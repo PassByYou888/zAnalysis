@@ -327,7 +327,6 @@ begin
       // 2. update center positions
       while True do
         begin
-
           // fill SourceIndex with center numbers
           WasChanges := False;
           i := 0;
@@ -425,7 +424,6 @@ begin
         end;
       if E < EBest then
         begin
-
           // store partition.
           EBest := E;
           CopyMatrix(ct, 0, k - 1, 0, NVars - 1, CTBest, 0, k - 1, 0, NVars - 1);
