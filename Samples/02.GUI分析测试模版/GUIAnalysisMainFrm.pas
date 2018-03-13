@@ -12,9 +12,9 @@ uses
   FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit, FMX.Layouts;
 
 const
-  sceneWidth  = 600;
-  sceneHeight = 600;
-  RandomCount = 10;
+  sceneWidth  = 800;
+  sceneHeight = 800;
+  RandomCount = 2000;
 
 type
   TGUIAnalysisMainForm = class(TForm)
