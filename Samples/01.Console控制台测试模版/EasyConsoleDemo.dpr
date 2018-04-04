@@ -18,11 +18,9 @@ uses
 
 procedure Demo;
 var
-  i, j: Integer;
-
-  buff    : TKDT1DD_DynamicVecBuffer;
-  outIndex: TDynamicIndexArray;
-
+  i, j           : Integer;
+  buff           : TKDT1DD_DynamicVecBuffer;
+  outIndex       : TDynamicIndexArray;
   k1t            : TKDT1DD;
   k1r            : PKDT1DD_Node;
   d              : Double;
@@ -36,7 +34,7 @@ begin
 
   SetLength(buff, 100);
   for i := 0 to Length(buff) - 1 do
-    for j := 0 to TKDT1DD_AxisCount - 1 do
+    for j := 0 to KDT1DD_Axis - 1 do
         buff[i][j] := umlRandomRangeD(-3000, 3000);
 
   k1t.BuildKDTreeWithCluster(buff, 10, 1, outIndex);
@@ -45,7 +43,6 @@ begin
   // k1t.SaveToFile('c:\test.dat');
   // k1t.Clear;
   // k1t.LoadFromFile('c:\test.dat');
-  // k1t.LoadFromStream(m64);
   // k1t.PrintNodeTree(k1t.RootNode);
 
   repeat
@@ -59,7 +56,7 @@ begin
         else if umlMultipleMatch(['origin'], n) then
           begin
             for i := 0 to Length(buff) - 1 do
-                DoStatus('%d. %s ', [i, KDT1DDVec(buff[i])]);
+                DoStatus('%d. %s ', [i, TKDT1DD.KDT1DDVec(buff[i])]);
           end
         else if umlMultipleMatch(['tree'], n) then
             k1t.PrintNodeTree(k1t.RootNode)
@@ -68,13 +65,13 @@ begin
         else
           begin
             NearestNodes.Clear;
-            k1r := k1t.Search(KDT1DDVec(n), d, SearchedCounter, NearestNodes);
+            k1r := k1t.Search(TKDT1DD.KDT1DDVec(n), d, SearchedCounter, NearestNodes);
 
             DoStatus(Format('finded total:%d Nearest:%d dist:%f', [SearchedCounter, k1r^.vec^.index,
-              sqrt(KDT1DDDistance(KDT1DDVec(n), k1r^.vec^.buff))]));
+              sqrt(TKDT1DD.KDT1DDDistance(TKDT1DD.KDT1DDVec(n), k1r^.vec^.buff))]));
             for i := 0 to NearestNodes.Count - 1 do
                 DoStatus(Format('index:%d dist:%f',
-                [PKDT1DD_Node(NearestNodes[i])^.vec^.index, sqrt(KDT1DDDistance(PKDT1DD_Node(NearestNodes[i])^.vec^.buff, k1r^.vec^.buff))]));
+                [PKDT1DD_Node(NearestNodes[i])^.vec^.index, sqrt(TKDT1DD.KDT1DDDistance(PKDT1DD_Node(NearestNodes[i])^.vec^.buff, k1r^.vec^.buff))]));
           end;
       end;
   until False;

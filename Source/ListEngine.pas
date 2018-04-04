@@ -713,6 +713,7 @@ type
     destructor Destroy; override;
 
     function Add(Value: Double): Integer;
+    procedure AddArray(const Value: array of Double);
     function Delete(Idx: Integer): Integer;
     function DeleteDouble(Value: Double): Integer;
     procedure Clear;
@@ -5773,6 +5774,14 @@ begin
   New(p);
   p^.Data := Value;
   Result := FList.Add(p);
+end;
+
+procedure TListDouble.AddArray(const Value: array of Double);
+var
+  i: Integer;
+begin
+  for i := 0 to Length(Value) - 1 do
+      Add(Value[i]);
 end;
 
 function TListDouble.Delete(Idx: Integer): Integer;

@@ -18,7 +18,8 @@ unit CoreClasses;
 
 interface
 
-uses SysUtils, Classes, Types, PascalStrings,
+uses SysUtils, Classes, Types, Math,
+  PascalStrings,
   SyncObjs
   {$IFDEF FPC}
     , Contnrs, fgl
@@ -413,6 +414,9 @@ end;
 initialization
   InitCriticalLock;
   MHGlobalHookEnabled := True;
+
+  // float check
+  SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow, exUnderflow, exPrecision]);
 finalization
   FreeCriticalLock;
   MHGlobalHookEnabled := False;

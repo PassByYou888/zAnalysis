@@ -5708,8 +5708,6 @@ end;
 
 initialization
 
-SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow, exUnderflow, exPrecision]);
-
 finalization
 
 end.

@@ -12,9 +12,9 @@ uses
   FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit, FMX.Layouts;
 
 const
-  sceneWidth  = 800;
-  sceneHeight = 800;
-  RandomCount = 2000;
+  sceneWidth  = 400;
+  sceneHeight = 400;
+  RandomCount = 1000;
 
 type
   TGUIAnalysisMainForm = class(TForm)
@@ -212,7 +212,7 @@ var
   ConvexHullPl: T2DPointList;
 begin
   k2d := TKDT2DS.Create;
-  k2d.BuildKDTreeWithClusterP(pl.Count, k, 1, OutIndex, procedure(IndexFor: NativeInt; var Source: TKDT2DS_Source)
+  k2d.BuildKDTreeWithClusterP(pl.Count, k, 1, OutIndex, procedure(const IndexFor: NativeInt; var Source: TKDT2DS_Source)
     begin
       Source.Buff[0] := pl[IndexFor]^[0];
       Source.Buff[1] := pl[IndexFor]^[1];

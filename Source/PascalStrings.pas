@@ -202,12 +202,12 @@ function SmithWatermanCompare(const seq1: Pointer; siz1: Integer; const seq2: Po
 function SmithWatermanCompareLongString(const t1, t2: TPascalString; const MinDiffCharWithPeerLine: Integer; out Same, Diff: Integer): Double; overload;
 function SmithWatermanCompareLongString(const t1, t2: TPascalString): Double; overload;
 
-const
-  SystemCharSize = SizeOf(SystemChar);
+var
+  SystemCharSize: NativeInt = SizeOf(SystemChar);
   {$IFDEF CPU64}
-  MaxSmithWatermanMatrix = 10000 * 10;
+  MaxSmithWatermanMatrix: NativeInt = 10000 * 10;
   {$ELSE}
-  MaxSmithWatermanMatrix = 8192;
+  MaxSmithWatermanMatrix: NativeInt = 8192;
   {$ENDIF}
 
 implementation

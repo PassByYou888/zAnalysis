@@ -162,6 +162,7 @@ type
     class function TranslateTextToC_DeclComment(const Text: TPascalString): TPascalString;
     { }
     constructor Create(const AText: TPascalString; AStyle: TTextStyle; ASpecialSymbol: TListPascalString); virtual;
+    constructor Create2(const AText: TPascalString; AStyle: TTextStyle);
     destructor Destroy; override;
     { }
     function Parsing: Boolean; virtual;
@@ -2123,6 +2124,25 @@ begin
   SpecialSymbol := TListPascalString.Create;
   if ASpecialSymbol <> nil then
       SpecialSymbol.Assign(ASpecialSymbol);
+
+  RebuildParsingCache;
+end;
+
+constructor TTextParsing.Create2(const AText: TPascalString; AStyle: TTextStyle);
+begin
+  inherited Create;
+  ParsingData.Cache.CommentData := nil;
+  ParsingData.Cache.TextData := nil;
+  ParsingData.Cache.TokenDataList := nil;
+  if AText.Len = 0 then
+      ParsingData.Text := #13#10
+  else
+      ParsingData.Text := AText + #32;
+  ParsingData.Len := ParsingData.Text.Len + 1;
+  TextStyle := AStyle;
+  SymbolTable := TextParsing_DefaultSymbol;
+  TokenStatistics := NullTokenStatistics;
+  SpecialSymbol := TListPascalString.Create;
 
   RebuildParsingCache;
 end;

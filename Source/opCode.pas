@@ -59,6 +59,11 @@ type
 
     function DoStr(var Param: TOpParam): Variant;
 
+    function DoBool(var Param: TOpParam): Variant;
+    function DoTrue(var Param: TOpParam): Variant;
+    function DoFalse(var Param: TOpParam): Variant;
+    function DoRandom(var Param: TOpParam): Variant;
+
     function DoGetFirst(var Param: TOpParam): Variant;
     function DoDeleteFirst(var Param: TOpParam): Variant;
     function DoGetLast(var Param: TOpParam): Variant;
@@ -97,7 +102,7 @@ type
     destructor Destroy; override;
 
     procedure SaveToStream(Stream: TCoreClassStream);
-    class function LoadFromStream(Fast: Boolean; Stream: TCoreClassStream; out LoadedOp: TOpCode): Boolean;
+    class function LoadFromStream(Stream: TCoreClassStream; out LoadedOp: TOpCode): Boolean;
 
     function AddValue(v: Variant): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function AddValue(v: Variant; vt: TOpValueType): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -114,139 +119,139 @@ type
     property AutoFreeLink: Boolean read FAutoFreeLink write FAutoFreeLink;
   end;
 
-  op_Value = class(TOpCode)
+  op_Value = class sealed(TOpCode)
   private
     // a
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Proc = class(TOpCode)
+  op_Proc = class sealed(TOpCode)
   private
     // proc(a,b,c...)
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Add = class(TOpCode)
+  op_Add = class sealed(TOpCode)
   private
     // a + b + n...
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Sub = class(TOpCode)
+  op_Sub = class sealed(TOpCode)
   private
     // a - b - n...
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Mul = class(TOpCode)
+  op_Mul = class sealed(TOpCode)
   private
     // a * b * n...
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Div = class(TOpCode)
+  op_Div = class sealed(TOpCode)
   private
     // a / b / n...
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_IntDiv = class(TOpCode)
+  op_IntDiv = class sealed(TOpCode)
   private
     // a div b div n...
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Pow = class(TOpCode)
+  op_Pow = class sealed(TOpCode)
   private
     // a pow b
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Mod = class(TOpCode)
+  op_Mod = class sealed(TOpCode)
   private
     // a mod b mod n...
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Or = class(TOpCode)
+  op_Or = class sealed(TOpCode)
   private
     // a or b or n...
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_And = class(TOpCode)
+  op_And = class sealed(TOpCode)
   private
     // a and b and n...
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Xor = class(TOpCode)
+  op_Xor = class sealed(TOpCode)
   private
     // a xor b xor n...
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Shl = class(TOpCode)
+  op_Shl = class sealed(TOpCode)
   private
     // a shl b shl n...
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Shr = class(TOpCode)
+  op_Shr = class sealed(TOpCode)
   private
     // a shr b shr n...
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Equal = class(TOpCode)
+  op_Equal = class sealed(TOpCode)
   private
     // a = b
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_LessThan = class(TOpCode)
+  op_LessThan = class sealed(TOpCode)
   private
     // a < b
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_EqualOrLessThan = class(TOpCode)
+  op_EqualOrLessThan = class sealed(TOpCode)
   private
     // a <= b
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_GreaterThan = class(TOpCode)
+  op_GreaterThan = class sealed(TOpCode)
   private
     // a > b
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_EqualOrGreaterThan = class(TOpCode)
+  op_EqualOrGreaterThan = class sealed(TOpCode)
   private
     // a >= b
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_NotEqual = class(TOpCode)
+  op_NotEqual = class sealed(TOpCode)
   private
     // a <> b
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Symbol_Sub = class(TOpCode)
+  op_Symbol_Sub = class sealed(TOpCode)
   private
     // -a
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-  op_Symbol_Add = class(TOpCode)
+  op_Symbol_Add = class sealed(TOpCode)
   private
     // +a
     function doExecute(opRT: TOpCustomRunTime): Variant; override;
   end;
 
-function LoadOpFromStream(Fast: Boolean; Stream: TCoreClassStream; out LoadedOp: TOpCode): Boolean;
+function LoadOpFromStream(Stream: TCoreClassStream; out LoadedOp: TOpCode): Boolean;
 
 var
   DefaultOpRT: TOpCustomRunTime;
@@ -327,7 +332,7 @@ begin
   DisposeObject(OpList);
 end;
 
-function LoadOpFromStream(Fast: Boolean; Stream: TCoreClassStream; out LoadedOp: TOpCode): Boolean;
+function LoadOpFromStream(Stream: TCoreClassStream; out LoadedOp: TOpCode): Boolean;
 
   function LoadFromDataFrame_1(CurDataEng: TDataFrameEngine): TOpCode;
   var
@@ -378,7 +383,7 @@ begin
   Result := False;
   dataEng := TDataFrameEngine.Create;
   try
-    dataEng.DecodeFrom(Stream, False);
+    dataEng.DecodeFrom(Stream, True);
     DataEdition := dataEng.Reader.ReadInteger;
     if DataEdition = 1 then
       begin
@@ -530,6 +535,63 @@ begin
   Result := n;
 end;
 
+function TOpCustomRunTime.DoBool(var Param: TOpParam): Variant;
+  function v2b(const v: Variant): Boolean;
+  var
+    n: TPascalString;
+  begin
+    if VarIsStr(v) then
+      begin
+        n.Text := VarToStr(v);
+        n := n.DeleteChar(#32#9);
+        if n.Same('True') or n.Same('Yes') or n.Same('1') then
+            Result := True
+        else
+            Result := False;
+      end
+    else if VarIsOrdinal(v) then
+        Result := v > 0
+    else if VarisFloat(v) then
+        Result := v > 0
+    else
+        Result := v;
+  end;
+
+var
+  n: Boolean;
+  i: Integer;
+begin
+  n := True;
+  for i := low(Param) to high(Param) do
+      n := n and v2b(Param[i]);
+  Result := n;
+end;
+
+function TOpCustomRunTime.DoTrue(var Param: TOpParam): Variant;
+begin
+  Result := True;
+end;
+
+function TOpCustomRunTime.DoFalse(var Param: TOpParam): Variant;
+begin
+  Result := False;
+end;
+
+function TOpCustomRunTime.DoRandom(var Param: TOpParam): Variant;
+var
+  v: NativeInt;
+  i: Integer;
+begin
+  v := 0;
+  for i := low(Param) to high(Param) do
+      v := v + Param[i];
+
+  if v <> 0 then
+      Result := Random(v)
+  else
+      Result := Random(MaxInt);
+end;
+
 function TOpCustomRunTime.DoGetFirst(var Param: TOpParam): Variant;
 begin
   if Length(Param) = 2 then
@@ -580,6 +642,11 @@ begin
 
   RegOp('Str', @DoStr);
 
+  RegOp('Bool', @DoBool);
+  RegOp('True', @DoTrue);
+  RegOp('False', @DoFalse);
+  RegOp('Random', @DoRandom);
+
   RegOp('GetFirst', @DoGetFirst);
   RegOp('DeleteFirst', @DoDeleteFirst);
   RegOp('GetLast', @DoGetLast);
@@ -599,6 +666,11 @@ begin
   RegOp('Trunc', DoTrunc);
 
   RegOp('Str', DoStr);
+
+  RegOp('Bool', DoBool);
+  RegOp('True', DoTrue);
+  RegOp('False', DoFalse);
+  RegOp('Random', DoRandom);
 
   RegOp('GetFirst', DoGetFirst);
   RegOp('DeleteFirst', DoDeleteFirst);
@@ -789,9 +861,9 @@ begin
   DisposeObject(dataEng);
 end;
 
-class function TOpCode.LoadFromStream(Fast: Boolean; Stream: TCoreClassStream; out LoadedOp: TOpCode): Boolean;
+class function TOpCode.LoadFromStream(Stream: TCoreClassStream; out LoadedOp: TOpCode): Boolean;
 begin
-  Result := LoadOpFromStream(Fast, Stream, LoadedOp);
+  Result := LoadOpFromStream(Stream, LoadedOp);
 end;
 
 function TOpCode.AddValue(v: Variant): Integer;
