@@ -7,50 +7,51 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-procedure RMatrixLU(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward;
-procedure CMatrixLU(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward;
-function HPDMatrixCholesky(var A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean): Boolean; forward;
-function SPDMatrixCholesky(var A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean): Boolean; forward;
-procedure RMatrixLUP(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward;
-procedure CMatrixLUP(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward;
-procedure RMatrixPLU(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward;
-procedure CMatrixPLU(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward;
+procedure RMatrixLU(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLU(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HPDMatrixCholesky(var A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SPDMatrixCholesky(var A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLUP(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLUP(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixPLU(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixPLU(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixLUPRec(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnComplexArray); forward;
+  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixLUPRec(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnFloatArray); forward;
+  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixPLURec(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnComplexArray); forward;
+  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixPLURec(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnFloatArray); forward;
+  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixLUP2(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnComplexArray); forward;
+  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixLUP2(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnFloatArray); forward;
+  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixPLU2(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnComplexArray); forward;
+  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixPLU2(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnFloatArray); forward;
+  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function HPDMatrixCholeskyRec(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnComplexArray): Boolean; forward;
+  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnComplexArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function SPDMatrixCholeskyRec(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnFloatArray): Boolean; forward;
+  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnFloatArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function HPDMatrixCholesky2(var AAA: TLearnComplex2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnComplexArray): Boolean; forward;
+  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnComplexArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function SPDMatrixCholesky2(var AAA: TLearnFloat2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnFloatArray): Boolean; forward;
+  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnFloatArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   LU decomposition of a general real matrix with row pivoting

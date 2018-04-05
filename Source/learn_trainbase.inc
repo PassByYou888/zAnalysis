@@ -24,50 +24,51 @@ type
 
   PMultiLayerPerceptron = ^TMultiLayerPerceptron;
 
-procedure MLPCreate0(NIn: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreate1(NIn: TLearnInteger; NHid: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreate2(NIn: TLearnInteger; NHid1: TLearnInteger; NHid2: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateB0(NIn: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateB1(NIn: TLearnInteger; NHid: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateB2(NIn: TLearnInteger; NHid1: TLearnInteger; NHid2: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateR0(NIn: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateR1(NIn: TLearnInteger; NHid: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateR2(NIn: TLearnInteger; NHid1: TLearnInteger; NHid2: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateC0(NIn: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateC1(NIn: TLearnInteger; NHid: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateC2(NIn: TLearnInteger; NHid1: TLearnInteger; NHid2: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward;
-procedure MLPFree(var Network: TMultiLayerPerceptron); forward;
-procedure MLPCopy(const Network1: TMultiLayerPerceptron; var Network2: TMultiLayerPerceptron); forward;
-procedure MLPSerialize(const Network: TMultiLayerPerceptron; var RA: TLearnFloatArray; var RLen: TLearnInteger); forward;
-procedure MLPUnserialize(const RA: TLearnFloatArray; var Network: TMultiLayerPerceptron); forward;
-procedure MLPRandomize(var Network: TMultiLayerPerceptron); overload; forward;
-procedure MLPRandomize(var Network: TMultiLayerPerceptron; const Diameter: TLearnFloat); overload; forward;
-procedure MLPRandomize(var Network: TMultiLayerPerceptron; const WBest: TLearnFloatArray; const Diameter: TLearnFloat); overload; forward;
-procedure MLPRandomizeFull(var Network: TMultiLayerPerceptron); forward;
-procedure MLPInitPreprocessor(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger); forward;
-procedure MLPProperties(const Network: TMultiLayerPerceptron; var NIn: TLearnInteger; var NOut: TLearnInteger; var WCount: TLearnInteger); forward;
-function MLPIsSoftmax(const Network: TMultiLayerPerceptron): Boolean; forward;
-procedure MLPProcess(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray; var Y: TLearnFloatArray); forward;
-function MLPError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger): TLearnFloat; forward;
-function MLPErrorN(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger): TLearnFloat; forward;
-function MLPClsError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger): TLearnInteger; forward;
-function MLPRelClsError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward;
-function MLPAvgCE(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward;
-function MLPRMSError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward;
-function MLPAvgError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward;
-function MLPAvgRelError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward;
-procedure MLPGrad(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray; const DesiredY: TLearnFloatArray; var E: TLearnFloat; var Grad: TLearnFloatArray); forward;
-procedure MLPGradN(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray; const DesiredY: TLearnFloatArray; var E: TLearnFloat; var Grad: TLearnFloatArray); forward;
-procedure MLPGradBatch(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat; var Grad: TLearnFloatArray); forward;
-procedure MLPGradNBatch(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat; var Grad: TLearnFloatArray); forward;
+procedure MLPCreate0(NIn: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreate1(NIn: TLearnInteger; NHid: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreate2(NIn: TLearnInteger; NHid1: TLearnInteger; NHid2: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateB0(NIn: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateB1(NIn: TLearnInteger; NHid: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateB2(NIn: TLearnInteger; NHid1: TLearnInteger; NHid2: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateR0(NIn: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateR1(NIn: TLearnInteger; NHid: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateR2(NIn: TLearnInteger; NHid1: TLearnInteger; NHid2: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateC0(NIn: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateC1(NIn: TLearnInteger; NHid: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateC2(NIn: TLearnInteger; NHid1: TLearnInteger; NHid2: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPFree(var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCopy(const Network1: TMultiLayerPerceptron; var Network2: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPSerialize(const Network: TMultiLayerPerceptron; var RA: TLearnFloatArray; var RLen: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPUnserialize(const RA: TLearnFloatArray; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPRandomize(var Network: TMultiLayerPerceptron); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPRandomize(var Network: TMultiLayerPerceptron; const Diameter: TLearnFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPRandomize(var Network: TMultiLayerPerceptron; const WBest: TLearnFloatArray; const Diameter: TLearnFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPRandomizeFull(var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPInitPreprocessor(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPProperties(const Network: TMultiLayerPerceptron; var NIn: TLearnInteger; var NOut: TLearnInteger; var WCount: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPIsSoftmax(const Network: TMultiLayerPerceptron): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPProcess(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray; var Y: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPErrorN(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPClsError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPRelClsError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPAvgCE(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPRMSError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPAvgError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPAvgRelError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPGrad(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray; const DesiredY: TLearnFloatArray; var E: TLearnFloat; var Grad: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPGradN(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray; const DesiredY: TLearnFloatArray; var E: TLearnFloat; var Grad: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPGradBatch(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat; var Grad: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPGradNBatch(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat; var Grad: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPHessianNBatch(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat; var Grad: TLearnFloatArray; var H: TLearnFloat2DArray); forward;
-procedure MLPHessianBatch(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat; var Grad: TLearnFloatArray; var H: TLearnFloat2DArray); forward;
+procedure MLPHessianNBatch(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat; var Grad: TLearnFloatArray; var H: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPHessianBatch(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat; var Grad: TLearnFloatArray; var H: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPInternalProcessVector(const StructInfo: TLearnIntegerArray;
   const Weights: TLearnFloatArray; const ColumnMeans: TLearnFloatArray;
   const ColumnSigmas: TLearnFloatArray; var Neurons: TLearnFloatArray;
-  var DFDNET: TLearnFloatArray; const X: TLearnFloatArray; var Y: TLearnFloatArray); forward;
+  var DFDNET: TLearnFloatArray; const X: TLearnFloatArray; var Y: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 const
   MLPVNum     = 7;
@@ -76,37 +77,38 @@ const
 
 procedure AddInputLayer(NCount: TLearnInteger; var LSizes: TLearnIntegerArray;
   var LTypes: TLearnIntegerArray; var LConnFirst: TLearnIntegerArray;
-  var LConnLast: TLearnIntegerArray; var LastProc: TLearnInteger); forward;
+  var LConnLast: TLearnIntegerArray; var LastProc: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure AddBiasedSummatorLayer(NCount: TLearnInteger;
   var LSizes: TLearnIntegerArray; var LTypes: TLearnIntegerArray;
   var LConnFirst: TLearnIntegerArray; var LConnLast: TLearnIntegerArray;
-  var LastProc: TLearnInteger); forward;
+  var LastProc: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure AddActivationLayer(FuncType: TLearnInteger;
   var LSizes: TLearnIntegerArray; var LTypes: TLearnIntegerArray;
   var LConnFirst: TLearnIntegerArray; var LConnLast: TLearnIntegerArray;
-  var LastProc: TLearnInteger); forward;
+  var LastProc: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure AddZeroLayer(var LSizes: TLearnIntegerArray; var LTypes: TLearnIntegerArray;
   var LConnFirst: TLearnIntegerArray; var LConnLast: TLearnIntegerArray;
-  var LastProc: TLearnInteger); forward;
+  var LastProc: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPCreate(NIn: TLearnInteger; NOut: TLearnInteger;
   const LSizes: TLearnIntegerArray; const LTypes: TLearnIntegerArray;
   const LConnFirst: TLearnIntegerArray; const LConnLast: TLearnIntegerArray;
   LayersCount: TLearnInteger; IsClsNet: Boolean;
-  var Network: TMultiLayerPerceptron); forward;
+  var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPActivationFunction(NET: TLearnFloat; K: TLearnInteger;
-  var F: TLearnFloat; var DF: TLearnFloat; var D2F: TLearnFloat); forward;
+  var F: TLearnFloat; var DF: TLearnFloat; var D2F: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPHessianBatchInternal(var Network: TMultiLayerPerceptron;
   const XY: TLearnFloat2DArray; SSize: TLearnInteger; NaturalErr: Boolean;
-  var E: TLearnFloat; var Grad: TLearnFloatArray; var H: TLearnFloat2DArray); forward;
+  var E: TLearnFloat; var Grad: TLearnFloatArray; var H: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPInternalCalculateGradient(var Network: TMultiLayerPerceptron;
   const Neurons: TLearnFloatArray; const Weights: TLearnFloatArray;
   var DError: TLearnFloatArray; var Grad: TLearnFloatArray;
-  NaturalErrorFunc: Boolean); forward;
+  NaturalErrorFunc: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPChunkedGradient(var Network: TMultiLayerPerceptron;
   const XY: TLearnFloat2DArray; CStart: TLearnInteger; CSize: TLearnInteger;
   var E: TLearnFloat; var Grad: TLearnFloatArray;
-  NaturalErrorFunc: Boolean); forward;
-function SafeCrossEntropy(T: TLearnFloat; Z: TLearnFloat): TLearnFloat; forward;
+  NaturalErrorFunc: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SafeCrossEntropy(T: TLearnFloat; Z: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   Creates  neural  network  with  NIn  inputs,  NOut outputs, without hidden
@@ -1236,11 +1238,9 @@ end;
   Y       -   result. Regression estimate when solving regression  task,
   vector of posterior probabilities for classification task.
   Subroutine does not allocate memory for this vector, it is
-  responsibility of a caller to allocate it. Array  must  be
-  at least [0..NOut-1].
+  responsibility of a caller to allocate it. Array must be at least [0..NOut-1].
   ************************************************************************ *)
-procedure MLPProcess(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray;
-  var Y: TLearnFloatArray);
+procedure MLPProcess(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray; var Y: TLearnFloatArray);
 begin
   MLPInternalProcessVector(Network.StructInfo, Network.Weights,
     Network.ColumnMeans, Network.ColumnSigmas, Network.Neurons,
@@ -1441,7 +1441,7 @@ end;
 function MLPRelClsError(var Network: TMultiLayerPerceptron;
   const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat;
 begin
-  Result := AP_Double(MLPClsError(Network, XY, NPoints)) / NPoints;
+  Result := AP_Float(MLPClsError(Network, XY, NPoints)) / NPoints;
 end;
 
 (* ************************************************************************
@@ -1904,8 +1904,7 @@ begin
           //
           // Activation function
           //
-          MLPActivationFunction(Neurons[StructInfo[Offs + 2]], StructInfo[Offs + 0],
-            F, DF, D2F);
+          MLPActivationFunction(Neurons[StructInfo[Offs + 2]], StructInfo[Offs + 0], F, DF, D2F);
           Neurons[I] := F;
           DFDNET[I] := DF;
         end;
@@ -1952,8 +1951,7 @@ begin
               Neurons[I] := 0;
               PErr := False;
             end;
-          Assert(not PErr,
-            'MLPInternalProcessVector: internal error - unknown neuron type!');
+          Assert(not PErr, 'MLPInternalProcessVector: internal error - unknown neuron type!');
         end;
     end;
 
@@ -1965,8 +1963,7 @@ begin
   //
   // Softmax post-processing or standardisation if needed
   //
-  Assert((StructInfo[6] = 0) or (StructInfo[6] = 1),
-    'MLPInternalProcessVector: unknown normalization type!');
+  Assert((StructInfo[6] = 0) or (StructInfo[6] = 1), 'MLPInternalProcessVector: unknown normalization type!');
   if StructInfo[6] = 1 then
     begin
 
@@ -2274,8 +2271,7 @@ end;
 (* ************************************************************************
   Internal subroutine
   ************************************************************************ *)
-procedure MLPActivationFunction(NET: TLearnFloat; K: TLearnInteger;
-  var F: TLearnFloat; var DF: TLearnFloat; var D2F: TLearnFloat);
+procedure MLPActivationFunction(NET: TLearnFloat; K: TLearnInteger; var F: TLearnFloat; var DF: TLearnFloat; var D2F: TLearnFloat);
 var
   NET2: TLearnFloat;
   ARG : TLearnFloat;

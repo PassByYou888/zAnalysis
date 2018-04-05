@@ -50,16 +50,17 @@ type
     TerminationType: TLearnInteger;
   end;
 
-procedure MinLBFGSCreate(N: TLearnInteger; M: TLearnInteger; const X: TLearnFloatArray; var State: TMinLBFGSState); forward;
-procedure MinLBFGSSetCond(var State: TMinLBFGSState; EpsG: TLearnFloat; EpsF: TLearnFloat; EpsX: TLearnFloat; MaxIts: TLearnInteger); forward;
-procedure MinLBFGSSetXRep(var State: TMinLBFGSState; NeedXRep: Boolean); forward;
-procedure MinLBFGSSetStpMax(var State: TMinLBFGSState; StpMax: TLearnFloat); forward;
-procedure MinLBFGSCreateX(N: TLearnInteger; M: TLearnInteger; const X: TLearnFloatArray; Flags: TLearnInteger; var State: TMinLBFGSState); forward;
-function MinLBFGSIteration(var State: TMinLBFGSState): Boolean; forward;
-procedure MinLBFGSResults(const State: TMinLBFGSState; var X: TLearnFloatArray; var Rep: TMinLBFGSReport); forward;
-procedure MinLBFGSFree(var X: TLearnFloatArray; var State: TMinLBFGSState); forward;
+procedure MinLBFGSCreate(N: TLearnInteger; M: TLearnInteger; const X: TLearnFloatArray; var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSSetCond(var State: TMinLBFGSState; EpsG: TLearnFloat; EpsF: TLearnFloat; EpsX: TLearnFloat; MaxIts: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSSetXRep(var State: TMinLBFGSState; NeedXRep: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSSetStpMax(var State: TMinLBFGSState; StpMax: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSCreateX(N: TLearnInteger; M: TLearnInteger; const X: TLearnFloatArray; Flags: TLearnInteger; var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MinLBFGSIteration(var State: TMinLBFGSState): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSResults(const State: TMinLBFGSState; var X: TLearnFloatArray; var Rep: TMinLBFGSReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSFree(var X: TLearnFloatArray; var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure ClearRequestFields(var State: TMinLBFGSState); forward;
+procedure ClearRequestFields(var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   LIMITED MEMORY BFGS METHOD FOR LARGE SCALE OPTIMIZATION

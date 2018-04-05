@@ -166,6 +166,8 @@ const
 
 procedure Empty;
 
+function CheckThreadSynchronize(Timeout: Integer): Boolean;
+
 procedure DisposeObject(const obj: TObject); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure DisposeObject(const objs: array of TObject); overload;
 procedure FreeObject(const obj: TObject); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -193,6 +195,11 @@ implementation
 
 procedure Empty;
 begin
+end;
+
+function CheckThreadSynchronize(Timeout: Integer): Boolean;
+begin
+  Result := CheckSynchronize(Timeout);
 end;
 
 procedure DisposeObject(const obj: TObject);

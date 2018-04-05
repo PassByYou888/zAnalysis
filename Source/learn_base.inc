@@ -46,71 +46,73 @@ const
   /// //////////////////////////////////////////////////////////////////////
   // Functions/procedures
   /// //////////////////////////////////////////////////////////////////////
-function AbsReal(X: TLearnFloat): TLearnFloat; inline; forward;
-function AbsInt(I: TLearnInteger): TLearnInteger; inline; forward;
-function RandomReal(): TLearnFloat; inline; forward;
-function RandomInteger(I: TLearnInteger): TLearnInteger; inline; forward;
-function Sign(X: TLearnFloat): TLearnInteger; inline; forward;
-function AP_Sqr(X: TLearnFloat): TLearnFloat; inline; forward;
+function AbsReal(X: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AbsInt(I: TLearnInteger): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RandomReal(): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RandomInteger(I: TLearnInteger): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function Sign(X: TLearnFloat): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_Sqr(X: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function DynamicArrayCopy(const A: TLearnIntegerArray): TLearnIntegerArray; overload; forward;
-function DynamicArrayCopy(const A: TLearnFloatArray): TLearnFloatArray; overload; forward;
-function DynamicArrayCopy(const A: TLearnComplexArray): TLearnComplexArray; overload; forward;
-function DynamicArrayCopy(const A: TLearnBooleanArray): TLearnBooleanArray; overload; forward;
+function DynamicArrayCopy(const A: TLearnIntegerArray): TLearnIntegerArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLearnFloatArray): TLearnFloatArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLearnComplexArray): TLearnComplexArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLearnBooleanArray): TLearnBooleanArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function DynamicArrayCopy(const A: TLearnInteger2DArray): TLearnInteger2DArray; overload; forward;
-function DynamicArrayCopy(const A: TLearnFloat2DArray): TLearnFloat2DArray; overload; forward;
-function DynamicArrayCopy(const A: TLearnComplex2DArray): TLearnComplex2DArray; overload; forward;
-function DynamicArrayCopy(const A: TLearnBoolean2DArray): TLearnBoolean2DArray; overload; forward;
+function DynamicArrayCopy(const A: TLearnInteger2DArray): TLearnInteger2DArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLearnFloat2DArray): TLearnFloat2DArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLearnComplex2DArray): TLearnComplex2DArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLearnBoolean2DArray): TLearnBoolean2DArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function AbsComplex(const Z: TLearnComplex): TLearnFloat; inline; forward;
-function Conj(const Z: TLearnComplex): TLearnComplex; inline; forward;
-function CSqr(const Z: TLearnComplex): TLearnComplex; inline; forward;
+function AbsComplex(const Z: TLearnComplex): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function Conj(const Z: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CSqr(const Z: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function C_Complex(const X: TLearnFloat): TLearnComplex; inline; forward;
-function C_Opposite(const Z: TLearnComplex): TLearnComplex; inline; forward;
-function C_Add(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex; inline; forward;
-function C_Mul(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex; inline; forward;
-function C_AddR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex; inline; forward;
-function C_MulR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex; inline; forward;
-function C_Sub(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex; inline; forward;
-function C_SubR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex; inline; forward;
-function C_RSub(const R: TLearnFloat; const Z1: TLearnComplex): TLearnComplex; inline; forward;
-function C_Div(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex; inline; forward;
-function C_DivR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex; inline; forward;
-function C_RDiv(const R: TLearnFloat; const Z2: TLearnComplex): TLearnComplex; inline; forward;
-function C_Equal(const Z1: TLearnComplex; const Z2: TLearnComplex): Boolean; inline; forward;
-function C_NotEqual(const Z1: TLearnComplex; const Z2: TLearnComplex): Boolean; inline; forward;
-function C_EqualR(const Z1: TLearnComplex; const R: TLearnFloat): Boolean; inline; forward;
-function C_NotEqualR(const Z1: TLearnComplex; const R: TLearnFloat): Boolean; inline; forward;
+function C_Complex(const X: TLearnFloat): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Opposite(const Z: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Add(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Mul(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_AddR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_MulR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Sub(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_SubR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_RSub(const R: TLearnFloat; const Z1: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Div(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_DivR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_RDiv(const R: TLearnFloat; const Z2: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Equal(const Z1: TLearnComplex; const Z2: TLearnComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_NotEqual(const Z1: TLearnComplex; const Z2: TLearnComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_EqualR(const Z1: TLearnComplex; const R: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_NotEqualR(const Z1: TLearnComplex; const R: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 /// //////////////////////////////////////////////////////////////////////
 // AP BLAS generic interface
 
 /// //////////////////////////////////////////////////////////////////////
 // procedure UseAPBLAS(Flag: Boolean);
-function APVDotProduct(V1: PLearnFloat; I11, I12: TLearnInteger; V2: PLearnFloat; I21, I22: TLearnInteger): TLearnFloat; forward;
-procedure APVMove(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger); overload; forward;
-procedure APVMove(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger; S: TLearnFloat); overload; forward;
-procedure APVMoveNeg(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger); forward;
-procedure APVAdd(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger); overload; forward;
-procedure APVAdd(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger; S: TLearnFloat); overload; forward;
-procedure APVSub(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger); overload; forward;
-procedure APVSub(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger; S: TLearnFloat); overload; forward;
-procedure APVMul(VOp: PLearnFloat; I1, I2: TLearnInteger; S: TLearnFloat); forward;
-procedure APVFillValue(VOp: PLearnFloat; I1, I2: TLearnInteger; S: TLearnFloat); forward;
+function APVDotProduct(V1: PLearnFloat; I11, I12: TLearnInteger; V2: PLearnFloat; I21, I22: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVMove(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVMove(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger; S: TLearnFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVMoveNeg(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVAdd(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVAdd(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger; S: TLearnFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVSub(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVSub(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger; S: TLearnFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVMul(VOp: PLearnFloat; I1, I2: TLearnInteger; S: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVFillValue(VOp: PLearnFloat; I1, I2: TLearnInteger; S: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 /// //////////////////////////////////////////////////////////////////////
 // IEEE-compliant functions, placed at the end, under 'non-optimization'
 // compiler switch
 /// //////////////////////////////////////////////////////////////////////
-function AP_Double(X: TLearnFloat): TLearnFloat; inline; forward;
-function AP_FP_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean; inline; forward;
-function AP_FP_NEq(X: TLearnFloat; Y: TLearnFloat): Boolean; inline; forward;
-function AP_FP_Less(X: TLearnFloat; Y: TLearnFloat): Boolean; inline; forward;
-function AP_FP_Less_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean; inline; forward;
-function AP_FP_Greater(X: TLearnFloat; Y: TLearnFloat): Boolean; inline; forward;
-function AP_FP_Greater_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean; inline; forward;
+function AP_Float(X: Extended): TLearnFloat; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_Float(X: Single): TLearnFloat; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_FP_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_FP_NEq(X: TLearnFloat; Y: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_FP_Less(X: TLearnFloat; Y: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_FP_Less_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_FP_Greater(X: TLearnFloat; Y: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_FP_Greater_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 /// //////////////////////////////////////////////////////////////////////
 // Functions/procedures
@@ -626,12 +628,16 @@ end;
 /// //////////////////////////////////////////////////////////////////////
 // IEEE-compliant functions
 /// //////////////////////////////////////////////////////////////////////
-{$OPTIMIZATION OFF}
 
 
-function AP_Double(X: TLearnFloat): TLearnFloat;
+function AP_Float(X: Extended): TLearnFloat;
 begin
-  AP_Double := X;
+  AP_Float := X;
+end;
+
+function AP_Float(X: Single): TLearnFloat;
+begin
+  AP_Float := X;
 end;
 
 function AP_FP_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean;

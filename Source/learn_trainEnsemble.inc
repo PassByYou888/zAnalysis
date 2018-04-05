@@ -36,64 +36,61 @@ type
   PMLPEnsemble = ^TMLPEnsemble;
 
 procedure MLPECreate0(NIn: TLearnInteger; NOut: TLearnInteger;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward;
+  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreate1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward;
+  NOut: TLearnInteger; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreate2(NIn: TLearnInteger; NHid1: TLearnInteger;
   NHid2: TLearnInteger; NOut: TLearnInteger; EnsembleSize: TLearnInteger;
-  var Ensemble: TMLPEnsemble); forward;
+  var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreateB0(NIn: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat;
-  D: TLearnFloat; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward;
+  D: TLearnFloat; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreateB1(NIn: TLearnInteger; NHid: TLearnInteger;
   NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward;
+  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreateB2(NIn: TLearnInteger; NHid1: TLearnInteger;
   NHid2: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward;
+  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreateR0(NIn: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat;
-  B: TLearnFloat; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward;
+  B: TLearnFloat; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreateR1(NIn: TLearnInteger; NHid: TLearnInteger;
   NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward;
+  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreateR2(NIn: TLearnInteger; NHid1: TLearnInteger;
   NHid2: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward;
+  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreateC0(NIn: TLearnInteger; NOut: TLearnInteger;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward;
+  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreateC1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward;
+  NOut: TLearnInteger; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreateC2(NIn: TLearnInteger; NHid1: TLearnInteger;
   NHid2: TLearnInteger; NOut: TLearnInteger; EnsembleSize: TLearnInteger;
-  var Ensemble: TMLPEnsemble); forward;
+  var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreateFromNetwork(const Network: TMultiLayerPerceptron;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward;
+  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPECopy(const Ensemble1: TMLPEnsemble; var Ensemble2: TMLPEnsemble); forward;
-procedure MLPESerialize(var Ensemble: TMLPEnsemble; var RA: TLearnFloatArray; var RLen: TLearnInteger); forward;
-procedure MLPEUnserialize(const RA: TLearnFloatArray; var Ensemble: TMLPEnsemble); forward;
-procedure MLPERandomize(var Ensemble: TMLPEnsemble); forward;
-procedure MLPEProperties(const Ensemble: TMLPEnsemble; var NIn: TLearnInteger; var NOut: TLearnInteger); forward;
-function MLPEIsSoftmax(const Ensemble: TMLPEnsemble): Boolean; forward;
-procedure MLPEProcess(var Ensemble: TMLPEnsemble; const X: TLearnFloatArray; var Y: TLearnFloatArray); forward;
+procedure MLPECopy(const Ensemble1: TMLPEnsemble; var Ensemble2: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPESerialize(var Ensemble: TMLPEnsemble; var RA: TLearnFloatArray; var RLen: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPEUnserialize(const RA: TLearnFloatArray; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPERandomize(var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPEProperties(const Ensemble: TMLPEnsemble; var NIn: TLearnInteger; var NOut: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPEIsSoftmax(const Ensemble: TMLPEnsemble): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPEProcess(var Ensemble: TMLPEnsemble; const X: TLearnFloatArray; var Y: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function MLPERelClsError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward;
-function MLPEAvgCE(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward;
-function MLPERMSError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward;
-function MLPEAvgError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward;
-function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward;
+function MLPERelClsError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPEAvgCE(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPERMSError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPEAvgError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPEBaggingLM(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
   NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward;
+  var Info: TLearnInteger; var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPEBaggingLBFGS(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
   NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
   WStep: TLearnFloat; MaxIts: TLearnInteger; var Info: TLearnInteger;
-  var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward;
+  var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPETrainES(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport); forward;
 
 const
   MLPNTotalOffset = 3;
@@ -101,12 +98,13 @@ const
 
 procedure MLPEAllErrors(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
   NPoints: TLearnInteger; var RelCls: TLearnFloat; var AvgCE: TLearnFloat;
-  var RMS: TLearnFloat; var Avg: TLearnFloat; var AvgRel: TLearnFloat); forward;
+  var RMS: TLearnFloat; var Avg: TLearnFloat; var AvgRel: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPEBaggingInternal(var Ensemble: TMLPEnsemble;
   const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
   Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
   LMAlgorithm: Boolean; var Info: TLearnInteger; var Rep: TMLPReport;
-  var OOBErrors: TMLPCVReport); forward;
+  var OOBErrors: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 procedure DSErrAllocate(NClasses: TLearnInteger; var Buf: TLearnFloatArray);
 begin
@@ -254,7 +252,6 @@ begin
       Buf[4] := Buf[4] / Buf[Offs + 2];
     end;
 end;
-
 
 (* ************************************************************************
   Like MLPCreate0, but for ensembles.
@@ -802,7 +799,7 @@ begin
     begin
       CC := Ensemble.NIn + Ensemble.NOut;
     end;
-  V := AP_Double(1) / ES;
+  V := AP_Float(1) / ES;
   I := 0;
   while I <= Ensemble.NOut - 1 do
     begin
@@ -1012,147 +1009,6 @@ procedure MLPEBaggingLBFGS(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DAr
 begin
   MLPEBaggingInternal(Ensemble, XY, NPoints, Decay, Restarts, WStep, MaxIts,
     False, Info, Rep, OOBErrors);
-end;
-
-(* ************************************************************************
-  Training neural networks ensemble using early stopping.
-
-  INPUT PARAMETERS:
-  Ensemble    -   model with initialized geometry
-  XY          -   training set
-  NPoints     -   training set size
-  Decay       -   weight decay coefficient, >=0.001
-  Restarts    -   restarts, >0.
-
-  OUTPUT PARAMETERS:
-  Ensemble    -   trained model
-  Info        -   return code:
-  * -2, if there is a point with class number outside of [0..NClasses-1].
-  * -1, if incorrect parameters was passed (NPoints<0, Restarts<1).
-  *  6, if task has been solved.
-  Rep         -   training report.
-  OOBErrors   -   out-of-bag generalization error estimate
-  ************************************************************************ *)
-procedure MLPETrainES(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport);
-var
-  I      : TLearnInteger;
-  K      : TLearnInteger;
-  CCount : TLearnInteger;
-  PCount : TLearnInteger;
-  TrnXY  : TLearnFloat2DArray;
-  ValXY  : TLearnFloat2DArray;
-  TrnSize: TLearnInteger;
-  ValSize: TLearnInteger;
-  Network: TMultiLayerPerceptron;
-  TmpInfo: TLearnInteger;
-  TmpRep : TMLPReport;
-begin
-  if (NPoints < 2) or (Restarts < 1) or AP_FP_Less(Decay, 0) then
-    begin
-      Info := -1;
-      Exit;
-    end;
-  if Ensemble.IsSoftmax then
-    begin
-      I := 0;
-      while I <= NPoints - 1 do
-        begin
-          if (Round(XY[I, Ensemble.NIn]) < 0) or
-            (Round(XY[I, Ensemble.NIn]) >= Ensemble.NOut) then
-            begin
-              Info := -2;
-              Exit;
-            end;
-          Inc(I);
-        end;
-    end;
-  Info := 6;
-
-  //
-  // allocate
-  //
-  if Ensemble.IsSoftmax then
-    begin
-      CCount := Ensemble.NIn + 1;
-      PCount := Ensemble.NIn;
-    end
-  else
-    begin
-      CCount := Ensemble.NIn + Ensemble.NOut;
-      PCount := Ensemble.NIn + Ensemble.NOut;
-    end;
-  SetLength(TrnXY, NPoints (* - 1 + 1 // optimized compler *) , CCount (* - 1 + 1 // optimized compler *) );
-  SetLength(ValXY, NPoints (* - 1 + 1 // optimized compler *) , CCount (* - 1 + 1 // optimized compler *) );
-  MLPUnserialize(Ensemble.SerializedMLP, Network);
-  Rep.NGrad := 0;
-  Rep.NHess := 0;
-  Rep.NCholesky := 0;
-
-  //
-  // train networks
-  //
-  K := 0;
-  while K <= Ensemble.EnsembleSize - 1 do
-    begin
-
-      //
-      // Split set
-      //
-      repeat
-        TrnSize := 0;
-        ValSize := 0;
-        I := 0;
-        while I <= NPoints - 1 do
-          begin
-            if AP_FP_Less(RandomReal, 0.66) then
-              begin
-
-                //
-                // Assign sample to training set
-                //
-                APVMove(@TrnXY[TrnSize][0], 0, CCount - 1, @XY[I][0], 0, CCount - 1);
-                TrnSize := TrnSize + 1;
-              end
-            else
-              begin
-
-                //
-                // Assign sample to validation set
-                //
-                APVMove(@ValXY[ValSize][0], 0, CCount - 1, @XY[I][0], 0, CCount - 1);
-                ValSize := ValSize + 1;
-              end;
-            Inc(I);
-          end;
-      until (TrnSize <> 0) and (ValSize <> 0);
-
-      //
-      // Train
-      //
-      MLPTrainES(Network, TrnXY, TrnSize, ValXY, ValSize, Decay, Restarts,
-        TmpInfo, TmpRep);
-      if TmpInfo < 0 then
-        begin
-          Info := TmpInfo;
-          Exit;
-        end;
-
-      //
-      // save results
-      //
-      APVMove(@Ensemble.Weights[0], K * Ensemble.WCount, (K + 1) * Ensemble.WCount
-        - 1, @Network.Weights[0], 0, Ensemble.WCount - 1);
-      APVMove(@Ensemble.ColumnMeans[0], K * PCount, (K + 1) * PCount - 1,
-        @Network.ColumnMeans[0], 0, PCount - 1);
-      APVMove(@Ensemble.ColumnSigmas[0], K * PCount, (K + 1) * PCount - 1,
-        @Network.ColumnSigmas[0], 0, PCount - 1);
-      Rep.NGrad := Rep.NGrad + TmpRep.NGrad;
-      Rep.NHess := Rep.NHess + TmpRep.NHess;
-      Rep.NCholesky := Rep.NCholesky + TmpRep.NCholesky;
-      Inc(K);
-    end;
 end;
 
 (* ************************************************************************
@@ -1412,7 +1268,7 @@ begin
     begin
       if OOBCntBuf[I] <> 0 then
         begin
-          V := AP_Double(1) / OOBCntBuf[I];
+          V := AP_Float(1) / OOBCntBuf[I];
           APVMove(@Y[0], 0, NOut - 1, @OOBBuf[I][0], 0, NOut - 1, V);
           if Ensemble.IsSoftmax then
             begin

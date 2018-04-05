@@ -625,7 +625,7 @@ type
     {$IFNDEF FPC}
     procedure EncodeAsPublicJson(output: TCoreClassStream);
     procedure EncodeAsJson(output: TCoreClassStream);
-    procedure DecodeFromJson(stream: TMemoryStream64);
+    procedure DecodeFromJson(stream: TCoreClassStream);
     {$ENDIF}
     //
     // ZLib compressor
@@ -3813,7 +3813,7 @@ begin
   DisposeObject(j);
 end;
 
-procedure TDataFrameEngine.DecodeFromJson(stream: TMemoryStream64);
+procedure TDataFrameEngine.DecodeFromJson(stream: TCoreClassStream);
 var
   j: TJsonObject;
   t: Byte;

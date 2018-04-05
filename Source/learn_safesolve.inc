@@ -9,15 +9,16 @@
 { ****************************************************************************** }
 function RMatrixScaledTRSafeSolve(const A: TLearnFloat2DArray; SA: TLearnFloat;
   N: TLearnInteger; var X: TLearnFloatArray; IsUpper: Boolean; Trans: TLearnInteger;
-  IsUnit: Boolean; MaxGrowth: TLearnFloat): Boolean; forward;
+  IsUnit: Boolean; MaxGrowth: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function CMatrixScaledTRSafeSolve(const A: TLearnComplex2DArray; SA: TLearnFloat;
   N: TLearnInteger; var X: TLearnComplexArray; IsUpper: Boolean;
-  Trans: TLearnInteger; IsUnit: Boolean; MaxGrowth: TLearnFloat): Boolean; forward;
+  Trans: TLearnInteger; IsUnit: Boolean; MaxGrowth: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function CBasicSolveAndUpdate(Alpha: TLearnComplex; Beta: TLearnComplex; LnMax: TLearnFloat;
   BNorm: TLearnFloat; MaxGrowth: TLearnFloat; var XNorm: TLearnFloat;
-  var X: TLearnComplex): Boolean; forward;
+  var X: TLearnComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   Real implementation
@@ -693,4 +694,3 @@ begin
     end;
   Result := True;
 end;
-

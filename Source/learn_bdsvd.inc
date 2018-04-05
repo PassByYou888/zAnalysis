@@ -10,25 +10,26 @@
 function RMatrixBDSVD(var D: TLearnFloatArray; E: TLearnFloatArray; N: TLearnInteger;
   IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean; var U: TLearnFloat2DArray;
   NRU: TLearnInteger; var C: TLearnFloat2DArray; NCC: TLearnInteger;
-  var VT: TLearnFloat2DArray; NCVT: TLearnInteger): Boolean; forward;
+  var VT: TLearnFloat2DArray; NCVT: TLearnInteger): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function BidiagonalSVDDecomposition(var D: TLearnFloatArray; E: TLearnFloatArray;
   N: TLearnInteger; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
   var U: TLearnFloat2DArray; NRU: TLearnInteger; var C: TLearnFloat2DArray;
-  NCC: TLearnInteger; var VT: TLearnFloat2DArray; NCVT: TLearnInteger): Boolean; forward;
+  NCC: TLearnInteger; var VT: TLearnFloat2DArray; NCVT: TLearnInteger): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function BidiagonalSVDDecompositionInternal(var D: TLearnFloatArray;
   E: TLearnFloatArray; N: TLearnInteger; IsUpper: Boolean;
   IsFractionalAccuracyRequired: Boolean; var U: TLearnFloat2DArray;
   UStart: TLearnInteger; NRU: TLearnInteger; var C: TLearnFloat2DArray;
   CStart: TLearnInteger; NCC: TLearnInteger; var VT: TLearnFloat2DArray;
-  VStart: TLearnInteger; NCVT: TLearnInteger): Boolean; forward;
-function ExtSignBDSQR(a: TLearnFloat; b: TLearnFloat): TLearnFloat; forward;
+  VStart: TLearnInteger; NCVT: TLearnInteger): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ExtSignBDSQR(a: TLearnFloat; b: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure Svd2X2(F: TLearnFloat; G: TLearnFloat; H: TLearnFloat;
-  var SSMIN: TLearnFloat; var SSMAX: TLearnFloat); forward;
+  var SSMIN: TLearnFloat; var SSMAX: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure SvdV2X2(F: TLearnFloat; G: TLearnFloat; H: TLearnFloat;
   var SSMIN: TLearnFloat; var SSMAX: TLearnFloat; var SNR: TLearnFloat;
-  var CSR: TLearnFloat; var SNL: TLearnFloat; var CSL: TLearnFloat); forward;
+  var CSR: TLearnFloat; var SNL: TLearnFloat; var CSL: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   Singular value decomposition of a bidiagonal matrix (extended algorithm)

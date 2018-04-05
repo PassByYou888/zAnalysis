@@ -11,21 +11,21 @@ procedure SymmetricMatrixVectorMultiply(const A: TLearnFloat2DArray; IsUpper: Bo
   I1: TLearnInteger; I2: TLearnInteger; const X: TLearnFloatArray;
   Alpha: TLearnFloat; var Y: TLearnFloatArray);
 var
-  I: TLearnInteger;
+  I  : TLearnInteger;
   BA1: TLearnInteger;
   BA2: TLearnInteger;
   BY1: TLearnInteger;
   BY2: TLearnInteger;
   BX1: TLearnInteger;
   BX2: TLearnInteger;
-  N: TLearnInteger;
-  V: TLearnFloat;
+  N  : TLearnInteger;
+  V  : TLearnFloat;
 begin
   N := I2 - I1 + 1;
   if N <= 0 then
-  begin
-    Exit;
-  end;
+    begin
+      Exit;
+    end;
 
   //
   // Let A = L + D + U, where
@@ -39,70 +39,70 @@ begin
   //
   I := I1;
   while I <= I2 do
-  begin
-    Y[I - I1 + 1] := A[I, I] * X[I - I1 + 1];
-    Inc(I);
-  end;
+    begin
+      Y[I - I1 + 1] := A[I, I] * X[I - I1 + 1];
+      Inc(I);
+    end;
 
   //
   // Add L*x + U*x
   //
   if IsUpper then
-  begin
-    I := I1;
-    while I <= I2 - 1 do
     begin
+      I := I1;
+      while I <= I2 - 1 do
+        begin
 
-      //
-      // Add L*x to the result
-      //
-      V := X[I - I1 + 1];
-      BY1 := I - I1 + 2;
-      BY2 := N;
-      BA1 := I + 1;
-      BA2 := I2;
-      APVAdd(@Y[0], BY1, BY2, @A[I][0], BA1, BA2, V);
+          //
+          // Add L*x to the result
+          //
+          V := X[I - I1 + 1];
+          BY1 := I - I1 + 2;
+          BY2 := N;
+          BA1 := I + 1;
+          BA2 := I2;
+          APVAdd(@Y[0], BY1, BY2, @A[I][0], BA1, BA2, V);
 
-      //
-      // Add U*x to the result
-      //
-      BX1 := I - I1 + 2;
-      BX2 := N;
-      BA1 := I + 1;
-      BA2 := I2;
-      V := APVDotProduct(@X[0], BX1, BX2, @A[I][0], BA1, BA2);
-      Y[I - I1 + 1] := Y[I - I1 + 1] + V;
-      Inc(I);
-    end;
-  end
+          //
+          // Add U*x to the result
+          //
+          BX1 := I - I1 + 2;
+          BX2 := N;
+          BA1 := I + 1;
+          BA2 := I2;
+          V := APVDotProduct(@X[0], BX1, BX2, @A[I][0], BA1, BA2);
+          Y[I - I1 + 1] := Y[I - I1 + 1] + V;
+          Inc(I);
+        end;
+    end
   else
-  begin
-    I := I1 + 1;
-    while I <= I2 do
     begin
+      I := I1 + 1;
+      while I <= I2 do
+        begin
 
-      //
-      // Add L*x to the result
-      //
-      BX1 := 1;
-      BX2 := I - I1;
-      BA1 := I1;
-      BA2 := I - 1;
-      V := APVDotProduct(@X[0], BX1, BX2, @A[I][0], BA1, BA2);
-      Y[I - I1 + 1] := Y[I - I1 + 1] + V;
+          //
+          // Add L*x to the result
+          //
+          BX1 := 1;
+          BX2 := I - I1;
+          BA1 := I1;
+          BA2 := I - 1;
+          V := APVDotProduct(@X[0], BX1, BX2, @A[I][0], BA1, BA2);
+          Y[I - I1 + 1] := Y[I - I1 + 1] + V;
 
-      //
-      // Add U*x to the result
-      //
-      V := X[I - I1 + 1];
-      BY1 := 1;
-      BY2 := I - I1;
-      BA1 := I1;
-      BA2 := I - 1;
-      APVAdd(@Y[0], BY1, BY2, @A[I][0], BA1, BA2, V);
-      Inc(I);
+          //
+          // Add U*x to the result
+          //
+          V := X[I - I1 + 1];
+          BY1 := 1;
+          BY2 := I - I1;
+          BA1 := I1;
+          BA2 := I - 1;
+          APVAdd(@Y[0], BY1, BY2, @A[I][0], BA1, BA2, V);
+          Inc(I);
+        end;
     end;
-  end;
   APVMul(@Y[0], 1, N, Alpha);
 end;
 
@@ -110,43 +110,43 @@ procedure SymmetricRank2Update(var A: TLearnFloat2DArray; IsUpper: Boolean;
   I1: TLearnInteger; I2: TLearnInteger; const X: TLearnFloatArray;
   const Y: TLearnFloatArray; var T: TLearnFloatArray; Alpha: TLearnFloat);
 var
-  I: TLearnInteger;
+  I  : TLearnInteger;
   TP1: TLearnInteger;
   TP2: TLearnInteger;
-  V: TLearnFloat;
+  V  : TLearnFloat;
 begin
   if IsUpper then
-  begin
-    I := I1;
-    while I <= I2 do
     begin
-      TP1 := I + 1 - I1;
-      TP2 := I2 - I1 + 1;
-      V := X[I + 1 - I1];
-      APVMove(@T[0], TP1, TP2, @Y[0], TP1, TP2, V);
-      V := Y[I + 1 - I1];
-      APVAdd(@T[0], TP1, TP2, @X[0], TP1, TP2, V);
-      APVMul(@T[0], TP1, TP2, Alpha);
-      APVAdd(@A[I][0], I, I2, @T[0], TP1, TP2);
-      Inc(I);
-    end;
-  end
+      I := I1;
+      while I <= I2 do
+        begin
+          TP1 := I + 1 - I1;
+          TP2 := I2 - I1 + 1;
+          V := X[I + 1 - I1];
+          APVMove(@T[0], TP1, TP2, @Y[0], TP1, TP2, V);
+          V := Y[I + 1 - I1];
+          APVAdd(@T[0], TP1, TP2, @X[0], TP1, TP2, V);
+          APVMul(@T[0], TP1, TP2, Alpha);
+          APVAdd(@A[I][0], I, I2, @T[0], TP1, TP2);
+          Inc(I);
+        end;
+    end
   else
-  begin
-    I := I1;
-    while I <= I2 do
     begin
-      TP1 := 1;
-      TP2 := I + 1 - I1;
-      V := X[I + 1 - I1];
-      APVMove(@T[0], TP1, TP2, @Y[0], TP1, TP2, V);
-      V := Y[I + 1 - I1];
-      APVAdd(@T[0], TP1, TP2, @X[0], TP1, TP2, V);
-      APVMul(@T[0], TP1, TP2, Alpha);
-      APVAdd(@A[I][0], I1, I, @T[0], TP1, TP2);
-      Inc(I);
+      I := I1;
+      while I <= I2 do
+        begin
+          TP1 := 1;
+          TP2 := I + 1 - I1;
+          V := X[I + 1 - I1];
+          APVMove(@T[0], TP1, TP2, @Y[0], TP1, TP2, V);
+          V := Y[I + 1 - I1];
+          APVAdd(@T[0], TP1, TP2, @X[0], TP1, TP2, V);
+          APVMul(@T[0], TP1, TP2, Alpha);
+          APVAdd(@A[I][0], I1, I, @T[0], TP1, TP2);
+          Inc(I);
+        end;
     end;
-  end;
 end;
 
 (* ************************************************************************
@@ -183,23 +183,23 @@ end;
 procedure ComplexGenerateReflection(var X: TLearnComplexArray; N: TLearnInteger;
   var Tau: TLearnComplex);
 var
-  J: TLearnInteger;
-  ALPHA: TLearnComplex;
+  J    : TLearnInteger;
+  Alpha: TLearnComplex;
   ALPHI: TLearnFloat;
   ALPHR: TLearnFloat;
-  BETA: TLearnFloat;
+  BETA : TLearnFloat;
   XNORM: TLearnFloat;
-  MX: TLearnFloat;
-  T: TLearnComplex;
-  S: TLearnFloat;
-  V: TLearnComplex;
-  i_: TLearnInteger;
+  MX   : TLearnFloat;
+  T    : TLearnComplex;
+  S    : TLearnFloat;
+  V    : TLearnComplex;
+  i_   : TLearnInteger;
 begin
   if N <= 0 then
-  begin
-    Tau := C_Complex(0);
-    Exit;
-  end;
+    begin
+      Tau := C_Complex(0);
+      Exit;
+    end;
 
   //
   // Scale if needed (to avoid overflow/underflow during intermediate
@@ -208,84 +208,84 @@ begin
   MX := 0;
   J := 1;
   while J <= N do
-  begin
-    MX := Max(AbsComplex(X[J]), MX);
-    Inc(J);
-  end;
+    begin
+      MX := Max(AbsComplex(X[J]), MX);
+      Inc(J);
+    end;
   S := 1;
   if AP_FP_Neq(MX, 0) then
-  begin
-    if AP_FP_Less(MX, 1) then
     begin
-      S := Sqrt(MinRealNumber);
-      V := C_Complex(1 / S);
-      for i_ := 1 to N do
-      begin
-        X[i_] := C_Mul(V, X[i_]);
-      end;
-    end
-    else
-    begin
-      S := Sqrt(MaxRealNumber);
-      V := C_Complex(1 / S);
-      for i_ := 1 to N do
-      begin
-        X[i_] := C_Mul(V, X[i_]);
-      end;
+      if AP_FP_Less(MX, 1) then
+        begin
+          S := Sqrt(MinRealNumber);
+          V := C_Complex(1 / S);
+          for i_ := 1 to N do
+            begin
+              X[i_] := C_Mul(V, X[i_]);
+            end;
+        end
+      else
+        begin
+          S := Sqrt(MaxRealNumber);
+          V := C_Complex(1 / S);
+          for i_ := 1 to N do
+            begin
+              X[i_] := C_Mul(V, X[i_]);
+            end;
+        end;
     end;
-  end;
 
   //
   // calculate
   //
-  ALPHA := X[1];
+  Alpha := X[1];
   MX := 0;
   J := 2;
   while J <= N do
-  begin
-    MX := Max(AbsComplex(X[J]), MX);
-    Inc(J);
-  end;
-  XNORM := 0;
-  if AP_FP_Neq(MX, 0) then
-  begin
-    J := 2;
-    while J <= N do
     begin
-      T := C_DivR(X[J], MX);
-      XNORM := XNORM + C_Mul(T, Conj(T)).X;
+      MX := Max(AbsComplex(X[J]), MX);
       Inc(J);
     end;
-    XNORM := Sqrt(XNORM) * MX;
-  end;
-  ALPHR := ALPHA.X;
-  ALPHI := ALPHA.Y;
+  XNORM := 0;
+  if AP_FP_Neq(MX, 0) then
+    begin
+      J := 2;
+      while J <= N do
+        begin
+          T := C_DivR(X[J], MX);
+          XNORM := XNORM + C_Mul(T, Conj(T)).X;
+          Inc(J);
+        end;
+      XNORM := Sqrt(XNORM) * MX;
+    end;
+  ALPHR := Alpha.X;
+  ALPHI := Alpha.Y;
   if AP_FP_Eq(XNORM, 0) and AP_FP_Eq(ALPHI, 0) then
-  begin
-    Tau := C_Complex(0);
-    X[1] := C_MulR(X[1], S);
-    Exit;
-  end;
+    begin
+      Tau := C_Complex(0);
+      X[1] := C_MulR(X[1], S);
+      Exit;
+    end;
   MX := Max(AbsReal(ALPHR), AbsReal(ALPHI));
   MX := Max(MX, AbsReal(XNORM));
   BETA := -MX * Sqrt(AP_Sqr(ALPHR / MX) + AP_Sqr(ALPHI / MX) +
     AP_Sqr(XNORM / MX));
   if AP_FP_Less(ALPHR, 0) then
-  begin
-    BETA := -BETA;
-  end;
+    begin
+      BETA := -BETA;
+    end;
   Tau.X := (BETA - ALPHR) / BETA;
   Tau.Y := -ALPHI / BETA;
-  ALPHA := C_RDiv(1, C_SubR(ALPHA, BETA));
+  Alpha := C_RDiv(1, C_SubR(Alpha, BETA));
   if N > 1 then
-  begin
-    for i_ := 2 to N do
     begin
-      X[i_] := C_Mul(ALPHA, X[i_]);
+      for i_ := 2 to N do
+        begin
+          X[i_] := C_Mul(Alpha, X[i_]);
+        end;
     end;
-  end;
-  ALPHA := C_Complex(BETA);
-  X[1] := ALPHA;
+  Alpha := C_Complex(BETA);
+  X[1] := Alpha;
 
   //
   // Scale back
@@ -323,15 +323,15 @@ procedure ComplexApplyReflectionFromTheLeft(var C: TLearnComplex2DArray;
   Tau: TLearnComplex; const V: TLearnComplexArray; M1: TLearnInteger; M2: TLearnInteger;
   N1: TLearnInteger; N2: TLearnInteger; var WORK: TLearnComplexArray);
 var
-  T: TLearnComplex;
-  I: TLearnInteger;
+  T : TLearnComplex;
+  I : TLearnInteger;
   VM: TLearnInteger;
   i_: TLearnInteger;
 begin
   if C_EqualR(Tau, 0) or (N1 > N2) or (M1 > M2) then
-  begin
-    Exit;
-  end;
+    begin
+      Exit;
+    end;
 
   //
   // w := C^T * conj(v)
@@ -339,34 +339,34 @@ begin
   VM := M2 - M1 + 1;
   I := N1;
   while I <= N2 do
-  begin
-    WORK[I] := C_Complex(0);
-    Inc(I);
-  end;
+    begin
+      WORK[I] := C_Complex(0);
+      Inc(I);
+    end;
   I := M1;
   while I <= M2 do
-  begin
-    T := Conj(V[I + 1 - M1]);
-    for i_ := N1 to N2 do
     begin
-      WORK[i_] := C_Add(WORK[i_], C_Mul(T, C[I, i_]));
+      T := Conj(V[I + 1 - M1]);
+      for i_ := N1 to N2 do
+        begin
+          WORK[i_] := C_Add(WORK[i_], C_Mul(T, C[I, i_]));
+        end;
+      Inc(I);
     end;
-    Inc(I);
-  end;
 
   //
   // C := C - tau * v * w^T
   //
   I := M1;
   while I <= M2 do
-  begin
-    T := C_Mul(V[I - M1 + 1], Tau);
-    for i_ := N1 to N2 do
     begin
-      C[I, i_] := C_Sub(C[I, i_], C_Mul(T, WORK[i_]));
+      T := C_Mul(V[I - M1 + 1], Tau);
+      for i_ := N1 to N2 do
+        begin
+          C[I, i_] := C_Sub(C[I, i_], C_Mul(T, WORK[i_]));
+        end;
+      Inc(I);
     end;
-    Inc(I);
-  end;
 end;
 
 (* ************************************************************************
@@ -396,16 +396,16 @@ procedure ComplexApplyReflectionFromTheRight(var C: TLearnComplex2DArray;
   Tau: TLearnComplex; var V: TLearnComplexArray; M1: TLearnInteger; M2: TLearnInteger;
   N1: TLearnInteger; N2: TLearnInteger; var WORK: TLearnComplexArray);
 var
-  T: TLearnComplex;
-  I: TLearnInteger;
-  VM: TLearnInteger;
-  i_: TLearnInteger;
+  T  : TLearnComplex;
+  I  : TLearnInteger;
+  VM : TLearnInteger;
+  i_ : TLearnInteger;
   i1_: TLearnInteger;
 begin
   if C_EqualR(Tau, 0) or (N1 > N2) or (M1 > M2) then
-  begin
-    Exit;
-  end;
+    begin
+      Exit;
+    end;
 
   //
   // w := C * v
@@ -413,39 +413,39 @@ begin
   VM := N2 - N1 + 1;
   I := M1;
   while I <= M2 do
-  begin
-    i1_ := (1) - (N1);
-    T := C_Complex(0.0);
-    for i_ := N1 to N2 do
     begin
-      T := C_Add(T, C_Mul(C[I, i_], V[i_ + i1_]));
+      i1_ := (1) - (N1);
+      T := C_Complex(0.0);
+      for i_ := N1 to N2 do
+        begin
+          T := C_Add(T, C_Mul(C[I, i_], V[i_ + i1_]));
+        end;
+      WORK[I] := T;
+      Inc(I);
     end;
-    WORK[I] := T;
-    Inc(I);
-  end;
 
   //
   // C := C - w * conj(v^T)
   //
   for i_ := 1 to VM do
-  begin
-    V[i_] := Conj(V[i_]);
-  end;
+    begin
+      V[i_] := Conj(V[i_]);
+    end;
   I := M1;
   while I <= M2 do
-  begin
-    T := C_Mul(WORK[I], Tau);
-    i1_ := (1) - (N1);
-    for i_ := N1 to N2 do
     begin
-      C[I, i_] := C_Sub(C[I, i_], C_Mul(T, V[i_ + i1_]));
+      T := C_Mul(WORK[I], Tau);
+      i1_ := (1) - (N1);
+      for i_ := N1 to N2 do
+        begin
+          C[I, i_] := C_Sub(C[I, i_], C_Mul(T, V[i_ + i1_]));
+        end;
+      Inc(I);
     end;
-    Inc(I);
-  end;
   for i_ := 1 to VM do
-  begin
-    V[i_] := Conj(V[i_]);
-  end;
+    begin
+      V[i_] := Conj(V[i_]);
+    end;
 end;
 
 (* ************************************************************************
@@ -484,19 +484,19 @@ end;
 procedure GenerateReflection(var X: TLearnFloatArray; N: TLearnInteger;
   var Tau: TLearnFloat);
 var
-  J: TLearnInteger;
+  J    : TLearnInteger;
   Alpha: TLearnFloat;
   XNORM: TLearnFloat;
-  V: TLearnFloat;
-  Beta: TLearnFloat;
-  MX: TLearnFloat;
-  S: TLearnFloat;
+  V    : TLearnFloat;
+  BETA : TLearnFloat;
+  MX   : TLearnFloat;
+  S    : TLearnFloat;
 begin
   if N <= 1 then
-  begin
-    Tau := 0;
-    Exit;
-  end;
+    begin
+      Tau := 0;
+      Exit;
+    end;
 
   //
   // Scale if needed (to avoid overflow/underflow during intermediate
@@ -505,31 +505,31 @@ begin
   MX := 0;
   J := 1;
   while J <= N do
-  begin
-    MX := Max(AbsReal(X[J]), MX);
-    Inc(J);
-  end;
+    begin
+      MX := Max(AbsReal(X[J]), MX);
+      Inc(J);
+    end;
   S := 1;
   if AP_FP_Neq(MX, 0) then
-  begin
-    if AP_FP_Less_Eq(MX, MinRealNumber / MachineEpsilon) then
     begin
-      S := MinRealNumber / MachineEpsilon;
-      V := 1 / S;
-      APVMul(@X[0], 1, N, V);
-      MX := MX * V;
-    end
-    else
-    begin
-      if AP_FP_Greater_Eq(MX, MaxRealNumber * MachineEpsilon) then
-      begin
-        S := MaxRealNumber * MachineEpsilon;
-        V := 1 / S;
-        APVMul(@X[0], 1, N, V);
-        MX := MX * V;
-      end;
+      if AP_FP_Less_Eq(MX, MinRealNumber / MachineEpsilon) then
+        begin
+          S := MinRealNumber / MachineEpsilon;
+          V := 1 / S;
+          APVMul(@X[0], 1, N, V);
+          MX := MX * V;
+        end
+      else
+        begin
+          if AP_FP_Greater_Eq(MX, MaxRealNumber * MachineEpsilon) then
+            begin
+              S := MaxRealNumber * MachineEpsilon;
+              V := 1 / S;
+              APVMul(@X[0], 1, N, V);
+              MX := MX * V;
+            end;
+        end;
     end;
-  end;
 
   //
   // XNORM = DNRM2( N-1, X, INCX )
@@ -537,39 +537,39 @@ begin
   Alpha := X[1];
   XNORM := 0;
   if AP_FP_Neq(MX, 0) then
-  begin
-    J := 2;
-    while J <= N do
     begin
-      XNORM := XNORM + AP_Sqr(X[J] / MX);
-      Inc(J);
+      J := 2;
+      while J <= N do
+        begin
+          XNORM := XNORM + AP_Sqr(X[J] / MX);
+          Inc(J);
+        end;
+      XNORM := Sqrt(XNORM) * MX;
     end;
-    XNORM := Sqrt(XNORM) * MX;
-  end;
   if AP_FP_Eq(XNORM, 0) then
-  begin
+    begin
 
-    //
-    // H  =  I
-    //
-    Tau := 0;
-    X[1] := X[1] * S;
-    Exit;
-  end;
+      //
+      // H  =  I
+      //
+      Tau := 0;
+      X[1] := X[1] * S;
+      Exit;
+    end;
 
   //
   // general case
   //
   MX := Max(AbsReal(Alpha), AbsReal(XNORM));
-  Beta := -MX * Sqrt(AP_Sqr(Alpha / MX) + AP_Sqr(XNORM / MX));
+  BETA := -MX * Sqrt(AP_Sqr(Alpha / MX) + AP_Sqr(XNORM / MX));
   if AP_FP_Less(Alpha, 0) then
-  begin
-    Beta := -Beta;
-  end;
-  Tau := (Beta - Alpha) / Beta;
-  V := 1 / (Alpha - Beta);
+    begin
+      BETA := -BETA;
+    end;
+  Tau := (BETA - Alpha) / BETA;
+  V := 1 / (Alpha - BETA);
   APVMul(@X[0], 2, N, V);
-  X[1] := Beta;
+  X[1] := BETA;
 
   //
   // Scale back outputs
@@ -604,14 +604,14 @@ procedure ApplyReflectionFromTheLeft(var C: TLearnFloat2DArray; Tau: TLearnFloat
   const V: TLearnFloatArray; M1: TLearnInteger; M2: TLearnInteger;
   N1: TLearnInteger; N2: TLearnInteger; var WORK: TLearnFloatArray);
 var
-  T: TLearnFloat;
-  I: TLearnInteger;
+  T : TLearnFloat;
+  I : TLearnInteger;
   VM: TLearnInteger;
 begin
   if AP_FP_Eq(Tau, 0) or (N1 > N2) or (M1 > M2) then
-  begin
-    Exit;
-  end;
+    begin
+      Exit;
+    end;
 
   //
   // w := C' * v
@@ -619,28 +619,28 @@ begin
   VM := M2 - M1 + 1;
   I := N1;
   while I <= N2 do
-  begin
-    WORK[I] := 0;
-    Inc(I);
-  end;
+    begin
+      WORK[I] := 0;
+      Inc(I);
+    end;
   I := M1;
   while I <= M2 do
-  begin
-    T := V[I + 1 - M1];
-    APVAdd(@WORK[0], N1, N2, @C[I][0], N1, N2, T);
-    Inc(I);
-  end;
+    begin
+      T := V[I + 1 - M1];
+      APVAdd(@WORK[0], N1, N2, @C[I][0], N1, N2, T);
+      Inc(I);
+    end;
 
   //
   // C := C - tau * v * w'
   //
   I := M1;
   while I <= M2 do
-  begin
-    T := V[I - M1 + 1] * Tau;
-    APVSub(@C[I][0], N1, N2, @WORK[0], N1, N2, T);
-    Inc(I);
-  end;
+    begin
+      T := V[I - M1 + 1] * Tau;
+      APVSub(@C[I][0], N1, N2, @WORK[0], N1, N2, T);
+      Inc(I);
+    end;
 end;
 
 (* ************************************************************************
@@ -670,46 +670,46 @@ procedure ApplyReflectionFromTheRight(var C: TLearnFloat2DArray; Tau: TLearnFloa
   const V: TLearnFloatArray; M1: TLearnInteger; M2: TLearnInteger;
   N1: TLearnInteger; N2: TLearnInteger; var WORK: TLearnFloatArray);
 var
-  T: TLearnFloat;
-  I: TLearnInteger;
+  T : TLearnFloat;
+  I : TLearnInteger;
   VM: TLearnInteger;
 begin
   if AP_FP_Eq(Tau, 0) or (N1 > N2) or (M1 > M2) then
-  begin
-    Exit;
-  end;
+    begin
+      Exit;
+    end;
   VM := N2 - N1 + 1;
   I := M1;
   while I <= M2 do
-  begin
-    T := APVDotProduct(@C[I][0], N1, N2, @V[0], 1, VM);
-    T := T * Tau;
-    APVSub(@C[I][0], N1, N2, @V[0], 1, VM, T);
-    Inc(I);
-  end;
+    begin
+      T := APVDotProduct(@C[I][0], N1, N2, @V[0], 1, VM);
+      T := T * Tau;
+      APVSub(@C[I][0], N1, N2, @V[0], 1, VM, T);
+      Inc(I);
+    end;
 end;
 
 procedure HermitianMatrixVectorMultiply(const A: TLearnComplex2DArray;
   IsUpper: Boolean; I1: TLearnInteger; I2: TLearnInteger;
   const X: TLearnComplexArray; Alpha: TLearnComplex; var Y: TLearnComplexArray);
 var
-  I: TLearnInteger;
+  I  : TLearnInteger;
   BA1: TLearnInteger;
   BA2: TLearnInteger;
   BY1: TLearnInteger;
   BY2: TLearnInteger;
   BX1: TLearnInteger;
   BX2: TLearnInteger;
-  N: TLearnInteger;
-  V: TLearnComplex;
-  i_: TLearnInteger;
+  N  : TLearnInteger;
+  V  : TLearnComplex;
+  i_ : TLearnInteger;
   i1_: TLearnInteger;
 begin
   N := I2 - I1 + 1;
   if N <= 0 then
-  begin
-    Exit;
-  end;
+    begin
+      Exit;
+    end;
 
   //
   // Let A = L + D + U, where
@@ -723,216 +723,217 @@ begin
   //
   I := I1;
   while I <= I2 do
-  begin
-    Y[I - I1 + 1] := C_Mul(A[I, I], X[I - I1 + 1]);
-    Inc(I);
-  end;
+    begin
+      Y[I - I1 + 1] := C_Mul(A[I, I], X[I - I1 + 1]);
+      Inc(I);
+    end;
 
   //
   // Add L*x + U*x
   //
   if IsUpper then
-  begin
-    I := I1;
-    while I <= I2 - 1 do
     begin
+      I := I1;
+      while I <= I2 - 1 do
+        begin
 
-      //
-      // Add L*x to the result
-      //
-      V := X[I - I1 + 1];
-      BY1 := I - I1 + 2;
-      BY2 := N;
-      BA1 := I + 1;
-      BA2 := I2;
-      i1_ := (BA1) - (BY1);
-      for i_ := BY1 to BY2 do
-      begin
-        Y[i_] := C_Add(Y[i_], C_Mul(V, Conj(A[I, i_ + i1_])));
-      end;
+          //
+          // Add L*x to the result
+          //
+          V := X[I - I1 + 1];
+          BY1 := I - I1 + 2;
+          BY2 := N;
+          BA1 := I + 1;
+          BA2 := I2;
+          i1_ := (BA1) - (BY1);
+          for i_ := BY1 to BY2 do
+            begin
+              Y[i_] := C_Add(Y[i_], C_Mul(V, Conj(A[I, i_ + i1_])));
+            end;
 
-      //
-      // Add U*x to the result
-      //
-      BX1 := I - I1 + 2;
-      BX2 := N;
-      BA1 := I + 1;
-      BA2 := I2;
-      i1_ := (BA1) - (BX1);
-      V := C_Complex(0.0);
-      for i_ := BX1 to BX2 do
-      begin
-        V := C_Add(V, C_Mul(X[i_], A[I, i_ + i1_]));
-      end;
-      Y[I - I1 + 1] := C_Add(Y[I - I1 + 1], V);
-      Inc(I);
-    end;
-  end
+          //
+          // Add U*x to the result
+          //
+          BX1 := I - I1 + 2;
+          BX2 := N;
+          BA1 := I + 1;
+          BA2 := I2;
+          i1_ := (BA1) - (BX1);
+          V := C_Complex(0.0);
+          for i_ := BX1 to BX2 do
+            begin
+              V := C_Add(V, C_Mul(X[i_], A[I, i_ + i1_]));
+            end;
+          Y[I - I1 + 1] := C_Add(Y[I - I1 + 1], V);
+          Inc(I);
+        end;
+    end
   else
-  begin
-    I := I1 + 1;
-    while I <= I2 do
     begin
+      I := I1 + 1;
+      while I <= I2 do
+        begin
 
-      //
-      // Add L*x to the result
-      //
-      BX1 := 1;
-      BX2 := I - I1;
-      BA1 := I1;
-      BA2 := I - 1;
-      i1_ := (BA1) - (BX1);
-      V := C_Complex(0.0);
-      for i_ := BX1 to BX2 do
-      begin
-        V := C_Add(V, C_Mul(X[i_], A[I, i_ + i1_]));
-      end;
-      Y[I - I1 + 1] := C_Add(Y[I - I1 + 1], V);
+          //
+          // Add L*x to the result
+          //
+          BX1 := 1;
+          BX2 := I - I1;
+          BA1 := I1;
+          BA2 := I - 1;
+          i1_ := (BA1) - (BX1);
+          V := C_Complex(0.0);
+          for i_ := BX1 to BX2 do
+            begin
+              V := C_Add(V, C_Mul(X[i_], A[I, i_ + i1_]));
+            end;
+          Y[I - I1 + 1] := C_Add(Y[I - I1 + 1], V);
 
-      //
-      // Add U*x to the result
-      //
-      V := X[I - I1 + 1];
-      BY1 := 1;
-      BY2 := I - I1;
-      BA1 := I1;
-      BA2 := I - 1;
-      i1_ := (BA1) - (BY1);
-      for i_ := BY1 to BY2 do
-      begin
-        Y[i_] := C_Add(Y[i_], C_Mul(V, Conj(A[I, i_ + i1_])));
-      end;
-      Inc(I);
+          //
+          // Add U*x to the result
+          //
+          V := X[I - I1 + 1];
+          BY1 := 1;
+          BY2 := I - I1;
+          BA1 := I1;
+          BA2 := I - 1;
+          i1_ := (BA1) - (BY1);
+          for i_ := BY1 to BY2 do
+            begin
+              Y[i_] := C_Add(Y[i_], C_Mul(V, Conj(A[I, i_ + i1_])));
+            end;
+          Inc(I);
+        end;
     end;
-  end;
   for i_ := 1 to N do
-  begin
-    Y[i_] := C_Mul(Alpha, Y[i_]);
-  end;
+    begin
+      Y[i_] := C_Mul(Alpha, Y[i_]);
+    end;
 end;
 
 procedure HermitianRank2Update(var A: TLearnComplex2DArray; IsUpper: Boolean;
   I1: TLearnInteger; I2: TLearnInteger; const X: TLearnComplexArray;
   const Y: TLearnComplexArray; var T: TLearnComplexArray; Alpha: TLearnComplex);
 var
-  I: TLearnInteger;
+  I  : TLearnInteger;
   TP1: TLearnInteger;
   TP2: TLearnInteger;
-  V: TLearnComplex;
-  i_: TLearnInteger;
+  V  : TLearnComplex;
+  i_ : TLearnInteger;
   i1_: TLearnInteger;
 begin
   if IsUpper then
-  begin
-    I := I1;
-    while I <= I2 do
     begin
-      TP1 := I + 1 - I1;
-      TP2 := I2 - I1 + 1;
-      V := C_Mul(Alpha, X[I + 1 - I1]);
-      for i_ := TP1 to TP2 do
-      begin
-        T[i_] := C_Mul(V, Conj(Y[i_]));
-      end;
-      V := C_Mul(Conj(Alpha), Y[I + 1 - I1]);
-      for i_ := TP1 to TP2 do
-      begin
-        T[i_] := C_Add(T[i_], C_Mul(V, Conj(X[i_])));
-      end;
-      i1_ := (TP1) - (I);
-      for i_ := I to I2 do
-      begin
-        A[I, i_] := C_Add(A[I, i_], T[i_ + i1_]);
-      end;
-      Inc(I);
-    end;
-  end
+      I := I1;
+      while I <= I2 do
+        begin
+          TP1 := I + 1 - I1;
+          TP2 := I2 - I1 + 1;
+          V := C_Mul(Alpha, X[I + 1 - I1]);
+          for i_ := TP1 to TP2 do
+            begin
+              T[i_] := C_Mul(V, Conj(Y[i_]));
+            end;
+          V := C_Mul(Conj(Alpha), Y[I + 1 - I1]);
+          for i_ := TP1 to TP2 do
+            begin
+              T[i_] := C_Add(T[i_], C_Mul(V, Conj(X[i_])));
+            end;
+          i1_ := (TP1) - (I);
+          for i_ := I to I2 do
+            begin
+              A[I, i_] := C_Add(A[I, i_], T[i_ + i1_]);
+            end;
+          Inc(I);
+        end;
+    end
   else
-  begin
-    I := I1;
-    while I <= I2 do
     begin
-      TP1 := 1;
-      TP2 := I + 1 - I1;
-      V := C_Mul(Alpha, X[I + 1 - I1]);
-      for i_ := TP1 to TP2 do
-      begin
-        T[i_] := C_Mul(V, Conj(Y[i_]));
-      end;
-      V := C_Mul(Conj(Alpha), Y[I + 1 - I1]);
-      for i_ := TP1 to TP2 do
-      begin
-        T[i_] := C_Add(T[i_], C_Mul(V, Conj(X[i_])));
-      end;
-      i1_ := (TP1) - (I1);
-      for i_ := I1 to I do
-      begin
-        A[I, i_] := C_Add(A[I, i_], T[i_ + i1_]);
-      end;
-      Inc(I);
+      I := I1;
+      while I <= I2 do
+        begin
+          TP1 := 1;
+          TP2 := I + 1 - I1;
+          V := C_Mul(Alpha, X[I + 1 - I1]);
+          for i_ := TP1 to TP2 do
+            begin
+              T[i_] := C_Mul(V, Conj(Y[i_]));
+            end;
+          V := C_Mul(Conj(Alpha), Y[I + 1 - I1]);
+          for i_ := TP1 to TP2 do
+            begin
+              T[i_] := C_Add(T[i_], C_Mul(V, Conj(X[i_])));
+            end;
+          i1_ := (TP1) - (I1);
+          for i_ := I1 to I do
+            begin
+              A[I, i_] := C_Add(A[I, i_], T[i_ + i1_]);
+            end;
+          Inc(I);
+        end;
     end;
-  end;
 end;
 
-procedure RMatrixQR(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Tau: TLearnFloatArray); forward;
-procedure RMatrixLQ(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Tau: TLearnFloatArray); forward;
-procedure CMatrixQR(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Tau: TLearnComplexArray); forward;
-procedure CMatrixLQ(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Tau: TLearnComplexArray); forward;
-procedure RMatrixQRUnpackQ(const A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; const Tau: TLearnFloatArray; QColumns: TLearnInteger; var Q: TLearnFloat2DArray); forward;
+procedure RMatrixQR(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Tau: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLQ(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Tau: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixQR(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Tau: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLQ(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Tau: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixQRUnpackQ(const A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; const Tau: TLearnFloatArray; QColumns: TLearnInteger; var Q: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixQRUnpackR(const A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var R: TLearnFloat2DArray); forward;
-procedure RMatrixLQUnpackQ(const A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; const Tau: TLearnFloatArray; QRows: TLearnInteger; var Q: TLearnFloat2DArray); forward;
+procedure RMatrixQRUnpackR(const A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var R: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLQUnpackQ(const A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; const Tau: TLearnFloatArray; QRows: TLearnInteger; var Q: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixLQUnpackL(const A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var L: TLearnFloat2DArray); forward;
-procedure CMatrixQRUnpackQ(const A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; const Tau: TLearnComplexArray; QColumns: TLearnInteger; var Q: TLearnComplex2DArray); forward;
-procedure CMatrixQRUnpackR(const A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var R: TLearnComplex2DArray); forward;
-procedure CMatrixLQUnpackQ(const A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; const Tau: TLearnComplexArray; QRows: TLearnInteger; var Q: TLearnComplex2DArray); forward;
-procedure CMatrixLQUnpackL(const A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var L: TLearnComplex2DArray); forward;
-procedure RMatrixBD(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var TauQ: TLearnFloatArray; var TauP: TLearnFloatArray); forward;
-procedure RMatrixBDUnpackQ(const QP: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; const TauQ: TLearnFloatArray; QColumns: TLearnInteger; var Q: TLearnFloat2DArray); forward;
+procedure RMatrixLQUnpackL(const A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var L: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixQRUnpackQ(const A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; const Tau: TLearnComplexArray; QColumns: TLearnInteger; var Q: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixQRUnpackR(const A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var R: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLQUnpackQ(const A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; const Tau: TLearnComplexArray; QRows: TLearnInteger; var Q: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLQUnpackL(const A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var L: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBD(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var TauQ: TLearnFloatArray; var TauP: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBDUnpackQ(const QP: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; const TauQ: TLearnFloatArray; QColumns: TLearnInteger; var Q: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixBDMultiplyByQ(const QP: TLearnFloat2DArray; M: TLearnInteger;
   N: TLearnInteger; const TauQ: TLearnFloatArray; var Z: TLearnFloat2DArray;
-  ZRows: TLearnInteger; ZColumns: TLearnInteger; FromTheRight: Boolean; DoTranspose: Boolean); forward;
+  ZRows: TLearnInteger; ZColumns: TLearnInteger; FromTheRight: Boolean; DoTranspose: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixBDUnpackPT(const QP: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; const TauP: TLearnFloatArray; PTRows: TLearnInteger; var PT: TLearnFloat2DArray); forward;
+  N: TLearnInteger; const TauP: TLearnFloatArray; PTRows: TLearnInteger; var PT: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixBDMultiplyByP(const QP: TLearnFloat2DArray; M: TLearnInteger;
   N: TLearnInteger; const TauP: TLearnFloatArray; var Z: TLearnFloat2DArray;
-  ZRows: TLearnInteger; ZColumns: TLearnInteger; FromTheRight: Boolean; DoTranspose: Boolean); forward;
+  ZRows: TLearnInteger; ZColumns: TLearnInteger; FromTheRight: Boolean; DoTranspose: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixBDUnpackDiagonals(const B: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; var IsUpper: Boolean; var D: TLearnFloatArray; var E: TLearnFloatArray); forward;
+  N: TLearnInteger; var IsUpper: Boolean; var D: TLearnFloatArray; var E: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixHessenberg(var A: TLearnFloat2DArray; N: TLearnInteger; var Tau: TLearnFloatArray); forward;
+procedure RMatrixHessenberg(var A: TLearnFloat2DArray; N: TLearnInteger; var Tau: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixHessenbergUnpackQ(const A: TLearnFloat2DArray; N: TLearnInteger; const Tau: TLearnFloatArray; var Q: TLearnFloat2DArray); forward;
-procedure RMatrixHessenbergUnpackH(const A: TLearnFloat2DArray; N: TLearnInteger; var H: TLearnFloat2DArray); forward;
-procedure SMatrixTD(var A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean; var Tau: TLearnFloatArray; var D: TLearnFloatArray; var E: TLearnFloatArray); forward;
-procedure SMatrixTDUnpackQ(const A: TLearnFloat2DArray; const N: TLearnInteger; const IsUpper: Boolean; const Tau: TLearnFloatArray; var Q: TLearnFloat2DArray); forward;
-procedure HMatrixTD(var A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean; var Tau: TLearnComplexArray; var D: TLearnFloatArray; var E: TLearnFloatArray); forward;
-procedure HMatrixTDUnpackQ(const A: TLearnComplex2DArray; const N: TLearnInteger; const IsUpper: Boolean; const Tau: TLearnComplexArray; var Q: TLearnComplex2DArray); forward;
+procedure RMatrixHessenbergUnpackQ(const A: TLearnFloat2DArray; N: TLearnInteger; const Tau: TLearnFloatArray; var Q: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixHessenbergUnpackH(const A: TLearnFloat2DArray; N: TLearnInteger; var H: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SMatrixTD(var A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean; var Tau: TLearnFloatArray; var D: TLearnFloatArray; var E: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SMatrixTDUnpackQ(const A: TLearnFloat2DArray; const N: TLearnInteger; const IsUpper: Boolean; const Tau: TLearnFloatArray; var Q: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure HMatrixTD(var A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean; var Tau: TLearnComplexArray; var D: TLearnFloatArray; var E: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure HMatrixTDUnpackQ(const A: TLearnComplex2DArray; const N: TLearnInteger; const IsUpper: Boolean; const Tau: TLearnComplexArray; var Q: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixQRBaseCase(var A: TLearnFloat2DArray; M: TLearnInteger;
   N: TLearnInteger; var WORK: TLearnFloatArray; var T: TLearnFloatArray;
-  var Tau: TLearnFloatArray); forward;
+  var Tau: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RMatrixLQBaseCase(var A: TLearnFloat2DArray; M: TLearnInteger;
   N: TLearnInteger; var WORK: TLearnFloatArray; var T: TLearnFloatArray;
-  var Tau: TLearnFloatArray); forward;
+  var Tau: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixQRBaseCase(var A: TLearnComplex2DArray; M: TLearnInteger;
   N: TLearnInteger; var WORK: TLearnComplexArray; var T: TLearnComplexArray;
-  var Tau: TLearnComplexArray); forward;
+  var Tau: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixLQBaseCase(var A: TLearnComplex2DArray; M: TLearnInteger;
   N: TLearnInteger; var WORK: TLearnComplexArray; var T: TLearnComplexArray;
-  var Tau: TLearnComplexArray); forward;
+  var Tau: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RMatrixBlockReflector(var A: TLearnFloat2DArray; var Tau: TLearnFloatArray;
   ColumnwiseA: Boolean; LengthA: TLearnInteger; BlockSize: TLearnInteger;
-  var T: TLearnFloat2DArray; var WORK: TLearnFloatArray); forward;
+  var T: TLearnFloat2DArray; var WORK: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixBlockReflector(var A: TLearnComplex2DArray;
   var Tau: TLearnComplexArray; ColumnwiseA: Boolean; LengthA: TLearnInteger;
   BlockSize: TLearnInteger; var T: TLearnComplex2DArray;
-  var WORK: TLearnComplexArray); forward;
+  var WORK: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   QR decomposition of a rectangular matrix of size MxN
@@ -2615,7 +2616,7 @@ var
   IStep: TLearnInteger;
   V    : TLearnFloatArray;
   WORK : TLearnFloatArray;
-  Mx   : TLearnInteger;
+  MX   : TLearnInteger;
   i_   : TLearnInteger;
   i1_  : TLearnInteger;
 begin
@@ -2629,11 +2630,11 @@ begin
   //
   // init
   //
-  Mx := Max(M, N);
-  Mx := Max(Mx, ZRows);
-  Mx := Max(Mx, ZColumns);
-  SetLength(V, Mx + 1);
-  SetLength(WORK, Mx + 1);
+  MX := Max(M, N);
+  MX := Max(MX, ZRows);
+  MX := Max(MX, ZColumns);
+  SetLength(V, MX + 1);
+  SetLength(WORK, MX + 1);
   if M >= N then
     begin
 
@@ -2834,7 +2835,7 @@ var
   I    : TLearnInteger;
   V    : TLearnFloatArray;
   WORK : TLearnFloatArray;
-  Mx   : TLearnInteger;
+  MX   : TLearnInteger;
   I1   : TLearnInteger;
   I2   : TLearnInteger;
   IStep: TLearnInteger;
@@ -2849,11 +2850,11 @@ begin
   //
   // init
   //
-  Mx := Max(M, N);
-  Mx := Max(Mx, ZRows);
-  Mx := Max(Mx, ZColumns);
-  SetLength(V, Mx + 1);
-  SetLength(WORK, Mx + 1);
+  MX := Max(M, N);
+  MX := Max(MX, ZRows);
+  MX := Max(MX, ZColumns);
+  SetLength(V, MX + 1);
+  SetLength(WORK, MX + 1);
   if M >= N then
     begin
 
@@ -3274,7 +3275,7 @@ procedure SMatrixTD(var A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolea
   var Tau: TLearnFloatArray; var D: TLearnFloatArray; var E: TLearnFloatArray);
 var
   I    : TLearnInteger;
-  ALPHA: TLearnFloat;
+  Alpha: TLearnFloat;
   TAUI : TLearnFloat;
   V    : TLearnFloat;
   T    : TLearnFloatArray;
@@ -3359,10 +3360,10 @@ begin
                 begin
                   V := V + Tau[i_] * A[i_, I + 1];
                 end;
-              ALPHA := -0.5 * TAUI * V;
+              Alpha := -0.5 * TAUI * V;
               for i_ := 0 to I do
                 begin
-                  Tau[i_] := Tau[i_] + ALPHA * A[i_, I + 1];
+                  Tau[i_] := Tau[i_] + Alpha * A[i_, I + 1];
                 end;
 
               //
@@ -3437,11 +3438,11 @@ begin
                 begin
                   V := V + Tau[i_] * A[i_ + i1_, I];
                 end;
-              ALPHA := -0.5 * TAUI * V;
+              Alpha := -0.5 * TAUI * V;
               i1_ := (I + 1) - (I);
               for i_ := I to N - 2 do
                 begin
-                  Tau[i_] := Tau[i_] + ALPHA * A[i_ + i1_, I];
+                  Tau[i_] := Tau[i_] + Alpha * A[i_ + i1_, I];
                 end;
 
               //
@@ -3631,7 +3632,7 @@ procedure HMatrixTD(var A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Bool
   var Tau: TLearnComplexArray; var D: TLearnFloatArray; var E: TLearnFloatArray);
 var
   I    : TLearnInteger;
-  ALPHA: TLearnComplex;
+  Alpha: TLearnComplex;
   TAUI : TLearnComplex;
   V    : TLearnComplex;
   T    : TLearnComplexArray;
@@ -3673,8 +3674,8 @@ begin
           //
           // Generate elementary reflector H = I+1 - tau * v * v'
           //
-          ALPHA := A[I, I + 1];
-          T[1] := ALPHA;
+          Alpha := A[I, I + 1];
+          T[1] := Alpha;
           if I >= 1 then
             begin
               i1_ := (0) - (2);
@@ -3692,8 +3693,8 @@ begin
                   A[i_, I + 1] := T[i_ + i1_];
                 end;
             end;
-          ALPHA := T[1];
-          E[I] := ALPHA.X;
+          Alpha := T[1];
+          E[I] := Alpha.X;
           if C_NotEqualR(TAUI, 0) then
             begin
 
@@ -3725,10 +3726,10 @@ begin
                 begin
                   V := C_Add(V, C_Mul(Conj(Tau[i_]), A[i_, I + 1]));
                 end;
-              ALPHA := C_Opposite(C_Mul(C_MulR(TAUI, 0.5), V));
+              Alpha := C_Opposite(C_Mul(C_MulR(TAUI, 0.5), V));
               for i_ := 0 to I do
                 begin
-                  Tau[i_] := C_Add(Tau[i_], C_Mul(ALPHA, A[i_, I + 1]));
+                  Tau[i_] := C_Add(Tau[i_], C_Mul(Alpha, A[i_, I + 1]));
                 end;
 
               //
@@ -3816,11 +3817,11 @@ begin
                 begin
                   V := C_Add(V, C_Mul(Conj(Tau[i_]), A[i_ + i1_, I]));
                 end;
-              ALPHA := C_Opposite(C_Mul(C_MulR(TAUI, 0.5), V));
+              Alpha := C_Opposite(C_Mul(C_MulR(TAUI, 0.5), V));
               i1_ := (I + 1) - (I);
               for i_ := I to N - 2 do
                 begin
-                  Tau[i_] := C_Add(Tau[i_], C_Mul(ALPHA, A[i_ + i1_, I]));
+                  Tau[i_] := C_Add(Tau[i_], C_Mul(Alpha, A[i_ + i1_, I]));
                 end;
 
               //

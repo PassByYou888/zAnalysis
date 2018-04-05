@@ -73,7 +73,7 @@ type
 
     property Count: NativeInt read NodeCounter;
     function StoreBuffPtr: PKDTreeyanmicStoreBuffer;
-    property Data[const index: NativeInt]: PKDTree_Source read GetData; default;
+    property SourceP[const index: NativeInt]: PKDTree_Source read GetData; default;
     property AxisCount: Integer read FAxisCount;
 
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildCall);
@@ -909,7 +909,6 @@ var
   SplitOutput: TArrayPascalString;
   c, i, j    : NativeInt;
 begin
-
   t := TTextParsing.Create(s, tsText, nil);
   c := t.SplitChar(1, ', ', '', SplitOutput);
   if c > 0 then
@@ -1004,7 +1003,11 @@ begin
   DoStatusNoLn('...');
   TKDTree_Test.Clear;
   { kMean test }
+  {$IFDEF FPC}
+  TKDTree_Test.BuildKDTreeWithClusterM(length(TKDTree_Test.TestBuff), 10, 1, KMeanBuildOutIndex, nil, @TKDTree_Test.Test_BuildM);
+  {$ELSE FPC}
   TKDTree_Test.BuildKDTreeWithClusterM(length(TKDTree_Test.TestBuff), 10, 1, KMeanBuildOutIndex, nil, TKDTree_Test.Test_BuildM);
+  {$ENDIF FPC}
   { parallel search test }
   TKDTree_Test.Search(TKDTree_Test.TestBuff, TestResultIndex);
   for i := 0 to length(TestResultIndex) - 1 do

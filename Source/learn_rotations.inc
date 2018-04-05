@@ -9,12 +9,13 @@
 { ****************************************************************************** }
 procedure ApplyRotationsFromTheLeft(IsForward: Boolean; M1: TLearnInteger;
   M2: TLearnInteger; N1: TLearnInteger; N2: TLearnInteger;
-  const C: TLearnFloatArray; const S: TLearnFloatArray; var A: TLearnFloat2DArray; var WORK: TLearnFloatArray); forward;
+  const C: TLearnFloatArray; const S: TLearnFloatArray; var A: TLearnFloat2DArray; var WORK: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLearnInteger;
   M2: TLearnInteger; N1: TLearnInteger; N2: TLearnInteger;
-  const C: TLearnFloatArray; const S: TLearnFloatArray; var A: TLearnFloat2DArray; var WORK: TLearnFloatArray); forward;
+  const C: TLearnFloatArray; const S: TLearnFloatArray; var A: TLearnFloat2DArray; var WORK: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure GenerateRotation(F: TLearnFloat; G: TLearnFloat; var CS: TLearnFloat;
-  var SN: TLearnFloat; var R: TLearnFloat); forward;
+  var SN: TLearnFloat; var R: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   Application of a sequence of  elementary rotations to a matrix

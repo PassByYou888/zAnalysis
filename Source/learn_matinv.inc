@@ -14,52 +14,53 @@ type
   end;
 
 procedure RMatrixLUInverse(var A: TLearnFloat2DArray; const Pivots: TLearnIntegerArray;
-  N: TLearnInteger; var Info: TLearnInteger; var Rep: TMatInvReport); forward;
+  N: TLearnInteger; var Info: TLearnInteger; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixInverse(var A: TLearnFloat2DArray; N: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMatInvReport); forward;
+  var Info: TLearnInteger; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixLUInverse(var A: TLearnComplex2DArray;
-  const Pivots: TLearnIntegerArray; N: TLearnInteger; var Info: TLearnInteger; var Rep: TMatInvReport); forward;
+  const Pivots: TLearnIntegerArray; N: TLearnInteger; var Info: TLearnInteger; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixInverse(var A: TLearnComplex2DArray; N: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMatInvReport); forward;
+  var Info: TLearnInteger; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure SPDMatrixCholeskyInverse(var A: TLearnFloat2DArray; N: TLearnInteger;
-  IsUpper: Boolean; var Info: TLearnInteger; var Rep: TMatInvReport); forward;
+  IsUpper: Boolean; var Info: TLearnInteger; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure SPDMatrixInverse(var A: TLearnFloat2DArray; N: TLearnInteger;
-  IsUpper: Boolean; var Info: TLearnInteger; var Rep: TMatInvReport); forward;
+  IsUpper: Boolean; var Info: TLearnInteger; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure HPDMatrixCholeskyInverse(var A: TLearnComplex2DArray; N: TLearnInteger;
-  IsUpper: Boolean; var Info: TLearnInteger; var Rep: TMatInvReport); forward;
+  IsUpper: Boolean; var Info: TLearnInteger; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure HPDMatrixInverse(var A: TLearnComplex2DArray; N: TLearnInteger;
-  IsUpper: Boolean; var Info: TLearnInteger; var Rep: TMatInvReport); forward;
+  IsUpper: Boolean; var Info: TLearnInteger; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixTRInverse(var A: TLearnFloat2DArray; N: TLearnInteger;
-  IsUpper: Boolean; IsUnit: Boolean; var Info: TLearnInteger; var Rep: TMatInvReport); forward;
+  IsUpper: Boolean; IsUnit: Boolean; var Info: TLearnInteger; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixTRInverse(var A: TLearnComplex2DArray; N: TLearnInteger;
-  IsUpper: Boolean; IsUnit: Boolean; var Info: TLearnInteger; var Rep: TMatInvReport); forward;
+  IsUpper: Boolean; IsUnit: Boolean; var Info: TLearnInteger; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixTRInverseRec(var A: TLearnFloat2DArray; Offs: TLearnInteger;
   N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean; var Tmp: TLearnFloatArray;
-  var Info: TLearnInteger; var Rep: TMatInvReport); forward;
+  var Info: TLearnInteger; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixTRInverseRec(var A: TLearnComplex2DArray; Offs: TLearnInteger;
   N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean; var Tmp: TLearnComplexArray;
-  var Info: TLearnInteger; var Rep: TMatInvReport); forward;
+  var Info: TLearnInteger; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RMatrixLUInverseRec(var A: TLearnFloat2DArray; Offs: TLearnInteger;
   N: TLearnInteger; var WORK: TLearnFloatArray; var Info: TLearnInteger;
-  var Rep: TMatInvReport); forward;
+  var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixLUInverseRec(var A: TLearnComplex2DArray; Offs: TLearnInteger;
   N: TLearnInteger; var WORK: TLearnComplexArray; var Info: TLearnInteger;
-  var Rep: TMatInvReport); forward;
+  var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure SPDMatrixCholeskyInverseRec(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnFloatArray); forward;
+  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure HPDMatrixCholeskyInverseRec(var A: TLearnComplex2DArray;
   Offs: TLearnInteger; N: TLearnInteger; IsUpper: Boolean;
-  var Tmp: TLearnComplexArray); forward;
+  var Tmp: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   Inversion of a matrix given by its LU decomposition.

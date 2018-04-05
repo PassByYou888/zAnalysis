@@ -7,62 +7,63 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-function RMatrixRCond1(A: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat; forward;
-function RMatrixRCondInf(A: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat; forward;
-function SPDMatrixRCond(A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat; forward;
-function RMatrixTRRCond1(const A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean): TLearnFloat; forward;
-function RMatrixTRRCondInf(const A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean): TLearnFloat; forward;
-function HPDMatrixRCond(A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat; forward;
-function CMatrixRCond1(A: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat; forward;
-function CMatrixRCondInf(A: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat; forward;
-function RMatrixLURCond1(const LUA: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat; forward;
-function RMatrixLURCondInf(const LUA: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat; forward;
-function SPDMatrixCholeskyRCond(const A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat; forward;
-function HPDMatrixCholeskyRCond(const A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat; forward;
-function CMatrixLURCond1(const LUA: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat; forward;
-function CMatrixLURCondInf(const LUA: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat; forward;
-function CMatrixTRRCond1(const A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean): TLearnFloat; forward;
-function CMatrixTRRCondInf(const A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean): TLearnFloat; forward;
-function RCondThreshold(): TLearnFloat; forward;
+function RMatrixRCond1(A: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixRCondInf(A: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SPDMatrixRCond(A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixTRRCond1(const A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixTRRCondInf(const A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HPDMatrixRCond(A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixRCond1(A: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixRCondInf(A: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixLURCond1(const LUA: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixLURCondInf(const LUA: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SPDMatrixCholeskyRCond(const A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HPDMatrixCholeskyRCond(const A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixLURCond1(const LUA: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixLURCondInf(const LUA: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixTRRCond1(const A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixTRRCondInf(const A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RCondThreshold(): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixRCondTRInternal(const A: TLearnFloat2DArray; N: TLearnInteger;
   IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean; ANORM: TLearnFloat;
-  var RC: TLearnFloat); forward;
+  var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixRCondTRInternal(const A: TLearnComplex2DArray;
   const N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean;
-  ANORM: TLearnFloat; var RC: TLearnFloat); forward;
+  ANORM: TLearnFloat; var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure SPDMatrixRCondCholeskyInternal(const CHA: TLearnFloat2DArray;
   N: TLearnInteger; IsUpper: Boolean; IsNormProvided: Boolean;
-  ANORM: TLearnFloat; var RC: TLearnFloat); forward;
+  ANORM: TLearnFloat; var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure HPDMatrixRCondCholeskyInternal(const CHA: TLearnComplex2DArray;
   N: TLearnInteger; IsUpper: Boolean; IsNormProvided: Boolean;
-  ANORM: TLearnFloat; var RC: TLearnFloat); forward;
+  ANORM: TLearnFloat; var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RMatrixRCondLUInternal(const LUA: TLearnFloat2DArray; N: TLearnInteger;
   OneNorm: Boolean; IsANormProvided: Boolean; ANORM: TLearnFloat;
-  var RC: TLearnFloat); forward;
+  var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixRCondLUInternal(const LUA: TLearnComplex2DArray;
   const N: TLearnInteger; OneNorm: Boolean; IsANormProvided: Boolean;
-  ANORM: TLearnFloat; var RC: TLearnFloat); forward;
+  ANORM: TLearnFloat; var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RMatrixEstimateNorm(N: TLearnInteger; var V: TLearnFloatArray;
   var X: TLearnFloatArray; var ISGN: TLearnIntegerArray; var EST: TLearnFloat;
-  var KASE: TLearnInteger); forward;
+  var KASE: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixEstimateNorm(const N: TLearnInteger; var V: TLearnComplexArray;
   var X: TLearnComplexArray; var EST: TLearnFloat; var KASE: TLearnInteger;
-  var ISAVE: TLearnIntegerArray; var RSAVE: TLearnFloatArray); forward;
+  var ISAVE: TLearnIntegerArray; var RSAVE: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function InternalComplexRCondSCSUM1(const X: TLearnComplexArray; N: TLearnInteger)
-  : TLearnFloat; forward;
+  : TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function InternalComplexRCondICMAX1(const X: TLearnComplexArray; N: TLearnInteger)
-  : TLearnInteger; forward;
+  : TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure InternalComplexRCondSaveAll(var ISAVE: TLearnIntegerArray;
   var RSAVE: TLearnFloatArray; var I: TLearnInteger; var ITER: TLearnInteger;
   var J: TLearnInteger; var JLAST: TLearnInteger; var JUMP: TLearnInteger;
   var ABSXI: TLearnFloat; var ALTSGN: TLearnFloat; var ESTOLD: TLearnFloat;
-  var TEMP: TLearnFloat); forward;
+  var TEMP: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure InternalComplexRCondLoadAll(var ISAVE: TLearnIntegerArray;
   var RSAVE: TLearnFloatArray; var I: TLearnInteger; var ITER: TLearnInteger;
   var J: TLearnInteger; var JLAST: TLearnInteger; var JUMP: TLearnInteger;
   var ABSXI: TLearnFloat; var ALTSGN: TLearnFloat; var ESTOLD: TLearnFloat;
-  var TEMP: TLearnFloat); forward;
+  var TEMP: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   Estimate of a matrix condition number (1-norm)
@@ -2435,7 +2436,7 @@ begin
       SetLength(V, N + 4);
       SetLength(X, N + 1);
       SetLength(ISGN, N + 5);
-      T := AP_Double(1) / N;
+      T := AP_Float(1) / N;
       I := 1;
       while I <= N do
         begin
@@ -2556,7 +2557,7 @@ begin
           I := 1;
           while I <= N do
             begin
-              X[I] := V[PosALTSGN] * (1 + AP_Double((I - 1)) / (N - 1));
+              X[I] := V[PosALTSGN] * (1 + AP_Float((I - 1)) / (N - 1));
               V[PosALTSGN] := -V[PosALTSGN];
               Inc(I);
             end;
@@ -2624,7 +2625,7 @@ begin
       I := 1;
       while I <= N do
         begin
-          X[I] := V[PosALTSGN] * (1 + AP_Double((I - 1)) / (N - 1));
+          X[I] := V[PosALTSGN] * (1 + AP_Float((I - 1)) / (N - 1));
           V[PosALTSGN] := -V[PosALTSGN];
           Inc(I);
         end;
@@ -2689,7 +2690,7 @@ begin
       I := 1;
       while I <= N do
         begin
-          X[I] := C_Complex(AP_Double(1) / N);
+          X[I] := C_Complex(AP_Float(1) / N);
           Inc(I);
         end;
       KASE := 1;
@@ -2790,7 +2791,7 @@ begin
           I := 1;
           while I <= N do
             begin
-              X[I] := C_Complex(ALTSGN * (1 + AP_Double((I - 1)) / (N - 1)));
+              X[I] := C_Complex(ALTSGN * (1 + AP_Float((I - 1)) / (N - 1)));
               ALTSGN := -ALTSGN;
               Inc(I);
             end;
@@ -2857,7 +2858,7 @@ begin
       I := 1;
       while I <= N do
         begin
-          X[I] := C_Complex(ALTSGN * (1 + AP_Double((I - 1)) / (N - 1)));
+          X[I] := C_Complex(ALTSGN * (1 + AP_Float((I - 1)) / (N - 1)));
           ALTSGN := -ALTSGN;
           Inc(I);
         end;

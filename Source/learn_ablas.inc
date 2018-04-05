@@ -8,123 +8,124 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 
-procedure ABLASSplitLength(const A: TLearnFloat2DArray; N: TLearnInteger; var N1: TLearnInteger; var N2: TLearnInteger); forward;
-procedure ABLASComplexSplitLength(const A: TLearnComplex2DArray; N: TLearnInteger; var N1: TLearnInteger; var N2: TLearnInteger);forward;
-function ABLASBlockSize(const A: TLearnFloat2DArray): TLearnInteger;forward;
-function ABLASComplexBlockSize(const A: TLearnComplex2DArray): TLearnInteger;forward;
-function ABLASMicroBlockSize(): TLearnInteger;forward;
+procedure ABLASSplitLength(const A: TLearnFloat2DArray; N: TLearnInteger; var N1: TLearnInteger; var N2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure ABLASComplexSplitLength(const A: TLearnComplex2DArray; N: TLearnInteger; var N1: TLearnInteger; var N2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ABLASBlockSize(const A: TLearnFloat2DArray): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ABLASComplexBlockSize(const A: TLearnComplex2DArray): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ABLASMicroBlockSize(): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixTranspose(M: TLearnInteger; N: TLearnInteger;
   const A: TLearnComplex2DArray; IA: TLearnInteger; JA: TLearnInteger;
-  var B: TLearnComplex2DArray; IB: TLearnInteger; JB: TLearnInteger);forward;
+  var B: TLearnComplex2DArray; IB: TLearnInteger; JB: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixTranspose(M: TLearnInteger; N: TLearnInteger;
   const A: TLearnFloat2DArray; IA: TLearnInteger; JA: TLearnInteger;
-  var B: TLearnFloat2DArray; IB: TLearnInteger; JB: TLearnInteger);forward;
+  var B: TLearnFloat2DArray; IB: TLearnInteger; JB: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixCopy(M: TLearnInteger; N: TLearnInteger;
   const A: TLearnComplex2DArray; IA: TLearnInteger; JA: TLearnInteger;
-  var B: TLearnComplex2DArray; IB: TLearnInteger; JB: TLearnInteger);forward;
+  var B: TLearnComplex2DArray; IB: TLearnInteger; JB: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixCopy(M: TLearnInteger; N: TLearnInteger; const A: TLearnFloat2DArray;
-  IA: TLearnInteger; JA: TLearnInteger; var B: TLearnFloat2DArray; IB: TLearnInteger; JB: TLearnInteger);forward;
+  IA: TLearnInteger; JA: TLearnInteger; var B: TLearnFloat2DArray; IB: TLearnInteger; JB: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixRank1(M: TLearnInteger; N: TLearnInteger;
   var A: TLearnComplex2DArray; IA: TLearnInteger; JA: TLearnInteger;
   var U: TLearnComplexArray; IU: TLearnInteger; var V: TLearnComplexArray;
-  IV: TLearnInteger);forward;
+  IV: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixRank1(M: TLearnInteger; N: TLearnInteger; var A: TLearnFloat2DArray;
   IA: TLearnInteger; JA: TLearnInteger; var U: TLearnFloatArray; IU: TLearnInteger;
-  var V: TLearnFloatArray; IV: TLearnInteger);forward;
+  var V: TLearnFloatArray; IV: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixMV(M: TLearnInteger; N: TLearnInteger; var A: TLearnComplex2DArray;
   IA: TLearnInteger; JA: TLearnInteger; OpA: TLearnInteger;
-  var X: TLearnComplexArray; IX: TLearnInteger; var Y: TLearnComplexArray; IY: TLearnInteger);forward;
+  var X: TLearnComplexArray; IX: TLearnInteger; var Y: TLearnComplexArray; IY: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixMV(M: TLearnInteger; N: TLearnInteger; var A: TLearnFloat2DArray;
   IA: TLearnInteger; JA: TLearnInteger; OpA: TLearnInteger; var X: TLearnFloatArray;
-  IX: TLearnInteger; var Y: TLearnFloatArray; IY: TLearnInteger);forward;
+  IX: TLearnInteger; var Y: TLearnFloatArray; IY: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixRightTRSM(M: TLearnInteger; N: TLearnInteger;
   const A: TLearnComplex2DArray; I1: TLearnInteger; J1: TLearnInteger;
   IsUpper: Boolean; IsUnit: Boolean; OpType: TLearnInteger;
-  var X: TLearnComplex2DArray; I2: TLearnInteger; J2: TLearnInteger);forward;
+  var X: TLearnComplex2DArray; I2: TLearnInteger; J2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixLeftTRSM(M: TLearnInteger; N: TLearnInteger;
   const A: TLearnComplex2DArray; I1: TLearnInteger; J1: TLearnInteger;
   IsUpper: Boolean; IsUnit: Boolean; OpType: TLearnInteger;
-  var X: TLearnComplex2DArray; I2: TLearnInteger; J2: TLearnInteger);forward;
+  var X: TLearnComplex2DArray; I2: TLearnInteger; J2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixRightTRSM(M: TLearnInteger; N: TLearnInteger;
   const A: TLearnFloat2DArray; I1: TLearnInteger; J1: TLearnInteger; IsUpper: Boolean;
   IsUnit: Boolean; OpType: TLearnInteger; var X: TLearnFloat2DArray;
-  I2: TLearnInteger; J2: TLearnInteger);forward;
+  I2: TLearnInteger; J2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixLeftTRSM(M: TLearnInteger; N: TLearnInteger;
   const A: TLearnFloat2DArray; I1: TLearnInteger; J1: TLearnInteger; IsUpper: Boolean;
   IsUnit: Boolean; OpType: TLearnInteger; var X: TLearnFloat2DArray;
-  I2: TLearnInteger; J2: TLearnInteger);forward;
+  I2: TLearnInteger; J2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixSYRK(N: TLearnInteger; K: TLearnInteger; Alpha: TLearnFloat;
   const A: TLearnComplex2DArray; IA: TLearnInteger; JA: TLearnInteger;
   OpTypeA: TLearnInteger; Beta: TLearnFloat; var C: TLearnComplex2DArray;
-  IC: TLearnInteger; JC: TLearnInteger; IsUpper: Boolean);forward;
+  IC: TLearnInteger; JC: TLearnInteger; IsUpper: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixSYRK(N: TLearnInteger; K: TLearnInteger; Alpha: TLearnFloat;
   const A: TLearnFloat2DArray; IA: TLearnInteger; JA: TLearnInteger;
   OpTypeA: TLearnInteger; Beta: TLearnFloat; var C: TLearnFloat2DArray;
-  IC: TLearnInteger; JC: TLearnInteger; IsUpper: Boolean);forward;
+  IC: TLearnInteger; JC: TLearnInteger; IsUpper: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixGEMM(M: TLearnInteger; N: TLearnInteger; K: TLearnInteger;
   Alpha: TLearnComplex; const A: TLearnComplex2DArray; IA: TLearnInteger;
   JA: TLearnInteger; OpTypeA: TLearnInteger; const B: TLearnComplex2DArray;
   IB: TLearnInteger; JB: TLearnInteger; OpTypeB: TLearnInteger; Beta: TLearnComplex;
-  var C: TLearnComplex2DArray; IC: TLearnInteger; JC: TLearnInteger);forward;
+  var C: TLearnComplex2DArray; IC: TLearnInteger; JC: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixGEMM(M: TLearnInteger; N: TLearnInteger; K: TLearnInteger;
   Alpha: TLearnFloat; const A: TLearnFloat2DArray; IA: TLearnInteger;
   JA: TLearnInteger; OpTypeA: TLearnInteger; const B: TLearnFloat2DArray;
   IB: TLearnInteger; JB: TLearnInteger; OpTypeB: TLearnInteger;
-  Beta: TLearnFloat; var C: TLearnFloat2DArray; IC: TLearnInteger; JC: TLearnInteger);forward;
+  Beta: TLearnFloat; var C: TLearnFloat2DArray; IC: TLearnInteger; JC: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure ABLASInternalSplitLength(N: TLearnInteger; NB: TLearnInteger;
-  var N1: TLearnInteger; var N2: TLearnInteger); forward;
+  var N1: TLearnInteger; var N2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixRightTRSM2(M: TLearnInteger; N: TLearnInteger;
   const A: TLearnComplex2DArray; I1: TLearnInteger; J1: TLearnInteger;
   IsUpper: Boolean; IsUnit: Boolean; OpType: TLearnInteger;
-  var X: TLearnComplex2DArray; I2: TLearnInteger; J2: TLearnInteger); forward;
+  var X: TLearnComplex2DArray; I2: TLearnInteger; J2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixLeftTRSM2(M: TLearnInteger; N: TLearnInteger;
   const A: TLearnComplex2DArray; I1: TLearnInteger; J1: TLearnInteger;
   IsUpper: Boolean; IsUnit: Boolean; OpType: TLearnInteger;
-  var X: TLearnComplex2DArray; I2: TLearnInteger; J2: TLearnInteger); forward;
+  var X: TLearnComplex2DArray; I2: TLearnInteger; J2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RMatrixRightTRSM2(M: TLearnInteger; N: TLearnInteger;
   const A: TLearnFloat2DArray; I1: TLearnInteger; J1: TLearnInteger; IsUpper: Boolean;
   IsUnit: Boolean; OpType: TLearnInteger; var X: TLearnFloat2DArray;
-  I2: TLearnInteger; J2: TLearnInteger); forward;
+  I2: TLearnInteger; J2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RMatrixLeftTRSM2(M: TLearnInteger; N: TLearnInteger;
   const A: TLearnFloat2DArray; I1: TLearnInteger; J1: TLearnInteger; IsUpper: Boolean;
   IsUnit: Boolean; OpType: TLearnInteger; var X: TLearnFloat2DArray;
-  I2: TLearnInteger; J2: TLearnInteger); forward;
+  I2: TLearnInteger; J2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixSYRK2(N: TLearnInteger; K: TLearnInteger; Alpha: TLearnFloat;
   const A: TLearnComplex2DArray; IA: TLearnInteger; JA: TLearnInteger;
   OpTypeA: TLearnInteger; Beta: TLearnFloat; var C: TLearnComplex2DArray;
-  IC: TLearnInteger; JC: TLearnInteger; IsUpper: Boolean); forward;
+  IC: TLearnInteger; JC: TLearnInteger; IsUpper: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RMatrixSYRK2(N: TLearnInteger; K: TLearnInteger; Alpha: TLearnFloat;
   const A: TLearnFloat2DArray; IA: TLearnInteger; JA: TLearnInteger;
   OpTypeA: TLearnInteger; Beta: TLearnFloat; var C: TLearnFloat2DArray;
-  IC: TLearnInteger; JC: TLearnInteger; IsUpper: Boolean); forward;
+  IC: TLearnInteger; JC: TLearnInteger; IsUpper: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixGEMMK(M: TLearnInteger; N: TLearnInteger; K: TLearnInteger;
   Alpha: TLearnComplex; const A: TLearnComplex2DArray; IA: TLearnInteger;
   JA: TLearnInteger; OpTypeA: TLearnInteger; const B: TLearnComplex2DArray;
   IB: TLearnInteger; JB: TLearnInteger; OpTypeB: TLearnInteger; Beta: TLearnComplex;
-  var C: TLearnComplex2DArray; IC: TLearnInteger; JC: TLearnInteger); forward;
+  var C: TLearnComplex2DArray; IC: TLearnInteger; JC: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RMatrixGEMMK(M: TLearnInteger; N: TLearnInteger; K: TLearnInteger;
   Alpha: TLearnFloat; const A: TLearnFloat2DArray; IA: TLearnInteger;
   JA: TLearnInteger; OpTypeA: TLearnInteger; const B: TLearnFloat2DArray;
   IB: TLearnInteger; JB: TLearnInteger; OpTypeB: TLearnInteger;
   Beta: TLearnFloat; var C: TLearnFloat2DArray; IC: TLearnInteger;
-  JC: TLearnInteger); forward;
+  JC: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   Splits matrix length in two parts, left part should match ABLAS block size
@@ -406,10 +407,10 @@ begin
     begin
       Exit;
     end;
-//  if CMatrixRank1F(M, N, A, IA, JA, U, IU, V, IV) then
-//    begin
-//      Exit;
-//    end;
+  // if CMatrixRank1F(M, N, A, IA, JA, U, IU, V, IV) then
+  // begin
+  // Exit;
+  // end;
   I := 0;
   while I <= M - 1 do
     begin
@@ -448,10 +449,10 @@ begin
     begin
       Exit;
     end;
-//  if RMatrixRank1F(M, N, A, IA, JA, U, IU, V, IV) then
-//    begin
-//      Exit;
-//    end;
+  // if RMatrixRank1F(M, N, A, IA, JA, U, IU, V, IV) then
+  // begin
+  // Exit;
+  // end;
   I := 0;
   while I <= M - 1 do
     begin
@@ -510,10 +511,10 @@ begin
         end;
       Exit;
     end;
-//  if CMatrixMVF(M, N, A, IA, JA, OpA, X, IX, Y, IY) then
-//    begin
-//      Exit;
-//    end;
+  // if CMatrixMVF(M, N, A, IA, JA, OpA, X, IX, Y, IY) then
+  // begin
+  // Exit;
+  // end;
   if OpA = 0 then
     begin
 
@@ -629,10 +630,10 @@ begin
         end;
       Exit;
     end;
-//  if RMatrixMVF(M, N, A, IA, JA, OpA, X, IX, Y, IY) then
-//    begin
-//      Exit;
-//    end;
+  // if RMatrixMVF(M, N, A, IA, JA, OpA, X, IX, Y, IY) then
+  // begin
+  // Exit;
+  // end;
   if OpA = 0 then
     begin
 

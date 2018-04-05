@@ -10,6 +10,7 @@
 {$MODE objfpc}
 {$MODESWITCH AdvancedRecords}
 {$MODESWITCH nestedprocvars}
+{$STACKFRAMES ON}
 {$NOTES OFF}
 
 {$ASMMODE intel}
@@ -56,6 +57,7 @@
 {$R-} { range check }
 {$A+} { Word Align Data }
 {$O-} { optimization }
+{$Q-} { OVERFLOWCHECKS }
 
 (*
   {$IFDEF FPC}

@@ -8,9 +8,10 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 procedure XSum(var W: TLearnFloatArray; MX: TLearnFloat; N: TLearnInteger;
-  var R: TLearnFloat; var RErr: TLearnFloat); forward;
+  var R: TLearnFloat; var RErr: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function XFastPow(R: TLearnFloat; N: TLearnInteger): TLearnFloat; forward;
+function XFastPow(R: TLearnFloat; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   More precise dot-product. Absolute error of  subroutine  result  is  about
@@ -247,7 +248,7 @@ begin
   // to tolerate possible problems with rounding and N's close
   // to the limit, so we don't want to be very strict here.
   //
-  K := Trunc(Ln(AP_Double(536870912) / N) / LN2);
+  K := Trunc(Ln(AP_Float(536870912) / N) / LN2);
   Chunk := XFastPow(2, K);
   if AP_FP_Less(Chunk, 2) then
     begin
@@ -334,118 +335,119 @@ type
 
 procedure RMatrixSolve(const A: TLearnFloat2DArray; N: TLearnInteger;
   const B: TLearnFloatArray; var Info: TLearnInteger; var Rep: TDenseSolverReport;
-  var X: TLearnFloatArray); forward;
+  var X: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixSolveM(const A: TLearnFloat2DArray; N: TLearnInteger;
   const B: TLearnFloat2DArray; M: TLearnInteger; RFS: Boolean;
-  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloat2DArray); forward;
+  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixLUSolve(const LUA: TLearnFloat2DArray; const P: TLearnIntegerArray;
   N: TLearnInteger; const B: TLearnFloatArray; var Info: TLearnInteger;
-  var Rep: TDenseSolverReport; var X: TLearnFloatArray); forward;
+  var Rep: TDenseSolverReport; var X: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixLUSolveM(const LUA: TLearnFloat2DArray; const P: TLearnIntegerArray;
   N: TLearnInteger; const B: TLearnFloat2DArray; M: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloat2DArray); forward;
+  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixMixedSolve(const A: TLearnFloat2DArray; const LUA: TLearnFloat2DArray;
   const P: TLearnIntegerArray; N: TLearnInteger; const B: TLearnFloatArray;
-  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloatArray); forward;
+  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixMixedSolveM(const A: TLearnFloat2DArray; const LUA: TLearnFloat2DArray;
   const P: TLearnIntegerArray; N: TLearnInteger; const B: TLearnFloat2DArray;
-  M: TLearnInteger; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloat2DArray); forward;
+  M: TLearnInteger; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixSolveM(const A: TLearnComplex2DArray; N: TLearnInteger;
   const B: TLearnComplex2DArray; M: TLearnInteger; RFS: Boolean;
-  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplex2DArray); forward;
+  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixSolve(const A: TLearnComplex2DArray; N: TLearnInteger;
-  const B: TLearnComplexArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplexArray); forward;
+  const B: TLearnComplexArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixLUSolveM(const LUA: TLearnComplex2DArray; const P: TLearnIntegerArray;
   N: TLearnInteger; const B: TLearnComplex2DArray; M: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplex2DArray); forward;
+  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixLUSolve(const LUA: TLearnComplex2DArray; const P: TLearnIntegerArray;
-  N: TLearnInteger; const B: TLearnComplexArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplexArray); forward;
+  N: TLearnInteger; const B: TLearnComplexArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixMixedSolveM(const A: TLearnComplex2DArray;
   const LUA: TLearnComplex2DArray; const P: TLearnIntegerArray; N: TLearnInteger;
-  const B: TLearnComplex2DArray; M: TLearnInteger; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplex2DArray); forward;
+  const B: TLearnComplex2DArray; M: TLearnInteger; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixMixedSolve(const A: TLearnComplex2DArray;
   const LUA: TLearnComplex2DArray; const P: TLearnIntegerArray; N: TLearnInteger;
-  const B: TLearnComplexArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplexArray); forward;
+  const B: TLearnComplexArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure SPDMatrixSolveM(const A: TLearnFloat2DArray; N: TLearnInteger;
   IsUpper: Boolean; const B: TLearnFloat2DArray; M: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloat2DArray); forward;
+  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure SPDMatrixSolve(const A: TLearnFloat2DArray; N: TLearnInteger;
-  IsUpper: Boolean; const B: TLearnFloatArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloatArray); forward;
+  IsUpper: Boolean; const B: TLearnFloatArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure SPDMatrixCholeskySolveM(const CHA: TLearnFloat2DArray; N: TLearnInteger;
   IsUpper: Boolean; const B: TLearnFloat2DArray; M: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloat2DArray); forward;
+  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure SPDMatrixCholeskySolve(const CHA: TLearnFloat2DArray; N: TLearnInteger;
-  IsUpper: Boolean; const B: TLearnFloatArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloatArray); forward;
+  IsUpper: Boolean; const B: TLearnFloatArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure HPDMatrixSolveM(const A: TLearnComplex2DArray; N: TLearnInteger;
   IsUpper: Boolean; const B: TLearnComplex2DArray; M: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplex2DArray); forward;
+  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure HPDMatrixSolve(const A: TLearnComplex2DArray; N: TLearnInteger;
-  IsUpper: Boolean; const B: TLearnComplexArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplexArray); forward;
+  IsUpper: Boolean; const B: TLearnComplexArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure HPDMatrixCholeskySolveM(const CHA: TLearnComplex2DArray; N: TLearnInteger;
   IsUpper: Boolean; const B: TLearnComplex2DArray; M: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplex2DArray); forward;
+  var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure HPDMatrixCholeskySolve(const CHA: TLearnComplex2DArray; N: TLearnInteger;
-  IsUpper: Boolean; const B: TLearnComplexArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplexArray); forward;
+  IsUpper: Boolean; const B: TLearnComplexArray; var Info: TLearnInteger; var Rep: TDenseSolverReport; var X: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixSolveLS(const A: TLearnFloat2DArray; NRows: TLearnInteger;
   NCols: TLearnInteger; const B: TLearnFloatArray; Threshold: TLearnFloat;
-  var Info: TLearnInteger; var Rep: TDenseSolverLSReport; var X: TLearnFloatArray); forward;
+  var Info: TLearnInteger; var Rep: TDenseSolverLSReport; var X: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixLUSolveInternal(const LUA: TLearnFloat2DArray;
   const P: TLearnIntegerArray; const ScaleA: TLearnFloat; N: TLearnInteger;
   const A: TLearnFloat2DArray; HaveA: Boolean; const B: TLearnFloat2DArray;
   M: TLearnInteger; var Info: TLearnInteger; var Rep: TDenseSolverReport;
-  var X: TLearnFloat2DArray); forward;
+  var X: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure SPDMatrixCholeskySolveInternal(const CHA: TLearnFloat2DArray;
   const SqrtScaleA: TLearnFloat; N: TLearnInteger; IsUpper: Boolean;
   const A: TLearnFloat2DArray; HaveA: Boolean; const B: TLearnFloat2DArray;
   M: TLearnInteger; var Info: TLearnInteger; var Rep: TDenseSolverReport;
-  var X: TLearnFloat2DArray); forward;
+  var X: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixLUSolveInternal(const LUA: TLearnComplex2DArray;
   const P: TLearnIntegerArray; const ScaleA: TLearnFloat; N: TLearnInteger;
   const A: TLearnComplex2DArray; HaveA: Boolean; const B: TLearnComplex2DArray;
   M: TLearnInteger; var Info: TLearnInteger; var Rep: TDenseSolverReport;
-  var X: TLearnComplex2DArray); forward;
+  var X: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure HPDMatrixCholeskySolveInternal(const CHA: TLearnComplex2DArray;
   const SqrtScaleA: TLearnFloat; N: TLearnInteger; IsUpper: Boolean;
   const A: TLearnComplex2DArray; HaveA: Boolean; const B: TLearnComplex2DArray;
   M: TLearnInteger; var Info: TLearnInteger; var Rep: TDenseSolverReport;
-  var X: TLearnComplex2DArray); forward;
+  var X: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function DenseSolverRFSMax(N: TLearnInteger; R1: TLearnFloat; RInf: TLearnFloat)
-  : TLearnInteger; forward;
+  : TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function DenseSolverRFSMaxV2(N: TLearnInteger; R2: TLearnFloat)
-  : TLearnInteger; forward;
+  : TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RBasicLUSolve(const LUA: TLearnFloat2DArray; const P: TLearnIntegerArray;
   ScaleA: TLearnFloat; N: TLearnInteger; var XB: TLearnFloatArray;
-  var Tmp: TLearnFloatArray); forward;
+  var Tmp: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure SPDBasicCholeskySolve(const CHA: TLearnFloat2DArray;
   SqrtScaleA: TLearnFloat; N: TLearnInteger; IsUpper: Boolean;
-  var XB: TLearnFloatArray; var Tmp: TLearnFloatArray); forward;
+  var XB: TLearnFloatArray; var Tmp: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CBasicLUSolve(const LUA: TLearnComplex2DArray; const P: TLearnIntegerArray;
   ScaleA: TLearnFloat; N: TLearnInteger; var XB: TLearnComplexArray;
-  var Tmp: TLearnComplexArray); forward;
+  var Tmp: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure HPDBasicCholeskySolve(const CHA: TLearnComplex2DArray;
   SqrtScaleA: TLearnFloat; N: TLearnInteger; IsUpper: Boolean;
-  var XB: TLearnComplexArray; var Tmp: TLearnComplexArray); forward;
+  var XB: TLearnComplexArray; var Tmp: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   Dense solver.

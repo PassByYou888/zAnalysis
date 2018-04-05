@@ -36,12 +36,13 @@ type
     XTRAPF: TLearnFloat;
   end;
 
-procedure LinMinNormalizeD(var D: TLearnFloatArray; var Stp: TLearnFloat; N: TLearnInteger); forward;
+procedure LinMinNormalizeD(var D: TLearnFloatArray; var Stp: TLearnFloat; N: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MCSRCH(const N: TLearnInteger; var X: TLearnFloatArray;
   var F: TLearnFloat; var G: TLearnFloatArray; const S: TLearnFloatArray;
   var Stp: TLearnFloat; STPMAX: TLearnFloat; var INFO: TLearnInteger;
-  var NFEV: TLearnInteger; var WA: TLearnFloatArray; var State: TLinMinState; var Stage: TLearnInteger); forward;
+  var NFEV: TLearnInteger; var WA: TLearnFloatArray; var State: TLinMinState; var Stage: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 const
   FTOL      = 0.001;
@@ -55,7 +56,8 @@ procedure MCSTEP(var STX: TLearnFloat; var FX: TLearnFloat; var DX: TLearnFloat;
   var STY: TLearnFloat; var FY: TLearnFloat; var DY: TLearnFloat;
   var Stp: TLearnFloat; const FP: TLearnFloat; const DP: TLearnFloat;
   var BRACKT: Boolean; const STMIN: TLearnFloat; const STMAX: TLearnFloat;
-  var INFO: TLearnInteger); forward;
+  var INFO: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   Normalizes direction/step pair: makes |D|=1, scales Stp.

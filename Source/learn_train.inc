@@ -33,39 +33,35 @@ type
 
 procedure MLPTrainLM(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
   NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport); forward;
+  var Info: TLearnInteger; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPTrainLBFGS(var Network: TMultiLayerPerceptron;
   const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
   Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
   var Info: TLearnInteger; var Rep: TMLPReport; IsTerminated: PBoolean;
-  out EBest: TLearnFloat); forward;
+  out EBest: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPTrainLBFGS_MT(var Network: TMultiLayerPerceptron;
   const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
   Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport); forward;
+  var Info: TLearnInteger; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPTrainLBFGS_MT_Mod(var Network: TMultiLayerPerceptron;
   const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Restarts: TLearnInteger;
-  WStep, Diameter: TLearnFloat; MaxIts: TLearnInteger; var Info: TLearnInteger;
-  var Rep: TMLPReport); forward;
-
-procedure MLPTrainES(var Network: TMultiLayerPerceptron;
-  const TrnXY: TLearnFloat2DArray; TrnSize: TLearnInteger; const ValXY: TLearnFloat2DArray;
-  ValSize: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport); forward;
+  WStep, Diameter: TLearnFloat; MaxIts: TLearnInteger;
+  var Info: TLearnInteger; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPKFoldCVLBFGS(const Network: TMultiLayerPerceptron;
   const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
   Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
   FoldsCount: TLearnInteger; var Info: TLearnInteger; var Rep: TMLPReport;
-  var CVRep: TMLPCVReport); forward;
+  var CVRep: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPKFoldCVLM(const Network: TMultiLayerPerceptron;
   const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
   Restarts: TLearnInteger; FoldsCount: TLearnInteger; var Info: TLearnInteger;
-  var Rep: TMLPReport; var CVRep: TMLPCVReport); forward;
+  var Rep: TMLPReport; var CVRep: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 type
   TMLPProcessData = packed record
@@ -84,10 +80,11 @@ procedure MLPKFoldCVGeneral(const N: TMultiLayerPerceptron;
   const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
   Restarts: TLearnInteger; FoldsCount: TLearnInteger; LMAlgorithm: boolean;
   WStep: TLearnFloat; MaxIts: TLearnInteger; var Info: TLearnInteger;
-  var Rep: TMLPReport; var CVRep: TMLPCVReport); forward;
+  var Rep: TMLPReport; var CVRep: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPKFoldSplit(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
   NClasses: TLearnInteger; FoldsCount: TLearnInteger; StratifiedSplits: boolean;
-  var Folds: TLearnIntegerArray); forward;
+  var Folds: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   Neural network training  using  modified  Levenberg-Marquardt  with  exact
@@ -1198,15 +1195,12 @@ var
 
       while (EBest > 1E-50) and MinLBFGSIteration(State) do
         begin
-          APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0,
-            WCount - 1);
+          APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0, WCount - 1);
           MLPGradNBatch(NetworkCopy, XY, NPoints, State.F, State.G);
-          V := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-            @NetworkCopy.Weights[0], 0, WCount - 1);
+          V := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
 
           State.F := State.F + 0.5 * Decay * V;
-          APVAdd(@State.G[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
-            WCount - 1, Decay);
+          APVAdd(@State.G[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
           RepCopy.NGrad := RepCopy.NGrad + 1;
 
           // checking
@@ -1331,23 +1325,19 @@ begin
         if AP_FP_Less(Ebegin, EBest) then
           begin
             zLock.Enter;
-            APVMove(@WBest[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
-              WCount - 1);
+            APVMove(@WBest[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
             EBest := Ebegin;
             zLock.Leave;
           end;
 
         while (EBest > 1E-50) and MinLBFGSIteration(State) do
           begin
-            APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0,
-              WCount - 1);
+            APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0, WCount - 1);
             MLPGradNBatch(NetworkCopy, XY, NPoints, State.F, State.G);
-            V := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-              @NetworkCopy.Weights[0], 0, WCount - 1);
+            V := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
 
             State.F := State.F + 0.5 * Decay * V;
-            APVAdd(@State.G[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
-              WCount - 1, Decay);
+            APVAdd(@State.G[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
             RepCopy.NGrad := RepCopy.NGrad + 1;
 
             // checking
@@ -1396,195 +1386,6 @@ begin
 end;
 
 (* ************************************************************************
-  Neural network training using early stopping (base algorithm - L-BFGS with
-  regularization).
-
-  INPUT PARAMETERS:
-  Network     -   neural network with initialized geometry
-  TrnXY       -   training set
-  TrnSize     -   training set size
-  ValXY       -   validation set
-  ValSize     -   validation set size
-  Decay       -   weight decay constant, >=0.001
-  Decay term 'Decay*||Weights||^2' is added to error
-  function.
-  If you don't know what Decay to choose, use 0.001.
-  Restarts    -   number of restarts from random position, >0.
-  If you don't know what Restarts to choose, use 2.
-
-  OUTPUT PARAMETERS:
-  Network     -   trained neural network.
-  Info        -   return code:
-  * -2, if there is a point with class number
-  outside of [0..NOut-1].
-  * -1, if wrong parameters specified
-  (NPoints<0, Restarts<1, ...).
-  *  2, task has been solved, stopping  criterion  met -
-  sufficiently small step size.  Not expected  (we
-  use  EARLY  stopping)  but  possible  and not an
-  error.
-  *  6, task has been solved, stopping  criterion  met -
-  increasing of validation set error.
-  Rep         -   training report
-
-  NOTE:
-
-  Algorithm stops if validation set error increases for  a  long  enough  or
-  step size is small enought  (there  are  task  where  validation  set  may
-  decrease for eternity). In any case solution returned corresponds  to  the
-  minimum of validation set error.
-  ************************************************************************ *)
-procedure MLPTrainES(var Network: TMultiLayerPerceptron;
-const TrnXY: TLearnFloat2DArray; TrnSize: TLearnInteger; const ValXY: TLearnFloat2DArray;
-ValSize: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-var Info: TLearnInteger; var Rep: TMLPReport);
-var
-  I          : TLearnInteger;
-  Pass       : TLearnInteger;
-  NIn        : TLearnInteger;
-  NOut       : TLearnInteger;
-  WCount     : TLearnInteger;
-  W          : TLearnFloatArray;
-  WBest      : TLearnFloatArray;
-  E          : TLearnFloat;
-  V          : TLearnFloat;
-  EBest      : TLearnFloat;
-  WFinal     : TLearnFloatArray;
-  EFinal     : TLearnFloat;
-  ItBest     : TLearnInteger;
-  InternalRep: TMinLBFGSReport;
-  State      : TMinLBFGSState;
-  WStep      : TLearnFloat;
-begin
-  WStep := 0.001;
-
-  //
-  // Test inputs, parse flags, read network geometry
-  //
-  if (TrnSize <= 0) or (ValSize <= 0) or (Restarts < 1) or AP_FP_Less(Decay, 0)
-  then
-    begin
-      Info := -1;
-      Exit;
-    end;
-  MLPProperties(Network, NIn, NOut, WCount);
-  if MLPIsSoftmax(Network) then
-    begin
-      I := 0;
-      while I <= TrnSize - 1 do
-        begin
-          if (Round(TrnXY[I, NIn]) < 0) or (Round(TrnXY[I, NIn]) >= NOut) then
-            begin
-              Info := -2;
-              Exit;
-            end;
-          Inc(I);
-        end;
-      I := 0;
-      while I <= ValSize - 1 do
-        begin
-          if (Round(ValXY[I, NIn]) < 0) or (Round(ValXY[I, NIn]) >= NOut) then
-            begin
-              Info := -2;
-              Exit;
-            end;
-          Inc(I);
-        end;
-    end;
-  Info := 2;
-
-  //
-  // Prepare
-  //
-  MLPInitPreprocessor(Network, TrnXY, TrnSize);
-  SetLength(W, WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(WBest, WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(WFinal, WCount (* - 1 + 1 // optimized compler *) );
-  EFinal := MaxRealNumber;
-  I := 0;
-  while I <= WCount - 1 do
-    begin
-      WFinal[I] := 0;
-      Inc(I);
-    end;
-
-  //
-  // Multiple starts
-  //
-  Rep.NCholesky := 0;
-  Rep.NHess := 0;
-  Rep.NGrad := 0;
-  Pass := 1;
-  while Pass <= Restarts do
-    begin
-
-      //
-      // Process
-      //
-      MLPRandomize(Network);
-      EBest := MLPError(Network, ValXY, ValSize);
-      APVMove(@WBest[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
-      ItBest := 0;
-      APVMove(@W[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
-      MinLBFGSCreate(WCount, Min(WCount, 10), W, State);
-      MinLBFGSSetCond(State, 0.0, 0.0, WStep, 0);
-      MinLBFGSSetXRep(State, True);
-      while MinLBFGSIteration(State) do
-        begin
-
-          //
-          // Calculate gradient
-          //
-          APVMove(@Network.Weights[0], 0, WCount - 1, @State.X[0], 0, WCount - 1);
-          MLPGradNBatch(Network, TrnXY, TrnSize, State.F, State.G);
-          V := APVDotProduct(@Network.Weights[0], 0, WCount - 1,
-            @Network.Weights[0], 0, WCount - 1);
-          State.F := State.F + 0.5 * Decay * V;
-          APVAdd(@State.G[0], 0, WCount - 1, @Network.Weights[0], 0,
-            WCount - 1, Decay);
-          Rep.NGrad := Rep.NGrad + 1;
-
-          //
-          // Validation set
-          //
-          if State.XUpdated then
-            begin
-              APVMove(@Network.Weights[0], 0, WCount - 1, @W[0], 0, WCount - 1);
-              E := MLPError(Network, ValXY, ValSize);
-              if AP_FP_Less(E, EBest) then
-                begin
-                  EBest := E;
-                  APVMove(@WBest[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
-                  ItBest := InternalRep.IterationsCount;
-                end;
-              if (InternalRep.IterationsCount > 30) and
-                AP_FP_Greater(InternalRep.IterationsCount, 1.5 * ItBest) then
-                begin
-                  Info := 6;
-                  Break;
-                end;
-            end;
-        end;
-      MinLBFGSResults(State, W, InternalRep);
-
-      //
-      // Compare with final answer
-      //
-      if AP_FP_Less(EBest, EFinal) then
-        begin
-          APVMove(@WFinal[0], 0, WCount - 1, @WBest[0], 0, WCount - 1);
-          EFinal := EBest;
-        end;
-      Inc(Pass);
-    end;
-
-  //
-  // The best network
-  //
-  APVMove(@Network.Weights[0], 0, WCount - 1, @WFinal[0], 0, WCount - 1);
-end;
-
-(* ************************************************************************
   Cross-validation estimate of generalization error.
 
   Base algorithm - L-BFGS.
@@ -1614,8 +1415,7 @@ Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
 FoldsCount: TLearnInteger; var Info: TLearnInteger; var Rep: TMLPReport;
 var CVRep: TMLPCVReport);
 begin
-  MLPKFoldCVGeneral(Network, XY, NPoints, Decay, Restarts, FoldsCount, False,
-    WStep, MaxIts, Info, Rep, CVRep);
+  MLPKFoldCVGeneral(Network, XY, NPoints, Decay, Restarts, FoldsCount, False, WStep, MaxIts, Info, Rep, CVRep);
 end;
 
 (* ************************************************************************
@@ -1645,8 +1445,7 @@ const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
 Restarts: TLearnInteger; FoldsCount: TLearnInteger; var Info: TLearnInteger;
 var Rep: TMLPReport; var CVRep: TMLPCVReport);
 begin
-  MLPKFoldCVGeneral(Network, XY, NPoints, Decay, Restarts, FoldsCount, True,
-    0.0, 0, Info, Rep, CVRep);
+  MLPKFoldCVGeneral(Network, XY, NPoints, Decay, Restarts, FoldsCount, True, 0.0, 0, Info, Rep, CVRep);
 end;
 
 (* ************************************************************************
@@ -1755,8 +1554,7 @@ begin
       else
         begin
           IsTerminated := False;
-          MLPTrainLBFGS(Network, CVSet, CVSSize, Decay, Restarts, WStep, MaxIts,
-            Info, InternalRep, @IsTerminated, EBest);
+          MLPTrainLBFGS(Network, CVSet, CVSSize, Decay, Restarts, WStep, MaxIts, Info, InternalRep, @IsTerminated, EBest);
         end;
       if Info < 0 then
         begin
@@ -1780,8 +1578,7 @@ begin
           //
           // classification-only code
           //
-          CVRep.RelCLSError := CVRep.RelCLSError + MLPClsError(Network,
-            TestSet, TSSize);
+          CVRep.RelCLSError := CVRep.RelCLSError + MLPClsError(Network, TestSet, TSSize);
           CVRep.AvgCE := CVRep.AvgCE + MLPErrorN(Network, TestSet, TSSize);
         end;
       I := 0;
@@ -1824,12 +1621,10 @@ begin
               while J <= NOut - 1 do
                 begin
                   CVRep.RMSError := CVRep.RMSError + AP_Sqr(Y[J] - TestSet[I, NIn + J]);
-                  CVRep.AvgError := CVRep.AvgError +
-                    AbsReal(Y[J] - TestSet[I, NIn + J]);
+                  CVRep.AvgError := CVRep.AvgError + AbsReal(Y[J] - TestSet[I, NIn + J]);
                   if AP_FP_Neq(TestSet[I, NIn + J], 0) then
                     begin
-                      CVRep.AvgRelError := CVRep.AvgRelError +
-                        AbsReal((Y[J] - TestSet[I, NIn + J]) / TestSet[I, NIn + J]);
+                      CVRep.AvgRelError := CVRep.AvgRelError + AbsReal((Y[J] - TestSet[I, NIn + J]) / TestSet[I, NIn + J]);
                       RelCnt := RelCnt + 1;
                     end;
                   Inc(J);
