@@ -1,5 +1,5 @@
 { ****************************************************************************** }
-{ * machine Learn support, writen by QQ 600585@qq.com                          * }
+{ * Training support, by QQ 600585@qq.com                                      * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
 { * https://github.com/PassByYou888/zExpression                                * }
@@ -32,6 +32,10 @@ type
   end;
 
 procedure MLPTrainLM(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
+  NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
+  var Info: TLearnInteger; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPTrainLM_MT(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
   NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
   var Info: TLearnInteger; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
@@ -107,12 +111,374 @@ procedure MLPKFoldSplit(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
   Network     -   trained neural network.
   Info        -   return code:
   * -9, if internal matrix inverse subroutine failed
+  * -2, if there is a point with class number
+  outside of [0..NOut-1].
+  * -1, if wrong parameters specified
+  (NPoints<0, Restarts<1).
+  *  2, if task has been solved.
+  Rep         -   training report
+
+  -- ALGLIB --
+  Copyright 10.03.2009 by Bochkanov Sergey
+  ************************************************************************ *)
+procedure MLPTrainLM(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
+  NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
+  var Info: TLearnInteger; var Rep: TMLPReport);
+var
+  NIn        : TLearnInteger;
+  NOut       : TLearnInteger;
+  WCount     : TLearnInteger;
+  LMFTol     : TLearnFloat;
+  LMStepTol  : TLearnFloat;
+  I          : TLearnInteger;
+  K          : TLearnInteger;
+  V          : TLearnFloat;
+  E          : TLearnFloat;
+  ENew       : TLearnFloat;
+  XNorm2     : TLearnFloat;
+  StepNorm   : TLearnFloat;
+  G          : TLearnFloatArray;
+  D          : TLearnFloatArray;
+  H          : TLearnFloat2DArray;
+  HMod       : TLearnFloat2DArray;
+  Z          : TLearnFloat2DArray;
+  SPD        : boolean;
+  Nu         : TLearnFloat;
+  Lambda     : TLearnFloat;
+  LambdaUp   : TLearnFloat;
+  LambdaDown : TLearnFloat;
+  InternalRep: TMinLBFGSReport;
+  State      : TMinLBFGSState;
+  X          : TLearnFloatArray;
+  Y          : TLearnFloatArray;
+  WBase      : TLearnFloatArray;
+  WDir       : TLearnFloatArray;
+  WT         : TLearnFloatArray;
+  WX         : TLearnFloatArray;
+  Pass       : TLearnInteger;
+  WBest      : TLearnFloatArray;
+  EBest      : TLearnFloat;
+  InvInfo    : TLearnInteger;
+  InvRep     : TMatInvReport;
+  SolverInfo : TLearnInteger;
+  SolverRep  : TDenseSolverReport;
+begin
+  MLPProperties(Network, NIn, NOut, WCount);
+  LambdaUp := 10;
+  LambdaDown := 0.3;
+  LMFTol := 0.001;
+  LMStepTol := 0.001;
+
+  //
+  // Test for inputs
+  //
+  if (NPoints <= 0) or (Restarts < 1) then
+    begin
+      Info := -1;
+      Exit;
+    end;
+  if MLPIsSoftmax(Network) then
+    begin
+      I := 0;
+      while I <= NPoints - 1 do
+        begin
+          if (Round(XY[I, NIn]) < 0) or (Round(XY[I, NIn]) >= NOut) then
+            begin
+              Info := -2;
+              Exit;
+            end;
+          Inc(I);
+        end;
+    end;
+  Decay := Max(Decay, MinDecay);
+  Info := 2;
+
+  //
+  // Initialize data
+  //
+  Rep.NGrad := 0;
+  Rep.NHess := 0;
+  Rep.NCholesky := 0;
+
+  //
+  // General case.
+  // Prepare task and network. Allocate space.
+  //
+  MLPInitPreprocessor(Network, XY, NPoints);
+  SetLength(G, WCount - 1 + 1);
+  SetLength(H, WCount - 1 + 1, WCount - 1 + 1);
+  SetLength(HMod, WCount - 1 + 1, WCount - 1 + 1);
+  SetLength(WBase, WCount - 1 + 1);
+  SetLength(WDir, WCount - 1 + 1);
+  SetLength(WBest, WCount - 1 + 1);
+  SetLength(WT, WCount - 1 + 1);
+  SetLength(WX, WCount - 1 + 1);
+  EBest := MaxRealNumber;
+
+  //
+  // Multiple passes
+  //
+  Pass := 1;
+  while Pass <= Restarts do
+    begin
+
+      //
+      // Initialize weights
+      //
+      MLPRandomize(Network);
+
+      //
+      // First stage of the hybrid algorithm: LBFGS
+      //
+      APVMove(@WBase[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+      MinLBFGSCreate(WCount, Min(WCount, 5), WBase, State);
+      MinLBFGSSetCond(State, 0, 0, 0, Max(25, WCount));
+      while MinLBFGSIteration(State) do
+        begin
+
+          //
+          // gradient
+          //
+          APVMove(@Network.Weights[0], 0, WCount - 1, @State.X[0], 0, WCount - 1);
+          MLPGradBatch(Network, XY, NPoints, State.F, State.G);
+
+          //
+          // weight decay
+          //
+          V := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+          State.F := State.F + 0.5 * Decay * V;
+          APVAdd(@State.G[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1, Decay);
+
+          //
+          // next iteration
+          //
+          Rep.NGrad := Rep.NGrad + 1;
+        end;
+      MinLBFGSResults(State, WBase, InternalRep);
+      APVMove(@Network.Weights[0], 0, WCount - 1, @WBase[0], 0, WCount - 1);
+
+      //
+      // Second stage of the hybrid algorithm: LM
+      //
+      // Initialize H with identity matrix,
+      // G with gradient,
+      // E with regularized error.
+      //
+      MLPHessianBatch(Network, XY, NPoints, E, G, H);
+      V := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+      E := E + 0.5 * Decay * V;
+      APVAdd(@G[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1, Decay);
+      K := 0;
+      while K <= WCount - 1 do
+        begin
+          H[K, K] := H[K, K] + Decay;
+          Inc(K);
+        end;
+      Rep.NHess := Rep.NHess + 1;
+      Lambda := 0.001;
+      Nu := 2;
+      while True do
+        begin
+
+          //
+          // 1. HMod = H+lambda*I
+          // 2. Try to solve (H+Lambda*I)*dx = -g.
+          // Increase lambda if left part is not positive definite.
+          //
+          I := 0;
+          while I <= WCount - 1 do
+            begin
+              APVMove(@HMod[I][0], 0, WCount - 1, @H[I][0], 0, WCount - 1);
+              HMod[I, I] := HMod[I, I] + Lambda;
+              Inc(I);
+            end;
+          SPD := SPDMatrixCholesky(HMod, WCount, True);
+          Rep.NCholesky := Rep.NCholesky + 1;
+          if not SPD then
+            begin
+              Lambda := Lambda * LambdaUp * Nu;
+              Nu := Nu * 2;
+              Continue;
+            end;
+          SPDMatrixCholeskySolve(HMod, WCount, True, G, SolverInfo, SolverRep, WDir);
+          if SolverInfo < 0 then
+            begin
+              Lambda := Lambda * LambdaUp * Nu;
+              Nu := Nu * 2;
+              Continue;
+            end;
+          APVMul(@WDir[0], 0, WCount - 1, -1);
+
+          //
+          // Lambda found.
+          // 1. Save old w in WBase
+          // 1. Test some stopping criterions
+          // 2. If error(w+wdir)>error(w), increase lambda
+          //
+          APVAdd(@Network.Weights[0], 0, WCount - 1, @WDir[0], 0, WCount - 1);
+          XNorm2 := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+          StepNorm := APVDotProduct(@WDir[0], 0, WCount - 1, @WDir[0], 0, WCount - 1);
+          StepNorm := Sqrt(StepNorm);
+          ENew := MLPError(Network, XY, NPoints) + 0.5 * Decay * XNorm2;
+          if AP_FP_Less(StepNorm, LMStepTol * (1 + Sqrt(XNorm2))) then
+            begin
+              Break;
+            end;
+          if AP_FP_Greater(ENew, E) then
+            begin
+              Lambda := Lambda * LambdaUp * Nu;
+              Nu := Nu * 2;
+              Continue;
+            end;
+
+          //
+          // Optimize using inv(cholesky(H)) as preconditioner
+          //
+          RMatrixTRInverse(HMod, WCount, True, False, InvInfo, InvRep);
+          if InvInfo <= 0 then
+            begin
+
+              //
+              // if matrix can't be inverted then exit with errors
+              // TODO: make WCount steps in direction suggested by HMod
+              //
+              Info := -9;
+              Exit;
+            end;
+          APVMove(@WBase[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+          I := 0;
+          while I <= WCount - 1 do
+            begin
+              WT[I] := 0;
+              Inc(I);
+            end;
+          MinLBFGSCreateX(WCount, WCount, WT, 1, State);
+          MinLBFGSSetCond(State, 0, 0, 0, 5);
+          while MinLBFGSIteration(State) do
+            begin
+
+              //
+              // gradient
+              //
+              I := 0;
+              while I <= WCount - 1 do
+                begin
+                  V := APVDotProduct(@State.X[0], I, WCount - 1, @HMod[I][0], I, WCount - 1);
+                  Network.Weights[I] := WBase[I] + V;
+                  Inc(I);
+                end;
+              MLPGradBatch(Network, XY, NPoints, State.F, G);
+              I := 0;
+              while I <= WCount - 1 do
+                begin
+                  State.G[I] := 0;
+                  Inc(I);
+                end;
+              I := 0;
+              while I <= WCount - 1 do
+                begin
+                  V := G[I];
+                  APVAdd(@State.G[0], I, WCount - 1, @HMod[I][0], I, WCount - 1, V);
+                  Inc(I);
+                end;
+
+              //
+              // weight decay
+              // grad(x'*x) = A'*(x0+A*t)
+              //
+              V := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+              State.F := State.F + 0.5 * Decay * V;
+              I := 0;
+              while I <= WCount - 1 do
+                begin
+                  V := Decay * Network.Weights[I];
+                  APVAdd(@State.G[0], I, WCount - 1, @HMod[I][0], I, WCount - 1, V);
+                  Inc(I);
+                end;
+
+              //
+              // next iteration
+              //
+              Rep.NGrad := Rep.NGrad + 1;
+            end;
+          MinLBFGSResults(State, WT, InternalRep);
+
+          //
+          // Accept new position.
+          // Calculate Hessian
+          //
+          I := 0;
+          while I <= WCount - 1 do
+            begin
+              V := APVDotProduct(@WT[0], I, WCount - 1, @HMod[I][0], I, WCount - 1);
+              Network.Weights[I] := WBase[I] + V;
+              Inc(I);
+            end;
+          MLPHessianBatch(Network, XY, NPoints, E, G, H);
+          V := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+          E := E + 0.5 * Decay * V;
+          APVAdd(@G[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1, Decay);
+          K := 0;
+          while K <= WCount - 1 do
+            begin
+              H[K, K] := H[K, K] + Decay;
+              Inc(K);
+            end;
+          Rep.NHess := Rep.NHess + 1;
+
+          //
+          // Update lambda
+          //
+          Lambda := Lambda * LambdaDown;
+          Nu := 2;
+        end;
+
+      //
+      // update WBest
+      //
+      V := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+      E := 0.5 * Decay * V + MLPError(Network, XY, NPoints);
+      if AP_FP_Less(E, EBest) then
+        begin
+          EBest := E;
+          APVMove(@WBest[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+        end;
+      Inc(Pass);
+    end;
+
+  //
+  // copy WBest to output
+  //
+  APVMove(@Network.Weights[0], 0, WCount - 1, @WBest[0], 0, WCount - 1);
+end;
+
+(* ************************************************************************
+  Neural network training  using  modified  Levenberg-Marquardt  with  exact
+  Hessian calculation and regularization. Subroutine trains  neural  network
+  with restarts from random positions. Algorithm is well  suited  for  small
+  and medium scale problems (hundreds of weights).
+
+  INPUT PARAMETERS:
+  Network     -   neural network with initialized geometry
+  XY          -   training set
+  NPoints     -   training set size
+  Decay       -   weight decay constant, >=0.001
+  Decay term 'Decay*||Weights||^2' is added to error
+  function.
+  If you don't know what Decay to choose, use 0.001.
+  Restarts    -   number of restarts from random position, >0.
+  If you don't know what Restarts to choose, use 2.
+
+  OUTPUT PARAMETERS:
+  Network     -   trained neural network.
+  Info        -   return code:
+  * -9, if internal matrix inverse subroutine failed
   * -2, if there is a point with class number outside of [0..NOut-1].
   * -1, if wrong parameters specified (NPoints<0, Restarts<1).
   *  2, if task has been solved.
   Rep         -   training report
   ************************************************************************ *)
-procedure MLPTrainLM(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
+procedure MLPTrainLM_MT(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
   NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
   var Info: TLearnInteger; var Rep: TMLPReport);
 var
@@ -133,7 +499,7 @@ var
   RepPtr : ^TMLPReport;
   InfoPtr: ^TLearnInteger;
 
-  NetworkPtr: ^TMultiLayerPerceptron;
+  NetworkPtr: PMultiLayerPerceptron;
 
   {$IFDEF FPC}
   procedure Nested_ParallelFor(Pass: PtrInt; Data: Pointer;
@@ -167,12 +533,12 @@ var
     K          : TLearnInteger;
   begin
 
-    SetLength(WT, WCount (* - 1 + 1 // optimized compler *) );
-    SetLength(WDir, WCount (* - 1 + 1 // optimized compler *) );
-    SetLength(WBase, WCount (* - 1 + 1 // optimized compler *) );
-    SetLength(HMod, WCount (* - 1 + 1 // optimized compler *) , WCount (* - 1 + 1 // optimized compler *) );
-    SetLength(H, WCount (* - 1 + 1 // optimized compler *) , WCount (* - 1 + 1 // optimized compler *) );
-    SetLength(G, WCount (* - 1 + 1 // optimized compler *) );
+    SetLength(WT, WCount (* - 1 + 1 // optimized compiler *) );
+    SetLength(WDir, WCount (* - 1 + 1 // optimized compiler *) );
+    SetLength(WBase, WCount (* - 1 + 1 // optimized compiler *) );
+    SetLength(HMod, WCount (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
+    SetLength(H, WCount (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
+    SetLength(G, WCount (* - 1 + 1 // optimized compiler *) );
 
     MLPCopy(NetworkPtr^, NetworkCopy);
     //
@@ -471,7 +837,7 @@ begin
   // Prepare task and network. Allocate space.
   //
   MLPInitPreprocessor(Network, XY, NPoints);
-  SetLength(WBest, WCount (* - 1 + 1 // optimized compler *) );
+  SetLength(WBest, WCount (* - 1 + 1 // optimized compiler *) );
   EBest := MaxRealNumber;
 
   //
@@ -515,12 +881,12 @@ begin
       K: TLearnInteger;
     begin
 
-      SetLength(WT, WCount (* - 1 + 1 // optimized compler *) );
-      SetLength(WDir, WCount (* - 1 + 1 // optimized compler *) );
-      SetLength(WBase, WCount (* - 1 + 1 // optimized compler *) );
-      SetLength(HMod, WCount (* - 1 + 1 // optimized compler *) , WCount (* - 1 + 1 // optimized compler *) );
-      SetLength(H, WCount (* - 1 + 1 // optimized compler *) , WCount (* - 1 + 1 // optimized compler *) );
-      SetLength(G, WCount (* - 1 + 1 // optimized compler *) );
+      SetLength(WT, WCount (* - 1 + 1 // optimized compiler *) );
+      SetLength(WDir, WCount (* - 1 + 1 // optimized compiler *) );
+      SetLength(WBase, WCount (* - 1 + 1 // optimized compiler *) );
+      SetLength(HMod, WCount (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
+      SetLength(H, WCount (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
+      SetLength(G, WCount (* - 1 + 1 // optimized compiler *) );
 
       MLPCopy(NetworkPtr^, NetworkCopy);
       //
@@ -869,8 +1235,8 @@ begin
   // Prepare
   //
   MLPInitPreprocessor(Network, XY, NPoints);
-  SetLength(W, WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(WBest, WCount (* - 1 + 1 // optimized compler *) );
+  SetLength(W, WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(WBest, WCount (* - 1 + 1 // optimized compiler *) );
   EBest := MaxRealNumber;
 
   //
@@ -939,7 +1305,7 @@ var
   EBest : TLearnFloat;
 
   zLock       : TCriticalSection;
-  NetworkPtr  : ^TMultiLayerPerceptron;
+  NetworkPtr  : PMultiLayerPerceptron;
   RepCopy     : TMLPReport;
   zProcessData: PMLPProcessData;
 
@@ -954,7 +1320,7 @@ var
     InternalRep: TMinLBFGSReport;
     NetworkCopy: TMultiLayerPerceptron;
   begin
-    SetLength(W, WCount (* - 1 + 1 // optimized compler *) );
+    SetLength(W, WCount (* - 1 + 1 // optimized compiler *) );
     MLPCopy(NetworkPtr^, NetworkCopy);
 
     //
@@ -966,14 +1332,11 @@ var
     MinLBFGSSetCond(State, 0.0, 0.0, WStep, MaxIts);
     while MinLBFGSIteration(State) do
       begin
-        APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0,
-          WCount - 1);
+        APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0, WCount - 1);
         MLPGradNBatch(NetworkCopy, XY, NPoints, State.F, State.G);
-        V := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-          @NetworkCopy.Weights[0], 0, WCount - 1);
+        V := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
         State.F := State.F + 0.5 * Decay * V;
-        APVAdd(@State.G[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
-          WCount - 1, Decay);
+        APVAdd(@State.G[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
         RepCopy.NGrad := RepCopy.NGrad + 1;
         if zProcessData^.IsTerminated then
             Break;
@@ -989,8 +1352,7 @@ var
     if AP_FP_Less(E, EBest) then
       begin
         zLock.Enter;
-        APVMove(@WBest[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
-        EBest := E;
+        APVMove(@WBest[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1); EBest := E;
         zProcessData^.EBest := EBest;
         zLock.Leave;
       end;
@@ -1040,7 +1402,7 @@ begin
   // Prepare
   //
   MLPInitPreprocessor(Network, XY, NPoints);
-  SetLength(WBest, WCount (* - 1 + 1 // optimized compler *) );
+  SetLength(WBest, WCount (* - 1 + 1 // optimized compiler *) );
   EBest := MaxRealNumber;
   New(zProcessData);
   zProcessData^.TotalRestarts := Restarts;
@@ -1060,8 +1422,7 @@ begin
 
   try
     {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 1,
-      PtrInt(Restarts));
+    ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 1, PtrInt(Restarts));
     {$ELSE}
     TParallel.For(1, Restarts, procedure(Pass: TLearnInteger)
       var
@@ -1072,7 +1433,7 @@ begin
         InternalRep: TMinLBFGSReport;
         NetworkCopy: TMultiLayerPerceptron;
       begin
-        SetLength(W, WCount (* - 1 + 1 // optimized compler *) );
+        SetLength(W, WCount (* - 1 + 1 // optimized compiler *) );
         MLPCopy(NetworkPtr^, NetworkCopy);
 
         //
@@ -1084,14 +1445,11 @@ begin
         MinLBFGSSetCond(State, 0.0, 0.0, WStep, MaxIts);
         while MinLBFGSIteration(State) do
           begin
-            APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0,
-              WCount - 1);
+            APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0, WCount - 1);
             MLPGradNBatch(NetworkCopy, XY, NPoints, State.F, State.G);
-            V := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-              @NetworkCopy.Weights[0], 0, WCount - 1);
+            V := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
             State.F := State.F + 0.5 * Decay * V;
-            APVAdd(@State.G[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
-              WCount - 1, Decay);
+            APVAdd(@State.G[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
             RepCopy.NGrad := RepCopy.NGrad + 1;
             if zProcessData.IsTerminated then
                 Break;
@@ -1107,8 +1465,7 @@ begin
         if AP_FP_Less(E, EBest) then
           begin
             zLock.Enter;
-            APVMove(@WBest[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
-              WCount - 1);
+            APVMove(@WBest[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
             EBest := E;
             zProcessData.EBest := EBest;
             zLock.Leave;
@@ -1151,7 +1508,7 @@ var
   EBest : TLearnFloat;
 
   zLock     : TCriticalSection;
-  NetworkPtr: ^TMultiLayerPerceptron;
+  NetworkPtr: PMultiLayerPerceptron;
   RepCopy   : TMLPReport;
   {$IFDEF FPC}
   procedure Nested_ParallelFor(Pass: PtrInt; Data: Pointer;
@@ -1170,7 +1527,7 @@ var
     try
       Decay := 1;
       Iteration := 0;
-      SetLength(W, WCount (* - 1 + 1 // optimized compler *) );
+      SetLength(W, WCount (* - 1 + 1 // optimized compiler *) );
       MLPCopy(NetworkPtr^, NetworkCopy);
 
       //
@@ -1276,7 +1633,7 @@ begin
   // Prepare
   //
   MLPInitPreprocessor(Network, XY, NPoints);
-  SetLength(WBest, WCount (* - 1 + 1 // optimized compler *) );
+  SetLength(WBest, WCount (* - 1 + 1 // optimized compiler *) );
   EBest := MaxRealNumber;
 
   //
@@ -1308,7 +1665,7 @@ begin
       try
         Decay := 1;
         Iteration := 0;
-        SetLength(W, WCount (* - 1 + 1 // optimized compler *) );
+        SetLength(W, WCount (* - 1 + 1 // optimized compiler *) );
         MLPCopy(NetworkPtr^, NetworkCopy);
 
         //
@@ -1505,10 +1862,10 @@ begin
   // K-fold out cross-validation.
   // First, estimate generalization error
   //
-  SetLength(TestSet, NPoints (* - 1 + 1 // optimized compler *) , RowLen (* - 1 + 1 // optimized compler *) );
-  SetLength(CVSet, NPoints (* - 1 + 1 // optimized compler *) , RowLen (* - 1 + 1 // optimized compler *) );
-  SetLength(X, NIn (* - 1 + 1 // optimized compler *) );
-  SetLength(Y, NOut (* - 1 + 1 // optimized compler *) );
+  SetLength(TestSet, NPoints (* - 1 + 1 // optimized compiler *) , RowLen (* - 1 + 1 // optimized compiler *) );
+  SetLength(CVSet, NPoints (* - 1 + 1 // optimized compiler *) , RowLen (* - 1 + 1 // optimized compiler *) );
+  SetLength(X, NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(Y, NOut (* - 1 + 1 // optimized compiler *) );
   MLPKFoldSplit(XY, NPoints, NClasses, FoldsCount, False, Folds);
   CVRep.RelCLSError := 0;
   CVRep.AvgCE := 0;
@@ -1674,7 +2031,7 @@ begin
   //
   // Folds
   //
-  SetLength(Folds, NPoints (* - 1 + 1 // optimized compler *) );
+  SetLength(Folds, NPoints (* - 1 + 1 // optimized compiler *) );
   I := 0;
   while I <= NPoints - 1 do
     begin

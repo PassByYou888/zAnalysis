@@ -18,14 +18,23 @@ uses CoreClasses;
 
 
 type
-  TDynamicIndexArray = array of NativeInt;
+  TDynamicIndexArray = array of Integer;
   PDynamicIndexArray = ^TDynamicIndexArray;
-  TKMFloat           = Double;
-  PKMFloat           = ^TKMFloat;
-  TKMIntegerArray    = TDynamicIndexArray;
-  TKMFloatArray      = array of TKMFloat;
-  TKMBoolArray       = array of Boolean;
-  TKMFloat2DArray    = array of array of TKMFloat;
+
+  TKMFloat = Double;
+  PKMFloat = ^TKMFloat;
+
+  TKMIntegerArray = TDynamicIndexArray;
+  PKMIntegerArray = PDynamicIndexArray;
+
+  TKMFloatArray = array of TKMFloat;
+  PKMFloatArray = ^TKMFloatArray;
+
+  TKMBoolArray = array of Boolean;
+  PKMBoolArray = ^TKMBoolArray;
+
+  TKMFloat2DArray = array of array of TKMFloat;
+  PKMFloat2DArray = ^TKMFloat2DArray;
 
   (*
     k-means++ clusterization

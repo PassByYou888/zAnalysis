@@ -1,5 +1,5 @@
 { ****************************************************************************** }
-{ * machine Learn support, writen by QQ 600585@qq.com                          * }
+{ * Neural networks ensemble support, by QQ 600585@qq.com                      * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
 { * https://github.com/PassByYou888/zExpression                                * }
@@ -82,11 +82,11 @@ function MLPERMSError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; 
 function MLPEAvgError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPEBaggingLM(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
+procedure MLPEBaggingLM(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
   NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
   var Info: TLearnInteger; var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPEBaggingLBFGS(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
+procedure MLPEBaggingLBFGS(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
   NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
   WStep: TLearnFloat; MaxIts: TLearnInteger; var Info: TLearnInteger;
   var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -99,7 +99,7 @@ const
 procedure MLPEAllErrors(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
   NPoints: TLearnInteger; var RelCls: TLearnFloat; var AvgCE: TLearnFloat;
   var RMS: TLearnFloat; var Avg: TLearnFloat; var AvgRel: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPEBaggingInternal(var Ensemble: TMLPEnsemble;
+procedure MLPEBaggingInternal(const MultiThread: Boolean; var Ensemble: TMLPEnsemble;
   const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
   Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
   LMAlgorithm: Boolean; var Info: TLearnInteger; var Rep: TMLPReport;
@@ -433,7 +433,7 @@ begin
   //
   // structure information
   //
-  SetLength(Ensemble.StructInfo, Network.StructInfo[0] (* - 1 + 1 // optimized compler *) );
+  SetLength(Ensemble.StructInfo, Network.StructInfo[0] (* - 1 + 1 // optimized compiler *) );
   I := 0;
   while I <= Network.StructInfo[0] - 1 do
     begin
@@ -444,9 +444,9 @@ begin
   //
   // weights, means, sigmas
   //
-  SetLength(Ensemble.Weights, EnsembleSize * Ensemble.WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.ColumnMeans, EnsembleSize * CCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.ColumnSigmas, EnsembleSize * CCount (* - 1 + 1 // optimized compler *) );
+  SetLength(Ensemble.Weights, EnsembleSize * Ensemble.WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.ColumnMeans, EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.ColumnSigmas, EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
   I := 0;
   while I <= EnsembleSize * Ensemble.WCount - 1 do
     begin
@@ -471,12 +471,12 @@ begin
   //
   // temporaries, internal buffers
   //
-  SetLength(Ensemble.TmpWeights, Ensemble.WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.TmpMeans, CCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.TmpSigmas, CCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.Neurons, Ensemble.StructInfo[MLPNTotalOffset] (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.DFDNET, Ensemble.StructInfo[MLPNTotalOffset] (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.Y, Ensemble.NOut (* - 1 + 1 // optimized compler *) );
+  SetLength(Ensemble.TmpWeights, Ensemble.WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.TmpMeans, CCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.TmpSigmas, CCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.Neurons, Ensemble.StructInfo[MLPNTotalOffset] (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.DFDNET, Ensemble.StructInfo[MLPNTotalOffset] (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.Y, Ensemble.NOut (* - 1 + 1 // optimized compiler *) );
 end;
 
 (* ************************************************************************
@@ -513,18 +513,18 @@ begin
   //
   // Allocate space
   //
-  SetLength(Ensemble2.StructInfo, SSize (* - 1 + 1 // optimized compler *) );
+  SetLength(Ensemble2.StructInfo, SSize (* - 1 + 1 // optimized compiler *) );
   SetLength(Ensemble2.Weights, Ensemble1.EnsembleSize *
-    Ensemble1.WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble2.ColumnMeans, Ensemble1.EnsembleSize * CCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble2.ColumnSigmas, Ensemble1.EnsembleSize * CCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble2.TmpWeights, Ensemble1.WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble2.TmpMeans, CCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble2.TmpSigmas, CCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble2.SerializedMLP, Ensemble1.SerializedLen (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble2.Neurons, NTotal (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble2.DFDNET, NTotal (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble2.Y, Ensemble1.NOut (* - 1 + 1 // optimized compler *) );
+    Ensemble1.WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble2.ColumnMeans, Ensemble1.EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble2.ColumnSigmas, Ensemble1.EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble2.TmpWeights, Ensemble1.WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble2.TmpMeans, CCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble2.TmpSigmas, CCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble2.SerializedMLP, Ensemble1.SerializedLen (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble2.Neurons, NTotal (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble2.DFDNET, NTotal (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble2.Y, Ensemble1.NOut (* - 1 + 1 // optimized compiler *) );
 
   //
   // Copy
@@ -608,7 +608,7 @@ begin
   // [..]    ColumnMeans
   // [..]    ColumnSigmas
   //
-  SetLength(RA, RLen (* - 1 + 1 // optimized compler *) );
+  SetLength(RA, RLen (* - 1 + 1 // optimized compiler *) );
   RA[0] := RLen;
   RA[1] := MLPEVNum;
   RA[2] := Ensemble.EnsembleSize;
@@ -697,17 +697,17 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(Ensemble.StructInfo, SSize (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.Weights, Ensemble.EnsembleSize * Ensemble.WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.ColumnMeans, Ensemble.EnsembleSize * CCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.ColumnSigmas, Ensemble.EnsembleSize * CCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.TmpWeights, Ensemble.WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.TmpMeans, CCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.TmpSigmas, CCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.Neurons, NTotal (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.DFDNET, NTotal (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.SerializedMLP, Ensemble.SerializedLen (* - 1 + 1 // optimized compler *) );
-  SetLength(Ensemble.Y, Ensemble.NOut (* - 1 + 1 // optimized compler *) );
+  SetLength(Ensemble.StructInfo, SSize (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.Weights, Ensemble.EnsembleSize * Ensemble.WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.ColumnMeans, Ensemble.EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.ColumnSigmas, Ensemble.EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.TmpWeights, Ensemble.WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.TmpMeans, CCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.TmpSigmas, CCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.Neurons, NTotal (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.DFDNET, NTotal (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.SerializedMLP, Ensemble.SerializedLen (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.Y, Ensemble.NOut (* - 1 + 1 // optimized compiler *) );
 
   //
   // load data
@@ -956,6 +956,7 @@ end;
   Modified Levenberg-Marquardt algorithm is used as base training method.
 
   INPUT PARAMETERS:
+  MultiThread -   parallel train
   Ensemble    -   model with initialized geometry
   XY          -   training set
   NPoints     -   training set size
@@ -971,11 +972,11 @@ end;
   Rep         -   training report.
   OOBErrors   -   out-of-bag generalization error estimate
   ************************************************************************ *)
-procedure MLPEBaggingLM(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
+procedure MLPEBaggingLM(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
   NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
   var Info: TLearnInteger; var Rep: TMLPReport; var OOBErrors: TMLPCVReport);
 begin
-  MLPEBaggingInternal(Ensemble, XY, NPoints, Decay, Restarts, 0.0, 0, True,
+  MLPEBaggingInternal(MultiThread, Ensemble, XY, NPoints, Decay, Restarts, 0.0, 0, True,
     Info, Rep, OOBErrors);
 end;
 
@@ -984,6 +985,7 @@ end;
   L-BFGS algorithm is used as base training method.
 
   INPUT PARAMETERS:
+  MultiThread -   parallel train
   Ensemble    -   model with initialized geometry
   XY          -   training set
   NPoints     -   training set size
@@ -1002,12 +1004,12 @@ end;
   Rep         -   training report.
   OOBErrors   -   out-of-bag generalization error estimate
   ************************************************************************ *)
-procedure MLPEBaggingLBFGS(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
+procedure MLPEBaggingLBFGS(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
   NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
   WStep: TLearnFloat; MaxIts: TLearnInteger; var Info: TLearnInteger;
   var Rep: TMLPReport; var OOBErrors: TMLPCVReport);
 begin
-  MLPEBaggingInternal(Ensemble, XY, NPoints, Decay, Restarts, WStep, MaxIts,
+  MLPEBaggingInternal(MultiThread, Ensemble, XY, NPoints, Decay, Restarts, WStep, MaxIts,
     False, Info, Rep, OOBErrors);
 end;
 
@@ -1024,8 +1026,8 @@ var
   Y    : TLearnFloatArray;
   DY   : TLearnFloatArray;
 begin
-  SetLength(WorkX, Ensemble.NIn (* - 1 + 1 // optimized compler *) );
-  SetLength(Y, Ensemble.NOut (* - 1 + 1 // optimized compler *) );
+  SetLength(WorkX, Ensemble.NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(Y, Ensemble.NOut (* - 1 + 1 // optimized compiler *) );
   if Ensemble.IsSoftmax then
     begin
       SetLength(DY, 0 + 1);
@@ -1033,7 +1035,7 @@ begin
     end
   else
     begin
-      SetLength(DY, Ensemble.NOut (* - 1 + 1 // optimized compler *) );
+      SetLength(DY, Ensemble.NOut (* - 1 + 1 // optimized compiler *) );
       DSErrAllocate(-Ensemble.NOut, Buf);
     end;
   I := 0;
@@ -1064,7 +1066,7 @@ end;
 (* ************************************************************************
   Internal bagging subroutine.
   ************************************************************************ *)
-procedure MLPEBaggingInternal(var Ensemble: TMLPEnsemble;
+procedure MLPEBaggingInternal(const MultiThread: Boolean; var Ensemble: TMLPEnsemble;
   const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
   Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
   LMAlgorithm: Boolean; var Info: TLearnInteger; var Rep: TMLPReport;
@@ -1145,19 +1147,19 @@ begin
       CCnt := NIn + NOut;
       PCnt := NIn + NOut;
     end;
-  SetLength(XYS, NPoints (* - 1 + 1 // optimized compler *) , CCnt (* - 1 + 1 // optimized compler *) );
-  SetLength(S, NPoints (* - 1 + 1 // optimized compler *) );
-  SetLength(OOBBuf, NPoints (* - 1 + 1 // optimized compler *) , NOut (* - 1 + 1 // optimized compler *) );
-  SetLength(OOBCntBuf, NPoints (* - 1 + 1 // optimized compler *) );
-  SetLength(X, NIn (* - 1 + 1 // optimized compler *) );
-  SetLength(Y, NOut (* - 1 + 1 // optimized compler *) );
+  SetLength(XYS, NPoints (* - 1 + 1 // optimized compiler *) , CCnt (* - 1 + 1 // optimized compiler *) );
+  SetLength(S, NPoints (* - 1 + 1 // optimized compiler *) );
+  SetLength(OOBBuf, NPoints (* - 1 + 1 // optimized compiler *) , NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(OOBCntBuf, NPoints (* - 1 + 1 // optimized compiler *) );
+  SetLength(X, NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(Y, NOut (* - 1 + 1 // optimized compiler *) );
   if Ensemble.IsSoftmax then
     begin
       SetLength(DY, 0 + 1);
     end
   else
     begin
-      SetLength(DY, NOut (* - 1 + 1 // optimized compler *) );
+      SetLength(DY, NOut (* - 1 + 1 // optimized compiler *) );
     end;
   I := 0;
   while I <= NPoints - 1 do
@@ -1208,13 +1210,19 @@ begin
       //
       if LMAlgorithm then
         begin
-          MLPTrainLM(Network, XYS, NPoints, Decay, Restarts, Info, TmpRep);
+          if MultiThread then
+              MLPTrainLM_MT(Network, XYS, NPoints, Decay, Restarts, Info, TmpRep)
+          else
+              MLPTrainLM(Network, XYS, NPoints, Decay, Restarts, Info, TmpRep);
         end
       else
         begin
           IsTerminated := False;
-          MLPTrainLBFGS(Network, XYS, NPoints, Decay, Restarts, WStep, MaxIts, Info,
-            TmpRep, @IsTerminated, EBest);
+
+          if MultiThread then
+              MLPTrainLBFGS_MT(Network, XYS, NPoints, Decay, Restarts, WStep, MaxIts, Info, TmpRep)
+          else
+              MLPTrainLBFGS(Network, XYS, NPoints, Decay, Restarts, WStep, MaxIts, Info, TmpRep, @IsTerminated, EBest);
         end;
       if Info < 0 then
         begin

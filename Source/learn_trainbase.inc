@@ -1,5 +1,5 @@
 { ****************************************************************************** }
-{ * machine Learn support, writen by QQ 600585@qq.com                          * }
+{ * neural network support, by QQ 600585@qq.com                                * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
 { * https://github.com/PassByYou888/zExpression                                * }
@@ -130,10 +130,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // Layers
@@ -167,10 +167,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // Layers
@@ -207,10 +207,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // Layers
@@ -268,10 +268,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // Layers
@@ -326,10 +326,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // Layers
@@ -386,10 +386,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // Layers
@@ -443,10 +443,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // Layers
@@ -493,10 +493,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // Layers
@@ -545,10 +545,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // Layers
@@ -602,10 +602,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // Layers
@@ -641,10 +641,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // Layers
@@ -683,10 +683,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LSizes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LTypes, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LConnLast, LayersCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // Layers
@@ -756,25 +756,25 @@ begin
   //
   // Allocate space
   //
-  SetLength(Network2.StructInfo, SSize (* - 1 + 1 // optimized compler *) );
-  SetLength(Network2.Weights, WCount (* - 1 + 1 // optimized compler *) );
+  SetLength(Network2.StructInfo, SSize (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network2.Weights, WCount (* - 1 + 1 // optimized compiler *) );
   if MLPIsSoftmax(Network1) then
     begin
-      SetLength(Network2.ColumnMeans, NIn (* - 1 + 1 // optimized compler *) );
-      SetLength(Network2.ColumnSigmas, NIn (* - 1 + 1 // optimized compler *) );
+      SetLength(Network2.ColumnMeans, NIn (* - 1 + 1 // optimized compiler *) );
+      SetLength(Network2.ColumnSigmas, NIn (* - 1 + 1 // optimized compiler *) );
     end
   else
     begin
-      SetLength(Network2.ColumnMeans, NIn + NOut (* - 1 + 1 // optimized compler *) );
-      SetLength(Network2.ColumnSigmas, NIn + NOut (* - 1 + 1 // optimized compler *) );
+      SetLength(Network2.ColumnMeans, NIn + NOut (* - 1 + 1 // optimized compiler *) );
+      SetLength(Network2.ColumnSigmas, NIn + NOut (* - 1 + 1 // optimized compiler *) );
     end;
-  SetLength(Network2.Neurons, NTotal (* - 1 + 1 // optimized compler *) );
-  SetLength(Network2.Chunks, 3 * NTotal + 1, ChunkSize (* - 1 + 1 // optimized compler *) );
-  SetLength(Network2.NWBuf, Max(WCount, 2 * NOut) (* - 1 + 1 // optimized compler *) );
-  SetLength(Network2.DFDNET, NTotal (* - 1 + 1 // optimized compler *) );
-  SetLength(Network2.X, NIn (* - 1 + 1 // optimized compler *) );
-  SetLength(Network2.Y, NOut (* - 1 + 1 // optimized compler *) );
-  SetLength(Network2.DError, NTotal (* - 1 + 1 // optimized compler *) );
+  SetLength(Network2.Neurons, NTotal (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network2.Chunks, 3 * NTotal + 1, ChunkSize (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network2.NWBuf, Max(WCount, 2 * NOut) (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network2.DFDNET, NTotal (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network2.X, NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network2.Y, NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network2.DError, NTotal (* - 1 + 1 // optimized compiler *) );
 
   //
   // Copy
@@ -864,7 +864,7 @@ begin
   // SigmaLen    ColumnSigmas
   //
   RLen := 3 + SSize + WCount + 2 * SigmaLen;
-  SetLength(RA, RLen (* - 1 + 1 // optimized compler *) );
+  SetLength(RA, RLen (* - 1 + 1 // optimized compiler *) );
   RA[0] := RLen;
   RA[1] := MLPVNum;
   RA[2] := SSize;
@@ -914,7 +914,7 @@ begin
   //
   Offs := 3;
   SSize := Round(RA[2]);
-  SetLength(Network.StructInfo, SSize (* - 1 + 1 // optimized compler *) );
+  SetLength(Network.StructInfo, SSize (* - 1 + 1 // optimized compiler *) );
   I := 0;
   while I <= SSize - 1 do
     begin
@@ -943,16 +943,16 @@ begin
   //
   // Allocate space for other fields
   //
-  SetLength(Network.Weights, WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.ColumnMeans, SigmaLen (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.ColumnSigmas, SigmaLen (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.Neurons, NTotal (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.Chunks, 3 * NTotal + 1, ChunkSize (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.NWBuf, Max(WCount, 2 * NOut) (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.DFDNET, NTotal (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.X, NIn (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.Y, NOut (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.DError, NTotal (* - 1 + 1 // optimized compler *) );
+  SetLength(Network.Weights, WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.ColumnMeans, SigmaLen (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.ColumnSigmas, SigmaLen (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.Neurons, NTotal (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.Chunks, 3 * NTotal + 1, ChunkSize (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.NWBuf, Max(WCount, 2 * NOut) (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.DFDNET, NTotal (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.X, NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.Y, NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.DError, NTotal (* - 1 + 1 // optimized compiler *) );
 
   //
   // Copy parameters from RA
@@ -1364,8 +1364,8 @@ var
   NMAX  : TLearnInteger;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
-  SetLength(WorkX, NIn (* - 1 + 1 // optimized compler *) );
-  SetLength(WorkY, NOut (* - 1 + 1 // optimized compler *) );
+  SetLength(WorkX, NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(WorkY, NOut (* - 1 + 1 // optimized compiler *) );
   Result := 0;
   I := 0;
   while I <= SSize - 1 do
@@ -2103,8 +2103,8 @@ begin
   //
   // Build network geometry
   //
-  SetLength(LNFirst, LayersCount (* - 1 + 1 // optimized compler *) );
-  SetLength(LNSyn, LayersCount (* - 1 + 1 // optimized compler *) );
+  SetLength(LNFirst, LayersCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(LNSyn, LayersCount (* - 1 + 1 // optimized compiler *) );
   NTotal := 0;
   WCount := 0;
   I := 0;
@@ -2151,25 +2151,25 @@ begin
   //
   // Allocate
   //
-  SetLength(Network.StructInfo, SSize (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.Weights, WCount (* - 1 + 1 // optimized compler *) );
+  SetLength(Network.StructInfo, SSize (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.Weights, WCount (* - 1 + 1 // optimized compiler *) );
   if IsClsNet then
     begin
-      SetLength(Network.ColumnMeans, NIn (* - 1 + 1 // optimized compler *) );
-      SetLength(Network.ColumnSigmas, NIn (* - 1 + 1 // optimized compler *) );
+      SetLength(Network.ColumnMeans, NIn (* - 1 + 1 // optimized compiler *) );
+      SetLength(Network.ColumnSigmas, NIn (* - 1 + 1 // optimized compiler *) );
     end
   else
     begin
-      SetLength(Network.ColumnMeans, NIn + NOut (* - 1 + 1 // optimized compler *) );
-      SetLength(Network.ColumnSigmas, NIn + NOut (* - 1 + 1 // optimized compler *) );
+      SetLength(Network.ColumnMeans, NIn + NOut (* - 1 + 1 // optimized compiler *) );
+      SetLength(Network.ColumnSigmas, NIn + NOut (* - 1 + 1 // optimized compiler *) );
     end;
-  SetLength(Network.Neurons, NTotal (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.Chunks, 3 * NTotal + 1, ChunkSize (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.NWBuf, Max(WCount, 2 * NOut) (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.DFDNET, NTotal (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.X, NIn (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.Y, NOut (* - 1 + 1 // optimized compler *) );
-  SetLength(Network.DError, NTotal (* - 1 + 1 // optimized compler *) );
+  SetLength(Network.Neurons, NTotal (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.Chunks, 3 * NTotal + 1, ChunkSize (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.NWBuf, Max(WCount, 2 * NOut) (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.DFDNET, NTotal (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.X, NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.Y, NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.DError, NTotal (* - 1 + 1 // optimized compiler *) );
 
   //
   // Fill structure: global info
@@ -2385,14 +2385,14 @@ begin
   //
   // Prepare
   //
-  SetLength(X, NIn (* - 1 + 1 // optimized compler *) );
-  SetLength(DesiredY, NOut (* - 1 + 1 // optimized compler *) );
-  SetLength(Zeros, WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(GT, WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(RX, NTotal + NOut (* - 1 + 1 // optimized compler *) , WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(RY, NTotal + NOut (* - 1 + 1 // optimized compler *) , WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(RDX, NTotal + NOut (* - 1 + 1 // optimized compler *) , WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(RDY, NTotal + NOut (* - 1 + 1 // optimized compler *) , WCount (* - 1 + 1 // optimized compler *) );
+  SetLength(X, NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(DesiredY, NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(Zeros, WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(GT, WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(RX, NTotal + NOut (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(RY, NTotal + NOut (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(RDX, NTotal + NOut (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(RDY, NTotal + NOut (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
   E := 0;
   I := 0;
   while I <= WCount - 1 do

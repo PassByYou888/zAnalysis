@@ -17,18 +17,39 @@ uses CoreClasses, UnicodeMixedLib, PascalStrings, KDTree;
 
 
 type
-  TLearnFloat      = TKDTree.TKDTree_VecType;
-  PLearnFloat      = TKDTree.PKDTree_VecType;
-  TLearnFloatArray = TKDTree.TKDTree_Vec;
-  PLearnFloatArray = TKDTree.PKDTree_Vec;
+  TLearnFloat        = TKDTree.TKDTree_VecType;
+  PLearnFloat        = TKDTree.PKDTree_VecType;
+  TLearnFloatArray   = TKDTree.TKDTree_Vec;
+  PLearnFloatArray   = TKDTree.PKDTree_Vec;
+  TLearnFloat2DArray = TKDTree.TKDTree_DynamicVecBuffer;
+  PLearnFloat2DArray = TKDTree.PKDTree_DynamicVecBuffer;
 
-  TLearnType = (ltKDT, ltLM, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod, ltLMEnsemble, ltLBFGSEnsemble);
+  TLearnVector = TLearnFloatArray;
+  PLearnVector = PLearnFloatArray;
+
+  TLearnMatrix = TLearnFloat2DArray;
+  PLearnMatrix = PLearnFloat2DArray;
+
+  TLearnInteger = Integer;
+  PLearnInteger = ^TLearnInteger;
+
+  TLearnIntegerArray   = array of Integer;
+  PLearnIntegerArray   = ^TLearnIntegerArray;
+  TLearnInteger2DArray = array of TLearnIntegerArray;
+
+  TLearnBooleanArray   = array of Boolean;
+  PLearnBooleanArray   = ^TLearnBooleanArray;
+  TLearnBoolean2DArray = array of TLearnBooleanArray;
+
+  TLearnType = (ltKDT,
+    ltLM, ltLM_MT, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod,
+    ltLM_Ensemble, ltLM_Ensemble_MT, ltLBFGS_Ensemble, ltLBFGS_Ensemble_MT);
 
   TLearn = class;
 
-  TLearnState_Call               = procedure(const source: TLearn; const state: Boolean);
-  TLearnState_Method             = procedure(const source: TLearn; const state: Boolean) of object;
-  {$IFNDEF FPC} TLearnState_Proc = reference to procedure(const source: TLearn; const state: Boolean); {$ENDIF}
+  TLearnState_Call               = procedure(const Sender: TLearn; const state: Boolean);
+  TLearnState_Method             = procedure(const Sender: TLearn; const state: Boolean) of object;
+  {$IFNDEF FPC} TLearnState_Proc = reference to procedure(const Sender: TLearn; const state: Boolean); {$ENDIF}
 
   TLearn = class(TCoreClassInterfacedObject)
   private
@@ -39,48 +60,67 @@ type
     FLearnData          : Pointer;
     FInfo               : string;
     FIsTraining         : Boolean;
-    FThreadRuning       : Boolean;
+    FTrainThreadRuning  : Boolean;
 
     procedure KDInput(const IndexFor: NativeInt; var source: TKDTree.TKDTree_Source; const Data: Pointer);
   public
     constructor Create(const lt: TLearnType; const AInLen, AOutLen: NativeInt); virtual;
     destructor Destroy; override;
 
+    { * fixed random number * }
     property EnabledRandomNumber: Boolean read FEnabledRandomNumber write FEnabledRandomNumber;
 
+    { * clear * }
     procedure Clear;
+
+    { * parameter support * }
     function Count: NativeInt;
     property InLen: NativeInt read FInLen;
     property OutLen: NativeInt read FOutLen;
+    property Info: string read FInfo;
+    property TrainThreadRuning: Boolean read FTrainThreadRuning;
 
+    { * dynamic memory support * }
     procedure AddMemory(const f_In, f_Out: TLearnFloatArray); overload;
     procedure AddMemory(const s_In, s_Out: string); overload;
     procedure AddMemory(const s: TPascalString); overload;
+
+    { * normal train * }
     function Train(const passcount: Cardinal): Boolean; overload;
     function Train: Boolean; overload;
+    { * train with thread support * }
     procedure TrainC(const passcount: Cardinal; const OnResult: TLearnState_Call);
     procedure TrainM(const passcount: Cardinal; const OnResult: TLearnState_Method);
     {$IFNDEF FPC} procedure TrainP(const passcount: Cardinal; const OnResult: TLearnState_Proc); {$ENDIF FPC}
     procedure WaitTrain;
     //
     // result ProcessOut
-    function process(const ProcessIn: TLearnFloatArray; var ProcessOut: TLearnFloatArray): Boolean; overload;
+    function process(const ProcessIn, ProcessOut: PLearnFloatArray): Boolean; overload;
     // result max value
     function processMax(const ProcessIn: TLearnFloatArray): TLearnFloat; overload;
     // result min value
     function processMin(const ProcessIn: TLearnFloatArray): TLearnFloat; overload;
 
+    { * fast binary store support * }
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     {$IFNDEF FPC}
+    { * json store support * }
     procedure SaveToJsonStream(stream: TCoreClassStream);
     procedure LoadFromJsonStream(stream: TCoreClassStream);
     {$ENDIF FPC}
-    //
-    //
-    property Info: string read FInfo;
-    property ThreadRuning: Boolean read FThreadRuning;
+    { * Linear discriminant analysis support * }
+    class function LDA(const buff: TLearnMatrix; const NPoints, NVars, NClasses: TLearnInteger; var w: TLearnMatrix): TLearnInteger; overload;
+    class function LDA(const buff: TLearnMatrix; const NPoints, NVars, NClasses: TLearnInteger; var w: TLearnVector): TLearnInteger; overload;
+    { * Principal components analysis support * }
+    class function PCA(const buff: TLearnMatrix; const NPoints, NVars: TLearnInteger; var s2: TLearnFloatArray; var v: TLearnMatrix): TLearnInteger;
+    { * matrix multiply support * }
+    class procedure LMultiply(const M: PLearnMatrix; const sourv: PLearnVector; var output: TLearnVector; const Trans: Boolean; const Alpha, Beta: TLearnFloat); overload;
+    class procedure LMultiply(const M: TLearnMatrix; const sourv: TLearnVector; var output: TLearnVector); overload;
+    class procedure LMultiply(const M: TLearnMatrix; const sourv: TLearnVector; var output: TLearnVector; const Trans: Boolean); overload;
+    class procedure LMultiply(const M: PLearnMatrix; const sourv: PLearnVector; var output: TLearnVector; const Trans: Boolean); overload;
+    class function LMultiply(const M: TLearnMatrix; const sourv: TLearnVector; const Trans: Boolean): TLearnVector; overload;
+    class function LMultiply(const M: PLearnMatrix; const sourv: PLearnVector; const Trans: Boolean): TLearnVector; overload;
   end;
 
 implementation
@@ -94,6 +134,7 @@ uses Math,
   SyncObjs, DataFrameEngine, DoStatusIO;
 
 {$INCLUDE Learn_Base.inc}
+{$INCLUDE learn_blas.inc}
 {$INCLUDE Learn_ablas.inc}
 {$INCLUDE learn_trfac.inc}
 {$INCLUDE learn_safesolve.inc}
@@ -109,6 +150,10 @@ uses Math,
 {$INCLUDE learn_trainbase.inc}
 {$INCLUDE learn_train.inc}
 {$INCLUDE learn_trainEnsemble.inc}
+{$INCLUDE learn_schur.inc}
+{$INCLUDE learn_evd.inc}
+{$INCLUDE learn_PCA.inc}
+{$INCLUDE learn_LDA.inc}
 
 
 type
@@ -143,7 +188,7 @@ begin
   if Assigned(OnStateP) then
       OnStateP(source, Successed);
   {$ENDIF FPC}
-  source.FThreadRuning := False;
+  source.FTrainThreadRuning := False;
 end;
 
 procedure TLearn_th.Execute;
@@ -179,11 +224,11 @@ end;
 
 procedure TLearn.KDInput(const IndexFor: NativeInt; var source: TKDTree.TKDTree_Source; const Data: Pointer);
 var
-  i: Integer;
+  I: Integer;
 begin
   source.index := IndexFor;
-  for i := 0 to FInLen - 1 do
-      source.Buff[i] := PLearnFloatArray(FDataIn[IndexFor])^[i];
+  for I := 0 to FInLen - 1 do
+      source.buff[I] := PLearnFloatArray(FDataIn[IndexFor])^[I];
 end;
 
 constructor TLearn.Create(const lt: TLearnType; const AInLen, AOutLen: NativeInt);
@@ -213,13 +258,13 @@ begin
         p_k^.kdt := TKDTree.Create(FInLen);
         FLearnData := p_k;
       end;
-    ltLM, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod:
+    ltLM, ltLM_MT, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod:
       begin
         new(p_n);
         MLPCreate0(FInLen, FOutLen, p_n^);
         FLearnData := p_n;
       end;
-    ltLMEnsemble, ltLBFGSEnsemble:
+    ltLM_Ensemble, ltLM_Ensemble_MT, ltLBFGS_Ensemble, ltLBFGS_Ensemble_MT:
       begin
         new(p_e);
         MLPECreate0(FInLen, FOutLen, 10, p_e^);
@@ -229,21 +274,21 @@ begin
 
   FInfo := '';
   FIsTraining := False;
-  FThreadRuning := False;
+  FTrainThreadRuning := False;
 end;
 
 destructor TLearn.Destroy;
 var
-  i: NativeInt;
+  I: NativeInt;
 begin
   WaitTrain;
 
   if FDataIn <> nil then
     begin
-      for i := 0 to FDataIn.Count - 1 do
+      for I := 0 to FDataIn.Count - 1 do
         begin
-          SetLength(PLearnFloatArray(FDataIn[i])^, 0);
-          Dispose(PLearnFloatArray(FDataIn[i]));
+          SetLength(PLearnFloatArray(FDataIn[I])^, 0);
+          Dispose(PLearnFloatArray(FDataIn[I]));
         end;
       DisposeObject(FDataIn);
       FDataIn := nil;
@@ -251,10 +296,10 @@ begin
 
   if FDataOut <> nil then
     begin
-      for i := 0 to FDataOut.Count - 1 do
+      for I := 0 to FDataOut.Count - 1 do
         begin
-          SetLength(PLearnFloatArray(FDataOut[i])^, 0);
-          Dispose(PLearnFloatArray(FDataOut[i]));
+          SetLength(PLearnFloatArray(FDataOut[I])^, 0);
+          Dispose(PLearnFloatArray(FDataOut[I]));
         end;
       DisposeObject(FDataOut);
       FDataOut := nil;
@@ -269,12 +314,12 @@ begin
             Dispose(PLearnKDT(FLearnData));
             FLearnData := nil;
           end;
-        ltLM, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod:
+        ltLM, ltLM_MT, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod:
           begin
             Dispose(PMultiLayerPerceptron(FLearnData));
             FLearnData := nil;
           end;
-        ltLMEnsemble, ltLBFGSEnsemble:
+        ltLM_Ensemble, ltLM_Ensemble_MT, ltLBFGS_Ensemble, ltLBFGS_Ensemble_MT:
           begin
             Dispose(PMLPEnsemble(FLearnData));
             FLearnData := nil;
@@ -290,7 +335,7 @@ end;
 
 procedure TLearn.Clear;
 var
-  i  : NativeInt;
+  I  : NativeInt;
   p_k: PLearnKDT;
   p_n: PMultiLayerPerceptron;
   p_e: PMLPEnsemble;
@@ -299,10 +344,10 @@ begin
 
   if FDataIn <> nil then
     begin
-      for i := 0 to FDataIn.Count - 1 do
+      for I := 0 to FDataIn.Count - 1 do
         begin
-          SetLength(PLearnFloatArray(FDataIn[i])^, 0);
-          Dispose(PLearnFloatArray(FDataIn[i]));
+          SetLength(PLearnFloatArray(FDataIn[I])^, 0);
+          Dispose(PLearnFloatArray(FDataIn[I]));
         end;
       DisposeObject(FDataIn);
       FDataIn := nil;
@@ -310,10 +355,10 @@ begin
 
   if FDataOut <> nil then
     begin
-      for i := 0 to FDataOut.Count - 1 do
+      for I := 0 to FDataOut.Count - 1 do
         begin
-          SetLength(PLearnFloatArray(FDataOut[i])^, 0);
-          Dispose(PLearnFloatArray(FDataOut[i]));
+          SetLength(PLearnFloatArray(FDataOut[I])^, 0);
+          Dispose(PLearnFloatArray(FDataOut[I]));
         end;
       DisposeObject(FDataOut);
       FDataOut := nil;
@@ -328,12 +373,12 @@ begin
             Dispose(PLearnKDT(FLearnData));
             FLearnData := nil;
           end;
-        ltLM, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod:
+        ltLM, ltLM_MT, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod:
           begin
             Dispose(PMultiLayerPerceptron(FLearnData));
             FLearnData := nil;
           end;
-        ltLMEnsemble, ltLBFGSEnsemble:
+        ltLM_Ensemble, ltLM_Ensemble_MT, ltLBFGS_Ensemble, ltLBFGS_Ensemble_MT:
           begin
             Dispose(PMLPEnsemble(FLearnData));
             FLearnData := nil;
@@ -350,13 +395,13 @@ begin
         p_k^.kdt := TKDTree.Create(FInLen);
         FLearnData := p_k;
       end;
-    ltLM, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod:
+    ltLM, ltLM_MT, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod:
       begin
         new(p_n);
         MLPCreate0(FInLen, FOutLen, p_n^);
         FLearnData := p_n;
       end;
-    ltLMEnsemble, ltLBFGSEnsemble:
+    ltLM_Ensemble, ltLM_Ensemble_MT, ltLBFGS_Ensemble, ltLBFGS_Ensemble_MT:
       begin
         new(p_e);
         MLPECreate0(FInLen, FOutLen, 10, p_e^);
@@ -376,7 +421,7 @@ procedure TLearn.AddMemory(const f_In, f_Out: TLearnFloatArray);
 var
   p_in, p_out: PLearnFloatArray;
 begin
-  if FIsTraining or FThreadRuning then
+  if FIsTraining or FTrainThreadRuning then
       raiseInfo('wait Training');
   if Length(f_In) <> FInLen then
       raiseInfo('input length need = %d', [FInLen]);
@@ -420,7 +465,7 @@ var
   p_k         : PLearnKDT;
   p_n         : PMultiLayerPerceptron;
   p_e         : PMLPEnsemble;
-  Buff        : TLearnFloat2DArray;
+  buff        : TLearnFloat2DArray;
   rInfo       : TLearnInteger;
   mlReport    : TMLPReport;
   IsTerminated: Boolean;
@@ -430,21 +475,19 @@ var
 
   procedure BuildInternalData;
   var
-    i, j: NativeInt;
+    I, j: NativeInt;
   begin
-    SetLength(Buff, FDataIn.Count, FInLen + FOutLen);
-    for i := 0 to FDataIn.Count - 1 do
+    SetLength(buff, FDataIn.Count, FInLen + FOutLen);
+    for I := 0 to FDataIn.Count - 1 do
       begin
-        for j := 0 to FInLen - 1 do
-            Buff[i][j] := PLearnFloatArray(FDataIn[i])^[j];
-        for j := 0 to FOutLen - 1 do
-            Buff[i][FInLen + j] := PLearnFloatArray(FDataOut[i])^[j];
+        CopyPtr(@(PLearnFloatArray(FDataIn[I])^[0]), @buff[I][0], FInLen * SizeOf(TLearnFloat));
+        CopyPtr(@(PLearnFloatArray(FDataOut[I])^[0]), @buff[I][FInLen], FOutLen * SizeOf(TLearnFloat));
       end;
   end;
 
   procedure FreeInternalData;
   begin
-    SetLength(Buff, 0, 0);
+    SetLength(buff, 0, 0);
   end;
 
 begin
@@ -453,18 +496,18 @@ begin
   if FIsTraining then
     begin
       FInfo := 'wait Training';
-      exit;
+      Exit;
     end;
 
   if FDataIn.Count <> FDataOut.Count then
     begin
-      FInfo := 'Training set mismatch';
-      exit;
+      FInfo := 'In Training set mismatch';
+      Exit;
     end;
   if FDataIn.Count <= 0 then
     begin
-      FInfo := 'Training set invailed';
-      exit;
+      FInfo := 'Out Training set invailed';
+      Exit;
     end;
 
   FIsTraining := True;
@@ -492,7 +535,22 @@ begin
         begin
           BuildInternalData;
           p_n := PMultiLayerPerceptron(FLearnData);
-          MLPTrainLM(p_n^, Buff, Length(Buff), 0.001, passcount, rInfo, mlReport);
+          MLPTrainLM(p_n^, buff, Length(buff), 0.001, passcount, rInfo, mlReport);
+          FreeInternalData;
+          case rInfo of
+            2: FInfo := 'task has been solved';
+            -9: FInfo := 'internal matrix inverse subroutine failed';
+            -2: FInfo := 'there is a point with class number outside of [0..NOut-1]';
+            -1: FInfo := 'wrong parameters specified (NPoints<0, Restarts<1)';
+            else FInfo := 'unknow state';
+          end;
+          Result := (rInfo = 2);
+        end;
+      ltLM_MT:
+        begin
+          BuildInternalData;
+          p_n := PMultiLayerPerceptron(FLearnData);
+          MLPTrainLM_MT(p_n^, buff, Length(buff), 0.001, passcount, rInfo, mlReport);
           FreeInternalData;
           case rInfo of
             2: FInfo := 'task has been solved';
@@ -508,7 +566,7 @@ begin
           BuildInternalData;
           p_n := PMultiLayerPerceptron(FLearnData);
           IsTerminated := False;
-          MLPTrainLBFGS(p_n^, Buff, Length(Buff), 0.001, passcount, 0.01, 0, rInfo, mlReport, @IsTerminated, eBest);
+          MLPTrainLBFGS(p_n^, buff, Length(buff), 0.001, passcount, 0.01, 0, rInfo, mlReport, @IsTerminated, eBest);
           FreeInternalData;
           case rInfo of
             2: FInfo := 'task has been solved';
@@ -524,7 +582,7 @@ begin
           BuildInternalData;
           p_n := PMultiLayerPerceptron(FLearnData);
           IsTerminated := False;
-          MLPTrainLBFGS_MT(p_n^, Buff, Length(Buff), 0.001, passcount, 0.01, 0, rInfo, mlReport);
+          MLPTrainLBFGS_MT(p_n^, buff, Length(buff), 0.001, passcount, 0.01, 0, rInfo, mlReport);
           FreeInternalData;
           case rInfo of
             2: FInfo := 'task has been solved';
@@ -540,7 +598,7 @@ begin
           BuildInternalData;
           p_n := PMultiLayerPerceptron(FLearnData);
           IsTerminated := False;
-          MLPTrainLBFGS_MT_Mod(p_n^, Buff, Length(Buff), passcount, 0.01, 2.0, 0, rInfo, mlReport);
+          MLPTrainLBFGS_MT_Mod(p_n^, buff, Length(buff), passcount, 0.01, 2.0, 0, rInfo, mlReport);
           FreeInternalData;
           case rInfo of
             2: FInfo := 'task has been solved';
@@ -551,11 +609,11 @@ begin
           end;
           Result := (rInfo = 2);
         end;
-      ltLMEnsemble:
+      ltLM_Ensemble, ltLM_Ensemble_MT:
         begin
           BuildInternalData;
           p_e := PMLPEnsemble(FLearnData);
-          MLPEBaggingLM(p_e^, Buff, Length(Buff), 0.001, passcount, rInfo, mlReport, CVRep);
+          MLPEBaggingLM(FLearnType = ltLM_Ensemble_MT, p_e^, buff, Length(buff), 0.001, passcount, rInfo, mlReport, CVRep);
           FreeInternalData;
           case rInfo of
             2: FInfo := 'task has been solved';
@@ -565,11 +623,11 @@ begin
           end;
           Result := (rInfo = 2);
         end;
-      ltLBFGSEnsemble:
+      ltLBFGS_Ensemble, ltLBFGS_Ensemble_MT:
         begin
           BuildInternalData;
           p_e := PMLPEnsemble(FLearnData);
-          MLPEBaggingLBFGS(p_e^, Buff, Length(Buff), 0.001, passcount, 0.01, 0, rInfo, mlReport, CVRep);
+          MLPEBaggingLBFGS(FLearnType = ltLBFGS_Ensemble_MT, p_e^, buff, Length(buff), 0.001, passcount, 0.01, 0, rInfo, mlReport, CVRep);
           FreeInternalData;
           case rInfo of
             2: FInfo := 'task has been solved';
@@ -598,7 +656,7 @@ var
   th: TLearn_th;
 begin
   WaitTrain;
-  FThreadRuning := True;
+  FTrainThreadRuning := True;
   th := TLearn_th.Create;
   th.source := Self;
   th.OnStateC := OnResult;
@@ -611,7 +669,7 @@ var
   th: TLearn_th;
 begin
   WaitTrain;
-  FThreadRuning := True;
+  FTrainThreadRuning := True;
   th := TLearn_th.Create;
   th.source := Self;
   th.OnStateM := OnResult;
@@ -627,7 +685,7 @@ var
   th: TLearn_th;
 begin
   WaitTrain;
-  FThreadRuning := True;
+  FTrainThreadRuning := True;
   th := TLearn_th.Create;
   th.source := Self;
   th.OnStateP := OnResult;
@@ -639,50 +697,51 @@ end;
 
 procedure TLearn.WaitTrain;
 begin
-  while FThreadRuning do
+  while FTrainThreadRuning do
       CheckThreadSynchronize(1);
 end;
 
-function TLearn.process(const ProcessIn: TLearnFloatArray; var ProcessOut: TLearnFloatArray): Boolean;
+function TLearn.process(const ProcessIn, ProcessOut: PLearnFloatArray): Boolean;
 var
   p_kd_node: TKDTree.PKDTree_Node;
 begin
   Result := False;
-  if FIsTraining or FThreadRuning then
+  if FIsTraining or FTrainThreadRuning then
     begin
       FInfo := 'wait training';
-      exit;
+      Exit;
     end;
-  if Length(ProcessIn) <> FInLen then
+  if Length(ProcessIn^) <> FInLen then
     begin
       FInfo := 'input length error';
-      exit;
+      Exit;
     end;
 
   case FLearnType of
     ltKDT:
       begin
-        p_kd_node := PLearnKDT(FLearnData)^.kdt.Search(ProcessIn);
+        p_kd_node := PLearnKDT(FLearnData)^.kdt.Search(ProcessIn^);
         if p_kd_node <> nil then
           begin
-            ProcessOut := PLearnFloatArray(FDataOut[p_kd_node^.vec^.index])^;
+            SetLength(ProcessOut^, FOutLen);
+            CopyPtr(@(PLearnFloatArray(FDataOut[p_kd_node^.vec^.index])^[0]), @ProcessOut^[0], FOutLen * SizeOf(TLearnFloat));
             FInfo := 'successed';
             Result := True;
           end
         else
             FInfo := 'kdTree not inited';
       end;
-    ltLM, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod:
+    ltLM, ltLM_MT, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod:
       begin
-        SetLength(ProcessOut, FOutLen);
-        MLPProcess(PMultiLayerPerceptron(FLearnData)^, ProcessIn, ProcessOut);
+        SetLength(ProcessOut^, FOutLen);
+        MLPProcess(PMultiLayerPerceptron(FLearnData)^, ProcessIn^, ProcessOut^);
         FInfo := 'successed';
         Result := True;
       end;
-    ltLMEnsemble, ltLBFGSEnsemble:
+    ltLM_Ensemble, ltLM_Ensemble_MT, ltLBFGS_Ensemble, ltLBFGS_Ensemble_MT:
       begin
-        SetLength(ProcessOut, FOutLen);
-        MLPEProcess(PMLPEnsemble(FLearnData)^, ProcessIn, ProcessOut);
+        SetLength(ProcessOut^, FOutLen);
+        MLPEProcess(PMLPEnsemble(FLearnData)^, ProcessIn^, ProcessOut^);
         FInfo := 'successed';
         Result := True;
       end;
@@ -692,18 +751,18 @@ end;
 function TLearn.processMax(const ProcessIn: TLearnFloatArray): TLearnFloat;
 var
   ProcessOut: TLearnFloatArray;
-  i         : NativeInt;
+  I         : NativeInt;
 begin
   Result := 0;
-  if not process(ProcessIn, ProcessOut) then
-      exit;
+  if not process(@ProcessIn, @ProcessOut) then
+      Exit;
 
   Result := ProcessOut[0];
 
   if FOutLen > 1 then
-    for i := 1 to FOutLen - 1 do
-      if ProcessOut[i] > Result then
-          Result := ProcessOut[i];
+    for I := 1 to FOutLen - 1 do
+      if ProcessOut[I] > Result then
+          Result := ProcessOut[I];
 
   SetLength(ProcessOut, 0);
 end;
@@ -711,18 +770,18 @@ end;
 function TLearn.processMin(const ProcessIn: TLearnFloatArray): TLearnFloat;
 var
   ProcessOut: TLearnFloatArray;
-  i         : NativeInt;
+  I         : NativeInt;
 begin
   Result := 0;
-  if not process(ProcessIn, ProcessOut) then
-      exit;
+  if not process(@ProcessIn, @ProcessOut) then
+      Exit;
 
   Result := ProcessOut[0];
 
   if FOutLen > 1 then
-    for i := 1 to FOutLen - 1 do
-      if ProcessOut[i] < Result then
-          Result := ProcessOut[i];
+    for I := 1 to FOutLen - 1 do
+      if ProcessOut[I] < Result then
+          Result := ProcessOut[I];
 
   SetLength(ProcessOut, 0);
 end;
@@ -731,7 +790,7 @@ procedure TLearn.SaveToStream(stream: TCoreClassStream);
 var
   de  : TDataFrameEngine;
   ar  : TDataFrameArrayDouble;
-  i, j: NativeInt;
+  I, j: NativeInt;
 begin
   de := TDataFrameEngine.Create;
   de.WriteInt64(FInLen);
@@ -739,14 +798,14 @@ begin
   de.WriteByte(Byte(FLearnType));
 
   ar := de.WriteArrayDouble;
-  for i := 0 to FDataIn.Count - 1 do
+  for I := 0 to FDataIn.Count - 1 do
     for j := 0 to FInLen - 1 do
-        ar.Add(PLearnFloatArray(FDataIn[i])^[j]);
+        ar.Add(PLearnFloatArray(FDataIn[I])^[j]);
 
   ar := de.WriteArrayDouble;
-  for i := 0 to FDataOut.Count - 1 do
+  for I := 0 to FDataOut.Count - 1 do
     for j := 0 to FOutLen - 1 do
-        ar.Add(PLearnFloatArray(FDataOut[i])^[j]);
+        ar.Add(PLearnFloatArray(FDataOut[I])^[j]);
 
   de.EncodeAsZLib(stream, False);
   DisposeObject(de);
@@ -756,7 +815,7 @@ procedure TLearn.LoadFromStream(stream: TCoreClassStream);
 var
   de  : TDataFrameEngine;
   ar  : TDataFrameArrayDouble;
-  i, j: NativeInt;
+  I, j: NativeInt;
   pf  : PLearnFloatArray;
 begin
   Clear;
@@ -769,7 +828,7 @@ begin
 
   ar := de.Reader.ReadArrayDouble;
   j := 0;
-  for i := 0 to ar.Count - 1 do
+  for I := 0 to ar.Count - 1 do
     begin
       if j = 0 then
         begin
@@ -778,15 +837,15 @@ begin
           FDataIn.Add(pf);
         end;
 
-      pf^[j] := ar[i];
-      inc(j);
+      pf^[j] := ar[I];
+      Inc(j);
       if j = FInLen then
           j := 0;
     end;
 
   ar := de.Reader.ReadArrayDouble;
   j := 0;
-  for i := 0 to ar.Count - 1 do
+  for I := 0 to ar.Count - 1 do
     begin
       if j = 0 then
         begin
@@ -795,8 +854,8 @@ begin
           FDataOut.Add(pf);
         end;
 
-      pf^[j] := ar[i];
-      inc(j);
+      pf^[j] := ar[I];
+      Inc(j);
       if j = FOutLen then
           j := 0;
     end;
@@ -812,7 +871,7 @@ procedure TLearn.SaveToJsonStream(stream: TCoreClassStream);
 var
   de  : TDataFrameEngine;
   ar  : TDataFrameArrayDouble;
-  i, j: NativeInt;
+  I, j: NativeInt;
 begin
   de := TDataFrameEngine.Create;
   de.WriteInt64(FInLen);
@@ -820,14 +879,14 @@ begin
   de.WriteByte(Byte(FLearnType));
 
   ar := de.WriteArrayDouble;
-  for i := 0 to FDataIn.Count - 1 do
+  for I := 0 to FDataIn.Count - 1 do
     for j := 0 to FInLen - 1 do
-        ar.Add(PLearnFloatArray(FDataIn[i])^[j]);
+        ar.Add(PLearnFloatArray(FDataIn[I])^[j]);
 
   ar := de.WriteArrayDouble;
-  for i := 0 to FDataOut.Count - 1 do
+  for I := 0 to FDataOut.Count - 1 do
     for j := 0 to FOutLen - 1 do
-        ar.Add(PLearnFloatArray(FDataOut[i])^[j]);
+        ar.Add(PLearnFloatArray(FDataOut[I])^[j]);
 
   de.EncodeAsPublicJson(stream);
   DisposeObject(de);
@@ -837,7 +896,7 @@ procedure TLearn.LoadFromJsonStream(stream: TCoreClassStream);
 var
   de  : TDataFrameEngine;
   ar  : TDataFrameArrayDouble;
-  i, j: NativeInt;
+  I, j: NativeInt;
   pf  : PLearnFloatArray;
 begin
   Clear;
@@ -850,7 +909,7 @@ begin
 
   ar := de.Reader.ReadArrayDouble;
   j := 0;
-  for i := 0 to ar.Count - 1 do
+  for I := 0 to ar.Count - 1 do
     begin
       if j = 0 then
         begin
@@ -859,15 +918,15 @@ begin
           FDataIn.Add(pf);
         end;
 
-      pf^[j] := ar[i];
-      inc(j);
+      pf^[j] := ar[I];
+      Inc(j);
       if j = FInLen then
           j := 0;
     end;
 
   ar := de.Reader.ReadArrayDouble;
   j := 0;
-  for i := 0 to ar.Count - 1 do
+  for I := 0 to ar.Count - 1 do
     begin
       if j = 0 then
         begin
@@ -876,8 +935,8 @@ begin
           FDataOut.Add(pf);
         end;
 
-      pf^[j] := ar[i];
-      inc(j);
+      pf^[j] := ar[I];
+      Inc(j);
       if j = FOutLen then
           j := 0;
     end;
@@ -885,6 +944,120 @@ begin
   DisposeObject(de);
 end;
 {$ENDIF FPC}
+
+
+class function TLearn.LDA(const buff: TLearnMatrix; const NPoints, NVars, NClasses: TLearnInteger; var w: TLearnMatrix): TLearnInteger;
+begin
+  FisherLDAN(buff, NPoints, NVars, NClasses, Result, w);
+end;
+
+class function TLearn.LDA(const buff: TLearnFloat2DArray; const NPoints, NVars, NClasses: TLearnInteger; var w: TLearnVector): TLearnInteger;
+begin
+  FisherLDA(buff, NPoints, NVars, NClasses, Result, w);
+end;
+
+class function TLearn.PCA(const buff: TLearnMatrix; const NPoints, NVars: TLearnInteger; var s2: TLearnFloatArray; var v: TLearnMatrix): TLearnInteger;
+begin
+  PCABuildBasis(buff, NPoints, NVars, Result, s2, v);
+end;
+
+class procedure TLearn.LMultiply(const M: PLearnMatrix; const sourv: PLearnVector; var output: TLearnVector; const Trans: Boolean; const Alpha, Beta: TLearnFloat);
+  procedure doMultiply(const A: PLearnMatrix; const I1, I2, J1, J2: TLearnInteger;
+    const X: PLearnVector; const IX1, IX2: TLearnInteger;
+    var Y: TLearnVector; const IY1, IY2: TLearnInteger);
+  var
+    I: TLearnInteger;
+    v: TLearnFloat;
+  begin
+    if not Trans then
+      begin
+        if (I1 > I2) or (J1 > J2) then
+            Exit;
+        Assert(J2 - J1 = IX2 - IX1, 'multiply_ptr: A and X dont match!');
+        Assert(I2 - I1 = IY2 - IY1, 'multiply_ptr: A and Y dont match!');
+        if AP_FP_Eq(Beta, 0) then
+          begin
+            I := IY1;
+            while I <= IY2 do
+              begin
+                Y[I] := 0;
+                Inc(I);
+              end;
+          end
+        else
+            APVMul(@Y[0], IY1, IY2, Beta);
+        I := I1;
+        while I <= I2 do
+          begin
+            v := APVDotProduct(@A^[I][0], J1, J2, @X^[0], IX1, IX2);
+            Y[IY1 + I - I1] := Y[IY1 + I - I1] + Alpha * v;
+            Inc(I);
+          end;
+      end
+    else
+      begin
+        if (I1 > I2) or (J1 > J2) then
+            Exit;
+        Assert(I2 - I1 = IX2 - IX1, 'multiply_ptr: A and X dont match!');
+        Assert(J2 - J1 = IY2 - IY1, 'multiply_ptr: A and Y dont match!');
+        if AP_FP_Eq(Beta, 0) then
+          begin
+            I := IY1;
+            while I <= IY2 do
+              begin
+                Y[I] := 0;
+                Inc(I);
+              end;
+          end
+        else
+            APVMul(@Y[0], IY1, IY2, Beta);
+        I := I1;
+        while I <= I2 do
+          begin
+            v := Alpha * X^[IX1 + I - I1];
+            APVAdd(@Y[0], IY1, IY2, @A^[I][0], J1, J2, v);
+            Inc(I);
+          end;
+      end;
+  end;
+
+var
+  l: NativeInt;
+begin
+  l := Length(sourv^);
+  if Length(output) <> l then
+      SetLength(output, l);
+
+  doMultiply(
+    M, 0, Length(M^) - 1, 0, l - 1,
+    sourv, 0, l - 1,
+    output, 0, Length(output) - 1);
+end;
+
+class procedure TLearn.LMultiply(const M: TLearnMatrix; const sourv: TLearnVector; var output: TLearnVector);
+begin
+  LMultiply(@M, @sourv, output, False, 1.0, 1.0);
+end;
+
+class procedure TLearn.LMultiply(const M: TLearnMatrix; const sourv: TLearnVector; var output: TLearnVector; const Trans: Boolean);
+begin
+  LMultiply(@M, @sourv, output, Trans, 1.0, 1.0);
+end;
+
+class procedure TLearn.LMultiply(const M: PLearnMatrix; const sourv: PLearnVector; var output: TLearnVector; const Trans: Boolean);
+begin
+  LMultiply(M, sourv, output, Trans, 1.0, 1.0);
+end;
+
+class function TLearn.LMultiply(const M: TLearnMatrix; const sourv: TLearnVector; const Trans: Boolean): TLearnVector;
+begin
+  LMultiply(@M, @sourv, Result, Trans, 1.0, 1.0);
+end;
+
+class function TLearn.LMultiply(const M: PLearnMatrix; const sourv: PLearnVector; const Trans: Boolean): TLearnVector;
+begin
+  LMultiply(M, sourv, Result, Trans, 1.0, 1.0);
+end;
 
 initialization
 

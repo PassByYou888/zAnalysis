@@ -1,5 +1,5 @@
 { ****************************************************************************** }
-{ * machine Learn support, writen by QQ 600585@qq.com                          * }
+{ * machine Learn base type support, by QQ 600585@qq.com                       * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
 { * https://github.com/PassByYou888/zExpression                                * }
@@ -8,27 +8,15 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 type
-  TLearnInteger = Int64;
-  PLearnInteger = ^TLearnInteger;
+  PLearnComplex = ^TLearnComplex;
 
   TLearnComplex = packed record
     X, Y: TLearnFloat;
   end;
 
-  PLearnComplex = ^TLearnComplex;
-
-  TLearnIntegerArray = array of Integer;
-  TLearnComplexArray = array of TLearnComplex;
-  TLearnBooleanArray = array of Boolean;
-
-  PLearnIntegerArray = ^TLearnIntegerArray;
-  PLearnComplexArray = ^TLearnComplexArray;
-  PLearnBooleanArray = ^TLearnBooleanArray;
-
-  TLearnInteger2DArray = array of TLearnIntegerArray;
-  TLearnFloat2DArray   = array of TLearnFloatArray;
+  TLearnComplexArray   = array of TLearnComplex;
+  PLearnComplexArray   = ^TLearnComplexArray;
   TLearnComplex2DArray = array of TLearnComplexArray;
-  TLearnBoolean2DArray = array of TLearnBooleanArray;
 
   TLearnCommState = packed record
     Stage: Integer;
@@ -628,7 +616,6 @@ end;
 /// //////////////////////////////////////////////////////////////////////
 // IEEE-compliant functions
 /// //////////////////////////////////////////////////////////////////////
-
 
 function AP_Float(X: Extended): TLearnFloat;
 begin

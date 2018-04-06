@@ -212,7 +212,7 @@ var
   ConvexHullPl: T2DPointList;
 begin
   k2d := TKDT2DS.Create;
-  k2d.BuildKDTreeWithClusterP(pl.Count, k, 1, OutIndex, procedure(const IndexFor: NativeInt; var Source: TKDT2DS_Source)
+  k2d.BuildKDTreeWithClusterP(pl.Count, k, 1, OutIndex, nil, procedure(const IndexFor: NativeInt; var Source: TKDT2DS.TKDT2DS_Source; const Data:Pointer)
     begin
       Source.Buff[0] := pl[IndexFor]^[0];
       Source.Buff[1] := pl[IndexFor]^[1];

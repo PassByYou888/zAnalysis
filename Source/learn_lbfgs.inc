@@ -1,5 +1,5 @@
 { ****************************************************************************** }
-{ * machine Learn support, writen by QQ 600585@qq.com                          * }
+{ * Limited memory BFGS optimizer support, by QQ 600585@qq.com                 * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
 { * https://github.com/PassByYou888/zExpression                                * }
@@ -223,14 +223,14 @@ begin
   Flags := Flags div 2;
   if AllocateMem then
     begin
-      SetLength(State.Rho, M (* - 1 + 1 // optimized compler *) );
-      SetLength(State.Theta, M (* - 1 + 1 // optimized compler *) );
-      SetLength(State.Y, M (* - 1 + 1 // optimized compler *) , N (* - 1 + 1 // optimized compler *) );
-      SetLength(State.S, M (* - 1 + 1 // optimized compler *) , N (* - 1 + 1 // optimized compler *) );
-      SetLength(State.D, N (* - 1 + 1 // optimized compler *) );
-      SetLength(State.X, N (* - 1 + 1 // optimized compler *) );
-      SetLength(State.G, N (* - 1 + 1 // optimized compler *) );
-      SetLength(State.WORK, N (* - 1 + 1 // optimized compler *) );
+      SetLength(State.Rho, M (* - 1 + 1 // optimized compiler *) );
+      SetLength(State.Theta, M (* - 1 + 1 // optimized compiler *) );
+      SetLength(State.Y, M (* - 1 + 1 // optimized compiler *) , N (* - 1 + 1 // optimized compiler *) );
+      SetLength(State.S, M (* - 1 + 1 // optimized compiler *) , N (* - 1 + 1 // optimized compiler *) );
+      SetLength(State.D, N (* - 1 + 1 // optimized compiler *) );
+      SetLength(State.X, N (* - 1 + 1 // optimized compiler *) );
+      SetLength(State.G, N (* - 1 + 1 // optimized compiler *) );
+      SetLength(State.WORK, N (* - 1 + 1 // optimized compiler *) );
     end;
   MinLBFGSSetCond(State, 0, 0, 0, 0);
   MinLBFGSSetXRep(State, False);
@@ -669,7 +669,7 @@ end;
 procedure MinLBFGSResults(const State: TMinLBFGSState; var X: TLearnFloatArray;
   var Rep: TMinLBFGSReport);
 begin
-  SetLength(X, State.N (* - 1 + 1 // optimized compler *) );
+  SetLength(X, State.N (* - 1 + 1 // optimized compiler *) );
   APVMove(@X[0], 0, State.N - 1, @State.X[0], 0, State.N - 1);
   Rep.IterationsCount := State.RepIterationsCount;
   Rep.NFEV := State.RepNFEV;

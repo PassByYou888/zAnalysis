@@ -1,5 +1,5 @@
 { ****************************************************************************** }
-{ * machine Learn support, writen by QQ 600585@qq.com                          * }
+{ * Condition number estimate support, by QQ 600585@qq.com                     * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
 { * https://github.com/PassByYou888/zExpression                                * }
@@ -28,36 +28,44 @@ function RCondThreshold(): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$E
 procedure RMatrixRCondTRInternal(const A: TLearnFloat2DArray; N: TLearnInteger;
   IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean; ANORM: TLearnFloat;
   var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure CMatrixRCondTRInternal(const A: TLearnComplex2DArray;
   const N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean;
   ANORM: TLearnFloat; var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure SPDMatrixRCondCholeskyInternal(const CHA: TLearnFloat2DArray;
   N: TLearnInteger; IsUpper: Boolean; IsNormProvided: Boolean;
   ANORM: TLearnFloat; var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure HPDMatrixRCondCholeskyInternal(const CHA: TLearnComplex2DArray;
   N: TLearnInteger; IsUpper: Boolean; IsNormProvided: Boolean;
   ANORM: TLearnFloat; var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure RMatrixRCondLUInternal(const LUA: TLearnFloat2DArray; N: TLearnInteger;
   OneNorm: Boolean; IsANormProvided: Boolean; ANORM: TLearnFloat;
   var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure CMatrixRCondLUInternal(const LUA: TLearnComplex2DArray;
   const N: TLearnInteger; OneNorm: Boolean; IsANormProvided: Boolean;
   ANORM: TLearnFloat; var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure RMatrixEstimateNorm(N: TLearnInteger; var V: TLearnFloatArray;
   var X: TLearnFloatArray; var ISGN: TLearnIntegerArray; var EST: TLearnFloat;
   var KASE: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure CMatrixEstimateNorm(const N: TLearnInteger; var V: TLearnComplexArray;
   var X: TLearnComplexArray; var EST: TLearnFloat; var KASE: TLearnInteger;
   var ISAVE: TLearnIntegerArray; var RSAVE: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function InternalComplexRCondSCSUM1(const X: TLearnComplexArray; N: TLearnInteger)
-  : TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function InternalComplexRCondICMAX1(const X: TLearnComplexArray; N: TLearnInteger)
-  : TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+function InternalComplexRCondSCSUM1(const X: TLearnComplexArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function InternalComplexRCondICMAX1(const X: TLearnComplexArray; N: TLearnInteger): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure InternalComplexRCondSaveAll(var ISAVE: TLearnIntegerArray;
   var RSAVE: TLearnFloatArray; var I: TLearnInteger; var ITER: TLearnInteger;
   var J: TLearnInteger; var JLAST: TLearnInteger; var JUMP: TLearnInteger;
   var ABSXI: TLearnFloat; var ALTSGN: TLearnFloat; var ESTOLD: TLearnFloat;
   var TEMP: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure InternalComplexRCondLoadAll(var ISAVE: TLearnIntegerArray;
   var RSAVE: TLearnFloatArray; var I: TLearnInteger; var ITER: TLearnInteger;
   var J: TLearnInteger; var JLAST: TLearnInteger; var JUMP: TLearnInteger;
@@ -196,8 +204,7 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function SPDMatrixRCond(A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean)
-  : TLearnFloat;
+function SPDMatrixRCond(A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat;
 var
   I  : TLearnInteger;
   J  : TLearnInteger;

@@ -1,5 +1,5 @@
 { ****************************************************************************** }
-{ * machine Learn support, writen by QQ 600585@qq.com                          * }
+{ * Level 2 and Level 3 BLAS operations support, by QQ 600585@qq.com           * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
 { * https://github.com/PassByYou888/zExpression                                * }
@@ -404,13 +404,7 @@ var
   i1_: TLearnInteger;
 begin
   if (M = 0) or (N = 0) then
-    begin
       Exit;
-    end;
-  // if CMatrixRank1F(M, N, A, IA, JA, U, IU, V, IV) then
-  // begin
-  // Exit;
-  // end;
   I := 0;
   while I <= M - 1 do
     begin
@@ -446,13 +440,7 @@ var
   S: TLearnFloat;
 begin
   if (M = 0) or (N = 0) then
-    begin
       Exit;
-    end;
-  // if RMatrixRank1F(M, N, A, IA, JA, U, IU, V, IV) then
-  // begin
-  // Exit;
-  // end;
   I := 0;
   while I <= M - 1 do
     begin
@@ -498,9 +486,7 @@ var
   i1_: TLearnInteger;
 begin
   if M = 0 then
-    begin
       Exit;
-    end;
   if N = 0 then
     begin
       I := 0;
@@ -511,10 +497,6 @@ begin
         end;
       Exit;
     end;
-  // if CMatrixMVF(M, N, A, IA, JA, OpA, X, IX, Y, IY) then
-  // begin
-  // Exit;
-  // end;
   if OpA = 0 then
     begin
 
@@ -617,9 +599,7 @@ var
   V: TLearnFloat;
 begin
   if M = 0 then
-    begin
       Exit;
-    end;
   if N = 0 then
     begin
       I := 0;
@@ -630,10 +610,6 @@ begin
         end;
       Exit;
     end;
-  // if RMatrixMVF(M, N, A, IA, JA, OpA, X, IX, Y, IY) then
-  // begin
-  // Exit;
-  // end;
   if OpA = 0 then
     begin
 
@@ -1605,9 +1581,7 @@ begin
           N2 := N div 2;
           N1 := N - N2;
           if N1 mod NB = 0 then
-            begin
               Exit;
-            end;
           R := NB - N1 mod NB;
           N1 := N1 + R;
           N2 := N2 - R;
@@ -1635,9 +1609,7 @@ begin
   // Special case
   //
   if N * M = 0 then
-    begin
       Exit;
-    end;
 
   //
   // General case
@@ -1887,9 +1859,7 @@ begin
   // Special case
   //
   if N * M = 0 then
-    begin
       Exit;
-    end;
 
   //
   // General case
@@ -2134,9 +2104,7 @@ begin
   // Special case
   //
   if N * M = 0 then
-    begin
       Exit;
-    end;
 
   //
   // General case
@@ -2301,9 +2269,7 @@ begin
   // Special case
   //
   if N * M = 0 then
-    begin
       Exit;
-    end;
 
   //
   // General case

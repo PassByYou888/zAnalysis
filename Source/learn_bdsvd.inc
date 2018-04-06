@@ -1,5 +1,5 @@
 { ****************************************************************************** }
-{ * machine Learn support, writen by QQ 600585@qq.com                          * }
+{ * Bidiagonal SVD support, by QQ 600585@qq.com                                * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
 { * https://github.com/PassByYou888/zExpression                                * }
@@ -114,7 +114,7 @@ begin
   APVMove(@D1[0], 1, N, @D[0], 0, N - 1);
   if N > 1 then
     begin
-      SetLength(E1, N (* - 1 + 1 // optimized compler *) );
+      SetLength(E1, N (* - 1 + 1 // optimized compiler *) );
       APVMove(@E1[0], 1, N - 1, @E[0], 0, N - 2);
     end;
   Result := BidiagonalSVDDecompositionInternal(D1, E1, N, IsUpper,
@@ -226,10 +226,10 @@ begin
   //
   // init
   //
-  SetLength(WORK0, N (* - 1 + 1 // optimized compler *) );
-  SetLength(WORK1, N (* - 1 + 1 // optimized compler *) );
-  SetLength(WORK2, N (* - 1 + 1 // optimized compler *) );
-  SetLength(WORK3, N (* - 1 + 1 // optimized compler *) );
+  SetLength(WORK0, N (* - 1 + 1 // optimized compiler *) );
+  SetLength(WORK1, N (* - 1 + 1 // optimized compiler *) );
+  SetLength(WORK2, N (* - 1 + 1 // optimized compiler *) );
+  SetLength(WORK3, N (* - 1 + 1 // optimized compiler *) );
   UEnd := UStart + Max(NRU - 1, 0);
   VEnd := VStart + Max(NCVT - 1, 0);
   CEnd := CStart + Max(NCC - 1, 0);

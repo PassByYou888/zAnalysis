@@ -1,5 +1,6 @@
 { ****************************************************************************** }
-{ * machine Learn support, writen by QQ 600585@qq.com                          * }
+{ * Real/complex QR, LQ, bi(tri)diagonal, Hessenberg decompositions support    * }
+{ * by QQ 600585@qq.com                                                        * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
 { * https://github.com/PassByYou888/zExpression                                * }
@@ -3060,7 +3061,7 @@ begin
     end;
   SetLength(Tau, N - 2 + 1);
   SetLength(T, N + 1);
-  SetLength(WORK, N (* - 1 + 1 // optimized compler *) );
+  SetLength(WORK, N (* - 1 + 1 // optimized compiler *) );
   I := 0;
   while I <= N - 2 do
     begin
@@ -3126,9 +3127,9 @@ begin
   //
   // init
   //
-  SetLength(Q, N (* - 1 + 1 // optimized compler *) , N (* - 1 + 1 // optimized compler *) );
-  SetLength(V, N (* - 1 + 1 // optimized compler *) );
-  SetLength(WORK, N (* - 1 + 1 // optimized compler *) );
+  SetLength(Q, N (* - 1 + 1 // optimized compiler *) , N (* - 1 + 1 // optimized compiler *) );
+  SetLength(V, N (* - 1 + 1 // optimized compiler *) );
+  SetLength(WORK, N (* - 1 + 1 // optimized compiler *) );
   I := 0;
   while I <= N - 1 do
     begin
@@ -3191,7 +3192,7 @@ begin
     begin
       Exit;
     end;
-  SetLength(H, N (* - 1 + 1 // optimized compler *) , N (* - 1 + 1 // optimized compler *) );
+  SetLength(H, N (* - 1 + 1 // optimized compiler *) , N (* - 1 + 1 // optimized compiler *) );
   I := 0;
   while I <= N - 1 do
     begin
@@ -3295,7 +3296,7 @@ begin
     begin
       SetLength(Tau, N - 2 + 1);
     end;
-  SetLength(D, N (* - 1 + 1 // optimized compler *) );
+  SetLength(D, N (* - 1 + 1 // optimized compiler *) );
   if N > 1 then
     begin
       SetLength(E, N - 2 + 1);
@@ -3499,9 +3500,9 @@ begin
   //
   // init
   //
-  SetLength(Q, N (* - 1 + 1 // optimized compler *) , N (* - 1 + 1 // optimized compler *) );
+  SetLength(Q, N (* - 1 + 1 // optimized compiler *) , N (* - 1 + 1 // optimized compiler *) );
   SetLength(V, N + 1);
-  SetLength(WORK, N (* - 1 + 1 // optimized compler *) );
+  SetLength(WORK, N (* - 1 + 1 // optimized compiler *) );
   I := 0;
   while I <= N - 1 do
     begin
@@ -3656,10 +3657,10 @@ begin
       SetLength(Tau, N - 2 + 1);
       SetLength(E, N - 2 + 1);
     end;
-  SetLength(D, N (* - 1 + 1 // optimized compler *) );
-  SetLength(T, N (* - 1 + 1 // optimized compler *) );
-  SetLength(T2, N (* - 1 + 1 // optimized compler *) );
-  SetLength(T3, N (* - 1 + 1 // optimized compler *) );
+  SetLength(D, N (* - 1 + 1 // optimized compiler *) );
+  SetLength(T, N (* - 1 + 1 // optimized compiler *) );
+  SetLength(T2, N (* - 1 + 1 // optimized compiler *) );
+  SetLength(T3, N (* - 1 + 1 // optimized compiler *) );
   if IsUpper then
     begin
 
@@ -3886,9 +3887,9 @@ begin
   //
   // init
   //
-  SetLength(Q, N (* - 1 + 1 // optimized compler *) , N (* - 1 + 1 // optimized compler *) );
+  SetLength(Q, N (* - 1 + 1 // optimized compiler *) , N (* - 1 + 1 // optimized compiler *) );
   SetLength(V, N + 1);
-  SetLength(WORK, N (* - 1 + 1 // optimized compler *) );
+  SetLength(WORK, N (* - 1 + 1 // optimized compiler *) );
   I := 0;
   while I <= N - 1 do
     begin

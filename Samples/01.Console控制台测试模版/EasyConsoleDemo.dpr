@@ -19,10 +19,10 @@ uses
 procedure Demo;
 var
   i, j           : Integer;
-  buff           : TKDT1DD_DynamicVecBuffer;
+  buff           : TKDT1DD.TKDT1DD_DynamicVecBuffer;
   outIndex       : TDynamicIndexArray;
   k1t            : TKDT1DD;
-  k1r            : PKDT1DD_Node;
+  k1r            : TKDT1DD.PKDT1DD_Node;
   d              : Double;
   SearchedCounter: NativeInt;
   n              : string;
@@ -32,12 +32,12 @@ begin
 
   NearestNodes := TCoreClassList.Create;
 
-  SetLength(buff, 100);
+  SetLength(buff, 10000);
   for i := 0 to Length(buff) - 1 do
     for j := 0 to KDT1DD_Axis - 1 do
         buff[i][j] := umlRandomRangeD(-3000, 3000);
 
-  k1t.BuildKDTreeWithCluster(buff, 10, 1, outIndex);
+  k1t.BuildKDTreeWithCluster(buff, 20, 1, outIndex);
 
   // k1t.PrintNodeTree(k1t.RootNode);
   // k1t.SaveToFile('c:\test.dat');
@@ -71,7 +71,7 @@ begin
               sqrt(TKDT1DD.KDT1DDDistance(TKDT1DD.KDT1DDVec(n), k1r^.vec^.buff))]));
             for i := 0 to NearestNodes.Count - 1 do
                 DoStatus(Format('index:%d dist:%f',
-                [PKDT1DD_Node(NearestNodes[i])^.vec^.index, sqrt(TKDT1DD.KDT1DDDistance(PKDT1DD_Node(NearestNodes[i])^.vec^.buff, k1r^.vec^.buff))]));
+                [TKDT1DD.PKDT1DD_Node(NearestNodes[i])^.vec^.index, sqrt(TKDT1DD.KDT1DDDistance(TKDT1DD.PKDT1DD_Node(NearestNodes[i])^.vec^.buff, k1r^.vec^.buff))]));
           end;
       end;
   until False;

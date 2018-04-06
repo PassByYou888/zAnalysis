@@ -19,11 +19,11 @@ uses CoreClasses, KM;
 type
   TKDTree = class(TCoreClassObject)
   public type
-    TKDTree_VecType = Double;
-    PKDTree_VecType = ^TKDTree_VecType;
+    TKDTree_VecType = TKMFloat;
+    PKDTree_VecType = PKMFloat;
 
-    TKDTree_Vec = array of TKDTree_VecType;
-    PKDTree_Vec = ^TKDTree_Vec;
+    TKDTree_Vec = TKMFloatArray;
+    PKDTree_Vec = PKMFloatArray;
 
     TKDTree_DynamicVecBuffer = array of TKDTree_Vec;
     PKDTree_DynamicVecBuffer = ^TKDTree_DynamicVecBuffer;
@@ -76,14 +76,14 @@ type
     property SourceP[const index: NativeInt]: PKDTree_Source read GetData; default;
     property AxisCount: Integer read FAxisCount;
 
-    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildCall);
-    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod);
-    {$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildProc); {$ENDIF}
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildCall); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    {$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildProc); {$IFDEF INLINE_ASM} inline; {$ENDIF} {$ENDIF}
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildCall); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     {$IFNDEF FPC}
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildProc); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildProc); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     {$ENDIF FPC}
     { search }
     function Search(const Buff: TKDTree_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDTree_Node; overload;
@@ -123,7 +123,7 @@ const
   SaveToken = $9;
 
 function TKDTree.InternalBuildKdTree(const KDSourceBufferPtr: PKDTree_SourceBuffer; const PlanCount, Depth: NativeInt): PKDTree_Node;
-  function SortCompare(const p1, p2: PKDTree_Source; const Axis: NativeInt): ShortInt;
+  function SortCompare(const p1, p2: PKDTree_Source; const Axis: NativeInt): ShortInt; inline;
   begin
     if p1^.Buff[Axis] = p2^.Buff[Axis] then
       begin
@@ -139,8 +139,7 @@ function TKDTree.InternalBuildKdTree(const KDSourceBufferPtr: PKDTree_SourceBuff
     else
         Result := 1;
   end;
-
-  procedure InternalSort(const SortBuffer: PKDTree_SourceBuffer; l, r: NativeInt; const Axis: NativeInt);
+  procedure InternalSort(const SortBuffer: PKDTree_SourceBuffer; l, r: NativeInt; const Axis: NativeInt); inline;
   var
     i, j: NativeInt;
     p, t: PKDTree_Source;
