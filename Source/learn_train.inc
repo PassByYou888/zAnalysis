@@ -55,6 +55,10 @@ procedure MLPTrainLBFGS_MT_Mod(var Network: TMultiLayerPerceptron;
   WStep, Diameter: TLearnFloat; MaxIts: TLearnInteger;
   var Info: TLearnInteger; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
+procedure MLPTrainMonteCarlo(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
+  const MainRestarts, SubRestarts: TLearnInteger; const MinError: TLearnFloat;
+  Diameter: TLearnFloat; var Info: TLearnInteger; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure MLPKFoldCVLBFGS(const Network: TMultiLayerPerceptron;
   const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
   Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
@@ -69,8 +73,8 @@ procedure MLPKFoldCVLM(const Network: TMultiLayerPerceptron;
 
 type
   TMLPProcessData = packed record
-    TotalRestarts: Integer;
-    RestartsFinished: Integer;
+    TotalRestarts: TLearnInteger;
+    RestartsFinished: TLearnInteger;
     IsTerminated: boolean;
     EBest: TLearnFloat;
   end;
@@ -91,35 +95,28 @@ procedure MLPKFoldSplit(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
 
 
 (* ************************************************************************
-  Neural network training  using  modified  Levenberg-Marquardt  with  exact
-  Hessian calculation and regularization. Subroutine trains  neural  network
-  with restarts from random positions. Algorithm is well  suited  for  small
-  and medium scale problems (hundreds of weights).
-
-  INPUT PARAMETERS:
-  Network     -   neural network with initialized geometry
-  XY          -   training set
-  NPoints     -   training set size
-  Decay       -   weight decay constant, >=0.001
-  Decay term 'Decay*||Weights||^2' is added to error
-  function.
-  If you don't know what Decay to choose, use 0.001.
-  Restarts    -   number of restarts from random position, >0.
-  If you don't know what Restarts to choose, use 2.
-
-  OUTPUT PARAMETERS:
-  Network     -   trained neural network.
-  Info        -   return code:
-  * -9, if internal matrix inverse subroutine failed
-  * -2, if there is a point with class number
-  outside of [0..NOut-1].
-  * -1, if wrong parameters specified
-  (NPoints<0, Restarts<1).
-  *  2, if task has been solved.
-  Rep         -   training report
-
-  -- ALGLIB --
-  Copyright 10.03.2009 by Bochkanov Sergey
+  //  Neural network training using modified Levenberg-Marquardt with exact
+  //  Hessian calculation and regularization. Subroutine trains neural network
+  //  with restarts from random positions.Algorithm is well suited for small
+  //  and medium scale problems (hundreds of weights).
+  //
+  //  INPUT PARAMETERS:
+  //  Network     -   neural network with initialized geometry
+  //  XY          -   training set
+  //  NPoints     -   training set size
+  //  Decay       -   weight decay constant, >=0.001 Decay term 'Decay*||Weights||^2' is added to error function.
+  //                  If you don't know what Decay to choose, use 0.001.
+  //  Restarts    -   number of restarts from random position, >0.
+  //                  If you don't know what Restarts to choose, use 2.
+  //
+  //  OUTPUT PARAMETERS:
+  //  Network     -   trained neural network.
+  //  Info        -   return code:
+  //  * -9, if internal matrix inverse subroutine failed
+  //  * -2, if there is a point with class number outside of [0..NOut-1].
+  //  * -1, if wrong parameters specified (NPoints<0, Restarts<1).
+  //  *  2, if task has been solved.
+  //  Rep         -   training report
   ************************************************************************ *)
 procedure MLPTrainLM(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
   NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
@@ -1739,6 +1736,102 @@ begin
   //
   Rep := RepCopy;
 
+  APVMove(@Network.Weights[0], 0, WCount - 1, @WBest[0], 0, WCount - 1);
+end;
+
+procedure MLPTrainMonteCarlo(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
+const MainRestarts, SubRestarts: TLearnInteger; const MinError: TLearnFloat;
+Diameter: TLearnFloat; var Info: TLearnInteger; var Rep: TMLPReport);
+var
+  I                : TLearnInteger;
+  MainPass, SubPass: TLearnInteger;
+  NIn              : TLearnInteger;
+  NOut             : TLearnInteger;
+  WCount           : TLearnInteger;
+  W                : TLearnFloatArray;
+  WBest            : TLearnFloatArray;
+  E                : TLearnFloat;
+  EBest            : TLearnFloat;
+  EBestSub         : TLearnFloat;
+begin
+
+  //
+  // Test inputs, parse flags, read network geometry
+  //
+  if (NPoints <= 0) or (MainRestarts < 1) or (SubRestarts < 1) or
+    (Diameter < 0.01) then
+    begin
+      Info := -1;
+      Exit;
+    end;
+  MLPProperties(Network, NIn, NOut, WCount);
+  if MLPIsSoftmax(Network) then
+    begin
+      I := 0;
+      while I <= NPoints - 1 do
+        begin
+          if (Round(XY[I, NIn]) < 0) or (Round(XY[I, NIn]) >= NOut) then
+            begin
+              Info := -2;
+              Exit;
+            end;
+          Inc(I);
+        end;
+    end;
+  Info := 2;
+
+  //
+  // Prepare
+  //
+  MLPInitPreprocessor(Network, XY, NPoints);
+  SetLength(W, WCount (* - 1 + 1 // optimized compler *) );
+  SetLength(WBest, WCount (* - 1 + 1 // optimized compler *) );
+  APVFillValue(@WBest[0], 0, WCount - 1, 0);
+  EBest := MaxRealNumber;
+
+  //
+  // Multiple starts
+  //
+  Rep.NCholesky := 0;
+  Rep.NHess := 0;
+  Rep.NGrad := 0;
+
+  for MainPass := 1 to MainRestarts do
+    begin
+      EBestSub := MaxRealNumber;
+      for SubPass := 1 to SubRestarts do
+        begin
+
+          // Process
+          MLPRandomize(Network, WBest, Diameter);
+
+          // Compare with best
+          E := MLPErrorN(Network, XY, NPoints);
+          if AP_FP_Less(E, EBestSub) then
+            begin
+              if AP_FP_Less(E, EBest) then
+                  APVMove(@W[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+              EBestSub := E;
+            end;
+
+          if AP_FP_Less(EBestSub, MinError) then
+              Break;
+
+        end;
+
+      // The best network
+      if AP_FP_Less(EBestSub, EBest) then
+        begin
+          APVMove(@WBest[0], 0, WCount - 1, @W[0], 0, WCount - 1);
+          EBest := EBestSub;
+        end;
+
+      if AP_FP_Less(EBest, MinError) then
+          Break;
+
+      Diameter := Diameter * 0.5;
+    end;
+  // The best network
   APVMove(@Network.Weights[0], 0, WCount - 1, @WBest[0], 0, WCount - 1);
 end;
 

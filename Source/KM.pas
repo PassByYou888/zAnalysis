@@ -18,8 +18,11 @@ uses CoreClasses;
 
 
 type
-  TDynamicIndexArray = array of Integer;
+  TDynamicIndexArray = packed array of Integer;
   PDynamicIndexArray = ^TDynamicIndexArray;
+
+  TKMBoolArray = packed array of Boolean;
+  PKMBoolArray = ^TKMBoolArray;
 
   TKMFloat = Double;
   PKMFloat = ^TKMFloat;
@@ -27,13 +30,10 @@ type
   TKMIntegerArray = TDynamicIndexArray;
   PKMIntegerArray = PDynamicIndexArray;
 
-  TKMFloatArray = array of TKMFloat;
+  TKMFloatArray = packed array of TKMFloat;
   PKMFloatArray = ^TKMFloatArray;
 
-  TKMBoolArray = array of Boolean;
-  PKMBoolArray = ^TKMBoolArray;
-
-  TKMFloat2DArray = array of array of TKMFloat;
+  TKMFloat2DArray = packed array of TKMFloatArray;
   PKMFloat2DArray = ^TKMFloat2DArray;
 
   (*
@@ -43,8 +43,8 @@ type
     * -1, if incorrect NPoints/NFeatures/K/Restarts was passed
     *  1, if subroutine finished successfully
   *)
-function KMeansCluster(const Source: TKMFloat2DArray;
-  const NVars, k, Restarts: NativeInt; var KArray: TKMFloat2DArray; var SourceIndex: TKMIntegerArray): ShortInt;
+function KMeansCluster(const Source: TKMFloat2DArray; const NVars, k, Restarts: NativeInt; var KArray: TKMFloat2DArray; var kIndex: TKMIntegerArray): ShortInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 implementation
 
@@ -264,7 +264,7 @@ begin
 end;
 
 function KMeansCluster(const Source: TKMFloat2DArray;
-  const NVars, k, Restarts: NativeInt; var KArray: TKMFloat2DArray; var SourceIndex: TKMIntegerArray): ShortInt;
+  const NVars, k, Restarts: NativeInt; var KArray: TKMFloat2DArray; var kIndex: TKMIntegerArray): ShortInt;
 var
   NPoints         : NativeInt;
   i               : NativeInt;
@@ -300,7 +300,7 @@ begin
 
   SetLength(ct, k, NVars);
   SetLength(CTBest, k, NVars);
-  SetLength(SourceIndex, NPoints);
+  SetLength(kIndex, NPoints);
   SetLength(XYCBest, NPoints);
   SetLength(D2, NPoints);
   SetLength(P, NPoints);
@@ -336,7 +336,7 @@ begin
       // 2. update center positions
       while True do
         begin
-          // fill SourceIndex with center numbers
+          // fill kIndex with center numbers
           WasChanges := False;
           i := 0;
           while i <= NPoints - 1 do
@@ -356,9 +356,9 @@ begin
                     end;
                   Inc(j);
                 end;
-              if SourceIndex[i] <> CClosest then
+              if kIndex[i] <> CClosest then
                   WasChanges := True;
-              SourceIndex[i] := CClosest;
+              kIndex[i] := CClosest;
               Inc(i);
             end;
 
@@ -383,8 +383,8 @@ begin
           i := 0;
           while i <= NPoints - 1 do
             begin
-              CSizes[SourceIndex[i]] := CSizes[SourceIndex[i]] + 1;
-              ArrayAdd(@ct[SourceIndex[i]][0], 0, NVars - 1, @Source[i][0], 0, NVars - 1);
+              CSizes[kIndex[i]] := CSizes[kIndex[i]] + 1;
+              ArrayAdd(@ct[kIndex[i]][0], 0, NVars - 1, @Source[i][0], 0, NVars - 1);
               Inc(i);
             end;
           ZeroSizeClusters := False;
@@ -426,7 +426,7 @@ begin
       while i <= NPoints - 1 do
         begin
           ArrayMove(@Tmp[0], 0, NVars - 1, @Source[i][0], 0, NVars - 1);
-          ArraySub(@Tmp[0], 0, NVars - 1, @ct[SourceIndex[i]][0], 0, NVars - 1);
+          ArraySub(@Tmp[0], 0, NVars - 1, @ct[kIndex[i]][0], 0, NVars - 1);
           v := ArrayDotProduct(@Tmp[0], 0, NVars - 1, @Tmp[0], 0, NVars - 1);
           E := E + v;
           Inc(i);
@@ -439,7 +439,7 @@ begin
           i := 0;
           while i <= NPoints - 1 do
             begin
-              XYCBest[i] := SourceIndex[i];
+              XYCBest[i] := kIndex[i];
               Inc(i);
             end;
         end;
@@ -452,7 +452,7 @@ begin
   i := 0;
   while i <= NPoints - 1 do
     begin
-      SourceIndex[i] := XYCBest[i];
+      kIndex[i] := XYCBest[i];
       Inc(i);
     end;
 end;

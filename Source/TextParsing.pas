@@ -347,6 +347,7 @@ begin
     begin
       repeat
         Inc(cPos, 1);
+
         while isWordSplitChar(ParsingData.Text[cPos]) do
           begin
             if cPos + 1 > l then
@@ -781,23 +782,29 @@ begin
   if cPos > l then
       cPos := l;
 
+  if cPos = l then
+      Exit;
+
   IsHex := False;
-  if (CharIn(ParsingData.Text[cPos], '$')) then
-    begin
-      // pascal style hex
-      IsHex := True;
-      Inc(cPos);
-      if cPos > l then
-          Exit;
-    end
-  else if ComparePosStr(cPos, '0x') then
-    begin
-      // c style hex
-      IsHex := True;
-      Inc(cPos, 2);
-      if cPos > l then
-          Exit;
-    end;
+  try
+    if (CharIn(ParsingData.Text[cPos], '$')) then
+      begin
+        // pascal style hex
+        IsHex := True;
+        Inc(cPos);
+        if cPos > l then
+            Exit;
+      end
+    else if ComparePosStr(cPos, '0x') then
+      begin
+        // c style hex
+        IsHex := True;
+        Inc(cPos, 2);
+        if cPos > l then
+            Exit;
+      end;
+  except
+  end;
 
   if IsHex then
     begin
@@ -1064,7 +1071,7 @@ end;
 
 function TTextParsing.isSymbol(const cOffset: Integer): Boolean;
 begin
-  Result := CharIn(ParsingData.Text[cOffset], SymbolTable);
+  Result := CharIn(ParsingData.Text[cOffset], SymbolTable)
 end;
 
 function TTextParsing.GetSymbolEndPos(const cOffset: Integer): Integer;

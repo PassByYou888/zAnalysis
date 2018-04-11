@@ -13,7 +13,7 @@
 
 unit ItemStream;
 
-{$I zDefine.inc}
+{$I ZDefine.inc}
 
 interface
 

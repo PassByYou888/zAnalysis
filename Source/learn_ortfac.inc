@@ -946,7 +946,7 @@ procedure CMatrixBlockReflector(var A: TLearnComplex2DArray;
 
   Output parameters:
   A   -   matrices Q and R in compact form (see below).
-  Tau -   array of scalar factors which are used to form
+  Tau -   packed array of scalar factors which are used to form
   matrix Q. Array whose index ranges within [0.. Min(M-1,N-1)].
 
   Matrix A is represented as A = QR, where Q is an orthogonal matrix of size
@@ -1101,7 +1101,7 @@ end;
 
   Output parameters:
   A   -   matrices L and Q in compact form (see below)
-  Tau -   array of scalar factors which are used to form
+  Tau -   packed array of scalar factors which are used to form
   matrix Q. Array whose index ranges within [0..Min(M,N)-1].
 
   Matrix A is represented as A = LQ, where Q is an orthogonal matrix of size
@@ -1249,7 +1249,7 @@ end;
 
   Output parameters:
   A   -   matrices Q and R in compact form
-  Tau -   array of scalar factors which are used to form matrix Q. Array
+  Tau -   packed array of scalar factors which are used to form matrix Q. Array
   whose indexes range within [0.. Min(M,N)-1]
 
   Matrix A is represented as A = QR, where Q is an orthogonal matrix of size
@@ -1393,7 +1393,7 @@ end;
 
   Output parameters:
   A   -   matrices Q and L in compact form
-  Tau -   array of scalar factors which are used to form matrix Q. Array
+  Tau -   packed array of scalar factors which are used to form matrix Q. Array
   whose indexes range within [0.. Min(M,N)-1]
 
   Matrix A is represented as A = LQ, where Q is an orthogonal matrix of size
@@ -3021,7 +3021,7 @@ end;
 
   Output parameters:
   A       -   matrices Q and P in  compact form (see below).
-  Tau     -   array of scalar factors which are used to form matrix Q.
+  Tau     -   packed array of scalar factors which are used to form matrix Q.
   Array whose index ranges within [0..N-2]
 
   Matrix H is located on the main diagonal, on the lower secondary  diagonal
@@ -3224,7 +3224,7 @@ end;
 
   Output parameters:
   A       -   matrices T and Q in  compact form (see lower)
-  Tau     -   array of factors which are forming matrices H(i)
+  Tau     -   packed array of factors which are forming matrices H(i)
   array with elements [0..N-2].
   D       -   main diagonal of symmetric matrix T.
   array with elements [0..N-1].
@@ -3581,7 +3581,7 @@ end;
 
   Output parameters:
   A       -   matrices T and Q in  compact form (see lower)
-  Tau     -   array of factors which are forming matrices H(i)
+  Tau     -   packed array of factors which are forming matrices H(i)
   array with elements [0..N-2].
   D       -   main diagonal of real symmetric matrix T.
   array with elements [0..N-1].

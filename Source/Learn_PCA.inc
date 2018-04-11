@@ -407,8 +407,7 @@ end;
   It should be noted that, unlike LDA, PCA does not use class labels.
 
   INPUT PARAMETERS:
-  X           -   dataset, array[0..NPoints-1,0..NVars-1].
-  matrix contains ONLY INDEPENDENT VARIABLES.
+  X           -   dataset, array[0..NPoints-1,0..NVars-1]. matrix contains ONLY INDEPENDENT VARIABLES.
   NPoints     -   dataset size, NPoints>=0
   NVars       -   number of independent variables, NVars>=1
 
@@ -417,8 +416,7 @@ end;
   * -1, if wrong parameters has been passed (NPoints<0, NVars<1)
   *  1, if task is solved
   S2          -   array[0..NVars-1]. variance values corresponding to basis vectors.
-  V           -   array[0..NVars-1,0..NVars-1]
-  matrix, whose columns store basis vectors.
+  V           -   array[0..NVars-1,0..NVars-1] matrix, whose columns store basis vectors.
   ************************************************************************ *)
 procedure PCABuildBasis(const X: TLearnFloat2DArray; NPoints: TLearnInteger; NVars: TLearnInteger; var Info: TLearnInteger; var S2: TLearnFloatArray; var V: TLearnFloat2DArray);
 var

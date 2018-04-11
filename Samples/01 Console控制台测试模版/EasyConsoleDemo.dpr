@@ -32,12 +32,12 @@ begin
 
   NearestNodes := TCoreClassList.Create;
 
-  SetLength(buff, 10000);
+  SetLength(buff, 1000);
   for i := 0 to Length(buff) - 1 do
     for j := 0 to KDT1DD_Axis - 1 do
         buff[i][j] := umlRandomRangeD(-3000, 3000);
 
-  k1t.BuildKDTreeWithCluster(buff, 20, 1, outIndex);
+  k1t.BuildKDTreeWithCluster(buff, 100, 1, outIndex);
 
   // k1t.PrintNodeTree(k1t.RootNode);
   // k1t.SaveToFile('c:\test.dat');
@@ -73,7 +73,9 @@ begin
                 DoStatus(Format('index:%d dist:%f',
                 [TKDT1DD.PKDT1DD_Node(NearestNodes[i])^.vec^.index, sqrt(TKDT1DD.KDT1DDDistance(TKDT1DD.PKDT1DD_Node(NearestNodes[i])^.vec^.buff, k1r^.vec^.buff))]));
           end;
-      end;
+      end
+    else
+        k1t.PrintBuffer;
   until False;
 
   disposeObject([k1t, NearestNodes]);
@@ -81,7 +83,7 @@ end;
 
 begin
   MH_1.BeginMemoryHook($FFFFF);
-  TKDT1DD.test();
+  FastKDTreeD.Test_All();
   Demo;
   MH_1.EndMemoryHook;
   MH_1.HookPtrList.Progress(procedure(NPtr: Pointer; uData: NativeUInt)

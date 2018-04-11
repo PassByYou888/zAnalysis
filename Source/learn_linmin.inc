@@ -1,5 +1,5 @@
 { ****************************************************************************** }
-{ * machine Learn support, by QQ 600585@qq.com                                 * }
+{ * Normalizes direction/step pair support, by QQ 600585@qq.com                * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
 { * https://github.com/PassByYou888/zExpression                                * }
@@ -45,12 +45,12 @@ procedure MCSRCH(const N: TLearnInteger; var X: TLearnFloatArray;
 
 
 const
-  FTOL      = 0.001;
-  XTOL      = 100 * MachineEpsilon;
-  GTOL      = 0.3;
-  MAXFEV    = 20;
-  STPMIN    = 1.0E-50;
-  DefSTPMAX = 1.0E+50;
+  LM_FTOL      = 0.001;
+  LM_XTOL      = 100 * MachineEpsilon;
+  LM_GTOL      = 0.3;
+  LM_MAXFEV    = 20;
+  LM_STPMIN    = 1.0E-50;
+  LM_DefSTPMAX = 1.0E+50;
 
 procedure MCSTEP(var STX: TLearnFloat; var FX: TLearnFloat; var DX: TLearnFloat;
   var STY: TLearnFloat; var FY: TLearnFloat; var DY: TLearnFloat;
@@ -119,11 +119,11 @@ begin
   ZERO := 0;
   if AP_FP_Eq(STPMAX, 0) then
     begin
-      STPMAX := DefSTPMAX;
+      STPMAX := LM_DefSTPMAX;
     end;
-  if AP_FP_Less(Stp, STPMIN) then
+  if AP_FP_Less(Stp, LM_STPMIN) then
     begin
-      Stp := STPMIN;
+      Stp := LM_STPMIN;
     end;
   if AP_FP_Greater(Stp, STPMAX) then
     begin
@@ -152,9 +152,9 @@ begin
           //
           // CHECK THE INPUT PARAMETERS FOR ERRORS.
           //
-          if (N <= 0) or AP_FP_Less_Eq(Stp, 0) or AP_FP_Less(FTOL, 0) or
-            AP_FP_Less(GTOL, ZERO) or AP_FP_Less(XTOL, ZERO) or
-            AP_FP_Less(STPMIN, ZERO) or AP_FP_Less(STPMAX, STPMIN) or (MAXFEV <= 0)
+          if (N <= 0) or AP_FP_Less_Eq(Stp, 0) or AP_FP_Less(LM_FTOL, 0) or
+            AP_FP_Less(LM_GTOL, ZERO) or AP_FP_Less(LM_XTOL, ZERO) or
+            AP_FP_Less(LM_STPMIN, ZERO) or AP_FP_Less(STPMAX, LM_STPMIN) or (LM_MAXFEV <= 0)
           then
             begin
               Stage := 0;
@@ -180,8 +180,8 @@ begin
           State.STAGE1 := True;
           NFEV := 0;
           State.FINIT := F;
-          State.DGTEST := FTOL * State.DGINIT;
-          State.WIDTH := STPMAX - STPMIN;
+          State.DGTEST := LM_FTOL * State.DGINIT;
+          State.WIDTH := STPMAX - LM_STPMIN;
           State.WIDTH1 := State.WIDTH / P5;
           APVMove(@WA[0], 0, N - 1, @X[0], 0, N - 1);
 
@@ -236,15 +236,15 @@ begin
             end;
 
           //
-          // FORCE THE STEP TO BE WITHIN THE BOUNDS STPMAX AND STPMIN.
+          // FORCE THE STEP TO BE WITHIN THE BOUNDS STPMAX AND LM_STPMIN.
           //
           if AP_FP_Greater(Stp, STPMAX) then
             begin
               Stp := STPMAX;
             end;
-          if AP_FP_Less(Stp, STPMIN) then
+          if AP_FP_Less(Stp, LM_STPMIN) then
             begin
-              Stp := STPMIN;
+              Stp := LM_STPMIN;
             end;
 
           //
@@ -252,9 +252,9 @@ begin
           // STP BE THE LOWEST POINT OBTAINED SO FAR.
           //
           if State.BRACKT and (AP_FP_Less_Eq(Stp, State.STMIN) or
-            AP_FP_Greater_Eq(Stp, State.STMAX)) or (NFEV >= MAXFEV - 1) or
+            AP_FP_Greater_Eq(Stp, State.STMAX)) or (NFEV >= LM_MAXFEV - 1) or
             (State.INFOC = 0) or State.BRACKT and
-            AP_FP_Less_Eq(State.STMAX - State.STMIN, XTOL * State.STMAX) then
+            AP_FP_Less_Eq(State.STMAX - State.STMIN, LM_XTOL * State.STMAX) then
             begin
               Stp := State.STX;
             end;
@@ -293,22 +293,22 @@ begin
             begin
               INFO := 5;
             end;
-          if AP_FP_Eq(Stp, STPMIN) and (AP_FP_Greater(F, State.FTEST1) or
+          if AP_FP_Eq(Stp, LM_STPMIN) and (AP_FP_Greater(F, State.FTEST1) or
             AP_FP_Greater_Eq(State.DG, State.DGTEST)) then
             begin
               INFO := 4;
             end;
-          if NFEV >= MAXFEV then
+          if NFEV >= LM_MAXFEV then
             begin
               INFO := 3;
             end;
           if State.BRACKT and AP_FP_Less_Eq(State.STMAX - State.STMIN,
-            XTOL * State.STMAX) then
+            LM_XTOL * State.STMAX) then
             begin
               INFO := 2;
             end;
           if AP_FP_Less_Eq(F, State.FTEST1) and AP_FP_Less_Eq(AbsReal(State.DG),
-            -GTOL * State.DGINIT) then
+            -LM_GTOL * State.DGINIT) then
             begin
               INFO := 1;
             end;
@@ -327,7 +327,7 @@ begin
           // FUNCTION HAS A NONPOSITIVE VALUE AND NONNEGATIVE DERIVATIVE.
           //
           if State.STAGE1 and AP_FP_Less_Eq(F, State.FTEST1) and
-            AP_FP_Greater_Eq(State.DG, Min(FTOL, GTOL) * State.DGINIT) then
+            AP_FP_Greater_Eq(State.DG, Min(LM_FTOL, LM_GTOL) * State.DGINIT) then
             begin
               State.STAGE1 := False;
             end;
@@ -518,7 +518,7 @@ begin
               // THE CUBIC STEP IS ONLY USED IF THE CUBIC TENDS TO INFINITY
               // IN THE DIRECTION OF THE STEP OR IF THE MINIMUM OF THE CUBIC
               // IS BEYOND STP. OTHERWISE THE CUBIC STEP IS DEFINED TO BE
-              // EITHER STPMIN OR STPMAX. THE QUADRATIC (SECANT) STEP IS ALSO
+              // EITHER LM_STPMIN OR STPMAX. THE QUADRATIC (SECANT) STEP IS ALSO
               // COMPUTED AND IF THE MINIMUM IS BRACKETED THEN THE THE STEP
               // CLOSEST TO STX IS TAKEN, ELSE THE STEP FARTHEST AWAY IS TAKEN.
               //
@@ -585,7 +585,7 @@ begin
               // FOURTH CASE. A LOWER FUNCTION VALUE, DERIVATIVES OF THE
               // SAME SIGN, AND THE MAGNITUDE OF THE DERIVATIVE DOES
               // NOT DECREASE. IF THE MINIMUM IS NOT BRACKETED, THE STEP
-              // IS EITHER STPMIN OR STPMAX, ELSE THE CUBIC STEP IS TAKEN.
+              // IS EITHER LM_STPMIN OR STPMAX, ELSE THE CUBIC STEP IS TAKEN.
               //
               INFO := 4;
               BOUND := False;

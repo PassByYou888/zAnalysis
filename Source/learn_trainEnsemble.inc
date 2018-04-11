@@ -559,7 +559,7 @@ end;
   Ensemble-   original
 
   OUTPUT PARAMETERS:
-  RA      -   array of real numbers which stores ensemble,
+  RA      -   packed array of real numbers which stores ensemble,
   array[0..RLen-1]
   RLen    -   RA lenght
   ************************************************************************ *)

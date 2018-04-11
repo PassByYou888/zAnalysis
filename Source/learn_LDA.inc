@@ -19,11 +19,9 @@ procedure FisherLDAN(const XY: TLearnFloat2DArray; NPoints: TLearnInteger; NVars
   training set on classes.
 
   INPUT PARAMETERS:
-  XY          -   training set, array[0..NPoints-1,0..NVars].
-  First NVars columns store values of independent
-  variables, next column stores number of class (from 0
-  to NClasses-1) which dataset element belongs to. Fractional
-  values are rounded to nearest integer.
+  XY          -   training set, array[0..NPoints-1,0..NVars]. First NVars columns store values of independent variables,
+                  next column stores number of class (from 0 to NClasses-1) which dataset element belongs to.
+                  Fractional values are rounded to nearest TLearnInteger.
   NPoints     -   training set size, NPoints>=0
   NVars       -   number of independent variables, NVars>=1
   NClasses    -   number of classes, NClasses>=2
@@ -32,13 +30,10 @@ procedure FisherLDAN(const XY: TLearnFloat2DArray; NPoints: TLearnInteger; NVars
   OUTPUT PARAMETERS:
   Info        -   return code:
   * -4, if internal EVD subroutine hasn't converged
-  * -2, if there is a point with class number
-  outside of [0..NClasses-1].
-  * -1, if incorrect parameters was passed (NPoints<0,
-  NVars<1, NClasses<2)
+  * -2, if there is a point with class number outside of [0..NClasses-1].
+  * -1, if incorrect parameters was passed (NPoints<0, NVars<1, NClasses<2)
   *  1, if task has been solved
-  *  2, if there was a multicollinearity in training set,
-  but task has been solved.
+  *  2, if there was a multicollinearity in training set, but task has been solved.
   W           -   linear combination coefficients, array[0..NVars-1]
   ************************************************************************ *)
 procedure FisherLDA(const XY: TLearnFloat2DArray; NPoints: TLearnInteger; NVars: TLearnInteger; NClasses: TLearnInteger;
@@ -67,10 +62,9 @@ end;
 
   INPUT PARAMETERS:
   XY          -   training set, array[0..NPoints-1,0..NVars].
-  First NVars columns store values of independent
-  variables, next column stores number of class (from 0
-  to NClasses-1) which dataset element belongs to. Fractional
-  values are rounded to nearest integer.
+                  First NVars columns store values of independent variables,
+                  next column stores number of class (from 0 to NClasses-1) which dataset element belongs to.
+                  Fractional values are rounded to nearest TLearnInteger.
   NPoints     -   training set size, NPoints>=0
   NVars       -   number of independent variables, NVars>=1
   NClasses    -   number of classes, NClasses>=2
@@ -81,14 +75,10 @@ end;
   * -4, if internal EVD subroutine hasn't converged
   * -2, if there is a point with class number
   outside of [0..NClasses-1].
-  * -1, if incorrect parameters was passed (NPoints<0,
-  NVars<1, NClasses<2)
+  * -1, if incorrect parameters was passed (NPoints<0, NVars<1, NClasses<2)
   *  1, if task has been solved
-  *  2, if there was a multicollinearity in training set,
-  but task has been solved.
-  W           -   basis, array[0..NVars-1,0..NVars-1]
-  columns of matrix stores basis vectors, sorted by
-  quality of training set separation (in descending order)
+  *  2, if there was a multicollinearity in training set, but task has been solved.
+  W           -   basis, array[0..NVars-1,0..NVars-1] columns of matrix stores basis vectors, sorted by quality of training set separation (in descending order)
   ************************************************************************ *)
 procedure FisherLDAN(const XY: TLearnFloat2DArray; NPoints: TLearnInteger; NVars: TLearnInteger; NClasses: TLearnInteger;
   var Info: TLearnInteger; var W: TLearnFloat2DArray); {$IFDEF INLINE_ASM} inline; {$ENDIF}

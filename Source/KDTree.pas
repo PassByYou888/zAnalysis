@@ -17,50 +17,50 @@ uses CoreClasses, KM;
 
 
 type
+  TKDTree_VecType = TKMFloat;
+  PKDTree_VecType = PKMFloat;
+
+  TKDTree_Vec = TKMFloatArray;
+  PKDTree_Vec = PKMFloatArray;
+
+  TKDTree_DynamicVecBuffer = TKMFloat2DArray;
+  PKDTree_DynamicVecBuffer = PKMFloat2DArray;
+
+  TKDTree_Source = packed record
+    Buff: TKDTree_Vec;
+    index: Int64;
+  end;
+
+  PKDTree_Source = ^TKDTree_Source;
+
+  TKDTree_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDTree_Source) - 1] of PKDTree_Source;
+  PKDTree_SourceBuffer = ^TKDTree_SourceBuffer;
+
+  TKDTreeyanmicSourceBuffer = packed array of PKDTree_Source;
+  PKDTreeyanmicSourceBuffer = ^TKDTreeyanmicSourceBuffer;
+
+  TKDTreeyanmicStoreBuffer = packed array of TKDTree_Source;
+  PKDTreeyanmicStoreBuffer = ^TKDTreeyanmicStoreBuffer;
+
+  PKDTree_Node = ^TKDTree_Node;
+
+  TKDTree_Node = packed record
+    Parent, Right, Left: PKDTree_Node;
+    vec: PKDTree_Source;
+  end;
+
+  TKDTree_BuildCall               = procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer);
+  TKDTree_BuildMethod             = procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer) of object;
+  {$IFNDEF FPC} TKDTree_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer); {$ENDIF}
+
   TKDTree = class(TCoreClassObject)
   public type
-    TKDTree_VecType = TKMFloat;
-    PKDTree_VecType = PKMFloat;
-
-    TKDTree_Vec = TKMFloatArray;
-    PKDTree_Vec = PKMFloatArray;
-
-    TKDTree_DynamicVecBuffer = array of TKDTree_Vec;
-    PKDTree_DynamicVecBuffer = ^TKDTree_DynamicVecBuffer;
-
-    TKDTree_Source = packed record
-      Buff: TKDTree_Vec;
-      index: Int64;
-    end;
-
-    PKDTree_Source = ^TKDTree_Source;
-
-    TKDTree_SourceBuffer = array [0 .. 0] of PKDTree_Source;
-    PKDTree_SourceBuffer = ^TKDTree_SourceBuffer;
-
-    TKDTreeyanmicSourceBuffer = array of PKDTree_Source;
-    PKDTreeyanmicSourceBuffer = ^TKDTreeyanmicSourceBuffer;
-
-    TKDTreeyanmicStoreBuffer = array of TKDTree_Source;
-    PKDTreeyanmicStoreBuffer = ^TKDTreeyanmicStoreBuffer;
-
-    PKDTree_Node = ^TKDTree_Node;
-
-    TKDTree_Node = packed record
-      Parent, Right, Left: PKDTree_Node;
-      vec: PKDTree_Source;
-    end;
-
-    TKDTree_BuildCall               = procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer);
-    TKDTree_BuildMethod             = procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer) of object;
-    {$IFNDEF FPC} TKDTree_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer); {$ENDIF}
   private
     FAxisCount : Integer;
     KDStoreBuff: TKDTreeyanmicStoreBuffer;
     KDBuff     : TKDTreeyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDTree_Node;
-    TestBuff   : TKDTree_DynamicVecBuffer;
+    KDNodes    : packed array of PKDTree_Node;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDTree_SourceBuffer; const PlanCount, Depth: NativeInt): PKDTree_Node;
     function GetData(const index: NativeInt): PKDTree_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
   public
@@ -104,10 +104,10 @@ type
     class function KDTreeVec(const s: string): TKDTree_Vec; overload;
     class function KDTreeVec(const v: TKDTree_Vec): string; overload;
     class function KDTreeDistance(const v1, v2: TKDTree_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-    // debug
-    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer);
-    class procedure Test(const Axis: Integer);
   end;
+
+  // debug
+procedure Test_KDTree(const Axis: Integer);
 
 implementation
 
@@ -236,15 +236,11 @@ begin
   SetLength(KDNodes, 0);
   SetLength(KDStoreBuff, 0);
   SetLength(KDBuff, 0);
-  Clear;
 end;
 
 destructor TKDTree.Destroy;
 begin
   Clear;
-  SetLength(KDNodes, 0);
-  SetLength(KDStoreBuff, 0);
-  SetLength(KDBuff, 0);
   inherited Destroy;
 end;
 
@@ -260,6 +256,7 @@ begin
     end;
   for i := 0 to length(KDStoreBuff) - 1 do
       SetLength(KDStoreBuff[i].Buff, 0);
+
   SetLength(KDNodes, 0);
   SetLength(KDStoreBuff, 0);
   SetLength(KDBuff, 0);
@@ -550,7 +547,7 @@ function TKDTree.Search(const Buff: TKDTree_Vec; var SearchedDistanceMin: Double
 var
   NearestNeighbour: PKDTree_Node;
 
-  function FindParentNode(const BuffPtr: PKDTree_Vec; NodePtr: PKDTree_Node): PKDTree_Node;
+  function FindParentNode(const BuffPtr: PKDTree_Vec; const NodePtr: PKDTree_Node): PKDTree_Node;
   var
     Next       : PKDTree_Node;
     Depth, Axis: NativeInt;
@@ -933,7 +930,7 @@ begin
   for i := 0 to length(v) - 1 do
     begin
       if i > 0 then
-          Result := Result + ',';
+          Result := Result + ' ';
       Result := Result + umlFloatToStr(v[i]);
     end;
 end;
@@ -952,15 +949,15 @@ begin
       Result := Result + KPow(v2[i] - v1[i]);
 end;
 
-procedure TKDTree.Test_BuildM(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer);
+procedure Test_BuildC(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer);
 var
   i: Integer;
 begin
   for i := 0 to length(Source.Buff) - 1 do
-      Source.Buff[i] := TestBuff[IndexFor][i];
+      Source.Buff[i] := PKDTree_DynamicVecBuffer(Data)^[IndexFor][i];
 end;
 
-class procedure TKDTree.Test(const Axis: Integer);
+procedure Test_KDTree(const Axis: Integer);
 var
   TKDTree_Test      : TKDTree;
   t                 : TTimeTick;
@@ -968,55 +965,56 @@ var
   TestResultIndex   : TDynamicIndexArray;
   KMeanBuildOutIndex: TDynamicIndexArray;
   errored           : Boolean;
+  TestBuff          : TKDTree_DynamicVecBuffer;
 
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  DoStatusNoLn('test KDTree...');
   t := GetTimeTick;
 
   TKDTree_Test := TKDTree.Create(Axis);
 
   DoStatusNoLn('...');
-  SetLength(TKDTree_Test.TestBuff, 100);
-  for i := 0 to length(TKDTree_Test.TestBuff) - 1 do
+  SetLength(TestBuff, 1000);
+  for i := 0 to length(TestBuff) - 1 do
     begin
-      SetLength(TKDTree_Test.TestBuff[i], TKDTree_Test.AxisCount);
+      SetLength(TestBuff[i], TKDTree_Test.AxisCount);
       for j := 0 to TKDTree_Test.AxisCount - 1 do
-          TKDTree_Test.TestBuff[i][j] := i + 1;
+          TestBuff[i][j] := i + 1;
     end;
 
   DoStatusNoLn('...');
   {$IFDEF FPC}
-  TKDTree_Test.BuildKDTreeM(length(TKDTree_Test.TestBuff), nil, @TKDTree_Test.Test_BuildM);
+  TKDTree_Test.BuildKDTreeC(length(TestBuff), @TestBuff, @Test_BuildC);
   {$ELSE FPC}
-  TKDTree_Test.BuildKDTreeM(length(TKDTree_Test.TestBuff), nil, TKDTree_Test.Test_BuildM);
+  TKDTree_Test.BuildKDTreeC(length(TestBuff), @TestBuff, Test_BuildC);
   {$ENDIF FPC}
   { parallel search test }
   DoStatusNoLn('...');
-  SetLength(TestResultIndex, length(TKDTree_Test.TestBuff));
-  TKDTree_Test.Search(TKDTree_Test.TestBuff, TestResultIndex);
+  SetLength(TestResultIndex, length(TestBuff));
+  TKDTree_Test.Search(TestBuff, TestResultIndex);
   for i := 0 to length(TestResultIndex) - 1 do
-    if KDTreeDistance(TKDTree_Test.TestBuff[TestResultIndex[i]], TKDTree_Test.TestBuff[i]) <> 0 then
+    if TKDTree.KDTreeDistance(TestBuff[TestResultIndex[i]], TestBuff[i]) <> 0 then
         errored := True;
 
   DoStatusNoLn('...');
   TKDTree_Test.Clear;
   { kMean test }
   {$IFDEF FPC}
-  TKDTree_Test.BuildKDTreeWithClusterM(length(TKDTree_Test.TestBuff), 10, 1, KMeanBuildOutIndex, nil, @TKDTree_Test.Test_BuildM);
+  TKDTree_Test.BuildKDTreeWithClusterC(length(TestBuff), 10, 1, KMeanBuildOutIndex, @TestBuff, @Test_BuildC);
   {$ELSE FPC}
-  TKDTree_Test.BuildKDTreeWithClusterM(length(TKDTree_Test.TestBuff), 10, 1, KMeanBuildOutIndex, nil, TKDTree_Test.Test_BuildM);
+  TKDTree_Test.BuildKDTreeWithClusterC(length(TestBuff), 10, 1, KMeanBuildOutIndex, @TestBuff, Test_BuildC);
   {$ENDIF FPC}
   { parallel search test }
-  TKDTree_Test.Search(TKDTree_Test.TestBuff, TestResultIndex);
+  TKDTree_Test.Search(TestBuff, TestResultIndex);
   for i := 0 to length(TestResultIndex) - 1 do
     if KMeanBuildOutIndex[i] <> TestResultIndex[i] then
         errored := True;
 
-  for i := 0 to length(TKDTree_Test.TestBuff) - 1 do
-      SetLength(TKDTree_Test.TestBuff[i], 0);
+  for i := 0 to length(TestBuff) - 1 do
+      SetLength(TestBuff[i], 0);
 
-  SetLength(TKDTree_Test.TestBuff, 0);
+  SetLength(TestBuff, 0);
   SetLength(TestResultIndex, 0);
   TKDTree_Test.Clear;
 

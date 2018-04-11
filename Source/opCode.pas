@@ -25,12 +25,12 @@ type
 
   TOpCode = class;
 
-  TOpParam = array of Variant;
+  TOpParam = packed array of Variant;
 
   POpData = ^opData;
 
   opData = packed record
-    OnGet: TOpCode;
+    Op: TOpCode;
     Value: Variant;
     ValueType: TOpValueType;
   end;
@@ -105,7 +105,7 @@ type
     class function LoadFromStream(Stream: TCoreClassStream; out LoadedOp: TOpCode): Boolean;
 
     function AddValue(v: Variant): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-    function AddValue(v: Variant; vt: TOpValueType): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    function AddValueT(v: Variant; vt: TOpValueType): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function AddLink(obj: TOpCode): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     { }
     function CloneNewSelf: TOpCode;
@@ -368,7 +368,7 @@ function LoadOpFromStream(Stream: TCoreClassStream; out LoadedOp: TOpCode): Bool
               begin
                 v := CurDataEng.Reader.ReadVariant;
                 vt := TOpValueType(CurDataEng.Reader.ReadInteger);
-                Result.AddValue(v, vt);
+                Result.AddValueT(v, vt);
               end;
           end;
       end
@@ -762,15 +762,15 @@ begin
   for i := 0 to FParam.Count - 1 do
     begin
       p := FParam[i];
-      if p^.OnGet <> nil then
+      if p^.Op <> nil then
         begin
           try
-              p^.OnGet.EvaluateParam(printLog, opRT);
+              p^.Op.EvaluateParam(printLog, opRT);
           except
           end;
 
           try
-            p^.Value := p^.OnGet.doExecute(opRT);
+            p^.Value := p^.Op.doExecute(opRT);
 
             if printLog then
                 DoStatus('%s value:%s', [ClassName, VarToStr(p^.Value)]);
@@ -810,8 +810,8 @@ begin
       for i := 0 to FParam.Count - 1 do
         begin
           p := FParam[i];
-          if (FAutoFreeLink) and (p^.OnGet <> nil) then
-              DisposeObject(p^.OnGet);
+          if (FAutoFreeLink) and (p^.Op <> nil) then
+              DisposeObject(p^.Op);
           Dispose(p);
         end;
       FParam.Clear;
@@ -834,11 +834,11 @@ procedure TOpCode.SaveToStream(Stream: TCoreClassStream);
     for i := 0 to Op.Count - 1 do
       begin
         p := Op[i];
-        if p^.OnGet <> nil then
+        if p^.Op <> nil then
           begin
             CurDataEng.WriteBool(True);
             newDataEng := TDataFrameEngine.Create;
-            SaveToDataFrame(p^.OnGet, newDataEng);
+            SaveToDataFrame(p^.Op, newDataEng);
             CurDataEng.WriteDataFrame(newDataEng);
             DisposeObject(newDataEng);
           end
@@ -871,7 +871,7 @@ var
   p: POpData;
 begin
   New(p);
-  p^.OnGet := nil;
+  p^.Op := nil;
 
   p^.Value := v;
 
@@ -900,12 +900,12 @@ begin
   Result := FParam.Add(p);
 end;
 
-function TOpCode.AddValue(v: Variant; vt: TOpValueType): Integer;
+function TOpCode.AddValueT(v: Variant; vt: TOpValueType): Integer;
 var
   p: POpData;
 begin
   New(p);
-  p^.OnGet := nil;
+  p^.Op := nil;
   p^.Value := v;
   p^.ValueType := vt;
   Result := FParam.Add(p);
@@ -918,11 +918,11 @@ begin
   New(p);
 
   if obj.Owner <> nil then
-      p^.OnGet := obj.CloneNewSelf
+      p^.Op := obj.CloneNewSelf
   else
-      p^.OnGet := obj;
+      p^.Op := obj;
 
-  p^.OnGet.Owner := Self;
+  p^.Op.Owner := Self;
 
   p^.Value := NULL;
   p^.ValueType := ovtUnknow;
@@ -941,10 +941,10 @@ begin
   for i := 0 to FParam.Count - 1 do
     begin
       p := FParam[i];
-      if p^.OnGet <> nil then
-          Result.AddLink(p^.OnGet.CloneNewSelf)
+      if p^.Op <> nil then
+          Result.AddLink(p^.Op.CloneNewSelf)
       else
-          Result.AddValue(p^.Value, p^.ValueType);
+          Result.AddValueT(p^.Value, p^.ValueType);
     end;
 end;
 

@@ -14,7 +14,7 @@
 
 unit DBCompressPackageForFile;
 
-{$I zDefine.inc}
+{$I ZDefine.inc}
 
 interface
 

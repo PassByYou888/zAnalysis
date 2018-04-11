@@ -8,38 +8,27 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 type
+  TLearnBooleanArray   = packed array of Boolean;
+  PLearnBooleanArray   = ^TLearnBooleanArray;
+  TLearnBoolean2DArray = packed array of TLearnBooleanArray;
+
   PLearnComplex = ^TLearnComplex;
 
   TLearnComplex = packed record
     X, Y: TLearnFloat;
   end;
 
-  TLearnComplexArray   = array of TLearnComplex;
+  TLearnComplexArray   = packed array of TLearnComplex;
   PLearnComplexArray   = ^TLearnComplexArray;
-  TLearnComplex2DArray = array of TLearnComplexArray;
+  TLearnComplex2DArray = packed array of TLearnComplexArray;
 
   TLearnCommState = packed record
-    Stage: Integer;
+    Stage: TLearnInteger;
     IA: TLearnIntegerArray;
     BA: TLearnBooleanArray;
     RA: TLearnFloatArray;
     CA: TLearnComplexArray;
   end;
-
-const
-  MachineEpsilon = 5E-16;
-  MaxRealNumber  = 1E300;
-  MinRealNumber  = 1E-300;
-
-  /// //////////////////////////////////////////////////////////////////////
-  // Functions/procedures
-  /// //////////////////////////////////////////////////////////////////////
-function AbsReal(X: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AbsInt(I: TLearnInteger): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RandomReal(): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RandomInteger(I: TLearnInteger): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function Sign(X: TLearnFloat): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_Sqr(X: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function DynamicArrayCopy(const A: TLearnIntegerArray): TLearnIntegerArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function DynamicArrayCopy(const A: TLearnFloatArray): TLearnFloatArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -72,34 +61,13 @@ function C_NotEqual(const Z1: TLearnComplex; const Z2: TLearnComplex): Boolean; 
 function C_EqualR(const Z1: TLearnComplex; const R: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function C_NotEqualR(const Z1: TLearnComplex; const R: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-/// //////////////////////////////////////////////////////////////////////
-// AP BLAS generic interface
-
-/// //////////////////////////////////////////////////////////////////////
-// procedure UseAPBLAS(Flag: Boolean);
-function APVDotProduct(V1: PLearnFloat; I11, I12: TLearnInteger; V2: PLearnFloat; I21, I22: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVMove(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVMove(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger; S: TLearnFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVMoveNeg(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVAdd(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVAdd(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger; S: TLearnFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVSub(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVSub(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat; I21, I22: TLearnInteger; S: TLearnFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVMul(VOp: PLearnFloat; I1, I2: TLearnInteger; S: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVFillValue(VOp: PLearnFloat; I1, I2: TLearnInteger; S: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-/// //////////////////////////////////////////////////////////////////////
-// IEEE-compliant functions, placed at the end, under 'non-optimization'
-// compiler switch
-/// //////////////////////////////////////////////////////////////////////
-function AP_Float(X: Extended): TLearnFloat; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_Float(X: Single): TLearnFloat; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_FP_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_FP_NEq(X: TLearnFloat; Y: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_FP_Less(X: TLearnFloat; Y: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_FP_Less_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_FP_Greater(X: TLearnFloat; Y: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_FP_Greater_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagSort(var A: TLearnFloatArray; const N: TLearnInteger; var P1: TLearnIntegerArray; var P2: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagSortFastI(var A: TLearnFloatArray; var B: TLearnIntegerArray; N: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagSortFastR(var A: TLearnFloatArray; var B: TLearnFloatArray; N: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagSortFast(var A: TLearnFloatArray; const N: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagHeapPushI(var A: TLearnFloatArray; var B: TLearnIntegerArray; var N: TLearnInteger; const VA: TLearnFloat; const VB: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagHeapReplaceTopI(var A: TLearnFloatArray; var B: TLearnIntegerArray; const N: TLearnInteger; const VA: TLearnFloat; const VB: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagHeapPopI(var A: TLearnFloatArray; var B: TLearnIntegerArray; var N: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 /// //////////////////////////////////////////////////////////////////////
@@ -433,7 +401,7 @@ end;
 function APVDotProduct(V1: PLearnFloat; I11, I12: TLearnInteger; V2: PLearnFloat;
   I21, I22: TLearnInteger): TLearnFloat;
 var
-  I, C: Integer;
+  I, C: TLearnInteger;
   R   : TLearnFloat;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVDotProduct: arrays of different size!');
@@ -457,7 +425,7 @@ end;
 procedure APVMove(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
   I21, I22: TLearnInteger); overload;
 var
-  I, C: Integer;
+  I, C: TLearnInteger;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVMove: arrays of different size!');
   Inc(VDst, I11);
@@ -478,7 +446,7 @@ end;
 procedure APVMove(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
   I21, I22: TLearnInteger; S: TLearnFloat); overload;
 var
-  I, C: Integer;
+  I, C: TLearnInteger;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVMove: arrays of different size!');
   Inc(VDst, I11);
@@ -499,7 +467,7 @@ end;
 procedure APVMoveNeg(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
   I21, I22: TLearnInteger);
 var
-  I, C: Integer;
+  I, C: TLearnInteger;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVMoveNeg: arrays of different size!');
   Inc(VDst, I11);
@@ -520,7 +488,7 @@ end;
 procedure APVAdd(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
   I21, I22: TLearnInteger); overload;
 var
-  I, C: Integer;
+  I, C: TLearnInteger;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVAdd: arrays of different size!');
   Inc(VDst, I11);
@@ -541,7 +509,7 @@ end;
 procedure APVAdd(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
   I21, I22: TLearnInteger; S: TLearnFloat); overload;
 var
-  I, C: Integer;
+  I, C: TLearnInteger;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVAdd: arrays of different size!');
   Inc(VDst, I11);
@@ -562,7 +530,7 @@ end;
 procedure APVSub(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
   I21, I22: TLearnInteger); overload;
 var
-  I, C: Integer;
+  I, C: TLearnInteger;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVSub arrays of different size!');
   Inc(VDst, I11);
@@ -589,7 +557,7 @@ end;
 
 procedure APVMul(VOp: PLearnFloat; I1, I2: TLearnInteger; S: TLearnFloat);
 var
-  I, C: Integer;
+  I, C: TLearnInteger;
 begin
   Inc(VOp, I1);
   C := I2 - I1;
@@ -602,7 +570,7 @@ end;
 
 procedure APVFillValue(VOp: PLearnFloat; I1, I2: TLearnInteger; S: TLearnFloat);
 var
-  I, C: Integer;
+  I, C: TLearnInteger;
 begin
   Inc(VOp, I1);
   C := I2 - I1;
@@ -617,12 +585,7 @@ end;
 // IEEE-compliant functions
 /// //////////////////////////////////////////////////////////////////////
 
-function AP_Float(X: Extended): TLearnFloat;
-begin
-  AP_Float := X;
-end;
-
-function AP_Float(X: Single): TLearnFloat;
+function AP_Float(X: TLearnFloat): TLearnFloat;
 begin
   AP_Float := X;
 end;
@@ -655,4 +618,579 @@ end;
 function AP_FP_Greater_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean;
 begin
   AP_FP_Greater_Eq := X >= Y;
+end;
+
+procedure TagSort(var A: TLearnFloatArray; const N: TLearnInteger; var P1: TLearnIntegerArray; var P2: TLearnIntegerArray);
+var
+  I : TLearnInteger;
+  PV: TLearnIntegerArray;
+  VP: TLearnIntegerArray;
+  LV: TLearnInteger;
+  LP: TLearnInteger;
+  RV: TLearnInteger;
+  RP: TLearnInteger;
+begin
+
+  //
+  // Special cases
+  //
+  if N <= 0 then
+    begin
+      Exit;
+    end;
+  if N = 1 then
+    begin
+      SetLength(P1, 0 + 1);
+      SetLength(P2, 0 + 1);
+      P1[0] := 0;
+      P2[0] := 0;
+      Exit;
+    end;
+
+  //
+  // General case, N>1: prepare permutations table P1
+  //
+  SetLength(P1, N (* - 1 + 1 // optimized compler *) );
+  I := 0;
+  while I <= N - 1 do
+    begin
+      P1[I] := I;
+      Inc(I);
+    end;
+
+  //
+  // General case, N>1: sort, update P1
+  //
+  TagSortFastI(A, P1, N);
+
+  //
+  // General case, N>1: fill permutations table P2
+  //
+  // To fill P2 we maintain two arrays:
+  // * PV, Position(Value). PV[i] contains position of I-th key at the moment
+  // * VP, Value(Position). VP[i] contains key which has position I at the moment
+  //
+  // At each step we making permutation of two items:
+  // Left, which is given by position/value pair LP/LV
+  // and Right, which is given by RP/RV
+  // and updating PV[] and VP[] correspondingly.
+  //
+  SetLength(PV, N (* - 1 + 1 // optimized compler *) );
+  SetLength(VP, N (* - 1 + 1 // optimized compler *) );
+  SetLength(P2, N (* - 1 + 1 // optimized compler *) );
+  I := 0;
+  while I <= N - 1 do
+    begin
+      PV[I] := I;
+      VP[I] := I;
+      Inc(I);
+    end;
+  I := 0;
+  while I <= N - 1 do
+    begin
+
+      //
+      // calculate LP, LV, RP, RV
+      //
+      LP := I;
+      LV := VP[LP];
+      RV := P1[I];
+      RP := PV[RV];
+
+      //
+      // Fill P2
+      //
+      P2[I] := RP;
+
+      //
+      // update PV and VP
+      //
+      VP[LP] := RV;
+      VP[RP] := LV;
+      PV[LV] := RP;
+      PV[RV] := LP;
+      Inc(I);
+    end;
+end;
+
+procedure TagSortFastI(var A: TLearnFloatArray; var B: TLearnIntegerArray; N: TLearnInteger);
+var
+  I   : TLearnInteger;
+  K   : TLearnInteger;
+  T   : TLearnInteger;
+  Tmp : TLearnFloat;
+  TmpI: TLearnInteger;
+begin
+
+  //
+  // Special cases
+  //
+  if N <= 1 then
+    begin
+      Exit;
+    end;
+
+  //
+  // General case, N>1: sort, update B
+  //
+  I := 2;
+  repeat
+    T := I;
+    while T <> 1 do
+      begin
+        K := T div 2;
+        if AP_FP_Greater_Eq(A[K - 1], A[T - 1]) then
+          begin
+            T := 1;
+          end
+        else
+          begin
+            Tmp := A[K - 1];
+            A[K - 1] := A[T - 1];
+            A[T - 1] := Tmp;
+            TmpI := B[K - 1];
+            B[K - 1] := B[T - 1];
+            B[T - 1] := TmpI;
+            T := K;
+          end;
+      end;
+    I := I + 1;
+  until not(I <= N);
+  I := N - 1;
+  repeat
+    Tmp := A[I];
+    A[I] := A[0];
+    A[0] := Tmp;
+    TmpI := B[I];
+    B[I] := B[0];
+    B[0] := TmpI;
+    T := 1;
+    while T <> 0 do
+      begin
+        K := 2 * T;
+        if K > I then
+          begin
+            T := 0;
+          end
+        else
+          begin
+            if K < I then
+              begin
+                if AP_FP_Greater(A[K], A[K - 1]) then
+                  begin
+                    K := K + 1;
+                  end;
+              end;
+            if AP_FP_Greater_Eq(A[T - 1], A[K - 1]) then
+              begin
+                T := 0;
+              end
+            else
+              begin
+                Tmp := A[K - 1];
+                A[K - 1] := A[T - 1];
+                A[T - 1] := Tmp;
+                TmpI := B[K - 1];
+                B[K - 1] := B[T - 1];
+                B[T - 1] := TmpI;
+                T := K;
+              end;
+          end;
+      end;
+    I := I - 1;
+  until not(I >= 1);
+end;
+
+procedure TagSortFastR(var A: TLearnFloatArray; var B: TLearnFloatArray;
+  N: TLearnInteger);
+var
+  I   : TLearnInteger;
+  K   : TLearnInteger;
+  T   : TLearnInteger;
+  Tmp : TLearnFloat;
+  TmpR: TLearnFloat;
+begin
+
+  //
+  // Special cases
+  //
+  if N <= 1 then
+    begin
+      Exit;
+    end;
+
+  //
+  // General case, N>1: sort, update B
+  //
+  I := 2;
+  repeat
+    T := I;
+    while T <> 1 do
+      begin
+        K := T div 2;
+        if AP_FP_Greater_Eq(A[K - 1], A[T - 1]) then
+          begin
+            T := 1;
+          end
+        else
+          begin
+            Tmp := A[K - 1];
+            A[K - 1] := A[T - 1];
+            A[T - 1] := Tmp;
+            TmpR := B[K - 1];
+            B[K - 1] := B[T - 1];
+            B[T - 1] := TmpR;
+            T := K;
+          end;
+      end;
+    I := I + 1;
+  until not(I <= N);
+  I := N - 1;
+  repeat
+    Tmp := A[I];
+    A[I] := A[0];
+    A[0] := Tmp;
+    TmpR := B[I];
+    B[I] := B[0];
+    B[0] := TmpR;
+    T := 1;
+    while T <> 0 do
+      begin
+        K := 2 * T;
+        if K > I then
+          begin
+            T := 0;
+          end
+        else
+          begin
+            if K < I then
+              begin
+                if AP_FP_Greater(A[K], A[K - 1]) then
+                  begin
+                    K := K + 1;
+                  end;
+              end;
+            if AP_FP_Greater_Eq(A[T - 1], A[K - 1]) then
+              begin
+                T := 0;
+              end
+            else
+              begin
+                Tmp := A[K - 1];
+                A[K - 1] := A[T - 1];
+                A[T - 1] := Tmp;
+                TmpR := B[K - 1];
+                B[K - 1] := B[T - 1];
+                B[T - 1] := TmpR;
+                T := K;
+              end;
+          end;
+      end;
+    I := I - 1;
+  until not(I >= 1);
+end;
+
+procedure TagSortFast(var A: TLearnFloatArray; const N: TLearnInteger);
+var
+  I  : TLearnInteger;
+  K  : TLearnInteger;
+  T  : TLearnInteger;
+  Tmp: TLearnFloat;
+begin
+
+  //
+  // Special cases
+  //
+  if N <= 1 then
+    begin
+      Exit;
+    end;
+
+  //
+  // General case, N>1: sort, update B
+  //
+  I := 2;
+  repeat
+    T := I;
+    while T <> 1 do
+      begin
+        K := T div 2;
+        if AP_FP_Greater_Eq(A[K - 1], A[T - 1]) then
+          begin
+            T := 1;
+          end
+        else
+          begin
+            Tmp := A[K - 1];
+            A[K - 1] := A[T - 1];
+            A[T - 1] := Tmp;
+            T := K;
+          end;
+      end;
+    I := I + 1;
+  until not(I <= N);
+  I := N - 1;
+  repeat
+    Tmp := A[I];
+    A[I] := A[0];
+    A[0] := Tmp;
+    T := 1;
+    while T <> 0 do
+      begin
+        K := 2 * T;
+        if K > I then
+          begin
+            T := 0;
+          end
+        else
+          begin
+            if K < I then
+              begin
+                if AP_FP_Greater(A[K], A[K - 1]) then
+                  begin
+                    K := K + 1;
+                  end;
+              end;
+            if AP_FP_Greater_Eq(A[T - 1], A[K - 1]) then
+              begin
+                T := 0;
+              end
+            else
+              begin
+                Tmp := A[K - 1];
+                A[K - 1] := A[T - 1];
+                A[T - 1] := Tmp;
+                T := K;
+              end;
+          end;
+      end;
+    I := I - 1;
+  until not(I >= 1);
+end;
+
+(* ************************************************************************
+  Heap operations: adds element to the heap
+
+  PARAMETERS:
+  A       -   heap itself, must be at least array[0..N]
+  B       -   packed array of integer tags, which are updated according to
+  permutations in the heap
+  N       -   size of the heap (without new element).
+  updated on output
+  VA      -   value of the element being added
+  VB      -   value of the tag
+  ************************************************************************ *)
+procedure TagHeapPushI(var A: TLearnFloatArray; var B: TLearnIntegerArray;
+  var N: TLearnInteger; const VA: TLearnFloat; const VB: TLearnInteger);
+var
+  J: TLearnInteger;
+  K: TLearnInteger;
+  V: TLearnFloat;
+begin
+  if N < 0 then
+    begin
+      Exit;
+    end;
+
+  //
+  // N=0 is a special case
+  //
+  if N = 0 then
+    begin
+      A[0] := VA;
+      B[0] := VB;
+      N := N + 1;
+      Exit;
+    end;
+
+  //
+  // add current point to the heap
+  // (add to the bottom, then move up)
+  //
+  // we don't write point to the heap
+  // until its final position is determined
+  // (it allow us to reduce number of array access operations)
+  //
+  J := N;
+  N := N + 1;
+  while J > 0 do
+    begin
+      K := (J - 1) div 2;
+      V := A[K];
+      if AP_FP_Less(V, VA) then
+        begin
+
+          //
+          // swap with higher element
+          //
+          A[J] := V;
+          B[J] := B[K];
+          J := K;
+        end
+      else
+        begin
+
+          //
+          // element in its place. terminate.
+          //
+          Break;
+        end;
+    end;
+  A[J] := VA;
+  B[J] := VB;
+end;
+
+(* ************************************************************************
+  Heap operations: replaces top element with new element
+  (which is moved down)
+
+  PARAMETERS:
+  A       -   heap itself, must be at least array[0..N-1]
+  B       -   packed array of integer tags, which are updated according to
+  permutations in the heap
+  N       -   size of the heap
+  VA      -   value of the element which replaces top element
+  VB      -   value of the tag
+  ************************************************************************ *)
+procedure TagHeapReplaceTopI(var A: TLearnFloatArray; var B: TLearnIntegerArray;
+  const N: TLearnInteger; const VA: TLearnFloat; const VB: TLearnInteger);
+var
+  J : TLearnInteger;
+  K1: TLearnInteger;
+  K2: TLearnInteger;
+  V : TLearnFloat;
+  V1: TLearnFloat;
+  V2: TLearnFloat;
+begin
+  if N < 1 then
+    begin
+      Exit;
+    end;
+
+  //
+  // N=1 is a special case
+  //
+  if N = 1 then
+    begin
+      A[0] := VA;
+      B[0] := VB;
+      Exit;
+    end;
+
+  //
+  // move down through heap:
+  // * J  -   current element
+  // * K1 -   first child (always exists)
+  // * K2 -   second child (may not exists)
+  //
+  // we don't write point to the heap
+  // until its final position is determined
+  // (it allow us to reduce number of array access operations)
+  //
+  J := 0;
+  K1 := 1;
+  K2 := 2;
+  while K1 < N do
+    begin
+      if K2 >= N then
+        begin
+
+          //
+          // only one child.
+          //
+          // swap and terminate (because this child
+          // have no siblings due to heap structure)
+          //
+          V := A[K1];
+          if AP_FP_Greater(V, VA) then
+            begin
+              A[J] := V;
+              B[J] := B[K1];
+              J := K1;
+            end;
+          Break;
+        end
+      else
+        begin
+
+          //
+          // two childs
+          //
+          V1 := A[K1];
+          V2 := A[K2];
+          if AP_FP_Greater(V1, V2) then
+            begin
+              if AP_FP_Less(VA, V1) then
+                begin
+                  A[J] := V1;
+                  B[J] := B[K1];
+                  J := K1;
+                end
+              else
+                begin
+                  Break;
+                end;
+            end
+          else
+            begin
+              if AP_FP_Less(VA, V2) then
+                begin
+                  A[J] := V2;
+                  B[J] := B[K2];
+                  J := K2;
+                end
+              else
+                begin
+                  Break;
+                end;
+            end;
+          K1 := 2 * J + 1;
+          K2 := 2 * J + 2;
+        end;
+    end;
+  A[J] := VA;
+  B[J] := VB;
+end;
+
+(* ************************************************************************
+  Heap operations: pops top element from the heap
+
+  PARAMETERS:
+  A       -   heap itself, must be at least array[0..N-1]
+  B       -   packed array of integer tags, which are updated according to
+  permutations in the heap
+  N       -   size of the heap, N>=1
+
+  On output top element is moved to A[N-1], B[N-1], heap is reordered, N is
+  decreased by 1.
+  ************************************************************************ *)
+procedure TagHeapPopI(var A: TLearnFloatArray; var B: TLearnIntegerArray; var N: TLearnInteger);
+var
+  VA: TLearnFloat;
+  VB: TLearnInteger;
+begin
+  if N < 1 then
+    begin
+      Exit;
+    end;
+
+  //
+  // N=1 is a special case
+  //
+  if N = 1 then
+    begin
+      N := 0;
+      Exit;
+    end;
+
+  //
+  // swap top element and last element,
+  // then reorder heap
+  //
+  VA := A[N - 1];
+  VB := B[N - 1];
+  A[N - 1] := A[0];
+  B[N - 1] := B[0];
+  N := N - 1;
+  TagHeapReplaceTopI(A, B, N, VA, VB);
 end;

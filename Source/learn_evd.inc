@@ -185,7 +185,7 @@ end;
 
   Output parameters:
   M       -   number of eigenvalues found in a given half-interval (M>=0).
-  W       -   array of the eigenvalues found.
+  W       -   packed array of the eigenvalues found.
   Array whose index ranges within [0..M-1].
   Z       -   if ZNeeded is equal to:
   * 0, Z hasn’t changed;
@@ -238,7 +238,7 @@ end;
   0 <= I1 <= I2 <= N-1.
 
   Output parameters:
-  W       -   array of the eigenvalues found.
+  W       -   packed array of the eigenvalues found.
   Array whose index ranges within [0..I2-I1].
   Z       -   if ZNeeded is equal to:
   * 0, Z hasn’t changed;
@@ -418,7 +418,7 @@ end;
 
   Output parameters:
   M       -   number of eigenvalues found in a given half-interval, M>=0
-  W       -   array of the eigenvalues found.
+  W       -   packed array of the eigenvalues found.
   Array whose index ranges within [0..M-1].
   Z       -   if ZNeeded is equal to:
   * 0, Z hasn’t changed;
@@ -553,7 +553,7 @@ end;
   0 <= I1 <= I2 <= N-1.
 
   Output parameters:
-  W       -   array of the eigenvalues found.
+  W       -   packed array of the eigenvalues found.
   Array whose index ranges within [0..I2-I1].
   Z       -   if ZNeeded is equal to:
   * 0, Z hasn’t changed;
@@ -819,7 +819,7 @@ end;
   * 2, Z isn't used (but changed on the exit).
 
   Output parameters:
-  D       -   array of the eigenvalues found.
+  D       -   packed array of the eigenvalues found.
   Array whose index ranges within [0..M-1].
   M       -   number of eigenvalues found in the given half-interval (M>=0).
   Z       -   if ZNeeded is equal to:
@@ -1123,7 +1123,7 @@ end;
   * 2, Z isn't used (but changed on the exit).
 
   Output parameters:
-  D       -   array of the eigenvalues found.
+  D       -   packed array of the eigenvalues found.
   Array whose index ranges within [0..I2-I1].
   Z       -   if ZNeeded is equal to:
   * 0, doesn't contain any information;

@@ -1,0 +1,84 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{1F6730FD-E33D-4D7D-B7C6-2480A9F92C4D}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="06 图像光栅化引擎\MemRasterDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="04 基于图片的特征码提取与识别\pictureAnalysis.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="05 随机森林之决策树\rForestDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="01 Console控制台测试模版\EasyConsoleDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="02 图形聚类分析测试演示\GUIAnalysis.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="MemRasterDemo">
+        <MSBuild Projects="06 图像光栅化引擎\MemRasterDemo.dproj"/>
+    </Target>
+    <Target Name="MemRasterDemo:Clean">
+        <MSBuild Projects="06 图像光栅化引擎\MemRasterDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MemRasterDemo:Make">
+        <MSBuild Projects="06 图像光栅化引擎\MemRasterDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="pictureAnalysis">
+        <MSBuild Projects="04 基于图片的特征码提取与识别\pictureAnalysis.dproj"/>
+    </Target>
+    <Target Name="pictureAnalysis:Clean">
+        <MSBuild Projects="04 基于图片的特征码提取与识别\pictureAnalysis.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="pictureAnalysis:Make">
+        <MSBuild Projects="04 基于图片的特征码提取与识别\pictureAnalysis.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="rForestDemo">
+        <MSBuild Projects="05 随机森林之决策树\rForestDemo.dproj"/>
+    </Target>
+    <Target Name="rForestDemo:Clean">
+        <MSBuild Projects="05 随机森林之决策树\rForestDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="rForestDemo:Make">
+        <MSBuild Projects="05 随机森林之决策树\rForestDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EasyConsoleDemo">
+        <MSBuild Projects="01 Console控制台测试模版\EasyConsoleDemo.dproj"/>
+    </Target>
+    <Target Name="EasyConsoleDemo:Clean">
+        <MSBuild Projects="01 Console控制台测试模版\EasyConsoleDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EasyConsoleDemo:Make">
+        <MSBuild Projects="01 Console控制台测试模版\EasyConsoleDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="GUIAnalysis">
+        <MSBuild Projects="02 图形聚类分析测试演示\GUIAnalysis.dproj"/>
+    </Target>
+    <Target Name="GUIAnalysis:Clean">
+        <MSBuild Projects="02 图形聚类分析测试演示\GUIAnalysis.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GUIAnalysis:Make">
+        <MSBuild Projects="02 图形聚类分析测试演示\GUIAnalysis.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="MemRasterDemo;pictureAnalysis;rForestDemo;EasyConsoleDemo;GUIAnalysis"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="MemRasterDemo:Clean;pictureAnalysis:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="MemRasterDemo:Make;pictureAnalysis:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

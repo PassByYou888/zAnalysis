@@ -1,35 +1,4 @@
-function VectorNorm2(const X: TLearnFloatArray; const I1, I2: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function VectorIdxAbsMax(const X: TLearnFloatArray; const I1, I2: TLearnInteger): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function ColumnIdxAbsMax(const X: TLearnFloat2DArray; const I1, I2, J: TLearnInteger): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function RowIdxAbsMax(const X: TLearnFloat2DArray; const J1, J2, I: TLearnInteger): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function UpperHessenberg1Norm(const A: TLearnFloat2DArray; const I1, I2, J1, J2: TLearnInteger; var WORK: TLearnFloatArray): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure CopyMatrix(const A: TLearnFloat2DArray; const IS1, IS2, JS1, JS2: TLearnInteger;
-  var B: TLearnFloat2DArray; const ID1, ID2, JD1, JD2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure InplaceTranspose(var A: TLearnFloat2DArray; const I1, I2, J1, J2: TLearnInteger; var WORK: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure CopyAndTranspose(const A: TLearnFloat2DArray; IS1, IS2, JS1, JS2: TLearnInteger;
-  var B: TLearnFloat2DArray; ID1, ID2, JD1, JD2: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure MatrixVectorMultiply(const A: TLearnFloat2DArray; const I1, I2, J1, J2: TLearnInteger; const Trans: Boolean;
-  const X: TLearnFloatArray; const IX1, IX2: TLearnInteger; const Alpha: TLearnFloat;
-  var Y: TLearnFloatArray; const IY1, IY2: TLearnInteger; const Beta: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function Pythag2(X: TLearnFloat; Y: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure MatrixMatrixMultiply(const A: TLearnFloat2DArray; const AI1, AI2, AJ1, AJ2: TLearnInteger; const TransA: Boolean;
-  const B: TLearnFloat2DArray; const BI1, BI2, BJ1, BJ2: TLearnInteger; const TransB: Boolean;
-  const Alpha: TLearnFloat;
-  var C: TLearnFloat2DArray; const CI1, CI2, CJ1, CJ2: TLearnInteger;
-  const Beta: TLearnFloat;
-  var WORK: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function VectorNorm2(const X: TLearnFloatArray; const I1, I2: TLearnInteger): TLearnFloat;
+function VectorNorm2(const X: TLearnVector; const I1, I2: TLearnInteger): TLearnFloat;
 var
   N    : TLearnInteger;
   IX   : TLearnInteger;
@@ -71,7 +40,7 @@ begin
   Result := SCL * SQRT(SSQ);
 end;
 
-function VectorIdxAbsMax(const X: TLearnFloatArray; const I1, I2: TLearnInteger): TLearnInteger;
+function VectorIdxAbsMax(const X: TLearnVector; const I1, I2: TLearnInteger): TLearnInteger;
 var
   I: TLearnInteger;
   A: TLearnFloat;
@@ -89,7 +58,7 @@ begin
     end;
 end;
 
-function ColumnIdxAbsMax(const X: TLearnFloat2DArray; const I1, I2, J: TLearnInteger): TLearnInteger;
+function ColumnIdxAbsMax(const X: TLearnMatrix; const I1, I2, J: TLearnInteger): TLearnInteger;
 var
   I: TLearnInteger;
   A: TLearnFloat;
@@ -107,7 +76,7 @@ begin
     end;
 end;
 
-function RowIdxAbsMax(const X: TLearnFloat2DArray; const J1, J2, I: TLearnInteger): TLearnInteger;
+function RowIdxAbsMax(const X: TLearnMatrix; const J1, J2, I: TLearnInteger): TLearnInteger;
 var
   J: TLearnInteger;
   A: TLearnFloat;
@@ -125,7 +94,7 @@ begin
     end;
 end;
 
-function UpperHessenberg1Norm(const A: TLearnFloat2DArray; const I1, I2, J1, J2: TLearnInteger; var WORK: TLearnFloatArray): TLearnFloat;
+function UpperHessenberg1Norm(const A: TLearnMatrix; const I1, I2, J1, J2: TLearnInteger; var WORK: TLearnVector): TLearnFloat;
 var
   I: TLearnInteger;
   J: TLearnInteger;
@@ -157,8 +126,8 @@ begin
     end;
 end;
 
-procedure CopyMatrix(const A: TLearnFloat2DArray; const IS1, IS2, JS1, JS2: TLearnInteger;
-  var B: TLearnFloat2DArray; const ID1, ID2, JD1, JD2: TLearnInteger);
+procedure CopyMatrix(const A: TLearnMatrix; const IS1, IS2, JS1, JS2: TLearnInteger;
+  var B: TLearnMatrix; const ID1, ID2, JD1, JD2: TLearnInteger);
 var
   ISRC: TLearnInteger;
   IDST: TLearnInteger;
@@ -176,7 +145,7 @@ begin
     end;
 end;
 
-procedure InplaceTranspose(var A: TLearnFloat2DArray; const I1, I2, J1, J2: TLearnInteger; var WORK: TLearnFloatArray);
+procedure InplaceTranspose(var A: TLearnMatrix; const I1, I2, J1, J2: TLearnInteger; var WORK: TLearnVector);
 var
   I  : TLearnInteger;
   J  : TLearnInteger;
@@ -211,8 +180,8 @@ begin
     end;
 end;
 
-procedure CopyAndTranspose(const A: TLearnFloat2DArray; IS1, IS2, JS1, JS2: TLearnInteger;
-  var B: TLearnFloat2DArray; ID1, ID2, JD1, JD2: TLearnInteger);
+procedure CopyAndTranspose(const A: TLearnMatrix; IS1, IS2, JS1, JS2: TLearnInteger;
+  var B: TLearnMatrix; ID1, ID2, JD1, JD2: TLearnInteger);
 var
   ISRC: TLearnInteger;
   JDST: TLearnInteger;
@@ -236,9 +205,9 @@ begin
     end;
 end;
 
-procedure MatrixVectorMultiply(const A: TLearnFloat2DArray; const I1, I2, J1, J2: TLearnInteger; const Trans: Boolean;
-  const X: TLearnFloatArray; const IX1, IX2: TLearnInteger; const Alpha: TLearnFloat;
-  var Y: TLearnFloatArray; const IY1, IY2: TLearnInteger; const Beta: TLearnFloat);
+procedure MatrixVectorMultiply(const A: TLearnMatrix; const I1, I2, J1, J2: TLearnInteger; const Trans: Boolean;
+  const X: TLearnVector; const IX1, IX2: TLearnInteger; const Alpha: TLearnFloat;
+  var Y: TLearnVector; const IY1, IY2: TLearnInteger; const Beta: TLearnFloat);
 var
   I: TLearnInteger;
   V: TLearnFloat;
@@ -344,12 +313,12 @@ begin
     end;
 end;
 
-procedure MatrixMatrixMultiply(const A: TLearnFloat2DArray; const AI1, AI2, AJ1, AJ2: TLearnInteger; const TransA: Boolean;
-  const B: TLearnFloat2DArray; const BI1, BI2, BJ1, BJ2: TLearnInteger; const TransB: Boolean;
+procedure MatrixMatrixMultiply(const A: TLearnMatrix; const AI1, AI2, AJ1, AJ2: TLearnInteger; const TransA: Boolean;
+  const B: TLearnMatrix; const BI1, BI2, BJ1, BJ2: TLearnInteger; const TransB: Boolean;
   const Alpha: TLearnFloat;
-  var C: TLearnFloat2DArray; const CI1, CI2, CJ1, CJ2: TLearnInteger;
+  var C: TLearnMatrix; const CI1, CI2, CJ1, CJ2: TLearnInteger;
   const Beta: TLearnFloat;
-  var WORK: TLearnFloatArray);
+  var WORK: TLearnVector);
 var
   ARows: TLearnInteger;
   ACols: TLearnInteger;
@@ -573,4 +542,3 @@ begin
         end;
     end;
 end;
-

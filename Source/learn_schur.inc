@@ -348,7 +348,7 @@ begin
         begin
 
           //
-          // Look for a single small subdiagonal element.
+          // Look for a TLearnFloat small subdiagonal element.
           //
           K := I;
           while K >= L + 1 do
@@ -738,7 +738,7 @@ begin
         begin
 
           //
-          // Look for a single small subdiagonal element.
+          // Look for a TLearnFloat small subdiagonal element.
           //
           K := I;
           while K >= L + 1 do

@@ -88,6 +88,13 @@ const
   KDT62DE_Axis = 62;
   KDT63DE_Axis = 63;
   KDT64DE_Axis = 64;
+  KDT65DE_Axis = 65;
+  KDT66DE_Axis = 66;
+  KDT67DE_Axis = 67;
+  KDT68DE_Axis = 68;
+  KDT69DE_Axis = 69;
+  KDT70DE_Axis = 70;
+  KDT71DE_Axis = 71;
   KDT72DE_Axis = 72;
   KDT84DE_Axis = 84;
   KDT96DE_Axis = 96;
@@ -182,6 +189,13 @@ type
   TKDT62DE = class; TKDT62DE_VecType = Extended; // 62D
   TKDT63DE = class; TKDT63DE_VecType = Extended; // 63D
   TKDT64DE = class; TKDT64DE_VecType = Extended; // 64D
+  TKDT65DE = class; TKDT65DE_VecType = Extended; // 65D
+  TKDT66DE = class; TKDT66DE_VecType = Extended; // 66D
+  TKDT67DE = class; TKDT67DE_VecType = Extended; // 67D
+  TKDT68DE = class; TKDT68DE_VecType = Extended; // 68D
+  TKDT69DE = class; TKDT69DE_VecType = Extended; // 69D
+  TKDT70DE = class; TKDT70DE_VecType = Extended; // 70D
+  TKDT71DE = class; TKDT71DE_VecType = Extended; // 71D
   TKDT72DE = class; TKDT72DE_VecType = Extended; // 72D
   TKDT84DE = class; TKDT84DE_VecType = Extended; // 84D
   TKDT96DE = class; TKDT96DE_VecType = Extended; // 96D
@@ -222,7 +236,7 @@ type
     TKDT1DE_Vec = array [0 .. KDT1DE_Axis - 1] of TKDT1DE_VecType;
     PKDT1DE_Vec = ^TKDT1DE_Vec;
 
-    TKDT1DE_DynamicVecBuffer = array of TKDT1DE_Vec;
+    TKDT1DE_DynamicVecBuffer = packed array of TKDT1DE_Vec;
     PKDT1DE_DynamicVecBuffer = ^TKDT1DE_DynamicVecBuffer;
 
     TKDT1DE_Source = packed record
@@ -231,13 +245,13 @@ type
     end;
 
     PKDT1DE_Source       = ^TKDT1DE_Source;
-    TKDT1DE_SourceBuffer = array [0 .. 0] of PKDT1DE_Source;
+    TKDT1DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1DE_Source) - 1] of PKDT1DE_Source;
     PKDT1DE_SourceBuffer = ^TKDT1DE_SourceBuffer;
 
-    TKDT1DEyanmicSourceBuffer = array of PKDT1DE_Source;
+    TKDT1DEyanmicSourceBuffer = packed array of PKDT1DE_Source;
     PKDT1DEyanmicSourceBuffer = ^TKDT1DEyanmicSourceBuffer;
 
-    TKDT1DEyanmicStoreBuffer = array of TKDT1DE_Source;
+    TKDT1DEyanmicStoreBuffer = packed array of TKDT1DE_Source;
     PKDT1DEyanmicStoreBuffer = ^TKDT1DEyanmicStoreBuffer;
 
     PKDT1DE_Node = ^TKDT1DE_Node;
@@ -254,7 +268,7 @@ type
     KDStoreBuff: TKDT1DEyanmicStoreBuffer;
     KDBuff     : TKDT1DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT1DE_Node;
+    KDNodes    : packed array of PKDT1DE_Node;
     TestBuff   : TKDT1DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1DE_Node;
     function GetData(const index: NativeInt): PKDT1DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -317,7 +331,7 @@ type
     TKDT2DE_Vec = array [0 .. KDT2DE_Axis - 1] of TKDT2DE_VecType;
     PKDT2DE_Vec = ^TKDT2DE_Vec;
 
-    TKDT2DE_DynamicVecBuffer = array of TKDT2DE_Vec;
+    TKDT2DE_DynamicVecBuffer = packed array of TKDT2DE_Vec;
     PKDT2DE_DynamicVecBuffer = ^TKDT2DE_DynamicVecBuffer;
 
     TKDT2DE_Source = packed record
@@ -326,13 +340,13 @@ type
     end;
 
     PKDT2DE_Source       = ^TKDT2DE_Source;
-    TKDT2DE_SourceBuffer = array [0 .. 0] of PKDT2DE_Source;
+    TKDT2DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT2DE_Source) - 1] of PKDT2DE_Source;
     PKDT2DE_SourceBuffer = ^TKDT2DE_SourceBuffer;
 
-    TKDT2DEyanmicSourceBuffer = array of PKDT2DE_Source;
+    TKDT2DEyanmicSourceBuffer = packed array of PKDT2DE_Source;
     PKDT2DEyanmicSourceBuffer = ^TKDT2DEyanmicSourceBuffer;
 
-    TKDT2DEyanmicStoreBuffer = array of TKDT2DE_Source;
+    TKDT2DEyanmicStoreBuffer = packed array of TKDT2DE_Source;
     PKDT2DEyanmicStoreBuffer = ^TKDT2DEyanmicStoreBuffer;
 
     PKDT2DE_Node = ^TKDT2DE_Node;
@@ -349,7 +363,7 @@ type
     KDStoreBuff: TKDT2DEyanmicStoreBuffer;
     KDBuff     : TKDT2DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT2DE_Node;
+    KDNodes    : packed array of PKDT2DE_Node;
     TestBuff   : TKDT2DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT2DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT2DE_Node;
     function GetData(const index: NativeInt): PKDT2DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -412,7 +426,7 @@ type
     TKDT3DE_Vec = array [0 .. KDT3DE_Axis - 1] of TKDT3DE_VecType;
     PKDT3DE_Vec = ^TKDT3DE_Vec;
 
-    TKDT3DE_DynamicVecBuffer = array of TKDT3DE_Vec;
+    TKDT3DE_DynamicVecBuffer = packed array of TKDT3DE_Vec;
     PKDT3DE_DynamicVecBuffer = ^TKDT3DE_DynamicVecBuffer;
 
     TKDT3DE_Source = packed record
@@ -421,13 +435,13 @@ type
     end;
 
     PKDT3DE_Source       = ^TKDT3DE_Source;
-    TKDT3DE_SourceBuffer = array [0 .. 0] of PKDT3DE_Source;
+    TKDT3DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT3DE_Source) - 1] of PKDT3DE_Source;
     PKDT3DE_SourceBuffer = ^TKDT3DE_SourceBuffer;
 
-    TKDT3DEyanmicSourceBuffer = array of PKDT3DE_Source;
+    TKDT3DEyanmicSourceBuffer = packed array of PKDT3DE_Source;
     PKDT3DEyanmicSourceBuffer = ^TKDT3DEyanmicSourceBuffer;
 
-    TKDT3DEyanmicStoreBuffer = array of TKDT3DE_Source;
+    TKDT3DEyanmicStoreBuffer = packed array of TKDT3DE_Source;
     PKDT3DEyanmicStoreBuffer = ^TKDT3DEyanmicStoreBuffer;
 
     PKDT3DE_Node = ^TKDT3DE_Node;
@@ -444,7 +458,7 @@ type
     KDStoreBuff: TKDT3DEyanmicStoreBuffer;
     KDBuff     : TKDT3DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT3DE_Node;
+    KDNodes    : packed array of PKDT3DE_Node;
     TestBuff   : TKDT3DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT3DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT3DE_Node;
     function GetData(const index: NativeInt): PKDT3DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -507,7 +521,7 @@ type
     TKDT4DE_Vec = array [0 .. KDT4DE_Axis - 1] of TKDT4DE_VecType;
     PKDT4DE_Vec = ^TKDT4DE_Vec;
 
-    TKDT4DE_DynamicVecBuffer = array of TKDT4DE_Vec;
+    TKDT4DE_DynamicVecBuffer = packed array of TKDT4DE_Vec;
     PKDT4DE_DynamicVecBuffer = ^TKDT4DE_DynamicVecBuffer;
 
     TKDT4DE_Source = packed record
@@ -516,13 +530,13 @@ type
     end;
 
     PKDT4DE_Source       = ^TKDT4DE_Source;
-    TKDT4DE_SourceBuffer = array [0 .. 0] of PKDT4DE_Source;
+    TKDT4DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT4DE_Source) - 1] of PKDT4DE_Source;
     PKDT4DE_SourceBuffer = ^TKDT4DE_SourceBuffer;
 
-    TKDT4DEyanmicSourceBuffer = array of PKDT4DE_Source;
+    TKDT4DEyanmicSourceBuffer = packed array of PKDT4DE_Source;
     PKDT4DEyanmicSourceBuffer = ^TKDT4DEyanmicSourceBuffer;
 
-    TKDT4DEyanmicStoreBuffer = array of TKDT4DE_Source;
+    TKDT4DEyanmicStoreBuffer = packed array of TKDT4DE_Source;
     PKDT4DEyanmicStoreBuffer = ^TKDT4DEyanmicStoreBuffer;
 
     PKDT4DE_Node = ^TKDT4DE_Node;
@@ -539,7 +553,7 @@ type
     KDStoreBuff: TKDT4DEyanmicStoreBuffer;
     KDBuff     : TKDT4DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT4DE_Node;
+    KDNodes    : packed array of PKDT4DE_Node;
     TestBuff   : TKDT4DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT4DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT4DE_Node;
     function GetData(const index: NativeInt): PKDT4DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -602,7 +616,7 @@ type
     TKDT5DE_Vec = array [0 .. KDT5DE_Axis - 1] of TKDT5DE_VecType;
     PKDT5DE_Vec = ^TKDT5DE_Vec;
 
-    TKDT5DE_DynamicVecBuffer = array of TKDT5DE_Vec;
+    TKDT5DE_DynamicVecBuffer = packed array of TKDT5DE_Vec;
     PKDT5DE_DynamicVecBuffer = ^TKDT5DE_DynamicVecBuffer;
 
     TKDT5DE_Source = packed record
@@ -611,13 +625,13 @@ type
     end;
 
     PKDT5DE_Source       = ^TKDT5DE_Source;
-    TKDT5DE_SourceBuffer = array [0 .. 0] of PKDT5DE_Source;
+    TKDT5DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT5DE_Source) - 1] of PKDT5DE_Source;
     PKDT5DE_SourceBuffer = ^TKDT5DE_SourceBuffer;
 
-    TKDT5DEyanmicSourceBuffer = array of PKDT5DE_Source;
+    TKDT5DEyanmicSourceBuffer = packed array of PKDT5DE_Source;
     PKDT5DEyanmicSourceBuffer = ^TKDT5DEyanmicSourceBuffer;
 
-    TKDT5DEyanmicStoreBuffer = array of TKDT5DE_Source;
+    TKDT5DEyanmicStoreBuffer = packed array of TKDT5DE_Source;
     PKDT5DEyanmicStoreBuffer = ^TKDT5DEyanmicStoreBuffer;
 
     PKDT5DE_Node = ^TKDT5DE_Node;
@@ -634,7 +648,7 @@ type
     KDStoreBuff: TKDT5DEyanmicStoreBuffer;
     KDBuff     : TKDT5DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT5DE_Node;
+    KDNodes    : packed array of PKDT5DE_Node;
     TestBuff   : TKDT5DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT5DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT5DE_Node;
     function GetData(const index: NativeInt): PKDT5DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -697,7 +711,7 @@ type
     TKDT6DE_Vec = array [0 .. KDT6DE_Axis - 1] of TKDT6DE_VecType;
     PKDT6DE_Vec = ^TKDT6DE_Vec;
 
-    TKDT6DE_DynamicVecBuffer = array of TKDT6DE_Vec;
+    TKDT6DE_DynamicVecBuffer = packed array of TKDT6DE_Vec;
     PKDT6DE_DynamicVecBuffer = ^TKDT6DE_DynamicVecBuffer;
 
     TKDT6DE_Source = packed record
@@ -706,13 +720,13 @@ type
     end;
 
     PKDT6DE_Source       = ^TKDT6DE_Source;
-    TKDT6DE_SourceBuffer = array [0 .. 0] of PKDT6DE_Source;
+    TKDT6DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT6DE_Source) - 1] of PKDT6DE_Source;
     PKDT6DE_SourceBuffer = ^TKDT6DE_SourceBuffer;
 
-    TKDT6DEyanmicSourceBuffer = array of PKDT6DE_Source;
+    TKDT6DEyanmicSourceBuffer = packed array of PKDT6DE_Source;
     PKDT6DEyanmicSourceBuffer = ^TKDT6DEyanmicSourceBuffer;
 
-    TKDT6DEyanmicStoreBuffer = array of TKDT6DE_Source;
+    TKDT6DEyanmicStoreBuffer = packed array of TKDT6DE_Source;
     PKDT6DEyanmicStoreBuffer = ^TKDT6DEyanmicStoreBuffer;
 
     PKDT6DE_Node = ^TKDT6DE_Node;
@@ -729,7 +743,7 @@ type
     KDStoreBuff: TKDT6DEyanmicStoreBuffer;
     KDBuff     : TKDT6DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT6DE_Node;
+    KDNodes    : packed array of PKDT6DE_Node;
     TestBuff   : TKDT6DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT6DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT6DE_Node;
     function GetData(const index: NativeInt): PKDT6DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -792,7 +806,7 @@ type
     TKDT7DE_Vec = array [0 .. KDT7DE_Axis - 1] of TKDT7DE_VecType;
     PKDT7DE_Vec = ^TKDT7DE_Vec;
 
-    TKDT7DE_DynamicVecBuffer = array of TKDT7DE_Vec;
+    TKDT7DE_DynamicVecBuffer = packed array of TKDT7DE_Vec;
     PKDT7DE_DynamicVecBuffer = ^TKDT7DE_DynamicVecBuffer;
 
     TKDT7DE_Source = packed record
@@ -801,13 +815,13 @@ type
     end;
 
     PKDT7DE_Source       = ^TKDT7DE_Source;
-    TKDT7DE_SourceBuffer = array [0 .. 0] of PKDT7DE_Source;
+    TKDT7DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT7DE_Source) - 1] of PKDT7DE_Source;
     PKDT7DE_SourceBuffer = ^TKDT7DE_SourceBuffer;
 
-    TKDT7DEyanmicSourceBuffer = array of PKDT7DE_Source;
+    TKDT7DEyanmicSourceBuffer = packed array of PKDT7DE_Source;
     PKDT7DEyanmicSourceBuffer = ^TKDT7DEyanmicSourceBuffer;
 
-    TKDT7DEyanmicStoreBuffer = array of TKDT7DE_Source;
+    TKDT7DEyanmicStoreBuffer = packed array of TKDT7DE_Source;
     PKDT7DEyanmicStoreBuffer = ^TKDT7DEyanmicStoreBuffer;
 
     PKDT7DE_Node = ^TKDT7DE_Node;
@@ -824,7 +838,7 @@ type
     KDStoreBuff: TKDT7DEyanmicStoreBuffer;
     KDBuff     : TKDT7DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT7DE_Node;
+    KDNodes    : packed array of PKDT7DE_Node;
     TestBuff   : TKDT7DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT7DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT7DE_Node;
     function GetData(const index: NativeInt): PKDT7DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -887,7 +901,7 @@ type
     TKDT8DE_Vec = array [0 .. KDT8DE_Axis - 1] of TKDT8DE_VecType;
     PKDT8DE_Vec = ^TKDT8DE_Vec;
 
-    TKDT8DE_DynamicVecBuffer = array of TKDT8DE_Vec;
+    TKDT8DE_DynamicVecBuffer = packed array of TKDT8DE_Vec;
     PKDT8DE_DynamicVecBuffer = ^TKDT8DE_DynamicVecBuffer;
 
     TKDT8DE_Source = packed record
@@ -896,13 +910,13 @@ type
     end;
 
     PKDT8DE_Source       = ^TKDT8DE_Source;
-    TKDT8DE_SourceBuffer = array [0 .. 0] of PKDT8DE_Source;
+    TKDT8DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT8DE_Source) - 1] of PKDT8DE_Source;
     PKDT8DE_SourceBuffer = ^TKDT8DE_SourceBuffer;
 
-    TKDT8DEyanmicSourceBuffer = array of PKDT8DE_Source;
+    TKDT8DEyanmicSourceBuffer = packed array of PKDT8DE_Source;
     PKDT8DEyanmicSourceBuffer = ^TKDT8DEyanmicSourceBuffer;
 
-    TKDT8DEyanmicStoreBuffer = array of TKDT8DE_Source;
+    TKDT8DEyanmicStoreBuffer = packed array of TKDT8DE_Source;
     PKDT8DEyanmicStoreBuffer = ^TKDT8DEyanmicStoreBuffer;
 
     PKDT8DE_Node = ^TKDT8DE_Node;
@@ -919,7 +933,7 @@ type
     KDStoreBuff: TKDT8DEyanmicStoreBuffer;
     KDBuff     : TKDT8DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT8DE_Node;
+    KDNodes    : packed array of PKDT8DE_Node;
     TestBuff   : TKDT8DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT8DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT8DE_Node;
     function GetData(const index: NativeInt): PKDT8DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -982,7 +996,7 @@ type
     TKDT9DE_Vec = array [0 .. KDT9DE_Axis - 1] of TKDT9DE_VecType;
     PKDT9DE_Vec = ^TKDT9DE_Vec;
 
-    TKDT9DE_DynamicVecBuffer = array of TKDT9DE_Vec;
+    TKDT9DE_DynamicVecBuffer = packed array of TKDT9DE_Vec;
     PKDT9DE_DynamicVecBuffer = ^TKDT9DE_DynamicVecBuffer;
 
     TKDT9DE_Source = packed record
@@ -991,13 +1005,13 @@ type
     end;
 
     PKDT9DE_Source       = ^TKDT9DE_Source;
-    TKDT9DE_SourceBuffer = array [0 .. 0] of PKDT9DE_Source;
+    TKDT9DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT9DE_Source) - 1] of PKDT9DE_Source;
     PKDT9DE_SourceBuffer = ^TKDT9DE_SourceBuffer;
 
-    TKDT9DEyanmicSourceBuffer = array of PKDT9DE_Source;
+    TKDT9DEyanmicSourceBuffer = packed array of PKDT9DE_Source;
     PKDT9DEyanmicSourceBuffer = ^TKDT9DEyanmicSourceBuffer;
 
-    TKDT9DEyanmicStoreBuffer = array of TKDT9DE_Source;
+    TKDT9DEyanmicStoreBuffer = packed array of TKDT9DE_Source;
     PKDT9DEyanmicStoreBuffer = ^TKDT9DEyanmicStoreBuffer;
 
     PKDT9DE_Node = ^TKDT9DE_Node;
@@ -1014,7 +1028,7 @@ type
     KDStoreBuff: TKDT9DEyanmicStoreBuffer;
     KDBuff     : TKDT9DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT9DE_Node;
+    KDNodes    : packed array of PKDT9DE_Node;
     TestBuff   : TKDT9DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT9DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT9DE_Node;
     function GetData(const index: NativeInt): PKDT9DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1077,7 +1091,7 @@ type
     TKDT10DE_Vec = array [0 .. KDT10DE_Axis - 1] of TKDT10DE_VecType;
     PKDT10DE_Vec = ^TKDT10DE_Vec;
 
-    TKDT10DE_DynamicVecBuffer = array of TKDT10DE_Vec;
+    TKDT10DE_DynamicVecBuffer = packed array of TKDT10DE_Vec;
     PKDT10DE_DynamicVecBuffer = ^TKDT10DE_DynamicVecBuffer;
 
     TKDT10DE_Source = packed record
@@ -1086,13 +1100,13 @@ type
     end;
 
     PKDT10DE_Source       = ^TKDT10DE_Source;
-    TKDT10DE_SourceBuffer = array [0 .. 0] of PKDT10DE_Source;
+    TKDT10DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT10DE_Source) - 1] of PKDT10DE_Source;
     PKDT10DE_SourceBuffer = ^TKDT10DE_SourceBuffer;
 
-    TKDT10DEyanmicSourceBuffer = array of PKDT10DE_Source;
+    TKDT10DEyanmicSourceBuffer = packed array of PKDT10DE_Source;
     PKDT10DEyanmicSourceBuffer = ^TKDT10DEyanmicSourceBuffer;
 
-    TKDT10DEyanmicStoreBuffer = array of TKDT10DE_Source;
+    TKDT10DEyanmicStoreBuffer = packed array of TKDT10DE_Source;
     PKDT10DEyanmicStoreBuffer = ^TKDT10DEyanmicStoreBuffer;
 
     PKDT10DE_Node = ^TKDT10DE_Node;
@@ -1109,7 +1123,7 @@ type
     KDStoreBuff: TKDT10DEyanmicStoreBuffer;
     KDBuff     : TKDT10DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT10DE_Node;
+    KDNodes    : packed array of PKDT10DE_Node;
     TestBuff   : TKDT10DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT10DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT10DE_Node;
     function GetData(const index: NativeInt): PKDT10DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1172,7 +1186,7 @@ type
     TKDT11DE_Vec = array [0 .. KDT11DE_Axis - 1] of TKDT11DE_VecType;
     PKDT11DE_Vec = ^TKDT11DE_Vec;
 
-    TKDT11DE_DynamicVecBuffer = array of TKDT11DE_Vec;
+    TKDT11DE_DynamicVecBuffer = packed array of TKDT11DE_Vec;
     PKDT11DE_DynamicVecBuffer = ^TKDT11DE_DynamicVecBuffer;
 
     TKDT11DE_Source = packed record
@@ -1181,13 +1195,13 @@ type
     end;
 
     PKDT11DE_Source       = ^TKDT11DE_Source;
-    TKDT11DE_SourceBuffer = array [0 .. 0] of PKDT11DE_Source;
+    TKDT11DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT11DE_Source) - 1] of PKDT11DE_Source;
     PKDT11DE_SourceBuffer = ^TKDT11DE_SourceBuffer;
 
-    TKDT11DEyanmicSourceBuffer = array of PKDT11DE_Source;
+    TKDT11DEyanmicSourceBuffer = packed array of PKDT11DE_Source;
     PKDT11DEyanmicSourceBuffer = ^TKDT11DEyanmicSourceBuffer;
 
-    TKDT11DEyanmicStoreBuffer = array of TKDT11DE_Source;
+    TKDT11DEyanmicStoreBuffer = packed array of TKDT11DE_Source;
     PKDT11DEyanmicStoreBuffer = ^TKDT11DEyanmicStoreBuffer;
 
     PKDT11DE_Node = ^TKDT11DE_Node;
@@ -1204,7 +1218,7 @@ type
     KDStoreBuff: TKDT11DEyanmicStoreBuffer;
     KDBuff     : TKDT11DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT11DE_Node;
+    KDNodes    : packed array of PKDT11DE_Node;
     TestBuff   : TKDT11DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT11DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT11DE_Node;
     function GetData(const index: NativeInt): PKDT11DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1267,7 +1281,7 @@ type
     TKDT12DE_Vec = array [0 .. KDT12DE_Axis - 1] of TKDT12DE_VecType;
     PKDT12DE_Vec = ^TKDT12DE_Vec;
 
-    TKDT12DE_DynamicVecBuffer = array of TKDT12DE_Vec;
+    TKDT12DE_DynamicVecBuffer = packed array of TKDT12DE_Vec;
     PKDT12DE_DynamicVecBuffer = ^TKDT12DE_DynamicVecBuffer;
 
     TKDT12DE_Source = packed record
@@ -1276,13 +1290,13 @@ type
     end;
 
     PKDT12DE_Source       = ^TKDT12DE_Source;
-    TKDT12DE_SourceBuffer = array [0 .. 0] of PKDT12DE_Source;
+    TKDT12DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT12DE_Source) - 1] of PKDT12DE_Source;
     PKDT12DE_SourceBuffer = ^TKDT12DE_SourceBuffer;
 
-    TKDT12DEyanmicSourceBuffer = array of PKDT12DE_Source;
+    TKDT12DEyanmicSourceBuffer = packed array of PKDT12DE_Source;
     PKDT12DEyanmicSourceBuffer = ^TKDT12DEyanmicSourceBuffer;
 
-    TKDT12DEyanmicStoreBuffer = array of TKDT12DE_Source;
+    TKDT12DEyanmicStoreBuffer = packed array of TKDT12DE_Source;
     PKDT12DEyanmicStoreBuffer = ^TKDT12DEyanmicStoreBuffer;
 
     PKDT12DE_Node = ^TKDT12DE_Node;
@@ -1299,7 +1313,7 @@ type
     KDStoreBuff: TKDT12DEyanmicStoreBuffer;
     KDBuff     : TKDT12DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT12DE_Node;
+    KDNodes    : packed array of PKDT12DE_Node;
     TestBuff   : TKDT12DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT12DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT12DE_Node;
     function GetData(const index: NativeInt): PKDT12DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1362,7 +1376,7 @@ type
     TKDT13DE_Vec = array [0 .. KDT13DE_Axis - 1] of TKDT13DE_VecType;
     PKDT13DE_Vec = ^TKDT13DE_Vec;
 
-    TKDT13DE_DynamicVecBuffer = array of TKDT13DE_Vec;
+    TKDT13DE_DynamicVecBuffer = packed array of TKDT13DE_Vec;
     PKDT13DE_DynamicVecBuffer = ^TKDT13DE_DynamicVecBuffer;
 
     TKDT13DE_Source = packed record
@@ -1371,13 +1385,13 @@ type
     end;
 
     PKDT13DE_Source       = ^TKDT13DE_Source;
-    TKDT13DE_SourceBuffer = array [0 .. 0] of PKDT13DE_Source;
+    TKDT13DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT13DE_Source) - 1] of PKDT13DE_Source;
     PKDT13DE_SourceBuffer = ^TKDT13DE_SourceBuffer;
 
-    TKDT13DEyanmicSourceBuffer = array of PKDT13DE_Source;
+    TKDT13DEyanmicSourceBuffer = packed array of PKDT13DE_Source;
     PKDT13DEyanmicSourceBuffer = ^TKDT13DEyanmicSourceBuffer;
 
-    TKDT13DEyanmicStoreBuffer = array of TKDT13DE_Source;
+    TKDT13DEyanmicStoreBuffer = packed array of TKDT13DE_Source;
     PKDT13DEyanmicStoreBuffer = ^TKDT13DEyanmicStoreBuffer;
 
     PKDT13DE_Node = ^TKDT13DE_Node;
@@ -1394,7 +1408,7 @@ type
     KDStoreBuff: TKDT13DEyanmicStoreBuffer;
     KDBuff     : TKDT13DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT13DE_Node;
+    KDNodes    : packed array of PKDT13DE_Node;
     TestBuff   : TKDT13DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT13DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT13DE_Node;
     function GetData(const index: NativeInt): PKDT13DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1457,7 +1471,7 @@ type
     TKDT14DE_Vec = array [0 .. KDT14DE_Axis - 1] of TKDT14DE_VecType;
     PKDT14DE_Vec = ^TKDT14DE_Vec;
 
-    TKDT14DE_DynamicVecBuffer = array of TKDT14DE_Vec;
+    TKDT14DE_DynamicVecBuffer = packed array of TKDT14DE_Vec;
     PKDT14DE_DynamicVecBuffer = ^TKDT14DE_DynamicVecBuffer;
 
     TKDT14DE_Source = packed record
@@ -1466,13 +1480,13 @@ type
     end;
 
     PKDT14DE_Source       = ^TKDT14DE_Source;
-    TKDT14DE_SourceBuffer = array [0 .. 0] of PKDT14DE_Source;
+    TKDT14DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT14DE_Source) - 1] of PKDT14DE_Source;
     PKDT14DE_SourceBuffer = ^TKDT14DE_SourceBuffer;
 
-    TKDT14DEyanmicSourceBuffer = array of PKDT14DE_Source;
+    TKDT14DEyanmicSourceBuffer = packed array of PKDT14DE_Source;
     PKDT14DEyanmicSourceBuffer = ^TKDT14DEyanmicSourceBuffer;
 
-    TKDT14DEyanmicStoreBuffer = array of TKDT14DE_Source;
+    TKDT14DEyanmicStoreBuffer = packed array of TKDT14DE_Source;
     PKDT14DEyanmicStoreBuffer = ^TKDT14DEyanmicStoreBuffer;
 
     PKDT14DE_Node = ^TKDT14DE_Node;
@@ -1489,7 +1503,7 @@ type
     KDStoreBuff: TKDT14DEyanmicStoreBuffer;
     KDBuff     : TKDT14DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT14DE_Node;
+    KDNodes    : packed array of PKDT14DE_Node;
     TestBuff   : TKDT14DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT14DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT14DE_Node;
     function GetData(const index: NativeInt): PKDT14DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1552,7 +1566,7 @@ type
     TKDT15DE_Vec = array [0 .. KDT15DE_Axis - 1] of TKDT15DE_VecType;
     PKDT15DE_Vec = ^TKDT15DE_Vec;
 
-    TKDT15DE_DynamicVecBuffer = array of TKDT15DE_Vec;
+    TKDT15DE_DynamicVecBuffer = packed array of TKDT15DE_Vec;
     PKDT15DE_DynamicVecBuffer = ^TKDT15DE_DynamicVecBuffer;
 
     TKDT15DE_Source = packed record
@@ -1561,13 +1575,13 @@ type
     end;
 
     PKDT15DE_Source       = ^TKDT15DE_Source;
-    TKDT15DE_SourceBuffer = array [0 .. 0] of PKDT15DE_Source;
+    TKDT15DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT15DE_Source) - 1] of PKDT15DE_Source;
     PKDT15DE_SourceBuffer = ^TKDT15DE_SourceBuffer;
 
-    TKDT15DEyanmicSourceBuffer = array of PKDT15DE_Source;
+    TKDT15DEyanmicSourceBuffer = packed array of PKDT15DE_Source;
     PKDT15DEyanmicSourceBuffer = ^TKDT15DEyanmicSourceBuffer;
 
-    TKDT15DEyanmicStoreBuffer = array of TKDT15DE_Source;
+    TKDT15DEyanmicStoreBuffer = packed array of TKDT15DE_Source;
     PKDT15DEyanmicStoreBuffer = ^TKDT15DEyanmicStoreBuffer;
 
     PKDT15DE_Node = ^TKDT15DE_Node;
@@ -1584,7 +1598,7 @@ type
     KDStoreBuff: TKDT15DEyanmicStoreBuffer;
     KDBuff     : TKDT15DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT15DE_Node;
+    KDNodes    : packed array of PKDT15DE_Node;
     TestBuff   : TKDT15DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT15DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT15DE_Node;
     function GetData(const index: NativeInt): PKDT15DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1647,7 +1661,7 @@ type
     TKDT16DE_Vec = array [0 .. KDT16DE_Axis - 1] of TKDT16DE_VecType;
     PKDT16DE_Vec = ^TKDT16DE_Vec;
 
-    TKDT16DE_DynamicVecBuffer = array of TKDT16DE_Vec;
+    TKDT16DE_DynamicVecBuffer = packed array of TKDT16DE_Vec;
     PKDT16DE_DynamicVecBuffer = ^TKDT16DE_DynamicVecBuffer;
 
     TKDT16DE_Source = packed record
@@ -1656,13 +1670,13 @@ type
     end;
 
     PKDT16DE_Source       = ^TKDT16DE_Source;
-    TKDT16DE_SourceBuffer = array [0 .. 0] of PKDT16DE_Source;
+    TKDT16DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT16DE_Source) - 1] of PKDT16DE_Source;
     PKDT16DE_SourceBuffer = ^TKDT16DE_SourceBuffer;
 
-    TKDT16DEyanmicSourceBuffer = array of PKDT16DE_Source;
+    TKDT16DEyanmicSourceBuffer = packed array of PKDT16DE_Source;
     PKDT16DEyanmicSourceBuffer = ^TKDT16DEyanmicSourceBuffer;
 
-    TKDT16DEyanmicStoreBuffer = array of TKDT16DE_Source;
+    TKDT16DEyanmicStoreBuffer = packed array of TKDT16DE_Source;
     PKDT16DEyanmicStoreBuffer = ^TKDT16DEyanmicStoreBuffer;
 
     PKDT16DE_Node = ^TKDT16DE_Node;
@@ -1679,7 +1693,7 @@ type
     KDStoreBuff: TKDT16DEyanmicStoreBuffer;
     KDBuff     : TKDT16DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT16DE_Node;
+    KDNodes    : packed array of PKDT16DE_Node;
     TestBuff   : TKDT16DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT16DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT16DE_Node;
     function GetData(const index: NativeInt): PKDT16DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1742,7 +1756,7 @@ type
     TKDT17DE_Vec = array [0 .. KDT17DE_Axis - 1] of TKDT17DE_VecType;
     PKDT17DE_Vec = ^TKDT17DE_Vec;
 
-    TKDT17DE_DynamicVecBuffer = array of TKDT17DE_Vec;
+    TKDT17DE_DynamicVecBuffer = packed array of TKDT17DE_Vec;
     PKDT17DE_DynamicVecBuffer = ^TKDT17DE_DynamicVecBuffer;
 
     TKDT17DE_Source = packed record
@@ -1751,13 +1765,13 @@ type
     end;
 
     PKDT17DE_Source       = ^TKDT17DE_Source;
-    TKDT17DE_SourceBuffer = array [0 .. 0] of PKDT17DE_Source;
+    TKDT17DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT17DE_Source) - 1] of PKDT17DE_Source;
     PKDT17DE_SourceBuffer = ^TKDT17DE_SourceBuffer;
 
-    TKDT17DEyanmicSourceBuffer = array of PKDT17DE_Source;
+    TKDT17DEyanmicSourceBuffer = packed array of PKDT17DE_Source;
     PKDT17DEyanmicSourceBuffer = ^TKDT17DEyanmicSourceBuffer;
 
-    TKDT17DEyanmicStoreBuffer = array of TKDT17DE_Source;
+    TKDT17DEyanmicStoreBuffer = packed array of TKDT17DE_Source;
     PKDT17DEyanmicStoreBuffer = ^TKDT17DEyanmicStoreBuffer;
 
     PKDT17DE_Node = ^TKDT17DE_Node;
@@ -1774,7 +1788,7 @@ type
     KDStoreBuff: TKDT17DEyanmicStoreBuffer;
     KDBuff     : TKDT17DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT17DE_Node;
+    KDNodes    : packed array of PKDT17DE_Node;
     TestBuff   : TKDT17DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT17DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT17DE_Node;
     function GetData(const index: NativeInt): PKDT17DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1837,7 +1851,7 @@ type
     TKDT18DE_Vec = array [0 .. KDT18DE_Axis - 1] of TKDT18DE_VecType;
     PKDT18DE_Vec = ^TKDT18DE_Vec;
 
-    TKDT18DE_DynamicVecBuffer = array of TKDT18DE_Vec;
+    TKDT18DE_DynamicVecBuffer = packed array of TKDT18DE_Vec;
     PKDT18DE_DynamicVecBuffer = ^TKDT18DE_DynamicVecBuffer;
 
     TKDT18DE_Source = packed record
@@ -1846,13 +1860,13 @@ type
     end;
 
     PKDT18DE_Source       = ^TKDT18DE_Source;
-    TKDT18DE_SourceBuffer = array [0 .. 0] of PKDT18DE_Source;
+    TKDT18DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT18DE_Source) - 1] of PKDT18DE_Source;
     PKDT18DE_SourceBuffer = ^TKDT18DE_SourceBuffer;
 
-    TKDT18DEyanmicSourceBuffer = array of PKDT18DE_Source;
+    TKDT18DEyanmicSourceBuffer = packed array of PKDT18DE_Source;
     PKDT18DEyanmicSourceBuffer = ^TKDT18DEyanmicSourceBuffer;
 
-    TKDT18DEyanmicStoreBuffer = array of TKDT18DE_Source;
+    TKDT18DEyanmicStoreBuffer = packed array of TKDT18DE_Source;
     PKDT18DEyanmicStoreBuffer = ^TKDT18DEyanmicStoreBuffer;
 
     PKDT18DE_Node = ^TKDT18DE_Node;
@@ -1869,7 +1883,7 @@ type
     KDStoreBuff: TKDT18DEyanmicStoreBuffer;
     KDBuff     : TKDT18DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT18DE_Node;
+    KDNodes    : packed array of PKDT18DE_Node;
     TestBuff   : TKDT18DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT18DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT18DE_Node;
     function GetData(const index: NativeInt): PKDT18DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1932,7 +1946,7 @@ type
     TKDT19DE_Vec = array [0 .. KDT19DE_Axis - 1] of TKDT19DE_VecType;
     PKDT19DE_Vec = ^TKDT19DE_Vec;
 
-    TKDT19DE_DynamicVecBuffer = array of TKDT19DE_Vec;
+    TKDT19DE_DynamicVecBuffer = packed array of TKDT19DE_Vec;
     PKDT19DE_DynamicVecBuffer = ^TKDT19DE_DynamicVecBuffer;
 
     TKDT19DE_Source = packed record
@@ -1941,13 +1955,13 @@ type
     end;
 
     PKDT19DE_Source       = ^TKDT19DE_Source;
-    TKDT19DE_SourceBuffer = array [0 .. 0] of PKDT19DE_Source;
+    TKDT19DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT19DE_Source) - 1] of PKDT19DE_Source;
     PKDT19DE_SourceBuffer = ^TKDT19DE_SourceBuffer;
 
-    TKDT19DEyanmicSourceBuffer = array of PKDT19DE_Source;
+    TKDT19DEyanmicSourceBuffer = packed array of PKDT19DE_Source;
     PKDT19DEyanmicSourceBuffer = ^TKDT19DEyanmicSourceBuffer;
 
-    TKDT19DEyanmicStoreBuffer = array of TKDT19DE_Source;
+    TKDT19DEyanmicStoreBuffer = packed array of TKDT19DE_Source;
     PKDT19DEyanmicStoreBuffer = ^TKDT19DEyanmicStoreBuffer;
 
     PKDT19DE_Node = ^TKDT19DE_Node;
@@ -1964,7 +1978,7 @@ type
     KDStoreBuff: TKDT19DEyanmicStoreBuffer;
     KDBuff     : TKDT19DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT19DE_Node;
+    KDNodes    : packed array of PKDT19DE_Node;
     TestBuff   : TKDT19DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT19DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT19DE_Node;
     function GetData(const index: NativeInt): PKDT19DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2027,7 +2041,7 @@ type
     TKDT20DE_Vec = array [0 .. KDT20DE_Axis - 1] of TKDT20DE_VecType;
     PKDT20DE_Vec = ^TKDT20DE_Vec;
 
-    TKDT20DE_DynamicVecBuffer = array of TKDT20DE_Vec;
+    TKDT20DE_DynamicVecBuffer = packed array of TKDT20DE_Vec;
     PKDT20DE_DynamicVecBuffer = ^TKDT20DE_DynamicVecBuffer;
 
     TKDT20DE_Source = packed record
@@ -2036,13 +2050,13 @@ type
     end;
 
     PKDT20DE_Source       = ^TKDT20DE_Source;
-    TKDT20DE_SourceBuffer = array [0 .. 0] of PKDT20DE_Source;
+    TKDT20DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT20DE_Source) - 1] of PKDT20DE_Source;
     PKDT20DE_SourceBuffer = ^TKDT20DE_SourceBuffer;
 
-    TKDT20DEyanmicSourceBuffer = array of PKDT20DE_Source;
+    TKDT20DEyanmicSourceBuffer = packed array of PKDT20DE_Source;
     PKDT20DEyanmicSourceBuffer = ^TKDT20DEyanmicSourceBuffer;
 
-    TKDT20DEyanmicStoreBuffer = array of TKDT20DE_Source;
+    TKDT20DEyanmicStoreBuffer = packed array of TKDT20DE_Source;
     PKDT20DEyanmicStoreBuffer = ^TKDT20DEyanmicStoreBuffer;
 
     PKDT20DE_Node = ^TKDT20DE_Node;
@@ -2059,7 +2073,7 @@ type
     KDStoreBuff: TKDT20DEyanmicStoreBuffer;
     KDBuff     : TKDT20DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT20DE_Node;
+    KDNodes    : packed array of PKDT20DE_Node;
     TestBuff   : TKDT20DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT20DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT20DE_Node;
     function GetData(const index: NativeInt): PKDT20DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2122,7 +2136,7 @@ type
     TKDT21DE_Vec = array [0 .. KDT21DE_Axis - 1] of TKDT21DE_VecType;
     PKDT21DE_Vec = ^TKDT21DE_Vec;
 
-    TKDT21DE_DynamicVecBuffer = array of TKDT21DE_Vec;
+    TKDT21DE_DynamicVecBuffer = packed array of TKDT21DE_Vec;
     PKDT21DE_DynamicVecBuffer = ^TKDT21DE_DynamicVecBuffer;
 
     TKDT21DE_Source = packed record
@@ -2131,13 +2145,13 @@ type
     end;
 
     PKDT21DE_Source       = ^TKDT21DE_Source;
-    TKDT21DE_SourceBuffer = array [0 .. 0] of PKDT21DE_Source;
+    TKDT21DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT21DE_Source) - 1] of PKDT21DE_Source;
     PKDT21DE_SourceBuffer = ^TKDT21DE_SourceBuffer;
 
-    TKDT21DEyanmicSourceBuffer = array of PKDT21DE_Source;
+    TKDT21DEyanmicSourceBuffer = packed array of PKDT21DE_Source;
     PKDT21DEyanmicSourceBuffer = ^TKDT21DEyanmicSourceBuffer;
 
-    TKDT21DEyanmicStoreBuffer = array of TKDT21DE_Source;
+    TKDT21DEyanmicStoreBuffer = packed array of TKDT21DE_Source;
     PKDT21DEyanmicStoreBuffer = ^TKDT21DEyanmicStoreBuffer;
 
     PKDT21DE_Node = ^TKDT21DE_Node;
@@ -2154,7 +2168,7 @@ type
     KDStoreBuff: TKDT21DEyanmicStoreBuffer;
     KDBuff     : TKDT21DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT21DE_Node;
+    KDNodes    : packed array of PKDT21DE_Node;
     TestBuff   : TKDT21DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT21DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT21DE_Node;
     function GetData(const index: NativeInt): PKDT21DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2217,7 +2231,7 @@ type
     TKDT22DE_Vec = array [0 .. KDT22DE_Axis - 1] of TKDT22DE_VecType;
     PKDT22DE_Vec = ^TKDT22DE_Vec;
 
-    TKDT22DE_DynamicVecBuffer = array of TKDT22DE_Vec;
+    TKDT22DE_DynamicVecBuffer = packed array of TKDT22DE_Vec;
     PKDT22DE_DynamicVecBuffer = ^TKDT22DE_DynamicVecBuffer;
 
     TKDT22DE_Source = packed record
@@ -2226,13 +2240,13 @@ type
     end;
 
     PKDT22DE_Source       = ^TKDT22DE_Source;
-    TKDT22DE_SourceBuffer = array [0 .. 0] of PKDT22DE_Source;
+    TKDT22DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT22DE_Source) - 1] of PKDT22DE_Source;
     PKDT22DE_SourceBuffer = ^TKDT22DE_SourceBuffer;
 
-    TKDT22DEyanmicSourceBuffer = array of PKDT22DE_Source;
+    TKDT22DEyanmicSourceBuffer = packed array of PKDT22DE_Source;
     PKDT22DEyanmicSourceBuffer = ^TKDT22DEyanmicSourceBuffer;
 
-    TKDT22DEyanmicStoreBuffer = array of TKDT22DE_Source;
+    TKDT22DEyanmicStoreBuffer = packed array of TKDT22DE_Source;
     PKDT22DEyanmicStoreBuffer = ^TKDT22DEyanmicStoreBuffer;
 
     PKDT22DE_Node = ^TKDT22DE_Node;
@@ -2249,7 +2263,7 @@ type
     KDStoreBuff: TKDT22DEyanmicStoreBuffer;
     KDBuff     : TKDT22DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT22DE_Node;
+    KDNodes    : packed array of PKDT22DE_Node;
     TestBuff   : TKDT22DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT22DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT22DE_Node;
     function GetData(const index: NativeInt): PKDT22DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2312,7 +2326,7 @@ type
     TKDT23DE_Vec = array [0 .. KDT23DE_Axis - 1] of TKDT23DE_VecType;
     PKDT23DE_Vec = ^TKDT23DE_Vec;
 
-    TKDT23DE_DynamicVecBuffer = array of TKDT23DE_Vec;
+    TKDT23DE_DynamicVecBuffer = packed array of TKDT23DE_Vec;
     PKDT23DE_DynamicVecBuffer = ^TKDT23DE_DynamicVecBuffer;
 
     TKDT23DE_Source = packed record
@@ -2321,13 +2335,13 @@ type
     end;
 
     PKDT23DE_Source       = ^TKDT23DE_Source;
-    TKDT23DE_SourceBuffer = array [0 .. 0] of PKDT23DE_Source;
+    TKDT23DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT23DE_Source) - 1] of PKDT23DE_Source;
     PKDT23DE_SourceBuffer = ^TKDT23DE_SourceBuffer;
 
-    TKDT23DEyanmicSourceBuffer = array of PKDT23DE_Source;
+    TKDT23DEyanmicSourceBuffer = packed array of PKDT23DE_Source;
     PKDT23DEyanmicSourceBuffer = ^TKDT23DEyanmicSourceBuffer;
 
-    TKDT23DEyanmicStoreBuffer = array of TKDT23DE_Source;
+    TKDT23DEyanmicStoreBuffer = packed array of TKDT23DE_Source;
     PKDT23DEyanmicStoreBuffer = ^TKDT23DEyanmicStoreBuffer;
 
     PKDT23DE_Node = ^TKDT23DE_Node;
@@ -2344,7 +2358,7 @@ type
     KDStoreBuff: TKDT23DEyanmicStoreBuffer;
     KDBuff     : TKDT23DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT23DE_Node;
+    KDNodes    : packed array of PKDT23DE_Node;
     TestBuff   : TKDT23DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT23DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT23DE_Node;
     function GetData(const index: NativeInt): PKDT23DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2407,7 +2421,7 @@ type
     TKDT24DE_Vec = array [0 .. KDT24DE_Axis - 1] of TKDT24DE_VecType;
     PKDT24DE_Vec = ^TKDT24DE_Vec;
 
-    TKDT24DE_DynamicVecBuffer = array of TKDT24DE_Vec;
+    TKDT24DE_DynamicVecBuffer = packed array of TKDT24DE_Vec;
     PKDT24DE_DynamicVecBuffer = ^TKDT24DE_DynamicVecBuffer;
 
     TKDT24DE_Source = packed record
@@ -2416,13 +2430,13 @@ type
     end;
 
     PKDT24DE_Source       = ^TKDT24DE_Source;
-    TKDT24DE_SourceBuffer = array [0 .. 0] of PKDT24DE_Source;
+    TKDT24DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT24DE_Source) - 1] of PKDT24DE_Source;
     PKDT24DE_SourceBuffer = ^TKDT24DE_SourceBuffer;
 
-    TKDT24DEyanmicSourceBuffer = array of PKDT24DE_Source;
+    TKDT24DEyanmicSourceBuffer = packed array of PKDT24DE_Source;
     PKDT24DEyanmicSourceBuffer = ^TKDT24DEyanmicSourceBuffer;
 
-    TKDT24DEyanmicStoreBuffer = array of TKDT24DE_Source;
+    TKDT24DEyanmicStoreBuffer = packed array of TKDT24DE_Source;
     PKDT24DEyanmicStoreBuffer = ^TKDT24DEyanmicStoreBuffer;
 
     PKDT24DE_Node = ^TKDT24DE_Node;
@@ -2439,7 +2453,7 @@ type
     KDStoreBuff: TKDT24DEyanmicStoreBuffer;
     KDBuff     : TKDT24DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT24DE_Node;
+    KDNodes    : packed array of PKDT24DE_Node;
     TestBuff   : TKDT24DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT24DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT24DE_Node;
     function GetData(const index: NativeInt): PKDT24DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2502,7 +2516,7 @@ type
     TKDT25DE_Vec = array [0 .. KDT25DE_Axis - 1] of TKDT25DE_VecType;
     PKDT25DE_Vec = ^TKDT25DE_Vec;
 
-    TKDT25DE_DynamicVecBuffer = array of TKDT25DE_Vec;
+    TKDT25DE_DynamicVecBuffer = packed array of TKDT25DE_Vec;
     PKDT25DE_DynamicVecBuffer = ^TKDT25DE_DynamicVecBuffer;
 
     TKDT25DE_Source = packed record
@@ -2511,13 +2525,13 @@ type
     end;
 
     PKDT25DE_Source       = ^TKDT25DE_Source;
-    TKDT25DE_SourceBuffer = array [0 .. 0] of PKDT25DE_Source;
+    TKDT25DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT25DE_Source) - 1] of PKDT25DE_Source;
     PKDT25DE_SourceBuffer = ^TKDT25DE_SourceBuffer;
 
-    TKDT25DEyanmicSourceBuffer = array of PKDT25DE_Source;
+    TKDT25DEyanmicSourceBuffer = packed array of PKDT25DE_Source;
     PKDT25DEyanmicSourceBuffer = ^TKDT25DEyanmicSourceBuffer;
 
-    TKDT25DEyanmicStoreBuffer = array of TKDT25DE_Source;
+    TKDT25DEyanmicStoreBuffer = packed array of TKDT25DE_Source;
     PKDT25DEyanmicStoreBuffer = ^TKDT25DEyanmicStoreBuffer;
 
     PKDT25DE_Node = ^TKDT25DE_Node;
@@ -2534,7 +2548,7 @@ type
     KDStoreBuff: TKDT25DEyanmicStoreBuffer;
     KDBuff     : TKDT25DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT25DE_Node;
+    KDNodes    : packed array of PKDT25DE_Node;
     TestBuff   : TKDT25DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT25DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT25DE_Node;
     function GetData(const index: NativeInt): PKDT25DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2597,7 +2611,7 @@ type
     TKDT26DE_Vec = array [0 .. KDT26DE_Axis - 1] of TKDT26DE_VecType;
     PKDT26DE_Vec = ^TKDT26DE_Vec;
 
-    TKDT26DE_DynamicVecBuffer = array of TKDT26DE_Vec;
+    TKDT26DE_DynamicVecBuffer = packed array of TKDT26DE_Vec;
     PKDT26DE_DynamicVecBuffer = ^TKDT26DE_DynamicVecBuffer;
 
     TKDT26DE_Source = packed record
@@ -2606,13 +2620,13 @@ type
     end;
 
     PKDT26DE_Source       = ^TKDT26DE_Source;
-    TKDT26DE_SourceBuffer = array [0 .. 0] of PKDT26DE_Source;
+    TKDT26DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT26DE_Source) - 1] of PKDT26DE_Source;
     PKDT26DE_SourceBuffer = ^TKDT26DE_SourceBuffer;
 
-    TKDT26DEyanmicSourceBuffer = array of PKDT26DE_Source;
+    TKDT26DEyanmicSourceBuffer = packed array of PKDT26DE_Source;
     PKDT26DEyanmicSourceBuffer = ^TKDT26DEyanmicSourceBuffer;
 
-    TKDT26DEyanmicStoreBuffer = array of TKDT26DE_Source;
+    TKDT26DEyanmicStoreBuffer = packed array of TKDT26DE_Source;
     PKDT26DEyanmicStoreBuffer = ^TKDT26DEyanmicStoreBuffer;
 
     PKDT26DE_Node = ^TKDT26DE_Node;
@@ -2629,7 +2643,7 @@ type
     KDStoreBuff: TKDT26DEyanmicStoreBuffer;
     KDBuff     : TKDT26DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT26DE_Node;
+    KDNodes    : packed array of PKDT26DE_Node;
     TestBuff   : TKDT26DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT26DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT26DE_Node;
     function GetData(const index: NativeInt): PKDT26DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2692,7 +2706,7 @@ type
     TKDT27DE_Vec = array [0 .. KDT27DE_Axis - 1] of TKDT27DE_VecType;
     PKDT27DE_Vec = ^TKDT27DE_Vec;
 
-    TKDT27DE_DynamicVecBuffer = array of TKDT27DE_Vec;
+    TKDT27DE_DynamicVecBuffer = packed array of TKDT27DE_Vec;
     PKDT27DE_DynamicVecBuffer = ^TKDT27DE_DynamicVecBuffer;
 
     TKDT27DE_Source = packed record
@@ -2701,13 +2715,13 @@ type
     end;
 
     PKDT27DE_Source       = ^TKDT27DE_Source;
-    TKDT27DE_SourceBuffer = array [0 .. 0] of PKDT27DE_Source;
+    TKDT27DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT27DE_Source) - 1] of PKDT27DE_Source;
     PKDT27DE_SourceBuffer = ^TKDT27DE_SourceBuffer;
 
-    TKDT27DEyanmicSourceBuffer = array of PKDT27DE_Source;
+    TKDT27DEyanmicSourceBuffer = packed array of PKDT27DE_Source;
     PKDT27DEyanmicSourceBuffer = ^TKDT27DEyanmicSourceBuffer;
 
-    TKDT27DEyanmicStoreBuffer = array of TKDT27DE_Source;
+    TKDT27DEyanmicStoreBuffer = packed array of TKDT27DE_Source;
     PKDT27DEyanmicStoreBuffer = ^TKDT27DEyanmicStoreBuffer;
 
     PKDT27DE_Node = ^TKDT27DE_Node;
@@ -2724,7 +2738,7 @@ type
     KDStoreBuff: TKDT27DEyanmicStoreBuffer;
     KDBuff     : TKDT27DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT27DE_Node;
+    KDNodes    : packed array of PKDT27DE_Node;
     TestBuff   : TKDT27DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT27DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT27DE_Node;
     function GetData(const index: NativeInt): PKDT27DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2787,7 +2801,7 @@ type
     TKDT28DE_Vec = array [0 .. KDT28DE_Axis - 1] of TKDT28DE_VecType;
     PKDT28DE_Vec = ^TKDT28DE_Vec;
 
-    TKDT28DE_DynamicVecBuffer = array of TKDT28DE_Vec;
+    TKDT28DE_DynamicVecBuffer = packed array of TKDT28DE_Vec;
     PKDT28DE_DynamicVecBuffer = ^TKDT28DE_DynamicVecBuffer;
 
     TKDT28DE_Source = packed record
@@ -2796,13 +2810,13 @@ type
     end;
 
     PKDT28DE_Source       = ^TKDT28DE_Source;
-    TKDT28DE_SourceBuffer = array [0 .. 0] of PKDT28DE_Source;
+    TKDT28DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT28DE_Source) - 1] of PKDT28DE_Source;
     PKDT28DE_SourceBuffer = ^TKDT28DE_SourceBuffer;
 
-    TKDT28DEyanmicSourceBuffer = array of PKDT28DE_Source;
+    TKDT28DEyanmicSourceBuffer = packed array of PKDT28DE_Source;
     PKDT28DEyanmicSourceBuffer = ^TKDT28DEyanmicSourceBuffer;
 
-    TKDT28DEyanmicStoreBuffer = array of TKDT28DE_Source;
+    TKDT28DEyanmicStoreBuffer = packed array of TKDT28DE_Source;
     PKDT28DEyanmicStoreBuffer = ^TKDT28DEyanmicStoreBuffer;
 
     PKDT28DE_Node = ^TKDT28DE_Node;
@@ -2819,7 +2833,7 @@ type
     KDStoreBuff: TKDT28DEyanmicStoreBuffer;
     KDBuff     : TKDT28DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT28DE_Node;
+    KDNodes    : packed array of PKDT28DE_Node;
     TestBuff   : TKDT28DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT28DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT28DE_Node;
     function GetData(const index: NativeInt): PKDT28DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2882,7 +2896,7 @@ type
     TKDT29DE_Vec = array [0 .. KDT29DE_Axis - 1] of TKDT29DE_VecType;
     PKDT29DE_Vec = ^TKDT29DE_Vec;
 
-    TKDT29DE_DynamicVecBuffer = array of TKDT29DE_Vec;
+    TKDT29DE_DynamicVecBuffer = packed array of TKDT29DE_Vec;
     PKDT29DE_DynamicVecBuffer = ^TKDT29DE_DynamicVecBuffer;
 
     TKDT29DE_Source = packed record
@@ -2891,13 +2905,13 @@ type
     end;
 
     PKDT29DE_Source       = ^TKDT29DE_Source;
-    TKDT29DE_SourceBuffer = array [0 .. 0] of PKDT29DE_Source;
+    TKDT29DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT29DE_Source) - 1] of PKDT29DE_Source;
     PKDT29DE_SourceBuffer = ^TKDT29DE_SourceBuffer;
 
-    TKDT29DEyanmicSourceBuffer = array of PKDT29DE_Source;
+    TKDT29DEyanmicSourceBuffer = packed array of PKDT29DE_Source;
     PKDT29DEyanmicSourceBuffer = ^TKDT29DEyanmicSourceBuffer;
 
-    TKDT29DEyanmicStoreBuffer = array of TKDT29DE_Source;
+    TKDT29DEyanmicStoreBuffer = packed array of TKDT29DE_Source;
     PKDT29DEyanmicStoreBuffer = ^TKDT29DEyanmicStoreBuffer;
 
     PKDT29DE_Node = ^TKDT29DE_Node;
@@ -2914,7 +2928,7 @@ type
     KDStoreBuff: TKDT29DEyanmicStoreBuffer;
     KDBuff     : TKDT29DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT29DE_Node;
+    KDNodes    : packed array of PKDT29DE_Node;
     TestBuff   : TKDT29DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT29DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT29DE_Node;
     function GetData(const index: NativeInt): PKDT29DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2977,7 +2991,7 @@ type
     TKDT30DE_Vec = array [0 .. KDT30DE_Axis - 1] of TKDT30DE_VecType;
     PKDT30DE_Vec = ^TKDT30DE_Vec;
 
-    TKDT30DE_DynamicVecBuffer = array of TKDT30DE_Vec;
+    TKDT30DE_DynamicVecBuffer = packed array of TKDT30DE_Vec;
     PKDT30DE_DynamicVecBuffer = ^TKDT30DE_DynamicVecBuffer;
 
     TKDT30DE_Source = packed record
@@ -2986,13 +3000,13 @@ type
     end;
 
     PKDT30DE_Source       = ^TKDT30DE_Source;
-    TKDT30DE_SourceBuffer = array [0 .. 0] of PKDT30DE_Source;
+    TKDT30DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT30DE_Source) - 1] of PKDT30DE_Source;
     PKDT30DE_SourceBuffer = ^TKDT30DE_SourceBuffer;
 
-    TKDT30DEyanmicSourceBuffer = array of PKDT30DE_Source;
+    TKDT30DEyanmicSourceBuffer = packed array of PKDT30DE_Source;
     PKDT30DEyanmicSourceBuffer = ^TKDT30DEyanmicSourceBuffer;
 
-    TKDT30DEyanmicStoreBuffer = array of TKDT30DE_Source;
+    TKDT30DEyanmicStoreBuffer = packed array of TKDT30DE_Source;
     PKDT30DEyanmicStoreBuffer = ^TKDT30DEyanmicStoreBuffer;
 
     PKDT30DE_Node = ^TKDT30DE_Node;
@@ -3009,7 +3023,7 @@ type
     KDStoreBuff: TKDT30DEyanmicStoreBuffer;
     KDBuff     : TKDT30DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT30DE_Node;
+    KDNodes    : packed array of PKDT30DE_Node;
     TestBuff   : TKDT30DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT30DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT30DE_Node;
     function GetData(const index: NativeInt): PKDT30DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3072,7 +3086,7 @@ type
     TKDT31DE_Vec = array [0 .. KDT31DE_Axis - 1] of TKDT31DE_VecType;
     PKDT31DE_Vec = ^TKDT31DE_Vec;
 
-    TKDT31DE_DynamicVecBuffer = array of TKDT31DE_Vec;
+    TKDT31DE_DynamicVecBuffer = packed array of TKDT31DE_Vec;
     PKDT31DE_DynamicVecBuffer = ^TKDT31DE_DynamicVecBuffer;
 
     TKDT31DE_Source = packed record
@@ -3081,13 +3095,13 @@ type
     end;
 
     PKDT31DE_Source       = ^TKDT31DE_Source;
-    TKDT31DE_SourceBuffer = array [0 .. 0] of PKDT31DE_Source;
+    TKDT31DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT31DE_Source) - 1] of PKDT31DE_Source;
     PKDT31DE_SourceBuffer = ^TKDT31DE_SourceBuffer;
 
-    TKDT31DEyanmicSourceBuffer = array of PKDT31DE_Source;
+    TKDT31DEyanmicSourceBuffer = packed array of PKDT31DE_Source;
     PKDT31DEyanmicSourceBuffer = ^TKDT31DEyanmicSourceBuffer;
 
-    TKDT31DEyanmicStoreBuffer = array of TKDT31DE_Source;
+    TKDT31DEyanmicStoreBuffer = packed array of TKDT31DE_Source;
     PKDT31DEyanmicStoreBuffer = ^TKDT31DEyanmicStoreBuffer;
 
     PKDT31DE_Node = ^TKDT31DE_Node;
@@ -3104,7 +3118,7 @@ type
     KDStoreBuff: TKDT31DEyanmicStoreBuffer;
     KDBuff     : TKDT31DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT31DE_Node;
+    KDNodes    : packed array of PKDT31DE_Node;
     TestBuff   : TKDT31DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT31DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT31DE_Node;
     function GetData(const index: NativeInt): PKDT31DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3167,7 +3181,7 @@ type
     TKDT32DE_Vec = array [0 .. KDT32DE_Axis - 1] of TKDT32DE_VecType;
     PKDT32DE_Vec = ^TKDT32DE_Vec;
 
-    TKDT32DE_DynamicVecBuffer = array of TKDT32DE_Vec;
+    TKDT32DE_DynamicVecBuffer = packed array of TKDT32DE_Vec;
     PKDT32DE_DynamicVecBuffer = ^TKDT32DE_DynamicVecBuffer;
 
     TKDT32DE_Source = packed record
@@ -3176,13 +3190,13 @@ type
     end;
 
     PKDT32DE_Source       = ^TKDT32DE_Source;
-    TKDT32DE_SourceBuffer = array [0 .. 0] of PKDT32DE_Source;
+    TKDT32DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT32DE_Source) - 1] of PKDT32DE_Source;
     PKDT32DE_SourceBuffer = ^TKDT32DE_SourceBuffer;
 
-    TKDT32DEyanmicSourceBuffer = array of PKDT32DE_Source;
+    TKDT32DEyanmicSourceBuffer = packed array of PKDT32DE_Source;
     PKDT32DEyanmicSourceBuffer = ^TKDT32DEyanmicSourceBuffer;
 
-    TKDT32DEyanmicStoreBuffer = array of TKDT32DE_Source;
+    TKDT32DEyanmicStoreBuffer = packed array of TKDT32DE_Source;
     PKDT32DEyanmicStoreBuffer = ^TKDT32DEyanmicStoreBuffer;
 
     PKDT32DE_Node = ^TKDT32DE_Node;
@@ -3199,7 +3213,7 @@ type
     KDStoreBuff: TKDT32DEyanmicStoreBuffer;
     KDBuff     : TKDT32DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT32DE_Node;
+    KDNodes    : packed array of PKDT32DE_Node;
     TestBuff   : TKDT32DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT32DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT32DE_Node;
     function GetData(const index: NativeInt): PKDT32DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3262,7 +3276,7 @@ type
     TKDT33DE_Vec = array [0 .. KDT33DE_Axis - 1] of TKDT33DE_VecType;
     PKDT33DE_Vec = ^TKDT33DE_Vec;
 
-    TKDT33DE_DynamicVecBuffer = array of TKDT33DE_Vec;
+    TKDT33DE_DynamicVecBuffer = packed array of TKDT33DE_Vec;
     PKDT33DE_DynamicVecBuffer = ^TKDT33DE_DynamicVecBuffer;
 
     TKDT33DE_Source = packed record
@@ -3271,13 +3285,13 @@ type
     end;
 
     PKDT33DE_Source       = ^TKDT33DE_Source;
-    TKDT33DE_SourceBuffer = array [0 .. 0] of PKDT33DE_Source;
+    TKDT33DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT33DE_Source) - 1] of PKDT33DE_Source;
     PKDT33DE_SourceBuffer = ^TKDT33DE_SourceBuffer;
 
-    TKDT33DEyanmicSourceBuffer = array of PKDT33DE_Source;
+    TKDT33DEyanmicSourceBuffer = packed array of PKDT33DE_Source;
     PKDT33DEyanmicSourceBuffer = ^TKDT33DEyanmicSourceBuffer;
 
-    TKDT33DEyanmicStoreBuffer = array of TKDT33DE_Source;
+    TKDT33DEyanmicStoreBuffer = packed array of TKDT33DE_Source;
     PKDT33DEyanmicStoreBuffer = ^TKDT33DEyanmicStoreBuffer;
 
     PKDT33DE_Node = ^TKDT33DE_Node;
@@ -3294,7 +3308,7 @@ type
     KDStoreBuff: TKDT33DEyanmicStoreBuffer;
     KDBuff     : TKDT33DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT33DE_Node;
+    KDNodes    : packed array of PKDT33DE_Node;
     TestBuff   : TKDT33DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT33DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT33DE_Node;
     function GetData(const index: NativeInt): PKDT33DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3357,7 +3371,7 @@ type
     TKDT34DE_Vec = array [0 .. KDT34DE_Axis - 1] of TKDT34DE_VecType;
     PKDT34DE_Vec = ^TKDT34DE_Vec;
 
-    TKDT34DE_DynamicVecBuffer = array of TKDT34DE_Vec;
+    TKDT34DE_DynamicVecBuffer = packed array of TKDT34DE_Vec;
     PKDT34DE_DynamicVecBuffer = ^TKDT34DE_DynamicVecBuffer;
 
     TKDT34DE_Source = packed record
@@ -3366,13 +3380,13 @@ type
     end;
 
     PKDT34DE_Source       = ^TKDT34DE_Source;
-    TKDT34DE_SourceBuffer = array [0 .. 0] of PKDT34DE_Source;
+    TKDT34DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT34DE_Source) - 1] of PKDT34DE_Source;
     PKDT34DE_SourceBuffer = ^TKDT34DE_SourceBuffer;
 
-    TKDT34DEyanmicSourceBuffer = array of PKDT34DE_Source;
+    TKDT34DEyanmicSourceBuffer = packed array of PKDT34DE_Source;
     PKDT34DEyanmicSourceBuffer = ^TKDT34DEyanmicSourceBuffer;
 
-    TKDT34DEyanmicStoreBuffer = array of TKDT34DE_Source;
+    TKDT34DEyanmicStoreBuffer = packed array of TKDT34DE_Source;
     PKDT34DEyanmicStoreBuffer = ^TKDT34DEyanmicStoreBuffer;
 
     PKDT34DE_Node = ^TKDT34DE_Node;
@@ -3389,7 +3403,7 @@ type
     KDStoreBuff: TKDT34DEyanmicStoreBuffer;
     KDBuff     : TKDT34DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT34DE_Node;
+    KDNodes    : packed array of PKDT34DE_Node;
     TestBuff   : TKDT34DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT34DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT34DE_Node;
     function GetData(const index: NativeInt): PKDT34DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3452,7 +3466,7 @@ type
     TKDT35DE_Vec = array [0 .. KDT35DE_Axis - 1] of TKDT35DE_VecType;
     PKDT35DE_Vec = ^TKDT35DE_Vec;
 
-    TKDT35DE_DynamicVecBuffer = array of TKDT35DE_Vec;
+    TKDT35DE_DynamicVecBuffer = packed array of TKDT35DE_Vec;
     PKDT35DE_DynamicVecBuffer = ^TKDT35DE_DynamicVecBuffer;
 
     TKDT35DE_Source = packed record
@@ -3461,13 +3475,13 @@ type
     end;
 
     PKDT35DE_Source       = ^TKDT35DE_Source;
-    TKDT35DE_SourceBuffer = array [0 .. 0] of PKDT35DE_Source;
+    TKDT35DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT35DE_Source) - 1] of PKDT35DE_Source;
     PKDT35DE_SourceBuffer = ^TKDT35DE_SourceBuffer;
 
-    TKDT35DEyanmicSourceBuffer = array of PKDT35DE_Source;
+    TKDT35DEyanmicSourceBuffer = packed array of PKDT35DE_Source;
     PKDT35DEyanmicSourceBuffer = ^TKDT35DEyanmicSourceBuffer;
 
-    TKDT35DEyanmicStoreBuffer = array of TKDT35DE_Source;
+    TKDT35DEyanmicStoreBuffer = packed array of TKDT35DE_Source;
     PKDT35DEyanmicStoreBuffer = ^TKDT35DEyanmicStoreBuffer;
 
     PKDT35DE_Node = ^TKDT35DE_Node;
@@ -3484,7 +3498,7 @@ type
     KDStoreBuff: TKDT35DEyanmicStoreBuffer;
     KDBuff     : TKDT35DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT35DE_Node;
+    KDNodes    : packed array of PKDT35DE_Node;
     TestBuff   : TKDT35DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT35DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT35DE_Node;
     function GetData(const index: NativeInt): PKDT35DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3547,7 +3561,7 @@ type
     TKDT36DE_Vec = array [0 .. KDT36DE_Axis - 1] of TKDT36DE_VecType;
     PKDT36DE_Vec = ^TKDT36DE_Vec;
 
-    TKDT36DE_DynamicVecBuffer = array of TKDT36DE_Vec;
+    TKDT36DE_DynamicVecBuffer = packed array of TKDT36DE_Vec;
     PKDT36DE_DynamicVecBuffer = ^TKDT36DE_DynamicVecBuffer;
 
     TKDT36DE_Source = packed record
@@ -3556,13 +3570,13 @@ type
     end;
 
     PKDT36DE_Source       = ^TKDT36DE_Source;
-    TKDT36DE_SourceBuffer = array [0 .. 0] of PKDT36DE_Source;
+    TKDT36DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT36DE_Source) - 1] of PKDT36DE_Source;
     PKDT36DE_SourceBuffer = ^TKDT36DE_SourceBuffer;
 
-    TKDT36DEyanmicSourceBuffer = array of PKDT36DE_Source;
+    TKDT36DEyanmicSourceBuffer = packed array of PKDT36DE_Source;
     PKDT36DEyanmicSourceBuffer = ^TKDT36DEyanmicSourceBuffer;
 
-    TKDT36DEyanmicStoreBuffer = array of TKDT36DE_Source;
+    TKDT36DEyanmicStoreBuffer = packed array of TKDT36DE_Source;
     PKDT36DEyanmicStoreBuffer = ^TKDT36DEyanmicStoreBuffer;
 
     PKDT36DE_Node = ^TKDT36DE_Node;
@@ -3579,7 +3593,7 @@ type
     KDStoreBuff: TKDT36DEyanmicStoreBuffer;
     KDBuff     : TKDT36DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT36DE_Node;
+    KDNodes    : packed array of PKDT36DE_Node;
     TestBuff   : TKDT36DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT36DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT36DE_Node;
     function GetData(const index: NativeInt): PKDT36DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3642,7 +3656,7 @@ type
     TKDT37DE_Vec = array [0 .. KDT37DE_Axis - 1] of TKDT37DE_VecType;
     PKDT37DE_Vec = ^TKDT37DE_Vec;
 
-    TKDT37DE_DynamicVecBuffer = array of TKDT37DE_Vec;
+    TKDT37DE_DynamicVecBuffer = packed array of TKDT37DE_Vec;
     PKDT37DE_DynamicVecBuffer = ^TKDT37DE_DynamicVecBuffer;
 
     TKDT37DE_Source = packed record
@@ -3651,13 +3665,13 @@ type
     end;
 
     PKDT37DE_Source       = ^TKDT37DE_Source;
-    TKDT37DE_SourceBuffer = array [0 .. 0] of PKDT37DE_Source;
+    TKDT37DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT37DE_Source) - 1] of PKDT37DE_Source;
     PKDT37DE_SourceBuffer = ^TKDT37DE_SourceBuffer;
 
-    TKDT37DEyanmicSourceBuffer = array of PKDT37DE_Source;
+    TKDT37DEyanmicSourceBuffer = packed array of PKDT37DE_Source;
     PKDT37DEyanmicSourceBuffer = ^TKDT37DEyanmicSourceBuffer;
 
-    TKDT37DEyanmicStoreBuffer = array of TKDT37DE_Source;
+    TKDT37DEyanmicStoreBuffer = packed array of TKDT37DE_Source;
     PKDT37DEyanmicStoreBuffer = ^TKDT37DEyanmicStoreBuffer;
 
     PKDT37DE_Node = ^TKDT37DE_Node;
@@ -3674,7 +3688,7 @@ type
     KDStoreBuff: TKDT37DEyanmicStoreBuffer;
     KDBuff     : TKDT37DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT37DE_Node;
+    KDNodes    : packed array of PKDT37DE_Node;
     TestBuff   : TKDT37DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT37DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT37DE_Node;
     function GetData(const index: NativeInt): PKDT37DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3737,7 +3751,7 @@ type
     TKDT38DE_Vec = array [0 .. KDT38DE_Axis - 1] of TKDT38DE_VecType;
     PKDT38DE_Vec = ^TKDT38DE_Vec;
 
-    TKDT38DE_DynamicVecBuffer = array of TKDT38DE_Vec;
+    TKDT38DE_DynamicVecBuffer = packed array of TKDT38DE_Vec;
     PKDT38DE_DynamicVecBuffer = ^TKDT38DE_DynamicVecBuffer;
 
     TKDT38DE_Source = packed record
@@ -3746,13 +3760,13 @@ type
     end;
 
     PKDT38DE_Source       = ^TKDT38DE_Source;
-    TKDT38DE_SourceBuffer = array [0 .. 0] of PKDT38DE_Source;
+    TKDT38DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT38DE_Source) - 1] of PKDT38DE_Source;
     PKDT38DE_SourceBuffer = ^TKDT38DE_SourceBuffer;
 
-    TKDT38DEyanmicSourceBuffer = array of PKDT38DE_Source;
+    TKDT38DEyanmicSourceBuffer = packed array of PKDT38DE_Source;
     PKDT38DEyanmicSourceBuffer = ^TKDT38DEyanmicSourceBuffer;
 
-    TKDT38DEyanmicStoreBuffer = array of TKDT38DE_Source;
+    TKDT38DEyanmicStoreBuffer = packed array of TKDT38DE_Source;
     PKDT38DEyanmicStoreBuffer = ^TKDT38DEyanmicStoreBuffer;
 
     PKDT38DE_Node = ^TKDT38DE_Node;
@@ -3769,7 +3783,7 @@ type
     KDStoreBuff: TKDT38DEyanmicStoreBuffer;
     KDBuff     : TKDT38DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT38DE_Node;
+    KDNodes    : packed array of PKDT38DE_Node;
     TestBuff   : TKDT38DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT38DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT38DE_Node;
     function GetData(const index: NativeInt): PKDT38DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3832,7 +3846,7 @@ type
     TKDT39DE_Vec = array [0 .. KDT39DE_Axis - 1] of TKDT39DE_VecType;
     PKDT39DE_Vec = ^TKDT39DE_Vec;
 
-    TKDT39DE_DynamicVecBuffer = array of TKDT39DE_Vec;
+    TKDT39DE_DynamicVecBuffer = packed array of TKDT39DE_Vec;
     PKDT39DE_DynamicVecBuffer = ^TKDT39DE_DynamicVecBuffer;
 
     TKDT39DE_Source = packed record
@@ -3841,13 +3855,13 @@ type
     end;
 
     PKDT39DE_Source       = ^TKDT39DE_Source;
-    TKDT39DE_SourceBuffer = array [0 .. 0] of PKDT39DE_Source;
+    TKDT39DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT39DE_Source) - 1] of PKDT39DE_Source;
     PKDT39DE_SourceBuffer = ^TKDT39DE_SourceBuffer;
 
-    TKDT39DEyanmicSourceBuffer = array of PKDT39DE_Source;
+    TKDT39DEyanmicSourceBuffer = packed array of PKDT39DE_Source;
     PKDT39DEyanmicSourceBuffer = ^TKDT39DEyanmicSourceBuffer;
 
-    TKDT39DEyanmicStoreBuffer = array of TKDT39DE_Source;
+    TKDT39DEyanmicStoreBuffer = packed array of TKDT39DE_Source;
     PKDT39DEyanmicStoreBuffer = ^TKDT39DEyanmicStoreBuffer;
 
     PKDT39DE_Node = ^TKDT39DE_Node;
@@ -3864,7 +3878,7 @@ type
     KDStoreBuff: TKDT39DEyanmicStoreBuffer;
     KDBuff     : TKDT39DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT39DE_Node;
+    KDNodes    : packed array of PKDT39DE_Node;
     TestBuff   : TKDT39DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT39DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT39DE_Node;
     function GetData(const index: NativeInt): PKDT39DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3927,7 +3941,7 @@ type
     TKDT40DE_Vec = array [0 .. KDT40DE_Axis - 1] of TKDT40DE_VecType;
     PKDT40DE_Vec = ^TKDT40DE_Vec;
 
-    TKDT40DE_DynamicVecBuffer = array of TKDT40DE_Vec;
+    TKDT40DE_DynamicVecBuffer = packed array of TKDT40DE_Vec;
     PKDT40DE_DynamicVecBuffer = ^TKDT40DE_DynamicVecBuffer;
 
     TKDT40DE_Source = packed record
@@ -3936,13 +3950,13 @@ type
     end;
 
     PKDT40DE_Source       = ^TKDT40DE_Source;
-    TKDT40DE_SourceBuffer = array [0 .. 0] of PKDT40DE_Source;
+    TKDT40DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT40DE_Source) - 1] of PKDT40DE_Source;
     PKDT40DE_SourceBuffer = ^TKDT40DE_SourceBuffer;
 
-    TKDT40DEyanmicSourceBuffer = array of PKDT40DE_Source;
+    TKDT40DEyanmicSourceBuffer = packed array of PKDT40DE_Source;
     PKDT40DEyanmicSourceBuffer = ^TKDT40DEyanmicSourceBuffer;
 
-    TKDT40DEyanmicStoreBuffer = array of TKDT40DE_Source;
+    TKDT40DEyanmicStoreBuffer = packed array of TKDT40DE_Source;
     PKDT40DEyanmicStoreBuffer = ^TKDT40DEyanmicStoreBuffer;
 
     PKDT40DE_Node = ^TKDT40DE_Node;
@@ -3959,7 +3973,7 @@ type
     KDStoreBuff: TKDT40DEyanmicStoreBuffer;
     KDBuff     : TKDT40DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT40DE_Node;
+    KDNodes    : packed array of PKDT40DE_Node;
     TestBuff   : TKDT40DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT40DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT40DE_Node;
     function GetData(const index: NativeInt): PKDT40DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4022,7 +4036,7 @@ type
     TKDT41DE_Vec = array [0 .. KDT41DE_Axis - 1] of TKDT41DE_VecType;
     PKDT41DE_Vec = ^TKDT41DE_Vec;
 
-    TKDT41DE_DynamicVecBuffer = array of TKDT41DE_Vec;
+    TKDT41DE_DynamicVecBuffer = packed array of TKDT41DE_Vec;
     PKDT41DE_DynamicVecBuffer = ^TKDT41DE_DynamicVecBuffer;
 
     TKDT41DE_Source = packed record
@@ -4031,13 +4045,13 @@ type
     end;
 
     PKDT41DE_Source       = ^TKDT41DE_Source;
-    TKDT41DE_SourceBuffer = array [0 .. 0] of PKDT41DE_Source;
+    TKDT41DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT41DE_Source) - 1] of PKDT41DE_Source;
     PKDT41DE_SourceBuffer = ^TKDT41DE_SourceBuffer;
 
-    TKDT41DEyanmicSourceBuffer = array of PKDT41DE_Source;
+    TKDT41DEyanmicSourceBuffer = packed array of PKDT41DE_Source;
     PKDT41DEyanmicSourceBuffer = ^TKDT41DEyanmicSourceBuffer;
 
-    TKDT41DEyanmicStoreBuffer = array of TKDT41DE_Source;
+    TKDT41DEyanmicStoreBuffer = packed array of TKDT41DE_Source;
     PKDT41DEyanmicStoreBuffer = ^TKDT41DEyanmicStoreBuffer;
 
     PKDT41DE_Node = ^TKDT41DE_Node;
@@ -4054,7 +4068,7 @@ type
     KDStoreBuff: TKDT41DEyanmicStoreBuffer;
     KDBuff     : TKDT41DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT41DE_Node;
+    KDNodes    : packed array of PKDT41DE_Node;
     TestBuff   : TKDT41DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT41DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT41DE_Node;
     function GetData(const index: NativeInt): PKDT41DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4117,7 +4131,7 @@ type
     TKDT42DE_Vec = array [0 .. KDT42DE_Axis - 1] of TKDT42DE_VecType;
     PKDT42DE_Vec = ^TKDT42DE_Vec;
 
-    TKDT42DE_DynamicVecBuffer = array of TKDT42DE_Vec;
+    TKDT42DE_DynamicVecBuffer = packed array of TKDT42DE_Vec;
     PKDT42DE_DynamicVecBuffer = ^TKDT42DE_DynamicVecBuffer;
 
     TKDT42DE_Source = packed record
@@ -4126,13 +4140,13 @@ type
     end;
 
     PKDT42DE_Source       = ^TKDT42DE_Source;
-    TKDT42DE_SourceBuffer = array [0 .. 0] of PKDT42DE_Source;
+    TKDT42DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT42DE_Source) - 1] of PKDT42DE_Source;
     PKDT42DE_SourceBuffer = ^TKDT42DE_SourceBuffer;
 
-    TKDT42DEyanmicSourceBuffer = array of PKDT42DE_Source;
+    TKDT42DEyanmicSourceBuffer = packed array of PKDT42DE_Source;
     PKDT42DEyanmicSourceBuffer = ^TKDT42DEyanmicSourceBuffer;
 
-    TKDT42DEyanmicStoreBuffer = array of TKDT42DE_Source;
+    TKDT42DEyanmicStoreBuffer = packed array of TKDT42DE_Source;
     PKDT42DEyanmicStoreBuffer = ^TKDT42DEyanmicStoreBuffer;
 
     PKDT42DE_Node = ^TKDT42DE_Node;
@@ -4149,7 +4163,7 @@ type
     KDStoreBuff: TKDT42DEyanmicStoreBuffer;
     KDBuff     : TKDT42DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT42DE_Node;
+    KDNodes    : packed array of PKDT42DE_Node;
     TestBuff   : TKDT42DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT42DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT42DE_Node;
     function GetData(const index: NativeInt): PKDT42DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4212,7 +4226,7 @@ type
     TKDT43DE_Vec = array [0 .. KDT43DE_Axis - 1] of TKDT43DE_VecType;
     PKDT43DE_Vec = ^TKDT43DE_Vec;
 
-    TKDT43DE_DynamicVecBuffer = array of TKDT43DE_Vec;
+    TKDT43DE_DynamicVecBuffer = packed array of TKDT43DE_Vec;
     PKDT43DE_DynamicVecBuffer = ^TKDT43DE_DynamicVecBuffer;
 
     TKDT43DE_Source = packed record
@@ -4221,13 +4235,13 @@ type
     end;
 
     PKDT43DE_Source       = ^TKDT43DE_Source;
-    TKDT43DE_SourceBuffer = array [0 .. 0] of PKDT43DE_Source;
+    TKDT43DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT43DE_Source) - 1] of PKDT43DE_Source;
     PKDT43DE_SourceBuffer = ^TKDT43DE_SourceBuffer;
 
-    TKDT43DEyanmicSourceBuffer = array of PKDT43DE_Source;
+    TKDT43DEyanmicSourceBuffer = packed array of PKDT43DE_Source;
     PKDT43DEyanmicSourceBuffer = ^TKDT43DEyanmicSourceBuffer;
 
-    TKDT43DEyanmicStoreBuffer = array of TKDT43DE_Source;
+    TKDT43DEyanmicStoreBuffer = packed array of TKDT43DE_Source;
     PKDT43DEyanmicStoreBuffer = ^TKDT43DEyanmicStoreBuffer;
 
     PKDT43DE_Node = ^TKDT43DE_Node;
@@ -4244,7 +4258,7 @@ type
     KDStoreBuff: TKDT43DEyanmicStoreBuffer;
     KDBuff     : TKDT43DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT43DE_Node;
+    KDNodes    : packed array of PKDT43DE_Node;
     TestBuff   : TKDT43DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT43DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT43DE_Node;
     function GetData(const index: NativeInt): PKDT43DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4307,7 +4321,7 @@ type
     TKDT44DE_Vec = array [0 .. KDT44DE_Axis - 1] of TKDT44DE_VecType;
     PKDT44DE_Vec = ^TKDT44DE_Vec;
 
-    TKDT44DE_DynamicVecBuffer = array of TKDT44DE_Vec;
+    TKDT44DE_DynamicVecBuffer = packed array of TKDT44DE_Vec;
     PKDT44DE_DynamicVecBuffer = ^TKDT44DE_DynamicVecBuffer;
 
     TKDT44DE_Source = packed record
@@ -4316,13 +4330,13 @@ type
     end;
 
     PKDT44DE_Source       = ^TKDT44DE_Source;
-    TKDT44DE_SourceBuffer = array [0 .. 0] of PKDT44DE_Source;
+    TKDT44DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT44DE_Source) - 1] of PKDT44DE_Source;
     PKDT44DE_SourceBuffer = ^TKDT44DE_SourceBuffer;
 
-    TKDT44DEyanmicSourceBuffer = array of PKDT44DE_Source;
+    TKDT44DEyanmicSourceBuffer = packed array of PKDT44DE_Source;
     PKDT44DEyanmicSourceBuffer = ^TKDT44DEyanmicSourceBuffer;
 
-    TKDT44DEyanmicStoreBuffer = array of TKDT44DE_Source;
+    TKDT44DEyanmicStoreBuffer = packed array of TKDT44DE_Source;
     PKDT44DEyanmicStoreBuffer = ^TKDT44DEyanmicStoreBuffer;
 
     PKDT44DE_Node = ^TKDT44DE_Node;
@@ -4339,7 +4353,7 @@ type
     KDStoreBuff: TKDT44DEyanmicStoreBuffer;
     KDBuff     : TKDT44DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT44DE_Node;
+    KDNodes    : packed array of PKDT44DE_Node;
     TestBuff   : TKDT44DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT44DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT44DE_Node;
     function GetData(const index: NativeInt): PKDT44DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4402,7 +4416,7 @@ type
     TKDT45DE_Vec = array [0 .. KDT45DE_Axis - 1] of TKDT45DE_VecType;
     PKDT45DE_Vec = ^TKDT45DE_Vec;
 
-    TKDT45DE_DynamicVecBuffer = array of TKDT45DE_Vec;
+    TKDT45DE_DynamicVecBuffer = packed array of TKDT45DE_Vec;
     PKDT45DE_DynamicVecBuffer = ^TKDT45DE_DynamicVecBuffer;
 
     TKDT45DE_Source = packed record
@@ -4411,13 +4425,13 @@ type
     end;
 
     PKDT45DE_Source       = ^TKDT45DE_Source;
-    TKDT45DE_SourceBuffer = array [0 .. 0] of PKDT45DE_Source;
+    TKDT45DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT45DE_Source) - 1] of PKDT45DE_Source;
     PKDT45DE_SourceBuffer = ^TKDT45DE_SourceBuffer;
 
-    TKDT45DEyanmicSourceBuffer = array of PKDT45DE_Source;
+    TKDT45DEyanmicSourceBuffer = packed array of PKDT45DE_Source;
     PKDT45DEyanmicSourceBuffer = ^TKDT45DEyanmicSourceBuffer;
 
-    TKDT45DEyanmicStoreBuffer = array of TKDT45DE_Source;
+    TKDT45DEyanmicStoreBuffer = packed array of TKDT45DE_Source;
     PKDT45DEyanmicStoreBuffer = ^TKDT45DEyanmicStoreBuffer;
 
     PKDT45DE_Node = ^TKDT45DE_Node;
@@ -4434,7 +4448,7 @@ type
     KDStoreBuff: TKDT45DEyanmicStoreBuffer;
     KDBuff     : TKDT45DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT45DE_Node;
+    KDNodes    : packed array of PKDT45DE_Node;
     TestBuff   : TKDT45DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT45DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT45DE_Node;
     function GetData(const index: NativeInt): PKDT45DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4497,7 +4511,7 @@ type
     TKDT46DE_Vec = array [0 .. KDT46DE_Axis - 1] of TKDT46DE_VecType;
     PKDT46DE_Vec = ^TKDT46DE_Vec;
 
-    TKDT46DE_DynamicVecBuffer = array of TKDT46DE_Vec;
+    TKDT46DE_DynamicVecBuffer = packed array of TKDT46DE_Vec;
     PKDT46DE_DynamicVecBuffer = ^TKDT46DE_DynamicVecBuffer;
 
     TKDT46DE_Source = packed record
@@ -4506,13 +4520,13 @@ type
     end;
 
     PKDT46DE_Source       = ^TKDT46DE_Source;
-    TKDT46DE_SourceBuffer = array [0 .. 0] of PKDT46DE_Source;
+    TKDT46DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT46DE_Source) - 1] of PKDT46DE_Source;
     PKDT46DE_SourceBuffer = ^TKDT46DE_SourceBuffer;
 
-    TKDT46DEyanmicSourceBuffer = array of PKDT46DE_Source;
+    TKDT46DEyanmicSourceBuffer = packed array of PKDT46DE_Source;
     PKDT46DEyanmicSourceBuffer = ^TKDT46DEyanmicSourceBuffer;
 
-    TKDT46DEyanmicStoreBuffer = array of TKDT46DE_Source;
+    TKDT46DEyanmicStoreBuffer = packed array of TKDT46DE_Source;
     PKDT46DEyanmicStoreBuffer = ^TKDT46DEyanmicStoreBuffer;
 
     PKDT46DE_Node = ^TKDT46DE_Node;
@@ -4529,7 +4543,7 @@ type
     KDStoreBuff: TKDT46DEyanmicStoreBuffer;
     KDBuff     : TKDT46DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT46DE_Node;
+    KDNodes    : packed array of PKDT46DE_Node;
     TestBuff   : TKDT46DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT46DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT46DE_Node;
     function GetData(const index: NativeInt): PKDT46DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4592,7 +4606,7 @@ type
     TKDT47DE_Vec = array [0 .. KDT47DE_Axis - 1] of TKDT47DE_VecType;
     PKDT47DE_Vec = ^TKDT47DE_Vec;
 
-    TKDT47DE_DynamicVecBuffer = array of TKDT47DE_Vec;
+    TKDT47DE_DynamicVecBuffer = packed array of TKDT47DE_Vec;
     PKDT47DE_DynamicVecBuffer = ^TKDT47DE_DynamicVecBuffer;
 
     TKDT47DE_Source = packed record
@@ -4601,13 +4615,13 @@ type
     end;
 
     PKDT47DE_Source       = ^TKDT47DE_Source;
-    TKDT47DE_SourceBuffer = array [0 .. 0] of PKDT47DE_Source;
+    TKDT47DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT47DE_Source) - 1] of PKDT47DE_Source;
     PKDT47DE_SourceBuffer = ^TKDT47DE_SourceBuffer;
 
-    TKDT47DEyanmicSourceBuffer = array of PKDT47DE_Source;
+    TKDT47DEyanmicSourceBuffer = packed array of PKDT47DE_Source;
     PKDT47DEyanmicSourceBuffer = ^TKDT47DEyanmicSourceBuffer;
 
-    TKDT47DEyanmicStoreBuffer = array of TKDT47DE_Source;
+    TKDT47DEyanmicStoreBuffer = packed array of TKDT47DE_Source;
     PKDT47DEyanmicStoreBuffer = ^TKDT47DEyanmicStoreBuffer;
 
     PKDT47DE_Node = ^TKDT47DE_Node;
@@ -4624,7 +4638,7 @@ type
     KDStoreBuff: TKDT47DEyanmicStoreBuffer;
     KDBuff     : TKDT47DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT47DE_Node;
+    KDNodes    : packed array of PKDT47DE_Node;
     TestBuff   : TKDT47DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT47DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT47DE_Node;
     function GetData(const index: NativeInt): PKDT47DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4687,7 +4701,7 @@ type
     TKDT48DE_Vec = array [0 .. KDT48DE_Axis - 1] of TKDT48DE_VecType;
     PKDT48DE_Vec = ^TKDT48DE_Vec;
 
-    TKDT48DE_DynamicVecBuffer = array of TKDT48DE_Vec;
+    TKDT48DE_DynamicVecBuffer = packed array of TKDT48DE_Vec;
     PKDT48DE_DynamicVecBuffer = ^TKDT48DE_DynamicVecBuffer;
 
     TKDT48DE_Source = packed record
@@ -4696,13 +4710,13 @@ type
     end;
 
     PKDT48DE_Source       = ^TKDT48DE_Source;
-    TKDT48DE_SourceBuffer = array [0 .. 0] of PKDT48DE_Source;
+    TKDT48DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT48DE_Source) - 1] of PKDT48DE_Source;
     PKDT48DE_SourceBuffer = ^TKDT48DE_SourceBuffer;
 
-    TKDT48DEyanmicSourceBuffer = array of PKDT48DE_Source;
+    TKDT48DEyanmicSourceBuffer = packed array of PKDT48DE_Source;
     PKDT48DEyanmicSourceBuffer = ^TKDT48DEyanmicSourceBuffer;
 
-    TKDT48DEyanmicStoreBuffer = array of TKDT48DE_Source;
+    TKDT48DEyanmicStoreBuffer = packed array of TKDT48DE_Source;
     PKDT48DEyanmicStoreBuffer = ^TKDT48DEyanmicStoreBuffer;
 
     PKDT48DE_Node = ^TKDT48DE_Node;
@@ -4719,7 +4733,7 @@ type
     KDStoreBuff: TKDT48DEyanmicStoreBuffer;
     KDBuff     : TKDT48DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT48DE_Node;
+    KDNodes    : packed array of PKDT48DE_Node;
     TestBuff   : TKDT48DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT48DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT48DE_Node;
     function GetData(const index: NativeInt): PKDT48DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4782,7 +4796,7 @@ type
     TKDT49DE_Vec = array [0 .. KDT49DE_Axis - 1] of TKDT49DE_VecType;
     PKDT49DE_Vec = ^TKDT49DE_Vec;
 
-    TKDT49DE_DynamicVecBuffer = array of TKDT49DE_Vec;
+    TKDT49DE_DynamicVecBuffer = packed array of TKDT49DE_Vec;
     PKDT49DE_DynamicVecBuffer = ^TKDT49DE_DynamicVecBuffer;
 
     TKDT49DE_Source = packed record
@@ -4791,13 +4805,13 @@ type
     end;
 
     PKDT49DE_Source       = ^TKDT49DE_Source;
-    TKDT49DE_SourceBuffer = array [0 .. 0] of PKDT49DE_Source;
+    TKDT49DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT49DE_Source) - 1] of PKDT49DE_Source;
     PKDT49DE_SourceBuffer = ^TKDT49DE_SourceBuffer;
 
-    TKDT49DEyanmicSourceBuffer = array of PKDT49DE_Source;
+    TKDT49DEyanmicSourceBuffer = packed array of PKDT49DE_Source;
     PKDT49DEyanmicSourceBuffer = ^TKDT49DEyanmicSourceBuffer;
 
-    TKDT49DEyanmicStoreBuffer = array of TKDT49DE_Source;
+    TKDT49DEyanmicStoreBuffer = packed array of TKDT49DE_Source;
     PKDT49DEyanmicStoreBuffer = ^TKDT49DEyanmicStoreBuffer;
 
     PKDT49DE_Node = ^TKDT49DE_Node;
@@ -4814,7 +4828,7 @@ type
     KDStoreBuff: TKDT49DEyanmicStoreBuffer;
     KDBuff     : TKDT49DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT49DE_Node;
+    KDNodes    : packed array of PKDT49DE_Node;
     TestBuff   : TKDT49DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT49DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT49DE_Node;
     function GetData(const index: NativeInt): PKDT49DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4877,7 +4891,7 @@ type
     TKDT50DE_Vec = array [0 .. KDT50DE_Axis - 1] of TKDT50DE_VecType;
     PKDT50DE_Vec = ^TKDT50DE_Vec;
 
-    TKDT50DE_DynamicVecBuffer = array of TKDT50DE_Vec;
+    TKDT50DE_DynamicVecBuffer = packed array of TKDT50DE_Vec;
     PKDT50DE_DynamicVecBuffer = ^TKDT50DE_DynamicVecBuffer;
 
     TKDT50DE_Source = packed record
@@ -4886,13 +4900,13 @@ type
     end;
 
     PKDT50DE_Source       = ^TKDT50DE_Source;
-    TKDT50DE_SourceBuffer = array [0 .. 0] of PKDT50DE_Source;
+    TKDT50DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT50DE_Source) - 1] of PKDT50DE_Source;
     PKDT50DE_SourceBuffer = ^TKDT50DE_SourceBuffer;
 
-    TKDT50DEyanmicSourceBuffer = array of PKDT50DE_Source;
+    TKDT50DEyanmicSourceBuffer = packed array of PKDT50DE_Source;
     PKDT50DEyanmicSourceBuffer = ^TKDT50DEyanmicSourceBuffer;
 
-    TKDT50DEyanmicStoreBuffer = array of TKDT50DE_Source;
+    TKDT50DEyanmicStoreBuffer = packed array of TKDT50DE_Source;
     PKDT50DEyanmicStoreBuffer = ^TKDT50DEyanmicStoreBuffer;
 
     PKDT50DE_Node = ^TKDT50DE_Node;
@@ -4909,7 +4923,7 @@ type
     KDStoreBuff: TKDT50DEyanmicStoreBuffer;
     KDBuff     : TKDT50DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT50DE_Node;
+    KDNodes    : packed array of PKDT50DE_Node;
     TestBuff   : TKDT50DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT50DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT50DE_Node;
     function GetData(const index: NativeInt): PKDT50DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4972,7 +4986,7 @@ type
     TKDT51DE_Vec = array [0 .. KDT51DE_Axis - 1] of TKDT51DE_VecType;
     PKDT51DE_Vec = ^TKDT51DE_Vec;
 
-    TKDT51DE_DynamicVecBuffer = array of TKDT51DE_Vec;
+    TKDT51DE_DynamicVecBuffer = packed array of TKDT51DE_Vec;
     PKDT51DE_DynamicVecBuffer = ^TKDT51DE_DynamicVecBuffer;
 
     TKDT51DE_Source = packed record
@@ -4981,13 +4995,13 @@ type
     end;
 
     PKDT51DE_Source       = ^TKDT51DE_Source;
-    TKDT51DE_SourceBuffer = array [0 .. 0] of PKDT51DE_Source;
+    TKDT51DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT51DE_Source) - 1] of PKDT51DE_Source;
     PKDT51DE_SourceBuffer = ^TKDT51DE_SourceBuffer;
 
-    TKDT51DEyanmicSourceBuffer = array of PKDT51DE_Source;
+    TKDT51DEyanmicSourceBuffer = packed array of PKDT51DE_Source;
     PKDT51DEyanmicSourceBuffer = ^TKDT51DEyanmicSourceBuffer;
 
-    TKDT51DEyanmicStoreBuffer = array of TKDT51DE_Source;
+    TKDT51DEyanmicStoreBuffer = packed array of TKDT51DE_Source;
     PKDT51DEyanmicStoreBuffer = ^TKDT51DEyanmicStoreBuffer;
 
     PKDT51DE_Node = ^TKDT51DE_Node;
@@ -5004,7 +5018,7 @@ type
     KDStoreBuff: TKDT51DEyanmicStoreBuffer;
     KDBuff     : TKDT51DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT51DE_Node;
+    KDNodes    : packed array of PKDT51DE_Node;
     TestBuff   : TKDT51DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT51DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT51DE_Node;
     function GetData(const index: NativeInt): PKDT51DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5067,7 +5081,7 @@ type
     TKDT52DE_Vec = array [0 .. KDT52DE_Axis - 1] of TKDT52DE_VecType;
     PKDT52DE_Vec = ^TKDT52DE_Vec;
 
-    TKDT52DE_DynamicVecBuffer = array of TKDT52DE_Vec;
+    TKDT52DE_DynamicVecBuffer = packed array of TKDT52DE_Vec;
     PKDT52DE_DynamicVecBuffer = ^TKDT52DE_DynamicVecBuffer;
 
     TKDT52DE_Source = packed record
@@ -5076,13 +5090,13 @@ type
     end;
 
     PKDT52DE_Source       = ^TKDT52DE_Source;
-    TKDT52DE_SourceBuffer = array [0 .. 0] of PKDT52DE_Source;
+    TKDT52DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT52DE_Source) - 1] of PKDT52DE_Source;
     PKDT52DE_SourceBuffer = ^TKDT52DE_SourceBuffer;
 
-    TKDT52DEyanmicSourceBuffer = array of PKDT52DE_Source;
+    TKDT52DEyanmicSourceBuffer = packed array of PKDT52DE_Source;
     PKDT52DEyanmicSourceBuffer = ^TKDT52DEyanmicSourceBuffer;
 
-    TKDT52DEyanmicStoreBuffer = array of TKDT52DE_Source;
+    TKDT52DEyanmicStoreBuffer = packed array of TKDT52DE_Source;
     PKDT52DEyanmicStoreBuffer = ^TKDT52DEyanmicStoreBuffer;
 
     PKDT52DE_Node = ^TKDT52DE_Node;
@@ -5099,7 +5113,7 @@ type
     KDStoreBuff: TKDT52DEyanmicStoreBuffer;
     KDBuff     : TKDT52DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT52DE_Node;
+    KDNodes    : packed array of PKDT52DE_Node;
     TestBuff   : TKDT52DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT52DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT52DE_Node;
     function GetData(const index: NativeInt): PKDT52DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5162,7 +5176,7 @@ type
     TKDT53DE_Vec = array [0 .. KDT53DE_Axis - 1] of TKDT53DE_VecType;
     PKDT53DE_Vec = ^TKDT53DE_Vec;
 
-    TKDT53DE_DynamicVecBuffer = array of TKDT53DE_Vec;
+    TKDT53DE_DynamicVecBuffer = packed array of TKDT53DE_Vec;
     PKDT53DE_DynamicVecBuffer = ^TKDT53DE_DynamicVecBuffer;
 
     TKDT53DE_Source = packed record
@@ -5171,13 +5185,13 @@ type
     end;
 
     PKDT53DE_Source       = ^TKDT53DE_Source;
-    TKDT53DE_SourceBuffer = array [0 .. 0] of PKDT53DE_Source;
+    TKDT53DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT53DE_Source) - 1] of PKDT53DE_Source;
     PKDT53DE_SourceBuffer = ^TKDT53DE_SourceBuffer;
 
-    TKDT53DEyanmicSourceBuffer = array of PKDT53DE_Source;
+    TKDT53DEyanmicSourceBuffer = packed array of PKDT53DE_Source;
     PKDT53DEyanmicSourceBuffer = ^TKDT53DEyanmicSourceBuffer;
 
-    TKDT53DEyanmicStoreBuffer = array of TKDT53DE_Source;
+    TKDT53DEyanmicStoreBuffer = packed array of TKDT53DE_Source;
     PKDT53DEyanmicStoreBuffer = ^TKDT53DEyanmicStoreBuffer;
 
     PKDT53DE_Node = ^TKDT53DE_Node;
@@ -5194,7 +5208,7 @@ type
     KDStoreBuff: TKDT53DEyanmicStoreBuffer;
     KDBuff     : TKDT53DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT53DE_Node;
+    KDNodes    : packed array of PKDT53DE_Node;
     TestBuff   : TKDT53DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT53DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT53DE_Node;
     function GetData(const index: NativeInt): PKDT53DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5257,7 +5271,7 @@ type
     TKDT54DE_Vec = array [0 .. KDT54DE_Axis - 1] of TKDT54DE_VecType;
     PKDT54DE_Vec = ^TKDT54DE_Vec;
 
-    TKDT54DE_DynamicVecBuffer = array of TKDT54DE_Vec;
+    TKDT54DE_DynamicVecBuffer = packed array of TKDT54DE_Vec;
     PKDT54DE_DynamicVecBuffer = ^TKDT54DE_DynamicVecBuffer;
 
     TKDT54DE_Source = packed record
@@ -5266,13 +5280,13 @@ type
     end;
 
     PKDT54DE_Source       = ^TKDT54DE_Source;
-    TKDT54DE_SourceBuffer = array [0 .. 0] of PKDT54DE_Source;
+    TKDT54DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT54DE_Source) - 1] of PKDT54DE_Source;
     PKDT54DE_SourceBuffer = ^TKDT54DE_SourceBuffer;
 
-    TKDT54DEyanmicSourceBuffer = array of PKDT54DE_Source;
+    TKDT54DEyanmicSourceBuffer = packed array of PKDT54DE_Source;
     PKDT54DEyanmicSourceBuffer = ^TKDT54DEyanmicSourceBuffer;
 
-    TKDT54DEyanmicStoreBuffer = array of TKDT54DE_Source;
+    TKDT54DEyanmicStoreBuffer = packed array of TKDT54DE_Source;
     PKDT54DEyanmicStoreBuffer = ^TKDT54DEyanmicStoreBuffer;
 
     PKDT54DE_Node = ^TKDT54DE_Node;
@@ -5289,7 +5303,7 @@ type
     KDStoreBuff: TKDT54DEyanmicStoreBuffer;
     KDBuff     : TKDT54DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT54DE_Node;
+    KDNodes    : packed array of PKDT54DE_Node;
     TestBuff   : TKDT54DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT54DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT54DE_Node;
     function GetData(const index: NativeInt): PKDT54DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5352,7 +5366,7 @@ type
     TKDT55DE_Vec = array [0 .. KDT55DE_Axis - 1] of TKDT55DE_VecType;
     PKDT55DE_Vec = ^TKDT55DE_Vec;
 
-    TKDT55DE_DynamicVecBuffer = array of TKDT55DE_Vec;
+    TKDT55DE_DynamicVecBuffer = packed array of TKDT55DE_Vec;
     PKDT55DE_DynamicVecBuffer = ^TKDT55DE_DynamicVecBuffer;
 
     TKDT55DE_Source = packed record
@@ -5361,13 +5375,13 @@ type
     end;
 
     PKDT55DE_Source       = ^TKDT55DE_Source;
-    TKDT55DE_SourceBuffer = array [0 .. 0] of PKDT55DE_Source;
+    TKDT55DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT55DE_Source) - 1] of PKDT55DE_Source;
     PKDT55DE_SourceBuffer = ^TKDT55DE_SourceBuffer;
 
-    TKDT55DEyanmicSourceBuffer = array of PKDT55DE_Source;
+    TKDT55DEyanmicSourceBuffer = packed array of PKDT55DE_Source;
     PKDT55DEyanmicSourceBuffer = ^TKDT55DEyanmicSourceBuffer;
 
-    TKDT55DEyanmicStoreBuffer = array of TKDT55DE_Source;
+    TKDT55DEyanmicStoreBuffer = packed array of TKDT55DE_Source;
     PKDT55DEyanmicStoreBuffer = ^TKDT55DEyanmicStoreBuffer;
 
     PKDT55DE_Node = ^TKDT55DE_Node;
@@ -5384,7 +5398,7 @@ type
     KDStoreBuff: TKDT55DEyanmicStoreBuffer;
     KDBuff     : TKDT55DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT55DE_Node;
+    KDNodes    : packed array of PKDT55DE_Node;
     TestBuff   : TKDT55DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT55DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT55DE_Node;
     function GetData(const index: NativeInt): PKDT55DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5447,7 +5461,7 @@ type
     TKDT56DE_Vec = array [0 .. KDT56DE_Axis - 1] of TKDT56DE_VecType;
     PKDT56DE_Vec = ^TKDT56DE_Vec;
 
-    TKDT56DE_DynamicVecBuffer = array of TKDT56DE_Vec;
+    TKDT56DE_DynamicVecBuffer = packed array of TKDT56DE_Vec;
     PKDT56DE_DynamicVecBuffer = ^TKDT56DE_DynamicVecBuffer;
 
     TKDT56DE_Source = packed record
@@ -5456,13 +5470,13 @@ type
     end;
 
     PKDT56DE_Source       = ^TKDT56DE_Source;
-    TKDT56DE_SourceBuffer = array [0 .. 0] of PKDT56DE_Source;
+    TKDT56DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT56DE_Source) - 1] of PKDT56DE_Source;
     PKDT56DE_SourceBuffer = ^TKDT56DE_SourceBuffer;
 
-    TKDT56DEyanmicSourceBuffer = array of PKDT56DE_Source;
+    TKDT56DEyanmicSourceBuffer = packed array of PKDT56DE_Source;
     PKDT56DEyanmicSourceBuffer = ^TKDT56DEyanmicSourceBuffer;
 
-    TKDT56DEyanmicStoreBuffer = array of TKDT56DE_Source;
+    TKDT56DEyanmicStoreBuffer = packed array of TKDT56DE_Source;
     PKDT56DEyanmicStoreBuffer = ^TKDT56DEyanmicStoreBuffer;
 
     PKDT56DE_Node = ^TKDT56DE_Node;
@@ -5479,7 +5493,7 @@ type
     KDStoreBuff: TKDT56DEyanmicStoreBuffer;
     KDBuff     : TKDT56DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT56DE_Node;
+    KDNodes    : packed array of PKDT56DE_Node;
     TestBuff   : TKDT56DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT56DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT56DE_Node;
     function GetData(const index: NativeInt): PKDT56DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5542,7 +5556,7 @@ type
     TKDT57DE_Vec = array [0 .. KDT57DE_Axis - 1] of TKDT57DE_VecType;
     PKDT57DE_Vec = ^TKDT57DE_Vec;
 
-    TKDT57DE_DynamicVecBuffer = array of TKDT57DE_Vec;
+    TKDT57DE_DynamicVecBuffer = packed array of TKDT57DE_Vec;
     PKDT57DE_DynamicVecBuffer = ^TKDT57DE_DynamicVecBuffer;
 
     TKDT57DE_Source = packed record
@@ -5551,13 +5565,13 @@ type
     end;
 
     PKDT57DE_Source       = ^TKDT57DE_Source;
-    TKDT57DE_SourceBuffer = array [0 .. 0] of PKDT57DE_Source;
+    TKDT57DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT57DE_Source) - 1] of PKDT57DE_Source;
     PKDT57DE_SourceBuffer = ^TKDT57DE_SourceBuffer;
 
-    TKDT57DEyanmicSourceBuffer = array of PKDT57DE_Source;
+    TKDT57DEyanmicSourceBuffer = packed array of PKDT57DE_Source;
     PKDT57DEyanmicSourceBuffer = ^TKDT57DEyanmicSourceBuffer;
 
-    TKDT57DEyanmicStoreBuffer = array of TKDT57DE_Source;
+    TKDT57DEyanmicStoreBuffer = packed array of TKDT57DE_Source;
     PKDT57DEyanmicStoreBuffer = ^TKDT57DEyanmicStoreBuffer;
 
     PKDT57DE_Node = ^TKDT57DE_Node;
@@ -5574,7 +5588,7 @@ type
     KDStoreBuff: TKDT57DEyanmicStoreBuffer;
     KDBuff     : TKDT57DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT57DE_Node;
+    KDNodes    : packed array of PKDT57DE_Node;
     TestBuff   : TKDT57DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT57DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT57DE_Node;
     function GetData(const index: NativeInt): PKDT57DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5637,7 +5651,7 @@ type
     TKDT58DE_Vec = array [0 .. KDT58DE_Axis - 1] of TKDT58DE_VecType;
     PKDT58DE_Vec = ^TKDT58DE_Vec;
 
-    TKDT58DE_DynamicVecBuffer = array of TKDT58DE_Vec;
+    TKDT58DE_DynamicVecBuffer = packed array of TKDT58DE_Vec;
     PKDT58DE_DynamicVecBuffer = ^TKDT58DE_DynamicVecBuffer;
 
     TKDT58DE_Source = packed record
@@ -5646,13 +5660,13 @@ type
     end;
 
     PKDT58DE_Source       = ^TKDT58DE_Source;
-    TKDT58DE_SourceBuffer = array [0 .. 0] of PKDT58DE_Source;
+    TKDT58DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT58DE_Source) - 1] of PKDT58DE_Source;
     PKDT58DE_SourceBuffer = ^TKDT58DE_SourceBuffer;
 
-    TKDT58DEyanmicSourceBuffer = array of PKDT58DE_Source;
+    TKDT58DEyanmicSourceBuffer = packed array of PKDT58DE_Source;
     PKDT58DEyanmicSourceBuffer = ^TKDT58DEyanmicSourceBuffer;
 
-    TKDT58DEyanmicStoreBuffer = array of TKDT58DE_Source;
+    TKDT58DEyanmicStoreBuffer = packed array of TKDT58DE_Source;
     PKDT58DEyanmicStoreBuffer = ^TKDT58DEyanmicStoreBuffer;
 
     PKDT58DE_Node = ^TKDT58DE_Node;
@@ -5669,7 +5683,7 @@ type
     KDStoreBuff: TKDT58DEyanmicStoreBuffer;
     KDBuff     : TKDT58DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT58DE_Node;
+    KDNodes    : packed array of PKDT58DE_Node;
     TestBuff   : TKDT58DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT58DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT58DE_Node;
     function GetData(const index: NativeInt): PKDT58DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5732,7 +5746,7 @@ type
     TKDT59DE_Vec = array [0 .. KDT59DE_Axis - 1] of TKDT59DE_VecType;
     PKDT59DE_Vec = ^TKDT59DE_Vec;
 
-    TKDT59DE_DynamicVecBuffer = array of TKDT59DE_Vec;
+    TKDT59DE_DynamicVecBuffer = packed array of TKDT59DE_Vec;
     PKDT59DE_DynamicVecBuffer = ^TKDT59DE_DynamicVecBuffer;
 
     TKDT59DE_Source = packed record
@@ -5741,13 +5755,13 @@ type
     end;
 
     PKDT59DE_Source       = ^TKDT59DE_Source;
-    TKDT59DE_SourceBuffer = array [0 .. 0] of PKDT59DE_Source;
+    TKDT59DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT59DE_Source) - 1] of PKDT59DE_Source;
     PKDT59DE_SourceBuffer = ^TKDT59DE_SourceBuffer;
 
-    TKDT59DEyanmicSourceBuffer = array of PKDT59DE_Source;
+    TKDT59DEyanmicSourceBuffer = packed array of PKDT59DE_Source;
     PKDT59DEyanmicSourceBuffer = ^TKDT59DEyanmicSourceBuffer;
 
-    TKDT59DEyanmicStoreBuffer = array of TKDT59DE_Source;
+    TKDT59DEyanmicStoreBuffer = packed array of TKDT59DE_Source;
     PKDT59DEyanmicStoreBuffer = ^TKDT59DEyanmicStoreBuffer;
 
     PKDT59DE_Node = ^TKDT59DE_Node;
@@ -5764,7 +5778,7 @@ type
     KDStoreBuff: TKDT59DEyanmicStoreBuffer;
     KDBuff     : TKDT59DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT59DE_Node;
+    KDNodes    : packed array of PKDT59DE_Node;
     TestBuff   : TKDT59DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT59DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT59DE_Node;
     function GetData(const index: NativeInt): PKDT59DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5827,7 +5841,7 @@ type
     TKDT60DE_Vec = array [0 .. KDT60DE_Axis - 1] of TKDT60DE_VecType;
     PKDT60DE_Vec = ^TKDT60DE_Vec;
 
-    TKDT60DE_DynamicVecBuffer = array of TKDT60DE_Vec;
+    TKDT60DE_DynamicVecBuffer = packed array of TKDT60DE_Vec;
     PKDT60DE_DynamicVecBuffer = ^TKDT60DE_DynamicVecBuffer;
 
     TKDT60DE_Source = packed record
@@ -5836,13 +5850,13 @@ type
     end;
 
     PKDT60DE_Source       = ^TKDT60DE_Source;
-    TKDT60DE_SourceBuffer = array [0 .. 0] of PKDT60DE_Source;
+    TKDT60DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT60DE_Source) - 1] of PKDT60DE_Source;
     PKDT60DE_SourceBuffer = ^TKDT60DE_SourceBuffer;
 
-    TKDT60DEyanmicSourceBuffer = array of PKDT60DE_Source;
+    TKDT60DEyanmicSourceBuffer = packed array of PKDT60DE_Source;
     PKDT60DEyanmicSourceBuffer = ^TKDT60DEyanmicSourceBuffer;
 
-    TKDT60DEyanmicStoreBuffer = array of TKDT60DE_Source;
+    TKDT60DEyanmicStoreBuffer = packed array of TKDT60DE_Source;
     PKDT60DEyanmicStoreBuffer = ^TKDT60DEyanmicStoreBuffer;
 
     PKDT60DE_Node = ^TKDT60DE_Node;
@@ -5859,7 +5873,7 @@ type
     KDStoreBuff: TKDT60DEyanmicStoreBuffer;
     KDBuff     : TKDT60DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT60DE_Node;
+    KDNodes    : packed array of PKDT60DE_Node;
     TestBuff   : TKDT60DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT60DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT60DE_Node;
     function GetData(const index: NativeInt): PKDT60DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5922,7 +5936,7 @@ type
     TKDT61DE_Vec = array [0 .. KDT61DE_Axis - 1] of TKDT61DE_VecType;
     PKDT61DE_Vec = ^TKDT61DE_Vec;
 
-    TKDT61DE_DynamicVecBuffer = array of TKDT61DE_Vec;
+    TKDT61DE_DynamicVecBuffer = packed array of TKDT61DE_Vec;
     PKDT61DE_DynamicVecBuffer = ^TKDT61DE_DynamicVecBuffer;
 
     TKDT61DE_Source = packed record
@@ -5931,13 +5945,13 @@ type
     end;
 
     PKDT61DE_Source       = ^TKDT61DE_Source;
-    TKDT61DE_SourceBuffer = array [0 .. 0] of PKDT61DE_Source;
+    TKDT61DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT61DE_Source) - 1] of PKDT61DE_Source;
     PKDT61DE_SourceBuffer = ^TKDT61DE_SourceBuffer;
 
-    TKDT61DEyanmicSourceBuffer = array of PKDT61DE_Source;
+    TKDT61DEyanmicSourceBuffer = packed array of PKDT61DE_Source;
     PKDT61DEyanmicSourceBuffer = ^TKDT61DEyanmicSourceBuffer;
 
-    TKDT61DEyanmicStoreBuffer = array of TKDT61DE_Source;
+    TKDT61DEyanmicStoreBuffer = packed array of TKDT61DE_Source;
     PKDT61DEyanmicStoreBuffer = ^TKDT61DEyanmicStoreBuffer;
 
     PKDT61DE_Node = ^TKDT61DE_Node;
@@ -5954,7 +5968,7 @@ type
     KDStoreBuff: TKDT61DEyanmicStoreBuffer;
     KDBuff     : TKDT61DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT61DE_Node;
+    KDNodes    : packed array of PKDT61DE_Node;
     TestBuff   : TKDT61DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT61DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT61DE_Node;
     function GetData(const index: NativeInt): PKDT61DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6017,7 +6031,7 @@ type
     TKDT62DE_Vec = array [0 .. KDT62DE_Axis - 1] of TKDT62DE_VecType;
     PKDT62DE_Vec = ^TKDT62DE_Vec;
 
-    TKDT62DE_DynamicVecBuffer = array of TKDT62DE_Vec;
+    TKDT62DE_DynamicVecBuffer = packed array of TKDT62DE_Vec;
     PKDT62DE_DynamicVecBuffer = ^TKDT62DE_DynamicVecBuffer;
 
     TKDT62DE_Source = packed record
@@ -6026,13 +6040,13 @@ type
     end;
 
     PKDT62DE_Source       = ^TKDT62DE_Source;
-    TKDT62DE_SourceBuffer = array [0 .. 0] of PKDT62DE_Source;
+    TKDT62DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT62DE_Source) - 1] of PKDT62DE_Source;
     PKDT62DE_SourceBuffer = ^TKDT62DE_SourceBuffer;
 
-    TKDT62DEyanmicSourceBuffer = array of PKDT62DE_Source;
+    TKDT62DEyanmicSourceBuffer = packed array of PKDT62DE_Source;
     PKDT62DEyanmicSourceBuffer = ^TKDT62DEyanmicSourceBuffer;
 
-    TKDT62DEyanmicStoreBuffer = array of TKDT62DE_Source;
+    TKDT62DEyanmicStoreBuffer = packed array of TKDT62DE_Source;
     PKDT62DEyanmicStoreBuffer = ^TKDT62DEyanmicStoreBuffer;
 
     PKDT62DE_Node = ^TKDT62DE_Node;
@@ -6049,7 +6063,7 @@ type
     KDStoreBuff: TKDT62DEyanmicStoreBuffer;
     KDBuff     : TKDT62DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT62DE_Node;
+    KDNodes    : packed array of PKDT62DE_Node;
     TestBuff   : TKDT62DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT62DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT62DE_Node;
     function GetData(const index: NativeInt): PKDT62DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6112,7 +6126,7 @@ type
     TKDT63DE_Vec = array [0 .. KDT63DE_Axis - 1] of TKDT63DE_VecType;
     PKDT63DE_Vec = ^TKDT63DE_Vec;
 
-    TKDT63DE_DynamicVecBuffer = array of TKDT63DE_Vec;
+    TKDT63DE_DynamicVecBuffer = packed array of TKDT63DE_Vec;
     PKDT63DE_DynamicVecBuffer = ^TKDT63DE_DynamicVecBuffer;
 
     TKDT63DE_Source = packed record
@@ -6121,13 +6135,13 @@ type
     end;
 
     PKDT63DE_Source       = ^TKDT63DE_Source;
-    TKDT63DE_SourceBuffer = array [0 .. 0] of PKDT63DE_Source;
+    TKDT63DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT63DE_Source) - 1] of PKDT63DE_Source;
     PKDT63DE_SourceBuffer = ^TKDT63DE_SourceBuffer;
 
-    TKDT63DEyanmicSourceBuffer = array of PKDT63DE_Source;
+    TKDT63DEyanmicSourceBuffer = packed array of PKDT63DE_Source;
     PKDT63DEyanmicSourceBuffer = ^TKDT63DEyanmicSourceBuffer;
 
-    TKDT63DEyanmicStoreBuffer = array of TKDT63DE_Source;
+    TKDT63DEyanmicStoreBuffer = packed array of TKDT63DE_Source;
     PKDT63DEyanmicStoreBuffer = ^TKDT63DEyanmicStoreBuffer;
 
     PKDT63DE_Node = ^TKDT63DE_Node;
@@ -6144,7 +6158,7 @@ type
     KDStoreBuff: TKDT63DEyanmicStoreBuffer;
     KDBuff     : TKDT63DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT63DE_Node;
+    KDNodes    : packed array of PKDT63DE_Node;
     TestBuff   : TKDT63DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT63DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT63DE_Node;
     function GetData(const index: NativeInt): PKDT63DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6207,7 +6221,7 @@ type
     TKDT64DE_Vec = array [0 .. KDT64DE_Axis - 1] of TKDT64DE_VecType;
     PKDT64DE_Vec = ^TKDT64DE_Vec;
 
-    TKDT64DE_DynamicVecBuffer = array of TKDT64DE_Vec;
+    TKDT64DE_DynamicVecBuffer = packed array of TKDT64DE_Vec;
     PKDT64DE_DynamicVecBuffer = ^TKDT64DE_DynamicVecBuffer;
 
     TKDT64DE_Source = packed record
@@ -6216,13 +6230,13 @@ type
     end;
 
     PKDT64DE_Source       = ^TKDT64DE_Source;
-    TKDT64DE_SourceBuffer = array [0 .. 0] of PKDT64DE_Source;
+    TKDT64DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT64DE_Source) - 1] of PKDT64DE_Source;
     PKDT64DE_SourceBuffer = ^TKDT64DE_SourceBuffer;
 
-    TKDT64DEyanmicSourceBuffer = array of PKDT64DE_Source;
+    TKDT64DEyanmicSourceBuffer = packed array of PKDT64DE_Source;
     PKDT64DEyanmicSourceBuffer = ^TKDT64DEyanmicSourceBuffer;
 
-    TKDT64DEyanmicStoreBuffer = array of TKDT64DE_Source;
+    TKDT64DEyanmicStoreBuffer = packed array of TKDT64DE_Source;
     PKDT64DEyanmicStoreBuffer = ^TKDT64DEyanmicStoreBuffer;
 
     PKDT64DE_Node = ^TKDT64DE_Node;
@@ -6239,7 +6253,7 @@ type
     KDStoreBuff: TKDT64DEyanmicStoreBuffer;
     KDBuff     : TKDT64DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT64DE_Node;
+    KDNodes    : packed array of PKDT64DE_Node;
     TestBuff   : TKDT64DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT64DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT64DE_Node;
     function GetData(const index: NativeInt): PKDT64DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6296,13 +6310,678 @@ type
 
 
 
+  TKDT65DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT65DE_Vec = array [0 .. KDT65DE_Axis - 1] of TKDT65DE_VecType;
+    PKDT65DE_Vec = ^TKDT65DE_Vec;
+
+    TKDT65DE_DynamicVecBuffer = packed array of TKDT65DE_Vec;
+    PKDT65DE_DynamicVecBuffer = ^TKDT65DE_DynamicVecBuffer;
+
+    TKDT65DE_Source = packed record
+      Buff: TKDT65DE_Vec;
+      index: Int64;
+    end;
+
+    PKDT65DE_Source       = ^TKDT65DE_Source;
+    TKDT65DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT65DE_Source) - 1] of PKDT65DE_Source;
+    PKDT65DE_SourceBuffer = ^TKDT65DE_SourceBuffer;
+
+    TKDT65DEyanmicSourceBuffer = packed array of PKDT65DE_Source;
+    PKDT65DEyanmicSourceBuffer = ^TKDT65DEyanmicSourceBuffer;
+
+    TKDT65DEyanmicStoreBuffer = packed array of TKDT65DE_Source;
+    PKDT65DEyanmicStoreBuffer = ^TKDT65DEyanmicStoreBuffer;
+
+    PKDT65DE_Node = ^TKDT65DE_Node;
+
+    TKDT65DE_Node = packed record
+      Parent, Right, Left: PKDT65DE_Node;
+      vec: PKDT65DE_Source;
+    end;
+
+    TKDT65DE_BuildCall               = procedure(const IndexFor: NativeInt; var Source: TKDT65DE_Source; const Data: Pointer);
+    TKDT65DE_BuildMethod             = procedure(const IndexFor: NativeInt; var Source: TKDT65DE_Source; const Data: Pointer) of object;
+    {$IFNDEF FPC} TKDT65DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT65DE_Source; const Data: Pointer); {$ENDIF}
+  private
+    KDStoreBuff: TKDT65DEyanmicStoreBuffer;
+    KDBuff     : TKDT65DEyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes    : packed array of PKDT65DE_Node;
+    TestBuff   : TKDT65DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT65DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT65DE_Node;
+    function GetData(const index: NativeInt): PKDT65DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  public
+    RootNode: PKDT65DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT65DEyanmicStoreBuffer;
+    property SourceP[const index: NativeInt]: PKDT65DE_Source read GetData; default;
+
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT65DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT65DE_BuildMethod);
+    {$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT65DE_BuildProc); {$ENDIF}
+    { direct k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT65DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT65DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT65DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT65DE_BuildMethod); overload;
+    {$IFNDEF FPC}
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT65DE_BuildProc); overload;
+    {$ENDIF FPC}
+    { search }
+    function Search(const Buff: TKDT65DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT65DE_Node; overload;
+    function Search(const Buff: TKDT65DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT65DE_Node; overload;
+    function Search(const Buff: TKDT65DE_Vec; var SearchedDistanceMin: Double): PKDT65DE_Node; overload;
+    function Search(const Buff: TKDT65DE_Vec): PKDT65DE_Node; overload;
+    { parallel support }
+    procedure Search(const inBuff: TKDT65DE_DynamicVecBuffer; var OutBuff: TKDT65DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT65DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+
+    procedure SaveToFile(fileName: string);
+    procedure LoadFromFile(fileName: string);
+
+    procedure PrintNodeTree(const NodePtr: PKDT65DE_Node);
+    procedure PrintBuffer;
+
+    class function KDT65DEVec(const s: string): TKDT65DE_Vec; overload;
+    class function KDT65DEVec(const v: TKDT65DE_Vec): string; overload;
+    class function KDT65DEPow(const v: TKDT65DE_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    class function KDT65DEDistance(const v1, v2: TKDT65DE_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT65DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT66DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT66DE_Vec = array [0 .. KDT66DE_Axis - 1] of TKDT66DE_VecType;
+    PKDT66DE_Vec = ^TKDT66DE_Vec;
+
+    TKDT66DE_DynamicVecBuffer = packed array of TKDT66DE_Vec;
+    PKDT66DE_DynamicVecBuffer = ^TKDT66DE_DynamicVecBuffer;
+
+    TKDT66DE_Source = packed record
+      Buff: TKDT66DE_Vec;
+      index: Int64;
+    end;
+
+    PKDT66DE_Source       = ^TKDT66DE_Source;
+    TKDT66DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT66DE_Source) - 1] of PKDT66DE_Source;
+    PKDT66DE_SourceBuffer = ^TKDT66DE_SourceBuffer;
+
+    TKDT66DEyanmicSourceBuffer = packed array of PKDT66DE_Source;
+    PKDT66DEyanmicSourceBuffer = ^TKDT66DEyanmicSourceBuffer;
+
+    TKDT66DEyanmicStoreBuffer = packed array of TKDT66DE_Source;
+    PKDT66DEyanmicStoreBuffer = ^TKDT66DEyanmicStoreBuffer;
+
+    PKDT66DE_Node = ^TKDT66DE_Node;
+
+    TKDT66DE_Node = packed record
+      Parent, Right, Left: PKDT66DE_Node;
+      vec: PKDT66DE_Source;
+    end;
+
+    TKDT66DE_BuildCall               = procedure(const IndexFor: NativeInt; var Source: TKDT66DE_Source; const Data: Pointer);
+    TKDT66DE_BuildMethod             = procedure(const IndexFor: NativeInt; var Source: TKDT66DE_Source; const Data: Pointer) of object;
+    {$IFNDEF FPC} TKDT66DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT66DE_Source; const Data: Pointer); {$ENDIF}
+  private
+    KDStoreBuff: TKDT66DEyanmicStoreBuffer;
+    KDBuff     : TKDT66DEyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes    : packed array of PKDT66DE_Node;
+    TestBuff   : TKDT66DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT66DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT66DE_Node;
+    function GetData(const index: NativeInt): PKDT66DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  public
+    RootNode: PKDT66DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT66DEyanmicStoreBuffer;
+    property SourceP[const index: NativeInt]: PKDT66DE_Source read GetData; default;
+
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT66DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT66DE_BuildMethod);
+    {$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT66DE_BuildProc); {$ENDIF}
+    { direct k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT66DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT66DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT66DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT66DE_BuildMethod); overload;
+    {$IFNDEF FPC}
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT66DE_BuildProc); overload;
+    {$ENDIF FPC}
+    { search }
+    function Search(const Buff: TKDT66DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT66DE_Node; overload;
+    function Search(const Buff: TKDT66DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT66DE_Node; overload;
+    function Search(const Buff: TKDT66DE_Vec; var SearchedDistanceMin: Double): PKDT66DE_Node; overload;
+    function Search(const Buff: TKDT66DE_Vec): PKDT66DE_Node; overload;
+    { parallel support }
+    procedure Search(const inBuff: TKDT66DE_DynamicVecBuffer; var OutBuff: TKDT66DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT66DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+
+    procedure SaveToFile(fileName: string);
+    procedure LoadFromFile(fileName: string);
+
+    procedure PrintNodeTree(const NodePtr: PKDT66DE_Node);
+    procedure PrintBuffer;
+
+    class function KDT66DEVec(const s: string): TKDT66DE_Vec; overload;
+    class function KDT66DEVec(const v: TKDT66DE_Vec): string; overload;
+    class function KDT66DEPow(const v: TKDT66DE_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    class function KDT66DEDistance(const v1, v2: TKDT66DE_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT66DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT67DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT67DE_Vec = array [0 .. KDT67DE_Axis - 1] of TKDT67DE_VecType;
+    PKDT67DE_Vec = ^TKDT67DE_Vec;
+
+    TKDT67DE_DynamicVecBuffer = packed array of TKDT67DE_Vec;
+    PKDT67DE_DynamicVecBuffer = ^TKDT67DE_DynamicVecBuffer;
+
+    TKDT67DE_Source = packed record
+      Buff: TKDT67DE_Vec;
+      index: Int64;
+    end;
+
+    PKDT67DE_Source       = ^TKDT67DE_Source;
+    TKDT67DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT67DE_Source) - 1] of PKDT67DE_Source;
+    PKDT67DE_SourceBuffer = ^TKDT67DE_SourceBuffer;
+
+    TKDT67DEyanmicSourceBuffer = packed array of PKDT67DE_Source;
+    PKDT67DEyanmicSourceBuffer = ^TKDT67DEyanmicSourceBuffer;
+
+    TKDT67DEyanmicStoreBuffer = packed array of TKDT67DE_Source;
+    PKDT67DEyanmicStoreBuffer = ^TKDT67DEyanmicStoreBuffer;
+
+    PKDT67DE_Node = ^TKDT67DE_Node;
+
+    TKDT67DE_Node = packed record
+      Parent, Right, Left: PKDT67DE_Node;
+      vec: PKDT67DE_Source;
+    end;
+
+    TKDT67DE_BuildCall               = procedure(const IndexFor: NativeInt; var Source: TKDT67DE_Source; const Data: Pointer);
+    TKDT67DE_BuildMethod             = procedure(const IndexFor: NativeInt; var Source: TKDT67DE_Source; const Data: Pointer) of object;
+    {$IFNDEF FPC} TKDT67DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT67DE_Source; const Data: Pointer); {$ENDIF}
+  private
+    KDStoreBuff: TKDT67DEyanmicStoreBuffer;
+    KDBuff     : TKDT67DEyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes    : packed array of PKDT67DE_Node;
+    TestBuff   : TKDT67DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT67DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT67DE_Node;
+    function GetData(const index: NativeInt): PKDT67DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  public
+    RootNode: PKDT67DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT67DEyanmicStoreBuffer;
+    property SourceP[const index: NativeInt]: PKDT67DE_Source read GetData; default;
+
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT67DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT67DE_BuildMethod);
+    {$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT67DE_BuildProc); {$ENDIF}
+    { direct k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT67DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT67DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT67DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT67DE_BuildMethod); overload;
+    {$IFNDEF FPC}
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT67DE_BuildProc); overload;
+    {$ENDIF FPC}
+    { search }
+    function Search(const Buff: TKDT67DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT67DE_Node; overload;
+    function Search(const Buff: TKDT67DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT67DE_Node; overload;
+    function Search(const Buff: TKDT67DE_Vec; var SearchedDistanceMin: Double): PKDT67DE_Node; overload;
+    function Search(const Buff: TKDT67DE_Vec): PKDT67DE_Node; overload;
+    { parallel support }
+    procedure Search(const inBuff: TKDT67DE_DynamicVecBuffer; var OutBuff: TKDT67DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT67DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+
+    procedure SaveToFile(fileName: string);
+    procedure LoadFromFile(fileName: string);
+
+    procedure PrintNodeTree(const NodePtr: PKDT67DE_Node);
+    procedure PrintBuffer;
+
+    class function KDT67DEVec(const s: string): TKDT67DE_Vec; overload;
+    class function KDT67DEVec(const v: TKDT67DE_Vec): string; overload;
+    class function KDT67DEPow(const v: TKDT67DE_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    class function KDT67DEDistance(const v1, v2: TKDT67DE_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT67DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT68DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT68DE_Vec = array [0 .. KDT68DE_Axis - 1] of TKDT68DE_VecType;
+    PKDT68DE_Vec = ^TKDT68DE_Vec;
+
+    TKDT68DE_DynamicVecBuffer = packed array of TKDT68DE_Vec;
+    PKDT68DE_DynamicVecBuffer = ^TKDT68DE_DynamicVecBuffer;
+
+    TKDT68DE_Source = packed record
+      Buff: TKDT68DE_Vec;
+      index: Int64;
+    end;
+
+    PKDT68DE_Source       = ^TKDT68DE_Source;
+    TKDT68DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT68DE_Source) - 1] of PKDT68DE_Source;
+    PKDT68DE_SourceBuffer = ^TKDT68DE_SourceBuffer;
+
+    TKDT68DEyanmicSourceBuffer = packed array of PKDT68DE_Source;
+    PKDT68DEyanmicSourceBuffer = ^TKDT68DEyanmicSourceBuffer;
+
+    TKDT68DEyanmicStoreBuffer = packed array of TKDT68DE_Source;
+    PKDT68DEyanmicStoreBuffer = ^TKDT68DEyanmicStoreBuffer;
+
+    PKDT68DE_Node = ^TKDT68DE_Node;
+
+    TKDT68DE_Node = packed record
+      Parent, Right, Left: PKDT68DE_Node;
+      vec: PKDT68DE_Source;
+    end;
+
+    TKDT68DE_BuildCall               = procedure(const IndexFor: NativeInt; var Source: TKDT68DE_Source; const Data: Pointer);
+    TKDT68DE_BuildMethod             = procedure(const IndexFor: NativeInt; var Source: TKDT68DE_Source; const Data: Pointer) of object;
+    {$IFNDEF FPC} TKDT68DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT68DE_Source; const Data: Pointer); {$ENDIF}
+  private
+    KDStoreBuff: TKDT68DEyanmicStoreBuffer;
+    KDBuff     : TKDT68DEyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes    : packed array of PKDT68DE_Node;
+    TestBuff   : TKDT68DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT68DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT68DE_Node;
+    function GetData(const index: NativeInt): PKDT68DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  public
+    RootNode: PKDT68DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT68DEyanmicStoreBuffer;
+    property SourceP[const index: NativeInt]: PKDT68DE_Source read GetData; default;
+
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT68DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT68DE_BuildMethod);
+    {$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT68DE_BuildProc); {$ENDIF}
+    { direct k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT68DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT68DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT68DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT68DE_BuildMethod); overload;
+    {$IFNDEF FPC}
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT68DE_BuildProc); overload;
+    {$ENDIF FPC}
+    { search }
+    function Search(const Buff: TKDT68DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT68DE_Node; overload;
+    function Search(const Buff: TKDT68DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT68DE_Node; overload;
+    function Search(const Buff: TKDT68DE_Vec; var SearchedDistanceMin: Double): PKDT68DE_Node; overload;
+    function Search(const Buff: TKDT68DE_Vec): PKDT68DE_Node; overload;
+    { parallel support }
+    procedure Search(const inBuff: TKDT68DE_DynamicVecBuffer; var OutBuff: TKDT68DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT68DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+
+    procedure SaveToFile(fileName: string);
+    procedure LoadFromFile(fileName: string);
+
+    procedure PrintNodeTree(const NodePtr: PKDT68DE_Node);
+    procedure PrintBuffer;
+
+    class function KDT68DEVec(const s: string): TKDT68DE_Vec; overload;
+    class function KDT68DEVec(const v: TKDT68DE_Vec): string; overload;
+    class function KDT68DEPow(const v: TKDT68DE_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    class function KDT68DEDistance(const v1, v2: TKDT68DE_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT68DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT69DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT69DE_Vec = array [0 .. KDT69DE_Axis - 1] of TKDT69DE_VecType;
+    PKDT69DE_Vec = ^TKDT69DE_Vec;
+
+    TKDT69DE_DynamicVecBuffer = packed array of TKDT69DE_Vec;
+    PKDT69DE_DynamicVecBuffer = ^TKDT69DE_DynamicVecBuffer;
+
+    TKDT69DE_Source = packed record
+      Buff: TKDT69DE_Vec;
+      index: Int64;
+    end;
+
+    PKDT69DE_Source       = ^TKDT69DE_Source;
+    TKDT69DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT69DE_Source) - 1] of PKDT69DE_Source;
+    PKDT69DE_SourceBuffer = ^TKDT69DE_SourceBuffer;
+
+    TKDT69DEyanmicSourceBuffer = packed array of PKDT69DE_Source;
+    PKDT69DEyanmicSourceBuffer = ^TKDT69DEyanmicSourceBuffer;
+
+    TKDT69DEyanmicStoreBuffer = packed array of TKDT69DE_Source;
+    PKDT69DEyanmicStoreBuffer = ^TKDT69DEyanmicStoreBuffer;
+
+    PKDT69DE_Node = ^TKDT69DE_Node;
+
+    TKDT69DE_Node = packed record
+      Parent, Right, Left: PKDT69DE_Node;
+      vec: PKDT69DE_Source;
+    end;
+
+    TKDT69DE_BuildCall               = procedure(const IndexFor: NativeInt; var Source: TKDT69DE_Source; const Data: Pointer);
+    TKDT69DE_BuildMethod             = procedure(const IndexFor: NativeInt; var Source: TKDT69DE_Source; const Data: Pointer) of object;
+    {$IFNDEF FPC} TKDT69DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT69DE_Source; const Data: Pointer); {$ENDIF}
+  private
+    KDStoreBuff: TKDT69DEyanmicStoreBuffer;
+    KDBuff     : TKDT69DEyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes    : packed array of PKDT69DE_Node;
+    TestBuff   : TKDT69DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT69DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT69DE_Node;
+    function GetData(const index: NativeInt): PKDT69DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  public
+    RootNode: PKDT69DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT69DEyanmicStoreBuffer;
+    property SourceP[const index: NativeInt]: PKDT69DE_Source read GetData; default;
+
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT69DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT69DE_BuildMethod);
+    {$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT69DE_BuildProc); {$ENDIF}
+    { direct k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT69DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT69DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT69DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT69DE_BuildMethod); overload;
+    {$IFNDEF FPC}
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT69DE_BuildProc); overload;
+    {$ENDIF FPC}
+    { search }
+    function Search(const Buff: TKDT69DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT69DE_Node; overload;
+    function Search(const Buff: TKDT69DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT69DE_Node; overload;
+    function Search(const Buff: TKDT69DE_Vec; var SearchedDistanceMin: Double): PKDT69DE_Node; overload;
+    function Search(const Buff: TKDT69DE_Vec): PKDT69DE_Node; overload;
+    { parallel support }
+    procedure Search(const inBuff: TKDT69DE_DynamicVecBuffer; var OutBuff: TKDT69DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT69DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+
+    procedure SaveToFile(fileName: string);
+    procedure LoadFromFile(fileName: string);
+
+    procedure PrintNodeTree(const NodePtr: PKDT69DE_Node);
+    procedure PrintBuffer;
+
+    class function KDT69DEVec(const s: string): TKDT69DE_Vec; overload;
+    class function KDT69DEVec(const v: TKDT69DE_Vec): string; overload;
+    class function KDT69DEPow(const v: TKDT69DE_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    class function KDT69DEDistance(const v1, v2: TKDT69DE_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT69DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT70DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT70DE_Vec = array [0 .. KDT70DE_Axis - 1] of TKDT70DE_VecType;
+    PKDT70DE_Vec = ^TKDT70DE_Vec;
+
+    TKDT70DE_DynamicVecBuffer = packed array of TKDT70DE_Vec;
+    PKDT70DE_DynamicVecBuffer = ^TKDT70DE_DynamicVecBuffer;
+
+    TKDT70DE_Source = packed record
+      Buff: TKDT70DE_Vec;
+      index: Int64;
+    end;
+
+    PKDT70DE_Source       = ^TKDT70DE_Source;
+    TKDT70DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT70DE_Source) - 1] of PKDT70DE_Source;
+    PKDT70DE_SourceBuffer = ^TKDT70DE_SourceBuffer;
+
+    TKDT70DEyanmicSourceBuffer = packed array of PKDT70DE_Source;
+    PKDT70DEyanmicSourceBuffer = ^TKDT70DEyanmicSourceBuffer;
+
+    TKDT70DEyanmicStoreBuffer = packed array of TKDT70DE_Source;
+    PKDT70DEyanmicStoreBuffer = ^TKDT70DEyanmicStoreBuffer;
+
+    PKDT70DE_Node = ^TKDT70DE_Node;
+
+    TKDT70DE_Node = packed record
+      Parent, Right, Left: PKDT70DE_Node;
+      vec: PKDT70DE_Source;
+    end;
+
+    TKDT70DE_BuildCall               = procedure(const IndexFor: NativeInt; var Source: TKDT70DE_Source; const Data: Pointer);
+    TKDT70DE_BuildMethod             = procedure(const IndexFor: NativeInt; var Source: TKDT70DE_Source; const Data: Pointer) of object;
+    {$IFNDEF FPC} TKDT70DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT70DE_Source; const Data: Pointer); {$ENDIF}
+  private
+    KDStoreBuff: TKDT70DEyanmicStoreBuffer;
+    KDBuff     : TKDT70DEyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes    : packed array of PKDT70DE_Node;
+    TestBuff   : TKDT70DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT70DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT70DE_Node;
+    function GetData(const index: NativeInt): PKDT70DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  public
+    RootNode: PKDT70DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT70DEyanmicStoreBuffer;
+    property SourceP[const index: NativeInt]: PKDT70DE_Source read GetData; default;
+
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT70DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT70DE_BuildMethod);
+    {$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT70DE_BuildProc); {$ENDIF}
+    { direct k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT70DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT70DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT70DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT70DE_BuildMethod); overload;
+    {$IFNDEF FPC}
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT70DE_BuildProc); overload;
+    {$ENDIF FPC}
+    { search }
+    function Search(const Buff: TKDT70DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT70DE_Node; overload;
+    function Search(const Buff: TKDT70DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT70DE_Node; overload;
+    function Search(const Buff: TKDT70DE_Vec; var SearchedDistanceMin: Double): PKDT70DE_Node; overload;
+    function Search(const Buff: TKDT70DE_Vec): PKDT70DE_Node; overload;
+    { parallel support }
+    procedure Search(const inBuff: TKDT70DE_DynamicVecBuffer; var OutBuff: TKDT70DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT70DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+
+    procedure SaveToFile(fileName: string);
+    procedure LoadFromFile(fileName: string);
+
+    procedure PrintNodeTree(const NodePtr: PKDT70DE_Node);
+    procedure PrintBuffer;
+
+    class function KDT70DEVec(const s: string): TKDT70DE_Vec; overload;
+    class function KDT70DEVec(const v: TKDT70DE_Vec): string; overload;
+    class function KDT70DEPow(const v: TKDT70DE_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    class function KDT70DEDistance(const v1, v2: TKDT70DE_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT70DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT71DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT71DE_Vec = array [0 .. KDT71DE_Axis - 1] of TKDT71DE_VecType;
+    PKDT71DE_Vec = ^TKDT71DE_Vec;
+
+    TKDT71DE_DynamicVecBuffer = packed array of TKDT71DE_Vec;
+    PKDT71DE_DynamicVecBuffer = ^TKDT71DE_DynamicVecBuffer;
+
+    TKDT71DE_Source = packed record
+      Buff: TKDT71DE_Vec;
+      index: Int64;
+    end;
+
+    PKDT71DE_Source       = ^TKDT71DE_Source;
+    TKDT71DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT71DE_Source) - 1] of PKDT71DE_Source;
+    PKDT71DE_SourceBuffer = ^TKDT71DE_SourceBuffer;
+
+    TKDT71DEyanmicSourceBuffer = packed array of PKDT71DE_Source;
+    PKDT71DEyanmicSourceBuffer = ^TKDT71DEyanmicSourceBuffer;
+
+    TKDT71DEyanmicStoreBuffer = packed array of TKDT71DE_Source;
+    PKDT71DEyanmicStoreBuffer = ^TKDT71DEyanmicStoreBuffer;
+
+    PKDT71DE_Node = ^TKDT71DE_Node;
+
+    TKDT71DE_Node = packed record
+      Parent, Right, Left: PKDT71DE_Node;
+      vec: PKDT71DE_Source;
+    end;
+
+    TKDT71DE_BuildCall               = procedure(const IndexFor: NativeInt; var Source: TKDT71DE_Source; const Data: Pointer);
+    TKDT71DE_BuildMethod             = procedure(const IndexFor: NativeInt; var Source: TKDT71DE_Source; const Data: Pointer) of object;
+    {$IFNDEF FPC} TKDT71DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT71DE_Source; const Data: Pointer); {$ENDIF}
+  private
+    KDStoreBuff: TKDT71DEyanmicStoreBuffer;
+    KDBuff     : TKDT71DEyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes    : packed array of PKDT71DE_Node;
+    TestBuff   : TKDT71DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT71DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT71DE_Node;
+    function GetData(const index: NativeInt): PKDT71DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  public
+    RootNode: PKDT71DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT71DEyanmicStoreBuffer;
+    property SourceP[const index: NativeInt]: PKDT71DE_Source read GetData; default;
+
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT71DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT71DE_BuildMethod);
+    {$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT71DE_BuildProc); {$ENDIF}
+    { direct k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT71DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT71DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT71DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT71DE_BuildMethod); overload;
+    {$IFNDEF FPC}
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT71DE_BuildProc); overload;
+    {$ENDIF FPC}
+    { search }
+    function Search(const Buff: TKDT71DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT71DE_Node; overload;
+    function Search(const Buff: TKDT71DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT71DE_Node; overload;
+    function Search(const Buff: TKDT71DE_Vec; var SearchedDistanceMin: Double): PKDT71DE_Node; overload;
+    function Search(const Buff: TKDT71DE_Vec): PKDT71DE_Node; overload;
+    { parallel support }
+    procedure Search(const inBuff: TKDT71DE_DynamicVecBuffer; var OutBuff: TKDT71DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT71DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+
+    procedure SaveToFile(fileName: string);
+    procedure LoadFromFile(fileName: string);
+
+    procedure PrintNodeTree(const NodePtr: PKDT71DE_Node);
+    procedure PrintBuffer;
+
+    class function KDT71DEVec(const s: string): TKDT71DE_Vec; overload;
+    class function KDT71DEVec(const v: TKDT71DE_Vec): string; overload;
+    class function KDT71DEPow(const v: TKDT71DE_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    class function KDT71DEDistance(const v1, v2: TKDT71DE_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT71DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
   TKDT72DE = class(TCoreClassObject)
   public type
     // code split
     TKDT72DE_Vec = array [0 .. KDT72DE_Axis - 1] of TKDT72DE_VecType;
     PKDT72DE_Vec = ^TKDT72DE_Vec;
 
-    TKDT72DE_DynamicVecBuffer = array of TKDT72DE_Vec;
+    TKDT72DE_DynamicVecBuffer = packed array of TKDT72DE_Vec;
     PKDT72DE_DynamicVecBuffer = ^TKDT72DE_DynamicVecBuffer;
 
     TKDT72DE_Source = packed record
@@ -6311,13 +6990,13 @@ type
     end;
 
     PKDT72DE_Source       = ^TKDT72DE_Source;
-    TKDT72DE_SourceBuffer = array [0 .. 0] of PKDT72DE_Source;
+    TKDT72DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT72DE_Source) - 1] of PKDT72DE_Source;
     PKDT72DE_SourceBuffer = ^TKDT72DE_SourceBuffer;
 
-    TKDT72DEyanmicSourceBuffer = array of PKDT72DE_Source;
+    TKDT72DEyanmicSourceBuffer = packed array of PKDT72DE_Source;
     PKDT72DEyanmicSourceBuffer = ^TKDT72DEyanmicSourceBuffer;
 
-    TKDT72DEyanmicStoreBuffer = array of TKDT72DE_Source;
+    TKDT72DEyanmicStoreBuffer = packed array of TKDT72DE_Source;
     PKDT72DEyanmicStoreBuffer = ^TKDT72DEyanmicStoreBuffer;
 
     PKDT72DE_Node = ^TKDT72DE_Node;
@@ -6334,7 +7013,7 @@ type
     KDStoreBuff: TKDT72DEyanmicStoreBuffer;
     KDBuff     : TKDT72DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT72DE_Node;
+    KDNodes    : packed array of PKDT72DE_Node;
     TestBuff   : TKDT72DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT72DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT72DE_Node;
     function GetData(const index: NativeInt): PKDT72DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6397,7 +7076,7 @@ type
     TKDT84DE_Vec = array [0 .. KDT84DE_Axis - 1] of TKDT84DE_VecType;
     PKDT84DE_Vec = ^TKDT84DE_Vec;
 
-    TKDT84DE_DynamicVecBuffer = array of TKDT84DE_Vec;
+    TKDT84DE_DynamicVecBuffer = packed array of TKDT84DE_Vec;
     PKDT84DE_DynamicVecBuffer = ^TKDT84DE_DynamicVecBuffer;
 
     TKDT84DE_Source = packed record
@@ -6406,13 +7085,13 @@ type
     end;
 
     PKDT84DE_Source       = ^TKDT84DE_Source;
-    TKDT84DE_SourceBuffer = array [0 .. 0] of PKDT84DE_Source;
+    TKDT84DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT84DE_Source) - 1] of PKDT84DE_Source;
     PKDT84DE_SourceBuffer = ^TKDT84DE_SourceBuffer;
 
-    TKDT84DEyanmicSourceBuffer = array of PKDT84DE_Source;
+    TKDT84DEyanmicSourceBuffer = packed array of PKDT84DE_Source;
     PKDT84DEyanmicSourceBuffer = ^TKDT84DEyanmicSourceBuffer;
 
-    TKDT84DEyanmicStoreBuffer = array of TKDT84DE_Source;
+    TKDT84DEyanmicStoreBuffer = packed array of TKDT84DE_Source;
     PKDT84DEyanmicStoreBuffer = ^TKDT84DEyanmicStoreBuffer;
 
     PKDT84DE_Node = ^TKDT84DE_Node;
@@ -6429,7 +7108,7 @@ type
     KDStoreBuff: TKDT84DEyanmicStoreBuffer;
     KDBuff     : TKDT84DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT84DE_Node;
+    KDNodes    : packed array of PKDT84DE_Node;
     TestBuff   : TKDT84DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT84DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT84DE_Node;
     function GetData(const index: NativeInt): PKDT84DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6492,7 +7171,7 @@ type
     TKDT96DE_Vec = array [0 .. KDT96DE_Axis - 1] of TKDT96DE_VecType;
     PKDT96DE_Vec = ^TKDT96DE_Vec;
 
-    TKDT96DE_DynamicVecBuffer = array of TKDT96DE_Vec;
+    TKDT96DE_DynamicVecBuffer = packed array of TKDT96DE_Vec;
     PKDT96DE_DynamicVecBuffer = ^TKDT96DE_DynamicVecBuffer;
 
     TKDT96DE_Source = packed record
@@ -6501,13 +7180,13 @@ type
     end;
 
     PKDT96DE_Source       = ^TKDT96DE_Source;
-    TKDT96DE_SourceBuffer = array [0 .. 0] of PKDT96DE_Source;
+    TKDT96DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT96DE_Source) - 1] of PKDT96DE_Source;
     PKDT96DE_SourceBuffer = ^TKDT96DE_SourceBuffer;
 
-    TKDT96DEyanmicSourceBuffer = array of PKDT96DE_Source;
+    TKDT96DEyanmicSourceBuffer = packed array of PKDT96DE_Source;
     PKDT96DEyanmicSourceBuffer = ^TKDT96DEyanmicSourceBuffer;
 
-    TKDT96DEyanmicStoreBuffer = array of TKDT96DE_Source;
+    TKDT96DEyanmicStoreBuffer = packed array of TKDT96DE_Source;
     PKDT96DEyanmicStoreBuffer = ^TKDT96DEyanmicStoreBuffer;
 
     PKDT96DE_Node = ^TKDT96DE_Node;
@@ -6524,7 +7203,7 @@ type
     KDStoreBuff: TKDT96DEyanmicStoreBuffer;
     KDBuff     : TKDT96DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT96DE_Node;
+    KDNodes    : packed array of PKDT96DE_Node;
     TestBuff   : TKDT96DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT96DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT96DE_Node;
     function GetData(const index: NativeInt): PKDT96DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6587,7 +7266,7 @@ type
     TKDT128DE_Vec = array [0 .. KDT128DE_Axis - 1] of TKDT128DE_VecType;
     PKDT128DE_Vec = ^TKDT128DE_Vec;
 
-    TKDT128DE_DynamicVecBuffer = array of TKDT128DE_Vec;
+    TKDT128DE_DynamicVecBuffer = packed array of TKDT128DE_Vec;
     PKDT128DE_DynamicVecBuffer = ^TKDT128DE_DynamicVecBuffer;
 
     TKDT128DE_Source = packed record
@@ -6596,13 +7275,13 @@ type
     end;
 
     PKDT128DE_Source       = ^TKDT128DE_Source;
-    TKDT128DE_SourceBuffer = array [0 .. 0] of PKDT128DE_Source;
+    TKDT128DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT128DE_Source) - 1] of PKDT128DE_Source;
     PKDT128DE_SourceBuffer = ^TKDT128DE_SourceBuffer;
 
-    TKDT128DEyanmicSourceBuffer = array of PKDT128DE_Source;
+    TKDT128DEyanmicSourceBuffer = packed array of PKDT128DE_Source;
     PKDT128DEyanmicSourceBuffer = ^TKDT128DEyanmicSourceBuffer;
 
-    TKDT128DEyanmicStoreBuffer = array of TKDT128DE_Source;
+    TKDT128DEyanmicStoreBuffer = packed array of TKDT128DE_Source;
     PKDT128DEyanmicStoreBuffer = ^TKDT128DEyanmicStoreBuffer;
 
     PKDT128DE_Node = ^TKDT128DE_Node;
@@ -6619,7 +7298,7 @@ type
     KDStoreBuff: TKDT128DEyanmicStoreBuffer;
     KDBuff     : TKDT128DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT128DE_Node;
+    KDNodes    : packed array of PKDT128DE_Node;
     TestBuff   : TKDT128DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT128DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT128DE_Node;
     function GetData(const index: NativeInt): PKDT128DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6682,7 +7361,7 @@ type
     TKDT140DE_Vec = array [0 .. KDT140DE_Axis - 1] of TKDT140DE_VecType;
     PKDT140DE_Vec = ^TKDT140DE_Vec;
 
-    TKDT140DE_DynamicVecBuffer = array of TKDT140DE_Vec;
+    TKDT140DE_DynamicVecBuffer = packed array of TKDT140DE_Vec;
     PKDT140DE_DynamicVecBuffer = ^TKDT140DE_DynamicVecBuffer;
 
     TKDT140DE_Source = packed record
@@ -6691,13 +7370,13 @@ type
     end;
 
     PKDT140DE_Source       = ^TKDT140DE_Source;
-    TKDT140DE_SourceBuffer = array [0 .. 0] of PKDT140DE_Source;
+    TKDT140DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT140DE_Source) - 1] of PKDT140DE_Source;
     PKDT140DE_SourceBuffer = ^TKDT140DE_SourceBuffer;
 
-    TKDT140DEyanmicSourceBuffer = array of PKDT140DE_Source;
+    TKDT140DEyanmicSourceBuffer = packed array of PKDT140DE_Source;
     PKDT140DEyanmicSourceBuffer = ^TKDT140DEyanmicSourceBuffer;
 
-    TKDT140DEyanmicStoreBuffer = array of TKDT140DE_Source;
+    TKDT140DEyanmicStoreBuffer = packed array of TKDT140DE_Source;
     PKDT140DEyanmicStoreBuffer = ^TKDT140DEyanmicStoreBuffer;
 
     PKDT140DE_Node = ^TKDT140DE_Node;
@@ -6714,7 +7393,7 @@ type
     KDStoreBuff: TKDT140DEyanmicStoreBuffer;
     KDBuff     : TKDT140DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT140DE_Node;
+    KDNodes    : packed array of PKDT140DE_Node;
     TestBuff   : TKDT140DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT140DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT140DE_Node;
     function GetData(const index: NativeInt): PKDT140DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6777,7 +7456,7 @@ type
     TKDT160DE_Vec = array [0 .. KDT160DE_Axis - 1] of TKDT160DE_VecType;
     PKDT160DE_Vec = ^TKDT160DE_Vec;
 
-    TKDT160DE_DynamicVecBuffer = array of TKDT160DE_Vec;
+    TKDT160DE_DynamicVecBuffer = packed array of TKDT160DE_Vec;
     PKDT160DE_DynamicVecBuffer = ^TKDT160DE_DynamicVecBuffer;
 
     TKDT160DE_Source = packed record
@@ -6786,13 +7465,13 @@ type
     end;
 
     PKDT160DE_Source       = ^TKDT160DE_Source;
-    TKDT160DE_SourceBuffer = array [0 .. 0] of PKDT160DE_Source;
+    TKDT160DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT160DE_Source) - 1] of PKDT160DE_Source;
     PKDT160DE_SourceBuffer = ^TKDT160DE_SourceBuffer;
 
-    TKDT160DEyanmicSourceBuffer = array of PKDT160DE_Source;
+    TKDT160DEyanmicSourceBuffer = packed array of PKDT160DE_Source;
     PKDT160DEyanmicSourceBuffer = ^TKDT160DEyanmicSourceBuffer;
 
-    TKDT160DEyanmicStoreBuffer = array of TKDT160DE_Source;
+    TKDT160DEyanmicStoreBuffer = packed array of TKDT160DE_Source;
     PKDT160DEyanmicStoreBuffer = ^TKDT160DEyanmicStoreBuffer;
 
     PKDT160DE_Node = ^TKDT160DE_Node;
@@ -6809,7 +7488,7 @@ type
     KDStoreBuff: TKDT160DEyanmicStoreBuffer;
     KDBuff     : TKDT160DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT160DE_Node;
+    KDNodes    : packed array of PKDT160DE_Node;
     TestBuff   : TKDT160DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT160DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT160DE_Node;
     function GetData(const index: NativeInt): PKDT160DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6872,7 +7551,7 @@ type
     TKDT196DE_Vec = array [0 .. KDT196DE_Axis - 1] of TKDT196DE_VecType;
     PKDT196DE_Vec = ^TKDT196DE_Vec;
 
-    TKDT196DE_DynamicVecBuffer = array of TKDT196DE_Vec;
+    TKDT196DE_DynamicVecBuffer = packed array of TKDT196DE_Vec;
     PKDT196DE_DynamicVecBuffer = ^TKDT196DE_DynamicVecBuffer;
 
     TKDT196DE_Source = packed record
@@ -6881,13 +7560,13 @@ type
     end;
 
     PKDT196DE_Source       = ^TKDT196DE_Source;
-    TKDT196DE_SourceBuffer = array [0 .. 0] of PKDT196DE_Source;
+    TKDT196DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT196DE_Source) - 1] of PKDT196DE_Source;
     PKDT196DE_SourceBuffer = ^TKDT196DE_SourceBuffer;
 
-    TKDT196DEyanmicSourceBuffer = array of PKDT196DE_Source;
+    TKDT196DEyanmicSourceBuffer = packed array of PKDT196DE_Source;
     PKDT196DEyanmicSourceBuffer = ^TKDT196DEyanmicSourceBuffer;
 
-    TKDT196DEyanmicStoreBuffer = array of TKDT196DE_Source;
+    TKDT196DEyanmicStoreBuffer = packed array of TKDT196DE_Source;
     PKDT196DEyanmicStoreBuffer = ^TKDT196DEyanmicStoreBuffer;
 
     PKDT196DE_Node = ^TKDT196DE_Node;
@@ -6904,7 +7583,7 @@ type
     KDStoreBuff: TKDT196DEyanmicStoreBuffer;
     KDBuff     : TKDT196DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT196DE_Node;
+    KDNodes    : packed array of PKDT196DE_Node;
     TestBuff   : TKDT196DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT196DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT196DE_Node;
     function GetData(const index: NativeInt): PKDT196DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6967,7 +7646,7 @@ type
     TKDT256DE_Vec = array [0 .. KDT256DE_Axis - 1] of TKDT256DE_VecType;
     PKDT256DE_Vec = ^TKDT256DE_Vec;
 
-    TKDT256DE_DynamicVecBuffer = array of TKDT256DE_Vec;
+    TKDT256DE_DynamicVecBuffer = packed array of TKDT256DE_Vec;
     PKDT256DE_DynamicVecBuffer = ^TKDT256DE_DynamicVecBuffer;
 
     TKDT256DE_Source = packed record
@@ -6976,13 +7655,13 @@ type
     end;
 
     PKDT256DE_Source       = ^TKDT256DE_Source;
-    TKDT256DE_SourceBuffer = array [0 .. 0] of PKDT256DE_Source;
+    TKDT256DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT256DE_Source) - 1] of PKDT256DE_Source;
     PKDT256DE_SourceBuffer = ^TKDT256DE_SourceBuffer;
 
-    TKDT256DEyanmicSourceBuffer = array of PKDT256DE_Source;
+    TKDT256DEyanmicSourceBuffer = packed array of PKDT256DE_Source;
     PKDT256DEyanmicSourceBuffer = ^TKDT256DEyanmicSourceBuffer;
 
-    TKDT256DEyanmicStoreBuffer = array of TKDT256DE_Source;
+    TKDT256DEyanmicStoreBuffer = packed array of TKDT256DE_Source;
     PKDT256DEyanmicStoreBuffer = ^TKDT256DEyanmicStoreBuffer;
 
     PKDT256DE_Node = ^TKDT256DE_Node;
@@ -6999,7 +7678,7 @@ type
     KDStoreBuff: TKDT256DEyanmicStoreBuffer;
     KDBuff     : TKDT256DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT256DE_Node;
+    KDNodes    : packed array of PKDT256DE_Node;
     TestBuff   : TKDT256DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT256DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT256DE_Node;
     function GetData(const index: NativeInt): PKDT256DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7062,7 +7741,7 @@ type
     TKDT272DE_Vec = array [0 .. KDT272DE_Axis - 1] of TKDT272DE_VecType;
     PKDT272DE_Vec = ^TKDT272DE_Vec;
 
-    TKDT272DE_DynamicVecBuffer = array of TKDT272DE_Vec;
+    TKDT272DE_DynamicVecBuffer = packed array of TKDT272DE_Vec;
     PKDT272DE_DynamicVecBuffer = ^TKDT272DE_DynamicVecBuffer;
 
     TKDT272DE_Source = packed record
@@ -7071,13 +7750,13 @@ type
     end;
 
     PKDT272DE_Source       = ^TKDT272DE_Source;
-    TKDT272DE_SourceBuffer = array [0 .. 0] of PKDT272DE_Source;
+    TKDT272DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT272DE_Source) - 1] of PKDT272DE_Source;
     PKDT272DE_SourceBuffer = ^TKDT272DE_SourceBuffer;
 
-    TKDT272DEyanmicSourceBuffer = array of PKDT272DE_Source;
+    TKDT272DEyanmicSourceBuffer = packed array of PKDT272DE_Source;
     PKDT272DEyanmicSourceBuffer = ^TKDT272DEyanmicSourceBuffer;
 
-    TKDT272DEyanmicStoreBuffer = array of TKDT272DE_Source;
+    TKDT272DEyanmicStoreBuffer = packed array of TKDT272DE_Source;
     PKDT272DEyanmicStoreBuffer = ^TKDT272DEyanmicStoreBuffer;
 
     PKDT272DE_Node = ^TKDT272DE_Node;
@@ -7094,7 +7773,7 @@ type
     KDStoreBuff: TKDT272DEyanmicStoreBuffer;
     KDBuff     : TKDT272DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT272DE_Node;
+    KDNodes    : packed array of PKDT272DE_Node;
     TestBuff   : TKDT272DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT272DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT272DE_Node;
     function GetData(const index: NativeInt): PKDT272DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7157,7 +7836,7 @@ type
     TKDT288DE_Vec = array [0 .. KDT288DE_Axis - 1] of TKDT288DE_VecType;
     PKDT288DE_Vec = ^TKDT288DE_Vec;
 
-    TKDT288DE_DynamicVecBuffer = array of TKDT288DE_Vec;
+    TKDT288DE_DynamicVecBuffer = packed array of TKDT288DE_Vec;
     PKDT288DE_DynamicVecBuffer = ^TKDT288DE_DynamicVecBuffer;
 
     TKDT288DE_Source = packed record
@@ -7166,13 +7845,13 @@ type
     end;
 
     PKDT288DE_Source       = ^TKDT288DE_Source;
-    TKDT288DE_SourceBuffer = array [0 .. 0] of PKDT288DE_Source;
+    TKDT288DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT288DE_Source) - 1] of PKDT288DE_Source;
     PKDT288DE_SourceBuffer = ^TKDT288DE_SourceBuffer;
 
-    TKDT288DEyanmicSourceBuffer = array of PKDT288DE_Source;
+    TKDT288DEyanmicSourceBuffer = packed array of PKDT288DE_Source;
     PKDT288DEyanmicSourceBuffer = ^TKDT288DEyanmicSourceBuffer;
 
-    TKDT288DEyanmicStoreBuffer = array of TKDT288DE_Source;
+    TKDT288DEyanmicStoreBuffer = packed array of TKDT288DE_Source;
     PKDT288DEyanmicStoreBuffer = ^TKDT288DEyanmicStoreBuffer;
 
     PKDT288DE_Node = ^TKDT288DE_Node;
@@ -7189,7 +7868,7 @@ type
     KDStoreBuff: TKDT288DEyanmicStoreBuffer;
     KDBuff     : TKDT288DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT288DE_Node;
+    KDNodes    : packed array of PKDT288DE_Node;
     TestBuff   : TKDT288DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT288DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT288DE_Node;
     function GetData(const index: NativeInt): PKDT288DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7252,7 +7931,7 @@ type
     TKDT372DE_Vec = array [0 .. KDT372DE_Axis - 1] of TKDT372DE_VecType;
     PKDT372DE_Vec = ^TKDT372DE_Vec;
 
-    TKDT372DE_DynamicVecBuffer = array of TKDT372DE_Vec;
+    TKDT372DE_DynamicVecBuffer = packed array of TKDT372DE_Vec;
     PKDT372DE_DynamicVecBuffer = ^TKDT372DE_DynamicVecBuffer;
 
     TKDT372DE_Source = packed record
@@ -7261,13 +7940,13 @@ type
     end;
 
     PKDT372DE_Source       = ^TKDT372DE_Source;
-    TKDT372DE_SourceBuffer = array [0 .. 0] of PKDT372DE_Source;
+    TKDT372DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT372DE_Source) - 1] of PKDT372DE_Source;
     PKDT372DE_SourceBuffer = ^TKDT372DE_SourceBuffer;
 
-    TKDT372DEyanmicSourceBuffer = array of PKDT372DE_Source;
+    TKDT372DEyanmicSourceBuffer = packed array of PKDT372DE_Source;
     PKDT372DEyanmicSourceBuffer = ^TKDT372DEyanmicSourceBuffer;
 
-    TKDT372DEyanmicStoreBuffer = array of TKDT372DE_Source;
+    TKDT372DEyanmicStoreBuffer = packed array of TKDT372DE_Source;
     PKDT372DEyanmicStoreBuffer = ^TKDT372DEyanmicStoreBuffer;
 
     PKDT372DE_Node = ^TKDT372DE_Node;
@@ -7284,7 +7963,7 @@ type
     KDStoreBuff: TKDT372DEyanmicStoreBuffer;
     KDBuff     : TKDT372DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT372DE_Node;
+    KDNodes    : packed array of PKDT372DE_Node;
     TestBuff   : TKDT372DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT372DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT372DE_Node;
     function GetData(const index: NativeInt): PKDT372DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7347,7 +8026,7 @@ type
     TKDT512DE_Vec = array [0 .. KDT512DE_Axis - 1] of TKDT512DE_VecType;
     PKDT512DE_Vec = ^TKDT512DE_Vec;
 
-    TKDT512DE_DynamicVecBuffer = array of TKDT512DE_Vec;
+    TKDT512DE_DynamicVecBuffer = packed array of TKDT512DE_Vec;
     PKDT512DE_DynamicVecBuffer = ^TKDT512DE_DynamicVecBuffer;
 
     TKDT512DE_Source = packed record
@@ -7356,13 +8035,13 @@ type
     end;
 
     PKDT512DE_Source       = ^TKDT512DE_Source;
-    TKDT512DE_SourceBuffer = array [0 .. 0] of PKDT512DE_Source;
+    TKDT512DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT512DE_Source) - 1] of PKDT512DE_Source;
     PKDT512DE_SourceBuffer = ^TKDT512DE_SourceBuffer;
 
-    TKDT512DEyanmicSourceBuffer = array of PKDT512DE_Source;
+    TKDT512DEyanmicSourceBuffer = packed array of PKDT512DE_Source;
     PKDT512DEyanmicSourceBuffer = ^TKDT512DEyanmicSourceBuffer;
 
-    TKDT512DEyanmicStoreBuffer = array of TKDT512DE_Source;
+    TKDT512DEyanmicStoreBuffer = packed array of TKDT512DE_Source;
     PKDT512DEyanmicStoreBuffer = ^TKDT512DEyanmicStoreBuffer;
 
     PKDT512DE_Node = ^TKDT512DE_Node;
@@ -7379,7 +8058,7 @@ type
     KDStoreBuff: TKDT512DEyanmicStoreBuffer;
     KDBuff     : TKDT512DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT512DE_Node;
+    KDNodes    : packed array of PKDT512DE_Node;
     TestBuff   : TKDT512DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT512DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT512DE_Node;
     function GetData(const index: NativeInt): PKDT512DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7442,7 +8121,7 @@ type
     TKDT576DE_Vec = array [0 .. KDT576DE_Axis - 1] of TKDT576DE_VecType;
     PKDT576DE_Vec = ^TKDT576DE_Vec;
 
-    TKDT576DE_DynamicVecBuffer = array of TKDT576DE_Vec;
+    TKDT576DE_DynamicVecBuffer = packed array of TKDT576DE_Vec;
     PKDT576DE_DynamicVecBuffer = ^TKDT576DE_DynamicVecBuffer;
 
     TKDT576DE_Source = packed record
@@ -7451,13 +8130,13 @@ type
     end;
 
     PKDT576DE_Source       = ^TKDT576DE_Source;
-    TKDT576DE_SourceBuffer = array [0 .. 0] of PKDT576DE_Source;
+    TKDT576DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT576DE_Source) - 1] of PKDT576DE_Source;
     PKDT576DE_SourceBuffer = ^TKDT576DE_SourceBuffer;
 
-    TKDT576DEyanmicSourceBuffer = array of PKDT576DE_Source;
+    TKDT576DEyanmicSourceBuffer = packed array of PKDT576DE_Source;
     PKDT576DEyanmicSourceBuffer = ^TKDT576DEyanmicSourceBuffer;
 
-    TKDT576DEyanmicStoreBuffer = array of TKDT576DE_Source;
+    TKDT576DEyanmicStoreBuffer = packed array of TKDT576DE_Source;
     PKDT576DEyanmicStoreBuffer = ^TKDT576DEyanmicStoreBuffer;
 
     PKDT576DE_Node = ^TKDT576DE_Node;
@@ -7474,7 +8153,7 @@ type
     KDStoreBuff: TKDT576DEyanmicStoreBuffer;
     KDBuff     : TKDT576DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT576DE_Node;
+    KDNodes    : packed array of PKDT576DE_Node;
     TestBuff   : TKDT576DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT576DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT576DE_Node;
     function GetData(const index: NativeInt): PKDT576DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7537,7 +8216,7 @@ type
     TKDT768DE_Vec = array [0 .. KDT768DE_Axis - 1] of TKDT768DE_VecType;
     PKDT768DE_Vec = ^TKDT768DE_Vec;
 
-    TKDT768DE_DynamicVecBuffer = array of TKDT768DE_Vec;
+    TKDT768DE_DynamicVecBuffer = packed array of TKDT768DE_Vec;
     PKDT768DE_DynamicVecBuffer = ^TKDT768DE_DynamicVecBuffer;
 
     TKDT768DE_Source = packed record
@@ -7546,13 +8225,13 @@ type
     end;
 
     PKDT768DE_Source       = ^TKDT768DE_Source;
-    TKDT768DE_SourceBuffer = array [0 .. 0] of PKDT768DE_Source;
+    TKDT768DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT768DE_Source) - 1] of PKDT768DE_Source;
     PKDT768DE_SourceBuffer = ^TKDT768DE_SourceBuffer;
 
-    TKDT768DEyanmicSourceBuffer = array of PKDT768DE_Source;
+    TKDT768DEyanmicSourceBuffer = packed array of PKDT768DE_Source;
     PKDT768DEyanmicSourceBuffer = ^TKDT768DEyanmicSourceBuffer;
 
-    TKDT768DEyanmicStoreBuffer = array of TKDT768DE_Source;
+    TKDT768DEyanmicStoreBuffer = packed array of TKDT768DE_Source;
     PKDT768DEyanmicStoreBuffer = ^TKDT768DEyanmicStoreBuffer;
 
     PKDT768DE_Node = ^TKDT768DE_Node;
@@ -7569,7 +8248,7 @@ type
     KDStoreBuff: TKDT768DEyanmicStoreBuffer;
     KDBuff     : TKDT768DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT768DE_Node;
+    KDNodes    : packed array of PKDT768DE_Node;
     TestBuff   : TKDT768DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT768DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT768DE_Node;
     function GetData(const index: NativeInt): PKDT768DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7632,7 +8311,7 @@ type
     TKDT1024DE_Vec = array [0 .. KDT1024DE_Axis - 1] of TKDT1024DE_VecType;
     PKDT1024DE_Vec = ^TKDT1024DE_Vec;
 
-    TKDT1024DE_DynamicVecBuffer = array of TKDT1024DE_Vec;
+    TKDT1024DE_DynamicVecBuffer = packed array of TKDT1024DE_Vec;
     PKDT1024DE_DynamicVecBuffer = ^TKDT1024DE_DynamicVecBuffer;
 
     TKDT1024DE_Source = packed record
@@ -7641,13 +8320,13 @@ type
     end;
 
     PKDT1024DE_Source       = ^TKDT1024DE_Source;
-    TKDT1024DE_SourceBuffer = array [0 .. 0] of PKDT1024DE_Source;
+    TKDT1024DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1024DE_Source) - 1] of PKDT1024DE_Source;
     PKDT1024DE_SourceBuffer = ^TKDT1024DE_SourceBuffer;
 
-    TKDT1024DEyanmicSourceBuffer = array of PKDT1024DE_Source;
+    TKDT1024DEyanmicSourceBuffer = packed array of PKDT1024DE_Source;
     PKDT1024DEyanmicSourceBuffer = ^TKDT1024DEyanmicSourceBuffer;
 
-    TKDT1024DEyanmicStoreBuffer = array of TKDT1024DE_Source;
+    TKDT1024DEyanmicStoreBuffer = packed array of TKDT1024DE_Source;
     PKDT1024DEyanmicStoreBuffer = ^TKDT1024DEyanmicStoreBuffer;
 
     PKDT1024DE_Node = ^TKDT1024DE_Node;
@@ -7664,7 +8343,7 @@ type
     KDStoreBuff: TKDT1024DEyanmicStoreBuffer;
     KDBuff     : TKDT1024DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT1024DE_Node;
+    KDNodes    : packed array of PKDT1024DE_Node;
     TestBuff   : TKDT1024DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1024DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1024DE_Node;
     function GetData(const index: NativeInt): PKDT1024DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7727,7 +8406,7 @@ type
     TKDT1040DE_Vec = array [0 .. KDT1040DE_Axis - 1] of TKDT1040DE_VecType;
     PKDT1040DE_Vec = ^TKDT1040DE_Vec;
 
-    TKDT1040DE_DynamicVecBuffer = array of TKDT1040DE_Vec;
+    TKDT1040DE_DynamicVecBuffer = packed array of TKDT1040DE_Vec;
     PKDT1040DE_DynamicVecBuffer = ^TKDT1040DE_DynamicVecBuffer;
 
     TKDT1040DE_Source = packed record
@@ -7736,13 +8415,13 @@ type
     end;
 
     PKDT1040DE_Source       = ^TKDT1040DE_Source;
-    TKDT1040DE_SourceBuffer = array [0 .. 0] of PKDT1040DE_Source;
+    TKDT1040DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1040DE_Source) - 1] of PKDT1040DE_Source;
     PKDT1040DE_SourceBuffer = ^TKDT1040DE_SourceBuffer;
 
-    TKDT1040DEyanmicSourceBuffer = array of PKDT1040DE_Source;
+    TKDT1040DEyanmicSourceBuffer = packed array of PKDT1040DE_Source;
     PKDT1040DEyanmicSourceBuffer = ^TKDT1040DEyanmicSourceBuffer;
 
-    TKDT1040DEyanmicStoreBuffer = array of TKDT1040DE_Source;
+    TKDT1040DEyanmicStoreBuffer = packed array of TKDT1040DE_Source;
     PKDT1040DEyanmicStoreBuffer = ^TKDT1040DEyanmicStoreBuffer;
 
     PKDT1040DE_Node = ^TKDT1040DE_Node;
@@ -7759,7 +8438,7 @@ type
     KDStoreBuff: TKDT1040DEyanmicStoreBuffer;
     KDBuff     : TKDT1040DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT1040DE_Node;
+    KDNodes    : packed array of PKDT1040DE_Node;
     TestBuff   : TKDT1040DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1040DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1040DE_Node;
     function GetData(const index: NativeInt): PKDT1040DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7822,7 +8501,7 @@ type
     TKDT1056DE_Vec = array [0 .. KDT1056DE_Axis - 1] of TKDT1056DE_VecType;
     PKDT1056DE_Vec = ^TKDT1056DE_Vec;
 
-    TKDT1056DE_DynamicVecBuffer = array of TKDT1056DE_Vec;
+    TKDT1056DE_DynamicVecBuffer = packed array of TKDT1056DE_Vec;
     PKDT1056DE_DynamicVecBuffer = ^TKDT1056DE_DynamicVecBuffer;
 
     TKDT1056DE_Source = packed record
@@ -7831,13 +8510,13 @@ type
     end;
 
     PKDT1056DE_Source       = ^TKDT1056DE_Source;
-    TKDT1056DE_SourceBuffer = array [0 .. 0] of PKDT1056DE_Source;
+    TKDT1056DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1056DE_Source) - 1] of PKDT1056DE_Source;
     PKDT1056DE_SourceBuffer = ^TKDT1056DE_SourceBuffer;
 
-    TKDT1056DEyanmicSourceBuffer = array of PKDT1056DE_Source;
+    TKDT1056DEyanmicSourceBuffer = packed array of PKDT1056DE_Source;
     PKDT1056DEyanmicSourceBuffer = ^TKDT1056DEyanmicSourceBuffer;
 
-    TKDT1056DEyanmicStoreBuffer = array of TKDT1056DE_Source;
+    TKDT1056DEyanmicStoreBuffer = packed array of TKDT1056DE_Source;
     PKDT1056DEyanmicStoreBuffer = ^TKDT1056DEyanmicStoreBuffer;
 
     PKDT1056DE_Node = ^TKDT1056DE_Node;
@@ -7854,7 +8533,7 @@ type
     KDStoreBuff: TKDT1056DEyanmicStoreBuffer;
     KDBuff     : TKDT1056DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT1056DE_Node;
+    KDNodes    : packed array of PKDT1056DE_Node;
     TestBuff   : TKDT1056DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1056DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1056DE_Node;
     function GetData(const index: NativeInt): PKDT1056DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7917,7 +8596,7 @@ type
     TKDT1536DE_Vec = array [0 .. KDT1536DE_Axis - 1] of TKDT1536DE_VecType;
     PKDT1536DE_Vec = ^TKDT1536DE_Vec;
 
-    TKDT1536DE_DynamicVecBuffer = array of TKDT1536DE_Vec;
+    TKDT1536DE_DynamicVecBuffer = packed array of TKDT1536DE_Vec;
     PKDT1536DE_DynamicVecBuffer = ^TKDT1536DE_DynamicVecBuffer;
 
     TKDT1536DE_Source = packed record
@@ -7926,13 +8605,13 @@ type
     end;
 
     PKDT1536DE_Source       = ^TKDT1536DE_Source;
-    TKDT1536DE_SourceBuffer = array [0 .. 0] of PKDT1536DE_Source;
+    TKDT1536DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1536DE_Source) - 1] of PKDT1536DE_Source;
     PKDT1536DE_SourceBuffer = ^TKDT1536DE_SourceBuffer;
 
-    TKDT1536DEyanmicSourceBuffer = array of PKDT1536DE_Source;
+    TKDT1536DEyanmicSourceBuffer = packed array of PKDT1536DE_Source;
     PKDT1536DEyanmicSourceBuffer = ^TKDT1536DEyanmicSourceBuffer;
 
-    TKDT1536DEyanmicStoreBuffer = array of TKDT1536DE_Source;
+    TKDT1536DEyanmicStoreBuffer = packed array of TKDT1536DE_Source;
     PKDT1536DEyanmicStoreBuffer = ^TKDT1536DEyanmicStoreBuffer;
 
     PKDT1536DE_Node = ^TKDT1536DE_Node;
@@ -7949,7 +8628,7 @@ type
     KDStoreBuff: TKDT1536DEyanmicStoreBuffer;
     KDBuff     : TKDT1536DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT1536DE_Node;
+    KDNodes    : packed array of PKDT1536DE_Node;
     TestBuff   : TKDT1536DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1536DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1536DE_Node;
     function GetData(const index: NativeInt): PKDT1536DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8012,7 +8691,7 @@ type
     TKDT1920DE_Vec = array [0 .. KDT1920DE_Axis - 1] of TKDT1920DE_VecType;
     PKDT1920DE_Vec = ^TKDT1920DE_Vec;
 
-    TKDT1920DE_DynamicVecBuffer = array of TKDT1920DE_Vec;
+    TKDT1920DE_DynamicVecBuffer = packed array of TKDT1920DE_Vec;
     PKDT1920DE_DynamicVecBuffer = ^TKDT1920DE_DynamicVecBuffer;
 
     TKDT1920DE_Source = packed record
@@ -8021,13 +8700,13 @@ type
     end;
 
     PKDT1920DE_Source       = ^TKDT1920DE_Source;
-    TKDT1920DE_SourceBuffer = array [0 .. 0] of PKDT1920DE_Source;
+    TKDT1920DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1920DE_Source) - 1] of PKDT1920DE_Source;
     PKDT1920DE_SourceBuffer = ^TKDT1920DE_SourceBuffer;
 
-    TKDT1920DEyanmicSourceBuffer = array of PKDT1920DE_Source;
+    TKDT1920DEyanmicSourceBuffer = packed array of PKDT1920DE_Source;
     PKDT1920DEyanmicSourceBuffer = ^TKDT1920DEyanmicSourceBuffer;
 
-    TKDT1920DEyanmicStoreBuffer = array of TKDT1920DE_Source;
+    TKDT1920DEyanmicStoreBuffer = packed array of TKDT1920DE_Source;
     PKDT1920DEyanmicStoreBuffer = ^TKDT1920DEyanmicStoreBuffer;
 
     PKDT1920DE_Node = ^TKDT1920DE_Node;
@@ -8044,7 +8723,7 @@ type
     KDStoreBuff: TKDT1920DEyanmicStoreBuffer;
     KDBuff     : TKDT1920DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT1920DE_Node;
+    KDNodes    : packed array of PKDT1920DE_Node;
     TestBuff   : TKDT1920DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1920DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1920DE_Node;
     function GetData(const index: NativeInt): PKDT1920DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8107,7 +8786,7 @@ type
     TKDT1980DE_Vec = array [0 .. KDT1980DE_Axis - 1] of TKDT1980DE_VecType;
     PKDT1980DE_Vec = ^TKDT1980DE_Vec;
 
-    TKDT1980DE_DynamicVecBuffer = array of TKDT1980DE_Vec;
+    TKDT1980DE_DynamicVecBuffer = packed array of TKDT1980DE_Vec;
     PKDT1980DE_DynamicVecBuffer = ^TKDT1980DE_DynamicVecBuffer;
 
     TKDT1980DE_Source = packed record
@@ -8116,13 +8795,13 @@ type
     end;
 
     PKDT1980DE_Source       = ^TKDT1980DE_Source;
-    TKDT1980DE_SourceBuffer = array [0 .. 0] of PKDT1980DE_Source;
+    TKDT1980DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1980DE_Source) - 1] of PKDT1980DE_Source;
     PKDT1980DE_SourceBuffer = ^TKDT1980DE_SourceBuffer;
 
-    TKDT1980DEyanmicSourceBuffer = array of PKDT1980DE_Source;
+    TKDT1980DEyanmicSourceBuffer = packed array of PKDT1980DE_Source;
     PKDT1980DEyanmicSourceBuffer = ^TKDT1980DEyanmicSourceBuffer;
 
-    TKDT1980DEyanmicStoreBuffer = array of TKDT1980DE_Source;
+    TKDT1980DEyanmicStoreBuffer = packed array of TKDT1980DE_Source;
     PKDT1980DEyanmicStoreBuffer = ^TKDT1980DEyanmicStoreBuffer;
 
     PKDT1980DE_Node = ^TKDT1980DE_Node;
@@ -8139,7 +8818,7 @@ type
     KDStoreBuff: TKDT1980DEyanmicStoreBuffer;
     KDBuff     : TKDT1980DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT1980DE_Node;
+    KDNodes    : packed array of PKDT1980DE_Node;
     TestBuff   : TKDT1980DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1980DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1980DE_Node;
     function GetData(const index: NativeInt): PKDT1980DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8202,7 +8881,7 @@ type
     TKDT2048DE_Vec = array [0 .. KDT2048DE_Axis - 1] of TKDT2048DE_VecType;
     PKDT2048DE_Vec = ^TKDT2048DE_Vec;
 
-    TKDT2048DE_DynamicVecBuffer = array of TKDT2048DE_Vec;
+    TKDT2048DE_DynamicVecBuffer = packed array of TKDT2048DE_Vec;
     PKDT2048DE_DynamicVecBuffer = ^TKDT2048DE_DynamicVecBuffer;
 
     TKDT2048DE_Source = packed record
@@ -8211,13 +8890,13 @@ type
     end;
 
     PKDT2048DE_Source       = ^TKDT2048DE_Source;
-    TKDT2048DE_SourceBuffer = array [0 .. 0] of PKDT2048DE_Source;
+    TKDT2048DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT2048DE_Source) - 1] of PKDT2048DE_Source;
     PKDT2048DE_SourceBuffer = ^TKDT2048DE_SourceBuffer;
 
-    TKDT2048DEyanmicSourceBuffer = array of PKDT2048DE_Source;
+    TKDT2048DEyanmicSourceBuffer = packed array of PKDT2048DE_Source;
     PKDT2048DEyanmicSourceBuffer = ^TKDT2048DEyanmicSourceBuffer;
 
-    TKDT2048DEyanmicStoreBuffer = array of TKDT2048DE_Source;
+    TKDT2048DEyanmicStoreBuffer = packed array of TKDT2048DE_Source;
     PKDT2048DEyanmicStoreBuffer = ^TKDT2048DEyanmicStoreBuffer;
 
     PKDT2048DE_Node = ^TKDT2048DE_Node;
@@ -8234,7 +8913,7 @@ type
     KDStoreBuff: TKDT2048DEyanmicStoreBuffer;
     KDBuff     : TKDT2048DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT2048DE_Node;
+    KDNodes    : packed array of PKDT2048DE_Node;
     TestBuff   : TKDT2048DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT2048DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT2048DE_Node;
     function GetData(const index: NativeInt): PKDT2048DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8297,7 +8976,7 @@ type
     TKDT3072DE_Vec = array [0 .. KDT3072DE_Axis - 1] of TKDT3072DE_VecType;
     PKDT3072DE_Vec = ^TKDT3072DE_Vec;
 
-    TKDT3072DE_DynamicVecBuffer = array of TKDT3072DE_Vec;
+    TKDT3072DE_DynamicVecBuffer = packed array of TKDT3072DE_Vec;
     PKDT3072DE_DynamicVecBuffer = ^TKDT3072DE_DynamicVecBuffer;
 
     TKDT3072DE_Source = packed record
@@ -8306,13 +8985,13 @@ type
     end;
 
     PKDT3072DE_Source       = ^TKDT3072DE_Source;
-    TKDT3072DE_SourceBuffer = array [0 .. 0] of PKDT3072DE_Source;
+    TKDT3072DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT3072DE_Source) - 1] of PKDT3072DE_Source;
     PKDT3072DE_SourceBuffer = ^TKDT3072DE_SourceBuffer;
 
-    TKDT3072DEyanmicSourceBuffer = array of PKDT3072DE_Source;
+    TKDT3072DEyanmicSourceBuffer = packed array of PKDT3072DE_Source;
     PKDT3072DEyanmicSourceBuffer = ^TKDT3072DEyanmicSourceBuffer;
 
-    TKDT3072DEyanmicStoreBuffer = array of TKDT3072DE_Source;
+    TKDT3072DEyanmicStoreBuffer = packed array of TKDT3072DE_Source;
     PKDT3072DEyanmicStoreBuffer = ^TKDT3072DEyanmicStoreBuffer;
 
     PKDT3072DE_Node = ^TKDT3072DE_Node;
@@ -8329,7 +9008,7 @@ type
     KDStoreBuff: TKDT3072DEyanmicStoreBuffer;
     KDBuff     : TKDT3072DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT3072DE_Node;
+    KDNodes    : packed array of PKDT3072DE_Node;
     TestBuff   : TKDT3072DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT3072DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT3072DE_Node;
     function GetData(const index: NativeInt): PKDT3072DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8392,7 +9071,7 @@ type
     TKDT3088DE_Vec = array [0 .. KDT3088DE_Axis - 1] of TKDT3088DE_VecType;
     PKDT3088DE_Vec = ^TKDT3088DE_Vec;
 
-    TKDT3088DE_DynamicVecBuffer = array of TKDT3088DE_Vec;
+    TKDT3088DE_DynamicVecBuffer = packed array of TKDT3088DE_Vec;
     PKDT3088DE_DynamicVecBuffer = ^TKDT3088DE_DynamicVecBuffer;
 
     TKDT3088DE_Source = packed record
@@ -8401,13 +9080,13 @@ type
     end;
 
     PKDT3088DE_Source       = ^TKDT3088DE_Source;
-    TKDT3088DE_SourceBuffer = array [0 .. 0] of PKDT3088DE_Source;
+    TKDT3088DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT3088DE_Source) - 1] of PKDT3088DE_Source;
     PKDT3088DE_SourceBuffer = ^TKDT3088DE_SourceBuffer;
 
-    TKDT3088DEyanmicSourceBuffer = array of PKDT3088DE_Source;
+    TKDT3088DEyanmicSourceBuffer = packed array of PKDT3088DE_Source;
     PKDT3088DEyanmicSourceBuffer = ^TKDT3088DEyanmicSourceBuffer;
 
-    TKDT3088DEyanmicStoreBuffer = array of TKDT3088DE_Source;
+    TKDT3088DEyanmicStoreBuffer = packed array of TKDT3088DE_Source;
     PKDT3088DEyanmicStoreBuffer = ^TKDT3088DEyanmicStoreBuffer;
 
     PKDT3088DE_Node = ^TKDT3088DE_Node;
@@ -8424,7 +9103,7 @@ type
     KDStoreBuff: TKDT3088DEyanmicStoreBuffer;
     KDBuff     : TKDT3088DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT3088DE_Node;
+    KDNodes    : packed array of PKDT3088DE_Node;
     TestBuff   : TKDT3088DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT3088DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT3088DE_Node;
     function GetData(const index: NativeInt): PKDT3088DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8487,7 +9166,7 @@ type
     TKDT3104DE_Vec = array [0 .. KDT3104DE_Axis - 1] of TKDT3104DE_VecType;
     PKDT3104DE_Vec = ^TKDT3104DE_Vec;
 
-    TKDT3104DE_DynamicVecBuffer = array of TKDT3104DE_Vec;
+    TKDT3104DE_DynamicVecBuffer = packed array of TKDT3104DE_Vec;
     PKDT3104DE_DynamicVecBuffer = ^TKDT3104DE_DynamicVecBuffer;
 
     TKDT3104DE_Source = packed record
@@ -8496,13 +9175,13 @@ type
     end;
 
     PKDT3104DE_Source       = ^TKDT3104DE_Source;
-    TKDT3104DE_SourceBuffer = array [0 .. 0] of PKDT3104DE_Source;
+    TKDT3104DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT3104DE_Source) - 1] of PKDT3104DE_Source;
     PKDT3104DE_SourceBuffer = ^TKDT3104DE_SourceBuffer;
 
-    TKDT3104DEyanmicSourceBuffer = array of PKDT3104DE_Source;
+    TKDT3104DEyanmicSourceBuffer = packed array of PKDT3104DE_Source;
     PKDT3104DEyanmicSourceBuffer = ^TKDT3104DEyanmicSourceBuffer;
 
-    TKDT3104DEyanmicStoreBuffer = array of TKDT3104DE_Source;
+    TKDT3104DEyanmicStoreBuffer = packed array of TKDT3104DE_Source;
     PKDT3104DEyanmicStoreBuffer = ^TKDT3104DEyanmicStoreBuffer;
 
     PKDT3104DE_Node = ^TKDT3104DE_Node;
@@ -8519,7 +9198,7 @@ type
     KDStoreBuff: TKDT3104DEyanmicStoreBuffer;
     KDBuff     : TKDT3104DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT3104DE_Node;
+    KDNodes    : packed array of PKDT3104DE_Node;
     TestBuff   : TKDT3104DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT3104DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT3104DE_Node;
     function GetData(const index: NativeInt): PKDT3104DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8582,7 +9261,7 @@ type
     TKDT4096DE_Vec = array [0 .. KDT4096DE_Axis - 1] of TKDT4096DE_VecType;
     PKDT4096DE_Vec = ^TKDT4096DE_Vec;
 
-    TKDT4096DE_DynamicVecBuffer = array of TKDT4096DE_Vec;
+    TKDT4096DE_DynamicVecBuffer = packed array of TKDT4096DE_Vec;
     PKDT4096DE_DynamicVecBuffer = ^TKDT4096DE_DynamicVecBuffer;
 
     TKDT4096DE_Source = packed record
@@ -8591,13 +9270,13 @@ type
     end;
 
     PKDT4096DE_Source       = ^TKDT4096DE_Source;
-    TKDT4096DE_SourceBuffer = array [0 .. 0] of PKDT4096DE_Source;
+    TKDT4096DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT4096DE_Source) - 1] of PKDT4096DE_Source;
     PKDT4096DE_SourceBuffer = ^TKDT4096DE_SourceBuffer;
 
-    TKDT4096DEyanmicSourceBuffer = array of PKDT4096DE_Source;
+    TKDT4096DEyanmicSourceBuffer = packed array of PKDT4096DE_Source;
     PKDT4096DEyanmicSourceBuffer = ^TKDT4096DEyanmicSourceBuffer;
 
-    TKDT4096DEyanmicStoreBuffer = array of TKDT4096DE_Source;
+    TKDT4096DEyanmicStoreBuffer = packed array of TKDT4096DE_Source;
     PKDT4096DEyanmicStoreBuffer = ^TKDT4096DEyanmicStoreBuffer;
 
     PKDT4096DE_Node = ^TKDT4096DE_Node;
@@ -8614,7 +9293,7 @@ type
     KDStoreBuff: TKDT4096DEyanmicStoreBuffer;
     KDBuff     : TKDT4096DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT4096DE_Node;
+    KDNodes    : packed array of PKDT4096DE_Node;
     TestBuff   : TKDT4096DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT4096DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT4096DE_Node;
     function GetData(const index: NativeInt): PKDT4096DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8677,7 +9356,7 @@ type
     TKDT8192DE_Vec = array [0 .. KDT8192DE_Axis - 1] of TKDT8192DE_VecType;
     PKDT8192DE_Vec = ^TKDT8192DE_Vec;
 
-    TKDT8192DE_DynamicVecBuffer = array of TKDT8192DE_Vec;
+    TKDT8192DE_DynamicVecBuffer = packed array of TKDT8192DE_Vec;
     PKDT8192DE_DynamicVecBuffer = ^TKDT8192DE_DynamicVecBuffer;
 
     TKDT8192DE_Source = packed record
@@ -8686,13 +9365,13 @@ type
     end;
 
     PKDT8192DE_Source       = ^TKDT8192DE_Source;
-    TKDT8192DE_SourceBuffer = array [0 .. 0] of PKDT8192DE_Source;
+    TKDT8192DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT8192DE_Source) - 1] of PKDT8192DE_Source;
     PKDT8192DE_SourceBuffer = ^TKDT8192DE_SourceBuffer;
 
-    TKDT8192DEyanmicSourceBuffer = array of PKDT8192DE_Source;
+    TKDT8192DEyanmicSourceBuffer = packed array of PKDT8192DE_Source;
     PKDT8192DEyanmicSourceBuffer = ^TKDT8192DEyanmicSourceBuffer;
 
-    TKDT8192DEyanmicStoreBuffer = array of TKDT8192DE_Source;
+    TKDT8192DEyanmicStoreBuffer = packed array of TKDT8192DE_Source;
     PKDT8192DEyanmicStoreBuffer = ^TKDT8192DEyanmicStoreBuffer;
 
     PKDT8192DE_Node = ^TKDT8192DE_Node;
@@ -8709,7 +9388,7 @@ type
     KDStoreBuff: TKDT8192DEyanmicStoreBuffer;
     KDBuff     : TKDT8192DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : array of PKDT8192DE_Node;
+    KDNodes    : packed array of PKDT8192DE_Node;
     TestBuff   : TKDT8192DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT8192DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT8192DE_Node;
     function GetData(const index: NativeInt): PKDT8192DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -71384,6 +72063,6852 @@ begin
 end;
 
 
+function TKDT65DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT65DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT65DE_Node;
+  function SortCompare(const p1, p2: PKDT65DE_Source; const Axis: NativeInt): ShortInt;
+  begin
+    if p1^.Buff[Axis] = p2^.Buff[Axis] then
+      begin
+        if p1^.index = p2^.index then
+            Result := 0
+        else if p1^.index < p2^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.Buff[Axis] < p2^.Buff[Axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT65DE_SourceBuffer; l, r: NativeInt; const Axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT65DE_Source;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer^[(l + r) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, Axis) < 0 do
+            inc(i);
+        while SortCompare(SortBuffer^[j], p, Axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, Axis);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  m        : NativeInt;
+  Axis     : NativeInt;
+  kdBuffPtr: PKDT65DE_SourceBuffer;
+  dynBuff  : PKDT65DEyanmicSourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      New(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+    end
+  else
+    begin
+      Axis := Depth mod KDT65DE_Axis;
+      m := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, Axis);
+
+      New(Result);
+      Result^.Parent := nil;
+      Result^.vec := kdBuffPtr^[m];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], m, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[m + 1], PlanCount - (m + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT65DE.GetData(const index: NativeInt): PKDT65DE_Source;
+begin
+  Result := @KDStoreBuff[index];
+end;
+
+constructor TKDT65DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT65DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT65DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT65DE_Node(KDNodes[i]));
+      inc(i);
+    end;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT65DE.StoreBuffPtr: PKDT65DEyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT65DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT65DE_BuildCall);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT65DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT65DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT65DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT65DE_BuildMethod);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT65DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT65DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT65DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT65DE_BuildProc);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT65DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT65DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+{$ENDIF}
+
+
+{ k-means++ clusterization }
+procedure TKDT65DE.BuildKDTreeWithCluster(const inBuff: TKDT65DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j  : NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT65DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT65DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT65DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT65DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT65DE.BuildKDTreeWithCluster(const inBuff: TKDT65DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT65DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT65DE_BuildCall);
+var
+  TempStoreBuff: TKDT65DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT65DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT65DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT65DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT65DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT65DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT65DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT65DE_BuildMethod);
+var
+  TempStoreBuff: TKDT65DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT65DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT65DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT65DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT65DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT65DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT65DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT65DE_BuildProc);
+var
+  TempStoreBuff: TKDT65DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT65DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT65DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT65DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT65DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT65DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$ENDIF FPC}
+
+
+function TKDT65DE.Search(const Buff: TKDT65DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT65DE_Node;
+
+var
+  NearestNeighbour: PKDT65DE_Node;
+
+  function FindParentNode(const BuffPtr: PKDT65DE_Vec; NodePtr: PKDT65DE_Node): PKDT65DE_Node;
+  var
+    Next       : PKDT65DE_Node;
+    Depth, Axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        Axis := Depth mod KDT65DE_Axis;
+        if BuffPtr^[Axis] > Next^.vec^.Buff[Axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT65DE_Node; const BuffPtr: PKDT65DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    Axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := KDT65DEDistance(BuffPtr^, NodePtr^.vec^.Buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.index < NearestNeighbour^.vec^.index) then
+        NearestNeighbour := NodePtr;
+
+    Axis := Depth mod KDT65DE_Axis;
+    Dist := NodePtr^.vec^.Buff[Axis] - BuffPtr^[Axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.vec^.Buff[Axis] > BuffPtr^[Axis] then
+            ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const BuffPtr: PKDT65DE_Vec; const p1, p2: PKDT65DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := KDT65DEDistance(BuffPtr^, p1^.vec^.Buff);
+    d2 := KDT65DEDistance(BuffPtr^, p2^.vec^.Buff);
+    if d1 = d2 then
+      begin
+        if p1^.vec^.index = p2^.vec^.index then
+            Result := 0
+        else if p1^.vec^.index < p2^.vec^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; l, r: NativeInt; const BuffPtr: PKDT65DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT65DE_Node;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer[(l + r) shr 1];
+      repeat
+        while SortCompare(BuffPtr, SortBuffer[i], p) < 0 do
+            inc(i);
+        while SortCompare(BuffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, BuffPtr);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  Parent: PKDT65DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@Buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := KDT65DEDistance(Buff, Parent^.vec^.Buff);
+
+  ScanSubtree(RootNode, @Buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @Buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT65DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT65DE.Search(const Buff: TKDT65DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT65DE_Node;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT65DE.Search(const Buff: TKDT65DE_Vec; var SearchedDistanceMin: Double): PKDT65DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT65DE.Search(const Buff: TKDT65DE_Vec): PKDT65DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter    : NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+procedure TKDT65DE.Search(const inBuff: TKDT65DE_DynamicVecBuffer; var OutBuff: TKDT65DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT65DE_DynamicVecBuffer;
+  outBuffPtr : PKDT65DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT65DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outBuffPtr^[Pass] := p^.vec^.Buff;
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT65DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outBuffPtr^[Pass] := p^.vec^.Buff;
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT65DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.vec^.Buff;
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT65DE.Search(const inBuff: TKDT65DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT65DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT65DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT65DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT65DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT65DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  id := KDT65DE_Axis;
+
+  stream.Write(st, 4);
+  stream.Write(id, 4);
+
+  stream.Write(cnt, 8);
+  stream.Write(KDStoreBuff[0], cnt * SizeOf(TKDT65DE_Source));
+end;
+
+procedure TKDT65DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+  i     : NativeInt;
+begin
+  Clear;
+
+  stream.Read(st, 4);
+  stream.Read(id, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if id <> KDT65DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.Read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+  try
+      stream.Read(KDStoreBuff[0], cnt * SizeOf(TKDT65DE_Source));
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      inc(i);
+    end;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT65DE.SaveToFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(fileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT65DE.LoadFromFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT65DE.PrintNodeTree(const NodePtr: PKDT65DE_Node);
+  procedure DoPrintNode(prefix: string; const p: PKDT65DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT65DEVec(p^.vec^.Buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT65DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT65DEVec(KDStoreBuff[i].Buff)]);
+end;
+
+class function TKDT65DE.KDT65DEVec(const s: string): TKDT65DE_Vec;
+var
+  t          : TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j       : NativeInt;
+begin
+  for i := 0 to KDT65DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            inc(j);
+            if j >= KDT65DE_Axis then
+                break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT65DE.KDT65DEVec(const v: TKDT65DE_Vec): string;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT65DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT65DE.KDT65DEPow(const v: TKDT65DE_VecType): Double;
+begin
+  Result := v * v;
+end;
+
+class function TKDT65DE.KDT65DEDistance(const v1, v2: TKDT65DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT65DE_Axis - 1 do
+      Result := Result + KDT65DEPow(v2[i] - v1[i]);
+end;
+
+procedure TKDT65DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT65DE_Source; const Data: Pointer);
+begin
+  Source.Buff := TestBuff[IndexFor];
+end;
+
+class procedure TKDT65DE.Test;
+var
+  TKDT65DE_Test    : TKDT65DE;
+  t              : TTimeTick;
+  i, j           : NativeInt;
+  TestResultBuff : TKDT65DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex  : TDynamicIndexArray;
+  errored        : Boolean;
+begin
+  errored := False;
+  DoStatusNoLn('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  TKDT65DE_Test := TKDT65DE.Create;
+
+  DoStatusNoLn('...');
+  SetLength(TKDT65DE_Test.TestBuff, 100);
+  for i := 0 to length(TKDT65DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT65DE_Axis - 1 do
+        TKDT65DE_Test.TestBuff[i][j] := umlRandomRangeD(-length(TKDT65DE_Test.TestBuff), length(TKDT65DE_Test.TestBuff));
+
+  DoStatusNoLn('...');
+  {$IFDEF FPC}
+  TKDT65DE_Test.BuildKDTreeM(length(TKDT65DE_Test.TestBuff), nil, @TKDT65DE_Test.Test_BuildM);
+  {$ELSE FPC}
+  TKDT65DE_Test.BuildKDTreeM(length(TKDT65DE_Test.TestBuff), nil, TKDT65DE_Test.Test_BuildM);
+  {$ENDIF FPC}
+  { parallel search test }
+  DoStatusNoLn('...');
+  SetLength(TestResultBuff, length(TKDT65DE_Test.TestBuff));
+  SetLength(TestResultIndex, length(TKDT65DE_Test.TestBuff));
+  TKDT65DE_Test.Search(TKDT65DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if KDT65DEDistance(TKDT65DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        errored := True;
+
+  DoStatusNoLn('...');
+  TKDT65DE_Test.Clear;
+  { kMean test }
+  TKDT65DE_Test.BuildKDTreeWithCluster(TKDT65DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+  { parallel search test }
+  TKDT65DE_Test.Search(TKDT65DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if TestResultIndex[i] <> KMeanOutIndex[i] then
+        errored := True;
+
+  SetLength(TKDT65DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT65DE_Test.Clear;
+
+  if errored then
+      DoStatusNoLn('error!')
+  else
+      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
+  DoStatusNoLn;
+
+  DisposeObject(TKDT65DE_Test);
+end;
+
+
+function TKDT66DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT66DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT66DE_Node;
+  function SortCompare(const p1, p2: PKDT66DE_Source; const Axis: NativeInt): ShortInt;
+  begin
+    if p1^.Buff[Axis] = p2^.Buff[Axis] then
+      begin
+        if p1^.index = p2^.index then
+            Result := 0
+        else if p1^.index < p2^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.Buff[Axis] < p2^.Buff[Axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT66DE_SourceBuffer; l, r: NativeInt; const Axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT66DE_Source;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer^[(l + r) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, Axis) < 0 do
+            inc(i);
+        while SortCompare(SortBuffer^[j], p, Axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, Axis);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  m        : NativeInt;
+  Axis     : NativeInt;
+  kdBuffPtr: PKDT66DE_SourceBuffer;
+  dynBuff  : PKDT66DEyanmicSourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      New(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+    end
+  else
+    begin
+      Axis := Depth mod KDT66DE_Axis;
+      m := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, Axis);
+
+      New(Result);
+      Result^.Parent := nil;
+      Result^.vec := kdBuffPtr^[m];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], m, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[m + 1], PlanCount - (m + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT66DE.GetData(const index: NativeInt): PKDT66DE_Source;
+begin
+  Result := @KDStoreBuff[index];
+end;
+
+constructor TKDT66DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT66DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT66DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT66DE_Node(KDNodes[i]));
+      inc(i);
+    end;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT66DE.StoreBuffPtr: PKDT66DEyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT66DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT66DE_BuildCall);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT66DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT66DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT66DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT66DE_BuildMethod);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT66DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT66DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT66DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT66DE_BuildProc);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT66DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT66DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+{$ENDIF}
+
+
+{ k-means++ clusterization }
+procedure TKDT66DE.BuildKDTreeWithCluster(const inBuff: TKDT66DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j  : NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT66DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT66DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT66DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT66DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT66DE.BuildKDTreeWithCluster(const inBuff: TKDT66DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT66DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT66DE_BuildCall);
+var
+  TempStoreBuff: TKDT66DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT66DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT66DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT66DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT66DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT66DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT66DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT66DE_BuildMethod);
+var
+  TempStoreBuff: TKDT66DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT66DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT66DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT66DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT66DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT66DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT66DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT66DE_BuildProc);
+var
+  TempStoreBuff: TKDT66DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT66DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT66DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT66DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT66DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT66DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$ENDIF FPC}
+
+
+function TKDT66DE.Search(const Buff: TKDT66DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT66DE_Node;
+
+var
+  NearestNeighbour: PKDT66DE_Node;
+
+  function FindParentNode(const BuffPtr: PKDT66DE_Vec; NodePtr: PKDT66DE_Node): PKDT66DE_Node;
+  var
+    Next       : PKDT66DE_Node;
+    Depth, Axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        Axis := Depth mod KDT66DE_Axis;
+        if BuffPtr^[Axis] > Next^.vec^.Buff[Axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT66DE_Node; const BuffPtr: PKDT66DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    Axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := KDT66DEDistance(BuffPtr^, NodePtr^.vec^.Buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.index < NearestNeighbour^.vec^.index) then
+        NearestNeighbour := NodePtr;
+
+    Axis := Depth mod KDT66DE_Axis;
+    Dist := NodePtr^.vec^.Buff[Axis] - BuffPtr^[Axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.vec^.Buff[Axis] > BuffPtr^[Axis] then
+            ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const BuffPtr: PKDT66DE_Vec; const p1, p2: PKDT66DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := KDT66DEDistance(BuffPtr^, p1^.vec^.Buff);
+    d2 := KDT66DEDistance(BuffPtr^, p2^.vec^.Buff);
+    if d1 = d2 then
+      begin
+        if p1^.vec^.index = p2^.vec^.index then
+            Result := 0
+        else if p1^.vec^.index < p2^.vec^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; l, r: NativeInt; const BuffPtr: PKDT66DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT66DE_Node;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer[(l + r) shr 1];
+      repeat
+        while SortCompare(BuffPtr, SortBuffer[i], p) < 0 do
+            inc(i);
+        while SortCompare(BuffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, BuffPtr);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  Parent: PKDT66DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@Buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := KDT66DEDistance(Buff, Parent^.vec^.Buff);
+
+  ScanSubtree(RootNode, @Buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @Buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT66DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT66DE.Search(const Buff: TKDT66DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT66DE_Node;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT66DE.Search(const Buff: TKDT66DE_Vec; var SearchedDistanceMin: Double): PKDT66DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT66DE.Search(const Buff: TKDT66DE_Vec): PKDT66DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter    : NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+procedure TKDT66DE.Search(const inBuff: TKDT66DE_DynamicVecBuffer; var OutBuff: TKDT66DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT66DE_DynamicVecBuffer;
+  outBuffPtr : PKDT66DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT66DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outBuffPtr^[Pass] := p^.vec^.Buff;
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT66DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outBuffPtr^[Pass] := p^.vec^.Buff;
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT66DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.vec^.Buff;
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT66DE.Search(const inBuff: TKDT66DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT66DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT66DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT66DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT66DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT66DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  id := KDT66DE_Axis;
+
+  stream.Write(st, 4);
+  stream.Write(id, 4);
+
+  stream.Write(cnt, 8);
+  stream.Write(KDStoreBuff[0], cnt * SizeOf(TKDT66DE_Source));
+end;
+
+procedure TKDT66DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+  i     : NativeInt;
+begin
+  Clear;
+
+  stream.Read(st, 4);
+  stream.Read(id, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if id <> KDT66DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.Read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+  try
+      stream.Read(KDStoreBuff[0], cnt * SizeOf(TKDT66DE_Source));
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      inc(i);
+    end;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT66DE.SaveToFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(fileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT66DE.LoadFromFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT66DE.PrintNodeTree(const NodePtr: PKDT66DE_Node);
+  procedure DoPrintNode(prefix: string; const p: PKDT66DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT66DEVec(p^.vec^.Buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT66DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT66DEVec(KDStoreBuff[i].Buff)]);
+end;
+
+class function TKDT66DE.KDT66DEVec(const s: string): TKDT66DE_Vec;
+var
+  t          : TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j       : NativeInt;
+begin
+  for i := 0 to KDT66DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            inc(j);
+            if j >= KDT66DE_Axis then
+                break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT66DE.KDT66DEVec(const v: TKDT66DE_Vec): string;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT66DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT66DE.KDT66DEPow(const v: TKDT66DE_VecType): Double;
+begin
+  Result := v * v;
+end;
+
+class function TKDT66DE.KDT66DEDistance(const v1, v2: TKDT66DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT66DE_Axis - 1 do
+      Result := Result + KDT66DEPow(v2[i] - v1[i]);
+end;
+
+procedure TKDT66DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT66DE_Source; const Data: Pointer);
+begin
+  Source.Buff := TestBuff[IndexFor];
+end;
+
+class procedure TKDT66DE.Test;
+var
+  TKDT66DE_Test    : TKDT66DE;
+  t              : TTimeTick;
+  i, j           : NativeInt;
+  TestResultBuff : TKDT66DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex  : TDynamicIndexArray;
+  errored        : Boolean;
+begin
+  errored := False;
+  DoStatusNoLn('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  TKDT66DE_Test := TKDT66DE.Create;
+
+  DoStatusNoLn('...');
+  SetLength(TKDT66DE_Test.TestBuff, 100);
+  for i := 0 to length(TKDT66DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT66DE_Axis - 1 do
+        TKDT66DE_Test.TestBuff[i][j] := umlRandomRangeD(-length(TKDT66DE_Test.TestBuff), length(TKDT66DE_Test.TestBuff));
+
+  DoStatusNoLn('...');
+  {$IFDEF FPC}
+  TKDT66DE_Test.BuildKDTreeM(length(TKDT66DE_Test.TestBuff), nil, @TKDT66DE_Test.Test_BuildM);
+  {$ELSE FPC}
+  TKDT66DE_Test.BuildKDTreeM(length(TKDT66DE_Test.TestBuff), nil, TKDT66DE_Test.Test_BuildM);
+  {$ENDIF FPC}
+  { parallel search test }
+  DoStatusNoLn('...');
+  SetLength(TestResultBuff, length(TKDT66DE_Test.TestBuff));
+  SetLength(TestResultIndex, length(TKDT66DE_Test.TestBuff));
+  TKDT66DE_Test.Search(TKDT66DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if KDT66DEDistance(TKDT66DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        errored := True;
+
+  DoStatusNoLn('...');
+  TKDT66DE_Test.Clear;
+  { kMean test }
+  TKDT66DE_Test.BuildKDTreeWithCluster(TKDT66DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+  { parallel search test }
+  TKDT66DE_Test.Search(TKDT66DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if TestResultIndex[i] <> KMeanOutIndex[i] then
+        errored := True;
+
+  SetLength(TKDT66DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT66DE_Test.Clear;
+
+  if errored then
+      DoStatusNoLn('error!')
+  else
+      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
+  DoStatusNoLn;
+
+  DisposeObject(TKDT66DE_Test);
+end;
+
+
+function TKDT67DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT67DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT67DE_Node;
+  function SortCompare(const p1, p2: PKDT67DE_Source; const Axis: NativeInt): ShortInt;
+  begin
+    if p1^.Buff[Axis] = p2^.Buff[Axis] then
+      begin
+        if p1^.index = p2^.index then
+            Result := 0
+        else if p1^.index < p2^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.Buff[Axis] < p2^.Buff[Axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT67DE_SourceBuffer; l, r: NativeInt; const Axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT67DE_Source;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer^[(l + r) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, Axis) < 0 do
+            inc(i);
+        while SortCompare(SortBuffer^[j], p, Axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, Axis);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  m        : NativeInt;
+  Axis     : NativeInt;
+  kdBuffPtr: PKDT67DE_SourceBuffer;
+  dynBuff  : PKDT67DEyanmicSourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      New(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+    end
+  else
+    begin
+      Axis := Depth mod KDT67DE_Axis;
+      m := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, Axis);
+
+      New(Result);
+      Result^.Parent := nil;
+      Result^.vec := kdBuffPtr^[m];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], m, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[m + 1], PlanCount - (m + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT67DE.GetData(const index: NativeInt): PKDT67DE_Source;
+begin
+  Result := @KDStoreBuff[index];
+end;
+
+constructor TKDT67DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT67DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT67DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT67DE_Node(KDNodes[i]));
+      inc(i);
+    end;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT67DE.StoreBuffPtr: PKDT67DEyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT67DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT67DE_BuildCall);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT67DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT67DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT67DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT67DE_BuildMethod);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT67DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT67DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT67DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT67DE_BuildProc);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT67DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT67DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+{$ENDIF}
+
+
+{ k-means++ clusterization }
+procedure TKDT67DE.BuildKDTreeWithCluster(const inBuff: TKDT67DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j  : NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT67DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT67DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT67DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT67DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT67DE.BuildKDTreeWithCluster(const inBuff: TKDT67DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT67DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT67DE_BuildCall);
+var
+  TempStoreBuff: TKDT67DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT67DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT67DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT67DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT67DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT67DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT67DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT67DE_BuildMethod);
+var
+  TempStoreBuff: TKDT67DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT67DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT67DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT67DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT67DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT67DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT67DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT67DE_BuildProc);
+var
+  TempStoreBuff: TKDT67DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT67DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT67DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT67DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT67DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT67DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$ENDIF FPC}
+
+
+function TKDT67DE.Search(const Buff: TKDT67DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT67DE_Node;
+
+var
+  NearestNeighbour: PKDT67DE_Node;
+
+  function FindParentNode(const BuffPtr: PKDT67DE_Vec; NodePtr: PKDT67DE_Node): PKDT67DE_Node;
+  var
+    Next       : PKDT67DE_Node;
+    Depth, Axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        Axis := Depth mod KDT67DE_Axis;
+        if BuffPtr^[Axis] > Next^.vec^.Buff[Axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT67DE_Node; const BuffPtr: PKDT67DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    Axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := KDT67DEDistance(BuffPtr^, NodePtr^.vec^.Buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.index < NearestNeighbour^.vec^.index) then
+        NearestNeighbour := NodePtr;
+
+    Axis := Depth mod KDT67DE_Axis;
+    Dist := NodePtr^.vec^.Buff[Axis] - BuffPtr^[Axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.vec^.Buff[Axis] > BuffPtr^[Axis] then
+            ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const BuffPtr: PKDT67DE_Vec; const p1, p2: PKDT67DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := KDT67DEDistance(BuffPtr^, p1^.vec^.Buff);
+    d2 := KDT67DEDistance(BuffPtr^, p2^.vec^.Buff);
+    if d1 = d2 then
+      begin
+        if p1^.vec^.index = p2^.vec^.index then
+            Result := 0
+        else if p1^.vec^.index < p2^.vec^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; l, r: NativeInt; const BuffPtr: PKDT67DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT67DE_Node;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer[(l + r) shr 1];
+      repeat
+        while SortCompare(BuffPtr, SortBuffer[i], p) < 0 do
+            inc(i);
+        while SortCompare(BuffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, BuffPtr);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  Parent: PKDT67DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@Buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := KDT67DEDistance(Buff, Parent^.vec^.Buff);
+
+  ScanSubtree(RootNode, @Buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @Buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT67DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT67DE.Search(const Buff: TKDT67DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT67DE_Node;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT67DE.Search(const Buff: TKDT67DE_Vec; var SearchedDistanceMin: Double): PKDT67DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT67DE.Search(const Buff: TKDT67DE_Vec): PKDT67DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter    : NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+procedure TKDT67DE.Search(const inBuff: TKDT67DE_DynamicVecBuffer; var OutBuff: TKDT67DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT67DE_DynamicVecBuffer;
+  outBuffPtr : PKDT67DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT67DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outBuffPtr^[Pass] := p^.vec^.Buff;
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT67DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outBuffPtr^[Pass] := p^.vec^.Buff;
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT67DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.vec^.Buff;
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT67DE.Search(const inBuff: TKDT67DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT67DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT67DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT67DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT67DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT67DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  id := KDT67DE_Axis;
+
+  stream.Write(st, 4);
+  stream.Write(id, 4);
+
+  stream.Write(cnt, 8);
+  stream.Write(KDStoreBuff[0], cnt * SizeOf(TKDT67DE_Source));
+end;
+
+procedure TKDT67DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+  i     : NativeInt;
+begin
+  Clear;
+
+  stream.Read(st, 4);
+  stream.Read(id, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if id <> KDT67DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.Read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+  try
+      stream.Read(KDStoreBuff[0], cnt * SizeOf(TKDT67DE_Source));
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      inc(i);
+    end;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT67DE.SaveToFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(fileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT67DE.LoadFromFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT67DE.PrintNodeTree(const NodePtr: PKDT67DE_Node);
+  procedure DoPrintNode(prefix: string; const p: PKDT67DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT67DEVec(p^.vec^.Buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT67DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT67DEVec(KDStoreBuff[i].Buff)]);
+end;
+
+class function TKDT67DE.KDT67DEVec(const s: string): TKDT67DE_Vec;
+var
+  t          : TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j       : NativeInt;
+begin
+  for i := 0 to KDT67DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            inc(j);
+            if j >= KDT67DE_Axis then
+                break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT67DE.KDT67DEVec(const v: TKDT67DE_Vec): string;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT67DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT67DE.KDT67DEPow(const v: TKDT67DE_VecType): Double;
+begin
+  Result := v * v;
+end;
+
+class function TKDT67DE.KDT67DEDistance(const v1, v2: TKDT67DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT67DE_Axis - 1 do
+      Result := Result + KDT67DEPow(v2[i] - v1[i]);
+end;
+
+procedure TKDT67DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT67DE_Source; const Data: Pointer);
+begin
+  Source.Buff := TestBuff[IndexFor];
+end;
+
+class procedure TKDT67DE.Test;
+var
+  TKDT67DE_Test    : TKDT67DE;
+  t              : TTimeTick;
+  i, j           : NativeInt;
+  TestResultBuff : TKDT67DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex  : TDynamicIndexArray;
+  errored        : Boolean;
+begin
+  errored := False;
+  DoStatusNoLn('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  TKDT67DE_Test := TKDT67DE.Create;
+
+  DoStatusNoLn('...');
+  SetLength(TKDT67DE_Test.TestBuff, 100);
+  for i := 0 to length(TKDT67DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT67DE_Axis - 1 do
+        TKDT67DE_Test.TestBuff[i][j] := umlRandomRangeD(-length(TKDT67DE_Test.TestBuff), length(TKDT67DE_Test.TestBuff));
+
+  DoStatusNoLn('...');
+  {$IFDEF FPC}
+  TKDT67DE_Test.BuildKDTreeM(length(TKDT67DE_Test.TestBuff), nil, @TKDT67DE_Test.Test_BuildM);
+  {$ELSE FPC}
+  TKDT67DE_Test.BuildKDTreeM(length(TKDT67DE_Test.TestBuff), nil, TKDT67DE_Test.Test_BuildM);
+  {$ENDIF FPC}
+  { parallel search test }
+  DoStatusNoLn('...');
+  SetLength(TestResultBuff, length(TKDT67DE_Test.TestBuff));
+  SetLength(TestResultIndex, length(TKDT67DE_Test.TestBuff));
+  TKDT67DE_Test.Search(TKDT67DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if KDT67DEDistance(TKDT67DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        errored := True;
+
+  DoStatusNoLn('...');
+  TKDT67DE_Test.Clear;
+  { kMean test }
+  TKDT67DE_Test.BuildKDTreeWithCluster(TKDT67DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+  { parallel search test }
+  TKDT67DE_Test.Search(TKDT67DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if TestResultIndex[i] <> KMeanOutIndex[i] then
+        errored := True;
+
+  SetLength(TKDT67DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT67DE_Test.Clear;
+
+  if errored then
+      DoStatusNoLn('error!')
+  else
+      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
+  DoStatusNoLn;
+
+  DisposeObject(TKDT67DE_Test);
+end;
+
+
+function TKDT68DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT68DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT68DE_Node;
+  function SortCompare(const p1, p2: PKDT68DE_Source; const Axis: NativeInt): ShortInt;
+  begin
+    if p1^.Buff[Axis] = p2^.Buff[Axis] then
+      begin
+        if p1^.index = p2^.index then
+            Result := 0
+        else if p1^.index < p2^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.Buff[Axis] < p2^.Buff[Axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT68DE_SourceBuffer; l, r: NativeInt; const Axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT68DE_Source;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer^[(l + r) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, Axis) < 0 do
+            inc(i);
+        while SortCompare(SortBuffer^[j], p, Axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, Axis);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  m        : NativeInt;
+  Axis     : NativeInt;
+  kdBuffPtr: PKDT68DE_SourceBuffer;
+  dynBuff  : PKDT68DEyanmicSourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      New(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+    end
+  else
+    begin
+      Axis := Depth mod KDT68DE_Axis;
+      m := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, Axis);
+
+      New(Result);
+      Result^.Parent := nil;
+      Result^.vec := kdBuffPtr^[m];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], m, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[m + 1], PlanCount - (m + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT68DE.GetData(const index: NativeInt): PKDT68DE_Source;
+begin
+  Result := @KDStoreBuff[index];
+end;
+
+constructor TKDT68DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT68DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT68DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT68DE_Node(KDNodes[i]));
+      inc(i);
+    end;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT68DE.StoreBuffPtr: PKDT68DEyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT68DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT68DE_BuildCall);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT68DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT68DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT68DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT68DE_BuildMethod);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT68DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT68DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT68DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT68DE_BuildProc);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT68DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT68DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+{$ENDIF}
+
+
+{ k-means++ clusterization }
+procedure TKDT68DE.BuildKDTreeWithCluster(const inBuff: TKDT68DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j  : NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT68DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT68DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT68DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT68DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT68DE.BuildKDTreeWithCluster(const inBuff: TKDT68DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT68DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT68DE_BuildCall);
+var
+  TempStoreBuff: TKDT68DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT68DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT68DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT68DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT68DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT68DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT68DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT68DE_BuildMethod);
+var
+  TempStoreBuff: TKDT68DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT68DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT68DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT68DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT68DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT68DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT68DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT68DE_BuildProc);
+var
+  TempStoreBuff: TKDT68DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT68DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT68DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT68DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT68DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT68DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$ENDIF FPC}
+
+
+function TKDT68DE.Search(const Buff: TKDT68DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT68DE_Node;
+
+var
+  NearestNeighbour: PKDT68DE_Node;
+
+  function FindParentNode(const BuffPtr: PKDT68DE_Vec; NodePtr: PKDT68DE_Node): PKDT68DE_Node;
+  var
+    Next       : PKDT68DE_Node;
+    Depth, Axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        Axis := Depth mod KDT68DE_Axis;
+        if BuffPtr^[Axis] > Next^.vec^.Buff[Axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT68DE_Node; const BuffPtr: PKDT68DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    Axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := KDT68DEDistance(BuffPtr^, NodePtr^.vec^.Buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.index < NearestNeighbour^.vec^.index) then
+        NearestNeighbour := NodePtr;
+
+    Axis := Depth mod KDT68DE_Axis;
+    Dist := NodePtr^.vec^.Buff[Axis] - BuffPtr^[Axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.vec^.Buff[Axis] > BuffPtr^[Axis] then
+            ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const BuffPtr: PKDT68DE_Vec; const p1, p2: PKDT68DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := KDT68DEDistance(BuffPtr^, p1^.vec^.Buff);
+    d2 := KDT68DEDistance(BuffPtr^, p2^.vec^.Buff);
+    if d1 = d2 then
+      begin
+        if p1^.vec^.index = p2^.vec^.index then
+            Result := 0
+        else if p1^.vec^.index < p2^.vec^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; l, r: NativeInt; const BuffPtr: PKDT68DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT68DE_Node;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer[(l + r) shr 1];
+      repeat
+        while SortCompare(BuffPtr, SortBuffer[i], p) < 0 do
+            inc(i);
+        while SortCompare(BuffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, BuffPtr);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  Parent: PKDT68DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@Buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := KDT68DEDistance(Buff, Parent^.vec^.Buff);
+
+  ScanSubtree(RootNode, @Buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @Buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT68DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT68DE.Search(const Buff: TKDT68DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT68DE_Node;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT68DE.Search(const Buff: TKDT68DE_Vec; var SearchedDistanceMin: Double): PKDT68DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT68DE.Search(const Buff: TKDT68DE_Vec): PKDT68DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter    : NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+procedure TKDT68DE.Search(const inBuff: TKDT68DE_DynamicVecBuffer; var OutBuff: TKDT68DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT68DE_DynamicVecBuffer;
+  outBuffPtr : PKDT68DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT68DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outBuffPtr^[Pass] := p^.vec^.Buff;
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT68DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outBuffPtr^[Pass] := p^.vec^.Buff;
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT68DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.vec^.Buff;
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT68DE.Search(const inBuff: TKDT68DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT68DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT68DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT68DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT68DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT68DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  id := KDT68DE_Axis;
+
+  stream.Write(st, 4);
+  stream.Write(id, 4);
+
+  stream.Write(cnt, 8);
+  stream.Write(KDStoreBuff[0], cnt * SizeOf(TKDT68DE_Source));
+end;
+
+procedure TKDT68DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+  i     : NativeInt;
+begin
+  Clear;
+
+  stream.Read(st, 4);
+  stream.Read(id, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if id <> KDT68DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.Read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+  try
+      stream.Read(KDStoreBuff[0], cnt * SizeOf(TKDT68DE_Source));
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      inc(i);
+    end;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT68DE.SaveToFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(fileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT68DE.LoadFromFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT68DE.PrintNodeTree(const NodePtr: PKDT68DE_Node);
+  procedure DoPrintNode(prefix: string; const p: PKDT68DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT68DEVec(p^.vec^.Buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT68DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT68DEVec(KDStoreBuff[i].Buff)]);
+end;
+
+class function TKDT68DE.KDT68DEVec(const s: string): TKDT68DE_Vec;
+var
+  t          : TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j       : NativeInt;
+begin
+  for i := 0 to KDT68DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            inc(j);
+            if j >= KDT68DE_Axis then
+                break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT68DE.KDT68DEVec(const v: TKDT68DE_Vec): string;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT68DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT68DE.KDT68DEPow(const v: TKDT68DE_VecType): Double;
+begin
+  Result := v * v;
+end;
+
+class function TKDT68DE.KDT68DEDistance(const v1, v2: TKDT68DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT68DE_Axis - 1 do
+      Result := Result + KDT68DEPow(v2[i] - v1[i]);
+end;
+
+procedure TKDT68DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT68DE_Source; const Data: Pointer);
+begin
+  Source.Buff := TestBuff[IndexFor];
+end;
+
+class procedure TKDT68DE.Test;
+var
+  TKDT68DE_Test    : TKDT68DE;
+  t              : TTimeTick;
+  i, j           : NativeInt;
+  TestResultBuff : TKDT68DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex  : TDynamicIndexArray;
+  errored        : Boolean;
+begin
+  errored := False;
+  DoStatusNoLn('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  TKDT68DE_Test := TKDT68DE.Create;
+
+  DoStatusNoLn('...');
+  SetLength(TKDT68DE_Test.TestBuff, 100);
+  for i := 0 to length(TKDT68DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT68DE_Axis - 1 do
+        TKDT68DE_Test.TestBuff[i][j] := umlRandomRangeD(-length(TKDT68DE_Test.TestBuff), length(TKDT68DE_Test.TestBuff));
+
+  DoStatusNoLn('...');
+  {$IFDEF FPC}
+  TKDT68DE_Test.BuildKDTreeM(length(TKDT68DE_Test.TestBuff), nil, @TKDT68DE_Test.Test_BuildM);
+  {$ELSE FPC}
+  TKDT68DE_Test.BuildKDTreeM(length(TKDT68DE_Test.TestBuff), nil, TKDT68DE_Test.Test_BuildM);
+  {$ENDIF FPC}
+  { parallel search test }
+  DoStatusNoLn('...');
+  SetLength(TestResultBuff, length(TKDT68DE_Test.TestBuff));
+  SetLength(TestResultIndex, length(TKDT68DE_Test.TestBuff));
+  TKDT68DE_Test.Search(TKDT68DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if KDT68DEDistance(TKDT68DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        errored := True;
+
+  DoStatusNoLn('...');
+  TKDT68DE_Test.Clear;
+  { kMean test }
+  TKDT68DE_Test.BuildKDTreeWithCluster(TKDT68DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+  { parallel search test }
+  TKDT68DE_Test.Search(TKDT68DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if TestResultIndex[i] <> KMeanOutIndex[i] then
+        errored := True;
+
+  SetLength(TKDT68DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT68DE_Test.Clear;
+
+  if errored then
+      DoStatusNoLn('error!')
+  else
+      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
+  DoStatusNoLn;
+
+  DisposeObject(TKDT68DE_Test);
+end;
+
+
+function TKDT69DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT69DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT69DE_Node;
+  function SortCompare(const p1, p2: PKDT69DE_Source; const Axis: NativeInt): ShortInt;
+  begin
+    if p1^.Buff[Axis] = p2^.Buff[Axis] then
+      begin
+        if p1^.index = p2^.index then
+            Result := 0
+        else if p1^.index < p2^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.Buff[Axis] < p2^.Buff[Axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT69DE_SourceBuffer; l, r: NativeInt; const Axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT69DE_Source;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer^[(l + r) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, Axis) < 0 do
+            inc(i);
+        while SortCompare(SortBuffer^[j], p, Axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, Axis);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  m        : NativeInt;
+  Axis     : NativeInt;
+  kdBuffPtr: PKDT69DE_SourceBuffer;
+  dynBuff  : PKDT69DEyanmicSourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      New(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+    end
+  else
+    begin
+      Axis := Depth mod KDT69DE_Axis;
+      m := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, Axis);
+
+      New(Result);
+      Result^.Parent := nil;
+      Result^.vec := kdBuffPtr^[m];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], m, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[m + 1], PlanCount - (m + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT69DE.GetData(const index: NativeInt): PKDT69DE_Source;
+begin
+  Result := @KDStoreBuff[index];
+end;
+
+constructor TKDT69DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT69DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT69DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT69DE_Node(KDNodes[i]));
+      inc(i);
+    end;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT69DE.StoreBuffPtr: PKDT69DEyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT69DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT69DE_BuildCall);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT69DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT69DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT69DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT69DE_BuildMethod);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT69DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT69DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT69DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT69DE_BuildProc);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT69DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT69DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+{$ENDIF}
+
+
+{ k-means++ clusterization }
+procedure TKDT69DE.BuildKDTreeWithCluster(const inBuff: TKDT69DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j  : NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT69DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT69DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT69DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT69DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT69DE.BuildKDTreeWithCluster(const inBuff: TKDT69DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT69DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT69DE_BuildCall);
+var
+  TempStoreBuff: TKDT69DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT69DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT69DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT69DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT69DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT69DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT69DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT69DE_BuildMethod);
+var
+  TempStoreBuff: TKDT69DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT69DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT69DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT69DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT69DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT69DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT69DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT69DE_BuildProc);
+var
+  TempStoreBuff: TKDT69DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT69DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT69DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT69DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT69DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT69DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$ENDIF FPC}
+
+
+function TKDT69DE.Search(const Buff: TKDT69DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT69DE_Node;
+
+var
+  NearestNeighbour: PKDT69DE_Node;
+
+  function FindParentNode(const BuffPtr: PKDT69DE_Vec; NodePtr: PKDT69DE_Node): PKDT69DE_Node;
+  var
+    Next       : PKDT69DE_Node;
+    Depth, Axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        Axis := Depth mod KDT69DE_Axis;
+        if BuffPtr^[Axis] > Next^.vec^.Buff[Axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT69DE_Node; const BuffPtr: PKDT69DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    Axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := KDT69DEDistance(BuffPtr^, NodePtr^.vec^.Buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.index < NearestNeighbour^.vec^.index) then
+        NearestNeighbour := NodePtr;
+
+    Axis := Depth mod KDT69DE_Axis;
+    Dist := NodePtr^.vec^.Buff[Axis] - BuffPtr^[Axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.vec^.Buff[Axis] > BuffPtr^[Axis] then
+            ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const BuffPtr: PKDT69DE_Vec; const p1, p2: PKDT69DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := KDT69DEDistance(BuffPtr^, p1^.vec^.Buff);
+    d2 := KDT69DEDistance(BuffPtr^, p2^.vec^.Buff);
+    if d1 = d2 then
+      begin
+        if p1^.vec^.index = p2^.vec^.index then
+            Result := 0
+        else if p1^.vec^.index < p2^.vec^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; l, r: NativeInt; const BuffPtr: PKDT69DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT69DE_Node;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer[(l + r) shr 1];
+      repeat
+        while SortCompare(BuffPtr, SortBuffer[i], p) < 0 do
+            inc(i);
+        while SortCompare(BuffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, BuffPtr);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  Parent: PKDT69DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@Buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := KDT69DEDistance(Buff, Parent^.vec^.Buff);
+
+  ScanSubtree(RootNode, @Buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @Buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT69DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT69DE.Search(const Buff: TKDT69DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT69DE_Node;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT69DE.Search(const Buff: TKDT69DE_Vec; var SearchedDistanceMin: Double): PKDT69DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT69DE.Search(const Buff: TKDT69DE_Vec): PKDT69DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter    : NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+procedure TKDT69DE.Search(const inBuff: TKDT69DE_DynamicVecBuffer; var OutBuff: TKDT69DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT69DE_DynamicVecBuffer;
+  outBuffPtr : PKDT69DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT69DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outBuffPtr^[Pass] := p^.vec^.Buff;
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT69DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outBuffPtr^[Pass] := p^.vec^.Buff;
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT69DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.vec^.Buff;
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT69DE.Search(const inBuff: TKDT69DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT69DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT69DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT69DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT69DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT69DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  id := KDT69DE_Axis;
+
+  stream.Write(st, 4);
+  stream.Write(id, 4);
+
+  stream.Write(cnt, 8);
+  stream.Write(KDStoreBuff[0], cnt * SizeOf(TKDT69DE_Source));
+end;
+
+procedure TKDT69DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+  i     : NativeInt;
+begin
+  Clear;
+
+  stream.Read(st, 4);
+  stream.Read(id, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if id <> KDT69DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.Read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+  try
+      stream.Read(KDStoreBuff[0], cnt * SizeOf(TKDT69DE_Source));
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      inc(i);
+    end;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT69DE.SaveToFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(fileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT69DE.LoadFromFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT69DE.PrintNodeTree(const NodePtr: PKDT69DE_Node);
+  procedure DoPrintNode(prefix: string; const p: PKDT69DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT69DEVec(p^.vec^.Buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT69DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT69DEVec(KDStoreBuff[i].Buff)]);
+end;
+
+class function TKDT69DE.KDT69DEVec(const s: string): TKDT69DE_Vec;
+var
+  t          : TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j       : NativeInt;
+begin
+  for i := 0 to KDT69DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            inc(j);
+            if j >= KDT69DE_Axis then
+                break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT69DE.KDT69DEVec(const v: TKDT69DE_Vec): string;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT69DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT69DE.KDT69DEPow(const v: TKDT69DE_VecType): Double;
+begin
+  Result := v * v;
+end;
+
+class function TKDT69DE.KDT69DEDistance(const v1, v2: TKDT69DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT69DE_Axis - 1 do
+      Result := Result + KDT69DEPow(v2[i] - v1[i]);
+end;
+
+procedure TKDT69DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT69DE_Source; const Data: Pointer);
+begin
+  Source.Buff := TestBuff[IndexFor];
+end;
+
+class procedure TKDT69DE.Test;
+var
+  TKDT69DE_Test    : TKDT69DE;
+  t              : TTimeTick;
+  i, j           : NativeInt;
+  TestResultBuff : TKDT69DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex  : TDynamicIndexArray;
+  errored        : Boolean;
+begin
+  errored := False;
+  DoStatusNoLn('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  TKDT69DE_Test := TKDT69DE.Create;
+
+  DoStatusNoLn('...');
+  SetLength(TKDT69DE_Test.TestBuff, 100);
+  for i := 0 to length(TKDT69DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT69DE_Axis - 1 do
+        TKDT69DE_Test.TestBuff[i][j] := umlRandomRangeD(-length(TKDT69DE_Test.TestBuff), length(TKDT69DE_Test.TestBuff));
+
+  DoStatusNoLn('...');
+  {$IFDEF FPC}
+  TKDT69DE_Test.BuildKDTreeM(length(TKDT69DE_Test.TestBuff), nil, @TKDT69DE_Test.Test_BuildM);
+  {$ELSE FPC}
+  TKDT69DE_Test.BuildKDTreeM(length(TKDT69DE_Test.TestBuff), nil, TKDT69DE_Test.Test_BuildM);
+  {$ENDIF FPC}
+  { parallel search test }
+  DoStatusNoLn('...');
+  SetLength(TestResultBuff, length(TKDT69DE_Test.TestBuff));
+  SetLength(TestResultIndex, length(TKDT69DE_Test.TestBuff));
+  TKDT69DE_Test.Search(TKDT69DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if KDT69DEDistance(TKDT69DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        errored := True;
+
+  DoStatusNoLn('...');
+  TKDT69DE_Test.Clear;
+  { kMean test }
+  TKDT69DE_Test.BuildKDTreeWithCluster(TKDT69DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+  { parallel search test }
+  TKDT69DE_Test.Search(TKDT69DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if TestResultIndex[i] <> KMeanOutIndex[i] then
+        errored := True;
+
+  SetLength(TKDT69DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT69DE_Test.Clear;
+
+  if errored then
+      DoStatusNoLn('error!')
+  else
+      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
+  DoStatusNoLn;
+
+  DisposeObject(TKDT69DE_Test);
+end;
+
+
+function TKDT70DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT70DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT70DE_Node;
+  function SortCompare(const p1, p2: PKDT70DE_Source; const Axis: NativeInt): ShortInt;
+  begin
+    if p1^.Buff[Axis] = p2^.Buff[Axis] then
+      begin
+        if p1^.index = p2^.index then
+            Result := 0
+        else if p1^.index < p2^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.Buff[Axis] < p2^.Buff[Axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT70DE_SourceBuffer; l, r: NativeInt; const Axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT70DE_Source;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer^[(l + r) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, Axis) < 0 do
+            inc(i);
+        while SortCompare(SortBuffer^[j], p, Axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, Axis);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  m        : NativeInt;
+  Axis     : NativeInt;
+  kdBuffPtr: PKDT70DE_SourceBuffer;
+  dynBuff  : PKDT70DEyanmicSourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      New(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+    end
+  else
+    begin
+      Axis := Depth mod KDT70DE_Axis;
+      m := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, Axis);
+
+      New(Result);
+      Result^.Parent := nil;
+      Result^.vec := kdBuffPtr^[m];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], m, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[m + 1], PlanCount - (m + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT70DE.GetData(const index: NativeInt): PKDT70DE_Source;
+begin
+  Result := @KDStoreBuff[index];
+end;
+
+constructor TKDT70DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT70DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT70DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT70DE_Node(KDNodes[i]));
+      inc(i);
+    end;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT70DE.StoreBuffPtr: PKDT70DEyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT70DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT70DE_BuildCall);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT70DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT70DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT70DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT70DE_BuildMethod);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT70DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT70DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT70DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT70DE_BuildProc);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT70DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT70DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+{$ENDIF}
+
+
+{ k-means++ clusterization }
+procedure TKDT70DE.BuildKDTreeWithCluster(const inBuff: TKDT70DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j  : NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT70DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT70DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT70DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT70DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT70DE.BuildKDTreeWithCluster(const inBuff: TKDT70DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT70DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT70DE_BuildCall);
+var
+  TempStoreBuff: TKDT70DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT70DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT70DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT70DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT70DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT70DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT70DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT70DE_BuildMethod);
+var
+  TempStoreBuff: TKDT70DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT70DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT70DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT70DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT70DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT70DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT70DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT70DE_BuildProc);
+var
+  TempStoreBuff: TKDT70DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT70DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT70DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT70DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT70DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT70DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$ENDIF FPC}
+
+
+function TKDT70DE.Search(const Buff: TKDT70DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT70DE_Node;
+
+var
+  NearestNeighbour: PKDT70DE_Node;
+
+  function FindParentNode(const BuffPtr: PKDT70DE_Vec; NodePtr: PKDT70DE_Node): PKDT70DE_Node;
+  var
+    Next       : PKDT70DE_Node;
+    Depth, Axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        Axis := Depth mod KDT70DE_Axis;
+        if BuffPtr^[Axis] > Next^.vec^.Buff[Axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT70DE_Node; const BuffPtr: PKDT70DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    Axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := KDT70DEDistance(BuffPtr^, NodePtr^.vec^.Buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.index < NearestNeighbour^.vec^.index) then
+        NearestNeighbour := NodePtr;
+
+    Axis := Depth mod KDT70DE_Axis;
+    Dist := NodePtr^.vec^.Buff[Axis] - BuffPtr^[Axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.vec^.Buff[Axis] > BuffPtr^[Axis] then
+            ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const BuffPtr: PKDT70DE_Vec; const p1, p2: PKDT70DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := KDT70DEDistance(BuffPtr^, p1^.vec^.Buff);
+    d2 := KDT70DEDistance(BuffPtr^, p2^.vec^.Buff);
+    if d1 = d2 then
+      begin
+        if p1^.vec^.index = p2^.vec^.index then
+            Result := 0
+        else if p1^.vec^.index < p2^.vec^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; l, r: NativeInt; const BuffPtr: PKDT70DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT70DE_Node;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer[(l + r) shr 1];
+      repeat
+        while SortCompare(BuffPtr, SortBuffer[i], p) < 0 do
+            inc(i);
+        while SortCompare(BuffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, BuffPtr);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  Parent: PKDT70DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@Buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := KDT70DEDistance(Buff, Parent^.vec^.Buff);
+
+  ScanSubtree(RootNode, @Buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @Buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT70DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT70DE.Search(const Buff: TKDT70DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT70DE_Node;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT70DE.Search(const Buff: TKDT70DE_Vec; var SearchedDistanceMin: Double): PKDT70DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT70DE.Search(const Buff: TKDT70DE_Vec): PKDT70DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter    : NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+procedure TKDT70DE.Search(const inBuff: TKDT70DE_DynamicVecBuffer; var OutBuff: TKDT70DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT70DE_DynamicVecBuffer;
+  outBuffPtr : PKDT70DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT70DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outBuffPtr^[Pass] := p^.vec^.Buff;
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT70DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outBuffPtr^[Pass] := p^.vec^.Buff;
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT70DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.vec^.Buff;
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT70DE.Search(const inBuff: TKDT70DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT70DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT70DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT70DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT70DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT70DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  id := KDT70DE_Axis;
+
+  stream.Write(st, 4);
+  stream.Write(id, 4);
+
+  stream.Write(cnt, 8);
+  stream.Write(KDStoreBuff[0], cnt * SizeOf(TKDT70DE_Source));
+end;
+
+procedure TKDT70DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+  i     : NativeInt;
+begin
+  Clear;
+
+  stream.Read(st, 4);
+  stream.Read(id, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if id <> KDT70DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.Read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+  try
+      stream.Read(KDStoreBuff[0], cnt * SizeOf(TKDT70DE_Source));
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      inc(i);
+    end;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT70DE.SaveToFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(fileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT70DE.LoadFromFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT70DE.PrintNodeTree(const NodePtr: PKDT70DE_Node);
+  procedure DoPrintNode(prefix: string; const p: PKDT70DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT70DEVec(p^.vec^.Buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT70DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT70DEVec(KDStoreBuff[i].Buff)]);
+end;
+
+class function TKDT70DE.KDT70DEVec(const s: string): TKDT70DE_Vec;
+var
+  t          : TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j       : NativeInt;
+begin
+  for i := 0 to KDT70DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            inc(j);
+            if j >= KDT70DE_Axis then
+                break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT70DE.KDT70DEVec(const v: TKDT70DE_Vec): string;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT70DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT70DE.KDT70DEPow(const v: TKDT70DE_VecType): Double;
+begin
+  Result := v * v;
+end;
+
+class function TKDT70DE.KDT70DEDistance(const v1, v2: TKDT70DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT70DE_Axis - 1 do
+      Result := Result + KDT70DEPow(v2[i] - v1[i]);
+end;
+
+procedure TKDT70DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT70DE_Source; const Data: Pointer);
+begin
+  Source.Buff := TestBuff[IndexFor];
+end;
+
+class procedure TKDT70DE.Test;
+var
+  TKDT70DE_Test    : TKDT70DE;
+  t              : TTimeTick;
+  i, j           : NativeInt;
+  TestResultBuff : TKDT70DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex  : TDynamicIndexArray;
+  errored        : Boolean;
+begin
+  errored := False;
+  DoStatusNoLn('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  TKDT70DE_Test := TKDT70DE.Create;
+
+  DoStatusNoLn('...');
+  SetLength(TKDT70DE_Test.TestBuff, 100);
+  for i := 0 to length(TKDT70DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT70DE_Axis - 1 do
+        TKDT70DE_Test.TestBuff[i][j] := umlRandomRangeD(-length(TKDT70DE_Test.TestBuff), length(TKDT70DE_Test.TestBuff));
+
+  DoStatusNoLn('...');
+  {$IFDEF FPC}
+  TKDT70DE_Test.BuildKDTreeM(length(TKDT70DE_Test.TestBuff), nil, @TKDT70DE_Test.Test_BuildM);
+  {$ELSE FPC}
+  TKDT70DE_Test.BuildKDTreeM(length(TKDT70DE_Test.TestBuff), nil, TKDT70DE_Test.Test_BuildM);
+  {$ENDIF FPC}
+  { parallel search test }
+  DoStatusNoLn('...');
+  SetLength(TestResultBuff, length(TKDT70DE_Test.TestBuff));
+  SetLength(TestResultIndex, length(TKDT70DE_Test.TestBuff));
+  TKDT70DE_Test.Search(TKDT70DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if KDT70DEDistance(TKDT70DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        errored := True;
+
+  DoStatusNoLn('...');
+  TKDT70DE_Test.Clear;
+  { kMean test }
+  TKDT70DE_Test.BuildKDTreeWithCluster(TKDT70DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+  { parallel search test }
+  TKDT70DE_Test.Search(TKDT70DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if TestResultIndex[i] <> KMeanOutIndex[i] then
+        errored := True;
+
+  SetLength(TKDT70DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT70DE_Test.Clear;
+
+  if errored then
+      DoStatusNoLn('error!')
+  else
+      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
+  DoStatusNoLn;
+
+  DisposeObject(TKDT70DE_Test);
+end;
+
+
+function TKDT71DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT71DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT71DE_Node;
+  function SortCompare(const p1, p2: PKDT71DE_Source; const Axis: NativeInt): ShortInt;
+  begin
+    if p1^.Buff[Axis] = p2^.Buff[Axis] then
+      begin
+        if p1^.index = p2^.index then
+            Result := 0
+        else if p1^.index < p2^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.Buff[Axis] < p2^.Buff[Axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT71DE_SourceBuffer; l, r: NativeInt; const Axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT71DE_Source;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer^[(l + r) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, Axis) < 0 do
+            inc(i);
+        while SortCompare(SortBuffer^[j], p, Axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, Axis);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  m        : NativeInt;
+  Axis     : NativeInt;
+  kdBuffPtr: PKDT71DE_SourceBuffer;
+  dynBuff  : PKDT71DEyanmicSourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      New(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+    end
+  else
+    begin
+      Axis := Depth mod KDT71DE_Axis;
+      m := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, Axis);
+
+      New(Result);
+      Result^.Parent := nil;
+      Result^.vec := kdBuffPtr^[m];
+
+      KDNodes[NodeCounter] := Result;
+      inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], m, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[m + 1], PlanCount - (m + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT71DE.GetData(const index: NativeInt): PKDT71DE_Source;
+begin
+  Result := @KDStoreBuff[index];
+end;
+
+constructor TKDT71DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT71DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT71DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT71DE_Node(KDNodes[i]));
+      inc(i);
+    end;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT71DE.StoreBuffPtr: PKDT71DEyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT71DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT71DE_BuildCall);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT71DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT71DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT71DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT71DE_BuildMethod);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT71DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT71DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT71DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT71DE_BuildProc);
+var
+  i, j         : NativeInt;
+  TempStoreBuff: TKDT71DEyanmicStoreBuffer;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].index := i;
+      FillPtrByte(@KDStoreBuff[i].Buff[0], SizeOf(TKDT71DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+{$ENDIF}
+
+
+{ k-means++ clusterization }
+procedure TKDT71DE.BuildKDTreeWithCluster(const inBuff: TKDT71DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j  : NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT71DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT71DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT71DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT71DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT71DE.BuildKDTreeWithCluster(const inBuff: TKDT71DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT71DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT71DE_BuildCall);
+var
+  TempStoreBuff: TKDT71DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT71DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT71DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT71DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT71DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT71DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT71DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT71DE_BuildMethod);
+var
+  TempStoreBuff: TKDT71DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT71DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT71DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT71DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT71DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT71DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$IFNDEF FPC}
+
+
+procedure TKDT71DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT71DE_BuildProc);
+var
+  TempStoreBuff: TKDT71DEyanmicStoreBuffer;
+  Source       : TKMFloat2DArray;
+  KArray       : TKMFloat2DArray;
+  i, j         : NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].index := i;
+      FillPtrByte(@TempStoreBuff[i].Buff[0], SizeOf(TKDT71DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT71DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT71DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].Buff[j];
+
+  if KMeansCluster(Source, KDT71DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].index := i;
+          for j := 0 to KDT71DE_Axis - 1 do
+              KDStoreBuff[i].Buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+{$ENDIF FPC}
+
+
+function TKDT71DE.Search(const Buff: TKDT71DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT71DE_Node;
+
+var
+  NearestNeighbour: PKDT71DE_Node;
+
+  function FindParentNode(const BuffPtr: PKDT71DE_Vec; NodePtr: PKDT71DE_Node): PKDT71DE_Node;
+  var
+    Next       : PKDT71DE_Node;
+    Depth, Axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        Axis := Depth mod KDT71DE_Axis;
+        if BuffPtr^[Axis] > Next^.vec^.Buff[Axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT71DE_Node; const BuffPtr: PKDT71DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    Axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := KDT71DEDistance(BuffPtr^, NodePtr^.vec^.Buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.index < NearestNeighbour^.vec^.index) then
+        NearestNeighbour := NodePtr;
+
+    Axis := Depth mod KDT71DE_Axis;
+    Dist := NodePtr^.vec^.Buff[Axis] - BuffPtr^[Axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.vec^.Buff[Axis] > BuffPtr^[Axis] then
+            ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, BuffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, BuffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const BuffPtr: PKDT71DE_Vec; const p1, p2: PKDT71DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := KDT71DEDistance(BuffPtr^, p1^.vec^.Buff);
+    d2 := KDT71DEDistance(BuffPtr^, p2^.vec^.Buff);
+    if d1 = d2 then
+      begin
+        if p1^.vec^.index = p2^.vec^.index then
+            Result := 0
+        else if p1^.vec^.index < p2^.vec^.index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; l, r: NativeInt; const BuffPtr: PKDT71DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT71DE_Node;
+  begin
+    repeat
+      i := l;
+      j := r;
+      p := SortBuffer[(l + r) shr 1];
+      repeat
+        while SortCompare(BuffPtr, SortBuffer[i], p) < 0 do
+            inc(i);
+        while SortCompare(BuffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if l < j then
+          InternalSort(SortBuffer, l, j, BuffPtr);
+      l := i;
+    until i >= r;
+  end;
+
+var
+  Parent: PKDT71DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@Buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := KDT71DEDistance(Buff, Parent^.vec^.Buff);
+
+  ScanSubtree(RootNode, @Buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @Buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT71DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT71DE.Search(const Buff: TKDT71DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT71DE_Node;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT71DE.Search(const Buff: TKDT71DE_Vec; var SearchedDistanceMin: Double): PKDT71DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT71DE.Search(const Buff: TKDT71DE_Vec): PKDT71DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter    : NativeInt;
+begin
+  Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+procedure TKDT71DE.Search(const inBuff: TKDT71DE_DynamicVecBuffer; var OutBuff: TKDT71DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT71DE_DynamicVecBuffer;
+  outBuffPtr : PKDT71DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT71DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outBuffPtr^[Pass] := p^.vec^.Buff;
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT71DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outBuffPtr^[Pass] := p^.vec^.Buff;
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT71DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.vec^.Buff;
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT71DE.Search(const inBuff: TKDT71DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr  : PKDT71DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+  {$IFDEF FPC}
+  procedure FPC_ParallelFor(Pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    p: PKDT71DE_Node;
+  begin
+    p := Search(inBuffPtr^[Pass]);
+    outIndexPtr^[Pass] := p^.vec^.index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  MHGlobalHookEnabled := False;
+  try
+    {$IFDEF FPC}
+    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    {$ELSE FPC}
+    TParallel.For(Int64(0), Int64(length(inBuff) - 1),
+      procedure(Pass: Int64)
+      var
+        p: PKDT71DE_Node;
+      begin
+        p := Search(inBuffPtr^[Pass]);
+        outIndexPtr^[Pass] := p^.vec^.index;
+      end);
+    {$ENDIF FPC}
+  finally
+      MHGlobalHookEnabled := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT71DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.vec^.index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT71DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  id := KDT71DE_Axis;
+
+  stream.Write(st, 4);
+  stream.Write(id, 4);
+
+  stream.Write(cnt, 8);
+  stream.Write(KDStoreBuff[0], cnt * SizeOf(TKDT71DE_Source));
+end;
+
+procedure TKDT71DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt   : Int64;
+  st, id: Integer;
+  i     : NativeInt;
+begin
+  Clear;
+
+  stream.Read(st, 4);
+  stream.Read(id, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if id <> KDT71DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.Read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+  try
+      stream.Read(KDStoreBuff[0], cnt * SizeOf(TKDT71DE_Source));
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      inc(i);
+    end;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT71DE.SaveToFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(fileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT71DE.LoadFromFile(fileName: string);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT71DE.PrintNodeTree(const NodePtr: PKDT71DE_Node);
+  procedure DoPrintNode(prefix: string; const p: PKDT71DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT71DEVec(p^.vec^.Buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT71DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT71DEVec(KDStoreBuff[i].Buff)]);
+end;
+
+class function TKDT71DE.KDT71DEVec(const s: string): TKDT71DE_Vec;
+var
+  t          : TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j       : NativeInt;
+begin
+  for i := 0 to KDT71DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            inc(j);
+            if j >= KDT71DE_Axis then
+                break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT71DE.KDT71DEVec(const v: TKDT71DE_Vec): string;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT71DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT71DE.KDT71DEPow(const v: TKDT71DE_VecType): Double;
+begin
+  Result := v * v;
+end;
+
+class function TKDT71DE.KDT71DEDistance(const v1, v2: TKDT71DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT71DE_Axis - 1 do
+      Result := Result + KDT71DEPow(v2[i] - v1[i]);
+end;
+
+procedure TKDT71DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT71DE_Source; const Data: Pointer);
+begin
+  Source.Buff := TestBuff[IndexFor];
+end;
+
+class procedure TKDT71DE.Test;
+var
+  TKDT71DE_Test    : TKDT71DE;
+  t              : TTimeTick;
+  i, j           : NativeInt;
+  TestResultBuff : TKDT71DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex  : TDynamicIndexArray;
+  errored        : Boolean;
+begin
+  errored := False;
+  DoStatusNoLn('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  TKDT71DE_Test := TKDT71DE.Create;
+
+  DoStatusNoLn('...');
+  SetLength(TKDT71DE_Test.TestBuff, 100);
+  for i := 0 to length(TKDT71DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT71DE_Axis - 1 do
+        TKDT71DE_Test.TestBuff[i][j] := umlRandomRangeD(-length(TKDT71DE_Test.TestBuff), length(TKDT71DE_Test.TestBuff));
+
+  DoStatusNoLn('...');
+  {$IFDEF FPC}
+  TKDT71DE_Test.BuildKDTreeM(length(TKDT71DE_Test.TestBuff), nil, @TKDT71DE_Test.Test_BuildM);
+  {$ELSE FPC}
+  TKDT71DE_Test.BuildKDTreeM(length(TKDT71DE_Test.TestBuff), nil, TKDT71DE_Test.Test_BuildM);
+  {$ENDIF FPC}
+  { parallel search test }
+  DoStatusNoLn('...');
+  SetLength(TestResultBuff, length(TKDT71DE_Test.TestBuff));
+  SetLength(TestResultIndex, length(TKDT71DE_Test.TestBuff));
+  TKDT71DE_Test.Search(TKDT71DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if KDT71DEDistance(TKDT71DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        errored := True;
+
+  DoStatusNoLn('...');
+  TKDT71DE_Test.Clear;
+  { kMean test }
+  TKDT71DE_Test.BuildKDTreeWithCluster(TKDT71DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+  { parallel search test }
+  TKDT71DE_Test.Search(TKDT71DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+  for i := 0 to length(TestResultIndex) - 1 do
+    if TestResultIndex[i] <> KMeanOutIndex[i] then
+        errored := True;
+
+  SetLength(TKDT71DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT71DE_Test.Clear;
+
+  if errored then
+      DoStatusNoLn('error!')
+  else
+      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
+  DoStatusNoLn;
+
+  DisposeObject(TKDT71DE_Test);
+end;
+
+
 function TKDT72DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT72DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT72DE_Node;
   function SortCompare(const p1, p2: PKDT72DE_Source; const Axis: NativeInt): ShortInt;
   begin
@@ -96878,6 +104403,13 @@ begin
   TKDT62DE.Test();
   TKDT63DE.Test();
   TKDT64DE.Test();
+  TKDT65DE.Test();
+  TKDT66DE.Test();
+  TKDT67DE.Test();
+  TKDT68DE.Test();
+  TKDT69DE.Test();
+  TKDT70DE.Test();
+  TKDT71DE.Test();
   TKDT72DE.Test();
   TKDT84DE.Test();
   TKDT96DE.Test();

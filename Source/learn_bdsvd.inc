@@ -23,9 +23,12 @@ function BidiagonalSVDDecompositionInternal(var D: TLearnFloatArray;
   UStart: TLearnInteger; NRU: TLearnInteger; var C: TLearnFloat2DArray;
   CStart: TLearnInteger; NCC: TLearnInteger; var VT: TLearnFloat2DArray;
   VStart: TLearnInteger; NCVT: TLearnInteger): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 function ExtSignBDSQR(a: TLearnFloat; b: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure Svd2X2(F: TLearnFloat; G: TLearnFloat; H: TLearnFloat;
   var SSMIN: TLearnFloat; var SSMAX: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure SvdV2X2(F: TLearnFloat; G: TLearnFloat; H: TLearnFloat;
   var SSMIN: TLearnFloat; var SSMAX: TLearnFloat; var SNR: TLearnFloat;
   var CSR: TLearnFloat; var SNL: TLearnFloat; var CSL: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}

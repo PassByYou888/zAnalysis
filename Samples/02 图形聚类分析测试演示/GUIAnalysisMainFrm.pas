@@ -12,9 +12,9 @@ uses
   FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit, FMX.Layouts;
 
 const
-  sceneWidth  = 400;
-  sceneHeight = 400;
-  RandomCount = 1000;
+  sceneWidth  = 300;
+  sceneHeight = 300;
+  RandomCount = 100;
 
 type
   TGUIAnalysisMainForm = class(TForm)
@@ -46,9 +46,9 @@ var
 
   { 下列函数是从 zDrawEngine->FMX 接口拔出的 }
   { 因为zDrawEngine的体系有点巨大，懒于整理，不便开源 }
-procedure MemoryBitmapToSurface(bmp: TMemoryRaster; Surface: TBitmapSurface); overload; inline;
-procedure MemoryBitmapToSurface(bmp: TMemoryRaster; sourRect: TRect; Surface: TBitmapSurface); overload; inline;
-procedure SurfaceToMemoryBitmap(Surface: TBitmapSurface; bmp: TMemoryRaster); inline;
+procedure MemoryBitmapToSurface(bmp: TMemoryRaster; Surface: TBitmapSurface); overload;
+procedure MemoryBitmapToSurface(bmp: TMemoryRaster; sourRect: TRect; Surface: TBitmapSurface); overload;
+procedure SurfaceToMemoryBitmap(Surface: TBitmapSurface; bmp: TMemoryRaster);
 procedure MemoryBitmapToBitmap(b: TMemoryRaster; bmp: TBitmap); overload;
 procedure MemoryBitmapToBitmap(b: TMemoryRaster; sourRect: TRect; bmp: TBitmap); overload;
 procedure BitmapToMemoryBitmap(bmp: TBitmap; b: TMemoryRaster);
@@ -70,15 +70,15 @@ begin
       begin
         {$IF Defined(ANDROID) or Defined(IOS) or Defined(OSX)}
         // 在安卓和苹果平台，fmx的纹理像素格式都是BGRA
-        c.RGBA := RGBA2BGRA(bmp.Pixel[X, Y]);
+        c.ARGB := RGBA2BGRA(bmp.Pixel[X, Y]);
         {$ELSE}
         // windows平台，fmx的纹理像素为RGBA
         c.RGBA := bmp.Pixel[X, Y];
         {$IFEND}
         TAlphaColorRec(dc).r := c.r;
-        TAlphaColorRec(dc).G := c.G;
+        TAlphaColorRec(dc).g := c.g;
         TAlphaColorRec(dc).b := c.b;
-        TAlphaColorRec(dc).A := c.A;
+        TAlphaColorRec(dc).a := c.a;
         Surface.Pixels[X, Y] := dc;
       end;
 end;
@@ -103,7 +103,7 @@ begin
   for Y := 0 to Surface.Height - 1 do
     for X := 0 to Surface.Width - 1 do
       with TAlphaColorRec(Surface.Pixels[X, Y]) do
-          bmp.Pixel[X, Y] := RasterColor(r, G, b, A)
+          bmp.Pixel[X, Y] := RasterColor(r, g, b, a);
 end;
 
 procedure MemoryBitmapToBitmap(b: TMemoryRaster; bmp: TBitmap);
@@ -198,7 +198,7 @@ begin
   for i := 0 to pl.Count - 1 do
     begin
       pt := pl[i]^;
-      bmp.DrawCross(Trunc(pt[0]), Trunc(pt[1]), 8, RasterColor($FF, 0, 0, $FF));
+      bmp.DrawCross(Trunc(pt[0]), Trunc(pt[1]), 8, RasterColor($FF, $0, $0, $FF));
     end;
 end;
 
@@ -212,7 +212,7 @@ var
   ConvexHullPl: T2DPointList;
 begin
   k2d := TKDT2DS.Create;
-  k2d.BuildKDTreeWithClusterP(pl.Count, k, 1, OutIndex, nil, procedure(const IndexFor: NativeInt; var Source: TKDT2DS.TKDT2DS_Source; const Data:Pointer)
+  k2d.BuildKDTreeWithClusterP(pl.Count, k, 1, OutIndex, nil, procedure(const IndexFor: NativeInt; var Source: TKDT2DS.TKDT2DS_Source; const Data: Pointer)
     begin
       Source.Buff[0] := pl[IndexFor]^[0];
       Source.Buff[1] := pl[IndexFor]^[1];

@@ -1751,12 +1751,12 @@ var
               begin
                 if LocalOp <> nil then
                   begin
-                    LocalOp.AddValue(p1^.Value, dt2op(p1^.DeclType));
+                    LocalOp.AddValueT(p1^.Value, dt2op(p1^.DeclType));
                   end
                 else
                   begin
                     LocalOp := NewOpValue(uName);
-                    LocalOp.AddValue(p1^.Value, dt2op(p1^.DeclType));
+                    LocalOp.AddValueT(p1^.Value, dt2op(p1^.DeclType));
                   end;
                 Result := LocalOp;
                 break;
@@ -1787,12 +1787,12 @@ var
                   begin
                     if LocalOp <> nil then
                       begin
-                        LocalOp.AddValue(p1^.Value, dt2op(p1^.DeclType));
+                        LocalOp.AddValueT(p1^.Value, dt2op(p1^.DeclType));
                       end
                     else
                       begin
                         LocalOp := NewOpValue(uName);
-                        LocalOp.AddValue(p1^.Value, dt2op(p1^.DeclType));
+                        LocalOp.AddValueT(p1^.Value, dt2op(p1^.DeclType));
                       end;
                     Result := LocalOp;
                     break;
@@ -1802,14 +1802,14 @@ var
                     if LocalOp <> nil then
                       begin
                         OldOp := LocalOp;
-                        OldOp.AddValue(p1^.Value, dt2op(p1^.DeclType));
+                        OldOp.AddValueT(p1^.Value, dt2op(p1^.DeclType));
                         LocalOp := NewOpFromSym(p2^.Symbol, uName);
                         LocalOp.AddLink(OldOp);
                       end
                     else
                       begin
                         LocalOp := NewOpFromSym(p2^.Symbol, uName);
-                        LocalOp.AddValue(p1^.Value, dt2op(p1^.DeclType));
+                        LocalOp.AddValueT(p1^.Value, dt2op(p1^.DeclType));
                       end;
                   end
                 else

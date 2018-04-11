@@ -1,0 +1,289 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'zAnalysis'#36328#24179#21488#26426#22120#23398#20064':'#22270#29255#23398#20064'Demo'
+  ClientHeight = 481
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  DesignerMasterStyle = 0
+  object globalLayout1: TLayout
+    Align = Client
+    Size.Width = 640.000000000000000000
+    Size.Height = 481.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    object Button1: TButton
+      StyledSettings = [Family, Style, FontColor]
+      Position.X = 16.000000000000000000
+      Position.Y = 16.000000000000000000
+      Size.Width = 105.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = #23398#20064#22270#29255
+      OnClick = Button1Click
+    end
+    object Button2: TButton
+      StyledSettings = [Family, Style, FontColor]
+      Position.X = 128.000000000000000000
+      Position.Y = 16.000000000000000000
+      Size.Width = 153.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      Text = #35782#21035#22270#29255' '#30382#23572#36874#26041#27861
+      OnClick = Button2Click
+    end
+    object Memo2: TMemo
+      Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+      DataDetectorTypes = []
+      StyledSettings = [Family, Style, FontColor]
+      Position.X = 16.000000000000000000
+      Position.Y = 400.000000000000000000
+      Size.Width = 601.000000000000000000
+      Size.Height = 73.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 4
+      Viewport.Width = 597.000000000000000000
+      Viewport.Height = 69.000000000000000000
+    end
+    object OpenDialog1: TOpenDialog
+      Filter = 'picture file|*.jpg;*.jpeg;*.png'
+      Options = [ofHideReadOnly, ofAllowMultiSelect, ofEnableSizing]
+      Left = 424
+      Top = 48
+    end
+    object OpenDialog2: TOpenDialog
+      Filter = 'picture file|*.jpg;*.jpeg;*.png'
+      Left = 536
+      Top = 40
+    end
+    object ProgressBar1: TProgressBar
+      Orientation = Horizontal
+      Position.X = 16.000000000000000000
+      Position.Y = 56.000000000000000000
+      Size.Width = 601.000000000000000000
+      Size.Height = 20.000000000000000000
+      Size.PlatformDefault = False
+      Visible = False
+    end
+    object TabControl1: TTabControl
+      Position.X = 16.000000000000000000
+      Position.Y = 80.000000000000000000
+      Size.Width = 601.000000000000000000
+      Size.Height = 305.000000000000000000
+      Size.PlatformDefault = False
+      TabIndex = 0
+      TabOrder = 6
+      TabPosition = PlatformDefault
+      Sizes = (
+        601s
+        279s
+        601s
+        279s
+        601s
+        279s)
+      object TabItem1: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = True
+        Size.Width = 92.000000000000000000
+        Size.Height = 26.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = #21487#35270#21270#22270#29255#24211
+        ExplicitSize.cx = 92.000000000000000000
+        ExplicitSize.cy = 26.000000000000000000
+        object ListBox1: TListBox
+          Align = Client
+          Size.Width = 601.000000000000000000
+          Size.Height = 279.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          Columns = 3
+          DisableFocusEffect = True
+          DefaultItemStyles.ItemStyle = ''
+          DefaultItemStyles.GroupHeaderStyle = ''
+          DefaultItemStyles.GroupFooterStyle = ''
+          Viewport.Width = 597.000000000000000000
+          Viewport.Height = 275.000000000000000000
+        end
+        object EnabledLibViewCheckBox: TCheckBox
+          Position.X = 16.000000000000000000
+          Position.Y = 8.000000000000000000
+          Size.Width = 185.000000000000000000
+          Size.Height = 19.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          Text = #26174#31034#22270#29255#24211'('#38750#24120#21507#20869#23384')'
+          OnChange = EnabledLibViewCheckBoxChange
+        end
+      end
+      object TabItem2: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 68.000000000000000000
+        Size.Height = 26.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = #20351#29992#35828#26126
+        ExplicitSize.cx = 68.000000000000000000
+        ExplicitSize.cy = 26.000000000000000000
+        object Memo1: TMemo
+          Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+          DataDetectorTypes = []
+          Lines.Strings = (
+            #39640#20934#30830#29575#27169#31946#35782#21035#65292#39640#36895#35782#21035#22270#29255#65292#39640#36895#23398#20064#22270#29255
+            ''
+            #20351#29992#22270#29255#23398#20064#21069#65292#38656#35201#20808#23450#20041#22909#23398#20064#32500#24230
+            ''
+            '40'#34920#31034'40'#20010#32500#24230#65292#24314#35758#27492#25968#20540#22312'40..200'#20043#38388
+            '1'#34920#31034#26368#30456#20284#30340#22270#29255#22312#35760#24518#24211#20013#30340#20301#32622
+            'lr:=TLearn.Create(40, 1);'
+            ''
+            
+              #23398#20064#22270#29255#20351#29992' lr.AddMemorySamplerWithPCA or lr.AddMemorySamplerWithLDA ' +
+              #20004#31181#26041#27861#20219#24847#19968#31181#21363#21487
+            ''
+            #20551#22914#35201#23398#20064#19968#20010#24211
+            'for i=0 to db.count'
+            '   AddMemorySamplerWithPCA(db[i], index)'
+            #24453#24490#29615#23436#25104#21518#20351#29992' lr.Train(1) '#36827#34892#23398#20064
+            'index'#26159#20320#33258#24049#23450#20041#30340#22270#29255#32034#24341
+            ''
+            #20351#29992' lr.savetostream and lr.loadfromstream '#21487#20197#20445#23384#21644#36824#21407#23398#20064#29366#24577
+            ''
+            #24453#25105#20204#38656#35201#25214#20986#30456#20284#22270#29255#26102#65292#20351#29992#22914#19979#26041#27861
+            'index=lr.processRF(PCA(bmp))'
+            'index'#20026#35760#24518#24211#20013#30340#22270#29255#32034#24341)
+          StyledSettings = [Family, Style, FontColor]
+          Align = Client
+          Size.Width = 601.000000000000000000
+          Size.Height = 279.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          Viewport.Width = 581.000000000000000000
+          Viewport.Height = 275.000000000000000000
+        end
+      end
+      object TabItem3: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 92.000000000000000000
+        Size.Height = 26.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = #35782#21035#22270#29255#36755#20986
+        ExplicitSize.cx = 92.000000000000000000
+        ExplicitSize.cy = 26.000000000000000000
+        object Image1: TImage
+          MultiResBitmap = <
+            item
+            end>
+          Position.X = 16.000000000000000000
+          Position.Y = 86.000000000000000000
+          Size.Width = 161.000000000000000000
+          Size.Height = 147.000000000000000000
+          Size.PlatformDefault = False
+        end
+        object Label1: TLabel
+          Position.X = 16.000000000000000000
+          Position.Y = 70.000000000000000000
+          Text = #24453#35782#21035#22270#29255
+          TabOrder = 4
+        end
+        object Image2: TImage
+          MultiResBitmap = <
+            item
+            end>
+          Position.X = 192.000000000000000000
+          Position.Y = 110.000000000000000000
+          Size.Width = 113.000000000000000000
+          Size.Height = 99.000000000000000000
+          Size.PlatformDefault = False
+        end
+        object Label2: TLabel
+          Position.X = 192.000000000000000000
+          Position.Y = 94.000000000000000000
+          Size.Width = 113.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          Text = #26368#20248#21305#37197
+          TabOrder = 3
+        end
+        object Image3: TImage
+          MultiResBitmap = <
+            item
+            end>
+          Position.X = 328.000000000000000000
+          Position.Y = 110.000000000000000000
+          Size.Width = 113.000000000000000000
+          Size.Height = 99.000000000000000000
+          Size.PlatformDefault = False
+        end
+        object Label3: TLabel
+          Position.X = 328.000000000000000000
+          Position.Y = 94.000000000000000000
+          Size.Width = 113.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          Text = #27424#20248#21305#37197
+          TabOrder = 2
+        end
+        object Label4: TLabel
+          Position.X = 464.000000000000000000
+          Position.Y = 94.000000000000000000
+          Size.Width = 113.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          Text = #27425#20248#21305#37197
+          TabOrder = 1
+        end
+        object Image4: TImage
+          MultiResBitmap = <
+            item
+            end>
+          Position.X = 464.000000000000000000
+          Position.Y = 110.000000000000000000
+          Size.Width = 113.000000000000000000
+          Size.Height = 99.000000000000000000
+          Size.PlatformDefault = False
+        end
+      end
+    end
+    object Button3: TButton
+      StyledSettings = [Family, Style, FontColor]
+      Position.X = 288.000000000000000000
+      Position.Y = 16.000000000000000000
+      Size.Width = 153.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Text = #35782#21035#22270#29255' '#26031#30382#23572#26364#26041#27861
+      OnClick = Button3Click
+    end
+    object Button4: TButton
+      StyledSettings = [Family, Style, FontColor]
+      Position.X = 448.000000000000000000
+      Position.Y = 16.000000000000000000
+      Size.Width = 153.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = #35782#21035#22270#29255' K'#26041#27861
+      OnClick = Button4Click
+    end
+  end
+end

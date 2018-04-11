@@ -201,7 +201,7 @@ begin
   //
   // special cases:
   // * N=0
-  // * N is too large to use integer arithmetics
+  // * N is too large to use TLearnInteger arithmetics
   //
   if N = 0 then
     begin

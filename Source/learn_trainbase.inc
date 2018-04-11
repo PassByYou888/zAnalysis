@@ -818,7 +818,7 @@ end;
   Network -   original
 
   OUTPUT PARAMETERS:
-  RA      -   array of real numbers which stores network,
+  RA      -   packed array of real numbers which stores network,
   array[0..RLen-1]
   RLen    -   RA lenght
   ************************************************************************ *)
