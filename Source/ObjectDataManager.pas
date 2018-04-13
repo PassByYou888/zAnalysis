@@ -13,7 +13,7 @@
 
 unit ObjectDataManager;
 
-{$I ZDefine.inc}
+{$I zDefine.inc}
 
 interface
 

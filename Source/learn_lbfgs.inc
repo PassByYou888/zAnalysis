@@ -9,55 +9,55 @@
 { ****************************************************************************** }
 type
   TMinLBFGSState = packed record
-    N: TLearnInteger;
-    M: TLearnInteger;
-    EpsG: TLearnFloat;
-    EpsF: TLearnFloat;
-    EpsX: TLearnFloat;
-    MaxIts: TLearnInteger;
-    Flags: TLearnInteger;
+    N: TLInt;
+    M: TLInt;
+    EpsG: TLFloat;
+    EpsF: TLFloat;
+    EpsX: TLFloat;
+    MaxIts: TLInt;
+    Flags: TLInt;
     XRep: Boolean;
-    StpMax: TLearnFloat;
-    NFEV: TLearnInteger;
-    MCStage: TLearnInteger;
-    K: TLearnInteger;
-    Q: TLearnInteger;
-    P: TLearnInteger;
-    Rho: TLearnFloatArray;
-    Y: TLearnFloat2DArray;
-    S: TLearnFloat2DArray;
-    Theta: TLearnFloatArray;
-    D: TLearnFloatArray;
-    Stp: TLearnFloat;
-    WORK: TLearnFloatArray;
-    FOld: TLearnFloat;
-    GammaK: TLearnFloat;
-    X: TLearnFloatArray;
-    F: TLearnFloat;
-    G: TLearnFloatArray;
+    StpMax: TLFloat;
+    NFEV: TLInt;
+    MCStage: TLInt;
+    K: TLInt;
+    Q: TLInt;
+    P: TLInt;
+    Rho: TLVec;
+    Y: TLMatrix;
+    S: TLMatrix;
+    Theta: TLVec;
+    D: TLVec;
+    Stp: TLFloat;
+    WORK: TLVec;
+    FOld: TLFloat;
+    GammaK: TLFloat;
+    X: TLVec;
+    F: TLFloat;
+    G: TLVec;
     NeedFG: Boolean;
     XUpdated: Boolean;
     RState: TLearnCommState;
-    RepIterationsCount: TLearnInteger;
-    RepNFEV: TLearnInteger;
-    RepTerminationType: TLearnInteger;
+    RepIterationsCount: TLInt;
+    RepNFEV: TLInt;
+    RepTerminationType: TLInt;
     LState: TLinMinState;
   end;
 
   TMinLBFGSReport = packed record
-    IterationsCount: TLearnInteger;
-    NFEV: TLearnInteger;
-    TerminationType: TLearnInteger;
+    IterationsCount: TLInt;
+    NFEV: TLInt;
+    TerminationType: TLInt;
   end;
 
-procedure MinLBFGSCreate(N: TLearnInteger; M: TLearnInteger; const X: TLearnFloatArray; var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MinLBFGSSetCond(var State: TMinLBFGSState; EpsG: TLearnFloat; EpsF: TLearnFloat; EpsX: TLearnFloat; MaxIts: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSCreate(N: TLInt; M: TLInt; const X: TLVec; var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSSetCond(var State: TMinLBFGSState; EpsG: TLFloat; EpsF: TLFloat; EpsX: TLFloat; MaxIts: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MinLBFGSSetXRep(var State: TMinLBFGSState; NeedXRep: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MinLBFGSSetStpMax(var State: TMinLBFGSState; StpMax: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MinLBFGSCreateX(N: TLearnInteger; M: TLearnInteger; const X: TLearnFloatArray; Flags: TLearnInteger; var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSSetStpMax(var State: TMinLBFGSState; StpMax: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSCreateX(N: TLInt; M: TLInt; const X: TLVec; Flags: TLInt; var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function MinLBFGSIteration(var State: TMinLBFGSState): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MinLBFGSResults(const State: TMinLBFGSState; var X: TLearnFloatArray; var Rep: TMinLBFGSReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MinLBFGSFree(var X: TLearnFloatArray; var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSResults(const State: TMinLBFGSState; var X: TLVec; var Rep: TMinLBFGSReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSFree(var X: TLVec; var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure ClearRequestFields(var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
@@ -101,8 +101,8 @@ procedure ClearRequestFields(var State: TMinLBFGSState); forward; {$IFDEF INLINE
   use MinLBFGSSetStpMax() function to bound algorithm's  steps.  However,
   L-BFGS rarely needs such a tuning.
   ************************************************************************ *)
-procedure MinLBFGSCreate(N: TLearnInteger; M: TLearnInteger;
-  const X: TLearnFloatArray; var State: TMinLBFGSState);
+procedure MinLBFGSCreate(N: TLInt; M: TLInt;
+  const X: TLVec; var State: TMinLBFGSState);
 begin
   MinLBFGSCreateX(N, M, X, 0, State);
 end;
@@ -131,8 +131,8 @@ end;
   Passing EpsG=0, EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to
   automatic stopping criterion selection (small EpsX).
   ************************************************************************ *)
-procedure MinLBFGSSetCond(var State: TMinLBFGSState; EpsG: TLearnFloat;
-  EpsF: TLearnFloat; EpsX: TLearnFloat; MaxIts: TLearnInteger);
+procedure MinLBFGSSetCond(var State: TMinLBFGSState; EpsG: TLFloat;
+  EpsF: TLFloat; EpsX: TLFloat; MaxIts: TLInt);
 begin
   Assert(AP_FP_Greater_Eq(EpsG, 0), 'MinLBFGSSetCond: negative EpsG!');
   Assert(AP_FP_Greater_Eq(EpsF, 0), 'MinLBFGSSetCond: negative EpsF!');
@@ -185,7 +185,7 @@ end;
   steps  that  are  too  large  (and  therefore  expose  us  to the possible
   overflow) without actually calculating function value at the x+stp*d.
   ************************************************************************ *)
-procedure MinLBFGSSetStpMax(var State: TMinLBFGSState; StpMax: TLearnFloat);
+procedure MinLBFGSSetStpMax(var State: TMinLBFGSState; StpMax: TLFloat);
 begin
   Assert(AP_FP_Greater_Eq(StpMax, 0), 'MinLBFGSSetStpMax: StpMax<0!');
   State.StpMax := StpMax;
@@ -204,8 +204,8 @@ end;
   subsequent  calls   of   MinLBFGS   with   same
   TMinLBFGSState structure can set Flags to 1.
   ************************************************************************ *)
-procedure MinLBFGSCreateX(N: TLearnInteger; M: TLearnInteger;
-  const X: TLearnFloatArray; Flags: TLearnInteger; var State: TMinLBFGSState);
+procedure MinLBFGSCreateX(N: TLInt; M: TLInt;
+  const X: TLVec; Flags: TLInt; var State: TMinLBFGSState);
 var
   AllocateMem: Boolean;
 begin
@@ -282,18 +282,18 @@ end;
   ************************************************************************ *)
 function MinLBFGSIteration(var State: TMinLBFGSState): Boolean;
 var
-  N     : TLearnInteger;
-  M     : TLearnInteger;
-  MaxIts: TLearnInteger;
-  EpsF  : TLearnFloat;
-  EpsG  : TLearnFloat;
-  EpsX  : TLearnFloat;
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  IC    : TLearnInteger;
-  MCINFO: TLearnInteger;
-  V     : TLearnFloat;
-  VV    : TLearnFloat;
+  N     : TLInt;
+  M     : TLInt;
+  MaxIts: TLInt;
+  EpsF  : TLFloat;
+  EpsG  : TLFloat;
+  EpsX  : TLFloat;
+  I     : TLInt;
+  J     : TLInt;
+  IC    : TLInt;
+  MCINFO: TLInt;
+  V     : TLFloat;
+  VV    : TLFloat;
 label
   lbl_0, lbl_1, lbl_4, lbl_6, lbl_8, lbl_2, lbl_9, lbl_3, lbl_10, lbl_7,
   lbl_rcomm;
@@ -666,7 +666,7 @@ end;
   * Rep.IterationsCount contains iterations count
   * NFEV countains number of function calculations
   ************************************************************************ *)
-procedure MinLBFGSResults(const State: TMinLBFGSState; var X: TLearnFloatArray;
+procedure MinLBFGSResults(const State: TMinLBFGSState; var X: TLVec;
   var Rep: TMinLBFGSReport);
 begin
   SetLength(X, State.N (* - 1 + 1 // optimized compiler *) );
@@ -676,7 +676,7 @@ begin
   Rep.TerminationType := State.RepTerminationType;
 end;
 
-procedure MinLBFGSFree(var X: TLearnFloatArray; var State: TMinLBFGSState);
+procedure MinLBFGSFree(var X: TLVec; var State: TMinLBFGSState);
 begin
   SetLength(X, 0);
 

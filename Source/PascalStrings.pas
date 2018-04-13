@@ -16,7 +16,7 @@
 
 unit PascalStrings;
 
-{$I ZDefine.inc}
+{$I zDefine.inc}
 
 interface
 

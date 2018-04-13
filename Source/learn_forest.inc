@@ -1,44 +1,44 @@
 type
   TDecisionForest = packed record
-    NVars: TLearnInteger;
-    NClasses: TLearnInteger;
-    NTrees: TLearnInteger;
-    BufSize: TLearnInteger;
-    Trees: TLearnFloatArray;
+    NVars: TLInt;
+    NClasses: TLInt;
+    NTrees: TLInt;
+    BufSize: TLInt;
+    Trees: TLVec;
   end;
 
   PDecisionForest = ^TDecisionForest;
 
   TDFReport = packed record
-    RelClsError: TLearnFloat;
-    AvgCE: TLearnFloat;
-    RMSError: TLearnFloat;
-    AvgError: TLearnFloat;
-    AvgRelError: TLearnFloat;
-    OOBRelClsError: TLearnFloat;
-    OOBAvgCE: TLearnFloat;
-    OOBRMSError: TLearnFloat;
-    OOBAvgError: TLearnFloat;
-    OOBAvgRelError: TLearnFloat;
+    RelClsError: TLFloat;
+    AvgCE: TLFloat;
+    RMSError: TLFloat;
+    AvgError: TLFloat;
+    AvgRelError: TLFloat;
+    OOBRelClsError: TLFloat;
+    OOBAvgCE: TLFloat;
+    OOBRMSError: TLFloat;
+    OOBAvgError: TLFloat;
+    OOBAvgRelError: TLFloat;
   end;
 
-procedure DFBuildRandomDecisionForest(const XY: TLearnFloat2DArray; NPoints, NVars, NClasses, NTrees: TLearnInteger; R: TLearnFloat;
-  var Info: TLearnInteger; var DF: TDecisionForest; var Rep: TDFReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure DFBuildRandomDecisionForest(const XY: TLMatrix; NPoints, NVars, NClasses, NTrees: TLInt; R: TLFloat;
+  var Info: TLInt; var DF: TDecisionForest; var Rep: TDFReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure DFBuildInternal(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
-  NVars: TLearnInteger; NClasses: TLearnInteger; NTrees: TLearnInteger;
-  SampleSize: TLearnInteger; NFeatures: TLearnInteger; Flags: TLearnInteger;
-  var Info: TLearnInteger; var DF: TDecisionForest; var Rep: TDFReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure DFBuildInternal(const XY: TLMatrix; NPoints: TLInt;
+  NVars: TLInt; NClasses: TLInt; NTrees: TLInt;
+  SampleSize: TLInt; NFeatures: TLInt; Flags: TLInt;
+  var Info: TLInt; var DF: TDecisionForest; var Rep: TDFReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure DFProcess(const DF: TDecisionForest; const X: TLearnFloatArray; var Y: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DFRelClsError(const DF: TDecisionForest; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DFAvgCE(const DF: TDecisionForest; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DFRMSError(const DF: TDecisionForest; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DFAvgError(const DF: TDecisionForest; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DFAvgRelError(const DF: TDecisionForest; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure DFProcess(const DF: TDecisionForest; const X: TLVec; var Y: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DFRelClsError(const DF: TDecisionForest; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DFAvgCE(const DF: TDecisionForest; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DFRMSError(const DF: TDecisionForest; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DFAvgError(const DF: TDecisionForest; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DFAvgRelError(const DF: TDecisionForest; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure DFCopy(const DF1: TDecisionForest; var DF2: TDecisionForest); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure DFSerialize(const DF: TDecisionForest; var RA: TLearnFloatArray; var RLen: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure DFUnserialize(const RA: TLearnFloatArray; var DF: TDecisionForest); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure DFSerialize(const DF: TDecisionForest; var RA: TLVec; var RLen: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure DFUnserialize(const RA: TLVec; var DF: TDecisionForest); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 const
@@ -50,40 +50,40 @@ const
 
 type
   TDFInternalBuffers = packed record
-    TreeBuf: TLearnFloatArray;
-    IdxBuf: TLearnIntegerArray;
-    TmpBufR: TLearnFloatArray;
-    TmpBufR2: TLearnFloatArray;
-    TmpBufI: TLearnIntegerArray;
-    ClassIBuf: TLearnIntegerArray;
-    VarPool: TLearnIntegerArray;
-    EVSBin: TLearnBooleanArray;
-    EVSSplits: TLearnFloatArray;
+    TreeBuf: TLVec;
+    IdxBuf: TLIVec;
+    TmpBufR: TLVec;
+    TmpBufR2: TLVec;
+    TmpBufI: TLIVec;
+    ClassIBuf: TLIVec;
+    VarPool: TLIVec;
+    EVSBin: TLBVec;
+    EVSSplits: TLVec;
   end;
 
-function DFClsError(const DF: TDecisionForest; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnInteger; forward;
-procedure DFProcessInternal(const DF: TDecisionForest; Offs: TLearnInteger;
-  const X: TLearnFloatArray; var Y: TLearnFloatArray); forward;
-procedure DFBuildTree(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
-  NVars: TLearnInteger; NClasses: TLearnInteger; NFeatures: TLearnInteger;
-  NVarsInPool: TLearnInteger; Flags: TLearnInteger;
+function DFClsError(const DF: TDecisionForest; const XY: TLMatrix;
+  NPoints: TLInt): TLInt; forward;
+procedure DFProcessInternal(const DF: TDecisionForest; Offs: TLInt;
+  const X: TLVec; var Y: TLVec); forward;
+procedure DFBuildTree(const XY: TLMatrix; NPoints: TLInt;
+  NVars: TLInt; NClasses: TLInt; NFeatures: TLInt;
+  NVarsInPool: TLInt; Flags: TLInt;
   var Bufs: TDFInternalBuffers); forward;
-procedure DFBuildTreeRec(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
-  NVars: TLearnInteger; NClasses: TLearnInteger; NFeatures: TLearnInteger;
-  NVarsInPool: TLearnInteger; Flags: TLearnInteger;
-  var NumProcessed: TLearnInteger; Idx1: TLearnInteger; Idx2: TLearnInteger;
+procedure DFBuildTreeRec(const XY: TLMatrix; NPoints: TLInt;
+  NVars: TLInt; NClasses: TLInt; NFeatures: TLInt;
+  NVarsInPool: TLInt; Flags: TLInt;
+  var NumProcessed: TLInt; Idx1: TLInt; Idx2: TLInt;
   var Bufs: TDFInternalBuffers); forward;
-procedure DFWeakSplitI(var X: TLearnFloatArray; var Y: TLearnIntegerArray;
-  N: TLearnInteger; NClasses: TLearnInteger; var Info: TLearnInteger;
-  var Threshold: TLearnFloat; var E: TLearnFloat); forward;
-procedure DFSplitC(var X: TLearnFloatArray; var C: TLearnIntegerArray;
-  var CntBuf: TLearnIntegerArray; N: TLearnInteger; NC: TLearnInteger;
-  Flags: TLearnInteger; var Info: TLearnInteger; var Threshold: TLearnFloat;
-  var E: TLearnFloat); forward;
-procedure DFSplitR(var X: TLearnFloatArray; var Y: TLearnFloatArray; N: TLearnInteger;
-  Flags: TLearnInteger; var Info: TLearnInteger; var Threshold: TLearnFloat;
-  var E: TLearnFloat); forward;
+procedure DFWeakSplitI(var X: TLVec; var Y: TLIVec;
+  N: TLInt; NClasses: TLInt; var Info: TLInt;
+  var Threshold: TLFloat; var E: TLFloat); forward;
+procedure DFSplitC(var X: TLVec; var C: TLIVec;
+  var CntBuf: TLIVec; N: TLInt; NC: TLInt;
+  Flags: TLInt; var Info: TLInt; var Threshold: TLFloat;
+  var E: TLFloat); forward;
+procedure DFSplitR(var X: TLVec; var Y: TLVec; N: TLInt;
+  Flags: TLInt; var Info: TLInt; var Threshold: TLFloat;
+  var E: TLFloat); forward;
 
 (* ************************************************************************
   //  This subroutine builds random decision forest.
@@ -108,10 +108,10 @@ procedure DFSplitR(var X: TLearnFloatArray; var Y: TLearnFloatArray; N: TLearnIn
   //  DF          -   model built
   //  Rep         -   training report, contains error on a training set and out-of-bag estimates of generalization error.
   ************************************************************************ *)
-procedure DFBuildRandomDecisionForest(const XY: TLearnFloat2DArray; NPoints, NVars, NClasses, NTrees: TLearnInteger; R: TLearnFloat;
-  var Info: TLearnInteger; var DF: TDecisionForest; var Rep: TDFReport);
+procedure DFBuildRandomDecisionForest(const XY: TLMatrix; NPoints, NVars, NClasses, NTrees: TLInt; R: TLFloat;
+  var Info: TLInt; var DF: TDecisionForest; var Rep: TDFReport);
 var
-  SampleSize: TLearnInteger;
+  SampleSize: TLInt;
 
 begin
   if AP_FP_Less_Eq(R, 0) or AP_FP_Greater(R, 1) then
@@ -124,33 +124,33 @@ begin
     Max(NVars div 2, 1), DFUseStrongSplits + DFUseEVS, Info, DF, Rep);
 end;
 
-procedure DFBuildInternal(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
-  NVars: TLearnInteger; NClasses: TLearnInteger; NTrees: TLearnInteger;
-  SampleSize: TLearnInteger; NFeatures: TLearnInteger; Flags: TLearnInteger;
-  var Info: TLearnInteger; var DF: TDecisionForest; var Rep: TDFReport);
+procedure DFBuildInternal(const XY: TLMatrix; NPoints: TLInt;
+  NVars: TLInt; NClasses: TLInt; NTrees: TLInt;
+  SampleSize: TLInt; NFeatures: TLInt; Flags: TLInt;
+  var Info: TLInt; var DF: TDecisionForest; var Rep: TDFReport);
 var
-  I           : TLearnInteger;
-  J           : TLearnInteger;
-  K           : TLearnInteger;
-  TmpI        : TLearnInteger;
-  LastTreeOffs: TLearnInteger;
-  Offs        : TLearnInteger;
-  OOBOffs     : TLearnInteger;
-  TreeSize    : TLearnInteger;
-  NVarsInPool : TLearnInteger;
+  I           : TLInt;
+  J           : TLInt;
+  K           : TLInt;
+  TmpI        : TLInt;
+  LastTreeOffs: TLInt;
+  Offs        : TLInt;
+  OOBOffs     : TLInt;
+  TreeSize    : TLInt;
+  NVarsInPool : TLInt;
   UseEVS      : Boolean;
   Bufs        : TDFInternalBuffers;
-  PermBuf     : TLearnIntegerArray;
-  OOBBuf      : TLearnFloatArray;
-  OOBCntBuf   : TLearnIntegerArray;
-  XYS         : TLearnFloat2DArray;
-  X           : TLearnFloatArray;
-  Y           : TLearnFloatArray;
-  OOBCnt      : TLearnInteger;
-  OOBRelCnt   : TLearnInteger;
-  V           : TLearnFloat;
-  VMin        : TLearnFloat;
-  VMax        : TLearnFloat;
+  PermBuf     : TLIVec;
+  OOBBuf      : TLVec;
+  OOBCntBuf   : TLIVec;
+  XYS         : TLMatrix;
+  X           : TLVec;
+  Y           : TLVec;
+  OOBCnt      : TLInt;
+  OOBRelCnt   : TLInt;
+  V           : TLFloat;
+  VMin        : TLFloat;
+  VMax        : TLFloat;
   BFlag       : Boolean;
 begin
 
@@ -520,11 +520,11 @@ end;
   responsibility of a caller to allocate it. Array  must  be
   at least [0..NClasses-1].
   ************************************************************************ *)
-procedure DFProcess(const DF: TDecisionForest; const X: TLearnFloatArray; var Y: TLearnFloatArray);
+procedure DFProcess(const DF: TDecisionForest; const X: TLVec; var Y: TLVec);
 var
-  Offs: TLearnInteger;
-  I   : TLearnInteger;
-  V   : TLearnFloat;
+  Offs: TLInt;
+  I   : TLInt;
+  V   : TLFloat;
 begin
 
   //
@@ -568,8 +568,8 @@ end;
   percent of incorrectly classified cases.
   Zero if model solves regression task.
   ************************************************************************ *)
-function DFRelClsError(const DF: TDecisionForest; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function DFRelClsError(const DF: TDecisionForest; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 begin
   Result := AP_Float(DFClsError(DF, XY, NPoints)) / NPoints;
 end;
@@ -586,15 +586,15 @@ end;
   CrossEntropy/(NPoints*LN(2)).
   Zero if model solves regression task.
   ************************************************************************ *)
-function DFAvgCE(const DF: TDecisionForest; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function DFAvgCE(const DF: TDecisionForest; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  X   : TLearnFloatArray;
-  Y   : TLearnFloatArray;
-  I   : TLearnInteger;
-  J   : TLearnInteger;
-  K   : TLearnInteger;
-  TmpI: TLearnInteger;
+  X   : TLVec;
+  Y   : TLVec;
+  I   : TLInt;
+  J   : TLInt;
+  K   : TLInt;
+  TmpI: TLInt;
 begin
   SetLength(X, DF.NVars (* - 1 + 1 // optimized compiler *) );
   SetLength(Y, DF.NClasses (* - 1 + 1 // optimized compiler *) );
@@ -649,15 +649,15 @@ end;
   classification task, RMS error means error when estimating posterior
   probabilities.
   ************************************************************************ *)
-function DFRMSError(const DF: TDecisionForest; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function DFRMSError(const DF: TDecisionForest; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  X   : TLearnFloatArray;
-  Y   : TLearnFloatArray;
-  I   : TLearnInteger;
-  J   : TLearnInteger;
-  K   : TLearnInteger;
-  TmpI: TLearnInteger;
+  X   : TLVec;
+  Y   : TLVec;
+  I   : TLInt;
+  J   : TLInt;
+  K   : TLInt;
+  TmpI: TLInt;
 begin
   SetLength(X, DF.NVars (* - 1 + 1 // optimized compiler *) );
   SetLength(Y, DF.NClasses (* - 1 + 1 // optimized compiler *) );
@@ -724,14 +724,14 @@ end;
   classification task, it means average error when estimating posterior
   probabilities.
   ************************************************************************ *)
-function DFAvgError(const DF: TDecisionForest; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function DFAvgError(const DF: TDecisionForest; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  X: TLearnFloatArray;
-  Y: TLearnFloatArray;
-  I: TLearnInteger;
-  J: TLearnInteger;
-  K: TLearnInteger;
+  X: TLVec;
+  Y: TLVec;
+  I: TLInt;
+  J: TLInt;
+  K: TLInt;
 begin
   SetLength(X, DF.NVars (* - 1 + 1 // optimized compiler *) );
   SetLength(Y, DF.NClasses (* - 1 + 1 // optimized compiler *) );
@@ -788,15 +788,15 @@ end;
   classification task, it means average relative error when estimating
   posterior probability of belonging to the correct class.
   ************************************************************************ *)
-function DFAvgRelError(const DF: TDecisionForest; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function DFAvgRelError(const DF: TDecisionForest; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  X     : TLearnFloatArray;
-  Y     : TLearnFloatArray;
-  RelCnt: TLearnInteger;
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  K     : TLearnInteger;
+  X     : TLVec;
+  Y     : TLVec;
+  RelCnt: TLInt;
+  I     : TLInt;
+  J     : TLInt;
+  K     : TLInt;
 begin
   SetLength(X, DF.NVars (* - 1 + 1 // optimized compiler *) );
   SetLength(Y, DF.NClasses (* - 1 + 1 // optimized compiler *) );
@@ -875,7 +875,7 @@ end;
   array[0..RLen-1]
   RLen    -   RA lenght
   ************************************************************************ *)
-procedure DFSerialize(const DF: TDecisionForest; var RA: TLearnFloatArray; var RLen: TLearnInteger);
+procedure DFSerialize(const DF: TDecisionForest; var RA: TLVec; var RLen: TLInt);
 begin
   SetLength(RA, DF.BufSize + 5 (* - 1 + 1 // optimized compiler *) );
   RA[0] := DFVNum;
@@ -896,7 +896,7 @@ end;
   OUTPUT PARAMETERS:
   DF      -   restored structure
   ************************************************************************ *)
-procedure DFUnserialize(const RA: TLearnFloatArray; var DF: TDecisionForest);
+procedure DFUnserialize(const RA: TLVec; var DF: TDecisionForest);
 begin
   Assert(Round(RA[0]) = DFVNum, 'DFUnserialize: incorrect array!');
   DF.NVars := Round(RA[1]);
@@ -910,15 +910,15 @@ end;
 (* ************************************************************************
   Classification error
   ************************************************************************ *)
-function DFClsError(const DF: TDecisionForest; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnInteger;
+function DFClsError(const DF: TDecisionForest; const XY: TLMatrix;
+  NPoints: TLInt): TLInt;
 var
-  X   : TLearnFloatArray;
-  Y   : TLearnFloatArray;
-  I   : TLearnInteger;
-  J   : TLearnInteger;
-  K   : TLearnInteger;
-  TmpI: TLearnInteger;
+  X   : TLVec;
+  Y   : TLVec;
+  I   : TLInt;
+  J   : TLInt;
+  K   : TLInt;
+  TmpI: TLInt;
 begin
   if DF.NClasses <= 1 then
     begin
@@ -955,11 +955,11 @@ end;
 (* ************************************************************************
   Internal subroutine for processing one decision tree starting at Offs
   ************************************************************************ *)
-procedure DFProcessInternal(const DF: TDecisionForest; Offs: TLearnInteger;
-  const X: TLearnFloatArray; var Y: TLearnFloatArray);
+procedure DFProcessInternal(const DF: TDecisionForest; Offs: TLInt;
+  const X: TLVec; var Y: TLVec);
 var
-  K  : TLearnInteger;
-  Idx: TLearnInteger;
+  K  : TLInt;
+  Idx: TLInt;
 begin
 
   //
@@ -999,13 +999,13 @@ end;
 (* ************************************************************************
   Builds one decision tree. Just a wrapper for the DFBuildTreeRec.
   ************************************************************************ *)
-procedure DFBuildTree(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
-  NVars: TLearnInteger; NClasses: TLearnInteger; NFeatures: TLearnInteger;
-  NVarsInPool: TLearnInteger; Flags: TLearnInteger;
+procedure DFBuildTree(const XY: TLMatrix; NPoints: TLInt;
+  NVars: TLInt; NClasses: TLInt; NFeatures: TLInt;
+  NVarsInPool: TLInt; Flags: TLInt;
   var Bufs: TDFInternalBuffers);
 var
-  NumProcessed: TLearnInteger;
-  I           : TLearnInteger;
+  NumProcessed: TLInt;
+  I           : TLInt;
 begin
   Assert(NPoints > 0);
 
@@ -1042,33 +1042,33 @@ end;
   TmpBufI     -   at least NPoints
   TmpBufI2    -   at least NPoints+1
   ************************************************************************ *)
-procedure DFBuildTreeRec(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
-  NVars: TLearnInteger; NClasses: TLearnInteger; NFeatures: TLearnInteger;
-  NVarsInPool: TLearnInteger; Flags: TLearnInteger;
-  var NumProcessed: TLearnInteger; Idx1: TLearnInteger; Idx2: TLearnInteger;
+procedure DFBuildTreeRec(const XY: TLMatrix; NPoints: TLInt;
+  NVars: TLInt; NClasses: TLInt; NFeatures: TLInt;
+  NVarsInPool: TLInt; Flags: TLInt;
+  var NumProcessed: TLInt; Idx1: TLInt; Idx2: TLInt;
   var Bufs: TDFInternalBuffers);
 var
-  I        : TLearnInteger;
-  J        : TLearnInteger;
-  K        : TLearnInteger;
+  I        : TLInt;
+  J        : TLInt;
+  K        : TLInt;
   BFlag    : Boolean;
-  I1       : TLearnInteger;
-  I2       : TLearnInteger;
-  Info     : TLearnInteger;
-  SL       : TLearnFloat;
-  SR       : TLearnFloat;
-  W        : TLearnFloat;
-  IdxBest  : TLearnInteger;
-  EBest    : TLearnFloat;
-  TBest    : TLearnFloat;
-  VarCur   : TLearnInteger;
-  S        : TLearnFloat;
-  V        : TLearnFloat;
-  V1       : TLearnFloat;
-  V2       : TLearnFloat;
-  Threshold: TLearnFloat;
-  OldNP    : TLearnInteger;
-  CurRMS   : TLearnFloat;
+  I1       : TLInt;
+  I2       : TLInt;
+  Info     : TLInt;
+  SL       : TLFloat;
+  SR       : TLFloat;
+  W        : TLFloat;
+  IdxBest  : TLInt;
+  EBest    : TLFloat;
+  TBest    : TLFloat;
+  VarCur   : TLInt;
+  S        : TLFloat;
+  V        : TLFloat;
+  V1       : TLFloat;
+  V2       : TLFloat;
+  Threshold: TLFloat;
+  OldNP    : TLInt;
+  CurRMS   : TLFloat;
   UseEVS   : Boolean;
 begin
   Assert(NPoints > 0);
@@ -1445,14 +1445,14 @@ end;
 (* ************************************************************************
   Makes weak split on attribute
   ************************************************************************ *)
-procedure DFWeakSplitI(var X: TLearnFloatArray; var Y: TLearnIntegerArray;
-  N: TLearnInteger; NClasses: TLearnInteger; var Info: TLearnInteger;
-  var Threshold: TLearnFloat; var E: TLearnFloat);
+procedure DFWeakSplitI(var X: TLVec; var Y: TLIVec;
+  N: TLInt; NClasses: TLInt; var Info: TLInt;
+  var Threshold: TLFloat; var E: TLFloat);
 var
-  I       : TLearnInteger;
-  NEq     : TLearnInteger;
-  NLess   : TLearnInteger;
-  NGreater: TLearnInteger;
+  I       : TLInt;
+  NEq     : TLInt;
+  NLess   : TLInt;
+  NGreater: TLInt;
 begin
   TagSortFastI(X, Y, N);
   if N mod 2 = 1 then
@@ -1528,26 +1528,26 @@ end;
 (* ************************************************************************
   Makes split on attribute
   ************************************************************************ *)
-procedure DFSplitC(var X: TLearnFloatArray; var C: TLearnIntegerArray;
-  var CntBuf: TLearnIntegerArray; N: TLearnInteger; NC: TLearnInteger;
-  Flags: TLearnInteger; var Info: TLearnInteger; var Threshold: TLearnFloat;
-  var E: TLearnFloat);
+procedure DFSplitC(var X: TLVec; var C: TLIVec;
+  var CntBuf: TLIVec; N: TLInt; NC: TLInt;
+  Flags: TLInt; var Info: TLInt; var Threshold: TLFloat;
+  var E: TLFloat);
 var
-  I       : TLearnInteger;
-  NEq     : TLearnInteger;
-  NLess   : TLearnInteger;
-  NGreater: TLearnInteger;
-  Q       : TLearnInteger;
-  QMin    : TLearnInteger;
-  QMax    : TLearnInteger;
-  QCnt    : TLearnInteger;
-  CurSplit: TLearnFloat;
-  NLeft   : TLearnInteger;
-  V       : TLearnFloat;
-  CurE    : TLearnFloat;
-  W       : TLearnFloat;
-  SL      : TLearnFloat;
-  SR      : TLearnFloat;
+  I       : TLInt;
+  NEq     : TLInt;
+  NLess   : TLInt;
+  NGreater: TLInt;
+  Q       : TLInt;
+  QMin    : TLInt;
+  QMax    : TLInt;
+  QCnt    : TLInt;
+  CurSplit: TLFloat;
+  NLeft   : TLInt;
+  V       : TLFloat;
+  CurE    : TLFloat;
+  W       : TLFloat;
+  SL      : TLFloat;
+  SR      : TLFloat;
 begin
   TagSortFastI(X, C, N);
   E := MaxRealNumber;
@@ -1679,22 +1679,22 @@ end;
 (* ************************************************************************
   Makes split on attribute
   ************************************************************************ *)
-procedure DFSplitR(var X: TLearnFloatArray; var Y: TLearnFloatArray; N: TLearnInteger;
-  Flags: TLearnInteger; var Info: TLearnInteger; var Threshold: TLearnFloat;
-  var E: TLearnFloat);
+procedure DFSplitR(var X: TLVec; var Y: TLVec; N: TLInt;
+  Flags: TLInt; var Info: TLInt; var Threshold: TLFloat;
+  var E: TLFloat);
 var
-  I       : TLearnInteger;
-  NEq     : TLearnInteger;
-  NLess   : TLearnInteger;
-  NGreater: TLearnInteger;
-  Q       : TLearnInteger;
-  QMin    : TLearnInteger;
-  QMax    : TLearnInteger;
-  QCnt    : TLearnInteger;
-  CurSplit: TLearnFloat;
-  NLeft   : TLearnInteger;
-  V       : TLearnFloat;
-  CurE    : TLearnFloat;
+  I       : TLInt;
+  NEq     : TLInt;
+  NLess   : TLInt;
+  NGreater: TLInt;
+  Q       : TLInt;
+  QMin    : TLInt;
+  QMax    : TLInt;
+  QCnt    : TLInt;
+  CurSplit: TLFloat;
+  NLeft   : TLInt;
+  V       : TLFloat;
+  CurE    : TLFloat;
 begin
   TagSortFastR(X, Y, N);
   E := MaxRealNumber;

@@ -9,9 +9,9 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 
-procedure PCABuildBasis(const X: TLearnFloat2DArray; NPoints: TLearnInteger; NVars: TLearnInteger; var Info: TLearnInteger; var S2: TLearnFloatArray; var V: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure PCABuildBasis(const X: TLMatrix; NPoints: TLInt; NVars: TLInt; var Info: TLInt; var S2: TLVec; var V: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure InternalStatHeapSort(var Arr: TLearnFloatArray; N: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalStatHeapSort(var Arr: TLVec; N: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -27,14 +27,14 @@ procedure InternalStatHeapSort(var Arr: TLearnFloatArray; N: TLearnInteger); for
   Skewness-   skewness (if variance<>0; zero otherwise).
   Kurtosis-   kurtosis (if variance<>0; zero otherwise).
   ************************************************************************ *)
-procedure CalculateMoments(const X: TLearnFloatArray; N: TLearnInteger;
-  var Mean: TLearnFloat; var Variance: TLearnFloat; var Skewness: TLearnFloat; var Kurtosis: TLearnFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CalculateMoments(const X: TLVec; N: TLInt;
+  var Mean: TLFloat; var Variance: TLFloat; var Skewness: TLFloat; var Kurtosis: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  I     : TLearnInteger;
-  V     : TLearnFloat;
-  V1    : TLearnFloat;
-  V2    : TLearnFloat;
-  StdDev: TLearnFloat;
+  I     : TLInt;
+  V     : TLFloat;
+  V1    : TLFloat;
+  V2    : TLFloat;
+  StdDev: TLFloat;
 begin
   Mean := 0;
   Variance := 0;
@@ -114,10 +114,10 @@ end;
   Output parameters:
   ADev-   ADev
   ************************************************************************ *)
-procedure CalculateADev(const X: TLearnFloatArray; const N: TLearnInteger; var ADev: TLearnFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CalculateADev(const X: TLVec; const N: TLInt; var ADev: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  I   : TLearnInteger;
-  Mean: TLearnFloat;
+  I   : TLInt;
+  Mean: TLFloat;
 begin
   Mean := 0;
   ADev := 0;
@@ -159,16 +159,16 @@ end;
   Output parameters:
   Median
   ************************************************************************ *)
-procedure CalculateMedian(const X: TLearnFloatArray; const N: TLearnInteger; var Median: TLearnFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CalculateMedian(const X: TLVec; const N: TLInt; var Median: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  I   : TLearnInteger;
-  ir  : TLearnInteger;
-  j   : TLearnInteger;
-  l   : TLearnInteger;
-  midp: TLearnInteger;
-  K   : TLearnInteger;
-  a   : TLearnFloat;
-  tval: TLearnFloat;
+  I   : TLInt;
+  ir  : TLInt;
+  j   : TLInt;
+  l   : TLInt;
+  midp: TLInt;
+  K   : TLInt;
+  a   : TLFloat;
+  tval: TLFloat;
 begin
   //
   // Some degenerate cases
@@ -300,11 +300,11 @@ end;
   Output parameters:
   V   -   percentile
   ************************************************************************ *)
-procedure CalculatePercentile(const X: TLearnFloatArray; const N: TLearnInteger; const P: TLearnFloat; var V: TLearnFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CalculatePercentile(const X: TLVec; const N: TLInt; const P: TLFloat; var V: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  NX: TLearnFloatArray;
-  I1: TLearnInteger;
-  T : TLearnFloat;
+  NX: TLVec;
+  I1: TLInt;
+  T : TLFloat;
 begin
   NX := DynamicArrayCopy(X);
   Assert(N > 1, 'CalculatePercentile: N<=1!');
@@ -327,12 +327,12 @@ begin
   V := NX[I1] * (1 - T) + NX[I1 + 1] * T;
 end;
 
-procedure InternalStatHeapSort(var Arr: TLearnFloatArray; N: TLearnInteger);
+procedure InternalStatHeapSort(var Arr: TLVec; N: TLInt);
 var
-  I  : TLearnInteger;
-  K  : TLearnInteger;
-  T  : TLearnInteger;
-  Tmp: TLearnFloat;
+  I  : TLInt;
+  K  : TLInt;
+  T  : TLInt;
+  Tmp: TLFloat;
 begin
   if N = 1 then
     begin
@@ -418,20 +418,20 @@ end;
   S2          -   array[0..NVars-1]. variance values corresponding to basis vectors.
   V           -   array[0..NVars-1,0..NVars-1] matrix, whose columns store basis vectors.
   ************************************************************************ *)
-procedure PCABuildBasis(const X: TLearnFloat2DArray; NPoints: TLearnInteger; NVars: TLearnInteger; var Info: TLearnInteger; var S2: TLearnFloatArray; var V: TLearnFloat2DArray);
+procedure PCABuildBasis(const X: TLMatrix; NPoints: TLInt; NVars: TLInt; var Info: TLInt; var S2: TLVec; var V: TLMatrix);
 var
-  a       : TLearnFloat2DArray;
-  U       : TLearnFloat2DArray;
-  VT      : TLearnFloat2DArray;
-  M       : TLearnFloatArray;
-  T       : TLearnFloatArray;
-  I       : TLearnInteger;
-  j       : TLearnInteger;
-  Mean    : TLearnFloat;
-  Variance: TLearnFloat;
-  Skewness: TLearnFloat;
-  Kurtosis: TLearnFloat;
-  i_      : TLearnInteger;
+  a       : TLMatrix;
+  U       : TLMatrix;
+  VT      : TLMatrix;
+  M       : TLVec;
+  T       : TLVec;
+  I       : TLInt;
+  j       : TLInt;
+  Mean    : TLFloat;
+  Variance: TLFloat;
+  Skewness: TLFloat;
+  Kurtosis: TLFloat;
+  i_      : TLInt;
 begin
 
   //

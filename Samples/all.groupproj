@@ -6,9 +6,6 @@
         <Projects Include="06 图像光栅化引擎\MemRasterDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="04 基于图片的特征码提取与识别\pictureAnalysis.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="05 随机森林之决策树\rForestDemo.dproj">
             <Dependencies/>
         </Projects>
@@ -16,6 +13,15 @@
             <Dependencies/>
         </Projects>
         <Projects Include="02 图形聚类分析测试演示\GUIAnalysis.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="03 基于ZDB的采样和聚类\zDBAnalysisDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="04 大规模图片特征码提取与识别\LargepictureAnalysis.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\test\LearnLibTest.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -34,15 +40,6 @@
     </Target>
     <Target Name="MemRasterDemo:Make">
         <MSBuild Projects="06 图像光栅化引擎\MemRasterDemo.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="pictureAnalysis">
-        <MSBuild Projects="04 基于图片的特征码提取与识别\pictureAnalysis.dproj"/>
-    </Target>
-    <Target Name="pictureAnalysis:Clean">
-        <MSBuild Projects="04 基于图片的特征码提取与识别\pictureAnalysis.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="pictureAnalysis:Make">
-        <MSBuild Projects="04 基于图片的特征码提取与识别\pictureAnalysis.dproj" Targets="Make"/>
     </Target>
     <Target Name="rForestDemo">
         <MSBuild Projects="05 随机森林之决策树\rForestDemo.dproj"/>
@@ -71,14 +68,41 @@
     <Target Name="GUIAnalysis:Make">
         <MSBuild Projects="02 图形聚类分析测试演示\GUIAnalysis.dproj" Targets="Make"/>
     </Target>
+    <Target Name="zDBAnalysisDemo">
+        <MSBuild Projects="03 基于ZDB的采样和聚类\zDBAnalysisDemo.dproj"/>
+    </Target>
+    <Target Name="zDBAnalysisDemo:Clean">
+        <MSBuild Projects="03 基于ZDB的采样和聚类\zDBAnalysisDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="zDBAnalysisDemo:Make">
+        <MSBuild Projects="03 基于ZDB的采样和聚类\zDBAnalysisDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="LargepictureAnalysis">
+        <MSBuild Projects="04 大规模图片特征码提取与识别\LargepictureAnalysis.dproj"/>
+    </Target>
+    <Target Name="LargepictureAnalysis:Clean">
+        <MSBuild Projects="04 大规模图片特征码提取与识别\LargepictureAnalysis.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="LargepictureAnalysis:Make">
+        <MSBuild Projects="04 大规模图片特征码提取与识别\LargepictureAnalysis.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="LearnLibTest">
+        <MSBuild Projects="..\test\LearnLibTest.dproj"/>
+    </Target>
+    <Target Name="LearnLibTest:Clean">
+        <MSBuild Projects="..\test\LearnLibTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="LearnLibTest:Make">
+        <MSBuild Projects="..\test\LearnLibTest.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="MemRasterDemo;pictureAnalysis;rForestDemo;EasyConsoleDemo;GUIAnalysis"/>
+        <CallTarget Targets="MemRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargepictureAnalysis;LearnLibTest"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="MemRasterDemo:Clean;pictureAnalysis:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean"/>
+        <CallTarget Targets="MemRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargepictureAnalysis:Clean;LearnLibTest:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="MemRasterDemo:Make;pictureAnalysis:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make"/>
+        <CallTarget Targets="MemRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargepictureAnalysis:Make;LearnLibTest:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -8,38 +8,38 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 
-procedure WCheb(const X, C: TLearnFloat; var TJ: TLearnFloat; var TJ1: TLearnFloat; var R: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W5(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W6(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W7(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W8(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W9(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W10(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W11(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W12(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W13(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W14(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W15(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W16(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W17(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W18(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W19(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W20(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W21(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W22(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W23(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W24(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W25(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W26(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W27(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W28(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W29(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W30(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W40(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W60(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W120(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function W200(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function WSigma(const S: TLearnFloat; const N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure WCheb(const X, C: TLFloat; var TJ: TLFloat; var TJ1: TLFloat; var R: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W5(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W6(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W7(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W8(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W9(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W10(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W11(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W12(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W13(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W16(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W17(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W18(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W19(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W20(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W21(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W22(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W23(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W24(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W25(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W26(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W27(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W28(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W29(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W40(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W60(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W120(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function W200(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function WSigma(const S: TLFloat; const N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -72,23 +72,23 @@ function WSigma(const S: TLearnFloat; const N: TLearnInteger): TLearnFloat; forw
   "Two decimal places" does not sound very impressive, but in practice the relative error of less than 1% is enough to make a decision.
   There is no approximation outside the [0.0001, 1] interval. Therefore,  if the significance level outlies this interval, the test returns 0.0001.
   ************************************************************************ *)
-procedure WilcoxonSignedRankTest(const X: TLearnFloatArray; N: TLearnInteger; E: TLearnFloat; var BothTails, LeftTail, RightTail: TLearnFloat);
+procedure WilcoxonSignedRankTest(const X: TLVec; N: TLInt; E: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  I    : TLearnInteger;
-  J    : TLearnInteger;
-  K    : TLearnInteger;
-  T    : TLearnInteger;
-  Tmp  : TLearnFloat;
-  TmpI : TLearnInteger;
-  NS   : TLearnInteger;
-  R    : TLearnFloatArray;
-  C    : TLearnIntegerArray;
-  W    : TLearnFloat;
-  P    : TLearnFloat;
-  MP   : TLearnFloat;
-  S    : TLearnFloat;
-  Sigma: TLearnFloat;
-  Mu   : TLearnFloat;
+  I    : TLInt;
+  J    : TLInt;
+  K    : TLInt;
+  T    : TLInt;
+  Tmp  : TLFloat;
+  TmpI : TLInt;
+  NS   : TLInt;
+  R    : TLVec;
+  C    : TLIVec;
+  W    : TLFloat;
+  P    : TLFloat;
+  MP   : TLFloat;
+  S    : TLFloat;
+  Sigma: TLFloat;
+  Mu   : TLFloat;
 begin
   //
   // Prepare
@@ -265,9 +265,9 @@ end;
 (* ************************************************************************
   Sequential Chebyshev interpolation.
   ************************************************************************ *)
-procedure WCheb(const X, C: TLearnFloat; var TJ: TLearnFloat; var TJ1: TLearnFloat; var R: TLearnFloat);
+procedure WCheb(const X, C: TLFloat; var TJ: TLFloat; var TJ1: TLFloat; var R: TLFloat);
 var
-  T: TLearnFloat;
+  T: TLFloat;
 begin
   R := R + C * TJ;
   T := 2 * X * TJ1 - TJ;
@@ -278,10 +278,10 @@ end;
 (* ************************************************************************
   Tail(S, 5)
   ************************************************************************ *)
-function W5(const S: TLearnFloat): TLearnFloat;
+function W5(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-3.708099E+00 * S + 7.500000E+00);
   if W >= 7 then
@@ -322,10 +322,10 @@ end;
 (* ************************************************************************
   Tail(S, 6)
   ************************************************************************ *)
-function W6(const S: TLearnFloat): TLearnFloat;
+function W6(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-4.769696E+00 * S + 1.050000E+01);
   if W >= 10 then
@@ -378,10 +378,10 @@ end;
 (* ************************************************************************
   Tail(S, 7)
   ************************************************************************ *)
-function W7(const S: TLearnFloat): TLearnFloat;
+function W7(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-5.916080E+00 * S + 1.400000E+01);
   if W >= 14 then
@@ -450,10 +450,10 @@ end;
 (* ************************************************************************
   Tail(S, 8)
   ************************************************************************ *)
-function W8(const S: TLearnFloat): TLearnFloat;
+function W8(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-7.141428E+00 * S + 1.800000E+01);
   if W >= 18 then
@@ -538,10 +538,10 @@ end;
 (* ************************************************************************
   Tail(S, 9)
   ************************************************************************ *)
-function W9(const S: TLearnFloat): TLearnFloat;
+function W9(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-8.440972E+00 * S + 2.250000E+01);
   if W >= 22 then
@@ -642,10 +642,10 @@ end;
 (* ************************************************************************
   Tail(S, 10)
   ************************************************************************ *)
-function W10(const S: TLearnFloat): TLearnFloat;
+function W10(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-9.810708E+00 * S + 2.750000E+01);
   if W >= 27 then
@@ -766,10 +766,10 @@ end;
 (* ************************************************************************
   Tail(S, 11)
   ************************************************************************ *)
-function W11(const S: TLearnFloat): TLearnFloat;
+function W11(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-1.124722E+01 * S + 3.300000E+01);
   if W >= 33 then
@@ -914,10 +914,10 @@ end;
 (* ************************************************************************
   Tail(S, 12)
   ************************************************************************ *)
-function W12(const S: TLearnFloat): TLearnFloat;
+function W12(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-1.274755E+01 * S + 3.900000E+01);
   if W >= 39 then
@@ -1086,10 +1086,10 @@ end;
 (* ************************************************************************
   Tail(S, 13)
   ************************************************************************ *)
-function W13(const S: TLearnFloat): TLearnFloat;
+function W13(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-1.430909E+01 * S + 4.550000E+01);
   if W >= 45 then
@@ -1282,10 +1282,10 @@ end;
 (* ************************************************************************
   Tail(S, 14)
   ************************************************************************ *)
-function W14(const S: TLearnFloat): TLearnFloat;
+function W14(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-1.592953E+01 * S + 5.250000E+01);
   if W >= 52 then
@@ -1506,10 +1506,10 @@ end;
 (* ************************************************************************
   Tail(S, 15)
   ************************************************************************ *)
-function W15(const S: TLearnFloat): TLearnFloat;
+function W15(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-1.760682E+01 * S + 6.000000E+01);
   if W >= 60 then
@@ -1762,10 +1762,10 @@ end;
 (* ************************************************************************
   Tail(S, 16)
   ************************************************************************ *)
-function W16(const S: TLearnFloat): TLearnFloat;
+function W16(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-1.933908E+01 * S + 6.800000E+01);
   if W >= 68 then
@@ -2050,10 +2050,10 @@ end;
 (* ************************************************************************
   Tail(S, 17)
   ************************************************************************ *)
-function W17(const S: TLearnFloat): TLearnFloat;
+function W17(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-2.112463E+01 * S + 7.650000E+01);
   if W >= 76 then
@@ -2370,10 +2370,10 @@ end;
 (* ************************************************************************
   Tail(S, 18)
   ************************************************************************ *)
-function W18(const S: TLearnFloat): TLearnFloat;
+function W18(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-2.296193E+01 * S + 8.550000E+01);
   if W >= 85 then
@@ -2726,10 +2726,10 @@ end;
 (* ************************************************************************
   Tail(S, 19)
   ************************************************************************ *)
-function W19(const S: TLearnFloat): TLearnFloat;
+function W19(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-2.484955E+01 * S + 9.500000E+01);
   if W >= 95 then
@@ -3122,10 +3122,10 @@ end;
 (* ************************************************************************
   Tail(S, 20)
   ************************************************************************ *)
-function W20(const S: TLearnFloat): TLearnFloat;
+function W20(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-2.678619E+01 * S + 1.050000E+02);
   if W >= 105 then
@@ -3558,10 +3558,10 @@ end;
 (* ************************************************************************
   Tail(S, 21)
   ************************************************************************ *)
-function W21(const S: TLearnFloat): TLearnFloat;
+function W21(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-2.877064E+01 * S + 1.155000E+02);
   if W >= 115 then
@@ -4034,10 +4034,10 @@ end;
 (* ************************************************************************
   Tail(S, 22)
   ************************************************************************ *)
-function W22(const S: TLearnFloat): TLearnFloat;
+function W22(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-3.080179E+01 * S + 1.265000E+02);
   if W >= 126 then
@@ -4554,10 +4554,10 @@ end;
 (* ************************************************************************
   Tail(S, 23)
   ************************************************************************ *)
-function W23(const S: TLearnFloat): TLearnFloat;
+function W23(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-3.287856E+01 * S + 1.380000E+02);
   if W >= 138 then
@@ -5122,10 +5122,10 @@ end;
 (* ************************************************************************
   Tail(S, 24)
   ************************************************************************ *)
-function W24(const S: TLearnFloat): TLearnFloat;
+function W24(const S: TLFloat): TLFloat;
 var
-  W: TLearnInteger;
-  R: TLearnFloat;
+  W: TLInt;
+  R: TLFloat;
 begin
   W := Round(-3.500000E+01 * S + 1.500000E+02);
   if W >= 150 then
@@ -5738,11 +5738,11 @@ end;
 (* ************************************************************************
   Tail(S, 25)
   ************************************************************************ *)
-function W25(const S: TLearnFloat): TLearnFloat;
+function W25(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 4.000000E+00 - 1, 1.0);
@@ -5764,11 +5764,11 @@ end;
 (* ************************************************************************
   Tail(S, 26)
   ************************************************************************ *)
-function W26(const S: TLearnFloat): TLearnFloat;
+function W26(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 4.000000E+00 - 1, 1.0);
@@ -5790,11 +5790,11 @@ end;
 (* ************************************************************************
   Tail(S, 27)
   ************************************************************************ *)
-function W27(const S: TLearnFloat): TLearnFloat;
+function W27(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 4.000000E+00 - 1, 1.0);
@@ -5816,11 +5816,11 @@ end;
 (* ************************************************************************
   Tail(S, 28)
   ************************************************************************ *)
-function W28(const S: TLearnFloat): TLearnFloat;
+function W28(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 4.000000E+00 - 1, 1.0);
@@ -5842,11 +5842,11 @@ end;
 (* ************************************************************************
   Tail(S, 29)
   ************************************************************************ *)
-function W29(const S: TLearnFloat): TLearnFloat;
+function W29(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 4.000000E+00 - 1, 1.0);
@@ -5868,11 +5868,11 @@ end;
 (* ************************************************************************
   Tail(S, 30)
   ************************************************************************ *)
-function W30(const S: TLearnFloat): TLearnFloat;
+function W30(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 4.000000E+00 - 1, 1.0);
@@ -5894,11 +5894,11 @@ end;
 (* ************************************************************************
   Tail(S, 40)
   ************************************************************************ *)
-function W40(const S: TLearnFloat): TLearnFloat;
+function W40(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 4.000000E+00 - 1, 1.0);
@@ -5920,11 +5920,11 @@ end;
 (* ************************************************************************
   Tail(S, 60)
   ************************************************************************ *)
-function W60(const S: TLearnFloat): TLearnFloat;
+function W60(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 4.000000E+00 - 1, 1.0);
@@ -5946,11 +5946,11 @@ end;
 (* ************************************************************************
   Tail(S, 120)
   ************************************************************************ *)
-function W120(const S: TLearnFloat): TLearnFloat;
+function W120(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 4.000000E+00 - 1, 1.0);
@@ -5972,11 +5972,11 @@ end;
 (* ************************************************************************
   Tail(S, 200)
   ************************************************************************ *)
-function W200(const S: TLearnFloat): TLearnFloat;
+function W200(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 4.000000E+00 - 1, 1.0);
@@ -5998,19 +5998,19 @@ end;
 (* ************************************************************************
   Tail(S,N), S>=0
   ************************************************************************ *)
-function WSigma(const S: TLearnFloat; const N: TLearnInteger): TLearnFloat;
+function WSigma(const S: TLFloat; const N: TLInt): TLFloat;
 var
-  F0: TLearnFloat;
-  F1: TLearnFloat;
-  F2: TLearnFloat;
-  F3: TLearnFloat;
-  F4: TLearnFloat;
-  X0: TLearnFloat;
-  X1: TLearnFloat;
-  X2: TLearnFloat;
-  X3: TLearnFloat;
-  X4: TLearnFloat;
-  X : TLearnFloat;
+  F0: TLFloat;
+  F1: TLFloat;
+  F2: TLFloat;
+  F3: TLFloat;
+  F4: TLFloat;
+  X0: TLFloat;
+  X1: TLFloat;
+  X2: TLFloat;
+  X3: TLFloat;
+  X4: TLFloat;
+  X : TLFloat;
 begin
   if N = 5 then
     begin

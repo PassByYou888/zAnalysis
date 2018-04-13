@@ -8,116 +8,116 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 
-procedure UCheb(const X, C: TLearnFloat; var TJ: TLearnFloat; var TJ1: TLearnFloat; var R: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UNInterpolate(const P1, P2, P3: TLearnFloat; const N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function USigma000(const N1, N2: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function USigma075(const N1, N2: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function USigma150(const N1, N2: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function USigma225(const N1, N2: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function USigma300(const N1, N2: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function USigma333(const N1, N2: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function USigma367(const N1, N2: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function USigma400(const N1, N2: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N5(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N6(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N7(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N8(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N9(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N10(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N11(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N12(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N13(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N14(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N15(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N16(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N17(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N18(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N19(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N20(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N21(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N22(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N23(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N24(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N25(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N26(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N27(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N28(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N29(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N30(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN5N100(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN6N6(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN6N7(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN6N8(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN6N9(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN6N10(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN6N11(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN6N12(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN6N13(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN6N14(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN6N15(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN6N30(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN6N100(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN7N7(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN7N8(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN7N9(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN7N10(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN7N11(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN7N12(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN7N13(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN7N14(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN7N15(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN7N30(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN7N100(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN8N8(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN8N9(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN8N10(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN8N11(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN8N12(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN8N13(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN8N14(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN8N15(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN8N30(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN8N100(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN9N9(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN9N10(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN9N11(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN9N12(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN9N13(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN9N14(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN9N15(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN9N30(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN9N100(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN10N10(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN10N11(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN10N12(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN10N13(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN10N14(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN10N15(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN10N30(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN10N100(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN11N11(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN11N12(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN11N13(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN11N14(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN11N15(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN11N30(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN11N100(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN12N12(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN12N13(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN12N14(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN12N15(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN12N30(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN12N100(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN13N13(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN13N14(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN13N15(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN13N30(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN13N100(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN14N14(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN14N15(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN14N30(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UTblN14N100(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function USigma(S: TLearnFloat; N1: TLearnInteger; N2: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure UCheb(const X, C: TLFloat; var TJ: TLFloat; var TJ1: TLFloat; var R: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UNInterpolate(const P1, P2, P3: TLFloat; const N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function USigma000(const N1, N2: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function USigma075(const N1, N2: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function USigma150(const N1, N2: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function USigma225(const N1, N2: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function USigma300(const N1, N2: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function USigma333(const N1, N2: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function USigma367(const N1, N2: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function USigma400(const N1, N2: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N5(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N6(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N7(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N8(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N9(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N10(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N11(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N12(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N13(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N16(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N17(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N18(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N19(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N20(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N21(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N22(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N23(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N24(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N25(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N26(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N27(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N28(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N29(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN5N100(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN6N6(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN6N7(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN6N8(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN6N9(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN6N10(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN6N11(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN6N12(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN6N13(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN6N14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN6N15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN6N30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN6N100(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN7N7(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN7N8(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN7N9(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN7N10(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN7N11(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN7N12(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN7N13(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN7N14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN7N15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN7N30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN7N100(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN8N8(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN8N9(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN8N10(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN8N11(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN8N12(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN8N13(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN8N14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN8N15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN8N30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN8N100(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN9N9(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN9N10(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN9N11(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN9N12(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN9N13(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN9N14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN9N15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN9N30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN9N100(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN10N10(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN10N11(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN10N12(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN10N13(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN10N14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN10N15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN10N30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN10N100(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN11N11(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN11N12(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN11N13(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN11N14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN11N15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN11N30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN11N100(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN12N12(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN12N13(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN12N14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN12N15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN12N30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN12N100(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN13N13(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN13N14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN13N15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN13N30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN13N100(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN14N14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN14N15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN14N30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UTblN14N100(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function USigma(S: TLFloat; N1: TLInt; N2: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -170,26 +170,26 @@ function USigma(S: TLearnFloat; N1: TLearnInteger; N2: TLearnInteger): TLearnFlo
   account characteristics of asymptotic approximation used, precision should
   not be sharply different from the values for interval [5, 100].
   ************************************************************************ *)
-procedure MannWhitneyUTest(const X: TLearnFloatArray; N: TLearnInteger; const Y: TLearnFloatArray; M: TLearnInteger;
-  var BothTails, LeftTail, RightTail: TLearnFloat);
+procedure MannWhitneyUTest(const X: TLVec; N: TLInt; const Y: TLVec; M: TLInt;
+  var BothTails, LeftTail, RightTail: TLFloat);
 var
-  I       : TLearnInteger;
-  J       : TLearnInteger;
-  K       : TLearnInteger;
-  T       : TLearnInteger;
-  Tmp     : TLearnFloat;
-  TmpI    : TLearnInteger;
-  NS      : TLearnInteger;
-  R       : TLearnFloatArray;
-  C       : TLearnIntegerArray;
-  U       : TLearnFloat;
-  P       : TLearnFloat;
-  MP      : TLearnFloat;
-  S       : TLearnFloat;
-  Sigma   : TLearnFloat;
-  Mu      : TLearnFloat;
-  TieCount: TLearnInteger;
-  TieSize : TLearnIntegerArray;
+  I       : TLInt;
+  J       : TLInt;
+  K       : TLInt;
+  T       : TLInt;
+  Tmp     : TLFloat;
+  TmpI    : TLInt;
+  NS      : TLInt;
+  R       : TLVec;
+  C       : TLIVec;
+  U       : TLFloat;
+  P       : TLFloat;
+  MP      : TLFloat;
+  S       : TLFloat;
+  Sigma   : TLFloat;
+  Mu      : TLFloat;
+  TieCount: TLInt;
+  TieSize : TLIVec;
 begin
 
   //
@@ -367,9 +367,9 @@ end;
 (* ************************************************************************
   Sequential Chebyshev interpolation.
   ************************************************************************ *)
-procedure UCheb(const X, C: TLearnFloat; var TJ: TLearnFloat; var TJ1: TLearnFloat; var R: TLearnFloat);
+procedure UCheb(const X, C: TLFloat; var TJ: TLFloat; var TJ1: TLFloat; var R: TLFloat);
 var
-  T: TLearnFloat;
+  T: TLFloat;
 begin
   R := R + C * TJ;
   T := 2 * X * TJ1 - TJ;
@@ -380,14 +380,14 @@ end;
 (* ************************************************************************
   Three-point polynomial interpolation.
   ************************************************************************ *)
-function UNInterpolate(const P1, P2, P3: TLearnFloat; const N: TLearnInteger): TLearnFloat;
+function UNInterpolate(const P1, P2, P3: TLFloat; const N: TLInt): TLFloat;
 var
-  T1 : TLearnFloat;
-  T2 : TLearnFloat;
-  T3 : TLearnFloat;
-  T  : TLearnFloat;
-  P12: TLearnFloat;
-  P23: TLearnFloat;
+  T1 : TLFloat;
+  T2 : TLFloat;
+  T3 : TLFloat;
+  T  : TLFloat;
+  P12: TLFloat;
+  P23: TLFloat;
 begin
   T1 := 1.0 / 15.0;
   T2 := 1.0 / 30.0;
@@ -401,11 +401,11 @@ end;
 (* ************************************************************************
   Tail(0, N1, N2)
   ************************************************************************ *)
-function USigma000(const N1, N2: TLearnInteger): TLearnFloat;
+function USigma000(const N1, N2: TLInt): TLFloat;
 var
-  P1: TLearnFloat;
-  P2: TLearnFloat;
-  P3: TLearnFloat;
+  P1: TLFloat;
+  P2: TLFloat;
+  P3: TLFloat;
 begin
   P1 := UNInterpolate(-6.76984E-01, -6.83700E-01, -6.89873E-01, N2);
   P2 := UNInterpolate(-6.83700E-01, -6.87311E-01, -6.90957E-01, N2);
@@ -416,11 +416,11 @@ end;
 (* ************************************************************************
   Tail(0.75, N1, N2)
   ************************************************************************ *)
-function USigma075(const N1, N2: TLearnInteger): TLearnFloat;
+function USigma075(const N1, N2: TLInt): TLFloat;
 var
-  P1: TLearnFloat;
-  P2: TLearnFloat;
-  P3: TLearnFloat;
+  P1: TLFloat;
+  P2: TLFloat;
+  P3: TLFloat;
 begin
   P1 := UNInterpolate(-1.44500E+00, -1.45906E+00, -1.47063E+00, N2);
   P2 := UNInterpolate(-1.45906E+00, -1.46856E+00, -1.47644E+00, N2);
@@ -431,11 +431,11 @@ end;
 (* ************************************************************************
   Tail(1.5, N1, N2)
   ************************************************************************ *)
-function USigma150(const N1, N2: TLearnInteger): TLearnFloat;
+function USigma150(const N1, N2: TLInt): TLFloat;
 var
-  P1: TLearnFloat;
-  P2: TLearnFloat;
-  P3: TLearnFloat;
+  P1: TLFloat;
+  P2: TLFloat;
+  P3: TLFloat;
 begin
   P1 := UNInterpolate(-2.65380E+00, -2.67352E+00, -2.69011E+00, N2);
   P2 := UNInterpolate(-2.67352E+00, -2.68591E+00, -2.69659E+00, N2);
@@ -446,11 +446,11 @@ end;
 (* ************************************************************************
   Tail(2.25, N1, N2)
   ************************************************************************ *)
-function USigma225(const N1, N2: TLearnInteger): TLearnFloat;
+function USigma225(const N1, N2: TLInt): TLFloat;
 var
-  P1: TLearnFloat;
-  P2: TLearnFloat;
-  P3: TLearnFloat;
+  P1: TLFloat;
+  P2: TLFloat;
+  P3: TLFloat;
 begin
   P1 := UNInterpolate(-4.41465E+00, -4.42260E+00, -4.43702E+00, N2);
   P2 := UNInterpolate(-4.42260E+00, -4.41639E+00, -4.41928E+00, N2);
@@ -461,11 +461,11 @@ end;
 (* ************************************************************************
   Tail(3.0, N1, N2)
   ************************************************************************ *)
-function USigma300(const N1, N2: TLearnInteger): TLearnFloat;
+function USigma300(const N1, N2: TLInt): TLFloat;
 var
-  P1: TLearnFloat;
-  P2: TLearnFloat;
-  P3: TLearnFloat;
+  P1: TLFloat;
+  P2: TLFloat;
+  P3: TLFloat;
 begin
   P1 := UNInterpolate(-6.89839E+00, -6.83477E+00, -6.82340E+00, N2);
   P2 := UNInterpolate(-6.83477E+00, -6.74559E+00, -6.71117E+00, N2);
@@ -476,11 +476,11 @@ end;
 (* ************************************************************************
   Tail(3.33, N1, N2)
   ************************************************************************ *)
-function USigma333(const N1, N2: TLearnInteger): TLearnFloat;
+function USigma333(const N1, N2: TLInt): TLFloat;
 var
-  P1: TLearnFloat;
-  P2: TLearnFloat;
-  P3: TLearnFloat;
+  P1: TLFloat;
+  P2: TLFloat;
+  P3: TLFloat;
 begin
   P1 := UNInterpolate(-8.31272E+00, -8.17096E+00, -8.13125E+00, N2);
   P2 := UNInterpolate(-8.17096E+00, -8.00156E+00, -7.93245E+00, N2);
@@ -491,11 +491,11 @@ end;
 (* ************************************************************************
   Tail(3.66, N1, N2)
   ************************************************************************ *)
-function USigma367(const N1, N2: TLearnInteger): TLearnFloat;
+function USigma367(const N1, N2: TLInt): TLFloat;
 var
-  P1: TLearnFloat;
-  P2: TLearnFloat;
-  P3: TLearnFloat;
+  P1: TLFloat;
+  P2: TLFloat;
+  P3: TLFloat;
 begin
   P1 := UNInterpolate(-9.98837E+00, -9.70844E+00, -9.62087E+00, N2);
   P2 := UNInterpolate(-9.70844E+00, -9.41156E+00, -9.28998E+00, N2);
@@ -506,11 +506,11 @@ end;
 (* ************************************************************************
   Tail(4.0, N1, N2)
   ************************************************************************ *)
-function USigma400(const N1, N2: TLearnInteger): TLearnFloat;
+function USigma400(const N1, N2: TLInt): TLFloat;
 var
-  P1: TLearnFloat;
-  P2: TLearnFloat;
-  P3: TLearnFloat;
+  P1: TLFloat;
+  P2: TLFloat;
+  P3: TLFloat;
 begin
   P1 := UNInterpolate(-1.20250E+01, -1.14911E+01, -1.13231E+01, N2);
   P2 := UNInterpolate(-1.14911E+01, -1.09927E+01, -1.07937E+01, N2);
@@ -521,11 +521,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 5)
   ************************************************************************ *)
-function UTblN5N5(const S: TLearnFloat): TLearnFloat;
+function UTblN5N5(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 2.611165E+00 - 1, 1.0);
@@ -552,11 +552,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 6)
   ************************************************************************ *)
-function UTblN5N6(const S: TLearnFloat): TLearnFloat;
+function UTblN5N6(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 2.738613E+00 - 1, 1.0);
@@ -583,11 +583,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 7)
   ************************************************************************ *)
-function UTblN5N7(const S: TLearnFloat): TLearnFloat;
+function UTblN5N7(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 2.841993E+00 - 1, 1.0);
@@ -614,11 +614,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 8)
   ************************************************************************ *)
-function UTblN5N8(const S: TLearnFloat): TLearnFloat;
+function UTblN5N8(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 2.927700E+00 - 1, 1.0);
@@ -645,11 +645,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 9)
   ************************************************************************ *)
-function UTblN5N9(const S: TLearnFloat): TLearnFloat;
+function UTblN5N9(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.000000E+00 - 1, 1.0);
@@ -676,11 +676,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 10)
   ************************************************************************ *)
-function UTblN5N10(const S: TLearnFloat): TLearnFloat;
+function UTblN5N10(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.061862E+00 - 1, 1.0);
@@ -707,11 +707,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 11)
   ************************************************************************ *)
-function UTblN5N11(const S: TLearnFloat): TLearnFloat;
+function UTblN5N11(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.115427E+00 - 1, 1.0);
@@ -738,11 +738,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 12)
   ************************************************************************ *)
-function UTblN5N12(const S: TLearnFloat): TLearnFloat;
+function UTblN5N12(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.162278E+00 - 1, 1.0);
@@ -769,11 +769,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 13)
   ************************************************************************ *)
-function UTblN5N13(const S: TLearnFloat): TLearnFloat;
+function UTblN5N13(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.203616E+00 - 1, 1.0);
@@ -800,11 +800,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 14)
   ************************************************************************ *)
-function UTblN5N14(const S: TLearnFloat): TLearnFloat;
+function UTblN5N14(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.240370E+00 - 1, 1.0);
@@ -831,11 +831,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 15)
   ************************************************************************ *)
-function UTblN5N15(const S: TLearnFloat): TLearnFloat;
+function UTblN5N15(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -862,11 +862,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 16)
   ************************************************************************ *)
-function UTblN5N16(const S: TLearnFloat): TLearnFloat;
+function UTblN5N16(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -893,11 +893,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 17)
   ************************************************************************ *)
-function UTblN5N17(const S: TLearnFloat): TLearnFloat;
+function UTblN5N17(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -924,11 +924,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 18)
   ************************************************************************ *)
-function UTblN5N18(const S: TLearnFloat): TLearnFloat;
+function UTblN5N18(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -955,11 +955,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 19)
   ************************************************************************ *)
-function UTblN5N19(const S: TLearnFloat): TLearnFloat;
+function UTblN5N19(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -986,11 +986,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 20)
   ************************************************************************ *)
-function UTblN5N20(const S: TLearnFloat): TLearnFloat;
+function UTblN5N20(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -1017,11 +1017,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 21)
   ************************************************************************ *)
-function UTblN5N21(const S: TLearnFloat): TLearnFloat;
+function UTblN5N21(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -1048,11 +1048,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 22)
   ************************************************************************ *)
-function UTblN5N22(const S: TLearnFloat): TLearnFloat;
+function UTblN5N22(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -1079,11 +1079,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 23)
   ************************************************************************ *)
-function UTblN5N23(const S: TLearnFloat): TLearnFloat;
+function UTblN5N23(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -1110,11 +1110,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 24)
   ************************************************************************ *)
-function UTblN5N24(const S: TLearnFloat): TLearnFloat;
+function UTblN5N24(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -1141,11 +1141,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 25)
   ************************************************************************ *)
-function UTblN5N25(const S: TLearnFloat): TLearnFloat;
+function UTblN5N25(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -1172,11 +1172,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 26)
   ************************************************************************ *)
-function UTblN5N26(const S: TLearnFloat): TLearnFloat;
+function UTblN5N26(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -1203,11 +1203,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 27)
   ************************************************************************ *)
-function UTblN5N27(const S: TLearnFloat): TLearnFloat;
+function UTblN5N27(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -1234,11 +1234,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 28)
   ************************************************************************ *)
-function UTblN5N28(const S: TLearnFloat): TLearnFloat;
+function UTblN5N28(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -1265,11 +1265,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 29)
   ************************************************************************ *)
-function UTblN5N29(const S: TLearnFloat): TLearnFloat;
+function UTblN5N29(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -1296,11 +1296,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 30)
   ************************************************************************ *)
-function UTblN5N30(const S: TLearnFloat): TLearnFloat;
+function UTblN5N30(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -1327,11 +1327,11 @@ end;
 (* ************************************************************************
   Tail(S, 5, 100)
   ************************************************************************ *)
-function UTblN5N100(const S: TLearnFloat): TLearnFloat;
+function UTblN5N100(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.250000E+00 - 1, 1.0);
@@ -1358,11 +1358,11 @@ end;
 (* ************************************************************************
   Tail(S, 6, 6)
   ************************************************************************ *)
-function UTblN6N6(const S: TLearnFloat): TLearnFloat;
+function UTblN6N6(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 2.882307E+00 - 1, 1.0);
@@ -1389,11 +1389,11 @@ end;
 (* ************************************************************************
   Tail(S, 6, 7)
   ************************************************************************ *)
-function UTblN6N7(const S: TLearnFloat): TLearnFloat;
+function UTblN6N7(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.000000E+00 - 1, 1.0);
@@ -1420,11 +1420,11 @@ end;
 (* ************************************************************************
   Tail(S, 6, 8)
   ************************************************************************ *)
-function UTblN6N8(const S: TLearnFloat): TLearnFloat;
+function UTblN6N8(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.098387E+00 - 1, 1.0);
@@ -1451,11 +1451,11 @@ end;
 (* ************************************************************************
   Tail(S, 6, 9)
   ************************************************************************ *)
-function UTblN6N9(const S: TLearnFloat): TLearnFloat;
+function UTblN6N9(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.181981E+00 - 1, 1.0);
@@ -1482,11 +1482,11 @@ end;
 (* ************************************************************************
   Tail(S, 6, 10)
   ************************************************************************ *)
-function UTblN6N10(const S: TLearnFloat): TLearnFloat;
+function UTblN6N10(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.253957E+00 - 1, 1.0);
@@ -1513,11 +1513,11 @@ end;
 (* ************************************************************************
   Tail(S, 6, 11)
   ************************************************************************ *)
-function UTblN6N11(const S: TLearnFloat): TLearnFloat;
+function UTblN6N11(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.316625E+00 - 1, 1.0);
@@ -1544,11 +1544,11 @@ end;
 (* ************************************************************************
   Tail(S, 6, 12)
   ************************************************************************ *)
-function UTblN6N12(const S: TLearnFloat): TLearnFloat;
+function UTblN6N12(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.371709E+00 - 1, 1.0);
@@ -1575,11 +1575,11 @@ end;
 (* ************************************************************************
   Tail(S, 6, 13)
   ************************************************************************ *)
-function UTblN6N13(const S: TLearnFloat): TLearnFloat;
+function UTblN6N13(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.420526E+00 - 1, 1.0);
@@ -1606,11 +1606,11 @@ end;
 (* ************************************************************************
   Tail(S, 6, 14)
   ************************************************************************ *)
-function UTblN6N14(const S: TLearnFloat): TLearnFloat;
+function UTblN6N14(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.450000E+00 - 1, 1.0);
@@ -1637,11 +1637,11 @@ end;
 (* ************************************************************************
   Tail(S, 6, 15)
   ************************************************************************ *)
-function UTblN6N15(const S: TLearnFloat): TLearnFloat;
+function UTblN6N15(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.450000E+00 - 1, 1.0);
@@ -1668,11 +1668,11 @@ end;
 (* ************************************************************************
   Tail(S, 6, 30)
   ************************************************************************ *)
-function UTblN6N30(const S: TLearnFloat): TLearnFloat;
+function UTblN6N30(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.450000E+00 - 1, 1.0);
@@ -1699,11 +1699,11 @@ end;
 (* ************************************************************************
   Tail(S, 6, 100)
   ************************************************************************ *)
-function UTblN6N100(const S: TLearnFloat): TLearnFloat;
+function UTblN6N100(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.450000E+00 - 1, 1.0);
@@ -1730,11 +1730,11 @@ end;
 (* ************************************************************************
   Tail(S, 7, 7)
   ************************************************************************ *)
-function UTblN7N7(const S: TLearnFloat): TLearnFloat;
+function UTblN7N7(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.130495E+00 - 1, 1.0);
@@ -1761,11 +1761,11 @@ end;
 (* ************************************************************************
   Tail(S, 7, 8)
   ************************************************************************ *)
-function UTblN7N8(const S: TLearnFloat): TLearnFloat;
+function UTblN7N8(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.240370E+00 - 1, 1.0);
@@ -1792,11 +1792,11 @@ end;
 (* ************************************************************************
   Tail(S, 7, 9)
   ************************************************************************ *)
-function UTblN7N9(const S: TLearnFloat): TLearnFloat;
+function UTblN7N9(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.334314E+00 - 1, 1.0);
@@ -1823,11 +1823,11 @@ end;
 (* ************************************************************************
   Tail(S, 7, 10)
   ************************************************************************ *)
-function UTblN7N10(const S: TLearnFloat): TLearnFloat;
+function UTblN7N10(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.415650E+00 - 1, 1.0);
@@ -1854,11 +1854,11 @@ end;
 (* ************************************************************************
   Tail(S, 7, 11)
   ************************************************************************ *)
-function UTblN7N11(const S: TLearnFloat): TLearnFloat;
+function UTblN7N11(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.486817E+00 - 1, 1.0);
@@ -1885,11 +1885,11 @@ end;
 (* ************************************************************************
   Tail(S, 7, 12)
   ************************************************************************ *)
-function UTblN7N12(const S: TLearnFloat): TLearnFloat;
+function UTblN7N12(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.500000E+00 - 1, 1.0);
@@ -1916,11 +1916,11 @@ end;
 (* ************************************************************************
   Tail(S, 7, 13)
   ************************************************************************ *)
-function UTblN7N13(const S: TLearnFloat): TLearnFloat;
+function UTblN7N13(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.500000E+00 - 1, 1.0);
@@ -1947,11 +1947,11 @@ end;
 (* ************************************************************************
   Tail(S, 7, 14)
   ************************************************************************ *)
-function UTblN7N14(const S: TLearnFloat): TLearnFloat;
+function UTblN7N14(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.500000E+00 - 1, 1.0);
@@ -1978,11 +1978,11 @@ end;
 (* ************************************************************************
   Tail(S, 7, 15)
   ************************************************************************ *)
-function UTblN7N15(const S: TLearnFloat): TLearnFloat;
+function UTblN7N15(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.500000E+00 - 1, 1.0);
@@ -2009,11 +2009,11 @@ end;
 (* ************************************************************************
   Tail(S, 7, 30)
   ************************************************************************ *)
-function UTblN7N30(const S: TLearnFloat): TLearnFloat;
+function UTblN7N30(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.500000E+00 - 1, 1.0);
@@ -2040,11 +2040,11 @@ end;
 (* ************************************************************************
   Tail(S, 7, 100)
   ************************************************************************ *)
-function UTblN7N100(const S: TLearnFloat): TLearnFloat;
+function UTblN7N100(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.500000E+00 - 1, 1.0);
@@ -2071,11 +2071,11 @@ end;
 (* ************************************************************************
   Tail(S, 8, 8)
   ************************************************************************ *)
-function UTblN8N8(const S: TLearnFloat): TLearnFloat;
+function UTblN8N8(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.360672E+00 - 1, 1.0);
@@ -2102,11 +2102,11 @@ end;
 (* ************************************************************************
   Tail(S, 8, 9)
   ************************************************************************ *)
-function UTblN8N9(const S: TLearnFloat): TLearnFloat;
+function UTblN8N9(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.464102E+00 - 1, 1.0);
@@ -2133,11 +2133,11 @@ end;
 (* ************************************************************************
   Tail(S, 8, 10)
   ************************************************************************ *)
-function UTblN8N10(const S: TLearnFloat): TLearnFloat;
+function UTblN8N10(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.554093E+00 - 1, 1.0);
@@ -2164,11 +2164,11 @@ end;
 (* ************************************************************************
   Tail(S, 8, 11)
   ************************************************************************ *)
-function UTblN8N11(const S: TLearnFloat): TLearnFloat;
+function UTblN8N11(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.600000E+00 - 1, 1.0);
@@ -2195,11 +2195,11 @@ end;
 (* ************************************************************************
   Tail(S, 8, 12)
   ************************************************************************ *)
-function UTblN8N12(const S: TLearnFloat): TLearnFloat;
+function UTblN8N12(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.600000E+00 - 1, 1.0);
@@ -2226,11 +2226,11 @@ end;
 (* ************************************************************************
   Tail(S, 8, 13)
   ************************************************************************ *)
-function UTblN8N13(const S: TLearnFloat): TLearnFloat;
+function UTblN8N13(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.600000E+00 - 1, 1.0);
@@ -2257,11 +2257,11 @@ end;
 (* ************************************************************************
   Tail(S, 8, 14)
   ************************************************************************ *)
-function UTblN8N14(const S: TLearnFloat): TLearnFloat;
+function UTblN8N14(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.600000E+00 - 1, 1.0);
@@ -2288,11 +2288,11 @@ end;
 (* ************************************************************************
   Tail(S, 8, 15)
   ************************************************************************ *)
-function UTblN8N15(const S: TLearnFloat): TLearnFloat;
+function UTblN8N15(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.600000E+00 - 1, 1.0);
@@ -2319,11 +2319,11 @@ end;
 (* ************************************************************************
   Tail(S, 8, 30)
   ************************************************************************ *)
-function UTblN8N30(const S: TLearnFloat): TLearnFloat;
+function UTblN8N30(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.600000E+00 - 1, 1.0);
@@ -2350,11 +2350,11 @@ end;
 (* ************************************************************************
   Tail(S, 8, 100)
   ************************************************************************ *)
-function UTblN8N100(const S: TLearnFloat): TLearnFloat;
+function UTblN8N100(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.600000E+00 - 1, 1.0);
@@ -2381,11 +2381,11 @@ end;
 (* ************************************************************************
   Tail(S, 9, 9)
   ************************************************************************ *)
-function UTblN9N9(const S: TLearnFloat): TLearnFloat;
+function UTblN9N9(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.576237E+00 - 1, 1.0);
@@ -2412,11 +2412,11 @@ end;
 (* ************************************************************************
   Tail(S, 9, 10)
   ************************************************************************ *)
-function UTblN9N10(const S: TLearnFloat): TLearnFloat;
+function UTblN9N10(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2443,11 +2443,11 @@ end;
 (* ************************************************************************
   Tail(S, 9, 11)
   ************************************************************************ *)
-function UTblN9N11(const S: TLearnFloat): TLearnFloat;
+function UTblN9N11(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2474,11 +2474,11 @@ end;
 (* ************************************************************************
   Tail(S, 9, 12)
   ************************************************************************ *)
-function UTblN9N12(const S: TLearnFloat): TLearnFloat;
+function UTblN9N12(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2505,11 +2505,11 @@ end;
 (* ************************************************************************
   Tail(S, 9, 13)
   ************************************************************************ *)
-function UTblN9N13(const S: TLearnFloat): TLearnFloat;
+function UTblN9N13(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2536,11 +2536,11 @@ end;
 (* ************************************************************************
   Tail(S, 9, 14)
   ************************************************************************ *)
-function UTblN9N14(const S: TLearnFloat): TLearnFloat;
+function UTblN9N14(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2567,11 +2567,11 @@ end;
 (* ************************************************************************
   Tail(S, 9, 15)
   ************************************************************************ *)
-function UTblN9N15(const S: TLearnFloat): TLearnFloat;
+function UTblN9N15(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2598,11 +2598,11 @@ end;
 (* ************************************************************************
   Tail(S, 9, 30)
   ************************************************************************ *)
-function UTblN9N30(const S: TLearnFloat): TLearnFloat;
+function UTblN9N30(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2629,11 +2629,11 @@ end;
 (* ************************************************************************
   Tail(S, 9, 100)
   ************************************************************************ *)
-function UTblN9N100(const S: TLearnFloat): TLearnFloat;
+function UTblN9N100(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2660,11 +2660,11 @@ end;
 (* ************************************************************************
   Tail(S, 10, 10)
   ************************************************************************ *)
-function UTblN10N10(const S: TLearnFloat): TLearnFloat;
+function UTblN10N10(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2691,11 +2691,11 @@ end;
 (* ************************************************************************
   Tail(S, 10, 11)
   ************************************************************************ *)
-function UTblN10N11(const S: TLearnFloat): TLearnFloat;
+function UTblN10N11(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2722,11 +2722,11 @@ end;
 (* ************************************************************************
   Tail(S, 10, 12)
   ************************************************************************ *)
-function UTblN10N12(const S: TLearnFloat): TLearnFloat;
+function UTblN10N12(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2753,11 +2753,11 @@ end;
 (* ************************************************************************
   Tail(S, 10, 13)
   ************************************************************************ *)
-function UTblN10N13(const S: TLearnFloat): TLearnFloat;
+function UTblN10N13(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2784,11 +2784,11 @@ end;
 (* ************************************************************************
   Tail(S, 10, 14)
   ************************************************************************ *)
-function UTblN10N14(const S: TLearnFloat): TLearnFloat;
+function UTblN10N14(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2815,11 +2815,11 @@ end;
 (* ************************************************************************
   Tail(S, 10, 15)
   ************************************************************************ *)
-function UTblN10N15(const S: TLearnFloat): TLearnFloat;
+function UTblN10N15(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2846,11 +2846,11 @@ end;
 (* ************************************************************************
   Tail(S, 10, 30)
   ************************************************************************ *)
-function UTblN10N30(const S: TLearnFloat): TLearnFloat;
+function UTblN10N30(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2877,11 +2877,11 @@ end;
 (* ************************************************************************
   Tail(S, 10, 100)
   ************************************************************************ *)
-function UTblN10N100(const S: TLearnFloat): TLearnFloat;
+function UTblN10N100(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.650000E+00 - 1, 1.0);
@@ -2908,11 +2908,11 @@ end;
 (* ************************************************************************
   Tail(S, 11, 11)
   ************************************************************************ *)
-function UTblN11N11(const S: TLearnFloat): TLearnFloat;
+function UTblN11N11(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -2939,11 +2939,11 @@ end;
 (* ************************************************************************
   Tail(S, 11, 12)
   ************************************************************************ *)
-function UTblN11N12(const S: TLearnFloat): TLearnFloat;
+function UTblN11N12(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -2970,11 +2970,11 @@ end;
 (* ************************************************************************
   Tail(S, 11, 13)
   ************************************************************************ *)
-function UTblN11N13(const S: TLearnFloat): TLearnFloat;
+function UTblN11N13(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -3001,11 +3001,11 @@ end;
 (* ************************************************************************
   Tail(S, 11, 14)
   ************************************************************************ *)
-function UTblN11N14(const S: TLearnFloat): TLearnFloat;
+function UTblN11N14(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -3032,11 +3032,11 @@ end;
 (* ************************************************************************
   Tail(S, 11, 15)
   ************************************************************************ *)
-function UTblN11N15(const S: TLearnFloat): TLearnFloat;
+function UTblN11N15(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -3063,11 +3063,11 @@ end;
 (* ************************************************************************
   Tail(S, 11, 30)
   ************************************************************************ *)
-function UTblN11N30(const S: TLearnFloat): TLearnFloat;
+function UTblN11N30(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -3094,11 +3094,11 @@ end;
 (* ************************************************************************
   Tail(S, 11, 100)
   ************************************************************************ *)
-function UTblN11N100(const S: TLearnFloat): TLearnFloat;
+function UTblN11N100(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -3125,11 +3125,11 @@ end;
 (* ************************************************************************
   Tail(S, 12, 12)
   ************************************************************************ *)
-function UTblN12N12(const S: TLearnFloat): TLearnFloat;
+function UTblN12N12(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -3156,11 +3156,11 @@ end;
 (* ************************************************************************
   Tail(S, 12, 13)
   ************************************************************************ *)
-function UTblN12N13(const S: TLearnFloat): TLearnFloat;
+function UTblN12N13(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -3187,11 +3187,11 @@ end;
 (* ************************************************************************
   Tail(S, 12, 14)
   ************************************************************************ *)
-function UTblN12N14(const S: TLearnFloat): TLearnFloat;
+function UTblN12N14(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -3218,11 +3218,11 @@ end;
 (* ************************************************************************
   Tail(S, 12, 15)
   ************************************************************************ *)
-function UTblN12N15(const S: TLearnFloat): TLearnFloat;
+function UTblN12N15(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -3249,11 +3249,11 @@ end;
 (* ************************************************************************
   Tail(S, 12, 30)
   ************************************************************************ *)
-function UTblN12N30(const S: TLearnFloat): TLearnFloat;
+function UTblN12N30(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -3280,11 +3280,11 @@ end;
 (* ************************************************************************
   Tail(S, 12, 100)
   ************************************************************************ *)
-function UTblN12N100(const S: TLearnFloat): TLearnFloat;
+function UTblN12N100(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.700000E+00 - 1, 1.0);
@@ -3311,11 +3311,11 @@ end;
 (* ************************************************************************
   Tail(S, 13, 13)
   ************************************************************************ *)
-function UTblN13N13(const S: TLearnFloat): TLearnFloat;
+function UTblN13N13(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.750000E+00 - 1, 1.0);
@@ -3342,11 +3342,11 @@ end;
 (* ************************************************************************
   Tail(S, 13, 14)
   ************************************************************************ *)
-function UTblN13N14(const S: TLearnFloat): TLearnFloat;
+function UTblN13N14(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.750000E+00 - 1, 1.0);
@@ -3373,11 +3373,11 @@ end;
 (* ************************************************************************
   Tail(S, 13, 15)
   ************************************************************************ *)
-function UTblN13N15(const S: TLearnFloat): TLearnFloat;
+function UTblN13N15(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.750000E+00 - 1, 1.0);
@@ -3404,11 +3404,11 @@ end;
 (* ************************************************************************
   Tail(S, 13, 30)
   ************************************************************************ *)
-function UTblN13N30(const S: TLearnFloat): TLearnFloat;
+function UTblN13N30(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.750000E+00 - 1, 1.0);
@@ -3435,11 +3435,11 @@ end;
 (* ************************************************************************
   Tail(S, 13, 100)
   ************************************************************************ *)
-function UTblN13N100(const S: TLearnFloat): TLearnFloat;
+function UTblN13N100(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.750000E+00 - 1, 1.0);
@@ -3466,11 +3466,11 @@ end;
 (* ************************************************************************
   Tail(S, 14, 14)
   ************************************************************************ *)
-function UTblN14N14(const S: TLearnFloat): TLearnFloat;
+function UTblN14N14(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.750000E+00 - 1, 1.0);
@@ -3497,11 +3497,11 @@ end;
 (* ************************************************************************
   Tail(S, 14, 15)
   ************************************************************************ *)
-function UTblN14N15(const S: TLearnFloat): TLearnFloat;
+function UTblN14N15(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.750000E+00 - 1, 1.0);
@@ -3528,11 +3528,11 @@ end;
 (* ************************************************************************
   Tail(S, 14, 30)
   ************************************************************************ *)
-function UTblN14N30(const S: TLearnFloat): TLearnFloat;
+function UTblN14N30(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.750000E+00 - 1, 1.0);
@@ -3559,11 +3559,11 @@ end;
 (* ************************************************************************
   Tail(S, 14, 100)
   ************************************************************************ *)
-function UTblN14N100(const S: TLearnFloat): TLearnFloat;
+function UTblN14N100(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   X := Min(2 * (S - 0.000000E+00) / 3.750000E+00 - 1, 1.0);
@@ -3590,18 +3590,18 @@ end;
 (* ************************************************************************
   Tail(S, N1, N2)
   ************************************************************************ *)
-function USigma(S: TLearnFloat; N1: TLearnInteger; N2: TLearnInteger): TLearnFloat;
+function USigma(S: TLFloat; N1: TLInt; N2: TLInt): TLFloat;
 var
-  F0: TLearnFloat;
-  F1: TLearnFloat;
-  F2: TLearnFloat;
-  F3: TLearnFloat;
-  F4: TLearnFloat;
-  S0: TLearnFloat;
-  S1: TLearnFloat;
-  S2: TLearnFloat;
-  S3: TLearnFloat;
-  S4: TLearnFloat;
+  F0: TLFloat;
+  F1: TLFloat;
+  F2: TLFloat;
+  F3: TLFloat;
+  F4: TLFloat;
+  S0: TLFloat;
+  S1: TLFloat;
+  S2: TLFloat;
+  S3: TLFloat;
+  S4: TLFloat;
 begin
 
   //

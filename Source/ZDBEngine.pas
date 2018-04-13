@@ -17,7 +17,7 @@ unit ZDBEngine;
 
 interface
 
-{$I ZDefine.inc}
+{$I zDefine.inc}
 
 uses SysUtils, Classes,
   ListEngine, PascalStrings, UnicodeMixedLib, TextDataEngine,

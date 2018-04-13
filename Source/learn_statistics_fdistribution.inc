@@ -41,9 +41,9 @@
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function FDistribution(const a: TLearnInteger; const b: TLearnInteger; const x: TLearnFloat): TLearnFloat;
+function FDistribution(const a: TLInt; const b: TLInt; const x: TLFloat): TLFloat;
 var
-  w: TLearnFloat;
+  w: TLFloat;
 begin
   Assert((a >= 1) and (b >= 1) and AP_FP_Greater_Eq(x, 0), 'Domain error in FDistribution');
   w := a * x;
@@ -87,9 +87,9 @@ end;
   * Cephes Math Library Release 2.8:  June, 2000
   * Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function FCDistribution(const a: TLearnInteger; const b: TLearnInteger; const x: TLearnFloat): TLearnFloat;
+function FCDistribution(const a: TLInt; const b: TLInt; const x: TLFloat): TLFloat;
 var
-  w: TLearnFloat;
+  w: TLFloat;
 begin
   Assert((a >= 1) and (b >= 1) and AP_FP_Greater_Eq(x, 0), 'Domain error in FCDistribution');
   w := b / (b + a * x);
@@ -131,9 +131,9 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvFDistribution(const a: TLearnInteger; const b: TLearnInteger; const y: TLearnFloat): TLearnFloat;
+function InvFDistribution(const a: TLInt; const b: TLInt; const y: TLFloat): TLFloat;
 var
-  w: TLearnFloat;
+  w: TLFloat;
 begin
   Assert((a >= 1) and (b >= 1) and AP_FP_Greater(y, 0) and AP_FP_Less_Eq(y, 1), 'Domain error in InvFDistribution');
 
@@ -182,16 +182,16 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure FTest(const x: TLearnFloatArray; N: TLearnInteger; const y: TLearnFloatArray; M: TLearnInteger; var BothTails, LeftTail, RightTail: TLearnFloat);
+procedure FTest(const x: TLVec; N: TLInt; const y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  I    : TLearnInteger;
-  XMean: TLearnFloat;
-  YMean: TLearnFloat;
-  XVar : TLearnFloat;
-  YVar : TLearnFloat;
-  DF1  : TLearnInteger;
-  DF2  : TLearnInteger;
-  Stat : TLearnFloat;
+  I    : TLInt;
+  XMean: TLFloat;
+  YMean: TLFloat;
+  XVar : TLFloat;
+  YVar : TLFloat;
+  DF1  : TLInt;
+  DF2  : TLInt;
+  Stat : TLFloat;
 begin
   if (N <= 2) or (M <= 2) then
     begin

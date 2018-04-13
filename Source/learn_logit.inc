@@ -1,6 +1,6 @@
 type
   TLogitModel = packed record
-    W: TLearnFloatArray;
+    W: TLVec;
   end;
 
   PLogitModel = ^TLogitModel;
@@ -8,29 +8,29 @@ type
   TLogitMCState = packed record
     BRACKT: Boolean;
     STAGE1: Boolean;
-    INFOC: TLearnInteger;
-    DG: TLearnFloat;
-    DGM: TLearnFloat;
-    DGINIT: TLearnFloat;
-    DGTEST: TLearnFloat;
-    DGX: TLearnFloat;
-    DGXM: TLearnFloat;
-    DGY: TLearnFloat;
-    DGYM: TLearnFloat;
-    FINIT: TLearnFloat;
-    FTEST1: TLearnFloat;
-    FM: TLearnFloat;
-    FX: TLearnFloat;
-    FXM: TLearnFloat;
-    FY: TLearnFloat;
-    FYM: TLearnFloat;
-    STX: TLearnFloat;
-    STY: TLearnFloat;
-    STMIN: TLearnFloat;
-    STMAX: TLearnFloat;
-    WIDTH: TLearnFloat;
-    WIDTH1: TLearnFloat;
-    XTRAPF: TLearnFloat;
+    INFOC: TLInt;
+    DG: TLFloat;
+    DGM: TLFloat;
+    DGINIT: TLFloat;
+    DGTEST: TLFloat;
+    DGX: TLFloat;
+    DGXM: TLFloat;
+    DGY: TLFloat;
+    DGYM: TLFloat;
+    FINIT: TLFloat;
+    FTEST1: TLFloat;
+    FM: TLFloat;
+    FX: TLFloat;
+    FXM: TLFloat;
+    FY: TLFloat;
+    FYM: TLFloat;
+    STX: TLFloat;
+    STY: TLFloat;
+    STMIN: TLFloat;
+    STMAX: TLFloat;
+    WIDTH: TLFloat;
+    WIDTH1: TLFloat;
+    XTRAPF: TLFloat;
   end;
 
   (* ************************************************************************
@@ -39,25 +39,25 @@ type
     * NHess     -   number of Hessian calculations
     ************************************************************************ *)
   TMNLReport = packed record
-    NGrad: TLearnInteger;
-    NHess: TLearnInteger;
+    NGrad: TLInt;
+    NHess: TLInt;
   end;
 
-procedure MNLTrainH(const XY: TLearnFloat2DArray; NPoints: TLearnInteger; NVars: TLearnInteger; NClasses: TLearnInteger;
-  var Info: TLearnInteger; var LM: TLogitModel; var Rep: TMNLReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MNLTrainH(const XY: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt;
+  var Info: TLInt; var LM: TLogitModel; var Rep: TMNLReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MNLProcess(var LM: TLogitModel; const X: TLearnFloatArray; var Y: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MNLUnpack(const LM: TLogitModel; var A: TLearnFloat2DArray; var NVars: TLearnInteger; var NClasses: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MNLPack(const A: TLearnFloat2DArray; NVars: TLearnInteger; NClasses: TLearnInteger; var LM: TLogitModel); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MNLProcess(var LM: TLogitModel; const X: TLVec; var Y: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MNLUnpack(const LM: TLogitModel; var A: TLMatrix; var NVars: TLInt; var NClasses: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MNLPack(const A: TLMatrix; NVars: TLInt; NClasses: TLInt; var LM: TLogitModel); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MNLCopy(const LM1: TLogitModel; var LM2: TLogitModel); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MNLSerialize(const LM: TLogitModel; var RA: TLearnFloatArray; var RLen: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MNLUnserialize(const RA: TLearnFloatArray; var LM: TLogitModel); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MNLAvgCE(var LM: TLogitModel; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MNLRelClsError(var LM: TLogitModel; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MNLRMSError(var LM: TLogitModel; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MNLAvgError(var LM: TLogitModel; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MNLAvgRelError(var LM: TLogitModel; const XY: TLearnFloat2DArray; SSize: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MNLClsError(var LM: TLogitModel; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MNLSerialize(const LM: TLogitModel; var RA: TLVec; var RLen: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MNLUnserialize(const RA: TLVec; var LM: TLogitModel); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MNLAvgCE(var LM: TLogitModel; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MNLRelClsError(var LM: TLogitModel; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MNLRMSError(var LM: TLogitModel; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MNLAvgError(var LM: TLogitModel; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MNLAvgRelError(var LM: TLogitModel; const XY: TLMatrix; SSize: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MNLClsError(var LM: TLogitModel; const XY: TLMatrix; NPoints: TLInt): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 const
@@ -69,23 +69,23 @@ const
   LogitSTPMAX = 1.0E5;
   LogitVNum   = 6;
 
-procedure MNLIExp(var W: TLearnFloatArray; const X: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MNLIExp(var W: TLVec; const X: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MNLAllErrors(var LM: TLogitModel; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; var RelCls: TLearnFloat; var AvgCE: TLearnFloat;
-  var RMS: TLearnFloat; var Avg: TLearnFloat; var AvgRel: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MNLAllErrors(var LM: TLogitModel; const XY: TLMatrix;
+  NPoints: TLInt; var RelCls: TLFloat; var AvgCE: TLFloat;
+  var RMS: TLFloat; var Avg: TLFloat; var AvgRel: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MNLMCSRCH(const N: TLearnInteger; var X: TLearnFloatArray;
-  var F: TLearnFloat; var G: TLearnFloatArray; const S: TLearnFloatArray;
-  var STP: TLearnFloat; var Info: TLearnInteger; var NFEV: TLearnInteger;
-  var WA: TLearnFloatArray; var State: TLogitMCState;
-  var Stage: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MNLMCSRCH(const N: TLInt; var X: TLVec;
+  var F: TLFloat; var G: TLVec; const S: TLVec;
+  var STP: TLFloat; var Info: TLInt; var NFEV: TLInt;
+  var WA: TLVec; var State: TLogitMCState;
+  var Stage: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MNLMCSTEP(var STX: TLearnFloat; var FX: TLearnFloat;
-  var DX: TLearnFloat; var STY: TLearnFloat; var FY: TLearnFloat;
-  var DY: TLearnFloat; var STP: TLearnFloat; const FP: TLearnFloat;
-  const DP: TLearnFloat; var BRACKT: Boolean; const STMIN: TLearnFloat;
-  const STMAX: TLearnFloat; var Info: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MNLMCSTEP(var STX: TLFloat; var FX: TLFloat;
+  var DX: TLFloat; var STY: TLFloat; var FY: TLFloat;
+  var DY: TLFloat; var STP: TLFloat; const FP: TLFloat;
+  const DP: TLFloat; var BRACKT: Boolean; const STMIN: TLFloat;
+  const STMAX: TLFloat; var Info: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -108,42 +108,42 @@ procedure MNLMCSTEP(var STX: TLearnFloat; var FX: TLearnFloat;
   //  LM          -   model built
   //  Rep         -   training report
   ************************************************************************ *)
-procedure MNLTrainH(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
-  NVars: TLearnInteger; NClasses: TLearnInteger; var Info: TLearnInteger;
+procedure MNLTrainH(const XY: TLMatrix; NPoints: TLInt;
+  NVars: TLInt; NClasses: TLInt; var Info: TLInt;
   var LM: TLogitModel; var Rep: TMNLReport);
 var
-  I         : TLearnInteger;
-  J         : TLearnInteger;
-  K         : TLearnInteger;
-  SSize     : TLearnInteger;
+  I         : TLInt;
+  J         : TLInt;
+  K         : TLInt;
+  SSize     : TLInt;
   AllSame   : Boolean;
-  Offs      : TLearnInteger;
-  Threshold : TLearnFloat;
-  WMinStep  : TLearnFloat;
-  Decay     : TLearnFloat;
-  WDim      : TLearnInteger;
-  ExpOffs   : TLearnInteger;
-  V         : TLearnFloat;
-  S         : TLearnFloat;
+  Offs      : TLInt;
+  Threshold : TLFloat;
+  WMinStep  : TLFloat;
+  Decay     : TLFloat;
+  WDim      : TLInt;
+  ExpOffs   : TLInt;
+  V         : TLFloat;
+  S         : TLFloat;
   Network   : TMultiLayerPerceptron;
-  NIn       : TLearnInteger;
-  NOut      : TLearnInteger;
-  WCount    : TLearnInteger;
-  E         : TLearnFloat;
-  G         : TLearnFloatArray;
-  H         : TLearnFloat2DArray;
+  NIn       : TLInt;
+  NOut      : TLInt;
+  WCount    : TLInt;
+  E         : TLFloat;
+  G         : TLVec;
+  H         : TLMatrix;
   SPD       : Boolean;
-  X         : TLearnFloatArray;
-  Y         : TLearnFloatArray;
-  WBase     : TLearnFloatArray;
-  WStep     : TLearnFloat;
-  WDir      : TLearnFloatArray;
-  WORK      : TLearnFloatArray;
-  MCStage   : TLearnInteger;
+  X         : TLVec;
+  Y         : TLVec;
+  WBase     : TLVec;
+  WStep     : TLFloat;
+  WDir      : TLVec;
+  WORK      : TLVec;
+  MCStage   : TLInt;
   MCState   : TLogitMCState;
-  MCInfo    : TLearnInteger;
-  MCNFEV    : TLearnInteger;
-  SolverInfo: TLearnInteger;
+  MCInfo    : TLInt;
+  MCNFEV    : TLInt;
+  SolverInfo: TLInt;
   SolverRep : TDenseSolverReport;
 begin
   Threshold := 1000 * MachineEpsilon;
@@ -420,14 +420,14 @@ end;
   responsibility of a caller to allocate it. Array  must  be
   at least [0..NClasses-1].
   ************************************************************************ *)
-procedure MNLProcess(var LM: TLogitModel; const X: TLearnFloatArray; var Y: TLearnFloatArray);
+procedure MNLProcess(var LM: TLogitModel; const X: TLVec; var Y: TLVec);
 var
-  NVars   : TLearnInteger;
-  NClasses: TLearnInteger;
-  Offs    : TLearnInteger;
-  I       : TLearnInteger;
-  I1      : TLearnInteger;
-  S       : TLearnFloat;
+  NVars   : TLInt;
+  NClasses: TLInt;
+  Offs    : TLInt;
+  I       : TLInt;
+  I1      : TLInt;
+  S       : TLFloat;
 begin
   Assert(AP_FP_Eq(LM.W[1], LogitVNum), 'MNLProcess: unexpected model version');
   NVars := Round(LM.W[2]);
@@ -465,11 +465,11 @@ end;
   NVars       -   number of independent variables
   NClasses    -   number of classes
   ************************************************************************ *)
-procedure MNLUnpack(const LM: TLogitModel; var A: TLearnFloat2DArray;
-  var NVars: TLearnInteger; var NClasses: TLearnInteger);
+procedure MNLUnpack(const LM: TLogitModel; var A: TLMatrix;
+  var NVars: TLInt; var NClasses: TLInt);
 var
-  Offs: TLearnInteger;
-  I   : TLearnInteger;
+  Offs: TLInt;
+  I   : TLInt;
 begin
   Assert(AP_FP_Eq(LM.W[1], LogitVNum), 'MNLUnpack: unexpected model version');
   NVars := Round(LM.W[2]);
@@ -496,13 +496,13 @@ end;
   OUTPUT PARAMETERS:
   LM          -   logit model.
   ************************************************************************ *)
-procedure MNLPack(const A: TLearnFloat2DArray; NVars: TLearnInteger;
-  NClasses: TLearnInteger; var LM: TLogitModel);
+procedure MNLPack(const A: TLMatrix; NVars: TLInt;
+  NClasses: TLInt; var LM: TLogitModel);
 var
-  Offs : TLearnInteger;
-  I    : TLearnInteger;
-  WDim : TLearnInteger;
-  SSize: TLearnInteger;
+  Offs : TLInt;
+  I    : TLInt;
+  WDim : TLInt;
+  SSize: TLInt;
 begin
   WDim := (NVars + 1) * (NClasses - 1);
   Offs := 5;
@@ -533,7 +533,7 @@ end;
   ************************************************************************ *)
 procedure MNLCopy(const LM1: TLogitModel; var LM2: TLogitModel);
 var
-  K: TLearnInteger;
+  K: TLInt;
 begin
   K := Round(LM1.W[0]);
   SetLength(LM2.W, K (* - 1 + 1 // optimized compiler *) );
@@ -551,8 +551,8 @@ end;
   array[0..RLen-1]
   RLen    -   RA lenght
   ************************************************************************ *)
-procedure MNLSerialize(const LM: TLogitModel; var RA: TLearnFloatArray;
-  var RLen: TLearnInteger);
+procedure MNLSerialize(const LM: TLogitModel; var RA: TLVec;
+  var RLen: TLInt);
 begin
   RLen := Round(LM.W[0]) + 1;
   SetLength(RA, RLen (* - 1 + 1 // optimized compiler *) );
@@ -569,7 +569,7 @@ end;
   OUTPUT PARAMETERS:
   LM      -   restored model
   ************************************************************************ *)
-procedure MNLUnserialize(const RA: TLearnFloatArray; var LM: TLogitModel);
+procedure MNLUnserialize(const RA: TLVec; var LM: TLogitModel);
 begin
   Assert(Round(RA[0]) = LogitVNum, 'MNLUnserialize: incorrect array!');
   SetLength(LM.W, Round(RA[1]) (* - 1 + 1 // optimized compiler *) );
@@ -587,14 +587,14 @@ end;
   RESULT:
   CrossEntropy/(NPoints*ln(2)).
   ************************************************************************ *)
-function MNLAvgCE(var LM: TLogitModel; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function MNLAvgCE(var LM: TLogitModel; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  NVars   : TLearnInteger;
-  NClasses: TLearnInteger;
-  I       : TLearnInteger;
-  WorkX   : TLearnFloatArray;
-  WorkY   : TLearnFloatArray;
+  NVars   : TLInt;
+  NClasses: TLInt;
+  I       : TLInt;
+  WorkX   : TLVec;
+  WorkY   : TLVec;
 begin
   Assert(AP_FP_Eq(LM.W[1], LogitVNum), 'MNLClsError: unexpected model version');
   NVars := Round(LM.W[2]);
@@ -637,8 +637,8 @@ end;
   RESULT:
   percent of incorrectly classified cases.
   ************************************************************************ *)
-function MNLRelClsError(var LM: TLogitModel; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function MNLRelClsError(var LM: TLogitModel; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 begin
   Result := AP_Float(MNLClsError(LM, XY, NPoints)) / NPoints;
 end;
@@ -654,14 +654,14 @@ end;
   RESULT:
   root mean square error (error when estimating posterior probabilities).
   ************************************************************************ *)
-function MNLRMSError(var LM: TLogitModel; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function MNLRMSError(var LM: TLogitModel; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  RelCls: TLearnFloat;
-  AvgCE : TLearnFloat;
-  RMS   : TLearnFloat;
-  Avg   : TLearnFloat;
-  AvgRel: TLearnFloat;
+  RelCls: TLFloat;
+  AvgCE : TLFloat;
+  RMS   : TLFloat;
+  Avg   : TLFloat;
+  AvgRel: TLFloat;
 begin
   Assert(Round(LM.W[1]) = LogitVNum, 'MNLRMSError: Incorrect MNL version!');
   MNLAllErrors(LM, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
@@ -679,14 +679,14 @@ end;
   RESULT:
   average error (error when estimating posterior probabilities).
   ************************************************************************ *)
-function MNLAvgError(var LM: TLogitModel; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function MNLAvgError(var LM: TLogitModel; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  RelCls: TLearnFloat;
-  AvgCE : TLearnFloat;
-  RMS   : TLearnFloat;
-  Avg   : TLearnFloat;
-  AvgRel: TLearnFloat;
+  RelCls: TLFloat;
+  AvgCE : TLFloat;
+  RMS   : TLFloat;
+  Avg   : TLFloat;
+  AvgRel: TLFloat;
 begin
   Assert(Round(LM.W[1]) = LogitVNum, 'MNLRMSError: Incorrect MNL version!');
   MNLAllErrors(LM, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
@@ -704,14 +704,14 @@ end;
   RESULT:
   average relative error (error when estimating posterior probabilities).
   ************************************************************************ *)
-function MNLAvgRelError(var LM: TLogitModel; const XY: TLearnFloat2DArray;
-  SSize: TLearnInteger): TLearnFloat;
+function MNLAvgRelError(var LM: TLogitModel; const XY: TLMatrix;
+  SSize: TLInt): TLFloat;
 var
-  RelCls: TLearnFloat;
-  AvgCE : TLearnFloat;
-  RMS   : TLearnFloat;
-  Avg   : TLearnFloat;
-  AvgRel: TLearnFloat;
+  RelCls: TLFloat;
+  AvgCE : TLFloat;
+  RMS   : TLFloat;
+  Avg   : TLFloat;
+  AvgRel: TLFloat;
 begin
   Assert(Round(LM.W[1]) = LogitVNum, 'MNLRMSError: Incorrect MNL version!');
   MNLAllErrors(LM, XY, SSize, RelCls, AvgCE, RMS, Avg, AvgRel);
@@ -721,16 +721,16 @@ end;
 (* ************************************************************************
   Classification error on test set = MNLRelClsError*NPoints
   ************************************************************************ *)
-function MNLClsError(var LM: TLogitModel; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnInteger;
+function MNLClsError(var LM: TLogitModel; const XY: TLMatrix;
+  NPoints: TLInt): TLInt;
 var
-  NVars   : TLearnInteger;
-  NClasses: TLearnInteger;
-  I       : TLearnInteger;
-  J       : TLearnInteger;
-  WorkX   : TLearnFloatArray;
-  WorkY   : TLearnFloatArray;
-  NMAX    : TLearnInteger;
+  NVars   : TLInt;
+  NClasses: TLInt;
+  I       : TLInt;
+  J       : TLInt;
+  WorkX   : TLVec;
+  WorkY   : TLVec;
+  NMAX    : TLInt;
 begin
   Assert(AP_FP_Eq(LM.W[1], LogitVNum), 'MNLClsError: unexpected model version');
   NVars := Round(LM.W[2]);
@@ -777,15 +777,15 @@ end;
   Internal subroutine. Places exponents of the anti-overflow shifted
   internal linear outputs into the service part of the W array.
   ************************************************************************ *)
-procedure MNLIExp(var W: TLearnFloatArray; const X: TLearnFloatArray);
+procedure MNLIExp(var W: TLVec; const X: TLVec);
 var
-  NVars   : TLearnInteger;
-  NClasses: TLearnInteger;
-  Offs    : TLearnInteger;
-  I       : TLearnInteger;
-  I1      : TLearnInteger;
-  V       : TLearnFloat;
-  MX      : TLearnFloat;
+  NVars   : TLInt;
+  NClasses: TLInt;
+  Offs    : TLInt;
+  I       : TLInt;
+  I1      : TLInt;
+  V       : TLFloat;
+  MX      : TLFloat;
 begin
   Assert(AP_FP_Eq(W[1], LogitVNum), 'LOGIT: unexpected model version');
   NVars := Round(W[2]);
@@ -819,17 +819,17 @@ end;
 (* ************************************************************************
   Calculation of all types of errors
   ************************************************************************ *)
-procedure MNLAllErrors(var LM: TLogitModel; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; var RelCls: TLearnFloat; var AvgCE: TLearnFloat;
-  var RMS: TLearnFloat; var Avg: TLearnFloat; var AvgRel: TLearnFloat);
+procedure MNLAllErrors(var LM: TLogitModel; const XY: TLMatrix;
+  NPoints: TLInt; var RelCls: TLFloat; var AvgCE: TLFloat;
+  var RMS: TLFloat; var Avg: TLFloat; var AvgRel: TLFloat);
 var
-  NVars   : TLearnInteger;
-  NClasses: TLearnInteger;
-  I       : TLearnInteger;
-  Buf     : TLearnFloatArray;
-  WorkX   : TLearnFloatArray;
-  Y       : TLearnFloatArray;
-  DY      : TLearnFloatArray;
+  NVars   : TLInt;
+  NClasses: TLInt;
+  I       : TLInt;
+  Buf     : TLVec;
+  WorkX   : TLVec;
+  Y       : TLVec;
+  DY      : TLVec;
 begin
   Assert(Round(LM.W[1]) = LogitVNum, 'MNL unit: Incorrect MNL version!');
   NVars := Round(LM.W[2]);
@@ -942,15 +942,15 @@ end;
   ARGONNE NATIONAL LABORATORY. MINPACK PROJECT. JUNE 1983
   JORGE J. MORE', DAVID J. THUENTE
   ************************************************************************ *)
-procedure MNLMCSRCH(const N: TLearnInteger; var X: TLearnFloatArray;
-  var F: TLearnFloat; var G: TLearnFloatArray; const S: TLearnFloatArray;
-  var STP: TLearnFloat; var Info: TLearnInteger; var NFEV: TLearnInteger;
-  var WA: TLearnFloatArray; var State: TLogitMCState; var Stage: TLearnInteger);
+procedure MNLMCSRCH(const N: TLInt; var X: TLVec;
+  var F: TLFloat; var G: TLVec; const S: TLVec;
+  var STP: TLFloat; var Info: TLInt; var NFEV: TLInt;
+  var WA: TLVec; var State: TLogitMCState; var Stage: TLInt);
 var
-  V   : TLearnFloat;
-  P5  : TLearnFloat;
-  P66 : TLearnFloat;
-  ZERO: TLearnFloat;
+  V   : TLFloat;
+  P5  : TLFloat;
+  P66 : TLFloat;
+  ZERO: TLFloat;
 begin
 
   //
@@ -1236,23 +1236,23 @@ begin
     end;
 end;
 
-procedure MNLMCSTEP(var STX: TLearnFloat; var FX: TLearnFloat;
-  var DX: TLearnFloat; var STY: TLearnFloat; var FY: TLearnFloat;
-  var DY: TLearnFloat; var STP: TLearnFloat; const FP: TLearnFloat;
-  const DP: TLearnFloat; var BRACKT: Boolean; const STMIN: TLearnFloat;
-  const STMAX: TLearnFloat; var Info: TLearnInteger);
+procedure MNLMCSTEP(var STX: TLFloat; var FX: TLFloat;
+  var DX: TLFloat; var STY: TLFloat; var FY: TLFloat;
+  var DY: TLFloat; var STP: TLFloat; const FP: TLFloat;
+  const DP: TLFloat; var BRACKT: Boolean; const STMIN: TLFloat;
+  const STMAX: TLFloat; var Info: TLInt);
 var
   BOUND: Boolean;
-  GAMMA: TLearnFloat;
-  P    : TLearnFloat;
-  Q    : TLearnFloat;
-  R    : TLearnFloat;
-  S    : TLearnFloat;
-  SGND : TLearnFloat;
-  STPC : TLearnFloat;
-  STPF : TLearnFloat;
-  STPQ : TLearnFloat;
-  THETA: TLearnFloat;
+  GAMMA: TLFloat;
+  P    : TLFloat;
+  Q    : TLFloat;
+  R    : TLFloat;
+  S    : TLFloat;
+  SGND : TLFloat;
+  STPC : TLFloat;
+  STPF : TLFloat;
+  STPQ : TLFloat;
+  THETA: TLFloat;
 begin
   Info := 0;
 

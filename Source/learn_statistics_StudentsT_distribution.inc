@@ -49,16 +49,16 @@
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function StudentTDistribution(const k: TLearnInteger; const t: TLearnFloat): TLearnFloat;
+function StudentTDistribution(const k: TLInt; const t: TLFloat): TLFloat;
 var
-  X   : TLearnFloat;
-  rk  : TLearnFloat;
-  z   : TLearnFloat;
-  f   : TLearnFloat;
-  tz  : TLearnFloat;
-  p   : TLearnFloat;
-  xsqk: TLearnFloat;
-  j   : TLearnInteger;
+  X   : TLFloat;
+  rk  : TLFloat;
+  z   : TLFloat;
+  f   : TLFloat;
+  tz  : TLFloat;
+  p   : TLFloat;
+  xsqk: TLFloat;
+  j   : TLInt;
 begin
   Assert(k > 0, 'Domain error in StudentTDistribution');
   if AP_FP_Eq(t, 0) then
@@ -139,12 +139,12 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvStudentTDistribution(const k: TLearnInteger; p: TLearnFloat): TLearnFloat;
+function InvStudentTDistribution(const k: TLInt; p: TLFloat): TLFloat;
 var
-  t   : TLearnFloat;
-  rk  : TLearnFloat;
-  z   : TLearnFloat;
-  rflg: TLearnInteger;
+  t   : TLFloat;
+  rk  : TLFloat;
+  z   : TLFloat;
+  rflg: TLInt;
 begin
   Assert((k > 0) and AP_FP_Greater(p, 0) and AP_FP_Less(p, 1),
     'Domain error in InvStudentTDistribution');
@@ -205,16 +205,16 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure StudentTTest1(const X: TLearnFloatArray; N: TLearnInteger; Mean: TLearnFloat; var BothTails, LeftTail, RightTail: TLearnFloat);
+procedure StudentTTest1(const X: TLVec; N: TLInt; Mean: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  I        : TLearnInteger;
-  XMean    : TLearnFloat;
-  XVariance: TLearnFloat;
-  XStdDev  : TLearnFloat;
-  V1       : TLearnFloat;
-  V2       : TLearnFloat;
-  Stat     : TLearnFloat;
-  S        : TLearnFloat;
+  I        : TLInt;
+  XMean    : TLFloat;
+  XVariance: TLFloat;
+  XStdDev  : TLFloat;
+  V1       : TLFloat;
+  V2       : TLFloat;
+  Stat     : TLFloat;
+  S        : TLFloat;
 begin
   if N <= 1 then
     begin
@@ -308,14 +308,14 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure StudentTTest2(const X: TLearnFloatArray; N: TLearnInteger; const Y: TLearnFloatArray; M: TLearnInteger; var BothTails, LeftTail, RightTail: TLearnFloat);
+procedure StudentTTest2(const X: TLVec; N: TLInt; const Y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  I    : TLearnInteger;
-  XMean: TLearnFloat;
-  YMean: TLearnFloat;
-  Stat : TLearnFloat;
-  S    : TLearnFloat;
-  p    : TLearnFloat;
+  I    : TLInt;
+  XMean: TLFloat;
+  YMean: TLFloat;
+  Stat : TLFloat;
+  S    : TLFloat;
+  p    : TLFloat;
 begin
   if (N <= 1) or (M <= 1) then
     begin
@@ -405,17 +405,17 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure UnequalVarianceTTest(const X: TLearnFloatArray; N: TLearnInteger; const Y: TLearnFloatArray; M: TLearnInteger; var BothTails, LeftTail, RightTail: TLearnFloat);
+procedure UnequalVarianceTTest(const X: TLVec; N: TLInt; const Y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  I    : TLearnInteger;
-  XMean: TLearnFloat;
-  YMean: TLearnFloat;
-  XVar : TLearnFloat;
-  YVar : TLearnFloat;
-  DF   : TLearnFloat;
-  p    : TLearnFloat;
-  Stat : TLearnFloat;
-  C    : TLearnFloat;
+  I    : TLInt;
+  XMean: TLFloat;
+  YMean: TLFloat;
+  XVar : TLFloat;
+  YVar : TLFloat;
+  DF   : TLFloat;
+  p    : TLFloat;
+  Stat : TLFloat;
+  C    : TLFloat;
 begin
   if (N <= 1) or (M <= 1) then
     begin

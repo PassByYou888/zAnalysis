@@ -233,19 +233,19 @@ type
   TKDT1DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT1DE_Vec = array [0 .. KDT1DE_Axis - 1] of TKDT1DE_VecType;
+    TKDT1DE_Vec = packed array [0 .. KDT1DE_Axis - 1] of TKDT1DE_VecType;
     PKDT1DE_Vec = ^TKDT1DE_Vec;
 
-    TKDT1DE_DynamicVecBuffer = packed array of TKDT1DE_Vec;
+    TKDT1DE_DynamicVecBuffer = array of TKDT1DE_Vec;
     PKDT1DE_DynamicVecBuffer = ^TKDT1DE_DynamicVecBuffer;
 
     TKDT1DE_Source = packed record
       Buff: TKDT1DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT1DE_Source       = ^TKDT1DE_Source;
-    TKDT1DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1DE_Source) - 1] of PKDT1DE_Source;
+    TKDT1DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT1DE_Source) - 1] of PKDT1DE_Source;
     PKDT1DE_SourceBuffer = ^TKDT1DE_SourceBuffer;
 
     TKDT1DEyanmicSourceBuffer = packed array of PKDT1DE_Source;
@@ -268,7 +268,7 @@ type
     KDStoreBuff: TKDT1DEyanmicStoreBuffer;
     KDBuff     : TKDT1DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT1DE_Node;
+    KDNodes    : array of PKDT1DE_Node;
     TestBuff   : TKDT1DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1DE_Node;
     function GetData(const index: NativeInt): PKDT1DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -328,19 +328,19 @@ type
   TKDT2DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT2DE_Vec = array [0 .. KDT2DE_Axis - 1] of TKDT2DE_VecType;
+    TKDT2DE_Vec = packed array [0 .. KDT2DE_Axis - 1] of TKDT2DE_VecType;
     PKDT2DE_Vec = ^TKDT2DE_Vec;
 
-    TKDT2DE_DynamicVecBuffer = packed array of TKDT2DE_Vec;
+    TKDT2DE_DynamicVecBuffer = array of TKDT2DE_Vec;
     PKDT2DE_DynamicVecBuffer = ^TKDT2DE_DynamicVecBuffer;
 
     TKDT2DE_Source = packed record
       Buff: TKDT2DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT2DE_Source       = ^TKDT2DE_Source;
-    TKDT2DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT2DE_Source) - 1] of PKDT2DE_Source;
+    TKDT2DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT2DE_Source) - 1] of PKDT2DE_Source;
     PKDT2DE_SourceBuffer = ^TKDT2DE_SourceBuffer;
 
     TKDT2DEyanmicSourceBuffer = packed array of PKDT2DE_Source;
@@ -363,7 +363,7 @@ type
     KDStoreBuff: TKDT2DEyanmicStoreBuffer;
     KDBuff     : TKDT2DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT2DE_Node;
+    KDNodes    : array of PKDT2DE_Node;
     TestBuff   : TKDT2DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT2DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT2DE_Node;
     function GetData(const index: NativeInt): PKDT2DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -423,19 +423,19 @@ type
   TKDT3DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT3DE_Vec = array [0 .. KDT3DE_Axis - 1] of TKDT3DE_VecType;
+    TKDT3DE_Vec = packed array [0 .. KDT3DE_Axis - 1] of TKDT3DE_VecType;
     PKDT3DE_Vec = ^TKDT3DE_Vec;
 
-    TKDT3DE_DynamicVecBuffer = packed array of TKDT3DE_Vec;
+    TKDT3DE_DynamicVecBuffer = array of TKDT3DE_Vec;
     PKDT3DE_DynamicVecBuffer = ^TKDT3DE_DynamicVecBuffer;
 
     TKDT3DE_Source = packed record
       Buff: TKDT3DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT3DE_Source       = ^TKDT3DE_Source;
-    TKDT3DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT3DE_Source) - 1] of PKDT3DE_Source;
+    TKDT3DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT3DE_Source) - 1] of PKDT3DE_Source;
     PKDT3DE_SourceBuffer = ^TKDT3DE_SourceBuffer;
 
     TKDT3DEyanmicSourceBuffer = packed array of PKDT3DE_Source;
@@ -458,7 +458,7 @@ type
     KDStoreBuff: TKDT3DEyanmicStoreBuffer;
     KDBuff     : TKDT3DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT3DE_Node;
+    KDNodes    : array of PKDT3DE_Node;
     TestBuff   : TKDT3DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT3DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT3DE_Node;
     function GetData(const index: NativeInt): PKDT3DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -518,19 +518,19 @@ type
   TKDT4DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT4DE_Vec = array [0 .. KDT4DE_Axis - 1] of TKDT4DE_VecType;
+    TKDT4DE_Vec = packed array [0 .. KDT4DE_Axis - 1] of TKDT4DE_VecType;
     PKDT4DE_Vec = ^TKDT4DE_Vec;
 
-    TKDT4DE_DynamicVecBuffer = packed array of TKDT4DE_Vec;
+    TKDT4DE_DynamicVecBuffer = array of TKDT4DE_Vec;
     PKDT4DE_DynamicVecBuffer = ^TKDT4DE_DynamicVecBuffer;
 
     TKDT4DE_Source = packed record
       Buff: TKDT4DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT4DE_Source       = ^TKDT4DE_Source;
-    TKDT4DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT4DE_Source) - 1] of PKDT4DE_Source;
+    TKDT4DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT4DE_Source) - 1] of PKDT4DE_Source;
     PKDT4DE_SourceBuffer = ^TKDT4DE_SourceBuffer;
 
     TKDT4DEyanmicSourceBuffer = packed array of PKDT4DE_Source;
@@ -553,7 +553,7 @@ type
     KDStoreBuff: TKDT4DEyanmicStoreBuffer;
     KDBuff     : TKDT4DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT4DE_Node;
+    KDNodes    : array of PKDT4DE_Node;
     TestBuff   : TKDT4DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT4DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT4DE_Node;
     function GetData(const index: NativeInt): PKDT4DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -613,19 +613,19 @@ type
   TKDT5DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT5DE_Vec = array [0 .. KDT5DE_Axis - 1] of TKDT5DE_VecType;
+    TKDT5DE_Vec = packed array [0 .. KDT5DE_Axis - 1] of TKDT5DE_VecType;
     PKDT5DE_Vec = ^TKDT5DE_Vec;
 
-    TKDT5DE_DynamicVecBuffer = packed array of TKDT5DE_Vec;
+    TKDT5DE_DynamicVecBuffer = array of TKDT5DE_Vec;
     PKDT5DE_DynamicVecBuffer = ^TKDT5DE_DynamicVecBuffer;
 
     TKDT5DE_Source = packed record
       Buff: TKDT5DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT5DE_Source       = ^TKDT5DE_Source;
-    TKDT5DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT5DE_Source) - 1] of PKDT5DE_Source;
+    TKDT5DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT5DE_Source) - 1] of PKDT5DE_Source;
     PKDT5DE_SourceBuffer = ^TKDT5DE_SourceBuffer;
 
     TKDT5DEyanmicSourceBuffer = packed array of PKDT5DE_Source;
@@ -648,7 +648,7 @@ type
     KDStoreBuff: TKDT5DEyanmicStoreBuffer;
     KDBuff     : TKDT5DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT5DE_Node;
+    KDNodes    : array of PKDT5DE_Node;
     TestBuff   : TKDT5DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT5DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT5DE_Node;
     function GetData(const index: NativeInt): PKDT5DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -708,19 +708,19 @@ type
   TKDT6DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT6DE_Vec = array [0 .. KDT6DE_Axis - 1] of TKDT6DE_VecType;
+    TKDT6DE_Vec = packed array [0 .. KDT6DE_Axis - 1] of TKDT6DE_VecType;
     PKDT6DE_Vec = ^TKDT6DE_Vec;
 
-    TKDT6DE_DynamicVecBuffer = packed array of TKDT6DE_Vec;
+    TKDT6DE_DynamicVecBuffer = array of TKDT6DE_Vec;
     PKDT6DE_DynamicVecBuffer = ^TKDT6DE_DynamicVecBuffer;
 
     TKDT6DE_Source = packed record
       Buff: TKDT6DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT6DE_Source       = ^TKDT6DE_Source;
-    TKDT6DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT6DE_Source) - 1] of PKDT6DE_Source;
+    TKDT6DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT6DE_Source) - 1] of PKDT6DE_Source;
     PKDT6DE_SourceBuffer = ^TKDT6DE_SourceBuffer;
 
     TKDT6DEyanmicSourceBuffer = packed array of PKDT6DE_Source;
@@ -743,7 +743,7 @@ type
     KDStoreBuff: TKDT6DEyanmicStoreBuffer;
     KDBuff     : TKDT6DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT6DE_Node;
+    KDNodes    : array of PKDT6DE_Node;
     TestBuff   : TKDT6DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT6DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT6DE_Node;
     function GetData(const index: NativeInt): PKDT6DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -803,19 +803,19 @@ type
   TKDT7DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT7DE_Vec = array [0 .. KDT7DE_Axis - 1] of TKDT7DE_VecType;
+    TKDT7DE_Vec = packed array [0 .. KDT7DE_Axis - 1] of TKDT7DE_VecType;
     PKDT7DE_Vec = ^TKDT7DE_Vec;
 
-    TKDT7DE_DynamicVecBuffer = packed array of TKDT7DE_Vec;
+    TKDT7DE_DynamicVecBuffer = array of TKDT7DE_Vec;
     PKDT7DE_DynamicVecBuffer = ^TKDT7DE_DynamicVecBuffer;
 
     TKDT7DE_Source = packed record
       Buff: TKDT7DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT7DE_Source       = ^TKDT7DE_Source;
-    TKDT7DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT7DE_Source) - 1] of PKDT7DE_Source;
+    TKDT7DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT7DE_Source) - 1] of PKDT7DE_Source;
     PKDT7DE_SourceBuffer = ^TKDT7DE_SourceBuffer;
 
     TKDT7DEyanmicSourceBuffer = packed array of PKDT7DE_Source;
@@ -838,7 +838,7 @@ type
     KDStoreBuff: TKDT7DEyanmicStoreBuffer;
     KDBuff     : TKDT7DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT7DE_Node;
+    KDNodes    : array of PKDT7DE_Node;
     TestBuff   : TKDT7DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT7DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT7DE_Node;
     function GetData(const index: NativeInt): PKDT7DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -898,19 +898,19 @@ type
   TKDT8DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT8DE_Vec = array [0 .. KDT8DE_Axis - 1] of TKDT8DE_VecType;
+    TKDT8DE_Vec = packed array [0 .. KDT8DE_Axis - 1] of TKDT8DE_VecType;
     PKDT8DE_Vec = ^TKDT8DE_Vec;
 
-    TKDT8DE_DynamicVecBuffer = packed array of TKDT8DE_Vec;
+    TKDT8DE_DynamicVecBuffer = array of TKDT8DE_Vec;
     PKDT8DE_DynamicVecBuffer = ^TKDT8DE_DynamicVecBuffer;
 
     TKDT8DE_Source = packed record
       Buff: TKDT8DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT8DE_Source       = ^TKDT8DE_Source;
-    TKDT8DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT8DE_Source) - 1] of PKDT8DE_Source;
+    TKDT8DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT8DE_Source) - 1] of PKDT8DE_Source;
     PKDT8DE_SourceBuffer = ^TKDT8DE_SourceBuffer;
 
     TKDT8DEyanmicSourceBuffer = packed array of PKDT8DE_Source;
@@ -933,7 +933,7 @@ type
     KDStoreBuff: TKDT8DEyanmicStoreBuffer;
     KDBuff     : TKDT8DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT8DE_Node;
+    KDNodes    : array of PKDT8DE_Node;
     TestBuff   : TKDT8DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT8DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT8DE_Node;
     function GetData(const index: NativeInt): PKDT8DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -993,19 +993,19 @@ type
   TKDT9DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT9DE_Vec = array [0 .. KDT9DE_Axis - 1] of TKDT9DE_VecType;
+    TKDT9DE_Vec = packed array [0 .. KDT9DE_Axis - 1] of TKDT9DE_VecType;
     PKDT9DE_Vec = ^TKDT9DE_Vec;
 
-    TKDT9DE_DynamicVecBuffer = packed array of TKDT9DE_Vec;
+    TKDT9DE_DynamicVecBuffer = array of TKDT9DE_Vec;
     PKDT9DE_DynamicVecBuffer = ^TKDT9DE_DynamicVecBuffer;
 
     TKDT9DE_Source = packed record
       Buff: TKDT9DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT9DE_Source       = ^TKDT9DE_Source;
-    TKDT9DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT9DE_Source) - 1] of PKDT9DE_Source;
+    TKDT9DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT9DE_Source) - 1] of PKDT9DE_Source;
     PKDT9DE_SourceBuffer = ^TKDT9DE_SourceBuffer;
 
     TKDT9DEyanmicSourceBuffer = packed array of PKDT9DE_Source;
@@ -1028,7 +1028,7 @@ type
     KDStoreBuff: TKDT9DEyanmicStoreBuffer;
     KDBuff     : TKDT9DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT9DE_Node;
+    KDNodes    : array of PKDT9DE_Node;
     TestBuff   : TKDT9DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT9DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT9DE_Node;
     function GetData(const index: NativeInt): PKDT9DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1088,19 +1088,19 @@ type
   TKDT10DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT10DE_Vec = array [0 .. KDT10DE_Axis - 1] of TKDT10DE_VecType;
+    TKDT10DE_Vec = packed array [0 .. KDT10DE_Axis - 1] of TKDT10DE_VecType;
     PKDT10DE_Vec = ^TKDT10DE_Vec;
 
-    TKDT10DE_DynamicVecBuffer = packed array of TKDT10DE_Vec;
+    TKDT10DE_DynamicVecBuffer = array of TKDT10DE_Vec;
     PKDT10DE_DynamicVecBuffer = ^TKDT10DE_DynamicVecBuffer;
 
     TKDT10DE_Source = packed record
       Buff: TKDT10DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT10DE_Source       = ^TKDT10DE_Source;
-    TKDT10DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT10DE_Source) - 1] of PKDT10DE_Source;
+    TKDT10DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT10DE_Source) - 1] of PKDT10DE_Source;
     PKDT10DE_SourceBuffer = ^TKDT10DE_SourceBuffer;
 
     TKDT10DEyanmicSourceBuffer = packed array of PKDT10DE_Source;
@@ -1123,7 +1123,7 @@ type
     KDStoreBuff: TKDT10DEyanmicStoreBuffer;
     KDBuff     : TKDT10DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT10DE_Node;
+    KDNodes    : array of PKDT10DE_Node;
     TestBuff   : TKDT10DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT10DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT10DE_Node;
     function GetData(const index: NativeInt): PKDT10DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1183,19 +1183,19 @@ type
   TKDT11DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT11DE_Vec = array [0 .. KDT11DE_Axis - 1] of TKDT11DE_VecType;
+    TKDT11DE_Vec = packed array [0 .. KDT11DE_Axis - 1] of TKDT11DE_VecType;
     PKDT11DE_Vec = ^TKDT11DE_Vec;
 
-    TKDT11DE_DynamicVecBuffer = packed array of TKDT11DE_Vec;
+    TKDT11DE_DynamicVecBuffer = array of TKDT11DE_Vec;
     PKDT11DE_DynamicVecBuffer = ^TKDT11DE_DynamicVecBuffer;
 
     TKDT11DE_Source = packed record
       Buff: TKDT11DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT11DE_Source       = ^TKDT11DE_Source;
-    TKDT11DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT11DE_Source) - 1] of PKDT11DE_Source;
+    TKDT11DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT11DE_Source) - 1] of PKDT11DE_Source;
     PKDT11DE_SourceBuffer = ^TKDT11DE_SourceBuffer;
 
     TKDT11DEyanmicSourceBuffer = packed array of PKDT11DE_Source;
@@ -1218,7 +1218,7 @@ type
     KDStoreBuff: TKDT11DEyanmicStoreBuffer;
     KDBuff     : TKDT11DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT11DE_Node;
+    KDNodes    : array of PKDT11DE_Node;
     TestBuff   : TKDT11DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT11DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT11DE_Node;
     function GetData(const index: NativeInt): PKDT11DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1278,19 +1278,19 @@ type
   TKDT12DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT12DE_Vec = array [0 .. KDT12DE_Axis - 1] of TKDT12DE_VecType;
+    TKDT12DE_Vec = packed array [0 .. KDT12DE_Axis - 1] of TKDT12DE_VecType;
     PKDT12DE_Vec = ^TKDT12DE_Vec;
 
-    TKDT12DE_DynamicVecBuffer = packed array of TKDT12DE_Vec;
+    TKDT12DE_DynamicVecBuffer = array of TKDT12DE_Vec;
     PKDT12DE_DynamicVecBuffer = ^TKDT12DE_DynamicVecBuffer;
 
     TKDT12DE_Source = packed record
       Buff: TKDT12DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT12DE_Source       = ^TKDT12DE_Source;
-    TKDT12DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT12DE_Source) - 1] of PKDT12DE_Source;
+    TKDT12DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT12DE_Source) - 1] of PKDT12DE_Source;
     PKDT12DE_SourceBuffer = ^TKDT12DE_SourceBuffer;
 
     TKDT12DEyanmicSourceBuffer = packed array of PKDT12DE_Source;
@@ -1313,7 +1313,7 @@ type
     KDStoreBuff: TKDT12DEyanmicStoreBuffer;
     KDBuff     : TKDT12DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT12DE_Node;
+    KDNodes    : array of PKDT12DE_Node;
     TestBuff   : TKDT12DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT12DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT12DE_Node;
     function GetData(const index: NativeInt): PKDT12DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1373,19 +1373,19 @@ type
   TKDT13DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT13DE_Vec = array [0 .. KDT13DE_Axis - 1] of TKDT13DE_VecType;
+    TKDT13DE_Vec = packed array [0 .. KDT13DE_Axis - 1] of TKDT13DE_VecType;
     PKDT13DE_Vec = ^TKDT13DE_Vec;
 
-    TKDT13DE_DynamicVecBuffer = packed array of TKDT13DE_Vec;
+    TKDT13DE_DynamicVecBuffer = array of TKDT13DE_Vec;
     PKDT13DE_DynamicVecBuffer = ^TKDT13DE_DynamicVecBuffer;
 
     TKDT13DE_Source = packed record
       Buff: TKDT13DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT13DE_Source       = ^TKDT13DE_Source;
-    TKDT13DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT13DE_Source) - 1] of PKDT13DE_Source;
+    TKDT13DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT13DE_Source) - 1] of PKDT13DE_Source;
     PKDT13DE_SourceBuffer = ^TKDT13DE_SourceBuffer;
 
     TKDT13DEyanmicSourceBuffer = packed array of PKDT13DE_Source;
@@ -1408,7 +1408,7 @@ type
     KDStoreBuff: TKDT13DEyanmicStoreBuffer;
     KDBuff     : TKDT13DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT13DE_Node;
+    KDNodes    : array of PKDT13DE_Node;
     TestBuff   : TKDT13DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT13DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT13DE_Node;
     function GetData(const index: NativeInt): PKDT13DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1468,19 +1468,19 @@ type
   TKDT14DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT14DE_Vec = array [0 .. KDT14DE_Axis - 1] of TKDT14DE_VecType;
+    TKDT14DE_Vec = packed array [0 .. KDT14DE_Axis - 1] of TKDT14DE_VecType;
     PKDT14DE_Vec = ^TKDT14DE_Vec;
 
-    TKDT14DE_DynamicVecBuffer = packed array of TKDT14DE_Vec;
+    TKDT14DE_DynamicVecBuffer = array of TKDT14DE_Vec;
     PKDT14DE_DynamicVecBuffer = ^TKDT14DE_DynamicVecBuffer;
 
     TKDT14DE_Source = packed record
       Buff: TKDT14DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT14DE_Source       = ^TKDT14DE_Source;
-    TKDT14DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT14DE_Source) - 1] of PKDT14DE_Source;
+    TKDT14DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT14DE_Source) - 1] of PKDT14DE_Source;
     PKDT14DE_SourceBuffer = ^TKDT14DE_SourceBuffer;
 
     TKDT14DEyanmicSourceBuffer = packed array of PKDT14DE_Source;
@@ -1503,7 +1503,7 @@ type
     KDStoreBuff: TKDT14DEyanmicStoreBuffer;
     KDBuff     : TKDT14DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT14DE_Node;
+    KDNodes    : array of PKDT14DE_Node;
     TestBuff   : TKDT14DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT14DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT14DE_Node;
     function GetData(const index: NativeInt): PKDT14DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1563,19 +1563,19 @@ type
   TKDT15DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT15DE_Vec = array [0 .. KDT15DE_Axis - 1] of TKDT15DE_VecType;
+    TKDT15DE_Vec = packed array [0 .. KDT15DE_Axis - 1] of TKDT15DE_VecType;
     PKDT15DE_Vec = ^TKDT15DE_Vec;
 
-    TKDT15DE_DynamicVecBuffer = packed array of TKDT15DE_Vec;
+    TKDT15DE_DynamicVecBuffer = array of TKDT15DE_Vec;
     PKDT15DE_DynamicVecBuffer = ^TKDT15DE_DynamicVecBuffer;
 
     TKDT15DE_Source = packed record
       Buff: TKDT15DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT15DE_Source       = ^TKDT15DE_Source;
-    TKDT15DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT15DE_Source) - 1] of PKDT15DE_Source;
+    TKDT15DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT15DE_Source) - 1] of PKDT15DE_Source;
     PKDT15DE_SourceBuffer = ^TKDT15DE_SourceBuffer;
 
     TKDT15DEyanmicSourceBuffer = packed array of PKDT15DE_Source;
@@ -1598,7 +1598,7 @@ type
     KDStoreBuff: TKDT15DEyanmicStoreBuffer;
     KDBuff     : TKDT15DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT15DE_Node;
+    KDNodes    : array of PKDT15DE_Node;
     TestBuff   : TKDT15DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT15DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT15DE_Node;
     function GetData(const index: NativeInt): PKDT15DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1658,19 +1658,19 @@ type
   TKDT16DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT16DE_Vec = array [0 .. KDT16DE_Axis - 1] of TKDT16DE_VecType;
+    TKDT16DE_Vec = packed array [0 .. KDT16DE_Axis - 1] of TKDT16DE_VecType;
     PKDT16DE_Vec = ^TKDT16DE_Vec;
 
-    TKDT16DE_DynamicVecBuffer = packed array of TKDT16DE_Vec;
+    TKDT16DE_DynamicVecBuffer = array of TKDT16DE_Vec;
     PKDT16DE_DynamicVecBuffer = ^TKDT16DE_DynamicVecBuffer;
 
     TKDT16DE_Source = packed record
       Buff: TKDT16DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT16DE_Source       = ^TKDT16DE_Source;
-    TKDT16DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT16DE_Source) - 1] of PKDT16DE_Source;
+    TKDT16DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT16DE_Source) - 1] of PKDT16DE_Source;
     PKDT16DE_SourceBuffer = ^TKDT16DE_SourceBuffer;
 
     TKDT16DEyanmicSourceBuffer = packed array of PKDT16DE_Source;
@@ -1693,7 +1693,7 @@ type
     KDStoreBuff: TKDT16DEyanmicStoreBuffer;
     KDBuff     : TKDT16DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT16DE_Node;
+    KDNodes    : array of PKDT16DE_Node;
     TestBuff   : TKDT16DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT16DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT16DE_Node;
     function GetData(const index: NativeInt): PKDT16DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1753,19 +1753,19 @@ type
   TKDT17DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT17DE_Vec = array [0 .. KDT17DE_Axis - 1] of TKDT17DE_VecType;
+    TKDT17DE_Vec = packed array [0 .. KDT17DE_Axis - 1] of TKDT17DE_VecType;
     PKDT17DE_Vec = ^TKDT17DE_Vec;
 
-    TKDT17DE_DynamicVecBuffer = packed array of TKDT17DE_Vec;
+    TKDT17DE_DynamicVecBuffer = array of TKDT17DE_Vec;
     PKDT17DE_DynamicVecBuffer = ^TKDT17DE_DynamicVecBuffer;
 
     TKDT17DE_Source = packed record
       Buff: TKDT17DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT17DE_Source       = ^TKDT17DE_Source;
-    TKDT17DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT17DE_Source) - 1] of PKDT17DE_Source;
+    TKDT17DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT17DE_Source) - 1] of PKDT17DE_Source;
     PKDT17DE_SourceBuffer = ^TKDT17DE_SourceBuffer;
 
     TKDT17DEyanmicSourceBuffer = packed array of PKDT17DE_Source;
@@ -1788,7 +1788,7 @@ type
     KDStoreBuff: TKDT17DEyanmicStoreBuffer;
     KDBuff     : TKDT17DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT17DE_Node;
+    KDNodes    : array of PKDT17DE_Node;
     TestBuff   : TKDT17DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT17DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT17DE_Node;
     function GetData(const index: NativeInt): PKDT17DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1848,19 +1848,19 @@ type
   TKDT18DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT18DE_Vec = array [0 .. KDT18DE_Axis - 1] of TKDT18DE_VecType;
+    TKDT18DE_Vec = packed array [0 .. KDT18DE_Axis - 1] of TKDT18DE_VecType;
     PKDT18DE_Vec = ^TKDT18DE_Vec;
 
-    TKDT18DE_DynamicVecBuffer = packed array of TKDT18DE_Vec;
+    TKDT18DE_DynamicVecBuffer = array of TKDT18DE_Vec;
     PKDT18DE_DynamicVecBuffer = ^TKDT18DE_DynamicVecBuffer;
 
     TKDT18DE_Source = packed record
       Buff: TKDT18DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT18DE_Source       = ^TKDT18DE_Source;
-    TKDT18DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT18DE_Source) - 1] of PKDT18DE_Source;
+    TKDT18DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT18DE_Source) - 1] of PKDT18DE_Source;
     PKDT18DE_SourceBuffer = ^TKDT18DE_SourceBuffer;
 
     TKDT18DEyanmicSourceBuffer = packed array of PKDT18DE_Source;
@@ -1883,7 +1883,7 @@ type
     KDStoreBuff: TKDT18DEyanmicStoreBuffer;
     KDBuff     : TKDT18DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT18DE_Node;
+    KDNodes    : array of PKDT18DE_Node;
     TestBuff   : TKDT18DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT18DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT18DE_Node;
     function GetData(const index: NativeInt): PKDT18DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1943,19 +1943,19 @@ type
   TKDT19DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT19DE_Vec = array [0 .. KDT19DE_Axis - 1] of TKDT19DE_VecType;
+    TKDT19DE_Vec = packed array [0 .. KDT19DE_Axis - 1] of TKDT19DE_VecType;
     PKDT19DE_Vec = ^TKDT19DE_Vec;
 
-    TKDT19DE_DynamicVecBuffer = packed array of TKDT19DE_Vec;
+    TKDT19DE_DynamicVecBuffer = array of TKDT19DE_Vec;
     PKDT19DE_DynamicVecBuffer = ^TKDT19DE_DynamicVecBuffer;
 
     TKDT19DE_Source = packed record
       Buff: TKDT19DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT19DE_Source       = ^TKDT19DE_Source;
-    TKDT19DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT19DE_Source) - 1] of PKDT19DE_Source;
+    TKDT19DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT19DE_Source) - 1] of PKDT19DE_Source;
     PKDT19DE_SourceBuffer = ^TKDT19DE_SourceBuffer;
 
     TKDT19DEyanmicSourceBuffer = packed array of PKDT19DE_Source;
@@ -1978,7 +1978,7 @@ type
     KDStoreBuff: TKDT19DEyanmicStoreBuffer;
     KDBuff     : TKDT19DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT19DE_Node;
+    KDNodes    : array of PKDT19DE_Node;
     TestBuff   : TKDT19DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT19DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT19DE_Node;
     function GetData(const index: NativeInt): PKDT19DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2038,19 +2038,19 @@ type
   TKDT20DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT20DE_Vec = array [0 .. KDT20DE_Axis - 1] of TKDT20DE_VecType;
+    TKDT20DE_Vec = packed array [0 .. KDT20DE_Axis - 1] of TKDT20DE_VecType;
     PKDT20DE_Vec = ^TKDT20DE_Vec;
 
-    TKDT20DE_DynamicVecBuffer = packed array of TKDT20DE_Vec;
+    TKDT20DE_DynamicVecBuffer = array of TKDT20DE_Vec;
     PKDT20DE_DynamicVecBuffer = ^TKDT20DE_DynamicVecBuffer;
 
     TKDT20DE_Source = packed record
       Buff: TKDT20DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT20DE_Source       = ^TKDT20DE_Source;
-    TKDT20DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT20DE_Source) - 1] of PKDT20DE_Source;
+    TKDT20DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT20DE_Source) - 1] of PKDT20DE_Source;
     PKDT20DE_SourceBuffer = ^TKDT20DE_SourceBuffer;
 
     TKDT20DEyanmicSourceBuffer = packed array of PKDT20DE_Source;
@@ -2073,7 +2073,7 @@ type
     KDStoreBuff: TKDT20DEyanmicStoreBuffer;
     KDBuff     : TKDT20DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT20DE_Node;
+    KDNodes    : array of PKDT20DE_Node;
     TestBuff   : TKDT20DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT20DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT20DE_Node;
     function GetData(const index: NativeInt): PKDT20DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2133,19 +2133,19 @@ type
   TKDT21DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT21DE_Vec = array [0 .. KDT21DE_Axis - 1] of TKDT21DE_VecType;
+    TKDT21DE_Vec = packed array [0 .. KDT21DE_Axis - 1] of TKDT21DE_VecType;
     PKDT21DE_Vec = ^TKDT21DE_Vec;
 
-    TKDT21DE_DynamicVecBuffer = packed array of TKDT21DE_Vec;
+    TKDT21DE_DynamicVecBuffer = array of TKDT21DE_Vec;
     PKDT21DE_DynamicVecBuffer = ^TKDT21DE_DynamicVecBuffer;
 
     TKDT21DE_Source = packed record
       Buff: TKDT21DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT21DE_Source       = ^TKDT21DE_Source;
-    TKDT21DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT21DE_Source) - 1] of PKDT21DE_Source;
+    TKDT21DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT21DE_Source) - 1] of PKDT21DE_Source;
     PKDT21DE_SourceBuffer = ^TKDT21DE_SourceBuffer;
 
     TKDT21DEyanmicSourceBuffer = packed array of PKDT21DE_Source;
@@ -2168,7 +2168,7 @@ type
     KDStoreBuff: TKDT21DEyanmicStoreBuffer;
     KDBuff     : TKDT21DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT21DE_Node;
+    KDNodes    : array of PKDT21DE_Node;
     TestBuff   : TKDT21DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT21DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT21DE_Node;
     function GetData(const index: NativeInt): PKDT21DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2228,19 +2228,19 @@ type
   TKDT22DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT22DE_Vec = array [0 .. KDT22DE_Axis - 1] of TKDT22DE_VecType;
+    TKDT22DE_Vec = packed array [0 .. KDT22DE_Axis - 1] of TKDT22DE_VecType;
     PKDT22DE_Vec = ^TKDT22DE_Vec;
 
-    TKDT22DE_DynamicVecBuffer = packed array of TKDT22DE_Vec;
+    TKDT22DE_DynamicVecBuffer = array of TKDT22DE_Vec;
     PKDT22DE_DynamicVecBuffer = ^TKDT22DE_DynamicVecBuffer;
 
     TKDT22DE_Source = packed record
       Buff: TKDT22DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT22DE_Source       = ^TKDT22DE_Source;
-    TKDT22DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT22DE_Source) - 1] of PKDT22DE_Source;
+    TKDT22DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT22DE_Source) - 1] of PKDT22DE_Source;
     PKDT22DE_SourceBuffer = ^TKDT22DE_SourceBuffer;
 
     TKDT22DEyanmicSourceBuffer = packed array of PKDT22DE_Source;
@@ -2263,7 +2263,7 @@ type
     KDStoreBuff: TKDT22DEyanmicStoreBuffer;
     KDBuff     : TKDT22DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT22DE_Node;
+    KDNodes    : array of PKDT22DE_Node;
     TestBuff   : TKDT22DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT22DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT22DE_Node;
     function GetData(const index: NativeInt): PKDT22DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2323,19 +2323,19 @@ type
   TKDT23DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT23DE_Vec = array [0 .. KDT23DE_Axis - 1] of TKDT23DE_VecType;
+    TKDT23DE_Vec = packed array [0 .. KDT23DE_Axis - 1] of TKDT23DE_VecType;
     PKDT23DE_Vec = ^TKDT23DE_Vec;
 
-    TKDT23DE_DynamicVecBuffer = packed array of TKDT23DE_Vec;
+    TKDT23DE_DynamicVecBuffer = array of TKDT23DE_Vec;
     PKDT23DE_DynamicVecBuffer = ^TKDT23DE_DynamicVecBuffer;
 
     TKDT23DE_Source = packed record
       Buff: TKDT23DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT23DE_Source       = ^TKDT23DE_Source;
-    TKDT23DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT23DE_Source) - 1] of PKDT23DE_Source;
+    TKDT23DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT23DE_Source) - 1] of PKDT23DE_Source;
     PKDT23DE_SourceBuffer = ^TKDT23DE_SourceBuffer;
 
     TKDT23DEyanmicSourceBuffer = packed array of PKDT23DE_Source;
@@ -2358,7 +2358,7 @@ type
     KDStoreBuff: TKDT23DEyanmicStoreBuffer;
     KDBuff     : TKDT23DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT23DE_Node;
+    KDNodes    : array of PKDT23DE_Node;
     TestBuff   : TKDT23DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT23DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT23DE_Node;
     function GetData(const index: NativeInt): PKDT23DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2418,19 +2418,19 @@ type
   TKDT24DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT24DE_Vec = array [0 .. KDT24DE_Axis - 1] of TKDT24DE_VecType;
+    TKDT24DE_Vec = packed array [0 .. KDT24DE_Axis - 1] of TKDT24DE_VecType;
     PKDT24DE_Vec = ^TKDT24DE_Vec;
 
-    TKDT24DE_DynamicVecBuffer = packed array of TKDT24DE_Vec;
+    TKDT24DE_DynamicVecBuffer = array of TKDT24DE_Vec;
     PKDT24DE_DynamicVecBuffer = ^TKDT24DE_DynamicVecBuffer;
 
     TKDT24DE_Source = packed record
       Buff: TKDT24DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT24DE_Source       = ^TKDT24DE_Source;
-    TKDT24DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT24DE_Source) - 1] of PKDT24DE_Source;
+    TKDT24DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT24DE_Source) - 1] of PKDT24DE_Source;
     PKDT24DE_SourceBuffer = ^TKDT24DE_SourceBuffer;
 
     TKDT24DEyanmicSourceBuffer = packed array of PKDT24DE_Source;
@@ -2453,7 +2453,7 @@ type
     KDStoreBuff: TKDT24DEyanmicStoreBuffer;
     KDBuff     : TKDT24DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT24DE_Node;
+    KDNodes    : array of PKDT24DE_Node;
     TestBuff   : TKDT24DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT24DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT24DE_Node;
     function GetData(const index: NativeInt): PKDT24DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2513,19 +2513,19 @@ type
   TKDT25DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT25DE_Vec = array [0 .. KDT25DE_Axis - 1] of TKDT25DE_VecType;
+    TKDT25DE_Vec = packed array [0 .. KDT25DE_Axis - 1] of TKDT25DE_VecType;
     PKDT25DE_Vec = ^TKDT25DE_Vec;
 
-    TKDT25DE_DynamicVecBuffer = packed array of TKDT25DE_Vec;
+    TKDT25DE_DynamicVecBuffer = array of TKDT25DE_Vec;
     PKDT25DE_DynamicVecBuffer = ^TKDT25DE_DynamicVecBuffer;
 
     TKDT25DE_Source = packed record
       Buff: TKDT25DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT25DE_Source       = ^TKDT25DE_Source;
-    TKDT25DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT25DE_Source) - 1] of PKDT25DE_Source;
+    TKDT25DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT25DE_Source) - 1] of PKDT25DE_Source;
     PKDT25DE_SourceBuffer = ^TKDT25DE_SourceBuffer;
 
     TKDT25DEyanmicSourceBuffer = packed array of PKDT25DE_Source;
@@ -2548,7 +2548,7 @@ type
     KDStoreBuff: TKDT25DEyanmicStoreBuffer;
     KDBuff     : TKDT25DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT25DE_Node;
+    KDNodes    : array of PKDT25DE_Node;
     TestBuff   : TKDT25DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT25DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT25DE_Node;
     function GetData(const index: NativeInt): PKDT25DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2608,19 +2608,19 @@ type
   TKDT26DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT26DE_Vec = array [0 .. KDT26DE_Axis - 1] of TKDT26DE_VecType;
+    TKDT26DE_Vec = packed array [0 .. KDT26DE_Axis - 1] of TKDT26DE_VecType;
     PKDT26DE_Vec = ^TKDT26DE_Vec;
 
-    TKDT26DE_DynamicVecBuffer = packed array of TKDT26DE_Vec;
+    TKDT26DE_DynamicVecBuffer = array of TKDT26DE_Vec;
     PKDT26DE_DynamicVecBuffer = ^TKDT26DE_DynamicVecBuffer;
 
     TKDT26DE_Source = packed record
       Buff: TKDT26DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT26DE_Source       = ^TKDT26DE_Source;
-    TKDT26DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT26DE_Source) - 1] of PKDT26DE_Source;
+    TKDT26DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT26DE_Source) - 1] of PKDT26DE_Source;
     PKDT26DE_SourceBuffer = ^TKDT26DE_SourceBuffer;
 
     TKDT26DEyanmicSourceBuffer = packed array of PKDT26DE_Source;
@@ -2643,7 +2643,7 @@ type
     KDStoreBuff: TKDT26DEyanmicStoreBuffer;
     KDBuff     : TKDT26DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT26DE_Node;
+    KDNodes    : array of PKDT26DE_Node;
     TestBuff   : TKDT26DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT26DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT26DE_Node;
     function GetData(const index: NativeInt): PKDT26DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2703,19 +2703,19 @@ type
   TKDT27DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT27DE_Vec = array [0 .. KDT27DE_Axis - 1] of TKDT27DE_VecType;
+    TKDT27DE_Vec = packed array [0 .. KDT27DE_Axis - 1] of TKDT27DE_VecType;
     PKDT27DE_Vec = ^TKDT27DE_Vec;
 
-    TKDT27DE_DynamicVecBuffer = packed array of TKDT27DE_Vec;
+    TKDT27DE_DynamicVecBuffer = array of TKDT27DE_Vec;
     PKDT27DE_DynamicVecBuffer = ^TKDT27DE_DynamicVecBuffer;
 
     TKDT27DE_Source = packed record
       Buff: TKDT27DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT27DE_Source       = ^TKDT27DE_Source;
-    TKDT27DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT27DE_Source) - 1] of PKDT27DE_Source;
+    TKDT27DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT27DE_Source) - 1] of PKDT27DE_Source;
     PKDT27DE_SourceBuffer = ^TKDT27DE_SourceBuffer;
 
     TKDT27DEyanmicSourceBuffer = packed array of PKDT27DE_Source;
@@ -2738,7 +2738,7 @@ type
     KDStoreBuff: TKDT27DEyanmicStoreBuffer;
     KDBuff     : TKDT27DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT27DE_Node;
+    KDNodes    : array of PKDT27DE_Node;
     TestBuff   : TKDT27DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT27DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT27DE_Node;
     function GetData(const index: NativeInt): PKDT27DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2798,19 +2798,19 @@ type
   TKDT28DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT28DE_Vec = array [0 .. KDT28DE_Axis - 1] of TKDT28DE_VecType;
+    TKDT28DE_Vec = packed array [0 .. KDT28DE_Axis - 1] of TKDT28DE_VecType;
     PKDT28DE_Vec = ^TKDT28DE_Vec;
 
-    TKDT28DE_DynamicVecBuffer = packed array of TKDT28DE_Vec;
+    TKDT28DE_DynamicVecBuffer = array of TKDT28DE_Vec;
     PKDT28DE_DynamicVecBuffer = ^TKDT28DE_DynamicVecBuffer;
 
     TKDT28DE_Source = packed record
       Buff: TKDT28DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT28DE_Source       = ^TKDT28DE_Source;
-    TKDT28DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT28DE_Source) - 1] of PKDT28DE_Source;
+    TKDT28DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT28DE_Source) - 1] of PKDT28DE_Source;
     PKDT28DE_SourceBuffer = ^TKDT28DE_SourceBuffer;
 
     TKDT28DEyanmicSourceBuffer = packed array of PKDT28DE_Source;
@@ -2833,7 +2833,7 @@ type
     KDStoreBuff: TKDT28DEyanmicStoreBuffer;
     KDBuff     : TKDT28DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT28DE_Node;
+    KDNodes    : array of PKDT28DE_Node;
     TestBuff   : TKDT28DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT28DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT28DE_Node;
     function GetData(const index: NativeInt): PKDT28DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2893,19 +2893,19 @@ type
   TKDT29DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT29DE_Vec = array [0 .. KDT29DE_Axis - 1] of TKDT29DE_VecType;
+    TKDT29DE_Vec = packed array [0 .. KDT29DE_Axis - 1] of TKDT29DE_VecType;
     PKDT29DE_Vec = ^TKDT29DE_Vec;
 
-    TKDT29DE_DynamicVecBuffer = packed array of TKDT29DE_Vec;
+    TKDT29DE_DynamicVecBuffer = array of TKDT29DE_Vec;
     PKDT29DE_DynamicVecBuffer = ^TKDT29DE_DynamicVecBuffer;
 
     TKDT29DE_Source = packed record
       Buff: TKDT29DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT29DE_Source       = ^TKDT29DE_Source;
-    TKDT29DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT29DE_Source) - 1] of PKDT29DE_Source;
+    TKDT29DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT29DE_Source) - 1] of PKDT29DE_Source;
     PKDT29DE_SourceBuffer = ^TKDT29DE_SourceBuffer;
 
     TKDT29DEyanmicSourceBuffer = packed array of PKDT29DE_Source;
@@ -2928,7 +2928,7 @@ type
     KDStoreBuff: TKDT29DEyanmicStoreBuffer;
     KDBuff     : TKDT29DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT29DE_Node;
+    KDNodes    : array of PKDT29DE_Node;
     TestBuff   : TKDT29DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT29DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT29DE_Node;
     function GetData(const index: NativeInt): PKDT29DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -2988,19 +2988,19 @@ type
   TKDT30DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT30DE_Vec = array [0 .. KDT30DE_Axis - 1] of TKDT30DE_VecType;
+    TKDT30DE_Vec = packed array [0 .. KDT30DE_Axis - 1] of TKDT30DE_VecType;
     PKDT30DE_Vec = ^TKDT30DE_Vec;
 
-    TKDT30DE_DynamicVecBuffer = packed array of TKDT30DE_Vec;
+    TKDT30DE_DynamicVecBuffer = array of TKDT30DE_Vec;
     PKDT30DE_DynamicVecBuffer = ^TKDT30DE_DynamicVecBuffer;
 
     TKDT30DE_Source = packed record
       Buff: TKDT30DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT30DE_Source       = ^TKDT30DE_Source;
-    TKDT30DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT30DE_Source) - 1] of PKDT30DE_Source;
+    TKDT30DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT30DE_Source) - 1] of PKDT30DE_Source;
     PKDT30DE_SourceBuffer = ^TKDT30DE_SourceBuffer;
 
     TKDT30DEyanmicSourceBuffer = packed array of PKDT30DE_Source;
@@ -3023,7 +3023,7 @@ type
     KDStoreBuff: TKDT30DEyanmicStoreBuffer;
     KDBuff     : TKDT30DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT30DE_Node;
+    KDNodes    : array of PKDT30DE_Node;
     TestBuff   : TKDT30DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT30DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT30DE_Node;
     function GetData(const index: NativeInt): PKDT30DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3083,19 +3083,19 @@ type
   TKDT31DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT31DE_Vec = array [0 .. KDT31DE_Axis - 1] of TKDT31DE_VecType;
+    TKDT31DE_Vec = packed array [0 .. KDT31DE_Axis - 1] of TKDT31DE_VecType;
     PKDT31DE_Vec = ^TKDT31DE_Vec;
 
-    TKDT31DE_DynamicVecBuffer = packed array of TKDT31DE_Vec;
+    TKDT31DE_DynamicVecBuffer = array of TKDT31DE_Vec;
     PKDT31DE_DynamicVecBuffer = ^TKDT31DE_DynamicVecBuffer;
 
     TKDT31DE_Source = packed record
       Buff: TKDT31DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT31DE_Source       = ^TKDT31DE_Source;
-    TKDT31DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT31DE_Source) - 1] of PKDT31DE_Source;
+    TKDT31DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT31DE_Source) - 1] of PKDT31DE_Source;
     PKDT31DE_SourceBuffer = ^TKDT31DE_SourceBuffer;
 
     TKDT31DEyanmicSourceBuffer = packed array of PKDT31DE_Source;
@@ -3118,7 +3118,7 @@ type
     KDStoreBuff: TKDT31DEyanmicStoreBuffer;
     KDBuff     : TKDT31DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT31DE_Node;
+    KDNodes    : array of PKDT31DE_Node;
     TestBuff   : TKDT31DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT31DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT31DE_Node;
     function GetData(const index: NativeInt): PKDT31DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3178,19 +3178,19 @@ type
   TKDT32DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT32DE_Vec = array [0 .. KDT32DE_Axis - 1] of TKDT32DE_VecType;
+    TKDT32DE_Vec = packed array [0 .. KDT32DE_Axis - 1] of TKDT32DE_VecType;
     PKDT32DE_Vec = ^TKDT32DE_Vec;
 
-    TKDT32DE_DynamicVecBuffer = packed array of TKDT32DE_Vec;
+    TKDT32DE_DynamicVecBuffer = array of TKDT32DE_Vec;
     PKDT32DE_DynamicVecBuffer = ^TKDT32DE_DynamicVecBuffer;
 
     TKDT32DE_Source = packed record
       Buff: TKDT32DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT32DE_Source       = ^TKDT32DE_Source;
-    TKDT32DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT32DE_Source) - 1] of PKDT32DE_Source;
+    TKDT32DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT32DE_Source) - 1] of PKDT32DE_Source;
     PKDT32DE_SourceBuffer = ^TKDT32DE_SourceBuffer;
 
     TKDT32DEyanmicSourceBuffer = packed array of PKDT32DE_Source;
@@ -3213,7 +3213,7 @@ type
     KDStoreBuff: TKDT32DEyanmicStoreBuffer;
     KDBuff     : TKDT32DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT32DE_Node;
+    KDNodes    : array of PKDT32DE_Node;
     TestBuff   : TKDT32DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT32DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT32DE_Node;
     function GetData(const index: NativeInt): PKDT32DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3273,19 +3273,19 @@ type
   TKDT33DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT33DE_Vec = array [0 .. KDT33DE_Axis - 1] of TKDT33DE_VecType;
+    TKDT33DE_Vec = packed array [0 .. KDT33DE_Axis - 1] of TKDT33DE_VecType;
     PKDT33DE_Vec = ^TKDT33DE_Vec;
 
-    TKDT33DE_DynamicVecBuffer = packed array of TKDT33DE_Vec;
+    TKDT33DE_DynamicVecBuffer = array of TKDT33DE_Vec;
     PKDT33DE_DynamicVecBuffer = ^TKDT33DE_DynamicVecBuffer;
 
     TKDT33DE_Source = packed record
       Buff: TKDT33DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT33DE_Source       = ^TKDT33DE_Source;
-    TKDT33DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT33DE_Source) - 1] of PKDT33DE_Source;
+    TKDT33DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT33DE_Source) - 1] of PKDT33DE_Source;
     PKDT33DE_SourceBuffer = ^TKDT33DE_SourceBuffer;
 
     TKDT33DEyanmicSourceBuffer = packed array of PKDT33DE_Source;
@@ -3308,7 +3308,7 @@ type
     KDStoreBuff: TKDT33DEyanmicStoreBuffer;
     KDBuff     : TKDT33DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT33DE_Node;
+    KDNodes    : array of PKDT33DE_Node;
     TestBuff   : TKDT33DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT33DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT33DE_Node;
     function GetData(const index: NativeInt): PKDT33DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3368,19 +3368,19 @@ type
   TKDT34DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT34DE_Vec = array [0 .. KDT34DE_Axis - 1] of TKDT34DE_VecType;
+    TKDT34DE_Vec = packed array [0 .. KDT34DE_Axis - 1] of TKDT34DE_VecType;
     PKDT34DE_Vec = ^TKDT34DE_Vec;
 
-    TKDT34DE_DynamicVecBuffer = packed array of TKDT34DE_Vec;
+    TKDT34DE_DynamicVecBuffer = array of TKDT34DE_Vec;
     PKDT34DE_DynamicVecBuffer = ^TKDT34DE_DynamicVecBuffer;
 
     TKDT34DE_Source = packed record
       Buff: TKDT34DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT34DE_Source       = ^TKDT34DE_Source;
-    TKDT34DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT34DE_Source) - 1] of PKDT34DE_Source;
+    TKDT34DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT34DE_Source) - 1] of PKDT34DE_Source;
     PKDT34DE_SourceBuffer = ^TKDT34DE_SourceBuffer;
 
     TKDT34DEyanmicSourceBuffer = packed array of PKDT34DE_Source;
@@ -3403,7 +3403,7 @@ type
     KDStoreBuff: TKDT34DEyanmicStoreBuffer;
     KDBuff     : TKDT34DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT34DE_Node;
+    KDNodes    : array of PKDT34DE_Node;
     TestBuff   : TKDT34DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT34DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT34DE_Node;
     function GetData(const index: NativeInt): PKDT34DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3463,19 +3463,19 @@ type
   TKDT35DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT35DE_Vec = array [0 .. KDT35DE_Axis - 1] of TKDT35DE_VecType;
+    TKDT35DE_Vec = packed array [0 .. KDT35DE_Axis - 1] of TKDT35DE_VecType;
     PKDT35DE_Vec = ^TKDT35DE_Vec;
 
-    TKDT35DE_DynamicVecBuffer = packed array of TKDT35DE_Vec;
+    TKDT35DE_DynamicVecBuffer = array of TKDT35DE_Vec;
     PKDT35DE_DynamicVecBuffer = ^TKDT35DE_DynamicVecBuffer;
 
     TKDT35DE_Source = packed record
       Buff: TKDT35DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT35DE_Source       = ^TKDT35DE_Source;
-    TKDT35DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT35DE_Source) - 1] of PKDT35DE_Source;
+    TKDT35DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT35DE_Source) - 1] of PKDT35DE_Source;
     PKDT35DE_SourceBuffer = ^TKDT35DE_SourceBuffer;
 
     TKDT35DEyanmicSourceBuffer = packed array of PKDT35DE_Source;
@@ -3498,7 +3498,7 @@ type
     KDStoreBuff: TKDT35DEyanmicStoreBuffer;
     KDBuff     : TKDT35DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT35DE_Node;
+    KDNodes    : array of PKDT35DE_Node;
     TestBuff   : TKDT35DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT35DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT35DE_Node;
     function GetData(const index: NativeInt): PKDT35DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3558,19 +3558,19 @@ type
   TKDT36DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT36DE_Vec = array [0 .. KDT36DE_Axis - 1] of TKDT36DE_VecType;
+    TKDT36DE_Vec = packed array [0 .. KDT36DE_Axis - 1] of TKDT36DE_VecType;
     PKDT36DE_Vec = ^TKDT36DE_Vec;
 
-    TKDT36DE_DynamicVecBuffer = packed array of TKDT36DE_Vec;
+    TKDT36DE_DynamicVecBuffer = array of TKDT36DE_Vec;
     PKDT36DE_DynamicVecBuffer = ^TKDT36DE_DynamicVecBuffer;
 
     TKDT36DE_Source = packed record
       Buff: TKDT36DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT36DE_Source       = ^TKDT36DE_Source;
-    TKDT36DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT36DE_Source) - 1] of PKDT36DE_Source;
+    TKDT36DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT36DE_Source) - 1] of PKDT36DE_Source;
     PKDT36DE_SourceBuffer = ^TKDT36DE_SourceBuffer;
 
     TKDT36DEyanmicSourceBuffer = packed array of PKDT36DE_Source;
@@ -3593,7 +3593,7 @@ type
     KDStoreBuff: TKDT36DEyanmicStoreBuffer;
     KDBuff     : TKDT36DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT36DE_Node;
+    KDNodes    : array of PKDT36DE_Node;
     TestBuff   : TKDT36DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT36DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT36DE_Node;
     function GetData(const index: NativeInt): PKDT36DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3653,19 +3653,19 @@ type
   TKDT37DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT37DE_Vec = array [0 .. KDT37DE_Axis - 1] of TKDT37DE_VecType;
+    TKDT37DE_Vec = packed array [0 .. KDT37DE_Axis - 1] of TKDT37DE_VecType;
     PKDT37DE_Vec = ^TKDT37DE_Vec;
 
-    TKDT37DE_DynamicVecBuffer = packed array of TKDT37DE_Vec;
+    TKDT37DE_DynamicVecBuffer = array of TKDT37DE_Vec;
     PKDT37DE_DynamicVecBuffer = ^TKDT37DE_DynamicVecBuffer;
 
     TKDT37DE_Source = packed record
       Buff: TKDT37DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT37DE_Source       = ^TKDT37DE_Source;
-    TKDT37DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT37DE_Source) - 1] of PKDT37DE_Source;
+    TKDT37DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT37DE_Source) - 1] of PKDT37DE_Source;
     PKDT37DE_SourceBuffer = ^TKDT37DE_SourceBuffer;
 
     TKDT37DEyanmicSourceBuffer = packed array of PKDT37DE_Source;
@@ -3688,7 +3688,7 @@ type
     KDStoreBuff: TKDT37DEyanmicStoreBuffer;
     KDBuff     : TKDT37DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT37DE_Node;
+    KDNodes    : array of PKDT37DE_Node;
     TestBuff   : TKDT37DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT37DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT37DE_Node;
     function GetData(const index: NativeInt): PKDT37DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3748,19 +3748,19 @@ type
   TKDT38DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT38DE_Vec = array [0 .. KDT38DE_Axis - 1] of TKDT38DE_VecType;
+    TKDT38DE_Vec = packed array [0 .. KDT38DE_Axis - 1] of TKDT38DE_VecType;
     PKDT38DE_Vec = ^TKDT38DE_Vec;
 
-    TKDT38DE_DynamicVecBuffer = packed array of TKDT38DE_Vec;
+    TKDT38DE_DynamicVecBuffer = array of TKDT38DE_Vec;
     PKDT38DE_DynamicVecBuffer = ^TKDT38DE_DynamicVecBuffer;
 
     TKDT38DE_Source = packed record
       Buff: TKDT38DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT38DE_Source       = ^TKDT38DE_Source;
-    TKDT38DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT38DE_Source) - 1] of PKDT38DE_Source;
+    TKDT38DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT38DE_Source) - 1] of PKDT38DE_Source;
     PKDT38DE_SourceBuffer = ^TKDT38DE_SourceBuffer;
 
     TKDT38DEyanmicSourceBuffer = packed array of PKDT38DE_Source;
@@ -3783,7 +3783,7 @@ type
     KDStoreBuff: TKDT38DEyanmicStoreBuffer;
     KDBuff     : TKDT38DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT38DE_Node;
+    KDNodes    : array of PKDT38DE_Node;
     TestBuff   : TKDT38DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT38DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT38DE_Node;
     function GetData(const index: NativeInt): PKDT38DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3843,19 +3843,19 @@ type
   TKDT39DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT39DE_Vec = array [0 .. KDT39DE_Axis - 1] of TKDT39DE_VecType;
+    TKDT39DE_Vec = packed array [0 .. KDT39DE_Axis - 1] of TKDT39DE_VecType;
     PKDT39DE_Vec = ^TKDT39DE_Vec;
 
-    TKDT39DE_DynamicVecBuffer = packed array of TKDT39DE_Vec;
+    TKDT39DE_DynamicVecBuffer = array of TKDT39DE_Vec;
     PKDT39DE_DynamicVecBuffer = ^TKDT39DE_DynamicVecBuffer;
 
     TKDT39DE_Source = packed record
       Buff: TKDT39DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT39DE_Source       = ^TKDT39DE_Source;
-    TKDT39DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT39DE_Source) - 1] of PKDT39DE_Source;
+    TKDT39DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT39DE_Source) - 1] of PKDT39DE_Source;
     PKDT39DE_SourceBuffer = ^TKDT39DE_SourceBuffer;
 
     TKDT39DEyanmicSourceBuffer = packed array of PKDT39DE_Source;
@@ -3878,7 +3878,7 @@ type
     KDStoreBuff: TKDT39DEyanmicStoreBuffer;
     KDBuff     : TKDT39DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT39DE_Node;
+    KDNodes    : array of PKDT39DE_Node;
     TestBuff   : TKDT39DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT39DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT39DE_Node;
     function GetData(const index: NativeInt): PKDT39DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -3938,19 +3938,19 @@ type
   TKDT40DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT40DE_Vec = array [0 .. KDT40DE_Axis - 1] of TKDT40DE_VecType;
+    TKDT40DE_Vec = packed array [0 .. KDT40DE_Axis - 1] of TKDT40DE_VecType;
     PKDT40DE_Vec = ^TKDT40DE_Vec;
 
-    TKDT40DE_DynamicVecBuffer = packed array of TKDT40DE_Vec;
+    TKDT40DE_DynamicVecBuffer = array of TKDT40DE_Vec;
     PKDT40DE_DynamicVecBuffer = ^TKDT40DE_DynamicVecBuffer;
 
     TKDT40DE_Source = packed record
       Buff: TKDT40DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT40DE_Source       = ^TKDT40DE_Source;
-    TKDT40DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT40DE_Source) - 1] of PKDT40DE_Source;
+    TKDT40DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT40DE_Source) - 1] of PKDT40DE_Source;
     PKDT40DE_SourceBuffer = ^TKDT40DE_SourceBuffer;
 
     TKDT40DEyanmicSourceBuffer = packed array of PKDT40DE_Source;
@@ -3973,7 +3973,7 @@ type
     KDStoreBuff: TKDT40DEyanmicStoreBuffer;
     KDBuff     : TKDT40DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT40DE_Node;
+    KDNodes    : array of PKDT40DE_Node;
     TestBuff   : TKDT40DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT40DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT40DE_Node;
     function GetData(const index: NativeInt): PKDT40DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4033,19 +4033,19 @@ type
   TKDT41DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT41DE_Vec = array [0 .. KDT41DE_Axis - 1] of TKDT41DE_VecType;
+    TKDT41DE_Vec = packed array [0 .. KDT41DE_Axis - 1] of TKDT41DE_VecType;
     PKDT41DE_Vec = ^TKDT41DE_Vec;
 
-    TKDT41DE_DynamicVecBuffer = packed array of TKDT41DE_Vec;
+    TKDT41DE_DynamicVecBuffer = array of TKDT41DE_Vec;
     PKDT41DE_DynamicVecBuffer = ^TKDT41DE_DynamicVecBuffer;
 
     TKDT41DE_Source = packed record
       Buff: TKDT41DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT41DE_Source       = ^TKDT41DE_Source;
-    TKDT41DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT41DE_Source) - 1] of PKDT41DE_Source;
+    TKDT41DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT41DE_Source) - 1] of PKDT41DE_Source;
     PKDT41DE_SourceBuffer = ^TKDT41DE_SourceBuffer;
 
     TKDT41DEyanmicSourceBuffer = packed array of PKDT41DE_Source;
@@ -4068,7 +4068,7 @@ type
     KDStoreBuff: TKDT41DEyanmicStoreBuffer;
     KDBuff     : TKDT41DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT41DE_Node;
+    KDNodes    : array of PKDT41DE_Node;
     TestBuff   : TKDT41DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT41DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT41DE_Node;
     function GetData(const index: NativeInt): PKDT41DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4128,19 +4128,19 @@ type
   TKDT42DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT42DE_Vec = array [0 .. KDT42DE_Axis - 1] of TKDT42DE_VecType;
+    TKDT42DE_Vec = packed array [0 .. KDT42DE_Axis - 1] of TKDT42DE_VecType;
     PKDT42DE_Vec = ^TKDT42DE_Vec;
 
-    TKDT42DE_DynamicVecBuffer = packed array of TKDT42DE_Vec;
+    TKDT42DE_DynamicVecBuffer = array of TKDT42DE_Vec;
     PKDT42DE_DynamicVecBuffer = ^TKDT42DE_DynamicVecBuffer;
 
     TKDT42DE_Source = packed record
       Buff: TKDT42DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT42DE_Source       = ^TKDT42DE_Source;
-    TKDT42DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT42DE_Source) - 1] of PKDT42DE_Source;
+    TKDT42DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT42DE_Source) - 1] of PKDT42DE_Source;
     PKDT42DE_SourceBuffer = ^TKDT42DE_SourceBuffer;
 
     TKDT42DEyanmicSourceBuffer = packed array of PKDT42DE_Source;
@@ -4163,7 +4163,7 @@ type
     KDStoreBuff: TKDT42DEyanmicStoreBuffer;
     KDBuff     : TKDT42DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT42DE_Node;
+    KDNodes    : array of PKDT42DE_Node;
     TestBuff   : TKDT42DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT42DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT42DE_Node;
     function GetData(const index: NativeInt): PKDT42DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4223,19 +4223,19 @@ type
   TKDT43DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT43DE_Vec = array [0 .. KDT43DE_Axis - 1] of TKDT43DE_VecType;
+    TKDT43DE_Vec = packed array [0 .. KDT43DE_Axis - 1] of TKDT43DE_VecType;
     PKDT43DE_Vec = ^TKDT43DE_Vec;
 
-    TKDT43DE_DynamicVecBuffer = packed array of TKDT43DE_Vec;
+    TKDT43DE_DynamicVecBuffer = array of TKDT43DE_Vec;
     PKDT43DE_DynamicVecBuffer = ^TKDT43DE_DynamicVecBuffer;
 
     TKDT43DE_Source = packed record
       Buff: TKDT43DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT43DE_Source       = ^TKDT43DE_Source;
-    TKDT43DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT43DE_Source) - 1] of PKDT43DE_Source;
+    TKDT43DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT43DE_Source) - 1] of PKDT43DE_Source;
     PKDT43DE_SourceBuffer = ^TKDT43DE_SourceBuffer;
 
     TKDT43DEyanmicSourceBuffer = packed array of PKDT43DE_Source;
@@ -4258,7 +4258,7 @@ type
     KDStoreBuff: TKDT43DEyanmicStoreBuffer;
     KDBuff     : TKDT43DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT43DE_Node;
+    KDNodes    : array of PKDT43DE_Node;
     TestBuff   : TKDT43DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT43DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT43DE_Node;
     function GetData(const index: NativeInt): PKDT43DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4318,19 +4318,19 @@ type
   TKDT44DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT44DE_Vec = array [0 .. KDT44DE_Axis - 1] of TKDT44DE_VecType;
+    TKDT44DE_Vec = packed array [0 .. KDT44DE_Axis - 1] of TKDT44DE_VecType;
     PKDT44DE_Vec = ^TKDT44DE_Vec;
 
-    TKDT44DE_DynamicVecBuffer = packed array of TKDT44DE_Vec;
+    TKDT44DE_DynamicVecBuffer = array of TKDT44DE_Vec;
     PKDT44DE_DynamicVecBuffer = ^TKDT44DE_DynamicVecBuffer;
 
     TKDT44DE_Source = packed record
       Buff: TKDT44DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT44DE_Source       = ^TKDT44DE_Source;
-    TKDT44DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT44DE_Source) - 1] of PKDT44DE_Source;
+    TKDT44DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT44DE_Source) - 1] of PKDT44DE_Source;
     PKDT44DE_SourceBuffer = ^TKDT44DE_SourceBuffer;
 
     TKDT44DEyanmicSourceBuffer = packed array of PKDT44DE_Source;
@@ -4353,7 +4353,7 @@ type
     KDStoreBuff: TKDT44DEyanmicStoreBuffer;
     KDBuff     : TKDT44DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT44DE_Node;
+    KDNodes    : array of PKDT44DE_Node;
     TestBuff   : TKDT44DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT44DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT44DE_Node;
     function GetData(const index: NativeInt): PKDT44DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4413,19 +4413,19 @@ type
   TKDT45DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT45DE_Vec = array [0 .. KDT45DE_Axis - 1] of TKDT45DE_VecType;
+    TKDT45DE_Vec = packed array [0 .. KDT45DE_Axis - 1] of TKDT45DE_VecType;
     PKDT45DE_Vec = ^TKDT45DE_Vec;
 
-    TKDT45DE_DynamicVecBuffer = packed array of TKDT45DE_Vec;
+    TKDT45DE_DynamicVecBuffer = array of TKDT45DE_Vec;
     PKDT45DE_DynamicVecBuffer = ^TKDT45DE_DynamicVecBuffer;
 
     TKDT45DE_Source = packed record
       Buff: TKDT45DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT45DE_Source       = ^TKDT45DE_Source;
-    TKDT45DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT45DE_Source) - 1] of PKDT45DE_Source;
+    TKDT45DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT45DE_Source) - 1] of PKDT45DE_Source;
     PKDT45DE_SourceBuffer = ^TKDT45DE_SourceBuffer;
 
     TKDT45DEyanmicSourceBuffer = packed array of PKDT45DE_Source;
@@ -4448,7 +4448,7 @@ type
     KDStoreBuff: TKDT45DEyanmicStoreBuffer;
     KDBuff     : TKDT45DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT45DE_Node;
+    KDNodes    : array of PKDT45DE_Node;
     TestBuff   : TKDT45DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT45DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT45DE_Node;
     function GetData(const index: NativeInt): PKDT45DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4508,19 +4508,19 @@ type
   TKDT46DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT46DE_Vec = array [0 .. KDT46DE_Axis - 1] of TKDT46DE_VecType;
+    TKDT46DE_Vec = packed array [0 .. KDT46DE_Axis - 1] of TKDT46DE_VecType;
     PKDT46DE_Vec = ^TKDT46DE_Vec;
 
-    TKDT46DE_DynamicVecBuffer = packed array of TKDT46DE_Vec;
+    TKDT46DE_DynamicVecBuffer = array of TKDT46DE_Vec;
     PKDT46DE_DynamicVecBuffer = ^TKDT46DE_DynamicVecBuffer;
 
     TKDT46DE_Source = packed record
       Buff: TKDT46DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT46DE_Source       = ^TKDT46DE_Source;
-    TKDT46DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT46DE_Source) - 1] of PKDT46DE_Source;
+    TKDT46DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT46DE_Source) - 1] of PKDT46DE_Source;
     PKDT46DE_SourceBuffer = ^TKDT46DE_SourceBuffer;
 
     TKDT46DEyanmicSourceBuffer = packed array of PKDT46DE_Source;
@@ -4543,7 +4543,7 @@ type
     KDStoreBuff: TKDT46DEyanmicStoreBuffer;
     KDBuff     : TKDT46DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT46DE_Node;
+    KDNodes    : array of PKDT46DE_Node;
     TestBuff   : TKDT46DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT46DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT46DE_Node;
     function GetData(const index: NativeInt): PKDT46DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4603,19 +4603,19 @@ type
   TKDT47DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT47DE_Vec = array [0 .. KDT47DE_Axis - 1] of TKDT47DE_VecType;
+    TKDT47DE_Vec = packed array [0 .. KDT47DE_Axis - 1] of TKDT47DE_VecType;
     PKDT47DE_Vec = ^TKDT47DE_Vec;
 
-    TKDT47DE_DynamicVecBuffer = packed array of TKDT47DE_Vec;
+    TKDT47DE_DynamicVecBuffer = array of TKDT47DE_Vec;
     PKDT47DE_DynamicVecBuffer = ^TKDT47DE_DynamicVecBuffer;
 
     TKDT47DE_Source = packed record
       Buff: TKDT47DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT47DE_Source       = ^TKDT47DE_Source;
-    TKDT47DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT47DE_Source) - 1] of PKDT47DE_Source;
+    TKDT47DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT47DE_Source) - 1] of PKDT47DE_Source;
     PKDT47DE_SourceBuffer = ^TKDT47DE_SourceBuffer;
 
     TKDT47DEyanmicSourceBuffer = packed array of PKDT47DE_Source;
@@ -4638,7 +4638,7 @@ type
     KDStoreBuff: TKDT47DEyanmicStoreBuffer;
     KDBuff     : TKDT47DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT47DE_Node;
+    KDNodes    : array of PKDT47DE_Node;
     TestBuff   : TKDT47DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT47DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT47DE_Node;
     function GetData(const index: NativeInt): PKDT47DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4698,19 +4698,19 @@ type
   TKDT48DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT48DE_Vec = array [0 .. KDT48DE_Axis - 1] of TKDT48DE_VecType;
+    TKDT48DE_Vec = packed array [0 .. KDT48DE_Axis - 1] of TKDT48DE_VecType;
     PKDT48DE_Vec = ^TKDT48DE_Vec;
 
-    TKDT48DE_DynamicVecBuffer = packed array of TKDT48DE_Vec;
+    TKDT48DE_DynamicVecBuffer = array of TKDT48DE_Vec;
     PKDT48DE_DynamicVecBuffer = ^TKDT48DE_DynamicVecBuffer;
 
     TKDT48DE_Source = packed record
       Buff: TKDT48DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT48DE_Source       = ^TKDT48DE_Source;
-    TKDT48DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT48DE_Source) - 1] of PKDT48DE_Source;
+    TKDT48DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT48DE_Source) - 1] of PKDT48DE_Source;
     PKDT48DE_SourceBuffer = ^TKDT48DE_SourceBuffer;
 
     TKDT48DEyanmicSourceBuffer = packed array of PKDT48DE_Source;
@@ -4733,7 +4733,7 @@ type
     KDStoreBuff: TKDT48DEyanmicStoreBuffer;
     KDBuff     : TKDT48DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT48DE_Node;
+    KDNodes    : array of PKDT48DE_Node;
     TestBuff   : TKDT48DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT48DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT48DE_Node;
     function GetData(const index: NativeInt): PKDT48DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4793,19 +4793,19 @@ type
   TKDT49DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT49DE_Vec = array [0 .. KDT49DE_Axis - 1] of TKDT49DE_VecType;
+    TKDT49DE_Vec = packed array [0 .. KDT49DE_Axis - 1] of TKDT49DE_VecType;
     PKDT49DE_Vec = ^TKDT49DE_Vec;
 
-    TKDT49DE_DynamicVecBuffer = packed array of TKDT49DE_Vec;
+    TKDT49DE_DynamicVecBuffer = array of TKDT49DE_Vec;
     PKDT49DE_DynamicVecBuffer = ^TKDT49DE_DynamicVecBuffer;
 
     TKDT49DE_Source = packed record
       Buff: TKDT49DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT49DE_Source       = ^TKDT49DE_Source;
-    TKDT49DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT49DE_Source) - 1] of PKDT49DE_Source;
+    TKDT49DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT49DE_Source) - 1] of PKDT49DE_Source;
     PKDT49DE_SourceBuffer = ^TKDT49DE_SourceBuffer;
 
     TKDT49DEyanmicSourceBuffer = packed array of PKDT49DE_Source;
@@ -4828,7 +4828,7 @@ type
     KDStoreBuff: TKDT49DEyanmicStoreBuffer;
     KDBuff     : TKDT49DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT49DE_Node;
+    KDNodes    : array of PKDT49DE_Node;
     TestBuff   : TKDT49DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT49DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT49DE_Node;
     function GetData(const index: NativeInt): PKDT49DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4888,19 +4888,19 @@ type
   TKDT50DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT50DE_Vec = array [0 .. KDT50DE_Axis - 1] of TKDT50DE_VecType;
+    TKDT50DE_Vec = packed array [0 .. KDT50DE_Axis - 1] of TKDT50DE_VecType;
     PKDT50DE_Vec = ^TKDT50DE_Vec;
 
-    TKDT50DE_DynamicVecBuffer = packed array of TKDT50DE_Vec;
+    TKDT50DE_DynamicVecBuffer = array of TKDT50DE_Vec;
     PKDT50DE_DynamicVecBuffer = ^TKDT50DE_DynamicVecBuffer;
 
     TKDT50DE_Source = packed record
       Buff: TKDT50DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT50DE_Source       = ^TKDT50DE_Source;
-    TKDT50DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT50DE_Source) - 1] of PKDT50DE_Source;
+    TKDT50DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT50DE_Source) - 1] of PKDT50DE_Source;
     PKDT50DE_SourceBuffer = ^TKDT50DE_SourceBuffer;
 
     TKDT50DEyanmicSourceBuffer = packed array of PKDT50DE_Source;
@@ -4923,7 +4923,7 @@ type
     KDStoreBuff: TKDT50DEyanmicStoreBuffer;
     KDBuff     : TKDT50DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT50DE_Node;
+    KDNodes    : array of PKDT50DE_Node;
     TestBuff   : TKDT50DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT50DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT50DE_Node;
     function GetData(const index: NativeInt): PKDT50DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -4983,19 +4983,19 @@ type
   TKDT51DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT51DE_Vec = array [0 .. KDT51DE_Axis - 1] of TKDT51DE_VecType;
+    TKDT51DE_Vec = packed array [0 .. KDT51DE_Axis - 1] of TKDT51DE_VecType;
     PKDT51DE_Vec = ^TKDT51DE_Vec;
 
-    TKDT51DE_DynamicVecBuffer = packed array of TKDT51DE_Vec;
+    TKDT51DE_DynamicVecBuffer = array of TKDT51DE_Vec;
     PKDT51DE_DynamicVecBuffer = ^TKDT51DE_DynamicVecBuffer;
 
     TKDT51DE_Source = packed record
       Buff: TKDT51DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT51DE_Source       = ^TKDT51DE_Source;
-    TKDT51DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT51DE_Source) - 1] of PKDT51DE_Source;
+    TKDT51DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT51DE_Source) - 1] of PKDT51DE_Source;
     PKDT51DE_SourceBuffer = ^TKDT51DE_SourceBuffer;
 
     TKDT51DEyanmicSourceBuffer = packed array of PKDT51DE_Source;
@@ -5018,7 +5018,7 @@ type
     KDStoreBuff: TKDT51DEyanmicStoreBuffer;
     KDBuff     : TKDT51DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT51DE_Node;
+    KDNodes    : array of PKDT51DE_Node;
     TestBuff   : TKDT51DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT51DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT51DE_Node;
     function GetData(const index: NativeInt): PKDT51DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5078,19 +5078,19 @@ type
   TKDT52DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT52DE_Vec = array [0 .. KDT52DE_Axis - 1] of TKDT52DE_VecType;
+    TKDT52DE_Vec = packed array [0 .. KDT52DE_Axis - 1] of TKDT52DE_VecType;
     PKDT52DE_Vec = ^TKDT52DE_Vec;
 
-    TKDT52DE_DynamicVecBuffer = packed array of TKDT52DE_Vec;
+    TKDT52DE_DynamicVecBuffer = array of TKDT52DE_Vec;
     PKDT52DE_DynamicVecBuffer = ^TKDT52DE_DynamicVecBuffer;
 
     TKDT52DE_Source = packed record
       Buff: TKDT52DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT52DE_Source       = ^TKDT52DE_Source;
-    TKDT52DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT52DE_Source) - 1] of PKDT52DE_Source;
+    TKDT52DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT52DE_Source) - 1] of PKDT52DE_Source;
     PKDT52DE_SourceBuffer = ^TKDT52DE_SourceBuffer;
 
     TKDT52DEyanmicSourceBuffer = packed array of PKDT52DE_Source;
@@ -5113,7 +5113,7 @@ type
     KDStoreBuff: TKDT52DEyanmicStoreBuffer;
     KDBuff     : TKDT52DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT52DE_Node;
+    KDNodes    : array of PKDT52DE_Node;
     TestBuff   : TKDT52DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT52DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT52DE_Node;
     function GetData(const index: NativeInt): PKDT52DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5173,19 +5173,19 @@ type
   TKDT53DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT53DE_Vec = array [0 .. KDT53DE_Axis - 1] of TKDT53DE_VecType;
+    TKDT53DE_Vec = packed array [0 .. KDT53DE_Axis - 1] of TKDT53DE_VecType;
     PKDT53DE_Vec = ^TKDT53DE_Vec;
 
-    TKDT53DE_DynamicVecBuffer = packed array of TKDT53DE_Vec;
+    TKDT53DE_DynamicVecBuffer = array of TKDT53DE_Vec;
     PKDT53DE_DynamicVecBuffer = ^TKDT53DE_DynamicVecBuffer;
 
     TKDT53DE_Source = packed record
       Buff: TKDT53DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT53DE_Source       = ^TKDT53DE_Source;
-    TKDT53DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT53DE_Source) - 1] of PKDT53DE_Source;
+    TKDT53DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT53DE_Source) - 1] of PKDT53DE_Source;
     PKDT53DE_SourceBuffer = ^TKDT53DE_SourceBuffer;
 
     TKDT53DEyanmicSourceBuffer = packed array of PKDT53DE_Source;
@@ -5208,7 +5208,7 @@ type
     KDStoreBuff: TKDT53DEyanmicStoreBuffer;
     KDBuff     : TKDT53DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT53DE_Node;
+    KDNodes    : array of PKDT53DE_Node;
     TestBuff   : TKDT53DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT53DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT53DE_Node;
     function GetData(const index: NativeInt): PKDT53DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5268,19 +5268,19 @@ type
   TKDT54DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT54DE_Vec = array [0 .. KDT54DE_Axis - 1] of TKDT54DE_VecType;
+    TKDT54DE_Vec = packed array [0 .. KDT54DE_Axis - 1] of TKDT54DE_VecType;
     PKDT54DE_Vec = ^TKDT54DE_Vec;
 
-    TKDT54DE_DynamicVecBuffer = packed array of TKDT54DE_Vec;
+    TKDT54DE_DynamicVecBuffer = array of TKDT54DE_Vec;
     PKDT54DE_DynamicVecBuffer = ^TKDT54DE_DynamicVecBuffer;
 
     TKDT54DE_Source = packed record
       Buff: TKDT54DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT54DE_Source       = ^TKDT54DE_Source;
-    TKDT54DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT54DE_Source) - 1] of PKDT54DE_Source;
+    TKDT54DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT54DE_Source) - 1] of PKDT54DE_Source;
     PKDT54DE_SourceBuffer = ^TKDT54DE_SourceBuffer;
 
     TKDT54DEyanmicSourceBuffer = packed array of PKDT54DE_Source;
@@ -5303,7 +5303,7 @@ type
     KDStoreBuff: TKDT54DEyanmicStoreBuffer;
     KDBuff     : TKDT54DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT54DE_Node;
+    KDNodes    : array of PKDT54DE_Node;
     TestBuff   : TKDT54DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT54DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT54DE_Node;
     function GetData(const index: NativeInt): PKDT54DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5363,19 +5363,19 @@ type
   TKDT55DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT55DE_Vec = array [0 .. KDT55DE_Axis - 1] of TKDT55DE_VecType;
+    TKDT55DE_Vec = packed array [0 .. KDT55DE_Axis - 1] of TKDT55DE_VecType;
     PKDT55DE_Vec = ^TKDT55DE_Vec;
 
-    TKDT55DE_DynamicVecBuffer = packed array of TKDT55DE_Vec;
+    TKDT55DE_DynamicVecBuffer = array of TKDT55DE_Vec;
     PKDT55DE_DynamicVecBuffer = ^TKDT55DE_DynamicVecBuffer;
 
     TKDT55DE_Source = packed record
       Buff: TKDT55DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT55DE_Source       = ^TKDT55DE_Source;
-    TKDT55DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT55DE_Source) - 1] of PKDT55DE_Source;
+    TKDT55DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT55DE_Source) - 1] of PKDT55DE_Source;
     PKDT55DE_SourceBuffer = ^TKDT55DE_SourceBuffer;
 
     TKDT55DEyanmicSourceBuffer = packed array of PKDT55DE_Source;
@@ -5398,7 +5398,7 @@ type
     KDStoreBuff: TKDT55DEyanmicStoreBuffer;
     KDBuff     : TKDT55DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT55DE_Node;
+    KDNodes    : array of PKDT55DE_Node;
     TestBuff   : TKDT55DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT55DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT55DE_Node;
     function GetData(const index: NativeInt): PKDT55DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5458,19 +5458,19 @@ type
   TKDT56DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT56DE_Vec = array [0 .. KDT56DE_Axis - 1] of TKDT56DE_VecType;
+    TKDT56DE_Vec = packed array [0 .. KDT56DE_Axis - 1] of TKDT56DE_VecType;
     PKDT56DE_Vec = ^TKDT56DE_Vec;
 
-    TKDT56DE_DynamicVecBuffer = packed array of TKDT56DE_Vec;
+    TKDT56DE_DynamicVecBuffer = array of TKDT56DE_Vec;
     PKDT56DE_DynamicVecBuffer = ^TKDT56DE_DynamicVecBuffer;
 
     TKDT56DE_Source = packed record
       Buff: TKDT56DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT56DE_Source       = ^TKDT56DE_Source;
-    TKDT56DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT56DE_Source) - 1] of PKDT56DE_Source;
+    TKDT56DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT56DE_Source) - 1] of PKDT56DE_Source;
     PKDT56DE_SourceBuffer = ^TKDT56DE_SourceBuffer;
 
     TKDT56DEyanmicSourceBuffer = packed array of PKDT56DE_Source;
@@ -5493,7 +5493,7 @@ type
     KDStoreBuff: TKDT56DEyanmicStoreBuffer;
     KDBuff     : TKDT56DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT56DE_Node;
+    KDNodes    : array of PKDT56DE_Node;
     TestBuff   : TKDT56DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT56DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT56DE_Node;
     function GetData(const index: NativeInt): PKDT56DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5553,19 +5553,19 @@ type
   TKDT57DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT57DE_Vec = array [0 .. KDT57DE_Axis - 1] of TKDT57DE_VecType;
+    TKDT57DE_Vec = packed array [0 .. KDT57DE_Axis - 1] of TKDT57DE_VecType;
     PKDT57DE_Vec = ^TKDT57DE_Vec;
 
-    TKDT57DE_DynamicVecBuffer = packed array of TKDT57DE_Vec;
+    TKDT57DE_DynamicVecBuffer = array of TKDT57DE_Vec;
     PKDT57DE_DynamicVecBuffer = ^TKDT57DE_DynamicVecBuffer;
 
     TKDT57DE_Source = packed record
       Buff: TKDT57DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT57DE_Source       = ^TKDT57DE_Source;
-    TKDT57DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT57DE_Source) - 1] of PKDT57DE_Source;
+    TKDT57DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT57DE_Source) - 1] of PKDT57DE_Source;
     PKDT57DE_SourceBuffer = ^TKDT57DE_SourceBuffer;
 
     TKDT57DEyanmicSourceBuffer = packed array of PKDT57DE_Source;
@@ -5588,7 +5588,7 @@ type
     KDStoreBuff: TKDT57DEyanmicStoreBuffer;
     KDBuff     : TKDT57DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT57DE_Node;
+    KDNodes    : array of PKDT57DE_Node;
     TestBuff   : TKDT57DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT57DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT57DE_Node;
     function GetData(const index: NativeInt): PKDT57DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5648,19 +5648,19 @@ type
   TKDT58DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT58DE_Vec = array [0 .. KDT58DE_Axis - 1] of TKDT58DE_VecType;
+    TKDT58DE_Vec = packed array [0 .. KDT58DE_Axis - 1] of TKDT58DE_VecType;
     PKDT58DE_Vec = ^TKDT58DE_Vec;
 
-    TKDT58DE_DynamicVecBuffer = packed array of TKDT58DE_Vec;
+    TKDT58DE_DynamicVecBuffer = array of TKDT58DE_Vec;
     PKDT58DE_DynamicVecBuffer = ^TKDT58DE_DynamicVecBuffer;
 
     TKDT58DE_Source = packed record
       Buff: TKDT58DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT58DE_Source       = ^TKDT58DE_Source;
-    TKDT58DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT58DE_Source) - 1] of PKDT58DE_Source;
+    TKDT58DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT58DE_Source) - 1] of PKDT58DE_Source;
     PKDT58DE_SourceBuffer = ^TKDT58DE_SourceBuffer;
 
     TKDT58DEyanmicSourceBuffer = packed array of PKDT58DE_Source;
@@ -5683,7 +5683,7 @@ type
     KDStoreBuff: TKDT58DEyanmicStoreBuffer;
     KDBuff     : TKDT58DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT58DE_Node;
+    KDNodes    : array of PKDT58DE_Node;
     TestBuff   : TKDT58DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT58DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT58DE_Node;
     function GetData(const index: NativeInt): PKDT58DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5743,19 +5743,19 @@ type
   TKDT59DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT59DE_Vec = array [0 .. KDT59DE_Axis - 1] of TKDT59DE_VecType;
+    TKDT59DE_Vec = packed array [0 .. KDT59DE_Axis - 1] of TKDT59DE_VecType;
     PKDT59DE_Vec = ^TKDT59DE_Vec;
 
-    TKDT59DE_DynamicVecBuffer = packed array of TKDT59DE_Vec;
+    TKDT59DE_DynamicVecBuffer = array of TKDT59DE_Vec;
     PKDT59DE_DynamicVecBuffer = ^TKDT59DE_DynamicVecBuffer;
 
     TKDT59DE_Source = packed record
       Buff: TKDT59DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT59DE_Source       = ^TKDT59DE_Source;
-    TKDT59DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT59DE_Source) - 1] of PKDT59DE_Source;
+    TKDT59DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT59DE_Source) - 1] of PKDT59DE_Source;
     PKDT59DE_SourceBuffer = ^TKDT59DE_SourceBuffer;
 
     TKDT59DEyanmicSourceBuffer = packed array of PKDT59DE_Source;
@@ -5778,7 +5778,7 @@ type
     KDStoreBuff: TKDT59DEyanmicStoreBuffer;
     KDBuff     : TKDT59DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT59DE_Node;
+    KDNodes    : array of PKDT59DE_Node;
     TestBuff   : TKDT59DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT59DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT59DE_Node;
     function GetData(const index: NativeInt): PKDT59DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5838,19 +5838,19 @@ type
   TKDT60DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT60DE_Vec = array [0 .. KDT60DE_Axis - 1] of TKDT60DE_VecType;
+    TKDT60DE_Vec = packed array [0 .. KDT60DE_Axis - 1] of TKDT60DE_VecType;
     PKDT60DE_Vec = ^TKDT60DE_Vec;
 
-    TKDT60DE_DynamicVecBuffer = packed array of TKDT60DE_Vec;
+    TKDT60DE_DynamicVecBuffer = array of TKDT60DE_Vec;
     PKDT60DE_DynamicVecBuffer = ^TKDT60DE_DynamicVecBuffer;
 
     TKDT60DE_Source = packed record
       Buff: TKDT60DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT60DE_Source       = ^TKDT60DE_Source;
-    TKDT60DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT60DE_Source) - 1] of PKDT60DE_Source;
+    TKDT60DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT60DE_Source) - 1] of PKDT60DE_Source;
     PKDT60DE_SourceBuffer = ^TKDT60DE_SourceBuffer;
 
     TKDT60DEyanmicSourceBuffer = packed array of PKDT60DE_Source;
@@ -5873,7 +5873,7 @@ type
     KDStoreBuff: TKDT60DEyanmicStoreBuffer;
     KDBuff     : TKDT60DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT60DE_Node;
+    KDNodes    : array of PKDT60DE_Node;
     TestBuff   : TKDT60DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT60DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT60DE_Node;
     function GetData(const index: NativeInt): PKDT60DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -5933,19 +5933,19 @@ type
   TKDT61DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT61DE_Vec = array [0 .. KDT61DE_Axis - 1] of TKDT61DE_VecType;
+    TKDT61DE_Vec = packed array [0 .. KDT61DE_Axis - 1] of TKDT61DE_VecType;
     PKDT61DE_Vec = ^TKDT61DE_Vec;
 
-    TKDT61DE_DynamicVecBuffer = packed array of TKDT61DE_Vec;
+    TKDT61DE_DynamicVecBuffer = array of TKDT61DE_Vec;
     PKDT61DE_DynamicVecBuffer = ^TKDT61DE_DynamicVecBuffer;
 
     TKDT61DE_Source = packed record
       Buff: TKDT61DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT61DE_Source       = ^TKDT61DE_Source;
-    TKDT61DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT61DE_Source) - 1] of PKDT61DE_Source;
+    TKDT61DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT61DE_Source) - 1] of PKDT61DE_Source;
     PKDT61DE_SourceBuffer = ^TKDT61DE_SourceBuffer;
 
     TKDT61DEyanmicSourceBuffer = packed array of PKDT61DE_Source;
@@ -5968,7 +5968,7 @@ type
     KDStoreBuff: TKDT61DEyanmicStoreBuffer;
     KDBuff     : TKDT61DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT61DE_Node;
+    KDNodes    : array of PKDT61DE_Node;
     TestBuff   : TKDT61DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT61DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT61DE_Node;
     function GetData(const index: NativeInt): PKDT61DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6028,19 +6028,19 @@ type
   TKDT62DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT62DE_Vec = array [0 .. KDT62DE_Axis - 1] of TKDT62DE_VecType;
+    TKDT62DE_Vec = packed array [0 .. KDT62DE_Axis - 1] of TKDT62DE_VecType;
     PKDT62DE_Vec = ^TKDT62DE_Vec;
 
-    TKDT62DE_DynamicVecBuffer = packed array of TKDT62DE_Vec;
+    TKDT62DE_DynamicVecBuffer = array of TKDT62DE_Vec;
     PKDT62DE_DynamicVecBuffer = ^TKDT62DE_DynamicVecBuffer;
 
     TKDT62DE_Source = packed record
       Buff: TKDT62DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT62DE_Source       = ^TKDT62DE_Source;
-    TKDT62DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT62DE_Source) - 1] of PKDT62DE_Source;
+    TKDT62DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT62DE_Source) - 1] of PKDT62DE_Source;
     PKDT62DE_SourceBuffer = ^TKDT62DE_SourceBuffer;
 
     TKDT62DEyanmicSourceBuffer = packed array of PKDT62DE_Source;
@@ -6063,7 +6063,7 @@ type
     KDStoreBuff: TKDT62DEyanmicStoreBuffer;
     KDBuff     : TKDT62DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT62DE_Node;
+    KDNodes    : array of PKDT62DE_Node;
     TestBuff   : TKDT62DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT62DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT62DE_Node;
     function GetData(const index: NativeInt): PKDT62DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6123,19 +6123,19 @@ type
   TKDT63DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT63DE_Vec = array [0 .. KDT63DE_Axis - 1] of TKDT63DE_VecType;
+    TKDT63DE_Vec = packed array [0 .. KDT63DE_Axis - 1] of TKDT63DE_VecType;
     PKDT63DE_Vec = ^TKDT63DE_Vec;
 
-    TKDT63DE_DynamicVecBuffer = packed array of TKDT63DE_Vec;
+    TKDT63DE_DynamicVecBuffer = array of TKDT63DE_Vec;
     PKDT63DE_DynamicVecBuffer = ^TKDT63DE_DynamicVecBuffer;
 
     TKDT63DE_Source = packed record
       Buff: TKDT63DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT63DE_Source       = ^TKDT63DE_Source;
-    TKDT63DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT63DE_Source) - 1] of PKDT63DE_Source;
+    TKDT63DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT63DE_Source) - 1] of PKDT63DE_Source;
     PKDT63DE_SourceBuffer = ^TKDT63DE_SourceBuffer;
 
     TKDT63DEyanmicSourceBuffer = packed array of PKDT63DE_Source;
@@ -6158,7 +6158,7 @@ type
     KDStoreBuff: TKDT63DEyanmicStoreBuffer;
     KDBuff     : TKDT63DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT63DE_Node;
+    KDNodes    : array of PKDT63DE_Node;
     TestBuff   : TKDT63DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT63DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT63DE_Node;
     function GetData(const index: NativeInt): PKDT63DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6218,19 +6218,19 @@ type
   TKDT64DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT64DE_Vec = array [0 .. KDT64DE_Axis - 1] of TKDT64DE_VecType;
+    TKDT64DE_Vec = packed array [0 .. KDT64DE_Axis - 1] of TKDT64DE_VecType;
     PKDT64DE_Vec = ^TKDT64DE_Vec;
 
-    TKDT64DE_DynamicVecBuffer = packed array of TKDT64DE_Vec;
+    TKDT64DE_DynamicVecBuffer = array of TKDT64DE_Vec;
     PKDT64DE_DynamicVecBuffer = ^TKDT64DE_DynamicVecBuffer;
 
     TKDT64DE_Source = packed record
       Buff: TKDT64DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT64DE_Source       = ^TKDT64DE_Source;
-    TKDT64DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT64DE_Source) - 1] of PKDT64DE_Source;
+    TKDT64DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT64DE_Source) - 1] of PKDT64DE_Source;
     PKDT64DE_SourceBuffer = ^TKDT64DE_SourceBuffer;
 
     TKDT64DEyanmicSourceBuffer = packed array of PKDT64DE_Source;
@@ -6253,7 +6253,7 @@ type
     KDStoreBuff: TKDT64DEyanmicStoreBuffer;
     KDBuff     : TKDT64DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT64DE_Node;
+    KDNodes    : array of PKDT64DE_Node;
     TestBuff   : TKDT64DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT64DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT64DE_Node;
     function GetData(const index: NativeInt): PKDT64DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6313,19 +6313,19 @@ type
   TKDT65DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT65DE_Vec = array [0 .. KDT65DE_Axis - 1] of TKDT65DE_VecType;
+    TKDT65DE_Vec = packed array [0 .. KDT65DE_Axis - 1] of TKDT65DE_VecType;
     PKDT65DE_Vec = ^TKDT65DE_Vec;
 
-    TKDT65DE_DynamicVecBuffer = packed array of TKDT65DE_Vec;
+    TKDT65DE_DynamicVecBuffer = array of TKDT65DE_Vec;
     PKDT65DE_DynamicVecBuffer = ^TKDT65DE_DynamicVecBuffer;
 
     TKDT65DE_Source = packed record
       Buff: TKDT65DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT65DE_Source       = ^TKDT65DE_Source;
-    TKDT65DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT65DE_Source) - 1] of PKDT65DE_Source;
+    TKDT65DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT65DE_Source) - 1] of PKDT65DE_Source;
     PKDT65DE_SourceBuffer = ^TKDT65DE_SourceBuffer;
 
     TKDT65DEyanmicSourceBuffer = packed array of PKDT65DE_Source;
@@ -6348,7 +6348,7 @@ type
     KDStoreBuff: TKDT65DEyanmicStoreBuffer;
     KDBuff     : TKDT65DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT65DE_Node;
+    KDNodes    : array of PKDT65DE_Node;
     TestBuff   : TKDT65DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT65DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT65DE_Node;
     function GetData(const index: NativeInt): PKDT65DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6408,19 +6408,19 @@ type
   TKDT66DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT66DE_Vec = array [0 .. KDT66DE_Axis - 1] of TKDT66DE_VecType;
+    TKDT66DE_Vec = packed array [0 .. KDT66DE_Axis - 1] of TKDT66DE_VecType;
     PKDT66DE_Vec = ^TKDT66DE_Vec;
 
-    TKDT66DE_DynamicVecBuffer = packed array of TKDT66DE_Vec;
+    TKDT66DE_DynamicVecBuffer = array of TKDT66DE_Vec;
     PKDT66DE_DynamicVecBuffer = ^TKDT66DE_DynamicVecBuffer;
 
     TKDT66DE_Source = packed record
       Buff: TKDT66DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT66DE_Source       = ^TKDT66DE_Source;
-    TKDT66DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT66DE_Source) - 1] of PKDT66DE_Source;
+    TKDT66DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT66DE_Source) - 1] of PKDT66DE_Source;
     PKDT66DE_SourceBuffer = ^TKDT66DE_SourceBuffer;
 
     TKDT66DEyanmicSourceBuffer = packed array of PKDT66DE_Source;
@@ -6443,7 +6443,7 @@ type
     KDStoreBuff: TKDT66DEyanmicStoreBuffer;
     KDBuff     : TKDT66DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT66DE_Node;
+    KDNodes    : array of PKDT66DE_Node;
     TestBuff   : TKDT66DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT66DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT66DE_Node;
     function GetData(const index: NativeInt): PKDT66DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6503,19 +6503,19 @@ type
   TKDT67DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT67DE_Vec = array [0 .. KDT67DE_Axis - 1] of TKDT67DE_VecType;
+    TKDT67DE_Vec = packed array [0 .. KDT67DE_Axis - 1] of TKDT67DE_VecType;
     PKDT67DE_Vec = ^TKDT67DE_Vec;
 
-    TKDT67DE_DynamicVecBuffer = packed array of TKDT67DE_Vec;
+    TKDT67DE_DynamicVecBuffer = array of TKDT67DE_Vec;
     PKDT67DE_DynamicVecBuffer = ^TKDT67DE_DynamicVecBuffer;
 
     TKDT67DE_Source = packed record
       Buff: TKDT67DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT67DE_Source       = ^TKDT67DE_Source;
-    TKDT67DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT67DE_Source) - 1] of PKDT67DE_Source;
+    TKDT67DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT67DE_Source) - 1] of PKDT67DE_Source;
     PKDT67DE_SourceBuffer = ^TKDT67DE_SourceBuffer;
 
     TKDT67DEyanmicSourceBuffer = packed array of PKDT67DE_Source;
@@ -6538,7 +6538,7 @@ type
     KDStoreBuff: TKDT67DEyanmicStoreBuffer;
     KDBuff     : TKDT67DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT67DE_Node;
+    KDNodes    : array of PKDT67DE_Node;
     TestBuff   : TKDT67DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT67DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT67DE_Node;
     function GetData(const index: NativeInt): PKDT67DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6598,19 +6598,19 @@ type
   TKDT68DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT68DE_Vec = array [0 .. KDT68DE_Axis - 1] of TKDT68DE_VecType;
+    TKDT68DE_Vec = packed array [0 .. KDT68DE_Axis - 1] of TKDT68DE_VecType;
     PKDT68DE_Vec = ^TKDT68DE_Vec;
 
-    TKDT68DE_DynamicVecBuffer = packed array of TKDT68DE_Vec;
+    TKDT68DE_DynamicVecBuffer = array of TKDT68DE_Vec;
     PKDT68DE_DynamicVecBuffer = ^TKDT68DE_DynamicVecBuffer;
 
     TKDT68DE_Source = packed record
       Buff: TKDT68DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT68DE_Source       = ^TKDT68DE_Source;
-    TKDT68DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT68DE_Source) - 1] of PKDT68DE_Source;
+    TKDT68DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT68DE_Source) - 1] of PKDT68DE_Source;
     PKDT68DE_SourceBuffer = ^TKDT68DE_SourceBuffer;
 
     TKDT68DEyanmicSourceBuffer = packed array of PKDT68DE_Source;
@@ -6633,7 +6633,7 @@ type
     KDStoreBuff: TKDT68DEyanmicStoreBuffer;
     KDBuff     : TKDT68DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT68DE_Node;
+    KDNodes    : array of PKDT68DE_Node;
     TestBuff   : TKDT68DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT68DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT68DE_Node;
     function GetData(const index: NativeInt): PKDT68DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6693,19 +6693,19 @@ type
   TKDT69DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT69DE_Vec = array [0 .. KDT69DE_Axis - 1] of TKDT69DE_VecType;
+    TKDT69DE_Vec = packed array [0 .. KDT69DE_Axis - 1] of TKDT69DE_VecType;
     PKDT69DE_Vec = ^TKDT69DE_Vec;
 
-    TKDT69DE_DynamicVecBuffer = packed array of TKDT69DE_Vec;
+    TKDT69DE_DynamicVecBuffer = array of TKDT69DE_Vec;
     PKDT69DE_DynamicVecBuffer = ^TKDT69DE_DynamicVecBuffer;
 
     TKDT69DE_Source = packed record
       Buff: TKDT69DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT69DE_Source       = ^TKDT69DE_Source;
-    TKDT69DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT69DE_Source) - 1] of PKDT69DE_Source;
+    TKDT69DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT69DE_Source) - 1] of PKDT69DE_Source;
     PKDT69DE_SourceBuffer = ^TKDT69DE_SourceBuffer;
 
     TKDT69DEyanmicSourceBuffer = packed array of PKDT69DE_Source;
@@ -6728,7 +6728,7 @@ type
     KDStoreBuff: TKDT69DEyanmicStoreBuffer;
     KDBuff     : TKDT69DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT69DE_Node;
+    KDNodes    : array of PKDT69DE_Node;
     TestBuff   : TKDT69DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT69DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT69DE_Node;
     function GetData(const index: NativeInt): PKDT69DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6788,19 +6788,19 @@ type
   TKDT70DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT70DE_Vec = array [0 .. KDT70DE_Axis - 1] of TKDT70DE_VecType;
+    TKDT70DE_Vec = packed array [0 .. KDT70DE_Axis - 1] of TKDT70DE_VecType;
     PKDT70DE_Vec = ^TKDT70DE_Vec;
 
-    TKDT70DE_DynamicVecBuffer = packed array of TKDT70DE_Vec;
+    TKDT70DE_DynamicVecBuffer = array of TKDT70DE_Vec;
     PKDT70DE_DynamicVecBuffer = ^TKDT70DE_DynamicVecBuffer;
 
     TKDT70DE_Source = packed record
       Buff: TKDT70DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT70DE_Source       = ^TKDT70DE_Source;
-    TKDT70DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT70DE_Source) - 1] of PKDT70DE_Source;
+    TKDT70DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT70DE_Source) - 1] of PKDT70DE_Source;
     PKDT70DE_SourceBuffer = ^TKDT70DE_SourceBuffer;
 
     TKDT70DEyanmicSourceBuffer = packed array of PKDT70DE_Source;
@@ -6823,7 +6823,7 @@ type
     KDStoreBuff: TKDT70DEyanmicStoreBuffer;
     KDBuff     : TKDT70DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT70DE_Node;
+    KDNodes    : array of PKDT70DE_Node;
     TestBuff   : TKDT70DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT70DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT70DE_Node;
     function GetData(const index: NativeInt): PKDT70DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6883,19 +6883,19 @@ type
   TKDT71DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT71DE_Vec = array [0 .. KDT71DE_Axis - 1] of TKDT71DE_VecType;
+    TKDT71DE_Vec = packed array [0 .. KDT71DE_Axis - 1] of TKDT71DE_VecType;
     PKDT71DE_Vec = ^TKDT71DE_Vec;
 
-    TKDT71DE_DynamicVecBuffer = packed array of TKDT71DE_Vec;
+    TKDT71DE_DynamicVecBuffer = array of TKDT71DE_Vec;
     PKDT71DE_DynamicVecBuffer = ^TKDT71DE_DynamicVecBuffer;
 
     TKDT71DE_Source = packed record
       Buff: TKDT71DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT71DE_Source       = ^TKDT71DE_Source;
-    TKDT71DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT71DE_Source) - 1] of PKDT71DE_Source;
+    TKDT71DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT71DE_Source) - 1] of PKDT71DE_Source;
     PKDT71DE_SourceBuffer = ^TKDT71DE_SourceBuffer;
 
     TKDT71DEyanmicSourceBuffer = packed array of PKDT71DE_Source;
@@ -6918,7 +6918,7 @@ type
     KDStoreBuff: TKDT71DEyanmicStoreBuffer;
     KDBuff     : TKDT71DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT71DE_Node;
+    KDNodes    : array of PKDT71DE_Node;
     TestBuff   : TKDT71DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT71DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT71DE_Node;
     function GetData(const index: NativeInt): PKDT71DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -6978,19 +6978,19 @@ type
   TKDT72DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT72DE_Vec = array [0 .. KDT72DE_Axis - 1] of TKDT72DE_VecType;
+    TKDT72DE_Vec = packed array [0 .. KDT72DE_Axis - 1] of TKDT72DE_VecType;
     PKDT72DE_Vec = ^TKDT72DE_Vec;
 
-    TKDT72DE_DynamicVecBuffer = packed array of TKDT72DE_Vec;
+    TKDT72DE_DynamicVecBuffer = array of TKDT72DE_Vec;
     PKDT72DE_DynamicVecBuffer = ^TKDT72DE_DynamicVecBuffer;
 
     TKDT72DE_Source = packed record
       Buff: TKDT72DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT72DE_Source       = ^TKDT72DE_Source;
-    TKDT72DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT72DE_Source) - 1] of PKDT72DE_Source;
+    TKDT72DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT72DE_Source) - 1] of PKDT72DE_Source;
     PKDT72DE_SourceBuffer = ^TKDT72DE_SourceBuffer;
 
     TKDT72DEyanmicSourceBuffer = packed array of PKDT72DE_Source;
@@ -7013,7 +7013,7 @@ type
     KDStoreBuff: TKDT72DEyanmicStoreBuffer;
     KDBuff     : TKDT72DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT72DE_Node;
+    KDNodes    : array of PKDT72DE_Node;
     TestBuff   : TKDT72DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT72DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT72DE_Node;
     function GetData(const index: NativeInt): PKDT72DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7073,19 +7073,19 @@ type
   TKDT84DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT84DE_Vec = array [0 .. KDT84DE_Axis - 1] of TKDT84DE_VecType;
+    TKDT84DE_Vec = packed array [0 .. KDT84DE_Axis - 1] of TKDT84DE_VecType;
     PKDT84DE_Vec = ^TKDT84DE_Vec;
 
-    TKDT84DE_DynamicVecBuffer = packed array of TKDT84DE_Vec;
+    TKDT84DE_DynamicVecBuffer = array of TKDT84DE_Vec;
     PKDT84DE_DynamicVecBuffer = ^TKDT84DE_DynamicVecBuffer;
 
     TKDT84DE_Source = packed record
       Buff: TKDT84DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT84DE_Source       = ^TKDT84DE_Source;
-    TKDT84DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT84DE_Source) - 1] of PKDT84DE_Source;
+    TKDT84DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT84DE_Source) - 1] of PKDT84DE_Source;
     PKDT84DE_SourceBuffer = ^TKDT84DE_SourceBuffer;
 
     TKDT84DEyanmicSourceBuffer = packed array of PKDT84DE_Source;
@@ -7108,7 +7108,7 @@ type
     KDStoreBuff: TKDT84DEyanmicStoreBuffer;
     KDBuff     : TKDT84DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT84DE_Node;
+    KDNodes    : array of PKDT84DE_Node;
     TestBuff   : TKDT84DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT84DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT84DE_Node;
     function GetData(const index: NativeInt): PKDT84DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7168,19 +7168,19 @@ type
   TKDT96DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT96DE_Vec = array [0 .. KDT96DE_Axis - 1] of TKDT96DE_VecType;
+    TKDT96DE_Vec = packed array [0 .. KDT96DE_Axis - 1] of TKDT96DE_VecType;
     PKDT96DE_Vec = ^TKDT96DE_Vec;
 
-    TKDT96DE_DynamicVecBuffer = packed array of TKDT96DE_Vec;
+    TKDT96DE_DynamicVecBuffer = array of TKDT96DE_Vec;
     PKDT96DE_DynamicVecBuffer = ^TKDT96DE_DynamicVecBuffer;
 
     TKDT96DE_Source = packed record
       Buff: TKDT96DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT96DE_Source       = ^TKDT96DE_Source;
-    TKDT96DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT96DE_Source) - 1] of PKDT96DE_Source;
+    TKDT96DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT96DE_Source) - 1] of PKDT96DE_Source;
     PKDT96DE_SourceBuffer = ^TKDT96DE_SourceBuffer;
 
     TKDT96DEyanmicSourceBuffer = packed array of PKDT96DE_Source;
@@ -7203,7 +7203,7 @@ type
     KDStoreBuff: TKDT96DEyanmicStoreBuffer;
     KDBuff     : TKDT96DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT96DE_Node;
+    KDNodes    : array of PKDT96DE_Node;
     TestBuff   : TKDT96DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT96DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT96DE_Node;
     function GetData(const index: NativeInt): PKDT96DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7263,19 +7263,19 @@ type
   TKDT128DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT128DE_Vec = array [0 .. KDT128DE_Axis - 1] of TKDT128DE_VecType;
+    TKDT128DE_Vec = packed array [0 .. KDT128DE_Axis - 1] of TKDT128DE_VecType;
     PKDT128DE_Vec = ^TKDT128DE_Vec;
 
-    TKDT128DE_DynamicVecBuffer = packed array of TKDT128DE_Vec;
+    TKDT128DE_DynamicVecBuffer = array of TKDT128DE_Vec;
     PKDT128DE_DynamicVecBuffer = ^TKDT128DE_DynamicVecBuffer;
 
     TKDT128DE_Source = packed record
       Buff: TKDT128DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT128DE_Source       = ^TKDT128DE_Source;
-    TKDT128DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT128DE_Source) - 1] of PKDT128DE_Source;
+    TKDT128DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT128DE_Source) - 1] of PKDT128DE_Source;
     PKDT128DE_SourceBuffer = ^TKDT128DE_SourceBuffer;
 
     TKDT128DEyanmicSourceBuffer = packed array of PKDT128DE_Source;
@@ -7298,7 +7298,7 @@ type
     KDStoreBuff: TKDT128DEyanmicStoreBuffer;
     KDBuff     : TKDT128DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT128DE_Node;
+    KDNodes    : array of PKDT128DE_Node;
     TestBuff   : TKDT128DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT128DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT128DE_Node;
     function GetData(const index: NativeInt): PKDT128DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7358,19 +7358,19 @@ type
   TKDT140DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT140DE_Vec = array [0 .. KDT140DE_Axis - 1] of TKDT140DE_VecType;
+    TKDT140DE_Vec = packed array [0 .. KDT140DE_Axis - 1] of TKDT140DE_VecType;
     PKDT140DE_Vec = ^TKDT140DE_Vec;
 
-    TKDT140DE_DynamicVecBuffer = packed array of TKDT140DE_Vec;
+    TKDT140DE_DynamicVecBuffer = array of TKDT140DE_Vec;
     PKDT140DE_DynamicVecBuffer = ^TKDT140DE_DynamicVecBuffer;
 
     TKDT140DE_Source = packed record
       Buff: TKDT140DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT140DE_Source       = ^TKDT140DE_Source;
-    TKDT140DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT140DE_Source) - 1] of PKDT140DE_Source;
+    TKDT140DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT140DE_Source) - 1] of PKDT140DE_Source;
     PKDT140DE_SourceBuffer = ^TKDT140DE_SourceBuffer;
 
     TKDT140DEyanmicSourceBuffer = packed array of PKDT140DE_Source;
@@ -7393,7 +7393,7 @@ type
     KDStoreBuff: TKDT140DEyanmicStoreBuffer;
     KDBuff     : TKDT140DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT140DE_Node;
+    KDNodes    : array of PKDT140DE_Node;
     TestBuff   : TKDT140DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT140DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT140DE_Node;
     function GetData(const index: NativeInt): PKDT140DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7453,19 +7453,19 @@ type
   TKDT160DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT160DE_Vec = array [0 .. KDT160DE_Axis - 1] of TKDT160DE_VecType;
+    TKDT160DE_Vec = packed array [0 .. KDT160DE_Axis - 1] of TKDT160DE_VecType;
     PKDT160DE_Vec = ^TKDT160DE_Vec;
 
-    TKDT160DE_DynamicVecBuffer = packed array of TKDT160DE_Vec;
+    TKDT160DE_DynamicVecBuffer = array of TKDT160DE_Vec;
     PKDT160DE_DynamicVecBuffer = ^TKDT160DE_DynamicVecBuffer;
 
     TKDT160DE_Source = packed record
       Buff: TKDT160DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT160DE_Source       = ^TKDT160DE_Source;
-    TKDT160DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT160DE_Source) - 1] of PKDT160DE_Source;
+    TKDT160DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT160DE_Source) - 1] of PKDT160DE_Source;
     PKDT160DE_SourceBuffer = ^TKDT160DE_SourceBuffer;
 
     TKDT160DEyanmicSourceBuffer = packed array of PKDT160DE_Source;
@@ -7488,7 +7488,7 @@ type
     KDStoreBuff: TKDT160DEyanmicStoreBuffer;
     KDBuff     : TKDT160DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT160DE_Node;
+    KDNodes    : array of PKDT160DE_Node;
     TestBuff   : TKDT160DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT160DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT160DE_Node;
     function GetData(const index: NativeInt): PKDT160DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7548,19 +7548,19 @@ type
   TKDT196DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT196DE_Vec = array [0 .. KDT196DE_Axis - 1] of TKDT196DE_VecType;
+    TKDT196DE_Vec = packed array [0 .. KDT196DE_Axis - 1] of TKDT196DE_VecType;
     PKDT196DE_Vec = ^TKDT196DE_Vec;
 
-    TKDT196DE_DynamicVecBuffer = packed array of TKDT196DE_Vec;
+    TKDT196DE_DynamicVecBuffer = array of TKDT196DE_Vec;
     PKDT196DE_DynamicVecBuffer = ^TKDT196DE_DynamicVecBuffer;
 
     TKDT196DE_Source = packed record
       Buff: TKDT196DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT196DE_Source       = ^TKDT196DE_Source;
-    TKDT196DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT196DE_Source) - 1] of PKDT196DE_Source;
+    TKDT196DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT196DE_Source) - 1] of PKDT196DE_Source;
     PKDT196DE_SourceBuffer = ^TKDT196DE_SourceBuffer;
 
     TKDT196DEyanmicSourceBuffer = packed array of PKDT196DE_Source;
@@ -7583,7 +7583,7 @@ type
     KDStoreBuff: TKDT196DEyanmicStoreBuffer;
     KDBuff     : TKDT196DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT196DE_Node;
+    KDNodes    : array of PKDT196DE_Node;
     TestBuff   : TKDT196DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT196DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT196DE_Node;
     function GetData(const index: NativeInt): PKDT196DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7643,19 +7643,19 @@ type
   TKDT256DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT256DE_Vec = array [0 .. KDT256DE_Axis - 1] of TKDT256DE_VecType;
+    TKDT256DE_Vec = packed array [0 .. KDT256DE_Axis - 1] of TKDT256DE_VecType;
     PKDT256DE_Vec = ^TKDT256DE_Vec;
 
-    TKDT256DE_DynamicVecBuffer = packed array of TKDT256DE_Vec;
+    TKDT256DE_DynamicVecBuffer = array of TKDT256DE_Vec;
     PKDT256DE_DynamicVecBuffer = ^TKDT256DE_DynamicVecBuffer;
 
     TKDT256DE_Source = packed record
       Buff: TKDT256DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT256DE_Source       = ^TKDT256DE_Source;
-    TKDT256DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT256DE_Source) - 1] of PKDT256DE_Source;
+    TKDT256DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT256DE_Source) - 1] of PKDT256DE_Source;
     PKDT256DE_SourceBuffer = ^TKDT256DE_SourceBuffer;
 
     TKDT256DEyanmicSourceBuffer = packed array of PKDT256DE_Source;
@@ -7678,7 +7678,7 @@ type
     KDStoreBuff: TKDT256DEyanmicStoreBuffer;
     KDBuff     : TKDT256DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT256DE_Node;
+    KDNodes    : array of PKDT256DE_Node;
     TestBuff   : TKDT256DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT256DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT256DE_Node;
     function GetData(const index: NativeInt): PKDT256DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7738,19 +7738,19 @@ type
   TKDT272DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT272DE_Vec = array [0 .. KDT272DE_Axis - 1] of TKDT272DE_VecType;
+    TKDT272DE_Vec = packed array [0 .. KDT272DE_Axis - 1] of TKDT272DE_VecType;
     PKDT272DE_Vec = ^TKDT272DE_Vec;
 
-    TKDT272DE_DynamicVecBuffer = packed array of TKDT272DE_Vec;
+    TKDT272DE_DynamicVecBuffer = array of TKDT272DE_Vec;
     PKDT272DE_DynamicVecBuffer = ^TKDT272DE_DynamicVecBuffer;
 
     TKDT272DE_Source = packed record
       Buff: TKDT272DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT272DE_Source       = ^TKDT272DE_Source;
-    TKDT272DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT272DE_Source) - 1] of PKDT272DE_Source;
+    TKDT272DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT272DE_Source) - 1] of PKDT272DE_Source;
     PKDT272DE_SourceBuffer = ^TKDT272DE_SourceBuffer;
 
     TKDT272DEyanmicSourceBuffer = packed array of PKDT272DE_Source;
@@ -7773,7 +7773,7 @@ type
     KDStoreBuff: TKDT272DEyanmicStoreBuffer;
     KDBuff     : TKDT272DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT272DE_Node;
+    KDNodes    : array of PKDT272DE_Node;
     TestBuff   : TKDT272DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT272DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT272DE_Node;
     function GetData(const index: NativeInt): PKDT272DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7833,19 +7833,19 @@ type
   TKDT288DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT288DE_Vec = array [0 .. KDT288DE_Axis - 1] of TKDT288DE_VecType;
+    TKDT288DE_Vec = packed array [0 .. KDT288DE_Axis - 1] of TKDT288DE_VecType;
     PKDT288DE_Vec = ^TKDT288DE_Vec;
 
-    TKDT288DE_DynamicVecBuffer = packed array of TKDT288DE_Vec;
+    TKDT288DE_DynamicVecBuffer = array of TKDT288DE_Vec;
     PKDT288DE_DynamicVecBuffer = ^TKDT288DE_DynamicVecBuffer;
 
     TKDT288DE_Source = packed record
       Buff: TKDT288DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT288DE_Source       = ^TKDT288DE_Source;
-    TKDT288DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT288DE_Source) - 1] of PKDT288DE_Source;
+    TKDT288DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT288DE_Source) - 1] of PKDT288DE_Source;
     PKDT288DE_SourceBuffer = ^TKDT288DE_SourceBuffer;
 
     TKDT288DEyanmicSourceBuffer = packed array of PKDT288DE_Source;
@@ -7868,7 +7868,7 @@ type
     KDStoreBuff: TKDT288DEyanmicStoreBuffer;
     KDBuff     : TKDT288DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT288DE_Node;
+    KDNodes    : array of PKDT288DE_Node;
     TestBuff   : TKDT288DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT288DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT288DE_Node;
     function GetData(const index: NativeInt): PKDT288DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -7928,19 +7928,19 @@ type
   TKDT372DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT372DE_Vec = array [0 .. KDT372DE_Axis - 1] of TKDT372DE_VecType;
+    TKDT372DE_Vec = packed array [0 .. KDT372DE_Axis - 1] of TKDT372DE_VecType;
     PKDT372DE_Vec = ^TKDT372DE_Vec;
 
-    TKDT372DE_DynamicVecBuffer = packed array of TKDT372DE_Vec;
+    TKDT372DE_DynamicVecBuffer = array of TKDT372DE_Vec;
     PKDT372DE_DynamicVecBuffer = ^TKDT372DE_DynamicVecBuffer;
 
     TKDT372DE_Source = packed record
       Buff: TKDT372DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT372DE_Source       = ^TKDT372DE_Source;
-    TKDT372DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT372DE_Source) - 1] of PKDT372DE_Source;
+    TKDT372DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT372DE_Source) - 1] of PKDT372DE_Source;
     PKDT372DE_SourceBuffer = ^TKDT372DE_SourceBuffer;
 
     TKDT372DEyanmicSourceBuffer = packed array of PKDT372DE_Source;
@@ -7963,7 +7963,7 @@ type
     KDStoreBuff: TKDT372DEyanmicStoreBuffer;
     KDBuff     : TKDT372DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT372DE_Node;
+    KDNodes    : array of PKDT372DE_Node;
     TestBuff   : TKDT372DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT372DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT372DE_Node;
     function GetData(const index: NativeInt): PKDT372DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8023,19 +8023,19 @@ type
   TKDT512DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT512DE_Vec = array [0 .. KDT512DE_Axis - 1] of TKDT512DE_VecType;
+    TKDT512DE_Vec = packed array [0 .. KDT512DE_Axis - 1] of TKDT512DE_VecType;
     PKDT512DE_Vec = ^TKDT512DE_Vec;
 
-    TKDT512DE_DynamicVecBuffer = packed array of TKDT512DE_Vec;
+    TKDT512DE_DynamicVecBuffer = array of TKDT512DE_Vec;
     PKDT512DE_DynamicVecBuffer = ^TKDT512DE_DynamicVecBuffer;
 
     TKDT512DE_Source = packed record
       Buff: TKDT512DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT512DE_Source       = ^TKDT512DE_Source;
-    TKDT512DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT512DE_Source) - 1] of PKDT512DE_Source;
+    TKDT512DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT512DE_Source) - 1] of PKDT512DE_Source;
     PKDT512DE_SourceBuffer = ^TKDT512DE_SourceBuffer;
 
     TKDT512DEyanmicSourceBuffer = packed array of PKDT512DE_Source;
@@ -8058,7 +8058,7 @@ type
     KDStoreBuff: TKDT512DEyanmicStoreBuffer;
     KDBuff     : TKDT512DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT512DE_Node;
+    KDNodes    : array of PKDT512DE_Node;
     TestBuff   : TKDT512DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT512DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT512DE_Node;
     function GetData(const index: NativeInt): PKDT512DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8118,19 +8118,19 @@ type
   TKDT576DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT576DE_Vec = array [0 .. KDT576DE_Axis - 1] of TKDT576DE_VecType;
+    TKDT576DE_Vec = packed array [0 .. KDT576DE_Axis - 1] of TKDT576DE_VecType;
     PKDT576DE_Vec = ^TKDT576DE_Vec;
 
-    TKDT576DE_DynamicVecBuffer = packed array of TKDT576DE_Vec;
+    TKDT576DE_DynamicVecBuffer = array of TKDT576DE_Vec;
     PKDT576DE_DynamicVecBuffer = ^TKDT576DE_DynamicVecBuffer;
 
     TKDT576DE_Source = packed record
       Buff: TKDT576DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT576DE_Source       = ^TKDT576DE_Source;
-    TKDT576DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT576DE_Source) - 1] of PKDT576DE_Source;
+    TKDT576DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT576DE_Source) - 1] of PKDT576DE_Source;
     PKDT576DE_SourceBuffer = ^TKDT576DE_SourceBuffer;
 
     TKDT576DEyanmicSourceBuffer = packed array of PKDT576DE_Source;
@@ -8153,7 +8153,7 @@ type
     KDStoreBuff: TKDT576DEyanmicStoreBuffer;
     KDBuff     : TKDT576DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT576DE_Node;
+    KDNodes    : array of PKDT576DE_Node;
     TestBuff   : TKDT576DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT576DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT576DE_Node;
     function GetData(const index: NativeInt): PKDT576DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8213,19 +8213,19 @@ type
   TKDT768DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT768DE_Vec = array [0 .. KDT768DE_Axis - 1] of TKDT768DE_VecType;
+    TKDT768DE_Vec = packed array [0 .. KDT768DE_Axis - 1] of TKDT768DE_VecType;
     PKDT768DE_Vec = ^TKDT768DE_Vec;
 
-    TKDT768DE_DynamicVecBuffer = packed array of TKDT768DE_Vec;
+    TKDT768DE_DynamicVecBuffer = array of TKDT768DE_Vec;
     PKDT768DE_DynamicVecBuffer = ^TKDT768DE_DynamicVecBuffer;
 
     TKDT768DE_Source = packed record
       Buff: TKDT768DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT768DE_Source       = ^TKDT768DE_Source;
-    TKDT768DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT768DE_Source) - 1] of PKDT768DE_Source;
+    TKDT768DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT768DE_Source) - 1] of PKDT768DE_Source;
     PKDT768DE_SourceBuffer = ^TKDT768DE_SourceBuffer;
 
     TKDT768DEyanmicSourceBuffer = packed array of PKDT768DE_Source;
@@ -8248,7 +8248,7 @@ type
     KDStoreBuff: TKDT768DEyanmicStoreBuffer;
     KDBuff     : TKDT768DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT768DE_Node;
+    KDNodes    : array of PKDT768DE_Node;
     TestBuff   : TKDT768DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT768DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT768DE_Node;
     function GetData(const index: NativeInt): PKDT768DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8308,19 +8308,19 @@ type
   TKDT1024DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT1024DE_Vec = array [0 .. KDT1024DE_Axis - 1] of TKDT1024DE_VecType;
+    TKDT1024DE_Vec = packed array [0 .. KDT1024DE_Axis - 1] of TKDT1024DE_VecType;
     PKDT1024DE_Vec = ^TKDT1024DE_Vec;
 
-    TKDT1024DE_DynamicVecBuffer = packed array of TKDT1024DE_Vec;
+    TKDT1024DE_DynamicVecBuffer = array of TKDT1024DE_Vec;
     PKDT1024DE_DynamicVecBuffer = ^TKDT1024DE_DynamicVecBuffer;
 
     TKDT1024DE_Source = packed record
       Buff: TKDT1024DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT1024DE_Source       = ^TKDT1024DE_Source;
-    TKDT1024DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1024DE_Source) - 1] of PKDT1024DE_Source;
+    TKDT1024DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT1024DE_Source) - 1] of PKDT1024DE_Source;
     PKDT1024DE_SourceBuffer = ^TKDT1024DE_SourceBuffer;
 
     TKDT1024DEyanmicSourceBuffer = packed array of PKDT1024DE_Source;
@@ -8343,7 +8343,7 @@ type
     KDStoreBuff: TKDT1024DEyanmicStoreBuffer;
     KDBuff     : TKDT1024DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT1024DE_Node;
+    KDNodes    : array of PKDT1024DE_Node;
     TestBuff   : TKDT1024DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1024DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1024DE_Node;
     function GetData(const index: NativeInt): PKDT1024DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8403,19 +8403,19 @@ type
   TKDT1040DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT1040DE_Vec = array [0 .. KDT1040DE_Axis - 1] of TKDT1040DE_VecType;
+    TKDT1040DE_Vec = packed array [0 .. KDT1040DE_Axis - 1] of TKDT1040DE_VecType;
     PKDT1040DE_Vec = ^TKDT1040DE_Vec;
 
-    TKDT1040DE_DynamicVecBuffer = packed array of TKDT1040DE_Vec;
+    TKDT1040DE_DynamicVecBuffer = array of TKDT1040DE_Vec;
     PKDT1040DE_DynamicVecBuffer = ^TKDT1040DE_DynamicVecBuffer;
 
     TKDT1040DE_Source = packed record
       Buff: TKDT1040DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT1040DE_Source       = ^TKDT1040DE_Source;
-    TKDT1040DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1040DE_Source) - 1] of PKDT1040DE_Source;
+    TKDT1040DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT1040DE_Source) - 1] of PKDT1040DE_Source;
     PKDT1040DE_SourceBuffer = ^TKDT1040DE_SourceBuffer;
 
     TKDT1040DEyanmicSourceBuffer = packed array of PKDT1040DE_Source;
@@ -8438,7 +8438,7 @@ type
     KDStoreBuff: TKDT1040DEyanmicStoreBuffer;
     KDBuff     : TKDT1040DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT1040DE_Node;
+    KDNodes    : array of PKDT1040DE_Node;
     TestBuff   : TKDT1040DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1040DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1040DE_Node;
     function GetData(const index: NativeInt): PKDT1040DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8498,19 +8498,19 @@ type
   TKDT1056DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT1056DE_Vec = array [0 .. KDT1056DE_Axis - 1] of TKDT1056DE_VecType;
+    TKDT1056DE_Vec = packed array [0 .. KDT1056DE_Axis - 1] of TKDT1056DE_VecType;
     PKDT1056DE_Vec = ^TKDT1056DE_Vec;
 
-    TKDT1056DE_DynamicVecBuffer = packed array of TKDT1056DE_Vec;
+    TKDT1056DE_DynamicVecBuffer = array of TKDT1056DE_Vec;
     PKDT1056DE_DynamicVecBuffer = ^TKDT1056DE_DynamicVecBuffer;
 
     TKDT1056DE_Source = packed record
       Buff: TKDT1056DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT1056DE_Source       = ^TKDT1056DE_Source;
-    TKDT1056DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1056DE_Source) - 1] of PKDT1056DE_Source;
+    TKDT1056DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT1056DE_Source) - 1] of PKDT1056DE_Source;
     PKDT1056DE_SourceBuffer = ^TKDT1056DE_SourceBuffer;
 
     TKDT1056DEyanmicSourceBuffer = packed array of PKDT1056DE_Source;
@@ -8533,7 +8533,7 @@ type
     KDStoreBuff: TKDT1056DEyanmicStoreBuffer;
     KDBuff     : TKDT1056DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT1056DE_Node;
+    KDNodes    : array of PKDT1056DE_Node;
     TestBuff   : TKDT1056DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1056DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1056DE_Node;
     function GetData(const index: NativeInt): PKDT1056DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8593,19 +8593,19 @@ type
   TKDT1536DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT1536DE_Vec = array [0 .. KDT1536DE_Axis - 1] of TKDT1536DE_VecType;
+    TKDT1536DE_Vec = packed array [0 .. KDT1536DE_Axis - 1] of TKDT1536DE_VecType;
     PKDT1536DE_Vec = ^TKDT1536DE_Vec;
 
-    TKDT1536DE_DynamicVecBuffer = packed array of TKDT1536DE_Vec;
+    TKDT1536DE_DynamicVecBuffer = array of TKDT1536DE_Vec;
     PKDT1536DE_DynamicVecBuffer = ^TKDT1536DE_DynamicVecBuffer;
 
     TKDT1536DE_Source = packed record
       Buff: TKDT1536DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT1536DE_Source       = ^TKDT1536DE_Source;
-    TKDT1536DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1536DE_Source) - 1] of PKDT1536DE_Source;
+    TKDT1536DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT1536DE_Source) - 1] of PKDT1536DE_Source;
     PKDT1536DE_SourceBuffer = ^TKDT1536DE_SourceBuffer;
 
     TKDT1536DEyanmicSourceBuffer = packed array of PKDT1536DE_Source;
@@ -8628,7 +8628,7 @@ type
     KDStoreBuff: TKDT1536DEyanmicStoreBuffer;
     KDBuff     : TKDT1536DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT1536DE_Node;
+    KDNodes    : array of PKDT1536DE_Node;
     TestBuff   : TKDT1536DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1536DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1536DE_Node;
     function GetData(const index: NativeInt): PKDT1536DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8688,19 +8688,19 @@ type
   TKDT1920DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT1920DE_Vec = array [0 .. KDT1920DE_Axis - 1] of TKDT1920DE_VecType;
+    TKDT1920DE_Vec = packed array [0 .. KDT1920DE_Axis - 1] of TKDT1920DE_VecType;
     PKDT1920DE_Vec = ^TKDT1920DE_Vec;
 
-    TKDT1920DE_DynamicVecBuffer = packed array of TKDT1920DE_Vec;
+    TKDT1920DE_DynamicVecBuffer = array of TKDT1920DE_Vec;
     PKDT1920DE_DynamicVecBuffer = ^TKDT1920DE_DynamicVecBuffer;
 
     TKDT1920DE_Source = packed record
       Buff: TKDT1920DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT1920DE_Source       = ^TKDT1920DE_Source;
-    TKDT1920DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1920DE_Source) - 1] of PKDT1920DE_Source;
+    TKDT1920DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT1920DE_Source) - 1] of PKDT1920DE_Source;
     PKDT1920DE_SourceBuffer = ^TKDT1920DE_SourceBuffer;
 
     TKDT1920DEyanmicSourceBuffer = packed array of PKDT1920DE_Source;
@@ -8723,7 +8723,7 @@ type
     KDStoreBuff: TKDT1920DEyanmicStoreBuffer;
     KDBuff     : TKDT1920DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT1920DE_Node;
+    KDNodes    : array of PKDT1920DE_Node;
     TestBuff   : TKDT1920DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1920DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1920DE_Node;
     function GetData(const index: NativeInt): PKDT1920DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8783,19 +8783,19 @@ type
   TKDT1980DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT1980DE_Vec = array [0 .. KDT1980DE_Axis - 1] of TKDT1980DE_VecType;
+    TKDT1980DE_Vec = packed array [0 .. KDT1980DE_Axis - 1] of TKDT1980DE_VecType;
     PKDT1980DE_Vec = ^TKDT1980DE_Vec;
 
-    TKDT1980DE_DynamicVecBuffer = packed array of TKDT1980DE_Vec;
+    TKDT1980DE_DynamicVecBuffer = array of TKDT1980DE_Vec;
     PKDT1980DE_DynamicVecBuffer = ^TKDT1980DE_DynamicVecBuffer;
 
     TKDT1980DE_Source = packed record
       Buff: TKDT1980DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT1980DE_Source       = ^TKDT1980DE_Source;
-    TKDT1980DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT1980DE_Source) - 1] of PKDT1980DE_Source;
+    TKDT1980DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT1980DE_Source) - 1] of PKDT1980DE_Source;
     PKDT1980DE_SourceBuffer = ^TKDT1980DE_SourceBuffer;
 
     TKDT1980DEyanmicSourceBuffer = packed array of PKDT1980DE_Source;
@@ -8818,7 +8818,7 @@ type
     KDStoreBuff: TKDT1980DEyanmicStoreBuffer;
     KDBuff     : TKDT1980DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT1980DE_Node;
+    KDNodes    : array of PKDT1980DE_Node;
     TestBuff   : TKDT1980DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT1980DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1980DE_Node;
     function GetData(const index: NativeInt): PKDT1980DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8878,19 +8878,19 @@ type
   TKDT2048DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT2048DE_Vec = array [0 .. KDT2048DE_Axis - 1] of TKDT2048DE_VecType;
+    TKDT2048DE_Vec = packed array [0 .. KDT2048DE_Axis - 1] of TKDT2048DE_VecType;
     PKDT2048DE_Vec = ^TKDT2048DE_Vec;
 
-    TKDT2048DE_DynamicVecBuffer = packed array of TKDT2048DE_Vec;
+    TKDT2048DE_DynamicVecBuffer = array of TKDT2048DE_Vec;
     PKDT2048DE_DynamicVecBuffer = ^TKDT2048DE_DynamicVecBuffer;
 
     TKDT2048DE_Source = packed record
       Buff: TKDT2048DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT2048DE_Source       = ^TKDT2048DE_Source;
-    TKDT2048DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT2048DE_Source) - 1] of PKDT2048DE_Source;
+    TKDT2048DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT2048DE_Source) - 1] of PKDT2048DE_Source;
     PKDT2048DE_SourceBuffer = ^TKDT2048DE_SourceBuffer;
 
     TKDT2048DEyanmicSourceBuffer = packed array of PKDT2048DE_Source;
@@ -8913,7 +8913,7 @@ type
     KDStoreBuff: TKDT2048DEyanmicStoreBuffer;
     KDBuff     : TKDT2048DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT2048DE_Node;
+    KDNodes    : array of PKDT2048DE_Node;
     TestBuff   : TKDT2048DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT2048DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT2048DE_Node;
     function GetData(const index: NativeInt): PKDT2048DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -8973,19 +8973,19 @@ type
   TKDT3072DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT3072DE_Vec = array [0 .. KDT3072DE_Axis - 1] of TKDT3072DE_VecType;
+    TKDT3072DE_Vec = packed array [0 .. KDT3072DE_Axis - 1] of TKDT3072DE_VecType;
     PKDT3072DE_Vec = ^TKDT3072DE_Vec;
 
-    TKDT3072DE_DynamicVecBuffer = packed array of TKDT3072DE_Vec;
+    TKDT3072DE_DynamicVecBuffer = array of TKDT3072DE_Vec;
     PKDT3072DE_DynamicVecBuffer = ^TKDT3072DE_DynamicVecBuffer;
 
     TKDT3072DE_Source = packed record
       Buff: TKDT3072DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT3072DE_Source       = ^TKDT3072DE_Source;
-    TKDT3072DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT3072DE_Source) - 1] of PKDT3072DE_Source;
+    TKDT3072DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT3072DE_Source) - 1] of PKDT3072DE_Source;
     PKDT3072DE_SourceBuffer = ^TKDT3072DE_SourceBuffer;
 
     TKDT3072DEyanmicSourceBuffer = packed array of PKDT3072DE_Source;
@@ -9008,7 +9008,7 @@ type
     KDStoreBuff: TKDT3072DEyanmicStoreBuffer;
     KDBuff     : TKDT3072DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT3072DE_Node;
+    KDNodes    : array of PKDT3072DE_Node;
     TestBuff   : TKDT3072DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT3072DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT3072DE_Node;
     function GetData(const index: NativeInt): PKDT3072DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -9068,19 +9068,19 @@ type
   TKDT3088DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT3088DE_Vec = array [0 .. KDT3088DE_Axis - 1] of TKDT3088DE_VecType;
+    TKDT3088DE_Vec = packed array [0 .. KDT3088DE_Axis - 1] of TKDT3088DE_VecType;
     PKDT3088DE_Vec = ^TKDT3088DE_Vec;
 
-    TKDT3088DE_DynamicVecBuffer = packed array of TKDT3088DE_Vec;
+    TKDT3088DE_DynamicVecBuffer = array of TKDT3088DE_Vec;
     PKDT3088DE_DynamicVecBuffer = ^TKDT3088DE_DynamicVecBuffer;
 
     TKDT3088DE_Source = packed record
       Buff: TKDT3088DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT3088DE_Source       = ^TKDT3088DE_Source;
-    TKDT3088DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT3088DE_Source) - 1] of PKDT3088DE_Source;
+    TKDT3088DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT3088DE_Source) - 1] of PKDT3088DE_Source;
     PKDT3088DE_SourceBuffer = ^TKDT3088DE_SourceBuffer;
 
     TKDT3088DEyanmicSourceBuffer = packed array of PKDT3088DE_Source;
@@ -9103,7 +9103,7 @@ type
     KDStoreBuff: TKDT3088DEyanmicStoreBuffer;
     KDBuff     : TKDT3088DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT3088DE_Node;
+    KDNodes    : array of PKDT3088DE_Node;
     TestBuff   : TKDT3088DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT3088DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT3088DE_Node;
     function GetData(const index: NativeInt): PKDT3088DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -9163,19 +9163,19 @@ type
   TKDT3104DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT3104DE_Vec = array [0 .. KDT3104DE_Axis - 1] of TKDT3104DE_VecType;
+    TKDT3104DE_Vec = packed array [0 .. KDT3104DE_Axis - 1] of TKDT3104DE_VecType;
     PKDT3104DE_Vec = ^TKDT3104DE_Vec;
 
-    TKDT3104DE_DynamicVecBuffer = packed array of TKDT3104DE_Vec;
+    TKDT3104DE_DynamicVecBuffer = array of TKDT3104DE_Vec;
     PKDT3104DE_DynamicVecBuffer = ^TKDT3104DE_DynamicVecBuffer;
 
     TKDT3104DE_Source = packed record
       Buff: TKDT3104DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT3104DE_Source       = ^TKDT3104DE_Source;
-    TKDT3104DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT3104DE_Source) - 1] of PKDT3104DE_Source;
+    TKDT3104DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT3104DE_Source) - 1] of PKDT3104DE_Source;
     PKDT3104DE_SourceBuffer = ^TKDT3104DE_SourceBuffer;
 
     TKDT3104DEyanmicSourceBuffer = packed array of PKDT3104DE_Source;
@@ -9198,7 +9198,7 @@ type
     KDStoreBuff: TKDT3104DEyanmicStoreBuffer;
     KDBuff     : TKDT3104DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT3104DE_Node;
+    KDNodes    : array of PKDT3104DE_Node;
     TestBuff   : TKDT3104DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT3104DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT3104DE_Node;
     function GetData(const index: NativeInt): PKDT3104DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -9258,19 +9258,19 @@ type
   TKDT4096DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT4096DE_Vec = array [0 .. KDT4096DE_Axis - 1] of TKDT4096DE_VecType;
+    TKDT4096DE_Vec = packed array [0 .. KDT4096DE_Axis - 1] of TKDT4096DE_VecType;
     PKDT4096DE_Vec = ^TKDT4096DE_Vec;
 
-    TKDT4096DE_DynamicVecBuffer = packed array of TKDT4096DE_Vec;
+    TKDT4096DE_DynamicVecBuffer = array of TKDT4096DE_Vec;
     PKDT4096DE_DynamicVecBuffer = ^TKDT4096DE_DynamicVecBuffer;
 
     TKDT4096DE_Source = packed record
       Buff: TKDT4096DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT4096DE_Source       = ^TKDT4096DE_Source;
-    TKDT4096DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT4096DE_Source) - 1] of PKDT4096DE_Source;
+    TKDT4096DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT4096DE_Source) - 1] of PKDT4096DE_Source;
     PKDT4096DE_SourceBuffer = ^TKDT4096DE_SourceBuffer;
 
     TKDT4096DEyanmicSourceBuffer = packed array of PKDT4096DE_Source;
@@ -9293,7 +9293,7 @@ type
     KDStoreBuff: TKDT4096DEyanmicStoreBuffer;
     KDBuff     : TKDT4096DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT4096DE_Node;
+    KDNodes    : array of PKDT4096DE_Node;
     TestBuff   : TKDT4096DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT4096DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT4096DE_Node;
     function GetData(const index: NativeInt): PKDT4096DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -9353,19 +9353,19 @@ type
   TKDT8192DE = class(TCoreClassObject)
   public type
     // code split
-    TKDT8192DE_Vec = array [0 .. KDT8192DE_Axis - 1] of TKDT8192DE_VecType;
+    TKDT8192DE_Vec = packed array [0 .. KDT8192DE_Axis - 1] of TKDT8192DE_VecType;
     PKDT8192DE_Vec = ^TKDT8192DE_Vec;
 
-    TKDT8192DE_DynamicVecBuffer = packed array of TKDT8192DE_Vec;
+    TKDT8192DE_DynamicVecBuffer = array of TKDT8192DE_Vec;
     PKDT8192DE_DynamicVecBuffer = ^TKDT8192DE_DynamicVecBuffer;
 
     TKDT8192DE_Source = packed record
       Buff: TKDT8192DE_Vec;
-      index: Int64;
+      index: Integer;
     end;
 
     PKDT8192DE_Source       = ^TKDT8192DE_Source;
-    TKDT8192DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT8192DE_Source) - 1] of PKDT8192DE_Source;
+    TKDT8192DE_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDT8192DE_Source) - 1] of PKDT8192DE_Source;
     PKDT8192DE_SourceBuffer = ^TKDT8192DE_SourceBuffer;
 
     TKDT8192DEyanmicSourceBuffer = packed array of PKDT8192DE_Source;
@@ -9388,7 +9388,7 @@ type
     KDStoreBuff: TKDT8192DEyanmicStoreBuffer;
     KDBuff     : TKDT8192DEyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDT8192DE_Node;
+    KDNodes    : array of PKDT8192DE_Node;
     TestBuff   : TKDT8192DE_DynamicVecBuffer;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDT8192DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT8192DE_Node;
     function GetData(const index: NativeInt): PKDT8192DE_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}

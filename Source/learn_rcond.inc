@@ -7,70 +7,70 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-function RMatrixRCond1(A: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RMatrixRCondInf(A: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SPDMatrixRCond(A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RMatrixTRRCond1(const A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RMatrixTRRCondInf(const A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function HPDMatrixRCond(A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CMatrixRCond1(A: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CMatrixRCondInf(A: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RMatrixLURCond1(const LUA: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RMatrixLURCondInf(const LUA: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SPDMatrixCholeskyRCond(const A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function HPDMatrixCholeskyRCond(const A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CMatrixLURCond1(const LUA: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CMatrixLURCondInf(const LUA: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CMatrixTRRCond1(const A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CMatrixTRRCondInf(const A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RCondThreshold(): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixRCond1(A: TLMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixRCondInf(A: TLMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SPDMatrixRCond(A: TLMatrix; N: TLInt; IsUpper: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixTRRCond1(const A: TLMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixTRRCondInf(const A: TLMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HPDMatrixRCond(A: TLComplexMatrix; N: TLInt; IsUpper: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixRCond1(A: TLComplexMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixRCondInf(A: TLComplexMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixLURCond1(const LUA: TLMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixLURCondInf(const LUA: TLMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SPDMatrixCholeskyRCond(const A: TLMatrix; N: TLInt; IsUpper: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HPDMatrixCholeskyRCond(const A: TLComplexMatrix; N: TLInt; IsUpper: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixLURCond1(const LUA: TLComplexMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixLURCondInf(const LUA: TLComplexMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixTRRCond1(const A: TLComplexMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixTRRCondInf(const A: TLComplexMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RCondThreshold(): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixRCondTRInternal(const A: TLearnFloat2DArray; N: TLearnInteger;
-  IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean; ANORM: TLearnFloat;
-  var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixRCondTRInternal(const A: TLMatrix; N: TLInt;
+  IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean; ANORM: TLFloat;
+  var RC: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure CMatrixRCondTRInternal(const A: TLearnComplex2DArray;
-  const N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean;
-  ANORM: TLearnFloat; var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixRCondTRInternal(const A: TLComplexMatrix;
+  const N: TLInt; IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean;
+  ANORM: TLFloat; var RC: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure SPDMatrixRCondCholeskyInternal(const CHA: TLearnFloat2DArray;
-  N: TLearnInteger; IsUpper: Boolean; IsNormProvided: Boolean;
-  ANORM: TLearnFloat; var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SPDMatrixRCondCholeskyInternal(const CHA: TLMatrix;
+  N: TLInt; IsUpper: Boolean; IsNormProvided: Boolean;
+  ANORM: TLFloat; var RC: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure HPDMatrixRCondCholeskyInternal(const CHA: TLearnComplex2DArray;
-  N: TLearnInteger; IsUpper: Boolean; IsNormProvided: Boolean;
-  ANORM: TLearnFloat; var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure HPDMatrixRCondCholeskyInternal(const CHA: TLComplexMatrix;
+  N: TLInt; IsUpper: Boolean; IsNormProvided: Boolean;
+  ANORM: TLFloat; var RC: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixRCondLUInternal(const LUA: TLearnFloat2DArray; N: TLearnInteger;
-  OneNorm: Boolean; IsANormProvided: Boolean; ANORM: TLearnFloat;
-  var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixRCondLUInternal(const LUA: TLMatrix; N: TLInt;
+  OneNorm: Boolean; IsANormProvided: Boolean; ANORM: TLFloat;
+  var RC: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure CMatrixRCondLUInternal(const LUA: TLearnComplex2DArray;
-  const N: TLearnInteger; OneNorm: Boolean; IsANormProvided: Boolean;
-  ANORM: TLearnFloat; var RC: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixRCondLUInternal(const LUA: TLComplexMatrix;
+  const N: TLInt; OneNorm: Boolean; IsANormProvided: Boolean;
+  ANORM: TLFloat; var RC: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixEstimateNorm(N: TLearnInteger; var V: TLearnFloatArray;
-  var X: TLearnFloatArray; var ISGN: TLearnIntegerArray; var EST: TLearnFloat;
-  var KASE: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixEstimateNorm(N: TLInt; var V: TLVec;
+  var X: TLVec; var ISGN: TLIVec; var EST: TLFloat;
+  var KASE: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure CMatrixEstimateNorm(const N: TLearnInteger; var V: TLearnComplexArray;
-  var X: TLearnComplexArray; var EST: TLearnFloat; var KASE: TLearnInteger;
-  var ISAVE: TLearnIntegerArray; var RSAVE: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixEstimateNorm(const N: TLInt; var V: TLComplexVec;
+  var X: TLComplexVec; var EST: TLFloat; var KASE: TLInt;
+  var ISAVE: TLIVec; var RSAVE: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function InternalComplexRCondSCSUM1(const X: TLearnComplexArray; N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function InternalComplexRCondICMAX1(const X: TLearnComplexArray; N: TLearnInteger): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function InternalComplexRCondSCSUM1(const X: TLComplexVec; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function InternalComplexRCondICMAX1(const X: TLComplexVec; N: TLInt): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure InternalComplexRCondSaveAll(var ISAVE: TLearnIntegerArray;
-  var RSAVE: TLearnFloatArray; var I: TLearnInteger; var ITER: TLearnInteger;
-  var J: TLearnInteger; var JLAST: TLearnInteger; var JUMP: TLearnInteger;
-  var ABSXI: TLearnFloat; var ALTSGN: TLearnFloat; var ESTOLD: TLearnFloat;
-  var TEMP: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalComplexRCondSaveAll(var ISAVE: TLIVec;
+  var RSAVE: TLVec; var I: TLInt; var ITER: TLInt;
+  var J: TLInt; var JLAST: TLInt; var JUMP: TLInt;
+  var ABSXI: TLFloat; var ALTSGN: TLFloat; var ESTOLD: TLFloat;
+  var TEMP: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure InternalComplexRCondLoadAll(var ISAVE: TLearnIntegerArray;
-  var RSAVE: TLearnFloatArray; var I: TLearnInteger; var ITER: TLearnInteger;
-  var J: TLearnInteger; var JLAST: TLearnInteger; var JUMP: TLearnInteger;
-  var ABSXI: TLearnFloat; var ALTSGN: TLearnFloat; var ESTOLD: TLearnFloat;
-  var TEMP: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalComplexRCondLoadAll(var ISAVE: TLIVec;
+  var RSAVE: TLVec; var I: TLInt; var ITER: TLInt;
+  var J: TLInt; var JLAST: TLInt; var JUMP: TLInt;
+  var ABSXI: TLFloat; var ALTSGN: TLFloat; var ESTOLD: TLFloat;
+  var TEMP: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -90,14 +90,14 @@ procedure InternalComplexRCondLoadAll(var ISAVE: TLearnIntegerArray;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function RMatrixRCond1(A: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat;
+function RMatrixRCond1(A: TLMatrix; N: TLInt): TLFloat;
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  V     : TLearnFloat;
-  Nrm   : TLearnFloat;
-  Pivots: TLearnIntegerArray;
-  T     : TLearnFloatArray;
+  I     : TLInt;
+  J     : TLInt;
+  V     : TLFloat;
+  Nrm   : TLFloat;
+  Pivots: TLIVec;
+  T     : TLVec;
 begin
   A := DynamicArrayCopy(A);
   Assert(N >= 1, 'RMatrixRCond1: N<1!');
@@ -148,13 +148,13 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function RMatrixRCondInf(A: TLearnFloat2DArray; N: TLearnInteger): TLearnFloat;
+function RMatrixRCondInf(A: TLMatrix; N: TLInt): TLFloat;
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  V     : TLearnFloat;
-  Nrm   : TLearnFloat;
-  Pivots: TLearnIntegerArray;
+  I     : TLInt;
+  J     : TLInt;
+  V     : TLFloat;
+  Nrm   : TLFloat;
+  Pivots: TLIVec;
 begin
   A := DynamicArrayCopy(A);
   Assert(N >= 1, 'RMatrixRCondInf: N<1!');
@@ -204,15 +204,15 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function SPDMatrixRCond(A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean): TLearnFloat;
+function SPDMatrixRCond(A: TLMatrix; N: TLInt; IsUpper: Boolean): TLFloat;
 var
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  J1 : TLearnInteger;
-  J2 : TLearnInteger;
-  V  : TLearnFloat;
-  Nrm: TLearnFloat;
-  T  : TLearnFloatArray;
+  I  : TLInt;
+  J  : TLInt;
+  J1 : TLInt;
+  J2 : TLInt;
+  V  : TLFloat;
+  Nrm: TLFloat;
+  T  : TLVec;
 begin
   A := DynamicArrayCopy(A);
   SetLength(T, N);
@@ -288,17 +288,17 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function RMatrixTRRCond1(const A: TLearnFloat2DArray; N: TLearnInteger;
-  IsUpper: Boolean; IsUnit: Boolean): TLearnFloat;
+function RMatrixTRRCond1(const A: TLMatrix; N: TLInt;
+  IsUpper: Boolean; IsUnit: Boolean): TLFloat;
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  V     : TLearnFloat;
-  Nrm   : TLearnFloat;
-  Pivots: TLearnIntegerArray;
-  T     : TLearnFloatArray;
-  J1    : TLearnInteger;
-  J2    : TLearnInteger;
+  I     : TLInt;
+  J     : TLInt;
+  V     : TLFloat;
+  Nrm   : TLFloat;
+  Pivots: TLIVec;
+  T     : TLVec;
+  J1    : TLInt;
+  J2    : TLInt;
 begin
   Assert(N >= 1, 'RMatrixTRRCond1: N<1!');
   SetLength(T, N);
@@ -367,16 +367,16 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function RMatrixTRRCondInf(const A: TLearnFloat2DArray; N: TLearnInteger;
-  IsUpper: Boolean; IsUnit: Boolean): TLearnFloat;
+function RMatrixTRRCondInf(const A: TLMatrix; N: TLInt;
+  IsUpper: Boolean; IsUnit: Boolean): TLFloat;
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  V     : TLearnFloat;
-  Nrm   : TLearnFloat;
-  Pivots: TLearnIntegerArray;
-  J1    : TLearnInteger;
-  J2    : TLearnInteger;
+  I     : TLInt;
+  J     : TLInt;
+  V     : TLFloat;
+  Nrm   : TLFloat;
+  Pivots: TLIVec;
+  J1    : TLInt;
+  J2    : TLInt;
 begin
   Assert(N >= 1, 'RMatrixTRRCondInf: N<1!');
   Nrm := 0;
@@ -442,16 +442,16 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function HPDMatrixRCond(A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean)
-  : TLearnFloat;
+function HPDMatrixRCond(A: TLComplexMatrix; N: TLInt; IsUpper: Boolean)
+  : TLFloat;
 var
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  J1 : TLearnInteger;
-  J2 : TLearnInteger;
-  V  : TLearnFloat;
-  Nrm: TLearnFloat;
-  T  : TLearnFloatArray;
+  I  : TLInt;
+  J  : TLInt;
+  J1 : TLInt;
+  J2 : TLInt;
+  V  : TLFloat;
+  Nrm: TLFloat;
+  T  : TLVec;
 begin
   A := DynamicArrayCopy(A);
   SetLength(T, N);
@@ -524,14 +524,14 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function CMatrixRCond1(A: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat;
+function CMatrixRCond1(A: TLComplexMatrix; N: TLInt): TLFloat;
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  V     : TLearnFloat;
-  Nrm   : TLearnFloat;
-  Pivots: TLearnIntegerArray;
-  T     : TLearnFloatArray;
+  I     : TLInt;
+  J     : TLInt;
+  V     : TLFloat;
+  Nrm   : TLFloat;
+  Pivots: TLIVec;
+  T     : TLVec;
 begin
   A := DynamicArrayCopy(A);
   Assert(N >= 1, 'CMatrixRCond1: N<1!');
@@ -581,13 +581,13 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function CMatrixRCondInf(A: TLearnComplex2DArray; N: TLearnInteger): TLearnFloat;
+function CMatrixRCondInf(A: TLComplexMatrix; N: TLInt): TLFloat;
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  V     : TLearnFloat;
-  Nrm   : TLearnFloat;
-  Pivots: TLearnIntegerArray;
+  I     : TLInt;
+  J     : TLInt;
+  V     : TLFloat;
+  Nrm   : TLFloat;
+  Pivots: TLIVec;
 begin
   A := DynamicArrayCopy(A);
   Assert(N >= 1, 'CMatrixRCondInf: N<1!');
@@ -627,10 +627,10 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function RMatrixLURCond1(const LUA: TLearnFloat2DArray; N: TLearnInteger)
-  : TLearnFloat;
+function RMatrixLURCond1(const LUA: TLMatrix; N: TLInt)
+  : TLFloat;
 var
-  V: TLearnFloat;
+  V: TLFloat;
 begin
   RMatrixRCondLUInternal(LUA, N, True, False, 0, V);
   Result := V;
@@ -654,10 +654,10 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function RMatrixLURCondInf(const LUA: TLearnFloat2DArray; N: TLearnInteger)
-  : TLearnFloat;
+function RMatrixLURCondInf(const LUA: TLMatrix; N: TLInt)
+  : TLFloat;
 var
-  V: TLearnFloat;
+  V: TLFloat;
 begin
   RMatrixRCondLUInternal(LUA, N, False, False, 0, V);
   Result := V;
@@ -685,10 +685,10 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function SPDMatrixCholeskyRCond(const A: TLearnFloat2DArray; N: TLearnInteger;
-  IsUpper: Boolean): TLearnFloat;
+function SPDMatrixCholeskyRCond(const A: TLMatrix; N: TLInt;
+  IsUpper: Boolean): TLFloat;
 var
-  V: TLearnFloat;
+  V: TLFloat;
 begin
   SPDMatrixRCondCholeskyInternal(A, N, IsUpper, False, 0, V);
   Result := V;
@@ -717,10 +717,10 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function HPDMatrixCholeskyRCond(const A: TLearnComplex2DArray; N: TLearnInteger;
-  IsUpper: Boolean): TLearnFloat;
+function HPDMatrixCholeskyRCond(const A: TLComplexMatrix; N: TLInt;
+  IsUpper: Boolean): TLFloat;
 var
-  V: TLearnFloat;
+  V: TLFloat;
 begin
   HPDMatrixRCondCholeskyInternal(A, N, IsUpper, False, 0, V);
   Result := V;
@@ -743,10 +743,10 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function CMatrixLURCond1(const LUA: TLearnComplex2DArray; N: TLearnInteger)
-  : TLearnFloat;
+function CMatrixLURCond1(const LUA: TLComplexMatrix; N: TLInt)
+  : TLFloat;
 var
-  V: TLearnFloat;
+  V: TLFloat;
 begin
   Assert(N >= 1, 'CMatrixLURCond1: N<1!');
   CMatrixRCondLUInternal(LUA, N, True, False, 0.0, V);
@@ -771,10 +771,10 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function CMatrixLURCondInf(const LUA: TLearnComplex2DArray; N: TLearnInteger)
-  : TLearnFloat;
+function CMatrixLURCondInf(const LUA: TLComplexMatrix; N: TLInt)
+  : TLFloat;
 var
-  V: TLearnFloat;
+  V: TLFloat;
 begin
   Assert(N >= 1, 'CMatrixLURCondInf: N<1!');
   CMatrixRCondLUInternal(LUA, N, False, False, 0.0, V);
@@ -799,17 +799,17 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function CMatrixTRRCond1(const A: TLearnComplex2DArray; N: TLearnInteger;
-  IsUpper: Boolean; IsUnit: Boolean): TLearnFloat;
+function CMatrixTRRCond1(const A: TLComplexMatrix; N: TLInt;
+  IsUpper: Boolean; IsUnit: Boolean): TLFloat;
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  V     : TLearnFloat;
-  Nrm   : TLearnFloat;
-  Pivots: TLearnIntegerArray;
-  T     : TLearnFloatArray;
-  J1    : TLearnInteger;
-  J2    : TLearnInteger;
+  I     : TLInt;
+  J     : TLInt;
+  V     : TLFloat;
+  Nrm   : TLFloat;
+  Pivots: TLIVec;
+  T     : TLVec;
+  J1    : TLInt;
+  J2    : TLInt;
 begin
   Assert(N >= 1, 'RMatrixTRRCond1: N<1!');
   SetLength(T, N);
@@ -877,16 +877,16 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function CMatrixTRRCondInf(const A: TLearnComplex2DArray; N: TLearnInteger;
-  IsUpper: Boolean; IsUnit: Boolean): TLearnFloat;
+function CMatrixTRRCondInf(const A: TLComplexMatrix; N: TLInt;
+  IsUpper: Boolean; IsUnit: Boolean): TLFloat;
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  V     : TLearnFloat;
-  Nrm   : TLearnFloat;
-  Pivots: TLearnIntegerArray;
-  J1    : TLearnInteger;
-  J2    : TLearnInteger;
+  I     : TLInt;
+  J     : TLInt;
+  V     : TLFloat;
+  Nrm   : TLFloat;
+  Pivots: TLIVec;
+  J1    : TLInt;
+  J2    : TLInt;
 begin
   Assert(N >= 1, 'RMatrixTRRCondInf: N<1!');
   Nrm := 0;
@@ -931,7 +931,7 @@ end;
 
   Threshold must be far enough from underflow, at least Sqr(Threshold) must be greater than underflow.
   ************************************************************************ *)
-function RCondThreshold(): TLearnFloat;
+function RCondThreshold(): TLFloat;
 begin
   Result := Sqrt(Sqrt(MinRealNumber));
 end;
@@ -939,24 +939,24 @@ end;
 (* ************************************************************************
   Internal subroutine for condition number estimation
   ************************************************************************ *)
-procedure RMatrixRCondTRInternal(const A: TLearnFloat2DArray; N: TLearnInteger;
-  IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean; ANORM: TLearnFloat;
-  var RC: TLearnFloat);
+procedure RMatrixRCondTRInternal(const A: TLMatrix; N: TLInt;
+  IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean; ANORM: TLFloat;
+  var RC: TLFloat);
 var
-  EX       : TLearnFloatArray;
-  EV       : TLearnFloatArray;
-  IWORK    : TLearnIntegerArray;
-  Tmp      : TLearnFloatArray;
-  V        : TLearnFloat;
-  I        : TLearnInteger;
-  J        : TLearnInteger;
-  KASE     : TLearnInteger;
-  KASE1    : TLearnInteger;
-  J1       : TLearnInteger;
-  J2       : TLearnInteger;
-  AINVNM   : TLearnFloat;
-  MaxGrowth: TLearnFloat;
-  S        : TLearnFloat;
+  EX       : TLVec;
+  EV       : TLVec;
+  IWORK    : TLIVec;
+  Tmp      : TLVec;
+  V        : TLFloat;
+  I        : TLInt;
+  J        : TLInt;
+  KASE     : TLInt;
+  KASE1    : TLInt;
+  J1       : TLInt;
+  J2       : TLInt;
+  AINVNM   : TLFloat;
+  MaxGrowth: TLFloat;
+  S        : TLFloat;
   MUpper   : Boolean;
   MTrans   : Boolean;
   Munit    : Boolean;
@@ -1122,26 +1122,26 @@ end;
 (* ************************************************************************
   Condition number estimation
   ************************************************************************ *)
-procedure CMatrixRCondTRInternal(const A: TLearnComplex2DArray;
-  const N: TLearnInteger; IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean;
-  ANORM: TLearnFloat; var RC: TLearnFloat);
+procedure CMatrixRCondTRInternal(const A: TLComplexMatrix;
+  const N: TLInt; IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean;
+  ANORM: TLFloat; var RC: TLFloat);
 var
-  EX       : TLearnComplexArray;
-  CWORK2   : TLearnComplexArray;
-  CWORK3   : TLearnComplexArray;
-  CWORK4   : TLearnComplexArray;
-  ISAVE    : TLearnIntegerArray;
-  RSAVE    : TLearnFloatArray;
-  KASE     : TLearnInteger;
-  KASE1    : TLearnInteger;
-  AINVNM   : TLearnFloat;
-  V        : TLearnComplex;
-  I        : TLearnInteger;
-  J        : TLearnInteger;
-  J1       : TLearnInteger;
-  J2       : TLearnInteger;
-  S        : TLearnFloat;
-  MaxGrowth: TLearnFloat;
+  EX       : TLComplexVec;
+  CWORK2   : TLComplexVec;
+  CWORK3   : TLComplexVec;
+  CWORK4   : TLComplexVec;
+  ISAVE    : TLIVec;
+  RSAVE    : TLVec;
+  KASE     : TLInt;
+  KASE1    : TLInt;
+  AINVNM   : TLFloat;
+  V        : TLComplex;
+  I        : TLInt;
+  J        : TLInt;
+  J1       : TLInt;
+  J2       : TLInt;
+  S        : TLFloat;
+  MaxGrowth: TLFloat;
 begin
 
   //
@@ -1303,21 +1303,21 @@ end;
 (* ************************************************************************
   Internal subroutine for condition number estimation
   ************************************************************************ *)
-procedure SPDMatrixRCondCholeskyInternal(const CHA: TLearnFloat2DArray;
-  N: TLearnInteger; IsUpper: Boolean; IsNormProvided: Boolean;
-  ANORM: TLearnFloat; var RC: TLearnFloat);
+procedure SPDMatrixRCondCholeskyInternal(const CHA: TLMatrix;
+  N: TLInt; IsUpper: Boolean; IsNormProvided: Boolean;
+  ANORM: TLFloat; var RC: TLFloat);
 var
-  I        : TLearnInteger;
-  J        : TLearnInteger;
-  KASE     : TLearnInteger;
-  AINVNM   : TLearnFloat;
-  EX       : TLearnFloatArray;
-  EV       : TLearnFloatArray;
-  Tmp      : TLearnFloatArray;
-  IWORK    : TLearnIntegerArray;
-  SA       : TLearnFloat;
-  V        : TLearnFloat;
-  MaxGrowth: TLearnFloat;
+  I        : TLInt;
+  J        : TLInt;
+  KASE     : TLInt;
+  AINVNM   : TLFloat;
+  EX       : TLVec;
+  EV       : TLVec;
+  Tmp      : TLVec;
+  IWORK    : TLIVec;
+  SA       : TLFloat;
+  V        : TLFloat;
+  MaxGrowth: TLFloat;
 begin
   Assert(N >= 1);
   SetLength(Tmp, N);
@@ -1548,24 +1548,24 @@ end;
 (* ************************************************************************
   Internal subroutine for condition number estimation
   ************************************************************************ *)
-procedure HPDMatrixRCondCholeskyInternal(const CHA: TLearnComplex2DArray;
-  N: TLearnInteger; IsUpper: Boolean; IsNormProvided: Boolean;
-  ANORM: TLearnFloat; var RC: TLearnFloat);
+procedure HPDMatrixRCondCholeskyInternal(const CHA: TLComplexMatrix;
+  N: TLInt; IsUpper: Boolean; IsNormProvided: Boolean;
+  ANORM: TLFloat; var RC: TLFloat);
 var
-  ISAVE    : TLearnIntegerArray;
-  RSAVE    : TLearnFloatArray;
-  EX       : TLearnComplexArray;
-  EV       : TLearnComplexArray;
-  Tmp      : TLearnComplexArray;
-  KASE     : TLearnInteger;
-  AINVNM   : TLearnFloat;
-  V        : TLearnComplex;
-  I        : TLearnInteger;
-  J        : TLearnInteger;
-  SA       : TLearnFloat;
-  MaxGrowth: TLearnFloat;
-  i_       : TLearnInteger;
-  i1_      : TLearnInteger;
+  ISAVE    : TLIVec;
+  RSAVE    : TLVec;
+  EX       : TLComplexVec;
+  EV       : TLComplexVec;
+  Tmp      : TLComplexVec;
+  KASE     : TLInt;
+  AINVNM   : TLFloat;
+  V        : TLComplex;
+  I        : TLInt;
+  J        : TLInt;
+  SA       : TLFloat;
+  MaxGrowth: TLFloat;
+  i_       : TLInt;
+  i1_      : TLInt;
 begin
   Assert(N >= 1);
   SetLength(Tmp, N);
@@ -1834,23 +1834,23 @@ end;
 (* ************************************************************************
   Internal subroutine for condition number estimation
   ************************************************************************ *)
-procedure RMatrixRCondLUInternal(const LUA: TLearnFloat2DArray; N: TLearnInteger;
-  OneNorm: Boolean; IsANormProvided: Boolean; ANORM: TLearnFloat;
-  var RC: TLearnFloat);
+procedure RMatrixRCondLUInternal(const LUA: TLMatrix; N: TLInt;
+  OneNorm: Boolean; IsANormProvided: Boolean; ANORM: TLFloat;
+  var RC: TLFloat);
 var
-  EX       : TLearnFloatArray;
-  EV       : TLearnFloatArray;
-  IWORK    : TLearnIntegerArray;
-  Tmp      : TLearnFloatArray;
-  V        : TLearnFloat;
-  I        : TLearnInteger;
-  J        : TLearnInteger;
-  KASE     : TLearnInteger;
-  KASE1    : TLearnInteger;
-  AINVNM   : TLearnFloat;
-  MaxGrowth: TLearnFloat;
-  SU       : TLearnFloat;
-  SL       : TLearnFloat;
+  EX       : TLVec;
+  EV       : TLVec;
+  IWORK    : TLIVec;
+  Tmp      : TLVec;
+  V        : TLFloat;
+  I        : TLInt;
+  J        : TLInt;
+  KASE     : TLInt;
+  KASE1    : TLInt;
+  AINVNM   : TLFloat;
+  MaxGrowth: TLFloat;
+  SU       : TLFloat;
+  SL       : TLFloat;
   MUpper   : Boolean;
   MTrans   : Boolean;
   Munit    : Boolean;
@@ -2116,27 +2116,27 @@ end;
 (* ************************************************************************
   Condition number estimation
   ************************************************************************ *)
-procedure CMatrixRCondLUInternal(const LUA: TLearnComplex2DArray;
-  const N: TLearnInteger; OneNorm: Boolean; IsANormProvided: Boolean;
-  ANORM: TLearnFloat; var RC: TLearnFloat);
+procedure CMatrixRCondLUInternal(const LUA: TLComplexMatrix;
+  const N: TLInt; OneNorm: Boolean; IsANormProvided: Boolean;
+  ANORM: TLFloat; var RC: TLFloat);
 var
-  EX       : TLearnComplexArray;
-  CWORK2   : TLearnComplexArray;
-  CWORK3   : TLearnComplexArray;
-  CWORK4   : TLearnComplexArray;
-  ISAVE    : TLearnIntegerArray;
-  RSAVE    : TLearnFloatArray;
-  KASE     : TLearnInteger;
-  KASE1    : TLearnInteger;
-  AINVNM   : TLearnFloat;
-  V        : TLearnComplex;
-  I        : TLearnInteger;
-  J        : TLearnInteger;
-  SU       : TLearnFloat;
-  SL       : TLearnFloat;
-  MaxGrowth: TLearnFloat;
-  i_       : TLearnInteger;
-  i1_      : TLearnInteger;
+  EX       : TLComplexVec;
+  CWORK2   : TLComplexVec;
+  CWORK3   : TLComplexVec;
+  CWORK4   : TLComplexVec;
+  ISAVE    : TLIVec;
+  RSAVE    : TLVec;
+  KASE     : TLInt;
+  KASE1    : TLInt;
+  AINVNM   : TLFloat;
+  V        : TLComplex;
+  I        : TLInt;
+  J        : TLInt;
+  SU       : TLFloat;
+  SL       : TLFloat;
+  MaxGrowth: TLFloat;
+  i_       : TLInt;
+  i1_      : TLInt;
 begin
   if N <= 0 then
     begin
@@ -2414,21 +2414,21 @@ end;
 (* ************************************************************************
   Internal subroutine for matrix norm estimation
   ************************************************************************ *)
-procedure RMatrixEstimateNorm(N: TLearnInteger; var V: TLearnFloatArray;
-  var X: TLearnFloatArray; var ISGN: TLearnIntegerArray; var EST: TLearnFloat;
-  var KASE: TLearnInteger);
+procedure RMatrixEstimateNorm(N: TLInt; var V: TLVec;
+  var X: TLVec; var ISGN: TLIVec; var EST: TLFloat;
+  var KASE: TLInt);
 var
-  ITMAX    : TLearnInteger;
-  I        : TLearnInteger;
-  T        : TLearnFloat;
+  ITMAX    : TLInt;
+  I        : TLInt;
+  T        : TLFloat;
   Flg      : Boolean;
-  PosITER  : TLearnInteger;
-  PosJ     : TLearnInteger;
-  PosJLAST : TLearnInteger;
-  PosJUMP  : TLearnInteger;
-  PosALTSGN: TLearnInteger;
-  PosESTOLD: TLearnInteger;
-  PosTEMP  : TLearnInteger;
+  PosITER  : TLInt;
+  PosJ     : TLInt;
+  PosJLAST : TLInt;
+  PosJUMP  : TLInt;
+  PosALTSGN: TLInt;
+  PosESTOLD: TLInt;
+  PosTEMP  : TLInt;
 begin
   ITMAX := 5;
   PosALTSGN := N + 1;
@@ -2665,22 +2665,22 @@ begin
     end;
 end;
 
-procedure CMatrixEstimateNorm(const N: TLearnInteger; var V: TLearnComplexArray;
-  var X: TLearnComplexArray; var EST: TLearnFloat; var KASE: TLearnInteger;
-  var ISAVE: TLearnIntegerArray; var RSAVE: TLearnFloatArray);
+procedure CMatrixEstimateNorm(const N: TLInt; var V: TLComplexVec;
+  var X: TLComplexVec; var EST: TLFloat; var KASE: TLInt;
+  var ISAVE: TLIVec; var RSAVE: TLVec);
 var
-  ITMAX : TLearnInteger;
-  I     : TLearnInteger;
-  ITER  : TLearnInteger;
-  J     : TLearnInteger;
-  JLAST : TLearnInteger;
-  JUMP  : TLearnInteger;
-  ABSXI : TLearnFloat;
-  ALTSGN: TLearnFloat;
-  ESTOLD: TLearnFloat;
-  SAFMIN: TLearnFloat;
-  TEMP  : TLearnFloat;
-  i_    : TLearnInteger;
+  ITMAX : TLInt;
+  I     : TLInt;
+  ITER  : TLInt;
+  J     : TLInt;
+  JLAST : TLInt;
+  JUMP  : TLInt;
+  ABSXI : TLFloat;
+  ALTSGN: TLFloat;
+  ESTOLD: TLFloat;
+  SAFMIN: TLFloat;
+  TEMP  : TLFloat;
+  i_    : TLInt;
 begin
 
   //
@@ -2898,10 +2898,10 @@ begin
     end;
 end;
 
-function InternalComplexRCondSCSUM1(const X: TLearnComplexArray; N: TLearnInteger)
-  : TLearnFloat;
+function InternalComplexRCondSCSUM1(const X: TLComplexVec; N: TLInt)
+  : TLFloat;
 var
-  I: TLearnInteger;
+  I: TLInt;
 begin
   Result := 0;
   I := 1;
@@ -2912,11 +2912,11 @@ begin
     end;
 end;
 
-function InternalComplexRCondICMAX1(const X: TLearnComplexArray; N: TLearnInteger)
-  : TLearnInteger;
+function InternalComplexRCondICMAX1(const X: TLComplexVec; N: TLInt)
+  : TLInt;
 var
-  I: TLearnInteger;
-  M: TLearnFloat;
+  I: TLInt;
+  M: TLFloat;
 begin
   Result := 1;
   M := AbsComplex(X[1]);
@@ -2932,11 +2932,11 @@ begin
     end;
 end;
 
-procedure InternalComplexRCondSaveAll(var ISAVE: TLearnIntegerArray;
-  var RSAVE: TLearnFloatArray; var I: TLearnInteger; var ITER: TLearnInteger;
-  var J: TLearnInteger; var JLAST: TLearnInteger; var JUMP: TLearnInteger;
-  var ABSXI: TLearnFloat; var ALTSGN: TLearnFloat; var ESTOLD: TLearnFloat;
-  var TEMP: TLearnFloat);
+procedure InternalComplexRCondSaveAll(var ISAVE: TLIVec;
+  var RSAVE: TLVec; var I: TLInt; var ITER: TLInt;
+  var J: TLInt; var JLAST: TLInt; var JUMP: TLInt;
+  var ABSXI: TLFloat; var ALTSGN: TLFloat; var ESTOLD: TLFloat;
+  var TEMP: TLFloat);
 begin
   ISAVE[0] := I;
   ISAVE[1] := ITER;
@@ -2949,11 +2949,11 @@ begin
   RSAVE[3] := TEMP;
 end;
 
-procedure InternalComplexRCondLoadAll(var ISAVE: TLearnIntegerArray;
-  var RSAVE: TLearnFloatArray; var I: TLearnInteger; var ITER: TLearnInteger;
-  var J: TLearnInteger; var JLAST: TLearnInteger; var JUMP: TLearnInteger;
-  var ABSXI: TLearnFloat; var ALTSGN: TLearnFloat; var ESTOLD: TLearnFloat;
-  var TEMP: TLearnFloat);
+procedure InternalComplexRCondLoadAll(var ISAVE: TLIVec;
+  var RSAVE: TLVec; var I: TLInt; var ITER: TLInt;
+  var J: TLInt; var JLAST: TLInt; var JUMP: TLInt;
+  var ABSXI: TLFloat; var ALTSGN: TLFloat; var ESTOLD: TLFloat;
+  var TEMP: TLFloat);
 begin
   I := ISAVE[0];
   ITER := ISAVE[1];

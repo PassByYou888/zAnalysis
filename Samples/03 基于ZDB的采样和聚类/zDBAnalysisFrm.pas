@@ -50,7 +50,7 @@ procedure TForm1.CreateRandDataButtonClick(Sender: TObject);
 var
   i         : Integer;
   vl        : THashVariantList;
-  OriginBuff: TLearnFloat2DArray;
+  OriginBuff: TLMatrix;
 
   kBuff       : TKMFloat2DArray;
   KResultArray: TKMFloat2DArray;
@@ -157,7 +157,7 @@ begin
   SetLength(kBuff, length(OriginBuff), 1);
   for i := 0 to length(kBuff) - 1 do
       kBuff[i][0] := OriginBuff[i][2];
-  lr1.KMeans(kBuff, 1, 5, KResultArray, kResultIndex);
+  KMeans(kBuff, 1, 5, KResultArray, kResultIndex);
   for i := 0 to 5 - 1 do
       lr1.AddMemory([KResultArray[0, i]], [i, kResultIndex[i]]);
   lr1.Train_MT;
@@ -169,7 +169,7 @@ begin
       kBuff[i][0] := OriginBuff[i][1];
       kBuff[i][1] := OriginBuff[i][2];
     end;
-  lr2.KMeans(kBuff, 2, 10, KResultArray, kResultIndex);
+  KMeans(kBuff, 2, 10, KResultArray, kResultIndex);
   for i := 0 to 10 - 1 do
       lr2.AddMemory([KResultArray[0, i], KResultArray[1, i]], [i, kResultIndex[i]]);
   lr2.Train_MT;
@@ -182,7 +182,7 @@ begin
       kBuff[i][1] := OriginBuff[i][1];
       kBuff[i][2] := OriginBuff[i][2];
     end;
-  lr3.KMeans(kBuff, 3, 5, KResultArray, kResultIndex);
+  KMeans(kBuff, 3, 5, KResultArray, kResultIndex);
   for i := 0 to 5 - 1 do
       lr3.AddMemory([KResultArray[0, i], KResultArray[1, i], KResultArray[2, i]], [i, kResultIndex[i]]);
   lr3.Train_MT;
@@ -191,7 +191,7 @@ begin
   SetLength(kBuff, length(OriginBuff), 1);
   for i := 0 to length(kBuff) - 1 do
       kBuff[i][0] := OriginBuff[i][0];
-  lr4.KMeans(kBuff, 1, 5, KResultArray, kResultIndex);
+  KMeans(kBuff, 1, 5, KResultArray, kResultIndex);
   for i := 0 to 5 - 1 do
       lr4.AddMemory([KResultArray[0, i]], [i, kResultIndex[i]]);
   lr4.Train_MT;
@@ -220,13 +220,12 @@ begin
 
   ze.WaitQuery(procedure(var qState: TQueryState)
     var
-      v, r: TLearnVector;
+      v, r: TLVec;
     begin
       v := [ze.vl[qState.StorePos]['consume']];
       r := [];
       lr1.process(@v, @r);
       buff[Round(r[0])].Add(Format('年龄:%d 每月消费 %f 万元', [
-
         Round(ze.vl[qState.StorePos]['age']),
         (Double(ze.vl[qState.StorePos]['consume']) * 0.0001)
         ]));
@@ -256,7 +255,7 @@ begin
 
   ze.WaitQuery(procedure(var qState: TQueryState)
     var
-      v, r: TLearnVector;
+      v, r: TLVec;
     begin
       v := [ze.vl[qState.StorePos]['deposit'], ze.vl[qState.StorePos]['consume']];
       r := [];
@@ -293,7 +292,7 @@ begin
 
   ze.WaitQuery(procedure(var qState: TQueryState)
     var
-      v, r: TLearnVector;
+      v, r: TLVec;
     begin
       v := [ze.vl[qState.StorePos]['age']];
       r := [];
@@ -329,7 +328,7 @@ begin
 
   ze.WaitQuery(procedure(var qState: TQueryState)
     var
-      v, r: TLearnVector;
+      v, r: TLVec;
     begin
       v := [ze.vl[qState.StorePos]['age'], ze.vl[qState.StorePos]['deposit'], ze.vl[qState.StorePos]['consume']];
       r := [];
@@ -357,7 +356,7 @@ end;
 
 procedure TForm1.Button6Click(Sender: TObject);
 var
-  v, r: TLearnVector;
+  v, r: TLVec;
 begin
   v := [umlStrToFloat(Edit1.text, 0)];
   r := [];
@@ -384,34 +383,34 @@ begin
   // ltKDT是k维线性空间的切割算法，它不能推理，它的作用是快速找到临近度最高的k维入口
   // 参数 AInLen: 输入的数组数据长度，lr1是学习消费能力，我们只输入1项数值
   // 参数 AOutLen:输出的数组数据长度，lr1是输出2个数值，第一是输出聚类索引，第二个是输出数据库索引
-  lr1 := TLearn.Create(TLearnType.ltKDT, 1, 2);
+  lr1 := TLearn.CreateRegression(TLearnType.ltKDT, 1, 2);
 
   // lr2          这是做存款+消费能力统计的机器人
   // 参数 lt:     机器学习的方式，我们在这里使用ltKDT
   // ltKDT是k维线性空间的切割算法，它不能推理，它的作用是快速找到临近度最高的k维入口
   // 参数 AInLen: 输入的数组数据长度，lr2是学习存款和消费能力，我们输入2项数值
   // 参数 AOutLen:输出的数组数据长度，lr2是输出2个数值，第一是输出聚类索引，第二个是输出数据库索引
-  lr2 := TLearn.Create(TLearnType.ltKDT, 2, 2);
+  lr2 := TLearn.CreateRegression(TLearnType.ltKDT, 2, 2);
 
   // lr3          这是做年龄+存款+消费能力统计的机器人
   // 参数 lt:     机器学习的方式，我们在这里使用ltKDT
   // ltKDT是k维线性空间的切割算法，它不能推理，它的作用是快速找到临近度最高的k维入口
   // 参数 AInLen: 输入的数组数据长度，lr3是学习年龄,存款,消费能力，我们输入3项数值
   // 参数 AOutLen:输出的数组数据长度，lr3是输出2个数值，第一是输出聚类索引，第二个是输出数据库索引
-  lr3 := TLearn.Create(TLearnType.ltKDT, 3, 2);
+  lr3 := TLearn.CreateRegression(TLearnType.ltKDT, 3, 2);
 
   // lr3          这是做年龄归类统计的机器人
   // 参数 lt:     机器学习的方式，我们在这里使用ltKDT
   // ltKDT是k维线性空间的切割算法，它不能推理，它的作用是快速找到临近度最高的k维入口
   // 参数 AInLen: 输入的数组数据长度，lr4是学习年龄，我们输入1项数值
   // 参数 AOutLen:输出的数组数据长度，lr4是输出2个数值，第一是输出聚类索引，第二个是输出数据库索引
-  lr4 := TLearn.Create(TLearnType.ltKDT, 1, 2);
+  lr4 := TLearn.CreateRegression(TLearnType.ltKDT, 1, 2);
 
   // lr5          这是做年龄推理的机器人，我们输入一项随意数值作为年龄，lr5会自动推理出这个年龄应该有的存款的消费能力
   // ltLBFGS_Ensemble_MT  是BFGS的神经网络集成，神经网络集成化算法是先将数据按极值归类后再学习(凡是后缀是_MT的，所有的学习都是并行化进行的，在HPC服务器上，它的效果非常好)
   // 神经网络集成的相关技术，请自行上网学习
   // lr5 与前面的k维线性空间学习方式不一样，它是将数据库内容全部进行记忆，然后再学习
-  lr5 := TLearn.Create(TLearnType.ltLBFGS_Ensemble_MT, 1, 2);
+  lr5 := TLearn.CreateRegression2(TLearnType.ltLM_Ensemble, 1, 2);
 
   CreateRandDataButtonClick(CreateRandDataButton);
 end;

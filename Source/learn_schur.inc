@@ -9,25 +9,25 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 
-function UpperHessenbergSchurDecomposition(var H: TLearnFloat2DArray; N: TLearnInteger; var S: TLearnFloat2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UpperHessenbergSchurDecomposition(var H: TLMatrix; N: TLInt; var S: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure InternalSchurDecomposition(var H: TLearnFloat2DArray; N: TLearnInteger; TNeeded: TLearnInteger; ZNeeded: TLearnInteger;
-  var WR: TLearnFloatArray; var WI: TLearnFloatArray; var Z: TLearnFloat2DArray; var INFO: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalSchurDecomposition(var H: TLMatrix; N: TLInt; TNeeded: TLInt; ZNeeded: TLInt;
+  var WR: TLVec; var WI: TLVec; var Z: TLMatrix; var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure InternalAuxSchur(WANTT: Boolean; WANTZ: Boolean; N: TLearnInteger;
-  ILO: TLearnInteger; IHI: TLearnInteger; var H: TLearnFloat2DArray;
-  var WR: TLearnFloatArray; var WI: TLearnFloatArray; ILOZ: TLearnInteger;
-  IHIZ: TLearnInteger; var Z: TLearnFloat2DArray; var WORK: TLearnFloatArray;
-  var WORKV3: TLearnFloatArray; var WORKC1: TLearnFloatArray; var WORKS1: TLearnFloatArray;
-  var INFO: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalAuxSchur(WANTT: Boolean; WANTZ: Boolean; N: TLInt;
+  ILO: TLInt; IHI: TLInt; var H: TLMatrix;
+  var WR: TLVec; var WI: TLVec; ILOZ: TLInt;
+  IHIZ: TLInt; var Z: TLMatrix; var WORK: TLVec;
+  var WORKV3: TLVec; var WORKC1: TLVec; var WORKS1: TLVec;
+  var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure Aux2X2Schur(var A: TLearnFloat; var B: TLearnFloat;
-  var C: TLearnFloat; var D: TLearnFloat; var RT1R: TLearnFloat;
-  var RT1I: TLearnFloat; var RT2R: TLearnFloat; var RT2I: TLearnFloat;
-  var CS: TLearnFloat; var SN: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure Aux2X2Schur(var A: TLFloat; var B: TLFloat;
+  var C: TLFloat; var D: TLFloat; var RT1R: TLFloat;
+  var RT1I: TLFloat; var RT2R: TLFloat; var RT2I: TLFloat;
+  var CS: TLFloat; var SN: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function ExtSchurSign(A: TLearnFloat; B: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ExtSchurSignToOne(B: TLearnFloat): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ExtSchurSign(A: TLFloat; B: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ExtSchurSignToOne(B: TLFloat): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -73,62 +73,62 @@ function ExtSchurSignToOne(B: TLearnFloat): TLearnInteger; forward; {$IFDEF INLI
 
   Algorithm implemented on the basis of subroutine DHSEQR (LAPACK 3.0 library).
   ************************************************************************ *)
-function UpperHessenbergSchurDecomposition(var H: TLearnFloat2DArray;
-  N: TLearnInteger; var S: TLearnFloat2DArray): Boolean;
+function UpperHessenbergSchurDecomposition(var H: TLMatrix;
+  N: TLInt; var S: TLMatrix): Boolean;
 var
-  WI  : TLearnFloatArray;
-  WR  : TLearnFloatArray;
-  INFO: TLearnInteger;
+  WI  : TLVec;
+  WR  : TLVec;
+  INFO: TLInt;
 begin
   InternalSchurDecomposition(H, N, 1, 2, WR, WI, S, INFO);
   Result := INFO = 0;
 end;
 
-procedure InternalSchurDecomposition(var H: TLearnFloat2DArray; N: TLearnInteger; TNeeded: TLearnInteger; ZNeeded: TLearnInteger;
-  var WR: TLearnFloatArray; var WI: TLearnFloatArray; var Z: TLearnFloat2DArray; var INFO: TLearnInteger);
+procedure InternalSchurDecomposition(var H: TLMatrix; N: TLInt; TNeeded: TLInt; ZNeeded: TLInt;
+  var WR: TLVec; var WI: TLVec; var Z: TLMatrix; var INFO: TLInt);
 var
-  WORK    : TLearnFloatArray;
-  I       : TLearnInteger;
-  I1      : TLearnInteger;
-  I2      : TLearnInteger;
-  IERR    : TLearnInteger;
-  II      : TLearnInteger;
-  ITEMP   : TLearnInteger;
-  ITN     : TLearnInteger;
-  ITS     : TLearnInteger;
-  J       : TLearnInteger;
-  K       : TLearnInteger;
-  L       : TLearnInteger;
-  MAXB    : TLearnInteger;
-  NR      : TLearnInteger;
-  NS      : TLearnInteger;
-  NV      : TLearnInteger;
-  ABSW    : TLearnFloat;
-  OVFL    : TLearnFloat;
-  SMLNUM  : TLearnFloat;
-  TAU     : TLearnFloat;
-  TEMP    : TLearnFloat;
-  TST1    : TLearnFloat;
-  ULP     : TLearnFloat;
-  UNFL    : TLearnFloat;
-  S       : TLearnFloat2DArray;
-  V       : TLearnFloatArray;
-  VV      : TLearnFloatArray;
-  WORKC1  : TLearnFloatArray;
-  WORKS1  : TLearnFloatArray;
-  WORKV3  : TLearnFloatArray;
-  TmpWR   : TLearnFloatArray;
-  TmpWI   : TLearnFloatArray;
+  WORK    : TLVec;
+  I       : TLInt;
+  I1      : TLInt;
+  I2      : TLInt;
+  IERR    : TLInt;
+  II      : TLInt;
+  ITEMP   : TLInt;
+  ITN     : TLInt;
+  ITS     : TLInt;
+  J       : TLInt;
+  K       : TLInt;
+  L       : TLInt;
+  MAXB    : TLInt;
+  NR      : TLInt;
+  NS      : TLInt;
+  NV      : TLInt;
+  ABSW    : TLFloat;
+  OVFL    : TLFloat;
+  SMLNUM  : TLFloat;
+  TAU     : TLFloat;
+  TEMP    : TLFloat;
+  TST1    : TLFloat;
+  ULP     : TLFloat;
+  UNFL    : TLFloat;
+  S       : TLMatrix;
+  V       : TLVec;
+  VV      : TLVec;
+  WORKC1  : TLVec;
+  WORKS1  : TLVec;
+  WORKV3  : TLVec;
+  TmpWR   : TLVec;
+  TmpWI   : TLVec;
   INITZ   : Boolean;
   WANTT   : Boolean;
   WANTZ   : Boolean;
-  CNST    : TLearnFloat;
+  CNST    : TLFloat;
   FailFlag: Boolean;
-  P1      : TLearnInteger;
-  P2      : TLearnInteger;
-  VT      : TLearnFloat;
-  i_      : TLearnInteger;
-  i1_     : TLearnInteger;
+  P1      : TLInt;
+  P2      : TLInt;
+  VT      : TLFloat;
+  i_      : TLInt;
+  i1_     : TLInt;
 begin
 
   //
@@ -230,7 +230,7 @@ begin
     begin
 
       //
-      // Use the standard TLearnFloat-shift algorithm
+      // Use the standard TLFloat-shift algorithm
       //
       InternalAuxSchur(WANTT, WANTZ, N, 1, N, H, WR, WI, 1, N, Z, WORK, WORKV3, WORKC1, WORKS1, INFO);
 
@@ -348,7 +348,7 @@ begin
         begin
 
           //
-          // Look for a TLearnFloat small subdiagonal element.
+          // Look for a TLFloat small subdiagonal element.
           //
           K := I;
           while K >= L + 1 do
@@ -591,7 +591,7 @@ begin
 
       //
       // A submatrix of order <= MAXB in rows and columns L to I has split
-      // off. Use the TLearnFloat-shift QR algorithm to handle it.
+      // off. Use the TLFloat-shift QR algorithm to handle it.
       //
       InternalAuxSchur(WANTT, WANTZ, N, L, I, H, WR, WI, 1, N, Z, WORK, WORKV3,
         WORKC1, WORKS1, INFO);
@@ -609,65 +609,65 @@ begin
     end;
 end;
 
-procedure InternalAuxSchur(WANTT: Boolean; WANTZ: Boolean; N: TLearnInteger;
-  ILO: TLearnInteger; IHI: TLearnInteger; var H: TLearnFloat2DArray;
-  var WR: TLearnFloatArray; var WI: TLearnFloatArray; ILOZ: TLearnInteger;
-  IHIZ: TLearnInteger; var Z: TLearnFloat2DArray; var WORK: TLearnFloatArray;
-  var WORKV3: TLearnFloatArray; var WORKC1: TLearnFloatArray; var WORKS1: TLearnFloatArray;
-  var INFO: TLearnInteger);
+procedure InternalAuxSchur(WANTT: Boolean; WANTZ: Boolean; N: TLInt;
+  ILO: TLInt; IHI: TLInt; var H: TLMatrix;
+  var WR: TLVec; var WI: TLVec; ILOZ: TLInt;
+  IHIZ: TLInt; var Z: TLMatrix; var WORK: TLVec;
+  var WORKV3: TLVec; var WORKC1: TLVec; var WORKS1: TLVec;
+  var INFO: TLInt);
 var
-  I       : TLearnInteger;
-  I1      : TLearnInteger;
-  I2      : TLearnInteger;
-  ITN     : TLearnInteger;
-  ITS     : TLearnInteger;
-  J       : TLearnInteger;
-  K       : TLearnInteger;
-  L       : TLearnInteger;
-  M       : TLearnInteger;
-  NH      : TLearnInteger;
-  NR      : TLearnInteger;
-  NZ      : TLearnInteger;
-  AVE     : TLearnFloat;
-  CS      : TLearnFloat;
-  DISC    : TLearnFloat;
-  H00     : TLearnFloat;
-  H10     : TLearnFloat;
-  H11     : TLearnFloat;
-  H12     : TLearnFloat;
-  H21     : TLearnFloat;
-  H22     : TLearnFloat;
-  H33     : TLearnFloat;
-  H33S    : TLearnFloat;
-  H43H34  : TLearnFloat;
-  H44     : TLearnFloat;
-  H44S    : TLearnFloat;
-  OVFL    : TLearnFloat;
-  S       : TLearnFloat;
-  SMLNUM  : TLearnFloat;
-  SN      : TLearnFloat;
-  SUM     : TLearnFloat;
-  T1      : TLearnFloat;
-  T2      : TLearnFloat;
-  T3      : TLearnFloat;
-  TST1    : TLearnFloat;
-  UNFL    : TLearnFloat;
-  V1      : TLearnFloat;
-  V2      : TLearnFloat;
-  V3      : TLearnFloat;
+  I       : TLInt;
+  I1      : TLInt;
+  I2      : TLInt;
+  ITN     : TLInt;
+  ITS     : TLInt;
+  J       : TLInt;
+  K       : TLInt;
+  L       : TLInt;
+  M       : TLInt;
+  NH      : TLInt;
+  NR      : TLInt;
+  NZ      : TLInt;
+  AVE     : TLFloat;
+  CS      : TLFloat;
+  DISC    : TLFloat;
+  H00     : TLFloat;
+  H10     : TLFloat;
+  H11     : TLFloat;
+  H12     : TLFloat;
+  H21     : TLFloat;
+  H22     : TLFloat;
+  H33     : TLFloat;
+  H33S    : TLFloat;
+  H43H34  : TLFloat;
+  H44     : TLFloat;
+  H44S    : TLFloat;
+  OVFL    : TLFloat;
+  S       : TLFloat;
+  SMLNUM  : TLFloat;
+  SN      : TLFloat;
+  SUM     : TLFloat;
+  T1      : TLFloat;
+  T2      : TLFloat;
+  T3      : TLFloat;
+  TST1    : TLFloat;
+  UNFL    : TLFloat;
+  V1      : TLFloat;
+  V2      : TLFloat;
+  V3      : TLFloat;
   FailFlag: Boolean;
-  DAT1    : TLearnFloat;
-  DAT2    : TLearnFloat;
-  P1      : TLearnInteger;
-  HIM1IM1 : TLearnFloat;
-  HIM1I   : TLearnFloat;
-  HIIM1   : TLearnFloat;
-  HII     : TLearnFloat;
-  WRIM1   : TLearnFloat;
-  WRI     : TLearnFloat;
-  WIIM1   : TLearnFloat;
-  WII     : TLearnFloat;
-  ULP     : TLearnFloat;
+  DAT1    : TLFloat;
+  DAT2    : TLFloat;
+  P1      : TLInt;
+  HIM1IM1 : TLFloat;
+  HIM1I   : TLFloat;
+  HIIM1   : TLFloat;
+  HII     : TLFloat;
+  WRIM1   : TLFloat;
+  WRI     : TLFloat;
+  WIIM1   : TLFloat;
+  WII     : TLFloat;
+  ULP     : TLFloat;
 begin
   INFO := 0;
   DAT1 := 0.75;
@@ -738,7 +738,7 @@ begin
         begin
 
           //
-          // Look for a TLearnFloat small subdiagonal element.
+          // Look for a TLFloat small subdiagonal element.
           //
           K := I;
           while K >= L + 1 do
@@ -793,7 +793,7 @@ begin
             begin
 
               //
-              // Prepare to use Francis' TLearnFloat shift
+              // Prepare to use Francis' TLFloat shift
               // (i.e. 2nd degree generalized Rayleigh quotient)
               //
               H44 := H[I, I];
@@ -832,7 +832,7 @@ begin
             begin
 
               //
-              // Determine the effect of starting the TLearnFloat-shift QR
+              // Determine the effect of starting the TLFloat-shift QR
               // iteration at row M, and see if this would make H(M,M-1)
               // negligible.
               //
@@ -868,7 +868,7 @@ begin
             end;
 
           //
-          // TLearnFloat-shift QR step
+          // TLFloat-shift QR step
           //
           K := M;
           while K <= I - 1 do
@@ -1096,29 +1096,29 @@ begin
     end;
 end;
 
-procedure Aux2X2Schur(var A: TLearnFloat; var B: TLearnFloat;
-  var C: TLearnFloat; var D: TLearnFloat; var RT1R: TLearnFloat;
-  var RT1I: TLearnFloat; var RT2R: TLearnFloat; var RT2I: TLearnFloat;
-  var CS: TLearnFloat; var SN: TLearnFloat);
+procedure Aux2X2Schur(var A: TLFloat; var B: TLFloat;
+  var C: TLFloat; var D: TLFloat; var RT1R: TLFloat;
+  var RT1I: TLFloat; var RT2R: TLFloat; var RT2I: TLFloat;
+  var CS: TLFloat; var SN: TLFloat);
 var
-  MULTPL: TLearnFloat;
-  AA    : TLearnFloat;
-  BB    : TLearnFloat;
-  BCMAX : TLearnFloat;
-  BCMIS : TLearnFloat;
-  CC    : TLearnFloat;
-  CS1   : TLearnFloat;
-  DD    : TLearnFloat;
-  EPS   : TLearnFloat;
-  P     : TLearnFloat;
-  SAB   : TLearnFloat;
-  SAC   : TLearnFloat;
-  SCL   : TLearnFloat;
-  SIGMA : TLearnFloat;
-  SN1   : TLearnFloat;
-  TAU   : TLearnFloat;
-  TEMP  : TLearnFloat;
-  Z     : TLearnFloat;
+  MULTPL: TLFloat;
+  AA    : TLFloat;
+  BB    : TLFloat;
+  BCMAX : TLFloat;
+  BCMIS : TLFloat;
+  CC    : TLFloat;
+  CS1   : TLFloat;
+  DD    : TLFloat;
+  EPS   : TLFloat;
+  P     : TLFloat;
+  SAB   : TLFloat;
+  SAC   : TLFloat;
+  SCL   : TLFloat;
+  SIGMA : TLFloat;
+  SN1   : TLFloat;
+  TAU   : TLFloat;
+  TEMP  : TLFloat;
+  Z     : TLFloat;
 begin
   MULTPL := 4.0;
   EPS := MachineEpsilon;
@@ -1272,7 +1272,7 @@ begin
     end;
 end;
 
-function ExtSchurSign(A: TLearnFloat; B: TLearnFloat): TLearnFloat;
+function ExtSchurSign(A: TLFloat; B: TLFloat): TLFloat;
 begin
   if AP_FP_Greater_Eq(B, 0) then
     begin
@@ -1284,7 +1284,7 @@ begin
     end;
 end;
 
-function ExtSchurSignToOne(B: TLearnFloat): TLearnInteger;
+function ExtSchurSignToOne(B: TLFloat): TLInt;
 begin
   if AP_FP_Greater_Eq(B, 0) then
     begin

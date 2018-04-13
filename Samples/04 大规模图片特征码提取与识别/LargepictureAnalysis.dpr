@@ -1,9 +1,9 @@
-program pictureAnalysis;
+program LargepictureAnalysis;
 
 uses
   System.StartUpCopy,
   FMX.Forms,
-  pictureAnalysisFrm in 'pictureAnalysisFrm.pas' {Form1};
+  LargepictureAnalysisFrm in 'LargepictureAnalysisFrm.pas' {Form1};
 
 {$R *.res}
 

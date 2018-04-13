@@ -7,14 +7,14 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-procedure ApplyRotationsFromTheLeft(IsForward: Boolean; M1: TLearnInteger;
-  M2: TLearnInteger; N1: TLearnInteger; N2: TLearnInteger;
-  const C: TLearnFloatArray; const S: TLearnFloatArray; var A: TLearnFloat2DArray; var WORK: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLearnInteger;
-  M2: TLearnInteger; N1: TLearnInteger; N2: TLearnInteger;
-  const C: TLearnFloatArray; const S: TLearnFloatArray; var A: TLearnFloat2DArray; var WORK: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure GenerateRotation(F: TLearnFloat; G: TLearnFloat; var CS: TLearnFloat;
-  var SN: TLearnFloat; var R: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure ApplyRotationsFromTheLeft(IsForward: Boolean; M1: TLInt;
+  M2: TLInt; N1: TLInt; N2: TLInt;
+  const C: TLVec; const S: TLVec; var A: TLMatrix; var WORK: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLInt;
+  M2: TLInt; N1: TLInt; N2: TLInt;
+  const C: TLVec; const S: TLVec; var A: TLMatrix; var WORK: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure GenerateRotation(F: TLFloat; G: TLFloat; var CS: TLFloat;
+  var SN: TLFloat; var R: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -40,16 +40,16 @@ procedure GenerateRotation(F: TLearnFloat; G: TLearnFloat; var CS: TLearnFloat;
   Output parameters:
   A           -   transformed matrix.
   ************************************************************************ *)
-procedure ApplyRotationsFromTheLeft(IsForward: Boolean; M1: TLearnInteger;
-  M2: TLearnInteger; N1: TLearnInteger; N2: TLearnInteger;
-  const C: TLearnFloatArray; const S: TLearnFloatArray; var A: TLearnFloat2DArray;
-  var WORK: TLearnFloatArray);
+procedure ApplyRotationsFromTheLeft(IsForward: Boolean; M1: TLInt;
+  M2: TLInt; N1: TLInt; N2: TLInt;
+  const C: TLVec; const S: TLVec; var A: TLMatrix;
+  var WORK: TLVec);
 var
-  J    : TLearnInteger;
-  JP1  : TLearnInteger;
-  CTEMP: TLearnFloat;
-  STEMP: TLearnFloat;
-  TEMP : TLearnFloat;
+  J    : TLInt;
+  JP1  : TLInt;
+  CTEMP: TLFloat;
+  STEMP: TLFloat;
+  TEMP : TLFloat;
 begin
   if (M1 > M2) or (N1 > N2) then
     begin
@@ -176,17 +176,17 @@ end;
   Output parameters:
   A           -   transformed matrix.
   ************************************************************************ *)
-procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLearnInteger;
-  M2: TLearnInteger; N1: TLearnInteger; N2: TLearnInteger;
-  const C: TLearnFloatArray; const S: TLearnFloatArray; var A: TLearnFloat2DArray;
-  var WORK: TLearnFloatArray);
+procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLInt;
+  M2: TLInt; N1: TLInt; N2: TLInt;
+  const C: TLVec; const S: TLVec; var A: TLMatrix;
+  var WORK: TLVec);
 var
-  J    : TLearnInteger;
-  JP1  : TLearnInteger;
-  CTEMP: TLearnFloat;
-  STEMP: TLearnFloat;
-  TEMP : TLearnFloat;
-  i_   : TLearnInteger;
+  J    : TLInt;
+  JP1  : TLInt;
+  CTEMP: TLFloat;
+  STEMP: TLFloat;
+  TEMP : TLFloat;
+  i_   : TLInt;
 begin
 
   //
@@ -324,11 +324,11 @@ end;
 
   CS**2 + SN**2 = 1
   ************************************************************************ *)
-procedure GenerateRotation(F: TLearnFloat; G: TLearnFloat; var CS: TLearnFloat;
-  var SN: TLearnFloat; var R: TLearnFloat);
+procedure GenerateRotation(F: TLFloat; G: TLFloat; var CS: TLFloat;
+  var SN: TLFloat; var R: TLFloat);
 var
-  F1: TLearnFloat;
-  G1: TLearnFloat;
+  F1: TLFloat;
+  G1: TLFloat;
 begin
   if AP_FP_Eq(G, 0) then
     begin

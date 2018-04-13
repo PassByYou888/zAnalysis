@@ -767,15 +767,12 @@ var
   i: NativeInt;
   p: PKDTree_Node;
 begin
-  if length(OutBuff) <> length(OutIndex) then
-      exit;
   if length(inBuff) <> length(OutIndex) then
       exit;
 
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.Buff;
       OutIndex[i] := p^.vec^.index;
     end;
 end;

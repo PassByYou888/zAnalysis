@@ -19,16 +19,16 @@
   Result:
   Pearson product-moment correlation coefficient
   ************************************************************************ *)
-function PearsonCorrelation(const X, Y: TLearnFloatArray; const N: TLearnInteger): TLearnFloat;
+function PearsonCorrelation(const X, Y: TLVec; const N: TLInt): TLFloat;
 var
-  I    : TLearnInteger;
-  XMean: TLearnFloat;
-  YMean: TLearnFloat;
-  S    : TLearnFloat;
-  XV   : TLearnFloat;
-  YV   : TLearnFloat;
-  T1   : TLearnFloat;
-  T2   : TLearnFloat;
+  I    : TLInt;
+  XMean: TLFloat;
+  YMean: TLFloat;
+  S    : TLFloat;
+  XV   : TLFloat;
+  YV   : TLFloat;
+  T1   : TLFloat;
+  T2   : TLFloat;
 begin
   XV := 0;
   YV := 0;
@@ -86,9 +86,9 @@ end;
   Result:
   Spearman's rank correlation coefficient
   ************************************************************************ *)
-function SpearmanRankCorrelation(const X, Y: TLearnFloatArray; const N: TLearnInteger): TLearnFloat;
+function SpearmanRankCorrelation(const X, Y: TLVec; const N: TLInt): TLFloat;
 var
-  NX, NY: TLearnFloatArray;
+  NX, NY: TLVec;
 begin
   if N <= 0 then
     begin
@@ -107,16 +107,16 @@ end;
 (* ************************************************************************
   Spearman Rank Correlation Coefficient
   ************************************************************************ *)
-procedure SpearmanRank(var X: TLearnFloatArray; N: TLearnInteger);
+procedure SpearmanRank(var X: TLVec; N: TLInt);
 var
-  I   : TLearnInteger;
-  J   : TLearnInteger;
-  K   : TLearnInteger;
-  T   : TLearnInteger;
-  Tmp : TLearnFloat;
-  TmpI: TLearnInteger;
-  R   : TLearnFloatArray;
-  C   : TLearnIntegerArray;
+  I   : TLInt;
+  J   : TLInt;
+  K   : TLInt;
+  T   : TLInt;
+  Tmp : TLFloat;
+  TmpI: TLInt;
+  R   : TLVec;
+  C   : TLIVec;
 begin
 
   //
@@ -243,12 +243,12 @@ begin
     end;
 end;
 
-function SpearmanTail5(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SpearmanTail6(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SpearmanTail7(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SpearmanTail8(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SpearmanTail9(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SpearmanTail(const T: TLearnFloat; const N: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SpearmanTail5(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SpearmanTail6(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SpearmanTail7(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SpearmanTail8(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SpearmanTail9(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SpearmanTail(const T: TLFloat; const N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -276,10 +276,10 @@ function SpearmanTail(const T: TLearnFloat; const N: TLearnInteger): TLearnFloat
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure PearsonCorrelationSignificance(const R: TLearnFloat; const N: TLearnInteger; var BothTails, LeftTail, RightTail: TLearnFloat);
+procedure PearsonCorrelationSignificance(const R: TLFloat; const N: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  T: TLearnFloat;
-  P: TLearnFloat;
+  T: TLFloat;
+  P: TLFloat;
 begin
 
   //
@@ -344,10 +344,10 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure SpearmanRankCorrelationSignificance(const R: TLearnFloat; const N: TLearnInteger; var BothTails, LeftTail, RightTail: TLearnFloat);
+procedure SpearmanRankCorrelationSignificance(const R: TLFloat; const N: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  T: TLearnFloat;
-  P: TLearnFloat;
+  T: TLFloat;
+  P: TLFloat;
 begin
 
   //
@@ -398,7 +398,7 @@ end;
 (* ************************************************************************
   Tail(S, 5)
   ************************************************************************ *)
-function SpearmanTail5(const S: TLearnFloat): TLearnFloat;
+function SpearmanTail5(const S: TLFloat): TLFloat;
 begin
   if AP_FP_Less(S, 0.000E+00) then
     begin
@@ -466,7 +466,7 @@ end;
 (* ************************************************************************
   Tail(S, 6)
   ************************************************************************ *)
-function SpearmanTail6(const S: TLearnFloat): TLearnFloat;
+function SpearmanTail6(const S: TLFloat): TLFloat;
 begin
   if AP_FP_Less(S, 1.001E+00) then
     begin
@@ -529,7 +529,7 @@ end;
 (* ************************************************************************
   Tail(S, 7)
   ************************************************************************ *)
-function SpearmanTail7(const S: TLearnFloat): TLearnFloat;
+function SpearmanTail7(const S: TLFloat): TLFloat;
 begin
   if AP_FP_Less(S, 1.001E+00) then
     begin
@@ -627,7 +627,7 @@ end;
 (* ************************************************************************
   Tail(S, 8)
   ************************************************************************ *)
-function SpearmanTail8(const S: TLearnFloat): TLearnFloat;
+function SpearmanTail8(const S: TLFloat): TLFloat;
 begin
   if AP_FP_Less(S, 2.001E+00) then
     begin
@@ -720,7 +720,7 @@ end;
 (* ************************************************************************
   Tail(S, 9)
   ************************************************************************ *)
-function SpearmanTail9(const S: TLearnFloat): TLearnFloat;
+function SpearmanTail9(const S: TLFloat): TLFloat;
 begin
   if AP_FP_Less(S, 2.001E+00) then
     begin
@@ -848,7 +848,7 @@ end;
 (* ************************************************************************
   Tail(T,N), accepts T<0
   ************************************************************************ *)
-function SpearmanTail(const T: TLearnFloat; const N: TLearnInteger): TLearnFloat;
+function SpearmanTail(const T: TLFloat; const N: TLInt): TLFloat;
 begin
   if N = 5 then
     begin

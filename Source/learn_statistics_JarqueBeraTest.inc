@@ -8,35 +8,35 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 
-procedure JarqueBeraStatistic(const X: TLearnFloatArray; const N: TLearnInteger; var S: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JarqueBeraApprox(N: TLearnInteger; S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl5(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl6(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl7(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl8(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl9(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl10(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl11(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl12(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl13(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl14(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl15(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl16(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl17(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl18(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl19(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl20(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl30(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl50(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl65(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl100(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl130(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl200(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl301(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl501(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl701(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl1401(const S: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure JBCheb(const X, C: TLearnFloat; var TJ: TLearnFloat; var TJ1: TLearnFloat; var R: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure JarqueBeraStatistic(const X: TLVec; const N: TLInt; var S: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JarqueBeraApprox(N: TLInt; S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl5(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl6(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl7(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl8(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl9(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl10(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl11(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl12(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl13(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl16(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl17(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl18(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl19(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl20(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl50(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl65(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl100(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl130(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl200(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl301(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl501(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl701(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl1401(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure JBCheb(const X, C: TLFloat; var TJ: TLFloat; var TJ1: TLFloat; var R: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 (* ************************************************************************
   Jarque-Bera test
@@ -66,9 +66,9 @@ procedure JBCheb(const X, C: TLearnFloat; var TJ: TLearnFloat; var TJ1: TLearnFl
 
   For N>1951 accuracy wasn't measured but it shouldn't be sharply  different from table values.
   ************************************************************************ *)
-procedure JarqueBeraTest(const X: TLearnFloatArray; const N: TLearnInteger; var P: TLearnFloat);
+procedure JarqueBeraTest(const X: TLVec; const N: TLInt; var P: TLFloat);
 var
-  S: TLearnFloat;
+  S: TLFloat;
 begin
 
   //
@@ -87,17 +87,17 @@ begin
   P := JarqueBeraApprox(N, S);
 end;
 
-procedure JarqueBeraStatistic(const X: TLearnFloatArray; const N: TLearnInteger; var S: TLearnFloat);
+procedure JarqueBeraStatistic(const X: TLVec; const N: TLInt; var S: TLFloat);
 var
-  I       : TLearnInteger;
-  V       : TLearnFloat;
-  V1      : TLearnFloat;
-  V2      : TLearnFloat;
-  StdDev  : TLearnFloat;
-  Mean    : TLearnFloat;
-  Variance: TLearnFloat;
-  Skewness: TLearnFloat;
-  Kurtosis: TLearnFloat;
+  I       : TLInt;
+  V       : TLFloat;
+  V1      : TLFloat;
+  V2      : TLFloat;
+  StdDev  : TLFloat;
+  Mean    : TLFloat;
+  Variance: TLFloat;
+  Skewness: TLFloat;
+  Kurtosis: TLFloat;
 begin
   Mean := 0;
   Variance := 0;
@@ -169,21 +169,21 @@ begin
   S := AP_Float(N) / 6 * (AP_Sqr(Skewness) + AP_Sqr(Kurtosis) / 4);
 end;
 
-function JarqueBeraApprox(N: TLearnInteger; S: TLearnFloat): TLearnFloat;
+function JarqueBeraApprox(N: TLInt; S: TLFloat): TLFloat;
 var
-  VX  : TLearnFloatArray;
-  VY  : TLearnFloatArray;
-  CTbl: TLearnFloat2DArray;
-  T1  : TLearnFloat;
-  T2  : TLearnFloat;
-  T3  : TLearnFloat;
-  T   : TLearnFloat;
-  F1  : TLearnFloat;
-  F2  : TLearnFloat;
-  F3  : TLearnFloat;
-  F12 : TLearnFloat;
-  F23 : TLearnFloat;
-  X   : TLearnFloat;
+  VX  : TLVec;
+  VY  : TLVec;
+  CTbl: TLMatrix;
+  T1  : TLFloat;
+  T2  : TLFloat;
+  T3  : TLFloat;
+  T   : TLFloat;
+  F1  : TLFloat;
+  F2  : TLFloat;
+  F3  : TLFloat;
+  F12 : TLFloat;
+  F23 : TLFloat;
+  X   : TLFloat;
 begin
   Result := 1;
   X := S;
@@ -404,11 +404,11 @@ begin
     end;
 end;
 
-function JBTbl5(const S: TLearnFloat): TLearnFloat;
+function JBTbl5(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 0.4000) then
@@ -455,11 +455,11 @@ begin
   Result := -5.188419E+02 * (S - 1.100000E+00) - 4.767297E+00;
 end;
 
-function JBTbl6(const S: TLearnFloat): TLearnFloat;
+function JBTbl6(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 0.2500) then
@@ -525,11 +525,11 @@ begin
   Result := -1.770029E+02 * (S - 1.850000E+00) - 1.371015E+01;
 end;
 
-function JBTbl7(const S: TLearnFloat): TLearnFloat;
+function JBTbl7(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 1.4000) then
@@ -603,11 +603,11 @@ begin
   Result := -1.824116E+03 * (S - 3.200000E+00) - 1.440330E+01;
 end;
 
-function JBTbl8(const S: TLearnFloat): TLearnFloat;
+function JBTbl8(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 1.3000) then
@@ -675,11 +675,11 @@ begin
   Result := -5.087028E+00 * (S - 5.000000E+00) - 1.071300E+01;
 end;
 
-function JBTbl9(const S: TLearnFloat): TLearnFloat;
+function JBTbl9(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 1.3000) then
@@ -747,11 +747,11 @@ begin
   Result := -2.020952E+00 * (S - 7.000000E+00) - 9.516623E+00;
 end;
 
-function JBTbl10(const S: TLearnFloat): TLearnFloat;
+function JBTbl10(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 1.2000) then
@@ -814,11 +814,11 @@ begin
   Result := -8.711035E-01 * (S - 7.000000E+00) - 7.212811E+00;
 end;
 
-function JBTbl11(const S: TLearnFloat): TLearnFloat;
+function JBTbl11(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 1.2000) then
@@ -881,11 +881,11 @@ begin
   Result := -5.715445E-01 * (S - 8.000000E+00) - 6.845834E+00;
 end;
 
-function JBTbl12(const S: TLearnFloat): TLearnFloat;
+function JBTbl12(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 1.0000) then
@@ -955,11 +955,11 @@ begin
   Result := -2.877243E-01 * (S - 1.200000E+01) - 7.936839E+00;
 end;
 
-function JBTbl13(const S: TLearnFloat): TLearnFloat;
+function JBTbl13(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 1.0000) then
@@ -1029,11 +1029,11 @@ begin
   Result := -2.799944E-01 * (S - 1.300000E+01) - 7.566269E+00;
 end;
 
-function JBTbl14(const S: TLearnFloat): TLearnFloat;
+function JBTbl14(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 1.0000) then
@@ -1103,11 +1103,11 @@ begin
   Result := -2.590621E-01 * (S - 1.500000E+01) - 7.632238E+00;
 end;
 
-function JBTbl15(const S: TLearnFloat): TLearnFloat;
+function JBTbl15(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 2.0000) then
@@ -1171,11 +1171,11 @@ begin
   Result := -1.927937E-01 * (S - 1.700000E+01) - 7.700983E+00;
 end;
 
-function JBTbl16(const S: TLearnFloat): TLearnFloat;
+function JBTbl16(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 2.0000) then
@@ -1239,11 +1239,11 @@ begin
   Result := -2.391580E-01 * (S - 2.000000E+01) - 7.963205E+00;
 end;
 
-function JBTbl17(const S: TLearnFloat): TLearnFloat;
+function JBTbl17(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 3.0000) then
@@ -1311,11 +1311,11 @@ begin
   Result := -2.127771E-01 * (S - 2.400000E+01) - 8.400197E+00;
 end;
 
-function JBTbl18(const S: TLearnFloat): TLearnFloat;
+function JBTbl18(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 3.0000) then
@@ -1383,11 +1383,11 @@ begin
   Result := -1.684623E-01 * (S - 2.000000E+01) - 7.428883E+00;
 end;
 
-function JBTbl19(const S: TLearnFloat): TLearnFloat;
+function JBTbl19(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 3.0000) then
@@ -1455,11 +1455,11 @@ begin
   Result := -1.539373E-01 * (S - 2.000000E+01) - 7.206941E+00;
 end;
 
-function JBTbl20(const S: TLearnFloat): TLearnFloat;
+function JBTbl20(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 4.0000) then
@@ -1533,11 +1533,11 @@ begin
   Result := -1.318007E-01 * (S - 2.500000E+01) - 7.742185E+00;
 end;
 
-function JBTbl30(const S: TLearnFloat): TLearnFloat;
+function JBTbl30(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 4.0000) then
@@ -1606,11 +1606,11 @@ begin
   Result := -1.028212E-01 * (S - 2.500000E+01) - 6.855288E+00;
 end;
 
-function JBTbl50(const S: TLearnFloat): TLearnFloat;
+function JBTbl50(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 4.0000) then
@@ -1674,11 +1674,11 @@ begin
   Result := -9.313116E-02 * (S - 2.500000E+01) - 6.479154E+00;
 end;
 
-function JBTbl65(const S: TLearnFloat): TLearnFloat;
+function JBTbl65(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 4.0000) then
@@ -1738,11 +1738,11 @@ begin
   Result := -9.443768E-02 * (S - 2.500000E+01) - 6.419137E+00;
 end;
 
-function JBTbl100(const S: TLearnFloat): TLearnFloat;
+function JBTbl100(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 4.0000) then
@@ -1798,11 +1798,11 @@ begin
   Result := -1.080097E-01 * (S - 2.500000E+01) - 6.481094E+00;
 end;
 
-function JBTbl130(const S: TLearnFloat): TLearnFloat;
+function JBTbl130(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 4.0000) then
@@ -1858,11 +1858,11 @@ begin
   Result := -1.045722E-01 * (S - 2.500000E+01) - 6.510314E+00;
 end;
 
-function JBTbl200(const S: TLearnFloat): TLearnFloat;
+function JBTbl200(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 4.0000) then
@@ -1918,11 +1918,11 @@ begin
   Result := -1.132404E-01 * (S - 2.500000E+01) - 6.764034E+00;
 end;
 
-function JBTbl301(const S: TLearnFloat): TLearnFloat;
+function JBTbl301(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 4.0000) then
@@ -1978,11 +1978,11 @@ begin
   Result := -1.293626E-01 * (S - 2.500000E+01) - 7.066995E+00;
 end;
 
-function JBTbl501(const S: TLearnFloat): TLearnFloat;
+function JBTbl501(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 4.0000) then
@@ -2034,11 +2034,11 @@ begin
   Result := -1.418332E-01 * (S - 2.500000E+01) - 7.468952E+00;
 end;
 
-function JBTbl701(const S: TLearnFloat): TLearnFloat;
+function JBTbl701(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 4.0000) then
@@ -2090,11 +2090,11 @@ begin
   Result := -1.532706E-01 * (S - 2.500000E+01) - 7.845715E+00;
 end;
 
-function JBTbl1401(const S: TLearnFloat): TLearnFloat;
+function JBTbl1401(const S: TLFloat): TLFloat;
 var
-  X  : TLearnFloat;
-  TJ : TLearnFloat;
-  TJ1: TLearnFloat;
+  X  : TLFloat;
+  TJ : TLFloat;
+  TJ1: TLFloat;
 begin
   Result := 0;
   if AP_FP_Less_Eq(S, 4.0000) then
@@ -2146,9 +2146,9 @@ begin
   Result := -2.019375E-01 * (S - 2.500000E+01) - 8.715788E+00;
 end;
 
-procedure JBCheb(const X, C: TLearnFloat; var TJ: TLearnFloat; var TJ1: TLearnFloat; var R: TLearnFloat);
+procedure JBCheb(const X, C: TLFloat; var TJ: TLFloat; var TJ1: TLFloat; var R: TLFloat);
 var
-  T: TLearnFloat;
+  T: TLFloat;
 begin
   R := R + C * TJ;
   T := 2 * X * TJ1 - TJ;

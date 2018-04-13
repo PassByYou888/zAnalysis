@@ -7,9 +7,9 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-function IncompleteBetaFE(const a, b, x, big, biginv: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IncompleteBetaFE2(const a, b, x, big, biginv: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IncompleteBetaPS(const a, b, x, MAXGAM: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IncompleteBetaFE(const a, b, x, big, biginv: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IncompleteBetaFE2(const a, b, x, big, biginv: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IncompleteBetaPS(const a, b, x, MAXGAM: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -52,19 +52,19 @@ function IncompleteBetaPS(const a, b, x, MAXGAM: TLearnFloat): TLearnFloat; forw
   *Cephes Math Library, Release 2.8:  June, 2000
   *Copyright 1984, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function IncompleteBeta(a, b, x: TLearnFloat): TLearnFloat;
+function IncompleteBeta(a, b, x: TLFloat): TLFloat;
 var
-  t     : TLearnFloat;
-  xc    : TLearnFloat;
-  w     : TLearnFloat;
-  y     : TLearnFloat;
-  flag  : TLearnInteger;
-  sg    : TLearnFloat;
-  big   : TLearnFloat;
-  biginv: TLearnFloat;
-  MAXGAM: TLearnFloat;
-  MINLOG: TLearnFloat;
-  MAXLOG: TLearnFloat;
+  t     : TLFloat;
+  xc    : TLFloat;
+  w     : TLFloat;
+  y     : TLFloat;
+  flag  : TLInt;
+  sg    : TLFloat;
+  big   : TLFloat;
+  biginv: TLFloat;
+  MAXGAM: TLFloat;
+  MINLOG: TLFloat;
+  MAXLOG: TLFloat;
 begin
   big := 4.503599627370496E15;
   biginv := 2.22044604925031308085E-16;
@@ -206,35 +206,35 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1996, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvIncompleteBeta(const a, b, y: TLearnFloat): TLearnFloat;
+function InvIncompleteBeta(const a, b, y: TLFloat): TLFloat;
 var
-  aaa             : TLearnFloat;
-  bbb             : TLearnFloat;
-  y0              : TLearnFloat;
-  d               : TLearnFloat;
-  yyy             : TLearnFloat;
-  x               : TLearnFloat;
-  x0              : TLearnFloat;
-  x1              : TLearnFloat;
-  lgm             : TLearnFloat;
-  yp              : TLearnFloat;
-  di              : TLearnFloat;
-  dithresh        : TLearnFloat;
-  yl              : TLearnFloat;
-  yh              : TLearnFloat;
-  xt              : TLearnFloat;
-  i               : TLearnInteger;
-  rflg            : TLearnInteger;
-  dir             : TLearnInteger;
-  nflg            : TLearnInteger;
-  s               : TLearnFloat;
-  MainLoopPos     : TLearnInteger;
-  ihalve          : TLearnInteger;
-  ihalvecycle     : TLearnInteger;
-  newt            : TLearnInteger;
-  newtcycle       : TLearnInteger;
-  breaknewtcycle  : TLearnInteger;
-  breakihalvecycle: TLearnInteger;
+  aaa             : TLFloat;
+  bbb             : TLFloat;
+  y0              : TLFloat;
+  d               : TLFloat;
+  yyy             : TLFloat;
+  x               : TLFloat;
+  x0              : TLFloat;
+  x1              : TLFloat;
+  lgm             : TLFloat;
+  yp              : TLFloat;
+  di              : TLFloat;
+  dithresh        : TLFloat;
+  yl              : TLFloat;
+  yh              : TLFloat;
+  xt              : TLFloat;
+  i               : TLInt;
+  rflg            : TLInt;
+  dir             : TLInt;
+  nflg            : TLInt;
+  s               : TLFloat;
+  MainLoopPos     : TLInt;
+  ihalve          : TLInt;
+  ihalvecycle     : TLInt;
+  newt            : TLInt;
+  newtcycle       : TLInt;
+  breaknewtcycle  : TLInt;
+  breakihalvecycle: TLInt;
 begin
   i := 0;
   Assert(AP_FP_Greater_Eq(y, 0) and AP_FP_Less_Eq(y, 1),
@@ -632,28 +632,28 @@ end;
   Cephes Math Library, Release 2.8:  June, 2000
   Copyright 1984, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function IncompleteBetaFE(const a, b, x, big, biginv: TLearnFloat): TLearnFloat;
+function IncompleteBetaFE(const a, b, x, big, biginv: TLFloat): TLFloat;
 var
-  xk    : TLearnFloat;
-  pk    : TLearnFloat;
-  pkm1  : TLearnFloat;
-  pkm2  : TLearnFloat;
-  qk    : TLearnFloat;
-  qkm1  : TLearnFloat;
-  qkm2  : TLearnFloat;
-  k1    : TLearnFloat;
-  k2    : TLearnFloat;
-  k3    : TLearnFloat;
-  k4    : TLearnFloat;
-  k5    : TLearnFloat;
-  k6    : TLearnFloat;
-  k7    : TLearnFloat;
-  k8    : TLearnFloat;
-  r     : TLearnFloat;
-  t     : TLearnFloat;
-  ans   : TLearnFloat;
-  thresh: TLearnFloat;
-  n     : TLearnInteger;
+  xk    : TLFloat;
+  pk    : TLFloat;
+  pkm1  : TLFloat;
+  pkm2  : TLFloat;
+  qk    : TLFloat;
+  qkm1  : TLFloat;
+  qkm2  : TLFloat;
+  k1    : TLFloat;
+  k2    : TLFloat;
+  k3    : TLFloat;
+  k4    : TLFloat;
+  k5    : TLFloat;
+  k6    : TLFloat;
+  k7    : TLFloat;
+  k8    : TLFloat;
+  r     : TLFloat;
+  t     : TLFloat;
+  ans   : TLFloat;
+  thresh: TLFloat;
+  n     : TLInt;
 begin
   k1 := a;
   k2 := a + b;
@@ -737,29 +737,29 @@ end;
   Cephes Math Library, Release 2.8:  June, 2000
   Copyright 1984, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function IncompleteBetaFE2(const a, b, x, big, biginv: TLearnFloat): TLearnFloat;
+function IncompleteBetaFE2(const a, b, x, big, biginv: TLFloat): TLFloat;
 var
-  xk    : TLearnFloat;
-  pk    : TLearnFloat;
-  pkm1  : TLearnFloat;
-  pkm2  : TLearnFloat;
-  qk    : TLearnFloat;
-  qkm1  : TLearnFloat;
-  qkm2  : TLearnFloat;
-  k1    : TLearnFloat;
-  k2    : TLearnFloat;
-  k3    : TLearnFloat;
-  k4    : TLearnFloat;
-  k5    : TLearnFloat;
-  k6    : TLearnFloat;
-  k7    : TLearnFloat;
-  k8    : TLearnFloat;
-  r     : TLearnFloat;
-  t     : TLearnFloat;
-  ans   : TLearnFloat;
-  z     : TLearnFloat;
-  thresh: TLearnFloat;
-  n     : TLearnInteger;
+  xk    : TLFloat;
+  pk    : TLFloat;
+  pkm1  : TLFloat;
+  pkm2  : TLFloat;
+  qk    : TLFloat;
+  qkm1  : TLFloat;
+  qkm2  : TLFloat;
+  k1    : TLFloat;
+  k2    : TLFloat;
+  k3    : TLFloat;
+  k4    : TLFloat;
+  k5    : TLFloat;
+  k6    : TLFloat;
+  k7    : TLFloat;
+  k8    : TLFloat;
+  r     : TLFloat;
+  t     : TLFloat;
+  ans   : TLFloat;
+  z     : TLFloat;
+  thresh: TLFloat;
+  n     : TLInt;
 begin
   k1 := a;
   k2 := b - 1.0;
@@ -844,17 +844,17 @@ end;
   Cephes Math Library, Release 2.8:  June, 2000
   Copyright 1984, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function IncompleteBetaPS(const a, b, x, MAXGAM: TLearnFloat): TLearnFloat;
+function IncompleteBetaPS(const a, b, x, MAXGAM: TLFloat): TLFloat;
 var
-  s : TLearnFloat;
-  t : TLearnFloat;
-  u : TLearnFloat;
-  v : TLearnFloat;
-  n : TLearnFloat;
-  t1: TLearnFloat;
-  z : TLearnFloat;
-  ai: TLearnFloat;
-  sg: TLearnFloat;
+  s : TLFloat;
+  t : TLFloat;
+  u : TLFloat;
+  v : TLFloat;
+  n : TLFloat;
+  t1: TLFloat;
+  z : TLFloat;
+  ai: TLFloat;
+  sg: TLFloat;
 begin
   ai := 1.0 / a;
   u := (1.0 - b) * x;

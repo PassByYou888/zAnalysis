@@ -39,10 +39,10 @@
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function BinomialDistribution(const k, n: TLearnInteger; const p: TLearnFloat): TLearnFloat;
+function BinomialDistribution(const k, n: TLInt; const p: TLFloat): TLFloat;
 var
-  dk: TLearnFloat;
-  dn: TLearnFloat;
+  dk: TLFloat;
+  dn: TLFloat;
 begin
   Assert(AP_FP_Greater_Eq(p, 0) and AP_FP_Less_Eq(p, 1), 'Domain error in BinomialDistribution');
   Assert((k >= -1) and (k <= n), 'Domain error in BinomialDistribution');
@@ -102,10 +102,10 @@ end;
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function BinomialCDistribution(const k, n: TLearnInteger; const p: TLearnFloat): TLearnFloat;
+function BinomialCDistribution(const k, n: TLInt; const p: TLFloat): TLFloat;
 var
-  dk: TLearnFloat;
-  dn: TLearnFloat;
+  dk: TLFloat;
+  dn: TLFloat;
 begin
   Assert(AP_FP_Greater_Eq(p, 0) and AP_FP_Less_Eq(p, 1), 'Domain error in BinomialDistributionC');
   Assert((k >= -1) and (k <= n), 'Domain error in BinomialDistributionC');
@@ -167,11 +167,11 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvBinomialDistribution(const k, n: TLearnInteger; const y: TLearnFloat): TLearnFloat;
+function InvBinomialDistribution(const k, n: TLInt; const y: TLFloat): TLFloat;
 var
-  dk: TLearnFloat;
-  dn: TLearnFloat;
-  p : TLearnFloat;
+  dk: TLFloat;
+  dn: TLFloat;
+  p : TLFloat;
 begin
   Assert((k >= 0) and (k < n), 'Domain error in InvBinomialDistribution');
   dn := n - k;
@@ -228,11 +228,11 @@ end;
 
   While calculating p-values high-precision binomial distribution approximation is used, so significance levels have about 15 exact digits.
   ************************************************************************ *)
-procedure OneSampleSignTest(const X: TLearnFloatArray; n: TLearnInteger; Median: TLearnFloat; var BothTails, LeftTail, RightTail: TLearnFloat);
+procedure OneSampleSignTest(const X: TLVec; n: TLInt; Median: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  I    : TLearnInteger;
-  GTCnt: TLearnInteger;
-  NECnt: TLearnInteger;
+  I    : TLInt;
+  GTCnt: TLInt;
+  NECnt: TLInt;
 begin
   if n <= 1 then
     begin

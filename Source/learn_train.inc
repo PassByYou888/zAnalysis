@@ -15,68 +15,68 @@ type
     * NCholesky - number of Cholesky decompositions
     ************************************************************************ *)
   TMLPReport = packed record
-    NGrad: TLearnInteger;
-    NHess: TLearnInteger;
-    NCholesky: TLearnInteger;
+    NGrad: TLInt;
+    NHess: TLInt;
+    NCholesky: TLInt;
   end;
 
   (* ************************************************************************
     Cross-validation estimates of generalization error
     ************************************************************************ *)
   TMLPCVReport = packed record
-    RelCLSError: TLearnFloat;
-    AvgCE: TLearnFloat;
-    RMSError: TLearnFloat;
-    AvgError: TLearnFloat;
-    AvgRelError: TLearnFloat;
+    RelCLSError: TLFloat;
+    AvgCE: TLFloat;
+    RMSError: TLFloat;
+    AvgError: TLFloat;
+    AvgRelError: TLFloat;
   end;
 
-procedure MLPTrainLM(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPTrainLM(var Network: TMultiLayerPerceptron; const XY: TLMatrix;
+  NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
+  var Info: TLInt; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPTrainLM_MT(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPTrainLM_MT(var Network: TMultiLayerPerceptron; const XY: TLMatrix;
+  NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
+  var Info: TLInt; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPTrainLBFGS(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
-  Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport; IsTerminated: PBoolean;
-  out EBest: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+  Restarts: TLInt; WStep: TLFloat; MaxIts: TLInt;
+  var Info: TLInt; var Rep: TMLPReport; IsTerminated: PBoolean;
+  out EBest: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPTrainLBFGS_MT(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
-  Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+  Restarts: TLInt; WStep: TLFloat; MaxIts: TLInt;
+  var Info: TLInt; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPTrainLBFGS_MT_Mod(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Restarts: TLearnInteger;
-  WStep, Diameter: TLearnFloat; MaxIts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  const XY: TLMatrix; NPoints: TLInt; Restarts: TLInt;
+  WStep, Diameter: TLFloat; MaxIts: TLInt;
+  var Info: TLInt; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPTrainMonteCarlo(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
-  const MainRestarts, SubRestarts: TLearnInteger; const MinError: TLearnFloat;
-  Diameter: TLearnFloat; var Info: TLearnInteger; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPTrainMonteCarlo(var Network: TMultiLayerPerceptron; const XY: TLMatrix; NPoints: TLInt;
+  const MainRestarts, SubRestarts: TLInt; const MinError: TLFloat;
+  Diameter: TLFloat; var Info: TLInt; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPKFoldCVLBFGS(const Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
-  Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
-  FoldsCount: TLearnInteger; var Info: TLearnInteger; var Rep: TMLPReport;
+  const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+  Restarts: TLInt; WStep: TLFloat; MaxIts: TLInt;
+  FoldsCount: TLInt; var Info: TLInt; var Rep: TMLPReport;
   var CVRep: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPKFoldCVLM(const Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
-  Restarts: TLearnInteger; FoldsCount: TLearnInteger; var Info: TLearnInteger;
+  const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+  Restarts: TLInt; FoldsCount: TLInt; var Info: TLInt;
   var Rep: TMLPReport; var CVRep: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 type
   TMLPProcessData = packed record
-    TotalRestarts: TLearnInteger;
-    RestartsFinished: TLearnInteger;
+    TotalRestarts: TLInt;
+    RestartsFinished: TLInt;
     IsTerminated: boolean;
-    EBest: TLearnFloat;
+    EBest: TLFloat;
   end;
 
   PMLPProcessData = ^TMLPProcessData;
@@ -85,13 +85,13 @@ const
   MinDecay = 0.001;
 
 procedure MLPKFoldCVGeneral(const N: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
-  Restarts: TLearnInteger; FoldsCount: TLearnInteger; LMAlgorithm: boolean;
-  WStep: TLearnFloat; MaxIts: TLearnInteger; var Info: TLearnInteger;
+  const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+  Restarts: TLInt; FoldsCount: TLInt; LMAlgorithm: boolean;
+  WStep: TLFloat; MaxIts: TLInt; var Info: TLInt;
   var Rep: TMLPReport; var CVRep: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPKFoldSplit(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
-  NClasses: TLearnInteger; FoldsCount: TLearnInteger; StratifiedSplits: boolean;
-  var Folds: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPKFoldSplit(const XY: TLMatrix; NPoints: TLInt;
+  NClasses: TLInt; FoldsCount: TLInt; StratifiedSplits: boolean;
+  var Folds: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -118,46 +118,46 @@ procedure MLPKFoldSplit(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
   //  *  2, if task has been solved.
   //  Rep         -   training report
   ************************************************************************ *)
-procedure MLPTrainLM(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport);
+procedure MLPTrainLM(var Network: TMultiLayerPerceptron; const XY: TLMatrix;
+  NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
+  var Info: TLInt; var Rep: TMLPReport);
 var
-  NIn        : TLearnInteger;
-  NOut       : TLearnInteger;
-  WCount     : TLearnInteger;
-  LMFTol     : TLearnFloat;
-  LMStepTol  : TLearnFloat;
-  I          : TLearnInteger;
-  K          : TLearnInteger;
-  V          : TLearnFloat;
-  E          : TLearnFloat;
-  ENew       : TLearnFloat;
-  XNorm2     : TLearnFloat;
-  StepNorm   : TLearnFloat;
-  G          : TLearnFloatArray;
-  D          : TLearnFloatArray;
-  H          : TLearnFloat2DArray;
-  HMod       : TLearnFloat2DArray;
-  Z          : TLearnFloat2DArray;
+  NIn        : TLInt;
+  NOut       : TLInt;
+  WCount     : TLInt;
+  LMFTol     : TLFloat;
+  LMStepTol  : TLFloat;
+  I          : TLInt;
+  K          : TLInt;
+  V          : TLFloat;
+  E          : TLFloat;
+  ENew       : TLFloat;
+  XNorm2     : TLFloat;
+  StepNorm   : TLFloat;
+  G          : TLVec;
+  D          : TLVec;
+  H          : TLMatrix;
+  HMod       : TLMatrix;
+  Z          : TLMatrix;
   SPD        : boolean;
-  Nu         : TLearnFloat;
-  Lambda     : TLearnFloat;
-  LambdaUp   : TLearnFloat;
-  LambdaDown : TLearnFloat;
+  Nu         : TLFloat;
+  Lambda     : TLFloat;
+  LambdaUp   : TLFloat;
+  LambdaDown : TLFloat;
   InternalRep: TMinLBFGSReport;
   State      : TMinLBFGSState;
-  X          : TLearnFloatArray;
-  Y          : TLearnFloatArray;
-  WBase      : TLearnFloatArray;
-  WDir       : TLearnFloatArray;
-  WT         : TLearnFloatArray;
-  WX         : TLearnFloatArray;
-  Pass       : TLearnInteger;
-  WBest      : TLearnFloatArray;
-  EBest      : TLearnFloat;
-  InvInfo    : TLearnInteger;
+  X          : TLVec;
+  Y          : TLVec;
+  WBase      : TLVec;
+  WDir       : TLVec;
+  WT         : TLVec;
+  WX         : TLVec;
+  Pass       : TLInt;
+  WBest      : TLVec;
+  EBest      : TLFloat;
+  InvInfo    : TLInt;
   InvRep     : TMatInvReport;
-  SolverInfo : TLearnInteger;
+  SolverInfo : TLInt;
   SolverRep  : TDenseSolverReport;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
@@ -475,26 +475,26 @@ end;
   *  2, if task has been solved.
   Rep         -   training report
   ************************************************************************ *)
-procedure MLPTrainLM_MT(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport);
+procedure MLPTrainLM_MT(var Network: TMultiLayerPerceptron; const XY: TLMatrix;
+  NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
+  var Info: TLInt; var Rep: TMLPReport);
 var
-  I        : TLearnInteger;
-  NIn      : TLearnInteger;
-  NOut     : TLearnInteger;
-  WCount   : TLearnInteger;
-  LMStepTol: TLearnFloat;
+  I        : TLInt;
+  NIn      : TLInt;
+  NOut     : TLInt;
+  WCount   : TLInt;
+  LMStepTol: TLFloat;
 
-  Lambda    : TLearnFloat;
-  LambdaUp  : TLearnFloat;
-  LambdaDown: TLearnFloat;
+  Lambda    : TLFloat;
+  LambdaUp  : TLFloat;
+  LambdaDown: TLFloat;
 
-  WBest: TLearnFloatArray;
-  EBest: TLearnFloat;
+  WBest: TLVec;
+  EBest: TLFloat;
 
   zLock  : TCriticalSection;
   RepPtr : ^TMLPReport;
-  InfoPtr: ^TLearnInteger;
+  InfoPtr: ^TLInt;
 
   NetworkPtr: PMultiLayerPerceptron;
 
@@ -502,32 +502,32 @@ var
   procedure Nested_ParallelFor(Pass: PtrInt; Data: Pointer;
     Item: TMultiThreadProcItem);
   var
-    _Parallel_I: TLearnInteger;
+    _Parallel_I: TLInt;
     NetworkCopy: TMultiLayerPerceptron;
-    // X: TLearnFloatArray;
-    // Y: TLearnFloatArray;
-    // D: TLearnFloatArray;
-    // Z: TLearnFloat2DArray;
-    InvInfo    : TLearnInteger;
+    // X: TLVec;
+    // Y: TLVec;
+    // D: TLVec;
+    // Z: TLMatrix;
+    InvInfo    : TLInt;
     InternalRep: TMinLBFGSReport;
     SolverRep  : TDenseSolverReport;
-    SolverInfo : TLearnInteger;
+    SolverInfo : TLInt;
     InvRep     : TMatInvReport;
-    WT         : TLearnFloatArray;
-    WDir       : TLearnFloatArray;
+    WT         : TLVec;
+    WDir       : TLVec;
     State      : TMinLBFGSState;
-    WBase      : TLearnFloatArray;
-    Nu         : TLearnFloat;
+    WBase      : TLVec;
+    Nu         : TLFloat;
     SPD        : boolean;
-    HMod       : TLearnFloat2DArray;
-    H          : TLearnFloat2DArray;
-    G          : TLearnFloatArray;
-    StepNorm   : TLearnFloat;
-    XNorm2     : TLearnFloat;
-    ENew       : TLearnFloat;
-    E          : TLearnFloat;
-    V          : TLearnFloat;
-    K          : TLearnInteger;
+    HMod       : TLMatrix;
+    H          : TLMatrix;
+    G          : TLVec;
+    StepNorm   : TLFloat;
+    XNorm2     : TLFloat;
+    ENew       : TLFloat;
+    E          : TLFloat;
+    V          : TLFloat;
+    K          : TLInt;
   begin
 
     SetLength(WT, WCount (* - 1 + 1 // optimized compiler *) );
@@ -848,34 +848,34 @@ begin
   {$IFDEF FPC}
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 1, PtrInt(Restarts));
   {$ELSE}
-  TParallel.For(1, Restarts, procedure(Pass: TLearnInteger)
+  TParallel.For(1, Restarts, procedure(Pass: TLInt)
     var
-      _Parallel_I: TLearnInteger;
+      _Parallel_I: TLInt;
       NetworkCopy: TMultiLayerPerceptron;
-      // X: TLearnFloatArray;
-      // Y: TLearnFloatArray;
-      // D: TLearnFloatArray;
-      // Z: TLearnFloat2DArray;
-      InvInfo: TLearnInteger;
+      // X: TLVec;
+      // Y: TLVec;
+      // D: TLVec;
+      // Z: TLMatrix;
+      InvInfo: TLInt;
       InternalRep: TMinLBFGSReport;
       SolverRep: TDenseSolverReport;
-      SolverInfo: TLearnInteger;
+      SolverInfo: TLInt;
       InvRep: TMatInvReport;
-      WT: TLearnFloatArray;
-      WDir: TLearnFloatArray;
+      WT: TLVec;
+      WDir: TLVec;
       State: TMinLBFGSState;
-      WBase: TLearnFloatArray;
-      Nu: TLearnFloat;
+      WBase: TLVec;
+      Nu: TLFloat;
       SPD: boolean;
-      HMod: TLearnFloat2DArray;
-      H: TLearnFloat2DArray;
-      G: TLearnFloatArray;
-      StepNorm: TLearnFloat;
-      XNorm2: TLearnFloat;
-      ENew: TLearnFloat;
-      E: TLearnFloat;
-      V: TLearnFloat;
-      K: TLearnInteger;
+      HMod: TLMatrix;
+      H: TLMatrix;
+      G: TLVec;
+      StepNorm: TLFloat;
+      XNorm2: TLFloat;
+      ENew: TLFloat;
+      E: TLFloat;
+      V: TLFloat;
+      K: TLInt;
     begin
 
       SetLength(WT, WCount (* - 1 + 1 // optimized compiler *) );
@@ -1178,20 +1178,20 @@ end;
   Rep         -   training report
   ************************************************************************ *)
 procedure MLPTrainLBFGS(var Network: TMultiLayerPerceptron;
-const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
-Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
-var Info: TLearnInteger; var Rep: TMLPReport; IsTerminated: PBoolean;
-out EBest: TLearnFloat);
+const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+Restarts: TLInt; WStep: TLFloat; MaxIts: TLInt;
+var Info: TLInt; var Rep: TMLPReport; IsTerminated: PBoolean;
+out EBest: TLFloat);
 var
-  I          : TLearnInteger;
-  Pass       : TLearnInteger;
-  NIn        : TLearnInteger;
-  NOut       : TLearnInteger;
-  WCount     : TLearnInteger;
-  W          : TLearnFloatArray;
-  WBest      : TLearnFloatArray;
-  E          : TLearnFloat;
-  V          : TLearnFloat;
+  I          : TLInt;
+  Pass       : TLInt;
+  NIn        : TLInt;
+  NOut       : TLInt;
+  WCount     : TLInt;
+  W          : TLVec;
+  WBest      : TLVec;
+  E          : TLFloat;
+  V          : TLFloat;
   InternalRep: TMinLBFGSReport;
   State      : TMinLBFGSState;
 begin
@@ -1290,16 +1290,16 @@ end;
   MaxIts - the higher the accuracy of the required its iterations > = 500
   Diameter - an initial values within the vector weighting > = 2 }
 procedure MLPTrainLBFGS_MT(var Network: TMultiLayerPerceptron;
-const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
-Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
-var Info: TLearnInteger; var Rep: TMLPReport);
+const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+Restarts: TLInt; WStep: TLFloat; MaxIts: TLInt;
+var Info: TLInt; var Rep: TMLPReport);
 var
-  I     : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
-  WBest : TLearnFloatArray;
-  EBest : TLearnFloat;
+  I     : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
+  WBest : TLVec;
+  EBest : TLFloat;
 
   zLock       : TCriticalSection;
   NetworkPtr  : PMultiLayerPerceptron;
@@ -1310,9 +1310,9 @@ var
   procedure Nested_ParallelFor(Pass: PtrInt; Data: Pointer;
   Item: TMultiThreadProcItem);
   var
-    E          : TLearnFloat;
-    V          : TLearnFloat;
-    W          : TLearnFloatArray;
+    E          : TLFloat;
+    V          : TLFloat;
+    W          : TLVec;
     State      : TMinLBFGSState;
     InternalRep: TMinLBFGSReport;
     NetworkCopy: TMultiLayerPerceptron;
@@ -1421,11 +1421,11 @@ begin
     {$IFDEF FPC}
     ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 1, PtrInt(Restarts));
     {$ELSE}
-    TParallel.For(1, Restarts, procedure(Pass: TLearnInteger)
+    TParallel.For(1, Restarts, procedure(Pass: TLInt)
       var
-        E: TLearnFloat;
-        V: TLearnFloat;
-        W: TLearnFloatArray;
+        E: TLFloat;
+        V: TLFloat;
+        W: TLVec;
         State: TMinLBFGSState;
         InternalRep: TMinLBFGSReport;
         NetworkCopy: TMultiLayerPerceptron;
@@ -1493,16 +1493,16 @@ end;
   MaxIts - the higher the accuracy of the required its iterations > = 500
   Diameter - an initial values within the vector weighting > = 2 }
 procedure MLPTrainLBFGS_MT_Mod(var Network: TMultiLayerPerceptron;
-const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Restarts: TLearnInteger;
-WStep, Diameter: TLearnFloat; MaxIts: TLearnInteger; var Info: TLearnInteger;
+const XY: TLMatrix; NPoints: TLInt; Restarts: TLInt;
+WStep, Diameter: TLFloat; MaxIts: TLInt; var Info: TLInt;
 var Rep: TMLPReport);
 var
-  I     : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
-  WBest : TLearnFloatArray;
-  EBest : TLearnFloat;
+  I     : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
+  WBest : TLVec;
+  EBest : TLFloat;
 
   zLock     : TCriticalSection;
   NetworkPtr: PMultiLayerPerceptron;
@@ -1511,15 +1511,15 @@ var
   procedure Nested_ParallelFor(Pass: PtrInt; Data: Pointer;
   Item: TMultiThreadProcItem);
   var
-    Ebegin     : TLearnFloat; { the initial error }
-    E          : TLearnFloat;
-    V          : TLearnFloat;
-    W          : TLearnFloatArray;
+    Ebegin     : TLFloat; { the initial error }
+    E          : TLFloat;
+    V          : TLFloat;
+    W          : TLVec;
     State      : TMinLBFGSState;
     InternalRep: TMinLBFGSReport;
     NetworkCopy: TMultiLayerPerceptron;
-    Decay      : TLearnFloat;
-    Iteration  : TLearnInteger;
+    Decay      : TLFloat;
+    Iteration  : TLInt;
   begin
     try
       Decay := 1;
@@ -1647,17 +1647,17 @@ begin
   {$IFDEF FPC}
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 1, PtrInt(Restarts));
   {$ELSE}
-  TParallel.For(1, Restarts, procedure(Pass: TLearnInteger)
+  TParallel.For(1, Restarts, procedure(Pass: TLInt)
     var
-      Ebegin: TLearnFloat; { the initial error }
-      E: TLearnFloat;
-      V: TLearnFloat;
-      W: TLearnFloatArray;
+      Ebegin: TLFloat; { the initial error }
+      E: TLFloat;
+      V: TLFloat;
+      W: TLVec;
       State: TMinLBFGSState;
       InternalRep: TMinLBFGSReport;
       NetworkCopy: TMultiLayerPerceptron;
-      Decay: TLearnFloat;
-      Iteration: TLearnInteger;
+      Decay: TLFloat;
+      Iteration: TLInt;
     begin
       try
         Decay := 1;
@@ -1739,20 +1739,20 @@ begin
   APVMove(@Network.Weights[0], 0, WCount - 1, @WBest[0], 0, WCount - 1);
 end;
 
-procedure MLPTrainMonteCarlo(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
-const MainRestarts, SubRestarts: TLearnInteger; const MinError: TLearnFloat;
-Diameter: TLearnFloat; var Info: TLearnInteger; var Rep: TMLPReport);
+procedure MLPTrainMonteCarlo(var Network: TMultiLayerPerceptron; const XY: TLMatrix; NPoints: TLInt;
+const MainRestarts, SubRestarts: TLInt; const MinError: TLFloat;
+Diameter: TLFloat; var Info: TLInt; var Rep: TMLPReport);
 var
-  I                : TLearnInteger;
-  MainPass, SubPass: TLearnInteger;
-  NIn              : TLearnInteger;
-  NOut             : TLearnInteger;
-  WCount           : TLearnInteger;
-  W                : TLearnFloatArray;
-  WBest            : TLearnFloatArray;
-  E                : TLearnFloat;
-  EBest            : TLearnFloat;
-  EBestSub         : TLearnFloat;
+  I                : TLInt;
+  MainPass, SubPass: TLInt;
+  NIn              : TLInt;
+  NOut             : TLInt;
+  WCount           : TLInt;
+  W                : TLVec;
+  WBest            : TLVec;
+  E                : TLFloat;
+  EBest            : TLFloat;
+  EBestSub         : TLFloat;
 begin
 
   //
@@ -1860,9 +1860,9 @@ end;
   CVRep       -   generalization error estimates
   ************************************************************************ *)
 procedure MLPKFoldCVLBFGS(const Network: TMultiLayerPerceptron;
-const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
-Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
-FoldsCount: TLearnInteger; var Info: TLearnInteger; var Rep: TMLPReport;
+const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+Restarts: TLInt; WStep: TLFloat; MaxIts: TLInt;
+FoldsCount: TLInt; var Info: TLInt; var Rep: TMLPReport;
 var CVRep: TMLPCVReport);
 begin
   MLPKFoldCVGeneral(Network, XY, NPoints, Decay, Restarts, FoldsCount, False, WStep, MaxIts, Info, Rep, CVRep);
@@ -1891,8 +1891,8 @@ end;
   CVRep       -   generalization error estimates
   ************************************************************************ *)
 procedure MLPKFoldCVLM(const Network: TMultiLayerPerceptron;
-const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
-Restarts: TLearnInteger; FoldsCount: TLearnInteger; var Info: TLearnInteger;
+const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+Restarts: TLInt; FoldsCount: TLInt; var Info: TLInt;
 var Rep: TMLPReport; var CVRep: TMLPCVReport);
 begin
   MLPKFoldCVGeneral(Network, XY, NPoints, Decay, Restarts, FoldsCount, True, 0.0, 0, Info, Rep, CVRep);
@@ -1902,32 +1902,32 @@ end;
   Internal cross-validation subroutine
   ************************************************************************ *)
 procedure MLPKFoldCVGeneral(const N: TMultiLayerPerceptron;
-const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
-Restarts: TLearnInteger; FoldsCount: TLearnInteger; LMAlgorithm: boolean;
-WStep: TLearnFloat; MaxIts: TLearnInteger; var Info: TLearnInteger;
+const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+Restarts: TLInt; FoldsCount: TLInt; LMAlgorithm: boolean;
+WStep: TLFloat; MaxIts: TLInt; var Info: TLInt;
 var Rep: TMLPReport; var CVRep: TMLPCVReport);
 var
-  I           : TLearnInteger;
-  Fold        : TLearnInteger;
-  J           : TLearnInteger;
-  K           : TLearnInteger;
+  I           : TLInt;
+  Fold        : TLInt;
+  J           : TLInt;
+  K           : TLInt;
   Network     : TMultiLayerPerceptron;
-  NIn         : TLearnInteger;
-  NOut        : TLearnInteger;
-  RowLen      : TLearnInteger;
-  WCount      : TLearnInteger;
-  NClasses    : TLearnInteger;
-  TSSize      : TLearnInteger;
-  CVSSize     : TLearnInteger;
-  CVSet       : TLearnFloat2DArray;
-  TestSet     : TLearnFloat2DArray;
-  Folds       : TLearnIntegerArray;
-  RelCnt      : TLearnInteger;
+  NIn         : TLInt;
+  NOut        : TLInt;
+  RowLen      : TLInt;
+  WCount      : TLInt;
+  NClasses    : TLInt;
+  TSSize      : TLInt;
+  CVSSize     : TLInt;
+  CVSet       : TLMatrix;
+  TestSet     : TLMatrix;
+  Folds       : TLIVec;
+  RelCnt      : TLInt;
   InternalRep : TMLPReport;
-  X           : TLearnFloatArray;
-  Y           : TLearnFloatArray;
+  X           : TLVec;
+  Y           : TLVec;
   IsTerminated: boolean;
-  EBest       : TLearnFloat;
+  EBest       : TLFloat;
 begin
 
   //
@@ -2102,13 +2102,13 @@ end;
   "NClasses>0" means that we have classification task.
   "NClasses<0" means regression task with -NClasses real outputs.
   ************************************************************************ *)
-procedure MLPKFoldSplit(const XY: TLearnFloat2DArray; NPoints: TLearnInteger;
-NClasses: TLearnInteger; FoldsCount: TLearnInteger; StratifiedSplits: boolean;
-var Folds: TLearnIntegerArray);
+procedure MLPKFoldSplit(const XY: TLMatrix; NPoints: TLInt;
+NClasses: TLInt; FoldsCount: TLInt; StratifiedSplits: boolean;
+var Folds: TLIVec);
 var
-  I: TLearnInteger;
-  J: TLearnInteger;
-  K: TLearnInteger;
+  I: TLInt;
+  J: TLInt;
+  K: TLInt;
 begin
 
   //

@@ -1,7 +1,7 @@
 object Form1: TForm1
   Left = 0
   Top = 0
-  Caption = 'zAnalysis'#36328#24179#21488#26426#22120#23398#20064':'#22270#29255#23398#20064'Demo'
+  Caption = 'zAnalysis'#36328#24179#21488#26426#22120#23398#20064':'#22823#35268#27169#22270#29255#23398#20064'Demo'
   ClientHeight = 481
   ClientWidth = 640
   FormFactor.Width = 320

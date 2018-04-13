@@ -9,11 +9,11 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 
-function Log1P(const x: TLearnFloat): TLearnFloat;
+function Log1P(const x: TLFloat): TLFloat;
 var
-  z : TLearnFloat;
-  LP: TLearnFloat;
-  LQ: TLearnFloat;
+  z : TLFloat;
+  LP: TLFloat;
+  LQ: TLFloat;
 begin
   z := 1.0 + x;
   if AP_FP_Less(z, 0.70710678118654752440) or
@@ -41,12 +41,12 @@ begin
   Result := x + z;
 end;
 
-function ExpM1(const x: TLearnFloat): TLearnFloat;
+function ExpM1(const x: TLFloat): TLFloat;
 var
-  r : TLearnFloat;
-  xx: TLearnFloat;
-  EP: TLearnFloat;
-  EQ: TLearnFloat;
+  r : TLFloat;
+  xx: TLFloat;
+  EP: TLFloat;
+  EQ: TLFloat;
 begin
   if AP_FP_Less(x, -0.5) or AP_FP_Greater(x, 0.5) then
     begin
@@ -66,10 +66,10 @@ begin
   Result := r + r;
 end;
 
-function CosM1(const x: TLearnFloat): TLearnFloat;
+function CosM1(const x: TLFloat): TLFloat;
 var
-  xx: TLearnFloat;
-  C : TLearnFloat;
+  xx: TLFloat;
+  C : TLFloat;
 begin
   if AP_FP_Less(x, -0.25 * Pi) or AP_FP_Greater(x, 0.25 * Pi) then
     begin
@@ -87,12 +87,12 @@ begin
   Result := -0.5 * xx + xx * xx * C;
 end;
 
-function GammaStirF(const x: TLearnFloat): TLearnFloat; inline;
+function GammaStirF(const x: TLFloat): TLFloat; inline;
 var
-  y   : TLearnFloat;
-  w   : TLearnFloat;
-  v   : TLearnFloat;
-  Stir: TLearnFloat;
+  y   : TLFloat;
+  w   : TLFloat;
+  v   : TLFloat;
+  Stir: TLFloat;
 begin
   w := 1 / x;
   Stir := 7.87311395793093628397E-4;
@@ -133,16 +133,16 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Original copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function Gamma(const x: TLearnFloat): TLearnFloat;
+function Gamma(const x: TLFloat): TLFloat;
 var
-  NX    : TLearnFloat;
-  p     : TLearnFloat;
-  PP    : TLearnFloat;
-  q     : TLearnFloat;
-  QQ    : TLearnFloat;
-  z     : TLearnFloat;
-  i     : TLearnInteger;
-  SgnGam: TLearnFloat;
+  NX    : TLFloat;
+  p     : TLFloat;
+  PP    : TLFloat;
+  q     : TLFloat;
+  QQ    : TLFloat;
+  z     : TLFloat;
+  i     : TLInt;
+  SgnGam: TLFloat;
 begin
   NX := x;
   SgnGam := 1;
@@ -256,21 +256,21 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function LnGamma(const x: TLearnFloat; var SgnGam: TLearnFloat): TLearnFloat;
+function LnGamma(const x: TLFloat; var SgnGam: TLFloat): TLFloat;
 var
-  NX   : TLearnFloat;
-  a    : TLearnFloat;
-  b    : TLearnFloat;
-  C    : TLearnFloat;
-  p    : TLearnFloat;
-  q    : TLearnFloat;
-  u    : TLearnFloat;
-  w    : TLearnFloat;
-  z    : TLearnFloat;
-  i    : TLearnInteger;
-  LogPi: TLearnFloat;
-  LS2PI: TLearnFloat;
-  Tmp  : TLearnFloat;
+  NX   : TLFloat;
+  a    : TLFloat;
+  b    : TLFloat;
+  C    : TLFloat;
+  p    : TLFloat;
+  q    : TLFloat;
+  u    : TLFloat;
+  w    : TLFloat;
+  z    : TLFloat;
+  i    : TLInt;
+  LogPi: TLFloat;
+  LS2PI: TLFloat;
+  Tmp  : TLFloat;
 begin
   NX := x;
   SgnGam := 1;
@@ -403,14 +403,14 @@ end;
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1985, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function IncompleteGamma(const a, x: TLearnFloat): TLearnFloat;
+function IncompleteGamma(const a, x: TLFloat): TLFloat;
 var
-  IGammaEpsilon: TLearnFloat;
-  ans          : TLearnFloat;
-  ax           : TLearnFloat;
-  C            : TLearnFloat;
-  r            : TLearnFloat;
-  Tmp          : TLearnFloat;
+  IGammaEpsilon: TLFloat;
+  ans          : TLFloat;
+  ax           : TLFloat;
+  C            : TLFloat;
+  r            : TLFloat;
+  Tmp          : TLFloat;
 begin
   IGammaEpsilon := 0.000000000000001;
   if AP_FP_Less_Eq(x, 0) or AP_FP_Less_Eq(a, 0) then
@@ -474,26 +474,26 @@ end;
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1985, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function IncompleteGammaC(const a, x: TLearnFloat): TLearnFloat;
+function IncompleteGammaC(const a, x: TLFloat): TLFloat;
 var
-  IGammaEpsilon     : TLearnFloat;
-  IGammaBigNumber   : TLearnFloat;
-  IGammaBigNumberInv: TLearnFloat;
-  ans               : TLearnFloat;
-  ax                : TLearnFloat;
-  C                 : TLearnFloat;
-  yc                : TLearnFloat;
-  r                 : TLearnFloat;
-  t                 : TLearnFloat;
-  y                 : TLearnFloat;
-  z                 : TLearnFloat;
-  pk                : TLearnFloat;
-  pkm1              : TLearnFloat;
-  pkm2              : TLearnFloat;
-  qk                : TLearnFloat;
-  qkm1              : TLearnFloat;
-  qkm2              : TLearnFloat;
-  Tmp               : TLearnFloat;
+  IGammaEpsilon     : TLFloat;
+  IGammaBigNumber   : TLFloat;
+  IGammaBigNumberInv: TLFloat;
+  ans               : TLFloat;
+  ax                : TLFloat;
+  C                 : TLFloat;
+  yc                : TLFloat;
+  r                 : TLFloat;
+  t                 : TLFloat;
+  y                 : TLFloat;
+  z                 : TLFloat;
+  pk                : TLFloat;
+  pkm1              : TLFloat;
+  pkm2              : TLFloat;
+  qk                : TLFloat;
+  qkm1              : TLFloat;
+  qkm2              : TLFloat;
+  Tmp               : TLFloat;
 begin
   IGammaEpsilon := 0.000000000000001;
   IGammaBigNumber := 4503599627370496.0;
@@ -591,22 +591,22 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvIncompleteGammaC(const a, y0: TLearnFloat): TLearnFloat;
+function InvIncompleteGammaC(const a, y0: TLFloat): TLFloat;
 var
-  IGammaEpsilon     : TLearnFloat;
-  IInvGammaBigNumber: TLearnFloat;
-  x0                : TLearnFloat;
-  x1                : TLearnFloat;
-  x                 : TLearnFloat;
-  yl                : TLearnFloat;
-  yh                : TLearnFloat;
-  y                 : TLearnFloat;
-  d                 : TLearnFloat;
-  lgm               : TLearnFloat;
-  dithresh          : TLearnFloat;
-  i                 : TLearnInteger;
-  dir               : TLearnInteger;
-  Tmp               : TLearnFloat;
+  IGammaEpsilon     : TLFloat;
+  IInvGammaBigNumber: TLFloat;
+  x0                : TLFloat;
+  x1                : TLFloat;
+  x                 : TLFloat;
+  yl                : TLFloat;
+  yh                : TLFloat;
+  y                 : TLFloat;
+  d                 : TLFloat;
+  lgm               : TLFloat;
+  dithresh          : TLFloat;
+  i                 : TLInt;
+  dir               : TLInt;
+  Tmp               : TLFloat;
 begin
   IGammaEpsilon := 0.000000000000001;
   IInvGammaBigNumber := 4503599627370496.0;
@@ -773,7 +773,7 @@ end;
   * Cephes Math Library Release 2.8:  June, 2000
   * Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function PoissonDistribution(k: TLearnInteger; m: TLearnFloat): TLearnFloat;
+function PoissonDistribution(k: TLInt; m: TLFloat): TLFloat;
 begin
   Assert((k >= 0) and AP_FP_Greater(m, 0), 'Domain error in PoissonDistribution');
   Result := IncompleteGammaC(k + 1, m);
@@ -805,7 +805,7 @@ end;
   * Cephes Math Library Release 2.8:  June, 2000
   * Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function PoissonCDistribution(k: TLearnInteger; m: TLearnFloat): TLearnFloat;
+function PoissonCDistribution(k: TLInt; m: TLFloat): TLFloat;
 begin
   Assert((k >= 0) and AP_FP_Greater(m, 0), 'Domain error in PoissonDistributionC');
   Result := IncompleteGamma(k + 1, m);
@@ -830,7 +830,7 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvPoissonDistribution(k: TLearnInteger; y: TLearnFloat): TLearnFloat;
+function InvPoissonDistribution(k: TLInt; y: TLFloat): TLFloat;
 begin
   Assert((k >= 0) and AP_FP_Greater_Eq(y, 0) and AP_FP_Less(y, 1), 'Domain error in InvPoissonDistribution');
   Result := InvIncompleteGammaC(k + 1, y);

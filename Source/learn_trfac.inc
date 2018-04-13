@@ -7,50 +7,50 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-procedure RMatrixLU(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLU(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function HPDMatrixCholesky(var A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SPDMatrixCholesky(var A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixLUP(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLUP(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixPLU(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixPLU(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLU(var A: TLMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLU(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HPDMatrixCholesky(var A: TLComplexMatrix; N: TLInt; IsUpper: Boolean): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SPDMatrixCholesky(var A: TLMatrix; N: TLInt; IsUpper: Boolean): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLUP(var A: TLMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLUP(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixPLU(var A: TLMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixPLU(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure CMatrixLUPRec(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLUPRec(var A: TLComplexMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec; var Tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixLUPRec(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLUPRec(var A: TLMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec; var Tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure CMatrixPLURec(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixPLURec(var A: TLComplexMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec; var Tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixPLURec(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixPLURec(var A: TLMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec; var Tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure CMatrixLUP2(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLUP2(var A: TLComplexMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec; var Tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixLUP2(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLUP2(var A: TLMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec; var Tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure CMatrixPLU2(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixPLU2(var A: TLComplexMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec; var Tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixPLU2(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray; var Tmp: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixPLU2(var A: TLMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec; var Tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function HPDMatrixCholeskyRec(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnComplexArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HPDMatrixCholeskyRec(var A: TLComplexMatrix; Offs: TLInt;
+  N: TLInt; IsUpper: Boolean; var Tmp: TLComplexVec): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function SPDMatrixCholeskyRec(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnFloatArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SPDMatrixCholeskyRec(var A: TLMatrix; Offs: TLInt;
+  N: TLInt; IsUpper: Boolean; var Tmp: TLVec): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function HPDMatrixCholesky2(var AAA: TLearnComplex2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnComplexArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HPDMatrixCholesky2(var AAA: TLComplexMatrix; Offs: TLInt;
+  N: TLInt; IsUpper: Boolean; var Tmp: TLComplexVec): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function SPDMatrixCholesky2(var AAA: TLearnFloat2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnFloatArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SPDMatrixCholesky2(var AAA: TLMatrix; Offs: TLInt;
+  N: TLInt; IsUpper: Boolean; var Tmp: TLVec): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -81,8 +81,8 @@ function SPDMatrixCholesky2(var AAA: TLearnFloat2DArray; Offs: TLearnInteger;
   * U is stored on and above main diagonal
   Pivots  -   permutation matrix in compact form. array[0..Min(M-1,N-1)].
   ************************************************************************ *)
-procedure RMatrixLU(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger;
-  var Pivots: TLearnIntegerArray);
+procedure RMatrixLU(var A: TLMatrix; M: TLInt; N: TLInt;
+  var Pivots: TLIVec);
 begin
   Assert(M > 0, 'RMatrixLU: incorrect M!');
   Assert(N > 0, 'RMatrixLU: incorrect N!');
@@ -90,7 +90,7 @@ begin
 end;
 
 (* ************************************************************************
-  LU decomposition of a general TLearnComplex matrix with row pivoting
+  LU decomposition of a general TLComplex matrix with row pivoting
 
   A is represented as A = P*L*U, where:
   * L is lower unitriangular matrix
@@ -117,8 +117,8 @@ end;
   * U is stored on and above main diagonal
   Pivots  -   permutation matrix in compact form. array[0..Min(M-1,N-1)].
   ************************************************************************ *)
-procedure CMatrixLU(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger;
-  var Pivots: TLearnIntegerArray);
+procedure CMatrixLU(var A: TLComplexMatrix; M: TLInt; N: TLInt;
+  var Pivots: TLIVec);
 begin
   Assert(M > 0, 'CMatrixLU: incorrect M!');
   Assert(N > 0, 'CMatrixLU: incorrect N!');
@@ -150,10 +150,10 @@ end;
   Otherwise, the function returns False. Contents of A is not determined
   in such case.
   ************************************************************************ *)
-function HPDMatrixCholesky(var A: TLearnComplex2DArray; N: TLearnInteger;
+function HPDMatrixCholesky(var A: TLComplexMatrix; N: TLInt;
   IsUpper: Boolean): Boolean;
 var
-  Tmp: TLearnComplexArray;
+  Tmp: TLComplexVec;
 begin
   if N < 1 then
     begin
@@ -189,10 +189,10 @@ end;
   Otherwise, the function returns False. Contents of A is not determined
   in such case.
   ************************************************************************ *)
-function SPDMatrixCholesky(var A: TLearnFloat2DArray; N: TLearnInteger;
+function SPDMatrixCholesky(var A: TLMatrix; N: TLInt;
   IsUpper: Boolean): Boolean;
 var
-  Tmp: TLearnFloatArray;
+  Tmp: TLVec;
 begin
   if N < 1 then
     begin
@@ -203,14 +203,14 @@ begin
   Result := SPDMatrixCholeskyRec(A, 0, N, IsUpper, Tmp);
 end;
 
-procedure RMatrixLUP(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger;
-  var Pivots: TLearnIntegerArray);
+procedure RMatrixLUP(var A: TLMatrix; M: TLInt; N: TLInt;
+  var Pivots: TLIVec);
 var
-  Tmp: TLearnFloatArray;
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  MX : TLearnFloat;
-  V  : TLearnFloat;
+  Tmp: TLVec;
+  I  : TLInt;
+  J  : TLInt;
+  MX : TLFloat;
+  V  : TLFloat;
 begin
 
   //
@@ -261,15 +261,15 @@ begin
     end;
 end;
 
-procedure CMatrixLUP(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger;
-  var Pivots: TLearnIntegerArray);
+procedure CMatrixLUP(var A: TLComplexMatrix; M: TLInt; N: TLInt;
+  var Pivots: TLIVec);
 var
-  Tmp: TLearnComplexArray;
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  MX : TLearnFloat;
-  V  : TLearnFloat;
-  i_ : TLearnInteger;
+  Tmp: TLComplexVec;
+  I  : TLInt;
+  J  : TLInt;
+  MX : TLFloat;
+  V  : TLFloat;
+  i_ : TLInt;
 begin
 
   //
@@ -326,14 +326,14 @@ begin
     end;
 end;
 
-procedure RMatrixPLU(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger;
-  var Pivots: TLearnIntegerArray);
+procedure RMatrixPLU(var A: TLMatrix; M: TLInt; N: TLInt;
+  var Pivots: TLIVec);
 var
-  Tmp: TLearnFloatArray;
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  MX : TLearnFloat;
-  V  : TLearnFloat;
+  Tmp: TLVec;
+  I  : TLInt;
+  J  : TLInt;
+  MX : TLFloat;
+  V  : TLFloat;
 begin
 
   //
@@ -384,15 +384,15 @@ begin
     end;
 end;
 
-procedure CMatrixPLU(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger;
-  var Pivots: TLearnIntegerArray);
+procedure CMatrixPLU(var A: TLComplexMatrix; M: TLInt; N: TLInt;
+  var Pivots: TLIVec);
 var
-  Tmp: TLearnComplexArray;
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  MX : TLearnFloat;
-  V  : TLearnComplex;
-  i_ : TLearnInteger;
+  Tmp: TLComplexVec;
+  I  : TLInt;
+  J  : TLInt;
+  MX : TLFloat;
+  V  : TLComplex;
+  i_ : TLInt;
 begin
 
   //
@@ -450,18 +450,18 @@ begin
 end;
 
 (* ************************************************************************
-  Recurrent TLearnComplex LU subroutine.
+  Recurrent TLComplex LU subroutine.
   Never call it directly.
   ************************************************************************ *)
-procedure CMatrixLUPRec(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray;
-  var Tmp: TLearnComplexArray);
+procedure CMatrixLUPRec(var A: TLComplexMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec;
+  var Tmp: TLComplexVec);
 var
-  I  : TLearnInteger;
-  M1 : TLearnInteger;
-  M2 : TLearnInteger;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  M1 : TLInt;
+  M2 : TLInt;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
 
   //
@@ -570,15 +570,15 @@ end;
   Recurrent real LU subroutine.
   Never call it directly.
   ************************************************************************ *)
-procedure RMatrixLUPRec(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray;
-  var Tmp: TLearnFloatArray);
+procedure RMatrixLUPRec(var A: TLMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec;
+  var Tmp: TLVec);
 var
-  I  : TLearnInteger;
-  M1 : TLearnInteger;
-  M2 : TLearnInteger;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  M1 : TLInt;
+  M2 : TLInt;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
 
   //
@@ -687,18 +687,18 @@ begin
 end;
 
 (* ************************************************************************
-  Recurrent TLearnComplex LU subroutine.
+  Recurrent TLComplex LU subroutine.
   Never call it directly.
   ************************************************************************ *)
-procedure CMatrixPLURec(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray;
-  var Tmp: TLearnComplexArray);
+procedure CMatrixPLURec(var A: TLComplexMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec;
+  var Tmp: TLComplexVec);
 var
-  I  : TLearnInteger;
-  N1 : TLearnInteger;
-  N2 : TLearnInteger;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  N1 : TLInt;
+  N2 : TLInt;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
 
   //
@@ -804,13 +804,13 @@ end;
   Recurrent real LU subroutine.
   Never call it directly.
   ************************************************************************ *)
-procedure RMatrixPLURec(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray;
-  var Tmp: TLearnFloatArray);
+procedure RMatrixPLURec(var A: TLMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec;
+  var Tmp: TLVec);
 var
-  I : TLearnInteger;
-  N1: TLearnInteger;
-  N2: TLearnInteger;
+  I : TLInt;
+  N1: TLInt;
+  N2: TLInt;
 begin
 
   //
@@ -886,18 +886,18 @@ begin
 end;
 
 (* ************************************************************************
-  TLearnComplex LUP kernel
+  TLComplex LUP kernel
   ************************************************************************ *)
-procedure CMatrixLUP2(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray;
-  var Tmp: TLearnComplexArray);
+procedure CMatrixLUP2(var A: TLComplexMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec;
+  var Tmp: TLComplexVec);
 var
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  JP : TLearnInteger;
-  S  : TLearnComplex;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  J  : TLInt;
+  JP : TLInt;
+  S  : TLComplex;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
 
   //
@@ -985,16 +985,16 @@ end;
 (* ************************************************************************
   Real LUP kernel
   ************************************************************************ *)
-procedure RMatrixLUP2(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray;
-  var Tmp: TLearnFloatArray);
+procedure RMatrixLUP2(var A: TLMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec;
+  var Tmp: TLVec);
 var
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  JP : TLearnInteger;
-  S  : TLearnFloat;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  J  : TLInt;
+  JP : TLInt;
+  S  : TLFloat;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
 
   //
@@ -1074,18 +1074,18 @@ begin
 end;
 
 (* ************************************************************************
-  TLearnComplex PLU kernel
+  TLComplex PLU kernel
   ************************************************************************ *)
-procedure CMatrixPLU2(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray;
-  var Tmp: TLearnComplexArray);
+procedure CMatrixPLU2(var A: TLComplexMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec;
+  var Tmp: TLComplexVec);
 var
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  JP : TLearnInteger;
-  S  : TLearnComplex;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  J  : TLInt;
+  JP : TLInt;
+  S  : TLComplex;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
 
   //
@@ -1170,16 +1170,16 @@ end;
 (* ************************************************************************
   Real PLU kernel
   ************************************************************************ *)
-procedure RMatrixPLU2(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  M: TLearnInteger; N: TLearnInteger; var Pivots: TLearnIntegerArray;
-  var Tmp: TLearnFloatArray);
+procedure RMatrixPLU2(var A: TLMatrix; Offs: TLInt;
+  M: TLInt; N: TLInt; var Pivots: TLIVec;
+  var Tmp: TLVec);
 var
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  JP : TLearnInteger;
-  S  : TLearnFloat;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  J  : TLInt;
+  JP : TLInt;
+  S  : TLFloat;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
 
   //
@@ -1261,11 +1261,11 @@ end;
 (* ************************************************************************
   Recursive computational subroutine for HPDMatrixCholesky
   ************************************************************************ *)
-function HPDMatrixCholeskyRec(var A: TLearnComplex2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnComplexArray): Boolean;
+function HPDMatrixCholeskyRec(var A: TLComplexMatrix; Offs: TLInt;
+  N: TLInt; IsUpper: Boolean; var Tmp: TLComplexVec): Boolean;
 var
-  N1: TLearnInteger;
-  N2: TLearnInteger;
+  N1: TLInt;
+  N2: TLInt;
 begin
 
   //
@@ -1336,11 +1336,11 @@ end;
 (* ************************************************************************
   Recursive computational subroutine for SPDMatrixCholesky
   ************************************************************************ *)
-function SPDMatrixCholeskyRec(var A: TLearnFloat2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnFloatArray): Boolean;
+function SPDMatrixCholeskyRec(var A: TLMatrix; Offs: TLInt;
+  N: TLInt; IsUpper: Boolean; var Tmp: TLVec): Boolean;
 var
-  N1: TLearnInteger;
-  N2: TLearnInteger;
+  N1: TLInt;
+  N2: TLInt;
 begin
 
   //
@@ -1411,19 +1411,19 @@ end;
 (* ************************************************************************
   Level-2 Hermitian Cholesky subroutine.
   ************************************************************************ *)
-function HPDMatrixCholesky2(var AAA: TLearnComplex2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnComplexArray): Boolean;
+function HPDMatrixCholesky2(var AAA: TLComplexMatrix; Offs: TLInt;
+  N: TLInt; IsUpper: Boolean; var Tmp: TLComplexVec): Boolean;
 var
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  K  : TLearnInteger;
-  J1 : TLearnInteger;
-  J2 : TLearnInteger;
-  AJJ: TLearnFloat;
-  V  : TLearnComplex;
-  R  : TLearnFloat;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  J  : TLInt;
+  K  : TLInt;
+  J1 : TLInt;
+  J2 : TLInt;
+  AJJ: TLFloat;
+  V  : TLComplex;
+  R  : TLFloat;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
   Result := True;
   if N < 0 then
@@ -1563,19 +1563,19 @@ end;
 (* ************************************************************************
   Level-2 Cholesky subroutine
   ************************************************************************ *)
-function SPDMatrixCholesky2(var AAA: TLearnFloat2DArray; Offs: TLearnInteger;
-  N: TLearnInteger; IsUpper: Boolean; var Tmp: TLearnFloatArray): Boolean;
+function SPDMatrixCholesky2(var AAA: TLMatrix; Offs: TLInt;
+  N: TLInt; IsUpper: Boolean; var Tmp: TLVec): Boolean;
 var
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  K  : TLearnInteger;
-  J1 : TLearnInteger;
-  J2 : TLearnInteger;
-  AJJ: TLearnFloat;
-  V  : TLearnFloat;
-  R  : TLearnFloat;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  J  : TLInt;
+  K  : TLInt;
+  J1 : TLInt;
+  J2 : TLInt;
+  AJJ: TLFloat;
+  V  : TLFloat;
+  R  : TLFloat;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
   Result := True;
   if N < 0 then

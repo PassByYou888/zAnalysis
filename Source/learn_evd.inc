@@ -8,117 +8,117 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 
-function SMatrixEVD(A: TLearnFloat2DArray; N: TLearnInteger; ZNeeded: TLearnInteger; IsUpper: Boolean;
-  var D: TLearnFloatArray; var Z: TLearnFloat2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SMatrixEVD(A: TLMatrix; N: TLInt; ZNeeded: TLInt; IsUpper: Boolean;
+  var D: TLVec; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function SMatrixEVDR(A: TLearnFloat2DArray; N: TLearnInteger; ZNeeded: TLearnInteger;
-  IsUpper: Boolean; B1: TLearnFloat; B2: TLearnFloat; var M: TLearnInteger;
-  var W: TLearnFloatArray; var Z: TLearnFloat2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SMatrixEVDR(A: TLMatrix; N: TLInt; ZNeeded: TLInt;
+  IsUpper: Boolean; B1: TLFloat; B2: TLFloat; var M: TLInt;
+  var W: TLVec; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function SMatrixEVDI(A: TLearnFloat2DArray; N: TLearnInteger; ZNeeded: TLearnInteger;
-  IsUpper: Boolean; I1: TLearnInteger; I2: TLearnInteger;
-  var W: TLearnFloatArray; var Z: TLearnFloat2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SMatrixEVDI(A: TLMatrix; N: TLInt; ZNeeded: TLInt;
+  IsUpper: Boolean; I1: TLInt; I2: TLInt;
+  var W: TLVec; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function HMatrixEVD(A: TLearnComplex2DArray; N: TLearnInteger; ZNeeded: TLearnInteger; IsUpper: Boolean;
-  var D: TLearnFloatArray; var Z: TLearnComplex2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HMatrixEVD(A: TLComplexMatrix; N: TLInt; ZNeeded: TLInt; IsUpper: Boolean;
+  var D: TLVec; var Z: TLComplexMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function HMatrixEVDR(A: TLearnComplex2DArray; N: TLearnInteger;
-  ZNeeded: TLearnInteger; IsUpper: Boolean; B1: TLearnFloat; B2: TLearnFloat;
-  var M: TLearnInteger; var W: TLearnFloatArray; var Z: TLearnComplex2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HMatrixEVDR(A: TLComplexMatrix; N: TLInt;
+  ZNeeded: TLInt; IsUpper: Boolean; B1: TLFloat; B2: TLFloat;
+  var M: TLInt; var W: TLVec; var Z: TLComplexMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function HMatrixEVDI(A: TLearnComplex2DArray; N: TLearnInteger;
-  ZNeeded: TLearnInteger; IsUpper: Boolean; I1: TLearnInteger;
-  I2: TLearnInteger; var W: TLearnFloatArray; var Z: TLearnComplex2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HMatrixEVDI(A: TLComplexMatrix; N: TLInt;
+  ZNeeded: TLInt; IsUpper: Boolean; I1: TLInt;
+  I2: TLInt; var W: TLVec; var Z: TLComplexMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function SMatrixTDEVD(var D: TLearnFloatArray; E: TLearnFloatArray; N: TLearnInteger;
-  ZNeeded: TLearnInteger; var Z: TLearnFloat2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SMatrixTDEVD(var D: TLVec; E: TLVec; N: TLInt;
+  ZNeeded: TLInt; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function SMatrixTDEVDR(var D: TLearnFloatArray; const E: TLearnFloatArray;
-  N: TLearnInteger; ZNeeded: TLearnInteger; A: TLearnFloat; B: TLearnFloat;
-  var M: TLearnInteger; var Z: TLearnFloat2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SMatrixTDEVDR(var D: TLVec; const E: TLVec;
+  N: TLInt; ZNeeded: TLInt; A: TLFloat; B: TLFloat;
+  var M: TLInt; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function SMatrixTDEVDI(var D: TLearnFloatArray; const E: TLearnFloatArray;
-  N: TLearnInteger; ZNeeded: TLearnInteger; I1: TLearnInteger;
-  I2: TLearnInteger; var Z: TLearnFloat2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SMatrixTDEVDI(var D: TLVec; const E: TLVec;
+  N: TLInt; ZNeeded: TLInt; I1: TLInt;
+  I2: TLInt; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function RMatrixEVD(A: TLearnFloat2DArray; N: TLearnInteger; VNeeded: TLearnInteger;
-  var WR: TLearnFloatArray; var WI: TLearnFloatArray; var VL: TLearnFloat2DArray;
-  var VR: TLearnFloat2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixEVD(A: TLMatrix; N: TLInt; VNeeded: TLInt;
+  var WR: TLVec; var WI: TLVec; var VL: TLMatrix;
+  var VR: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function InternalBisectionEigenValues(D: TLearnFloatArray; E: TLearnFloatArray;
-  N: TLearnInteger; IRANGE: TLearnInteger; IORDER: TLearnInteger;
-  VL: TLearnFloat; VU: TLearnFloat; IL: TLearnInteger; IU: TLearnInteger;
-  ABSTOL: TLearnFloat; var W: TLearnFloatArray; var M: TLearnInteger;
-  var NSPLIT: TLearnInteger; var IBLOCK: TLearnIntegerArray;
-  var ISPLIT: TLearnIntegerArray; var ErrorCode: TLearnInteger): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function InternalBisectionEigenValues(D: TLVec; E: TLVec;
+  N: TLInt; IRANGE: TLInt; IORDER: TLInt;
+  VL: TLFloat; VU: TLFloat; IL: TLInt; IU: TLInt;
+  ABSTOL: TLFloat; var W: TLVec; var M: TLInt;
+  var NSPLIT: TLInt; var IBLOCK: TLIVec;
+  var ISPLIT: TLIVec; var ErrorCode: TLInt): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure InternalDSTEIN(const N: TLearnInteger; const D: TLearnFloatArray;
-  E: TLearnFloatArray; const M: TLearnInteger; W: TLearnFloatArray;
-  const IBLOCK: TLearnIntegerArray; const ISPLIT: TLearnIntegerArray;
-  var Z: TLearnFloat2DArray; var IFAIL: TLearnIntegerArray; var INFO: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalDSTEIN(const N: TLInt; const D: TLVec;
+  E: TLVec; const M: TLInt; W: TLVec;
+  const IBLOCK: TLIVec; const ISPLIT: TLIVec;
+  var Z: TLMatrix; var IFAIL: TLIVec; var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function TridiagonalEVD(var D: TLearnFloatArray; E: TLearnFloatArray; N: TLearnInteger;
-  ZNeeded: TLearnInteger; var Z: TLearnFloat2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function TridiagonalEVD(var D: TLVec; E: TLVec; N: TLInt;
+  ZNeeded: TLInt; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure TdEVDE2(const A: TLearnFloat; const B: TLearnFloat;
-  const C: TLearnFloat; var RT1: TLearnFloat; var RT2: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TdEVDE2(const A: TLFloat; const B: TLFloat;
+  const C: TLFloat; var RT1: TLFloat; var RT2: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure TdEVDEV2(const A: TLearnFloat; const B: TLearnFloat;
-  const C: TLearnFloat; var RT1: TLearnFloat; var RT2: TLearnFloat;
-  var CS1: TLearnFloat; var SN1: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TdEVDEV2(const A: TLFloat; const B: TLFloat;
+  const C: TLFloat; var RT1: TLFloat; var RT2: TLFloat;
+  var CS1: TLFloat; var SN1: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function TdEVDPythag(A: TLearnFloat; B: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function TdEVDExtSign(A: TLearnFloat; B: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function TdEVDPythag(A: TLFloat; B: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function TdEVDExtSign(A: TLFloat; B: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure TDINInternalDLAGTF(const N: TLearnInteger; var A: TLearnFloatArray;
-  const LAMBDA: TLearnFloat; var B: TLearnFloatArray; var C: TLearnFloatArray;
-  const TOL: TLearnFloat; var D: TLearnFloatArray; var IIN: TLearnIntegerArray;
-  var INFO: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TDINInternalDLAGTF(const N: TLInt; var A: TLVec;
+  const LAMBDA: TLFloat; var B: TLVec; var C: TLVec;
+  const TOL: TLFloat; var D: TLVec; var IIN: TLIVec;
+  var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure TDINInternalDLAGTS(const N: TLearnInteger; const A: TLearnFloatArray;
-  const B: TLearnFloatArray; const C: TLearnFloatArray; const D: TLearnFloatArray;
-  const IIN: TLearnIntegerArray; var Y: TLearnFloatArray; var TOL: TLearnFloat;
-  var INFO: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TDINInternalDLAGTS(const N: TLInt; const A: TLVec;
+  const B: TLVec; const C: TLVec; const D: TLVec;
+  const IIN: TLIVec; var Y: TLVec; var TOL: TLFloat;
+  var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure InternalDLAEBZ(const IJOB: TLearnInteger; const NITMAX: TLearnInteger;
-  const N: TLearnInteger; const MMAX: TLearnInteger; const MINP: TLearnInteger;
-  const ABSTOL: TLearnFloat; const RELTOL: TLearnFloat;
-  const PIVMIN: TLearnFloat; const D: TLearnFloatArray; const E: TLearnFloatArray;
-  const E2: TLearnFloatArray; var NVAL: TLearnIntegerArray; var AB: TLearnFloat2DArray;
-  var C: TLearnFloatArray; var MOUT: TLearnInteger; var NAB: TLearnInteger2DArray;
-  var WORK: TLearnFloatArray; var IWORK: TLearnIntegerArray;
-  var INFO: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalDLAEBZ(const IJOB: TLInt; const NITMAX: TLInt;
+  const N: TLInt; const MMAX: TLInt; const MINP: TLInt;
+  const ABSTOL: TLFloat; const RELTOL: TLFloat;
+  const PIVMIN: TLFloat; const D: TLVec; const E: TLVec;
+  const E2: TLVec; var NVAL: TLIVec; var AB: TLMatrix;
+  var C: TLVec; var MOUT: TLInt; var NAB: TLIMatrix;
+  var WORK: TLVec; var IWORK: TLIVec;
+  var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure InternalTREVC(const T: TLearnFloat2DArray; N: TLearnInteger;
-  SIDE: TLearnInteger; HOWMNY: TLearnInteger; VSELECT: TLearnBooleanArray;
-  var VL: TLearnFloat2DArray; var VR: TLearnFloat2DArray; var M: TLearnInteger;
-  var INFO: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalTREVC(const T: TLMatrix; N: TLInt;
+  SIDE: TLInt; HOWMNY: TLInt; VSELECT: TLBVec;
+  var VL: TLMatrix; var VR: TLMatrix; var M: TLInt;
+  var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure InternalHSEVDLALN2(const LTRANS: Boolean; const NA: TLearnInteger;
-  const NW: TLearnInteger; const SMIN: TLearnFloat; const CA: TLearnFloat;
-  const A: TLearnFloat2DArray; const D1: TLearnFloat; const D2: TLearnFloat;
-  const B: TLearnFloat2DArray; const WR: TLearnFloat; const WI: TLearnFloat;
-  var RSWAP4: TLearnBooleanArray; var ZSWAP4: TLearnBooleanArray;
-  var IPIVOT44: TLearnInteger2DArray; var CIV4: TLearnFloatArray; var CRV4: TLearnFloatArray;
-  var X: TLearnFloat2DArray; var SCL: TLearnFloat; var XNORM: TLearnFloat;
-  var INFO: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalHSEVDLALN2(const LTRANS: Boolean; const NA: TLInt;
+  const NW: TLInt; const SMIN: TLFloat; const CA: TLFloat;
+  const A: TLMatrix; const D1: TLFloat; const D2: TLFloat;
+  const B: TLMatrix; const WR: TLFloat; const WI: TLFloat;
+  var RSWAP4: TLBVec; var ZSWAP4: TLBVec;
+  var IPIVOT44: TLIMatrix; var CIV4: TLVec; var CRV4: TLVec;
+  var X: TLMatrix; var SCL: TLFloat; var XNORM: TLFloat;
+  var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure InternalHSEVDLADIV(const A: TLearnFloat; const B: TLearnFloat;
-  const C: TLearnFloat; const D: TLearnFloat; var P: TLearnFloat;
-  var Q: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalHSEVDLADIV(const A: TLFloat; const B: TLFloat;
+  const C: TLFloat; const D: TLFloat; var P: TLFloat;
+  var Q: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function NonSymmetricEVD(A: TLearnFloat2DArray; N: TLearnInteger;
-  VNeeded: TLearnInteger; var WR: TLearnFloatArray; var WI: TLearnFloatArray;
-  var VL: TLearnFloat2DArray; var VR: TLearnFloat2DArray): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function NonSymmetricEVD(A: TLMatrix; N: TLInt;
+  VNeeded: TLInt; var WR: TLVec; var WI: TLVec;
+  var VL: TLMatrix; var VR: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure ToUpperHessenberg(var A: TLearnFloat2DArray; N: TLearnInteger;
-  var TAU: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure ToUpperHessenberg(var A: TLMatrix; N: TLInt;
+  var TAU: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure UnpackQFromUpperHessenberg(const A: TLearnFloat2DArray; N: TLearnInteger;
-  const TAU: TLearnFloatArray; var Q: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure UnpackQFromUpperHessenberg(const A: TLMatrix; N: TLInt;
+  const TAU: TLVec; var Q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure UnpackHFromUpperHessenberg(const A: TLearnFloat2DArray; N: TLearnInteger;
-  const TAU: TLearnFloatArray; var H: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure UnpackHFromUpperHessenberg(const A: TLMatrix; N: TLInt;
+  const TAU: TLVec; var H: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -151,11 +151,11 @@ procedure UnpackHFromUpperHessenberg(const A: TLearnFloat2DArray; N: TLearnInteg
   True, if the algorithm has converged.
   False, if the algorithm hasn't converged (rare case).
   ************************************************************************ *)
-function SMatrixEVD(A: TLearnFloat2DArray; N: TLearnInteger; ZNeeded: TLearnInteger;
-  IsUpper: Boolean; var D: TLearnFloatArray; var Z: TLearnFloat2DArray): Boolean;
+function SMatrixEVD(A: TLMatrix; N: TLInt; ZNeeded: TLInt;
+  IsUpper: Boolean; var D: TLVec; var Z: TLMatrix): Boolean;
 var
-  TAU: TLearnFloatArray;
-  E  : TLearnFloatArray;
+  TAU: TLVec;
+  E  : TLVec;
 begin
   A := DynamicArrayCopy(A);
   Assert((ZNeeded = 0) or (ZNeeded = 1), 'SMatrixEVD: incorrect ZNeeded');
@@ -204,12 +204,12 @@ end;
   In that case, the eigenvalues and eigenvectors are not returned,
   M is equal to 0.
   ************************************************************************ *)
-function SMatrixEVDR(A: TLearnFloat2DArray; N: TLearnInteger; ZNeeded: TLearnInteger;
-  IsUpper: Boolean; B1: TLearnFloat; B2: TLearnFloat; var M: TLearnInteger;
-  var W: TLearnFloatArray; var Z: TLearnFloat2DArray): Boolean;
+function SMatrixEVDR(A: TLMatrix; N: TLInt; ZNeeded: TLInt;
+  IsUpper: Boolean; B1: TLFloat; B2: TLFloat; var M: TLInt;
+  var W: TLVec; var Z: TLMatrix): Boolean;
 var
-  TAU: TLearnFloatArray;
-  E  : TLearnFloatArray;
+  TAU: TLVec;
+  E  : TLVec;
 begin
   A := DynamicArrayCopy(A);
   Assert((ZNeeded = 0) or (ZNeeded = 1), 'SMatrixTDEVDR: incorrect ZNeeded');
@@ -255,12 +255,12 @@ end;
   wasn't able to find all the corresponding eigenvectors.
   In that case, the eigenvalues and eigenvectors are not returned.
   ************************************************************************ *)
-function SMatrixEVDI(A: TLearnFloat2DArray; N: TLearnInteger; ZNeeded: TLearnInteger;
-  IsUpper: Boolean; I1: TLearnInteger; I2: TLearnInteger; var W: TLearnFloatArray;
-  var Z: TLearnFloat2DArray): Boolean;
+function SMatrixEVDI(A: TLMatrix; N: TLInt; ZNeeded: TLInt;
+  IsUpper: Boolean; I1: TLInt; I2: TLInt; var W: TLVec;
+  var Z: TLMatrix): Boolean;
 var
-  TAU: TLearnFloatArray;
-  E  : TLearnFloatArray;
+  TAU: TLVec;
+  E  : TLVec;
 begin
   A := DynamicArrayCopy(A);
   Assert((ZNeeded = 0) or (ZNeeded = 1), 'SMatrixEVDI: incorrect ZNeeded');
@@ -306,18 +306,18 @@ end;
   eigenvectors of Hermitian matrix are defined up to  multiplication  by
   a complex number L, such that |L|=1.
   ************************************************************************ *)
-function HMatrixEVD(A: TLearnComplex2DArray; N: TLearnInteger;
-  ZNeeded: TLearnInteger; IsUpper: Boolean; var D: TLearnFloatArray;
-  var Z: TLearnComplex2DArray): Boolean;
+function HMatrixEVD(A: TLComplexMatrix; N: TLInt;
+  ZNeeded: TLInt; IsUpper: Boolean; var D: TLVec;
+  var Z: TLComplexMatrix): Boolean;
 var
-  TAU : TLearnComplexArray;
-  E   : TLearnFloatArray;
-  WORK: TLearnFloatArray;
-  T   : TLearnFloat2DArray;
-  Q   : TLearnComplex2DArray;
-  I   : TLearnInteger;
-  K   : TLearnInteger;
-  V   : TLearnFloat;
+  TAU : TLComplexVec;
+  E   : TLVec;
+  WORK: TLVec;
+  T   : TLMatrix;
+  Q   : TLComplexMatrix;
+  I   : TLInt;
+  K   : TLInt;
+  V   : TLFloat;
 begin
   A := DynamicArrayCopy(A);
   Assert((ZNeeded = 0) or (ZNeeded = 1), 'HermitianEVD: incorrect ZNeeded');
@@ -441,18 +441,18 @@ end;
   eigen vectors of Hermitian matrix are defined up to multiplication  by
   a complex number L, such as |L|=1.
   ************************************************************************ *)
-function HMatrixEVDR(A: TLearnComplex2DArray; N: TLearnInteger;
-  ZNeeded: TLearnInteger; IsUpper: Boolean; B1: TLearnFloat; B2: TLearnFloat;
-  var M: TLearnInteger; var W: TLearnFloatArray; var Z: TLearnComplex2DArray): Boolean;
+function HMatrixEVDR(A: TLComplexMatrix; N: TLInt;
+  ZNeeded: TLInt; IsUpper: Boolean; B1: TLFloat; B2: TLFloat;
+  var M: TLInt; var W: TLVec; var Z: TLComplexMatrix): Boolean;
 var
-  Q   : TLearnComplex2DArray;
-  T   : TLearnFloat2DArray;
-  TAU : TLearnComplexArray;
-  E   : TLearnFloatArray;
-  WORK: TLearnFloatArray;
-  I   : TLearnInteger;
-  K   : TLearnInteger;
-  V   : TLearnFloat;
+  Q   : TLComplexMatrix;
+  T   : TLMatrix;
+  TAU : TLComplexVec;
+  E   : TLVec;
+  WORK: TLVec;
+  I   : TLInt;
+  K   : TLInt;
+  V   : TLFloat;
 begin
   A := DynamicArrayCopy(A);
   Assert((ZNeeded = 0) or (ZNeeded = 1),
@@ -575,19 +575,19 @@ end;
   eigen vectors of Hermitian matrix are defined up to multiplication  by
   a complex number L, such as |L|=1.
   ************************************************************************ *)
-function HMatrixEVDI(A: TLearnComplex2DArray; N: TLearnInteger;
-  ZNeeded: TLearnInteger; IsUpper: Boolean; I1: TLearnInteger;
-  I2: TLearnInteger; var W: TLearnFloatArray; var Z: TLearnComplex2DArray): Boolean;
+function HMatrixEVDI(A: TLComplexMatrix; N: TLInt;
+  ZNeeded: TLInt; IsUpper: Boolean; I1: TLInt;
+  I2: TLInt; var W: TLVec; var Z: TLComplexMatrix): Boolean;
 var
-  Q   : TLearnComplex2DArray;
-  T   : TLearnFloat2DArray;
-  TAU : TLearnComplexArray;
-  E   : TLearnFloatArray;
-  WORK: TLearnFloatArray;
-  I   : TLearnInteger;
-  K   : TLearnInteger;
-  V   : TLearnFloat;
-  M   : TLearnInteger;
+  Q   : TLComplexMatrix;
+  T   : TLMatrix;
+  TAU : TLComplexVec;
+  E   : TLVec;
+  WORK: TLVec;
+  I   : TLInt;
+  K   : TLInt;
+  V   : TLFloat;
+  M   : TLInt;
 begin
   A := DynamicArrayCopy(A);
   Assert((ZNeeded = 0) or (ZNeeded = 1),
@@ -715,13 +715,13 @@ end;
   True, if the algorithm has converged.
   False, if the algorithm hasn't converged.
   ************************************************************************ *)
-function SMatrixTDEVD(var D: TLearnFloatArray; E: TLearnFloatArray; N: TLearnInteger;
-  ZNeeded: TLearnInteger; var Z: TLearnFloat2DArray): Boolean;
+function SMatrixTDEVD(var D: TLVec; E: TLVec; N: TLInt;
+  ZNeeded: TLInt; var Z: TLMatrix): Boolean;
 var
-  D1: TLearnFloatArray;
-  E1: TLearnFloatArray;
-  Z1: TLearnFloat2DArray;
-  I : TLearnInteger;
+  D1: TLVec;
+  E1: TLVec;
+  Z1: TLMatrix;
+  I : TLInt;
 begin
   E := DynamicArrayCopy(E);
 
@@ -842,27 +842,27 @@ end;
   wasn't able to find all the corresponding eigenvectors. In that case,
   the eigenvalues and eigenvectors are not returned, M is equal to 0.
   ************************************************************************ *)
-function SMatrixTDEVDR(var D: TLearnFloatArray; const E: TLearnFloatArray;
-  N: TLearnInteger; ZNeeded: TLearnInteger; A: TLearnFloat; B: TLearnFloat;
-  var M: TLearnInteger; var Z: TLearnFloat2DArray): Boolean;
+function SMatrixTDEVDR(var D: TLVec; const E: TLVec;
+  N: TLInt; ZNeeded: TLInt; A: TLFloat; B: TLFloat;
+  var M: TLInt; var Z: TLMatrix): Boolean;
 var
-  ErrorCode: TLearnInteger;
-  NSPLIT   : TLearnInteger;
-  I        : TLearnInteger;
-  J        : TLearnInteger;
-  K        : TLearnInteger;
-  CR       : TLearnInteger;
-  IBLOCK   : TLearnIntegerArray;
-  ISPLIT   : TLearnIntegerArray;
-  IFAIL    : TLearnIntegerArray;
-  D1       : TLearnFloatArray;
-  E1       : TLearnFloatArray;
-  W        : TLearnFloatArray;
-  Z2       : TLearnFloat2DArray;
-  Z3       : TLearnFloat2DArray;
-  V        : TLearnFloat;
-  i_       : TLearnInteger;
-  i1_      : TLearnInteger;
+  ErrorCode: TLInt;
+  NSPLIT   : TLInt;
+  I        : TLInt;
+  J        : TLInt;
+  K        : TLInt;
+  CR       : TLInt;
+  IBLOCK   : TLIVec;
+  ISPLIT   : TLIVec;
+  IFAIL    : TLIVec;
+  D1       : TLVec;
+  E1       : TLVec;
+  W        : TLVec;
+  Z2       : TLMatrix;
+  Z3       : TLMatrix;
+  V        : TLFloat;
+  i_       : TLInt;
+  i1_      : TLInt;
 begin
   Assert((ZNeeded >= 0) and (ZNeeded <= 2),
     'SMatrixTDEVDR: incorrect ZNeeded!');
@@ -1145,28 +1145,28 @@ end;
   to find all the corresponding eigenvectors. In that case, the eigenvalues
   and eigenvectors are not returned.
   ************************************************************************ *)
-function SMatrixTDEVDI(var D: TLearnFloatArray; const E: TLearnFloatArray;
-  N: TLearnInteger; ZNeeded: TLearnInteger; I1: TLearnInteger;
-  I2: TLearnInteger; var Z: TLearnFloat2DArray): Boolean;
+function SMatrixTDEVDI(var D: TLVec; const E: TLVec;
+  N: TLInt; ZNeeded: TLInt; I1: TLInt;
+  I2: TLInt; var Z: TLMatrix): Boolean;
 var
-  ErrorCode: TLearnInteger;
-  NSPLIT   : TLearnInteger;
-  I        : TLearnInteger;
-  J        : TLearnInteger;
-  K        : TLearnInteger;
-  M        : TLearnInteger;
-  CR       : TLearnInteger;
-  IBLOCK   : TLearnIntegerArray;
-  ISPLIT   : TLearnIntegerArray;
-  IFAIL    : TLearnIntegerArray;
-  W        : TLearnFloatArray;
-  D1       : TLearnFloatArray;
-  E1       : TLearnFloatArray;
-  Z2       : TLearnFloat2DArray;
-  Z3       : TLearnFloat2DArray;
-  V        : TLearnFloat;
-  i_       : TLearnInteger;
-  i1_      : TLearnInteger;
+  ErrorCode: TLInt;
+  NSPLIT   : TLInt;
+  I        : TLInt;
+  J        : TLInt;
+  K        : TLInt;
+  M        : TLInt;
+  CR       : TLInt;
+  IBLOCK   : TLIVec;
+  ISPLIT   : TLIVec;
+  IFAIL    : TLIVec;
+  W        : TLVec;
+  D1       : TLVec;
+  E1       : TLVec;
+  Z2       : TLMatrix;
+  Z3       : TLMatrix;
+  V        : TLFloat;
+  i_       : TLInt;
+  i1_      : TLInt;
 begin
   Assert((0 <= I1) and (I1 <= I2) and (I2 < N),
     'SMatrixTDEVDI: incorrect I1/I2!');
@@ -1466,16 +1466,16 @@ end;
 
   See also the InternalTREVC subroutine.
   ************************************************************************ *)
-function RMatrixEVD(A: TLearnFloat2DArray; N: TLearnInteger; VNeeded: TLearnInteger;
-  var WR: TLearnFloatArray; var WI: TLearnFloatArray; var VL: TLearnFloat2DArray;
-  var VR: TLearnFloat2DArray): Boolean;
+function RMatrixEVD(A: TLMatrix; N: TLInt; VNeeded: TLInt;
+  var WR: TLVec; var WI: TLVec; var VL: TLMatrix;
+  var VR: TLMatrix): Boolean;
 var
-  A1 : TLearnFloat2DArray;
-  VL1: TLearnFloat2DArray;
-  VR1: TLearnFloat2DArray;
-  WR1: TLearnFloatArray;
-  WI1: TLearnFloatArray;
-  I  : TLearnInteger;
+  A1 : TLMatrix;
+  VL1: TLMatrix;
+  VR1: TLMatrix;
+  WR1: TLVec;
+  WI1: TLVec;
+  I  : TLInt;
 begin
   A := DynamicArrayCopy(A);
   Assert((VNeeded >= 0) and (VNeeded <= 3), 'RMatrixEVD: incorrect VNeeded!');
@@ -1516,72 +1516,72 @@ begin
     end;
 end;
 
-function InternalBisectionEigenValues(D: TLearnFloatArray; E: TLearnFloatArray;
-  N: TLearnInteger; IRANGE: TLearnInteger; IORDER: TLearnInteger;
-  VL: TLearnFloat; VU: TLearnFloat; IL: TLearnInteger; IU: TLearnInteger;
-  ABSTOL: TLearnFloat; var W: TLearnFloatArray; var M: TLearnInteger;
-  var NSPLIT: TLearnInteger; var IBLOCK: TLearnIntegerArray;
-  var ISPLIT: TLearnIntegerArray; var ErrorCode: TLearnInteger): Boolean;
+function InternalBisectionEigenValues(D: TLVec; E: TLVec;
+  N: TLInt; IRANGE: TLInt; IORDER: TLInt;
+  VL: TLFloat; VU: TLFloat; IL: TLInt; IU: TLInt;
+  ABSTOL: TLFloat; var W: TLVec; var M: TLInt;
+  var NSPLIT: TLInt; var IBLOCK: TLIVec;
+  var ISPLIT: TLIVec; var ErrorCode: TLInt): Boolean;
 var
-  FUDGE      : TLearnFloat;
-  RELFAC     : TLearnFloat;
+  FUDGE      : TLFloat;
+  RELFAC     : TLFloat;
   NCNVRG     : Boolean;
   TOOFEW     : Boolean;
-  IB         : TLearnInteger;
-  IBEGIN     : TLearnInteger;
-  IDISCL     : TLearnInteger;
-  IDISCU     : TLearnInteger;
-  IE         : TLearnInteger;
-  IEND       : TLearnInteger;
-  IINFO      : TLearnInteger;
-  IM         : TLearnInteger;
-  IIN        : TLearnInteger;
-  IOFF       : TLearnInteger;
-  IOUT       : TLearnInteger;
-  ITMAX      : TLearnInteger;
-  IW         : TLearnInteger;
-  IWOFF      : TLearnInteger;
-  J          : TLearnInteger;
-  ITMP1      : TLearnInteger;
-  JB         : TLearnInteger;
-  JDISC      : TLearnInteger;
-  JE         : TLearnInteger;
-  NWL        : TLearnInteger;
-  NWU        : TLearnInteger;
-  ATOLI      : TLearnFloat;
-  BNORM      : TLearnFloat;
-  GL         : TLearnFloat;
-  GU         : TLearnFloat;
-  PIVMIN     : TLearnFloat;
-  RTOLI      : TLearnFloat;
-  SAFEMN     : TLearnFloat;
-  TMP1       : TLearnFloat;
-  TMP2       : TLearnFloat;
-  TNORM      : TLearnFloat;
-  ULP        : TLearnFloat;
-  WKILL      : TLearnFloat;
-  WL         : TLearnFloat;
-  WLU        : TLearnFloat;
-  WU         : TLearnFloat;
-  WUL        : TLearnFloat;
-  ScaleFactor: TLearnFloat;
-  T          : TLearnFloat;
-  IDUMMA     : TLearnIntegerArray;
-  WORK       : TLearnFloatArray;
-  IWORK      : TLearnIntegerArray;
-  IA1S2      : TLearnIntegerArray;
-  RA1S2      : TLearnFloatArray;
-  RA1S2X2    : TLearnFloat2DArray;
-  IA1S2X2    : TLearnInteger2DArray;
-  RA1SIIN    : TLearnFloatArray;
-  RA2SIIN    : TLearnFloatArray;
-  RA3SIIN    : TLearnFloatArray;
-  RA4SIIN    : TLearnFloatArray;
-  RA1SIINX2  : TLearnFloat2DArray;
-  IA1SIINX2  : TLearnInteger2DArray;
-  IWORKSPACE : TLearnIntegerArray;
-  RWORKSPACE : TLearnFloatArray;
-  TmpI       : TLearnInteger;
+  IB         : TLInt;
+  IBEGIN     : TLInt;
+  IDISCL     : TLInt;
+  IDISCU     : TLInt;
+  IE         : TLInt;
+  IEND       : TLInt;
+  IINFO      : TLInt;
+  IM         : TLInt;
+  IIN        : TLInt;
+  IOFF       : TLInt;
+  IOUT       : TLInt;
+  ITMAX      : TLInt;
+  IW         : TLInt;
+  IWOFF      : TLInt;
+  J          : TLInt;
+  ITMP1      : TLInt;
+  JB         : TLInt;
+  JDISC      : TLInt;
+  JE         : TLInt;
+  NWL        : TLInt;
+  NWU        : TLInt;
+  ATOLI      : TLFloat;
+  BNORM      : TLFloat;
+  GL         : TLFloat;
+  GU         : TLFloat;
+  PIVMIN     : TLFloat;
+  RTOLI      : TLFloat;
+  SAFEMN     : TLFloat;
+  TMP1       : TLFloat;
+  TMP2       : TLFloat;
+  TNORM      : TLFloat;
+  ULP        : TLFloat;
+  WKILL      : TLFloat;
+  WL         : TLFloat;
+  WLU        : TLFloat;
+  WU         : TLFloat;
+  WUL        : TLFloat;
+  ScaleFactor: TLFloat;
+  T          : TLFloat;
+  IDUMMA     : TLIVec;
+  WORK       : TLVec;
+  IWORK      : TLIVec;
+  IA1S2      : TLIVec;
+  RA1S2      : TLVec;
+  RA1S2X2    : TLMatrix;
+  IA1S2X2    : TLIMatrix;
+  RA1SIIN    : TLVec;
+  RA2SIIN    : TLVec;
+  RA3SIIN    : TLVec;
+  RA4SIIN    : TLVec;
+  RA1SIINX2  : TLMatrix;
+  IA1SIINX2  : TLIMatrix;
+  IWORKSPACE : TLIVec;
+  RWORKSPACE : TLVec;
+  TmpI       : TLInt;
 begin
   D := DynamicArrayCopy(D);
   E := DynamicArrayCopy(E);
@@ -2292,52 +2292,52 @@ begin
   Result := ErrorCode = 0;
 end;
 
-procedure InternalDSTEIN(const N: TLearnInteger; const D: TLearnFloatArray;
-  E: TLearnFloatArray; const M: TLearnInteger; W: TLearnFloatArray;
-  const IBLOCK: TLearnIntegerArray; const ISPLIT: TLearnIntegerArray;
-  var Z: TLearnFloat2DArray; var IFAIL: TLearnIntegerArray; var INFO: TLearnInteger);
+procedure InternalDSTEIN(const N: TLInt; const D: TLVec;
+  E: TLVec; const M: TLInt; W: TLVec;
+  const IBLOCK: TLIVec; const ISPLIT: TLIVec;
+  var Z: TLMatrix; var IFAIL: TLIVec; var INFO: TLInt);
 var
-  MAXITS      : TLearnInteger;
-  EXTRA       : TLearnInteger;
-  B1          : TLearnInteger;
-  BLKSIZ      : TLearnInteger;
-  BN          : TLearnInteger;
-  GPIND       : TLearnInteger;
-  I           : TLearnInteger;
-  IINFO       : TLearnInteger;
-  ITS         : TLearnInteger;
-  J           : TLearnInteger;
-  J1          : TLearnInteger;
-  JBLK        : TLearnInteger;
-  JMAX        : TLearnInteger;
-  NBLK        : TLearnInteger;
-  NRMCHK      : TLearnInteger;
-  DTPCRT      : TLearnFloat;
-  EPS         : TLearnFloat;
-  EPS1        : TLearnFloat;
-  NRM         : TLearnFloat;
-  ONENRM      : TLearnFloat;
-  ORTOL       : TLearnFloat;
-  PERTOL      : TLearnFloat;
-  SCL         : TLearnFloat;
-  SEP         : TLearnFloat;
-  TOL         : TLearnFloat;
-  XJ          : TLearnFloat;
-  XJM         : TLearnFloat;
-  ZTR         : TLearnFloat;
-  WORK1       : TLearnFloatArray;
-  WORK2       : TLearnFloatArray;
-  WORK3       : TLearnFloatArray;
-  WORK4       : TLearnFloatArray;
-  WORK5       : TLearnFloatArray;
-  IWORK       : TLearnIntegerArray;
+  MAXITS      : TLInt;
+  EXTRA       : TLInt;
+  B1          : TLInt;
+  BLKSIZ      : TLInt;
+  BN          : TLInt;
+  GPIND       : TLInt;
+  I           : TLInt;
+  IINFO       : TLInt;
+  ITS         : TLInt;
+  J           : TLInt;
+  J1          : TLInt;
+  JBLK        : TLInt;
+  JMAX        : TLInt;
+  NBLK        : TLInt;
+  NRMCHK      : TLInt;
+  DTPCRT      : TLFloat;
+  EPS         : TLFloat;
+  EPS1        : TLFloat;
+  NRM         : TLFloat;
+  ONENRM      : TLFloat;
+  ORTOL       : TLFloat;
+  PERTOL      : TLFloat;
+  SCL         : TLFloat;
+  SEP         : TLFloat;
+  TOL         : TLFloat;
+  XJ          : TLFloat;
+  XJM         : TLFloat;
+  ZTR         : TLFloat;
+  WORK1       : TLVec;
+  WORK2       : TLVec;
+  WORK3       : TLVec;
+  WORK4       : TLVec;
+  WORK5       : TLVec;
+  IWORK       : TLIVec;
   TmpCriterion: Boolean;
-  TI          : TLearnInteger;
-  I1          : TLearnInteger;
-  I2          : TLearnInteger;
-  V           : TLearnFloat;
-  i_          : TLearnInteger;
-  i1_         : TLearnInteger;
+  TI          : TLInt;
+  I1          : TLInt;
+  I2          : TLInt;
+  V           : TLFloat;
+  i_          : TLInt;
+  i1_         : TLInt;
 begin
   E := DynamicArrayCopy(E);
   W := DynamicArrayCopy(W);
@@ -2663,58 +2663,58 @@ begin
     end;
 end;
 
-function TridiagonalEVD(var D: TLearnFloatArray; E: TLearnFloatArray; N: TLearnInteger;
-  ZNeeded: TLearnInteger; var Z: TLearnFloat2DArray): Boolean;
+function TridiagonalEVD(var D: TLVec; E: TLVec; N: TLInt;
+  ZNeeded: TLInt; var Z: TLMatrix): Boolean;
 var
-  MAXIT       : TLearnInteger;
-  I           : TLearnInteger;
-  II          : TLearnInteger;
-  ISCALE      : TLearnInteger;
-  J           : TLearnInteger;
-  JTOT        : TLearnInteger;
-  K           : TLearnInteger;
-  T           : TLearnInteger;
-  L           : TLearnInteger;
-  L1          : TLearnInteger;
-  LEND        : TLearnInteger;
-  LENDM1      : TLearnInteger;
-  LENDP1      : TLearnInteger;
-  LENDSV      : TLearnInteger;
-  LM1         : TLearnInteger;
-  LSV         : TLearnInteger;
-  M           : TLearnInteger;
-  MM          : TLearnInteger;
-  MM1         : TLearnInteger;
-  NM1         : TLearnInteger;
-  NMAXIT      : TLearnInteger;
-  TmpInt      : TLearnInteger;
-  ANORM       : TLearnFloat;
-  B           : TLearnFloat;
-  C           : TLearnFloat;
-  EPS         : TLearnFloat;
-  EPS2        : TLearnFloat;
-  F           : TLearnFloat;
-  G           : TLearnFloat;
-  P           : TLearnFloat;
-  R           : TLearnFloat;
-  RT1         : TLearnFloat;
-  RT2         : TLearnFloat;
-  S           : TLearnFloat;
-  SAFMAX      : TLearnFloat;
-  SAFMIN      : TLearnFloat;
-  SSFMAX      : TLearnFloat;
-  SSFMIN      : TLearnFloat;
-  TST         : TLearnFloat;
-  Tmp         : TLearnFloat;
-  WORK1       : TLearnFloatArray;
-  WORK2       : TLearnFloatArray;
-  WORKC       : TLearnFloatArray;
-  WORKS       : TLearnFloatArray;
-  WTEMP       : TLearnFloatArray;
+  MAXIT       : TLInt;
+  I           : TLInt;
+  II          : TLInt;
+  ISCALE      : TLInt;
+  J           : TLInt;
+  JTOT        : TLInt;
+  K           : TLInt;
+  T           : TLInt;
+  L           : TLInt;
+  L1          : TLInt;
+  LEND        : TLInt;
+  LENDM1      : TLInt;
+  LENDP1      : TLInt;
+  LENDSV      : TLInt;
+  LM1         : TLInt;
+  LSV         : TLInt;
+  M           : TLInt;
+  MM          : TLInt;
+  MM1         : TLInt;
+  NM1         : TLInt;
+  NMAXIT      : TLInt;
+  TmpInt      : TLInt;
+  ANORM       : TLFloat;
+  B           : TLFloat;
+  C           : TLFloat;
+  EPS         : TLFloat;
+  EPS2        : TLFloat;
+  F           : TLFloat;
+  G           : TLFloat;
+  P           : TLFloat;
+  R           : TLFloat;
+  RT1         : TLFloat;
+  RT2         : TLFloat;
+  S           : TLFloat;
+  SAFMAX      : TLFloat;
+  SAFMIN      : TLFloat;
+  SSFMAX      : TLFloat;
+  SSFMIN      : TLFloat;
+  TST         : TLFloat;
+  Tmp         : TLFloat;
+  WORK1       : TLVec;
+  WORK2       : TLVec;
+  WORKC       : TLVec;
+  WORKS       : TLVec;
+  WTEMP       : TLVec;
   GotoFlag    : Boolean;
-  ZRows       : TLearnInteger;
+  ZRows       : TLInt;
   WasTranspose: Boolean;
-  i_          : TLearnInteger;
+  i_          : TLInt;
 begin
   E := DynamicArrayCopy(E);
   Assert((ZNeeded >= 0) and (ZNeeded <= 3),
@@ -3456,17 +3456,17 @@ end;
   On return, RT1 is the eigenvalue of larger absolute value, and RT2
   is the eigenvalue of smaller absolute value.
   ************************************************************************ *)
-procedure TdEVDE2(const A: TLearnFloat; const B: TLearnFloat;
-  const C: TLearnFloat; var RT1: TLearnFloat; var RT2: TLearnFloat);
+procedure TdEVDE2(const A: TLFloat; const B: TLFloat;
+  const C: TLFloat; var RT1: TLFloat; var RT2: TLFloat);
 var
-  AB  : TLearnFloat;
-  ACMN: TLearnFloat;
-  ACMX: TLearnFloat;
-  ADF : TLearnFloat;
-  DF  : TLearnFloat;
-  RT  : TLearnFloat;
-  SM  : TLearnFloat;
-  TB  : TLearnFloat;
+  AB  : TLFloat;
+  ACMN: TLFloat;
+  ACMX: TLFloat;
+  ADF : TLFloat;
+  DF  : TLFloat;
+  RT  : TLFloat;
+  SM  : TLFloat;
+  TB  : TLFloat;
 begin
   SM := A + C;
   DF := A - C;
@@ -3551,24 +3551,24 @@ end;
   [ CS1  SN1 ] [  A   B  ] [ CS1 -SN1 ]  =  [ RT1  0  ]
   [-SN1  CS1 ] [  B   C  ] [ SN1  CS1 ]     [  0  RT2 ].
   ************************************************************************ *)
-procedure TdEVDEV2(const A: TLearnFloat; const B: TLearnFloat;
-  const C: TLearnFloat; var RT1: TLearnFloat; var RT2: TLearnFloat;
-  var CS1: TLearnFloat; var SN1: TLearnFloat);
+procedure TdEVDEV2(const A: TLFloat; const B: TLFloat;
+  const C: TLFloat; var RT1: TLFloat; var RT2: TLFloat;
+  var CS1: TLFloat; var SN1: TLFloat);
 var
-  SGN1: TLearnInteger;
-  SGN2: TLearnInteger;
-  AB  : TLearnFloat;
-  ACMN: TLearnFloat;
-  ACMX: TLearnFloat;
-  ACS : TLearnFloat;
-  ADF : TLearnFloat;
-  CS  : TLearnFloat;
-  CT  : TLearnFloat;
-  DF  : TLearnFloat;
-  RT  : TLearnFloat;
-  SM  : TLearnFloat;
-  TB  : TLearnFloat;
-  TN  : TLearnFloat;
+  SGN1: TLInt;
+  SGN2: TLInt;
+  AB  : TLFloat;
+  ACMN: TLFloat;
+  ACMX: TLFloat;
+  ACS : TLFloat;
+  ADF : TLFloat;
+  CS  : TLFloat;
+  CT  : TLFloat;
+  DF  : TLFloat;
+  RT  : TLFloat;
+  SM  : TLFloat;
+  TB  : TLFloat;
+  TN  : TLFloat;
 begin
 
   //
@@ -3691,7 +3691,7 @@ end;
 (* ************************************************************************
   Internal routine
   ************************************************************************ *)
-function TdEVDPythag(A: TLearnFloat; B: TLearnFloat): TLearnFloat;
+function TdEVDPythag(A: TLFloat; B: TLFloat): TLFloat;
 begin
   if AP_FP_Less(ABSReal(A), ABSReal(B)) then
     begin
@@ -3706,7 +3706,7 @@ end;
 (* ************************************************************************
   Internal routine
   ************************************************************************ *)
-function TdEVDExtSign(A: TLearnFloat; B: TLearnFloat): TLearnFloat;
+function TdEVDExtSign(A: TLFloat; B: TLFloat): TLFloat;
 begin
   if AP_FP_Greater_Eq(B, 0) then
     begin
@@ -3718,20 +3718,20 @@ begin
     end;
 end;
 
-procedure TDINInternalDLAGTF(const N: TLearnInteger; var A: TLearnFloatArray;
-  const LAMBDA: TLearnFloat; var B: TLearnFloatArray; var C: TLearnFloatArray;
-  const TOL: TLearnFloat; var D: TLearnFloatArray; var IIN: TLearnIntegerArray;
-  var INFO: TLearnInteger);
+procedure TDINInternalDLAGTF(const N: TLInt; var A: TLVec;
+  const LAMBDA: TLFloat; var B: TLVec; var C: TLVec;
+  const TOL: TLFloat; var D: TLVec; var IIN: TLIVec;
+  var INFO: TLInt);
 var
-  K     : TLearnInteger;
-  EPS   : TLearnFloat;
-  MULT  : TLearnFloat;
-  PIV1  : TLearnFloat;
-  PIV2  : TLearnFloat;
-  SCALE1: TLearnFloat;
-  SCALE2: TLearnFloat;
-  TEMP  : TLearnFloat;
-  TL    : TLearnFloat;
+  K     : TLInt;
+  EPS   : TLFloat;
+  MULT  : TLFloat;
+  PIV1  : TLFloat;
+  PIV2  : TLFloat;
+  SCALE1: TLFloat;
+  SCALE2: TLFloat;
+  TEMP  : TLFloat;
+  TL    : TLFloat;
 begin
   INFO := 0;
   if N < 0 then
@@ -3825,19 +3825,19 @@ begin
     end;
 end;
 
-procedure TDINInternalDLAGTS(const N: TLearnInteger; const A: TLearnFloatArray;
-  const B: TLearnFloatArray; const C: TLearnFloatArray; const D: TLearnFloatArray;
-  const IIN: TLearnIntegerArray; var Y: TLearnFloatArray; var TOL: TLearnFloat;
-  var INFO: TLearnInteger);
+procedure TDINInternalDLAGTS(const N: TLInt; const A: TLVec;
+  const B: TLVec; const C: TLVec; const D: TLVec;
+  const IIN: TLIVec; var Y: TLVec; var TOL: TLFloat;
+  var INFO: TLInt);
 var
-  K     : TLearnInteger;
-  ABSAK : TLearnFloat;
-  AK    : TLearnFloat;
-  BIGNUM: TLearnFloat;
-  EPS   : TLearnFloat;
-  PERT  : TLearnFloat;
-  SFMIN : TLearnFloat;
-  TEMP  : TLearnFloat;
+  K     : TLInt;
+  ABSAK : TLFloat;
+  AK    : TLFloat;
+  BIGNUM: TLFloat;
+  EPS   : TLFloat;
+  PERT  : TLFloat;
+  SFMIN : TLFloat;
+  TEMP  : TLFloat;
 begin
   INFO := 0;
   if N < 0 then
@@ -3948,26 +3948,26 @@ begin
     end;
 end;
 
-procedure InternalDLAEBZ(const IJOB: TLearnInteger; const NITMAX: TLearnInteger;
-  const N: TLearnInteger; const MMAX: TLearnInteger; const MINP: TLearnInteger;
-  const ABSTOL: TLearnFloat; const RELTOL: TLearnFloat;
-  const PIVMIN: TLearnFloat; const D: TLearnFloatArray; const E: TLearnFloatArray;
-  const E2: TLearnFloatArray; var NVAL: TLearnIntegerArray; var AB: TLearnFloat2DArray;
-  var C: TLearnFloatArray; var MOUT: TLearnInteger; var NAB: TLearnInteger2DArray;
-  var WORK: TLearnFloatArray; var IWORK: TLearnIntegerArray; var INFO: TLearnInteger);
+procedure InternalDLAEBZ(const IJOB: TLInt; const NITMAX: TLInt;
+  const N: TLInt; const MMAX: TLInt; const MINP: TLInt;
+  const ABSTOL: TLFloat; const RELTOL: TLFloat;
+  const PIVMIN: TLFloat; const D: TLVec; const E: TLVec;
+  const E2: TLVec; var NVAL: TLIVec; var AB: TLMatrix;
+  var C: TLVec; var MOUT: TLInt; var NAB: TLIMatrix;
+  var WORK: TLVec; var IWORK: TLIVec; var INFO: TLInt);
 var
-  ITMP1: TLearnInteger;
-  ITMP2: TLearnInteger;
-  J    : TLearnInteger;
-  JI   : TLearnInteger;
-  JIT  : TLearnInteger;
-  JP   : TLearnInteger;
-  KF   : TLearnInteger;
-  KFNEW: TLearnInteger;
-  KL   : TLearnInteger;
-  KLNEW: TLearnInteger;
-  TMP1 : TLearnFloat;
-  TMP2 : TLearnFloat;
+  ITMP1: TLInt;
+  ITMP2: TLInt;
+  J    : TLInt;
+  JI   : TLInt;
+  JIT  : TLInt;
+  JP   : TLInt;
+  KF   : TLInt;
+  KFNEW: TLInt;
+  KL   : TLInt;
+  KLNEW: TLInt;
+  TMP1 : TLFloat;
+  TMP2 : TLFloat;
 begin
   INFO := 0;
   if (IJOB < 1) or (IJOB > 3) then
@@ -4263,10 +4263,10 @@ end;
 (* ************************************************************************
   Internal subroutine
   ************************************************************************ *)
-procedure InternalTREVC(const T: TLearnFloat2DArray; N: TLearnInteger;
-  SIDE: TLearnInteger; HOWMNY: TLearnInteger; VSELECT: TLearnBooleanArray;
-  var VL: TLearnFloat2DArray; var VR: TLearnFloat2DArray; var M: TLearnInteger;
-  var INFO: TLearnInteger);
+procedure InternalTREVC(const T: TLMatrix; N: TLInt;
+  SIDE: TLInt; HOWMNY: TLInt; VSELECT: TLBVec;
+  var VL: TLMatrix; var VR: TLMatrix; var M: TLInt;
+  var INFO: TLInt);
 var
   ALLV    : Boolean;
   BOTHV   : Boolean;
@@ -4275,56 +4275,56 @@ var
   PAIR    : Boolean;
   RIGHTV  : Boolean;
   SOMEV   : Boolean;
-  I       : TLearnInteger;
-  IERR    : TLearnInteger;
-  II      : TLearnInteger;
-  IP      : TLearnInteger;
-  IIS     : TLearnInteger;
-  J       : TLearnInteger;
-  J1      : TLearnInteger;
-  J2      : TLearnInteger;
-  JNXT    : TLearnInteger;
-  K       : TLearnInteger;
-  KI      : TLearnInteger;
-  N2      : TLearnInteger;
-  BETA    : TLearnFloat;
-  BIGNUM  : TLearnFloat;
-  EMAX    : TLearnFloat;
-  OVFL    : TLearnFloat;
-  REC     : TLearnFloat;
-  REMAX   : TLearnFloat;
-  SCL     : TLearnFloat;
-  SMIN    : TLearnFloat;
-  SMLNUM  : TLearnFloat;
-  ULP     : TLearnFloat;
-  UNFL    : TLearnFloat;
-  VCRIT   : TLearnFloat;
-  VMAX    : TLearnFloat;
-  WI      : TLearnFloat;
-  WR      : TLearnFloat;
-  XNORM   : TLearnFloat;
-  X       : TLearnFloat2DArray;
-  WORK    : TLearnFloatArray;
-  TEMP    : TLearnFloatArray;
-  TEMP11  : TLearnFloat2DArray;
-  TEMP22  : TLearnFloat2DArray;
-  TEMP11B : TLearnFloat2DArray;
-  TEMP21B : TLearnFloat2DArray;
-  TEMP12B : TLearnFloat2DArray;
-  TEMP22B : TLearnFloat2DArray;
+  I       : TLInt;
+  IERR    : TLInt;
+  II      : TLInt;
+  IP      : TLInt;
+  IIS     : TLInt;
+  J       : TLInt;
+  J1      : TLInt;
+  J2      : TLInt;
+  JNXT    : TLInt;
+  K       : TLInt;
+  KI      : TLInt;
+  N2      : TLInt;
+  BETA    : TLFloat;
+  BIGNUM  : TLFloat;
+  EMAX    : TLFloat;
+  OVFL    : TLFloat;
+  REC     : TLFloat;
+  REMAX   : TLFloat;
+  SCL     : TLFloat;
+  SMIN    : TLFloat;
+  SMLNUM  : TLFloat;
+  ULP     : TLFloat;
+  UNFL    : TLFloat;
+  VCRIT   : TLFloat;
+  VMAX    : TLFloat;
+  WI      : TLFloat;
+  WR      : TLFloat;
+  XNORM   : TLFloat;
+  X       : TLMatrix;
+  WORK    : TLVec;
+  TEMP    : TLVec;
+  TEMP11  : TLMatrix;
+  TEMP22  : TLMatrix;
+  TEMP11B : TLMatrix;
+  TEMP21B : TLMatrix;
+  TEMP12B : TLMatrix;
+  TEMP22B : TLMatrix;
   SkipFlag: Boolean;
-  K1      : TLearnInteger;
-  K2      : TLearnInteger;
-  K3      : TLearnInteger;
-  K4      : TLearnInteger;
-  VT      : TLearnFloat;
-  RSWAP4  : TLearnBooleanArray;
-  ZSWAP4  : TLearnBooleanArray;
-  IPIVOT44: TLearnInteger2DArray;
-  CIV4    : TLearnFloatArray;
-  CRV4    : TLearnFloatArray;
-  i_      : TLearnInteger;
-  i1_     : TLearnInteger;
+  K1      : TLInt;
+  K2      : TLInt;
+  K3      : TLInt;
+  K4      : TLInt;
+  VT      : TLFloat;
+  RSWAP4  : TLBVec;
+  ZSWAP4  : TLBVec;
+  IPIVOT44: TLIMatrix;
+  CIV4    : TLVec;
+  CRV4    : TLVec;
+  i_      : TLInt;
+  i1_     : TLInt;
 begin
   VSELECT := DynamicArrayCopy(VSELECT);
   SetLength(X, 2 + 1, 2 + 1);
@@ -5644,54 +5644,54 @@ end;
   Note: all input quantities are assumed to be smaller than overflow
   by a reasonable factor.  (See BIGNUM.)
   ************************************************************************ *)
-procedure InternalHSEVDLALN2(const LTRANS: Boolean; const NA: TLearnInteger;
-  const NW: TLearnInteger; const SMIN: TLearnFloat; const CA: TLearnFloat;
-  const A: TLearnFloat2DArray; const D1: TLearnFloat; const D2: TLearnFloat;
-  const B: TLearnFloat2DArray; const WR: TLearnFloat; const WI: TLearnFloat;
-  var RSWAP4: TLearnBooleanArray; var ZSWAP4: TLearnBooleanArray;
-  var IPIVOT44: TLearnInteger2DArray; var CIV4: TLearnFloatArray; var CRV4: TLearnFloatArray;
-  var X: TLearnFloat2DArray; var SCL: TLearnFloat; var XNORM: TLearnFloat;
-  var INFO: TLearnInteger);
+procedure InternalHSEVDLALN2(const LTRANS: Boolean; const NA: TLInt;
+  const NW: TLInt; const SMIN: TLFloat; const CA: TLFloat;
+  const A: TLMatrix; const D1: TLFloat; const D2: TLFloat;
+  const B: TLMatrix; const WR: TLFloat; const WI: TLFloat;
+  var RSWAP4: TLBVec; var ZSWAP4: TLBVec;
+  var IPIVOT44: TLIMatrix; var CIV4: TLVec; var CRV4: TLVec;
+  var X: TLMatrix; var SCL: TLFloat; var XNORM: TLFloat;
+  var INFO: TLInt);
 var
-  ICMAX : TLearnInteger;
-  J     : TLearnInteger;
-  BBND  : TLearnFloat;
-  BI1   : TLearnFloat;
-  BI2   : TLearnFloat;
-  BIGNUM: TLearnFloat;
-  BNORM : TLearnFloat;
-  BR1   : TLearnFloat;
-  BR2   : TLearnFloat;
-  CI21  : TLearnFloat;
-  CI22  : TLearnFloat;
-  CMAX  : TLearnFloat;
-  CNORM : TLearnFloat;
-  CR21  : TLearnFloat;
-  CR22  : TLearnFloat;
-  CSI   : TLearnFloat;
-  CSR   : TLearnFloat;
-  LI21  : TLearnFloat;
-  LR21  : TLearnFloat;
-  SMINI : TLearnFloat;
-  SMLNUM: TLearnFloat;
-  TEMP  : TLearnFloat;
-  U22ABS: TLearnFloat;
-  UI11  : TLearnFloat;
-  UI11R : TLearnFloat;
-  UI12  : TLearnFloat;
-  UI12S : TLearnFloat;
-  UI22  : TLearnFloat;
-  UR11  : TLearnFloat;
-  UR11R : TLearnFloat;
-  UR12  : TLearnFloat;
-  UR12S : TLearnFloat;
-  UR22  : TLearnFloat;
-  XI1   : TLearnFloat;
-  XI2   : TLearnFloat;
-  XR1   : TLearnFloat;
-  XR2   : TLearnFloat;
-  TMP1  : TLearnFloat;
-  TMP2  : TLearnFloat;
+  ICMAX : TLInt;
+  J     : TLInt;
+  BBND  : TLFloat;
+  BI1   : TLFloat;
+  BI2   : TLFloat;
+  BIGNUM: TLFloat;
+  BNORM : TLFloat;
+  BR1   : TLFloat;
+  BR2   : TLFloat;
+  CI21  : TLFloat;
+  CI22  : TLFloat;
+  CMAX  : TLFloat;
+  CNORM : TLFloat;
+  CR21  : TLFloat;
+  CR22  : TLFloat;
+  CSI   : TLFloat;
+  CSR   : TLFloat;
+  LI21  : TLFloat;
+  LR21  : TLFloat;
+  SMINI : TLFloat;
+  SMLNUM: TLFloat;
+  TEMP  : TLFloat;
+  U22ABS: TLFloat;
+  UI11  : TLFloat;
+  UI11R : TLFloat;
+  UI12  : TLFloat;
+  UI12S : TLFloat;
+  UI22  : TLFloat;
+  UR11  : TLFloat;
+  UR11R : TLFloat;
+  UR12  : TLFloat;
+  UR12S : TLFloat;
+  UR22  : TLFloat;
+  XI1   : TLFloat;
+  XI2   : TLFloat;
+  XR1   : TLFloat;
+  XR2   : TLFloat;
+  TMP1  : TLFloat;
+  TMP2  : TLFloat;
 begin
   ZSWAP4[1] := False;
   ZSWAP4[2] := False;
@@ -6138,12 +6138,12 @@ end;
   The algorithm is due to Robert L. Smith and can be found
   in D. Knuth, The art of Computer Programming, Vol.2, p.195
   ************************************************************************ *)
-procedure InternalHSEVDLADIV(const A: TLearnFloat; const B: TLearnFloat;
-  const C: TLearnFloat; const D: TLearnFloat; var P: TLearnFloat;
-  var Q: TLearnFloat);
+procedure InternalHSEVDLADIV(const A: TLFloat; const B: TLFloat;
+  const C: TLFloat; const D: TLFloat; var P: TLFloat;
+  var Q: TLFloat);
 var
-  E: TLearnFloat;
-  F: TLearnFloat;
+  E: TLFloat;
+  F: TLFloat;
 begin
   if AP_FP_Less(ABSReal(D), ABSReal(C)) then
     begin
@@ -6161,16 +6161,16 @@ begin
     end;
 end;
 
-function NonSymmetricEVD(A: TLearnFloat2DArray; N: TLearnInteger;
-  VNeeded: TLearnInteger; var WR: TLearnFloatArray; var WI: TLearnFloatArray;
-  var VL: TLearnFloat2DArray; var VR: TLearnFloat2DArray): Boolean;
+function NonSymmetricEVD(A: TLMatrix; N: TLInt;
+  VNeeded: TLInt; var WR: TLVec; var WI: TLVec;
+  var VL: TLMatrix; var VR: TLMatrix): Boolean;
 var
-  S   : TLearnFloat2DArray;
-  TAU : TLearnFloatArray;
-  SEL : TLearnBooleanArray;
-  I   : TLearnInteger;
-  INFO: TLearnInteger;
-  M   : TLearnInteger;
+  S   : TLMatrix;
+  TAU : TLVec;
+  SEL : TLBVec;
+  I   : TLInt;
+  INFO: TLInt;
+  M   : TLInt;
 begin
   A := DynamicArrayCopy(A);
   Assert((VNeeded >= 0) and (VNeeded <= 3),
@@ -6222,17 +6222,17 @@ begin
   Result := INFO = 0;
 end;
 
-procedure ToUpperHessenberg(var A: TLearnFloat2DArray; N: TLearnInteger;
-  var TAU: TLearnFloatArray);
+procedure ToUpperHessenberg(var A: TLMatrix; N: TLInt;
+  var TAU: TLVec);
 var
-  I   : TLearnInteger;
-  IP1 : TLearnInteger;
-  NMI : TLearnInteger;
-  V   : TLearnFloat;
-  T   : TLearnFloatArray;
-  WORK: TLearnFloatArray;
-  i_  : TLearnInteger;
-  i1_ : TLearnInteger;
+  I   : TLInt;
+  IP1 : TLInt;
+  NMI : TLInt;
+  V   : TLFloat;
+  T   : TLVec;
+  WORK: TLVec;
+  i_  : TLInt;
+  i1_ : TLInt;
 begin
   Assert(N >= 0, 'ToUpperHessenberg: incorrect N!');
 
@@ -6282,17 +6282,17 @@ begin
     end;
 end;
 
-procedure UnpackQFromUpperHessenberg(const A: TLearnFloat2DArray; N: TLearnInteger;
-  const TAU: TLearnFloatArray; var Q: TLearnFloat2DArray);
+procedure UnpackQFromUpperHessenberg(const A: TLMatrix; N: TLInt;
+  const TAU: TLVec; var Q: TLMatrix);
 var
-  I   : TLearnInteger;
-  J   : TLearnInteger;
-  V   : TLearnFloatArray;
-  WORK: TLearnFloatArray;
-  IP1 : TLearnInteger;
-  NMI : TLearnInteger;
-  i_  : TLearnInteger;
-  i1_ : TLearnInteger;
+  I   : TLInt;
+  J   : TLInt;
+  V   : TLVec;
+  WORK: TLVec;
+  IP1 : TLInt;
+  NMI : TLInt;
+  i_  : TLInt;
+  i1_ : TLInt;
 begin
   if N = 0 then
     begin
@@ -6347,13 +6347,13 @@ begin
     end;
 end;
 
-procedure UnpackHFromUpperHessenberg(const A: TLearnFloat2DArray; N: TLearnInteger;
-  const TAU: TLearnFloatArray; var H: TLearnFloat2DArray);
+procedure UnpackHFromUpperHessenberg(const A: TLMatrix; N: TLInt;
+  const TAU: TLVec; var H: TLMatrix);
 var
-  I   : TLearnInteger;
-  J   : TLearnInteger;
-  V   : TLearnFloatArray;
-  WORK: TLearnFloatArray;
+  I   : TLInt;
+  J   : TLInt;
+  V   : TLVec;
+  WORK: TLVec;
 begin
   if N = 0 then
     begin

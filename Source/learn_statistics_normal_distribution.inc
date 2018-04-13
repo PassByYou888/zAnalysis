@@ -34,13 +34,13 @@
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function Erf(const X: TLearnFloat): TLearnFloat;
+function Erf(const X: TLFloat): TLFloat;
 var
-  NX : TLearnFloat;
-  XSq: TLearnFloat;
-  S  : TLearnFloat;
-  P  : TLearnFloat;
-  Q  : TLearnFloat;
+  NX : TLFloat;
+  XSq: TLFloat;
+  S  : TLFloat;
+  P  : TLFloat;
+  Q  : TLFloat;
 begin
   NX := AbsReal(X);
   S := Sign(NX);
@@ -99,10 +99,10 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function ErfC(const X: TLearnFloat): TLearnFloat;
+function ErfC(const X: TLFloat): TLFloat;
 var
-  P: TLearnFloat;
-  Q: TLearnFloat;
+  P: TLFloat;
+  Q: TLFloat;
 begin
   if AP_FP_Less(X, 0) then
     begin
@@ -170,7 +170,7 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function NormalDistribution(const X: TLearnFloat): TLearnFloat;
+function NormalDistribution(const X: TLFloat): TLFloat;
 begin
   Result := 0.5 * (Erf(X / 1.41421356237309504880) + 1);
 end;
@@ -181,7 +181,7 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvErf(const E: TLearnFloat): TLearnFloat;
+function InvErf(const E: TLFloat): TLFloat;
 begin
   Result := InvNormalDistribution(0.5 * (E + 1)) / Sqrt(2);
 end;
@@ -211,23 +211,23 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1988, 1992, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvNormalDistribution(const y0: TLearnFloat): TLearnFloat;
+function InvNormalDistribution(const y0: TLFloat): TLFloat;
 var
-  Expm2: TLearnFloat;
-  S2Pi : TLearnFloat;
-  X    : TLearnFloat;
-  y    : TLearnFloat;
-  z    : TLearnFloat;
-  y2   : TLearnFloat;
-  x0   : TLearnFloat;
-  x1   : TLearnFloat;
-  code : TLearnInteger;
-  P0   : TLearnFloat;
-  Q0   : TLearnFloat;
-  P1   : TLearnFloat;
-  Q1   : TLearnFloat;
-  P2   : TLearnFloat;
-  Q2   : TLearnFloat;
+  Expm2: TLFloat;
+  S2Pi : TLFloat;
+  X    : TLFloat;
+  y    : TLFloat;
+  z    : TLFloat;
+  y2   : TLFloat;
+  x0   : TLFloat;
+  x1   : TLFloat;
+  code : TLInt;
+  P0   : TLFloat;
+  Q0   : TLFloat;
+  P1   : TLFloat;
+  Q1   : TLFloat;
+  P2   : TLFloat;
+  Q2   : TLFloat;
 begin
   Expm2 := 0.13533528323661269189;
   S2Pi := 2.50662827463100050242;

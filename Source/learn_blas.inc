@@ -1,10 +1,10 @@
-function VectorNorm2(const X: TLearnVector; const I1, I2: TLearnInteger): TLearnFloat;
+function VectorNorm2(const X: TLVec; const I1, I2: TLInt): TLFloat;
 var
-  N    : TLearnInteger;
-  IX   : TLearnInteger;
-  ABSXI: TLearnFloat;
-  SCL  : TLearnFloat;
-  SSQ  : TLearnFloat;
+  N    : TLInt;
+  IX   : TLInt;
+  ABSXI: TLFloat;
+  SCL  : TLFloat;
+  SSQ  : TLFloat;
 begin
   N := I2 - I1 + 1;
   if N < 1 then
@@ -40,10 +40,10 @@ begin
   Result := SCL * SQRT(SSQ);
 end;
 
-function VectorIdxAbsMax(const X: TLearnVector; const I1, I2: TLearnInteger): TLearnInteger;
+function VectorIdxAbsMax(const X: TLVec; const I1, I2: TLInt): TLInt;
 var
-  I: TLearnInteger;
-  A: TLearnFloat;
+  I: TLInt;
+  A: TLFloat;
 begin
   Result := I1;
   A := AbsReal(X[Result]);
@@ -58,10 +58,10 @@ begin
     end;
 end;
 
-function ColumnIdxAbsMax(const X: TLearnMatrix; const I1, I2, J: TLearnInteger): TLearnInteger;
+function ColumnIdxAbsMax(const X: TLMatrix; const I1, I2, J: TLInt): TLInt;
 var
-  I: TLearnInteger;
-  A: TLearnFloat;
+  I: TLInt;
+  A: TLFloat;
 begin
   Result := I1;
   A := AbsReal(X[Result, J]);
@@ -76,10 +76,10 @@ begin
     end;
 end;
 
-function RowIdxAbsMax(const X: TLearnMatrix; const J1, J2, I: TLearnInteger): TLearnInteger;
+function RowIdxAbsMax(const X: TLMatrix; const J1, J2, I: TLInt): TLInt;
 var
-  J: TLearnInteger;
-  A: TLearnFloat;
+  J: TLInt;
+  A: TLFloat;
 begin
   Result := J1;
   A := AbsReal(X[I, Result]);
@@ -94,10 +94,10 @@ begin
     end;
 end;
 
-function UpperHessenberg1Norm(const A: TLearnMatrix; const I1, I2, J1, J2: TLearnInteger; var WORK: TLearnVector): TLearnFloat;
+function UpperHessenberg1Norm(const A: TLMatrix; const I1, I2, J1, J2: TLInt; var WORK: TLVec): TLFloat;
 var
-  I: TLearnInteger;
-  J: TLearnInteger;
+  I: TLInt;
+  J: TLInt;
 begin
   Assert(I2 - I1 = J2 - J1, 'UpperHessenberg1Norm: I2-I1<>J2-J1!');
   J := J1;
@@ -126,11 +126,11 @@ begin
     end;
 end;
 
-procedure CopyMatrix(const A: TLearnMatrix; const IS1, IS2, JS1, JS2: TLearnInteger;
-  var B: TLearnMatrix; const ID1, ID2, JD1, JD2: TLearnInteger);
+procedure CopyMatrix(const A: TLMatrix; const IS1, IS2, JS1, JS2: TLInt;
+  var B: TLMatrix; const ID1, ID2, JD1, JD2: TLInt);
 var
-  ISRC: TLearnInteger;
-  IDST: TLearnInteger;
+  ISRC: TLInt;
+  IDST: TLInt;
 begin
   if (IS1 > IS2) or (JS1 > JS2) then
       Exit;
@@ -145,15 +145,15 @@ begin
     end;
 end;
 
-procedure InplaceTranspose(var A: TLearnMatrix; const I1, I2, J1, J2: TLearnInteger; var WORK: TLearnVector);
+procedure InplaceTranspose(var A: TLMatrix; const I1, I2, J1, J2: TLInt; var WORK: TLVec);
 var
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  IPS: TLearnInteger;
-  JPS: TLearnInteger;
-  L  : TLearnInteger;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  J  : TLInt;
+  IPS: TLInt;
+  JPS: TLInt;
+  L  : TLInt;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
   if (I1 > I2) or (J1 > J2) then
       Exit;
@@ -180,13 +180,13 @@ begin
     end;
 end;
 
-procedure CopyAndTranspose(const A: TLearnMatrix; IS1, IS2, JS1, JS2: TLearnInteger;
-  var B: TLearnMatrix; ID1, ID2, JD1, JD2: TLearnInteger);
+procedure CopyAndTranspose(const A: TLMatrix; IS1, IS2, JS1, JS2: TLInt;
+  var B: TLMatrix; ID1, ID2, JD1, JD2: TLInt);
 var
-  ISRC: TLearnInteger;
-  JDST: TLearnInteger;
-  i_  : TLearnInteger;
-  i1_ : TLearnInteger;
+  ISRC: TLInt;
+  JDST: TLInt;
+  i_  : TLInt;
+  i1_ : TLInt;
 begin
   if (IS1 > IS2) or (JS1 > JS2) then
       Exit;
@@ -205,12 +205,12 @@ begin
     end;
 end;
 
-procedure MatrixVectorMultiply(const A: TLearnMatrix; const I1, I2, J1, J2: TLearnInteger; const Trans: Boolean;
-  const X: TLearnVector; const IX1, IX2: TLearnInteger; const Alpha: TLearnFloat;
-  var Y: TLearnVector; const IY1, IY2: TLearnInteger; const Beta: TLearnFloat);
+procedure MatrixVectorMultiply(const A: TLMatrix; const I1, I2, J1, J2: TLInt; const Trans: Boolean;
+  const X: TLVec; const IX1, IX2: TLInt; const Alpha: TLFloat;
+  var Y: TLVec; const IY1, IY2: TLInt; const Beta: TLFloat);
 var
-  I: TLearnInteger;
-  V: TLearnFloat;
+  I: TLInt;
+  V: TLFloat;
 begin
   if not Trans then
     begin
@@ -292,12 +292,12 @@ begin
     end;
 end;
 
-function Pythag2(X: TLearnFloat; Y: TLearnFloat): TLearnFloat;
+function Pythag2(X: TLFloat; Y: TLFloat): TLFloat;
 var
-  W   : TLearnFloat;
-  XABS: TLearnFloat;
-  YABS: TLearnFloat;
-  Z   : TLearnFloat;
+  W   : TLFloat;
+  XABS: TLFloat;
+  YABS: TLFloat;
+  Z   : TLFloat;
 begin
   XABS := AbsReal(X);
   YABS := AbsReal(Y);
@@ -313,27 +313,27 @@ begin
     end;
 end;
 
-procedure MatrixMatrixMultiply(const A: TLearnMatrix; const AI1, AI2, AJ1, AJ2: TLearnInteger; const TransA: Boolean;
-  const B: TLearnMatrix; const BI1, BI2, BJ1, BJ2: TLearnInteger; const TransB: Boolean;
-  const Alpha: TLearnFloat;
-  var C: TLearnMatrix; const CI1, CI2, CJ1, CJ2: TLearnInteger;
-  const Beta: TLearnFloat;
-  var WORK: TLearnVector);
+procedure MatrixMatrixMultiply(const A: TLMatrix; const AI1, AI2, AJ1, AJ2: TLInt; const TransA: Boolean;
+  const B: TLMatrix; const BI1, BI2, BJ1, BJ2: TLInt; const TransB: Boolean;
+  const Alpha: TLFloat;
+  var C: TLMatrix; const CI1, CI2, CJ1, CJ2: TLInt;
+  const Beta: TLFloat;
+  var WORK: TLVec);
 var
-  ARows: TLearnInteger;
-  ACols: TLearnInteger;
-  BRows: TLearnInteger;
-  BCols: TLearnInteger;
-  CRows: TLearnInteger;
-  CCols: TLearnInteger;
-  I    : TLearnInteger;
-  J    : TLearnInteger;
-  K    : TLearnInteger;
-  L    : TLearnInteger;
-  R    : TLearnInteger;
-  V    : TLearnFloat;
-  i_   : TLearnInteger;
-  i1_  : TLearnInteger;
+  ARows: TLInt;
+  ACols: TLInt;
+  BRows: TLInt;
+  BCols: TLInt;
+  CRows: TLInt;
+  CCols: TLInt;
+  I    : TLInt;
+  J    : TLInt;
+  K    : TLInt;
+  L    : TLInt;
+  R    : TLInt;
+  V    : TLFloat;
+  i_   : TLInt;
+  i1_  : TLInt;
 begin
 
   //

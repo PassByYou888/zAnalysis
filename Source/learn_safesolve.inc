@@ -7,36 +7,36 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-function RMatrixScaledTRSafeSolve(const A: TLearnFloat2DArray; SA: TLearnFloat;
-  N: TLearnInteger; var X: TLearnFloatArray; IsUpper: Boolean; Trans: TLearnInteger;
-  IsUnit: Boolean; MaxGrowth: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixScaledTRSafeSolve(const A: TLMatrix; SA: TLFloat;
+  N: TLInt; var X: TLVec; IsUpper: Boolean; Trans: TLInt;
+  IsUnit: Boolean; MaxGrowth: TLFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function CMatrixScaledTRSafeSolve(const A: TLearnComplex2DArray; SA: TLearnFloat;
-  N: TLearnInteger; var X: TLearnComplexArray; IsUpper: Boolean;
-  Trans: TLearnInteger; IsUnit: Boolean; MaxGrowth: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CMatrixScaledTRSafeSolve(const A: TLComplexMatrix; SA: TLFloat;
+  N: TLInt; var X: TLComplexVec; IsUpper: Boolean;
+  Trans: TLInt; IsUnit: Boolean; MaxGrowth: TLFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function CBasicSolveAndUpdate(Alpha: TLearnComplex; Beta: TLearnComplex; LnMax: TLearnFloat;
-  BNorm: TLearnFloat; MaxGrowth: TLearnFloat; var XNorm: TLearnFloat;
-  var X: TLearnComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CBasicSolveAndUpdate(Alpha: TLComplex; Beta: TLComplex; LnMax: TLFloat;
+  BNorm: TLFloat; MaxGrowth: TLFloat; var XNorm: TLFloat;
+  var X: TLComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
   Real implementation
   of CMatrixScaledTRSafeSolve
   ************************************************************************ *)
-function RMatrixScaledTRSafeSolve(const A: TLearnFloat2DArray; SA: TLearnFloat;
-  N: TLearnInteger; var X: TLearnFloatArray; IsUpper: Boolean; Trans: TLearnInteger;
-  IsUnit: Boolean; MaxGrowth: TLearnFloat): Boolean;
+function RMatrixScaledTRSafeSolve(const A: TLMatrix; SA: TLFloat;
+  N: TLInt; var X: TLVec; IsUpper: Boolean; Trans: TLInt;
+  IsUnit: Boolean; MaxGrowth: TLFloat): Boolean;
 var
-  LnMax: TLearnFloat;
-  NrmB : TLearnFloat;
-  NrmX : TLearnFloat;
-  I    : TLearnInteger;
-  Alpha: TLearnComplex;
-  Beta : TLearnComplex;
-  VR   : TLearnFloat;
-  CX   : TLearnComplex;
-  Tmp  : TLearnFloatArray;
+  LnMax: TLFloat;
+  NrmB : TLFloat;
+  NrmX : TLFloat;
+  I    : TLInt;
+  Alpha: TLComplex;
+  Beta : TLComplex;
+  VR   : TLFloat;
+  CX   : TLComplex;
+  Tmp  : TLVec;
 begin
   Assert(N > 0, 'RMatrixTRSafeSolve: incorrect N!');
   Assert((Trans = 0) or (Trans = 1), 'RMatrixTRSafeSolve: incorrect Trans!');
@@ -271,19 +271,19 @@ end;
   near-degenerate matrices are handled correctly (False is returned) as long
   as MaxGrowth is significantly less than MaxRealNumber/norm(b).
   ************************************************************************ *)
-function CMatrixScaledTRSafeSolve(const A: TLearnComplex2DArray; SA: TLearnFloat;
-  N: TLearnInteger; var X: TLearnComplexArray; IsUpper: Boolean;
-  Trans: TLearnInteger; IsUnit: Boolean; MaxGrowth: TLearnFloat): Boolean;
+function CMatrixScaledTRSafeSolve(const A: TLComplexMatrix; SA: TLFloat;
+  N: TLInt; var X: TLComplexVec; IsUpper: Boolean;
+  Trans: TLInt; IsUnit: Boolean; MaxGrowth: TLFloat): Boolean;
 var
-  LnMax: TLearnFloat;
-  NrmB : TLearnFloat;
-  NrmX : TLearnFloat;
-  I    : TLearnInteger;
-  Alpha: TLearnComplex;
-  Beta : TLearnComplex;
-  VC   : TLearnComplex;
-  Tmp  : TLearnComplexArray;
-  i_   : TLearnInteger;
+  LnMax: TLFloat;
+  NrmB : TLFloat;
+  NrmX : TLFloat;
+  I    : TLInt;
+  Alpha: TLComplex;
+  Beta : TLComplex;
+  VC   : TLComplex;
+  Tmp  : TLComplexVec;
+  i_   : TLInt;
 begin
   Assert(N > 0, 'CMatrixTRSafeSolve: incorrect N!');
   Assert((Trans = 0) or (Trans = 1) or (Trans = 2),
@@ -634,7 +634,7 @@ begin
 end;
 
 (* ************************************************************************
-  TLearnComplex basic solver-updater for reduced linear system
+  TLComplex basic solver-updater for reduced linear system
 
   alpha*x[i] = beta
 
@@ -651,11 +651,11 @@ end;
   it is updated by CBasicSolveAndUpdate.
   X       -   solution
   ************************************************************************ *)
-function CBasicSolveAndUpdate(Alpha: TLearnComplex; Beta: TLearnComplex; LnMax: TLearnFloat;
-  BNorm: TLearnFloat; MaxGrowth: TLearnFloat; var XNorm: TLearnFloat;
-  var X: TLearnComplex): Boolean;
+function CBasicSolveAndUpdate(Alpha: TLComplex; Beta: TLComplex; LnMax: TLFloat;
+  BNorm: TLFloat; MaxGrowth: TLFloat; var XNorm: TLFloat;
+  var X: TLComplex): Boolean;
 var
-  V: TLearnFloat;
+  V: TLFloat;
 begin
   Result := False;
   if C_EqualR(Alpha, 0) then

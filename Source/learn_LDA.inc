@@ -8,50 +8,6 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 
-procedure FisherLDAN(const XY: TLearnFloat2DArray; NPoints: TLearnInteger; NVars: TLearnInteger; NClasses: TLearnInteger;
-  var Info: TLearnInteger; var W: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-
-(* ************************************************************************
-  Multiclass Fisher LDA
-
-  Subroutine finds coefficients of linear combination which optimally separates
-  training set on classes.
-
-  INPUT PARAMETERS:
-  XY          -   training set, array[0..NPoints-1,0..NVars]. First NVars columns store values of independent variables,
-                  next column stores number of class (from 0 to NClasses-1) which dataset element belongs to.
-                  Fractional values are rounded to nearest TLearnInteger.
-  NPoints     -   training set size, NPoints>=0
-  NVars       -   number of independent variables, NVars>=1
-  NClasses    -   number of classes, NClasses>=2
-
-
-  OUTPUT PARAMETERS:
-  Info        -   return code:
-  * -4, if internal EVD subroutine hasn't converged
-  * -2, if there is a point with class number outside of [0..NClasses-1].
-  * -1, if incorrect parameters was passed (NPoints<0, NVars<1, NClasses<2)
-  *  1, if task has been solved
-  *  2, if there was a multicollinearity in training set, but task has been solved.
-  W           -   linear combination coefficients, array[0..NVars-1]
-  ************************************************************************ *)
-procedure FisherLDA(const XY: TLearnFloat2DArray; NPoints: TLearnInteger; NVars: TLearnInteger; NClasses: TLearnInteger;
-  var Info: TLearnInteger; var W: TLearnFloatArray); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-var
-  W2: TLearnFloat2DArray;
-  i_: TLearnInteger;
-begin
-  FisherLDAN(XY, NPoints, NVars, NClasses, Info, W2);
-  if Info > 0 then
-    begin
-      SetLength(W, NVars (* - 1 + 1 // optimized compiler *) );
-      for i_ := 0 to NVars - 1 do
-        begin
-          W[i_] := W2[i_, 0];
-        end;
-    end;
-end;
 
 (* ************************************************************************
   N-dimensional multiclass Fisher LDA
@@ -64,7 +20,7 @@ end;
   XY          -   training set, array[0..NPoints-1,0..NVars].
                   First NVars columns store values of independent variables,
                   next column stores number of class (from 0 to NClasses-1) which dataset element belongs to.
-                  Fractional values are rounded to nearest TLearnInteger.
+                  Fractional values are rounded to nearest TLInt.
   NPoints     -   training set size, NPoints>=0
   NVars       -   number of independent variables, NVars>=1
   NClasses    -   number of classes, NClasses>=2
@@ -80,32 +36,32 @@ end;
   *  2, if there was a multicollinearity in training set, but task has been solved.
   W           -   basis, array[0..NVars-1,0..NVars-1] columns of matrix stores basis vectors, sorted by quality of training set separation (in descending order)
   ************************************************************************ *)
-procedure FisherLDAN(const XY: TLearnFloat2DArray; NPoints: TLearnInteger; NVars: TLearnInteger; NClasses: TLearnInteger;
-  var Info: TLearnInteger; var W: TLearnFloat2DArray); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure FisherLDAN(const XY: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt;
+  var Info: TLInt; var W: TLMatrix); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  K     : TLearnInteger;
-  M     : TLearnInteger;
-  V     : TLearnFloat;
-  C     : TLearnIntegerArray;
-  Mu    : TLearnFloatArray;
-  MuC   : TLearnFloat2DArray;
-  NC    : TLearnIntegerArray;
-  SW    : TLearnFloat2DArray;
-  ST    : TLearnFloat2DArray;
-  Z     : TLearnFloat2DArray;
-  Z2    : TLearnFloat2DArray;
-  TM    : TLearnFloat2DArray;
-  SBRoot: TLearnFloat2DArray;
-  A     : TLearnFloat2DArray;
-  XYProj: TLearnFloat2DArray;
-  WProj : TLearnFloat2DArray;
-  TF    : TLearnFloatArray;
-  D     : TLearnFloatArray;
-  D2    : TLearnFloatArray;
-  WORK  : TLearnFloatArray;
-  i_    : TLearnInteger;
+  I     : TLInt;
+  J     : TLInt;
+  K     : TLInt;
+  M     : TLInt;
+  V     : TLFloat;
+  C     : TLIVec;
+  Mu    : TLVec;
+  MuC   : TLMatrix;
+  NC    : TLIVec;
+  SW    : TLMatrix;
+  ST    : TLMatrix;
+  Z     : TLMatrix;
+  Z2    : TLMatrix;
+  TM    : TLMatrix;
+  SBRoot: TLMatrix;
+  A     : TLMatrix;
+  XYProj: TLMatrix;
+  WProj : TLMatrix;
+  TF    : TLVec;
+  D     : TLVec;
+  D2    : TLVec;
+  WORK  : TLVec;
+  i_    : TLInt;
 begin
 
   //
@@ -466,3 +422,45 @@ begin
       Inc(K);
     end;
 end;
+
+(* ************************************************************************
+  Multiclass Fisher LDA
+
+  Subroutine finds coefficients of linear combination which optimally separates
+  training set on classes.
+
+  INPUT PARAMETERS:
+  XY          -   training set, array[0..NPoints-1,0..NVars]. First NVars columns store values of independent variables,
+                  next column stores number of class (from 0 to NClasses-1) which dataset element belongs to.
+                  Fractional values are rounded to nearest TLInt.
+  NPoints     -   training set size, NPoints>=0
+  NVars       -   number of independent variables, NVars>=1
+  NClasses    -   number of classes, NClasses>=2
+
+
+  OUTPUT PARAMETERS:
+  Info        -   return code:
+  * -4, if internal EVD subroutine hasn't converged
+  * -2, if there is a point with class number outside of [0..NClasses-1].
+  * -1, if incorrect parameters was passed (NPoints<0, NVars<1, NClasses<2)
+  *  1, if task has been solved
+  *  2, if there was a multicollinearity in training set, but task has been solved.
+  W           -   linear combination coefficients, array[0..NVars-1]
+  ************************************************************************ *)
+procedure FisherLDA(const XY: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt;
+  var Info: TLInt; var W: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+var
+  W2: TLMatrix;
+  i_: TLInt;
+begin
+  FisherLDAN(XY, NPoints, NVars, NClasses, Info, W2);
+  if Info > 0 then
+    begin
+      SetLength(W, NVars (* - 1 + 1 // optimized compiler *) );
+      for i_ := 0 to NVars - 1 do
+        begin
+          W[i_] := W2[i_, 0];
+        end;
+    end;
+end;
+

@@ -9,65 +9,75 @@
 { ****************************************************************************** }
 type
   TMultiLayerPerceptron = packed record
-    StructInfo: TLearnIntegerArray;
-    Weights: TLearnFloatArray;
-    ColumnMeans: TLearnFloatArray;
-    ColumnSigmas: TLearnFloatArray;
-    Neurons: TLearnFloatArray;
-    DFDNET: TLearnFloatArray;
-    DError: TLearnFloatArray;
-    X: TLearnFloatArray;
-    Y: TLearnFloatArray;
-    Chunks: TLearnFloat2DArray;
-    NWBuf: TLearnFloatArray;
+    StructInfo: TLIVec;
+    Weights: TLVec;
+    ColumnMeans: TLVec;
+    ColumnSigmas: TLVec;
+    Neurons: TLVec;
+    DFDNET: TLVec;
+    DError: TLVec;
+    X: TLVec;
+    Y: TLVec;
+    Chunks: TLMatrix;
+    NWBuf: TLVec;
   end;
 
   PMultiLayerPerceptron = ^TMultiLayerPerceptron;
 
-procedure MLPCreate0(NIn: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreate1(NIn: TLearnInteger; NHid: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreate2(NIn: TLearnInteger; NHid1: TLearnInteger; NHid2: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateB0(NIn: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateB1(NIn: TLearnInteger; NHid: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateB2(NIn: TLearnInteger; NHid1: TLearnInteger; NHid2: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateR0(NIn: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateR1(NIn: TLearnInteger; NHid: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateR2(NIn: TLearnInteger; NHid1: TLearnInteger; NHid2: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateC0(NIn: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateC1(NIn: TLearnInteger; NHid: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateC2(NIn: TLearnInteger; NHid1: TLearnInteger; NHid2: TLearnInteger; NOut: TLearnInteger; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreate0(NIn, NOut: TLInt; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreate1(NIn, NHid, NOut: TLInt; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreate2(NIn, NHid1, NHid2, NOut: TLInt; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPCreateB0(NIn, NOut: TLInt; B, D: TLFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateB1(NIn, NHid, NOut: TLInt; B, D: TLFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateB2(NIn, NHid1, NHid2, NOut: TLInt; B, D: TLFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPCreateR0(NIn, NOut: TLInt; A, B: TLFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateR1(NIn, NHid, NOut: TLInt; A, B: TLFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateR2(NIn, NHid1, NHid2, NOut: TLInt; A, B: TLFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPCreateC0(NIn, NOut: TLInt; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateC1(NIn, NHid, NOut: TLInt; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateC2(NIn, NHid1, NHid2, NOut: TLInt; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure MLPFree(var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPCopy(const Network1: TMultiLayerPerceptron; var Network2: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPSerialize(const Network: TMultiLayerPerceptron; var RA: TLearnFloatArray; var RLen: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPUnserialize(const RA: TLearnFloatArray; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPSerialize(const Network: TMultiLayerPerceptron; var RA: TLVec; var RLen: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPUnserialize(const RA: TLVec; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure MLPRandomize(var Network: TMultiLayerPerceptron); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPRandomize(var Network: TMultiLayerPerceptron; const Diameter: TLearnFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPRandomize(var Network: TMultiLayerPerceptron; const WBest: TLearnFloatArray; const Diameter: TLearnFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPRandomize(var Network: TMultiLayerPerceptron; const Diameter: TLFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPRandomize(var Network: TMultiLayerPerceptron; const WBest: TLVec; const Diameter: TLFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPRandomizeFull(var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPInitPreprocessor(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPProperties(const Network: TMultiLayerPerceptron; var NIn: TLearnInteger; var NOut: TLearnInteger; var WCount: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPInitPreprocessor(var Network: TMultiLayerPerceptron; const XY: TLMatrix; SSize: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPProperties(const Network: TMultiLayerPerceptron; var NIn: TLInt; var NOut: TLInt; var WCount: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function MLPIsSoftmax(const Network: TMultiLayerPerceptron): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPProcess(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray; var Y: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPErrorN(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPClsError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger): TLearnInteger; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPRelClsError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPAvgCE(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPRMSError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPAvgError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPAvgRelError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPGrad(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray; const DesiredY: TLearnFloatArray; var E: TLearnFloat; var Grad: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPGradN(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray; const DesiredY: TLearnFloatArray; var E: TLearnFloat; var Grad: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPGradBatch(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat; var Grad: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPGradNBatch(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat; var Grad: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPHessianNBatch(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat; var Grad: TLearnFloatArray; var H: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPHessianBatch(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat; var Grad: TLearnFloatArray; var H: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPProcess(var Network: TMultiLayerPerceptron; const X: TLVec; var Y: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPInternalProcessVector(const StructInfo: TLearnIntegerArray;
-  const Weights: TLearnFloatArray; const ColumnMeans: TLearnFloatArray;
-  const ColumnSigmas: TLearnFloatArray; var Neurons: TLearnFloatArray;
-  var DFDNET: TLearnFloatArray; const X: TLearnFloatArray; var Y: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPError(var Network: TMultiLayerPerceptron; const XY: TLMatrix; SSize: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPErrorN(var Network: TMultiLayerPerceptron; const XY: TLMatrix; SSize: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPClsError(var Network: TMultiLayerPerceptron; const XY: TLMatrix; SSize: TLInt): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPRelClsError(var Network: TMultiLayerPerceptron; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPAvgCE(var Network: TMultiLayerPerceptron; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPRMSError(var Network: TMultiLayerPerceptron; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPAvgError(var Network: TMultiLayerPerceptron; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPAvgRelError(var Network: TMultiLayerPerceptron; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPGrad(var Network: TMultiLayerPerceptron; const X: TLVec; const DesiredY: TLVec; var E: TLFloat; var Grad: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPGradN(var Network: TMultiLayerPerceptron; const X: TLVec; const DesiredY: TLVec; var E: TLFloat; var Grad: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPGradBatch(var Network: TMultiLayerPerceptron; const XY: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPGradNBatch(var Network: TMultiLayerPerceptron; const XY: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPHessianNBatch(var Network: TMultiLayerPerceptron; const XY: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec; var H: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPHessianBatch(var Network: TMultiLayerPerceptron; const XY: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec; var H: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPInternalProcessVector(const StructInfo: TLIVec;
+  const Weights: TLVec; const ColumnMeans: TLVec;
+  const ColumnSigmas: TLVec; var Neurons: TLVec;
+  var DFDNET: TLVec; const X: TLVec; var Y: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 const
@@ -75,39 +85,39 @@ const
   NFieldWidth = 4;
   ChunkSize   = 32;
 
-procedure AddInputLayer(NCount: TLearnInteger; var LSizes: TLearnIntegerArray;
-  var LTypes: TLearnIntegerArray; var LConnFirst: TLearnIntegerArray;
-  var LConnLast: TLearnIntegerArray; var LastProc: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure AddBiasedSummatorLayer(NCount: TLearnInteger;
-  var LSizes: TLearnIntegerArray; var LTypes: TLearnIntegerArray;
-  var LConnFirst: TLearnIntegerArray; var LConnLast: TLearnIntegerArray;
-  var LastProc: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure AddActivationLayer(FuncType: TLearnInteger;
-  var LSizes: TLearnIntegerArray; var LTypes: TLearnIntegerArray;
-  var LConnFirst: TLearnIntegerArray; var LConnLast: TLearnIntegerArray;
-  var LastProc: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure AddZeroLayer(var LSizes: TLearnIntegerArray; var LTypes: TLearnIntegerArray;
-  var LConnFirst: TLearnIntegerArray; var LConnLast: TLearnIntegerArray;
-  var LastProc: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreate(NIn: TLearnInteger; NOut: TLearnInteger;
-  const LSizes: TLearnIntegerArray; const LTypes: TLearnIntegerArray;
-  const LConnFirst: TLearnIntegerArray; const LConnLast: TLearnIntegerArray;
-  LayersCount: TLearnInteger; IsClsNet: Boolean;
+procedure AddInputLayer(NCount: TLInt; var LSizes: TLIVec;
+  var LTypes: TLIVec; var LConnFirst: TLIVec;
+  var LConnLast: TLIVec; var LastProc: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure AddBiasedSummatorLayer(NCount: TLInt;
+  var LSizes: TLIVec; var LTypes: TLIVec;
+  var LConnFirst: TLIVec; var LConnLast: TLIVec;
+  var LastProc: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure AddActivationLayer(FuncType: TLInt;
+  var LSizes: TLIVec; var LTypes: TLIVec;
+  var LConnFirst: TLIVec; var LConnLast: TLIVec;
+  var LastProc: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure AddZeroLayer(var LSizes: TLIVec; var LTypes: TLIVec;
+  var LConnFirst: TLIVec; var LConnLast: TLIVec;
+  var LastProc: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreate(NIn, NOut: TLInt;
+  const LSizes: TLIVec; const LTypes: TLIVec;
+  const LConnFirst: TLIVec; const LConnLast: TLIVec;
+  LayersCount: TLInt; IsClsNet: Boolean;
   var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPActivationFunction(NET: TLearnFloat; K: TLearnInteger;
-  var F: TLearnFloat; var DF: TLearnFloat; var D2F: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPActivationFunction(NET: TLFloat; K: TLInt;
+  var F: TLFloat; var DF: TLFloat; var D2F: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPHessianBatchInternal(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; SSize: TLearnInteger; NaturalErr: Boolean;
-  var E: TLearnFloat; var Grad: TLearnFloatArray; var H: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  const XY: TLMatrix; SSize: TLInt; NaturalErr: Boolean;
+  var E: TLFloat; var Grad: TLVec; var H: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPInternalCalculateGradient(var Network: TMultiLayerPerceptron;
-  const Neurons: TLearnFloatArray; const Weights: TLearnFloatArray;
-  var DError: TLearnFloatArray; var Grad: TLearnFloatArray;
+  const Neurons: TLVec; const Weights: TLVec;
+  var DError: TLVec; var Grad: TLVec;
   NaturalErrorFunc: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPChunkedGradient(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; CStart: TLearnInteger; CSize: TLearnInteger;
-  var E: TLearnFloat; var Grad: TLearnFloatArray;
+  const XY: TLMatrix; CStart: TLInt; CSize: TLInt;
+  var E: TLFloat; var Grad: TLVec;
   NaturalErrorFunc: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SafeCrossEntropy(T: TLearnFloat; Z: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SafeCrossEntropy(T: TLFloat; Z: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -115,15 +125,14 @@ function SafeCrossEntropy(T: TLearnFloat; Z: TLearnFloat): TLearnFloat; forward;
   layers, with linear output layer. Network weights are  filled  with  small
   random values.
   ************************************************************************ *)
-procedure MLPCreate0(NIn: TLearnInteger; NOut: TLearnInteger;
-  var Network: TMultiLayerPerceptron);
+procedure MLPCreate0(NIn, NOut: TLInt; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLearnIntegerArray;
-  LTypes     : TLearnIntegerArray;
-  LConnFirst : TLearnIntegerArray;
-  LConnLast  : TLearnIntegerArray;
-  LayersCount: TLearnInteger;
-  LastProc   : TLearnInteger;
+  LSizes     : TLIVec;
+  LTypes     : TLIVec;
+  LConnFirst : TLIVec;
+  LConnLast  : TLIVec;
+  LayersCount: TLInt;
+  LastProc   : TLInt;
 begin
   LayersCount := 1 + 2;
 
@@ -152,15 +161,14 @@ end;
   Same  as  MLPCreate0,  but  with  one  hidden  layer  (NHid  neurons) with
   non-linear activation function. Output layer is linear.
   ************************************************************************ *)
-procedure MLPCreate1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; var Network: TMultiLayerPerceptron);
+procedure MLPCreate1(NIn, NHid, NOut: TLInt; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLearnIntegerArray;
-  LTypes     : TLearnIntegerArray;
-  LConnFirst : TLearnIntegerArray;
-  LConnLast  : TLearnIntegerArray;
-  LayersCount: TLearnInteger;
-  LastProc   : TLearnInteger;
+  LSizes     : TLIVec;
+  LTypes     : TLIVec;
+  LConnFirst : TLIVec;
+  LConnLast  : TLIVec;
+  LayersCount: TLInt;
+  LastProc   : TLInt;
 begin
   LayersCount := 1 + 3 + 2;
 
@@ -191,16 +199,14 @@ end;
   Same as MLPCreate0, but with two hidden layers (NHid1 and  NHid2  neurons)
   with non-linear activation function. Output layer is linear.
   ************************************************************************ *)
-procedure MLPCreate2(NIn: TLearnInteger; NHid1: TLearnInteger;
-  NHid2: TLearnInteger; NOut: TLearnInteger;
-  var Network: TMultiLayerPerceptron);
+procedure MLPCreate2(NIn, NHid1, NHid2, NOut: TLInt; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLearnIntegerArray;
-  LTypes     : TLearnIntegerArray;
-  LConnFirst : TLearnIntegerArray;
-  LConnLast  : TLearnIntegerArray;
-  LayersCount: TLearnInteger;
-  LastProc   : TLearnInteger;
+  LSizes     : TLIVec;
+  LTypes     : TLIVec;
+  LConnFirst : TLIVec;
+  LConnLast  : TLIVec;
+  LayersCount: TLInt;
+  LastProc   : TLInt;
 begin
   LayersCount := 1 + 3 + 3 + 2;
 
@@ -244,16 +250,15 @@ end;
 
   (-INF, B), if D<0.
   ************************************************************************ *)
-procedure MLPCreateB0(NIn: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat;
-  D: TLearnFloat; var Network: TMultiLayerPerceptron);
+procedure MLPCreateB0(NIn, NOut: TLInt; B, D: TLFloat; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLearnIntegerArray;
-  LTypes     : TLearnIntegerArray;
-  LConnFirst : TLearnIntegerArray;
-  LConnLast  : TLearnIntegerArray;
-  LayersCount: TLearnInteger;
-  LastProc   : TLearnInteger;
-  I          : TLearnInteger;
+  LSizes     : TLIVec;
+  LTypes     : TLIVec;
+  LConnFirst : TLIVec;
+  LConnLast  : TLIVec;
+  LayersCount: TLInt;
+  LastProc   : TLInt;
+  I          : TLInt;
 begin
   LayersCount := 1 + 3;
   if AP_FP_Greater_Eq(D, 0) then
@@ -301,17 +306,15 @@ end;
 (* ************************************************************************
   Same as MLPCreateB0 but with non-linear hidden layer.
   ************************************************************************ *)
-procedure MLPCreateB1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat;
-  var Network: TMultiLayerPerceptron);
+procedure MLPCreateB1(NIn, NHid, NOut: TLInt; B, D: TLFloat; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLearnIntegerArray;
-  LTypes     : TLearnIntegerArray;
-  LConnFirst : TLearnIntegerArray;
-  LConnLast  : TLearnIntegerArray;
-  LayersCount: TLearnInteger;
-  LastProc   : TLearnInteger;
-  I          : TLearnInteger;
+  LSizes     : TLIVec;
+  LTypes     : TLIVec;
+  LConnFirst : TLIVec;
+  LConnLast  : TLIVec;
+  LayersCount: TLInt;
+  LastProc   : TLInt;
+  I          : TLInt;
 begin
   LayersCount := 1 + 3 + 3;
   if AP_FP_Greater_Eq(D, 0) then
@@ -361,17 +364,15 @@ end;
 (* ************************************************************************
   Same as MLPCreateB0 but with two non-linear hidden layers.
   ************************************************************************ *)
-procedure MLPCreateB2(NIn: TLearnInteger; NHid1: TLearnInteger;
-  NHid2: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat;
-  var Network: TMultiLayerPerceptron);
+procedure MLPCreateB2(NIn, NHid1, NHid2, NOut: TLInt; B, D: TLFloat; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLearnIntegerArray;
-  LTypes     : TLearnIntegerArray;
-  LConnFirst : TLearnIntegerArray;
-  LConnLast  : TLearnIntegerArray;
-  LayersCount: TLearnInteger;
-  LastProc   : TLearnInteger;
-  I          : TLearnInteger;
+  LSizes     : TLIVec;
+  LTypes     : TLIVec;
+  LConnFirst : TLIVec;
+  LConnLast  : TLIVec;
+  LayersCount: TLInt;
+  LastProc   : TLInt;
+  I          : TLInt;
 begin
   LayersCount := 1 + 3 + 3 + 3;
   if AP_FP_Greater_Eq(D, 0) then
@@ -427,16 +428,15 @@ end;
   layers with non-linear output layer. Network weights are filled with small
   random values. Activation function of the output layer takes values [A,B].
   ************************************************************************ *)
-procedure MLPCreateR0(NIn: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat;
-  B: TLearnFloat; var Network: TMultiLayerPerceptron);
+procedure MLPCreateR0(NIn, NOut: TLInt; A, B: TLFloat; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLearnIntegerArray;
-  LTypes     : TLearnIntegerArray;
-  LConnFirst : TLearnIntegerArray;
-  LConnLast  : TLearnIntegerArray;
-  LayersCount: TLearnInteger;
-  LastProc   : TLearnInteger;
-  I          : TLearnInteger;
+  LSizes     : TLIVec;
+  LTypes     : TLIVec;
+  LConnFirst : TLIVec;
+  LConnLast  : TLIVec;
+  LayersCount: TLInt;
+  LastProc   : TLInt;
+  I          : TLInt;
 begin
   LayersCount := 1 + 3;
 
@@ -476,17 +476,15 @@ end;
 (* ************************************************************************
   Same as MLPCreateR0, but with non-linear hidden layer.
   ************************************************************************ *)
-procedure MLPCreateR1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat;
-  var Network: TMultiLayerPerceptron);
+procedure MLPCreateR1(NIn, NHid, NOut: TLInt; A, B: TLFloat; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLearnIntegerArray;
-  LTypes     : TLearnIntegerArray;
-  LConnFirst : TLearnIntegerArray;
-  LConnLast  : TLearnIntegerArray;
-  LayersCount: TLearnInteger;
-  LastProc   : TLearnInteger;
-  I          : TLearnInteger;
+  LSizes     : TLIVec;
+  LTypes     : TLIVec;
+  LConnFirst : TLIVec;
+  LConnLast  : TLIVec;
+  LayersCount: TLInt;
+  LastProc   : TLInt;
+  I          : TLInt;
 begin
   LayersCount := 1 + 3 + 3;
 
@@ -528,17 +526,15 @@ end;
 (* ************************************************************************
   Same as MLPCreateR0, but with two non-linear hidden layers.
   ************************************************************************ *)
-procedure MLPCreateR2(NIn: TLearnInteger; NHid1: TLearnInteger;
-  NHid2: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat;
-  var Network: TMultiLayerPerceptron);
+procedure MLPCreateR2(NIn, NHid1, NHid2, NOut: TLInt; A, B: TLFloat; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLearnIntegerArray;
-  LTypes     : TLearnIntegerArray;
-  LConnFirst : TLearnIntegerArray;
-  LConnLast  : TLearnIntegerArray;
-  LayersCount: TLearnInteger;
-  LastProc   : TLearnInteger;
-  I          : TLearnInteger;
+  LSizes     : TLIVec;
+  LTypes     : TLIVec;
+  LConnFirst : TLIVec;
+  LConnLast  : TLIVec;
+  LayersCount: TLInt;
+  LastProc   : TLInt;
+  I          : TLInt;
 begin
   LayersCount := 1 + 3 + 3 + 3;
 
@@ -586,15 +582,14 @@ end;
   Network contains no hidden layers and linear output layer with SOFTMAX-
   normalization (so outputs sums up to 1.0 and converge to posterior probabilities).
   ************************************************************************ *)
-procedure MLPCreateC0(NIn: TLearnInteger; NOut: TLearnInteger;
-  var Network: TMultiLayerPerceptron);
+procedure MLPCreateC0(NIn, NOut: TLInt; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLearnIntegerArray;
-  LTypes     : TLearnIntegerArray;
-  LConnFirst : TLearnIntegerArray;
-  LConnLast  : TLearnIntegerArray;
-  LayersCount: TLearnInteger;
-  LastProc   : TLearnInteger;
+  LSizes     : TLIVec;
+  LTypes     : TLIVec;
+  LConnFirst : TLIVec;
+  LConnLast  : TLIVec;
+  LayersCount: TLInt;
+  LastProc   : TLInt;
 begin
   Assert(NOut >= 2, 'MLPCreateC0: NOut<2!');
   LayersCount := 1 + 2 + 1;
@@ -625,15 +620,14 @@ end;
 (* ************************************************************************
   Same as MLPCreateC0, but with one non-linear hidden layer.
   ************************************************************************ *)
-procedure MLPCreateC1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; var Network: TMultiLayerPerceptron);
+procedure MLPCreateC1(NIn, NHid, NOut: TLInt; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLearnIntegerArray;
-  LTypes     : TLearnIntegerArray;
-  LConnFirst : TLearnIntegerArray;
-  LConnLast  : TLearnIntegerArray;
-  LayersCount: TLearnInteger;
-  LastProc   : TLearnInteger;
+  LSizes     : TLIVec;
+  LTypes     : TLIVec;
+  LConnFirst : TLIVec;
+  LConnLast  : TLIVec;
+  LayersCount: TLInt;
+  LastProc   : TLInt;
 begin
   Assert(NOut >= 2, 'MLPCreateC1: NOut<2!');
   LayersCount := 1 + 3 + 2 + 1;
@@ -666,16 +660,14 @@ end;
 (* ************************************************************************
   Same as MLPCreateC0, but with two non-linear hidden layers.
   ************************************************************************ *)
-procedure MLPCreateC2(NIn: TLearnInteger; NHid1: TLearnInteger;
-  NHid2: TLearnInteger; NOut: TLearnInteger;
-  var Network: TMultiLayerPerceptron);
+procedure MLPCreateC2(NIn, NHid1, NHid2, NOut: TLInt; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLearnIntegerArray;
-  LTypes     : TLearnIntegerArray;
-  LConnFirst : TLearnIntegerArray;
-  LConnLast  : TLearnIntegerArray;
-  LayersCount: TLearnInteger;
-  LastProc   : TLearnInteger;
+  LSizes     : TLIVec;
+  LTypes     : TLIVec;
+  LConnFirst : TLIVec;
+  LConnLast  : TLIVec;
+  LayersCount: TLInt;
+  LastProc   : TLInt;
 begin
   Assert(NOut >= 2, 'MLPCreateC2: NOut<2!');
   LayersCount := 1 + 3 + 3 + 2 + 1;
@@ -736,12 +728,12 @@ end;
 procedure MLPCopy(const Network1: TMultiLayerPerceptron;
   var Network2: TMultiLayerPerceptron);
 var
-  I     : TLearnInteger;
-  SSize : TLearnInteger;
-  NTotal: TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
+  I     : TLInt;
+  SSize : TLInt;
+  NTotal: TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
 begin
 
   //
@@ -823,16 +815,16 @@ end;
   RLen    -   RA lenght
   ************************************************************************ *)
 procedure MLPSerialize(const Network: TMultiLayerPerceptron;
-  var RA: TLearnFloatArray; var RLen: TLearnInteger);
+  var RA: TLVec; var RLen: TLInt);
 var
-  I       : TLearnInteger;
-  SSize   : TLearnInteger;
-  NTotal  : TLearnInteger;
-  NIn     : TLearnInteger;
-  NOut    : TLearnInteger;
-  WCount  : TLearnInteger;
-  SigmaLen: TLearnInteger;
-  Offs    : TLearnInteger;
+  I       : TLInt;
+  SSize   : TLInt;
+  NTotal  : TLInt;
+  NIn     : TLInt;
+  NOut    : TLInt;
+  WCount  : TLInt;
+  SigmaLen: TLInt;
+  Offs    : TLInt;
 begin
 
   //
@@ -895,17 +887,17 @@ end;
   OUTPUT PARAMETERS:
   Network -   restored network
   ************************************************************************ *)
-procedure MLPUnserialize(const RA: TLearnFloatArray;
+procedure MLPUnserialize(const RA: TLVec;
   var Network: TMultiLayerPerceptron);
 var
-  I       : TLearnInteger;
-  SSize   : TLearnInteger;
-  NTotal  : TLearnInteger;
-  NIn     : TLearnInteger;
-  NOut    : TLearnInteger;
-  WCount  : TLearnInteger;
-  SigmaLen: TLearnInteger;
-  Offs    : TLearnInteger;
+  I       : TLInt;
+  SSize   : TLInt;
+  NTotal  : TLInt;
+  NIn     : TLInt;
+  NOut    : TLInt;
+  WCount  : TLInt;
+  SigmaLen: TLInt;
+  Offs    : TLInt;
 begin
   Assert(Round(RA[1]) = MLPVNum, 'MLPUnserialize: incorrect array!');
 
@@ -972,10 +964,10 @@ end;
   ************************************************************************ *)
 procedure MLPRandomize(var Network: TMultiLayerPerceptron); overload;
 var
-  I     : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
+  I     : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   for I := 0 to WCount - 1 do
@@ -988,12 +980,12 @@ end;
   Randomization of neural network weights
   ************************************************************************ *)
 procedure MLPRandomize(var Network: TMultiLayerPerceptron;
-  const Diameter: TLearnFloat); overload;
+  const Diameter: TLFloat); overload;
 var
-  I     : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
+  I     : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   for I := 0 to WCount - 1 do
@@ -1006,12 +998,12 @@ end;
   Randomization of neural network weights
   ************************************************************************ *)
 procedure MLPRandomize(var Network: TMultiLayerPerceptron;
-  const WBest: TLearnFloatArray; const Diameter: TLearnFloat); overload;
+  const WBest: TLVec; const Diameter: TLFloat); overload;
 var
-  I     : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
+  I     : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   for I := 0 to WCount - 1 do
@@ -1025,14 +1017,14 @@ end;
   ************************************************************************ *)
 procedure MLPRandomizeFull(var Network: TMultiLayerPerceptron);
 var
-  I     : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
-  NTotal: TLearnInteger;
-  IStart: TLearnInteger;
-  Offs  : TLearnInteger;
-  NType : TLearnInteger;
+  I     : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
+  NTotal: TLInt;
+  IStart: TLInt;
+  Offs  : TLInt;
+  NType : TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   NTotal := Network.StructInfo[3];
@@ -1088,21 +1080,21 @@ end;
   Internal subroutine.
   ************************************************************************ *)
 procedure MLPInitPreprocessor(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; SSize: TLearnInteger);
+  const XY: TLMatrix; SSize: TLInt);
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  JMax  : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
-  NTotal: TLearnInteger;
-  IStart: TLearnInteger;
-  Offs  : TLearnInteger;
-  NType : TLearnInteger;
-  Means : TLearnFloatArray;
-  Sigmas: TLearnFloatArray;
-  S     : TLearnFloat;
+  I     : TLInt;
+  J     : TLInt;
+  JMax  : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
+  NTotal: TLInt;
+  IStart: TLInt;
+  Offs  : TLInt;
+  NType : TLInt;
+  Means : TLVec;
+  Sigmas: TLVec;
+  S     : TLFloat;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   NTotal := Network.StructInfo[3];
@@ -1212,7 +1204,7 @@ end;
   Returns information about initialized network: number of inputs, outputs, weights.
   ************************************************************************ *)
 procedure MLPProperties(const Network: TMultiLayerPerceptron;
-  var NIn: TLearnInteger; var NOut: TLearnInteger; var WCount: TLearnInteger);
+  var NIn: TLInt; var NOut: TLInt; var WCount: TLInt);
 begin
   NIn := Network.StructInfo[1];
   NOut := Network.StructInfo[2];
@@ -1240,7 +1232,7 @@ end;
   Subroutine does not allocate memory for this vector, it is
   responsibility of a caller to allocate it. Array must be at least [0..NOut-1].
   ************************************************************************ *)
-procedure MLPProcess(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray; var Y: TLearnFloatArray);
+procedure MLPProcess(var Network: TMultiLayerPerceptron; const X: TLVec; var Y: TLVec);
 begin
   MLPInternalProcessVector(Network.StructInfo, Network.Weights,
     Network.ColumnMeans, Network.ColumnSigmas, Network.Neurons,
@@ -1250,15 +1242,15 @@ end;
 (* ************************************************************************
   Error function for neural network, internal subroutine.
   ************************************************************************ *)
-function MLPError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
-  SSize: TLearnInteger): TLearnFloat;
+function MLPError(var Network: TMultiLayerPerceptron; const XY: TLMatrix;
+  SSize: TLInt): TLFloat;
 var
-  I     : TLearnInteger;
-  K     : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
-  E     : TLearnFloat;
+  I     : TLInt;
+  K     : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
+  E     : TLFloat;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   Result := 0;
@@ -1296,15 +1288,15 @@ end;
 (* ************************************************************************
   Natural error function for neural network, internal subroutine.
   ************************************************************************ *)
-function MLPErrorN(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
-  SSize: TLearnInteger): TLearnFloat;
+function MLPErrorN(var Network: TMultiLayerPerceptron; const XY: TLMatrix;
+  SSize: TLInt): TLFloat;
 var
-  I     : TLearnInteger;
-  K     : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
-  E     : TLearnFloat;
+  I     : TLInt;
+  K     : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
+  E     : TLFloat;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   Result := 0;
@@ -1349,19 +1341,19 @@ end;
 (* ************************************************************************
   Classification error
   ************************************************************************ *)
-function MLPClsError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
-  SSize: TLearnInteger): TLearnInteger;
+function MLPClsError(var Network: TMultiLayerPerceptron; const XY: TLMatrix;
+  SSize: TLInt): TLInt;
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
-  WorkX : TLearnFloatArray;
-  WorkY : TLearnFloatArray;
-  NN    : TLearnInteger;
-  NS    : TLearnInteger;
-  NMAX  : TLearnInteger;
+  I     : TLInt;
+  J     : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
+  WorkX : TLVec;
+  WorkY : TLVec;
+  NN    : TLInt;
+  NS    : TLInt;
+  NMAX  : TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   SetLength(WorkX, NIn (* - 1 + 1 // optimized compiler *) );
@@ -1439,7 +1431,7 @@ end;
   classifiers.
   ************************************************************************ *)
 function MLPRelClsError(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat;
+  const XY: TLMatrix; NPoints: TLInt): TLFloat;
 begin
   Result := AP_Float(MLPClsError(Network, XY, NPoints)) / NPoints;
 end;
@@ -1456,12 +1448,12 @@ end;
   CrossEntropy/(NPoints*LN(2)).
   Zero if network solves regression task.
   ************************************************************************ *)
-function MLPAvgCE(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function MLPAvgCE(var Network: TMultiLayerPerceptron; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
 begin
   if MLPIsSoftmax(Network) then
     begin
@@ -1488,12 +1480,12 @@ end;
   classification task, RMS error means error when estimating posterior
   probabilities.
   ************************************************************************ *)
-function MLPRMSError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function MLPRMSError(var Network: TMultiLayerPerceptron; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   Result := Sqrt(2 * MLPError(Network, XY, NPoints) / (NPoints * NOut));
@@ -1512,15 +1504,15 @@ end;
   classification task, it means average error when estimating posterior
   probabilities.
   ************************************************************************ *)
-function MLPAvgError(var Network: TMultiLayerPerceptron; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function MLPAvgError(var Network: TMultiLayerPerceptron; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  K     : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
+  I     : TLInt;
+  J     : TLInt;
+  K     : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   Result := 0;
@@ -1583,15 +1575,15 @@ end;
 
   ************************************************************************ *)
 function MLPAvgRelError(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat;
+  const XY: TLMatrix; NPoints: TLInt): TLFloat;
 var
-  I     : TLearnInteger;
-  J     : TLearnInteger;
-  K     : TLearnInteger;
-  LK    : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
+  I     : TLInt;
+  J     : TLInt;
+  K     : TLInt;
+  LK    : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   Result := 0;
@@ -1648,12 +1640,12 @@ end;
 (* ************************************************************************
   Gradient calculation. Internal subroutine.
   ************************************************************************ *)
-procedure MLPGrad(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray;
-  const DesiredY: TLearnFloatArray; var E: TLearnFloat; var Grad: TLearnFloatArray);
+procedure MLPGrad(var Network: TMultiLayerPerceptron; const X: TLVec;
+  const DesiredY: TLVec; var E: TLFloat; var Grad: TLVec);
 var
-  I     : TLearnInteger;
-  NOut  : TLearnInteger;
-  NTotal: TLearnInteger;
+  I     : TLInt;
+  NOut  : TLInt;
+  NTotal: TLInt;
 begin
 
   //
@@ -1687,13 +1679,13 @@ end;
 (* ************************************************************************
   Gradient calculation (natural error function). Internal subroutine.
   ************************************************************************ *)
-procedure MLPGradN(var Network: TMultiLayerPerceptron; const X: TLearnFloatArray;
-  const DesiredY: TLearnFloatArray; var E: TLearnFloat; var Grad: TLearnFloatArray);
+procedure MLPGradN(var Network: TMultiLayerPerceptron; const X: TLVec;
+  const DesiredY: TLVec; var E: TLFloat; var Grad: TLVec);
 var
-  S     : TLearnFloat;
-  I     : TLearnInteger;
-  NOut  : TLearnInteger;
-  NTotal: TLearnInteger;
+  S     : TLFloat;
+  I     : TLInt;
+  NOut  : TLInt;
+  NTotal: TLInt;
 begin
 
   //
@@ -1756,13 +1748,13 @@ end;
   Batch gradient calculation. Internal subroutine.
   ************************************************************************ *)
 procedure MLPGradBatch(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat;
-  var Grad: TLearnFloatArray);
+  const XY: TLMatrix; SSize: TLInt; var E: TLFloat;
+  var Grad: TLVec);
 var
-  I     : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
+  I     : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   I := 0;
@@ -1785,13 +1777,13 @@ end;
   Batch gradient calculation (natural error function). Internal subroutine.
   ************************************************************************ *)
 procedure MLPGradNBatch(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat;
-  var Grad: TLearnFloatArray);
+  const XY: TLMatrix; SSize: TLInt; var E: TLFloat;
+  var Grad: TLVec);
 var
-  I     : TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  WCount: TLearnInteger;
+  I     : TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   I := 0;
@@ -1820,8 +1812,8 @@ end;
   Neural Computation, 1994.
   ************************************************************************ *)
 procedure MLPHessianNBatch(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat;
-  var Grad: TLearnFloatArray; var H: TLearnFloat2DArray);
+  const XY: TLMatrix; SSize: TLInt; var E: TLFloat;
+  var Grad: TLVec; var H: TLMatrix);
 begin
   MLPHessianBatchInternal(Network, XY, SSize, True, E, Grad, H);
 end;
@@ -1836,8 +1828,8 @@ end;
   Neural Computation, 1994.
   ************************************************************************ *)
 procedure MLPHessianBatch(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; SSize: TLearnInteger; var E: TLearnFloat;
-  var Grad: TLearnFloatArray; var H: TLearnFloat2DArray);
+  const XY: TLMatrix; SSize: TLInt; var E: TLFloat;
+  var Grad: TLVec; var H: TLMatrix);
 begin
   MLPHessianBatchInternal(Network, XY, SSize, False, E, Grad, H);
 end;
@@ -1845,26 +1837,26 @@ end;
 (* ************************************************************************
   Internal subroutine, shouldn't be called by user.
   ************************************************************************ *)
-procedure MLPInternalProcessVector(const StructInfo: TLearnIntegerArray;
-  const Weights: TLearnFloatArray; const ColumnMeans: TLearnFloatArray;
-  const ColumnSigmas: TLearnFloatArray; var Neurons: TLearnFloatArray;
-  var DFDNET: TLearnFloatArray; const X: TLearnFloatArray; var Y: TLearnFloatArray);
+procedure MLPInternalProcessVector(const StructInfo: TLIVec;
+  const Weights: TLVec; const ColumnMeans: TLVec;
+  const ColumnSigmas: TLVec; var Neurons: TLVec;
+  var DFDNET: TLVec; const X: TLVec; var Y: TLVec);
 var
-  I     : TLearnInteger;
-  N1    : TLearnInteger;
-  N2    : TLearnInteger;
-  W1    : TLearnInteger;
-  W2    : TLearnInteger;
-  NTotal: TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  IStart: TLearnInteger;
-  Offs  : TLearnInteger;
-  NET   : TLearnFloat;
-  F     : TLearnFloat;
-  DF    : TLearnFloat;
-  D2F   : TLearnFloat;
-  MX    : TLearnFloat;
+  I     : TLInt;
+  N1    : TLInt;
+  N2    : TLInt;
+  W1    : TLInt;
+  W2    : TLInt;
+  NTotal: TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  IStart: TLInt;
+  Offs  : TLInt;
+  NET   : TLFloat;
+  F     : TLFloat;
+  DF    : TLFloat;
+  D2F   : TLFloat;
+  MX    : TLFloat;
   PErr  : Boolean;
 begin
 
@@ -2002,9 +1994,9 @@ end;
 (* ************************************************************************
   Internal subroutine: adding new input layer to network
   ************************************************************************ *)
-procedure AddInputLayer(NCount: TLearnInteger; var LSizes: TLearnIntegerArray;
-  var LTypes: TLearnIntegerArray; var LConnFirst: TLearnIntegerArray;
-  var LConnLast: TLearnIntegerArray; var LastProc: TLearnInteger);
+procedure AddInputLayer(NCount: TLInt; var LSizes: TLIVec;
+  var LTypes: TLIVec; var LConnFirst: TLIVec;
+  var LConnLast: TLIVec; var LastProc: TLInt);
 begin
   LSizes[0] := NCount;
   LTypes[0] := -2;
@@ -2016,10 +2008,10 @@ end;
 (* ************************************************************************
   Internal subroutine: adding new summator layer to network
   ************************************************************************ *)
-procedure AddBiasedSummatorLayer(NCount: TLearnInteger;
-  var LSizes: TLearnIntegerArray; var LTypes: TLearnIntegerArray;
-  var LConnFirst: TLearnIntegerArray; var LConnLast: TLearnIntegerArray;
-  var LastProc: TLearnInteger);
+procedure AddBiasedSummatorLayer(NCount: TLInt;
+  var LSizes: TLIVec; var LTypes: TLIVec;
+  var LConnFirst: TLIVec; var LConnLast: TLIVec;
+  var LastProc: TLInt);
 begin
   LSizes[LastProc + 1] := 1;
   LTypes[LastProc + 1] := -3;
@@ -2035,10 +2027,10 @@ end;
 (* ************************************************************************
   Internal subroutine: adding new summator layer to network
   ************************************************************************ *)
-procedure AddActivationLayer(FuncType: TLearnInteger;
-  var LSizes: TLearnIntegerArray; var LTypes: TLearnIntegerArray;
-  var LConnFirst: TLearnIntegerArray; var LConnLast: TLearnIntegerArray;
-  var LastProc: TLearnInteger);
+procedure AddActivationLayer(FuncType: TLInt;
+  var LSizes: TLIVec; var LTypes: TLIVec;
+  var LConnFirst: TLIVec; var LConnLast: TLIVec;
+  var LastProc: TLInt);
 begin
   Assert(FuncType > 0, 'AddActivationLayer: incorrect function type');
   LSizes[LastProc + 1] := LSizes[LastProc];
@@ -2051,9 +2043,9 @@ end;
 (* ************************************************************************
   Internal subroutine: adding new zero layer to network
   ************************************************************************ *)
-procedure AddZeroLayer(var LSizes: TLearnIntegerArray; var LTypes: TLearnIntegerArray;
-  var LConnFirst: TLearnIntegerArray; var LConnLast: TLearnIntegerArray;
-  var LastProc: TLearnInteger);
+procedure AddZeroLayer(var LSizes: TLIVec; var LTypes: TLIVec;
+  var LConnFirst: TLIVec; var LConnLast: TLIVec;
+  var LastProc: TLInt);
 begin
   LSizes[LastProc + 1] := 1;
   LTypes[LastProc + 1] := -4;
@@ -2065,23 +2057,23 @@ end;
 (* ************************************************************************
   Internal subroutine.
   ************************************************************************ *)
-procedure MLPCreate(NIn: TLearnInteger; NOut: TLearnInteger;
-  const LSizes: TLearnIntegerArray; const LTypes: TLearnIntegerArray;
-  const LConnFirst: TLearnIntegerArray; const LConnLast: TLearnIntegerArray;
-  LayersCount: TLearnInteger; IsClsNet: Boolean;
+procedure MLPCreate(NIn, NOut: TLInt;
+  const LSizes: TLIVec; const LTypes: TLIVec;
+  const LConnFirst: TLIVec; const LConnLast: TLIVec;
+  LayersCount: TLInt; IsClsNet: Boolean;
   var Network: TMultiLayerPerceptron);
 var
-  I         : TLearnInteger;
-  J         : TLearnInteger;
-  SSize     : TLearnInteger;
-  NTotal    : TLearnInteger;
-  WCount    : TLearnInteger;
-  Offs      : TLearnInteger;
-  NProcessed: TLearnInteger;
-  WAllocated: TLearnInteger;
-  LocalTemp : TLearnIntegerArray;
-  LNFirst   : TLearnIntegerArray;
-  LNSyn     : TLearnIntegerArray;
+  I         : TLInt;
+  J         : TLInt;
+  SSize     : TLInt;
+  NTotal    : TLInt;
+  WCount    : TLInt;
+  Offs      : TLInt;
+  NProcessed: TLInt;
+  WAllocated: TLInt;
+  LocalTemp : TLIVec;
+  LNFirst   : TLIVec;
+  LNSyn     : TLIVec;
 begin
 
   //
@@ -2271,12 +2263,12 @@ end;
 (* ************************************************************************
   Internal subroutine
   ************************************************************************ *)
-procedure MLPActivationFunction(NET: TLearnFloat; K: TLearnInteger; var F: TLearnFloat; var DF: TLearnFloat; var D2F: TLearnFloat);
+procedure MLPActivationFunction(NET: TLFloat; K: TLInt; var F: TLFloat; var DF: TLFloat; var D2F: TLFloat);
 var
-  NET2: TLearnFloat;
-  ARG : TLearnFloat;
-  ROOT: TLearnFloat;
-  R   : TLearnFloat;
+  NET2: TLFloat;
+  ARG : TLFloat;
+  ROOT: TLFloat;
+  R   : TLFloat;
 begin
   F := 0;
   DF := 0;
@@ -2337,46 +2329,46 @@ end;
   WARNING!!! Unspeakable math far beyong human capabilities :)
   ************************************************************************ *)
 procedure MLPHessianBatchInternal(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; SSize: TLearnInteger; NaturalErr: Boolean;
-  var E: TLearnFloat; var Grad: TLearnFloatArray; var H: TLearnFloat2DArray);
+  const XY: TLMatrix; SSize: TLInt; NaturalErr: Boolean;
+  var E: TLFloat; var Grad: TLVec; var H: TLMatrix);
 var
-  NIn     : TLearnInteger;
-  NOut    : TLearnInteger;
-  WCount  : TLearnInteger;
-  NTotal  : TLearnInteger;
-  IStart  : TLearnInteger;
-  I       : TLearnInteger;
-  J       : TLearnInteger;
-  K       : TLearnInteger;
-  KL      : TLearnInteger;
-  Offs    : TLearnInteger;
-  N1      : TLearnInteger;
-  N2      : TLearnInteger;
-  W1      : TLearnInteger;
-  W2      : TLearnInteger;
-  S       : TLearnFloat;
-  T       : TLearnFloat;
-  V       : TLearnFloat;
-  ET      : TLearnFloat;
+  NIn     : TLInt;
+  NOut    : TLInt;
+  WCount  : TLInt;
+  NTotal  : TLInt;
+  IStart  : TLInt;
+  I       : TLInt;
+  J       : TLInt;
+  K       : TLInt;
+  KL      : TLInt;
+  Offs    : TLInt;
+  N1      : TLInt;
+  N2      : TLInt;
+  W1      : TLInt;
+  W2      : TLInt;
+  S       : TLFloat;
+  T       : TLFloat;
+  V       : TLFloat;
+  ET      : TLFloat;
   BFlag   : Boolean;
-  F       : TLearnFloat;
-  DF      : TLearnFloat;
-  D2F     : TLearnFloat;
-  dEIdYJ  : TLearnFloat;
-  MX      : TLearnFloat;
-  Q       : TLearnFloat;
-  Z       : TLearnFloat;
-  S2      : TLearnFloat;
-  ExpI    : TLearnFloat;
-  ExpJ    : TLearnFloat;
-  X       : TLearnFloatArray;
-  DesiredY: TLearnFloatArray;
-  GT      : TLearnFloatArray;
-  Zeros   : TLearnFloatArray;
-  RX      : TLearnFloat2DArray;
-  RY      : TLearnFloat2DArray;
-  RDX     : TLearnFloat2DArray;
-  RDY     : TLearnFloat2DArray;
+  F       : TLFloat;
+  DF      : TLFloat;
+  D2F     : TLFloat;
+  dEIdYJ  : TLFloat;
+  MX      : TLFloat;
+  Q       : TLFloat;
+  Z       : TLFloat;
+  S2      : TLFloat;
+  ExpI    : TLFloat;
+  ExpJ    : TLFloat;
+  X       : TLVec;
+  DesiredY: TLVec;
+  GT      : TLVec;
+  Zeros   : TLVec;
+  RX      : TLMatrix;
+  RY      : TLMatrix;
+  RDX     : TLMatrix;
+  RDY     : TLMatrix;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   NTotal := Network.StructInfo[3];
@@ -2839,26 +2831,26 @@ end;
   Network must be processed by MLPProcess on X
   ************************************************************************ *)
 procedure MLPInternalCalculateGradient(var Network: TMultiLayerPerceptron;
-  const Neurons: TLearnFloatArray; const Weights: TLearnFloatArray;
-  var DError: TLearnFloatArray; var Grad: TLearnFloatArray; NaturalErrorFunc: Boolean);
+  const Neurons: TLVec; const Weights: TLVec;
+  var DError: TLVec; var Grad: TLVec; NaturalErrorFunc: Boolean);
 var
-  I     : TLearnInteger;
-  N1    : TLearnInteger;
-  N2    : TLearnInteger;
-  W1    : TLearnInteger;
-  W2    : TLearnInteger;
-  NTotal: TLearnInteger;
-  IStart: TLearnInteger;
-  NIn   : TLearnInteger;
-  NOut  : TLearnInteger;
-  Offs  : TLearnInteger;
-  dEdF  : TLearnFloat;
-  DFDNET: TLearnFloat;
-  V     : TLearnFloat;
-  FOwn  : TLearnFloat;
-  DEOwn : TLearnFloat;
-  NET   : TLearnFloat;
-  MX    : TLearnFloat;
+  I     : TLInt;
+  N1    : TLInt;
+  N2    : TLInt;
+  W1    : TLInt;
+  W2    : TLInt;
+  NTotal: TLInt;
+  IStart: TLInt;
+  NIn   : TLInt;
+  NOut  : TLInt;
+  Offs  : TLInt;
+  dEdF  : TLFloat;
+  DFDNET: TLFloat;
+  V     : TLFloat;
+  FOwn  : TLFloat;
+  DEOwn : TLFloat;
+  NET   : TLFloat;
+  MX    : TLFloat;
   BFlag : Boolean;
 begin
 
@@ -2994,39 +2986,39 @@ end;
   Internal subroutine, chunked gradient
   ************************************************************************ *)
 procedure MLPChunkedGradient(var Network: TMultiLayerPerceptron;
-  const XY: TLearnFloat2DArray; CStart: TLearnInteger; CSize: TLearnInteger;
-  var E: TLearnFloat; var Grad: TLearnFloatArray; NaturalErrorFunc: Boolean);
+  const XY: TLMatrix; CStart: TLInt; CSize: TLInt;
+  var E: TLFloat; var Grad: TLVec; NaturalErrorFunc: Boolean);
 var
-  I       : TLearnInteger;
-  J       : TLearnInteger;
-  K       : TLearnInteger;
-  KL      : TLearnInteger;
-  N1      : TLearnInteger;
-  N2      : TLearnInteger;
-  W1      : TLearnInteger;
-  W2      : TLearnInteger;
-  C1      : TLearnInteger;
-  C2      : TLearnInteger;
-  NTotal  : TLearnInteger;
-  NIn     : TLearnInteger;
-  NOut    : TLearnInteger;
-  Offs    : TLearnInteger;
-  F       : TLearnFloat;
-  DF      : TLearnFloat;
-  D2F     : TLearnFloat;
-  V       : TLearnFloat;
-  S       : TLearnFloat;
-  FOwn    : TLearnFloat;
-  DEOwn   : TLearnFloat;
-  NET     : TLearnFloat;
-  LnNET   : TLearnFloat;
-  MX      : TLearnFloat;
+  I       : TLInt;
+  J       : TLInt;
+  K       : TLInt;
+  KL      : TLInt;
+  N1      : TLInt;
+  N2      : TLInt;
+  W1      : TLInt;
+  W2      : TLInt;
+  C1      : TLInt;
+  C2      : TLInt;
+  NTotal  : TLInt;
+  NIn     : TLInt;
+  NOut    : TLInt;
+  Offs    : TLInt;
+  F       : TLFloat;
+  DF      : TLFloat;
+  D2F     : TLFloat;
+  V       : TLFloat;
+  S       : TLFloat;
+  FOwn    : TLFloat;
+  DEOwn   : TLFloat;
+  NET     : TLFloat;
+  LnNET   : TLFloat;
+  MX      : TLFloat;
   BFlag   : Boolean;
-  IStart  : TLearnInteger;
-  INeurons: TLearnInteger;
-  IDFDNET : TLearnInteger;
-  IDError : TLearnInteger;
-  IZeros  : TLearnInteger;
+  IStart  : TLInt;
+  INeurons: TLInt;
+  IDFDNET : TLInt;
+  IDError : TLInt;
+  IZeros  : TLInt;
 begin
 
   //
@@ -3386,9 +3378,9 @@ end;
   Returns T*Ln(T/Z), guarded against overflow/underflow.
   Internal subroutine.
   ************************************************************************ *)
-function SafeCrossEntropy(T: TLearnFloat; Z: TLearnFloat): TLearnFloat;
+function SafeCrossEntropy(T: TLFloat; Z: TLFloat): TLFloat;
 var
-  R: TLearnFloat;
+  R: TLFloat;
 begin
   if AP_FP_Eq(T, 0) then
     begin

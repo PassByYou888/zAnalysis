@@ -7,31 +7,31 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-function RMatrixBDSVD(var D: TLearnFloatArray; E: TLearnFloatArray; N: TLearnInteger;
-  IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean; var U: TLearnFloat2DArray;
-  NRU: TLearnInteger; var C: TLearnFloat2DArray; NCC: TLearnInteger;
-  var VT: TLearnFloat2DArray; NCVT: TLearnInteger): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixBDSVD(var D: TLVec; E: TLVec; N: TLInt;
+  IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean; var U: TLMatrix;
+  NRU: TLInt; var C: TLMatrix; NCC: TLInt;
+  var VT: TLMatrix; NCVT: TLInt): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function BidiagonalSVDDecomposition(var D: TLearnFloatArray; E: TLearnFloatArray;
-  N: TLearnInteger; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
-  var U: TLearnFloat2DArray; NRU: TLearnInteger; var C: TLearnFloat2DArray;
-  NCC: TLearnInteger; var VT: TLearnFloat2DArray; NCVT: TLearnInteger): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function BidiagonalSVDDecomposition(var D: TLVec; E: TLVec;
+  N: TLInt; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
+  var U: TLMatrix; NRU: TLInt; var C: TLMatrix;
+  NCC: TLInt; var VT: TLMatrix; NCVT: TLInt): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function BidiagonalSVDDecompositionInternal(var D: TLearnFloatArray;
-  E: TLearnFloatArray; N: TLearnInteger; IsUpper: Boolean;
-  IsFractionalAccuracyRequired: Boolean; var U: TLearnFloat2DArray;
-  UStart: TLearnInteger; NRU: TLearnInteger; var C: TLearnFloat2DArray;
-  CStart: TLearnInteger; NCC: TLearnInteger; var VT: TLearnFloat2DArray;
-  VStart: TLearnInteger; NCVT: TLearnInteger): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function BidiagonalSVDDecompositionInternal(var D: TLVec;
+  E: TLVec; N: TLInt; IsUpper: Boolean;
+  IsFractionalAccuracyRequired: Boolean; var U: TLMatrix;
+  UStart: TLInt; NRU: TLInt; var C: TLMatrix;
+  CStart: TLInt; NCC: TLInt; var VT: TLMatrix;
+  VStart: TLInt; NCVT: TLInt): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function ExtSignBDSQR(a: TLearnFloat; b: TLearnFloat): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ExtSignBDSQR(a: TLFloat; b: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure Svd2X2(F: TLearnFloat; G: TLearnFloat; H: TLearnFloat;
-  var SSMIN: TLearnFloat; var SSMAX: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure Svd2X2(F: TLFloat; G: TLFloat; H: TLFloat;
+  var SSMIN: TLFloat; var SSMAX: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure SvdV2X2(F: TLearnFloat; G: TLearnFloat; H: TLearnFloat;
-  var SSMIN: TLearnFloat; var SSMAX: TLearnFloat; var SNR: TLearnFloat;
-  var CSR: TLearnFloat; var SNL: TLearnFloat; var CSL: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SvdV2X2(F: TLFloat; G: TLFloat; H: TLFloat;
+  var SSMIN: TLFloat; var SSMAX: TLFloat; var SNR: TLFloat;
+  var CSR: TLFloat; var SNL: TLFloat; var CSL: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -104,13 +104,13 @@ procedure SvdV2X2(F: TLearnFloat; G: TLearnFloat; H: TLearnFloat;
   TOL less than 10*Epsilon since this will  considerably  slow  down  the
   algorithm and may not lead to error decreasing.
   ************************************************************************ *)
-function RMatrixBDSVD(var D: TLearnFloatArray; E: TLearnFloatArray; N: TLearnInteger;
-  IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean; var U: TLearnFloat2DArray;
-  NRU: TLearnInteger; var C: TLearnFloat2DArray; NCC: TLearnInteger;
-  var VT: TLearnFloat2DArray; NCVT: TLearnInteger): Boolean;
+function RMatrixBDSVD(var D: TLVec; E: TLVec; N: TLInt;
+  IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean; var U: TLMatrix;
+  NRU: TLInt; var C: TLMatrix; NCC: TLInt;
+  var VT: TLMatrix; NCVT: TLInt): Boolean;
 var
-  D1: TLearnFloatArray;
-  E1: TLearnFloatArray;
+  D1: TLVec;
+  E1: TLVec;
 begin
   E := DynamicArrayCopy(E);
   SetLength(D1, N + 1);
@@ -125,10 +125,10 @@ begin
   APVMove(@D[0], 0, N - 1, @D1[0], 1, N);
 end;
 
-function BidiagonalSVDDecomposition(var D: TLearnFloatArray; E: TLearnFloatArray;
-  N: TLearnInteger; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
-  var U: TLearnFloat2DArray; NRU: TLearnInteger; var C: TLearnFloat2DArray;
-  NCC: TLearnInteger; var VT: TLearnFloat2DArray; NCVT: TLearnInteger): Boolean;
+function BidiagonalSVDDecomposition(var D: TLVec; E: TLVec;
+  N: TLInt; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
+  var U: TLMatrix; NRU: TLInt; var C: TLMatrix;
+  NCC: TLInt; var VT: TLMatrix; NCVT: TLInt): Boolean;
 begin
   E := DynamicArrayCopy(E);
   Result := BidiagonalSVDDecompositionInternal(D, E, N, IsUpper,
@@ -138,74 +138,74 @@ end;
 (* ************************************************************************
   Internal working subroutine for bidiagonal decomposition
   ************************************************************************ *)
-function BidiagonalSVDDecompositionInternal(var D: TLearnFloatArray;
-  E: TLearnFloatArray; N: TLearnInteger; IsUpper: Boolean;
-  IsFractionalAccuracyRequired: Boolean; var U: TLearnFloat2DArray;
-  UStart: TLearnInteger; NRU: TLearnInteger; var C: TLearnFloat2DArray;
-  CStart: TLearnInteger; NCC: TLearnInteger; var VT: TLearnFloat2DArray;
-  VStart: TLearnInteger; NCVT: TLearnInteger): Boolean;
+function BidiagonalSVDDecompositionInternal(var D: TLVec;
+  E: TLVec; N: TLInt; IsUpper: Boolean;
+  IsFractionalAccuracyRequired: Boolean; var U: TLMatrix;
+  UStart: TLInt; NRU: TLInt; var C: TLMatrix;
+  CStart: TLInt; NCC: TLInt; var VT: TLMatrix;
+  VStart: TLInt; NCVT: TLInt): Boolean;
 var
-  I              : TLearnInteger;
-  IDIR           : TLearnInteger;
-  ISUB           : TLearnInteger;
-  ITER           : TLearnInteger;
-  J              : TLearnInteger;
-  LL             : TLearnInteger;
-  LLL            : TLearnInteger;
-  M              : TLearnInteger;
-  MAXIT          : TLearnInteger;
-  OLDLL          : TLearnInteger;
-  OLDM           : TLearnInteger;
-  ABSE           : TLearnFloat;
-  ABSS           : TLearnFloat;
-  COSL           : TLearnFloat;
-  COSR           : TLearnFloat;
-  CS             : TLearnFloat;
-  EPS            : TLearnFloat;
-  F              : TLearnFloat;
-  G              : TLearnFloat;
-  H              : TLearnFloat;
-  MU             : TLearnFloat;
-  OLDCS          : TLearnFloat;
-  OLDSN          : TLearnFloat;
-  R              : TLearnFloat;
-  SHIFT          : TLearnFloat;
-  SIGMN          : TLearnFloat;
-  SIGMX          : TLearnFloat;
-  SINL           : TLearnFloat;
-  SINR           : TLearnFloat;
-  SLL            : TLearnFloat;
-  SMAX           : TLearnFloat;
-  SMIN           : TLearnFloat;
-  SMINL          : TLearnFloat;
-  SMINLO         : TLearnFloat;
-  SMINOA         : TLearnFloat;
-  SN             : TLearnFloat;
-  THRESH         : TLearnFloat;
-  TOL            : TLearnFloat;
-  TOLMUL         : TLearnFloat;
-  UNFL           : TLearnFloat;
-  WORK0          : TLearnFloatArray;
-  WORK1          : TLearnFloatArray;
-  WORK2          : TLearnFloatArray;
-  WORK3          : TLearnFloatArray;
-  MAXITR         : TLearnInteger;
+  I              : TLInt;
+  IDIR           : TLInt;
+  ISUB           : TLInt;
+  ITER           : TLInt;
+  J              : TLInt;
+  LL             : TLInt;
+  LLL            : TLInt;
+  M              : TLInt;
+  MAXIT          : TLInt;
+  OLDLL          : TLInt;
+  OLDM           : TLInt;
+  ABSE           : TLFloat;
+  ABSS           : TLFloat;
+  COSL           : TLFloat;
+  COSR           : TLFloat;
+  CS             : TLFloat;
+  EPS            : TLFloat;
+  F              : TLFloat;
+  G              : TLFloat;
+  H              : TLFloat;
+  MU             : TLFloat;
+  OLDCS          : TLFloat;
+  OLDSN          : TLFloat;
+  R              : TLFloat;
+  SHIFT          : TLFloat;
+  SIGMN          : TLFloat;
+  SIGMX          : TLFloat;
+  SINL           : TLFloat;
+  SINR           : TLFloat;
+  SLL            : TLFloat;
+  SMAX           : TLFloat;
+  SMIN           : TLFloat;
+  SMINL          : TLFloat;
+  SMINLO         : TLFloat;
+  SMINOA         : TLFloat;
+  SN             : TLFloat;
+  THRESH         : TLFloat;
+  TOL            : TLFloat;
+  TOLMUL         : TLFloat;
+  UNFL           : TLFloat;
+  WORK0          : TLVec;
+  WORK1          : TLVec;
+  WORK2          : TLVec;
+  WORK3          : TLVec;
+  MAXITR         : TLInt;
   MatrixSplitFlag: Boolean;
   IterFlag       : Boolean;
-  UTemp          : TLearnFloatArray;
-  VTTemp         : TLearnFloatArray;
-  CTemp          : TLearnFloatArray;
-  ETemp          : TLearnFloatArray;
+  UTemp          : TLVec;
+  VTTemp         : TLVec;
+  CTemp          : TLVec;
+  ETemp          : TLVec;
   RightSide      : Boolean;
   FwdDir         : Boolean;
-  Tmp            : TLearnFloat;
-  MM1            : TLearnInteger;
-  MM0            : TLearnInteger;
+  Tmp            : TLFloat;
+  MM1            : TLInt;
+  MM0            : TLInt;
   BChangeDir     : Boolean;
-  UEnd           : TLearnInteger;
-  CEnd           : TLearnInteger;
-  VEnd           : TLearnInteger;
-  i_             : TLearnInteger;
+  UEnd           : TLInt;
+  CEnd           : TLInt;
+  VEnd           : TLInt;
+  i_             : TLInt;
 begin
   E := DynamicArrayCopy(E);
   Result := True;
@@ -1048,7 +1048,7 @@ begin
     end;
 end;
 
-function ExtSignBDSQR(a: TLearnFloat; b: TLearnFloat): TLearnFloat;
+function ExtSignBDSQR(a: TLFloat; b: TLFloat): TLFloat;
 begin
   if AP_FP_Greater_Eq(b, 0) then
     begin
@@ -1060,18 +1060,18 @@ begin
     end;
 end;
 
-procedure Svd2X2(F: TLearnFloat; G: TLearnFloat; H: TLearnFloat;
-  var SSMIN: TLearnFloat; var SSMAX: TLearnFloat);
+procedure Svd2X2(F: TLFloat; G: TLFloat; H: TLFloat;
+  var SSMIN: TLFloat; var SSMAX: TLFloat);
 var
-  AAS : TLearnFloat;
-  AT  : TLearnFloat;
-  AU  : TLearnFloat;
-  C   : TLearnFloat;
-  FA  : TLearnFloat;
-  FHMN: TLearnFloat;
-  FHMX: TLearnFloat;
-  GA  : TLearnFloat;
-  HA  : TLearnFloat;
+  AAS : TLFloat;
+  AT  : TLFloat;
+  AU  : TLFloat;
+  C   : TLFloat;
+  FA  : TLFloat;
+  FHMN: TLFloat;
+  FHMX: TLFloat;
+  GA  : TLFloat;
+  HA  : TLFloat;
 begin
   FA := ABSReal(F);
   GA := ABSReal(G);
@@ -1128,35 +1128,35 @@ begin
     end;
 end;
 
-procedure SvdV2X2(F: TLearnFloat; G: TLearnFloat; H: TLearnFloat;
-  var SSMIN: TLearnFloat; var SSMAX: TLearnFloat; var SNR: TLearnFloat;
-  var CSR: TLearnFloat; var SNL: TLearnFloat; var CSL: TLearnFloat);
+procedure SvdV2X2(F: TLFloat; G: TLFloat; H: TLFloat;
+  var SSMIN: TLFloat; var SSMAX: TLFloat; var SNR: TLFloat;
+  var CSR: TLFloat; var SNL: TLFloat; var CSL: TLFloat);
 var
   GASMAL: Boolean;
   SWP   : Boolean;
-  PMAX  : TLearnInteger;
-  a     : TLearnFloat;
-  CLT   : TLearnFloat;
-  CRT   : TLearnFloat;
-  D     : TLearnFloat;
-  FA    : TLearnFloat;
-  FT    : TLearnFloat;
-  GA    : TLearnFloat;
-  GT    : TLearnFloat;
-  HA    : TLearnFloat;
-  HT    : TLearnFloat;
-  L     : TLearnFloat;
-  M     : TLearnFloat;
-  MM    : TLearnFloat;
-  R     : TLearnFloat;
-  S     : TLearnFloat;
-  SLT   : TLearnFloat;
-  SRT   : TLearnFloat;
-  T     : TLearnFloat;
-  TEMP  : TLearnFloat;
-  TSIGN : TLearnFloat;
-  TT    : TLearnFloat;
-  V     : TLearnFloat;
+  PMAX  : TLInt;
+  a     : TLFloat;
+  CLT   : TLFloat;
+  CRT   : TLFloat;
+  D     : TLFloat;
+  FA    : TLFloat;
+  FT    : TLFloat;
+  GA    : TLFloat;
+  GT    : TLFloat;
+  HA    : TLFloat;
+  HT    : TLFloat;
+  L     : TLFloat;
+  M     : TLFloat;
+  MM    : TLFloat;
+  R     : TLFloat;
+  S     : TLFloat;
+  SLT   : TLFloat;
+  SRT   : TLFloat;
+  T     : TLFloat;
+  TEMP  : TLFloat;
+  TSIGN : TLFloat;
+  TT    : TLFloat;
+  V     : TLFloat;
 begin
   FT := F;
   FA := ABSReal(FT);

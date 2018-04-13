@@ -1,4 +1,4 @@
-unit pictureAnalysisFrm;
+unit LargepictureAnalysisFrm;
 
 interface
 
@@ -202,7 +202,7 @@ var
   m64     : TMemoryStream64;
   storePos: Int64;
   i       : Integer;
-  buff    : TLearnFloatArray;
+  buff    : TLVec;
   mr      : TMemoryRaster;
 begin
   if not OpenDialog1.Execute then
@@ -219,7 +219,6 @@ begin
       try
         mr := TMemoryRaster.Create;
         LoadMemoryBitmap(OpenDialog1.Files[i], mr);
-        lr.PCA(True, mr, buff);
 
         // 将图片原始数据存储到zdb
         m64 := TMemoryStream64.Create;
@@ -227,7 +226,7 @@ begin
         storePos := ze.AddData(m64, $99);
         DisposeObject(m64);
 
-        lr.AddMemory(buff, [Double(storePos)]);
+        lr.AddMatrix(MatrixSampler(True, 15, mr), [Double(storePos)]);
 
         ProgressBar1.Value := i;
         DoStatus('提取图片特征 %s ', [umlGetFileName(OpenDialog1.Files[i]).Text]);
@@ -253,8 +252,8 @@ procedure TForm1.Button2Click(Sender: TObject);
 var
   // TMemoryRaster 是高速光栅化图形库的类
   mr1, mr2: TMemoryRaster;
-  f_In    : TLearnVector;
-  list    : TLearnIntegerArray;
+  f_In    : TLVec;
+  list    : TLIVec;
   i       : Integer;
   storePos: Int64;
 begin
@@ -266,45 +265,45 @@ begin
 
   MemoryBitmapToBitmap(mr1, Image1.Bitmap);
 
-  if lr.PCA(True, mr1, f_In) then
+  f_In := LVec(MatrixSampler(True, 15, mr1), 15 * 15);
+
+  if lr.Count > 0 then
     begin
-      if lr.Count > 0 then
+      lr.SearchMemoryWithPearson(f_In, list);
+
+      for i := 0 to length(list) - 1 do
         begin
-          lr.SearchMemoryWithPearson(f_In, list);
-
-          for i := 0 to length(list) - 1 do
-            begin
-              case i of
-                0:
-                  begin
-                    storePos := Round(lr[list[i]]^.m_out[0]);
-                    mr2 := TMemoryRaster.Create;
-                    mr2.LoadFromStream(ze.GetCacheStream(storePos));
-                    MemoryBitmapToBitmap(mr2, Image2.Bitmap);
-                    DisposeObject(mr2);
-                  end;
-                1:
-                  begin
-                    storePos := Round(lr[list[i]]^.m_out[0]);
-                    mr2 := TMemoryRaster.Create;
-                    mr2.LoadFromStream(ze.GetCacheStream(storePos));
-                    MemoryBitmapToBitmap(mr2, Image3.Bitmap);
-                    DisposeObject(mr2);
-                  end;
-                2:
-                  begin
-                    storePos := Round(lr[list[i]]^.m_out[0]);
-                    mr2 := TMemoryRaster.Create;
-                    mr2.LoadFromStream(ze.GetCacheStream(storePos));
-                    MemoryBitmapToBitmap(mr2, Image4.Bitmap);
-                    DisposeObject(mr2);
-                  end;
+          case i of
+            0:
+              begin
+                storePos := Round(lr[list[i]]^.m_out[0]);
+                mr2 := TMemoryRaster.Create;
+                mr2.LoadFromStream(ze.GetCacheStream(storePos));
+                MemoryBitmapToBitmap(mr2, Image2.Bitmap);
+                DisposeObject(mr2);
               end;
-            end;
-
-          TabControl1.ActiveTab := TabItem3;
+            1:
+              begin
+                storePos := Round(lr[list[i]]^.m_out[0]);
+                mr2 := TMemoryRaster.Create;
+                mr2.LoadFromStream(ze.GetCacheStream(storePos));
+                MemoryBitmapToBitmap(mr2, Image3.Bitmap);
+                DisposeObject(mr2);
+              end;
+            2:
+              begin
+                storePos := Round(lr[list[i]]^.m_out[0]);
+                mr2 := TMemoryRaster.Create;
+                mr2.LoadFromStream(ze.GetCacheStream(storePos));
+                MemoryBitmapToBitmap(mr2, Image4.Bitmap);
+                DisposeObject(mr2);
+              end;
+          end;
         end;
+
+      TabControl1.ActiveTab := TabItem3;
     end;
+
   DisposeObject(mr1);
 end;
 
@@ -312,8 +311,8 @@ procedure TForm1.Button3Click(Sender: TObject);
 var
   // TMemoryRaster 是高速光栅化图形库的类
   mr1, mr2: TMemoryRaster;
-  f_In    : TLearnVector;
-  list    : TLearnIntegerArray;
+  f_In    : TLVec;
+  list    : TLIVec;
   i       : Integer;
   storePos: Int64;
 begin
@@ -325,44 +324,43 @@ begin
 
   MemoryBitmapToBitmap(mr1, Image1.Bitmap);
 
-  if lr.PCA(True, mr1, f_In) then
+  f_In := LVec(MatrixSampler(True, 15, mr1), 15 * 15);
+
+  if lr.Count > 0 then
     begin
-      if lr.Count > 0 then
+      lr.SearchMemoryWithSpearman(f_In, list);
+
+      for i := 0 to length(list) - 1 do
         begin
-          lr.SearchMemoryWithSpearman(f_In, list);
-
-          for i := 0 to length(list) - 1 do
-            begin
-              case i of
-                0:
-                  begin
-                    storePos := Round(lr[list[i]]^.m_out[0]);
-                    mr2 := TMemoryRaster.Create;
-                    mr2.LoadFromStream(ze.GetCacheStream(storePos));
-                    MemoryBitmapToBitmap(mr2, Image2.Bitmap);
-                    DisposeObject(mr2);
-                  end;
-                1:
-                  begin
-                    storePos := Round(lr[list[i]]^.m_out[0]);
-                    mr2 := TMemoryRaster.Create;
-                    mr2.LoadFromStream(ze.GetCacheStream(storePos));
-                    MemoryBitmapToBitmap(mr2, Image3.Bitmap);
-                    DisposeObject(mr2);
-                  end;
-                2:
-                  begin
-                    storePos := Round(lr[list[i]]^.m_out[0]);
-                    mr2 := TMemoryRaster.Create;
-                    mr2.LoadFromStream(ze.GetCacheStream(storePos));
-                    MemoryBitmapToBitmap(mr2, Image4.Bitmap);
-                    DisposeObject(mr2);
-                  end;
+          case i of
+            0:
+              begin
+                storePos := Round(lr[list[i]]^.m_out[0]);
+                mr2 := TMemoryRaster.Create;
+                mr2.LoadFromStream(ze.GetCacheStream(storePos));
+                MemoryBitmapToBitmap(mr2, Image2.Bitmap);
+                DisposeObject(mr2);
               end;
-            end;
-
-          TabControl1.ActiveTab := TabItem3;
+            1:
+              begin
+                storePos := Round(lr[list[i]]^.m_out[0]);
+                mr2 := TMemoryRaster.Create;
+                mr2.LoadFromStream(ze.GetCacheStream(storePos));
+                MemoryBitmapToBitmap(mr2, Image3.Bitmap);
+                DisposeObject(mr2);
+              end;
+            2:
+              begin
+                storePos := Round(lr[list[i]]^.m_out[0]);
+                mr2 := TMemoryRaster.Create;
+                mr2.LoadFromStream(ze.GetCacheStream(storePos));
+                MemoryBitmapToBitmap(mr2, Image4.Bitmap);
+                DisposeObject(mr2);
+              end;
+          end;
         end;
+
+      TabControl1.ActiveTab := TabItem3;
     end;
   DisposeObject(mr1);
 end;
@@ -371,8 +369,8 @@ procedure TForm1.Button4Click(Sender: TObject);
 var
   // TMemoryRaster 是高速光栅化图形库的类
   mr1, mr2: TMemoryRaster;
-  f_In    : TLearnVector;
-  list    : TLearnIntegerArray;
+  f_In    : TLVec;
+  list    : TLIVec;
   i       : Integer;
   storePos: Int64;
 begin
@@ -384,44 +382,42 @@ begin
 
   MemoryBitmapToBitmap(mr1, Image1.Bitmap);
 
-  if lr.PCA(True, mr1, f_In) then
+  f_In := LVec(MatrixSampler(True, 15, mr1), 15 * 15);
+  if lr.Count > 0 then
     begin
-      if lr.Count > 0 then
+      lr.SearchMemoryWithDistance(f_In, list);
+
+      for i := 0 to length(list) - 1 do
         begin
-          lr.SearchMemoryWithKDTree(f_In, list);
-
-          for i := 0 to length(list) - 1 do
-            begin
-              case i of
-                0:
-                  begin
-                    storePos := Round(lr[list[i]]^.m_out[0]);
-                    mr2 := TMemoryRaster.Create;
-                    mr2.LoadFromStream(ze.GetCacheStream(storePos));
-                    MemoryBitmapToBitmap(mr2, Image2.Bitmap);
-                    DisposeObject(mr2);
-                  end;
-                1:
-                  begin
-                    storePos := Round(lr[list[i]]^.m_out[0]);
-                    mr2 := TMemoryRaster.Create;
-                    mr2.LoadFromStream(ze.GetCacheStream(storePos));
-                    MemoryBitmapToBitmap(mr2, Image3.Bitmap);
-                    DisposeObject(mr2);
-                  end;
-                2:
-                  begin
-                    storePos := Round(lr[list[i]]^.m_out[0]);
-                    mr2 := TMemoryRaster.Create;
-                    mr2.LoadFromStream(ze.GetCacheStream(storePos));
-                    MemoryBitmapToBitmap(mr2, Image4.Bitmap);
-                    DisposeObject(mr2);
-                  end;
+          case i of
+            0:
+              begin
+                storePos := Round(lr[list[i]]^.m_out[0]);
+                mr2 := TMemoryRaster.Create;
+                mr2.LoadFromStream(ze.GetCacheStream(storePos));
+                MemoryBitmapToBitmap(mr2, Image2.Bitmap);
+                DisposeObject(mr2);
               end;
-            end;
-
-          TabControl1.ActiveTab := TabItem3;
+            1:
+              begin
+                storePos := Round(lr[list[i]]^.m_out[0]);
+                mr2 := TMemoryRaster.Create;
+                mr2.LoadFromStream(ze.GetCacheStream(storePos));
+                MemoryBitmapToBitmap(mr2, Image3.Bitmap);
+                DisposeObject(mr2);
+              end;
+            2:
+              begin
+                storePos := Round(lr[list[i]]^.m_out[0]);
+                mr2 := TMemoryRaster.Create;
+                mr2.LoadFromStream(ze.GetCacheStream(storePos));
+                MemoryBitmapToBitmap(mr2, Image4.Bitmap);
+                DisposeObject(mr2);
+              end;
+          end;
         end;
+
+      TabControl1.ActiveTab := TabItem3;
     end;
   DisposeObject(mr1);
 end;
@@ -441,7 +437,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
   // 直观解释，每张图片50个双浮点特征数据，存储空间维50*double(8byte)
   // 在TLearn内部，50是表示50个维度
-  lr := TLearn.Create(50, 1);
+  lr := TLearn.CreateRegression(ltKDT, 15 * 15, 1);
 
   // CreateNewMemory方法是让zdb基于内存进行存储和工作
 

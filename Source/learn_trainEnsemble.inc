@@ -13,82 +13,71 @@ type
     Neural networks ensemble
     ************************************************************************ *)
   TMLPEnsemble = packed record
-    StructInfo: TLearnIntegerArray;
-    EnsembleSize: TLearnInteger;
-    NIn: TLearnInteger;
-    NOut: TLearnInteger;
-    WCount: TLearnInteger;
+    StructInfo: TLIVec;
+    EnsembleSize: TLInt;
+    NIn: TLInt;
+    NOut: TLInt;
+    WCount: TLInt;
     IsSoftmax: Boolean;
     PostProcessing: Boolean;
-    Weights: TLearnFloatArray;
-    ColumnMeans: TLearnFloatArray;
-    ColumnSigmas: TLearnFloatArray;
-    SerializedLen: TLearnInteger;
-    SerializedMLP: TLearnFloatArray;
-    TmpWeights: TLearnFloatArray;
-    TmpMeans: TLearnFloatArray;
-    TmpSigmas: TLearnFloatArray;
-    Neurons: TLearnFloatArray;
-    DFDNET: TLearnFloatArray;
-    Y: TLearnFloatArray;
+    Weights: TLVec;
+    ColumnMeans: TLVec;
+    ColumnSigmas: TLVec;
+    SerializedLen: TLInt;
+    SerializedMLP: TLVec;
+    TmpWeights: TLVec;
+    TmpMeans: TLVec;
+    TmpSigmas: TLVec;
+    Neurons: TLVec;
+    DFDNET: TLVec;
+    Y: TLVec;
   end;
 
   PMLPEnsemble = ^TMLPEnsemble;
 
-procedure MLPECreate0(NIn: TLearnInteger; NOut: TLearnInteger;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreate1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreate2(NIn: TLearnInteger; NHid1: TLearnInteger;
-  NHid2: TLearnInteger; NOut: TLearnInteger; EnsembleSize: TLearnInteger;
-  var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateB0(NIn: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat;
-  D: TLearnFloat; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateB1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateB2(NIn: TLearnInteger; NHid1: TLearnInteger;
-  NHid2: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateR0(NIn: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat;
-  B: TLearnFloat; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateR1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateR2(NIn: TLearnInteger; NHid1: TLearnInteger;
-  NHid2: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateC0(NIn: TLearnInteger; NOut: TLearnInteger;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateC1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateC2(NIn: TLearnInteger; NHid1: TLearnInteger;
-  NHid2: TLearnInteger; NOut: TLearnInteger; EnsembleSize: TLearnInteger;
-  var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateFromNetwork(const Network: TMultiLayerPerceptron;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreate0(NIn, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreate1(NIn, NHid, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreate2(NIn, NHid1, NHid2, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPECreateB0(NIn, NOut: TLInt; B, D: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreateB1(NIn, NHid, NOut: TLInt; B, D: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreateB2(NIn, NHid1, NHid2, NOut: TLInt; B, D: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPECreateR0(NIn, NOut: TLInt; A, B: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreateR1(NIn, NHid, NOut: TLInt; A, B: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreateR2(NIn, NHid1, NHid2, NOut: TLInt; A, B: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPECreateC0(NIn, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreateC1(NIn, NHid, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreateC2(NIn, NHid1, NHid2, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPECreateFromNetwork(const Network: TMultiLayerPerceptron; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPECopy(const Ensemble1: TMLPEnsemble; var Ensemble2: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPESerialize(var Ensemble: TMLPEnsemble; var RA: TLearnFloatArray; var RLen: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPEUnserialize(const RA: TLearnFloatArray; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPESerialize(var Ensemble: TMLPEnsemble; var RA: TLVec; var RLen: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPEUnserialize(const RA: TLVec; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure MLPERandomize(var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPEProperties(const Ensemble: TMLPEnsemble; var NIn: TLearnInteger; var NOut: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPEProperties(const Ensemble: TMLPEnsemble; var NIn: TLInt; var NOut: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 function MLPEIsSoftmax(const Ensemble: TMLPEnsemble): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPEProcess(var Ensemble: TMLPEnsemble; const X: TLearnFloatArray; var Y: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function MLPERelClsError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPEAvgCE(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPERMSError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPEAvgError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray; NPoints: TLearnInteger): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPEProcess(var Ensemble: TMLPEnsemble; const X: TLVec; var Y: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPEBaggingLM(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPERelClsError(var Ensemble: TMLPEnsemble; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPEAvgCE(var Ensemble: TMLPEnsemble; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPERMSError(var Ensemble: TMLPEnsemble; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPEAvgError(var Ensemble: TMLPEnsemble; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPEBaggingLBFGS(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  WStep: TLearnFloat; MaxIts: TLearnInteger; var Info: TLearnInteger;
+procedure MLPEBaggingLM(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+  NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
+  var Info: TLInt; var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MLPEBaggingLBFGS(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+  NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
+  WStep: TLFloat; MaxIts: TLInt; var Info: TLInt;
   var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
@@ -96,17 +85,17 @@ const
   MLPNTotalOffset = 3;
   MLPEVNum        = 9;
 
-procedure MLPEAllErrors(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; var RelCls: TLearnFloat; var AvgCE: TLearnFloat;
-  var RMS: TLearnFloat; var Avg: TLearnFloat; var AvgRel: TLearnFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPEAllErrors(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+  NPoints: TLInt; var RelCls: TLFloat; var AvgCE: TLFloat;
+  var RMS: TLFloat; var Avg: TLFloat; var AvgRel: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPEBaggingInternal(const MultiThread: Boolean; var Ensemble: TMLPEnsemble;
-  const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
-  Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
-  LMAlgorithm: Boolean; var Info: TLearnInteger; var Rep: TMLPReport;
+  const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+  Restarts: TLInt; WStep: TLFloat; MaxIts: TLInt;
+  LMAlgorithm: Boolean; var Info: TLInt; var Rep: TMLPReport;
   var OOBErrors: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
-procedure DSErrAllocate(NClasses: TLearnInteger; var Buf: TLearnFloatArray);
+procedure DSErrAllocate(NClasses: TLInt; var Buf: TLVec);
 begin
   SetLength(Buf, 7 + 1);
   Buf[0] := 0;
@@ -119,16 +108,16 @@ begin
   Buf[7] := 0;
 end;
 
-procedure DSErrAccumulate(var Buf: TLearnFloatArray; const Y: TLearnFloatArray; const DesiredY: TLearnFloatArray);
+procedure DSErrAccumulate(var Buf: TLVec; const Y: TLVec; const DesiredY: TLVec);
 var
-  NClasses: TLearnInteger;
-  NOut    : TLearnInteger;
-  Offs    : TLearnInteger;
-  MMax    : TLearnInteger;
-  RMax    : TLearnInteger;
-  J       : TLearnInteger;
-  V       : TLearnFloat;
-  EV      : TLearnFloat;
+  NClasses: TLInt;
+  NOut    : TLInt;
+  Offs    : TLInt;
+  MMax    : TLInt;
+  RMax    : TLInt;
+  J       : TLInt;
+  V       : TLFloat;
+  EV      : TLFloat;
 begin
   Offs := 5;
   NClasses := Round(Buf[Offs]);
@@ -233,10 +222,10 @@ begin
     end;
 end;
 
-procedure DSErrFinish(var Buf: TLearnFloatArray);
+procedure DSErrFinish(var Buf: TLVec);
 var
-  NOut: TLearnInteger;
-  Offs: TLearnInteger;
+  NOut: TLInt;
+  Offs: TLInt;
 begin
   Offs := 5;
   NOut := AbsInt(Round(Buf[Offs]));
@@ -256,8 +245,7 @@ end;
 (* ************************************************************************
   Like MLPCreate0, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreate0(NIn: TLearnInteger; NOut: TLearnInteger;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble);
+procedure MLPECreate0(NIn, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
   Net: TMultiLayerPerceptron;
 begin
@@ -268,8 +256,7 @@ end;
 (* ************************************************************************
   Like MLPCreate1, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreate1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble);
+procedure MLPECreate1(NIn, NHid, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
   Net: TMultiLayerPerceptron;
 begin
@@ -280,9 +267,7 @@ end;
 (* ************************************************************************
   Like MLPCreate2, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreate2(NIn: TLearnInteger; NHid1: TLearnInteger;
-  NHid2: TLearnInteger; NOut: TLearnInteger; EnsembleSize: TLearnInteger;
-  var Ensemble: TMLPEnsemble);
+procedure MLPECreate2(NIn, NHid1, NHid2, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
   Net: TMultiLayerPerceptron;
 begin
@@ -293,8 +278,7 @@ end;
 (* ************************************************************************
   Like MLPCreateB0, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateB0(NIn: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat;
-  D: TLearnFloat; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble);
+procedure MLPECreateB0(NIn, NOut: TLInt; B, D: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
   Net: TMultiLayerPerceptron;
 begin
@@ -305,9 +289,7 @@ end;
 (* ************************************************************************
   Like MLPCreateB1, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateB1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble);
+procedure MLPECreateB1(NIn, NHid, NOut: TLInt; B, D: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
   Net: TMultiLayerPerceptron;
 begin
@@ -318,9 +300,7 @@ end;
 (* ************************************************************************
   Like MLPCreateB2, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateB2(NIn: TLearnInteger; NHid1: TLearnInteger;
-  NHid2: TLearnInteger; NOut: TLearnInteger; B: TLearnFloat; D: TLearnFloat;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble);
+procedure MLPECreateB2(NIn, NHid1, NHid2, NOut: TLInt; B, D: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
   Net: TMultiLayerPerceptron;
 begin
@@ -331,8 +311,7 @@ end;
 (* ************************************************************************
   Like MLPCreateR0, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateR0(NIn: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat;
-  B: TLearnFloat; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble);
+procedure MLPECreateR0(NIn, NOut: TLInt; A, B: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
   Net: TMultiLayerPerceptron;
 begin
@@ -343,9 +322,7 @@ end;
 (* ************************************************************************
   Like MLPCreateR1, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateR1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble);
+procedure MLPECreateR1(NIn, NHid, NOut: TLInt; A, B: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
   Net: TMultiLayerPerceptron;
 begin
@@ -356,9 +333,7 @@ end;
 (* ************************************************************************
   Like MLPCreateR2, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateR2(NIn: TLearnInteger; NHid1: TLearnInteger;
-  NHid2: TLearnInteger; NOut: TLearnInteger; A: TLearnFloat; B: TLearnFloat;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble);
+procedure MLPECreateR2(NIn, NHid1, NHid2, NOut: TLInt; A, B: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
   Net: TMultiLayerPerceptron;
 begin
@@ -369,8 +344,7 @@ end;
 (* ************************************************************************
   Like MLPCreateC0, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateC0(NIn: TLearnInteger; NOut: TLearnInteger;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble);
+procedure MLPECreateC0(NIn, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
   Net: TMultiLayerPerceptron;
 begin
@@ -381,8 +355,7 @@ end;
 (* ************************************************************************
   Like MLPCreateC1, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateC1(NIn: TLearnInteger; NHid: TLearnInteger;
-  NOut: TLearnInteger; EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble);
+procedure MLPECreateC1(NIn, NHid, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
   Net: TMultiLayerPerceptron;
 begin
@@ -393,9 +366,7 @@ end;
 (* ************************************************************************
   Like MLPCreateC2, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateC2(NIn: TLearnInteger; NHid1: TLearnInteger;
-  NHid2: TLearnInteger; NOut: TLearnInteger; EnsembleSize: TLearnInteger;
-  var Ensemble: TMLPEnsemble);
+procedure MLPECreateC2(NIn, NHid1, NHid2, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
   Net: TMultiLayerPerceptron;
 begin
@@ -406,11 +377,10 @@ end;
 (* ************************************************************************
   Creates ensemble from network. Only network geometry is copied.
   ************************************************************************ *)
-procedure MLPECreateFromNetwork(const Network: TMultiLayerPerceptron;
-  EnsembleSize: TLearnInteger; var Ensemble: TMLPEnsemble);
+procedure MLPECreateFromNetwork(const Network: TMultiLayerPerceptron; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  I     : TLearnInteger;
-  CCount: TLearnInteger;
+  I     : TLInt;
+  CCount: TLInt;
 begin
   Assert(EnsembleSize > 0, 'MLPECreate: incorrect ensemble size!');
 
@@ -490,10 +460,10 @@ end;
   ************************************************************************ *)
 procedure MLPECopy(const Ensemble1: TMLPEnsemble; var Ensemble2: TMLPEnsemble);
 var
-  I     : TLearnInteger;
-  SSize : TLearnInteger;
-  CCount: TLearnInteger;
-  NTotal: TLearnInteger;
+  I     : TLInt;
+  SSize : TLInt;
+  CCount: TLInt;
+  NTotal: TLInt;
 begin
 
   //
@@ -563,15 +533,15 @@ end;
   array[0..RLen-1]
   RLen    -   RA lenght
   ************************************************************************ *)
-procedure MLPESerialize(var Ensemble: TMLPEnsemble; var RA: TLearnFloatArray;
-  var RLen: TLearnInteger);
+procedure MLPESerialize(var Ensemble: TMLPEnsemble; var RA: TLVec;
+  var RLen: TLInt);
 var
-  I     : TLearnInteger;
-  SSize : TLearnInteger;
-  NTotal: TLearnInteger;
-  CCount: TLearnInteger;
-  HSize : TLearnInteger;
-  Offs  : TLearnInteger;
+  I     : TLInt;
+  SSize : TLInt;
+  NTotal: TLInt;
+  CCount: TLInt;
+  HSize : TLInt;
+  Offs  : TLInt;
 begin
   HSize := 13;
   SSize := Ensemble.StructInfo[0];
@@ -667,14 +637,14 @@ end;
   OUTPUT PARAMETERS:
   Ensemble-   restored structure
   ************************************************************************ *)
-procedure MLPEUnserialize(const RA: TLearnFloatArray; var Ensemble: TMLPEnsemble);
+procedure MLPEUnserialize(const RA: TLVec; var Ensemble: TMLPEnsemble);
 var
-  I     : TLearnInteger;
-  SSize : TLearnInteger;
-  NTotal: TLearnInteger;
-  CCount: TLearnInteger;
-  HSize : TLearnInteger;
-  Offs  : TLearnInteger;
+  I     : TLInt;
+  SSize : TLInt;
+  NTotal: TLInt;
+  CCount: TLInt;
+  HSize : TLInt;
+  Offs  : TLInt;
 begin
   Assert(Round(RA[1]) = MLPEVNum, 'MLPEUnserialize: incorrect array!');
 
@@ -738,7 +708,7 @@ end;
   ************************************************************************ *)
 procedure MLPERandomize(var Ensemble: TMLPEnsemble);
 var
-  I: TLearnInteger;
+  I: TLInt;
 begin
   I := 0;
   while I <= Ensemble.EnsembleSize * Ensemble.WCount - 1 do
@@ -751,8 +721,8 @@ end;
 (* ************************************************************************
   Return ensemble properties (number of inputs and outputs).
   ************************************************************************ *)
-procedure MLPEProperties(const Ensemble: TMLPEnsemble; var NIn: TLearnInteger;
-  var NOut: TLearnInteger);
+procedure MLPEProperties(const Ensemble: TMLPEnsemble; var NIn: TLInt;
+  var NOut: TLInt);
 begin
   NIn := Ensemble.NIn;
   NOut := Ensemble.NOut;
@@ -780,14 +750,14 @@ end;
   responsibility of a caller to allocate it. Array  must  be
   at least [0..NOut-1].
   ************************************************************************ *)
-procedure MLPEProcess(var Ensemble: TMLPEnsemble; const X: TLearnFloatArray;
-  var Y: TLearnFloatArray);
+procedure MLPEProcess(var Ensemble: TMLPEnsemble; const X: TLVec;
+  var Y: TLVec);
 var
-  I : TLearnInteger;
-  ES: TLearnInteger;
-  WC: TLearnInteger;
-  CC: TLearnInteger;
-  V : TLearnFloat;
+  I : TLInt;
+  ES: TLInt;
+  WC: TLInt;
+  CC: TLInt;
+  V : TLFloat;
 begin
   ES := Ensemble.EnsembleSize;
   WC := Ensemble.WCount;
@@ -837,14 +807,14 @@ end;
   Works both for classifier betwork and for regression networks which
   are used as classifiers.
   ************************************************************************ *)
-function MLPERelClsError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function MLPERelClsError(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  RelCls: TLearnFloat;
-  AvgCE : TLearnFloat;
-  RMS   : TLearnFloat;
-  Avg   : TLearnFloat;
-  AvgRel: TLearnFloat;
+  RelCls: TLFloat;
+  AvgCE : TLFloat;
+  RMS   : TLFloat;
+  Avg   : TLFloat;
+  AvgRel: TLFloat;
 begin
   MLPEAllErrors(Ensemble, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := RelCls;
@@ -862,14 +832,14 @@ end;
   CrossEntropy/(NPoints*LN(2)).
   Zero if ensemble solves regression task.
   ************************************************************************ *)
-function MLPEAvgCE(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function MLPEAvgCE(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  RelCls: TLearnFloat;
-  AvgCE : TLearnFloat;
-  RMS   : TLearnFloat;
-  Avg   : TLearnFloat;
-  AvgRel: TLearnFloat;
+  RelCls: TLFloat;
+  AvgCE : TLFloat;
+  RMS   : TLFloat;
+  Avg   : TLFloat;
+  AvgRel: TLFloat;
 begin
   MLPEAllErrors(Ensemble, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := AvgCE;
@@ -888,14 +858,14 @@ end;
   Its meaning for regression task is obvious. As for classification task
   RMS error means error when estimating posterior probabilities.
   ************************************************************************ *)
-function MLPERMSError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function MLPERMSError(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  RelCls: TLearnFloat;
-  AvgCE : TLearnFloat;
-  RMS   : TLearnFloat;
-  Avg   : TLearnFloat;
-  AvgRel: TLearnFloat;
+  RelCls: TLFloat;
+  AvgCE : TLFloat;
+  RMS   : TLFloat;
+  Avg   : TLFloat;
+  AvgRel: TLFloat;
 begin
   MLPEAllErrors(Ensemble, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := RMS;
@@ -913,14 +883,14 @@ end;
   Its meaning for regression task is obvious. As for classification task
   it means average error when estimating posterior probabilities.
   ************************************************************************ *)
-function MLPEAvgError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function MLPEAvgError(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  RelCls: TLearnFloat;
-  AvgCE : TLearnFloat;
-  RMS   : TLearnFloat;
-  Avg   : TLearnFloat;
-  AvgRel: TLearnFloat;
+  RelCls: TLFloat;
+  AvgCE : TLFloat;
+  RMS   : TLFloat;
+  Avg   : TLFloat;
+  AvgRel: TLFloat;
 begin
   MLPEAllErrors(Ensemble, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := Avg;
@@ -938,14 +908,14 @@ end;
   Its meaning for regression task is obvious. As for classification task
   it means average relative error when estimating posterior probabilities.
   ************************************************************************ *)
-function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger): TLearnFloat;
+function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+  NPoints: TLInt): TLFloat;
 var
-  RelCls: TLearnFloat;
-  AvgCE : TLearnFloat;
-  RMS   : TLearnFloat;
-  Avg   : TLearnFloat;
-  AvgRel: TLearnFloat;
+  RelCls: TLFloat;
+  AvgCE : TLFloat;
+  RMS   : TLFloat;
+  Avg   : TLFloat;
+  AvgRel: TLFloat;
 begin
   MLPEAllErrors(Ensemble, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := AvgRel;
@@ -972,9 +942,9 @@ end;
   Rep         -   training report.
   OOBErrors   -   out-of-bag generalization error estimate
   ************************************************************************ *)
-procedure MLPEBaggingLM(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  var Info: TLearnInteger; var Rep: TMLPReport; var OOBErrors: TMLPCVReport);
+procedure MLPEBaggingLM(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+  NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
+  var Info: TLInt; var Rep: TMLPReport; var OOBErrors: TMLPCVReport);
 begin
   MLPEBaggingInternal(MultiThread, Ensemble, XY, NPoints, Decay, Restarts, 0.0, 0, True,
     Info, Rep, OOBErrors);
@@ -1004,9 +974,9 @@ end;
   Rep         -   training report.
   OOBErrors   -   out-of-bag generalization error estimate
   ************************************************************************ *)
-procedure MLPEBaggingLBFGS(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; Decay: TLearnFloat; Restarts: TLearnInteger;
-  WStep: TLearnFloat; MaxIts: TLearnInteger; var Info: TLearnInteger;
+procedure MLPEBaggingLBFGS(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+  NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
+  WStep: TLFloat; MaxIts: TLInt; var Info: TLInt;
   var Rep: TMLPReport; var OOBErrors: TMLPCVReport);
 begin
   MLPEBaggingInternal(MultiThread, Ensemble, XY, NPoints, Decay, Restarts, WStep, MaxIts,
@@ -1016,15 +986,15 @@ end;
 (* ************************************************************************
   Calculation of all types of errors
   ************************************************************************ *)
-procedure MLPEAllErrors(var Ensemble: TMLPEnsemble; const XY: TLearnFloat2DArray;
-  NPoints: TLearnInteger; var RelCls: TLearnFloat; var AvgCE: TLearnFloat;
-  var RMS: TLearnFloat; var Avg: TLearnFloat; var AvgRel: TLearnFloat);
+procedure MLPEAllErrors(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+  NPoints: TLInt; var RelCls: TLFloat; var AvgCE: TLFloat;
+  var RMS: TLFloat; var Avg: TLFloat; var AvgRel: TLFloat);
 var
-  I    : TLearnInteger;
-  Buf  : TLearnFloatArray;
-  WorkX: TLearnFloatArray;
-  Y    : TLearnFloatArray;
-  DY   : TLearnFloatArray;
+  I    : TLInt;
+  Buf  : TLVec;
+  WorkX: TLVec;
+  Y    : TLVec;
+  DY   : TLVec;
 begin
   SetLength(WorkX, Ensemble.NIn (* - 1 + 1 // optimized compiler *) );
   SetLength(Y, Ensemble.NOut (* - 1 + 1 // optimized compiler *) );
@@ -1067,31 +1037,31 @@ end;
   Internal bagging subroutine.
   ************************************************************************ *)
 procedure MLPEBaggingInternal(const MultiThread: Boolean; var Ensemble: TMLPEnsemble;
-  const XY: TLearnFloat2DArray; NPoints: TLearnInteger; Decay: TLearnFloat;
-  Restarts: TLearnInteger; WStep: TLearnFloat; MaxIts: TLearnInteger;
-  LMAlgorithm: Boolean; var Info: TLearnInteger; var Rep: TMLPReport;
+  const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+  Restarts: TLInt; WStep: TLFloat; MaxIts: TLInt;
+  LMAlgorithm: Boolean; var Info: TLInt; var Rep: TMLPReport;
   var OOBErrors: TMLPCVReport);
 var
-  XYS         : TLearnFloat2DArray;
-  S           : TLearnBooleanArray;
-  OOBBuf      : TLearnFloat2DArray;
-  OOBCntBuf   : TLearnIntegerArray;
-  X           : TLearnFloatArray;
-  Y           : TLearnFloatArray;
-  DY          : TLearnFloatArray;
-  DSBuf       : TLearnFloatArray;
-  NIn         : TLearnInteger;
-  NOut        : TLearnInteger;
-  CCnt        : TLearnInteger;
-  PCnt        : TLearnInteger;
-  I           : TLearnInteger;
-  J           : TLearnInteger;
-  K           : TLearnInteger;
-  V           : TLearnFloat;
+  XYS         : TLMatrix;
+  S           : TLBVec;
+  OOBBuf      : TLMatrix;
+  OOBCntBuf   : TLIVec;
+  X           : TLVec;
+  Y           : TLVec;
+  DY          : TLVec;
+  DSBuf       : TLVec;
+  NIn         : TLInt;
+  NOut        : TLInt;
+  CCnt        : TLInt;
+  PCnt        : TLInt;
+  I           : TLInt;
+  J           : TLInt;
+  K           : TLInt;
+  V           : TLFloat;
   TmpRep      : TMLPReport;
   Network     : TMultiLayerPerceptron;
   IsTerminated: Boolean;
-  EBest       : TLearnFloat;
+  EBest       : TLFloat;
 begin
 
   //

@@ -57,23 +57,23 @@
   if VTNeeded=2, VT contains matrix V^T wholly. Array whose
   indexes range within [0..N-1, 0..N-1].
   ************************************************************************ *)
-function RMatrixSVD(A: TLearnFloat2DArray; const M, N, UNeeded, VTNeeded, AdditionalMemory: TLearnInteger;
-  var W: TLearnFloatArray; var U: TLearnFloat2DArray; var VT: TLearnFloat2DArray): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixSVD(A: TLMatrix; const M, N, UNeeded, VTNeeded, AdditionalMemory: TLInt;
+  var W: TLVec; var U: TLMatrix; var VT: TLMatrix): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  TauQ   : TLearnFloatArray;
-  TauP   : TLearnFloatArray;
-  Tau    : TLearnFloatArray;
-  E      : TLearnFloatArray;
-  WORK   : TLearnFloatArray;
-  T2     : TLearnFloat2DArray;
+  TauQ   : TLVec;
+  TauP   : TLVec;
+  Tau    : TLVec;
+  E      : TLVec;
+  WORK   : TLVec;
+  T2     : TLMatrix;
   IsUpper: Boolean;
-  MinMN  : TLearnInteger;
-  NCU    : TLearnInteger;
-  NRVT   : TLearnInteger;
-  NRU    : TLearnInteger;
-  NCVT   : TLearnInteger;
-  I      : TLearnInteger;
-  J      : TLearnInteger;
+  MinMN  : TLInt;
+  NCU    : TLInt;
+  NRVT   : TLInt;
+  NRU    : TLInt;
+  NCVT   : TLInt;
+  I      : TLInt;
+  J      : TLInt;
 begin
   A := DynamicArrayCopy(A);
   Result := True;
@@ -81,12 +81,9 @@ begin
     begin
       Exit;
     end;
-  Assert((UNeeded >= 0) and (UNeeded <= 2),
-    'SVDDecomposition: wrong parameters!');
-  Assert((VTNeeded >= 0) and (VTNeeded <= 2),
-    'SVDDecomposition: wrong parameters!');
-  Assert((AdditionalMemory >= 0) and (AdditionalMemory <= 2),
-    'SVDDecomposition: wrong parameters!');
+  Assert((UNeeded >= 0) and (UNeeded <= 2), 'SVDDecomposition: wrong parameters!');
+  Assert((VTNeeded >= 0) and (VTNeeded <= 2), 'SVDDecomposition: wrong parameters!');
+  Assert((AdditionalMemory >= 0) and (AdditionalMemory <= 2), 'SVDDecomposition: wrong parameters!');
 
   //
   // initialize

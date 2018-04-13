@@ -15,7 +15,7 @@ interface
 
 uses Types, Math, Variants, CoreClasses, Geometry2DUnit, PascalStrings, UnicodeMixedLib;
 
-{$I ZDefine.inc}
+{$I zDefine.inc}
 
 
 type
@@ -25,16 +25,13 @@ type
   TRasterColorArray = packed array [0 .. MaxInt div SizeOf(TRasterColor) - 1] of TRasterColor;
   PRasterColorArray = ^TRasterColorArray;
 
-  TArrayOfRasterColor = array of TRasterColor;
-  PArrayOfRasterColor = ^TArrayOfRasterColor;
-
-  PRasterColorEntry = ^TRasterColorEntry;
-
   TRasterColorEntry = packed record
     case byte of
       0: (R, G, B, A: byte);
       2: (RGBA: TRasterColor);
   end;
+
+  PRasterColorEntry = ^TRasterColorEntry;
 
   PRasterColorEntryArray   = ^TRasterColorEntryArray;
   TRasterColorEntryArray   = array [0 .. MaxInt div SizeOf(TRasterColorEntry) - 1] of TRasterColorEntry;
@@ -305,9 +302,9 @@ const
 procedure FillRasterColor(var X; Count: Cardinal; Value: TRasterColor); {$IFDEF INLINE_ASM}inline; {$ENDIF}
 var
   i: Integer;
-  p: PArrayOfRasterColor;
+  p: PRasterColorArray;
 begin
-  p := PArrayOfRasterColor(@X);
+  p := PRasterColorArray(@X);
   for i := Count - 1 downto 0 do
       p^[i] := Value;
 end;

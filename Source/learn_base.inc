@@ -8,72 +8,72 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 type
-  TLearnBooleanArray   = packed array of Boolean;
-  PLearnBooleanArray   = ^TLearnBooleanArray;
-  TLearnBoolean2DArray = packed array of TLearnBooleanArray;
+  TLBVec   = packed array of Boolean;
+  PLearnBooleanArray   = ^TLBVec;
+  TLBMatrix = packed array of TLBVec;
 
-  PLearnComplex = ^TLearnComplex;
+  PLearnComplex = ^TLComplex;
 
-  TLearnComplex = packed record
-    X, Y: TLearnFloat;
+  TLComplex = packed record
+    X, Y: TLFloat;
   end;
 
-  TLearnComplexArray   = packed array of TLearnComplex;
-  PLearnComplexArray   = ^TLearnComplexArray;
-  TLearnComplex2DArray = packed array of TLearnComplexArray;
+  TLComplexVec   = packed array of TLComplex;
+  PLearnComplexArray   = ^TLComplexVec;
+  TLComplexMatrix = packed array of TLComplexVec;
 
   TLearnCommState = packed record
-    Stage: TLearnInteger;
-    IA: TLearnIntegerArray;
-    BA: TLearnBooleanArray;
-    RA: TLearnFloatArray;
-    CA: TLearnComplexArray;
+    Stage: TLInt;
+    IA: TLIVec;
+    BA: TLBVec;
+    RA: TLVec;
+    CA: TLComplexVec;
   end;
 
-function DynamicArrayCopy(const A: TLearnIntegerArray): TLearnIntegerArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLearnFloatArray): TLearnFloatArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLearnComplexArray): TLearnComplexArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLearnBooleanArray): TLearnBooleanArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLIVec): TLIVec; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLVec): TLVec; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLComplexVec): TLComplexVec; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLBVec): TLBVec; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function DynamicArrayCopy(const A: TLearnInteger2DArray): TLearnInteger2DArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLearnFloat2DArray): TLearnFloat2DArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLearnComplex2DArray): TLearnComplex2DArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLearnBoolean2DArray): TLearnBoolean2DArray; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLIMatrix): TLIMatrix; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLMatrix): TLMatrix; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLComplexMatrix): TLComplexMatrix; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLBMatrix): TLBMatrix; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function AbsComplex(const Z: TLearnComplex): TLearnFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function Conj(const Z: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CSqr(const Z: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AbsComplex(const Z: TLComplex): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function Conj(const Z: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CSqr(const Z: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function C_Complex(const X: TLearnFloat): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_Opposite(const Z: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_Add(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_Mul(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_AddR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_MulR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_Sub(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_SubR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_RSub(const R: TLearnFloat; const Z1: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_Div(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_DivR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_RDiv(const R: TLearnFloat; const Z2: TLearnComplex): TLearnComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_Equal(const Z1: TLearnComplex; const Z2: TLearnComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_NotEqual(const Z1: TLearnComplex; const Z2: TLearnComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_EqualR(const Z1: TLearnComplex; const R: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_NotEqualR(const Z1: TLearnComplex; const R: TLearnFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Complex(const X: TLFloat): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Opposite(const Z: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Add(const Z1: TLComplex; const Z2: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Mul(const Z1: TLComplex; const Z2: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_AddR(const Z1: TLComplex; const R: TLFloat): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_MulR(const Z1: TLComplex; const R: TLFloat): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Sub(const Z1: TLComplex; const Z2: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_SubR(const Z1: TLComplex; const R: TLFloat): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_RSub(const R: TLFloat; const Z1: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Div(const Z1: TLComplex; const Z2: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_DivR(const Z1: TLComplex; const R: TLFloat): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_RDiv(const R: TLFloat; const Z2: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Equal(const Z1: TLComplex; const Z2: TLComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_NotEqual(const Z1: TLComplex; const Z2: TLComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_EqualR(const Z1: TLComplex; const R: TLFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_NotEqualR(const Z1: TLComplex; const R: TLFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure TagSort(var A: TLearnFloatArray; const N: TLearnInteger; var P1: TLearnIntegerArray; var P2: TLearnIntegerArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure TagSortFastI(var A: TLearnFloatArray; var B: TLearnIntegerArray; N: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure TagSortFastR(var A: TLearnFloatArray; var B: TLearnFloatArray; N: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure TagSortFast(var A: TLearnFloatArray; const N: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure TagHeapPushI(var A: TLearnFloatArray; var B: TLearnIntegerArray; var N: TLearnInteger; const VA: TLearnFloat; const VB: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure TagHeapReplaceTopI(var A: TLearnFloatArray; var B: TLearnIntegerArray; const N: TLearnInteger; const VA: TLearnFloat; const VB: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure TagHeapPopI(var A: TLearnFloatArray; var B: TLearnIntegerArray; var N: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagSort(var A: TLVec; const N: TLInt; var P1: TLIVec; var P2: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagSortFastI(var A: TLVec; var B: TLIVec; N: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagSortFastR(var A: TLVec; var B: TLVec; N: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagSortFast(var A: TLVec; const N: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagHeapPushI(var A: TLVec; var B: TLIVec; var N: TLInt; const VA: TLFloat; const VB: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagHeapReplaceTopI(var A: TLVec; var B: TLIVec; const N: TLInt; const VA: TLFloat; const VB: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagHeapPopI(var A: TLVec; var B: TLIVec; var N: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 /// //////////////////////////////////////////////////////////////////////
 // Functions/procedures
 /// //////////////////////////////////////////////////////////////////////
-function AbsReal(X: TLearnFloat): TLearnFloat;
+function AbsReal(X: TLFloat): TLFloat;
 begin
   // Result := Abs(X);
   if X >= 0 then
@@ -82,7 +82,7 @@ begin
       AbsReal := -X;
 end;
 
-function AbsInt(I: TLearnInteger): TLearnInteger;
+function AbsInt(I: TLInt): TLInt;
 begin
   // Result := Abs(I);
   if I >= 0 then
@@ -91,17 +91,17 @@ begin
       AbsInt := -I;
 end;
 
-function RandomReal(): TLearnFloat;
+function RandomReal(): TLFloat;
 begin
   RandomReal := Random;
 end;
 
-function RandomInteger(I: TLearnInteger): TLearnInteger;
+function RandomInteger(I: TLInt): TLInt;
 begin
   RandomInteger := Random(I);
 end;
 
-function Sign(X: TLearnFloat): TLearnInteger;
+function Sign(X: TLFloat): TLInt;
 begin
   if X > 0 then
       Sign := 1
@@ -111,7 +111,7 @@ begin
       Sign := 0;
 end;
 
-function AP_Sqr(X: TLearnFloat): TLearnFloat;
+function AP_Sqr(X: TLFloat): TLFloat;
 begin
   AP_Sqr := X * X;
 end;
@@ -119,119 +119,103 @@ end;
 /// //////////////////////////////////////////////////////////////////////
 // dynamical arrays copying
 /// //////////////////////////////////////////////////////////////////////
-function DynamicArrayCopy(const A: TLearnIntegerArray): TLearnIntegerArray; overload;
+function DynamicArrayCopy(const A: TLIVec): TLIVec; overload;
 var
-  I: TLearnInteger;
-  R: TLearnIntegerArray;
+  I: TLInt;
 begin
-  SetLength(R, high(A) + 1);
+  SetLength(Result, Length(A));
   for I := low(A) to high(A) do
-      R[I] := A[I];
-  DynamicArrayCopy := R;
+      Result[I] := A[I];
 end;
 
-function DynamicArrayCopy(const A: TLearnFloatArray): TLearnFloatArray; overload;
+function DynamicArrayCopy(const A: TLVec): TLVec; overload;
 var
-  I: TLearnInteger;
-  R: TLearnFloatArray;
+  I: TLInt;
 begin
-  SetLength(R, high(A) + 1);
+  SetLength(Result, Length(A));
   for I := low(A) to high(A) do
-      R[I] := A[I];
-  DynamicArrayCopy := R;
+      Result[I] := A[I];
 end;
 
-function DynamicArrayCopy(const A: TLearnComplexArray): TLearnComplexArray; overload;
+function DynamicArrayCopy(const A: TLComplexVec): TLComplexVec; overload;
 var
-  I: TLearnInteger;
-  R: TLearnComplexArray;
+  I: TLInt;
 begin
-  SetLength(R, high(A) + 1);
+  SetLength(Result, Length(A));
   for I := low(A) to high(A) do
-      R[I] := A[I];
-  DynamicArrayCopy := R;
+      Result[I] := A[I];
 end;
 
-function DynamicArrayCopy(const A: TLearnBooleanArray): TLearnBooleanArray; overload;
+function DynamicArrayCopy(const A: TLBVec): TLBVec; overload;
 var
-  I: TLearnInteger;
-  R: TLearnBooleanArray;
+  I: TLInt;
 begin
-  SetLength(R, high(A) + 1);
+  SetLength(Result, Length(A));
   for I := low(A) to high(A) do
-      R[I] := A[I];
-  DynamicArrayCopy := R;
+      Result[I] := A[I];
 end;
 
-function DynamicArrayCopy(const A: TLearnInteger2DArray): TLearnInteger2DArray; overload;
+function DynamicArrayCopy(const A: TLIMatrix): TLIMatrix; overload;
 var
-  I, J: TLearnInteger;
-  R   : TLearnInteger2DArray;
+  I, J: TLInt;
 begin
-  SetLength(R, high(A) + 1);
+  SetLength(Result, Length(A));
   for I := low(A) to high(A) do
     begin
-      SetLength(R[I], high(A[I]) + 1);
+      SetLength(Result[I], Length(A[I]));
       for J := low(A[I]) to high(A[I]) do
-          R[I, J] := A[I, J];
+          Result[I, J] := A[I, J];
     end;
-  DynamicArrayCopy := R;
 end;
 
-function DynamicArrayCopy(const A: TLearnFloat2DArray): TLearnFloat2DArray; overload;
+function DynamicArrayCopy(const A: TLMatrix): TLMatrix; overload;
 var
-  I, J: TLearnInteger;
-  R   : TLearnFloat2DArray;
+  I, J: TLInt;
 begin
-  SetLength(R, high(A) + 1);
+  SetLength(Result, Length(A));
   for I := low(A) to high(A) do
     begin
-      SetLength(R[I], high(A[I]) + 1);
+      SetLength(Result[I], Length(A[I]));
       for J := low(A[I]) to high(A[I]) do
-          R[I, J] := A[I, J];
+          Result[I, J] := A[I, J];
     end;
-  DynamicArrayCopy := R;
 end;
 
-function DynamicArrayCopy(const A: TLearnComplex2DArray): TLearnComplex2DArray; overload;
+function DynamicArrayCopy(const A: TLComplexMatrix): TLComplexMatrix; overload;
 var
-  I, J: TLearnInteger;
-  R   : TLearnComplex2DArray;
+  I, J: TLInt;
 begin
-  SetLength(R, high(A) + 1);
+  SetLength(Result, Length(A));
   for I := low(A) to high(A) do
     begin
-      SetLength(R[I], high(A[I]) + 1);
+      SetLength(Result[I], Length(A[I]));
       for J := low(A[I]) to high(A[I]) do
-          R[I, J] := A[I, J];
+          Result[I, J] := A[I, J];
     end;
-  DynamicArrayCopy := R;
 end;
 
-function DynamicArrayCopy(const A: TLearnBoolean2DArray): TLearnBoolean2DArray; overload;
+function DynamicArrayCopy(const A: TLBMatrix): TLBMatrix; overload;
 var
-  I, J: TLearnInteger;
-  R   : TLearnBoolean2DArray;
+  I, J: TLInt;
 begin
-  SetLength(R, high(A) + 1);
+  SetLength(Result, Length(A));
   for I := low(A) to high(A) do
     begin
-      SetLength(R[I], high(A[I]) + 1);
+      SetLength(Result[I], Length(A[I]));
       for J := low(A[I]) to high(A[I]) do
-          R[I, J] := A[I, J];
+          Result[I, J] := A[I, J];
     end;
-  DynamicArrayCopy := R;
 end;
 
 /// //////////////////////////////////////////////////////////////////////
-// TLearnComplex numbers
+// TLComplex numbers
 /// //////////////////////////////////////////////////////////////////////
-function AbsComplex(const Z: TLearnComplex): TLearnFloat;
+function AbsComplex(const Z: TLComplex): TLFloat;
 var
-  W   : TLearnFloat;
-  XABS: TLearnFloat;
-  YABS: TLearnFloat;
-  V   : TLearnFloat;
+  W   : TLFloat;
+  XABS: TLFloat;
+  YABS: TLFloat;
+  V   : TLFloat;
 begin
   XABS := AbsReal(Z.X);
   YABS := AbsReal(Z.Y);
@@ -247,80 +231,80 @@ begin
     end;
 end;
 
-function Conj(const Z: TLearnComplex): TLearnComplex;
+function Conj(const Z: TLComplex): TLComplex;
 begin
   Conj.X := Z.X;
   Conj.Y := -Z.Y;
 end;
 
-function CSqr(const Z: TLearnComplex): TLearnComplex;
+function CSqr(const Z: TLComplex): TLComplex;
 begin
   CSqr.X := Sqr(Z.X) - Sqr(Z.Y);
   CSqr.Y := 2 * Z.X * Z.Y;
 end;
 
-function C_Complex(const X: TLearnFloat): TLearnComplex;
+function C_Complex(const X: TLFloat): TLComplex;
 begin
   C_Complex.X := X;
   C_Complex.Y := 0;
 end;
 
-function C_Opposite(const Z: TLearnComplex): TLearnComplex;
+function C_Opposite(const Z: TLComplex): TLComplex;
 begin
   C_Opposite.X := -Z.X;
   C_Opposite.Y := -Z.Y;
 end;
 
-function C_Add(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex;
+function C_Add(const Z1: TLComplex; const Z2: TLComplex): TLComplex;
 begin
   C_Add.X := Z1.X + Z2.X;
   C_Add.Y := Z1.Y + Z2.Y;
 end;
 
-function C_Mul(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex;
+function C_Mul(const Z1: TLComplex; const Z2: TLComplex): TLComplex;
 begin
   C_Mul.X := Z1.X * Z2.X - Z1.Y * Z2.Y;
   C_Mul.Y := Z1.X * Z2.Y + Z1.Y * Z2.X;
 end;
 
-function C_AddR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex;
+function C_AddR(const Z1: TLComplex; const R: TLFloat): TLComplex;
 begin
   C_AddR.X := Z1.X + R;
   C_AddR.Y := Z1.Y;
 end;
 
-function C_MulR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex;
+function C_MulR(const Z1: TLComplex; const R: TLFloat): TLComplex;
 begin
   C_MulR.X := Z1.X * R;
   C_MulR.Y := Z1.Y * R;
 end;
 
-function C_Sub(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex;
+function C_Sub(const Z1: TLComplex; const Z2: TLComplex): TLComplex;
 begin
   C_Sub.X := Z1.X - Z2.X;
   C_Sub.Y := Z1.Y - Z2.Y;
 end;
 
-function C_SubR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex;
+function C_SubR(const Z1: TLComplex; const R: TLFloat): TLComplex;
 begin
   C_SubR.X := Z1.X - R;
   C_SubR.Y := Z1.Y;
 end;
 
-function C_RSub(const R: TLearnFloat; const Z1: TLearnComplex): TLearnComplex;
+function C_RSub(const R: TLFloat; const Z1: TLComplex): TLComplex;
 begin
   C_RSub.X := R - Z1.X;
   C_RSub.Y := -Z1.Y;
 end;
 
-function C_Div(const Z1: TLearnComplex; const Z2: TLearnComplex): TLearnComplex;
+function C_Div(const Z1: TLComplex; const Z2: TLComplex): TLComplex;
 var
-  A: TLearnFloat;
-  B: TLearnFloat;
-  C: TLearnFloat;
-  D: TLearnFloat;
-  E: TLearnFloat;
-  F: TLearnFloat;
+  A: TLFloat;
+  B: TLFloat;
+  C: TLFloat;
+  D: TLFloat;
+  E: TLFloat;
+  F: TLFloat;
 begin
   A := Z1.X;
   B := Z1.Y;
@@ -342,19 +326,19 @@ begin
     end;
 end;
 
-function C_DivR(const Z1: TLearnComplex; const R: TLearnFloat): TLearnComplex;
+function C_DivR(const Z1: TLComplex; const R: TLFloat): TLComplex;
 begin
   C_DivR.X := Z1.X / R;
   C_DivR.Y := Z1.Y / R;
 end;
 
-function C_RDiv(const R: TLearnFloat; const Z2: TLearnComplex): TLearnComplex;
+function C_RDiv(const R: TLFloat; const Z2: TLComplex): TLComplex;
 var
-  A: TLearnFloat;
-  C: TLearnFloat;
-  D: TLearnFloat;
-  E: TLearnFloat;
-  F: TLearnFloat;
+  A: TLFloat;
+  C: TLFloat;
+  D: TLFloat;
+  E: TLFloat;
+  F: TLFloat;
 begin
   A := R;
   C := Z2.X;
@@ -375,22 +359,22 @@ begin
     end;
 end;
 
-function C_Equal(const Z1: TLearnComplex; const Z2: TLearnComplex): Boolean;
+function C_Equal(const Z1: TLComplex; const Z2: TLComplex): Boolean;
 begin
   C_Equal := (Z1.X = Z2.X) and (Z1.Y = Z2.Y);
 end;
 
-function C_NotEqual(const Z1: TLearnComplex; const Z2: TLearnComplex): Boolean;
+function C_NotEqual(const Z1: TLComplex; const Z2: TLComplex): Boolean;
 begin
   C_NotEqual := (Z1.X <> Z2.X) or (Z1.Y <> Z2.Y);
 end;
 
-function C_EqualR(const Z1: TLearnComplex; const R: TLearnFloat): Boolean;
+function C_EqualR(const Z1: TLComplex; const R: TLFloat): Boolean;
 begin
   C_EqualR := (Z1.X = R) and (Z1.Y = 0);
 end;
 
-function C_NotEqualR(const Z1: TLearnComplex; const R: TLearnFloat): Boolean;
+function C_NotEqualR(const Z1: TLComplex; const R: TLFloat): Boolean;
 begin
   C_NotEqualR := (Z1.X <> R) or (Z1.Y <> 0);
 end;
@@ -398,11 +382,11 @@ end;
 /// //////////////////////////////////////////////////////////////////////
 // AP BLAS generic interface
 /// //////////////////////////////////////////////////////////////////////
-function APVDotProduct(V1: PLearnFloat; I11, I12: TLearnInteger; V2: PLearnFloat;
-  I21, I22: TLearnInteger): TLearnFloat;
+function APVDotProduct(V1: PLFloat; I11, I12: TLInt; V2: PLFloat;
+  I21, I22: TLInt): TLFloat;
 var
-  I, C: TLearnInteger;
-  R   : TLearnFloat;
+  I, C: TLInt;
+  R   : TLFloat;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVDotProduct: arrays of different size!');
   Inc(V1, I11);
@@ -422,10 +406,10 @@ begin
   APVDotProduct := R;
 end;
 
-procedure APVMove(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
-  I21, I22: TLearnInteger); overload;
+procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
+  I21, I22: TLInt); overload;
 var
-  I, C: TLearnInteger;
+  I, C: TLInt;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVMove: arrays of different size!');
   Inc(VDst, I11);
@@ -443,10 +427,10 @@ begin
     end;
 end;
 
-procedure APVMove(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
-  I21, I22: TLearnInteger; S: TLearnFloat); overload;
+procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
+  I21, I22: TLInt; S: TLFloat); overload;
 var
-  I, C: TLearnInteger;
+  I, C: TLInt;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVMove: arrays of different size!');
   Inc(VDst, I11);
@@ -464,10 +448,10 @@ begin
     end;
 end;
 
-procedure APVMoveNeg(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
-  I21, I22: TLearnInteger);
+procedure APVMoveNeg(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
+  I21, I22: TLInt);
 var
-  I, C: TLearnInteger;
+  I, C: TLInt;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVMoveNeg: arrays of different size!');
   Inc(VDst, I11);
@@ -485,10 +469,10 @@ begin
     end;
 end;
 
-procedure APVAdd(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
-  I21, I22: TLearnInteger); overload;
+procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
+  I21, I22: TLInt); overload;
 var
-  I, C: TLearnInteger;
+  I, C: TLInt;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVAdd: arrays of different size!');
   Inc(VDst, I11);
@@ -506,10 +490,10 @@ begin
     end;
 end;
 
-procedure APVAdd(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
-  I21, I22: TLearnInteger; S: TLearnFloat); overload;
+procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
+  I21, I22: TLInt; S: TLFloat); overload;
 var
-  I, C: TLearnInteger;
+  I, C: TLInt;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVAdd: arrays of different size!');
   Inc(VDst, I11);
@@ -527,10 +511,10 @@ begin
     end;
 end;
 
-procedure APVSub(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
-  I21, I22: TLearnInteger); overload;
+procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
+  I21, I22: TLInt); overload;
 var
-  I, C: TLearnInteger;
+  I, C: TLInt;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVSub arrays of different size!');
   Inc(VDst, I11);
@@ -548,16 +532,16 @@ begin
     end;
 end;
 
-procedure APVSub(VDst: PLearnFloat; I11, I12: TLearnInteger; VSrc: PLearnFloat;
-  I21, I22: TLearnInteger; S: TLearnFloat); overload;
+procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
+  I21, I22: TLInt; S: TLFloat); overload;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVSub: arrays of different size!');
   APVAdd(VDst, I11, I12, VSrc, I21, I22, -S);
 end;
 
-procedure APVMul(VOp: PLearnFloat; I1, I2: TLearnInteger; S: TLearnFloat);
+procedure APVMul(VOp: PLFloat; I1, I2: TLInt; S: TLFloat);
 var
-  I, C: TLearnInteger;
+  I, C: TLInt;
 begin
   Inc(VOp, I1);
   C := I2 - I1;
@@ -568,9 +552,9 @@ begin
     end;
 end;
 
-procedure APVFillValue(VOp: PLearnFloat; I1, I2: TLearnInteger; S: TLearnFloat);
+procedure APVFillValue(VOp: PLFloat; I1, I2: TLInt; S: TLFloat);
 var
-  I, C: TLearnInteger;
+  I, C: TLInt;
 begin
   Inc(VOp, I1);
   C := I2 - I1;
@@ -585,50 +569,50 @@ end;
 // IEEE-compliant functions
 /// //////////////////////////////////////////////////////////////////////
 
-function AP_Float(X: TLearnFloat): TLearnFloat;
+function AP_Float(X: TLFloat): TLFloat;
 begin
   AP_Float := X;
 end;
 
-function AP_FP_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean;
+function AP_FP_Eq(X: TLFloat; Y: TLFloat): Boolean;
 begin
   AP_FP_Eq := X = Y;
 end;
 
-function AP_FP_NEq(X: TLearnFloat; Y: TLearnFloat): Boolean;
+function AP_FP_NEq(X: TLFloat; Y: TLFloat): Boolean;
 begin
   AP_FP_NEq := X <> Y;
 end;
 
-function AP_FP_Less(X: TLearnFloat; Y: TLearnFloat): Boolean;
+function AP_FP_Less(X: TLFloat; Y: TLFloat): Boolean;
 begin
   AP_FP_Less := X < Y;
 end;
 
-function AP_FP_Less_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean;
+function AP_FP_Less_Eq(X: TLFloat; Y: TLFloat): Boolean;
 begin
   AP_FP_Less_Eq := X <= Y;
 end;
 
-function AP_FP_Greater(X: TLearnFloat; Y: TLearnFloat): Boolean;
+function AP_FP_Greater(X: TLFloat; Y: TLFloat): Boolean;
 begin
   AP_FP_Greater := X > Y;
 end;
 
-function AP_FP_Greater_Eq(X: TLearnFloat; Y: TLearnFloat): Boolean;
+function AP_FP_Greater_Eq(X: TLFloat; Y: TLFloat): Boolean;
 begin
   AP_FP_Greater_Eq := X >= Y;
 end;
 
-procedure TagSort(var A: TLearnFloatArray; const N: TLearnInteger; var P1: TLearnIntegerArray; var P2: TLearnIntegerArray);
+procedure TagSort(var A: TLVec; const N: TLInt; var P1: TLIVec; var P2: TLIVec);
 var
-  I : TLearnInteger;
-  PV: TLearnIntegerArray;
-  VP: TLearnIntegerArray;
-  LV: TLearnInteger;
-  LP: TLearnInteger;
-  RV: TLearnInteger;
-  RP: TLearnInteger;
+  I : TLInt;
+  PV: TLIVec;
+  VP: TLIVec;
+  LV: TLInt;
+  LP: TLInt;
+  RV: TLInt;
+  RP: TLInt;
 begin
 
   //
@@ -713,13 +697,13 @@ begin
     end;
 end;
 
-procedure TagSortFastI(var A: TLearnFloatArray; var B: TLearnIntegerArray; N: TLearnInteger);
+procedure TagSortFastI(var A: TLVec; var B: TLIVec; N: TLInt);
 var
-  I   : TLearnInteger;
-  K   : TLearnInteger;
-  T   : TLearnInteger;
-  Tmp : TLearnFloat;
-  TmpI: TLearnInteger;
+  I   : TLInt;
+  K   : TLInt;
+  T   : TLInt;
+  Tmp : TLFloat;
+  TmpI: TLInt;
 begin
 
   //
@@ -801,14 +785,14 @@ begin
   until not(I >= 1);
 end;
 
-procedure TagSortFastR(var A: TLearnFloatArray; var B: TLearnFloatArray;
-  N: TLearnInteger);
+procedure TagSortFastR(var A: TLVec; var B: TLVec;
+  N: TLInt);
 var
-  I   : TLearnInteger;
-  K   : TLearnInteger;
-  T   : TLearnInteger;
-  Tmp : TLearnFloat;
-  TmpR: TLearnFloat;
+  I   : TLInt;
+  K   : TLInt;
+  T   : TLInt;
+  Tmp : TLFloat;
+  TmpR: TLFloat;
 begin
 
   //
@@ -890,12 +874,12 @@ begin
   until not(I >= 1);
 end;
 
-procedure TagSortFast(var A: TLearnFloatArray; const N: TLearnInteger);
+procedure TagSortFast(var A: TLVec; const N: TLInt);
 var
-  I  : TLearnInteger;
-  K  : TLearnInteger;
-  T  : TLearnInteger;
-  Tmp: TLearnFloat;
+  I  : TLInt;
+  K  : TLInt;
+  T  : TLInt;
+  Tmp: TLFloat;
 begin
 
   //
@@ -980,12 +964,12 @@ end;
   VA      -   value of the element being added
   VB      -   value of the tag
   ************************************************************************ *)
-procedure TagHeapPushI(var A: TLearnFloatArray; var B: TLearnIntegerArray;
-  var N: TLearnInteger; const VA: TLearnFloat; const VB: TLearnInteger);
+procedure TagHeapPushI(var A: TLVec; var B: TLIVec;
+  var N: TLInt; const VA: TLFloat; const VB: TLInt);
 var
-  J: TLearnInteger;
-  K: TLearnInteger;
-  V: TLearnFloat;
+  J: TLInt;
+  K: TLInt;
+  V: TLFloat;
 begin
   if N < 0 then
     begin
@@ -1052,15 +1036,15 @@ end;
   VA      -   value of the element which replaces top element
   VB      -   value of the tag
   ************************************************************************ *)
-procedure TagHeapReplaceTopI(var A: TLearnFloatArray; var B: TLearnIntegerArray;
-  const N: TLearnInteger; const VA: TLearnFloat; const VB: TLearnInteger);
+procedure TagHeapReplaceTopI(var A: TLVec; var B: TLIVec;
+  const N: TLInt; const VA: TLFloat; const VB: TLInt);
 var
-  J : TLearnInteger;
-  K1: TLearnInteger;
-  K2: TLearnInteger;
-  V : TLearnFloat;
-  V1: TLearnFloat;
-  V2: TLearnFloat;
+  J : TLInt;
+  K1: TLInt;
+  K2: TLInt;
+  V : TLFloat;
+  V1: TLFloat;
+  V2: TLFloat;
 begin
   if N < 1 then
     begin
@@ -1164,10 +1148,10 @@ end;
   On output top element is moved to A[N-1], B[N-1], heap is reordered, N is
   decreased by 1.
   ************************************************************************ *)
-procedure TagHeapPopI(var A: TLearnFloatArray; var B: TLearnIntegerArray; var N: TLearnInteger);
+procedure TagHeapPopI(var A: TLVec; var B: TLIVec; var N: TLInt);
 var
-  VA: TLearnFloat;
-  VB: TLearnInteger;
+  VA: TLFloat;
+  VB: TLInt;
 begin
   if N < 1 then
     begin

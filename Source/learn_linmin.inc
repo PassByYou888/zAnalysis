@@ -11,37 +11,37 @@ type
   TLinMinState = packed record
     BRACKT: Boolean;
     STAGE1: Boolean;
-    INFOC: TLearnInteger;
-    DG: TLearnFloat;
-    DGM: TLearnFloat;
-    DGINIT: TLearnFloat;
-    DGTEST: TLearnFloat;
-    DGX: TLearnFloat;
-    DGXM: TLearnFloat;
-    DGY: TLearnFloat;
-    DGYM: TLearnFloat;
-    FINIT: TLearnFloat;
-    FTEST1: TLearnFloat;
-    FM: TLearnFloat;
-    FX: TLearnFloat;
-    FXM: TLearnFloat;
-    FY: TLearnFloat;
-    FYM: TLearnFloat;
-    STX: TLearnFloat;
-    STY: TLearnFloat;
-    STMIN: TLearnFloat;
-    STMAX: TLearnFloat;
-    WIDTH: TLearnFloat;
-    WIDTH1: TLearnFloat;
-    XTRAPF: TLearnFloat;
+    INFOC: TLInt;
+    DG: TLFloat;
+    DGM: TLFloat;
+    DGINIT: TLFloat;
+    DGTEST: TLFloat;
+    DGX: TLFloat;
+    DGXM: TLFloat;
+    DGY: TLFloat;
+    DGYM: TLFloat;
+    FINIT: TLFloat;
+    FTEST1: TLFloat;
+    FM: TLFloat;
+    FX: TLFloat;
+    FXM: TLFloat;
+    FY: TLFloat;
+    FYM: TLFloat;
+    STX: TLFloat;
+    STY: TLFloat;
+    STMIN: TLFloat;
+    STMAX: TLFloat;
+    WIDTH: TLFloat;
+    WIDTH1: TLFloat;
+    XTRAPF: TLFloat;
   end;
 
-procedure LinMinNormalizeD(var D: TLearnFloatArray; var Stp: TLearnFloat; N: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure LinMinNormalizeD(var D: TLVec; var Stp: TLFloat; N: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MCSRCH(const N: TLearnInteger; var X: TLearnFloatArray;
-  var F: TLearnFloat; var G: TLearnFloatArray; const S: TLearnFloatArray;
-  var Stp: TLearnFloat; STPMAX: TLearnFloat; var INFO: TLearnInteger;
-  var NFEV: TLearnInteger; var WA: TLearnFloatArray; var State: TLinMinState; var Stage: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MCSRCH(const N: TLInt; var X: TLVec;
+  var F: TLFloat; var G: TLVec; const S: TLVec;
+  var Stp: TLFloat; STPMAX: TLFloat; var INFO: TLInt;
+  var NFEV: TLInt; var WA: TLVec; var State: TLinMinState; var Stage: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 const
@@ -52,23 +52,23 @@ const
   LM_STPMIN    = 1.0E-50;
   LM_DefSTPMAX = 1.0E+50;
 
-procedure MCSTEP(var STX: TLearnFloat; var FX: TLearnFloat; var DX: TLearnFloat;
-  var STY: TLearnFloat; var FY: TLearnFloat; var DY: TLearnFloat;
-  var Stp: TLearnFloat; const FP: TLearnFloat; const DP: TLearnFloat;
-  var BRACKT: Boolean; const STMIN: TLearnFloat; const STMAX: TLearnFloat;
-  var INFO: TLearnInteger); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MCSTEP(var STX: TLFloat; var FX: TLFloat; var DX: TLFloat;
+  var STY: TLFloat; var FY: TLFloat; var DY: TLFloat;
+  var Stp: TLFloat; const FP: TLFloat; const DP: TLFloat;
+  var BRACKT: Boolean; const STMIN: TLFloat; const STMAX: TLFloat;
+  var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
   Normalizes direction/step pair: makes |D|=1, scales Stp.
   If |D|=0, it returns, leavind D/Stp unchanged.
   ************************************************************************ *)
-procedure LinMinNormalizeD(var D: TLearnFloatArray; var Stp: TLearnFloat;
-  N: TLearnInteger);
+procedure LinMinNormalizeD(var D: TLVec; var Stp: TLFloat;
+  N: TLInt);
 var
-  MX: TLearnFloat;
-  S : TLearnFloat;
-  I : TLearnInteger;
+  MX: TLFloat;
+  S : TLFloat;
+  I : TLInt;
 begin
 
   //
@@ -98,16 +98,16 @@ begin
   Stp := Stp / S;
 end;
 
-procedure MCSRCH(const N: TLearnInteger; var X: TLearnFloatArray;
-  var F: TLearnFloat; var G: TLearnFloatArray; const S: TLearnFloatArray;
-  var Stp: TLearnFloat; STPMAX: TLearnFloat; var INFO: TLearnInteger;
-  var NFEV: TLearnInteger; var WA: TLearnFloatArray; var State: TLinMinState;
-  var Stage: TLearnInteger);
+procedure MCSRCH(const N: TLInt; var X: TLVec;
+  var F: TLFloat; var G: TLVec; const S: TLVec;
+  var Stp: TLFloat; STPMAX: TLFloat; var INFO: TLInt;
+  var NFEV: TLInt; var WA: TLVec; var State: TLinMinState;
+  var Stage: TLInt);
 var
-  V   : TLearnFloat;
-  P5  : TLearnFloat;
-  P66 : TLearnFloat;
-  ZERO: TLearnFloat;
+  V   : TLFloat;
+  P5  : TLFloat;
+  P66 : TLFloat;
+  ZERO: TLFloat;
 begin
 
   //
@@ -405,23 +405,23 @@ begin
     end;
 end;
 
-procedure MCSTEP(var STX: TLearnFloat; var FX: TLearnFloat; var DX: TLearnFloat;
-  var STY: TLearnFloat; var FY: TLearnFloat; var DY: TLearnFloat;
-  var Stp: TLearnFloat; const FP: TLearnFloat; const DP: TLearnFloat;
-  var BRACKT: Boolean; const STMIN: TLearnFloat; const STMAX: TLearnFloat;
-  var INFO: TLearnInteger);
+procedure MCSTEP(var STX: TLFloat; var FX: TLFloat; var DX: TLFloat;
+  var STY: TLFloat; var FY: TLFloat; var DY: TLFloat;
+  var Stp: TLFloat; const FP: TLFloat; const DP: TLFloat;
+  var BRACKT: Boolean; const STMIN: TLFloat; const STMAX: TLFloat;
+  var INFO: TLInt);
 var
   BOUND: Boolean;
-  GAMMA: TLearnFloat;
-  P    : TLearnFloat;
-  Q    : TLearnFloat;
-  R    : TLearnFloat;
-  S    : TLearnFloat;
-  SGND : TLearnFloat;
-  STPC : TLearnFloat;
-  STPF : TLearnFloat;
-  STPQ : TLearnFloat;
-  THETA: TLearnFloat;
+  GAMMA: TLFloat;
+  P    : TLFloat;
+  Q    : TLFloat;
+  R    : TLFloat;
+  S    : TLFloat;
+  SGND : TLFloat;
+  STPC : TLFloat;
+  STPF : TLFloat;
+  STPQ : TLFloat;
+  THETA: TLFloat;
 begin
   INFO := 0;
 

@@ -41,7 +41,7 @@
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1984, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function ChiSquareDistribution(const v, x: TLearnFloat): TLearnFloat;
+function ChiSquareDistribution(const v, x: TLFloat): TLFloat;
 begin
   Assert(AP_FP_Greater_Eq(x, 0) and AP_FP_Greater_Eq(v, 1), 'Domain error in ChiSquareDistribution');
   Result := IncompleteGamma(v / 2.0, x / 2.0);
@@ -78,7 +78,7 @@ end;
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1984, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function ChiSquareCDistribution(const v, x: TLearnFloat): TLearnFloat;
+function ChiSquareCDistribution(const v, x: TLFloat): TLFloat;
 begin
   Assert(AP_FP_Greater_Eq(x, 0) and AP_FP_Greater_Eq(v, 1), 'Domain error in ChiSquareDistributionC');
   Result := IncompleteGammaC(v / 2.0, x / 2.0);
@@ -104,7 +104,7 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvChiSquareDistribution(const v, y: TLearnFloat): TLearnFloat;
+function InvChiSquareDistribution(const v, y: TLFloat): TLFloat;
 begin
   Assert(AP_FP_Greater_Eq(y, 0) and AP_FP_Less_Eq(y, 1) and AP_FP_Greater_Eq(v, 1), 'Domain error in InvChiSquareDistribution');
   Result := 2 * InvIncompleteGammaC(0.5 * v, y);
@@ -132,13 +132,13 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure OneSampleVarianceTest(const x: TLearnFloatArray; N: TLearnInteger; Variance: TLearnFloat; var BothTails, LeftTail, RightTail: TLearnFloat);
+procedure OneSampleVarianceTest(const x: TLVec; N: TLInt; Variance: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  I    : TLearnInteger;
-  XMean: TLearnFloat;
-  XVar : TLearnFloat;
-  S    : TLearnFloat;
-  Stat : TLearnFloat;
+  I    : TLInt;
+  XMean: TLFloat;
+  XVar : TLFloat;
+  S    : TLFloat;
+  Stat : TLFloat;
 begin
   if N <= 1 then
     begin

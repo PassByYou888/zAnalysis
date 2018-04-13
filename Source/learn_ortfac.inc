@@ -8,19 +8,19 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-procedure SymmetricMatrixVectorMultiply(const A: TLearnFloat2DArray; IsUpper: Boolean;
-  I1: TLearnInteger; I2: TLearnInteger; const X: TLearnFloatArray;
-  Alpha: TLearnFloat; var Y: TLearnFloatArray);
+procedure SymmetricMatrixVectorMultiply(const A: TLMatrix; IsUpper: Boolean;
+  I1: TLInt; I2: TLInt; const X: TLVec;
+  Alpha: TLFloat; var Y: TLVec);
 var
-  I  : TLearnInteger;
-  BA1: TLearnInteger;
-  BA2: TLearnInteger;
-  BY1: TLearnInteger;
-  BY2: TLearnInteger;
-  BX1: TLearnInteger;
-  BX2: TLearnInteger;
-  N  : TLearnInteger;
-  V  : TLearnFloat;
+  I  : TLInt;
+  BA1: TLInt;
+  BA2: TLInt;
+  BY1: TLInt;
+  BY2: TLInt;
+  BX1: TLInt;
+  BX2: TLInt;
+  N  : TLInt;
+  V  : TLFloat;
 begin
   N := I2 - I1 + 1;
   if N <= 0 then
@@ -107,14 +107,14 @@ begin
   APVMul(@Y[0], 1, N, Alpha);
 end;
 
-procedure SymmetricRank2Update(var A: TLearnFloat2DArray; IsUpper: Boolean;
-  I1: TLearnInteger; I2: TLearnInteger; const X: TLearnFloatArray;
-  const Y: TLearnFloatArray; var T: TLearnFloatArray; Alpha: TLearnFloat);
+procedure SymmetricRank2Update(var A: TLMatrix; IsUpper: Boolean;
+  I1: TLInt; I2: TLInt; const X: TLVec;
+  const Y: TLVec; var T: TLVec; Alpha: TLFloat);
 var
-  I  : TLearnInteger;
-  TP1: TLearnInteger;
-  TP2: TLearnInteger;
-  V  : TLearnFloat;
+  I  : TLInt;
+  TP1: TLInt;
+  TP2: TLInt;
+  V  : TLFloat;
 begin
   if IsUpper then
     begin
@@ -151,9 +151,9 @@ begin
 end;
 
 (* ************************************************************************
-  Generation of an elementary TLearnComplex reflection transformation
+  Generation of an elementary TLComplex reflection transformation
 
-  The subroutine generates elementary TLearnComplex reflection H of  order  N,  so
+  The subroutine generates elementary TLComplex reflection H of  order  N,  so
   that, for a given X, the following equality holds true:
 
   ( X(1) )   ( Beta )
@@ -181,20 +181,20 @@ end;
   library. It has similar functionality except for the fact that it  doesn’t
   handle errors when intermediate results cause an overflow.
   ************************************************************************ *)
-procedure ComplexGenerateReflection(var X: TLearnComplexArray; N: TLearnInteger;
-  var Tau: TLearnComplex);
+procedure ComplexGenerateReflection(var X: TLComplexVec; N: TLInt;
+  var Tau: TLComplex);
 var
-  J    : TLearnInteger;
-  Alpha: TLearnComplex;
-  ALPHI: TLearnFloat;
-  ALPHR: TLearnFloat;
-  BETA : TLearnFloat;
-  XNORM: TLearnFloat;
-  MX   : TLearnFloat;
-  T    : TLearnComplex;
-  S    : TLearnFloat;
-  V    : TLearnComplex;
-  i_   : TLearnInteger;
+  J    : TLInt;
+  Alpha: TLComplex;
+  ALPHI: TLFloat;
+  ALPHR: TLFloat;
+  BETA : TLFloat;
+  XNORM: TLFloat;
+  MX   : TLFloat;
+  T    : TLComplex;
+  S    : TLFloat;
+  V    : TLComplex;
+  i_   : TLInt;
 begin
   if N <= 0 then
     begin
@@ -320,14 +320,14 @@ end;
   transformation matrix which is given by Tau and V.
   If N1>N2 or M1>M2, C is not modified.
   ************************************************************************ *)
-procedure ComplexApplyReflectionFromTheLeft(var C: TLearnComplex2DArray;
-  Tau: TLearnComplex; const V: TLearnComplexArray; M1: TLearnInteger; M2: TLearnInteger;
-  N1: TLearnInteger; N2: TLearnInteger; var WORK: TLearnComplexArray);
+procedure ComplexApplyReflectionFromTheLeft(var C: TLComplexMatrix;
+  Tau: TLComplex; const V: TLComplexVec; M1: TLInt; M2: TLInt;
+  N1: TLInt; N2: TLInt; var WORK: TLComplexVec);
 var
-  T : TLearnComplex;
-  I : TLearnInteger;
-  VM: TLearnInteger;
-  i_: TLearnInteger;
+  T : TLComplex;
+  I : TLInt;
+  VM: TLInt;
+  i_: TLInt;
 begin
   if C_EqualR(Tau, 0) or (N1 > N2) or (M1 > M2) then
     begin
@@ -393,15 +393,15 @@ end;
   transformation matrix which is given by Tau and V.
   If N1>N2 or M1>M2, C is not modified.
   ************************************************************************ *)
-procedure ComplexApplyReflectionFromTheRight(var C: TLearnComplex2DArray;
-  Tau: TLearnComplex; var V: TLearnComplexArray; M1: TLearnInteger; M2: TLearnInteger;
-  N1: TLearnInteger; N2: TLearnInteger; var WORK: TLearnComplexArray);
+procedure ComplexApplyReflectionFromTheRight(var C: TLComplexMatrix;
+  Tau: TLComplex; var V: TLComplexVec; M1: TLInt; M2: TLInt;
+  N1: TLInt; N2: TLInt; var WORK: TLComplexVec);
 var
-  T  : TLearnComplex;
-  I  : TLearnInteger;
-  VM : TLearnInteger;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  T  : TLComplex;
+  I  : TLInt;
+  VM : TLInt;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
   if C_EqualR(Tau, 0) or (N1 > N2) or (M1 > M2) then
     begin
@@ -482,16 +482,16 @@ end;
   MODIFICATIONS:
   24.12.2005 sign(Alpha) was replaced with an analogous to the Fortran SIGN code.
   ************************************************************************ *)
-procedure GenerateReflection(var X: TLearnFloatArray; N: TLearnInteger;
-  var Tau: TLearnFloat);
+procedure GenerateReflection(var X: TLVec; N: TLInt;
+  var Tau: TLFloat);
 var
-  J    : TLearnInteger;
-  Alpha: TLearnFloat;
-  XNORM: TLearnFloat;
-  V    : TLearnFloat;
-  BETA : TLearnFloat;
-  MX   : TLearnFloat;
-  S    : TLearnFloat;
+  J    : TLInt;
+  Alpha: TLFloat;
+  XNORM: TLFloat;
+  V    : TLFloat;
+  BETA : TLFloat;
+  MX   : TLFloat;
+  S    : TLFloat;
 begin
   if N <= 1 then
     begin
@@ -601,13 +601,13 @@ end;
   transformation matrix which is given by Tau and V.
   If N1>N2 or M1>M2, C is not modified.
   ************************************************************************ *)
-procedure ApplyReflectionFromTheLeft(var C: TLearnFloat2DArray; Tau: TLearnFloat;
-  const V: TLearnFloatArray; M1: TLearnInteger; M2: TLearnInteger;
-  N1: TLearnInteger; N2: TLearnInteger; var WORK: TLearnFloatArray);
+procedure ApplyReflectionFromTheLeft(var C: TLMatrix; Tau: TLFloat;
+  const V: TLVec; M1: TLInt; M2: TLInt;
+  N1: TLInt; N2: TLInt; var WORK: TLVec);
 var
-  T : TLearnFloat;
-  I : TLearnInteger;
-  VM: TLearnInteger;
+  T : TLFloat;
+  I : TLInt;
+  VM: TLInt;
 begin
   if AP_FP_Eq(Tau, 0) or (N1 > N2) or (M1 > M2) then
     begin
@@ -667,13 +667,13 @@ end;
   transformation matrix which is given by Tau and V.
   If N1>N2 or M1>M2, C is not modified.
   ************************************************************************ *)
-procedure ApplyReflectionFromTheRight(var C: TLearnFloat2DArray; Tau: TLearnFloat;
-  const V: TLearnFloatArray; M1: TLearnInteger; M2: TLearnInteger;
-  N1: TLearnInteger; N2: TLearnInteger; var WORK: TLearnFloatArray);
+procedure ApplyReflectionFromTheRight(var C: TLMatrix; Tau: TLFloat;
+  const V: TLVec; M1: TLInt; M2: TLInt;
+  N1: TLInt; N2: TLInt; var WORK: TLVec);
 var
-  T : TLearnFloat;
-  I : TLearnInteger;
-  VM: TLearnInteger;
+  T : TLFloat;
+  I : TLInt;
+  VM: TLInt;
 begin
   if AP_FP_Eq(Tau, 0) or (N1 > N2) or (M1 > M2) then
     begin
@@ -690,21 +690,21 @@ begin
     end;
 end;
 
-procedure HermitianMatrixVectorMultiply(const A: TLearnComplex2DArray;
-  IsUpper: Boolean; I1: TLearnInteger; I2: TLearnInteger;
-  const X: TLearnComplexArray; Alpha: TLearnComplex; var Y: TLearnComplexArray);
+procedure HermitianMatrixVectorMultiply(const A: TLComplexMatrix;
+  IsUpper: Boolean; I1: TLInt; I2: TLInt;
+  const X: TLComplexVec; Alpha: TLComplex; var Y: TLComplexVec);
 var
-  I  : TLearnInteger;
-  BA1: TLearnInteger;
-  BA2: TLearnInteger;
-  BY1: TLearnInteger;
-  BY2: TLearnInteger;
-  BX1: TLearnInteger;
-  BX2: TLearnInteger;
-  N  : TLearnInteger;
-  V  : TLearnComplex;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  BA1: TLInt;
+  BA2: TLInt;
+  BY1: TLInt;
+  BY2: TLInt;
+  BX1: TLInt;
+  BX2: TLInt;
+  N  : TLInt;
+  V  : TLComplex;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
   N := I2 - I1 + 1;
   if N <= 0 then
@@ -812,16 +812,16 @@ begin
     end;
 end;
 
-procedure HermitianRank2Update(var A: TLearnComplex2DArray; IsUpper: Boolean;
-  I1: TLearnInteger; I2: TLearnInteger; const X: TLearnComplexArray;
-  const Y: TLearnComplexArray; var T: TLearnComplexArray; Alpha: TLearnComplex);
+procedure HermitianRank2Update(var A: TLComplexMatrix; IsUpper: Boolean;
+  I1: TLInt; I2: TLInt; const X: TLComplexVec;
+  const Y: TLComplexVec; var T: TLComplexVec; Alpha: TLComplex);
 var
-  I  : TLearnInteger;
-  TP1: TLearnInteger;
-  TP2: TLearnInteger;
-  V  : TLearnComplex;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  TP1: TLInt;
+  TP2: TLInt;
+  V  : TLComplex;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
   if IsUpper then
     begin
@@ -875,65 +875,65 @@ begin
     end;
 end;
 
-procedure RMatrixQR(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Tau: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixLQ(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var Tau: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixQR(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Tau: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLQ(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var Tau: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixQRUnpackQ(const A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; const Tau: TLearnFloatArray; QColumns: TLearnInteger; var Q: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixQR(var A: TLMatrix; M: TLInt; N: TLInt; var Tau: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLQ(var A: TLMatrix; M: TLInt; N: TLInt; var Tau: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixQR(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Tau: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLQ(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Tau: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixQRUnpackQ(const A: TLMatrix; M: TLInt; N: TLInt; const Tau: TLVec; QColumns: TLInt; var Q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixQRUnpackR(const A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var R: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixLQUnpackQ(const A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; const Tau: TLearnFloatArray; QRows: TLearnInteger; var Q: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixQRUnpackR(const A: TLMatrix; M: TLInt; N: TLInt; var R: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLQUnpackQ(const A: TLMatrix; M: TLInt; N: TLInt; const Tau: TLVec; QRows: TLInt; var Q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixLQUnpackL(const A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var L: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixQRUnpackQ(const A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; const Tau: TLearnComplexArray; QColumns: TLearnInteger; var Q: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixQRUnpackR(const A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var R: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLQUnpackQ(const A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; const Tau: TLearnComplexArray; QRows: TLearnInteger; var Q: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLQUnpackL(const A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger; var L: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixBD(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; var TauQ: TLearnFloatArray; var TauP: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixBDUnpackQ(const QP: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger; const TauQ: TLearnFloatArray; QColumns: TLearnInteger; var Q: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLQUnpackL(const A: TLMatrix; M: TLInt; N: TLInt; var L: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixQRUnpackQ(const A: TLComplexMatrix; M: TLInt; N: TLInt; const Tau: TLComplexVec; QColumns: TLInt; var Q: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixQRUnpackR(const A: TLComplexMatrix; M: TLInt; N: TLInt; var R: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLQUnpackQ(const A: TLComplexMatrix; M: TLInt; N: TLInt; const Tau: TLComplexVec; QRows: TLInt; var Q: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLQUnpackL(const A: TLComplexMatrix; M: TLInt; N: TLInt; var L: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBD(var A: TLMatrix; M: TLInt; N: TLInt; var TauQ: TLVec; var TauP: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBDUnpackQ(const QP: TLMatrix; M: TLInt; N: TLInt; const TauQ: TLVec; QColumns: TLInt; var Q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixBDMultiplyByQ(const QP: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; const TauQ: TLearnFloatArray; var Z: TLearnFloat2DArray;
-  ZRows: TLearnInteger; ZColumns: TLearnInteger; FromTheRight: Boolean; DoTranspose: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBDMultiplyByQ(const QP: TLMatrix; M: TLInt;
+  N: TLInt; const TauQ: TLVec; var Z: TLMatrix;
+  ZRows: TLInt; ZColumns: TLInt; FromTheRight: Boolean; DoTranspose: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixBDUnpackPT(const QP: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; const TauP: TLearnFloatArray; PTRows: TLearnInteger; var PT: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBDUnpackPT(const QP: TLMatrix; M: TLInt;
+  N: TLInt; const TauP: TLVec; PTRows: TLInt; var PT: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixBDMultiplyByP(const QP: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; const TauP: TLearnFloatArray; var Z: TLearnFloat2DArray;
-  ZRows: TLearnInteger; ZColumns: TLearnInteger; FromTheRight: Boolean; DoTranspose: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBDMultiplyByP(const QP: TLMatrix; M: TLInt;
+  N: TLInt; const TauP: TLVec; var Z: TLMatrix;
+  ZRows: TLInt; ZColumns: TLInt; FromTheRight: Boolean; DoTranspose: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixBDUnpackDiagonals(const B: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; var IsUpper: Boolean; var D: TLearnFloatArray; var E: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBDUnpackDiagonals(const B: TLMatrix; M: TLInt;
+  N: TLInt; var IsUpper: Boolean; var D: TLVec; var E: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixHessenberg(var A: TLearnFloat2DArray; N: TLearnInteger; var Tau: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixHessenberg(var A: TLMatrix; N: TLInt; var Tau: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixHessenbergUnpackQ(const A: TLearnFloat2DArray; N: TLearnInteger; const Tau: TLearnFloatArray; var Q: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixHessenbergUnpackH(const A: TLearnFloat2DArray; N: TLearnInteger; var H: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure SMatrixTD(var A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean; var Tau: TLearnFloatArray; var D: TLearnFloatArray; var E: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure SMatrixTDUnpackQ(const A: TLearnFloat2DArray; const N: TLearnInteger; const IsUpper: Boolean; const Tau: TLearnFloatArray; var Q: TLearnFloat2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure HMatrixTD(var A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean; var Tau: TLearnComplexArray; var D: TLearnFloatArray; var E: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure HMatrixTDUnpackQ(const A: TLearnComplex2DArray; const N: TLearnInteger; const IsUpper: Boolean; const Tau: TLearnComplexArray; var Q: TLearnComplex2DArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixHessenbergUnpackQ(const A: TLMatrix; N: TLInt; const Tau: TLVec; var Q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixHessenbergUnpackH(const A: TLMatrix; N: TLInt; var H: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SMatrixTD(var A: TLMatrix; N: TLInt; IsUpper: Boolean; var Tau: TLVec; var D: TLVec; var E: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SMatrixTDUnpackQ(const A: TLMatrix; const N: TLInt; const IsUpper: Boolean; const Tau: TLVec; var Q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure HMatrixTD(var A: TLComplexMatrix; N: TLInt; IsUpper: Boolean; var Tau: TLComplexVec; var D: TLVec; var E: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure HMatrixTDUnpackQ(const A: TLComplexMatrix; const N: TLInt; const IsUpper: Boolean; const Tau: TLComplexVec; var Q: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixQRBaseCase(var A: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; var WORK: TLearnFloatArray; var T: TLearnFloatArray;
-  var Tau: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixLQBaseCase(var A: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; var WORK: TLearnFloatArray; var T: TLearnFloatArray;
-  var Tau: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixQRBaseCase(var A: TLearnComplex2DArray; M: TLearnInteger;
-  N: TLearnInteger; var WORK: TLearnComplexArray; var T: TLearnComplexArray;
-  var Tau: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLQBaseCase(var A: TLearnComplex2DArray; M: TLearnInteger;
-  N: TLearnInteger; var WORK: TLearnComplexArray; var T: TLearnComplexArray;
-  var Tau: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixBlockReflector(var A: TLearnFloat2DArray; var Tau: TLearnFloatArray;
-  ColumnwiseA: Boolean; LengthA: TLearnInteger; BlockSize: TLearnInteger;
-  var T: TLearnFloat2DArray; var WORK: TLearnFloatArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixBlockReflector(var A: TLearnComplex2DArray;
-  var Tau: TLearnComplexArray; ColumnwiseA: Boolean; LengthA: TLearnInteger;
-  BlockSize: TLearnInteger; var T: TLearnComplex2DArray;
-  var WORK: TLearnComplexArray); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixQRBaseCase(var A: TLMatrix; M: TLInt;
+  N: TLInt; var WORK: TLVec; var T: TLVec;
+  var Tau: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLQBaseCase(var A: TLMatrix; M: TLInt;
+  N: TLInt; var WORK: TLVec; var T: TLVec;
+  var Tau: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixQRBaseCase(var A: TLComplexMatrix; M: TLInt;
+  N: TLInt; var WORK: TLComplexVec; var T: TLComplexVec;
+  var Tau: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLQBaseCase(var A: TLComplexMatrix; M: TLInt;
+  N: TLInt; var WORK: TLComplexVec; var T: TLComplexVec;
+  var Tau: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBlockReflector(var A: TLMatrix; var Tau: TLVec;
+  ColumnwiseA: Boolean; LengthA: TLInt; BlockSize: TLInt;
+  var T: TLMatrix; var WORK: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixBlockReflector(var A: TLComplexMatrix;
+  var Tau: TLComplexVec; ColumnwiseA: Boolean; LengthA: TLInt;
+  BlockSize: TLInt; var T: TLComplexMatrix;
+  var WORK: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -967,25 +967,25 @@ procedure CMatrixBlockReflector(var A: TLearnComplex2DArray;
   where tau is a scalar stored in Tau[I]; v - real vector,
   so that v(0:i-1) = 0, v(i) = 1, v(i+1:m-1) stored in A(i+1:m-1,i).
   ************************************************************************ *)
-procedure RMatrixQR(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger;
-  var Tau: TLearnFloatArray);
+procedure RMatrixQR(var A: TLMatrix; M: TLInt; N: TLInt;
+  var Tau: TLVec);
 var
-  WORK      : TLearnFloatArray;
-  T         : TLearnFloatArray;
-  TauBuf    : TLearnFloatArray;
-  MinMN     : TLearnInteger;
-  TmpA      : TLearnFloat2DArray;
-  TmpT      : TLearnFloat2DArray;
-  TmpR      : TLearnFloat2DArray;
-  BlockStart: TLearnInteger;
-  BlockSize : TLearnInteger;
-  RowsCount : TLearnInteger;
-  I         : TLearnInteger;
-  J         : TLearnInteger;
-  K         : TLearnInteger;
-  V         : TLearnFloat;
-  i_        : TLearnInteger;
-  i1_       : TLearnInteger;
+  WORK      : TLVec;
+  T         : TLVec;
+  TauBuf    : TLVec;
+  MinMN     : TLInt;
+  TmpA      : TLMatrix;
+  TmpT      : TLMatrix;
+  TmpR      : TLMatrix;
+  BlockStart: TLInt;
+  BlockSize : TLInt;
+  RowsCount : TLInt;
+  I         : TLInt;
+  J         : TLInt;
+  K         : TLInt;
+  V         : TLFloat;
+  i_        : TLInt;
+  i1_       : TLInt;
 begin
   if (M <= 0) or (N <= 0) then
     begin
@@ -1122,23 +1122,23 @@ end;
   where tau is a scalar stored in Tau[I]; v - real vector, so that v(0:i-1)=0,
   v(i) = 1, v(i+1:n-1) stored in A(i,i+1:n-1).
   ************************************************************************ *)
-procedure RMatrixLQ(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger;
-  var Tau: TLearnFloatArray);
+procedure RMatrixLQ(var A: TLMatrix; M: TLInt; N: TLInt;
+  var Tau: TLVec);
 var
-  WORK        : TLearnFloatArray;
-  T           : TLearnFloatArray;
-  TauBuf      : TLearnFloatArray;
-  MinMN       : TLearnInteger;
-  TmpA        : TLearnFloat2DArray;
-  TmpT        : TLearnFloat2DArray;
-  TmpR        : TLearnFloat2DArray;
-  BlockStart  : TLearnInteger;
-  BlockSize   : TLearnInteger;
-  ColumnsCount: TLearnInteger;
-  I           : TLearnInteger;
-  J           : TLearnInteger;
-  K           : TLearnInteger;
-  V           : TLearnFloat;
+  WORK        : TLVec;
+  T           : TLVec;
+  TauBuf      : TLVec;
+  MinMN       : TLInt;
+  TmpA        : TLMatrix;
+  TmpT        : TLMatrix;
+  TmpR        : TLMatrix;
+  BlockStart  : TLInt;
+  BlockSize   : TLInt;
+  ColumnsCount: TLInt;
+  I           : TLInt;
+  J           : TLInt;
+  K           : TLInt;
+  V           : TLFloat;
 begin
   if (M <= 0) or (N <= 0) then
     begin
@@ -1240,7 +1240,7 @@ begin
 end;
 
 (* ************************************************************************
-  QR decomposition of a rectangular TLearnComplex matrix of size MxN
+  QR decomposition of a rectangular TLComplex matrix of size MxN
 
   Input parameters:
   A   -   matrix A whose indexes range within [0..M-1, 0..N-1]
@@ -1255,25 +1255,25 @@ end;
   Matrix A is represented as A = QR, where Q is an orthogonal matrix of size
   MxM, R - upper triangular (or upper trapezoid) matrix of size MxN.
   ************************************************************************ *)
-procedure CMatrixQR(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger;
-  var Tau: TLearnComplexArray);
+procedure CMatrixQR(var A: TLComplexMatrix; M: TLInt; N: TLInt;
+  var Tau: TLComplexVec);
 var
-  WORK      : TLearnComplexArray;
-  T         : TLearnComplexArray;
-  TauBuf    : TLearnComplexArray;
-  MinMN     : TLearnInteger;
-  TmpA      : TLearnComplex2DArray;
-  TmpT      : TLearnComplex2DArray;
-  TmpR      : TLearnComplex2DArray;
-  BlockStart: TLearnInteger;
-  BlockSize : TLearnInteger;
-  RowsCount : TLearnInteger;
-  I         : TLearnInteger;
-  J         : TLearnInteger;
-  K         : TLearnInteger;
-  V         : TLearnComplex;
-  i_        : TLearnInteger;
-  i1_       : TLearnInteger;
+  WORK      : TLComplexVec;
+  T         : TLComplexVec;
+  TauBuf    : TLComplexVec;
+  MinMN     : TLInt;
+  TmpA      : TLComplexMatrix;
+  TmpT      : TLComplexMatrix;
+  TmpR      : TLComplexMatrix;
+  BlockStart: TLInt;
+  BlockSize : TLInt;
+  RowsCount : TLInt;
+  I         : TLInt;
+  J         : TLInt;
+  K         : TLInt;
+  V         : TLComplex;
+  i_        : TLInt;
+  i1_       : TLInt;
 begin
   if (M <= 0) or (N <= 0) then
     begin
@@ -1384,7 +1384,7 @@ begin
 end;
 
 (* ************************************************************************
-  LQ decomposition of a rectangular TLearnComplex matrix of size MxN
+  LQ decomposition of a rectangular TLComplex matrix of size MxN
 
   Input parameters:
   A   -   matrix A whose indexes range within [0..M-1, 0..N-1]
@@ -1399,25 +1399,25 @@ end;
   Matrix A is represented as A = LQ, where Q is an orthogonal matrix of size
   MxM, L - lower triangular (or lower trapezoid) matrix of size MxN.
   ************************************************************************ *)
-procedure CMatrixLQ(var A: TLearnComplex2DArray; M: TLearnInteger; N: TLearnInteger;
-  var Tau: TLearnComplexArray);
+procedure CMatrixLQ(var A: TLComplexMatrix; M: TLInt; N: TLInt;
+  var Tau: TLComplexVec);
 var
-  WORK        : TLearnComplexArray;
-  T           : TLearnComplexArray;
-  TauBuf      : TLearnComplexArray;
-  MinMN       : TLearnInteger;
-  TmpA        : TLearnComplex2DArray;
-  TmpT        : TLearnComplex2DArray;
-  TmpR        : TLearnComplex2DArray;
-  BlockStart  : TLearnInteger;
-  BlockSize   : TLearnInteger;
-  ColumnsCount: TLearnInteger;
-  I           : TLearnInteger;
-  J           : TLearnInteger;
-  K           : TLearnInteger;
-  V           : TLearnComplex;
-  i_          : TLearnInteger;
-  i1_         : TLearnInteger;
+  WORK        : TLComplexVec;
+  T           : TLComplexVec;
+  TauBuf      : TLComplexVec;
+  MinMN       : TLInt;
+  TmpA        : TLComplexMatrix;
+  TmpT        : TLComplexMatrix;
+  TmpR        : TLComplexMatrix;
+  BlockStart  : TLInt;
+  BlockSize   : TLInt;
+  ColumnsCount: TLInt;
+  I           : TLInt;
+  J           : TLInt;
+  K           : TLInt;
+  V           : TLComplex;
+  i_          : TLInt;
+  i1_         : TLInt;
 begin
   if (M <= 0) or (N <= 0) then
     begin
@@ -1543,27 +1543,27 @@ end;
   Array whose indexes range within [0..M-1, 0..QColumns-1].
   If QColumns=0, the array remains unchanged.
   ************************************************************************ *)
-procedure RMatrixQRUnpackQ(const A: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; const Tau: TLearnFloatArray; QColumns: TLearnInteger;
-  var Q: TLearnFloat2DArray);
+procedure RMatrixQRUnpackQ(const A: TLMatrix; M: TLInt;
+  N: TLInt; const Tau: TLVec; QColumns: TLInt;
+  var Q: TLMatrix);
 var
-  WORK      : TLearnFloatArray;
-  T         : TLearnFloatArray;
-  TauBuf    : TLearnFloatArray;
-  MinMN     : TLearnInteger;
-  RefCnt    : TLearnInteger;
-  TmpA      : TLearnFloat2DArray;
-  TmpT      : TLearnFloat2DArray;
-  TmpR      : TLearnFloat2DArray;
-  BlockStart: TLearnInteger;
-  BlockSize : TLearnInteger;
-  RowsCount : TLearnInteger;
-  I         : TLearnInteger;
-  J         : TLearnInteger;
-  K         : TLearnInteger;
-  V         : TLearnFloat;
-  i_        : TLearnInteger;
-  i1_       : TLearnInteger;
+  WORK      : TLVec;
+  T         : TLVec;
+  TauBuf    : TLVec;
+  MinMN     : TLInt;
+  RefCnt    : TLInt;
+  TmpA      : TLMatrix;
+  TmpT      : TLMatrix;
+  TmpR      : TLMatrix;
+  BlockStart: TLInt;
+  BlockSize : TLInt;
+  RowsCount : TLInt;
+  I         : TLInt;
+  J         : TLInt;
+  K         : TLInt;
+  V         : TLFloat;
+  i_        : TLInt;
+  i1_       : TLInt;
 begin
   Assert(QColumns <= M, 'UnpackQFromQR: QColumns>M!');
   if (M <= 0) or (N <= 0) or (QColumns <= 0) then
@@ -1687,11 +1687,11 @@ end;
   Output parameters:
   R       -   matrix R, array[0..M-1, 0..N-1].
   ************************************************************************ *)
-procedure RMatrixQRUnpackR(const A: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; var R: TLearnFloat2DArray);
+procedure RMatrixQRUnpackR(const A: TLMatrix; M: TLInt;
+  N: TLInt; var R: TLMatrix);
 var
-  I: TLearnInteger;
-  K: TLearnInteger;
+  I: TLInt;
+  K: TLInt;
 begin
   if (M <= 0) or (N <= 0) then
     begin
@@ -1736,25 +1736,25 @@ end;
   within [0..QRows-1, 0..N-1]. If QRows=0, the array remains
   unchanged.
   ************************************************************************ *)
-procedure RMatrixLQUnpackQ(const A: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; const Tau: TLearnFloatArray; QRows: TLearnInteger;
-  var Q: TLearnFloat2DArray);
+procedure RMatrixLQUnpackQ(const A: TLMatrix; M: TLInt;
+  N: TLInt; const Tau: TLVec; QRows: TLInt;
+  var Q: TLMatrix);
 var
-  WORK        : TLearnFloatArray;
-  T           : TLearnFloatArray;
-  TauBuf      : TLearnFloatArray;
-  MinMN       : TLearnInteger;
-  RefCnt      : TLearnInteger;
-  TmpA        : TLearnFloat2DArray;
-  TmpT        : TLearnFloat2DArray;
-  TmpR        : TLearnFloat2DArray;
-  BlockStart  : TLearnInteger;
-  BlockSize   : TLearnInteger;
-  ColumnsCount: TLearnInteger;
-  I           : TLearnInteger;
-  J           : TLearnInteger;
-  K           : TLearnInteger;
-  V           : TLearnFloat;
+  WORK        : TLVec;
+  T           : TLVec;
+  TauBuf      : TLVec;
+  MinMN       : TLInt;
+  RefCnt      : TLInt;
+  TmpA        : TLMatrix;
+  TmpT        : TLMatrix;
+  TmpR        : TLMatrix;
+  BlockStart  : TLInt;
+  BlockSize   : TLInt;
+  ColumnsCount: TLInt;
+  I           : TLInt;
+  J           : TLInt;
+  K           : TLInt;
+  V           : TLFloat;
 begin
   Assert(QRows <= N, 'RMatrixLQUnpackQ: QRows>N!');
   if (M <= 0) or (N <= 0) or (QRows <= 0) then
@@ -1874,11 +1874,11 @@ end;
   Output parameters:
   L       -   matrix L, array[0..M-1, 0..N-1].
   ************************************************************************ *)
-procedure RMatrixLQUnpackL(const A: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; var L: TLearnFloat2DArray);
+procedure RMatrixLQUnpackL(const A: TLMatrix; M: TLInt;
+  N: TLInt; var L: TLMatrix);
 var
-  I: TLearnInteger;
-  K: TLearnInteger;
+  I: TLInt;
+  K: TLInt;
 begin
   if (M <= 0) or (N <= 0) then
     begin
@@ -1907,7 +1907,7 @@ begin
 end;
 
 (* ************************************************************************
-  Partial unpacking of matrix Q from QR decomposition of a TLearnComplex matrix A.
+  Partial unpacking of matrix Q from QR decomposition of a TLComplex matrix A.
 
   Input parameters:
   A           -   matrices Q and R in compact form.
@@ -1923,27 +1923,27 @@ end;
   Array whose index ranges within [0..M-1, 0..QColumns-1].
   If QColumns=0, array isn't changed.
   ************************************************************************ *)
-procedure CMatrixQRUnpackQ(const A: TLearnComplex2DArray; M: TLearnInteger;
-  N: TLearnInteger; const Tau: TLearnComplexArray; QColumns: TLearnInteger;
-  var Q: TLearnComplex2DArray);
+procedure CMatrixQRUnpackQ(const A: TLComplexMatrix; M: TLInt;
+  N: TLInt; const Tau: TLComplexVec; QColumns: TLInt;
+  var Q: TLComplexMatrix);
 var
-  WORK      : TLearnComplexArray;
-  T         : TLearnComplexArray;
-  TauBuf    : TLearnComplexArray;
-  MinMN     : TLearnInteger;
-  RefCnt    : TLearnInteger;
-  TmpA      : TLearnComplex2DArray;
-  TmpT      : TLearnComplex2DArray;
-  TmpR      : TLearnComplex2DArray;
-  BlockStart: TLearnInteger;
-  BlockSize : TLearnInteger;
-  RowsCount : TLearnInteger;
-  I         : TLearnInteger;
-  J         : TLearnInteger;
-  K         : TLearnInteger;
-  V         : TLearnComplex;
-  i_        : TLearnInteger;
-  i1_       : TLearnInteger;
+  WORK      : TLComplexVec;
+  T         : TLComplexVec;
+  TauBuf    : TLComplexVec;
+  MinMN     : TLInt;
+  RefCnt    : TLInt;
+  TmpA      : TLComplexMatrix;
+  TmpT      : TLComplexMatrix;
+  TmpR      : TLComplexMatrix;
+  BlockStart: TLInt;
+  BlockSize : TLInt;
+  RowsCount : TLInt;
+  I         : TLInt;
+  J         : TLInt;
+  K         : TLInt;
+  V         : TLComplex;
+  i_        : TLInt;
+  i1_       : TLInt;
 begin
   Assert(QColumns <= M, 'UnpackQFromQR: QColumns>M!');
   if (M <= 0) or (N <= 0) then
@@ -2074,12 +2074,12 @@ end;
   Output parameters:
   R       -   matrix R, array[0..M-1, 0..N-1].
   ************************************************************************ *)
-procedure CMatrixQRUnpackR(const A: TLearnComplex2DArray; M: TLearnInteger;
-  N: TLearnInteger; var R: TLearnComplex2DArray);
+procedure CMatrixQRUnpackR(const A: TLComplexMatrix; M: TLInt;
+  N: TLInt; var R: TLComplexMatrix);
 var
-  I : TLearnInteger;
-  K : TLearnInteger;
-  i_: TLearnInteger;
+  I : TLInt;
+  K : TLInt;
+  i_: TLInt;
 begin
   if (M <= 0) or (N <= 0) then
     begin
@@ -2114,7 +2114,7 @@ begin
 end;
 
 (* ************************************************************************
-  Partial unpacking of matrix Q from LQ decomposition of a TLearnComplex matrix A.
+  Partial unpacking of matrix Q from LQ decomposition of a TLComplex matrix A.
 
   Input parameters:
   A           -   matrices Q and R in compact form.
@@ -2130,27 +2130,27 @@ end;
   Array whose index ranges within [0..QRows-1, 0..N-1].
   If QRows=0, array isn't changed.
   ************************************************************************ *)
-procedure CMatrixLQUnpackQ(const A: TLearnComplex2DArray; M: TLearnInteger;
-  N: TLearnInteger; const Tau: TLearnComplexArray; QRows: TLearnInteger;
-  var Q: TLearnComplex2DArray);
+procedure CMatrixLQUnpackQ(const A: TLComplexMatrix; M: TLInt;
+  N: TLInt; const Tau: TLComplexVec; QRows: TLInt;
+  var Q: TLComplexMatrix);
 var
-  WORK        : TLearnComplexArray;
-  T           : TLearnComplexArray;
-  TauBuf      : TLearnComplexArray;
-  MinMN       : TLearnInteger;
-  RefCnt      : TLearnInteger;
-  TmpA        : TLearnComplex2DArray;
-  TmpT        : TLearnComplex2DArray;
-  TmpR        : TLearnComplex2DArray;
-  BlockStart  : TLearnInteger;
-  BlockSize   : TLearnInteger;
-  ColumnsCount: TLearnInteger;
-  I           : TLearnInteger;
-  J           : TLearnInteger;
-  K           : TLearnInteger;
-  V           : TLearnComplex;
-  i_          : TLearnInteger;
-  i1_         : TLearnInteger;
+  WORK        : TLComplexVec;
+  T           : TLComplexVec;
+  TauBuf      : TLComplexVec;
+  MinMN       : TLInt;
+  RefCnt      : TLInt;
+  TmpA        : TLComplexMatrix;
+  TmpT        : TLComplexMatrix;
+  TmpR        : TLComplexMatrix;
+  BlockStart  : TLInt;
+  BlockSize   : TLInt;
+  ColumnsCount: TLInt;
+  I           : TLInt;
+  J           : TLInt;
+  K           : TLInt;
+  V           : TLComplex;
+  i_          : TLInt;
+  i1_         : TLInt;
 begin
   if (M <= 0) or (N <= 0) then
     begin
@@ -2280,12 +2280,12 @@ end;
   Output parameters:
   L       -   matrix L, array[0..M-1, 0..N-1].
   ************************************************************************ *)
-procedure CMatrixLQUnpackL(const A: TLearnComplex2DArray; M: TLearnInteger;
-  N: TLearnInteger; var L: TLearnComplex2DArray);
+procedure CMatrixLQUnpackL(const A: TLComplexMatrix; M: TLInt;
+  N: TLInt; var L: TLComplexMatrix);
 var
-  I : TLearnInteger;
-  K : TLearnInteger;
-  i_: TLearnInteger;
+  I : TLInt;
+  K : TLInt;
+  i_: TLInt;
 begin
   if (M <= 0) or (N <= 0) then
     begin
@@ -2369,17 +2369,17 @@ end;
   Here vi and ui are vectors which form H(i) and G(i), and d and e -
   are the diagonal and off-diagonal elements of matrix B.
   ************************************************************************ *)
-procedure RMatrixBD(var A: TLearnFloat2DArray; M: TLearnInteger; N: TLearnInteger;
-  var TauQ: TLearnFloatArray; var TauP: TLearnFloatArray);
+procedure RMatrixBD(var A: TLMatrix; M: TLInt; N: TLInt;
+  var TauQ: TLVec; var TauP: TLVec);
 var
-  WORK : TLearnFloatArray;
-  T    : TLearnFloatArray;
-  MinMN: TLearnInteger;
-  MaxMN: TLearnInteger;
-  I    : TLearnInteger;
-  LTau : TLearnFloat;
-  i_   : TLearnInteger;
-  i1_  : TLearnInteger;
+  WORK : TLVec;
+  T    : TLVec;
+  MinMN: TLInt;
+  MaxMN: TLInt;
+  I    : TLInt;
+  LTau : TLFloat;
+  i_   : TLInt;
+  i1_  : TLInt;
 begin
 
   //
@@ -2537,12 +2537,12 @@ end;
   Array[0..M-1, 0..QColumns-1]
   If QColumns=0, the array is not modified.
   ************************************************************************ *)
-procedure RMatrixBDUnpackQ(const QP: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; const TauQ: TLearnFloatArray; QColumns: TLearnInteger;
-  var Q: TLearnFloat2DArray);
+procedure RMatrixBDUnpackQ(const QP: TLMatrix; M: TLInt;
+  N: TLInt; const TauQ: TLVec; QColumns: TLInt;
+  var Q: TLMatrix);
 var
-  I: TLearnInteger;
-  J: TLearnInteger;
+  I: TLInt;
+  J: TLInt;
 begin
   Assert(QColumns <= M, 'RMatrixBDUnpackQ: QColumns>M!');
   Assert(QColumns >= 0, 'RMatrixBDUnpackQ: QColumns<0!');
@@ -2606,20 +2606,20 @@ end;
   Array[0..ZRows-1,0..ZColumns-1]
   If ZRows=0 or ZColumns=0, the array is not modified.
   ************************************************************************ *)
-procedure RMatrixBDMultiplyByQ(const QP: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; const TauQ: TLearnFloatArray; var Z: TLearnFloat2DArray;
-  ZRows: TLearnInteger; ZColumns: TLearnInteger; FromTheRight: Boolean;
+procedure RMatrixBDMultiplyByQ(const QP: TLMatrix; M: TLInt;
+  N: TLInt; const TauQ: TLVec; var Z: TLMatrix;
+  ZRows: TLInt; ZColumns: TLInt; FromTheRight: Boolean;
   DoTranspose: Boolean);
 var
-  I    : TLearnInteger;
-  I1   : TLearnInteger;
-  I2   : TLearnInteger;
-  IStep: TLearnInteger;
-  V    : TLearnFloatArray;
-  WORK : TLearnFloatArray;
-  MX   : TLearnInteger;
-  i_   : TLearnInteger;
-  i1_  : TLearnInteger;
+  I    : TLInt;
+  I1   : TLInt;
+  I2   : TLInt;
+  IStep: TLInt;
+  V    : TLVec;
+  WORK : TLVec;
+  MX   : TLInt;
+  i_   : TLInt;
+  i1_  : TLInt;
 begin
   if (M <= 0) or (N <= 0) or (ZRows <= 0) or (ZColumns <= 0) then
     begin
@@ -2759,12 +2759,12 @@ end;
   Array[0..PTRows-1, 0..N-1]
   If PTRows=0, the array is not modified.
   ************************************************************************ *)
-procedure RMatrixBDUnpackPT(const QP: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; const TauP: TLearnFloatArray; PTRows: TLearnInteger;
-  var PT: TLearnFloat2DArray);
+procedure RMatrixBDUnpackPT(const QP: TLMatrix; M: TLInt;
+  N: TLInt; const TauP: TLVec; PTRows: TLInt;
+  var PT: TLMatrix);
 var
-  I: TLearnInteger;
-  J: TLearnInteger;
+  I: TLInt;
+  J: TLInt;
 begin
   Assert(PTRows <= N, 'RMatrixBDUnpackPT: PTRows>N!');
   Assert(PTRows >= 0, 'RMatrixBDUnpackPT: PTRows<0!');
@@ -2828,18 +2828,18 @@ end;
   Array whose indexes range within [0..ZRows-1,0..ZColumns-1].
   If ZRows=0 or ZColumns=0, the array is not modified.
   ************************************************************************ *)
-procedure RMatrixBDMultiplyByP(const QP: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; const TauP: TLearnFloatArray; var Z: TLearnFloat2DArray;
-  ZRows: TLearnInteger; ZColumns: TLearnInteger; FromTheRight: Boolean;
+procedure RMatrixBDMultiplyByP(const QP: TLMatrix; M: TLInt;
+  N: TLInt; const TauP: TLVec; var Z: TLMatrix;
+  ZRows: TLInt; ZColumns: TLInt; FromTheRight: Boolean;
   DoTranspose: Boolean);
 var
-  I    : TLearnInteger;
-  V    : TLearnFloatArray;
-  WORK : TLearnFloatArray;
-  MX   : TLearnInteger;
-  I1   : TLearnInteger;
-  I2   : TLearnInteger;
-  IStep: TLearnInteger;
+  I    : TLInt;
+  V    : TLVec;
+  WORK : TLVec;
+  MX   : TLInt;
+  I1   : TLInt;
+  I2   : TLInt;
+  IStep: TLInt;
 begin
   if (M <= 0) or (N <= 0) or (ZRows <= 0) or (ZColumns <= 0) then
     begin
@@ -2972,11 +2972,11 @@ end;
   Array index ranges within [0..Min(M,N)-1], the last
   element is not used.
   ************************************************************************ *)
-procedure RMatrixBDUnpackDiagonals(const B: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; var IsUpper: Boolean; var D: TLearnFloatArray;
-  var E: TLearnFloatArray);
+procedure RMatrixBDUnpackDiagonals(const B: TLMatrix; M: TLInt;
+  N: TLInt; var IsUpper: Boolean; var D: TLVec;
+  var E: TLVec);
 var
-  I: TLearnInteger;
+  I: TLInt;
 begin
   IsUpper := M >= N;
   if (M <= 0) or (N <= 0) then
@@ -3040,15 +3040,15 @@ end;
   where tau is a scalar stored in Tau[I]; v - is a real vector,
   so that v(0:i) = 0, v(i+1) = 1, v(i+2:n-1) stored in A(i+2:n-1,i).
   ************************************************************************ *)
-procedure RMatrixHessenberg(var A: TLearnFloat2DArray; N: TLearnInteger;
-  var Tau: TLearnFloatArray);
+procedure RMatrixHessenberg(var A: TLMatrix; N: TLInt;
+  var Tau: TLVec);
 var
-  I   : TLearnInteger;
-  V   : TLearnFloat;
-  T   : TLearnFloatArray;
-  WORK: TLearnFloatArray;
-  i_  : TLearnInteger;
-  i1_ : TLearnInteger;
+  I   : TLInt;
+  V   : TLFloat;
+  T   : TLVec;
+  WORK: TLVec;
+  i_  : TLInt;
+  i1_ : TLInt;
 begin
   Assert(N >= 0, 'RMatrixHessenberg: incorrect N!');
 
@@ -3109,15 +3109,15 @@ end;
   Q   -   matrix Q.
   Array whose indexes range within [0..N-1, 0..N-1].
   ************************************************************************ *)
-procedure RMatrixHessenbergUnpackQ(const A: TLearnFloat2DArray; N: TLearnInteger;
-  const Tau: TLearnFloatArray; var Q: TLearnFloat2DArray);
+procedure RMatrixHessenbergUnpackQ(const A: TLMatrix; N: TLInt;
+  const Tau: TLVec; var Q: TLMatrix);
 var
-  I   : TLearnInteger;
-  J   : TLearnInteger;
-  V   : TLearnFloatArray;
-  WORK: TLearnFloatArray;
-  i_  : TLearnInteger;
-  i1_ : TLearnInteger;
+  I   : TLInt;
+  J   : TLInt;
+  V   : TLVec;
+  WORK: TLVec;
+  i_  : TLInt;
+  i1_ : TLInt;
 begin
   if N = 0 then
     begin
@@ -3180,13 +3180,13 @@ end;
   Output parameters:
   H   -   matrix H. Array whose indexes range within [0..N-1, 0..N-1].
   ************************************************************************ *)
-procedure RMatrixHessenbergUnpackH(const A: TLearnFloat2DArray; N: TLearnInteger;
-  var H: TLearnFloat2DArray);
+procedure RMatrixHessenbergUnpackH(const A: TLMatrix; N: TLInt;
+  var H: TLMatrix);
 var
-  I   : TLearnInteger;
-  J   : TLearnInteger;
-  V   : TLearnFloatArray;
-  WORK: TLearnFloatArray;
+  I   : TLInt;
+  J   : TLInt;
+  V   : TLVec;
+  WORK: TLVec;
 begin
   if N = 0 then
     begin
@@ -3272,18 +3272,18 @@ end;
   where d and e denote diagonal and off-diagonal elements of T, and vi
   denotes an element of the vector defining H(i).
   ************************************************************************ *)
-procedure SMatrixTD(var A: TLearnFloat2DArray; N: TLearnInteger; IsUpper: Boolean;
-  var Tau: TLearnFloatArray; var D: TLearnFloatArray; var E: TLearnFloatArray);
+procedure SMatrixTD(var A: TLMatrix; N: TLInt; IsUpper: Boolean;
+  var Tau: TLVec; var D: TLVec; var E: TLVec);
 var
-  I    : TLearnInteger;
-  Alpha: TLearnFloat;
-  TAUI : TLearnFloat;
-  V    : TLearnFloat;
-  T    : TLearnFloatArray;
-  T2   : TLearnFloatArray;
-  T3   : TLearnFloatArray;
-  i_   : TLearnInteger;
-  i1_  : TLearnInteger;
+  I    : TLInt;
+  Alpha: TLFloat;
+  TAUI : TLFloat;
+  V    : TLFloat;
+  T    : TLVec;
+  T2   : TLVec;
+  T3   : TLVec;
+  i_   : TLInt;
+  i1_  : TLInt;
 begin
   if N <= 0 then
     begin
@@ -3482,15 +3482,15 @@ end;
   Q       -   transformation matrix.
   array with elements [0..N-1, 0..N-1].
   ************************************************************************ *)
-procedure SMatrixTDUnpackQ(const A: TLearnFloat2DArray; const N: TLearnInteger;
-  const IsUpper: Boolean; const Tau: TLearnFloatArray; var Q: TLearnFloat2DArray);
+procedure SMatrixTDUnpackQ(const A: TLMatrix; const N: TLInt;
+  const IsUpper: Boolean; const Tau: TLVec; var Q: TLMatrix);
 var
-  I   : TLearnInteger;
-  J   : TLearnInteger;
-  V   : TLearnFloatArray;
-  WORK: TLearnFloatArray;
-  i_  : TLearnInteger;
-  i1_ : TLearnInteger;
+  I   : TLInt;
+  J   : TLInt;
+  V   : TLVec;
+  WORK: TLVec;
+  i_  : TLInt;
+  i1_ : TLInt;
 begin
   if N = 0 then
     begin
@@ -3598,7 +3598,7 @@ end;
 
   H(i) = I - tau * v * v'
 
-  where tau is a TLearnComplex scalar, and v is a TLearnComplex vector with
+  where tau is a TLComplex scalar, and v is a TLComplex vector with
   v(i+1:n-1) = 0, v(i) = 1, v(0:i-1) is stored on exit in
   A(0:i-1,i+1), and tau in TAU(i).
 
@@ -3611,7 +3611,7 @@ end;
 
   H(i) = I - tau * v * v'
 
-  where tau is a TLearnComplex scalar, and v is a TLearnComplex vector with
+  where tau is a TLComplex scalar, and v is a TLComplex vector with
   v(0:i) = 0, v(i+1) = 1, v(i+2:n-1) is stored on exit in A(i+2:n-1,i),
   and tau in TAU(i).
 
@@ -3629,18 +3629,18 @@ end;
   where d and e denote diagonal and off-diagonal elements of T, and vi
   denotes an element of the vector defining H(i).
   ************************************************************************ *)
-procedure HMatrixTD(var A: TLearnComplex2DArray; N: TLearnInteger; IsUpper: Boolean;
-  var Tau: TLearnComplexArray; var D: TLearnFloatArray; var E: TLearnFloatArray);
+procedure HMatrixTD(var A: TLComplexMatrix; N: TLInt; IsUpper: Boolean;
+  var Tau: TLComplexVec; var D: TLVec; var E: TLVec);
 var
-  I    : TLearnInteger;
-  Alpha: TLearnComplex;
-  TAUI : TLearnComplex;
-  V    : TLearnComplex;
-  T    : TLearnComplexArray;
-  T2   : TLearnComplexArray;
-  T3   : TLearnComplexArray;
-  i_   : TLearnInteger;
-  i1_  : TLearnInteger;
+  I    : TLInt;
+  Alpha: TLComplex;
+  TAUI : TLComplex;
+  V    : TLComplex;
+  T    : TLComplexVec;
+  T2   : TLComplexVec;
+  T3   : TLComplexVec;
+  i_   : TLInt;
+  i1_  : TLInt;
 begin
   if N <= 0 then
     begin
@@ -3869,15 +3869,15 @@ end;
   Q       -   transformation matrix.
   array with elements [0..N-1, 0..N-1].
   ************************************************************************ *)
-procedure HMatrixTDUnpackQ(const A: TLearnComplex2DArray; const N: TLearnInteger;
-  const IsUpper: Boolean; const Tau: TLearnComplexArray; var Q: TLearnComplex2DArray);
+procedure HMatrixTDUnpackQ(const A: TLComplexMatrix; const N: TLInt;
+  const IsUpper: Boolean; const Tau: TLComplexVec; var Q: TLComplexMatrix);
 var
-  I   : TLearnInteger;
-  J   : TLearnInteger;
-  V   : TLearnComplexArray;
-  WORK: TLearnComplexArray;
-  i_  : TLearnInteger;
-  i1_ : TLearnInteger;
+  I   : TLInt;
+  J   : TLInt;
+  V   : TLComplexVec;
+  WORK: TLComplexVec;
+  i_  : TLInt;
+  i1_ : TLInt;
 begin
   if N = 0 then
     begin
@@ -3956,16 +3956,16 @@ end;
 (* ************************************************************************
   Base case for real QR
   ************************************************************************ *)
-procedure RMatrixQRBaseCase(var A: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; var WORK: TLearnFloatArray; var T: TLearnFloatArray;
-  var Tau: TLearnFloatArray);
+procedure RMatrixQRBaseCase(var A: TLMatrix; M: TLInt;
+  N: TLInt; var WORK: TLVec; var T: TLVec;
+  var Tau: TLVec);
 var
-  I    : TLearnInteger;
-  K    : TLearnInteger;
-  MinMN: TLearnInteger;
-  Tmp  : TLearnFloat;
-  i_   : TLearnInteger;
-  i1_  : TLearnInteger;
+  I    : TLInt;
+  K    : TLInt;
+  MinMN: TLInt;
+  Tmp  : TLFloat;
+  i_   : TLInt;
+  i1_  : TLInt;
 begin
   MinMN := Min(M, N);
 
@@ -4008,14 +4008,14 @@ end;
 (* ************************************************************************
   Base case for real LQ
   ************************************************************************ *)
-procedure RMatrixLQBaseCase(var A: TLearnFloat2DArray; M: TLearnInteger;
-  N: TLearnInteger; var WORK: TLearnFloatArray; var T: TLearnFloatArray;
-  var Tau: TLearnFloatArray);
+procedure RMatrixLQBaseCase(var A: TLMatrix; M: TLInt;
+  N: TLInt; var WORK: TLVec; var T: TLVec;
+  var Tau: TLVec);
 var
-  I    : TLearnInteger;
-  K    : TLearnInteger;
-  MinMN: TLearnInteger;
-  Tmp  : TLearnFloat;
+  I    : TLInt;
+  K    : TLInt;
+  MinMN: TLInt;
+  Tmp  : TLFloat;
 begin
   MinMN := Min(M, N);
   K := Min(M, N);
@@ -4044,19 +4044,19 @@ begin
 end;
 
 (* ************************************************************************
-  Base case for TLearnComplex QR
+  Base case for TLComplex QR
   ************************************************************************ *)
-procedure CMatrixQRBaseCase(var A: TLearnComplex2DArray; M: TLearnInteger;
-  N: TLearnInteger; var WORK: TLearnComplexArray; var T: TLearnComplexArray;
-  var Tau: TLearnComplexArray);
+procedure CMatrixQRBaseCase(var A: TLComplexMatrix; M: TLInt;
+  N: TLInt; var WORK: TLComplexVec; var T: TLComplexVec;
+  var Tau: TLComplexVec);
 var
-  I    : TLearnInteger;
-  K    : TLearnInteger;
-  MMI  : TLearnInteger;
-  MinMN: TLearnInteger;
-  Tmp  : TLearnComplex;
-  i_   : TLearnInteger;
-  i1_  : TLearnInteger;
+  I    : TLInt;
+  K    : TLInt;
+  MMI  : TLInt;
+  MinMN: TLInt;
+  Tmp  : TLComplex;
+  i_   : TLInt;
+  i1_  : TLInt;
 begin
   MinMN := Min(M, N);
   if MinMN <= 0 then
@@ -4103,17 +4103,17 @@ begin
 end;
 
 (* ************************************************************************
-  Base case for TLearnComplex LQ
+  Base case for TLComplex LQ
   ************************************************************************ *)
-procedure CMatrixLQBaseCase(var A: TLearnComplex2DArray; M: TLearnInteger;
-  N: TLearnInteger; var WORK: TLearnComplexArray; var T: TLearnComplexArray;
-  var Tau: TLearnComplexArray);
+procedure CMatrixLQBaseCase(var A: TLComplexMatrix; M: TLInt;
+  N: TLInt; var WORK: TLComplexVec; var T: TLComplexVec;
+  var Tau: TLComplexVec);
 var
-  I    : TLearnInteger;
-  MinMN: TLearnInteger;
-  Tmp  : TLearnComplex;
-  i_   : TLearnInteger;
-  i1_  : TLearnInteger;
+  I    : TLInt;
+  MinMN: TLInt;
+  Tmp  : TLComplex;
+  i_   : TLInt;
+  i1_  : TLInt;
 begin
   MinMN := Min(M, N);
   if MinMN <= 0 then
@@ -4181,16 +4181,16 @@ end;
   submatrix stores triangular factor on exit.
   WORK        -   array[BlockSize]
   ************************************************************************ *)
-procedure RMatrixBlockReflector(var A: TLearnFloat2DArray; var Tau: TLearnFloatArray;
-  ColumnwiseA: Boolean; LengthA: TLearnInteger; BlockSize: TLearnInteger;
-  var T: TLearnFloat2DArray; var WORK: TLearnFloatArray);
+procedure RMatrixBlockReflector(var A: TLMatrix; var Tau: TLVec;
+  ColumnwiseA: Boolean; LengthA: TLInt; BlockSize: TLInt;
+  var T: TLMatrix; var WORK: TLVec);
 var
-  I  : TLearnInteger;
-  J  : TLearnInteger;
-  K  : TLearnInteger;
-  V  : TLearnFloat;
-  i_ : TLearnInteger;
-  i1_: TLearnInteger;
+  I  : TLInt;
+  J  : TLInt;
+  K  : TLInt;
+  V  : TLFloat;
+  i_ : TLInt;
+  i1_: TLInt;
 begin
 
   //
@@ -4301,19 +4301,19 @@ begin
 end;
 
 (* ************************************************************************
-  Generate block reflector (TLearnComplex):
+  Generate block reflector (TLComplex):
   * fill unused parts of reflectors matrix by zeros
   * fill diagonal of reflectors matrix by ones
   * generate triangular factor T
   ************************************************************************ *)
-procedure CMatrixBlockReflector(var A: TLearnComplex2DArray;
-  var Tau: TLearnComplexArray; ColumnwiseA: Boolean; LengthA: TLearnInteger;
-  BlockSize: TLearnInteger; var T: TLearnComplex2DArray; var WORK: TLearnComplexArray);
+procedure CMatrixBlockReflector(var A: TLComplexMatrix;
+  var Tau: TLComplexVec; ColumnwiseA: Boolean; LengthA: TLInt;
+  BlockSize: TLInt; var T: TLComplexMatrix; var WORK: TLComplexVec);
 var
-  I : TLearnInteger;
-  K : TLearnInteger;
-  V : TLearnComplex;
-  i_: TLearnInteger;
+  I : TLInt;
+  K : TLInt;
+  V : TLComplex;
+  i_: TLInt;
 begin
 
   //

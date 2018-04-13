@@ -14,7 +14,7 @@
 
 unit LibraryManager;
 
-{$I ZDefine.inc}
+{$I zDefine.inc}
 
 interface
 
