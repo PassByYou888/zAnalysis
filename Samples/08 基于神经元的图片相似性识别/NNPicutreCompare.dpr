@@ -1,11 +1,11 @@
-program MemRasterDemo;
+program NNPicutreCompare;
 
 {$R *.dres}
 
 uses
   System.StartUpCopy,
   FMX.Forms,
-  RasterFrm in 'RasterFrm.pas' {Form1};
+  NNPicutreCompareFrm in 'NNPicutreCompareFrm.pas' {Form1};
 
 {$R *.res}
 

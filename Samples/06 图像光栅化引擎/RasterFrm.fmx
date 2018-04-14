@@ -33,6 +33,8 @@ object Form1: TForm1
       StyleLookup = ''
       TabOrder = 0
       Text = #22270#29255#36755#20986
+      ExplicitSize.cx = 68.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
       object Button1: TButton
         Position.X = 24.000000000000000000
         Position.Y = 24.000000000000000000
@@ -127,6 +129,8 @@ object Form1: TForm1
       StyleLookup = ''
       TabOrder = 0
       Text = #35828#26126
+      ExplicitSize.cx = 44.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
       object Memo1: TMemo
         Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
         DataDetectorTypes = []

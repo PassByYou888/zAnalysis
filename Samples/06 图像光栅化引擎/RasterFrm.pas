@@ -6,10 +6,9 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects,
-  FMX.Surfaces, FMX.ListBox,
+  FMX.Surfaces, FMX.ListBox, FMX.ScrollBox, FMX.Memo, FMX.TabControl,
 
-  CoreClasses, MemoryRaster, PascalStrings, FMX.ScrollBox, FMX.Memo,
-  FMX.TabControl;
+  CoreClasses, MemoryRaster, PascalStrings;
 
 type
   TForm1 = class(TForm)

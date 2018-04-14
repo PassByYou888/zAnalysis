@@ -102,6 +102,8 @@ type
     FInfo                                      : string;
     FIsTraining                                : Boolean;
     FTrainThreadRuning                         : Boolean;
+    FUserData                                  : Pointer;
+    FUserObject                                : TCoreClassObject;
 
     procedure KDInput(const IndexFor: NativeInt; var source: TKDTree_Source; const Data: Pointer);
 
@@ -137,10 +139,15 @@ type
     function Count: TLInt;
     property InLen: TLInt read FInLen;
     property OutLen: TLInt read FOutLen;
+    property LearnType: TLearnType read FLearnType;
     property Info: string read FInfo;
     property TrainThreadRuning: Boolean read FTrainThreadRuning;
     function GetMemorySource(const index: TLInt): PLearnMemory;
     property MemorySource[const index: TLInt]: PLearnMemory read GetMemorySource; default;
+
+    { * user parameter * }
+    property UserData: Pointer read FUserData write FUserData;
+    property UserObject: TCoreClassObject read FUserObject write FUserObject;
 
     { * add sampler support * }
     procedure AddMemory(const f_In, f_Out: TLVec); overload;
@@ -633,6 +640,9 @@ begin
   FInfo := '';
   FIsTraining := False;
   FTrainThreadRuning := False;
+
+  FUserData := nil;
+  FUserObject := nil;
 end;
 
 constructor TLearn.CreateRegression1(const lt: TLearnType; const InDataLen, OutDataLen: TLInt);
@@ -669,6 +679,9 @@ begin
   FInfo := '';
   FIsTraining := False;
   FTrainThreadRuning := False;
+
+  FUserData := nil;
+  FUserObject := nil;
 end;
 
 constructor TLearn.CreateRegression2(const lt: TLearnType; const InDataLen, OutDataLen: TLInt);
@@ -705,6 +718,9 @@ begin
   FInfo := '';
   FIsTraining := False;
   FTrainThreadRuning := False;
+
+  FUserData := nil;
+  FUserObject := nil;
 end;
 
 constructor TLearn.CreateClassifier(const lt: TLearnType; const InDataLen: TLInt);
@@ -730,6 +746,9 @@ begin
   FInfo := '';
   FIsTraining := False;
   FTrainThreadRuning := False;
+
+  FUserData := nil;
+  FUserObject := nil;
 end;
 
 constructor TLearn.CreateClassifier1(const lt: TLearnType; const InDataLen: TLInt);
@@ -755,6 +774,9 @@ begin
   FInfo := '';
   FIsTraining := False;
   FTrainThreadRuning := False;
+
+  FUserData := nil;
+  FUserObject := nil;
 end;
 
 constructor TLearn.CreateClassifier2(const lt: TLearnType; const InDataLen: TLInt);
@@ -780,6 +802,9 @@ begin
   FInfo := '';
   FIsTraining := False;
   FTrainThreadRuning := False;
+
+  FUserData := nil;
+  FUserObject := nil;
 end;
 
 constructor TLearn.CreatePictureClassifier(const lt: TLearnType; const SamplerWidth: TLInt);

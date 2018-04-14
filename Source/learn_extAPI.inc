@@ -169,9 +169,9 @@ begin
     begin
       N := TMemoryRaster.Create;
       if Antialiasing then
-          N.ZoomFrom(mr, SamplerSize, SamplerSize)
+          N.GrayscaleBlurZoomFrom(mr, SamplerSize, SamplerSize)
       else
-          N.GrayscaleBlurZoomFrom(mr, SamplerSize, SamplerSize);
+          N.ZoomFrom(mr, SamplerSize, SamplerSize);
 
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do

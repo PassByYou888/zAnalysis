@@ -3,7 +3,7 @@
         <ProjectGuid>{1F6730FD-E33D-4D7D-B7C6-2480A9F92C4D}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="06 图像光栅化引擎\MemRasterDemo.dproj">
+        <Projects Include="06 图像光栅化引擎\MemoryRasterDemo.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="05 随机森林之决策树\rForestDemo.dproj">
@@ -24,6 +24,9 @@
         <Projects Include="07 单词学习\WordAnalysis.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -32,14 +35,14 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="MemRasterDemo">
-        <MSBuild Projects="06 图像光栅化引擎\MemRasterDemo.dproj"/>
+    <Target Name="MemoryRasterDemo">
+        <MSBuild Projects="06 图像光栅化引擎\MemoryRasterDemo.dproj"/>
     </Target>
-    <Target Name="MemRasterDemo:Clean">
-        <MSBuild Projects="06 图像光栅化引擎\MemRasterDemo.dproj" Targets="Clean"/>
+    <Target Name="MemoryRasterDemo:Clean">
+        <MSBuild Projects="06 图像光栅化引擎\MemoryRasterDemo.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="MemRasterDemo:Make">
-        <MSBuild Projects="06 图像光栅化引擎\MemRasterDemo.dproj" Targets="Make"/>
+    <Target Name="MemoryRasterDemo:Make">
+        <MSBuild Projects="06 图像光栅化引擎\MemoryRasterDemo.dproj" Targets="Make"/>
     </Target>
     <Target Name="rForestDemo">
         <MSBuild Projects="05 随机森林之决策树\rForestDemo.dproj"/>
@@ -95,14 +98,23 @@
     <Target Name="WordAnalysis:Make">
         <MSBuild Projects="07 单词学习\WordAnalysis.dproj" Targets="Make"/>
     </Target>
+    <Target Name="NNPicutreCompare">
+        <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj"/>
+    </Target>
+    <Target Name="NNPicutreCompare:Clean">
+        <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NNPicutreCompare:Make">
+        <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="MemRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargepictureAnalysis;WordAnalysis"/>
+        <CallTarget Targets="MemoryRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargepictureAnalysis;WordAnalysis;NNPicutreCompare"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="MemRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargepictureAnalysis:Clean;WordAnalysis:Clean"/>
+        <CallTarget Targets="MemoryRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargepictureAnalysis:Clean;WordAnalysis:Clean;NNPicutreCompare:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="MemRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargepictureAnalysis:Make;WordAnalysis:Make"/>
+        <CallTarget Targets="MemoryRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargepictureAnalysis:Make;WordAnalysis:Make;NNPicutreCompare:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

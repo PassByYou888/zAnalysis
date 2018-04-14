@@ -89,13 +89,18 @@ var
   vArry: TLVec;
   n    : TPascalString;
 begin
+  (*
+    这里用到的不是真正的词频技术，只是Demo原理
+    实际使用时，请自己编写文本向量化程序
+  *)
+
   Dict.Clear;
   dHash.Clear;
   lr.Clear;
 
   t := TTextParsing.Create(Memo1.Text, tsText, nil);
 
-  dict.Add('');
+  Dict.Add('');
   vArry := LVec(5);
   lr.AddMemory(vArry, [0]);
 
@@ -107,7 +112,6 @@ begin
         if not dHash.Exists(t.Tokens[i]^.Text) then
             dHash[t.Tokens[i]^.Text] := Dict.Count - 1;
       end;
-
 
   for i := 1 to Dict.Count - 1 do
     begin
@@ -129,7 +133,7 @@ begin
       if n.Len > 0 then
         begin
           lr.AddMemory(vArry, [i]);
-          DoStatus('学习向量: %s = %s', [LVec(vArry).Text, GetWordFromVec(vArry).Text]);
+          DoStatus('学习向量: %s = %s', [LVec(vArry).Text, n.Text]);
         end;
     end;
 
