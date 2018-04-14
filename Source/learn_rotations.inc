@@ -7,18 +7,17 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-procedure ApplyRotationsFromTheLeft(IsForward: Boolean; M1: TLInt;
-  M2: TLInt; N1: TLInt; N2: TLInt;
+procedure ApplyRotationsFromTheLeft(IsForward: Boolean; M1: TLInt; M2: TLInt; N1: TLInt; N2: TLInt;
   const C: TLVec; const S: TLVec; var A: TLMatrix; var WORK: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLInt;
-  M2: TLInt; N1: TLInt; N2: TLInt;
+
+procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLInt; M2: TLInt; N1: TLInt; N2: TLInt;
   const C: TLVec; const S: TLVec; var A: TLMatrix; var WORK: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure GenerateRotation(F: TLFloat; G: TLFloat; var CS: TLFloat;
-  var SN: TLFloat; var R: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure GenerateRotation(F: TLFloat; G: TLFloat; var CS: TLFloat; var SN: TLFloat; var R: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
-  Application of a sequence of  elementary rotations to a matrix
+  Application of a sequence of elementary rotations to a matrix
 
   The algorithm pre-multiplies the matrix by a sequence of rotation
   transformations which is given by arrays C and S. Depending on the value
@@ -40,10 +39,8 @@ procedure GenerateRotation(F: TLFloat; G: TLFloat; var CS: TLFloat;
   Output parameters:
   A           -   transformed matrix.
   ************************************************************************ *)
-procedure ApplyRotationsFromTheLeft(IsForward: Boolean; M1: TLInt;
-  M2: TLInt; N1: TLInt; N2: TLInt;
-  const C: TLVec; const S: TLVec; var A: TLMatrix;
-  var WORK: TLVec);
+procedure ApplyRotationsFromTheLeft(IsForward: Boolean; M1: TLInt; M2: TLInt; N1: TLInt; N2: TLInt;
+  const C: TLVec; const S: TLVec; var A: TLMatrix; var WORK: TLVec);
 var
   J    : TLInt;
   JP1  : TLInt;
@@ -154,7 +151,7 @@ begin
 end;
 
 (* ************************************************************************
-  Application of a sequence of  elementary rotations to a matrix
+  Application of a sequence of elementary rotations to a matrix
 
   The algorithm post-multiplies the matrix by a sequence of rotation
   transformations which is given by arrays C and S. Depending on the value
@@ -176,10 +173,8 @@ end;
   Output parameters:
   A           -   transformed matrix.
   ************************************************************************ *)
-procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLInt;
-  M2: TLInt; N1: TLInt; N2: TLInt;
-  const C: TLVec; const S: TLVec; var A: TLMatrix;
-  var WORK: TLVec);
+procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLInt; M2: TLInt; N1: TLInt; N2: TLInt;
+  const C: TLVec; const S: TLVec; var A: TLMatrix; var WORK: TLVec);
 var
   J    : TLInt;
   JP1  : TLInt;
@@ -324,8 +319,7 @@ end;
 
   CS**2 + SN**2 = 1
   ************************************************************************ *)
-procedure GenerateRotation(F: TLFloat; G: TLFloat; var CS: TLFloat;
-  var SN: TLFloat; var R: TLFloat);
+procedure GenerateRotation(F: TLFloat; G: TLFloat; var CS: TLFloat; var SN: TLFloat; var R: TLFloat);
 var
   F1: TLFloat;
   G1: TLFloat;

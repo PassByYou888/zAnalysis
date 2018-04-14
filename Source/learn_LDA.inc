@@ -36,8 +36,7 @@
   *  2, if there was a multicollinearity in training set, but task has been solved.
   W           -   basis, array[0..NVars-1,0..NVars-1] columns of matrix stores basis vectors, sorted by quality of training set separation (in descending order)
   ************************************************************************ *)
-procedure FisherLDAN(const XY: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt;
-  var Info: TLInt; var W: TLMatrix); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure FisherLDAN(const XY: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt; var Info: TLInt; var W: TLMatrix); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
   I     : TLInt;
   J     : TLInt;
@@ -447,8 +446,7 @@ end;
   *  2, if there was a multicollinearity in training set, but task has been solved.
   W           -   linear combination coefficients, array[0..NVars-1]
   ************************************************************************ *)
-procedure FisherLDA(const XY: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt;
-  var Info: TLInt; var W: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure FisherLDA(const XY: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt; var Info: TLInt; var W: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
   W2: TLMatrix;
   i_: TLInt;

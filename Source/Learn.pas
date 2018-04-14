@@ -162,7 +162,7 @@ type
     {$IFNDEF FPC} procedure TrainP(const TrainDepth: TLInt; const OnResult: TLearnState_Proc); {$ENDIF FPC}
     procedure WaitTrain;
     //
-    // result ProcessOut
+    // data input/output support
     function process(const p_in, p_out: PLVec): Boolean; overload;
     function process(const ProcessIn: PLVec): string; overload;
     function process(const ProcessIn: TLVec): string; overload;
@@ -199,15 +199,16 @@ type
     // search with Spearman - parallel support
     procedure SearchMemoryWithSpearman(const ProcessIn: TLVec; out List: TLIVec); overload;
 
-    // search with KDTree
+    // search with euclidean metric
     function SearchMemoryWithDistance(const ProcessIn: TLVec): TLInt; overload;
-    // search with KDTree - parallel support
+    // search with euclidean metric - parallel support
     procedure SearchMemoryWithDistance(const ProcessIn: TLVec; out List: TLIVec); overload;
 
     { * fast binary store support * }
     procedure SaveToDF(df: TDataFrameEngine);
     procedure LoadFromDF(df: TDataFrameEngine);
 
+    { stream store support }
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
@@ -368,13 +369,15 @@ procedure MannWhitneyUTest(const X: TLVec; N: TLInt; const Y: TLVec; m: TLInt; v
 procedure WilcoxonSignedRankTest(const X: TLVec; N: TLInt; E: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 
 { learn vector api }
+function LVec(const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LVec(const v: TLVec): TPascalString; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function LVec(const m: TLMatrix; const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function LVec(const s: TPascalString; const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function SpearmanLVec(const m: TLMatrix; const veclen: TLInt): TLVec; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MaxVec(const v: TLVec): TLFloat;{$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MinVec(const v: TLVec): TLFloat;{$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MaxVecIndex(const v: TLVec): TLInt;  {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MinVecIndex(const v: TLVec): TLInt;  {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MaxVec(const v: TLVec): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MinVec(const v: TLVec): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MaxVecIndex(const v: TLVec): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MinVecIndex(const v: TLVec): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure Clamp(var AValue: TLFloat; const AMin, AMax: TLFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure Clamp(var AValue: TLInt; const AMin, AMax: TLInt); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 

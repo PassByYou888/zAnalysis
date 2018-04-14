@@ -1,0 +1,126 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'zAnalysis '#21333#35789#20998#26512'Demo'#65292'byQQ600585'
+  ClientHeight = 607
+  ClientWidth = 1044
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  DesignerMasterStyle = 0
+  object Edit1: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 0
+    Position.X = 40.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 393.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TextPrompt = #36755#20837#33267#23569'5'#20010#21333#35789#65292#35201#20998#38548#24320
+    StyledSettings = [Family, Style, FontColor]
+    OnChange = Edit1Change
+  end
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Lines.Strings = (
+      
+        'Effective machine learning is difficult because finding patterns' +
+        ' is hard and often not enough training data are available; as a ' +
+        'result, machine-learning programs often fail to deliver.'
+      '')
+    StyledSettings = [Family, Style, FontColor]
+    TextSettings.WordWrap = True
+    Position.X = 24.000000000000000000
+    Position.Y = 152.000000000000000000
+    Size.Width = 513.000000000000000000
+    Size.Height = 289.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    Viewport.Width = 509.000000000000000000
+    Viewport.Height = 285.000000000000000000
+  end
+  object Memo2: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    StyledSettings = [Family, Style, FontColor]
+    Position.X = 24.000000000000000000
+    Position.Y = 472.000000000000000000
+    Size.Width = 985.000000000000000000
+    Size.Height = 105.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    Viewport.Width = 981.000000000000000000
+    Viewport.Height = 101.000000000000000000
+  end
+  object StringGrid1: TStringGrid
+    CanFocus = True
+    ClipChildren = True
+    Position.X = 544.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 465.000000000000000000
+    Size.Height = 409.000000000000000000
+    Size.PlatformDefault = False
+    StyledSettings = [Family, Style, FontColor]
+    TabOrder = 3
+    RowCount = 0
+    Options = [AlternatingRowBackground, ColumnResize, ColLines, RowLines, Tabs, Header, HeaderClick, AutoDisplacement]
+    Viewport.Width = 461.000000000000000000
+    Viewport.Height = 384.000000000000000000
+    object StringColumn1: TStringColumn
+      Header = #31070#32463#32593#32476#23398#20250#30340'5'#36830#21333#35789
+      Size.Width = 305.000000000000000000
+    end
+    object FloatColumn1: TFloatColumn
+      Header = #32858#31867#30456#36817#24230
+      ShowThousandSeparator = False
+      Size.Width = 135.000000000000000000
+    end
+  end
+  object Button1: TButton
+    StyledSettings = [Family, Style, FontColor]
+    Position.X = 24.000000000000000000
+    Position.Y = 72.000000000000000000
+    Size.Width = 249.000000000000000000
+    Size.Height = 30.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 7
+    Text = #23398#20064#19979#21015#25991#31456'(k'#32500#31354#38388#26641#26041#27861')'
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    StyledSettings = [Family, Style, FontColor]
+    Position.X = 280.000000000000000000
+    Position.Y = 72.000000000000000000
+    Size.Width = 249.000000000000000000
+    Size.Height = 30.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    Text = #23398#20064#19979#21015#25991#31456'('#38543#26426#26862#26519#22238#24402#26041#27861')'
+    OnClick = Button2Click
+  end
+  object Button3: TButton
+    StyledSettings = [Family, Style, FontColor]
+    Position.X = 280.000000000000000000
+    Position.Y = 112.000000000000000000
+    Size.Width = 249.000000000000000000
+    Size.Height = 30.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Text = #23398#20064#19979#21015#25991#31456'('#26368#36895#19979#38477#29275#39039#26041#27861')'
+    OnClick = Button3Click
+  end
+  object Button4: TButton
+    StyledSettings = [Family, Style, FontColor]
+    Position.X = 24.000000000000000000
+    Position.Y = 112.000000000000000000
+    Size.Width = 249.000000000000000000
+    Size.Height = 30.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Text = #23398#20064#19979#21015#25991#31456'('#38750#32447#24615#26368#23567#20108#20056#27861')'
+    OnClick = Button4Click
+  end
+end

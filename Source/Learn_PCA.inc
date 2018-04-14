@@ -27,8 +27,7 @@ procedure InternalStatHeapSort(var Arr: TLVec; N: TLInt); forward; {$IFDEF INLIN
   Skewness-   skewness (if variance<>0; zero otherwise).
   Kurtosis-   kurtosis (if variance<>0; zero otherwise).
   ************************************************************************ *)
-procedure CalculateMoments(const X: TLVec; N: TLInt;
-  var Mean: TLFloat; var Variance: TLFloat; var Skewness: TLFloat; var Kurtosis: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CalculateMoments(const X: TLVec; N: TLInt; var Mean: TLFloat; var Variance: TLFloat; var Skewness: TLFloat; var Kurtosis: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
   I     : TLInt;
   V     : TLFloat;

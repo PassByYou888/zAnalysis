@@ -21,7 +21,7 @@
         <Projects Include="04 大规模图片特征码提取与识别\LargepictureAnalysis.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\test\LearnLibTest.dproj">
+        <Projects Include="07 单词学习\WordAnalysis.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -86,23 +86,23 @@
     <Target Name="LargepictureAnalysis:Make">
         <MSBuild Projects="04 大规模图片特征码提取与识别\LargepictureAnalysis.dproj" Targets="Make"/>
     </Target>
-    <Target Name="LearnLibTest">
-        <MSBuild Projects="..\test\LearnLibTest.dproj"/>
+    <Target Name="WordAnalysis">
+        <MSBuild Projects="07 单词学习\WordAnalysis.dproj"/>
     </Target>
-    <Target Name="LearnLibTest:Clean">
-        <MSBuild Projects="..\test\LearnLibTest.dproj" Targets="Clean"/>
+    <Target Name="WordAnalysis:Clean">
+        <MSBuild Projects="07 单词学习\WordAnalysis.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="LearnLibTest:Make">
-        <MSBuild Projects="..\test\LearnLibTest.dproj" Targets="Make"/>
+    <Target Name="WordAnalysis:Make">
+        <MSBuild Projects="07 单词学习\WordAnalysis.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="MemRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargepictureAnalysis;LearnLibTest"/>
+        <CallTarget Targets="MemRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargepictureAnalysis;WordAnalysis"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="MemRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargepictureAnalysis:Clean;LearnLibTest:Clean"/>
+        <CallTarget Targets="MemRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargepictureAnalysis:Clean;WordAnalysis:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="MemRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargepictureAnalysis:Make;LearnLibTest:Make"/>
+        <CallTarget Targets="MemRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargepictureAnalysis:Make;WordAnalysis:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

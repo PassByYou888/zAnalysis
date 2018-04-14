@@ -1,14 +1,28 @@
+function LVec(const veclen: TLInt): TLVec;
+var
+  i: TLInt;
+begin
+  SetLength(Result, veclen);
+  for i := 0 to veclen - 1 do
+      Result[i] := 0.0;
+end;
+
+function LVec(const v: TLVec): TPascalString;
+begin
+  Result := TKDTree.KDTreeVec(v);
+end;
+
 function LVec(const m: TLMatrix; const veclen: TLInt): TLVec;
 var
-  I, J, id: TLInt;
+  i, J, id: TLInt;
 begin
   id := 0;
-  SetLength(Result, veclen);
-  for I := 0 to Length(m) - 1 do
-    for J := 0 to Length(m[I]) - 1 do
+  Result := LVec(veclen);
+  for i := 0 to Length(m) - 1 do
+    for J := 0 to Length(m[i]) - 1 do
       if id < veclen then
         begin
-          Result[id] := m[I, J];
+          Result[id] := m[i, J];
           inc(id);
         end
       else
@@ -17,14 +31,14 @@ end;
 
 function LVec(const s: TPascalString; const veclen: TLInt): TLVec;
 var
-  I: TLInt;
+  i: TLInt;
   v: TLVec;
 begin
   v := TKDTree.KDTreeVec(s.Text);
-  SetLength(Result, veclen);
-  for I := 0 to Length(v) - 1 do
-    if I < veclen then
-        Result[I] := v[I]
+  Result := LVec(veclen);
+  for i := 0 to Length(v) - 1 do
+    if i < veclen then
+        Result[i] := v[i]
     else
         break;
 end;
@@ -37,59 +51,59 @@ end;
 
 function MaxVec(const v: TLVec): TLFloat;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := v[0];
 
   if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-      if v[I] > Result then
-          Result := v[I];
+    for i := 1 to Length(v) - 1 do
+      if v[i] > Result then
+          Result := v[i];
 end;
 
 function MinVec(const v: TLVec): TLFloat;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := v[0];
 
   if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-      if v[I] < Result then
-          Result := v[I];
+    for i := 1 to Length(v) - 1 do
+      if v[i] < Result then
+          Result := v[i];
 end;
 
 function MaxVecIndex(const v: TLVec): TLInt;
 var
-  I: TLInt;
+  i: TLInt;
   k: TLFloat;
 begin
   k := v[0];
   Result := 0;
 
   if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-      if v[I] > k then
+    for i := 1 to Length(v) - 1 do
+      if v[i] > k then
         begin
-          Result := I;
-          k := v[I];
+          Result := i;
+          k := v[i];
         end;
 end;
 
 function MinVecIndex(const v: TLVec): TLInt;
 var
-  I: TLInt;
+  i: TLInt;
   k: TLFloat;
 begin
   k := v[0];
   Result := 0;
 
   if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-      if v[I] < k then
+    for i := 1 to Length(v) - 1 do
+      if v[i] < k then
         begin
-          Result := I;
-          k := v[I];
+          Result := i;
+          k := v[i];
         end;
 end;
 
@@ -116,14 +130,14 @@ end;
 function MatrixSampler(const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix;
 var
   N   : TMemoryRaster;
-  I, J: TLInt;
+  i, J: TLInt;
 begin
   if (mr.Width = SamplerSize) and (mr.Height = SamplerSize) then
     begin
       SetLength(Result, SamplerSize, SamplerSize);
-      for I := 0 to SamplerSize - 1 do
+      for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[I, J] := mr.PixelGrayD[I, J] * $FF;
+            Result[i, J] := mr.PixelGrayD[i, J] * $FF;
     end
   else
     begin
@@ -131,9 +145,9 @@ begin
       N.ZoomFrom(mr, SamplerSize, SamplerSize);
 
       SetLength(Result, SamplerSize, SamplerSize);
-      for I := 0 to SamplerSize - 1 do
+      for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[I, J] := N.PixelGrayD[I, J] * $FF;
+            Result[i, J] := N.PixelGrayD[i, J] * $FF;
 
       DisposeObject(N);
     end;
@@ -142,14 +156,14 @@ end;
 function MatrixSampler(const Antialiasing: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix;
 var
   N   : TMemoryRaster;
-  I, J: TLInt;
+  i, J: TLInt;
 begin
   if (mr.Width = SamplerSize) and (mr.Height = SamplerSize) then
     begin
       SetLength(Result, SamplerSize, SamplerSize);
-      for I := 0 to SamplerSize - 1 do
+      for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[I, J] := mr.PixelGrayD[I, J] * $FF;
+            Result[i, J] := mr.PixelGrayD[i, J] * $FF;
     end
   else
     begin
@@ -160,12 +174,12 @@ begin
           N.GrayscaleBlurZoomFrom(mr, SamplerSize, SamplerSize);
 
       SetLength(Result, SamplerSize, SamplerSize);
-      for I := 0 to SamplerSize - 1 do
+      for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
           if Antialiasing then
-              Result[I, J] := PRasterColorEntry(N.PixelPtr[I, J])^.R
+              Result[i, J] := PRasterColorEntry(N.PixelPtr[i, J])^.R
           else
-              Result[I, J] := N.PixelGrayD[I, J] * $FF;
+              Result[i, J] := N.PixelGrayD[i, J] * $FF;
 
       DisposeObject(N);
     end;
@@ -185,7 +199,7 @@ function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRas
 var
   k        : TLFloat;
   mrblur, N: TMemoryRaster;
-  I, J     : TLInt;
+  i, J     : TLInt;
   buff     : TLMatrix;
   rInfo    : TLInt;
 begin
@@ -211,11 +225,11 @@ begin
 
   SetLength(buff, N.Height, SamplerSize + 1);
 
-  for I := 0 to N.Height - 1 do
+  for i := 0 to N.Height - 1 do
     begin
       for J := 0 to SamplerSize - 1 do
-          buff[I, J] := N.PixelGrayD[J, I];
-      buff[I, SamplerSize] := I;
+          buff[i, J] := N.PixelGrayD[J, i];
+      buff[i, SamplerSize] := i;
     end;
 
   rInfo := LDA(buff, N.Height, SamplerSize, SamplerSize + 1, output);
@@ -247,7 +261,7 @@ function PCA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRas
 var
   k        : TLFloat;
   mrblur, N: TMemoryRaster;
-  I, J     : TLInt;
+  i, J     : TLInt;
   buff     : TLMatrix;
   rInfo    : TLInt;
 begin
@@ -275,9 +289,9 @@ begin
 
   SetLength(buff, N.Height, SamplerSize);
 
-  for I := 0 to N.Height - 1 do
+  for i := 0 to N.Height - 1 do
     for J := 0 to N.Width - 1 do
-        buff[I, J] := N.PixelGrayD[J, I];
+        buff[i, J] := N.PixelGrayD[J, i];
 
   rInfo := PCA(buff, N.Height, N.Width, output);
 

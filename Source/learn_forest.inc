@@ -61,29 +61,29 @@ type
     EVSSplits: TLVec;
   end;
 
-function DFClsError(const DF: TDecisionForest; const XY: TLMatrix;
-  NPoints: TLInt): TLInt; forward;
-procedure DFProcessInternal(const DF: TDecisionForest; Offs: TLInt;
-  const X: TLVec; var Y: TLVec); forward;
+function DFClsError(const DF: TDecisionForest; const XY: TLMatrix; NPoints: TLInt): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure DFProcessInternal(const DF: TDecisionForest; Offs: TLInt; const X: TLVec; var Y: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure DFBuildTree(const XY: TLMatrix; NPoints: TLInt;
   NVars: TLInt; NClasses: TLInt; NFeatures: TLInt;
   NVarsInPool: TLInt; Flags: TLInt;
-  var Bufs: TDFInternalBuffers); forward;
+  var Bufs: TDFInternalBuffers); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure DFBuildTreeRec(const XY: TLMatrix; NPoints: TLInt;
   NVars: TLInt; NClasses: TLInt; NFeatures: TLInt;
   NVarsInPool: TLInt; Flags: TLInt;
   var NumProcessed: TLInt; Idx1: TLInt; Idx2: TLInt;
-  var Bufs: TDFInternalBuffers); forward;
+  var Bufs: TDFInternalBuffers); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure DFWeakSplitI(var X: TLVec; var Y: TLIVec;
   N: TLInt; NClasses: TLInt; var Info: TLInt;
-  var Threshold: TLFloat; var E: TLFloat); forward;
+  var Threshold: TLFloat; var E: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 procedure DFSplitC(var X: TLVec; var C: TLIVec;
-  var CntBuf: TLIVec; N: TLInt; NC: TLInt;
-  Flags: TLInt; var Info: TLInt; var Threshold: TLFloat;
-  var E: TLFloat); forward;
-procedure DFSplitR(var X: TLVec; var Y: TLVec; N: TLInt;
-  Flags: TLInt; var Info: TLInt; var Threshold: TLFloat;
-  var E: TLFloat); forward;
+  var CntBuf: TLIVec; N: TLInt; NC: TLInt; Flags: TLInt; var Info: TLInt; var Threshold: TLFloat; var E: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure DFSplitR(var X: TLVec; var Y: TLVec; N: TLInt; Flags: TLInt; var Info: TLInt; var Threshold: TLFloat; var E: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 (* ************************************************************************
   //  This subroutine builds random decision forest.
