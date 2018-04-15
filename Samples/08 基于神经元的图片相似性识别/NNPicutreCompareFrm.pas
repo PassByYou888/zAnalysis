@@ -306,7 +306,7 @@ begin
   // 为保证Demo的顺利运行，我们在这里使用单核训练，只消耗很小内存
 
   t := GetTimeTick;
-  lr.TrainP(1,
+  lr.TrainP(10,
     procedure(const LSender: TLearn; const state: Boolean)
     begin
       if state then
@@ -487,7 +487,7 @@ begin
   if lr = nil then
       exit;
 
-  m := MatrixSampler(Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[TListboxItem(Sender).Index]));
+  m := MatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[TListboxItem(Sender).Index]));
   fin := LVec(m, lr.InLen);
   if lr.process(@fin, @fout) then
     begin

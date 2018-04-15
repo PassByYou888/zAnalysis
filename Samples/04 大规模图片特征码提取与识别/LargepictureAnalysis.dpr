@@ -1,4 +1,4 @@
-program LargepictureAnalysis;
+program LargePictureAnalysis;
 
 uses
   System.StartUpCopy,

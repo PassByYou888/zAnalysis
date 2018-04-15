@@ -380,6 +380,7 @@ function LVec(const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline;
 function LVec(const v: TLVec): TPascalString; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function LVec(const m: TLMatrix; const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function LVec(const s: TPascalString; const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LVec(const v: TLVec; const ShortFloat: Boolean): TPascalString; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function SpearmanLVec(const m: TLMatrix; const veclen: TLInt): TLVec; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function MaxVec(const v: TLVec): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function MinVec(const v: TLVec): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -1353,7 +1354,7 @@ begin
   case FLearnType of
     ltKDT, ltKM:
       begin
-        if p_kd_node <> nil then
+        if PLearnKDT(FLearnData)^.kdt.Count > 0 then
           begin
             if FClassifier then
               begin
@@ -1368,13 +1369,12 @@ begin
               begin
                 p_kd_node := PLearnKDT(FLearnData)^.kdt.Search(p_in^);
                 SetLength(p_out^, FOutLen);
-                CopyPtr(@(PLearnMemory(FMemorySource[p_kd_node^.vec^.index])^.m_out[0]), @p_out^[0], FOutLen * SizeOf(TLFloat));
+                if p_kd_node <> nil then
+                    CopyPtr(@(PLearnMemory(FMemorySource[p_kd_node^.vec^.index])^.m_out[0]), @p_out^[0], FOutLen * SizeOf(TLFloat));
               end;
             FInfo := 'successed';
             Result := True;
-          end
-        else
-            FInfo := 'kdTree not inited';
+          end;
       end;
     ltForest:
       begin
@@ -1433,7 +1433,7 @@ begin
   Result := '';
   if not process(ProcessIn, @ProcessOut) then
       exit;
-  Result := TKDTree.KDTreeVec(ProcessOut);
+  Result := LVec(ProcessOut, True);
 end;
 
 function TLearn.process(const ProcessIn: TLVec): string;

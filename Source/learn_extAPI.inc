@@ -43,6 +43,23 @@ begin
         break;
 end;
 
+function LVec(const v: TLVec; const ShortFloat: Boolean): TPascalString;
+var
+  i: TLInt;
+begin
+  Result := '';
+  for i := 0 to Length(v) - 1 do
+    begin
+      if i > 0 then
+          Result.Append(' ');
+
+      if ShortFloat then
+          Result.Append(umlShortFloatToStr(v[i]))
+      else
+          Result.Append(umlFloatToStr(v[i]));
+    end;
+end;
+
 function SpearmanLVec(const m: TLMatrix; const veclen: TLInt): TLVec;
 begin
   Result := LVec(m, veclen);
@@ -137,7 +154,7 @@ begin
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[i, J] := mr.PixelGrayD[i, J] * $FF;
+            Result[i, J] := Round(mr.PixelGrayD[i, J] * $FF);
     end
   else
     begin
@@ -147,7 +164,7 @@ begin
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[i, J] := N.PixelGrayD[i, J] * $FF;
+            Result[i, J] := Round(N.PixelGrayD[i, J] * $FF);
 
       DisposeObject(N);
     end;
@@ -163,23 +180,20 @@ begin
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[i, J] := mr.PixelGrayD[i, J] * $FF;
+            Result[i, J] := Round(mr.PixelGrayD[i, J] * $FF);
     end
   else
     begin
       N := TMemoryRaster.Create;
       if Antialiasing then
-          N.GrayscaleBlurZoomFrom(mr, SamplerSize, SamplerSize)
+          N.GaussianBlurZoomFrom(mr, SamplerSize, SamplerSize)
       else
           N.ZoomFrom(mr, SamplerSize, SamplerSize);
 
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-          if Antialiasing then
-              Result[i, J] := PRasterColorEntry(N.PixelPtr[i, J])^.R
-          else
-              Result[i, J] := N.PixelGrayD[i, J] * $FF;
+            Result[i, J] := Round(N.PixelGrayD[i, J] * $FF);
 
       DisposeObject(N);
     end;

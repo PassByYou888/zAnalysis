@@ -1,8 +1,8 @@
 procedure LearnTest;
 const
-  test_InLen  = 10;
-  test_OutLen = 5;
-  test_Depth  = 50;
+  test_InLen  = 5;
+  test_OutLen = 3;
+  test_Depth  = 10;
 
   RegressionLearnType: set of TLearnType = [
     ltKDT, ltKM,
@@ -38,7 +38,7 @@ begin
   for lv := 0 to 2 do
     for lt in RegressionLearnType do
       begin
-        DoStatusNoLn('Regression test %s ..', [CLearnString[lt]]);
+        DoStatusNoLn('Regression%d test %s ..', [lv, CLearnString[lt]]);
         case lv of
           0: lr := TLearn.CreateRegression(lt, test_InLen, test_OutLen);
           1: lr := TLearn.CreateRegression1(lt, test_InLen, test_OutLen);
@@ -117,7 +117,7 @@ begin
   for lv := 0 to 2 do
     for lt in ClassifierLearnType do
       begin
-        DoStatusNoLn('Classifier test %s ..', [CLearnString[lt]]);
+        DoStatusNoLn('Classifier%d test %s ..', [lv, CLearnString[lt]]);
         case lv of
           0: lr := TLearn.CreateClassifier(lt, test_InLen);
           1: lr := TLearn.CreateClassifier1(lt, test_InLen);

@@ -18,13 +18,16 @@
         <Projects Include="03 基于ZDB的采样和聚类\zDBAnalysisDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="04 大规模图片特征码提取与识别\LargepictureAnalysis.dproj">
+        <Projects Include="04 大规模图片特征码提取与识别\LargePictureAnalysis.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="07 单词学习\WordAnalysis.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -80,14 +83,14 @@
     <Target Name="zDBAnalysisDemo:Make">
         <MSBuild Projects="03 基于ZDB的采样和聚类\zDBAnalysisDemo.dproj" Targets="Make"/>
     </Target>
-    <Target Name="LargepictureAnalysis">
-        <MSBuild Projects="04 大规模图片特征码提取与识别\LargepictureAnalysis.dproj"/>
+    <Target Name="LargePictureAnalysis">
+        <MSBuild Projects="04 大规模图片特征码提取与识别\LargePictureAnalysis.dproj"/>
     </Target>
-    <Target Name="LargepictureAnalysis:Clean">
-        <MSBuild Projects="04 大规模图片特征码提取与识别\LargepictureAnalysis.dproj" Targets="Clean"/>
+    <Target Name="LargePictureAnalysis:Clean">
+        <MSBuild Projects="04 大规模图片特征码提取与识别\LargePictureAnalysis.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="LargepictureAnalysis:Make">
-        <MSBuild Projects="04 大规模图片特征码提取与识别\LargepictureAnalysis.dproj" Targets="Make"/>
+    <Target Name="LargePictureAnalysis:Make">
+        <MSBuild Projects="04 大规模图片特征码提取与识别\LargePictureAnalysis.dproj" Targets="Make"/>
     </Target>
     <Target Name="WordAnalysis">
         <MSBuild Projects="07 单词学习\WordAnalysis.dproj"/>
@@ -107,14 +110,23 @@
     <Target Name="NNPicutreCompare:Make">
         <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj" Targets="Make"/>
     </Target>
+    <Target Name="NNDecisionDemo">
+        <MSBuild Projects="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj"/>
+    </Target>
+    <Target Name="NNDecisionDemo:Clean">
+        <MSBuild Projects="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NNDecisionDemo:Make">
+        <MSBuild Projects="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="MemoryRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargepictureAnalysis;WordAnalysis;NNPicutreCompare"/>
+        <CallTarget Targets="MemoryRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargePictureAnalysis;WordAnalysis;NNPicutreCompare;NNDecisionDemo"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="MemoryRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargepictureAnalysis:Clean;WordAnalysis:Clean;NNPicutreCompare:Clean"/>
+        <CallTarget Targets="MemoryRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargePictureAnalysis:Clean;WordAnalysis:Clean;NNPicutreCompare:Clean;NNDecisionDemo:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="MemoryRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargepictureAnalysis:Make;WordAnalysis:Make;NNPicutreCompare:Make"/>
+        <CallTarget Targets="MemoryRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargePictureAnalysis:Make;WordAnalysis:Make;NNPicutreCompare:Make;NNDecisionDemo:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

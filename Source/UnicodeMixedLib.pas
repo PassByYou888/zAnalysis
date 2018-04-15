@@ -291,7 +291,8 @@ function umlIntToStr(Parameter: Int64): TPascalString; overload;
 function umlSizeToStr(Parameter: Int64): TPascalString;
 function umlTimeToStr(TimeInteger: Integer): TPascalString;
 function umlDateToStr(TimeInteger: Integer): TPascalString;
-function umlFloatToStr(f: Double): TPascalString;
+function umlFloatToStr(const f: Extended): TPascalString;
+function umlShortFloatToStr(const f: Extended): TPascalString;
 
 function umlStrToInt(const _V: TPascalString): Integer; overload;
 function umlStrToInt(const _V: TPascalString; _Def: Integer): Integer; overload;
@@ -2838,9 +2839,14 @@ begin
   Result := DateToStr(FileDateToDateTime(TimeInteger));
 end;
 
-function umlFloatToStr(f: Double): TPascalString;
+function umlFloatToStr(const f: Extended): TPascalString;
 begin
   Result := FloatToStr(f);
+end;
+
+function umlShortFloatToStr(const f: Extended): TPascalString;
+begin
+  Result := format('%f', [f]);
 end;
 
 function umlStrToInt(const _V: TPascalString): Integer;

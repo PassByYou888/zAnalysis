@@ -38,6 +38,7 @@ type
     Image4: TImage;
     Button3: TButton;
     Button4: TButton;
+    Button5: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -45,6 +46,7 @@ type
     procedure EnabledLibViewCheckBoxChange(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -226,7 +228,7 @@ begin
         storePos := ze.AddData(m64, $99);
         DisposeObject(m64);
 
-        lr.AddMatrix(MatrixSampler(True, 15, mr), [Double(storePos)]);
+        lr.AddMatrix(MatrixSampler(15, mr), [Double(storePos)]);
 
         ProgressBar1.Value := i;
         DoStatus('提取图片特征 %s ', [umlGetFileName(OpenDialog1.Files[i]).Text]);
@@ -420,6 +422,58 @@ begin
       TabControl1.ActiveTab := TabItem3;
     end;
   DisposeObject(mr1);
+end;
+
+procedure TForm1.Button5Click(Sender: TObject);
+var
+  // TMemoryRaster 是高速光栅化图形库的类
+  m64     : TMemoryStream64;
+  storePos: Int64;
+  i       : Integer;
+  buff    : TLVec;
+  mr      : TMemoryRaster;
+begin
+  if not OpenDialog1.Execute then
+      exit;
+
+  ProgressBar1.Visible := True;
+  ProgressBar1.Max := OpenDialog1.Files.Count - 1;
+  ProgressBar1.Min := 0;
+
+  globalLayout1.Enabled := False;
+
+  for i := 0 to OpenDialog1.Files.Count - 1 do
+    begin
+      try
+        mr := TMemoryRaster.Create;
+        LoadMemoryBitmap(OpenDialog1.Files[i], mr);
+
+        // 将图片原始数据存储到zdb
+        m64 := TMemoryStream64.Create;
+        mr.SaveToStream(m64);
+        storePos := ze.AddData(m64, $99);
+        DisposeObject(m64);
+
+        lr.AddMatrix(MatrixSampler(True, 15, mr), [Double(storePos)]);
+
+        ProgressBar1.Value := i;
+        DoStatus('提取图片特征 %s ', [umlGetFileName(OpenDialog1.Files[i]).Text]);
+        Application.ProcessMessages;
+      finally
+          DisposeObject(mr);
+      end;
+    end;
+
+  // 在后台进行特征学习
+  lr.TrainP(
+    1,
+    procedure(const LSender: TLearn; const state: Boolean)
+    begin
+      DoStatus('机器人学习完成，一共学习了 %d 张图片', [LSender.Count]);
+      ProgressBar1.Visible := False;
+      RefreshGRLib;
+      globalLayout1.Enabled := True;
+    end);
 end;
 
 procedure TForm1.DoStatusM(AText: SystemString; const ID: Integer);
