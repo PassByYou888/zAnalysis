@@ -1,3 +1,32 @@
+{ matrix support }
+function VectorNorm2(const X: TLVec; const I1, I2: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function VectorIdxAbsMax(const X: TLVec; const I1, I2: TLInt): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ColumnIdxAbsMax(const X: TLMatrix; const I1, I2, J: TLInt): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RowIdxAbsMax(const X: TLMatrix; const J1, J2, I: TLInt): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UpperHessenberg1Norm(const A: TLMatrix; const I1, I2, J1, J2: TLInt; var WORK: TLVec): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure CopyMatrix(const A: TLMatrix; const IS1, IS2, JS1, JS2: TLInt;
+  var B: TLMatrix; const ID1, ID2, JD1, JD2: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure InplaceTranspose(var A: TLMatrix; const I1, I2, J1, J2: TLInt; var WORK: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure CopyAndTranspose(const A: TLMatrix; IS1, IS2, JS1, JS2: TLInt;
+  var B: TLMatrix; ID1, ID2, JD1, JD2: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MatrixVectorMultiply(const A: TLMatrix; const I1, I2, J1, J2: TLInt; const Trans: Boolean;
+  const X: TLVec; const IX1, IX2: TLInt; const Alpha: TLFloat;
+  var Y: TLVec; const IY1, IY2: TLInt; const Beta: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+function Pythag2(X: TLFloat; Y: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MatrixMatrixMultiply(const A: TLMatrix; const AI1, AI2, AJ1, AJ2: TLInt; const TransA: Boolean;
+  const B: TLMatrix; const BI1, BI2, BJ1, BJ2: TLInt; const TransB: Boolean;
+  const Alpha: TLFloat;
+  var C: TLMatrix; const CI1, CI2, CJ1, CJ2: TLInt;
+  const Beta: TLFloat;
+  var WORK: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+
 function VectorNorm2(const X: TLVec; const I1, I2: TLInt): TLFloat;
 var
   N    : TLInt;

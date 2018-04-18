@@ -7,10 +7,38 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
+
+{ base type api }
+function AbsReal(X: TLFloat): TLFloat; forward;
+function AbsInt(I: TLInt): TLInt; forward;
+function RandomReal(): TLFloat; forward;
+function RandomInteger(I: TLInt): TLInt; forward;
+function Sign(X: TLFloat): TLInt; forward;
+function AP_Sqr(X: TLFloat): TLFloat; forward;
+
+function APVDotProduct(V1: PLFloat; I11, I12: TLInt; V2: PLFloat; I21, I22: TLInt): TLFloat; forward;
+procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; forward;
+procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt; s: TLFloat); overload; forward;
+procedure APVMoveNeg(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); forward;
+procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; forward;
+procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt; s: TLFloat); overload; forward;
+procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; forward;
+procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt; s: TLFloat); overload; forward;
+procedure APVMul(VOp: PLFloat; I1, I2: TLInt; s: TLFloat); forward;
+procedure APVFillValue(VOp: PLFloat; I1, I2: TLInt; s: TLFloat); forward;
+
+function AP_Float(X: TLFloat): TLFloat; forward;
+function AP_FP_Eq(X: TLFloat; Y: TLFloat): Boolean; forward;
+function AP_FP_NEq(X: TLFloat; Y: TLFloat): Boolean; forward;
+function AP_FP_Less(X: TLFloat; Y: TLFloat): Boolean; forward;
+function AP_FP_Less_Eq(X: TLFloat; Y: TLFloat): Boolean; forward;
+function AP_FP_Greater(X: TLFloat; Y: TLFloat): Boolean; forward;
+function AP_FP_Greater_Eq(X: TLFloat; Y: TLFloat): Boolean; forward;
+
 type
-  TLBVec   = packed array of Boolean;
-  PLearnBooleanArray   = ^TLBVec;
-  TLBMatrix = packed array of TLBVec;
+  TLBVec             = packed array of Boolean;
+  PLearnBooleanArray = ^TLBVec;
+  TLBMatrix          = packed array of TLBVec;
 
   PLearnComplex = ^TLComplex;
 
@@ -18,9 +46,9 @@ type
     X, Y: TLFloat;
   end;
 
-  TLComplexVec   = packed array of TLComplex;
-  PLearnComplexArray   = ^TLComplexVec;
-  TLComplexMatrix = packed array of TLComplexVec;
+  TLComplexVec       = packed array of TLComplex;
+  PLearnComplexArray = ^TLComplexVec;
+  TLComplexMatrix    = packed array of TLComplexVec;
 
   TLearnCommState = packed record
     Stage: TLInt;
@@ -428,7 +456,7 @@ begin
 end;
 
 procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
-  I21, I22: TLInt; S: TLFloat); overload;
+  I21, I22: TLInt; s: TLFloat); overload;
 var
   I, C: TLInt;
 begin
@@ -442,7 +470,7 @@ begin
   C := I12 - I11;
   for I := 0 to C do
     begin
-      VDst^ := S * VSrc^;
+      VDst^ := s * VSrc^;
       Inc(VDst);
       Inc(VSrc);
     end;
@@ -491,7 +519,7 @@ begin
 end;
 
 procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
-  I21, I22: TLInt; S: TLFloat); overload;
+  I21, I22: TLInt; s: TLFloat); overload;
 var
   I, C: TLInt;
 begin
@@ -505,7 +533,7 @@ begin
   C := I12 - I11;
   for I := 0 to C do
     begin
-      VDst^ := VDst^ + S * VSrc^;
+      VDst^ := VDst^ + s * VSrc^;
       Inc(VDst);
       Inc(VSrc);
     end;
@@ -533,13 +561,13 @@ begin
 end;
 
 procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
-  I21, I22: TLInt; S: TLFloat); overload;
+  I21, I22: TLInt; s: TLFloat); overload;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVSub: arrays of different size!');
-  APVAdd(VDst, I11, I12, VSrc, I21, I22, -S);
+  APVAdd(VDst, I11, I12, VSrc, I21, I22, -s);
 end;
 
-procedure APVMul(VOp: PLFloat; I1, I2: TLInt; S: TLFloat);
+procedure APVMul(VOp: PLFloat; I1, I2: TLInt; s: TLFloat);
 var
   I, C: TLInt;
 begin
@@ -547,12 +575,12 @@ begin
   C := I2 - I1;
   for I := 0 to C do
     begin
-      VOp^ := S * VOp^;
+      VOp^ := s * VOp^;
       Inc(VOp);
     end;
 end;
 
-procedure APVFillValue(VOp: PLFloat; I1, I2: TLInt; S: TLFloat);
+procedure APVFillValue(VOp: PLFloat; I1, I2: TLInt; s: TLFloat);
 var
   I, C: TLInt;
 begin
@@ -560,7 +588,7 @@ begin
   C := I2 - I1;
   for I := 0 to C do
     begin
-      VOp^ := S;
+      VOp^ := s;
       Inc(VOp);
     end;
 end;

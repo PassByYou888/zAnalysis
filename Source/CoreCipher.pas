@@ -25,7 +25,6 @@
 unit CoreCipher;
 
 { core cipher engine. create by qq600585 }
-
 {$I zDefine.inc}
 
 interface
@@ -208,7 +207,7 @@ type
     Digest: array [0 .. 255] of Byte;
     KeyIndex: Integer;
     case Byte of
-      0: (KeyInts: array [0 .. 3] of Integer);
+      0: (KeyInts: array [0 .. 3] of DWord);
       1: (key: TKey128);
   end;
 
@@ -4491,8 +4490,8 @@ end;
 
 class procedure TLMD.UpdateLMD(var Context: TLMDContext; const Buf; BufSize: nativeInt);
 var
-  AA, BB: Integer;
-  CC, DD: Integer;
+  AA, BB: DWord;
+  CC, DD: DWord;
   i, R  : nativeInt;
 begin
   for i := 0 to BufSize - 1 do

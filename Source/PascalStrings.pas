@@ -16,9 +16,10 @@
 
 unit PascalStrings;
 
+interface
+
 {$I zDefine.inc}
 
-interface
 
 uses SysUtils;
 
@@ -32,6 +33,9 @@ type
   PPascalString = ^TPascalString;
 
   TPascalChars = packed array of Char;
+
+  TOrdChar  = (c0to9, c1to9, c0to32, c0to32no10, cLoAtoF, cHiAtoF, cLoAtoZ, cHiAtoZ, cHex, cAtoF, cAtoZ);
+  TOrdChars = set of TOrdChar;
 
   TPascalString = packed record
   private
@@ -82,11 +86,12 @@ type
     function Same(const IgnoreCase: Boolean; const t: TPascalString): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function ComparePos(const Offset: Integer; const p: PPascalString): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function ComparePos(const Offset: Integer; const t: TPascalString): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-    function GetPos(const SubStr: TPascalString; const Offset: Integer = 1): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-    function GetPos(const SubStr: PPascalString; const Offset: Integer = 1): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    function GetPos(const s: TPascalString; const Offset: Integer = 1): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    function GetPos(const s: PPascalString; const Offset: Integer = 1): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function Exists(c: SystemChar): Boolean; overload;
-    function Exists(c: array of SystemChar): Boolean; overload;
-    function Exists(const SubStr: TPascalString): Boolean; overload;
+    function Exists(c: array of Char): Boolean; overload;
+    function Exists(const s: TPascalString): Boolean; overload;
+    function GetCharCount(c: SystemChar): Integer;
     //
     function Hash: THash; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function Hash64: THash64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -111,7 +116,11 @@ type
     function UpperText: SystemString;
     function Invert: TPascalString;
     function TrimChar(const charS: TPascalString): TPascalString;
-    function DeleteChar(const charS: TPascalString): TPascalString;
+    function DeleteChar(const charS: TPascalString): TPascalString; overload;
+    function DeleteChar(const charS: TOrdChars): TPascalString; overload;
+    function ReplaceChar(const charS: TPascalString; const newChar: SystemChar): TPascalString; overload;
+    function ReplaceChar(const charS, newChar: SystemChar): TPascalString; overload;
+    function ReplaceChar(const charS: TOrdChars; const newChar: SystemChar): TPascalString; overload;
 
     { https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm }
     function SmithWaterman(const p: PPascalString): Double; overload;
@@ -124,11 +133,12 @@ type
   end;
 
   TArrayPascalString = array of TPascalString;
+  PArrayPascalString = ^TArrayPascalString;
 
-  TOrdChar  = (c0to9, c1to9, c0to32, c0to32no10, cLoAtoF, cHiAtoF, cLoAtoZ, cHiAtoZ, cHex, cAtoF, cAtoZ);
-  TOrdChars = set of TOrdChar;
+  TArrayPascalStringPtr = array of PPascalString;
+  PArrayPascalStringPtr = ^TArrayPascalStringPtr;
 
-function CharIn(c: SystemChar; const SomeChars: array of SystemChar): Boolean; overload;
+function CharIn(c: SystemChar; const SomeChars: array of Char): Boolean; overload;
 function CharIn(c: SystemChar; const SomeChar: SystemChar): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function CharIn(c: SystemChar; const s: TPascalString): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function CharIn(c: SystemChar; const p: PPascalString): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -210,6 +220,7 @@ var
   MaxSmithWatermanMatrix: NativeInt = 8192;
   {$ENDIF}
 
+
 const
   {$IFDEF FirstCharInZero}
   FirstCharPos = 0;
@@ -282,7 +293,7 @@ begin
   Output[ll] := c2;
 end;
 
-function CharIn(c: SystemChar; const SomeChars: array of SystemChar): Boolean;
+function CharIn(c: SystemChar; const SomeChars: array of Char): Boolean;
 var
   AChar: SystemChar;
 begin
@@ -457,19 +468,19 @@ begin
     end;
 end;
 
-function GetSWMVMemory(const xLen, yLen: NativeUInt): Pointer; inline;
+function GetSWMVMemory(const xLen, yLen: NativeInt): Pointer; inline;
 { optimized matrix performance }
 begin
   Result := System.AllocMem((xLen + 1) * (yLen + 1) * SizeOf(NativeInt));
 end;
 
-function GetSWMV(const p: Pointer; const w, x, y: NativeUInt): NativeInt; inline;
+function GetSWMV(const p: Pointer; const w, x, y: NativeInt): NativeInt; inline;
 { optimized matrix performance }
 begin
   Result := PNativeInt(NativeUInt(p) + ((x + y * (w + 1)) * SizeOf(NativeInt)))^;
 end;
 
-procedure SetSWMV(const p: Pointer; const w, x, y: NativeUInt; const v: NativeInt); inline;
+procedure SetSWMV(const p: Pointer; const w, x, y: NativeInt; const v: NativeInt); inline;
 { optimized matrix performance }
 begin
   PNativeInt(NativeUInt(p) + ((x + y * (w + 1)) * SizeOf(NativeInt)))^ := v;
@@ -508,7 +519,7 @@ function SmithWatermanCompare(const seq1, seq2: PPascalString; var diff1, diff2:
 
 var
   swMatrixPtr                                           : Pointer;
-  i, j, l1, l2                                          : NativeUInt;
+  i, j, l1, l2                                          : NativeInt;
   matched, deleted, inserted                            : NativeInt;
   score_current, score_diagonal, score_left, score_right: NativeInt;
   identity                                              : NativeUInt;
@@ -675,7 +686,7 @@ function SmithWatermanCompare(const seq1, seq2: PPascalString; out Same, Diff: I
 
 var
   swMatrixPtr                                           : Pointer;
-  i, j, l1, l2                                          : NativeUInt;
+  i, j, l1, l2                                          : NativeInt;
   matched, deleted, inserted                            : NativeInt;
   score_current, score_diagonal, score_left, score_right: NativeInt;
   identity, l                                           : NativeUInt;
@@ -821,7 +832,7 @@ function SmithWatermanCompare(const seq1: Pointer; siz1: Integer; const seq2: Po
 
 var
   swMatrixPtr                                           : Pointer;
-  i, j, l1, l2                                          : NativeUInt;
+  i, j, l1, l2                                          : NativeInt;
   matched, deleted, inserted                            : NativeInt;
   score_current, score_diagonal, score_left, score_right: NativeInt;
   identity, l                                           : NativeUInt;
@@ -1020,7 +1031,7 @@ var
 
 var
   swMatrixPtr                                           : Pointer;
-  i, j, l1, l2                                          : NativeUInt;
+  i, j, l1, l2                                          : NativeInt;
   matched, deleted, inserted                            : NativeInt;
   score_current, score_diagonal, score_left, score_right: NativeInt;
   cSame, cDiff, TotalSame, TotalDiff                    : Integer;
@@ -1576,25 +1587,25 @@ begin
   Result := True;
 end;
 
-function TPascalString.GetPos(const SubStr: TPascalString; const Offset: Integer = 1): Integer;
+function TPascalString.GetPos(const s: TPascalString; const Offset: Integer = 1): Integer;
 var
   i: Integer;
 begin
   Result := 0;
-  if SubStr.Len > 0 then
-    for i := Offset to Len - SubStr.Len + 1 do
-      if ComparePos(i, @SubStr) then
+  if s.Len > 0 then
+    for i := Offset to Len - s.Len + 1 do
+      if ComparePos(i, @s) then
           Exit(i);
 end;
 
-function TPascalString.GetPos(const SubStr: PPascalString; const Offset: Integer = 1): Integer;
+function TPascalString.GetPos(const s: PPascalString; const Offset: Integer = 1): Integer;
 var
   i: Integer;
 begin
   Result := 0;
-  if SubStr^.Len > 0 then
-    for i := Offset to Len - SubStr^.Len + 1 do
-      if ComparePos(i, SubStr) then
+  if s^.Len > 0 then
+    for i := Offset to Len - s^.Len + 1 do
+      if ComparePos(i, s) then
           Exit(i);
 end;
 
@@ -1608,7 +1619,7 @@ begin
   Result := False;
 end;
 
-function TPascalString.Exists(c: array of SystemChar): Boolean;
+function TPascalString.Exists(c: array of Char): Boolean;
 var
   i: Integer;
 begin
@@ -1618,9 +1629,19 @@ begin
   Result := False;
 end;
 
-function TPascalString.Exists(const SubStr: TPascalString): Boolean;
+function TPascalString.Exists(const s: TPascalString): Boolean;
 begin
-  Result := GetPos(@SubStr, 1) > 0;
+  Result := GetPos(@s, 1) > 0;
+end;
+
+function TPascalString.GetCharCount(c: SystemChar): Integer;
+var
+  i: Integer;
+begin
+  Result := 0;
+  for i := low(Buff) to high(Buff) do
+    if CharIn(Buff[i], c) then
+        inc(Result);
 end;
 
 function TPascalString.Hash: THash;
@@ -1776,6 +1797,53 @@ begin
   for c in Buff do
     if not CharIn(c, @charS) then
         Result.Append(c);
+end;
+
+function TPascalString.DeleteChar(const charS: TOrdChars): TPascalString;
+var
+  i: Integer;
+  c: SystemChar;
+begin
+  Result := '';
+  for c in Buff do
+    if not CharIn(c, charS) then
+        Result.Append(c);
+end;
+
+function TPascalString.ReplaceChar(const charS: TPascalString; const newChar: SystemChar): TPascalString;
+var
+  i: Integer;
+begin
+  Result.Len := Len;
+  for i := low(Buff) to high(Buff) do
+    if CharIn(Buff[i], charS) then
+        Result.Buff[i] := newChar
+    else
+        Result.Buff[i] := Buff[i];
+end;
+
+function TPascalString.ReplaceChar(const charS, newChar: SystemChar): TPascalString;
+var
+  i: Integer;
+begin
+  Result.Len := Len;
+  for i := low(Buff) to high(Buff) do
+    if CharIn(Buff[i], charS) then
+        Result.Buff[i] := newChar
+    else
+        Result.Buff[i] := Buff[i];
+end;
+
+function TPascalString.ReplaceChar(const charS: TOrdChars; const newChar: SystemChar): TPascalString;
+var
+  i: Integer;
+begin
+  Result.Len := Len;
+  for i := low(Buff) to high(Buff) do
+    if CharIn(Buff[i], charS) then
+        Result.Buff[i] := newChar
+    else
+        Result.Buff[i] := Buff[i];
 end;
 
 function TPascalString.SmithWaterman(const p: PPascalString): Double;

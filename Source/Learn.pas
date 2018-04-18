@@ -226,91 +226,34 @@ type
     {$ENDIF FPC}
   end;
 
-  {$REGION 'LearnAPI'}
+procedure LearnTest;
 
-  { base type api }
-function AbsReal(X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AbsInt(I: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RandomReal(): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RandomInteger(I: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function Sign(X: TLFloat): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_Sqr(X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function APVDotProduct(V1: PLFloat; I11, I12: TLInt; V2: PLFloat; I21, I22: TLInt): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt; s: TLFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVMoveNeg(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt; s: TLFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt; s: TLFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVMul(VOp: PLFloat; I1, I2: TLInt; s: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure APVFillValue(VOp: PLFloat; I1, I2: TLInt; s: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function AP_Float(X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_FP_Eq(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_FP_NEq(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_FP_Less(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_FP_Less_Eq(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_FP_Greater(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AP_FP_Greater_Eq(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-{ matrix support }
-function VectorNorm2(const X: TLVec; const I1, I2: TLInt): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function VectorIdxAbsMax(const X: TLVec; const I1, I2: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ColumnIdxAbsMax(const X: TLMatrix; const I1, I2, J: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RowIdxAbsMax(const X: TLMatrix; const J1, J2, I: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function UpperHessenberg1Norm(const A: TLMatrix; const I1, I2, J1, J2: TLInt; var WORK: TLVec): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure CopyMatrix(const A: TLMatrix; const IS1, IS2, JS1, JS2: TLInt;
-  var B: TLMatrix; const ID1, ID2, JD1, JD2: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure InplaceTranspose(var A: TLMatrix; const I1, I2, J1, J2: TLInt; var WORK: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure CopyAndTranspose(const A: TLMatrix; IS1, IS2, JS1, JS2: TLInt;
-  var B: TLMatrix; ID1, ID2, JD1, JD2: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure MatrixVectorMultiply(const A: TLMatrix; const I1, I2, J1, J2: TLInt; const Trans: Boolean;
-  const X: TLVec; const IX1, IX2: TLInt; const Alpha: TLFloat;
-  var Y: TLVec; const IY1, IY2: TLInt; const Beta: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function Pythag2(X: TLFloat; Y: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure MatrixMatrixMultiply(const A: TLMatrix; const AI1, AI2, AJ1, AJ2: TLInt; const TransA: Boolean;
-  const B: TLMatrix; const BI1, BI2, BJ1, BJ2: TLInt; const TransB: Boolean;
-  const Alpha: TLFloat;
-  var C: TLMatrix; const CI1, CI2, CJ1, CJ2: TLInt;
-  const Beta: TLFloat;
-  var WORK: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
+{$REGION 'LearnAPI'}
 { Normal distribution support }
-function Erf(const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ErfC(const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function InvErf(const E: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function NormalDistribution(const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function InvNormalDistribution(const y0: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function NormalDistribution(const X: TLFloat): TLFloat;
+function InvNormalDistribution(const y0: TLFloat): TLFloat;
 
 { statistics base }
-function Log1P(const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ExpM1(const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CosM1(const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function Log1P(const X: TLFloat): TLFloat;
+function ExpM1(const X: TLFloat): TLFloat;
+function CosM1(const X: TLFloat): TLFloat;
 { Gamma support }
-function Gamma(const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function Gamma(const X: TLFloat): TLFloat;
 { Natural logarithm of gamma function }
-function LnGamma(const X: TLFloat; var SgnGam: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LnGamma(const X: TLFloat; var SgnGam: TLFloat): TLFloat;
 { Incomplete gamma integral }
-function IncompleteGamma(const A, X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IncompleteGamma(const A, X: TLFloat): TLFloat;
 { Complemented incomplete gamma integral }
-function IncompleteGammaC(const A, X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IncompleteGammaC(const A, X: TLFloat): TLFloat;
 { Inverse of complemented imcomplete gamma integral }
-function InvIncompleteGammaC(const A, y0: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function InvIncompleteGammaC(const A, y0: TLFloat): TLFloat;
 
 { Poisson distribution }
-function PoissonDistribution(k: TLInt; m: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function PoissonDistribution(k: TLInt; m: TLFloat): TLFloat;
 { Complemented Poisson distribution }
-function PoissonCDistribution(k: TLInt; m: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function PoissonCDistribution(k: TLInt; m: TLFloat): TLFloat;
 { Inverse Poisson distribution }
-function InvPoissonDistribution(k: TLInt; Y: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function InvPoissonDistribution(k: TLInt; Y: TLFloat): TLFloat;
 
 { Incomplete beta integral support }
 function IncompleteBeta(A, B, X: TLFloat): TLFloat;
@@ -318,49 +261,49 @@ function IncompleteBeta(A, B, X: TLFloat): TLFloat;
 function InvIncompleteBeta(const A, B, Y: TLFloat): TLFloat;
 
 { F distribution support }
-function FDistribution(const A: TLInt; const B: TLInt; const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function FDistribution(const A: TLInt; const B: TLInt; const X: TLFloat): TLFloat;
 { Complemented F distribution }
-function FCDistribution(const A: TLInt; const B: TLInt; const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function FCDistribution(const A: TLInt; const B: TLInt; const X: TLFloat): TLFloat;
 { Inverse of complemented F distribution }
-function InvFDistribution(const A: TLInt; const B: TLInt; const Y: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function InvFDistribution(const A: TLInt; const B: TLInt; const Y: TLFloat): TLFloat;
 { Two-sample F-test }
 procedure FTest(const X: TLVec; N: TLInt; const Y: TLVec; m: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 
 { Binomial distribution support }
-function BinomialDistribution(const k, N: TLInt; const p: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function BinomialDistribution(const k, N: TLInt; const p: TLFloat): TLFloat;
 { Complemented binomial distribution }
-function BinomialCDistribution(const k, N: TLInt; const p: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function BinomialCDistribution(const k, N: TLInt; const p: TLFloat): TLFloat;
 { Inverse binomial distribution }
-function InvBinomialDistribution(const k, N: TLInt; const Y: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function InvBinomialDistribution(const k, N: TLInt; const Y: TLFloat): TLFloat;
 { Sign test }
 procedure OneSampleSignTest(const X: TLVec; N: TLInt; Median: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 
 { Chi-square distribution support }
-function ChiSquareDistribution(const v, X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ChiSquareDistribution(const v, X: TLFloat): TLFloat;
 { Complemented Chi-square distribution }
-function ChiSquareCDistribution(const v, X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ChiSquareCDistribution(const v, X: TLFloat): TLFloat;
 { Inverse of complemented Chi-square distribution }
-function InvChiSquareDistribution(const v, Y: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function InvChiSquareDistribution(const v, Y: TLFloat): TLFloat;
 { One-sample chi-square test }
-procedure OneSampleVarianceTest(const X: TLVec; N: TLInt; Variance: TLFloat; var BothTails, LeftTail, RightTail: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure OneSampleVarianceTest(const X: TLVec; N: TLInt; Variance: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 
 { Student's t distribution support }
-function StudentTDistribution(const k: TLInt; const t: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function StudentTDistribution(const k: TLInt; const t: TLFloat): TLFloat;
 { Functional inverse of Student's t distribution }
-function InvStudentTDistribution(const k: TLInt; p: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function InvStudentTDistribution(const k: TLInt; p: TLFloat): TLFloat;
 { One-sample t-test }
-procedure StudentTTest1(const X: TLVec; N: TLInt; Mean: TLFloat; var BothTails, LeftTail, RightTail: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure StudentTTest1(const X: TLVec; N: TLInt; Mean: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 { Two-sample pooled test }
-procedure StudentTTest2(const X: TLVec; N: TLInt; const Y: TLVec; m: TLInt; var BothTails, LeftTail, RightTail: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure StudentTTest2(const X: TLVec; N: TLInt; const Y: TLVec; m: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 { Two-sample unpooled test }
-procedure UnequalVarianceTTest(const X: TLVec; N: TLInt; const Y: TLVec; m: TLInt; var BothTails, LeftTail, RightTail: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure UnequalVarianceTTest(const X: TLVec; N: TLInt; const Y: TLVec; m: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 
 { Pearson and Spearman distribution support }
 { Pearson product-moment correlation coefficient }
-function PearsonCorrelation(const X, Y: TLVec; const N: TLInt): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function PearsonCorrelation(const X, Y: TLVec; const N: TLInt): TLFloat;
 { Spearman's rank correlation coefficient }
-function SpearmanRankCorrelation(const X, Y: TLVec; const N: TLInt): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure SpearmanRank(var X: TLVec; N: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SpearmanRankCorrelation(const X, Y: TLVec; const N: TLInt): TLFloat;
+procedure SpearmanRank(var X: TLVec; N: TLInt);
 { Pearson's correlation coefficient significance test }
 procedure PearsonCorrelationSignificance(const R: TLFloat; const N: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 { Spearman's rank correlation coefficient significance test }
@@ -404,8 +347,6 @@ function KMeans(const source: TKMFloat2DArray; const NVars, k: TLInt; var KArray
 
 {$ENDREGION 'LearnAPI'}
 
-{ full test }
-procedure LearnTest;
 
 const
   MachineEpsilon = 5E-16;
@@ -458,7 +399,6 @@ uses Math,
 {$INCLUDE learn_statistics_Wilcoxon.inc}
 {$INCLUDE learn_extAPI.inc}
 {$INCLUDE learn_th.inc}
-{$INCLUDE learn_test.inc}
 
 
 procedure TLearn.KDInput(const IndexFor: NativeInt; var source: TKDTree_Source; const Data: Pointer);
@@ -2311,6 +2251,7 @@ begin
 end;
 {$ENDIF FPC}
 
+{$INCLUDE learn_test.inc}
 
 initialization
 
