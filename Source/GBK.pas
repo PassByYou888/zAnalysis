@@ -16,22 +16,22 @@ interface
 
 uses SysUtils, DoStatusIO, CoreClasses, PascalStrings, MemoryStream64, ListEngine, UnicodeMixedLib;
 
-{ Million with a simplified form, support simplified port body }
+{ any text fixed }
 function GBKString(const s: TPascalString): TPascalString;
 
 { Pinyin encoding conversion, support simplified port body }
 function PY(const s: TPascalString; const multiPy: Boolean): TPascalString;
 
-{ Simplified body }
+{ Simplified to Traditional }
 function S2T(const s: TPascalString): TPascalString;
 
-{ Simplified transformation of Hongkong body (built-in vocabulary conversion) }
+{ Simplified to Hongkong Traditional (built-in vocabulary conversion) }
 function S2HK(const s: TPascalString): TPascalString;
 
-{ Simplified simplified form (built-in vocabulary conversion) }
+{ Traditional to Simplified (built-in vocabulary conversion) }
 function T2S(const s: TPascalString): TPascalString;
 
-{ Simplified transformation of Taiwan (built-in vocabulary conversion) }
+{ Simplified to Taiwan Traditional (built-in vocabulary conversion) }
 function S2TW(const s: TPascalString): TPascalString;
 
 implementation
@@ -356,4 +356,3 @@ finalization
 FreeGBK;
 
 end.
- 

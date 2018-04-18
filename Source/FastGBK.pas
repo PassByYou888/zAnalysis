@@ -1,5 +1,5 @@
-﻿{******************************************************************************}
-{* Core class library  written by QQ 600585@qq.com                            *}
+﻿{ ****************************************************************************** }
+{ * Core class library  written by QQ 600585@qq.com                            * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
 { * https://github.com/PassByYou888/zExpression                                * }
@@ -25,6 +25,7 @@ function FastPY(const s: TPascalString; const multiPy: Boolean = False): TPascal
 { Using the GBK coding table to sort out the phonetic alphabet quickly }
 procedure FastPYSort(const inverse: Boolean; const InBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr);
 
+{ custom sort }
 type
   TFastCompareFuncCall   = function(const v1, v2: PPascalString)  : ShortInt;
   TFastCompareFuncMethod = function(const v1, v2: PPascalString): ShortInt of object;
@@ -383,4 +384,3 @@ finalization
 FreeGBK;
 
 end.
- 
