@@ -13,7 +13,7 @@ unit FastKDTreeD;
 
 interface
 
-uses CoreClasses, KM;
+uses CoreClasses, PascalStrings, KM;
 
 {$I zDefine.inc}
 
@@ -308,14 +308,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT1DD_Node);
     procedure PrintBuffer;
 
-    class function KDT1DDVec(const s: string): TKDT1DD_Vec; overload;
-    class function KDT1DDVec(const v: TKDT1DD_Vec): string; overload;
+    class function KDT1DDVec(const s: SystemString): TKDT1DD_Vec; overload;
+    class function KDT1DDVec(const v: TKDT1DD_Vec): SystemString; overload;
     class function KDT1DDPow(const v: TKDT1DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT1DDDistance(const v1, v2: TKDT1DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -403,14 +403,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT2DD_Node);
     procedure PrintBuffer;
 
-    class function KDT2DDVec(const s: string): TKDT2DD_Vec; overload;
-    class function KDT2DDVec(const v: TKDT2DD_Vec): string; overload;
+    class function KDT2DDVec(const s: SystemString): TKDT2DD_Vec; overload;
+    class function KDT2DDVec(const v: TKDT2DD_Vec): SystemString; overload;
     class function KDT2DDPow(const v: TKDT2DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT2DDDistance(const v1, v2: TKDT2DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -498,14 +498,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT3DD_Node);
     procedure PrintBuffer;
 
-    class function KDT3DDVec(const s: string): TKDT3DD_Vec; overload;
-    class function KDT3DDVec(const v: TKDT3DD_Vec): string; overload;
+    class function KDT3DDVec(const s: SystemString): TKDT3DD_Vec; overload;
+    class function KDT3DDVec(const v: TKDT3DD_Vec): SystemString; overload;
     class function KDT3DDPow(const v: TKDT3DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT3DDDistance(const v1, v2: TKDT3DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -593,14 +593,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT4DD_Node);
     procedure PrintBuffer;
 
-    class function KDT4DDVec(const s: string): TKDT4DD_Vec; overload;
-    class function KDT4DDVec(const v: TKDT4DD_Vec): string; overload;
+    class function KDT4DDVec(const s: SystemString): TKDT4DD_Vec; overload;
+    class function KDT4DDVec(const v: TKDT4DD_Vec): SystemString; overload;
     class function KDT4DDPow(const v: TKDT4DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT4DDDistance(const v1, v2: TKDT4DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -688,14 +688,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT5DD_Node);
     procedure PrintBuffer;
 
-    class function KDT5DDVec(const s: string): TKDT5DD_Vec; overload;
-    class function KDT5DDVec(const v: TKDT5DD_Vec): string; overload;
+    class function KDT5DDVec(const s: SystemString): TKDT5DD_Vec; overload;
+    class function KDT5DDVec(const v: TKDT5DD_Vec): SystemString; overload;
     class function KDT5DDPow(const v: TKDT5DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT5DDDistance(const v1, v2: TKDT5DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -783,14 +783,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT6DD_Node);
     procedure PrintBuffer;
 
-    class function KDT6DDVec(const s: string): TKDT6DD_Vec; overload;
-    class function KDT6DDVec(const v: TKDT6DD_Vec): string; overload;
+    class function KDT6DDVec(const s: SystemString): TKDT6DD_Vec; overload;
+    class function KDT6DDVec(const v: TKDT6DD_Vec): SystemString; overload;
     class function KDT6DDPow(const v: TKDT6DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT6DDDistance(const v1, v2: TKDT6DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -878,14 +878,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT7DD_Node);
     procedure PrintBuffer;
 
-    class function KDT7DDVec(const s: string): TKDT7DD_Vec; overload;
-    class function KDT7DDVec(const v: TKDT7DD_Vec): string; overload;
+    class function KDT7DDVec(const s: SystemString): TKDT7DD_Vec; overload;
+    class function KDT7DDVec(const v: TKDT7DD_Vec): SystemString; overload;
     class function KDT7DDPow(const v: TKDT7DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT7DDDistance(const v1, v2: TKDT7DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -973,14 +973,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT8DD_Node);
     procedure PrintBuffer;
 
-    class function KDT8DDVec(const s: string): TKDT8DD_Vec; overload;
-    class function KDT8DDVec(const v: TKDT8DD_Vec): string; overload;
+    class function KDT8DDVec(const s: SystemString): TKDT8DD_Vec; overload;
+    class function KDT8DDVec(const v: TKDT8DD_Vec): SystemString; overload;
     class function KDT8DDPow(const v: TKDT8DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT8DDDistance(const v1, v2: TKDT8DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -1068,14 +1068,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT9DD_Node);
     procedure PrintBuffer;
 
-    class function KDT9DDVec(const s: string): TKDT9DD_Vec; overload;
-    class function KDT9DDVec(const v: TKDT9DD_Vec): string; overload;
+    class function KDT9DDVec(const s: SystemString): TKDT9DD_Vec; overload;
+    class function KDT9DDVec(const v: TKDT9DD_Vec): SystemString; overload;
     class function KDT9DDPow(const v: TKDT9DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT9DDDistance(const v1, v2: TKDT9DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -1163,14 +1163,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT10DD_Node);
     procedure PrintBuffer;
 
-    class function KDT10DDVec(const s: string): TKDT10DD_Vec; overload;
-    class function KDT10DDVec(const v: TKDT10DD_Vec): string; overload;
+    class function KDT10DDVec(const s: SystemString): TKDT10DD_Vec; overload;
+    class function KDT10DDVec(const v: TKDT10DD_Vec): SystemString; overload;
     class function KDT10DDPow(const v: TKDT10DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT10DDDistance(const v1, v2: TKDT10DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -1258,14 +1258,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT11DD_Node);
     procedure PrintBuffer;
 
-    class function KDT11DDVec(const s: string): TKDT11DD_Vec; overload;
-    class function KDT11DDVec(const v: TKDT11DD_Vec): string; overload;
+    class function KDT11DDVec(const s: SystemString): TKDT11DD_Vec; overload;
+    class function KDT11DDVec(const v: TKDT11DD_Vec): SystemString; overload;
     class function KDT11DDPow(const v: TKDT11DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT11DDDistance(const v1, v2: TKDT11DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -1353,14 +1353,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT12DD_Node);
     procedure PrintBuffer;
 
-    class function KDT12DDVec(const s: string): TKDT12DD_Vec; overload;
-    class function KDT12DDVec(const v: TKDT12DD_Vec): string; overload;
+    class function KDT12DDVec(const s: SystemString): TKDT12DD_Vec; overload;
+    class function KDT12DDVec(const v: TKDT12DD_Vec): SystemString; overload;
     class function KDT12DDPow(const v: TKDT12DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT12DDDistance(const v1, v2: TKDT12DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -1448,14 +1448,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT13DD_Node);
     procedure PrintBuffer;
 
-    class function KDT13DDVec(const s: string): TKDT13DD_Vec; overload;
-    class function KDT13DDVec(const v: TKDT13DD_Vec): string; overload;
+    class function KDT13DDVec(const s: SystemString): TKDT13DD_Vec; overload;
+    class function KDT13DDVec(const v: TKDT13DD_Vec): SystemString; overload;
     class function KDT13DDPow(const v: TKDT13DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT13DDDistance(const v1, v2: TKDT13DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -1543,14 +1543,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT14DD_Node);
     procedure PrintBuffer;
 
-    class function KDT14DDVec(const s: string): TKDT14DD_Vec; overload;
-    class function KDT14DDVec(const v: TKDT14DD_Vec): string; overload;
+    class function KDT14DDVec(const s: SystemString): TKDT14DD_Vec; overload;
+    class function KDT14DDVec(const v: TKDT14DD_Vec): SystemString; overload;
     class function KDT14DDPow(const v: TKDT14DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT14DDDistance(const v1, v2: TKDT14DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -1638,14 +1638,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT15DD_Node);
     procedure PrintBuffer;
 
-    class function KDT15DDVec(const s: string): TKDT15DD_Vec; overload;
-    class function KDT15DDVec(const v: TKDT15DD_Vec): string; overload;
+    class function KDT15DDVec(const s: SystemString): TKDT15DD_Vec; overload;
+    class function KDT15DDVec(const v: TKDT15DD_Vec): SystemString; overload;
     class function KDT15DDPow(const v: TKDT15DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT15DDDistance(const v1, v2: TKDT15DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -1733,14 +1733,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT16DD_Node);
     procedure PrintBuffer;
 
-    class function KDT16DDVec(const s: string): TKDT16DD_Vec; overload;
-    class function KDT16DDVec(const v: TKDT16DD_Vec): string; overload;
+    class function KDT16DDVec(const s: SystemString): TKDT16DD_Vec; overload;
+    class function KDT16DDVec(const v: TKDT16DD_Vec): SystemString; overload;
     class function KDT16DDPow(const v: TKDT16DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT16DDDistance(const v1, v2: TKDT16DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -1828,14 +1828,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT17DD_Node);
     procedure PrintBuffer;
 
-    class function KDT17DDVec(const s: string): TKDT17DD_Vec; overload;
-    class function KDT17DDVec(const v: TKDT17DD_Vec): string; overload;
+    class function KDT17DDVec(const s: SystemString): TKDT17DD_Vec; overload;
+    class function KDT17DDVec(const v: TKDT17DD_Vec): SystemString; overload;
     class function KDT17DDPow(const v: TKDT17DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT17DDDistance(const v1, v2: TKDT17DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -1923,14 +1923,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT18DD_Node);
     procedure PrintBuffer;
 
-    class function KDT18DDVec(const s: string): TKDT18DD_Vec; overload;
-    class function KDT18DDVec(const v: TKDT18DD_Vec): string; overload;
+    class function KDT18DDVec(const s: SystemString): TKDT18DD_Vec; overload;
+    class function KDT18DDVec(const v: TKDT18DD_Vec): SystemString; overload;
     class function KDT18DDPow(const v: TKDT18DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT18DDDistance(const v1, v2: TKDT18DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -2018,14 +2018,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT19DD_Node);
     procedure PrintBuffer;
 
-    class function KDT19DDVec(const s: string): TKDT19DD_Vec; overload;
-    class function KDT19DDVec(const v: TKDT19DD_Vec): string; overload;
+    class function KDT19DDVec(const s: SystemString): TKDT19DD_Vec; overload;
+    class function KDT19DDVec(const v: TKDT19DD_Vec): SystemString; overload;
     class function KDT19DDPow(const v: TKDT19DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT19DDDistance(const v1, v2: TKDT19DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -2113,14 +2113,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT20DD_Node);
     procedure PrintBuffer;
 
-    class function KDT20DDVec(const s: string): TKDT20DD_Vec; overload;
-    class function KDT20DDVec(const v: TKDT20DD_Vec): string; overload;
+    class function KDT20DDVec(const s: SystemString): TKDT20DD_Vec; overload;
+    class function KDT20DDVec(const v: TKDT20DD_Vec): SystemString; overload;
     class function KDT20DDPow(const v: TKDT20DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT20DDDistance(const v1, v2: TKDT20DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -2208,14 +2208,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT21DD_Node);
     procedure PrintBuffer;
 
-    class function KDT21DDVec(const s: string): TKDT21DD_Vec; overload;
-    class function KDT21DDVec(const v: TKDT21DD_Vec): string; overload;
+    class function KDT21DDVec(const s: SystemString): TKDT21DD_Vec; overload;
+    class function KDT21DDVec(const v: TKDT21DD_Vec): SystemString; overload;
     class function KDT21DDPow(const v: TKDT21DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT21DDDistance(const v1, v2: TKDT21DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -2303,14 +2303,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT22DD_Node);
     procedure PrintBuffer;
 
-    class function KDT22DDVec(const s: string): TKDT22DD_Vec; overload;
-    class function KDT22DDVec(const v: TKDT22DD_Vec): string; overload;
+    class function KDT22DDVec(const s: SystemString): TKDT22DD_Vec; overload;
+    class function KDT22DDVec(const v: TKDT22DD_Vec): SystemString; overload;
     class function KDT22DDPow(const v: TKDT22DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT22DDDistance(const v1, v2: TKDT22DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -2398,14 +2398,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT23DD_Node);
     procedure PrintBuffer;
 
-    class function KDT23DDVec(const s: string): TKDT23DD_Vec; overload;
-    class function KDT23DDVec(const v: TKDT23DD_Vec): string; overload;
+    class function KDT23DDVec(const s: SystemString): TKDT23DD_Vec; overload;
+    class function KDT23DDVec(const v: TKDT23DD_Vec): SystemString; overload;
     class function KDT23DDPow(const v: TKDT23DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT23DDDistance(const v1, v2: TKDT23DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -2493,14 +2493,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT24DD_Node);
     procedure PrintBuffer;
 
-    class function KDT24DDVec(const s: string): TKDT24DD_Vec; overload;
-    class function KDT24DDVec(const v: TKDT24DD_Vec): string; overload;
+    class function KDT24DDVec(const s: SystemString): TKDT24DD_Vec; overload;
+    class function KDT24DDVec(const v: TKDT24DD_Vec): SystemString; overload;
     class function KDT24DDPow(const v: TKDT24DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT24DDDistance(const v1, v2: TKDT24DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -2588,14 +2588,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT25DD_Node);
     procedure PrintBuffer;
 
-    class function KDT25DDVec(const s: string): TKDT25DD_Vec; overload;
-    class function KDT25DDVec(const v: TKDT25DD_Vec): string; overload;
+    class function KDT25DDVec(const s: SystemString): TKDT25DD_Vec; overload;
+    class function KDT25DDVec(const v: TKDT25DD_Vec): SystemString; overload;
     class function KDT25DDPow(const v: TKDT25DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT25DDDistance(const v1, v2: TKDT25DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -2683,14 +2683,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT26DD_Node);
     procedure PrintBuffer;
 
-    class function KDT26DDVec(const s: string): TKDT26DD_Vec; overload;
-    class function KDT26DDVec(const v: TKDT26DD_Vec): string; overload;
+    class function KDT26DDVec(const s: SystemString): TKDT26DD_Vec; overload;
+    class function KDT26DDVec(const v: TKDT26DD_Vec): SystemString; overload;
     class function KDT26DDPow(const v: TKDT26DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT26DDDistance(const v1, v2: TKDT26DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -2778,14 +2778,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT27DD_Node);
     procedure PrintBuffer;
 
-    class function KDT27DDVec(const s: string): TKDT27DD_Vec; overload;
-    class function KDT27DDVec(const v: TKDT27DD_Vec): string; overload;
+    class function KDT27DDVec(const s: SystemString): TKDT27DD_Vec; overload;
+    class function KDT27DDVec(const v: TKDT27DD_Vec): SystemString; overload;
     class function KDT27DDPow(const v: TKDT27DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT27DDDistance(const v1, v2: TKDT27DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -2873,14 +2873,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT28DD_Node);
     procedure PrintBuffer;
 
-    class function KDT28DDVec(const s: string): TKDT28DD_Vec; overload;
-    class function KDT28DDVec(const v: TKDT28DD_Vec): string; overload;
+    class function KDT28DDVec(const s: SystemString): TKDT28DD_Vec; overload;
+    class function KDT28DDVec(const v: TKDT28DD_Vec): SystemString; overload;
     class function KDT28DDPow(const v: TKDT28DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT28DDDistance(const v1, v2: TKDT28DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -2968,14 +2968,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT29DD_Node);
     procedure PrintBuffer;
 
-    class function KDT29DDVec(const s: string): TKDT29DD_Vec; overload;
-    class function KDT29DDVec(const v: TKDT29DD_Vec): string; overload;
+    class function KDT29DDVec(const s: SystemString): TKDT29DD_Vec; overload;
+    class function KDT29DDVec(const v: TKDT29DD_Vec): SystemString; overload;
     class function KDT29DDPow(const v: TKDT29DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT29DDDistance(const v1, v2: TKDT29DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -3063,14 +3063,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT30DD_Node);
     procedure PrintBuffer;
 
-    class function KDT30DDVec(const s: string): TKDT30DD_Vec; overload;
-    class function KDT30DDVec(const v: TKDT30DD_Vec): string; overload;
+    class function KDT30DDVec(const s: SystemString): TKDT30DD_Vec; overload;
+    class function KDT30DDVec(const v: TKDT30DD_Vec): SystemString; overload;
     class function KDT30DDPow(const v: TKDT30DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT30DDDistance(const v1, v2: TKDT30DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -3158,14 +3158,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT31DD_Node);
     procedure PrintBuffer;
 
-    class function KDT31DDVec(const s: string): TKDT31DD_Vec; overload;
-    class function KDT31DDVec(const v: TKDT31DD_Vec): string; overload;
+    class function KDT31DDVec(const s: SystemString): TKDT31DD_Vec; overload;
+    class function KDT31DDVec(const v: TKDT31DD_Vec): SystemString; overload;
     class function KDT31DDPow(const v: TKDT31DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT31DDDistance(const v1, v2: TKDT31DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -3253,14 +3253,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT32DD_Node);
     procedure PrintBuffer;
 
-    class function KDT32DDVec(const s: string): TKDT32DD_Vec; overload;
-    class function KDT32DDVec(const v: TKDT32DD_Vec): string; overload;
+    class function KDT32DDVec(const s: SystemString): TKDT32DD_Vec; overload;
+    class function KDT32DDVec(const v: TKDT32DD_Vec): SystemString; overload;
     class function KDT32DDPow(const v: TKDT32DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT32DDDistance(const v1, v2: TKDT32DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -3348,14 +3348,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT33DD_Node);
     procedure PrintBuffer;
 
-    class function KDT33DDVec(const s: string): TKDT33DD_Vec; overload;
-    class function KDT33DDVec(const v: TKDT33DD_Vec): string; overload;
+    class function KDT33DDVec(const s: SystemString): TKDT33DD_Vec; overload;
+    class function KDT33DDVec(const v: TKDT33DD_Vec): SystemString; overload;
     class function KDT33DDPow(const v: TKDT33DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT33DDDistance(const v1, v2: TKDT33DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -3443,14 +3443,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT34DD_Node);
     procedure PrintBuffer;
 
-    class function KDT34DDVec(const s: string): TKDT34DD_Vec; overload;
-    class function KDT34DDVec(const v: TKDT34DD_Vec): string; overload;
+    class function KDT34DDVec(const s: SystemString): TKDT34DD_Vec; overload;
+    class function KDT34DDVec(const v: TKDT34DD_Vec): SystemString; overload;
     class function KDT34DDPow(const v: TKDT34DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT34DDDistance(const v1, v2: TKDT34DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -3538,14 +3538,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT35DD_Node);
     procedure PrintBuffer;
 
-    class function KDT35DDVec(const s: string): TKDT35DD_Vec; overload;
-    class function KDT35DDVec(const v: TKDT35DD_Vec): string; overload;
+    class function KDT35DDVec(const s: SystemString): TKDT35DD_Vec; overload;
+    class function KDT35DDVec(const v: TKDT35DD_Vec): SystemString; overload;
     class function KDT35DDPow(const v: TKDT35DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT35DDDistance(const v1, v2: TKDT35DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -3633,14 +3633,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT36DD_Node);
     procedure PrintBuffer;
 
-    class function KDT36DDVec(const s: string): TKDT36DD_Vec; overload;
-    class function KDT36DDVec(const v: TKDT36DD_Vec): string; overload;
+    class function KDT36DDVec(const s: SystemString): TKDT36DD_Vec; overload;
+    class function KDT36DDVec(const v: TKDT36DD_Vec): SystemString; overload;
     class function KDT36DDPow(const v: TKDT36DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT36DDDistance(const v1, v2: TKDT36DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -3728,14 +3728,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT37DD_Node);
     procedure PrintBuffer;
 
-    class function KDT37DDVec(const s: string): TKDT37DD_Vec; overload;
-    class function KDT37DDVec(const v: TKDT37DD_Vec): string; overload;
+    class function KDT37DDVec(const s: SystemString): TKDT37DD_Vec; overload;
+    class function KDT37DDVec(const v: TKDT37DD_Vec): SystemString; overload;
     class function KDT37DDPow(const v: TKDT37DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT37DDDistance(const v1, v2: TKDT37DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -3823,14 +3823,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT38DD_Node);
     procedure PrintBuffer;
 
-    class function KDT38DDVec(const s: string): TKDT38DD_Vec; overload;
-    class function KDT38DDVec(const v: TKDT38DD_Vec): string; overload;
+    class function KDT38DDVec(const s: SystemString): TKDT38DD_Vec; overload;
+    class function KDT38DDVec(const v: TKDT38DD_Vec): SystemString; overload;
     class function KDT38DDPow(const v: TKDT38DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT38DDDistance(const v1, v2: TKDT38DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -3918,14 +3918,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT39DD_Node);
     procedure PrintBuffer;
 
-    class function KDT39DDVec(const s: string): TKDT39DD_Vec; overload;
-    class function KDT39DDVec(const v: TKDT39DD_Vec): string; overload;
+    class function KDT39DDVec(const s: SystemString): TKDT39DD_Vec; overload;
+    class function KDT39DDVec(const v: TKDT39DD_Vec): SystemString; overload;
     class function KDT39DDPow(const v: TKDT39DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT39DDDistance(const v1, v2: TKDT39DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -4013,14 +4013,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT40DD_Node);
     procedure PrintBuffer;
 
-    class function KDT40DDVec(const s: string): TKDT40DD_Vec; overload;
-    class function KDT40DDVec(const v: TKDT40DD_Vec): string; overload;
+    class function KDT40DDVec(const s: SystemString): TKDT40DD_Vec; overload;
+    class function KDT40DDVec(const v: TKDT40DD_Vec): SystemString; overload;
     class function KDT40DDPow(const v: TKDT40DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT40DDDistance(const v1, v2: TKDT40DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -4108,14 +4108,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT41DD_Node);
     procedure PrintBuffer;
 
-    class function KDT41DDVec(const s: string): TKDT41DD_Vec; overload;
-    class function KDT41DDVec(const v: TKDT41DD_Vec): string; overload;
+    class function KDT41DDVec(const s: SystemString): TKDT41DD_Vec; overload;
+    class function KDT41DDVec(const v: TKDT41DD_Vec): SystemString; overload;
     class function KDT41DDPow(const v: TKDT41DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT41DDDistance(const v1, v2: TKDT41DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -4203,14 +4203,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT42DD_Node);
     procedure PrintBuffer;
 
-    class function KDT42DDVec(const s: string): TKDT42DD_Vec; overload;
-    class function KDT42DDVec(const v: TKDT42DD_Vec): string; overload;
+    class function KDT42DDVec(const s: SystemString): TKDT42DD_Vec; overload;
+    class function KDT42DDVec(const v: TKDT42DD_Vec): SystemString; overload;
     class function KDT42DDPow(const v: TKDT42DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT42DDDistance(const v1, v2: TKDT42DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -4298,14 +4298,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT43DD_Node);
     procedure PrintBuffer;
 
-    class function KDT43DDVec(const s: string): TKDT43DD_Vec; overload;
-    class function KDT43DDVec(const v: TKDT43DD_Vec): string; overload;
+    class function KDT43DDVec(const s: SystemString): TKDT43DD_Vec; overload;
+    class function KDT43DDVec(const v: TKDT43DD_Vec): SystemString; overload;
     class function KDT43DDPow(const v: TKDT43DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT43DDDistance(const v1, v2: TKDT43DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -4393,14 +4393,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT44DD_Node);
     procedure PrintBuffer;
 
-    class function KDT44DDVec(const s: string): TKDT44DD_Vec; overload;
-    class function KDT44DDVec(const v: TKDT44DD_Vec): string; overload;
+    class function KDT44DDVec(const s: SystemString): TKDT44DD_Vec; overload;
+    class function KDT44DDVec(const v: TKDT44DD_Vec): SystemString; overload;
     class function KDT44DDPow(const v: TKDT44DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT44DDDistance(const v1, v2: TKDT44DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -4488,14 +4488,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT45DD_Node);
     procedure PrintBuffer;
 
-    class function KDT45DDVec(const s: string): TKDT45DD_Vec; overload;
-    class function KDT45DDVec(const v: TKDT45DD_Vec): string; overload;
+    class function KDT45DDVec(const s: SystemString): TKDT45DD_Vec; overload;
+    class function KDT45DDVec(const v: TKDT45DD_Vec): SystemString; overload;
     class function KDT45DDPow(const v: TKDT45DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT45DDDistance(const v1, v2: TKDT45DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -4583,14 +4583,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT46DD_Node);
     procedure PrintBuffer;
 
-    class function KDT46DDVec(const s: string): TKDT46DD_Vec; overload;
-    class function KDT46DDVec(const v: TKDT46DD_Vec): string; overload;
+    class function KDT46DDVec(const s: SystemString): TKDT46DD_Vec; overload;
+    class function KDT46DDVec(const v: TKDT46DD_Vec): SystemString; overload;
     class function KDT46DDPow(const v: TKDT46DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT46DDDistance(const v1, v2: TKDT46DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -4678,14 +4678,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT47DD_Node);
     procedure PrintBuffer;
 
-    class function KDT47DDVec(const s: string): TKDT47DD_Vec; overload;
-    class function KDT47DDVec(const v: TKDT47DD_Vec): string; overload;
+    class function KDT47DDVec(const s: SystemString): TKDT47DD_Vec; overload;
+    class function KDT47DDVec(const v: TKDT47DD_Vec): SystemString; overload;
     class function KDT47DDPow(const v: TKDT47DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT47DDDistance(const v1, v2: TKDT47DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -4773,14 +4773,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT48DD_Node);
     procedure PrintBuffer;
 
-    class function KDT48DDVec(const s: string): TKDT48DD_Vec; overload;
-    class function KDT48DDVec(const v: TKDT48DD_Vec): string; overload;
+    class function KDT48DDVec(const s: SystemString): TKDT48DD_Vec; overload;
+    class function KDT48DDVec(const v: TKDT48DD_Vec): SystemString; overload;
     class function KDT48DDPow(const v: TKDT48DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT48DDDistance(const v1, v2: TKDT48DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -4868,14 +4868,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT49DD_Node);
     procedure PrintBuffer;
 
-    class function KDT49DDVec(const s: string): TKDT49DD_Vec; overload;
-    class function KDT49DDVec(const v: TKDT49DD_Vec): string; overload;
+    class function KDT49DDVec(const s: SystemString): TKDT49DD_Vec; overload;
+    class function KDT49DDVec(const v: TKDT49DD_Vec): SystemString; overload;
     class function KDT49DDPow(const v: TKDT49DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT49DDDistance(const v1, v2: TKDT49DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -4963,14 +4963,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT50DD_Node);
     procedure PrintBuffer;
 
-    class function KDT50DDVec(const s: string): TKDT50DD_Vec; overload;
-    class function KDT50DDVec(const v: TKDT50DD_Vec): string; overload;
+    class function KDT50DDVec(const s: SystemString): TKDT50DD_Vec; overload;
+    class function KDT50DDVec(const v: TKDT50DD_Vec): SystemString; overload;
     class function KDT50DDPow(const v: TKDT50DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT50DDDistance(const v1, v2: TKDT50DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -5058,14 +5058,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT51DD_Node);
     procedure PrintBuffer;
 
-    class function KDT51DDVec(const s: string): TKDT51DD_Vec; overload;
-    class function KDT51DDVec(const v: TKDT51DD_Vec): string; overload;
+    class function KDT51DDVec(const s: SystemString): TKDT51DD_Vec; overload;
+    class function KDT51DDVec(const v: TKDT51DD_Vec): SystemString; overload;
     class function KDT51DDPow(const v: TKDT51DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT51DDDistance(const v1, v2: TKDT51DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -5153,14 +5153,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT52DD_Node);
     procedure PrintBuffer;
 
-    class function KDT52DDVec(const s: string): TKDT52DD_Vec; overload;
-    class function KDT52DDVec(const v: TKDT52DD_Vec): string; overload;
+    class function KDT52DDVec(const s: SystemString): TKDT52DD_Vec; overload;
+    class function KDT52DDVec(const v: TKDT52DD_Vec): SystemString; overload;
     class function KDT52DDPow(const v: TKDT52DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT52DDDistance(const v1, v2: TKDT52DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -5248,14 +5248,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT53DD_Node);
     procedure PrintBuffer;
 
-    class function KDT53DDVec(const s: string): TKDT53DD_Vec; overload;
-    class function KDT53DDVec(const v: TKDT53DD_Vec): string; overload;
+    class function KDT53DDVec(const s: SystemString): TKDT53DD_Vec; overload;
+    class function KDT53DDVec(const v: TKDT53DD_Vec): SystemString; overload;
     class function KDT53DDPow(const v: TKDT53DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT53DDDistance(const v1, v2: TKDT53DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -5343,14 +5343,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT54DD_Node);
     procedure PrintBuffer;
 
-    class function KDT54DDVec(const s: string): TKDT54DD_Vec; overload;
-    class function KDT54DDVec(const v: TKDT54DD_Vec): string; overload;
+    class function KDT54DDVec(const s: SystemString): TKDT54DD_Vec; overload;
+    class function KDT54DDVec(const v: TKDT54DD_Vec): SystemString; overload;
     class function KDT54DDPow(const v: TKDT54DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT54DDDistance(const v1, v2: TKDT54DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -5438,14 +5438,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT55DD_Node);
     procedure PrintBuffer;
 
-    class function KDT55DDVec(const s: string): TKDT55DD_Vec; overload;
-    class function KDT55DDVec(const v: TKDT55DD_Vec): string; overload;
+    class function KDT55DDVec(const s: SystemString): TKDT55DD_Vec; overload;
+    class function KDT55DDVec(const v: TKDT55DD_Vec): SystemString; overload;
     class function KDT55DDPow(const v: TKDT55DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT55DDDistance(const v1, v2: TKDT55DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -5533,14 +5533,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT56DD_Node);
     procedure PrintBuffer;
 
-    class function KDT56DDVec(const s: string): TKDT56DD_Vec; overload;
-    class function KDT56DDVec(const v: TKDT56DD_Vec): string; overload;
+    class function KDT56DDVec(const s: SystemString): TKDT56DD_Vec; overload;
+    class function KDT56DDVec(const v: TKDT56DD_Vec): SystemString; overload;
     class function KDT56DDPow(const v: TKDT56DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT56DDDistance(const v1, v2: TKDT56DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -5628,14 +5628,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT57DD_Node);
     procedure PrintBuffer;
 
-    class function KDT57DDVec(const s: string): TKDT57DD_Vec; overload;
-    class function KDT57DDVec(const v: TKDT57DD_Vec): string; overload;
+    class function KDT57DDVec(const s: SystemString): TKDT57DD_Vec; overload;
+    class function KDT57DDVec(const v: TKDT57DD_Vec): SystemString; overload;
     class function KDT57DDPow(const v: TKDT57DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT57DDDistance(const v1, v2: TKDT57DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -5723,14 +5723,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT58DD_Node);
     procedure PrintBuffer;
 
-    class function KDT58DDVec(const s: string): TKDT58DD_Vec; overload;
-    class function KDT58DDVec(const v: TKDT58DD_Vec): string; overload;
+    class function KDT58DDVec(const s: SystemString): TKDT58DD_Vec; overload;
+    class function KDT58DDVec(const v: TKDT58DD_Vec): SystemString; overload;
     class function KDT58DDPow(const v: TKDT58DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT58DDDistance(const v1, v2: TKDT58DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -5818,14 +5818,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT59DD_Node);
     procedure PrintBuffer;
 
-    class function KDT59DDVec(const s: string): TKDT59DD_Vec; overload;
-    class function KDT59DDVec(const v: TKDT59DD_Vec): string; overload;
+    class function KDT59DDVec(const s: SystemString): TKDT59DD_Vec; overload;
+    class function KDT59DDVec(const v: TKDT59DD_Vec): SystemString; overload;
     class function KDT59DDPow(const v: TKDT59DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT59DDDistance(const v1, v2: TKDT59DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -5913,14 +5913,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT60DD_Node);
     procedure PrintBuffer;
 
-    class function KDT60DDVec(const s: string): TKDT60DD_Vec; overload;
-    class function KDT60DDVec(const v: TKDT60DD_Vec): string; overload;
+    class function KDT60DDVec(const s: SystemString): TKDT60DD_Vec; overload;
+    class function KDT60DDVec(const v: TKDT60DD_Vec): SystemString; overload;
     class function KDT60DDPow(const v: TKDT60DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT60DDDistance(const v1, v2: TKDT60DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -6008,14 +6008,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT61DD_Node);
     procedure PrintBuffer;
 
-    class function KDT61DDVec(const s: string): TKDT61DD_Vec; overload;
-    class function KDT61DDVec(const v: TKDT61DD_Vec): string; overload;
+    class function KDT61DDVec(const s: SystemString): TKDT61DD_Vec; overload;
+    class function KDT61DDVec(const v: TKDT61DD_Vec): SystemString; overload;
     class function KDT61DDPow(const v: TKDT61DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT61DDDistance(const v1, v2: TKDT61DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -6103,14 +6103,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT62DD_Node);
     procedure PrintBuffer;
 
-    class function KDT62DDVec(const s: string): TKDT62DD_Vec; overload;
-    class function KDT62DDVec(const v: TKDT62DD_Vec): string; overload;
+    class function KDT62DDVec(const s: SystemString): TKDT62DD_Vec; overload;
+    class function KDT62DDVec(const v: TKDT62DD_Vec): SystemString; overload;
     class function KDT62DDPow(const v: TKDT62DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT62DDDistance(const v1, v2: TKDT62DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -6198,14 +6198,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT63DD_Node);
     procedure PrintBuffer;
 
-    class function KDT63DDVec(const s: string): TKDT63DD_Vec; overload;
-    class function KDT63DDVec(const v: TKDT63DD_Vec): string; overload;
+    class function KDT63DDVec(const s: SystemString): TKDT63DD_Vec; overload;
+    class function KDT63DDVec(const v: TKDT63DD_Vec): SystemString; overload;
     class function KDT63DDPow(const v: TKDT63DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT63DDDistance(const v1, v2: TKDT63DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -6293,14 +6293,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT64DD_Node);
     procedure PrintBuffer;
 
-    class function KDT64DDVec(const s: string): TKDT64DD_Vec; overload;
-    class function KDT64DDVec(const v: TKDT64DD_Vec): string; overload;
+    class function KDT64DDVec(const s: SystemString): TKDT64DD_Vec; overload;
+    class function KDT64DDVec(const v: TKDT64DD_Vec): SystemString; overload;
     class function KDT64DDPow(const v: TKDT64DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT64DDDistance(const v1, v2: TKDT64DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -6388,14 +6388,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT65DD_Node);
     procedure PrintBuffer;
 
-    class function KDT65DDVec(const s: string): TKDT65DD_Vec; overload;
-    class function KDT65DDVec(const v: TKDT65DD_Vec): string; overload;
+    class function KDT65DDVec(const s: SystemString): TKDT65DD_Vec; overload;
+    class function KDT65DDVec(const v: TKDT65DD_Vec): SystemString; overload;
     class function KDT65DDPow(const v: TKDT65DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT65DDDistance(const v1, v2: TKDT65DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -6483,14 +6483,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT66DD_Node);
     procedure PrintBuffer;
 
-    class function KDT66DDVec(const s: string): TKDT66DD_Vec; overload;
-    class function KDT66DDVec(const v: TKDT66DD_Vec): string; overload;
+    class function KDT66DDVec(const s: SystemString): TKDT66DD_Vec; overload;
+    class function KDT66DDVec(const v: TKDT66DD_Vec): SystemString; overload;
     class function KDT66DDPow(const v: TKDT66DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT66DDDistance(const v1, v2: TKDT66DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -6578,14 +6578,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT67DD_Node);
     procedure PrintBuffer;
 
-    class function KDT67DDVec(const s: string): TKDT67DD_Vec; overload;
-    class function KDT67DDVec(const v: TKDT67DD_Vec): string; overload;
+    class function KDT67DDVec(const s: SystemString): TKDT67DD_Vec; overload;
+    class function KDT67DDVec(const v: TKDT67DD_Vec): SystemString; overload;
     class function KDT67DDPow(const v: TKDT67DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT67DDDistance(const v1, v2: TKDT67DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -6673,14 +6673,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT68DD_Node);
     procedure PrintBuffer;
 
-    class function KDT68DDVec(const s: string): TKDT68DD_Vec; overload;
-    class function KDT68DDVec(const v: TKDT68DD_Vec): string; overload;
+    class function KDT68DDVec(const s: SystemString): TKDT68DD_Vec; overload;
+    class function KDT68DDVec(const v: TKDT68DD_Vec): SystemString; overload;
     class function KDT68DDPow(const v: TKDT68DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT68DDDistance(const v1, v2: TKDT68DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -6768,14 +6768,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT69DD_Node);
     procedure PrintBuffer;
 
-    class function KDT69DDVec(const s: string): TKDT69DD_Vec; overload;
-    class function KDT69DDVec(const v: TKDT69DD_Vec): string; overload;
+    class function KDT69DDVec(const s: SystemString): TKDT69DD_Vec; overload;
+    class function KDT69DDVec(const v: TKDT69DD_Vec): SystemString; overload;
     class function KDT69DDPow(const v: TKDT69DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT69DDDistance(const v1, v2: TKDT69DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -6863,14 +6863,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT70DD_Node);
     procedure PrintBuffer;
 
-    class function KDT70DDVec(const s: string): TKDT70DD_Vec; overload;
-    class function KDT70DDVec(const v: TKDT70DD_Vec): string; overload;
+    class function KDT70DDVec(const s: SystemString): TKDT70DD_Vec; overload;
+    class function KDT70DDVec(const v: TKDT70DD_Vec): SystemString; overload;
     class function KDT70DDPow(const v: TKDT70DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT70DDDistance(const v1, v2: TKDT70DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -6958,14 +6958,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT71DD_Node);
     procedure PrintBuffer;
 
-    class function KDT71DDVec(const s: string): TKDT71DD_Vec; overload;
-    class function KDT71DDVec(const v: TKDT71DD_Vec): string; overload;
+    class function KDT71DDVec(const s: SystemString): TKDT71DD_Vec; overload;
+    class function KDT71DDVec(const v: TKDT71DD_Vec): SystemString; overload;
     class function KDT71DDPow(const v: TKDT71DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT71DDDistance(const v1, v2: TKDT71DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -7053,14 +7053,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT72DD_Node);
     procedure PrintBuffer;
 
-    class function KDT72DDVec(const s: string): TKDT72DD_Vec; overload;
-    class function KDT72DDVec(const v: TKDT72DD_Vec): string; overload;
+    class function KDT72DDVec(const s: SystemString): TKDT72DD_Vec; overload;
+    class function KDT72DDVec(const v: TKDT72DD_Vec): SystemString; overload;
     class function KDT72DDPow(const v: TKDT72DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT72DDDistance(const v1, v2: TKDT72DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -7148,14 +7148,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT84DD_Node);
     procedure PrintBuffer;
 
-    class function KDT84DDVec(const s: string): TKDT84DD_Vec; overload;
-    class function KDT84DDVec(const v: TKDT84DD_Vec): string; overload;
+    class function KDT84DDVec(const s: SystemString): TKDT84DD_Vec; overload;
+    class function KDT84DDVec(const v: TKDT84DD_Vec): SystemString; overload;
     class function KDT84DDPow(const v: TKDT84DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT84DDDistance(const v1, v2: TKDT84DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -7243,14 +7243,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT96DD_Node);
     procedure PrintBuffer;
 
-    class function KDT96DDVec(const s: string): TKDT96DD_Vec; overload;
-    class function KDT96DDVec(const v: TKDT96DD_Vec): string; overload;
+    class function KDT96DDVec(const s: SystemString): TKDT96DD_Vec; overload;
+    class function KDT96DDVec(const v: TKDT96DD_Vec): SystemString; overload;
     class function KDT96DDPow(const v: TKDT96DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT96DDDistance(const v1, v2: TKDT96DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -7338,14 +7338,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT128DD_Node);
     procedure PrintBuffer;
 
-    class function KDT128DDVec(const s: string): TKDT128DD_Vec; overload;
-    class function KDT128DDVec(const v: TKDT128DD_Vec): string; overload;
+    class function KDT128DDVec(const s: SystemString): TKDT128DD_Vec; overload;
+    class function KDT128DDVec(const v: TKDT128DD_Vec): SystemString; overload;
     class function KDT128DDPow(const v: TKDT128DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT128DDDistance(const v1, v2: TKDT128DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -7433,14 +7433,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT140DD_Node);
     procedure PrintBuffer;
 
-    class function KDT140DDVec(const s: string): TKDT140DD_Vec; overload;
-    class function KDT140DDVec(const v: TKDT140DD_Vec): string; overload;
+    class function KDT140DDVec(const s: SystemString): TKDT140DD_Vec; overload;
+    class function KDT140DDVec(const v: TKDT140DD_Vec): SystemString; overload;
     class function KDT140DDPow(const v: TKDT140DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT140DDDistance(const v1, v2: TKDT140DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -7528,14 +7528,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT160DD_Node);
     procedure PrintBuffer;
 
-    class function KDT160DDVec(const s: string): TKDT160DD_Vec; overload;
-    class function KDT160DDVec(const v: TKDT160DD_Vec): string; overload;
+    class function KDT160DDVec(const s: SystemString): TKDT160DD_Vec; overload;
+    class function KDT160DDVec(const v: TKDT160DD_Vec): SystemString; overload;
     class function KDT160DDPow(const v: TKDT160DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT160DDDistance(const v1, v2: TKDT160DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -7623,14 +7623,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT196DD_Node);
     procedure PrintBuffer;
 
-    class function KDT196DDVec(const s: string): TKDT196DD_Vec; overload;
-    class function KDT196DDVec(const v: TKDT196DD_Vec): string; overload;
+    class function KDT196DDVec(const s: SystemString): TKDT196DD_Vec; overload;
+    class function KDT196DDVec(const v: TKDT196DD_Vec): SystemString; overload;
     class function KDT196DDPow(const v: TKDT196DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT196DDDistance(const v1, v2: TKDT196DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -7718,14 +7718,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT256DD_Node);
     procedure PrintBuffer;
 
-    class function KDT256DDVec(const s: string): TKDT256DD_Vec; overload;
-    class function KDT256DDVec(const v: TKDT256DD_Vec): string; overload;
+    class function KDT256DDVec(const s: SystemString): TKDT256DD_Vec; overload;
+    class function KDT256DDVec(const v: TKDT256DD_Vec): SystemString; overload;
     class function KDT256DDPow(const v: TKDT256DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT256DDDistance(const v1, v2: TKDT256DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -7813,14 +7813,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT272DD_Node);
     procedure PrintBuffer;
 
-    class function KDT272DDVec(const s: string): TKDT272DD_Vec; overload;
-    class function KDT272DDVec(const v: TKDT272DD_Vec): string; overload;
+    class function KDT272DDVec(const s: SystemString): TKDT272DD_Vec; overload;
+    class function KDT272DDVec(const v: TKDT272DD_Vec): SystemString; overload;
     class function KDT272DDPow(const v: TKDT272DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT272DDDistance(const v1, v2: TKDT272DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -7908,14 +7908,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT288DD_Node);
     procedure PrintBuffer;
 
-    class function KDT288DDVec(const s: string): TKDT288DD_Vec; overload;
-    class function KDT288DDVec(const v: TKDT288DD_Vec): string; overload;
+    class function KDT288DDVec(const s: SystemString): TKDT288DD_Vec; overload;
+    class function KDT288DDVec(const v: TKDT288DD_Vec): SystemString; overload;
     class function KDT288DDPow(const v: TKDT288DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT288DDDistance(const v1, v2: TKDT288DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -8003,14 +8003,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT372DD_Node);
     procedure PrintBuffer;
 
-    class function KDT372DDVec(const s: string): TKDT372DD_Vec; overload;
-    class function KDT372DDVec(const v: TKDT372DD_Vec): string; overload;
+    class function KDT372DDVec(const s: SystemString): TKDT372DD_Vec; overload;
+    class function KDT372DDVec(const v: TKDT372DD_Vec): SystemString; overload;
     class function KDT372DDPow(const v: TKDT372DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT372DDDistance(const v1, v2: TKDT372DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -8098,14 +8098,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT512DD_Node);
     procedure PrintBuffer;
 
-    class function KDT512DDVec(const s: string): TKDT512DD_Vec; overload;
-    class function KDT512DDVec(const v: TKDT512DD_Vec): string; overload;
+    class function KDT512DDVec(const s: SystemString): TKDT512DD_Vec; overload;
+    class function KDT512DDVec(const v: TKDT512DD_Vec): SystemString; overload;
     class function KDT512DDPow(const v: TKDT512DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT512DDDistance(const v1, v2: TKDT512DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -8193,14 +8193,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT576DD_Node);
     procedure PrintBuffer;
 
-    class function KDT576DDVec(const s: string): TKDT576DD_Vec; overload;
-    class function KDT576DDVec(const v: TKDT576DD_Vec): string; overload;
+    class function KDT576DDVec(const s: SystemString): TKDT576DD_Vec; overload;
+    class function KDT576DDVec(const v: TKDT576DD_Vec): SystemString; overload;
     class function KDT576DDPow(const v: TKDT576DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT576DDDistance(const v1, v2: TKDT576DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -8288,14 +8288,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT768DD_Node);
     procedure PrintBuffer;
 
-    class function KDT768DDVec(const s: string): TKDT768DD_Vec; overload;
-    class function KDT768DDVec(const v: TKDT768DD_Vec): string; overload;
+    class function KDT768DDVec(const s: SystemString): TKDT768DD_Vec; overload;
+    class function KDT768DDVec(const v: TKDT768DD_Vec): SystemString; overload;
     class function KDT768DDPow(const v: TKDT768DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT768DDDistance(const v1, v2: TKDT768DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -8383,14 +8383,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT1024DD_Node);
     procedure PrintBuffer;
 
-    class function KDT1024DDVec(const s: string): TKDT1024DD_Vec; overload;
-    class function KDT1024DDVec(const v: TKDT1024DD_Vec): string; overload;
+    class function KDT1024DDVec(const s: SystemString): TKDT1024DD_Vec; overload;
+    class function KDT1024DDVec(const v: TKDT1024DD_Vec): SystemString; overload;
     class function KDT1024DDPow(const v: TKDT1024DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT1024DDDistance(const v1, v2: TKDT1024DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -8478,14 +8478,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT1040DD_Node);
     procedure PrintBuffer;
 
-    class function KDT1040DDVec(const s: string): TKDT1040DD_Vec; overload;
-    class function KDT1040DDVec(const v: TKDT1040DD_Vec): string; overload;
+    class function KDT1040DDVec(const s: SystemString): TKDT1040DD_Vec; overload;
+    class function KDT1040DDVec(const v: TKDT1040DD_Vec): SystemString; overload;
     class function KDT1040DDPow(const v: TKDT1040DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT1040DDDistance(const v1, v2: TKDT1040DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -8573,14 +8573,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT1056DD_Node);
     procedure PrintBuffer;
 
-    class function KDT1056DDVec(const s: string): TKDT1056DD_Vec; overload;
-    class function KDT1056DDVec(const v: TKDT1056DD_Vec): string; overload;
+    class function KDT1056DDVec(const s: SystemString): TKDT1056DD_Vec; overload;
+    class function KDT1056DDVec(const v: TKDT1056DD_Vec): SystemString; overload;
     class function KDT1056DDPow(const v: TKDT1056DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT1056DDDistance(const v1, v2: TKDT1056DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -8668,14 +8668,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT1536DD_Node);
     procedure PrintBuffer;
 
-    class function KDT1536DDVec(const s: string): TKDT1536DD_Vec; overload;
-    class function KDT1536DDVec(const v: TKDT1536DD_Vec): string; overload;
+    class function KDT1536DDVec(const s: SystemString): TKDT1536DD_Vec; overload;
+    class function KDT1536DDVec(const v: TKDT1536DD_Vec): SystemString; overload;
     class function KDT1536DDPow(const v: TKDT1536DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT1536DDDistance(const v1, v2: TKDT1536DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -8763,14 +8763,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT1920DD_Node);
     procedure PrintBuffer;
 
-    class function KDT1920DDVec(const s: string): TKDT1920DD_Vec; overload;
-    class function KDT1920DDVec(const v: TKDT1920DD_Vec): string; overload;
+    class function KDT1920DDVec(const s: SystemString): TKDT1920DD_Vec; overload;
+    class function KDT1920DDVec(const v: TKDT1920DD_Vec): SystemString; overload;
     class function KDT1920DDPow(const v: TKDT1920DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT1920DDDistance(const v1, v2: TKDT1920DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -8858,14 +8858,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT1980DD_Node);
     procedure PrintBuffer;
 
-    class function KDT1980DDVec(const s: string): TKDT1980DD_Vec; overload;
-    class function KDT1980DDVec(const v: TKDT1980DD_Vec): string; overload;
+    class function KDT1980DDVec(const s: SystemString): TKDT1980DD_Vec; overload;
+    class function KDT1980DDVec(const v: TKDT1980DD_Vec): SystemString; overload;
     class function KDT1980DDPow(const v: TKDT1980DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT1980DDDistance(const v1, v2: TKDT1980DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -8953,14 +8953,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT2048DD_Node);
     procedure PrintBuffer;
 
-    class function KDT2048DDVec(const s: string): TKDT2048DD_Vec; overload;
-    class function KDT2048DDVec(const v: TKDT2048DD_Vec): string; overload;
+    class function KDT2048DDVec(const s: SystemString): TKDT2048DD_Vec; overload;
+    class function KDT2048DDVec(const v: TKDT2048DD_Vec): SystemString; overload;
     class function KDT2048DDPow(const v: TKDT2048DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT2048DDDistance(const v1, v2: TKDT2048DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -9048,14 +9048,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT3072DD_Node);
     procedure PrintBuffer;
 
-    class function KDT3072DDVec(const s: string): TKDT3072DD_Vec; overload;
-    class function KDT3072DDVec(const v: TKDT3072DD_Vec): string; overload;
+    class function KDT3072DDVec(const s: SystemString): TKDT3072DD_Vec; overload;
+    class function KDT3072DDVec(const v: TKDT3072DD_Vec): SystemString; overload;
     class function KDT3072DDPow(const v: TKDT3072DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT3072DDDistance(const v1, v2: TKDT3072DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -9143,14 +9143,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT3088DD_Node);
     procedure PrintBuffer;
 
-    class function KDT3088DDVec(const s: string): TKDT3088DD_Vec; overload;
-    class function KDT3088DDVec(const v: TKDT3088DD_Vec): string; overload;
+    class function KDT3088DDVec(const s: SystemString): TKDT3088DD_Vec; overload;
+    class function KDT3088DDVec(const v: TKDT3088DD_Vec): SystemString; overload;
     class function KDT3088DDPow(const v: TKDT3088DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT3088DDDistance(const v1, v2: TKDT3088DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -9238,14 +9238,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT3104DD_Node);
     procedure PrintBuffer;
 
-    class function KDT3104DDVec(const s: string): TKDT3104DD_Vec; overload;
-    class function KDT3104DDVec(const v: TKDT3104DD_Vec): string; overload;
+    class function KDT3104DDVec(const s: SystemString): TKDT3104DD_Vec; overload;
+    class function KDT3104DDVec(const v: TKDT3104DD_Vec): SystemString; overload;
     class function KDT3104DDPow(const v: TKDT3104DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT3104DDDistance(const v1, v2: TKDT3104DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -9333,14 +9333,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT4096DD_Node);
     procedure PrintBuffer;
 
-    class function KDT4096DDVec(const s: string): TKDT4096DD_Vec; overload;
-    class function KDT4096DDVec(const v: TKDT4096DD_Vec): string; overload;
+    class function KDT4096DDVec(const s: SystemString): TKDT4096DD_Vec; overload;
+    class function KDT4096DDVec(const v: TKDT4096DD_Vec): SystemString; overload;
     class function KDT4096DDPow(const v: TKDT4096DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT4096DDDistance(const v1, v2: TKDT4096DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -9428,14 +9428,14 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDT8192DD_Node);
     procedure PrintBuffer;
 
-    class function KDT8192DDVec(const s: string): TKDT8192DD_Vec; overload;
-    class function KDT8192DDVec(const v: TKDT8192DD_Vec): string; overload;
+    class function KDT8192DDVec(const s: SystemString): TKDT8192DD_Vec; overload;
+    class function KDT8192DDVec(const v: TKDT8192DD_Vec): SystemString; overload;
     class function KDT8192DDPow(const v: TKDT8192DD_VecType): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function KDT8192DDDistance(const v1, v2: TKDT8192DD_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     // debug time
@@ -9460,7 +9460,7 @@ uses
   {$ELSE FPC}
   Threading,
   {$ENDIF FPC}
-  PascalStrings, TextParsing, UnicodeMixedLib, DoStatusIO;
+  TextParsing, UnicodeMixedLib, DoStatusIO;
 
 
 
@@ -9525,7 +9525,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT1DD_SourceBuffer;
-  dynBuff  : PKDT1DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -9622,8 +9621,7 @@ end;
 
 procedure TKDT1DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -9651,8 +9649,7 @@ end;
 
 procedure TKDT1DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -9683,8 +9680,7 @@ end;
 
 procedure TKDT1DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -10276,7 +10272,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT1DD.SaveToFile(fileName: string);
+procedure TKDT1DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -10288,7 +10284,7 @@ begin
   end;
 end;
 
-procedure TKDT1DD.LoadFromFile(fileName: string);
+procedure TKDT1DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -10306,7 +10302,7 @@ begin
 end;
 
 procedure TKDT1DD.PrintNodeTree(const NodePtr: PKDT1DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT1DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT1DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT1DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -10327,7 +10323,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT1DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT1DD.KDT1DDVec(const s: string): TKDT1DD_Vec;
+class function TKDT1DD.KDT1DDVec(const s: SystemString): TKDT1DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -10352,7 +10348,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT1DD.KDT1DDVec(const v: TKDT1DD_Vec): string;
+class function TKDT1DD.KDT1DDVec(const v: TKDT1DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -10503,7 +10499,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT2DD_SourceBuffer;
-  dynBuff  : PKDT2DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -10600,8 +10595,7 @@ end;
 
 procedure TKDT2DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT2DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -10629,8 +10623,7 @@ end;
 
 procedure TKDT2DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT2DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -10661,8 +10654,7 @@ end;
 
 procedure TKDT2DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT2DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -11254,7 +11246,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT2DD.SaveToFile(fileName: string);
+procedure TKDT2DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -11266,7 +11258,7 @@ begin
   end;
 end;
 
-procedure TKDT2DD.LoadFromFile(fileName: string);
+procedure TKDT2DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -11284,7 +11276,7 @@ begin
 end;
 
 procedure TKDT2DD.PrintNodeTree(const NodePtr: PKDT2DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT2DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT2DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT2DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -11305,7 +11297,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT2DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT2DD.KDT2DDVec(const s: string): TKDT2DD_Vec;
+class function TKDT2DD.KDT2DDVec(const s: SystemString): TKDT2DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -11330,7 +11322,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT2DD.KDT2DDVec(const v: TKDT2DD_Vec): string;
+class function TKDT2DD.KDT2DDVec(const v: TKDT2DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -11481,7 +11473,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT3DD_SourceBuffer;
-  dynBuff  : PKDT3DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -11578,8 +11569,7 @@ end;
 
 procedure TKDT3DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT3DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -11607,8 +11597,7 @@ end;
 
 procedure TKDT3DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT3DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -11639,8 +11628,7 @@ end;
 
 procedure TKDT3DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT3DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -12232,7 +12220,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT3DD.SaveToFile(fileName: string);
+procedure TKDT3DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -12244,7 +12232,7 @@ begin
   end;
 end;
 
-procedure TKDT3DD.LoadFromFile(fileName: string);
+procedure TKDT3DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -12262,7 +12250,7 @@ begin
 end;
 
 procedure TKDT3DD.PrintNodeTree(const NodePtr: PKDT3DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT3DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT3DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT3DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -12283,7 +12271,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT3DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT3DD.KDT3DDVec(const s: string): TKDT3DD_Vec;
+class function TKDT3DD.KDT3DDVec(const s: SystemString): TKDT3DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -12308,7 +12296,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT3DD.KDT3DDVec(const v: TKDT3DD_Vec): string;
+class function TKDT3DD.KDT3DDVec(const v: TKDT3DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -12459,7 +12447,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT4DD_SourceBuffer;
-  dynBuff  : PKDT4DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -12556,8 +12543,7 @@ end;
 
 procedure TKDT4DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT4DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -12585,8 +12571,7 @@ end;
 
 procedure TKDT4DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT4DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -12617,8 +12602,7 @@ end;
 
 procedure TKDT4DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT4DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -13210,7 +13194,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT4DD.SaveToFile(fileName: string);
+procedure TKDT4DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -13222,7 +13206,7 @@ begin
   end;
 end;
 
-procedure TKDT4DD.LoadFromFile(fileName: string);
+procedure TKDT4DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -13240,7 +13224,7 @@ begin
 end;
 
 procedure TKDT4DD.PrintNodeTree(const NodePtr: PKDT4DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT4DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT4DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT4DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -13261,7 +13245,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT4DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT4DD.KDT4DDVec(const s: string): TKDT4DD_Vec;
+class function TKDT4DD.KDT4DDVec(const s: SystemString): TKDT4DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -13286,7 +13270,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT4DD.KDT4DDVec(const v: TKDT4DD_Vec): string;
+class function TKDT4DD.KDT4DDVec(const v: TKDT4DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -13437,7 +13421,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT5DD_SourceBuffer;
-  dynBuff  : PKDT5DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -13534,8 +13517,7 @@ end;
 
 procedure TKDT5DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT5DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT5DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -13563,8 +13545,7 @@ end;
 
 procedure TKDT5DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT5DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT5DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -13595,8 +13576,7 @@ end;
 
 procedure TKDT5DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT5DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT5DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -14188,7 +14168,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT5DD.SaveToFile(fileName: string);
+procedure TKDT5DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -14200,7 +14180,7 @@ begin
   end;
 end;
 
-procedure TKDT5DD.LoadFromFile(fileName: string);
+procedure TKDT5DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -14218,7 +14198,7 @@ begin
 end;
 
 procedure TKDT5DD.PrintNodeTree(const NodePtr: PKDT5DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT5DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT5DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT5DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -14239,7 +14219,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT5DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT5DD.KDT5DDVec(const s: string): TKDT5DD_Vec;
+class function TKDT5DD.KDT5DDVec(const s: SystemString): TKDT5DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -14264,7 +14244,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT5DD.KDT5DDVec(const v: TKDT5DD_Vec): string;
+class function TKDT5DD.KDT5DDVec(const v: TKDT5DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -14415,7 +14395,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT6DD_SourceBuffer;
-  dynBuff  : PKDT6DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -14512,8 +14491,7 @@ end;
 
 procedure TKDT6DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT6DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT6DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -14541,8 +14519,7 @@ end;
 
 procedure TKDT6DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT6DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT6DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -14573,8 +14550,7 @@ end;
 
 procedure TKDT6DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT6DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT6DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -15166,7 +15142,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT6DD.SaveToFile(fileName: string);
+procedure TKDT6DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -15178,7 +15154,7 @@ begin
   end;
 end;
 
-procedure TKDT6DD.LoadFromFile(fileName: string);
+procedure TKDT6DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -15196,7 +15172,7 @@ begin
 end;
 
 procedure TKDT6DD.PrintNodeTree(const NodePtr: PKDT6DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT6DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT6DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT6DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -15217,7 +15193,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT6DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT6DD.KDT6DDVec(const s: string): TKDT6DD_Vec;
+class function TKDT6DD.KDT6DDVec(const s: SystemString): TKDT6DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -15242,7 +15218,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT6DD.KDT6DDVec(const v: TKDT6DD_Vec): string;
+class function TKDT6DD.KDT6DDVec(const v: TKDT6DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -15393,7 +15369,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT7DD_SourceBuffer;
-  dynBuff  : PKDT7DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -15490,8 +15465,7 @@ end;
 
 procedure TKDT7DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT7DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT7DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -15519,8 +15493,7 @@ end;
 
 procedure TKDT7DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT7DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT7DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -15551,8 +15524,7 @@ end;
 
 procedure TKDT7DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT7DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT7DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -16144,7 +16116,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT7DD.SaveToFile(fileName: string);
+procedure TKDT7DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -16156,7 +16128,7 @@ begin
   end;
 end;
 
-procedure TKDT7DD.LoadFromFile(fileName: string);
+procedure TKDT7DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -16174,7 +16146,7 @@ begin
 end;
 
 procedure TKDT7DD.PrintNodeTree(const NodePtr: PKDT7DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT7DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT7DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT7DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -16195,7 +16167,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT7DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT7DD.KDT7DDVec(const s: string): TKDT7DD_Vec;
+class function TKDT7DD.KDT7DDVec(const s: SystemString): TKDT7DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -16220,7 +16192,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT7DD.KDT7DDVec(const v: TKDT7DD_Vec): string;
+class function TKDT7DD.KDT7DDVec(const v: TKDT7DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -16371,7 +16343,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT8DD_SourceBuffer;
-  dynBuff  : PKDT8DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -16468,8 +16439,7 @@ end;
 
 procedure TKDT8DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT8DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -16497,8 +16467,7 @@ end;
 
 procedure TKDT8DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT8DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -16529,8 +16498,7 @@ end;
 
 procedure TKDT8DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT8DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -17122,7 +17090,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT8DD.SaveToFile(fileName: string);
+procedure TKDT8DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -17134,7 +17102,7 @@ begin
   end;
 end;
 
-procedure TKDT8DD.LoadFromFile(fileName: string);
+procedure TKDT8DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -17152,7 +17120,7 @@ begin
 end;
 
 procedure TKDT8DD.PrintNodeTree(const NodePtr: PKDT8DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT8DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT8DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT8DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -17173,7 +17141,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT8DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT8DD.KDT8DDVec(const s: string): TKDT8DD_Vec;
+class function TKDT8DD.KDT8DDVec(const s: SystemString): TKDT8DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -17198,7 +17166,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT8DD.KDT8DDVec(const v: TKDT8DD_Vec): string;
+class function TKDT8DD.KDT8DDVec(const v: TKDT8DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -17349,7 +17317,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT9DD_SourceBuffer;
-  dynBuff  : PKDT9DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -17446,8 +17413,7 @@ end;
 
 procedure TKDT9DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT9DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT9DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -17475,8 +17441,7 @@ end;
 
 procedure TKDT9DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT9DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT9DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -17507,8 +17472,7 @@ end;
 
 procedure TKDT9DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT9DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT9DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -18100,7 +18064,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT9DD.SaveToFile(fileName: string);
+procedure TKDT9DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -18112,7 +18076,7 @@ begin
   end;
 end;
 
-procedure TKDT9DD.LoadFromFile(fileName: string);
+procedure TKDT9DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -18130,7 +18094,7 @@ begin
 end;
 
 procedure TKDT9DD.PrintNodeTree(const NodePtr: PKDT9DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT9DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT9DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT9DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -18151,7 +18115,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT9DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT9DD.KDT9DDVec(const s: string): TKDT9DD_Vec;
+class function TKDT9DD.KDT9DDVec(const s: SystemString): TKDT9DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -18176,7 +18140,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT9DD.KDT9DDVec(const v: TKDT9DD_Vec): string;
+class function TKDT9DD.KDT9DDVec(const v: TKDT9DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -18327,7 +18291,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT10DD_SourceBuffer;
-  dynBuff  : PKDT10DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -18424,8 +18387,7 @@ end;
 
 procedure TKDT10DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT10DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT10DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -18453,8 +18415,7 @@ end;
 
 procedure TKDT10DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT10DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT10DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -18485,8 +18446,7 @@ end;
 
 procedure TKDT10DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT10DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT10DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -19078,7 +19038,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT10DD.SaveToFile(fileName: string);
+procedure TKDT10DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -19090,7 +19050,7 @@ begin
   end;
 end;
 
-procedure TKDT10DD.LoadFromFile(fileName: string);
+procedure TKDT10DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -19108,7 +19068,7 @@ begin
 end;
 
 procedure TKDT10DD.PrintNodeTree(const NodePtr: PKDT10DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT10DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT10DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT10DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -19129,7 +19089,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT10DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT10DD.KDT10DDVec(const s: string): TKDT10DD_Vec;
+class function TKDT10DD.KDT10DDVec(const s: SystemString): TKDT10DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -19154,7 +19114,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT10DD.KDT10DDVec(const v: TKDT10DD_Vec): string;
+class function TKDT10DD.KDT10DDVec(const v: TKDT10DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -19305,7 +19265,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT11DD_SourceBuffer;
-  dynBuff  : PKDT11DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -19402,8 +19361,7 @@ end;
 
 procedure TKDT11DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT11DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT11DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -19431,8 +19389,7 @@ end;
 
 procedure TKDT11DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT11DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT11DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -19463,8 +19420,7 @@ end;
 
 procedure TKDT11DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT11DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT11DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -20056,7 +20012,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT11DD.SaveToFile(fileName: string);
+procedure TKDT11DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -20068,7 +20024,7 @@ begin
   end;
 end;
 
-procedure TKDT11DD.LoadFromFile(fileName: string);
+procedure TKDT11DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -20086,7 +20042,7 @@ begin
 end;
 
 procedure TKDT11DD.PrintNodeTree(const NodePtr: PKDT11DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT11DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT11DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT11DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -20107,7 +20063,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT11DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT11DD.KDT11DDVec(const s: string): TKDT11DD_Vec;
+class function TKDT11DD.KDT11DDVec(const s: SystemString): TKDT11DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -20132,7 +20088,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT11DD.KDT11DDVec(const v: TKDT11DD_Vec): string;
+class function TKDT11DD.KDT11DDVec(const v: TKDT11DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -20283,7 +20239,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT12DD_SourceBuffer;
-  dynBuff  : PKDT12DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -20380,8 +20335,7 @@ end;
 
 procedure TKDT12DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT12DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT12DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -20409,8 +20363,7 @@ end;
 
 procedure TKDT12DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT12DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT12DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -20441,8 +20394,7 @@ end;
 
 procedure TKDT12DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT12DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT12DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -21034,7 +20986,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT12DD.SaveToFile(fileName: string);
+procedure TKDT12DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -21046,7 +20998,7 @@ begin
   end;
 end;
 
-procedure TKDT12DD.LoadFromFile(fileName: string);
+procedure TKDT12DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -21064,7 +21016,7 @@ begin
 end;
 
 procedure TKDT12DD.PrintNodeTree(const NodePtr: PKDT12DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT12DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT12DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT12DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -21085,7 +21037,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT12DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT12DD.KDT12DDVec(const s: string): TKDT12DD_Vec;
+class function TKDT12DD.KDT12DDVec(const s: SystemString): TKDT12DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -21110,7 +21062,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT12DD.KDT12DDVec(const v: TKDT12DD_Vec): string;
+class function TKDT12DD.KDT12DDVec(const v: TKDT12DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -21261,7 +21213,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT13DD_SourceBuffer;
-  dynBuff  : PKDT13DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -21358,8 +21309,7 @@ end;
 
 procedure TKDT13DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT13DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT13DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -21387,8 +21337,7 @@ end;
 
 procedure TKDT13DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT13DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT13DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -21419,8 +21368,7 @@ end;
 
 procedure TKDT13DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT13DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT13DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -22012,7 +21960,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT13DD.SaveToFile(fileName: string);
+procedure TKDT13DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -22024,7 +21972,7 @@ begin
   end;
 end;
 
-procedure TKDT13DD.LoadFromFile(fileName: string);
+procedure TKDT13DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -22042,7 +21990,7 @@ begin
 end;
 
 procedure TKDT13DD.PrintNodeTree(const NodePtr: PKDT13DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT13DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT13DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT13DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -22063,7 +22011,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT13DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT13DD.KDT13DDVec(const s: string): TKDT13DD_Vec;
+class function TKDT13DD.KDT13DDVec(const s: SystemString): TKDT13DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -22088,7 +22036,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT13DD.KDT13DDVec(const v: TKDT13DD_Vec): string;
+class function TKDT13DD.KDT13DDVec(const v: TKDT13DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -22239,7 +22187,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT14DD_SourceBuffer;
-  dynBuff  : PKDT14DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -22336,8 +22283,7 @@ end;
 
 procedure TKDT14DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT14DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT14DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -22365,8 +22311,7 @@ end;
 
 procedure TKDT14DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT14DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT14DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -22397,8 +22342,7 @@ end;
 
 procedure TKDT14DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT14DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT14DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -22990,7 +22934,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT14DD.SaveToFile(fileName: string);
+procedure TKDT14DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -23002,7 +22946,7 @@ begin
   end;
 end;
 
-procedure TKDT14DD.LoadFromFile(fileName: string);
+procedure TKDT14DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -23020,7 +22964,7 @@ begin
 end;
 
 procedure TKDT14DD.PrintNodeTree(const NodePtr: PKDT14DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT14DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT14DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT14DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -23041,7 +22985,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT14DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT14DD.KDT14DDVec(const s: string): TKDT14DD_Vec;
+class function TKDT14DD.KDT14DDVec(const s: SystemString): TKDT14DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -23066,7 +23010,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT14DD.KDT14DDVec(const v: TKDT14DD_Vec): string;
+class function TKDT14DD.KDT14DDVec(const v: TKDT14DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -23217,7 +23161,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT15DD_SourceBuffer;
-  dynBuff  : PKDT15DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -23314,8 +23257,7 @@ end;
 
 procedure TKDT15DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT15DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT15DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -23343,8 +23285,7 @@ end;
 
 procedure TKDT15DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT15DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT15DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -23375,8 +23316,7 @@ end;
 
 procedure TKDT15DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT15DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT15DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -23968,7 +23908,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT15DD.SaveToFile(fileName: string);
+procedure TKDT15DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -23980,7 +23920,7 @@ begin
   end;
 end;
 
-procedure TKDT15DD.LoadFromFile(fileName: string);
+procedure TKDT15DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -23998,7 +23938,7 @@ begin
 end;
 
 procedure TKDT15DD.PrintNodeTree(const NodePtr: PKDT15DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT15DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT15DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT15DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -24019,7 +23959,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT15DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT15DD.KDT15DDVec(const s: string): TKDT15DD_Vec;
+class function TKDT15DD.KDT15DDVec(const s: SystemString): TKDT15DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -24044,7 +23984,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT15DD.KDT15DDVec(const v: TKDT15DD_Vec): string;
+class function TKDT15DD.KDT15DDVec(const v: TKDT15DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -24195,7 +24135,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT16DD_SourceBuffer;
-  dynBuff  : PKDT16DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -24292,8 +24231,7 @@ end;
 
 procedure TKDT16DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT16DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT16DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -24321,8 +24259,7 @@ end;
 
 procedure TKDT16DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT16DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT16DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -24353,8 +24290,7 @@ end;
 
 procedure TKDT16DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT16DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT16DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -24946,7 +24882,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT16DD.SaveToFile(fileName: string);
+procedure TKDT16DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -24958,7 +24894,7 @@ begin
   end;
 end;
 
-procedure TKDT16DD.LoadFromFile(fileName: string);
+procedure TKDT16DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -24976,7 +24912,7 @@ begin
 end;
 
 procedure TKDT16DD.PrintNodeTree(const NodePtr: PKDT16DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT16DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT16DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT16DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -24997,7 +24933,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT16DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT16DD.KDT16DDVec(const s: string): TKDT16DD_Vec;
+class function TKDT16DD.KDT16DDVec(const s: SystemString): TKDT16DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -25022,7 +24958,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT16DD.KDT16DDVec(const v: TKDT16DD_Vec): string;
+class function TKDT16DD.KDT16DDVec(const v: TKDT16DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -25173,7 +25109,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT17DD_SourceBuffer;
-  dynBuff  : PKDT17DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -25270,8 +25205,7 @@ end;
 
 procedure TKDT17DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT17DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT17DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -25299,8 +25233,7 @@ end;
 
 procedure TKDT17DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT17DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT17DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -25331,8 +25264,7 @@ end;
 
 procedure TKDT17DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT17DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT17DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -25924,7 +25856,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT17DD.SaveToFile(fileName: string);
+procedure TKDT17DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -25936,7 +25868,7 @@ begin
   end;
 end;
 
-procedure TKDT17DD.LoadFromFile(fileName: string);
+procedure TKDT17DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -25954,7 +25886,7 @@ begin
 end;
 
 procedure TKDT17DD.PrintNodeTree(const NodePtr: PKDT17DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT17DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT17DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT17DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -25975,7 +25907,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT17DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT17DD.KDT17DDVec(const s: string): TKDT17DD_Vec;
+class function TKDT17DD.KDT17DDVec(const s: SystemString): TKDT17DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -26000,7 +25932,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT17DD.KDT17DDVec(const v: TKDT17DD_Vec): string;
+class function TKDT17DD.KDT17DDVec(const v: TKDT17DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -26151,7 +26083,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT18DD_SourceBuffer;
-  dynBuff  : PKDT18DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -26248,8 +26179,7 @@ end;
 
 procedure TKDT18DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT18DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT18DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -26277,8 +26207,7 @@ end;
 
 procedure TKDT18DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT18DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT18DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -26309,8 +26238,7 @@ end;
 
 procedure TKDT18DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT18DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT18DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -26902,7 +26830,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT18DD.SaveToFile(fileName: string);
+procedure TKDT18DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -26914,7 +26842,7 @@ begin
   end;
 end;
 
-procedure TKDT18DD.LoadFromFile(fileName: string);
+procedure TKDT18DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -26932,7 +26860,7 @@ begin
 end;
 
 procedure TKDT18DD.PrintNodeTree(const NodePtr: PKDT18DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT18DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT18DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT18DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -26953,7 +26881,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT18DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT18DD.KDT18DDVec(const s: string): TKDT18DD_Vec;
+class function TKDT18DD.KDT18DDVec(const s: SystemString): TKDT18DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -26978,7 +26906,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT18DD.KDT18DDVec(const v: TKDT18DD_Vec): string;
+class function TKDT18DD.KDT18DDVec(const v: TKDT18DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -27129,7 +27057,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT19DD_SourceBuffer;
-  dynBuff  : PKDT19DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -27226,8 +27153,7 @@ end;
 
 procedure TKDT19DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT19DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT19DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -27255,8 +27181,7 @@ end;
 
 procedure TKDT19DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT19DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT19DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -27287,8 +27212,7 @@ end;
 
 procedure TKDT19DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT19DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT19DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -27880,7 +27804,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT19DD.SaveToFile(fileName: string);
+procedure TKDT19DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -27892,7 +27816,7 @@ begin
   end;
 end;
 
-procedure TKDT19DD.LoadFromFile(fileName: string);
+procedure TKDT19DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -27910,7 +27834,7 @@ begin
 end;
 
 procedure TKDT19DD.PrintNodeTree(const NodePtr: PKDT19DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT19DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT19DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT19DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -27931,7 +27855,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT19DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT19DD.KDT19DDVec(const s: string): TKDT19DD_Vec;
+class function TKDT19DD.KDT19DDVec(const s: SystemString): TKDT19DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -27956,7 +27880,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT19DD.KDT19DDVec(const v: TKDT19DD_Vec): string;
+class function TKDT19DD.KDT19DDVec(const v: TKDT19DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -28107,7 +28031,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT20DD_SourceBuffer;
-  dynBuff  : PKDT20DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -28204,8 +28127,7 @@ end;
 
 procedure TKDT20DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT20DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT20DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -28233,8 +28155,7 @@ end;
 
 procedure TKDT20DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT20DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT20DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -28265,8 +28186,7 @@ end;
 
 procedure TKDT20DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT20DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT20DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -28858,7 +28778,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT20DD.SaveToFile(fileName: string);
+procedure TKDT20DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -28870,7 +28790,7 @@ begin
   end;
 end;
 
-procedure TKDT20DD.LoadFromFile(fileName: string);
+procedure TKDT20DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -28888,7 +28808,7 @@ begin
 end;
 
 procedure TKDT20DD.PrintNodeTree(const NodePtr: PKDT20DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT20DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT20DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT20DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -28909,7 +28829,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT20DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT20DD.KDT20DDVec(const s: string): TKDT20DD_Vec;
+class function TKDT20DD.KDT20DDVec(const s: SystemString): TKDT20DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -28934,7 +28854,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT20DD.KDT20DDVec(const v: TKDT20DD_Vec): string;
+class function TKDT20DD.KDT20DDVec(const v: TKDT20DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -29085,7 +29005,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT21DD_SourceBuffer;
-  dynBuff  : PKDT21DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -29182,8 +29101,7 @@ end;
 
 procedure TKDT21DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT21DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT21DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -29211,8 +29129,7 @@ end;
 
 procedure TKDT21DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT21DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT21DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -29243,8 +29160,7 @@ end;
 
 procedure TKDT21DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT21DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT21DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -29836,7 +29752,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT21DD.SaveToFile(fileName: string);
+procedure TKDT21DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -29848,7 +29764,7 @@ begin
   end;
 end;
 
-procedure TKDT21DD.LoadFromFile(fileName: string);
+procedure TKDT21DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -29866,7 +29782,7 @@ begin
 end;
 
 procedure TKDT21DD.PrintNodeTree(const NodePtr: PKDT21DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT21DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT21DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT21DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -29887,7 +29803,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT21DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT21DD.KDT21DDVec(const s: string): TKDT21DD_Vec;
+class function TKDT21DD.KDT21DDVec(const s: SystemString): TKDT21DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -29912,7 +29828,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT21DD.KDT21DDVec(const v: TKDT21DD_Vec): string;
+class function TKDT21DD.KDT21DDVec(const v: TKDT21DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -30063,7 +29979,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT22DD_SourceBuffer;
-  dynBuff  : PKDT22DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -30160,8 +30075,7 @@ end;
 
 procedure TKDT22DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT22DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT22DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -30189,8 +30103,7 @@ end;
 
 procedure TKDT22DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT22DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT22DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -30221,8 +30134,7 @@ end;
 
 procedure TKDT22DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT22DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT22DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -30814,7 +30726,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT22DD.SaveToFile(fileName: string);
+procedure TKDT22DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -30826,7 +30738,7 @@ begin
   end;
 end;
 
-procedure TKDT22DD.LoadFromFile(fileName: string);
+procedure TKDT22DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -30844,7 +30756,7 @@ begin
 end;
 
 procedure TKDT22DD.PrintNodeTree(const NodePtr: PKDT22DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT22DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT22DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT22DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -30865,7 +30777,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT22DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT22DD.KDT22DDVec(const s: string): TKDT22DD_Vec;
+class function TKDT22DD.KDT22DDVec(const s: SystemString): TKDT22DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -30890,7 +30802,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT22DD.KDT22DDVec(const v: TKDT22DD_Vec): string;
+class function TKDT22DD.KDT22DDVec(const v: TKDT22DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -31041,7 +30953,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT23DD_SourceBuffer;
-  dynBuff  : PKDT23DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -31138,8 +31049,7 @@ end;
 
 procedure TKDT23DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT23DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT23DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -31167,8 +31077,7 @@ end;
 
 procedure TKDT23DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT23DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT23DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -31199,8 +31108,7 @@ end;
 
 procedure TKDT23DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT23DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT23DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -31792,7 +31700,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT23DD.SaveToFile(fileName: string);
+procedure TKDT23DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -31804,7 +31712,7 @@ begin
   end;
 end;
 
-procedure TKDT23DD.LoadFromFile(fileName: string);
+procedure TKDT23DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -31822,7 +31730,7 @@ begin
 end;
 
 procedure TKDT23DD.PrintNodeTree(const NodePtr: PKDT23DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT23DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT23DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT23DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -31843,7 +31751,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT23DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT23DD.KDT23DDVec(const s: string): TKDT23DD_Vec;
+class function TKDT23DD.KDT23DDVec(const s: SystemString): TKDT23DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -31868,7 +31776,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT23DD.KDT23DDVec(const v: TKDT23DD_Vec): string;
+class function TKDT23DD.KDT23DDVec(const v: TKDT23DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -32019,7 +31927,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT24DD_SourceBuffer;
-  dynBuff  : PKDT24DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -32116,8 +32023,7 @@ end;
 
 procedure TKDT24DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT24DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT24DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -32145,8 +32051,7 @@ end;
 
 procedure TKDT24DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT24DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT24DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -32177,8 +32082,7 @@ end;
 
 procedure TKDT24DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT24DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT24DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -32770,7 +32674,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT24DD.SaveToFile(fileName: string);
+procedure TKDT24DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -32782,7 +32686,7 @@ begin
   end;
 end;
 
-procedure TKDT24DD.LoadFromFile(fileName: string);
+procedure TKDT24DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -32800,7 +32704,7 @@ begin
 end;
 
 procedure TKDT24DD.PrintNodeTree(const NodePtr: PKDT24DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT24DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT24DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT24DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -32821,7 +32725,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT24DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT24DD.KDT24DDVec(const s: string): TKDT24DD_Vec;
+class function TKDT24DD.KDT24DDVec(const s: SystemString): TKDT24DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -32846,7 +32750,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT24DD.KDT24DDVec(const v: TKDT24DD_Vec): string;
+class function TKDT24DD.KDT24DDVec(const v: TKDT24DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -32997,7 +32901,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT25DD_SourceBuffer;
-  dynBuff  : PKDT25DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -33094,8 +32997,7 @@ end;
 
 procedure TKDT25DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT25DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT25DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -33123,8 +33025,7 @@ end;
 
 procedure TKDT25DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT25DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT25DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -33155,8 +33056,7 @@ end;
 
 procedure TKDT25DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT25DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT25DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -33748,7 +33648,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT25DD.SaveToFile(fileName: string);
+procedure TKDT25DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -33760,7 +33660,7 @@ begin
   end;
 end;
 
-procedure TKDT25DD.LoadFromFile(fileName: string);
+procedure TKDT25DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -33778,7 +33678,7 @@ begin
 end;
 
 procedure TKDT25DD.PrintNodeTree(const NodePtr: PKDT25DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT25DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT25DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT25DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -33799,7 +33699,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT25DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT25DD.KDT25DDVec(const s: string): TKDT25DD_Vec;
+class function TKDT25DD.KDT25DDVec(const s: SystemString): TKDT25DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -33824,7 +33724,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT25DD.KDT25DDVec(const v: TKDT25DD_Vec): string;
+class function TKDT25DD.KDT25DDVec(const v: TKDT25DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -33975,7 +33875,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT26DD_SourceBuffer;
-  dynBuff  : PKDT26DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -34072,8 +33971,7 @@ end;
 
 procedure TKDT26DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT26DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT26DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -34101,8 +33999,7 @@ end;
 
 procedure TKDT26DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT26DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT26DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -34133,8 +34030,7 @@ end;
 
 procedure TKDT26DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT26DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT26DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -34726,7 +34622,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT26DD.SaveToFile(fileName: string);
+procedure TKDT26DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -34738,7 +34634,7 @@ begin
   end;
 end;
 
-procedure TKDT26DD.LoadFromFile(fileName: string);
+procedure TKDT26DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -34756,7 +34652,7 @@ begin
 end;
 
 procedure TKDT26DD.PrintNodeTree(const NodePtr: PKDT26DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT26DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT26DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT26DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -34777,7 +34673,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT26DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT26DD.KDT26DDVec(const s: string): TKDT26DD_Vec;
+class function TKDT26DD.KDT26DDVec(const s: SystemString): TKDT26DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -34802,7 +34698,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT26DD.KDT26DDVec(const v: TKDT26DD_Vec): string;
+class function TKDT26DD.KDT26DDVec(const v: TKDT26DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -34953,7 +34849,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT27DD_SourceBuffer;
-  dynBuff  : PKDT27DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -35050,8 +34945,7 @@ end;
 
 procedure TKDT27DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT27DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT27DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -35079,8 +34973,7 @@ end;
 
 procedure TKDT27DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT27DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT27DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -35111,8 +35004,7 @@ end;
 
 procedure TKDT27DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT27DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT27DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -35704,7 +35596,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT27DD.SaveToFile(fileName: string);
+procedure TKDT27DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -35716,7 +35608,7 @@ begin
   end;
 end;
 
-procedure TKDT27DD.LoadFromFile(fileName: string);
+procedure TKDT27DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -35734,7 +35626,7 @@ begin
 end;
 
 procedure TKDT27DD.PrintNodeTree(const NodePtr: PKDT27DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT27DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT27DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT27DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -35755,7 +35647,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT27DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT27DD.KDT27DDVec(const s: string): TKDT27DD_Vec;
+class function TKDT27DD.KDT27DDVec(const s: SystemString): TKDT27DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -35780,7 +35672,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT27DD.KDT27DDVec(const v: TKDT27DD_Vec): string;
+class function TKDT27DD.KDT27DDVec(const v: TKDT27DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -35931,7 +35823,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT28DD_SourceBuffer;
-  dynBuff  : PKDT28DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -36028,8 +35919,7 @@ end;
 
 procedure TKDT28DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT28DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT28DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -36057,8 +35947,7 @@ end;
 
 procedure TKDT28DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT28DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT28DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -36089,8 +35978,7 @@ end;
 
 procedure TKDT28DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT28DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT28DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -36682,7 +36570,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT28DD.SaveToFile(fileName: string);
+procedure TKDT28DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -36694,7 +36582,7 @@ begin
   end;
 end;
 
-procedure TKDT28DD.LoadFromFile(fileName: string);
+procedure TKDT28DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -36712,7 +36600,7 @@ begin
 end;
 
 procedure TKDT28DD.PrintNodeTree(const NodePtr: PKDT28DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT28DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT28DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT28DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -36733,7 +36621,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT28DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT28DD.KDT28DDVec(const s: string): TKDT28DD_Vec;
+class function TKDT28DD.KDT28DDVec(const s: SystemString): TKDT28DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -36758,7 +36646,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT28DD.KDT28DDVec(const v: TKDT28DD_Vec): string;
+class function TKDT28DD.KDT28DDVec(const v: TKDT28DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -36909,7 +36797,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT29DD_SourceBuffer;
-  dynBuff  : PKDT29DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -37006,8 +36893,7 @@ end;
 
 procedure TKDT29DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT29DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT29DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -37035,8 +36921,7 @@ end;
 
 procedure TKDT29DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT29DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT29DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -37067,8 +36952,7 @@ end;
 
 procedure TKDT29DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT29DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT29DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -37660,7 +37544,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT29DD.SaveToFile(fileName: string);
+procedure TKDT29DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -37672,7 +37556,7 @@ begin
   end;
 end;
 
-procedure TKDT29DD.LoadFromFile(fileName: string);
+procedure TKDT29DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -37690,7 +37574,7 @@ begin
 end;
 
 procedure TKDT29DD.PrintNodeTree(const NodePtr: PKDT29DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT29DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT29DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT29DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -37711,7 +37595,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT29DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT29DD.KDT29DDVec(const s: string): TKDT29DD_Vec;
+class function TKDT29DD.KDT29DDVec(const s: SystemString): TKDT29DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -37736,7 +37620,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT29DD.KDT29DDVec(const v: TKDT29DD_Vec): string;
+class function TKDT29DD.KDT29DDVec(const v: TKDT29DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -37887,7 +37771,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT30DD_SourceBuffer;
-  dynBuff  : PKDT30DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -37984,8 +37867,7 @@ end;
 
 procedure TKDT30DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT30DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT30DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -38013,8 +37895,7 @@ end;
 
 procedure TKDT30DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT30DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT30DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -38045,8 +37926,7 @@ end;
 
 procedure TKDT30DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT30DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT30DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -38638,7 +38518,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT30DD.SaveToFile(fileName: string);
+procedure TKDT30DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -38650,7 +38530,7 @@ begin
   end;
 end;
 
-procedure TKDT30DD.LoadFromFile(fileName: string);
+procedure TKDT30DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -38668,7 +38548,7 @@ begin
 end;
 
 procedure TKDT30DD.PrintNodeTree(const NodePtr: PKDT30DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT30DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT30DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT30DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -38689,7 +38569,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT30DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT30DD.KDT30DDVec(const s: string): TKDT30DD_Vec;
+class function TKDT30DD.KDT30DDVec(const s: SystemString): TKDT30DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -38714,7 +38594,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT30DD.KDT30DDVec(const v: TKDT30DD_Vec): string;
+class function TKDT30DD.KDT30DDVec(const v: TKDT30DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -38865,7 +38745,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT31DD_SourceBuffer;
-  dynBuff  : PKDT31DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -38962,8 +38841,7 @@ end;
 
 procedure TKDT31DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT31DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT31DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -38991,8 +38869,7 @@ end;
 
 procedure TKDT31DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT31DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT31DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -39023,8 +38900,7 @@ end;
 
 procedure TKDT31DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT31DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT31DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -39616,7 +39492,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT31DD.SaveToFile(fileName: string);
+procedure TKDT31DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -39628,7 +39504,7 @@ begin
   end;
 end;
 
-procedure TKDT31DD.LoadFromFile(fileName: string);
+procedure TKDT31DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -39646,7 +39522,7 @@ begin
 end;
 
 procedure TKDT31DD.PrintNodeTree(const NodePtr: PKDT31DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT31DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT31DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT31DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -39667,7 +39543,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT31DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT31DD.KDT31DDVec(const s: string): TKDT31DD_Vec;
+class function TKDT31DD.KDT31DDVec(const s: SystemString): TKDT31DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -39692,7 +39568,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT31DD.KDT31DDVec(const v: TKDT31DD_Vec): string;
+class function TKDT31DD.KDT31DDVec(const v: TKDT31DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -39843,7 +39719,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT32DD_SourceBuffer;
-  dynBuff  : PKDT32DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -39940,8 +39815,7 @@ end;
 
 procedure TKDT32DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT32DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT32DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -39969,8 +39843,7 @@ end;
 
 procedure TKDT32DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT32DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT32DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -40001,8 +39874,7 @@ end;
 
 procedure TKDT32DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT32DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT32DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -40594,7 +40466,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT32DD.SaveToFile(fileName: string);
+procedure TKDT32DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -40606,7 +40478,7 @@ begin
   end;
 end;
 
-procedure TKDT32DD.LoadFromFile(fileName: string);
+procedure TKDT32DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -40624,7 +40496,7 @@ begin
 end;
 
 procedure TKDT32DD.PrintNodeTree(const NodePtr: PKDT32DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT32DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT32DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT32DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -40645,7 +40517,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT32DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT32DD.KDT32DDVec(const s: string): TKDT32DD_Vec;
+class function TKDT32DD.KDT32DDVec(const s: SystemString): TKDT32DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -40670,7 +40542,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT32DD.KDT32DDVec(const v: TKDT32DD_Vec): string;
+class function TKDT32DD.KDT32DDVec(const v: TKDT32DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -40821,7 +40693,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT33DD_SourceBuffer;
-  dynBuff  : PKDT33DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -40918,8 +40789,7 @@ end;
 
 procedure TKDT33DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT33DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT33DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -40947,8 +40817,7 @@ end;
 
 procedure TKDT33DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT33DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT33DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -40979,8 +40848,7 @@ end;
 
 procedure TKDT33DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT33DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT33DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -41572,7 +41440,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT33DD.SaveToFile(fileName: string);
+procedure TKDT33DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -41584,7 +41452,7 @@ begin
   end;
 end;
 
-procedure TKDT33DD.LoadFromFile(fileName: string);
+procedure TKDT33DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -41602,7 +41470,7 @@ begin
 end;
 
 procedure TKDT33DD.PrintNodeTree(const NodePtr: PKDT33DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT33DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT33DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT33DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -41623,7 +41491,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT33DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT33DD.KDT33DDVec(const s: string): TKDT33DD_Vec;
+class function TKDT33DD.KDT33DDVec(const s: SystemString): TKDT33DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -41648,7 +41516,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT33DD.KDT33DDVec(const v: TKDT33DD_Vec): string;
+class function TKDT33DD.KDT33DDVec(const v: TKDT33DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -41799,7 +41667,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT34DD_SourceBuffer;
-  dynBuff  : PKDT34DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -41896,8 +41763,7 @@ end;
 
 procedure TKDT34DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT34DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT34DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -41925,8 +41791,7 @@ end;
 
 procedure TKDT34DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT34DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT34DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -41957,8 +41822,7 @@ end;
 
 procedure TKDT34DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT34DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT34DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -42550,7 +42414,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT34DD.SaveToFile(fileName: string);
+procedure TKDT34DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -42562,7 +42426,7 @@ begin
   end;
 end;
 
-procedure TKDT34DD.LoadFromFile(fileName: string);
+procedure TKDT34DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -42580,7 +42444,7 @@ begin
 end;
 
 procedure TKDT34DD.PrintNodeTree(const NodePtr: PKDT34DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT34DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT34DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT34DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -42601,7 +42465,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT34DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT34DD.KDT34DDVec(const s: string): TKDT34DD_Vec;
+class function TKDT34DD.KDT34DDVec(const s: SystemString): TKDT34DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -42626,7 +42490,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT34DD.KDT34DDVec(const v: TKDT34DD_Vec): string;
+class function TKDT34DD.KDT34DDVec(const v: TKDT34DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -42777,7 +42641,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT35DD_SourceBuffer;
-  dynBuff  : PKDT35DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -42874,8 +42737,7 @@ end;
 
 procedure TKDT35DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT35DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT35DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -42903,8 +42765,7 @@ end;
 
 procedure TKDT35DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT35DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT35DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -42935,8 +42796,7 @@ end;
 
 procedure TKDT35DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT35DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT35DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -43528,7 +43388,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT35DD.SaveToFile(fileName: string);
+procedure TKDT35DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -43540,7 +43400,7 @@ begin
   end;
 end;
 
-procedure TKDT35DD.LoadFromFile(fileName: string);
+procedure TKDT35DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -43558,7 +43418,7 @@ begin
 end;
 
 procedure TKDT35DD.PrintNodeTree(const NodePtr: PKDT35DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT35DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT35DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT35DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -43579,7 +43439,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT35DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT35DD.KDT35DDVec(const s: string): TKDT35DD_Vec;
+class function TKDT35DD.KDT35DDVec(const s: SystemString): TKDT35DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -43604,7 +43464,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT35DD.KDT35DDVec(const v: TKDT35DD_Vec): string;
+class function TKDT35DD.KDT35DDVec(const v: TKDT35DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -43755,7 +43615,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT36DD_SourceBuffer;
-  dynBuff  : PKDT36DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -43852,8 +43711,7 @@ end;
 
 procedure TKDT36DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT36DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT36DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -43881,8 +43739,7 @@ end;
 
 procedure TKDT36DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT36DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT36DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -43913,8 +43770,7 @@ end;
 
 procedure TKDT36DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT36DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT36DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -44506,7 +44362,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT36DD.SaveToFile(fileName: string);
+procedure TKDT36DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -44518,7 +44374,7 @@ begin
   end;
 end;
 
-procedure TKDT36DD.LoadFromFile(fileName: string);
+procedure TKDT36DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -44536,7 +44392,7 @@ begin
 end;
 
 procedure TKDT36DD.PrintNodeTree(const NodePtr: PKDT36DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT36DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT36DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT36DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -44557,7 +44413,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT36DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT36DD.KDT36DDVec(const s: string): TKDT36DD_Vec;
+class function TKDT36DD.KDT36DDVec(const s: SystemString): TKDT36DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -44582,7 +44438,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT36DD.KDT36DDVec(const v: TKDT36DD_Vec): string;
+class function TKDT36DD.KDT36DDVec(const v: TKDT36DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -44733,7 +44589,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT37DD_SourceBuffer;
-  dynBuff  : PKDT37DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -44830,8 +44685,7 @@ end;
 
 procedure TKDT37DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT37DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT37DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -44859,8 +44713,7 @@ end;
 
 procedure TKDT37DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT37DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT37DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -44891,8 +44744,7 @@ end;
 
 procedure TKDT37DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT37DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT37DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -45484,7 +45336,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT37DD.SaveToFile(fileName: string);
+procedure TKDT37DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -45496,7 +45348,7 @@ begin
   end;
 end;
 
-procedure TKDT37DD.LoadFromFile(fileName: string);
+procedure TKDT37DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -45514,7 +45366,7 @@ begin
 end;
 
 procedure TKDT37DD.PrintNodeTree(const NodePtr: PKDT37DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT37DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT37DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT37DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -45535,7 +45387,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT37DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT37DD.KDT37DDVec(const s: string): TKDT37DD_Vec;
+class function TKDT37DD.KDT37DDVec(const s: SystemString): TKDT37DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -45560,7 +45412,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT37DD.KDT37DDVec(const v: TKDT37DD_Vec): string;
+class function TKDT37DD.KDT37DDVec(const v: TKDT37DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -45711,7 +45563,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT38DD_SourceBuffer;
-  dynBuff  : PKDT38DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -45808,8 +45659,7 @@ end;
 
 procedure TKDT38DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT38DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT38DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -45837,8 +45687,7 @@ end;
 
 procedure TKDT38DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT38DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT38DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -45869,8 +45718,7 @@ end;
 
 procedure TKDT38DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT38DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT38DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -46462,7 +46310,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT38DD.SaveToFile(fileName: string);
+procedure TKDT38DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -46474,7 +46322,7 @@ begin
   end;
 end;
 
-procedure TKDT38DD.LoadFromFile(fileName: string);
+procedure TKDT38DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -46492,7 +46340,7 @@ begin
 end;
 
 procedure TKDT38DD.PrintNodeTree(const NodePtr: PKDT38DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT38DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT38DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT38DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -46513,7 +46361,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT38DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT38DD.KDT38DDVec(const s: string): TKDT38DD_Vec;
+class function TKDT38DD.KDT38DDVec(const s: SystemString): TKDT38DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -46538,7 +46386,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT38DD.KDT38DDVec(const v: TKDT38DD_Vec): string;
+class function TKDT38DD.KDT38DDVec(const v: TKDT38DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -46689,7 +46537,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT39DD_SourceBuffer;
-  dynBuff  : PKDT39DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -46786,8 +46633,7 @@ end;
 
 procedure TKDT39DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT39DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT39DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -46815,8 +46661,7 @@ end;
 
 procedure TKDT39DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT39DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT39DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -46847,8 +46692,7 @@ end;
 
 procedure TKDT39DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT39DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT39DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -47440,7 +47284,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT39DD.SaveToFile(fileName: string);
+procedure TKDT39DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -47452,7 +47296,7 @@ begin
   end;
 end;
 
-procedure TKDT39DD.LoadFromFile(fileName: string);
+procedure TKDT39DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -47470,7 +47314,7 @@ begin
 end;
 
 procedure TKDT39DD.PrintNodeTree(const NodePtr: PKDT39DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT39DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT39DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT39DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -47491,7 +47335,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT39DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT39DD.KDT39DDVec(const s: string): TKDT39DD_Vec;
+class function TKDT39DD.KDT39DDVec(const s: SystemString): TKDT39DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -47516,7 +47360,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT39DD.KDT39DDVec(const v: TKDT39DD_Vec): string;
+class function TKDT39DD.KDT39DDVec(const v: TKDT39DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -47667,7 +47511,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT40DD_SourceBuffer;
-  dynBuff  : PKDT40DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -47764,8 +47607,7 @@ end;
 
 procedure TKDT40DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT40DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT40DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -47793,8 +47635,7 @@ end;
 
 procedure TKDT40DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT40DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT40DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -47825,8 +47666,7 @@ end;
 
 procedure TKDT40DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT40DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT40DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -48418,7 +48258,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT40DD.SaveToFile(fileName: string);
+procedure TKDT40DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -48430,7 +48270,7 @@ begin
   end;
 end;
 
-procedure TKDT40DD.LoadFromFile(fileName: string);
+procedure TKDT40DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -48448,7 +48288,7 @@ begin
 end;
 
 procedure TKDT40DD.PrintNodeTree(const NodePtr: PKDT40DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT40DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT40DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT40DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -48469,7 +48309,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT40DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT40DD.KDT40DDVec(const s: string): TKDT40DD_Vec;
+class function TKDT40DD.KDT40DDVec(const s: SystemString): TKDT40DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -48494,7 +48334,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT40DD.KDT40DDVec(const v: TKDT40DD_Vec): string;
+class function TKDT40DD.KDT40DDVec(const v: TKDT40DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -48645,7 +48485,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT41DD_SourceBuffer;
-  dynBuff  : PKDT41DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -48742,8 +48581,7 @@ end;
 
 procedure TKDT41DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT41DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT41DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -48771,8 +48609,7 @@ end;
 
 procedure TKDT41DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT41DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT41DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -48803,8 +48640,7 @@ end;
 
 procedure TKDT41DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT41DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT41DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -49396,7 +49232,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT41DD.SaveToFile(fileName: string);
+procedure TKDT41DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -49408,7 +49244,7 @@ begin
   end;
 end;
 
-procedure TKDT41DD.LoadFromFile(fileName: string);
+procedure TKDT41DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -49426,7 +49262,7 @@ begin
 end;
 
 procedure TKDT41DD.PrintNodeTree(const NodePtr: PKDT41DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT41DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT41DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT41DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -49447,7 +49283,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT41DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT41DD.KDT41DDVec(const s: string): TKDT41DD_Vec;
+class function TKDT41DD.KDT41DDVec(const s: SystemString): TKDT41DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -49472,7 +49308,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT41DD.KDT41DDVec(const v: TKDT41DD_Vec): string;
+class function TKDT41DD.KDT41DDVec(const v: TKDT41DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -49623,7 +49459,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT42DD_SourceBuffer;
-  dynBuff  : PKDT42DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -49720,8 +49555,7 @@ end;
 
 procedure TKDT42DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT42DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT42DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -49749,8 +49583,7 @@ end;
 
 procedure TKDT42DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT42DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT42DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -49781,8 +49614,7 @@ end;
 
 procedure TKDT42DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT42DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT42DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -50374,7 +50206,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT42DD.SaveToFile(fileName: string);
+procedure TKDT42DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -50386,7 +50218,7 @@ begin
   end;
 end;
 
-procedure TKDT42DD.LoadFromFile(fileName: string);
+procedure TKDT42DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -50404,7 +50236,7 @@ begin
 end;
 
 procedure TKDT42DD.PrintNodeTree(const NodePtr: PKDT42DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT42DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT42DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT42DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -50425,7 +50257,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT42DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT42DD.KDT42DDVec(const s: string): TKDT42DD_Vec;
+class function TKDT42DD.KDT42DDVec(const s: SystemString): TKDT42DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -50450,7 +50282,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT42DD.KDT42DDVec(const v: TKDT42DD_Vec): string;
+class function TKDT42DD.KDT42DDVec(const v: TKDT42DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -50601,7 +50433,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT43DD_SourceBuffer;
-  dynBuff  : PKDT43DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -50698,8 +50529,7 @@ end;
 
 procedure TKDT43DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT43DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT43DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -50727,8 +50557,7 @@ end;
 
 procedure TKDT43DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT43DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT43DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -50759,8 +50588,7 @@ end;
 
 procedure TKDT43DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT43DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT43DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -51352,7 +51180,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT43DD.SaveToFile(fileName: string);
+procedure TKDT43DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -51364,7 +51192,7 @@ begin
   end;
 end;
 
-procedure TKDT43DD.LoadFromFile(fileName: string);
+procedure TKDT43DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -51382,7 +51210,7 @@ begin
 end;
 
 procedure TKDT43DD.PrintNodeTree(const NodePtr: PKDT43DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT43DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT43DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT43DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -51403,7 +51231,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT43DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT43DD.KDT43DDVec(const s: string): TKDT43DD_Vec;
+class function TKDT43DD.KDT43DDVec(const s: SystemString): TKDT43DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -51428,7 +51256,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT43DD.KDT43DDVec(const v: TKDT43DD_Vec): string;
+class function TKDT43DD.KDT43DDVec(const v: TKDT43DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -51579,7 +51407,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT44DD_SourceBuffer;
-  dynBuff  : PKDT44DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -51676,8 +51503,7 @@ end;
 
 procedure TKDT44DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT44DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT44DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -51705,8 +51531,7 @@ end;
 
 procedure TKDT44DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT44DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT44DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -51737,8 +51562,7 @@ end;
 
 procedure TKDT44DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT44DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT44DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -52330,7 +52154,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT44DD.SaveToFile(fileName: string);
+procedure TKDT44DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -52342,7 +52166,7 @@ begin
   end;
 end;
 
-procedure TKDT44DD.LoadFromFile(fileName: string);
+procedure TKDT44DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -52360,7 +52184,7 @@ begin
 end;
 
 procedure TKDT44DD.PrintNodeTree(const NodePtr: PKDT44DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT44DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT44DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT44DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -52381,7 +52205,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT44DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT44DD.KDT44DDVec(const s: string): TKDT44DD_Vec;
+class function TKDT44DD.KDT44DDVec(const s: SystemString): TKDT44DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -52406,7 +52230,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT44DD.KDT44DDVec(const v: TKDT44DD_Vec): string;
+class function TKDT44DD.KDT44DDVec(const v: TKDT44DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -52557,7 +52381,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT45DD_SourceBuffer;
-  dynBuff  : PKDT45DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -52654,8 +52477,7 @@ end;
 
 procedure TKDT45DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT45DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT45DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -52683,8 +52505,7 @@ end;
 
 procedure TKDT45DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT45DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT45DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -52715,8 +52536,7 @@ end;
 
 procedure TKDT45DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT45DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT45DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -53308,7 +53128,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT45DD.SaveToFile(fileName: string);
+procedure TKDT45DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -53320,7 +53140,7 @@ begin
   end;
 end;
 
-procedure TKDT45DD.LoadFromFile(fileName: string);
+procedure TKDT45DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -53338,7 +53158,7 @@ begin
 end;
 
 procedure TKDT45DD.PrintNodeTree(const NodePtr: PKDT45DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT45DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT45DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT45DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -53359,7 +53179,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT45DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT45DD.KDT45DDVec(const s: string): TKDT45DD_Vec;
+class function TKDT45DD.KDT45DDVec(const s: SystemString): TKDT45DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -53384,7 +53204,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT45DD.KDT45DDVec(const v: TKDT45DD_Vec): string;
+class function TKDT45DD.KDT45DDVec(const v: TKDT45DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -53535,7 +53355,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT46DD_SourceBuffer;
-  dynBuff  : PKDT46DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -53632,8 +53451,7 @@ end;
 
 procedure TKDT46DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT46DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT46DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -53661,8 +53479,7 @@ end;
 
 procedure TKDT46DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT46DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT46DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -53693,8 +53510,7 @@ end;
 
 procedure TKDT46DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT46DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT46DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -54286,7 +54102,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT46DD.SaveToFile(fileName: string);
+procedure TKDT46DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -54298,7 +54114,7 @@ begin
   end;
 end;
 
-procedure TKDT46DD.LoadFromFile(fileName: string);
+procedure TKDT46DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -54316,7 +54132,7 @@ begin
 end;
 
 procedure TKDT46DD.PrintNodeTree(const NodePtr: PKDT46DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT46DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT46DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT46DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -54337,7 +54153,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT46DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT46DD.KDT46DDVec(const s: string): TKDT46DD_Vec;
+class function TKDT46DD.KDT46DDVec(const s: SystemString): TKDT46DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -54362,7 +54178,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT46DD.KDT46DDVec(const v: TKDT46DD_Vec): string;
+class function TKDT46DD.KDT46DDVec(const v: TKDT46DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -54513,7 +54329,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT47DD_SourceBuffer;
-  dynBuff  : PKDT47DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -54610,8 +54425,7 @@ end;
 
 procedure TKDT47DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT47DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT47DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -54639,8 +54453,7 @@ end;
 
 procedure TKDT47DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT47DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT47DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -54671,8 +54484,7 @@ end;
 
 procedure TKDT47DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT47DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT47DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -55264,7 +55076,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT47DD.SaveToFile(fileName: string);
+procedure TKDT47DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -55276,7 +55088,7 @@ begin
   end;
 end;
 
-procedure TKDT47DD.LoadFromFile(fileName: string);
+procedure TKDT47DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -55294,7 +55106,7 @@ begin
 end;
 
 procedure TKDT47DD.PrintNodeTree(const NodePtr: PKDT47DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT47DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT47DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT47DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -55315,7 +55127,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT47DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT47DD.KDT47DDVec(const s: string): TKDT47DD_Vec;
+class function TKDT47DD.KDT47DDVec(const s: SystemString): TKDT47DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -55340,7 +55152,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT47DD.KDT47DDVec(const v: TKDT47DD_Vec): string;
+class function TKDT47DD.KDT47DDVec(const v: TKDT47DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -55491,7 +55303,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT48DD_SourceBuffer;
-  dynBuff  : PKDT48DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -55588,8 +55399,7 @@ end;
 
 procedure TKDT48DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT48DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT48DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -55617,8 +55427,7 @@ end;
 
 procedure TKDT48DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT48DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT48DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -55649,8 +55458,7 @@ end;
 
 procedure TKDT48DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT48DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT48DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -56242,7 +56050,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT48DD.SaveToFile(fileName: string);
+procedure TKDT48DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -56254,7 +56062,7 @@ begin
   end;
 end;
 
-procedure TKDT48DD.LoadFromFile(fileName: string);
+procedure TKDT48DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -56272,7 +56080,7 @@ begin
 end;
 
 procedure TKDT48DD.PrintNodeTree(const NodePtr: PKDT48DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT48DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT48DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT48DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -56293,7 +56101,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT48DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT48DD.KDT48DDVec(const s: string): TKDT48DD_Vec;
+class function TKDT48DD.KDT48DDVec(const s: SystemString): TKDT48DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -56318,7 +56126,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT48DD.KDT48DDVec(const v: TKDT48DD_Vec): string;
+class function TKDT48DD.KDT48DDVec(const v: TKDT48DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -56469,7 +56277,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT49DD_SourceBuffer;
-  dynBuff  : PKDT49DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -56566,8 +56373,7 @@ end;
 
 procedure TKDT49DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT49DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT49DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -56595,8 +56401,7 @@ end;
 
 procedure TKDT49DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT49DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT49DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -56627,8 +56432,7 @@ end;
 
 procedure TKDT49DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT49DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT49DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -57220,7 +57024,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT49DD.SaveToFile(fileName: string);
+procedure TKDT49DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -57232,7 +57036,7 @@ begin
   end;
 end;
 
-procedure TKDT49DD.LoadFromFile(fileName: string);
+procedure TKDT49DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -57250,7 +57054,7 @@ begin
 end;
 
 procedure TKDT49DD.PrintNodeTree(const NodePtr: PKDT49DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT49DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT49DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT49DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -57271,7 +57075,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT49DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT49DD.KDT49DDVec(const s: string): TKDT49DD_Vec;
+class function TKDT49DD.KDT49DDVec(const s: SystemString): TKDT49DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -57296,7 +57100,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT49DD.KDT49DDVec(const v: TKDT49DD_Vec): string;
+class function TKDT49DD.KDT49DDVec(const v: TKDT49DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -57447,7 +57251,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT50DD_SourceBuffer;
-  dynBuff  : PKDT50DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -57544,8 +57347,7 @@ end;
 
 procedure TKDT50DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT50DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT50DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -57573,8 +57375,7 @@ end;
 
 procedure TKDT50DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT50DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT50DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -57605,8 +57406,7 @@ end;
 
 procedure TKDT50DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT50DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT50DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -58198,7 +57998,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT50DD.SaveToFile(fileName: string);
+procedure TKDT50DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -58210,7 +58010,7 @@ begin
   end;
 end;
 
-procedure TKDT50DD.LoadFromFile(fileName: string);
+procedure TKDT50DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -58228,7 +58028,7 @@ begin
 end;
 
 procedure TKDT50DD.PrintNodeTree(const NodePtr: PKDT50DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT50DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT50DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT50DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -58249,7 +58049,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT50DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT50DD.KDT50DDVec(const s: string): TKDT50DD_Vec;
+class function TKDT50DD.KDT50DDVec(const s: SystemString): TKDT50DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -58274,7 +58074,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT50DD.KDT50DDVec(const v: TKDT50DD_Vec): string;
+class function TKDT50DD.KDT50DDVec(const v: TKDT50DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -58425,7 +58225,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT51DD_SourceBuffer;
-  dynBuff  : PKDT51DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -58522,8 +58321,7 @@ end;
 
 procedure TKDT51DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT51DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT51DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -58551,8 +58349,7 @@ end;
 
 procedure TKDT51DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT51DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT51DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -58583,8 +58380,7 @@ end;
 
 procedure TKDT51DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT51DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT51DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -59176,7 +58972,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT51DD.SaveToFile(fileName: string);
+procedure TKDT51DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -59188,7 +58984,7 @@ begin
   end;
 end;
 
-procedure TKDT51DD.LoadFromFile(fileName: string);
+procedure TKDT51DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -59206,7 +59002,7 @@ begin
 end;
 
 procedure TKDT51DD.PrintNodeTree(const NodePtr: PKDT51DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT51DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT51DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT51DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -59227,7 +59023,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT51DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT51DD.KDT51DDVec(const s: string): TKDT51DD_Vec;
+class function TKDT51DD.KDT51DDVec(const s: SystemString): TKDT51DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -59252,7 +59048,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT51DD.KDT51DDVec(const v: TKDT51DD_Vec): string;
+class function TKDT51DD.KDT51DDVec(const v: TKDT51DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -59403,7 +59199,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT52DD_SourceBuffer;
-  dynBuff  : PKDT52DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -59500,8 +59295,7 @@ end;
 
 procedure TKDT52DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT52DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT52DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -59529,8 +59323,7 @@ end;
 
 procedure TKDT52DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT52DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT52DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -59561,8 +59354,7 @@ end;
 
 procedure TKDT52DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT52DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT52DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -60154,7 +59946,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT52DD.SaveToFile(fileName: string);
+procedure TKDT52DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -60166,7 +59958,7 @@ begin
   end;
 end;
 
-procedure TKDT52DD.LoadFromFile(fileName: string);
+procedure TKDT52DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -60184,7 +59976,7 @@ begin
 end;
 
 procedure TKDT52DD.PrintNodeTree(const NodePtr: PKDT52DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT52DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT52DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT52DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -60205,7 +59997,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT52DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT52DD.KDT52DDVec(const s: string): TKDT52DD_Vec;
+class function TKDT52DD.KDT52DDVec(const s: SystemString): TKDT52DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -60230,7 +60022,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT52DD.KDT52DDVec(const v: TKDT52DD_Vec): string;
+class function TKDT52DD.KDT52DDVec(const v: TKDT52DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -60381,7 +60173,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT53DD_SourceBuffer;
-  dynBuff  : PKDT53DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -60478,8 +60269,7 @@ end;
 
 procedure TKDT53DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT53DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT53DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -60507,8 +60297,7 @@ end;
 
 procedure TKDT53DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT53DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT53DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -60539,8 +60328,7 @@ end;
 
 procedure TKDT53DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT53DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT53DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -61132,7 +60920,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT53DD.SaveToFile(fileName: string);
+procedure TKDT53DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -61144,7 +60932,7 @@ begin
   end;
 end;
 
-procedure TKDT53DD.LoadFromFile(fileName: string);
+procedure TKDT53DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -61162,7 +60950,7 @@ begin
 end;
 
 procedure TKDT53DD.PrintNodeTree(const NodePtr: PKDT53DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT53DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT53DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT53DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -61183,7 +60971,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT53DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT53DD.KDT53DDVec(const s: string): TKDT53DD_Vec;
+class function TKDT53DD.KDT53DDVec(const s: SystemString): TKDT53DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -61208,7 +60996,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT53DD.KDT53DDVec(const v: TKDT53DD_Vec): string;
+class function TKDT53DD.KDT53DDVec(const v: TKDT53DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -61359,7 +61147,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT54DD_SourceBuffer;
-  dynBuff  : PKDT54DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -61456,8 +61243,7 @@ end;
 
 procedure TKDT54DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT54DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT54DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -61485,8 +61271,7 @@ end;
 
 procedure TKDT54DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT54DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT54DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -61517,8 +61302,7 @@ end;
 
 procedure TKDT54DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT54DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT54DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -62110,7 +61894,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT54DD.SaveToFile(fileName: string);
+procedure TKDT54DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -62122,7 +61906,7 @@ begin
   end;
 end;
 
-procedure TKDT54DD.LoadFromFile(fileName: string);
+procedure TKDT54DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -62140,7 +61924,7 @@ begin
 end;
 
 procedure TKDT54DD.PrintNodeTree(const NodePtr: PKDT54DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT54DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT54DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT54DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -62161,7 +61945,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT54DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT54DD.KDT54DDVec(const s: string): TKDT54DD_Vec;
+class function TKDT54DD.KDT54DDVec(const s: SystemString): TKDT54DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -62186,7 +61970,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT54DD.KDT54DDVec(const v: TKDT54DD_Vec): string;
+class function TKDT54DD.KDT54DDVec(const v: TKDT54DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -62337,7 +62121,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT55DD_SourceBuffer;
-  dynBuff  : PKDT55DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -62434,8 +62217,7 @@ end;
 
 procedure TKDT55DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT55DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT55DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -62463,8 +62245,7 @@ end;
 
 procedure TKDT55DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT55DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT55DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -62495,8 +62276,7 @@ end;
 
 procedure TKDT55DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT55DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT55DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -63088,7 +62868,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT55DD.SaveToFile(fileName: string);
+procedure TKDT55DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -63100,7 +62880,7 @@ begin
   end;
 end;
 
-procedure TKDT55DD.LoadFromFile(fileName: string);
+procedure TKDT55DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -63118,7 +62898,7 @@ begin
 end;
 
 procedure TKDT55DD.PrintNodeTree(const NodePtr: PKDT55DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT55DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT55DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT55DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -63139,7 +62919,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT55DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT55DD.KDT55DDVec(const s: string): TKDT55DD_Vec;
+class function TKDT55DD.KDT55DDVec(const s: SystemString): TKDT55DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -63164,7 +62944,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT55DD.KDT55DDVec(const v: TKDT55DD_Vec): string;
+class function TKDT55DD.KDT55DDVec(const v: TKDT55DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -63315,7 +63095,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT56DD_SourceBuffer;
-  dynBuff  : PKDT56DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -63412,8 +63191,7 @@ end;
 
 procedure TKDT56DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT56DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT56DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -63441,8 +63219,7 @@ end;
 
 procedure TKDT56DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT56DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT56DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -63473,8 +63250,7 @@ end;
 
 procedure TKDT56DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT56DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT56DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -64066,7 +63842,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT56DD.SaveToFile(fileName: string);
+procedure TKDT56DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -64078,7 +63854,7 @@ begin
   end;
 end;
 
-procedure TKDT56DD.LoadFromFile(fileName: string);
+procedure TKDT56DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -64096,7 +63872,7 @@ begin
 end;
 
 procedure TKDT56DD.PrintNodeTree(const NodePtr: PKDT56DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT56DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT56DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT56DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -64117,7 +63893,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT56DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT56DD.KDT56DDVec(const s: string): TKDT56DD_Vec;
+class function TKDT56DD.KDT56DDVec(const s: SystemString): TKDT56DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -64142,7 +63918,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT56DD.KDT56DDVec(const v: TKDT56DD_Vec): string;
+class function TKDT56DD.KDT56DDVec(const v: TKDT56DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -64293,7 +64069,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT57DD_SourceBuffer;
-  dynBuff  : PKDT57DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -64390,8 +64165,7 @@ end;
 
 procedure TKDT57DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT57DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT57DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -64419,8 +64193,7 @@ end;
 
 procedure TKDT57DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT57DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT57DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -64451,8 +64224,7 @@ end;
 
 procedure TKDT57DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT57DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT57DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -65044,7 +64816,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT57DD.SaveToFile(fileName: string);
+procedure TKDT57DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -65056,7 +64828,7 @@ begin
   end;
 end;
 
-procedure TKDT57DD.LoadFromFile(fileName: string);
+procedure TKDT57DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -65074,7 +64846,7 @@ begin
 end;
 
 procedure TKDT57DD.PrintNodeTree(const NodePtr: PKDT57DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT57DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT57DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT57DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -65095,7 +64867,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT57DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT57DD.KDT57DDVec(const s: string): TKDT57DD_Vec;
+class function TKDT57DD.KDT57DDVec(const s: SystemString): TKDT57DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -65120,7 +64892,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT57DD.KDT57DDVec(const v: TKDT57DD_Vec): string;
+class function TKDT57DD.KDT57DDVec(const v: TKDT57DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -65271,7 +65043,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT58DD_SourceBuffer;
-  dynBuff  : PKDT58DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -65368,8 +65139,7 @@ end;
 
 procedure TKDT58DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT58DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT58DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -65397,8 +65167,7 @@ end;
 
 procedure TKDT58DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT58DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT58DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -65429,8 +65198,7 @@ end;
 
 procedure TKDT58DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT58DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT58DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -66022,7 +65790,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT58DD.SaveToFile(fileName: string);
+procedure TKDT58DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -66034,7 +65802,7 @@ begin
   end;
 end;
 
-procedure TKDT58DD.LoadFromFile(fileName: string);
+procedure TKDT58DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -66052,7 +65820,7 @@ begin
 end;
 
 procedure TKDT58DD.PrintNodeTree(const NodePtr: PKDT58DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT58DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT58DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT58DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -66073,7 +65841,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT58DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT58DD.KDT58DDVec(const s: string): TKDT58DD_Vec;
+class function TKDT58DD.KDT58DDVec(const s: SystemString): TKDT58DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -66098,7 +65866,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT58DD.KDT58DDVec(const v: TKDT58DD_Vec): string;
+class function TKDT58DD.KDT58DDVec(const v: TKDT58DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -66249,7 +66017,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT59DD_SourceBuffer;
-  dynBuff  : PKDT59DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -66346,8 +66113,7 @@ end;
 
 procedure TKDT59DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT59DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT59DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -66375,8 +66141,7 @@ end;
 
 procedure TKDT59DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT59DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT59DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -66407,8 +66172,7 @@ end;
 
 procedure TKDT59DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT59DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT59DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -67000,7 +66764,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT59DD.SaveToFile(fileName: string);
+procedure TKDT59DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -67012,7 +66776,7 @@ begin
   end;
 end;
 
-procedure TKDT59DD.LoadFromFile(fileName: string);
+procedure TKDT59DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -67030,7 +66794,7 @@ begin
 end;
 
 procedure TKDT59DD.PrintNodeTree(const NodePtr: PKDT59DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT59DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT59DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT59DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -67051,7 +66815,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT59DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT59DD.KDT59DDVec(const s: string): TKDT59DD_Vec;
+class function TKDT59DD.KDT59DDVec(const s: SystemString): TKDT59DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -67076,7 +66840,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT59DD.KDT59DDVec(const v: TKDT59DD_Vec): string;
+class function TKDT59DD.KDT59DDVec(const v: TKDT59DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -67227,7 +66991,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT60DD_SourceBuffer;
-  dynBuff  : PKDT60DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -67324,8 +67087,7 @@ end;
 
 procedure TKDT60DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT60DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT60DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -67353,8 +67115,7 @@ end;
 
 procedure TKDT60DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT60DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT60DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -67385,8 +67146,7 @@ end;
 
 procedure TKDT60DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT60DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT60DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -67978,7 +67738,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT60DD.SaveToFile(fileName: string);
+procedure TKDT60DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -67990,7 +67750,7 @@ begin
   end;
 end;
 
-procedure TKDT60DD.LoadFromFile(fileName: string);
+procedure TKDT60DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -68008,7 +67768,7 @@ begin
 end;
 
 procedure TKDT60DD.PrintNodeTree(const NodePtr: PKDT60DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT60DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT60DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT60DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -68029,7 +67789,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT60DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT60DD.KDT60DDVec(const s: string): TKDT60DD_Vec;
+class function TKDT60DD.KDT60DDVec(const s: SystemString): TKDT60DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -68054,7 +67814,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT60DD.KDT60DDVec(const v: TKDT60DD_Vec): string;
+class function TKDT60DD.KDT60DDVec(const v: TKDT60DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -68205,7 +67965,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT61DD_SourceBuffer;
-  dynBuff  : PKDT61DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -68302,8 +68061,7 @@ end;
 
 procedure TKDT61DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT61DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT61DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -68331,8 +68089,7 @@ end;
 
 procedure TKDT61DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT61DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT61DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -68363,8 +68120,7 @@ end;
 
 procedure TKDT61DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT61DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT61DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -68956,7 +68712,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT61DD.SaveToFile(fileName: string);
+procedure TKDT61DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -68968,7 +68724,7 @@ begin
   end;
 end;
 
-procedure TKDT61DD.LoadFromFile(fileName: string);
+procedure TKDT61DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -68986,7 +68742,7 @@ begin
 end;
 
 procedure TKDT61DD.PrintNodeTree(const NodePtr: PKDT61DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT61DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT61DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT61DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -69007,7 +68763,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT61DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT61DD.KDT61DDVec(const s: string): TKDT61DD_Vec;
+class function TKDT61DD.KDT61DDVec(const s: SystemString): TKDT61DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -69032,7 +68788,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT61DD.KDT61DDVec(const v: TKDT61DD_Vec): string;
+class function TKDT61DD.KDT61DDVec(const v: TKDT61DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -69183,7 +68939,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT62DD_SourceBuffer;
-  dynBuff  : PKDT62DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -69280,8 +69035,7 @@ end;
 
 procedure TKDT62DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT62DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT62DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -69309,8 +69063,7 @@ end;
 
 procedure TKDT62DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT62DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT62DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -69341,8 +69094,7 @@ end;
 
 procedure TKDT62DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT62DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT62DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -69934,7 +69686,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT62DD.SaveToFile(fileName: string);
+procedure TKDT62DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -69946,7 +69698,7 @@ begin
   end;
 end;
 
-procedure TKDT62DD.LoadFromFile(fileName: string);
+procedure TKDT62DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -69964,7 +69716,7 @@ begin
 end;
 
 procedure TKDT62DD.PrintNodeTree(const NodePtr: PKDT62DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT62DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT62DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT62DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -69985,7 +69737,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT62DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT62DD.KDT62DDVec(const s: string): TKDT62DD_Vec;
+class function TKDT62DD.KDT62DDVec(const s: SystemString): TKDT62DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -70010,7 +69762,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT62DD.KDT62DDVec(const v: TKDT62DD_Vec): string;
+class function TKDT62DD.KDT62DDVec(const v: TKDT62DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -70161,7 +69913,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT63DD_SourceBuffer;
-  dynBuff  : PKDT63DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -70258,8 +70009,7 @@ end;
 
 procedure TKDT63DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT63DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT63DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -70287,8 +70037,7 @@ end;
 
 procedure TKDT63DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT63DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT63DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -70319,8 +70068,7 @@ end;
 
 procedure TKDT63DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT63DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT63DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -70912,7 +70660,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT63DD.SaveToFile(fileName: string);
+procedure TKDT63DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -70924,7 +70672,7 @@ begin
   end;
 end;
 
-procedure TKDT63DD.LoadFromFile(fileName: string);
+procedure TKDT63DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -70942,7 +70690,7 @@ begin
 end;
 
 procedure TKDT63DD.PrintNodeTree(const NodePtr: PKDT63DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT63DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT63DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT63DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -70963,7 +70711,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT63DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT63DD.KDT63DDVec(const s: string): TKDT63DD_Vec;
+class function TKDT63DD.KDT63DDVec(const s: SystemString): TKDT63DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -70988,7 +70736,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT63DD.KDT63DDVec(const v: TKDT63DD_Vec): string;
+class function TKDT63DD.KDT63DDVec(const v: TKDT63DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -71139,7 +70887,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT64DD_SourceBuffer;
-  dynBuff  : PKDT64DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -71236,8 +70983,7 @@ end;
 
 procedure TKDT64DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT64DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT64DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -71265,8 +71011,7 @@ end;
 
 procedure TKDT64DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT64DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT64DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -71297,8 +71042,7 @@ end;
 
 procedure TKDT64DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT64DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT64DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -71890,7 +71634,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT64DD.SaveToFile(fileName: string);
+procedure TKDT64DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -71902,7 +71646,7 @@ begin
   end;
 end;
 
-procedure TKDT64DD.LoadFromFile(fileName: string);
+procedure TKDT64DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -71920,7 +71664,7 @@ begin
 end;
 
 procedure TKDT64DD.PrintNodeTree(const NodePtr: PKDT64DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT64DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT64DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT64DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -71941,7 +71685,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT64DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT64DD.KDT64DDVec(const s: string): TKDT64DD_Vec;
+class function TKDT64DD.KDT64DDVec(const s: SystemString): TKDT64DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -71966,7 +71710,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT64DD.KDT64DDVec(const v: TKDT64DD_Vec): string;
+class function TKDT64DD.KDT64DDVec(const v: TKDT64DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -72117,7 +71861,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT65DD_SourceBuffer;
-  dynBuff  : PKDT65DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -72214,8 +71957,7 @@ end;
 
 procedure TKDT65DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT65DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT65DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -72243,8 +71985,7 @@ end;
 
 procedure TKDT65DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT65DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT65DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -72275,8 +72016,7 @@ end;
 
 procedure TKDT65DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT65DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT65DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -72868,7 +72608,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT65DD.SaveToFile(fileName: string);
+procedure TKDT65DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -72880,7 +72620,7 @@ begin
   end;
 end;
 
-procedure TKDT65DD.LoadFromFile(fileName: string);
+procedure TKDT65DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -72898,7 +72638,7 @@ begin
 end;
 
 procedure TKDT65DD.PrintNodeTree(const NodePtr: PKDT65DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT65DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT65DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT65DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -72919,7 +72659,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT65DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT65DD.KDT65DDVec(const s: string): TKDT65DD_Vec;
+class function TKDT65DD.KDT65DDVec(const s: SystemString): TKDT65DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -72944,7 +72684,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT65DD.KDT65DDVec(const v: TKDT65DD_Vec): string;
+class function TKDT65DD.KDT65DDVec(const v: TKDT65DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -73095,7 +72835,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT66DD_SourceBuffer;
-  dynBuff  : PKDT66DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -73192,8 +72931,7 @@ end;
 
 procedure TKDT66DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT66DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT66DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -73221,8 +72959,7 @@ end;
 
 procedure TKDT66DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT66DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT66DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -73253,8 +72990,7 @@ end;
 
 procedure TKDT66DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT66DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT66DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -73846,7 +73582,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT66DD.SaveToFile(fileName: string);
+procedure TKDT66DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -73858,7 +73594,7 @@ begin
   end;
 end;
 
-procedure TKDT66DD.LoadFromFile(fileName: string);
+procedure TKDT66DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -73876,7 +73612,7 @@ begin
 end;
 
 procedure TKDT66DD.PrintNodeTree(const NodePtr: PKDT66DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT66DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT66DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT66DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -73897,7 +73633,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT66DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT66DD.KDT66DDVec(const s: string): TKDT66DD_Vec;
+class function TKDT66DD.KDT66DDVec(const s: SystemString): TKDT66DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -73922,7 +73658,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT66DD.KDT66DDVec(const v: TKDT66DD_Vec): string;
+class function TKDT66DD.KDT66DDVec(const v: TKDT66DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -74073,7 +73809,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT67DD_SourceBuffer;
-  dynBuff  : PKDT67DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -74170,8 +73905,7 @@ end;
 
 procedure TKDT67DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT67DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT67DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -74199,8 +73933,7 @@ end;
 
 procedure TKDT67DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT67DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT67DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -74231,8 +73964,7 @@ end;
 
 procedure TKDT67DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT67DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT67DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -74824,7 +74556,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT67DD.SaveToFile(fileName: string);
+procedure TKDT67DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -74836,7 +74568,7 @@ begin
   end;
 end;
 
-procedure TKDT67DD.LoadFromFile(fileName: string);
+procedure TKDT67DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -74854,7 +74586,7 @@ begin
 end;
 
 procedure TKDT67DD.PrintNodeTree(const NodePtr: PKDT67DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT67DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT67DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT67DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -74875,7 +74607,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT67DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT67DD.KDT67DDVec(const s: string): TKDT67DD_Vec;
+class function TKDT67DD.KDT67DDVec(const s: SystemString): TKDT67DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -74900,7 +74632,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT67DD.KDT67DDVec(const v: TKDT67DD_Vec): string;
+class function TKDT67DD.KDT67DDVec(const v: TKDT67DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -75051,7 +74783,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT68DD_SourceBuffer;
-  dynBuff  : PKDT68DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -75148,8 +74879,7 @@ end;
 
 procedure TKDT68DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT68DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT68DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -75177,8 +74907,7 @@ end;
 
 procedure TKDT68DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT68DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT68DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -75209,8 +74938,7 @@ end;
 
 procedure TKDT68DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT68DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT68DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -75802,7 +75530,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT68DD.SaveToFile(fileName: string);
+procedure TKDT68DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -75814,7 +75542,7 @@ begin
   end;
 end;
 
-procedure TKDT68DD.LoadFromFile(fileName: string);
+procedure TKDT68DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -75832,7 +75560,7 @@ begin
 end;
 
 procedure TKDT68DD.PrintNodeTree(const NodePtr: PKDT68DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT68DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT68DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT68DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -75853,7 +75581,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT68DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT68DD.KDT68DDVec(const s: string): TKDT68DD_Vec;
+class function TKDT68DD.KDT68DDVec(const s: SystemString): TKDT68DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -75878,7 +75606,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT68DD.KDT68DDVec(const v: TKDT68DD_Vec): string;
+class function TKDT68DD.KDT68DDVec(const v: TKDT68DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -76029,7 +75757,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT69DD_SourceBuffer;
-  dynBuff  : PKDT69DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -76126,8 +75853,7 @@ end;
 
 procedure TKDT69DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT69DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT69DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -76155,8 +75881,7 @@ end;
 
 procedure TKDT69DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT69DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT69DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -76187,8 +75912,7 @@ end;
 
 procedure TKDT69DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT69DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT69DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -76780,7 +76504,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT69DD.SaveToFile(fileName: string);
+procedure TKDT69DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -76792,7 +76516,7 @@ begin
   end;
 end;
 
-procedure TKDT69DD.LoadFromFile(fileName: string);
+procedure TKDT69DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -76810,7 +76534,7 @@ begin
 end;
 
 procedure TKDT69DD.PrintNodeTree(const NodePtr: PKDT69DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT69DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT69DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT69DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -76831,7 +76555,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT69DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT69DD.KDT69DDVec(const s: string): TKDT69DD_Vec;
+class function TKDT69DD.KDT69DDVec(const s: SystemString): TKDT69DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -76856,7 +76580,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT69DD.KDT69DDVec(const v: TKDT69DD_Vec): string;
+class function TKDT69DD.KDT69DDVec(const v: TKDT69DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -77007,7 +76731,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT70DD_SourceBuffer;
-  dynBuff  : PKDT70DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -77104,8 +76827,7 @@ end;
 
 procedure TKDT70DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT70DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT70DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -77133,8 +76855,7 @@ end;
 
 procedure TKDT70DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT70DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT70DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -77165,8 +76886,7 @@ end;
 
 procedure TKDT70DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT70DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT70DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -77758,7 +77478,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT70DD.SaveToFile(fileName: string);
+procedure TKDT70DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -77770,7 +77490,7 @@ begin
   end;
 end;
 
-procedure TKDT70DD.LoadFromFile(fileName: string);
+procedure TKDT70DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -77788,7 +77508,7 @@ begin
 end;
 
 procedure TKDT70DD.PrintNodeTree(const NodePtr: PKDT70DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT70DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT70DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT70DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -77809,7 +77529,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT70DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT70DD.KDT70DDVec(const s: string): TKDT70DD_Vec;
+class function TKDT70DD.KDT70DDVec(const s: SystemString): TKDT70DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -77834,7 +77554,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT70DD.KDT70DDVec(const v: TKDT70DD_Vec): string;
+class function TKDT70DD.KDT70DDVec(const v: TKDT70DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -77985,7 +77705,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT71DD_SourceBuffer;
-  dynBuff  : PKDT71DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -78082,8 +77801,7 @@ end;
 
 procedure TKDT71DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT71DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT71DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -78111,8 +77829,7 @@ end;
 
 procedure TKDT71DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT71DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT71DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -78143,8 +77860,7 @@ end;
 
 procedure TKDT71DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT71DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT71DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -78736,7 +78452,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT71DD.SaveToFile(fileName: string);
+procedure TKDT71DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -78748,7 +78464,7 @@ begin
   end;
 end;
 
-procedure TKDT71DD.LoadFromFile(fileName: string);
+procedure TKDT71DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -78766,7 +78482,7 @@ begin
 end;
 
 procedure TKDT71DD.PrintNodeTree(const NodePtr: PKDT71DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT71DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT71DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT71DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -78787,7 +78503,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT71DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT71DD.KDT71DDVec(const s: string): TKDT71DD_Vec;
+class function TKDT71DD.KDT71DDVec(const s: SystemString): TKDT71DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -78812,7 +78528,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT71DD.KDT71DDVec(const v: TKDT71DD_Vec): string;
+class function TKDT71DD.KDT71DDVec(const v: TKDT71DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -78963,7 +78679,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT72DD_SourceBuffer;
-  dynBuff  : PKDT72DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -79060,8 +78775,7 @@ end;
 
 procedure TKDT72DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT72DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT72DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -79089,8 +78803,7 @@ end;
 
 procedure TKDT72DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT72DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT72DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -79121,8 +78834,7 @@ end;
 
 procedure TKDT72DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT72DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT72DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -79714,7 +79426,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT72DD.SaveToFile(fileName: string);
+procedure TKDT72DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -79726,7 +79438,7 @@ begin
   end;
 end;
 
-procedure TKDT72DD.LoadFromFile(fileName: string);
+procedure TKDT72DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -79744,7 +79456,7 @@ begin
 end;
 
 procedure TKDT72DD.PrintNodeTree(const NodePtr: PKDT72DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT72DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT72DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT72DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -79765,7 +79477,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT72DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT72DD.KDT72DDVec(const s: string): TKDT72DD_Vec;
+class function TKDT72DD.KDT72DDVec(const s: SystemString): TKDT72DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -79790,7 +79502,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT72DD.KDT72DDVec(const v: TKDT72DD_Vec): string;
+class function TKDT72DD.KDT72DDVec(const v: TKDT72DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -79941,7 +79653,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT84DD_SourceBuffer;
-  dynBuff  : PKDT84DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -80038,8 +79749,7 @@ end;
 
 procedure TKDT84DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT84DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT84DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -80067,8 +79777,7 @@ end;
 
 procedure TKDT84DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT84DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT84DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -80099,8 +79808,7 @@ end;
 
 procedure TKDT84DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT84DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT84DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -80692,7 +80400,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT84DD.SaveToFile(fileName: string);
+procedure TKDT84DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -80704,7 +80412,7 @@ begin
   end;
 end;
 
-procedure TKDT84DD.LoadFromFile(fileName: string);
+procedure TKDT84DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -80722,7 +80430,7 @@ begin
 end;
 
 procedure TKDT84DD.PrintNodeTree(const NodePtr: PKDT84DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT84DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT84DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT84DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -80743,7 +80451,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT84DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT84DD.KDT84DDVec(const s: string): TKDT84DD_Vec;
+class function TKDT84DD.KDT84DDVec(const s: SystemString): TKDT84DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -80768,7 +80476,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT84DD.KDT84DDVec(const v: TKDT84DD_Vec): string;
+class function TKDT84DD.KDT84DDVec(const v: TKDT84DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -80919,7 +80627,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT96DD_SourceBuffer;
-  dynBuff  : PKDT96DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -81016,8 +80723,7 @@ end;
 
 procedure TKDT96DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT96DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT96DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -81045,8 +80751,7 @@ end;
 
 procedure TKDT96DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT96DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT96DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -81077,8 +80782,7 @@ end;
 
 procedure TKDT96DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT96DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT96DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -81670,7 +81374,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT96DD.SaveToFile(fileName: string);
+procedure TKDT96DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -81682,7 +81386,7 @@ begin
   end;
 end;
 
-procedure TKDT96DD.LoadFromFile(fileName: string);
+procedure TKDT96DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -81700,7 +81404,7 @@ begin
 end;
 
 procedure TKDT96DD.PrintNodeTree(const NodePtr: PKDT96DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT96DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT96DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT96DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -81721,7 +81425,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT96DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT96DD.KDT96DDVec(const s: string): TKDT96DD_Vec;
+class function TKDT96DD.KDT96DDVec(const s: SystemString): TKDT96DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -81746,7 +81450,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT96DD.KDT96DDVec(const v: TKDT96DD_Vec): string;
+class function TKDT96DD.KDT96DDVec(const v: TKDT96DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -81897,7 +81601,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT128DD_SourceBuffer;
-  dynBuff  : PKDT128DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -81994,8 +81697,7 @@ end;
 
 procedure TKDT128DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT128DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT128DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -82023,8 +81725,7 @@ end;
 
 procedure TKDT128DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT128DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT128DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -82055,8 +81756,7 @@ end;
 
 procedure TKDT128DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT128DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT128DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -82648,7 +82348,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT128DD.SaveToFile(fileName: string);
+procedure TKDT128DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -82660,7 +82360,7 @@ begin
   end;
 end;
 
-procedure TKDT128DD.LoadFromFile(fileName: string);
+procedure TKDT128DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -82678,7 +82378,7 @@ begin
 end;
 
 procedure TKDT128DD.PrintNodeTree(const NodePtr: PKDT128DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT128DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT128DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT128DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -82699,7 +82399,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT128DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT128DD.KDT128DDVec(const s: string): TKDT128DD_Vec;
+class function TKDT128DD.KDT128DDVec(const s: SystemString): TKDT128DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -82724,7 +82424,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT128DD.KDT128DDVec(const v: TKDT128DD_Vec): string;
+class function TKDT128DD.KDT128DDVec(const v: TKDT128DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -82875,7 +82575,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT140DD_SourceBuffer;
-  dynBuff  : PKDT140DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -82972,8 +82671,7 @@ end;
 
 procedure TKDT140DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT140DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT140DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -83001,8 +82699,7 @@ end;
 
 procedure TKDT140DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT140DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT140DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -83033,8 +82730,7 @@ end;
 
 procedure TKDT140DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT140DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT140DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -83626,7 +83322,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT140DD.SaveToFile(fileName: string);
+procedure TKDT140DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -83638,7 +83334,7 @@ begin
   end;
 end;
 
-procedure TKDT140DD.LoadFromFile(fileName: string);
+procedure TKDT140DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -83656,7 +83352,7 @@ begin
 end;
 
 procedure TKDT140DD.PrintNodeTree(const NodePtr: PKDT140DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT140DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT140DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT140DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -83677,7 +83373,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT140DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT140DD.KDT140DDVec(const s: string): TKDT140DD_Vec;
+class function TKDT140DD.KDT140DDVec(const s: SystemString): TKDT140DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -83702,7 +83398,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT140DD.KDT140DDVec(const v: TKDT140DD_Vec): string;
+class function TKDT140DD.KDT140DDVec(const v: TKDT140DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -83853,7 +83549,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT160DD_SourceBuffer;
-  dynBuff  : PKDT160DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -83950,8 +83645,7 @@ end;
 
 procedure TKDT160DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT160DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT160DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -83979,8 +83673,7 @@ end;
 
 procedure TKDT160DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT160DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT160DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -84011,8 +83704,7 @@ end;
 
 procedure TKDT160DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT160DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT160DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -84604,7 +84296,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT160DD.SaveToFile(fileName: string);
+procedure TKDT160DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -84616,7 +84308,7 @@ begin
   end;
 end;
 
-procedure TKDT160DD.LoadFromFile(fileName: string);
+procedure TKDT160DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -84634,7 +84326,7 @@ begin
 end;
 
 procedure TKDT160DD.PrintNodeTree(const NodePtr: PKDT160DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT160DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT160DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT160DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -84655,7 +84347,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT160DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT160DD.KDT160DDVec(const s: string): TKDT160DD_Vec;
+class function TKDT160DD.KDT160DDVec(const s: SystemString): TKDT160DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -84680,7 +84372,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT160DD.KDT160DDVec(const v: TKDT160DD_Vec): string;
+class function TKDT160DD.KDT160DDVec(const v: TKDT160DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -84831,7 +84523,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT196DD_SourceBuffer;
-  dynBuff  : PKDT196DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -84928,8 +84619,7 @@ end;
 
 procedure TKDT196DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT196DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT196DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -84957,8 +84647,7 @@ end;
 
 procedure TKDT196DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT196DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT196DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -84989,8 +84678,7 @@ end;
 
 procedure TKDT196DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT196DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT196DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -85582,7 +85270,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT196DD.SaveToFile(fileName: string);
+procedure TKDT196DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -85594,7 +85282,7 @@ begin
   end;
 end;
 
-procedure TKDT196DD.LoadFromFile(fileName: string);
+procedure TKDT196DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -85612,7 +85300,7 @@ begin
 end;
 
 procedure TKDT196DD.PrintNodeTree(const NodePtr: PKDT196DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT196DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT196DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT196DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -85633,7 +85321,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT196DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT196DD.KDT196DDVec(const s: string): TKDT196DD_Vec;
+class function TKDT196DD.KDT196DDVec(const s: SystemString): TKDT196DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -85658,7 +85346,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT196DD.KDT196DDVec(const v: TKDT196DD_Vec): string;
+class function TKDT196DD.KDT196DDVec(const v: TKDT196DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -85809,7 +85497,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT256DD_SourceBuffer;
-  dynBuff  : PKDT256DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -85906,8 +85593,7 @@ end;
 
 procedure TKDT256DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT256DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT256DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -85935,8 +85621,7 @@ end;
 
 procedure TKDT256DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT256DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT256DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -85967,8 +85652,7 @@ end;
 
 procedure TKDT256DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT256DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT256DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -86560,7 +86244,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT256DD.SaveToFile(fileName: string);
+procedure TKDT256DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -86572,7 +86256,7 @@ begin
   end;
 end;
 
-procedure TKDT256DD.LoadFromFile(fileName: string);
+procedure TKDT256DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -86590,7 +86274,7 @@ begin
 end;
 
 procedure TKDT256DD.PrintNodeTree(const NodePtr: PKDT256DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT256DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT256DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT256DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -86611,7 +86295,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT256DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT256DD.KDT256DDVec(const s: string): TKDT256DD_Vec;
+class function TKDT256DD.KDT256DDVec(const s: SystemString): TKDT256DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -86636,7 +86320,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT256DD.KDT256DDVec(const v: TKDT256DD_Vec): string;
+class function TKDT256DD.KDT256DDVec(const v: TKDT256DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -86787,7 +86471,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT272DD_SourceBuffer;
-  dynBuff  : PKDT272DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -86884,8 +86567,7 @@ end;
 
 procedure TKDT272DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT272DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT272DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -86913,8 +86595,7 @@ end;
 
 procedure TKDT272DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT272DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT272DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -86945,8 +86626,7 @@ end;
 
 procedure TKDT272DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT272DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT272DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -87538,7 +87218,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT272DD.SaveToFile(fileName: string);
+procedure TKDT272DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -87550,7 +87230,7 @@ begin
   end;
 end;
 
-procedure TKDT272DD.LoadFromFile(fileName: string);
+procedure TKDT272DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -87568,7 +87248,7 @@ begin
 end;
 
 procedure TKDT272DD.PrintNodeTree(const NodePtr: PKDT272DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT272DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT272DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT272DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -87589,7 +87269,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT272DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT272DD.KDT272DDVec(const s: string): TKDT272DD_Vec;
+class function TKDT272DD.KDT272DDVec(const s: SystemString): TKDT272DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -87614,7 +87294,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT272DD.KDT272DDVec(const v: TKDT272DD_Vec): string;
+class function TKDT272DD.KDT272DDVec(const v: TKDT272DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -87765,7 +87445,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT288DD_SourceBuffer;
-  dynBuff  : PKDT288DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -87862,8 +87541,7 @@ end;
 
 procedure TKDT288DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT288DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT288DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -87891,8 +87569,7 @@ end;
 
 procedure TKDT288DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT288DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT288DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -87923,8 +87600,7 @@ end;
 
 procedure TKDT288DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT288DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT288DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -88516,7 +88192,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT288DD.SaveToFile(fileName: string);
+procedure TKDT288DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -88528,7 +88204,7 @@ begin
   end;
 end;
 
-procedure TKDT288DD.LoadFromFile(fileName: string);
+procedure TKDT288DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -88546,7 +88222,7 @@ begin
 end;
 
 procedure TKDT288DD.PrintNodeTree(const NodePtr: PKDT288DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT288DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT288DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT288DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -88567,7 +88243,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT288DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT288DD.KDT288DDVec(const s: string): TKDT288DD_Vec;
+class function TKDT288DD.KDT288DDVec(const s: SystemString): TKDT288DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -88592,7 +88268,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT288DD.KDT288DDVec(const v: TKDT288DD_Vec): string;
+class function TKDT288DD.KDT288DDVec(const v: TKDT288DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -88743,7 +88419,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT372DD_SourceBuffer;
-  dynBuff  : PKDT372DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -88840,8 +88515,7 @@ end;
 
 procedure TKDT372DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT372DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT372DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -88869,8 +88543,7 @@ end;
 
 procedure TKDT372DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT372DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT372DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -88901,8 +88574,7 @@ end;
 
 procedure TKDT372DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT372DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT372DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -89494,7 +89166,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT372DD.SaveToFile(fileName: string);
+procedure TKDT372DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -89506,7 +89178,7 @@ begin
   end;
 end;
 
-procedure TKDT372DD.LoadFromFile(fileName: string);
+procedure TKDT372DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -89524,7 +89196,7 @@ begin
 end;
 
 procedure TKDT372DD.PrintNodeTree(const NodePtr: PKDT372DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT372DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT372DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT372DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -89545,7 +89217,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT372DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT372DD.KDT372DDVec(const s: string): TKDT372DD_Vec;
+class function TKDT372DD.KDT372DDVec(const s: SystemString): TKDT372DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -89570,7 +89242,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT372DD.KDT372DDVec(const v: TKDT372DD_Vec): string;
+class function TKDT372DD.KDT372DDVec(const v: TKDT372DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -89721,7 +89393,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT512DD_SourceBuffer;
-  dynBuff  : PKDT512DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -89818,8 +89489,7 @@ end;
 
 procedure TKDT512DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT512DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT512DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -89847,8 +89517,7 @@ end;
 
 procedure TKDT512DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT512DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT512DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -89879,8 +89548,7 @@ end;
 
 procedure TKDT512DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT512DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT512DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -90472,7 +90140,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT512DD.SaveToFile(fileName: string);
+procedure TKDT512DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -90484,7 +90152,7 @@ begin
   end;
 end;
 
-procedure TKDT512DD.LoadFromFile(fileName: string);
+procedure TKDT512DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -90502,7 +90170,7 @@ begin
 end;
 
 procedure TKDT512DD.PrintNodeTree(const NodePtr: PKDT512DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT512DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT512DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT512DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -90523,7 +90191,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT512DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT512DD.KDT512DDVec(const s: string): TKDT512DD_Vec;
+class function TKDT512DD.KDT512DDVec(const s: SystemString): TKDT512DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -90548,7 +90216,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT512DD.KDT512DDVec(const v: TKDT512DD_Vec): string;
+class function TKDT512DD.KDT512DDVec(const v: TKDT512DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -90699,7 +90367,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT576DD_SourceBuffer;
-  dynBuff  : PKDT576DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -90796,8 +90463,7 @@ end;
 
 procedure TKDT576DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT576DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT576DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -90825,8 +90491,7 @@ end;
 
 procedure TKDT576DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT576DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT576DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -90857,8 +90522,7 @@ end;
 
 procedure TKDT576DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT576DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT576DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -91450,7 +91114,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT576DD.SaveToFile(fileName: string);
+procedure TKDT576DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -91462,7 +91126,7 @@ begin
   end;
 end;
 
-procedure TKDT576DD.LoadFromFile(fileName: string);
+procedure TKDT576DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -91480,7 +91144,7 @@ begin
 end;
 
 procedure TKDT576DD.PrintNodeTree(const NodePtr: PKDT576DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT576DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT576DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT576DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -91501,7 +91165,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT576DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT576DD.KDT576DDVec(const s: string): TKDT576DD_Vec;
+class function TKDT576DD.KDT576DDVec(const s: SystemString): TKDT576DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -91526,7 +91190,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT576DD.KDT576DDVec(const v: TKDT576DD_Vec): string;
+class function TKDT576DD.KDT576DDVec(const v: TKDT576DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -91677,7 +91341,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT768DD_SourceBuffer;
-  dynBuff  : PKDT768DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -91774,8 +91437,7 @@ end;
 
 procedure TKDT768DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT768DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT768DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -91803,8 +91465,7 @@ end;
 
 procedure TKDT768DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT768DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT768DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -91835,8 +91496,7 @@ end;
 
 procedure TKDT768DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT768DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT768DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -92428,7 +92088,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT768DD.SaveToFile(fileName: string);
+procedure TKDT768DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -92440,7 +92100,7 @@ begin
   end;
 end;
 
-procedure TKDT768DD.LoadFromFile(fileName: string);
+procedure TKDT768DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -92458,7 +92118,7 @@ begin
 end;
 
 procedure TKDT768DD.PrintNodeTree(const NodePtr: PKDT768DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT768DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT768DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT768DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -92479,7 +92139,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT768DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT768DD.KDT768DDVec(const s: string): TKDT768DD_Vec;
+class function TKDT768DD.KDT768DDVec(const s: SystemString): TKDT768DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -92504,7 +92164,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT768DD.KDT768DDVec(const v: TKDT768DD_Vec): string;
+class function TKDT768DD.KDT768DDVec(const v: TKDT768DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -92655,7 +92315,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT1024DD_SourceBuffer;
-  dynBuff  : PKDT1024DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -92752,8 +92411,7 @@ end;
 
 procedure TKDT1024DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1024DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1024DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -92781,8 +92439,7 @@ end;
 
 procedure TKDT1024DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1024DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1024DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -92813,8 +92470,7 @@ end;
 
 procedure TKDT1024DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1024DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1024DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -93406,7 +93062,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT1024DD.SaveToFile(fileName: string);
+procedure TKDT1024DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -93418,7 +93074,7 @@ begin
   end;
 end;
 
-procedure TKDT1024DD.LoadFromFile(fileName: string);
+procedure TKDT1024DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -93436,7 +93092,7 @@ begin
 end;
 
 procedure TKDT1024DD.PrintNodeTree(const NodePtr: PKDT1024DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT1024DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT1024DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT1024DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -93457,7 +93113,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT1024DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT1024DD.KDT1024DDVec(const s: string): TKDT1024DD_Vec;
+class function TKDT1024DD.KDT1024DDVec(const s: SystemString): TKDT1024DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -93482,7 +93138,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT1024DD.KDT1024DDVec(const v: TKDT1024DD_Vec): string;
+class function TKDT1024DD.KDT1024DDVec(const v: TKDT1024DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -93633,7 +93289,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT1040DD_SourceBuffer;
-  dynBuff  : PKDT1040DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -93730,8 +93385,7 @@ end;
 
 procedure TKDT1040DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1040DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1040DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -93759,8 +93413,7 @@ end;
 
 procedure TKDT1040DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1040DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1040DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -93791,8 +93444,7 @@ end;
 
 procedure TKDT1040DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1040DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1040DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -94384,7 +94036,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT1040DD.SaveToFile(fileName: string);
+procedure TKDT1040DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -94396,7 +94048,7 @@ begin
   end;
 end;
 
-procedure TKDT1040DD.LoadFromFile(fileName: string);
+procedure TKDT1040DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -94414,7 +94066,7 @@ begin
 end;
 
 procedure TKDT1040DD.PrintNodeTree(const NodePtr: PKDT1040DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT1040DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT1040DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT1040DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -94435,7 +94087,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT1040DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT1040DD.KDT1040DDVec(const s: string): TKDT1040DD_Vec;
+class function TKDT1040DD.KDT1040DDVec(const s: SystemString): TKDT1040DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -94460,7 +94112,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT1040DD.KDT1040DDVec(const v: TKDT1040DD_Vec): string;
+class function TKDT1040DD.KDT1040DDVec(const v: TKDT1040DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -94611,7 +94263,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT1056DD_SourceBuffer;
-  dynBuff  : PKDT1056DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -94708,8 +94359,7 @@ end;
 
 procedure TKDT1056DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1056DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1056DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -94737,8 +94387,7 @@ end;
 
 procedure TKDT1056DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1056DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1056DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -94769,8 +94418,7 @@ end;
 
 procedure TKDT1056DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1056DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1056DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -95362,7 +95010,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT1056DD.SaveToFile(fileName: string);
+procedure TKDT1056DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -95374,7 +95022,7 @@ begin
   end;
 end;
 
-procedure TKDT1056DD.LoadFromFile(fileName: string);
+procedure TKDT1056DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -95392,7 +95040,7 @@ begin
 end;
 
 procedure TKDT1056DD.PrintNodeTree(const NodePtr: PKDT1056DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT1056DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT1056DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT1056DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -95413,7 +95061,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT1056DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT1056DD.KDT1056DDVec(const s: string): TKDT1056DD_Vec;
+class function TKDT1056DD.KDT1056DDVec(const s: SystemString): TKDT1056DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -95438,7 +95086,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT1056DD.KDT1056DDVec(const v: TKDT1056DD_Vec): string;
+class function TKDT1056DD.KDT1056DDVec(const v: TKDT1056DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -95589,7 +95237,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT1536DD_SourceBuffer;
-  dynBuff  : PKDT1536DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -95686,8 +95333,7 @@ end;
 
 procedure TKDT1536DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1536DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1536DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -95715,8 +95361,7 @@ end;
 
 procedure TKDT1536DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1536DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1536DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -95747,8 +95392,7 @@ end;
 
 procedure TKDT1536DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1536DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1536DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -96340,7 +95984,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT1536DD.SaveToFile(fileName: string);
+procedure TKDT1536DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -96352,7 +95996,7 @@ begin
   end;
 end;
 
-procedure TKDT1536DD.LoadFromFile(fileName: string);
+procedure TKDT1536DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -96370,7 +96014,7 @@ begin
 end;
 
 procedure TKDT1536DD.PrintNodeTree(const NodePtr: PKDT1536DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT1536DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT1536DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT1536DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -96391,7 +96035,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT1536DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT1536DD.KDT1536DDVec(const s: string): TKDT1536DD_Vec;
+class function TKDT1536DD.KDT1536DDVec(const s: SystemString): TKDT1536DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -96416,7 +96060,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT1536DD.KDT1536DDVec(const v: TKDT1536DD_Vec): string;
+class function TKDT1536DD.KDT1536DDVec(const v: TKDT1536DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -96567,7 +96211,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT1920DD_SourceBuffer;
-  dynBuff  : PKDT1920DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -96664,8 +96307,7 @@ end;
 
 procedure TKDT1920DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1920DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1920DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -96693,8 +96335,7 @@ end;
 
 procedure TKDT1920DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1920DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1920DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -96725,8 +96366,7 @@ end;
 
 procedure TKDT1920DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1920DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1920DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -97318,7 +96958,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT1920DD.SaveToFile(fileName: string);
+procedure TKDT1920DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -97330,7 +96970,7 @@ begin
   end;
 end;
 
-procedure TKDT1920DD.LoadFromFile(fileName: string);
+procedure TKDT1920DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -97348,7 +96988,7 @@ begin
 end;
 
 procedure TKDT1920DD.PrintNodeTree(const NodePtr: PKDT1920DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT1920DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT1920DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT1920DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -97369,7 +97009,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT1920DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT1920DD.KDT1920DDVec(const s: string): TKDT1920DD_Vec;
+class function TKDT1920DD.KDT1920DDVec(const s: SystemString): TKDT1920DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -97394,7 +97034,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT1920DD.KDT1920DDVec(const v: TKDT1920DD_Vec): string;
+class function TKDT1920DD.KDT1920DDVec(const v: TKDT1920DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -97545,7 +97185,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT1980DD_SourceBuffer;
-  dynBuff  : PKDT1980DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -97642,8 +97281,7 @@ end;
 
 procedure TKDT1980DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1980DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1980DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -97671,8 +97309,7 @@ end;
 
 procedure TKDT1980DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1980DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1980DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -97703,8 +97340,7 @@ end;
 
 procedure TKDT1980DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1980DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT1980DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -98296,7 +97932,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT1980DD.SaveToFile(fileName: string);
+procedure TKDT1980DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -98308,7 +97944,7 @@ begin
   end;
 end;
 
-procedure TKDT1980DD.LoadFromFile(fileName: string);
+procedure TKDT1980DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -98326,7 +97962,7 @@ begin
 end;
 
 procedure TKDT1980DD.PrintNodeTree(const NodePtr: PKDT1980DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT1980DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT1980DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT1980DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -98347,7 +97983,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT1980DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT1980DD.KDT1980DDVec(const s: string): TKDT1980DD_Vec;
+class function TKDT1980DD.KDT1980DDVec(const s: SystemString): TKDT1980DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -98372,7 +98008,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT1980DD.KDT1980DDVec(const v: TKDT1980DD_Vec): string;
+class function TKDT1980DD.KDT1980DDVec(const v: TKDT1980DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -98523,7 +98159,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT2048DD_SourceBuffer;
-  dynBuff  : PKDT2048DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -98620,8 +98255,7 @@ end;
 
 procedure TKDT2048DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2048DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT2048DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -98649,8 +98283,7 @@ end;
 
 procedure TKDT2048DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2048DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT2048DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -98681,8 +98314,7 @@ end;
 
 procedure TKDT2048DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2048DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT2048DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -99274,7 +98906,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT2048DD.SaveToFile(fileName: string);
+procedure TKDT2048DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -99286,7 +98918,7 @@ begin
   end;
 end;
 
-procedure TKDT2048DD.LoadFromFile(fileName: string);
+procedure TKDT2048DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -99304,7 +98936,7 @@ begin
 end;
 
 procedure TKDT2048DD.PrintNodeTree(const NodePtr: PKDT2048DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT2048DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT2048DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT2048DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -99325,7 +98957,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT2048DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT2048DD.KDT2048DDVec(const s: string): TKDT2048DD_Vec;
+class function TKDT2048DD.KDT2048DDVec(const s: SystemString): TKDT2048DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -99350,7 +98982,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT2048DD.KDT2048DDVec(const v: TKDT2048DD_Vec): string;
+class function TKDT2048DD.KDT2048DDVec(const v: TKDT2048DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -99501,7 +99133,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT3072DD_SourceBuffer;
-  dynBuff  : PKDT3072DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -99598,8 +99229,7 @@ end;
 
 procedure TKDT3072DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3072DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT3072DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -99627,8 +99257,7 @@ end;
 
 procedure TKDT3072DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3072DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT3072DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -99659,8 +99288,7 @@ end;
 
 procedure TKDT3072DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3072DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT3072DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -100252,7 +99880,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT3072DD.SaveToFile(fileName: string);
+procedure TKDT3072DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -100264,7 +99892,7 @@ begin
   end;
 end;
 
-procedure TKDT3072DD.LoadFromFile(fileName: string);
+procedure TKDT3072DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -100282,7 +99910,7 @@ begin
 end;
 
 procedure TKDT3072DD.PrintNodeTree(const NodePtr: PKDT3072DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT3072DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT3072DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT3072DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -100303,7 +99931,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT3072DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT3072DD.KDT3072DDVec(const s: string): TKDT3072DD_Vec;
+class function TKDT3072DD.KDT3072DDVec(const s: SystemString): TKDT3072DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -100328,7 +99956,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT3072DD.KDT3072DDVec(const v: TKDT3072DD_Vec): string;
+class function TKDT3072DD.KDT3072DDVec(const v: TKDT3072DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -100479,7 +100107,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT3088DD_SourceBuffer;
-  dynBuff  : PKDT3088DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -100576,8 +100203,7 @@ end;
 
 procedure TKDT3088DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3088DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT3088DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -100605,8 +100231,7 @@ end;
 
 procedure TKDT3088DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3088DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT3088DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -100637,8 +100262,7 @@ end;
 
 procedure TKDT3088DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3088DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT3088DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -101230,7 +100854,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT3088DD.SaveToFile(fileName: string);
+procedure TKDT3088DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -101242,7 +100866,7 @@ begin
   end;
 end;
 
-procedure TKDT3088DD.LoadFromFile(fileName: string);
+procedure TKDT3088DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -101260,7 +100884,7 @@ begin
 end;
 
 procedure TKDT3088DD.PrintNodeTree(const NodePtr: PKDT3088DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT3088DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT3088DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT3088DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -101281,7 +100905,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT3088DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT3088DD.KDT3088DDVec(const s: string): TKDT3088DD_Vec;
+class function TKDT3088DD.KDT3088DDVec(const s: SystemString): TKDT3088DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -101306,7 +100930,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT3088DD.KDT3088DDVec(const v: TKDT3088DD_Vec): string;
+class function TKDT3088DD.KDT3088DDVec(const v: TKDT3088DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -101457,7 +101081,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT3104DD_SourceBuffer;
-  dynBuff  : PKDT3104DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -101554,8 +101177,7 @@ end;
 
 procedure TKDT3104DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3104DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT3104DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -101583,8 +101205,7 @@ end;
 
 procedure TKDT3104DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3104DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT3104DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -101615,8 +101236,7 @@ end;
 
 procedure TKDT3104DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3104DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT3104DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -102208,7 +101828,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT3104DD.SaveToFile(fileName: string);
+procedure TKDT3104DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -102220,7 +101840,7 @@ begin
   end;
 end;
 
-procedure TKDT3104DD.LoadFromFile(fileName: string);
+procedure TKDT3104DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -102238,7 +101858,7 @@ begin
 end;
 
 procedure TKDT3104DD.PrintNodeTree(const NodePtr: PKDT3104DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT3104DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT3104DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT3104DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -102259,7 +101879,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT3104DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT3104DD.KDT3104DDVec(const s: string): TKDT3104DD_Vec;
+class function TKDT3104DD.KDT3104DDVec(const s: SystemString): TKDT3104DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -102284,7 +101904,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT3104DD.KDT3104DDVec(const v: TKDT3104DD_Vec): string;
+class function TKDT3104DD.KDT3104DDVec(const v: TKDT3104DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -102435,7 +102055,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT4096DD_SourceBuffer;
-  dynBuff  : PKDT4096DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -102532,8 +102151,7 @@ end;
 
 procedure TKDT4096DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4096DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT4096DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -102561,8 +102179,7 @@ end;
 
 procedure TKDT4096DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4096DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT4096DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -102593,8 +102210,7 @@ end;
 
 procedure TKDT4096DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4096DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT4096DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -103186,7 +102802,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT4096DD.SaveToFile(fileName: string);
+procedure TKDT4096DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -103198,7 +102814,7 @@ begin
   end;
 end;
 
-procedure TKDT4096DD.LoadFromFile(fileName: string);
+procedure TKDT4096DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -103216,7 +102832,7 @@ begin
 end;
 
 procedure TKDT4096DD.PrintNodeTree(const NodePtr: PKDT4096DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT4096DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT4096DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT4096DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -103237,7 +102853,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT4096DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT4096DD.KDT4096DDVec(const s: string): TKDT4096DD_Vec;
+class function TKDT4096DD.KDT4096DDVec(const s: SystemString): TKDT4096DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -103262,7 +102878,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT4096DD.KDT4096DDVec(const v: TKDT4096DD_Vec): string;
+class function TKDT4096DD.KDT4096DDVec(const v: TKDT4096DD_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -103413,7 +103029,6 @@ var
   m        : NativeInt;
   Axis     : NativeInt;
   kdBuffPtr: PKDT8192DD_SourceBuffer;
-  dynBuff  : PKDT8192DDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -103510,8 +103125,7 @@ end;
 
 procedure TKDT8192DD.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8192DD_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT8192DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -103539,8 +103153,7 @@ end;
 
 procedure TKDT8192DD.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8192DD_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT8192DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -103571,8 +103184,7 @@ end;
 
 procedure TKDT8192DD.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8192DD_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDT8192DDyanmicStoreBuffer;
+  i, j: NativeInt;
 begin
   Clear;
 
@@ -104164,7 +103776,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDT8192DD.SaveToFile(fileName: string);
+procedure TKDT8192DD.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -104176,7 +103788,7 @@ begin
   end;
 end;
 
-procedure TKDT8192DD.LoadFromFile(fileName: string);
+procedure TKDT8192DD.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -104194,7 +103806,7 @@ begin
 end;
 
 procedure TKDT8192DD.PrintNodeTree(const NodePtr: PKDT8192DD_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDT8192DD_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT8192DD_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDT8192DDVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -104215,7 +103827,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDT8192DDVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDT8192DD.KDT8192DDVec(const s: string): TKDT8192DD_Vec;
+class function TKDT8192DD.KDT8192DDVec(const s: SystemString): TKDT8192DD_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -104240,7 +103852,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT8192DD.KDT8192DDVec(const v: TKDT8192DD_Vec): string;
+class function TKDT8192DD.KDT8192DDVec(const v: TKDT8192DD_Vec): SystemString;
 var
   i: NativeInt;
 begin

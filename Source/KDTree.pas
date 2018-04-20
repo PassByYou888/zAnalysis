@@ -11,7 +11,7 @@ unit KDTree;
 
 interface
 
-uses CoreClasses, KM;
+uses CoreClasses, PascalStrings, KM;
 
 {$I zDefine.inc}
 
@@ -95,14 +95,14 @@ type
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-    procedure SaveToFile(fileName: string);
-    procedure LoadFromFile(fileName: string);
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDTree_Node);
     procedure PrintBuffer;
 
-    class function KDTreeVec(const s: string): TKDTree_Vec; overload;
-    class function KDTreeVec(const v: TKDTree_Vec): string; overload;
+    class function KDTreeVec(const s: SystemString): TKDTree_Vec; overload;
+    class function KDTreeVec(const v: TKDTree_Vec): SystemString; overload;
     class function KDTreeDistance(const v1, v2: TKDTree_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
   end;
 
@@ -117,7 +117,7 @@ uses
   {$ELSE FPC}
   Threading,
   {$ENDIF FPC}
-  PascalStrings, TextParsing, UnicodeMixedLib, DoStatusIO;
+  TextParsing, UnicodeMixedLib, DoStatusIO;
 
 const
   SaveToken = $9;
@@ -845,7 +845,7 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDTree.SaveToFile(fileName: string);
+procedure TKDTree.SaveToFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -857,7 +857,7 @@ begin
   end;
 end;
 
-procedure TKDTree.LoadFromFile(fileName: string);
+procedure TKDTree.LoadFromFile(fileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
@@ -875,7 +875,7 @@ begin
 end;
 
 procedure TKDTree.PrintNodeTree(const NodePtr: PKDTree_Node);
-  procedure DoPrintNode(prefix: string; const p: PKDTree_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDTree_Node);
   begin
     DoStatus('%s +%d (%s) ', [prefix, p^.vec^.index, KDTreeVec(p^.vec^.Buff)]);
     if p^.Left <> nil then
@@ -896,7 +896,7 @@ begin
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDTreeVec(KDStoreBuff[i].Buff)]);
 end;
 
-class function TKDTree.KDTreeVec(const s: string): TKDTree_Vec;
+class function TKDTree.KDTreeVec(const s: SystemString): TKDTree_Vec;
 var
   t          : TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -919,7 +919,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDTree.KDTreeVec(const v: TKDTree_Vec): string;
+class function TKDTree.KDTreeVec(const v: TKDTree_Vec): SystemString;
 var
   i: NativeInt;
 begin

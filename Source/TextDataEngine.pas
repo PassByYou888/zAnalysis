@@ -1,5 +1,5 @@
 { ***************************************************************************** }
-{ * ini,section text library,writen by QQ 600585@qq.com                       * }
+{ * ini text library,writen by QQ 600585@qq.com                                * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
 { * https://github.com/PassByYou888/zExpression                                * }
@@ -26,7 +26,7 @@ uses SysUtils, Variants,
   CoreClasses,
   // fast stream
   MemoryStream64,
-  // unicode string support
+  // SystemString support
   PascalStrings;
 
 type
@@ -34,13 +34,12 @@ type
 
   TSectionTextData = THashTextEngine;
 
-  // big ini format
   THashTextEngine = class(TCoreClassObject)
   private
-    FComment                             : TCoreClassStrings;
-    FSectionTextList, FSectionVariantList: THashObjectList;
-    FAutoUpdateDefaultValue              : Boolean;
-    FMaxHashBlock                        : Integer;
+    FComment                                : TCoreClassStrings;
+    FSectionTextList, FSectionVariantList   : THashObjectList;
+    FAutoUpdateDefaultValue                 : Boolean;
+    FMaxSectionListHash, FMaxVariantListHash: Integer;
 
     function GetNames(aName: SystemString): TCoreClassStrings;
     procedure SetNames(aName: SystemString; const Value: TCoreClassStrings);
@@ -52,7 +51,8 @@ type
     procedure AddDataSection(aSection: SystemString; TextList: TCoreClassStrings);
   public
     constructor Create; overload;
-    constructor Create(AHashBlock: Integer); overload;
+    constructor Create(AMaxSectionListHash: Integer); overload;
+    constructor Create(AMaxSectionListHash, AMaxVariantListHash: Integer); overload;
     destructor Destroy; override;
 
     procedure ReBuildList;
@@ -81,6 +81,11 @@ type
 
     procedure LoadFromFile(FileName: SystemString);
     procedure SaveToFile(FileName: SystemString);
+
+    // total item count
+    function TotalCount: NativeInt;
+    function MaxSectionNameLen: Integer;
+    function MinSectionNameLen: Integer;
 
     function GetAsText: SystemString;
     procedure SetAsText(const Value: SystemString);
@@ -149,7 +154,7 @@ begin
           Exit;
       if nsl.Count = 0 then
           Exit;
-      vl := THashVariantList.Create(FMaxHashBlock);
+      vl := THashVariantList.Create(FMaxVariantListHash);
       vl.AutoUpdateDefaultValue := AutoUpdateDefaultValue;
 
       vt := THashVariantTextStream.Create(vl);
@@ -170,7 +175,7 @@ begin
   vl := THashVariantList(FSectionVariantList[aSectionName]);
   if vl = nil then
     begin
-      vl := THashVariantList.Create(FMaxHashBlock);
+      vl := THashVariantList.Create(FMaxVariantListHash);
       vl.AutoUpdateDefaultValue := AutoUpdateDefaultValue;
 
       nsl := Names[aSectionName];
@@ -193,7 +198,7 @@ begin
   Result := THashVariantList(FSectionVariantList[aName]);
   if Result = nil then
     begin
-      Result := THashVariantList.Create(FMaxHashBlock);
+      Result := THashVariantList.Create(FMaxVariantListHash);
       Result.AutoUpdateDefaultValue := FAutoUpdateDefaultValue;
       nsl := Names[aName];
       if nsl <> nil then
@@ -233,20 +238,35 @@ end;
 constructor THashTextEngine.Create;
 begin
   inherited Create;
-  FMaxHashBlock := 10;
+  FMaxSectionListHash := 10;
+  FMaxVariantListHash := 10;
   FComment := TCoreClassStringList.Create;
-  FSectionTextList := THashObjectList.Create(True, FMaxHashBlock);
-  FSectionVariantList := THashObjectList.Create(True, FMaxHashBlock);
+  FSectionTextList := THashObjectList.Create(True, FMaxSectionListHash);
+  FSectionVariantList := THashObjectList.Create(True, FMaxSectionListHash);
   FAutoUpdateDefaultValue := False;
 end;
 
-constructor THashTextEngine.Create(AHashBlock: Integer);
+constructor THashTextEngine.Create(AMaxSectionListHash: Integer);
 begin
   inherited Create;
-  FMaxHashBlock := AHashBlock;
+  FMaxSectionListHash := AMaxSectionListHash;
+  FMaxVariantListHash := 16;
+
   FComment := TCoreClassStringList.Create;
-  FSectionTextList := THashObjectList.Create(True, FMaxHashBlock);
-  FSectionVariantList := THashObjectList.Create(True, FMaxHashBlock);
+  FSectionTextList := THashObjectList.Create(True, FMaxSectionListHash);
+  FSectionVariantList := THashObjectList.Create(True, FMaxSectionListHash);
+  FAutoUpdateDefaultValue := False;
+end;
+
+constructor THashTextEngine.Create(AMaxSectionListHash, AMaxVariantListHash: Integer);
+begin
+  inherited Create;
+  FMaxSectionListHash := AMaxSectionListHash;
+  FMaxVariantListHash := AMaxVariantListHash;
+
+  FComment := TCoreClassStringList.Create;
+  FSectionTextList := THashObjectList.Create(True, FMaxSectionListHash);
+  FSectionVariantList := THashObjectList.Create(True, FMaxSectionListHash);
   FAutoUpdateDefaultValue := False;
 end;
 
@@ -647,6 +667,43 @@ begin
   finally
       DisposeObject(ns);
   end;
+end;
+
+function THashTextEngine.TotalCount: NativeInt;
+var
+  i        : Integer;
+  tmpSecLst: TListString;
+  nsl      : TCoreClassStrings;
+  vt       : THashVariantTextStream;
+begin
+  Result := 0;
+  tmpSecLst := TListString.Create;
+  FSectionTextList.GetListData(tmpSecLst);
+  if tmpSecLst.Count > 0 then
+    for i := 0 to tmpSecLst.Count - 1 do
+      begin
+        if not FSectionVariantList.Exists(tmpSecLst[i]) then
+            Inc(Result, TCoreClassStrings(tmpSecLst.Objects[i]).Count);
+      end;
+  DisposeObject(tmpSecLst);
+
+  // merge section
+  tmpSecLst := TListString.Create;
+  FSectionVariantList.GetListData(tmpSecLst);
+  if tmpSecLst.Count > 0 then
+    for i := 0 to tmpSecLst.Count - 1 do
+        Inc(Result, THashVariantList(tmpSecLst.Objects[i]).Count);
+  DisposeObject(tmpSecLst);
+end;
+
+function THashTextEngine.MaxSectionNameLen: Integer;
+begin
+  Result := umlMax(FSectionTextList.HashList.MaxNameLen, FSectionVariantList.HashList.MaxNameLen);
+end;
+
+function THashTextEngine.MinSectionNameLen: Integer;
+begin
+  Result := umlMin(FSectionTextList.HashList.MinNameLen, FSectionVariantList.HashList.MinNameLen);
 end;
 
 function THashTextEngine.GetAsText: SystemString;

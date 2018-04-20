@@ -51,7 +51,7 @@ type
     );
 
 const
-  CLearnString: array [TLearnType] of string = (
+  CLearnString: array [TLearnType] of SystemString = (
     'k-dimensional tree',
     'k-means++ clusterization',
     'Random forest',
@@ -99,7 +99,7 @@ type
     FClassifier                                : Boolean;
     FHideLayerDepth                            : THideLayerDepth;
     FLastTrainMaxInValue, FLastTrainMaxOutValue: TLFloat;
-    FInfo                                      : string;
+    FInfo                                      : SystemString;
     FIsTraining                                : Boolean;
     FTrainThreadRuning                         : Boolean;
     FUserData                                  : Pointer;
@@ -140,7 +140,7 @@ type
     property InLen: TLInt read FInLen;
     property OutLen: TLInt read FOutLen;
     property LearnType: TLearnType read FLearnType;
-    property Info: string read FInfo;
+    property Info: SystemString read FInfo;
     property TrainThreadRuning: Boolean read FTrainThreadRuning;
     function GetMemorySource(const index: TLInt): PLearnMemory;
     property MemorySource[const index: TLInt]: PLearnMemory read GetMemorySource; default;
@@ -151,10 +151,10 @@ type
 
     { * add sampler support * }
     procedure AddMemory(const f_In, f_Out: TLVec); overload;
-    procedure AddMemory(const s_In, s_Out: string); overload;
+    procedure AddMemory(const s_In, s_Out: SystemString); overload;
     procedure AddMemory(const s: TPascalString); overload;
     procedure AddSampler(const f_In, f_Out: TLVec); overload;
-    procedure AddSampler(const s_In, s_Out: string); overload;
+    procedure AddSampler(const s_In, s_Out: SystemString); overload;
     procedure AddSampler(const s: TPascalString); overload;
     procedure AddMatrix(const m_in: TLMatrix; const f_Out: TLVec);
 
@@ -171,9 +171,9 @@ type
     //
     // data input/output support
     function process(const p_in, p_out: PLVec): Boolean; overload;
-    function process(const ProcessIn: PLVec): string; overload;
-    function process(const ProcessIn: TLVec): string; overload;
-    function process(const ProcessIn: TPascalString): string; overload;
+    function process(const ProcessIn: PLVec): SystemString; overload;
+    function process(const ProcessIn: TLVec): SystemString; overload;
+    function process(const ProcessIn: TPascalString): SystemString; overload;
     function processMatrix(const p_in: PLMatrix; const p_out: PLVec): Boolean; overload;
     // result max value
     function processMax(const ProcessIn: TLVec): TLFloat; overload;
@@ -338,10 +338,10 @@ function MatrixSampler(const Antialiasing: Boolean; const SamplerSize: TLInt; co
 { * linear discriminant analysis support * }
 function LDA(const buff: TLMatrix; const NPoints, NVars, NClasses: TLInt; var w: TLMatrix): TLInt; overload;
 function LDA(const buff: TLMatrix; const NPoints, NVars, NClasses: TLInt; var w: TLVec): TLInt; overload;
-function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: string; var output: TLMatrix): Boolean; overload;
+function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean; overload;
 { * principal component analysis support * }
 function PCA(const buff: TLMatrix; const NPoints, NVars: TLInt; var v: TLMatrix): TLInt; overload;
-function PCA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: string; var output: TLMatrix): Boolean; overload;
+function PCA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean; overload;
 { * k-means++ clusterization support * }
 function KMeans(const source: TKMFloat2DArray; const NVars, k: TLInt; var KArray: TKMFloat2DArray; var kIndex: TKMIntegerArray): Boolean;
 
@@ -850,7 +850,7 @@ begin
   FMemorySource.Add(p);
 end;
 
-procedure TLearn.AddMemory(const s_In, s_Out: string);
+procedure TLearn.AddMemory(const s_In, s_Out: SystemString);
 var
   f_In, f_Out: TLVec;
 begin
@@ -875,7 +875,7 @@ begin
   AddMemory(f_In, f_Out);
 end;
 
-procedure TLearn.AddSampler(const s_In, s_Out: string);
+procedure TLearn.AddSampler(const s_In, s_Out: SystemString);
 begin
   AddMemory(s_In, s_Out);
 end;
@@ -986,11 +986,10 @@ begin
 
   FIsTraining := True;
 
+  bakseed := RandSeed;
   if not FEnabledRandomNumber then
-    begin
-      bakseed := RandSeed;
       RandSeed := 0;
-    end;
+
   try
     case FLearnType of
       ltKDT:
@@ -1366,7 +1365,7 @@ begin
   end;
 end;
 
-function TLearn.process(const ProcessIn: PLVec): string;
+function TLearn.process(const ProcessIn: PLVec): SystemString;
 var
   ProcessOut: TLVec;
 begin
@@ -1376,12 +1375,12 @@ begin
   Result := LVec(ProcessOut, True);
 end;
 
-function TLearn.process(const ProcessIn: TLVec): string;
+function TLearn.process(const ProcessIn: TLVec): SystemString;
 begin
   Result := process(PLVec(@ProcessIn));
 end;
 
-function TLearn.process(const ProcessIn: TPascalString): string;
+function TLearn.process(const ProcessIn: TPascalString): SystemString;
 begin
   Result := process(TKDTree.KDTreeVec(ProcessIn.Text));
 end;

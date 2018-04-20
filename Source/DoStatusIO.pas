@@ -10,8 +10,6 @@
 
 unit DoStatusIO;
 
-{$I zDefine.inc}
-
 interface
 
 uses
@@ -20,7 +18,9 @@ uses
   {$ELSEIF not Defined(Linux)}
   FMX.Types,
   {$ENDIF}
-  Sysutils, Classes, PascalStrings, UnicodeMixedLib, CoreClasses, MemoryStream64;
+  Sysutils, Classes, PascalStrings, UPascalStrings, UnicodeMixedLib, CoreClasses, MemoryStream64;
+
+{$I zDefine.inc}
 
 type
   TDoStatusMethod = procedure(AText: SystemString; const ID: Integer) of object;
@@ -46,6 +46,7 @@ procedure DoStatus(const v: SystemString; const Args: array of const); overload;
 procedure DoError(v: SystemString; const Args: array of const); overload;
 procedure DoStatus(const v: SystemString); overload;
 procedure DoStatus(const v: TPascalString); overload;
+procedure DoStatus(const v: TUPascalString); overload;
 procedure DoStatus(const v: TMD5); overload;
 
 procedure DoStatusNoLn(const v: TPascalString); overload;
@@ -191,6 +192,11 @@ begin
 end;
 
 procedure DoStatus(const v: TPascalString);
+begin
+  DoStatus(v.Text, 0);
+end;
+
+procedure DoStatus(const v: TUPascalString);
 begin
   DoStatus(v.Text, 0);
 end;

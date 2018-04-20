@@ -209,7 +209,7 @@ begin
   FisherLDA(buff, NPoints, NVars, NClasses, Result, w);
 end;
 
-function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: string; var output: TLMatrix): Boolean;
+function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean;
 var
   k        : TLFloat;
   mrblur, N: TMemoryRaster;
@@ -271,7 +271,7 @@ begin
   SetLength(s, 0);
 end;
 
-function PCA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: string; var output: TLMatrix): Boolean;
+function PCA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean;
 var
   k        : TLFloat;
   mrblur, N: TMemoryRaster;
