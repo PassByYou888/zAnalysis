@@ -16,6 +16,7 @@ type
 
 procedure TLearn_th.SyncResultState;
 begin
+  source.FTrainThreadRuning := False;
   if Assigned(OnStateC) then
       OnStateC(source, Successed);
   if Assigned(OnStateM) then
@@ -24,7 +25,6 @@ begin
   if Assigned(OnStateP) then
       OnStateP(source, Successed);
   {$ENDIF FPC}
-  source.FTrainThreadRuning := False;
 end;
 
 procedure TLearn_th.Execute;

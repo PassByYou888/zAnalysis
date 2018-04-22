@@ -144,6 +144,8 @@ type
     property TrainThreadRuning: Boolean read FTrainThreadRuning;
     function GetMemorySource(const index: TLInt): PLearnMemory;
     property MemorySource[const index: TLInt]: PLearnMemory read GetMemorySource; default;
+    property LastTrainMaxInValue: TLFloat read FLastTrainMaxInValue;
+    property LastTrainMaxOutValue: TLFloat read FLastTrainMaxOutValue;
 
     { * user parameter * }
     property UserData: Pointer read FUserData write FUserData;
@@ -322,6 +324,7 @@ procedure WilcoxonSignedRankTest(const X: TLVec; N: TLInt; E: TLFloat; var BothT
 function LVec(const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function LVec(const v: TLVec): TPascalString; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function LVec(const m: TLMatrix; const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LVec(const m: TLMatrix): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function LVec(const s: TPascalString; const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function LVec(const v: TLVec; const ShortFloat: Boolean): TPascalString; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function SpearmanLVec(const m: TLMatrix; const veclen: TLInt): TLVec; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -333,6 +336,7 @@ procedure Clamp(var AValue: TLFloat; const AMin, AMax: TLFloat); overload; {$IFD
 procedure Clamp(var AValue: TLInt; const AMin, AMax: TLInt); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 { * sampler support * }
+function MatrixSampler(const mr: TMemoryRaster): TLMatrix; overload;
 function MatrixSampler(const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix; overload;
 function MatrixSampler(const Antialiasing: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix; overload;
 { * linear discriminant analysis support * }
@@ -403,11 +407,11 @@ uses Math,
 
 procedure TLearn.KDInput(const IndexFor: NativeInt; var source: TKDTree_Source; const Data: Pointer);
 var
-  I: TLInt;
+  i: TLInt;
 begin
   source.index := IndexFor;
-  for I := 0 to FInLen - 1 do
-      source.buff[I] := PLearnMemory(FMemorySource[IndexFor])^.m_in[I];
+  for i := 0 to FInLen - 1 do
+      source.buff[i] := PLearnMemory(FMemorySource[IndexFor])^.m_in[i];
 end;
 
 procedure TLearn.FreeLearnData;
@@ -755,17 +759,17 @@ end;
 
 destructor TLearn.Destroy;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   WaitTrain;
 
   if FMemorySource <> nil then
     begin
-      for I := 0 to FMemorySource.Count - 1 do
+      for i := 0 to FMemorySource.Count - 1 do
         begin
-          SetLength(PLearnMemory(FMemorySource[I])^.m_in, 0);
-          SetLength(PLearnMemory(FMemorySource[I])^.m_out, 0);
-          Dispose(PLearnMemory(FMemorySource[I]));
+          SetLength(PLearnMemory(FMemorySource[i])^.m_in, 0);
+          SetLength(PLearnMemory(FMemorySource[i])^.m_out, 0);
+          Dispose(PLearnMemory(FMemorySource[i]));
         end;
       DisposeObject(FMemorySource);
       FMemorySource := nil;
@@ -781,7 +785,7 @@ end;
 
 procedure TLearn.Clear;
 var
-  I      : TLInt;
+  i      : TLInt;
   p_k    : PLearnKDT;
   p_f    : PDecisionForest;
   p_logit: PLogitModel;
@@ -792,11 +796,11 @@ begin
 
   if FMemorySource <> nil then
     begin
-      for I := 0 to FMemorySource.Count - 1 do
+      for i := 0 to FMemorySource.Count - 1 do
         begin
-          SetLength(PLearnMemory(FMemorySource[I])^.m_in, 0);
-          SetLength(PLearnMemory(FMemorySource[I])^.m_out, 0);
-          Dispose(PLearnMemory(FMemorySource[I]));
+          SetLength(PLearnMemory(FMemorySource[i])^.m_in, 0);
+          SetLength(PLearnMemory(FMemorySource[i])^.m_out, 0);
+          Dispose(PLearnMemory(FMemorySource[i]));
         end;
       DisposeObject(FMemorySource);
       FMemorySource := nil;
@@ -824,7 +828,7 @@ end;
 procedure TLearn.AddMemory(const f_In, f_Out: TLVec);
 var
   p: PLearnMemory;
-  I: TLInt;
+  i: TLInt;
 begin
   if FIsTraining or FTrainThreadRuning then
       raiseInfo('wait Training');
@@ -914,7 +918,7 @@ var
 
   procedure BuildInternalData;
   var
-    I, J: TLInt;
+    i, J: TLInt;
     v   : TLFloat;
   begin
     FLastTrainMaxInValue := PLearnMemory(FMemorySource[0])^.m_in[0];
@@ -923,42 +927,42 @@ var
     if FClassifier then
       begin
         SetLength(buff, FMemorySource.Count, FInLen + 1);
-        for I := 0 to FMemorySource.Count - 1 do
+        for i := 0 to FMemorySource.Count - 1 do
           begin
             for J := 0 to FInLen - 1 do
               begin
-                v := PLearnMemory(FMemorySource[I])^.m_in[J];
+                v := PLearnMemory(FMemorySource[i])^.m_in[J];
                 if v > FLastTrainMaxInValue then
                     FLastTrainMaxInValue := v;
-                buff[I][J] := v;
+                buff[i][J] := v;
               end;
 
-            v := PLearnMemory(FMemorySource[I])^.m_out[0];;
+            v := PLearnMemory(FMemorySource[i])^.m_out[0];;
             if v > FLastTrainMaxOutValue then
                 FLastTrainMaxOutValue := v;
-            buff[I][FInLen] := v;
+            buff[i][FInLen] := v;
           end;
         CreateLearnData(True);
       end
     else
       begin
         SetLength(buff, FMemorySource.Count, FInLen + FOutLen);
-        for I := 0 to FMemorySource.Count - 1 do
+        for i := 0 to FMemorySource.Count - 1 do
           begin
             for J := 0 to FInLen - 1 do
               begin
-                v := PLearnMemory(FMemorySource[I])^.m_in[J];
+                v := PLearnMemory(FMemorySource[i])^.m_in[J];
                 if v > FLastTrainMaxInValue then
                     FLastTrainMaxInValue := v;
-                buff[I][J] := v;
+                buff[i][J] := v;
               end;
 
             for J := 0 to FOutLen - 1 do
               begin
-                v := PLearnMemory(FMemorySource[I])^.m_out[J];
+                v := PLearnMemory(FMemorySource[i])^.m_out[J];
                 if v > FLastTrainMaxOutValue then
                     FLastTrainMaxOutValue := v;
-                buff[I][FInLen + J] := v;
+                buff[i][FInLen + J] := v;
               end;
           end;
       end;
@@ -1274,7 +1278,7 @@ end;
 function TLearn.process(const p_in, p_out: PLVec): Boolean;
 var
   p_kd_node: PKDTree_Node;
-  I        : TLInt;
+  i        : TLInt;
   R, rmax  : TLFloat;
   List     : TLIVec;
 begin
@@ -1300,8 +1304,8 @@ begin
                 SearchMemoryWithDistance(p_in^, List);
                 SetLength(p_out^, Length(List));
 
-                for I := 0 to Length(List) - 1 do
-                    p_out^[List[I]] := (Length(List) - 1) - I;
+                for i := 0 to Length(List) - 1 do
+                    p_out^[List[i]] := (Length(List) - 1) - i;
                 SetLength(List, 0);
               end
             else
@@ -1397,7 +1401,7 @@ end;
 function TLearn.processMax(const ProcessIn: TLVec): TLFloat;
 var
   ProcessOut: TLVec;
-  I         : TLInt;
+  i         : TLInt;
 begin
   Result := 0;
   if not process(@ProcessIn, @ProcessOut) then
@@ -1406,9 +1410,9 @@ begin
   Result := ProcessOut[0];
 
   if Length(ProcessOut) > 1 then
-    for I := 1 to Length(ProcessOut) - 1 do
-      if ProcessOut[I] > Result then
-          Result := ProcessOut[I];
+    for i := 1 to Length(ProcessOut) - 1 do
+      if ProcessOut[i] > Result then
+          Result := ProcessOut[i];
 
   SetLength(ProcessOut, 0);
 end;
@@ -1426,7 +1430,7 @@ function TLearn.processMaxIndex(const ProcessIn: TLVec): TLInt;
 var
   ProcessOut: TLVec;
   k         : TLFloat;
-  I         : TLInt;
+  i         : TLInt;
 begin
   Result := -1;
   if not process(@ProcessIn, @ProcessOut) then
@@ -1436,11 +1440,11 @@ begin
   Result := 0;
 
   if Length(ProcessOut) > 1 then
-    for I := 1 to Length(ProcessOut) - 1 do
-      if ProcessOut[I] > k then
+    for i := 1 to Length(ProcessOut) - 1 do
+      if ProcessOut[i] > k then
         begin
-          Result := I;
-          k := ProcessOut[I];
+          Result := i;
+          k := ProcessOut[i];
         end;
 
   SetLength(ProcessOut, 0);
@@ -1458,7 +1462,7 @@ end;
 function TLearn.processMin(const ProcessIn: TLVec): TLFloat;
 var
   ProcessOut: TLVec;
-  I         : TLInt;
+  i         : TLInt;
 begin
   Result := 0;
   if not process(@ProcessIn, @ProcessOut) then
@@ -1467,9 +1471,9 @@ begin
   Result := ProcessOut[0];
 
   if Length(ProcessOut) > 1 then
-    for I := 1 to Length(ProcessOut) - 1 do
-      if ProcessOut[I] < Result then
-          Result := ProcessOut[I];
+    for i := 1 to Length(ProcessOut) - 1 do
+      if ProcessOut[i] < Result then
+          Result := ProcessOut[i];
 
   SetLength(ProcessOut, 0);
 end;
@@ -1487,7 +1491,7 @@ function TLearn.processMinIndex(const ProcessIn: TLVec): TLInt;
 var
   ProcessOut: TLVec;
   k         : TLFloat;
-  I         : TLInt;
+  i         : TLInt;
 begin
   Result := -1;
   if not process(@ProcessIn, @ProcessOut) then
@@ -1497,11 +1501,11 @@ begin
   Result := 0;
 
   if Length(ProcessOut) > 1 then
-    for I := 1 to Length(ProcessOut) - 1 do
-      if ProcessOut[I] < k then
+    for i := 1 to Length(ProcessOut) - 1 do
+      if ProcessOut[i] < k then
         begin
-          Result := I;
-          k := ProcessOut[I];
+          Result := i;
+          k := ProcessOut[i];
         end;
 
   SetLength(ProcessOut, 0);
@@ -1573,7 +1577,7 @@ end;
 function TLearn.SearchMemoryWithPearson(const ProcessIn: TLVec): TLInt;
 var
   k, R: TLFloat;
-  I   : TLInt;
+  i   : TLInt;
 begin
   if Count <= 0 then
     begin
@@ -1584,13 +1588,13 @@ begin
   k := PearsonCorrelation(ProcessIn, GetMemorySource(0)^.m_in, FInLen);
   Result := 0;
 
-  for I := 1 to Count - 1 do
+  for i := 1 to Count - 1 do
     begin
-      R := PearsonCorrelation(ProcessIn, GetMemorySource(I)^.m_in, FInLen);
+      R := PearsonCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
       if (R <> 0) and (R > k) then
         begin
           k := R;
-          Result := I;
+          Result := i;
         end;
     end;
 end;
@@ -1620,34 +1624,34 @@ type
   end;
   procedure InternalSort(var SortBuffer: TStatePtrArray; l, R: TLInt);
   var
-    I, J: TLInt;
+    i, J: TLInt;
     p, t: PState;
   begin
     repeat
-      I := l;
+      i := l;
       J := R;
       p := SortBuffer[(l + R) shr 1];
       repeat
-        while SortCompare(SortBuffer[I], p) < 0 do
-            inc(I);
+        while SortCompare(SortBuffer[i], p) < 0 do
+            inc(i);
         while SortCompare(SortBuffer[J], p) > 0 do
             Dec(J);
-        if I <= J then
+        if i <= J then
           begin
-            if I <> J then
+            if i <> J then
               begin
-                t := SortBuffer[I];
-                SortBuffer[I] := SortBuffer[J];
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[J];
                 SortBuffer[J] := t;
               end;
-            inc(I);
+            inc(i);
             Dec(J);
           end;
-      until I > J;
+      until i > J;
       if l < J then
           InternalSort(SortBuffer, l, J);
-      l := I;
-    until I >= R;
+      l := i;
+    until i >= R;
   end;
 
 var
@@ -1665,7 +1669,7 @@ var
 
 
 var
-  I: TLInt;
+  i: TLInt;
 begin
   if Count <= 0 then
       exit;
@@ -1690,19 +1694,19 @@ begin
     end);
   {$ENDIF FPC}
   {$ELSE}
-  for I := 0 to Count - 1 do
+  for i := 0 to Count - 1 do
     begin
-      buff[I].k := PearsonCorrelation(ProcessIn, GetMemorySource(I)^.m_in, FInLen);
-      buff[I].index := I;
-      buffPtr[I] := @buff[I];
+      buff[i].k := PearsonCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
+      buff[i].index := i;
+      buffPtr[i] := @buff[i];
     end;
   {$ENDIF parallel}
   // complete sort
   InternalSort(buffPtr, 0, Length(buffPtr) - 1);
 
   SetLength(List, Count);
-  for I := 0 to Count - 1 do
-      List[I] := buffPtr[I]^.index;
+  for i := 0 to Count - 1 do
+      List[i] := buffPtr[i]^.index;
 
   SetLength(buff, 0);
   SetLength(buffPtr, 0);
@@ -1713,7 +1717,7 @@ end;
 function TLearn.SearchMemoryWithSpearman(const ProcessIn: TLVec): TLInt;
 var
   k, R: TLFloat;
-  I   : TLInt;
+  i   : TLInt;
 begin
   if Count <= 0 then
     begin
@@ -1724,13 +1728,13 @@ begin
   k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(0)^.m_in, FInLen);
   Result := 0;
 
-  for I := 1 to Count - 1 do
+  for i := 1 to Count - 1 do
     begin
-      R := SpearmanRankCorrelation(ProcessIn, GetMemorySource(I)^.m_in, FInLen);
+      R := SpearmanRankCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
       if (R <> 0) and (R > k) then
         begin
           k := R;
-          Result := I;
+          Result := i;
         end;
     end;
 end;
@@ -1760,34 +1764,34 @@ type
   end;
   procedure InternalSort(var SortBuffer: TStatePtrArray; l, R: TLInt);
   var
-    I, J: TLInt;
+    i, J: TLInt;
     p, t: PState;
   begin
     repeat
-      I := l;
+      i := l;
       J := R;
       p := SortBuffer[(l + R) shr 1];
       repeat
-        while SortCompare(SortBuffer[I], p) < 0 do
-            inc(I);
+        while SortCompare(SortBuffer[i], p) < 0 do
+            inc(i);
         while SortCompare(SortBuffer[J], p) > 0 do
             Dec(J);
-        if I <= J then
+        if i <= J then
           begin
-            if I <> J then
+            if i <> J then
               begin
-                t := SortBuffer[I];
-                SortBuffer[I] := SortBuffer[J];
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[J];
                 SortBuffer[J] := t;
               end;
-            inc(I);
+            inc(i);
             Dec(J);
           end;
-      until I > J;
+      until i > J;
       if l < J then
           InternalSort(SortBuffer, l, J);
-      l := I;
-    until I >= R;
+      l := i;
+    until i >= R;
   end;
 
 var
@@ -1805,7 +1809,7 @@ var
 
 
 var
-  I: TLInt;
+  i: TLInt;
 begin
   if Count <= 0 then
       exit;
@@ -1830,19 +1834,19 @@ begin
     end);
   {$ENDIF FPC}
   {$ELSE}
-  for I := 0 to Count - 1 do
+  for i := 0 to Count - 1 do
     begin
-      buff[I].k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(I)^.m_in, FInLen);
-      buff[I].index := I;
-      buffPtr[I] := @buff[I];
+      buff[i].k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
+      buff[i].index := i;
+      buffPtr[i] := @buff[i];
     end;
   {$ENDIF parallel}
   // complete sort
   InternalSort(buffPtr, 0, Length(buffPtr) - 1);
 
   SetLength(List, Count);
-  for I := 0 to Count - 1 do
-      List[I] := buffPtr[I]^.index;
+  for i := 0 to Count - 1 do
+      List[i] := buffPtr[i]^.index;
 
   SetLength(buff, 0);
   SetLength(buffPtr, 0);
@@ -1853,7 +1857,7 @@ end;
 function TLearn.SearchMemoryWithDistance(const ProcessIn: TLVec): TLInt;
 var
   k, R: Double;
-  I   : TLInt;
+  i   : TLInt;
 begin
   if Count <= 0 then
     begin
@@ -1866,13 +1870,13 @@ begin
   k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(0)^.m_in);
   Result := 0;
 
-  for I := 1 to Count - 1 do
+  for i := 1 to Count - 1 do
     begin
-      R := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(I)^.m_in);
+      R := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(i)^.m_in);
       if (R < k) then
         begin
           k := R;
-          Result := I;
+          Result := i;
         end;
     end;
 end;
@@ -1900,34 +1904,34 @@ type
   end;
   procedure InternalSort(var SortBuffer: TStatePtrArray; l, R: TLInt);
   var
-    I, J: TLInt;
+    i, J: TLInt;
     p, t: PState;
   begin
     repeat
-      I := l;
+      i := l;
       J := R;
       p := SortBuffer[(l + R) shr 1];
       repeat
-        while SortCompare(SortBuffer[I], p) < 0 do
-            inc(I);
+        while SortCompare(SortBuffer[i], p) < 0 do
+            inc(i);
         while SortCompare(SortBuffer[J], p) > 0 do
             Dec(J);
-        if I <= J then
+        if i <= J then
           begin
-            if I <> J then
+            if i <> J then
               begin
-                t := SortBuffer[I];
-                SortBuffer[I] := SortBuffer[J];
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[J];
                 SortBuffer[J] := t;
               end;
-            inc(I);
+            inc(i);
             Dec(J);
           end;
-      until I > J;
+      until i > J;
       if l < J then
           InternalSort(SortBuffer, l, J);
-      l := I;
-    until I >= R;
+      l := i;
+    until i >= R;
   end;
 
 var
@@ -1945,7 +1949,7 @@ var
 
 
 var
-  I: TLInt;
+  i: TLInt;
 begin
   if Count <= 0 then
     begin
@@ -1974,19 +1978,19 @@ begin
     end);
   {$ENDIF FPC}
   {$ELSE}
-  for I := 0 to Count - 1 do
+  for i := 0 to Count - 1 do
     begin
-      buff[I].k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(I)^.m_in);
-      buff[I].index := I;
-      buffPtr[I] := @buff[I];
+      buff[i].k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(i)^.m_in);
+      buff[i].index := i;
+      buffPtr[i] := @buff[i];
     end;
   {$ENDIF parallel}
   // complete sort
   InternalSort(buffPtr, 0, Length(buffPtr) - 1);
 
   SetLength(List, Count);
-  for I := 0 to Count - 1 do
-      List[I] := buffPtr[I]^.index;
+  for i := 0 to Count - 1 do
+      List[i] := buffPtr[i]^.index;
 
   SetLength(buff, 0);
   SetLength(buffPtr, 0);
@@ -1995,7 +1999,7 @@ end;
 procedure TLearn.SaveToDF(df: TDataFrameEngine);
 var
   ar     : TDataFrameArrayDouble;
-  I, J   : TLInt;
+  i, J   : TLInt;
   buff   : TLVec;
   buffLen: TLInt;
   m64    : TMemoryStream64;
@@ -2010,12 +2014,12 @@ begin
   df.WriteDouble(FLastTrainMaxOutValue);
 
   ar := df.WriteArrayDouble;
-  for I := 0 to FMemorySource.Count - 1 do
+  for i := 0 to FMemorySource.Count - 1 do
     begin
       for J := 0 to FInLen - 1 do
-          ar.Add(PLearnMemory(FMemorySource[I])^.m_in[J]);
+          ar.Add(PLearnMemory(FMemorySource[i])^.m_in[J]);
       for J := 0 to FOutLen - 1 do
-          ar.Add(PLearnMemory(FMemorySource[I])^.m_out[J]);
+          ar.Add(PLearnMemory(FMemorySource[i])^.m_out[J]);
     end;
 
   case FLearnType of
@@ -2035,8 +2039,8 @@ begin
           begin
             DFSerialize(PDecisionForest(FLearnData)^, buff, buffLen);
             ar := df.WriteArrayDouble;
-            for I := 0 to buffLen - 1 do
-                ar.Add(buff[I]);
+            for i := 0 to buffLen - 1 do
+                ar.Add(buff[i]);
           end;
       end;
     ltLogit:
@@ -2045,8 +2049,8 @@ begin
           begin
             MNLSerialize(PLogitModel(FLearnData)^, buff, buffLen);
             ar := df.WriteArrayDouble;
-            for I := 0 to buffLen - 1 do
-                ar.Add(buff[I]);
+            for i := 0 to buffLen - 1 do
+                ar.Add(buff[i]);
           end;
       end;
     ltLM, ltLM_MT, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod, ltMonteCarlo:
@@ -2055,8 +2059,8 @@ begin
           begin
             MLPSerialize(PMultiLayerPerceptron(FLearnData)^, buff, buffLen);
             ar := df.WriteArrayDouble;
-            for I := 0 to buffLen - 1 do
-                ar.Add(buff[I]);
+            for i := 0 to buffLen - 1 do
+                ar.Add(buff[i]);
           end;
       end;
     ltLM_Ensemble, ltLM_Ensemble_MT, ltLBFGS_Ensemble, ltLBFGS_Ensemble_MT:
@@ -2065,8 +2069,8 @@ begin
           begin
             MLPESerialize(PMLPEnsemble(FLearnData)^, buff, buffLen);
             ar := df.WriteArrayDouble;
-            for I := 0 to buffLen - 1 do
-                ar.Add(buff[I]);
+            for i := 0 to buffLen - 1 do
+                ar.Add(buff[i]);
           end;
       end;
   end;
@@ -2075,7 +2079,7 @@ end;
 procedure TLearn.LoadFromDF(df: TDataFrameEngine);
 var
   ar  : TDataFrameArrayDouble;
-  I, J: TLInt;
+  i, J: TLInt;
   plm : PLearnMemory;
   buff: TLVec;
   m64 : TMemoryStream64;
@@ -2093,8 +2097,8 @@ begin
 
   ar := df.Reader.ReadArrayDouble;
 
-  I := 0;
-  while I < ar.Count do
+  i := 0;
+  while i < ar.Count do
     begin
       new(plm);
       SetLength(plm^.m_in, FInLen);
@@ -2104,17 +2108,17 @@ begin
       J := 0;
       while J < FInLen do
         begin
-          plm^.m_in[J] := ar[I];
+          plm^.m_in[J] := ar[i];
           inc(J);
-          inc(I);
+          inc(i);
         end;
 
       J := 0;
       while J < FOutLen do
         begin
-          plm^.m_out[J] := ar[I];
+          plm^.m_out[J] := ar[i];
           inc(J);
-          inc(I);
+          inc(i);
         end;
     end;
 
@@ -2141,8 +2145,8 @@ begin
       begin
         ar := df.Reader.ReadArrayDouble;
         SetLength(buff, ar.Count);
-        for I := 0 to ar.Count - 1 do
-            buff[I] := ar[I];
+        for i := 0 to ar.Count - 1 do
+            buff[i] := ar[i];
 
         try
             DFUnserialize(buff, PDecisionForest(FLearnData)^);
@@ -2155,8 +2159,8 @@ begin
       begin
         ar := df.Reader.ReadArrayDouble;
         SetLength(buff, ar.Count);
-        for I := 0 to ar.Count - 1 do
-            buff[I] := ar[I];
+        for i := 0 to ar.Count - 1 do
+            buff[i] := ar[i];
 
         try
             MNLUnserialize(buff, PLogitModel(FLearnData)^);
@@ -2169,8 +2173,8 @@ begin
       begin
         ar := df.Reader.ReadArrayDouble;
         SetLength(buff, ar.Count);
-        for I := 0 to ar.Count - 1 do
-            buff[I] := ar[I];
+        for i := 0 to ar.Count - 1 do
+            buff[i] := ar[i];
 
         try
             MLPUNSerialize(buff, PMultiLayerPerceptron(FLearnData)^);
@@ -2183,8 +2187,8 @@ begin
       begin
         ar := df.Reader.ReadArrayDouble;
         SetLength(buff, ar.Count);
-        for I := 0 to ar.Count - 1 do
-            buff[I] := ar[I];
+        for i := 0 to ar.Count - 1 do
+            buff[i] := ar[i];
 
         try
             MLPEUNSerialize(buff, PMLPEnsemble(FLearnData)^);

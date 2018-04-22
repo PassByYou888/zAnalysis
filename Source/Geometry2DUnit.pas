@@ -281,13 +281,13 @@ procedure Circle2LineIntersectionPoint(const lb, le, cp: T2DPoint; const radius:
 
 procedure Circle2CircleIntersectionPoint(const cp1, cp2: T2DPoint; const r1, r2: TGeoFloat; out Point1, Point2: T2DPoint); {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 
-// circle collision check
-function Check_Circle2Circle(const p1, p2: T2DPoint; const r1, r2: TGeoFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+// circle collision Detect
+function Detect_Circle2Circle(const p1, p2: T2DPoint; const r1, r2: TGeoFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function CircleCollision(const p1, p2: T2DPoint; const r1, r2: TGeoFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 
-function Check_Circle2CirclePoint(const p1, p2: T2DPoint; const r1, r2: TGeoFloat; out op1, op2: T2DPoint): Boolean;
+function Detect_Circle2CirclePoint(const p1, p2: T2DPoint; const r1, r2: TGeoFloat; out op1, op2: T2DPoint): Boolean;
 // circle 2 line collision
-function Check_Circle2Line(const cp: T2DPoint; const r: TGeoFloat; const lb, le: T2DPoint): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function Detect_Circle2Line(const cp: T2DPoint; const r: TGeoFloat; const lb, le: T2DPoint): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 
 type
   T2DPointList = class;
@@ -1067,7 +1067,7 @@ var
   Diff: TGeoFloat;
 begin
   Diff := Val1 - Val2;
-  Assert(((-Epsilon <= Diff) and (Diff <= Epsilon)) = (Abs(Diff) <= Epsilon), 'Error - Illogical error in equality check. (IsEqual)');
+  Assert(((-Epsilon <= Diff) and (Diff <= Epsilon)) = (Abs(Diff) <= Epsilon), 'Error - Illogical error in equality Detect. (IsEqual)');
   Result := ((-Epsilon <= Diff) and (Diff <= Epsilon));
 end;
 
@@ -1096,7 +1096,7 @@ var
   Diff: TGeoFloat;
 begin
   Diff := Val1 - Val2;
-  Assert(((-Epsilon > Diff) or (Diff > Epsilon)) = (Abs(Val1 - Val2) > Epsilon), 'Error - Illogical error in equality check. (NotEqual)');
+  Assert(((-Epsilon > Diff) or (Diff > Epsilon)) = (Abs(Val1 - Val2) > Epsilon), 'Error - Illogical error in equality Detect. (NotEqual)');
   Result := ((-Epsilon > Diff) or (Diff > Epsilon));
 end;
 
@@ -2476,7 +2476,7 @@ begin
   Point2[1] := Phi[1] + dx;
 end;
 
-function Check_Circle2Circle(const p1, p2: T2DPoint; const r1, r2: TGeoFloat): Boolean;
+function Detect_Circle2Circle(const p1, p2: T2DPoint; const r1, r2: TGeoFloat): Boolean;
 begin
   // return point disace < sum
   Result := PointDistance(p1, p2) <= r1 + r2;
@@ -2488,7 +2488,7 @@ begin
   Result := PointDistance(p1, p2) <= r1 + r2;
 end;
 
-function Check_Circle2CirclePoint(const p1, p2: T2DPoint; const r1, r2: TGeoFloat; out op1, op2: T2DPoint): Boolean;
+function Detect_Circle2CirclePoint(const p1, p2: T2DPoint; const r1, r2: TGeoFloat; out op1, op2: T2DPoint): Boolean;
 var
   Dist  : TGeoFloat;
   a     : TGeoFloat;
@@ -2535,12 +2535,12 @@ end;
 
 // circle 2 line collision
 
-function Check_Circle2Line(const cp: T2DPoint; const r: TGeoFloat; const lb, le: T2DPoint): Boolean;
+function Detect_Circle2Line(const cp: T2DPoint; const r: TGeoFloat; const lb, le: T2DPoint): Boolean;
 var
   lineCen, v1, v2: T2DPoint;
 begin
   lineCen := PointLerp(lb, le, 0.5);
-  if Check_Circle2Circle(cp, lineCen, r, PointDistance(lb, le) * 0.5) then
+  if Detect_Circle2Circle(cp, lineCen, r, PointDistance(lb, le) * 0.5) then
     begin
       v1 := PointSub(lb, cp);
       v2 := PointSub(le, cp);
@@ -4304,7 +4304,7 @@ var
   d, d2   : TGeoFloat;
 begin
   Result := False;
-  if not Check_Circle2Line(FPosition, FMaxRadius * FScale, lb, le) then
+  if not Detect_Circle2Line(FPosition, FMaxRadius * FScale, lb, le) then
       Exit;
 
   if FList.Count > 1 then
@@ -4353,7 +4353,7 @@ var
   pt1, pt2: T2DPoint;
 begin
   Result := False;
-  if not Check_Circle2Line(FPosition, FMaxRadius * FScale, lb, le) then
+  if not Detect_Circle2Line(FPosition, FMaxRadius * FScale, lb, le) then
       Exit;
 
   if FList.Count > 1 then
@@ -4469,7 +4469,7 @@ var
   d, d2   : TGeoFloat;
 begin
   Result := False;
-  if not Check_Circle2Line(FPosition, FMaxRadius * FScale + AExpandDistance, lb, le) then
+  if not Detect_Circle2Line(FPosition, FMaxRadius * FScale + AExpandDistance, lb, le) then
       Exit;
 
   if FList.Count > 1 then
@@ -4518,7 +4518,7 @@ var
   pt1, pt2: T2DPoint;
 begin
   Result := False;
-  if not Check_Circle2Line(FPosition, FMaxRadius * FScale + AExpandDistance, lb, le) then
+  if not Detect_Circle2Line(FPosition, FMaxRadius * FScale + AExpandDistance, lb, le) then
       Exit;
 
   if FList.Count > 1 then
@@ -4604,19 +4604,19 @@ var
   i            : Integer;
   curpt, destpt: T2DPoint;
 begin
-  if (Check_Circle2Circle(FPosition, cp, FMaxRadius * FScale, r)) and (Count > 0) then
+  if (Detect_Circle2Circle(FPosition, cp, FMaxRadius * FScale, r)) and (Count > 0) then
     begin
       Result := True;
       curpt := Points[0];
       for i := 1 to Count - 1 do
         begin
           destpt := Points[i];
-          if Check_Circle2Line(cp, r, curpt, destpt) then
+          if Detect_Circle2Line(cp, r, curpt, destpt) then
               Exit;
           curpt := destpt;
         end;
       if ClosedPolyMode then
-        if Check_Circle2Line(cp, r, curpt, Points[0]) then
+        if Detect_Circle2Line(cp, r, curpt, Points[0]) then
             Exit;
     end;
   Result := False;
@@ -4628,13 +4628,13 @@ var
   curpt, destpt: T2DPoint;
 begin
   Result := False;
-  if (Check_Circle2Circle(FPosition, cp, FMaxRadius * FScale, r)) and (Count > 0) then
+  if (Detect_Circle2Circle(FPosition, cp, FMaxRadius * FScale, r)) and (Count > 0) then
     begin
       curpt := Points[0];
       for i := 1 to Count - 1 do
         begin
           destpt := Points[i];
-          if Check_Circle2Line(cp, r, curpt, destpt) then
+          if Detect_Circle2Line(cp, r, curpt, destpt) then
             begin
               OutputLine.Add(curpt, destpt, i - 1, i, Self);
               Result := True;
@@ -4642,7 +4642,7 @@ begin
           curpt := destpt;
         end;
       if ClosedPolyMode then
-        if Check_Circle2Line(cp, r, curpt, Points[0]) then
+        if Detect_Circle2Line(cp, r, curpt, Points[0]) then
           begin
             OutputLine.Add(curpt, Points[0], Count - 1, 0, Self);
             Result := True;
@@ -4656,13 +4656,13 @@ var
   curpt, destpt: T2DPoint;
 begin
   Result := False;
-  if (Check_Circle2Circle(FPosition, cp, FMaxRadius * FScale + AExpandDistance, r)) and (Count > 0) then
+  if (Detect_Circle2Circle(FPosition, cp, FMaxRadius * FScale + AExpandDistance, r)) and (Count > 0) then
     begin
       curpt := Expands[0, AExpandDistance];
       for i := 1 to Count - 1 do
         begin
           destpt := Expands[i, AExpandDistance];
-          if Check_Circle2Line(cp, r, curpt, destpt) then
+          if Detect_Circle2Line(cp, r, curpt, destpt) then
             begin
               OutputLine.Add(curpt, destpt, i - 1, i, Self);
               Result := True;
@@ -4670,7 +4670,7 @@ begin
           curpt := destpt;
         end;
       if ClosedPolyMode then
-        if Check_Circle2Line(cp, r, curpt, Expands[0, AExpandDistance]) then
+        if Detect_Circle2Line(cp, r, curpt, Expands[0, AExpandDistance]) then
           begin
             OutputLine.Add(curpt, Expands[0, AExpandDistance], Count - 1, 0, Self);
             Result := True;
@@ -4682,7 +4682,7 @@ function TPoly.PolyIntersect(APoly: TPoly): Boolean;
 var
   i: Integer;
 begin
-  Result := Check_Circle2Circle(Position, APoly.Position, MaxRadius * FScale, APoly.MaxRadius * APoly.Scale);
+  Result := Detect_Circle2Circle(Position, APoly.Position, MaxRadius * FScale, APoly.MaxRadius * APoly.Scale);
   if not Result then
       Exit;
 

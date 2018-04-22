@@ -30,6 +30,9 @@
         <Projects Include="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="10 训练神经网络做加减法运算\numberTrainDemo.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -119,14 +122,23 @@
     <Target Name="NNDecisionDemo:Make">
         <MSBuild Projects="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj" Targets="Make"/>
     </Target>
+    <Target Name="numberTrainDemo">
+        <MSBuild Projects="10 训练神经网络做加减法运算\numberTrainDemo.dproj"/>
+    </Target>
+    <Target Name="numberTrainDemo:Clean">
+        <MSBuild Projects="10 训练神经网络做加减法运算\numberTrainDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="numberTrainDemo:Make">
+        <MSBuild Projects="10 训练神经网络做加减法运算\numberTrainDemo.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="MemoryRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargePictureAnalysis;WordAnalysis;NNPicutreCompare;NNDecisionDemo"/>
+        <CallTarget Targets="MemoryRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargePictureAnalysis;WordAnalysis;NNPicutreCompare;NNDecisionDemo;numberTrainDemo"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="MemoryRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargePictureAnalysis:Clean;WordAnalysis:Clean;NNPicutreCompare:Clean;NNDecisionDemo:Clean"/>
+        <CallTarget Targets="MemoryRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargePictureAnalysis:Clean;WordAnalysis:Clean;NNPicutreCompare:Clean;NNDecisionDemo:Clean;numberTrainDemo:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="MemoryRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargePictureAnalysis:Make;WordAnalysis:Make;NNPicutreCompare:Make;NNDecisionDemo:Make"/>
+        <CallTarget Targets="MemoryRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargePictureAnalysis:Make;WordAnalysis:Make;NNPicutreCompare:Make;NNDecisionDemo:Make;numberTrainDemo:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

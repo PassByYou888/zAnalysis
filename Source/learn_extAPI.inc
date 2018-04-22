@@ -29,6 +29,16 @@ begin
           exit;
 end;
 
+function LVec(const m: TLMatrix): TLVec;
+var
+  i, l: TLInt;
+begin
+  l := 0;
+  for i := 0 to Length(m) - 1 do
+      inc(l, Length(m[i]));
+  Result := LVec(m, l);
+end;
+
 function LVec(const s: TPascalString; const veclen: TLInt): TLVec;
 var
   i: TLInt;
@@ -144,6 +154,16 @@ begin
       AValue := AMin;
 end;
 
+function MatrixSampler(const mr: TMemoryRaster): TLMatrix;
+var
+  i, J: Integer;
+begin
+  SetLength(Result, mr.Height, mr.Width);
+  for J := 0 to mr.Height - 1 do
+    for i := 0 to mr.Width - 1 do
+        Result[J, i] := mr.PixelGrayD[i, J];
+end;
+
 function MatrixSampler(const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix;
 var
   N   : TMemoryRaster;
@@ -154,7 +174,7 @@ begin
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[i, J] := Round(mr.PixelGrayD[i, J] * $FF);
+            Result[J, i] := N.PixelGrayD[i, J];
     end
   else
     begin
@@ -164,7 +184,7 @@ begin
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[i, J] := Round(N.PixelGrayD[i, J] * $FF);
+            Result[J, i] := N.PixelGrayD[i, J];
 
       DisposeObject(N);
     end;
@@ -180,7 +200,7 @@ begin
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[i, J] := Round(mr.PixelGrayD[i, J] * $FF);
+            Result[J, i] := mr.PixelGrayD[i, J];
     end
   else
     begin
@@ -193,7 +213,7 @@ begin
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[i, J] := Round(N.PixelGrayD[i, J] * $FF);
+            Result[J, i] := N.PixelGrayD[i, J];
 
       DisposeObject(N);
     end;
@@ -335,3 +355,5 @@ begin
       RandSeed := bakseed;
   end;
 end;
+
+
