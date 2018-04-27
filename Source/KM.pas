@@ -245,7 +245,7 @@ begin
           // random number within (0,1) is generated and
           // inverse empirical CDF is used to randomly choose a point.
           s := 0;
-          v := TKMFloat(Random);
+          v := Random();
           i := 0;
           while i <= NPoints - 1 do
             begin
