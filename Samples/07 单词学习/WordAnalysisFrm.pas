@@ -19,11 +19,11 @@ type
     Memo2: TMemo;
     StringGrid1: TStringGrid;
     StringColumn1: TStringColumn;
-    FloatColumn1: TFloatColumn;
     Button1: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
+    StringColumn2: TStringColumn;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
@@ -70,6 +70,8 @@ begin
   Dict := TListPascalString.Create;
   dHash := THashVariantList.Create(128);
   lr := nil;
+
+  Button1Click(nil);
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);

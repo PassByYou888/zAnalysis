@@ -228,7 +228,7 @@ begin
         storePos := ze.AddData(m64, $99);
         DisposeObject(m64);
 
-        lr.AddMatrix(MatrixSampler(15, mr), [Double(storePos)]);
+        lr.AddMatrix(MatrixSampler(15, mr), [storePos]);
 
         ProgressBar1.Value := i;
         DoStatus('提取图片特征 %s ', [umlGetFileName(OpenDialog1.Files[i]).Text]);
@@ -454,7 +454,7 @@ begin
         storePos := ze.AddData(m64, $99);
         DisposeObject(m64);
 
-        lr.AddMatrix(MatrixSampler(True, 15, mr), [Double(storePos)]);
+        lr.AddMatrix(MatrixSampler(True, 15, mr), [storePos]);
 
         ProgressBar1.Value := i;
         DoStatus('提取图片特征 %s ', [umlGetFileName(OpenDialog1.Files[i]).Text]);
