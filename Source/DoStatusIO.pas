@@ -17,7 +17,7 @@ uses
   Windows,
   {$ELSEIF not Defined(Linux)}
   FMX.Types,
-  {$ENDIF}
+  {$IFEND}
   Sysutils, Classes, PascalStrings, UPascalStrings, UnicodeMixedLib, CoreClasses, MemoryStream64;
 
 {$I zDefine.inc}
@@ -301,9 +301,9 @@ begin
         OutputDebugString(PWideChar('"' + Text + '"'));
         {$ELSEIF not Defined(Linux)}
         FMX.Types.Log.d('"' + Text + '"');
-        {$ENDIF}
+        {$IFEND}
       end;
-    {$ENDIF}
+    {$IFEND}
     if ((ConsoleOutput) or (ID = 2)) and (IsConsole) then
         Writeln(Text);
   finally
@@ -328,7 +328,7 @@ begin
       TCoreClassThread.Synchronize(th, @ts.DoSync);
       {$ELSE}
       TCoreClassThread.Synchronize(th, ts.DoSync);
-      {$ENDIF}
+      {$IFEND}
       DisposeObject(ts);
       exit;
     end;
@@ -358,9 +358,9 @@ begin
         OutputDebugString(PWideChar('"' + Text + '"'));
         {$ELSEIF not Defined(Linux)}
         FMX.Types.Log.d('"' + Text + '"');
-        {$ENDIF}
+        {$IFEND}
       end;
-    {$ENDIF}
+    {$IFEND}
     if ((ConsoleOutput) or (ID = 2)) and (IsConsole) then
         Writeln(Text);
   finally
@@ -435,7 +435,7 @@ ConsoleOutput := True;
 OnDoStatusHook := @InternalDoStatus;
 {$ELSE}
 OnDoStatusHook := InternalDoStatus;
-{$ENDIF}
+{$IFEND}
 
 finalization
 

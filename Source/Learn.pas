@@ -91,19 +91,19 @@ type
 
     PLearnKDT = ^TLearnKDT;
   private
-    FEnabledRandomNumber                       : Boolean;
-    FInLen, FOutLen                            : TLInt;
-    FMemorySource                              : TCoreClassList;
-    FLearnType                                 : TLearnType;
-    FLearnData                                 : Pointer;
-    FClassifier                                : Boolean;
-    FHideLayerDepth                            : THideLayerDepth;
+    FEnabledRandomNumber: Boolean;
+    FInLen, FOutLen: TLInt;
+    FMemorySource: TCoreClassList;
+    FLearnType: TLearnType;
+    FLearnData: Pointer;
+    FClassifier: Boolean;
+    FHideLayerDepth: THideLayerDepth;
     FLastTrainMaxInValue, FLastTrainMaxOutValue: TLFloat;
-    FInfo                                      : SystemString;
-    FIsTraining                                : Boolean;
-    FTrainThreadRuning                         : Boolean;
-    FUserData                                  : Pointer;
-    FUserObject                                : TCoreClassObject;
+    FInfo: SystemString;
+    FIsTraining: Boolean;
+    FTrainThreadRuning: Boolean;
+    FUserData: Pointer;
+    FUserObject: TCoreClassObject;
 
     procedure KDInput(const IndexFor: NativeInt; var source: TKDTree_Source; const Data: Pointer);
 
@@ -231,31 +231,101 @@ type
 procedure LearnTest;
 
 {$REGION 'LearnAPI'}
+{ base type api }
+function AbsReal(X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AbsInt(I: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RandomReal(): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RandomInteger(I: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function Sign(X: TLFloat): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_Sqr(X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+function APVDotProduct(V1: PLFloat; I11, I12: TLInt; V2: PLFloat; I21, I22: TLInt): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt; s: TLFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVMoveNeg(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt; s: TLFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt; s: TLFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVMul(VOp: PLFloat; I1, I2: TLInt; s: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure APVFillValue(VOp: PLFloat; I1, I2: TLInt; s: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+function AP_Float(X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_FP_Eq(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_FP_NEq(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_FP_Less(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_FP_Less_Eq(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_FP_Greater(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_FP_Greater_Eq(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+function DynamicArrayCopy(const A: TLIVec): TLIVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLVec): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLIMatrix): TLIMatrix; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLMatrix): TLMatrix; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure TagSort(var A: TLVec; const N: TLInt; var P1: TLIVec; var P2: TLIVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagSortFastI(var A: TLVec; var B: TLIVec; N: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagSortFastR(var A: TLVec; var B: TLVec; N: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagSortFast(var A: TLVec; const N: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagHeapPushI(var A: TLVec; var B: TLIVec; var N: TLInt; const VA: TLFloat; const VB: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagHeapReplaceTopI(var A: TLVec; var B: TLIVec; const N: TLInt; const VA: TLFloat; const VB: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TagHeapPopI(var A: TLVec; var B: TLIVec; var N: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+{ matrix base }
+function VectorNorm2(const X: TLVec; const I1, I2: TLInt): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function VectorIdxAbsMax(const X: TLVec; const I1, I2: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ColumnIdxAbsMax(const X: TLMatrix; const I1, I2, J: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RowIdxAbsMax(const X: TLMatrix; const J1, J2, I: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UpperHessenberg1Norm(const A: TLMatrix; const I1, I2, J1, J2: TLInt; var WORK: TLVec): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure CopyMatrix(const A: TLMatrix; const IS1, IS2, JS1, JS2: TLInt;
+  var B: TLMatrix; const ID1, ID2, JD1, JD2: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure InplaceTranspose(var A: TLMatrix; const I1, I2, J1, J2: TLInt; var WORK: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure CopyAndTranspose(const A: TLMatrix; IS1, IS2, JS1, JS2: TLInt;
+  var B: TLMatrix; ID1, ID2, JD1, JD2: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MatrixVectorMultiply(const A: TLMatrix; const I1, I2, J1, J2: TLInt; const Trans: Boolean;
+  const X: TLVec; const IX1, IX2: TLInt; const Alpha: TLFloat;
+  var Y: TLVec; const IY1, IY2: TLInt; const Beta: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+function Pythag2(X: TLFloat; Y: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+procedure MatrixMatrixMultiply(const A: TLMatrix; const AI1, AI2, AJ1, AJ2: TLInt; const TransA: Boolean;
+  const B: TLMatrix; const BI1, BI2, BJ1, BJ2: TLInt; const TransB: Boolean;
+  const Alpha: TLFloat;
+  var C: TLMatrix; const CI1, CI2, CJ1, CJ2: TLInt;
+  const Beta: TLFloat;
+  var WORK: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+function SMatrixTDEVD(var D: TLVec; E: TLVec; N: TLInt; ZNeeded: TLInt; var Z: TLMatrix): Boolean;
+
 { Normal distribution support }
 function NormalDistribution(const X: TLFloat): TLFloat;
-function InvNormalDistribution(const y0: TLFloat): TLFloat;
+function InvNormalDistribution(const y0: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 { statistics base }
-function Log1P(const X: TLFloat): TLFloat;
-function ExpM1(const X: TLFloat): TLFloat;
-function CosM1(const X: TLFloat): TLFloat;
+function Log1P(const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ExpM1(const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CosM1(const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 { Gamma support }
-function Gamma(const X: TLFloat): TLFloat;
+function Gamma(const X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 { Natural logarithm of gamma function }
-function LnGamma(const X: TLFloat; var SgnGam: TLFloat): TLFloat;
+function LnGamma(const X: TLFloat; var SgnGam: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 { Incomplete gamma integral }
-function IncompleteGamma(const A, X: TLFloat): TLFloat;
+function IncompleteGamma(const A, X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 { Complemented incomplete gamma integral }
-function IncompleteGammaC(const A, X: TLFloat): TLFloat;
+function IncompleteGammaC(const A, X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 { Inverse of complemented imcomplete gamma integral }
-function InvIncompleteGammaC(const A, y0: TLFloat): TLFloat;
+function InvIncompleteGammaC(const A, y0: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 { Poisson distribution }
-function PoissonDistribution(k: TLInt; m: TLFloat): TLFloat;
+function PoissonDistribution(k: TLInt; m: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 { Complemented Poisson distribution }
-function PoissonCDistribution(k: TLInt; m: TLFloat): TLFloat;
+function PoissonCDistribution(k: TLInt; m: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 { Inverse Poisson distribution }
-function InvPoissonDistribution(k: TLInt; Y: TLFloat): TLFloat;
+function InvPoissonDistribution(k: TLInt; Y: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 { Incomplete beta integral support }
 function IncompleteBeta(A, B, X: TLFloat): TLFloat;
@@ -320,6 +390,101 @@ procedure MannWhitneyUTest(const X: TLVec; N: TLInt; const Y: TLVec; m: TLInt; v
 { Wilcoxon signed-rank test }
 procedure WilcoxonSignedRankTest(const X: TLVec; N: TLInt; E: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 
+{
+  Computation of nodes and weights for a Gauss quadrature formula
+
+  The algorithm generates the N-point Gauss quadrature formula with weight
+  function given by coefficients alpha and beta of a recurrence relation
+  which generates a system of orthogonal polynomials:
+
+  P-1(x)   =  0
+  P0(x)    =  1
+  Pn+1(x)  =  (x-alpha(n))*Pn(x)  -  beta(n)*Pn-1(x)
+
+  and zeroth moment Mu0
+
+  Mu0 = integral(W(x)dx,a,b)
+}
+procedure GaussQuadratureGenerateRec(const Alpha, Beta: TLVec; const Mu0: TLFloat; N: TLInt; var Info: TLInt; var X: TLVec; var W: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+{
+  Computation of nodes and weights for a Gauss-Lobatto quadrature formula
+
+  The algorithm generates the N-point Gauss-Lobatto quadrature formula with
+  weight function given by coefficients alpha and beta of a recurrence which
+  generates a system of orthogonal polynomials.
+
+  P-1(x)   =  0
+  P0(x)    =  1
+  Pn+1(x)  =  (x-alpha(n))*Pn(x)  -  beta(n)*Pn-1(x)
+
+  and zeroth moment Mu0
+
+  Mu0 = integral(W(x)dx,a,b)
+}
+procedure GaussQuadratureGenerateGaussLobattoRec(const Alpha, Beta: TLVec; const Mu0, A, B: TLFloat; N: TLInt; var Info: TLInt; var X: TLVec; var W: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+{
+  Computation of nodes and weights for a Gauss-Radau quadrature formula
+
+  The algorithm generates the N-point Gauss-Radau quadrature formula with
+  weight function given by the coefficients alpha and beta of a recurrence
+  which generates a system of orthogonal polynomials.
+
+  P-1(x)   =  0
+  P0(x)    =  1
+  Pn+1(x)  =  (x-alpha(n))*Pn(x)  -  beta(n)*Pn-1(x)
+
+  and zeroth moment Mu0
+
+  Mu0 = integral(W(x)dx,a,b)
+}
+procedure GaussQuadratureGenerateGaussRadauRec(const Alpha, Beta: TLVec; const Mu0, A: TLFloat; N: TLInt; var Info: TLInt; var X: TLVec; var W: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+{ Returns nodes/weights for Gauss-Legendre quadrature on [-1,1] with N nodes }
+procedure GaussQuadratureGenerateGaussLegendre(const N: TLInt; var Info: TLInt; var X: TLVec; var W: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+{ Returns nodes/weights for Gauss-Jacobi quadrature on [-1,1] with weight function W(x)=Power(1-x,Alpha)*Power(1+x,Beta) }
+procedure GaussQuadratureGenerateGaussJacobi(const N: TLInt; const Alpha, Beta: TLFloat; var Info: TLInt; var X: TLVec; var W: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+{ Returns nodes/weights for Gauss-Laguerre quadrature on (0,+inf) with weight function W(x)=Power(x,Alpha)*Exp(-x) }
+procedure GaussQuadratureGenerateGaussLaguerre(const N: TLInt; const Alpha: TLFloat; var Info: TLInt; var X: TLVec; var W: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+{ Returns nodes/weights for Gauss-Hermite quadrature on (-inf,+inf) with weight function W(x)=Exp(-x*x) }
+procedure GaussQuadratureGenerateGaussHermite(const N: TLInt; var Info: TLInt; var X: TLVec; var W: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+{
+  Computation of nodes and weights of a Gauss-Kronrod quadrature formula
+
+  The algorithm generates the N-point Gauss-Kronrod quadrature formula  with
+  weight function given by coefficients alpha and beta of a recurrence
+  relation which generates a system of orthogonal polynomials:
+
+  P-1(x)   =  0
+  P0(x)    =  1
+  Pn+1(x)  =  (x-alpha(n))*Pn(x)  -  beta(n)*Pn-1(x)
+
+  and zero moment Mu0
+
+  Mu0 = integral(W(x)dx,a,b)
+}
+procedure GaussKronrodQuadratureGenerateRec(const Alpha, Beta: TLVec; const Mu0: TLFloat; N: TLInt; var Info: TLInt; var X, WKronrod, WGauss: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+{
+  Returns Gauss and Gauss-Kronrod nodes/weights for Gauss-Legendre quadrature with N points.
+  GKQLegendreCalc (calculation) or GKQLegendreTbl (precomputed table) is used depending on machine precision and number of nodes.
+}
+procedure GaussKronrodQuadratureGenerateGaussLegendre(const N: TLInt; var Info: TLInt; var X, WKronrod, WGauss: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+{
+  Returns Gauss and Gauss-Kronrod nodes/weights for Gauss-Jacobi quadrature on [-1,1] with weight function
+  W(x)=Power(1-x,Alpha)*Power(1+x,Beta).
+}
+procedure GaussKronrodQuadratureGenerateGaussJacobi(const N: TLInt; const Alpha, Beta: TLFloat; var Info: TLInt; var X, WKronrod, WGauss: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+{
+  Returns Gauss and Gauss-Kronrod nodes for quadrature with N points.
+  Reduction to tridiagonal eigenproblem is used.
+}
+procedure GaussKronrodQuadratureLegendreCalc(const N: TLInt; var Info: TLInt; var X, WKronrod, WGauss: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+{
+  Returns Gauss and Gauss-Kronrod nodes for quadrature with N  points  using pre-calculated table. Nodes/weights were computed with accuracy up to 1.0E-32.
+  In standard TLFloat  precision accuracy reduces to something about 2.0E-16 (depending  on your compiler's handling of long floating point constants).
+}
+procedure GaussKronrodQuadratureLegendreTbl(const N: TLInt; var X, WKronrod, WGauss: TLVec; var Eps: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 { learn vector api }
 function LVec(const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function LVec(const v: TLVec): TPascalString; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -340,8 +505,8 @@ function MatrixSampler(const mr: TMemoryRaster): TLMatrix; overload;
 function MatrixSampler(const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix; overload;
 function MatrixSampler(const Antialiasing: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix; overload;
 { * linear discriminant analysis support * }
-function LDA(const buff: TLMatrix; const NPoints, NVars, NClasses: TLInt; var w: TLMatrix): TLInt; overload;
-function LDA(const buff: TLMatrix; const NPoints, NVars, NClasses: TLInt; var w: TLVec): TLInt; overload;
+function LDA(const buff: TLMatrix; const NPoints, NVars, NClasses: TLInt; var W: TLMatrix): TLInt; overload;
+function LDA(const buff: TLMatrix; const NPoints, NVars, NClasses: TLInt; var W: TLVec): TLInt; overload;
 function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean; overload;
 { * principal component analysis support * }
 function PCA(const buff: TLMatrix; const NPoints, NVars: TLInt; var v: TLMatrix): TLInt; overload;
@@ -353,9 +518,9 @@ function KMeans(const source: TKMFloat2DArray; const NVars, k: TLInt; var KArray
 
 
 const
-  MachineEpsilon = 5E-16;
-  MaxRealNumber  = 1E300;
-  MinRealNumber  = 1E-300;
+  MachineEpsilon = 5.0E-16;
+  MaxRealNumber  = 1.0E300;
+  MinRealNumber  = 1.0E-300;
 
 implementation
 
@@ -401,17 +566,18 @@ uses Math,
 {$INCLUDE learn_statistics_JarqueBeraTest.inc}
 {$INCLUDE learn_statistics_MannWhitneyUTest.inc}
 {$INCLUDE learn_statistics_Wilcoxon.inc}
+{$INCLUDE learn_gaussintegral.inc}
 {$INCLUDE learn_extAPI.inc}
 {$INCLUDE learn_th.inc}
 
 
 procedure TLearn.KDInput(const IndexFor: NativeInt; var source: TKDTree_Source; const Data: Pointer);
 var
-  i: TLInt;
+  I: TLInt;
 begin
   source.index := IndexFor;
-  for i := 0 to FInLen - 1 do
-      source.buff[i] := PLearnMemory(FMemorySource[IndexFor])^.m_in[i];
+  for I := 0 to FInLen - 1 do
+      source.buff[I] := PLearnMemory(FMemorySource[IndexFor])^.m_in[I];
 end;
 
 procedure TLearn.FreeLearnData;
@@ -452,11 +618,11 @@ end;
 
 procedure TLearn.CreateLearnData(const isTrainTime: Boolean);
 var
-  p_k    : PLearnKDT;
-  p_f    : PDecisionForest;
+  p_k: PLearnKDT;
+  p_f: PDecisionForest;
   p_logit: PLogitModel;
-  p_n    : PMultiLayerPerceptron;
-  p_e    : PMLPEnsemble;
+  p_n: PMultiLayerPerceptron;
+  p_e: PMLPEnsemble;
 begin
   if not isTrainTime then
       FreeLearnData;
@@ -759,17 +925,17 @@ end;
 
 destructor TLearn.Destroy;
 var
-  i: TLInt;
+  I: TLInt;
 begin
   WaitTrain;
 
   if FMemorySource <> nil then
     begin
-      for i := 0 to FMemorySource.Count - 1 do
+      for I := 0 to FMemorySource.Count - 1 do
         begin
-          SetLength(PLearnMemory(FMemorySource[i])^.m_in, 0);
-          SetLength(PLearnMemory(FMemorySource[i])^.m_out, 0);
-          Dispose(PLearnMemory(FMemorySource[i]));
+          SetLength(PLearnMemory(FMemorySource[I])^.m_in, 0);
+          SetLength(PLearnMemory(FMemorySource[I])^.m_out, 0);
+          Dispose(PLearnMemory(FMemorySource[I]));
         end;
       DisposeObject(FMemorySource);
       FMemorySource := nil;
@@ -785,22 +951,22 @@ end;
 
 procedure TLearn.Clear;
 var
-  i      : TLInt;
-  p_k    : PLearnKDT;
-  p_f    : PDecisionForest;
+  I: TLInt;
+  p_k: PLearnKDT;
+  p_f: PDecisionForest;
   p_logit: PLogitModel;
-  p_n    : PMultiLayerPerceptron;
-  p_e    : PMLPEnsemble;
+  p_n: PMultiLayerPerceptron;
+  p_e: PMLPEnsemble;
 begin
   WaitTrain;
 
   if FMemorySource <> nil then
     begin
-      for i := 0 to FMemorySource.Count - 1 do
+      for I := 0 to FMemorySource.Count - 1 do
         begin
-          SetLength(PLearnMemory(FMemorySource[i])^.m_in, 0);
-          SetLength(PLearnMemory(FMemorySource[i])^.m_out, 0);
-          Dispose(PLearnMemory(FMemorySource[i]));
+          SetLength(PLearnMemory(FMemorySource[I])^.m_in, 0);
+          SetLength(PLearnMemory(FMemorySource[I])^.m_out, 0);
+          Dispose(PLearnMemory(FMemorySource[I]));
         end;
       DisposeObject(FMemorySource);
       FMemorySource := nil;
@@ -828,7 +994,7 @@ end;
 procedure TLearn.AddMemory(const f_In, f_Out: TLVec);
 var
   p: PLearnMemory;
-  i: TLInt;
+  I: TLInt;
 begin
   if FIsTraining or FTrainThreadRuning then
       raiseInfo('wait Training');
@@ -900,26 +1066,26 @@ end;
 
 function TLearn.Train(const TrainDepth: TLInt): Boolean;
 var
-  p_k         : PLearnKDT;
-  p_f         : PDecisionForest;
-  p_logit     : PLogitModel;
-  p_n         : PMultiLayerPerceptron;
-  p_e         : PMLPEnsemble;
-  kmIndexOut  : TDynamicIndexArray;
-  buff        : TLMatrix;
-  rInfo       : TLInt;
-  mlReport    : TMLPReport;
+  p_k: PLearnKDT;
+  p_f: PDecisionForest;
+  p_logit: PLogitModel;
+  p_n: PMultiLayerPerceptron;
+  p_e: PMLPEnsemble;
+  kmIndexOut: TDynamicIndexArray;
+  buff: TLMatrix;
+  rInfo: TLInt;
+  mlReport: TMLPReport;
   IsTerminated: Boolean;
-  eBest       : TLFloat;
-  CVRep       : TMLPCVReport;
-  DFRep       : TDFReport;
-  logitRep    : TMNLReport;
-  bakseed     : TLInt;
+  eBest: TLFloat;
+  CVRep: TMLPCVReport;
+  DFRep: TDFReport;
+  logitRep: TMNLReport;
+  bakseed: TLInt;
 
   procedure BuildInternalData;
   var
-    i, J: TLInt;
-    v   : TLFloat;
+    I, J: TLInt;
+    v: TLFloat;
   begin
     FLastTrainMaxInValue := PLearnMemory(FMemorySource[0])^.m_in[0];
     FLastTrainMaxOutValue := PLearnMemory(FMemorySource[0])^.m_out[0];
@@ -927,42 +1093,42 @@ var
     if FClassifier then
       begin
         SetLength(buff, FMemorySource.Count, FInLen + 1);
-        for i := 0 to FMemorySource.Count - 1 do
+        for I := 0 to FMemorySource.Count - 1 do
           begin
             for J := 0 to FInLen - 1 do
               begin
-                v := PLearnMemory(FMemorySource[i])^.m_in[J];
+                v := PLearnMemory(FMemorySource[I])^.m_in[J];
                 if v > FLastTrainMaxInValue then
                     FLastTrainMaxInValue := v;
-                buff[i][J] := v;
+                buff[I][J] := v;
               end;
 
-            v := PLearnMemory(FMemorySource[i])^.m_out[0];;
+            v := PLearnMemory(FMemorySource[I])^.m_out[0];;
             if v > FLastTrainMaxOutValue then
                 FLastTrainMaxOutValue := v;
-            buff[i][FInLen] := v;
+            buff[I][FInLen] := v;
           end;
         CreateLearnData(True);
       end
     else
       begin
         SetLength(buff, FMemorySource.Count, FInLen + FOutLen);
-        for i := 0 to FMemorySource.Count - 1 do
+        for I := 0 to FMemorySource.Count - 1 do
           begin
             for J := 0 to FInLen - 1 do
               begin
-                v := PLearnMemory(FMemorySource[i])^.m_in[J];
+                v := PLearnMemory(FMemorySource[I])^.m_in[J];
                 if v > FLastTrainMaxInValue then
                     FLastTrainMaxInValue := v;
-                buff[i][J] := v;
+                buff[I][J] := v;
               end;
 
             for J := 0 to FOutLen - 1 do
               begin
-                v := PLearnMemory(FMemorySource[i])^.m_out[J];
+                v := PLearnMemory(FMemorySource[I])^.m_out[J];
                 if v > FLastTrainMaxOutValue then
                     FLastTrainMaxOutValue := v;
-                buff[i][FInLen + J] := v;
+                buff[I][FInLen + J] := v;
               end;
           end;
       end;
@@ -1278,9 +1444,9 @@ end;
 function TLearn.process(const p_in, p_out: PLVec): Boolean;
 var
   p_kd_node: PKDTree_Node;
-  i        : TLInt;
-  R, rmax  : TLFloat;
-  List     : TLIVec;
+  I: TLInt;
+  R, rmax: TLFloat;
+  List: TLIVec;
 begin
   Result := False;
   if FIsTraining or FTrainThreadRuning then
@@ -1304,8 +1470,8 @@ begin
                 SearchMemoryWithDistance(p_in^, List);
                 SetLength(p_out^, Length(List));
 
-                for i := 0 to Length(List) - 1 do
-                    p_out^[List[i]] := (Length(List) - 1) - i;
+                for I := 0 to Length(List) - 1 do
+                    p_out^[List[I]] := (Length(List) - 1) - I;
                 SetLength(List, 0);
               end
             else
@@ -1335,7 +1501,7 @@ begin
       end;
     ltLogit:
       begin
-        if Length(PLogitModel(FLearnData)^.w) > 0 then
+        if Length(PLogitModel(FLearnData)^.W) > 0 then
           begin
             SetLength(p_out^, Max(2, Round(FLastTrainMaxOutValue) + 1));
 
@@ -1401,7 +1567,7 @@ end;
 function TLearn.processMax(const ProcessIn: TLVec): TLFloat;
 var
   ProcessOut: TLVec;
-  i         : TLInt;
+  I: TLInt;
 begin
   Result := 0;
   if not process(@ProcessIn, @ProcessOut) then
@@ -1410,9 +1576,9 @@ begin
   Result := ProcessOut[0];
 
   if Length(ProcessOut) > 1 then
-    for i := 1 to Length(ProcessOut) - 1 do
-      if ProcessOut[i] > Result then
-          Result := ProcessOut[i];
+    for I := 1 to Length(ProcessOut) - 1 do
+      if ProcessOut[I] > Result then
+          Result := ProcessOut[I];
 
   SetLength(ProcessOut, 0);
 end;
@@ -1429,8 +1595,8 @@ end;
 function TLearn.processMaxIndex(const ProcessIn: TLVec): TLInt;
 var
   ProcessOut: TLVec;
-  k         : TLFloat;
-  i         : TLInt;
+  k: TLFloat;
+  I: TLInt;
 begin
   Result := -1;
   if not process(@ProcessIn, @ProcessOut) then
@@ -1440,11 +1606,11 @@ begin
   Result := 0;
 
   if Length(ProcessOut) > 1 then
-    for i := 1 to Length(ProcessOut) - 1 do
-      if ProcessOut[i] > k then
+    for I := 1 to Length(ProcessOut) - 1 do
+      if ProcessOut[I] > k then
         begin
-          Result := i;
-          k := ProcessOut[i];
+          Result := I;
+          k := ProcessOut[I];
         end;
 
   SetLength(ProcessOut, 0);
@@ -1462,7 +1628,7 @@ end;
 function TLearn.processMin(const ProcessIn: TLVec): TLFloat;
 var
   ProcessOut: TLVec;
-  i         : TLInt;
+  I: TLInt;
 begin
   Result := 0;
   if not process(@ProcessIn, @ProcessOut) then
@@ -1471,9 +1637,9 @@ begin
   Result := ProcessOut[0];
 
   if Length(ProcessOut) > 1 then
-    for i := 1 to Length(ProcessOut) - 1 do
-      if ProcessOut[i] < Result then
-          Result := ProcessOut[i];
+    for I := 1 to Length(ProcessOut) - 1 do
+      if ProcessOut[I] < Result then
+          Result := ProcessOut[I];
 
   SetLength(ProcessOut, 0);
 end;
@@ -1490,8 +1656,8 @@ end;
 function TLearn.processMinIndex(const ProcessIn: TLVec): TLInt;
 var
   ProcessOut: TLVec;
-  k         : TLFloat;
-  i         : TLInt;
+  k: TLFloat;
+  I: TLInt;
 begin
   Result := -1;
   if not process(@ProcessIn, @ProcessOut) then
@@ -1501,11 +1667,11 @@ begin
   Result := 0;
 
   if Length(ProcessOut) > 1 then
-    for i := 1 to Length(ProcessOut) - 1 do
-      if ProcessOut[i] < k then
+    for I := 1 to Length(ProcessOut) - 1 do
+      if ProcessOut[I] < k then
         begin
-          Result := i;
-          k := ProcessOut[i];
+          Result := I;
+          k := ProcessOut[I];
         end;
 
   SetLength(ProcessOut, 0);
@@ -1577,7 +1743,7 @@ end;
 function TLearn.SearchMemoryWithPearson(const ProcessIn: TLVec): TLInt;
 var
   k, R: TLFloat;
-  i   : TLInt;
+  I: TLInt;
 begin
   if Count <= 0 then
     begin
@@ -1588,13 +1754,13 @@ begin
   k := PearsonCorrelation(ProcessIn, GetMemorySource(0)^.m_in, FInLen);
   Result := 0;
 
-  for i := 1 to Count - 1 do
+  for I := 1 to Count - 1 do
     begin
-      R := PearsonCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
+      R := PearsonCorrelation(ProcessIn, GetMemorySource(I)^.m_in, FInLen);
       if (R <> 0) and (R > k) then
         begin
           k := R;
-          Result := i;
+          Result := I;
         end;
     end;
 end;
@@ -1613,49 +1779,49 @@ type
   TStatePtrArray = array of PState;
   TStateArray    = array of TState;
 
-  function SortCompare(const p1, p2: PState): ShortInt; inline;
+  function SortCompare(const P1, P2: PState): ShortInt; inline;
   begin
-    if p1^.k > p2^.k then
+    if P1^.k > P2^.k then
         Result := -1
-    else if p1^.k < p2^.k then
+    else if P1^.k < P2^.k then
         Result := 1
     else
         Result := 0;
   end;
   procedure InternalSort(var SortBuffer: TStatePtrArray; l, R: TLInt);
   var
-    i, J: TLInt;
+    I, J: TLInt;
     p, t: PState;
   begin
     repeat
-      i := l;
+      I := l;
       J := R;
       p := SortBuffer[(l + R) shr 1];
       repeat
-        while SortCompare(SortBuffer[i], p) < 0 do
-            inc(i);
+        while SortCompare(SortBuffer[I], p) < 0 do
+            inc(I);
         while SortCompare(SortBuffer[J], p) > 0 do
             Dec(J);
-        if i <= J then
+        if I <= J then
           begin
-            if i <> J then
+            if I <> J then
               begin
-                t := SortBuffer[i];
-                SortBuffer[i] := SortBuffer[J];
+                t := SortBuffer[I];
+                SortBuffer[I] := SortBuffer[J];
                 SortBuffer[J] := t;
               end;
-            inc(i);
+            inc(I);
             Dec(J);
           end;
-      until i > J;
+      until I > J;
       if l < J then
           InternalSort(SortBuffer, l, J);
-      l := i;
-    until i >= R;
+      l := I;
+    until I >= R;
   end;
 
 var
-  buff   : TStateArray;
+  buff: TStateArray;
   buffPtr: TStatePtrArray;
 
   {$IFDEF FPC}
@@ -1669,7 +1835,7 @@ var
 
 
 var
-  i: TLInt;
+  I: TLInt;
 begin
   if Count <= 0 then
       exit;
@@ -1694,19 +1860,19 @@ begin
     end);
   {$ENDIF FPC}
   {$ELSE}
-  for i := 0 to Count - 1 do
+  for I := 0 to Count - 1 do
     begin
-      buff[i].k := PearsonCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
-      buff[i].index := i;
-      buffPtr[i] := @buff[i];
+      buff[I].k := PearsonCorrelation(ProcessIn, GetMemorySource(I)^.m_in, FInLen);
+      buff[I].index := I;
+      buffPtr[I] := @buff[I];
     end;
   {$ENDIF parallel}
   // complete sort
   InternalSort(buffPtr, 0, Length(buffPtr) - 1);
 
   SetLength(List, Count);
-  for i := 0 to Count - 1 do
-      List[i] := buffPtr[i]^.index;
+  for I := 0 to Count - 1 do
+      List[I] := buffPtr[I]^.index;
 
   SetLength(buff, 0);
   SetLength(buffPtr, 0);
@@ -1717,7 +1883,7 @@ end;
 function TLearn.SearchMemoryWithSpearman(const ProcessIn: TLVec): TLInt;
 var
   k, R: TLFloat;
-  i   : TLInt;
+  I: TLInt;
 begin
   if Count <= 0 then
     begin
@@ -1728,13 +1894,13 @@ begin
   k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(0)^.m_in, FInLen);
   Result := 0;
 
-  for i := 1 to Count - 1 do
+  for I := 1 to Count - 1 do
     begin
-      R := SpearmanRankCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
+      R := SpearmanRankCorrelation(ProcessIn, GetMemorySource(I)^.m_in, FInLen);
       if (R <> 0) and (R > k) then
         begin
           k := R;
-          Result := i;
+          Result := I;
         end;
     end;
 end;
@@ -1753,49 +1919,49 @@ type
   TStatePtrArray = array of PState;
   TStateArray    = array of TState;
 
-  function SortCompare(const p1, p2: PState): ShortInt; inline;
+  function SortCompare(const P1, P2: PState): ShortInt; inline;
   begin
-    if p1^.k > p2^.k then
+    if P1^.k > P2^.k then
         Result := -1
-    else if p1^.k < p2^.k then
+    else if P1^.k < P2^.k then
         Result := 1
     else
         Result := 0;
   end;
   procedure InternalSort(var SortBuffer: TStatePtrArray; l, R: TLInt);
   var
-    i, J: TLInt;
+    I, J: TLInt;
     p, t: PState;
   begin
     repeat
-      i := l;
+      I := l;
       J := R;
       p := SortBuffer[(l + R) shr 1];
       repeat
-        while SortCompare(SortBuffer[i], p) < 0 do
-            inc(i);
+        while SortCompare(SortBuffer[I], p) < 0 do
+            inc(I);
         while SortCompare(SortBuffer[J], p) > 0 do
             Dec(J);
-        if i <= J then
+        if I <= J then
           begin
-            if i <> J then
+            if I <> J then
               begin
-                t := SortBuffer[i];
-                SortBuffer[i] := SortBuffer[J];
+                t := SortBuffer[I];
+                SortBuffer[I] := SortBuffer[J];
                 SortBuffer[J] := t;
               end;
-            inc(i);
+            inc(I);
             Dec(J);
           end;
-      until i > J;
+      until I > J;
       if l < J then
           InternalSort(SortBuffer, l, J);
-      l := i;
-    until i >= R;
+      l := I;
+    until I >= R;
   end;
 
 var
-  buff   : TStateArray;
+  buff: TStateArray;
   buffPtr: TStatePtrArray;
 
   {$IFDEF FPC}
@@ -1809,7 +1975,7 @@ var
 
 
 var
-  i: TLInt;
+  I: TLInt;
 begin
   if Count <= 0 then
       exit;
@@ -1834,19 +2000,19 @@ begin
     end);
   {$ENDIF FPC}
   {$ELSE}
-  for i := 0 to Count - 1 do
+  for I := 0 to Count - 1 do
     begin
-      buff[i].k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
-      buff[i].index := i;
-      buffPtr[i] := @buff[i];
+      buff[I].k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(I)^.m_in, FInLen);
+      buff[I].index := I;
+      buffPtr[I] := @buff[I];
     end;
   {$ENDIF parallel}
   // complete sort
   InternalSort(buffPtr, 0, Length(buffPtr) - 1);
 
   SetLength(List, Count);
-  for i := 0 to Count - 1 do
-      List[i] := buffPtr[i]^.index;
+  for I := 0 to Count - 1 do
+      List[I] := buffPtr[I]^.index;
 
   SetLength(buff, 0);
   SetLength(buffPtr, 0);
@@ -1857,7 +2023,7 @@ end;
 function TLearn.SearchMemoryWithDistance(const ProcessIn: TLVec): TLInt;
 var
   k, R: Double;
-  i   : TLInt;
+  I: TLInt;
 begin
   if Count <= 0 then
     begin
@@ -1870,13 +2036,13 @@ begin
   k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(0)^.m_in);
   Result := 0;
 
-  for i := 1 to Count - 1 do
+  for I := 1 to Count - 1 do
     begin
-      R := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(i)^.m_in);
+      R := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(I)^.m_in);
       if (R < k) then
         begin
           k := R;
-          Result := i;
+          Result := I;
         end;
     end;
 end;
@@ -1893,49 +2059,49 @@ type
   TStatePtrArray = array of PState;
   TStateArray    = array of TState;
 
-  function SortCompare(const p1, p2: PState): ShortInt; inline;
+  function SortCompare(const P1, P2: PState): ShortInt; inline;
   begin
-    if p1^.k < p2^.k then
+    if P1^.k < P2^.k then
         Result := -1
-    else if p1^.k > p2^.k then
+    else if P1^.k > P2^.k then
         Result := 1
     else
         Result := 0;
   end;
   procedure InternalSort(var SortBuffer: TStatePtrArray; l, R: TLInt);
   var
-    i, J: TLInt;
+    I, J: TLInt;
     p, t: PState;
   begin
     repeat
-      i := l;
+      I := l;
       J := R;
       p := SortBuffer[(l + R) shr 1];
       repeat
-        while SortCompare(SortBuffer[i], p) < 0 do
-            inc(i);
+        while SortCompare(SortBuffer[I], p) < 0 do
+            inc(I);
         while SortCompare(SortBuffer[J], p) > 0 do
             Dec(J);
-        if i <= J then
+        if I <= J then
           begin
-            if i <> J then
+            if I <> J then
               begin
-                t := SortBuffer[i];
-                SortBuffer[i] := SortBuffer[J];
+                t := SortBuffer[I];
+                SortBuffer[I] := SortBuffer[J];
                 SortBuffer[J] := t;
               end;
-            inc(i);
+            inc(I);
             Dec(J);
           end;
-      until i > J;
+      until I > J;
       if l < J then
           InternalSort(SortBuffer, l, J);
-      l := i;
-    until i >= R;
+      l := I;
+    until I >= R;
   end;
 
 var
-  buff   : TStateArray;
+  buff: TStateArray;
   buffPtr: TStatePtrArray;
 
   {$IFDEF FPC}
@@ -1949,7 +2115,7 @@ var
 
 
 var
-  i: TLInt;
+  I: TLInt;
 begin
   if Count <= 0 then
     begin
@@ -1978,19 +2144,19 @@ begin
     end);
   {$ENDIF FPC}
   {$ELSE}
-  for i := 0 to Count - 1 do
+  for I := 0 to Count - 1 do
     begin
-      buff[i].k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(i)^.m_in);
-      buff[i].index := i;
-      buffPtr[i] := @buff[i];
+      buff[I].k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(I)^.m_in);
+      buff[I].index := I;
+      buffPtr[I] := @buff[I];
     end;
   {$ENDIF parallel}
   // complete sort
   InternalSort(buffPtr, 0, Length(buffPtr) - 1);
 
   SetLength(List, Count);
-  for i := 0 to Count - 1 do
-      List[i] := buffPtr[i]^.index;
+  for I := 0 to Count - 1 do
+      List[I] := buffPtr[I]^.index;
 
   SetLength(buff, 0);
   SetLength(buffPtr, 0);
@@ -1998,11 +2164,11 @@ end;
 
 procedure TLearn.SaveToDF(df: TDataFrameEngine);
 var
-  ar     : TDataFrameArrayDouble;
-  i, J   : TLInt;
-  buff   : TLVec;
+  ar: TDataFrameArrayDouble;
+  I, J: TLInt;
+  buff: TLVec;
   buffLen: TLInt;
-  m64    : TMemoryStream64;
+  m64: TMemoryStream64;
 begin
   df.WriteInt64(FInLen);
   df.WriteInt64(FOutLen);
@@ -2014,12 +2180,12 @@ begin
   df.WriteDouble(FLastTrainMaxOutValue);
 
   ar := df.WriteArrayDouble;
-  for i := 0 to FMemorySource.Count - 1 do
+  for I := 0 to FMemorySource.Count - 1 do
     begin
       for J := 0 to FInLen - 1 do
-          ar.Add(PLearnMemory(FMemorySource[i])^.m_in[J]);
+          ar.Add(PLearnMemory(FMemorySource[I])^.m_in[J]);
       for J := 0 to FOutLen - 1 do
-          ar.Add(PLearnMemory(FMemorySource[i])^.m_out[J]);
+          ar.Add(PLearnMemory(FMemorySource[I])^.m_out[J]);
     end;
 
   case FLearnType of
@@ -2039,18 +2205,18 @@ begin
           begin
             DFSerialize(PDecisionForest(FLearnData)^, buff, buffLen);
             ar := df.WriteArrayDouble;
-            for i := 0 to buffLen - 1 do
-                ar.Add(buff[i]);
+            for I := 0 to buffLen - 1 do
+                ar.Add(buff[I]);
           end;
       end;
     ltLogit:
       begin
-        if Length(PLogitModel(FLearnData)^.w) > 0 then
+        if Length(PLogitModel(FLearnData)^.W) > 0 then
           begin
             MNLSerialize(PLogitModel(FLearnData)^, buff, buffLen);
             ar := df.WriteArrayDouble;
-            for i := 0 to buffLen - 1 do
-                ar.Add(buff[i]);
+            for I := 0 to buffLen - 1 do
+                ar.Add(buff[I]);
           end;
       end;
     ltLM, ltLM_MT, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod, ltMonteCarlo:
@@ -2059,8 +2225,8 @@ begin
           begin
             MLPSerialize(PMultiLayerPerceptron(FLearnData)^, buff, buffLen);
             ar := df.WriteArrayDouble;
-            for i := 0 to buffLen - 1 do
-                ar.Add(buff[i]);
+            for I := 0 to buffLen - 1 do
+                ar.Add(buff[I]);
           end;
       end;
     ltLM_Ensemble, ltLM_Ensemble_MT, ltLBFGS_Ensemble, ltLBFGS_Ensemble_MT:
@@ -2069,8 +2235,8 @@ begin
           begin
             MLPESerialize(PMLPEnsemble(FLearnData)^, buff, buffLen);
             ar := df.WriteArrayDouble;
-            for i := 0 to buffLen - 1 do
-                ar.Add(buff[i]);
+            for I := 0 to buffLen - 1 do
+                ar.Add(buff[I]);
           end;
       end;
   end;
@@ -2078,11 +2244,11 @@ end;
 
 procedure TLearn.LoadFromDF(df: TDataFrameEngine);
 var
-  ar  : TDataFrameArrayDouble;
-  i, J: TLInt;
-  plm : PLearnMemory;
+  ar: TDataFrameArrayDouble;
+  I, J: TLInt;
+  plm: PLearnMemory;
   buff: TLVec;
-  m64 : TMemoryStream64;
+  m64: TMemoryStream64;
 begin
   Clear;
 
@@ -2097,8 +2263,8 @@ begin
 
   ar := df.Reader.ReadArrayDouble;
 
-  i := 0;
-  while i < ar.Count do
+  I := 0;
+  while I < ar.Count do
     begin
       new(plm);
       SetLength(plm^.m_in, FInLen);
@@ -2108,17 +2274,17 @@ begin
       J := 0;
       while J < FInLen do
         begin
-          plm^.m_in[J] := ar[i];
+          plm^.m_in[J] := ar[I];
           inc(J);
-          inc(i);
+          inc(I);
         end;
 
       J := 0;
       while J < FOutLen do
         begin
-          plm^.m_out[J] := ar[i];
+          plm^.m_out[J] := ar[I];
           inc(J);
-          inc(i);
+          inc(I);
         end;
     end;
 
@@ -2145,8 +2311,8 @@ begin
       begin
         ar := df.Reader.ReadArrayDouble;
         SetLength(buff, ar.Count);
-        for i := 0 to ar.Count - 1 do
-            buff[i] := ar[i];
+        for I := 0 to ar.Count - 1 do
+            buff[I] := ar[I];
 
         try
             DFUnserialize(buff, PDecisionForest(FLearnData)^);
@@ -2159,8 +2325,8 @@ begin
       begin
         ar := df.Reader.ReadArrayDouble;
         SetLength(buff, ar.Count);
-        for i := 0 to ar.Count - 1 do
-            buff[i] := ar[i];
+        for I := 0 to ar.Count - 1 do
+            buff[I] := ar[I];
 
         try
             MNLUnserialize(buff, PLogitModel(FLearnData)^);
@@ -2173,8 +2339,8 @@ begin
       begin
         ar := df.Reader.ReadArrayDouble;
         SetLength(buff, ar.Count);
-        for i := 0 to ar.Count - 1 do
-            buff[i] := ar[i];
+        for I := 0 to ar.Count - 1 do
+            buff[I] := ar[I];
 
         try
             MLPUNSerialize(buff, PMultiLayerPerceptron(FLearnData)^);
@@ -2187,8 +2353,8 @@ begin
       begin
         ar := df.Reader.ReadArrayDouble;
         SetLength(buff, ar.Count);
-        for i := 0 to ar.Count - 1 do
-            buff[i] := ar[i];
+        for I := 0 to ar.Count - 1 do
+            buff[I] := ar[I];
 
         try
             MLPEUNSerialize(buff, PMLPEnsemble(FLearnData)^);

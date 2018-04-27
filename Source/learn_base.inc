@@ -8,33 +8,6 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 
-{ base type api }
-function AbsReal(X: TLFloat): TLFloat; forward;
-function AbsInt(I: TLInt): TLInt; forward;
-function RandomReal(): TLFloat; forward;
-function RandomInteger(I: TLInt): TLInt; forward;
-function Sign(X: TLFloat): TLInt; forward;
-function AP_Sqr(X: TLFloat): TLFloat; forward;
-
-function APVDotProduct(V1: PLFloat; I11, I12: TLInt; V2: PLFloat; I21, I22: TLInt): TLFloat; forward;
-procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; forward;
-procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt; s: TLFloat); overload; forward;
-procedure APVMoveNeg(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); forward;
-procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; forward;
-procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt; s: TLFloat); overload; forward;
-procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; forward;
-procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt; s: TLFloat); overload; forward;
-procedure APVMul(VOp: PLFloat; I1, I2: TLInt; s: TLFloat); forward;
-procedure APVFillValue(VOp: PLFloat; I1, I2: TLInt; s: TLFloat); forward;
-
-function AP_Float(X: TLFloat): TLFloat; forward;
-function AP_FP_Eq(X: TLFloat; Y: TLFloat): Boolean; forward;
-function AP_FP_NEq(X: TLFloat; Y: TLFloat): Boolean; forward;
-function AP_FP_Less(X: TLFloat; Y: TLFloat): Boolean; forward;
-function AP_FP_Less_Eq(X: TLFloat; Y: TLFloat): Boolean; forward;
-function AP_FP_Greater(X: TLFloat; Y: TLFloat): Boolean; forward;
-function AP_FP_Greater_Eq(X: TLFloat; Y: TLFloat): Boolean; forward;
-
 type
   TLBVec             = packed array of Boolean;
   PLearnBooleanArray = ^TLBVec;
@@ -58,15 +31,11 @@ type
     CA: TLComplexVec;
   end;
 
-function DynamicArrayCopy(const A: TLIVec): TLIVec; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLVec): TLVec; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLComplexVec): TLComplexVec; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function DynamicArrayCopy(const A: TLBVec): TLBVec; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function DynamicArrayCopy(const A: TLIMatrix): TLIMatrix; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLMatrix): TLMatrix; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLComplexMatrix): TLComplexMatrix; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function DynamicArrayCopy(const A: TLBMatrix): TLBMatrix; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+function DynamicArrayCopy(const A: TLComplexVec): TLComplexVec; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLComplexMatrix): TLComplexMatrix; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function AbsComplex(const Z: TLComplex): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function Conj(const Z: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -88,14 +57,6 @@ function C_Equal(const Z1: TLComplex; const Z2: TLComplex): Boolean; forward; {$
 function C_NotEqual(const Z1: TLComplex; const Z2: TLComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function C_EqualR(const Z1: TLComplex; const R: TLFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function C_NotEqualR(const Z1: TLComplex; const R: TLFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure TagSort(var A: TLVec; const N: TLInt; var P1: TLIVec; var P2: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure TagSortFastI(var A: TLVec; var B: TLIVec; N: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure TagSortFastR(var A: TLVec; var B: TLVec; N: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure TagSortFast(var A: TLVec; const N: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure TagHeapPushI(var A: TLVec; var B: TLIVec; var N: TLInt; const VA: TLFloat; const VB: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure TagHeapReplaceTopI(var A: TLVec; var B: TLIVec; const N: TLInt; const VA: TLFloat; const VB: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure TagHeapPopI(var A: TLVec; var B: TLIVec; var N: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 /// //////////////////////////////////////////////////////////////////////
@@ -240,10 +201,10 @@ end;
 /// //////////////////////////////////////////////////////////////////////
 function AbsComplex(const Z: TLComplex): TLFloat;
 var
-  W   : TLFloat;
+  W: TLFloat;
   XABS: TLFloat;
   YABS: TLFloat;
-  V   : TLFloat;
+  V: TLFloat;
 begin
   XABS := AbsReal(Z.X);
   YABS := AbsReal(Z.Y);
@@ -414,7 +375,7 @@ function APVDotProduct(V1: PLFloat; I11, I12: TLInt; V2: PLFloat;
   I21, I22: TLInt): TLFloat;
 var
   I, C: TLInt;
-  R   : TLFloat;
+  R: TLFloat;
 begin
   Assert(I12 - I11 = I22 - I21, 'APVDotProduct: arrays of different size!');
   Inc(V1, I11);
@@ -634,7 +595,7 @@ end;
 
 procedure TagSort(var A: TLVec; const N: TLInt; var P1: TLIVec; var P2: TLIVec);
 var
-  I : TLInt;
+  I: TLInt;
   PV: TLIVec;
   VP: TLIVec;
   LV: TLInt;
@@ -727,10 +688,10 @@ end;
 
 procedure TagSortFastI(var A: TLVec; var B: TLIVec; N: TLInt);
 var
-  I   : TLInt;
-  K   : TLInt;
-  T   : TLInt;
-  Tmp : TLFloat;
+  I: TLInt;
+  K: TLInt;
+  T: TLInt;
+  Tmp: TLFloat;
   TmpI: TLInt;
 begin
 
@@ -816,10 +777,10 @@ end;
 procedure TagSortFastR(var A: TLVec; var B: TLVec;
   N: TLInt);
 var
-  I   : TLInt;
-  K   : TLInt;
-  T   : TLInt;
-  Tmp : TLFloat;
+  I: TLInt;
+  K: TLInt;
+  T: TLInt;
+  Tmp: TLFloat;
   TmpR: TLFloat;
 begin
 
@@ -904,9 +865,9 @@ end;
 
 procedure TagSortFast(var A: TLVec; const N: TLInt);
 var
-  I  : TLInt;
-  K  : TLInt;
-  T  : TLInt;
+  I: TLInt;
+  K: TLInt;
+  T: TLInt;
   Tmp: TLFloat;
 begin
 
@@ -1067,10 +1028,10 @@ end;
 procedure TagHeapReplaceTopI(var A: TLVec; var B: TLIVec;
   const N: TLInt; const VA: TLFloat; const VB: TLInt);
 var
-  J : TLInt;
+  J: TLInt;
   K1: TLInt;
   K2: TLInt;
-  V : TLFloat;
+  V: TLFloat;
   V1: TLFloat;
   V2: TLFloat;
 begin

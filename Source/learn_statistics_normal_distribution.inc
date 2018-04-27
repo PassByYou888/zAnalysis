@@ -40,11 +40,11 @@ function InvErf(const E: TLFloat): TLFloat; forward;
   ************************************************************************ *)
 function Erf(const X: TLFloat): TLFloat;
 var
-  NX : TLFloat;
+  NX: TLFloat;
   XSq: TLFloat;
-  S  : TLFloat;
-  P  : TLFloat;
-  Q  : TLFloat;
+  S: TLFloat;
+  P: TLFloat;
+  Q: TLFloat;
 begin
   NX := AbsReal(X);
   S := Sign(NX);
@@ -218,20 +218,20 @@ end;
 function InvNormalDistribution(const y0: TLFloat): TLFloat;
 var
   Expm2: TLFloat;
-  S2Pi : TLFloat;
-  X    : TLFloat;
-  y    : TLFloat;
-  z    : TLFloat;
-  y2   : TLFloat;
-  x0   : TLFloat;
-  x1   : TLFloat;
-  code : TLInt;
-  P0   : TLFloat;
-  Q0   : TLFloat;
-  P1   : TLFloat;
-  Q1   : TLFloat;
-  P2   : TLFloat;
-  Q2   : TLFloat;
+  S2Pi: TLFloat;
+  X: TLFloat;
+  y: TLFloat;
+  z: TLFloat;
+  y2: TLFloat;
+  x0: TLFloat;
+  x1: TLFloat;
+  code: TLInt;
+  P0: TLFloat;
+  Q0: TLFloat;
+  P1: TLFloat;
+  Q1: TLFloat;
+  P2: TLFloat;
+  Q2: TLFloat;
 begin
   Expm2 := 0.13533528323661269189;
   S2Pi := 2.50662827463100050242;

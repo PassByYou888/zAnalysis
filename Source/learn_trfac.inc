@@ -207,10 +207,10 @@ procedure RMatrixLUP(var A: TLMatrix; M: TLInt; N: TLInt;
   var Pivots: TLIVec);
 var
   Tmp: TLVec;
-  I  : TLInt;
-  J  : TLInt;
-  MX : TLFloat;
-  V  : TLFloat;
+  I: TLInt;
+  J: TLInt;
+  MX: TLFloat;
+  V: TLFloat;
 begin
 
   //
@@ -265,11 +265,11 @@ procedure CMatrixLUP(var A: TLComplexMatrix; M: TLInt; N: TLInt;
   var Pivots: TLIVec);
 var
   Tmp: TLComplexVec;
-  I  : TLInt;
-  J  : TLInt;
-  MX : TLFloat;
-  V  : TLFloat;
-  i_ : TLInt;
+  I: TLInt;
+  J: TLInt;
+  MX: TLFloat;
+  V: TLFloat;
+  i_: TLInt;
 begin
 
   //
@@ -330,10 +330,10 @@ procedure RMatrixPLU(var A: TLMatrix; M: TLInt; N: TLInt;
   var Pivots: TLIVec);
 var
   Tmp: TLVec;
-  I  : TLInt;
-  J  : TLInt;
-  MX : TLFloat;
-  V  : TLFloat;
+  I: TLInt;
+  J: TLInt;
+  MX: TLFloat;
+  V: TLFloat;
 begin
 
   //
@@ -388,11 +388,11 @@ procedure CMatrixPLU(var A: TLComplexMatrix; M: TLInt; N: TLInt;
   var Pivots: TLIVec);
 var
   Tmp: TLComplexVec;
-  I  : TLInt;
-  J  : TLInt;
-  MX : TLFloat;
-  V  : TLComplex;
-  i_ : TLInt;
+  I: TLInt;
+  J: TLInt;
+  MX: TLFloat;
+  V: TLComplex;
+  i_: TLInt;
 begin
 
   //
@@ -457,10 +457,10 @@ procedure CMatrixLUPRec(var A: TLComplexMatrix; Offs: TLInt;
   M: TLInt; N: TLInt; var Pivots: TLIVec;
   var Tmp: TLComplexVec);
 var
-  I  : TLInt;
-  M1 : TLInt;
-  M2 : TLInt;
-  i_ : TLInt;
+  I: TLInt;
+  M1: TLInt;
+  M2: TLInt;
+  i_: TLInt;
   i1_: TLInt;
 begin
 
@@ -574,10 +574,10 @@ procedure RMatrixLUPRec(var A: TLMatrix; Offs: TLInt;
   M: TLInt; N: TLInt; var Pivots: TLIVec;
   var Tmp: TLVec);
 var
-  I  : TLInt;
-  M1 : TLInt;
-  M2 : TLInt;
-  i_ : TLInt;
+  I: TLInt;
+  M1: TLInt;
+  M2: TLInt;
+  i_: TLInt;
   i1_: TLInt;
 begin
 
@@ -694,10 +694,10 @@ procedure CMatrixPLURec(var A: TLComplexMatrix; Offs: TLInt;
   M: TLInt; N: TLInt; var Pivots: TLIVec;
   var Tmp: TLComplexVec);
 var
-  I  : TLInt;
-  N1 : TLInt;
-  N2 : TLInt;
-  i_ : TLInt;
+  I: TLInt;
+  N1: TLInt;
+  N2: TLInt;
+  i_: TLInt;
   i1_: TLInt;
 begin
 
@@ -808,7 +808,7 @@ procedure RMatrixPLURec(var A: TLMatrix; Offs: TLInt;
   M: TLInt; N: TLInt; var Pivots: TLIVec;
   var Tmp: TLVec);
 var
-  I : TLInt;
+  I: TLInt;
   N1: TLInt;
   N2: TLInt;
 begin
@@ -892,11 +892,11 @@ procedure CMatrixLUP2(var A: TLComplexMatrix; Offs: TLInt;
   M: TLInt; N: TLInt; var Pivots: TLIVec;
   var Tmp: TLComplexVec);
 var
-  I  : TLInt;
-  J  : TLInt;
-  JP : TLInt;
-  S  : TLComplex;
-  i_ : TLInt;
+  I: TLInt;
+  J: TLInt;
+  JP: TLInt;
+  S: TLComplex;
+  i_: TLInt;
   i1_: TLInt;
 begin
 
@@ -989,11 +989,11 @@ procedure RMatrixLUP2(var A: TLMatrix; Offs: TLInt;
   M: TLInt; N: TLInt; var Pivots: TLIVec;
   var Tmp: TLVec);
 var
-  I  : TLInt;
-  J  : TLInt;
-  JP : TLInt;
-  S  : TLFloat;
-  i_ : TLInt;
+  I: TLInt;
+  J: TLInt;
+  JP: TLInt;
+  S: TLFloat;
+  i_: TLInt;
   i1_: TLInt;
 begin
 
@@ -1080,11 +1080,11 @@ procedure CMatrixPLU2(var A: TLComplexMatrix; Offs: TLInt;
   M: TLInt; N: TLInt; var Pivots: TLIVec;
   var Tmp: TLComplexVec);
 var
-  I  : TLInt;
-  J  : TLInt;
-  JP : TLInt;
-  S  : TLComplex;
-  i_ : TLInt;
+  I: TLInt;
+  J: TLInt;
+  JP: TLInt;
+  S: TLComplex;
+  i_: TLInt;
   i1_: TLInt;
 begin
 
@@ -1174,11 +1174,11 @@ procedure RMatrixPLU2(var A: TLMatrix; Offs: TLInt;
   M: TLInt; N: TLInt; var Pivots: TLIVec;
   var Tmp: TLVec);
 var
-  I  : TLInt;
-  J  : TLInt;
-  JP : TLInt;
-  S  : TLFloat;
-  i_ : TLInt;
+  I: TLInt;
+  J: TLInt;
+  JP: TLInt;
+  S: TLFloat;
+  i_: TLInt;
   i1_: TLInt;
 begin
 
@@ -1414,15 +1414,15 @@ end;
 function HPDMatrixCholesky2(var AAA: TLComplexMatrix; Offs: TLInt;
   N: TLInt; IsUpper: Boolean; var Tmp: TLComplexVec): Boolean;
 var
-  I  : TLInt;
-  J  : TLInt;
-  K  : TLInt;
-  J1 : TLInt;
-  J2 : TLInt;
+  I: TLInt;
+  J: TLInt;
+  K: TLInt;
+  J1: TLInt;
+  J2: TLInt;
   AJJ: TLFloat;
-  V  : TLComplex;
-  R  : TLFloat;
-  i_ : TLInt;
+  V: TLComplex;
+  R: TLFloat;
+  i_: TLInt;
   i1_: TLInt;
 begin
   Result := True;
@@ -1566,15 +1566,15 @@ end;
 function SPDMatrixCholesky2(var AAA: TLMatrix; Offs: TLInt;
   N: TLInt; IsUpper: Boolean; var Tmp: TLVec): Boolean;
 var
-  I  : TLInt;
-  J  : TLInt;
-  K  : TLInt;
-  J1 : TLInt;
-  J2 : TLInt;
+  I: TLInt;
+  J: TLInt;
+  K: TLInt;
+  J1: TLInt;
+  J2: TLInt;
   AJJ: TLFloat;
-  V  : TLFloat;
-  R  : TLFloat;
-  i_ : TLInt;
+  V: TLFloat;
+  R: TLFloat;
+  i_: TLInt;
   i1_: TLInt;
 begin
   Result := True;

@@ -111,8 +111,13 @@ type
     property IgnoreCase: Boolean read FIgnoreCase write FIgnoreCase;
     property AccessOptimization: Boolean read FAccessOptimization write FAccessOptimization;
     property Count: NativeInt read FCount write FCount;
-    property NameValue[const name: SystemString]: Pointer read GetNameValue write SetValue; default;
+
+    property KeyValue[const name: SystemString]: Pointer read GetNameValue write SetValue; default;
+    property NameValue[const name: SystemString]: Pointer read GetNameValue write SetValue;
+
+    property KeyData[const name: SystemString]: PHashListData read GetNameData;
     property NameData[const name: SystemString]: PHashListData read GetNameData;
+
     property OnDataFreeProc: TPointerDataNotifyProc read FOnDataFreeProc write FOnDataFreeProc;
     property MaxNameLen: NativeInt read FMaxNameLen;
     property MinNameLen: NativeInt read FMinNameLen;
@@ -373,6 +378,7 @@ type
     function GetNext(NPtr: Pointer): NativeUInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function GetPrev(NPtr: Pointer): NativeUInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function ListBuffer: PListBuffer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
     procedure Progress(OnProgress: TPointerHashNativeUIntListLoopCall); overload;
     procedure Progress(OnProgress: TPointerHashNativeUIntListLoopMethod); overload;
     {$IFNDEF FPC} procedure Progress(OnProgress: TPointerHashNativeUIntListLoopProc); overload; {$ENDIF}
@@ -431,6 +437,7 @@ type
     destructor Destroy; override;
 
     procedure Assign(sour: THashObjectList);
+
     procedure Progress(OnProgress: THashObjectListLoopCall); overload;
     procedure Progress(OnProgress: THashObjectListLoopMethod); overload;
     {$IFNDEF FPC} procedure Progress(OnProgress: THashObjectListLoopProc); overload; {$ENDIF}
@@ -459,9 +466,12 @@ type
     property IgnoreCase: Boolean read GetIgnoreCase write SetIgnoreCase;
     property AutoFreeObject: Boolean read FAutoFreeObject write FAutoFreeObject;
     property Count: NativeInt read GetCount;
-    property NameValue[const name: SystemString]: TCoreClassObject read GetNameValue write SetNames; default;
+
+    property KeyValue[const name: SystemString]: TCoreClassObject read GetNameValue write SetNames; default;
+    property NameValue[const name: SystemString]: TCoreClassObject read GetNameValue write SetNames;
+
     property OnChange[const name: SystemString]: THashObjectChangeEvent read GetOnChange write SetOnChange;
-    // no script interface
+
     property HashList: THashList read FHashList;
   end;
 
@@ -538,7 +548,10 @@ type
     property AccessOptimization: Boolean read GetAccessOptimization write SetAccessOptimization;
     property IgnoreCase: Boolean read GetIgnoreCase write SetIgnoreCase;
     property Count: NativeInt read GetCount;
-    property NameValue[const name: SystemString]: SystemString read GetNameValue write SetNames; default;
+
+    property KeyValue[const name: SystemString]: SystemString read GetNameValue write SetNames; default;
+    property NameValue[const name: SystemString]: SystemString read GetNameValue write SetNames;
+
     property OnChange[const name: SystemString]: THashStringChangeEvent read GetOnChange write SetOnChange;
     property OnValueChangeNotify: THashStringChangeEvent read FOnValueChangeNotify write FOnValueChangeNotify;
 
@@ -552,7 +565,6 @@ type
     procedure SetAsText(const Value: SystemString);
     property AsText: SystemString read GetAsText write SetAsText;
 
-    // no script interface
     property HashList: THashList read FHashList;
   end;
 
@@ -676,7 +688,9 @@ type
     property f[const name: SystemString]: Double read GetF write SetF;
     property s[const name: SystemString]: SystemString read GetS write SetS;
 
-    property NameValue[const name: SystemString]: Variant read GetNameValue write SetNames; default;
+    property KeyValue[const name: SystemString]: Variant read GetNameValue write SetNames; default;
+    property NameValue[const name: SystemString]: Variant read GetNameValue write SetNames;
+
     property OnChange[const name: SystemString]: THashVariantChangeEvent read GetOnChange write SetOnChange;
     property OnValueChangeNotify: THashVariantChangeEvent read FOnValueChangeNotify write FOnValueChangeNotify;
 
@@ -692,7 +706,6 @@ type
     procedure SetAsText(const Value: SystemString);
     property AsText: SystemString read GetAsText write SetAsText;
 
-    // no script interface
     property HashList: THashList read FHashList;
   end;
 

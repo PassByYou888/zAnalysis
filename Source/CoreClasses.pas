@@ -19,6 +19,13 @@ unit CoreClasses;
 interface
 
 uses SysUtils, Classes, Types, Math,
+  {$IFDEF parallel}
+  {$IFDEF FPC}
+  mtprocs,
+  {$ELSE}
+  Threading,
+  {$ENDIF FPC}
+  {$ENDIF parallel}
   PascalStrings,
   SyncObjs
   {$IFDEF FPC}
