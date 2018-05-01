@@ -70,8 +70,10 @@ const
   BelowOrientation     = -1;
   CoplanarOrientation  = 0;
 
-function RangeValue(const v, minv, maxv: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
-function ClampValue(const v, minv, maxv: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function fabs(const v: Single): Single; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function fabs(const v: Double): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function Range(const v, minv, maxv: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function Clamp(const v, minv, maxv: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function MaxValue(const v1, v2: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function MinValue(const v1, v2: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function MakePoint(const X, Y: TGeoFloat): T2DPoint; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
@@ -129,7 +131,7 @@ function PointLerp(const v1, v2: T2DPoint; t: TGeoFloat): T2DPoint; {$IFDEF INLI
 function PointLerpTo(const sour, dest: T2DPoint; const d: TGeoFloat): T2DPoint; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 procedure SwapPoint(var v1, v2: T2DPoint); {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function Pow(v: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
-function Pow(v: TGeoFloat; n: Integer): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function Pow(const v, n: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function MidPoint(const pt1, pt2: T2DPoint): T2DPoint; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 
 function IsEqual(const Val1, Val2, Epsilon: TGeoFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
@@ -306,8 +308,9 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    procedure Add(X, Y: TGeoFloat); overload;
-    procedure Add(pt: T2DPoint); overload;
+    procedure Add(const X, Y: TGeoFloat); overload;
+    procedure Add(const pt: T2DPoint); overload;
+    procedure Add(v2l: TVec2List); overload;
     procedure AddSubdivision(nbCount: Integer; pt: T2DPoint); overload;
     procedure AddSubdivisionWithDistance(avgDist: TGeoFloat; pt: T2DPoint); overload;
     procedure Insert(idx: Integer; X, Y: TGeoFloat); overload;
@@ -700,7 +703,23 @@ end;
 {$ENDIF}
 
 
-function RangeValue(const v, minv, maxv: TGeoFloat): TGeoFloat;
+function fabs(const v: Single): Single;
+begin
+  if v < 0 then
+      Result := -v
+  else
+      Result := v;
+end;
+
+function fabs(const v: Double): Double;
+begin
+  if v < 0 then
+      Result := -v
+  else
+      Result := v;
+end;
+
+function Range(const v, minv, maxv: TGeoFloat): TGeoFloat;
 begin
   if v < minv then
       Result := minv
@@ -710,7 +729,7 @@ begin
       Result := v;
 end;
 
-function ClampValue(const v, minv, maxv: TGeoFloat): TGeoFloat;
+function Clamp(const v, minv, maxv: TGeoFloat): TGeoFloat;
 begin
   if v < minv then
       Result := minv
@@ -834,13 +853,15 @@ begin
 end;
 
 function HypotX(const X, Y: Extended): TGeoFloat;
-{ formula: Sqrt(X*X + Y*Y)
-  implemented as:  |Y|*Sqrt(1+Sqr(X/Y)), |X| < |Y| for greater precision }
+{
+  formula: Sqrt(X*X + Y*Y)
+  implemented as: |Y|*Sqrt(1+Sqr(X/Y)), |X| < |Y| for greater precision
+}
 var
   temp, TempX, TempY: Extended;
 begin
-  TempX := Abs(X);
-  TempY := Abs(Y);
+  TempX := fabs(X);
+  TempY := fabs(Y);
   if TempX > TempY then
     begin
       temp := TempX;
@@ -1059,7 +1080,7 @@ begin
   Result := v * v;
 end;
 
-function Pow(v: TGeoFloat; n: Integer): TGeoFloat;
+function Pow(const v, n: TGeoFloat): TGeoFloat;
 begin
   Result := Math.Power(v, n);
 end;
@@ -1075,7 +1096,7 @@ var
   Diff: TGeoFloat;
 begin
   Diff := Val1 - Val2;
-  Assert(((-Epsilon <= Diff) and (Diff <= Epsilon)) = (Abs(Diff) <= Epsilon), 'Error - Illogical error in equality Detect. (IsEqual)');
+  Assert(((-Epsilon <= Diff) and (Diff <= Epsilon)) = (fabs(Diff) <= Epsilon), 'Error - Illogical error in equality Detect. (IsEqual)');
   Result := ((-Epsilon <= Diff) and (Diff <= Epsilon));
 end;
 
@@ -1104,7 +1125,7 @@ var
   Diff: TGeoFloat;
 begin
   Diff := Val1 - Val2;
-  Assert(((-Epsilon > Diff) or (Diff > Epsilon)) = (Abs(Val1 - Val2) > Epsilon), 'Error - Illogical error in equality Detect. (NotEqual)');
+  Assert(((-Epsilon > Diff) or (Diff > Epsilon)) = (fabs(Val1 - Val2) > Epsilon), 'Error - Illogical error in equality Detect. (NotEqual)');
   Result := ((-Epsilon > Diff) or (Diff > Epsilon));
 end;
 
@@ -1182,7 +1203,7 @@ end;
 
 function AngleDistance(const s, a: TGeoFloat): TGeoFloat;
 begin
-  Result := Abs(s - a);
+  Result := fabs(s - a);
   if Result > 180 then
       Result := 360 - Result;
 end;
@@ -1745,7 +1766,7 @@ begin
         FirstLastDelta := PointSub(Points[FirstIndex], LastPoint);
         for i := FirstIndex + 1 to LastIndex - 1 do
           begin
-            Delta := Abs((Points[i][0] - LastPoint[0]) * FirstLastDelta[1] - (Points[i][1] - LastPoint[1]) * FirstLastDelta[0]);
+            Delta := fabs((Points[i][0] - LastPoint[0]) * FirstLastDelta[1] - (Points[i][1] - LastPoint[1]) * FirstLastDelta[0]);
             if Delta > DeltaMax then
               begin
                 DeltaMaxIndex := i;
@@ -2578,7 +2599,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TVec2List.Add(X, Y: TGeoFloat);
+procedure TVec2List.Add(const X, Y: TGeoFloat);
 var
   p: P2DPoint;
 begin
@@ -2587,9 +2608,21 @@ begin
   FList.Add(p);
 end;
 
-procedure TVec2List.Add(pt: T2DPoint);
+procedure TVec2List.Add(const pt: T2DPoint);
+var
+  p: P2DPoint;
 begin
-  Add(pt[0], pt[1]);
+  New(p);
+  p^ := pt;
+  FList.Add(p);
+end;
+
+procedure TVec2List.Add(v2l: TVec2List);
+var
+  i: Integer;
+begin
+  for i := 0 to v2l.Count - 1 do
+      Add(v2l[i]^);
 end;
 
 procedure TVec2List.AddSubdivision(nbCount: Integer; pt: T2DPoint);
