@@ -8,13 +8,14 @@
 {$IFDEF FPC}
   {$MODE objfpc}
   {$MODESWITCH AdvancedRecords}
-  {$MODESWITCH nestedprocvars}
   {$STACKFRAMES ON}
   {$NOTES OFF}
   {$ASMMODE intel}
   {$IFDEF FPC_BIG_ENDIAN}
     {$DEFINE BIG_ENDIAN}
   {$ENDIF}
+
+  {$UNDEF FirstCharInZero}
 
   {$R-} { range check }
 
@@ -45,16 +46,24 @@
     {$DEFINE CriticalSimulateAtomic}
     {$UNDEF parallel}
   {$ENDIF}
+
+  {$IFDEF release}
+    {$R-} { range check }
+  {$ELSE}
+    {$R-} { range check }
+  {$ENDIF}
+
 {$ENDIF}
 
-{$WARNINGS OFF}
+//{$WARNINGS OFF}
 {$HINTS OFF}
 {$H+} { long string }
-{$R-} { range check }
+//{$R+} { range check }
 {$A+} { Word Align Data }
 {$O-} { optimization }
 {$Q-} { Overflow checking }
 {$B-} { Complete boolean evaluation }
+{$I+} { Input output checking }
 
 (*
   {$IFDEF FPC}
@@ -63,6 +72,13 @@
 
   {$IFNDEF FPC}
   {$ENDIF FPC}
+
+  {$IFDEF parallel}
+  {$ELSE}
+  {$ENDIF}
+
+  {$IFNDEF parallel}
+  {$ENDIF}
 
   {$Region 'RegionName'}
   {$EndRegion 'RegionName'}
