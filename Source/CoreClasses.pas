@@ -268,14 +268,14 @@ end;
 
 {$I CoreAtomic.inc}
 
-threadvar
-  LockIDBuff: packed array [0..255] of TCoreClassPersistent;
+var
+  LockIDBuff: packed array [0..$FF] of TCoreClassPersistent;
 
 procedure InitLockIDBuff;
 var
-  i: Integer;
+  i: Byte;
 begin
-  for i := 0 to 255 do
+  for i := 0 to $FF do
       LockIDBuff[i] := TCoreClassPersistent.Create;
 end;
 
@@ -283,7 +283,7 @@ procedure FreeLockIDBuff;
 var
   i: Integer;
 begin
-  for i := 0 to 255 do
+  for i := 0 to $FF do
       DisposeObject(LockIDBuff[i]);
 end;
 
