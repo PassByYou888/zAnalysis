@@ -48,10 +48,7 @@ function KMeansCluster(const Source: TKMFloat2DArray; const NVars, k, Restarts: 
 
 implementation
 
-uses Math;
-
-const
-  MaxRealNumber = 1E300;
+uses Math, Learn;
 
 procedure ArrayMove(VDst: PKMFloat; const i11, i12: NativeInt; VSrc: PKMFloat; const i21, i22: NativeInt); inline; overload;
 var
@@ -245,7 +242,7 @@ begin
           // random number within (0,1) is generated and
           // inverse empirical CDF is used to randomly choose a point.
           s := 0;
-          v := Random();
+          v := RandomReal();
           i := 0;
           while i <= NPoints - 1 do
             begin
@@ -317,7 +314,7 @@ begin
       //
       // Note that for performance reasons centers are stored in ROWS of CT, not
       // in columns. We'll transpose CT in the end and store it in the KArray.
-      i := Random(NPoints);
+      i := RandomInteger(NPoints);
       ArrayMove(@ct[0][0], 0, NVars - 1, @Source[i][0], 0, NVars - 1);
       CBusy[0] := True;
       i := 1;
