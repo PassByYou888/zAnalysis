@@ -80,6 +80,7 @@ type
     procedure SetSize(NewWidth, NewHeight: Integer; const ClearColor: TRasterColor); overload; virtual;
     function SizeOfPoint: TPoint;
     function SizeOf2DPoint: T2DPoint;
+    function Size2D: TVec2;
     function Empty: Boolean;
     function BoundsRect: TRect;
     function Bounds2DRect: T2DRect;
@@ -111,7 +112,8 @@ type
 
     procedure VertLine(X, Y1, Y2: Integer; Value: TRasterColor);
     procedure HorzLine(X1, Y, X2: Integer; Value: TRasterColor);
-    procedure Line(X1, Y1, X2, Y2: Integer; Value: TRasterColor; L: Boolean);
+    procedure Line(X1, Y1, X2, Y2: Integer; Value: TRasterColor; L: Boolean); overload;
+    procedure Line(p1, p2: T2DPoint; Value: TRasterColor; L: Boolean); overload;
     procedure FillRect(X1, Y1, X2, Y2: Integer; Value: TRasterColor);
     procedure DrawCross(DstX, DstY, LineDist: Integer; Value: TRasterColor);
     procedure DrawPointListLine(pl: T2DPointList; Value: TRasterColor; wasClose: Boolean);
@@ -568,6 +570,11 @@ begin
   Result := Make2DPoint(Width, Height);
 end;
 
+function TMemoryRaster.Size2D: TVec2;
+begin
+  Result := SizeOf2DPoint;
+end;
+
 function TMemoryRaster.Empty: Boolean;
 begin
   Result := (FBits = nil) or (FWidth <= 0) or (FHeight <= 0);
@@ -629,28 +636,28 @@ end;
 procedure TMemoryRaster.FlipHorz;
 var
   i, J: Integer;
-  P1, P2: PRasterColor;
+  p1, p2: PRasterColor;
   tmp: TRasterColor;
   w, W2: Integer;
 begin
   w := Width;
   { In-place flipping }
-  P1 := PRasterColor(Bits);
-  P2 := P1;
-  Inc(P2, Width - 1);
+  p1 := PRasterColor(Bits);
+  p2 := p1;
+  Inc(p2, Width - 1);
   W2 := Width shr 1;
   for J := 0 to Height - 1 do
     begin
       for i := 0 to W2 - 1 do
         begin
-          tmp := P1^;
-          P1^ := P2^;
-          P2^ := tmp;
-          Inc(P1);
-          Dec(P2);
+          tmp := p1^;
+          p1^ := p2^;
+          p2^ := tmp;
+          Inc(p1);
+          Dec(p2);
         end;
-      Inc(P1, w - W2);
-      Inc(P2, w + W2);
+      Inc(p1, w - W2);
+      Inc(p2, w + W2);
     end;
 end;
 
@@ -658,18 +665,18 @@ procedure TMemoryRaster.FlipVert;
 var
   J, J2: Integer;
   Buffer: PRasterColorArray;
-  P1, P2: PRasterColor;
+  p1, p2: PRasterColor;
 begin
   { in-place }
   J2 := Height - 1;
   GetMem(Buffer, Width shl 2);
   for J := 0 to Height div 2 - 1 do
     begin
-      P1 := PixelPtr[0, J];
-      P2 := PixelPtr[0, J2];
-      MoveCardinal(P1^, Buffer^, Width);
-      MoveCardinal(P2^, P1^, Width);
-      MoveCardinal(Buffer^, P2^, Width);
+      p1 := PixelPtr[0, J];
+      p2 := PixelPtr[0, J2];
+      MoveCardinal(p1^, Buffer^, Width);
+      MoveCardinal(p2^, p1^, Width);
+      MoveCardinal(Buffer^, p2^, Width);
       Dec(J2);
     end;
   FreeMem(Buffer);
@@ -1192,6 +1199,11 @@ begin
   end;
 end;
 
+procedure TMemoryRaster.Line(p1, p2: T2DPoint; Value: TRasterColor; L: Boolean);
+begin
+  Line(Round(p1[0]), Round(p1[1]), Round(p2[0]), Round(p2[1]), Value, L);
+end;
+
 procedure TMemoryRaster.FillRect(X1, Y1, X2, Y2: Integer; Value: TRasterColor);
 var
   J: Integer;
@@ -1227,21 +1239,21 @@ end;
 procedure TMemoryRaster.DrawPointListLine(pl: T2DPointList; Value: TRasterColor; wasClose: Boolean);
 var
   i: Integer;
-  P1, P2: P2DPoint;
+  p1, p2: P2DPoint;
 begin
   if pl.Count < 2 then
       Exit;
   for i := 1 to pl.Count - 1 do
     begin
-      P1 := pl[i - 1];
-      P2 := pl[i];
-      Line(Round(P1^[0]), Round(P1^[1]), Round(P2^[0]), Round(P2^[1]), Value, True);
+      p1 := pl[i - 1];
+      p2 := pl[i];
+      Line(Round(p1^[0]), Round(p1^[1]), Round(p2^[0]), Round(p2^[1]), Value, True);
     end;
   if wasClose then
     begin
-      P1 := pl.First;
-      P2 := pl.Last;
-      Line(Round(P1^[0]), Round(P1^[1]), Round(P2^[0]), Round(P2^[1]), Value, True);
+      p1 := pl.First;
+      p2 := pl.Last;
+      Line(Round(p1^[0]), Round(p1^[1]), Round(p2^[0]), Round(p2^[1]), Value, True);
     end;
 end;
 
@@ -2476,7 +2488,7 @@ var
   r0, R1Prev, R1Next, R2: Cardinal;
   g0, G1Prev, G1Next, g2: Cardinal;
   b0, B1Prev, B1Next, b2: Cardinal;
-  p0, P1, P2: PRasterColorArray;
+  p0, p1, p2: PRasterColorArray;
 begin
   if AXFinal < AXOrigin then
     begin
@@ -2500,34 +2512,34 @@ begin
   for Y := AYOrigin to AYFinal do
     begin
       p0 := DestMR.ScanLine[Y - 1];
-      P1 := DestMR.ScanLine[Y];
-      P2 := DestMR.ScanLine[Y + 1];
+      p1 := DestMR.ScanLine[Y];
+      p2 := DestMR.ScanLine[Y + 1];
 
       for X := AXOrigin to AXFinal do
         begin
           // alpha component
           a0 := p0^[X] shr 24 and $FF;
-          A1Prev := P1^[X - 1] shr 24 and $FF;
-          A1Next := P1^[X + 1] shr 24 and $FF;
-          a2 := P2^[X] shr 24 and $FF;
+          A1Prev := p1^[X - 1] shr 24 and $FF;
+          A1Next := p1^[X + 1] shr 24 and $FF;
+          a2 := p2^[X] shr 24 and $FF;
 
           // red component
           r0 := p0^[X] shr 16 and $FF;
-          R1Prev := P1^[X - 1] shr 16 and $FF;
-          R1Next := P1^[X + 1] shr 16 and $FF;
-          R2 := P2^[X] shr 16 and $FF;
+          R1Prev := p1^[X - 1] shr 16 and $FF;
+          R1Next := p1^[X + 1] shr 16 and $FF;
+          R2 := p2^[X] shr 16 and $FF;
 
           // green component
           g0 := p0^[X] shr 8 and $FF;
-          G1Prev := P1^[X - 1] shr 8 and $FF;
-          G1Next := P1^[X + 1] shr 8 and $FF;
-          g2 := P2^[X] shr 8 and $FF;
+          G1Prev := p1^[X - 1] shr 8 and $FF;
+          G1Next := p1^[X + 1] shr 8 and $FF;
+          g2 := p2^[X] shr 8 and $FF;
 
           // blue component
           b0 := p0^[X] and $FF;
-          B1Prev := P1^[X - 1] and $FF;
-          B1Next := P1^[X + 1] and $FF;
-          b2 := P2^[X] and $FF;
+          B1Prev := p1^[X - 1] and $FF;
+          B1Next := p1^[X + 1] and $FF;
+          b2 := p2^[X] and $FF;
 
           // composition
           A := (a0 + a2 + A1Prev + A1Next) div 4;
@@ -2535,7 +2547,7 @@ begin
           G := (g0 + g2 + G1Prev + G1Next) div 4;
           B := (b0 + b2 + B1Prev + B1Next) div 4;
 
-          P1^[X] := (A shl 24) or (R shl 16) or (G shl 8) or B;
+          p1^[X] := (A shl 24) or (R shl 16) or (G shl 8) or B;
         end;
     end;
 end;
