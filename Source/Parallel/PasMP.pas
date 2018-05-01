@@ -10,14 +10,13 @@
 { ****************************************************************************** }
 (******************************************************************************
  *                                   PasMP                                    *
- *                    https://github.com/BeRo1985/pasmp                       *
  ******************************************************************************
- *                        Version 2017-10-18-02-02-0000                       *
+ *                        Version 2018-03-23-10-18-0000                       *
  ******************************************************************************
  *                                zlib license                                *
  *============================================================================*
  *                                                                            *
- * Copyright (C) 2016-2017, Benjamin Rosseaux (benjamin@rosseaux.de)          *
+ * Copyright (C) 2016-2018, Benjamin Rosseaux (benjamin@rosseaux.de)          *
  *                                                                            *
  * This software is provided 'as-is', without any express or implied          *
  * warranty. In no event will the authors be held liable for any damages      *
@@ -62,7 +61,6 @@
  *                                                                            *
  ******************************************************************************)
 unit PasMP;
-
 {$ifdef fpc}
  {$mode delphi}
  {$ifdef CPUi386}
@@ -149,7 +147,6 @@ unit PasMP;
  {$ifndef cpu64}
   {$define cpu32}
  {$endif}
-
  {$ifndef BCB}
   {$ifdef ver120}
    {$define Delphi4or5}
@@ -365,7 +362,7 @@ unit PasMP;
 {$undef UseThreadLocalStorage}
 {$undef UseThreadLocalStorageX8632}
 
-{$if defined(Android)}
+{$if defined(Linux) or defined(Android)}
  {$ifdef fpc}
   {$define PasMPPThreadSpinLock}
   {$define PasMPPThreadBarrier}
@@ -402,7 +399,6 @@ unit PasMP;
 {$endif}
 
 {$define PasMPUseWakeUpConditionVariable}
-
 
 interface
 
@@ -462,10 +458,10 @@ type PPasMPInt8=^TPasMPInt8;
      TPasMPUInt16=word;
 
      PPasMPInt32=^TPasMPInt32;
-     TPasMPInt32=Integer;
+     TPasMPInt32=longint;
 
      PPasMPUInt32=^TPasMPUInt32;
-     TPasMPUInt32=Cardinal;
+     TPasMPUInt32=longword;
 
      PPasMPInt64=^TPasMPInt64;
      TPasMPInt64=int64;
@@ -661,7 +657,7 @@ const PasMPAllocatorPoolBucketBits=12;
 type TPasMPAvailableCPUCores=array of TPasMPInt32;
 
      PPasMPInt128Record=^TPasMPInt128Record;
-     TPasMPInt128Record=packed record
+     TPasMPInt128Record=record
 {$ifdef BIG_ENDIAN}
       Hi,Lo:TPasMPUInt64;
 {$else}
@@ -670,7 +666,7 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
      end;
 
      PPasMPInt64Record=^TPasMPInt64Record;
-     TPasMPInt64Record=packed record
+     TPasMPInt64Record=record
       case boolean of
        false:(
 {$ifdef BIG_ENDIAN}
@@ -685,7 +681,7 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
      end;
 
      PPasMPTaggedPointer=^TPasMPTaggedPointer;
-     TPasMPTaggedPointer=packed record
+     TPasMPTaggedPointer=record
       case TPasMPInt32 of
        0:(
         PointerValue:pointer;
@@ -698,13 +694,13 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
 
 {$ifdef Unix}
      PPasMPTimeSpec=^TPasMPTimeSpec;
-     TPasMPTimeSpec={$if defined(fpc)}TTimeSpec{$elseif declared(timespec)}timespec{$else}packed record
+     TPasMPTimeSpec={$if defined(fpc)}TTimeSpec{$elseif declared(timespec)}timespec{$else}record
       tv_sec:time_t;
       tv_nsec:suseconds_t;
      end{$ifend};
 
      PPasMPTimeZone=^TPasMPTimeZone;
-     TPasMPTimeZone={$ifdef fpc}timezone{$else}packed record
+     TPasMPTimeZone={$ifdef fpc}timezone{$else}record
       tz_minuteswest:TPasMPInt32;
       tz_dsttime:TPasMPInt32;
      end{$endif};
@@ -1248,11 +1244,11 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
      PPasMPSpinLockPThreadBarrier=^TPasMPSpinLockPThreadBarrier;
 {$if defined(Android)}
      PPasMPSpinLockPThreadFastLock=^TPasMPSpinLockPThreadFastLock;
-     TPasMPSpinLockPThreadFastLock={$ifdef fpc}_pthread_fastlock{$else}packed record
+     TPasMPSpinLockPThreadFastLock={$ifdef fpc}_pthread_fastlock{$else}record
       __status:TPasMPInt32;
       __spinlock:TPasMPInt32;
      end{$endif};
-     TPasMPSpinLockPThreadBarrier=packed record
+     TPasMPSpinLockPThreadBarrier=record
       __ba_lock:TPasMPSpinLockPThreadFastLock;
       __ba_required:TPasMPInt32;
       __ba_present:TPasMPInt32;
@@ -1312,14 +1308,14 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
 {$if defined(fpc) and (fpc_version>=3)}{$pop}{$ifend}
 
      PPasMPThreadSafeQueueNode=^TPasMPThreadSafeQueueNode;
-     TPasMPThreadSafeQueueNode=packed record
+     TPasMPThreadSafeQueueNode=record
 {$ifdef PASMP_HAS_DOUBLE_NATIVE_MACHINE_WORD_ATOMIC_COMPARE_EXCHANGE}
       Previous:TPasMPTaggedPointer;
       Next:TPasMPTaggedPointer;
 {$else}
       Next:pointer;
 {$endif}
-      Data:packed record
+      Data:record
        // Empty
       end;
      end;
@@ -1361,9 +1357,9 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
 {$if defined(fpc) and (fpc_version>=3)}{$pop}{$ifend}
 
      PPasMPThreadSafeBoundedArrayBasedQueueItemNode=^TPasMPThreadSafeBoundedArrayBasedQueueItemNode;
-     TPasMPThreadSafeBoundedArrayBasedQueueItemNode=packed record
+     TPasMPThreadSafeBoundedArrayBasedQueueItemNode=record
       Sequence:TPasMPUInt32;
-      Data:packed record
+      Data:record
        // Empty
       end;
      end;
@@ -1402,13 +1398,13 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
      TPasMPThreadSafeHashTableHash=TPasMPUInt32;
 
      PPasMPThreadSafeHashTableItem=^TPasMPThreadSafeHashTableItem;
-     TPasMPThreadSafeHashTableItem=packed record
+     TPasMPThreadSafeHashTableItem=record
       case TPasMPInt32 of
        0:(
         Lock:TPasMPInt32;
         State:TPasMPInt32;
         Hash:TPasMPThreadSafeHashTableHash;
-        Data:packed record
+        Data:record
          // Empty
         end;
        );
@@ -1418,7 +1414,7 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
      end;
 
      PPasMPThreadSafeHashTableState=^TPasMPThreadSafeHashTableState;
-     TPasMPThreadSafeHashTableState=packed record
+     TPasMPThreadSafeHashTableState=record
       case TPasMPInt32 of
        0:(
         Previous:PPasMPThreadSafeHashTableState;
@@ -1585,9 +1581,9 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
 {$endif}
 
      PPasMPBoundedStackItem=^TPasMPBoundedStackItem;
-     TPasMPBoundedStackItem=packed record
+     TPasMPBoundedStackItem=record
       Next:TPasMPThreadSafeStackEntry;
-      Data:packed record
+      Data:record
        // Empty
       end;
      end;
@@ -1616,7 +1612,7 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
      TPasMPBoundedStack<T>=class
       private
        type PPasMPBoundedTypedStackItem=^TPasMPBoundedTypedStackItem;
-            TPasMPBoundedTypedStackItem=packed record
+            TPasMPBoundedTypedStackItem=record
              Next:TPasMPThreadSafeStackEntry;
              Data:T;
             end;
@@ -1638,9 +1634,9 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
 {$endif}
 
      PPasMPUnboundedStackItem=^TPasMPUnboundedStackItem;
-     TPasMPUnboundedStackItem=packed record
+     TPasMPUnboundedStackItem=record
       Next:TPasMPThreadSafeStackEntry;
-      Data:packed record
+      Data:record
        // Empty
       end;
      end;
@@ -1665,7 +1661,7 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
      TPasMPUnboundedStack<T>=class
       private
        type PPasMPUnboundedTypedStackItem=^TPasMPUnboundedTypedStackItem;
-            TPasMPUnboundedTypedStackItem=packed record
+            TPasMPUnboundedTypedStackItem=record
              Next:TPasMPThreadSafeStackEntry;
              Data:T;
             end;
@@ -1684,9 +1680,9 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
 {$endif}
 
      PPasMPBoundedQueueItem=^TPasMPBoundedQueueItem;
-     TPasMPBoundedQueueItem=packed record
+     TPasMPBoundedQueueItem=record
       Next:TPasMPThreadSafeStackEntry;
-      Data:packed record
+      Data:record
        // Empty
       end;
      end;
@@ -1715,7 +1711,7 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
      TPasMPBoundedQueue<T>=class
       private
        type PPasMPBoundedTypedQueueItem=^TPasMPBoundedTypedQueueItem;
-            TPasMPBoundedTypedQueueItem=packed record
+            TPasMPBoundedTypedQueueItem=record
              Next:TPasMPThreadSafeStackEntry;
              Data:T;
             end;
@@ -1969,7 +1965,7 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
 
      TPasMPJobWorkerThread=class;
 
-     TPasMPJob=packed record
+     TPasMPJob=record
       case TPasMPInt32 of
        0:(                                          // 32 / 64 bit
         Method:TMethod;                             //  8 / 16 => 2x pointers
@@ -2125,7 +2121,7 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
 
 {$if defined(fpc) and (fpc_version>=3)}{$push}{$optimization noorderfields}{$ifend}
      PPasMPProfilerHistoryRingBufferItem=^TPasMPProfilerHistoryRingBufferItem;
-     TPasMPProfilerHistoryRingBufferItem=packed record
+     TPasMPProfilerHistoryRingBufferItem=record
       case TPasMPUInt32 of
        0:(
         JobTag:TPasMPUInt32;
@@ -2255,6 +2251,7 @@ type TPasMPAvailableCPUCores=array of TPasMPInt32;
        class function DecodeJobTagFromJobFlags(const Flags:TPasMPUInt32):TPasMPUInt32; {$ifdef HAS_STATIC}static;{$endif}{$ifdef CAN_INLINE}inline;{$endif}
        procedure Reset;
        function CreateScope:TPasMPScope; {$ifdef fpc}{$ifdef CAN_INLINE}inline;{$endif}{$endif}
+       function GetJobWorkerThreadIndex:TPasMPInt32;
 {$ifdef HAS_ANONYMOUS_METHODS}
        function Acquire(const JobReferenceProcedure:TPasMPJobReferenceProcedure;const Data:pointer=nil;const ParentJob:PPasMPJob=nil;const Flags:TPasMPUInt32=0):PPasMPJob; overload;
 {$endif}
@@ -2488,7 +2485,7 @@ type ppthread_mutex_t=^pthread_mutex_t;
      Ppthread_barrier_t=^pthread_barrier_t;
      pthread_barrier_t=TPasMPSpinLockPThreadBarrier;
 
-     pthread_barrierattr_t=packed record
+     pthread_barrierattr_t=record
       __pshared:TPasMPInt32;
      end;
      ppthread_barrierattr_t=^pthread_barrierattr_t;
@@ -2578,7 +2575,7 @@ const PTHREAD_BARRIER_SERIAL_THREAD=-1;
 type Ppthread_barrier_t=^pthread_barrier_t;
      pthread_barrier_t=TPasMPSpinLockPThreadBarrier;
 
-     pthread_barrierattr_t=packed record
+     pthread_barrierattr_t=record
       __pshared:TPasMPInt32;
      end;
      ppthread_barrierattr_t=^pthread_barrierattr_t;
@@ -11482,7 +11479,7 @@ type PItem=^TItem;
      PItemArray=^TItemArray;
      TItemArray=array of TItem;
      PStackItem=^TStackItem;
-     TStackItem=packed record
+     TStackItem=record
       Left,Right,Depth:TPasMPInt32;
      end;
  function Compare(const a,b:TPasMPProfilerHistoryRingBufferItem):TPasMPInt32;
@@ -12193,6 +12190,17 @@ begin
 end;
 {$endif}
 
+function TPasMP.GetJobWorkerThreadIndex:TPasMPInt32;
+var CurrentJobWorkerThread:TPasMPJobWorkerThread;
+begin
+ CurrentJobWorkerThread:=GetJobWorkerThread;
+ if assigned(CurrentJobWorkerThread) then begin
+  result:=CurrentJobWorkerThread.fThreadIndex;
+ end else begin
+  result:=-1;
+ end;
+end;
+
 procedure TPasMP.WaitForWakeUp;
 {$ifdef PasMPUseWakeUpConditionVariable}
 var SavedWakeUpCounter:TPasMPInt32;
@@ -12320,7 +12328,7 @@ end;
 
 {$ifdef HAS_ANONYMOUS_METHODS}
 type PPasMPJobReferenceProcedureJobData=^TPasMPJobReferenceProcedureJobData;
-     TPasMPJobReferenceProcedureJobData=packed record
+     TPasMPJobReferenceProcedureJobData=record
       JobReferenceProcedure:TPasMPJobReferenceProcedure;
       Data:pointer;
      end;
@@ -12712,7 +12720,7 @@ end;
 
 {$ifdef HAS_ANONYMOUS_METHODS}
 type PPasMPParallelForReferenceProcedureStartJobData=^TPasMPParallelForReferenceProcedureStartJobData;
-     TPasMPParallelForReferenceProcedureStartJobData=packed record
+     TPasMPParallelForReferenceProcedureStartJobData=record
       ParallelForReferenceProcedure:TPasMPParallelForReferenceProcedure;
       Data:pointer;
       FirstIndex:TPasMPNativeInt;
@@ -12723,7 +12731,7 @@ type PPasMPParallelForReferenceProcedureStartJobData=^TPasMPParallelForReference
      end;
 
      PPasMPParallelForReferenceProcedureJobData=^TPasMPParallelForReferenceProcedureJobData;
-     TPasMPParallelForReferenceProcedureJobData=packed record
+     TPasMPParallelForReferenceProcedureJobData=record
       StartJobData:PPasMPParallelForReferenceProcedureStartJobData;
       FirstIndex:TPasMPNativeInt;
       LastIndex:TPasMPNativeInt;
@@ -12872,7 +12880,7 @@ end;
 {$endif}
 
 type PPasMPParallelForStartJobData=^TPasMPParallelForStartJobData;
-     TPasMPParallelForStartJobData=packed record
+     TPasMPParallelForStartJobData=record
       Method:TMethod;
       Data:pointer;
       FirstIndex:TPasMPNativeInt;
@@ -12883,7 +12891,7 @@ type PPasMPParallelForStartJobData=^TPasMPParallelForStartJobData;
      end;
 
      PPasMPParallelForJobData=^TPasMPParallelForJobData;
-     TPasMPParallelForJobData=packed record
+     TPasMPParallelForJobData=record
       StartJobData:PPasMPParallelForStartJobData;
       FirstIndex:TPasMPNativeInt;
       LastIndex:TPasMPNativeInt;
@@ -13048,10 +13056,11 @@ begin
   JobData^.Granularity:=Granularity;
  end;
  JobData^.Depth:=Depth;
+ JobData^.CanSpread:=CanSpread;
 end;
 
 type PPasMPParallelDirectIntroSortJobData=^TPasMPParallelDirectIntroSortJobData;
-     TPasMPParallelDirectIntroSortJobData=packed record
+     TPasMPParallelDirectIntroSortJobData=record
       Items:pointer;
       Left:TPasMPNativeInt;
       Right:TPasMPNativeInt;
@@ -13257,7 +13266,7 @@ begin
 end;
 
 type PPasMPParallelIndirectIntroSortJobData=^TPasMPParallelIndirectIntroSortJobData;
-     TPasMPParallelIndirectIntroSortJobData=packed record
+     TPasMPParallelIndirectIntroSortJobData=record
       Items:pointer;
       Left:TPasMPNativeInt;
       Right:TPasMPNativeInt;
@@ -13457,7 +13466,7 @@ begin
 end;
 
 type PPasMPParallelDirectMergeSortData=^TPasMPParallelDirectMergeSortData;
-     TPasMPParallelDirectMergeSortData=packed record
+     TPasMPParallelDirectMergeSortData=record
       Items:pointer;
       Temp:pointer;
       ElementSize:TPasMPInt32;
@@ -13466,7 +13475,7 @@ type PPasMPParallelDirectMergeSortData=^TPasMPParallelDirectMergeSortData;
      end;
 
      PPasMPParallelDirectMergeSortJobData=^TPasMPParallelDirectMergeSortJobData;
-     TPasMPParallelDirectMergeSortJobData=packed record
+     TPasMPParallelDirectMergeSortJobData=record
       Data:PPasMPParallelDirectMergeSortData;
       Left:TPasMPNativeInt;
       Right:TPasMPNativeInt;
@@ -13628,7 +13637,7 @@ begin
 end;
 
 type PPasMPParallelDirectMergeSortRootJobData=^TPasMPParallelDirectMergeSortRootJobData;
-     TPasMPParallelDirectMergeSortRootJobData=packed record
+     TPasMPParallelDirectMergeSortRootJobData=record
       Items:pointer;
       Left:TPasMPNativeInt;
       Right:TPasMPNativeInt;
@@ -13689,7 +13698,7 @@ begin
 end;
 
 type PPasMPParallelIndirectMergeSortData=^TPasMPParallelIndirectMergeSortData;
-     TPasMPParallelIndirectMergeSortData=packed record
+     TPasMPParallelIndirectMergeSortData=record
       Items:pointer;
       Temp:pointer;
       Granularity:TPasMPInt32;
@@ -13697,7 +13706,7 @@ type PPasMPParallelIndirectMergeSortData=^TPasMPParallelIndirectMergeSortData;
      end;
 
      PPasMPParallelIndirectMergeSortJobData=^TPasMPParallelIndirectMergeSortJobData;
-     TPasMPParallelIndirectMergeSortJobData=packed record
+     TPasMPParallelIndirectMergeSortJobData=record
       Data:PPasMPParallelIndirectMergeSortData;
       Left:TPasMPNativeInt;
       Right:TPasMPNativeInt;
@@ -13848,7 +13857,7 @@ begin
 end;
 
 type PPasMPParallelIndirectMergeSortRootJobData=^TPasMPParallelIndirectMergeSortRootJobData;
-     TPasMPParallelIndirectMergeSortRootJobData=packed record
+     TPasMPParallelIndirectMergeSortRootJobData=record
       Items:pointer;
       Left:TPasMPNativeInt;
       Right:TPasMPNativeInt;
