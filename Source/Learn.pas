@@ -33,6 +33,17 @@ type
   TLIMatrix = packed array of TLIVec;
   PLIMatrix = ^TLIMatrix;
 
+  TLBVec             = packed array of Boolean;
+  PLearnBooleanArray = ^TLBVec;
+  TLBMatrix          = packed array of TLBVec;
+
+  TLComplex = packed record
+    X, Y: TLFloat;
+  end;
+
+  TLComplexVec    = packed array of TLComplex;
+  TLComplexMatrix = packed array of TLComplexVec;
+
   TLearnType = (
     ltKDT,              // KDTree, fast space operation, this not Neurons network
     ltKM,               // k-means++ clusterization, this not Neurons network
@@ -169,6 +180,8 @@ type
     procedure TrainC(const TrainDepth: TLInt; const OnResult: TLearnState_Call);
     procedure TrainM(const TrainDepth: TLInt; const OnResult: TLearnState_Method);
     {$IFNDEF FPC} procedure TrainP(const TrainDepth: TLInt; const OnResult: TLearnState_Proc); {$ENDIF FPC}
+    //
+    // wait thread
     procedure WaitTrain;
     //
     // data input/output support
@@ -231,13 +244,77 @@ type
 procedure LearnTest;
 
 {$REGION 'LearnAPI'}
-{ base type api }
+
+procedure LSetVec(var v: TLVec; const VDef: TLFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LVec(const veclen: TLInt; const VDef: TLFloat): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LVec(const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LVec(const v: TLVec): TPascalString; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LVec(const M: TLMatrix; const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LVec(const M: TLMatrix): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LVec(const s: TPascalString; const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LVec(const v: TLVec; const ShortFloat: Boolean): TPascalString; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SpearmanLVec(const M: TLMatrix; const veclen: TLInt): TLVec; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AbsMaxVec(const v: TLVec): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MaxVec(const v: TLVec): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MinVec(const v: TLVec): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MaxVecIndex(const v: TLVec): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MinVecIndex(const v: TLVec): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure Clamp(var AValue: TLFloat; const AMin, AMax: TLFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure Clamp(var AValue: TLInt; const AMin, AMax: TLInt); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+{ * sampler support * }
+function MatrixSampler(const mr: TMemoryRaster): TLMatrix; overload;
+function MatrixSampler(const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix; overload;
+function MatrixSampler(const Antialiasing: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix; overload;
+{ * linear discriminant analysis support * }
+function LDA(const buff: TLMatrix; const NPoints, NVars, NClasses: TLInt; var W: TLMatrix): TLInt; overload;
+function LDA(const buff: TLMatrix; const NPoints, NVars, NClasses: TLInt; var W: TLVec): TLInt; overload;
+function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean; overload;
+{ * principal component analysis support * }
+function PCA(const buff: TLMatrix; const NPoints, NVars: TLInt; var v: TLMatrix): TLInt; overload;
+function PCA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean; overload;
+{ * k-means++ clusterization support * }
+function KMeans(const source: TKMFloat2DArray; const NVars, k: TLInt; var KArray: TKMFloat2DArray; var kIndex: TKMIntegerArray): Boolean;
+{$ENDREGION 'LearnAPI'}
+
+{$REGION 'FloatAPI'}
 function AbsReal(X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function AbsInt(I: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function RandomReal(): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function RandomInteger(I: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function Sign(X: TLFloat): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function AP_Sqr(X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+function DynamicArrayCopy(const A: TLIVec): TLIVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLVec): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLComplexVec): TLComplexVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLBVec): TLBVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+function DynamicArrayCopy(const A: TLIMatrix): TLIMatrix; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLMatrix): TLMatrix; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLComplexMatrix): TLComplexMatrix; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DynamicArrayCopy(const A: TLBMatrix): TLBMatrix; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+function AbsComplex(const Z: TLComplex): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function Conj(const Z: TLComplex): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CSqr(const Z: TLComplex): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+function C_Complex(const X: TLFloat): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Opposite(const Z: TLComplex): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Add(const Z1: TLComplex; const Z2: TLComplex): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Mul(const Z1: TLComplex; const Z2: TLComplex): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_AddR(const Z1: TLComplex; const R: TLFloat): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_MulR(const Z1: TLComplex; const R: TLFloat): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Sub(const Z1: TLComplex; const Z2: TLComplex): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_SubR(const Z1: TLComplex; const R: TLFloat): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_RSub(const R: TLFloat; const Z1: TLComplex): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Div(const Z1: TLComplex; const Z2: TLComplex): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_DivR(const Z1: TLComplex; const R: TLFloat): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_RDiv(const R: TLFloat; const Z2: TLComplex): TLComplex; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_Equal(const Z1: TLComplex; const Z2: TLComplex): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_NotEqual(const Z1: TLComplex; const Z2: TLComplex): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_EqualR(const Z1: TLComplex; const R: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function C_NotEqualR(const Z1: TLComplex; const R: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function APVDotProduct(V1: PLFloat; I11, I12: TLInt; V2: PLFloat; I21, I22: TLInt): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -250,18 +327,13 @@ procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat; I21, I22: TLInt;
 procedure APVMul(VOp: PLFloat; I1, I2: TLInt; s: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure APVFillValue(VOp: PLFloat; I1, I2: TLInt; s: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function AP_Float(X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AP_Float(X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function AP_FP_Eq(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function AP_FP_NEq(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function AP_FP_Less(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function AP_FP_Less_Eq(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function AP_FP_Greater(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function AP_FP_Greater_Eq(X: TLFloat; Y: TLFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function DynamicArrayCopy(const A: TLIVec): TLIVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLVec): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLIMatrix): TLIMatrix; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLMatrix): TLMatrix; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure TagSort(var A: TLVec; const N: TLInt; var P1: TLIVec; var P2: TLIVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure TagSortFastI(var A: TLVec; var B: TLIVec; N: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -270,7 +342,9 @@ procedure TagSortFast(var A: TLVec; const N: TLInt); {$IFDEF INLINE_ASM} inline;
 procedure TagHeapPushI(var A: TLVec; var B: TLIVec; var N: TLInt; const VA: TLFloat; const VB: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure TagHeapReplaceTopI(var A: TLVec; var B: TLIVec; const N: TLInt; const VA: TLFloat; const VB: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure TagHeapPopI(var A: TLVec; var B: TLIVec; var N: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+{$ENDREGION 'FloatAPI'}
 
+{$REGION 'LowLevelMatrix'}
 { matrix base }
 function VectorNorm2(const X: TLVec; const I1, I2: TLInt): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function VectorIdxAbsMax(const X: TLVec; const I1, I2: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -299,7 +373,184 @@ procedure MatrixMatrixMultiply(const A: TLMatrix; const AI1, AI2, AJ1, AJ2: TLIn
   const Beta: TLFloat;
   var WORK: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
+{ Level 2 and Level 3 BLAS operations }
+procedure ABLASSplitLength(const A: TLMatrix; N: TLInt; var N1: TLInt; var N2: TLInt);
+procedure ABLASComplexSplitLength(const A: TLComplexMatrix; N: TLInt; var N1: TLInt; var N2: TLInt);
+function ABLASBlockSize(const A: TLMatrix): TLInt;
+function ABLASComplexBlockSize(const A: TLComplexMatrix): TLInt;
+function ABLASMicroBlockSize(): TLInt;
+procedure CMatrixTranspose(M: TLInt; N: TLInt; const A: TLComplexMatrix; IA: TLInt; JA: TLInt; var B: TLComplexMatrix; IB: TLInt; JB: TLInt);
+procedure RMatrixTranspose(M: TLInt; N: TLInt; const A: TLMatrix; IA: TLInt; JA: TLInt; var B: TLMatrix; IB: TLInt; JB: TLInt);
+procedure CMatrixCopy(M: TLInt; N: TLInt; const A: TLComplexMatrix; IA: TLInt; JA: TLInt; var B: TLComplexMatrix; IB: TLInt; JB: TLInt);
+procedure RMatrixCopy(M: TLInt; N: TLInt; const A: TLMatrix; IA: TLInt; JA: TLInt; var B: TLMatrix; IB: TLInt; JB: TLInt);
+procedure CMatrixRank1(M: TLInt; N: TLInt; var A: TLComplexMatrix; IA: TLInt; JA: TLInt; var U: TLComplexVec; IU: TLInt; var v: TLComplexVec; IV: TLInt);
+procedure RMatrixRank1(M: TLInt; N: TLInt; var A: TLMatrix; IA: TLInt; JA: TLInt; var U: TLVec; IU: TLInt; var v: TLVec; IV: TLInt);
+procedure CMatrixMV(M: TLInt; N: TLInt; var A: TLComplexMatrix; IA: TLInt; JA: TLInt; OpA: TLInt; var X: TLComplexVec; IX: TLInt; var Y: TLComplexVec; IY: TLInt);
+procedure RMatrixMV(M: TLInt; N: TLInt; var A: TLMatrix; IA: TLInt; JA: TLInt; OpA: TLInt; var X: TLVec; IX: TLInt; var Y: TLVec; IY: TLInt);
+
+procedure CMatrixRightTRSM(M: TLInt; N: TLInt;
+  const A: TLComplexMatrix; I1: TLInt; J1: TLInt;
+  IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt;
+  var X: TLComplexMatrix; I2: TLInt; J2: TLInt);
+
+procedure CMatrixLeftTRSM(M: TLInt; N: TLInt;
+  const A: TLComplexMatrix; I1: TLInt; J1: TLInt;
+  IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt;
+  var X: TLComplexMatrix; I2: TLInt; J2: TLInt);
+
+procedure RMatrixRightTRSM(M: TLInt; N: TLInt;
+  const A: TLMatrix; I1: TLInt; J1: TLInt; IsUpper: Boolean;
+  IsUnit: Boolean; OpType: TLInt; var X: TLMatrix; I2: TLInt; J2: TLInt);
+
+procedure RMatrixLeftTRSM(M: TLInt; N: TLInt;
+  const A: TLMatrix; I1: TLInt; J1: TLInt; IsUpper: Boolean;
+  IsUnit: Boolean; OpType: TLInt; var X: TLMatrix; I2: TLInt; J2: TLInt);
+
+procedure CMatrixSYRK(N: TLInt; k: TLInt; Alpha: TLFloat;
+  const A: TLComplexMatrix; IA: TLInt; JA: TLInt;
+  OpTypeA: TLInt; Beta: TLFloat; var C: TLComplexMatrix; IC: TLInt; JC: TLInt; IsUpper: Boolean);
+
+procedure RMatrixSYRK(N: TLInt; k: TLInt; Alpha: TLFloat;
+  const A: TLMatrix; IA: TLInt; JA: TLInt;
+  OpTypeA: TLInt; Beta: TLFloat; var C: TLMatrix; IC: TLInt; JC: TLInt; IsUpper: Boolean);
+
+procedure CMatrixGEMM(M: TLInt; N: TLInt; k: TLInt;
+  Alpha: TLComplex; const A: TLComplexMatrix; IA: TLInt;
+  JA: TLInt; OpTypeA: TLInt; const B: TLComplexMatrix;
+  IB: TLInt; JB: TLInt; OpTypeB: TLInt; Beta: TLComplex;
+  var C: TLComplexMatrix; IC: TLInt; JC: TLInt);
+
+procedure RMatrixGEMM(M: TLInt; N: TLInt; k: TLInt;
+  Alpha: TLFloat; const A: TLMatrix; IA: TLInt;
+  JA: TLInt; OpTypeA: TLInt; const B: TLMatrix;
+  IB: TLInt; JB: TLInt; OpTypeB: TLInt; Beta: TLFloat;
+  var C: TLMatrix; IC: TLInt; JC: TLInt);
+
+{ LU and Cholesky decompositions }
+procedure RMatrixLU(var A: TLMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec);
+procedure CMatrixLU(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec);
+function HPDMatrixCholesky(var A: TLComplexMatrix; N: TLInt; IsUpper: Boolean): Boolean;
+function SPDMatrixCholesky(var A: TLMatrix; N: TLInt; IsUpper: Boolean): Boolean;
+procedure RMatrixLUP(var A: TLMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec);
+procedure CMatrixLUP(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec);
+procedure RMatrixPLU(var A: TLMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec);
+procedure CMatrixPLU(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec);
+
+{ matrix safe }
+function RMatrixScaledTRSafeSolve(const A: TLMatrix; SA: TLFloat;
+  N: TLInt; var X: TLVec; IsUpper: Boolean; Trans: TLInt;
+  IsUnit: Boolean; MaxGrowth: TLFloat): Boolean;
+
+function CMatrixScaledTRSafeSolve(const A: TLComplexMatrix; SA: TLFloat;
+  N: TLInt; var X: TLComplexVec; IsUpper: Boolean;
+  Trans: TLInt; IsUnit: Boolean; MaxGrowth: TLFloat): Boolean;
+
+{ * Condition number estimate support * }
+function RMatrixRCond1(A: TLMatrix; N: TLInt): TLFloat;
+function RMatrixRCondInf(A: TLMatrix; N: TLInt): TLFloat;
+function SPDMatrixRCond(A: TLMatrix; N: TLInt; IsUpper: Boolean): TLFloat;
+function RMatrixTRRCond1(const A: TLMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean): TLFloat;
+function RMatrixTRRCondInf(const A: TLMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean): TLFloat;
+function HPDMatrixRCond(A: TLComplexMatrix; N: TLInt; IsUpper: Boolean): TLFloat;
+function CMatrixRCond1(A: TLComplexMatrix; N: TLInt): TLFloat;
+function CMatrixRCondInf(A: TLComplexMatrix; N: TLInt): TLFloat;
+function RMatrixLURCond1(const LUA: TLMatrix; N: TLInt): TLFloat;
+function RMatrixLURCondInf(const LUA: TLMatrix; N: TLInt): TLFloat;
+function SPDMatrixCholeskyRCond(const A: TLMatrix; N: TLInt; IsUpper: Boolean): TLFloat;
+function HPDMatrixCholeskyRCond(const A: TLComplexMatrix; N: TLInt; IsUpper: Boolean): TLFloat;
+function CMatrixLURCond1(const LUA: TLComplexMatrix; N: TLInt): TLFloat;
+function CMatrixLURCondInf(const LUA: TLComplexMatrix; N: TLInt): TLFloat;
+function CMatrixTRRCond1(const A: TLComplexMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean): TLFloat;
+function CMatrixTRRCondInf(const A: TLComplexMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean): TLFloat;
+function RCondThreshold(): TLFloat;
+
+{ Matrix inverse }
+type
+  TMatInvReport = packed record
+    R1: TLFloat;
+    RInf: TLFloat;
+  end;
+
+procedure RMatrixLUInverse(var A: TLMatrix; const Pivots: TLIVec; N: TLInt; var Info: TLInt; var Rep: TMatInvReport);
+procedure RMatrixInverse(var A: TLMatrix; N: TLInt; var Info: TLInt; var Rep: TMatInvReport);
+procedure CMatrixLUInverse(var A: TLComplexMatrix; const Pivots: TLIVec; N: TLInt; var Info: TLInt; var Rep: TMatInvReport);
+procedure CMatrixInverse(var A: TLComplexMatrix; N: TLInt; var Info: TLInt; var Rep: TMatInvReport);
+procedure SPDMatrixCholeskyInverse(var A: TLMatrix; N: TLInt; IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport);
+procedure SPDMatrixInverse(var A: TLMatrix; N: TLInt; IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport);
+procedure HPDMatrixCholeskyInverse(var A: TLComplexMatrix; N: TLInt; IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport);
+procedure HPDMatrixInverse(var A: TLComplexMatrix; N: TLInt; IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport);
+procedure RMatrixTRInverse(var A: TLMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean; var Info: TLInt; var Rep: TMatInvReport);
+procedure CMatrixTRInverse(var A: TLComplexMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean; var Info: TLInt; var Rep: TMatInvReport);
+
+{ matrix rotations }
+procedure ApplyRotationsFromTheLeft(IsForward: Boolean; M1: TLInt; M2: TLInt; N1: TLInt; N2: TLInt;
+  const C: TLVec; const s: TLVec; var A: TLMatrix; var WORK: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLInt; M2: TLInt; N1: TLInt; N2: TLInt;
+  const C: TLVec; const s: TLVec; var A: TLMatrix; var WORK: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure GenerateRotation(F: TLFloat; G: TLFloat; var CS: TLFloat; var SN: TLFloat; var R: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
+{ Bidiagonal SVD }
+function RMatrixBDSVD(var D: TLVec; E: TLVec; N: TLInt; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
+  var U: TLMatrix; NRU: TLInt; var C: TLMatrix; NCC: TLInt; var VT: TLMatrix; NCVT: TLInt): Boolean;
+
+function BidiagonalSVDDecomposition(var D: TLVec; E: TLVec; N: TLInt; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
+  var U: TLMatrix; NRU: TLInt; var C: TLMatrix; NCC: TLInt; var VT: TLMatrix; NCVT: TLInt): Boolean;
+
+{ Eigensolvers }
+function SMatrixEVD(A: TLMatrix; N: TLInt; ZNeeded: TLInt; IsUpper: Boolean; var D: TLVec; var Z: TLMatrix): Boolean;
+
+function SMatrixEVDR(A: TLMatrix; N: TLInt; ZNeeded: TLInt;
+  IsUpper: Boolean; B1: TLFloat; B2: TLFloat; var M: TLInt;
+  var W: TLVec; var Z: TLMatrix): Boolean;
+
+function SMatrixEVDI(A: TLMatrix; N: TLInt; ZNeeded: TLInt;
+  IsUpper: Boolean; I1: TLInt; I2: TLInt;
+  var W: TLVec; var Z: TLMatrix): Boolean;
+
+function HMatrixEVD(A: TLComplexMatrix; N: TLInt; ZNeeded: TLInt; IsUpper: Boolean;
+  var D: TLVec; var Z: TLComplexMatrix): Boolean;
+
+function HMatrixEVDR(A: TLComplexMatrix; N: TLInt;
+  ZNeeded: TLInt; IsUpper: Boolean; B1: TLFloat; B2: TLFloat;
+  var M: TLInt; var W: TLVec; var Z: TLComplexMatrix): Boolean;
+
+function HMatrixEVDI(A: TLComplexMatrix; N: TLInt;
+  ZNeeded: TLInt; IsUpper: Boolean; I1: TLInt;
+  I2: TLInt; var W: TLVec; var Z: TLComplexMatrix): Boolean;
+
 function SMatrixTDEVD(var D: TLVec; E: TLVec; N: TLInt; ZNeeded: TLInt; var Z: TLMatrix): Boolean;
+
+function SMatrixTDEVDR(var D: TLVec; const E: TLVec;
+  N: TLInt; ZNeeded: TLInt; A: TLFloat; B: TLFloat;
+  var M: TLInt; var Z: TLMatrix): Boolean;
+
+function SMatrixTDEVDI(var D: TLVec; const E: TLVec;
+  N: TLInt; ZNeeded: TLInt; I1: TLInt;
+  I2: TLInt; var Z: TLMatrix): Boolean;
+
+function RMatrixEVD(A: TLMatrix; N: TLInt; VNeeded: TLInt;
+  var WR: TLVec; var WI: TLVec; var VL: TLMatrix;
+  var VR: TLMatrix): Boolean;
+
+function InternalBisectionEigenValues(D: TLVec; E: TLVec;
+  N: TLInt; IRANGE: TLInt; IORDER: TLInt;
+  VL: TLFloat; VU: TLFloat; IL: TLInt; IU: TLInt;
+  ABSTOL: TLFloat; var W: TLVec; var M: TLInt;
+  var NSPLIT: TLInt; var IBLOCK: TLIVec;
+  var ISPLIT: TLIVec; var ErrorCode: TLInt): Boolean;
+
+procedure InternalDSTEIN(const N: TLInt; const D: TLVec;
+  E: TLVec; const M: TLInt; W: TLVec;
+  const IBLOCK: TLIVec; const ISPLIT: TLIVec;
+  var Z: TLMatrix; var IFAIL: TLIVec; var Info: TLInt);
+
+{ Schur decomposition }
+function RMatrixSchur(var A: TLMatrix; N: TLInt; var s: TLMatrix): Boolean;
+function UpperHessenbergSchurDecomposition(var H: TLMatrix; N: TLInt; var s: TLMatrix): Boolean;
+
+{$ENDREGION 'LowLevelMatrix'}
+
+{$REGION 'LowlevelDistribution'}
 
 { Normal distribution support }
 function NormalDistribution(const X: TLFloat): TLFloat;
@@ -321,9 +572,9 @@ function IncompleteGammaC(const A, X: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inl
 function InvIncompleteGammaC(const A, y0: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 { Poisson distribution }
-function PoissonDistribution(k: TLInt; m: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function PoissonDistribution(k: TLInt; M: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 { Complemented Poisson distribution }
-function PoissonCDistribution(k: TLInt; m: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function PoissonCDistribution(k: TLInt; M: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 { Inverse Poisson distribution }
 function InvPoissonDistribution(k: TLInt; Y: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
@@ -339,7 +590,7 @@ function FCDistribution(const A: TLInt; const B: TLInt; const X: TLFloat): TLFlo
 { Inverse of complemented F distribution }
 function InvFDistribution(const A: TLInt; const B: TLInt; const Y: TLFloat): TLFloat;
 { Two-sample F-test }
-procedure FTest(const X: TLVec; N: TLInt; const Y: TLVec; m: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
+procedure FTest(const X: TLVec; N: TLInt; const Y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 
 { Binomial distribution support }
 function BinomialDistribution(const k, N: TLInt; const p: TLFloat): TLFloat;
@@ -366,9 +617,9 @@ function InvStudentTDistribution(const k: TLInt; p: TLFloat): TLFloat;
 { One-sample t-test }
 procedure StudentTTest1(const X: TLVec; N: TLInt; Mean: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 { Two-sample pooled test }
-procedure StudentTTest2(const X: TLVec; N: TLInt; const Y: TLVec; m: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
+procedure StudentTTest2(const X: TLVec; N: TLInt; const Y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 { Two-sample unpooled test }
-procedure UnequalVarianceTTest(const X: TLVec; N: TLInt; const Y: TLVec; m: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
+procedure UnequalVarianceTTest(const X: TLVec; N: TLInt; const Y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 
 { Pearson and Spearman distribution support }
 { Pearson product-moment correlation coefficient }
@@ -385,11 +636,13 @@ procedure SpearmanRankCorrelationSignificance(const R: TLFloat; const N: TLInt; 
 procedure JarqueBeraTest(const X: TLVec; const N: TLInt; var p: TLFloat);
 
 { Mann-Whitney U-test }
-procedure MannWhitneyUTest(const X: TLVec; N: TLInt; const Y: TLVec; m: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
+procedure MannWhitneyUTest(const X: TLVec; N: TLInt; const Y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 
 { Wilcoxon signed-rank test }
 procedure WilcoxonSignedRankTest(const X: TLVec; N: TLInt; E: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
+{$ENDREGION 'LowlevelDistribution'}
 
+{$REGION 'LowLevelGauss'}
 {
   Computation of nodes and weights for a Gauss quadrature formula
 
@@ -484,40 +737,11 @@ procedure GaussKronrodQuadratureLegendreCalc(const N: TLInt; var Info: TLInt; va
   In standard TLFloat  precision accuracy reduces to something about 2.0E-16 (depending  on your compiler's handling of long floating point constants).
 }
 procedure GaussKronrodQuadratureLegendreTbl(const N: TLInt; var X, WKronrod, WGauss: TLVec; var Eps: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-{ learn vector api }
-function LVec(const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function LVec(const v: TLVec): TPascalString; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function LVec(const m: TLMatrix; const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function LVec(const m: TLMatrix): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function LVec(const s: TPascalString; const veclen: TLInt): TLVec; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function LVec(const v: TLVec; const ShortFloat: Boolean): TPascalString; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SpearmanLVec(const m: TLMatrix; const veclen: TLInt): TLVec; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MaxVec(const v: TLVec): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MinVec(const v: TLVec): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MaxVecIndex(const v: TLVec): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MinVecIndex(const v: TLVec): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Clamp(var AValue: TLFloat; const AMin, AMax: TLFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Clamp(var AValue: TLInt; const AMin, AMax: TLInt); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-{ * sampler support * }
-function MatrixSampler(const mr: TMemoryRaster): TLMatrix; overload;
-function MatrixSampler(const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix; overload;
-function MatrixSampler(const Antialiasing: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix; overload;
-{ * linear discriminant analysis support * }
-function LDA(const buff: TLMatrix; const NPoints, NVars, NClasses: TLInt; var W: TLMatrix): TLInt; overload;
-function LDA(const buff: TLMatrix; const NPoints, NVars, NClasses: TLInt; var W: TLVec): TLInt; overload;
-function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean; overload;
-{ * principal component analysis support * }
-function PCA(const buff: TLMatrix; const NPoints, NVars: TLInt; var v: TLMatrix): TLInt; overload;
-function PCA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean; overload;
-{ * k-means++ clusterization support * }
-function KMeans(const source: TKMFloat2DArray; const NVars, k: TLInt; var KArray: TKMFloat2DArray; var kIndex: TKMIntegerArray): Boolean;
-
-{$ENDREGION 'LearnAPI'}
+{$ENDREGION 'LowLevelGauss'}
 
 
 const
+  // Ranges of the IEEE floating point types
   MachineEpsilon = 5.0E-16;
   MaxRealNumber  = 1.0E300;
   MinRealNumber  = 1.0E-300;
@@ -569,7 +793,7 @@ uses Math,
 {$INCLUDE learn_gaussintegral.inc}
 {$INCLUDE learn_extAPI.inc}
 {$INCLUDE learn_th.inc}
-
+{$INCLUDE learn_test.inc}
 
 procedure TLearn.KDInput(const IndexFor: NativeInt; var source: TKDTree_Source; const Data: Pointer);
 var
@@ -2419,8 +2643,6 @@ begin
   DisposeObject(de);
 end;
 {$ENDIF FPC}
-
-{$INCLUDE learn_test.inc}
 
 initialization
 
