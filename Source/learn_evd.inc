@@ -8,55 +8,6 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 
-function SMatrixEVD(A: TLMatrix; N: TLInt; ZNeeded: TLInt; IsUpper: Boolean;
-  var D: TLVec; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function SMatrixEVDR(A: TLMatrix; N: TLInt; ZNeeded: TLInt;
-  IsUpper: Boolean; B1: TLFloat; B2: TLFloat; var M: TLInt;
-  var W: TLVec; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function SMatrixEVDI(A: TLMatrix; N: TLInt; ZNeeded: TLInt;
-  IsUpper: Boolean; I1: TLInt; I2: TLInt;
-  var W: TLVec; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function HMatrixEVD(A: TLComplexMatrix; N: TLInt; ZNeeded: TLInt; IsUpper: Boolean;
-  var D: TLVec; var Z: TLComplexMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function HMatrixEVDR(A: TLComplexMatrix; N: TLInt;
-  ZNeeded: TLInt; IsUpper: Boolean; B1: TLFloat; B2: TLFloat;
-  var M: TLInt; var W: TLVec; var Z: TLComplexMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function HMatrixEVDI(A: TLComplexMatrix; N: TLInt;
-  ZNeeded: TLInt; IsUpper: Boolean; I1: TLInt;
-  I2: TLInt; var W: TLVec; var Z: TLComplexMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-// optmized with inline
-// function SMatrixTDEVD(var D: TLVec; E: TLVec; N: TLInt; ZNeeded: TLInt; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function SMatrixTDEVDR(var D: TLVec; const E: TLVec;
-  N: TLInt; ZNeeded: TLInt; A: TLFloat; B: TLFloat;
-  var M: TLInt; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function SMatrixTDEVDI(var D: TLVec; const E: TLVec;
-  N: TLInt; ZNeeded: TLInt; I1: TLInt;
-  I2: TLInt; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function RMatrixEVD(A: TLMatrix; N: TLInt; VNeeded: TLInt;
-  var WR: TLVec; var WI: TLVec; var VL: TLMatrix;
-  var VR: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function InternalBisectionEigenValues(D: TLVec; E: TLVec;
-  N: TLInt; IRANGE: TLInt; IORDER: TLInt;
-  VL: TLFloat; VU: TLFloat; IL: TLInt; IU: TLInt;
-  ABSTOL: TLFloat; var W: TLVec; var M: TLInt;
-  var NSPLIT: TLInt; var IBLOCK: TLIVec;
-  var ISPLIT: TLIVec; var ErrorCode: TLInt): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure InternalDSTEIN(const N: TLInt; const D: TLVec;
-  E: TLVec; const M: TLInt; W: TLVec;
-  const IBLOCK: TLIVec; const ISPLIT: TLIVec;
-  var Z: TLMatrix; var IFAIL: TLIVec; var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
 function TridiagonalEVD(var D: TLVec; E: TLVec; N: TLInt;
   ZNeeded: TLInt; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 

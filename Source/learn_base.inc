@@ -9,20 +9,6 @@
 { ****************************************************************************** }
 
 type
-  TLBVec             = packed array of Boolean;
-  PLearnBooleanArray = ^TLBVec;
-  TLBMatrix          = packed array of TLBVec;
-
-  PLearnComplex = ^TLComplex;
-
-  TLComplex = packed record
-    X, Y: TLFloat;
-  end;
-
-  TLComplexVec       = packed array of TLComplex;
-  PLearnComplexArray = ^TLComplexVec;
-  TLComplexMatrix    = packed array of TLComplexVec;
-
   TLearnCommState = packed record
     Stage: TLInt;
     IA: TLIVec;
@@ -31,37 +17,9 @@ type
     CA: TLComplexVec;
   end;
 
-function DynamicArrayCopy(const A: TLBVec): TLBVec; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLBMatrix): TLBMatrix; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function DynamicArrayCopy(const A: TLComplexVec): TLComplexVec; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DynamicArrayCopy(const A: TLComplexMatrix): TLComplexMatrix; overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function AbsComplex(const Z: TLComplex): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function Conj(const Z: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CSqr(const Z: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function C_Complex(const X: TLFloat): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_Opposite(const Z: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_Add(const Z1: TLComplex; const Z2: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_Mul(const Z1: TLComplex; const Z2: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_AddR(const Z1: TLComplex; const R: TLFloat): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_MulR(const Z1: TLComplex; const R: TLFloat): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_Sub(const Z1: TLComplex; const Z2: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_SubR(const Z1: TLComplex; const R: TLFloat): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_RSub(const R: TLFloat; const Z1: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_Div(const Z1: TLComplex; const Z2: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_DivR(const Z1: TLComplex; const R: TLFloat): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_RDiv(const R: TLFloat; const Z2: TLComplex): TLComplex; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_Equal(const Z1: TLComplex; const Z2: TLComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_NotEqual(const Z1: TLComplex; const Z2: TLComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_EqualR(const Z1: TLComplex; const R: TLFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function C_NotEqualR(const Z1: TLComplex; const R: TLFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-
-/// //////////////////////////////////////////////////////////////////////
-// Functions/procedures
-/// //////////////////////////////////////////////////////////////////////
+  /// //////////////////////////////////////////////////////////////////////
+  // Functions/procedures
+  /// //////////////////////////////////////////////////////////////////////
 function AbsReal(X: TLFloat): TLFloat;
 begin
   // Result := Abs(X);
@@ -368,11 +326,7 @@ begin
   C_NotEqualR := (Z1.X <> R) or (Z1.Y <> 0);
 end;
 
-/// //////////////////////////////////////////////////////////////////////
-// AP BLAS generic interface
-/// //////////////////////////////////////////////////////////////////////
-function APVDotProduct(V1: PLFloat; I11, I12: TLInt; V2: PLFloat;
-  I21, I22: TLInt): TLFloat;
+function APVDotProduct(V1: PLFloat; I11, I12: TLInt; V2: PLFloat; I21, I22: TLInt): TLFloat;
 var
   I, C: TLInt;
   R: TLFloat;

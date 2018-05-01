@@ -7,13 +7,7 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-function RMatrixScaledTRSafeSolve(const A: TLMatrix; SA: TLFloat;
-  N: TLInt; var X: TLVec; IsUpper: Boolean; Trans: TLInt;
-  IsUnit: Boolean; MaxGrowth: TLFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function CMatrixScaledTRSafeSolve(const A: TLComplexMatrix; SA: TLFloat;
-  N: TLInt; var X: TLComplexVec; IsUpper: Boolean;
-  Trans: TLInt; IsUnit: Boolean; MaxGrowth: TLFloat): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function CBasicSolveAndUpdate(Alpha: TLComplex; Beta: TLComplex; LnMax: TLFloat;
   BNorm: TLFloat; MaxGrowth: TLFloat; var XNorm: TLFloat;

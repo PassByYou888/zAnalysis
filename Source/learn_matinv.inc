@@ -7,41 +7,6 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-type
-  TMatInvReport = packed record
-    R1: TLFloat;
-    RInf: TLFloat;
-  end;
-
-procedure RMatrixLUInverse(var A: TLMatrix; const Pivots: TLIVec;
-  N: TLInt; var Info: TLInt; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure RMatrixInverse(var A: TLMatrix; N: TLInt;
-  var Info: TLInt; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure CMatrixLUInverse(var A: TLComplexMatrix;
-  const Pivots: TLIVec; N: TLInt; var Info: TLInt; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure CMatrixInverse(var A: TLComplexMatrix; N: TLInt;
-  var Info: TLInt; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure SPDMatrixCholeskyInverse(var A: TLMatrix; N: TLInt;
-  IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure SPDMatrixInverse(var A: TLMatrix; N: TLInt;
-  IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure HPDMatrixCholeskyInverse(var A: TLComplexMatrix; N: TLInt;
-  IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure HPDMatrixInverse(var A: TLComplexMatrix; N: TLInt;
-  IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure RMatrixTRInverse(var A: TLMatrix; N: TLInt;
-  IsUpper: Boolean; IsUnit: Boolean; var Info: TLInt; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure CMatrixTRInverse(var A: TLComplexMatrix; N: TLInt;
-  IsUpper: Boolean; IsUnit: Boolean; var Info: TLInt; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixTRInverseRec(var A: TLMatrix; Offs: TLInt;
   N: TLInt; IsUpper: Boolean; IsUnit: Boolean; var Tmp: TLVec;
@@ -92,10 +57,10 @@ procedure RMatrixLUInverse(var A: TLMatrix; const Pivots: TLIVec;
   N: TLInt; var Info: TLInt; var Rep: TMatInvReport);
 var
   WORK: TLVec;
-  I   : TLInt;
-  J   : TLInt;
-  K   : TLInt;
-  V   : TLFloat;
+  I: TLInt;
+  J: TLInt;
+  K: TLInt;
+  V: TLFloat;
 begin
   Info := 1;
 
@@ -212,10 +177,10 @@ procedure CMatrixLUInverse(var A: TLComplexMatrix;
   var Rep: TMatInvReport);
 var
   WORK: TLComplexVec;
-  I   : TLInt;
-  J   : TLInt;
-  K   : TLInt;
-  V   : TLComplex;
+  I: TLInt;
+  J: TLInt;
+  K: TLInt;
+  V: TLComplex;
 begin
   Info := 1;
 
@@ -331,15 +296,15 @@ end;
 procedure SPDMatrixCholeskyInverse(var A: TLMatrix; N: TLInt;
   IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport);
 var
-  I    : TLInt;
-  J    : TLInt;
-  K    : TLInt;
-  V    : TLFloat;
-  AJJ  : TLFloat;
-  AII  : TLFloat;
-  Tmp  : TLVec;
+  I: TLInt;
+  J: TLInt;
+  K: TLInt;
+  V: TLFloat;
+  AJJ: TLFloat;
+  AII: TLFloat;
+  Tmp: TLVec;
   Info2: TLInt;
-  Rep2 : TMatInvReport;
+  Rep2: TMatInvReport;
 begin
   if N < 1 then
     begin
@@ -442,12 +407,12 @@ end;
 procedure HPDMatrixCholeskyInverse(var A: TLComplexMatrix; N: TLInt;
   IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport);
 var
-  I    : TLInt;
-  J    : TLInt;
+  I: TLInt;
+  J: TLInt;
   Info2: TLInt;
-  Rep2 : TMatInvReport;
-  Tmp  : TLComplexVec;
-  V    : TLComplex;
+  Rep2: TMatInvReport;
+  Tmp: TLComplexVec;
+  V: TLComplex;
 begin
   if N < 1 then
     begin
@@ -575,8 +540,8 @@ procedure RMatrixTRInverse(var A: TLMatrix; N: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; var Info: TLInt;
   var Rep: TMatInvReport);
 var
-  I  : TLInt;
-  J  : TLInt;
+  I: TLInt;
+  J: TLInt;
   Tmp: TLVec;
 begin
   if N < 1 then
@@ -650,8 +615,8 @@ procedure CMatrixTRInverse(var A: TLComplexMatrix; N: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; var Info: TLInt;
   var Rep: TMatInvReport);
 var
-  I  : TLInt;
-  J  : TLInt;
+  I: TLInt;
+  J: TLInt;
   Tmp: TLComplexVec;
 begin
   if N < 1 then
@@ -700,13 +665,13 @@ procedure RMatrixTRInverseRec(var A: TLMatrix; Offs: TLInt;
   N: TLInt; IsUpper: Boolean; IsUnit: Boolean; var Tmp: TLVec;
   var Info: TLInt; var Rep: TMatInvReport);
 var
-  N1 : TLInt;
-  N2 : TLInt;
-  I  : TLInt;
-  J  : TLInt;
-  V  : TLFloat;
+  N1: TLInt;
+  N2: TLInt;
+  I: TLInt;
+  J: TLInt;
+  V: TLFloat;
   AJJ: TLFloat;
-  i_ : TLInt;
+  i_: TLInt;
   i1_: TLInt;
 begin
   if N < 1 then
@@ -895,13 +860,13 @@ procedure CMatrixTRInverseRec(var A: TLComplexMatrix; Offs: TLInt;
   N: TLInt; IsUpper: Boolean; IsUnit: Boolean; var Tmp: TLComplexVec;
   var Info: TLInt; var Rep: TMatInvReport);
 var
-  N1 : TLInt;
-  N2 : TLInt;
-  I  : TLInt;
-  J  : TLInt;
-  V  : TLComplex;
+  N1: TLInt;
+  N2: TLInt;
+  I: TLInt;
+  J: TLInt;
+  V: TLComplex;
   AJJ: TLComplex;
-  i_ : TLInt;
+  i_: TLInt;
   i1_: TLInt;
 begin
   if N < 1 then
@@ -1103,16 +1068,16 @@ procedure RMatrixLUInverseRec(var A: TLMatrix; Offs: TLInt;
   N: TLInt; var WORK: TLVec; var Info: TLInt;
   var Rep: TMatInvReport);
 var
-  I  : TLInt;
+  I: TLInt;
   IWS: TLInt;
-  J  : TLInt;
-  JB : TLInt;
-  JJ : TLInt;
-  JP : TLInt;
-  K  : TLInt;
-  V  : TLFloat;
-  N1 : TLInt;
-  N2 : TLInt;
+  J: TLInt;
+  JB: TLInt;
+  JJ: TLInt;
+  JP: TLInt;
+  K: TLInt;
+  V: TLFloat;
+  N1: TLInt;
+  N2: TLInt;
 begin
   if N < 1 then
     begin
@@ -1242,17 +1207,17 @@ procedure CMatrixLUInverseRec(var A: TLComplexMatrix; Offs: TLInt;
   N: TLInt; var WORK: TLComplexVec; var Info: TLInt;
   var Rep: TMatInvReport);
 var
-  I  : TLInt;
+  I: TLInt;
   IWS: TLInt;
-  J  : TLInt;
-  JB : TLInt;
-  JJ : TLInt;
-  JP : TLInt;
-  K  : TLInt;
-  V  : TLComplex;
-  N1 : TLInt;
-  N2 : TLInt;
-  i_ : TLInt;
+  J: TLInt;
+  JB: TLInt;
+  JJ: TLInt;
+  JP: TLInt;
+  K: TLInt;
+  V: TLComplex;
+  N1: TLInt;
+  N2: TLInt;
+  i_: TLInt;
   i1_: TLInt;
 begin
   if N < 1 then
@@ -1395,15 +1360,15 @@ end;
 procedure SPDMatrixCholeskyInverseRec(var A: TLMatrix; Offs: TLInt;
   N: TLInt; IsUpper: Boolean; var Tmp: TLVec);
 var
-  I    : TLInt;
-  J    : TLInt;
-  V    : TLFloat;
-  N1   : TLInt;
-  N2   : TLInt;
+  I: TLInt;
+  J: TLInt;
+  V: TLFloat;
+  N1: TLInt;
+  N2: TLInt;
   Info2: TLInt;
-  Rep2 : TMatInvReport;
-  i_   : TLInt;
-  i1_  : TLInt;
+  Rep2: TMatInvReport;
+  i_: TLInt;
+  i1_: TLInt;
 begin
   if N < 1 then
     begin
@@ -1590,15 +1555,15 @@ procedure HPDMatrixCholeskyInverseRec(var A: TLComplexMatrix;
   Offs: TLInt; N: TLInt; IsUpper: Boolean;
   var Tmp: TLComplexVec);
 var
-  I    : TLInt;
-  J    : TLInt;
-  V    : TLComplex;
-  N1   : TLInt;
-  N2   : TLInt;
+  I: TLInt;
+  J: TLInt;
+  V: TLComplex;
+  N1: TLInt;
+  N2: TLInt;
   Info2: TLInt;
-  Rep2 : TMatInvReport;
-  i_   : TLInt;
-  i1_  : TLInt;
+  Rep2: TMatInvReport;
+  i_: TLInt;
+  i1_: TLInt;
 begin
   if N < 1 then
     begin

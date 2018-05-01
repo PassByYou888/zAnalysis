@@ -9,7 +9,6 @@
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
 
-function UpperHessenbergSchurDecomposition(var H: TLMatrix; N: TLInt; var S: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure InternalSchurDecomposition(var H: TLMatrix; N: TLInt; TNeeded: TLInt; ZNeeded: TLInt;
   var WR: TLVec; var WI: TLVec; var Z: TLMatrix; var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -31,6 +30,101 @@ function ExtSchurSignToOne(B: TLFloat): TLInt; forward; {$IFDEF INLINE_ASM} inli
 
 
 (* ************************************************************************
+  Subroutine performing the Schur decomposition of a general matrix by using
+  the QR algorithm with multiple shifts.
+
+  The source matrix A is represented as S'*A*S = T, where S is an orthogonal
+  matrix (Schur vectors), T - upper quasi-triangular matrix (with blocks of
+  sizes 1x1 and 2x2 on the main diagonal).
+
+  Input parameters:
+  A   -   matrix to be decomposed.
+  Array whose indexes range within [0..N-1, 0..N-1].
+  N   -   size of A, N>=0.
+
+
+  Output parameters:
+  A   -   contains matrix T.
+  Array whose indexes range within [0..N-1, 0..N-1].
+  S   -   contains Schur vectors.
+  Array whose indexes range within [0..N-1, 0..N-1].
+
+  Note 1:
+  The block structure of matrix T can be easily recognized: since all
+  the elements below the blocks are zeros, the elements a[i+1,i] which
+  are equal to 0 show the block border.
+
+  Note 2:
+  The algorithm performance depends on the value of the internal parameter
+  NS of the InternalSchurDecomposition subroutine which defines the number
+  of shifts in the QR algorithm (similarly to the block width in block-matrix
+  algorithms in linear algebra). If you require maximum performance on
+  your machine, it is recommended to adjust this parameter manually.
+
+  Result:
+  True,  if the algorithm has converged and parameters A and S contain the result.
+  False, if the algorithm has not converged.
+  ************************************************************************ *)
+function RMatrixSchur(var A: TLMatrix; N: TLInt; var S: TLMatrix): Boolean;
+var
+  Tau: TLVec;
+  WI: TLVec;
+  WR: TLVec;
+  A1: TLMatrix;
+  S1: TLMatrix;
+  INFO: TLInt;
+  I: TLInt;
+  J: TLInt;
+begin
+
+  //
+  // Upper Hessenberg form of the 0-based matrix
+  //
+  RMatrixHessenberg(A, N, Tau);
+  RMatrixHessenbergUnpackQ(A, N, Tau, S);
+
+  //
+  // Convert from 0-based arrays to 1-based,
+  // then call InternalSchurDecomposition
+  // Awkward, of course, but Schur decompisiton subroutine
+  // is too TLComplex to fix it.
+  //
+  //
+  SetLength(A1, N + 1, N + 1);
+  SetLength(S1, N + 1, N + 1);
+  I := 1;
+  while I <= N do
+    begin
+      J := 1;
+      while J <= N do
+        begin
+          A1[I, J] := A[I - 1, J - 1];
+          S1[I, J] := S[I - 1, J - 1];
+          Inc(J);
+        end;
+      Inc(I);
+    end;
+  InternalSchurDecomposition(A1, N, 1, 1, WR, WI, S1, INFO);
+  Result := INFO = 0;
+
+  //
+  // convert from 1-based arrays to -based
+  //
+  I := 1;
+  while I <= N do
+    begin
+      J := 1;
+      while J <= N do
+        begin
+          A[I - 1, J - 1] := A1[I, J];
+          S[I - 1, J - 1] := S1[I, J];
+          Inc(J);
+        end;
+      Inc(I);
+    end;
+end;
+
+(* ************************************************************************
   Subroutine performing  the  Schur  decomposition  of  a  matrix  in  upper
   Hessenberg form using the QR algorithm with multiple shifts.
 
@@ -40,18 +134,13 @@ function ExtSchurSignToOne(B: TLFloat): TLInt; forward; {$IFDEF INLINE_ASM} inli
   diagonal).
 
   Input parameters:
-  H   -   matrix to be decomposed.
-  Array whose indexes range within [1..N, 1..N].
+  H   -   matrix to be decomposed. Array whose indexes range within [1..N, 1..N].
   N   -   size of H, N>=0.
 
-
   Output parameters:
-  H   ?  contains the matrix T.
-  Array whose indexes range within [1..N, 1..N].
-  All elements below the blocks on the main diagonal are equal
-  to 0.
-  S   -   contains Schur vectors.
-  Array whose indexes range within [1..N, 1..N].
+  H   -  contains the matrix T. Array whose indexes range within [1..N, 1..N].
+  All elements below the blocks on the main diagonal are equal to 0.
+  S   -   contains Schur vectors. Array whose indexes range within [1..N, 1..N].
 
   Note 1:
   The block structure of matrix T could be easily recognized: since  all
@@ -76,8 +165,8 @@ function ExtSchurSignToOne(B: TLFloat): TLInt; forward; {$IFDEF INLINE_ASM} inli
 function UpperHessenbergSchurDecomposition(var H: TLMatrix;
   N: TLInt; var S: TLMatrix): Boolean;
 var
-  WI  : TLVec;
-  WR  : TLVec;
+  WI: TLVec;
+  WR: TLVec;
   INFO: TLInt;
 begin
   InternalSchurDecomposition(H, N, 1, 2, WR, WI, S, INFO);
@@ -87,48 +176,48 @@ end;
 procedure InternalSchurDecomposition(var H: TLMatrix; N: TLInt; TNeeded: TLInt; ZNeeded: TLInt;
   var WR: TLVec; var WI: TLVec; var Z: TLMatrix; var INFO: TLInt);
 var
-  WORK    : TLVec;
-  I       : TLInt;
-  I1      : TLInt;
-  I2      : TLInt;
-  IERR    : TLInt;
-  II      : TLInt;
-  ITEMP   : TLInt;
-  ITN     : TLInt;
-  ITS     : TLInt;
-  J       : TLInt;
-  K       : TLInt;
-  L       : TLInt;
-  MAXB    : TLInt;
-  NR      : TLInt;
-  NS      : TLInt;
-  NV      : TLInt;
-  ABSW    : TLFloat;
-  OVFL    : TLFloat;
-  SMLNUM  : TLFloat;
-  TAU     : TLFloat;
-  TEMP    : TLFloat;
-  TST1    : TLFloat;
-  ULP     : TLFloat;
-  UNFL    : TLFloat;
-  S       : TLMatrix;
-  V       : TLVec;
-  VV      : TLVec;
-  WORKC1  : TLVec;
-  WORKS1  : TLVec;
-  WORKV3  : TLVec;
-  TmpWR   : TLVec;
-  TmpWI   : TLVec;
-  INITZ   : Boolean;
-  WANTT   : Boolean;
-  WANTZ   : Boolean;
-  CNST    : TLFloat;
+  WORK: TLVec;
+  I: TLInt;
+  I1: TLInt;
+  I2: TLInt;
+  IERR: TLInt;
+  II: TLInt;
+  ITEMP: TLInt;
+  ITN: TLInt;
+  ITS: TLInt;
+  J: TLInt;
+  K: TLInt;
+  L: TLInt;
+  MAXB: TLInt;
+  NR: TLInt;
+  NS: TLInt;
+  NV: TLInt;
+  ABSW: TLFloat;
+  OVFL: TLFloat;
+  SMLNUM: TLFloat;
+  Tau: TLFloat;
+  TEMP: TLFloat;
+  TST1: TLFloat;
+  ULP: TLFloat;
+  UNFL: TLFloat;
+  S: TLMatrix;
+  V: TLVec;
+  VV: TLVec;
+  WORKC1: TLVec;
+  WORKS1: TLVec;
+  WORKV3: TLVec;
+  TmpWR: TLVec;
+  TmpWI: TLVec;
+  INITZ: Boolean;
+  WANTT: Boolean;
+  WANTZ: Boolean;
+  CNST: TLFloat;
   FailFlag: Boolean;
-  P1      : TLInt;
-  P2      : TLInt;
-  VT      : TLFloat;
-  i_      : TLInt;
-  i1_     : TLInt;
+  P1: TLInt;
+  P2: TLInt;
+  VT: TLFloat;
+  i_: TLInt;
+  i1_: TLInt;
 begin
 
   //
@@ -542,7 +631,7 @@ begin
                       V[i_] := H[i_ + i1_, P1];
                     end;
                 end;
-              GenerateReflection(V, NR, TAU);
+              GenerateReflection(V, NR, Tau);
               if K > L then
                 begin
                   H[K, K - 1] := V[1];
@@ -559,13 +648,13 @@ begin
               // Apply G from the left to transform the rows of the matrix in
               // columns K to I2.
               //
-              ApplyReflectionFromTheLeft(H, TAU, V, K, K + NR - 1, K, I2, WORK);
+              ApplyReflectionFromTheLeft(H, Tau, V, K, K + NR - 1, K, I2, WORK);
 
               //
               // Apply G from the right to transform the columns of the
               // matrix in rows I1 to min(K+NR,I).
               //
-              ApplyReflectionFromTheRight(H, TAU, V, I1, Min(K + NR, I), K,
+              ApplyReflectionFromTheRight(H, Tau, V, I1, Min(K + NR, I), K,
                 K + NR - 1, WORK);
               if WANTZ then
                 begin
@@ -573,7 +662,7 @@ begin
                   //
                   // Accumulate transformations in the matrix Z
                   //
-                  ApplyReflectionFromTheRight(Z, TAU, V, 1, N, K, K + NR - 1, WORK);
+                  ApplyReflectionFromTheRight(Z, Tau, V, 1, N, K, K + NR - 1, WORK);
                 end;
               Inc(K);
             end;
@@ -616,58 +705,58 @@ procedure InternalAuxSchur(WANTT: Boolean; WANTZ: Boolean; N: TLInt;
   var WORKV3: TLVec; var WORKC1: TLVec; var WORKS1: TLVec;
   var INFO: TLInt);
 var
-  I       : TLInt;
-  I1      : TLInt;
-  I2      : TLInt;
-  ITN     : TLInt;
-  ITS     : TLInt;
-  J       : TLInt;
-  K       : TLInt;
-  L       : TLInt;
-  M       : TLInt;
-  NH      : TLInt;
-  NR      : TLInt;
-  NZ      : TLInt;
-  AVE     : TLFloat;
-  CS      : TLFloat;
-  DISC    : TLFloat;
-  H00     : TLFloat;
-  H10     : TLFloat;
-  H11     : TLFloat;
-  H12     : TLFloat;
-  H21     : TLFloat;
-  H22     : TLFloat;
-  H33     : TLFloat;
-  H33S    : TLFloat;
-  H43H34  : TLFloat;
-  H44     : TLFloat;
-  H44S    : TLFloat;
-  OVFL    : TLFloat;
-  S       : TLFloat;
-  SMLNUM  : TLFloat;
-  SN      : TLFloat;
-  SUM     : TLFloat;
-  T1      : TLFloat;
-  T2      : TLFloat;
-  T3      : TLFloat;
-  TST1    : TLFloat;
-  UNFL    : TLFloat;
-  V1      : TLFloat;
-  V2      : TLFloat;
-  V3      : TLFloat;
+  I: TLInt;
+  I1: TLInt;
+  I2: TLInt;
+  ITN: TLInt;
+  ITS: TLInt;
+  J: TLInt;
+  K: TLInt;
+  L: TLInt;
+  M: TLInt;
+  NH: TLInt;
+  NR: TLInt;
+  NZ: TLInt;
+  AVE: TLFloat;
+  CS: TLFloat;
+  DISC: TLFloat;
+  H00: TLFloat;
+  H10: TLFloat;
+  H11: TLFloat;
+  H12: TLFloat;
+  H21: TLFloat;
+  H22: TLFloat;
+  H33: TLFloat;
+  H33S: TLFloat;
+  H43H34: TLFloat;
+  H44: TLFloat;
+  H44S: TLFloat;
+  OVFL: TLFloat;
+  S: TLFloat;
+  SMLNUM: TLFloat;
+  SN: TLFloat;
+  SUM: TLFloat;
+  T1: TLFloat;
+  T2: TLFloat;
+  T3: TLFloat;
+  TST1: TLFloat;
+  UNFL: TLFloat;
+  V1: TLFloat;
+  V2: TLFloat;
+  V3: TLFloat;
   FailFlag: Boolean;
-  DAT1    : TLFloat;
-  DAT2    : TLFloat;
-  P1      : TLInt;
-  HIM1IM1 : TLFloat;
-  HIM1I   : TLFloat;
-  HIIM1   : TLFloat;
-  HII     : TLFloat;
-  WRIM1   : TLFloat;
-  WRI     : TLFloat;
-  WIIM1   : TLFloat;
-  WII     : TLFloat;
-  ULP     : TLFloat;
+  DAT1: TLFloat;
+  DAT2: TLFloat;
+  P1: TLInt;
+  HIM1IM1: TLFloat;
+  HIM1I: TLFloat;
+  HIIM1: TLFloat;
+  HII: TLFloat;
+  WRIM1: TLFloat;
+  WRI: TLFloat;
+  WIIM1: TLFloat;
+  WII: TLFloat;
+  ULP: TLFloat;
 begin
   INFO := 0;
   DAT1 := 0.75;
@@ -1102,23 +1191,23 @@ procedure Aux2X2Schur(var A: TLFloat; var B: TLFloat;
   var CS: TLFloat; var SN: TLFloat);
 var
   MULTPL: TLFloat;
-  AA    : TLFloat;
-  BB    : TLFloat;
-  BCMAX : TLFloat;
-  BCMIS : TLFloat;
-  CC    : TLFloat;
-  CS1   : TLFloat;
-  DD    : TLFloat;
-  EPS   : TLFloat;
-  P     : TLFloat;
-  SAB   : TLFloat;
-  SAC   : TLFloat;
-  SCL   : TLFloat;
-  SIGMA : TLFloat;
-  SN1   : TLFloat;
-  TAU   : TLFloat;
-  TEMP  : TLFloat;
-  Z     : TLFloat;
+  AA: TLFloat;
+  BB: TLFloat;
+  BCMAX: TLFloat;
+  BCMIS: TLFloat;
+  CC: TLFloat;
+  CS1: TLFloat;
+  DD: TLFloat;
+  EPS: TLFloat;
+  P: TLFloat;
+  SAB: TLFloat;
+  SAC: TLFloat;
+  SCL: TLFloat;
+  SIGMA: TLFloat;
+  SN1: TLFloat;
+  Tau: TLFloat;
+  TEMP: TLFloat;
+  Z: TLFloat;
 begin
   MULTPL := 4.0;
   EPS := MachineEpsilon;
@@ -1178,9 +1267,9 @@ begin
                   //
                   // Compute B and the rotation matrix
                   //
-                  TAU := Pythag2(C, Z);
-                  CS := Z / TAU;
-                  SN := C / TAU;
+                  Tau := Pythag2(C, Z);
+                  CS := Z / Tau;
+                  SN := C / Tau;
                   B := B - C;
                   C := 0;
                 end
@@ -1192,9 +1281,9 @@ begin
                   // Make diagonal elements equal.
                   //
                   SIGMA := B + C;
-                  TAU := Pythag2(SIGMA, TEMP);
-                  CS := SQRT(0.5 * (1 + ABSReal(SIGMA) / TAU));
-                  SN := -P / (TAU * CS) * ExtSchurSign(1, SIGMA);
+                  Tau := Pythag2(SIGMA, TEMP);
+                  CS := SQRT(0.5 * (1 + ABSReal(SIGMA) / Tau));
+                  SN := -P / (Tau * CS) * ExtSchurSign(1, SIGMA);
 
                   //
                   // Compute [ AA  BB ] = [ A  B ] [ CS -SN ]
@@ -1229,13 +1318,13 @@ begin
                               SAB := SQRT(ABSReal(B));
                               SAC := SQRT(ABSReal(C));
                               P := ExtSchurSign(SAB * SAC, C);
-                              TAU := 1 / SQRT(ABSReal(B + C));
+                              Tau := 1 / SQRT(ABSReal(B + C));
                               A := TEMP + P;
                               D := TEMP - P;
                               B := B - C;
                               C := 0;
-                              CS1 := SAB * TAU;
-                              SN1 := SAC * TAU;
+                              CS1 := SAB * Tau;
+                              SN1 := SAC * Tau;
                               TEMP := CS * CS1 - SN * SN1;
                               SN := CS * SN1 + SN * CS1;
                               CS := TEMP;

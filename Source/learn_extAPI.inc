@@ -1,10 +1,20 @@
-function LVec(const veclen: TLInt): TLVec;
+procedure LSetVec(var v: TLVec; const VDef: TLFloat);
 var
   i: TLInt;
 begin
+  for i := 0 to Length(v) - 1 do
+      v[i] := VDef;
+end;
+
+function LVec(const veclen: TLInt; const VDef: TLFloat): TLVec;
+begin
   SetLength(Result, veclen);
-  for i := 0 to veclen - 1 do
-      Result[i] := 0.0;
+  LSetVec(Result, VDef);
+end;
+
+function LVec(const veclen: TLInt): TLVec;
+begin
+  SetLength(Result, veclen);
 end;
 
 function LVec(const v: TLVec): TPascalString;
@@ -76,6 +86,17 @@ begin
   SpearmanRank(Result, Length(Result));
 end;
 
+function AbsMaxVec(const v: TLVec): TLFloat;
+var
+  i: TLInt;
+begin
+  Result := AbsReal(v[0]);
+
+  if Length(v) > 1 then
+    for i := 1 to Length(v) - 1 do
+        Result := Max(Result, AbsReal(v[i]));
+end;
+
 function MaxVec(const v: TLVec): TLFloat;
 var
   i: TLInt;
@@ -84,8 +105,7 @@ begin
 
   if Length(v) > 1 then
     for i := 1 to Length(v) - 1 do
-      if v[i] > Result then
-          Result := v[i];
+        Result := Max(Result, v[i]);
 end;
 
 function MinVec(const v: TLVec): TLFloat;
@@ -96,8 +116,7 @@ begin
 
   if Length(v) > 1 then
     for i := 1 to Length(v) - 1 do
-      if v[i] < Result then
-          Result := v[i];
+        Result := Min(Result, v[i]);
 end;
 
 function MaxVecIndex(const v: TLVec): TLInt;
@@ -166,7 +185,7 @@ end;
 
 function MatrixSampler(const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix;
 var
-  N   : TMemoryRaster;
+  N: TMemoryRaster;
   i, J: TLInt;
 begin
   if (mr.Width = SamplerSize) and (mr.Height = SamplerSize) then
@@ -192,7 +211,7 @@ end;
 
 function MatrixSampler(const Antialiasing: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix;
 var
-  N   : TMemoryRaster;
+  N: TMemoryRaster;
   i, J: TLInt;
 begin
   if (mr.Width = SamplerSize) and (mr.Height = SamplerSize) then
@@ -231,11 +250,11 @@ end;
 
 function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean;
 var
-  k        : TLFloat;
+  k: TLFloat;
   mrblur, N: TMemoryRaster;
-  i, J     : TLInt;
-  buff     : TLMatrix;
-  rInfo    : TLInt;
+  i, J: TLInt;
+  buff: TLMatrix;
+  rInfo: TLInt;
 begin
   k := SamplerSize / mr.Width;
 
@@ -293,11 +312,11 @@ end;
 
 function PCA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean;
 var
-  k        : TLFloat;
+  k: TLFloat;
   mrblur, N: TMemoryRaster;
-  i, J     : TLInt;
-  buff     : TLMatrix;
-  rInfo    : TLInt;
+  i, J: TLInt;
+  buff: TLMatrix;
+  rInfo: TLInt;
 begin
   Result := False;
 
@@ -355,5 +374,3 @@ begin
       RandSeed := bakseed;
   end;
 end;
-
-

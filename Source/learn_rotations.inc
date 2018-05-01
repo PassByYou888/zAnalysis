@@ -7,13 +7,6 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-procedure ApplyRotationsFromTheLeft(IsForward: Boolean; M1: TLInt; M2: TLInt; N1: TLInt; N2: TLInt;
-  const C: TLVec; const S: TLVec; var A: TLMatrix; var WORK: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLInt; M2: TLInt; N1: TLInt; N2: TLInt;
-  const C: TLVec; const S: TLVec; var A: TLMatrix; var WORK: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-procedure GenerateRotation(F: TLFloat; G: TLFloat; var CS: TLFloat; var SN: TLFloat; var R: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************

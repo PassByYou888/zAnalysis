@@ -7,15 +7,6 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-function RMatrixBDSVD(var D: TLVec; E: TLVec; N: TLInt;
-  IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean; var U: TLMatrix;
-  NRU: TLInt; var C: TLMatrix; NCC: TLInt;
-  var VT: TLMatrix; NCVT: TLInt): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-function BidiagonalSVDDecomposition(var D: TLVec; E: TLVec;
-  N: TLInt; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
-  var U: TLMatrix; NRU: TLInt; var C: TLMatrix;
-  NCC: TLInt; var VT: TLMatrix; NCVT: TLInt): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function BidiagonalSVDDecompositionInternal(var D: TLVec;
   E: TLVec; N: TLInt; IsUpper: Boolean;

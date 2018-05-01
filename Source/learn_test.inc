@@ -1,8 +1,8 @@
 procedure LearnTest;
 const
   test_InLen  = 5;
-  test_OutLen = 3;
-  test_Depth  = 10;
+  test_OutLen = 5;
+  test_Depth  = 5;
 
   RegressionLearnType: set of TLearnType = [
     ltKDT, ltKM,

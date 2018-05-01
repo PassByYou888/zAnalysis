@@ -7,23 +7,6 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-function RMatrixRCond1(A: TLMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RMatrixRCondInf(A: TLMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SPDMatrixRCond(A: TLMatrix; N: TLInt; IsUpper: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RMatrixTRRCond1(const A: TLMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RMatrixTRRCondInf(const A: TLMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function HPDMatrixRCond(A: TLComplexMatrix; N: TLInt; IsUpper: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CMatrixRCond1(A: TLComplexMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CMatrixRCondInf(A: TLComplexMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RMatrixLURCond1(const LUA: TLMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RMatrixLURCondInf(const LUA: TLMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SPDMatrixCholeskyRCond(const A: TLMatrix; N: TLInt; IsUpper: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function HPDMatrixCholeskyRCond(const A: TLComplexMatrix; N: TLInt; IsUpper: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CMatrixLURCond1(const LUA: TLComplexMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CMatrixLURCondInf(const LUA: TLComplexMatrix; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CMatrixTRRCond1(const A: TLComplexMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CMatrixTRRCondInf(const A: TLComplexMatrix; N: TLInt; IsUpper: Boolean; IsUnit: Boolean): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RCondThreshold(): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixRCondTRInternal(const A: TLMatrix; N: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean; ANORM: TLFloat;

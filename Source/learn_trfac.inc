@@ -7,14 +7,6 @@
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
 { ****************************************************************************** }
-procedure RMatrixLU(var A: TLMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLU(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function HPDMatrixCholesky(var A: TLComplexMatrix; N: TLInt; IsUpper: Boolean): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SPDMatrixCholesky(var A: TLMatrix; N: TLInt; IsUpper: Boolean): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixLUP(var A: TLMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLUP(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixPLU(var A: TLMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixPLU(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Pivots: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixLUPRec(var A: TLComplexMatrix; Offs: TLInt;
   M: TLInt; N: TLInt; var Pivots: TLIVec; var Tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
