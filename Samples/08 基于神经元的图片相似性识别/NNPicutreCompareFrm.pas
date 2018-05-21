@@ -11,7 +11,7 @@ uses
   FMX.Surfaces,
 
   CoreClasses, DoStatusIO, MemoryRaster, PascalStrings, ObjectDataManager, ItemStream,
-  Learn;
+  Learn, LearnTypes;
 
 type
   TForm1 = class(TForm)
@@ -204,13 +204,13 @@ begin
   DoStatus('正在生成 %d * %d 采样矩阵...', [Trunc(Sqrt(lr.InLen)), Trunc(Sqrt(lr.InLen))]);
   for i := 0 to mrList.Count - 1 do
     begin
-      m := Learn.MatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[i]));
+      m := Learn.LMatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[i]));
       lr.AddMatrix(m, [i]);
     end;
   DoStatus('采样矩阵生成完成...耗时%dms', [GetTimeTick - t]);
 
   GlobalLayout.Enabled := False;
-  DoStatus('正在使用 %s 训练神经网络...', [Learn.CLearnString[lr.LearnType]]);
+  DoStatus('正在使用 %s 训练神经网络...', [LearnTypes.CLearnString[lr.LearnType]]);
 
   // 深度训练时请将1改大，比如50
   // 如果使用了"ltLBFGS_MT, ltLM_MT"这些并行方式训练，大数值深度+n维度的数组，会在瞬间吃掉16G以上内存，多数情况下，这一过程只会持续几秒，根据数据体积而定
@@ -293,13 +293,13 @@ begin
   DoStatus('正在生成 %d * %d 采样矩阵...', [Trunc(Sqrt(lr.InLen)), Trunc(Sqrt(lr.InLen))]);
   for i := 0 to mrList.Count - 1 do
     begin
-      m := Learn.MatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[i]));
+      m := Learn.LMatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[i]));
       lr.AddMatrix(m, [i]);
     end;
   DoStatus('采样矩阵生成完成...耗时%dms', [GetTimeTick - t]);
 
   GlobalLayout.Enabled := False;
-  DoStatus('正在使用 %s 训练神经网络...', [Learn.CLearnString[lr.LearnType]]);
+  DoStatus('正在使用 %s 训练神经网络...', [LearnTypes.CLearnString[lr.LearnType]]);
 
   // 深度训练时请将1改大，比如50
   // 如果使用了"ltLBFGS_MT, ltLM_MT"这些并行方式训练，大数值深度+n维度的数组，会在瞬间吃掉16G以上内存，多数情况下，这一过程只会持续几秒，根据数据体积而定
@@ -332,13 +332,13 @@ begin
   DoStatus('正在生成 %d * %d 采样矩阵...', [Trunc(Sqrt(lr.InLen)), Trunc(Sqrt(lr.InLen))]);
   for i := 0 to mrList.Count - 1 do
     begin
-      m := Learn.MatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[i]));
+      m := Learn.LMatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[i]));
       lr.AddMatrix(m, [i]);
     end;
   DoStatus('采样矩阵生成完成...耗时%dms', [GetTimeTick - t]);
 
   GlobalLayout.Enabled := False;
-  DoStatus('正在使用 %s 训练神经网络...', [Learn.CLearnString[lr.LearnType]]);
+  DoStatus('正在使用 %s 训练神经网络...', [LearnTypes.CLearnString[lr.LearnType]]);
 
   // 深度训练时请将1改大，比如50
   // 如果使用了"ltLBFGS_MT, ltLM_MT"这些并行方式训练，大数值深度+n维度的数组，会在瞬间吃掉16G以上内存，多数情况下，这一过程只会持续几秒，根据数据体积而定
@@ -372,13 +372,13 @@ begin
   DoStatus('正在生成 %d * %d 采样矩阵...', [Trunc(Sqrt(lr.InLen)), Trunc(Sqrt(lr.InLen))]);
   for i := 0 to mrList.Count - 1 do
     begin
-      m := Learn.MatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[i]));
+      m := Learn.LMatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[i]));
       lr.AddMatrix(m, [i]);
     end;
   DoStatus('采样矩阵生成完成...耗时%dms', [GetTimeTick - t]);
 
   GlobalLayout.Enabled := False;
-  DoStatus('正在使用 %s 训练神经网络...', [Learn.CLearnString[lr.LearnType]]);
+  DoStatus('正在使用 %s 训练神经网络...', [LearnTypes.CLearnString[lr.LearnType]]);
 
   // 深度训练时请将1改大，比如50
   // 如果使用了"ltLBFGS_MT, ltLM_MT"这些并行方式训练，大数值深度+n维度的数组，会在瞬间吃掉16G以上内存，多数情况下，这一过程只会持续几秒，根据数据体积而定
@@ -412,13 +412,13 @@ begin
   DoStatus('正在生成 %d * %d 采样矩阵...', [Trunc(Sqrt(lr.InLen)), Trunc(Sqrt(lr.InLen))]);
   for i := 0 to mrList.Count - 1 do
     begin
-      m := Learn.MatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[i]));
+      m := Learn.LMatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[i]));
       lr.AddMatrix(m, [i]);
     end;
   DoStatus('采样矩阵生成完成...耗时%dms', [GetTimeTick - t]);
 
   GlobalLayout.Enabled := False;
-  DoStatus('正在使用 %s 训练神经网络...', [Learn.CLearnString[lr.LearnType]]);
+  DoStatus('正在使用 %s 训练神经网络...', [LearnTypes.CLearnString[lr.LearnType]]);
 
   // 深度训练时请将1改大，比如50
   // 如果使用了"ltLBFGS_MT, ltLM_MT"这些并行方式训练，大数值深度+n维度的数组，会在瞬间吃掉16G以上内存，多数情况下，这一过程只会持续几秒，根据数据体积而定
@@ -451,13 +451,13 @@ begin
   DoStatus('正在生成 %d * %d 采样矩阵...', [Trunc(Sqrt(lr.InLen)), Trunc(Sqrt(lr.InLen))]);
   for i := 0 to mrList.Count - 1 do
     begin
-      m := Learn.MatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[i]));
+      m := Learn.LMatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[i]));
       lr.AddMatrix(m, [i]);
     end;
   DoStatus('采样矩阵生成完成...耗时%dms', [GetTimeTick - t]);
 
   GlobalLayout.Enabled := False;
-  DoStatus('正在使用 %s 训练神经网络...', [Learn.CLearnString[lr.LearnType]]);
+  DoStatus('正在使用 %s 训练神经网络...', [LearnTypes.CLearnString[lr.LearnType]]);
 
   // 深度训练时请将1改大，比如50
   // 如果使用了"ltLBFGS_MT, ltLM_MT"这些并行方式训练，大数值深度+n维度的数组，会在瞬间吃掉16G以上内存，多数情况下，这一过程只会持续几秒，根据数据体积而定
@@ -487,16 +487,16 @@ begin
   if lr = nil then
       exit;
 
-  m := MatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[TListboxItem(Sender).Index]));
+  m := LMatrixSampler(True, Trunc(Sqrt(lr.InLen)), TMemoryRaster(mrList[TListboxItem(Sender).Index]));
   fin := LVec(m, lr.InLen);
   if lr.process(@fin, @fout) then
     begin
-      DoStatus('最接近的图片索引：%d', [MaxVecIndex(fout)]);
-      MemoryBitmapToBitmap(TMemoryRaster(mrList[MaxVecIndex(fout)]), Image1.Bitmap);
+      DoStatus('最接近的图片索引：%d', [LMaxVecIndex(fout)]);
+      MemoryBitmapToBitmap(TMemoryRaster(mrList[LMaxVecIndex(fout)]), Image1.Bitmap);
 
       // 做归一化处理
-      fMax := MaxVec(fout);
-      fMin := MinVec(fout);
+      fMax := LMaxVec(fout);
+      fMin := LMinVec(fout);
       for i := 0 to length(fout) - 1 do
         begin
           pb := TProgressBar(ListBox1.ListItems[i].TagObject);

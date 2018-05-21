@@ -10,7 +10,7 @@ uses
   FMX.Surfaces,
 
   CoreClasses, DoStatusIO, MemoryRaster, PascalStrings, ObjectDataManager, ItemStream,
-  Geometry2DUnit, UnicodeMixedLib, Learn;
+  Geometry2DUnit, UnicodeMixedLib, Learn, LearnTypes;
 
 type
   TForm1 = class(TForm)

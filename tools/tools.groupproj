@@ -15,7 +15,7 @@
         <Projects Include="ConvFile2RESCode\ConvFile2Pascal.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\..\ZServer4D\Tools\StringTranslate\StringTranslate.dproj">
+        <Projects Include="StringTranslate\StringTranslate.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -63,13 +63,13 @@
         <MSBuild Projects="ConvFile2RESCode\ConvFile2Pascal.dproj" Targets="Make"/>
     </Target>
     <Target Name="StringTranslate">
-        <MSBuild Projects="..\..\ZServer4D\Tools\StringTranslate\StringTranslate.dproj"/>
+        <MSBuild Projects="StringTranslate\StringTranslate.dproj"/>
     </Target>
     <Target Name="StringTranslate:Clean">
-        <MSBuild Projects="..\..\ZServer4D\Tools\StringTranslate\StringTranslate.dproj" Targets="Clean"/>
+        <MSBuild Projects="StringTranslate\StringTranslate.dproj" Targets="Clean"/>
     </Target>
     <Target Name="StringTranslate:Make">
-        <MSBuild Projects="..\..\ZServer4D\Tools\StringTranslate\StringTranslate.dproj" Targets="Make"/>
+        <MSBuild Projects="StringTranslate\StringTranslate.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
         <CallTarget Targets="ImgFmtConver2PNG;BitmapConver;FilePackageWithZDB;ConvFile2Pascal;StringTranslate"/>

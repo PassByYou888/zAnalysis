@@ -10,7 +10,7 @@ uses
 
   Math,
 
-  CoreClasses, DoStatusIO, Learn, PascalStrings, TextParsing, ListEngine;
+  CoreClasses, DoStatusIO, Learn, LearnTypes, PascalStrings, TextParsing, ListEngine;
 
 type
   TForm1 = class(TForm)
@@ -254,7 +254,7 @@ begin
             end;
           end;
 
-      DoStatus('神经网络判定 %s = %s', [AText.Text, GetWordFromVec(lr[MaxVecIndex(vOut)]^.m_in).Text]);
+      DoStatus('神经网络判定 %s = %s', [AText.Text, GetWordFromVec(lr[LMaxVecIndex(vOut)]^.m_in).Text]);
     end;
 end;
 

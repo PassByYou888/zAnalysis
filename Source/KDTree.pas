@@ -15,16 +15,12 @@ uses CoreClasses, PascalStrings, KM;
 
 {$I zDefine.inc}
 
-
 type
   TKDTree_VecType = TKMFloat;
   PKDTree_VecType = PKMFloat;
 
   TKDTree_Vec = TKMFloatArray;
   PKDTree_Vec = PKMFloatArray;
-
-  TKDTree_DynamicVecBuffer = TKMFloat2DArray;
-  PKDTree_DynamicVecBuffer = PKMFloat2DArray;
 
   TKDTree_Source = packed record
     Buff: TKDTree_Vec;
@@ -33,14 +29,17 @@ type
 
   PKDTree_Source = ^TKDTree_Source;
 
+  TKDTree_DynamicVecBuffer = TKMFloat2DArray;
+  PKDTree_DynamicVecBuffer = PKMFloat2DArray;
+
   TKDTree_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDTree_Source) - 1] of PKDTree_Source;
   PKDTree_SourceBuffer = ^TKDTree_SourceBuffer;
 
-  TKDTreeyanmicSourceBuffer = packed array of PKDTree_Source;
-  PKDTreeyanmicSourceBuffer = ^TKDTreeyanmicSourceBuffer;
+  TKDTreeDyanmicSourceBuffer = packed array of PKDTree_Source;
+  PKDTreeDyanmicSourceBuffer = ^TKDTreeDyanmicSourceBuffer;
 
-  TKDTreeyanmicStoreBuffer = packed array of TKDTree_Source;
-  PKDTreeyanmicStoreBuffer = ^TKDTreeyanmicStoreBuffer;
+  TKDTreeDyanmicStoreBuffer = packed array of TKDTree_Source;
+  PKDTreeDyanmicStoreBuffer = ^TKDTreeDyanmicStoreBuffer;
 
   PKDTree_Node = ^TKDTree_Node;
 
@@ -49,18 +48,17 @@ type
     vec: PKDTree_Source;
   end;
 
-  TKDTree_BuildCall               = procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer);
-  TKDTree_BuildMethod             = procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer) of object;
-  {$IFNDEF FPC} TKDTree_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer); {$ENDIF}
-
   TKDTree = class(TCoreClassObject)
   public type
+    TKDTree_BuildCall               = procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer);
+    TKDTree_BuildMethod             = procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer) of object;
+    {$IFNDEF FPC} TKDTree_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer); {$ENDIF}
   private
-    FAxisCount : Integer;
-    KDStoreBuff: TKDTreeyanmicStoreBuffer;
-    KDBuff     : TKDTreeyanmicSourceBuffer;
+    FAxisCount: Integer;
+    KDStoreBuff: TKDTreeDyanmicStoreBuffer;
+    KDBuff: TKDTreeDyanmicSourceBuffer;
     NodeCounter: NativeInt;
-    KDNodes    : packed array of PKDTree_Node;
+    KDNodes: packed array of PKDTree_Node;
     function InternalBuildKdTree(const KDSourceBufferPtr: PKDTree_SourceBuffer; const PlanCount, Depth: NativeInt): PKDTree_Node;
     function GetData(const index: NativeInt): PKDTree_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
   public
@@ -72,7 +70,7 @@ type
     procedure Clear;
 
     property Count: NativeInt read NodeCounter;
-    function StoreBuffPtr: PKDTreeyanmicStoreBuffer;
+    function StoreBuffPtr: PKDTreeDyanmicStoreBuffer;
     property SourceP[const index: NativeInt]: PKDTree_Source read GetData; default;
     property AxisCount: Integer read FAxisCount;
 
@@ -172,10 +170,10 @@ function TKDTree.InternalBuildKdTree(const KDSourceBufferPtr: PKDTree_SourceBuff
   end;
 
 var
-  m        : NativeInt;
-  Axis     : NativeInt;
+  m: NativeInt;
+  Axis: NativeInt;
   kdBuffPtr: PKDTree_SourceBuffer;
-  dynBuff  : PKDTreeyanmicSourceBuffer;
+  dynBuff: PKDTreeDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -265,15 +263,15 @@ begin
   RootNode := nil;
 end;
 
-function TKDTree.StoreBuffPtr: PKDTreeyanmicStoreBuffer;
+function TKDTree.StoreBuffPtr: PKDTreeDyanmicStoreBuffer;
 begin
   Result := @KDStoreBuff;
 end;
 
 procedure TKDTree.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildCall);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDTreeyanmicStoreBuffer;
+  i, j: NativeInt;
+  TempStoreBuff: TKDTreeDyanmicStoreBuffer;
 begin
   Clear;
 
@@ -303,8 +301,8 @@ end;
 
 procedure TKDTree.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDTreeyanmicStoreBuffer;
+  i, j: NativeInt;
+  TempStoreBuff: TKDTreeDyanmicStoreBuffer;
 begin
   Clear;
 
@@ -337,8 +335,8 @@ end;
 
 procedure TKDTree.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildProc);
 var
-  i, j         : NativeInt;
-  TempStoreBuff: TKDTreeyanmicStoreBuffer;
+  i, j: NativeInt;
+  TempStoreBuff: TKDTreeDyanmicStoreBuffer;
 begin
   Clear;
 
@@ -370,10 +368,10 @@ end;
 
 procedure TKDTree.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildCall);
 var
-  TempStoreBuff: TKDTreeyanmicStoreBuffer;
-  Source       : TKMFloat2DArray;
-  KArray       : TKMFloat2DArray;
-  i, j         : NativeInt;
+  TempStoreBuff: TKDTreeDyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
 begin
   Clear;
   SetLength(TempStoreBuff, PlanCount);
@@ -426,10 +424,10 @@ end;
 
 procedure TKDTree.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod);
 var
-  TempStoreBuff: TKDTreeyanmicStoreBuffer;
-  Source       : TKMFloat2DArray;
-  KArray       : TKMFloat2DArray;
-  i, j         : NativeInt;
+  TempStoreBuff: TKDTreeDyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
 begin
   Clear;
   SetLength(TempStoreBuff, PlanCount);
@@ -485,10 +483,10 @@ end;
 
 procedure TKDTree.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildProc);
 var
-  TempStoreBuff: TKDTreeyanmicStoreBuffer;
-  Source       : TKMFloat2DArray;
-  KArray       : TKMFloat2DArray;
-  i, j         : NativeInt;
+  TempStoreBuff: TKDTreeDyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
 begin
   Clear;
   SetLength(TempStoreBuff, PlanCount);
@@ -542,14 +540,15 @@ end;
 {$ENDIF FPC}
 
 
-function TKDTree.Search(const Buff: TKDTree_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDTree_Node;
+function TKDTree.Search(
+  const Buff: TKDTree_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDTree_Node;
 
 var
   NearestNeighbour: PKDTree_Node;
 
   function FindParentNode(const BuffPtr: PKDTree_Vec; const NodePtr: PKDTree_Node): PKDTree_Node;
   var
-    Next       : PKDTree_Node;
+    Next: PKDTree_Node;
     Depth, Axis: NativeInt;
   begin
     Result := nil;
@@ -711,7 +710,7 @@ end;
 function TKDTree.Search(const Buff: TKDTree_Vec): PKDTree_Node;
 var
   SearchedDistanceMin: Double;
-  SearchedCounter    : NativeInt;
+  SearchedCounter: NativeInt;
 begin
   Result := Search(Buff, SearchedDistanceMin, SearchedCounter);
 end;
@@ -720,7 +719,7 @@ procedure TKDTree.Search(const inBuff: TKDTree_DynamicVecBuffer; var OutIndex: T
 
 {$IFDEF parallel}
 var
-  inBuffPtr  : PKDTree_DynamicVecBuffer;
+  inBuffPtr: PKDTree_DynamicVecBuffer;
   outIndexPtr: PDynamicIndexArray;
 
   {$IFDEF FPC}
@@ -781,9 +780,9 @@ end;
 
 procedure TKDTree.SaveToStream(stream: TCoreClassStream);
 var
-  cnt   : Int64;
+  cnt: Int64;
   st, id: Integer;
-  i     : NativeInt;
+  i: NativeInt;
 begin
   cnt := length(KDStoreBuff);
   st := SaveToken;
@@ -802,9 +801,9 @@ end;
 
 procedure TKDTree.LoadFromStream(stream: TCoreClassStream);
 var
-  cnt   : Int64;
+  cnt: Int64;
   st, id: Integer;
-  i     : NativeInt;
+  i: NativeInt;
 begin
   Clear;
 
@@ -898,9 +897,9 @@ end;
 
 class function TKDTree.KDTreeVec(const s: SystemString): TKDTree_Vec;
 var
-  t          : TTextParsing;
+  t: TTextParsing;
   SplitOutput: TArrayPascalString;
-  c, i, j    : NativeInt;
+  c, i, j: NativeInt;
 begin
   t := TTextParsing.Create(s, tsText, nil);
   c := t.SplitChar(1, ', ', '', SplitOutput);
@@ -956,13 +955,13 @@ end;
 
 procedure Test_KDTree(const Axis: Integer);
 var
-  TKDTree_Test      : TKDTree;
-  t                 : TTimeTick;
-  i, j              : NativeInt;
-  TestResultIndex   : TDynamicIndexArray;
+  TKDTree_Test: TKDTree;
+  t: TTimeTick;
+  i, j: NativeInt;
+  TestResultIndex: TDynamicIndexArray;
   KMeanBuildOutIndex: TDynamicIndexArray;
-  errored           : Boolean;
-  TestBuff          : TKDTree_DynamicVecBuffer;
+  errored: Boolean;
+  TestBuff: TKDTree_DynamicVecBuffer;
 
 begin
   errored := False;

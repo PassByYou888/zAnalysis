@@ -239,7 +239,7 @@ begin
     begin
       sour := SourMemo.Lines[i];
       if not umlFileExists(sour) then
-        continue;
+          continue;
       dest := GetDestFile(sour);
       if (umlMultipleMatch(['*.png'], sour)) and (UsedSameDirCheckBox.Checked) then
           continue;
@@ -268,7 +268,7 @@ begin
               begin
                 byteptr := png.AlphaScanline[y];
                 for x := 0 to bmp32.Width - 1 do
-                    byteptr^[x] := AlphaComponent(bmp32[x, y]);
+                    byteptr^[x] := bmp32.PixelAlpha[x, y];
               end;
             png.SaveToFile(dest);
           except
@@ -299,7 +299,7 @@ begin
               begin
                 byteptr := png.AlphaScanline[y];
                 for x := 0 to bmp32.Width - 1 do
-                    byteptr^[x] := AlphaComponent(bmp32[x, y]);
+                    byteptr^[x] := bmp32.PixelAlpha[x, y];
               end;
             png.SaveToFile(dest);
           except

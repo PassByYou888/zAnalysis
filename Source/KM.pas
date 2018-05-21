@@ -18,7 +18,10 @@ uses CoreClasses;
 
 
 type
-  TDynamicIndexArray = packed array of Integer;
+  TKMInt = Integer;
+  PKMInt = ^TKMInt;
+
+  TDynamicIndexArray = packed array of TKMInt;
   PDynamicIndexArray = ^TDynamicIndexArray;
 
   TKMBoolArray = packed array of Boolean;
@@ -188,11 +191,11 @@ function SelectCenter(const Source: TKMFloat2DArray;
   var D2: TKMFloatArray; var P: TKMFloatArray; var Tmp: TKMFloatArray): Boolean; inline;
 var
   NewBusyCenters: TKMBoolArray;
-  i             : NativeInt;
-  j             : NativeInt;
-  cc            : NativeInt;
-  v             : TKMFloat;
-  s             : TKMFloat;
+  i: NativeInt;
+  j: NativeInt;
+  cc: NativeInt;
+  v: TKMFloat;
+  s: TKMFloat;
 begin
   DynamicArrayCopy(BusyCenters, NewBusyCenters);
 
@@ -263,27 +266,27 @@ end;
 function KMeansCluster(const Source: TKMFloat2DArray;
   const NVars, k, Restarts: NativeInt; var KArray: TKMFloat2DArray; var kIndex: TKMIntegerArray): ShortInt;
 var
-  NPoints         : NativeInt;
-  i               : NativeInt;
-  j               : NativeInt;
-  ct              : TKMFloat2DArray;
-  CTBest          : TKMFloat2DArray;
-  XYCBest         : TKMIntegerArray;
-  E               : TKMFloat;
-  EBest           : TKMFloat;
-  X               : TKMFloatArray;
-  Tmp             : TKMFloatArray;
-  D2              : TKMFloatArray;
-  P               : TKMFloatArray;
-  CSizes          : TKMIntegerArray;
-  CBusy           : TKMBoolArray;
-  v               : TKMFloat;
-  CClosest        : NativeInt;
-  DClosest        : TKMFloat;
-  WORK            : TKMFloatArray;
-  WasChanges      : Boolean;
+  NPoints: NativeInt;
+  i: NativeInt;
+  j: NativeInt;
+  ct: TKMFloat2DArray;
+  CTBest: TKMFloat2DArray;
+  XYCBest: TKMIntegerArray;
+  E: TKMFloat;
+  EBest: TKMFloat;
+  X: TKMFloatArray;
+  Tmp: TKMFloatArray;
+  D2: TKMFloatArray;
+  P: TKMFloatArray;
+  CSizes: TKMIntegerArray;
+  CBusy: TKMBoolArray;
+  v: TKMFloat;
+  CClosest: NativeInt;
+  DClosest: TKMFloat;
+  WORK: TKMFloatArray;
+  WasChanges: Boolean;
   ZeroSizeClusters: Boolean;
-  Pass            : NativeInt;
+  Pass: NativeInt;
 begin
   NPoints := Length(Source);
 

@@ -9,7 +9,7 @@ uses
   FMX.Memo, FMX.Layouts, FMX.ListBox, FMX.Objects,
   FMX.Surfaces, System.Threading,
 
-  Learn, KDTree,
+  Learn, LearnTypes, KDTree,
   MemoryRaster, ZDBEngine, MemoryStream64, PascalStrings, UnicodeMixedLib, DoStatusIO, CoreClasses;
 
 type
@@ -228,7 +228,7 @@ begin
         storePos := ze.AddData(m64, $99);
         DisposeObject(m64);
 
-        lr.AddMatrix(MatrixSampler(15, mr), [storePos]);
+        lr.AddMatrix(LMatrixSampler(15, mr), [storePos]);
 
         ProgressBar1.Value := i;
         DoStatus('提取图片特征 %s ', [umlGetFileName(OpenDialog1.Files[i]).Text]);
@@ -267,7 +267,7 @@ begin
 
   MemoryBitmapToBitmap(mr1, Image1.Bitmap);
 
-  f_In := LVec(MatrixSampler(True, 15, mr1), 15 * 15);
+  f_In := LVec(LMatrixSampler(True, 15, mr1), 15 * 15);
 
   if lr.Count > 0 then
     begin
@@ -326,7 +326,7 @@ begin
 
   MemoryBitmapToBitmap(mr1, Image1.Bitmap);
 
-  f_In := LVec(MatrixSampler(True, 15, mr1), 15 * 15);
+  f_In := LVec(LMatrixSampler(True, 15, mr1), 15 * 15);
 
   if lr.Count > 0 then
     begin
@@ -384,7 +384,7 @@ begin
 
   MemoryBitmapToBitmap(mr1, Image1.Bitmap);
 
-  f_In := LVec(MatrixSampler(True, 15, mr1), 15 * 15);
+  f_In := LVec(LMatrixSampler(True, 15, mr1), 15 * 15);
   if lr.Count > 0 then
     begin
       lr.SearchMemoryWithDistance(f_In, list);
@@ -454,7 +454,7 @@ begin
         storePos := ze.AddData(m64, $99);
         DisposeObject(m64);
 
-        lr.AddMatrix(MatrixSampler(True, 15, mr), [storePos]);
+        lr.AddMatrix(LMatrixSampler(True, 15, mr), [storePos]);
 
         ProgressBar1.Value := i;
         DoStatus('提取图片特征 %s ', [umlGetFileName(OpenDialog1.Files[i]).Text]);

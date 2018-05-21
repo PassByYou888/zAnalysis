@@ -6,7 +6,7 @@ program rForestDemo;
 
 
 uses
-  System.SysUtils, CoreClasses, DoStatusIO, UnicodeMixedLib, Learn;
+  System.SysUtils, CoreClasses, DoStatusIO, UnicodeMixedLib, Learn, LearnTypes;
 
 // 这里是我们模拟在应用时的条件处理程序
 procedure runF(id: TLFloat);

@@ -456,9 +456,7 @@ begin
     begin
       SetLength(W, NVars (* - 1 + 1 // optimized compiler *) );
       for i_ := 0 to NVars - 1 do
-        begin
           W[i_] := W2[i_, 0];
-        end;
     end;
 end;
 

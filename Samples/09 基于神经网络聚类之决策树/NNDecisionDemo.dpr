@@ -10,6 +10,7 @@ uses
   CoreClasses,
   PascalStrings,
   DoStatusIO,
+  LearnTypes,
   Learn;
 
 var
@@ -49,15 +50,15 @@ begin
       // 数值最大的值，表示最接近的决策id，当我们取得了决策id后，即可进行相应的子程序处理
       // 不同的训练方法会产生不同的权重
       n := '1 2 3 4 5';
-      DoStatus('(%s) %s = %s', [Learn.CLearnString[lr.LearnType], n.Text, lr.process(n)]);
-      DoStatus('(%s) 最优决策ID:%d', [Learn.CLearnString[lr.LearnType], lr.processMaxIndex(LVec(n, lr.InLen))]);
+      DoStatus('(%s) %s = %s', [LearnTypes.CLearnString[lr.LearnType], n.Text, lr.process(n)]);
+      DoStatus('(%s) 最优决策ID:%d', [LearnTypes.CLearnString[lr.LearnType], lr.processMaxIndex(LVec(n, lr.InLen))]);
 
       // 这里的输出是4个返回值，因为，我们只有0,1,2,3三种决策，依据0123的顺序，对n变量的输入值进行分别评估
       // 数值最大的值，表示最接近的决策id，当我们取得了决策id后，即可进行相应的子程序处理
       // 不同的训练方法会产生不同的权重
       n := '10 10 21 12 21';
-      DoStatus('(%s) %s = %s', [Learn.CLearnString[lr.LearnType], n.Text, lr.process(n)]);
-      DoStatus('(%s) 最优决策ID:%d', [Learn.CLearnString[lr.LearnType], lr.processMaxIndex(LVec(n, lr.InLen))]);
+      DoStatus('(%s) %s = %s', [LearnTypes.CLearnString[lr.LearnType], n.Text, lr.process(n)]);
+      DoStatus('(%s) 最优决策ID:%d', [LearnTypes.CLearnString[lr.LearnType], lr.processMaxIndex(LVec(n, lr.InLen))]);
 
       disposeObject(lr);
     end;

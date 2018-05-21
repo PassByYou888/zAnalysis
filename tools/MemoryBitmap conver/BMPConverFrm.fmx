@@ -2,7 +2,7 @@ object BMPConverForm: TBMPConverForm
   Left = 0
   Top = 0
   Caption = 'memoryBitmap conver, create by qq600585'
-  ClientHeight = 575
+  ClientHeight = 590
   ClientWidth = 968
   StyleBook = StyleBook1
   FormFactor.Width = 320
@@ -13,22 +13,22 @@ object BMPConverForm: TBMPConverForm
   object converbmpButton: TButton
     Anchors = [akLeft, akBottom]
     Position.X = 16.000000000000000000
-    Position.Y = 448.000000000000000000
+    Position.Y = 453.000000000000000000
     Size.Width = 145.000000000000000000
-    Size.Height = 57.000000000000000000
+    Size.Height = 41.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 1
+    TabOrder = 2
     Text = 'conver to .bmp'
     OnClick = converbmpButtonClick
   end
   object Layout1: TLayout
     Anchors = [akLeft, akRight, akBottom]
     Position.X = 168.000000000000000000
-    Position.Y = 504.000000000000000000
+    Position.Y = 493.000000000000000000
     Size.Width = 449.000000000000000000
     Size.Height = 50.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 3
+    TabOrder = 4
     object DestDirEdit: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       Anchors = [akLeft, akTop, akRight]
@@ -82,18 +82,18 @@ object BMPConverForm: TBMPConverForm
     Position.X = 624.000000000000000000
     Position.Y = 16.000000000000000000
     Size.Width = 329.000000000000000000
-    Size.Height = 537.000000000000000000
+    Size.Height = 552.000000000000000000
     Size.PlatformDefault = False
   end
   object SameDirCheckBox: TCheckBox
     Anchors = [akLeft, akBottom]
     IsChecked = True
     Position.X = 168.000000000000000000
-    Position.Y = 472.000000000000000000
+    Position.Y = 461.000000000000000000
     Size.Width = 233.000000000000000000
     Size.Height = 27.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 5
+    TabOrder = 6
     Text = 'convert to same directory'
   end
   object StyleBook1: TStyleBook
@@ -12872,7 +12872,7 @@ object BMPConverForm: TBMPConverForm
     Size.Width = 153.000000000000000000
     Size.Height = 33.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 8
+    TabOrder = 9
     Text = 'Add File'
     OnClick = AddFileButtonClick
   end
@@ -12882,7 +12882,7 @@ object BMPConverForm: TBMPConverForm
     Size.Width = 153.000000000000000000
     Size.Height = 33.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 7
+    TabOrder = 8
     Text = 'Clear'
     OnClick = ClearButtonClick
   end
@@ -12891,16 +12891,16 @@ object BMPConverForm: TBMPConverForm
     Position.X = 8.000000000000000000
     Position.Y = 56.000000000000000000
     Size.Width = 601.000000000000000000
-    Size.Height = 377.000000000000000000
+    Size.Height = 392.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 10
+    TabOrder = 11
     DisableFocusEffect = True
     DefaultItemStyles.ItemStyle = ''
     DefaultItemStyles.GroupHeaderStyle = ''
     DefaultItemStyles.GroupFooterStyle = ''
     OnChange = ListBoxChange
     Viewport.Width = 597.000000000000000000
-    Viewport.Height = 373.000000000000000000
+    Viewport.Height = 388.000000000000000000
   end
   object OpenDialog: TOpenDialog
     Options = [ofHideReadOnly, ofAllowMultiSelect, ofFileMustExist, ofEnableSizing]
@@ -12910,12 +12910,56 @@ object BMPConverForm: TBMPConverForm
   object converseqButton: TButton
     Anchors = [akLeft, akBottom]
     Position.X = 16.000000000000000000
-    Position.Y = 512.000000000000000000
+    Position.Y = 497.000000000000000000
     Size.Width = 145.000000000000000000
-    Size.Height = 57.000000000000000000
+    Size.Height = 41.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 0
+    TabOrder = 1
     Text = 'conver to .seq'
     OnClick = converseqButtonClick
+  end
+  object converjlsButton: TButton
+    Anchors = [akLeft, akBottom]
+    Position.X = 16.000000000000000000
+    Position.Y = 541.000000000000000000
+    Size.Width = 145.000000000000000000
+    Size.Height = 41.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    Text = 'conver to .jls'
+    OnClick = converjlsButtonClick
+  end
+  object RadioButton_JLS8: TRadioButton
+    StyledSettings = [Family, Style, FontColor]
+    GroupName = 'JLS'
+    Position.X = 168.000000000000000000
+    Position.Y = 558.000000000000000000
+    Size.Width = 73.000000000000000000
+    Size.Height = 19.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 16
+    Text = 'JLS8'
+  end
+  object RadioButton_JLS24: TRadioButton
+    StyledSettings = [Family, Style, FontColor]
+    GroupName = 'JLS'
+    Position.X = 240.000000000000000000
+    Position.Y = 558.000000000000000000
+    Size.Width = 73.000000000000000000
+    Size.Height = 19.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 15
+    Text = 'JLS24'
+  end
+  object RadioButton_JLS32: TRadioButton
+    StyledSettings = [Family, Style, FontColor]
+    GroupName = 'JLS'
+    Position.X = 312.000000000000000000
+    Position.Y = 558.000000000000000000
+    Size.Width = 193.000000000000000000
+    Size.Height = 19.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 14
+    Text = 'JLS_Alpha(no publish format)'
   end
 end

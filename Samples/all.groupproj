@@ -24,13 +24,16 @@
         <Projects Include="07 单词学习\WordAnalysis.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj">
+            <Dependencies/>
+        </Projects>
         <Projects Include="10 训练神经网络做加减法运算\numberTrainDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="13 基于高斯金字塔的图片内容识别\GaussPyramidDemo.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -104,15 +107,6 @@
     <Target Name="WordAnalysis:Make">
         <MSBuild Projects="07 单词学习\WordAnalysis.dproj" Targets="Make"/>
     </Target>
-    <Target Name="NNPicutreCompare">
-        <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj"/>
-    </Target>
-    <Target Name="NNPicutreCompare:Clean">
-        <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="NNPicutreCompare:Make">
-        <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj" Targets="Make"/>
-    </Target>
     <Target Name="NNDecisionDemo">
         <MSBuild Projects="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj"/>
     </Target>
@@ -121,6 +115,15 @@
     </Target>
     <Target Name="NNDecisionDemo:Make">
         <MSBuild Projects="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="NNPicutreCompare">
+        <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj"/>
+    </Target>
+    <Target Name="NNPicutreCompare:Clean">
+        <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NNPicutreCompare:Make">
+        <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj" Targets="Make"/>
     </Target>
     <Target Name="numberTrainDemo">
         <MSBuild Projects="10 训练神经网络做加减法运算\numberTrainDemo.dproj"/>
@@ -131,14 +134,23 @@
     <Target Name="numberTrainDemo:Make">
         <MSBuild Projects="10 训练神经网络做加减法运算\numberTrainDemo.dproj" Targets="Make"/>
     </Target>
+    <Target Name="GaussPyramidDemo">
+        <MSBuild Projects="13 基于高斯金字塔的图片内容识别\GaussPyramidDemo.dproj"/>
+    </Target>
+    <Target Name="GaussPyramidDemo:Clean">
+        <MSBuild Projects="13 基于高斯金字塔的图片内容识别\GaussPyramidDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GaussPyramidDemo:Make">
+        <MSBuild Projects="13 基于高斯金字塔的图片内容识别\GaussPyramidDemo.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="MemoryRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargePictureAnalysis;WordAnalysis;NNPicutreCompare;NNDecisionDemo;numberTrainDemo"/>
+        <CallTarget Targets="MemoryRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargePictureAnalysis;WordAnalysis;NNDecisionDemo;NNPicutreCompare;numberTrainDemo;GaussPyramidDemo"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="MemoryRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargePictureAnalysis:Clean;WordAnalysis:Clean;NNPicutreCompare:Clean;NNDecisionDemo:Clean;numberTrainDemo:Clean"/>
+        <CallTarget Targets="MemoryRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargePictureAnalysis:Clean;WordAnalysis:Clean;NNDecisionDemo:Clean;NNPicutreCompare:Clean;numberTrainDemo:Clean;GaussPyramidDemo:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="MemoryRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargePictureAnalysis:Make;WordAnalysis:Make;NNPicutreCompare:Make;NNDecisionDemo:Make;numberTrainDemo:Make"/>
+        <CallTarget Targets="MemoryRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargePictureAnalysis:Make;WordAnalysis:Make;NNDecisionDemo:Make;NNPicutreCompare:Make;numberTrainDemo:Make;GaussPyramidDemo:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

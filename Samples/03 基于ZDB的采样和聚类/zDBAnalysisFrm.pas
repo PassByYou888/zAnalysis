@@ -6,7 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
 
-  CoreClasses, ZDBEngine, Learn, KDTree, KM, ListEngine, DoStatusIO, PascalStrings, UnicodeMixedLib, JsonDataObjects,
+  CoreClasses, ZDBEngine, Learn, LearnTypes,
+  KDTree, KM, ListEngine, DoStatusIO, PascalStrings, UnicodeMixedLib, JsonDataObjects,
   Vcl.ExtCtrls;
 
 type

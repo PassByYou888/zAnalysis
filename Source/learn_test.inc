@@ -201,7 +201,7 @@ begin
 
       for J := 0 to test_Depth - 1 do
         begin
-          m := MatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[J]);
+          m := LMatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[J]);
           SetLength(f_Out, 1);
           f_Out[0] := J;
           lr.AddMatrix(m, f_Out);
@@ -214,7 +214,7 @@ begin
           SetLength(f_out_list, test_Depth);
           for J := 0 to test_Depth - 1 do
             begin
-              m := MatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[J]);
+              m := LMatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[J]);
 
               Search_Out[J] := lr.processMaxIndex(m);
               if Search_Out[J] <> J then
