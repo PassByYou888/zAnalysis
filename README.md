@@ -21,6 +21,16 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 - Delphi XE10 或以上版本
 
 
+**编译注意事项**
+
+**在Source中的子目录，均对开发或则运行平台有所要求**
+- source\DrawInterfaceInFMX，必须使用delphi+fmx才能进行编译，运行平台支持ios,android,osx,windows，不支持linux
+- source\SoundInterfaceInFMX，，必须使用delphi+fmx才能进行编译，运行平台支持ios,android,osx,windows，不支持linux
+- source\SoundInterfaceInBass，bass是平台无关性，详见zSound开源工程的部署方法 https://github.com/PassByYou888/zSound
+
+**在Source中的所有库均为平台无关性支持**
+- source中的所有*.pas均为平台关性，包括编译器fpc+laz与delphi的支持，包括各个系统环境的支持，均能无关性
+
 # 指标
 
 暂无指标统计程序
@@ -92,15 +102,6 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 - 安全动态数组处理
 - 后台HPC服务器运算支持
 - 工具集
-
-## 编译注意事项
-**在Source中的子目录，均对开发或则运行平台有所要求**
-source\DrawInterfaceInFMX，必须使用delphi+fmx才能进行编译，运行平台支持ios,android,osx,windows，不支持linux
-source\SoundInterfaceInFMX，，必须使用delphi+fmx才能进行编译，运行平台支持ios,android,osx,windows，不支持linux
-source\SoundInterfaceInBass，bass是平台无关性，详见zSound开源工程的部署方法 https://github.com/PassByYou888/zSound
-
-**在Source中的所有库均为平台无关性支持**
-source中的所有*.pas均为平台关性，包括编译器fpc+laz与delphi的支持，包括各个系统环境的支持，均能无关性
 
 
 ## 面向未来支持的补完计划
