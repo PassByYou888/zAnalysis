@@ -148,7 +148,7 @@ begin
   DisposeObject(ft1);
   nvl := TVec2List.Create;
   nvl.Assign(vl1);
-  nvl.Translform(-b1[0, 0], -b1[0, 1]);
+  nvl.Transform(-b1[0, 0], -b1[0, 1]);
   w := ort1.Width;
   h := ort1.Height;
   ComputeSamplerSize(w, h);
@@ -185,7 +185,7 @@ begin
   DisposeObject(ft2);
   nvl := TVec2List.Create;
   nvl.Assign(vl2);
-  nvl.Translform(-b2[0, 0], -b2[0, 1]);
+  nvl.Transform(-b2[0, 0], -b2[0, 1]);
   w := ort2.Width;
   h := ort2.Height;
   ComputeSamplerSize(w, h);
