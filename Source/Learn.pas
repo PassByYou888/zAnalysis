@@ -181,35 +181,6 @@ type
     {$ENDIF FPC}
   end;
 
-  TComputeThread = class(TCoreClassThread)
-  private type
-    TRunWithThreadCall               = procedure(Sender: TComputeThread);
-    TRunWithThreadMethod             = procedure(Sender: TComputeThread) of object;
-    {$IFNDEF FPC} TRunWithThreadProc = reference to procedure(Sender: TComputeThread); {$ENDIF FPC}
-  protected
-    OnRunCall: TRunWithThreadCall;
-    OnRunMethod: TRunWithThreadMethod;
-    {$IFNDEF FPC}
-    OnRunProc: TRunWithThreadProc;
-    {$ENDIF FPC}
-    OnDoneCall: TRunWithThreadCall;
-    OnDoneMethod: TRunWithThreadMethod;
-    {$IFNDEF FPC}
-    OnDoneProc: TRunWithThreadProc;
-    {$ENDIF FPC}
-    procedure Execute; override;
-    procedure Done_Sync;
-  public
-    UserData: Pointer;
-    UserObject: TCoreClassObject;
-
-    constructor Create;
-    class function RunC(const Data: Pointer; const Obj: TCoreClassObject; const OnRun, OnDone: TRunWithThreadCall): TComputeThread;
-    class function RunM(const Data: Pointer; const Obj: TCoreClassObject; const OnRun, OnDone: TRunWithThreadMethod): TComputeThread;
-    {$IFNDEF FPC}
-    class function RunP(const Data: Pointer; const Obj: TCoreClassObject; const OnRun, OnDone: TRunWithThreadProc): TComputeThread;
-    {$ENDIF FPC}
-  end;
   {$ENDREGION 'Class'}
 
 {$REGION 'LearnAPI'}
@@ -826,11 +797,12 @@ uses KM, Math,
 {$INCLUDE learn_gaussintegral.inc}
 {$INCLUDE learn_extAPI.inc}
 {$INCLUDE learn_th.inc}
-{$INCLUDE learn_test.inc}
 {$INCLUDE learn_class.inc}
+{$INCLUDE learn_test.inc}
 {$ENDREGION 'Include'}
 
 
 initialization
 
 end.
+

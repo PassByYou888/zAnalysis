@@ -80,8 +80,10 @@ type
 
     function GetGray(X, Y: Integer): byte;
     procedure SetGray(X, Y: Integer; const Value: byte);
+
     function GetGrayS(X, Y: Integer): Single;
     procedure SetGrayS(X, Y: Integer; const Value: Single);
+
     function GetGrayD(X, Y: Integer): Double;
     procedure SetGrayD(X, Y: Integer; const Value: Double);
 

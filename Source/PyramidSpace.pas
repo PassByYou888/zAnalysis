@@ -193,6 +193,8 @@ type
     procedure BuildFeature(Pyramids: TPyramids);
   public
     constructor CreateWithPyramids(Pyramids: TPyramids);
+    constructor CreateWithRaster(const raster: TMemoryRaster; const clip: TVec2List); overload;
+    constructor CreateWithRaster(const raster: TMemoryRaster; var mat: TLBMatrix); overload;
     constructor CreateWithRaster(const raster: TMemoryRaster); overload;
     constructor CreateWithRaster(const fn: string); overload;
     constructor CreateWithRaster(const stream: TCoreClassStream); overload;
@@ -965,7 +967,7 @@ begin
   // free cache
   SetLength(sqr_memory, 0, 0);
   // fill result
-  Result := l.Count / pf1.Count;
+  Result := l.Count;
   FillMatchInfoAndFreeTemp;
 
   disposeObject(l);
@@ -996,8 +998,8 @@ begin
 
   if ViewFeature then
     begin
-      mr1 := ft1.CreateFeatureViewer(8, RasterColorF(0.4, 0.1, 0.1, 0.5));
-      mr2 := ft2.CreateFeatureViewer(8, RasterColorF(0.4, 0.1, 0.1, 0.5));
+      mr1 := ft1.CreateFeatureViewer(8, RasterColorF(0.4, 0.1, 0.1, 0.9));
+      mr2 := ft2.CreateFeatureViewer(8, RasterColorF(0.4, 0.1, 0.1, 0.9));
     end
   else
     begin
@@ -1018,7 +1020,7 @@ begin
   for i := 0 to Length(MatchInfo) - 1 do
     begin
       p := @MatchInfo[i];
-      rc := RasterColor(RandomRange(0, 255), RandomRange(0, 255), RandomRange(0, 255), 255 div 2);
+      rc := RasterColor(RandomRange(0, 255), RandomRange(0, 255), RandomRange(0, 255), 255);
 
       v1 := PointAdd(p^.d1^.AbsCoor, p^.d1^.Owner.FInternalVec);
       v2 := PointAdd(p^.d2^.AbsCoor, p^.d2^.Owner.FInternalVec);
@@ -2015,21 +2017,24 @@ procedure TPyramids.SetRegion(const clip: TVec2List);
 
 
 begin
-  {$IFDEF parallel}
-  {$IFDEF FPC}
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, FHeight - 1);
-  {$ELSE FPC}
-  TParallel.For(0, FHeight - 1, procedure(pass: Integer)
-    var
-      i: TLInt;
+  if clip.Count > 0 then
     begin
-      for i := 0 to FWidth - 1 do
-          SamplerXY[i + pass * FWidth] := IfThen(clip.PointInHere(Vec2(i, pass)), 1, 0);
-    end);
-  {$ENDIF FPC}
-  {$ELSE parallel}
-  DoFor;
-  {$ENDIF parallel}
+      {$IFDEF parallel}
+      {$IFDEF FPC}
+      ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, FHeight - 1);
+      {$ELSE FPC}
+      TParallel.For(0, FHeight - 1, procedure(pass: Integer)
+        var
+          i: TLInt;
+        begin
+          for i := 0 to FWidth - 1 do
+              SamplerXY[i + pass * FWidth] := IfThen(clip.PointInHere(Vec2(i, pass)), 1, 0);
+        end);
+      {$ENDIF FPC}
+      {$ELSE parallel}
+      DoFor;
+      {$ENDIF parallel}
+    end;
 end;
 
 procedure TPyramids.SetRegion(var mat: TLBMatrix);
@@ -2037,13 +2042,18 @@ var
   nmat: TLBMatrix;
   j, i: TLInt;
 begin
-  LZoomMatrix(mat, nmat, FWidth, FHeight);
+  if (Length(nmat) = Length(mat)) and (Length(nmat[0]) = Length(mat[0])) then
+      nmat := LMatrixCopy(mat)
+  else
+      LZoomMatrix(mat, nmat, FWidth, FHeight);
+
   for j := 0 to FHeight - 1 do
     for i := 0 to FWidth - 1 do
       if nmat[j, i] then
           SamplerXY[i + j * FWidth] := 1
       else
           SamplerXY[i + j * FWidth] := 0;
+
   SetLength(nmat, 0, 0);
 end;
 
@@ -2501,8 +2511,8 @@ begin
   for j := 0 to FHeight - 1 do
     for i := 0 to FWidth - 1 do
       begin
-        // FViewer[i + j * FWidth] := Pyramids.FViewer.PixelGray[i, j];
-        FViewer[i + j * FWidth] := Round(Clamp(Pyramids.GaussTransformSpace[j, i], 0, 1) * 255);
+        FViewer[i + j * FWidth] := Pyramids.FViewer.PixelGray[i, j];
+        // FViewer[i + j * FWidth] := Round(Clamp(Pyramids.GaussTransformSpace[j, i], 0, 1) * 255);
       end;
 end;
 
@@ -2516,6 +2526,26 @@ begin
   FUserData := nil;
   FPyramidCoordList := nil;
   BuildFeature(Pyramids);
+end;
+
+constructor TFeature.CreateWithRaster(const raster: TMemoryRaster; const clip: TVec2List);
+var
+  Pyramids: TPyramids;
+begin
+  Pyramids := TPyramids.CreateWithRaster(raster);
+  Pyramids.SetRegion(clip);
+  CreateWithPyramids(Pyramids);
+  disposeObject(Pyramids);
+end;
+
+constructor TFeature.CreateWithRaster(const raster: TMemoryRaster; var mat: TLBMatrix);
+var
+  Pyramids: TPyramids;
+begin
+  Pyramids := TPyramids.CreateWithRaster(raster);
+  Pyramids.SetRegion(mat);
+  CreateWithPyramids(Pyramids);
+  disposeObject(Pyramids);
 end;
 
 constructor TFeature.CreateWithRaster(const raster: TMemoryRaster);
@@ -2682,7 +2712,7 @@ var
   F: TLFloat;
 begin
   f1 := TFeature.CreateWithRaster('c:\1.bmp');
-  f2 := TFeature.CreateWithRaster('c:\x2.bmp');
+  f2 := TFeature.CreateWithRaster('c:\2.bmp');
   F := MatchFeature(f1, f2, m);
 
   raster := BuildMatchInfoView(m, 10, False);
@@ -2728,7 +2758,7 @@ CFILTER_MAX_KEYPOINT_ENDGE := 3000;
 COFFSET_DEPTH := 30;
 COFFSET_THRESHOLD := 0.6;
 CCONTRAST_THRESHOLD := 3.0E-2;
-CEDGE_RATIO := 5.0;
+CEDGE_RATIO := 2.0;
 CORIENTATION_RADIUS := 30;
 CORIENTATION_SMOOTH_COUNT := 256;
 

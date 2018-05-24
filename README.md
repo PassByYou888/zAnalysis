@@ -26,7 +26,7 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 **在Source中的子目录，均对开发或则运行平台有所要求**
 - source\DrawInterfaceInFMX，必须使用delphi+fmx才能进行编译，运行平台支持ios,android,osx,windows，不支持linux
 - source\SoundInterfaceInFMX，，必须使用delphi+fmx才能进行编译，运行平台支持ios,android,osx,windows，不支持linux
-- source\SoundInterfaceInBass，bass是平台无关性，详见zSound开源工程的部署方法 https://github.com/PassByYou888/zSound
+- source\SoundInterfaceInBass，bass是平台无关性(fpc+delphi+所有操作系统)，详见zSound开源工程的部署方法 https://github.com/PassByYou888/zSound
 
 **在Source中的所有库均为平台无关性支持**
 - source中的所有*.pas均为平台关性，包括编译器fpc+laz与delphi的支持，包括各个系统环境的支持，均能无关性
@@ -91,7 +91,7 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 - ZDB可以轻松改造成网络数据库后台，并且能基于zServer项目轻松搭建机器学习的后台框架
 
 **其它支持**
-- ffmpeg待支持（平台无关性，需要另一个ffmpeg作者同意后，我才能开源和使用他的基础支持库）
+- ffmpeg待支持（平台无关性，**已经过另一个ffmpeg作者同意，zAnalysis结合ffmpeg近期开源版本将支持商业VR功能**）
 - 小型渲染引擎支持（平台无关性，支持并行化渲染，支持多线程渲染，支持所有运行平台）
 - zSound音频库支持（平台无关性，支持播放音乐，音效，混音等等功能）
 - 提供快速存储与恢复，可以动态读取，计算结果，无需训练
@@ -119,6 +119,11 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 
 ## 更新日志
 
+**2018-5-24**
+- 根据客户要求，新增一个区域内容识别的Demo，内置了部分与DrawEngine相关的绘制编程范式，使用方法等等
+- 根据客户要求，识别算法精度有略微提高
+- 新增一份使用DrawEngine在IOS和Android真机实现硬件加速的技术文档
+
 **2018-5-21**
 - 彻底移除外部并行化支持库 pasmp.pas
 - Learn.pas内核新增并行线程机制
@@ -131,7 +136,11 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 - 新增一个弹道引擎库：BulletMovementEngine.pas(平台无关性)
 - 新增zSound库：zSound.pas(平台无关性) + bass(平台无关性) + fmxsound(只支持fmx平台)
 - 新增多媒体中心：MediaCenter.pas(平台无关性)
-- 暂时没有做对ffmpeg视频流的支持：ffmpeg视频流支持的底层库正在联系陈省是否允许我开源他的核心技术
+ 
+- 暂时没有做对ffmpeg视频流的支持：**已经过另一个ffmpeg作者同意，zAnalysis结合ffmpeg近期开源版本将支持商业VR功能**
+
+**感谢ffmpeg作者支持开源，请大家有空多多关照该作者，源作者叫陈省，10年ffmpeg鼓捣经历 http://www.flashavconverter.com/**
+
 - 新增sift高斯金字塔，sift完全支持并行化，21个可调整参量，可以覆盖几乎所有的图片特征向量的发掘和处理
 - 新增一个sift算法核的Demo（只演示了算法核，无场景模型支持，如需应用于生产，请联系我做优化和集成工作）
 - **注意：sift高斯金字塔不支持分色尺度和分色差分计算，内核是把彩色转换成灰度后进行的尺度和差分计算**

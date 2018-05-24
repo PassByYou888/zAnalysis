@@ -36,6 +36,9 @@
         <Projects Include="13 基于高斯金字塔的图片内容识别\GaussPyramidDemo.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="14 基于高斯金字塔不规则图片区域内容识别\GaussPyramidRegionDemo.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -143,14 +146,23 @@
     <Target Name="GaussPyramidDemo:Make">
         <MSBuild Projects="13 基于高斯金字塔的图片内容识别\GaussPyramidDemo.dproj" Targets="Make"/>
     </Target>
+    <Target Name="GaussPyramidRegionDemo">
+        <MSBuild Projects="14 基于高斯金字塔不规则图片区域内容识别\GaussPyramidRegionDemo.dproj"/>
+    </Target>
+    <Target Name="GaussPyramidRegionDemo:Clean">
+        <MSBuild Projects="14 基于高斯金字塔不规则图片区域内容识别\GaussPyramidRegionDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GaussPyramidRegionDemo:Make">
+        <MSBuild Projects="14 基于高斯金字塔不规则图片区域内容识别\GaussPyramidRegionDemo.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="MemoryRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargePictureAnalysis;WordAnalysis;NNDecisionDemo;NNPicutreCompare;numberTrainDemo;GaussPyramidDemo"/>
+        <CallTarget Targets="MemoryRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargePictureAnalysis;WordAnalysis;NNDecisionDemo;NNPicutreCompare;numberTrainDemo;GaussPyramidDemo;GaussPyramidRegionDemo"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="MemoryRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargePictureAnalysis:Clean;WordAnalysis:Clean;NNDecisionDemo:Clean;NNPicutreCompare:Clean;numberTrainDemo:Clean;GaussPyramidDemo:Clean"/>
+        <CallTarget Targets="MemoryRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargePictureAnalysis:Clean;WordAnalysis:Clean;NNDecisionDemo:Clean;NNPicutreCompare:Clean;numberTrainDemo:Clean;GaussPyramidDemo:Clean;GaussPyramidRegionDemo:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="MemoryRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargePictureAnalysis:Make;WordAnalysis:Make;NNDecisionDemo:Make;NNPicutreCompare:Make;numberTrainDemo:Make;GaussPyramidDemo:Make"/>
+        <CallTarget Targets="MemoryRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargePictureAnalysis:Make;WordAnalysis:Make;NNDecisionDemo:Make;NNPicutreCompare:Make;numberTrainDemo:Make;GaussPyramidDemo:Make;GaussPyramidRegionDemo:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
