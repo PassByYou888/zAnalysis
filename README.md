@@ -135,12 +135,8 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 - 新增一套小型渲染引擎系统：DrawEngine.pas(支持并行化渲染，多线程渲染，平台无关性支持fpc和delphi) + DrawEngineInterface_SlowFMX.pas(需求FMX平台，不支持fpc)
 - 新增一个弹道引擎库：BulletMovementEngine.pas(平台无关性)
 - 新增zSound库：zSound.pas(平台无关性) + bass(平台无关性) + fmxsound(只支持fmx平台)
-- 新增多媒体中心：MediaCenter.pas(平台无关性)
- 
-- 暂时没有做对ffmpeg视频流的支持：**已经过另一个ffmpeg作者同意，zAnalysis结合ffmpeg近期开源版本将支持商业VR功能**
-
-**感谢ffmpeg作者支持开源，请大家有空多多关照该作者，源作者叫陈省，10年ffmpeg鼓捣经历 http://www.flashavconverter.com/**
-
+- 新增多媒体中心：MediaCenter.pas(平台无关性) 
+- 暂时没有做对ffmpeg视频流的支持：**已经过另一个ffmpeg作者同意，zAnalysis结合ffmpeg近期开源版本将支持商业VR功能，感谢ffmpeg作者支持开源，请大家有空多多关照该作者，源作者叫陈省，10年ffmpeg鼓捣经历 http://www.flashavconverter.com/**
 - 新增sift高斯金字塔，sift完全支持并行化，21个可调整参量，可以覆盖几乎所有的图片特征向量的发掘和处理
 - 新增一个sift算法核的Demo（只演示了算法核，无场景模型支持，如需应用于生产，请联系我做优化和集成工作）
 - **注意：sift高斯金字塔不支持分色尺度和分色差分计算，内核是把彩色转换成灰度后进行的尺度和差分计算**
