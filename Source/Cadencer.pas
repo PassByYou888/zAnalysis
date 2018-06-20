@@ -41,20 +41,20 @@ type
   TCadencer = class(TCoreClassObject)
   private
     { Private Declarations }
-    FTimeMultiplier                              : Double;
-    lastTime, downTime, lastMultiplier           : Double;
-    FEnabled                                     : Boolean;
-    FSleepLength                                 : Integer;
-    FCurrentTime                                 : Double;
-    FOriginTime                                  : Double;
+    FTimeMultiplier: Double;
+    lastTime, downTime, lastMultiplier: Double;
+    FEnabled: Boolean;
+    FSleepLength: Integer;
+    FCurrentTime: Double;
+    FOriginTime: Double;
     FMaxDeltaTime, FMinDeltaTime, FFixedDeltaTime: Double;
-    FOnProgress                                  : TCadencerProgressMethod;
-    FOnProgressCall                              : TCadencerProgressCall;
+    FOnProgress: TCadencerProgressMethod;
+    FOnProgressCall: TCadencerProgressCall;
     {$IFNDEF FPC}
-    FOnProgressProc                              : TCadencerProgressProc;
+    FOnProgressProc: TCadencerProgressProc;
     {$ENDIF FPC}
-    FProgressing                                 : Integer;
-    FProgressIntf                                : ICadencerProgressInterface;
+    FProgressing: Integer;
+    FProgressIntf: ICadencerProgressInterface;
   protected
     { Protected Declarations }
     function StoreTimeMultiplier: Boolean;

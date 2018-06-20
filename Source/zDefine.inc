@@ -44,7 +44,6 @@
 
   {$IFDEF Linux}
     {$DEFINE CriticalSimulateAtomic}
-    {$UNDEF parallel}
   {$ENDIF}
 
   {$IFDEF release}
@@ -55,7 +54,7 @@
 
 {$ENDIF}
 
-//{$WARNINGS OFF}
+{$WARNINGS OFF}
 {$HINTS OFF}
 {$H+} { long string }
 //{$R+} { range check }
@@ -70,15 +69,20 @@
   {$ELSE FPC}
   {$ENDIF FPC}
 
+  {$IFDEF FPC}
+  {$ENDIF FPC}
+
+  {$IFDEF FPC}@{$ENDIF FPC}
+
   {$IFNDEF FPC}
   {$ENDIF FPC}
 
   {$IFDEF parallel}
-  {$ELSE}
-  {$ENDIF}
+  {$ELSE parallel}
+  {$ENDIF parallel}
 
   {$IFNDEF parallel}
-  {$ENDIF}
+  {$ENDIF parallel}
 
   {$Region 'RegionName'}
   {$EndRegion 'RegionName'}

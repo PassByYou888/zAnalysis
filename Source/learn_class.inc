@@ -1,3 +1,7 @@
+
+{$REGION 'ClassImp'}
+
+
 procedure TLearn.KDInput(const IndexFor: NativeInt; var source: TKDTree_Source; const Data: Pointer);
 var
   I: TLInt;
@@ -14,7 +18,7 @@ begin
       case FLearnType of
         ltKDT, ltKM:
           begin
-            DisposeObject(PLearnKDT(FLearnData)^.kdt);
+            disposeObject(PLearnKDT(FLearnData)^.kdt);
             Dispose(PLearnKDT(FLearnData));
             FLearnData := nil;
           end;
@@ -364,7 +368,7 @@ begin
           SetLength(PLearnMemory(FMemorySource[I])^.m_out, 0);
           Dispose(PLearnMemory(FMemorySource[I]));
         end;
-      DisposeObject(FMemorySource);
+      disposeObject(FMemorySource);
       FMemorySource := nil;
     end;
 
@@ -395,7 +399,7 @@ begin
           SetLength(PLearnMemory(FMemorySource[I])^.m_out, 0);
           Dispose(PLearnMemory(FMemorySource[I]));
         end;
-      DisposeObject(FMemorySource);
+      disposeObject(FMemorySource);
       FMemorySource := nil;
     end;
 
@@ -1623,7 +1627,7 @@ begin
             m64 := TMemoryStream64.Create;
             PLearnKDT(FLearnData)^.kdt.SaveToStream(m64);
             df.WriteStream(m64);
-            DisposeObject(m64);
+            disposeObject(m64);
           end;
       end;
     ltForest:
@@ -1732,7 +1736,7 @@ begin
         except
             Train;
         end;
-        DisposeObject(m64);
+        disposeObject(m64);
       end;
     ltForest:
       begin
@@ -1802,7 +1806,7 @@ begin
   SaveToDF(de);
 
   de.EncodeTo(stream, True);
-  DisposeObject(de);
+  disposeObject(de);
 end;
 
 procedure TLearn.LoadFromStream(stream: TCoreClassStream);
@@ -1814,7 +1818,7 @@ begin
 
   LoadFromDF(de);
 
-  DisposeObject(de);
+  disposeObject(de);
 end;
 
 {$IFNDEF FPC}
@@ -1829,7 +1833,7 @@ begin
   SaveToDF(de);
 
   de.EncodeAsPublicJson(stream);
-  DisposeObject(de);
+  disposeObject(de);
 end;
 
 procedure TLearn.LoadFromJsonStream(stream: TCoreClassStream);
@@ -1843,7 +1847,9 @@ begin
 
   LoadFromDF(de);
 
-  DisposeObject(de);
+  disposeObject(de);
 end;
 {$ENDIF FPC}
+{$ENDREGION 'ClassImp'}
+
 

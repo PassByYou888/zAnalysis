@@ -58,13 +58,13 @@ type
     function GetLinkValue(index: Integer): Single;
     procedure SetLinkValue(index: Integer; const Value: Single);
   public
-    property Vec2                     : TVec2 read GetVec2 write SetVec2;
-    property Vec3                     : TVec3 read GetVec3 write SetVec3;
-    property XYZ                      : TVec3 read GetVec3 write SetVec3;
-    property RGB                      : TVec3 read GetVec3 write SetVec3;
-    property Vec4                     : TVec4 read Link write Link;
-    property RGBA                     : TVec4 read Link write Link;
-    property COLOR                    : TVec4 read Link write Link;
+    property Vec2: TVec2 read GetVec2 write SetVec2;
+    property Vec3: TVec3 read GetVec3 write SetVec3;
+    property XYZ: TVec3 read GetVec3 write SetVec3;
+    property RGB: TVec3 read GetVec3 write SetVec3;
+    property Vec4: TVec4 read Link write Link;
+    property RGBA: TVec4 read Link write Link;
+    property COLOR: TVec4 read Link write Link;
     property LinkValue[index: Integer]: Single read GetLinkValue write SetLinkValue; default;
 
     {$IFNDEF FPC}
@@ -133,11 +133,11 @@ type
     function GetLinkValue(index: Integer): Single;
     procedure SetLinkValue(index: Integer; const Value: Single);
   public
-    property Vec2                     : TVec2 read GetVec2 write SetVec2;
-    property Vec3                     : TVec3 read Link write Link;
-    property XYZ                      : TVec3 read Link write Link;
-    property COLOR                    : TVec3 read Link write Link;
-    property RGB                      : TVec3 read Link write Link;
+    property Vec2: TVec2 read GetVec2 write SetVec2;
+    property Vec3: TVec3 read Link write Link;
+    property XYZ: TVec3 read Link write Link;
+    property COLOR: TVec3 read Link write Link;
+    property RGB: TVec3 read Link write Link;
     property LinkValue[index: Integer]: Single read GetLinkValue write SetLinkValue; default;
 
     {$IFNDEF FPC}
@@ -1371,7 +1371,7 @@ end;
 function TVector4.Normalize: TVector4;
 var
   invLen: Single;
-  vn    : Single;
+  vn: Single;
 begin
   vn := Norm;
   if vn = 0 then
@@ -1667,7 +1667,7 @@ end;
 function TVector3.Normalize: TVector3;
 var
   invLen: Single;
-  vn    : Single;
+  vn: Single;
 begin
   vn := Norm;
   if vn = 0 then

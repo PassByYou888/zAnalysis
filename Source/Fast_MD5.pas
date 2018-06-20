@@ -181,9 +181,6 @@ begin
   BufSiz := EndPos - StartPos;
   rest := 0;
 
-  if (BufSiz shl 3) < 0 then
-      Inc(Hi);
-
   Inc(Lo, BufSiz shl 3);
   Inc(Hi, BufSiz shr 29);
 

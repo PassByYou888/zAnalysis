@@ -26,7 +26,7 @@ unit UnicodeMixedLib;
 
 interface
 
-uses SysUtils, Classes, Types, Variants,
+uses SysUtils, Types, Variants,
   CoreClasses,
   PascalStrings,
   ListEngine;
@@ -91,7 +91,6 @@ type
     AutoFree: Boolean;
     Handle: TMixedStream;
     Time: TDateTime;
-    Attrib: Integer;
     Size: Int64;
     Position: Int64;
     Name: umlString;
@@ -150,7 +149,8 @@ function umlMin(const v1, v2: Double): Double; overload; {$IFDEF INLINE_ASM} inl
 function umlMin(const v1, v2: Single): Single; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function umlDeltaNumber(const V, delta: NativeInt): NativeInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function umlGetResourceStream(const FileName: TPascalString): TStream;
+
+function umlGetResourceStream(const FileName: TPascalString): TCoreClassStream;
 
 function umlSameVarValue(const v1, v2: Variant): Boolean;
 
@@ -197,19 +197,23 @@ function umlFileUpdate(var IOHnd: TIOHnd): Boolean; {$IFDEF INLINE_ASM} inline; 
 function umlFileTest(var IOHnd: TIOHnd): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure umlResetPrepareRead(var IOHnd: TIOHnd); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function umlFilePrepareRead(var IOHnd: TIOHnd; Size: Int64; var Buffers): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function umlFileRead(var IOHnd: TIOHnd; Size: Int64; var Buffers): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function umlFilePrepareRead(var IOHnd: TIOHnd; Size: Int64; var buff): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function umlFileRead(var IOHnd: TIOHnd; const Size: Int64; var buff): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function umlBlockRead(var IOHnd: TIOHnd; var buff; Size: Int64): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function umlFileBeginWrite(var IOHnd: TIOHnd): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function umlFileEndWrite(var IOHnd: TIOHnd): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function umlFileWrite(var IOHnd: TIOHnd; const Size: Int64; var Buffers): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function umlFileWrite(var IOHnd: TIOHnd; const Size: Int64; var buff): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function umlBlockWrite(var IOHnd: TIOHnd; var buff; const Size: Int64): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function umlFileWriteStr(var IOHnd: TIOHnd; var Value: TPascalString): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function umlFileReadStr(var IOHnd: TIOHnd; var Value: TPascalString): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function umlFileSeek(var IOHnd: TIOHnd; APos: Int64): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function umlFileGetPOS(var IOHnd: TIOHnd): Int64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function umlFilePOS(var IOHnd: TIOHnd): Int64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function umlFileGetSize(var IOHnd: TIOHnd): Int64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function umlFileSize(var IOHnd: TIOHnd): Int64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function umlGetFileTime(const FileName: TPascalString): TDateTime;
 procedure umlSetFileTime(const FileName: TPascalString; newTime: TDateTime);
@@ -289,8 +293,8 @@ function umlSmartSizeToStr(Size: Int64): TPascalString;
 function umlIntToStr(Parameter: Double): TPascalString; overload;
 function umlIntToStr(Parameter: Int64): TPascalString; overload;
 function umlSizeToStr(Parameter: Int64): TPascalString;
-function umlTimeToStr(t:TDateTime): TPascalString;
-function umlDateToStr(t:TDateTime): TPascalString;
+function umlTimeToStr(t: TDateTime): TPascalString;
+function umlDateToStr(t: TDateTime): TPascalString;
 function umlFloatToStr(const f: Extended): TPascalString;
 function umlShortFloatToStr(const f: Extended): TPascalString;
 
@@ -306,11 +310,11 @@ function umlMultipleMatch(const ValueCheck: TArrayPascalString; Value: TPascalSt
 function umlSearchMatch(const SourceStr, TargetStr: TPascalString): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function umlSearchMatch(const ValueCheck: TArrayPascalString; Value: TPascalString): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-{ De Time Double Code }
+{ Decode Double }
 function umlDeTimeCodeToStr(NowDateTime: TDateTime): TPascalString;
 
-{ StringReplace replaces occurances of <oldpattern> with <newpattern> in a
-  given TPascalString.  Assumes the TPascalString may contain Multibyte characters }
+{ StringReplace replaces occurances of <oldpattern> with <newpattern> in a given TPascalString.
+  Assumes the TPascalString may contain Multibyte characters }
 function umlStringReplace(const S, OldPattern, NewPattern: TPascalString; IgnoreCase: Boolean): TPascalString;
 function umlCharReplace(const S: TPascalString; OldPattern, NewPattern: umlChar): TPascalString;
 
@@ -811,7 +815,7 @@ begin
   Result := (V + (delta - 1)) and (not(delta - 1));
 end;
 
-function umlGetResourceStream(const FileName: TPascalString): TStream;
+function umlGetResourceStream(const FileName: TPascalString): TCoreClassStream;
 var
   n: TPascalString;
 begin
@@ -820,7 +824,7 @@ begin
   else
       n := FileName;
 
-  Result := TResourceStream.Create(hInstance, n.Text, RT_RCDATA);
+  Result := TCoreClassResourceStream.Create(hInstance, n.Text, RT_RCDATA);
 end;
 
 function umlSameVarValue(const v1, v2: Variant): Boolean;
@@ -1287,7 +1291,6 @@ begin
   IOHnd.AutoFree := False;
   IOHnd.Handle := nil;
   IOHnd.Time := 0;
-  IOHnd.Attrib := 0;
   IOHnd.Size := 0;
   IOHnd.Position := 0;
   IOHnd.Name := '';
@@ -1315,7 +1318,6 @@ begin
   IOHnd.Size := 0;
   IOHnd.Position := 0;
   IOHnd.Time := umlDefaultTime;
-  IOHnd.Attrib := umlDefaultAttrib;
   IOHnd.Name := name;
   IOHnd.OpenFlags := True;
   IOHnd.IsOnlyRead := False;
@@ -1338,7 +1340,6 @@ begin
   IOHnd.Size := Stream.Size;
   IOHnd.Position := 0;
   IOHnd.Time := umlDefaultTime;
-  IOHnd.Attrib := 0;
   IOHnd.Name := name;
   IOHnd.OpenFlags := True;
   IOHnd.AutoFree := False;
@@ -1365,7 +1366,6 @@ begin
   IOHnd.Size := 0;
   IOHnd.Position := 0;
   IOHnd.Time := Now;
-  IOHnd.Attrib := umlDefaultAttrib;
   IOHnd.Name := name;
   IOHnd.OpenFlags := True;
   IOHnd.IsOnlyRead := False;
@@ -1374,8 +1374,6 @@ begin
 end;
 
 function umlFileOpen(const Name: TPascalString; var IOHnd: TIOHnd; _OnlyRead: Boolean): Boolean;
-var
-  SR: TSR;
 begin
   if IOHnd.OpenFlags = True then
     begin
@@ -1383,11 +1381,10 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFindFirstFile(name, SR) = False then
+  if not umlFileExists(name) then
     begin
       IOHnd.Return := umlNotFindFile;
       Result := False;
-      umlFindClose(SR);
       Exit;
     end;
   try
@@ -1399,21 +1396,18 @@ begin
     IOHnd.Handle := nil;
     IOHnd.Return := umlOpenFileError;
     Result := False;
-    umlFindClose(SR);
     Exit;
   end;
   IOHnd.IsOnlyRead := _OnlyRead;
   IOHnd.Return := umlNotError;
-  IOHnd.Size := SR.Size;
+  IOHnd.Size := IOHnd.Handle.Size;
   IOHnd.Position := 0;
   if not FileAge(name.Text, IOHnd.Time) then
       IOHnd.Time := Now;
-  IOHnd.Attrib := SR.Attr;
   IOHnd.Name := name;
   IOHnd.OpenFlags := True;
   IOHnd.AutoFree := True;
   Result := True;
-  umlFindClose(SR);
 end;
 
 function umlFileClose(var IOHnd: TIOHnd): Boolean;
@@ -1448,7 +1442,6 @@ begin
   IOHnd.Handle := nil;
   IOHnd.Return := umlNotError;
   IOHnd.Time := umlDefaultTime;
-  IOHnd.Attrib := umlDefaultAttrib;
   IOHnd.Name := '';
   IOHnd.OpenFlags := False;
   IOHnd.WriteFlag := False;
@@ -1491,7 +1484,7 @@ begin
   IOHnd.PrepareReadPosition := -1;
 end;
 
-function umlFilePrepareRead(var IOHnd: TIOHnd; Size: Int64; var Buffers): Boolean;
+function umlFilePrepareRead(var IOHnd: TIOHnd; Size: Int64; var buff): Boolean;
 var
   m64: TMemoryStream64;
   preRedSiz: Int64;
@@ -1536,7 +1529,7 @@ begin
 
   if (IOHnd.Position >= IOHnd.PrepareReadPosition) and (IOHnd.PrepareReadPosition + m64.Size >= IOHnd.Position + Size) then
     begin
-      CopyPtr(Pointer(NativeUInt(m64.Memory) + (IOHnd.Position - IOHnd.PrepareReadPosition)), @Buffers, Size);
+      CopyPtr(Pointer(NativeUInt(m64.Memory) + (IOHnd.Position - IOHnd.PrepareReadPosition)), @buff, Size);
       Inc(IOHnd.Position, Size);
       Result := True;
     end
@@ -1549,7 +1542,7 @@ begin
     end;
 end;
 
-function umlFileRead(var IOHnd: TIOHnd; Size: Int64; var Buffers): Boolean;
+function umlFileRead(var IOHnd: TIOHnd; const Size: Int64; var buff): Boolean;
 var
   BuffPointer: Pointer;
   i: NativeInt;
@@ -1568,7 +1561,7 @@ begin
       Exit;
     end;
 
-  if umlFilePrepareRead(IOHnd, Size, Buffers) then
+  if umlFilePrepareRead(IOHnd, Size, buff) then
     begin
       IOHnd.Return := umlNotError;
       Result := True;
@@ -1579,7 +1572,7 @@ begin
     if Size > umlMaxFileRecSize then
       begin
         // process Chunk buffer
-        BuffInt := NativeUInt(@Buffers);
+        BuffInt := NativeUInt(@buff);
         BuffPointer := Pointer(BuffInt);
         for i := 1 to (Size div umlMaxFileRecSize) do
           begin
@@ -1606,7 +1599,7 @@ begin
         Inc(IOHnd.IORead, Size);
         Exit;
       end;
-    if IOHnd.Handle.Read(Buffers, Size) <> Size then
+    if IOHnd.Handle.Read(buff, Size) <> Size then
       begin
         IOHnd.Return := umlFileReadError;
         Result := False;
@@ -1620,6 +1613,11 @@ begin
     IOHnd.Return := umlFileReadError;
     Result := False;
   end;
+end;
+
+function umlBlockRead(var IOHnd: TIOHnd; var buff; Size: Int64): Boolean;
+begin
+  Result := umlFileRead(IOHnd, Size, buff);
 end;
 
 function umlFileBeginWrite(var IOHnd: TIOHnd): Boolean;
@@ -1657,7 +1655,7 @@ begin
   Result := True;
 end;
 
-function umlFileWrite(var IOHnd: TIOHnd; const Size: Int64; var Buffers): Boolean;
+function umlFileWrite(var IOHnd: TIOHnd; const Size: Int64; var buff): Boolean;
 var
   BuffPointer: Pointer;
   i: NativeInt;
@@ -1685,7 +1683,7 @@ begin
 
   if IOHnd.FlushBuff <> nil then
     begin
-      if TMemoryStream64(IOHnd.FlushBuff).Write64(Buffers, Size) <> Size then
+      if TMemoryStream64(IOHnd.FlushBuff).Write64(buff, Size) <> Size then
         begin
           IOHnd.Return := umlFileWriteError;
           Result := False;
@@ -1704,7 +1702,7 @@ begin
     if Size > umlMaxFileRecSize then
       begin
         // process buffer chunk
-        BuffInt := NativeUInt(@Buffers);
+        BuffInt := NativeUInt(@buff);
         BuffPointer := Pointer(BuffInt);
         for i := 1 to (Size div umlMaxFileRecSize) do
           begin
@@ -1734,7 +1732,7 @@ begin
         Inc(IOHnd.IOWrite, Size);
         Exit;
       end;
-    if IOHnd.Handle.Write(Buffers, Size) <> Size then
+    if IOHnd.Handle.Write(buff, Size) <> Size then
       begin
         IOHnd.Return := umlFileWriteError;
         Result := False;
@@ -1751,6 +1749,11 @@ begin
     IOHnd.Return := umlFileWriteError;
     Result := False;
   end;
+end;
+
+function umlBlockWrite(var IOHnd: TIOHnd; var buff; const Size: Int64): Boolean;
+begin
+  Result := umlFileWrite(IOHnd, Size, buff);
 end;
 
 function umlFileWriteStr(var IOHnd: TIOHnd; var Value: TPascalString): Boolean;
@@ -1825,6 +1828,11 @@ begin
   end;
 end;
 
+function umlFilePOS(var IOHnd: TIOHnd): Int64;
+begin
+  Result := umlFileGetPOS(IOHnd);
+end;
+
 function umlFileGetSize(var IOHnd: TIOHnd): Int64;
 begin
   if (IOHnd.OpenFlags = False) or (IOHnd.Handle = nil) then
@@ -1834,6 +1842,11 @@ begin
       Exit;
     end;
   Result := IOHnd.Size;
+end;
+
+function umlFileSize(var IOHnd: TIOHnd): Int64;
+begin
+  Result := umlFileGetSize(IOHnd);
 end;
 
 function umlGetFileTime(const FileName: TPascalString): TDateTime;
@@ -2843,12 +2856,12 @@ begin
   end;
 end;
 
-function umlTimeToStr(t:TDateTime): TPascalString;
+function umlTimeToStr(t: TDateTime): TPascalString;
 begin
   Result := TimeToStr(t);
 end;
 
-function umlDateToStr(t:TDateTime): TPascalString;
+function umlDateToStr(t: TDateTime): TPascalString;
 begin
   Result := DateToStr(t);
 end;
@@ -5180,6 +5193,7 @@ begin
   n := '';
 end;
 {$ENDIF FPC}
+
 
 initialization
 

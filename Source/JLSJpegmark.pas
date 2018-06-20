@@ -32,9 +32,13 @@ uses
 
 { Marker identifiers }
 const
-  JPEGLS_MARKER_SOI = $FF8D; { start of image } // modify by 600585@qq.com
-  JPEGLS_MARKER_EOI = $FF9D; { end of image }   // modify by 600585@qq.com
-
+  // publish marker
+  JPEGLS_MARKER_SOI = $FFD8; { start of image } // modify by 600585@qq.com
+  JPEGLS_MARKER_EOI = $FFD9; { end of image }   // modify by 600585@qq.com
+  // custom marker
+  JPEGLS_MARKER_SOI2 = $FF8D; { start of image } // modify by 600585@qq.com
+  JPEGLS_MARKER_EOI2 = $FF9D; { end of image }   // modify by 600585@qq.com
+  // publish marker
   JPEGLS_MARKER_SOS  = $FFDA; { Start of scan }
   JPEGLS_MARKER_DNL  = $FFDC; { Define number of lines }
   JPEGLS_MARKER_DRI  = $FFDD; { Define restart interval }
@@ -107,26 +111,12 @@ begin
       exit;
     end;
 
-  // #ifdef BIG_ENDIAN
   for l := n - 1 downto 0 do
     begin
       i := shr_c(value, 8 * l) and $000000FF;
       outstrm.Write(i, 1 { sizeof(i) } );
     end;
-  // if (putc((value>>(8*l))&0x000000FF,out) == EOF )
-  // result:=BUF_EOF;
-  // end;
-  (*
-    #else  /* little endian */
-    for (l=0;l<n;l++) {
-    if ( putc((value&0x000000FF),out) == EOF )
-    return EOF;
-    value >>= 8;
-    }
-    #endif
-  *)
   Result := n;
-
 end;
 
 function TJLSJpegMark.write_2_bytes(outstrm: TCoreClassStream; value: int): int;

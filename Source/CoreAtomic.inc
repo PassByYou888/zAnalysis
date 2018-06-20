@@ -52,8 +52,6 @@ begin
     pi := -1;
     p := nil;
     i := 0;
-    if CriticalList.Count > 1 then
-        empty;
     while i < CriticalList.Count do
       begin
         if PCriticalLock(CriticalList[i])^.Obj = Obj then

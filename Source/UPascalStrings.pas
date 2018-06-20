@@ -18,13 +18,13 @@ interface
 uses SysUtils, PascalStrings;
 
 type
-  {$IFDEF FPC}
+{$IFDEF FPC}
   USystemChar   = UnicodeChar;
   USystemString = UnicodeString;
-  {$ELSE FPC}
+{$ELSE FPC}
   USystemChar   = PascalStrings.SystemChar;
   USystemString = PascalStrings.SystemString;
-  {$ENDIF FPC}
+{$ENDIF FPC}
   PUSystemString = ^USystemString;
   PUPascalString = ^TUPascalString;
   TUPascalChars  = packed array of USystemChar;
@@ -50,7 +50,7 @@ type
   public
     Buff: TUPascalChars;
 
-    {$IFDEF DELPHI}
+{$IFDEF DELPHI}
     class operator Equal(const Lhs, Rhs: TUPascalString): Boolean;
     class operator NotEqual(const Lhs, Rhs: TUPascalString): Boolean;
     class operator GreaterThan(const Lhs, Rhs: TUPascalString): Boolean;
@@ -77,7 +77,7 @@ type
     class operator Explicit(Value: USystemString): TUPascalString;
     class operator Explicit(Value: Variant): TUPascalString;
     class operator Explicit(Value: USystemChar): TUPascalString;
-    {$ENDIF}
+{$ENDIF}
     function copy(index, count: NativeInt): TUPascalString;
     function Same(const p: PUPascalString): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function Same(const t: TUPascalString): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -213,19 +213,19 @@ function USmithWatermanCompareLongString(const t1, t2: TUPascalString): Double; 
 
 var
   USystemCharSize: NativeInt = SizeOf(USystemChar);
-  {$IFDEF CPU64}
+{$IFDEF CPU64}
   UMaxSmithWatermanMatrix: NativeInt = 10000 * 10;
-  {$ELSE}
+{$ELSE}
   UMaxSmithWatermanMatrix: NativeInt = 8192;
-  {$ENDIF}
+{$ENDIF}
 
 
 const
-  {$IFDEF FirstCharInZero}
+{$IFDEF FirstCharInZero}
   UFirstCharPos = 0;
-  {$ELSE}
+{$ELSE}
   UFirstCharPos = 1;
-  {$ENDIF}
+{$ENDIF}
 
 implementation
 
@@ -384,11 +384,11 @@ var
 begin
   Result := 0;
 
-  {$IFDEF FirstCharInZero}
+{$IFDEF FirstCharInZero}
   for i := 0 to Length(s^) - 1 do
-  {$ELSE}
+{$ELSE}
   for i := 1 to Length(s^) do
-    {$ENDIF}
+{$ENDIF}
     begin
       c := s^[i];
       if UCharIn(c, ucHiAtoZ) then
@@ -404,11 +404,11 @@ var
 begin
   Result := 0;
 
-  {$IFDEF FirstCharInZero}
+{$IFDEF FirstCharInZero}
   for i := 0 to Length(s^) - 1 do
-  {$ELSE}
+{$ELSE}
   for i := 1 to Length(s^) do
-    {$ENDIF}
+{$ENDIF}
     begin
       c := s^[i];
       if UCharIn(c, ucHiAtoZ) then
@@ -459,11 +459,11 @@ end;
 
 function UFormat(const Fmt: USystemString; const Args: array of const): USystemString;
 begin
-  {$IFDEF FPC}
+{$IFDEF FPC}
   Result := UnicodeFormat(Fmt, Args);
-  {$ELSE FPC}
+{$ELSE FPC}
   Result := Format(Fmt, Args);
-  {$ENDIF FPC}
+{$ENDIF FPC}
 end;
 
 function BytesOfPascalString(const s: TUPascalString): TBytes;
@@ -1328,11 +1328,11 @@ end;
 
 function TUPascalString.GetBytes: TBytes;
 begin
-  {$IFDEF FPC}
+{$IFDEF FPC}
   Result := SysUtils.TEncoding.UTF8.GetBytes(Buff);
-  {$ELSE}
+{$ELSE}
   Result := SysUtils.TEncoding.UTF8.GetBytes(Buff);
-  {$ENDIF}
+{$ENDIF}
 end;
 
 function TUPascalString.GetLast: USystemChar;
@@ -1747,11 +1747,11 @@ end;
 
 procedure TUPascalString.FastGetBytes(var Output: TBytes);
 begin
-  {$IFDEF FPC}
+{$IFDEF FPC}
   Output := SysUtils.TEncoding.UTF8.GetBytes(Buff);
-  {$ELSE}
+{$ELSE}
   Output := SysUtils.TEncoding.UTF8.GetBytes(Buff);
-  {$ENDIF}
+{$ENDIF}
 end;
 
 function TUPascalString.LowerText: USystemString;
@@ -1883,11 +1883,11 @@ end;
 
 function TUPascalString.BOMBytes: TBytes;
 begin
-  {$IFDEF FPC}
+{$IFDEF FPC}
   Result := GetBytes;
-  {$ELSE}
+{$ELSE}
   Result := SysUtils.TEncoding.UTF8.GetPreamble + GetBytes;
-  {$ENDIF}
+{$ENDIF}
 end;
 
 initialization

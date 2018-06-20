@@ -35,8 +35,6 @@ type
   TListBuffer = packed array of TCoreClassList;
   PListBuffer = ^TListBuffer;
 
-  TDataPos = (dpOnly, dpFirst, dpMiddle, dpLast);
-
   THashObjectList  = class;
   THashVariantList = class;
 

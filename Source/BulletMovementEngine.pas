@@ -84,7 +84,7 @@ type
     destructor Destroy; override;
 
     procedure Start(ATo: T2DPoint); overload;
-    procedure Start(APaths: T2DPointList); overload;
+    procedure Start(APaths: TVec2List); overload;
     procedure Start; overload;
     procedure Stop;
     procedure Pause;
@@ -216,7 +216,7 @@ begin
     end;
 end;
 
-procedure TBulletMovementEngine.Start(APaths: T2DPointList);
+procedure TBulletMovementEngine.Start(APaths: TVec2List);
 var
   i: Integer;
 begin

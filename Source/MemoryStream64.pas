@@ -24,18 +24,18 @@ interface
 
 uses
   SysUtils, ZLib,
-  {$IFDEF FPC}
+{$IFDEF FPC}
   zstream,
-  {$ENDIF}
+{$ENDIF}
   CoreClasses, PascalStrings;
 
 type
   TMemoryStream64 = class(TCoreClassStream)
   private
-    FMemory       : Pointer;
-    FSize         : NativeUInt;
-    FPosition     : NativeUInt;
-    FCapacity     : NativeUInt;
+    FMemory: Pointer;
+    FSize: NativeUInt;
+    FPosition: NativeUInt;
+    FCapacity: NativeUInt;
     FProtectedMode: Boolean;
   protected
     procedure SetPointer(BuffPtr: Pointer; const BuffSize: NativeUInt);
@@ -62,12 +62,12 @@ type
     function Write64(const Buffer; Count: Int64): Int64; virtual;
     function WritePtr(const p: Pointer; Count: Int64): Int64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function Write(const Buffer; Count: Longint): Longint; overload; override;
-    {$IFNDEF FPC} function Write(const Buffer: TBytes; Offset, Count: Longint): Longint; overload; override; {$ENDIF}
+{$IFNDEF FPC} function Write(const Buffer: TBytes; Offset, Count: Longint): Longint; overload; override; {$ENDIF}
     //
     function Read64(var Buffer; Count: Int64): Int64; virtual;
     function ReadPtr(const p: Pointer; Count: Int64): Int64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function Read(var Buffer; Count: Longint): Longint; overload; override;
-    {$IFNDEF FPC} function Read(Buffer: TBytes; Offset, Count: Longint): Longint; overload; override; {$ENDIF}
+{$IFNDEF FPC} function Read(Buffer: TBytes; Offset, Count: Longint): Longint; overload; override; {$ENDIF}
     //
     function Seek(const Offset: Int64; Origin: TSeekOrigin): Int64; override;
     property Memory: Pointer read FMemory;
@@ -113,7 +113,7 @@ type
     function Write64(const Buffer; Count: Int64): Int64; override;
   end;
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
 
   TDecompressionStream = class(zstream.TDecompressionStream)
   public
@@ -126,11 +126,11 @@ type
     constructor Create(Stream: TCoreClassStream); overload;
     constructor Create(level: Tcompressionlevel; Stream: TCoreClassStream); overload;
   end;
-  {$ELSE}
+{$ELSE}
 
-  TDecompressionStream = TZDecompressionStream;
-  TCompressionStream   = TZCompressionStream;
-  {$ENDIF}
+  TDecompressionStream = ZLib.TZDecompressionStream;
+  TCompressionStream   = ZLib.TZCompressionStream;
+{$ENDIF}
   //
   // zlib
 function MaxCompressStream(Sour: TCoreClassStream; ComTo: TCoreClassStream): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -235,9 +235,9 @@ procedure TMemoryStream64.LoadFromStream(Stream: TCoreClassStream);
 const
   ChunkSize = 64 * 1024 * 1024;
 var
-  p   : Pointer;
-  j   : NativeInt;
-  Num : NativeInt;
+  p: Pointer;
+  j: NativeInt;
+  Num: NativeInt;
   Rest: NativeInt;
 begin
   if FProtectedMode then
@@ -290,9 +290,9 @@ procedure TMemoryStream64.SaveToStream(Stream: TCoreClassStream);
 const
   ChunkSize = 64 * 1024 * 1024;
 var
-  p   : Pointer;
-  j   : NativeInt;
-  Num : NativeInt;
+  p: Pointer;
+  j: NativeInt;
+  Num: NativeInt;
   Rest: NativeInt;
 begin
   if Size > 0 then
@@ -496,7 +496,7 @@ const
   MaxBufSize = $F000;
 var
   BufSize, N: Int64;
-  Buffer    : TBytes;
+  Buffer: TBytes;
 begin
   if FProtectedMode then
       raiseInfo('protected mode');
@@ -600,7 +600,7 @@ end;
 
 function MaxCompressStream(Sour: TCoreClassStream; ComTo: TCoreClassStream): Boolean;
 var
-  cp       : TCompressionStream;
+  cp: TCompressionStream;
   sizevalue: Int64;
 begin
   Result := False;
@@ -620,7 +620,7 @@ end;
 
 function FastCompressStream(Sour: TCoreClassStream; ComTo: TCoreClassStream): Boolean;
 var
-  cp       : TCompressionStream;
+  cp: TCompressionStream;
   sizevalue: Int64;
 begin
   Result := False;
@@ -640,7 +640,7 @@ end;
 
 function CompressStream(Sour: TCoreClassStream; ComTo: TCoreClassStream): Boolean;
 var
-  cp       : TCompressionStream;
+  cp: TCompressionStream;
   sizevalue: Int64;
 begin
   Result := False;
@@ -670,7 +670,7 @@ end;
 
 function DecompressStream(Sour: TCoreClassStream; DeTo: TCoreClassStream): Boolean;
 var
-  DC    : TDecompressionStream;
+  DC: TDecompressionStream;
   DeSize: Int64;
 begin
   Result := False;
@@ -688,7 +688,7 @@ end;
 
 function DecompressStreamToPtr(Sour: TCoreClassStream; var DeTo: Pointer): Boolean;
 var
-  DC    : TDecompressionStream;
+  DC: TDecompressionStream;
   DeSize: Int64;
 begin
   Result := False;

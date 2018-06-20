@@ -29,7 +29,7 @@ uses
 
 const
   { Version number }
-  JPEGLSVERSION = 'V.2.2'; // last by 600585@qq.com
+  JPEGLSVERSION = 'V.2.3'; // last by 600585@qq.com
 
   { Maximal number of components in the implementation }
   MAX_COMPONENTS = 6;
@@ -284,7 +284,7 @@ type
   function ENDIAN8(x: Word): byte;
   function ENDIAN16(x: Word): Word;
 
-  function check_compatibility(head_frame: Pjpeg_ls_header; head_scan: Pjpeg_ls_header; n_s: int; ALog: TListPascalString): int;
+  function check_compatibility(head_frame: Pjpeg_ls_header; head_scan: Pjpeg_ls_header; n_s: int): int;
 
   function shr_c(Value: Int64; ShiftBits: integer): Int64; overload;
   function shr_c(Value: integer; ShiftBits: integer): integer; overload;
@@ -292,6 +292,8 @@ type
   function Bool_c(AVAlue: boolean): integer;
 
 implementation
+
+uses DoStatusIO;
 
 function ENDIAN8(x: Word): byte;
 begin
@@ -384,7 +386,7 @@ end;
 
 { We first check compatibility with JPEG-LS, then with this implementation }
 
-function check_compatibility(head_frame: Pjpeg_ls_header; head_scan: Pjpeg_ls_header; n_s: int; ALog: TListPascalString): int;
+function check_compatibility(head_frame: Pjpeg_ls_header; head_scan: Pjpeg_ls_header; n_s: int): int;
 var
   number_of_scans, i: int;
   maxreset: int;
@@ -393,7 +395,7 @@ begin
   { Check implemented color modes }
   if ((head_scan^.color_mode > PIXEL_INT)) then
     begin
-      ALog.Append(PFormat('Color mode %d not supported.', [head_scan^.color_mode]));
+      DoStatus('Color mode %d not supported.', [head_scan^.color_mode]);
       Result := 10;
       exit;
     end;
@@ -407,14 +409,14 @@ begin
 
   if (head_frame^.columns <= 0) or (head_frame^.rows <= 0) then
     begin
-      ALog.Append('Image size must be positive for this implementation.');
+      DoStatus('Image size must be positive for this implementation.');
       Result := 10;
       exit;
     end;
 
   if (head_frame^.alp < 4) then
     begin
-      ALog.Append(PFormat('Alphabet size must be >= 4, got %d.', [head_frame^.alp]));
+      DoStatus('Alphabet size must be >= 4, got %d.', [head_frame^.alp]);
       Result := 10;
       exit;
     end;
@@ -422,21 +424,21 @@ begin
   if (head_scan^.T1 > head_scan^.T2) or (head_scan^.T2 > head_scan^.T3) or
     (head_scan^.T1 < head_scan^._near + 1) or (head_scan^.T3 >= head_scan^.alp) then
     begin
-      ALog.Append(PFormat('Bad thresholds: must be %d <= Ta <= Tb <= Tc <= %d.', [head_scan^._near + 1, head_scan^.alp - 1]));
+      DoStatus('Bad thresholds: must be %d <= Ta <= Tb <= Tc <= %d.', [head_scan^._near + 1, head_scan^.alp - 1]);
       Result := 10;
       exit;
     end;
 
   if (head_frame^.comp > 255) then
     begin
-      ALog.Append('Too many components (must be less than 255).');
+      DoStatus('Too many components (must be less than 255).');
       Result := 10;
       exit;
     end;
 
   if (head_scan^._near >= head_scan^.alp) then
     begin
-      ALog.Append(PFormat('Error for _near-lossless must be smaller than alphabet (%d), got %d.', [head_scan^.alp, head_scan^._near]));
+      DoStatus('Error for _near-lossless must be smaller than alphabet (%d), got %d.', [head_scan^.alp, head_scan^._near]);
       Result := 10;
       exit;
     end;
@@ -448,7 +450,7 @@ begin
 
   if (head_scan^.RES < MINRESET) or (head_scan^.RES > maxreset) then
     begin
-      ALog.Append(PFormat('Reset parameter must be between %d and %d.', [MINRESET, head_scan^.alp - 1]));
+      DoStatus('Reset parameter must be between %d and %d.', [MINRESET, head_scan^.alp - 1]);
       Result := 10;
       exit;
     end;
@@ -456,7 +458,7 @@ begin
   for i := 0 to pred(head_frame^.comp) do
     if (head_frame^.comp_ids[i] <> (i + 1)) then
       begin
-        ALog.Append('Components id in frame not compatible with this implementation.');
+        DoStatus('Components id in frame not compatible with this implementation.');
         Result := 10;
         exit;
       end;
@@ -465,7 +467,7 @@ begin
     begin
       if (head_frame^.comp <> head_scan^.comp) then
         begin
-          ALog.Append('In this implementation, when single scan, all components must be in the scan.');
+          DoStatus('In this implementation, when single scan, all components must be in the scan.');
           Result := 10;
           exit;
         end;
@@ -473,7 +475,7 @@ begin
       for i := 0 to pred(head_frame^.comp) do
         if (head_scan^.comp_ids[i] <> (i + 1)) then
           begin
-            ALog.Append('Components id in single scan not compatible with this implementation.');
+            DoStatus('Components id in single scan not compatible with this implementation.');
             Result := 10;
             exit;
           end;
@@ -483,14 +485,14 @@ begin
     begin
       if (head_scan^.comp <> 1) then
         begin
-          ALog.Append('Only 1 component per scan for plane interleaved mode.');
+          DoStatus('Only 1 component per scan for plane interleaved mode.');
           Result := 10;
           exit;
         end;
 
       if (head_scan^.comp_ids[0] <> (n_s + 1)) then
         begin
-          ALog.Append('Components id in multiple scan not compatible with this implementation.');
+          DoStatus('Components id in multiple scan not compatible with this implementation.');
           Result := 10;
           exit;
         end;

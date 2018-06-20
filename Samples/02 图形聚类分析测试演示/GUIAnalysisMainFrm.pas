@@ -7,9 +7,10 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
 
   FMX.TabControl, FMX.Surfaces, FMX.Objects,
+  FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit, FMX.Layouts,
 
   CoreClasses, MemoryRaster, UnicodeMixedLib, Geometry2DUnit, FastKDTreeS, KM,
-  FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit, FMX.Layouts;
+  zDrawEngineInterface_SlowFMX;
 
 const
   sceneWidth  = 300;
@@ -44,103 +45,17 @@ type
 var
   GUIAnalysisMainForm: TGUIAnalysisMainForm;
 
-  { 下列函数是从 zDrawEngine->FMX 接口拔出的 }
-  { 因为zDrawEngine的体系有点巨大，懒于整理，不便开源 }
-procedure MemoryBitmapToSurface(bmp: TMemoryRaster; Surface: TBitmapSurface); overload;
-procedure MemoryBitmapToSurface(bmp: TMemoryRaster; sourRect: TRect; Surface: TBitmapSurface); overload;
-procedure SurfaceToMemoryBitmap(Surface: TBitmapSurface; bmp: TMemoryRaster);
-procedure MemoryBitmapToBitmap(b: TMemoryRaster; bmp: TBitmap); overload;
-procedure MemoryBitmapToBitmap(b: TMemoryRaster; sourRect: TRect; bmp: TBitmap); overload;
-procedure BitmapToMemoryBitmap(bmp: TBitmap; b: TMemoryRaster);
-
 implementation
 
 {$R *.fmx}
 
-
-procedure MemoryBitmapToSurface(bmp: TMemoryRaster; Surface: TBitmapSurface);
-var
-  X, Y: Integer;
-  c   : TRasterColorEntry;
-  dc  : TAlphaColor;
-begin
-  Surface.SetSize(bmp.Width, bmp.Height, TPixelFormat.RGBA);
-  for Y := 0 to bmp.Height - 1 do
-    for X := 0 to bmp.Width - 1 do
-      begin
-        {$IF Defined(ANDROID) or Defined(IOS) or Defined(OSX)}
-        // 在安卓和苹果平台，fmx的纹理像素格式都是BGRA
-        c.ARGB := RGBA2BGRA(bmp.Pixel[X, Y]);
-        {$ELSE}
-        // windows平台，fmx的纹理像素为RGBA
-        c.RGBA := bmp.Pixel[X, Y];
-        {$IFEND}
-        TAlphaColorRec(dc).r := c.r;
-        TAlphaColorRec(dc).g := c.g;
-        TAlphaColorRec(dc).b := c.b;
-        TAlphaColorRec(dc).a := c.a;
-        Surface.Pixels[X, Y] := dc;
-      end;
-end;
-
-procedure MemoryBitmapToSurface(bmp: TMemoryRaster; sourRect: TRect; Surface: TBitmapSurface);
-var
-  nb: TMemoryRaster;
-begin
-  nb := TMemoryRaster.Create;
-  nb.DrawMode := dmBlend;
-  nb.SetSize(sourRect.Width, sourRect.Height, RasterColor(0, 0, 0, 0));
-  bmp.DrawTo(nb, 0, 0, sourRect);
-  MemoryBitmapToSurface(nb, Surface);
-  DisposeObject(nb);
-end;
-
-procedure SurfaceToMemoryBitmap(Surface: TBitmapSurface; bmp: TMemoryRaster);
-var
-  X, Y: Integer;
-begin
-  bmp.SetSize(Surface.Width, Surface.Height);
-  for Y := 0 to Surface.Height - 1 do
-    for X := 0 to Surface.Width - 1 do
-      with TAlphaColorRec(Surface.Pixels[X, Y]) do
-          bmp.Pixel[X, Y] := RasterColor(r, g, b, a);
-end;
-
-procedure MemoryBitmapToBitmap(b: TMemoryRaster; bmp: TBitmap);
-var
-  Surface: TBitmapSurface;
-begin
-  Surface := TBitmapSurface.Create;
-  MemoryBitmapToSurface(b, Surface);
-  bmp.Assign(Surface);
-  DisposeObject(Surface);
-end;
-
-procedure MemoryBitmapToBitmap(b: TMemoryRaster; sourRect: TRect; bmp: TBitmap);
-var
-  Surface: TBitmapSurface;
-begin
-  Surface := TBitmapSurface.Create;
-  MemoryBitmapToSurface(b, sourRect, Surface);
-  bmp.Assign(Surface);
-  DisposeObject(Surface);
-end;
-
-procedure BitmapToMemoryBitmap(bmp: TBitmap; b: TMemoryRaster);
-var
-  Surface: TBitmapSurface;
-begin
-  Surface := TBitmapSurface.Create;
-  Surface.Assign(bmp);
-  SurfaceToMemoryBitmap(Surface, b);
-  DisposeObject(Surface);
-end;
 
 procedure TGUIAnalysisMainForm.Button1Click(Sender: TObject);
 var
   mr: TMemoryRaster;
 begin
   mr := TMemoryRaster.Create;
+  mr.OpenAGG;
   GenerateView(pl1, mr);
 
   MemoryBitmapToBitmap(mr, LeftImage1.Bitmap);
@@ -178,7 +93,7 @@ end;
 
 procedure TGUIAnalysisMainForm.GenerateData(pl: T2DPointList);
 var
-  i : Integer;
+  i: Integer;
   pt: T2DPoint;
 begin
   pl.Clear;
@@ -191,24 +106,24 @@ end;
 
 procedure TGUIAnalysisMainForm.GenerateView(pl: T2DPointList; bmp: TMemoryRaster);
 var
-  i : Integer;
+  i: Integer;
   pt: T2DPoint;
 begin
   bmp.SetSize(sceneWidth, sceneHeight, RasterColor($0, $0, $0, $0));
   for i := 0 to pl.Count - 1 do
     begin
       pt := pl[i]^;
-      bmp.DrawCross(Trunc(pt[0]), Trunc(pt[1]), 8, RasterColor($FF, $0, $0, $FF));
+      bmp.FillCircle(pt, 8, RasterColor($FF, $0, $0, $FF));
     end;
 end;
 
 procedure TGUIAnalysisMainForm.BuildCluster(pl: T2DPointList; k: Integer; bmp: TMemoryRaster);
 var
-  k2d         : TKDT2DS;
-  OutIndex    : TDynamicIndexArray;
-  arryPl      : array of T2DPointList;
-  i           : Integer;
-  pt          : T2DPoint;
+  k2d: TKDT2DS;
+  OutIndex: TDynamicIndexArray;
+  arryPl: array of T2DPointList;
+  i: Integer;
+  pt: T2DPoint;
   ConvexHullPl: T2DPointList;
 begin
   k2d := TKDT2DS.Create;

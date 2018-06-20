@@ -29,11 +29,8 @@ type
   THash         = Cardinal;
   THash64       = UInt64;
   PSystemString = ^SystemString;
-
   PPascalString = ^TPascalString;
-
   TPascalChars = packed array of SystemChar;
-
   TOrdChar  = (c0to9, c1to9, c0to32, c0to32no10, cLoAtoF, cHiAtoF, cLoAtoZ, cHiAtoZ, cHex, cAtoF, cAtoZ);
   TOrdChars = set of TOrdChar;
 
@@ -75,10 +72,10 @@ type
     class operator Implicit(Value: TPascalString): Variant;
 
     class operator Explicit(Value: TPascalString): SystemString;
-    class operator Explicit(Value: TPascalString): Variant;
     class operator Explicit(Value: SystemString): TPascalString;
-    class operator Explicit(Value: Variant): TPascalString;
     class operator Explicit(Value: SystemChar): TPascalString;
+    class operator Explicit(Value: Variant): TPascalString;
+    class operator Explicit(Value: TPascalString): Variant;
     {$ENDIF}
     function copy(index, count: NativeInt): TPascalString;
     function Same(const p: PPascalString): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -186,7 +183,7 @@ operator + (const A: SystemString; const B: TPascalString): TPascalString;
 operator + (const A: TPascalString; const B: SystemChar): TPascalString;
 operator + (const A: SystemChar; const B: TPascalString): TPascalString;
 
-{$ENDIF}
+{$ENDIF FPC}
 
 { https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm }
 

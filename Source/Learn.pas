@@ -22,9 +22,9 @@ uses CoreClasses, UnicodeMixedLib, PascalStrings, MemoryRaster, MemoryStream64, 
 type
   TLearn = class;
 
-  TLearnState_Call               = procedure(const LSender: TLearn; const state: Boolean);
-  TLearnState_Method             = procedure(const LSender: TLearn; const state: Boolean) of object;
-  {$IFNDEF FPC} TLearnState_Proc = reference to procedure(const LSender: TLearn; const state: Boolean); {$ENDIF}
+  TLearnState_Call             = procedure(const LSender: TLearn; const state: Boolean);
+  TLearnState_Method           = procedure(const LSender: TLearn; const state: Boolean) of object;
+{$IFNDEF FPC} TLearnState_Proc = reference to procedure(const LSender: TLearn; const state: Boolean); {$ENDIF}
 
   TLearn = class(TCoreClassInterfacedObject)
   public type
@@ -119,7 +119,7 @@ type
     procedure Train_MT(const TrainDepth: TLInt); overload;
     procedure TrainC(const TrainDepth: TLInt; const OnResult: TLearnState_Call);
     procedure TrainM(const TrainDepth: TLInt; const OnResult: TLearnState_Method);
-    {$IFNDEF FPC} procedure TrainP(const TrainDepth: TLInt; const OnResult: TLearnState_Proc); {$ENDIF FPC}
+{$IFNDEF FPC} procedure TrainP(const TrainDepth: TLInt; const OnResult: TLearnState_Proc); {$ENDIF FPC}
     //
     // wait thread
     procedure WaitTrain;
@@ -174,16 +174,18 @@ type
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
 
-    {$IFNDEF FPC}
+{$IFNDEF FPC}
     { * json store support * }
     procedure SaveToJsonStream(stream: TCoreClassStream);
     procedure LoadFromJsonStream(stream: TCoreClassStream);
-    {$ENDIF FPC}
+{$ENDIF FPC}
   end;
 
-  {$ENDREGION 'Class'}
+{$ENDREGION 'Class'}
 
 {$REGION 'LearnAPI'}
+
+
 procedure LAdd(var f: TLFloat; const Value: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure LSub(var f: TLFloat; const Value: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure LMul(var f: TLFloat; const Value: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -752,12 +754,12 @@ const
 implementation
 
 uses KM, Math,
-  {$IFDEF FPC}
+{$IFDEF FPC}
   mtprocs,
-  {$ELSE}
+{$ELSE}
   Threading,
-  {$ENDIF FPC}
-  SyncObjs, PyramidSpace, DoStatusIO;
+{$ENDIF FPC}
+  SyncObjs, PyramidSpace, FastHistogramSpace, DoStatusIO;
 
 {$REGION 'Include'}
 {$INCLUDE Learn_Base.inc}
@@ -801,8 +803,8 @@ uses KM, Math,
 {$INCLUDE learn_test.inc}
 {$ENDREGION 'Include'}
 
-
 initialization
 
-end.
 
+
+end.

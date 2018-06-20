@@ -185,7 +185,6 @@ procedure InitExp(var v: TExpressionListData); {$IFDEF INLINE_ASM} inline; {$END
 function dt2op(const v: TExpressionDeclType): TOpValueType; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function VariantToExpressionDeclType(var v: Variant): TExpressionDeclType; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-
 var
   OpCache          : THashObjectList;
   SpecialAsciiToken: TListPascalString;

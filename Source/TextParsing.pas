@@ -1854,7 +1854,7 @@ begin
 
   ordCharInfo.Len := 32;
   for cPos := 0 to 31 do
-      ordCharInfo[cPos] := SystemChar(ord(cPos));
+      ordCharInfo.Buff[cPos] := SystemChar(ord(cPos));
   ordCharInfo[32] := #39;
 
   Result := '';

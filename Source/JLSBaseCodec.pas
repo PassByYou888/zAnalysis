@@ -66,7 +66,6 @@ type
     FInputStream: TCoreClassStream;
     FOutputStream: TCoreClassStream;
     FEnableLog: Boolean;
-    FLog: TListPascalString;
     pscanline, cscanline: ppixel;
     pscanl0, cscanl0: ppixel;
 
@@ -144,6 +143,8 @@ implementation
 
 { TbsJLSBaseCoder }
 
+uses DoStatusIO;
+
 constructor TJLSBaseCodec.Create;
 begin
   FInputStream := nil;
@@ -153,31 +154,29 @@ begin
   FMelcode := TJLSMelcode.Create(FBitIO, @FImageInfo);
   FLossless := TJLSLossless.Create(FBitIO, FMelcode, @FImageInfo);
   FLossy := TJLSLossy.Create(FBitIO, FMelcode, @FImageInfo);
-  FLog := TListPascalString.Create;
   FT3 := -1;
   FT2 := -1;
   FT1 := -1;
   FTa := -1;
   FImageInfo.RESET := 64;
-  FEnableLog := False;
+  FEnableLog := false;
   nopause := true;
   nolegal := true;
 end;
 
 destructor TJLSBaseCodec.Destroy;
 begin
-  FLossless.Free;
-  FLossy.Free;
-  FMelcode.Free;
-  FJpeg.Free;
-  FBitIO.Free;
-  FLog.Free;
+  DisposeObject(FLossless);
+  DisposeObject(FLossy);
+  DisposeObject(FMelcode);
+  DisposeObject(FJpeg);
+  DisposeObject(FBitIO);
   inherited;
 end;
 
 function TJLSBaseCodec.Execute: Boolean;
 begin
-  Result := False;
+  Result := false;
 end;
 
 function TJLSBaseCodec.GetInputStream: TCoreClassStream;
@@ -354,14 +353,14 @@ begin
 
   { implementation limitation: }
   if (FT3 > lmax - 1) then begin
-      FLog.Append(PFormat('ERROR : Sorry, current implementation does not support threshold T3 > %d, got %d', [lmax - 1, FT3]));
+      DoStatus('ERROR : Sorry, current implementation does not support threshold T3 > %d, got %d', [lmax - 1, FT3]);
       Result := 10;
       exit;
     end;
 
   { Build classification tables (lossless or lossy) }
 
-  if (lossy = False) then
+  if (lossy = false) then
     begin
 
       for i := -lmax + 1 to pred(lmax) do
@@ -501,7 +500,7 @@ begin
   GetMem(FImageInfo.qdiv0, (2 * absize - 1) * sizeof(Int));
   if (FImageInfo.qdiv0 = nil) then
     begin
-      FLog.Append('ERROR : qdiv  table');
+      DoStatus('ERROR : qdiv  table');
       Result := 10;
       exit;
     end;
@@ -513,7 +512,7 @@ begin
 
   if (FImageInfo.qmul0 = nil) then
     begin
-      FLog.Append('ERROR : qmul  table');
+      DoStatus('ERROR : qmul  table');
       Result := 10;
       exit;
     end;

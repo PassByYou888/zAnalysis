@@ -606,15 +606,13 @@ begin
   // Layers
   //
   AddInputLayer(NIn, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
-  AddBiasedSummatorLayer(NOut - 1, LSizes, LTypes, LConnFirst, LConnLast,
-    LastProc);
+  AddBiasedSummatorLayer(NOut - 1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddZeroLayer(LSizes, LTypes, LConnFirst, LConnLast, LastProc);
 
   //
   // Create
   //
-  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount,
-    True, Network);
+  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount, True, Network);
 end;
 
 (* ************************************************************************
@@ -646,15 +644,13 @@ begin
   AddInputLayer(NIn, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddBiasedSummatorLayer(NHid, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddActivationLayer(1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
-  AddBiasedSummatorLayer(NOut - 1, LSizes, LTypes, LConnFirst, LConnLast,
-    LastProc);
+  AddBiasedSummatorLayer(NOut - 1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddZeroLayer(LSizes, LTypes, LConnFirst, LConnLast, LastProc);
 
   //
   // Create
   //
-  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount,
-    True, Network);
+  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount, True, Network);
 end;
 
 (* ************************************************************************
@@ -684,21 +680,17 @@ begin
   // Layers
   //
   AddInputLayer(NIn, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
-  AddBiasedSummatorLayer(NHid1, LSizes, LTypes, LConnFirst, LConnLast,
-    LastProc);
+  AddBiasedSummatorLayer(NHid1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddActivationLayer(1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
-  AddBiasedSummatorLayer(NHid2, LSizes, LTypes, LConnFirst, LConnLast,
-    LastProc);
+  AddBiasedSummatorLayer(NHid2, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddActivationLayer(1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
-  AddBiasedSummatorLayer(NOut - 1, LSizes, LTypes, LConnFirst, LConnLast,
-    LastProc);
+  AddBiasedSummatorLayer(NOut - 1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddZeroLayer(LSizes, LTypes, LConnFirst, LConnLast, LastProc);
 
   //
   // Create
   //
-  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount,
-    True, Network);
+  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount, True, Network);
 end;
 
 procedure MLPFree(var Network: TMultiLayerPerceptron);

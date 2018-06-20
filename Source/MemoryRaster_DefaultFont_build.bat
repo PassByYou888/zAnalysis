@@ -1,0 +1,1 @@
+brcc32.exe MemoryRaster_DefaultFont.rc

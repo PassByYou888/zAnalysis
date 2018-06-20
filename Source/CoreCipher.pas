@@ -439,6 +439,7 @@ procedure InitSysCBCAndDefaultKey(rand: Int64);
 
 function SequEncryptWithDirect(const cs: TCipherStyle; sour: Pointer; Size: nativeInt; var key: TBytes; Encrypt, ProcessTail: Boolean): Boolean; overload;
 function SequEncryptWithDirect(const ca: TCipherStyleArray; sour: Pointer; Size: nativeInt; var key: TBytes; Encrypt, ProcessTail: Boolean): Boolean; overload;
+
 {$IFDEF parallel}
 function SequEncryptWithParallel(const cs: TCipherStyle; sour: Pointer; Size: nativeInt; var key: TBytes; Encrypt, ProcessTail: Boolean): Boolean; overload;
 function SequEncryptWithParallel(const ca: TCipherStyleArray; sour: Pointer; Size: nativeInt; var key: TBytes; Encrypt, ProcessTail: Boolean): Boolean; overload;
@@ -450,10 +451,12 @@ function SequEncrypt(sour: Pointer; Size: nativeInt; Encrypt, ProcessTail: Boole
 
 function SequEncryptCBCWithDirect(const cs: TCipherStyle; sour: Pointer; Size: nativeInt; var key: TBytes; Encrypt, ProcessTail: Boolean): Boolean; overload;
 function SequEncryptCBCWithDirect(const ca: TCipherStyleArray; sour: Pointer; Size: nativeInt; var key: TBytes; Encrypt, ProcessTail: Boolean): Boolean; overload;
+
 {$IFDEF parallel}
 function SequEncryptCBCWithParallel(const cs: TCipherStyle; sour: Pointer; Size: nativeInt; var key: TBytes; Encrypt, ProcessTail: Boolean): Boolean; overload;
 function SequEncryptCBCWithParallel(const ca: TCipherStyleArray; sour: Pointer; Size: nativeInt; var key: TBytes; Encrypt, ProcessTail: Boolean): Boolean; overload;
 {$ENDIF}
+
 function SequEncryptCBC(const ca: TCipherStyleArray; sour: Pointer; Size: nativeInt; var key: TBytes; Encrypt, ProcessTail: Boolean): Boolean; overload;
 function SequEncryptCBC(const cs: TCipherStyle; sour: Pointer; Size: nativeInt; var key: TBytes; Encrypt, ProcessTail: Boolean): Boolean; overload;
 
@@ -4470,8 +4473,7 @@ end;
 
 class procedure TLMD.UpdateLMD(var Context: TLMDContext; const Buf; BufSize: nativeInt);
 var
-  AA, BB: DWord;
-  CC, DD: DWord;
+  AA, BB, CC, DD: DWord;
   i, R: nativeInt;
 begin
   for i := 0 to BufSize - 1 do
@@ -4495,29 +4497,29 @@ begin
             { mix all the bits around for 4 rounds }
             { achieves avalanche and eliminates funnels }
             for R := 0 to 3 do begin
-                AA := AA + DD;
-                DD := DD + AA;
+                inc(AA, DD);
+                inc(DD, AA);
                 AA := AA xor (AA shr 7);
-                BB := BB + AA;
-                AA := AA + BB;
+                inc(BB, AA);
+                inc(AA, BB);
                 BB := BB xor (BB shl 13);
-                CC := CC + BB;
-                BB := BB + CC;
+                inc(CC, BB);
+                inc(BB, CC);
                 CC := CC xor (CC shr 17);
-                DD := DD + CC;
-                CC := CC + DD;
+                inc(DD, CC);
+                inc(CC, DD);
                 DD := DD xor (DD shl 9);
-                AA := AA + DD;
-                DD := DD + AA;
+                inc(AA, DD);
+                inc(DD, AA);
                 AA := AA xor (AA shr 3);
-                BB := BB + AA;
-                AA := AA + BB;
+                inc(BB, AA);
+                inc(AA, BB);
                 BB := BB xor (BB shl 7);
-                CC := CC + BB;
-                BB := BB + CC;
+                inc(CC, BB);
+                inc(BB, CC);
                 CC := CC xor (DD shr 15);
-                DD := DD + CC;
-                CC := CC + DD;
+                inc(DD, CC);
+                inc(CC, DD);
                 DD := DD xor (DD shl 11);
               end;
 

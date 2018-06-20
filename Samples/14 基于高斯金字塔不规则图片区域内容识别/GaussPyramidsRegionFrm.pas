@@ -13,7 +13,7 @@ uses
   CoreClasses, DoStatusIO, MemoryRaster, PascalStrings, ObjectDataManager, ItemStream,
   UnicodeMixedLib, Learn, LearnTypes, PyramidSpace, Geometry2DUnit,
 
-  DrawEngine, DrawEngineInterface_SlowFMX;
+  zDrawEngine, zDrawEngineInterface_SlowFMX;
 
 type
   TGaussPyramidsForm = class(TForm)

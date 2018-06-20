@@ -61,6 +61,8 @@ type
 
 implementation
 
+uses DoStatusIO;
+
 procedure TJLSEncoder.read_one_line(line: PPixel; cols: int; infile: TCoreClassStream);
 var
   line8: PByte;
@@ -178,43 +180,19 @@ begin
       lossy := TRUE;
 
   case color_mode of
-    PLANE_INT:
-      begin
-        color_mode_string := plane_int_string;
-
-      end;
-    LINE_INT:
-      begin
-        color_mode_string := line_int_string;
-      end;
-    PIXEL_INT:
-      begin
-        color_mode_string := pixel_int_string;
-        // if (components>1){
-        // fprintf(stderr,"ERROR: specified more than 1 input file in pixel interleaved mode\n");
-        // exit(10);
-        // }
-      end;
+    PLANE_INT: color_mode_string := plane_int_string;
+    LINE_INT: color_mode_string := line_int_string;
+    PIXEL_INT: color_mode_string := pixel_int_string;
     else
       begin
-        // fprintf(stderr,"ERROR: Invalid color mode %d\n",color_mode);
-        // usage();
-        // exit(10);
       end;
   end;
-
-
-  // if ( verbose>1 ) then
-  // fprintf(msgfile,"Number of contexts (non-run): %d regular + %d EOR = %d\n",CONTEXTS-LESS_CONTEXTS,EOR_CONTEXTS,TOT_CONTEXTS-LESS_CONTEXTS);
-  { Read image headers }
-
-  // if ( read_header_6(FInputStream, @FImageInfo.Width, @FImageInfo.Height, @alpha0, @(FImageInfo.components)) <> 0 ) then
-  // error('Could not read image header. Must be PPM or PGM file.');
 
   { Single component => PLANE_INT }
   if (((color_mode = LINE_INT) or (color_mode = PIXEL_INT)) and (FImageInfo.components = 1)) then
     begin
-      FLog.Append('Single component received: Color mode changed to PLANE INTERLEAVED');
+      if (FEnableLog) then
+          DoStatus('Single component received: Color mode changed to PLANE INTERLEAVED');
       color_mode := PLANE_INT;
       color_mode_string := plane_int_string;
     end;
@@ -234,9 +212,7 @@ begin
 
   if (FImageInfo.alpha <> (1 shl i)) then
     begin
-      FLog.Append(Format('Sorry, this version has been optimized for alphabet size = power of 2, got %d', [FImageInfo.alpha]));
-      // Result:=False;
-      // exit(10);
+      DoStatus('Sorry, this version has been optimized for alphabet size = power of 2, got %d', [FImageInfo.alpha]);
     end;
 
   { Check for 16 or 8 bit mode }
@@ -258,9 +234,7 @@ begin
   { print out parameters }
   if (FEnableLog) then
     begin
-      FLog.Append(Format('Image: cols=%d rows=%d alpha=%d comp=%d mode=%d (%s)',
-        [Width, height, alpha, components, color_mode, color_mode_string]));
-
+      DoStatus('Image: cols=%d rows=%d alpha=%d comp=%d mode=%d (%s)', [Width, height, alpha, components, color_mode, color_mode_string]);
     end;
 
   { compute auxiliary parameters for _near-lossless (globals) }
@@ -272,7 +246,7 @@ begin
       ceil_half_qbeta := (FImageInfo.qbeta + 1) div 2;
       FImageInfo.negNEAR := -FImageInfo._near;
       if (FEnableLog) then
-          FLog.Append(Format('_near-lossless mode: _near = %d  beta = %d  qbeta = %d', [FImageInfo._near, FImageInfo.beta, FImageInfo.qbeta]));
+          DoStatus('_near-lossless mode: _near = %d  beta = %d  qbeta = %d', [FImageInfo._near, FImageInfo.beta, FImageInfo.qbeta]);
     end;
 
   { compute bits per sample for input symbols }
@@ -283,8 +257,7 @@ begin
 
   { check if alpha is a power of 2: }
   if (FImageInfo.alpha <> (1 shl bpp)) then
-      need_lse := 1; { if not, MAXVAL will be non-default, and
-    we'll need to specify it in an LSE marker }
+      need_lse := 1; { if not, MAXVAL will be non-default, and we'll need to specify it in an LSE marker }
 
   { compute bits per sample for unencoded prediction errors }
   FImageInfo.qbpp := 1;
@@ -362,10 +335,10 @@ begin
       head_frame^.samplingy[i] := samplingy[i];
     end;
 
-  head_frame^._near := FImageInfo._near;  { Not needed, scan information }
-  head_frame^.need_lse := need_lse;     { Not needed, for commpletness }
-  head_frame^.color_mode := color_mode; { Not needed, scan information }
-  head_frame^.shift := shift;           { Not needed, scan information }
+  head_frame^._near := FImageInfo._near; { Not needed, scan information }
+  head_frame^.need_lse := need_lse;      { Not needed, for commpletness }
+  head_frame^.color_mode := color_mode;  { Not needed, scan information }
+  head_frame^.shift := shift;            { Not needed, scan information }
 
   for n_s := 0 to pred(number_of_scans) do
     begin
@@ -397,7 +370,7 @@ begin
     end;
 
   { Write SOI }
-  all_header := FJpeg.write_marker(FOutputStream, JPEGLS_MARKER_SOI);
+  all_header := FJpeg.write_marker(FOutputStream, JPEGLS_MARKER_SOI2);
 
   { Write the frame }
   all_header := all_header + FJpeg.write_jpegls_frame(FOutputStream, head_frame);
@@ -450,7 +423,7 @@ begin
 
       { Print out parameters }
       if FEnableLog then
-          FLog.Append(Format('Parameters: T1=%d T2=%d T3=%d RESET=%d limit=%d', [T1, T2, T3, RESET, limit]));
+          DoStatus('Parameters: T1=%d T2=%d T3=%d RESET=%d limit=%d', [T1, T2, T3, RESET, limit]);
 
       { Prepare LUTs for context quantization }
       { Must re-do when Thresholds change }
@@ -460,7 +433,7 @@ begin
           prepare_qtables(FImageInfo.alpha, FImageInfo._near);
 
       { Check for errors }
-      check_compatibility(head_frame, head_scan[0], 0, FLog);
+      check_compatibility(head_frame, head_scan[0], 0);
 
       { Restart Marker is reset after every scan }
       MCUs_counted := 0;
@@ -833,7 +806,7 @@ begin
 
     end; { End of loop on scans }
 
-  all_header := all_header + FJpeg.write_marker(FOutputStream, JPEGLS_MARKER_EOI);
+  all_header := all_header + FJpeg.write_marker(FOutputStream, JPEGLS_MARKER_EOI2);
 
   { Close down }
   FMelcode.close_process_run();
@@ -848,16 +821,15 @@ begin
   if local_scanl1 <> nil then
       FreeMem(local_scanl1);
 
-  { total bytes out, including JPEG-LS header, but not
-    application-specific header bytes }
+  { total bytes out, including JPEG-LS header, but not application-specific header bytes }
 
   tot_out := pos1 * 8;
 
   if IsTrue(need_restart) then
-      FLog.Append(Format('Used restart markers with restart interval : %d', [restart_interval]));
+      DoStatus('Used restart markers with restart interval : %d', [restart_interval]);
 
   if FEnableLog then
-      FLog.Append(Format('Marker segment bytes: %d', [all_header]));
+      DoStatus('Marker segment bytes: %d', [all_header]);
 
   result := TRUE; { OK! }
 end;

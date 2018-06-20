@@ -61,9 +61,10 @@ type
   TCoreClassObject     = TObject;
   TCoreClassPersistent = TPersistent;
 
-  TCoreClassStream       = TStream;
-  TCoreClassFileStream   = TFileStream;
-  TCoreClassStringStream = TStringStream;
+  TCoreClassStream         = TStream;
+  TCoreClassFileStream     = TFileStream;
+  TCoreClassStringStream   = TStringStream;
+  TCoreClassResourceStream = TResourceStream;
 
   TCoreClassThread = TThread;
 
@@ -73,8 +74,8 @@ type
 
   TCoreClassInterfacedObject = class(TInterfacedObject)
   protected
-    function _AddRef: longint; {$IFNDEF WINDOWS}cdecl{$ELSE}stdcall{$ENDIF};
-    function _Release: longint; {$IFNDEF WINDOWS}cdecl{$ELSE}stdcall{$ENDIF};
+    function _AddRef: longint; {$IFNDEF WINDOWS} cdecl {$ELSE} stdcall {$ENDIF};
+    function _Release: longint; {$IFNDEF WINDOWS} cdecl {$ELSE} stdcall {$ENDIF};
   public
     procedure AfterConstruction; override;
     procedure BeforeDestruction; override;
@@ -201,7 +202,7 @@ const
   CurrentPlatform = TExecutePlatform.epUnknow;
   {$IFEND}
 
-procedure Empty;
+procedure Nop;
 
 function CheckThreadSynchronize(Timeout: Integer): Boolean;
 
@@ -238,6 +239,8 @@ function ROR16(const Value: Word; Shift: Byte): Word; {$IFDEF INLINE_ASM} inline
 function ROR32(const Value: Cardinal; Shift: Byte): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function ROR64(const Value: UInt64; Shift: Byte): UInt64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
+procedure Swap(var v1,v2:Byte); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure Swap(var v1,v2:Word); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure Swap(var v1,v2:Integer); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure Swap(var v1,v2:Int64); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure Swap(var v1,v2:UInt64); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -246,11 +249,16 @@ procedure Swap(var v1,v2:Single); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure Swap(var v1,v2:Double); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure Swap(var v1,v2:Pointer); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
+function SAR16(const AValue: SmallInt; const Shift: Byte): SmallInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SAR32(const AValue: Integer; Shift: Byte): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SAR64(const AValue: Int64; Shift: Byte): Int64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MemoryAlign(addr: Pointer; alignment: NativeUInt): Pointer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 threadvar MHGlobalHookEnabled: Boolean;
 
 implementation
 
-procedure Empty;
+procedure Nop;
 begin
 end;
 
@@ -490,6 +498,24 @@ begin
   Result := UInt64((Value shr Shift) or (Value shl (64 - Shift)));
 end;
 
+procedure Swap(var v1,v2: Byte);
+var
+  V: Byte;
+begin
+  V := v1;
+  v1 := v2;
+  v2 := V;
+end;
+
+procedure Swap(var v1,v2: Word);
+var
+  V: Word;
+begin
+  V := v1;
+  v1 := v2;
+  v2 := V;
+end;
+
 procedure Swap(var v1, v2: Integer);
 var
   V: Integer;
@@ -552,6 +578,30 @@ begin
   v1 := v2;
   v2 := V;
 end;
+
+function SAR16(const AValue: SmallInt; const Shift: Byte): SmallInt;
+begin
+  Result := SmallInt(Word(Word(Word(AValue) shr (Shift and 15)) or (Word(SmallInt(Word(0 - Word(Word(AValue) shr 15)) and Word(SmallInt(0 - (Ord((Shift and 15) <> 0) { and 1 } ))))) shl (16 - (Shift and 15)))));
+end;
+
+function SAR32(const AValue: Integer; Shift: Byte): Integer;
+begin
+  Result := longint(Cardinal(Cardinal(Cardinal(AValue) shr (Shift and 31)) or (Cardinal(longint(Cardinal(0 - Cardinal(Cardinal(AValue) shr 31)) and Cardinal(longint(0 - (Ord((Shift and 31) <> 0) { and 1 } ))))) shl (32 - (Shift and 31)))));
+end;
+
+function SAR64(const AValue: Int64; Shift: Byte): Int64;
+begin
+  Result := Int64(UInt64(UInt64(UInt64(AValue) shr (Shift and 63)) or (UInt64(Int64(UInt64(0 - UInt64(UInt64(AValue) shr 63)) and UInt64(Int64(0 - (Ord((Shift and 63) <> 0) { and 1 } ))))) shl (64 - (Shift and 63)))));
+end;
+
+function MemoryAlign(addr: Pointer; alignment: NativeUInt): Pointer;
+var
+  tmp: NativeUInt;
+begin
+  tmp := NativeUInt(addr) + (alignment - 1);
+  Result := Pointer(tmp - (tmp mod alignment));
+end;
+
 
 {$IFDEF FPC}
 

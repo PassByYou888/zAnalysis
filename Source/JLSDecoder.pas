@@ -48,6 +48,9 @@ type
 implementation
 
 { Write one row of pixel values }
+
+uses DoStatusIO;
+
 procedure TJLSDecoder.write_one_line(line: ppixel; cols: int; outfile: TCoreClassStream);
 var
   i, index: integer;
@@ -224,15 +227,15 @@ begin
   seek_return := FJpeg.seek_marker(FInputStream, @mk);
   if (seek_return = BUF_EOF) then
     begin
-      FLog.Append('*** Premature End of File seeking SOI');
+      DoStatus('*** Premature End of File seeking SOI');
       Result := 10;
       Exit;
     end
   else begin
       pos := seek_return;
-      if (mk <> JPEGLS_MARKER_SOI) then
+      if (mk <> JPEGLS_MARKER_SOI) and (mk <> JPEGLS_MARKER_SOI2) then
         begin
-          FLog.Append(PFormat('Marker %04x found: first marker must be SOI (%04x) in this implementation', [mk, JPEGLS_MARKER_SOI]));
+          DoStatus('Marker %04x found: first marker must be SOI (%04x) in this implementation', [mk, JPEGLS_MARKER_SOI]);
           Result := 10;
           Exit;
         end;
@@ -242,7 +245,7 @@ begin
   seek_return := FJpeg.seek_marker(FInputStream, @mk);
   if (seek_return = BUF_EOF) then
     begin
-      FLog.Append('*** Premature End of File seeking SOF_LS');
+      DoStatus('*** Premature End of File seeking SOF_LS');
       Result := 10;
       Exit;
     end
@@ -250,7 +253,7 @@ begin
       pos := pos + seek_return; { Read SOF_LS }
       if (mk <> SOF_LS) then
         begin
-          FLog.Append(PFormat('Marker %04x found: second marker must be SOF_LS (%04x) in this implementation', [mk, SOF_LS]));
+          DoStatus('Marker %04x found: second marker must be SOF_LS (%04x) in this implementation', [mk, SOF_LS]);
           Result := 10;
           Exit;
         end;
@@ -260,7 +263,7 @@ begin
   seek_return := FJpeg.read_jpegls_frame(FInputStream, head_frame);
   if (seek_return = BUF_EOF) then
     begin
-      FLog.Append('*** Premature End of File reading frame header');
+      DoStatus('*** Premature End of File reading frame header');
       Result := 10;
       Exit;
     end
@@ -280,7 +283,7 @@ begin
       seek_return := FJpeg.seek_marker(FInputStream, @mk);
       if (seek_return = BUF_EOF) then
         begin
-          FLog.Append('*** Premature End of File seeking SOS or LSE marker');
+          DoStatus('*** Premature End of File seeking SOS or LSE marker');
           Result := 10;
           Exit;
         end;
@@ -293,7 +296,7 @@ begin
             seek_return := FJpeg.read_jpegls_extmarker(FInputStream, head_scan[0]);
             if (seek_return = BUF_EOF) then
               begin
-                FLog.Append('*** Premature End of File');
+                DoStatus('*** Premature End of File');
                 Result := 10;
                 Exit;
               end;
@@ -319,7 +322,7 @@ begin
   seek_return := FJpeg.read_jpegls_scan(FInputStream, head_scan[0]);
   if (seek_return = BUF_EOF) then
     begin
-      FLog.Append('*** Premature End of File reading scan marker segment');
+      DoStatus('*** Premature End of File reading scan marker segment');
       Result := 10;
       Exit;
     end;
@@ -329,7 +332,7 @@ begin
   shift := head_scan[0]^.shift;
   if (shift <> 0) then
     begin
-      FLog.Append(PFormat('Got shift = %d != 0 : not implemented.', [shift]));
+      DoStatus('Got shift = %d != 0 : not implemented.', [shift]);
       Result := 10;
       Exit;
     end;
@@ -354,7 +357,7 @@ begin
 
   if (head_scan[0]^.RES <> DEFAULT_RESET) then
     begin
-      FLog.Append(PFormat('ERROR: Version compiled for fixed RESET=%d parameter: got %d', [DEFAULT_RESET, head_scan[0]^.RES]));
+      DoStatus('ERROR: Version compiled for fixed RESET=%d parameter: got %d', [DEFAULT_RESET, head_scan[0]^.RES]);
       Result := 10;
       Exit;
     end;
@@ -379,13 +382,13 @@ begin
       lutmax := LUTMAX8;
     end
   else begin
-      FLog.Append(PFormat('Got alpha = %d', [alpha0 + 1]));
-      raiseInfo('Bad value for alpha. Sorry...');
+      DoStatus('Got alpha = %d', [alpha0 + 1]);
+      RaiseInfo('Bad value for alpha. Sorry...');
       Result := 10;
       Exit;
     end;
 
-  check_compatibility(head_frame, head_scan[0], 0, FLog);
+  check_compatibility(head_frame, head_scan[0], 0);
 
   for i := 0 to pred(FImageInfo.components) do
     begin
@@ -444,7 +447,7 @@ begin
     PIXEL_INT: color_mode_string := pixel_int_string;
     else
       begin
-        FLog.Append(PFormat('ERROR: Invalid color mode %d', [color_mode]));
+        DoStatus('ERROR: Invalid color mode %d', [color_mode]);
         Result := 10;
         Exit;
       end;
@@ -465,7 +468,7 @@ begin
 
   if (FImageInfo.alpha <> (1 shl i)) then
     begin
-      FLog.Append(PFormat('Sorry, this version has been optimized for alphabet size = power of 2, got %d', [FImageInfo.alpha]));
+      DoStatus('Sorry, this version has been optimized for alphabet size = power of 2, got %d', [FImageInfo.alpha]);
       Result := 10;
       Exit;
     end;
@@ -479,7 +482,7 @@ begin
       ceil_half_qbeta := (FImageInfo.qbeta + 1) div 2;
       FImageInfo.negNEAR := -FImageInfo._near;
       FImageInfo.alpha1eps := FImageInfo.alpha - 1 + FImageInfo._near;
-      // FLog.Append(PFormat('_near-lossless mode: _near = %d  beta = %d  qbeta = %d',[FImageInfo._near, FImageInfo.beta, FImageInfo.qbeta]));
+      DoStatus('_near-lossless mode: _near = %d  beta = %d  qbeta = %d', [FImageInfo._near, FImageInfo.beta, FImageInfo.qbeta]);
     end;
 
   { compute bits per sample for input symbols }
@@ -510,9 +513,8 @@ begin
   { print out parameters }
   if FEnableLog then
     begin
-
-      FLog.Append(PFormat('Image: cols=%d rows=%d alpha=%d comp=%d mode=%d (%s)', [Width, Height, alpha0, components, color_mode, color_mode_string]));
-      FLog.Append(PFormat('Parameters: Ta=%d Tb=%d Tc=%d RESET=%d limit=%d', [T1, T2, T3, RESET, limit]));
+      DoStatus('Image: cols=%d rows=%d alpha=%d comp=%d mode=%d (%s)', [Width, Height, alpha0, components, color_mode, color_mode_string]);
+      DoStatus('Parameters: Ta=%d Tb=%d Tc=%d RESET=%d limit=%d', [T1, T2, T3, RESET, limit]);
     end;
 
   { Allocate memory pools. }
@@ -592,15 +594,15 @@ begin
           seek_return := FJpeg.seek_marker(FInputStream, @mk);
           if (seek_return = BUF_EOF) then
             begin
-              FLog.Append('*** Premature End of File seeking SOS marker.');
+              DoStatus('*** Premature End of File seeking SOS marker.');
               Result := FALSE;
               Exit;
             end;
 
           if (seek_return > 2) then
             begin
-              FLog.Append(PFormat('*** WARNING: %d extra bytes between end of scan and next marker.', [seek_return - 2]));
-              FLog.Append('***          Added to marker segment count.');
+              DoStatus('*** WARNING: %d extra bytes between end of scan and next marker.', [seek_return - 2]);
+              DoStatus('***          Added to marker segment count.');
               Result := FALSE;
               Exit;
             end;
@@ -608,7 +610,7 @@ begin
           pos0 := pos0 + seek_return;
           if (mk <> JPEGLS_MARKER_SOS) then
             begin
-              FLog.Append(PFormat('Expecting SOS (%x), got %x', [JPEGLS_MARKER_SOS, mk]));
+              DoStatus('Expecting SOS (%x), got %x', [JPEGLS_MARKER_SOS, mk]);
               Result := FALSE;
               Exit;
             end;
@@ -616,21 +618,21 @@ begin
           seek_return := FJpeg.read_jpegls_scan(FInputStream, head_scan[n_s]); { Read the scan header }
           if (seek_return = BUF_EOF) then
             begin
-              FLog.Append('*** Premature End of File reading scan marker segment');
+              DoStatus('*** Premature End of File reading scan marker segment');
               Result := FALSE;
               Exit;
             end;
           pos0 := pos0 + seek_return;
           if (head_scan[n_s]^.shift <> 0) then
             begin
-              FLog.Append(PFormat('Got shift = %d != 0 : not implemented.', [head_scan[n_s]^.shift]));
+              DoStatus('Got shift = %d != 0 : not implemented.', [head_scan[n_s]^.shift]);
               Result := FALSE;
               Exit;
             end;
 
           if (head_scan[n_s]^._near <> FImageInfo._near) then
             begin
-              FLog.Append(PFormat('Got _near=%d after _near=%d: cannot change parameters between scans in this implementation.', [head_scan[n_s]^._near, FImageInfo._near]));
+              DoStatus('Got _near=%d after _near=%d: cannot change parameters between scans in this implementation.', [head_scan[n_s]^._near, FImageInfo._near]);
               Result := FALSE;
               Exit;
             end;
@@ -638,7 +640,7 @@ begin
           if ((head_scan[n_s]^.color_mode <> PLANE_INT) or (head_scan[n_s]^.comp <> 1) or
             (head_scan[n_s]^.comp_ids[0] <> n_s + 1)) then
             begin
-              FLog.Append('This implementation supports multiple scans only in PLANE INTERLEAVED mode.');
+              DoStatus('This implementation supports multiple scans only in PLANE INTERLEAVED mode.');
               Result := FALSE;
               Exit;
             end;
@@ -696,7 +698,7 @@ begin
 
                       if (FLossless.lossless_undoscanline(ppixelarray(local_pscanline), ppixelarray(local_cscanline), Width, n_c) <> 0) then
                         begin
-                          FLog.Append(PFormat('*** Premature EOF: expected %d rows, got %d', [Height, n - 1]));
+                          DoStatus('*** Premature EOF: expected %d rows, got %d', [Height, n - 1]);
                           found_EOF := 1;
                           break;
                         end;
@@ -768,7 +770,7 @@ begin
 
                       if (FLossy.lossy_undoscanline(ppixelarray(local_pscanline), ppixelarray(local_cscanline), Width, n_c) <> 0) then
                         begin
-                          FLog.Append(PFormat('*** Premature EOF: expected %d rows, got %d', [Width, n - 1]));
+                          DoStatus('*** Premature EOF: expected %d rows, got %d', [Width, n - 1]);
                           found_EOF := 1;
                           break;
                         end;
@@ -836,7 +838,7 @@ begin
 
                       if (FLossless.lossless_undoscanline_pixel(ppixelarray(pscanline), ppixelarray(cscanline), FImageInfo.components * Width) <> 0) then
                         begin
-                          FLog.Append(PFormat('*** Premature EOF: expected %d rows, got %d', [Width, n - 1]));
+                          DoStatus('*** Premature EOF: expected %d rows, got %d', [Width, n - 1]);
                           found_EOF := 1;
                           break;
                         end;
@@ -887,7 +889,7 @@ begin
 
                       if (FLossy.lossy_undoscanline_pixel(ppixelarray(pscanline), ppixelarray(cscanline), FImageInfo.components * Width) <> 0) then
                         begin
-                          FLog.Append(PFormat('*** Premature EOF: expected %d rows, got %d', [Width, n - 1]));
+                          DoStatus('*** Premature EOF: expected %d rows, got %d', [Width, n - 1]);
                           found_EOF := 1;
                           break;
                         end;
@@ -943,7 +945,7 @@ begin
 
                       if (FLossless.lossless_undoscanline(ppixelarray(pscanline), ppixelarray(cscanline), Width, n_s) <> 0) then
                         begin
-                          FLog.Append(PFormat('*** Premature EOF: expected %d rows, got %d', [Height, n - 1]));
+                          DoStatus('*** Premature EOF: expected %d rows, got %d', [Height, n - 1]);
                           found_EOF := 1;
                           break;
                         end;
@@ -988,7 +990,7 @@ begin
 
                       if (FLossy.lossy_undoscanline(ppixelarray(pscanline), ppixelarray(cscanline), Width, n_s) <> 0) then
                         begin
-                          FLog.Append(PFormat('*** Premature EOF: expected %d rows, got %d', [Height, n - 1]));
+                          DoStatus('*** Premature EOF: expected %d rows, got %d', [Height, n - 1]);
                           found_EOF := 1;
                           break;
                         end;
@@ -1033,32 +1035,32 @@ begin
       seek_return := FJpeg.seek_marker(FInputStream, @mk);
       if (seek_return = BUF_EOF) then
         begin
-          FLog.Append('Did not get EOI at end of compressed image');
+          DoStatus('Did not get EOI at end of compressed image');
           Result := FALSE;
           Exit;
         end;
 
       if (seek_return > 2) then
         begin
-          FLog.Append(PFormat('*** WARNING: %d extra bytes between end of scan and next marker.', [seek_return - 2]));
-          FLog.Append('***          Added to marker segment count.');
+          DoStatus('*** WARNING: %d extra bytes between end of scan and next marker.', [seek_return - 2]);
+          DoStatus('***          Added to marker segment count.');
           Result := FALSE;
           Exit;
         end;
 
       pos0 := pos0 + seek_return;
-      if (mk <> JPEGLS_MARKER_EOI) then
+      if (mk <> JPEGLS_MARKER_EOI) and (mk <> JPEGLS_MARKER_EOI2) then
         begin
-          FLog.Append('In this implementation last marker must be EOI');
+          DoStatus('In this implementation last marker must be EOI');
           Result := FALSE;
           Exit;
         end;
 
       if IsTrue(got_restart) then
-          FLog.Append(PFormat('Restart markers were found with a restart interval of %i', [restart_interval]));
+          DoStatus('Restart markers were found with a restart interval of %i', [restart_interval]);
 
       if FEnableLog then
-          FLog.Append(PFormat('Marker segment bytes: %d', [pos0]));
+          DoStatus('Marker segment bytes: %d', [pos0]);
 
       { position in input file }
       pos1 := FBitIO.ftell(FInputStream);
