@@ -10,7 +10,7 @@ uses
   FMX.Surfaces, System.Threading,
 
   Learn, LearnTypes, KDTree,
-  MemoryRaster, ZDBEngine, MemoryStream64, PascalStrings, UnicodeMixedLib, DoStatusIO, CoreClasses;
+  MemoryRaster, ZDBEngine, ZDBLocalManager, MemoryStream64, PascalStrings, UnicodeMixedLib, DoStatusIO, CoreClasses;
 
 type
   TForm1 = class(TForm)
