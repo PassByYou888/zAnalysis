@@ -16,8 +16,7 @@ unit h264Loopfilter;
 interface
 
 uses
-  h264Stdint, h264common, h264util,
-  sysutils, syncobjs, CoreClasses;
+  h264Stdint, h264common, h264util, sysutils, syncobjs, CoreClasses;
 
 type
   IDeblocker = class
@@ -25,14 +24,12 @@ type
     procedure FrameFinished; virtual; abstract;
   end;
 
-function GetNewDeblocker(const frame: frame_t; const constant_qp, threading_enabled: boolean): IDeblocker;
-procedure CalculateBStrength(const mb: macroblock_p);
+function GetNewDeblocker(const frame: TFrame; const constant_qp, threading_enabled: boolean): IDeblocker;
+procedure CalculateBStrength(const mb: PMacroblock);
 
 implementation
 
 type
-
-  { TDeblockThread }
   TDeblockThread = class(TCoreClassThread)
   private
     _encoded_mb_rows: int32_t;
@@ -46,7 +43,7 @@ type
     function GetEncodedMBRows(): int32_t;
 
   public
-    frame: frame_p;
+    frame: PFrame;
     cqp: boolean;
 
     property EncodedMBRows: int32_t read GetEncodedMBRows write SetEncodedMBRows;
@@ -60,17 +57,17 @@ type
     procedure AbortProcessing;
   end;
 
-  { TThreadedDeblocker
+  {
     Deblocks in paralell with encoding; running a few macroblock rows behind the encoding thread
   }
   TThreadedDeblocker = class(IDeblocker)
   private
     dthread: TDeblockThread;
     scheduled_mbrows: int32_t;
-    f: frame_p;
+    f: PFrame;
     _is_frame_finished: boolean;
   public
-    constructor Create(const frame: frame_t; const cqp: boolean = true);
+    constructor Create(const frame: TFrame; const cqp: boolean = true);
     destructor Destroy; override;
     procedure MBRowFinished; override;
     procedure FrameFinished; override;
@@ -81,16 +78,16 @@ type
   }
   TSimpleDeblocker = class(IDeblocker)
   private
-    f: frame_p;
+    f: PFrame;
     scheduled_mbrows: int32_t;
     _cqp: boolean;
   public
-    constructor Create(const frame: frame_t; const cqp: boolean = true);
+    constructor Create(const frame: TFrame; const cqp: boolean = true);
     procedure FrameFinished; override;
     procedure MBRowFinished; override;
   end;
 
-function GetNewDeblocker(const frame: frame_t; const constant_qp, threading_enabled: boolean): IDeblocker;
+function GetNewDeblocker(const frame: TFrame; const constant_qp, threading_enabled: boolean): IDeblocker;
 begin
   if threading_enabled then
       result := TThreadedDeblocker.Create(frame, constant_qp)
@@ -133,17 +130,17 @@ end;
 { 8.7.2.1 Derivation process for the luma content dependent boundary filtering strength
   mixedModeEdgeFlag = 0 (prog)
 }
-procedure CalculateBStrength(const mb: macroblock_p);
+procedure CalculateBStrength(const mb: PMacroblock);
 
 // test p/q non-zero coeffs
-  function inner_bs(const a: macroblock_p; na, nb: int32_t): int32_t; inline;
+  function inner_bs(const a: PMacroblock; na, nb: int32_t): int32_t; inline;
   begin
     result := 0;
     if a^.nz_coef_cnt[na] + a^.nz_coef_cnt[nb] > 0 then
         result := 2;
   end;
 
-  function edge_bs(const a, b: macroblock_p; na, nb: int32_t; bS_min: int32_t): int32_t; inline;
+  function edge_bs(const a, b: PMacroblock; na, nb: int32_t; bS_min: int32_t): int32_t; inline;
   begin
     result := bS_min;
     if a^.nz_coef_cnt[na] + b^.nz_coef_cnt[nb] > 0 then
@@ -151,7 +148,7 @@ procedure CalculateBStrength(const mb: macroblock_p);
   end;
 
 // different ref, mv delta >= 4, diff. partitions
-  function mb_bs(const a, b: macroblock_p): int32_t; inline;
+  function mb_bs(const a, b: PMacroblock): int32_t; inline;
   begin
     result := 0;
     if (a^.ref <> b^.ref) or
@@ -172,7 +169,7 @@ const
 
 var
   i, j: int32_t;
-  mba, mbb: macroblock_p;
+  mba, mbb: PMacroblock;
   bS_min: int32_t;
 
 begin
@@ -240,7 +237,7 @@ end;
 
 procedure DeblockMBRow(
   const mby: int32_t;
-  const f: frame_t;
+  const f: TFrame;
   const cqp: boolean = true;
   const offset_a: int32_t = 0; const offset_b: int32_t = 0);
 var
@@ -529,7 +526,7 @@ var
   alpha, beta: int32_t;
   alpha_c, beta_c: int32_t;
 
-  procedure SetupParams(const mb: macroblock_p);
+  procedure SetupParams(const mb: PMacroblock);
   var
     qp, qpc: int32_t;
     indexB, indexB_c: int32_t;
@@ -556,7 +553,7 @@ var
       end;
   end;
 
-  procedure FilterMB(const mb: macroblock_p);
+  procedure FilterMB(const mb: PMacroblock);
   begin
     bS_vertical := mb^.bS_vertical;
     bS_horizontal := mb^.bS_horizontal;
@@ -566,7 +563,7 @@ var
   end;
 
 var
-  mb: macroblock_p;
+  mb: PMacroblock;
 
 begin
   if cqp then
@@ -687,9 +684,7 @@ begin
   _row_processed_event.SetEvent;
 end;
 
-{ TThreadedDeblocker }
-
-constructor TThreadedDeblocker.Create(const frame: frame_t; const cqp: boolean);
+constructor TThreadedDeblocker.Create(const frame: TFrame; const cqp: boolean);
 begin
   f := @frame;
   scheduled_mbrows := 0;
@@ -723,9 +718,7 @@ begin
   _is_frame_finished := true;
 end;
 
-{ TSimpleDeblocker }
-
-constructor TSimpleDeblocker.Create(const frame: frame_t; const cqp: boolean);
+constructor TSimpleDeblocker.Create(const frame: TFrame; const cqp: boolean);
 begin
   f := @frame;
   _cqp := cqp;

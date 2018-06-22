@@ -26,10 +26,9 @@ type
     _max_x_hpel, _max_y_hpel: int32_t;
     _max_x_qpel, _max_y_qpel: int32_t;
     _last_search_score: int32_t;
-    _starting_fpel_mv: motionvec_t;
+    _starting_fpel_mv: TMotionvec;
     MotionCompensator: TMotionCompensation;
     InterCostEval: IInterPredCostEvaluator;
-
   public
     cur: uint8_p;
     _mbx, _mby: int32_t;
@@ -37,10 +36,10 @@ type
     property LastSearchScore: int32_t read _last_search_score;
 
     constructor Create(region_width, region_height: int32_t; mc: TMotionCompensation; cost_eval: IInterPredCostEvaluator);
-    procedure PickFPelStartingPoint(const fref: frame_p; const predicted_mv_list: TMotionVectorList);
-    function SearchFPel(var mb: macroblock_t; const fref: frame_p): motionvec_t;
-    function SearchHPel(var mb: macroblock_t; const fref: frame_p): motionvec_t;
-    function SearchQPel(var mb: macroblock_t; const fref: frame_p; const satd, chroma_me: boolean): motionvec_t;
+    procedure PickFPelStartingPoint(const fref: PFrame; const predicted_mv_list: TMotionVectorList);
+    function SearchFPel(var mb: TMacroblock; const fref: PFrame): TMotionvec;
+    function SearchHPel(var mb: TMacroblock; const fref: PFrame): TMotionvec;
+    function SearchQPel(var mb: TMacroblock; const fref: PFrame; const satd, chroma_me: boolean): TMotionvec;
   end;
 
   (* ******************************************************************************
@@ -53,19 +52,15 @@ type
   TMEPrecision = (mpFpel, mpHpel, mpQpel);
 
 const
-  FPEL_SAD_TRESH                             = 64;
-  ME_RANGES: array [TMEPrecision] of uint8_t = (16, 4, 4);
-  MIN_XY                                     = -FRAME_EDGE_W;
-  MIN_XY_HPEL                                = MIN_XY * 2;
-  MIN_XY_QPEL                                = MIN_XY * 4;
-  pt_dia_small: array [0 .. 3] of TXYOffs    =
-    ((0, -1), (0, 1), (-1, 0), (1, 0));
-  pt_dia_large: array [0 .. 7] of TXYOffs =
-    ((0, -2), (0, 2), (-2, 0), (2, 0), (-1, -1), (-1, 1), (1, -1), (1, 1));
-  pt_dia_large_sparse: array [0 .. 3] of TXYOffs =
-    ((0, -2), (0, 2), (-2, 0), (2, 0));
-  pt_square: array [0 .. 7] of TXYOffs =
-    ((0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1));
+  FPEL_SAD_TRESH                                 = 64;
+  ME_RANGES: array [TMEPrecision] of uint8_t     = (16, 4, 4);
+  MIN_XY                                         = -FRAME_EDGE_W;
+  MIN_XY_HPEL                                    = MIN_XY * 2;
+  MIN_XY_QPEL                                    = MIN_XY * 4;
+  pt_dia_small: array [0 .. 3] of TXYOffs        = ((0, -1), (0, 1), (-1, 0), (1, 0));
+  pt_dia_large: array [0 .. 7] of TXYOffs        = ((0, -2), (0, 2), (-2, 0), (2, 0), (-1, -1), (-1, 1), (1, -1), (1, 1));
+  pt_dia_large_sparse: array [0 .. 3] of TXYOffs = ((0, -2), (0, 2), (-2, 0), (2, 0));
+  pt_square: array [0 .. 7] of TXYOffs           = ((0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1));
 
 constructor TRegionSearch.Create(region_width, region_height: int32_t; mc: TMotionCompensation; cost_eval: IInterPredCostEvaluator);
 var
@@ -99,13 +94,13 @@ end;
   me - ME struct set up for fpel
   predicted_mv_list - list of predicted mvs in QPel units
 *)
-procedure TRegionSearch.PickFPelStartingPoint(const fref: frame_p; const predicted_mv_list: TMotionVectorList);
+procedure TRegionSearch.PickFPelStartingPoint(const fref: PFrame; const predicted_mv_list: TMotionVectorList);
 var
   i, x, y: int32_t;
   stride: int32_t;
   score: int32_t;
   ref: uint8_p;
-  tested_mv: motionvec_t;
+  tested_mv: TMotionvec;
 
 begin
   ref := fref^.plane_dec[0];
@@ -139,14 +134,14 @@ end;
   output
   result - best found vector (in qpel units)
 *)
-function TRegionSearch.SearchFPel(var mb: macroblock_t; const fref: frame_p): motionvec_t;
+function TRegionSearch.SearchFPel(var mb: TMacroblock; const fref: PFrame): TMotionvec;
 var
   ref: uint8_p;
   max_x, max_y: int32_t;
   x, y: int32_t; // currently searched fpel x,y position
   stride: int32_t;
   min_score: int32_t;
-  mv, mv_prev_pass: motionvec_t;
+  mv, mv_prev_pass: TMotionvec;
   iter: int32_t;
   check_bounds: boolean;
   range: int32_t;
@@ -221,7 +216,7 @@ end;
   output
   result - best found vector (in qpel units)
 *)
-function TRegionSearch.SearchHPel(var mb: macroblock_t; const fref: frame_p): motionvec_t;
+function TRegionSearch.SearchHPel(var mb: TMacroblock; const fref: PFrame): TMotionvec;
 var
   ref: array [0 .. 3] of uint8_p;
   max_x, max_y: int32_t;
@@ -230,7 +225,7 @@ var
   stride: int32_t;
   min_score: int32_t;
   mv,
-    mv_prev_pass: motionvec_t;
+    mv_prev_pass: TMotionvec;
   range: int32_t;
   iter: int32_t;
   check_bounds: boolean;
@@ -284,8 +279,7 @@ begin
   min_score := MaxInt; // we need to include bitcost in score, so reset
 
   iter := 0;
-  check_bounds := (x - range < MIN_XY_HPEL) or (x + range > max_x)
-    or (y - range < MIN_XY_HPEL) or (y + range > max_y);
+  check_bounds := (x - range < MIN_XY_HPEL) or (x + range > max_x) or (y - range < MIN_XY_HPEL) or (y + range > max_y);
   repeat
     mv_prev_pass := mv;
     check_pattern_hpel;
@@ -305,8 +299,7 @@ end;
   output
   h.mb.mv - best found vector in qpel units
 *)
-function TRegionSearch.SearchQPel
-  (var mb: macroblock_t; const fref: frame_p; const satd, chroma_me: boolean): motionvec_t;
+function TRegionSearch.SearchQPel(var mb: TMacroblock; const fref: PFrame; const satd, chroma_me: boolean): TMotionvec;
 var
   mbcmp: mbcmp_func_t;
   max_x, max_y: int32_t;
@@ -314,7 +307,7 @@ var
   x, y: int32_t; // currently searched qpel x,y position
   min_score: int32_t;
   mv,
-    mv_prev_pass: motionvec_t;
+    mv_prev_pass: TMotionvec;
   range: int32_t;
   iter: int32_t;
   check_bounds: boolean;
@@ -332,8 +325,7 @@ var
       score: int32_t;
   begin
     if check_bounds then
-      if (x - 1 < MIN_XY_QPEL) or (x + 1 > max_x) or
-        (y - 1 < MIN_XY_QPEL) or (y + 1 > max_y) then
+      if (x - 1 < MIN_XY_QPEL) or (x + 1 > max_x) or (y - 1 < MIN_XY_QPEL) or (y + 1 > max_y) then
           exit;
     for i := 0 to 3 do
       begin
@@ -341,8 +333,7 @@ var
         ny := y + pt_dia_small[i][1];
 
         MotionCompensator.CompensateQPelXY(fref, nx, ny, mb.mcomp);
-        score := mbcmp(cur, mb.mcomp, 16)
-          + InterCostEval.BitCost(XYToMVec(nx - mbx, ny - mby));
+        score := mbcmp(cur, mb.mcomp, 16) + InterCostEval.BitCost(XYToMVec(nx - mbx, ny - mby));
 
         if chroma_me then
           begin
@@ -377,8 +368,7 @@ begin
   min_score := MaxInt; // reset score, mbcmp may be different
 
   iter := 0;
-  check_bounds := (x - range < MIN_XY_QPEL) or (x + range > max_x) or
-    (y - range < MIN_XY_QPEL) or (y + range > max_y);
+  check_bounds := (x - range < MIN_XY_QPEL) or (x + range > max_x) or (y - range < MIN_XY_QPEL) or (y + range > max_y);
   repeat
     mv_prev_pass := mv;
     check_pattern_qpel();

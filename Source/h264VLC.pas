@@ -24,9 +24,9 @@ type
 procedure vlc_init();
 procedure vlc_done();
 
-procedure cavlc_encode(const mb: macroblock_t; const blok: block_t; const blk_idx: uint8_t; const res: residual_type_t; var bs: TBitstreamWriter);
-function cavlc_block_bits(const mb: macroblock_t; const blok: block_t; const blk_idx: uint8_t; const res: residual_type_t): int32_t;
-procedure cavlc_analyse_block(var block: block_t; dct_coefs: int16_p; const ncoef: int32_t);
+procedure cavlc_encode(const mb: TMacroblock; const blok: TBlock; const blk_idx: uint8_t; const res: residual_type_t; var bs: TBitstreamWriter);
+function cavlc_block_bits(const mb: TMacroblock; const blok: TBlock; const blk_idx: uint8_t; const res: residual_type_t): int32_t;
+procedure cavlc_analyse_block(var block: TBlock; dct_coefs: int16_p; const ncoef: int32_t);
 
 procedure write_se_code(var bs: TBitstreamWriter; n: int32_t);
 procedure write_ue_code(var bs: TBitstreamWriter; const n: int32_t);
@@ -125,7 +125,6 @@ end;
 
 procedure zigzag16(a, b: int16_p);
 begin
-  // for i := 0 to 15 do  a[i] := b[ zigzag_pos[i] ];
   a[0] := b[0];
   a[1] := b[1];
   a[2] := b[4];
@@ -146,7 +145,6 @@ end;
 
 procedure zigzag15(a, b: int16_p);
 begin
-  // for i := 0 to 14 do  a[i] := b[-1 + zigzag_pos[i+1]];
   a[0] := b[0];
   a[1] := b[3];
   a[2] := b[7];
@@ -175,19 +173,12 @@ const
     index: 0 - top/a, 1 - left/b
   }
   idx: array [0 .. 15, 0 .. 1] of uint8_t = (
-    (16, 20), (17, 0), (0, 21), (1, 2),
-    (18, 1), (19, 4), (4, 3), (5, 6),
-    (2, 22), (3, 8), (8, 23), (9, 10),
-    (6, 9), (7, 12), (12, 11), (13, 14)
-    );
+    (16, 20), (17, 0), (0, 21), (1, 2), (18, 1), (19, 4), (4, 3), (5, 6), (2, 22), (3, 8), (8, 23), (9, 10), (6, 9), (7, 12), (12, 11), (13, 14));
   { 0..3 - current
     4, 5 - top mb, lower row
     6, 7 - left mb, right column
   }
-  idxc: array [0 .. 3, 0 .. 1] of uint8_t = (
-    (4, 6), (5, 0),
-    (0, 7), (1, 2)
-    );
+  idxc: array [0 .. 3, 0 .. 1] of uint8_t = ((4, 6), (5, 0), (0, 7), (1, 2));
 
   nz2tab: array [0 .. 16] of uint8_t = (0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3);
 var
@@ -277,7 +268,7 @@ end;
   cavlc_encode
 *)
 procedure cavlc_encode
-  (const mb: macroblock_t; const blok: block_t; const blk_idx: uint8_t; const res: residual_type_t; var bs: TBitstreamWriter);
+  (const mb: TMacroblock; const blok: TBlock; const blk_idx: uint8_t; const res: residual_type_t; var bs: TBitstreamWriter);
 var
   i: int32_t;
   coef: int32_t;
@@ -430,18 +421,16 @@ begin
     end;
 end;
 
-function cavlc_block_bits(const mb: macroblock_t; const blok: block_t; const blk_idx: uint8_t; const res: residual_type_t): int32_t;
+function cavlc_block_bits(const mb: TMacroblock; const blok: TBlock; const blk_idx: uint8_t; const res: residual_type_t): int32_t;
 var
   i: int32_t;
   coef: int32_t;
   run_before, zeros_left, total_zeros: int32_t;
-  nz,              // TotalCoeff( coeff_token )
+  nz: int32_t;     // TotalCoeff( coeff_token )
   t0, t1: int32_t; // trailing 0, TrailingOnes( coeff_token )
-
   tab: uint8_t;
   suffix_length: uint8_t;
   vlc: vlc_bits_len;
-
 begin
   result := 0;
   t0 := blok.t0;
@@ -452,12 +441,9 @@ begin
   if res <> RES_DC then
     begin
       case res of
-        RES_LUMA, RES_LUMA_AC, RES_LUMA_DC:
-          tab := predict_nz_count_to_tab(mb.nz_coef_cnt, blk_idx);
-        RES_AC_U:
-          tab := predict_nz_count_to_tab(mb.nz_coef_cnt_chroma_ac[0], blk_idx, true);
-        RES_AC_V:
-          tab := predict_nz_count_to_tab(mb.nz_coef_cnt_chroma_ac[1], blk_idx, true);
+        RES_LUMA, RES_LUMA_AC, RES_LUMA_DC: tab := predict_nz_count_to_tab(mb.nz_coef_cnt, blk_idx);
+        RES_AC_U: tab := predict_nz_count_to_tab(mb.nz_coef_cnt_chroma_ac[0], blk_idx, true);
+        RES_AC_V: tab := predict_nz_count_to_tab(mb.nz_coef_cnt_chroma_ac[1], blk_idx, true);
       end;
       inc(result, tab_coef_num[tab, nz, t1][1]);
     end
@@ -537,7 +523,7 @@ begin
 end;
 
 // ******************************************************************************
-procedure cavlc_analyse_block(var block: block_t; dct_coefs: int16_p; const ncoef: int32_t);
+procedure cavlc_analyse_block(var block: TBlock; dct_coefs: int16_p; const ncoef: int32_t);
 var
   i, t0, zeros, n: int32_t;
   p: array [0 .. 15] of int16_t;

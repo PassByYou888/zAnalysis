@@ -26,9 +26,6 @@ uses
 type
   TBufferState = (bsUnderflow, bsOverflow, bsStable);
 
-const
-  TBufferStateName: array [bsUnderflow .. bsStable] of string = ('under', 'over', 'stable');
-
 type
   TRcFrame = packed record
     bitsize: int32_t;
@@ -103,7 +100,7 @@ type
     procedure Set2pass(const TargetBitrate, FrameCount: int32_t; const FramesPS: single);
     function GetQP(const FrameNum: int32_t; const FrameType: uint8_t): uint8_t;
     function GetFrameType(const FrameNum: int32_t): uint8_t;
-    procedure Update(const FrameNum: int32_t; const FrameBits: int32_t; var f: frame_t);
+    procedure Update(const FrameNum: int32_t; const FrameBits: int32_t; var f: TFrame);
   end;
 
 implementation
@@ -533,7 +530,7 @@ begin
       result := frames[FrameNum].frame_type;
 end;
 
-procedure TRatecontrol.Update(const FrameNum: int32_t; const FrameBits: int32_t; var f: frame_t);
+procedure TRatecontrol.Update(const FrameNum: int32_t; const FrameBits: int32_t; var f: TFrame);
 const
   STATECHECK_INTERVAL = 10;
   REACTION_DELAY      = 30;

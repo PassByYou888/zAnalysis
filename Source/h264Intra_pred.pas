@@ -20,7 +20,6 @@ uses
 type
   TPredict4x4Func   = procedure(src, dst: uint8_p; stride: int32_t);
   TPredict16x16Func = procedure(src, dst: uint8_p);
-  { TIntraPredictor }
 
   TIntraPredictor = class
   private
@@ -51,9 +50,7 @@ type
   end;
 
 var
-  predict_top16,
-    predict_left16,
-    predict_plane16: TPredict16x16Func;
+  predict_top16, predict_left16, predict_plane16: TPredict16x16Func;
 
 procedure intra_pred_init;
 
@@ -383,8 +380,8 @@ begin
     end;
 
   a := 16 * (src[15 + 17] + src[15]) + 16;
-  b := Sar16(5 * h + 32, 6);
-  c := Sar16(5 * v + 32, 6);
+  b := Sar16(SmallInt(5 * h + 32), 6);
+  c := Sar16(SmallInt(5 * v + 32), 6);
 
   for y := 0 to 15 do
     begin
@@ -590,15 +587,15 @@ end;
 
 const
   Predict4x4Funcs: array [INTRA_PRED_TOP .. INTRA_PRED_HU] of TPredict4x4Func = (
-    {$IFDEF FPC}@{$ENDIF FPC}predict_top4,
-    {$IFDEF FPC}@{$ENDIF FPC}predict_left4,
+{$IFDEF FPC}@{$ENDIF FPC}predict_top4,
+{$IFDEF FPC}@{$ENDIF FPC}predict_left4,
     nil, // INTRA_PRED_DC is different
-    {$IFDEF FPC}@{$ENDIF FPC}predict_ddl4,
-    {$IFDEF FPC}@{$ENDIF FPC}predict_ddr4,
-    {$IFDEF FPC}@{$ENDIF FPC}predict_vr4,
-    {$IFDEF FPC}@{$ENDIF FPC}predict_hd4,
-    {$IFDEF FPC}@{$ENDIF FPC}predict_vl4,
-    {$IFDEF FPC}@{$ENDIF FPC}predict_hu4
+{$IFDEF FPC}@{$ENDIF FPC}predict_ddl4,
+{$IFDEF FPC}@{$ENDIF FPC}predict_ddr4,
+{$IFDEF FPC}@{$ENDIF FPC}predict_vr4,
+{$IFDEF FPC}@{$ENDIF FPC}predict_hd4,
+{$IFDEF FPC}@{$ENDIF FPC}predict_vl4,
+{$IFDEF FPC}@{$ENDIF FPC}predict_hu4
     );
 
   { TIntraPredictor }
@@ -668,14 +665,10 @@ end;
 procedure TIntraPredictor.Predict_16x16(mode: int32_t; mbx, mby: int32_t);
 begin
   case mode of
-    INTRA_PRED_DC:
-      predict_dc16(pixel_cache, prediction, mbx, mby);
-    INTRA_PRED_TOP:
-      predict_top16(pixel_cache, prediction);
-    INTRA_PRED_LEFT:
-      predict_left16(pixel_cache, prediction);
-    INTRA_PRED_PLANE:
-      predict_plane16(pixel_cache, prediction);
+    INTRA_PRED_DC: predict_dc16(pixel_cache, prediction, mbx, mby);
+    INTRA_PRED_TOP: predict_top16(pixel_cache, prediction);
+    INTRA_PRED_LEFT: predict_left16(pixel_cache, prediction);
+    INTRA_PRED_PLANE: predict_plane16(pixel_cache, prediction);
     else
       DoStatus('mb_intra_pred_16 error: unknown predict mode');
   end;

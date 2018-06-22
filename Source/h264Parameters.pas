@@ -15,7 +15,7 @@ unit h264Parameters;
 interface
 
 uses
-  Classes, SysUtils, h264Stdint, h264util;
+  Classes, SysUtils, h264Stdint, h264util, PascalParsing, PascalStrings;
 
 const
   MIN_QP               = 0;
@@ -24,7 +24,6 @@ const
   MAX_REFERENCE_FRAMES = 16;
 
 type
-
   { TEncodingParameters }
   // encoder configuration parameters
   TEncodingParameters = class
@@ -82,9 +81,23 @@ type
 
     property LoopFilterEnabled: boolean read loopfilter write loopfilter;
     property FilterThreadEnabled: boolean read filter_thread write SetFilterThreadEnabled;
-    property AnalysisLevel: uint8_t read analyse write SetAnalysisLevel;
-    property SubpixelMELevel: uint8_t read subme write SetSubpixelMELevel;
+
+    property AnalysisLevel: uint8_t read analyse write SetAnalysisLevel; // mb type decision quality
+    { 0 - none
+      1 - heuristics - SAD
+      2 - heuristics - SATD
+      3 - bitcost
+    }
+
+    property SubpixelMELevel: uint8_t read subme write SetSubpixelMELevel; // subpixel ME refinement
+    { 0 - none (fpel only)
+      1 - hpel
+      2 - qpel
+      3 - qpel SATD
+    }
+
     property NumReferenceFrames: uint8_t read ref write SetNumReferenceFrames;
+
     property AdaptiveQuant: boolean read aq write aq;
 
     property IgnoreChroma: boolean read luma_only write luma_only;
@@ -93,7 +106,7 @@ type
     constructor Create(const width_, height_: uint16_t; const fps_: double); overload;
     procedure SetABRRateControl(const bitrate_: uint32_t);
     procedure SetStreamParams(const width_, height_, frame_count: int32_t; const fps_: single);
-    function ToString: string; override;
+    function ToPascalString: TPascalString; overload;
   end;
 
 implementation
@@ -199,8 +212,8 @@ begin
   fps := fps_;
 end;
 
-function TEncodingParameters.ToString: string;
-  function b2s(b: boolean): char;
+function TEncodingParameters.ToPascalString: TPascalString;
+  function b2s(const b: boolean): SystemString;
   begin
     if b then
         result := '1'
@@ -209,11 +222,10 @@ function TEncodingParameters.ToString: string;
   end;
 
 begin
-  result := format('%dx%d keyint:%d qp:%d subme:%d analyse:%d ref:%d aq:%s '
+  result.Text := PFormat('%dx%d keyint:%d qp:%d subme:%d analyse:%d ref:%d aq:%s '
     + 'chroma_qp_offset:%d loopfilter:%s (threaded:%s)',
     [width, height, key_interval, qp, subme, analyse, ref, b2s(aq),
-    chroma_qp_offset, b2s(loopfilter), b2s(filter_thread)]
-    );
+    chroma_qp_offset, b2s(loopfilter), b2s(filter_thread)]);
 end;
 
 end.

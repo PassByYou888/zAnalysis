@@ -30,8 +30,8 @@ object Form1: TForm1
       Size.Height = 141.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
-      Viewport.Width = 747.000000000000000000
-      Viewport.Height = 137.000000000000000000
+      Viewport.Width = 751.000000000000000000
+      Viewport.Height = 141.000000000000000000
     end
     object TabControl1: TTabControl
       Align = Client
@@ -81,7 +81,7 @@ object Form1: TForm1
           Size.Width = 225.000000000000000000
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 12
+          TabOrder = 14
           Text = #23398#20064#22270#29255'('#20351#29992#39640#36895'K'#31354#38388#26641')'
           OnClick = Button1Click
         end
@@ -91,7 +91,7 @@ object Form1: TForm1
           Size.Width = 225.000000000000000000
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 11
+          TabOrder = 13
           Text = #23398#20064#22270#29255'('#20351#29992'LBFGS'#22823#35268#27169#29275#39039#19979#38477#27861')'
           OnClick = Button2Click
         end
@@ -101,7 +101,7 @@ object Form1: TForm1
           Size.Width = 225.000000000000000000
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 9
+          TabOrder = 11
           Text = #23398#20064#22270#29255'('#20351#29992'LM)'
           OnClick = Button3Click
         end
@@ -121,7 +121,7 @@ object Form1: TForm1
           Size.Width = 225.000000000000000000
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 6
+          TabOrder = 7
           Text = #23398#20064#22270#29255'('#20351#29992'LBFGS'#31070#32463#32593#32476#38598#25104#27861')'
           OnClick = Button5Click
         end

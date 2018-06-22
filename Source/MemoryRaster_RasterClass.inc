@@ -383,6 +383,11 @@ begin
       OpenAgg;
 end;
 
+procedure TMemoryRaster.SetWorkMemory(Raster: TMemoryRaster);
+begin
+  SetWorkMemory(@Raster.FBits[0], Raster.Width, Raster.Height);
+end;
+
 procedure TMemoryRaster.OpenFont;
 begin
   if FFont = nil then
@@ -750,8 +755,8 @@ var
 begin
   for j := 0 to dest.Height - 1 do
     begin
-      SourceI := (pass / (dest.Width - 1)) * (Source.Width - 1);
-      SourceJ := (j / (dest.Height - 1)) * (Source.Height - 1);
+      SourceI := (pass / (dest.Width - 1));
+      SourceJ := (j / (dest.Height - 1));
 
       dest.Pixel[pass, j] := Source.PixelWrapLinear[SourceI, SourceJ];
     end;
@@ -1297,6 +1302,12 @@ var
   r4: TV2Rect4;
   buff: array [0 .. 4] of TPointDouble;
 begin
+  if Angle = 0 then
+    begin
+      FillRect(R, Value);
+      exit;
+    end;
+
   r4 := TV2Rect4.Init(R, Angle);
   if FAgg <> nil then
     begin
@@ -1641,7 +1652,7 @@ end;
 class function TMemoryRaster.CanLoadStream(Stream: TCoreClassStream): Boolean;
 var
   bakPos: Int64;
-  hflag: Word;
+  hflag, hflag2: Word;
   Header: TBmpHeader;
 begin
   Result := False;
@@ -1649,8 +1660,13 @@ begin
     bakPos := Stream.Position;
 
     Stream.Read(hflag, 2);
-    if (hflag = $8D42) or (hflag = $8D43) or (hflag = $8D44) or (hflag = $8D45) or (hflag = $8DFF) or (hflag = $D8FF) then
+    if (hflag = $8D42) or (hflag = $8D43) or (hflag = $8D44) or (hflag = $8D45) then
         Result := True
+    else if (hflag = $D8FF) or (hflag = $8DFF) then
+      begin
+        Stream.Read(hflag2, 2);
+        Result := (hflag2 = $F7FF);
+      end
     else
       begin
         Stream.Position := bakPos;
@@ -1708,7 +1724,7 @@ procedure TMemoryRaster.LoadFromStream(Stream: TCoreClassStream);
 var
   bakPos: Int64;
 
-  hflag: Word;
+  hflag, hflag2: Word;
   m64: TMemoryStream64;
 begin
   Reset;
@@ -1749,10 +1765,12 @@ begin
       LoadFromBmpStream(Stream);
     end
     // jls endian support
-  else if (hflag = $8DFF) or (hflag = $D8FF) then
+  else if (hflag = $D8FF) or (hflag = $8DFF) then
     begin
+      Stream.Read(hflag2, 2);
       Stream.Position := bakPos;
-      DecodeJpegLSRasterFromStream(Stream, Self);
+      if (hflag2 = $F7FF) then
+          DecodeJpegLSRasterFromStream(Stream, Self);
     end
     // jls alpha
   else if hflag = $8D45 then

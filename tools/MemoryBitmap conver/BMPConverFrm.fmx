@@ -3,7 +3,7 @@ object BMPConverForm: TBMPConverForm
   Top = 0
   Caption = 'memoryBitmap conver, create by qq600585'
   ClientHeight = 590
-  ClientWidth = 968
+  ClientWidth = 1322
   StyleBook = StyleBook1
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -25,7 +25,7 @@ object BMPConverForm: TBMPConverForm
     Anchors = [akLeft, akRight, akBottom]
     Position.X = 168.000000000000000000
     Position.Y = 493.000000000000000000
-    Size.Width = 449.000000000000000000
+    Size.Width = 560.000000000000000000
     Size.Height = 50.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 4
@@ -35,7 +35,7 @@ object BMPConverForm: TBMPConverForm
       TabOrder = 4
       Position.X = 128.000000000000000000
       Position.Y = 9.000000000000000000
-      Size.Width = 313.000000000000000000
+      Size.Width = 424.000000000000000000
       Size.Height = 32.000000000000000000
       Size.PlatformDefault = False
       StyledSettings = [Family, Style, FontColor]
@@ -62,28 +62,6 @@ object BMPConverForm: TBMPConverForm
       TextSettings.WordWrap = False
       Text = 'output directory'
     end
-  end
-  object Rectangle: TRectangle
-    Anchors = [akTop, akRight, akBottom]
-    Fill.Kind = Gradient
-    Fill.Gradient.Points = <
-      item
-        Color = xFF626262
-        Offset = 0.000000000000000000
-      end
-      item
-        Color = claWhite
-        Offset = 1.000000000000000000
-      end>
-    Fill.Gradient.StartPosition.X = 0.500000000000000000
-    Fill.Gradient.StartPosition.Y = 1.000000000000000000
-    Fill.Gradient.StopPosition.X = 0.499999970197677600
-    Fill.Gradient.StopPosition.Y = 0.000000000000000000
-    Position.X = 624.000000000000000000
-    Position.Y = 16.000000000000000000
-    Size.Width = 329.000000000000000000
-    Size.Height = 552.000000000000000000
-    Size.PlatformDefault = False
   end
   object SameDirCheckBox: TCheckBox
     Anchors = [akLeft, akBottom]
@@ -12890,7 +12868,7 @@ object BMPConverForm: TBMPConverForm
     Anchors = [akLeft, akTop, akRight, akBottom]
     Position.X = 8.000000000000000000
     Position.Y = 56.000000000000000000
-    Size.Width = 601.000000000000000000
+    Size.Width = 720.000000000000000000
     Size.Height = 392.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 11
@@ -12899,7 +12877,7 @@ object BMPConverForm: TBMPConverForm
     DefaultItemStyles.GroupHeaderStyle = ''
     DefaultItemStyles.GroupFooterStyle = ''
     OnChange = ListBoxChange
-    Viewport.Width = 597.000000000000000000
+    Viewport.Width = 716.000000000000000000
     Viewport.Height = 388.000000000000000000
   end
   object OpenDialog: TOpenDialog
@@ -12930,6 +12908,7 @@ object BMPConverForm: TBMPConverForm
     OnClick = converjlsButtonClick
   end
   object RadioButton_JLS8: TRadioButton
+    Anchors = [akLeft, akBottom]
     StyledSettings = [Family, Style, FontColor]
     GroupName = 'JLS'
     Position.X = 168.000000000000000000
@@ -12941,6 +12920,7 @@ object BMPConverForm: TBMPConverForm
     Text = 'JLS8'
   end
   object RadioButton_JLS24: TRadioButton
+    Anchors = [akLeft, akBottom]
     StyledSettings = [Family, Style, FontColor]
     GroupName = 'JLS'
     Position.X = 240.000000000000000000
@@ -12952,6 +12932,7 @@ object BMPConverForm: TBMPConverForm
     Text = 'JLS24'
   end
   object RadioButton_JLS32: TRadioButton
+    Anchors = [akLeft, akBottom]
     StyledSettings = [Family, Style, FontColor]
     GroupName = 'JLS'
     Position.X = 312.000000000000000000
@@ -12961,5 +12942,16 @@ object BMPConverForm: TBMPConverForm
     Size.PlatformDefault = False
     TabOrder = 14
     Text = 'JLS_Alpha(no publish format)'
+  end
+  object Image: TImageViewer
+    Anchors = [akTop, akRight, akBottom]
+    Position.X = 743.000000000000000000
+    Position.Y = 16.000000000000000000
+    Size.Width = 564.000000000000000000
+    Size.Height = 561.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 19
+    Viewport.Width = 560.000000000000000000
+    Viewport.Height = 557.000000000000000000
   end
 end

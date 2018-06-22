@@ -45,11 +45,6 @@ type
     ****************************************************************************** *)
 implementation
 
-const
-  I4x4_PRED_NAMES: array [0 .. 8] of string[3]    = ('v', 'h', 'dc', 'ddl', 'ddr', 'vr', 'hd', 'vl', 'hu');
-  I16x16_PRED_NAMES: array [0 .. 3] of string[5]  = ('v', 'h', 'dc', 'plane');
-  ICHROMA_PRED_NAMES: array [0 .. 3] of string[5] = ('dc', 'h', 'v', 'plane');
-
   { TStreamStats }
 
 procedure TStreamStats.Clear;

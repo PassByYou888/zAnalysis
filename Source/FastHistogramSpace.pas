@@ -61,10 +61,15 @@ type
     procedure ComputeHistogram(const AntiLight: Boolean; const oriH, oriF: PLIMatrix; const bw: PLMatrix; const itp: THOGTable.PItpRecArray);
   public
     Ori: THRecArray;
+    OriDim: TLInt;
     constructor Create(Table: THOGTable; img: TMemoryRaster);
     constructor CreateAntiLight(Table: THOGTable; img: TMemoryRaster);
     destructor Destroy; override;
 
+    property SizeX: TLInt read hSizX;
+    property SizeY: TLInt read hSizY;
+
+    procedure BuildFeatureMatrix(var m: TLMatrix);
     procedure BuildViewer(output: TMemoryRaster);
   end;
 
@@ -74,13 +79,13 @@ implementation
 
 uses
   Math, DoStatusIO,
-  {$IFDEF parallel}
-  {$IFDEF FPC}
+{$IFDEF parallel}
+{$IFDEF FPC}
   mtprocs,
-  {$ELSE FPC}
+{$ELSE FPC}
   Threading,
-  {$ENDIF FPC}
-  {$ENDIF parallel}
+{$ENDIF FPC}
+{$ENDIF parallel}
   SyncObjs, Learn;
 
 const
@@ -242,6 +247,7 @@ begin
   hSizY := nCY + 2;
   Width := imgWidth;
   Height := imgHeight;
+  OriDim := 4 + (numOriFull + numOriHalf);
 
   SetLength(Ori, hSizY, hSizX);
 
@@ -250,7 +256,7 @@ begin
       begin
         SetLength(Ori[y, x].binF, numOriFull);
         SetLength(Ori[y, x].binH, numOriHalf);
-        Ori[y, x].dim := 4 + (numOriFull + numOriHalf);
+        Ori[y, x].dim := OriDim;
         SetLength(Ori[y, x].feat, Ori[y, x].dim);
 
         Ori[y, x].nOriF := numOriFull;
@@ -337,10 +343,10 @@ procedure THOG.ComputeRGB_Diff(img: TMemoryRaster; const m: PLMatrix);
 
 
 begin
-  {$IFDEF parallel}
-  {$IFDEF FPC}
+{$IFDEF parallel}
+{$IFDEF FPC}
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, Height - 1);
-  {$ELSE FPC}
+{$ELSE FPC}
   TParallel.For(0, Height - 1, procedure(pass: Integer)
     var
       x, xDiffs, yDiffs, magni: TLInt;
@@ -374,17 +380,17 @@ begin
             end;
         end;
     end);
-  {$ENDIF FPC}
-  {$ELSE parallel}
+{$ENDIF FPC}
+{$ELSE parallel}
   DoFor;
-  {$ENDIF parallel}
+{$ENDIF parallel}
 end;
 
 procedure THOG.ComputeHistogram(const AntiLight: Boolean; const oriH, oriF: PLIMatrix; const bw: PLMatrix; const itp: THOGTable.PItpRecArray);
 var
   setoff: TLInt;
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
   procedure Nested_ParallelFor_Weight(y: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
   var
     x, n: TLInt;
@@ -444,10 +450,10 @@ var
 
         for n := 0 to hp^.nOriH - 1 do
           begin
-            ns[0] := max(hp^.binH[n] / nw[0], 0.2);
-            ns[1] := max(hp^.binH[n] / nw[1], 0.2);
-            ns[2] := max(hp^.binH[n] / nw[2], 0.2);
-            ns[3] := max(hp^.binH[n] / nw[3], 0.2);
+            ns[0] := LSafeDivF(hp^.binH[n], nw[0]);
+            ns[1] := LSafeDivF(hp^.binH[n], nw[1]);
+            ns[2] := LSafeDivF(hp^.binH[n], nw[2]);
+            ns[3] := LSafeDivF(hp^.binH[n], nw[3]);
             hp^.feat[n] := ns[0] + ns[1] + ns[2] + ns[3];
             LAdd(hp^.feat[setoff + 0], ns[0]);
             LAdd(hp^.feat[setoff + 1], ns[1]);
@@ -457,10 +463,10 @@ var
 
         for n := 0 to hp^.nOriF - 1 do
           begin
-            ns[0] := max(hp^.binF[n] / nw[0], 0.2);
-            ns[1] := max(hp^.binF[n] / nw[1], 0.2);
-            ns[2] := max(hp^.binF[n] / nw[2], 0.2);
-            ns[3] := max(hp^.binF[n] / nw[3], 0.2);
+            ns[0] := LSafeDivF(hp^.binF[n], nw[0]);
+            ns[1] := LSafeDivF(hp^.binF[n], nw[1]);
+            ns[2] := LSafeDivF(hp^.binF[n], nw[2]);
+            ns[3] := LSafeDivF(hp^.binF[n], nw[3]);
             hp^.feat[hp^.nOriH + n] := ns[0] + ns[1] + ns[2] + ns[3];
             LAdd(hp^.feat[setoff + 0], ns[0]);
             LAdd(hp^.feat[setoff + 1], ns[1]);
@@ -474,7 +480,7 @@ var
             for n := 0 to Length(hp^.feat) - 1 do
                 LAdd(sum, hp^.feat[n]);
             for n := 0 to Length(hp^.feat) - 1 do
-                hp^.feat[n] := Learn.AP_Sqr(hp^.feat[n] / sum);
+                hp^.feat[n] := Learn.AP_Sqr(LSafeDivF(hp^.feat[n], sum));
           end;
       end;
   end;
@@ -542,10 +548,10 @@ var
 
           for n := 0 to hp^.nOriH - 1 do
             begin
-              ns[0] := max(hp^.binH[n] / nw[0], 0.2);
-              ns[1] := max(hp^.binH[n] / nw[1], 0.2);
-              ns[2] := max(hp^.binH[n] / nw[2], 0.2);
-              ns[3] := max(hp^.binH[n] / nw[3], 0.2);
+              ns[0] := LSafeDivF(hp^.binH[n], nw[0]);
+              ns[1] := LSafeDivF(hp^.binH[n], nw[1]);
+              ns[2] := LSafeDivF(hp^.binH[n], nw[2]);
+              ns[3] := LSafeDivF(hp^.binH[n], nw[3]);
               hp^.feat[n] := ns[0] + ns[1] + ns[2] + ns[3];
               LAdd(hp^.feat[setoff + 0], ns[0]);
               LAdd(hp^.feat[setoff + 1], ns[1]);
@@ -555,10 +561,10 @@ var
 
           for n := 0 to hp^.nOriF - 1 do
             begin
-              ns[0] := max(hp^.binF[n] / nw[0], 0.2);
-              ns[1] := max(hp^.binF[n] / nw[1], 0.2);
-              ns[2] := max(hp^.binF[n] / nw[2], 0.2);
-              ns[3] := max(hp^.binF[n] / nw[3], 0.2);
+              ns[0] := LSafeDivF(hp^.binF[n], nw[0]);
+              ns[1] := LSafeDivF(hp^.binF[n], nw[1]);
+              ns[2] := LSafeDivF(hp^.binF[n], nw[2]);
+              ns[3] := LSafeDivF(hp^.binF[n], nw[3]);
               hp^.feat[hp^.nOriH + n] := ns[0] + ns[1] + ns[2] + ns[3];
               LAdd(hp^.feat[setoff + 0], ns[0]);
               LAdd(hp^.feat[setoff + 1], ns[1]);
@@ -572,7 +578,7 @@ var
               for n := 0 to Length(hp^.feat) - 1 do
                   LAdd(sum, hp^.feat[n]);
               for n := 0 to Length(hp^.feat) - 1 do
-                  hp^.feat[n] := Learn.AP_Sqr(hp^.feat[n] / sum);
+                  hp^.feat[n] := Learn.AP_Sqr(LSafeDivF(hp^.feat[n], sum));
             end;
         end;
   end;
@@ -582,12 +588,12 @@ var
 begin
   setoff := Ori[0, 0].nOriH + Ori[0, 0].nOriF;
 
-  {$IFDEF parallel}
-  {$IFDEF FPC}
+{$IFDEF parallel}
+{$IFDEF FPC}
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor_Weight, 0, Height - 1);
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor_normH, 0, hSizY - 1);
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor_Ori, 1, nCY - 1);
-  {$ELSE FPC}
+{$ELSE FPC}
   TParallel.For(0, Height - 1, procedure(y: Integer)
     var
       x, n: TLInt;
@@ -647,10 +653,10 @@ begin
 
           for n := 0 to hp^.nOriH - 1 do
             begin
-              ns[0] := max(hp^.binH[n] / nw[0], 0.2);
-              ns[1] := max(hp^.binH[n] / nw[1], 0.2);
-              ns[2] := max(hp^.binH[n] / nw[2], 0.2);
-              ns[3] := max(hp^.binH[n] / nw[3], 0.2);
+              ns[0] := LSafeDivF(hp^.binH[n], nw[0]);
+              ns[1] := LSafeDivF(hp^.binH[n], nw[1]);
+              ns[2] := LSafeDivF(hp^.binH[n], nw[2]);
+              ns[3] := LSafeDivF(hp^.binH[n], nw[3]);
               hp^.feat[n] := ns[0] + ns[1] + ns[2] + ns[3];
               LAdd(hp^.feat[setoff + 0], ns[0]);
               LAdd(hp^.feat[setoff + 1], ns[1]);
@@ -660,10 +666,10 @@ begin
 
           for n := 0 to hp^.nOriF - 1 do
             begin
-              ns[0] := max(hp^.binF[n] / nw[0], 0.2);
-              ns[1] := max(hp^.binF[n] / nw[1], 0.2);
-              ns[2] := max(hp^.binF[n] / nw[2], 0.2);
-              ns[3] := max(hp^.binF[n] / nw[3], 0.2);
+              ns[0] := LSafeDivF(hp^.binF[n], nw[0]);
+              ns[1] := LSafeDivF(hp^.binF[n], nw[1]);
+              ns[2] := LSafeDivF(hp^.binF[n], nw[2]);
+              ns[3] := LSafeDivF(hp^.binF[n], nw[3]);
               hp^.feat[hp^.nOriH + n] := ns[0] + ns[1] + ns[2] + ns[3];
               LAdd(hp^.feat[setoff + 0], ns[0]);
               LAdd(hp^.feat[setoff + 1], ns[1]);
@@ -677,16 +683,16 @@ begin
               for n := 0 to Length(hp^.feat) - 1 do
                   LAdd(sum, hp^.feat[n]);
               for n := 0 to Length(hp^.feat) - 1 do
-                  hp^.feat[n] := Learn.AP_Sqr(hp^.feat[n] / sum);
+                  hp^.feat[n] := Learn.AP_Sqr(LSafeDivF(hp^.feat[n], sum));
             end;
         end;
     end);
-  {$ENDIF FPC}
-  {$ELSE parallel}
+{$ENDIF FPC}
+{$ELSE parallel}
   DoFor_Weight;
   DoFor_normH;
   DoFor_Ori;
-  {$ENDIF parallel}
+{$ENDIF parallel}
 end;
 
 constructor THOG.Create(Table: THOGTable; img: TMemoryRaster);
@@ -728,6 +734,21 @@ begin
   SetLength(dx, 0, 0);
   SetLength(dy, 0, 0);
   inherited Destroy;
+end;
+
+procedure THOG.BuildFeatureMatrix(var m: TLMatrix);
+var
+  i, j, n: TLInt;
+  p: PHRec;
+begin
+  SetLength(m, hSizY, hSizX * OriDim);
+  for j := 0 to Length(Ori) - 1 do
+    for i := 0 to Length(Ori[j]) - 1 do
+      begin
+        p := @Ori[j, i];
+        for n := 0 to OriDim - 1 do
+            m[j, i + n] := p^.feat[n];
+      end;
 end;
 
 procedure THOG.BuildViewer(output: TMemoryRaster);
@@ -787,22 +808,24 @@ var
   view: TMemoryRaster;
   i: TLInt;
   t: TTimeTick;
+  m: TLMatrix;
 begin
   img := NewRasterFromFile('c:\1.bmp');
 
-  tab := THOGTable.Create(18, 36, 8);
+  tab := THOGTable.Create(18, 36, 16);
 
-  t := GetTimeTick;
-  for i := 1 to 100 do
-    begin
-      hog := THOG.CreateAntiLight(tab, img);
-      disposeObject(hog);
-    end;
-  DoStatus('%dms', [GetTimeTick - t]);
+  // t := GetTimeTick;
+  // for i := 1 to 100 do
+  // begin
+  // hog := THOG.CreateAntiLight(tab, img);
+  // disposeObject(hog);
+  // end;
+  // DoStatus('%dms', [GetTimeTick - t]);
 
   hog := THOG.CreateAntiLight(tab, img);
 
   view := TMemoryRaster.Create;
+  view.OpenAgg;
   hog.BuildViewer(view);
   img.Draw(-8, -8, view);
   img.SaveToFile('c:\view.bmp');

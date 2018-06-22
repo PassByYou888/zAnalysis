@@ -129,14 +129,15 @@ type
     destructor Destroy; override;
 
     { memory map }
-    procedure SetWorkMemory(WorkMemory: Pointer; NewWidth, NewHeight: Integer);
+    procedure SetWorkMemory(WorkMemory: Pointer; NewWidth, NewHeight: Integer); overload;
+    procedure SetWorkMemory(Raster:TMemoryRaster); overload;
 
     { font raster support }
     procedure OpenFont;
     procedure CloseFont;
     property Font: TFontRaster read GetFont write SetFont;
 
-    { AGG2D Advanced rasterization support }
+    { Advanced rasterization }
     property AggImage: TMemoryRaster_AggImage read GetAggImage;
     property Agg: TMemoryRaster_Agg2D read GetAgg;
     procedure OpenAgg;

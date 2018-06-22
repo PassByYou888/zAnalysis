@@ -18,7 +18,7 @@ interface
 uses
   h264Stdint, h264common, h264util;
 
-procedure mb_load_mvs(var mb: macroblock_t; const frame: frame_t; const num_ref_frames: int32_t);
+procedure mb_load_mvs(var mb: TMacroblock; const frame: TFrame; const num_ref_frames: int32_t);
 
 implementation
 
@@ -28,9 +28,9 @@ implementation
   D B C
   A X
 *)
-procedure mb_load_mvs(var mb: macroblock_t; const frame: frame_t; const num_ref_frames: int32_t);
+procedure mb_load_mvs(var mb: TMacroblock; const frame: TFrame; const num_ref_frames: int32_t);
 
-  function is_avail(const mb: macroblock_p): boolean;
+  function is_avail(const mb: PMacroblock): boolean; inline;
   begin
     result := not(mb^.mbtype in [MB_I_4x4, MB_I_16x16]);
   end;
@@ -38,13 +38,13 @@ procedure mb_load_mvs(var mb: macroblock_t; const frame: frame_t; const num_ref_
 type
   mb_info = record
     avail: boolean;
-    mv: motionvec_t;
+    mv: TMotionvec;
     refidx: int32_t;
   end;
 
 var
   mbs: array [0 .. 2] of mb_info; // A, B, C (D)
-  t: macroblock_p;
+  t: PMacroblock;
   i: int32_t;
   num_avail: int32_t;
   same_ref_n: int32_t;

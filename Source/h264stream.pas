@@ -15,7 +15,7 @@ unit h264stream;
 interface
 
 uses
-  h264util, h264stdint, h264common, h264vlc, h264bitstream, h264tables;
+  h264util, h264stdint, h264common, h264vlc, h264bitstream, h264tables, PascalStrings;
 
 type
   // SPS
@@ -56,7 +56,7 @@ type
     pps: pps_t;
     write_sei: boolean;
     write_vui: boolean;
-    sei_string: string;
+    sei_string: TPascalString;
 
     mb_skip_count: int32_t;
     bs: TBitStreamWriter;
@@ -71,33 +71,33 @@ type
     procedure SetKeyInterval(const AValue: uint16_t);
     procedure SetNumRefFrames(const AValue: uint8_t);
     procedure SetQP(const AValue: uint8_t);
-    function GetSEI: string;
-    procedure SetSEI(const AValue: string);
+    function GetSEI: TPascalString;
+    procedure SetSEI(const AValue: TPascalString);
     procedure WriteSliceHeader;
     procedure WriteParamSetsToNAL(var nalstream: TBitStreamWriter);
 
-    procedure write_mb_pred_intra(const mb: macroblock_t);
-    procedure write_mb_pred_inter(const mb: macroblock_t);
-    procedure write_mb_residual(var mb: macroblock_t);
-    procedure write_mb_i_pcm(var mb: macroblock_t);
-    procedure write_mb_i_4x4(var mb: macroblock_t);
-    procedure write_mb_i_16x16(var mb: macroblock_t);
-    procedure write_mb_p_16x16(var mb: macroblock_t);
+    procedure write_mb_pred_intra(const mb: TMacroblock);
+    procedure write_mb_pred_inter(const mb: TMacroblock);
+    procedure write_mb_residual(var mb: TMacroblock);
+    procedure write_mb_i_pcm(var mb: TMacroblock);
+    procedure write_mb_i_4x4(var mb: TMacroblock);
+    procedure write_mb_i_16x16(var mb: TMacroblock);
+    procedure write_mb_p_16x16(var mb: TMacroblock);
     procedure write_mb_p_skip;
-    function mb_intrapred_bits(const mb: macroblock_t): int32_t;
-    function mb_residual_bits(const mb: macroblock_t): int32_t;
-    function mb_i_4x4_bits(const mb: macroblock_t): int32_t;
-    function mb_i_16x16_bits(const mb: macroblock_t): int32_t;
-    function mb_p_16x16_bits(const mb: macroblock_t): int32_t;
+    function mb_intrapred_bits(const mb: TMacroblock): int32_t;
+    function mb_residual_bits(const mb: TMacroblock): int32_t;
+    function mb_i_4x4_bits(const mb: TMacroblock): int32_t;
+    function mb_i_16x16_bits(const mb: TMacroblock): int32_t;
+    function mb_p_16x16_bits(const mb: TMacroblock): int32_t;
     function mb_p_skip_bits: int32_t;
-    function mb_interpred_bits(const mb: macroblock_t): int32_t;
+    function mb_interpred_bits(const mb: TMacroblock): int32_t;
 
   public
     property NumRefFrames: uint8_t read slice.num_ref_frames write SetNumRefFrames;
     property qp: uint8_t write SetQP;
     property ChromaQPOffset: uint8_t write SetChromaQPOffset;
     property KeyInterval: uint16_t write SetKeyInterval;
-    property SEIString: string read GetSEI write SetSEI;
+    property SEIString: TPascalString read GetSEI write SetSEI;
     property NoPSkipAllowed: boolean read GetNoPSkip;
 
     constructor Create(w, h, mbw, mbh: int32_t);
@@ -106,8 +106,8 @@ type
     procedure InitSlice(slicetype, slice_qp, ref_frame_count: int32_t; bs_buffer: uint8_p);
     procedure AbortSlice;
     procedure GetSliceBitstream(var buffer: uint8_p; out size: uint32_t);
-    procedure WriteMB(var mb: macroblock_t);
-    function GetBitCost(const mb: macroblock_t): int32_t;
+    procedure WriteMB(var mb: TMacroblock);
+    function GetBitCost(const mb: TMacroblock): int32_t;
     function GetInterPredCostEvaluator: IInterPredCostEvaluator;
   end;
 
@@ -115,14 +115,14 @@ type
   private
     _h264stream: TH264Stream;
     _lambda: int32_t;
-    _mvp: motionvec_t;
+    _mvp: TMotionvec;
     _ref_idx: int32_t;
     _ref_frame_bits: int32_t;
   public
     constructor Create(const h264stream: TH264Stream);
     procedure SetQP(qp: int32_t); override;
-    procedure SetMVPredAndRefIdx(const mvp: motionvec_t; const idx: int32_t); override;
-    function BitCost(const mv: motionvec_t): int32_t; override;
+    procedure SetMVPredAndRefIdx(const mvp: TMotionvec; const idx: int32_t); override;
+    function BitCost(const mv: TMotionvec): int32_t; override;
   end;
 
 implementation
@@ -186,11 +186,11 @@ end;
 
 {
   3.104 raw uint8_t sequence payload (RBSP): A syntax structure containing an int32_t number of bytes that is
-  encapsulated in a NAL unit. An RBSP is either empty or has the form of a string of data bits containing syntax
+  encapsulated in a NAL unit. An RBSP is either empty or has the form of a TPascalString of data bits containing syntax
   elements followed by an RBSP stop bit and followed by zero or more subsequent bits equal to 0.
 
   3.105 raw uint8_t sequence payload (RBSP) stop bit: A bit equal to 1 present within a raw uint8_t sequence payload
-  (RBSP) after a string of data bits. The location of the end of the string of data bits within an RBSP can be
+  (RBSP) after a TPascalString of data bits. The location of the end of the TPascalString of data bits within an RBSP can be
   identified by searching from the end of the RBSP for the RBSP stop bit, which is the last non-zero bit in the
   RBSP.
 
@@ -261,7 +261,7 @@ end;
 
   bits(SODB) -> RBSP
 
-  3.131 string of data bits (SODB): A sequence of some number of bits representing syntax elements present within a
+  3.131 TPascalString of data bits (SODB): A sequence of some number of bits representing syntax elements present within a
   raw uint8_t sequence payload prior to the raw uint8_t sequence payload stop bit. Within an SODB, the left-most bit
   is considered to be the first and most significant bit, and the right-most bit is considered to be the last and least
   significant bit.
@@ -273,15 +273,15 @@ end;
 }
 
 procedure TH264Stream.WriteParamSetsToNAL(var nalstream: TBitStreamWriter);
-const
-  sei_uuid = '2011012520091007';
 var
   b: TBitStreamWriter;
   rbsp: array [0 .. 255] of uint8_t;
   i: int32_t;
-  sei_text: string;
+  sei_uuid: TPascalString;
+  sei_text: TPascalString;
   level: uint8_t;
 begin
+  sei_uuid.Text := '2011012520091007';
   level := get_level(sps.mb_width * 16, sps.mb_height * 16, sps.num_ref_frames);
 
   // SPS
@@ -392,16 +392,16 @@ begin
       b := TBitStreamWriter.Create(@rbsp);
       b.Write(5, 8); // last_payload_type_byte
 
-      i := Length(sei_uuid) + Length(sei_text);
+      i := sei_uuid.len + sei_text.len;
       while i > 255 do
         begin
           b.Write(255, 8); // ff_byte
           dec(i, 255);
         end;
       b.Write(i, 8); // last_payload_size_byte
-      for i := 1 to Length(sei_uuid) do
+      for i := 1 to sei_uuid.len do
           b.Write(uint8_t(sei_uuid[i]), 8);
-      for i := 1 to Length(sei_text) do
+      for i := 1 to sei_text.len do
           b.Write(uint8_t(sei_text[i]), 8);
 
       NAL_encapsulate(b, nalstream, NAL_SEI);
@@ -535,12 +535,12 @@ begin
   pps.qp := AValue;
 end;
 
-function TH264Stream.GetSEI: string;
+function TH264Stream.GetSEI: TPascalString;
 begin
   result := sei_string;
 end;
 
-procedure TH264Stream.SetSEI(const AValue: string);
+procedure TH264Stream.SetSEI(const AValue: TPascalString);
 begin
   sei_string := AValue;
 end;
@@ -608,7 +608,7 @@ begin
       result := min(a, b);
 end;
 
-procedure TH264Stream.write_mb_pred_intra(const mb: macroblock_t);
+procedure TH264Stream.write_mb_pred_intra(const mb: TMacroblock);
 var
   mode,          // current block intrapred mode
   pred: uint8_t; // predicted intrapred mode
@@ -637,7 +637,7 @@ begin
   write_ue_code(bs, mb.chroma_pred_mode); // intra_chroma_pred_mode  ue(v)
 end;
 
-procedure TH264Stream.write_mb_pred_inter(const mb: macroblock_t);
+procedure TH264Stream.write_mb_pred_inter(const mb: TMacroblock);
 var
   x, y: int16_t;
 begin
@@ -658,7 +658,7 @@ begin
   write_se_code(bs, y);
 end;
 
-procedure TH264Stream.write_mb_residual(var mb: macroblock_t);
+procedure TH264Stream.write_mb_residual(var mb: TMacroblock);
 var
   bits, i: int32_t;
 begin
@@ -793,7 +793,7 @@ begin
 end;
 
 // PCM mb - no compression
-procedure TH264Stream.write_mb_i_pcm(var mb: macroblock_t);
+procedure TH264Stream.write_mb_i_pcm(var mb: TMacroblock);
 var
   i, j, chroma_idx: int32_t;
 begin
@@ -816,7 +816,7 @@ begin
           bs.Write(mb.pixels_c[chroma_idx][i * 16 + j], 8);
 end;
 
-procedure TH264Stream.write_mb_i_4x4(var mb: macroblock_t);
+procedure TH264Stream.write_mb_i_4x4(var mb: TMacroblock);
 begin
   // skip run, mbtype
   if slice.type_ = SLICE_P then
@@ -845,7 +845,7 @@ begin
       inc(result, 12);
 end;
 
-procedure TH264Stream.write_mb_i_16x16(var mb: macroblock_t);
+procedure TH264Stream.write_mb_i_16x16(var mb: TMacroblock);
 var
   mbt: int32_t;
 begin
@@ -862,7 +862,7 @@ begin
   write_mb_residual(mb);
 end;
 
-procedure TH264Stream.write_mb_p_16x16(var mb: macroblock_t);
+procedure TH264Stream.write_mb_p_16x16(var mb: TMacroblock);
 begin
   // skip run, mbtype
   write_ue_code(bs, mb_skip_count);
@@ -881,7 +881,7 @@ begin
   inc(mb_skip_count);
 end;
 
-procedure TH264Stream.WriteMB(var mb: macroblock_t);
+procedure TH264Stream.WriteMB(var mb: TMacroblock);
 begin
   case mb.mbtype of
     MB_I_PCM:
@@ -897,7 +897,7 @@ begin
   end;
 end;
 
-function TH264Stream.GetBitCost(const mb: macroblock_t): int32_t;
+function TH264Stream.GetBitCost(const mb: TMacroblock): int32_t;
 begin
   case mb.mbtype of
     MB_I_4x4:
@@ -914,7 +914,7 @@ begin
 end;
 
 // bitcost functions
-function TH264Stream.mb_interpred_bits(const mb: macroblock_t): int32_t;
+function TH264Stream.mb_interpred_bits(const mb: TMacroblock): int32_t;
 var
   x, y: int16_t;
 begin
@@ -938,7 +938,7 @@ begin
   result := interPredCostEval;
 end;
 
-function TH264Stream.mb_intrapred_bits(const mb: macroblock_t): int32_t;
+function TH264Stream.mb_intrapred_bits(const mb: TMacroblock): int32_t;
 var
   mode,          // current block intrapred mode
   pred: uint8_t; // predicted intrapred mode
@@ -962,7 +962,7 @@ begin
   inc(result, ue_code_len(mb.chroma_pred_mode));
 end;
 
-function TH264Stream.mb_residual_bits(const mb: macroblock_t): int32_t;
+function TH264Stream.mb_residual_bits(const mb: TMacroblock): int32_t;
 var
   i: uint8_t;
 begin
@@ -994,7 +994,7 @@ begin
     end;
 end;
 
-function TH264Stream.mb_i_4x4_bits(const mb: macroblock_t): int32_t;
+function TH264Stream.mb_i_4x4_bits(const mb: TMacroblock): int32_t;
 begin
   if slice.type_ = SLICE_P then
       result := ue_code_len(5)
@@ -1006,7 +1006,7 @@ begin
       inc(result, mb_residual_bits(mb));
 end;
 
-function TH264Stream.mb_i_16x16_bits(const mb: macroblock_t): int32_t;
+function TH264Stream.mb_i_16x16_bits(const mb: TMacroblock): int32_t;
 var
   mbt: int32_t;
 begin
@@ -1019,7 +1019,7 @@ begin
   inc(result, mb_residual_bits(mb));
 end;
 
-function TH264Stream.mb_p_16x16_bits(const mb: macroblock_t): int32_t;
+function TH264Stream.mb_p_16x16_bits(const mb: TMacroblock): int32_t;
 begin
   result := 1 + mb_interpred_bits(mb);
   inc(result, ue_code_len(tab_cbp_inter_4x4_to_codenum[mb.cbp]));
@@ -1044,7 +1044,7 @@ const
     74, 83
     );
 
-procedure TH264InterPredCostEvaluator.SetMVPredAndRefIdx(const mvp: motionvec_t; const idx: int32_t);
+procedure TH264InterPredCostEvaluator.SetMVPredAndRefIdx(const mvp: TMotionvec; const idx: int32_t);
 begin
   _mvp := mvp;
   _ref_idx := idx;
@@ -1071,7 +1071,7 @@ begin
   _lambda := lambda_mv[median(0, qp, 51)];
 end;
 
-function TH264InterPredCostEvaluator.BitCost(const mv: motionvec_t): int32_t;
+function TH264InterPredCostEvaluator.BitCost(const mv: TMotionvec): int32_t;
 begin
   result := _ref_frame_bits + se_code_len(mv.x - _mvp.x) + se_code_len(mv.y - _mvp.y);
   result := result * _lambda;

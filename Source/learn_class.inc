@@ -1,4 +1,3 @@
-
 {$REGION 'ClassImp'}
 
 
@@ -148,210 +147,261 @@ begin
   end;
 end;
 
-constructor TLearn.CreateRegression(const lt: TLearnType; const InDataLen, OutDataLen: TLInt);
+class function TLearn.CreateRegression(const lt: TLearnType; const InDataLen, OutDataLen: TLInt): TLearn;
 begin
-  inherited Create;
   if InDataLen <= 0 then
       raiseInfo('input need > 0');
   if OutDataLen <= 0 then
       raiseInfo('output need > 0');
 
-  FEnabledRandomNumber := False;
-
-  FInLen := InDataLen;
-  FOutLen := OutDataLen;
-
-  if (FOutLen <> 1) then
+  Result := TLearn.Create;
+  with Result do
     begin
-      if (lt = ltForest) then
-          FOutLen := 1
-      else if (lt = ltLogit) then
-          FOutLen := 1;
+      FEnabledRandomNumber := False;
+
+      FInLen := InDataLen;
+      FOutLen := OutDataLen;
+
+      if (FOutLen <> 1) then
+        begin
+          if (lt = ltForest) then
+              FOutLen := 1
+          else if (lt = ltLogit) then
+              FOutLen := 1;
+        end;
+
+      FMemorySource := TCoreClassList.Create;
+      FLearnType := lt;
+
+      FLearnData := nil;
+      FClassifier := False;
+      FHideLayerDepth := hld0;
+      CreateLearnData(False);
+
+      FLastTrainMaxInValue := 0;
+      FLastTrainMaxOutValue := 0;
+      FInfo := '';
+      FIsTraining := False;
+      FTrainThreadRuning := False;
+
+      FUserData := nil;
+      FUserObject := nil;
     end;
-
-  FMemorySource := TCoreClassList.Create;
-  FLearnType := lt;
-
-  FLearnData := nil;
-  FClassifier := False;
-  FHideLayerDepth := hld0;
-  CreateLearnData(False);
-
-  FLastTrainMaxInValue := 0;
-  FLastTrainMaxOutValue := 0;
-  FInfo := '';
-  FIsTraining := False;
-  FTrainThreadRuning := False;
-
-  FUserData := nil;
-  FUserObject := nil;
 end;
 
-constructor TLearn.CreateRegression1(const lt: TLearnType; const InDataLen, OutDataLen: TLInt);
+class function TLearn.CreateRegression1(const lt: TLearnType; const InDataLen, OutDataLen: TLInt): TLearn;
 begin
-  inherited Create;
   if InDataLen <= 0 then
       raiseInfo('input need > 0');
   if OutDataLen <= 0 then
       raiseInfo('output need > 0');
 
-  FEnabledRandomNumber := False;
-
-  FInLen := InDataLen;
-  FOutLen := OutDataLen;
-
-  if (FOutLen <> 1) then
+  Result := TLearn.Create;
+  with Result do
     begin
-      if (lt = ltForest) then
-          FOutLen := 1
-      else if (lt = ltLogit) then
-          FOutLen := 1;
+      FEnabledRandomNumber := False;
+
+      FInLen := InDataLen;
+      FOutLen := OutDataLen;
+
+      if (FOutLen <> 1) then
+        begin
+          if (lt = ltForest) then
+              FOutLen := 1
+          else if (lt = ltLogit) then
+              FOutLen := 1;
+        end;
+
+      FMemorySource := TCoreClassList.Create;
+      FLearnType := lt;
+
+      FLearnData := nil;
+      FClassifier := False;
+      FHideLayerDepth := hld1;
+      CreateLearnData(False);
+
+      FLastTrainMaxInValue := 0;
+      FLastTrainMaxOutValue := 0;
+      FInfo := '';
+      FIsTraining := False;
+      FTrainThreadRuning := False;
+
+      FUserData := nil;
+      FUserObject := nil;
     end;
-
-  FMemorySource := TCoreClassList.Create;
-  FLearnType := lt;
-
-  FLearnData := nil;
-  FClassifier := False;
-  FHideLayerDepth := hld1;
-  CreateLearnData(False);
-
-  FLastTrainMaxInValue := 0;
-  FLastTrainMaxOutValue := 0;
-  FInfo := '';
-  FIsTraining := False;
-  FTrainThreadRuning := False;
-
-  FUserData := nil;
-  FUserObject := nil;
 end;
 
-constructor TLearn.CreateRegression2(const lt: TLearnType; const InDataLen, OutDataLen: TLInt);
+class function TLearn.CreateRegression2(const lt: TLearnType; const InDataLen, OutDataLen: TLInt): TLearn;
 begin
-  inherited Create;
   if InDataLen <= 0 then
       raiseInfo('input need > 0');
   if OutDataLen <= 0 then
       raiseInfo('output need > 0');
 
-  FEnabledRandomNumber := False;
-
-  FInLen := InDataLen;
-  FOutLen := OutDataLen;
-
-  if (FOutLen <> 1) then
+  Result := TLearn.Create;
+  with Result do
     begin
-      if (lt = ltForest) then
-          FOutLen := 1
-      else if (lt = ltLogit) then
-          FOutLen := 1;
+      FEnabledRandomNumber := False;
+
+      FInLen := InDataLen;
+      FOutLen := OutDataLen;
+
+      if (FOutLen <> 1) then
+        begin
+          if (lt = ltForest) then
+              FOutLen := 1
+          else if (lt = ltLogit) then
+              FOutLen := 1;
+        end;
+
+      FMemorySource := TCoreClassList.Create;
+      FLearnType := lt;
+
+      FLearnData := nil;
+      FClassifier := False;
+      FHideLayerDepth := hld2;
+      CreateLearnData(False);
+
+      FLastTrainMaxInValue := 0;
+      FLastTrainMaxOutValue := 0;
+      FInfo := '';
+      FIsTraining := False;
+      FTrainThreadRuning := False;
+
+      FUserData := nil;
+      FUserObject := nil;
     end;
-
-  FMemorySource := TCoreClassList.Create;
-  FLearnType := lt;
-
-  FLearnData := nil;
-  FClassifier := False;
-  FHideLayerDepth := hld2;
-  CreateLearnData(False);
-
-  FLastTrainMaxInValue := 0;
-  FLastTrainMaxOutValue := 0;
-  FInfo := '';
-  FIsTraining := False;
-  FTrainThreadRuning := False;
-
-  FUserData := nil;
-  FUserObject := nil;
 end;
 
-constructor TLearn.CreateClassifier(const lt: TLearnType; const InDataLen: TLInt);
+class function TLearn.CreateClassifier(const lt: TLearnType; const InDataLen: TLInt): TLearn;
 begin
-  inherited Create;
   if InDataLen <= 0 then
       raiseInfo('input need > 0');
 
-  FEnabledRandomNumber := False;
+  Result := TLearn.Create;
+  with Result do
+    begin
+      FEnabledRandomNumber := False;
 
-  FInLen := InDataLen;
+      FInLen := InDataLen;
+      FOutLen := 1;
+      FMemorySource := TCoreClassList.Create;
+      FLearnType := lt;
+
+      FLearnData := nil;
+      FClassifier := True;
+      FHideLayerDepth := hld0;
+      CreateLearnData(False);
+
+      FLastTrainMaxInValue := 0;
+      FLastTrainMaxOutValue := 0;
+      FInfo := '';
+      FIsTraining := False;
+      FTrainThreadRuning := False;
+
+      FUserData := nil;
+      FUserObject := nil;
+    end;
+end;
+
+class function TLearn.CreateClassifier1(const lt: TLearnType; const InDataLen: TLInt): TLearn;
+begin
+  if InDataLen <= 0 then
+      raiseInfo('input need > 0');
+
+  Result := TLearn.Create;
+  with Result do
+    begin
+      FEnabledRandomNumber := False;
+
+      FInLen := InDataLen;
+      FOutLen := 1;
+      FMemorySource := TCoreClassList.Create;
+      FLearnType := lt;
+
+      FLearnData := nil;
+      FClassifier := True;
+      FHideLayerDepth := hld1;
+      CreateLearnData(False);
+
+      FLastTrainMaxInValue := 0;
+      FLastTrainMaxOutValue := 0;
+      FInfo := '';
+      FIsTraining := False;
+      FTrainThreadRuning := False;
+
+      FUserData := nil;
+      FUserObject := nil;
+    end;
+end;
+
+class function TLearn.CreateClassifier2(const lt: TLearnType; const InDataLen: TLInt): TLearn;
+begin
+  if InDataLen <= 0 then
+      raiseInfo('input need > 0');
+
+  Result := TLearn.Create;
+  with Result do
+    begin
+      FEnabledRandomNumber := False;
+
+      FInLen := InDataLen;
+      FOutLen := 1;
+      FMemorySource := TCoreClassList.Create;
+      FLearnType := lt;
+
+      FLearnData := nil;
+      FClassifier := True;
+      FHideLayerDepth := hld2;
+      CreateLearnData(False);
+
+      FLastTrainMaxInValue := 0;
+      FLastTrainMaxOutValue := 0;
+      FInfo := '';
+      FIsTraining := False;
+      FTrainThreadRuning := False;
+
+      FUserData := nil;
+      FUserObject := nil;
+    end;
+end;
+
+// picture classifier style
+class function TLearn.CreatePictureClassifier(const lt: TLearnType; const SamplerWidth: TLInt): TLearn;
+begin
+  Result := TLearn.CreateClassifier(lt, SamplerWidth * SamplerWidth);
+end;
+
+// regression style with fast Histogram of Oriented Gradient
+class function TLearn.CreateHOGRegression(const lt: TLearnType; const OutDataLen: TLInt): TLearn;
+begin
+  Result := TLearn.CreateRegression(lt, SYSTEM_HOG_FEATURESIZE, OutDataLen);
+end;
+
+// classifier style with fast Histogram of Oriented Gradient
+class function TLearn.CreateHOGClassifier(const lt: TLearnType): TLearn;
+begin
+  Result := TLearn.CreateClassifier(lt, SYSTEM_HOG_FEATURESIZE);
+end;
+
+constructor TLearn.Create;
+begin
+  inherited Create;
+  FEnabledRandomNumber := False;
+  FInLen := 1;
   FOutLen := 1;
-  FMemorySource := TCoreClassList.Create;
-  FLearnType := lt;
-
+  FMemorySource := nil;
+  FLearnType := ltKDT;
   FLearnData := nil;
   FClassifier := True;
   FHideLayerDepth := hld0;
-  CreateLearnData(False);
-
   FLastTrainMaxInValue := 0;
   FLastTrainMaxOutValue := 0;
   FInfo := '';
   FIsTraining := False;
   FTrainThreadRuning := False;
-
   FUserData := nil;
   FUserObject := nil;
-end;
-
-constructor TLearn.CreateClassifier1(const lt: TLearnType; const InDataLen: TLInt);
-begin
-  inherited Create;
-  if InDataLen <= 0 then
-      raiseInfo('input need > 0');
-
-  FEnabledRandomNumber := False;
-
-  FInLen := InDataLen;
-  FOutLen := 1;
-  FMemorySource := TCoreClassList.Create;
-  FLearnType := lt;
-
-  FLearnData := nil;
-  FClassifier := True;
-  FHideLayerDepth := hld1;
-  CreateLearnData(False);
-
-  FLastTrainMaxInValue := 0;
-  FLastTrainMaxOutValue := 0;
-  FInfo := '';
-  FIsTraining := False;
-  FTrainThreadRuning := False;
-
-  FUserData := nil;
-  FUserObject := nil;
-end;
-
-constructor TLearn.CreateClassifier2(const lt: TLearnType; const InDataLen: TLInt);
-begin
-  inherited Create;
-  if InDataLen <= 0 then
-      raiseInfo('input need > 0');
-
-  FEnabledRandomNumber := False;
-
-  FInLen := InDataLen;
-  FOutLen := 1;
-  FMemorySource := TCoreClassList.Create;
-  FLearnType := lt;
-
-  FLearnData := nil;
-  FClassifier := True;
-  FHideLayerDepth := hld2;
-  CreateLearnData(False);
-
-  FLastTrainMaxInValue := 0;
-  FLastTrainMaxOutValue := 0;
-  FInfo := '';
-  FIsTraining := False;
-  FTrainThreadRuning := False;
-
-  FUserData := nil;
-  FUserObject := nil;
-end;
-
-constructor TLearn.CreatePictureClassifier(const lt: TLearnType; const SamplerWidth: TLInt);
-begin
-  CreateClassifier(lt, SamplerWidth * SamplerWidth);
 end;
 
 destructor TLearn.Destroy;
@@ -598,11 +648,11 @@ begin
           CreateLearnData(True);
           p_k := PLearnKDT(FLearnData);
           p_k^.kdt.Clear;
-          {$IFDEF FPC}
+{$IFDEF FPC}
           p_k^.kdt.BuildKDTreeM(FMemorySource.Count, nil, @KDInput);
-          {$ELSE FPC}
+{$ELSE FPC}
           p_k^.kdt.BuildKDTreeM(FMemorySource.Count, nil, KDInput);
-          {$ENDIF FPC}
+{$ENDIF FPC}
           FInfo := 'task has been solved';
           Result := True;
         end;
@@ -613,19 +663,19 @@ begin
           p_k^.kdt.Clear;
           if (TrainDepth > 1) and (not FClassifier) then
             begin
-              {$IFDEF FPC}
+{$IFDEF FPC}
               p_k^.kdt.BuildKDTreeWithClusterM(FMemorySource.Count, TrainDepth, 1, kmIndexOut, nil, @KDInput);
-              {$ELSE FPC}
+{$ELSE FPC}
               p_k^.kdt.BuildKDTreeWithClusterM(FMemorySource.Count, TrainDepth, 1, kmIndexOut, nil, KDInput);
-              {$ENDIF FPC}
+{$ENDIF FPC}
             end
           else
             begin
-              {$IFDEF FPC}
+{$IFDEF FPC}
               p_k^.kdt.BuildKDTreeM(FMemorySource.Count, nil, @KDInput);
-              {$ELSE FPC}
+{$ELSE FPC}
               p_k^.kdt.BuildKDTreeM(FMemorySource.Count, nil, KDInput);
-              {$ENDIF FPC}
+{$ENDIF FPC}
             end;
           FInfo := 'task has been solved';
           Result := True;
@@ -1255,7 +1305,7 @@ var
   buff: TStateArray;
   buffPtr: TStatePtrArray;
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
   procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
   begin
     buff[pass].k := PearsonCorrelation(ProcessIn, GetMemorySource(pass)^.m_in, FInLen);
@@ -1279,25 +1329,25 @@ begin
   SetLength(buff, Count);
   SetLength(buffPtr, Count);
 
-  {$IFDEF parallel}
-  {$IFDEF FPC}
+{$IFDEF parallel}
+{$IFDEF FPC}
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, Count - 1);
-  {$ELSE}
+{$ELSE}
   TParallel.For(0, Count - 1, procedure(pass: TLInt)
     begin
       buff[pass].k := PearsonCorrelation(ProcessIn, GetMemorySource(pass)^.m_in, FInLen);
       buff[pass].index := pass;
       buffPtr[pass] := @buff[pass];
     end);
-  {$ENDIF FPC}
-  {$ELSE}
+{$ENDIF FPC}
+{$ELSE}
   for I := 0 to Count - 1 do
     begin
       buff[I].k := PearsonCorrelation(ProcessIn, GetMemorySource(I)^.m_in, FInLen);
       buff[I].index := I;
       buffPtr[I] := @buff[I];
     end;
-  {$ENDIF parallel}
+{$ENDIF parallel}
   // complete sort
   InternalSort(buffPtr, 0, Length(buffPtr) - 1);
 
@@ -1395,7 +1445,7 @@ var
   buff: TStateArray;
   buffPtr: TStatePtrArray;
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
   procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
   begin
     buff[pass].k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(pass)^.m_in, FInLen);
@@ -1419,25 +1469,25 @@ begin
   SetLength(buff, Count);
   SetLength(buffPtr, Count);
 
-  {$IFDEF parallel}
-  {$IFDEF FPC}
+{$IFDEF parallel}
+{$IFDEF FPC}
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, Count - 1);
-  {$ELSE}
+{$ELSE}
   TParallel.For(0, Count - 1, procedure(pass: TLInt)
     begin
       buff[pass].k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(pass)^.m_in, FInLen);
       buff[pass].index := pass;
       buffPtr[pass] := @buff[pass];
     end);
-  {$ENDIF FPC}
-  {$ELSE}
+{$ENDIF FPC}
+{$ELSE}
   for I := 0 to Count - 1 do
     begin
       buff[I].k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(I)^.m_in, FInLen);
       buff[I].index := I;
       buffPtr[I] := @buff[I];
     end;
-  {$ENDIF parallel}
+{$ENDIF parallel}
   // complete sort
   InternalSort(buffPtr, 0, Length(buffPtr) - 1);
 
@@ -1535,7 +1585,7 @@ var
   buff: TStateArray;
   buffPtr: TStatePtrArray;
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
   procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
   begin
     buff[pass].k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(pass)^.m_in);
@@ -1563,25 +1613,25 @@ begin
   SetLength(buff, Count);
   SetLength(buffPtr, Count);
 
-  {$IFDEF parallel}
-  {$IFDEF FPC}
+{$IFDEF parallel}
+{$IFDEF FPC}
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, Count - 1);
-  {$ELSE}
+{$ELSE}
   TParallel.For(0, Count - 1, procedure(pass: TLInt)
     begin
       buff[pass].k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(pass)^.m_in);
       buff[pass].index := pass;
       buffPtr[pass] := @buff[pass];
     end);
-  {$ENDIF FPC}
-  {$ELSE}
+{$ENDIF FPC}
+{$ELSE}
   for I := 0 to Count - 1 do
     begin
       buff[I].k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(I)^.m_in);
       buff[I].index := I;
       buffPtr[I] := @buff[I];
     end;
-  {$ENDIF parallel}
+{$ENDIF parallel}
   // complete sort
   InternalSort(buffPtr, 0, Length(buffPtr) - 1);
 
@@ -1851,5 +1901,3 @@ begin
 end;
 {$ENDIF FPC}
 {$ENDREGION 'ClassImp'}
-
-

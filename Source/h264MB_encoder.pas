@@ -24,8 +24,8 @@ type
 
   TMacroblockEncoder = class
   private
-    mb: macroblock_t;
-    frame: frame_t;
+    mb: TMacroblock;
+    frame: TFrame;
     stats: TFrameStats;
     intrapred: TIntraPredictor;
 
@@ -51,7 +51,7 @@ type
 
     constructor Create; virtual;
     destructor Destroy; override;
-    procedure SetFrame(const f: frame_t); virtual;
+    procedure SetFrame(const f: TFrame); virtual;
     procedure Encode(mbx, mby: int32_t); virtual; abstract;
   end;
 
@@ -76,7 +76,7 @@ type
     InterCost: IInterPredCostEvaluator;
   public
     constructor Create; override;
-    procedure SetFrame(const f: frame_t); override;
+    procedure SetFrame(const f: TFrame); override;
     procedure Encode(mbx, mby: int32_t); override;
   end;
 
@@ -84,7 +84,7 @@ type
 
   TMBEncoderRateAnalyse = class(TMacroblockEncoder)
   private
-    mb_cache: array [0 .. 2] of macroblock_t; // todo init in constructor
+    mb_cache: array [0 .. 2] of TMacroblock; // todo init in constructor
     mb_type_bitcost: array [MB_I_4x4 .. MB_P_SKIP] of int32_t;
     procedure CacheStore;
     procedure CacheLoad;
@@ -209,10 +209,11 @@ var
   i: int32_t;
 begin
   i := mb.y * frame.mbw + mb.x;
-  CopyPtr(@mb, @frame.mbs[i], sizeof(macroblock_t));
+  CopyPtr(@mb, @frame.mbs[i], sizeof(TMacroblock));
 
   if mb.mbtype <> MB_I_4x4 then
       dsp.pixel_save_16x16(mb.pixels_dec, mb.pfdec, frame.stride);
+
   dsp.pixel_save_8x8(mb.pixels_dec_c[0], mb.pfdec_c[0], frame.stride_c);
   dsp.pixel_save_8x8(mb.pixels_dec_c[1], mb.pfdec_c[1], frame.stride_c);
 
@@ -258,7 +259,7 @@ const
   SKIP_SSD_TRESH        = 256;
   SKIP_SSD_CHROMA_TRESH = 96;
 var
-  mv: motionvec_t;
+  mv: TMotionvec;
   score, score_c: int32_t;
 begin
   result := false;
@@ -324,7 +325,7 @@ end;
 // test if mb can be changed to skip
 procedure TMacroblockEncoder.MakeSkip;
 var
-  mv: motionvec_t;
+  mv: TMotionvec;
 begin
   if h264s.NoPSkipAllowed then
       exit;
@@ -359,8 +360,7 @@ end;
 
 function TMacroblockEncoder.GetChromaMcSSD: int32_t;
 begin
-  result := dsp.ssd_8x8(mb.pixels_c[0], mb.mcomp_c[0], 16)
-    + dsp.ssd_8x8(mb.pixels_c[1], mb.mcomp_c[1], 16);
+  result := dsp.ssd_8x8(mb.pixels_c[0], mb.mcomp_c[0], 16) + dsp.ssd_8x8(mb.pixels_c[1], mb.mcomp_c[1], 16);
 end;
 
 constructor TMacroblockEncoder.Create;
@@ -389,7 +389,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TMacroblockEncoder.SetFrame(const f: frame_t);
+procedure TMacroblockEncoder.SetFrame(const f: TFrame);
 begin
   frame := f;
   intrapred.frame_stride := frame.stride;
@@ -634,7 +634,7 @@ begin
   intrapred.UseSATDCompare;
 end;
 
-procedure TMBEncoderQuickAnalyseSATD.SetFrame(const f: frame_t);
+procedure TMBEncoderQuickAnalyseSATD.SetFrame(const f: TFrame);
 begin
   inherited SetFrame(f);
   InterCost := h264s.GetInterPredCostEvaluator;

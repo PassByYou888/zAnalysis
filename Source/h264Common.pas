@@ -89,44 +89,45 @@ function is_inter(const m: int32_t): boolean; inline;
 
 type
   // motion vector
-  motionvec_t = packed record
+  TMotionvec = packed record
     x, y: int16_t;
 
 {$IFNDEF FPC}
     // operator overloads
-    class operator Equal(const a, b: motionvec_t): boolean;
-    class operator Add(const a, b: motionvec_t): motionvec_t;
-    class operator Subtract(const a, b: motionvec_t): motionvec_t;
-    class operator Multiply(const a: motionvec_t; multiplier: int32_t): motionvec_t;
-    class operator Divide(const a: motionvec_t; divisor: int32_t): motionvec_t;
+    class operator Equal(const a, b: TMotionvec): boolean;
+    class operator Add(const a, b: TMotionvec): TMotionvec;
+    class operator Subtract(const a, b: TMotionvec): TMotionvec;
+    class operator Multiply(const a: TMotionvec; multiplier: int32_t): TMotionvec;
+    class operator Divide(const a: TMotionvec; divisor: int32_t): TMotionvec;
 {$ENDIF FPC}
   end;
 
-  motionvec_p = ^motionvec_t;
+  PMotionvec = ^TMotionvec;
 
 {$IFDEF FPC}
-  TMotionVectorList = specialize TGenericStructList<motionvec_t>;
+  TMotionVectorList = specialize TGenericStructList<TMotionvec>;
 {$ELSE FPC}
-  TMotionVectorList = TGenericsList<motionvec_t>;
-{$ENDIF FPC}
-{$IFDEF FPC}
-  operator = (const a, b: motionvec_t): boolean;
-operator / (const a: motionvec_t; const divisor: int32_t): motionvec_t;
-operator * (const a: motionvec_t; const multiplier: int32_t): motionvec_t;
-operator + (const a, b: motionvec_t): motionvec_t;
-operator - (const a, b: motionvec_t): motionvec_t;
+  TMotionVectorList = TGenericsList<TMotionvec>;
 {$ENDIF FPC}
 
-function XYToMVec(const x: int32_t; const y: int32_t): motionvec_t; inline;
+{$IFDEF FPC}
+operator = (const a, b: TMotionvec): boolean;
+operator / (const a: TMotionvec; const divisor: int32_t): TMotionvec;
+operator * (const a: TMotionvec; const multiplier: int32_t): TMotionvec;
+operator + (const a, b: TMotionvec): TMotionvec;
+operator - (const a, b: TMotionvec): TMotionvec;
+{$ENDIF FPC}
+
+function XYToMVec(const x: int32_t; const y: int32_t): TMotionvec; inline;
 
 const
-  ZERO_MV: motionvec_t = (x: 0; y: 0);
+  ZERO_MV: TMotionvec = (x: 0; y: 0);
 
 type
-  frame_p = ^frame_t;
+  PFrame = ^TFrame;
 
   // residual block
-  block_t = packed record
+  TBlock = packed record
     t0, t1, t1_signs: uint8_t;
     ncoef, nlevel: uint8_t;
     run_before: array [0 .. 15] of uint8_t;
@@ -137,9 +138,9 @@ type
   TBSarray = array [0 .. 3, 0 .. 3] of uint8_t;
 
   // macroblock
-  macroblock_p = ^macroblock_t;
+  PMacroblock = ^TMacroblock;
 
-  macroblock_t = packed record
+  TMacroblock = packed record
     x, y: int32_t; // position
     mbtype: int32_t;
     qp, qpc: uint8_t;
@@ -154,8 +155,8 @@ type
     i16_pred_mode: int32_t;    // intra 16x16 pred mode
     chroma_pred_mode: int32_t; // chroma intra pred mode
 
-    mvp, mv_skip, mv: motionvec_t; // mvs: predicted, skip, coded
-    fref: frame_p;                 // reference frame selected for inter prediction
+    mvp, mv_skip, mv: TMotionvec; // mvs: predicted, skip, coded
+    fref: PFrame;                 // reference frame selected for inter prediction
     ref: int32_t;                  // reference frame L0 index
     cbp: int32_t;                  // cpb bitmask: 0..3 luma, 4..5 chroma u/v
 
@@ -173,7 +174,7 @@ type
     // coef arrays
     dct: array [0 .. 24] of int16_p; // 0-15 - luma, 16-23 chroma, 24 - luma DC
     chroma_dc: array [0 .. 1, 0 .. 3] of int16_t;
-    block: array [0 .. 26] of block_t; // 0-24 as in dct, 25/26 chroma_dc u/v
+    block: array [0 .. 26] of TBlock; // 0-24 as in dct, 25/26 chroma_dc u/v
 
     // cache for speeding up the prediction process
     intra_pixel_cache: array [0 .. 33] of uint8_t;
@@ -188,12 +189,12 @@ type
     nz_coef_cnt_dc: uint8_t;
 
     // me
-    L0_mvp: array [0 .. 15] of motionvec_t; // predicted mv for L0 refs
+    L0_mvp: array [0 .. 15] of TMotionvec; // predicted mv for L0 refs
     score_skip, score_skip_uv: int32_t;
     residual_bits: int32_t;
 
     // loopfilter
-    mba, mbb: macroblock_p;
+    mba, mbb: PMacroblock;
     bS_vertical, bS_horizontal: TBSarray;
 
     // analysis
@@ -201,12 +202,12 @@ type
   end;
 
   // frame
-  frame_t = packed record
+  TFrame = packed record
     ftype: int32_t; // slice type
 
     qp: int32_t;             // fixed quant parameter
     num: int32_t;            // frame number
-    mbs: macroblock_p;       // frame macroblocks
+    mbs: PMacroblock;       // frame macroblocks
     num_ref_frames: int32_t; // L0 reference picture count
 
     // img data
@@ -224,7 +225,7 @@ type
     blk_offset: array [0 .. 15] of int32_t;         // 4x4 block offsets
     blk_chroma_offset: array [0 .. 3] of int32_t;   // 4x4 chroma block offsets
     filter_hv_temp: int16_p;                        // temp storage for fir filter
-    refs: array [0 .. 15] of frame_p;               // L0 reference list
+    refs: array [0 .. 15] of PFrame;               // L0 reference list
 
     // mb-adaptive quant data
     aq_table: uint8_p; // qp table
@@ -241,12 +242,12 @@ type
 
   IInterPredCostEvaluator = class
     procedure SetQP(qp: int32_t); virtual; abstract;
-    procedure SetMVPredAndRefIdx(const mvp: motionvec_t; const idx: int32_t); virtual; abstract;
-    function bitcost(const mv: motionvec_t): int32_t; virtual; abstract;
+    procedure SetMVPredAndRefIdx(const mvp: TMotionvec; const idx: int32_t); virtual; abstract;
+    function bitcost(const mv: TMotionvec): int32_t; virtual; abstract;
   end;
 
 procedure YV12ToRaster(const luma_ptr, u_ptr, v_ptr: uint8_p; const w, h, stride, stride_cr: int32_t; const dest: TMemoryRaster; const forceITU_BT_709, lumaFull: boolean); overload;
-procedure YV12ToRaster(const sour: frame_p; const dest: TMemoryRaster); overload;
+procedure YV12ToRaster(const sour: PFrame; const dest: TMemoryRaster); overload;
 procedure RasterToYV12(const sour: TMemoryRaster; const luma_ptr, u_ptr, v_ptr: uint8_p; const w, h: int32_t); overload;
 
 var
@@ -258,30 +259,30 @@ implementation
 {$IFNDEF FPC}
 
 
-class operator motionvec_t.Equal(const a, b: motionvec_t): boolean;
+class operator TMotionvec.Equal(const a, b: TMotionvec): boolean;
 begin
   result := int32_t(a) = int32_t(b);
 end;
 
-class operator motionvec_t.Add(const a, b: motionvec_t): motionvec_t;
+class operator TMotionvec.Add(const a, b: TMotionvec): TMotionvec;
 begin
   result.x := a.x + b.x;
   result.y := a.y + b.y;
 end;
 
-class operator motionvec_t.Subtract(const a, b: motionvec_t): motionvec_t;
+class operator TMotionvec.Subtract(const a, b: TMotionvec): TMotionvec;
 begin
   result.x := a.x - b.x;
   result.y := a.y - b.y;
 end;
 
-class operator motionvec_t.Multiply(const a: motionvec_t; multiplier: int32_t): motionvec_t;
+class operator TMotionvec.Multiply(const a: TMotionvec; multiplier: int32_t): TMotionvec;
 begin
   result.x := a.x * multiplier;
   result.y := a.y * multiplier;
 end;
 
-class operator motionvec_t.Divide(const a: motionvec_t; divisor: int32_t): motionvec_t;
+class operator TMotionvec.Divide(const a: TMotionvec; divisor: int32_t): TMotionvec;
 begin
   result.x := a.x div divisor;
   result.y := a.y div divisor;
@@ -290,30 +291,30 @@ end;
 {$ELSE}
 
 
-operator = (const a, b: motionvec_t): boolean; inline;
+operator = (const a, b: TMotionvec): boolean; inline;
 begin
   result := int32_t(a) = int32_t(b);
 end;
 
-operator / (const a: motionvec_t; const divisor: int32_t): motionvec_t;
+operator / (const a: TMotionvec; const divisor: int32_t): TMotionvec;
 begin
   result.x := a.x div divisor;
   result.y := a.y div divisor;
 end;
 
-operator * (const a: motionvec_t; const multiplier: int32_t): motionvec_t;
+operator * (const a: TMotionvec; const multiplier: int32_t): TMotionvec;
 begin
   result.x := a.x * multiplier;
   result.y := a.y * multiplier;
 end;
 
-operator + (const a, b: motionvec_t): motionvec_t;
+operator + (const a, b: TMotionvec): TMotionvec;
 begin
   result.x := a.x + b.x;
   result.y := a.y + b.y;
 end;
 
-operator - (const a, b: motionvec_t): motionvec_t;
+operator - (const a, b: TMotionvec): TMotionvec;
 begin
   result.x := a.x - b.x;
   result.y := a.y - b.y;
@@ -321,7 +322,7 @@ end;
 {$ENDIF FPC}
 
 
-function XYToMVec(const x: int32_t; const y: int32_t): motionvec_t;
+function XYToMVec(const x: int32_t; const y: int32_t): TMotionvec;
 begin
   result.x := x;
   result.y := y;
@@ -397,34 +398,34 @@ begin
           r4 := t^;
           if lumaFull then
               r4 := round((255 / 219) * (r4 - 16));
-          row1[d].b := clip(r4 + r0);
+          row1[d].r := clip(r4 + r0);
           row1[d].g := clip(r4 + r1);
-          row1[d].r := clip(r4 + r2);
+          row1[d].b := clip(r4 + r2);
           row1[d].a := 255;
 
           r4 := (t + 1)^;
           if lumaFull then
               r4 := round((255 / 219) * (r4 - 16));
-          row1[d + 1].b := clip(r4 + r0);
+          row1[d + 1].r := clip(r4 + r0);
           row1[d + 1].g := clip(r4 + r1);
-          row1[d + 1].r := clip(r4 + r2);
+          row1[d + 1].b := clip(r4 + r2);
           row1[d + 1].a := 255;
 
           // lower left/right luma
           r4 := (t + stride)^;
           if lumaFull then
               r4 := round((255 / 219) * (r4 - 16));
-          row2[d].b := clip(r4 + r0);
+          row2[d].r := clip(r4 + r0);
           row2[d].g := clip(r4 + r1);
-          row2[d].r := clip(r4 + r2);
+          row2[d].b := clip(r4 + r2);
           row2[d].a := 255;
 
           r4 := (t + 1 + stride)^;
           if lumaFull then
               r4 := round((255 / 219) * (r4 - 16));
-          row2[d + 1].b := clip(r4 + r0);
+          row2[d + 1].r := clip(r4 + r0);
           row2[d + 1].g := clip(r4 + r1);
-          row2[d + 1].r := clip(r4 + r2);
+          row2[d + 1].b := clip(r4 + r2);
           row2[d + 1].a := 255;
         end;
 
@@ -434,7 +435,7 @@ begin
     end;
 end;
 
-procedure YV12ToRaster(const sour: frame_p; const dest: TMemoryRaster);
+procedure YV12ToRaster(const sour: PFrame; const dest: TMemoryRaster);
 begin
   YV12ToRaster(sour^.plane[0], sour^.plane[1], sour^.plane[2], sour^.w, sour^.h, sour^.stride, sour^.stride_c, dest, False, False);
 end;
@@ -475,11 +476,11 @@ begin
     for i := 0 to w - 1 do
       begin
         c.RGBA := nm.Pixel[i, j];
-        y^ := clip(Trunc(0.256788 * c.b + 0.504129 * c.g + 0.097906 * c.r + 16));
+        y^ := clip(Trunc(0.256788 * c.r + 0.504129 * c.g + 0.097906 * c.b + 16));
         inc(y);
-        u^ := clip(Trunc(-0.148223 * c.b - 0.290993 * c.g + 0.439216 * c.r + 128));
+        u^ := clip(Trunc(-0.148223 * c.r - 0.290993 * c.g + 0.439216 * c.b + 128));
         inc(u);
-        v^ := clip(Trunc(0.439216 * c.b - 0.367788 * c.g - 0.071427 * c.r + 128));
+        v^ := clip(Trunc(0.439216 * c.r - 0.367788 * c.g - 0.071427 * c.b + 128));
         inc(v);
       end;
 

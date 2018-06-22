@@ -1,0 +1,125 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = #22522#20110#31070#32463#32593#32476#20998#31867#22120#30340#22270#29255#23398#20064' byQQ600585'
+  ClientHeight = 453
+  ClientWidth = 751
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  DesignerMasterStyle = 0
+  object GlobalLayout: TLayout
+    Align = Client
+    Size.Width = 751.000000000000000000
+    Size.Height = 453.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Memo1: TMemo
+      Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+      DataDetectorTypes = []
+      Lines.Strings = (
+        #22522#20110#31070#32463#32593#32476#30340#25968#25454#20998#31867#19981#36866#21512#22823#35268#27169#25968#25454' '#23427#26356#36866#21512#23567#33539#22260'+'#8220#39640#26234#21830#8221#30340#22270#29255#23398#20064
+        #22312#23454#38469#24037#20316#20013' '#25105#20204#35201#36816#29992#31070#32463#32593#32476#26469#20570#25968#25454#20998#31867#38656#35201#20570#39044#22788#29702' '#25105#20204#25552#21069#20998#22909#22823#31867#65292#20877#20174#23569#37327#30340#23567#31867#20013#26469#20351#29992#31070#32463#32593#32476#20998#31867#27861
+        'by.QQ600585')
+      TextSettings.WordWrap = True
+      Align = MostBottom
+      Position.Y = 312.000000000000000000
+      Size.Width = 751.000000000000000000
+      Size.Height = 141.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Viewport.Width = 747.000000000000000000
+      Viewport.Height = 137.000000000000000000
+    end
+    object TabControl1: TTabControl
+      Align = Client
+      Size.Width = 551.000000000000000000
+      Size.Height = 299.000000000000000000
+      Size.PlatformDefault = False
+      TabIndex = 0
+      TabOrder = 1
+      TabPosition = PlatformDefault
+      Sizes = (
+        551s
+        272s)
+      object TabItem1: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = True
+        Size.Width = 148.000000000000000000
+        Size.Height = 27.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = #23398#20064#22270#29255'('#31070#32463#32593#32476#26041#27861')'
+        ExplicitSize.cx = 148.000000000000000000
+        ExplicitSize.cy = 27.000000000000000000
+        object Image1: TImage
+          MultiResBitmap = <
+            item
+            end>
+          Position.X = 16.000000000000000000
+          Position.Y = 29.000000000000000000
+          Size.Width = 80.000000000000000000
+          Size.Height = 80.000000000000000000
+          Size.PlatformDefault = False
+          object Label1: TLabel
+            Position.Y = -23.000000000000000000
+            Size.Width = 81.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = #30456#36817#22270#29255
+            TabOrder = 0
+          end
+        end
+        object Button1: TButton
+          Position.X = 16.000000000000000000
+          Position.Y = 128.000000000000000000
+          Size.Width = 225.000000000000000000
+          Size.Height = 33.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 12
+          Text = #23398#20064#22270#29255'('#20351#29992#39640#36895'K'#31354#38388#26641')'
+          OnClick = Button1Click
+        end
+        object Button2: TButton
+          Position.X = 16.000000000000000000
+          Position.Y = 168.000000000000000000
+          Size.Width = 225.000000000000000000
+          Size.Height = 33.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 11
+          Text = #23398#20064#22270#29255'('#20351#29992'LBFGS'#22823#35268#27169#29275#39039#19979#38477#27861')'
+          OnClick = Button2Click
+        end
+      end
+    end
+    object ListBox1: TListBox
+      Align = Left
+      Size.Width = 200.000000000000000000
+      Size.Height = 299.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      CanFocus = False
+      Columns = 3
+      DisableFocusEffect = True
+      DefaultItemStyles.ItemStyle = ''
+      DefaultItemStyles.GroupHeaderStyle = ''
+      DefaultItemStyles.GroupFooterStyle = ''
+      Viewport.Width = 196.000000000000000000
+      Viewport.Height = 295.000000000000000000
+    end
+    object Splitter1: TSplitter
+      Align = Bottom
+      Cursor = crVSplit
+      MinSize = 20.000000000000000000
+      Position.Y = 299.000000000000000000
+      Size.Width = 751.000000000000000000
+      Size.Height = 13.000000000000000000
+      Size.PlatformDefault = False
+    end
+  end
+end

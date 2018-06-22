@@ -538,6 +538,7 @@ var
   ms: TMemoryStream64;
   i: integer;
 begin
+  Result := FALSE;
   inherited Execute;
   found_EOF := 0;
   tot_in := 0;

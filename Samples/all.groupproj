@@ -39,6 +39,21 @@
         <Projects Include="14 基于高斯金字塔不规则图片区域内容识别\GaussPyramidRegionDemo.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="15 yuv视频转换h264\yuv2Video.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="16 软渲染器\SoftRenderer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="17 渲染成视频\Render2Video.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="18 基于梯度方向的大规模图片特征码提取与识别\HOGLargePictureAnalysis.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="19 基于神经元的梯度方向识别\NNHOGCompare.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -155,14 +170,59 @@
     <Target Name="GaussPyramidRegionDemo:Make">
         <MSBuild Projects="14 基于高斯金字塔不规则图片区域内容识别\GaussPyramidRegionDemo.dproj" Targets="Make"/>
     </Target>
+    <Target Name="yuv2Video">
+        <MSBuild Projects="15 yuv视频转换h264\yuv2Video.dproj"/>
+    </Target>
+    <Target Name="yuv2Video:Clean">
+        <MSBuild Projects="15 yuv视频转换h264\yuv2Video.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="yuv2Video:Make">
+        <MSBuild Projects="15 yuv视频转换h264\yuv2Video.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="SoftRenderer">
+        <MSBuild Projects="16 软渲染器\SoftRenderer.dproj"/>
+    </Target>
+    <Target Name="SoftRenderer:Clean">
+        <MSBuild Projects="16 软渲染器\SoftRenderer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SoftRenderer:Make">
+        <MSBuild Projects="16 软渲染器\SoftRenderer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Render2Video">
+        <MSBuild Projects="17 渲染成视频\Render2Video.dproj"/>
+    </Target>
+    <Target Name="Render2Video:Clean">
+        <MSBuild Projects="17 渲染成视频\Render2Video.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Render2Video:Make">
+        <MSBuild Projects="17 渲染成视频\Render2Video.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="HOGLargePictureAnalysis">
+        <MSBuild Projects="18 基于梯度方向的大规模图片特征码提取与识别\HOGLargePictureAnalysis.dproj"/>
+    </Target>
+    <Target Name="HOGLargePictureAnalysis:Clean">
+        <MSBuild Projects="18 基于梯度方向的大规模图片特征码提取与识别\HOGLargePictureAnalysis.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="HOGLargePictureAnalysis:Make">
+        <MSBuild Projects="18 基于梯度方向的大规模图片特征码提取与识别\HOGLargePictureAnalysis.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="NNHOGCompare">
+        <MSBuild Projects="19 基于神经元的梯度方向识别\NNHOGCompare.dproj"/>
+    </Target>
+    <Target Name="NNHOGCompare:Clean">
+        <MSBuild Projects="19 基于神经元的梯度方向识别\NNHOGCompare.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NNHOGCompare:Make">
+        <MSBuild Projects="19 基于神经元的梯度方向识别\NNHOGCompare.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="MemoryRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargePictureAnalysis;WordAnalysis;NNDecisionDemo;NNPicutreCompare;numberTrainDemo;GaussPyramidDemo;GaussPyramidRegionDemo"/>
+        <CallTarget Targets="MemoryRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargePictureAnalysis;WordAnalysis;NNDecisionDemo;NNPicutreCompare;numberTrainDemo;GaussPyramidDemo;GaussPyramidRegionDemo;yuv2Video;SoftRenderer;Render2Video;HOGLargePictureAnalysis;NNHOGCompare"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="MemoryRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargePictureAnalysis:Clean;WordAnalysis:Clean;NNDecisionDemo:Clean;NNPicutreCompare:Clean;numberTrainDemo:Clean;GaussPyramidDemo:Clean;GaussPyramidRegionDemo:Clean"/>
+        <CallTarget Targets="MemoryRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargePictureAnalysis:Clean;WordAnalysis:Clean;NNDecisionDemo:Clean;NNPicutreCompare:Clean;numberTrainDemo:Clean;GaussPyramidDemo:Clean;GaussPyramidRegionDemo:Clean;yuv2Video:Clean;SoftRenderer:Clean;Render2Video:Clean;HOGLargePictureAnalysis:Clean;NNHOGCompare:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="MemoryRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargePictureAnalysis:Make;WordAnalysis:Make;NNDecisionDemo:Make;NNPicutreCompare:Make;numberTrainDemo:Make;GaussPyramidDemo:Make;GaussPyramidRegionDemo:Make"/>
+        <CallTarget Targets="MemoryRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargePictureAnalysis:Make;WordAnalysis:Make;NNDecisionDemo:Make;NNPicutreCompare:Make;numberTrainDemo:Make;GaussPyramidDemo:Make;GaussPyramidRegionDemo:Make;yuv2Video:Make;SoftRenderer:Make;Render2Video:Make;HOGLargePictureAnalysis:Make;NNHOGCompare:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

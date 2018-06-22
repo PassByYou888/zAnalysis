@@ -201,8 +201,8 @@ function umlFilePrepareRead(var IOHnd: TIOHnd; Size: Int64; var buff): Boolean; 
 function umlFileRead(var IOHnd: TIOHnd; const Size: Int64; var buff): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function umlBlockRead(var IOHnd: TIOHnd; var buff; Size: Int64): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function umlFileBeginWrite(var IOHnd: TIOHnd): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function umlFileEndWrite(var IOHnd: TIOHnd): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function umlFilePrepareWrite(var IOHnd: TIOHnd): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function umlFileFlushWrite(var IOHnd: TIOHnd): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function umlFileWrite(var IOHnd: TIOHnd; const Size: Int64; var buff): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function umlBlockWrite(var IOHnd: TIOHnd; var buff; const Size: Int64): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
@@ -494,9 +494,9 @@ function umlProcessCycleValue(CurrentVal, DeltaVal, StartVal, OverVal: Single; v
 
 
 type
-  TCSVCall               = procedure(const Sour: TPascalString; const king, Data: TArrayPascalString);
-  TCSVMethod             = procedure(const Sour: TPascalString; const king, Data: TArrayPascalString) of object;
-  {$IFNDEF FPC} TCSVProc = reference to procedure(const Sour: TPascalString; const king, Data: TArrayPascalString); {$ENDIF FPC}
+  TCSVCall             = procedure(const Sour: TPascalString; const king, Data: TArrayPascalString);
+  TCSVMethod           = procedure(const Sour: TPascalString; const king, Data: TArrayPascalString) of object;
+{$IFNDEF FPC} TCSVProc = reference to procedure(const Sour: TPascalString; const king, Data: TArrayPascalString); {$ENDIF FPC}
 
 procedure ImportCSV_C(const Sour: TArrayPascalString; OnNotify: TCSVCall);
 procedure ImportCSV_M(const Sour: TArrayPascalString; OnNotify: TCSVMethod);
@@ -506,9 +506,9 @@ procedure ImportCSV_M(const Sour: TArrayPascalString; OnNotify: TCSVMethod);
 implementation
 
 uses
-  {$IF Defined(WIN32) or Defined(WIN64)}
+{$IF Defined(WIN32) or Defined(WIN64)}
   Fast_MD5,
-  {$ENDIF}
+{$ENDIF}
   MemoryStream64;
 
 function umlBytesOf(const S: TPascalString): TBytes;
@@ -573,11 +573,11 @@ begin
         end;
       varUInt64:
         begin
-          {$IFDEF FPC}
+{$IFDEF FPC}
           Result := IntToStr(UInt64(V));
-          {$ELSE}
+{$ELSE}
           Result := UIntToStr(UInt64(V));
-          {$ENDIF}
+{$ENDIF}
         end;
       varSingle, varDouble, varCurrency, varDate:
         begin
@@ -629,11 +629,11 @@ begin
           ntBool: Result := StrToBool(n.Text);
           ntInt: Result := StrToInt(n.Text);
           ntInt64: Result := StrToInt64(n.Text);
-          {$IFDEF FPC}
+{$IFDEF FPC}
           ntUInt64: Result := StrToQWord(n.Text);
-          {$ELSE}
+{$ELSE}
           ntUInt64: Result := StrToUInt64(n.Text);
-          {$ENDIF}
+{$ENDIF}
           ntWord: Result := StrToInt(n.Text);
           ntByte: Result := StrToInt(n.Text);
           ntSmallInt: Result := StrToInt(n.Text);
@@ -1425,7 +1425,7 @@ begin
       Exit;
     end;
 
-  umlFileEndWrite(IOHnd);
+  umlFileFlushWrite(IOHnd);
 
   if IOHnd.PrepareReadBuff <> nil then
       DisposeObject(IOHnd.PrepareReadBuff);
@@ -1457,7 +1457,7 @@ begin
       Exit;
     end;
 
-  umlFileEndWrite(IOHnd);
+  umlFileFlushWrite(IOHnd);
   umlResetPrepareRead(IOHnd);
   IOHnd.WriteFlag := False;
 
@@ -1548,7 +1548,7 @@ var
   i: NativeInt;
   BuffInt: NativeUInt;
 begin
-  if not umlFileEndWrite(IOHnd) then
+  if not umlFileFlushWrite(IOHnd) then
     begin
       Result := False;
       Exit;
@@ -1620,7 +1620,7 @@ begin
   Result := umlFileRead(IOHnd, Size, buff);
 end;
 
-function umlFileBeginWrite(var IOHnd: TIOHnd): Boolean;
+function umlFilePrepareWrite(var IOHnd: TIOHnd): Boolean;
 begin
   Result := True;
 
@@ -1634,7 +1634,7 @@ begin
       IOHnd.FlushBuff := TMemoryStream64.Create;
 end;
 
-function umlFileEndWrite(var IOHnd: TIOHnd): Boolean;
+function umlFileFlushWrite(var IOHnd: TIOHnd): Boolean;
 var
   m64: TMemoryStream64;
 begin
@@ -1679,7 +1679,7 @@ begin
   umlResetPrepareRead(IOHnd);
 
   if Size <= $F000 then
-      umlFileBeginWrite(IOHnd);
+      umlFilePrepareWrite(IOHnd);
 
   if IOHnd.FlushBuff <> nil then
     begin
@@ -1695,6 +1695,9 @@ begin
           IOHnd.Size := IOHnd.Position;
       IOHnd.Return := umlNotError;
       Result := True;
+
+      if IOHnd.FlushBuff.Size > 8 * 1024 * 1024 then
+          umlFileFlushWrite(IOHnd);
       Exit;
     end;
 
@@ -1795,7 +1798,7 @@ end;
 function umlFileSeek(var IOHnd: TIOHnd; APos: Int64): Boolean;
 begin
   if (APos <> IOHnd.Position) or (APos <> IOHnd.Handle.Position) then
-    if not umlFileEndWrite(IOHnd) then
+    if not umlFileFlushWrite(IOHnd) then
       begin
         Result := False;
         Exit;
@@ -3800,7 +3803,7 @@ var
   WorkLen: Byte;
   WorkBuf: array [0 .. 63] of Byte;
 begin
-  {$IFDEF OptimizationMemoryStreamMD5}
+{$IFDEF OptimizationMemoryStreamMD5}
   if Stream is TCoreClassMemoryStream then
     begin
       Result := umlMD5(Pointer(NativeUInt(TCoreClassMemoryStream(Stream).Memory) + StartPos), EndPos - StartPos);
@@ -3811,7 +3814,7 @@ begin
       Result := umlMD5(TMemoryStream64(Stream).PositionAsPtr(StartPos), EndPos - StartPos);
       Exit;
     end;
-  {$IFEND}
+{$IFEND}
   //
 
   Lo := 0;

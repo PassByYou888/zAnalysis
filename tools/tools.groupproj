@@ -18,6 +18,9 @@
         <Projects Include="StringTranslate\StringTranslate.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="FontBuild\FontBuild.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -71,14 +74,23 @@
     <Target Name="StringTranslate:Make">
         <MSBuild Projects="StringTranslate\StringTranslate.dproj" Targets="Make"/>
     </Target>
+    <Target Name="FontBuild">
+        <MSBuild Projects="FontBuild\FontBuild.dproj"/>
+    </Target>
+    <Target Name="FontBuild:Clean">
+        <MSBuild Projects="FontBuild\FontBuild.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FontBuild:Make">
+        <MSBuild Projects="FontBuild\FontBuild.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="ImgFmtConver2PNG;BitmapConver;FilePackageWithZDB;ConvFile2Pascal;StringTranslate"/>
+        <CallTarget Targets="ImgFmtConver2PNG;BitmapConver;FilePackageWithZDB;ConvFile2Pascal;StringTranslate;FontBuild"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="ImgFmtConver2PNG:Clean;BitmapConver:Clean;FilePackageWithZDB:Clean;ConvFile2Pascal:Clean;StringTranslate:Clean"/>
+        <CallTarget Targets="ImgFmtConver2PNG:Clean;BitmapConver:Clean;FilePackageWithZDB:Clean;ConvFile2Pascal:Clean;StringTranslate:Clean;FontBuild:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="ImgFmtConver2PNG:Make;BitmapConver:Make;FilePackageWithZDB:Make;ConvFile2Pascal:Make;StringTranslate:Make"/>
+        <CallTarget Targets="ImgFmtConver2PNG:Make;BitmapConver:Make;FilePackageWithZDB:Make;ConvFile2Pascal:Make;StringTranslate:Make;FontBuild:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

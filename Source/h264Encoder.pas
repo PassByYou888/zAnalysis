@@ -11,7 +11,6 @@
 unit h264Encoder;
 
 {$I zDefine.inc}
-{$POINTERMATH ON}
 
 interface
 
@@ -24,7 +23,7 @@ type
   private
     h264s: TH264Stream;
     mb_enc: TMacroblockEncoder;
-    fenc: frame_t; // currently encoded frame
+    fenc: TFrame; // currently encoded frame
     stats: TStreamStats;
     frame_num: int32_t;
 
@@ -51,20 +50,19 @@ type
     procedure GetFrameSSD;
     procedure UpdateStats;
   public
-    { Create encoder with desired parameters.
+    {
+      Create encoder with desired parameters.
       Param instance is bound to encoder and shouldn't be modified until the encoder is freed
     }
     constructor Create(var param: TEncodingParameters);
     destructor destroy; override;
     procedure EncodeFrame(const img: TPlanarImage; buffer: uint8_p; out stream_size: uint32_t);
     procedure GetLastFrameSSD(out ssd: array of int64_t);
-    procedure GetLastFrame(out last_frame: frame_t);
+    procedure GetLastFrame(out last_frame: TFrame);
   end;
 
 implementation
 
-
-{ TFevh264Encoder }
 
 constructor TFevh264Encoder.Create(var param: TEncodingParameters);
 begin
@@ -114,14 +112,10 @@ begin
 
   // mb encoder
   case param.AnalysisLevel of
-    0:
-      mb_enc := TMBEncoderNoAnalyse.Create;
-    1:
-      mb_enc := TMBEncoderQuickAnalyse.Create;
-    2:
-      mb_enc := TMBEncoderQuickAnalyseSATD.Create;
-    else
-      mb_enc := TMBEncoderRateAnalyse.Create;
+    0: mb_enc := TMBEncoderNoAnalyse.Create;
+    1: mb_enc := TMBEncoderQuickAnalyse.Create;
+    2: mb_enc := TMBEncoderQuickAnalyseSATD.Create;
+    else mb_enc := TMBEncoderRateAnalyse.Create;
   end;
   mb_enc.num_ref_frames := num_ref_frames;
   mb_enc.chroma_coding := true;
@@ -134,7 +128,7 @@ begin
 
   // stats
   stats := TStreamStats.Create;
-  h264s.SEIString := param.ToString;
+  h264s.SEIString := param.ToPascalString;
 end;
 
 destructor TFevh264Encoder.destroy;
@@ -278,7 +272,7 @@ begin
   end;
 end;
 
-procedure TFevh264Encoder.GetLastFrame(out last_frame: frame_t);
+procedure TFevh264Encoder.GetLastFrame(out last_frame: TFrame);
 begin
   last_frame := fenc;
 end;
@@ -296,7 +290,7 @@ end;
 procedure TFevh264Encoder.GetFrameSSD;
 var
   x, y: int32_t;
-  mb: macroblock_p;
+  mb: PMacroblock;
 begin
   for y := 0 to (mb_height - 1) do
     begin

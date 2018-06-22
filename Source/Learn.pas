@@ -62,22 +62,28 @@ type
     procedure CreateLearnData(const isTrainTime: Boolean);
   public
     // regression style
-    constructor CreateRegression(const lt: TLearnType; const InDataLen, OutDataLen: TLInt);
+    class function CreateRegression(const lt: TLearnType; const InDataLen, OutDataLen: TLInt): TLearn;
     // regression style of level 1
-    constructor CreateRegression1(const lt: TLearnType; const InDataLen, OutDataLen: TLInt);
+    class function CreateRegression1(const lt: TLearnType; const InDataLen, OutDataLen: TLInt): TLearn;
     // regression style of level 2
-    constructor CreateRegression2(const lt: TLearnType; const InDataLen, OutDataLen: TLInt);
+    class function CreateRegression2(const lt: TLearnType; const InDataLen, OutDataLen: TLInt): TLearn;
 
     // classifier style
-    constructor CreateClassifier(const lt: TLearnType; const InDataLen: TLInt);
+    class function CreateClassifier(const lt: TLearnType; const InDataLen: TLInt): TLearn;
     // classifier style of level 1
-    constructor CreateClassifier1(const lt: TLearnType; const InDataLen: TLInt);
+    class function CreateClassifier1(const lt: TLearnType; const InDataLen: TLInt): TLearn;
     // classifier style of level 2
-    constructor CreateClassifier2(const lt: TLearnType; const InDataLen: TLInt);
+    class function CreateClassifier2(const lt: TLearnType; const InDataLen: TLInt): TLearn;
 
     // picture classifier style
-    constructor CreatePictureClassifier(const lt: TLearnType; const SamplerWidth: TLInt);
+    class function CreatePictureClassifier(const lt: TLearnType; const SamplerWidth: TLInt):TLearn;
 
+    // regression style with fast Histogram of Oriented Gradient
+    class function CreateHOGRegression(const lt: TLearnType; const OutDataLen: TLInt): TLearn;
+    // classifier style with fast Histogram of Oriented Gradient
+    class function CreateHOGClassifier(const lt: TLearnType): TLearn;
+
+    constructor Create; virtual;
     destructor Destroy; override;
 
     { * random number * }
@@ -190,6 +196,7 @@ procedure LAdd(var f: TLFloat; const Value: TLFloat); {$IFDEF INLINE_ASM} inline
 procedure LSub(var f: TLFloat; const Value: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure LMul(var f: TLFloat; const Value: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure LDiv(var f: TLFloat; const Value: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LSafeDivF(const s, d: TLFloat): TLFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure LSetVec(var v: TLVec; const VDef: TLFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure LSetVec(var v: TLIVec; const VDef: TLInt); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure LSetVec(var v: TLBVec; const VDef: Boolean); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -234,7 +241,8 @@ function LClamp(const AValue: TLFloat; const AMin, AMax: TLFloat): TLFloat; over
 function LClamp(const AValue: TLInt; const AMin, AMax: TLInt): TLInt; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 { * sampler support * }
-procedure LFeatureSampler(const mr: TMemoryRaster; ln: TLearn; lOut: TLVec);
+procedure LFeatureSamplerWithSift(const mr: TMemoryRaster; ln: TLearn; lOut: TLVec);
+function LMatrixSamplerWithHOG(const mr: TMemoryRaster): TLMatrix;
 function LMatrixSampler(const mr: TMemoryRaster): TLMatrix; overload;
 function LMatrixSampler(const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix; overload;
 function LMatrixSampler(const Antialiasing: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix; overload;
@@ -494,14 +502,14 @@ procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLInt; M2: TLInt; N
 procedure GenerateRotation(f: TLFloat; G: TLFloat; var CS: TLFloat; var SN: TLFloat; var R: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 { Bidiagonal SVD }
-function RMatrixBDSVD(var D: TLVec; E: TLVec; N: TLInt; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
+function RMatrixBDSVD(var d: TLVec; E: TLVec; N: TLInt; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
   var U: TLMatrix; NRU: TLInt; var C: TLMatrix; NCC: TLInt; var VT: TLMatrix; NCVT: TLInt): Boolean;
 
-function BidiagonalSVDDecomposition(var D: TLVec; E: TLVec; N: TLInt; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
+function BidiagonalSVDDecomposition(var d: TLVec; E: TLVec; N: TLInt; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
   var U: TLMatrix; NRU: TLInt; var C: TLMatrix; NCC: TLInt; var VT: TLMatrix; NCVT: TLInt): Boolean;
 
 { Eigensolvers }
-function SMatrixEVD(A: TLMatrix; N: TLInt; ZNeeded: TLInt; IsUpper: Boolean; var D: TLVec; var Z: TLMatrix): Boolean;
+function SMatrixEVD(A: TLMatrix; N: TLInt; ZNeeded: TLInt; IsUpper: Boolean; var d: TLVec; var Z: TLMatrix): Boolean;
 
 function SMatrixEVDR(A: TLMatrix; N: TLInt; ZNeeded: TLInt;
   IsUpper: Boolean; B1: TLFloat; B2: TLFloat; var m: TLInt;
@@ -512,7 +520,7 @@ function SMatrixEVDI(A: TLMatrix; N: TLInt; ZNeeded: TLInt;
   var W: TLVec; var Z: TLMatrix): Boolean;
 
 function HMatrixEVD(A: TLComplexMatrix; N: TLInt; ZNeeded: TLInt; IsUpper: Boolean;
-  var D: TLVec; var Z: TLComplexMatrix): Boolean;
+  var d: TLVec; var Z: TLComplexMatrix): Boolean;
 
 function HMatrixEVDR(A: TLComplexMatrix; N: TLInt;
   ZNeeded: TLInt; IsUpper: Boolean; B1: TLFloat; B2: TLFloat;
@@ -522,13 +530,13 @@ function HMatrixEVDI(A: TLComplexMatrix; N: TLInt;
   ZNeeded: TLInt; IsUpper: Boolean; I1: TLInt;
   I2: TLInt; var W: TLVec; var Z: TLComplexMatrix): Boolean;
 
-function SMatrixTDEVD(var D: TLVec; E: TLVec; N: TLInt; ZNeeded: TLInt; var Z: TLMatrix): Boolean;
+function SMatrixTDEVD(var d: TLVec; E: TLVec; N: TLInt; ZNeeded: TLInt; var Z: TLMatrix): Boolean;
 
-function SMatrixTDEVDR(var D: TLVec; const E: TLVec;
+function SMatrixTDEVDR(var d: TLVec; const E: TLVec;
   N: TLInt; ZNeeded: TLInt; A: TLFloat; B: TLFloat;
   var m: TLInt; var Z: TLMatrix): Boolean;
 
-function SMatrixTDEVDI(var D: TLVec; const E: TLVec;
+function SMatrixTDEVDI(var d: TLVec; const E: TLVec;
   N: TLInt; ZNeeded: TLInt; I1: TLInt;
   I2: TLInt; var Z: TLMatrix): Boolean;
 
@@ -536,14 +544,14 @@ function RMatrixEVD(A: TLMatrix; N: TLInt; VNeeded: TLInt;
   var WR: TLVec; var WI: TLVec; var VL: TLMatrix;
   var VR: TLMatrix): Boolean;
 
-function InternalBisectionEigenValues(D: TLVec; E: TLVec;
+function InternalBisectionEigenValues(d: TLVec; E: TLVec;
   N: TLInt; IRANGE: TLInt; IORDER: TLInt;
   VL: TLFloat; VU: TLFloat; IL: TLInt; IU: TLInt;
   ABSTOL: TLFloat; var W: TLVec; var m: TLInt;
   var NSPLIT: TLInt; var IBLOCK: TLIVec;
   var ISPLIT: TLIVec; var ErrorCode: TLInt): Boolean;
 
-procedure InternalDSTEIN(const N: TLInt; const D: TLVec;
+procedure InternalDSTEIN(const N: TLInt; const d: TLVec;
   E: TLVec; const m: TLInt; W: TLVec;
   const IBLOCK: TLIVec; const ISPLIT: TLIVec;
   var Z: TLMatrix; var IFAIL: TLIVec; var Info: TLInt);
@@ -761,6 +769,14 @@ uses KM, Math,
 {$ENDIF FPC}
   SyncObjs, PyramidSpace, FastHistogramSpace, DoStatusIO;
 
+const
+  SYSTEM_HOGCELLSIZE     = 10;
+  SYSTEM_HOGSAMPLERSIZE  = 12;
+  SYSTEM_HOG_FEATURESIZE = 12 * 12 * (4 + 9 + 18);
+
+var
+  System_HOGTable: THOGTable;
+
 {$REGION 'Include'}
 {$INCLUDE Learn_Base.inc}
 {$INCLUDE learn_blas.inc}
@@ -805,6 +821,10 @@ uses KM, Math,
 
 initialization
 
+System_HOGTable := THOGTable.Create(9, 18, SYSTEM_HOGCELLSIZE);
 
+finalization
+
+DisposeObject(System_HOGTable);
 
 end.

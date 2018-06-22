@@ -18,30 +18,28 @@ interface
 uses
   h264stdint, h264common, h264util, h264pixel, h264intra_pred, h264transquant, h264vlc, h264tables, CoreClasses;
 
-procedure mb_alloc(var mb: macroblock_t);
-procedure mb_free(var mb: macroblock_t);
-procedure mb_init_row_ptrs(var mb: macroblock_t; const frame: frame_t; const y: int32_t);
-procedure mb_init(var mb: macroblock_t; var frame: frame_t; const adaptive_quant: boolean = false);
+procedure mb_alloc(var mb: TMacroblock);
+procedure mb_free(var mb: TMacroblock);
+procedure mb_init_row_ptrs(var mb: TMacroblock; const frame: TFrame; const y: int32_t);
+procedure mb_init(var mb: TMacroblock; var frame: TFrame; const adaptive_quant: boolean = false);
 
-procedure encode_mb_intra_i4(var mb: macroblock_t; var frame: frame_t; const intrapred: TIntraPredictor);
+procedure encode_mb_intra_i4(var mb: TMacroblock; var frame: TFrame; const intrapred: TIntraPredictor);
 
-procedure encode_mb_intra_i16(var mb: macroblock_t);
-procedure decode_mb_intra_i16(var mb: macroblock_t; const intrapred: TIntraPredictor);
+procedure encode_mb_intra_i16(var mb: TMacroblock);
+procedure decode_mb_intra_i16(var mb: TMacroblock; const intrapred: TIntraPredictor);
 
-procedure encode_mb_inter(var mb: macroblock_t);
-procedure decode_mb_inter(var mb: macroblock_t);
+procedure encode_mb_inter(var mb: TMacroblock);
+procedure decode_mb_inter(var mb: TMacroblock);
 
-procedure decode_mb_inter_pskip(var mb: macroblock_t);
-procedure decode_mb_pcm(var mb: macroblock_t);
+procedure decode_mb_inter_pskip(var mb: TMacroblock);
+procedure decode_mb_pcm(var mb: TMacroblock);
 
-procedure encode_mb_chroma(var mb: macroblock_t; const intrapred: TIntraPredictor; const intra: boolean);
-procedure decode_mb_chroma(var mb: macroblock_t; const intra: boolean);
+procedure encode_mb_chroma(var mb: TMacroblock; const intrapred: TIntraPredictor; const intra: boolean);
+procedure decode_mb_chroma(var mb: TMacroblock; const intra: boolean);
 
-(* ******************************************************************************
-  ****************************************************************************** *)
 implementation
 
-procedure mb_alloc(var mb: macroblock_t);
+procedure mb_alloc(var mb: TMacroblock);
 var
   i: int32_t;
 begin
@@ -65,13 +63,13 @@ begin
       mb.dct[i] := mb.dct[i - 1] + 16;
 end;
 
-procedure mb_free(var mb: macroblock_t);
+procedure mb_free(var mb: TMacroblock);
 begin
   fev_free(mb.pixels);
   fev_free(mb.dct[0]);
 end;
 
-procedure mb_init_row_ptrs(var mb: macroblock_t; const frame: frame_t; const y: int32_t);
+procedure mb_init_row_ptrs(var mb: TMacroblock; const frame: TFrame; const y: int32_t);
 begin
   mb.pfenc := frame.plane[0] + y * 16 * frame.stride;
   mb.pfenc_c[0] := frame.plane[1] + y * 8 * frame.stride_c;
@@ -87,7 +85,7 @@ end;
   1..16 - pixels from top
   18..33 - pixels from left
 }
-procedure fill_intra_pred_cache(var mb: macroblock_t; var frame: frame_t);
+procedure fill_intra_pred_cache(var mb: TMacroblock; var frame: TFrame);
 var
   i: int32_t;
   src, dst: uint8_p;
@@ -111,9 +109,9 @@ end;
   -qp
   -mvd, skip mv
 *)
-procedure mb_init(var mb: macroblock_t; var frame: frame_t; const adaptive_quant: boolean = false);
+procedure mb_init(var mb: TMacroblock; var frame: TFrame; const adaptive_quant: boolean = false);
 var
-  mbb, mba: macroblock_p;
+  mbb, mba: PMacroblock;
   i: int32_t;
 begin
   FillPtrByte(@mb.i4_pred_mode, 24, INTRA_PRED_NA);
@@ -221,7 +219,7 @@ const
     640, 704
     );
 
-procedure block_use_zero(var b: block_t);
+procedure block_use_zero(var b: TBlock);
 begin
   b.t0 := 0;
   b.t1 := 0;
@@ -229,7 +227,7 @@ begin
 end;
 
 procedure encode_mb_intra_i4
-  (var mb: macroblock_t; var frame: frame_t; const intrapred: TIntraPredictor);
+  (var mb: TMacroblock; var frame: TFrame; const intrapred: TIntraPredictor);
 var
   i: int32_t;
   block: int16_p;
@@ -278,7 +276,7 @@ begin
         mb.cbp := mb.cbp or (1 shl i);
 end;
 
-procedure encode_mb_intra_i16(var mb: macroblock_t);
+procedure encode_mb_intra_i16(var mb: TMacroblock);
 var
   i: int32_t;
   block: int16_p;
@@ -313,7 +311,7 @@ begin
       mb.cbp := $F;
 end;
 
-procedure decode_mb_intra_i16(var mb: macroblock_t; const intrapred: TIntraPredictor);
+procedure decode_mb_intra_i16(var mb: TMacroblock; const intrapred: TIntraPredictor);
 var
   i: int32_t;
   block: int16_p;
@@ -340,7 +338,7 @@ end;
 (* ******************************************************************************
   inter coding
 *)
-procedure encode_mb_inter(var mb: macroblock_t);
+procedure encode_mb_inter(var mb: TMacroblock);
 var
   i: int32_t;
   block: int16_p;
@@ -376,7 +374,7 @@ begin
         mb.cbp := mb.cbp or (1 shl i);
 end;
 
-procedure decode_mb_inter(var mb: macroblock_t);
+procedure decode_mb_inter(var mb: TMacroblock);
 var
   i: int32_t;
   block: int16_p;
@@ -395,7 +393,7 @@ begin
     end;
 end;
 
-procedure decode_mb_inter_pskip(var mb: macroblock_t);
+procedure decode_mb_inter_pskip(var mb: TMacroblock);
 begin
   CopyPtr(mb.mcomp, mb.pixels_dec, 256);
   FillPtrByte(@mb.nz_coef_cnt, 16, 0);
@@ -405,8 +403,7 @@ end;
 (* ******************************************************************************
   chroma coding
 *)
-procedure encode_mb_chroma
-  (var mb: macroblock_t; const intrapred: TIntraPredictor; const intra: boolean);
+procedure encode_mb_chroma(var mb: TMacroblock; const intrapred: TIntraPredictor; const intra: boolean);
 var
   i, j, n: int32_t;
   block: int16_p;
@@ -473,7 +470,7 @@ begin
       mb.cbp := mb.cbp or (1 shl 4);
 end;
 
-procedure decode_mb_chroma(var mb: macroblock_t; const intra: boolean);
+procedure decode_mb_chroma(var mb: TMacroblock; const intra: boolean);
 var
   i, j: int32_t;
   block: int16_p;
@@ -525,7 +522,7 @@ begin
 end;
 
 // I_PCM
-procedure decode_mb_pcm(var mb: macroblock_t);
+procedure decode_mb_pcm(var mb: TMacroblock);
 begin
   CopyPtr(mb.pixels, mb.pixels_dec, 256);
   CopyPtr(mb.pixels_c[0], mb.pixels_dec_c[0], 128);

@@ -197,7 +197,7 @@ begin
   for lt in RasterClassifierLearnType do
     begin
       DoStatusNoLn('raster Classifier test %s ..', [CLearnString[lt]]);
-      lr := TLearn.CreatePictureClassifier(lt, Trunc(Sqrt(test_Depth)));
+      lr := TLearn.CreateHOGClassifier(lt);
 
       for J := 0 to test_Depth - 1 do
         begin

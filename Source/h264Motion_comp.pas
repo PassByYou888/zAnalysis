@@ -18,15 +18,12 @@ uses
   h264Common, h264util, h264frame, h264stdint, CoreClasses;
 
 type
-
-  { TMotionCompensation }
-
   TMotionCompensation = class
   public
-    procedure Compensate(const fref: frame_p; mv: motionvec_t; mbx, mby: int32_t; dst: uint8_p);
-    procedure CompensateQPelXY(const fref: frame_p; qx, qy: int32_t; dst: uint8_p);
-    procedure CompensateChroma(const fref: frame_p; mv: motionvec_t; mbx, mby: int32_t; dstU, dstV: uint8_p);
-    procedure CompensateChromaQpelXY(const fref: frame_p; qx, qy: int32_t; dstU, dstV: uint8_p);
+    procedure Compensate(const fref: PFrame; mv: TMotionvec; mbx, mby: int32_t; dst: uint8_p);
+    procedure CompensateQPelXY(const fref: PFrame; qx, qy: int32_t; dst: uint8_p);
+    procedure CompensateChroma(const fref: PFrame; mv: TMotionvec; mbx, mby: int32_t; dstU, dstV: uint8_p);
+    procedure CompensateChromaQpelXY(const fref: PFrame; qx, qy: int32_t; dstU, dstV: uint8_p);
   end;
 
 var
@@ -36,10 +33,7 @@ procedure motion_compensate_init;
 
 implementation
 
-(* ******************************************************************************
-  motion_compensate
-*)
-procedure TMotionCompensation.Compensate(const fref: frame_p; mv: motionvec_t; mbx, mby: int32_t; dst: uint8_p);
+procedure TMotionCompensation.Compensate(const fref: PFrame; mv: TMotionvec; mbx, mby: int32_t; dst: uint8_p);
 var
   x, y,
     fx, fy: int32_t; // fullpel position
@@ -61,7 +55,7 @@ begin
     end;
 end;
 
-procedure TMotionCompensation.CompensateQPelXY(const fref: frame_p; qx, qy: int32_t; dst: uint8_p);
+procedure TMotionCompensation.CompensateQPelXY(const fref: PFrame; qx, qy: int32_t; dst: uint8_p);
 const
   {
     plane 1/2 idx
@@ -100,8 +94,7 @@ begin
       dsp.pixel_avg_16x16(p1 + i, p2 + i, dst, stride);
 end;
 
-procedure TMotionCompensation.CompensateChroma
-  (const fref: frame_p; mv: motionvec_t; mbx, mby: int32_t; dstU, dstV: uint8_p);
+procedure TMotionCompensation.CompensateChroma(const fref: PFrame; mv: TMotionvec; mbx, mby: int32_t; dstU, dstV: uint8_p);
 var
   x, y,
     fx, fy: int32_t; // chroma fullpel
@@ -114,7 +107,7 @@ begin
   CompensateChromaQpelXY(fref, x, y, dstU, dstV);
 end;
 
-procedure TMotionCompensation.CompensateChromaQpelXY(const fref: frame_p; qx, qy: int32_t; dstU, dstV: uint8_p);
+procedure TMotionCompensation.CompensateChromaQpelXY(const fref: PFrame; qx, qy: int32_t; dstU, dstV: uint8_p);
 var
   fx, fy: int32_t; // chroma fullpel
   dx, dy: int32_t;

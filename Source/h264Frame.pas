@@ -25,28 +25,28 @@ const
 type
   TFrameManager = class
   private
-    listL0: array of frame_t;
+    listL0: array of TFrame;
     ifree: int32_t;
-    procedure GetRef(out f: frame_p; const frame_num: int32_t);
+    procedure GetRef(out f: PFrame; const frame_num: int32_t);
   public
-    procedure InsertRef(var f: frame_t);
-    procedure SetRefs(var f: frame_t; const frame_num, nrefs: int32_t);
-    procedure GetFree(var f: frame_t);
+    procedure InsertRef(var f: TFrame);
+    procedure SetRefs(var f: TFrame; const frame_num, nrefs: int32_t);
+    procedure GetFree(var f: TFrame);
     constructor Create(const ref_count, mb_w, mb_h: int32_t);
     destructor destroy; override;
   end;
 
-procedure frame_new(var frame: frame_t; const mb_width, mb_height: int32_t);
-procedure frame_free(var frame: frame_t);
+procedure frame_new(var frame: TFrame; const mb_width, mb_height: int32_t);
+procedure frame_free(var frame: TFrame);
 
-procedure frame_img2frame_copy(var frame: frame_t; const img: TPlanarImage);
-procedure frame_paint_edges(var frame: frame_t);
-procedure frame_hpel_interpolate(var frame: frame_t);
+procedure frame_img2frame_copy(var frame: TFrame; const img: TPlanarImage);
+procedure frame_paint_edges(var frame: TFrame);
+procedure frame_hpel_interpolate(var frame: TFrame);
 procedure frame_init;
 
 implementation
 
-procedure TFrameManager.GetRef(out f: frame_p; const frame_num: int32_t);
+procedure TFrameManager.GetRef(out f: PFrame; const frame_num: int32_t);
 var
   i: int32_t;
 begin
@@ -60,7 +60,7 @@ begin
 end;
 
 // insert ref. frame to oldest slot, mark oldest taken slot as free
-procedure TFrameManager.InsertRef(var f: frame_t);
+procedure TFrameManager.InsertRef(var f: TFrame);
 var
   i, oldest: int32_t;
 begin
@@ -82,10 +82,10 @@ begin
       end;
 end;
 
-procedure TFrameManager.SetRefs(var f: frame_t; const frame_num, nrefs: int32_t);
+procedure TFrameManager.SetRefs(var f: TFrame; const frame_num, nrefs: int32_t);
 var
   i: int32_t;
-  t: frame_p;
+  t: PFrame;
 begin
   for i := 1 to nrefs do
     begin
@@ -94,7 +94,7 @@ begin
     end;
 end;
 
-procedure TFrameManager.GetFree(var f: frame_t);
+procedure TFrameManager.GetFree(var f: TFrame);
 begin
   if ifree = -1 then
       RaiseInfo('GetFree - no free frame!');
@@ -126,7 +126,7 @@ begin
   inherited destroy;
 end;
 
-procedure frame_new(var frame: frame_t; const mb_width, mb_height: int32_t);
+procedure frame_new(var frame: TFrame; const mb_width, mb_height: int32_t);
 var
   padded_height, padded_width,
     frame_mem_offset, frame_mem_offset_cr: int32_t; // frame memory to image data start offset
@@ -155,7 +155,7 @@ begin
   frame_mem_offset := FRAME_PADDING_W * padded_width + FRAME_PADDING_W;
   frame_mem_offset_cr := FRAME_PADDING_W * padded_width div 4 + FRAME_PADDING_W div 2;
 
-  frame.mbs := fev_malloc(mb_width * mb_height * sizeof(macroblock_t));
+  frame.mbs := fev_malloc(mb_width * mb_height * sizeof(TMacroblock));
   frame.aq_table := fev_malloc(mb_width * mb_height);
   frame.qp := 0;
   frame.qp_avg := 0;
@@ -225,7 +225,7 @@ begin
   frame.stats := TFrameStats.Create;
 end;
 
-procedure frame_free(var frame: frame_t);
+procedure frame_free(var frame: TFrame);
 begin
   fev_free(frame.mbs);
   fev_free(frame.aq_table);
@@ -247,9 +247,9 @@ begin
   frame.h := 0;
 end;
 
-procedure frame_swap(var a, b: frame_t);
+procedure frame_swap(var a, b: TFrame);
 var
-  t: frame_t;
+  t: TFrame;
 begin
   t := a;
   a := b;
@@ -260,7 +260,7 @@ end;
   frame_setup_adapt_q
   adjust mb quant according to variance
 *)
-procedure frame_setup_adapt_q(var frame: frame_t; pixbuffer: uint8_p; const base_qp: uint8_t);
+procedure frame_setup_adapt_q(var frame: TFrame; pixbuffer: uint8_p; const base_qp: uint8_t);
 const
   QP_RANGE  = 10;
   QP_MIN    = 15;
@@ -326,7 +326,7 @@ begin
     end;
 end;
 
-procedure frame_img2frame_copy(var frame: frame_t; const img: TPlanarImage);
+procedure frame_img2frame_copy(var frame: TFrame; const img: TPlanarImage);
 var
   w, h, i, j: int32_t;
   dstride, sstride, edge_width: int32_t;
@@ -389,7 +389,7 @@ begin
   paint_edge_horiz(p - edge_width + stride * (h - 1), p - edge_width + stride * h, stride, edge_width);
 end;
 
-procedure frame_paint_edges(var frame: frame_t);
+procedure frame_paint_edges(var frame: TFrame);
 var
   i: int32_t;
 begin
@@ -401,7 +401,7 @@ end;
 (* ******************************************************************************
   h.264 6tap hpel filter
 *)
-procedure frame_hpel_interpolate(var frame: frame_t);
+procedure frame_hpel_interpolate(var frame: TFrame);
 var
   Width, Height: int32_t;
   stride: int32_t;

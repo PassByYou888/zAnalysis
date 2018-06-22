@@ -1,4 +1,3 @@
-
 {$REGION 'extAPI'}
 
 
@@ -19,7 +18,14 @@ end;
 
 procedure LDiv(var f: TLFloat; const Value: TLFloat);
 begin
-  f := f / Value;
+  f := LSafeDivF(f, Value);
+end;
+
+function LSafeDivF(const s, d: TLFloat): TLFloat;
+begin
+  Result := s / d;
+  if IsNan(Result) then
+      Result := 0;
 end;
 
 procedure LSetVec(var v: TLVec; const VDef: TLFloat);
@@ -463,7 +469,7 @@ begin
       Result := AValue;
 end;
 
-procedure LFeatureSampler(const mr: TMemoryRaster; ln: TLearn; lOut: TLVec);
+procedure LFeatureSamplerWithSift(const mr: TMemoryRaster; ln: TLearn; lOut: TLVec);
 var
   f: TFeature;
   I: TLInt;
@@ -472,6 +478,20 @@ begin
   for I := 0 to f.Count - 1 do
       ln.AddMemory(f[I]^.descriptor, lOut);
   disposeObject(f);
+end;
+
+function LMatrixSamplerWithHOG(const mr: TMemoryRaster): TLMatrix;
+var
+  nmr: TMemoryRaster;
+  HOG: THOG;
+begin
+  nmr := TMemoryRaster.Create;
+  nmr.NoLineZoomFrom(mr, SYSTEM_HOGCELLSIZE * (SYSTEM_HOGSAMPLERSIZE - 2), SYSTEM_HOGCELLSIZE * (SYSTEM_HOGSAMPLERSIZE - 2));
+
+  HOG := THOG.CreateAntiLight(System_HOGTable, nmr);
+  disposeObject(nmr);
+  HOG.BuildFeatureMatrix(Result);
+  disposeObject(HOG);
 end;
 
 function LMatrixSampler(const mr: TMemoryRaster): TLMatrix;
@@ -556,7 +576,7 @@ procedure LZoomMatrix(var source, dest: TLMatrix; const DestWidth, DestHeight: T
 var
   SourceWidth, SourceHeight: TLInt;
   SourceP, DestP: PLMatrix;
-  {$IFDEF FPC}
+{$IFDEF FPC}
   procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
   begin
     ZoomLineF(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
@@ -583,18 +603,18 @@ begin
       SourceP := @source;
       DestP := @dest;
 
-      {$IFDEF parallel}
-      {$IFDEF FPC}
+{$IFDEF parallel}
+{$IFDEF FPC}
       ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, DestWidth - 1);
-      {$ELSE FPC}
+{$ELSE FPC}
       TParallel.For(0, DestWidth - 1, procedure(pass: Integer)
         begin
           ZoomLineF(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
         end);
-      {$ENDIF FPC}
-      {$ELSE parallel}
+{$ENDIF FPC}
+{$ELSE parallel}
       DoFor;
-      {$ENDIF parallel}
+{$ENDIF parallel}
     end;
 end;
 
@@ -615,7 +635,7 @@ procedure LZoomMatrix(var source, dest: TLIMatrix; const DestWidth, DestHeight: 
 var
   SourceWidth, SourceHeight: TLInt;
   SourceP, DestP: PLIMatrix;
-  {$IFDEF FPC}
+{$IFDEF FPC}
   procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
   begin
     ZoomLineI(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
@@ -642,18 +662,18 @@ begin
       SourceP := @source;
       DestP := @dest;
 
-      {$IFDEF parallel}
-      {$IFDEF FPC}
+{$IFDEF parallel}
+{$IFDEF FPC}
       ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, DestWidth - 1);
-      {$ELSE FPC}
+{$ELSE FPC}
       TParallel.For(0, DestWidth - 1, procedure(pass: Integer)
         begin
           ZoomLineI(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
         end);
-      {$ENDIF FPC}
-      {$ELSE parallel}
+{$ENDIF FPC}
+{$ELSE parallel}
       DoFor;
-      {$ENDIF parallel}
+{$ENDIF parallel}
     end;
 end;
 
@@ -674,7 +694,7 @@ procedure LZoomMatrix(var source, dest: TLBMatrix; const DestWidth, DestHeight: 
 var
   SourceWidth, SourceHeight: TLInt;
   SourceP, DestP: PLBMatrix;
-  {$IFDEF FPC}
+{$IFDEF FPC}
   procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
   begin
     ZoomLineB(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
@@ -701,18 +721,18 @@ begin
       SourceP := @source;
       DestP := @dest;
 
-      {$IFDEF parallel}
-      {$IFDEF FPC}
+{$IFDEF parallel}
+{$IFDEF FPC}
       ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, DestWidth - 1);
-      {$ELSE FPC}
+{$ELSE FPC}
       TParallel.For(0, DestWidth - 1, procedure(pass: Integer)
         begin
           ZoomLineB(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
         end);
-      {$ENDIF FPC}
-      {$ELSE parallel}
+{$ENDIF FPC}
+{$ELSE parallel}
       DoFor;
-      {$ENDIF parallel}
+{$ENDIF parallel}
     end;
 end;
 
@@ -1094,4 +1114,3 @@ begin
 end;
 
 {$ENDREGION 'extAPI'}
-
