@@ -15,7 +15,7 @@ unit h264Parameters;
 interface
 
 uses
-  Classes, SysUtils, h264Stdint, h264util, PascalParsing, PascalStrings;
+  Classes, SysUtils, h264Stdint, h264util, PascalStrings;
 
 const
   MIN_QP               = 0;
