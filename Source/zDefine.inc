@@ -4,6 +4,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 {$IFDEF FPC}
   {$MODE objfpc}
@@ -16,8 +18,6 @@
   {$ENDIF}
 
   {$UNDEF FirstCharInZero}
-
-  {$R-} { range check }
 
   {$UNDEF Delphi}
   {$UNDEF FastMD5}
@@ -46,19 +46,14 @@
     {$DEFINE CriticalSimulateAtomic}
   {$ENDIF}
 
-  {$IFDEF release}
-    {$R-} { range check }
-  {$ELSE}
-    {$R-} { range check }
-  {$ENDIF}
 
 {$ENDIF}
 
 {$WARNINGS OFF}
 {$HINTS OFF}
 {$H+} { long string }
-//{$R+} { range check }
 {$A+} { Word Align Data }
+{$R-} { range check }
 {$O-} { optimization }
 {$Q-} { Overflow checking }
 {$B-} { Complete boolean evaluation }

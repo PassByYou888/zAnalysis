@@ -7,6 +7,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 (*
   update history
@@ -807,7 +809,7 @@ var
   _Len: Integer;
   b: TBytes;
 begin
-  stream.Read64(_Len, umlIntegerLength);
+  stream.Read64(_Len, C_Integer_Size);
   SetLength(b, _Len);
   if (_Len > 0) then
       stream.Read64(b[0], _Len);
@@ -822,7 +824,7 @@ var
 begin
   b := umlBytesOf(FBuffer);
   _Len := Length(b);
-  stream.Write64(_Len, umlIntegerLength);
+  stream.Write64(_Len, C_Integer_Size);
   if _Len > 0 then
       stream.Write64(b[0], _Len);
 end;
@@ -847,7 +849,7 @@ var
   b: TBytes;
 begin
   b := umlBytesOf(FBuffer);
-  Result := umlIntegerLength + Length(b);
+  Result := C_Integer_Size + Length(b);
 end;
 
 constructor TDataFrameInteger.Create(id: Byte);
@@ -863,12 +865,12 @@ end;
 
 procedure TDataFrameInteger.LoadFromStream(stream: TMemoryStream64);
 begin
-  stream.Read64(FBuffer, umlIntegerLength);
+  stream.Read64(FBuffer, C_Integer_Size);
 end;
 
 procedure TDataFrameInteger.SaveToStream(stream: TMemoryStream64);
 begin
-  stream.Write64(FBuffer, umlIntegerLength);
+  stream.Write64(FBuffer, C_Integer_Size);
 end;
 
 {$IFNDEF FPC}
@@ -888,7 +890,7 @@ end;
 
 function TDataFrameInteger.ComputeEncodeSize: Integer;
 begin
-  Result := umlIntegerLength;
+  Result := C_Integer_Size;
 end;
 
 constructor TDataFrameCardinal.Create(id: Byte);
@@ -904,12 +906,12 @@ end;
 
 procedure TDataFrameCardinal.LoadFromStream(stream: TMemoryStream64);
 begin
-  stream.Read64(FBuffer, umlCardinalLength);
+  stream.Read64(FBuffer, C_Cardinal_Size);
 end;
 
 procedure TDataFrameCardinal.SaveToStream(stream: TMemoryStream64);
 begin
-  stream.Write64(FBuffer, umlCardinalLength);
+  stream.Write64(FBuffer, C_Cardinal_Size);
 end;
 
 {$IFNDEF FPC}
@@ -929,7 +931,7 @@ end;
 
 function TDataFrameCardinal.ComputeEncodeSize: Integer;
 begin
-  Result := umlCardinalLength;
+  Result := C_Cardinal_Size;
 end;
 
 constructor TDataFrameWord.Create(id: Byte);
@@ -945,12 +947,12 @@ end;
 
 procedure TDataFrameWord.LoadFromStream(stream: TMemoryStream64);
 begin
-  stream.Read64(FBuffer, umlWordLength);
+  stream.Read64(FBuffer, C_Word_Size);
 end;
 
 procedure TDataFrameWord.SaveToStream(stream: TMemoryStream64);
 begin
-  stream.Write64(FBuffer, umlWordLength);
+  stream.Write64(FBuffer, C_Word_Size);
 end;
 
 {$IFNDEF FPC}
@@ -970,7 +972,7 @@ end;
 
 function TDataFrameWord.ComputeEncodeSize: Integer;
 begin
-  Result := umlWordLength;
+  Result := C_Word_Size;
 end;
 
 constructor TDataFrameByte.Create(id: Byte);
@@ -986,12 +988,12 @@ end;
 
 procedure TDataFrameByte.LoadFromStream(stream: TMemoryStream64);
 begin
-  stream.Read64(FBuffer, umlByteLength);
+  stream.Read64(FBuffer, C_Byte_Size);
 end;
 
 procedure TDataFrameByte.SaveToStream(stream: TMemoryStream64);
 begin
-  stream.Write64(FBuffer, umlByteLength);
+  stream.Write64(FBuffer, C_Byte_Size);
 end;
 
 {$IFNDEF FPC}
@@ -1011,7 +1013,7 @@ end;
 
 function TDataFrameByte.ComputeEncodeSize: Integer;
 begin
-  Result := umlByteLength;
+  Result := C_Byte_Size;
 end;
 
 constructor TDataFrameSingle.Create(id: Byte);
@@ -1027,12 +1029,12 @@ end;
 
 procedure TDataFrameSingle.LoadFromStream(stream: TMemoryStream64);
 begin
-  stream.Read64(FBuffer, umlSingleLength);
+  stream.Read64(FBuffer, C_Single_Size);
 end;
 
 procedure TDataFrameSingle.SaveToStream(stream: TMemoryStream64);
 begin
-  stream.Write64(FBuffer, umlSingleLength);
+  stream.Write64(FBuffer, C_Single_Size);
 end;
 
 {$IFNDEF FPC}
@@ -1052,7 +1054,7 @@ end;
 
 function TDataFrameSingle.ComputeEncodeSize: Integer;
 begin
-  Result := umlSingleLength;
+  Result := C_Single_Size;
 end;
 
 constructor TDataFrameDouble.Create(id: Byte);
@@ -1068,12 +1070,12 @@ end;
 
 procedure TDataFrameDouble.LoadFromStream(stream: TMemoryStream64);
 begin
-  stream.Read64(FBuffer, umlDoubleLength);
+  stream.Read64(FBuffer, C_Double_Size);
 end;
 
 procedure TDataFrameDouble.SaveToStream(stream: TMemoryStream64);
 begin
-  stream.Write64(FBuffer, umlDoubleLength);
+  stream.Write64(FBuffer, C_Double_Size);
 end;
 
 {$IFNDEF FPC}
@@ -1093,7 +1095,7 @@ end;
 
 function TDataFrameDouble.ComputeEncodeSize: Integer;
 begin
-  Result := umlDoubleLength;
+  Result := C_Double_Size;
 end;
 
 constructor TDataFrameArrayInteger.Create(id: Byte);
@@ -1156,10 +1158,10 @@ var
   d: Integer;
 begin
   Clear;
-  stream.Read64(l, umlIntegerLength);
+  stream.Read64(l, C_Integer_Size);
   for i := 0 to l - 1 do
     begin
-      stream.Read64(d, umlIntegerLength);
+      stream.Read64(d, C_Integer_Size);
       Add(d);
     end;
 end;
@@ -1170,11 +1172,11 @@ var
   d: Integer;
 begin
   l := Count;
-  stream.Write64(l, umlIntegerLength);
+  stream.Write64(l, C_Integer_Size);
   for i := 0 to l - 1 do
     begin
       d := Buffer[i];
-      stream.Write64(d, umlIntegerLength);
+      stream.Write64(d, C_Integer_Size);
     end;
 end;
 
@@ -1205,7 +1207,7 @@ end;
 
 function TDataFrameArrayInteger.ComputeEncodeSize: Integer;
 begin
-  Result := umlIntegerLength + umlIntegerLength * Count;
+  Result := C_Integer_Size + C_Integer_Size * Count;
 end;
 
 function TDataFrameArrayInteger.GetBuffer(idx: Integer): Integer;
@@ -1278,10 +1280,10 @@ var
   d: ShortInt;
 begin
   Clear;
-  stream.Read64(l, umlIntegerLength);
+  stream.Read64(l, C_Integer_Size);
   for i := 0 to l - 1 do
     begin
-      stream.Read64(d, umlShortIntLength);
+      stream.Read64(d, C_Short_Int_Size);
       Add(d);
     end;
 end;
@@ -1292,11 +1294,11 @@ var
   d: ShortInt;
 begin
   l := Count;
-  stream.Write64(l, umlIntegerLength);
+  stream.Write64(l, C_Integer_Size);
   for i := 0 to l - 1 do
     begin
       d := Buffer[i];
-      stream.Write64(d, umlShortIntLength);
+      stream.Write64(d, C_Short_Int_Size);
     end;
 end;
 
@@ -1327,7 +1329,7 @@ end;
 
 function TDataFrameArrayShortInt.ComputeEncodeSize: Integer;
 begin
-  Result := umlIntegerLength + umlShortIntLength * Count;
+  Result := C_Integer_Size + C_Short_Int_Size * Count;
 end;
 
 function TDataFrameArrayShortInt.GetBuffer(idx: Integer): ShortInt;
@@ -1388,22 +1390,22 @@ end;
 
 procedure TDataFrameArrayByte.AddI64(v: Int64);
 begin
-  AddPtrBuff(@v, umlInt64Length);
+  AddPtrBuff(@v, C_Int64_Size);
 end;
 
 procedure TDataFrameArrayByte.AddU64(v: UInt64);
 begin
-  AddPtrBuff(@v, umlUInt64Length);
+  AddPtrBuff(@v, C_UInt64_Size);
 end;
 
 procedure TDataFrameArrayByte.Addi(v: Integer);
 begin
-  AddPtrBuff(@v, umlIntegerLength);
+  AddPtrBuff(@v, C_Integer_Size);
 end;
 
 procedure TDataFrameArrayByte.AddWord(v: Word);
 begin
-  AddPtrBuff(@v, umlWordLength);
+  AddPtrBuff(@v, C_Word_Size);
 end;
 
 procedure TDataFrameArrayByte.Delete(idx: Integer);
@@ -1457,10 +1459,10 @@ var
   d: Byte;
 begin
   Clear;
-  stream.Read64(l, umlIntegerLength);
+  stream.Read64(l, C_Integer_Size);
   for i := 0 to l - 1 do
     begin
-      stream.Read64(d, umlByteLength);
+      stream.Read64(d, C_Byte_Size);
       Add(d);
     end;
 end;
@@ -1471,11 +1473,11 @@ var
   d: Byte;
 begin
   l := Count;
-  stream.Write64(l, umlIntegerLength);
+  stream.Write64(l, C_Integer_Size);
   for i := 0 to l - 1 do
     begin
       d := Buffer[i];
-      stream.Write64(d, umlByteLength);
+      stream.Write64(d, C_Byte_Size);
     end;
 end;
 
@@ -1506,7 +1508,7 @@ end;
 
 function TDataFrameArrayByte.ComputeEncodeSize: Integer;
 begin
-  Result := umlIntegerLength + umlByteLength * Count;
+  Result := C_Integer_Size + C_Byte_Size * Count;
 end;
 
 function TDataFrameArraySingle.GetBuffer(idx: Integer): Single;
@@ -1589,10 +1591,10 @@ var
   d: Single;
 begin
   Clear;
-  stream.Read64(l, umlIntegerLength);
+  stream.Read64(l, C_Integer_Size);
   for i := 0 to l - 1 do
     begin
-      stream.Read64(d, umlSingleLength);
+      stream.Read64(d, C_Single_Size);
       Add(d);
     end;
 end;
@@ -1603,11 +1605,11 @@ var
   d: Single;
 begin
   l := Count;
-  stream.Write64(l, umlIntegerLength);
+  stream.Write64(l, C_Integer_Size);
   for i := 0 to l - 1 do
     begin
       d := Buffer[i];
-      stream.Write64(d, umlSingleLength);
+      stream.Write64(d, C_Single_Size);
     end;
 end;
 
@@ -1638,7 +1640,7 @@ end;
 
 function TDataFrameArraySingle.ComputeEncodeSize: Integer;
 begin
-  Result := umlIntegerLength + umlSingleLength * Count;
+  Result := C_Integer_Size + C_Single_Size * Count;
 end;
 
 constructor TDataFrameArrayDouble.Create(id: Byte);
@@ -1701,10 +1703,10 @@ var
   d: Double;
 begin
   Clear;
-  stream.Read64(l, umlIntegerLength);
+  stream.Read64(l, C_Integer_Size);
   for i := 0 to l - 1 do
     begin
-      stream.Read64(d, umlDoubleLength);
+      stream.Read64(d, C_Double_Size);
       Add(d);
     end;
 end;
@@ -1715,11 +1717,11 @@ var
   d: Double;
 begin
   l := Count;
-  stream.Write64(l, umlIntegerLength);
+  stream.Write64(l, C_Integer_Size);
   for i := 0 to l - 1 do
     begin
       d := Buffer[i];
-      stream.Write64(d, umlDoubleLength);
+      stream.Write64(d, C_Double_Size);
     end;
 end;
 
@@ -1750,7 +1752,7 @@ end;
 
 function TDataFrameArrayDouble.ComputeEncodeSize: Integer;
 begin
-  Result := umlIntegerLength + umlDoubleLength * Count;
+  Result := C_Integer_Size + C_Double_Size * Count;
 end;
 
 function TDataFrameArrayDouble.GetBuffer(idx: Integer): Double;
@@ -1823,10 +1825,10 @@ var
   d: Int64;
 begin
   Clear;
-  stream.Read64(l, umlIntegerLength);
+  stream.Read64(l, C_Integer_Size);
   for i := 0 to l - 1 do
     begin
-      stream.Read64(d, umlInt64Length);
+      stream.Read64(d, C_Int64_Size);
       Add(d);
     end;
 end;
@@ -1837,11 +1839,11 @@ var
   d: Int64;
 begin
   l := Count;
-  stream.Write64(l, umlIntegerLength);
+  stream.Write64(l, C_Integer_Size);
   for i := 0 to l - 1 do
     begin
       d := Buffer[i];
-      stream.Write64(d, umlInt64Length);
+      stream.Write64(d, C_Int64_Size);
     end;
 end;
 
@@ -1872,7 +1874,7 @@ end;
 
 function TDataFrameArrayInt64.ComputeEncodeSize: Integer;
 begin
-  Result := umlIntegerLength + umlInt64Length * Count;
+  Result := C_Integer_Size + C_Int64_Size * Count;
 end;
 
 function TDataFrameArrayInt64.GetBuffer(idx: Integer): Int64;
@@ -1907,7 +1909,7 @@ var
   _Len: Integer;
 begin
   FBuffer.Clear;
-  stream.Read64(_Len, umlIntegerLength);
+  stream.Read64(_Len, C_Integer_Size);
   if (_Len > 0) then
       FBuffer.CopyFrom(stream, _Len);
 end;
@@ -1917,7 +1919,7 @@ var
   _Len: Integer;
 begin
   _Len := FBuffer.Size;
-  stream.Write64(_Len, umlIntegerLength);
+  stream.Write64(_Len, C_Integer_Size);
   if _Len > 0 then
     begin
       FBuffer.Position := 0;
@@ -1949,7 +1951,7 @@ end;
 
 function TDataFrameStream.ComputeEncodeSize: Integer;
 begin
-  Result := umlIntegerLength + FBuffer.Size;
+  Result := C_Integer_Size + FBuffer.Size;
 end;
 
 function TDataFrameStream.GetBuffer: TCoreClassStream;
@@ -2041,12 +2043,12 @@ end;
 
 procedure TDataFrameInt64.LoadFromStream(stream: TMemoryStream64);
 begin
-  stream.Read64(FBuffer, umlInt64Length);
+  stream.Read64(FBuffer, C_Int64_Size);
 end;
 
 procedure TDataFrameInt64.SaveToStream(stream: TMemoryStream64);
 begin
-  stream.Write64(FBuffer, umlInt64Length);
+  stream.Write64(FBuffer, C_Int64_Size);
 end;
 
 {$IFNDEF FPC}
@@ -2066,7 +2068,7 @@ end;
 
 function TDataFrameInt64.ComputeEncodeSize: Integer;
 begin
-  Result := umlInt64Length;
+  Result := C_Int64_Size;
 end;
 
 constructor TDataFrameUInt64.Create(id: Byte);
@@ -2082,12 +2084,12 @@ end;
 
 procedure TDataFrameUInt64.LoadFromStream(stream: TMemoryStream64);
 begin
-  stream.Read64(FBuffer, umlUInt64Length);
+  stream.Read64(FBuffer, C_UInt64_Size);
 end;
 
 procedure TDataFrameUInt64.SaveToStream(stream: TMemoryStream64);
 begin
-  stream.Write64(FBuffer, umlUInt64Length);
+  stream.Write64(FBuffer, C_UInt64_Size);
 end;
 
 {$IFNDEF FPC}
@@ -2107,7 +2109,7 @@ end;
 
 function TDataFrameUInt64.ComputeEncodeSize: Integer;
 begin
-  Result := umlUInt64Length;
+  Result := C_UInt64_Size;
 end;
 
 constructor TDataFrameEngineReader.Create(AOwner: TDataFrameEngine);
@@ -3618,7 +3620,7 @@ begin
   d := TMemoryStream64.Create;
   ReadStream(idx, d);
   d.Position := 0;
-  output.LoadFromStream(d, TEncoding.UTF8, False, nil);
+  output.LoadFromStream(d, TEncoding.UTF8, False);
   DisposeObject(d);
 end;
 {$ENDIF}
@@ -3775,9 +3777,9 @@ function TDataFrameEngine.ComputeEncodeSize: Integer;
 var
   i: Integer;
 begin
-  Result := umlIntegerLength;
+  Result := C_Integer_Size;
   for i := 0 to Count - 1 do
-      Result := Result + umlByteLength + GetData(i).ComputeEncodeSize;
+      Result := Result + C_Byte_Size + GetData(i).ComputeEncodeSize;
 end;
 
 class procedure TDataFrameEngine.BuildEmptyStream(output: TCoreClassStream);
@@ -3790,16 +3792,16 @@ var
 begin
   // make header
   editionFlag := $FF;
-  sizeInfo := umlIntegerLength;
+  sizeInfo := C_Integer_Size;
   compFlag := 0;
   md5 := NullMD5;
   cnt := 0;
 
-  output.Write(editionFlag, umlByteLength);
-  output.Write(sizeInfo, umlIntegerLength);
-  output.Write(compFlag, umlByteLength);
-  output.Write(md5[0], umlMD5Length);
-  output.Write(cnt, umlIntegerLength);
+  output.Write(editionFlag, C_Byte_Size);
+  output.Write(sizeInfo, C_Integer_Size);
+  output.Write(compFlag, C_Byte_Size);
+  output.Write(md5[0], C_MD5_Size);
+  output.Write(cnt, C_Integer_Size);
 end;
 
 function TDataFrameEngine.EncodeTo(output: TCoreClassStream; const FastMode: Boolean): Integer;
@@ -3825,7 +3827,7 @@ begin
   StoreStream := TMemoryStream64.Create;
 
   // make body
-  StoreStream.Write64(Result, umlIntegerLength);
+  StoreStream.Write64(Result, C_Integer_Size);
 
   nStream := TMemoryStream64.Create;
   for i := 0 to Count - 1 do
@@ -3834,7 +3836,7 @@ begin
       id := b.FID;
       b.SaveToStream(nStream);
 
-      StoreStream.Write64(id, umlByteLength);
+      StoreStream.Write64(id, C_Byte_Size);
       nStream.Position := 0;
       StoreStream.CopyFrom(nStream, nStream.Size);
       nStream.Clear;
@@ -3851,10 +3853,10 @@ begin
       md5 := umlMD5(StoreStream.Memory, StoreStream.Size);
 
   nStream.Clear;
-  nStream.Write(editionFlag, umlByteLength);
-  nStream.Write(sizeInfo, umlIntegerLength);
-  nStream.Write(compFlag, umlByteLength);
-  nStream.Write(md5[0], umlMD5Length);
+  nStream.Write(editionFlag, C_Byte_Size);
+  nStream.Write(sizeInfo, C_Integer_Size);
+  nStream.Write(compFlag, C_Byte_Size);
+  nStream.Write(md5[0], C_MD5_Size);
 
   // write header
   nStream.Position := 0;
@@ -3972,7 +3974,7 @@ begin
   StoreStream := TMemoryStream64.Create;
 
   // make body
-  StoreStream.Write64(Result, umlIntegerLength);
+  StoreStream.Write64(Result, C_Integer_Size);
 
   nStream := TMemoryStream64.Create;
   for i := 0 to Count - 1 do
@@ -3981,7 +3983,7 @@ begin
       id := b.FID;
       b.SaveToStream(nStream);
 
-      StoreStream.Write64(id, umlByteLength);
+      StoreStream.Write64(id, C_Byte_Size);
       nStream.Position := 0;
       StoreStream.CopyFrom(nStream, nStream.Size);
       nStream.Clear;
@@ -4007,11 +4009,11 @@ begin
   compFlag := 1;
 
   nStream.Clear;
-  nStream.Write(editionFlag, umlByteLength);
-  nStream.Write(sizeInfo, umlIntegerLength);
-  nStream.Write(compFlag, umlByteLength);
-  nStream.Write(compSizeInfo, umlIntegerLength);
-  nStream.Write(md5[0], umlMD5Length);
+  nStream.Write(editionFlag, C_Byte_Size);
+  nStream.Write(sizeInfo, C_Integer_Size);
+  nStream.Write(compFlag, C_Byte_Size);
+  nStream.Write(compSizeInfo, C_Integer_Size);
+  nStream.Write(md5[0], C_MD5_Size);
 
   // write header
   nStream.Position := 0;
@@ -4053,7 +4055,7 @@ begin
   StoreStream := TMemoryStream64.Create;
 
   // make body
-  StoreStream.Write64(Result, umlIntegerLength);
+  StoreStream.Write64(Result, C_Integer_Size);
 
   nStream := TMemoryStream64.Create;
   for i := 0 to Count - 1 do
@@ -4062,7 +4064,7 @@ begin
       id := b.FID;
       b.SaveToStream(nStream);
 
-      StoreStream.Write64(id, umlByteLength);
+      StoreStream.Write64(id, C_Byte_Size);
       nStream.Position := 0;
       StoreStream.CopyFrom(nStream, nStream.Size);
       nStream.Clear;
@@ -4090,11 +4092,11 @@ begin
   compFlag := 2;
 
   nStream.Clear;
-  nStream.Write(editionFlag, umlByteLength);
-  nStream.Write(sizeInfo, umlIntegerLength);
-  nStream.Write(compFlag, umlByteLength);
-  nStream.Write(compSizeInfo, umlIntegerLength);
-  nStream.Write(md5[0], umlMD5Length);
+  nStream.Write(editionFlag, C_Byte_Size);
+  nStream.Write(sizeInfo, C_Integer_Size);
+  nStream.Write(compFlag, C_Byte_Size);
+  nStream.Write(compSizeInfo, C_Integer_Size);
+  nStream.Write(md5[0], C_MD5_Size);
 
   // write header
   nStream.Position := 0;
@@ -4136,7 +4138,7 @@ begin
   StoreStream := TMemoryStream64.Create;
 
   // make body
-  StoreStream.Write64(Result, umlIntegerLength);
+  StoreStream.Write64(Result, C_Integer_Size);
 
   nStream := TMemoryStream64.Create;
   for i := 0 to Count - 1 do
@@ -4145,7 +4147,7 @@ begin
       id := b.FID;
       b.SaveToStream(nStream);
 
-      StoreStream.Write64(id, umlByteLength);
+      StoreStream.Write64(id, C_Byte_Size);
       nStream.Position := 0;
       StoreStream.CopyFrom(nStream, nStream.Size);
       nStream.Clear;
@@ -4173,11 +4175,11 @@ begin
   compFlag := 3;
 
   nStream.Clear;
-  nStream.Write(editionFlag, umlByteLength);
-  nStream.Write(sizeInfo, umlIntegerLength);
-  nStream.Write(compFlag, umlByteLength);
-  nStream.Write(compSizeInfo, umlIntegerLength);
-  nStream.Write(md5[0], umlMD5Length);
+  nStream.Write(editionFlag, C_Byte_Size);
+  nStream.Write(sizeInfo, C_Integer_Size);
+  nStream.Write(compFlag, C_Byte_Size);
+  nStream.Write(compSizeInfo, C_Integer_Size);
+  nStream.Write(md5[0], C_MD5_Size);
 
   // write header
   nStream.Position := 0;
@@ -4206,11 +4208,11 @@ begin
   bakPos := source.Position;
   Result := False;
 
-  source.Read(editionFlag, umlByteLength);
+  source.Read(editionFlag, C_Byte_Size);
   if editionFlag = $FF then
     begin
-      source.Read(sizeInfo, umlIntegerLength);
-      source.Read(compFlag, umlByteLength);
+      source.Read(sizeInfo, C_Integer_Size);
+      source.Read(compFlag, C_Byte_Size);
 
       Result := compFlag in [1, 2, 3];
     end;
@@ -4238,11 +4240,11 @@ begin
 
   StoreStream := TMemoryStream64.Create;
 
-  source.Read(editionFlag, umlByteLength);
+  source.Read(editionFlag, C_Byte_Size);
   if editionFlag = $FF then
     begin
-      source.Read(sizeInfo, umlIntegerLength);
-      source.Read(compFlag, umlByteLength);
+      source.Read(sizeInfo, C_Integer_Size);
+      source.Read(compFlag, C_Byte_Size);
       if compFlag = 0 then
         begin
           source.Read(md5[0], 16);
@@ -4263,7 +4265,7 @@ begin
         end
       else if compFlag = 1 then
         begin
-          source.Read(compSizeInfo, umlIntegerLength);
+          source.Read(compSizeInfo, C_Integer_Size);
           source.Read(md5[0], 16);
 
           ZDecompStream := TDecompressionStream.Create(source);
@@ -4281,7 +4283,7 @@ begin
         end
       else if compFlag = 2 then
         begin
-          source.Read(compSizeInfo, umlIntegerLength);
+          source.Read(compSizeInfo, C_Integer_Size);
           source.Read(md5[0], 16);
 
           if FCompressorDeflate = nil then
@@ -4299,7 +4301,7 @@ begin
         end
       else if compFlag = 3 then
         begin
-          source.Read(compSizeInfo, umlIntegerLength);
+          source.Read(compSizeInfo, C_Integer_Size);
           source.Read(md5[0], 16);
 
           if FCompressorBRRC = nil then
@@ -4325,10 +4327,10 @@ begin
 
   StoreStream.Position := 0;
 
-  StoreStream.Read64(cnt, umlIntegerLength);
+  StoreStream.Read64(cnt, C_Integer_Size);
   for i := 0 to cnt - 1 do
     begin
-      StoreStream.Read64(id, umlByteLength);
+      StoreStream.Read64(id, C_Byte_Size);
       b := AddData(ByteToDataType(id));
       b.LoadFromStream(StoreStream);
     end;
@@ -4447,10 +4449,10 @@ begin
 
       // write compressed flag
       FlagCompressed := False;
-      FStream.Write(FlagCompressed, umlBooleanLength);
+      FStream.Write(FlagCompressed, C_Boolean_Size);
 
       // write length info
-      FStream.Write(len, umlInt64Length);
+      FStream.Write(len, C_Int64_Size);
 
       // write buffer
       m.Position := 0;
@@ -4715,10 +4717,10 @@ begin
           raise Exception.Create('Version flag Does not match!');
 
       // read compressed flag
-      AStream.Read(FlagCompressed, umlBooleanLength);
+      AStream.Read(FlagCompressed, C_Boolean_Size);
 
       // read length info
-      AStream.Read(len, umlInt64Length);
+      AStream.Read(len, C_Int64_Size);
 
       // write buffer
       m := TMemoryStream64.Create;

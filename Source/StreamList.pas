@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 (*
   update history
@@ -17,8 +19,7 @@ unit StreamList;
 
 interface
 
-uses SysUtils, ObjectDataManager, ItemStream, CoreClasses, PascalStrings,
-  ListEngine;
+uses SysUtils, ObjectDataManager, ItemStream, CoreClasses, PascalStrings, ListEngine;
 
 type
   THashStreamList = class;

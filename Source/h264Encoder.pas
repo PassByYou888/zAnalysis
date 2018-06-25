@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
 unit h264Encoder;
@@ -297,13 +299,13 @@ begin
       for x := 0 to (mb_width - 1) do
         begin
           mb := @fenc.mbs[y * mb_width + x];
-          dsp.pixel_load_16x16(mb^.pixels, mb^.pfdec, fenc.stride);
-          dsp.pixel_load_8x8(mb^.pixels_c[0], mb^.pfdec_c[0], fenc.stride_c);
-          dsp.pixel_load_8x8(mb^.pixels_c[1], mb^.pfdec_c[1], fenc.stride_c);
+          DSP.pixel_load_16x16(mb^.pixels, mb^.pfdec, fenc.stride);
+          DSP.pixel_load_8x8(mb^.pixels_c[0], mb^.pfdec_c[0], fenc.stride_c);
+          DSP.pixel_load_8x8(mb^.pixels_c[1], mb^.pfdec_c[1], fenc.stride_c);
 
-          inc(fenc.stats.ssd[0], dsp.ssd_16x16(mb^.pixels, mb^.pfenc, fenc.stride));
-          inc(fenc.stats.ssd[1], dsp.ssd_8x8(mb^.pixels_c[0], mb^.pfenc_c[0], fenc.stride_c));
-          inc(fenc.stats.ssd[2], dsp.ssd_8x8(mb^.pixels_c[1], mb^.pfenc_c[1], fenc.stride_c));
+          inc(fenc.stats.ssd[0], DSP.ssd_16x16(mb^.pixels, mb^.pfenc, fenc.stride));
+          inc(fenc.stats.ssd[1], DSP.ssd_8x8(mb^.pixels_c[0], mb^.pfenc_c[0], fenc.stride_c));
+          inc(fenc.stats.ssd[2], DSP.ssd_8x8(mb^.pixels_c[1], mb^.pfenc_c[1], fenc.stride_c));
         end;
     end;
 end;
@@ -313,12 +315,11 @@ end;
 
 initialization
 
-frame_init;
 intra_pred_init;
-dsp := TDsp.Create;
+DSP := TDSP.Create;
 
 finalization
 
-disposeObject(dsp);
+disposeObject(DSP);
 
 end.

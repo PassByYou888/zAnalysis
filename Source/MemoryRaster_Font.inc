@@ -89,7 +89,7 @@ var
 begin
   C.RGBA := TFontRaster.PDrawWorkData(Sender^.UserData)^.DestColor;
   C.A := TRasterColorEntry(f).A;
-  Internal_ComputeBlend(Sender, C.RGBA, m, B);
+  Vertex_ComputeBlend(Sender, C.RGBA, m, B);
 end;
 
 constructor TFontRaster.Create;
@@ -431,6 +431,7 @@ end;
 function TFontRaster.Draw(Text: TFontRasterString; Dst: TMemoryRaster; dstVec: TVec2; dstColor: TRasterColor;
   const bilinear_sampling: Boolean; const Alpha: TGeoFloat; const Axis: TVec2; const Angle, Scale: TGeoFloat): TVec2;
 var
+  bak_userData: Pointer;
   dd: TDrawWorkData;
   TempSampler: TMemoryRaster;
   vm: TVertexMap;
@@ -451,7 +452,8 @@ begin
   TempSampler := TMemoryRaster.Create;
   TempSampler.SetWorkMemory(nil, FWidth, FHeight);
 
-  vm.Init(Dst);
+  vm := Dst.Vertex;
+  bak_userData := vm.UserData;
   vm.ComputeNearest := {$IFDEF FPC}@{$ENDIF FPC}fr_ComputeNearest;
   vm.ComputeLinear := {$IFDEF FPC}@{$ENDIF FPC}fr_ComputeLinear;
   vm.ComputeBlend := {$IFDEF FPC}@{$ENDIF FPC}fr_ComputeBlend;
@@ -470,38 +472,50 @@ begin
   wp.Scale := Scale;
   wi := 0;
 
+  vm.BeginUpdate;
   // projection
-  for i := 1 to Text.Len do
-    begin
-      C := Text[i];
-      fd := @(FFontTable^[Word(C)]);
+  try
+    for i := 1 to Text.Len do
+      begin
+        C := Text[i];
+        fd := @(FFontTable^[Word(C)]);
 
-      if C = #10 then
-          continue;
+        if C = #10 then
+            continue;
 
-      if C = #9 then
-          continue;
+        if C = #9 then
+            continue;
 
-      if C = #13 then
-          continue;
+        if C = #13 then
+            continue;
 
-      if not fd^.Activted then
-          continue;
+        if not fd^.Activted then
+            continue;
 
-      s := RectV2(fd^.X, fd^.Y, fd^.X + fd^.W + 1, fd^.Y + fd^.H + 1);
+        s := RectV2(fd^.X, fd^.Y, fd^.X + fd^.W + 1, fd^.Y + fd^.H + 1);
 
-      cv := wp.Points[wi];
+        cv := wp.Points[wi];
 
-      vm.DrawRect(TV2Rect4.Init(s, 0),
-        TV2Rect4.Init(cv, (fd^.W + 1) * Scale, (fd^.H + 1) * Scale, Angle), TempSampler, bilinear_sampling, 1);
+        vm.DrawRect(TV2Rect4.Init(s, 0),
+          TV2Rect4.Init(cv, (fd^.W + 1) * Scale, (fd^.H + 1) * Scale, Angle), TempSampler, bilinear_sampling, 1);
 
-      inc(wi);
-    end;
+        inc(wi);
+      end;
+  finally
+    vm.EndUpdate;
+
+    DisposeObject(wp);
+    DisposeObject(TempSampler);
+
+    // restore vertex parameter
+    vm.ComputeBlend := {$IFDEF FPC}@{$ENDIF FPC}Vertex_ComputeBlend;
+    vm.ComputeNearest := {$IFDEF FPC}@{$ENDIF FPC}Vertex_ComputeNearest;
+    vm.ComputeLinear := {$IFDEF FPC}@{$ENDIF FPC}Vertex_ComputeLinear;
+    vm.UserData := bak_userData;
+  end;
 
   Result := vSiz;
 
-  DisposeObject(wp);
-  DisposeObject(TempSampler);
 end;
 
 procedure TFontRaster.Draw(Text: TFontRasterString; Dst: TMemoryRaster; dstVec: TVec2; dstColor: TRasterColor);

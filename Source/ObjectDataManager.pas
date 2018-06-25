@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 (*
   update history
@@ -106,10 +108,7 @@ type
     function GetFirstHeaderFromField(FieldPos: Int64; var h: THeader): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function GetLastHeaderFromField(FieldPos: Int64; var h: THeader): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function GetHeader(hPos: Int64; var h: THeader): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-    function ItemAddFile(var ItemHnd: TItemHandle; const FileName: SystemString): Boolean;
-    function ItemAutoConnect(const dbPath, DBItem, DBItemDescription: SystemString; var ItemHnd: TItemHandle): Boolean;
-    function ItemFastAutoConnect_F(const FieldPos: Int64; const DBItem, DBItemDescription: SystemString; var ItemHnd: TItemHandle): Boolean;
-    function ItemFastAutoConnect_L(const FieldPos: Int64; const DBItem, DBItemDescription: SystemString; var ItemHnd: TItemHandle): Boolean;
+    function ItemAutoOpenOrCreate(const dbPath, DBItem, DBItemDescription: SystemString; var ItemHnd: TItemHandle): Boolean;
     function ItemUpdate(var ItemHnd: TItemHandle): Boolean;
     function ItemClose(var ItemHnd: TItemHandle): Boolean;
     function ItemReName(const FieldPos: Int64; var ItemHnd: TItemHandle; const aNewName, aNewDescription: SystemString): Boolean;
@@ -151,7 +150,6 @@ type
     property DefaultItemID: Byte read FDefaultItemID;
     property StreamEngine: TCoreClassStream read FStreamEngine;
     property DBTime: TDateTime read GetDBTime;
-
     property OverWriteItem: Boolean read GetOverWriteItem write SetOverWriteItem;
     property AllowSameHeaderName: Boolean read GetAllowSameHeaderName write SetAllowSameHeaderName;
     // user custom data
@@ -159,8 +157,7 @@ type
   end;
 
   TObjectDataManagerOfCache = class(TObjectDataManager)
-  private
-    type
+  private type
     PObjectDataCacheHeader    = PHeader;
     PObjectDataCacheItemBlock = PItemBlock;
 
@@ -782,113 +779,12 @@ begin
   Result := dbHeader_ReadRec(hPos, FObjectDataHandle.IOHnd, h);
 end;
 
-function TObjectDataManager.ItemAddFile(var ItemHnd: TItemHandle; const FileName: SystemString): Boolean;
-var
-  RepaInt: Integer;
-  FileHandle: TIOHnd;
-  FileSize: Int64;
-  Buff: array [0 .. MaxBuffSize] of umlChar;
-begin
-  Result := False;
-  if not umlFileExists(FileName) then
-      Exit;
-  InitIOHnd(FileHandle);
-  if not umlFileOpen(FileName, FileHandle, True) then
-    begin
-      umlFileClose(FileHandle);
-      Exit;
-    end;
-  FileSize := FileHandle.Size;
-
-  if not dbPack_ItemWrite(umlSizeLength, FileSize, ItemHnd, FObjectDataHandle) then
-    begin
-      umlFileClose(FileHandle);
-      Exit;
-    end;
-
-  if FileSize > MaxBuffSize then
-    begin
-      for RepaInt := 1 to FileSize div MaxBuffSize do
-        begin
-          if not umlFileRead(FileHandle, MaxBuffSize, Buff) then
-            begin
-              umlFileClose(FileHandle);
-              Exit;
-            end;
-          if not dbPack_ItemWrite(MaxBuffSize, Buff, ItemHnd, FObjectDataHandle) then
-            begin
-              umlFileClose(FileHandle);
-              Exit;
-            end;
-        end;
-      if (FileSize mod MaxBuffSize) > 0 then
-        begin
-          if not umlFileRead(FileHandle, FileSize mod MaxBuffSize, Buff) then
-            begin
-              umlFileClose(FileHandle);
-              Exit;
-            end;
-          if not dbPack_ItemWrite(FileSize mod MaxBuffSize, Buff, ItemHnd, FObjectDataHandle) then
-            begin
-              umlFileClose(FileHandle);
-              Exit;
-            end;
-        end;
-    end
-  else
-    begin
-      if FileSize > 0 then
-        begin
-          if not umlFileRead(FileHandle, FileSize, Buff) then
-            begin
-              umlFileClose(FileHandle);
-              Exit;
-            end;
-          if not dbPack_ItemWrite(FileSize, Buff, ItemHnd, FObjectDataHandle) then
-            begin
-              umlFileClose(FileHandle);
-              Exit;
-            end;
-        end;
-    end;
-  umlFileClose(FileHandle);
-  Result := True;
-end;
-
-function TObjectDataManager.ItemAutoConnect(const dbPath, DBItem, DBItemDescription: SystemString; var ItemHnd: TItemHandle): Boolean;
+function TObjectDataManager.ItemAutoOpenOrCreate(const dbPath, DBItem, DBItemDescription: SystemString; var ItemHnd: TItemHandle): Boolean;
 begin
   if ItemExists(dbPath, DBItem) then
       Result := ItemOpen(dbPath, DBItem, ItemHnd)
   else
       Result := ItemCreate(dbPath, DBItem, DBItemDescription, ItemHnd);
-end;
-
-function TObjectDataManager.ItemFastAutoConnect_F(const FieldPos: Int64; const DBItem, DBItemDescription: SystemString; var ItemHnd: TItemHandle): Boolean;
-var
-  srHnd: TItemSearch;
-begin
-  if ItemFastFindFirst(FieldPos, DBItem, srHnd) then
-    begin
-      Result := ItemFastOpen(srHnd.HeaderPOS, ItemHnd);
-    end
-  else
-    begin
-      Result := ItemFastCreate(FieldPos, DBItem, DBItemDescription, ItemHnd);
-    end;
-end;
-
-function TObjectDataManager.ItemFastAutoConnect_L(const FieldPos: Int64; const DBItem, DBItemDescription: SystemString; var ItemHnd: TItemHandle): Boolean;
-var
-  srHnd: TItemSearch;
-begin
-  if ItemFastFindLast(FieldPos, DBItem, srHnd) then
-    begin
-      Result := ItemFastOpen(srHnd.HeaderPOS, ItemHnd);
-    end
-  else
-    begin
-      Result := ItemFastCreate(FieldPos, DBItem, DBItemDescription, ItemHnd);
-    end;
 end;
 
 function TObjectDataManager.ItemUpdate(var ItemHnd: TItemHandle): Boolean;
@@ -1430,27 +1326,16 @@ begin
   FFieldCache.AutoFreeData := True;
   FFieldCache.AccessOptimization := True;
 
-  {$IFDEF FPC}
-  FHeaderCache.OnAddDataNotifyProc := @HeaderCache_AddDataProc;
-  FItemBlockCache.OnAddDataNotifyProc := @ItemBlockCache_AddDataProc;
-  FItemCache.OnAddDataNotifyProc := @ItemCache_AddDataProc;
-  FFieldCache.OnAddDataNotifyProc := @FieldCache_AddDataProc;
+  FHeaderCache.OnAddDataNotifyProc := {$IFDEF FPC}@{$ENDIF FPC}HeaderCache_AddDataProc;
+  FItemBlockCache.OnAddDataNotifyProc := {$IFDEF FPC}@{$ENDIF FPC}ItemBlockCache_AddDataProc;
+  FItemCache.OnAddDataNotifyProc := {$IFDEF FPC}@{$ENDIF FPC}ItemCache_AddDataProc;
+  FFieldCache.OnAddDataNotifyProc := {$IFDEF FPC}@{$ENDIF FPC}FieldCache_AddDataProc;
 
-  FHeaderCache.OnDataFreeProc := @HeaderCache_DataFreeProc;
-  FItemBlockCache.OnDataFreeProc := @ItemBlockCache_DataFreeProc;
-  FItemCache.OnDataFreeProc := @ItemCache_DataFreeProc;
-  FFieldCache.OnDataFreeProc := @FieldCache_DataFreeProc;
-  {$ELSE}
-  FHeaderCache.OnAddDataNotifyProc := HeaderCache_AddDataProc;
-  FItemBlockCache.OnAddDataNotifyProc := ItemBlockCache_AddDataProc;
-  FItemCache.OnAddDataNotifyProc := ItemCache_AddDataProc;
-  FFieldCache.OnAddDataNotifyProc := FieldCache_AddDataProc;
+  FHeaderCache.OnDataFreeProc := {$IFDEF FPC}@{$ENDIF FPC}HeaderCache_DataFreeProc;
+  FItemBlockCache.OnDataFreeProc := {$IFDEF FPC}@{$ENDIF FPC}ItemBlockCache_DataFreeProc;
+  FItemCache.OnDataFreeProc := {$IFDEF FPC}@{$ENDIF FPC}ItemCache_DataFreeProc;
+  FFieldCache.OnDataFreeProc := {$IFDEF FPC}@{$ENDIF FPC}FieldCache_DataFreeProc;
 
-  FHeaderCache.OnDataFreeProc := HeaderCache_DataFreeProc;
-  FItemBlockCache.OnDataFreeProc := ItemBlockCache_DataFreeProc;
-  FItemCache.OnDataFreeProc := ItemCache_DataFreeProc;
-  FFieldCache.OnDataFreeProc := FieldCache_DataFreeProc;
-  {$ENDIF}
   BuildDBCacheIntf;
 end;
 
@@ -1463,33 +1348,18 @@ end;
 
 procedure TObjectDataManagerOfCache.BuildDBCacheIntf;
 begin
-  {$IFDEF FPC}
-  ObjectDataHandlePtr^.OnWriteHeader := @HeaderWriteProc;
-  ObjectDataHandlePtr^.OnReadHeader := @HeaderReadProc;
-  ObjectDataHandlePtr^.OnWriteItemBlock := @ItemBlockWriteProc;
-  ObjectDataHandlePtr^.OnReadItemBlock := @ItemBlockReadProc;
-  ObjectDataHandlePtr^.OnWriteItem := @ItemWriteProc;
-  ObjectDataHandlePtr^.OnReadItem := @ItemReadProc;
-  ObjectDataHandlePtr^.OnOnlyWriteItemRec := @OnlyItemRecWriteProc;
-  ObjectDataHandlePtr^.OnOnlyReadItemRec := @OnlyItemRecReadProc;
-  ObjectDataHandlePtr^.OnWriteField := @FieldWriteProc;
-  ObjectDataHandlePtr^.OnReadField := @FieldReadProc;
-  ObjectDataHandlePtr^.OnOnlyWriteFieldRec := @OnlyFieldRecWriteProc;
-  ObjectDataHandlePtr^.OnOnlyReadFieldRec := @OnlyFieldRecReadProc;
-  {$ELSE}
-  ObjectDataHandlePtr^.OnWriteHeader := HeaderWriteProc;
-  ObjectDataHandlePtr^.OnReadHeader := HeaderReadProc;
-  ObjectDataHandlePtr^.OnWriteItemBlock := ItemBlockWriteProc;
-  ObjectDataHandlePtr^.OnReadItemBlock := ItemBlockReadProc;
-  ObjectDataHandlePtr^.OnWriteItem := ItemWriteProc;
-  ObjectDataHandlePtr^.OnReadItem := ItemReadProc;
-  ObjectDataHandlePtr^.OnOnlyWriteItemRec := OnlyItemRecWriteProc;
-  ObjectDataHandlePtr^.OnOnlyReadItemRec := OnlyItemRecReadProc;
-  ObjectDataHandlePtr^.OnWriteField := FieldWriteProc;
-  ObjectDataHandlePtr^.OnReadField := FieldReadProc;
-  ObjectDataHandlePtr^.OnOnlyWriteFieldRec := OnlyFieldRecWriteProc;
-  ObjectDataHandlePtr^.OnOnlyReadFieldRec := OnlyFieldRecReadProc;
-  {$ENDIF}
+  ObjectDataHandlePtr^.OnWriteHeader := {$IFDEF FPC}@{$ENDIF FPC}HeaderWriteProc;
+  ObjectDataHandlePtr^.OnReadHeader := {$IFDEF FPC}@{$ENDIF FPC}HeaderReadProc;
+  ObjectDataHandlePtr^.OnWriteItemBlock := {$IFDEF FPC}@{$ENDIF FPC}ItemBlockWriteProc;
+  ObjectDataHandlePtr^.OnReadItemBlock := {$IFDEF FPC}@{$ENDIF FPC}ItemBlockReadProc;
+  ObjectDataHandlePtr^.OnWriteItem := {$IFDEF FPC}@{$ENDIF FPC}ItemWriteProc;
+  ObjectDataHandlePtr^.OnReadItem := {$IFDEF FPC}@{$ENDIF FPC}ItemReadProc;
+  ObjectDataHandlePtr^.OnOnlyWriteItemRec := {$IFDEF FPC}@{$ENDIF FPC}OnlyItemRecWriteProc;
+  ObjectDataHandlePtr^.OnOnlyReadItemRec := {$IFDEF FPC}@{$ENDIF FPC}OnlyItemRecReadProc;
+  ObjectDataHandlePtr^.OnWriteField := {$IFDEF FPC}@{$ENDIF FPC}FieldWriteProc;
+  ObjectDataHandlePtr^.OnReadField := {$IFDEF FPC}@{$ENDIF FPC}FieldReadProc;
+  ObjectDataHandlePtr^.OnOnlyWriteFieldRec := {$IFDEF FPC}@{$ENDIF FPC}OnlyFieldRecWriteProc;
+  ObjectDataHandlePtr^.OnOnlyReadFieldRec := {$IFDEF FPC}@{$ENDIF FPC}OnlyFieldRecReadProc;
 end;
 
 procedure TObjectDataManagerOfCache.FreeDBCacheIntf;

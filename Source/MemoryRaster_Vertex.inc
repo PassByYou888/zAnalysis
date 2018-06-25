@@ -1,10 +1,3 @@
-{
-  Make sure the triangle has counter-clockwise winding
-
-  For a triangle A B C, you can find the winding by computing the cross product (B - A) rx (C - A).
-  For 2d tri's, with z=0, it will only have a z component.
-  To give all the same winding, swap vertices C and B if this z component is negative.
-}
 function EnsureCcWinding(var t: TTriangle): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
   procedure swap_vertex(var A, B: TVert2); {$IFDEF INLINE_ASM} inline; {$ENDIF}
   var
@@ -13,6 +6,13 @@ function EnsureCcWinding(var t: TTriangle): Boolean; {$IFDEF INLINE_ASM} inline;
     v := A; A := B; B := v;
   end;
 
+{
+  Make sure the triangle has counter-clockwise winding
+
+  For a triangle A B C, you can find the winding by computing the cross product (B - A) rx (C - A).
+  For 2d tri's, with z=0, it will only have a z component.
+  To give all the same winding, swap vertices C and B if this z component is negative.
+}
 begin
   result := false;
   if (t[1].render[0] - t[0].render[0]) * (t[2].render[1] - t[0].render[1]) > (t[2].render[0] - t[0].render[0]) * (t[1].render[1] - t[0].render[1]) then
@@ -22,10 +22,10 @@ begin
     end;
 end;
 
+function TexCoordWrapRepeat(const f: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 {
   emulate OpenGL4.4 GL_TEXTURE_WRAP_S/T: GL_REPEAT
 }
-function TexCoordWrapRepeat(const f: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
   if f < 0 then
       result := 1 - trunc(f) + f
@@ -35,7 +35,7 @@ begin
       result := f;
 end;
 
-procedure Internal_ComputeBlend(const Sender: PVertexMap; const f, m: TRasterColor; var B: TRasterColor);
+procedure Vertex_ComputeBlend(const Sender: PVertexMap; const f, m: TRasterColor; var B: TRasterColor);
 begin
   if m >= 255 then
       BlendMem(f, B)
@@ -43,7 +43,7 @@ begin
       BlendMemEx(f, B, m);
 end;
 
-function Internal_ComputeNearest(const Sender: PVertexMap; const Sampler: TMemoryRaster; const x, y: TGeoFloat): TRasterColor;
+function Vertex_ComputeNearest(const Sender: PVertexMap; const Sampler: TMemoryRaster; const x, y: TGeoFloat): TRasterColor;
 var
   tu0, tv0: Integer;
 begin
@@ -52,7 +52,7 @@ begin
   result := Sampler.Pixel[tu0, tv0];
 end;
 
-function Internal_ComputeLinear(const Sender: PVertexMap; const Sampler: TMemoryRaster; const x, y: TGeoFloat): TRasterColor;
+function Vertex_ComputeLinear(const Sender: PVertexMap; const Sampler: TMemoryRaster; const x, y: TGeoFloat): TRasterColor;
   procedure ClampF(var f: TGeoFloat); inline;
   begin
     if f < 0 then
@@ -121,10 +121,10 @@ begin
   ClampF(B);
   ClampF(A);
 
-  TRasterColorEntry(result).R := Round(R * 255);
-  TRasterColorEntry(result).G := Round(G * 255);
-  TRasterColorEntry(result).B := Round(B * 255);
-  TRasterColorEntry(result).A := Round(A * 255);
+  TRasterColorEntry(result).R := trunc(R * 255);
+  TRasterColorEntry(result).G := trunc(G * 255);
+  TRasterColorEntry(result).B := trunc(B * 255);
+  TRasterColorEntry(result).A := trunc(A * 255);
 end;
 
 procedure TVertexMap.RasterizeTriangle(const ft: TFragSampling; const sc: TRasterColor; const Tex: TMemoryRaster; const t: TTriangle);
@@ -185,7 +185,7 @@ var
     y1, y2, y3: Integer;
     C1, C2, C3: Integer;
   begin
-    // 28.4 fixed-point coordinates
+    // fixed-point coordinates
     x1 := trunc(t[0].render[0] * 16);
     y1 := trunc(t[0].render[1] * 16);
     x2 := trunc(t[1].render[0] * 16);
@@ -241,7 +241,7 @@ var
   end;
 
 begin
-  // init pixel rasterization
+  // pixel rasterization
   RasterizationSetup;
 
   // init triangle interpolation
@@ -297,11 +297,15 @@ begin
       if (bitX < 0) or (bitX >= WindowSize) then
           break;
 
-      case ft of
-        fsSolid: BlendMem(sc, Window.Bits^[bitX]);
-        fsNearest: ComputeBlend(@Self, ComputeNearest(@Self, Tex, x, y), Tex.MasterAlpha, Window.Bits^[bitX]);
-        fsLinear: ComputeBlend(@Self, ComputeLinear(@Self, Tex, x, y), Tex.MasterAlpha, Window.Bits^[bitX]);
-      end;
+      if FNearestWriteBuffer[bitX] <> FNearestWriterID then
+        begin
+          FNearestWriteBuffer[bitX] := FNearestWriterID;
+          case ft of
+            fsSolid: BlendMem(sc, Window.Bits^[bitX]);
+            fsNearest: ComputeBlend(@Self, ComputeNearest(@Self, Tex, x, y), Tex.MasterAlpha, Window.Bits^[bitX]);
+            fsLinear: ComputeBlend(@Self, ComputeLinear(@Self, Tex, x, y), Tex.MasterAlpha, Window.Bits^[bitX]);
+          end;
+        end;
 
       x := x + attr_u.A;
       y := y + attr_v.A;
@@ -309,18 +313,22 @@ begin
     end;
 end;
 
-procedure TVertexMap.Init(const w: TMemoryRaster);
+procedure TVertexMap.NewWriterBuffer;
+var
+  old: Byte;
 begin
-  Window := w;
-  WindowSize := Window.Width * Window.Height;
-  ComputeBlend := {$IFDEF FPC}@{$ENDIF FPC}Internal_ComputeBlend;
-  ComputeNearest := {$IFDEF FPC}@{$ENDIF FPC}Internal_ComputeNearest;
-  ComputeLinear := {$IFDEF FPC}@{$ENDIF FPC}Internal_ComputeLinear;
-  Debug := false;
-  UserData := nil;
+  if FCurrentUpdate > 0 then
+      exit;
+  old := FNearestWriterID;
+  inc(FNearestWriterID);
+  if FNearestWriterID < old then
+    begin
+      FillPtrByte(@FNearestWriteBuffer[0], Length(FNearestWriteBuffer), FNearestWriterID);
+      inc(FNearestWriterID);
+    end;
 end;
 
-procedure TVertexMap.DrawTriangle(const triangle: TTriangle; const Sampler: TRasterColor);
+procedure TVertexMap.internal_Draw(const triangle: TTriangle; const Sampler: TRasterColor);
 var
   nt: TTriangle;
   offset_u, offset_v: TGeoFloat;
@@ -339,12 +347,9 @@ begin
   nt[2].render[1] := nt[2].render[1] * Window.Height;
 
   RasterizeTriangle(TFragSampling.fsSolid, Sampler, nil, nt);
-
-  if Debug then
-      Window.DrawTriangle_Render(triangle, true, RasterColorF(1, 0, 0, 0.8), true);
 end;
 
-procedure TVertexMap.DrawTriangle(const triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean);
+procedure TVertexMap.internal_Draw(const triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean);
 var
   nt: TTriangle;
   offset_u, offset_v: TGeoFloat;
@@ -375,22 +380,69 @@ begin
       RasterizeTriangle(TFragSampling.fsLinear, RasterColor(0, 0, 0), Sampler, nt)
   else
       RasterizeTriangle(TFragSampling.fsNearest, RasterColor(0, 0, 0), Sampler, nt);
-
-  if Debug then
-      Window.DrawTriangle_Render(triangle, true, RasterColorF(1, 0, 0, 0.8), true);
 end;
 
-procedure TVertexMap.DrawTriangle(const triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean; const Alpha: Single);
+procedure TVertexMap.internal_Draw(const triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean; const Alpha: Single);
 var
   mA: Cardinal;
 begin
   mA := Sampler.MasterAlpha;
   if Alpha > 1.0 then
-      Sampler.MasterAlpha := ClampByte(Round(Alpha))
+      Sampler.MasterAlpha := ClampByte(trunc(Alpha))
   else
-      Sampler.MasterAlpha := ClampByte(Round(Alpha * 255));
-  DrawTriangle(triangle, Sampler, bilinear_sampling);
+      Sampler.MasterAlpha := ClampByte(trunc(Alpha * 255));
+  internal_Draw(triangle, Sampler, bilinear_sampling);
   Sampler.MasterAlpha := mA;
+end;
+
+constructor TVertexMap.Create(raster: TMemoryRaster);
+begin
+  inherited Create;
+  SetLength(FNearestWriteBuffer, raster.Width * raster.Height);
+  FNearestWriterID := 0;
+  FCurrentUpdate := 0;
+  ComputeBlend := {$IFDEF FPC}@{$ENDIF FPC}Vertex_ComputeBlend;
+  ComputeNearest := {$IFDEF FPC}@{$ENDIF FPC}Vertex_ComputeNearest;
+  ComputeLinear := {$IFDEF FPC}@{$ENDIF FPC}Vertex_ComputeLinear;
+  Window := raster;
+  WindowSize := Window.Width * Window.Height;
+  UserData := nil;
+end;
+
+destructor TVertexMap.Destroy;
+begin
+  SetLength(FNearestWriteBuffer, 0);
+  inherited Destroy;
+end;
+
+procedure TVertexMap.BeginUpdate;
+begin
+  if FCurrentUpdate = 0 then
+      NewWriterBuffer;
+  inc(FCurrentUpdate);
+end;
+
+procedure TVertexMap.EndUpdate;
+begin
+  dec(FCurrentUpdate);
+end;
+
+procedure TVertexMap.DrawTriangle(const triangle: TTriangle; const Sampler: TRasterColor);
+begin
+  NewWriterBuffer;
+  internal_Draw(triangle, Sampler);
+end;
+
+procedure TVertexMap.DrawTriangle(const triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean);
+begin
+  NewWriterBuffer;
+  internal_Draw(triangle, Sampler, bilinear_sampling);
+end;
+
+procedure TVertexMap.DrawTriangle(const triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean; const Alpha: TGeoFloat);
+begin
+  NewWriterBuffer;
+  internal_Draw(triangle, Sampler, bilinear_sampling, Alpha);
 end;
 
 procedure TVertexMap.DrawRect(const RenVec: TV2Rect4; const Sampler: TRasterColor);
@@ -398,23 +450,19 @@ var
   rv: TV2Rect4;
   t: TTriangle;
 begin
+  NewWriterBuffer;
   rv := RenVec.FDiv(Vec2(Window.Width, Window.Height));
-
-  t[0].Sampler := rv.LeftTop;
+  t[0].Sampler := ZeroVec2;
+  t[1].Sampler := ZeroVec2;
+  t[2].Sampler := ZeroVec2;
   t[0].render := rv.LeftTop;
-  t[1].Sampler := rv.RightTop;
   t[1].render := rv.RightTop;
-  t[2].Sampler := rv.LeftBottom;
   t[2].render := rv.LeftBottom;
-  DrawTriangle(t, Sampler);
-
-  t[0].Sampler := rv.LeftBottom;
+  internal_Draw(t, Sampler);
   t[0].render := rv.LeftBottom;
-  t[1].Sampler := rv.RightTop;
   t[1].render := rv.RightTop;
-  t[2].Sampler := rv.RightBottom;
   t[2].render := rv.RightBottom;
-  DrawTriangle(t, Sampler);
+  internal_Draw(t, Sampler);
 end;
 
 procedure TVertexMap.DrawRect(const SamVec, RenVec: TV2Rect4; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean; const Alpha: Single);
@@ -422,24 +470,23 @@ var
   sv, rv: TV2Rect4;
   t: TTriangle;
 begin
+  NewWriterBuffer;
   sv := SamVec.FDiv(Vec2(Sampler.Width, Sampler.Height));
   rv := RenVec.FDiv(Vec2(Window.Width, Window.Height));
-
   t[0].Sampler := sv.LeftTop;
   t[0].render := rv.LeftTop;
   t[1].Sampler := sv.RightTop;
   t[1].render := rv.RightTop;
   t[2].Sampler := sv.LeftBottom;
   t[2].render := rv.LeftBottom;
-  DrawTriangle(t, Sampler, bilinear_sampling, Alpha);
-
+  internal_Draw(t, Sampler, bilinear_sampling, Alpha);
   t[0].Sampler := sv.LeftBottom;
   t[0].render := rv.LeftBottom;
   t[1].Sampler := sv.RightTop;
   t[1].render := rv.RightTop;
   t[2].Sampler := sv.RightBottom;
   t[2].render := rv.RightBottom;
-  DrawTriangle(t, Sampler, bilinear_sampling, Alpha);
+  internal_Draw(t, Sampler, bilinear_sampling, Alpha);
 end;
 
 procedure TVertexMap.DrawRect(const RenVec: TRectV2; const Sampler: TRasterColor);
@@ -467,17 +514,19 @@ begin
   DrawRect(SamVec, TV2Rect4.Init(RenVec, RenAngle), Sampler, bilinear_sampling, Alpha);
 end;
 
-procedure TVertexMap.DrawPoly(const RenVec: TVec2List; const Sampler: TRasterColor);
+procedure TVertexMap.FillPoly(const RenVec: TVec2List; const cen: TVec2; const Sampler: TRasterColor);
 var
   rv: TVec2List;
   rCen: TVec2;
   i: Integer;
   t: TTriangle;
 begin
+  NewWriterBuffer;
+
   rv := TVec2List.Create;
   rv.Assign(RenVec);
   rv.FDiv(Window.Width, Window.Height);
-  rCen := rv.Centroid;
+  rCen := Vec2Div(cen, Vec2(Window.Width, Window.Height));
 
   t[0].Sampler := ZeroVec2;
   t[1].Sampler := ZeroVec2;
@@ -488,18 +537,22 @@ begin
       t[0].render := rCen;
       t[1].render := rv[i]^;
       t[2].render := rv[i - 1]^;
-      DrawTriangle(t, Sampler);
+      internal_Draw(t, Sampler);
     end;
 
   t[0].render := rCen;
   t[1].render := rv.First^;
   t[2].render := rv.Last^;
-  DrawTriangle(t, Sampler);
-
+  internal_Draw(t, Sampler);
   DisposeObject(rv);
 end;
 
-procedure TVertexMap.DrawPoly(const SamVec, RenVec: TVec2List; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean);
+procedure TVertexMap.FillPoly(const RenVec: TVec2List; const Sampler: TRasterColor);
+begin
+  FillPoly(RenVec, RenVec.Centroid, Sampler);
+end;
+
+procedure TVertexMap.FillPoly(const SamVec, RenVec: TVec2List; const SamCen, RenCen: TVec2; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean);
 var
   sv, rv: TVec2List;
   sCen, rCen: TVec2;
@@ -509,15 +562,17 @@ begin
   if SamVec.Count <> RenVec.Count then
       RaiseInfo('vertex error');
 
+  NewWriterBuffer;
+
   sv := TVec2List.Create;
   sv.Assign(SamVec);
   sv.FDiv(Sampler.Width, Sampler.Height);
-  sCen := sv.Centroid;
+  sCen := Vec2Div(SamCen, Vec2(Sampler.Width, Sampler.Height));
 
   rv := TVec2List.Create;
   rv.Assign(RenVec);
   rv.FDiv(Window.Width, Window.Height);
-  rCen := rv.Centroid;
+  rCen := Vec2Div(RenCen, Vec2(Window.Width, Window.Height));
 
   for i := 1 to sv.Count - 1 do
     begin
@@ -527,7 +582,7 @@ begin
       t[1].render := rv[i]^;
       t[2].Sampler := sv[i - 1]^;
       t[2].render := rv[i - 1]^;
-      DrawTriangle(t, Sampler, bilinear_sampling);
+      internal_Draw(t, Sampler, bilinear_sampling);
     end;
 
   t[0].Sampler := sCen;
@@ -536,10 +591,15 @@ begin
   t[1].render := rv.First^;
   t[2].Sampler := sv.Last^;
   t[2].render := rv.Last^;
-  DrawTriangle(t, Sampler, bilinear_sampling);
+  internal_Draw(t, Sampler, bilinear_sampling);
 
   DisposeObject(sv);
   DisposeObject(rv);
+end;
+
+procedure TVertexMap.FillPoly(const SamVec, RenVec: TVec2List; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean);
+begin
+  FillPoly(SamVec, RenVec, SamVec.Centroid, RenVec.Centroid, Sampler, bilinear_sampling);
 end;
 
 procedure TestVetexMap;
@@ -548,15 +608,18 @@ var
   pr: TVertexMap;
 
   vl: TVec2List;
+  bbb: Byte;
 begin
+  bbb := $FF;
+  inc(bbb);
   B := TMemoryRaster.Create;
   B.LoadFromFile('c:\1.bmp');
   b2 := TMemoryRaster.Create;
   b2.SetSize(512, 512, RasterColorF(0, 0, 0, 1));
   b2.Agg.LineWidth := 1;
 
-  pr.Init(b2);
-  pr.Debug := true;
+  pr := b2.Vertex;
+  // pr.Debug := true;
 
   pr.DrawRect(TV2Rect4.Init(B.BoundsRectV2, 0), TV2Rect4.Init(b2.BoundsRectV2, 0), B, false, 0.5);
   pr.DrawRect(TV2Rect4.Init(B.BoundsRectV2, 0), TV2Rect4.Init(Vec2(200, 300), 100, 100, 45), B, true, 1.0);
@@ -567,9 +630,9 @@ begin
 
   vl := TVec2List.Create;
   vl.AddCirclePoint(20, Vec2(150, 150), 150);
-  pr.DrawPoly(vl, vl, B, false);
+  pr.FillPoly(vl, vl, B, false);
   vl.Transform(200, 200);
-  pr.DrawPoly(vl, RasterColorF(1, 0, 0, 0.5));
+  pr.FillPoly(vl, RasterColorF(1, 0, 0, 0.5));
 
   b2.SaveToFile('c:\test2.bmp');
   B.SaveToFile('c:\test1.bmp');

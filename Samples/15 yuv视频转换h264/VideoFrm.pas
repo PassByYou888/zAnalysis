@@ -109,7 +109,7 @@ procedure TVideoForm.ProcessButtonClick(Sender: TObject);
     clientLayout.Enabled := False;
     Timer.Enabled := False;
 
-    enWriter := TY4MWriter.Create(yR.Width, yR.Height, Trunc(yR.FrameRate), Y4MSaveDialog.FileName);
+    enWriter := TY4MWriter.Create(yR.Width, yR.Height, Round(yR.FrameRate + 0.5), Y4MSaveDialog.FileName);
     raster := TMemoryRaster.Create;
     yR.SeekFirstFrame;
     for i := yR.CurrentFrame to yR.FrameCount - 1 do

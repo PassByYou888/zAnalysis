@@ -12,9 +12,6 @@ uses
   FastKDTreeD, FastKDTreeE, FastKDTreeS, FastKDTreeC, FastKDTreeI8,
   FastKDTreeI16, FastKDTreeI32, FastKDTreeI64;
 
-var
-  i: integer;
-
 begin
   KDTree.Test_KDTree(64);
   FastKDTreeI8.Test_All;

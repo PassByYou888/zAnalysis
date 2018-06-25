@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
 unit h264Util;
@@ -18,16 +20,16 @@ interface
 uses
   h264Stdint, math, CoreClasses;
 
-function fev_malloc(size: uint32_t): pointer;
-procedure fev_free(ptr: pointer);
+function fev_malloc(size: uint32_t): pointer; inline;
+procedure fev_free(ptr: pointer); inline;
 
 function min(const a, b: int32_t): int32_t; inline;
 function max(const a, b: int32_t): int32_t; inline;
 function clip3(const a, b, c: int32_t): int32_t; inline; // lower bound, value, upper bound
-function median(const x, y, z: int32_t): int16_t;
-function num2log2(n: int32_t): uint8_t;
-procedure swap_ptr(var a, b: pointer); overload;
-procedure swap_ptr(var a, b: uint8_p); overload;
+function median(const x, y, z: int32_t): int16_t; inline;
+function num2log2(n: int32_t): uint8_t; inline;
+procedure swap_ptr(var a, b: pointer); overload; inline;
+procedure swap_ptr(var a, b: uint8_p); overload; inline;
 
 type
   mbcmp_func_t     = function(pix1, pix2: uint8_p; stride: int32_t): int32_t;
@@ -38,7 +40,7 @@ type
   mc_chroma_func_t = procedure(src, dst: uint8_p; const stride: int32_t; coef: uint8_p);
 
   { TDsp }
-  TDsp = class
+  TDSP = class(TCoreClassObject)
   public
     sad_16x16, sad_8x8, sad_4x4, ssd_16x16, ssd_8x8, satd_4x4, satd_8x8, satd_16x16: mbcmp_func_t;
     var_16x16: mbstat_func_t;
@@ -51,7 +53,7 @@ type
   end;
 
 var
-  dsp: TDsp;
+  DSP: TDSP;
 
 implementation
 
@@ -140,7 +142,7 @@ end;
 
 { TDsp }
 
-constructor TDsp.Create;
+constructor TDSP.Create;
 begin
   pixel_init;
   motion_compensate_init;

@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
 (*
@@ -1390,97 +1392,97 @@ end;
 
 class procedure TCipher.GenerateNoneKey(var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength);
+  SetLength(Output, C_Byte_Size);
   Output[0] := Byte(TCipherKeyStyle.cksNone);
 end;
 
 class procedure TCipher.GenerateKey64(const s: TPascalString; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey64Size);
+  SetLength(Output, C_Byte_Size + cKey64Size);
   Output[0] := Byte(TCipherKeyStyle.cksKey64);
   TLMD.GenerateLMDKey((@Output[1])^, cKey64Size, s.Bytes);
 end;
 
 class procedure TCipher.GenerateKey64(sour: Pointer; Size: nativeInt; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey64Size);
+  SetLength(Output, C_Byte_Size + cKey64Size);
   Output[0] := Byte(TCipherKeyStyle.cksKey64);
   TLMD.HashLMD((@Output[1])^, cKey64Size, sour^, Size);
 end;
 
 class procedure TCipher.GenerateKey128(const s: TPascalString; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey128Size);
+  SetLength(Output, C_Byte_Size + cKey128Size);
   Output[0] := Byte(TCipherKeyStyle.cksKey128);
   TLMD.GenerateLMDKey((@Output[1])^, cKey128Size, s.Bytes);
 end;
 
 class procedure TCipher.GenerateKey128(sour: Pointer; Size: nativeInt; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey128Size);
+  SetLength(Output, C_Byte_Size + cKey128Size);
   Output[0] := Byte(TCipherKeyStyle.cksKey128);
   TLMD.HashLMD((@Output[1])^, cKey128Size, sour^, Size);
 end;
 
 class procedure TCipher.GenerateKey256(const s: TPascalString; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey256Size);
+  SetLength(Output, C_Byte_Size + cKey256Size);
   Output[0] := Byte(TCipherKeyStyle.cksKey256);
   TLMD.GenerateLMDKey((@Output[1])^, cKey256Size, s.Bytes);
 end;
 
 class procedure TCipher.GenerateKey256(sour: Pointer; Size: nativeInt; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey256Size);
+  SetLength(Output, C_Byte_Size + cKey256Size);
   Output[0] := Byte(TCipherKeyStyle.cksKey256);
   TLMD.HashLMD((@Output[1])^, cKey256Size, sour^, Size);
 end;
 
 class procedure TCipher.Generate3Key64(const s: TPascalString; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey192Size);
+  SetLength(Output, C_Byte_Size + cKey192Size);
   Output[0] := Byte(TCipherKeyStyle.cks3Key64);
   TLMD.GenerateLMDKey((@Output[1])^, cKey192Size, s.Bytes);
 end;
 
 class procedure TCipher.Generate3Key64(sour: Pointer; Size: nativeInt; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey192Size);
+  SetLength(Output, C_Byte_Size + cKey192Size);
   Output[0] := Byte(TCipherKeyStyle.cks3Key64);
   TLMD.HashLMD((@Output[1])^, cKey192Size, sour^, Size);
 end;
 
 class procedure TCipher.Generate2IntKey(const s: TPascalString; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey2DWORDSize);
+  SetLength(Output, C_Byte_Size + cKey2DWORDSize);
   Output[0] := Byte(TCipherKeyStyle.cks2IntKey);
   TLMD.GenerateLMDKey((@Output[1])^, cKey2DWORDSize, s.Bytes);
 end;
 
 class procedure TCipher.Generate2IntKey(sour: Pointer; Size: nativeInt; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey2DWORDSize);
+  SetLength(Output, C_Byte_Size + cKey2DWORDSize);
   Output[0] := Byte(TCipherKeyStyle.cks2IntKey);
   TLMD.HashLMD((@Output[1])^, cKey2DWORDSize, sour^, Size);
 end;
 
 class procedure TCipher.GenerateIntKey(const s: TPascalString; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKeyDWORDSize);
+  SetLength(Output, C_Byte_Size + cKeyDWORDSize);
   Output[0] := Byte(TCipherKeyStyle.cksIntKey);
   TLMD.GenerateLMDKey((@Output[1])^, cKeyDWORDSize, s.Bytes);
 end;
 
 class procedure TCipher.GenerateIntKey(sour: Pointer; Size: nativeInt; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKeyDWORDSize);
+  SetLength(Output, C_Byte_Size + cKeyDWORDSize);
   Output[0] := Byte(TCipherKeyStyle.cksIntKey);
   TLMD.HashLMD((@Output[1])^, cKeyDWORDSize, sour^, Size);
 end;
 
 class procedure TCipher.GenerateBytesKey(const s: TPascalString; KeySize: DWord; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cIntSize + KeySize);
+  SetLength(Output, C_Byte_Size + cIntSize + KeySize);
   Output[0] := Byte(TCipherKeyStyle.ckyDynamicKey);
   PDWord(@Output[1])^ := KeySize;
   TLMD.GenerateLMDKey((@Output[1 + cIntSize])^, KeySize, s.Bytes);
@@ -1488,7 +1490,7 @@ end;
 
 class procedure TCipher.GenerateBytesKey(sour: Pointer; Size, KeySize: DWord; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cIntSize + KeySize);
+  SetLength(Output, C_Byte_Size + cIntSize + KeySize);
   Output[0] := Byte(TCipherKeyStyle.ckyDynamicKey);
   PDWord(@Output[1])^ := KeySize;
   TLMD.HashLMD((@Output[1 + cIntSize])^, KeySize, sour^, Size);
@@ -1501,7 +1503,7 @@ end;
 
 class procedure TCipher.GenerateKey128(const k1, k2: TKey64; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey128Size);
+  SetLength(Output, C_Byte_Size + cKey128Size);
   Output[0] := Byte(TCipherKeyStyle.cksKey128);
   PKey64(@Output[1])^ := k1;
   PKey64(@Output[1 + cKey64Size])^ := k2;
@@ -1509,14 +1511,14 @@ end;
 
 class procedure TCipher.GenerateKey(const k: TKey64; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey64Size);
+  SetLength(Output, C_Byte_Size + cKey64Size);
   Output[0] := Byte(TCipherKeyStyle.cksKey64);
   PKey64(@Output[1])^ := k;
 end;
 
 class procedure TCipher.GenerateKey(const k1, k2, k3: TKey64; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey192Size);
+  SetLength(Output, C_Byte_Size + cKey192Size);
   Output[0] := Byte(TCipherKeyStyle.cks3Key64);
   PKey64(@Output[1])^ := k1;
   PKey64(@Output[1 + cKey64Size])^ := k2;
@@ -1525,21 +1527,21 @@ end;
 
 class procedure TCipher.GenerateKey(const k: TKey128; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey128Size);
+  SetLength(Output, C_Byte_Size + cKey128Size);
   Output[0] := Byte(TCipherKeyStyle.cksKey128);
   PKey128(@Output[1])^ := k;
 end;
 
 class procedure TCipher.GenerateKey(const k: TKey256; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey256Size);
+  SetLength(Output, C_Byte_Size + cKey256Size);
   Output[0] := Byte(TCipherKeyStyle.cksKey256);
   PKey256(@Output[1])^ := k;
 end;
 
 class procedure TCipher.GenerateKey(const k1, k2: DWord; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey2DWORDSize);
+  SetLength(Output, C_Byte_Size + cKey2DWORDSize);
   Output[0] := Byte(TCipherKeyStyle.cks2IntKey);
   PInteger(@Output[1])^ := k1;
   PInteger(@Output[1 + cKeyDWORDSize])^ := k2;
@@ -1547,21 +1549,21 @@ end;
 
 class procedure TCipher.GenerateKey(const k: DWord; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKeyDWORDSize);
+  SetLength(Output, C_Byte_Size + cKeyDWORDSize);
   Output[0] := Byte(TCipherKeyStyle.cksIntKey);
   PInteger(@Output[1])^ := k;
 end;
 
 class procedure TCipher.GenerateKey(const k: TDESKey; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cKey64Size);
+  SetLength(Output, C_Byte_Size + cKey64Size);
   Output[0] := Byte(TCipherKeyStyle.cksKey64);
   PDESKey(@Output[1])^ := k;
 end;
 
 class procedure TCipher.GenerateKey(const key: PByte; Size: DWord; var Output: TCipherKeyBuffer);
 begin
-  SetLength(Output, umlByteLength + cIntSize + Size);
+  SetLength(Output, C_Byte_Size + cIntSize + Size);
   Output[0] := Byte(TCipherKeyStyle.ckyDynamicKey);
   PInteger(@Output[1])^ := Size;
   CopyPtr(key, @Output[1 + cIntSize], Size);
@@ -4496,7 +4498,8 @@ begin
 
             { mix all the bits around for 4 rounds }
             { achieves avalanche and eliminates funnels }
-            for R := 0 to 3 do begin
+            for R := 0 to 3 do
+              begin
                 inc(AA, DD);
                 inc(DD, AA);
                 AA := AA xor (AA shr 7);

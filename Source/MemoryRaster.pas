@@ -8,6 +8,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 unit MemoryRaster;
 
@@ -36,10 +38,10 @@ type
   PRasterColorArray = ^TRasterColorArray;
 
   TRasterColorEntry = packed record
-    case byte of
-      0: (B, G, R, A: byte);
+    case Byte of
+      0: (B, G, R, A: Byte);
       1: (RGBA: TRasterColor);
-      2: (Bytes: array [0 .. 3] of byte);
+      2: (Bytes: array [0 .. 3] of Byte);
   end;
 
   PRasterColorEntry = ^TRasterColorEntry;
@@ -52,14 +54,15 @@ type
   TDrawMode    = (dmOpaque, dmBlend, dmTransparent);
   TCombineMode = (cmBlend, cmMerge);
 
-  TByteRaster = array of array of byte;
+  TByteRaster = array of array of Byte;
   PByteRaster = ^TByteRaster;
 
   TMemoryRaster_AggImage = class;
   TMemoryRaster_Agg2D    = class;
+  TVertexMap             = class;
   TFontRaster            = class;
 
-  TMemoryRaster = class(TCoreClassInterfacedObject)
+  TMemoryRaster = class(TCoreClassObject)
   private
     FFreeBits: Boolean;
     FBits: PRasterColorArray;
@@ -67,6 +70,7 @@ type
     FDrawMode: TDrawMode;
     FCombineMode: TCombineMode;
 
+    FVertex: TVertexMap;
     FFont: TFontRaster;
 
     FAggNeed: Boolean;
@@ -78,6 +82,9 @@ type
 
     FUserObject: TCoreClassObject;
     FUserData: Pointer;
+    FUserText: SystemString;
+
+    function GetVertex: TVertexMap;
 
     function GetFont: TFontRaster;
     procedure SetFont(f: TFontRaster); overload;
@@ -96,20 +103,20 @@ type
 
     function GetScanLine(Y: Integer): PRasterColorArray;
 
-    function GetPixelRed(const X, Y: Integer): byte;
-    procedure SetPixelRed(const X, Y: Integer; const Value: byte);
+    function GetPixelRed(const X, Y: Integer): Byte;
+    procedure SetPixelRed(const X, Y: Integer; const Value: Byte);
 
-    function GetPixelGreen(const X, Y: Integer): byte;
-    procedure SetPixelGreen(const X, Y: Integer; const Value: byte);
+    function GetPixelGreen(const X, Y: Integer): Byte;
+    procedure SetPixelGreen(const X, Y: Integer; const Value: Byte);
 
-    function GetPixelBlue(const X, Y: Integer): byte;
-    procedure SetPixelBlue(const X, Y: Integer; const Value: byte);
+    function GetPixelBlue(const X, Y: Integer): Byte;
+    procedure SetPixelBlue(const X, Y: Integer; const Value: Byte);
 
-    function GetPixelAlpha(const X, Y: Integer): byte;
-    procedure SetPixelAlpha(const X, Y: Integer; const Value: byte);
+    function GetPixelAlpha(const X, Y: Integer): Byte;
+    procedure SetPixelAlpha(const X, Y: Integer; const Value: Byte);
 
-    function GetGray(const X, Y: Integer): byte;
-    procedure SetGray(const X, Y: Integer; const Value: byte);
+    function GetGray(const X, Y: Integer): Byte;
+    procedure SetGray(const X, Y: Integer; const Value: Byte);
 
     function GetGrayS(const X, Y: Integer): TGeoFloat;
     procedure SetGrayS(const X, Y: Integer; const Value: TGeoFloat);
@@ -130,7 +137,12 @@ type
 
     { memory map }
     procedure SetWorkMemory(WorkMemory: Pointer; NewWidth, NewHeight: Integer); overload;
-    procedure SetWorkMemory(Raster:TMemoryRaster); overload;
+    procedure SetWorkMemory(Raster: TMemoryRaster); overload;
+
+    { triangle vertex map }
+    procedure OpenVertex;
+    procedure CloseVertex;
+    property Vertex: TVertexMap read GetVertex;
 
     { font raster support }
     procedure OpenFont;
@@ -149,7 +161,7 @@ type
     procedure SetSize(NewWidth, NewHeight: Integer); overload; virtual;
     procedure SetSize(NewWidth, NewHeight: Integer; const ClearColor: TRasterColor); overload; virtual;
     function SizeOfPoint: TPoint;
-    function SizeOf2DPoint: T2DPoint;
+    function SizeOf2DPoint: TVec2;
     function Size2D: TVec2;
     function Empty: Boolean;
     function BoundsRect: TRect;
@@ -189,17 +201,17 @@ type
     { shape support }
     procedure Line(X1, Y1, X2, Y2: Integer; Value: TRasterColor; L: Boolean); virtual;
     procedure LineF(X1, Y1, X2, Y2: TGeoFloat; Value: TRasterColor; L: Boolean); overload;
-    procedure LineF(p1, p2: T2DPoint; Value: TRasterColor; L: Boolean); overload;
-    procedure LineF(p1, p2: T2DPoint; Value: TRasterColor; L, Cross: Boolean); overload;
+    procedure LineF(p1, p2: TVec2; Value: TRasterColor; L: Boolean); overload;
+    procedure LineF(p1, p2: TVec2; Value: TRasterColor; L, Cross: Boolean); overload;
     procedure FillRect(X1, Y1, X2, Y2: Integer; Value: TRasterColor); overload;
     procedure FillRect(DstX, DstY, LineDist: Integer; Value: TRasterColor); overload;
     procedure FillRect(Dst: TVec2; LineDist: Integer; Value: TRasterColor); overload;
     procedure FillRect(R: TRectV2; Value: TRasterColor); overload;
-    procedure FillRect(R: TRectV2; Angle:TGeoFloat; Value: TRasterColor); overload;
+    procedure FillRect(R: TRectV2; Angle: TGeoFloat; Value: TRasterColor); overload;
     procedure DrawRect(R: TRect; Value: TRasterColor); overload;
     procedure DrawRect(R: TRectV2; Value: TRasterColor); overload;
     procedure DrawRect(R: TV2Rect4; Value: TRasterColor); overload;
-    procedure DrawRect(R: TRectV2; Angle:TGeoFloat; Value: TRasterColor); overload;
+    procedure DrawRect(R: TRectV2; Angle: TGeoFloat; Value: TRasterColor); overload;
     procedure DrawTriangle_Render(t: TTriangle; Transform: Boolean; Value: TRasterColor; Cross: Boolean);
     procedure DrawTriangle_Sampler(t: TTriangle; Transform: Boolean; Value: TRasterColor; Cross: Boolean);
     procedure DrawCross(DstX, DstY, LineDist: Integer; Value: TRasterColor); overload;
@@ -208,6 +220,8 @@ type
     procedure DrawPointListLine(pl: TVec2List; Value: TRasterColor; wasClose: Boolean);
     procedure DrawCircle(cc: TVec2; R: TGeoFloat; Value: TRasterColor);
     procedure FillCircle(cc: TVec2; R: TGeoFloat; Value: TRasterColor);
+    procedure DrawEllipse(cc: TVec2; xRadius, yRadius: TGeoFloat; Value: TRasterColor);
+    procedure FillEllipse(cc: TVec2; xRadius, yRadius: TGeoFloat; Value: TRasterColor);
     { text support }
     function TextSize(Text: SystemString; Siz: TGeoFloat): TVec2;
     procedure DrawText(Text: SystemString; X, Y: Integer; RotateVec: TVec2; Angle, Alpha, Siz: TGeoFloat; TextColor: TRasterColor); overload;
@@ -216,7 +230,7 @@ type
     { hardware pipe simulate : openGL:GLTexture Sampler }
     procedure ProjectionTo2DMap(Dst: TMemoryRaster; const SourRect, DestRect: TV2Rect4; const bilinear_sampling: Boolean; const Alpha: TGeoFloat);
     { triangle projection }
-    procedure ProjectionColor(const DestRect: TV2Rect4; const color:TRasterColor);
+    procedure ProjectionColor(const DestRect: TV2Rect4; const color: TRasterColor);
 
     { blend draw }
     procedure Draw(Src: TMemoryRaster); overload;
@@ -259,11 +273,11 @@ type
     property Pixel[const X, Y: Integer]: TRasterColor read GetPixel write SetPixel; default;
     property PixelBGRA[const X, Y: Integer]: TRasterColor read GetPixelBGRA write SetPixelBGRA;
     property PixelPtr[const X, Y: Integer]: PRasterColor read GetPixelPtr;
-    property PixelRed[const X, Y: Integer]: byte read GetPixelRed write SetPixelRed;
-    property PixelGreen[const X, Y: Integer]: byte read GetPixelGreen write SetPixelGreen;
-    property PixelBlue[const X, Y: Integer]: byte read GetPixelBlue write SetPixelBlue;
-    property PixelAlpha[const X, Y: Integer]: byte read GetPixelAlpha write SetPixelAlpha;
-    property PixelGray[const X, Y: Integer]: byte read GetGray write SetGray;
+    property PixelRed[const X, Y: Integer]: Byte read GetPixelRed write SetPixelRed;
+    property PixelGreen[const X, Y: Integer]: Byte read GetPixelGreen write SetPixelGreen;
+    property PixelBlue[const X, Y: Integer]: Byte read GetPixelBlue write SetPixelBlue;
+    property PixelAlpha[const X, Y: Integer]: Byte read GetPixelAlpha write SetPixelAlpha;
+    property PixelGray[const X, Y: Integer]: Byte read GetGray write SetGray;
     property PixelGrayS[const X, Y: Integer]: TGeoFloat read GetGrayS write SetGrayS;
     property PixelGrayD[const X, Y: Integer]: Double read GetGrayD write SetGrayD;
     property PixelF[const X, Y: TGeoFloat]: TRasterColor read GetPixelF write SetPixelF;
@@ -283,6 +297,7 @@ type
     { user define }
     property UserObject: TCoreClassObject read FUserObject write FUserObject;
     property UserData: Pointer read FUserData write FUserData;
+    property UserText: SystemString read FUserText write FUserText;
   end;
 
   TMemoryRasterClass = class of TMemoryRaster;
@@ -353,7 +368,7 @@ type
 
   PVertexMap = ^TVertexMap;
 
-  TVertexMap = packed record
+  TVertexMap = class(TCoreClassObject)
   private type
     { Setup interpolation constants for linearly varying vaues }
     TBilerpConsts = packed record
@@ -363,23 +378,41 @@ type
     { fragment mode }
     TFragSampling = (fsSolid, fsNearest, fsLinear);
 
+    TNearestWriteBuffer = array of Byte;
+    PNearestWriteBuffer = ^TNearestWriteBuffer;
+
     TSamplerBlend        = procedure(const Sender: PVertexMap; const f, m: TRasterColor; var B: TRasterColor);
     TComputeSamplerColor = function(const Sender: PVertexMap; const Sampler: TMemoryRaster; const X, Y: TGeoFloat): TRasterColor;
   private
+    // rasterization nearest templet
+    FNearestWriteBuffer: TNearestWriteBuffer;
+    FNearestWriterID: Byte;
+    FCurrentUpdate: ShortInt;
+    // sampler shader
+    ComputeNearest: TComputeSamplerColor;
+    ComputeLinear: TComputeSamplerColor;
+    ComputeBlend: TSamplerBlend;
+
     procedure RasterizeTriangle(const ft: TFragSampling; const sc: TRasterColor; const Tex: TMemoryRaster; const t: TTriangle);
 
     procedure FillFragment(const ft: TFragSampling; const sc: TRasterColor; const Tex: TMemoryRaster;
       const bitDst, j, start_x, frag_count: Integer; const attr_v, attr_u: TBilerpConsts); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    procedure NewWriterBuffer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    procedure internal_Draw(const triangle: TTriangle; const Sampler: TRasterColor); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    procedure internal_Draw(const triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    procedure internal_Draw(const triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean; const Alpha: TGeoFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
   public
+    // render window
     Window: TMemoryRaster;
     WindowSize: Integer;
-    ComputeNearest: TComputeSamplerColor;
-    ComputeLinear: TComputeSamplerColor;
-    ComputeBlend: TSamplerBlend;
-    Debug: Boolean;
+    // user define
     UserData: Pointer;
 
-    procedure Init(const W: TMemoryRaster);
+    constructor Create(Raster: TMemoryRaster);
+    destructor Destroy; override;
+
+    procedure BeginUpdate;
+    procedure EndUpdate;
 
     procedure DrawTriangle(const triangle: TTriangle; const Sampler: TRasterColor); overload;
     procedure DrawTriangle(const triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean); overload;
@@ -418,11 +451,14 @@ type
     (*
       SamVec: (TVec2List) sampler Absolute coordiantes
       RenVec: (TVec2List) renderer Absolute coordiantes
+      cen: Centroid coordinate
       Sampler: MemoryRaster or Solid color
       bilinear_sampling: used Linear sampling
     *)
-    procedure DrawPoly(const RenVec: TVec2List; const Sampler: TRasterColor); overload;
-    procedure DrawPoly(const SamVec, RenVec: TVec2List; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean); overload;
+    procedure FillPoly(const RenVec: TVec2List; const cen: TVec2; const Sampler: TRasterColor); overload;
+    procedure FillPoly(const RenVec: TVec2List; const Sampler: TRasterColor); overload;
+    procedure FillPoly(const SamVec, RenVec: TVec2List; const SamCen, RenCen: TVec2; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean); overload;
+    procedure FillPoly(const SamVec, RenVec: TVec2List; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean); overload;
   end;
 
   TFontRaster = class(TCoreClassObject)
@@ -432,13 +468,13 @@ type
     TFontCharDefine = packed record
       Activted: Boolean;
       X, Y: Word;
-      W, H: byte;
+      W, H: Byte;
     end;
 
     TFontTable = array [0 .. MaxInt div SizeOf(TFontCharDefine) - 1] of TFontCharDefine;
     PFontTable = ^TFontTable;
 
-    TFontBitRaster = array [0 .. MaxInt - 1] of byte;
+    TFontBitRaster = array [0 .. MaxInt - 1] of Byte;
     PFontBitRaster = ^TFontBitRaster;
 
 {$IFDEF FPC}
@@ -505,22 +541,23 @@ type
 
 {$REGION 'RasterAPI'}
 
+
 procedure FillRasterColor(var X; Count: Cardinal; Value: TRasterColor); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CopyRasterColor(const Source; var dest; Count: Cardinal); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure BlendBlock(Dst: TMemoryRaster; dstRect: TRect; Src: TMemoryRaster; SrcX, SrcY: Integer; CombineOp: TDrawMode); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure BlockTransfer(Dst: TMemoryRaster; DstX: Integer; DstY: Integer; DstClip: TRect; Src: TMemoryRaster; SrcRect: TRect; CombineOp: TDrawMode);
-function RandomRasterColor(const A: byte = $FF): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RasterColor(const R, G, B: byte; const A: byte = $FF): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RandomRasterColor(const A: Byte = $FF): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RasterColor(const R, G, B: Byte; const A: Byte = $FF): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function RasterColorInv(const C: TRasterColor): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RasterAlphaColor(const C: TRasterColor; const A: byte): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RasterAlphaColor(const C: TRasterColor; const A: Byte): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function RasterAlphaColorF(const C: TRasterColor; const A: Single): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function RasterColorF(const R, G, B: TGeoFloat; const A: TGeoFloat = 1.0): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RasterColor2F(const C: TRasterColor; var R, G, B, A: TGeoFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RasterColor2F(const C: TRasterColor; var R, G, B: TGeoFloat); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function RasterColor2Gray(const C: TRasterColor): byte; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RasterColor2Gray(const C: TRasterColor): Byte; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function RasterColor2GrayS(const C: TRasterColor): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function RasterColor2GrayD(const C: TRasterColor): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function RGBA2BGRA(const sour: TRasterColor): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -543,7 +580,7 @@ procedure Antialias32(const DestMR: TMemoryRaster; AXOrigin, AYOrigin, AXFinal, 
 procedure Antialias32(const DestMR: TMemoryRaster; const AAmount: Integer); overload;
 procedure HistogramEqualize(const mr: TMemoryRaster);
 procedure RemoveRedEyes(const mr: TMemoryRaster);
-procedure Sepia32(const mr: TMemoryRaster; const Depth: byte);
+procedure Sepia32(const mr: TMemoryRaster; const Depth: Byte);
 procedure Sharpen(const DestMR: TMemoryRaster; const SharpenMore: Boolean);
 
 procedure AlphaToGrayscale(Src: TMemoryRaster);
@@ -622,14 +659,14 @@ uses
 
 
 var
-  RcTable: array [byte, byte] of byte;
-  DivTable: array [byte, byte] of byte;
+  RcTable: array [Byte, Byte] of Byte;
+  DivTable: array [Byte, Byte] of Byte;
   SystemFont: TFontRaster;
 
 type
-  TLUT8            = array [byte] of byte;
+  TLUT8            = array [Byte] of Byte;
   TLogicalOperator = (loXOR, loAND, loOR);
-  TByteArray       = array [0 .. MaxInt div SizeOf(byte) - 1] of byte;
+  TByteArray       = array [0 .. MaxInt div SizeOf(Byte) - 1] of Byte;
   PByteArray       = ^TByteArray;
 
   TBmpHeader = packed record
@@ -662,6 +699,7 @@ const
 {$I MemoryRaster_Vertex.inc}
 {$I MemoryRaster_Agg.inc}
 {$I MemoryRaster_Font.inc}
+{$I MemoryRaster_ExtApi.inc}
 
 
 function _NewRaster: TMemoryRaster;
@@ -686,24 +724,14 @@ begin
   mr.SaveToFile(fn);
 end;
 
-{$I MemoryRaster_ExtApi.inc}
-
-
 initialization
 
 MakeMergeTables;
 
-{$IFDEF FPC}
-NewRaster := @_NewRaster;
-NewRasterFromFile := @_NewRasterFromFile;
-NewRasterFromStream := @_NewRasterFromStream;
-SaveRaster := @_SaveRaster;
-{$ELSE FPC}
-NewRaster := _NewRaster;
-NewRasterFromFile := _NewRasterFromFile;
-NewRasterFromStream := _NewRasterFromStream;
-SaveRaster := _SaveRaster;
-{$ENDIF FPC}
+NewRaster := {$IFDEF FPC}@{$ENDIF FPC}_NewRaster;
+NewRasterFromFile := {$IFDEF FPC}@{$ENDIF FPC}_NewRasterFromFile;
+NewRasterFromStream := {$IFDEF FPC}@{$ENDIF FPC}_NewRasterFromStream;
+SaveRaster := {$IFDEF FPC}@{$ENDIF FPC}_SaveRaster;
 
 Init_DefaultFont;
 

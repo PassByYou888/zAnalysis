@@ -7,6 +7,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
 procedure PCABuildBasis(const X: TLMatrix; NPoints: TLInt; NVars: TLInt; var Info: TLInt; var S2: TLVec; var V: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}

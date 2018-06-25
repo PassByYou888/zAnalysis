@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
 unit h264Frame;
@@ -42,7 +44,6 @@ procedure frame_free(var frame: TFrame);
 procedure frame_img2frame_copy(var frame: TFrame; const img: TPlanarImage);
 procedure frame_paint_edges(var frame: TFrame);
 procedure frame_hpel_interpolate(var frame: TFrame);
-procedure frame_init;
 
 implementation
 
@@ -479,13 +480,6 @@ begin
       for i := -2 to 3 do
           inc(row[i], stride);
     end;
-end;
-
-(* ******************************************************************************
-  frame_init
-*)
-procedure frame_init;
-begin
 end;
 
 end.

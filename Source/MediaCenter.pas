@@ -7,6 +7,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 unit MediaCenter;
 
@@ -161,7 +163,7 @@ begin
         begin
           repeat
             case ItmRecursionHnd.ReturnHeader.ID of
-              db_Header_ItemID:
+              db_Header_Item_ID:
                 begin
                   if aIntf.ItemFastOpen(ItmRecursionHnd.ReturnHeader.CurrentHeader, ItemHnd) then
                     begin
@@ -230,7 +232,7 @@ begin
         begin
           repeat
             case ItmRecursionHnd.ReturnHeader.ID of
-              db_Header_ItemID:
+              db_Header_Item_ID:
                 begin
                   Result := True;
                   Exit;
@@ -361,8 +363,8 @@ begin
       Exit;
     end;
 
-  {$IFDEF FPC}
-  {$ELSE}
+{$IFDEF FPC}
+{$ELSE}
   n := umlGetFileName(filename);
   n := umlCombineFileName(TPath.GetLibraryPath, n);
   if umlFileExists(n) then
@@ -394,7 +396,7 @@ begin
       Result := TCoreClassFileStream.Create(n, fmOpenRead or fmShareDenyWrite);
       Exit;
     end;
-  {$ENDIF}
+{$ENDIF}
   Result := nil;
 end;
 
@@ -451,8 +453,8 @@ begin
         Exit;
       end;
 
-    {$IFDEF FPC}
-    {$ELSE}
+{$IFDEF FPC}
+{$ELSE}
     n := umlGetFileName(filename);
     n := umlCombineFileName(TPath.GetLibraryPath, n);
     if umlFileExists(n) then
@@ -484,7 +486,7 @@ begin
         Result := True;
         Exit;
       end;
-    {$ENDIF}
+{$ENDIF}
   except
   end;
 end;
@@ -679,14 +681,14 @@ begin
   if TPascalString(filename).Exists('.') then
       n := umlDeleteLastStr(filename, '.');
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
   if FindResource(hInstance, n, RT_RCDATA) = 0 then
-  {$ELSE}
+{$ELSE}
   if FindResource(hInstance, PChar(n), RT_RCDATA) = 0 then
-    {$ENDIF}
+{$ENDIF}
     begin
-      {$IFDEF FPC}
-      {$ELSE}
+{$IFDEF FPC}
+{$ELSE}
       n := umlGetFileName(filename);
       n := umlCombineFileName(TPath.GetLibraryPath, n);
       if umlFileExists(n) then
@@ -718,7 +720,7 @@ begin
           Result := TCoreClassFileStream.Create(n, fmOpenRead or fmShareDenyWrite);
           Exit;
         end;
-      {$ENDIF}
+{$ENDIF}
       n := umlGetFileName(filename);
       if FileIOExists(n) then
         begin
@@ -775,11 +777,11 @@ begin
       FileIO.AddSearchObj(True, UserLibrary, '/');
     end;
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
   Media := DefaultSoundEngineClass.Create(umlCurrentPath);
-  {$ELSE}
+{$ELSE}
   Media := DefaultSoundEngineClass.Create(TPath.GetTempPath);
-  {$ENDIF}
+{$ENDIF}
   Media.SearchDB := SoundLibrary;
 
 end;

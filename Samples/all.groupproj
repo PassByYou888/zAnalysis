@@ -3,13 +3,13 @@
         <ProjectGuid>{1F6730FD-E33D-4D7D-B7C6-2480A9F92C4D}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
+        <Projects Include="01 Console控制台测试模版\EasyConsoleDemo.dproj">
+            <Dependencies/>
+        </Projects>
         <Projects Include="06 图像光栅化引擎\MemoryRasterDemo.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="05 随机森林之决策树\rForestDemo.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="01 Console控制台测试模版\EasyConsoleDemo.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="02 图形聚类分析测试演示\GUIAnalysis.dproj">
@@ -62,6 +62,15 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
+    <Target Name="EasyConsoleDemo">
+        <MSBuild Projects="01 Console控制台测试模版\EasyConsoleDemo.dproj"/>
+    </Target>
+    <Target Name="EasyConsoleDemo:Clean">
+        <MSBuild Projects="01 Console控制台测试模版\EasyConsoleDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EasyConsoleDemo:Make">
+        <MSBuild Projects="01 Console控制台测试模版\EasyConsoleDemo.dproj" Targets="Make"/>
+    </Target>
     <Target Name="MemoryRasterDemo">
         <MSBuild Projects="06 图像光栅化引擎\MemoryRasterDemo.dproj"/>
     </Target>
@@ -79,15 +88,6 @@
     </Target>
     <Target Name="rForestDemo:Make">
         <MSBuild Projects="05 随机森林之决策树\rForestDemo.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="EasyConsoleDemo">
-        <MSBuild Projects="01 Console控制台测试模版\EasyConsoleDemo.dproj"/>
-    </Target>
-    <Target Name="EasyConsoleDemo:Clean">
-        <MSBuild Projects="01 Console控制台测试模版\EasyConsoleDemo.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="EasyConsoleDemo:Make">
-        <MSBuild Projects="01 Console控制台测试模版\EasyConsoleDemo.dproj" Targets="Make"/>
     </Target>
     <Target Name="GUIAnalysis">
         <MSBuild Projects="02 图形聚类分析测试演示\GUIAnalysis.dproj"/>
@@ -216,13 +216,13 @@
         <MSBuild Projects="19 基于神经元的梯度方向识别\NNHOGCompare.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="MemoryRasterDemo;rForestDemo;EasyConsoleDemo;GUIAnalysis;zDBAnalysisDemo;LargePictureAnalysis;WordAnalysis;NNDecisionDemo;NNPicutreCompare;numberTrainDemo;GaussPyramidDemo;GaussPyramidRegionDemo;yuv2Video;SoftRenderer;Render2Video;HOGLargePictureAnalysis;NNHOGCompare"/>
+        <CallTarget Targets="EasyConsoleDemo;MemoryRasterDemo;rForestDemo;GUIAnalysis;zDBAnalysisDemo;LargePictureAnalysis;WordAnalysis;NNDecisionDemo;NNPicutreCompare;numberTrainDemo;GaussPyramidDemo;GaussPyramidRegionDemo;yuv2Video;SoftRenderer;Render2Video;HOGLargePictureAnalysis;NNHOGCompare"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="MemoryRasterDemo:Clean;rForestDemo:Clean;EasyConsoleDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargePictureAnalysis:Clean;WordAnalysis:Clean;NNDecisionDemo:Clean;NNPicutreCompare:Clean;numberTrainDemo:Clean;GaussPyramidDemo:Clean;GaussPyramidRegionDemo:Clean;yuv2Video:Clean;SoftRenderer:Clean;Render2Video:Clean;HOGLargePictureAnalysis:Clean;NNHOGCompare:Clean"/>
+        <CallTarget Targets="EasyConsoleDemo:Clean;MemoryRasterDemo:Clean;rForestDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargePictureAnalysis:Clean;WordAnalysis:Clean;NNDecisionDemo:Clean;NNPicutreCompare:Clean;numberTrainDemo:Clean;GaussPyramidDemo:Clean;GaussPyramidRegionDemo:Clean;yuv2Video:Clean;SoftRenderer:Clean;Render2Video:Clean;HOGLargePictureAnalysis:Clean;NNHOGCompare:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="MemoryRasterDemo:Make;rForestDemo:Make;EasyConsoleDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargePictureAnalysis:Make;WordAnalysis:Make;NNDecisionDemo:Make;NNPicutreCompare:Make;numberTrainDemo:Make;GaussPyramidDemo:Make;GaussPyramidRegionDemo:Make;yuv2Video:Make;SoftRenderer:Make;Render2Video:Make;HOGLargePictureAnalysis:Make;NNHOGCompare:Make"/>
+        <CallTarget Targets="EasyConsoleDemo:Make;MemoryRasterDemo:Make;rForestDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargePictureAnalysis:Make;WordAnalysis:Make;NNDecisionDemo:Make;NNPicutreCompare:Make;numberTrainDemo:Make;GaussPyramidDemo:Make;GaussPyramidRegionDemo:Make;yuv2Video:Make;SoftRenderer:Make;Render2Video:Make;HOGLargePictureAnalysis:Make;NNHOGCompare:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

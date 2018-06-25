@@ -7,6 +7,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 unit zDrawEngine;
 
@@ -1050,7 +1052,7 @@ var
 begin
   Result.Angle := MovementLerp(Angle, dest.Angle, rLerp);
 
-  r := Geometry3DUnit.MovementLerp(MakeRectV2, dest.MakeRectV2, mLerp);
+  r := MovementLerp(MakeRectV2, dest.MakeRectV2, mLerp);
   Result.Left := r[0][0];
   Result.Top := r[0][1];
   Result.Right := r[1][0];
@@ -1063,7 +1065,7 @@ var
 begin
   Result.Angle := SmoothAngle(Angle, dest.Angle, rSpeed);
 
-  r := Geometry3DUnit.MovementDistance(MakeRectV2, dest.MakeRectV2, mSpeed);
+  r := MovementDistance(MakeRectV2, dest.MakeRectV2, mSpeed);
   Result.Left := r[0][0];
   Result.Top := r[0][1];
   Result.Right := r[1][0];
@@ -4076,9 +4078,7 @@ var
   c: TDEVec;
 begin
   c := RectCentre(r);
-  FMemory.Agg.LineColor := DEColor2RasterColor(color);
-  FMemory.Agg.NoFill;
-  FMemory.Agg.Ellipse(c[0], c[1], RectWidth(r) * 0.5, RectHeight(r) * 0.5);
+  FMemory.DrawEllipse(c, RectWidth(r) * 0.5, RectHeight(r) * 0.5, DEColor2RasterColor(color));
 end;
 
 procedure TDrawEngine_Raster.FillEllipse(r: TDERect; color: TDEColor);
@@ -4086,9 +4086,7 @@ var
   c: TDEVec;
 begin
   c := RectCentre(r);
-  FMemory.Agg.FillColor := DEColor2RasterColor(color);
-  FMemory.Agg.NoLine;
-  FMemory.Agg.Ellipse(c[0], c[1], RectWidth(r) * 0.5, RectHeight(r) * 0.5);
+  FMemory.FillEllipse(c, RectWidth(r) * 0.5, RectHeight(r) * 0.5, DEColor2RasterColor(color));
 end;
 
 procedure TDrawEngine_Raster.DrawText(text: SystemString; size: TDEFloat; r: TDERect; color: TDEColor; center: Boolean; RotateVec: TDEVec; Angle: TDEFloat);
@@ -4118,23 +4116,18 @@ end;
 
 procedure TDrawEngine_Raster.Flush;
 begin
-  FMemory.CloseAgg;
 end;
 
 procedure TDrawEngine_Raster.ResetState;
 begin
-  FMemory.CloseAgg;
-  FMemory.OpenAgg;
 end;
 
 procedure TDrawEngine_Raster.BeginDraw;
 begin
-  FMemory.OpenAgg;
 end;
 
 procedure TDrawEngine_Raster.EndDraw;
 begin
-  FMemory.CloseAgg;
 end;
 
 function TDrawEngine_Raster.CurrentScreenSize: TDEVec;

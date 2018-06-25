@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 (*
   update history
@@ -21,33 +23,33 @@ interface
 uses UnicodeMixedLib;
 
 const
-  umlVersionLength  = 2;
-  umlTimeLength     = 8;
-  umlCountLength    = 8;
-  umlSizeLength     = 8;
-  umlPositionLength = 8;
-  umlIDLength       = 1;
-  umlPropertyLength = 4;
-  umlLevelLength    = 2;
+  DB_Version_Size  = C_Word_Size;
+  DB_Time_Size     = C_Double_Size;
+  DB_Counter_Size  = C_Int64_Size;
+  DB_DataSize_Size = C_Int64_Size;
+  DB_Position_Size = C_Int64_Size;
+  DB_ID_Size       = C_Byte_Size;
+  DB_Property_Size = C_Cardinal_Size;
+  DB_Level_Size    = C_Word_Size;
 
-  db_Pack_MajorVersion = 2;
-  db_Pack_MinorVersion = 1;
-  MaxSecursionLevel    = 128;
+  db_Pack_MajorVersion   = 2;
+  db_Pack_MinorVersion   = 1;
+  db_Max_Secursion_Level = 128;
 
   db_Pack_FileDescription    = 'ObjectDataV2.0';
   db_Pack_DefaultDescription = 'Field';
 
-  db_PathChar = '/';
+  db_Path_Delimiter = '/';
 
   db_String_Length  = FixedLengthStringSize + FixedLengthStringSize;
-  db_Header_Size    = (db_String_Length * 1) + (umlPositionLength * 4) + (umlTimeLength * 2) + (umlIDLength * 2) + (umlPropertyLength * 1);
-  db_Item_Size      = (db_String_Length * 1) + (umlIDLength * 1) + (umlPositionLength * 2) + (umlSizeLength * 1) + (umlCountLength * 1);
-  db_Item_BlockSize = (umlIDLength * 1) + (umlPositionLength * 4) + (umlSizeLength * 1);
-  db_Field_Size     = (db_String_Length * 1) + (umlCountLength * 1) + (umlPositionLength * 3);
-  db_Pack_Size      = (db_String_Length * 1) + (umlVersionLength * 2) + (umlTimeLength * 2) + (umlCountLength * 1) + (umlPositionLength * 4) + (umlLevelLength * 1);
+  db_Header_Size    = (db_String_Length * 1) + (DB_Position_Size * 4) + (DB_Time_Size * 2) + (DB_ID_Size * 2) + (DB_Property_Size * 1);
+  db_Item_Size      = (db_String_Length * 1) + (DB_ID_Size * 1) + (DB_Position_Size * 2) + (DB_DataSize_Size * 1) + (DB_Counter_Size * 1);
+  db_Item_BlockSize = (DB_ID_Size * 1) + (DB_Position_Size * 4) + (DB_DataSize_Size * 1);
+  db_Field_Size     = (db_String_Length * 1) + (DB_Counter_Size * 1) + (DB_Position_Size * 3);
+  db_Pack_Size      = (db_String_Length * 1) + (DB_Version_Size * 2) + (DB_Time_Size * 2) + (DB_Counter_Size * 1) + (DB_Position_Size * 4) + (DB_Level_Size * 1);
 
-  db_Header_FieldID = 21;
-  db_Header_ItemID  = 22;
+  db_Header_Field_ID = 21;
+  db_Header_Item_ID  = 22;
 
   db_Header_FirstPositionFlags  = 11;
   db_Header_MediumPositionFlags = 12;
@@ -221,7 +223,7 @@ type
     InitPath: umlString;
     FilterName: umlString;
     SearchBuffGo: Integer;
-    SearchBuff: array [0 .. MaxSecursionLevel] of TFieldSearch;
+    SearchBuff: array [0 .. db_Max_Secursion_Level] of TFieldSearch;
   end;
 
 procedure Init_THeader(var SenderHeader: THeader); inline;
@@ -530,8 +532,8 @@ const
 
 var
   TreeMDBHeaderNameMultipleCharacter: umlSystemString = '?';
-  TreeMDBHeaderNameMultipleString   : umlSystemString = '*';
-  db_FieldPathLimitChar             : umlSystemString = '/\';
+  TreeMDBHeaderNameMultipleString: umlSystemString    = '*';
+  db_FieldPathLimitChar: umlSystemString              = '/\';
 
 implementation
 
@@ -740,7 +742,7 @@ begin
   SenderTMDBRecursionSearch.InitPath := '';
   SenderTMDBRecursionSearch.FilterName := '';
   SenderTMDBRecursionSearch.SearchBuffGo := 0;
-  for i := 0 to MaxSecursionLevel do
+  for i := 0 to db_Max_Secursion_Level do
       Init_TFieldSearch(SenderTMDBRecursionSearch.SearchBuff[i]);
 end;
 
@@ -752,49 +754,49 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderHeader.NextHeader) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderHeader.NextHeader) = False then
     begin
       SenderHeader.Return := db_Header_WriteNextPosError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderHeader.PrevHeader) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderHeader.PrevHeader) = False then
     begin
       SenderHeader.Return := db_Header_WritePrevPosError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderHeader.DataMainPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderHeader.DataMainPOS) = False then
     begin
       SenderHeader.Return := db_Header_WritePubMainPosError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlTimeLength, SenderHeader.CreateTime) = False then
+  if umlFileWrite(IOHnd, DB_Time_Size, SenderHeader.CreateTime) = False then
     begin
       SenderHeader.Return := db_Header_WriteCreateTimeError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlTimeLength, SenderHeader.LastModifyTime) = False then
+  if umlFileWrite(IOHnd, DB_Time_Size, SenderHeader.LastModifyTime) = False then
     begin
       SenderHeader.Return := db_Header_WriteLastEditTimeError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlIDLength, SenderHeader.ID) = False then
+  if umlFileWrite(IOHnd, DB_ID_Size, SenderHeader.ID) = False then
     begin
       SenderHeader.Return := db_Header_WriteIDError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlIDLength, SenderHeader.PositionID) = False then
+  if umlFileWrite(IOHnd, DB_ID_Size, SenderHeader.PositionID) = False then
     begin
       SenderHeader.Return := db_Header_WritePositionIDError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPropertyLength, SenderHeader.UserProperty) = False then
+  if umlFileWrite(IOHnd, DB_Property_Size, SenderHeader.UserProperty) = False then
     begin
       SenderHeader.Return := db_Header_WriteUserPropertyIDError;
       Result := False;
@@ -835,49 +837,49 @@ begin
 
   SenderHeader.CurrentHeader := fPos;
 
-  if umlFileRead(IOHnd, umlPositionLength, SenderHeader.NextHeader) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderHeader.NextHeader) = False then
     begin
       SenderHeader.Return := db_Header_ReadNextPosError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderHeader.PrevHeader) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderHeader.PrevHeader) = False then
     begin
       SenderHeader.Return := db_Header_ReadPrevPosError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderHeader.DataMainPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderHeader.DataMainPOS) = False then
     begin
       SenderHeader.Return := db_Header_ReadPubMainPosError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlTimeLength, SenderHeader.CreateTime) = False then
+  if umlFileRead(IOHnd, DB_Time_Size, SenderHeader.CreateTime) = False then
     begin
       SenderHeader.Return := db_Header_ReadCreateTimeError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlTimeLength, SenderHeader.LastModifyTime) = False then
+  if umlFileRead(IOHnd, DB_Time_Size, SenderHeader.LastModifyTime) = False then
     begin
       SenderHeader.Return := db_Header_ReadLastEditTimeError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlIDLength, SenderHeader.ID) = False then
+  if umlFileRead(IOHnd, DB_ID_Size, SenderHeader.ID) = False then
     begin
       SenderHeader.Return := db_Header_ReadIDError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlIDLength, SenderHeader.PositionID) = False then
+  if umlFileRead(IOHnd, DB_ID_Size, SenderHeader.PositionID) = False then
     begin
       SenderHeader.Return := db_Header_ReadPositionIDError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPropertyLength, SenderHeader.UserProperty) = False then
+  if umlFileRead(IOHnd, DB_Property_Size, SenderHeader.UserProperty) = False then
     begin
       SenderHeader.Return := db_Header_ReadUserPropertyIDError;
       Result := False;
@@ -918,31 +920,31 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlIDLength, SenderItem.ExtID) = False then
+  if umlFileWrite(IOHnd, DB_ID_Size, SenderItem.ExtID) = False then
     begin
       SenderItem.Return := db_Item_WriteRecExterIDError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderItem.FirstBlockPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderItem.FirstBlockPOS) = False then
     begin
       SenderItem.Return := db_Item_WriteFirstBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderItem.LastBlockPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderItem.LastBlockPOS) = False then
     begin
       SenderItem.Return := db_Item_WriteLastBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlSizeLength, SenderItem.Size) = False then
+  if umlFileWrite(IOHnd, DB_DataSize_Size, SenderItem.Size) = False then
     begin
       SenderItem.Return := db_Item_WriteRecBuffSizeError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlCountLength, SenderItem.BlockCount) = False then
+  if umlFileWrite(IOHnd, DB_Counter_Size, SenderItem.BlockCount) = False then
     begin
       SenderItem.Return := db_Item_WriteBlockCountError;
       Result := False;
@@ -985,31 +987,31 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlIDLength, SenderItem.ExtID) = False then
+  if umlFileRead(IOHnd, DB_ID_Size, SenderItem.ExtID) = False then
     begin
       SenderItem.Return := db_Item_ReadRecExterIDError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderItem.FirstBlockPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderItem.FirstBlockPOS) = False then
     begin
       SenderItem.Return := db_Item_ReadFirstBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderItem.LastBlockPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderItem.LastBlockPOS) = False then
     begin
       SenderItem.Return := db_Item_ReadLastBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlSizeLength, SenderItem.Size) = False then
+  if umlFileRead(IOHnd, DB_DataSize_Size, SenderItem.Size) = False then
     begin
       SenderItem.Return := db_Item_ReadRecBuffSizeError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlCountLength, SenderItem.BlockCount) = False then
+  if umlFileRead(IOHnd, DB_Counter_Size, SenderItem.BlockCount) = False then
     begin
       SenderItem.Return := db_Item_ReadBlockCountError;
       Result := False;
@@ -1037,7 +1039,7 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderField.UpLevelFieldPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderField.UpLevelFieldPOS) = False then
     begin
       SenderField.Return := db_Field_WriteHeaderFieldPosError;
       Result := False;
@@ -1049,19 +1051,19 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlCountLength, SenderField.HeaderCount) = False then
+  if umlFileWrite(IOHnd, DB_Counter_Size, SenderField.HeaderCount) = False then
     begin
       SenderField.Return := db_Field_WriteCountError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderField.FirstHeaderPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderField.FirstHeaderPOS) = False then
     begin
       SenderField.Return := db_Field_WriteFirstPosError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderField.LastHeaderPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderField.LastHeaderPOS) = False then
     begin
       SenderField.Return := db_Field_WriteLastPosError;
       Result := False;
@@ -1098,7 +1100,7 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderField.UpLevelFieldPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderField.UpLevelFieldPOS) = False then
     begin
       SenderField.Return := db_Field_ReadHeaderFieldPosError;
       Result := False;
@@ -1110,19 +1112,19 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlCountLength, SenderField.HeaderCount) = False then
+  if umlFileRead(IOHnd, DB_Counter_Size, SenderField.HeaderCount) = False then
     begin
       SenderField.Return := db_Field_ReadCountError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderField.FirstHeaderPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderField.FirstHeaderPOS) = False then
     begin
       SenderField.Return := db_Field_ReadFirstPosError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderField.LastHeaderPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderField.LastHeaderPOS) = False then
     begin
       SenderField.Return := db_Field_ReadLastPosError;
       Result := False;
@@ -1144,37 +1146,37 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlIDLength, SenderItemBlock.IDFlags) = False then
+  if umlFileWrite(IOHnd, DB_ID_Size, SenderItemBlock.IDFlags) = False then
     begin
       SenderItemBlock.Return := db_Item_WriteItemBlockIDFlagsError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderItemBlock.CurrentBlockPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderItemBlock.CurrentBlockPOS) = False then
     begin
       SenderItemBlock.Return := db_Item_WriteCurrentBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderItemBlock.NextBlockPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderItemBlock.NextBlockPOS) = False then
     begin
       SenderItemBlock.Return := db_Item_WriteNextBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderItemBlock.PrevBlockPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderItemBlock.PrevBlockPOS) = False then
     begin
       SenderItemBlock.Return := db_Item_WritePrevBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderItemBlock.DataBlockPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderItemBlock.DataBlockPOS) = False then
     begin
       SenderItemBlock.Return := db_Item_WriteDataBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlSizeLength, SenderItemBlock.Size) = False then
+  if umlFileWrite(IOHnd, DB_DataSize_Size, SenderItemBlock.Size) = False then
     begin
       SenderItemBlock.Return := db_Item_WriteDataBuffSizeError;
       Result := False;
@@ -1205,37 +1207,37 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlIDLength, SenderItemBlock.IDFlags) = False then
+  if umlFileRead(IOHnd, DB_ID_Size, SenderItemBlock.IDFlags) = False then
     begin
       SenderItemBlock.Return := db_Item_ReadItemBlockIDFlagsError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderItemBlock.CurrentBlockPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderItemBlock.CurrentBlockPOS) = False then
     begin
       SenderItemBlock.Return := db_Item_ReadCurrentBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderItemBlock.NextBlockPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderItemBlock.NextBlockPOS) = False then
     begin
       SenderItemBlock.Return := db_Item_ReadNextBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderItemBlock.PrevBlockPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderItemBlock.PrevBlockPOS) = False then
     begin
       SenderItemBlock.Return := db_Item_ReadPrevBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderItemBlock.DataBlockPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderItemBlock.DataBlockPOS) = False then
     begin
       SenderItemBlock.Return := db_Item_ReadDataBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlSizeLength, SenderItemBlock.Size) = False then
+  if umlFileRead(IOHnd, DB_DataSize_Size, SenderItemBlock.Size) = False then
     begin
       SenderItemBlock.Return := db_Item_ReadDataBuffSizeError;
       Result := False;
@@ -1264,61 +1266,61 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlVersionLength, SenderTMDB.MajorVer) = False then
+  if umlFileWrite(IOHnd, DB_Version_Size, SenderTMDB.MajorVer) = False then
     begin
       SenderTMDB.Return := db_Pack_WriteMajorVersionError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlVersionLength, SenderTMDB.MinorVer) = False then
+  if umlFileWrite(IOHnd, DB_Version_Size, SenderTMDB.MinorVer) = False then
     begin
       SenderTMDB.Return := db_Pack_WriteMinorVersionError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlTimeLength, SenderTMDB.CreateTime) = False then
+  if umlFileWrite(IOHnd, DB_Time_Size, SenderTMDB.CreateTime) = False then
     begin
       SenderTMDB.Return := db_Pack_WriteCreateTimeError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlTimeLength, SenderTMDB.LastModifyTime) = False then
+  if umlFileWrite(IOHnd, DB_Time_Size, SenderTMDB.LastModifyTime) = False then
     begin
       SenderTMDB.Return := db_Pack_WriteLastEditTimeError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlCountLength, SenderTMDB.RootHeaderCount) = False then
+  if umlFileWrite(IOHnd, DB_Counter_Size, SenderTMDB.RootHeaderCount) = False then
     begin
       SenderTMDB.Return := db_Pack_WriteHeaderCountError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderTMDB.DefaultFieldPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderTMDB.DefaultFieldPOS) = False then
     begin
       SenderTMDB.Return := db_Pack_WriteDefaultPositionError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderTMDB.FirstHeaderPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderTMDB.FirstHeaderPOS) = False then
     begin
       SenderTMDB.Return := db_Pack_WriteFirstPositionError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderTMDB.LastHeaderPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderTMDB.LastHeaderPOS) = False then
     begin
       SenderTMDB.Return := db_Pack_WriteLastPositionError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderTMDB.CurrentFieldPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderTMDB.CurrentFieldPOS) = False then
     begin
       SenderTMDB.Return := db_Pack_WriteCurrentPositionError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlLevelLength, SenderTMDB.CurrentFieldLevel) = False then
+  if umlFileWrite(IOHnd, DB_Level_Size, SenderTMDB.CurrentFieldLevel) = False then
     begin
       SenderTMDB.Return := db_Pack_WriteCurrentLevelError;
       Result := False;
@@ -1348,61 +1350,61 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlVersionLength, SenderTMDB.MajorVer) = False then
+  if umlFileRead(IOHnd, DB_Version_Size, SenderTMDB.MajorVer) = False then
     begin
       SenderTMDB.Return := db_Pack_ReadMajorVersionError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlVersionLength, SenderTMDB.MinorVer) = False then
+  if umlFileRead(IOHnd, DB_Version_Size, SenderTMDB.MinorVer) = False then
     begin
       SenderTMDB.Return := db_Pack_ReadMinorVersionError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlTimeLength, SenderTMDB.CreateTime) = False then
+  if umlFileRead(IOHnd, DB_Time_Size, SenderTMDB.CreateTime) = False then
     begin
       SenderTMDB.Return := db_Pack_ReadCreateTimeError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlTimeLength, SenderTMDB.LastModifyTime) = False then
+  if umlFileRead(IOHnd, DB_Time_Size, SenderTMDB.LastModifyTime) = False then
     begin
       SenderTMDB.Return := db_Pack_ReadLastEditTimeError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlCountLength, SenderTMDB.RootHeaderCount) = False then
+  if umlFileRead(IOHnd, DB_Counter_Size, SenderTMDB.RootHeaderCount) = False then
     begin
       SenderTMDB.Return := db_Pack_ReadHeaderCountError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderTMDB.DefaultFieldPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderTMDB.DefaultFieldPOS) = False then
     begin
       SenderTMDB.Return := db_Pack_ReadDefaultPositionError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderTMDB.FirstHeaderPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderTMDB.FirstHeaderPOS) = False then
     begin
       SenderTMDB.Return := db_Pack_ReadFirstPositionError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderTMDB.LastHeaderPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderTMDB.LastHeaderPOS) = False then
     begin
       SenderTMDB.Return := db_Pack_ReadLastPositionError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderTMDB.CurrentFieldPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderTMDB.CurrentFieldPOS) = False then
     begin
       SenderTMDB.Return := db_Pack_ReadCurrentPositionError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlLevelLength, SenderTMDB.CurrentFieldLevel) = False then
+  if umlFileRead(IOHnd, DB_Level_Size, SenderTMDB.CurrentFieldLevel) = False then
     begin
       SenderTMDB.Return := db_Pack_ReadCurrentLevelError;
       Result := False;
@@ -1426,31 +1428,31 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlIDLength, SenderItem.ExtID) = False then
+  if umlFileWrite(IOHnd, DB_ID_Size, SenderItem.ExtID) = False then
     begin
       SenderItem.Return := db_Item_WriteRecExterIDError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderItem.FirstBlockPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderItem.FirstBlockPOS) = False then
     begin
       SenderItem.Return := db_Item_WriteFirstBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderItem.LastBlockPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderItem.LastBlockPOS) = False then
     begin
       SenderItem.Return := db_Item_WriteLastBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlSizeLength, SenderItem.Size) = False then
+  if umlFileWrite(IOHnd, DB_DataSize_Size, SenderItem.Size) = False then
     begin
       SenderItem.Return := db_Item_WriteRecBuffSizeError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlCountLength, SenderItem.BlockCount) = False then
+  if umlFileWrite(IOHnd, DB_Counter_Size, SenderItem.BlockCount) = False then
     begin
       SenderItem.Return := db_Item_WriteBlockCountError;
       Result := False;
@@ -1487,31 +1489,31 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlIDLength, SenderItem.ExtID) = False then
+  if umlFileRead(IOHnd, DB_ID_Size, SenderItem.ExtID) = False then
     begin
       SenderItem.Return := db_Item_ReadRecExterIDError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderItem.FirstBlockPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderItem.FirstBlockPOS) = False then
     begin
       SenderItem.Return := db_Item_ReadFirstBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderItem.LastBlockPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderItem.LastBlockPOS) = False then
     begin
       SenderItem.Return := db_Item_ReadLastBlockPOSError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlSizeLength, SenderItem.Size) = False then
+  if umlFileRead(IOHnd, DB_DataSize_Size, SenderItem.Size) = False then
     begin
       SenderItem.Return := db_Item_ReadRecBuffSizeError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlCountLength, SenderItem.BlockCount) = False then
+  if umlFileRead(IOHnd, DB_Counter_Size, SenderItem.BlockCount) = False then
     begin
       SenderItem.Return := db_Item_ReadBlockCountError;
       Result := False;
@@ -1533,7 +1535,7 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderField.UpLevelFieldPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderField.UpLevelFieldPOS) = False then
     begin
       SenderField.Return := db_Field_WriteHeaderFieldPosError;
       Result := False;
@@ -1545,19 +1547,19 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlCountLength, SenderField.HeaderCount) = False then
+  if umlFileWrite(IOHnd, DB_Counter_Size, SenderField.HeaderCount) = False then
     begin
       SenderField.Return := db_Field_WriteCountError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderField.FirstHeaderPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderField.FirstHeaderPOS) = False then
     begin
       SenderField.Return := db_Field_WriteFirstPosError;
       Result := False;
       Exit;
     end;
-  if umlFileWrite(IOHnd, umlPositionLength, SenderField.LastHeaderPOS) = False then
+  if umlFileWrite(IOHnd, DB_Position_Size, SenderField.LastHeaderPOS) = False then
     begin
       SenderField.Return := db_Field_WriteLastPosError;
       Result := False;
@@ -1588,7 +1590,7 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderField.UpLevelFieldPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderField.UpLevelFieldPOS) = False then
     begin
       SenderField.Return := db_Field_ReadHeaderFieldPosError;
       Result := False;
@@ -1600,19 +1602,19 @@ begin
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlCountLength, SenderField.HeaderCount) = False then
+  if umlFileRead(IOHnd, DB_Counter_Size, SenderField.HeaderCount) = False then
     begin
       SenderField.Return := db_Field_ReadCountError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderField.FirstHeaderPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderField.FirstHeaderPOS) = False then
     begin
       SenderField.Return := db_Field_ReadFirstPosError;
       Result := False;
       Exit;
     end;
-  if umlFileRead(IOHnd, umlPositionLength, SenderField.LastHeaderPOS) = False then
+  if umlFileRead(IOHnd, DB_Position_Size, SenderField.LastHeaderPOS) = False then
     begin
       SenderField.Return := db_Field_ReadLastPosError;
       Result := False;
@@ -1855,11 +1857,11 @@ function dbItem_BlockReadData(var IOHnd: TIOHnd; var SenderItem: TItem; var Buff
 label
   Rep_Label;
 var
-  BuffPointer            : Pointer;
-  BuffInt                : NativeUInt;
+  BuffPointer: Pointer;
+  BuffInt: NativeUInt;
   DeformitySize, BlockPOS: Int64;
-  ItemBlock              : TItemBlock;
-  Size                   : Int64;
+  ItemBlock: TItemBlock;
+  Size: Int64;
 begin
   if (_Size <= SenderItem.Size) then
       Size := _Size
@@ -2062,10 +2064,10 @@ function dbItem_BlockWriteData(var IOHnd: TIOHnd; var SenderItem: TItem; var Buf
 label
   Rep_Label;
 var
-  BuffPointer            : Pointer;
-  BuffInt                : NativeUInt;
+  BuffPointer: Pointer;
+  BuffInt: NativeUInt;
   DeformitySize, BlockPOS: Int64;
-  ItemBlock              : TItemBlock;
+  ItemBlock: TItemBlock;
 begin
   if (SenderItem.Size = 0) or (SenderItem.BlockCount = 0) then
     begin
@@ -2185,7 +2187,7 @@ end;
 
 function dbItem_BlockSeekPOS(var IOHnd: TIOHnd; var SenderItem: TItem; const Position: Int64): Boolean;
 var
-  ItemBlock   : TItemBlock;
+  ItemBlock: TItemBlock;
   DeformityInt: Int64;
 begin
   if (Position = 0) and (SenderItem.Size = 0) then
@@ -2667,7 +2669,7 @@ end;
 
 function dbField_FindFirstItem(const Name: umlString; const ItemExtID: Byte; const fPos: Int64; var IOHnd: TIOHnd; var SenderFieldSearch: TFieldSearch; var SenderItem: TItem): Boolean;
 begin
-  if dbField_FindFirst(name, db_Header_ItemID, fPos, IOHnd, SenderFieldSearch) = False then
+  if dbField_FindFirst(name, db_Header_Item_ID, fPos, IOHnd, SenderFieldSearch) = False then
     begin
       Result := False;
       Exit;
@@ -2728,7 +2730,7 @@ end;
 
 function dbField_FindLastItem(const Name: umlString; const ItemExtID: Byte; const fPos: Int64; var IOHnd: TIOHnd; var SenderFieldSearch: TFieldSearch; var SenderItem: TItem): Boolean;
 begin
-  if dbField_FindLast(name, db_Header_ItemID, fPos, IOHnd, SenderFieldSearch) = False then
+  if dbField_FindLast(name, db_Header_Item_ID, fPos, IOHnd, SenderFieldSearch) = False then
     begin
       Result := False;
       Exit;
@@ -2791,7 +2793,7 @@ function dbField_FindFirstItem(const Name: umlString; const ItemExtID: Byte; con
 var
   itm: TItem;
 begin
-  if dbField_FindFirst(name, db_Header_ItemID, fPos, IOHnd, SenderFieldSearch) = False then
+  if dbField_FindFirst(name, db_Header_Item_ID, fPos, IOHnd, SenderFieldSearch) = False then
     begin
       Result := False;
       Exit;
@@ -2851,7 +2853,7 @@ function dbField_FindLastItem(const Name: umlString; const ItemExtID: Byte; cons
 var
   itm: TItem;
 begin
-  if dbField_FindLast(name, db_Header_ItemID, fPos, IOHnd, SenderFieldSearch) = False then
+  if dbField_FindLast(name, db_Header_Item_ID, fPos, IOHnd, SenderFieldSearch) = False then
     begin
       Result := False;
       Exit;
@@ -2923,7 +2925,7 @@ end;
 
 function dbField_CreateHeader(const Name: umlString; const ID: Byte; const fPos: Int64; var IOHnd: TIOHnd; var SenderHeader: THeader): Boolean;
 var
-  f      : TField;
+  f: TField;
   _Header: THeader;
 begin
   if dbField_ReadRec(fPos, IOHnd, f) = False then
@@ -3868,7 +3870,7 @@ end;
 
 function dbField_CreateField(const Name: umlString; const fPos: Int64; var IOHnd: TIOHnd; var SenderField: TField): Boolean;
 begin
-  if dbField_CreateHeader(name, db_Header_FieldID, fPos, IOHnd, SenderField.RHeader) = False then
+  if dbField_CreateHeader(name, db_Header_Field_ID, fPos, IOHnd, SenderField.RHeader) = False then
     begin
       SenderField.Return := SenderField.RHeader.Return;
       Result := False;
@@ -3888,7 +3890,7 @@ end;
 
 function dbField_InsertNewField(const Name: umlString; const fieldPos, CurrentInsertPos: Int64; var IOHnd: TIOHnd; var SenderField: TField): Boolean;
 begin
-  if dbField_InsertNewHeader(name, db_Header_FieldID, fieldPos, CurrentInsertPos, IOHnd, SenderField.RHeader) = False then
+  if dbField_InsertNewHeader(name, db_Header_Field_ID, fieldPos, CurrentInsertPos, IOHnd, SenderField.RHeader) = False then
     begin
       SenderField.Return := SenderField.RHeader.Return;
       Result := False;
@@ -3908,7 +3910,7 @@ end;
 
 function dbField_CreateItem(const Name: umlString; const ExterID: Byte; const fPos: Int64; var IOHnd: TIOHnd; var SenderItem: TItem): Boolean;
 begin
-  if dbField_CreateHeader(name, db_Header_ItemID, fPos, IOHnd, SenderItem.RHeader) = False then
+  if dbField_CreateHeader(name, db_Header_Item_ID, fPos, IOHnd, SenderItem.RHeader) = False then
     begin
       SenderItem.Return := SenderItem.RHeader.Return;
       Result := False;
@@ -3933,7 +3935,7 @@ end;
 
 function dbField_InsertNewItem(const Name: umlString; const ExterID: Byte; const fieldPos, CurrentInsertPos: Int64; var IOHnd: TIOHnd; var SenderItem: TItem): Boolean;
 begin
-  if dbField_InsertNewHeader(name, db_Header_ItemID, fieldPos, CurrentInsertPos, IOHnd, SenderItem.RHeader) = False then
+  if dbField_InsertNewHeader(name, db_Header_Item_ID, fieldPos, CurrentInsertPos, IOHnd, SenderItem.RHeader) = False then
     begin
       SenderItem.Return := SenderItem.RHeader.Return;
       Result := False;
@@ -3958,9 +3960,9 @@ end;
 
 function dbField_CopyItem(var SenderItem: TItem; var IOHnd: TIOHnd; const DestFieldPos: Int64; var DestRecFile: TIOHnd): Boolean;
 var
-  i         : Integer;
+  i: Integer;
   NewItemHnd: TItem;
-  buff      : array [0 .. umlMaxFileRecSize] of umlChar;
+  buff: array [0 .. umlMaxFileRecSize] of umlChar;
 begin
   Init_TItem(NewItemHnd);
   NewItemHnd := SenderItem;
@@ -4032,7 +4034,7 @@ end;
 
 function dbField_CopyItemBuffer(var SenderItem: TItem; var IOHnd: TIOHnd; var DestItemHnd: TItem; var DestRecFile: TIOHnd): Boolean;
 var
-  i   : Integer;
+  i: Integer;
   buff: array [0 .. umlMaxFileRecSize] of umlChar;
 begin
   if dbItem_BlockSeekStartPOS(IOHnd, SenderItem) = False then
@@ -4097,23 +4099,23 @@ end;
 
 function dbField_CopyAllTo(const FilterName: umlString; const fieldPos: Int64; var IOHnd: TIOHnd; const DestFieldPos: Int64; var DestRecFile: TIOHnd): Boolean;
 var
-  fs      : TFieldSearch;
+  fs: TFieldSearch;
   NewField: TField;
-  NewItem : TItem;
+  NewItem: TItem;
 begin
   Init_TFieldSearch(fs);
   if dbField_OnlyFindFirstName(FilterName, fieldPos, IOHnd, fs) then
     begin
       repeat
         case fs.ID of
-          db_Header_FieldID:
+          db_Header_Field_ID:
             begin
               Init_TField(NewField);
               if dbField_ReadRec(fs.RHeader.CurrentHeader, IOHnd, NewField) then
                 if dbField_CreateField(fs.RHeader.Name, DestFieldPos, DestRecFile, NewField) then
                     dbField_CopyAllTo(FilterName, fs.RHeader.CurrentHeader, IOHnd, NewField.RHeader.CurrentHeader, DestRecFile);
             end;
-          db_Header_ItemID:
+          db_Header_Item_ID:
             begin
               if dbItem_ReadRec(fs.RHeader.CurrentHeader, IOHnd, NewItem) then
                 begin
@@ -4352,7 +4354,7 @@ begin
 
   if dbPack_GetRootField(name, f, SenderTMDB) = False then
     begin
-      if dbPack_CreateRootHeader(name, db_Header_FieldID, SenderTMDB, SenderField.RHeader) = False then
+      if dbPack_CreateRootHeader(name, db_Header_Field_ID, SenderTMDB, SenderField.RHeader) = False then
         begin
           SenderTMDB.Return := SenderField.RHeader.Return;
           SenderField.Return := SenderTMDB.Return;
@@ -4504,7 +4506,7 @@ begin
       Result := False;
       Exit;
     end;
-  if dbPack_CreateRootHeader(name, db_Header_FieldID, SenderTMDB, f.RHeader) = False then
+  if dbPack_CreateRootHeader(name, db_Header_Field_ID, SenderTMDB, f.RHeader) = False then
     begin
       SenderTMDB.Return := f.RHeader.Return;
       Result := False;
@@ -4540,7 +4542,7 @@ begin
       Result := False;
       Exit;
     end;
-  if dbPack_CreateRootHeader(name, db_Header_FieldID, SenderTMDB, f.RHeader) = False then
+  if dbPack_CreateRootHeader(name, db_Header_Field_ID, SenderTMDB, f.RHeader) = False then
     begin
       SenderTMDB.Return := f.RHeader.Return;
       Result := False;
@@ -4562,9 +4564,9 @@ end;
 
 function dbPack_CreateField(const PathName, Description: umlString; var SenderTMDB: TTMDB): Boolean;
 var
-  f                        : TField;
-  fs                       : TFieldSearch;
-  i, pc                    : Integer;
+  f: TField;
+  fs: TFieldSearch;
+  i, pc: Integer;
   TempPathStr, TempPathName: umlString;
 begin
   if umlFileTest(SenderTMDB.IOHnd) = False then
@@ -4601,7 +4603,7 @@ begin
               Result := False;
               Exit;
             end;
-          case dbField_FindFirst(TempPathStr, db_Header_FieldID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, fs) of
+          case dbField_FindFirst(TempPathStr, db_Header_Field_ID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, fs) of
             False:
               begin
                 f.Description := Description;
@@ -4630,8 +4632,8 @@ end;
 
 function dbPack_SetFieldName(const PathName, OriginFieldName, NewFieldName, FieldDescription: umlString; var SenderTMDB: TTMDB): Boolean;
 var
-  TempSR     : TFieldSearch;
-  f          : TField;
+  TempSR: TFieldSearch;
+  f: TField;
   OriginField: TField;
 begin
   if dbPack_GetField(PathName, f, SenderTMDB) = False then
@@ -4639,7 +4641,7 @@ begin
       Result := False;
       Exit;
     end;
-  if dbField_FindFirst(OriginFieldName, db_Header_FieldID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, TempSR) = False then
+  if dbField_FindFirst(OriginFieldName, db_Header_Field_ID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, TempSR) = False then
     begin
       SenderTMDB.Return := TempSR.Return;
       Result := False;
@@ -4665,8 +4667,8 @@ end;
 
 function dbPack_SetItemName(const PathName, OriginItemName, NewItemName, ItemDescription: umlString; var SenderTMDB: TTMDB): Boolean;
 var
-  TempSR    : TFieldSearch;
-  f         : TField;
+  TempSR: TFieldSearch;
+  f: TField;
   OriginItem: TItem;
 begin
   if dbPack_GetField(PathName, f, SenderTMDB) = False then
@@ -4674,7 +4676,7 @@ begin
       Result := False;
       Exit;
     end;
-  if dbField_FindFirst(OriginItemName, db_Header_ItemID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, TempSR) = False then
+  if dbField_FindFirst(OriginItemName, db_Header_Item_ID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, TempSR) = False then
     begin
       SenderTMDB.Return := TempSR.Return;
       Result := False;
@@ -4701,14 +4703,14 @@ end;
 function dbPack_DeleteField(const PathName, FilterName: umlString; var SenderTMDB: TTMDB): Boolean;
 var
   TempSR: TFieldSearch;
-  f     : TField;
+  f: TField;
 begin
   if dbPack_GetField(PathName, f, SenderTMDB) = False then
     begin
       Result := False;
       Exit;
     end;
-  if dbField_FindFirst(FilterName, db_Header_FieldID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, TempSR) = False then
+  if dbField_FindFirst(FilterName, db_Header_Field_ID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, TempSR) = False then
     begin
       SenderTMDB.Return := TempSR.Return;
       Result := False;
@@ -4720,7 +4722,7 @@ begin
       Result := False;
       Exit;
     end;
-  while dbField_FindFirst(FilterName, db_Header_FieldID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, TempSR) do
+  while dbField_FindFirst(FilterName, db_Header_Field_ID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, TempSR) do
     begin
       if dbField_DeleteHeader(TempSR.RHeader.CurrentHeader, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, f) = False then
         begin
@@ -4736,7 +4738,7 @@ end;
 function dbPack_DeleteHeader(const PathName, FilterName: umlString; const ID: Byte; var SenderTMDB: TTMDB): Boolean;
 var
   TempSR: TFieldSearch;
-  f     : TField;
+  f: TField;
 begin
   if dbPack_GetField(PathName, f, SenderTMDB) = False then
     begin
@@ -4770,7 +4772,7 @@ end;
 
 function dbPack_MoveItem(const SourcerPathName, FilterName: umlString; const TargetPathName: umlString; const ItemExtID: Byte; var SenderTMDB: TTMDB): Boolean;
 var
-  TempSR                   : TFieldSearch;
+  TempSR: TFieldSearch;
   SourcerField, TargetField: TField;
 begin
   if dbPack_GetField(SourcerPathName, SourcerField, SenderTMDB) = False then
@@ -4831,7 +4833,7 @@ end;
 
 function dbPack_MoveField(const SourcerPathName, FilterName: umlString; const TargetPathName: umlString; var SenderTMDB: TTMDB): Boolean;
 var
-  TempSR                   : TFieldSearch;
+  TempSR: TFieldSearch;
   SourcerField, TargetField: TField;
 begin
   if dbPack_GetField(SourcerPathName, SourcerField, SenderTMDB) = False then
@@ -4851,7 +4853,7 @@ begin
       Result := False;
       Exit;
     end;
-  if dbField_FindFirst(FilterName, db_Header_FieldID, SourcerField.RHeader.CurrentHeader, SenderTMDB.IOHnd, TempSR) = False then
+  if dbField_FindFirst(FilterName, db_Header_Field_ID, SourcerField.RHeader.CurrentHeader, SenderTMDB.IOHnd, TempSR) = False then
     begin
       SenderTMDB.Return := TempSR.Return;
       Result := False;
@@ -4870,7 +4872,7 @@ begin
       Result := False;
       Exit;
     end;
-  while dbField_FindFirst(FilterName, db_Header_FieldID, SourcerField.RHeader.CurrentHeader, SenderTMDB.IOHnd, TempSR) do
+  while dbField_FindFirst(FilterName, db_Header_Field_ID, SourcerField.RHeader.CurrentHeader, SenderTMDB.IOHnd, TempSR) do
     begin
       if TempSR.RHeader.CurrentHeader = TargetField.RHeader.CurrentHeader then
         begin
@@ -4892,7 +4894,7 @@ end;
 
 function dbPack_MoveHeader(const SourcerPathName, FilterName: umlString; const TargetPathName: umlString; const HeaderID: Byte; var SenderTMDB: TTMDB): Boolean;
 var
-  TempSR                   : TFieldSearch;
+  TempSR: TFieldSearch;
   SourcerField, TargetField: TField;
 begin
   if dbPack_GetField(SourcerPathName, SourcerField, SenderTMDB) = False then
@@ -4968,7 +4970,7 @@ begin
       Exit;
     end;
 
-  if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_FieldID) then
+  if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_Field_ID) then
     begin
       SenderTMDB.DefaultFieldPOS := f.RHeader.CurrentHeader;
       SenderTMDB.Return := db_Pack_ok;
@@ -4989,7 +4991,7 @@ begin
       Exit;
     end;
 
-  if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_FieldID) then
+  if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_Field_ID) then
     begin
       SenderTMDB.DefaultFieldPOS := f.RHeader.CurrentHeader;
       SenderTMDB.Return := db_Pack_ok;
@@ -5005,7 +5007,7 @@ begin
           Result := False;
           Exit;
         end;
-      if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_FieldID) then
+      if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_Field_ID) then
         begin
           SenderTMDB.DefaultFieldPOS := f.RHeader.CurrentHeader;
           SenderTMDB.Return := db_Pack_ok;
@@ -5019,9 +5021,9 @@ end;
 
 function dbPack_SetCurrentField(const PathName: umlString; var SenderTMDB: TTMDB): Boolean;
 var
-  f                        : TField;
-  fs                       : TFieldSearch;
-  i, pc                    : Integer;
+  f: TField;
+  fs: TFieldSearch;
+  i, pc: Integer;
   TempPathStr, TempPathName: umlString;
 begin
   if umlFileTest(SenderTMDB.IOHnd) = False then
@@ -5060,7 +5062,7 @@ begin
               Result := False;
               Exit;
             end;
-          if dbField_FindFirst(TempPathStr, db_Header_FieldID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, fs) = False then
+          if dbField_FindFirst(TempPathStr, db_Header_Field_ID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, fs) = False then
             begin
               SenderTMDB.Return := fs.Return;
               Result := False;
@@ -5102,7 +5104,7 @@ begin
       Exit;
     end;
 
-  if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_FieldID) then
+  if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_Field_ID) then
     begin
       SenderTMDB.Return := db_Pack_ok;
       SenderField := f;
@@ -5125,7 +5127,7 @@ begin
       Exit;
     end;
 
-  if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_FieldID) then
+  if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_Field_ID) then
     begin
       SenderTMDB.Return := db_Pack_ok;
       SenderField := f;
@@ -5142,7 +5144,7 @@ begin
           Result := False;
           Exit;
         end;
-      if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_FieldID) then
+      if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_Field_ID) then
         begin
           SenderTMDB.Return := db_Pack_ok;
           SenderField := f;
@@ -5157,9 +5159,9 @@ end;
 
 function dbPack_GetField(const PathName: umlString; var SenderField: TField; var SenderTMDB: TTMDB): Boolean;
 var
-  f                        : TField;
-  fs                       : TFieldSearch;
-  i, pc                    : Integer;
+  f: TField;
+  fs: TFieldSearch;
+  i, pc: Integer;
   TempPathStr, TempPathName: umlString;
 begin
   if umlFileTest(SenderTMDB.IOHnd) = False then
@@ -5198,7 +5200,7 @@ begin
               Result := False;
               Exit;
             end;
-          if dbField_FindFirst(TempPathStr, db_Header_FieldID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, fs) = False then
+          if dbField_FindFirst(TempPathStr, db_Header_Field_ID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, fs) = False then
             begin
               SenderTMDB.Return := fs.Return;
               Result := False;
@@ -5229,7 +5231,7 @@ begin
       Exit;
     end;
 
-  if f.RHeader.ID <> db_Header_FieldID then
+  if f.RHeader.ID <> db_Header_Field_ID then
     begin
       SenderTMDB.Return := db_Field_SetPosError;
       Result := False;
@@ -5244,23 +5246,23 @@ begin
 
   if f.RHeader.CurrentHeader = RootFieldPos then
     begin
-      RetPath := db_PathChar;
+      RetPath := db_Path_Delimiter;
       SenderTMDB.Return := db_Pack_ok;
       Result := True;
       Exit;
     end;
-  RetPath := f.RHeader.Name + db_PathChar;
+  RetPath := f.RHeader.Name + db_Path_Delimiter;
 
   while dbField_ReadRec(f.UpLevelFieldPOS, SenderTMDB.IOHnd, f) do
     begin
       if f.RHeader.CurrentHeader = RootFieldPos then
         begin
-          RetPath := db_PathChar + RetPath;
+          RetPath := db_Path_Delimiter + RetPath;
           SenderTMDB.Return := db_Pack_ok;
           Result := True;
           Exit;
         end;
-      RetPath := f.RHeader.Name + db_PathChar + RetPath;
+      RetPath := f.RHeader.Name + db_Path_Delimiter + RetPath;
     end;
   SenderTMDB.Return := f.Return;
   Result := False;
@@ -5268,9 +5270,9 @@ end;
 
 function dbPack_NewItem(const PathName, ItemName, ItemDescription: umlString; const ItemExtID: Byte; var SenderItem: TItem; var SenderTMDB: TTMDB): Boolean;
 var
-  f                        : TField;
-  fs                       : TFieldSearch;
-  i, pc                    : Integer;
+  f: TField;
+  fs: TFieldSearch;
+  i, pc: Integer;
   TempPathStr, TempPathName: umlString;
 begin
   if umlFileTest(SenderTMDB.IOHnd) = False then
@@ -5303,7 +5305,7 @@ begin
                   Result := False;
                   Exit;
                 end;
-              case dbField_FindFirst(TempPathStr, db_Header_FieldID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, fs) of
+              case dbField_FindFirst(TempPathStr, db_Header_Field_ID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, fs) of
                 False:
                   begin
                     f.Description := db_Pack_DefaultDescription;
@@ -5369,7 +5371,7 @@ end;
 function dbPack_DeleteItem(const PathName, FilterName: umlString; const ItemExtID: Byte; var SenderTMDB: TTMDB): Boolean;
 var
   TempSR: TFieldSearch;
-  f     : TField;
+  f: TField;
 begin
   if dbPack_GetField(PathName, f, SenderTMDB) = False then
     begin
@@ -5403,7 +5405,7 @@ end;
 
 function dbPack_GetItem(const PathName, ItemName: umlString; const ItemExtID: Byte; var SenderItem: TItem; var SenderTMDB: TTMDB): Boolean;
 var
-  f       : TField;
+  f: TField;
   _FieldSR: TFieldSearch;
 begin
   if dbPack_GetField(PathName, f, SenderTMDB) = False then
@@ -5564,7 +5566,7 @@ begin
       Result := False;
       Exit;
     end;
-  if itm.RHeader.ID <> db_Header_ItemID then
+  if itm.RHeader.ID <> db_Header_Item_ID then
     begin
       SenderTMDB.Return := db_Pack_OpenItemError;
       Result := False;
@@ -5733,7 +5735,7 @@ end;
 
 function dbPack_ItemReadStr(var Name: umlString; var SenderTMDBItemHandle: TTMDBItemHandle; var SenderTMDB: TTMDB): Boolean;
 var
-  StrSize : Integer;
+  StrSize: Integer;
   SwapName: umlBytes;
 begin
   if SenderTMDBItemHandle.OpenFlags = False then
@@ -5769,7 +5771,7 @@ end;
 
 function dbPack_ItemWriteStr(const Name: umlString; var SenderTMDBItemHandle: TTMDBItemHandle; var SenderTMDB: TTMDB): Boolean;
 var
-  StrSize : Integer;
+  StrSize: Integer;
   SwapName: umlBytes;
 begin
   if SenderTMDBItemHandle.OpenFlags = False then
@@ -5881,7 +5883,7 @@ end;
 function dbPack_AppendItemSize(var SenderTMDBItemHandle: TTMDBItemHandle; const Size: Int64; var SenderTMDB: TTMDB): Boolean;
 var
   SwapBuffers: array [0 .. umlMaxFileRecSize] of Byte;
-  i          : Integer;
+  i: Integer;
 begin
   if SenderTMDBItemHandle.OpenFlags = False then
     begin
@@ -5943,7 +5945,7 @@ begin
       Exit;
     end;
 
-  if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_FieldID) then
+  if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_Field_ID) then
     begin
       SenderTMDB.Return := db_Pack_ok;
       Result := True;
@@ -5963,7 +5965,7 @@ begin
       Exit;
     end;
 
-  if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_FieldID) then
+  if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_Field_ID) then
     begin
       SenderTMDB.Return := db_Pack_ok;
       Result := True;
@@ -5978,7 +5980,7 @@ begin
           Result := False;
           Exit;
         end;
-      if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_FieldID) then
+      if (dbMultipleMatch(name, f.RHeader.Name) = True) and (f.RHeader.ID = db_Header_Field_ID) then
         begin
           SenderTMDB.Return := db_Pack_ok;
           Result := True;
@@ -6077,7 +6079,7 @@ end;
 
 function dbPack_FindFirstItem(const PathName, FilterName: umlString; const ItemExtID: Byte; var SenderSearch: TTMDBSearchItem; var SenderTMDB: TTMDB): Boolean;
 var
-  f  : TField;
+  f: TField;
   itm: TItem;
 begin
   if dbPack_GetField(PathName, f, SenderTMDB) = False then
@@ -6123,7 +6125,7 @@ end;
 
 function dbPack_FindLastItem(const PathName, FilterName: umlString; const ItemExtID: Byte; var SenderSearch: TTMDBSearchItem; var SenderTMDB: TTMDB): Boolean;
 var
-  f  : TField;
+  f: TField;
   itm: TItem;
 begin
   if dbPack_GetField(PathName, f, SenderTMDB) = False then
@@ -6256,7 +6258,7 @@ begin
       Result := False;
       Exit;
     end;
-  if dbField_FindFirst(FilterName, db_Header_FieldID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, SenderSearch.FieldSearch) = False then
+  if dbField_FindFirst(FilterName, db_Header_Field_ID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, SenderSearch.FieldSearch) = False then
     begin
       SenderTMDB.Return := SenderSearch.FieldSearch.Return;
       Result := False;
@@ -6311,7 +6313,7 @@ begin
       Result := False;
       Exit;
     end;
-  if dbField_FindLast(FilterName, db_Header_FieldID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, SenderSearch.FieldSearch) = False then
+  if dbField_FindLast(FilterName, db_Header_Field_ID, f.RHeader.CurrentHeader, SenderTMDB.IOHnd, SenderSearch.FieldSearch) = False then
     begin
       SenderTMDB.Return := SenderSearch.FieldSearch.Return;
       Result := False;
@@ -6361,7 +6363,7 @@ function dbPack_FastFindFirstField(const fieldPos: Int64; const FilterName: umlS
 var
   f: TField;
 begin
-  if dbField_FindFirst(FilterName, db_Header_FieldID, fieldPos, SenderTMDB.IOHnd, SenderSearch.FieldSearch) = False then
+  if dbField_FindFirst(FilterName, db_Header_Field_ID, fieldPos, SenderTMDB.IOHnd, SenderSearch.FieldSearch) = False then
     begin
       SenderTMDB.Return := SenderSearch.FieldSearch.Return;
       Result := False;
@@ -6411,7 +6413,7 @@ function dbPack_FastFindLastField(const fieldPos: Int64; const FilterName: umlSt
 var
   f: TField;
 begin
-  if dbField_FindLast(FilterName, db_Header_FieldID, fieldPos, SenderTMDB.IOHnd, SenderSearch.FieldSearch) = False then
+  if dbField_FindLast(FilterName, db_Header_Field_ID, fieldPos, SenderTMDB.IOHnd, SenderSearch.FieldSearch) = False then
     begin
       SenderTMDB.Return := SenderSearch.FieldSearch.Return;
       Result := False;
@@ -6465,10 +6467,10 @@ begin
       Exit;
     end;
   SenderRecursionSearch.SearchBuffGo := 0;
-  if dbField_FindFirst(FilterName, db_Header_ItemID, SenderRecursionSearch.CurrentField.RHeader.CurrentHeader, SenderTMDB.IOHnd,
+  if dbField_FindFirst(FilterName, db_Header_Item_ID, SenderRecursionSearch.CurrentField.RHeader.CurrentHeader, SenderTMDB.IOHnd,
     SenderRecursionSearch.SearchBuff[SenderRecursionSearch.SearchBuffGo]) = False then
     begin
-      if dbField_FindFirst('*', db_Header_FieldID, SenderRecursionSearch.CurrentField.RHeader.CurrentHeader, SenderTMDB.IOHnd,
+      if dbField_FindFirst('*', db_Header_Field_ID, SenderRecursionSearch.CurrentField.RHeader.CurrentHeader, SenderTMDB.IOHnd,
         SenderRecursionSearch.SearchBuff[SenderRecursionSearch.SearchBuffGo]) = False then
         begin
           SenderTMDB.Return := SenderRecursionSearch.SearchBuff[SenderRecursionSearch.SearchBuffGo].Return;
@@ -6497,9 +6499,9 @@ end;
 function dbPack_RecursionSearchNext(var SenderRecursionSearch: TTMDBRecursionSearch; var SenderTMDB: TTMDB): Boolean;
 begin
   case SenderRecursionSearch.ReturnHeader.ID of
-    db_Header_FieldID:
+    db_Header_Field_ID:
       begin
-        if dbField_FindFirst(SenderRecursionSearch.FilterName, db_Header_ItemID, SenderRecursionSearch.CurrentField.RHeader.CurrentHeader, SenderTMDB.IOHnd,
+        if dbField_FindFirst(SenderRecursionSearch.FilterName, db_Header_Item_ID, SenderRecursionSearch.CurrentField.RHeader.CurrentHeader, SenderTMDB.IOHnd,
           SenderRecursionSearch.SearchBuff[SenderRecursionSearch.SearchBuffGo]) then
           begin
             SenderRecursionSearch.ReturnHeader := SenderRecursionSearch.SearchBuff[SenderRecursionSearch.SearchBuffGo].RHeader;
@@ -6507,7 +6509,7 @@ begin
             Result := True;
             Exit;
           end;
-        if dbField_FindFirst('*', db_Header_FieldID, SenderRecursionSearch.CurrentField.RHeader.CurrentHeader, SenderTMDB.IOHnd,
+        if dbField_FindFirst('*', db_Header_Field_ID, SenderRecursionSearch.CurrentField.RHeader.CurrentHeader, SenderTMDB.IOHnd,
           SenderRecursionSearch.SearchBuff[SenderRecursionSearch.SearchBuffGo]) then
           begin
             if dbField_OnlyReadFieldRec(SenderRecursionSearch.SearchBuff[SenderRecursionSearch.SearchBuffGo].RHeader.DataMainPOS, SenderTMDB.IOHnd,
@@ -6556,7 +6558,7 @@ begin
         Result := True;
         Exit;
       end;
-    db_Header_ItemID:
+    db_Header_Item_ID:
       begin
         if dbField_FindNext(SenderTMDB.IOHnd, SenderRecursionSearch.SearchBuff[SenderRecursionSearch.SearchBuffGo]) then
           begin
@@ -6565,7 +6567,7 @@ begin
             Result := True;
             Exit;
           end;
-        if dbField_FindFirst('*', db_Header_FieldID, SenderRecursionSearch.CurrentField.RHeader.CurrentHeader, SenderTMDB.IOHnd,
+        if dbField_FindFirst('*', db_Header_Field_ID, SenderRecursionSearch.CurrentField.RHeader.CurrentHeader, SenderTMDB.IOHnd,
           SenderRecursionSearch.SearchBuff[SenderRecursionSearch.SearchBuffGo]) then
           begin
             if dbField_OnlyReadFieldRec(SenderRecursionSearch.SearchBuff[SenderRecursionSearch.SearchBuffGo].RHeader.DataMainPOS, SenderTMDB.IOHnd,

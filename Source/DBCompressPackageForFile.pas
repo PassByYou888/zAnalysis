@@ -7,6 +7,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 (*
   update history
@@ -18,8 +20,7 @@ unit DBCompressPackageForFile;
 
 interface
 
-uses SysUtils,
-  ObjectData, ObjectDataManager, UnicodeMixedLib, CoreClasses, ItemStream,
+uses ObjectData, ObjectDataManager, UnicodeMixedLib, CoreClasses, ItemStream,
   DoStatusIO, ListEngine, TextDataEngine, PascalStrings;
 
 procedure BeginImportStreamToDB(dbEng: TObjectDataManager; md5List: THashStringList);
@@ -289,7 +290,7 @@ begin
         begin
           itmStream := TItemStream.Create(dbEng, itmHnd);
 
-          if SameText(itmHnd.Name, DBPackageMD5VerifyFileName) then
+          if itmHnd.Name.Same(DBPackageMD5VerifyFileName) then
               ExtractToStream.CopyFrom(itmStream, itmStream.Size)
           else
               UnPackStream(itmStream, ExtractToStream);
@@ -377,7 +378,7 @@ procedure ExtractDBToPath(dbEng: TObjectDataManager; ExtractToDir: SystemString;
       begin
         repeat
           try
-            if not SameText(itmSrHnd.Name, DBPackageMD5VerifyFileName) then
+            if not itmSrHnd.Name.Same(DBPackageMD5VerifyFileName) then
               if dbEng.ItemFastOpen(itmSrHnd.HeaderPOS, itmHnd) then
                 begin
                   fn := umlCombineFileName(ToDir, itmSrHnd.Name).Text;
@@ -439,7 +440,7 @@ var
     itmStream: TItemStream;
     ms: TMemoryStream64;
 
-    md5: SystemString;
+    md5: TPascalString;
     md5List: THashStringList;
     hashTextStream: THashStringTextStream;
   begin
@@ -461,7 +462,7 @@ var
       begin
         repeat
           try
-            if not SameText(itmSrHnd.Name, DBPackageMD5VerifyFileName) then
+            if not itmSrHnd.Name.Same(DBPackageMD5VerifyFileName) then
               if dbEng.ItemFastOpen(itmSrHnd.HeaderPOS, itmHnd) then
                 begin
                   itmStream := TItemStream.Create(dbEng, itmHnd);
@@ -469,8 +470,8 @@ var
                   ms := TMemoryStream64.Create;
                   UnPackStream(itmStream, ms);
                   ms.Position := 0;
-                  md5 := umlStreamMD5Char(ms).Text;
-                  if not SameText(md5List[itmHnd.Name], md5) then
+                  md5 := umlStreamMD5String(ms);
+                  if not md5.Same(md5List[itmHnd.Name]) then
                     begin
                       DoStatus('%s verify failed!', [itmHnd.Name.Text]);
                       Inc(MD5Failed);

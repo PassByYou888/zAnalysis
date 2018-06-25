@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
 (*
@@ -1199,17 +1201,17 @@ end;
 
 function MakeHash(var i64: Int64): THash;
 begin
-  Result := umlCRC32(@i64, umlInt64Length);
+  Result := umlCRC32(@i64, C_Int64_Size);
 end;
 
 function MakeHash(var c32: Cardinal): THash;
 begin
-  Result := umlCRC32(@c32, umlCardinalLength);
+  Result := umlCRC32(@c32, C_Cardinal_Size);
 end;
 
 function MakeHash(var p: Pointer): THash;
 begin
-  Result := umlCRC32(@p, umlPointerLength);
+  Result := umlCRC32(@p, C_Pointer_Size);
 end;
 
 function THashList.GetListTable(Hash: THash; AutoCreate: Boolean): TCoreClassList;
@@ -6734,9 +6736,9 @@ var
   c: Integer;
 begin
   c := FList.Count;
-  Stream.Write(c, umlIntegerLength);
+  Stream.Write(c, C_Integer_Size);
   for i := 0 to FList.Count - 1 do
-      Stream.Write(PListInt64Data(FList[i])^.Data, umlInt64Length);
+      Stream.Write(PListInt64Data(FList[i])^.Data, C_Int64_Size);
 end;
 
 procedure TListInt64.LoadFromStream(Stream: TCoreClassStream);
@@ -6745,10 +6747,10 @@ var
   c: Integer;
   V: Int64;
 begin
-  Stream.Read(c, umlIntegerLength);
+  Stream.Read(c, C_Integer_Size);
   for i := 0 to c - 1 do
     begin
-      Stream.Read(V, umlInt64Length);
+      Stream.Read(V, C_Int64_Size);
       Add(V);
     end;
 end;

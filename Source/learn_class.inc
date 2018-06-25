@@ -1871,6 +1871,35 @@ begin
   disposeObject(de);
 end;
 
+procedure TLearn.SaveToFile(fileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(fileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      disposeObject(fs);
+  end;
+end;
+
+procedure TLearn.LoadFromFile(fileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+  except
+      exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      disposeObject(fs);
+  end;
+end;
+
 {$IFNDEF FPC}
 
 
@@ -1882,7 +1911,7 @@ begin
 
   SaveToDF(de);
 
-  de.EncodeAsPublicJson(stream);
+  de.EncodeAsJson(stream);
   disposeObject(de);
 end;
 
@@ -1899,5 +1928,35 @@ begin
 
   disposeObject(de);
 end;
+
+procedure TLearn.SaveToJsonFile(fileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(fileName, fmCreate);
+  try
+      SaveToJsonStream(fs);
+  finally
+      disposeObject(fs);
+  end;
+end;
+
+procedure TLearn.LoadFromJsonFile(fileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+  except
+      exit;
+  end;
+
+  try
+      LoadFromJsonStream(fs);
+  finally
+      disposeObject(fs);
+  end;
+end;
+
 {$ENDIF FPC}
 {$ENDREGION 'ClassImp'}

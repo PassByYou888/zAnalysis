@@ -8,18 +8,8 @@
     {$DEFINE BIG_ENDIAN}
   {$ENDIF}
 
-  {$UNDEF FirstCharInZero}
-
-  {$R-} { range check }
-
   {$UNDEF Delphi}
 {$ELSE}
-  {$IFDEF release}
-    {$R-} { range check }
-  {$ELSE}
-    {$R-} { range check }
-  {$ENDIF}
-
   {$DEFINE Delphi}
 {$ENDIF}
 
@@ -28,6 +18,7 @@
 {$H+} { long string }
 {$A+} { Word Align Data }
 {$O-} { optimization }
+{$R-} { range check }
 {$Q-} { Overflow checking }
 {$B-} { Complete boolean evaluation }
 {$I+} { Input output checking }

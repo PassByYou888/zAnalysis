@@ -1,3 +1,12 @@
+
+**2018-6-25**
+- 通过写模板缓冲区技术，修正顶点渲染器发生三角边缘重叠的问题
+- 增加高速椭圆绘制与高速椭圆填充
+- 将顶点渲染器record修饰符改为class修饰符
+- Learn增加SaveToFile，LoadFromFile
+- ObjectData.pas, UnicodeMixedLib.Pas 大量常量重命名
+- 调节了高斯精度
+
 **2018-6-22**
 
 **更新列表**

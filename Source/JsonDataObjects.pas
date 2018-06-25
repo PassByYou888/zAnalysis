@@ -7,6 +7,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
 
@@ -80,15 +82,15 @@ unit JsonDataObjects;
 {$ENDIF EXTERNALLINKER}
 
 // Enables the progress callback feature
-{$DEFINE SUPPORT_PROGRESS}
+//{$DEFINE SUPPORT_PROGRESS}
 
 // Sanity checks all array index accesses and raise an EListError exception.
-{$DEFINE CHECK_ARRAY_INDEX}
+//{$DEFINE CHECK_ARRAY_INDEX}
 
 // JSON allows the slash to be escaped. This is only necessary if you plan to put the JSON string
 // into a <script>-Tag because then "</" can't be used and must be escaped to "<\/". This switch
 // enables the special handling for "</" but makes the parser slightly slower.
-{.$DEFINE ESCAPE_SLASH_AFTER_LESSTHAN}
+//{$DEFINE ESCAPE_SLASH_AFTER_LESSTHAN}
 
 // When parsing a JSON string the pair names are interned to reduce the memory foot print. This
 // slightly slows down the parser but saves a lot of memory if the JSON string contains repeating
@@ -97,7 +99,7 @@ unit JsonDataObjects;
 
 // Use an optimized NewInstance implementation. It skips the initialization of the interface table.
 // and seals the TJsonArray and TJsonObject classes because it isn't safe to derive from them.
-{.$DEFINE USE_FAST_NEWINSTANCE}
+//{$DEFINE USE_FAST_NEWINSTANCE}
 
 //{$IF CompilerVersion < 28.0} // XE6 or older
   // The XE7 compiler is broken. It doesn't collapse duplicate string literals anymore. (RSP-10015)

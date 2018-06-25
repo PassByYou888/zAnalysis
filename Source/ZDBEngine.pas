@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 (*
   update history
@@ -803,7 +805,7 @@ var
   l: Integer;
   b: TBytes;
 begin
-  Stream.Read(l, umlIntegerLength);
+  Stream.Read(l, C_Integer_Size);
   SetLength(b, l);
   Stream.Read(b[0], l);
   p^.Bytes := b;
@@ -817,7 +819,7 @@ var
 begin
   p^.FastGetBytes(b);
   l := length(b);
-  Stream.Write(l, umlIntegerLength);
+  Stream.Write(l, C_Integer_Size);
   Stream.Write(b[0], l);
   SetLength(b, 0);
 end;
@@ -2384,7 +2386,7 @@ begin
   if FDBEngine.ItemFastInsertNew(FStoreFieldPos, InsertPos, '', '', itmHnd) then
     begin
       itmHnd.Item.RHeader.UserProperty := ID;
-      itmHnd.Name := '0x' + TCipher.BuffToString(@itmHnd.Item.RHeader.CurrentHeader, umlInt64Length);
+      itmHnd.Name := '0x' + TCipher.BuffToString(@itmHnd.Item.RHeader.CurrentHeader, C_Int64_Size);
       itmStream := TItemStream.Create(FDBEngine, itmHnd);
       Buff.Position := 0;
       itmStream.CopyFrom(Buff, Buff.Size);
@@ -2422,7 +2424,7 @@ begin
   if FDBEngine.ItemFastCreate(FStoreFieldPos, '', '', itmHnd) then
     begin
       itmHnd.Item.RHeader.UserProperty := ID;
-      itmHnd.Name := '0x' + TCipher.BuffToString(@itmHnd.Item.RHeader.CurrentHeader, umlInt64Length);
+      itmHnd.Name := '0x' + TCipher.BuffToString(@itmHnd.Item.RHeader.CurrentHeader, C_Int64_Size);
       itmStream := TItemStream.Create(FDBEngine, itmHnd);
       Buff.Position := 0;
       itmStream.CopyFrom(Buff, Buff.Size);

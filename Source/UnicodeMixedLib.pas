@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
 {
@@ -32,24 +34,23 @@ uses SysUtils, Types, Variants,
   ListEngine;
 
 const
-  umlAddressLength  = SizeOf(Pointer);
-  umlPointerLength  = umlAddressLength;
-  umlIntegerLength  = 4;
-  umlInt64Length    = 8;
-  umlUInt64Length   = 8;
-  umlSingleLength   = 4;
-  umlDoubleLength   = 8;
-  umlExtendedLength = 10;
-  umlSmallIntLength = 2;
-  umlByteLength     = 1;
-  umlShortIntLength = 1;
-  umlWordLength     = 2;
-  umlDWORDLength    = 4;
-  umlCardinalLength = 4;
-  umlBooleanLength  = 1;
-  umlBoolLength     = 1;
-  umlMD5Length      = 16;
-  umlDESLength      = 8;
+  C_Address_Size   = SizeOf(Pointer);
+  C_Pointer_Size   = C_Address_Size;
+  C_Integer_Size   = 4;
+  C_Int64_Size     = 8;
+  C_UInt64_Size    = 8;
+  C_Single_Size    = 4;
+  C_Double_Size    = 8;
+  C_Small_Int_Size = 2;
+  C_Byte_Size      = 1;
+  C_Short_Int_Size = 1;
+  C_Word_Size      = 2;
+  C_DWord_Size     = 4;
+  C_Cardinal_Size  = 4;
+  C_Boolean_Size   = 1;
+  C_Bool_Size      = 1;
+  C_MD5_Size       = 16;
+  C_DES_Size       = 8;
 
   umlMaxSearchRec = 1024;
 
@@ -4430,9 +4431,9 @@ begin
 
   if Encrypt then
     begin
-      Output.Size := umlInt64Length + Size;
+      Output.Size := C_Int64_Size + Size;
       Output.Position := 0;
-      Output.Write(Size, umlInt64Length);
+      Output.Write(Size, C_Int64_Size);
 
       while p + bufflen < Size do
         begin
@@ -4449,7 +4450,7 @@ begin
     end
   else
     begin
-      Input.Read(Size, umlInt64Length);
+      Input.Read(Size, C_Int64_Size);
       Output.Size := Size;
       Output.Position := 0;
 
@@ -4497,7 +4498,7 @@ begin
           b^ := b^ - Key[i];
 
       Inc(i);
-      if i >= umlDESLength then
+      if i >= C_DES_Size then
           i := 0;
     end;
 end;

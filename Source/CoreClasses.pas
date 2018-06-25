@@ -22,7 +22,7 @@ uses SysUtils, Classes, Types,
   {$IFDEF parallel}
   {$IFDEF FPC}
   mtprocs,
-  {$ELSE}
+  {$ELSE FPC}
   Threading,
   {$ENDIF FPC}
   {$ENDIF parallel}
@@ -30,9 +30,9 @@ uses SysUtils, Classes, Types,
   SyncObjs
   {$IFDEF FPC}
     , Contnrs, fgl
-  {$ELSE}
+  {$ELSE FPC}
   , System.Generics.Collections
-  {$ENDIF}
+  {$ENDIF FPC}
   ,Math;
 
 {$I zDefine.inc}
@@ -70,8 +70,14 @@ type
 
   CoreClassException = Exception;
 
-  {$IFDEF FPC}
+  TCoreClassMemoryStream = TMemoryStream;
+  TCoreClassStrings    = TStrings;
+  TCoreClassStringList = TStringList;
+  TCoreClassReader     = TReader;
+  TCoreClassWriter     = TWriter;
+  TCoreClassComponent  = TComponent;
 
+  {$IFDEF FPC}
   TCoreClassInterfacedObject = class(TInterfacedObject)
   protected
     function _AddRef: longint; {$IFNDEF WINDOWS} cdecl {$ELSE} stdcall {$ENDIF};
@@ -80,34 +86,12 @@ type
     procedure AfterConstruction; override;
     procedure BeforeDestruction; override;
   end;
-  {$ELSE}
 
-  TCoreClassInterfacedObject = class(TInterfacedObject)
-  protected
-    function _AddRef: Integer; stdcall;
-    function _Release: Integer; stdcall;
-  public
-    procedure AfterConstruction; override;
-    procedure BeforeDestruction; override;
-  end;
-  {$ENDIF}
-  {$IFDEF FPC}
-
-  TCoreClassMemoryStream = TMemoryStream;
-  {$ELSE}
-  TCoreClassMemoryStream = TMemoryStream;
-  {$ENDIF}
-  TCoreClassStrings    = TStrings;
-  TCoreClassStringList = TStringList;
-  TCoreClassReader     = TReader;
-  TCoreClassWriter     = TWriter;
-  TCoreClassComponent  = TComponent;
-
-  {$IFDEF FPC}
   PCoreClassPointerList      = Classes.PPointerList;
   TCoreClassPointerList      = Classes.TPointerList;
   TCoreClassListSortCompare  = Classes.TListSortCompare;
   TCoreClassListNotification = Classes.TListNotification;
+
   TCoreClassList             = Class(TList)
     property ListData: PPointerList read GetList;
   end;
@@ -116,7 +100,15 @@ type
   public
     constructor Create;
   end;
-  {$ELSE}
+  {$ELSE FPC}
+  TCoreClassInterfacedObject = class(TInterfacedObject)
+  protected
+    function _AddRef: Integer; stdcall;
+    function _Release: Integer; stdcall;
+  public
+    procedure AfterConstruction; override;
+    procedure BeforeDestruction; override;
+  end;
 
   TGenericsList<T>=class(System.Generics.Collections.TList<T>)
     function ListData: Pointer;
@@ -145,8 +137,7 @@ type
   TCoreClassListForObj = class(TCoreClassListForObj_)
     function ListData: PCoreClassForObjectList;
   end;
-
-  {$ENDIF}
+  {$ENDIF FPC}
 
   TComputeThread = class(TCoreClassThread)
   private type
@@ -156,14 +147,10 @@ type
   protected
     OnRunCall: TRunWithThreadCall;
     OnRunMethod: TRunWithThreadMethod;
-    {$IFNDEF FPC}
-    OnRunProc: TRunWithThreadProc;
-    {$ENDIF FPC}
+    {$IFNDEF FPC} OnRunProc: TRunWithThreadProc; {$ENDIF FPC}
     OnDoneCall: TRunWithThreadCall;
     OnDoneMethod: TRunWithThreadMethod;
-    {$IFNDEF FPC}
-    OnDoneProc: TRunWithThreadProc;
-    {$ENDIF FPC}
+    {$IFNDEF FPC} OnDoneProc: TRunWithThreadProc; {$ENDIF FPC}
     procedure Execute; override;
     procedure Done_Sync;
   public
@@ -173,9 +160,7 @@ type
     constructor Create;
     class function RunC(const Data: Pointer; const Obj: TCoreClassObject; const OnRun, OnDone: TRunWithThreadCall): TComputeThread;
     class function RunM(const Data: Pointer; const Obj: TCoreClassObject; const OnRun, OnDone: TRunWithThreadMethod): TComputeThread;
-    {$IFNDEF FPC}
-    class function RunP(const Data: Pointer; const Obj: TCoreClassObject; const OnRun, OnDone: TRunWithThreadProc): TComputeThread;
-    {$ENDIF FPC}
+    {$IFNDEF FPC} class function RunP(const Data: Pointer; const Obj: TCoreClassObject; const OnRun, OnDone: TRunWithThreadProc): TComputeThread; {$ENDIF FPC}
   end;
 
 
@@ -189,11 +174,11 @@ const
   {$ELSEIF Defined(OSX)}
   CurrentPlatform = TExecutePlatform.epOSX;
   {$ELSEIF Defined(IOS)}
-  {$IFDEF CPUARM}
-  CurrentPlatform = TExecutePlatform.epIOS;
-  {$ELSE}
-  CurrentPlatform = TExecutePlatform.epIOSSIM;
-  {$ENDIF}
+    {$IFDEF CPUARM}
+    CurrentPlatform = TExecutePlatform.epIOS;
+    {$ELSE CPUARM}
+    CurrentPlatform = TExecutePlatform.epIOSSIM;
+    {$ENDIF CPUARM}
   {$ELSEIF Defined(ANDROID)}
   CurrentPlatform = TExecutePlatform.epANDROID;
   {$ELSEIF Defined(Linux)}
@@ -204,7 +189,7 @@ const
 
 procedure Nop;
 
-function CheckThreadSynchronize(Timeout: Integer): Boolean;
+function CheckThreadSynchronize(Timeout: Integer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure DisposeObject(const obj: TObject); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure DisposeObject(const objs: array of TObject); overload;
@@ -221,7 +206,7 @@ procedure FillPtrByte(const Dest:Pointer; Count: NativeUInt; const Value: Byte);
 function CompareMemory(const P1, P2: Pointer; const MLen: NativeUInt): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CopyPtr(const sour, dest:Pointer; Count: NativeUInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RaiseInfo(const n: SystemString); overload; inline;
+procedure RaiseInfo(const n: SystemString); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RaiseInfo(const n: SystemString; const Args: array of const); overload;
 
 function IsMobile: Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -252,6 +237,7 @@ procedure Swap(var v1,v2:Pointer); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF
 function SAR16(const AValue: SmallInt; const Shift: Byte): SmallInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function SAR32(const AValue: Integer; Shift: Byte): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function SAR64(const AValue: Int64; Shift: Byte): Int64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 function MemoryAlign(addr: Pointer; alignment: NativeUInt): Pointer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 threadvar MHGlobalHookEnabled: Boolean;
@@ -375,18 +361,15 @@ var
   Index: NativeInt;
   V    : UInt64;
   PB   : PByte;
-  Total: NativeUInt;
 begin
   PB := Dest;
 
   if Count >= 8 then
     begin
-      V := Value or (Value shl 8) or
-        (Value shl 16) or (Value shl 24);
+      V := Value or (Value shl 8) or (Value shl 16) or (Value shl 24);
       V := V or (V shl 32);
-      Total := Count shr 3;
 
-      for index := 0 to Total - 1 do
+      for index := (Count shr 3) - 1 downto 0 do
         begin
           PUInt64(PB)^ := V;
           Inc(PB, 8);
@@ -397,7 +380,7 @@ begin
 
   // Fill remain.
   if Count > 0 then
-    for index := 0 to Count - 1 do
+    for index := Count - 1 downto 0 do
       begin
         PB^ := Value;
         Inc(PB);
@@ -778,4 +761,5 @@ finalization
   FreeLockIDBuff;
   MHGlobalHookEnabled := False;
 end.
+
 

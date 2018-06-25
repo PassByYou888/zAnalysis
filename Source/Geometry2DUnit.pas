@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
 unit Geometry2DUnit;
@@ -45,6 +47,9 @@ type
 
   TTriangle = array [0 .. 2] of TVert2;
   PTriangle = ^TTriangle;
+
+  TGeoFloatArray = array of TGeoFloat;
+  PGeoFloatArray = ^TGeoFloatArray;
 
 {$IFDEF FPC}
 
@@ -117,6 +122,8 @@ function vec2(const X, Y: Int64): TVec2; {$IFDEF INLINE_ASM} inline; {$ENDIF} ov
 function vec2(const pt: TPoint): TVec2; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function vec2(const pt: TPointf): TVec2; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 
+function RoundVec2(const v: TVec2): TVec2; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+
 function MakePointf(const pt: TVec2): TPointf; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 
 function IsZero(const v: TGeoFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
@@ -160,10 +167,13 @@ function Distance(const x1, y1, x2, y2: TGeoFloat): TGeoFloat; {$IFDEF INLINE_AS
 function Distance(const x1, y1, z1, x2, y2, z2: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function PointDistance(const x1, y1, x2, y2: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function PointDistance(const v1, v2: TVec2): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function Vec2Distance(const v1, v2: TVec2): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function PointLayDistance(const v1, v2: TVec2): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function SqrDistance(const v1, v2: TVec2): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function PointLerp(const v1, v2: TVec2; t: TGeoFloat): TVec2; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function PointLerpTo(const sour, dest: TVec2; const d: TGeoFloat): TVec2; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function Vec2Lerp(const v1, v2: TVec2; t: TGeoFloat): TVec2; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function Vec2LerpTo(const sour, dest: TVec2; const d: TGeoFloat): TVec2; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 procedure SwapPoint(var v1, v2: TVec2); {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function Pow(v: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function Pow(const v, n: TGeoFloat): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
@@ -290,6 +300,9 @@ function Intersect(const x1, y1, x2, y2, x3, y3, x4, y4: TGeoFloat; out ix, iy: 
 function Intersect(const pt1, pt2, pt3, pt4: TVec2; out pt: TVec2): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function Intersect(const pt1, pt2, pt3, pt4: TVec2): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function PointInCircle(const pt, cp: TVec2; radius: TGeoFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+
+function PointInTriangle(const Px, Py, x1, y1, x2, y2, x3, y3: TGeoFloat): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure BuildSinCosCache(const oSin, oCos: PGeoFloatArray; const b, e: TGeoFloat);
 
 procedure ClosestPointOnSegmentFromPoint(const x1, y1, x2, y2, Px, Py: TGeoFloat; out Nx, Ny: TGeoFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function ClosestPointOnSegmentFromPoint(const lb, le, pt: TVec2): TVec2; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
@@ -631,7 +644,6 @@ type
     function BoundRect: TRectV2; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function BoundRectf: TRectf; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function Centroid: TVec2; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
     class function Init(r: TRectV2; Ang: TGeoFloat): TV2Rect4; overload; static; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function Init(r: TRectf; Ang: TGeoFloat): TV2Rect4; overload; static; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     class function Init(r: TRect; Ang: TGeoFloat): TV2Rect4; overload; static; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -909,6 +921,12 @@ begin
   Result[1] := pt.Y;
 end;
 
+function RoundVec2(const v: TVec2): TVec2;
+begin
+  Result[0] := Round(v[0]);
+  Result[1] := Round(v[1]);
+end;
+
 function MakePointf(const pt: TVec2): TPointf;
 begin
   Result.X := pt[0];
@@ -1127,6 +1145,11 @@ begin
   Result := Sqrt((v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]));
 end;
 
+function Vec2Distance(const v1, v2: TVec2): TGeoFloat;
+begin
+  Result := Sqrt((v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]));
+end;
+
 function PointLayDistance(const v1, v2: TVec2): TGeoFloat;
 begin
   Result := Pow(v2[0] - v1[0]) + Pow(v2[1] - v1[1]);
@@ -1138,15 +1161,38 @@ begin
 end;
 
 function PointLerp(const v1, v2: TVec2; t: TGeoFloat): TVec2;
-const
-  X = 0;
-  Y = 1;
 begin
-  Result[X] := v1[X] + (v2[X] - v1[X]) * t;
-  Result[Y] := v1[Y] + (v2[Y] - v1[Y]) * t;
+  Result[0] := v1[0] + (v2[0] - v1[0]) * t;
+  Result[1] := v1[1] + (v2[1] - v1[1]) * t;
 end;
 
 function PointLerpTo(const sour, dest: TVec2; const d: TGeoFloat): TVec2;
+var
+  dx: TGeoFloat;
+  dy: TGeoFloat;
+  k: Double;
+begin
+  dx := dest[0] - sour[0];
+  dy := dest[1] - sour[1];
+  if ((dx <> 0) or (dy <> 0)) and (d <> 0) then
+    begin
+      k := d / Sqrt(dx * dx + dy * dy);
+      Result[0] := sour[0] + k * dx;
+      Result[1] := sour[1] + k * dy;
+    end
+  else
+    begin
+      Result := sour;
+    end;
+end;
+
+function Vec2Lerp(const v1, v2: TVec2; t: TGeoFloat): TVec2;
+begin
+  Result[0] := v1[0] + (v2[0] - v1[0]) * t;
+  Result[1] := v1[1] + (v2[1] - v1[1]) * t;
+end;
+
+function Vec2LerpTo(const sour, dest: TVec2; const d: TGeoFloat): TVec2;
 var
   dx: TGeoFloat;
   dy: TGeoFloat;
@@ -2288,6 +2334,65 @@ end;
 function PointInCircle(const pt, cp: TVec2; radius: TGeoFloat): Boolean;
 begin
   Result := (PointLayDistance(pt, cp) <= (radius * radius));
+end;
+
+function PointInTriangle(const Px, Py, x1, y1, x2, y2, x3, y3: TGeoFloat): Boolean;
+var
+  Or1, Or2, Or3: Integer;
+begin
+  Or1 := Orientation(x1, y1, x2, y2, Px, Py);
+  Or2 := Orientation(x2, y2, x3, y3, Px, Py);
+
+  if (Or1 * Or2) = -1 then
+      Result := False
+  else
+    begin
+      Or3 := Orientation(x3, y3, x1, y1, Px, Py);
+      if (Or1 = Or3) or (Or3 = 0) then
+          Result := True
+      else if Or1 = 0 then
+          Result := (Or2 * Or3) >= 0
+      else if Or2 = 0 then
+          Result := (Or1 * Or3) >= 0
+      else
+          Result := False;
+    end;
+end;
+
+procedure BuildSinCosCache(const oSin, oCos: PGeoFloatArray; const b, e: TGeoFloat);
+var
+  i: Integer;
+  startAngle, stopAngle, d, alpha, beta: TGeoFloat;
+begin
+  startAngle := b;
+  stopAngle := e + 1E-5;
+  if high(oSin^) > low(oSin^) then
+      d := PIDiv180 * (stopAngle - startAngle) / (high(oSin^) - low(oSin^))
+  else
+      d := 0;
+
+  if high(oSin^) - low(oSin^) < 1000 then
+    begin
+      // Fast computation (approx 5.5x)
+      alpha := 2 * Sqr(Sin(d * 0.5));
+      beta := Sin(d);
+      SinCos(startAngle * PIDiv180, oSin^[low(oSin^)], oCos^[low(oSin^)]);
+      for i := low(oSin^) to high(oSin^) - 1 do
+        begin
+          // Make use of the incremental formulae:
+          // cos (theta+delta) = cos(theta) - [alpha*cos(theta) + beta*sin(theta)]
+          // sin (theta+delta) = sin(theta) - [alpha*sin(theta) - beta*cos(theta)]
+          oCos^[i + 1] := oCos^[i] - alpha * oCos^[i] - beta * oSin^[i];
+          oSin^[i + 1] := oSin^[i] - alpha * oSin^[i] + beta * oCos^[i];
+        end;
+    end
+  else
+    begin
+      // Slower, but maintains precision when steps are small
+      startAngle := startAngle * PIDiv180;
+      for i := low(oSin^) to high(oSin^) do
+          SinCos((i - low(oSin^)) * d + startAngle, oSin^[i], oCos^[i]);
+    end;
 end;
 
 procedure ClosestPointOnSegmentFromPoint(const x1, y1, x2, y2, Px, Py: TGeoFloat; out Nx, Ny: TGeoFloat);

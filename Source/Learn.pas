@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 unit Learn;
 
@@ -13,7 +15,7 @@ unit Learn;
 
 interface
 
-uses CoreClasses, UnicodeMixedLib, PascalStrings, MemoryRaster, MemoryStream64, DataFrameEngine,
+uses Math, CoreClasses, UnicodeMixedLib, PascalStrings, MemoryRaster, MemoryStream64, DataFrameEngine,
   KDTree, LearnTypes;
 
 {$REGION 'Class'}
@@ -172,18 +174,24 @@ type
     // search with euclidean metric - parallel support
     procedure SearchMemoryWithDistance(const ProcessIn: TLVec; out List: TLIVec); overload;
 
-    { * fast binary store support * }
+    { * fast binary store * }
     procedure SaveToDF(df: TDataFrameEngine);
     procedure LoadFromDF(df: TDataFrameEngine);
 
-    { stream store support }
+    { store support }
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
+
+    procedure SaveToFile(fileName: SystemString);
+    procedure LoadFromFile(fileName: SystemString);
 
 {$IFNDEF FPC}
     { * json store support * }
     procedure SaveToJsonStream(stream: TCoreClassStream);
     procedure LoadFromJsonStream(stream: TCoreClassStream);
+
+    procedure SaveToJsonFile(fileName: SystemString);
+    procedure LoadFromJsonFile(fileName: SystemString);
 {$ENDIF FPC}
   end;
 
@@ -761,7 +769,7 @@ const
 
 implementation
 
-uses KM, Math,
+uses KM,
 {$IFDEF FPC}
   mtprocs,
 {$ELSE}

@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 (*
   update history
@@ -378,11 +380,11 @@ begin
   m64 := TMemoryStream64.Create;
   while DataSour.Position < DataSour.Size do
     begin
-      if DataSour.ReadPtr(@StorePos, umlInt64Length) <> umlCardinalLength then
+      if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Cardinal_Size then
           break;
-      if DataSour.ReadPtr(@siz, umlInt64Length) <> umlCardinalLength then
+      if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Cardinal_Size then
           break;
-      if DataSour.ReadPtr(@ID, umlCardinalLength) <> umlCardinalLength then
+      if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
           break;
 
       if DataSour.Position + siz > DataSour.Size then
@@ -415,11 +417,11 @@ begin
   m64 := TMemoryStream64.Create;
   while DataSour.Position < DataSour.Size do
     begin
-      if DataSour.ReadPtr(@StorePos, umlInt64Length) <> umlInt64Length then
+      if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Int64_Size then
           break;
-      if DataSour.ReadPtr(@siz, umlInt64Length) <> umlInt64Length then
+      if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
           break;
-      if DataSour.ReadPtr(@ID, umlCardinalLength) <> umlCardinalLength then
+      if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
           break;
 
       if DataSour.Position + siz > DataSour.Size then
@@ -452,11 +454,11 @@ begin
   m64 := TMemoryStream64.Create;
   while DataSour.Position < DataSour.Size do
     begin
-      if DataSour.ReadPtr(@StorePos, umlInt64Length) <> umlInt64Length then
+      if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Int64_Size then
           break;
-      if DataSour.ReadPtr(@siz, umlInt64Length) <> umlInt64Length then
+      if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
           break;
-      if DataSour.ReadPtr(@ID, umlCardinalLength) <> umlCardinalLength then
+      if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
           break;
 
       if DataSour.Position + siz > DataSour.Size then
@@ -492,11 +494,11 @@ begin
   m64 := TMemoryStream64.Create;
   while DataSour.Position < DataSour.Size do
     begin
-      if DataSour.ReadPtr(@StorePos, umlInt64Length) <> umlInt64Length then
+      if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Int64_Size then
           break;
-      if DataSour.ReadPtr(@siz, umlInt64Length) <> umlInt64Length then
+      if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
           break;
-      if DataSour.ReadPtr(@ID, umlCardinalLength) <> umlCardinalLength then
+      if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
           break;
 
       if DataSour.Position + siz > DataSour.Size then
@@ -532,11 +534,11 @@ begin
   m64 := TMemoryStream64.Create;
   while DataSour.Position < DataSour.Size do
     begin
-      if DataSour.ReadPtr(@StorePos, umlInt64Length) <> umlInt64Length then
+      if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Int64_Size then
           break;
-      if DataSour.ReadPtr(@siz, umlInt64Length) <> umlInt64Length then
+      if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
           break;
-      if DataSour.ReadPtr(@ID, umlCardinalLength) <> umlCardinalLength then
+      if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
           break;
 
       if DataSour.Position + siz > DataSour.Size then
@@ -570,11 +572,11 @@ begin
   m64 := TMemoryStream64.Create;
   while DataSour.Position < DataSour.Size do
     begin
-      if DataSour.ReadPtr(@StorePos, umlInt64Length) <> umlInt64Length then
+      if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Int64_Size then
           break;
-      if DataSour.ReadPtr(@siz, umlInt64Length) <> umlInt64Length then
+      if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
           break;
-      if DataSour.ReadPtr(@ID, umlCardinalLength) <> umlCardinalLength then
+      if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
           break;
 
       if DataSour.Position + siz > DataSour.Size then
@@ -611,11 +613,11 @@ begin
   m64 := TMemoryStream64.Create;
   while DataSour.Position < DataSour.Size do
     begin
-      if DataSour.ReadPtr(@StorePos, umlInt64Length) <> umlInt64Length then
+      if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Int64_Size then
           break;
-      if DataSour.ReadPtr(@siz, umlInt64Length) <> umlInt64Length then
+      if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
           break;
-      if DataSour.ReadPtr(@ID, umlCardinalLength) <> umlCardinalLength then
+      if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
           break;
 
       if DataSour.Position + siz > DataSour.Size then
@@ -647,9 +649,9 @@ begin
       siz := itmStream.Size;
       ID := itmStream.CacheID;
       DestStream.Position := DestStream.Size;
-      DestStream.WritePtr(@StorePos, umlInt64Length);
-      DestStream.WritePtr(@siz, umlInt64Length);
-      DestStream.WritePtr(@ID, umlCardinalLength);
+      DestStream.WritePtr(@StorePos, C_Int64_Size);
+      DestStream.WritePtr(@siz, C_Int64_Size);
+      DestStream.WritePtr(@ID, C_Cardinal_Size);
       DestStream.CopyFrom(itmStream, siz);
 
       DisposeObject(itmStream);
@@ -662,11 +664,11 @@ var
   siz: Int64;
 begin
   Result := nil;
-  if DataSour.ReadPtr(@dStorePos, umlInt64Length) <> umlInt64Length then
+  if DataSour.ReadPtr(@dStorePos, C_Int64_Size) <> C_Int64_Size then
       exit;
-  if DataSour.ReadPtr(@siz, umlInt64Length) <> umlInt64Length then
+  if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
       exit;
-  if DataSour.ReadPtr(@ID, umlCardinalLength) <> umlCardinalLength then
+  if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
       exit;
 
   if DataSour.Position + siz > DataSour.Size then
@@ -689,11 +691,11 @@ var
   siz: Int64;
 begin
   Result := nil;
-  if DataSour.ReadPtr(@dStorePos, umlInt64Length) <> umlInt64Length then
+  if DataSour.ReadPtr(@dStorePos, C_Int64_Size) <> C_Int64_Size then
       exit;
-  if DataSour.ReadPtr(@siz, umlInt64Length) <> umlInt64Length then
+  if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
       exit;
-  if DataSour.ReadPtr(@ID, umlCardinalLength) <> umlCardinalLength then
+  if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
       exit;
 
   if DataSour.Position + siz > DataSour.Size then
@@ -911,9 +913,9 @@ begin
       itmStream.Position := 0;
       siz := itmStream.Size;
       FFragmentBuffer.Position := FFragmentBuffer.Size;
-      FFragmentBuffer.WritePtr(@StorePos, umlInt64Length);
-      FFragmentBuffer.WritePtr(@siz, umlInt64Length);
-      FFragmentBuffer.WritePtr(@ID, umlCardinalLength);
+      FFragmentBuffer.WritePtr(@StorePos, C_Int64_Size);
+      FFragmentBuffer.WritePtr(@siz, C_Int64_Size);
+      FFragmentBuffer.WritePtr(@ID, C_Cardinal_Size);
       FFragmentBuffer.CopyFrom(itmStream, siz);
     end;
 end;

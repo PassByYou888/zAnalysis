@@ -81,6 +81,14 @@ begin
       end;
 end;
 
+function TMemoryRaster.GetVertex: TVertexMap;
+begin
+  if FVertex = nil then
+      OpenVertex;
+
+  Result := FVertex;
+end;
+
 function TMemoryRaster.GetFont: TFontRaster;
 begin
   if FFont = nil then
@@ -341,6 +349,7 @@ begin
   FDrawMode := dmBlend;
   FCombineMode := cmBlend;
 
+  FVertex := nil;
   FFont := nil;
 
   FAggImage := nil;
@@ -349,6 +358,7 @@ begin
 
   FUserObject := nil;
   FUserData := nil;
+  FUserText := '';
 end;
 
 destructor TMemoryRaster.Destroy;
@@ -359,6 +369,7 @@ end;
 
 procedure TMemoryRaster.SetWorkMemory(WorkMemory: Pointer; NewWidth, NewHeight: Integer);
 begin
+  CloseVertex;
   FreeAgg;
 
   if Assigned(FBits) and FFreeBits then
@@ -386,6 +397,21 @@ end;
 procedure TMemoryRaster.SetWorkMemory(Raster: TMemoryRaster);
 begin
   SetWorkMemory(@Raster.FBits[0], Raster.Width, Raster.Height);
+end;
+
+procedure TMemoryRaster.OpenVertex;
+begin
+  if FVertex = nil then
+      FVertex := TVertexMap.Create(Self);
+end;
+
+procedure TMemoryRaster.CloseVertex;
+begin
+  if FVertex <> nil then
+    begin
+      DisposeObject(FVertex);
+      FVertex := nil;
+    end;
 end;
 
 procedure TMemoryRaster.OpenFont;
@@ -450,6 +476,7 @@ begin
       FBits := nil;
     end;
 
+  CloseVertex;
   FreeAgg;
 
   FFreeBits := True;
@@ -472,7 +499,7 @@ begin
   Result := Point(Width, Height);
 end;
 
-function TMemoryRaster.SizeOf2DPoint: T2DPoint;
+function TMemoryRaster.SizeOf2DPoint: TVec2;
 begin
   Result := Make2DPoint(Width, Height);
 end;
@@ -515,6 +542,7 @@ begin
       FFont := nil;
     end;
 
+  CloseVertex;
   FreeAgg;
 
   FFreeBits := False;
@@ -538,6 +566,7 @@ begin
   GetMem(FBits, sour.FWidth * sour.FHeight * SizeOf(TRasterColor));
   CopyRasterColor(sour.FBits^[0], FBits^[0], sour.FWidth * sour.FHeight);
 
+  CloseVertex;
   FreeAgg;
 end;
 
@@ -568,6 +597,7 @@ begin
       Inc(p2, w + W2);
     end;
 
+  CloseVertex;
   FreeAgg;
 end;
 
@@ -591,6 +621,7 @@ begin
     end;
   FreeMem(Buffer);
 
+  CloseVertex;
   FreeAgg;
 end;
 
@@ -624,6 +655,7 @@ begin
   tmp.FBits := nil;
   DisposeObject(tmp);
 
+  CloseVertex;
   FreeAgg;
 end;
 
@@ -641,6 +673,7 @@ begin
       Dec(I2);
     end;
 
+  CloseVertex;
   FreeAgg;
 end;
 
@@ -674,6 +707,7 @@ begin
   tmp.FBits := nil;
   DisposeObject(tmp);
 
+  CloseVertex;
   FreeAgg;
 end;
 
@@ -745,6 +779,7 @@ begin
   n.FHeight := 0;
   DisposeObject(n);
 
+  CloseVertex;
   FreeAgg;
 end;
 
@@ -811,6 +846,7 @@ begin
   n.FHeight := 0;
   DisposeObject(n);
 
+  CloseVertex;
   FreeAgg;
 end;
 
@@ -858,6 +894,7 @@ begin
   n.FHeight := 0;
   DisposeObject(n);
 
+  CloseVertex;
   FreeAgg;
 end;
 
@@ -904,6 +941,7 @@ begin
   n.FHeight := 0;
   DisposeObject(n);
 
+  CloseVertex;
   FreeAgg;
 end;
 
@@ -950,6 +988,7 @@ begin
   n.FHeight := 0;
   DisposeObject(n);
 
+  CloseVertex;
   FreeAgg;
 end;
 
@@ -1213,12 +1252,12 @@ begin
   Line(Round(X1), Round(Y1), Round(X2), Round(Y2), Value, L);
 end;
 
-procedure TMemoryRaster.LineF(p1, p2: T2DPoint; Value: TRasterColor; L: Boolean);
+procedure TMemoryRaster.LineF(p1, p2: TVec2; Value: TRasterColor; L: Boolean);
 begin
   LineF(p1[0], p1[1], p2[0], p2[1], Value, L);
 end;
 
-procedure TMemoryRaster.LineF(p1, p2: T2DPoint; Value: TRasterColor; L, Cross: Boolean);
+procedure TMemoryRaster.LineF(p1, p2: TVec2; Value: TRasterColor; L, Cross: Boolean);
 begin
   LineF(p1[0], p1[1], p2[0], p2[1], Value, L);
   if not Cross then
@@ -1299,35 +1338,36 @@ end;
 
 procedure TMemoryRaster.FillRect(R: TRectV2; Angle: TGeoFloat; Value: TRasterColor);
 var
+  A: TGeoFloat;
   r4: TV2Rect4;
   buff: array [0 .. 4] of TPointDouble;
 begin
-  if Angle = 0 then
-    begin
-      FillRect(R, Value);
-      exit;
-    end;
-
-  r4 := TV2Rect4.Init(R, Angle);
-  if FAgg <> nil then
-    begin
-      buff[0].X := r4.LeftTop[0];
-      buff[0].Y := r4.LeftTop[1];
-      buff[1].X := r4.RightTop[0];
-      buff[1].Y := r4.RightTop[1];
-      buff[2].X := r4.RightBottom[0];
-      buff[2].Y := r4.RightBottom[1];
-      buff[3].X := r4.LeftBottom[0];
-      buff[3].Y := r4.LeftBottom[1];
-      buff[4].X := r4.LeftTop[0];
-      buff[4].Y := r4.LeftTop[1];
-
-      FAgg.FillColor := Value;
-      FAgg.NoLine;
-      FAgg.Polygon(@buff[0], 5);
-    end
+  A := NormalizeDegAngle(Angle);
+  if A = 0 then
+      FillRect(R, Value)
   else
-      ProjectionColor(r4, Value);
+    begin
+      r4 := TV2Rect4.Init(R, A);
+      if FAgg <> nil then
+        begin
+          buff[0].X := r4.LeftTop[0];
+          buff[0].Y := r4.LeftTop[1];
+          buff[1].X := r4.RightTop[0];
+          buff[1].Y := r4.RightTop[1];
+          buff[2].X := r4.RightBottom[0];
+          buff[2].Y := r4.RightBottom[1];
+          buff[3].X := r4.LeftBottom[0];
+          buff[3].Y := r4.LeftBottom[1];
+          buff[4].X := r4.LeftTop[0];
+          buff[4].Y := r4.LeftTop[1];
+
+          FAgg.FillColor := Value;
+          FAgg.NoLine;
+          FAgg.Polygon(@buff[0], 5);
+        end
+      else
+          ProjectionColor(r4, Value);
+    end;
 end;
 
 procedure TMemoryRaster.DrawRect(R: TRect; Value: TRasterColor);
@@ -1549,7 +1589,6 @@ end;
 procedure TMemoryRaster.FillCircle(cc: TVec2; R: TGeoFloat; Value: TRasterColor);
 var
   vl: TVec2List;
-  vt: TVertexMap;
 begin
   if FAgg <> nil then
     begin
@@ -1561,8 +1600,99 @@ begin
     begin
       vl := TVec2List.Create;
       vl.AddCirclePoint(Round(R), cc, R);
-      vt.Init(Self);
-      vt.DrawPoly(vl, Value);
+      Vertex.FillPoly(vl, cc, Value);
+      DisposeObject(vl);
+    end;
+end;
+
+procedure TMemoryRaster.DrawEllipse(cc: TVec2; xRadius, yRadius: TGeoFloat; Value: TRasterColor);
+var
+  i, n: Integer;
+  S, c: TGeoFloatArray;
+  vl: TVec2List;
+begin
+  if xRadius = yRadius then
+      DrawCircle(cc, xRadius, Value)
+  else if FAgg <> nil then
+    begin
+      FAgg.NoFill;
+      FAgg.LineColor := Value;
+      FAgg.Ellipse(cc[0], cc[1], xRadius, yRadius);
+    end
+  else
+    begin
+      n := Round(Max(xRadius, yRadius) * 0.1) + 5;
+      SetLength(S, n);
+      SetLength(c, n);
+      Dec(n);
+      BuildSinCosCache(@S, @c, 0, 90);
+      for i := 0 to n do
+        begin
+          S[i] := S[i] * yRadius;
+          c[i] := c[i] * xRadius;
+        end;
+      vl := TVec2List.Create;
+      // first quadrant (top right)
+      for i := 0 to n do
+          vl.Add(cc[0] + c[i], cc[1] - S[i]);
+      // second quadrant (top left)
+      for i := n - 1 downto 0 do
+          vl.Add(cc[0] - c[i], cc[1] - S[i]);
+      // third quadrant (bottom left)
+      for i := 1 to n do
+          vl.Add(cc[0] - c[i], cc[1] + S[i]);
+      // fourth quadrant (bottom right)
+      for i := n - 1 downto 0 do
+          vl.Add(cc[0] + c[i], cc[1] + S[i]);
+      SetLength(S, 0);
+      SetLength(c, 0);
+      DrawPointListLine(vl, Value, False);
+      DisposeObject(vl);
+    end;
+end;
+
+procedure TMemoryRaster.FillEllipse(cc: TVec2; xRadius, yRadius: TGeoFloat; Value: TRasterColor);
+var
+  i, n: Integer;
+  S, c: TGeoFloatArray;
+  vl: TVec2List;
+begin
+  if xRadius = yRadius then
+      FillCircle(cc, xRadius, Value)
+  else if FAgg <> nil then
+    begin
+      FAgg.FillColor := Value;
+      FAgg.NoLine;
+      FAgg.Ellipse(cc[0], cc[1], xRadius, yRadius);
+    end
+  else
+    begin
+      n := Round(Max(xRadius, yRadius) * 0.1) + 5;
+      SetLength(S, n);
+      SetLength(c, n);
+      Dec(n);
+      BuildSinCosCache(@S, @c, 0, 90);
+      for i := 0 to n do
+        begin
+          S[i] := S[i] * yRadius;
+          c[i] := c[i] * xRadius;
+        end;
+      vl := TVec2List.Create;
+      // first quadrant (top right)
+      for i := 0 to n do
+          vl.Add(cc[0] + c[i], cc[1] - S[i]);
+      // second quadrant (top left)
+      for i := n - 1 downto 0 do
+          vl.Add(cc[0] - c[i], cc[1] - S[i]);
+      // third quadrant (bottom left)
+      for i := 1 to n do
+          vl.Add(cc[0] - c[i], cc[1] + S[i]);
+      // fourth quadrant (bottom right)
+      for i := n - 1 downto 0 do
+          vl.Add(cc[0] + c[i], cc[1] + S[i]);
+      SetLength(S, 0);
+      SetLength(c, 0);
+      Vertex.FillPoly(vl, cc, Value);
       DisposeObject(vl);
     end;
 end;
@@ -1572,7 +1702,7 @@ begin
   Result := Vec2Mul(Font.TextSize(Text), Siz / Font.FontSize)
 end;
 
-procedure TMemoryRaster.DrawText(Text: SystemString; X, Y: Integer; RotateVec: TVec2; Angle, Alpha, Siz: TGeoFloat; TextColor: TRasterColor);
+procedure TMemoryRaster.DrawText(Text: SystemString; X, Y: Integer; RotateVec: TVec2; Angle, alpha, Siz: TGeoFloat; TextColor: TRasterColor);
 var
   fSiz: TVec2;
   sc: TGeoFloat;
@@ -1581,7 +1711,7 @@ begin
   fSiz := Font.TextSize(Text);
   sc := Siz / Font.FontSize;
   fPt := Vec2Mul(Vec2Sub(fSiz, Vec2Mul(fSiz, sc)), RotateVec);
-  Font.Draw(Text, Self, Vec2(X - fPt[0], Y - fPt[1]), TextColor, True, Alpha, RotateVec, Angle, sc);
+  Font.Draw(Text, Self, Vec2(X - fPt[0], Y - fPt[1]), TextColor, True, alpha, RotateVec, Angle, sc);
 end;
 
 procedure TMemoryRaster.DrawText(Text: SystemString; X, Y: Integer; Siz: TGeoFloat; TextColor: TRasterColor);
@@ -1589,20 +1719,14 @@ begin
   DrawText(Text, X, Y, Vec2(0.5, 0.5), 0, 1, Siz, TextColor);
 end;
 
-procedure TMemoryRaster.ProjectionTo2DMap(Dst: TMemoryRaster; const SourRect, DestRect: TV2Rect4; const bilinear_sampling: Boolean; const Alpha: Single);
-var
-  vt: TVertexMap;
+procedure TMemoryRaster.ProjectionTo2DMap(Dst: TMemoryRaster; const SourRect, DestRect: TV2Rect4; const bilinear_sampling: Boolean; const alpha: Single);
 begin
-  vt.Init(Dst);
-  vt.DrawRect(SourRect, DestRect, Self, bilinear_sampling, Alpha);
+  Vertex.DrawRect(SourRect, DestRect, Self, bilinear_sampling, alpha);
 end;
 
 procedure TMemoryRaster.ProjectionColor(const DestRect: TV2Rect4; const color: TRasterColor);
-var
-  vt: TVertexMap;
 begin
-  vt.Init(Self);
-  vt.DrawRect(DestRect, color);
+  Vertex.DrawRect(DestRect, color);
 end;
 
 procedure TMemoryRaster.Draw(Src: TMemoryRaster);
@@ -1698,7 +1822,7 @@ begin
     (Header.biBitCount = 32) and (Header.biPlanes = 1) and
     (Header.biCompression = 0) then
     begin
-      SetSize(Header.biWidth, Abs(Header.biHeight));
+      SetSize(Header.biWidth, abs(Header.biHeight));
 
       // Check whether the bitmap is saved top-down
       if Header.biHeight > 0 then

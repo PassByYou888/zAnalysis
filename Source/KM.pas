@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
 unit KM;
@@ -60,7 +62,7 @@ begin
   Inc(VDst, i11);
   Inc(VSrc, i21);
 
-  for i := 0 to i12 - i11 do
+  for i := i12 - i11 downto 0 do
     begin
       VDst^ := VSrc^;
       Inc(VDst);
@@ -75,7 +77,7 @@ begin
   Inc(VDst, i11);
   Inc(VSrc, i21);
 
-  for i := 0 to i12 - i11 do
+  for i := i12 - i11 downto 0 do
     begin
       VDst^ := f * VSrc^;
       Inc(VDst);
@@ -90,7 +92,7 @@ begin
   Inc(VDst, i11);
   Inc(VSrc, i21);
 
-  for i := 0 to i12 - i11 do
+  for i := i12 - i11 downto 0 do
     begin
       VDst^ := VDst^ - VSrc^;
       Inc(VDst);
@@ -106,7 +108,7 @@ begin
   Inc(V2, i21);
 
   Result := 0;
-  for i := 0 to i12 - i11 do
+  for i := i12 - i11 downto 0 do
     begin
       Result := Result + (V1^ * V2^);
       Inc(V1);
@@ -121,7 +123,7 @@ begin
   Inc(VDst, i11);
   Inc(VSrc, i21);
 
-  for i := 0 to i12 - i11 do
+  for i := i12 - i11 downto 0 do
     begin
       VDst^ := VDst^ + VSrc^;
       Inc(VDst);
@@ -134,7 +136,7 @@ var
   i: NativeInt;
 begin
   Inc(VOp, I1);
-  for i := 0 to I2 - I1 do
+  for i := I2 - I1 downto 0 do
     begin
       VOp^ := f * VOp^;
       Inc(VOp);

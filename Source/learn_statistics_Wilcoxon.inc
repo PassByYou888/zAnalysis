@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
 procedure WCheb(const X, C: TLFloat; var TJ: TLFloat; var TJ1: TLFloat; var R: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}

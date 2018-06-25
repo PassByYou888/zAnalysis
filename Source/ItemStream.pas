@@ -6,6 +6,8 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 (*
   update history
@@ -23,7 +25,7 @@ uses SysUtils, CoreClasses, Classes, UnicodeMixedLib, ObjectData, ObjectDataMana
 type
   TItemStream = class(TCoreClassStream)
   private
-    FItemHnd : TItemHandle;
+    FItemHnd: TItemHandle;
     FDBEngine: TObjectDataManager;
   protected
     function GetSize: Int64; override;
@@ -73,7 +75,7 @@ var
   ihnd: TItemHandle;
 begin
   inherited Create;
-  DBEngine.ItemAutoConnect(DBPath, DBItem, DBItem, ihnd);
+  DBEngine.ItemAutoOpenOrCreate(DBPath, DBItem, DBItem, ihnd);
   ChangeHandle(DBEngine, ihnd);
 end;
 
@@ -129,7 +131,7 @@ end;
 
 function TItemStream.Read(var Buffer; Count: Longint): Longint;
 var
-  _P   : Int64;
+  _P: Int64;
   _Size: Int64;
 begin
   Result := 0;
