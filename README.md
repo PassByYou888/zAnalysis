@@ -118,7 +118,8 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 
 
 ** 首次编译前，先运行Source\MemoryRaster_DefaultFont_build.bat，生成一次字体库 **
-**默认环境下，光栅引擎不支持中文，假如要使用中文，请用字体工具重新生成一次中文字体库（让它包含GBK字符集）**
+
+** 默认环境下，光栅引擎不支持中文，假如要使用中文，请用字体工具重新生成一次中文字体库（让它包含GBK字符集） **
 
 **在Source中的子目录，均对开发或则运行平台有所要求**
 - source\DrawInterfaceInFMX，必须使用delphi+fmx才能进行编译，运行平台支持ios,android,osx,windows，不支持linux
