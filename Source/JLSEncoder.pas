@@ -22,12 +22,12 @@
 }
 unit JLSEncoder;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
 uses
-  JLSGlobal, CoreClasses, JLSBitIO, StrUtils, SysUtils, JLSJpegmark, JLSMelcode, JLSLossless, JLSBasecodec;
+  JLSGlobal, CoreClasses, JLSBitIO, StrUtils, SysUtils, JLSJpegmark, JLSMelcode, JLSLossless, JLSBaseCodec;
 
 const
   LESS_CONTEXTS = 1;
@@ -36,18 +36,18 @@ type
   TJLSEncoder = class(TJLSBaseCodec)
   private
     FOwnStreams: Boolean;
-    application_header: int; { application bytes written in the header }
-    all_header: int;         { all bytes of the header, including application bytes and JPEG-LS bytes }
-    shift: int;              { Shift value for sparse images }
-    palete: int;             { for paletized images }
+    application_header: Int; { application bytes written in the header }
+    all_header: Int;         { all bytes of the header, including application bytes and JPEG-LS bytes }
+    Shift: Int;              { Shift value for sparse images }
+    palete: Int;             { for paletized images }
     { close the line buffers }
-    function closebuffers: int;
+    function closebuffers: Int;
     { Initialize the buffers for each line }
-    procedure initbuffers(comp: int);
+    procedure initbuffers(comp: Int);
     { Initialization Function - Reads in parameters from image }
-    procedure initialize;
+    procedure Initialize;
     { Read one row of pixel values }
-    procedure read_one_line(line: PPixel; cols: int; infile: TCoreClassStream);
+    procedure read_one_line(Line: ppixel; Cols: Int; infile: TCoreClassStream);
     { Swap the pointers to the current and previous scanlines }
     procedure swaplines;
 
@@ -57,7 +57,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function Execute: Boolean; override;
-    procedure SaveToFile(AFileName: string);
+    procedure SaveToFile(aFileName: string);
 
   end;
 
@@ -65,77 +65,77 @@ implementation
 
 uses DoStatusIO;
 
-procedure TJLSEncoder.read_one_line(line: PPixel; cols: int; infile: TCoreClassStream);
+procedure TJLSEncoder.read_one_line(Line: ppixel; Cols: Int; infile: TCoreClassStream);
 var
   line8: PByte;
-  i: int;
+  i: Int;
 begin
-  if (FImageInfo.bpp16 = FALSE) then
+  if (FImageInfo.bpp16 = False) then
     begin
-      line8 := PByte(safealloc(cols));
+      line8 := PByte(safealloc(Cols));
 
-      if infile.Read(line8^, cols) <> cols then
+      if infile.read(line8^, Cols) <> Cols then
           error('Input file is truncated');
 
-      for i := 0 to pred(cols) do
+      for i := 0 to pred(Cols) do
         begin
-          line^ := PByteArrayAccess(line8)^[i];
-          Inc(line);
+          Line^ := PByteArrayAccess(line8)^[i];
+          Inc(Line);
         end;
       FreeMem(line8);
     end
   else
     begin
-      if infile.Read(line, cols * 2) <> cols * 2 then
+      if infile.read(Line, Cols * 2) <> Cols * 2 then
           error('Input file is truncated');
     end;
 end;
 
-procedure TJLSEncoder.SaveToFile(AFileName: string);
+procedure TJLSEncoder.SaveToFile(aFileName: string);
 var
-  Stream: TCoreClassStream;
+  stream: TCoreClassStream;
 begin
-  Stream := TCoreClassFileStream.Create(AFileName, fmCreate);
+  stream := TCoreClassFileStream.Create(aFileName, fmCreate);
   try
     FOutputStream.Position := 0;
-    Stream.CopyFrom(FOutputStream, FOutputStream.Size);
+    stream.CopyFrom(FOutputStream, FOutputStream.Size);
   finally
-      DisposeObject(Stream);
+      DisposeObject(stream);
   end;
 end;
 
-procedure TJLSEncoder.initbuffers(comp: int);
+procedure TJLSEncoder.initbuffers(comp: Int);
 var
-  Ptr: PPixel;
+  PTR: ppixel;
 begin
-  pscanl0 := safecalloc(comp * (Width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE), SizeOf(Pixel));
-  cscanl0 := safecalloc(comp * (Width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE), SizeOf(Pixel));
+  pscanl0 := safecalloc(comp * (width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE), SizeOf(Pixel));
+  cscanl0 := safecalloc(comp * (width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE), SizeOf(Pixel));
 
   { Adjust scan line pointers taking into account the margins,
     and also the fact that indexing for scan lines starts from 1
   }
-  Ptr := pscanl0; Inc(Ptr, comp * (LEFTMARGIN - 1));
-  pscanline := Ptr;
-  Ptr := cscanl0; Inc(Ptr, comp * (LEFTMARGIN - 1));
-  cscanline := Ptr;
+  PTR := pscanl0; Inc(PTR, comp * (LEFTMARGIN - 1));
+  pscanline := PTR;
+  PTR := cscanl0; Inc(PTR, comp * (LEFTMARGIN - 1));
+  cscanline := PTR;
 
   FBitIO.bitoinit();
 end;
 
 procedure TJLSEncoder.swaplines;
 var
-  temp: PPixel;
+  Temp: ppixel;
 begin
-  temp := pscanline;
+  Temp := pscanline;
   pscanline := cscanline;
-  cscanline := temp;
+  cscanline := Temp;
 end;
 
 constructor TJLSEncoder.Create;
 begin
-  FOwnStreams := FALSE;
+  FOwnStreams := False;
   inherited Create;
-  shift := 0;  { Shift value for sparse images }
+  Shift := 0;  { Shift value for sparse images }
   palete := 0; { for paletized images }
   Init;
 end;
@@ -152,9 +152,9 @@ begin
   inherited;
 end;
 
-function TJLSEncoder.closebuffers: int;
+function TJLSEncoder.closebuffers: Int;
 var
-  pos: int;
+  pos: Int;
 begin
   FBitIO.bitoflush();
 
@@ -167,19 +167,19 @@ begin
   FreeMem(pscanl0);
   FreeMem(cscanl0);
 
-  result := pos;
+  Result := pos;
 end;
 
-procedure TJLSEncoder.initialize;
+procedure TJLSEncoder.Initialize;
 var
   color_mode_string: string;
-  i: int;
+  i: Int;
 begin
   { check that color mode is valid and pick color mode string }
   if (FImageInfo._near = 0) then
-      lossy := FALSE
+      lossy := False
   else
-      lossy := TRUE;
+      lossy := True;
 
   case color_mode of
     PLANE_INT: color_mode_string := plane_int_string;
@@ -191,7 +191,7 @@ begin
   end;
 
   { Single component => PLANE_INT }
-  if (((color_mode = LINE_INT) or (color_mode = PIXEL_INT)) and (FImageInfo.components = 1)) then
+  if (((color_mode = LINE_INT) or (color_mode = PIXEL_INT)) and (FImageInfo.Components = 1)) then
     begin
       if (FEnableLog) then
           DoStatus('Single component received: Color mode changed to PLANE INTERLEAVED');
@@ -220,12 +220,12 @@ begin
   { Check for 16 or 8 bit mode }
   if (FImageInfo.alpha <= MAXA16) and (FImageInfo.alpha > MAXA8) then
     begin
-      FImageInfo.bpp16 := TRUE;
+      FImageInfo.bpp16 := True;
       lutmax := LUTMAX16;
     end
   else if (FImageInfo.alpha <= MAXA8) and (FImageInfo.alpha >= 1) then
     begin
-      FImageInfo.bpp16 := FALSE;
+      FImageInfo.bpp16 := False;
       lutmax := LUTMAX8;
     end
   else begin
@@ -236,11 +236,11 @@ begin
   { print out parameters }
   if (FEnableLog) then
     begin
-      DoStatus('Image: cols=%d rows=%d alpha=%d comp=%d mode=%d (%s)', [Width, height, alpha, components, color_mode, color_mode_string]);
+      DoStatus('Image: cols=%d rows=%d alpha=%d comp=%d mode=%d (%s)', [width, height, alpha, Components, color_mode, color_mode_string]);
     end;
 
   { compute auxiliary parameters for _near-lossless (globals) }
-  if (lossy = TRUE) then
+  if (lossy = True) then
     begin
       quant := 2 * FImageInfo._near + 1;
       FImageInfo.qbeta := (FImageInfo.alpha + 2 * FImageInfo._near + quant - 1) div quant;
@@ -253,7 +253,7 @@ begin
 
   { compute bits per sample for input symbols }
   bpp := 1;
-  while LongInt(1 shl bpp) < FImageInfo.alpha
+  while longint(1 shl bpp) < FImageInfo.alpha
     do
       Inc(bpp);
 
@@ -263,8 +263,8 @@ begin
 
   { compute bits per sample for unencoded prediction errors }
   FImageInfo.qbpp := 1;
-  if (lossy = TRUE) then
-    while LongInt(1 shl FImageInfo.qbpp) < FImageInfo.qbeta do
+  if (lossy = True) then
+    while longint(1 shl FImageInfo.qbpp) < FImageInfo.qbeta do
         Inc(FImageInfo.qbpp)
   else
       FImageInfo.qbpp := bpp;
@@ -274,28 +274,28 @@ begin
 
   { limit for unary part of Golomb code }
   if (bpp < 8) then
-      FImageInfo.limit := 2 * (bpp + 8) - FImageInfo.qbpp - 1
+      FImageInfo.Limit := 2 * (bpp + 8) - FImageInfo.qbpp - 1
   else
-      FImageInfo.limit := 4 * bpp - FImageInfo.qbpp - 1;
+      FImageInfo.Limit := 4 * bpp - FImageInfo.qbpp - 1;
 
-  for i := 0 to pred(FImageInfo.components) do
+  for i := 0 to pred(FImageInfo.Components) do
     begin
       samplingx[i] := 1;
       samplingy[i] := 1;
     end;
 
   { Allocate memory pools. }
-  initbuffers(FImageInfo.components);
+  initbuffers(FImageInfo.Components);
 end;
 
 function TJLSEncoder.Execute: Boolean;
 var
-  n, n_c, n_r, my_i, n_s, i: int;
-  tot_in, tot_out, pos0, pos1: long;
-  temp_columns: int;
-  MCUs_counted: int;
-  local_scanl0, local_scanl1, local_pscanline, local_cscanline: PPixel;
-  Ptr: PPixel;
+  n, n_c, n_r, my_i, n_s, i: Int;
+  tot_in, tot_out, pos0, pos1: LONG;
+  temp_columns: Int;
+  MCUs_counted: Int;
+  local_scanl0, local_scanl1, local_pscanline, local_cscanline: ppixel;
+  PTR: ppixel;
 begin
   inherited Execute;
   tot_in := 0;
@@ -306,13 +306,13 @@ begin
   local_scanl0 := nil;
   local_scanl1 := nil;
   { Parse the parameters, initialize }
-  initialize;
+  Initialize;
 
   { Compute the number of scans }
   { Multiple scans only for PLANE_INT in this implementation }
 
   if (color_mode = PLANE_INT) then
-      number_of_scans := FImageInfo.components
+      number_of_scans := FImageInfo.Components
   else
       number_of_scans := 1;
 
@@ -323,14 +323,14 @@ begin
       head_scan[n_s] := safecalloc(1, SizeOf(tjpeg_ls_header));
 
   { Assigns columns/rows to head_frame }
-  head_frame^.columns := Width;
-  head_frame^.rows := height;
+  head_frame^.columns := width;
+  head_frame^.Rows := height;
 
   head_frame^.alp := FImageInfo.alpha;
-  head_frame^.comp := FImageInfo.components;
+  head_frame^.comp := FImageInfo.Components;
 
   { Assign component id and samplingx/samplingy }
-  for i := 0 to pred(FImageInfo.components) do
+  for i := 0 to pred(FImageInfo.Components) do
     begin
       head_frame^.comp_ids[i] := i + 1;
       head_frame^.samplingx[i] := samplingx[i];
@@ -340,17 +340,17 @@ begin
   head_frame^._near := FImageInfo._near; { Not needed, scan information }
   head_frame^.need_lse := need_lse;      { Not needed, for commpletness }
   head_frame^.color_mode := color_mode;  { Not needed, scan information }
-  head_frame^.shift := shift;            { Not needed, scan information }
+  head_frame^.Shift := Shift;            { Not needed, scan information }
 
   for n_s := 0 to pred(number_of_scans) do
     begin
       head_scan[n_s]^.alp := FImageInfo.alpha;
       head_scan[n_s]^._near := FImageInfo._near;
-      head_scan[n_s]^.T1 := FT1;
-      head_scan[n_s]^.T2 := FT2;
-      head_scan[n_s]^.T3 := FT3;
-      head_scan[n_s]^.RES := FImageInfo.RESET;
-      head_scan[n_s]^.shift := shift;
+      head_scan[n_s]^.t1 := FT1;
+      head_scan[n_s]^.t2 := FT2;
+      head_scan[n_s]^.t3 := FT3;
+      head_scan[n_s]^.res := FImageInfo.Reset;
+      head_scan[n_s]^.Shift := Shift;
       head_scan[n_s]^.color_mode := color_mode;
     end;
 
@@ -379,17 +379,17 @@ begin
 
   { End of frame header writing }
 
-  if ((FImageInfo.components > 1)) then
+  if ((FImageInfo.Components > 1)) then
     begin
 
-      local_scanl0 := safecalloc(Width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE, SizeOf(Pixel));
-      local_scanl1 := safecalloc(Width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE, SizeOf(Pixel));
+      local_scanl0 := safecalloc(width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE, SizeOf(Pixel));
+      local_scanl1 := safecalloc(width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE, SizeOf(Pixel));
 
-      Ptr := local_scanl0; Inc(Ptr, LEFTMARGIN - 1);
-      local_pscanline := Ptr;
+      PTR := local_scanl0; Inc(PTR, LEFTMARGIN - 1);
+      local_pscanline := PTR;
 
-      Ptr := local_scanl1; Inc(Ptr, LEFTMARGIN - 1);
-      local_cscanline := Ptr;
+      PTR := local_scanl1; Inc(PTR, LEFTMARGIN - 1);
+      local_cscanline := PTR;
 
     end;
 
@@ -405,9 +405,9 @@ begin
           set_thresholds(FImageInfo.alpha, FImageInfo._near, @FT1, @FT2, @FT3);
           for i := 0 to pred(number_of_scans) do
             begin
-              head_scan[n_s]^.T1 := FT1;
-              head_scan[n_s]^.T2 := FT2;
-              head_scan[n_s]^.T3 := FT3;
+              head_scan[n_s]^.t1 := FT1;
+              head_scan[n_s]^.t2 := FT2;
+              head_scan[n_s]^.t3 := FT3;
             end;
         end;
 
@@ -425,13 +425,13 @@ begin
 
       { Print out parameters }
       if FEnableLog then
-          DoStatus('Parameters: T1=%d T2=%d T3=%d RESET=%d limit=%d', [T1, T2, T3, RESET, limit]);
+          DoStatus('Parameters: T1=%d T2=%d T3=%d RESET=%d limit=%d', [t1, t2, t3, Reset, Limit]);
 
       { Prepare LUTs for context quantization }
       { Must re-do when Thresholds change }
       prepareLUTs();
 
-      if (lossy = TRUE) then { prepare div/mul tables for _near-lossless quantization }
+      if (lossy = True) then { prepare div/mul tables for _near-lossless quantization }
           prepare_qtables(FImageInfo.alpha, FImageInfo._near);
 
       { Check for errors }
@@ -449,7 +449,7 @@ begin
       n := 0;
 
       { initialize stats arrays }
-      if (lossy = TRUE) then
+      if (lossy = True) then
           init_stats(FImageInfo.qbeta)
       else
           init_stats(FImageInfo.alpha);
@@ -464,34 +464,34 @@ begin
             /*           Line interleaved mode with single file received           */
             /*********************************************************************** }
 
-          if (lossy = FALSE) then
+          if (lossy = False) then
             begin
               Inc(n);
               { LOSSLESS mode }
               while (n <= height) do
                 begin
 
-                  Ptr := @(PWordArray(cscanline)^[FImageInfo.components + 1]);
-                  read_one_line(Ptr, FImageInfo.components * Width, FInputStream);
-                  tot_in := tot_in + FImageInfo.components * Width;
+                  PTR := @(pwordarray(cscanline)^[FImageInfo.Components + 1]);
+                  read_one_line(PTR, FImageInfo.Components * width, FInputStream);
+                  tot_in := tot_in + FImageInfo.Components * width;
 
                   { 'extend' the edges }
 
-                  for n_c := 0 to pred(FImageInfo.components) do
+                  for n_c := 0 to pred(FImageInfo.Components) do
                     begin
-                      ppixelarray(cscanline)^[-FImageInfo.components + n_c] := ppixelarray(pscanline)^[FImageInfo.components + n_c];
-                      ppixelarray(cscanline)^[n_c] := ppixelarray(pscanline)^[FImageInfo.components + n_c];
+                      ppixelarray(cscanline)^[-FImageInfo.Components + n_c] := ppixelarray(pscanline)^[FImageInfo.Components + n_c];
+                      ppixelarray(cscanline)^[n_c] := ppixelarray(pscanline)^[FImageInfo.Components + n_c];
                     end;
 
-                  for n_c := 0 to pred(FImageInfo.components) do
+                  for n_c := 0 to pred(FImageInfo.Components) do
                     begin
 
-                      if (FImageInfo.components > 1) then
+                      if (FImageInfo.Components > 1) then
                         begin
-                          for my_i := 0 to pred(Width + LEFTMARGIN + RIGHTMARGIN) do
+                          for my_i := 0 to pred(width + LEFTMARGIN + RIGHTMARGIN) do
                             begin
-                              ppixelarray(local_cscanline)^[-1 + my_i] := ppixelarray(cscanline)^[-FImageInfo.components + my_i * FImageInfo.components + n_c];
-                              ppixelarray(local_pscanline)^[-1 + my_i] := ppixelarray(pscanline)^[-FImageInfo.components + my_i * FImageInfo.components + n_c];
+                              ppixelarray(local_cscanline)^[-1 + my_i] := ppixelarray(cscanline)^[-FImageInfo.Components + my_i * FImageInfo.Components + n_c];
+                              ppixelarray(local_pscanline)^[-1 + my_i] := ppixelarray(pscanline)^[-FImageInfo.Components + my_i * FImageInfo.Components + n_c];
                             end;
                         end
                       else begin
@@ -500,13 +500,13 @@ begin
                         end;
 
                       { process the lines }
-                      FLossless.lossless_doscanline(ppixelarray(local_pscanline), ppixelarray(local_cscanline), Width, n_c);
+                      FLossless.lossless_doscanline(ppixelarray(local_pscanline), ppixelarray(local_cscanline), width, n_c);
 
                     end;
 
                   { 'extend' the edges }
-                  for n_c := 0 to pred(FImageInfo.components) do
-                      ppixelarray(cscanline)^[FImageInfo.components * (Width + 1) + n_c] := ppixelarray(cscanline)^[FImageInfo.components * Width + n_c];
+                  for n_c := 0 to pred(FImageInfo.Components) do
+                      ppixelarray(cscanline)^[FImageInfo.Components * (width + 1) + n_c] := ppixelarray(cscanline)^[FImageInfo.Components * width + n_c];
 
                   { make the current scanline the previous one }
                   swaplines();
@@ -532,29 +532,29 @@ begin
               { LOSSY mode }
               while (n <= height) do
                 begin
-                  Ptr := @(PWordArray(cscanline)^[FImageInfo.components + 1]);
+                  PTR := @(pwordarray(cscanline)^[FImageInfo.Components + 1]);
 
-                  read_one_line(Ptr, FImageInfo.components * Width, FInputStream);
+                  read_one_line(PTR, FImageInfo.Components * width, FInputStream);
 
-                  tot_in := tot_in + FImageInfo.components * Width;
+                  tot_in := tot_in + FImageInfo.Components * width;
 
                   { 'extend' the edges }
 
-                  for n_c := 0 to pred(FImageInfo.components) do
+                  for n_c := 0 to pred(FImageInfo.Components) do
                     begin
-                      ppixelarray(cscanline)^[-FImageInfo.components + n_c] := ppixelarray(pscanline)^[FImageInfo.components + n_c];
-                      ppixelarray(cscanline)^[n_c] := ppixelarray(pscanline)^[FImageInfo.components + n_c];
+                      ppixelarray(cscanline)^[-FImageInfo.Components + n_c] := ppixelarray(pscanline)^[FImageInfo.Components + n_c];
+                      ppixelarray(cscanline)^[n_c] := ppixelarray(pscanline)^[FImageInfo.Components + n_c];
                     end;
 
-                  for n_c := 0 to pred(FImageInfo.components) do
+                  for n_c := 0 to pred(FImageInfo.Components) do
                     begin
 
-                      if (FImageInfo.components > 1) then
+                      if (FImageInfo.Components > 1) then
                         begin
-                          for my_i := 0 to pred(Width + LEFTMARGIN + RIGHTMARGIN) do
+                          for my_i := 0 to pred(width + LEFTMARGIN + RIGHTMARGIN) do
                             begin
-                              ppixelarray(local_cscanline)^[-1 + my_i] := ppixelarray(cscanline)^[-FImageInfo.components + my_i * FImageInfo.components + n_c];
-                              ppixelarray(local_pscanline)^[-1 + my_i] := ppixelarray(pscanline)^[-FImageInfo.components + my_i * FImageInfo.components + n_c];
+                              ppixelarray(local_cscanline)^[-1 + my_i] := ppixelarray(cscanline)^[-FImageInfo.Components + my_i * FImageInfo.Components + n_c];
+                              ppixelarray(local_pscanline)^[-1 + my_i] := ppixelarray(pscanline)^[-FImageInfo.Components + my_i * FImageInfo.Components + n_c];
                             end;
                         end
                       else begin
@@ -563,20 +563,20 @@ begin
                         end;
 
                       { process the lines }
-                      FLossy.lossy_doscanline(ppixelarray(local_pscanline), ppixelarray(local_cscanline), Width, n_c);
+                      FLossy.lossy_doscanline(ppixelarray(local_pscanline), ppixelarray(local_cscanline), width, n_c);
 
-                      if (components > 1) then
+                      if (Components > 1) then
                         begin
-                          for my_i := 0 to pred(Width + LEFTMARGIN + RIGHTMARGIN) do
+                          for my_i := 0 to pred(width + LEFTMARGIN + RIGHTMARGIN) do
                             begin
-                              ppixelarray(cscanline)^[-components + my_i * components + n_c] := ppixelarray(local_cscanline)^[-1 + my_i];
+                              ppixelarray(cscanline)^[-Components + my_i * Components + n_c] := ppixelarray(local_cscanline)^[-1 + my_i];
                             end;
                         end;
                     end;
 
                   { 'extend' the edges }
-                  for n_c := 0 to pred(FImageInfo.components) do
-                      ppixelarray(cscanline)^[FImageInfo.components * (Width + 1) + n_c] := ppixelarray(cscanline)^[FImageInfo.components * Width + n_c];
+                  for n_c := 0 to pred(FImageInfo.Components) do
+                      ppixelarray(cscanline)^[FImageInfo.Components * (width + 1) + n_c] := ppixelarray(cscanline)^[FImageInfo.Components * width + n_c];
 
                   { make the current scanline the previous one }
                   swaplines();
@@ -606,33 +606,33 @@ begin
                 *           Pixel interleaved mode with single file received          *
                 *********************************************************************** }
 
-              if (lossy = FALSE) then
+              if (lossy = False) then
                 begin
                   Inc(n);
 
                   { LOSSLESS mode }
                   while (n <= height) do
                     begin
-                      Ptr := @(PWordArray(cscanline)^[FImageInfo.components + 1]);
+                      PTR := @(pwordarray(cscanline)^[FImageInfo.Components + 1]);
 
-                      read_one_line(Ptr, FImageInfo.components * Width, FInputStream);
+                      read_one_line(PTR, FImageInfo.Components * width, FInputStream);
 
-                      tot_in := tot_in + FImageInfo.components * Width;
+                      tot_in := tot_in + FImageInfo.Components * width;
 
                       { 'extend' the edges }
 
-                      for n_c := 0 to pred(FImageInfo.components) do
+                      for n_c := 0 to pred(FImageInfo.Components) do
                         begin
-                          ppixelarray(cscanline)^[-FImageInfo.components + n_c] := ppixelarray(pscanline)^[FImageInfo.components + n_c];
-                          ppixelarray(cscanline)^[n_c] := ppixelarray(pscanline)^[FImageInfo.components + n_c];
+                          ppixelarray(cscanline)^[-FImageInfo.Components + n_c] := ppixelarray(pscanline)^[FImageInfo.Components + n_c];
+                          ppixelarray(cscanline)^[n_c] := ppixelarray(pscanline)^[FImageInfo.Components + n_c];
                         end;
 
                       { process the lines }
-                      FLossless.lossless_doscanline_pixel(ppixelarray(pscanline), ppixelarray(cscanline), FImageInfo.components * Width);
+                      FLossless.lossless_doscanline_pixel(ppixelarray(pscanline), ppixelarray(cscanline), FImageInfo.Components * width);
 
                       { 'extend' the edges }
-                      for n_c := 0 to pred(FImageInfo.components) do
-                          ppixelarray(cscanline)^[FImageInfo.components * (Width + 1) + n_c] := ppixelarray(cscanline)^[FImageInfo.components * Width + n_c];
+                      for n_c := 0 to pred(FImageInfo.Components) do
+                          ppixelarray(cscanline)^[FImageInfo.Components * (width + 1) + n_c] := ppixelarray(cscanline)^[FImageInfo.Components * width + n_c];
 
                       { make the current scanline the previous one }
                       swaplines();
@@ -658,26 +658,26 @@ begin
                   { LOSSY mode }
                   while (n <= height) do
                     begin
-                      Ptr := @(PWordArray(cscanline)^[FImageInfo.components + 1]);
+                      PTR := @(pwordarray(cscanline)^[FImageInfo.Components + 1]);
 
-                      read_one_line(Ptr, FImageInfo.components * Width, FInputStream);
+                      read_one_line(PTR, FImageInfo.Components * width, FInputStream);
 
-                      tot_in := tot_in + FImageInfo.components * Width;
+                      tot_in := tot_in + FImageInfo.Components * width;
 
                       { 'extend' the edges }
 
-                      for n_c := 0 to pred(FImageInfo.components) do
+                      for n_c := 0 to pred(FImageInfo.Components) do
                         begin
-                          ppixelarray(cscanline)^[-FImageInfo.components + n_c] := ppixelarray(pscanline)^[FImageInfo.components + n_c];
-                          ppixelarray(cscanline)^[n_c] := ppixelarray(pscanline)^[FImageInfo.components + n_c];
+                          ppixelarray(cscanline)^[-FImageInfo.Components + n_c] := ppixelarray(pscanline)^[FImageInfo.Components + n_c];
+                          ppixelarray(cscanline)^[n_c] := ppixelarray(pscanline)^[FImageInfo.Components + n_c];
                         end;
 
                       { process the lines }
-                      FLossy.lossy_doscanline_pixel(ppixelarray(pscanline), ppixelarray(cscanline), FImageInfo.components * Width);
+                      FLossy.lossy_doscanline_pixel(ppixelarray(pscanline), ppixelarray(cscanline), FImageInfo.Components * width);
 
                       { 'extend' the edges }
-                      for n_c := 0 to pred(FImageInfo.components) do
-                          ppixelarray(cscanline)^[FImageInfo.components * (Width + 1) + n_c] := ppixelarray(cscanline)^[FImageInfo.components * Width + n_c];
+                      for n_c := 0 to pred(FImageInfo.Components) do
+                          ppixelarray(cscanline)^[FImageInfo.Components * (width + 1) + n_c] := ppixelarray(cscanline)^[FImageInfo.Components * width + n_c];
 
                       { make the current scanline the previous one }
                       swaplines();
@@ -706,7 +706,7 @@ begin
                 /*           Plane interleaved mode                    */
                 /*********************************************************************** }
 
-              if (lossy = FALSE) then
+              if (lossy = False) then
                 begin
                   { LOSSLESS mode }
                   Inc(n);
@@ -714,11 +714,11 @@ begin
                   while (n <= height) do
                     begin
 
-                      temp_columns := Width;;
+                      temp_columns := width;;
 
-                      Ptr := @(PWordArray(cscanline)^[1]);
+                      PTR := @(pwordarray(cscanline)^[1]);
 
-                      read_one_line(Ptr, temp_columns, InputStream);
+                      read_one_line(PTR, temp_columns, InputStream);
 
                       tot_in := tot_in + temp_columns;
 
@@ -761,11 +761,11 @@ begin
                   while (n <= height) do
                     begin
 
-                      temp_columns := Width;
+                      temp_columns := width;
 
-                      Ptr := @(PWordArray(cscanline)^[1]);
+                      PTR := @(pwordarray(cscanline)^[1]);
 
-                      read_one_line(Ptr, temp_columns, InputStream);
+                      read_one_line(PTR, temp_columns, InputStream);
 
                       tot_in := tot_in + temp_columns;
 
@@ -833,7 +833,7 @@ begin
   if FEnableLog then
       DoStatus('Marker segment bytes: %d', [all_header]);
 
-  result := TRUE; { OK! }
+  Result := True; { OK! }
 end;
 
 procedure TJLSEncoder.Init;
@@ -843,17 +843,18 @@ begin
   need_table := 0;
   need_restart := 0;
   restart_interval := 0;
-  FImageInfo.components := 0;
+  FImageInfo.Components := 0;
   FT1 := 0;
   FT2 := 0;
   FT3 := 0;
 
-  FImageInfo.RESET := DEFAULT_RESET;
+  FImageInfo.Reset := DEFAULT_RESET;
 
   { Initialize _near to zero and loss-less mode }
   FImageInfo._near := DEF_NEAR;
-  lossy := FALSE;
+  lossy := False;
   alpha0 := DEF_ALPHA;
 end;
 
-end.
+end. 
+ 

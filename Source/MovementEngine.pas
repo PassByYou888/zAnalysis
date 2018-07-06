@@ -11,7 +11,7 @@
 { ****************************************************************************** }
 unit MovementEngine;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
@@ -20,8 +20,8 @@ uses SysUtils, Geometry2DUnit, CoreClasses, Math;
 type
   TMovementStep = packed record
     Position: TVec2;
-    Angle: TGeoFloat;
-    Index: Integer;
+    angle: TGeoFloat;
+    index: Integer;
   end;
 
   IMovementEngineIntf = interface
@@ -90,7 +90,7 @@ type
     procedure Start(ATo: TVec2); overload;
     procedure Start(APaths: TVec2List); overload;
     procedure Start; overload;
-    procedure Stop;
+    procedure stop;
     procedure Pause;
 
     procedure Progress(const deltaTime: Double);
@@ -156,7 +156,7 @@ end;
 
 function TMovementEngine.LastStep: TMovementStep;
 begin
-  Result := FSteps[Length(FSteps) - 1];
+  Result := FSteps[length(FSteps) - 1];
 end;
 
 constructor TMovementEngine.Create;
@@ -179,8 +179,8 @@ begin
 
   FCurrentPathStepTo := -1;
 
-  FFromPosition := NullPoint;
-  FToPosition := NullPoint;
+  FFromPosition := NULLPoint;
+  FToPosition := NULLPoint;
 
   FMovementDone := False;
   FRollDone := False;
@@ -216,7 +216,7 @@ begin
   if not FActive then
     begin
       FCurrentPathStepTo := 0;
-      FFromPosition := NullPoint;
+      FFromPosition := NULLPoint;
       FMovementDone := False;
       FRollDone := False;
       FOperationMode := momMovementPath;
@@ -230,9 +230,9 @@ begin
               begin
                 Position := APaths[i]^;
                 if i > 0 then
-                    Angle := CalcAngle(APaths[i - 1]^, APaths[i]^)
+                    angle := CalcAngle(APaths[i - 1]^, APaths[i]^)
                 else
-                    Angle := CalcAngle(Position, APaths[i]^);
+                    angle := CalcAngle(Position, APaths[i]^);
                 index := i;
               end;
 
@@ -256,13 +256,13 @@ begin
     end;
 end;
 
-procedure TMovementEngine.Stop;
+procedure TMovementEngine.stop;
 begin
   if FActive then
     begin
       SetLength(FSteps, 0);
       FCurrentPathStepTo := 0;
-      FFromPosition := NullPoint;
+      FFromPosition := NULLPoint;
       FMovementDone := False;
       FRollDone := True;
       FPause := False;
@@ -287,14 +287,14 @@ var
   CurrentDeltaTime: Double;
   toStep: TMovementStep;
   FromV, ToV, v: TVec2;
-  dt, rt: Double;
+  dt, RT: Double;
   d: TGeoFloat;
 begin
   FLastProgressDeltaTime := deltaTime;
   if FActive then
     begin
       CurrentDeltaTime := deltaTime;
-      FActive := (Length(FSteps) > 0) or (FOperationMode = momStopRollAngle);
+      FActive := (length(FSteps) > 0) or (FOperationMode = momStopRollAngle);
       if (not FPause) and (FActive) then
         begin
           case FOperationMode of
@@ -317,19 +317,19 @@ begin
 
                     if FMovementDone and not FRollDone then
                       begin
-                        RollAngle := SmoothAngle(RollAngle, LastStep.Angle, deltaTime * FRollSpeed);
-                        FRollDone := not AngleEqual(RollAngle, LastStep.Angle);
+                        RollAngle := SmoothAngle(RollAngle, LastStep.angle, deltaTime * FRollSpeed);
+                        FRollDone := not AngleEqual(RollAngle, LastStep.angle);
                         Break;
                       end;
 
-                    if FCurrentPathStepTo >= Length(FSteps) then
+                    if FCurrentPathStepTo >= length(FSteps) then
                       begin
                         v := LastStep.Position;
                         Position := v;
-                        if not AngleEqual(RollAngle, LastStep.Angle) then
+                        if not AngleEqual(RollAngle, LastStep.angle) then
                           begin
                             FOperationMode := momStopRollAngle;
-                            FStopRollAngle := LastStep.Angle;
+                            FStopRollAngle := LastStep.angle;
                           end
                         else
                             FActive := False;
@@ -338,15 +338,15 @@ begin
 
                     toStep := FSteps[FCurrentPathStepTo];
                     ToV := toStep.Position;
-                    FMovementDone := FCurrentPathStepTo >= Length(FSteps);
+                    FMovementDone := FCurrentPathStepTo >= length(FSteps);
 
-                    if (FRollDone) and (not AngleEqual(RollAngle, toStep.Angle)) then
+                    if (FRollDone) and (not AngleEqual(RollAngle, toStep.angle)) then
                         FIntf.DoRollMovementStart;
 
-                    if (not FRollDone) and (AngleEqual(RollAngle, toStep.Angle)) then
+                    if (not FRollDone) and (AngleEqual(RollAngle, toStep.angle)) then
                         FIntf.DoRollMovementOver;
 
-                    FRollDone := AngleEqual(RollAngle, toStep.Angle);
+                    FRollDone := AngleEqual(RollAngle, toStep.angle);
 
                     if FRollDone then
                       begin
@@ -367,7 +367,7 @@ begin
                             Inc(FCurrentPathStepTo);
 
                             // trigger execute event
-                            if (FCurrentPathStepTo < Length(FSteps)) then
+                            if (FCurrentPathStepTo < length(FSteps)) then
                                 FIntf.DoMovementStepChange(toStep, FSteps[FCurrentPathStepTo]);
                           end;
                       end
@@ -375,17 +375,17 @@ begin
                       begin
                         // uses roll attenuation movement
 
-                        rt := AngleRollDistanceDeltaTime(RollAngle, toStep.Angle, FRollSpeed);
+                        RT := AngleRollDistanceDeltaTime(RollAngle, toStep.angle, FRollSpeed);
                         d := Distance(FromV, ToV);
 
-                        if rt >= CurrentDeltaTime then
+                        if RT >= CurrentDeltaTime then
                           begin
                             if d > CurrentDeltaTime * FMoveSpeed * FRollMoveRatio then
                               begin
                                 // position vector dont cross endge for ToV
                                 v := MovementDistance(FromV, ToV, CurrentDeltaTime * FMoveSpeed * FRollMoveRatio);
                                 Position := v;
-                                RollAngle := SmoothAngle(RollAngle, toStep.Angle, CurrentDeltaTime * FRollSpeed);
+                                RollAngle := SmoothAngle(RollAngle, toStep.angle, CurrentDeltaTime * FRollSpeed);
                                 Break;
                               end
                             else
@@ -394,41 +394,41 @@ begin
                                 dt := MovementDistanceDeltaTime(FromV, ToV, FMoveSpeed * FRollMoveRatio);
                                 v := ToV;
                                 Position := v;
-                                RollAngle := SmoothAngle(RollAngle, toStep.Angle, dt * FRollSpeed);
+                                RollAngle := SmoothAngle(RollAngle, toStep.angle, dt * FRollSpeed);
                                 CurrentDeltaTime := CurrentDeltaTime - dt;
                                 FromV := ToV;
                                 Inc(FCurrentPathStepTo);
 
                                 // trigger execute event
-                                if (FCurrentPathStepTo < Length(FSteps)) then
+                                if (FCurrentPathStepTo < length(FSteps)) then
                                     FIntf.DoMovementStepChange(toStep, FSteps[FCurrentPathStepTo]);
                               end;
                           end
                         else
                           begin
                             // preprocess roll movement speed attenuation
-                            if rt * FMoveSpeed * FRollMoveRatio > d then
+                            if RT * FMoveSpeed * FRollMoveRatio > d then
                               begin
                                 // position vector cross endge for ToV
                                 dt := MovementDistanceDeltaTime(FromV, ToV, FMoveSpeed * FRollMoveRatio);
                                 v := ToV;
                                 Position := v;
-                                RollAngle := SmoothAngle(RollAngle, toStep.Angle, dt * FRollSpeed);
+                                RollAngle := SmoothAngle(RollAngle, toStep.angle, dt * FRollSpeed);
                                 CurrentDeltaTime := CurrentDeltaTime - dt;
                                 FromV := ToV;
                                 Inc(FCurrentPathStepTo);
 
                                 // trigger execute event
-                                if (FCurrentPathStepTo < Length(FSteps)) then
+                                if (FCurrentPathStepTo < length(FSteps)) then
                                     FIntf.DoMovementStepChange(toStep, FSteps[FCurrentPathStepTo]);
                               end
                             else
                               begin
                                 // position vector dont cross endge for ToV
-                                v := MovementDistance(FromV, ToV, rt * FMoveSpeed * FRollMoveRatio);
+                                v := MovementDistance(FromV, ToV, RT * FMoveSpeed * FRollMoveRatio);
                                 Position := v;
-                                RollAngle := toStep.Angle;
-                                CurrentDeltaTime := CurrentDeltaTime - rt;
+                                RollAngle := toStep.angle;
+                                CurrentDeltaTime := CurrentDeltaTime - RT;
                               end;
                           end;
                       end;
@@ -438,20 +438,20 @@ begin
 
           if (not FActive) then
             begin
-              if (FLooped) and (Length(FSteps) > 0) then
+              if (FLooped) and (length(FSteps) > 0) then
                 begin
                   FCurrentPathStepTo := 0;
                   FActive := True;
                   FMovementDone := False;
                   FRollDone := False;
                   FOperationMode := momMovementPath;
-                  FSteps[0].Angle := CalcAngle(Position, FSteps[0].Position);
+                  FSteps[0].angle := CalcAngle(Position, FSteps[0].Position);
                   FIntf.DoLoop;
                 end
               else
                 begin
                   FCurrentPathStepTo := 0;
-                  FFromPosition := NullPoint;
+                  FFromPosition := NULLPoint;
                   FMovementDone := False;
                   FRollDone := False;
                   FOperationMode := momMovementPath;
@@ -462,4 +462,5 @@ begin
     end;
 end;
 
-end.
+end. 
+ 

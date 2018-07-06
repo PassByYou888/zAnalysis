@@ -39,7 +39,7 @@ unit AggSpanGouraudRgba;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -59,13 +59,13 @@ type
 
   TAggRgbaCalc = packed record
   private
-    F1, FDelta: TPointDouble;
+    f1, FDelta: TPointDouble;
 
     FRed1, FGreen1, FBlue1, FAlpha1: Integer;
     FDeltaRed, FDeltaGreen, FDeltaBlue, FDeltaAlpha: Integer;
-    FRed, FGreen, FBlue, FAlpha, FX: Integer;
+    FRed, FGreen, FBlue, FAlpha, fx: Integer;
   public
-    procedure Init(C1, C2: PAggCoordType);
+    procedure Init(c1, c2: PAggCoordType);
     procedure Calc(Y: Double);
   end;
 
@@ -77,8 +77,8 @@ type
     FRgba1, FRgba2, FRgba3: TAggRgbaCalc;
   public
     constructor Create(Alloc: TAggSpanAllocator); overload;
-    constructor Create(Alloc: TAggSpanAllocator; C1, C2, C3: PAggColor; X1, Y1, X2, Y2, X3, Y3, D: Double); overload;
-    constructor Create(C1, C2, C3: PAggColor; X1, Y1, X2, Y2, X3, Y3: Double; D: Double = 0); overload;
+    constructor Create(Alloc: TAggSpanAllocator; c1, c2, c3: PAggColor; x1, y1, x2, y2, x3, y3, d: Double); overload;
+    constructor Create(c1, c2, c3: PAggColor; x1, y1, x2, y2, x3, y3: Double; d: Double = 0); overload;
 
     procedure Prepare; overload;
     procedure Prepare(MaxSpanLength: Cardinal); overload; override;
@@ -91,55 +91,55 @@ implementation
 
 { TAggRgbaCalc }
 
-procedure TAggRgbaCalc.Init(C1, C2: PAggCoordType);
+procedure TAggRgbaCalc.Init(c1, c2: PAggCoordType);
 var
-  DeltaY: Double;
+  deltay: Double;
 begin
-  F1.X := C1.X - 0.5;
-  F1.Y := C1.Y - 0.5;
-  FDelta.X := C2.X - C1.X;
+  f1.X := c1.X - 0.5;
+  f1.Y := c1.Y - 0.5;
+  FDelta.X := c2.X - c1.X;
 
-  DeltaY := C2.Y - C1.Y;
+  deltay := c2.Y - c1.Y;
 
-  if DeltaY < 1E-5 then
+  if deltay < 1E-5 then
       FDelta.Y := 1E5
   else
-      FDelta.Y := 1.0 / DeltaY;
+      FDelta.Y := 1.0 / deltay;
 
-  FRed1 := C1.Color.Rgba8.R;
-  FGreen1 := C1.Color.Rgba8.G;
-  FBlue1 := C1.Color.Rgba8.B;
-  FAlpha1 := C1.Color.Rgba8.A;
-  FDeltaRed := C2.Color.Rgba8.R - FRed1;
-  FDeltaGreen := C2.Color.Rgba8.G - FGreen1;
-  FDeltaBlue := C2.Color.Rgba8.B - FBlue1;
-  FDeltaAlpha := C2.Color.Rgba8.A - FAlpha1;
+  FRed1 := c1.COLOR.Rgba8.R;
+  FGreen1 := c1.COLOR.Rgba8.g;
+  FBlue1 := c1.COLOR.Rgba8.b;
+  FAlpha1 := c1.COLOR.Rgba8.A;
+  FDeltaRed := c2.COLOR.Rgba8.R - FRed1;
+  FDeltaGreen := c2.COLOR.Rgba8.g - FGreen1;
+  FDeltaBlue := c2.COLOR.Rgba8.b - FBlue1;
+  FDeltaAlpha := c2.COLOR.Rgba8.A - FAlpha1;
 end;
 
 procedure TAggRgbaCalc.Calc(Y: Double);
 var
-  K: Double;
+  k: Double;
 begin
-  K := (Y - F1.Y) * FDelta.Y;
+  k := (Y - f1.Y) * FDelta.Y;
 
-  if K < 0.0 then
+  if k < 0.0 then
     begin
       FRed := FRed1;
       FGreen := FGreen1;
       FBlue := FBlue1;
       FAlpha := FAlpha1;
-      FX := IntegerRound(F1.X * CAggSubpixelSize);
+      fx := IntegerRound(f1.X * CAggSubpixelSize);
       Exit;
     end;
 
-  if K > 1.0 then
-      K := 1.0;
+  if k > 1.0 then
+      k := 1.0;
 
-  FRed := FRed1 + IntegerRound(FDeltaRed * K);
-  FGreen := FGreen1 + IntegerRound(FDeltaGreen * K);
-  FBlue := FBlue1 + IntegerRound(FDeltaBlue * K);
-  FAlpha := FAlpha1 + IntegerRound(FDeltaAlpha * K);
-  FX := IntegerRound((F1.X + FDelta.X * K) * CAggSubpixelSize);
+  FRed := FRed1 + IntegerRound(FDeltaRed * k);
+  FGreen := FGreen1 + IntegerRound(FDeltaGreen * k);
+  FBlue := FBlue1 + IntegerRound(FDeltaBlue * k);
+  FAlpha := FAlpha1 + IntegerRound(FDeltaAlpha * k);
+  fx := IntegerRound((f1.X + FDelta.X * k) * CAggSubpixelSize);
 end;
 
 { TAggSpanGouraudRgba }
@@ -150,15 +150,15 @@ begin
 end;
 
 constructor TAggSpanGouraudRgba.Create(Alloc: TAggSpanAllocator;
-  C1, C2, C3: PAggColor; X1, Y1, X2, Y2, X3, Y3, D: Double);
+  c1, c2, c3: PAggColor; x1, y1, x2, y2, x3, y3, d: Double);
 begin
-  inherited Create(Alloc, C1, C2, C3, X1, Y1, X2, Y2, X3, Y3, D);
+  inherited Create(Alloc, c1, c2, c3, x1, y1, x2, y2, x3, y3, d);
 end;
 
-constructor TAggSpanGouraudRgba.Create(C1, C2, C3: PAggColor;
-  X1, Y1, X2, Y2, X3, Y3: Double; D: Double = 0);
+constructor TAggSpanGouraudRgba.Create(c1, c2, c3: PAggColor;
+  x1, y1, x2, y2, x3, y3: Double; d: Double = 0);
 begin
-  inherited Create(nil, C1, C2, C3, X1, Y1, X2, Y2, X3, Y3, D);
+  inherited Create(nil, c1, c2, c3, x1, y1, x2, y2, x3, y3, d);
 end;
 
 procedure TAggSpanGouraudRgba.Prepare(MaxSpanLength: Cardinal);
@@ -199,15 +199,15 @@ function TAggSpanGouraudRgba.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
 const
   Lim = AggColor32.CAggBaseMask;
 var
-  Pc1, Pc2, T: PAggRgbaCalc;
-  Nlen, Start, Vr, Vg, Vb, Va: Integer;
-  R, G, B, A: TAggDdaLineInterpolator;
+  PC1, PC2, T: PAggRgbaCalc;
+  Nlen, Start, vr, Vg, VB, VA: Integer;
+  R, g, b, A: TAggDdaLineInterpolator;
   Span: PAggColor;
 begin
   FRgba1.Calc(Y); // (FRgba1.FDelta.Y > 2) ? FRgba1.F1.Y : y);
 
-  Pc1 := @FRgba1;
-  Pc2 := @FRgba2;
+  PC1 := @FRgba1;
+  PC2 := @FRgba2;
 
   if Y <= FY2 then
     // Bottom part of the triangle (first subtriangle)
@@ -217,39 +217,39 @@ begin
       // Upper part (second subtriangle)
       FRgba3.Calc(Y - FRgba3.FDelta.Y);
 
-      Pc2 := @FRgba3;
+      PC2 := @FRgba3;
     end;
 
   if FSwap then
     begin
       // It means that the triangle is oriented clockwise,
       // so that we need to swap the controlling structures
-      T := Pc2;
-      Pc2 := Pc1;
-      Pc1 := T;
+      T := PC2;
+      PC2 := PC1;
+      PC1 := T;
     end;
 
   // Get the horizontal length with subpixel accuracy
   // and protect it from division by zero
-  Nlen := Abs(Pc2.FX - Pc1.FX);
+  Nlen := Abs(PC2.fx - PC1.fx);
 
   if Nlen <= 0 then
       Nlen := 1;
 
-  R.Initialize(Pc1.FRed, Pc2.FRed, Nlen, 14);
-  G.Initialize(Pc1.FGreen, Pc2.FGreen, Nlen, 14);
-  B.Initialize(Pc1.FBlue, Pc2.FBlue, Nlen, 14);
-  A.Initialize(Pc1.FAlpha, Pc2.FAlpha, Nlen, 14);
+  R.Initialize(PC1.FRed, PC2.FRed, Nlen, 14);
+  g.Initialize(PC1.FGreen, PC2.FGreen, Nlen, 14);
+  b.Initialize(PC1.FBlue, PC2.FBlue, Nlen, 14);
+  A.Initialize(PC1.FAlpha, PC2.FAlpha, Nlen, 14);
 
   // Calculate the starting point of the Gradient with subpixel
   // accuracy and correct (roll back) the interpolators.
   // This operation will also clip the beginning of the Span
   // if necessary.
-  Start := Pc1.FX - (X shl CAggSubpixelShift);
+  Start := PC1.fx - (X shl CAggSubpixelShift);
 
   R.DecOperator(Start);
-  G.DecOperator(Start);
-  B.DecOperator(Start);
+  g.DecOperator(Start);
+  b.DecOperator(Start);
   A.DecOperator(Start);
 
   Inc(Nlen, Start);
@@ -264,13 +264,13 @@ begin
   while (Len <> 0) and (Start > 0) do
     begin
       Span.Rgba8.R := Int8u(EnsureRange(R.Y, 0, Lim));
-      Span.Rgba8.G := Int8u(EnsureRange(G.Y, 0, Lim));
-      Span.Rgba8.B := Int8u(EnsureRange(B.Y, 0, Lim));
+      Span.Rgba8.g := Int8u(EnsureRange(g.Y, 0, Lim));
+      Span.Rgba8.b := Int8u(EnsureRange(b.Y, 0, Lim));
       Span.Rgba8.A := Int8u(EnsureRange(A.Y, 0, Lim));
 
       R.IncOperator(CAggSubpixelSize);
-      G.IncOperator(CAggSubpixelSize);
-      B.IncOperator(CAggSubpixelSize);
+      g.IncOperator(CAggSubpixelSize);
+      b.IncOperator(CAggSubpixelSize);
       A.IncOperator(CAggSubpixelSize);
 
       Dec(Nlen, CAggSubpixelSize);
@@ -286,13 +286,13 @@ begin
   while (Len <> 0) and (Nlen > 0) do
     begin
       Span.Rgba8.R := Int8u(R.Y);
-      Span.Rgba8.G := Int8u(G.Y);
-      Span.Rgba8.B := Int8u(B.Y);
+      Span.Rgba8.g := Int8u(g.Y);
+      Span.Rgba8.b := Int8u(b.Y);
       Span.Rgba8.A := Int8u(A.Y);
 
       R.IncOperator(CAggSubpixelSize);
-      G.IncOperator(CAggSubpixelSize);
-      B.IncOperator(CAggSubpixelSize);
+      g.IncOperator(CAggSubpixelSize);
+      b.IncOperator(CAggSubpixelSize);
       A.IncOperator(CAggSubpixelSize);
 
       Dec(Nlen, CAggSubpixelSize);
@@ -305,13 +305,13 @@ begin
   while Len <> 0 do
     begin
       Span.Rgba8.R := Int8u(EnsureRange(R.Y, 0, Lim));
-      Span.Rgba8.G := Int8u(EnsureRange(G.Y, 0, Lim));
-      Span.Rgba8.B := Int8u(EnsureRange(B.Y, 0, Lim));
+      Span.Rgba8.g := Int8u(EnsureRange(g.Y, 0, Lim));
+      Span.Rgba8.b := Int8u(EnsureRange(b.Y, 0, Lim));
       Span.Rgba8.A := Int8u(EnsureRange(A.Y, 0, Lim));
 
       R.IncOperator(CAggSubpixelSize);
-      G.IncOperator(CAggSubpixelSize);
-      B.IncOperator(CAggSubpixelSize);
+      g.IncOperator(CAggSubpixelSize);
+      b.IncOperator(CAggSubpixelSize);
       A.IncOperator(CAggSubpixelSize);
 
       Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -326,14 +326,14 @@ procedure TAggSpanGouraudRgba.Generate(Span: PAggColor; X, Y: Integer;
 const
   Lim = AggColor32.CAggBaseMask;
 var
-  Pc1, Pc2, T: PAggRgbaCalc;
-  Nlen, Start, Vr, Vg, Vb, Va: Integer;
-  R, G, B, A: TAggDdaLineInterpolator;
+  PC1, PC2, T: PAggRgbaCalc;
+  Nlen, Start, vr, Vg, VB, VA: Integer;
+  R, g, b, A: TAggDdaLineInterpolator;
 begin
   FRgba1.Calc(Y); // (FRgba1.FDelta.Y > 2) ? FRgba1.F1.Y : y);
 
-  Pc1 := @FRgba1;
-  Pc2 := @FRgba2;
+  PC1 := @FRgba1;
+  PC2 := @FRgba2;
 
   if Y <= FY2 then
     // Bottom part of the triangle (first subtriangle)
@@ -343,39 +343,39 @@ begin
       // Upper part (second subtriangle)
       FRgba3.Calc(Y - FRgba3.FDelta.Y);
 
-      Pc2 := @FRgba3;
+      PC2 := @FRgba3;
     end;
 
   if FSwap then
     begin
       // It means that the triangle is oriented clockwise,
       // so that we need to swap the controlling structures
-      T := Pc2;
-      Pc2 := Pc1;
-      Pc1 := T;
+      T := PC2;
+      PC2 := PC1;
+      PC1 := T;
     end;
 
   // Get the horizontal length with subpixel accuracy
   // and protect it from division by zero
-  Nlen := Abs(Pc2.FX - Pc1.FX);
+  Nlen := Abs(PC2.fx - PC1.fx);
 
   if Nlen <= 0 then
       Nlen := 1;
 
-  R.Initialize(Pc1.FRed, Pc2.FRed, Nlen, 14);
-  G.Initialize(Pc1.FGreen, Pc2.FGreen, Nlen, 14);
-  B.Initialize(Pc1.FBlue, Pc2.FBlue, Nlen, 14);
-  A.Initialize(Pc1.FAlpha, Pc2.FAlpha, Nlen, 14);
+  R.Initialize(PC1.FRed, PC2.FRed, Nlen, 14);
+  g.Initialize(PC1.FGreen, PC2.FGreen, Nlen, 14);
+  b.Initialize(PC1.FBlue, PC2.FBlue, Nlen, 14);
+  A.Initialize(PC1.FAlpha, PC2.FAlpha, Nlen, 14);
 
   // Calculate the starting point of the Gradient with subpixel
   // accuracy and correct (roll back) the interpolators.
   // This operation will also clip the beginning of the span
   // if necessary.
-  Start := Pc1.FX - (X shl CAggSubpixelShift);
+  Start := PC1.fx - (X shl CAggSubpixelShift);
 
   R.DecOperator(Start);
-  G.DecOperator(Start);
-  B.DecOperator(Start);
+  g.DecOperator(Start);
+  b.DecOperator(Start);
   A.DecOperator(Start);
 
   Inc(Nlen, Start);
@@ -388,13 +388,13 @@ begin
   while (Len <> 0) and (Start > 0) do
     begin
       Span.Rgba8.R := Int8u(EnsureRange(R.Y, 0, Lim));
-      Span.Rgba8.G := Int8u(EnsureRange(G.Y, 0, Lim));
-      Span.Rgba8.B := Int8u(EnsureRange(B.Y, 0, Lim));
+      Span.Rgba8.g := Int8u(EnsureRange(g.Y, 0, Lim));
+      Span.Rgba8.b := Int8u(EnsureRange(b.Y, 0, Lim));
       Span.Rgba8.A := Int8u(EnsureRange(A.Y, 0, Lim));
 
       R.IncOperator(CAggSubpixelSize);
-      G.IncOperator(CAggSubpixelSize);
-      B.IncOperator(CAggSubpixelSize);
+      g.IncOperator(CAggSubpixelSize);
+      b.IncOperator(CAggSubpixelSize);
       A.IncOperator(CAggSubpixelSize);
 
       Dec(Nlen, CAggSubpixelSize);
@@ -410,13 +410,13 @@ begin
   while (Len <> 0) and (Nlen > 0) do
     begin
       Span.Rgba8.R := Int8u(R.Y);
-      Span.Rgba8.G := Int8u(G.Y);
-      Span.Rgba8.B := Int8u(B.Y);
+      Span.Rgba8.g := Int8u(g.Y);
+      Span.Rgba8.b := Int8u(b.Y);
       Span.Rgba8.A := Int8u(A.Y);
 
       R.IncOperator(CAggSubpixelSize);
-      G.IncOperator(CAggSubpixelSize);
-      B.IncOperator(CAggSubpixelSize);
+      g.IncOperator(CAggSubpixelSize);
+      b.IncOperator(CAggSubpixelSize);
       A.IncOperator(CAggSubpixelSize);
 
       Dec(Nlen, CAggSubpixelSize);
@@ -429,13 +429,13 @@ begin
   while Len <> 0 do
     begin
       Span.Rgba8.R := Int8u(EnsureRange(R.Y, 0, Lim));
-      Span.Rgba8.G := Int8u(EnsureRange(G.Y, 0, Lim));
-      Span.Rgba8.B := Int8u(EnsureRange(B.Y, 0, Lim));
+      Span.Rgba8.g := Int8u(EnsureRange(g.Y, 0, Lim));
+      Span.Rgba8.b := Int8u(EnsureRange(b.Y, 0, Lim));
       Span.Rgba8.A := Int8u(EnsureRange(A.Y, 0, Lim));
 
       R.IncOperator(CAggSubpixelSize);
-      G.IncOperator(CAggSubpixelSize);
-      B.IncOperator(CAggSubpixelSize);
+      g.IncOperator(CAggSubpixelSize);
+      b.IncOperator(CAggSubpixelSize);
       A.IncOperator(CAggSubpixelSize);
 
       Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -443,4 +443,4 @@ begin
     end;
 end;
 
-end.
+end. 

@@ -35,19 +35,19 @@
   //                                                                            //
   ////////////////////////////////////////////////////////////////////////////////
 *)
-unit AggScanLineStorageAA;
+unit AggScanlineStorageAA;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
   AggArray,
-  AggScanLine,
+  AggScanline,
   AggRendererScanLine,
-  AggRenderScanLines,
+  AggRenderScanlines,
   AggRasterizerScanLine;
 
 type
@@ -55,24 +55,24 @@ type
 
   TAggExtraSpan = packed record
     Len: Cardinal;
-    Ptr: Pointer;
+    PTR: Pointer;
   end;
 
   TAggScanLineCellStorage = class
   private
     FCells, FExtraStorage: TAggPodDeque;
-    function ArrayOperator(Index: Integer): Pointer;
+    function ArrayOperator(index: Integer): Pointer;
   public
     constructor Create(EntrySize: Cardinal); overload;
-    constructor Create(V: TAggScanLineCellStorage); overload;
+    constructor Create(v: TAggScanLineCellStorage); overload;
     destructor Destroy; override;
 
     procedure RemoveAll;
     function AddCells(Cells: Pointer; NumCells: Cardinal): Integer;
 
-    function AssignOperator(V: TAggScanLineCellStorage): TAggScanLineCellStorage;
+    function AssignOperator(v: TAggScanLineCellStorage): TAggScanLineCellStorage;
 
-    procedure CopyExtraStorage(V: TAggScanLineCellStorage);
+    procedure CopyExtraStorage(v: TAggScanLineCellStorage);
 
     property CellPointer[index: Integer]: Pointer read ArrayOperator; default;
   end;
@@ -151,8 +151,8 @@ type
     destructor Destroy; override;
 
     // Renderer Interface
-    procedure Prepare(U: Cardinal); override;
-    procedure Render(Sl: TAggCustomScanLine); override;
+    procedure Prepare(u: Cardinal); override;
+    procedure Render(SL: TAggCustomScanLine); override;
 
     // Iterate ScanLines interface
     function GetMinX: Integer; virtual;
@@ -161,18 +161,18 @@ type
     function GetMaxY: Integer; virtual;
 
     function RewindScanLines: Boolean; virtual;
-    function SweepScanLine(Sl: TAggCustomScanLine): Boolean; overload; virtual;
+    function SweepScanLine(SL: TAggCustomScanLine): Boolean; overload; virtual;
 
     // Specialization for embedded_ScanLine
-    function SweepScanLine(Sl: TAggEmbeddedScanLine): Boolean; overload; virtual;
+    function SweepScanLine(SL: TAggEmbeddedScanLine): Boolean; overload; virtual;
 
     function ByteSize: Cardinal; virtual;
-    procedure WriteInt32(Dst: PInt8u; Val: Int32);
+    procedure WriteInt32(Dst: PInt8u; val: Int32);
     procedure Serialize(Data: PInt8u); virtual;
 
-    function ScanLineByIndex(I: Cardinal): PAggScanLineDataSS;
-    function SpanByIndex(I: Cardinal): PAggSpanDataSS;
-    function CoversByIndex(I: Integer): Pointer;
+    function ScanLineByIndex(i: Cardinal): PAggScanLineDataSS;
+    function SpanByIndex(i: Cardinal): PAggSpanDataSS;
+    function CoversByIndex(i: Integer): Pointer;
   public
     property MinimumX: Integer read GetMinX;
     property MinimumY: Integer read GetMinY;
@@ -189,7 +189,7 @@ type
   public
     constructor Create; override;
 
-    function SweepScanLine(Sl: TAggCustomScanLine): Boolean; override;
+    function SweepScanLine(SL: TAggCustomScanLine): Boolean; override;
 
     function ByteSize: Cardinal; override;
     procedure Serialize(Data: PInt8u); override;
@@ -199,7 +199,7 @@ type
   public
     constructor Create; override;
 
-    function SweepScanLine(Sl: TAggCustomScanLine): Boolean; override;
+    function SweepScanLine(SL: TAggCustomScanLine): Boolean; override;
 
     function ByteSize: Cardinal; override;
     procedure Serialize(Data: PInt8u); override;
@@ -222,7 +222,7 @@ type
       function GetLength: Integer; override;
       function ReadInt32: Integer;
     public
-      constructor Create(aScanLine: TAggEmbeddedScanLineSA; aSize: Cardinal);
+      constructor Create(aScanline: TAggEmbeddedScanLineSA; ASize: Cardinal);
       function Covers: PInt8u; override;
       procedure IncOperator; override;
 
@@ -230,7 +230,7 @@ type
     end;
   private
     FPtr: PInt8u;
-    FY: Integer;
+    fy: Integer;
 
     FNumSpans: Cardinal;
 
@@ -248,7 +248,7 @@ type
     procedure Reset(MinX, MaxX: Integer); override;
 
     function GetBegin: TAggCustomSpan; override;
-    procedure Init(Ptr: PInt8u; Dx, Dy: Integer); override;
+    procedure Init(PTR: PInt8u; dx, dy: Integer); override;
 
     function ReadInt32: Integer;
 
@@ -270,11 +270,11 @@ type
     function GetMaxX: Integer; override;
     function GetMaxY: Integer; override;
   public
-    constructor Create(Sz: Cardinal); overload;
-    constructor Create(Sz: Cardinal; Data: PInt8u; aSize: Cardinal;
-      Dx, Dy: Double); overload;
+    constructor Create(SZ: Cardinal); overload;
+    constructor Create(SZ: Cardinal; Data: PInt8u; ASize: Cardinal;
+      dx, dy: Double); overload;
 
-    procedure Init(Data: PInt8u; aSize: Cardinal; Dx, Dy: Double);
+    procedure Init(Data: PInt8u; ASize: Cardinal; dx, dy: Double);
 
     function ReadInt32: Integer;
     function ReadInt32u: Cardinal;
@@ -282,10 +282,10 @@ type
     // Iterate ScanLines interface
     function RewindScanLines: Boolean; override;
 
-    function SweepScanLine(Sl: TAggCustomScanLine): Boolean; override;
+    function SweepScanLine(SL: TAggCustomScanLine): Boolean; override;
 
     // Specialization for embedded_ScanLine
-    function SweepScanLine(Sl: TAggEmbeddedScanLine): Boolean; override;
+    function SweepScanLine(SL: TAggEmbeddedScanLine): Boolean; override;
 
     property Size: Cardinal read GetSize;
   end;
@@ -293,19 +293,19 @@ type
   TAggSerializedScanLinesAdaptorAA8 = class(TAggSerializedScanLinesAdaptorAA)
   public
     constructor Create; overload;
-    constructor Create(Data: PInt8u; aSize: Cardinal; Dx, Dy: Double); overload;
+    constructor Create(Data: PInt8u; ASize: Cardinal; dx, dy: Double); overload;
   end;
 
   TAggSerializedScanLinesAdaptorAA16 = class(TAggSerializedScanLinesAdaptorAA)
   public
     constructor Create; overload;
-    constructor Create(Data: PInt8u; aSize: Cardinal; Dx, Dy: Double); overload;
+    constructor Create(Data: PInt8u; ASize: Cardinal; dx, dy: Double); overload;
   end;
 
   TAggSerializedScanLinesAdaptorAA32 = class(TAggSerializedScanLinesAdaptorAA)
   public
     constructor Create; overload;
-    constructor Create(Data: PInt8u; aSize: Cardinal; Dx, Dy: Double); overload;
+    constructor Create(Data: PInt8u; ASize: Cardinal; dx, dy: Double); overload;
   end;
 
 implementation
@@ -318,13 +318,13 @@ begin
   FExtraStorage := TAggPodDeque.Create(SizeOf(TAggExtraSpan), 6);
 end;
 
-constructor TAggScanLineCellStorage.Create(V: TAggScanLineCellStorage);
+constructor TAggScanLineCellStorage.Create(v: TAggScanLineCellStorage);
 begin
-  FCells := TAggPodDeque.Create(V.FCells.EntrySize);
+  FCells := TAggPodDeque.Create(v.FCells.EntrySize);
   FExtraStorage := TAggPodDeque.Create(SizeOf(TAggExtraSpan), 6);
 
-  AssignOperator(V);
-  CopyExtraStorage(V);
+  AssignOperator(v);
+  CopyExtraStorage(v);
 end;
 
 destructor TAggScanLineCellStorage.Destroy;
@@ -339,19 +339,19 @@ end;
 
 procedure TAggScanLineCellStorage.RemoveAll;
 var
-  I: Integer;
-  S: PAggExtraSpan;
+  i: Integer;
+  s: PAggExtraSpan;
 begin
-  I := FExtraStorage.Size;
-  Dec(I);
+  i := FExtraStorage.Size;
+  Dec(i);
 
-  while I >= 0 do
+  while i >= 0 do
     begin
-      S := FExtraStorage[I];
+      s := FExtraStorage[i];
 
-      AggFreeMem(S.Ptr, S.Len * FCells.EntrySize);
+      AggFreeMem(s.PTR, s.Len * FCells.EntrySize);
 
-      Dec(I);
+      Dec(i);
     end;
 
   FExtraStorage.RemoveAll;
@@ -360,32 +360,32 @@ end;
 
 function TAggScanLineCellStorage.AddCells;
 var
-  Index: Integer;
-  Ptr: Pointer;
+  index: Integer;
+  PTR: Pointer;
 
-  S: TAggExtraSpan;
+  s: TAggExtraSpan;
 
 begin
   index := FCells.AllocateContinuousBlock(NumCells);
 
   if index >= 0 then
     begin
-      Ptr := FCells[index];
+      PTR := FCells[index];
 
-      Move(Cells^, Ptr^, FCells.EntrySize * NumCells);
+      Move(Cells^, PTR^, FCells.EntrySize * NumCells);
 
       Result := index;
 
       Exit;
     end;
 
-  S.Len := NumCells;
+  s.Len := NumCells;
 
-  AggGetMem(S.Ptr, S.Len * FCells.EntrySize);
+  AggGetMem(s.PTR, s.Len * FCells.EntrySize);
 
-  Move(Cells^, S.Ptr^, S.Len * FCells.EntrySize);
+  Move(Cells^, s.PTR^, s.Len * FCells.EntrySize);
 
-  FExtraStorage.Add(@S);
+  FExtraStorage.Add(@s);
 
   Result := -Integer(FExtraStorage.Size);
 end;
@@ -394,15 +394,15 @@ function TAggScanLineCellStorage.AssignOperator;
 begin
   RemoveAll;
 
-  FCells.AssignOperator(@V.FCells);
-  CopyExtraStorage(V);
+  FCells.AssignOperator(@v.FCells);
+  CopyExtraStorage(v);
 
   Result := @Self;
 end;
 
 function TAggScanLineCellStorage.ArrayOperator;
 var
-  I: Cardinal;
+  i: Cardinal;
 
 begin
   if index >= 0 then
@@ -419,40 +419,40 @@ begin
       Exit;
     end;
 
-  I := Cardinal(-index - 1);
+  i := Cardinal(-index - 1);
 
-  if I >= FExtraStorage.Size then
+  if i >= FExtraStorage.Size then
     begin
       Result := 0;
 
       Exit;
     end;
 
-  Result := PAggExtraSpan(FExtraStorage[I]).Ptr;
+  Result := PAggExtraSpan(FExtraStorage[i]).PTR;
 end;
 
 procedure TAggScanLineCellStorage.CopyExtraStorage;
 var
-  I: Cardinal;
+  i: Cardinal;
 
   Src: PAggExtraSpan;
   Dst: TAggExtraSpan;
 begin
-  I := 0;
+  i := 0;
 
-  while I < V.FExtraStorage.Size do
+  while i < v.FExtraStorage.Size do
     begin
-      Src := V.FExtraStorage[I];
+      Src := v.FExtraStorage[i];
 
       Dst.Len := Src.Len;
 
-      AggGetMem(Dst.Ptr, Dst.Len * V.FCells.EntrySize);
+      AggGetMem(Dst.PTR, Dst.Len * v.FCells.EntrySize);
 
-      Move(Src.Ptr^, Dst.Ptr^, Dst.Len * V.FCells.EntrySize);
+      Move(Src.PTR^, Dst.PTR^, Dst.Len * v.FCells.EntrySize);
 
       FExtraStorage.Add(@Dst);
 
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -490,13 +490,13 @@ end;
 
 procedure TAggEmbeddedScanLineSS.TConstIterator.Init;
 var
-  S: PAggSpanDataSS;
+  s: PAggSpanDataSS;
 begin
-  S := FStorage.SpanByIndex(FSpanIdx);
+  s := FStorage.SpanByIndex(FSpanIdx);
 
-  FSpan.X := S.X;
-  FSpan.Len := S.Len;
-  FSpan.Covers := FStorage.CoversByIndex(S.CoversID);
+  FSpan.X := s.X;
+  FSpan.Len := s.Len;
+  FSpan.Covers := FStorage.CoversByIndex(s.CoversID);
 end;
 
 { TAggEmbeddedScanLineSS }
@@ -587,14 +587,14 @@ procedure TAggCustomScanLineStorageAA.Render;
 var
   ScanLineData: TAggScanLineDataSS;
 
-  Y, X1, X2, Len: Integer;
+  Y, x1, x2, Len: Integer;
 
   NumSpans: Cardinal;
   Span: TAggCustomSpan;
 
-  Sp: TAggSpanDataSS;
+  sp: TAggSpanDataSS;
 begin
-  Y := Sl.Y;
+  Y := SL.Y;
 
   if Y < FMin.Y then
       FMin.Y := Y;
@@ -603,31 +603,31 @@ begin
       FMax.Y := Y;
 
   ScanLineData.Y := Y;
-  ScanLineData.NumSpans := Sl.NumSpans;
+  ScanLineData.NumSpans := SL.NumSpans;
   ScanLineData.StartSpan := FSpans.Size;
 
   NumSpans := ScanLineData.NumSpans;
 
-  Span := Sl.GetBegin;
+  Span := SL.GetBegin;
 
   repeat
-    Sp.X := Span.X;
-    Sp.Len := Span.Len;
+    sp.X := Span.X;
+    sp.Len := Span.Len;
 
-    Len := Abs(Sp.Len);
+    Len := Abs(sp.Len);
 
-    Sp.CoversID := FCovers.AddCells(Span.Covers, Cardinal(Len));
+    sp.CoversID := FCovers.AddCells(Span.Covers, Cardinal(Len));
 
-    FSpans.Add(@Sp);
+    FSpans.Add(@sp);
 
-    X1 := Sp.X;
-    X2 := Sp.X + Len - 1;
+    x1 := sp.X;
+    x2 := sp.X + Len - 1;
 
-    if X1 < FMin.X then
-        FMin.X := X1;
+    if x1 < FMin.X then
+        FMin.X := x1;
 
-    if X2 > FMax.X then
-        FMax.X := X2;
+    if x2 > FMax.X then
+        FMax.X := x2;
 
     Dec(NumSpans);
 
@@ -670,14 +670,14 @@ begin
 end;
 
 function TAggCustomScanLineStorageAA.SweepScanLine(
-  Sl: TAggCustomScanLine): Boolean;
+  SL: TAggCustomScanLine): Boolean;
 var
   ScanLineData: PAggScanLineDataSS;
   NumSpans, SpanIndex: Cardinal;
-  Sp: PAggSpanDataSS;
+  sp: PAggSpanDataSS;
   Covers: PInt8u;
 begin
-  Sl.ResetSpans;
+  SL.ResetSpans;
 
   repeat
     if FCurrentScanLine >= FScanLines.Size then
@@ -693,25 +693,25 @@ begin
     SpanIndex := ScanLineData.StartSpan;
 
     repeat
-      Sp := FSpans[SpanIndex];
+      sp := FSpans[SpanIndex];
 
       Inc(SpanIndex);
 
-      Covers := CoversByIndex(Sp.CoversID);
+      Covers := CoversByIndex(sp.CoversID);
 
-      if Sp.Len < 0 then
-          Sl.AddSpan(Sp.X, Cardinal(-Sp.Len), Covers^)
+      if sp.Len < 0 then
+          SL.AddSpan(sp.X, Cardinal(-sp.Len), Covers^)
       else
-          Sl.AddCells(Sp.X, Sp.Len, Covers);
+          SL.AddCells(sp.X, sp.Len, Covers);
 
       Dec(NumSpans);
     until NumSpans = 0;
 
     Inc(FCurrentScanLine);
 
-    if Sl.NumSpans <> 0 then
+    if SL.NumSpans <> 0 then
       begin
-        Sl.Finalize(ScanLineData.Y);
+        SL.Finalize(ScanLineData.Y);
 
         Break;
       end;
@@ -723,7 +723,7 @@ end;
 
 // function TAggCustomScanLineStorageAA.SweepScanLineEm;
 function TAggCustomScanLineStorageAA.SweepScanLine(
-  Sl: TAggEmbeddedScanLine): Boolean;
+  SL: TAggEmbeddedScanLine): Boolean;
 begin
   repeat
     if FCurrentScanLine >= FScanLines.Size then
@@ -733,52 +733,52 @@ begin
         Exit;
       end;
 
-    Sl.Setup(FCurrentScanLine);
+    SL.Setup(FCurrentScanLine);
 
     Inc(FCurrentScanLine);
 
-  until Sl.NumSpans <> 0;
+  until SL.NumSpans <> 0;
 
   Result := True;
 end;
 
 function TAggCustomScanLineStorageAA.ByteSize;
 var
-  I, Size, NumSpans, SpanIndex: Cardinal;
+  i, Size, NumSpans, SpanIndex: Cardinal;
 
   ScanLineData: PAggScanLineDataSS;
 
-  Sp: PAggSpanDataSS;
+  sp: PAggSpanDataSS;
 
 begin
   Size := SizeOf(Int32) * 4; // MinX, MinY, MaxX, MaxY
 
-  I := 0;
+  i := 0;
 
-  while I < FScanLines.Size do
+  while i < FScanLines.Size do
     begin
       Inc(Size, SizeOf(Int32) * 3); // ScanLine size in bytes, Y, NumSpans
 
-      ScanLineData := FScanLines[I];
+      ScanLineData := FScanLines[i];
 
       NumSpans := ScanLineData.NumSpans;
       SpanIndex := ScanLineData.StartSpan;
 
       repeat
-        Sp := FSpans[SpanIndex];
+        sp := FSpans[SpanIndex];
 
         Inc(SpanIndex);
         Inc(Size, SizeOf(Int32) * 2); // X, Span Length
 
-        if Sp.Len < 0 then
+        if sp.Len < 0 then
             Inc(Size, SizeOf(Int8u)) // cover
         else
-            Inc(Size, SizeOf(Int8u) * Cardinal(Sp.Len)); // covers
+            Inc(Size, SizeOf(Int8u) * Cardinal(sp.Len)); // covers
 
         Dec(NumSpans);
       until NumSpans = 0;
 
-      Inc(I);
+      Inc(i);
     end;
 
   Result := Size;
@@ -786,19 +786,19 @@ end;
 
 procedure TAggCustomScanLineStorageAA.WriteInt32;
 begin
-  PInt8u(Dst)^ := TInt32Int8uAccess(Val).Values[0];
-  PInt8u(PtrComp(Dst) + SizeOf(Int8u))^ := TInt32Int8uAccess(Val).Values[1];
-  PInt8u(PtrComp(Dst) + 2 * SizeOf(Int8u))^ := TInt32Int8uAccess(Val).Values[2];
-  PInt8u(PtrComp(Dst) + 3 * SizeOf(Int8u))^ := TInt32Int8uAccess(Val).Values[3];
+  PInt8u(Dst)^ := TInt32Int8uAccess(val).values[0];
+  PInt8u(PtrComp(Dst) + SizeOf(Int8u))^ := TInt32Int8uAccess(val).values[1];
+  PInt8u(PtrComp(Dst) + 2 * SizeOf(Int8u))^ := TInt32Int8uAccess(val).values[2];
+  PInt8u(PtrComp(Dst) + 3 * SizeOf(Int8u))^ := TInt32Int8uAccess(val).values[3];
 end;
 
 procedure TAggCustomScanLineStorageAA.Serialize;
 var
-  I, NumSpans, SpanIndex: Cardinal;
+  i, NumSpans, SpanIndex: Cardinal;
 
   ScanLineThis: PAggScanLineDataSS;
 
-  Sp: PAggSpanDataSS;
+  sp: PAggSpanDataSS;
 
   Covers: PInt8u;
 
@@ -817,11 +817,11 @@ begin
   WriteInt32(Data, GetMaxY); // MaxY
   Inc(PtrComp(Data), SizeOf(Int32));
 
-  I := 0;
+  i := 0;
 
-  while I < FScanLines.Size do
+  while i < FScanLines.Size do
     begin
-      ScanLineThis := FScanLines[I];
+      ScanLineThis := FScanLines[i];
       SizePointer := Data;
 
       Inc(PtrComp(Data), SizeOf(Int32));
@@ -837,27 +837,27 @@ begin
       SpanIndex := ScanLineThis.StartSpan;
 
       repeat
-        Sp := FSpans[SpanIndex];
+        sp := FSpans[SpanIndex];
 
         Inc(SpanIndex);
 
-        Covers := CoversByIndex(Sp.CoversID);
+        Covers := CoversByIndex(sp.CoversID);
 
-        WriteInt32(Data, Sp.X); // X
+        WriteInt32(Data, sp.X); // X
         Inc(PtrComp(Data), SizeOf(Int32));
 
-        WriteInt32(Data, Sp.Len); // Span Length
+        WriteInt32(Data, sp.Len); // Span Length
         Inc(PtrComp(Data), SizeOf(Int32));
 
-        if Sp.Len < 0 then
+        if sp.Len < 0 then
           begin
             Move(Covers^, Data^, SizeOf(Int8u));
             Inc(PtrComp(Data), SizeOf(Int8u));
           end
         else
           begin
-            Move(Covers^, Data^, Cardinal(Sp.Len) * SizeOf(Int8u));
-            Inc(PtrComp(Data), SizeOf(Int8u) * Cardinal(Sp.Len));
+            Move(Covers^, Data^, Cardinal(sp.Len) * SizeOf(Int8u));
+            Inc(PtrComp(Data), SizeOf(Int8u) * Cardinal(sp.Len));
           end;
 
         Dec(NumSpans);
@@ -865,29 +865,29 @@ begin
 
       WriteInt32(SizePointer, PtrComp(Data) - PtrComp(SizePointer));
 
-      Inc(I);
+      Inc(i);
     end;
 end;
 
 function TAggCustomScanLineStorageAA.ScanLineByIndex;
 begin
-  if I < FScanLines.Size then
-      Result := FScanLines[I]
+  if i < FScanLines.Size then
+      Result := FScanLines[i]
   else
       Result := @FFakeScanLine;
 end;
 
 function TAggCustomScanLineStorageAA.SpanByIndex;
 begin
-  if I < FSpans.Size then
-      Result := FSpans[I]
+  if i < FSpans.Size then
+      Result := FSpans[i]
   else
       Result := @FFakeSpan;
 end;
 
 function TAggCustomScanLineStorageAA.CoversByIndex;
 begin
-  Result := FCovers[I];
+  Result := FCovers[i];
 end;
 
 { TAggScanLineStorageAA8 }
@@ -906,14 +906,14 @@ begin
   FCovers := TAggScanLineCellStorage.Create(SizeOf(Int16u));
 end;
 
-function TAggScanLineStorageAA16.SweepScanLine(Sl: TAggCustomScanLine): Boolean;
+function TAggScanLineStorageAA16.SweepScanLine(SL: TAggCustomScanLine): Boolean;
 var
   ScanLineData: PAggScanLineDataSS;
   NumSpans, SpanIndex: Cardinal;
-  Sp: PAggSpanDataSS;
+  sp: PAggSpanDataSS;
   Covers: PInt16u;
 begin
-  Sl.ResetSpans;
+  SL.ResetSpans;
 
   repeat
     if FCurrentScanLine >= FScanLines.Size then
@@ -929,25 +929,25 @@ begin
     SpanIndex := ScanLineData.StartSpan;
 
     repeat
-      Sp := FSpans[SpanIndex];
+      sp := FSpans[SpanIndex];
 
       Inc(SpanIndex);
 
-      Covers := CoversByIndex(Sp.CoversID);
+      Covers := CoversByIndex(sp.CoversID);
 
-      if Sp.Len < 0 then
-          Sl.AddSpan(Sp.X, Cardinal(-Sp.Len), Covers^)
+      if sp.Len < 0 then
+          SL.AddSpan(sp.X, Cardinal(-sp.Len), Covers^)
       else
-          Sl.AddCells(Sp.X, Sp.Len, PInt8u(Covers));
+          SL.AddCells(sp.X, sp.Len, PInt8u(Covers));
 
       Dec(NumSpans);
     until NumSpans = 0;
 
     Inc(FCurrentScanLine);
 
-    if Sl.NumSpans <> 0 then
+    if SL.NumSpans <> 0 then
       begin
-        Sl.Finalize(ScanLineData.Y);
+        SL.Finalize(ScanLineData.Y);
 
         Break;
       end;
@@ -959,41 +959,41 @@ end;
 
 function TAggScanLineStorageAA16.ByteSize;
 var
-  I, Size, NumSpans, SpanIndex: Cardinal;
+  i, Size, NumSpans, SpanIndex: Cardinal;
 
   ScanLineData: PAggScanLineDataSS;
 
-  Sp: PAggSpanDataSS;
+  sp: PAggSpanDataSS;
 
 begin
   Size := SizeOf(Int32) * 4; // MinX, min_y, MaxX, max_y
 
-  I := 0;
+  i := 0;
 
-  while I < FScanLines.Size do
+  while i < FScanLines.Size do
     begin
       Inc(Size, SizeOf(Int32) * 3); // ScanLine size in bytes, Y, NumSpans
 
-      ScanLineData := FScanLines[I];
+      ScanLineData := FScanLines[i];
 
       NumSpans := ScanLineData.NumSpans;
       SpanIndex := ScanLineData.StartSpan;
 
       repeat
-        Sp := FSpans[SpanIndex];
+        sp := FSpans[SpanIndex];
 
         Inc(SpanIndex);
         Inc(Size, SizeOf(Int32) * 2); // X, Span Length
 
-        if Sp.Len < 0 then
+        if sp.Len < 0 then
             Inc(Size, SizeOf(Int16u)) // cover
         else
-            Inc(Size, SizeOf(Int16u) * Cardinal(Sp.Len)); // covers
+            Inc(Size, SizeOf(Int16u) * Cardinal(sp.Len)); // covers
 
         Dec(NumSpans);
       until NumSpans = 0;
 
-      Inc(I);
+      Inc(i);
     end;
 
   Result := Size;
@@ -1001,9 +1001,9 @@ end;
 
 procedure TAggScanLineStorageAA16.Serialize;
 var
-  I, NumSpans, SpanIndex: Cardinal;
+  i, NumSpans, SpanIndex: Cardinal;
   ScanLineThis: PAggScanLineDataSS;
-  Sp: PAggSpanDataSS;
+  sp: PAggSpanDataSS;
   Covers: PInt16u;
   SizePointer: PInt8u;
 begin
@@ -1019,11 +1019,11 @@ begin
   WriteInt32(Data, GetMaxY); // max_y
   Inc(PtrComp(Data), SizeOf(Int32));
 
-  I := 0;
+  i := 0;
 
-  while I < FScanLines.Size do
+  while i < FScanLines.Size do
     begin
-      ScanLineThis := FScanLines[I];
+      ScanLineThis := FScanLines[i];
       SizePointer := Data;
 
       Inc(PtrComp(Data), SizeOf(Int32));
@@ -1039,27 +1039,27 @@ begin
       SpanIndex := ScanLineThis.StartSpan;
 
       repeat
-        Sp := FSpans[SpanIndex];
+        sp := FSpans[SpanIndex];
 
         Inc(SpanIndex);
 
-        Covers := CoversByIndex(Sp.CoversID);
+        Covers := CoversByIndex(sp.CoversID);
 
-        WriteInt32(Data, Sp.X); // X
+        WriteInt32(Data, sp.X); // X
         Inc(PtrComp(Data), SizeOf(Int32));
 
-        WriteInt32(Data, Sp.Len); // Span Length
+        WriteInt32(Data, sp.Len); // Span Length
         Inc(PtrComp(Data), SizeOf(Int32));
 
-        if Sp.Len < 0 then
+        if sp.Len < 0 then
           begin
             Move(Covers^, Data^, SizeOf(Int16u));
             Inc(PtrComp(Data), SizeOf(Int16u));
           end
         else
           begin
-            Move(Covers^, Data^, Cardinal(Sp.Len) * SizeOf(Int16u));
-            Inc(PtrComp(Data), SizeOf(Int16u) * Cardinal(Sp.Len));
+            Move(Covers^, Data^, Cardinal(sp.Len) * SizeOf(Int16u));
+            Inc(PtrComp(Data), SizeOf(Int16u) * Cardinal(sp.Len));
           end;
 
         Dec(NumSpans);
@@ -1067,7 +1067,7 @@ begin
 
       WriteInt32(SizePointer, PtrComp(Data) - PtrComp(SizePointer));
 
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -1079,18 +1079,18 @@ begin
   FCovers := TAggScanLineCellStorage.Create(SizeOf(Int32u));
 end;
 
-function TAggScanLineStorageAA32.SweepScanLine(Sl: TAggCustomScanLine): Boolean;
+function TAggScanLineStorageAA32.SweepScanLine(SL: TAggCustomScanLine): Boolean;
 var
   ScanLineThis: PAggScanLineDataSS;
 
   NumSpans, SpanIndex: Cardinal;
 
-  Sp: PAggSpanDataSS;
+  sp: PAggSpanDataSS;
 
   Covers: PInt32u;
 
 begin
-  Sl.ResetSpans;
+  SL.ResetSpans;
 
   repeat
     if FCurrentScanLine >= FScanLines.Size then
@@ -1106,25 +1106,25 @@ begin
     SpanIndex := ScanLineThis.StartSpan;
 
     repeat
-      Sp := FSpans[SpanIndex];
+      sp := FSpans[SpanIndex];
 
       Inc(SpanIndex);
 
-      Covers := CoversByIndex(Sp.CoversID);
+      Covers := CoversByIndex(sp.CoversID);
 
-      if Sp.Len < 0 then
-          Sl.AddSpan(Sp.X, Cardinal(-Sp.Len), Covers^)
+      if sp.Len < 0 then
+          SL.AddSpan(sp.X, Cardinal(-sp.Len), Covers^)
       else
-          Sl.AddCells(Sp.X, Sp.Len, PInt8u(Covers));
+          SL.AddCells(sp.X, sp.Len, PInt8u(Covers));
 
       Dec(NumSpans);
     until NumSpans = 0;
 
     Inc(FCurrentScanLine);
 
-    if Sl.NumSpans <> 0 then
+    if SL.NumSpans <> 0 then
       begin
-        Sl.Finalize(ScanLineThis.Y);
+        SL.Finalize(ScanLineThis.Y);
 
         Break;
       end;
@@ -1136,38 +1136,38 @@ end;
 
 function TAggScanLineStorageAA32.ByteSize;
 var
-  I, Size, NumSpans, SpanIndex: Cardinal;
+  i, Size, NumSpans, SpanIndex: Cardinal;
   ScanLineThis: PAggScanLineDataSS;
-  Sp: PAggSpanDataSS;
+  sp: PAggSpanDataSS;
 begin
   Size := SizeOf(Int32) * 4; // MinX, min_y, MaxX, max_y
 
-  I := 0;
+  i := 0;
 
-  while I < FScanLines.Size do
+  while i < FScanLines.Size do
     begin
       Inc(Size, SizeOf(Int32) * 3); // ScanLine size in bytes, Y, NumSpans
 
-      ScanLineThis := FScanLines[I];
+      ScanLineThis := FScanLines[i];
 
       NumSpans := ScanLineThis.NumSpans;
       SpanIndex := ScanLineThis.StartSpan;
 
       repeat
-        Sp := FSpans[SpanIndex];
+        sp := FSpans[SpanIndex];
 
         Inc(SpanIndex);
         Inc(Size, SizeOf(Int32) * 2); // X, Span Length
 
-        if Sp.Len < 0 then
+        if sp.Len < 0 then
             Inc(Size, SizeOf(Int32u)) // cover
         else
-            Inc(Size, SizeOf(Int32u) * Cardinal(Sp.Len)); // covers
+            Inc(Size, SizeOf(Int32u) * Cardinal(sp.Len)); // covers
 
         Dec(NumSpans);
       until NumSpans = 0;
 
-      Inc(I);
+      Inc(i);
     end;
 
   Result := Size;
@@ -1175,11 +1175,11 @@ end;
 
 procedure TAggScanLineStorageAA32.Serialize;
 var
-  I, NumSpans, SpanIndex: Cardinal;
+  i, NumSpans, SpanIndex: Cardinal;
 
   ScanLineThis: PAggScanLineDataSS;
 
-  Sp: PAggSpanDataSS;
+  sp: PAggSpanDataSS;
 
   Covers: PInt32u;
 
@@ -1198,11 +1198,11 @@ begin
   WriteInt32(Data, GetMaxY); // max_y
   Inc(PtrComp(Data), SizeOf(Int32));
 
-  I := 0;
+  i := 0;
 
-  while I < FScanLines.Size do
+  while i < FScanLines.Size do
     begin
-      ScanLineThis := FScanLines[I];
+      ScanLineThis := FScanLines[i];
       SizePointer := Data;
 
       Inc(PtrComp(Data), SizeOf(Int32));
@@ -1218,19 +1218,19 @@ begin
       SpanIndex := ScanLineThis.StartSpan;
 
       repeat
-        Sp := FSpans[SpanIndex];
+        sp := FSpans[SpanIndex];
 
         Inc(SpanIndex);
 
-        Covers := CoversByIndex(Sp.CoversID);
+        Covers := CoversByIndex(sp.CoversID);
 
-        WriteInt32(Data, Sp.X); // X
+        WriteInt32(Data, sp.X); // X
         Inc(PtrComp(Data), SizeOf(Int32));
 
-        WriteInt32(Data, Sp.Len); // Span Length
+        WriteInt32(Data, sp.Len); // Span Length
         Inc(PtrComp(Data), SizeOf(Int32));
 
-        if Sp.Len < 0 then
+        if sp.Len < 0 then
           begin
             Move(Covers^, Data^, SizeOf(Int32u));
             Inc(PtrComp(Data), SizeOf(Int32u));
@@ -1238,8 +1238,8 @@ begin
           end
         else
           begin
-            Move(Covers^, Data^, Cardinal(Sp.Len) * SizeOf(Int32u));
-            Inc(PtrComp(Data), SizeOf(Int32u) * Cardinal(Sp.Len));
+            Move(Covers^, Data^, Cardinal(sp.Len) * SizeOf(Int32u));
+            Inc(PtrComp(Data), SizeOf(Int32u) * Cardinal(sp.Len));
           end;
 
         Dec(NumSpans);
@@ -1248,7 +1248,7 @@ begin
 
       WriteInt32(SizePointer, PtrComp(Data) - PtrComp(SizePointer));
 
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -1260,12 +1260,12 @@ begin
 end;
 
 constructor TAggEmbeddedScanLineSA.TConstIterator.Create(
-  aScanLine: TAggEmbeddedScanLineSA; aSize: Cardinal);
+  aScanline: TAggEmbeddedScanLineSA; ASize: Cardinal);
 begin
   inherited Create;
-  FPtr := aScanLine.FPtr;
-  FDeltaX := aScanLine.FDeltaX;
-  FSize := aSize;
+  FPtr := aScanline.FPtr;
+  FDeltaX := aScanline.FDeltaX;
+  FSize := ASize;
 
   Init;
 end;
@@ -1304,13 +1304,13 @@ end;
 
 function TAggEmbeddedScanLineSA.TConstIterator.ReadInt32: Integer;
 begin
-  TInt32Int8uAccess(Result).Values[0] := FPtr^;
+  TInt32Int8uAccess(Result).values[0] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[1] := FPtr^;
+  TInt32Int8uAccess(Result).values[1] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[2] := FPtr^;
+  TInt32Int8uAccess(Result).values[2] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[3] := FPtr^;
+  TInt32Int8uAccess(Result).values[3] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
 end;
 
@@ -1319,7 +1319,7 @@ end;
 constructor TAggEmbeddedScanLineSA.Create(Size: Cardinal);
 begin
   FPtr := nil;
-  FY := 0;
+  fy := 0;
   FSize := Size;
 
   FNumSpans := 0;
@@ -1336,7 +1336,7 @@ end;
 
 function TAggEmbeddedScanLineSA.GetY: Integer;
 begin
-  Result := FY;
+  Result := fy;
 end;
 
 function TAggEmbeddedScanLineSA.GetNumSpans: Cardinal;
@@ -1354,29 +1354,29 @@ begin
   Result := TConstIterator.Create(Self, FSize);
 end;
 
-procedure TAggEmbeddedScanLineSA.Init(Ptr: PInt8u; Dx, Dy: Integer);
+procedure TAggEmbeddedScanLineSA.Init(PTR: PInt8u; dx, dy: Integer);
 begin
-  FPtr := Ptr;
-  FY := ReadInt32 + Dy;
+  FPtr := PTR;
+  fy := ReadInt32 + dy;
   FNumSpans := Cardinal(ReadInt32);
-  FDeltaX := Dx;
+  FDeltaX := dx;
 end;
 
 function TAggEmbeddedScanLineSA.ReadInt32: Integer;
 begin
-  TInt32Int8uAccess(Result).Values[0] := FPtr^;
+  TInt32Int8uAccess(Result).values[0] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[1] := FPtr^;
+  TInt32Int8uAccess(Result).values[1] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[2] := FPtr^;
+  TInt32Int8uAccess(Result).values[2] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[3] := FPtr^;
+  TInt32Int8uAccess(Result).values[3] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
 end;
 
 { TAggSerializedScanLinesAdaptorAA }
 
-constructor TAggSerializedScanLinesAdaptorAA.Create(Sz: Cardinal);
+constructor TAggSerializedScanLinesAdaptorAA.Create(SZ: Cardinal);
 begin
   FData := nil;
   FEnd := nil;
@@ -1390,35 +1390,35 @@ begin
   FMax.X := -$7FFFFFFF;
   FMax.Y := -$7FFFFFFF;
 
-  FSize := Sz;
+  FSize := SZ;
 end;
 
-constructor TAggSerializedScanLinesAdaptorAA.Create(Sz: Cardinal;
-  Data: PInt8u; aSize: Cardinal; Dx, Dy: Double);
+constructor TAggSerializedScanLinesAdaptorAA.Create(SZ: Cardinal;
+  Data: PInt8u; ASize: Cardinal; dx, dy: Double);
 begin
   FData := Data;
-  FEnd := PInt8u(PtrComp(Data) + aSize);
+  FEnd := PInt8u(PtrComp(Data) + ASize);
   FPtr := Data;
 
-  FDelta.X := Trunc(Dx + 0.5);
-  FDelta.Y := Trunc(Dy + 0.5);
+  FDelta.X := Trunc(dx + 0.5);
+  FDelta.Y := Trunc(dy + 0.5);
 
   FMin.X := $7FFFFFFF;
   FMin.Y := $7FFFFFFF;
   FMax.X := -$7FFFFFFF;
   FMax.Y := -$7FFFFFFF;
 
-  FSize := Sz;
+  FSize := SZ;
 end;
 
-procedure TAggSerializedScanLinesAdaptorAA.Init(Data: PInt8u; aSize: Cardinal; Dx, Dy: Double);
+procedure TAggSerializedScanLinesAdaptorAA.Init(Data: PInt8u; ASize: Cardinal; dx, dy: Double);
 begin
   FData := Data;
-  FEnd := PInt8u(PtrComp(Data) + aSize);
+  FEnd := PInt8u(PtrComp(Data) + ASize);
   FPtr := Data;
 
-  FDelta.X := Trunc(Dx + 0.5);
-  FDelta.Y := Trunc(Dy + 0.5);
+  FDelta.X := Trunc(dx + 0.5);
+  FDelta.Y := Trunc(dy + 0.5);
 
   FMin.X := $7FFFFFFF;
   FMin.Y := $7FFFFFFF;
@@ -1428,25 +1428,25 @@ end;
 
 function TAggSerializedScanLinesAdaptorAA.ReadInt32: Integer;
 begin
-  TInt32Int8uAccess(Result).Values[0] := FPtr^;
+  TInt32Int8uAccess(Result).values[0] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[1] := FPtr^;
+  TInt32Int8uAccess(Result).values[1] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[2] := FPtr^;
+  TInt32Int8uAccess(Result).values[2] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[3] := FPtr^;
+  TInt32Int8uAccess(Result).values[3] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
 end;
 
 function TAggSerializedScanLinesAdaptorAA.ReadInt32u: Cardinal;
 begin
-  TInt32Int8uAccess(Result).Values[0] := FPtr^;
+  TInt32Int8uAccess(Result).values[0] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[1] := FPtr^;
+  TInt32Int8uAccess(Result).values[1] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[2] := FPtr^;
+  TInt32Int8uAccess(Result).values[2] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[3] := FPtr^;
+  TInt32Int8uAccess(Result).values[3] := FPtr^;
   Inc(PtrComp(FPtr), SizeOf(Int8u));
 end;
 
@@ -1492,12 +1492,12 @@ begin
 end;
 
 function TAggSerializedScanLinesAdaptorAA.SweepScanLine(
-  Sl: TAggCustomScanLine): Boolean;
+  SL: TAggCustomScanLine): Boolean;
 var
   Y, X, Len: Integer;
   NumSpans: Cardinal;
 begin
-  Sl.ResetSpans;
+  SL.ResetSpans;
 
   repeat
     if PtrComp(FPtr) >= PtrComp(FEnd) then
@@ -1516,20 +1516,20 @@ begin
 
       if Len < 0 then
         begin
-          Sl.AddSpan(X, Cardinal(-Len), FPtr^);
+          SL.AddSpan(X, Cardinal(-Len), FPtr^);
           Inc(PtrComp(FPtr), FSize);
         end
       else
         begin
-          Sl.AddCells(X, Len, FPtr);
+          SL.AddCells(X, Len, FPtr);
           Inc(PtrComp(FPtr), Len * FSize);
         end;
       Dec(NumSpans);
     until NumSpans = 0;
 
-    if Sl.NumSpans <> 0 then
+    if SL.NumSpans <> 0 then
       begin
-        Sl.Finalize(Y);
+        SL.Finalize(Y);
         Break;
       end;
   until False;
@@ -1538,7 +1538,7 @@ end;
 
 // function TAggSerializedScanLinesAdaptorAA.SweepScanLineEm;
 function TAggSerializedScanLinesAdaptorAA.SweepScanLine(
-  Sl: TAggEmbeddedScanLine): Boolean;
+  SL: TAggEmbeddedScanLine): Boolean;
 var
   ByteSize: Cardinal;
 begin
@@ -1549,9 +1549,9 @@ begin
         Exit;
       end;
     ByteSize := ReadInt32u;
-    Sl.Init(FPtr, FDelta.X, FDelta.Y);
+    SL.Init(FPtr, FDelta.X, FDelta.Y);
     Inc(PtrComp(FPtr), ByteSize - SizeOf(Int32));
-  until Sl.NumSpans <> 0;
+  until SL.NumSpans <> 0;
   Result := True;
 end;
 
@@ -1563,9 +1563,9 @@ begin
 end;
 
 constructor TAggSerializedScanLinesAdaptorAA8.Create(Data: PInt8u;
-  aSize: Cardinal; Dx, Dy: Double);
+  ASize: Cardinal; dx, dy: Double);
 begin
-  inherited Create(SizeOf(Int8u), Data, aSize, Dx, Dy);
+  inherited Create(SizeOf(Int8u), Data, ASize, dx, dy);
 end;
 
 { TAggSerializedScanLinesAdaptorAA16 }
@@ -1576,9 +1576,9 @@ begin
 end;
 
 constructor TAggSerializedScanLinesAdaptorAA16.Create(Data: PInt8u;
-  aSize: Cardinal; Dx, Dy: Double);
+  ASize: Cardinal; dx, dy: Double);
 begin
-  inherited Create(SizeOf(Int8u), Data, aSize, Dx, Dy);
+  inherited Create(SizeOf(Int8u), Data, ASize, dx, dy);
 end;
 
 { TAggSerializedScanLinesAdaptorAA32 }
@@ -1589,9 +1589,10 @@ begin
 end;
 
 constructor TAggSerializedScanLinesAdaptorAA32.Create(Data: PInt8u;
-  aSize: Cardinal; Dx, Dy: Double);
+  ASize: Cardinal; dx, dy: Double);
 begin
-  inherited Create(SizeOf(Int8u), Data, aSize, Dx, Dy);
+  inherited Create(SizeOf(Int8u), Data, ASize, dx, dy);
 end;
 
-end.
+end. 
+ 

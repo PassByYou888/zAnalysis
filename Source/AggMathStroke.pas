@@ -39,7 +39,7 @@ unit AggMathStroke;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -80,14 +80,14 @@ type
   public
     constructor Create;
 
-    procedure CalculateArc(Vc: TAggPodBVector; X, Y, Dx1, Dy1, Dx2, Dy2: Double);
-    procedure CalculateMiter(Vc: TAggPodBVector; V0, V1, V2: PAggVertexDistance; Dx1, Dy1, Dx2, Dy2: Double; Lj: TAggLineJoin; Mlimit, Dbevel: Double);
-    procedure CalculateCap(Vc: TAggPodBVector; V0, V1: PAggVertexDistance; Len: Double);
-    procedure CalculateJoin(Vc: TAggPodBVector; V0, V1, V2: PAggVertexDistance; Len1, Len2: Double);
+    procedure CalculateArc(VC: TAggPodBVector; X, Y, Dx1, Dy1, Dx2, Dy2: Double);
+    procedure CalculateMiter(VC: TAggPodBVector; v0, v1, v2: PAggVertexDistance; Dx1, Dy1, Dx2, Dy2: Double; Lj: TAggLineJoin; Mlimit, Dbevel: Double);
+    procedure CalculateCap(VC: TAggPodBVector; v0, v1: PAggVertexDistance; Len: Double);
+    procedure CalculateJoin(VC: TAggPodBVector; v0, v1, v2: PAggVertexDistance; Len1, Len2: Double);
 
     procedure SetMiterLimitTheta(Value: Double);
 
-    procedure AddVertex(Vc: TAggPodBVector; X, Y: Double);
+    procedure AddVertex(VC: TAggPodBVector; X, Y: Double);
 
     property LineCap: TAggLineCap read FLineCap write SetLineCap;
     property LineJoin: TAggLineJoin read FLineJoin write SetLineJoin;
@@ -96,19 +96,19 @@ type
     property ApproximationScale: Double read FApproxScale write SetApproximationScale;
     property InnerMiterLimit: Double read FInnerMiterLimit write SetInnerMiterLimit;
     property MiterLimit: Double read FMiterLimit write SetMiterLimit;
-    property Width: Double read GetWidth write SetWidth;
+    property width: Double read GetWidth write SetWidth;
   end;
 
-procedure StrokeCalcArc(OutVertices: TAggPodDeque; X, Y, Dx1, Dy1, Dx2, Dy2, Width, ApproximationScale: Double);
+procedure StrokeCalcArc(OutVertices: TAggPodDeque; X, Y, Dx1, Dy1, Dx2, Dy2, width, ApproximationScale: Double);
 
-procedure StrokeCalcMiter(OutVertices: TAggPodDeque; V0, V1, V2: PAggVertexDistance;
-  Dx1, Dy1, Dx2, Dy2, Width: Double; LineJoin: TAggLineJoin; MiterLimit, ApproximationScale: Double);
+procedure StrokeCalcMiter(OutVertices: TAggPodDeque; v0, v1, v2: PAggVertexDistance;
+  Dx1, Dy1, Dx2, Dy2, width: Double; LineJoin: TAggLineJoin; MiterLimit, ApproximationScale: Double);
 
-procedure StrokeCalcCap(OutVertices: TAggPodDeque; V0, V1: PAggVertexDistance;
-  Len: Double; LineCap: TAggLineCap; Width, ApproximationScale: Double);
+procedure StrokeCalcCap(OutVertices: TAggPodDeque; v0, v1: PAggVertexDistance;
+  Len: Double; LineCap: TAggLineCap; width, ApproximationScale: Double);
 
-procedure StrokeCalcJoin(OutVertices: TAggPodDeque; V0, V1, V2: PAggVertexDistance;
-  Len1, Len2, Width: Double; LineJoin: TAggLineJoin; InnerJoin: TAggInnerJoin; MiterLimit, InnerMiterLimit, ApproximationScale: Double);
+procedure StrokeCalcJoin(OutVertices: TAggPodDeque; v0, v1, v2: PAggVertexDistance;
+  Len1, Len2, width: Double; LineJoin: TAggLineJoin; InnerJoin: TAggInnerJoin; MiterLimit, InnerMiterLimit, ApproximationScale: Double);
 
 implementation
 
@@ -191,19 +191,19 @@ begin
   Result := 2 * FWidth;
 end;
 
-procedure TAggMathStroke.CalculateCap(Vc: TAggPodBVector; V0,
-  V1: PAggVertexDistance; Len: Double);
+procedure TAggMathStroke.CalculateCap(VC: TAggPodBVector; v0,
+  v1: PAggVertexDistance; Len: Double);
 var
   Delta: array [0 .. 1] of TPointDouble;
-  Da, A1: Double;
-  Sn, Cn: Double;
-  I, N: Integer;
+  DA, a1: Double;
+  sn, CN: Double;
+  i, n: Integer;
 begin
-  Vc.RemoveAll;
+  VC.RemoveAll;
 
-  Da := 1 / Len;
-  Delta[0].X := (V1.Pos.Y - V0.Pos.Y) * Da;
-  Delta[0].Y := (V1.Pos.X - V0.Pos.X) * Da;
+  DA := 1 / Len;
+  Delta[0].X := (v1.pos.Y - v0.pos.Y) * DA;
+  Delta[0].Y := (v1.pos.X - v0.pos.X) * DA;
   Delta[1] := PointDouble(0);
 
   Delta[0].X := Delta[0].X * FWidth;
@@ -217,73 +217,73 @@ begin
           Delta[1].Y := Delta[0].X * FWidthSign;
         end;
 
-      AddVertex(Vc, V0.Pos.X - Delta[0].X - Delta[1].X,
-        V0.Pos.Y + Delta[0].Y - Delta[1].Y);
-      AddVertex(Vc, V0.Pos.X + Delta[0].X - Delta[1].X,
-        V0.Pos.Y - Delta[0].Y - Delta[1].Y);
+      AddVertex(VC, v0.pos.X - Delta[0].X - Delta[1].X,
+        v0.pos.Y + Delta[0].Y - Delta[1].Y);
+      AddVertex(VC, v0.pos.X + Delta[0].X - Delta[1].X,
+        v0.pos.Y - Delta[0].Y - Delta[1].Y);
     end
   else
     begin
-      Da := ArcCos(FWidthAbs / (FWidthAbs + 0.125 / FApproxScale)) * 2;
-      N := Integer(Trunc(Pi / Da));
-      Da := Pi / (N + 1);
+      DA := ArcCos(FWidthAbs / (FWidthAbs + 0.125 / FApproxScale)) * 2;
+      n := Integer(Trunc(pi / DA));
+      DA := pi / (n + 1);
 
-      AddVertex(Vc, V0.Pos.X - Delta[0].X, V0.Pos.Y + Delta[0].Y);
+      AddVertex(VC, v0.pos.X - Delta[0].X, v0.pos.Y + Delta[0].Y);
 
       if FWidthSign > 0 then
         begin
-          A1 := ArcTan2(Delta[0].Y, -Delta[0].X);
-          A1 := A1 + Da;
-          I := 0;
+          a1 := ArcTan2(Delta[0].Y, -Delta[0].X);
+          a1 := a1 + DA;
+          i := 0;
 
-          while I < N do
+          while i < n do
             begin
-              SinCosScale(A1, Sn, Cn, FWidth);
-              AddVertex(Vc, V0.Pos.X + Cn, V0.Pos.Y + Sn);
+              SinCosScale(a1, sn, CN, FWidth);
+              AddVertex(VC, v0.pos.X + CN, v0.pos.Y + sn);
 
-              A1 := A1 + Da;
+              a1 := a1 + DA;
 
-              Inc(I);
+              Inc(i);
             end;
         end
       else
         begin
-          A1 := ArcTan2(-Delta[0].Y, Delta[0].X);
-          A1 := A1 - Da;
-          I := 0;
+          a1 := ArcTan2(-Delta[0].Y, Delta[0].X);
+          a1 := a1 - DA;
+          i := 0;
 
-          while I < N do
+          while i < n do
             begin
-              SinCosScale(A1, Sn, Cn, FWidth);
-              AddVertex(Vc, V0.Pos.X + Cn, V0.Pos.Y + Sn);
+              SinCosScale(a1, sn, CN, FWidth);
+              AddVertex(VC, v0.pos.X + CN, v0.pos.Y + sn);
 
-              A1 := A1 - Da;
+              a1 := a1 - DA;
 
-              Inc(I);
+              Inc(i);
             end;
         end;
 
-      AddVertex(Vc, V0.Pos.X + Delta[0].X, V0.Pos.Y - Delta[0].Y);
+      AddVertex(VC, v0.pos.X + Delta[0].X, v0.pos.Y - Delta[0].Y);
     end;
 end;
 
-procedure TAggMathStroke.CalculateJoin(Vc: TAggPodBVector;
-  V0, V1, V2: PAggVertexDistance; Len1, Len2: Double);
+procedure TAggMathStroke.CalculateJoin(VC: TAggPodBVector;
+  v0, v1, v2: PAggVertexDistance; Len1, Len2: Double);
 var
-  Dx1, Dy1, Dx2, Dy2, Cp, Limit, Dx, Dy, Dbevel, Temp: Double;
+  Dx1, Dy1, Dx2, Dy2, cp, Limit, dx, dy, Dbevel, Temp: Double;
 begin
   Temp := FWidth / Len1;
-  Dx1 := (V1.Pos.Y - V0.Pos.Y) * Temp;
-  Dy1 := (V1.Pos.X - V0.Pos.X) * Temp;
+  Dx1 := (v1.pos.Y - v0.pos.Y) * Temp;
+  Dy1 := (v1.pos.X - v0.pos.X) * Temp;
   Temp := FWidth / Len2;
-  Dx2 := (V2.Pos.Y - V1.Pos.Y) * Temp;
-  Dy2 := (V2.Pos.X - V1.Pos.X) * Temp;
+  Dx2 := (v2.pos.Y - v1.pos.Y) * Temp;
+  Dy2 := (v2.pos.X - v1.pos.X) * Temp;
 
-  Vc.RemoveAll;
+  VC.RemoveAll;
 
-  Cp := CrossProduct(V0.Pos.X, V0.Pos.Y, V1.Pos.X, V1.Pos.Y, V2.Pos.X, V2.Pos.Y);
+  cp := CrossProduct(v0.pos.X, v0.pos.Y, v1.pos.X, v1.pos.Y, v2.pos.X, v2.pos.Y);
 
-  if (Cp <> 0) and ((Cp > 0) = (FWidth > 0)) then
+  if (cp <> 0) and ((cp > 0) = (FWidth > 0)) then
     begin
       // Inner join
       if Len1 < Len2 then
@@ -296,37 +296,37 @@ begin
 
       case FInnerJoin of
         ijMiter:
-          CalculateMiter(Vc, V0, V1, V2, Dx1, Dy1, Dx2, Dy2, ljMiterRevert,
+          CalculateMiter(VC, v0, v1, v2, Dx1, Dy1, Dx2, Dy2, ljMiterRevert,
             Limit, 0);
 
         ijJag, ijRound:
           begin
-            Cp := (Dx1 - Dx2) * (Dx1 - Dx2) + (Dy1 - Dy2) * (Dy1 - Dy2);
+            cp := (Dx1 - Dx2) * (Dx1 - Dx2) + (Dy1 - Dy2) * (Dy1 - Dy2);
 
-            if (Cp < Len1 * Len1) and (Cp < Len2 * Len2) then
-                CalculateMiter(Vc, V0, V1, V2, Dx1, Dy1, Dx2, Dy2,
+            if (cp < Len1 * Len1) and (cp < Len2 * Len2) then
+                CalculateMiter(VC, v0, v1, v2, Dx1, Dy1, Dx2, Dy2,
                 ljMiterRevert, Limit, 0)
             else if FInnerJoin = ijJag then
               begin
-                AddVertex(Vc, V1.Pos.X + Dx1, V1.Pos.Y - Dy1);
-                AddVertex(Vc, V1.Pos.X, V1.Pos.Y);
-                AddVertex(Vc, V1.Pos.X + Dx2, V1.Pos.Y - Dy2);
+                AddVertex(VC, v1.pos.X + Dx1, v1.pos.Y - Dy1);
+                AddVertex(VC, v1.pos.X, v1.pos.Y);
+                AddVertex(VC, v1.pos.X + Dx2, v1.pos.Y - Dy2);
 
               end
             else
               begin
-                AddVertex(Vc, V1.Pos.X + Dx1, V1.Pos.Y - Dy1);
-                AddVertex(Vc, V1.Pos.X, V1.Pos.Y);
-                CalculateArc(Vc, V1.Pos.X, V1.Pos.Y, Dx2, -Dy2, Dx1, -Dy1);
-                AddVertex(Vc, V1.Pos.X, V1.Pos.Y);
-                AddVertex(Vc, V1.Pos.X + Dx2, V1.Pos.Y - Dy2);
+                AddVertex(VC, v1.pos.X + Dx1, v1.pos.Y - Dy1);
+                AddVertex(VC, v1.pos.X, v1.pos.Y);
+                CalculateArc(VC, v1.pos.X, v1.pos.Y, Dx2, -Dy2, Dx1, -Dy1);
+                AddVertex(VC, v1.pos.X, v1.pos.Y);
+                AddVertex(VC, v1.pos.X + Dx2, v1.pos.Y - Dy2);
               end;
           end;
         else
           begin
             // ijBevel
-            AddVertex(Vc, V1.Pos.X + Dx1, V1.Pos.Y - Dy1);
-            AddVertex(Vc, V1.Pos.X + Dx2, V1.Pos.Y - Dy2);
+            AddVertex(VC, v1.pos.X + Dx1, v1.pos.Y - Dy1);
+            AddVertex(VC, v1.pos.X + Dx2, v1.pos.Y - Dy2);
           end;
       end;
     end
@@ -336,10 +336,10 @@ begin
       // ---------------
       // Calculate the distance between v1 and
       // the central point of the bevel line segment
-      Dx := (Dx1 + Dx2) * 0.5;
-      Dy := (Dy1 + Dy2) * 0.5;
+      dx := (Dx1 + Dx2) * 0.5;
+      dy := (Dy1 + Dy2) * 0.5;
 
-      Dbevel := Hypot(Dx, Dy);
+      Dbevel := Hypot(dx, dy);
 
       if (FLineJoin = ljRound) or (FLineJoin = ljBevel) then
         begin
@@ -361,12 +361,12 @@ begin
           // out this entire "if".
           if FApproxScale * (FWidthAbs - Dbevel) < FWidthEps then
             begin
-              if CalculateIntersection(V0.Pos.X + Dx1, V0.Pos.Y - Dy1,
-                V1.Pos.X + Dx1, V1.Pos.Y - Dy1, V1.Pos.X + Dx2, V1.Pos.Y - Dy2,
-                V2.Pos.X + Dx2, V2.Pos.Y - Dy2, @Dx, @Dy) then
-                  AddVertex(Vc, Dx, Dy)
+              if CalculateIntersection(v0.pos.X + Dx1, v0.pos.Y - Dy1,
+                v1.pos.X + Dx1, v1.pos.Y - Dy1, v1.pos.X + Dx2, v1.pos.Y - Dy2,
+                v2.pos.X + Dx2, v2.pos.Y - Dy2, @dx, @dy) then
+                  AddVertex(VC, dx, dy)
               else
-                  AddVertex(Vc, V1.Pos.X + Dx1, V1.Pos.Y - Dy1);
+                  AddVertex(VC, v1.pos.X + Dx1, v1.pos.Y - Dy1);
 
               Exit;
             end;
@@ -374,115 +374,115 @@ begin
 
       case FLineJoin of
         ljMiter, ljMiterRevert, ljMiterRound:
-          CalculateMiter(Vc, V0, V1, V2, Dx1, Dy1, Dx2, Dy2, FLineJoin,
+          CalculateMiter(VC, v0, v1, v2, Dx1, Dy1, Dx2, Dy2, FLineJoin,
             FMiterLimit, Dbevel);
 
         ljRound:
-          CalculateArc(Vc, V1.Pos.X, V1.Pos.Y, Dx1, -Dy1, Dx2, -Dy2);
+          CalculateArc(VC, v1.pos.X, v1.pos.Y, Dx1, -Dy1, Dx2, -Dy2);
         else
           begin
             // Bevel join
-            AddVertex(Vc, V1.Pos.X + Dx1, V1.Pos.Y - Dy1);
-            AddVertex(Vc, V1.Pos.X + Dx2, V1.Pos.Y - Dy2);
+            AddVertex(VC, v1.pos.X + Dx1, v1.pos.Y - Dy1);
+            AddVertex(VC, v1.pos.X + Dx2, v1.pos.Y - Dy2);
           end;
       end;
     end;
 end;
 
-procedure TAggMathStroke.AddVertex(Vc: TAggPodBVector; X, Y: Double);
+procedure TAggMathStroke.AddVertex(VC: TAggPodBVector; X, Y: Double);
 var
-  Pt: TPointDouble;
+  pt: TPointDouble;
 begin
-  Pt.X := X;
-  Pt.Y := Y;
+  pt.X := X;
+  pt.Y := Y;
 
-  Vc.Add(@Pt);
+  VC.Add(@pt);
 end;
 
-procedure TAggMathStroke.CalculateArc(Vc: TAggPodBVector;
+procedure TAggMathStroke.CalculateArc(VC: TAggPodBVector;
   X, Y, Dx1, Dy1, Dx2, Dy2: Double);
 var
-  A1, A2, Da: Double;
-  Sn, Cn: Double;
-  I, N: Integer;
+  a1, a2, DA: Double;
+  sn, CN: Double;
+  i, n: Integer;
 begin
-  A1 := ArcTan2(Dy1 * FWidthSign, Dx1 * FWidthSign);
-  A2 := ArcTan2(Dy2 * FWidthSign, Dx2 * FWidthSign);
-  Da := A1 - A2;
-  Da := ArcCos(FWidthAbs / (FWidthAbs + 0.125 / FApproxScale)) * 2;
+  a1 := ArcTan2(Dy1 * FWidthSign, Dx1 * FWidthSign);
+  a2 := ArcTan2(Dy2 * FWidthSign, Dx2 * FWidthSign);
+  DA := a1 - a2;
+  DA := ArcCos(FWidthAbs / (FWidthAbs + 0.125 / FApproxScale)) * 2;
 
-  AddVertex(Vc, X + Dx1, Y + Dy1);
+  AddVertex(VC, X + Dx1, Y + Dy1);
 
   if FWidthSign > 0 then
     begin
-      if A1 > A2 then
-          A2 := A2 + 2 * Pi;
+      if a1 > a2 then
+          a2 := a2 + 2 * pi;
 
-      N := Integer(Trunc((A2 - A1) / Da));
-      Da := (A2 - A1) / (N + 1);
-      A1 := A1 + Da;
-      I := 0;
+      n := Integer(Trunc((a2 - a1) / DA));
+      DA := (a2 - a1) / (n + 1);
+      a1 := a1 + DA;
+      i := 0;
 
-      while I < N do
+      while i < n do
         begin
-          SinCos(A1, Sn, Cn);
-          AddVertex(Vc, X + Cn * FWidth, Y + Sn * FWidth);
+          SinCos(a1, sn, CN);
+          AddVertex(VC, X + CN * FWidth, Y + sn * FWidth);
 
-          A1 := A1 + Da;
+          a1 := a1 + DA;
 
-          Inc(I);
+          Inc(i);
         end;
     end
   else
     begin
-      if A1 < A2 then
-          A2 := A2 - 2 * Pi;
+      if a1 < a2 then
+          a2 := a2 - 2 * pi;
 
-      N := Integer(Trunc((A1 - A2) / Da));
-      Da := (A1 - A2) / (N + 1);
-      A1 := A1 - Da;
-      I := 0;
+      n := Integer(Trunc((a1 - a2) / DA));
+      DA := (a1 - a2) / (n + 1);
+      a1 := a1 - DA;
+      i := 0;
 
-      while I < N do
+      while i < n do
         begin
-          SinCos(A1, Sn, Cn);
-          AddVertex(Vc, X + Cn * FWidth, Y + Sn * FWidth);
+          SinCos(a1, sn, CN);
+          AddVertex(VC, X + CN * FWidth, Y + sn * FWidth);
 
-          A1 := A1 - Da;
+          a1 := a1 - DA;
 
-          Inc(I);
+          Inc(i);
         end;
     end;
 
-  AddVertex(Vc, X + Dx2, Y + Dy2);
+  AddVertex(VC, X + Dx2, Y + Dy2);
 end;
 
-procedure TAggMathStroke.CalculateMiter(Vc: TAggPodBVector;
-  V0, V1, V2: PAggVertexDistance; Dx1, Dy1, Dx2, Dy2: Double; Lj: TAggLineJoin;
+procedure TAggMathStroke.CalculateMiter(VC: TAggPodBVector;
+  v0, v1, v2: PAggVertexDistance; Dx1, Dy1, Dx2, Dy2: Double; Lj: TAggLineJoin;
   Mlimit, Dbevel: Double);
 var
-  Xi, Yi, Di, Lim, X2, Y2, X1, Y1: Double;
+  XI, Yi, di, Lim, x2, y2, x1, y1: Double;
   MiterLimitExceeded, IntersectionFailed: Boolean;
 begin
-  Xi := V1.Pos.X;
-  Yi := V1.Pos.Y;
-  Di := 1;
+  XI := v1.pos.X;
+  Yi := v1.pos.Y;
+  di := 1;
   Lim := FWidthAbs * Mlimit;
 
   MiterLimitExceeded := True; // Assume the worst
   IntersectionFailed := True; // Assume the worst
 
-  if CalculateIntersection(V0.Pos.X + Dx1, V0.Pos.Y - Dy1, V1.Pos.X + Dx1,
-    V1.Pos.Y - Dy1, V1.Pos.X + Dx2, V1.Pos.Y - Dy2, V2.Pos.X + Dx2,
-    V2.Pos.Y - Dy2, @Xi, @Yi) then
+  if CalculateIntersection(v0.pos.X + Dx1, v0.pos.Y - Dy1, v1.pos.X + Dx1,
+    v1.pos.Y - Dy1, v1.pos.X + Dx2, v1.pos.Y - Dy2, v2.pos.X + Dx2,
+    v2.pos.Y - Dy2, @XI, @Yi) then
     begin
       // Calculation of the intersection succeeded
-      Di := CalculateDistance(V1.Pos.X, V1.Pos.Y, Xi, Yi);
+      di := CalculateDistance(v1.pos.X, v1.pos.Y, XI, Yi);
 
-      if Di <= Lim then
+      if di <= Lim then
         begin
           // Inside the miter limit
-          AddVertex(Vc, Xi, Yi);
+          AddVertex(VC, XI, Yi);
 
           MiterLimitExceeded := False;
         end;
@@ -498,15 +498,15 @@ begin
       // to the line determined by vertices v0 and v1.
       // This condition determines whether the next line segments continues
       // the previous one or goes back.
-      X2 := V1.Pos.X + Dx1;
-      Y2 := V1.Pos.Y - Dy1;
+      x2 := v1.pos.X + Dx1;
+      y2 := v1.pos.Y - Dy1;
 
-      if (CrossProduct(V0.Pos.X, V0.Pos.Y, V1.Pos.X, V1.Pos.Y, X2, Y2) < 0.0)
-        = (CrossProduct(V1.Pos.X, V1.Pos.Y, V2.Pos.X, V2.Pos.Y, X2, Y2) < 0.0) then
+      if (CrossProduct(v0.pos.X, v0.pos.Y, v1.pos.X, v1.pos.Y, x2, y2) < 0.0)
+        = (CrossProduct(v1.pos.X, v1.pos.Y, v2.pos.X, v2.pos.Y, x2, y2) < 0.0) then
         begin
           // This case means that the next segment continues
           // the previous one (straight line)
-          AddVertex(Vc, V1.Pos.X + Dx1, V1.Pos.Y - Dy1);
+          AddVertex(VC, v1.pos.X + Dx1, v1.pos.Y - Dy1);
 
           MiterLimitExceeded := False;
         end;
@@ -520,12 +520,12 @@ begin
           // For the compatibility with SVG, PDF, etc,
           // we use a simple bevel join instead of
           // "smart" bevel
-          AddVertex(Vc, V1.Pos.X + Dx1, V1.Pos.Y - Dy1);
-          AddVertex(Vc, V1.Pos.X + Dx2, V1.Pos.Y - Dy2);
+          AddVertex(VC, v1.pos.X + Dx1, v1.pos.Y - Dy1);
+          AddVertex(VC, v1.pos.X + Dx2, v1.pos.Y - Dy2);
         end;
 
       ljMiterRound:
-        CalculateArc(Vc, V1.Pos.X, V1.Pos.Y, Dx1, -Dy1, Dx2, -Dy2);
+        CalculateArc(VC, v1.pos.X, v1.pos.Y, Dx1, -Dy1, Dx2, -Dy2);
 
       // If no miter-revert, calculate new dx1, dy1, dx2, dy2
       else
@@ -533,39 +533,39 @@ begin
           begin
             Mlimit := Mlimit * FWidthSign;
 
-            AddVertex(Vc, V1.Pos.X + Dx1 + Dy1 * Mlimit, V1.Pos.Y - Dy1 + Dx1 * Mlimit);
+            AddVertex(VC, v1.pos.X + Dx1 + Dy1 * Mlimit, v1.pos.Y - Dy1 + Dx1 * Mlimit);
 
-            AddVertex(Vc, V1.Pos.X + Dx2 - Dy2 * Mlimit, V1.Pos.Y - Dy2 - Dx2 * Mlimit);
+            AddVertex(VC, v1.pos.X + Dx2 - Dy2 * Mlimit, v1.pos.Y - Dy2 - Dx2 * Mlimit);
 
           end
         else
           begin
-            X1 := V1.Pos.X + Dx1;
-            Y1 := V1.Pos.Y - Dy1;
-            X2 := V1.Pos.X + Dx2;
-            Y2 := V1.Pos.Y - Dy2;
-            Di := (Lim - Dbevel) / (Di - Dbevel);
+            x1 := v1.pos.X + Dx1;
+            y1 := v1.pos.Y - Dy1;
+            x2 := v1.pos.X + Dx2;
+            y2 := v1.pos.Y - Dy2;
+            di := (Lim - Dbevel) / (di - Dbevel);
 
-            AddVertex(Vc, X1 + (Xi - X1) * Di, Y1 + (Yi - Y1) * Di);
+            AddVertex(VC, x1 + (XI - x1) * di, y1 + (Yi - y1) * di);
 
-            AddVertex(Vc, X2 + (Xi - X2) * Di, Y2 + (Yi - Y2) * Di);
+            AddVertex(VC, x2 + (XI - x2) * di, y2 + (Yi - y2) * di);
           end;
     end;
 end;
 
 procedure StrokeCalcArc(OutVertices: TAggPodDeque;
-  X, Y, Dx1, Dy1, Dx2, Dy2, Width, ApproximationScale: Double);
+  X, Y, Dx1, Dy1, Dx2, Dy2, width, ApproximationScale: Double);
 var
-  Pt: TPointDouble;
+  pt: TPointDouble;
 
-  A1, A2, Da: Double;
-  Sn, Cn: Double;
+  a1, a2, DA: Double;
+  sn, CN: Double;
 
   Ccw: Boolean;
 begin
-  A1 := ArcTan2(Dy1, Dx1);
-  A2 := ArcTan2(Dy2, Dx2);
-  Da := A1 - A2;
+  a1 := ArcTan2(Dy1, Dx1);
+  a2 := ArcTan2(Dy2, Dx2);
+  DA := a1 - a2;
 
   // Possible optimization. Not important at all; consumes time but happens rarely
   // if Abs(da ) < CAggStrokeTheta then
@@ -577,96 +577,96 @@ begin
   // exit;
   //
   // end;
-  Ccw := (Da > 0.0) and (Da < Pi);
+  Ccw := (DA > 0.0) and (DA < pi);
 
-  if Width < 0 then
-      Width := -Width;
+  if width < 0 then
+      width := -width;
 
   if ApproximationScale = 0 then
       ApproximationScale := 0.00001;
 
-  Da := ArcCos(Width / (Width + 0.125 / ApproximationScale)) * 2;
+  DA := ArcCos(width / (width + 0.125 / ApproximationScale)) * 2;
 
-  Pt.X := X + Dx1;
-  Pt.Y := Y + Dy1;
+  pt.X := X + Dx1;
+  pt.Y := Y + Dy1;
 
-  OutVertices.Add(@Pt);
+  OutVertices.Add(@pt);
 
   if not Ccw then
     begin
-      if A1 > A2 then
-          A2 := A2 + (2 * Pi);
+      if a1 > a2 then
+          a2 := a2 + (2 * pi);
 
-      A2 := A2 - 0.25 * Da;
-      A1 := A1 + Da;
+      a2 := a2 - 0.25 * DA;
+      a1 := a1 + DA;
 
-      while A1 < A2 do
+      while a1 < a2 do
         begin
-          SinCosScale(A1, Sn, Cn, Width);
-          Pt.X := X + Cn;
-          Pt.Y := Y + Sn;
+          SinCosScale(a1, sn, CN, width);
+          pt.X := X + CN;
+          pt.Y := Y + sn;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
 
-          A1 := A1 + Da;
+          a1 := a1 + DA;
         end;
     end
   else
     begin
-      if A1 < A2 then
-          A2 := A2 - (2 * Pi);
+      if a1 < a2 then
+          a2 := a2 - (2 * pi);
 
-      A2 := A2 + 0.25 * Da;
-      A1 := A1 - Da;
+      a2 := a2 + 0.25 * DA;
+      a1 := a1 - DA;
 
-      while A1 > A2 do
+      while a1 > a2 do
         begin
-          SinCosScale(A1, Sn, Cn, Width);
-          Pt.X := X + Cn;
-          Pt.Y := Y + Sn;
+          SinCosScale(a1, sn, CN, width);
+          pt.X := X + CN;
+          pt.Y := Y + sn;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
 
-          A1 := A1 - Da;
+          a1 := a1 - DA;
         end;
     end;
 
-  Pt.X := X + Dx2;
-  Pt.Y := Y + Dy2;
+  pt.X := X + Dx2;
+  pt.Y := Y + Dy2;
 
-  OutVertices.Add(@Pt);
+  OutVertices.Add(@pt);
 end;
 
 procedure StrokeCalcMiter(OutVertices: TAggPodDeque;
-  V0, V1, V2: PAggVertexDistance; Dx1, Dy1, Dx2, Dy2, Width: Double;
+  v0, v1, v2: PAggVertexDistance; Dx1, Dy1, Dx2, Dy2, width: Double;
   LineJoin: TAggLineJoin; MiterLimit, ApproximationScale: Double);
 var
-  Pt: TPointDouble;
-  Xi, Yi, D1, Lim, X2, Y2: Double;
+  pt: TPointDouble;
+  XI, Yi, d1, Lim, x2, y2: Double;
   MiterLimitExceeded: Boolean;
 begin
-  Xi := V1.Pos.X;
-  Yi := V1.Pos.Y;
+  XI := v1.pos.X;
+  Yi := v1.pos.Y;
 
   MiterLimitExceeded := True; // Assume the worst
 
-  if CalculateIntersection(V0.Pos.X + Dx1, V0.Pos.Y - Dy1, V1.Pos.X + Dx1,
-    V1.Pos.Y - Dy1, V1.Pos.X + Dx2, V1.Pos.Y - Dy2, V2.Pos.X + Dx2,
-    V2.Pos.Y - Dy2, @Xi, @Yi) then
+  if CalculateIntersection(v0.pos.X + Dx1, v0.pos.Y - Dy1, v1.pos.X + Dx1,
+    v1.pos.Y - Dy1, v1.pos.X + Dx2, v1.pos.Y - Dy2, v2.pos.X + Dx2,
+    v2.pos.Y - Dy2, @XI, @Yi) then
     begin
       // Calculation of the intersection succeeded
       // ---------------------
-      D1 := CalculateDistance(V1.Pos.X, V1.Pos.Y, Xi, Yi);
-      Lim := Width * MiterLimit;
+      d1 := CalculateDistance(v1.pos.X, v1.pos.Y, XI, Yi);
+      Lim := width * MiterLimit;
 
-      if D1 <= Lim then
+      if d1 <= Lim then
         begin
           // Inside the miter limit
           // ---------------------
-          Pt.X := Xi;
-          Pt.Y := Yi;
+          pt.X := XI;
+          pt.Y := Yi;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
 
           MiterLimitExceeded := False;
         end;
@@ -681,19 +681,19 @@ begin
       // This condition determines whether the next line segments continues
       // the previous one or goes back.
       // ----------------
-      X2 := V1.Pos.X + Dx1;
-      Y2 := V1.Pos.Y - Dy1;
+      x2 := v1.pos.X + Dx1;
+      y2 := v1.pos.Y - Dy1;
 
-      if (((X2 - V0.Pos.X) * Dy1 - (V0.Pos.Y - Y2) * Dx1 < 0.0) <>
-        ((X2 - V2.Pos.X) * Dy1 - (V2.Pos.Y - Y2) * Dx1 < 0.0)) then
+      if (((x2 - v0.pos.X) * Dy1 - (v0.pos.Y - y2) * Dx1 < 0.0) <>
+        ((x2 - v2.pos.X) * Dy1 - (v2.pos.Y - y2) * Dx1 < 0.0)) then
         begin
           // This case means that the next segment continues
           // the previous one (straight line)
           // -----------------
-          Pt.X := V1.Pos.X + Dx1;
-          Pt.Y := V1.Pos.Y - Dy1;
+          pt.X := v1.pos.X + Dx1;
+          pt.Y := v1.pos.Y - Dy1;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
 
           MiterLimitExceeded := False;
         end;
@@ -709,55 +709,55 @@ begin
           // we use a simple bevel join instead of
           // "smart" bevel
           // -------------------
-          Pt.X := V1.Pos.X + Dx1;
-          Pt.Y := V1.Pos.Y - Dy1;
+          pt.X := v1.pos.X + Dx1;
+          pt.Y := v1.pos.Y - Dy1;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
 
-          Pt.X := V1.Pos.X + Dx2;
-          Pt.Y := V1.Pos.Y - Dy2;
+          pt.X := v1.pos.X + Dx2;
+          pt.Y := v1.pos.Y - Dy2;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
         end;
 
       ljMiterRound:
-        StrokeCalcArc(OutVertices, V1.Pos.X, V1.Pos.Y, Dx1, -Dy1, Dx2, -Dy2, Width,
+        StrokeCalcArc(OutVertices, v1.pos.X, v1.pos.Y, Dx1, -Dy1, Dx2, -Dy2, width,
           ApproximationScale);
 
       else
         begin
           // If no miter-revert, calculate new dx1, dy1, dx2, dy2
           // ----------------
-          Pt.X := V1.Pos.X + Dx1 + Dy1 * MiterLimit;
-          Pt.Y := V1.Pos.Y - Dy1 + Dx1 * MiterLimit;
+          pt.X := v1.pos.X + Dx1 + Dy1 * MiterLimit;
+          pt.Y := v1.pos.Y - Dy1 + Dx1 * MiterLimit;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
 
-          Pt.X := V1.Pos.X + Dx2 - Dy2 * MiterLimit;
-          Pt.Y := V1.Pos.Y - Dy2 - Dx2 * MiterLimit;
+          pt.X := v1.pos.X + Dx2 - Dy2 * MiterLimit;
+          pt.Y := v1.pos.Y - Dy2 - Dx2 * MiterLimit;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
         end;
     end;
 end;
 
-procedure StrokeCalcCap(OutVertices: TAggPodDeque; V0, V1: PAggVertexDistance;
-  Len: Double; LineCap: TAggLineCap; Width, ApproximationScale: Double);
+procedure StrokeCalcCap(OutVertices: TAggPodDeque; v0, v1: PAggVertexDistance;
+  Len: Double; LineCap: TAggLineCap; width, ApproximationScale: Double);
 var
-  Pt: TPointDouble;
-  Dx1, Dy1, Dx2, Dy2, A1, A2, Da: Double;
-  Sn, Cn: Double;
+  pt: TPointDouble;
+  Dx1, Dy1, Dx2, Dy2, a1, a2, DA: Double;
+  sn, CN: Double;
 begin
   OutVertices.RemoveAll;
 
-  Da := 1 / Len;
-  Dx1 := (V1.Pos.Y - V0.Pos.Y) * Da;
-  Dy1 := (V1.Pos.X - V0.Pos.X) * Da;
+  DA := 1 / Len;
+  Dx1 := (v1.pos.Y - v0.pos.Y) * DA;
+  Dy1 := (v1.pos.X - v0.pos.X) * DA;
   Dx2 := 0;
   Dy2 := 0;
 
-  Dx1 := Dx1 * Width;
-  Dy1 := Dy1 * Width;
+  Dx1 := Dx1 * width;
+  Dy1 := Dy1 * width;
 
   if LineCap <> lcRound then
     begin
@@ -767,141 +767,141 @@ begin
           Dy2 := Dx1;
         end;
 
-      Pt.X := V0.Pos.X - Dx1 - Dx2;
-      Pt.Y := V0.Pos.Y + Dy1 - Dy2;
+      pt.X := v0.pos.X - Dx1 - Dx2;
+      pt.Y := v0.pos.Y + Dy1 - Dy2;
 
-      OutVertices.Add(@Pt);
+      OutVertices.Add(@pt);
 
-      Pt.X := V0.Pos.X + Dx1 - Dx2;
-      Pt.Y := V0.Pos.Y - Dy1 - Dy2;
+      pt.X := v0.pos.X + Dx1 - Dx2;
+      pt.Y := v0.pos.Y - Dy1 - Dy2;
 
-      OutVertices.Add(@Pt);
+      OutVertices.Add(@pt);
     end
   else
     begin
-      A1 := ArcTan2(Dy1, -Dx1);
-      A2 := A1 + Pi;
+      a1 := ArcTan2(Dy1, -Dx1);
+      a2 := a1 + pi;
 
       if ApproximationScale = 0 then
           ApproximationScale := 0.00001;
 
-      Da := ArcCos(Width / (Width + 0.125 / ApproximationScale)) * 2;
+      DA := ArcCos(width / (width + 0.125 / ApproximationScale)) * 2;
 
-      Pt.X := V0.Pos.X - Dx1;
-      Pt.Y := V0.Pos.Y + Dy1;
+      pt.X := v0.pos.X - Dx1;
+      pt.Y := v0.pos.Y + Dy1;
 
-      OutVertices.Add(@Pt);
+      OutVertices.Add(@pt);
 
-      A1 := A1 + Da;
-      A2 := A2 - 0.25 * Da;
+      a1 := a1 + DA;
+      a2 := a2 - 0.25 * DA;
 
-      while A1 < A2 do
+      while a1 < a2 do
         begin
-          SinCosScale(A1, Sn, Cn, Width);
-          Pt.X := V0.Pos.X + Cn;
-          Pt.Y := V0.Pos.Y + Sn;
+          SinCosScale(a1, sn, CN, width);
+          pt.X := v0.pos.X + CN;
+          pt.Y := v0.pos.Y + sn;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
 
-          A1 := A1 + Da;
+          a1 := a1 + DA;
         end;
 
-      Pt.X := V0.Pos.X + Dx1;
-      Pt.Y := V0.Pos.Y - Dy1;
+      pt.X := v0.pos.X + Dx1;
+      pt.Y := v0.pos.Y - Dy1;
 
-      OutVertices.Add(@Pt);
+      OutVertices.Add(@pt);
     end;
 end;
 
 procedure StrokeCalcJoin(OutVertices: TAggPodDeque;
-  V0, V1, V2: PAggVertexDistance; Len1, Len2, Width: Double;
+  v0, v1, v2: PAggVertexDistance; Len1, Len2, width: Double;
   LineJoin: TAggLineJoin; InnerJoin: TAggInnerJoin; MiterLimit, InnerMiterLimit,
   ApproximationScale: Double);
 var
-  Pt: TPointDouble;
+  pt: TPointDouble;
 
-  D, Dx1, Dy1, Dx2, Dy2: Double;
+  d, Dx1, Dy1, Dx2, Dy2: Double;
 begin
-  D := Width / Len1;
-  Dx1 := (V1.Pos.Y - V0.Pos.Y) * D;
-  Dy1 := (V1.Pos.X - V0.Pos.X) * D;
+  d := width / Len1;
+  Dx1 := (v1.pos.Y - v0.pos.Y) * d;
+  Dy1 := (v1.pos.X - v0.pos.X) * d;
 
-  D := Width / Len2;
-  Dx2 := (V2.Pos.Y - V1.Pos.Y) * D;
-  Dy2 := (V2.Pos.X - V1.Pos.X) * D;
+  d := width / Len2;
+  Dx2 := (v2.pos.Y - v1.pos.Y) * d;
+  Dy2 := (v2.pos.X - v1.pos.X) * d;
 
   OutVertices.RemoveAll;
 
-  if CalculatePointLocation(V0.Pos.X, V0.Pos.Y, V1.Pos.X, V1.Pos.Y, V2.Pos.X, V2.Pos.Y) > 0 then
+  if CalculatePointLocation(v0.pos.X, v0.pos.Y, v1.pos.X, v1.pos.Y, v2.pos.X, v2.pos.Y) > 0 then
     // Inner join
     // ---------------
     case InnerJoin of
       ijMiter:
-        StrokeCalcMiter(OutVertices, V0, V1, V2, Dx1, Dy1, Dx2, Dy2, Width,
+        StrokeCalcMiter(OutVertices, v0, v1, v2, Dx1, Dy1, Dx2, Dy2, width,
           ljMiterRevert, InnerMiterLimit, 1.0);
 
       ijJag, ijRound:
         begin
-          D := Sqr(Dx1 - Dx2) + Sqr(Dy1 - Dy2);
+          d := Sqr(Dx1 - Dx2) + Sqr(Dy1 - Dy2);
 
-          if (D < Len1 * Len1) and (D < Len2 * Len2) then
-              StrokeCalcMiter(OutVertices, V0, V1, V2, Dx1, Dy1, Dx2, Dy2,
-              Width, ljMiterRevert, InnerMiterLimit, 1.0)
+          if (d < Len1 * Len1) and (d < Len2 * Len2) then
+              StrokeCalcMiter(OutVertices, v0, v1, v2, Dx1, Dy1, Dx2, Dy2,
+              width, ljMiterRevert, InnerMiterLimit, 1.0)
 
           else if InnerJoin = ijJag then
             begin
-              Pt.X := V1.Pos.X + Dx1;
-              Pt.Y := V1.Pos.Y - Dy1;
+              pt.X := v1.pos.X + Dx1;
+              pt.Y := v1.pos.Y - Dy1;
 
-              OutVertices.Add(@Pt);
+              OutVertices.Add(@pt);
 
-              Pt.X := V1.Pos.X;
-              Pt.Y := V1.Pos.Y;
+              pt.X := v1.pos.X;
+              pt.Y := v1.pos.Y;
 
-              OutVertices.Add(@Pt);
+              OutVertices.Add(@pt);
 
-              Pt.X := V1.Pos.X + Dx2;
-              Pt.Y := V1.Pos.Y - Dy2;
+              pt.X := v1.pos.X + Dx2;
+              pt.Y := v1.pos.Y - Dy2;
 
-              OutVertices.Add(@Pt);
+              OutVertices.Add(@pt);
             end
           else
             begin
-              Pt.X := V1.Pos.X + Dx1;
-              Pt.Y := V1.Pos.Y - Dy1;
+              pt.X := v1.pos.X + Dx1;
+              pt.Y := v1.pos.Y - Dy1;
 
-              OutVertices.Add(@Pt);
+              OutVertices.Add(@pt);
 
-              Pt.X := V1.Pos.X;
-              Pt.Y := V1.Pos.Y;
+              pt.X := v1.pos.X;
+              pt.Y := v1.pos.Y;
 
-              OutVertices.Add(@Pt);
+              OutVertices.Add(@pt);
 
-              StrokeCalcArc(OutVertices, V1.Pos.X, V1.Pos.Y, Dx2, -Dy2, Dx1, -Dy1,
-                Width, ApproximationScale);
+              StrokeCalcArc(OutVertices, v1.pos.X, v1.pos.Y, Dx2, -Dy2, Dx1, -Dy1,
+                width, ApproximationScale);
 
-              Pt.X := V1.Pos.X;
-              Pt.Y := V1.Pos.Y;
+              pt.X := v1.pos.X;
+              pt.Y := v1.pos.Y;
 
-              OutVertices.Add(@Pt);
+              OutVertices.Add(@pt);
 
-              Pt.X := V1.Pos.X + Dx2;
-              Pt.Y := V1.Pos.Y - Dy2;
+              pt.X := v1.pos.X + Dx2;
+              pt.Y := v1.pos.Y - Dy2;
 
-              OutVertices.Add(@Pt);
+              OutVertices.Add(@pt);
             end;
         end;
       else // ijBevel
         begin
-          Pt.X := V1.Pos.X + Dx1;
-          Pt.Y := V1.Pos.Y - Dy1;
+          pt.X := v1.pos.X + Dx1;
+          pt.Y := v1.pos.Y - Dy1;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
 
-          Pt.X := V1.Pos.X + Dx2;
-          Pt.Y := V1.Pos.Y - Dy2;
+          pt.X := v1.pos.X + Dx2;
+          pt.Y := v1.pos.Y - Dy2;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
         end;
 
     end
@@ -910,26 +910,27 @@ begin
     // ---------------
     case LineJoin of
       ljMiter, ljMiterRevert, ljMiterRound:
-        StrokeCalcMiter(OutVertices, V0, V1, V2, Dx1, Dy1, Dx2, Dy2, Width,
+        StrokeCalcMiter(OutVertices, v0, v1, v2, Dx1, Dy1, Dx2, Dy2, width,
           LineJoin, MiterLimit, ApproximationScale);
 
       ljRound:
-        StrokeCalcArc(OutVertices, V1.Pos.X, V1.Pos.Y, Dx1, -Dy1, Dx2, -Dy2,
-          Width, ApproximationScale);
+        StrokeCalcArc(OutVertices, v1.pos.X, v1.pos.Y, Dx1, -Dy1, Dx2, -Dy2,
+          width, ApproximationScale);
 
       else // Bevel join
         begin
-          Pt.X := V1.Pos.X + Dx1;
-          Pt.Y := V1.Pos.Y - Dy1;
+          pt.X := v1.pos.X + Dx1;
+          pt.Y := v1.pos.Y - Dy1;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
 
-          Pt.X := V1.Pos.X + Dx2;
-          Pt.Y := V1.Pos.Y - Dy2;
+          pt.X := v1.pos.X + Dx2;
+          pt.Y := v1.pos.Y - Dy2;
 
-          OutVertices.Add(@Pt);
+          OutVertices.Add(@pt);
         end;
     end;
 end;
 
-end.
+end. 
+ 

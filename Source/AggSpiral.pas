@@ -39,7 +39,7 @@ unit AggSpiral;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -51,11 +51,11 @@ uses
 type
   TSpiral = class(TAggVertexSource)
   private
-    FX, FY, FR1, FR2, FStep, FStartAngle, FAngle: Double;
+    fx, fy, FR1, FR2, FStep, FStartAngle, FAngle: Double;
     FCurrentRadius, FDa, FDr: Double;
     FStart: Boolean;
   public
-    constructor Create(X, Y, R1, R2, Step: Double; StartAngle: Double = 0);
+    constructor Create(X, Y, r1, r2, Step: Double; startAngle: Double = 0);
 
     procedure Rewind(PathID: Cardinal); override;
     function Vertex(X, Y: PDouble): Cardinal; override;
@@ -65,16 +65,16 @@ implementation
 
 { TSpiral }
 
-constructor TSpiral.Create(X, Y, R1, R2, Step: Double; StartAngle: Double = 0);
+constructor TSpiral.Create(X, Y, r1, r2, Step: Double; startAngle: Double = 0);
 begin
-  FX := X;
-  FY := Y;
-  FR1 := R1;
-  FR2 := R2;
+  fx := X;
+  fy := Y;
+  FR1 := r1;
+  FR2 := r2;
 
   FStep := Step;
-  FStartAngle := StartAngle;
-  FAngle := StartAngle;
+  FStartAngle := startAngle;
+  FAngle := startAngle;
 
   FDa := Deg2Rad(4.0);
   FDr := FStep / 90.0;
@@ -100,8 +100,8 @@ begin
 
   SinCosScale(FAngle, Pnt.Y, Pnt.X, FCurrentRadius);
 
-  X^ := FX + Pnt.X;
-  Y^ := FY + Pnt.Y;
+  X^ := fx + Pnt.X;
+  Y^ := fy + Pnt.Y;
 
   FCurrentRadius := FCurrentRadius + FDr;
   FAngle := FAngle + FDa;
@@ -116,4 +116,4 @@ begin
       Result := CAggPathCmdLineTo;
 end;
 
-end.
+end. 

@@ -39,7 +39,7 @@ unit AggConvCurve;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -92,7 +92,7 @@ type
     procedure SetCuspLimit(Value: Double); override;
     function GetCuspLimit: Double; override;
   public
-    constructor Create(Source: TAggVertexSource; C3: TAggCurve3 = nil; C4: TAggCurve4 = nil);
+    constructor Create(Source: TAggVertexSource; c3: TAggCurve3 = nil; c4: TAggCurve4 = nil);
     destructor Destroy; override;
 
     procedure Reset; override;
@@ -108,16 +108,16 @@ implementation
 
 { TAggConvCurve }
 
-constructor TAggConvCurve.Create(Source: TAggVertexSource; C3: TAggCurve3 = nil;
-  C4: TAggCurve4 = nil);
+constructor TAggConvCurve.Create(Source: TAggVertexSource; c3: TAggCurve3 = nil;
+  c4: TAggCurve4 = nil);
 begin
-  if C3 <> nil then
-      FCurve3 := C3
+  if c3 <> nil then
+      FCurve3 := c3
   else
       FCurve3 := TAggCurve3.Create;
 
-  if C4 <> nil then
-      FCurve4 := C4
+  if c4 <> nil then
+      FCurve4 := c4
   else
       FCurve4 := TAggCurve4.Create;
 
@@ -257,4 +257,4 @@ begin
   Result := Cmd;
 end;
 
-end.
+end. 

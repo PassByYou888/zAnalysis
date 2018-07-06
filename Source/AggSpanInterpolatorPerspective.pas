@@ -39,7 +39,7 @@ unit AggSpanInterpolatorPerspective;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -62,11 +62,11 @@ type
     constructor Create(Src, Dst: PQuadDouble; SS: Cardinal = 8); overload;
 
     // Direct transformations
-    constructor Create(X1, Y1, X2, Y2: Double; Quad: PQuadDouble; SS: Cardinal = 8); overload;
+    constructor Create(x1, y1, x2, y2: Double; Quad: PQuadDouble; SS: Cardinal = 8); overload;
     constructor Create(Rect: TRectDouble; Quad: PQuadDouble; SS: Cardinal = 8); overload;
 
     // Reverse transformations
-    constructor Create(Quad: PQuadDouble; X1, Y1, X2, Y2: Double; SS: Cardinal = 8); overload;
+    constructor Create(Quad: PQuadDouble; x1, y1, x2, y2: Double; SS: Cardinal = 8); overload;
     constructor Create(Quad: PQuadDouble; Rect: TRectDouble; SS: Cardinal = 8); overload;
 
     destructor Destroy; override;
@@ -75,11 +75,11 @@ type
     procedure QuadToQuad(Src, Dst: PQuadDouble);
 
     // Set the direct transformations, i.e., rectangle -> quadrangle
-    procedure RectToQuad(X1, Y1, X2, Y2: Double; Quad: PQuadDouble); overload;
+    procedure RectToQuad(x1, y1, x2, y2: Double; Quad: PQuadDouble); overload;
     procedure RectToQuad(Rect: TRectDouble; Quad: PQuadDouble); overload;
 
     // Set the reverse transformations, i.e., quadrangle -> rectangle
-    procedure QuadToRect(Quad: PQuadDouble; X1, Y1, X2, Y2: Double); overload;
+    procedure QuadToRect(Quad: PQuadDouble; x1, y1, x2, y2: Double); overload;
     procedure QuadToRect(Quad: PQuadDouble; Rect: TRectDouble); overload;
 
     // Check if the equations were solved successfully
@@ -88,7 +88,7 @@ type
     // Span interpolator interface
     procedure SetBegin(X, Y: Double; Len: Cardinal); override;
 
-    procedure Resynchronize(Xe, Ye: Double; Len: Cardinal); override;
+    procedure Resynchronize(XE, Ye: Double; Len: Cardinal); override;
 
     procedure IncOperator; override;
     procedure Coordinates(X, Y: PInteger); override;
@@ -112,10 +112,10 @@ type
     constructor Create(Src, Dst: PQuadDouble; SS: Cardinal = 8); overload;
 
     // Direct transformations
-    constructor Create(X1, Y1, X2, Y2: Double; Quad: PQuadDouble; SS: Cardinal = 8); overload;
+    constructor Create(x1, y1, x2, y2: Double; Quad: PQuadDouble; SS: Cardinal = 8); overload;
 
     // Reverse transformations
-    constructor Create(Quad: PQuadDouble; X1, Y1, X2, Y2: Double; SS: Cardinal = 8); overload;
+    constructor Create(Quad: PQuadDouble; x1, y1, x2, y2: Double; SS: Cardinal = 8); overload;
     constructor Create(Quad: PQuadDouble; Rect: TRectDouble; SS: Cardinal = 8); overload;
 
     destructor Destroy; override;
@@ -124,17 +124,17 @@ type
     procedure QuadToQuad(Src, Dst: PQuadDouble);
 
     // Set the direct transformations, i.e., rectangle -> quadrangle
-    procedure RectToQuad(X1, Y1, X2, Y2: Double; Quad: PQuadDouble); overload;
+    procedure RectToQuad(x1, y1, x2, y2: Double; Quad: PQuadDouble); overload;
     procedure RectToQuad(Rect: TRectDouble; Quad: PQuadDouble); overload;
 
     // Set the reverse transformations, i.e., quadrangle -> rectangle
-    procedure QuadToRect(Quad: PQuadDouble; X1, Y1, X2, Y2: Double); overload;
+    procedure QuadToRect(Quad: PQuadDouble; x1, y1, x2, y2: Double); overload;
     procedure QuadToRect(Quad: PQuadDouble; Rect: TRectDouble); overload;
 
     // Span interpolator interface
     procedure SetBegin(X, Y: Double; Len: Cardinal); override;
 
-    procedure Resynchronize(Xe, Ye: Double; Len: Cardinal); override;
+    procedure Resynchronize(XE, Ye: Double; Len: Cardinal); override;
 
     procedure IncOperator; override;
     procedure Coordinates(X, Y: PInteger); override;
@@ -168,11 +168,11 @@ begin
   QuadToQuad(Src, Dst);
 end;
 
-constructor TAggSpanInterpolatorPerspectiveExact.Create(X1, Y1, X2, Y2: Double;
+constructor TAggSpanInterpolatorPerspectiveExact.Create(x1, y1, x2, y2: Double;
   Quad: PQuadDouble; SS: Cardinal = 8);
 begin
   Create(SS);
-  RectToQuad(X1, Y1, X2, Y2, Quad);
+  RectToQuad(x1, y1, x2, y2, Quad);
 end;
 
 constructor TAggSpanInterpolatorPerspectiveExact.Create(Rect: TRectDouble;
@@ -183,10 +183,10 @@ begin
 end;
 
 constructor TAggSpanInterpolatorPerspectiveExact.Create(Quad: PQuadDouble;
-  X1, Y1, X2, Y2: Double; SS: Cardinal = 8);
+  x1, y1, x2, y2: Double; SS: Cardinal = 8);
 begin
   Create(SS);
-  QuadToRect(Quad, X1, Y1, X2, Y2);
+  QuadToRect(Quad, x1, y1, x2, y2);
 end;
 
 constructor TAggSpanInterpolatorPerspectiveExact.Create(Quad: PQuadDouble;
@@ -211,12 +211,12 @@ begin
   FTransInv.QuadToQuad(Dst, Src);
 end;
 
-procedure TAggSpanInterpolatorPerspectiveExact.RectToQuad(X1, Y1, X2, Y2: Double;
+procedure TAggSpanInterpolatorPerspectiveExact.RectToQuad(x1, y1, x2, y2: Double;
   Quad: PQuadDouble);
 var
   Src: TQuadDouble;
 begin
-  Src := QuadDouble(RectDouble(X1, Y1, X2, Y2));
+  Src := QuadDouble(RectDouble(x1, y1, x2, y2));
   QuadToQuad(@Src, Quad);
 end;
 
@@ -230,11 +230,11 @@ begin
 end;
 
 procedure TAggSpanInterpolatorPerspectiveExact.QuadToRect(Quad: PQuadDouble;
-  X1, Y1, X2, Y2: Double);
+  x1, y1, x2, y2: Double);
 var
   Dst: TQuadDouble;
 begin
-  Dst := QuadDouble(RectDouble(X1, Y1, X2, Y2));
+  Dst := QuadDouble(RectDouble(x1, y1, x2, y2));
   QuadToQuad(Quad, @Dst);
 end;
 
@@ -324,7 +324,7 @@ begin
   Sy1 := FScaleY.Y;
 
   // Calculate transformed coordinates at x2,y2
-  Temp.X := Xe;
+  Temp.X := XE;
   Temp.Y := Ye;
 
   FTransDir.Transform(FTransDir, @Temp.X, @Temp.Y);
@@ -337,7 +337,7 @@ begin
 
   FTransInv.Transform(FTransInv, @Delta.X, @Delta.Y);
 
-  Delta.X := Delta.X - Xe;
+  Delta.X := Delta.X - XE;
   Delta.Y := Delta.Y - Ye;
   Sx2 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.X, Delta.Y)),
     CAggSubpixelShift);
@@ -348,7 +348,7 @@ begin
 
   FTransInv.Transform(FTransInv, @Delta.X, @Delta.Y);
 
-  Delta.X := Delta.X - Xe;
+  Delta.X := Delta.X - XE;
   Delta.Y := Delta.Y - Ye;
   Sy2 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.X, Delta.Y)),
     CAggSubpixelShift);
@@ -409,7 +409,7 @@ begin
   QuadToQuad(Src, Dst);
 end;
 
-constructor TAggSpanInterpolatorPerspectiveLerp.Create(X1, Y1, X2, Y2: Double;
+constructor TAggSpanInterpolatorPerspectiveLerp.Create(x1, y1, x2, y2: Double;
   Quad: PQuadDouble; SS: Cardinal = 8);
 begin
   inherited Create(SS);
@@ -417,18 +417,18 @@ begin
   FTransDir := TAggTransPerspective23.Create;
   FTransInv := TAggTransPerspective23.Create;
 
-  RectToQuad(X1, Y1, X2, Y2, Quad);
+  RectToQuad(x1, y1, x2, y2, Quad);
 end;
 
 constructor TAggSpanInterpolatorPerspectiveLerp.Create(Quad: PQuadDouble;
-  X1, Y1, X2, Y2: Double; SS: Cardinal = 8);
+  x1, y1, x2, y2: Double; SS: Cardinal = 8);
 begin
   inherited Create(SS);
 
   FTransDir := TAggTransPerspective23.Create;
   FTransInv := TAggTransPerspective23.Create;
 
-  QuadToRect(Quad, X1, Y1, X2, Y2);
+  QuadToRect(Quad, x1, y1, x2, y2);
 end;
 
 constructor TAggSpanInterpolatorPerspectiveLerp.Create(Quad: PQuadDouble;
@@ -439,7 +439,7 @@ begin
   FTransDir := TAggTransPerspective23.Create;
   FTransInv := TAggTransPerspective23.Create;
 
-  QuadToRect(Quad, Rect.X1, Rect.Y1, Rect.X2, Rect.Y2);
+  QuadToRect(Quad, Rect.x1, Rect.y1, Rect.x2, Rect.y2);
 end;
 
 destructor TAggSpanInterpolatorPerspectiveLerp.Destroy;
@@ -455,12 +455,12 @@ begin
   FTransInv.QuadToQuad(Dst, Src);
 end;
 
-procedure TAggSpanInterpolatorPerspectiveLerp.RectToQuad(X1, Y1, X2, Y2: Double;
+procedure TAggSpanInterpolatorPerspectiveLerp.RectToQuad(x1, y1, x2, y2: Double;
   Quad: PQuadDouble);
 var
   Src: TQuadDouble;
 begin
-  Src := QuadDouble(RectDouble(X1, Y1, X2, Y2));
+  Src := QuadDouble(RectDouble(x1, y1, x2, y2));
   QuadToQuad(@Src, Quad);
 end;
 
@@ -474,11 +474,11 @@ begin
 end;
 
 procedure TAggSpanInterpolatorPerspectiveLerp.QuadToRect(Quad: PQuadDouble;
-  X1, Y1, X2, Y2: Double);
+  x1, y1, x2, y2: Double);
 var
   Dst: TQuadDouble;
 begin
-  Dst := QuadDouble(RectDouble(X1, Y1, X2, Y2));
+  Dst := QuadDouble(RectDouble(x1, y1, x2, y2));
   QuadToQuad(Quad, @Dst);
 end;
 
@@ -499,130 +499,130 @@ end;
 procedure TAggSpanInterpolatorPerspectiveLerp.SetBegin(X, Y: Double;
   Len: Cardinal);
 var
-  Xt, Yt, Dx, Dy, Delta: Double;
-  X1, Y1, Sx1, Sy1, X2, Y2, Sx2, Sy2: Integer;
+  xt, Yt, dx, dy, Delta: Double;
+  x1, y1, Sx1, Sy1, x2, y2, Sx2, Sy2: Integer;
 begin
   // Calculate transformed coordinates at x1,y1
-  Xt := X;
+  xt := X;
   Yt := Y;
 
-  FTransDir.Transform(FTransDir, @Xt, @Yt);
+  FTransDir.Transform(FTransDir, @xt, @Yt);
 
-  X1 := Trunc(Xt * CAggSubpixelSize);
-  Y1 := Trunc(Yt * CAggSubpixelSize);
+  x1 := Trunc(xt * CAggSubpixelSize);
+  y1 := Trunc(Yt * CAggSubpixelSize);
 
   Delta := 1 / CAggSubpixelSize;
 
   // Calculate scale by X at x1,y1
-  Dx := Xt + Delta;
-  Dy := Yt;
+  dx := xt + Delta;
+  dy := Yt;
 
-  FTransInv.Transform(FTransInv, @Dx, @Dy);
+  FTransInv.Transform(FTransInv, @dx, @dy);
 
-  Dx := Dx - X;
-  Dy := Dy - Y;
-  Sx1 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(Dx * Dx + Dy * Dy)),
+  dx := dx - X;
+  dy := dy - Y;
+  Sx1 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(dx * dx + dy * dy)),
     CAggSubpixelShift);
 
   // Calculate scale by Y at x1,y1
-  Dx := Xt;
-  Dy := Yt + Delta;
+  dx := xt;
+  dy := Yt + Delta;
 
-  FTransInv.Transform(FTransInv, @Dx, @Dy);
+  FTransInv.Transform(FTransInv, @dx, @dy);
 
-  Dx := Dx - X;
-  Dy := Dy - Y;
-  Sy1 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(Dx * Dx + Dy * Dy)),
+  dx := dx - X;
+  dy := dy - Y;
+  Sy1 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(dx * dx + dy * dy)),
     CAggSubpixelShift);
 
   // Calculate transformed coordinates at x2,y2
   X := X + Len;
-  Xt := X;
+  xt := X;
   Yt := Y;
 
-  FTransDir.Transform(FTransDir, @Xt, @Yt);
+  FTransDir.Transform(FTransDir, @xt, @Yt);
 
-  X2 := Trunc(Xt * CAggSubpixelSize);
-  Y2 := Trunc(Yt * CAggSubpixelSize);
+  x2 := Trunc(xt * CAggSubpixelSize);
+  y2 := Trunc(Yt * CAggSubpixelSize);
 
   // Calculate scale by X at x2,y2
-  Dx := Xt + Delta;
-  Dy := Yt;
+  dx := xt + Delta;
+  dy := Yt;
 
-  FTransInv.Transform(FTransInv, @Dx, @Dy);
+  FTransInv.Transform(FTransInv, @dx, @dy);
 
-  Dx := Dx - X;
-  Dy := Dy - Y;
-  Sx2 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(Dx * Dx + Dy * Dy)),
+  dx := dx - X;
+  dy := dy - Y;
+  Sx2 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(dx * dx + dy * dy)),
     CAggSubpixelShift);
 
   // Calculate scale by Y at x2,y2
-  Dx := Xt;
-  Dy := Yt + Delta;
+  dx := xt;
+  dy := Yt + Delta;
 
-  FTransInv.Transform(FTransInv, @Dx, @Dy);
+  FTransInv.Transform(FTransInv, @dx, @dy);
 
-  Dx := Dx - X;
-  Dy := Dy - Y;
-  Sy2 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(Dx * Dx + Dy * Dy)),
+  dx := dx - X;
+  dy := dy - Y;
+  Sy2 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(dx * dx + dy * dy)),
     CAggSubpixelShift);
 
   // Initialize the interpolators
-  FCoordX.Initialize(X1, X2, Len);
-  FCoordY.Initialize(Y1, Y2, Len);
+  FCoordX.Initialize(x1, x2, Len);
+  FCoordY.Initialize(y1, y2, Len);
   FScaleX.Initialize(Sx1, Sx2, Len);
   FScaleY.Initialize(Sy1, Sy2, Len);
 end;
 
 procedure TAggSpanInterpolatorPerspectiveLerp.Resynchronize;
 var
-  X1, Y1, Sx1, Sy1, X2, Y2, Sx2, Sy2: Integer;
+  x1, y1, Sx1, Sy1, x2, y2, Sx2, Sy2: Integer;
 
-  Xt, Yt, Delta, Dx, Dy: Double;
+  xt, Yt, Delta, dx, dy: Double;
 
 begin
   // Assume x1,y1 are equal to the ones at the previous end point
-  X1 := FCoordX.Y;
-  Y1 := FCoordY.Y;
+  x1 := FCoordX.Y;
+  y1 := FCoordY.Y;
   Sx1 := FScaleX.Y;
   Sy1 := FScaleY.Y;
 
   // Calculate transformed coordinates at x2,y2
-  Xt := Xe;
+  xt := XE;
   Yt := Ye;
 
-  FTransDir.Transform(FTransDir, @Xt, @Yt);
+  FTransDir.Transform(FTransDir, @xt, @Yt);
 
-  X2 := Trunc(Xt * CAggSubpixelSize);
-  Y2 := Trunc(Yt * CAggSubpixelSize);
+  x2 := Trunc(xt * CAggSubpixelSize);
+  y2 := Trunc(Yt * CAggSubpixelSize);
 
   Delta := 1 / CAggSubpixelSize;
 
   // Calculate scale by X at x2,y2
-  Dx := Xt + Delta;
-  Dy := Yt;
+  dx := xt + Delta;
+  dy := Yt;
 
-  FTransInv.Transform(FTransInv, @Dx, @Dy);
+  FTransInv.Transform(FTransInv, @dx, @dy);
 
-  Dx := Dx - Xe;
-  Dy := Dy - Ye;
-  Sx2 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(Dx * Dx + Dy * Dy)),
+  dx := dx - XE;
+  dy := dy - Ye;
+  Sx2 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(dx * dx + dy * dy)),
     CAggSubpixelShift);
 
   // Calculate scale by Y at x2,y2
-  Dx := Xt;
-  Dy := Yt + Delta;
+  dx := xt;
+  dy := Yt + Delta;
 
-  FTransInv.Transform(FTransInv, @Dx, @Dy);
+  FTransInv.Transform(FTransInv, @dx, @dy);
 
-  Dx := Dx - Xe;
-  Dy := Dy - Ye;
-  Sy2 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(Dx * Dx + Dy * Dy)),
+  dx := dx - XE;
+  dy := dy - Ye;
+  Sy2 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(dx * dx + dy * dy)),
     CAggSubpixelShift);
 
   // Initialize the interpolators
-  FCoordX.Initialize(X1, X2, Len);
-  FCoordY.Initialize(Y1, Y2, Len);
+  FCoordX.Initialize(x1, x2, Len);
+  FCoordY.Initialize(y1, y2, Len);
   FScaleX.Initialize(Sx1, Sx2, Len);
   FScaleY.Initialize(Sy1, Sy2, Len);
 end;
@@ -658,4 +658,4 @@ begin
   FTransDir.Transform(FTransDir, X, Y);
 end;
 
-end.
+end. 

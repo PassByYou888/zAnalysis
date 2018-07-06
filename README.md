@@ -12,26 +12,16 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 - **Windows - delphi/fpc x64/100%兼容**
 - **Linux - delphi/fpc x64/100%兼容**
 - **OSX - delphi/fpc x86/100%兼容**
-- **Linux - delphi x86/不兼容 - fpc x86/100%兼容**
-- **OSX - delphi x64/不兼容 - fpc x64/100兼容**
+- **Linux - delphi x86/不兼容 - fpc x86/x64/100%兼容**
+- **OSX - 下一次更新版本会全面支持x64/x86**
+- **树莓派Linux - 下一次更新版本会全面支持树莓派**
 
 
 # 开发平台支持 #
-- Freepascal with Lazarus
-- Delphi XE10 或以上版本
+- Freepascal with Lazarus，http://lazarus.freepascal.org/
+- CodeTyphone，http://www.pilotlogic.com/
+- Delphi XE10 或以上版本，http://embarcadero.com/
 
-
-**编译注意事项**
-
-首次编译前，先运行Source\MemoryRaster_DefaultFont_build.bat，生成一次字体库
-
-**在Source中的子目录，均对开发或则运行平台有所要求**
-- source\DrawInterfaceInFMX，必须使用delphi+fmx才能进行编译，运行平台支持ios,android,osx,windows，不支持linux
-- source\SoundInterfaceInFMX，，必须使用delphi+fmx才能进行编译，运行平台支持ios,android,osx,windows，不支持linux
-- source\SoundInterfaceInBass，bass是平台无关性(fpc+delphi+所有操作系统)，详见zSound开源工程的部署方法 https://github.com/PassByYou888/zSound
-
-**在Source中的所有库均为平台无关性支持**
-- source中的所有*.pas均为平台关性，包括编译器fpc+laz与delphi的支持，包括各个系统环境的支持，均能无关性
 
 # 指标
 
@@ -98,6 +88,7 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 - ZDB可以轻松改造成网络数据库后台，并且能基于zServer项目轻松搭建机器学习的后台框架
 
 **其它支持**
+- 100%兼容linux桌面开发(fpc方向)
 - ffmpeg待支持（平台无关性）
 - 小型渲染引擎支持（平台无关性，支持并行化渲染，支持多线程渲染，支持所有运行平台）
 - zSound音频库支持（平台无关性，支持播放音乐，音效，混音等等功能）
@@ -123,8 +114,46 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 - 分布式云服务器计算后台
 - 提供plot二维可视化图形api(光栅库已经加强，下一版本将提供模型呈现系统)
 
+## 编译注意事项
 
-## 更新日志
+
+** 首次编译前，先运行Source\MemoryRaster_DefaultFont_build.bat，生成一次字体库 **
+
+**在Source中的子目录，均对开发或则运行平台有所要求**
+- source\DrawInterfaceInFMX，必须使用delphi+fmx才能进行编译，运行平台支持ios,android,osx,windows，不支持linux
+- source\SoundInterfaceInFMX，，必须使用delphi+fmx才能进行编译，运行平台支持ios,android,osx,windows，不支持linux
+- source\SoundInterfaceInBass，bass是平台无关性(fpc+delphi+所有操作系统)，详见zSound开源工程的部署方法 https://github.com/PassByYou888/zSound
+
+**在Source中的所有库均为平台无关性支持**
+- source中的所有*.pas均为平台关性，包括编译器fpc+laz与delphi的支持，包括各个系统环境的支持，均能无关性
+
+**编译和开发基于Linux桌面的机器学习应用是fpc方向，需要搭建环境，请参看文档**
+
+- Linux桌面开发指南.pdf
+
+**在linux或则fpc编译器出来的应用启动缓慢的解决办法**
+1. 解决办法1：自行外挂一个内存管理单元，比如TCMAlloc
+2. 解决办法2：使用字体工具，将字体库改小（不创建BGK字符集），重新生成字体库
+3. 解决办法3：将 https://github.com/PassByYou888/zRasterization/Source 中的所有文件copy到zAnalysis/Source中覆盖
+4. 默认环境下，光栅引擎不支持中文，假如要使用中文，请用字体工具重新生成一次中文字体库（让它包含GBK字符集）
+
+**在Windows中使用高速d2d绘图请参看文档**
+
+- 在苹果和安卓手机平台中让DrawEngine在FMX中加速工作.docx
+
+
+
+## 近期更新日志
+
+**2018-7-6**
+- 大幅修正底层库的命名规则
+- 全面支持Linux桌面级的机器学习应用程序开发
+- 对fpc编译器3.1.1全面支持
+- 新增大小字节序支持
+- 修复对32位fpc编译器不认for用Int64的问题
+- 修复字符串在fpc编译器运行于linux发生异常的问题
+- 新增pascal预编译工具，将pascal代码规范成c风格的全部统一大小写，全面兼容Linux区分大小写文件名的机制
+- 下次更新会新增声纹特征提取
 
 **2018-6-25**
 - 通过写模板缓冲区技术，修正顶点渲染器发生三角边缘重叠的问题

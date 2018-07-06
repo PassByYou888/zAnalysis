@@ -39,7 +39,7 @@ unit AggPathStorageInteger;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -63,9 +63,9 @@ type
   private
     X, Y: Int16;
   public
-    procedure Initialize(X, Y: Int16; Flag: Cardinal);
+    procedure Initialize(X, Y: Int16; flag: Cardinal);
 
-    function Vertex(X, Y: PDouble; Dx: Double = 0; Dy: Double = 0; Scale: Double = 1.0): Cardinal;
+    function Vertex(X, Y: PDouble; dx: Double = 0; dy: Double = 0; Scale: Double = 1.0): Cardinal;
   end;
 
   PAggVertexInt32 = ^TAggVertexInt32;
@@ -74,18 +74,18 @@ type
   private
     X, Y: Int32;
   public
-    procedure Initialize(X, Y: Int32; Flag: Cardinal);
+    procedure Initialize(X, Y: Int32; flag: Cardinal);
 
-    function Vertex(X, Y: PDouble; Dx: Double = 0; Dy: Double = 0; Scale: Double = 1.0): Cardinal;
+    function Vertex(X, Y: PDouble; dx: Double = 0; dy: Double = 0; Scale: Double = 1.0): Cardinal;
   end;
 
   TAggCustomPathStorageInteger = class(TAggVertexSource)
   public
     procedure MoveTo(X, Y: Int32); virtual; abstract;
     procedure LineTo(X, Y: Int32); virtual; abstract;
-    procedure Curve3To(ControlX, ControlY, ToX, ToY: Int32); virtual; abstract;
-    procedure Curve4To(Control1X, Control1Y, Control2X, Control2Y, ToX, ToY: Int32); virtual; abstract;
-    function SetVertex(Index: Cardinal; X, Y: PInt32): Cardinal; virtual; abstract;
+    procedure Curve3To(ControlX, ControlY, tox, ToY: Int32); virtual; abstract;
+    procedure Curve4To(Control1X, Control1Y, Control2X, Control2Y, tox, ToY: Int32); virtual; abstract;
+    function SetVertex(index: Cardinal; X, Y: PInt32): Cardinal; virtual; abstract;
     procedure ClosePolygon; virtual; abstract;
   end;
 
@@ -102,16 +102,16 @@ type
 
     procedure MoveTo(X, Y: Int32); override;
     procedure LineTo(X, Y: Int32); override;
-    procedure Curve3To(ControlX, ControlY, ToX, ToY: Int32); override;
-    procedure Curve4To(Control1X, Control1Y, Control2X, Control2Y, ToX, ToY: Int32); override;
+    procedure Curve3To(ControlX, ControlY, tox, ToY: Int32); override;
+    procedure Curve4To(Control1X, Control1Y, Control2X, Control2Y, tox, ToY: Int32); override;
 
     procedure ClosePolygon; override;
 
     function Size: Cardinal;
-    function SetVertex(Index: Cardinal; X, Y: PInt32): Cardinal; override;
+    function SetVertex(index: Cardinal; X, Y: PInt32): Cardinal; override;
 
     function ByteSize: Cardinal;
-    procedure Serialize(Ptr: PInt8u);
+    procedure Serialize(PTR: PInt8u);
 
     procedure Rewind(PathID: Cardinal); override;
     function Vertex(X, Y: PDouble): Cardinal; override;
@@ -132,16 +132,16 @@ type
 
     procedure MoveTo(X, Y: Int32); override;
     procedure LineTo(X, Y: Int32); override;
-    procedure Curve3To(ControlX, ControlY, ToX, ToY: Int32); override;
-    procedure Curve4To(Control1X, Control1Y, Control2X, Control2Y, ToX, ToY: Int32); override;
+    procedure Curve3To(ControlX, ControlY, tox, ToY: Int32); override;
+    procedure Curve4To(Control1X, Control1Y, Control2X, Control2Y, tox, ToY: Int32); override;
 
     procedure ClosePolygon; override;
 
     function Size: Cardinal;
-    function SetVertex(Index: Cardinal; X, Y: PInt32): Cardinal; override;
+    function SetVertex(index: Cardinal; X, Y: PInt32): Cardinal; override;
 
     function ByteSize: Cardinal;
-    procedure Serialize(Ptr: PInt8u);
+    procedure Serialize(PTR: PInt8u);
 
     procedure Rewind(PathID: Cardinal); override;
     function Vertex(X, Y: PDouble): Cardinal; override;
@@ -151,7 +151,7 @@ type
 
   TAggCustomSerializedIntegerPathAdaptor = class(TAggVertexSource)
   public
-    procedure Init(Data: PInt8u; Size: Cardinal; Dx, Dy: Double;
+    procedure Init(Data: PInt8u; Size: Cardinal; dx, dy: Double;
       Scale: Double = 1.0); virtual; abstract;
   end;
 
@@ -166,9 +166,9 @@ type
     function GetPathCount: Cardinal; override;
   public
     constructor Create; overload;
-    constructor Create(Data: PInt8u; Size: Cardinal; Dx, Dy: Double); overload;
+    constructor Create(Data: PInt8u; Size: Cardinal; dx, dy: Double); overload;
 
-    procedure Init(Data: PInt8u; Size: Cardinal; Dx, Dy: Double; Scale: Double = 1.0); override;
+    procedure Init(Data: PInt8u; Size: Cardinal; dx, dy: Double; Scale: Double = 1.0); override;
 
     procedure Rewind(PathID: Cardinal); override;
     function Vertex(X, Y: PDouble): Cardinal; override;
@@ -185,9 +185,9 @@ type
     function GetPathCount: Cardinal; override;
   public
     constructor Create; overload;
-    constructor Create(Data: PInt8u; Size: Cardinal; Dx, Dy: Double); overload;
+    constructor Create(Data: PInt8u; Size: Cardinal; dx, dy: Double); overload;
 
-    procedure Init(Data: PInt8u; Size: Cardinal; Dx, Dy: Double; Scale: Double = 1.0); override;
+    procedure Init(Data: PInt8u; Size: Cardinal; dx, dy: Double; Scale: Double = 1.0); override;
 
     procedure Rewind(PathID: Cardinal); override;
     function Vertex(X, Y: PDouble): Cardinal; override;
@@ -198,17 +198,17 @@ implementation
 
 { TAggVertexInt16 }
 
-procedure TAggVertexInt16.Initialize(X, Y: Int16; Flag: Cardinal);
+procedure TAggVertexInt16.Initialize(X, Y: Int16; flag: Cardinal);
 begin
-  Self.X := ((X shl 1) and not 1) or (Flag and 1);
-  Self.Y := ((Y shl 1) and not 1) or (Flag shr 1);
+  Self.X := ((X shl 1) and not 1) or (flag and 1);
+  Self.Y := ((Y shl 1) and not 1) or (flag shr 1);
 end;
 
-function TAggVertexInt16.Vertex(X, Y: PDouble; Dx: Double = 0; Dy: Double = 0;
+function TAggVertexInt16.Vertex(X, Y: PDouble; dx: Double = 0; dy: Double = 0;
   Scale: Double = 1.0): Cardinal;
 begin
-  X^ := Dx + (ShrInt16(Self.X, 1) / CAggCoordScale) * Scale;
-  Y^ := Dy + (ShrInt16(Self.Y, 1) / CAggCoordScale) * Scale;
+  X^ := dx + (ShrInt16(Self.X, 1) / CAggCoordScale) * Scale;
+  Y^ := dy + (ShrInt16(Self.Y, 1) / CAggCoordScale) * Scale;
 
   case ((Self.Y and 1) shl 1) or (Self.X and 1) of
     CAggCmdMoveTo:
@@ -230,17 +230,17 @@ end;
 
 { TAggVertexInt32 }
 
-procedure TAggVertexInt32.Initialize(X, Y: Int32; Flag: Cardinal);
+procedure TAggVertexInt32.Initialize(X, Y: Int32; flag: Cardinal);
 begin
-  Self.X := ((X shl 1) and not 1) or (Flag and 1);
-  Self.Y := ((Y shl 1) and not 1) or (Flag shr 1);
+  Self.X := ((X shl 1) and not 1) or (flag and 1);
+  Self.Y := ((Y shl 1) and not 1) or (flag shr 1);
 end;
 
-function TAggVertexInt32.Vertex(X, Y: PDouble; Dx: Double = 0; Dy: Double = 0;
+function TAggVertexInt32.Vertex(X, Y: PDouble; dx: Double = 0; dy: Double = 0;
   Scale: Double = 1.0): Cardinal;
 begin
-  X^ := Dx + (ShrInt32(Self.X, 1) / CAggCoordScale) * Scale;
-  Y^ := Dy + (ShrInt32(Self.Y, 1) / CAggCoordScale) * Scale;
+  X^ := dx + (ShrInt32(Self.X, 1) / CAggCoordScale) * Scale;
+  Y^ := dy + (ShrInt32(Self.Y, 1) / CAggCoordScale) * Scale;
 
   case ((Self.Y and 1) shl 1) or (Self.X and 1) of
     CAggCmdMoveTo:
@@ -283,44 +283,44 @@ end;
 
 procedure TAggPathStorageInt16.MoveTo;
 var
-  V: TAggVertexInt16;
+  v: TAggVertexInt16;
 begin
-  V.Initialize(Int16(X), Int16(Y), CAggCmdMoveTo);
-  FStorage.Add(@V);
+  v.Initialize(Int16(X), Int16(Y), CAggCmdMoveTo);
+  FStorage.Add(@v);
 end;
 
 procedure TAggPathStorageInt16.LineTo(X, Y: Int32);
 var
-  V: TAggVertexInt16;
+  v: TAggVertexInt16;
 begin
-  V.Initialize(Int16(X), Int16(Y), CAggCmdLineTo);
-  FStorage.Add(@V);
+  v.Initialize(Int16(X), Int16(Y), CAggCmdLineTo);
+  FStorage.Add(@v);
 end;
 
-procedure TAggPathStorageInt16.Curve3To(ControlX, ControlY, ToX, ToY: Int32);
+procedure TAggPathStorageInt16.Curve3To(ControlX, ControlY, tox, ToY: Int32);
 var
-  V: TAggVertexInt16;
+  v: TAggVertexInt16;
 begin
-  V.Initialize(Int16(ControlX), Int16(ControlY), CAggCmdCurve3);
-  FStorage.Add(@V);
+  v.Initialize(Int16(ControlX), Int16(ControlY), CAggCmdCurve3);
+  FStorage.Add(@v);
 
-  V.Initialize(Int16(ToX), Int16(ToY), CAggCmdCurve3);
-  FStorage.Add(@V);
+  v.Initialize(Int16(tox), Int16(ToY), CAggCmdCurve3);
+  FStorage.Add(@v);
 end;
 
-procedure TAggPathStorageInt16.Curve4To(Control1X, Control1Y, Control2X, Control2Y, ToX,
+procedure TAggPathStorageInt16.Curve4To(Control1X, Control1Y, Control2X, Control2Y, tox,
   ToY: Int32);
 var
-  V: TAggVertexInt16;
+  v: TAggVertexInt16;
 begin
-  V.Initialize(Int16(Control1X), Int16(Control1Y), CAggCmdCurve4);
-  FStorage.Add(@V);
+  v.Initialize(Int16(Control1X), Int16(Control1Y), CAggCmdCurve4);
+  FStorage.Add(@v);
 
-  V.Initialize(Int16(Control2X), Int16(Control2Y), Int16(CAggCmdCurve4));
-  FStorage.Add(@V);
+  v.Initialize(Int16(Control2X), Int16(Control2Y), Int16(CAggCmdCurve4));
+  FStorage.Add(@v);
 
-  V.Initialize(Int16(ToX), Int16(ToY), CAggCmdCurve4);
-  FStorage.Add(@V);
+  v.Initialize(Int16(tox), Int16(ToY), CAggCmdCurve4);
+  FStorage.Add(@v);
 end;
 
 procedure TAggPathStorageInt16.ClosePolygon;
@@ -334,14 +334,14 @@ end;
 
 function TAggPathStorageInt16.SetVertex;
 var
-  V: PAggVertexInt16;
+  v: PAggVertexInt16;
 begin
-  V := FStorage[index];
+  v := FStorage[index];
 
-  PInt16(X)^ := ShrInt16(V.X, 1);
-  PInt16(Y)^ := ShrInt16(V.Y, 1);
+  PInt16(X)^ := ShrInt16(v.X, 1);
+  PInt16(Y)^ := ShrInt16(v.Y, 1);
 
-  Result := ((V.Y and 1) shl 1) or (V.X and 1);
+  Result := ((v.Y and 1) shl 1) or (v.X and 1);
 end;
 
 function TAggPathStorageInt16.ByteSize;
@@ -351,16 +351,16 @@ end;
 
 procedure TAggPathStorageInt16.Serialize;
 var
-  I: Cardinal;
+  i: Cardinal;
 begin
-  I := 0;
+  i := 0;
 
-  while I < FStorage.Size do
+  while i < FStorage.Size do
     begin
-      Move(FStorage[I]^, Ptr^, SizeOf(TAggVertexInt16));
+      Move(FStorage[i]^, PTR^, SizeOf(TAggVertexInt16));
 
-      Inc(PtrComp(Ptr), SizeOf(TAggVertexInt16));
-      Inc(I);
+      Inc(PtrComp(PTR), SizeOf(TAggVertexInt16));
+      Inc(i);
     end;
 end;
 
@@ -419,7 +419,7 @@ end;
 
 function TAggPathStorageInt16.GetBoundingRect: TRectDouble;
 var
-  I: Cardinal;
+  i: Cardinal;
   X, Y: Double;
 begin
   Result := RectDouble(1E100, 1E100, -1E100, -1E100);
@@ -427,21 +427,21 @@ begin
   if FStorage.Size = 0 then
       Result := RectDouble(0.0, 0.0, 0.0, 0.0)
   else
-    for I := 0 to FStorage.Size - 1 do
+    for i := 0 to FStorage.Size - 1 do
       begin
-        PAggVertexInt16(FStorage[I]).Vertex(@X, @Y);
+        PAggVertexInt16(FStorage[i]).Vertex(@X, @Y);
 
-        if X < Result.X1 then
-            Result.X1 := X;
+        if X < Result.x1 then
+            Result.x1 := X;
 
-        if Y < Result.Y1 then
-            Result.Y1 := Y;
+        if Y < Result.y1 then
+            Result.y1 := Y;
 
-        if X > Result.X2 then
-            Result.X2 := X;
+        if X > Result.x2 then
+            Result.x2 := X;
 
-        if Y > Result.Y2 then
-            Result.Y2 := Y;
+        if Y > Result.y2 then
+            Result.y2 := Y;
       end;
 end;
 
@@ -468,43 +468,43 @@ end;
 
 procedure TAggPathStorageInt32.MoveTo;
 var
-  V: TAggVertexInt32;
+  v: TAggVertexInt32;
 begin
-  V.Initialize(X, Y, CAggCmdMoveTo);
-  FStorage.Add(@V);
+  v.Initialize(X, Y, CAggCmdMoveTo);
+  FStorage.Add(@v);
 end;
 
 procedure TAggPathStorageInt32.LineTo;
 var
-  V: TAggVertexInt32;
+  v: TAggVertexInt32;
 begin
-  V.Initialize(X, Y, CAggCmdLineTo);
-  FStorage.Add(@V);
+  v.Initialize(X, Y, CAggCmdLineTo);
+  FStorage.Add(@v);
 end;
 
 procedure TAggPathStorageInt32.Curve3To;
 var
-  V: TAggVertexInt32;
+  v: TAggVertexInt32;
 begin
-  V.Initialize(ControlX, ControlY, CAggCmdCurve3);
-  FStorage.Add(@V);
+  v.Initialize(ControlX, ControlY, CAggCmdCurve3);
+  FStorage.Add(@v);
 
-  V.Initialize(ToX, ToY, CAggCmdCurve3);
-  FStorage.Add(@V);
+  v.Initialize(tox, ToY, CAggCmdCurve3);
+  FStorage.Add(@v);
 end;
 
 procedure TAggPathStorageInt32.Curve4To;
 var
-  V: TAggVertexInt32;
+  v: TAggVertexInt32;
 begin
-  V.Initialize(Control1X, Control1Y, CAggCmdCurve4);
-  FStorage.Add(@V);
+  v.Initialize(Control1X, Control1Y, CAggCmdCurve4);
+  FStorage.Add(@v);
 
-  V.Initialize(Control2X, Control2Y, CAggCmdCurve4);
-  FStorage.Add(@V);
+  v.Initialize(Control2X, Control2Y, CAggCmdCurve4);
+  FStorage.Add(@v);
 
-  V.Initialize(ToX, ToY, CAggCmdCurve4);
-  FStorage.Add(@V);
+  v.Initialize(tox, ToY, CAggCmdCurve4);
+  FStorage.Add(@v);
 end;
 
 procedure TAggPathStorageInt32.ClosePolygon;
@@ -518,14 +518,14 @@ end;
 
 function TAggPathStorageInt32.SetVertex;
 var
-  V: PAggVertexInt32;
+  v: PAggVertexInt32;
 begin
-  V := FStorage[index];
+  v := FStorage[index];
 
-  X^ := ShrInt32(V.X, 1);
-  Y^ := ShrInt32(V.Y, 1);
+  X^ := ShrInt32(v.X, 1);
+  Y^ := ShrInt32(v.Y, 1);
 
-  Result := ((V.Y and 1) shl 1) or (V.X and 1);
+  Result := ((v.Y and 1) shl 1) or (v.X and 1);
 end;
 
 function TAggPathStorageInt32.ByteSize;
@@ -535,16 +535,16 @@ end;
 
 procedure TAggPathStorageInt32.Serialize;
 var
-  I: Cardinal;
+  i: Cardinal;
 begin
-  I := 0;
+  i := 0;
 
-  while I < FStorage.Size do
+  while i < FStorage.Size do
     begin
-      Move(FStorage[I]^, Ptr^, SizeOf(TAggVertexInt32));
+      Move(FStorage[i]^, PTR^, SizeOf(TAggVertexInt32));
 
-      Inc(PtrComp(Ptr), SizeOf(TAggVertexInt32));
-      Inc(I);
+      Inc(PtrComp(PTR), SizeOf(TAggVertexInt32));
+      Inc(i);
     end;
 end;
 
@@ -603,7 +603,7 @@ end;
 
 function TAggPathStorageInt32.GetBoundingRect;
 var
-  I: Cardinal;
+  i: Cardinal;
   X, Y: Double;
 begin
   Result := RectDouble(1E100, 1E100, -1E100, -1E100);
@@ -611,21 +611,21 @@ begin
   if FStorage.Size = 0 then
       Result := RectDouble(0.0, 0.0, 0.0, 0.0)
   else
-    for I := 0 to FStorage.Size - 1 do
+    for i := 0 to FStorage.Size - 1 do
       begin
-        PAggVertexInt32(FStorage[I]).Vertex(@X, @Y);
+        PAggVertexInt32(FStorage[i]).Vertex(@X, @Y);
 
-        if X < Result.X1 then
-            Result.X1 := X;
+        if X < Result.x1 then
+            Result.x1 := X;
 
-        if Y < Result.Y1 then
-            Result.Y1 := Y;
+        if Y < Result.y1 then
+            Result.y1 := Y;
 
-        if X > Result.X2 then
-            Result.X2 := X;
+        if X > Result.x2 then
+            Result.x2 := X;
 
-        if Y > Result.Y2 then
-            Result.Y2 := Y;
+        if Y > Result.y2 then
+            Result.y2 := Y;
       end;
 end;
 
@@ -645,14 +645,14 @@ begin
 end;
 
 constructor TAggSerializedInt16PathAdaptor.Create(Data: PInt8u;
-  Size: Cardinal; Dx, Dy: Double);
+  Size: Cardinal; dx, dy: Double);
 begin
   FData := Data;
   FEnd := PInt8u(PtrComp(Data) + Size);
   FInternalData := Data;
 
-  FDelta.X := Dx;
-  FDelta.Y := Dy;
+  FDelta.X := dx;
+  FDelta.Y := dy;
 
   FScale := 0.0;
   FVertices := 0;
@@ -664,8 +664,8 @@ begin
   FEnd := PInt8u(PtrComp(Data) + Size);
   FInternalData := Data;
 
-  FDelta.X := Dx;
-  FDelta.Y := Dy;
+  FDelta.X := dx;
+  FDelta.Y := dy;
 
   FScale := Scale;
   FVertices := 0;
@@ -685,7 +685,7 @@ end;
 
 function TAggSerializedInt16PathAdaptor.Vertex(X, Y: PDouble): Cardinal;
 var
-  V: TAggVertexInt16;
+  v: TAggVertexInt16;
   Cmd: Cardinal;
 begin
   if (FData = nil) or (PtrComp(FInternalData) > PtrComp(FEnd)) then
@@ -710,9 +710,9 @@ begin
       Exit;
     end;
 
-  Move(FInternalData^, V, SizeOf(TAggVertexInt16));
+  Move(FInternalData^, v, SizeOf(TAggVertexInt16));
 
-  Cmd := V.Vertex(X, Y, FDelta.X, FDelta.Y, FScale);
+  Cmd := v.Vertex(X, Y, FDelta.X, FDelta.Y, FScale);
 
   if IsMoveTo(Cmd) and (FVertices > 2) then
     begin
@@ -748,14 +748,14 @@ begin
 end;
 
 constructor TAggSerializedInt32PathAdaptor.Create(Data: PInt8u;
-  Size: Cardinal; Dx, Dy: Double);
+  Size: Cardinal; dx, dy: Double);
 begin
   FData := Data;
   FEnd := PInt8u(PtrComp(Data) + Size);
   FInternalData := Data;
 
-  FDelta.X := Dx;
-  FDelta.Y := Dy;
+  FDelta.X := dx;
+  FDelta.Y := dy;
 
   FScale := 0.0;
   FVertices := 0;
@@ -767,8 +767,8 @@ begin
   FEnd := PInt8u(PtrComp(Data) + Size);
   FInternalData := Data;
 
-  FDelta.X := Dx;
-  FDelta.Y := Dy;
+  FDelta.X := dx;
+  FDelta.Y := dy;
 
   FScale := Scale;
   FVertices := 0;
@@ -788,7 +788,7 @@ end;
 
 function TAggSerializedInt32PathAdaptor.Vertex(X, Y: PDouble): Cardinal;
 var
-  V: TAggVertexInt32;
+  v: TAggVertexInt32;
   Cmd: Cardinal;
 begin
   if (FData = nil) or (PtrComp(FInternalData) > PtrComp(FEnd)) then
@@ -811,9 +811,9 @@ begin
       Exit;
     end;
 
-  Move(FInternalData^, V, SizeOf(TAggVertexInt32));
+  Move(FInternalData^, v, SizeOf(TAggVertexInt32));
 
-  Cmd := V.Vertex(X, Y, FDelta.X, FDelta.Y, FScale);
+  Cmd := v.Vertex(X, Y, FDelta.X, FDelta.Y, FScale);
 
   if IsMoveTo(Cmd) and (FVertices > 2) then
     begin
@@ -832,4 +832,5 @@ begin
   Result := Cmd;
 end;
 
-end.
+end. 
+ 

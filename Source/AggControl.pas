@@ -39,16 +39,16 @@ unit AggControl;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
   AggTransAffine,
   AggRasterizerScanLine,
-  AggScanLine,
+  AggScanline,
   AggRendererScanLine,
-  AggRenderScanLines,
+  AggRenderScanlines,
   AggVertexSource,
   AggColor32;
 
@@ -60,12 +60,12 @@ type
     function GetScale: Double;
   protected
     FRect: TRectDouble;
-    function GetColorPointer(Index: Cardinal): PAggColor; virtual; abstract;
+    function GetColorPointer(index: Cardinal): PAggColor; virtual; abstract;
   public
-    constructor Create(X1, Y1, X2, Y2: Double; FlipY: Boolean); virtual;
+    constructor Create(x1, y1, x2, y2: Double; FlipY: Boolean); virtual;
     destructor Destroy; override;
 
-    procedure SetClipBox(X1, Y1, X2, Y2: Double); overload; virtual;
+    procedure SetClipBox(x1, y1, x2, y2: Double); overload; virtual;
     procedure SetClipBox(ClipBox: TRectDouble); overload; virtual;
 
     function InRect(X, Y: Double): Boolean; virtual;
@@ -74,7 +74,7 @@ type
     function OnMouseButtonUp(X, Y: Double): Boolean; virtual;
 
     function OnMouseMove(X, Y: Double; ButtonFlag: Boolean): Boolean; virtual;
-    function OnArrowKeys(Left, Right, Down, Up: Boolean): Boolean; virtual;
+    function OnArrowKeys(Left, Right, Down, up: Boolean): Boolean; virtual;
 
     procedure Transform(Matrix: TAggTransAffine);
     procedure TransformXY(X, Y: PDouble);
@@ -86,7 +86,7 @@ type
     property Scale: Double read GetScale;
   end;
 
-procedure RenderControl(Ras: TAggRasterizerScanLine; Sl: TAggCustomScanLine; R: TAggCustomRendererScanLineSolid; C: TAggCustomAggControl);
+procedure RenderControl(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine; R: TAggCustomRendererScanLineSolid; C: TAggCustomAggControl);
 
 implementation
 
@@ -97,10 +97,10 @@ constructor TAggCustomAggControl.Create;
 begin
   inherited Create;
 
-  FRect.X1 := X1;
-  FRect.Y1 := Y1;
-  FRect.X2 := X2;
-  FRect.Y2 := Y2;
+  FRect.x1 := x1;
+  FRect.y1 := y1;
+  FRect.x2 := x2;
+  FRect.y2 := y2;
 
   FFlipY := FlipY;
 
@@ -132,9 +132,9 @@ begin
   Result := False;
 end;
 
-procedure TAggCustomAggControl.SetClipBox(X1, Y1, X2, Y2: Double);
+procedure TAggCustomAggControl.SetClipBox(x1, y1, x2, y2: Double);
 begin
-  SetClipBox(RectDouble(X1, Y1, X2, Y2));
+  SetClipBox(RectDouble(x1, y1, x2, y2));
 end;
 
 procedure TAggCustomAggControl.SetClipBox(ClipBox: TRectDouble);
@@ -142,7 +142,7 @@ begin
   FRect := ClipBox;
 end;
 
-function TAggCustomAggControl.OnArrowKeys(Left, Right, Down, Up: Boolean): Boolean;
+function TAggCustomAggControl.OnArrowKeys(Left, Right, Down, up: Boolean): Boolean;
 begin
   Result := False;
 end;
@@ -160,7 +160,7 @@ end;
 procedure TAggCustomAggControl.TransformXY(X, Y: PDouble);
 begin
   if FFlipY then
-      Y^ := FRect.Y1 + FRect.Y2 - Y^;
+      Y^ := FRect.y1 + FRect.y2 - Y^;
 
   if FMatrix <> nil then
       FMatrix.Transform(FMatrix, X, Y);
@@ -172,7 +172,7 @@ begin
       FMatrix.InverseTransform(FMatrix, X, Y);
 
   if FFlipY then
-      Y^ := FRect.Y1 + FRect.Y2 - Y^;
+      Y^ := FRect.y1 + FRect.y2 - Y^;
 end;
 
 procedure TAggCustomAggControl.InverseTransformXY(var X, Y: Double);
@@ -188,21 +188,22 @@ begin
       Result := 1.0;
 end;
 
-procedure RenderControl(Ras: TAggRasterizerScanLine; Sl: TAggCustomScanLine;
+procedure RenderControl(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine;
   R: TAggCustomRendererScanLineSolid; C: TAggCustomAggControl);
 var
-  I: Cardinal;
+  i: Cardinal;
 begin
   if C.PathCount > 0 then
-    for I := 0 to C.PathCount - 1 do
+    for i := 0 to C.PathCount - 1 do
       begin
         Ras.Reset;
-        Ras.AddPath(C, I);
+        Ras.AddPath(C, i);
 
-        R.SetColor(C.ColorPointer[I]);
+        R.SetColor(C.ColorPointer[i]);
 
-        RenderScanLines(Ras, Sl, R);
+        RenderScanLines(Ras, SL, R);
       end;
 end;
 
-end.
+end. 
+ 

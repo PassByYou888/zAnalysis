@@ -39,7 +39,7 @@ unit AggSpanSubdivAdaptor;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -56,7 +56,7 @@ type
 
     FSourceX: Integer;
     FSourceY: Double;
-    FPos, FLength: Cardinal;
+    fPos, FLength: Cardinal;
 
     procedure SetSubdivShift(Shift: Cardinal);
     procedure SetInterpolator(Value: TAggSpanInterpolator);
@@ -150,7 +150,7 @@ end;
 
 procedure TAggSpanSubdivAdaptor.SetBegin(X, Y: Double; Len: Cardinal);
 begin
-  FPos := 1;
+  fPos := 1;
   FSourceX := Trunc(X * FSubpixelSize) + FSubpixelSize;
   FSourceY := Y;
   FLength := Len;
@@ -167,7 +167,7 @@ var
 begin
   FInterpolator.IncOperator;
 
-  if FPos >= FSubdivSize then
+  if fPos >= FSubdivSize then
     begin
       Len := FLength;
 
@@ -176,11 +176,11 @@ begin
 
       FInterpolator.Resynchronize(FSourceX / FSubpixelSize + Len, FSourceY, Len);
 
-      FPos := 0;
+      fPos := 0;
     end;
 
   Inc(FSourceX, FSubpixelSize);
-  Inc(FPos);
+  Inc(fPos);
   Dec(FLength);
 end;
 
@@ -199,4 +199,4 @@ begin
   FInterpolator.LocalScale(X, Y);
 end;
 
-end.
+end. 

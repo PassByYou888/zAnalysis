@@ -39,40 +39,40 @@ unit AggShortenPath;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
   AggVertexSequence;
 
-procedure ShortenPath(VertexSequence: TAggVertexSequence; S: Double; Closed: Cardinal = 0);
+procedure ShortenPath(VertexSequence: TAggVertexSequence; s: Double; closed: Cardinal = 0);
 
 implementation
 
-procedure ShortenPath(VertexSequence: TAggVertexSequence; S: Double;
-  Closed: Cardinal = 0);
+procedure ShortenPath(VertexSequence: TAggVertexSequence; s: Double;
+  closed: Cardinal = 0);
 var
-  N: Integer;
-  D, X, Y: Double;
+  n: Integer;
+  d, X, Y: Double;
   Prev, Last: PAggVertexDistance;
 begin
-  if (S > 0.0) and (VertexSequence.Size > 1) then
+  if (s > 0.0) and (VertexSequence.Size > 1) then
     begin
-      N := VertexSequence.Size - 2;
+      n := VertexSequence.Size - 2;
 
-      while N <> 0 do
+      while n <> 0 do
         begin
-          D := PAggVertexDistance(VertexSequence[N])^.Dist;
+          d := PAggVertexDistance(VertexSequence[n])^.Dist;
 
-          if D > S then
+          if d > s then
               Break;
 
           VertexSequence.RemoveLast;
 
-          S := S - D;
+          s := s - d;
 
-          Dec(N);
+          Dec(n);
         end;
 
       if VertexSequence.Size < 2 then
@@ -80,23 +80,24 @@ begin
 
       else
         begin
-          N := VertexSequence.Size - 1;
+          n := VertexSequence.Size - 1;
 
-          Prev := VertexSequence[N - 1];
-          Last := VertexSequence[N];
+          Prev := VertexSequence[n - 1];
+          Last := VertexSequence[n];
 
-          D := (Prev.Dist - S) / Prev.Dist;
+          d := (Prev.Dist - s) / Prev.Dist;
 
-          X := Prev.Pos.X + (Last.Pos.X - Prev.Pos.X) * D;
-          Y := Prev.Pos.Y + (Last.Pos.Y - Prev.Pos.Y) * D;
-          Last.Pos := PointDouble(X, Y);
+          X := Prev.pos.X + (Last.pos.X - Prev.pos.X) * d;
+          Y := Prev.pos.Y + (Last.pos.Y - Prev.pos.Y) * d;
+          Last.pos := PointDouble(X, Y);
 
           if not VertexSequence.FuncOperatorVertexSequence(Prev, Last) then
               VertexSequence.RemoveLast;
 
-          VertexSequence.Close(Boolean(Closed <> 0));
+          VertexSequence.Close(Boolean(closed <> 0));
         end;
     end;
 end;
 
-end.
+end. 
+ 

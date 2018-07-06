@@ -15,7 +15,7 @@
 
 unit NotifyObjectBase;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
@@ -226,8 +226,8 @@ begin
   ProcessedTime := 0;
   Data1 := nil;
   Data2 := nil;
-  Data3 := NULL;
-  Data4 := NULL;
+  Data3 := Null;
+  Data4 := Null;
   Data5 := nil;
   Delay := 0;
 
@@ -436,18 +436,18 @@ end;
 procedure TNProgressPost.Progress(deltaTime: Double);
 var
   i: Integer;
-  l: TCoreClassListForObj;
+  L: TCoreClassListForObj;
   p: TNPostExecute;
 begin
   if FPaused then
-      exit;
+      Exit;
   if FPostProcessIsRun then
-      exit;
+      Exit;
 
   FPostProcessIsRun := True;
   FBreakProgress := False;
 
-  l := TCoreClassListForObj.Create;
+  L := TCoreClassListForObj.Create;
 
   i := 0;
   while i < FPostExecuteList.Count do
@@ -456,7 +456,7 @@ begin
       p.ProcessedTime := p.ProcessedTime + deltaTime;
       if p.ProcessedTime >= p.Delay then
         begin
-          l.Add(p);
+          L.Add(p);
           FPostExecuteList.Delete(i);
         end
       else
@@ -464,10 +464,10 @@ begin
     end;
 
   i := 0;
-  while (i < l.Count) do
+  while (i < L.Count) do
     begin
       FBusy := True;
-      FCurrentExecute := TNPostExecute(l[i]);
+      FCurrentExecute := TNPostExecute(L[i]);
       try
           FCurrentExecute.Execute;
       except
@@ -483,10 +483,10 @@ begin
 
       Inc(i);
       if FBreakProgress then
-          break;
+          Break;
     end;
 
-  DisposeObject(l);
+  DisposeObject(L);
 
   FPostProcessIsRun := False;
 end;
@@ -524,4 +524,5 @@ begin
   FCadencerEng.Progress;
 end;
 
-end.
+end. 
+ 

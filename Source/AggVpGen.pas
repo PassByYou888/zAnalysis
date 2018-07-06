@@ -39,7 +39,7 @@ unit AggVpGen;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -64,3 +64,4 @@ type
 implementation
 
 end.
+ 

@@ -39,7 +39,7 @@ unit AggBezierArc;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -63,11 +63,11 @@ type
     function GetVertices: PDoubleMatrix2x6;
     function GetNumVertices: Cardinal;
 
-    procedure Init(X, Y, Rx, Ry, StartAngle, SweepAngle: Double);
+    procedure Init(X, Y, RX, RY, startAngle, SweepAngle: Double);
   public
     constructor Create; overload;
-    constructor Create(X, Y, Rx, Ry, StartAngle, SweepAngle: Double); overload;
-    constructor Create(X, Y: Double; Radius: TPointDouble; StartAngle, SweepAngle: Double); overload;
+    constructor Create(X, Y, RX, RY, startAngle, SweepAngle: Double); overload;
+    constructor Create(X, Y: Double; radius: TPointDouble; startAngle, SweepAngle: Double); overload;
 
     procedure Rewind(PathID: Cardinal); override;
     function Vertex(X, Y: PDouble): Cardinal; override;
@@ -90,46 +90,46 @@ type
     FRadiiOK: Boolean;
   public
     constructor Create; overload;
-    constructor Create(X1, Y1, Rx, Ry, Angle: Double; LargeArcFlag, SweepFlag: Boolean; X2, Y2: Double); overload;
-    procedure Init(X0, Y0, Rx, Ry, Angle: Double; LargeArcFlag, SweepFlag: Boolean; X2, Y2: Double);
+    constructor Create(x1, y1, RX, RY, angle: Double; LargeArcFlag, SweepFlag: Boolean; x2, y2: Double); overload;
+    procedure Init(x0, y0, RX, RY, angle: Double; LargeArcFlag, SweepFlag: Boolean; x2, y2: Double);
 
     property RadiiOK: Boolean read FRadiiOK;
   end;
 
-procedure ArcToBezier(Cx, Cy, Rx, Ry, StartAngle, SweepAngle: Double; Curve: PDoubleArray8);
+procedure ArcToBezier(Cx, Cy, RX, RY, startAngle, SweepAngle: Double; Curve: PDoubleArray8);
 
 implementation
 
 const
   CBezierArcAngleEpsilon = 0.01;
 
-procedure ArcToBezier(Cx, Cy, Rx, Ry, StartAngle, SweepAngle: Double;
+procedure ArcToBezier(Cx, Cy, RX, RY, startAngle, SweepAngle: Double;
   Curve: PDoubleArray8);
 var
-  I: Cardinal;
+  i: Cardinal;
 
-  Sn, Cs, X0, Y0, Tx, Ty: Double;
+  sn, cs, x0, y0, TX, TY: Double;
   Px, Py: array [0 .. 3] of Double;
 begin
-  SinCos(SweepAngle * 0.5, Y0, X0);
-  Tx := (1.0 - X0) * 4.0 / 3.0;
-  Ty := Y0 - Tx * X0 / Y0;
+  SinCos(SweepAngle * 0.5, y0, x0);
+  TX := (1.0 - x0) * 4.0 / 3.0;
+  TY := y0 - TX * x0 / y0;
 
-  Px[0] := X0;
-  Py[0] := -Y0;
-  Px[1] := X0 + Tx;
-  Py[1] := -Ty;
-  Px[2] := X0 + Tx;
-  Py[2] := Ty;
-  Px[3] := X0;
-  Py[3] := Y0;
+  Px[0] := x0;
+  Py[0] := -y0;
+  Px[1] := x0 + TX;
+  Py[1] := -TY;
+  Px[2] := x0 + TX;
+  Py[2] := TY;
+  Px[3] := x0;
+  Py[3] := y0;
 
-  SinCos(StartAngle + SweepAngle * 0.5, Sn, Cs);
+  SinCos(startAngle + SweepAngle * 0.5, sn, cs);
 
-  for I := 0 to 3 do
+  for i := 0 to 3 do
     begin
-      Curve[I * 2] := Cx + Rx * (Px[I] * Cs - Py[I] * Sn);
-      Curve[I * 2 + 1] := Cy + Ry * (Px[I] * Sn + Py[I] * Cs);
+      Curve[i * 2] := Cx + RX * (Px[i] * cs - Py[i] * sn);
+      Curve[i * 2 + 1] := Cy + RY * (Px[i] * sn + Py[i] * cs);
     end;
 end;
 
@@ -144,38 +144,38 @@ begin
   FCmd := CAggPathCmdLineTo;
 end;
 
-constructor TAggBezierArc.Create(X, Y, Rx, Ry, StartAngle,
+constructor TAggBezierArc.Create(X, Y, RX, RY, startAngle,
   SweepAngle: Double);
 begin
-  Init(X, Y, Rx, Ry, StartAngle, SweepAngle);
+  Init(X, Y, RX, RY, startAngle, SweepAngle);
 end;
 
-constructor TAggBezierArc.Create(X, Y: Double; Radius: TPointDouble; StartAngle,
+constructor TAggBezierArc.Create(X, Y: Double; radius: TPointDouble; startAngle,
   SweepAngle: Double);
 begin
-  Init(X, Y, Radius.X, Radius.Y, StartAngle, SweepAngle);
+  Init(X, Y, radius.X, radius.Y, startAngle, SweepAngle);
 end;
 
-procedure TAggBezierArc.Init(X, Y, Rx, Ry, StartAngle, SweepAngle: Double);
+procedure TAggBezierArc.Init(X, Y, RX, RY, startAngle, SweepAngle: Double);
 var
-  I: Integer;
+  i: Integer;
   F: Double;
 
-  Sn, Cn: Double;
+  sn, CN: Double;
   TotalSweep, LocalSweep, PrevSweep: Double;
 
   Done: Boolean;
 begin
-  I := Trunc(StartAngle / (2.0 * Pi));
-  F := StartAngle - (I * 2.0 * Pi);
+  i := Trunc(startAngle / (2.0 * pi));
+  F := startAngle - (i * 2.0 * pi);
 
-  StartAngle := F;
+  startAngle := F;
 
-  if SweepAngle >= 2.0 * Pi then
-      SweepAngle := 2.0 * Pi;
+  if SweepAngle >= 2.0 * pi then
+      SweepAngle := 2.0 * pi;
 
-  if SweepAngle <= -2.0 * Pi then
-      SweepAngle := -2.0 * Pi;
+  if SweepAngle <= -2.0 * pi then
+      SweepAngle := -2.0 * pi;
 
   if Abs(SweepAngle) < 1E-10 then
     begin
@@ -183,12 +183,12 @@ begin
 
       FCmd := CAggPathCmdLineTo;
 
-      SinCosScale(StartAngle, Sn, Cn, Ry, Rx);
-      FVertices[0] := X + Cn;
-      FVertices[1] := Y + Sn;
-      SinCosScale(StartAngle + SweepAngle, Sn, Cn, Ry, Rx);
-      FVertices[2] := X + Cn;
-      FVertices[3] := Y + Sn;
+      SinCosScale(startAngle, sn, CN, RY, RX);
+      FVertices[0] := X + CN;
+      FVertices[1] := Y + sn;
+      SinCosScale(startAngle + SweepAngle, sn, CN, RY, RX);
+      FVertices[2] := X + CN;
+      FVertices[3] := Y + sn;
 
       Exit;
     end;
@@ -205,8 +205,8 @@ begin
     if SweepAngle < 0.0 then
       begin
         PrevSweep := TotalSweep;
-        LocalSweep := -Pi * 0.5;
-        TotalSweep := TotalSweep - (Pi * 0.5);
+        LocalSweep := -pi * 0.5;
+        TotalSweep := TotalSweep - (pi * 0.5);
 
         if TotalSweep <= SweepAngle + CBezierArcAngleEpsilon then
           begin
@@ -219,8 +219,8 @@ begin
     else
       begin
         PrevSweep := TotalSweep;
-        LocalSweep := Pi * 0.5;
-        TotalSweep := TotalSweep + (Pi * 0.5);
+        LocalSweep := pi * 0.5;
+        TotalSweep := TotalSweep + (pi * 0.5);
 
         if TotalSweep >= SweepAngle - CBezierArcAngleEpsilon then
           begin
@@ -230,11 +230,11 @@ begin
           end;
       end;
 
-    ArcToBezier(X, Y, Rx, Ry, StartAngle, LocalSweep,
+    ArcToBezier(X, Y, RX, RY, startAngle, LocalSweep,
       @FVertices[FNumVertices - 2]);
 
     FNumVertices := FNumVertices + 6;
-    StartAngle := StartAngle + LocalSweep;
+    startAngle := startAngle + LocalSweep;
 
   until Done or (FNumVertices >= 26);
 end;
@@ -283,61 +283,61 @@ begin
   FRadiiOK := False;
 end;
 
-constructor TAggBezierArcSvg.Create(X1, Y1, Rx, Ry, Angle: Double;
-  LargeArcFlag, SweepFlag: Boolean; X2, Y2: Double);
+constructor TAggBezierArcSvg.Create(x1, y1, RX, RY, angle: Double;
+  LargeArcFlag, SweepFlag: Boolean; x2, y2: Double);
 begin
   inherited Create;
 
   FRadiiOK := False;
 
-  Init(X1, Y1, Rx, Ry, Angle, LargeArcFlag, SweepFlag, X2, Y2);
+  Init(x1, y1, RX, RY, angle, LargeArcFlag, SweepFlag, x2, y2);
 end;
 
 procedure TAggBezierArcSvg.Init;
 var
-  I: Cardinal;
+  i: Cardinal;
 
-  V, P, N, Sq, X1, Y1, Cx, Cy, Ux, Uy, Vx, Vy, Dx2, Dy2: Double;
-  Prx, Pry, Px1, Py1, Cx1, Cy1, Sx2, Sy2, Sign, Coef: Double;
-  RadiiCheck, StartAngle, SweepAngle, Cn, Sn: Double;
+  v, p, n, Sq, x1, y1, Cx, Cy, Ux, Uy, Vx, Vy, Dx2, Dy2: Double;
+  Prx, Pry, Px1, Py1, Cx1, Cy1, Sx2, Sy2, Sign, coef: Double;
+  RadiiCheck, startAngle, SweepAngle, CN, sn: Double;
 
   Mtx: TAggTransAffineRotation;
 begin
   FRadiiOK := True;
 
-  if Rx < 0.0 then
-      Rx := -Rx;
+  if RX < 0.0 then
+      RX := -RX;
 
-  if Ry < 0.0 then
-      Ry := -Rx;
+  if RY < 0.0 then
+      RY := -RX;
 
   // Calculate the middle point between
   // the current and the final points
-  Dx2 := (X0 - X2) * 0.5;
-  Dy2 := (Y0 - Y2) * 0.5;
+  Dx2 := (x0 - x2) * 0.5;
+  Dy2 := (y0 - y2) * 0.5;
 
   // Convert angle from degrees to radians
-  SinCos(Angle, Sn, Cn);
+  SinCos(angle, sn, CN);
 
   // Calculate (x1, y1)
-  X1 := Cn * Dx2 + Sn * Dy2;
-  Y1 := -Sn * Dx2 + Cn * Dy2;
+  x1 := CN * Dx2 + sn * Dy2;
+  y1 := -sn * Dx2 + CN * Dy2;
 
   // Ensure radii are large enough
-  Prx := Rx * Rx;
-  Pry := Ry * Ry;
-  Px1 := X1 * X1;
-  Py1 := Y1 * Y1;
+  Prx := RX * RX;
+  Pry := RY * RY;
+  Px1 := x1 * x1;
+  Py1 := y1 * y1;
 
   // Check that radii are large enough
   RadiiCheck := Px1 / Prx + Py1 / Pry;
 
   if RadiiCheck > 1.0 then
     begin
-      Rx := Sqrt(RadiiCheck) * Rx;
-      Ry := Sqrt(RadiiCheck) * Ry;
-      Prx := Rx * Rx;
-      Pry := Ry * Ry;
+      RX := Sqrt(RadiiCheck) * RX;
+      RY := Sqrt(RadiiCheck) * RY;
+      Prx := RX * RX;
+      Pry := RY * RY;
 
       if RadiiCheck > 10.0 then
           FRadiiOK := False;
@@ -352,84 +352,84 @@ begin
   Sq := (Prx * Pry - Prx * Py1 - Pry * Px1) / (Prx * Py1 + Pry * Px1);
 
   if Sq < 0 then
-      Coef := Sign * Sqrt(0)
+      coef := Sign * Sqrt(0)
   else
-      Coef := Sign * Sqrt(Sq);
+      coef := Sign * Sqrt(Sq);
 
-  Cx1 := Coef * ((Rx * Y1) / Ry);
-  Cy1 := Coef * -((Ry * X1) / Rx);
+  Cx1 := coef * ((RX * y1) / RY);
+  Cy1 := coef * -((RY * x1) / RX);
 
   // Calculate (cx, cy) from (cx1, cy1)
-  Sx2 := (X0 + X2) / 2.0;
-  Sy2 := (Y0 + Y2) / 2.0;
-  Cx := Sx2 + (Cn * Cx1 - Sn * Cy1);
-  Cy := Sy2 + (Sn * Cx1 + Cn * Cy1);
+  Sx2 := (x0 + x2) / 2.0;
+  Sy2 := (y0 + y2) / 2.0;
+  Cx := Sx2 + (CN * Cx1 - sn * Cy1);
+  Cy := Sy2 + (sn * Cx1 + CN * Cy1);
 
   // Calculate the StartAngle (angle1) and the SweepAngle (dangle)
-  Ux := (X1 - Cx1) / Rx;
-  Uy := (Y1 - Cy1) / Ry;
-  Vx := (-X1 - Cx1) / Rx;
-  Vy := (-Y1 - Cy1) / Ry;
+  Ux := (x1 - Cx1) / RX;
+  Uy := (y1 - Cy1) / RY;
+  Vx := (-x1 - Cx1) / RX;
+  Vy := (-y1 - Cy1) / RY;
 
   // Calculate the angle start
-  N := Sqrt(Ux * Ux + Uy * Uy);
-  P := Ux; // (1 * ux ) + (0 * uy )
+  n := Sqrt(Ux * Ux + Uy * Uy);
+  p := Ux; // (1 * ux ) + (0 * uy )
 
   if Uy < 0 then
       Sign := -1.0
   else
       Sign := 1.0;
 
-  V := P / N;
+  v := p / n;
 
-  if V < -1.0 then
-      V := -1.0;
+  if v < -1.0 then
+      v := -1.0;
 
-  if V > 1.0 then
-      V := 1.0;
+  if v > 1.0 then
+      v := 1.0;
 
-  StartAngle := Sign * ArcCos(V);
+  startAngle := Sign * ArcCos(v);
 
   // Calculate the sweep angle
-  N := Sqrt((Ux * Ux + Uy * Uy) * (Vx * Vx + Vy * Vy));
-  P := Ux * Vx + Uy * Vy;
+  n := Sqrt((Ux * Ux + Uy * Uy) * (Vx * Vx + Vy * Vy));
+  p := Ux * Vx + Uy * Vy;
 
   if Ux * Vy - Uy * Vx < 0 then
       Sign := -1.0
   else
       Sign := 1.0;
 
-  V := P / N;
+  v := p / n;
 
-  if V < -1.0 then
-      V := -1.0;
+  if v < -1.0 then
+      v := -1.0;
 
-  if V > 1.0 then
-      V := 1.0;
+  if v > 1.0 then
+      v := 1.0;
 
-  SweepAngle := Sign * ArcCos(V);
+  SweepAngle := Sign * ArcCos(v);
 
   if (not SweepFlag) and (SweepAngle > 0) then
-      SweepAngle := SweepAngle - Pi * 2.0
+      SweepAngle := SweepAngle - pi * 2.0
   else if SweepFlag and (SweepAngle < 0) then
-      SweepAngle := SweepAngle + Pi * 2.0;
+      SweepAngle := SweepAngle + pi * 2.0;
 
   // We can now build and transform the resulting arc
-  inherited Init(0.0, 0.0, Rx, Ry, StartAngle, SweepAngle);
+  inherited Init(0.0, 0.0, RX, RY, startAngle, SweepAngle);
 
-  Mtx := TAggTransAffineRotation.Create(Angle);
+  Mtx := TAggTransAffineRotation.Create(angle);
   try
     Mtx.Translate(Cx, Cy);
 
-    I := 2;
+    i := 2;
 
-    while I < NumVertices - 2 do
+    while i < NumVertices - 2 do
       begin
         // Mtx.Transform(@FArc.Vertices[i], @FArc.Vertices[i + 1 ]);
-        Mtx.Transform(Mtx, PDouble(PtrComp(GetVertices) + I * SizeOf(Double)),
-          PDouble(PtrComp(GetVertices) + (I + 1) * SizeOf(Double)));
+        Mtx.Transform(Mtx, PDouble(PtrComp(GetVertices) + i * SizeOf(Double)),
+          PDouble(PtrComp(GetVertices) + (i + 1) * SizeOf(Double)));
 
-        Inc(I, 2);
+        Inc(i, 2);
       end;
   finally
       Mtx.Free;
@@ -437,14 +437,14 @@ begin
 
   // We must make sure that the starting and ending points
   // exactly coincide with the initial (x0,y0) and (x2,y2)
-  GetVertices[0] := X0;
-  GetVertices[1] := Y0;
+  GetVertices[0] := x0;
+  GetVertices[1] := y0;
 
   if NumVertices > 2 then
     begin
-      GetVertices[NumVertices - 2] := X2;
-      GetVertices[NumVertices - 1] := Y2;
+      GetVertices[NumVertices - 2] := x2;
+      GetVertices[NumVertices - 1] := y2;
     end;
 end;
 
-end.
+end. 

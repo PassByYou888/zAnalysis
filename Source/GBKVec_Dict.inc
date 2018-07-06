@@ -1,10 +1,10 @@
 type
-  T_BadEmotionDict_PackageBuffer = array [0..5325] of byte;
-  T_BadRepDict_PackageBuffer = array [0..14595] of byte;
-  T_GoodEmotionDict_PackageBuffer = array [0..3489] of byte;
-  T_GoodRepDict_PackageBuffer = array [0..16609] of byte;
-  T_willVecDict_PackageBuffer = array [0..196] of byte;
-  T_WordVecDict_PackageBuffer = array [0..903] of byte;
+  T_BadEmotionDict_PackageBuffer = array [0..5325] of Byte;
+  T_BadRepDict_PackageBuffer = array [0..14595] of Byte;
+  T_GoodEmotionDict_PackageBuffer = array [0..3489] of Byte;
+  T_GoodRepDict_PackageBuffer = array [0..16609] of Byte;
+  T_willVecDict_PackageBuffer = array [0..196] of Byte;
+  T_WordVecDict_PackageBuffer = array [0..903] of Byte;
 
 const
   // compiled BadEmotionDict.txt package
@@ -1030,4 +1030,4 @@ const
    $0F,$B5,$4A,$22,$02,$2D,$84,$97,$5D,$E9,$68,$0F,$4E,$1F,$59,$D7,$73,$4E,$A9,$6A,$7A,$2D,$2E,$39,$E6,$12,$A6,$5C,$42,$C8,$1F,$D9,$23,$61,$FB,$60,$1D,$F2,$52,$F2,$7E,
    $F8,$FF,$6F,$14,$B2,$5E,$F2,$57,$F1,$2E,$58,$64,$EB,$B7,$E5,$2D,$79,$7C,$97,$F1,$8B,$91,$EE,$D7,$D9,$3F,$A2,$D7,$37,$0B,$B9,$A1,$0C,$09,$5E,$CB,$4F,$E0,$3F,$32,$27,
    $B2,$74);
-
+ 

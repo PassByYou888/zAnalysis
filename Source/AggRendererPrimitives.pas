@@ -39,7 +39,7 @@ unit AggRendererPrimitives;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -63,18 +63,18 @@ type
 
     function Coord(C: Double): Integer;
 
-    procedure Rectangle(X1, Y1, X2, Y2: Integer); overload;
+    procedure Rectangle(x1, y1, x2, y2: Integer); overload;
     procedure Rectangle(Rect: TRectInteger); overload;
-    procedure SolidRectangle(X1, Y1, X2, Y2: Integer); overload;
+    procedure SolidRectangle(x1, y1, x2, y2: Integer); overload;
     procedure SolidRectangle(Rect: TRectInteger); overload;
-    procedure OutlinedRectangle(X1, Y1, X2, Y2: Integer); overload;
+    procedure OutlinedRectangle(x1, y1, x2, y2: Integer); overload;
     procedure OutlinedRectangle(Rect: TRectInteger); overload;
 
-    procedure Ellipse(X, Y, Rx, Ry: Integer);
-    procedure SolidEllipse(X, Y, Rx, Ry: Integer);
-    procedure OutlinedEllipse(X, Y, Rx, Ry: Integer);
+    procedure Ellipse(X, Y, RX, RY: Integer);
+    procedure SolidEllipse(X, Y, RX, RY: Integer);
+    procedure OutlinedEllipse(X, Y, RX, RY: Integer);
 
-    procedure Line(X1, Y1, X2, Y2: Integer; Last: Boolean = False); overload;
+    procedure Line(x1, y1, x2, y2: Integer; Last: Boolean = False); overload;
     procedure Line(Point1, Point2: TPointInteger; Last: Boolean = False); overload;
 
     procedure MoveTo(X, Y: Integer); overload;
@@ -117,14 +117,14 @@ begin
   FLineColor := Value;
 end;
 
-procedure TAggRendererPrimitives.Rectangle(X1, Y1, X2, Y2: Integer);
+procedure TAggRendererPrimitives.Rectangle(x1, y1, x2, y2: Integer);
 begin
   with FRenderBase do
     begin
-      BlendHorizontalLine(X1, Y1, X2 - 1, @FLineColor, CAggCoverFull);
-      BlendVerticalLine(X2, Y1, Y2 - 1, @FLineColor, CAggCoverFull);
-      BlendHorizontalLine(X1 + 1, Y2, X2, @FLineColor, CAggCoverFull);
-      BlendVerticalLine(X1, Y1 + 1, Y2, @FLineColor, CAggCoverFull);
+      BlendHorizontalLine(x1, y1, x2 - 1, @FLineColor, CAggCoverFull);
+      BlendVerticalLine(x2, y1, y2 - 1, @FLineColor, CAggCoverFull);
+      BlendHorizontalLine(x1 + 1, y2, x2, @FLineColor, CAggCoverFull);
+      BlendVerticalLine(x1, y1 + 1, y2, @FLineColor, CAggCoverFull);
     end;
 end;
 
@@ -132,50 +132,50 @@ procedure TAggRendererPrimitives.Rectangle(Rect: TRectInteger);
 begin
   with Rect, FRenderBase do
     begin
-      BlendHorizontalLine(X1, Y1, X2 - 1, @FLineColor, CAggCoverFull);
-      BlendVerticalLine(X2, Y1, Y2 - 1, @FLineColor, CAggCoverFull);
-      BlendHorizontalLine(X1 + 1, Y2, X2, @FLineColor, CAggCoverFull);
-      BlendVerticalLine(X1, Y1 + 1, Y2, @FLineColor, CAggCoverFull);
+      BlendHorizontalLine(x1, y1, x2 - 1, @FLineColor, CAggCoverFull);
+      BlendVerticalLine(x2, y1, y2 - 1, @FLineColor, CAggCoverFull);
+      BlendHorizontalLine(x1 + 1, y2, x2, @FLineColor, CAggCoverFull);
+      BlendVerticalLine(x1, y1 + 1, y2, @FLineColor, CAggCoverFull);
     end;
 end;
 
-procedure TAggRendererPrimitives.SolidRectangle(X1, Y1, X2, Y2: Integer);
+procedure TAggRendererPrimitives.SolidRectangle(x1, y1, x2, y2: Integer);
 begin
-  FRenderBase.BlendBar(X1, Y1, X2, Y2, @FFillColor, CAggCoverFull);
+  FRenderBase.BlendBar(x1, y1, x2, y2, @FFillColor, CAggCoverFull);
 end;
 
 procedure TAggRendererPrimitives.SolidRectangle(Rect: TRectInteger);
 begin
-  FRenderBase.BlendBar(Rect.X1, Rect.Y1, Rect.X2, Rect.Y2, @FFillColor,
+  FRenderBase.BlendBar(Rect.x1, Rect.y1, Rect.x2, Rect.y2, @FFillColor,
     CAggCoverFull);
 end;
 
-procedure TAggRendererPrimitives.OutlinedRectangle(X1, Y1, X2, Y2: Integer);
+procedure TAggRendererPrimitives.OutlinedRectangle(x1, y1, x2, y2: Integer);
 begin
-  Rectangle(X1, Y1, X2, Y2);
-  FRenderBase.BlendBar(X1 + 1, Y1 + 1, X2 - 1, Y2 - 1, @FFillColor,
+  Rectangle(x1, y1, x2, y2);
+  FRenderBase.BlendBar(x1 + 1, y1 + 1, x2 - 1, y2 - 1, @FFillColor,
     CAggCoverFull);
 end;
 
 procedure TAggRendererPrimitives.OutlinedRectangle(Rect: TRectInteger);
 begin
-  Rectangle(Rect.X1, Rect.Y1, Rect.X2, Rect.Y2);
-  FRenderBase.BlendBar(Rect.X1 + 1, Rect.Y1 + 1, Rect.X2 - 1, Rect.Y2 - 1,
+  Rectangle(Rect.x1, Rect.y1, Rect.x2, Rect.y2);
+  FRenderBase.BlendBar(Rect.x1 + 1, Rect.y1 + 1, Rect.x2 - 1, Rect.y2 - 1,
     @FFillColor, CAggCoverFull);
 end;
 
-procedure TAggRendererPrimitives.Ellipse(X, Y, Rx, Ry: Integer);
+procedure TAggRendererPrimitives.Ellipse(X, Y, RX, RY: Integer);
 var
   Ei: TAggEllipseBresenhamInterpolator;
   Delta: TPointInteger;
 begin
-  Ei.Initialize(Rx, Ry);
+  Ei.Initialize(RX, RY);
 
-  Delta := PointInteger(0, -Ry);
+  Delta := PointInteger(0, -RY);
 
   repeat
-    Inc(Delta.X, Ei.DeltaX);
-    Inc(Delta.Y, Ei.DeltaY);
+    Inc(Delta.X, Ei.deltax);
+    Inc(Delta.Y, Ei.deltay);
 
     with FRenderBase do
       begin
@@ -189,19 +189,19 @@ begin
   until Delta.Y >= 0;
 end;
 
-procedure TAggRendererPrimitives.SolidEllipse(X, Y, Rx, Ry: Integer);
+procedure TAggRendererPrimitives.SolidEllipse(X, Y, RX, RY: Integer);
 var
   Ei: TAggEllipseBresenhamInterpolator;
   Delta, LastDelta: TPointInteger;
 begin
-  Ei.Initialize(Rx, Ry);
+  Ei.Initialize(RX, RY);
 
-  Delta := PointInteger(0, -Ry);
+  Delta := PointInteger(0, -RY);
   LastDelta := Delta;
 
   repeat
-    Inc(Delta.X, Ei.DeltaX);
-    Inc(Delta.Y, Ei.DeltaY);
+    Inc(Delta.X, Ei.deltax);
+    Inc(Delta.Y, Ei.deltay);
 
     if Delta.Y <> LastDelta.Y then
       begin
@@ -220,24 +220,24 @@ begin
     X + LastDelta.X, @FFillColor, CAggCoverFull);
 end;
 
-procedure TAggRendererPrimitives.OutlinedEllipse(X, Y, Rx, Ry: Integer);
+procedure TAggRendererPrimitives.OutlinedEllipse(X, Y, RX, RY: Integer);
 var
   Ei: TAggEllipseBresenhamInterpolator;
   Delta: TPointInteger;
 begin
-  Ei.Initialize(Rx, Ry);
+  Ei.Initialize(RX, RY);
 
-  Delta := PointInteger(0, -Ry);
+  Delta := PointInteger(0, -RY);
   repeat
-    Inc(Delta.X, Ei.DeltaX);
-    Inc(Delta.Y, Ei.DeltaY);
+    Inc(Delta.X, Ei.deltax);
+    Inc(Delta.Y, Ei.deltay);
 
     FRenderBase.BlendPixel(X + Delta.X, Y + Delta.Y, @FLineColor, CAggCoverFull);
     FRenderBase.BlendPixel(X + Delta.X, Y - Delta.Y, @FLineColor, CAggCoverFull);
     FRenderBase.BlendPixel(X - Delta.X, Y - Delta.Y, @FLineColor, CAggCoverFull);
     FRenderBase.BlendPixel(X - Delta.X, Y + Delta.Y, @FLineColor, CAggCoverFull);
 
-    if (Ei.DeltaY <> 0) and (Delta.X <> 0) then
+    if (Ei.deltay <> 0) and (Delta.X <> 0) then
       begin
         FRenderBase.BlendHorizontalLine(X - Delta.X + 1, Y + Delta.Y,
           X + Delta.X - 1, @FFillColor, CAggCoverFull);
@@ -249,21 +249,21 @@ begin
   until Delta.Y >= 0;
 end;
 
-procedure TAggRendererPrimitives.Line(X1, Y1, X2, Y2: Integer;
+procedure TAggRendererPrimitives.Line(x1, y1, x2, y2: Integer;
   Last: Boolean = False);
 var
   Li: TAggLineBresenhamInterpolator;
   Len: Cardinal;
 begin
-  Li.Initialize(X1, Y1, X2, Y2);
+  Li.Initialize(x1, y1, x2, y2);
 
-  Len := Li.Length;
+  Len := Li.length;
 
   if Len = 0 then
     begin
       if Last then
-          FRenderBase.BlendPixel(Li.LineLowResolution(X1),
-          Li.LineLowResolution(Y1), @FLineColor, CAggCoverFull);
+          FRenderBase.BlendPixel(Li.LineLowResolution(x1),
+          Li.LineLowResolution(y1), @FLineColor, CAggCoverFull);
 
       Exit;
     end;
@@ -273,7 +273,7 @@ begin
 
   if Li.IsVer then
     repeat
-      FRenderBase.BlendPixel(Li.X2, Li.Y1, @FLineColor, CAggCoverFull);
+      FRenderBase.BlendPixel(Li.x2, Li.y1, @FLineColor, CAggCoverFull);
 
       Li.Vstep;
 
@@ -281,9 +281,9 @@ begin
     until Len = 0
   else
     repeat
-      FRenderBase.BlendPixel(Li.X1, Li.Y2, @FLineColor, CAggCoverFull);
+      FRenderBase.BlendPixel(Li.x1, Li.y2, @FLineColor, CAggCoverFull);
 
-      Li.Hstep;
+      Li.HStep;
 
       Dec(Len);
     until Len = 0;
@@ -296,7 +296,7 @@ var
 begin
   Li.Initialize(Point1, Point2);
 
-  Len := Li.Length;
+  Len := Li.length;
 
   if Len = 0 then
     begin
@@ -312,7 +312,7 @@ begin
 
   if Li.IsVer then
     repeat
-      FRenderBase.BlendPixel(Li.X2, Li.Y1, @FLineColor, CAggCoverFull);
+      FRenderBase.BlendPixel(Li.x2, Li.y1, @FLineColor, CAggCoverFull);
 
       Li.Vstep;
 
@@ -320,9 +320,9 @@ begin
     until Len = 0
   else
     repeat
-      FRenderBase.BlendPixel(Li.X1, Li.Y2, @FLineColor, CAggCoverFull);
+      FRenderBase.BlendPixel(Li.x1, Li.y2, @FLineColor, CAggCoverFull);
 
-      Li.Hstep;
+      Li.HStep;
 
       Dec(Len);
     until Len = 0;
@@ -350,4 +350,4 @@ begin
   FCurrent := Point;
 end;
 
-end.
+end. 

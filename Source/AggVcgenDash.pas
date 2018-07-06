@@ -39,7 +39,7 @@ unit AggVcgenDash;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -78,7 +78,7 @@ type
     procedure SetShorten(Value: Double);
     procedure SetDashStart(Value: Double);
   protected
-    procedure CalculateDashStart(Ds: Double);
+    procedure CalculateDashStart(DS: Double);
   public
     constructor Create;
     destructor Destroy; override;
@@ -177,17 +177,17 @@ end;
 
 procedure TAggVcgenDash.AddVertex(X, Y: Double; Cmd: Cardinal);
 var
-  Vd: TAggVertexDistance;
+  VD: TAggVertexDistance;
 begin
   FStatus := siInitial;
 
-  Vd.Pos := PointDouble(X, Y);
-  Vd.Dist := 0;
+  VD.pos := PointDouble(X, Y);
+  VD.Dist := 0;
 
   if IsMoveTo(Cmd) then
-      FSourceVertices.ModifyLast(@Vd)
+      FSourceVertices.ModifyLast(@VD)
   else if IsVertex(Cmd) then
-      FSourceVertices.Add(@Vd)
+      FSourceVertices.Add(@VD)
   else
       FClosed := GetCloseFlag(Cmd);
 end;
@@ -240,8 +240,8 @@ begin
 
           FCurrentRest := FVertex1.Dist;
 
-          X^ := FVertex1.Pos.X;
-          Y^ := FVertex1.Pos.Y;
+          X^ := FVertex1.pos.X;
+          Y^ := FVertex1.pos.Y;
 
           if FDashStart >= 0.0 then
               CalculateDashStart(FDashStart);
@@ -272,15 +272,15 @@ begin
               FCurrDashStart := 0.0;
 
               Temp := FCurrentRest / FVertex1.Dist;
-              X^ := FVertex2.Pos.X - (FVertex2.Pos.X - FVertex1.Pos.X) * Temp;
-              Y^ := FVertex2.Pos.Y - (FVertex2.Pos.Y - FVertex1.Pos.Y) * Temp;
+              X^ := FVertex2.pos.X - (FVertex2.pos.X - FVertex1.pos.X) * Temp;
+              Y^ := FVertex2.pos.Y - (FVertex2.pos.Y - FVertex1.pos.Y) * Temp;
             end
           else
             begin
               FCurrDashStart := FCurrDashStart + FCurrentRest;
 
-              X^ := FVertex2.Pos.X;
-              Y^ := FVertex2.Pos.Y;
+              X^ := FVertex2.pos.X;
+              Y^ := FVertex2.pos.Y;
 
               Inc(FSourceVertex);
 
@@ -314,10 +314,10 @@ begin
   FCurrentDash := 0;
   FCurrDashStart := 0.0;
 
-  while Ds > 0.0 do
-    if Ds > FDashes[FCurrentDash] then
+  while DS > 0.0 do
+    if DS > FDashes[FCurrentDash] then
       begin
-        Ds := Ds - FDashes[FCurrentDash];
+        DS := DS - FDashes[FCurrentDash];
 
         Inc(FCurrentDash);
 
@@ -329,10 +329,11 @@ begin
       end
     else
       begin
-        FCurrDashStart := Ds;
+        FCurrDashStart := DS;
 
-        Ds := 0.0;
+        DS := 0.0;
       end;
 end;
 
-end.
+end. 
+ 

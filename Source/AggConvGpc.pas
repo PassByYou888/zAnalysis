@@ -35,7 +35,7 @@
   //                                                                            //
   ////////////////////////////////////////////////////////////////////////////////
 *)
-unit AggConvGPC;
+unit AggConvGpc;
 
 /// /////////////////////////////////////////////////////////////////////////////
 // //
@@ -49,11 +49,11 @@ unit AggConvGPC;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
-  Gpc,
+  gpc,
   AggBasics,
   AggArray,
   AggVertexSource;
@@ -85,21 +85,21 @@ type
     FPolygonA, FPolygonB, FResult: TGpcPolygon;
 
     // Private
-    procedure FreePolygon(P: PGpcPolygon);
+    procedure FreePolygon(p: PGpcPolygon);
     procedure FreeResult;
     procedure FreeGpcData;
     procedure StartContour;
     procedure SetAddVertex(X, Y: Double);
     procedure EndContour(Orientation: Cardinal);
-    procedure MakePolygon(P: PGpcPolygon);
+    procedure MakePolygon(p: PGpcPolygon);
     procedure StartExtracting;
 
     function NextContour: Boolean;
     function NextVertex(X, Y: PDouble): Boolean;
 
-    procedure Add(Src: TAggVertexSource; P: PGpcPolygon);
+    procedure Add(Src: TAggVertexSource; p: PGpcPolygon);
   public
-    constructor Create(A, B: TAggVertexSource; Op: TAggGpcOp = goOr);
+    constructor Create(A, b: TAggVertexSource; Op: TAggGpcOp = goOr);
     destructor Destroy; override;
 
     // Vertex Source Interface
@@ -116,13 +116,13 @@ implementation
 
 { TAggConvGpc }
 
-constructor TAggConvGpc.Create(A, B: TAggVertexSource; Op: TAggGpcOp = goOr);
+constructor TAggConvGpc.Create(A, b: TAggVertexSource; Op: TAggGpcOp = goOr);
 begin
   FVertexAccumulator := TAggPodDeque.Create(SizeOf(TGpcVertex), 8);
   FContourAccumulator := TAggPodDeque.Create(SizeOf(TAggContourHeader), 6);
 
   FSourceA := A;
-  FSourceB := B;
+  FSourceB := b;
 
   FStatus := siMoveTo;
   FVertex := -1;
@@ -156,19 +156,19 @@ begin
 
   case FOperation of
     goOr:
-      GpcPolygonClip(Gpc.goUnion, @FPolygonA, @FPolygonB, @FResult);
+      GpcPolygonClip(gpc.goUnion, @FPolygonA, @FPolygonB, @FResult);
 
     goAnd:
-      GpcPolygonClip(Gpc.goInt, @FPolygonA, @FPolygonB, @FResult);
+      GpcPolygonClip(gpc.goInt, @FPolygonA, @FPolygonB, @FResult);
 
     goXor:
-      GpcPolygonClip(Gpc.goXor, @FPolygonA, @FPolygonB, @FResult);
+      GpcPolygonClip(gpc.goXor, @FPolygonA, @FPolygonB, @FResult);
 
     goAMinusB:
-      GpcPolygonClip(Gpc.goDiff, @FPolygonA, @FPolygonB, @FResult);
+      GpcPolygonClip(gpc.goDiff, @FPolygonA, @FPolygonB, @FResult);
 
     goBMinusA:
-      GpcPolygonClip(Gpc.goDiff, @FPolygonB, @FPolygonA, @FResult);
+      GpcPolygonClip(gpc.goDiff, @FPolygonB, @FPolygonA, @FResult);
   end;
 
   StartExtracting;
@@ -214,24 +214,24 @@ begin
   Result := CAggPathCmdStop;
 end;
 
-procedure TAggConvGpc.FreePolygon(P: PGpcPolygon);
+procedure TAggConvGpc.FreePolygon(p: PGpcPolygon);
 var
-  I: Integer;
+  i: Integer;
 begin
-  I := 0;
+  i := 0;
 
-  while I < P.NumContours do
+  while i < p.NumContours do
     begin
-      AggFreeMem(Pointer(P.Contour[I].Vertex), P.Contour[I].NumVertices *
+      AggFreeMem(Pointer(p.Contour[i].Vertex), p.Contour[i].NumVertices *
         SizeOf(TGpcVertex));
 
-      Inc(I);
+      Inc(i);
     end;
 
   // AggFreeMem(pointer(p.hole ) ,? );
-  AggFreeMem(Pointer(P.Contour), P.NumContours * SizeOf(TGpcVertexList));
+  AggFreeMem(Pointer(p.Contour), p.NumContours * SizeOf(TGpcVertexList));
 
-  FillChar(P^, SizeOf(TGpcPolygon), 0);
+  FillChar(p^, SizeOf(TGpcPolygon), 0);
 end;
 
 procedure TAggConvGpc.FreeResult;
@@ -251,52 +251,52 @@ end;
 
 procedure TAggConvGpc.StartContour;
 var
-  H: TAggContourHeader;
+  h: TAggContourHeader;
 begin
-  FillChar(H, SizeOf(H), 0);
-  FContourAccumulator.Add(@H);
+  FillChar(h, SizeOf(h), 0);
+  FContourAccumulator.Add(@h);
   FVertexAccumulator.RemoveAll;
 end;
 
 procedure TAggConvGpc.SetAddVertex(X, Y: Double);
 var
-  V: TGpcVertex;
+  v: TGpcVertex;
 begin
-  V.X := X;
-  V.Y := Y;
+  v.X := X;
+  v.Y := Y;
 
-  FVertexAccumulator.Add(@V);
+  FVertexAccumulator.Add(@v);
 end;
 
 procedure TAggConvGpc.EndContour(Orientation: Cardinal);
 var
-  H: PAggContourHeader;
-  D, S: PAggGpcVertex;
-  I: Integer;
+  h: PAggContourHeader;
+  d, s: PAggGpcVertex;
+  i: Integer;
 begin
   if FContourAccumulator.Size <> 0 then
     if FVertexAccumulator.Size > 2 then
       begin
-        H := FContourAccumulator[FContourAccumulator.Size - 1];
+        h := FContourAccumulator[FContourAccumulator.Size - 1];
 
-        H.NumVertices := FVertexAccumulator.Size;
-        H.HoleFlag := 0;
+        h.NumVertices := FVertexAccumulator.Size;
+        h.HoleFlag := 0;
 
         // TO DO: Clarify the "holes"
         // if IsClockwise(orientation ) then h.HoleFlag:=1;
 
-        AggGetMem(Pointer(H.Vertices), H.NumVertices * SizeOf(TGpcVertex));
+        AggGetMem(Pointer(h.Vertices), h.NumVertices * SizeOf(TGpcVertex));
 
-        D := H.Vertices;
+        d := h.Vertices;
 
-        for I := 0 to H.NumVertices - 1 do
+        for i := 0 to h.NumVertices - 1 do
           begin
-            S := FVertexAccumulator[I];
+            s := FVertexAccumulator[i];
 
-            D.X := S.X;
-            D.Y := S.Y;
+            d.X := s.X;
+            d.Y := s.Y;
 
-            Inc(PtrComp(D), SizeOf(TGpcVertex));
+            Inc(PtrComp(d), SizeOf(TGpcVertex));
           end;
 
       end
@@ -304,40 +304,40 @@ begin
         FVertexAccumulator.RemoveLast;
 end;
 
-procedure TAggConvGpc.MakePolygon(P: PGpcPolygon);
+procedure TAggConvGpc.MakePolygon(p: PGpcPolygon);
 var
-  I: Integer;
-  H: PAggContourHeader;
+  i: Integer;
+  h: PAggContourHeader;
 
   // ph : PInteger;
-  Pv: PGpcVertexList;
+  PV: PGpcVertexList;
 begin
-  FreePolygon(P);
+  FreePolygon(p);
 
   if FContourAccumulator.Size <> 0 then
     begin
-      P.NumContours := FContourAccumulator.Size;
+      p.NumContours := FContourAccumulator.Size;
 
       // TO DO: Clarify the "holes"
       // p.hole = new goInt[p.NumContours];
 
-      P.Hole := nil;
+      p.Hole := nil;
 
-      AggGetMem(Pointer(P.Contour), P.NumContours * SizeOf(TGpcVertexList));
+      AggGetMem(Pointer(p.Contour), p.NumContours * SizeOf(TGpcVertexList));
 
       // ph:=p.hole;
-      Pv := PGpcVertexList(P.Contour);
+      PV := PGpcVertexList(p.Contour);
 
-      if P.NumContours > 0 then
-        for I := 0 to P.NumContours - 1 do
+      if p.NumContours > 0 then
+        for i := 0 to p.NumContours - 1 do
           begin
-            H := FContourAccumulator[I];
+            h := FContourAccumulator[i];
 
             // *ph++ = h.HoleFlag;
-            Pv.NumVertices := H.NumVertices;
-            Pv.Vertex := PGpcVertexArray(H.Vertices);
+            PV.NumVertices := h.NumVertices;
+            PV.Vertex := PGpcVertexArray(h.Vertices);
 
-            Inc(PtrComp(Pv), SizeOf(TGpcVertexList));
+            Inc(PtrComp(PV), SizeOf(TGpcVertexList));
           end;
     end;
 end;
@@ -367,7 +367,7 @@ end;
 function TAggConvGpc.NextVertex(X, Y: PDouble): Boolean;
 var
   Vlist: PGpcVertexList;
-  V: PAggGpcVertex;
+  v: PAggGpcVertex;
 begin
   Vlist := @FResult.Contour[FContour];
 
@@ -375,10 +375,10 @@ begin
 
   if FVertex < Vlist.NumVertices then
     begin
-      V := @Vlist.Vertex[FVertex];
+      v := @Vlist.Vertex[FVertex];
 
-      X^ := V.X;
-      Y^ := V.Y;
+      X^ := v.X;
+      Y^ := v.Y;
 
       Result := True;
 
@@ -387,7 +387,7 @@ begin
       Result := False;
 end;
 
-procedure TAggConvGpc.Add(Src: TAggVertexSource; P: PGpcPolygon);
+procedure TAggConvGpc.Add(Src: TAggVertexSource; p: PGpcPolygon);
 var
   Cmd, Orientation: Cardinal;
   X, Y, StartX, StartY: Double;
@@ -441,7 +441,7 @@ begin
   if LineTo then
       EndContour(Orientation);
 
-  MakePolygon(P);
+  MakePolygon(p);
 end;
 
-end.
+end.   

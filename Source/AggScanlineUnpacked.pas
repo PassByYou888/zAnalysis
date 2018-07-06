@@ -39,12 +39,12 @@ unit AggScanlineUnpacked;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
-  AggScanLine,
+  AggScanline,
   AggAlphaMaskUnpacked8;
 
 type
@@ -148,7 +148,7 @@ type
   private
     FMinX: Integer;
     FMaxLength: Cardinal;
-    FLastX, FY: Integer;
+    FLastX, fy: Integer;
 
     FCovers: PInt8u;
     FSpans, FCurrentSpan: PAggSpanUnpacked8;
@@ -261,7 +261,7 @@ end;
 
 procedure TAggScanLineUnpacked8.Finalize(Y: Integer);
 begin
-  FY := Y;
+  fy := Y;
 end;
 
 procedure TAggScanLineUnpacked8.AddCell(X: Integer; Cover: Cardinal);
@@ -327,7 +327,7 @@ end;
 
 function TAggScanLineUnpacked8.GetY: Integer;
 begin
-  Result := FY;
+  Result := fy;
 end;
 
 function TAggScanLineUnpacked8.GetNumSpans: Cardinal;
@@ -378,4 +378,4 @@ begin
     end;
 end;
 
-end.
+end. 

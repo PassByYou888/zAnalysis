@@ -12,7 +12,7 @@
 
 unit h264Pixel;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 {$POINTERMATH ON}
 
 interface
@@ -20,8 +20,8 @@ interface
 uses
   h264Stdint, h264Util, CoreClasses;
 
-procedure pixel_load_4x4(dest, src: uint8_p; stride: int32_t);
-procedure pixel_save_4x4(src, dest: uint8_p; stride: int32_t);
+procedure pixel_load_4x4(dest, Src: uint8_p; stride: int32_t);
+procedure pixel_save_4x4(Src, dest: uint8_p; stride: int32_t);
 procedure pixel_init;
 
 var
@@ -37,43 +37,43 @@ implementation
 
 function sad_16x16_pas(pix1, pix2: uint8_p; stride: int32_t): int32_t;
 var
-  x, y: int32_t;
+  X, Y: int32_t;
 begin
-  result := 0;
-  for y := 0 to 15 do
+  Result := 0;
+  for Y := 0 to 15 do
     begin
-      for x := 0 to 15 do
-          inc(result, abs(pix1[x] - pix2[x]));
-      inc(pix1, 16);
-      inc(pix2, stride);
+      for X := 0 to 15 do
+          Inc(Result, Abs(pix1[X] - pix2[X]));
+      Inc(pix1, 16);
+      Inc(pix2, stride);
     end;
 end;
 
 function sad_8x8_pas(pix1, pix2: uint8_p; stride: int32_t): int32_t;
 var
-  x, y: int32_t;
+  X, Y: int32_t;
 begin
-  result := 0;
-  for y := 0 to 7 do
+  Result := 0;
+  for Y := 0 to 7 do
     begin
-      for x := 0 to 7 do
-          inc(result, abs(pix1[x] - pix2[x]));
-      inc(pix1, 16);
-      inc(pix2, stride);
+      for X := 0 to 7 do
+          Inc(Result, Abs(pix1[X] - pix2[X]));
+      Inc(pix1, 16);
+      Inc(pix2, stride);
     end;
 end;
 
 function sad_4x4_pas(pix1, pix2: uint8_p; stride: int32_t): int32_t;
 var
-  x, y: int32_t;
+  X, Y: int32_t;
 begin
-  result := 0;
-  for y := 0 to 3 do
+  Result := 0;
+  for Y := 0 to 3 do
     begin
-      for x := 0 to 3 do
-          inc(result, abs(pix1[x] - pix2[x]));
-      inc(pix1, 16);
-      inc(pix2, stride);
+      for X := 0 to 3 do
+          Inc(Result, Abs(pix1[X] - pix2[X]));
+      Inc(pix1, 16);
+      Inc(pix2, stride);
     end;
 end;
 
@@ -82,53 +82,53 @@ end;
 *)
 function ssd_16x16_pas(pix1, pix2: uint8_p; stride: int32_t): int32_t;
 var
-  x, y: int32_t;
+  X, Y: int32_t;
 begin
-  result := 0;
-  for y := 0 to 15 do
+  Result := 0;
+  for Y := 0 to 15 do
     begin
-      for x := 0 to 15 do
-          inc(result, (pix1[x] - pix2[x]) * (pix1[x] - pix2[x]));
-      inc(pix1, 16);
-      inc(pix2, stride);
+      for X := 0 to 15 do
+          Inc(Result, (pix1[X] - pix2[X]) * (pix1[X] - pix2[X]));
+      Inc(pix1, 16);
+      Inc(pix2, stride);
     end;
 end;
 
 function ssd_8x8_pas(pix1, pix2: uint8_p; stride: int32_t): int32_t;
 var
-  x, y: int32_t;
+  X, Y: int32_t;
 begin
-  result := 0;
-  for y := 0 to 7 do
+  Result := 0;
+  for Y := 0 to 7 do
     begin
-      for x := 0 to 7 do
-          inc(result, (pix1[x] - pix2[x]) * (pix1[x] - pix2[x]));
-      inc(pix1, 16);
-      inc(pix2, stride);
+      for X := 0 to 7 do
+          Inc(Result, (pix1[X] - pix2[X]) * (pix1[X] - pix2[X]));
+      Inc(pix1, 16);
+      Inc(pix2, stride);
     end;
 end;
 
 (* ******************************************************************************
   variance 16x16
 *)
-function var_16x16_pas(pix: uint8_p): uint32;
+function var_16x16_pas(pix: uint8_p): UInt32;
 var
-  x, y: int32_t;
+  X, Y: int32_t;
   s: uint16_t;  // sum
-  ss: uint32_t; // sum squared
+  SS: uint32_t; // sum squared
 begin
   s := 0;
-  ss := 0;
-  for y := 0 to 15 do
+  SS := 0;
+  for Y := 0 to 15 do
     begin
-      for x := 0 to 15 do
+      for X := 0 to 15 do
         begin
-          inc(s, pix[x]);
-          inc(ss, pix[x] * pix[x]);
+          Inc(s, pix[X]);
+          Inc(SS, pix[X] * pix[X]);
         end;
-      inc(pix, 16);
+      Inc(pix, 16);
     end;
-  result := ss - (s * s div 256);
+  Result := SS - (s * s div 256);
 end;
 
 (* ******************************************************************************
@@ -138,62 +138,62 @@ function satd_4x4_pas(pix1, pix2: uint8_p; stride: int32_t): int32_t;
 type
   matrix_t = array [0 .. 3, 0 .. 3] of int16_t;
 var
-  a, t: matrix_t;
-  e, f, g, h: array [0 .. 3] of int16_t;
-  i, j: int32_t;
+  A, T: matrix_t;
+  E, F, g, h: array [0 .. 3] of int16_t;
+  i, J: int32_t;
 begin
   for i := 0 to 3 do
     begin
-      for j := 0 to 3 do
-          a[i][j] := pix1[j] - pix2[j];
-      inc(pix1, 16);
-      inc(pix2, stride);
+      for J := 0 to 3 do
+          A[i][J] := pix1[J] - pix2[J];
+      Inc(pix1, 16);
+      Inc(pix2, stride);
     end;
 
   for i := 0 to 3 do
     begin
-      e[i] := a[0][i] + a[2][i];
-      f[i] := a[0][i] - a[2][i];
-      g[i] := a[1][i] + a[3][i];
-      h[i] := a[1][i] - a[3][i];
+      E[i] := A[0][i] + A[2][i];
+      F[i] := A[0][i] - A[2][i];
+      g[i] := A[1][i] + A[3][i];
+      h[i] := A[1][i] - A[3][i];
 
-      t[i][0] := e[i] + g[i];
-      t[i][1] := e[i] - g[i];
-      t[i][2] := f[i] + h[i];
-      t[i][3] := f[i] - h[i];
+      T[i][0] := E[i] + g[i];
+      T[i][1] := E[i] - g[i];
+      T[i][2] := F[i] + h[i];
+      T[i][3] := F[i] - h[i];
     end;
 
   for i := 0 to 3 do
     begin
-      e[i] := t[0][i] + t[2][i];
-      f[i] := t[0][i] - t[2][i];
-      g[i] := t[1][i] + t[3][i];
-      h[i] := t[1][i] - t[3][i];
+      E[i] := T[0][i] + T[2][i];
+      F[i] := T[0][i] - T[2][i];
+      g[i] := T[1][i] + T[3][i];
+      h[i] := T[1][i] - T[3][i];
     end;
   for i := 0 to 3 do
     begin
-      t[i][0] := e[i] + g[i];
-      t[i][1] := e[i] - g[i];
-      t[i][2] := f[i] + h[i];
-      t[i][3] := f[i] - h[i];
+      T[i][0] := E[i] + g[i];
+      T[i][1] := E[i] - g[i];
+      T[i][2] := F[i] + h[i];
+      T[i][3] := F[i] - h[i];
     end;
 
-  result := 0;
+  Result := 0;
   for i := 0 to 15 do
-      inc(result, abs(int16_p(@t)[i]));
+      Inc(Result, Abs(int16_p(@T)[i]));
 end;
 
 function satd_8x8_pas(pix1, pix2: uint8_p; stride: int32_t): int32_t;
 var
   i: int32_t;
 begin
-  result := 0;
+  Result := 0;
   for i := 0 to 1 do
     begin
-      inc(result, satd_4x4_pas(pix1, pix2, stride));
-      inc(result, satd_4x4_pas(pix1 + 4, pix2 + 4, stride));
-      inc(pix1, 4 * 16);
-      inc(pix2, 4 * stride);
+      Inc(Result, satd_4x4_pas(pix1, pix2, stride));
+      Inc(Result, satd_4x4_pas(pix1 + 4, pix2 + 4, stride));
+      Inc(pix1, 4 * 16);
+      Inc(pix2, 4 * stride);
     end
 end;
 
@@ -201,15 +201,15 @@ function satd_16x16_pas(pix1, pix2: uint8_p; stride: int32_t): int32_t;
 var
   i: int32_t;
 begin
-  result := 0;
+  Result := 0;
   for i := 0 to 3 do
     begin
-      inc(result, satd_4x4_pas(pix1, pix2, stride));
-      inc(result, satd_4x4_pas(pix1 + 4, pix2 + 4, stride));
-      inc(result, satd_4x4_pas(pix1 + 8, pix2 + 8, stride));
-      inc(result, satd_4x4_pas(pix1 + 12, pix2 + 12, stride));
-      inc(pix1, 4 * 16);
-      inc(pix2, 4 * stride);
+      Inc(Result, satd_4x4_pas(pix1, pix2, stride));
+      Inc(Result, satd_4x4_pas(pix1 + 4, pix2 + 4, stride));
+      Inc(Result, satd_4x4_pas(pix1 + 8, pix2 + 8, stride));
+      Inc(Result, satd_4x4_pas(pix1 + 12, pix2 + 12, stride));
+      Inc(pix1, 4 * 16);
+      Inc(pix2, 4 * stride);
     end
 end;
 
@@ -217,17 +217,17 @@ end;
   pixel_sub_8x8_pas
   subtract two 8x8 blocks, return uint16_t-sized results
 *)
-procedure pixel_sub_4x4_pas(pix1, pix2: uint8_p; diff: int16_p);
+procedure pixel_sub_4x4_pas(pix1, pix2: uint8_p; Diff: int16_p);
 var
-  x, y: int32_t;
+  X, Y: int32_t;
 begin
-  for y := 0 to 3 do
+  for Y := 0 to 3 do
     begin
-      for x := 0 to 3 do
-          diff[x] := pix1[x] - pix2[x];
-      inc(pix1, 16);
-      inc(pix2, 16);
-      inc(diff, 4);
+      for X := 0 to 3 do
+          Diff[X] := pix1[X] - pix2[X];
+      Inc(pix1, 16);
+      Inc(pix2, 16);
+      Inc(Diff, 4);
     end;
 end;
 
@@ -235,28 +235,28 @@ end;
   pixel_add_8x8_pas
   addition of two 8x8 blocks, return clipped uint8_t-sized results
 *)
-procedure pixel_add_4x4_pas(pix1, pix2: uint8_p; diff: int16_p);
+procedure pixel_add_4x4_pas(pix1, pix2: uint8_p; Diff: int16_p);
 
-  function clip(c: int32_t): uint8_t; inline;
+  function Clip(C: int32_t): uint8_t; inline;
   begin
-    result := uint8_t(c);
-    if c > 255 then
-        result := 255
+    Result := uint8_t(C);
+    if C > 255 then
+        Result := 255
     else
-      if c < 0 then
-        result := 0;
+      if C < 0 then
+        Result := 0;
   end;
 
 var
-  y, x: int32_t;
+  Y, X: int32_t;
 begin
-  for y := 0 to 3 do
+  for Y := 0 to 3 do
     begin
-      for x := 0 to 3 do
-          pix1[x] := clip(diff[x] + pix2[x]);
-      inc(pix1, 16);
-      inc(pix2, 16);
-      inc(diff, 4);
+      for X := 0 to 3 do
+          pix1[X] := Clip(Diff[X] + pix2[X]);
+      Inc(pix1, 16);
+      Inc(pix2, 16);
+      Inc(Diff, 4);
     end;
 end;
 
@@ -264,39 +264,39 @@ end;
   pixel_load_16x16
   load 16x16 pixel block from frame
 *)
-procedure pixel_load_16x16_pas(dest, src: uint8_p; stride: int32_t);
+procedure pixel_load_16x16_pas(dest, Src: uint8_p; stride: int32_t);
 var
   i: int32_t;
 begin
   for i := 0 to 15 do
     begin
-      CopyPtr(src, dest, 16);
-      inc(src, stride);
-      inc(dest, 16);
+      CopyPtr(Src, dest, 16);
+      Inc(Src, stride);
+      Inc(dest, 16);
     end;
 end;
 
-procedure pixel_load_8x8_pas(dest, src: uint8_p; stride: int32_t);
+procedure pixel_load_8x8_pas(dest, Src: uint8_p; stride: int32_t);
 var
   i: int32_t;
 begin
   for i := 0 to 7 do
     begin
-      uint64_p(dest)^ := uint64_p(src)^;
-      inc(src, stride);
-      inc(dest, 16);
+      uint64_p(dest)^ := uint64_p(Src)^;
+      Inc(Src, stride);
+      Inc(dest, 16);
     end;
 end;
 
-procedure pixel_load_4x4(dest, src: uint8_p; stride: int32_t);
+procedure pixel_load_4x4(dest, Src: uint8_p; stride: int32_t);
 var
   i: int32_t;
 begin
   for i := 0 to 3 do
     begin
-      uint32_p(dest)^ := uint32_p(src)^;
-      inc(src, stride);
-      inc(dest, 16);
+      uint32_p(dest)^ := uint32_p(Src)^;
+      Inc(Src, stride);
+      Inc(dest, 16);
     end;
 end;
 
@@ -304,39 +304,39 @@ end;
   pixel_save_16x16
   save 16x16 pixel block to frame
 *)
-procedure pixel_save_16x16_pas(src, dest: uint8_p; stride: int32_t);
+procedure pixel_save_16x16_pas(Src, dest: uint8_p; stride: int32_t);
 var
   i: int32_t;
 begin
   for i := 0 to 15 do
     begin
-      CopyPtr(src, dest, 16);
-      inc(dest, stride);
-      inc(src, 16);
+      CopyPtr(Src, dest, 16);
+      Inc(dest, stride);
+      Inc(Src, 16);
     end;
 end;
 
-procedure pixel_save_8x8_pas(src, dest: uint8_p; stride: int32_t);
+procedure pixel_save_8x8_pas(Src, dest: uint8_p; stride: int32_t);
 var
   i: int32_t;
 begin
   for i := 0 to 7 do
     begin
-      uint64_p(dest)^ := uint64_p(src)^;
-      inc(dest, stride);
-      inc(src, 16);
+      uint64_p(dest)^ := uint64_p(Src)^;
+      Inc(dest, stride);
+      Inc(Src, 16);
     end;
 end;
 
-procedure pixel_save_4x4(src, dest: uint8_p; stride: int32_t);
+procedure pixel_save_4x4(Src, dest: uint8_p; stride: int32_t);
 var
   i: int32_t;
 begin
   for i := 0 to 3 do
     begin
-      uint32_p(dest)^ := uint32_p(src)^;
-      inc(dest, stride);
-      inc(src, 16);
+      uint32_p(dest)^ := uint32_p(Src)^;
+      Inc(dest, stride);
+      Inc(Src, 16);
     end;
 end;
 
@@ -346,15 +346,15 @@ end;
 *)
 procedure pixel_avg_16x16_pas(src1, src2, dest: uint8_p; stride: int32_t);
 var
-  x, y: int32_t;
+  X, Y: int32_t;
 begin
-  for y := 0 to 15 do
+  for Y := 0 to 15 do
     begin
-      for x := 0 to 15 do
-          dest[x] := (src1[x] + src2[x] + 1) shr 1;
-      inc(src1, stride);
-      inc(src2, stride);
-      inc(dest, 16);
+      for X := 0 to 15 do
+          dest[X] := (src1[X] + src2[X] + 1) shr 1;
+      Inc(src1, stride);
+      Inc(src2, stride);
+      Inc(dest, 16);
     end;
 end;
 
@@ -382,4 +382,4 @@ begin
   pixel_avg_16x16 := @pixel_avg_16x16_pas;
 end;
 
-end.
+end.  

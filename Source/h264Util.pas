@@ -12,32 +12,32 @@
 
 unit h264Util;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 {$POINTERMATH ON}
 
 interface
 
 uses
-  h264Stdint, math, CoreClasses;
+  h264Stdint, Math, CoreClasses;
 
-function fev_malloc(size: uint32_t): pointer; inline;
-procedure fev_free(ptr: pointer); inline;
+function fev_malloc(Size: uint32_t): Pointer; inline;
+procedure fev_free(PTR: Pointer); inline;
 
-function min(const a, b: int32_t): int32_t; inline;
-function max(const a, b: int32_t): int32_t; inline;
-function clip3(const a, b, c: int32_t): int32_t; inline; // lower bound, value, upper bound
-function median(const x, y, z: int32_t): int16_t; inline;
+function Min(const A, b: int32_t): int32_t; inline;
+function Max(const A, b: int32_t): int32_t; inline;
+function clip3(const A, b, C: int32_t): int32_t; inline; // lower bound, value, upper bound
+function Median(const X, Y, Z: int32_t): int16_t; inline;
 function num2log2(n: int32_t): uint8_t; inline;
-procedure swap_ptr(var a, b: pointer); overload; inline;
-procedure swap_ptr(var a, b: uint8_p); overload; inline;
+procedure swap_ptr(var A, b: Pointer); overload; inline;
+procedure swap_ptr(var A, b: uint8_p); overload; inline;
 
 type
   mbcmp_func_t     = function(pix1, pix2: uint8_p; stride: int32_t): int32_t;
-  mbstat_func_t    = function(pix: uint8_p): uint32;
+  mbstat_func_t    = function(pix: uint8_p): UInt32;
   pixmove_func_t   = procedure(pix1, pix2: uint8_p; stride: int32_t);
-  pixoper_func_t   = procedure(pix1, pix2: uint8_p; diff: int16_p);
+  pixoper_func_t   = procedure(pix1, pix2: uint8_p; Diff: int16_p);
   pixavg_func_t    = procedure(src1, src2, dest: uint8_p; stride: int32_t);
-  mc_chroma_func_t = procedure(src, dst: uint8_p; const stride: int32_t; coef: uint8_p);
+  mc_chroma_func_t = procedure(Src, Dst: uint8_p; const stride: int32_t; coef: uint8_p);
 
   { TDsp }
   TDSP = class(TCoreClassObject)
@@ -64,80 +64,80 @@ uses
   evx_malloc, evx_mfree
   memory allocation with address aligned to 16-uint8_t boundaries
   ****************************************************************************** *)
-function fev_malloc(size: uint32_t): pointer;
+function fev_malloc(Size: uint32_t): Pointer;
 const
-  ALIGNMENT = 64;
+  alignment = 64;
 var
-  ptr: pointer;
+  PTR: Pointer;
 begin
-  ptr := getMemory(size + ALIGNMENT);
-  result := MemoryAlign(ptr, ALIGNMENT);
-  if result = ptr then
-      inc(uint8_p(result), ALIGNMENT);
-  (uint8_p(result) - 1)^ := NativeUInt(result) - NativeUInt(ptr);
+  PTR := GetMemory(Size + alignment);
+  Result := MemoryAlign(PTR, alignment);
+  if Result = PTR then
+      Inc(uint8_p(Result), alignment);
+  (uint8_p(Result) - 1)^ := nativeUInt(Result) - nativeUInt(PTR);
 end;
 
-procedure fev_free(ptr: pointer);
+procedure fev_free(PTR: Pointer);
 begin
-  if ptr = nil then
-      exit;
-  dec(uint8_p(ptr), uint8_p(NativeUInt(ptr) - 1)^);
-  freemem(ptr);
-  ptr := nil;
+  if PTR = nil then
+      Exit;
+  Dec(uint8_p(PTR), uint8_p(nativeUInt(PTR) - 1)^);
+  FreeMem(PTR);
+  PTR := nil;
 end;
 
-function min(const a, b: int32_t): int32_t;
+function Min(const A, b: int32_t): int32_t;
 begin
-  if a < b then
-      result := a
+  if A < b then
+      Result := A
   else
-      result := b;
+      Result := b;
 end;
 
-function max(const a, b: int32_t): int32_t;
+function Max(const A, b: int32_t): int32_t;
 begin
-  if a >= b then
-      result := a
+  if A >= b then
+      Result := A
   else
-      result := b;
+      Result := b;
 end;
 
-function clip3(const a, b, c: int32_t): int32_t;
+function clip3(const A, b, C: int32_t): int32_t;
 begin
-  if b < a then
-      result := a
-  else if b > c then
-      result := c
+  if b < A then
+      Result := A
+  else if b > C then
+      Result := C
   else
-      result := b;
+      Result := b;
 end;
 
-function median(const x, y, z: int32_t): int16_t;
+function Median(const X, Y, Z: int32_t): int16_t;
 begin
-  result := x + y + z - min(x, min(y, z)) - max(x, max(y, z));
+  Result := X + Y + Z - Min(X, Min(Y, Z)) - Max(X, Max(Y, Z));
 end;
 
 function num2log2(n: int32_t): uint8_t;
 begin
-  result := ceil(log2(n));
+  Result := Ceil(Log2(n));
 end;
 
-procedure swap_ptr(var a, b: pointer);
+procedure swap_ptr(var A, b: Pointer);
 var
-  t: pointer;
+  T: Pointer;
 begin
-  t := a;
-  a := b;
-  b := t;
+  T := A;
+  A := b;
+  b := T;
 end;
 
-procedure swap_ptr(var a, b: uint8_p);
+procedure swap_ptr(var A, b: uint8_p);
 var
-  t: uint8_p;
+  T: uint8_p;
 begin
-  t := a;
-  a := b;
-  b := t;
+  T := A;
+  A := b;
+  b := T;
 end;
 
 { TDsp }
@@ -169,4 +169,4 @@ begin
   mc_chroma_8x8 := h264Motion_comp.mc_chroma_8x8;
 end;
 
-end.
+end.   

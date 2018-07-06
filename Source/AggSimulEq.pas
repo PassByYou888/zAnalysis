@@ -39,76 +39,76 @@ unit AggSimulEq;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics;
 
-procedure SwapArrays(A1, A2: PDouble; N: Cardinal);
+procedure SwapArrays(a1, a2: PDouble; n: Cardinal);
 function MatrixPivot(M: PDouble; Row, Rows, Cols: Cardinal): Integer;
 function SimulEqSolve(Left, Right, EqResult: PDouble; Size, RightCols: Cardinal): Boolean;
 
 implementation
 
-procedure SwapArrays(A1, A2: PDouble; N: Cardinal);
+procedure SwapArrays(a1, a2: PDouble; n: Cardinal);
 var
-  I: Cardinal;
-  Tmp: Double;
+  i: Cardinal;
+  tmp: Double;
 begin
-  I := 0;
+  i := 0;
 
-  while I < N do
+  while i < n do
     begin
-      Tmp := A1^;
-      A1^ := A2^;
-      A2^ := Tmp;
+      tmp := a1^;
+      a1^ := a2^;
+      a2^ := tmp;
 
-      Inc(PtrComp(A1), SizeOf(Double));
-      Inc(PtrComp(A2), SizeOf(Double));
-      Inc(I);
+      Inc(PtrComp(a1), SizeOf(Double));
+      Inc(PtrComp(a2), SizeOf(Double));
+      Inc(i);
     end;
 end;
 
 function MatrixPivot(M: PDouble; Row, Rows, Cols: Cardinal): Integer;
 var
-  I: Cardinal;
-  K: Integer;
-  MaxVal, Tmp: Double;
+  i: Cardinal;
+  k: Integer;
+  MaxVal, tmp: Double;
 begin
-  K := Row;
+  k := Row;
 
   MaxVal := -1.0;
 
-  I := Row;
+  i := Row;
 
-  while I < Rows do
+  while i < Rows do
     begin
-      Tmp := Abs(PDouble(PtrComp(M) + (I * Cols + Row) * SizeOf(Double))^);
+      tmp := Abs(PDouble(PtrComp(M) + (i * Cols + Row) * SizeOf(Double))^);
 
-      if (Tmp > MaxVal) and (Tmp <> 0.0) then
+      if (tmp > MaxVal) and (tmp <> 0.0) then
         begin
-          MaxVal := Tmp;
+          MaxVal := tmp;
 
-          K := I;
+          k := i;
         end;
 
-      Inc(I);
+      Inc(i);
     end;
 
-  if PDouble(PtrComp(M) + (K * Cols + Row) * SizeOf(Double))^ = 0.0 then
+  if PDouble(PtrComp(M) + (k * Cols + Row) * SizeOf(Double))^ = 0.0 then
     begin
       Result := -1;
 
       Exit;
     end;
 
-  if K <> Row then
+  if k <> Row then
     begin
-      SwapArrays(PDouble(PtrComp(M) + K * Cols * SizeOf(Double)),
+      SwapArrays(PDouble(PtrComp(M) + k * Cols * SizeOf(Double)),
         PDouble(PtrComp(M) + Row * Cols * SizeOf(Double)), Cols);
 
-      Result := K;
+      Result := k;
 
       Exit;
     end;
@@ -121,82 +121,82 @@ function SimulEqSolve(Left, Right, EqResult: PDouble; Size,
 var
   M: Integer;
 
-  I, J, K, Adx: Cardinal;
+  i, J, k, Adx: Cardinal;
 
-  A1: Double;
-  Tmp: PDouble;
+  a1: Double;
+  tmp: PDouble;
 begin
   Result := False;
 
   // Alloc
   Adx := Size + RightCols;
 
-  AggGetMem(Pointer(Tmp), Size * Adx * SizeOf(Double));
+  AggGetMem(Pointer(tmp), Size * Adx * SizeOf(Double));
   try
-    for I := 0 to Size - 1 do
+    for i := 0 to Size - 1 do
       begin
         for J := 0 to Size - 1 do
-            PDouble(PtrComp(Tmp) + (I * Adx + J) * SizeOf(Double))^ :=
-            PDouble(PtrComp(Left) + (I * Size + J) * SizeOf(Double))^;
+            PDouble(PtrComp(tmp) + (i * Adx + J) * SizeOf(Double))^ :=
+            PDouble(PtrComp(Left) + (i * Size + J) * SizeOf(Double))^;
 
         for J := 0 to RightCols - 1 do
-            PDouble(PtrComp(Tmp) + (I * Adx + Size + J) * SizeOf(Double))^ :=
-            PDouble(PtrComp(Right) + (I * RightCols + J) * SizeOf(Double))^;
+            PDouble(PtrComp(tmp) + (i * Adx + Size + J) * SizeOf(Double))^ :=
+            PDouble(PtrComp(Right) + (i * RightCols + J) * SizeOf(Double))^;
       end;
 
-    for K := 0 to Size - 1 do
+    for k := 0 to Size - 1 do
       begin
-        if MatrixPivot(Tmp, K, Size, Size + RightCols) < 0 then
+        if MatrixPivot(tmp, k, Size, Size + RightCols) < 0 then
             Exit;
 
-        A1 := PDouble(PtrComp(Tmp) + (K * Adx + K) * SizeOf(Double))^;
-        J := K;
+        a1 := PDouble(PtrComp(tmp) + (k * Adx + k) * SizeOf(Double))^;
+        J := k;
 
         while J < Size + RightCols do
           begin
-            PDouble(PtrComp(Tmp) + (K * Adx + J) * SizeOf(Double))^ :=
-              PDouble(PtrComp(Tmp) + (K * Adx + J) * SizeOf(Double))^ / A1;
+            PDouble(PtrComp(tmp) + (k * Adx + J) * SizeOf(Double))^ :=
+              PDouble(PtrComp(tmp) + (k * Adx + J) * SizeOf(Double))^ / a1;
 
             Inc(J);
           end;
 
-        I := K + 1;
+        i := k + 1;
 
-        while I < Size do
+        while i < Size do
           begin
-            A1 := PDouble(PtrComp(Tmp) + (I * Adx + K) * SizeOf(Double))^;
-            J := K;
+            a1 := PDouble(PtrComp(tmp) + (i * Adx + k) * SizeOf(Double))^;
+            J := k;
 
             while J < Size + RightCols do
               begin
-                PDouble(PtrComp(Tmp) + (I * Adx + J) * SizeOf(Double))^ :=
-                  PDouble(PtrComp(Tmp) + (I * Adx + J) * SizeOf(Double))^ - A1 *
-                  PDouble(PtrComp(Tmp) + (K * Adx + J) * SizeOf(Double))^;
+                PDouble(PtrComp(tmp) + (i * Adx + J) * SizeOf(Double))^ :=
+                  PDouble(PtrComp(tmp) + (i * Adx + J) * SizeOf(Double))^ - a1 *
+                  PDouble(PtrComp(tmp) + (k * Adx + J) * SizeOf(Double))^;
 
                 Inc(J);
               end;
 
-            Inc(I);
+            Inc(i);
           end;
       end;
 
-    for K := 0 to RightCols - 1 do
+    for k := 0 to RightCols - 1 do
       begin
         M := Integer(Size - 1);
 
         while M >= 0 do
           begin
-            PDouble(PtrComp(EqResult) + (M * RightCols + K) * SizeOf(Double))^ :=
-              PDouble(PtrComp(Tmp) + (M * Adx + Size + K) * SizeOf(Double))^;
+            PDouble(PtrComp(EqResult) + (M * RightCols + k) * SizeOf(Double))^ :=
+              PDouble(PtrComp(tmp) + (M * Adx + Size + k) * SizeOf(Double))^;
 
             J := M + 1;
 
             while J < Size do
               begin
-                PDouble(PtrComp(EqResult) + (M * RightCols + K) * SizeOf(Double))^ :=
-                  PDouble(PtrComp(EqResult) + (M * RightCols + K) * SizeOf(Double))^ -
-                  (PDouble(PtrComp(Tmp) + (M * Adx + J) * SizeOf(Double))^ *
-                  PDouble(PtrComp(EqResult) + (J * RightCols + K) * SizeOf(Double))^);
+                PDouble(PtrComp(EqResult) + (M * RightCols + k) * SizeOf(Double))^ :=
+                  PDouble(PtrComp(EqResult) + (M * RightCols + k) * SizeOf(Double))^ -
+                  (PDouble(PtrComp(tmp) + (M * Adx + J) * SizeOf(Double))^ *
+                  PDouble(PtrComp(EqResult) + (J * RightCols + k) * SizeOf(Double))^);
 
                 Inc(J);
               end;
@@ -207,8 +207,8 @@ begin
 
     Result := True;
   finally
-      AggFreeMem(Pointer(Tmp), Size * Adx * SizeOf(Double));
+      AggFreeMem(Pointer(tmp), Size * Adx * SizeOf(Double));
   end;
 end;
 
-end.
+end. 

@@ -2,42 +2,42 @@
 // AggPas 2.4 RM3 pixel format definition file
 //
 
-procedure BlendPixGrayPre(P: PInt8u; Cv, Alpha, Cover: Cardinal); overload;
+procedure BlendPixGrayPre(p: PInt8u; cv, alpha, Cover: Cardinal); overload;
 begin
-  Alpha := CAggBaseMask - Alpha;
+  alpha := CAggBaseMask - alpha;
   Cover := (Cover + 1) shl (CAggBaseShift - 8);
 
-  P^ := Int8u((P^ * Alpha + Cv * Cover) shr CAggBaseShift);
+  p^ := Int8u((p^ * alpha + cv * Cover) shr CAggBaseShift);
 end;
 
-procedure BlendPixGrayPre(P: PInt8u; Cv, Alpha: Cardinal); overload;
+procedure BlendPixGrayPre(p: PInt8u; cv, alpha: Cardinal); overload;
 begin
-  P^ := Int8u(((P^ * (CAggBaseMask - Alpha)) shr CAggBaseShift) + Cv);
+  p^ := Int8u(((p^ * (CAggBaseMask - alpha)) shr CAggBaseShift) + cv);
 end;
 
-procedure CopyOrBlendPixGrayPre(P: PInt8u; C: PAggColor;
+procedure CopyOrBlendPixGrayPre(p: PInt8u; C: PAggColor;
   Cover: Cardinal); overload;
 var
-  Alpha: Cardinal;
+  alpha: Cardinal;
 begin
   if C.Rgba8.A <> 0 then
   begin
-    Alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
+    alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
 
-    if Alpha = CAggBaseMask then
-      P^ := C.V
+    if alpha = CAggBaseMask then
+      p^ := C.v
     else
-      BlendPixGrayPre(P, C.V, Alpha, Cover);
+      BlendPixGrayPre(p, C.v, alpha, Cover);
   end;
 end;
 
-procedure CopyOrBlendPixPre(P: PInt8u; C: PAggColor); overload;
+procedure CopyOrBlendPixPre(p: PInt8u; C: PAggColor); overload;
 begin
   if C.Rgba8.A <> 0 then
     if C.Rgba8.A = CAggBaseMask then
-      P^ := C.V
+      p^ := C.v
     else
-      BlendPixGrayPre(P, C.V, C.Rgba8.A);
+      BlendPixGrayPre(p, C.v, C.Rgba8.A);
 end;
 
 procedure Gray8PreBlendPixel(This: TAggPixelFormatProcessor; X, Y: Integer;
@@ -50,29 +50,29 @@ end;
 procedure Gray8PreBlendHorizontalLine(This: TAggPixelFormatProcessor; X,
   Y: Integer; Len: Cardinal; C: PAggColor; Cover: Int8u);
 var
-  P: PInt8u;
+  p: PInt8u;
 
-  Alpha: Cardinal;
+  alpha: Cardinal;
 begin
   if C.Rgba8.A <> 0 then
   begin
-    P := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step +
+    p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step +
       This.Offset);
 
-    Alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
+    alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
 
-    if Alpha = CAggBaseMask then
+    if alpha = CAggBaseMask then
       repeat
-        P^ := C.V;
+        p^ := C.v;
 
-        Inc(PtrComp(P), This.Step);
+        Inc(PtrComp(p), This.Step);
         Dec(Len);
       until Len = 0
     else
       repeat
-        BlendPixGrayPre(P, C.V, Alpha, Cover);
+        BlendPixGrayPre(p, C.v, alpha, Cover);
 
-        Inc(PtrComp(P), This.Step);
+        Inc(PtrComp(p), This.Step);
         Dec(Len);
       until Len = 0;
   end;
@@ -81,28 +81,28 @@ end;
 procedure Gray8PreBlendVerticalLine(This: TAggPixelFormatProcessor; X, Y: Integer;
   Len: Cardinal; C: PAggColor; Cover: Int8u);
 var
-  P: PInt8u;
-  Alpha: Cardinal;
+  p: PInt8u;
+  alpha: Cardinal;
 begin
   if C.Rgba8.A <> 0 then
   begin
-    P := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step +
+    p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step +
       This.Offset);
 
-    Alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
+    alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
 
-    if Alpha = CAggBaseMask then
+    if alpha = CAggBaseMask then
       repeat
-        P^ := C.V;
-        P := This.RenderingBuffer.NextRow(P);
+        p^ := C.v;
+        p := This.RenderingBuffer.NextRow(p);
 
         Dec(Len);
       until Len = 0
     else
       repeat
-        BlendPixGrayPre(P, C.V, Alpha, Cover);
+        BlendPixGrayPre(p, C.v, alpha, Cover);
 
-        P := This.RenderingBuffer.NextRow(P);
+        p := This.RenderingBuffer.NextRow(p);
 
         Dec(Len);
       until Len = 0;
@@ -112,23 +112,23 @@ end;
 procedure Gray8PreBlendSolidHSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
   Len: Cardinal; C: PAggColor; Covers: PInt8u);
 var
-  P: PInt8u;
-  Alpha: Cardinal;
+  p: PInt8u;
+  alpha: Cardinal;
 begin
   if C.Rgba8.A <> 0 then
   begin
-    P := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step +
+    p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step +
       This.Offset);
 
     repeat
-      Alpha := (C.Rgba8.A * (Covers^ + 1)) shr 8;
+      alpha := (C.Rgba8.A * (Covers^ + 1)) shr 8;
 
-      if Alpha = CAggBaseMask then
-        P^ := C.V
+      if alpha = CAggBaseMask then
+        p^ := C.v
       else
-        BlendPixGrayPre(P, C.V, Alpha, Covers^);
+        BlendPixGrayPre(p, C.v, alpha, Covers^);
 
-      Inc(PtrComp(P), This.Step);
+      Inc(PtrComp(p), This.Step);
       Inc(PtrComp(Covers));
       Dec(Len);
     until Len = 0;
@@ -138,23 +138,23 @@ end;
 procedure Gray8PreBlendSolidVSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
   Len: Cardinal; C: PAggColor; Covers: PInt8u);
 var
-  P: PInt8u;
-  Alpha: Cardinal;
+  p: PInt8u;
+  alpha: Cardinal;
 begin
   if C.Rgba8.A <> 0 then
   begin
-    P := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step +
+    p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step +
       This.Offset);
 
     repeat
-      Alpha := (C.Rgba8.A * (Covers^ + 1)) shr 8;
+      alpha := (C.Rgba8.A * (Covers^ + 1)) shr 8;
 
-      if Alpha = CAggBaseMask then
-        P^ := C.V
+      if alpha = CAggBaseMask then
+        p^ := C.v
       else
-        BlendPixGrayPre(P, C.V, Alpha, Covers^);
+        BlendPixGrayPre(p, C.v, alpha, Covers^);
 
-      P := This.RenderingBuffer.NextRow(P);
+      p := This.RenderingBuffer.NextRow(p);
 
       Inc(PtrComp(Covers), SizeOf(Int8u));
       Dec(Len);
@@ -163,109 +163,109 @@ begin
 end;
 
 procedure Gray8PreBlendColorHSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; Colors: PAggColor; Covers: PInt8u; Cover: Int8u);
+  Len: Cardinal; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u);
 var
-  P: PInt8u;
+  p: PInt8u;
 begin
-  P := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step +
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step +
     This.Offset);
 
   if Covers <> nil then
     repeat
-      CopyOrBlendPixGrayPre(P, Colors, Covers^);
+      CopyOrBlendPixGrayPre(p, COLORS, Covers^);
 
-      Inc(PtrComp(Colors), SizeOf(TAggColor));
+      Inc(PtrComp(COLORS), SizeOf(TAggColor));
       Inc(PtrComp(Covers), SizeOf(Int8u));
-      Inc(PtrComp(P), This.Step);
+      Inc(PtrComp(p), This.Step);
       Dec(Len);
     until Len = 0
   else if Cover = 255 then
     repeat
-      if Colors.Rgba8.A = CAggBaseMask then
-        P^ := Colors.V
+      if COLORS.Rgba8.A = CAggBaseMask then
+        p^ := COLORS.v
       else
-        CopyOrBlendPixPre(P, Colors);
+        CopyOrBlendPixPre(p, COLORS);
 
-      Inc(PtrComp(Colors), SizeOf(TAggColor));
-      Inc(PtrComp(P), This.Step);
+      Inc(PtrComp(COLORS), SizeOf(TAggColor));
+      Inc(PtrComp(p), This.Step);
       Dec(Len);
 
     until Len = 0
   else
     repeat
-      CopyOrBlendPixGrayPre(P, Colors, Cover);
+      CopyOrBlendPixGrayPre(p, COLORS, Cover);
 
-      Inc(PtrComp(Colors), SizeOf(TAggColor));
-      Inc(PtrComp(P), This.Step);
+      Inc(PtrComp(COLORS), SizeOf(TAggColor));
+      Inc(PtrComp(p), This.Step);
       Dec(Len);
     until Len = 0;
 end;
 
 procedure Gray8PreBlendColorVSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; Colors: PAggColor; Covers: PInt8u; Cover: Int8u);
+  Len: Cardinal; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u);
 var
-  P: PInt8u;
+  p: PInt8u;
 begin
-  P := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step +
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step +
     This.Offset);
 
   if Covers <> nil then
     repeat
-      CopyOrBlendPixGrayPre(P, Colors, Covers^);
+      CopyOrBlendPixGrayPre(p, COLORS, Covers^);
 
-      Inc(PtrComp(Colors), SizeOf(TAggColor));
+      Inc(PtrComp(COLORS), SizeOf(TAggColor));
       Inc(PtrComp(Covers), SizeOf(Int8u));
 
-      P := This.RenderingBuffer.NextRow(P);
+      p := This.RenderingBuffer.NextRow(p);
 
       Dec(Len);
     until Len = 0
   else if Cover = 255 then
     repeat
-      if Colors.Rgba8.A = CAggBaseMask then
-        P^ := Colors.V
+      if COLORS.Rgba8.A = CAggBaseMask then
+        p^ := COLORS.v
       else
-        CopyOrBlendPixPre(P, Colors);
+        CopyOrBlendPixPre(p, COLORS);
 
-      P := This.RenderingBuffer.NextRow(P);
+      p := This.RenderingBuffer.NextRow(p);
 
-      Inc(PtrComp(Colors), SizeOf(TAggColor));
+      Inc(PtrComp(COLORS), SizeOf(TAggColor));
       Dec(Len);
     until Len = 0
   else
     repeat
-      CopyOrBlendPixGrayPre(P, Colors, Cover);
+      CopyOrBlendPixGrayPre(p, COLORS, Cover);
 
-      Inc(PtrComp(Colors), SizeOf(TAggColor));
+      Inc(PtrComp(COLORS), SizeOf(TAggColor));
 
-      P := This.RenderingBuffer.NextRow(P);
+      p := This.RenderingBuffer.NextRow(p);
 
       Dec(Len);
     until Len = 0;
 end;
 
 procedure Gray8PreBlendFromColor(This, From: TAggPixelFormatProcessor;
-  Color: PAggColor; Xdst, Ydst, Xsrc, Ysrc: Integer; Len: Cardinal;
+  COLOR: PAggColor; Xdst, Ydst, Xsrc, Ysrc: Integer; Len: Cardinal;
   Cover: Int8u);
 var
   Ppsz: Cardinal;
 
-  Psrc, Pdst: PInt8u;
+  PSrc, PDst: PInt8u;
 begin
   Ppsz := From.PixWidth;
-  Psrc := From.GetRowPointer(Ysrc);
+  PSrc := From.GetRowPointer(Ysrc);
 
-  if Psrc <> nil then
+  if PSrc <> nil then
   begin
-    Pdst := PInt8u(PtrComp(This.RenderingBuffer.RowXY(Xdst, Ydst, Len)) + Xdst
+    PDst := PInt8u(PtrComp(This.RenderingBuffer.RowXY(Xdst, Ydst, Len)) + Xdst
       * This.Step + This.Offset);
 
     repeat
-      CopyOrBlendPixGrayPre(Pdst, Color, ShrInt32(Psrc^ * Cover + CAggBaseMask,
+      CopyOrBlendPixGrayPre(PDst, COLOR, ShrInt32(PSrc^ * Cover + CAggBaseMask,
         CAggBaseShift));
 
-      Inc(PtrComp(Psrc), Ppsz);
-      Inc(PtrComp(Pdst), This.Step);
+      Inc(PtrComp(PSrc), Ppsz);
+      Inc(PtrComp(PDst), This.Step);
       Dec(Len);
     until Len = 0;
   end;
@@ -277,23 +277,24 @@ procedure Gray8PreBlendFromLUT(This, From: TAggPixelFormatProcessor;
 var
   Ppsz: Cardinal;
 
-  Psrc, Pdst: PInt8u;
+  PSrc, PDst: PInt8u;
 begin
   Ppsz := From.PixWidth;
-  Psrc := From.GetRowPointer(Ysrc);
+  PSrc := From.GetRowPointer(Ysrc);
 
-  if Psrc <> nil then
+  if PSrc <> nil then
   begin
-    Pdst := PInt8u(PtrComp(This.RenderingBuffer.RowXY(Xdst, Ydst, Len)) + Xdst
+    PDst := PInt8u(PtrComp(This.RenderingBuffer.RowXY(Xdst, Ydst, Len)) + Xdst
       * This.Step + This.Offset);
 
     repeat
-      CopyOrBlendPixGrayPre(Pdst,
-        PAggColor(PtrComp(ColorLUT) + Psrc^ * SizeOf(TAggColor)), Cover);
+      CopyOrBlendPixGrayPre(PDst,
+        PAggColor(PtrComp(ColorLUT) + PSrc^ * SizeOf(TAggColor)), Cover);
 
-      Inc(PtrComp(Psrc), Ppsz);
-      Inc(PtrComp(Pdst), This.Step);
+      Inc(PtrComp(PSrc), Ppsz);
+      Inc(PtrComp(PDst), This.Step);
       Dec(Len);
     until Len = 0;
   end;
-end;
+end; 
+ 

@@ -39,14 +39,14 @@ unit AggConvAdaptorVpgen;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
   AggVertexSource,
-  AggVpgen,
-  AggVpgenSegmentator;
+  AggVpGen,
+  AggVpGenSegmentator;
 
 type
   TAggConvAdaptorVpgen = class(TAggVertexSource)
@@ -116,7 +116,7 @@ end;
 function TAggConvAdaptorVpgenSegmentator.Vertex(X, Y: PDouble): Cardinal;
 var
   Cmd: Cardinal;
-  Tx, Ty: Double;
+  TX, TY: Double;
 begin
   Cmd := CAggPathCmdStop;
 
@@ -156,7 +156,7 @@ begin
         Continue;
       end;
 
-    Cmd := FSource.Vertex(@Tx, @Ty);
+    Cmd := FSource.Vertex(@TX, @TY);
 
     if IsVertex(Cmd) then
       if IsMoveTo(Cmd) then
@@ -166,22 +166,22 @@ begin
               Vpgen.LineTo(FStart.X, FStart.Y);
 
               FPolyFlags := CAggPathCmdEndPoly or CAggPathFlagsClose;
-              FStart.X := Tx;
-              FStart.Y := Ty;
+              FStart.X := TX;
+              FStart.Y := TY;
               FVertices := -1;
 
               Continue;
             end;
 
-          Vpgen.MoveTo(Tx, Ty);
+          Vpgen.MoveTo(TX, TY);
 
-          FStart.X := Tx;
-          FStart.Y := Ty;
+          FStart.X := TX;
+          FStart.Y := TY;
           FVertices := 1;
         end
       else
         begin
-          Vpgen.LineTo(Tx, Ty);
+          Vpgen.LineTo(TX, TY);
 
           Inc(FVertices);
         end
@@ -220,4 +220,4 @@ begin
   Result := Cmd;
 end;
 
-end.
+end. 

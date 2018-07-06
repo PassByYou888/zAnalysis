@@ -39,7 +39,7 @@ unit AggConvMarker;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -105,7 +105,7 @@ end;
 function TAggConvMarker.Vertex(X, Y: PDouble): Cardinal;
 var
   Cmd: Cardinal;
-  X1, Y1, X2, Y2: Double;
+  x1, y1, x2, y2: Double;
 
 label
   _markers, _polygon, _stop;
@@ -136,8 +136,8 @@ begin
       siMarkers:
       _markers:
         begin
-          if IsStop(FMarkerLocator.Vertex(@X1, @Y1)) or
-            IsStop(FMarkerLocator.Vertex(@X2, @Y2)) then
+          if IsStop(FMarkerLocator.Vertex(@x1, @y1)) or
+            IsStop(FMarkerLocator.Vertex(@x2, @y2)) then
             begin
               FStatus := siInitial;
               Continue;
@@ -146,8 +146,8 @@ begin
           Inc(FNumMarkers);
 
           FMatrix.Assign(FTransform);
-          FMatrix.Rotate(ArcTan2(Y2 - Y1, X2 - X1));
-          FMatrix.Translate(X1, Y1);
+          FMatrix.Rotate(ArcTan2(y2 - y1, x2 - x1));
+          FMatrix.Translate(x1, y1);
 
           FMarkerShapes.Rewind(FMarker - 1);
 
@@ -183,4 +183,4 @@ begin
   Result := Cmd;
 end;
 
-end.
+end. 

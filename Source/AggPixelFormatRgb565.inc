@@ -2,45 +2,45 @@
 // AggPas 2.4 RM3 pixel format definition file
 //
 
-function MakePix565(R, G, B: Cardinal): Int16u;
+function MakePix565(R, g, b: Cardinal): Int16u;
 begin
-  Result := ((R and $F8) shl 8) or ((G and $FC) shl 3) or (B shr 3);
+  Result := ((R and $F8) shl 8) or ((g and $FC) shl 3) or (b shr 3);
 end;
 
-procedure MakeColor565(var Color: TAggColor; P: PInt16u);
+procedure MakeColor565(var COLOR: TAggColor; p: PInt16u);
 begin
-  Color.FromRgbaInteger((P^ shr 8) and $F8, (P^ shr 3) and $FC, (P^ shl 3)
+  COLOR.FromRgbaInteger((p^ shr 8) and $F8, (p^ shr 3) and $FC, (p^ shl 3)
     and $F8);
 end;
 
-procedure BlendPix565(P: PInt16u; Cr, Cg, Cb, Alpha: Integer);
+procedure BlendPix565(p: PInt16u; CR, Cg, CB, alpha: Integer);
 var
-  Rgb: Int16u;
-  R, G, B: Integer;
+  RGB: Int16u;
+  R, g, b: Integer;
 begin
-  Rgb := P^;
+  RGB := p^;
 
-  R := (Rgb shr 8) and $F8;
-  G := (Rgb shr 3) and $FC;
-  B := (Rgb shl 3) and $F8;
+  R := (RGB shr 8) and $F8;
+  g := (RGB shr 3) and $FC;
+  b := (RGB shl 3) and $F8;
 
-  P^ := ((((Cr - R) * Alpha + (R shl 8))) and $F800) or
-    ((((Cg - G) * Alpha + (G shl 8)) shr 5) and $07E0) or
-    (((Cb - B) * Alpha + (B shl 8)) shr 11);
+  p^ := ((((CR - R) * alpha + (R shl 8))) and $F800) or
+    ((((Cg - g) * alpha + (g shl 8)) shr 5) and $07E0) or
+    (((CB - b) * alpha + (b shl 8)) shr 11);
 end;
 
-procedure CopyOrBlendPix565(P: PInt16u; C: PAggColor; Cover: Cardinal);
+procedure CopyOrBlendPix565(p: PInt16u; C: PAggColor; Cover: Cardinal);
 var
-  Alpha: Cardinal;
+  alpha: Cardinal;
 begin
   if C.Rgba8.A <> 0 then
   begin
-    Alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
+    alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
 
-    if Alpha = CAggBaseMask then
-      P^ := MakePix565(C.Rgba8.R, C.Rgba8.G, C.Rgba8.B)
+    if alpha = CAggBaseMask then
+      p^ := MakePix565(C.Rgba8.R, C.Rgba8.g, C.Rgba8.b)
     else
-      BlendPix565(P, C.Rgba8.R, C.Rgba8.G, C.Rgba8.B, Alpha);
+      BlendPix565(p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b, alpha);
   end;
 end;
 
@@ -48,7 +48,7 @@ procedure Rgb565CopyPixel(This: TAggPixelFormatProcessor; X, Y: Integer;
   C: PAggColor);
 begin
   PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u))^ :=
-    MakePix565(C.Rgba8.R, C.Rgba8.G, C.Rgba8.B);
+    MakePix565(C.Rgba8.R, C.Rgba8.g, C.Rgba8.b);
 end;
 
 procedure Rgb565BlendPixel(This: TAggPixelFormatProcessor; X, Y: Integer;
@@ -67,16 +67,16 @@ end;
 procedure Rgb565CopyHorizontalLine(This: TAggPixelFormatProcessor; X,
   Y: Integer; Len: Cardinal; C: PAggColor);
 var
-  P: PInt16u;
-  V: Int16u;
+  p: PInt16u;
+  v: Int16u;
 begin
-  P := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
-  V := MakePix565(C.Rgba8.R, C.Rgba8.G, C.Rgba8.B);
+  p := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
+  v := MakePix565(C.Rgba8.R, C.Rgba8.g, C.Rgba8.b);
 
   repeat
-    P^ := V;
+    p^ := v;
 
-    Inc(PtrComp(P), SizeOf(Int16u));
+    Inc(PtrComp(p), SizeOf(Int16u));
     Dec(Len);
   until Len = 0;
 end;
@@ -84,15 +84,15 @@ end;
 procedure Rgb565CopyVerticalLine(This: TAggPixelFormatProcessor; X,
   Y: Integer; Len: Cardinal; C: PAggColor);
 var
-  P: PInt16u;
-  V: Int16u;
+  p: PInt16u;
+  v: Int16u;
 begin
-  P := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
-  V := MakePix565(C.Rgba8.R, C.Rgba8.G, C.Rgba8.B);
+  p := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
+  v := MakePix565(C.Rgba8.R, C.Rgba8.g, C.Rgba8.b);
 
   repeat
-    P^ := V;
-    P := PInt16u(This.RenderingBuffer.NextRow(PInt8u(P)));
+    p^ := v;
+    p := PInt16u(This.RenderingBuffer.NextRow(PInt8u(p)));
 
     Dec(Len);
   until Len = 0;
@@ -101,33 +101,33 @@ end;
 procedure Rgb565BlendHorizontalLine(This: TAggPixelFormatProcessor; X,
   Y: Integer; Len: Cardinal; C: PAggColor; Cover: Int8u);
 var
-  P: PInt16u;
-  V: Int16u;
+  p: PInt16u;
+  v: Int16u;
 
-  Alpha: Cardinal;
+  alpha: Cardinal;
 begin
   if C.Rgba8.A <> 0 then
   begin
-    P := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
+    p := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
 
-    Alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
+    alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
 
-    if Alpha = CAggBaseMask then
+    if alpha = CAggBaseMask then
     begin
-      V := MakePix565(C.Rgba8.R, C.Rgba8.G, C.Rgba8.B);
+      v := MakePix565(C.Rgba8.R, C.Rgba8.g, C.Rgba8.b);
 
       repeat
-        P^ := V;
+        p^ := v;
 
-        Inc(PtrComp(P), SizeOf(Int16u));
+        Inc(PtrComp(p), SizeOf(Int16u));
         Dec(Len);
       until Len = 0;
     end
     else
       repeat
-        BlendPix565(P, C.Rgba8.R, C.Rgba8.G, C.Rgba8.B, Alpha);
+        BlendPix565(p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b, alpha);
 
-        Inc(PtrComp(P), SizeOf(Int16u));
+        Inc(PtrComp(p), SizeOf(Int16u));
         Dec(Len);
       until Len = 0;
   end;
@@ -136,33 +136,33 @@ end;
 procedure Rgb565BlendVerticalLine(This: TAggPixelFormatProcessor; X,
   Y: Integer; Len: Cardinal; C: PAggColor; Cover: Int8u);
 var
-  P: PInt16u;
-  V: Int16u;
+  p: PInt16u;
+  v: Int16u;
 
-  Alpha: Cardinal;
+  alpha: Cardinal;
 begin
   if C.Rgba8.A <> 0 then
   begin
-    P := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
+    p := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
 
-    Alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
+    alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
 
-    if Alpha = CAggBaseMask then
+    if alpha = CAggBaseMask then
     begin
-      V := MakePix565(C.Rgba8.R, C.Rgba8.G, C.Rgba8.B);
+      v := MakePix565(C.Rgba8.R, C.Rgba8.g, C.Rgba8.b);
 
       repeat
-        P^ := V;
-        P := PInt16u(This.RenderingBuffer.NextRow(PInt8u(P)));
+        p^ := v;
+        p := PInt16u(This.RenderingBuffer.NextRow(PInt8u(p)));
 
         Dec(Len);
       until Len = 0;
     end
     else
       repeat
-        BlendPix565(P, C.Rgba8.R, C.Rgba8.G, C.Rgba8.B, Alpha);
+        BlendPix565(p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b, alpha);
 
-        P := PInt16u(This.RenderingBuffer.NextRow(PInt8u(P)));
+        p := PInt16u(This.RenderingBuffer.NextRow(PInt8u(p)));
 
         Dec(Len);
       until Len = 0;
@@ -172,15 +172,15 @@ end;
 procedure Rgb565BlendSolidHSpan(This: TAggPixelFormatProcessor;
   X, Y: Integer; Len: Cardinal; C: PAggColor; Covers: PInt8u);
 var
-  P: PInt16u;
+  p: PInt16u;
 begin
-  P := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
+  p := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
 
   repeat
-    CopyOrBlendPix565(P, C, Covers^);
+    CopyOrBlendPix565(p, C, Covers^);
 
     Inc(PtrComp(Covers));
-    Inc(PtrComp(P), SizeOf(Int16u));
+    Inc(PtrComp(p), SizeOf(Int16u));
     Dec(Len);
   until Len = 0;
 end;
@@ -188,65 +188,65 @@ end;
 procedure Rgb565BlendSolidVSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
   Len: Cardinal; C: PAggColor; Covers: PInt8u);
 var
-  P: PInt16u;
+  p: PInt16u;
 begin
-  P := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
+  p := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
 
   repeat
-    CopyOrBlendPix565(P, C, Covers^);
+    CopyOrBlendPix565(p, C, Covers^);
 
     Inc(PtrComp(Covers));
 
-    P := PInt16u(This.RenderingBuffer.NextRow(PInt8u(P)));
+    p := PInt16u(This.RenderingBuffer.NextRow(PInt8u(p)));
 
     Dec(Len);
   until Len = 0;
 end;
 
 procedure Rgb565BlendColorHSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; Colors: PAggColor; Covers: PInt8u; Cover: Int8u);
+  Len: Cardinal; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u);
 var
-  P: PInt16u;
+  p: PInt16u;
 begin
-  P := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
+  p := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
 
   repeat
     if Covers <> nil then
     begin
-      CopyOrBlendPix565(P, Colors, Covers^);
+      CopyOrBlendPix565(p, COLORS, Covers^);
 
       Inc(PtrComp(Covers), SizeOf(Int8u));
     end
     else
-      CopyOrBlendPix565(P, Colors, Cover);
+      CopyOrBlendPix565(p, COLORS, Cover);
 
-    Inc(PtrComp(P), SizeOf(Int16u));
-    Inc(PtrComp(Colors), SizeOf(TAggColor));
+    Inc(PtrComp(p), SizeOf(Int16u));
+    Inc(PtrComp(COLORS), SizeOf(TAggColor));
     Dec(Len);
   until Len = 0;
 end;
 
 procedure Rgb565BlendColorVSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; Colors: PAggColor; Covers: PInt8u; Cover: Int8u);
+  Len: Cardinal; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u);
 var
-  P: PInt16u;
+  p: PInt16u;
 
 begin
-  P := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
+  p := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
 
   repeat
     if Covers <> nil then
     begin
-      CopyOrBlendPix565(P, Colors, Covers^);
+      CopyOrBlendPix565(p, COLORS, Covers^);
 
       Inc(PtrComp(Covers), SizeOf(Int8u));
     end
     else
-      CopyOrBlendPix565(P, Colors, Cover);
+      CopyOrBlendPix565(p, COLORS, Cover);
 
-    P := PInt16u(This.RenderingBuffer.NextRow(PInt8u(P)));
+    p := PInt16u(This.RenderingBuffer.NextRow(PInt8u(p)));
 
-    Inc(PtrComp(Colors), SizeOf(TAggColor));
+    Inc(PtrComp(COLORS), SizeOf(TAggColor));
     Dec(Len);
   until Len = 0;
 end;
@@ -263,87 +263,87 @@ procedure Rgb565BlendFrom(This: TAggPixelFormatProcessor;
   From: TAggPixelFormatProcessor; SourcePtr: PInt8u; Xdst, Ydst, Xsrc,
   Ysrc: Integer; Len: Cardinal; Cover: Int8u);
 var
-  Pdst: PInt16u;
+  PDst: PInt16u;
 
-  Alpha: Cardinal;
+  alpha: Cardinal;
 begin
-  Pdst := PInt16u(PtrComp(This.RenderingBuffer.Row(Ydst)) + Xdst * SizeOf(Int16u));
+  PDst := PInt16u(PtrComp(This.RenderingBuffer.Row(Ydst)) + Xdst * SizeOf(Int16u));
 
   repeat
-    Alpha := PInt8u(PtrComp(SourcePtr) + From.Order.A)^;
+    alpha := PInt8u(PtrComp(SourcePtr) + From.Order.A)^;
 
-    if Alpha <> 0 then
-      if (Alpha = CAggBaseMask) and (Cover = 255) then
-        Pdst^ := MakePix565(PInt8u(PtrComp(SourcePtr) + From.Order.R)^,
-          PInt8u(PtrComp(SourcePtr) + From.Order.G)^,
-          PInt8u(PtrComp(SourcePtr) + From.Order.B)^)
+    if alpha <> 0 then
+      if (alpha = CAggBaseMask) and (Cover = 255) then
+        PDst^ := MakePix565(PInt8u(PtrComp(SourcePtr) + From.Order.R)^,
+          PInt8u(PtrComp(SourcePtr) + From.Order.g)^,
+          PInt8u(PtrComp(SourcePtr) + From.Order.b)^)
       else
-        BlendPix565(Pdst, PInt8u(PtrComp(SourcePtr) + From.Order.R)^,
-          PInt8u(PtrComp(SourcePtr) + From.Order.G)^,
-          PInt8u(PtrComp(SourcePtr) + From.Order.B)^, Alpha);
+        BlendPix565(PDst, PInt8u(PtrComp(SourcePtr) + From.Order.R)^,
+          PInt8u(PtrComp(SourcePtr) + From.Order.g)^,
+          PInt8u(PtrComp(SourcePtr) + From.Order.b)^, alpha);
 
     Inc(PtrComp(SourcePtr), 4);
-    Inc(PtrComp(Pdst), SizeOf(Int16u));
+    Inc(PtrComp(PDst), SizeOf(Int16u));
     Dec(Len);
   until Len = 0;
 end;
 
 procedure Rgb565CopyColorHSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; Colors: PAggColor);
+  Len: Cardinal; COLORS: PAggColor);
 var
-  P: PInt16u;
+  p: PInt16u;
 begin
-  P := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
+  p := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
 
   repeat
-    P^ := MakePix565(Colors.Rgba8.R, Colors.Rgba8.G, Colors.Rgba8.B);
+    p^ := MakePix565(COLORS.Rgba8.R, COLORS.Rgba8.g, COLORS.Rgba8.b);
 
-    Inc(PtrComp(P), SizeOf(Int16u));
-    Inc(PtrComp(Colors), SizeOf(TAggColor));
+    Inc(PtrComp(p), SizeOf(Int16u));
+    Inc(PtrComp(COLORS), SizeOf(TAggColor));
     Dec(Len);
   until Len = 0;
 end;
 
 procedure Rgb565CopyColorVSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; Colors: PAggColor);
+  Len: Cardinal; COLORS: PAggColor);
 var
-  P: PInt16u;
+  p: PInt16u;
 
 begin
-  P := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
+  p := PInt16u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u));
 
   repeat
-    P^ := MakePix565(Colors.Rgba8.R, Colors.Rgba8.G, Colors.Rgba8.B);
-    P := PInt16u(This.RenderingBuffer.NextRow(PInt8u(P)));
+    p^ := MakePix565(COLORS.Rgba8.R, COLORS.Rgba8.g, COLORS.Rgba8.b);
+    p := PInt16u(This.RenderingBuffer.NextRow(PInt8u(p)));
 
-    Inc(PtrComp(Colors), SizeOf(TAggColor));
+    Inc(PtrComp(COLORS), SizeOf(TAggColor));
     Dec(Len);
   until Len = 0;
 end;
 
 procedure Rgb565BlendFromColor(This: TAggPixelFormatProcessor;
-  From: TAggPixelFormatProcessor; Color: PAggColor; Xdst, Ydst, Xsrc,
+  From: TAggPixelFormatProcessor; COLOR: PAggColor; Xdst, Ydst, Xsrc,
   Ysrc: Integer; Len: Cardinal; Cover: Int8u);
 var
   Ppsz: Cardinal;
 
-  Psrc: PInt8u;
-  Pdst: PInt16u;
+  PSrc: PInt8u;
+  PDst: PInt16u;
 begin
   Ppsz := From.PixWidth;
-  Psrc := From.GetRowPointer(Ysrc);
+  PSrc := From.GetRowPointer(Ysrc);
 
-  if Psrc <> nil then
+  if PSrc <> nil then
   begin
-    Pdst := PInt16u(PtrComp(This.RenderingBuffer.RowXY(Xdst, Ydst, Len)) +
+    PDst := PInt16u(PtrComp(This.RenderingBuffer.RowXY(Xdst, Ydst, Len)) +
       Xdst * SizeOf(Int16u));
 
     repeat
-      BlendPix565(Pdst, Color.Rgba8.R, Color.Rgba8.G, Color.Rgba8.B,
-        ShrInt32(Psrc^ * Cover + CAggBaseMask, CAggBaseShift));
+      BlendPix565(PDst, COLOR.Rgba8.R, COLOR.Rgba8.g, COLOR.Rgba8.b,
+        ShrInt32(PSrc^ * Cover + CAggBaseMask, CAggBaseShift));
 
-      Inc(PtrComp(Psrc), Ppsz);
-      Inc(PtrComp(Pdst), SizeOf(Int16u));
+      Inc(PtrComp(PSrc), Ppsz);
+      Inc(PtrComp(PDst), SizeOf(Int16u));
       Dec(Len);
     until Len = 0;
   end;
@@ -355,28 +355,29 @@ procedure Rgb565BlendFromLUT(This: TAggPixelFormatProcessor;
 var
   Ppsz: Cardinal;
 
-  Psrc: PInt8u;
-  Pdst: PInt16u;
+  PSrc: PInt8u;
+  PDst: PInt16u;
 
-  Color: PAggColor;
+  COLOR: PAggColor;
 begin
   Ppsz := From.PixWidth;
-  Psrc := From.GetRowPointer(Ysrc);
+  PSrc := From.GetRowPointer(Ysrc);
 
-  if Psrc <> nil then
+  if PSrc <> nil then
   begin
-    Pdst := PInt16u(PtrComp(This.RenderingBuffer.RowXY(Xdst, Ydst, Len)) +
+    PDst := PInt16u(PtrComp(This.RenderingBuffer.RowXY(Xdst, Ydst, Len)) +
       Xdst * SizeOf(Int16u));
 
     repeat
-      Color := PAggColor(PtrComp(ColorLUT) + Psrc^ * SizeOf(TAggColor));
+      COLOR := PAggColor(PtrComp(ColorLUT) + PSrc^ * SizeOf(TAggColor));
 
-      BlendPix565(Pdst, Color.Rgba8.R, Color.Rgba8.G, Color.Rgba8.B,
-        ShrInt32(Psrc^ * Cover + CAggBaseMask, CAggBaseShift));
+      BlendPix565(PDst, COLOR.Rgba8.R, COLOR.Rgba8.g, COLOR.Rgba8.b,
+        ShrInt32(PSrc^ * Cover + CAggBaseMask, CAggBaseShift));
 
-      Inc(PtrComp(Psrc), Ppsz);
-      Inc(PtrComp(Pdst), SizeOf(Int16u));
+      Inc(PtrComp(PSrc), Ppsz);
+      Inc(PtrComp(PDst), SizeOf(Int16u));
       Dec(Len);
     until Len = 0;
   end;
-end;
+end; 
+ 

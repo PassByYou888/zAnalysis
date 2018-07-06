@@ -12,7 +12,7 @@
 
 unit Cadencer;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
@@ -325,3 +325,4 @@ initialization
 finalization
 
 end.
+ 

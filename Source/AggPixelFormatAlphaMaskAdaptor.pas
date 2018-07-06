@@ -39,7 +39,7 @@ unit AggPixelFormatAlphaMaskAdaptor;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -64,94 +64,94 @@ type
     constructor Create(PixelFormat: TAggPixelFormatProcessor; Mask: TAggCustomAlphaMask);
     destructor Destroy; override;
 
-    procedure ReallocSpan(Length: Cardinal);
+    procedure ReallocSpan(length: Cardinal);
 
-    procedure IniTAggSpan(Length: Cardinal); overload;
-    procedure IniTAggSpan(Length: Cardinal; Covers: PInt8u); overload;
+    procedure IniTAggSpan(length: Cardinal); overload;
+    procedure IniTAggSpan(length: Cardinal; Covers: PInt8u); overload;
   end;
 
 implementation
 
 procedure CopyHorizontalLineAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; Length: Cardinal; C: PAggColor);
+  X, Y: Integer; length: Cardinal; C: PAggColor);
 begin
-  This.ReallocSpan(Length);
-  This.FMask.FillHSpan(X, Y, This.FSpan, Length);
-  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, X, Y, Length, C,
+  This.ReallocSpan(length);
+  This.FMask.FillHSpan(X, Y, This.FSpan, length);
+  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, X, Y, length, C,
     This.FSpan);
 end;
 
 procedure BlendHorizontalLineAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; Length: Cardinal; C: PAggColor; Cover: Int8u);
+  X, Y: Integer; length: Cardinal; C: PAggColor; Cover: Int8u);
 begin
-  This.IniTAggSpan(Length);
-  This.FMask.CombineHSpan(X, Y, This.FSpan, Length);
-  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, X, Y, Length, C,
+  This.IniTAggSpan(length);
+  This.FMask.CombineHSpan(X, Y, This.FSpan, length);
+  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, X, Y, length, C,
     This.FSpan);
 end;
 
 procedure BlendVerticalLineAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; Length: Cardinal; C: PAggColor; Cover: Int8u);
+  X, Y: Integer; length: Cardinal; C: PAggColor; Cover: Int8u);
 begin
-  This.IniTAggSpan(Length);
-  This.FMask.CombineVSpan(X, Y, This.FSpan, Length);
-  This.FPixelFormats.BlendSolidVSpan(This.FPixelFormats, X, Y, Length, C,
+  This.IniTAggSpan(length);
+  This.FMask.CombineVSpan(X, Y, This.FSpan, length);
+  This.FPixelFormats.BlendSolidVSpan(This.FPixelFormats, X, Y, length, C,
     This.FSpan);
 end;
 
 procedure BlendSolidHSpanAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; Length: Cardinal; C: PAggColor; Covers: PInt8u);
+  X, Y: Integer; length: Cardinal; C: PAggColor; Covers: PInt8u);
 begin
-  This.IniTAggSpan(Length, Covers);
-  This.FMask.CombineHSpan(X, Y, This.FSpan, Length);
-  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, X, Y, Length, C,
+  This.IniTAggSpan(length, Covers);
+  This.FMask.CombineHSpan(X, Y, This.FSpan, length);
+  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, X, Y, length, C,
     This.FSpan);
 end;
 
 procedure BlendSolidVSpanAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; Length: Cardinal; C: PAggColor; Covers: PInt8u);
+  X, Y: Integer; length: Cardinal; C: PAggColor; Covers: PInt8u);
 begin
-  This.IniTAggSpan(Length, Covers);
-  This.FMask.CombineVSpan(X, Y, This.FSpan, Length);
-  This.FPixelFormats.BlendSolidVSpan(This.FPixelFormats, X, Y, Length, C,
+  This.IniTAggSpan(length, Covers);
+  This.FMask.CombineVSpan(X, Y, This.FSpan, length);
+  This.FPixelFormats.BlendSolidVSpan(This.FPixelFormats, X, Y, length, C,
     This.FSpan);
 end;
 
 procedure BlendColorHSpanAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; Length: Cardinal; Colors: PAggColor; Covers: PInt8u;
+  X, Y: Integer; length: Cardinal; COLORS: PAggColor; Covers: PInt8u;
   Cover: Int8u);
 begin
   if Covers <> nil then
     begin
-      This.IniTAggSpan(Length, Covers);
-      This.FMask.CombineHSpan(X, Y, This.FSpan, Length);
+      This.IniTAggSpan(length, Covers);
+      This.FMask.CombineHSpan(X, Y, This.FSpan, length);
     end
   else
     begin
-      This.ReallocSpan(Length);
-      This.FMask.FillHSpan(X, Y, This.FSpan, Length);
+      This.ReallocSpan(length);
+      This.FMask.FillHSpan(X, Y, This.FSpan, length);
     end;
 
-  This.FPixelFormats.BlendColorHSpan(This.FPixelFormats, X, Y, Length, Colors,
+  This.FPixelFormats.BlendColorHSpan(This.FPixelFormats, X, Y, length, COLORS,
     This.FSpan, Cover);
 end;
 
 procedure BlendColorVSpanAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; Length: Cardinal; Colors: PAggColor; Covers: PInt8u;
+  X, Y: Integer; length: Cardinal; COLORS: PAggColor; Covers: PInt8u;
   Cover: Int8u);
 begin
   if Covers <> nil then
     begin
-      This.IniTAggSpan(Length, Covers);
-      This.FMask.CombineVSpan(X, Y, This.FSpan, Length);
+      This.IniTAggSpan(length, Covers);
+      This.FMask.CombineVSpan(X, Y, This.FSpan, length);
     end
   else
     begin
-      This.ReallocSpan(Length);
-      This.FMask.FillVSpan(X, Y, This.FSpan, Length);
+      This.ReallocSpan(length);
+      This.FMask.FillVSpan(X, Y, This.FSpan, length);
     end;
 
-  This.FPixelFormats.BlendColorVSpan(This.FPixelFormats, X, Y, Length, Colors,
+  This.FPixelFormats.BlendColorVSpan(This.FPixelFormats, X, Y, length, COLORS,
     This.FSpan, Cover);
 end;
 
@@ -196,29 +196,30 @@ end;
 
 procedure TAggPixelFormatProcessorAlphaMaskAdaptor.ReallocSpan;
 begin
-  if Length > FMaxLength then
+  if length > FMaxLength then
     begin
       AggFreeMem(Pointer(FSpan), FMaxLength * SizeOf(Int8u));
 
-      FMaxLength := Length + CSpanExtraTail;
+      FMaxLength := length + CSpanExtraTail;
 
       AggGetMem(Pointer(FSpan), FMaxLength * SizeOf(Int8u));
     end;
 end;
 
-procedure TAggPixelFormatProcessorAlphaMaskAdaptor.IniTAggSpan(Length: Cardinal);
+procedure TAggPixelFormatProcessorAlphaMaskAdaptor.IniTAggSpan(length: Cardinal);
 begin
-  ReallocSpan(Length);
+  ReallocSpan(length);
 
-  FillChar(FSpan^, Length * SizeOf(Int8u), CAggCoverFull);
+  FillChar(FSpan^, length * SizeOf(Int8u), CAggCoverFull);
 end;
 
-procedure TAggPixelFormatProcessorAlphaMaskAdaptor.IniTAggSpan(Length: Cardinal;
+procedure TAggPixelFormatProcessorAlphaMaskAdaptor.IniTAggSpan(length: Cardinal;
   Covers: PInt8u);
 begin
-  ReallocSpan(Length);
+  ReallocSpan(length);
 
-  Move(Covers^, FSpan^, Length * SizeOf(Int8u));
+  Move(Covers^, FSpan^, length * SizeOf(Int8u));
 end;
 
-end.
+end. 
+ 

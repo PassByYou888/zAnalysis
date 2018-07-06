@@ -39,7 +39,7 @@ unit AggPixelFormatRgbPacked;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -61,11 +61,11 @@ implementation
 
 function Fmt5x5Row(This: TAggPixelFormatProcessor; X, Y: Integer): TAggRowDataType;
 begin
-  Result.Initialize(X, This.Width - 1,
+  Result.Initialize(X, This.width - 1,
     PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u)));
 end;
 
-{$I AggPixelFormatRgb555.inc}
+{$INCLUDE AggPixelFormatRgb555.inc}
 
 
 procedure PixelFormatRgb555;
@@ -106,7 +106,7 @@ begin
   PixelFormatProcessor.GammaInvApply := nil;
 end;
 
-{$I AggPixelFormatRgb565.inc}
+{$INCLUDE AggPixelFormatRgb565.inc}
 
 
 procedure PixelFormatRgb565;
@@ -147,7 +147,7 @@ begin
   PixelFormatProcessor.GammaInvApply := nil;
 end;
 
-{$I AggPixelFormatRgb555Pre.inc}
+{$INCLUDE AggPixelFormatRgb555Pre.inc}
 
 
 procedure PixelFormatRgb555Pre;
@@ -188,7 +188,7 @@ begin
   PixelFormatProcessor.GammaInvApply := nil;
 end;
 
-{$I AggPixelFormatRgb565Pre.inc}
+{$INCLUDE AggPixelFormatRgb565Pre.inc}
 
 
 procedure PixelFormatRgb565Pre;
@@ -229,7 +229,7 @@ begin
   PixelFormatProcessor.GammaInvApply := nil;
 end;
 
-{$I AggPixelFormatRgb555Gamma.inc}
+{$INCLUDE AggPixelFormatRgb555Gamma.inc}
 
 
 procedure PixelFormatRgb555Gamma;
@@ -272,7 +272,7 @@ begin
   PixelFormatProcessor.GammaInvApply := nil;
 end;
 
-{$I AggPixelFormatRgb565Gamma.inc}
+{$INCLUDE AggPixelFormatRgb565Gamma.inc}
 
 
 procedure PixelFormatRgb565Gamma;
@@ -315,4 +315,4 @@ begin
   PixelFormatProcessor.GammaInvApply := nil;
 end;
 
-end.
+end. 

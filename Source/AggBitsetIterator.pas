@@ -39,7 +39,7 @@ unit AggBitsetIterator;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 uses
   AggBasics;
@@ -86,3 +86,4 @@ begin
 end;
 
 end.
+ 

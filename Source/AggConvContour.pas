@@ -39,7 +39,7 @@ unit AggConvContour;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -79,7 +79,7 @@ type
     property LineJoin: TAggLineJoin read GetLineJoin write SetLineJoin;
     property InnerJoin: TAggInnerJoin read GetInnerJoin write SetInnerJoin;
 
-    property Width: Double read GetWidth write SetWidth;
+    property width: Double read GetWidth write SetWidth;
     property MiterLimit: Double read GetMiterLimit write SetMiterLimit;
     property InnerMiterLimit: Double read GetInnerMiterLimit write SetInnerMiterLimit;
     property ApproximationScale: Double read GetApproximationScale write SetApproximationScale;
@@ -117,7 +117,7 @@ end;
 
 procedure TAggConvContour.SetWidth;
 begin
-  FGenerator.Width := Value;
+  FGenerator.width := Value;
 end;
 
 procedure TAggConvContour.SetMiterLimit;
@@ -157,7 +157,7 @@ end;
 
 function TAggConvContour.GetWidth;
 begin
-  Result := FGenerator.Width;
+  Result := FGenerator.width;
 end;
 
 function TAggConvContour.GetMiterLimit;
@@ -180,4 +180,4 @@ begin
   Result := FGenerator.AutoDetectOrientation;
 end;
 
-end.
+end. 

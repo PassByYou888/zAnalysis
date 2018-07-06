@@ -39,14 +39,14 @@ unit AggConvSegmentator;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
   AggVertexSource,
   AggConvAdaptorVpgen,
-  AggVpgenSegmentator;
+  AggVpGenSegmentator;
 
 type
   TAggConvSegmentator = class(TAggConvAdaptorVpgenSegmentator)
@@ -90,4 +90,4 @@ begin
   Result := VpGenSegmentator.ApproximationScale;
 end;
 
-end.
+end. 

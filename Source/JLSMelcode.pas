@@ -22,7 +22,7 @@
 }
 unit JLSMelcode;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
@@ -57,9 +57,9 @@ type
     FBitIO: TJLSBitIO;
     FImageInfo: PImageInfo;
 
-    melcstate: packed array [0 .. MAX_COMPONENTS - 1] of int; { index to the state packed array }
+    melcstate: packed array [0 .. MAX_COMPONENTS - 1] of Int; { index to the state packed array }
 
-    melclen: packed array [0 .. MAX_COMPONENTS - 1] of int;
+    melclen: packed array [0 .. MAX_COMPONENTS - 1] of Int;
     { contents of the state packed array location
       indexed by melcstate: the "expected"
       run length is 2^melclen, shorter runs are
@@ -67,12 +67,12 @@ type
       in binary representation, wit a fixed length
       of melclen bits }
 
-    melcorder: packed array [0 .. MAX_COMPONENTS - 1] of ulong; { 2^ melclen }
+    melcorder: packed array [0 .. MAX_COMPONENTS - 1] of ULONG; { 2^ melclen }
   public
     constructor Create(ABitIO: TJLSBitIO; AImageInfo: PImageInfo);
     procedure init_process_run;
-    function process_run_dec(lineleft: int; color: int): int;
-    procedure process_run_enc(runlen: int; an_eoline: int; color: int);
+    function process_run_dec(lineleft: Int; COLOR: Int): Int;
+    procedure process_run_enc(runlen: Int; an_eoline: Int; COLOR: Int);
     procedure close_process_run;
   end;
 
@@ -86,10 +86,10 @@ end;
 
 procedure TJLSMelcode.init_process_run;
 var
-  n_c: int;
+  n_c: Int;
 begin
 
-  for n_c := 0 to pred(FImageInfo^.components) do
+  for n_c := 0 to pred(FImageInfo^.Components) do
     begin
       melcstate[n_c] := 0;
       melclen[n_c] := J[0];
@@ -99,83 +99,83 @@ end;
 
 { decoding routine: reads bits from the input and returns a run length. }
 { argument is the number of pixels left to  end-of-line (bound on run length) }
-function TJLSMelcode.process_run_dec(lineleft: int; color: int): int;
+function TJLSMelcode.process_run_dec(lineleft: Int; COLOR: Int): Int;
 var
-  runlen: int;
-  temp, hits: int;
+  runlen: Int;
+  Temp, hits: Int;
 begin
   runlen := 0;
 
-  while true do
+  while True do
     begin
-      temp := FBitIO.zeroLUT[Byte((not shr_c(FBitIO.reg, 24)))]; { number of leading ones in the
+      Temp := FBitIO.zeroLUT[Byte((not shr_c(FBitIO.reg, 24)))]; { number of leading ones in the
         input stream, up to 8 }
-      for hits := 1 to temp do
+      for hits := 1 to Temp do
         begin
-          runlen := runlen + melcorder[color];
+          runlen := runlen + melcorder[COLOR];
           if (runlen >= lineleft) then
             begin { reached end-of-line }
-              if (runlen = lineleft) and (melcstate[color] < MELCSTATES) then
+              if (runlen = lineleft) and (melcstate[COLOR] < MELCSTATES) then
                 begin
-                  inc(melcstate[color]);
-                  melclen[color] := J[melcstate[color]];
-                  melcorder[color] := (1 shl melclen[color]);
+                  Inc(melcstate[COLOR]);
+                  melclen[COLOR] := J[melcstate[COLOR]];
+                  melcorder[COLOR] := (1 shl melclen[COLOR]);
                 end;
-              FBitIO.FILLBUFFER(hits); { actual # of 1's consumed }
-              result := lineleft;
-              exit;
+              FBitIO.fillbuffer(hits); { actual # of 1's consumed }
+              Result := lineleft;
+              Exit;
             end;
-          if (melcstate[color] < MELCSTATES) then
+          if (melcstate[COLOR] < MELCSTATES) then
             begin
-              inc(melcstate[color]);
-              melclen[color] := J[melcstate[color]];
-              melcorder[color] := (1 shl melclen[color]);
+              Inc(melcstate[COLOR]);
+              melclen[COLOR] := J[melcstate[COLOR]];
+              melcorder[COLOR] := (1 shl melclen[COLOR]);
             end;
         end;
-      if (temp <> 8) then
+      if (Temp <> 8) then
         begin
-          FBitIO.FILLBUFFER(temp + 1); { consume the leading 0 of the remainder encoding }
-          break;
+          FBitIO.fillbuffer(Temp + 1); { consume the leading 0 of the remainder encoding }
+          Break;
         end;
-      FBitIO.FILLBUFFER(8);
+      FBitIO.fillbuffer(8);
     end;
 
   { read the length of the remainder }
-  if Istrue(melclen[color]) then
+  if IsTrue(melclen[COLOR]) then
     begin
-      temp := shr_c(FBitIO.reg, 32 - (melclen[color]));
-      FBitIO.FILLBUFFER(melclen[color]);
+      Temp := shr_c(FBitIO.reg, 32 - (melclen[COLOR]));
+      FBitIO.fillbuffer(melclen[COLOR]);
       // GETBITS(temp, melclen[color]);  /*** GETBITS is a macro, not a function */
-      runlen := runlen + temp;
+      runlen := runlen + Temp;
     end;
-  FImageInfo^.limit_reduce := melclen[color] + 1;
+  FImageInfo^.limit_reduce := melclen[COLOR] + 1;
 
   { adjust melcoder parameters }
-  if Istrue(melcstate[color]) then
+  if IsTrue(melcstate[COLOR]) then
     begin
-      dec(melcstate[color]);
-      melclen[color] := J[melcstate[color]];
-      melcorder[color] := (1 shl melclen[color]);
+      Dec(melcstate[COLOR]);
+      melclen[COLOR] := J[melcstate[COLOR]];
+      melcorder[COLOR] := (1 shl melclen[COLOR]);
     end;
 
-  result := runlen;
+  Result := runlen;
 end;
 
-procedure TJLSMelcode.process_run_enc(runlen: int; an_eoline: int; color: int);
+procedure TJLSMelcode.process_run_enc(runlen: Int; an_eoline: Int; COLOR: Int);
 var
-  hits: int;
+  hits: Int;
 begin
   hits := 0;
 
-  while (runlen >= melcorder[color]) do
+  while (runlen >= melcorder[COLOR]) do
     begin
-      inc(hits);
-      runlen := runlen - melcorder[color];
-      if (melcstate[color] < MELCSTATES) then
+      Inc(hits);
+      runlen := runlen - melcorder[COLOR];
+      if (melcstate[COLOR] < MELCSTATES) then
         begin
-          inc(melcstate[color]);
-          melclen[color] := J[melcstate[color]];
-          melcorder[color] := (1 shl melclen[color]);
+          Inc(melcstate[COLOR]);
+          melclen[COLOR] := J[melcstate[COLOR]];
+          melcorder[COLOR] := (1 shl melclen[COLOR]);
         end;
     end;
 
@@ -184,29 +184,29 @@ begin
     after 31 such "hit" bits, each "hit" would represent a run of 32K
     pixels.
   }
-  FBitIO.PUT_ONES(hits);
+  FBitIO.put_ones(hits);
 
   if (an_eoline = EOLINE) then
     begin
       { when the run is broken by end-of-line, if there is
         a non-null remainder, send it as if it were
         a max length run }
-      if Istrue(runlen) then
-          FBitIO.PUT_ONES(1);
-      exit;
+      if IsTrue(runlen) then
+          FBitIO.put_ones(1);
+      Exit;
     end;
 
   { now send the length of the remainder, encoded as a 0 followed
     by the length in binary representation, to melclen bits }
-  FImageInfo^.limit_reduce := melclen[color] + 1;
-  FBitIO.PUTBITS(runlen, FImageInfo^.limit_reduce);
+  FImageInfo^.limit_reduce := melclen[COLOR] + 1;
+  FBitIO.putbits(runlen, FImageInfo^.limit_reduce);
 
   { adjust melcoder parameters }
-  if Istrue(melcstate[color]) then
+  if IsTrue(melcstate[COLOR]) then
     begin
-      dec(melcstate[color]);
-      melclen[color] := J[melcstate[color]];
-      melcorder[color] := (1 shl melclen[color]);
+      Dec(melcstate[COLOR]);
+      melclen[COLOR] := J[melcstate[COLOR]];
+      melcorder[COLOR] := (1 shl melclen[COLOR]);
     end;
 
 end;
@@ -216,4 +216,5 @@ begin
   { retained for compatibility with ranked runs }
 end;
 
-end.
+end. 
+ 

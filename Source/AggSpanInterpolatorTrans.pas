@@ -48,7 +48,7 @@ unit AggSpanInterpolatorTrans;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -61,7 +61,7 @@ type
   private
     FTrans: TAggTransAffine;
 
-    FX, FY: Double;
+    fx, fy: Double;
     FIntX, FIntY: Integer;
   public
     constructor Create(SS: Cardinal = 8); overload;
@@ -120,8 +120,8 @@ end;
 
 procedure TAggSpanInterpolatorTrans.SetBegin(X, Y: Double; Len: Cardinal);
 begin
-  FX := X;
-  FY := Y;
+  fx := X;
+  fy := Y;
 
   FTrans.Transform(FTrans, @X, @Y);
 
@@ -134,10 +134,10 @@ var
   X, Y: Double;
 
 begin
-  FX := FX + 1.0;
+  fx := fx + 1.0;
 
-  X := FX;
-  Y := FY;
+  X := fx;
+  Y := fy;
 
   FTrans.Transform(FTrans, @X, @Y);
 
@@ -157,4 +157,4 @@ begin
   Y := FIntY;
 end;
 
-end.
+end. 

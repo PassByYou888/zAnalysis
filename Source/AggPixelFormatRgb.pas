@@ -39,7 +39,7 @@ unit AggPixelFormatRgb;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -61,7 +61,7 @@ implementation
 
 function Fmt24Row(This: TAggPixelFormatProcessor; X, Y: Integer): TAggRowDataType;
 begin
-  Result.Initialize(X, This.Width - 1,
+  Result.Initialize(X, This.width - 1,
     PInt8u(PtrComp(This.GetRenderingBuffer.Row(Y)) + X * 3 * SizeOf(Int8u)));
 end;
 
@@ -73,43 +73,43 @@ begin
     SizeOf(Int8u) * 3 * Len);
 end;
 
-procedure Order24GammaDirApply(This: TAggPixelFormatProcessor; P: PInt8u);
+procedure Order24GammaDirApply(This: TAggPixelFormatProcessor; p: PInt8u);
 begin
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u(This.Apply.Dir[PInt8u(PtrComp(P) + This.Order.R)^]);
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u(This.Apply.Dir[PInt8u(PtrComp(P) + This.Order.G)^]);
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u(This.Apply.Dir[PInt8u(PtrComp(P) + This.Order.B)^]);
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u(This.Apply.dir[PInt8u(PtrComp(p) + This.Order.R)^]);
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u(This.Apply.dir[PInt8u(PtrComp(p) + This.Order.g)^]);
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u(This.Apply.dir[PInt8u(PtrComp(p) + This.Order.b)^]);
 end;
 
-procedure Order24GammaInvApply(This: TAggPixelFormatProcessor; P: PInt8u);
+procedure Order24GammaInvApply(This: TAggPixelFormatProcessor; p: PInt8u);
 begin
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u(This.Apply.Inv[PInt8u(PtrComp(P) + This.Order.R)^]);
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u(This.Apply.Inv[PInt8u(PtrComp(P) + This.Order.G)^]);
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u(This.Apply.Inv[PInt8u(PtrComp(P) + This.Order.B)^]);
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u(This.Apply.Inv[PInt8u(PtrComp(p) + This.Order.R)^]);
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u(This.Apply.Inv[PInt8u(PtrComp(p) + This.Order.g)^]);
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u(This.Apply.Inv[PInt8u(PtrComp(p) + This.Order.b)^]);
 end;
 
 procedure Order24ForEachPixel(This: TAggPixelFormatProcessor; F: TAggFuncApplyGamma);
 var
   Y, Len: Cardinal;
-  P: PInt8u;
+  p: PInt8u;
 begin
   Y := 0;
 
-  while Y < This.Height do
+  while Y < This.height do
     begin
-      Len := This.Width;
+      Len := This.width;
 
-      P := This.RenderingBuffer.Row(Y);
+      p := This.RenderingBuffer.Row(Y);
 
       repeat
-        F(This, P);
+        F(This, p);
 
-        Inc(PtrComp(P), 3);
+        Inc(PtrComp(p), 3);
         Dec(Len);
       until Len = 0;
 
@@ -117,7 +117,7 @@ begin
     end;
 end;
 
-{$I AggPixelFormatBgr24.inc}
+{$INCLUDE AggPixelFormatBgr24.inc}
 
 
 procedure PixelFormatBgr24(out PixelFormatProcessor: TAggPixelFormatProcessor;
@@ -154,14 +154,14 @@ begin
   PixelFormatProcessor.BlendFrom := @Bgr24BlendFrom;
 
   PixelFormatProcessor.BlendFromColor := @Bgr24BlendFromColor;
-  PixelFormatProcessor.BlendFromLut := @Bgr24BlendFromLut;
+  PixelFormatProcessor.BlendFromLUT := @Bgr24BlendFromLut;
 
   PixelFormatProcessor.ForEachPixel := @Order24ForEachPixel;
   PixelFormatProcessor.GammaDirApply := @Order24GammaDirApply;
   PixelFormatProcessor.GammaInvApply := @Order24GammaInvApply;
 end;
 
-{$I AggPixelFormatRgb24.inc}
+{$INCLUDE AggPixelFormatRgb24.inc}
 
 
 procedure PixelFormatRgb24(out PixelFormatProcessor: TAggPixelFormatProcessor;
@@ -198,14 +198,14 @@ begin
   PixelFormatProcessor.BlendFrom := @Rgb24BlendFrom;
 
   PixelFormatProcessor.BlendFromColor := @Rgb24BlendFromColor;
-  PixelFormatProcessor.BlendFromLut := @Rgb24BlendFromLUT;
+  PixelFormatProcessor.BlendFromLUT := @Rgb24BlendFromLUT;
 
   PixelFormatProcessor.ForEachPixel := @Order24ForEachPixel;
   PixelFormatProcessor.GammaDirApply := @Order24GammaDirApply;
   PixelFormatProcessor.GammaInvApply := @Order24GammaInvApply;
 end;
 
-{$I AggPixelFormatBgr24Pre.inc}
+{$INCLUDE AggPixelFormatBgr24Pre.inc}
 
 
 procedure PixelFormatBgr24Pre(out PixelFormatProcessor: TAggPixelFormatProcessor;
@@ -242,14 +242,14 @@ begin
   PixelFormatProcessor.BlendFrom := @Bgr24PreBlendFrom;
 
   PixelFormatProcessor.BlendFromColor := @Bgr24PreBlendFromColor;
-  PixelFormatProcessor.BlendFromLut := @Bgr24PreBlendFromLUT;
+  PixelFormatProcessor.BlendFromLUT := @Bgr24PreBlendFromLUT;
 
   PixelFormatProcessor.ForEachPixel := @Order24ForEachPixel;
   PixelFormatProcessor.GammaDirApply := @Order24GammaDirApply;
   PixelFormatProcessor.GammaInvApply := @Order24GammaInvApply;
 end;
 
-{$I AggPixelFormatRgb24Pre.inc}
+{$INCLUDE AggPixelFormatRgb24Pre.inc}
 
 
 procedure PixelFormatRgb24Pre(out PixelFormatProcessor: TAggPixelFormatProcessor;
@@ -286,14 +286,14 @@ begin
   PixelFormatProcessor.BlendFrom := @Rgb24PreBlendFrom;
 
   PixelFormatProcessor.BlendFromColor := @Rgb24PreBlendFromColor;
-  PixelFormatProcessor.BlendFromLut := @Rgb24PreBlendFromLUT;
+  PixelFormatProcessor.BlendFromLUT := @Rgb24PreBlendFromLUT;
 
   PixelFormatProcessor.ForEachPixel := @Order24ForEachPixel;
   PixelFormatProcessor.GammaDirApply := @Order24GammaDirApply;
   PixelFormatProcessor.GammaInvApply := @Order24GammaInvApply;
 end;
 
-{$I AggPixelFormatBgr24Gamma.inc}
+{$INCLUDE AggPixelFormatBgr24Gamma.inc}
 
 
 procedure PixelFormatBgr24Gamma(out PixelFormatProcessor: TAggPixelFormatProcessor;
@@ -333,14 +333,14 @@ begin
   PixelFormatProcessor.BlendFrom := @Bgr24GammaBlendFrom;
 
   PixelFormatProcessor.BlendFromColor := @Bgr24GammaBlendFromColor;
-  PixelFormatProcessor.BlendFromLut := @Bgr24GammaBlendFromLUT;
+  PixelFormatProcessor.BlendFromLUT := @Bgr24GammaBlendFromLUT;
 
   PixelFormatProcessor.ForEachPixel := @Order24ForEachPixel;
   PixelFormatProcessor.GammaDirApply := @Order24GammaDirApply;
   PixelFormatProcessor.GammaInvApply := @Order24GammaInvApply;
 end;
 
-{$I AggPixelFormatRgb24Gamma.inc}
+{$INCLUDE AggPixelFormatRgb24Gamma.inc}
 
 
 procedure PixelFormatRgb24Gamma;
@@ -377,11 +377,11 @@ begin
   PixelFormatProcessor.BlendFrom := @Rgb24GammaBlendFrom;
 
   PixelFormatProcessor.BlendFromColor := @Rgb24GammaBlendFromColor;
-  PixelFormatProcessor.BlendFromLut := @Rgb24GammaBlendFromLUT;
+  PixelFormatProcessor.BlendFromLUT := @Rgb24GammaBlendFromLUT;
 
   PixelFormatProcessor.ForEachPixel := @Order24ForEachPixel;
   PixelFormatProcessor.GammaDirApply := @Order24GammaDirApply;
   PixelFormatProcessor.GammaInvApply := @Order24GammaInvApply;
 end;
 
-end.
+end. 

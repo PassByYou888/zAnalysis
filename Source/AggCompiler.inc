@@ -8,9 +8,20 @@
     {$DEFINE BIG_ENDIAN}
   {$ENDIF}
 
+  {$UNDEF FirstCharInZero}
+
+  {$UNDEF Delphi}
+  {$DEFINE release}
+  {$DEFINE INLINE_ASM}
   {$UNDEF Delphi}
 {$ELSE}
   {$DEFINE Delphi}
+
+  {$IFDEF release}
+    {$DEFINE INLINE_ASM}
+  {$ELSE}
+    {$UNDEF INLINE_ASM}
+  {$ENDIF}
 {$ENDIF}
 
 {$WARNINGS OFF}
@@ -18,16 +29,10 @@
 {$H+} { long string }
 {$A+} { Word Align Data }
 {$O-} { optimization }
-{$R-} { range check }
 {$Q-} { Overflow checking }
 {$B-} { Complete boolean evaluation }
 {$I+} { Input output checking }
-
-{$IFDEF release}
-  {$DEFINE INLINE_ASM}
-{$ELSE}
-  {$UNDEF INLINE_ASM}
-{$ENDIF}
+{$R-} { range check }
 
 {$UNDEF CPU64}
 

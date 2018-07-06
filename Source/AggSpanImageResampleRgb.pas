@@ -39,7 +39,7 @@ unit AggSpanImageResampleRgb;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -113,7 +113,7 @@ var
 
   Span: PAggColor;
 
-  Radius, Max, LoRes, HiRes: TPointInteger;
+  radius, Max, LoRes, HiRes: TPointInteger;
   Diameter, FilterSize, TotalWeight, WeightY, Weight: Integer;
   InitialLoResX, InitialHiResX: Integer;
 
@@ -124,8 +124,8 @@ begin
   Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
 
   BackR := GetBackgroundColor.Rgba8.R;
-  BackG := GetBackgroundColor.Rgba8.G;
-  BackB := GetBackgroundColor.Rgba8.B;
+  BackG := GetBackgroundColor.Rgba8.g;
+  BackB := GetBackgroundColor.Rgba8.b;
   BackA := GetBackgroundColor.Rgba8.A;
 
   Span := Allocator.Span;
@@ -133,19 +133,19 @@ begin
   Diameter := Filter.Diameter;
   FilterSize := Diameter shl CAggImageSubpixelShift;
 
-  Radius.X := ShrInt32(Diameter * FRadiusX, 1);
-  Radius.Y := ShrInt32(Diameter * FRadiusY, 1);
+  radius.X := ShrInt32(Diameter * FRadiusX, 1);
+  radius.Y := ShrInt32(Diameter * FRadiusY, 1);
 
-  Max.X := SourceImage.Width - 1;
-  Max.Y := SourceImage.Height - 1;
+  Max.X := SourceImage.width - 1;
+  Max.Y := SourceImage.height - 1;
 
   WeightArray := Filter.WeightArray;
 
   repeat
     Interpolator.Coordinates(@X, @Y);
 
-    Inc(X, FilterDeltaXInteger - Radius.X);
-    Inc(Y, FilterDeltaYInteger - Radius.Y);
+    Inc(X, FilterDeltaXInteger - radius.X);
+    Inc(Y, FilterDeltaYInteger - radius.Y);
 
     Fg[0] := CAggImageFilterSize div 2;
     Fg[1] := Fg[0];
@@ -191,8 +191,8 @@ begin
             else
               begin
                 Inc(Fg[FOrder.R], BackR * Weight);
-                Inc(Fg[FOrder.G], BackG * Weight);
-                Inc(Fg[FOrder.B], BackB * Weight);
+                Inc(Fg[FOrder.g], BackG * Weight);
+                Inc(Fg[FOrder.b], BackB * Weight);
                 Inc(Fg[3], BackA * Weight);
 
                 Inc(PtrComp(ForeGroundPointer), 3 * SizeOf(Int8u));
@@ -212,8 +212,8 @@ begin
 
           Inc(TotalWeight, Weight);
           Inc(Fg[FOrder.R], BackR * Weight);
-          Inc(Fg[FOrder.G], BackG * Weight);
-          Inc(Fg[FOrder.B], BackB * Weight);
+          Inc(Fg[FOrder.g], BackG * Weight);
+          Inc(Fg[FOrder.b], BackB * Weight);
           Inc(Fg[3], BackA * Weight);
           Inc(HiRes.X, FRadiusXInv);
 
@@ -254,8 +254,8 @@ begin
         Fg[2] := Fg[3];
 
     Span.Rgba8.R := Int8u(Fg[FOrder.R]);
-    Span.Rgba8.G := Int8u(Fg[FOrder.G]);
-    Span.Rgba8.B := Int8u(Fg[FOrder.B]);
+    Span.Rgba8.g := Int8u(Fg[FOrder.g]);
+    Span.Rgba8.b := Int8u(Fg[FOrder.b]);
     Span.Rgba8.A := Int8u(Fg[3]);
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -297,8 +297,8 @@ var
 
   BackR, BackG, BackB, BackA: Int8u;
 
-  Radius, Max, LoRes, HiRes: TPointInteger;
-  Diameter, FilterSize, Rx, Ry, RxInv, RyInv, TotalWeight,
+  radius, Max, LoRes, HiRes: TPointInteger;
+  Diameter, FilterSize, RX, RY, RxInv, RyInv, TotalWeight,
     InitialLoResX, InitialHiResX, WeightY, Weight: Integer;
 
   WeightArray: PInt16;
@@ -310,8 +310,8 @@ begin
   Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
 
   BackR := GetBackgroundColor.Rgba8.R;
-  BackG := GetBackgroundColor.Rgba8.G;
-  BackB := GetBackgroundColor.Rgba8.B;
+  BackG := GetBackgroundColor.Rgba8.g;
+  BackB := GetBackgroundColor.Rgba8.b;
   BackA := GetBackgroundColor.Rgba8.A;
 
   Diameter := Filter.Diameter;
@@ -324,39 +324,39 @@ begin
     RyInv := CAggImageSubpixelSize;
 
     Interpolator.Coordinates(@X, @Y);
-    Interpolator.LocalScale(@Rx, @Ry);
+    Interpolator.LocalScale(@RX, @RY);
 
-    Rx := ShrInt32(Rx * FBlur.X, CAggImageSubpixelShift);
-    Ry := ShrInt32(Ry * FBlur.Y, CAggImageSubpixelShift);
+    RX := ShrInt32(RX * FBlur.X, CAggImageSubpixelShift);
+    RY := ShrInt32(RY * FBlur.Y, CAggImageSubpixelShift);
 
-    if Rx < CAggImageSubpixelSize then
-        Rx := CAggImageSubpixelSize
+    if RX < CAggImageSubpixelSize then
+        RX := CAggImageSubpixelSize
     else
       begin
-        if Rx > CAggImageSubpixelSize * FScaleLimit then
-            Rx := CAggImageSubpixelSize * FScaleLimit;
+        if RX > CAggImageSubpixelSize * FScaleLimit then
+            RX := CAggImageSubpixelSize * FScaleLimit;
 
-        RxInv := CAggImageSubpixelSize * CAggImageSubpixelSize div Rx;
+        RxInv := CAggImageSubpixelSize * CAggImageSubpixelSize div RX;
       end;
 
-    if Ry < CAggImageSubpixelSize then
-        Ry := CAggImageSubpixelSize
+    if RY < CAggImageSubpixelSize then
+        RY := CAggImageSubpixelSize
     else
       begin
-        if Ry > CAggImageSubpixelSize * FScaleLimit then
-            Ry := CAggImageSubpixelSize * FScaleLimit;
+        if RY > CAggImageSubpixelSize * FScaleLimit then
+            RY := CAggImageSubpixelSize * FScaleLimit;
 
-        RyInv := CAggImageSubpixelSize * CAggImageSubpixelSize div Ry;
+        RyInv := CAggImageSubpixelSize * CAggImageSubpixelSize div RY;
       end;
 
-    Radius.X := ShrInt32(Diameter * Rx, 1);
-    Radius.Y := ShrInt32(Diameter * Ry, 1);
+    radius.X := ShrInt32(Diameter * RX, 1);
+    radius.Y := ShrInt32(Diameter * RY, 1);
 
-    Max.X := SourceImage.Width - 1;
-    Max.Y := SourceImage.Height - 1;
+    Max.X := SourceImage.width - 1;
+    Max.Y := SourceImage.height - 1;
 
-    Inc(X, FilterDeltaXInteger - Radius.X);
-    Inc(Y, FilterDeltaYInteger - Radius.Y);
+    Inc(X, FilterDeltaXInteger - radius.X);
+    Inc(Y, FilterDeltaYInteger - radius.Y);
 
     Fg[0] := CAggImageFilterSize div 2;
     Fg[1] := Fg[0];
@@ -402,8 +402,8 @@ begin
             else
               begin
                 Inc(Fg[FOrder.R], BackR * Weight);
-                Inc(Fg[FOrder.G], BackG * Weight);
-                Inc(Fg[FOrder.B], BackB * Weight);
+                Inc(Fg[FOrder.g], BackG * Weight);
+                Inc(Fg[FOrder.b], BackB * Weight);
                 Inc(Fg[3], BackA * Weight);
 
                 Inc(PtrComp(ForeGroundPointer), 3 * SizeOf(Int8u));
@@ -423,8 +423,8 @@ begin
 
           Inc(TotalWeight, Weight);
           Inc(Fg[FOrder.R], BackR * Weight);
-          Inc(Fg[FOrder.G], BackG * Weight);
-          Inc(Fg[FOrder.B], BackB * Weight);
+          Inc(Fg[FOrder.g], BackG * Weight);
+          Inc(Fg[FOrder.b], BackB * Weight);
           Inc(Fg[3], BackA * Weight);
           Inc(HiRes.X, RxInv);
 
@@ -465,8 +465,8 @@ begin
         Fg[2] := Fg[3];
 
     Span.Rgba8.R := Int8u(Fg[FOrder.R]);
-    Span.Rgba8.G := Int8u(Fg[FOrder.G]);
-    Span.Rgba8.B := Int8u(Fg[FOrder.B]);
+    Span.Rgba8.g := Int8u(Fg[FOrder.g]);
+    Span.Rgba8.b := Int8u(Fg[FOrder.b]);
     Span.Rgba8.A := Int8u(Fg[3]);
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -479,4 +479,4 @@ begin
   Result := Allocator.Span;
 end;
 
-end.
+end. 

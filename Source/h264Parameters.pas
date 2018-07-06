@@ -12,12 +12,12 @@
 
 unit h264Parameters;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
 uses
-  Classes, SysUtils, h264Stdint, h264util, PascalStrings;
+  Classes, SysUtils, h264Stdint, h264Util, PascalStrings;
 
 const
   MIN_QP               = 0;
@@ -32,7 +32,7 @@ type
   private
     width, height: uint16_t;  // input dimensions
     frames: uint32_t;         // frame count
-    fps: single;              // fps
+    fps: Single;              // fps
     qp: uint8_t;              // quantization parameter
     chroma_qp_offset: int8_t; // chroma qp offset
     subme: uint8_t;           // subpixel ME refinement
@@ -49,19 +49,19 @@ type
     }
     ref: uint8_t;           // reference frame count
     key_interval: uint16_t; // maximum keyframe interval
-    loopfilter: boolean;    // deblocking
-    filter_thread: boolean; // deblocking in separate thread
-    aq: boolean;            // mb-level adaptive quantization
-    luma_only: boolean;     // ignore chroma
+    loopfilter: Boolean;    // deblocking
+    filter_thread: Boolean; // deblocking in separate thread
+    aq: Boolean;            // mb-level adaptive quantization
+    luma_only: Boolean;     // ignore chroma
 
-    rc: record
-      enabled: boolean;  // enable avg. bitrate ratecontrol
-      bitrate: uint32_t; // desired bitrate in kbps
+    RC: record
+      Enabled: Boolean;  // enable avg. bitrate ratecontrol
+      Bitrate: uint32_t; // desired bitrate in kbps
     end;
 
     procedure SetAnalysisLevel(const AValue: uint8_t);
     procedure SetChromaQParamOffset(const AValue: int8_t);
-    procedure SetFilterThreadEnabled(AValue: boolean);
+    procedure SetFilterThreadEnabled(AValue: Boolean);
     procedure SetKeyFrameInterval(const AValue: uint16_t);
     procedure SetNumReferenceFrames(const AValue: uint8_t);
     procedure SetQParam(const AValue: uint8_t);
@@ -71,18 +71,18 @@ type
   public
     property FrameWidth: uint16_t read width;
     property FrameHeight: uint16_t read height;
-    property FrameRate: single read fps;
+    property FrameRate: Single read fps;
 
-    property ABRRateControlEnabled: boolean read rc.enabled;
+    property ABRRateControlEnabled: Boolean read RC.Enabled;
     property FrameCount: uint32_t read frames write frames;
-    property bitrate: uint32_t read rc.bitrate;
+    property Bitrate: uint32_t read RC.Bitrate;
 
     property QParam: uint8_t read qp write SetQParam;
     property ChromaQParamOffset: int8_t read chroma_qp_offset write SetChromaQParamOffset;
     property KeyFrameInterval: uint16_t read key_interval write SetKeyFrameInterval;
 
-    property LoopFilterEnabled: boolean read loopfilter write loopfilter;
-    property FilterThreadEnabled: boolean read filter_thread write SetFilterThreadEnabled;
+    property LoopFilterEnabled: Boolean read loopfilter write loopfilter;
+    property FilterThreadEnabled: Boolean read filter_thread write SetFilterThreadEnabled;
 
     property AnalysisLevel: uint8_t read analyse write SetAnalysisLevel; // mb type decision quality
     { 0 - none
@@ -100,14 +100,14 @@ type
 
     property NumReferenceFrames: uint8_t read ref write SetNumReferenceFrames;
 
-    property AdaptiveQuant: boolean read aq write aq;
+    property AdaptiveQuant: Boolean read aq write aq;
 
-    property IgnoreChroma: boolean read luma_only write luma_only;
+    property IgnoreChroma: Boolean read luma_only write luma_only;
 
     constructor Create; overload;
-    constructor Create(const width_, height_: uint16_t; const fps_: double); overload;
+    constructor Create(const width_, height_: uint16_t; const fps_: Double); overload;
     procedure SetABRRateControl(const bitrate_: uint32_t);
-    procedure SetStreamParams(const width_, height_, frame_count: int32_t; const fps_: single);
+    procedure SetStreamParams(const width_, height_, frame_count: int32_t; const fps_: Single);
     function ToPascalString: TPascalString; overload;
   end;
 
@@ -126,13 +126,13 @@ begin
   ValidateQParams;
 end;
 
-procedure TEncodingParameters.SetFilterThreadEnabled(AValue: boolean);
+procedure TEncodingParameters.SetFilterThreadEnabled(AValue: Boolean);
 begin
   if filter_thread = AValue then
       Exit;
   filter_thread := AValue;
   if AValue and not loopfilter then
-      LoopFilterEnabled := true;
+      LoopFilterEnabled := True;
 end;
 
 procedure TEncodingParameters.SetKeyFrameInterval(const AValue: uint16_t);
@@ -179,7 +179,7 @@ begin
   Create(320, 240, 25.0);
 end;
 
-constructor TEncodingParameters.Create(const width_, height_: uint16_t; const fps_: double);
+constructor TEncodingParameters.Create(const width_, height_: uint16_t; const fps_: Double);
 begin
   inherited Create;
   width := width_;
@@ -192,21 +192,21 @@ begin
   subme := 3;
   analyse := 2;
   ref := 1;
-  rc.enabled := false;
-  aq := false;
-  loopfilter := false;
-  filter_thread := false;
-  luma_only := false;
+  RC.Enabled := False;
+  aq := False;
+  loopfilter := False;
+  filter_thread := False;
+  luma_only := False;
   frames := 0;
 end;
 
 procedure TEncodingParameters.SetABRRateControl(const bitrate_: uint32_t);
 begin
-  rc.enabled := true;
-  rc.bitrate := bitrate_;
+  RC.Enabled := True;
+  RC.Bitrate := bitrate_;
 end;
 
-procedure TEncodingParameters.SetStreamParams(const width_, height_, frame_count: int32_t; const fps_: single);
+procedure TEncodingParameters.SetStreamParams(const width_, height_, frame_count: int32_t; const fps_: Single);
 begin
   width := width_;
   height := height_;
@@ -215,19 +215,19 @@ begin
 end;
 
 function TEncodingParameters.ToPascalString: TPascalString;
-  function b2s(const b: boolean): SystemString;
+  function b2s(const b: Boolean): SystemString;
   begin
     if b then
-        result := '1'
+        Result := '1'
     else
-        result := '0'
+        Result := '0'
   end;
 
 begin
-  result.Text := PFormat('%dx%d keyint:%d qp:%d subme:%d analyse:%d ref:%d aq:%s '
+  Result.Text := PFormat('%dx%d keyint:%d qp:%d subme:%d analyse:%d ref:%d aq:%s '
     + 'chroma_qp_offset:%d loopfilter:%s (threaded:%s)',
     [width, height, key_interval, qp, subme, analyse, ref, b2s(aq),
     chroma_qp_offset, b2s(loopfilter), b2s(filter_thread)]);
 end;
 
-end.
+end.  

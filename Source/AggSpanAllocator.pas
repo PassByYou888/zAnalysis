@@ -39,7 +39,7 @@ unit AggSpanAllocator;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -104,3 +104,4 @@ begin
 end;
 
 end.
+ 

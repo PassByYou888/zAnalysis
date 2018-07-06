@@ -39,7 +39,7 @@ unit AggGradientLut;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -61,7 +61,7 @@ type
     // Size-index Interface. This class can be used directly as the
     // ColorF in SpanGradient. All it needs is two access methods
     // size() and operator [].
-    function ArrayOperator(Index: Cardinal): Pointer; override;
+    function ArrayOperator(index: Cardinal): Pointer; override;
     property ItemPointer[index: Cardinal]: Pointer read ArrayOperator; default;
   public
     constructor Create(ASize: Cardinal = 256);
@@ -76,7 +76,7 @@ type
     // TAggGradientLut.addColor(0.0, startColor);
     // TAggGradientLut.addColor(1.0, endColor);
     procedure RemoveAll;
-    procedure AddColor(Offset: Double; Color: PAggColor);
+    procedure AddColor(Offset: Double; COLOR: PAggColor);
 
     procedure BuildLut;
   end;
@@ -88,30 +88,30 @@ type
 
   TAggColorPoint = packed record
     Offset: Double;
-    Color: TAggColor;
+    COLOR: TAggColor;
   end;
 
   TAggColorInterpolator = packed record
     FC1, FC2: TAggColor;
     FLength, FCount: Cardinal;
-    V, R, G, B, A: TAggDdaLineInterpolator;
+    v, R, g, b, A: TAggDdaLineInterpolator;
     FIsGray: Boolean;
   public
-    procedure Initialize(C1, C2: PAggColor; Len: Cardinal;
+    procedure Initialize(c1, c2: PAggColor; Len: Cardinal;
       IsGray: Boolean = False);
 
     procedure OperatorInc;
 
-    function Color: TAggColor;
+    function COLOR: TAggColor;
   end;
 
   { TAggColorInterpolator }
 
-procedure TAggColorInterpolator.Initialize(C1, C2: PAggColor; Len: Cardinal;
+procedure TAggColorInterpolator.Initialize(c1, c2: PAggColor; Len: Cardinal;
   IsGray: Boolean = False);
 begin
-  FC1 := C1^;
-  FC2 := C2^;
+  FC1 := c1^;
+  FC2 := c2^;
 
   FLength := Len;
   FCount := 0;
@@ -119,16 +119,16 @@ begin
   FIsGray := IsGray;
 
   if FIsGray then
-      V.Initialize(C1.V, C2.V, Len, 14)
+      v.Initialize(c1.v, c2.v, Len, 14)
 
   else
     begin
-      R.Initialize(C1.Rgba8.R, C2.Rgba8.R, Len, 14);
-      G.Initialize(C1.Rgba8.G, C2.Rgba8.G, Len, 14);
-      B.Initialize(C1.Rgba8.B, C2.Rgba8.B, Len, 14);
+      R.Initialize(c1.Rgba8.R, c2.Rgba8.R, Len, 14);
+      g.Initialize(c1.Rgba8.g, c2.Rgba8.g, Len, 14);
+      b.Initialize(c1.Rgba8.b, c2.Rgba8.b, Len, 14);
     end;
 
-  A.Initialize(C1.Rgba8.A, C2.Rgba8.A, Len, 14);
+  A.Initialize(c1.Rgba8.A, c2.Rgba8.A, Len, 14);
 end;
 
 procedure TAggColorInterpolator.OperatorInc;
@@ -136,23 +136,23 @@ begin
   Inc(FCount);
 
   if FIsGray then
-      V.PlusOperator
+      v.PlusOperator
   else
     begin
       R.PlusOperator;
-      G.PlusOperator;
-      B.PlusOperator;
+      g.PlusOperator;
+      b.PlusOperator;
     end;
 
   A.PlusOperator;
 end;
 
-function TAggColorInterpolator.Color: TAggColor;
+function TAggColorInterpolator.COLOR: TAggColor;
 begin
   if FIsGray then
       Result.FromValueInteger(R.Y, A.Y)
   else
-      Result.FromRgbaInteger(R.Y, G.Y, B.Y, A.Y)
+      Result.FromRgbaInteger(R.Y, g.Y, b.Y, A.Y)
 end;
 
 { TAggGradientLut }
@@ -177,9 +177,9 @@ begin
   FColorProfile.RemoveAll;
 end;
 
-procedure TAggGradientLut.AddColor(Offset: Double; Color: PAggColor);
+procedure TAggGradientLut.AddColor(Offset: Double; COLOR: PAggColor);
 var
-  Cp: TAggColorPoint;
+  cp: TAggColorPoint;
 begin
   if Offset < 0.0 then
       Offset := 0.0;
@@ -187,27 +187,27 @@ begin
   if Offset > 1.0 then
       Offset := 1.0;
 
-  Cp.Color := Color^;
-  Cp.Offset := Offset;
+  cp.COLOR := COLOR^;
+  cp.Offset := Offset;
 
-  FColorProfile.Add(@Cp);
+  FColorProfile.Add(@cp);
 end;
 
-function OffsetLess(A, B: PAggColorPoint): Boolean;
+function OffsetLess(A, b: PAggColorPoint): Boolean;
 begin
-  Result := A.Offset < B.Offset;
+  Result := A.Offset < b.Offset;
 end;
 
-function OffsetEqual(A, B: PAggColorPoint): Boolean;
+function OffsetEqual(A, b: PAggColorPoint): Boolean;
 begin
-  Result := A.Offset = B.Offset;
+  Result := A.Offset = b.Offset;
 end;
 
 procedure TAggGradientLut.BuildLut;
 var
-  I, Start, Stop: Cardinal;
+  i, Start, stop: Cardinal;
   C: TAggColor;
-  Ci: TAggColorInterpolator;
+  CI: TAggColorInterpolator;
 begin
   QuickSort(FColorProfile, @OffsetLess);
   FColorProfile.CutAt(RemoveDuplicates(FColorProfile, @OffsetEqual));
@@ -217,45 +217,45 @@ begin
       Start := UnsignedRound(PAggColorPoint(FColorProfile[0]).Offset *
         FColorLutSize);
 
-      C := PAggColorPoint(FColorProfile[0]).Color;
-      I := 0;
+      C := PAggColorPoint(FColorProfile[0]).COLOR;
+      i := 0;
 
-      while I < Start do
+      while i < Start do
         begin
-          PAggColor(FColorLut[I])^ := C;
+          PAggColor(FColorLut[i])^ := C;
 
-          Inc(I);
+          Inc(i);
         end;
 
-      I := 1;
+      i := 1;
 
-      while I < FColorProfile.Size do
+      while i < FColorProfile.Size do
         begin
-          Stop := UnsignedRound(PAggColorPoint(FColorProfile[I]).Offset *
+          stop := UnsignedRound(PAggColorPoint(FColorProfile[i]).Offset *
             FColorLutSize);
 
-          Ci.Initialize(@PAggColorPoint(FColorProfile[I - 1]).Color,
-            @PAggColorPoint(FColorProfile[I]).Color, Stop - Start + 1);
+          CI.Initialize(@PAggColorPoint(FColorProfile[i - 1]).COLOR,
+            @PAggColorPoint(FColorProfile[i]).COLOR, stop - Start + 1);
 
-          while Start < Stop do
+          while Start < stop do
             begin
-              PAggColor(FColorLut[Start])^ := Ci.Color;
+              PAggColor(FColorLut[Start])^ := CI.COLOR;
 
-              Ci.OperatorInc;
+              CI.OperatorInc;
 
               Inc(Start);
             end;
 
-          Inc(I);
+          Inc(i);
         end;
 
-      C := PAggColorPoint(FColorProfile.Last).Color;
+      C := PAggColorPoint(FColorProfile.Last).COLOR;
 
-      while Stop < FColorLut.Size do
+      while stop < FColorLut.Size do
         begin
-          PAggColor(FColorLut[Stop])^ := C;
+          PAggColor(FColorLut[stop])^ := C;
 
-          Inc(Stop);
+          Inc(stop);
         end;
     end;
 end;
@@ -270,9 +270,10 @@ begin
   Result := FColorLut.EntrySize;
 end;
 
-function TAggGradientLut.ArrayOperator(Index: Cardinal): Pointer;
+function TAggGradientLut.ArrayOperator(index: Cardinal): Pointer;
 begin
   Result := FColorLut[index];
 end;
 
-end.
+end. 
+ 

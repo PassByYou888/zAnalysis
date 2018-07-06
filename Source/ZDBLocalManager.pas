@@ -14,15 +14,15 @@
 *)
 unit ZDBLocalManager;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
 uses SysUtils, Variants,
   CoreClasses, ListEngine, UnicodeMixedLib, DataFrameEngine, MemoryStream64, TextDataEngine,
-  {$IFNDEF FPC}
+{$IFNDEF FPC}
   JsonDataObjects,
-  {$ENDIF}
+{$ENDIF}
   DoStatusIO, Cadencer, NotifyObjectBase, PascalStrings, CoreCipher, ZDBEngine, ItemStream;
 
 type
@@ -32,7 +32,7 @@ type
     FLastModifyTime: TTimeTickValue;
     procedure DoCreateInit; override;
   public
-    property name: SystemString read FName;
+    property Name: SystemString read FName;
   end;
 
   TZDBLocalManager = class;
@@ -44,10 +44,10 @@ type
   TZDBPipelineDoneCall   = procedure(dPipe: TZDBPipeline);
   TZDBPipelineDoneMethod = procedure(dPipe: TZDBPipeline) of object;
 
-  {$IFNDEF FPC}
+{$IFNDEF FPC}
   TZDBPipelineFilterProc = reference to procedure(dPipe: TZDBPipeline; var qState: TQueryState; var Allowed: Boolean);
   TZDBPipelineDoneProc   = reference to procedure(dPipe: TZDBPipeline);
-  {$ENDIF}
+{$ENDIF}
 
   TZDBStorePosTransform = record
     OriginPos, NewPos: Int64;
@@ -67,7 +67,7 @@ type
     FFragmentBuffer: TMemoryStream64;
     FActivted: Boolean;
     FQueryTask: TQueryTask;
-    FPerformaceCounter: NativeInt;
+    FPerformaceCounter: nativeInt;
     FLastPerformaceTime: TTimeTickValue;
     FQueryCounterOfPerSec: Double;
     FRealTimePostFragmentData: Boolean;
@@ -100,14 +100,14 @@ type
 
     OnDataDoneCall: TZDBPipelineDoneCall;
     OnDataDoneMethod: TZDBPipelineDoneMethod;
-    {$IFNDEF FPC}
+{$IFNDEF FPC}
     OnDataFilterProc: TZDBPipelineFilterProc;
     OnDataDoneProc: TZDBPipelineDoneProc;
-    {$ENDIF}
+{$ENDIF}
     OnStorePosTransform: TZDBStorePosTransformNotify;
     //
     //
-    Values: THashVariantList;
+    values: THashVariantList;
     DataEng: TDataFrameEngine;
     UserPointer: Pointer;
     UserObject: TCoreClassObject;
@@ -127,7 +127,7 @@ type
     function GetStorePosTransform(const index: Integer): PZDBStorePosTransform;
     property StorePosTransform[const index: Integer]: PZDBStorePosTransform read GetStorePosTransform;
 
-    procedure Stop; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    procedure stop; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     procedure Pause; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     procedure Play; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function Paused: Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -180,7 +180,7 @@ type
     procedure DoDeleteData(Sender: TDBStoreBase; const StorePos: Int64); virtual;
   protected
     // canencer trigger
-    procedure ZDBEngProgress(const Name: PSystemString; obj: TCoreClassObject);
+    procedure ZDBEngProgress(const Name: PSystemString; Obj: TCoreClassObject);
     procedure CadencerProgress(const deltaTime, newTime: Double);
   protected
     procedure DoQueryFragmentData(pipe: TZDBPipeline; FragmentSour: TMemoryStream64); virtual;
@@ -230,12 +230,12 @@ type
     function GenerateTaskName: SystemString; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function GenerateNewTaskName: SystemString; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     function GetPipeline(pipeName: SystemString): TZDBPipeline;
-    function GetDB(dN: SystemString): TZDBStoreEngine;
-    function GetDBName(dN: SystemString): TZDBStoreEngine;
-    property DBName[dN: SystemString]: TZDBStoreEngine read GetDBName; default;
+    function GetDB(dn: SystemString): TZDBStoreEngine;
+    function GetDBName(dn: SystemString): TZDBStoreEngine;
+    property DBName[dn: SystemString]: TZDBStoreEngine read GetDBName; default;
     property PipelineN[pipeName: SystemString]: TZDBPipeline read GetPipeline;
     property QueryPipelineList: TCoreClassListForObj read FQueryPipelineList;
-    function ExistsDB(dN: SystemString): Boolean;
+    function ExistsDB(dn: SystemString): Boolean;
     function ExistsPipeline(pipeName: SystemString): Boolean;
     procedure StopPipeline(pipeName: SystemString);
     procedure GetPipeList(OutputList: TCoreClassListForObj);
@@ -258,7 +258,7 @@ type
       MaxQueryCompare, MaxQueryResult: Int64;
       OnDataFilterMethod: TZDBPipelineFilterMethod; OnDataDoneMethod: TZDBPipelineDoneMethod): TZDBPipeline; overload;
 
-    {$IFNDEF FPC}
+{$IFNDEF FPC}
     function QueryDB(WriteResultToOutputDB, InMemory, ReverseQuery: Boolean; dbN, OutputDB: SystemString;
       AutoDestroyDB: Boolean; QueryDoneFreeDelayTime, FragmentWaitTime, MaxWaitTime: Double;
       MaxQueryCompare, MaxQueryResult: Int64;
@@ -268,7 +268,7 @@ type
       AutoDestroyDB: Boolean; QueryDoneFreeDelayTime, FragmentWaitTime, MaxWaitTime: Double;
       MaxQueryCompare, MaxQueryResult: Int64;
       OnDataFilterProc: TZDBPipelineFilterProc; OnDataDoneProc: TZDBPipelineDoneProc): TZDBPipeline; overload;
-    {$ENDIF}
+{$ENDIF}
     function QueryDBToMemory(WriteResultToOutputDB, ReverseQuery: Boolean; dbN: SystemString;
       QueryDoneFreeDelayTime, FragmentWaitTime, MaxWaitTime: Double;
       MaxQueryCompare, MaxQueryResult: Int64): TZDBPipeline; overload;
@@ -276,11 +276,11 @@ type
     function QueryDBToMemory(WriteResultToOutputDB, ReverseQuery: Boolean; dbN: SystemString;
       FragmentWaitTime, MaxWaitTime: Double; MaxQueryResult: Int64): TZDBPipeline; overload;
 
-    {$IFNDEF FPC}
+{$IFNDEF FPC}
     function QueryDBToMemory(WriteResultToOutputDB, ReverseQuery: Boolean; dbN: SystemString;
       QueryDoneFreeDelayTime, FragmentWaitTime, MaxWaitTime: Double; MaxQueryCompare, MaxQueryResult: Int64;
       OnDataFilterProc: TZDBPipelineFilterProc; OnDataDoneProc: TZDBPipelineDoneProc): TZDBPipeline; overload;
-    {$ENDIF}
+{$ENDIF}
     function QueryDBToFile(WriteResultToOutputDB, ReverseQuery: Boolean; dbN, OutputDB: SystemString;
       FragmentWaitTime, MaxWaitTime: Double; MaxQueryCompare, MaxQueryResult: Int64): TZDBPipeline;
 
@@ -288,51 +288,51 @@ type
     function WriteDBItemToOneFragment(dbN: SystemString; StorePos: Int64; DestStream: TMemoryStream64): Boolean;
 
     // post operation
-    function PostData(dN: SystemString; sourDBEng: TZDBStoreEngine; SourStorePos: Int64): Int64; overload;
-    function PostData(dN: SystemString; var qState: TQueryState): Int64; overload;
-    function PostData(dN: SystemString; dSour: TCoreClassStream; ID: Cardinal): Int64; overload;
-    function PostData(dN: SystemString; dSour: TDataFrameEngine): Int64; overload;
-    function PostData(dN: SystemString; dSour: THashVariantList): Int64; overload;
-    function PostData(dN: SystemString; dSour: TSectionTextData): Int64; overload;
-    function PostData(dN: SystemString; dSour: TPascalString): Int64; overload;
-    {$IFNDEF FPC}
-    function PostData(dN: SystemString; dSour: TJsonObject): Int64; overload;
-    {$ENDIF}
+    function PostData(dn: SystemString; sourDBEng: TZDBStoreEngine; SourStorePos: Int64): Int64; overload;
+    function PostData(dn: SystemString; var qState: TQueryState): Int64; overload;
+    function PostData(dn: SystemString; dSour: TCoreClassStream; ID: Cardinal): Int64; overload;
+    function PostData(dn: SystemString; dSour: TDataFrameEngine): Int64; overload;
+    function PostData(dn: SystemString; dSour: THashVariantList): Int64; overload;
+    function PostData(dn: SystemString; dSour: TSectionTextData): Int64; overload;
+    function PostData(dn: SystemString; dSour: TPascalString): Int64; overload;
+{$IFNDEF FPC}
+    function PostData(dn: SystemString; dSour: TJsonObject): Int64; overload;
+{$ENDIF}
     //
     // insert operation
-    function InsertData(dN: SystemString; InsertPos: Int64; dSour: TCoreClassStream; ID: Cardinal): Int64; overload;
-    function InsertData(dN: SystemString; InsertPos: Int64; dSour: TDataFrameEngine): Int64; overload;
-    function InsertData(dN: SystemString; InsertPos: Int64; dSour: THashVariantList): Int64; overload;
-    function InsertData(dN: SystemString; InsertPos: Int64; dSour: TSectionTextData): Int64; overload;
-    function InsertData(dN: SystemString; InsertPos: Int64; dSour: TPascalString): Int64; overload;
-    {$IFNDEF FPC}
-    function InsertData(dN: SystemString; InsertPos: Int64; dSour: TJsonObject): Int64; overload;
-    {$ENDIF}
+    function InsertData(dn: SystemString; InsertPos: Int64; dSour: TCoreClassStream; ID: Cardinal): Int64; overload;
+    function InsertData(dn: SystemString; InsertPos: Int64; dSour: TDataFrameEngine): Int64; overload;
+    function InsertData(dn: SystemString; InsertPos: Int64; dSour: THashVariantList): Int64; overload;
+    function InsertData(dn: SystemString; InsertPos: Int64; dSour: TSectionTextData): Int64; overload;
+    function InsertData(dn: SystemString; InsertPos: Int64; dSour: TPascalString): Int64; overload;
+{$IFNDEF FPC}
+    function InsertData(dn: SystemString; InsertPos: Int64; dSour: TJsonObject): Int64; overload;
+{$ENDIF}
     //
     // delete operation
-    procedure DeleteData(dN: SystemString; StorePos: Int64); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    procedure DeleteData(dn: SystemString; StorePos: Int64); {$IFDEF INLINE_ASM} inline; {$ENDIF}
     //
     // manual getData
-    function GetData(dN: SystemString; StorePos: Int64; ID: Cardinal): TMemoryStream64InCache; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    function GetData(dn: SystemString; StorePos: Int64; ID: Cardinal): TMemoryStream64InCache; {$IFDEF INLINE_ASM} inline; {$ENDIF}
     //
     // modify operation
-    function SetData(dN: SystemString; StorePos: Int64; dSour: TMemoryStream64): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    function SetData(dn: SystemString; StorePos: Int64; dSour: TMemoryStream64): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
   end;
 
   TFillQueryDataCall   = procedure(dbN, pipeN: SystemString; StorePos: Int64; ID: Cardinal; DataSour: TMemoryStream64);
   TFillQueryDataMethod = procedure(dbN, pipeN: SystemString; StorePos: Int64; ID: Cardinal; DataSour: TMemoryStream64) of object;
   //
-  {$IFNDEF FPC}
+{$IFNDEF FPC}
   TFillQueryDataProc = reference to procedure(dbN, pipeN: SystemString; StorePos: Int64; ID: Cardinal; DataSour: TMemoryStream64);
-  {$ENDIF}
+{$ENDIF}
   TUserFillQueryDataCall = procedure(UserPointer: Pointer; UserObject: TCoreClassObject; UserVariant: Variant;
     dbN, pipeN: SystemString; StorePos: Int64; ID: Cardinal; DataSour: TMemoryStream64);
   TUserFillQueryDataMethod = procedure(UserPointer: Pointer; UserObject: TCoreClassObject; UserVariant: Variant;
     dbN, pipeN: SystemString; StorePos: Int64; ID: Cardinal; DataSour: TMemoryStream64) of object;
-  {$IFNDEF FPC}
+{$IFNDEF FPC}
   TUserFillQueryDataProc = reference to procedure(UserPointer: Pointer; UserObject: TCoreClassObject; UserVariant: Variant;
     dbN, pipeN: SystemString; StorePos: Int64; ID: Cardinal; DataSour: TMemoryStream64);
-  {$ENDIF}
+{$ENDIF}
 
 function GeneratePipeName(const sourDBName, taskName: SystemString): SystemString; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
@@ -358,9 +358,10 @@ function DecodeOneNewFragment(DataSour: TMemoryStream64): TMemoryStream64; overl
 
 // encrypt as completeBuffer
 function EncodeOneBuff(const dbN: TPascalString; const ID: Cardinal; const StorePos: Int64;
-  buff: Pointer; buffSiz: NativeUInt; var outputSiz: NativeUInt): Pointer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure DecodeOneBuff(buff: Pointer; buffSiz: NativeUInt;
-  var dbN: TPascalString; var ID: Cardinal; var StorePos: Int64; var output: Pointer; var outputSiz: NativeUInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  buff: Pointer; buffSiz: nativeUInt; var outputSiz: nativeUInt): Pointer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure DecodeOneBuff(buff: Pointer; buffSiz: nativeUInt;
+  var dbN: TPascalString; var ID: Cardinal; var StorePos: Int64; var output: Pointer; var outputSiz: nativeUInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 implementation
 
@@ -381,14 +382,14 @@ begin
   while DataSour.Position < DataSour.Size do
     begin
       if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Cardinal_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Cardinal_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
-          break;
+          Break;
 
       if DataSour.Position + siz > DataSour.Size then
-          break;
+          Break;
 
       try
         m64.SetPointerWithProtectedMode(DataSour.PositionAsPtr(DataSour.Position), siz);
@@ -408,9 +409,9 @@ var
   m64: TMemoryStream64;
 begin
   if not Assigned(OnResult) then
-      exit;
+      Exit;
   if DataSour.Size <= 0 then
-      exit;
+      Exit;
 
   DataSour.Position := 0;
 
@@ -418,14 +419,14 @@ begin
   while DataSour.Position < DataSour.Size do
     begin
       if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Int64_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
-          break;
+          Break;
 
       if DataSour.Position + siz > DataSour.Size then
-          break;
+          Break;
 
       try
         m64.SetPointerWithProtectedMode(DataSour.PositionAsPtr(DataSour.Position), siz);
@@ -445,9 +446,9 @@ var
   m64: TMemoryStream64;
 begin
   if not Assigned(OnResult) then
-      exit;
+      Exit;
   if DataSour.Size <= 0 then
-      exit;
+      Exit;
 
   DataSour.Position := 0;
 
@@ -455,14 +456,14 @@ begin
   while DataSour.Position < DataSour.Size do
     begin
       if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Int64_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
-          break;
+          Break;
 
       if DataSour.Position + siz > DataSour.Size then
-          break;
+          Break;
 
       try
         m64.SetPointerWithProtectedMode(DataSour.PositionAsPtr(DataSour.Position), siz);
@@ -485,9 +486,9 @@ var
   m64: TMemoryStream64;
 begin
   if not Assigned(OnResult) then
-      exit;
+      Exit;
   if DataSour.Size <= 0 then
-      exit;
+      Exit;
 
   DataSour.Position := 0;
 
@@ -495,14 +496,14 @@ begin
   while DataSour.Position < DataSour.Size do
     begin
       if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Int64_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
-          break;
+          Break;
 
       if DataSour.Position + siz > DataSour.Size then
-          break;
+          Break;
 
       try
         m64.SetPointerWithProtectedMode(DataSour.PositionAsPtr(DataSour.Position), siz);
@@ -525,9 +526,9 @@ var
   m64: TMemoryStream64;
 begin
   if not Assigned(OnResult) then
-      exit;
+      Exit;
   if DataSour.Size <= 0 then
-      exit;
+      Exit;
 
   DataSour.Position := 0;
 
@@ -535,14 +536,14 @@ begin
   while DataSour.Position < DataSour.Size do
     begin
       if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Int64_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
-          break;
+          Break;
 
       if DataSour.Position + siz > DataSour.Size then
-          break;
+          Break;
 
       try
         m64.SetPointerWithProtectedMode(DataSour.PositionAsPtr(DataSour.Position), siz);
@@ -563,9 +564,9 @@ var
   m64: TMemoryStream64;
 begin
   if not Assigned(OnResult) then
-      exit;
+      Exit;
   if DataSour.Size <= 0 then
-      exit;
+      Exit;
 
   DataSour.Position := 0;
 
@@ -573,14 +574,14 @@ begin
   while DataSour.Position < DataSour.Size do
     begin
       if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Int64_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
-          break;
+          Break;
 
       if DataSour.Position + siz > DataSour.Size then
-          break;
+          Break;
 
       try
         m64.SetPointerWithProtectedMode(DataSour.PositionAsPtr(DataSour.Position), siz);
@@ -604,9 +605,9 @@ var
   m64: TMemoryStream64;
 begin
   if not Assigned(OnResult) then
-      exit;
+      Exit;
   if DataSour.Size <= 0 then
-      exit;
+      Exit;
 
   DataSour.Position := 0;
 
@@ -614,14 +615,14 @@ begin
   while DataSour.Position < DataSour.Size do
     begin
       if DataSour.ReadPtr(@StorePos, C_Int64_Size) <> C_Int64_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
-          break;
+          Break;
       if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
-          break;
+          Break;
 
       if DataSour.Position + siz > DataSour.Size then
-          break;
+          Break;
 
       try
         m64.SetPointerWithProtectedMode(DataSour.PositionAsPtr(DataSour.Position), siz);
@@ -665,14 +666,14 @@ var
 begin
   Result := nil;
   if DataSour.ReadPtr(@dStorePos, C_Int64_Size) <> C_Int64_Size then
-      exit;
+      Exit;
   if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
-      exit;
+      Exit;
   if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
-      exit;
+      Exit;
 
   if DataSour.Position + siz > DataSour.Size then
-      exit;
+      Exit;
 
   Result := TMemoryStream64.Create;
   Result.SetPointerWithProtectedMode(DataSour.PositionAsPtr(DataSour.Position), siz);
@@ -692,14 +693,14 @@ var
 begin
   Result := nil;
   if DataSour.ReadPtr(@dStorePos, C_Int64_Size) <> C_Int64_Size then
-      exit;
+      Exit;
   if DataSour.ReadPtr(@siz, C_Int64_Size) <> C_Int64_Size then
-      exit;
+      Exit;
   if DataSour.ReadPtr(@ID, C_Cardinal_Size) <> C_Cardinal_Size then
-      exit;
+      Exit;
 
   if DataSour.Position + siz > DataSour.Size then
-      exit;
+      Exit;
 
   Result := TMemoryStream64.Create;
   Result.CopyFrom(DataSour, siz);
@@ -715,38 +716,38 @@ begin
 end;
 
 function EncodeOneBuff(const dbN: TPascalString; const ID: Cardinal; const StorePos: Int64;
-  buff: Pointer; buffSiz: NativeUInt; var outputSiz: NativeUInt): Pointer;
+  buff: Pointer; buffSiz: nativeUInt; var outputSiz: nativeUInt): Pointer;
 var
   nb: TBytes;
-  l: word;
+  L: Word;
   p: PByteArray;
 begin
   dbN.FastGetBytes(nb);
-  l := length(nb);
-  outputSiz := 2 + l + 4 + 8 + buffSiz;
+  L := length(nb);
+  outputSiz := 2 + L + 4 + 8 + buffSiz;
   p := GetMemory(outputSiz);
   Result := p;
-  PWord(@p^[0])^ := l;
-  copyPtr(@nb[0], @p^[2], l);
-  PCardinal(@(p^[2 + l]))^ := ID;
-  PInt64(@(p^[2 + l + 4]))^ := StorePos;
-  copyPtr(buff, @p^[2 + l + 4 + 8], buffSiz);
+  PWORD(@p^[0])^ := L;
+  CopyPtr(@nb[0], @p^[2], L);
+  PCardinal(@(p^[2 + L]))^ := ID;
+  PInt64(@(p^[2 + L + 4]))^ := StorePos;
+  CopyPtr(buff, @p^[2 + L + 4 + 8], buffSiz);
 end;
 
-procedure DecodeOneBuff(buff: Pointer; buffSiz: NativeUInt;
-  var dbN: TPascalString; var ID: Cardinal; var StorePos: Int64; var output: Pointer; var outputSiz: NativeUInt);
+procedure DecodeOneBuff(buff: Pointer; buffSiz: nativeUInt;
+  var dbN: TPascalString; var ID: Cardinal; var StorePos: Int64; var output: Pointer; var outputSiz: nativeUInt);
 var
   nb: TBytes;
   p: PByteArray;
 begin
   p := buff;
-  setLength(nb, PWord(@p^[0])^);
-  copyPtr(@p^[2], @nb[0], PWord(@p^[0])^);
+  SetLength(nb, PWORD(@p^[0])^);
+  CopyPtr(@p^[2], @nb[0], PWORD(@p^[0])^);
   dbN.Bytes := nb;
-  ID := PCardinal(@(p^[2 + PWord(@p^[0])^]))^;
-  StorePos := PInt64(@(p^[2 + PWord(@p^[0])^ + 4]))^;
-  outputSiz := buffSiz - (2 + PWord(@p^[0])^ + 4 + 8);
-  output := @p^[2 + PWord(@p^[0])^ + 4 + 8];
+  ID := PCardinal(@(p^[2 + PWORD(@p^[0])^]))^;
+  StorePos := PInt64(@(p^[2 + PWORD(@p^[0])^ + 4]))^;
+  outputSiz := buffSiz - (2 + PWORD(@p^[0])^ + 4 + 8);
+  output := @p^[2 + PWORD(@p^[0])^ + 4 + 8];
 end;
 
 procedure TZDBStoreEngine.DoCreateInit;
@@ -765,16 +766,16 @@ var
   procedure DoWrite;
   begin
     if AlreadWrite then
-        exit;
+        Exit;
 
     WriteToOutput(qState.DBEng, qState.StorePos, qState.ID);
     AlreadWrite := True;
-    inc(FQueryResultCounter);
+    Inc(FQueryResultCounter);
   end;
 
 begin
   lastTime := GetTimeTick;
-  inc(FPerformaceCounter);
+  Inc(FPerformaceCounter);
 
   FActivted := True;
 
@@ -783,9 +784,9 @@ begin
   Allowed := False;
 
   if OutputDB = nil then
-      exit;
+      Exit;
   if SourceDB = nil then
-      exit;
+      Exit;
 
   try
     if Assigned(OnDataFilterCall) then
@@ -806,7 +807,7 @@ begin
   except
   end;
 
-  {$IFNDEF FPC}
+{$IFNDEF FPC}
   Allowed := False;
   try
     if Assigned(OnDataFilterProc) then
@@ -816,8 +817,8 @@ begin
         DoWrite;
   except
   end;
-  {$ENDIF}
-  inc(FQueryCounter);
+{$ENDIF}
+  Inc(FQueryCounter);
 
   FCurrentFragmentTime := FCurrentFragmentTime + qState.deltaTime;
   if (AlreadWrite) and (FCurrentFragmentTime >= Trunc(FragmentWaitTime * 1000)) then
@@ -829,17 +830,17 @@ begin
   if (MaxQueryResult > 0) and (FQueryResultCounter >= MaxQueryResult) then
     begin
       qState.Aborted := True;
-      exit;
+      Exit;
     end;
   if (MaxQueryCompare > 0) and (FQueryCounter >= MaxQueryCompare) then
     begin
       qState.Aborted := True;
-      exit;
+      Exit;
     end;
   if (MaxWaitTime > 0) and (qState.newTime >= Trunc(MaxWaitTime * 1000)) then
     begin
       qState.Aborted := True;
-      exit;
+      Exit;
     end;
 
   if lastTime - FLastPerformaceTime > 1000 then
@@ -873,13 +874,13 @@ begin
   except
   end;
 
-  {$IFNDEF FPC}
+{$IFNDEF FPC}
   try
     if Assigned(OnDataDoneProc) then
         OnDataDoneProc(Self);
   except
   end;
-  {$ENDIF}
+{$ENDIF}
   //
   try
       Owner.DoQueryDone(Self);
@@ -899,7 +900,7 @@ var
   siz: Int64;
 begin
   if (not WriteResultToOutputDB) and (not WriteFragmentBuffer) then
-      exit;
+      Exit;
 
   itmStream := DBEng.GetCacheStream(StorePos, ID);
 
@@ -923,9 +924,9 @@ end;
 procedure TZDBPipeline.PostFragmentData(forcePost: Boolean);
 begin
   if (not forcePost) and (not FRealTimePostFragmentData) then
-      exit;
+      Exit;
   if FFragmentBuffer.Size <= 0 then
-      exit;
+      Exit;
 
   FFragmentBuffer.Position := 0;
   Owner.DoQueryFragmentData(Self, FFragmentBuffer);
@@ -959,21 +960,21 @@ begin
 
   OnDataFilterCall := nil;
   OnDataFilterMethod := nil;
-  {$IFNDEF FPC}
+{$IFNDEF FPC}
   OnDataFilterProc := nil;
-  {$ENDIF}
+{$ENDIF}
   OnDataDoneCall := nil;
   OnDataDoneMethod := nil;
-  {$IFNDEF FPC}
+{$IFNDEF FPC}
   OnDataDoneProc := nil;
-  {$ENDIF}
+{$ENDIF}
   OnStorePosTransform := nil;
 
-  Values := THashVariantList.Create;
+  values := THashVariantList.Create;
   DataEng := TDataFrameEngine.Create;
   UserPointer := nil;
   UserObject := nil;
-  UserVariant := NULL;
+  UserVariant := Null;
 
   Owner.FQueryPipelinePool[PipelineName] := Self;
   Owner.FQueryPipelineList.Add(Self);
@@ -1010,7 +1011,7 @@ begin
       if Owner.FQueryPipelineList[i] = Self then
           Owner.FQueryPipelineList.Delete(i)
       else
-          inc(i);
+          Inc(i);
     end;
 
   Owner.FQueryPipelinePool.Delete(PipelineName);
@@ -1039,7 +1040,7 @@ begin
   except
   end;
 
-  DisposeObject([FFragmentBuffer, Values, DataEng]);
+  DisposeObject([FFragmentBuffer, values, DataEng]);
 
   for i := 0 to FStorePosTransformList.Count - 1 do
       Dispose(PZDBStorePosTransform(FStorePosTransformList[i]));
@@ -1081,10 +1082,10 @@ begin
   Result := PZDBStorePosTransform(FStorePosTransformList[index]);
 end;
 
-procedure TZDBPipeline.Stop;
+procedure TZDBPipeline.stop;
 begin
   if FQueryTask <> nil then
-      FQueryTask.Stop;
+      FQueryTask.stop;
 end;
 
 procedure TZDBPipeline.Pause;
@@ -1160,7 +1161,7 @@ end;
 procedure TZDBLocalManager.DoQueryFragmentData(pipe: TZDBPipeline; FragmentSour: TMemoryStream64);
 begin
   if not Assigned(FNotifyIntf) then
-      exit;
+      Exit;
 
   FragmentSour.Position := 0;
 
@@ -1178,11 +1179,7 @@ begin
   except
   end;
 
-  {$IFDEF FPC}
-  with ProgressPost.PostExecute(pipe.QueryDoneFreeDelayTime, @DelayFreePipe) do
-  {$ELSE}
-  with ProgressPost.PostExecute(pipe.QueryDoneFreeDelayTime, DelayFreePipe) do
-    {$ENDIF}
+  with ProgressPost.PostExecute(pipe.QueryDoneFreeDelayTime, {$IFDEF FPC}@{$ENDIF FPC}DelayFreePipe) do
       Data1 := pipe;
 end;
 
@@ -1199,13 +1196,9 @@ begin
         pl := TZDBPipeline(FQueryPipelineList[i]);
         if (pl.SourceDB = sour.OutputDB) and (pl.Activted) then
           begin
-            {$IFDEF FPC}
-            with ProgressPost.PostExecute(1.0, @DelayFreePipe) do
-            {$ELSE}
-            with ProgressPost.PostExecute(1.0, DelayFreePipe) do
-              {$ENDIF}
+            with ProgressPost.PostExecute(1.0, {$IFDEF FPC}@{$ENDIF FPC}DelayFreePipe) do
                 Data1 := sour;
-            exit;
+            Exit;
           end;
       end;
 
@@ -1228,12 +1221,12 @@ var
 begin
   if Assigned(dPipe.OnStorePosTransform) then
     begin
-      setLength(TransformBuff, dPipe.FStorePosTransformList.Count);
+      SetLength(TransformBuff, dPipe.FStorePosTransformList.Count);
       for i := 0 to dPipe.StorePosTransformCount - 1 do
           TransformBuff[i] := dPipe.StorePosTransform[i]^;
 
       dPipe.OnStorePosTransform(dPipe.UserPointer, @TransformBuff);
-      setLength(TransformBuff, 0);
+      SetLength(TransformBuff, 0);
     end;
 end;
 
@@ -1250,18 +1243,14 @@ begin
       new(Done_Ptr);
       Done_Ptr^.OnStorePosTransform := dPipe.OnStorePosTransform;
       Done_Ptr^.Data := dPipe.UserPointer;
-      setLength(Done_Ptr^.TransformBuff, dPipe.FStorePosTransformList.Count);
+      SetLength(Done_Ptr^.TransformBuff, dPipe.FStorePosTransformList.Count);
       for i := 0 to dPipe.StorePosTransformCount - 1 do
           Done_Ptr^.TransformBuff[i] := dPipe.StorePosTransform[i]^;
     end;
 
   SourN := dPipe.SourceDB.Name;
   replaceN := dPipe.UserVariant;
-  {$IFDEF FPC}
-  with ProgressPost.PostExecute(2.0, @DelayReplaceDB) do
-  {$ELSE}
-  with ProgressPost.PostExecute(2.0, DelayReplaceDB) do
-    {$ENDIF}
+  with ProgressPost.PostExecute(2.0, {$IFDEF FPC}@{$ENDIF FPC}DelayReplaceDB) do
     begin
       Data3 := SourN;
       Data4 := replaceN;
@@ -1284,9 +1273,9 @@ begin
   Done_Ptr := Sender.Data5;
 
   if not ExistsDB(SourN) then
-      exit;
+      Exit;
   if not ExistsDB(replaceN) then
-      exit;
+      Exit;
 
   sourDB := DBName[SourN];
 
@@ -1297,22 +1286,18 @@ begin
       if TZDBPipeline(FQueryPipelineList[i]).SourceDB = sourDB then
         begin
           dbBusy := True;
-          break;
+          Break;
         end;
 
   if dbBusy then
     begin
-      {$IFDEF FPC}
-      with ProgressPost.PostExecute(1.0, @DelayReplaceDB) do
-      {$ELSE}
-      with ProgressPost.PostExecute(1.0, DelayReplaceDB) do
-        {$ENDIF}
+      with ProgressPost.PostExecute(1.0, {$IFDEF FPC}@{$ENDIF FPC}DelayReplaceDB) do
         begin
           Data3 := SourN;
           Data4 := replaceN;
           Data5 := Done_Ptr;
         end;
-      exit;
+      Exit;
     end;
 
   CloseAndDeleteDB(SourN);
@@ -1326,7 +1311,7 @@ begin
     begin
       if Assigned(Done_Ptr^.OnStorePosTransform) then
           Done_Ptr^.OnStorePosTransform(Done_Ptr^.Data, @Done_Ptr^.TransformBuff);
-      setLength(Done_Ptr^.TransformBuff, 0);
+      SetLength(Done_Ptr^.TransformBuff, 0);
       Dispose(Done_Ptr);
     end;
 end;
@@ -1381,14 +1366,14 @@ end;
 
 function TZDBLocalManager.InitDB(dbN: SystemString; ReadOnly: Boolean): TZDBStoreEngine;
 var
-  fn: umlString;
+  fn: U_String;
   isNewDB: Boolean;
 begin
   Result := GetDB(dbN);
   if Result <> nil then
-      exit;
+      Exit;
 
-  if not umlString(dbN).Exists(['/', '\']) then
+  if not U_String(dbN).Exists(['/', '\']) then
       fn := umlCombineFileName(FRootPath, dbN + '.OX')
   else
     begin
@@ -1401,7 +1386,7 @@ begin
   if isNewDB then
       Result := TZDBStoreEngine.CreateNew(fn)
   else
-      Result := TZDBStoreEngine.Create(fn, readonly);
+      Result := TZDBStoreEngine.Create(fn, ReadOnly);
 
   Result.NotifyIntf := Self;
   Result.FName := dbN;
@@ -1417,9 +1402,9 @@ end;
 
 function TZDBLocalManager.InitNewDB(dbN: SystemString): TZDBStoreEngine;
 var
-  fn: umlString;
+  fn: U_String;
 begin
-  if not umlString(dbN).Exists(['/', '\']) then
+  if not U_String(dbN).Exists(['/', '\']) then
       fn := umlCombineFileName(FRootPath, dbN + '.OX')
   else
     begin
@@ -1447,7 +1432,7 @@ function TZDBLocalManager.InitMemoryDB(dbN: SystemString): TZDBStoreEngine;
 begin
   Result := GetDB(dbN);
   if Result <> nil then
-      exit;
+      Exit;
   Result := TZDBStoreEngine.CreateNewMemory;
 
   Result.NotifyIntf := Self;
@@ -1462,14 +1447,14 @@ begin
   end;
 end;
 
-procedure TZDBLocalManager.ZDBEngProgress(const Name: PSystemString; obj: TCoreClassObject);
+procedure TZDBLocalManager.ZDBEngProgress(const Name: PSystemString; Obj: TCoreClassObject);
 var
   db: TZDBStoreEngine;
 begin
-  if obj = nil then
-      exit;
+  if Obj = nil then
+      Exit;
 
-  db := TZDBStoreEngine(obj);
+  db := TZDBStoreEngine(Obj);
   if (db.DBEngine.Modify) and (GetTimeTick - db.FLastModifyTime > 1000) then
     begin
       db.DBEngine.Update;
@@ -1491,11 +1476,7 @@ begin
       end;
     end;
 
-  {$IFDEF FPC}
-  FDBPool.Progress(@ZDBEngProgress);
-  {$ELSE}
-  FDBPool.Progress(ZDBEngProgress);
-  {$ENDIF}
+  FDBPool.Progress({$IFDEF FPC}@{$ENDIF FPC}ZDBEngProgress);
 end;
 
 procedure TZDBLocalManager.CloseDB(dbN: SystemString);
@@ -1506,7 +1487,7 @@ var
 begin
   db := GetDB(dbN);
   if db = nil then
-      exit;
+      Exit;
 
   for i := 0 to FQueryPipelineList.Count - 1 do
     begin
@@ -1533,7 +1514,7 @@ var
 begin
   db := GetDB(dbN);
   if db = nil then
-      exit;
+      Exit;
 
   if db.DBEngine.StreamEngine is TMemoryStream64 then
     begin
@@ -1558,10 +1539,10 @@ begin
   Result := nil;
   db := GetDB(SourN);
   if db = nil then
-      exit;
+      Exit;
 
   if db.IsReadOnly then
-      exit;
+      Exit;
 
   n := DestN;
 
@@ -1571,13 +1552,8 @@ begin
       nd := InitDB(n, False);
 
   pl := QueryDB(False, True, False, db.Name, 'Copying', True, 0.0, 0, 0, 0, 0);
-  {$IFDEF FPC}
-  pl.OnDataFilterMethod := @DoQueryCopy;
-  pl.OnDataDoneMethod := @DoCopyDone;
-  {$ELSE}
-  pl.OnDataFilterMethod := DoQueryCopy;
-  pl.OnDataDoneMethod := DoCopyDone;
-  {$ENDIF}
+  pl.OnDataFilterMethod := {$IFDEF FPC}@{$ENDIF FPC}DoQueryCopy;
+  pl.OnDataDoneMethod := {$IFDEF FPC}@{$ENDIF FPC}DoCopyDone;
   pl.UserVariant := nd.Name;
   pl.ClearStorePosTransform;
   Result := pl;
@@ -1600,18 +1576,18 @@ begin
   Result := nil;
   db := GetDB(dbN);
   if db = nil then
-      exit;
+      Exit;
 
   if db.IsReadOnly then
-      exit;
+      Exit;
 
   if ExistsPipeline(db.Name + '.*.Compressing') then
-      exit;
+      Exit;
 
   n := db.Name + '.CompressSwap';
 
   if ExistsDB(n) then
-      exit;
+      Exit;
 
   if db.IsMemoryMode then
       nd := InitMemoryDB(n)
@@ -1619,13 +1595,8 @@ begin
       nd := InitNewDB(n);
 
   pl := QueryDB(False, True, False, db.Name, n, False, 0.0, 0, 0, 0, 0);
-  {$IFDEF FPC}
-  pl.OnDataFilterMethod := @DoQueryCopy;
-  pl.OnDataDoneMethod := @DoCompressDone;
-  {$ELSE}
-  pl.OnDataFilterMethod := DoQueryCopy;
-  pl.OnDataDoneMethod := DoCompressDone;
-  {$ENDIF}
+  pl.OnDataFilterMethod := {$IFDEF FPC}@{$ENDIF FPC}DoQueryCopy;
+  pl.OnDataDoneMethod := {$IFDEF FPC}@{$ENDIF FPC}DoCompressDone;
   pl.UserVariant := nd.Name;
   pl.ClearStorePosTransform;
   Result := pl;
@@ -1640,11 +1611,7 @@ end;
 
 procedure TZDBLocalManager.ReplaceDB(dbN, replaceN: SystemString);
 begin
-  {$IFDEF FPC}
-  with ProgressPost.PostExecute(0, @DelayReplaceDB) do
-  {$ELSE}
-  with ProgressPost.PostExecute(0, DelayReplaceDB) do
-    {$ENDIF}
+  with ProgressPost.PostExecute(0, {$IFDEF FPC}@{$ENDIF FPC}DelayReplaceDB) do
     begin
       Data3 := dbN;
       Data4 := replaceN;
@@ -1657,10 +1624,10 @@ var
 begin
   db := GetDB(dbN);
   if db = nil then
-      exit;
+      Exit;
 
   if db.IsReadOnly then
-      exit;
+      Exit;
 
   db.ResetDB;
 end;
@@ -1689,7 +1656,7 @@ end;
 function TZDBLocalManager.GenerateNewTaskName: SystemString;
 begin
   Result := GenerateTaskName;
-  inc(FTaskCounter);
+  Inc(FTaskCounter);
 end;
 
 function TZDBLocalManager.GetPipeline(pipeName: SystemString): TZDBPipeline;
@@ -1697,19 +1664,19 @@ begin
   Result := TZDBPipeline(FQueryPipelinePool[pipeName]);
 end;
 
-function TZDBLocalManager.GetDB(dN: SystemString): TZDBStoreEngine;
+function TZDBLocalManager.GetDB(dn: SystemString): TZDBStoreEngine;
 begin
-  Result := TZDBStoreEngine(FDBPool[dN]);
+  Result := TZDBStoreEngine(FDBPool[dn]);
 end;
 
-function TZDBLocalManager.GetDBName(dN: SystemString): TZDBStoreEngine;
+function TZDBLocalManager.GetDBName(dn: SystemString): TZDBStoreEngine;
 begin
-  Result := InitMemoryDB(dN);
+  Result := InitMemoryDB(dn);
 end;
 
-function TZDBLocalManager.ExistsDB(dN: SystemString): Boolean;
+function TZDBLocalManager.ExistsDB(dn: SystemString): Boolean;
 begin
-  Result := FDBPool.Exists(dN);
+  Result := FDBPool.Exists(dn);
 end;
 
 function TZDBLocalManager.ExistsPipeline(pipeName: SystemString): Boolean;
@@ -1718,12 +1685,12 @@ var
 begin
   Result := FQueryPipelinePool.Exists(pipeName);
   if Result then
-      exit;
+      Exit;
   for i := 0 to FQueryPipelineList.Count - 1 do
     if umlMultipleMatch(True, pipeName, TZDBPipeline(FQueryPipelineList[i]).PipelineName) then
       begin
         Result := True;
-        exit;
+        Exit;
       end;
 end;
 
@@ -1733,7 +1700,7 @@ var
 begin
   pl := GetPipeline(pipeName);
   if pl <> nil then
-      pl.Stop;
+      pl.stop;
 end;
 
 procedure TZDBLocalManager.GetPipeList(OutputList: TCoreClassListForObj);
@@ -1758,7 +1725,7 @@ begin
       if (pl.Activted) and ((pl.SourceDB = db) or (pl.OutputDB = db)) then
         begin
           Result := True;
-          exit;
+          Exit;
         end;
     end;
 end;
@@ -1770,13 +1737,13 @@ var
 begin
   Result := False;
   if db = nil then
-      exit;
+      Exit;
 
   for i := 0 to FQueryPipelineList.Count - 1 do
     begin
       pl := TZDBPipeline(FQueryPipelineList[i]);
       if (pl.Activted) and (pl.AutoDestroyDB) and ((pl.SourceDB = db) or (pl.OutputDB = db)) then
-          exit;
+          Exit;
     end;
 
   Result := True;
@@ -1786,16 +1753,16 @@ function TZDBLocalManager.QueryDB(WriteResultToOutputDB, InMemory, ReverseQuery:
   AutoDestroyDB: Boolean; QueryDoneFreeDelayTime, FragmentWaitTime, MaxWaitTime: Double;
   MaxQueryCompare, MaxQueryResult: Int64): TZDBPipeline;
 var
-  tn: SystemString;
+  tN: SystemString;
   plN: SystemString;
 begin
   Result := nil;
 
   if not ExistsDB(dbN) then
-      exit;
+      Exit;
 
-  tn := GenerateNewTaskName;
-  plN := GeneratePipeName(dbN, tn);
+  tN := GenerateNewTaskName;
+  plN := GeneratePipeName(dbN, tN);
   if OutputDB = '' then
       OutputDB := plN;
   Result := FPipelineClass.Create(InMemory, Self, dbN, plN, OutputDB);
@@ -1809,11 +1776,7 @@ begin
   Result.QueryDoneFreeDelayTime := QueryDoneFreeDelayTime;
   Result.WriteFragmentBuffer := True;
 
-  {$IFDEF FPC}
-  Result.FQueryTask := Result.SourceDB.Query(Result.PipelineName, ReverseQuery, @Result.Query, @Result.QueryDone);
-  {$ELSE}
-  Result.FQueryTask := Result.SourceDB.Query(Result.PipelineName, ReverseQuery, Result.Query, Result.QueryDone);
-  {$ENDIF}
+  Result.FQueryTask := Result.SourceDB.Query(Result.PipelineName, ReverseQuery, {$IFDEF FPC}@{$ENDIF FPC}Result.Query, {$IFDEF FPC}@{$ENDIF FPC}Result.QueryDone);
   try
     if Assigned(NotifyIntf) then
         NotifyIntf.CreateQuery(Result);
@@ -1908,111 +1871,111 @@ function TZDBLocalManager.WriteDBItemToOneFragment(dbN: SystemString; StorePos: 
 begin
   Result := False;
   if not ExistsDB(dbN) then
-      exit;
+      Exit;
 
   Result := EncodeOneFragment(DBName[dbN], StorePos, DestStream);
 end;
 
-function TZDBLocalManager.PostData(dN: SystemString; sourDBEng: TZDBStoreEngine; SourStorePos: Int64): Int64;
+function TZDBLocalManager.PostData(dn: SystemString; sourDBEng: TZDBStoreEngine; SourStorePos: Int64): Int64;
 var
   d: TZDBStoreEngine;
-  m: TMemoryStream64InCache;
+  M: TMemoryStream64InCache;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
-      d := InitMemoryDB(dN);
-  m := sourDBEng.GetCacheStream(SourStorePos);
-  if m <> nil then
+      d := InitMemoryDB(dn);
+  M := sourDBEng.GetCacheStream(SourStorePos);
+  if M <> nil then
     begin
-      Result := d.AddData(m, m.CacheID);
-      DisposeObject(m);
+      Result := d.AddData(M, M.CacheID);
+      DisposeObject(M);
     end;
 end;
 
-function TZDBLocalManager.PostData(dN: SystemString; var qState: TQueryState): Int64;
+function TZDBLocalManager.PostData(dn: SystemString; var qState: TQueryState): Int64;
 var
   d: TZDBStoreEngine;
-  m: TMemoryStream64InCache;
+  M: TMemoryStream64InCache;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
-      d := InitMemoryDB(dN);
-  m := qState.DBEng.GetCacheStream(qState.StorePos, qState.ID);
-  if m <> nil then
+      d := InitMemoryDB(dn);
+  M := qState.DBEng.GetCacheStream(qState.StorePos, qState.ID);
+  if M <> nil then
     begin
-      Result := d.AddData(m, m.CacheID);
-      DisposeObject(m);
+      Result := d.AddData(M, M.CacheID);
+      DisposeObject(M);
     end;
 end;
 
-function TZDBLocalManager.PostData(dN: SystemString; dSour: TCoreClassStream; ID: Cardinal): Int64;
+function TZDBLocalManager.PostData(dn: SystemString; dSour: TCoreClassStream; ID: Cardinal): Int64;
 var
   d: TZDBStoreEngine;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
-      d := InitMemoryDB(dN);
+      d := InitMemoryDB(dn);
   Result := d.AddData(dSour, ID);
 end;
 
-function TZDBLocalManager.PostData(dN: SystemString; dSour: TDataFrameEngine): Int64;
+function TZDBLocalManager.PostData(dn: SystemString; dSour: TDataFrameEngine): Int64;
 var
   d: TZDBStoreEngine;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
-      d := InitMemoryDB(dN);
+      d := InitMemoryDB(dn);
   Result := d.AddData(dSour);
 end;
 
-function TZDBLocalManager.PostData(dN: SystemString; dSour: THashVariantList): Int64;
+function TZDBLocalManager.PostData(dn: SystemString; dSour: THashVariantList): Int64;
 var
   d: TZDBStoreEngine;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
-      d := InitMemoryDB(dN);
+      d := InitMemoryDB(dn);
   Result := d.AddData(dSour);
 end;
 
-function TZDBLocalManager.PostData(dN: SystemString; dSour: TSectionTextData): Int64;
+function TZDBLocalManager.PostData(dn: SystemString; dSour: TSectionTextData): Int64;
 var
   d: TZDBStoreEngine;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
-      d := InitMemoryDB(dN);
+      d := InitMemoryDB(dn);
   Result := d.AddData(dSour);
 end;
 
-function TZDBLocalManager.PostData(dN: SystemString; dSour: TPascalString): Int64;
+function TZDBLocalManager.PostData(dn: SystemString; dSour: TPascalString): Int64;
 var
   d: TZDBStoreEngine;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
-      d := InitMemoryDB(dN);
+      d := InitMemoryDB(dn);
   Result := d.AddData(dSour);
 end;
 
 {$IFNDEF FPC}
 
 
-function TZDBLocalManager.PostData(dN: SystemString; dSour: TJsonObject): Int64;
+function TZDBLocalManager.PostData(dn: SystemString; dSour: TJsonObject): Int64;
 var
   d: TZDBStoreEngine;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
-      d := InitMemoryDB(dN);
+      d := InitMemoryDB(dn);
   Result := d.AddData(dSour);
 end;
 {$ENDIF}
@@ -2042,22 +2005,22 @@ end;
 
 procedure TZDBLocalManager.LoadDB(ReadOnly: Boolean);
 var
-  arr: umlStringDynArray;
+  Arr: U_StringArray;
   fn, n: SystemString;
 
 begin
   Clear;
 
-  arr := umlGetFileListWithFullPath(RootPath);
+  Arr := umlGetFileListWithFullPath(RootPath);
 
-  for fn in arr do
+  for fn in Arr do
     begin
       n := umlGetFileName(fn);
       if not umlMultipleMatch(True, '*.CompressSwap.*', n) then
         if umlMultipleMatch(True, '*.OX', n) then
-            InitDB(umlChangeFileExt(n, '').Text, readonly);
+            InitDB(umlChangeFileExt(n, '').Text, ReadOnly);
     end;
-  setLength(arr, 0);
+  SetLength(Arr, 0);
 end;
 
 procedure TZDBLocalManager.SetRootPath(const Value: SystemString);
@@ -2071,75 +2034,75 @@ begin
   FCadencerEng.Progress;
 end;
 
-function TZDBLocalManager.InsertData(dN: SystemString; InsertPos: Int64; dSour: TCoreClassStream; ID: Cardinal): Int64;
+function TZDBLocalManager.InsertData(dn: SystemString; InsertPos: Int64; dSour: TCoreClassStream; ID: Cardinal): Int64;
 var
   d: TZDBStoreEngine;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
     begin
-      d := InitMemoryDB(dN);
+      d := InitMemoryDB(dn);
       Result := d.AddData(dSour, ID);
     end
   else
       Result := d.InsertData(InsertPos, dSour, ID);
 end;
 
-function TZDBLocalManager.InsertData(dN: SystemString; InsertPos: Int64; dSour: TDataFrameEngine): Int64;
+function TZDBLocalManager.InsertData(dn: SystemString; InsertPos: Int64; dSour: TDataFrameEngine): Int64;
 var
   d: TZDBStoreEngine;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
     begin
-      d := InitMemoryDB(dN);
+      d := InitMemoryDB(dn);
       Result := d.AddData(dSour);
     end
   else
       Result := d.InsertData(InsertPos, dSour);
 end;
 
-function TZDBLocalManager.InsertData(dN: SystemString; InsertPos: Int64; dSour: THashVariantList): Int64;
+function TZDBLocalManager.InsertData(dn: SystemString; InsertPos: Int64; dSour: THashVariantList): Int64;
 var
   d: TZDBStoreEngine;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
     begin
-      d := InitMemoryDB(dN);
+      d := InitMemoryDB(dn);
       Result := d.AddData(dSour);
     end
   else
       Result := d.InsertData(InsertPos, dSour);
 end;
 
-function TZDBLocalManager.InsertData(dN: SystemString; InsertPos: Int64; dSour: TSectionTextData): Int64;
+function TZDBLocalManager.InsertData(dn: SystemString; InsertPos: Int64; dSour: TSectionTextData): Int64;
 var
   d: TZDBStoreEngine;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
     begin
-      d := InitMemoryDB(dN);
+      d := InitMemoryDB(dn);
       Result := d.AddData(dSour);
     end
   else
       Result := d.InsertData(InsertPos, dSour);
 end;
 
-function TZDBLocalManager.InsertData(dN: SystemString; InsertPos: Int64; dSour: TPascalString): Int64;
+function TZDBLocalManager.InsertData(dn: SystemString; InsertPos: Int64; dSour: TPascalString): Int64;
 var
   d: TZDBStoreEngine;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
     begin
-      d := InitMemoryDB(dN);
+      d := InitMemoryDB(dn);
       Result := d.AddData(dSour);
     end
   else
@@ -2149,15 +2112,15 @@ end;
 {$IFNDEF FPC}
 
 
-function TZDBLocalManager.InsertData(dN: SystemString; InsertPos: Int64; dSour: TJsonObject): Int64;
+function TZDBLocalManager.InsertData(dn: SystemString; InsertPos: Int64; dSour: TJsonObject): Int64;
 var
   d: TZDBStoreEngine;
 begin
   Result := -1;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
     begin
-      d := InitMemoryDB(dN);
+      d := InitMemoryDB(dn);
       Result := d.AddData(dSour);
     end
   else
@@ -2166,38 +2129,39 @@ end;
 {$ENDIF}
 
 
-procedure TZDBLocalManager.DeleteData(dN: SystemString; StorePos: Int64);
+procedure TZDBLocalManager.DeleteData(dn: SystemString; StorePos: Int64);
 var
   d: TZDBStoreEngine;
 begin
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
-      exit;
+      Exit;
   d.PostDeleteData(StorePos);
 end;
 
-function TZDBLocalManager.GetData(dN: SystemString; StorePos: Int64; ID: Cardinal): TMemoryStream64InCache;
+function TZDBLocalManager.GetData(dn: SystemString; StorePos: Int64; ID: Cardinal): TMemoryStream64InCache;
 var
   d: TZDBStoreEngine;
 begin
   Result := nil;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
-      exit;
+      Exit;
   Result := d.GetCacheStream(StorePos, ID);
 end;
 
-function TZDBLocalManager.SetData(dN: SystemString; StorePos: Int64; dSour: TMemoryStream64): Boolean;
+function TZDBLocalManager.SetData(dn: SystemString; StorePos: Int64; dSour: TMemoryStream64): Boolean;
 var
   d: TZDBStoreEngine;
 begin
   Result := False;
-  d := GetDB(dN);
+  d := GetDB(dn);
   if d = nil then
-      exit;
+      Exit;
   Result := d.SetData(StorePos, dSour);
 end;
 
 initialization
 
-end.
+end. 
+ 

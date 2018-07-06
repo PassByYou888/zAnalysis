@@ -39,7 +39,7 @@ unit AggTransWarpMagnifier;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -59,32 +59,32 @@ type
     procedure SetCenter(X, Y: Double);
 
     property Magnification: Double read FMagnification write SetMagnification;
-    property Radius: Double read FRadius write SetRadius;
+    property radius: Double read FRadius write SetRadius;
   end;
 
 implementation
 
 procedure WarpMagnifierTransform(This: TAggTransWarpMagnifier; X, Y: PDouble);
 var
-  Dx, Dy, R, M: Double;
+  dx, dy, R, M: Double;
 
 begin
-  Dx := X^ - This.FCenter.X;
-  Dy := Y^ - This.FCenter.Y;
-  R := Sqrt(Dx * Dx + Dy * Dy);
+  dx := X^ - This.FCenter.X;
+  dy := Y^ - This.FCenter.Y;
+  R := Sqrt(dx * dx + dy * dy);
 
   if R < This.FRadius then
     begin
-      X^ := This.FCenter.X + Dx * This.FMagnification;
-      Y^ := This.FCenter.Y + Dy * This.FMagnification;
+      X^ := This.FCenter.X + dx * This.FMagnification;
+      Y^ := This.FCenter.Y + dy * This.FMagnification;
 
       Exit;
     end;
 
   M := (R + This.FRadius * (This.FMagnification - 1.0)) / R;
 
-  X^ := This.FCenter.X + Dx * M;
-  Y^ := This.FCenter.Y + Dy * M;
+  X^ := This.FCenter.X + dx * M;
+  Y^ := This.FCenter.Y + dy * M;
 end;
 
 procedure WarpMagnifierTransformInverseTransform(This: TAggTransWarpMagnifier;
@@ -136,4 +136,4 @@ begin
   FRadius := R;
 end;
 
-end.
+end. 

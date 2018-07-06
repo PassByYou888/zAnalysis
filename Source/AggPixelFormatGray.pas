@@ -39,7 +39,7 @@ unit AggPixelFormatGray;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -64,36 +64,36 @@ implementation
 
 function Fmt8Row(This: TAggPixelFormatProcessor; X, Y: Integer): TAggRowDataType;
 begin
-  Result.Initialize(X, This.Width - 1,
+  Result.Initialize(X, This.width - 1,
     PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step + This.Offset));
 end;
 
-procedure GrayGammaDirApply(This: TAggPixelFormatProcessor; P: PInt8u);
+procedure GrayGammaDirApply(This: TAggPixelFormatProcessor; p: PInt8u);
 begin
-  P^ := This.Apply.Dir[P^];
+  p^ := This.Apply.dir[p^];
 end;
 
-procedure GrayGammaInvApply(This: TAggPixelFormatProcessor; P: PInt8u);
+procedure GrayGammaInvApply(This: TAggPixelFormatProcessor; p: PInt8u);
 begin
-  P^ := This.Apply.Inv[P^];
+  p^ := This.Apply.Inv[p^];
 end;
 
 procedure GrayForEachPixel(This: TAggPixelFormatProcessor; F: TAggFuncApplyGamma);
 var
   Y, Len: Cardinal;
-  P: PInt8u;
+  p: PInt8u;
 begin
   Y := 0;
 
-  while Y < This.Height do
+  while Y < This.height do
     begin
-      Len := This.Width;
-      P := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + This.Offset);
+      Len := This.width;
+      p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + This.Offset);
 
       repeat
-        F(This, P);
+        F(This, p);
 
-        Inc(PtrComp(P), This.Step);
+        Inc(PtrComp(p), This.Step);
         Dec(Len);
 
       until Len = 0;
@@ -102,7 +102,7 @@ begin
     end;
 end;
 
-{$I AggPixelFormatGray8.inc }
+{$INCLUDE AggPixelFormatGray8.inc }
 
 
 procedure PixelFormatGray8;
@@ -257,7 +257,7 @@ begin
   PixelFormatProcessor.GammaInvApply := @GrayGammaInvApply;
 end;
 
-{$I AggPixelFormatGray8Pre.inc }
+{$INCLUDE AggPixelFormatGray8Pre.inc }
 
 
 procedure PixelFormatGray8Pre;
@@ -412,4 +412,4 @@ begin
   PixelFormatProcessor.GammaInvApply := @GrayGammaInvApply;
 end;
 
-end.
+end. 

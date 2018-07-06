@@ -39,7 +39,7 @@ unit AggSpanImageResampleGray;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -100,7 +100,7 @@ var
   Fg, SourceAlpha, Diameter, FilterSize, TotalWeight, WeightY, Weight: Integer;
 
   IniLowResX, IniHighResX: Integer;
-  Radius, Max: TPointInteger;
+  radius, Max: TPointInteger;
   LowRes, HighRes: TPointInteger;
 
   BackV, BackA: Int8u;
@@ -110,7 +110,7 @@ var
 begin
   Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
 
-  BackV := GetBackgroundColor.V;
+  BackV := GetBackgroundColor.v;
   BackA := GetBackgroundColor.Rgba8.A;
 
   Span := Allocator.Span;
@@ -118,19 +118,19 @@ begin
   Diameter := Filter.Diameter;
   FilterSize := Diameter shl CAggImageSubpixelShift;
 
-  Radius.X := ShrInt32(Diameter * FRadiusX, 1);
-  Radius.Y := ShrInt32(Diameter * FRadiusY, 1);
+  radius.X := ShrInt32(Diameter * FRadiusX, 1);
+  radius.Y := ShrInt32(Diameter * FRadiusY, 1);
 
-  Max.X := SourceImage.Width - 1;
-  Max.Y := SourceImage.Height - 1;
+  Max.X := SourceImage.width - 1;
+  Max.Y := SourceImage.height - 1;
 
   WeightArray := Filter.WeightArray;
 
   repeat
     Interpolator.Coordinates(@X, @Y);
 
-    Inc(X, FilterDeltaXInteger - Radius.X);
-    Inc(Y, FilterDeltaYInteger - Radius.Y);
+    Inc(X, FilterDeltaXInteger - radius.X);
+    Inc(Y, FilterDeltaYInteger - radius.Y);
 
     Fg := CAggImageFilterSize div 2;
     SourceAlpha := Fg;
@@ -207,7 +207,7 @@ begin
     if Fg > SourceAlpha then
         Fg := SourceAlpha;
 
-    Span.V := Int8u(Fg);
+    Span.v := Int8u(Fg);
     Span.Rgba8.A := Int8u(SourceAlpha);
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -241,7 +241,7 @@ var
   IniLowResX, IniHighResX: Integer;
   Weight, FilterSize, WeightY: Integer;
 
-  Radius, Max, LowRes, HighRes, RadiusInv: TPointInteger;
+  radius, Max, LowRes, HighRes, RadiusInv: TPointInteger;
 
   BackV, BackA: Int8u;
   WeightArray: PInt16;
@@ -251,7 +251,7 @@ begin
 
   Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
 
-  BackV := GetBackgroundColor.V;
+  BackV := GetBackgroundColor.v;
   BackA := GetBackgroundColor.Rgba8.A;
 
   Diameter := Filter.Diameter;
@@ -264,39 +264,39 @@ begin
     RadiusInv.Y := CAggImageSubpixelSize;
 
     Interpolator.Coordinates(@X, @Y);
-    Interpolator.LocalScale(@Radius.X, @Radius.Y);
+    Interpolator.LocalScale(@radius.X, @radius.Y);
 
-    Radius.X := ShrInt32(Radius.X * FBlur.X, CAggImageSubpixelShift);
-    Radius.Y := ShrInt32(Radius.Y * FBlur.Y, CAggImageSubpixelShift);
+    radius.X := ShrInt32(radius.X * FBlur.X, CAggImageSubpixelShift);
+    radius.Y := ShrInt32(radius.Y * FBlur.Y, CAggImageSubpixelShift);
 
-    if Radius.X < CAggImageSubpixelSize then
-        Radius.X := CAggImageSubpixelSize
+    if radius.X < CAggImageSubpixelSize then
+        radius.X := CAggImageSubpixelSize
     else
       begin
-        if Radius.X > CAggImageSubpixelSize * FScaleLimit then
-            Radius.X := CAggImageSubpixelSize * FScaleLimit;
+        if radius.X > CAggImageSubpixelSize * FScaleLimit then
+            radius.X := CAggImageSubpixelSize * FScaleLimit;
 
-        RadiusInv.X := CAggImageSubpixelSize * CAggImageSubpixelSize div Radius.X;
+        RadiusInv.X := CAggImageSubpixelSize * CAggImageSubpixelSize div radius.X;
       end;
 
-    if Radius.Y < CAggImageSubpixelSize then
-        Radius.Y := CAggImageSubpixelSize
+    if radius.Y < CAggImageSubpixelSize then
+        radius.Y := CAggImageSubpixelSize
     else
       begin
-        if Radius.Y > CAggImageSubpixelSize * FScaleLimit then
-            Radius.Y := CAggImageSubpixelSize * FScaleLimit;
+        if radius.Y > CAggImageSubpixelSize * FScaleLimit then
+            radius.Y := CAggImageSubpixelSize * FScaleLimit;
 
-        RadiusInv.Y := CAggImageSubpixelSize * CAggImageSubpixelSize div Radius.Y;
+        RadiusInv.Y := CAggImageSubpixelSize * CAggImageSubpixelSize div radius.Y;
       end;
 
-    Radius.X := ShrInt32(Diameter * Radius.X, 1);
-    Radius.Y := ShrInt32(Diameter * Radius.Y, 1);
+    radius.X := ShrInt32(Diameter * radius.X, 1);
+    radius.Y := ShrInt32(Diameter * radius.Y, 1);
 
-    Max.X := SourceImage.Width - 1;
-    Max.Y := SourceImage.Height - 1;
+    Max.X := SourceImage.width - 1;
+    Max.Y := SourceImage.height - 1;
 
-    Inc(X, FilterDeltaXInteger - Radius.X);
-    Inc(Y, FilterDeltaYInteger - Radius.Y);
+    Inc(X, FilterDeltaXInteger - radius.X);
+    Inc(Y, FilterDeltaYInteger - radius.Y);
 
     Fg := CAggImageFilterSize div 2;
     SourceAlpha := Fg;
@@ -374,7 +374,7 @@ begin
     if Fg > SourceAlpha then
         Fg := SourceAlpha;
 
-    Span.V := Int8u(Fg);
+    Span.v := Int8u(Fg);
     Span.Rgba8.A := Int8u(SourceAlpha);
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -387,4 +387,4 @@ begin
   Result := Allocator.Span;
 end;
 
-end.
+end. 

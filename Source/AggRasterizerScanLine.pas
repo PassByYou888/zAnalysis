@@ -41,7 +41,7 @@ interface
 
 uses
   AggBasics,
-  AggScanLine,
+  AggScanline,
   AggVertexSource;
 
 type
@@ -51,7 +51,7 @@ type
     procedure SetFillingRule(FillingRule: TAggFillingRule); virtual; abstract;
   public
     procedure Reset; virtual; abstract;
-    procedure SetClipBox(X1, Y1, X2, Y2: Double); overload; virtual; abstract;
+    procedure SetClipBox(x1, y1, x2, y2: Double); overload; virtual; abstract;
     procedure SetClipBox(Rect: TRectDouble); overload; virtual; abstract;
 
     procedure AddPath(Vs: TAggCustomVertexSource; PathID: Cardinal = 0); virtual; abstract;
@@ -60,7 +60,7 @@ type
     procedure Sort; virtual; abstract;
     function RewindScanLines: Boolean; virtual; abstract;
 
-    function HitTest(Tx, Ty: Integer): Boolean; virtual; abstract;
+    function HitTest(TX, TY: Integer): Boolean; virtual; abstract;
 
     property FillingRule: TAggFillingRule read GetFillingRule write SetFillingRule;
   end;
@@ -80,18 +80,18 @@ type
 
   IAggRasterizerScanline = interface
     procedure Gamma(AGammaFunction: TAggCustomVertexSource);
-    function SweepScanLine(Sl: TAggCustomScanLine): Boolean;
-    function SweepScanLineEm(Sl: TAggCustomScanLine): Boolean;
+    function SweepScanLine(SL: TAggCustomScanLine): Boolean;
+    function SweepScanLineEm(SL: TAggCustomScanLine): Boolean;
   end;
 
-  TAggRasterizerScanline = class(TAggCustomBoundsRasterizerScanLine)
+  TAggRasterizerScanLine = class(TAggCustomBoundsRasterizerScanLine)
   public
     procedure Gamma(AGammaFunction: TAggCustomVertexSource); virtual; abstract;
-    function SweepScanLine(Sl: TAggCustomScanLine): Boolean; overload; virtual; abstract;
+    function SweepScanLine(SL: TAggCustomScanLine): Boolean; overload; virtual; abstract;
     // function SweepScanLineEm(Sl: TAggCustomScanLine): Boolean; virtual; abstract;
-    function SweepScanLine(Sl: TAggEmbeddedScanLine): Boolean; overload; virtual; abstract;
+    function SweepScanLine(SL: TAggEmbeddedScanLine): Boolean; overload; virtual; abstract;
   end;
 
 implementation
 
-end.
+end. 

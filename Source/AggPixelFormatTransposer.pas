@@ -39,7 +39,7 @@ unit AggPixelFormatTransposer;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -104,12 +104,12 @@ end;
 
 function TAggPixelFormatProcessorTransposer.GetWidth: Cardinal;
 begin
-  Result := FPixelFormats.Height;
+  Result := FPixelFormats.height;
 end;
 
 function TAggPixelFormatProcessorTransposer.GetHeight: Cardinal;
 begin
-  Result := FPixelFormats.Width;
+  Result := FPixelFormats.width;
 end;
 
 procedure TransposerCopyPixel(This: TAggPixelFormatProcessorTransposer;
@@ -167,30 +167,30 @@ begin
 end;
 
 procedure TransposerCopyColorHSpan(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; Colors: PAggColor);
+  X, Y: Integer; Len: Cardinal; COLORS: PAggColor);
 begin
-  This.FPixelFormats.CopyColorVSpan(This.FPixelFormats, Y, X, Len, Colors);
+  This.FPixelFormats.CopyColorVSpan(This.FPixelFormats, Y, X, Len, COLORS);
 end;
 
 procedure TransposerCopyColorVSpan(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; Colors: PAggColor);
+  X, Y: Integer; Len: Cardinal; COLORS: PAggColor);
 begin
-  This.FPixelFormats.CopyColorHSpan(This.FPixelFormats, Y, X, Len, Colors);
+  This.FPixelFormats.CopyColorHSpan(This.FPixelFormats, Y, X, Len, COLORS);
 end;
 
 procedure TransposerBlendColorHSpan(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; Colors: PAggColor; Covers: PInt8u;
+  X, Y: Integer; Len: Cardinal; COLORS: PAggColor; Covers: PInt8u;
   Cover: Int8u);
 begin
-  This.FPixelFormats.BlendColorVSpan(This.FPixelFormats, Y, X, Len, Colors,
+  This.FPixelFormats.BlendColorVSpan(This.FPixelFormats, Y, X, Len, COLORS,
     Covers, Cover);
 end;
 
 procedure TransposerBlendColorVSpan(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; Colors: PAggColor; Covers: PInt8u;
+  X, Y: Integer; Len: Cardinal; COLORS: PAggColor; Covers: PInt8u;
   Cover: Int8u);
 begin
-  This.FPixelFormats.BlendColorHSpan(This.FPixelFormats, Y, X, Len, Colors,
+  This.FPixelFormats.BlendColorHSpan(This.FPixelFormats, Y, X, Len, COLORS,
     Covers, Cover);
 end;
 
@@ -221,4 +221,5 @@ begin
   PixelFormatProcessor.BlendColorVSpan := @TransposerBlendColorVSpan;
 end;
 
-end.
+end. 
+ 

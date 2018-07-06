@@ -39,7 +39,7 @@ unit AggRoundedRect;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -60,19 +60,19 @@ type
     function GetApproximationScale: Double;
   public
     constructor Create; overload;
-    constructor Create(X1, Y1, X2, Y2, R: Double); overload;
+    constructor Create(x1, y1, x2, y2, R: Double); overload;
     destructor Destroy; override;
 
-    procedure Rect(X1, Y1, X2, Y2: Double); overload;
+    procedure Rect(x1, y1, x2, y2: Double); overload;
     procedure Rect(Value: TRectDouble); overload;
 
-    procedure Radius(R: Double); overload;
-    procedure Radius(Rx, Ry: Double); overload;
-    procedure Radius(Radius: TPointDouble); overload;
-    procedure Radius(BottomX, BottomY, TopX, TopY: Double); overload;
-    procedure Radius(Bottom, Top: TPointDouble); overload;
-    procedure Radius(Rx1, Ry1, Rx2, Ry2, Rx3, Ry3, Rx4, Ry4: Double); overload;
-    procedure Radius(Radius1, Radius2, Radius3, Radius4: TPointDouble); overload;
+    procedure radius(R: Double); overload;
+    procedure radius(RX, RY: Double); overload;
+    procedure radius(radius: TPointDouble); overload;
+    procedure radius(BottomX, BottomY, TopX, TopY: Double); overload;
+    procedure radius(Bottom, Top: TPointDouble); overload;
+    procedure radius(Rx1, Ry1, Rx2, Ry2, Rx3, Ry3, Rx4, Ry4: Double); overload;
+    procedure radius(Radius1, Radius2, Radius3, Radius4: TPointDouble); overload;
 
     procedure NormalizeRadius;
 
@@ -101,27 +101,27 @@ begin
   FArc := TAggArc.Create;
 end;
 
-constructor TAggRoundedRect.Create(X1, Y1, X2, Y2, R: Double);
+constructor TAggRoundedRect.Create(x1, y1, x2, y2, R: Double);
 begin
   Create;
 
-  FPoint[0] := PointDouble(X1, Y1);
-  FPoint[1] := PointDouble(X2, Y2);
+  FPoint[0] := PointDouble(x1, y1);
+  FPoint[1] := PointDouble(x2, y2);
   FRadius[0] := PointDouble(R);
   FRadius[1] := PointDouble(R);
   FRadius[2] := PointDouble(R);
   FRadius[3] := PointDouble(R);
 
-  if X1 > X2 then
+  if x1 > x2 then
     begin
-      FPoint[0].X := X2;
-      FPoint[1].X := X1;
+      FPoint[0].X := x2;
+      FPoint[1].X := x1;
     end;
 
-  if Y1 > Y2 then
+  if y1 > y2 then
     begin
-      FPoint[0].Y := Y2;
-      FPoint[1].Y := Y1;
+      FPoint[0].Y := y2;
+      FPoint[1].Y := y1;
     end;
 end;
 
@@ -131,43 +131,43 @@ begin
   inherited;
 end;
 
-procedure TAggRoundedRect.Rect(X1, Y1, X2, Y2: Double);
+procedure TAggRoundedRect.Rect(x1, y1, x2, y2: Double);
 begin
-  FPoint[0] := PointDouble(X1, Y1);
-  FPoint[1] := PointDouble(X2, Y2);
+  FPoint[0] := PointDouble(x1, y1);
+  FPoint[1] := PointDouble(x2, y2);
 
-  if X1 > X2 then
+  if x1 > x2 then
     begin
-      FPoint[0].X := X2;
-      FPoint[1].X := X1;
+      FPoint[0].X := x2;
+      FPoint[1].X := x1;
     end;
 
-  if Y1 > Y2 then
+  if y1 > y2 then
     begin
-      FPoint[0].Y := Y2;
-      FPoint[1].Y := Y1;
+      FPoint[0].Y := y2;
+      FPoint[1].Y := y1;
     end;
 end;
 
 procedure TAggRoundedRect.Rect(Value: TRectDouble);
 begin
-  FPoint[0] := PointDouble(Value.X1, Value.Y1);
-  FPoint[1] := PointDouble(Value.X2, Value.Y2);
+  FPoint[0] := PointDouble(Value.x1, Value.y1);
+  FPoint[1] := PointDouble(Value.x2, Value.y2);
 
-  if Value.X1 > Value.X2 then
+  if Value.x1 > Value.x2 then
     begin
-      FPoint[0].X := Value.X2;
-      FPoint[1].X := Value.X1;
+      FPoint[0].X := Value.x2;
+      FPoint[1].X := Value.x1;
     end;
 
-  if Value.Y1 > Value.Y2 then
+  if Value.y1 > Value.y2 then
     begin
-      FPoint[0].Y := Value.Y2;
-      FPoint[1].Y := Value.Y1;
+      FPoint[0].Y := Value.y2;
+      FPoint[1].Y := Value.y1;
     end;
 end;
 
-procedure TAggRoundedRect.Radius(R: Double);
+procedure TAggRoundedRect.radius(R: Double);
 begin
   FRadius[0] := PointDouble(R);
   FRadius[1] := PointDouble(R);
@@ -175,23 +175,23 @@ begin
   FRadius[3] := PointDouble(R);
 end;
 
-procedure TAggRoundedRect.Radius(Rx, Ry: Double);
+procedure TAggRoundedRect.radius(RX, RY: Double);
 begin
-  FRadius[0] := PointDouble(Rx, Ry);
-  FRadius[1] := PointDouble(Rx, Ry);
-  FRadius[2] := PointDouble(Rx, Ry);
-  FRadius[3] := PointDouble(Rx, Ry);
+  FRadius[0] := PointDouble(RX, RY);
+  FRadius[1] := PointDouble(RX, RY);
+  FRadius[2] := PointDouble(RX, RY);
+  FRadius[3] := PointDouble(RX, RY);
 end;
 
-procedure TAggRoundedRect.Radius(Radius: TPointDouble);
+procedure TAggRoundedRect.radius(radius: TPointDouble);
 begin
-  FRadius[0] := Radius;
-  FRadius[1] := Radius;
-  FRadius[2] := Radius;
-  FRadius[3] := Radius;
+  FRadius[0] := radius;
+  FRadius[1] := radius;
+  FRadius[2] := radius;
+  FRadius[3] := radius;
 end;
 
-procedure TAggRoundedRect.Radius(BottomX, BottomY, TopX, TopY: Double);
+procedure TAggRoundedRect.radius(BottomX, BottomY, TopX, TopY: Double);
 begin
   FRadius[0] := PointDouble(BottomX, BottomY);
   FRadius[1] := PointDouble(BottomX, BottomY);
@@ -199,7 +199,7 @@ begin
   FRadius[3] := PointDouble(TopX, TopY);
 end;
 
-procedure TAggRoundedRect.Radius(Bottom, Top: TPointDouble);
+procedure TAggRoundedRect.radius(Bottom, Top: TPointDouble);
 begin
   FRadius[0] := Bottom;
   FRadius[1] := Bottom;
@@ -207,7 +207,7 @@ begin
   FRadius[3] := Top;
 end;
 
-procedure TAggRoundedRect.Radius(Rx1, Ry1, Rx2, Ry2, Rx3, Ry3, Rx4, Ry4: Double);
+procedure TAggRoundedRect.radius(Rx1, Ry1, Rx2, Ry2, Rx3, Ry3, Rx4, Ry4: Double);
 begin
   FRadius[0] := PointDouble(Rx1, Ry1);
   FRadius[1] := PointDouble(Rx2, Ry2);
@@ -215,7 +215,7 @@ begin
   FRadius[3] := PointDouble(Rx4, Ry4);
 end;
 
-procedure TAggRoundedRect.Radius(Radius1, Radius2, Radius3,
+procedure TAggRoundedRect.radius(Radius1, Radius2, Radius3,
   Radius4: TPointDouble);
 begin
   FRadius[0] := Radius1;
@@ -227,54 +227,54 @@ end;
 procedure TAggRoundedRect.NormalizeRadius;
 var
   Delta: TPointDouble;
-  K, T: Double;
+  k, T: Double;
 begin
   Delta.X := Abs(FPoint[1].Y - FPoint[0].Y);
   Delta.Y := Abs(FPoint[1].X - FPoint[0].X);
 
-  K := 1.0;
+  k := 1.0;
   try
     T := Delta.X / (FRadius[0].X + FRadius[1].X);
 
-    if T < K then
-        K := T;
+    if T < k then
+        k := T;
   except
   end;
 
   try
     T := Delta.X / (FRadius[2].X + FRadius[3].X);
 
-    if T < K then
-        K := T;
+    if T < k then
+        k := T;
   except
   end;
 
   try
     T := Delta.Y / (FRadius[0].Y + FRadius[1].Y);
 
-    if T < K then
-        K := T;
+    if T < k then
+        k := T;
   except
   end;
 
   try
     T := Delta.Y / (FRadius[2].Y + FRadius[3].Y);
 
-    if T < K then
-        K := T;
+    if T < k then
+        k := T;
   except
   end;
 
-  if K < 1.0 then
+  if k < 1.0 then
     begin
-      FRadius[0].X := FRadius[0].X * K;
-      FRadius[0].Y := FRadius[0].Y * K;
-      FRadius[1].X := FRadius[1].X * K;
-      FRadius[1].Y := FRadius[1].Y * K;
-      FRadius[2].X := FRadius[2].X * K;
-      FRadius[2].Y := FRadius[2].Y * K;
-      FRadius[3].X := FRadius[3].X * K;
-      FRadius[3].Y := FRadius[3].Y * K;
+      FRadius[0].X := FRadius[0].X * k;
+      FRadius[0].Y := FRadius[0].Y * k;
+      FRadius[1].X := FRadius[1].X * k;
+      FRadius[1].Y := FRadius[1].Y * k;
+      FRadius[2].X := FRadius[2].X * k;
+      FRadius[2].Y := FRadius[2].Y * k;
+      FRadius[3].X := FRadius[3].X * k;
+      FRadius[3].Y := FRadius[3].Y * k;
     end;
 end;
 
@@ -305,7 +305,7 @@ begin
     0:
       begin
         FArc.Init(FPoint[0].X + FRadius[0].X, FPoint[0].Y + FRadius[0].Y,
-          FRadius[0].X, FRadius[0].Y, Pi, Pi + Pi * 0.5);
+          FRadius[0].X, FRadius[0].Y, pi, pi + pi * 0.5);
         FArc.Rewind(0);
 
         Inc(FStatus);
@@ -334,7 +334,7 @@ begin
     _2:
       begin
         FArc.Init(FPoint[1].X - FRadius[1].X, FPoint[0].Y + FRadius[1].Y,
-          FRadius[1].X, FRadius[1].Y, Pi + Pi * 0.5, 0.0);
+          FRadius[1].X, FRadius[1].Y, pi + pi * 0.5, 0.0);
         FArc.Rewind(0);
 
         Inc(FStatus);
@@ -362,7 +362,7 @@ begin
     _4:
       begin
         FArc.Init(FPoint[1].X - FRadius[2].X, FPoint[1].Y - FRadius[2].Y,
-          FRadius[2].X, FRadius[2].Y, 0.0, Pi * 0.5);
+          FRadius[2].X, FRadius[2].Y, 0.0, pi * 0.5);
         FArc.Rewind(0);
 
         Inc(FStatus);
@@ -390,7 +390,7 @@ begin
     _6:
       begin
         FArc.Init(FPoint[0].X + FRadius[3].X, FPoint[1].Y - FRadius[3].Y,
-          FRadius[3].X, FRadius[3].Y, Pi * 0.5, Pi);
+          FRadius[3].X, FRadius[3].Y, pi * 0.5, pi);
         FArc.Rewind(0);
 
         Inc(FStatus);
@@ -425,4 +425,4 @@ begin
   Result := Cmd;
 end;
 
-end.
+end. 

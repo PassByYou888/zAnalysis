@@ -39,7 +39,7 @@ unit AggRenderingBufferDynaRow;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -57,10 +57,10 @@ type
     FBuffer: PAggRowDataType;     // Pointers to each row of the buffer
     FAlloc, FByteWidth: Cardinal; // Width in bytes
   public
-    constructor Create(Width, Height, ByteWidth: Cardinal);
+    constructor Create(width, height, ByteWidth: Cardinal);
     destructor Destroy; override;
 
-    procedure Init(Width, Height, ByteWidth: Cardinal);
+    procedure Init(width, height, ByteWidth: Cardinal);
 
     function GetByteWidth: Cardinal;
 
@@ -74,15 +74,15 @@ implementation
 { TAggRenderingBufferDynaRow }
 
 // Allocate and clear the buffer
-constructor TAggRenderingBufferDynaRow.Create(Width, Height,
+constructor TAggRenderingBufferDynaRow.Create(width, height,
   ByteWidth: Cardinal);
 begin
-  FAlloc := SizeOf(TAggRowDataType) * Height;
+  FAlloc := SizeOf(TAggRowDataType) * height;
 
   AggGetMem(Pointer(FBuffer), FAlloc);
 
-  FWidth := Width;
-  FHeight := Height;
+  FWidth := width;
+  FHeight := height;
 
   FByteWidth := ByteWidth;
 
@@ -96,32 +96,32 @@ begin
 end;
 
 // Allocate and clear the buffer
-procedure TAggRenderingBufferDynaRow.Init(Width, Height, ByteWidth: Cardinal);
+procedure TAggRenderingBufferDynaRow.Init(width, height, ByteWidth: Cardinal);
 var
-  I: Cardinal;
+  i: Cardinal;
 begin
-  I := 0;
+  i := 0;
 
-  while I < FHeight do
+  while i < FHeight do
     begin
-      AggFreeMem(Pointer(PAggRowDataType(PtrComp(FBuffer) + I *
-        SizeOf(TAggRowDataType)).Ptr), FByteWidth);
+      AggFreeMem(Pointer(PAggRowDataType(PtrComp(FBuffer) + i *
+        SizeOf(TAggRowDataType)).PTR), FByteWidth);
 
-      Inc(I);
+      Inc(i);
     end;
 
   AggFreeMem(Pointer(FBuffer), FAlloc);
 
   FBuffer := nil;
 
-  if (Width <> 0) and (Height <> 0) then
+  if (width <> 0) and (height <> 0) then
     begin
-      FWidth := Width;
-      FHeight := Height;
+      FWidth := width;
+      FHeight := height;
 
       FByteWidth := ByteWidth;
 
-      FAlloc := SizeOf(TAggRowDataType) * Height;
+      FAlloc := SizeOf(TAggRowDataType) * height;
 
       AggGetMem(Pointer(FBuffer), FAlloc);
       FillChar(FBuffer^, FAlloc, 0);
@@ -138,35 +138,35 @@ end;
 function TAggRenderingBufferDynaRow.RowXY(X, Y: Integer; Len: Cardinal): PInt8u;
 var
   R: PAggRowDataType;
-  P: PInt8u;
+  p: PInt8u;
 
-  X2: Integer;
+  x2: Integer;
 
 begin
   R := PAggRowDataType(PtrComp(FBuffer) + Y * SizeOf(TAggRowDataType));
-  X2 := X + Len - 1;
+  x2 := X + Len - 1;
 
-  if R.Ptr <> nil then
+  if R.PTR <> nil then
     begin
-      if X < R.X1 then
-          R.X1 := X;
+      if X < R.x1 then
+          R.x1 := X;
 
-      if X2 > R.X2 then
-          R.X2 := X2;
+      if x2 > R.x2 then
+          R.x2 := x2;
 
     end
   else
     begin
-      AggGetMem(Pointer(P), FByteWidth);
+      AggGetMem(Pointer(p), FByteWidth);
 
-      R.Ptr := P;
-      R.X1 := X;
-      R.X2 := X2;
+      R.PTR := p;
+      R.x1 := X;
+      R.x2 := x2;
 
-      FillChar(P^, FByteWidth, 0);
+      FillChar(p^, FByteWidth, 0);
     end;
 
-  Result := R.Ptr;
+  Result := R.PTR;
 end;
 
 function TAggRenderingBufferDynaRow.Row(Y: Cardinal): PInt8u;
@@ -174,4 +174,4 @@ begin
   Result := RowXY(0, Y, FWidth);
 end;
 
-end.
+end. 

@@ -22,7 +22,7 @@
 }
 unit JLSGlobal;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
@@ -38,7 +38,7 @@ const
   MAX_SCANS      = MAX_COMPONENTS;
 
   { For 1st component of plane interl. mode }
-  FIRST = 1;
+  First = 1;
 
   { Different colour modes }
   PLANE_INT = 0;
@@ -125,31 +125,31 @@ const
 
 type
   Pixel  = Word;
-  PPixel = ^Pixel;
-  int    = integer;
-  pint   = ^int;
+  ppixel = ^Pixel;
+  Int    = Integer;
+  pint   = ^Int;
 
-  TByteArray = array [0 .. MaxInt div SizeOf(byte) - 1] of byte;
+  TByteArray = array [0 .. MaxInt div SizeOf(Byte) - 1] of Byte;
   PByteArray = ^TByteArray;
 
   TWordArray = array [0 .. MaxInt div SizeOf(Word) - 1] of Word;
-  PWordArray = ^TWordArray;
+  pwordarray = ^TWordArray;
 
-  IntArrayAccess  = packed array [0 .. MaxInt div SizeOf(int) - 1] of int;
-  ByteArrayAccess = packed array [0 .. MaxInt - 1] of byte;
+  IntArrayAccess  = packed array [0 .. MaxInt div SizeOf(Int) - 1] of Int;
+  ByteArrayAccess = packed array [0 .. MaxInt - 1] of Byte;
   PixelArray      = packed array [-NEGBUFFSIZE .. MaxInt div SizeOf(Word) - (NEGBUFFSIZE + 1)] of Pixel;
 
   PIntArrayAccess  = ^IntArrayAccess;
   PByteArrayAccess = ^ByteArrayAccess;
-  PPixelArray      = ^PixelArray;
+  ppixelarray      = ^PixelArray;
   size_t           = Cardinal;
-  uint             = Cardinal;
-  short            = smallint;
-  long             = longint;
-  ulong            = NativeUInt;
-  TBytes           = packed array of byte;
+  UINT             = Cardinal;
+  short            = SmallInt;
+  LONG             = longint;
+  ULONG            = nativeUInt;
+  TBytes           = packed array of Byte;
 
-  TABLE_ARRAY = packed array [0 .. MAX_COMPONENTS - 1] of PWordArray;
+  TABLE_ARRAY = packed array [0 .. MAX_COMPONENTS - 1] of pwordarray;
   PTABLE      = ^TABLE_ARRAY;
 
   /// <summary>
@@ -162,23 +162,23 @@ type
     /// Maximum possible value for any image sample in a scan.
     /// This must be greater than or equal to the actual maximum value for the components in a scan.
     /// </summary>
-    MAXVAL: integer;
+    MaxVal: Integer;
     /// <summary>
     /// First quantization threshold value for the local gradients.
     /// </summary>
-    T1: integer;
+    t1: Integer;
     /// <summary>
     /// Second quantization threshold value for the local gradients.
     /// </summary>
-    T2: integer;
+    t2: Integer;
     /// <summary>
     /// Third quantization threshold value for the local gradients.
     /// </summary>
-    T3: integer;
+    t3: Integer;
     /// <summary>
     /// Value at which the counters A, B, and N are halved.
     /// </summary>
-    RESET: integer;
+    Reset: Integer;
   end;
 
   PJlsParameters = ^TJlsParameters;
@@ -187,211 +187,211 @@ type
     /// <summary>
     /// Width of the image in pixels.
     /// </summary>
-    Width: integer;
+    width: Integer;
     /// <summary>
     /// Height of the image in pixels.
     /// </summary>
-    Height: integer;
+    height: Integer;
     /// <summary>
     /// The number of valid bits per sample to encode.
     /// Valid range 2 - 16. When greater than 8, pixels are assumed to stored as two bytes per sample, otherwise one byte per sample is assumed.
     /// </summary>
-    BitsPerSample: integer;
+    BitsPerSample: Integer;
     /// <summary>
     /// The number of components.
     /// Typical 1 for monochrome images and 3 for color images.
     /// </summary>
-    Components: integer;
+    Components: Integer;
     /// <summary>
     /// Defines the allowed lossy error. Value 0 defines lossless.
     /// </summary>
-    AllowedLossyError: integer;
+    AllowedLossyError: Integer;
     Custom: TJlsCustomParameters;
   end;
 
-  Pjpeg_ls_header = ^Tjpeg_ls_header;
+  pjpeg_ls_header = ^tjpeg_ls_header;
 
-  Tjpeg_ls_header = packed record
-    columns: integer;                                             { The number of columns }
-    rows: integer;                                                { Number of rows }
-    alp: integer;                                                 { alphabet size (Max+1) , 2 bytes }
-    comp: integer;                                                { number of components, 1 byte }
-    _near: integer;                                               { _near-lossless error, 1 byte }
-    color_mode: integer;                                          { indicates the color mode , 1 byte }
-    need_lse: integer;                                            { Indicates non-default parameters }
-    need_table: integer;                                          { Indicates use of mapping table }
-    need_restart: integer;                                        { Indicates use of restart markers }
-    restart_interval: integer;                                    { The number of MCU's between restart markers }
-    shift: integer;                                               { for sparse images, 1 byte }
-    T1, T2, T3: integer;                                          { Thresholds, 2 bytes each }
-    RES: integer;                                                 { reset value for counters, 2 bytes }
-    samplingx: packed array [0 .. MAX_COMPONENTS - 1] of integer; { col. sampling rates 1 byte each }
-    samplingy: packed array [0 .. MAX_COMPONENTS - 1] of integer; { row sampling rates }
-    comp_ids: packed array [0 .. MAX_COMPONENTS - 1] of integer;  { component id's }
-    acc_size: integer;                                            { 1 byte }
-    adds: packed array [0 .. MAX_COMPONENTS - 1] of integer;      { size given by acc_size }
-    TID: uint;                                                    { Table ID, 1 byte }
-    MAXTAB: uint;                                                 { Maximum table index value }
-    Wt: uint;                                                     { Width of each table entry, 1 byte }
-    TABLE: PTABLE                                                 { The table(s) for each component }
+  tjpeg_ls_header = packed record
+    columns: Integer;                                             { The number of columns }
+    Rows: Integer;                                                { Number of rows }
+    alp: Integer;                                                 { alphabet size (Max+1) , 2 bytes }
+    comp: Integer;                                                { number of components, 1 byte }
+    _near: Integer;                                               { _near-lossless error, 1 byte }
+    color_mode: Integer;                                          { indicates the color mode , 1 byte }
+    need_lse: Integer;                                            { Indicates non-default parameters }
+    need_table: Integer;                                          { Indicates use of mapping table }
+    need_restart: Integer;                                        { Indicates use of restart markers }
+    restart_interval: Integer;                                    { The number of MCU's between restart markers }
+    Shift: Integer;                                               { for sparse images, 1 byte }
+    t1, t2, t3: Integer;                                          { Thresholds, 2 bytes each }
+    res: Integer;                                                 { reset value for counters, 2 bytes }
+    samplingx: packed array [0 .. MAX_COMPONENTS - 1] of Integer; { col. sampling rates 1 byte each }
+    samplingy: packed array [0 .. MAX_COMPONENTS - 1] of Integer; { row sampling rates }
+    comp_ids: packed array [0 .. MAX_COMPONENTS - 1] of Integer;  { component id's }
+    acc_size: Integer;                                            { 1 byte }
+    AddS: packed array [0 .. MAX_COMPONENTS - 1] of Integer;      { size given by acc_size }
+    TID: UINT;                                                    { Table ID, 1 byte }
+    MAXTAB: UINT;                                                 { Maximum table index value }
+    WT: UINT;                                                     { Width of each table entry, 1 byte }
+    Table: PTABLE                                                 { The table(s) for each component }
     end;
 
   type
     TImageInfo = packed record
-      bpp16: boolean; { Indicates if 16 bits per pixel mode or not }
-      Width: int;
-      Height: int;
-      Components: integer;
-      limit_reduce: integer; { reduction on above for EOR states }
-      qbpp: integer;         { bits per sample for quantized prediction errors }
-      alpha: integer;        { alphabet size }
-      limit: integer;        { limit for unary part of Golomb code }
-      RESET: integer;
-      highmask: integer;        { for powers of 2, a mask for high bits }
-      ceil_half_alpha: integer; { ceil(alpha/2) }
-      _near: integer;           { loss tolerance }
+      bpp16: Boolean; { Indicates if 16 bits per pixel mode or not }
+      width: Int;
+      height: Int;
+      Components: Integer;
+      limit_reduce: Integer; { reduction on above for EOR states }
+      qbpp: Integer;         { bits per sample for quantized prediction errors }
+      alpha: Integer;        { alphabet size }
+      Limit: Integer;        { limit for unary part of Golomb code }
+      Reset: Integer;
+      highmask: Integer;        { for powers of 2, a mask for high bits }
+      ceil_half_alpha: Integer; { ceil(alpha/2) }
+      _near: Integer;           { loss tolerance }
       { LOSSY Mode }
-      negNEAR: integer;
+      negNEAR: Integer;
 
       qdiv0: PIntegerArray; { quantization table (division via look-up) }
       qdiv: PInteger;       { quantization table (division via look-up) }
       qmul0: PIntegerArray; { dequantization table }
       qmul: PInteger;       { dequantization table }
 
-      quant: int;           { quantization = 2*_near+1 }
-      beta: int;            { size of extended alphabet }
-      qbeta: int;           { size of quantized alphabet }
-      ceil_half_qbeta: int; { ceil(qbeta/2) }
-      alpha1eps: int;       { alpha-1+_near }
+      quant: Int;           { quantization = 2*_near+1 }
+      beta: Int;            { size of extended alphabet }
+      qbeta: Int;           { size of quantized alphabet }
+      ceil_half_qbeta: Int; { ceil(qbeta/2) }
+      alpha1eps: Int;       { alpha-1+_near }
 
-      N: packed array [0 .. TOT_CONTEXTS - 1] of int;
-      A: packed array [0 .. TOT_CONTEXTS - 1] of int;
-      B: packed array [0 .. TOT_CONTEXTS - 1] of int;
-      C: packed array [0 .. TOT_CONTEXTS - 1] of int;
+      n: packed array [0 .. TOT_CONTEXTS - 1] of Int;
+      A: packed array [0 .. TOT_CONTEXTS - 1] of Int;
+      b: packed array [0 .. TOT_CONTEXTS - 1] of Int;
+      C: packed array [0 .. TOT_CONTEXTS - 1] of Int;
 
-      vLUT: packed array [0 .. 3 - 1, 0 .. 2 * LUTMAX16 - 1] of int;
-      classmap: packed array [0 .. CONTEXTS1 - 1] of int;
+      vLUT: packed array [0 .. 3 - 1, 0 .. 2 * LUTMAX16 - 1] of Int;
+      classmap: packed array [0 .. CONTEXTS1 - 1] of Int;
 
     end;
 
     PImageInfo = ^TImageInfo;
 
-  procedure error(msg: string);
-  function safealloc(size: size_t): Pointer;
-  function safecalloc(numels, size: size_t): Pointer;
+  procedure error(Msg: string);
+  function safealloc(Size: size_t): Pointer;
+  function safecalloc(numels, Size: size_t): Pointer;
 
-  function predict(Rb, Ra, Rc: Word): Word;
+  function predict(rb, RA, RC: Word): Word;
 
-  function IsTrue(AVAlue: integer): boolean;
-  function ENDIAN8(x: Word): byte;
-  function ENDIAN16(x: Word): Word;
+  function IsTrue(AValue: Integer): Boolean;
+  function ENDIAN8(X: Word): Byte;
+  function ENDIAN16(X: Word): Word;
 
-  function check_compatibility(head_frame: Pjpeg_ls_header; head_scan: Pjpeg_ls_header; n_s: int): int;
+  function check_compatibility(head_frame: pjpeg_ls_header; head_scan: pjpeg_ls_header; n_s: Int): Int;
 
-  function shr_c(Value: Int64; ShiftBits: integer): Int64; overload;
-  function shr_c(Value: integer; ShiftBits: integer): integer; overload;
+  function shr_c(Value: Int64; ShiftBits: Integer): Int64; overload;
+  function shr_c(Value: Integer; ShiftBits: Integer): Integer; overload;
 
-  function Bool_c(AVAlue: boolean): integer;
+  function Bool_c(AValue: Boolean): Integer;
 
 implementation
 
 uses DoStatusIO;
 
-function ENDIAN8(x: Word): byte;
+function ENDIAN8(X: Word): Byte;
 begin
-  Result := (x and $000000FF)
+  Result := (X and $000000FF)
 end;
 
-function ENDIAN16(x: Word): Word;
+function ENDIAN16(X: Word): Word;
 begin
-  Result := x; // ( ((x shr 8) or(x shl 8)) and $0000ffff);
+  Result := X; // ( ((x shr 8) or(x shl 8)) and $0000ffff);
 end;
 
-function Bool_c(AVAlue: boolean): integer;
+function Bool_c(AValue: Boolean): Integer;
 begin
-  if AVAlue then
+  if AValue then
       Result := 1
   else
       Result := 0;
 end;
 
-function IsTrue(AVAlue: integer): boolean;
+function IsTrue(AValue: Integer): Boolean;
 begin
-  Result := AVAlue <> 0;
+  Result := AValue <> 0;
 end;
 
-function shr_c(Value: Int64; ShiftBits: integer): Int64; overload;
+function shr_c(Value: Int64; ShiftBits: Integer): Int64; overload;
 begin
   Result := Value shr ShiftBits;
   if (Value and $8000000000000000) > 0 then
       Result := Result or ($FFFFFFFFFFFFFFFF shl (64 - ShiftBits));
 end;
 
-function shr_c(Value: integer; ShiftBits: integer): integer; overload;
+function shr_c(Value: Integer; ShiftBits: Integer): Integer; overload;
 begin
   Result := Value shr ShiftBits;
   if (Value and $80000000) > 0 then
-      Result := Result or integer($FFFFFFFF shl (64 - ShiftBits));
+      Result := Result or Integer($FFFFFFFF shl (64 - ShiftBits));
 end;
 
 { function to print out error messages }
-procedure error(msg: string);
+procedure error(Msg: string);
 begin
-  RaiseInfo(msg);
+  RaiseInfo(Msg);
 end;
 
 { function to safely call malloc }
-function safealloc(size: size_t): Pointer;
+function safealloc(Size: size_t): Pointer;
 var
-  temp: Pointer;
+  Temp: Pointer;
 begin
-  temp := AllocMem(size);
-  if (temp = nil) then
+  Temp := AllocMem(Size);
+  if (Temp = nil) then
       error('safealloc: Out of memory. Aborting...');
-  Result := temp;
+  Result := Temp;
 end;
 
 { function to safely call calloc }
-function safecalloc(numels, size: size_t): Pointer;
+function safecalloc(numels, Size: size_t): Pointer;
 var
-  temp: Pointer;
+  Temp: Pointer;
 begin
-  temp := AllocMem(numels * size);
-  if (temp = nil) then
+  Temp := AllocMem(numels * Size);
+  if (Temp = nil) then
       error('safecalloc: Out of memory. Aborting...');
-  Result := temp;
+  Result := Temp;
 end;
 
 { macro to predict Px }
-function predict(Rb, Ra, Rc: Word): Word;
+function predict(rb, RA, RC: Word): Word;
 var
-  minx, maxx: Pixel;
+  MinX, MaxX: Pixel;
 begin
-  if (Rb > Ra) then
+  if (rb > RA) then
     begin
-      minx := Ra;
-      maxx := Rb;
+      MinX := RA;
+      MaxX := rb;
     end
   else
     begin
-      maxx := Ra;
-      minx := Rb;
+      MaxX := RA;
+      MinX := rb;
     end;
 
-  if (Rc >= maxx) then
-      Result := minx
-  else if (Rc <= minx) then
-      Result := maxx
+  if (RC >= MaxX) then
+      Result := MinX
+  else if (RC <= MinX) then
+      Result := MaxX
   else
-      Result := Ra + Rb - Rc;
+      Result := RA + rb - RC;
 end;
 
 { We first check compatibility with JPEG-LS, then with this implementation }
 
-function check_compatibility(head_frame: Pjpeg_ls_header; head_scan: Pjpeg_ls_header; n_s: int): int;
+function check_compatibility(head_frame: pjpeg_ls_header; head_scan: pjpeg_ls_header; n_s: Int): Int;
 var
-  number_of_scans, i: int;
-  maxreset: int;
+  number_of_scans, i: Int;
+  maxreset: Int;
 begin
   Result := 0;
   { Check implemented color modes }
@@ -399,7 +399,7 @@ begin
     begin
       DoStatus('Color mode %d not supported.', [head_scan^.color_mode]);
       Result := 10;
-      exit;
+      Exit;
     end;
 
   if (head_scan^.color_mode = PLANE_INT) then
@@ -409,40 +409,40 @@ begin
 
   { Test standard compatibility }
 
-  if (head_frame^.columns <= 0) or (head_frame^.rows <= 0) then
+  if (head_frame^.columns <= 0) or (head_frame^.Rows <= 0) then
     begin
       DoStatus('Image size must be positive for this implementation.');
       Result := 10;
-      exit;
+      Exit;
     end;
 
   if (head_frame^.alp < 4) then
     begin
       DoStatus('Alphabet size must be >= 4, got %d.', [head_frame^.alp]);
       Result := 10;
-      exit;
+      Exit;
     end;
 
-  if (head_scan^.T1 > head_scan^.T2) or (head_scan^.T2 > head_scan^.T3) or
-    (head_scan^.T1 < head_scan^._near + 1) or (head_scan^.T3 >= head_scan^.alp) then
+  if (head_scan^.t1 > head_scan^.t2) or (head_scan^.t2 > head_scan^.t3) or
+    (head_scan^.t1 < head_scan^._near + 1) or (head_scan^.t3 >= head_scan^.alp) then
     begin
       DoStatus('Bad thresholds: must be %d <= Ta <= Tb <= Tc <= %d.', [head_scan^._near + 1, head_scan^.alp - 1]);
       Result := 10;
-      exit;
+      Exit;
     end;
 
   if (head_frame^.comp > 255) then
     begin
       DoStatus('Too many components (must be less than 255).');
       Result := 10;
-      exit;
+      Exit;
     end;
 
   if (head_scan^._near >= head_scan^.alp) then
     begin
       DoStatus('Error for _near-lossless must be smaller than alphabet (%d), got %d.', [head_scan^.alp, head_scan^._near]);
       Result := 10;
-      exit;
+      Exit;
     end;
 
   if (head_scan^.alp >= 256) then
@@ -450,11 +450,11 @@ begin
   else
       maxreset := 255;
 
-  if (head_scan^.RES < MINRESET) or (head_scan^.RES > maxreset) then
+  if (head_scan^.res < MINRESET) or (head_scan^.res > maxreset) then
     begin
       DoStatus('Reset parameter must be between %d and %d.', [MINRESET, head_scan^.alp - 1]);
       Result := 10;
-      exit;
+      Exit;
     end;
 
   for i := 0 to pred(head_frame^.comp) do
@@ -462,7 +462,7 @@ begin
       begin
         DoStatus('Components id in frame not compatible with this implementation.');
         Result := 10;
-        exit;
+        Exit;
       end;
 
   if (number_of_scans = 1) then
@@ -471,7 +471,7 @@ begin
         begin
           DoStatus('In this implementation, when single scan, all components must be in the scan.');
           Result := 10;
-          exit;
+          Exit;
         end;
 
       for i := 0 to pred(head_frame^.comp) do
@@ -479,7 +479,7 @@ begin
           begin
             DoStatus('Components id in single scan not compatible with this implementation.');
             Result := 10;
-            exit;
+            Exit;
           end;
 
     end
@@ -489,17 +489,18 @@ begin
         begin
           DoStatus('Only 1 component per scan for plane interleaved mode.');
           Result := 10;
-          exit;
+          Exit;
         end;
 
       if (head_scan^.comp_ids[0] <> (n_s + 1)) then
         begin
           DoStatus('Components id in multiple scan not compatible with this implementation.');
           Result := 10;
-          exit;
+          Exit;
         end;
 
     end;
 end;
 
-end.
+end. 
+ 

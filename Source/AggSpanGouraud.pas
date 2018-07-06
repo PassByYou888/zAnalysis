@@ -39,7 +39,7 @@ unit AggSpanGouraud;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -55,24 +55,24 @@ type
 
   TAggCoordType = packed record
     X, Y: Double;
-    Color: TAggColor;
+    COLOR: TAggColor;
   end;
 
   TAggSpanGouraud = class(TAggSpanGenerator)
   private
     FCoord: array [0 .. 2] of TAggCoordType;
-    FX, FY: array [0 .. 7] of Double;
+    fx, fy: array [0 .. 7] of Double;
     FCmd: array [0 .. 7] of Cardinal;
     FVertex: Cardinal;
   protected
     procedure ArrangeVertices(Coord: PAggCoordType);
   public
     constructor Create(Alloc: TAggSpanAllocator); overload;
-    constructor Create(Alloc: TAggSpanAllocator; C1, C2, C3: PAggColor; X1, Y1, X2, Y2, X3, Y3, D: Double); overload;
+    constructor Create(Alloc: TAggSpanAllocator; c1, c2, c3: PAggColor; x1, y1, x2, y2, x3, y3, d: Double); overload;
 
-    procedure SetColors(C1, C2, C3: PAggColor); overload;
-    procedure SetColors(C1, C2, C3: TAggRgba8); overload;
-    procedure Triangle(X1, Y1, X2, Y2, X3, Y3, D: Double);
+    procedure SetColors(c1, c2, c3: PAggColor); overload;
+    procedure SetColors(c1, c2, c3: TAggRgba8); overload;
+    procedure Triangle(x1, y1, x2, y2, x3, y3, d: Double);
 
     // Vertex Source Interface to feed the coordinates to the Rasterizer
     procedure Rewind(PathID: Cardinal); override;
@@ -92,12 +92,12 @@ begin
 end;
 
 constructor TAggSpanGouraud.Create(Alloc: TAggSpanAllocator;
-  C1, C2, C3: PAggColor; X1, Y1, X2, Y2, X3, Y3, D: Double);
+  c1, c2, c3: PAggColor; x1, y1, x2, y2, x3, y3, d: Double);
 begin
   inherited Create(Alloc);
 
-  SetColors(C1, C2, C3);
-  Triangle(X1, Y1, X2, Y2, X3, Y3, D);
+  SetColors(c1, c2, c3);
+  Triangle(x1, y1, x2, y2, x3, y3, d);
 end;
 
 // Sets the triangle and dilates it if needed.
@@ -106,39 +106,39 @@ end;
 // It's necessary to achieve numerical stability.
 // However, the coordinates to interpolate colors are calculated
 // as miter joins (CalculateIntersection).
-procedure TAggSpanGouraud.Triangle(X1, Y1, X2, Y2, X3, Y3, D: Double);
+procedure TAggSpanGouraud.Triangle(x1, y1, x2, y2, x3, y3, d: Double);
 begin
-  FCoord[0].X := X1;
-  FX[0] := X1;
-  FCoord[0].Y := Y1;
-  FY[0] := Y1;
-  FCoord[1].X := X2;
-  FX[1] := X2;
-  FCoord[1].Y := Y2;
-  FY[1] := Y2;
-  FCoord[2].X := X3;
-  FX[2] := X3;
-  FCoord[2].Y := Y3;
-  FY[2] := Y3;
+  FCoord[0].X := x1;
+  fx[0] := x1;
+  FCoord[0].Y := y1;
+  fy[0] := y1;
+  FCoord[1].X := x2;
+  fx[1] := x2;
+  FCoord[1].Y := y2;
+  fy[1] := y2;
+  FCoord[2].X := x3;
+  fx[2] := x3;
+  FCoord[2].Y := y3;
+  fy[2] := y3;
 
   FCmd[0] := CAggPathCmdMoveTo;
   FCmd[1] := CAggPathCmdLineTo;
   FCmd[2] := CAggPathCmdLineTo;
   FCmd[3] := CAggPathCmdStop;
 
-  if D <> 0.0 then
+  if d <> 0.0 then
     begin
       DilateTriangle(FCoord[0].X, FCoord[0].Y, FCoord[1].X, FCoord[1].Y,
-        FCoord[2].X, FCoord[2].Y, @FX, @FY, D);
+        FCoord[2].X, FCoord[2].Y, @fx, @fy, d);
 
-      CalculateIntersection(FX[4], FY[4], FX[5], FY[5], FX[0], FY[0], FX[1],
-        FY[1], @FCoord[0].X, @FCoord[0].Y);
+      CalculateIntersection(fx[4], fy[4], fx[5], fy[5], fx[0], fy[0], fx[1],
+        fy[1], @FCoord[0].X, @FCoord[0].Y);
 
-      CalculateIntersection(FX[0], FY[0], FX[1], FY[1], FX[2], FY[2], FX[3],
-        FY[3], @FCoord[1].X, @FCoord[1].Y);
+      CalculateIntersection(fx[0], fy[0], fx[1], fy[1], fx[2], fy[2], fx[3],
+        fy[3], @FCoord[1].X, @FCoord[1].Y);
 
-      CalculateIntersection(FX[2], FY[2], FX[3], FY[3], FX[4], FY[4], FX[5],
-        FY[5], @FCoord[2].X, @FCoord[2].Y);
+      CalculateIntersection(fx[2], fy[2], fx[3], fy[3], fx[4], fy[4], fx[5],
+        fy[5], @FCoord[2].X, @FCoord[2].Y);
 
       FCmd[3] := CAggPathCmdLineTo;
       FCmd[4] := CAggPathCmdLineTo;
@@ -152,29 +152,29 @@ begin
   FVertex := 0;
 end;
 
-procedure TAggSpanGouraud.SetColors(C1, C2, C3: PAggColor);
+procedure TAggSpanGouraud.SetColors(c1, c2, c3: PAggColor);
 begin
-  FCoord[0].Color := C1^;
-  FCoord[1].Color := C2^;
-  FCoord[2].Color := C3^;
+  FCoord[0].COLOR := c1^;
+  FCoord[1].COLOR := c2^;
+  FCoord[2].COLOR := c3^;
 end;
 
-procedure TAggSpanGouraud.SetColors(C1, C2, C3: TAggRgba8);
+procedure TAggSpanGouraud.SetColors(c1, c2, c3: TAggRgba8);
 var
-  Color: TAggColor;
+  COLOR: TAggColor;
 begin
-  Color.Rgba8 := C1;
-  FCoord[0].Color := Color;
-  Color.Rgba8 := C2;
-  FCoord[1].Color := Color;
-  Color.Rgba8 := C3;
-  FCoord[2].Color := Color;
+  COLOR.Rgba8 := c1;
+  FCoord[0].COLOR := COLOR;
+  COLOR.Rgba8 := c2;
+  FCoord[1].COLOR := COLOR;
+  COLOR.Rgba8 := c3;
+  FCoord[2].COLOR := COLOR;
 end;
 
 function TAggSpanGouraud.Vertex(X, Y: PDouble): Cardinal;
 begin
-  X^ := FX[FVertex];
-  Y^ := FY[FVertex];
+  X^ := fx[FVertex];
+  Y^ := fy[FVertex];
 
   Result := FCmd[FVertex];
 
@@ -183,7 +183,7 @@ end;
 
 procedure TAggSpanGouraud.ArrangeVertices(Coord: PAggCoordType);
 var
-  Tmp: TAggCoordType;
+  tmp: TAggCoordType;
 begin
   PAggCoordType(PtrComp(Coord))^ := FCoord[0];
   PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType))^ := FCoord[1];
@@ -198,24 +198,24 @@ begin
   if PAggCoordType(Coord).Y >
     PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType)).Y then
     begin
-      Tmp := PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType))^;
+      tmp := PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType))^;
 
       PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType))^ :=
         PAggCoordType(Coord)^;
 
-      PAggCoordType(Coord)^ := Tmp;
+      PAggCoordType(Coord)^ := tmp;
     end;
 
   if PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType)).Y >
     PAggCoordType(PtrComp(Coord) + 2 * SizeOf(TAggCoordType)).Y then
     begin
-      Tmp := PAggCoordType(PtrComp(Coord) + 2 * SizeOf(TAggCoordType))^;
+      tmp := PAggCoordType(PtrComp(Coord) + 2 * SizeOf(TAggCoordType))^;
 
       PAggCoordType(PtrComp(Coord) + 2 * SizeOf(TAggCoordType))^ :=
         PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType))^;
 
-      PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType))^ := Tmp;
+      PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType))^ := tmp;
     end;
 end;
 
-end.
+end. 

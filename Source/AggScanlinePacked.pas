@@ -35,16 +35,16 @@
   //                                                                            //
   ////////////////////////////////////////////////////////////////////////////////
 *)
-unit AggScanLinePacked;
+unit AggScanlinePacked;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
-  AggScanLine;
+  AggScanline;
 
 type
   PAggSpanPacked8 = ^TAggSpanPacked8;
@@ -70,7 +70,7 @@ type
     end;
   private
     FMaxLength: Cardinal;
-    FLastX, FY: Integer;
+    FLastX, fy: Integer;
     FCovers, FCoverPtr: PInt8u;
     FSpans, FCurrentSpan: PAggSpanPacked8;
   protected
@@ -131,7 +131,7 @@ begin
   FMaxLength := 0;
   FLastX := $7FFFFFF0;
 
-  FY := 0;
+  fy := 0;
 
   FCovers := nil;
   FCoverPtr := nil;
@@ -184,7 +184,7 @@ end;
 
 procedure TAggScanLinePacked8.Finalize(Y: Integer);
 begin
-  FY := Y;
+  fy := Y;
 end;
 
 procedure TAggScanLinePacked8.AddCell(X: Integer; Cover: Cardinal);
@@ -252,7 +252,7 @@ end;
 
 function TAggScanLinePacked8.GetY;
 begin
-  Result := FY;
+  Result := fy;
 end;
 
 function TAggScanLinePacked8.GetNumSpans: Cardinal;
@@ -265,4 +265,4 @@ begin
   Result := TConstIterator.Create(Self);
 end;
 
-end.
+end. 

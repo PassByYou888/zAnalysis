@@ -11,51 +11,51 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
-function Log1P(const x: TLFloat): TLFloat;
+function Log1P(const X: TLFloat): TLFloat;
 var
-  z : TLFloat;
+  Z : TLFloat;
   LP: TLFloat;
   LQ: TLFloat;
 begin
-  z := 1.0 + x;
-  if AP_FP_Less(z, 0.70710678118654752440) or
-    AP_FP_Greater(z, 1.41421356237309504880) then
+  Z := 1.0 + X;
+  if AP_FP_Less(Z, 0.70710678118654752440) or
+    AP_FP_Greater(Z, 1.41421356237309504880) then
     begin
-      Result := Ln(z);
+      Result := ln(Z);
       Exit;
     end;
-  z := x * x;
+  Z := X * X;
   LP := 4.5270000862445199635215E-5;
-  LP := LP * x + 4.9854102823193375972212E-1;
-  LP := LP * x + 6.5787325942061044846969E0;
-  LP := LP * x + 2.9911919328553073277375E1;
-  LP := LP * x + 6.0949667980987787057556E1;
-  LP := LP * x + 5.7112963590585538103336E1;
-  LP := LP * x + 2.0039553499201281259648E1;
+  LP := LP * X + 4.9854102823193375972212E-1;
+  LP := LP * X + 6.5787325942061044846969E0;
+  LP := LP * X + 2.9911919328553073277375E1;
+  LP := LP * X + 6.0949667980987787057556E1;
+  LP := LP * X + 5.7112963590585538103336E1;
+  LP := LP * X + 2.0039553499201281259648E1;
   LQ := 1.0000000000000000000000E0;
-  LQ := LQ * x + 1.5062909083469192043167E1;
-  LQ := LQ * x + 8.3047565967967209469434E1;
-  LQ := LQ * x + 2.2176239823732856465394E2;
-  LQ := LQ * x + 3.0909872225312059774938E2;
-  LQ := LQ * x + 2.1642788614495947685003E2;
-  LQ := LQ * x + 6.0118660497603843919306E1;
-  z := -0.5 * z + x * (z * LP / LQ);
-  Result := x + z;
+  LQ := LQ * X + 1.5062909083469192043167E1;
+  LQ := LQ * X + 8.3047565967967209469434E1;
+  LQ := LQ * X + 2.2176239823732856465394E2;
+  LQ := LQ * X + 3.0909872225312059774938E2;
+  LQ := LQ * X + 2.1642788614495947685003E2;
+  LQ := LQ * X + 6.0118660497603843919306E1;
+  Z := -0.5 * Z + X * (Z * LP / LQ);
+  Result := X + Z;
 end;
 
-function ExpM1(const x: TLFloat): TLFloat;
+function ExpM1(const X: TLFloat): TLFloat;
 var
-  r : TLFloat;
+  R : TLFloat;
   xx: TLFloat;
   EP: TLFloat;
   EQ: TLFloat;
 begin
-  if AP_FP_Less(x, -0.5) or AP_FP_Greater(x, 0.5) then
+  if AP_FP_Less(X, -0.5) or AP_FP_Greater(X, 0.5) then
     begin
-      Result := exp(x) - 1.0;
+      Result := Exp(X) - 1.0;
       Exit;
     end;
-  xx := x * x;
+  xx := X * X;
   EP := 1.2617719307481059087798E-4;
   EP := EP * xx + 3.0299440770744196129956E-2;
   EP := EP * xx + 9.9999999999999999991025E-1;
@@ -63,22 +63,22 @@ begin
   EQ := EQ * xx + 2.5244834034968410419224E-3;
   EQ := EQ * xx + 2.2726554820815502876593E-1;
   EQ := EQ * xx + 2.0000000000000000000897E0;
-  r := x * EP;
-  r := r / (EQ - r);
-  Result := r + r;
+  R := X * EP;
+  R := R / (EQ - R);
+  Result := R + R;
 end;
 
-function CosM1(const x: TLFloat): TLFloat;
+function CosM1(const X: TLFloat): TLFloat;
 var
   xx: TLFloat;
   C : TLFloat;
 begin
-  if AP_FP_Less(x, -0.25 * Pi) or AP_FP_Greater(x, 0.25 * Pi) then
+  if AP_FP_Less(X, -0.25 * pi) or AP_FP_Greater(X, 0.25 * pi) then
     begin
-      Result := Cos(x) - 1;
+      Result := Cos(X) - 1;
       Exit;
     end;
-  xx := x * x;
+  xx := X * X;
   C := 4.7377507964246204691685E-14;
   C := C * xx - 1.1470284843425359765671E-11;
   C := C * xx + 2.0876754287081521758361E-9;
@@ -89,31 +89,31 @@ begin
   Result := -0.5 * xx + xx * xx * C;
 end;
 
-function GammaStirF(const x: TLFloat): TLFloat; inline;
+function GammaStirF(const X: TLFloat): TLFloat; inline;
 var
-  y   : TLFloat;
+  Y   : TLFloat;
   w   : TLFloat;
   v   : TLFloat;
   Stir: TLFloat;
 begin
-  w := 1 / x;
+  w := 1 / X;
   Stir := 7.87311395793093628397E-4;
   Stir := -2.29549961613378126380E-4 + w * Stir;
   Stir := -2.68132617805781232825E-3 + w * Stir;
   Stir := 3.47222221605458667310E-3 + w * Stir;
   Stir := 8.33333333333482257126E-2 + w * Stir;
   w := 1 + w * Stir;
-  y := exp(x);
-  if AP_FP_Greater(x, 143.01608) then
+  Y := Exp(X);
+  if AP_FP_Greater(X, 143.01608) then
     begin
-      v := power(x, 0.5 * x - 0.25);
-      y := v * (v / y);
+      v := Power(X, 0.5 * X - 0.25);
+      Y := v * (v / Y);
     end
   else
     begin
-      y := power(x, x - 0.5) / y;
+      Y := Power(X, X - 0.5) / Y;
     end;
-  Result := 2.50662827463100050242 * y * w;
+  Result := 2.50662827463100050242 * Y * w;
 end;
 
 (* ************************************************************************
@@ -135,95 +135,95 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Original copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function Gamma(const x: TLFloat): TLFloat;
+function Gamma(const X: TLFloat): TLFloat;
 var
-  NX    : TLFloat;
+  Nx    : TLFloat;
   p     : TLFloat;
   PP    : TLFloat;
   q     : TLFloat;
   QQ    : TLFloat;
-  z     : TLFloat;
+  Z     : TLFloat;
   i     : TLInt;
   SgnGam: TLFloat;
 begin
-  NX := x;
+  Nx := X;
   SgnGam := 1;
-  q := absReal(NX);
+  q := AbsReal(Nx);
   if AP_FP_Greater(q, 33.0) then
     begin
-      if AP_FP_Less(NX, 0.0) then
+      if AP_FP_Less(Nx, 0.0) then
         begin
-          p := floor(q);
+          p := Floor(q);
           i := Round(p);
           if i mod 2 = 0 then
             begin
               SgnGam := -1;
             end;
-          z := q - p;
-          if AP_FP_Greater(z, 0.5) then
+          Z := q - p;
+          if AP_FP_Greater(Z, 0.5) then
             begin
               p := p + 1;
-              z := q - p;
+              Z := q - p;
             end;
-          z := q * Sin(Pi * z);
-          z := absReal(z);
-          z := Pi / (z * GammaStirF(q));
+          Z := q * Sin(pi * Z);
+          Z := AbsReal(Z);
+          Z := pi / (Z * GammaStirF(q));
         end
       else
         begin
-          z := GammaStirF(NX);
+          Z := GammaStirF(Nx);
         end;
-      Result := SgnGam * z;
+      Result := SgnGam * Z;
       Exit;
     end;
-  z := 1;
-  while AP_FP_Greater_Eq(NX, 3) do
+  Z := 1;
+  while AP_FP_Greater_Eq(Nx, 3) do
     begin
-      NX := NX - 1;
-      z := z * NX;
+      Nx := Nx - 1;
+      Z := Z * Nx;
     end;
-  while AP_FP_Less(NX, 0) do
+  while AP_FP_Less(Nx, 0) do
     begin
-      if AP_FP_Greater(NX, -0.000000001) then
+      if AP_FP_Greater(Nx, -0.000000001) then
         begin
-          Result := z / ((1 + 0.5772156649015329 * NX) * NX);
+          Result := Z / ((1 + 0.5772156649015329 * Nx) * Nx);
           Exit;
         end;
-      z := z / NX;
-      NX := NX + 1;
+      Z := Z / Nx;
+      Nx := Nx + 1;
     end;
-  while AP_FP_Less(NX, 2) do
+  while AP_FP_Less(Nx, 2) do
     begin
-      if AP_FP_Less(NX, 0.000000001) then
+      if AP_FP_Less(Nx, 0.000000001) then
         begin
-          Result := z / ((1 + 0.5772156649015329 * NX) * NX);
+          Result := Z / ((1 + 0.5772156649015329 * Nx) * Nx);
           Exit;
         end;
-      z := z / NX;
-      NX := NX + 1.0;
+      Z := Z / Nx;
+      Nx := Nx + 1.0;
     end;
-  if AP_FP_Eq(NX, 2) then
+  if AP_FP_Eq(Nx, 2) then
     begin
-      Result := z;
+      Result := Z;
       Exit;
     end;
-  NX := NX - 2.0;
+  Nx := Nx - 2.0;
   PP := 1.60119522476751861407E-4;
-  PP := 1.19135147006586384913E-3 + NX * PP;
-  PP := 1.04213797561761569935E-2 + NX * PP;
-  PP := 4.76367800457137231464E-2 + NX * PP;
-  PP := 2.07448227648435975150E-1 + NX * PP;
-  PP := 4.94214826801497100753E-1 + NX * PP;
-  PP := 9.99999999999999996796E-1 + NX * PP;
+  PP := 1.19135147006586384913E-3 + Nx * PP;
+  PP := 1.04213797561761569935E-2 + Nx * PP;
+  PP := 4.76367800457137231464E-2 + Nx * PP;
+  PP := 2.07448227648435975150E-1 + Nx * PP;
+  PP := 4.94214826801497100753E-1 + Nx * PP;
+  PP := 9.99999999999999996796E-1 + Nx * PP;
   QQ := -2.31581873324120129819E-5;
-  QQ := 5.39605580493303397842E-4 + NX * QQ;
-  QQ := -4.45641913851797240494E-3 + NX * QQ;
-  QQ := 1.18139785222060435552E-2 + NX * QQ;
-  QQ := 3.58236398605498653373E-2 + NX * QQ;
-  QQ := -2.34591795718243348568E-1 + NX * QQ;
-  QQ := 7.14304917030273074085E-2 + NX * QQ;
-  QQ := 1.00000000000000000320 + NX * QQ;
-  Result := z * PP / QQ;
+  QQ := 5.39605580493303397842E-4 + Nx * QQ;
+  QQ := -4.45641913851797240494E-3 + Nx * QQ;
+  QQ := 1.18139785222060435552E-2 + Nx * QQ;
+  QQ := 3.58236398605498653373E-2 + Nx * QQ;
+  QQ := -2.34591795718243348568E-1 + Nx * QQ;
+  QQ := 7.14304917030273074085E-2 + Nx * QQ;
+  QQ := 1.00000000000000000320 + Nx * QQ;
+  Result := Z * PP / QQ;
   Exit;
 end;
 
@@ -258,31 +258,31 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function LnGamma(const x: TLFloat; var SgnGam: TLFloat): TLFloat;
+function LnGamma(const X: TLFloat; var SgnGam: TLFloat): TLFloat;
 var
-  NX   : TLFloat;
-  a    : TLFloat;
+  Nx   : TLFloat;
+  A    : TLFloat;
   b    : TLFloat;
   C    : TLFloat;
   p    : TLFloat;
   q    : TLFloat;
   u    : TLFloat;
   w    : TLFloat;
-  z    : TLFloat;
+  Z    : TLFloat;
   i    : TLInt;
   LogPi: TLFloat;
   LS2PI: TLFloat;
-  Tmp  : TLFloat;
+  tmp  : TLFloat;
 begin
-  NX := x;
+  Nx := X;
   SgnGam := 1;
   LogPi := 1.14472988584940017414;
   LS2PI := 0.91893853320467274178;
-  if AP_FP_Less(NX, -34.0) then
+  if AP_FP_Less(Nx, -34.0) then
     begin
-      q := -NX;
-      w := LnGamma(q, Tmp);
-      p := floor(q);
+      q := -Nx;
+      w := LnGamma(q, tmp);
+      p := Floor(q);
       i := Round(p);
       if i mod 2 = 0 then
         begin
@@ -292,37 +292,37 @@ begin
         begin
           SgnGam := 1;
         end;
-      z := q - p;
-      if AP_FP_Greater(z, 0.5) then
+      Z := q - p;
+      if AP_FP_Greater(Z, 0.5) then
         begin
           p := p + 1;
-          z := p - q;
+          Z := p - q;
         end;
-      z := q * Sin(Pi * z);
-      Result := LogPi - Ln(z) - w;
+      Z := q * Sin(pi * Z);
+      Result := LogPi - ln(Z) - w;
       Exit;
     end;
-  if AP_FP_Less(NX, 13) then
+  if AP_FP_Less(Nx, 13) then
     begin
-      z := 1;
+      Z := 1;
       p := 0;
-      u := NX;
+      u := Nx;
       while AP_FP_Greater_Eq(u, 3) do
         begin
           p := p - 1;
-          u := NX + p;
-          z := z * u;
+          u := Nx + p;
+          Z := Z * u;
         end;
       while AP_FP_Less(u, 2) do
         begin
-          z := z / u;
+          Z := Z / u;
           p := p + 1;
-          u := NX + p;
+          u := Nx + p;
         end;
-      if AP_FP_Less(z, 0) then
+      if AP_FP_Less(Z, 0) then
         begin
           SgnGam := -1;
-          z := -z;
+          Z := -Z;
         end
       else
         begin
@@ -330,48 +330,48 @@ begin
         end;
       if AP_FP_Eq(u, 2) then
         begin
-          Result := Ln(z);
+          Result := ln(Z);
           Exit;
         end;
       p := p - 2;
-      NX := NX + p;
+      Nx := Nx + p;
       b := -1378.25152569120859100;
-      b := -38801.6315134637840924 + NX * b;
-      b := -331612.992738871184744 + NX * b;
-      b := -1162370.97492762307383 + NX * b;
-      b := -1721737.00820839662146 + NX * b;
-      b := -853555.664245765465627 + NX * b;
+      b := -38801.6315134637840924 + Nx * b;
+      b := -331612.992738871184744 + Nx * b;
+      b := -1162370.97492762307383 + Nx * b;
+      b := -1721737.00820839662146 + Nx * b;
+      b := -853555.664245765465627 + Nx * b;
       C := 1;
-      C := -351.815701436523470549 + NX * C;
-      C := -17064.2106651881159223 + NX * C;
-      C := -220528.590553854454839 + NX * C;
-      C := -1139334.44367982507207 + NX * C;
-      C := -2532523.07177582951285 + NX * C;
-      C := -2018891.41433532773231 + NX * C;
-      p := NX * b / C;
-      Result := Ln(z) + p;
+      C := -351.815701436523470549 + Nx * C;
+      C := -17064.2106651881159223 + Nx * C;
+      C := -220528.590553854454839 + Nx * C;
+      C := -1139334.44367982507207 + Nx * C;
+      C := -2532523.07177582951285 + Nx * C;
+      C := -2018891.41433532773231 + Nx * C;
+      p := Nx * b / C;
+      Result := ln(Z) + p;
       Exit;
     end;
-  q := (NX - 0.5) * Ln(NX) - NX + LS2PI;
-  if AP_FP_Greater(NX, 100000000) then
+  q := (Nx - 0.5) * ln(Nx) - Nx + LS2PI;
+  if AP_FP_Greater(Nx, 100000000) then
     begin
       Result := q;
       Exit;
     end;
-  p := 1 / (NX * NX);
-  if AP_FP_Greater_Eq(NX, 1000.0) then
+  p := 1 / (Nx * Nx);
+  if AP_FP_Greater_Eq(Nx, 1000.0) then
     begin
       q := q + ((7.9365079365079365079365 * 0.0001 * p - 2.7777777777777777777778
-        * 0.001) * p + 0.0833333333333333333333) / NX;
+        * 0.001) * p + 0.0833333333333333333333) / Nx;
     end
   else
     begin
-      a := 8.11614167470508450300 * 0.0001;
-      a := -5.95061904284301438324 * 0.0001 + p * a;
-      a := 7.93650340457716943945 * 0.0001 + p * a;
-      a := -2.77777777730099687205 * 0.001 + p * a;
-      a := 8.33333333333331927722 * 0.01 + p * a;
-      q := q + a / NX;
+      A := 8.11614167470508450300 * 0.0001;
+      A := -5.95061904284301438324 * 0.0001 + p * A;
+      A := 7.93650340457716943945 * 0.0001 + p * A;
+      A := -2.77777777730099687205 * 0.001 + p * A;
+      A := 8.33333333333331927722 * 0.01 + p * A;
+      q := q + A / Nx;
     end;
   Result := q;
 end;
@@ -405,42 +405,42 @@ end;
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1985, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function IncompleteGamma(const a, x: TLFloat): TLFloat;
+function IncompleteGamma(const A, X: TLFloat): TLFloat;
 var
   IGammaEpsilon: TLFloat;
   ans          : TLFloat;
-  ax           : TLFloat;
+  Ax           : TLFloat;
   C            : TLFloat;
-  r            : TLFloat;
-  Tmp          : TLFloat;
+  R            : TLFloat;
+  tmp          : TLFloat;
 begin
   IGammaEpsilon := 0.000000000000001;
-  if AP_FP_Less_Eq(x, 0) or AP_FP_Less_Eq(a, 0) then
+  if AP_FP_Less_Eq(X, 0) or AP_FP_Less_Eq(A, 0) then
     begin
       Result := 0;
       Exit;
     end;
-  if AP_FP_Greater(x, 1) and AP_FP_Greater(x, a) then
+  if AP_FP_Greater(X, 1) and AP_FP_Greater(X, A) then
     begin
-      Result := 1 - IncompleteGammaC(a, x);
+      Result := 1 - IncompleteGammaC(A, X);
       Exit;
     end;
-  ax := a * Ln(x) - x - LnGamma(a, Tmp);
-  if AP_FP_Less(ax, -709.78271289338399) then
+  Ax := A * ln(X) - X - LnGamma(A, tmp);
+  if AP_FP_Less(Ax, -709.78271289338399) then
     begin
       Result := 0;
       Exit;
     end;
-  ax := exp(ax);
-  r := a;
+  Ax := Exp(Ax);
+  R := A;
   C := 1;
   ans := 1;
   repeat
-    r := r + 1;
-    C := C * x / r;
+    R := R + 1;
+    C := C * X / R;
     ans := ans + C;
   until AP_FP_Less_Eq(C / ans, IGammaEpsilon);
-  Result := ans * ax / a;
+  Result := ans * Ax / A;
 end;
 
 (* ************************************************************************
@@ -476,85 +476,85 @@ end;
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1985, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function IncompleteGammaC(const a, x: TLFloat): TLFloat;
+function IncompleteGammaC(const A, X: TLFloat): TLFloat;
 var
   IGammaEpsilon     : TLFloat;
   IGammaBigNumber   : TLFloat;
   IGammaBigNumberInv: TLFloat;
   ans               : TLFloat;
-  ax                : TLFloat;
+  Ax                : TLFloat;
   C                 : TLFloat;
   yc                : TLFloat;
-  r                 : TLFloat;
-  t                 : TLFloat;
-  y                 : TLFloat;
-  z                 : TLFloat;
+  R                 : TLFloat;
+  T                 : TLFloat;
+  Y                 : TLFloat;
+  Z                 : TLFloat;
   pk                : TLFloat;
   pkm1              : TLFloat;
   pkm2              : TLFloat;
   qk                : TLFloat;
   qkm1              : TLFloat;
   qkm2              : TLFloat;
-  Tmp               : TLFloat;
+  tmp               : TLFloat;
 begin
   IGammaEpsilon := 0.000000000000001;
   IGammaBigNumber := 4503599627370496.0;
   IGammaBigNumberInv := 2.22044604925031308085 * 0.0000000000000001;
-  if AP_FP_Less_Eq(x, 0) or AP_FP_Less_Eq(a, 0) then
+  if AP_FP_Less_Eq(X, 0) or AP_FP_Less_Eq(A, 0) then
     begin
       Result := 1;
       Exit;
     end;
-  if AP_FP_Less(x, 1) or AP_FP_Less(x, a) then
+  if AP_FP_Less(X, 1) or AP_FP_Less(X, A) then
     begin
-      Result := 1 - IncompleteGamma(a, x);
+      Result := 1 - IncompleteGamma(A, X);
       Exit;
     end;
-  ax := a * Ln(x) - x - LnGamma(a, Tmp);
-  if AP_FP_Less(ax, -709.78271289338399) then
+  Ax := A * ln(X) - X - LnGamma(A, tmp);
+  if AP_FP_Less(Ax, -709.78271289338399) then
     begin
       Result := 0;
       Exit;
     end;
-  ax := exp(ax);
-  y := 1 - a;
-  z := x + y + 1;
+  Ax := Exp(Ax);
+  Y := 1 - A;
+  Z := X + Y + 1;
   C := 0;
   pkm2 := 1;
-  qkm2 := x;
-  pkm1 := x + 1;
-  qkm1 := z * x;
+  qkm2 := X;
+  pkm1 := X + 1;
+  qkm1 := Z * X;
   ans := pkm1 / qkm1;
   repeat
     C := C + 1;
-    y := y + 1;
-    z := z + 2;
-    yc := y * C;
-    pk := pkm1 * z - pkm2 * yc;
-    qk := qkm1 * z - qkm2 * yc;
-    if AP_FP_Neq(qk, 0) then
+    Y := Y + 1;
+    Z := Z + 2;
+    yc := Y * C;
+    pk := pkm1 * Z - pkm2 * yc;
+    qk := qkm1 * Z - qkm2 * yc;
+    if AP_FP_NEq(qk, 0) then
       begin
-        r := pk / qk;
-        t := absReal((ans - r) / r);
-        ans := r;
+        R := pk / qk;
+        T := AbsReal((ans - R) / R);
+        ans := R;
       end
     else
       begin
-        t := 1;
+        T := 1;
       end;
     pkm2 := pkm1;
     pkm1 := pk;
     qkm2 := qkm1;
     qkm1 := qk;
-    if AP_FP_Greater(absReal(pk), IGammaBigNumber) then
+    if AP_FP_Greater(AbsReal(pk), IGammaBigNumber) then
       begin
         pkm2 := pkm2 * IGammaBigNumberInv;
         pkm1 := pkm1 * IGammaBigNumberInv;
         qkm2 := qkm2 * IGammaBigNumberInv;
         qkm1 := qkm1 * IGammaBigNumberInv;
       end;
-  until AP_FP_Less_Eq(t, IGammaEpsilon);
-  Result := ans * ax;
+  until AP_FP_Less_Eq(T, IGammaEpsilon);
+  Result := ans * Ax;
 end;
 
 (* ************************************************************************
@@ -593,22 +593,22 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvIncompleteGammaC(const a, y0: TLFloat): TLFloat;
+function InvIncompleteGammaC(const A, y0: TLFloat): TLFloat;
 var
   IGammaEpsilon     : TLFloat;
   IInvGammaBigNumber: TLFloat;
   x0                : TLFloat;
   x1                : TLFloat;
-  x                 : TLFloat;
+  X                 : TLFloat;
   yl                : TLFloat;
   yh                : TLFloat;
-  y                 : TLFloat;
+  Y                 : TLFloat;
   d                 : TLFloat;
   lgm               : TLFloat;
   dithresh          : TLFloat;
   i                 : TLInt;
   dir               : TLInt;
-  Tmp               : TLFloat;
+  tmp               : TLFloat;
 begin
   IGammaEpsilon := 0.000000000000001;
   IInvGammaBigNumber := 4503599627370496.0;
@@ -617,64 +617,64 @@ begin
   x1 := 0;
   yh := 1;
   dithresh := 5 * IGammaEpsilon;
-  d := 1 / (9 * a);
-  y := 1 - d - InvNormalDistribution(y0) * Sqrt(d);
-  x := a * y * y * y;
-  lgm := LnGamma(a, Tmp);
+  d := 1 / (9 * A);
+  Y := 1 - d - InvNormalDistribution(y0) * Sqrt(d);
+  X := A * Y * Y * Y;
+  lgm := LnGamma(A, tmp);
   i := 0;
   while i < 10 do
     begin
-      if AP_FP_Greater(x, x0) or AP_FP_Less(x, x1) then
+      if AP_FP_Greater(X, x0) or AP_FP_Less(X, x1) then
         begin
           d := 0.0625;
           Break;
         end;
-      y := IncompleteGammaC(a, x);
-      if AP_FP_Less(y, yl) or AP_FP_Greater(y, yh) then
+      Y := IncompleteGammaC(A, X);
+      if AP_FP_Less(Y, yl) or AP_FP_Greater(Y, yh) then
         begin
           d := 0.0625;
           Break;
         end;
-      if AP_FP_Less(y, y0) then
+      if AP_FP_Less(Y, y0) then
         begin
-          x0 := x;
-          yl := y;
+          x0 := X;
+          yl := Y;
         end
       else
         begin
-          x1 := x;
-          yh := y;
+          x1 := X;
+          yh := Y;
         end;
-      d := (a - 1) * Ln(x) - x - lgm;
+      d := (A - 1) * ln(X) - X - lgm;
       if AP_FP_Less(d, -709.78271289338399) then
         begin
           d := 0.0625;
           Break;
         end;
-      d := -exp(d);
-      d := (y - y0) / d;
-      if AP_FP_Less(absReal(d / x), IGammaEpsilon) then
+      d := -Exp(d);
+      d := (Y - y0) / d;
+      if AP_FP_Less(AbsReal(d / X), IGammaEpsilon) then
         begin
-          Result := x;
+          Result := X;
           Exit;
         end;
-      x := x - d;
+      X := X - d;
       i := i + 1;
     end;
   if AP_FP_Eq(x0, IInvGammaBigNumber) then
     begin
-      if AP_FP_Less_Eq(x, 0) then
+      if AP_FP_Less_Eq(X, 0) then
         begin
-          x := 1;
+          X := 1;
         end;
       while AP_FP_Eq(x0, IInvGammaBigNumber) do
         begin
-          x := (1 + d) * x;
-          y := IncompleteGammaC(a, x);
-          if AP_FP_Less(y, y0) then
+          X := (1 + d) * X;
+          Y := IncompleteGammaC(A, X);
+          if AP_FP_Less(Y, y0) then
             begin
-              x0 := x;
-              yl := y;
+              x0 := X;
+              yl := Y;
               Break;
             end;
           d := d + d;
@@ -685,26 +685,26 @@ begin
   i := 0;
   while i < 400 do
     begin
-      x := x1 + d * (x0 - x1);
-      y := IncompleteGammaC(a, x);
+      X := x1 + d * (x0 - x1);
+      Y := IncompleteGammaC(A, X);
       lgm := (x0 - x1) / (x1 + x0);
-      if AP_FP_Less(absReal(lgm), dithresh) then
+      if AP_FP_Less(AbsReal(lgm), dithresh) then
         begin
           Break;
         end;
-      lgm := (y - y0) / y0;
-      if AP_FP_Less(absReal(lgm), dithresh) then
+      lgm := (Y - y0) / y0;
+      if AP_FP_Less(AbsReal(lgm), dithresh) then
         begin
           Break;
         end;
-      if AP_FP_Less_Eq(x, 0.0) then
+      if AP_FP_Less_Eq(X, 0.0) then
         begin
           Break;
         end;
-      if AP_FP_Greater_Eq(y, y0) then
+      if AP_FP_Greater_Eq(Y, y0) then
         begin
-          x1 := x;
-          yh := y;
+          x1 := X;
+          yh := Y;
           if dir < 0 then
             begin
               dir := 0;
@@ -725,8 +725,8 @@ begin
         end
       else
         begin
-          x0 := x;
-          yl := y;
+          x0 := X;
+          yl := Y;
           if dir > 0 then
             begin
               dir := 0;
@@ -747,7 +747,7 @@ begin
         end;
       i := i + 1;
     end;
-  Result := x;
+  Result := X;
 end;
 
 (* ************************************************************************
@@ -775,10 +775,10 @@ end;
   * Cephes Math Library Release 2.8:  June, 2000
   * Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function PoissonDistribution(k: TLInt; m: TLFloat): TLFloat;
+function PoissonDistribution(k: TLInt; M: TLFloat): TLFloat;
 begin
-  Assert((k >= 0) and AP_FP_Greater(m, 0), 'Domain error in PoissonDistribution');
-  Result := IncompleteGammaC(k + 1, m);
+  Assert((k >= 0) and AP_FP_Greater(M, 0), 'Domain error in PoissonDistribution');
+  Result := IncompleteGammaC(k + 1, M);
 end;
 
 (* ************************************************************************
@@ -807,10 +807,10 @@ end;
   * Cephes Math Library Release 2.8:  June, 2000
   * Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function PoissonCDistribution(k: TLInt; m: TLFloat): TLFloat;
+function PoissonCDistribution(k: TLInt; M: TLFloat): TLFloat;
 begin
-  Assert((k >= 0) and AP_FP_Greater(m, 0), 'Domain error in PoissonDistributionC');
-  Result := IncompleteGamma(k + 1, m);
+  Assert((k >= 0) and AP_FP_Greater(M, 0), 'Domain error in PoissonDistributionC');
+  Result := IncompleteGamma(k + 1, M);
 end;
 
 (* ************************************************************************
@@ -832,8 +832,8 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvPoissonDistribution(k: TLInt; y: TLFloat): TLFloat;
+function InvPoissonDistribution(k: TLInt; Y: TLFloat): TLFloat;
 begin
-  Assert((k >= 0) and AP_FP_Greater_Eq(y, 0) and AP_FP_Less(y, 1), 'Domain error in InvPoissonDistribution');
-  Result := InvIncompleteGammaC(k + 1, y);
-end;
+  Assert((k >= 0) and AP_FP_Greater_Eq(Y, 0) and AP_FP_Less(Y, 1), 'Domain error in InvPoissonDistribution');
+  Result := InvIncompleteGammaC(k + 1, Y);
+end; 

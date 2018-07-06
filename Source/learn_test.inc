@@ -23,78 +23,78 @@ const
 
 var
   lt          : TLearnType;
-  lr          : TLearn;
-  I, J, lv    : TLInt;
+  lR          : TLearn;
+  i, J, LV    : TLInt;
   f_In, f_Out : TLVec;
   f_out_list  : TLMatrix;
   Search_Out  : TLIVec;
-  m           : TLMatrix;
+  M           : TLMatrix;
   mr          : TMemoryRaster;
   RasterArray : array of TMemoryRaster;
   m64         : TMemoryStream64;
   md5_1, md5_2: TMD5;
 begin
   // Regression test
-  for lv := 0 to 2 do
+  for LV := 0 to 2 do
     for lt in RegressionLearnType do
       begin
-        DoStatusNoLn('Regression%d test %s ..', [lv, CLearnString[lt]]);
-        case lv of
-          0: lr := TLearn.CreateRegression(lt, test_InLen, test_OutLen);
-          1: lr := TLearn.CreateRegression1(lt, test_InLen, test_OutLen);
-          else lr := TLearn.CreateRegression2(lt, test_InLen, test_OutLen);
+        DoStatusNoLn('Regression%d test %s ..', [LV, CLearnString[lt]]);
+        case LV of
+          0: lR := TLearn.CreateRegression(lt, test_InLen, test_OutLen);
+          1: lR := TLearn.CreateRegression1(lt, test_InLen, test_OutLen);
+          else lR := TLearn.CreateRegression2(lt, test_InLen, test_OutLen);
         end;
 
-        SetLength(f_In, lr.InLen);
-        SetLength(f_Out, lr.OutLen);
+        SetLength(f_In, lR.InLen);
+        SetLength(f_Out, lR.OutLen);
 
         for J := 0 to test_Depth - 1 do
           begin
-            for I := 0 to lr.InLen - 1 do
-                f_In[I] := umlRandomRangeD(0, 100);
-            for I := 0 to lr.OutLen - 1 do
-                f_Out[I] := umlRandomRangeD(0, 10);
-            lr.AddMemory(f_In, f_Out);
+            for i := 0 to lR.InLen - 1 do
+                f_In[i] := umlRandomRangeD(0, 100);
+            for i := 0 to lR.OutLen - 1 do
+                f_Out[i] := umlRandomRangeD(0, 10);
+            lR.AddMemory(f_In, f_Out);
           end;
-        if lr.Train then
+        if lR.Train then
           begin
-            SetLength(f_out_list, lr.Count);
-            for I := 0 to lr.Count - 1 do
-              if not lr.process(@lr[I]^.m_in, @f_out_list[I]) then
+            SetLength(f_out_list, lR.Count);
+            for i := 0 to lR.Count - 1 do
+              if not lR.process(@lR[i]^.m_in, @f_out_list[i]) then
                   DoStatusNoLn('process error ');
 
             if lt = ltLBFGS then
-              for I := 0 to lr.Count - 1 do
+              for i := 0 to lR.Count - 1 do
                 begin
-                  lr.SearchMemoryWithPearson(lr[I]^.m_in);
-                  lr.SearchMemoryWithPearson(lr[I]^.m_in, Search_Out);
+                  lR.SearchMemoryWithPearson(lR[i]^.m_in);
+                  lR.SearchMemoryWithPearson(lR[i]^.m_in, Search_Out);
                   SetLength(Search_Out, 0);
 
-                  lr.SearchMemoryWithSpearman(lr[I]^.m_in);
-                  lr.SearchMemoryWithSpearman(lr[I]^.m_in, Search_Out);
+                  lR.SearchMemoryWithSpearman(lR[i]^.m_in);
+                  lR.SearchMemoryWithSpearman(lR[i]^.m_in, Search_Out);
                   SetLength(Search_Out, 0);
 
-                  lr.SearchMemoryWithDistance(lr[I]^.m_in);
-                  lr.SearchMemoryWithDistance(lr[I]^.m_in, Search_Out);
+                  lR.SearchMemoryWithDistance(lR[i]^.m_in);
+                  lR.SearchMemoryWithDistance(lR[i]^.m_in, Search_Out);
                   SetLength(Search_Out, 0);
                 end;
 
             m64 := TMemoryStream64.Create;
-            lr.SaveToStream(m64);
+            lR.SaveToStream(m64);
             md5_1 := umlStreamMD5(m64);
             m64.Position := 0;
-            lr.LoadFromStream(m64);
+            lR.LoadFromStream(m64);
             m64.Clear;
-            lr.SaveToStream(m64);
+            lR.SaveToStream(m64);
             md5_2 := umlStreamMD5(m64);
             if not umlCompareMD5(md5_1, md5_2) then
                 DoStatusNoLn('encode error ');
             DisposeObject(m64);
 
-            for I := 0 to lr.Count - 1 do
-              if lr.process(@lr[I]^.m_in, @f_Out) then
+            for i := 0 to lR.Count - 1 do
+              if lR.process(@lR[i]^.m_in, @f_Out) then
                 begin
-                  if TKDTree.KDTreeDistance(f_Out, f_out_list[I]) <> 0 then
+                  if TKDTree.KDTreeDistance(f_Out, f_out_list[i]) <> 0 then
                       DoStatusNoLn('verify data error ');
                 end
               else
@@ -110,54 +110,54 @@ begin
         SetLength(f_In, 0);
         SetLength(f_Out, 0);
 
-        DisposeObject(lr);
+        DisposeObject(lR);
       end;
 
   // classifier test
-  for lv := 0 to 2 do
+  for LV := 0 to 2 do
     for lt in ClassifierLearnType do
       begin
-        DoStatusNoLn('Classifier%d test %s ..', [lv, CLearnString[lt]]);
-        case lv of
-          0: lr := TLearn.CreateClassifier(lt, test_InLen);
-          1: lr := TLearn.CreateClassifier1(lt, test_InLen);
-          else lr := TLearn.CreateClassifier2(lt, test_InLen);
+        DoStatusNoLn('Classifier%d test %s ..', [LV, CLearnString[lt]]);
+        case LV of
+          0: lR := TLearn.CreateClassifier(lt, test_InLen);
+          1: lR := TLearn.CreateClassifier1(lt, test_InLen);
+          else lR := TLearn.CreateClassifier2(lt, test_InLen);
         end;
 
-        SetLength(f_In, lr.InLen);
-        SetLength(f_Out, lr.OutLen);
+        SetLength(f_In, lR.InLen);
+        SetLength(f_Out, lR.OutLen);
 
         for J := 0 to test_Depth - 1 do
           begin
-            for I := 0 to lr.InLen - 1 do
-                f_In[I] := umlRandomRangeD(0, 100);
-            for I := 0 to lr.OutLen - 1 do
-                f_Out[I] := umlRandomRangeD(0, 10);
-            lr.AddMemory(f_In, f_Out);
+            for i := 0 to lR.InLen - 1 do
+                f_In[i] := umlRandomRangeD(0, 100);
+            for i := 0 to lR.OutLen - 1 do
+                f_Out[i] := umlRandomRangeD(0, 10);
+            lR.AddMemory(f_In, f_Out);
           end;
-        if lr.Train then
+        if lR.Train then
           begin
-            SetLength(f_out_list, lr.Count);
-            for I := 0 to lr.Count - 1 do
-              if not lr.process(@lr[I]^.m_in, @f_out_list[I]) then
+            SetLength(f_out_list, lR.Count);
+            for i := 0 to lR.Count - 1 do
+              if not lR.process(@lR[i]^.m_in, @f_out_list[i]) then
                   DoStatusNoLn('process error ');
 
             m64 := TMemoryStream64.Create;
-            lr.SaveToStream(m64);
+            lR.SaveToStream(m64);
             md5_1 := umlStreamMD5(m64);
             m64.Position := 0;
-            lr.LoadFromStream(m64);
+            lR.LoadFromStream(m64);
             m64.Clear;
-            lr.SaveToStream(m64);
+            lR.SaveToStream(m64);
             md5_2 := umlStreamMD5(m64);
             if not umlCompareMD5(md5_1, md5_2) then
                 DoStatusNoLn('encode error ');
             DisposeObject(m64);
 
-            for I := 0 to lr.Count - 1 do
-              if lr.process(@lr[I]^.m_in, @f_Out) then
+            for i := 0 to lR.Count - 1 do
+              if lR.process(@lR[i]^.m_in, @f_Out) then
                 begin
-                  if TKDTree.KDTreeDistance(f_Out, f_out_list[I]) <> 0 then
+                  if TKDTree.KDTreeDistance(f_Out, f_out_list[i]) <> 0 then
                       DoStatusNoLn('verify data error ');
                 end
               else
@@ -173,7 +173,7 @@ begin
         SetLength(f_In, 0);
         SetLength(f_Out, 0);
 
-        DisposeObject(lr);
+        DisposeObject(lR);
       end;
 
   // raster sampler test
@@ -188,25 +188,25 @@ begin
 
   for mr in RasterArray do
     begin
-      for J := 0 to mr.Height - 1 do
-        for I := 0 to mr.Width - 1 do
-            mr.Pixel[I, J] := RasterColor(umlRandomRange(0, 255), umlRandomRange(0, 255), umlRandomRange(0, 255), 255);
+      for J := 0 to mr.height - 1 do
+        for i := 0 to mr.width - 1 do
+            mr.Pixel[i, J] := RasterColor(umlRandomRange(0, 255), umlRandomRange(0, 255), umlRandomRange(0, 255), 255);
     end;
 
   // raster Classifier
   for lt in RasterClassifierLearnType do
     begin
       DoStatusNoLn('raster Classifier test %s ..', [CLearnString[lt]]);
-      lr := TLearn.CreatePictureClassifier(lt, Trunc(Sqrt(test_Depth)));
+      lR := TLearn.CreatePictureClassifier(lt, Trunc(Sqrt(test_Depth)));
 
       for J := 0 to test_Depth - 1 do
         begin
-          m := LMatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[J]);
+          M := LMatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[J]);
           SetLength(f_Out, 1);
           f_Out[0] := J;
-          lr.AddMatrix(m, f_Out);
+          lR.AddMatrix(M, f_Out);
         end;
-      if lr.Train then
+      if lR.Train then
         begin
           DoStatusNoLn;
 
@@ -214,21 +214,21 @@ begin
           SetLength(f_out_list, test_Depth);
           for J := 0 to test_Depth - 1 do
             begin
-              m := LMatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[J]);
+              M := LMatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[J]);
 
-              Search_Out[J] := lr.processMaxIndex(m);
+              Search_Out[J] := lR.processMaxIndex(M);
               if Search_Out[J] <> J then
                   DoStatus('raster Classifier %s search matrix problem..', [CLearnString[lt]]);
 
-              Search_Out[J] := lr.SearchMemoryWithDistance(LVec(m, lr.InLen));
+              Search_Out[J] := lR.SearchMemoryWithDistance(lvec(M, lR.InLen));
               if Search_Out[J] <> J then
                   DoStatus('raster Classifier %s SearchMemoryWithDistance problem..', [CLearnString[lt]]);
 
-              Search_Out[J] := lr.SearchMemoryWithPearson(LVec(m, lr.InLen));
+              Search_Out[J] := lR.SearchMemoryWithPearson(lvec(M, lR.InLen));
               if Search_Out[J] <> J then
                   DoStatus('raster Classifier %s SearchMemoryWithPearson problem..', [CLearnString[lt]]);
 
-              Search_Out[J] := lr.SearchMemoryWithSpearman(LVec(m, lr.InLen));
+              Search_Out[J] := lR.SearchMemoryWithSpearman(lvec(M, lR.InLen));
               if Search_Out[J] <> J then
                   DoStatus('raster Classifier %s SearchMemoryWithSpearman problem..', [CLearnString[lt]]);
             end;
@@ -237,7 +237,7 @@ begin
           DoStatusNoLn('train error ');
 
       DoStatusNoLn;
-      DisposeObject(lr);
+      DisposeObject(lR);
     end;
 
   for J := 0 to test_Depth - 1 do
@@ -245,4 +245,4 @@ begin
   SetLength(RasterArray, 0);
 
   DoStatus('all learn test finish!');
-end;
+end; 

@@ -10,19 +10,19 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
-function BidiagonalSVDDecompositionInternal(var D: TLVec;
-  E: TLVec; N: TLInt; IsUpper: Boolean;
-  IsFractionalAccuracyRequired: Boolean; var U: TLMatrix;
+function BidiagonalSVDDecompositionInternal(var d: TLVec;
+  E: TLVec; n: TLInt; IsUpper: Boolean;
+  IsFractionalAccuracyRequired: Boolean; var u: TLMatrix;
   UStart: TLInt; NRU: TLInt; var C: TLMatrix;
   CStart: TLInt; NCC: TLInt; var VT: TLMatrix;
   VStart: TLInt; NCVT: TLInt): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function ExtSignBDSQR(a: TLFloat; b: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ExtSignBDSQR(A: TLFloat; b: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure Svd2X2(F: TLFloat; G: TLFloat; H: TLFloat;
+procedure Svd2X2(F: TLFloat; g: TLFloat; h: TLFloat;
   var SSMIN: TLFloat; var SSMAX: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure SvdV2X2(F: TLFloat; G: TLFloat; H: TLFloat;
+procedure SvdV2X2(F: TLFloat; g: TLFloat; h: TLFloat;
   var SSMIN: TLFloat; var SSMAX: TLFloat; var SNR: TLFloat;
   var CSR: TLFloat; var SNL: TLFloat; var CSL: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
@@ -97,48 +97,48 @@ procedure SvdV2X2(F: TLFloat; G: TLFloat; H: TLFloat;
   TOL less than 10*Epsilon since this will  considerably  slow  down  the
   algorithm and may not lead to error decreasing.
   ************************************************************************ *)
-function RMatrixBDSVD(var D: TLVec; E: TLVec; N: TLInt;
-  IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean; var U: TLMatrix;
+function RMatrixBDSVD(var d: TLVec; E: TLVec; n: TLInt;
+  IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean; var u: TLMatrix;
   NRU: TLInt; var C: TLMatrix; NCC: TLInt;
   var VT: TLMatrix; NCVT: TLInt): Boolean;
 var
-  D1: TLVec;
-  E1: TLVec;
+  d1: TLVec;
+  e1: TLVec;
 begin
   E := DynamicArrayCopy(E);
-  SetLength(D1, N + 1);
-  APVMove(@D1[0], 1, N, @D[0], 0, N - 1);
-  if N > 1 then
+  SetLength(d1, n + 1);
+  APVMove(@d1[0], 1, n, @d[0], 0, n - 1);
+  if n > 1 then
     begin
-      SetLength(E1, N (* - 1 + 1 // optimized compiler *) );
-      APVMove(@E1[0], 1, N - 1, @E[0], 0, N - 2);
+      SetLength(e1, n (* - 1 + 1 // optimized compiler *) );
+      APVMove(@e1[0], 1, n - 1, @E[0], 0, n - 2);
     end;
-  Result := BidiagonalSVDDecompositionInternal(D1, E1, N, IsUpper,
-    IsFractionalAccuracyRequired, U, 0, NRU, C, 0, NCC, VT, 0, NCVT);
-  APVMove(@D[0], 0, N - 1, @D1[0], 1, N);
+  Result := BidiagonalSVDDecompositionInternal(d1, e1, n, IsUpper,
+    IsFractionalAccuracyRequired, u, 0, NRU, C, 0, NCC, VT, 0, NCVT);
+  APVMove(@d[0], 0, n - 1, @d1[0], 1, n);
 end;
 
-function BidiagonalSVDDecomposition(var D: TLVec; E: TLVec;
-  N: TLInt; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
-  var U: TLMatrix; NRU: TLInt; var C: TLMatrix;
+function BidiagonalSVDDecomposition(var d: TLVec; E: TLVec;
+  n: TLInt; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
+  var u: TLMatrix; NRU: TLInt; var C: TLMatrix;
   NCC: TLInt; var VT: TLMatrix; NCVT: TLInt): Boolean;
 begin
   E := DynamicArrayCopy(E);
-  Result := BidiagonalSVDDecompositionInternal(D, E, N, IsUpper,
-    IsFractionalAccuracyRequired, U, 1, NRU, C, 1, NCC, VT, 1, NCVT);
+  Result := BidiagonalSVDDecompositionInternal(d, E, n, IsUpper,
+    IsFractionalAccuracyRequired, u, 1, NRU, C, 1, NCC, VT, 1, NCVT);
 end;
 
 (* ************************************************************************
   Internal working subroutine for bidiagonal decomposition
   ************************************************************************ *)
-function BidiagonalSVDDecompositionInternal(var D: TLVec;
-  E: TLVec; N: TLInt; IsUpper: Boolean;
-  IsFractionalAccuracyRequired: Boolean; var U: TLMatrix;
+function BidiagonalSVDDecompositionInternal(var d: TLVec;
+  E: TLVec; n: TLInt; IsUpper: Boolean;
+  IsFractionalAccuracyRequired: Boolean; var u: TLMatrix;
   UStart: TLInt; NRU: TLInt; var C: TLMatrix;
   CStart: TLInt; NCC: TLInt; var VT: TLMatrix;
   VStart: TLInt; NCVT: TLInt): Boolean;
 var
-  I              : TLInt;
+  i              : TLInt;
   IDIR           : TLInt;
   ISUB           : TLInt;
   ITER           : TLInt;
@@ -153,16 +153,16 @@ var
   ABSS           : TLFloat;
   COSL           : TLFloat;
   COSR           : TLFloat;
-  CS             : TLFloat;
-  EPS            : TLFloat;
+  cs             : TLFloat;
+  Eps            : TLFloat;
   F              : TLFloat;
-  G              : TLFloat;
-  H              : TLFloat;
+  g              : TLFloat;
+  h              : TLFloat;
   MU             : TLFloat;
   OLDCS          : TLFloat;
   OLDSN          : TLFloat;
   R              : TLFloat;
-  SHIFT          : TLFloat;
+  Shift          : TLFloat;
   SIGMN          : TLFloat;
   SIGMX          : TLFloat;
   SINL           : TLFloat;
@@ -173,14 +173,14 @@ var
   SMINL          : TLFloat;
   SMINLO         : TLFloat;
   SMINOA         : TLFloat;
-  SN             : TLFloat;
+  sn             : TLFloat;
   THRESH         : TLFloat;
   TOL            : TLFloat;
   TOLMUL         : TLFloat;
   UNFL           : TLFloat;
   WORK0          : TLVec;
-  WORK1          : TLVec;
-  WORK2          : TLVec;
+  Work1          : TLVec;
+  Work2          : TLVec;
   WORK3          : TLVec;
   MAXITR         : TLInt;
   MatrixSplitFlag: Boolean;
@@ -191,7 +191,7 @@ var
   ETemp          : TLVec;
   RightSide      : Boolean;
   FwdDir         : Boolean;
-  Tmp            : TLFloat;
+  tmp            : TLFloat;
   MM1            : TLInt;
   MM0            : TLInt;
   BChangeDir     : Boolean;
@@ -202,15 +202,15 @@ var
 begin
   E := DynamicArrayCopy(E);
   Result := True;
-  if N = 0 then
+  if n = 0 then
     begin
       Exit;
     end;
-  if N = 1 then
+  if n = 1 then
     begin
-      if AP_FP_Less(D[1], 0) then
+      if AP_FP_Less(d[1], 0) then
         begin
-          D[1] := -D[1];
+          d[1] := -d[1];
           if NCVT > 0 then
             begin
               APVMul(@VT[VStart][0], VStart, VStart + NCVT - 1, -1);
@@ -222,10 +222,10 @@ begin
   //
   // init
   //
-  SetLength(WORK0, N (* - 1 + 1 // optimized compiler *) );
-  SetLength(WORK1, N (* - 1 + 1 // optimized compiler *) );
-  SetLength(WORK2, N (* - 1 + 1 // optimized compiler *) );
-  SetLength(WORK3, N (* - 1 + 1 // optimized compiler *) );
+  SetLength(WORK0, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(Work1, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(Work2, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(WORK3, n (* - 1 + 1 // optimized compiler *) );
   UEnd := UStart + Max(NRU - 1, 0);
   VEnd := VStart + Max(NCVT - 1, 0);
   CEnd := CStart + Max(NCC - 1, 0);
@@ -239,27 +239,27 @@ begin
   //
   // resize E from N-1 to N
   //
-  SetLength(ETemp, N + 1);
-  I := 1;
-  while I <= N - 1 do
+  SetLength(ETemp, n + 1);
+  i := 1;
+  while i <= n - 1 do
     begin
-      ETemp[I] := E[I];
-      Inc(I);
+      ETemp[i] := E[i];
+      Inc(i);
     end;
-  SetLength(E, N + 1);
-  I := 1;
-  while I <= N - 1 do
+  SetLength(E, n + 1);
+  i := 1;
+  while i <= n - 1 do
     begin
-      E[I] := ETemp[I];
-      Inc(I);
+      E[i] := ETemp[i];
+      Inc(i);
     end;
-  E[N] := 0;
+  E[n] := 0;
   IDIR := 0;
 
   //
   // Get machine constants
   //
-  EPS := MachineEpsilon;
+  Eps := MachineEpsilon;
   UNFL := MinRealNumber;
 
   //
@@ -268,16 +268,16 @@ begin
   //
   if not IsUpper then
     begin
-      I := 1;
-      while I <= N - 1 do
+      i := 1;
+      while i <= n - 1 do
         begin
-          GenerateRotation(D[I], E[I], CS, SN, R);
-          D[I] := R;
-          E[I] := SN * D[I + 1];
-          D[I + 1] := CS * D[I + 1];
-          WORK0[I] := CS;
-          WORK1[I] := SN;
-          Inc(I);
+          GenerateRotation(d[i], E[i], cs, sn, R);
+          d[i] := R;
+          E[i] := sn * d[i + 1];
+          d[i + 1] := cs * d[i + 1];
+          WORK0[i] := cs;
+          Work1[i] := sn;
+          Inc(i);
         end;
 
       //
@@ -286,12 +286,12 @@ begin
       if NRU > 0 then
         begin
           ApplyRotationsFromTheRight(FwdDir, UStart, UEnd, 1 + UStart - 1,
-            N + UStart - 1, WORK0, WORK1, U, UTemp);
+            n + UStart - 1, WORK0, Work1, u, UTemp);
         end;
       if NCC > 0 then
         begin
-          ApplyRotationsFromTheLeft(FwdDir, 1 + CStart - 1, N + CStart - 1, CStart,
-            CEnd, WORK0, WORK1, C, CTemp);
+          ApplyRotationsFromTheLeft(FwdDir, 1 + CStart - 1, n + CStart - 1, CStart,
+            CEnd, WORK0, Work1, C, CTemp);
         end;
     end;
 
@@ -300,8 +300,8 @@ begin
   // (By setting TOL to be negative, algorithm will compute
   // singular values to absolute accuracy ABS(TOL)*norm(input matrix))
   //
-  TOLMUL := Max(10, Min(100, Power(EPS, -0.125)));
-  TOL := TOLMUL * EPS;
+  TOLMUL := Max(10, Min(100, Power(Eps, -0.125)));
+  TOL := TOLMUL * Eps;
   if not IsFractionalAccuracyRequired then
     begin
       TOL := -TOL;
@@ -311,17 +311,17 @@ begin
   // Compute approximate maximum, minimum singular values
   //
   SMAX := 0;
-  I := 1;
-  while I <= N do
+  i := 1;
+  while i <= n do
     begin
-      SMAX := Max(SMAX, ABSReal(D[I]));
-      Inc(I);
+      SMAX := Max(SMAX, AbsReal(d[i]));
+      Inc(i);
     end;
-  I := 1;
-  while I <= N - 1 do
+  i := 1;
+  while i <= n - 1 do
     begin
-      SMAX := Max(SMAX, ABSReal(E[I]));
-      Inc(I);
+      SMAX := Max(SMAX, AbsReal(E[i]));
+      Inc(i);
     end;
   SMINL := 0;
   if AP_FP_Greater_Eq(TOL, 0) then
@@ -330,24 +330,24 @@ begin
       //
       // Relative accuracy desired
       //
-      SMINOA := ABSReal(D[1]);
-      if AP_FP_Neq(SMINOA, 0) then
+      SMINOA := AbsReal(d[1]);
+      if AP_FP_NEq(SMINOA, 0) then
         begin
           MU := SMINOA;
-          I := 2;
-          while I <= N do
+          i := 2;
+          while i <= n do
             begin
-              MU := ABSReal(D[I]) * (MU / (MU + ABSReal(E[I - 1])));
+              MU := AbsReal(d[i]) * (MU / (MU + AbsReal(E[i - 1])));
               SMINOA := Min(SMINOA, MU);
               if AP_FP_Eq(SMINOA, 0) then
                 begin
                   Break;
                 end;
-              Inc(I);
+              Inc(i);
             end;
         end;
-      SMINOA := SMINOA / SQRT(N);
-      THRESH := Max(TOL * SMINOA, MAXITR * N * N * UNFL);
+      SMINOA := SMINOA / Sqrt(n);
+      THRESH := Max(TOL * SMINOA, MAXITR * n * n * UNFL);
     end
   else
     begin
@@ -355,7 +355,7 @@ begin
       //
       // Absolute accuracy desired
       //
-      THRESH := Max(ABSReal(TOL) * SMAX, MAXITR * N * N * UNFL);
+      THRESH := Max(AbsReal(TOL) * SMAX, MAXITR * n * n * UNFL);
     end;
 
   //
@@ -363,7 +363,7 @@ begin
   // (MAXIT is the maximum number of passes through the inner
   // loop permitted before nonconvergence signalled.)
   //
-  MAXIT := MAXITR * N * N;
+  MAXIT := MAXITR * n * n;
   ITER := 0;
   OLDLL := -1;
   OLDM := -1;
@@ -371,7 +371,7 @@ begin
   //
   // M points to last element of unconverged part of matrix
   //
-  M := N;
+  M := n;
 
   //
   // Begin main iteration loop
@@ -395,22 +395,22 @@ begin
       //
       // Find diagonal block of matrix to work on
       //
-      if AP_FP_Less(TOL, 0) and AP_FP_Less_Eq(ABSReal(D[M]), THRESH) then
+      if AP_FP_Less(TOL, 0) and AP_FP_Less_Eq(AbsReal(d[M]), THRESH) then
         begin
-          D[M] := 0;
+          d[M] := 0;
         end;
-      SMAX := ABSReal(D[M]);
+      SMAX := AbsReal(d[M]);
       SMIN := SMAX;
       MatrixSplitFlag := False;
       LLL := 1;
       while LLL <= M - 1 do
         begin
           LL := M - LLL;
-          ABSS := ABSReal(D[LL]);
-          ABSE := ABSReal(E[LL]);
+          ABSS := AbsReal(d[LL]);
+          ABSE := AbsReal(E[LL]);
           if AP_FP_Less(TOL, 0) and AP_FP_Less_Eq(ABSS, THRESH) then
             begin
-              D[LL] := 0;
+              d[LL] := 0;
             end;
           if AP_FP_Less_Eq(ABSE, THRESH) then
             begin
@@ -453,10 +453,10 @@ begin
           //
           // 2 by 2 block, handle separately
           //
-          SvdV2X2(D[M - 1], E[M - 1], D[M], SIGMN, SIGMX, SINR, COSR, SINL, COSL);
-          D[M - 1] := SIGMX;
+          SvdV2X2(d[M - 1], E[M - 1], d[M], SIGMN, SIGMX, SINR, COSR, SINL, COSL);
+          d[M - 1] := SIGMX;
           E[M - 1] := 0;
-          D[M] := SIGMN;
+          d[M] := SIGMN;
 
           //
           // Compute singular vectors, if desired
@@ -477,23 +477,23 @@ begin
               MM1 := M - 1 + UStart - 1;
               for i_ := UStart to UEnd do
                 begin
-                  UTemp[i_] := COSL * U[i_, MM1];
+                  UTemp[i_] := COSL * u[i_, MM1];
                 end;
               for i_ := UStart to UEnd do
                 begin
-                  UTemp[i_] := UTemp[i_] + SINL * U[i_, MM0];
+                  UTemp[i_] := UTemp[i_] + SINL * u[i_, MM0];
                 end;
               for i_ := UStart to UEnd do
                 begin
-                  U[i_, MM0] := COSL * U[i_, MM0];
+                  u[i_, MM0] := COSL * u[i_, MM0];
                 end;
               for i_ := UStart to UEnd do
                 begin
-                  U[i_, MM0] := U[i_, MM0] - SINL * U[i_, MM1];
+                  u[i_, MM0] := u[i_, MM0] - SINL * u[i_, MM1];
                 end;
               for i_ := UStart to UEnd do
                 begin
-                  U[i_, MM1] := UTemp[i_];
+                  u[i_, MM1] := UTemp[i_];
                 end;
             end;
           if NCC > 0 then
@@ -520,17 +520,17 @@ begin
       // Very strange that LAPACK still contains it.
       //
       BChangeDir := False;
-      if (IDIR = 1) and AP_FP_Less(ABSReal(D[LL]), 1.0E-3 * ABSReal(D[M])) then
+      if (IDIR = 1) and AP_FP_Less(AbsReal(d[LL]), 1.0E-3 * AbsReal(d[M])) then
         begin
           BChangeDir := True;
         end;
-      if (IDIR = 2) and AP_FP_Less(ABSReal(D[M]), 1.0E-3 * ABSReal(D[LL])) then
+      if (IDIR = 2) and AP_FP_Less(AbsReal(d[M]), 1.0E-3 * AbsReal(d[LL])) then
         begin
           BChangeDir := True;
         end;
       if (LL <> OLDLL) or (M <> OLDM) or BChangeDir then
         begin
-          if AP_FP_Greater_Eq(ABSReal(D[LL]), ABSReal(D[M])) then
+          if AP_FP_Greater_Eq(AbsReal(d[LL]), AbsReal(d[M])) then
             begin
 
               //
@@ -558,8 +558,8 @@ begin
           // Run convergence test in forward direction
           // First apply standard test to bottom of matrix
           //
-          if AP_FP_Less_Eq(ABSReal(E[M - 1]), ABSReal(TOL) * ABSReal(D[M])) or
-            AP_FP_Less(TOL, 0) and AP_FP_Less_Eq(ABSReal(E[M - 1]), THRESH) then
+          if AP_FP_Less_Eq(AbsReal(E[M - 1]), AbsReal(TOL) * AbsReal(d[M])) or
+            AP_FP_Less(TOL, 0) and AP_FP_Less_Eq(AbsReal(E[M - 1]), THRESH) then
             begin
               E[M - 1] := 0;
               Continue;
@@ -571,20 +571,20 @@ begin
               // If relative accuracy desired,
               // apply convergence criterion forward
               //
-              MU := ABSReal(D[LL]);
+              MU := AbsReal(d[LL]);
               SMINL := MU;
               IterFlag := False;
               LLL := LL;
               while LLL <= M - 1 do
                 begin
-                  if AP_FP_Less_Eq(ABSReal(E[LLL]), TOL * MU) then
+                  if AP_FP_Less_Eq(AbsReal(E[LLL]), TOL * MU) then
                     begin
                       E[LLL] := 0;
                       IterFlag := True;
                       Break;
                     end;
                   SMINLO := SMINL;
-                  MU := ABSReal(D[LLL + 1]) * (MU / (MU + ABSReal(E[LLL])));
+                  MU := AbsReal(d[LLL + 1]) * (MU / (MU + AbsReal(E[LLL])));
                   SMINL := Min(SMINL, MU);
                   Inc(LLL);
                 end;
@@ -601,8 +601,8 @@ begin
           // Run convergence test in backward direction
           // First apply standard test to top of matrix
           //
-          if AP_FP_Less_Eq(ABSReal(E[LL]), ABSReal(TOL) * ABSReal(D[LL])) or
-            AP_FP_Less(TOL, 0) and AP_FP_Less_Eq(ABSReal(E[LL]), THRESH) then
+          if AP_FP_Less_Eq(AbsReal(E[LL]), AbsReal(TOL) * AbsReal(d[LL])) or
+            AP_FP_Less(TOL, 0) and AP_FP_Less_Eq(AbsReal(E[LL]), THRESH) then
             begin
               E[LL] := 0;
               Continue;
@@ -614,20 +614,20 @@ begin
               // If relative accuracy desired,
               // apply convergence criterion backward
               //
-              MU := ABSReal(D[M]);
+              MU := AbsReal(d[M]);
               SMINL := MU;
               IterFlag := False;
               LLL := M - 1;
               while LLL >= LL do
                 begin
-                  if AP_FP_Less_Eq(ABSReal(E[LLL]), TOL * MU) then
+                  if AP_FP_Less_Eq(AbsReal(E[LLL]), TOL * MU) then
                     begin
                       E[LLL] := 0;
                       IterFlag := True;
                       Break;
                     end;
                   SMINLO := SMINL;
-                  MU := ABSReal(D[LLL]) * (MU / (MU + ABSReal(E[LLL])));
+                  MU := AbsReal(d[LLL]) * (MU / (MU + AbsReal(E[LLL])));
                   SMINL := Min(SMINL, MU);
                   Dec(LLL);
                 end;
@@ -644,14 +644,14 @@ begin
       // Compute shift.  First, test if shifting would ruin relative
       // accuracy, and if so set the shift to zero.
       //
-      if AP_FP_Greater_Eq(TOL, 0) and AP_FP_Less_Eq(N * TOL * (SMINL / SMAX),
-        Max(EPS, 0.01 * TOL)) then
+      if AP_FP_Greater_Eq(TOL, 0) and AP_FP_Less_Eq(n * TOL * (SMINL / SMAX),
+        Max(Eps, 0.01 * TOL)) then
         begin
 
           //
           // Use a zero shift to avoid loss of relative accuracy
           //
-          SHIFT := 0;
+          Shift := 0;
         end
       else
         begin
@@ -661,13 +661,13 @@ begin
           //
           if IDIR = 1 then
             begin
-              SLL := ABSReal(D[LL]);
-              Svd2X2(D[M - 1], E[M - 1], D[M], SHIFT, R);
+              SLL := AbsReal(d[LL]);
+              Svd2X2(d[M - 1], E[M - 1], d[M], Shift, R);
             end
           else
             begin
-              SLL := ABSReal(D[M]);
-              Svd2X2(D[LL], E[LL], D[LL + 1], SHIFT, R);
+              SLL := AbsReal(d[M]);
+              Svd2X2(d[LL], E[LL], d[LL + 1], Shift, R);
             end;
 
           //
@@ -675,9 +675,9 @@ begin
           //
           if AP_FP_Greater(SLL, 0) then
             begin
-              if AP_FP_Less(AP_Sqr(SHIFT / SLL), EPS) then
+              if AP_FP_Less(AP_Sqr(Shift / SLL), Eps) then
                 begin
-                  SHIFT := 0;
+                  Shift := 0;
                 end;
             end;
         end;
@@ -690,7 +690,7 @@ begin
       //
       // If SHIFT = 0, do simplified QR iteration
       //
-      if AP_FP_Eq(SHIFT, 0) then
+      if AP_FP_Eq(Shift, 0) then
         begin
           if IDIR = 1 then
             begin
@@ -699,27 +699,27 @@ begin
               // Chase bulge from top to bottom
               // Save cosines and sines for later singular vector updates
               //
-              CS := 1;
+              cs := 1;
               OLDCS := 1;
-              I := LL;
-              while I <= M - 1 do
+              i := LL;
+              while i <= M - 1 do
                 begin
-                  GenerateRotation(D[I] * CS, E[I], CS, SN, R);
-                  if I > LL then
+                  GenerateRotation(d[i] * cs, E[i], cs, sn, R);
+                  if i > LL then
                     begin
-                      E[I - 1] := OLDSN * R;
+                      E[i - 1] := OLDSN * R;
                     end;
-                  GenerateRotation(OLDCS * R, D[I + 1] * SN, OLDCS, OLDSN, Tmp);
-                  D[I] := Tmp;
-                  WORK0[I - LL + 1] := CS;
-                  WORK1[I - LL + 1] := SN;
-                  WORK2[I - LL + 1] := OLDCS;
-                  WORK3[I - LL + 1] := OLDSN;
-                  Inc(I);
+                  GenerateRotation(OLDCS * R, d[i + 1] * sn, OLDCS, OLDSN, tmp);
+                  d[i] := tmp;
+                  WORK0[i - LL + 1] := cs;
+                  Work1[i - LL + 1] := sn;
+                  Work2[i - LL + 1] := OLDCS;
+                  WORK3[i - LL + 1] := OLDSN;
+                  Inc(i);
                 end;
-              H := D[M] * CS;
-              D[M] := H * OLDCS;
-              E[M - 1] := H * OLDSN;
+              h := d[M] * cs;
+              d[M] := h * OLDCS;
+              E[M - 1] := h * OLDSN;
 
               //
               // Update singular vectors
@@ -727,23 +727,23 @@ begin
               if NCVT > 0 then
                 begin
                   ApplyRotationsFromTheLeft(FwdDir, LL + VStart - 1, M + VStart - 1,
-                    VStart, VEnd, WORK0, WORK1, VT, VTTemp);
+                    VStart, VEnd, WORK0, Work1, VT, VTTemp);
                 end;
               if NRU > 0 then
                 begin
                   ApplyRotationsFromTheRight(FwdDir, UStart, UEnd, LL + UStart - 1,
-                    M + UStart - 1, WORK2, WORK3, U, UTemp);
+                    M + UStart - 1, Work2, WORK3, u, UTemp);
                 end;
               if NCC > 0 then
                 begin
                   ApplyRotationsFromTheLeft(FwdDir, LL + CStart - 1, M + CStart - 1,
-                    CStart, CEnd, WORK2, WORK3, C, CTemp);
+                    CStart, CEnd, Work2, WORK3, C, CTemp);
                 end;
 
               //
               // Test convergence
               //
-              if AP_FP_Less_Eq(ABSReal(E[M - 1]), THRESH) then
+              if AP_FP_Less_Eq(AbsReal(E[M - 1]), THRESH) then
                 begin
                   E[M - 1] := 0;
                 end;
@@ -755,27 +755,27 @@ begin
               // Chase bulge from bottom to top
               // Save cosines and sines for later singular vector updates
               //
-              CS := 1;
+              cs := 1;
               OLDCS := 1;
-              I := M;
-              while I >= LL + 1 do
+              i := M;
+              while i >= LL + 1 do
                 begin
-                  GenerateRotation(D[I] * CS, E[I - 1], CS, SN, R);
-                  if I < M then
+                  GenerateRotation(d[i] * cs, E[i - 1], cs, sn, R);
+                  if i < M then
                     begin
-                      E[I] := OLDSN * R;
+                      E[i] := OLDSN * R;
                     end;
-                  GenerateRotation(OLDCS * R, D[I - 1] * SN, OLDCS, OLDSN, Tmp);
-                  D[I] := Tmp;
-                  WORK0[I - LL] := CS;
-                  WORK1[I - LL] := -SN;
-                  WORK2[I - LL] := OLDCS;
-                  WORK3[I - LL] := -OLDSN;
-                  Dec(I);
+                  GenerateRotation(OLDCS * R, d[i - 1] * sn, OLDCS, OLDSN, tmp);
+                  d[i] := tmp;
+                  WORK0[i - LL] := cs;
+                  Work1[i - LL] := -sn;
+                  Work2[i - LL] := OLDCS;
+                  WORK3[i - LL] := -OLDSN;
+                  Dec(i);
                 end;
-              H := D[LL] * CS;
-              D[LL] := H * OLDCS;
-              E[LL] := H * OLDSN;
+              h := d[LL] * cs;
+              d[LL] := h * OLDCS;
+              E[LL] := h * OLDSN;
 
               //
               // Update singular vectors
@@ -783,23 +783,23 @@ begin
               if NCVT > 0 then
                 begin
                   ApplyRotationsFromTheLeft(not FwdDir, LL + VStart - 1, M + VStart - 1,
-                    VStart, VEnd, WORK2, WORK3, VT, VTTemp);
+                    VStart, VEnd, Work2, WORK3, VT, VTTemp);
                 end;
               if NRU > 0 then
                 begin
                   ApplyRotationsFromTheRight(not FwdDir, UStart, UEnd, LL + UStart - 1,
-                    M + UStart - 1, WORK0, WORK1, U, UTemp);
+                    M + UStart - 1, WORK0, Work1, u, UTemp);
                 end;
               if NCC > 0 then
                 begin
                   ApplyRotationsFromTheLeft(not FwdDir, LL + CStart - 1, M + CStart - 1,
-                    CStart, CEnd, WORK0, WORK1, C, CTemp);
+                    CStart, CEnd, WORK0, Work1, C, CTemp);
                 end;
 
               //
               // Test convergence
               //
-              if AP_FP_Less_Eq(ABSReal(E[LL]), THRESH) then
+              if AP_FP_Less_Eq(AbsReal(E[LL]), THRESH) then
                 begin
                   E[LL] := 0;
                 end;
@@ -818,35 +818,35 @@ begin
               // Chase bulge from top to bottom
               // Save cosines and sines for later singular vector updates
               //
-              F := (ABSReal(D[LL]) - SHIFT) *
-                (ExtSignBDSQR(1, D[LL]) + SHIFT / D[LL]);
-              G := E[LL];
-              I := LL;
-              while I <= M - 1 do
+              F := (AbsReal(d[LL]) - Shift) *
+                (ExtSignBDSQR(1, d[LL]) + Shift / d[LL]);
+              g := E[LL];
+              i := LL;
+              while i <= M - 1 do
                 begin
-                  GenerateRotation(F, G, COSR, SINR, R);
-                  if I > LL then
+                  GenerateRotation(F, g, COSR, SINR, R);
+                  if i > LL then
                     begin
-                      E[I - 1] := R;
+                      E[i - 1] := R;
                     end;
-                  F := COSR * D[I] + SINR * E[I];
-                  E[I] := COSR * E[I] - SINR * D[I];
-                  G := SINR * D[I + 1];
-                  D[I + 1] := COSR * D[I + 1];
-                  GenerateRotation(F, G, COSL, SINL, R);
-                  D[I] := R;
-                  F := COSL * E[I] + SINL * D[I + 1];
-                  D[I + 1] := COSL * D[I + 1] - SINL * E[I];
-                  if I < M - 1 then
+                  F := COSR * d[i] + SINR * E[i];
+                  E[i] := COSR * E[i] - SINR * d[i];
+                  g := SINR * d[i + 1];
+                  d[i + 1] := COSR * d[i + 1];
+                  GenerateRotation(F, g, COSL, SINL, R);
+                  d[i] := R;
+                  F := COSL * E[i] + SINL * d[i + 1];
+                  d[i + 1] := COSL * d[i + 1] - SINL * E[i];
+                  if i < M - 1 then
                     begin
-                      G := SINL * E[I + 1];
-                      E[I + 1] := COSL * E[I + 1];
+                      g := SINL * E[i + 1];
+                      E[i + 1] := COSL * E[i + 1];
                     end;
-                  WORK0[I - LL + 1] := COSR;
-                  WORK1[I - LL + 1] := SINR;
-                  WORK2[I - LL + 1] := COSL;
-                  WORK3[I - LL + 1] := SINL;
-                  Inc(I);
+                  WORK0[i - LL + 1] := COSR;
+                  Work1[i - LL + 1] := SINR;
+                  Work2[i - LL + 1] := COSL;
+                  WORK3[i - LL + 1] := SINL;
+                  Inc(i);
                 end;
               E[M - 1] := F;
 
@@ -856,23 +856,23 @@ begin
               if NCVT > 0 then
                 begin
                   ApplyRotationsFromTheLeft(FwdDir, LL + VStart - 1, M + VStart - 1,
-                    VStart, VEnd, WORK0, WORK1, VT, VTTemp);
+                    VStart, VEnd, WORK0, Work1, VT, VTTemp);
                 end;
               if NRU > 0 then
                 begin
                   ApplyRotationsFromTheRight(FwdDir, UStart, UEnd, LL + UStart - 1,
-                    M + UStart - 1, WORK2, WORK3, U, UTemp);
+                    M + UStart - 1, Work2, WORK3, u, UTemp);
                 end;
               if NCC > 0 then
                 begin
                   ApplyRotationsFromTheLeft(FwdDir, LL + CStart - 1, M + CStart - 1,
-                    CStart, CEnd, WORK2, WORK3, C, CTemp);
+                    CStart, CEnd, Work2, WORK3, C, CTemp);
                 end;
 
               //
               // Test convergence
               //
-              if AP_FP_Less_Eq(ABSReal(E[M - 1]), THRESH) then
+              if AP_FP_Less_Eq(AbsReal(E[M - 1]), THRESH) then
                 begin
                   E[M - 1] := 0;
                 end;
@@ -884,41 +884,41 @@ begin
               // Chase bulge from bottom to top
               // Save cosines and sines for later singular vector updates
               //
-              F := (ABSReal(D[M]) - SHIFT) * (ExtSignBDSQR(1, D[M]) + SHIFT / D[M]);
-              G := E[M - 1];
-              I := M;
-              while I >= LL + 1 do
+              F := (AbsReal(d[M]) - Shift) * (ExtSignBDSQR(1, d[M]) + Shift / d[M]);
+              g := E[M - 1];
+              i := M;
+              while i >= LL + 1 do
                 begin
-                  GenerateRotation(F, G, COSR, SINR, R);
-                  if I < M then
+                  GenerateRotation(F, g, COSR, SINR, R);
+                  if i < M then
                     begin
-                      E[I] := R;
+                      E[i] := R;
                     end;
-                  F := COSR * D[I] + SINR * E[I - 1];
-                  E[I - 1] := COSR * E[I - 1] - SINR * D[I];
-                  G := SINR * D[I - 1];
-                  D[I - 1] := COSR * D[I - 1];
-                  GenerateRotation(F, G, COSL, SINL, R);
-                  D[I] := R;
-                  F := COSL * E[I - 1] + SINL * D[I - 1];
-                  D[I - 1] := COSL * D[I - 1] - SINL * E[I - 1];
-                  if I > LL + 1 then
+                  F := COSR * d[i] + SINR * E[i - 1];
+                  E[i - 1] := COSR * E[i - 1] - SINR * d[i];
+                  g := SINR * d[i - 1];
+                  d[i - 1] := COSR * d[i - 1];
+                  GenerateRotation(F, g, COSL, SINL, R);
+                  d[i] := R;
+                  F := COSL * E[i - 1] + SINL * d[i - 1];
+                  d[i - 1] := COSL * d[i - 1] - SINL * E[i - 1];
+                  if i > LL + 1 then
                     begin
-                      G := SINL * E[I - 2];
-                      E[I - 2] := COSL * E[I - 2];
+                      g := SINL * E[i - 2];
+                      E[i - 2] := COSL * E[i - 2];
                     end;
-                  WORK0[I - LL] := COSR;
-                  WORK1[I - LL] := -SINR;
-                  WORK2[I - LL] := COSL;
-                  WORK3[I - LL] := -SINL;
-                  Dec(I);
+                  WORK0[i - LL] := COSR;
+                  Work1[i - LL] := -SINR;
+                  Work2[i - LL] := COSL;
+                  WORK3[i - LL] := -SINL;
+                  Dec(i);
                 end;
               E[LL] := F;
 
               //
               // Test convergence
               //
-              if AP_FP_Less_Eq(ABSReal(E[LL]), THRESH) then
+              if AP_FP_Less_Eq(AbsReal(E[LL]), THRESH) then
                 begin
                   E[LL] := 0;
                 end;
@@ -929,17 +929,17 @@ begin
               if NCVT > 0 then
                 begin
                   ApplyRotationsFromTheLeft(not FwdDir, LL + VStart - 1, M + VStart - 1,
-                    VStart, VEnd, WORK2, WORK3, VT, VTTemp);
+                    VStart, VEnd, Work2, WORK3, VT, VTTemp);
                 end;
               if NRU > 0 then
                 begin
                   ApplyRotationsFromTheRight(not FwdDir, UStart, UEnd, LL + UStart - 1,
-                    M + UStart - 1, WORK0, WORK1, U, UTemp);
+                    M + UStart - 1, WORK0, Work1, u, UTemp);
                 end;
               if NCC > 0 then
                 begin
                   ApplyRotationsFromTheLeft(not FwdDir, LL + CStart - 1, M + CStart - 1,
-                    CStart, CEnd, WORK0, WORK1, C, CTemp);
+                    CStart, CEnd, WORK0, Work1, C, CTemp);
                 end;
             end;
         end;
@@ -953,58 +953,58 @@ begin
   //
   // All singular values converged, so make them positive
   //
-  I := 1;
-  while I <= N do
+  i := 1;
+  while i <= n do
     begin
-      if AP_FP_Less(D[I], 0) then
+      if AP_FP_Less(d[i], 0) then
         begin
-          D[I] := -D[I];
+          d[i] := -d[i];
 
           //
           // Change sign of singular vectors, if desired
           //
           if NCVT > 0 then
             begin
-              APVMul(@VT[I + VStart - 1][0], VStart, VEnd, -1);
+              APVMul(@VT[i + VStart - 1][0], VStart, VEnd, -1);
             end;
         end;
-      Inc(I);
+      Inc(i);
     end;
 
   //
   // Sort the singular values into decreasing order (insertion sort on
   // singular values, but only one transposition per singular vector)
   //
-  I := 1;
-  while I <= N - 1 do
+  i := 1;
+  while i <= n - 1 do
     begin
 
       //
       // Scan for smallest D(I)
       //
       ISUB := 1;
-      SMIN := D[1];
+      SMIN := d[1];
       J := 2;
-      while J <= N + 1 - I do
+      while J <= n + 1 - i do
         begin
-          if AP_FP_Less_Eq(D[J], SMIN) then
+          if AP_FP_Less_Eq(d[J], SMIN) then
             begin
               ISUB := J;
-              SMIN := D[J];
+              SMIN := d[J];
             end;
           Inc(J);
         end;
-      if ISUB <> N + 1 - I then
+      if ISUB <> n + 1 - i then
         begin
 
           //
           // Swap singular values and vectors
           //
-          D[ISUB] := D[N + 1 - I];
-          D[N + 1 - I] := SMIN;
+          d[ISUB] := d[n + 1 - i];
+          d[n + 1 - i] := SMIN;
           if NCVT > 0 then
             begin
-              J := N + 1 - I;
+              J := n + 1 - i;
               APVMove(@VTTemp[0], VStart, VEnd, @VT[ISUB + VStart - 1][0],
                 VStart, VEnd);
               APVMove(@VT[ISUB + VStart - 1][0], VStart, VEnd, @VT[J + VStart - 1][0],
@@ -1013,23 +1013,23 @@ begin
             end;
           if NRU > 0 then
             begin
-              J := N + 1 - I;
+              J := n + 1 - i;
               for i_ := UStart to UEnd do
                 begin
-                  UTemp[i_] := U[i_, ISUB + UStart - 1];
+                  UTemp[i_] := u[i_, ISUB + UStart - 1];
                 end;
               for i_ := UStart to UEnd do
                 begin
-                  U[i_, ISUB + UStart - 1] := U[i_, J + UStart - 1];
+                  u[i_, ISUB + UStart - 1] := u[i_, J + UStart - 1];
                 end;
               for i_ := UStart to UEnd do
                 begin
-                  U[i_, J + UStart - 1] := UTemp[i_];
+                  u[i_, J + UStart - 1] := UTemp[i_];
                 end;
             end;
           if NCC > 0 then
             begin
-              J := N + 1 - I;
+              J := n + 1 - i;
               APVMove(@CTemp[0], CStart, CEnd, @C[ISUB + CStart - 1][0],
                 CStart, CEnd);
               APVMove(@C[ISUB + CStart - 1][0], CStart, CEnd, @C[J + CStart - 1][0],
@@ -1037,40 +1037,40 @@ begin
               APVMove(@C[J + CStart - 1][0], CStart, CEnd, @CTemp[0], CStart, CEnd);
             end;
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
-function ExtSignBDSQR(a: TLFloat; b: TLFloat): TLFloat;
+function ExtSignBDSQR(A: TLFloat; b: TLFloat): TLFloat;
 begin
   if AP_FP_Greater_Eq(b, 0) then
     begin
-      Result := ABSReal(a);
+      Result := AbsReal(A);
     end
   else
     begin
-      Result := -ABSReal(a);
+      Result := -AbsReal(A);
     end;
 end;
 
-procedure Svd2X2(F: TLFloat; G: TLFloat; H: TLFloat;
+procedure Svd2X2(F: TLFloat; g: TLFloat; h: TLFloat;
   var SSMIN: TLFloat; var SSMAX: TLFloat);
 var
   AAS : TLFloat;
-  AT  : TLFloat;
+  at  : TLFloat;
   AU  : TLFloat;
   C   : TLFloat;
   FA  : TLFloat;
   FHMN: TLFloat;
   FHMX: TLFloat;
   GA  : TLFloat;
-  HA  : TLFloat;
+  hA  : TLFloat;
 begin
-  FA := ABSReal(F);
-  GA := ABSReal(G);
-  HA := ABSReal(H);
-  FHMN := Min(FA, HA);
-  FHMX := Max(FA, HA);
+  FA := AbsReal(F);
+  GA := AbsReal(g);
+  hA := AbsReal(h);
+  FHMN := Min(FA, hA);
+  FHMX := Max(FA, hA);
   if AP_FP_Eq(FHMN, 0) then
     begin
       SSMIN := 0;
@@ -1080,7 +1080,7 @@ begin
         end
       else
         begin
-          SSMAX := Max(FHMX, GA) * SQRT(1 + AP_Sqr(Min(FHMX, GA) / Max(FHMX, GA)));
+          SSMAX := Max(FHMX, GA) * Sqrt(1 + AP_Sqr(Min(FHMX, GA) / Max(FHMX, GA)));
         end;
     end
   else
@@ -1088,9 +1088,9 @@ begin
       if AP_FP_Less(GA, FHMX) then
         begin
           AAS := 1 + FHMN / FHMX;
-          AT := (FHMX - FHMN) / FHMX;
+          at := (FHMX - FHMN) / FHMX;
           AU := AP_Sqr(GA / FHMX);
-          C := 2 / (SQRT(AAS * AAS + AU) + SQRT(AT * AT + AU));
+          C := 2 / (Sqrt(AAS * AAS + AU) + Sqrt(at * at + AU));
           SSMIN := FHMN * C;
           SSMAX := FHMX / C;
         end
@@ -1111,8 +1111,8 @@ begin
           else
             begin
               AAS := 1 + FHMN / FHMX;
-              AT := (FHMX - FHMN) / FHMX;
-              C := 1 / (SQRT(1 + AP_Sqr(AAS * AU)) + SQRT(1 + AP_Sqr(AT * AU)));
+              at := (FHMX - FHMN) / FHMX;
+              C := 1 / (Sqrt(1 + AP_Sqr(AAS * AU)) + Sqrt(1 + AP_Sqr(at * AU)));
               SSMIN := FHMN * C * AU;
               SSMIN := SSMIN + SSMIN;
               SSMAX := GA / (C + C);
@@ -1121,40 +1121,40 @@ begin
     end;
 end;
 
-procedure SvdV2X2(F: TLFloat; G: TLFloat; H: TLFloat;
+procedure SvdV2X2(F: TLFloat; g: TLFloat; h: TLFloat;
   var SSMIN: TLFloat; var SSMAX: TLFloat; var SNR: TLFloat;
   var CSR: TLFloat; var SNL: TLFloat; var CSL: TLFloat);
 var
   GASMAL: Boolean;
   SWP   : Boolean;
   PMAX  : TLInt;
-  a     : TLFloat;
+  A     : TLFloat;
   CLT   : TLFloat;
   CRT   : TLFloat;
-  D     : TLFloat;
+  d     : TLFloat;
   FA    : TLFloat;
   FT    : TLFloat;
   GA    : TLFloat;
   GT    : TLFloat;
-  HA    : TLFloat;
+  hA    : TLFloat;
   HT    : TLFloat;
   L     : TLFloat;
   M     : TLFloat;
   MM    : TLFloat;
   R     : TLFloat;
-  S     : TLFloat;
+  s     : TLFloat;
   SLT   : TLFloat;
   SRT   : TLFloat;
   T     : TLFloat;
-  TEMP  : TLFloat;
+  Temp  : TLFloat;
   TSIGN : TLFloat;
   TT    : TLFloat;
-  V     : TLFloat;
+  v     : TLFloat;
 begin
   FT := F;
-  FA := ABSReal(FT);
-  HT := H;
-  HA := ABSReal(H);
+  FA := AbsReal(FT);
+  HT := h;
+  hA := AbsReal(h);
 
   //
   // PMAX points to the maximum absolute element of matrix
@@ -1163,7 +1163,7 @@ begin
   // PMAX = 3 if H largest in absolute values
   //
   PMAX := 1;
-  SWP := AP_FP_Greater(HA, FA);
+  SWP := AP_FP_Greater(hA, FA);
   if SWP then
     begin
 
@@ -1171,22 +1171,22 @@ begin
       // Now FA .ge. HA
       //
       PMAX := 3;
-      TEMP := FT;
+      Temp := FT;
       FT := HT;
-      HT := TEMP;
-      TEMP := FA;
-      FA := HA;
-      HA := TEMP;
+      HT := Temp;
+      Temp := FA;
+      FA := hA;
+      hA := Temp;
     end;
-  GT := G;
-  GA := ABSReal(GT);
+  GT := g;
+  GA := AbsReal(GT);
   if AP_FP_Eq(GA, 0) then
     begin
 
       //
       // Diagonal matrix
       //
-      SSMIN := HA;
+      SSMIN := hA;
       SSMAX := FA;
       CLT := 1;
       CRT := 1;
@@ -1207,15 +1207,15 @@ begin
               //
               GASMAL := False;
               SSMAX := GA;
-              if AP_FP_Greater(HA, 1) then
+              if AP_FP_Greater(hA, 1) then
                 begin
-                  V := GA / HA;
-                  SSMIN := FA / V;
+                  v := GA / hA;
+                  SSMIN := FA / v;
                 end
               else
                 begin
-                  V := FA / GA;
-                  SSMIN := V * HA;
+                  v := FA / GA;
+                  SSMIN := v * hA;
                 end;
               CLT := 1;
               SLT := HT / GT;
@@ -1229,31 +1229,31 @@ begin
           //
           // Normal case
           //
-          D := FA - HA;
-          if AP_FP_Eq(D, FA) then
+          d := FA - hA;
+          if AP_FP_Eq(d, FA) then
             begin
               L := 1;
             end
           else
             begin
-              L := D / FA;
+              L := d / FA;
             end;
           M := GT / FT;
           T := 2 - L;
           MM := M * M;
           TT := T * T;
-          S := SQRT(TT + MM);
+          s := Sqrt(TT + MM);
           if AP_FP_Eq(L, 0) then
             begin
-              R := ABSReal(M);
+              R := AbsReal(M);
             end
           else
             begin
-              R := SQRT(L * L + MM);
+              R := Sqrt(L * L + MM);
             end;
-          a := 0.5 * (S + R);
-          SSMIN := HA / a;
-          SSMAX := FA * a;
+          A := 0.5 * (s + R);
+          SSMIN := hA / A;
+          SSMAX := FA * A;
           if AP_FP_Eq(MM, 0) then
             begin
 
@@ -1266,19 +1266,19 @@ begin
                 end
               else
                 begin
-                  T := GT / ExtSignBDSQR(D, FT) + M / T;
+                  T := GT / ExtSignBDSQR(d, FT) + M / T;
                 end;
             end
           else
             begin
-              T := (M / (S + T) + M / (R + L)) * (1 + a);
+              T := (M / (s + T) + M / (R + L)) * (1 + A);
             end;
-          L := SQRT(T * T + 4);
+          L := Sqrt(T * T + 4);
           CRT := 2 / L;
           SRT := T / L;
-          CLT := (CRT + SRT * M) / a;
-          V := HT / FT;
-          SLT := V * SRT / a;
+          CLT := (CRT + SRT * M) / A;
+          v := HT / FT;
+          SLT := v * SRT / A;
         end;
     end;
   if SWP then
@@ -1305,12 +1305,12 @@ begin
     end;
   if PMAX = 2 then
     begin
-      TSIGN := ExtSignBDSQR(1, SNR) * ExtSignBDSQR(1, CSL) * ExtSignBDSQR(1, G);
+      TSIGN := ExtSignBDSQR(1, SNR) * ExtSignBDSQR(1, CSL) * ExtSignBDSQR(1, g);
     end;
   if PMAX = 3 then
     begin
-      TSIGN := ExtSignBDSQR(1, SNR) * ExtSignBDSQR(1, SNL) * ExtSignBDSQR(1, H);
+      TSIGN := ExtSignBDSQR(1, SNR) * ExtSignBDSQR(1, SNL) * ExtSignBDSQR(1, h);
     end;
   SSMAX := ExtSignBDSQR(SSMAX, TSIGN);
-  SSMIN := ExtSignBDSQR(SSMIN, TSIGN * ExtSignBDSQR(1, F) * ExtSignBDSQR(1, H));
-end;
+  SSMIN := ExtSignBDSQR(SSMIN, TSIGN * ExtSignBDSQR(1, F) * ExtSignBDSQR(1, h));
+end; 

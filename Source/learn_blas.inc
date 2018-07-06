@@ -1,31 +1,31 @@
 
-function VectorNorm2(const X: TLVec; const I1, I2: TLInt): TLFloat;
+function VectorNorm2(const X: TLVec; const i1, i2: TLInt): TLFloat;
 var
-  N    : TLInt;
-  IX   : TLInt;
+  n    : TLInt;
+  ix   : TLInt;
   ABSXI: TLFloat;
   SCL  : TLFloat;
   SSQ  : TLFloat;
 begin
-  N := I2 - I1 + 1;
-  if N < 1 then
+  n := i2 - i1 + 1;
+  if n < 1 then
     begin
       Result := 0;
       Exit;
     end;
-  if N = 1 then
+  if n = 1 then
     begin
-      Result := AbsReal(X[I1]);
+      Result := AbsReal(X[i1]);
       Exit;
     end;
   SCL := 0;
   SSQ := 1;
-  IX := I1;
-  while IX <= I2 do
+  ix := i1;
+  while ix <= i2 do
     begin
-      if AP_FP_Neq(X[IX], 0) then
+      if AP_FP_NEq(X[ix], 0) then
         begin
-          ABSXI := AbsReal(X[IX]);
+          ABSXI := AbsReal(X[ix]);
           if AP_FP_Less(SCL, ABSXI) then
             begin
               SSQ := 1 + SSQ * AP_Sqr(SCL / ABSXI);
@@ -36,58 +36,58 @@ begin
               SSQ := SSQ + AP_Sqr(ABSXI / SCL);
             end;
         end;
-      Inc(IX);
+      Inc(ix);
     end;
-  Result := SCL * SQRT(SSQ);
+  Result := SCL * Sqrt(SSQ);
 end;
 
-function VectorIdxAbsMax(const X: TLVec; const I1, I2: TLInt): TLInt;
+function VectorIdxAbsMax(const X: TLVec; const i1, i2: TLInt): TLInt;
 var
-  I: TLInt;
+  i: TLInt;
   A: TLFloat;
 begin
-  Result := I1;
+  Result := i1;
   A := AbsReal(X[Result]);
-  I := I1 + 1;
-  while I <= I2 do
+  i := i1 + 1;
+  while i <= i2 do
     begin
-      if AP_FP_Greater(AbsReal(X[I]), AbsReal(X[Result])) then
+      if AP_FP_Greater(AbsReal(X[i]), AbsReal(X[Result])) then
         begin
-          Result := I;
+          Result := i;
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
-function ColumnIdxAbsMax(const X: TLMatrix; const I1, I2, J: TLInt): TLInt;
+function ColumnIdxAbsMax(const X: TLMatrix; const i1, i2, J: TLInt): TLInt;
 var
-  I: TLInt;
+  i: TLInt;
   A: TLFloat;
 begin
-  Result := I1;
+  Result := i1;
   A := AbsReal(X[Result, J]);
-  I := I1 + 1;
-  while I <= I2 do
+  i := i1 + 1;
+  while i <= i2 do
     begin
-      if AP_FP_Greater(AbsReal(X[I, J]), AbsReal(X[Result, J])) then
+      if AP_FP_Greater(AbsReal(X[i, J]), AbsReal(X[Result, J])) then
         begin
-          Result := I;
+          Result := i;
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
-function RowIdxAbsMax(const X: TLMatrix; const J1, J2, I: TLInt): TLInt;
+function RowIdxAbsMax(const X: TLMatrix; const J1, J2, i: TLInt): TLInt;
 var
   J: TLInt;
   A: TLFloat;
 begin
   Result := J1;
-  A := AbsReal(X[I, Result]);
+  A := AbsReal(X[i, Result]);
   J := J1 + 1;
   while J <= J2 do
     begin
-      if AP_FP_Greater(AbsReal(X[I, J]), AbsReal(X[I, Result])) then
+      if AP_FP_Greater(AbsReal(X[i, J]), AbsReal(X[i, Result])) then
         begin
           Result := J;
         end;
@@ -95,60 +95,60 @@ begin
     end;
 end;
 
-function UpperHessenberg1Norm(const A: TLMatrix; const I1, I2, J1, J2: TLInt; var WORK: TLVec): TLFloat;
+function UpperHessenberg1Norm(const A: TLMatrix; const i1, i2, J1, J2: TLInt; var Work: TLVec): TLFloat;
 var
-  I: TLInt;
+  i: TLInt;
   J: TLInt;
 begin
-  Assert(I2 - I1 = J2 - J1, 'UpperHessenberg1Norm: I2-I1<>J2-J1!');
+  Assert(i2 - i1 = J2 - J1, 'UpperHessenberg1Norm: I2-I1<>J2-J1!');
   J := J1;
   while J <= J2 do
     begin
-      WORK[J] := 0;
+      Work[J] := 0;
       Inc(J);
     end;
-  I := I1;
-  while I <= I2 do
+  i := i1;
+  while i <= i2 do
     begin
-      J := Max(J1, J1 + I - I1 - 1);
+      J := Max(J1, J1 + i - i1 - 1);
       while J <= J2 do
         begin
-          WORK[J] := WORK[J] + AbsReal(A[I, J]);
+          Work[J] := Work[J] + AbsReal(A[i, J]);
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
   Result := 0;
   J := J1;
   while J <= J2 do
     begin
-      Result := Max(Result, WORK[J]);
+      Result := Max(Result, Work[J]);
       Inc(J);
     end;
 end;
 
 procedure CopyMatrix(const A: TLMatrix; const IS1, IS2, JS1, JS2: TLInt;
-  var B: TLMatrix; const ID1, ID2, JD1, JD2: TLInt);
+  var b: TLMatrix; const ID1, id2, JD1, JD2: TLInt);
 var
-  ISRC: TLInt;
-  IDST: TLInt;
+  isrc: TLInt;
+  idst: TLInt;
 begin
   if (IS1 > IS2) or (JS1 > JS2) then
       Exit;
-  Assert(IS2 - IS1 = ID2 - ID1, 'CopyMatrix: different sizes!');
+  Assert(IS2 - IS1 = id2 - ID1, 'CopyMatrix: different sizes!');
   Assert(JS2 - JS1 = JD2 - JD1, 'CopyMatrix: different sizes!');
-  ISRC := IS1;
-  while ISRC <= IS2 do
+  isrc := IS1;
+  while isrc <= IS2 do
     begin
-      IDST := ISRC - IS1 + ID1;
-      APVMove(@B[IDST][0], JD1, JD2, @A[ISRC][0], JS1, JS2);
-      Inc(ISRC);
+      idst := isrc - IS1 + ID1;
+      APVMove(@b[idst][0], JD1, JD2, @A[isrc][0], JS1, JS2);
+      Inc(isrc);
     end;
 end;
 
-procedure InplaceTranspose(var A: TLMatrix; const I1, I2, J1, J2: TLInt; var WORK: TLVec);
+procedure InplaceTranspose(var A: TLMatrix; const i1, i2, J1, J2: TLInt; var Work: TLVec);
 var
-  I  : TLInt;
+  i  : TLInt;
   J  : TLInt;
   IPS: TLInt;
   JPS: TLInt;
@@ -156,62 +156,62 @@ var
   i_ : TLInt;
   i1_: TLInt;
 begin
-  if (I1 > I2) or (J1 > J2) then
+  if (i1 > i2) or (J1 > J2) then
       Exit;
-  Assert(I1 - I2 = J1 - J2, 'InplaceTranspose error: incorrect array size!');
-  I := I1;
-  while I <= I2 - 1 do
+  Assert(i1 - i2 = J1 - J2, 'InplaceTranspose error: incorrect array size!');
+  i := i1;
+  while i <= i2 - 1 do
     begin
-      J := J1 + I - I1;
-      IPS := I + 1;
-      JPS := J1 + IPS - I1;
-      L := I2 - I;
+      J := J1 + i - i1;
+      IPS := i + 1;
+      JPS := J1 + IPS - i1;
+      L := i2 - i;
       i1_ := (IPS) - (1);
       for i_ := 1 to L do
         begin
-          WORK[i_] := A[i_ + i1_, J];
+          Work[i_] := A[i_ + i1_, J];
         end;
       i1_ := (JPS) - (IPS);
-      for i_ := IPS to I2 do
+      for i_ := IPS to i2 do
         begin
-          A[i_, J] := A[I, i_ + i1_];
+          A[i_, J] := A[i, i_ + i1_];
         end;
-      APVMove(@A[I][0], JPS, J2, @WORK[0], 1, L);
-      Inc(I);
+      APVMove(@A[i][0], JPS, J2, @Work[0], 1, L);
+      Inc(i);
     end;
 end;
 
 procedure CopyAndTranspose(const A: TLMatrix; IS1, IS2, JS1, JS2: TLInt;
-  var B: TLMatrix; ID1, ID2, JD1, JD2: TLInt);
+  var b: TLMatrix; ID1, id2, JD1, JD2: TLInt);
 var
-  ISRC: TLInt;
-  JDST: TLInt;
+  isrc: TLInt;
+  jdst: TLInt;
   i_  : TLInt;
   i1_ : TLInt;
 begin
   if (IS1 > IS2) or (JS1 > JS2) then
       Exit;
   Assert(IS2 - IS1 = JD2 - JD1, 'CopyAndTranspose: different sizes!');
-  Assert(JS2 - JS1 = ID2 - ID1, 'CopyAndTranspose: different sizes!');
-  ISRC := IS1;
-  while ISRC <= IS2 do
+  Assert(JS2 - JS1 = id2 - ID1, 'CopyAndTranspose: different sizes!');
+  isrc := IS1;
+  while isrc <= IS2 do
     begin
-      JDST := ISRC - IS1 + JD1;
+      jdst := isrc - IS1 + JD1;
       i1_ := (JS1) - (ID1);
-      for i_ := ID1 to ID2 do
+      for i_ := ID1 to id2 do
         begin
-          B[i_, JDST] := A[ISRC, i_ + i1_];
+          b[i_, jdst] := A[isrc, i_ + i1_];
         end;
-      Inc(ISRC);
+      Inc(isrc);
     end;
 end;
 
-procedure MatrixVectorMultiply(const A: TLMatrix; const I1, I2, J1, J2: TLInt; const Trans: Boolean;
-  const X: TLVec; const IX1, IX2: TLInt; const Alpha: TLFloat;
-  var Y: TLVec; const IY1, IY2: TLInt; const Beta: TLFloat);
+procedure MatrixVectorMultiply(const A: TLMatrix; const i1, i2, J1, J2: TLInt; const Trans: Boolean;
+  const X: TLVec; const IX1, IX2: TLInt; const alpha: TLFloat;
+  var Y: TLVec; const IY1, IY2: TLInt; const beta: TLFloat);
 var
-  I: TLInt;
-  V: TLFloat;
+  i: TLInt;
+  v: TLFloat;
 begin
   if not Trans then
     begin
@@ -219,37 +219,37 @@ begin
       //
       // y := alpha*A*x + beta*y;
       //
-      if (I1 > I2) or (J1 > J2) then
+      if (i1 > i2) or (J1 > J2) then
           Exit;
       Assert(J2 - J1 = IX2 - IX1, 'MatrixVectorMultiply: A and X dont match!');
-      Assert(I2 - I1 = IY2 - IY1, 'MatrixVectorMultiply: A and Y dont match!');
+      Assert(i2 - i1 = IY2 - IY1, 'MatrixVectorMultiply: A and Y dont match!');
 
       //
       // beta*y
       //
-      if AP_FP_Eq(Beta, 0) then
+      if AP_FP_Eq(beta, 0) then
         begin
-          I := IY1;
-          while I <= IY2 do
+          i := IY1;
+          while i <= IY2 do
             begin
-              Y[I] := 0;
-              Inc(I);
+              Y[i] := 0;
+              Inc(i);
             end;
         end
       else
         begin
-          APVMul(@Y[0], IY1, IY2, Beta);
+          APVMul(@Y[0], IY1, IY2, beta);
         end;
 
       //
       // alpha*A*x
       //
-      I := I1;
-      while I <= I2 do
+      i := i1;
+      while i <= i2 do
         begin
-          V := APVDotProduct(@A[I][0], J1, J2, @X[0], IX1, IX2);
-          Y[IY1 + I - I1] := Y[IY1 + I - I1] + Alpha * V;
-          Inc(I);
+          v := APVDotProduct(@A[i][0], J1, J2, @X[0], IX1, IX2);
+          Y[IY1 + i - i1] := Y[IY1 + i - i1] + alpha * v;
+          Inc(i);
         end;
     end
   else
@@ -258,68 +258,68 @@ begin
       //
       // y := alpha*A'*x + beta*y;
       //
-      if (I1 > I2) or (J1 > J2) then
+      if (i1 > i2) or (J1 > J2) then
           Exit;
-      Assert(I2 - I1 = IX2 - IX1, 'MatrixVectorMultiply: A and X dont match!');
+      Assert(i2 - i1 = IX2 - IX1, 'MatrixVectorMultiply: A and X dont match!');
       Assert(J2 - J1 = IY2 - IY1, 'MatrixVectorMultiply: A and Y dont match!');
 
       //
       // beta*y
       //
-      if AP_FP_Eq(Beta, 0) then
+      if AP_FP_Eq(beta, 0) then
         begin
-          I := IY1;
-          while I <= IY2 do
+          i := IY1;
+          while i <= IY2 do
             begin
-              Y[I] := 0;
-              Inc(I);
+              Y[i] := 0;
+              Inc(i);
             end;
         end
       else
         begin
-          APVMul(@Y[0], IY1, IY2, Beta);
+          APVMul(@Y[0], IY1, IY2, beta);
         end;
 
       //
       // alpha*A'*x
       //
-      I := I1;
-      while I <= I2 do
+      i := i1;
+      while i <= i2 do
         begin
-          V := Alpha * X[IX1 + I - I1];
-          APVAdd(@Y[0], IY1, IY2, @A[I][0], J1, J2, V);
-          Inc(I);
+          v := alpha * X[IX1 + i - i1];
+          APVAdd(@Y[0], IY1, IY2, @A[i][0], J1, J2, v);
+          Inc(i);
         end;
     end;
 end;
 
 function Pythag2(X: TLFloat; Y: TLFloat): TLFloat;
 var
-  W   : TLFloat;
+  w   : TLFloat;
   XABS: TLFloat;
   YABS: TLFloat;
   Z   : TLFloat;
 begin
   XABS := AbsReal(X);
   YABS := AbsReal(Y);
-  W := Max(XABS, YABS);
+  w := Max(XABS, YABS);
   Z := Min(XABS, YABS);
   if AP_FP_Eq(Z, 0) then
     begin
-      Result := W;
+      Result := w;
     end
   else
     begin
-      Result := W * SQRT(1 + AP_Sqr(Z / W));
+      Result := w * Sqrt(1 + AP_Sqr(Z / w));
     end;
 end;
 
 procedure MatrixMatrixMultiply(const A: TLMatrix; const AI1, AI2, AJ1, AJ2: TLInt; const TransA: Boolean;
-  const B: TLMatrix; const BI1, BI2, BJ1, BJ2: TLInt; const TransB: Boolean;
-  const Alpha: TLFloat;
+  const b: TLMatrix; const BI1, BI2, BJ1, BJ2: TLInt; const TransB: Boolean;
+  const alpha: TLFloat;
   var C: TLMatrix; const CI1, CI2, CJ1, CJ2: TLInt;
-  const Beta: TLFloat;
-  var WORK: TLVec);
+  const beta: TLFloat;
+  var Work: TLVec);
 var
   ARows: TLInt;
   ACols: TLInt;
@@ -327,12 +327,12 @@ var
   BCols: TLInt;
   CRows: TLInt;
   CCols: TLInt;
-  I    : TLInt;
+  i    : TLInt;
   J    : TLInt;
-  K    : TLInt;
+  k    : TLInt;
   L    : TLInt;
   R    : TLInt;
-  V    : TLFloat;
+  v    : TLFloat;
   i_   : TLInt;
   i1_  : TLInt;
 begin
@@ -369,36 +369,36 @@ begin
   //
   // Test WORK
   //
-  I := Max(ARows, ACols);
-  I := Max(BRows, I);
-  I := Max(I, BCols);
-  WORK[1] := 0;
-  WORK[I] := 0;
+  i := Max(ARows, ACols);
+  i := Max(BRows, i);
+  i := Max(i, BCols);
+  Work[1] := 0;
+  Work[i] := 0;
 
   //
   // Prepare C
   //
-  if AP_FP_Eq(Beta, 0) then
+  if AP_FP_Eq(beta, 0) then
     begin
-      I := CI1;
-      while I <= CI2 do
+      i := CI1;
+      while i <= CI2 do
         begin
           J := CJ1;
           while J <= CJ2 do
             begin
-              C[I, J] := 0;
+              C[i, J] := 0;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
     end
   else
     begin
-      I := CI1;
-      while I <= CI2 do
+      i := CI1;
+      while i <= CI2 do
         begin
-          APVMul(@C[I][0], CJ1, CJ2, Beta);
-          Inc(I);
+          APVMul(@C[i][0], CJ1, CJ2, beta);
+          Inc(i);
         end;
     end;
 
@@ -413,9 +413,9 @@ begin
           R := BI1;
           while R <= BI2 do
             begin
-              V := Alpha * A[L, AJ1 + R - BI1];
-              K := CI1 + L - AI1;
-              APVAdd(@C[K][0], CJ1, CJ2, @B[R][0], BJ1, BJ2, V);
+              v := alpha * A[L, AJ1 + R - BI1];
+              k := CI1 + L - AI1;
+              APVAdd(@C[k][0], CJ1, CJ2, @b[R][0], BJ1, BJ2, v);
               Inc(R);
             end;
           Inc(L);
@@ -436,9 +436,9 @@ begin
               L := AI1;
               while L <= AI2 do
                 begin
-                  V := APVDotProduct(@A[L][0], AJ1, AJ2, @B[R][0], BJ1, BJ2);
+                  v := APVDotProduct(@A[L][0], AJ1, AJ2, @b[R][0], BJ1, BJ2);
                   C[CI1 + L - AI1, CJ1 + R - BI1] := C[CI1 + L - AI1, CJ1 + R - BI1]
-                    + Alpha * V;
+                    + alpha * v;
                   Inc(L);
                 end;
               Inc(R);
@@ -453,9 +453,9 @@ begin
               R := BI1;
               while R <= BI2 do
                 begin
-                  V := APVDotProduct(@A[L][0], AJ1, AJ2, @B[R][0], BJ1, BJ2);
+                  v := APVDotProduct(@A[L][0], AJ1, AJ2, @b[R][0], BJ1, BJ2);
                   C[CI1 + L - AI1, CJ1 + R - BI1] := C[CI1 + L - AI1, CJ1 + R - BI1]
-                    + Alpha * V;
+                    + alpha * v;
                   Inc(R);
                 end;
               Inc(L);
@@ -475,9 +475,9 @@ begin
           R := BI1;
           while R <= BI2 do
             begin
-              V := Alpha * A[AI1 + R - BI1, L];
-              K := CI1 + L - AJ1;
-              APVAdd(@C[K][0], CJ1, CJ2, @B[R][0], BJ1, BJ2, V);
+              v := alpha * A[AI1 + R - BI1, L];
+              k := CI1 + L - AJ1;
+              APVAdd(@C[k][0], CJ1, CJ2, @b[R][0], BJ1, BJ2, v);
               Inc(R);
             end;
           Inc(L);
@@ -495,24 +495,24 @@ begin
           R := BI1;
           while R <= BI2 do
             begin
-              I := 1;
-              while I <= CRows do
+              i := 1;
+              while i <= CRows do
                 begin
-                  WORK[I] := 0.0;
-                  Inc(I);
+                  Work[i] := 0.0;
+                  Inc(i);
                 end;
               L := AI1;
               while L <= AI2 do
                 begin
-                  V := Alpha * B[R, BJ1 + L - AI1];
-                  K := CJ1 + R - BI1;
-                  APVAdd(@WORK[0], 1, CRows, @A[L][0], AJ1, AJ2, V);
+                  v := alpha * b[R, BJ1 + L - AI1];
+                  k := CJ1 + R - BI1;
+                  APVAdd(@Work[0], 1, CRows, @A[L][0], AJ1, AJ2, v);
                   Inc(L);
                 end;
               i1_ := (1) - (CI1);
               for i_ := CI1 to CI2 do
                 begin
-                  C[i_, K] := C[i_, K] + WORK[i_ + i1_];
+                  C[i_, k] := C[i_, k] + Work[i_ + i1_];
                 end;
               Inc(R);
             end;
@@ -523,18 +523,18 @@ begin
           L := AJ1;
           while L <= AJ2 do
             begin
-              K := AI2 - AI1 + 1;
+              k := AI2 - AI1 + 1;
               i1_ := (AI1) - (1);
-              for i_ := 1 to K do
+              for i_ := 1 to k do
                 begin
-                  WORK[i_] := A[i_ + i1_, L];
+                  Work[i_] := A[i_ + i1_, L];
                 end;
               R := BI1;
               while R <= BI2 do
                 begin
-                  V := APVDotProduct(@WORK[0], 1, K, @B[R][0], BJ1, BJ2);
+                  v := APVDotProduct(@Work[0], 1, k, @b[R][0], BJ1, BJ2);
                   C[CI1 + L - AJ1, CJ1 + R - BI1] := C[CI1 + L - AJ1, CJ1 + R - BI1]
-                    + Alpha * V;
+                    + alpha * v;
                   Inc(R);
                 end;
               Inc(L);
@@ -542,4 +542,4 @@ begin
           Exit;
         end;
     end;
-end;
+end; 

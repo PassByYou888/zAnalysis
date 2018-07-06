@@ -1,7 +1,7 @@
 type
   TLearn_th = class(TCoreClassThread)
   public
-    source                : TLearn;
+    Source                : TLearn;
     TrainDepth            : TLInt;
     OnStateC              : TLearnState_Call;
     OnStateM              : TLearnState_Method;
@@ -16,21 +16,21 @@ type
 
 procedure TLearn_th.SyncResultState;
 begin
-  source.FTrainThreadRuning := False;
+  Source.FTrainThreadRuning := False;
   if Assigned(OnStateC) then
-      OnStateC(source, Successed);
+      OnStateC(Source, Successed);
   if Assigned(OnStateM) then
-      OnStateM(source, Successed);
+      OnStateM(Source, Successed);
   {$IFNDEF FPC}
   if Assigned(OnStateP) then
-      OnStateP(source, Successed);
+      OnStateP(Source, Successed);
   {$ENDIF FPC}
 end;
 
 procedure TLearn_th.Execute;
 begin
-  if source <> nil then
-      Successed := source.Train(TrainDepth)
+  if Source <> nil then
+      Successed := Source.Train(TrainDepth)
   else
       Successed := False;
 
@@ -45,7 +45,7 @@ constructor TLearn_th.Create;
 begin
   inherited Create(True);
   FreeOnTerminate := True;
-  source := nil;
+  Source := nil;
   TrainDepth := 2;
   OnStateC := nil;
   OnStateM := nil;
@@ -57,4 +57,4 @@ destructor TLearn_th.Destroy;
 begin
   inherited Destroy;
 end;
-
+ 

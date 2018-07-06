@@ -33,7 +33,7 @@ interface
 
 {$IFDEF FPC}
 
-uses FGL, h264Stdint;
+uses fgl, h264Stdint;
 
 type
   { Generic list of types that are compared by CompareByte.
@@ -54,18 +54,18 @@ type
       TCompareFunc = function(const Item1, Item2: T): int32_t;
       TTypeList = array[0..MaxGListSize] of T;
       PTypeList = ^TTypeList;
-      PT = ^T;
+      pt = ^T;
   {$ifdef HAS_ENUMERATOR} TFPGListEnumeratorSpec = specialize TFPGListEnumerator<T>; {$endif}
   {$ifndef OldSyntax}protected var{$else}
       {$ifdef PASDOC}protected var{$else} { PasDoc can't handle "var protected", and I don't know how/if they should be handled? }
                      var protected{$endif}{$endif}
       FOnCompare: TCompareFunc;
-    procedure CopyItem(Src, Dest: Pointer); override;
+    procedure CopyItem(Src, dest: Pointer); override;
     procedure Deref(Item: Pointer); override;
-    function  Get(Index: int32_t): T; {$ifdef CLASSESINLINE} inline; {$endif}
+    function  Get(index: int32_t): T; {$ifdef CLASSESINLINE} inline; {$endif}
     function  GetList: PTypeList; {$ifdef CLASSESINLINE} inline; {$endif}
     function  ItemPtrCompare(Item1, Item2: Pointer): int32_t;
-    procedure Put(Index: int32_t; const Item: T); {$ifdef CLASSESINLINE} inline; {$endif}
+    procedure Put(index: int32_t; const Item: T); {$ifdef CLASSESINLINE} inline; {$endif}
   public
     constructor Create;
     function Add(const Item: T): int32_t; {$ifdef CLASSESINLINE} inline; {$endif}
@@ -73,14 +73,14 @@ type
     function First: T; {$ifdef CLASSESINLINE} inline; {$endif}
     {$ifdef HAS_ENUMERATOR} function GetEnumerator: TFPGListEnumeratorSpec; {$ifdef CLASSESINLINE} inline; {$endif} {$endif}
     function IndexOf(const Item: T): int32_t;
-    procedure Insert(Index: int32_t; const Item: T); {$ifdef CLASSESINLINE} inline; {$endif}
+    procedure Insert(index: int32_t; const Item: T); {$ifdef CLASSESINLINE} inline; {$endif}
     function Last: T; {$ifdef CLASSESINLINE} inline; {$endif}
 {$ifndef OldSyntax}
     procedure Assign(Source: TGenericStructList);
 {$endif OldSyntax}
     function Remove(const Item: T): int32_t; {$ifdef CLASSESINLINE} inline; {$endif}
     procedure Sort(Compare: TCompareFunc);
-    property Items[Index: int32_t]: T read Get write Put; default;
+    property Items[index: int32_t]: T read Get write Put; default;
     property List: PTypeList read GetList;
 
     { Pointer to items. Exactly like @link(List), but this points to a single item,
@@ -95,12 +95,12 @@ type
         @item(slow (important for us, since these are used for vector arrays that
          are crucial for renderer and various processing).)
       ) }
-    function L: PT;
+    function L: pt;
 
     { Increase Count and return pointer to new item.
       Comfortable and efficient way to add a new item that you want to immediately
       initialize. }
-    function Add: PT;
+    function Add: pt;
   end;
 
 {$ENDIF FPC}
@@ -110,12 +110,12 @@ implementation
 {$IFDEF FPC}
 constructor TGenericStructList.Create;
 begin
-  inherited Create(sizeof(T));
+  inherited Create(SizeOf(T));
 end;
 
-procedure TGenericStructList.CopyItem(Src, Dest: Pointer);
+procedure TGenericStructList.CopyItem(Src, dest: Pointer);
 begin
-  T(Dest^) := T(Src^);
+  T(dest^) := T(Src^);
 end;
 
 procedure TGenericStructList.Deref(Item: Pointer);
@@ -123,9 +123,9 @@ begin
   Finalize(T(Item^));
 end;
 
-function TGenericStructList.Get(Index: int32_t): T;
+function TGenericStructList.Get(index: int32_t): T;
 begin
-  Result := T(inherited Get(Index)^);
+  Result := T(inherited Get(index)^);
 end;
 
 function TGenericStructList.GetList: PTypeList;
@@ -138,9 +138,9 @@ begin
   Result := FOnCompare(T(Item1^), T(Item2^));
 end;
 
-procedure TGenericStructList.Put(Index: int32_t; const Item: T);
+procedure TGenericStructList.Put(index: int32_t; const Item: T);
 begin
-  inherited Put(Index, @Item);
+  inherited Put(index, @Item);
 end;
 
 function TGenericStructList.Add(const Item: T): int32_t;
@@ -172,9 +172,9 @@ begin
   Result := inherited IndexOf(@Item);
 end;
 
-procedure TGenericStructList.Insert(Index: int32_t; const Item: T);
+procedure TGenericStructList.Insert(index: int32_t; const Item: T);
 begin
-  T(inherited Insert(Index)^) := Item;
+  T(inherited Insert(index)^) := Item;
 end;
 
 function TGenericStructList.Last: T;
@@ -188,7 +188,7 @@ var
   i: int32_t;
 begin
   Clear;
-  for I := 0 to Source.Count - 1 do
+  for i := 0 to Source.Count - 1 do
     Add(Source[i]);
 end;
 {$endif OldSyntax}
@@ -206,17 +206,18 @@ begin
   inherited Sort(@ItemPtrCompare);
 end;
 
-function TGenericStructList.L: PT;
+function TGenericStructList.L: pt;
 begin
-  Result := PT(FList);
+  Result := pt(FList);
 end;
 
-function TGenericStructList.Add: PT;
+function TGenericStructList.Add: pt;
 begin
   Count := Count + 1;
-  Result := Addr(L[Count - 1]);
+  Result := addr(L[Count - 1]);
 end;
 
 {$ENDIF FPC}
 
-end.
+end.  
+ 

@@ -39,7 +39,7 @@ unit AggVcgenContour;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -96,7 +96,7 @@ type
     property InnerJoin: TAggInnerJoin read FInnerJoin write SetInnerJoin;
     property AutoDetectOrientation: Boolean read FAutoDetect write SetAutoDetectOrientation;
 
-    property Width: Double read GetWidth write SetWidth;
+    property width: Double read GetWidth write SetWidth;
     property MiterLimit: Double read FMiterLimit write SetMiterLimit;
     property InnerMiterLimit: Double read FInnerMiterLimit write SetInnerMiterLimit;
     property ApproximationScale: Double read FApproxScale write SetApproximationScale;
@@ -196,17 +196,17 @@ end;
 
 procedure TAggVcgenContour.AddVertex(X, Y: Double; Cmd: Cardinal);
 var
-  Vd: TAggVertexDistance;
+  VD: TAggVertexDistance;
 begin
   FStatus := siInitial;
 
-  Vd.Pos := PointDouble(X, Y);
-  Vd.Dist := 0;
+  VD.pos := PointDouble(X, Y);
+  VD.Dist := 0;
 
   if IsMoveTo(Cmd) then
-      FSourceVertices.ModifyLast(@Vd)
+      FSourceVertices.ModifyLast(@VD)
   else if IsVertex(Cmd) then
-      FSourceVertices.Add(@Vd)
+      FSourceVertices.Add(@VD)
   else if IsEndPoly(Cmd) then
     begin
       FClosed := GetCloseFlag(Cmd);
@@ -345,4 +345,5 @@ begin
     end;
 end;
 
-end.
+end. 
+ 

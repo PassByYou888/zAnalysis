@@ -39,7 +39,7 @@ unit AggRenderingBuffer;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -49,18 +49,18 @@ type
   PAggRowDataType = ^TAggRowDataType;
 
   TAggRowDataType = packed record
-    X1, X2: Integer;
-    Ptr: PInt8u;
+    x1, x2: Integer;
+    PTR: PInt8u;
   public
-    procedure Initialize(X1, X2: Integer; Ptr: PInt8u); overload;
+    procedure Initialize(x1, x2: Integer; PTR: PInt8u); overload;
   end;
 
   TAggSpanData = packed record
     X: Integer;
     Len: Byte;
-    Ptr: PInt8u;
+    PTR: PInt8u;
   public
-    procedure Initialize(X: Integer; Len: Byte; Ptr: PInt8u); overload;
+    procedure Initialize(X: Integer; Len: Byte; PTR: PInt8u); overload;
   end;
 
   TAggRenderingBuffer = class
@@ -83,16 +83,16 @@ type
 
     function RowXY(X, Y: Integer; Len: Cardinal): PInt8u; virtual;
     function Row(Y: Cardinal): PInt8u; virtual;
-    function NextRow(P: PInt8u): PInt8u; virtual;
+    function NextRow(p: PInt8u): PInt8u; virtual;
     function Rows: PInt8u;
 
     procedure CopyFrom(RenderingBuffer: TAggRenderingBuffer);
     procedure Clear(Value: Int8u);
 
-    property Buffer: PInt8u read FBuffer;
-    property Height: Cardinal read FHeight;
-    property Width: Cardinal read FWidth;
-    property Stride: Integer read FStride;
+    property buffer: PInt8u read FBuffer;
+    property height: Cardinal read FHeight;
+    property width: Cardinal read FWidth;
+    property stride: Integer read FStride;
     property StrideAbs: Cardinal read GetStrideAbs;
 
     property ScanLine[index: Cardinal]: PInt8u read Row;
@@ -104,20 +104,20 @@ implementation
 
 { TAggRowDataType }
 
-procedure TAggRowDataType.Initialize(X1, X2: Integer; Ptr: PInt8u);
+procedure TAggRowDataType.Initialize(x1, x2: Integer; PTR: PInt8u);
 begin
-  Self.X1 := X1;
-  Self.X2 := X2;
-  Self.Ptr := Ptr;
+  Self.x1 := x1;
+  Self.x2 := x2;
+  Self.PTR := PTR;
 end;
 
 { TAggSpanData }
 
-procedure TAggSpanData.Initialize(X: Integer; Len: Byte; Ptr: PInt8u);
+procedure TAggSpanData.Initialize(X: Integer; Len: Byte; PTR: PInt8u);
 begin
   Self.X := X;
   Self.Len := Len;
-  Self.Ptr := Ptr;
+  Self.PTR := PTR;
 end;
 
 { TAggRenderingBuffer }
@@ -221,9 +221,9 @@ begin
   Result := RowPointer^;
 end;
 
-function TAggRenderingBuffer.NextRow(P: PInt8u): PInt8u;
+function TAggRenderingBuffer.NextRow(p: PInt8u): PInt8u;
 begin
-  Result := P;
+  Result := p;
   Inc(Result, FStride);
 end;
 
@@ -234,12 +234,12 @@ end;
 
 procedure TAggRenderingBuffer.CopyFrom(RenderingBuffer: TAggRenderingBuffer);
 var
-  H, L, Y: Cardinal;
+  h, L, Y: Cardinal;
 begin
-  H := Height;
+  h := height;
 
-  if RenderingBuffer.Height < H then
-      H := RenderingBuffer.Height;
+  if RenderingBuffer.height < h then
+      h := RenderingBuffer.height;
 
   L := StrideAbs;
 
@@ -248,29 +248,30 @@ begin
 
   L := L * SizeOf(Int8u);
 
-  if H > 0 then
-    for Y := 0 to H - 1 do
+  if h > 0 then
+    for Y := 0 to h - 1 do
         Move(RenderingBuffer.Row(Y)^, Row(Y)^, L);
 end;
 
 procedure TAggRenderingBuffer.Clear(Value: Int8u);
 var
   Y, X: Cardinal;
-  P: PInt8u;
+  p: PInt8u;
 begin
-  if Height > 0 then
-    for Y := 0 to Height - 1 do
+  if height > 0 then
+    for Y := 0 to height - 1 do
       begin
-        P := Row(Y);
+        p := Row(Y);
 
         if StrideAbs > 0 then
           for X := 0 to StrideAbs - 1 do
             begin
-              P^ := Value;
+              p^ := Value;
 
-              Inc(PtrComp(P), SizeOf(Int8u));
+              Inc(PtrComp(p), SizeOf(Int8u));
             end;
       end;
 end;
 
-end.
+end. 
+ 

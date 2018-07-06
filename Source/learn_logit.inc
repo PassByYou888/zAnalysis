@@ -1,6 +1,6 @@
 type
   TLogitModel = packed record
-    W: TLVec;
+    w: TLVec;
   end;
 
   PLogitModel = ^TLogitModel;
@@ -20,15 +20,15 @@ type
     FINIT: TLFloat;
     FTEST1: TLFloat;
     FM: TLFloat;
-    FX: TLFloat;
+    fx: TLFloat;
     FXM: TLFloat;
-    FY: TLFloat;
+    fy: TLFloat;
     FYM: TLFloat;
     STX: TLFloat;
     STY: TLFloat;
     STMIN: TLFloat;
     STMAX: TLFloat;
-    WIDTH: TLFloat;
+    width: TLFloat;
     WIDTH1: TLFloat;
     XTRAPF: TLFloat;
   end;
@@ -43,7 +43,7 @@ type
     NHess: TLInt;
   end;
 
-procedure MNLTrainH(const XY: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt;
+procedure MNLTrainH(const xy: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt;
   var Info: TLInt; var LM: TLogitModel; var Rep: TMNLReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MNLProcess(var LM: TLogitModel; const X: TLVec; var Y: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -52,12 +52,12 @@ procedure MNLPack(const A: TLMatrix; NVars: TLInt; NClasses: TLInt; var LM: TLog
 procedure MNLCopy(const LM1: TLogitModel; var LM2: TLogitModel); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MNLSerialize(const LM: TLogitModel; var RA: TLVec; var RLen: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MNLUnserialize(const RA: TLVec; var LM: TLogitModel); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MNLAvgCE(var LM: TLogitModel; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MNLRelClsError(var LM: TLogitModel; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MNLRMSError(var LM: TLogitModel; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MNLAvgError(var LM: TLogitModel; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MNLAvgRelError(var LM: TLogitModel; const XY: TLMatrix; SSize: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MNLClsError(var LM: TLogitModel; const XY: TLMatrix; NPoints: TLInt): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MNLAvgCE(var LM: TLogitModel; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MNLRelClsError(var LM: TLogitModel; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MNLRMSError(var LM: TLogitModel; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MNLAvgError(var LM: TLogitModel; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MNLAvgRelError(var LM: TLogitModel; const xy: TLMatrix; SSize: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MNLClsError(var LM: TLogitModel; const xy: TLMatrix; NPoints: TLInt): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 const
@@ -69,21 +69,21 @@ const
   LogitSTPMAX = 1.0E5;
   LogitVNum   = 6;
 
-procedure MNLIExp(var W: TLVec; const X: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MNLIExp(var w: TLVec; const X: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MNLAllErrors(var LM: TLogitModel; const XY: TLMatrix;
+procedure MNLAllErrors(var LM: TLogitModel; const xy: TLMatrix;
   NPoints: TLInt; var RelCls: TLFloat; var AvgCE: TLFloat;
   var RMS: TLFloat; var Avg: TLFloat; var AvgRel: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MNLMCSRCH(const N: TLInt; var X: TLVec;
-  var F: TLFloat; var G: TLVec; const S: TLVec;
-  var STP: TLFloat; var Info: TLInt; var NFEV: TLInt;
+procedure MNLMCSRCH(const n: TLInt; var X: TLVec;
+  var F: TLFloat; var g: TLVec; const s: TLVec;
+  var Stp: TLFloat; var Info: TLInt; var NFEV: TLInt;
   var WA: TLVec; var State: TLogitMCState;
   var Stage: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MNLMCSTEP(var STX: TLFloat; var FX: TLFloat;
-  var DX: TLFloat; var STY: TLFloat; var FY: TLFloat;
-  var DY: TLFloat; var STP: TLFloat; const FP: TLFloat;
+procedure MNLMCSTEP(var STX: TLFloat; var fx: TLFloat;
+  var dx: TLFloat; var STY: TLFloat; var fy: TLFloat;
+  var dy: TLFloat; var Stp: TLFloat; const FP: TLFloat;
   const DP: TLFloat; var BRACKT: Boolean; const STMIN: TLFloat;
   const STMAX: TLFloat; var Info: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
@@ -108,13 +108,13 @@ procedure MNLMCSTEP(var STX: TLFloat; var FX: TLFloat;
   //  LM          -   model built
   //  Rep         -   training report
   ************************************************************************ *)
-procedure MNLTrainH(const XY: TLMatrix; NPoints: TLInt;
+procedure MNLTrainH(const xy: TLMatrix; NPoints: TLInt;
   NVars: TLInt; NClasses: TLInt; var Info: TLInt;
   var LM: TLogitModel; var Rep: TMNLReport);
 var
-  I         : TLInt;
+  i         : TLInt;
   J         : TLInt;
-  K         : TLInt;
+  k         : TLInt;
   SSize     : TLInt;
   AllSame   : Boolean;
   Offs      : TLInt;
@@ -123,25 +123,25 @@ var
   Decay     : TLFloat;
   WDim      : TLInt;
   ExpOffs   : TLInt;
-  V         : TLFloat;
-  S         : TLFloat;
+  v         : TLFloat;
+  s         : TLFloat;
   Network   : TMultiLayerPerceptron;
   NIn       : TLInt;
   NOut      : TLInt;
   WCount    : TLInt;
   E         : TLFloat;
-  G         : TLVec;
-  H         : TLMatrix;
+  g         : TLVec;
+  h         : TLMatrix;
   SPD       : Boolean;
   X         : TLVec;
   Y         : TLVec;
   WBase     : TLVec;
   WStep     : TLFloat;
   WDir      : TLVec;
-  WORK      : TLVec;
+  Work      : TLVec;
   MCStage   : TLInt;
   MCState   : TLogitMCState;
-  MCInfo    : TLInt;
+  MCINFO    : TLInt;
   MCNFEV    : TLInt;
   SolverInfo: TLInt;
   SolverRep : TDenseSolverReport;
@@ -158,15 +158,15 @@ begin
       Info := -1;
       Exit;
     end;
-  I := 0;
-  while I <= NPoints - 1 do
+  i := 0;
+  while i <= NPoints - 1 do
     begin
-      if (Round(XY[I, NVars]) < 0) or (Round(XY[I, NVars]) >= NClasses) then
+      if (Round(xy[i, NVars]) < 0) or (Round(xy[i, NVars]) >= NClasses) then
         begin
           Info := -2;
           Exit;
         end;
-      Inc(I);
+      Inc(i);
     end;
   Info := 1;
 
@@ -183,59 +183,59 @@ begin
   Offs := 5;
   ExpOffs := Offs + WDim;
   SSize := 5 + (NVars + 1) * (NClasses - 1) + NClasses;
-  SetLength(LM.W, SSize (* - 1 + 1 // optimized compiler *) );
-  LM.W[0] := SSize;
-  LM.W[1] := LogitVNum;
-  LM.W[2] := NVars;
-  LM.W[3] := NClasses;
-  LM.W[4] := Offs;
+  SetLength(LM.w, SSize (* - 1 + 1 // optimized compiler *) );
+  LM.w[0] := SSize;
+  LM.w[1] := LogitVNum;
+  LM.w[2] := NVars;
+  LM.w[3] := NClasses;
+  LM.w[4] := Offs;
 
   //
   // Degenerate case: all outputs are equal
   //
   AllSame := True;
-  I := 1;
-  while I <= NPoints - 1 do
+  i := 1;
+  while i <= NPoints - 1 do
     begin
-      if Round(XY[I, NVars]) <> Round(XY[I - 1, NVars]) then
+      if Round(xy[i, NVars]) <> Round(xy[i - 1, NVars]) then
         begin
           AllSame := False;
         end;
-      Inc(I);
+      Inc(i);
     end;
   if AllSame then
     begin
-      I := 0;
-      while I <= (NVars + 1) * (NClasses - 1) - 1 do
+      i := 0;
+      while i <= (NVars + 1) * (NClasses - 1) - 1 do
         begin
-          LM.W[Offs + I] := 0;
-          Inc(I);
+          LM.w[Offs + i] := 0;
+          Inc(i);
         end;
-      V := -2 * Ln(MinRealNumber);
-      K := Round(XY[0, NVars]);
-      if K = NClasses - 1 then
+      v := -2 * ln(MinRealNumber);
+      k := Round(xy[0, NVars]);
+      if k = NClasses - 1 then
         begin
-          I := 0;
-          while I <= NClasses - 2 do
+          i := 0;
+          while i <= NClasses - 2 do
             begin
-              LM.W[Offs + I * (NVars + 1) + NVars] := -V;
-              Inc(I);
+              LM.w[Offs + i * (NVars + 1) + NVars] := -v;
+              Inc(i);
             end;
         end
       else
         begin
-          I := 0;
-          while I <= NClasses - 2 do
+          i := 0;
+          while i <= NClasses - 2 do
             begin
-              if I = K then
+              if i = k then
                 begin
-                  LM.W[Offs + I * (NVars + 1) + NVars] := +V;
+                  LM.w[Offs + i * (NVars + 1) + NVars] := +v;
                 end
               else
                 begin
-                  LM.W[Offs + I * (NVars + 1) + NVars] := 0;
+                  LM.w[Offs + i * (NVars + 1) + NVars] := 0;
                 end;
-              Inc(I);
+              Inc(i);
             end;
         end;
       Exit;
@@ -246,56 +246,56 @@ begin
   // Prepare task and network. Allocate space.
   //
   MLPCreateC0(NVars, NClasses, Network);
-  MLPInitPreprocessor(Network, XY, NPoints);
+  MLPInitPreprocessor(Network, xy, NPoints);
   MLPProperties(Network, NIn, NOut, WCount);
-  I := 0;
-  while I <= WCount - 1 do
+  i := 0;
+  while i <= WCount - 1 do
     begin
-      Network.Weights[I] := (2 * RandomReal - 1) / NVars;
-      Inc(I);
+      Network.Weights[i] := (2 * RandomReal - 1) / NVars;
+      Inc(i);
     end;
-  SetLength(G, WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(H, WCount (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(g, WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(h, WCount (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
   SetLength(WBase, WCount (* - 1 + 1 // optimized compiler *) );
   SetLength(WDir, WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(WORK, WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Work, WCount (* - 1 + 1 // optimized compiler *) );
 
   //
   // First stage: optimize in gradient direction.
   //
-  K := 0;
-  while K <= WCount div 3 + 10 do
+  k := 0;
+  while k <= WCount div 3 + 10 do
     begin
 
       //
       // Calculate gradient in starting point
       //
-      MLPGradNBatch(Network, XY, NPoints, E, G);
-      V := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
-      E := E + 0.5 * Decay * V;
-      APVAdd(@G[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1, Decay);
+      MLPGradNBatch(Network, xy, NPoints, E, g);
+      v := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+      E := E + 0.5 * Decay * v;
+      APVAdd(@g[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1, Decay);
       Rep.NGrad := Rep.NGrad + 1;
 
       //
       // Setup optimization scheme
       //
-      APVMoveNeg(@WDir[0], 0, WCount - 1, @G[0], 0, WCount - 1);
-      V := APVDotProduct(@WDir[0], 0, WCount - 1, @WDir[0], 0, WCount - 1);
-      WStep := Sqrt(V);
-      V := 1 / Sqrt(V);
-      APVMul(@WDir[0], 0, WCount - 1, V);
+      APVMoveNeg(@WDir[0], 0, WCount - 1, @g[0], 0, WCount - 1);
+      v := APVDotProduct(@WDir[0], 0, WCount - 1, @WDir[0], 0, WCount - 1);
+      WStep := Sqrt(v);
+      v := 1 / Sqrt(v);
+      APVMul(@WDir[0], 0, WCount - 1, v);
       MCStage := 0;
-      MNLMCSRCH(WCount, Network.Weights, E, G, WDir, WStep, MCInfo, MCNFEV, WORK, MCState, MCStage);
+      MNLMCSRCH(WCount, Network.Weights, E, g, WDir, WStep, MCINFO, MCNFEV, Work, MCState, MCStage);
       while MCStage <> 0 do
         begin
-          MLPGradNBatch(Network, XY, NPoints, E, G);
-          V := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
-          E := E + 0.5 * Decay * V;
-          APVAdd(@G[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1, Decay);
+          MLPGradNBatch(Network, xy, NPoints, E, g);
+          v := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+          E := E + 0.5 * Decay * v;
+          APVAdd(@g[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1, Decay);
           Rep.NGrad := Rep.NGrad + 1;
-          MNLMCSRCH(WCount, Network.Weights, E, G, WDir, WStep, MCInfo, MCNFEV, WORK, MCState, MCStage);
+          MNLMCSRCH(WCount, Network.Weights, E, g, WDir, WStep, MCINFO, MCNFEV, Work, MCState, MCStage);
         end;
-      Inc(K);
+      Inc(k);
     end;
 
   //
@@ -307,15 +307,15 @@ begin
       //
       // Calculate and update E/G/H
       //
-      MLPHessianNBatch(Network, XY, NPoints, E, G, H);
-      V := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
-      E := E + 0.5 * Decay * V;
-      APVAdd(@G[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1, Decay);
-      K := 0;
-      while K <= WCount - 1 do
+      MLPHessianNBatch(Network, xy, NPoints, E, g, h);
+      v := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
+      E := E + 0.5 * Decay * v;
+      APVAdd(@g[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1, Decay);
+      k := 0;
+      while k <= WCount - 1 do
         begin
-          H[K, K] := H[K, K] + Decay;
-          Inc(K);
+          h[k, k] := h[k, k] + Decay;
+          Inc(k);
         end;
       Rep.NHess := Rep.NHess + 1;
 
@@ -324,8 +324,8 @@ begin
       // NOTE: it is important to use lower-triangle Cholesky
       // factorization since it is much faster than higher-triangle version.
       //
-      SPD := SPDMatrixCholesky(H, WCount, False);
-      SPDMatrixCholeskySolve(H, WCount, False, G, SolverInfo, SolverRep, WDir);
+      SPD := SPDMatrixCholesky(h, WCount, False);
+      SPDMatrixCholeskySolve(h, WCount, False, g, SolverInfo, SolverRep, WDir);
       SPD := SolverInfo > 0;
       if SPD then
         begin
@@ -344,30 +344,30 @@ begin
           // H is indefinite.
           // Step in gradient direction.
           //
-          APVMoveNeg(@WDir[0], 0, WCount - 1, @G[0], 0, WCount - 1);
+          APVMoveNeg(@WDir[0], 0, WCount - 1, @g[0], 0, WCount - 1);
           SPD := False;
         end;
 
       //
       // Optimize in WDir direction
       //
-      V := APVDotProduct(@WDir[0], 0, WCount - 1, @WDir[0], 0, WCount - 1);
-      WStep := Sqrt(V);
-      V := 1 / Sqrt(V);
-      APVMul(@WDir[0], 0, WCount - 1, V);
+      v := APVDotProduct(@WDir[0], 0, WCount - 1, @WDir[0], 0, WCount - 1);
+      WStep := Sqrt(v);
+      v := 1 / Sqrt(v);
+      APVMul(@WDir[0], 0, WCount - 1, v);
       MCStage := 0;
-      MNLMCSRCH(WCount, Network.Weights, E, G, WDir, WStep, MCInfo, MCNFEV, WORK, MCState, MCStage);
+      MNLMCSRCH(WCount, Network.Weights, E, g, WDir, WStep, MCINFO, MCNFEV, Work, MCState, MCStage);
       while MCStage <> 0 do
         begin
-          MLPGradNBatch(Network, XY, NPoints, E, G);
-          V := APVDotProduct(@Network.Weights[0], 0, WCount - 1,
+          MLPGradNBatch(Network, xy, NPoints, E, g);
+          v := APVDotProduct(@Network.Weights[0], 0, WCount - 1,
             @Network.Weights[0], 0, WCount - 1);
-          E := E + 0.5 * Decay * V;
-          APVAdd(@G[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1, Decay);
+          E := E + 0.5 * Decay * v;
+          APVAdd(@g[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1, Decay);
           Rep.NGrad := Rep.NGrad + 1;
-          MNLMCSRCH(WCount, Network.Weights, E, G, WDir, WStep, MCInfo, MCNFEV, WORK, MCState, MCStage);
+          MNLMCSRCH(WCount, Network.Weights, E, g, WDir, WStep, MCINFO, MCNFEV, Work, MCState, MCStage);
         end;
-      if SPD and ((MCInfo = 2) or (MCInfo = 4) or (MCInfo = 6)) then
+      if SPD and ((MCINFO = 2) or (MCINFO = 4) or (MCINFO = 6)) then
         begin
           Break;
         end;
@@ -376,33 +376,33 @@ begin
   //
   // Convert from NN format to MNL format
   //
-  APVMove(@LM.W[0], Offs, Offs + WCount - 1, @Network.Weights[0], 0,
+  APVMove(@LM.w[0], Offs, Offs + WCount - 1, @Network.Weights[0], 0,
     WCount - 1);
-  K := 0;
-  while K <= NVars - 1 do
+  k := 0;
+  while k <= NVars - 1 do
     begin
-      I := 0;
-      while I <= NClasses - 2 do
+      i := 0;
+      while i <= NClasses - 2 do
         begin
-          S := Network.ColumnSigmas[K];
-          if AP_FP_Eq(S, 0) then
+          s := Network.ColumnSigmas[k];
+          if AP_FP_Eq(s, 0) then
             begin
-              S := 1;
+              s := 1;
             end;
-          J := Offs + (NVars + 1) * I;
-          V := LM.W[J + K];
-          LM.W[J + K] := V / S;
-          LM.W[J + NVars] := LM.W[J + NVars] + V * Network.ColumnMeans[K] / S;
-          Inc(I);
+          J := Offs + (NVars + 1) * i;
+          v := LM.w[J + k];
+          LM.w[J + k] := v / s;
+          LM.w[J + NVars] := LM.w[J + NVars] + v * Network.ColumnMeans[k] / s;
+          Inc(i);
         end;
-      Inc(K);
+      Inc(k);
     end;
-  K := 0;
-  while K <= NClasses - 2 do
+  k := 0;
+  while k <= NClasses - 2 do
     begin
-      LM.W[Offs + (NVars + 1) * K + NVars] :=
-        -LM.W[Offs + (NVars + 1) * K + NVars];
-      Inc(K);
+      LM.w[Offs + (NVars + 1) * k + NVars] :=
+        -LM.w[Offs + (NVars + 1) * k + NVars];
+      Inc(k);
     end;
 end;
 
@@ -425,28 +425,28 @@ var
   NVars   : TLInt;
   NClasses: TLInt;
   Offs    : TLInt;
-  I       : TLInt;
-  I1      : TLInt;
-  S       : TLFloat;
+  i       : TLInt;
+  i1      : TLInt;
+  s       : TLFloat;
 begin
-  Assert(AP_FP_Eq(LM.W[1], LogitVNum), 'MNLProcess: unexpected model version');
-  NVars := Round(LM.W[2]);
-  NClasses := Round(LM.W[3]);
-  Offs := Round(LM.W[4]);
-  MNLIExp(LM.W, X);
-  S := 0;
-  I1 := Offs + (NVars + 1) * (NClasses - 1);
-  I := I1;
-  while I <= I1 + NClasses - 1 do
+  Assert(AP_FP_Eq(LM.w[1], LogitVNum), 'MNLProcess: unexpected model version');
+  NVars := Round(LM.w[2]);
+  NClasses := Round(LM.w[3]);
+  Offs := Round(LM.w[4]);
+  MNLIExp(LM.w, X);
+  s := 0;
+  i1 := Offs + (NVars + 1) * (NClasses - 1);
+  i := i1;
+  while i <= i1 + NClasses - 1 do
     begin
-      S := S + LM.W[I];
-      Inc(I);
+      s := s + LM.w[i];
+      Inc(i);
     end;
-  I := 0;
-  while I <= NClasses - 1 do
+  i := 0;
+  while i <= NClasses - 1 do
     begin
-      Y[I] := LM.W[I1 + I] / S;
-      Inc(I);
+      Y[i] := LM.w[i1 + i] / s;
+      Inc(i);
     end;
 end;
 
@@ -469,19 +469,19 @@ procedure MNLUnpack(const LM: TLogitModel; var A: TLMatrix;
   var NVars: TLInt; var NClasses: TLInt);
 var
   Offs: TLInt;
-  I   : TLInt;
+  i   : TLInt;
 begin
-  Assert(AP_FP_Eq(LM.W[1], LogitVNum), 'MNLUnpack: unexpected model version');
-  NVars := Round(LM.W[2]);
-  NClasses := Round(LM.W[3]);
-  Offs := Round(LM.W[4]);
+  Assert(AP_FP_Eq(LM.w[1], LogitVNum), 'MNLUnpack: unexpected model version');
+  NVars := Round(LM.w[2]);
+  NClasses := Round(LM.w[3]);
+  Offs := Round(LM.w[4]);
   SetLength(A, NClasses - 2 + 1, NVars + 1);
-  I := 0;
-  while I <= NClasses - 2 do
+  i := 0;
+  while i <= NClasses - 2 do
     begin
-      APVMove(@A[I][0], 0, NVars, @LM.W[0], Offs + I * (NVars + 1),
-        Offs + I * (NVars + 1) + NVars);
-      Inc(I);
+      APVMove(@A[i][0], 0, NVars, @LM.w[0], Offs + i * (NVars + 1),
+        Offs + i * (NVars + 1) + NVars);
+      Inc(i);
     end;
 end;
 
@@ -500,25 +500,25 @@ procedure MNLPack(const A: TLMatrix; NVars: TLInt;
   NClasses: TLInt; var LM: TLogitModel);
 var
   Offs : TLInt;
-  I    : TLInt;
+  i    : TLInt;
   WDim : TLInt;
   SSize: TLInt;
 begin
   WDim := (NVars + 1) * (NClasses - 1);
   Offs := 5;
   SSize := 5 + (NVars + 1) * (NClasses - 1) + NClasses;
-  SetLength(LM.W, SSize (* - 1 + 1 // optimized compiler *) );
-  LM.W[0] := SSize;
-  LM.W[1] := LogitVNum;
-  LM.W[2] := NVars;
-  LM.W[3] := NClasses;
-  LM.W[4] := Offs;
-  I := 0;
-  while I <= NClasses - 2 do
+  SetLength(LM.w, SSize (* - 1 + 1 // optimized compiler *) );
+  LM.w[0] := SSize;
+  LM.w[1] := LogitVNum;
+  LM.w[2] := NVars;
+  LM.w[3] := NClasses;
+  LM.w[4] := Offs;
+  i := 0;
+  while i <= NClasses - 2 do
     begin
-      APVMove(@LM.W[0], Offs + I * (NVars + 1), Offs + I * (NVars + 1) + NVars,
-        @A[I][0], 0, NVars);
-      Inc(I);
+      APVMove(@LM.w[0], Offs + i * (NVars + 1), Offs + i * (NVars + 1) + NVars,
+        @A[i][0], 0, NVars);
+      Inc(i);
     end;
 end;
 
@@ -533,11 +533,11 @@ end;
   ************************************************************************ *)
 procedure MNLCopy(const LM1: TLogitModel; var LM2: TLogitModel);
 var
-  K: TLInt;
+  k: TLInt;
 begin
-  K := Round(LM1.W[0]);
-  SetLength(LM2.W, K (* - 1 + 1 // optimized compiler *) );
-  APVMove(@LM2.W[0], 0, K - 1, @LM1.W[0], 0, K - 1);
+  k := Round(LM1.w[0]);
+  SetLength(LM2.w, k (* - 1 + 1 // optimized compiler *) );
+  APVMove(@LM2.w[0], 0, k - 1, @LM1.w[0], 0, k - 1);
 end;
 
 (* ************************************************************************
@@ -554,10 +554,10 @@ end;
 procedure MNLSerialize(const LM: TLogitModel; var RA: TLVec;
   var RLen: TLInt);
 begin
-  RLen := Round(LM.W[0]) + 1;
+  RLen := Round(LM.w[0]) + 1;
   SetLength(RA, RLen (* - 1 + 1 // optimized compiler *) );
   RA[0] := LogitVNum;
-  APVMove(@RA[0], 1, RLen - 1, @LM.W[0], 0, RLen - 2);
+  APVMove(@RA[0], 1, RLen - 1, @LM.w[0], 0, RLen - 2);
 end;
 
 (* ************************************************************************
@@ -572,8 +572,8 @@ end;
 procedure MNLUnserialize(const RA: TLVec; var LM: TLogitModel);
 begin
   Assert(Round(RA[0]) = LogitVNum, 'MNLUnserialize: incorrect array!');
-  SetLength(LM.W, Round(RA[1]) (* - 1 + 1 // optimized compiler *) );
-  APVMove(@LM.W[0], 0, Round(RA[1]) - 1, @RA[0], 1, Round(RA[1]));
+  SetLength(LM.w, Round(RA[1]) (* - 1 + 1 // optimized compiler *) );
+  APVMove(@LM.w[0], 0, Round(RA[1]) - 1, @RA[0], 1, Round(RA[1]));
 end;
 
 (* ************************************************************************
@@ -587,43 +587,43 @@ end;
   RESULT:
   CrossEntropy/(NPoints*ln(2)).
   ************************************************************************ *)
-function MNLAvgCE(var LM: TLogitModel; const XY: TLMatrix;
+function MNLAvgCE(var LM: TLogitModel; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   NVars   : TLInt;
   NClasses: TLInt;
-  I       : TLInt;
+  i       : TLInt;
   WorkX   : TLVec;
   WorkY   : TLVec;
 begin
-  Assert(AP_FP_Eq(LM.W[1], LogitVNum), 'MNLClsError: unexpected model version');
-  NVars := Round(LM.W[2]);
-  NClasses := Round(LM.W[3]);
+  Assert(AP_FP_Eq(LM.w[1], LogitVNum), 'MNLClsError: unexpected model version');
+  NVars := Round(LM.w[2]);
+  NClasses := Round(LM.w[3]);
   SetLength(WorkX, NVars (* - 1 + 1 // optimized compiler *) );
   SetLength(WorkY, NClasses (* - 1 + 1 // optimized compiler *) );
   Result := 0;
-  I := 0;
-  while I <= NPoints - 1 do
+  i := 0;
+  while i <= NPoints - 1 do
     begin
-      Assert((Round(XY[I, NVars]) >= 0) and (Round(XY[I, NVars]) < NClasses),
+      Assert((Round(xy[i, NVars]) >= 0) and (Round(xy[i, NVars]) < NClasses),
         'MNLAvgCE: incorrect class number!');
 
       //
       // Process
       //
-      APVMove(@WorkX[0], 0, NVars - 1, @XY[I][0], 0, NVars - 1);
+      APVMove(@WorkX[0], 0, NVars - 1, @xy[i][0], 0, NVars - 1);
       MNLProcess(LM, WorkX, WorkY);
-      if AP_FP_Greater(WorkY[Round(XY[I, NVars])], 0) then
+      if AP_FP_Greater(WorkY[Round(xy[i, NVars])], 0) then
         begin
-          Result := Result - Ln(WorkY[Round(XY[I, NVars])]);
+          Result := Result - ln(WorkY[Round(xy[i, NVars])]);
         end
       else
         begin
-          Result := Result - Ln(MinRealNumber);
+          Result := Result - ln(MinRealNumber);
         end;
-      Inc(I);
+      Inc(i);
     end;
-  Result := Result / (NPoints * Ln(2));
+  Result := Result / (NPoints * ln(2));
 end;
 
 (* ************************************************************************
@@ -637,10 +637,10 @@ end;
   RESULT:
   percent of incorrectly classified cases.
   ************************************************************************ *)
-function MNLRelClsError(var LM: TLogitModel; const XY: TLMatrix;
+function MNLRelClsError(var LM: TLogitModel; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 begin
-  Result := AP_Float(MNLClsError(LM, XY, NPoints)) / NPoints;
+  Result := AP_Float(MNLClsError(LM, xy, NPoints)) / NPoints;
 end;
 
 (* ************************************************************************
@@ -654,7 +654,7 @@ end;
   RESULT:
   root mean square error (error when estimating posterior probabilities).
   ************************************************************************ *)
-function MNLRMSError(var LM: TLogitModel; const XY: TLMatrix;
+function MNLRMSError(var LM: TLogitModel; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
@@ -663,8 +663,8 @@ var
   Avg   : TLFloat;
   AvgRel: TLFloat;
 begin
-  Assert(Round(LM.W[1]) = LogitVNum, 'MNLRMSError: Incorrect MNL version!');
-  MNLAllErrors(LM, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
+  Assert(Round(LM.w[1]) = LogitVNum, 'MNLRMSError: Incorrect MNL version!');
+  MNLAllErrors(LM, xy, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := RMS;
 end;
 
@@ -679,7 +679,7 @@ end;
   RESULT:
   average error (error when estimating posterior probabilities).
   ************************************************************************ *)
-function MNLAvgError(var LM: TLogitModel; const XY: TLMatrix;
+function MNLAvgError(var LM: TLogitModel; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
@@ -688,8 +688,8 @@ var
   Avg   : TLFloat;
   AvgRel: TLFloat;
 begin
-  Assert(Round(LM.W[1]) = LogitVNum, 'MNLRMSError: Incorrect MNL version!');
-  MNLAllErrors(LM, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
+  Assert(Round(LM.w[1]) = LogitVNum, 'MNLRMSError: Incorrect MNL version!');
+  MNLAllErrors(LM, xy, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := Avg;
 end;
 
@@ -704,7 +704,7 @@ end;
   RESULT:
   average relative error (error when estimating posterior probabilities).
   ************************************************************************ *)
-function MNLAvgRelError(var LM: TLogitModel; const XY: TLMatrix;
+function MNLAvgRelError(var LM: TLogitModel; const xy: TLMatrix;
   SSize: TLInt): TLFloat;
 var
   RelCls: TLFloat;
@@ -713,39 +713,39 @@ var
   Avg   : TLFloat;
   AvgRel: TLFloat;
 begin
-  Assert(Round(LM.W[1]) = LogitVNum, 'MNLRMSError: Incorrect MNL version!');
-  MNLAllErrors(LM, XY, SSize, RelCls, AvgCE, RMS, Avg, AvgRel);
+  Assert(Round(LM.w[1]) = LogitVNum, 'MNLRMSError: Incorrect MNL version!');
+  MNLAllErrors(LM, xy, SSize, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := AvgRel;
 end;
 
 (* ************************************************************************
   Classification error on test set = MNLRelClsError*NPoints
   ************************************************************************ *)
-function MNLClsError(var LM: TLogitModel; const XY: TLMatrix;
+function MNLClsError(var LM: TLogitModel; const xy: TLMatrix;
   NPoints: TLInt): TLInt;
 var
   NVars   : TLInt;
   NClasses: TLInt;
-  I       : TLInt;
+  i       : TLInt;
   J       : TLInt;
   WorkX   : TLVec;
   WorkY   : TLVec;
   NMAX    : TLInt;
 begin
-  Assert(AP_FP_Eq(LM.W[1], LogitVNum), 'MNLClsError: unexpected model version');
-  NVars := Round(LM.W[2]);
-  NClasses := Round(LM.W[3]);
+  Assert(AP_FP_Eq(LM.w[1], LogitVNum), 'MNLClsError: unexpected model version');
+  NVars := Round(LM.w[2]);
+  NClasses := Round(LM.w[3]);
   SetLength(WorkX, NVars (* - 1 + 1 // optimized compiler *) );
   SetLength(WorkY, NClasses (* - 1 + 1 // optimized compiler *) );
   Result := 0;
-  I := 0;
-  while I <= NPoints - 1 do
+  i := 0;
+  while i <= NPoints - 1 do
     begin
 
       //
       // Process
       //
-      APVMove(@WorkX[0], 0, NVars - 1, @XY[I][0], 0, NVars - 1);
+      APVMove(@WorkX[0], 0, NVars - 1, @xy[i][0], 0, NVars - 1);
       MNLProcess(LM, WorkX, WorkY);
 
       //
@@ -765,11 +765,11 @@ begin
       //
       // compare
       //
-      if NMAX <> Round(XY[I, NVars]) then
+      if NMAX <> Round(xy[i, NVars]) then
         begin
           Result := Result + 1;
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -777,75 +777,75 @@ end;
   Internal subroutine. Places exponents of the anti-overflow shifted
   internal linear outputs into the service part of the W array.
   ************************************************************************ *)
-procedure MNLIExp(var W: TLVec; const X: TLVec);
+procedure MNLIExp(var w: TLVec; const X: TLVec);
 var
   NVars   : TLInt;
   NClasses: TLInt;
   Offs    : TLInt;
-  I       : TLInt;
-  I1      : TLInt;
-  V       : TLFloat;
-  MX      : TLFloat;
+  i       : TLInt;
+  i1      : TLInt;
+  v       : TLFloat;
+  mx      : TLFloat;
 begin
-  Assert(AP_FP_Eq(W[1], LogitVNum), 'LOGIT: unexpected model version');
-  NVars := Round(W[2]);
-  NClasses := Round(W[3]);
-  Offs := Round(W[4]);
-  I1 := Offs + (NVars + 1) * (NClasses - 1);
-  I := 0;
-  while I <= NClasses - 2 do
+  Assert(AP_FP_Eq(w[1], LogitVNum), 'LOGIT: unexpected model version');
+  NVars := Round(w[2]);
+  NClasses := Round(w[3]);
+  Offs := Round(w[4]);
+  i1 := Offs + (NVars + 1) * (NClasses - 1);
+  i := 0;
+  while i <= NClasses - 2 do
     begin
-      V := APVDotProduct(@W[0], Offs + I * (NVars + 1), Offs + I * (NVars + 1) +
+      v := APVDotProduct(@w[0], Offs + i * (NVars + 1), Offs + i * (NVars + 1) +
         NVars - 1, @X[0], 0, NVars - 1);
-      W[I1 + I] := V + W[Offs + I * (NVars + 1) + NVars];
-      Inc(I);
+      w[i1 + i] := v + w[Offs + i * (NVars + 1) + NVars];
+      Inc(i);
     end;
-  W[I1 + NClasses - 1] := 0;
-  MX := 0;
-  I := I1;
-  while I <= I1 + NClasses - 1 do
+  w[i1 + NClasses - 1] := 0;
+  mx := 0;
+  i := i1;
+  while i <= i1 + NClasses - 1 do
     begin
-      MX := Max(MX, W[I]);
-      Inc(I);
+      mx := Max(mx, w[i]);
+      Inc(i);
     end;
-  I := I1;
-  while I <= I1 + NClasses - 1 do
+  i := i1;
+  while i <= i1 + NClasses - 1 do
     begin
-      W[I] := Exp(W[I] - MX);
-      Inc(I);
+      w[i] := Exp(w[i] - mx);
+      Inc(i);
     end;
 end;
 
 (* ************************************************************************
   Calculation of all types of errors
   ************************************************************************ *)
-procedure MNLAllErrors(var LM: TLogitModel; const XY: TLMatrix;
+procedure MNLAllErrors(var LM: TLogitModel; const xy: TLMatrix;
   NPoints: TLInt; var RelCls: TLFloat; var AvgCE: TLFloat;
   var RMS: TLFloat; var Avg: TLFloat; var AvgRel: TLFloat);
 var
   NVars   : TLInt;
   NClasses: TLInt;
-  I       : TLInt;
+  i       : TLInt;
   Buf     : TLVec;
   WorkX   : TLVec;
   Y       : TLVec;
-  DY      : TLVec;
+  dy      : TLVec;
 begin
-  Assert(Round(LM.W[1]) = LogitVNum, 'MNL unit: Incorrect MNL version!');
-  NVars := Round(LM.W[2]);
-  NClasses := Round(LM.W[3]);
+  Assert(Round(LM.w[1]) = LogitVNum, 'MNL unit: Incorrect MNL version!');
+  NVars := Round(LM.w[2]);
+  NClasses := Round(LM.w[3]);
   SetLength(WorkX, NVars (* - 1 + 1 // optimized compiler *) );
   SetLength(Y, NClasses (* - 1 + 1 // optimized compiler *) );
-  SetLength(DY, 0 + 1);
+  SetLength(dy, 0 + 1);
   DSErrAllocate(NClasses, Buf);
-  I := 0;
-  while I <= NPoints - 1 do
+  i := 0;
+  while i <= NPoints - 1 do
     begin
-      APVMove(@WorkX[0], 0, NVars - 1, @XY[I][0], 0, NVars - 1);
+      APVMove(@WorkX[0], 0, NVars - 1, @xy[i][0], 0, NVars - 1);
       MNLProcess(LM, WorkX, Y);
-      DY[0] := XY[I, NVars];
-      DSErrAccumulate(Buf, Y, DY);
-      Inc(I);
+      dy[0] := xy[i, NVars];
+      DSErrAccumulate(Buf, Y, dy);
+      Inc(i);
     end;
   DSErrFinish(Buf);
   RelCls := Buf[0];
@@ -942,15 +942,15 @@ end;
   ARGONNE NATIONAL LABORATORY. MINPACK PROJECT. JUNE 1983
   JORGE J. MORE', DAVID J. THUENTE
   ************************************************************************ *)
-procedure MNLMCSRCH(const N: TLInt; var X: TLVec;
-  var F: TLFloat; var G: TLVec; const S: TLVec;
-  var STP: TLFloat; var Info: TLInt; var NFEV: TLInt;
+procedure MNLMCSRCH(const n: TLInt; var X: TLVec;
+  var F: TLFloat; var g: TLVec; const s: TLVec;
+  var Stp: TLFloat; var Info: TLInt; var NFEV: TLInt;
   var WA: TLVec; var State: TLogitMCState; var Stage: TLInt);
 var
-  V   : TLFloat;
+  v   : TLFloat;
   P5  : TLFloat;
   P66 : TLFloat;
-  ZERO: TLFloat;
+  Zero: TLFloat;
 begin
 
   //
@@ -959,7 +959,7 @@ begin
   P5 := 0.5;
   P66 := 0.66;
   State.XTRAPF := 4.0;
-  ZERO := 0;
+  Zero := 0;
 
   //
   // Main cycle
@@ -983,9 +983,9 @@ begin
           //
           // CHECK THE INPUT PARAMETERS FOR ERRORS.
           //
-          if (N <= 0) or AP_FP_Less_Eq(STP, 0) or AP_FP_Less(LogitFTOL, 0) or
-            AP_FP_Less(LogitGTOL, ZERO) or AP_FP_Less(LogitXTOL, ZERO) or
-            AP_FP_Less(LogitSTPMIN, ZERO) or AP_FP_Less(LogitSTPMAX, LogitSTPMIN) or (LogitMAXFEV <= 0)
+          if (n <= 0) or AP_FP_Less_Eq(Stp, 0) or AP_FP_Less(LogitFTOL, 0) or
+            AP_FP_Less(LogitGTOL, Zero) or AP_FP_Less(LogitXTOL, Zero) or
+            AP_FP_Less(LogitSTPMIN, Zero) or AP_FP_Less(LogitSTPMAX, LogitSTPMIN) or (LogitMAXFEV <= 0)
           then
             begin
               Stage := 0;
@@ -996,8 +996,8 @@ begin
           // COMPUTE THE INITIAL GRADIENT IN THE SEARCH DIRECTION
           // AND CHECK THAT S IS A DESCENT DIRECTION.
           //
-          V := APVDotProduct(@G[0], 0, N - 1, @S[0], 0, N - 1);
-          State.DGINIT := V;
+          v := APVDotProduct(@g[0], 0, n - 1, @s[0], 0, n - 1);
+          State.DGINIT := v;
           if AP_FP_Greater_Eq(State.DGINIT, 0) then
             begin
               Stage := 0;
@@ -1012,9 +1012,9 @@ begin
           NFEV := 0;
           State.FINIT := F;
           State.DGTEST := LogitFTOL * State.DGINIT;
-          State.WIDTH := LogitSTPMAX - LogitSTPMIN;
-          State.WIDTH1 := State.WIDTH / P5;
-          APVMove(@WA[0], 0, N - 1, @X[0], 0, N - 1);
+          State.width := LogitSTPMAX - LogitSTPMIN;
+          State.WIDTH1 := State.width / P5;
+          APVMove(@WA[0], 0, n - 1, @X[0], 0, n - 1);
 
           //
           // THE VARIABLES STX, FX, DGX CONTAIN THE VALUES OF THE STEP,
@@ -1026,10 +1026,10 @@ begin
           // FUNCTION, AND DERIVATIVE AT THE CURRENT STEP.
           //
           State.STX := 0;
-          State.FX := State.FINIT;
+          State.fx := State.FINIT;
           State.DGX := State.DGINIT;
           State.STY := 0;
-          State.FY := State.FINIT;
+          State.fy := State.FINIT;
           State.DGY := State.DGINIT;
 
           //
@@ -1063,39 +1063,39 @@ begin
           else
             begin
               State.STMIN := State.STX;
-              State.STMAX := STP + State.XTRAPF * (STP - State.STX);
+              State.STMAX := Stp + State.XTRAPF * (Stp - State.STX);
             end;
 
           //
           // FORCE THE STEP TO BE WITHIN THE BOUNDS LogitSTPMAX AND LogitSTPMIN.
           //
-          if AP_FP_Greater(STP, LogitSTPMAX) then
+          if AP_FP_Greater(Stp, LogitSTPMAX) then
             begin
-              STP := LogitSTPMAX;
+              Stp := LogitSTPMAX;
             end;
-          if AP_FP_Less(STP, LogitSTPMIN) then
+          if AP_FP_Less(Stp, LogitSTPMIN) then
             begin
-              STP := LogitSTPMIN;
+              Stp := LogitSTPMIN;
             end;
 
           //
           // IF AN UNUSUAL TERMINATION IS TO OCCUR THEN LET
           // STP BE THE LOWEST POINT OBTAINED SO FAR.
           //
-          if State.BRACKT and (AP_FP_Less_Eq(STP, State.STMIN) or
-            AP_FP_Greater_Eq(STP, State.STMAX)) or (NFEV >= LogitMAXFEV - 1) or
+          if State.BRACKT and (AP_FP_Less_Eq(Stp, State.STMIN) or
+            AP_FP_Greater_Eq(Stp, State.STMAX)) or (NFEV >= LogitMAXFEV - 1) or
             (State.INFOC = 0) or State.BRACKT and
             AP_FP_Less_Eq(State.STMAX - State.STMIN, LogitXTOL * State.STMAX) then
             begin
-              STP := State.STX;
+              Stp := State.STX;
             end;
 
           //
           // EVALUATE THE FUNCTION AND GRADIENT AT STP
           // AND COMPUTE THE DIRECTIONAL DERIVATIVE.
           //
-          APVMove(@X[0], 0, N - 1, @WA[0], 0, N - 1);
-          APVAdd(@X[0], 0, N - 1, @S[0], 0, N - 1, STP);
+          APVMove(@X[0], 0, n - 1, @WA[0], 0, n - 1);
+          APVAdd(@X[0], 0, n - 1, @s[0], 0, n - 1, Stp);
 
           //
           // NEXT
@@ -1107,24 +1107,24 @@ begin
         begin
           Info := 0;
           NFEV := NFEV + 1;
-          V := APVDotProduct(@G[0], 0, N - 1, @S[0], 0, N - 1);
-          State.DG := V;
-          State.FTEST1 := State.FINIT + STP * State.DGTEST;
+          v := APVDotProduct(@g[0], 0, n - 1, @s[0], 0, n - 1);
+          State.DG := v;
+          State.FTEST1 := State.FINIT + Stp * State.DGTEST;
 
           //
           // TEST FOR CONVERGENCE.
           //
-          if State.BRACKT and (AP_FP_Less_Eq(STP, State.STMIN) or
-            AP_FP_Greater_Eq(STP, State.STMAX)) or (State.INFOC = 0) then
+          if State.BRACKT and (AP_FP_Less_Eq(Stp, State.STMIN) or
+            AP_FP_Greater_Eq(Stp, State.STMAX)) or (State.INFOC = 0) then
             begin
               Info := 6;
             end;
-          if AP_FP_Eq(STP, LogitSTPMAX) and AP_FP_Less_Eq(F, State.FTEST1) and
+          if AP_FP_Eq(Stp, LogitSTPMAX) and AP_FP_Less_Eq(F, State.FTEST1) and
             AP_FP_Less_Eq(State.DG, State.DGTEST) then
             begin
               Info := 5;
             end;
-          if AP_FP_Eq(STP, LogitSTPMIN) and (AP_FP_Greater(F, State.FTEST1) or
+          if AP_FP_Eq(Stp, LogitSTPMIN) and (AP_FP_Greater(F, State.FTEST1) or
             AP_FP_Greater_Eq(State.DG, State.DGTEST)) then
             begin
               Info := 4;
@@ -1170,16 +1170,16 @@ begin
           // DERIVATIVE, AND IF A LOWER FUNCTION VALUE HAS BEEN
           // OBTAINED BUT THE DECREASE IS NOT SUFFICIENT.
           //
-          if State.STAGE1 and AP_FP_Less_Eq(F, State.FX) and
+          if State.STAGE1 and AP_FP_Less_Eq(F, State.fx) and
             AP_FP_Greater(F, State.FTEST1) then
             begin
 
               //
               // DEFINE THE MODIFIED FUNCTION AND DERIVATIVE VALUES.
               //
-              State.FM := F - STP * State.DGTEST;
-              State.FXM := State.FX - State.STX * State.DGTEST;
-              State.FYM := State.FY - State.STY * State.DGTEST;
+              State.FM := F - Stp * State.DGTEST;
+              State.FXM := State.fx - State.STX * State.DGTEST;
+              State.FYM := State.fy - State.STY * State.DGTEST;
               State.DGM := State.DG - State.DGTEST;
               State.DGXM := State.DGX - State.DGTEST;
               State.DGYM := State.DGY - State.DGTEST;
@@ -1189,14 +1189,14 @@ begin
               // AND TO COMPUTE THE NEW STEP.
               //
               MNLMCSTEP(State.STX, State.FXM, State.DGXM, State.STY, State.FYM,
-                State.DGYM, STP, State.FM, State.DGM, State.BRACKT, State.STMIN,
+                State.DGYM, Stp, State.FM, State.DGM, State.BRACKT, State.STMIN,
                 State.STMAX, State.INFOC);
 
               //
               // RESET THE FUNCTION AND GRADIENT VALUES FOR F.
               //
-              State.FX := State.FXM + State.STX * State.DGTEST;
-              State.FY := State.FYM + State.STY * State.DGTEST;
+              State.fx := State.FXM + State.STX * State.DGTEST;
+              State.fy := State.FYM + State.STY * State.DGTEST;
               State.DGX := State.DGXM + State.DGTEST;
               State.DGY := State.DGYM + State.DGTEST;
             end
@@ -1207,8 +1207,8 @@ begin
               // CALL MCSTEP TO UPDATE THE INTERVAL OF UNCERTAINTY
               // AND TO COMPUTE THE NEW STEP.
               //
-              MNLMCSTEP(State.STX, State.FX, State.DGX, State.STY, State.FY,
-                State.DGY, STP, F, State.DG, State.BRACKT, State.STMIN, State.STMAX,
+              MNLMCSTEP(State.STX, State.fx, State.DGX, State.STY, State.fy,
+                State.DGY, Stp, F, State.DG, State.BRACKT, State.STMIN, State.STMAX,
                 State.INFOC);
             end;
 
@@ -1221,10 +1221,10 @@ begin
               if AP_FP_Greater_Eq(AbsReal(State.STY - State.STX), P66 * State.WIDTH1)
               then
                 begin
-                  STP := State.STX + P5 * (State.STY - State.STX);
+                  Stp := State.STX + P5 * (State.STY - State.STX);
                 end;
-              State.WIDTH1 := State.WIDTH;
-              State.WIDTH := AbsReal(State.STY - State.STX);
+              State.WIDTH1 := State.width;
+              State.width := AbsReal(State.STY - State.STX);
             end;
 
           //
@@ -1236,31 +1236,31 @@ begin
     end;
 end;
 
-procedure MNLMCSTEP(var STX: TLFloat; var FX: TLFloat;
-  var DX: TLFloat; var STY: TLFloat; var FY: TLFloat;
-  var DY: TLFloat; var STP: TLFloat; const FP: TLFloat;
+procedure MNLMCSTEP(var STX: TLFloat; var fx: TLFloat;
+  var dx: TLFloat; var STY: TLFloat; var fy: TLFloat;
+  var dy: TLFloat; var Stp: TLFloat; const FP: TLFloat;
   const DP: TLFloat; var BRACKT: Boolean; const STMIN: TLFloat;
   const STMAX: TLFloat; var Info: TLInt);
 var
-  BOUND: Boolean;
-  GAMMA: TLFloat;
-  P    : TLFloat;
-  Q    : TLFloat;
+  Bound: Boolean;
+  Gamma: TLFloat;
+  p    : TLFloat;
+  q    : TLFloat;
   R    : TLFloat;
-  S    : TLFloat;
+  s    : TLFloat;
   SGND : TLFloat;
   STPC : TLFloat;
   STPF : TLFloat;
   STPQ : TLFloat;
-  THETA: TLFloat;
+  Theta: TLFloat;
 begin
   Info := 0;
 
   //
   // CHECK THE INPUT PARAMETERS FOR ERRORS.
   //
-  if BRACKT and (AP_FP_Less_Eq(STP, Min(STX, STY)) or AP_FP_Greater_Eq(STP,
-    Max(STX, STY))) or AP_FP_Greater_Eq(DX * (STP - STX), 0) or
+  if BRACKT and (AP_FP_Less_Eq(Stp, Min(STX, STY)) or AP_FP_Greater_Eq(Stp,
+    Max(STX, STY))) or AP_FP_Greater_Eq(dx * (Stp - STX), 0) or
     AP_FP_Less(STMAX, STMIN) then
     begin
       Exit;
@@ -1269,7 +1269,7 @@ begin
   //
   // DETERMINE IF THE DERIVATIVES HAVE OPPOSITE SIGN.
   //
-  SGND := DP * (DX / AbsReal(DX));
+  SGND := DP * (dx / AbsReal(dx));
 
   //
   // FIRST CASE. A HIGHER FUNCTION VALUE.
@@ -1277,22 +1277,22 @@ begin
   // TO STX THAN THE QUADRATIC STEP, THE CUBIC STEP IS TAKEN,
   // ELSE THE AVERAGE OF THE CUBIC AND QUADRATIC STEPS IS TAKEN.
   //
-  if AP_FP_Greater(FP, FX) then
+  if AP_FP_Greater(FP, fx) then
     begin
       Info := 1;
-      BOUND := True;
-      THETA := 3 * (FX - FP) / (STP - STX) + DX + DP;
-      S := Max(AbsReal(THETA), Max(AbsReal(DX), AbsReal(DP)));
-      GAMMA := S * Sqrt(AP_Sqr(THETA / S) - DX / S * (DP / S));
-      if AP_FP_Less(STP, STX) then
+      Bound := True;
+      Theta := 3 * (fx - FP) / (Stp - STX) + dx + DP;
+      s := Max(AbsReal(Theta), Max(AbsReal(dx), AbsReal(DP)));
+      Gamma := s * Sqrt(AP_Sqr(Theta / s) - dx / s * (DP / s));
+      if AP_FP_Less(Stp, STX) then
         begin
-          GAMMA := -GAMMA;
+          Gamma := -Gamma;
         end;
-      P := GAMMA - DX + THETA;
-      Q := GAMMA - DX + GAMMA + DP;
-      R := P / Q;
-      STPC := STX + R * (STP - STX);
-      STPQ := STX + DX / ((FX - FP) / (STP - STX) + DX) / 2 * (STP - STX);
+      p := Gamma - dx + Theta;
+      q := Gamma - dx + Gamma + DP;
+      R := p / q;
+      STPC := STX + R * (Stp - STX);
+      STPQ := STX + dx / ((fx - FP) / (Stp - STX) + dx) / 2 * (Stp - STX);
       if AP_FP_Less(AbsReal(STPC - STX), AbsReal(STPQ - STX)) then
         begin
           STPF := STPC;
@@ -1315,20 +1315,20 @@ begin
           // THE CUBIC STEP IS TAKEN, ELSE THE QUADRATIC STEP IS TAKEN.
           //
           Info := 2;
-          BOUND := False;
-          THETA := 3 * (FX - FP) / (STP - STX) + DX + DP;
-          S := Max(AbsReal(THETA), Max(AbsReal(DX), AbsReal(DP)));
-          GAMMA := S * Sqrt(AP_Sqr(THETA / S) - DX / S * (DP / S));
-          if AP_FP_Greater(STP, STX) then
+          Bound := False;
+          Theta := 3 * (fx - FP) / (Stp - STX) + dx + DP;
+          s := Max(AbsReal(Theta), Max(AbsReal(dx), AbsReal(DP)));
+          Gamma := s * Sqrt(AP_Sqr(Theta / s) - dx / s * (DP / s));
+          if AP_FP_Greater(Stp, STX) then
             begin
-              GAMMA := -GAMMA;
+              Gamma := -Gamma;
             end;
-          P := GAMMA - DP + THETA;
-          Q := GAMMA - DP + GAMMA + DX;
-          R := P / Q;
-          STPC := STP + R * (STX - STP);
-          STPQ := STP + DP / (DP - DX) * (STX - STP);
-          if AP_FP_Greater(AbsReal(STPC - STP), AbsReal(STPQ - STP)) then
+          p := Gamma - DP + Theta;
+          q := Gamma - DP + Gamma + dx;
+          R := p / q;
+          STPC := Stp + R * (STX - Stp);
+          STPQ := Stp + DP / (DP - dx) * (STX - Stp);
+          if AP_FP_Greater(AbsReal(STPC - Stp), AbsReal(STPQ - Stp)) then
             begin
               STPF := STPC;
             end
@@ -1340,7 +1340,7 @@ begin
         end
       else
         begin
-          if AP_FP_Less(AbsReal(DP), AbsReal(DX)) then
+          if AP_FP_Less(AbsReal(DP), AbsReal(dx)) then
             begin
 
               //
@@ -1354,29 +1354,29 @@ begin
               // CLOSEST TO STX IS TAKEN, ELSE THE STEP FARTHEST AWAY IS TAKEN.
               //
               Info := 3;
-              BOUND := True;
-              THETA := 3 * (FX - FP) / (STP - STX) + DX + DP;
-              S := Max(AbsReal(THETA), Max(AbsReal(DX), AbsReal(DP)));
+              Bound := True;
+              Theta := 3 * (fx - FP) / (Stp - STX) + dx + DP;
+              s := Max(AbsReal(Theta), Max(AbsReal(dx), AbsReal(DP)));
 
               //
               // THE CASE GAMMA = 0 ONLY ARISES IF THE CUBIC DOES NOT TEND
               // TO INFINITY IN THE DIRECTION OF THE STEP.
               //
-              GAMMA := S * Sqrt(Max(0, AP_Sqr(THETA / S) - DX / S * (DP / S)));
-              if AP_FP_Greater(STP, STX) then
+              Gamma := s * Sqrt(Max(0, AP_Sqr(Theta / s) - dx / s * (DP / s)));
+              if AP_FP_Greater(Stp, STX) then
                 begin
-                  GAMMA := -GAMMA;
+                  Gamma := -Gamma;
                 end;
-              P := GAMMA - DP + THETA;
-              Q := GAMMA + (DX - DP) + GAMMA;
-              R := P / Q;
-              if AP_FP_Less(R, 0) and AP_FP_Neq(GAMMA, 0) then
+              p := Gamma - DP + Theta;
+              q := Gamma + (dx - DP) + Gamma;
+              R := p / q;
+              if AP_FP_Less(R, 0) and AP_FP_NEq(Gamma, 0) then
                 begin
-                  STPC := STP + R * (STX - STP);
+                  STPC := Stp + R * (STX - Stp);
                 end
               else
                 begin
-                  if AP_FP_Greater(STP, STX) then
+                  if AP_FP_Greater(Stp, STX) then
                     begin
                       STPC := STMAX;
                     end
@@ -1385,10 +1385,10 @@ begin
                       STPC := STMIN;
                     end;
                 end;
-              STPQ := STP + DP / (DP - DX) * (STX - STP);
+              STPQ := Stp + DP / (DP - dx) * (STX - Stp);
               if BRACKT then
                 begin
-                  if AP_FP_Less(AbsReal(STP - STPC), AbsReal(STP - STPQ)) then
+                  if AP_FP_Less(AbsReal(Stp - STPC), AbsReal(Stp - STPQ)) then
                     begin
                       STPF := STPC;
                     end
@@ -1399,7 +1399,7 @@ begin
                 end
               else
                 begin
-                  if AP_FP_Greater(AbsReal(STP - STPC), AbsReal(STP - STPQ)) then
+                  if AP_FP_Greater(AbsReal(Stp - STPC), AbsReal(Stp - STPQ)) then
                     begin
                       STPF := STPC;
                     end
@@ -1419,25 +1419,25 @@ begin
               // IS EITHER LogitSTPMIN OR LogitSTPMAX, ELSE THE CUBIC STEP IS TAKEN.
               //
               Info := 4;
-              BOUND := False;
+              Bound := False;
               if BRACKT then
                 begin
-                  THETA := 3 * (FP - FY) / (STY - STP) + DY + DP;
-                  S := Max(AbsReal(THETA), Max(AbsReal(DY), AbsReal(DP)));
-                  GAMMA := S * Sqrt(AP_Sqr(THETA / S) - DY / S * (DP / S));
-                  if AP_FP_Greater(STP, STY) then
+                  Theta := 3 * (FP - fy) / (STY - Stp) + dy + DP;
+                  s := Max(AbsReal(Theta), Max(AbsReal(dy), AbsReal(DP)));
+                  Gamma := s * Sqrt(AP_Sqr(Theta / s) - dy / s * (DP / s));
+                  if AP_FP_Greater(Stp, STY) then
                     begin
-                      GAMMA := -GAMMA;
+                      Gamma := -Gamma;
                     end;
-                  P := GAMMA - DP + THETA;
-                  Q := GAMMA - DP + GAMMA + DY;
-                  R := P / Q;
-                  STPC := STP + R * (STY - STP);
+                  p := Gamma - DP + Theta;
+                  q := Gamma - DP + Gamma + dy;
+                  R := p / q;
+                  STPC := Stp + R * (STY - Stp);
                   STPF := STPC;
                 end
               else
                 begin
-                  if AP_FP_Greater(STP, STX) then
+                  if AP_FP_Greater(Stp, STX) then
                     begin
                       STPF := STMAX;
                     end
@@ -1454,23 +1454,23 @@ begin
   // UPDATE THE INTERVAL OF UNCERTAINTY. THIS UPDATE DOES NOT
   // DEPEND ON THE NEW STEP OR THE CASE ANALYSIS ABOVE.
   //
-  if AP_FP_Greater(FP, FX) then
+  if AP_FP_Greater(FP, fx) then
     begin
-      STY := STP;
-      FY := FP;
-      DY := DP;
+      STY := Stp;
+      fy := FP;
+      dy := DP;
     end
   else
     begin
       if AP_FP_Less(SGND, 0.0) then
         begin
           STY := STX;
-          FY := FX;
-          DY := DX;
+          fy := fx;
+          dy := dx;
         end;
-      STX := STP;
-      FX := FP;
-      DX := DP;
+      STX := Stp;
+      fx := FP;
+      dx := DP;
     end;
 
   //
@@ -1478,16 +1478,16 @@ begin
   //
   STPF := Min(STMAX, STPF);
   STPF := Max(STMIN, STPF);
-  STP := STPF;
-  if BRACKT and BOUND then
+  Stp := STPF;
+  if BRACKT and Bound then
     begin
       if AP_FP_Greater(STY, STX) then
         begin
-          STP := Min(STX + 0.66 * (STY - STX), STP);
+          Stp := Min(STX + 0.66 * (STY - STX), Stp);
         end
       else
         begin
-          STP := Max(STX + 0.66 * (STY - STX), STP);
+          Stp := Max(STX + 0.66 * (STY - STX), Stp);
         end;
     end;
-end;
+end; 

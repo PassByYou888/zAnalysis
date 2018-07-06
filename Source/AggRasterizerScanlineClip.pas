@@ -39,7 +39,7 @@ unit AggRasterizerScanlineClip;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -54,13 +54,13 @@ const
 type
   TAggRasterizerConv = class
   public
-    function MulDiv(A, B, C: Double): Pointer; virtual; abstract;
+    function MulDiv(A, b, C: Double): Pointer; virtual; abstract;
 
-    function Xi(V: Pointer): Integer; virtual; abstract;
-    function Yi(V: Pointer): Integer; virtual; abstract;
+    function XI(v: Pointer): Integer; virtual; abstract;
+    function Yi(v: Pointer): Integer; virtual; abstract;
 
-    function Upscale(V: Double): Pointer; virtual; abstract;
-    function Downscale(V: Integer): Pointer; virtual; abstract;
+    function Upscale(v: Double): Pointer; virtual; abstract;
+    function Downscale(v: Integer): Pointer; virtual; abstract;
   end;
 
   TAggRasConvInt = class(TAggRasterizerConv)
@@ -70,13 +70,13 @@ type
   public
     constructor Create;
 
-    function MulDiv(A, B, C: Double): Pointer; override;
+    function MulDiv(A, b, C: Double): Pointer; override;
 
-    function Xi(V: Pointer): Integer; override;
-    function Yi(V: Pointer): Integer; override;
+    function XI(v: Pointer): Integer; override;
+    function Yi(v: Pointer): Integer; override;
 
-    function Upscale(V: Double): Pointer; override;
-    function Downscale(V: Integer): Pointer; override;
+    function Upscale(v: Double): Pointer; override;
+    function Downscale(v: Integer): Pointer; override;
   end;
 
   TAggRasConvIntSat = class(TAggRasterizerConv)
@@ -86,13 +86,13 @@ type
   public
     constructor Create;
 
-    function MulDiv(A, B, C: Double): Pointer; override;
+    function MulDiv(A, b, C: Double): Pointer; override;
 
-    function Xi(V: Pointer): Integer; override;
-    function Yi(V: Pointer): Integer; override;
+    function XI(v: Pointer): Integer; override;
+    function Yi(v: Pointer): Integer; override;
 
-    function Upscale(V: Double): Pointer; override;
-    function Downscale(V: Integer): Pointer; override;
+    function Upscale(v: Double): Pointer; override;
+    function Downscale(v: Integer): Pointer; override;
   end;
 
   TAggRasConvInt3x = class(TAggRasterizerConv)
@@ -102,13 +102,13 @@ type
   public
     constructor Create;
 
-    function MulDiv(A, B, C: Double): Pointer; override;
+    function MulDiv(A, b, C: Double): Pointer; override;
 
-    function Xi(V: Pointer): Integer; override;
-    function Yi(V: Pointer): Integer; override;
+    function XI(v: Pointer): Integer; override;
+    function Yi(v: Pointer): Integer; override;
 
-    function Upscale(V: Double): Pointer; override;
-    function Downscale(V: Integer): Pointer; override;
+    function Upscale(v: Double): Pointer; override;
+    function Downscale(v: Integer): Pointer; override;
   end;
 
   TRasConvDouble = class(TAggRasterizerConv)
@@ -118,13 +118,13 @@ type
   public
     constructor Create;
 
-    function MulDiv(A, B, C: Double): Pointer; override;
+    function MulDiv(A, b, C: Double): Pointer; override;
 
-    function Xi(V: Pointer): Integer; override;
-    function Yi(V: Pointer): Integer; override;
+    function XI(v: Pointer): Integer; override;
+    function Yi(v: Pointer): Integer; override;
 
-    function Upscale(V: Double): Pointer; override;
-    function Downscale(V: Integer): Pointer; override;
+    function Upscale(v: Double): Pointer; override;
+    function Downscale(v: Integer): Pointer; override;
   end;
 
   TRasConvDouble3x = class(TAggRasterizerConv)
@@ -134,13 +134,13 @@ type
   public
     constructor Create;
 
-    function MulDiv(A, B, C: Double): Pointer; override;
+    function MulDiv(A, b, C: Double): Pointer; override;
 
-    function Xi(V: Pointer): Integer; override;
-    function Yi(V: Pointer): Integer; override;
+    function XI(v: Pointer): Integer; override;
+    function Yi(v: Pointer): Integer; override;
 
-    function Upscale(V: Double): Pointer; override;
-    function Downscale(V: Integer): Pointer; override;
+    function Upscale(v: Double): Pointer; override;
+    function Downscale(v: Integer): Pointer; override;
   end;
 
   TAggRasterizerScanLineClip = class
@@ -148,10 +148,10 @@ type
     function GetConverterType: TAggRasterizerConv; virtual; abstract;
   public
     procedure ResetClipping; virtual; abstract;
-    procedure SetClipBox(X1, Y1, X2, Y2: Pointer); overload; virtual; abstract;
+    procedure SetClipBox(x1, y1, x2, y2: Pointer); overload; virtual; abstract;
     procedure SetClipBox(Bounds: Pointer); overload; virtual; abstract;
-    procedure MoveTo(X1, Y1: Pointer); virtual; abstract;
-    procedure LineTo(Ras: TAggRasterizerCellsAA; X2, Y2: Pointer); virtual; abstract;
+    procedure MoveTo(x1, y1: Pointer); virtual; abstract;
+    procedure LineTo(Ras: TAggRasterizerCellsAA; x2, y2: Pointer); virtual; abstract;
 
     property ConverterType: TAggRasterizerConv read GetConverterType;
   end;
@@ -163,18 +163,18 @@ type
     FX1, FY1: Integer;
     FF1: Cardinal;
     FClipping: Boolean;
-    procedure LineClipY(Ras: TAggRasterizerCellsAA; X1, Y1, X2, Y2: Integer;
-      F1, F2: Cardinal);
+    procedure LineClipY(Ras: TAggRasterizerCellsAA; x1, y1, x2, y2: Integer;
+      f1, f2: Cardinal);
   protected
     function GetConverterType: TAggRasterizerConv; override;
   public
-    constructor Create(Conv: TAggRasterizerConv);
+    constructor Create(conv: TAggRasterizerConv);
 
     procedure ResetClipping; override;
-    procedure SetClipBox(X1, Y1, X2, Y2: Pointer); override;
+    procedure SetClipBox(x1, y1, x2, y2: Pointer); override;
     procedure SetClipBox(Bounds: Pointer); override;
-    procedure MoveTo(X1, Y1: Pointer); override;
-    procedure LineTo(Ras: TAggRasterizerCellsAA; X2, Y2: Pointer); override;
+    procedure MoveTo(x1, y1: Pointer); override;
+    procedure LineTo(Ras: TAggRasterizerCellsAA; x2, y2: Pointer); override;
   end;
 
   TAggRasterizerScanLineClipDouble = class(TAggRasterizerScanLineClip)
@@ -184,18 +184,18 @@ type
     FX1, FY1: Double;
     FF1: Cardinal;
     FClipping: Boolean;
-    procedure LineClipY(Ras: TAggRasterizerCellsAA; X1, Y1, X2, Y2: Double;
-      F1, F2: Cardinal);
+    procedure LineClipY(Ras: TAggRasterizerCellsAA; x1, y1, x2, y2: Double;
+      f1, f2: Cardinal);
   protected
     function GetConverterType: TAggRasterizerConv; override;
   public
-    constructor Create(Conv: TAggRasterizerConv);
+    constructor Create(conv: TAggRasterizerConv);
 
     procedure ResetClipping; override;
-    procedure SetClipBox(X1, Y1, X2, Y2: Pointer); override;
+    procedure SetClipBox(x1, y1, x2, y2: Pointer); override;
     procedure SetClipBox(Bounds: Pointer); override;
-    procedure MoveTo(X1, Y1: Pointer); override;
-    procedure LineTo(Ras: TAggRasterizerCellsAA; X2, Y2: Pointer); override;
+    procedure MoveTo(x1, y1: Pointer); override;
+    procedure LineTo(Ras: TAggRasterizerCellsAA; x2, y2: Pointer); override;
   end;
 
   TAggRasterizerScanLineNoClip = class(TAggRasterizerScanLineClip)
@@ -208,10 +208,10 @@ type
     constructor Create;
 
     procedure ResetClipping; override;
-    procedure SetClipBox(X1, Y1, X2, Y2: Pointer); override;
+    procedure SetClipBox(x1, y1, x2, y2: Pointer); override;
     procedure SetClipBox(Bounds: Pointer); override;
-    procedure MoveTo(X1, Y1: Pointer); override;
-    procedure LineTo(Ras: TAggRasterizerCellsAA; X2, Y2: Pointer); override;
+    procedure MoveTo(x1, y1: Pointer); override;
+    procedure LineTo(Ras: TAggRasterizerCellsAA; x2, y2: Pointer); override;
   end;
 
   TAggRasterizerScanLineClipInt = class(TAggRasterizerScanLineClipInteger)
@@ -265,9 +265,9 @@ begin
   inherited;
 end;
 
-function TAggRasConvInt.MulDiv(A, B, C: Double): Pointer;
+function TAggRasConvInt.MulDiv(A, b, C: Double): Pointer;
 begin
-  FResult[FStack] := IntegerRound(A * B / C);
+  FResult[FStack] := IntegerRound(A * b / C);
 
   Result := @FResult[FStack];
 
@@ -277,19 +277,19 @@ begin
       FStack := 1;
 end;
 
-function TAggRasConvInt.Xi(V: Pointer): Integer;
+function TAggRasConvInt.XI(v: Pointer): Integer;
 begin
-  Result := PInteger(V)^;
+  Result := PInteger(v)^;
 end;
 
-function TAggRasConvInt.Yi(V: Pointer): Integer;
+function TAggRasConvInt.Yi(v: Pointer): Integer;
 begin
-  Result := PInteger(V)^;
+  Result := PInteger(v)^;
 end;
 
-function TAggRasConvInt.Upscale(V: Double): Pointer;
+function TAggRasConvInt.Upscale(v: Double): Pointer;
 begin
-  FResult[FStack] := IntegerRound(V * CAggPolySubpixelScale);
+  FResult[FStack] := IntegerRound(v * CAggPolySubpixelScale);
 
   Result := @FResult[FStack];
 
@@ -299,9 +299,9 @@ begin
       FStack := 1;
 end;
 
-function TAggRasConvInt.Downscale(V: Integer): Pointer;
+function TAggRasConvInt.Downscale(v: Integer): Pointer;
 begin
-  FResult[FStack] := V;
+  FResult[FStack] := v;
 
   Result := @FResult[FStack];
 
@@ -318,9 +318,9 @@ begin
   FStack := 1;
 end;
 
-function TAggRasConvIntSat.MulDiv(A, B, C: Double): Pointer;
+function TAggRasConvIntSat.MulDiv(A, b, C: Double): Pointer;
 begin
-  FResult[FStack] := SaturationIntegerRound(CAggPolyMaxCoord, A * B / C);
+  FResult[FStack] := SaturationIntegerRound(CAggPolyMaxCoord, A * b / C);
 
   Result := @FResult[FStack];
 
@@ -330,20 +330,20 @@ begin
       FStack := 1;
 end;
 
-function TAggRasConvIntSat.Xi(V: Pointer): Integer;
+function TAggRasConvIntSat.XI(v: Pointer): Integer;
 begin
-  Result := PInteger(V)^;
+  Result := PInteger(v)^;
 end;
 
-function TAggRasConvIntSat.Yi(V: Pointer): Integer;
+function TAggRasConvIntSat.Yi(v: Pointer): Integer;
 begin
-  Result := PInteger(V)^;
+  Result := PInteger(v)^;
 end;
 
-function TAggRasConvIntSat.Upscale(V: Double): Pointer;
+function TAggRasConvIntSat.Upscale(v: Double): Pointer;
 begin
   FResult[FStack] := SaturationIntegerRound(CAggPolyMaxCoord,
-    V * CAggPolySubpixelScale);
+    v * CAggPolySubpixelScale);
 
   Result := @FResult[FStack];
 
@@ -353,9 +353,9 @@ begin
       FStack := 1;
 end;
 
-function TAggRasConvIntSat.Downscale(V: Integer): Pointer;
+function TAggRasConvIntSat.Downscale(v: Integer): Pointer;
 begin
-  FResult[FStack] := V;
+  FResult[FStack] := v;
 
   Result := @FResult[FStack];
 
@@ -372,9 +372,9 @@ begin
   FStack := 1;
 end;
 
-function TAggRasConvInt3x.MulDiv(A, B, C: Double): Pointer;
+function TAggRasConvInt3x.MulDiv(A, b, C: Double): Pointer;
 begin
-  FResult[FStack] := IntegerRound(A * B / C);
+  FResult[FStack] := IntegerRound(A * b / C);
 
   Result := @FResult[FStack];
 
@@ -384,19 +384,19 @@ begin
       FStack := 1;
 end;
 
-function TAggRasConvInt3x.Xi(V: Pointer): Integer;
+function TAggRasConvInt3x.XI(v: Pointer): Integer;
 begin
-  Result := PInteger(V)^ * 3;
+  Result := PInteger(v)^ * 3;
 end;
 
-function TAggRasConvInt3x.Yi(V: Pointer): Integer;
+function TAggRasConvInt3x.Yi(v: Pointer): Integer;
 begin
-  Result := PInteger(V)^;
+  Result := PInteger(v)^;
 end;
 
-function TAggRasConvInt3x.Upscale(V: Double): Pointer;
+function TAggRasConvInt3x.Upscale(v: Double): Pointer;
 begin
-  FResult[FStack] := IntegerRound(V * CAggPolySubpixelScale);
+  FResult[FStack] := IntegerRound(v * CAggPolySubpixelScale);
 
   Result := @FResult[FStack];
 
@@ -406,9 +406,9 @@ begin
       FStack := 1;
 end;
 
-function TAggRasConvInt3x.Downscale(V: Integer): Pointer;
+function TAggRasConvInt3x.Downscale(v: Integer): Pointer;
 begin
-  FResult[FStack] := V;
+  FResult[FStack] := v;
 
   Result := @FResult[FStack];
 
@@ -425,9 +425,9 @@ begin
   FStack := 1;
 end;
 
-function TRasConvDouble.MulDiv(A, B, C: Double): Pointer;
+function TRasConvDouble.MulDiv(A, b, C: Double): Pointer;
 begin
-  FResult[FStack] := A * B / C;
+  FResult[FStack] := A * b / C;
 
   Result := @FResult[FStack];
 
@@ -437,19 +437,19 @@ begin
       FStack := 1;
 end;
 
-function TRasConvDouble.Xi(V: Pointer): Integer;
+function TRasConvDouble.XI(v: Pointer): Integer;
 begin
-  Result := IntegerRound(PDouble(V)^ * CAggPolySubpixelScale);
+  Result := IntegerRound(PDouble(v)^ * CAggPolySubpixelScale);
 end;
 
-function TRasConvDouble.Yi(V: Pointer): Integer;
+function TRasConvDouble.Yi(v: Pointer): Integer;
 begin
-  Result := IntegerRound(PDouble(V)^ * CAggPolySubpixelScale);
+  Result := IntegerRound(PDouble(v)^ * CAggPolySubpixelScale);
 end;
 
-function TRasConvDouble.Upscale(V: Double): Pointer;
+function TRasConvDouble.Upscale(v: Double): Pointer;
 begin
-  FResult[FStack] := V;
+  FResult[FStack] := v;
 
   Result := @FResult[FStack];
 
@@ -459,9 +459,9 @@ begin
       FStack := 1;
 end;
 
-function TRasConvDouble.Downscale(V: Integer): Pointer;
+function TRasConvDouble.Downscale(v: Integer): Pointer;
 begin
-  FResult[FStack] := V / CAggPolySubpixelScale;
+  FResult[FStack] := v / CAggPolySubpixelScale;
 
   Result := @FResult[FStack];
 
@@ -478,9 +478,9 @@ begin
   FStack := 1;
 end;
 
-function TRasConvDouble3x.MulDiv(A, B, C: Double): Pointer;
+function TRasConvDouble3x.MulDiv(A, b, C: Double): Pointer;
 begin
-  FResult[FStack] := A * B / C;
+  FResult[FStack] := A * b / C;
 
   Result := @FResult[FStack];
 
@@ -490,19 +490,19 @@ begin
       FStack := 1;
 end;
 
-function TRasConvDouble3x.Xi(V: Pointer): Integer;
+function TRasConvDouble3x.XI(v: Pointer): Integer;
 begin
-  Result := IntegerRound(PDouble(V)^ * CAggPolySubpixelScale * 3);
+  Result := IntegerRound(PDouble(v)^ * CAggPolySubpixelScale * 3);
 end;
 
-function TRasConvDouble3x.Yi(V: Pointer): Integer;
+function TRasConvDouble3x.Yi(v: Pointer): Integer;
 begin
-  Result := IntegerRound(PDouble(V)^ * CAggPolySubpixelScale);
+  Result := IntegerRound(PDouble(v)^ * CAggPolySubpixelScale);
 end;
 
-function TRasConvDouble3x.Upscale(V: Double): Pointer;
+function TRasConvDouble3x.Upscale(v: Double): Pointer;
 begin
-  FResult[FStack] := V;
+  FResult[FStack] := v;
 
   Result := @FResult[FStack];
 
@@ -512,9 +512,9 @@ begin
       FStack := 1;
 end;
 
-function TRasConvDouble3x.Downscale(V: Integer): Pointer;
+function TRasConvDouble3x.Downscale(v: Integer): Pointer;
 begin
-  FResult[FStack] := V / CAggPolySubpixelScale;
+  FResult[FStack] := v / CAggPolySubpixelScale;
 
   Result := @FResult[FStack];
 
@@ -526,9 +526,9 @@ end;
 
 { TAggRasterizerScanLineClipInteger }
 
-constructor TAggRasterizerScanLineClipInteger.Create(Conv: TAggRasterizerConv);
+constructor TAggRasterizerScanLineClipInteger.Create(conv: TAggRasterizerConv);
 begin
-  RasterizerConverter := Conv;
+  RasterizerConverter := conv;
 
   FClipBox := RectInteger(0, 0, 0, 0);
 
@@ -552,154 +552,154 @@ begin
   FClipping := True;
 end;
 
-procedure TAggRasterizerScanLineClipInteger.SetClipBox(X1, Y1, X2, Y2: Pointer);
+procedure TAggRasterizerScanLineClipInteger.SetClipBox(x1, y1, x2, y2: Pointer);
 begin
-  FClipBox := RectInteger(PInteger(X1)^, PInteger(Y1)^, PInteger(X2)^,
-    PInteger(Y2)^);
+  FClipBox := RectInteger(PInteger(x1)^, PInteger(y1)^, PInteger(x2)^,
+    PInteger(y2)^);
   FClipBox.Normalize;
 
   FClipping := True;
 end;
 
-procedure TAggRasterizerScanLineClipInteger.MoveTo(X1, Y1: Pointer);
+procedure TAggRasterizerScanLineClipInteger.MoveTo(x1, y1: Pointer);
 begin
-  FX1 := PInteger(X1)^;
-  FY1 := PInteger(Y1)^;
+  FX1 := PInteger(x1)^;
+  FY1 := PInteger(y1)^;
 
   if FClipping then
-      FF1 := ClippingFlagsInteger(PInteger(X1)^, PInteger(Y1)^, FClipBox);
+      FF1 := ClippingFlagsInteger(PInteger(x1)^, PInteger(y1)^, FClipBox);
 end;
 
 procedure TAggRasterizerScanLineClipInteger.LineTo(Ras: TAggRasterizerCellsAA;
-  X2, Y2: Pointer);
+  x2, y2: Pointer);
 var
-  F1, F2, F3, F4: Cardinal;
-  X1, Y1, Y3, Y4: Integer;
+  f1, f2, F3, F4: Cardinal;
+  x1, y1, y3, y4: Integer;
 
 begin
   if FClipping then
     begin
-      F2 := ClippingFlagsInteger(PInteger(X2)^, PInteger(Y2)^, FClipBox);
+      f2 := ClippingFlagsInteger(PInteger(x2)^, PInteger(y2)^, FClipBox);
 
       // Invisible by Y
-      if ((FF1 and 10) = (F2 and 10)) and (FF1 and 10 <> 0) then
+      if ((FF1 and 10) = (f2 and 10)) and (FF1 and 10 <> 0) then
         begin
-          FX1 := PInteger(X2)^;
-          FY1 := PInteger(Y2)^;
-          FF1 := F2;
+          FX1 := PInteger(x2)^;
+          FY1 := PInteger(y2)^;
+          FF1 := f2;
 
           Exit;
         end;
 
-      X1 := FX1;
-      Y1 := FY1;
-      F1 := FF1;
+      x1 := FX1;
+      y1 := FY1;
+      f1 := FF1;
 
-      case ((F1 and 5) shl 1) or (F2 and 5) of
+      case ((f1 and 5) shl 1) or (f2 and 5) of
         // Visible by X
         0:
-          LineClipY(Ras, X1, Y1, PInteger(X2)^, PInteger(Y2)^, F1, F2);
+          LineClipY(Ras, x1, y1, PInteger(x2)^, PInteger(y2)^, f1, f2);
 
         // x2 > clip.x2
         1:
           begin
-            Y3 := Y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.X2 - X1,
-              PInteger(Y2)^ - Y1, PInteger(X2)^ - X1))^;
-            F3 := ClippingFlagsYInteger(Y3, FClipBox);
+            y3 := y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.x2 - x1,
+              PInteger(y2)^ - y1, PInteger(x2)^ - x1))^;
+            F3 := ClippingFlagsYInteger(y3, FClipBox);
 
-            LineClipY(Ras, X1, Y1, FClipBox.X2, Y3, F1, F3);
-            LineClipY(Ras, FClipBox.X2, Y3, FClipBox.X2,
-              PInteger(Y2)^, F3, F2);
+            LineClipY(Ras, x1, y1, FClipBox.x2, y3, f1, F3);
+            LineClipY(Ras, FClipBox.x2, y3, FClipBox.x2,
+              PInteger(y2)^, F3, f2);
           end;
 
         // x1 > clip.x2
         2:
           begin
-            Y3 := Y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.X2 - X1,
-              PInteger(Y2)^ - Y1, PInteger(X2)^ - X1))^;
-            F3 := ClippingFlagsYInteger(Y3, FClipBox);
+            y3 := y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.x2 - x1,
+              PInteger(y2)^ - y1, PInteger(x2)^ - x1))^;
+            F3 := ClippingFlagsYInteger(y3, FClipBox);
 
-            LineClipY(Ras, FClipBox.X2, Y1, FClipBox.X2, Y3, F1, F3);
-            LineClipY(Ras, FClipBox.X2, Y3, PInteger(X2)^,
-              PInteger(Y2)^, F3, F2);
+            LineClipY(Ras, FClipBox.x2, y1, FClipBox.x2, y3, f1, F3);
+            LineClipY(Ras, FClipBox.x2, y3, PInteger(x2)^,
+              PInteger(y2)^, F3, f2);
           end;
 
         // x1 > clip.x2 && x2 > clip.x2
         3:
-          LineClipY(Ras, FClipBox.X2, Y1, FClipBox.X2,
-            PInteger(Y2)^, F1, F2);
+          LineClipY(Ras, FClipBox.x2, y1, FClipBox.x2,
+            PInteger(y2)^, f1, f2);
 
         // x2 < clip.x1
         4:
           begin
-            Y3 := Y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.X1 - X1,
-              PInteger(Y2)^ - Y1, PInteger(X2)^ - X1))^;
-            F3 := ClippingFlagsYInteger(Y3, FClipBox);
+            y3 := y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.x1 - x1,
+              PInteger(y2)^ - y1, PInteger(x2)^ - x1))^;
+            F3 := ClippingFlagsYInteger(y3, FClipBox);
 
-            LineClipY(Ras, X1, Y1, FClipBox.X1, Y3, F1, F3);
-            LineClipY(Ras, FClipBox.X1, Y3, FClipBox.X1,
-              PInteger(Y2)^, F3, F2);
+            LineClipY(Ras, x1, y1, FClipBox.x1, y3, f1, F3);
+            LineClipY(Ras, FClipBox.x1, y3, FClipBox.x1,
+              PInteger(y2)^, F3, f2);
           end;
 
         // x1 > clip.x2 && x2 < clip.x1
         6:
           begin
-            Y3 := Y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.X2 - X1,
-              PInteger(Y2)^ - Y1, PInteger(X2)^ - X1))^;
-            Y4 := Y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.X1 - X1,
-              PInteger(Y2)^ - Y1, PInteger(X2)^ - X1))^;
+            y3 := y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.x2 - x1,
+              PInteger(y2)^ - y1, PInteger(x2)^ - x1))^;
+            y4 := y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.x1 - x1,
+              PInteger(y2)^ - y1, PInteger(x2)^ - x1))^;
 
-            F3 := ClippingFlagsYInteger(Y3, FClipBox);
-            F4 := ClippingFlagsYInteger(Y4, FClipBox);
+            F3 := ClippingFlagsYInteger(y3, FClipBox);
+            F4 := ClippingFlagsYInteger(y4, FClipBox);
 
-            LineClipY(Ras, FClipBox.X2, Y1, FClipBox.X2, Y3, F1, F3);
-            LineClipY(Ras, FClipBox.X2, Y3, FClipBox.X1, Y4, F3, F4);
-            LineClipY(Ras, FClipBox.X1, Y4, FClipBox.X1,
-              PInteger(Y2)^, F4, F2);
+            LineClipY(Ras, FClipBox.x2, y1, FClipBox.x2, y3, f1, F3);
+            LineClipY(Ras, FClipBox.x2, y3, FClipBox.x1, y4, F3, F4);
+            LineClipY(Ras, FClipBox.x1, y4, FClipBox.x1,
+              PInteger(y2)^, F4, f2);
           end;
 
         // x1 < clip.x1
         8:
           begin
-            Y3 := Y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.X1 - X1,
-              PInteger(Y2)^ - Y1, PInteger(X2)^ - X1))^;
-            F3 := ClippingFlagsYInteger(Y3, FClipBox);
+            y3 := y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.x1 - x1,
+              PInteger(y2)^ - y1, PInteger(x2)^ - x1))^;
+            F3 := ClippingFlagsYInteger(y3, FClipBox);
 
-            LineClipY(Ras, FClipBox.X1, Y1, FClipBox.X1, Y3, F1, F3);
-            LineClipY(Ras, FClipBox.X1, Y3, PInteger(X2)^,
-              PInteger(Y2)^, F3, F2);
+            LineClipY(Ras, FClipBox.x1, y1, FClipBox.x1, y3, f1, F3);
+            LineClipY(Ras, FClipBox.x1, y3, PInteger(x2)^,
+              PInteger(y2)^, F3, f2);
           end;
 
         // x1 < clip.x1 && x2 > clip.x2
         9:
           begin
-            Y3 := Y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.X1 - X1,
-              PInteger(Y2)^ - Y1, PInteger(X2)^ - X1))^;
-            Y4 := Y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.X2 - X1,
-              PInteger(Y2)^ - Y1, PInteger(X2)^ - X1))^;
-            F3 := ClippingFlagsYInteger(Y3, FClipBox);
-            F4 := ClippingFlagsYInteger(Y4, FClipBox);
+            y3 := y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.x1 - x1,
+              PInteger(y2)^ - y1, PInteger(x2)^ - x1))^;
+            y4 := y1 + PInteger(RasterizerConverter.MulDiv(FClipBox.x2 - x1,
+              PInteger(y2)^ - y1, PInteger(x2)^ - x1))^;
+            F3 := ClippingFlagsYInteger(y3, FClipBox);
+            F4 := ClippingFlagsYInteger(y4, FClipBox);
 
-            LineClipY(Ras, FClipBox.X1, Y1, FClipBox.X1, Y3, F1, F3);
-            LineClipY(Ras, FClipBox.X1, Y3, FClipBox.X2, Y4, F3, F4);
-            LineClipY(Ras, FClipBox.X2, Y4, FClipBox.X2,
-              PInteger(Y2)^, F4, F2);
+            LineClipY(Ras, FClipBox.x1, y1, FClipBox.x1, y3, f1, F3);
+            LineClipY(Ras, FClipBox.x1, y3, FClipBox.x2, y4, F3, F4);
+            LineClipY(Ras, FClipBox.x2, y4, FClipBox.x2,
+              PInteger(y2)^, F4, f2);
           end;
 
         // x1 < clip.x1 && x2 < clip.x1
         12:
-          LineClipY(Ras, FClipBox.X1, Y1, FClipBox.X1,
-            PInteger(Y2)^, F1, F2);
+          LineClipY(Ras, FClipBox.x1, y1, FClipBox.x1,
+            PInteger(y2)^, f1, f2);
       end;
 
-      FF1 := F2;
+      FF1 := f2;
 
     end
   else
-      Ras.Line(RasterizerConverter.Xi(@FX1), RasterizerConverter.Yi(@FY1), RasterizerConverter.Xi(X2), RasterizerConverter.Yi(Y2));
+      Ras.Line(RasterizerConverter.XI(@FX1), RasterizerConverter.Yi(@FY1), RasterizerConverter.XI(x2), RasterizerConverter.Yi(y2));
 
-  FX1 := PInteger(X2)^;
-  FY1 := PInteger(Y2)^;
+  FX1 := PInteger(x2)^;
+  FY1 := PInteger(y2)^;
 end;
 
 function TAggRasterizerScanLineClipInteger.GetConverterType: TAggRasterizerConv;
@@ -708,70 +708,70 @@ begin
 end;
 
 procedure TAggRasterizerScanLineClipInteger.LineClipY(Ras: TAggRasterizerCellsAA;
-  X1, Y1, X2, Y2: Integer; F1, F2: Cardinal);
+  x1, y1, x2, y2: Integer; f1, f2: Cardinal);
 var
   Tx1, Ty1, Tx2, Ty2: Integer;
 begin
-  F1 := F1 and 10;
-  F2 := F2 and 10;
+  f1 := f1 and 10;
+  f2 := f2 and 10;
 
-  if F1 or F2 = 0 then
+  if f1 or f2 = 0 then
     // Fully visible
-      Ras.Line(RasterizerConverter.Xi(@X1), RasterizerConverter.Yi(@Y1), RasterizerConverter.Xi(@X2), RasterizerConverter.Yi(@Y2))
+      Ras.Line(RasterizerConverter.XI(@x1), RasterizerConverter.Yi(@y1), RasterizerConverter.XI(@x2), RasterizerConverter.Yi(@y2))
 
   else
     begin
       // Invisible by Y
-      if F1 = F2 then
+      if f1 = f2 then
           Exit;
 
-      Tx1 := X1;
-      Ty1 := Y1;
-      Tx2 := X2;
-      Ty2 := Y2;
+      Tx1 := x1;
+      Ty1 := y1;
+      Tx2 := x2;
+      Ty2 := y2;
 
       // y1 < clip.y1
-      if F1 and 8 <> 0 then
+      if f1 and 8 <> 0 then
         begin
-          Tx1 := X1 + PInteger(RasterizerConverter.MulDiv(FClipBox.Y1 - Y1, X2 - X1,
-            Y2 - Y1))^;
-          Ty1 := FClipBox.Y1;
+          Tx1 := x1 + PInteger(RasterizerConverter.MulDiv(FClipBox.y1 - y1, x2 - x1,
+            y2 - y1))^;
+          Ty1 := FClipBox.y1;
         end;
 
       // y1 > clip.y2
-      if F1 and 2 <> 0 then
+      if f1 and 2 <> 0 then
         begin
-          Tx1 := X1 + PInteger(RasterizerConverter.MulDiv(FClipBox.Y2 - Y1, X2 - X1,
-            Y2 - Y1))^;
-          Ty1 := FClipBox.Y2;
+          Tx1 := x1 + PInteger(RasterizerConverter.MulDiv(FClipBox.y2 - y1, x2 - x1,
+            y2 - y1))^;
+          Ty1 := FClipBox.y2;
         end;
 
       // y2 < clip.y1
-      if F2 and 8 <> 0 then
+      if f2 and 8 <> 0 then
         begin
-          Tx2 := X1 + PInteger(RasterizerConverter.MulDiv(FClipBox.Y1 - Y1, X2 - X1,
-            Y2 - Y1))^;
-          Ty2 := FClipBox.Y1;
+          Tx2 := x1 + PInteger(RasterizerConverter.MulDiv(FClipBox.y1 - y1, x2 - x1,
+            y2 - y1))^;
+          Ty2 := FClipBox.y1;
         end;
 
       // y2 > clip.y2
-      if F2 and 2 <> 0 then
+      if f2 and 2 <> 0 then
         begin
-          Tx2 := X1 + PInteger(RasterizerConverter.MulDiv(FClipBox.Y2 - Y1, X2 - X1,
-            Y2 - Y1))^;
-          Ty2 := FClipBox.Y2;
+          Tx2 := x1 + PInteger(RasterizerConverter.MulDiv(FClipBox.y2 - y1, x2 - x1,
+            y2 - y1))^;
+          Ty2 := FClipBox.y2;
         end;
 
-      Ras.Line(RasterizerConverter.Xi(@Tx1), RasterizerConverter.Yi(@Ty1), RasterizerConverter.Xi(@Tx2),
+      Ras.Line(RasterizerConverter.XI(@Tx1), RasterizerConverter.Yi(@Ty1), RasterizerConverter.XI(@Tx2),
         RasterizerConverter.Yi(@Ty2));
     end;
 end;
 
 { TAggRasterizerScanLineClipDouble }
 
-constructor TAggRasterizerScanLineClipDouble.Create(Conv: TAggRasterizerConv);
+constructor TAggRasterizerScanLineClipDouble.Create(conv: TAggRasterizerConv);
 begin
-  RasterizerConverter := Conv;
+  RasterizerConverter := conv;
 
   FClipBox := RectDouble(0, 0, 0, 0);
 
@@ -795,154 +795,154 @@ begin
   FClipping := True;
 end;
 
-procedure TAggRasterizerScanLineClipDouble.SetClipBox(X1, Y1, X2, Y2: Pointer);
+procedure TAggRasterizerScanLineClipDouble.SetClipBox(x1, y1, x2, y2: Pointer);
 begin
-  FClipBox := RectDouble(PDouble(X1)^, PDouble(Y1)^, PDouble(X2)^,
-    PDouble(Y2)^);
+  FClipBox := RectDouble(PDouble(x1)^, PDouble(y1)^, PDouble(x2)^,
+    PDouble(y2)^);
   FClipBox.Normalize;
 
   FClipping := True;
 end;
 
-procedure TAggRasterizerScanLineClipDouble.MoveTo(X1, Y1: Pointer);
+procedure TAggRasterizerScanLineClipDouble.MoveTo(x1, y1: Pointer);
 begin
-  FX1 := PDouble(X1)^;
-  FY1 := PDouble(Y1)^;
+  FX1 := PDouble(x1)^;
+  FY1 := PDouble(y1)^;
 
   if FClipping then
-      FF1 := ClippingFlagsDouble(PDouble(X1)^, PDouble(Y1)^, @FClipBox);
+      FF1 := ClippingFlagsDouble(PDouble(x1)^, PDouble(y1)^, @FClipBox);
 end;
 
 procedure TAggRasterizerScanLineClipDouble.LineTo(Ras: TAggRasterizerCellsAA;
-  X2, Y2: Pointer);
+  x2, y2: Pointer);
 var
-  F1, F2, F3, F4: Cardinal;
-  X1, Y1, Y3, Y4: Double;
+  f1, f2, F3, F4: Cardinal;
+  x1, y1, y3, y4: Double;
 
 begin
   if FClipping then
     begin
-      F2 := ClippingFlagsDouble(PDouble(X2)^, PDouble(Y2)^, @FClipBox);
+      f2 := ClippingFlagsDouble(PDouble(x2)^, PDouble(y2)^, @FClipBox);
 
       // Invisible by Y
-      if ((FF1 and 10) = (F2 and 10)) and (FF1 and 10 <> 0) then
+      if ((FF1 and 10) = (f2 and 10)) and (FF1 and 10 <> 0) then
         begin
-          FX1 := PDouble(X2)^;
-          FY1 := PDouble(Y2)^;
-          FF1 := F2;
+          FX1 := PDouble(x2)^;
+          FY1 := PDouble(y2)^;
+          FF1 := f2;
 
           Exit;
         end;
 
-      X1 := FX1;
-      Y1 := FY1;
-      F1 := FF1;
+      x1 := FX1;
+      y1 := FY1;
+      f1 := FF1;
 
-      case ((F1 and 5) shl 1) or (F2 and 5) of
+      case ((f1 and 5) shl 1) or (f2 and 5) of
         // Visible by X
         0:
-          LineClipY(Ras, X1, Y1, PDouble(X2)^, PDouble(Y2)^, F1, F2);
+          LineClipY(Ras, x1, y1, PDouble(x2)^, PDouble(y2)^, f1, f2);
 
         // x2 > clip.x2
         1:
           begin
-            Y3 := Y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.X2 - X1,
-              PDouble(Y2)^ - Y1, PDouble(X2)^ - X1))^;
-            F3 := ClippingFlagsYDouble(Y3, @FClipBox);
+            y3 := y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.x2 - x1,
+              PDouble(y2)^ - y1, PDouble(x2)^ - x1))^;
+            F3 := ClippingFlagsYDouble(y3, @FClipBox);
 
-            LineClipY(Ras, X1, Y1, FClipBox.X2, Y3, F1, F3);
-            LineClipY(Ras, FClipBox.X2, Y3, FClipBox.X2,
-              PDouble(Y2)^, F3, F2);
+            LineClipY(Ras, x1, y1, FClipBox.x2, y3, f1, F3);
+            LineClipY(Ras, FClipBox.x2, y3, FClipBox.x2,
+              PDouble(y2)^, F3, f2);
           end;
 
         // x1 > clip.x2
         2:
           begin
-            Y3 := Y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.X2 - X1,
-              PDouble(Y2)^ - Y1, PDouble(X2)^ - X1))^;
-            F3 := ClippingFlagsYDouble(Y3, @FClipBox);
+            y3 := y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.x2 - x1,
+              PDouble(y2)^ - y1, PDouble(x2)^ - x1))^;
+            F3 := ClippingFlagsYDouble(y3, @FClipBox);
 
-            LineClipY(Ras, FClipBox.X2, Y1, FClipBox.X2, Y3, F1, F3);
-            LineClipY(Ras, FClipBox.X2, Y3, PDouble(X2)^,
-              PDouble(Y2)^, F3, F2);
+            LineClipY(Ras, FClipBox.x2, y1, FClipBox.x2, y3, f1, F3);
+            LineClipY(Ras, FClipBox.x2, y3, PDouble(x2)^,
+              PDouble(y2)^, F3, f2);
           end;
 
         // x1 > clip.x2 && x2 > clip.x2
         3:
-          LineClipY(Ras, FClipBox.X2, Y1, FClipBox.X2,
-            PDouble(Y2)^, F1, F2);
+          LineClipY(Ras, FClipBox.x2, y1, FClipBox.x2,
+            PDouble(y2)^, f1, f2);
 
         // x2 < clip.x1
         4:
           begin
-            Y3 := Y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.X1 - X1,
-              PDouble(Y2)^ - Y1, PDouble(X2)^ - X1))^;
-            F3 := ClippingFlagsYDouble(Y3, @FClipBox);
+            y3 := y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.x1 - x1,
+              PDouble(y2)^ - y1, PDouble(x2)^ - x1))^;
+            F3 := ClippingFlagsYDouble(y3, @FClipBox);
 
-            LineClipY(Ras, X1, Y1, FClipBox.X1, Y3, F1, F3);
-            LineClipY(Ras, FClipBox.X1, Y3, FClipBox.X1,
-              PDouble(Y2)^, F3, F2);
+            LineClipY(Ras, x1, y1, FClipBox.x1, y3, f1, F3);
+            LineClipY(Ras, FClipBox.x1, y3, FClipBox.x1,
+              PDouble(y2)^, F3, f2);
           end;
 
         // x1 > clip.x2 && x2 < clip.x1
         6:
           begin
-            Y3 := Y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.X2 - X1,
-              PDouble(Y2)^ - Y1, PDouble(X2)^ - X1))^;
-            Y4 := Y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.X1 - X1,
-              PDouble(Y2)^ - Y1, PDouble(X2)^ - X1))^;
+            y3 := y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.x2 - x1,
+              PDouble(y2)^ - y1, PDouble(x2)^ - x1))^;
+            y4 := y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.x1 - x1,
+              PDouble(y2)^ - y1, PDouble(x2)^ - x1))^;
 
-            F3 := ClippingFlagsYDouble(Y3, @FClipBox);
-            F4 := ClippingFlagsYDouble(Y4, @FClipBox);
+            F3 := ClippingFlagsYDouble(y3, @FClipBox);
+            F4 := ClippingFlagsYDouble(y4, @FClipBox);
 
-            LineClipY(Ras, FClipBox.X2, Y1, FClipBox.X2, Y3, F1, F3);
-            LineClipY(Ras, FClipBox.X2, Y3, FClipBox.X1, Y4, F3, F4);
-            LineClipY(Ras, FClipBox.X1, Y4, FClipBox.X1,
-              PDouble(Y2)^, F4, F2);
+            LineClipY(Ras, FClipBox.x2, y1, FClipBox.x2, y3, f1, F3);
+            LineClipY(Ras, FClipBox.x2, y3, FClipBox.x1, y4, F3, F4);
+            LineClipY(Ras, FClipBox.x1, y4, FClipBox.x1,
+              PDouble(y2)^, F4, f2);
           end;
 
         // x1 < clip.x1
         8:
           begin
-            Y3 := Y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.X1 - X1,
-              PDouble(Y2)^ - Y1, PDouble(X2)^ - X1))^;
-            F3 := ClippingFlagsYDouble(Y3, @FClipBox);
+            y3 := y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.x1 - x1,
+              PDouble(y2)^ - y1, PDouble(x2)^ - x1))^;
+            F3 := ClippingFlagsYDouble(y3, @FClipBox);
 
-            LineClipY(Ras, FClipBox.X1, Y1, FClipBox.X1, Y3, F1, F3);
-            LineClipY(Ras, FClipBox.X1, Y3, PDouble(X2)^,
-              PDouble(Y2)^, F3, F2);
+            LineClipY(Ras, FClipBox.x1, y1, FClipBox.x1, y3, f1, F3);
+            LineClipY(Ras, FClipBox.x1, y3, PDouble(x2)^,
+              PDouble(y2)^, F3, f2);
           end;
 
         // x1 < clip.x1 && x2 > clip.x2
         9:
           begin
-            Y3 := Y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.X1 - X1,
-              PDouble(Y2)^ - Y1, PDouble(X2)^ - X1))^;
-            Y4 := Y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.X2 - X1,
-              PDouble(Y2)^ - Y1, PDouble(X2)^ - X1))^;
-            F3 := ClippingFlagsYDouble(Y3, @FClipBox);
-            F4 := ClippingFlagsYDouble(Y4, @FClipBox);
+            y3 := y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.x1 - x1,
+              PDouble(y2)^ - y1, PDouble(x2)^ - x1))^;
+            y4 := y1 + PDouble(RasterizerConverter.MulDiv(FClipBox.x2 - x1,
+              PDouble(y2)^ - y1, PDouble(x2)^ - x1))^;
+            F3 := ClippingFlagsYDouble(y3, @FClipBox);
+            F4 := ClippingFlagsYDouble(y4, @FClipBox);
 
-            LineClipY(Ras, FClipBox.X1, Y1, FClipBox.X1, Y3, F1, F3);
-            LineClipY(Ras, FClipBox.X1, Y3, FClipBox.X2, Y4, F3, F4);
-            LineClipY(Ras, FClipBox.X2, Y4, FClipBox.X2,
-              PDouble(Y2)^, F4, F2);
+            LineClipY(Ras, FClipBox.x1, y1, FClipBox.x1, y3, f1, F3);
+            LineClipY(Ras, FClipBox.x1, y3, FClipBox.x2, y4, F3, F4);
+            LineClipY(Ras, FClipBox.x2, y4, FClipBox.x2,
+              PDouble(y2)^, F4, f2);
           end;
 
         // x1 < clip.x1 && x2 < clip.x1
         12:
-          LineClipY(Ras, FClipBox.X1, Y1, FClipBox.X1,
-            PDouble(Y2)^, F1, F2);
+          LineClipY(Ras, FClipBox.x1, y1, FClipBox.x1,
+            PDouble(y2)^, f1, f2);
       end;
 
-      FF1 := F2;
+      FF1 := f2;
 
     end
   else
-      Ras.Line(RasterizerConverter.Xi(@FX1), RasterizerConverter.Yi(@FY1), RasterizerConverter.Xi(X2), RasterizerConverter.Yi(Y2));
+      Ras.Line(RasterizerConverter.XI(@FX1), RasterizerConverter.Yi(@FY1), RasterizerConverter.XI(x2), RasterizerConverter.Yi(y2));
 
-  FX1 := PDouble(X2)^;
-  FY1 := PDouble(Y2)^;
+  FX1 := PDouble(x2)^;
+  FY1 := PDouble(y2)^;
 end;
 
 function TAggRasterizerScanLineClipDouble.GetConverterType: TAggRasterizerConv;
@@ -951,62 +951,62 @@ begin
 end;
 
 procedure TAggRasterizerScanLineClipDouble.LineClipY(Ras: TAggRasterizerCellsAA;
-  X1, Y1, X2, Y2: Double; F1, F2: Cardinal);
+  x1, y1, x2, y2: Double; f1, f2: Cardinal);
 var
   Tx1, Ty1, Tx2, Ty2: Double;
 
 begin
-  F1 := F1 and 10;
-  F2 := F2 and 10;
+  f1 := f1 and 10;
+  f2 := f2 and 10;
 
-  if F1 or F2 = 0 then
+  if f1 or f2 = 0 then
     // Fully visible
-      Ras.Line(RasterizerConverter.Xi(@X1), RasterizerConverter.Yi(@Y1), RasterizerConverter.Xi(@X2), RasterizerConverter.Yi(@Y2))
+      Ras.Line(RasterizerConverter.XI(@x1), RasterizerConverter.Yi(@y1), RasterizerConverter.XI(@x2), RasterizerConverter.Yi(@y2))
 
   else
     begin
       // Invisible by Y
-      if F1 = F2 then
+      if f1 = f2 then
           Exit;
 
-      Tx1 := X1;
-      Ty1 := Y1;
-      Tx2 := X2;
-      Ty2 := Y2;
+      Tx1 := x1;
+      Ty1 := y1;
+      Tx2 := x2;
+      Ty2 := y2;
 
       // y1 < clip.y1
-      if F1 and 8 <> 0 then
+      if f1 and 8 <> 0 then
         begin
-          Tx1 := X1 + PDouble(RasterizerConverter.MulDiv(FClipBox.Y1 - Y1, X2 - X1,
-            Y2 - Y1))^;
-          Ty1 := FClipBox.Y1;
+          Tx1 := x1 + PDouble(RasterizerConverter.MulDiv(FClipBox.y1 - y1, x2 - x1,
+            y2 - y1))^;
+          Ty1 := FClipBox.y1;
         end;
 
       // y1 > clip.y2
-      if F1 and 2 <> 0 then
+      if f1 and 2 <> 0 then
         begin
-          Tx1 := X1 + PDouble(RasterizerConverter.MulDiv(FClipBox.Y2 - Y1, X2 - X1,
-            Y2 - Y1))^;
-          Ty1 := FClipBox.Y2;
+          Tx1 := x1 + PDouble(RasterizerConverter.MulDiv(FClipBox.y2 - y1, x2 - x1,
+            y2 - y1))^;
+          Ty1 := FClipBox.y2;
         end;
 
       // y2 < clip.y1
-      if F2 and 8 <> 0 then
+      if f2 and 8 <> 0 then
         begin
-          Tx2 := X1 + PDouble(RasterizerConverter.MulDiv(FClipBox.Y1 - Y1, X2 - X1,
-            Y2 - Y1))^;
-          Ty2 := FClipBox.Y1;
+          Tx2 := x1 + PDouble(RasterizerConverter.MulDiv(FClipBox.y1 - y1, x2 - x1,
+            y2 - y1))^;
+          Ty2 := FClipBox.y1;
         end;
 
       // y2 > clip.y2
-      if F2 and 2 <> 0 then
+      if f2 and 2 <> 0 then
         begin
-          Tx2 := X1 + PDouble(RasterizerConverter.MulDiv(FClipBox.Y2 - Y1, X2 - X1,
-            Y2 - Y1))^;
-          Ty2 := FClipBox.Y2;
+          Tx2 := x1 + PDouble(RasterizerConverter.MulDiv(FClipBox.y2 - y1, x2 - x1,
+            y2 - y1))^;
+          Ty2 := FClipBox.y2;
         end;
 
-      Ras.Line(RasterizerConverter.Xi(@Tx1), RasterizerConverter.Yi(@Ty1), RasterizerConverter.Xi(@Tx2),
+      Ras.Line(RasterizerConverter.XI(@Tx1), RasterizerConverter.Yi(@Ty1), RasterizerConverter.XI(@Tx2),
         RasterizerConverter.Yi(@Ty2));
     end;
 end;
@@ -1025,7 +1025,7 @@ procedure TAggRasterizerScanLineNoClip.ResetClipping;
 begin
 end;
 
-procedure TAggRasterizerScanLineNoClip.SetClipBox(X1, Y1, X2, Y2: Pointer);
+procedure TAggRasterizerScanLineNoClip.SetClipBox(x1, y1, x2, y2: Pointer);
 begin
 end;
 
@@ -1033,19 +1033,19 @@ procedure TAggRasterizerScanLineNoClip.SetClipBox(Bounds: Pointer);
 begin
 end;
 
-procedure TAggRasterizerScanLineNoClip.MoveTo(X1, Y1: Pointer);
+procedure TAggRasterizerScanLineNoClip.MoveTo(x1, y1: Pointer);
 begin
-  FX1 := PInteger(X1)^;
-  FY1 := PInteger(Y1)^;
+  FX1 := PInteger(x1)^;
+  FY1 := PInteger(y1)^;
 end;
 
 procedure TAggRasterizerScanLineNoClip.LineTo(Ras: TAggRasterizerCellsAA;
-  X2, Y2: Pointer);
+  x2, y2: Pointer);
 begin
-  Ras.Line(FX1, FY1, PInteger(X2)^, PInteger(Y2)^);
+  Ras.Line(FX1, FY1, PInteger(x2)^, PInteger(y2)^);
 
-  FX1 := PInteger(X2)^;
-  FY1 := PInteger(Y2)^;
+  FX1 := PInteger(x2)^;
+  FY1 := PInteger(y2)^;
 end;
 
 function TAggRasterizerScanLineNoClip.GetConverterType: TAggRasterizerConv;
@@ -1128,4 +1128,4 @@ begin
   inherited;
 end;
 
-end.
+end. 

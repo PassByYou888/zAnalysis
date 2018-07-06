@@ -39,7 +39,7 @@ unit AggEllipse;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -59,7 +59,7 @@ type
     procedure SetApproximationScale(Value: Double);
   protected
     procedure CalculateNumSteps; virtual; abstract;
-    function GetPathID(Index: Cardinal): Cardinal; override;
+    function GetPathID(index: Cardinal): Cardinal; override;
   public
     constructor Create; virtual;
 
@@ -75,11 +75,11 @@ type
     procedure CalculateNumSteps; override;
   public
     constructor Create; overload; override;
-    constructor Create(X, Y, Radius: Double; NumSteps: Cardinal = 0; Cw: Boolean = False); overload;
-    constructor Create(Center: TPointDouble; Radius: Double; NumSteps: Cardinal = 0; Cw: Boolean = False); overload;
+    constructor Create(X, Y, radius: Double; NumSteps: Cardinal = 0; CW: Boolean = False); overload;
+    constructor Create(center: TPointDouble; radius: Double; NumSteps: Cardinal = 0; CW: Boolean = False); overload;
 
-    procedure Initialize(X, Y, Radius: Double; NumSteps: Cardinal = 0; Cw: Boolean = False); overload;
-    procedure Initialize(Center: TPointDouble; Radius: Double; NumSteps: Cardinal = 0; Cw: Boolean = False); overload;
+    procedure Initialize(X, Y, radius: Double; NumSteps: Cardinal = 0; CW: Boolean = False); overload;
+    procedure Initialize(center: TPointDouble; radius: Double; NumSteps: Cardinal = 0; CW: Boolean = False); overload;
 
     function Vertex(X, Y: PDouble): Cardinal; override;
   end;
@@ -91,11 +91,11 @@ type
     procedure CalculateNumSteps; override;
   public
     constructor Create; overload; override;
-    constructor Create(X, Y, Rx, Ry: Double; NumSteps: Cardinal = 0; Cw: Boolean = False); overload;
-    constructor Create(Center, Radius: TPointDouble; NumSteps: Cardinal = 0; Cw: Boolean = False); overload;
+    constructor Create(X, Y, RX, RY: Double; NumSteps: Cardinal = 0; CW: Boolean = False); overload;
+    constructor Create(center, radius: TPointDouble; NumSteps: Cardinal = 0; CW: Boolean = False); overload;
 
-    procedure Initialize(X, Y, Rx, Ry: Double; NumSteps: Cardinal = 0; Cw: Boolean = False); overload;
-    procedure Initialize(Center, Radius: TPointDouble; NumSteps: Cardinal = 0; Cw: Boolean = False); overload;
+    procedure Initialize(X, Y, RX, RY: Double; NumSteps: Cardinal = 0; CW: Boolean = False); overload;
+    procedure Initialize(center, radius: TPointDouble; NumSteps: Cardinal = 0; CW: Boolean = False); overload;
 
     function Vertex(X, Y: PDouble): Cardinal; override;
   end;
@@ -111,7 +111,7 @@ begin
   FApproximationScale := 1.0;
 end;
 
-function TAggCustomEllipse.GetPathID(Index: Cardinal): Cardinal;
+function TAggCustomEllipse.GetPathID(index: Cardinal): Cardinal;
 begin
   Result := 0;
 end;
@@ -139,37 +139,37 @@ begin
   Initialize(PointDouble(0), 1, 4, False);
 end;
 
-constructor TAggCircle.Create(X, Y, Radius: Double; NumSteps: Cardinal;
-  Cw: Boolean);
+constructor TAggCircle.Create(X, Y, radius: Double; NumSteps: Cardinal;
+  CW: Boolean);
 begin
   inherited Create;
 
-  Initialize(PointDouble(X, Y), Radius, NumSteps, Cw);
+  Initialize(PointDouble(X, Y), radius, NumSteps, CW);
 end;
 
-constructor TAggCircle.Create(Center: TPointDouble; Radius: Double;
-  NumSteps: Cardinal; Cw: Boolean);
+constructor TAggCircle.Create(center: TPointDouble; radius: Double;
+  NumSteps: Cardinal; CW: Boolean);
 begin
   inherited Create;
 
-  Initialize(Center, Radius, NumSteps, Cw);
+  Initialize(center, radius, NumSteps, CW);
 end;
 
-procedure TAggCircle.Initialize(X, Y, Radius: Double; NumSteps: Cardinal;
-  Cw: Boolean);
+procedure TAggCircle.Initialize(X, Y, radius: Double; NumSteps: Cardinal;
+  CW: Boolean);
 begin
-  Initialize(PointDouble(X, Y), Radius, NumSteps, Cw);
+  Initialize(PointDouble(X, Y), radius, NumSteps, CW);
 end;
 
-procedure TAggCircle.Initialize(Center: TPointDouble; Radius: Double;
-  NumSteps: Cardinal; Cw: Boolean);
+procedure TAggCircle.Initialize(center: TPointDouble; radius: Double;
+  NumSteps: Cardinal; CW: Boolean);
 begin
-  FCenter := Center;
-  FRadius := Radius;
+  FCenter := center;
+  FRadius := radius;
 
   FNum := NumSteps;
   FStep := 0;
-  FClockWise := Cw;
+  FClockWise := CW;
 
   if FNum = 0 then
       CalculateNumSteps;
@@ -177,8 +177,8 @@ end;
 
 function TAggCircle.Vertex(X, Y: PDouble): Cardinal;
 var
-  Angle: Double;
-  Sn, Cn: Double;
+  angle: Double;
+  sn, CN: Double;
 begin
   if FStep = FNum then
     begin
@@ -196,14 +196,14 @@ begin
       Exit;
     end;
 
-  Angle := 2 * Pi * FStep / FNum;
+  angle := 2 * pi * FStep / FNum;
 
   if FClockWise then
-      Angle := 2 * Pi - Angle;
+      angle := 2 * pi - angle;
 
-  SinCosScale(Angle, Sn, Cn, FRadius);
-  X^ := FCenter.X + Cn;
-  Y^ := FCenter.Y + Sn;
+  SinCosScale(angle, sn, CN, FRadius);
+  X^ := FCenter.X + CN;
+  Y^ := FCenter.Y + sn;
 
   Inc(FStep);
 
@@ -215,12 +215,12 @@ end;
 
 procedure TAggCircle.CalculateNumSteps;
 var
-  Ra, Da: Double;
+  RA, DA: Double;
 begin
-  Ra := Abs(FRadius);
-  Da := ArcCos(Ra / (Ra + 0.125 / FApproximationScale)) * 2;
+  RA := Abs(FRadius);
+  DA := ArcCos(RA / (RA + 0.125 / FApproximationScale)) * 2;
 
-  FNum := Trunc(2 * Pi / Da);
+  FNum := Trunc(2 * pi / DA);
 end;
 
 { TAggEllipse }
@@ -232,37 +232,37 @@ begin
   Initialize(PointDouble(0), PointDouble(1), 4, False);
 end;
 
-constructor TAggEllipse.Create(X, Y, Rx, Ry: Double; NumSteps: Cardinal = 0;
-  Cw: Boolean = False);
+constructor TAggEllipse.Create(X, Y, RX, RY: Double; NumSteps: Cardinal = 0;
+  CW: Boolean = False);
 begin
   inherited Create;
 
-  Initialize(PointDouble(X, Y), PointDouble(Rx, Ry), NumSteps, Cw);
+  Initialize(PointDouble(X, Y), PointDouble(RX, RY), NumSteps, CW);
 end;
 
-constructor TAggEllipse.Create(Center, Radius: TPointDouble; NumSteps: Cardinal;
-  Cw: Boolean);
+constructor TAggEllipse.Create(center, radius: TPointDouble; NumSteps: Cardinal;
+  CW: Boolean);
 begin
   inherited Create;
 
-  Initialize(Center, Radius, NumSteps, Cw);
+  Initialize(center, radius, NumSteps, CW);
 end;
 
-procedure TAggEllipse.Initialize(X, Y, Rx, Ry: Double; NumSteps: Cardinal = 0;
-  Cw: Boolean = False);
+procedure TAggEllipse.Initialize(X, Y, RX, RY: Double; NumSteps: Cardinal = 0;
+  CW: Boolean = False);
 begin
-  Initialize(PointDouble(X, Y), PointDouble(Rx, Ry), NumSteps, Cw);
+  Initialize(PointDouble(X, Y), PointDouble(RX, RY), NumSteps, CW);
 end;
 
-procedure TAggEllipse.Initialize(Center, Radius: TPointDouble; NumSteps: Cardinal = 0;
-  Cw: Boolean = False);
+procedure TAggEllipse.Initialize(center, radius: TPointDouble; NumSteps: Cardinal = 0;
+  CW: Boolean = False);
 begin
-  FCenter := Center;
-  FRadius := Radius;
+  FCenter := center;
+  FRadius := radius;
 
   FNum := NumSteps;
   FStep := 0;
-  FClockWise := Cw;
+  FClockWise := CW;
 
   if FNum = 0 then
       CalculateNumSteps;
@@ -270,8 +270,8 @@ end;
 
 function TAggEllipse.Vertex(X, Y: PDouble): Cardinal;
 var
-  Angle: Double;
-  Sn, Cn: Double;
+  angle: Double;
+  sn, CN: Double;
 begin
   if FStep = FNum then
     begin
@@ -289,14 +289,14 @@ begin
       Exit;
     end;
 
-  Angle := 2 * Pi * FStep / FNum;
+  angle := 2 * pi * FStep / FNum;
 
   if FClockWise then
-      Angle := 2 * Pi - Angle;
+      angle := 2 * pi - angle;
 
-  SinCosScale(Angle, Sn, Cn, FRadius.Y, FRadius.X);
-  X^ := FCenter.X + Cn;
-  Y^ := FCenter.Y + Sn;
+  SinCosScale(angle, sn, CN, FRadius.Y, FRadius.X);
+  X^ := FCenter.X + CN;
+  Y^ := FCenter.Y + sn;
 
   Inc(FStep);
 
@@ -308,12 +308,13 @@ end;
 
 procedure TAggEllipse.CalculateNumSteps;
 var
-  Ra, Da: Double;
+  RA, DA: Double;
 begin
-  Ra := (Abs(FRadius.X) + Abs(FRadius.Y)) * 0.5;
-  Da := ArcCos(Ra / (Ra + 0.125 / FApproximationScale)) * 2;
+  RA := (Abs(FRadius.X) + Abs(FRadius.Y)) * 0.5;
+  DA := ArcCos(RA / (RA + 0.125 / FApproximationScale)) * 2;
 
-  FNum := Trunc(2 * Pi / Da);
+  FNum := Trunc(2 * pi / DA);
 end;
 
-end.
+end. 
+ 

@@ -39,17 +39,17 @@ unit AggRasterizerCompoundAA;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
   AggArray,
   AggRasterizerCellsAA,
-  AggRasterizerScanline,
+  AggRasterizerScanLine,
   AggRasterizerScanlineClip,
   AggVertexSource,
-  AggScanLine;
+  AggScanline;
 
 const
   CAggAntiAliasingShift  = 8;
@@ -107,11 +107,11 @@ type
 
     procedure Reset; override;
     procedure ResetClipping;
-    procedure SetClipBox(X1, Y1, X2, Y2: Double); override;
+    procedure SetClipBox(x1, y1, x2, y2: Double); override;
     procedure SetClipBox(Rect: TRectDouble); override;
 
     procedure LayerOrder(Order: TAggLayerOrder);
-    procedure MasterAlpha(AStyle: Integer; Alpha: Double);
+    procedure MasterAlpha(AStyle: Integer; alpha: Double);
 
     procedure Styles(Left, Right: Integer);
     procedure MoveTo(X, Y: Integer); virtual; abstract;
@@ -120,8 +120,8 @@ type
     procedure MoveToDouble(X, Y: Double); virtual; abstract;
     procedure LineToDouble(X, Y: Double);
 
-    procedure EdgeInteger(X1, Y1, X2, Y2: Integer);
-    procedure EdgeDouble(X1, Y1, X2, Y2: Double);
+    procedure EdgeInteger(x1, y1, x2, y2: Integer);
+    procedure EdgeDouble(x1, y1, x2, y2: Double);
 
     procedure AddPath(Vs: TAggCustomVertexSource; PathID: Cardinal = 0); override;
 
@@ -139,10 +139,10 @@ type
 
     function NavigateScanLine(Y: Integer): Boolean;
 
-    function HitTest(Tx, Ty: Integer): Boolean; override;
+    function HitTest(TX, TY: Integer): Boolean; override;
 
     function CalculateAlpha(Area: Integer; MasterAlpha: Cardinal): Cardinal;
-    function SweepScanLine(Sl: TAggCustomScanLine; StyleIndex: Integer): Boolean;
+    function SweepScanLine(SL: TAggCustomScanLine; StyleIndex: Integer): Boolean;
   end;
 
   TAggRasterizerCompoundAAInteger = class(TAggRasterizerCompoundAA)
@@ -233,21 +233,21 @@ begin
   FClipper.ResetClipping;
 end;
 
-procedure TAggRasterizerCompoundAA.SetClipBox(X1, Y1, X2, Y2: Double);
+procedure TAggRasterizerCompoundAA.SetClipBox(x1, y1, x2, y2: Double);
 begin
   Reset;
-  FClipper.SetClipBox(FRasterizerConverter.Upscale(X1),
-    FRasterizerConverter.Upscale(Y1), FRasterizerConverter.Upscale(X2),
-    FRasterizerConverter.Upscale(Y2));
+  FClipper.SetClipBox(FRasterizerConverter.Upscale(x1),
+    FRasterizerConverter.Upscale(y1), FRasterizerConverter.Upscale(x2),
+    FRasterizerConverter.Upscale(y2));
 end;
 
 procedure TAggRasterizerCompoundAA.SetClipBox(Rect: TRectDouble);
 begin
   Reset;
-  FClipper.SetClipBox(FRasterizerConverter.Upscale(Rect.X1),
-    FRasterizerConverter.Upscale(Rect.Y1),
-    FRasterizerConverter.Upscale(Rect.X2),
-    FRasterizerConverter.Upscale(Rect.Y2));
+  FClipper.SetClipBox(FRasterizerConverter.Upscale(Rect.x1),
+    FRasterizerConverter.Upscale(Rect.y1),
+    FRasterizerConverter.Upscale(Rect.x2),
+    FRasterizerConverter.Upscale(Rect.y2));
 end;
 
 procedure TAggRasterizerCompoundAA.SetFillingRule(Value: TAggFillingRule);
@@ -265,7 +265,7 @@ begin
   FLayerOrder := Order;
 end;
 
-procedure TAggRasterizerCompoundAA.MasterAlpha(AStyle: Integer; Alpha: Double);
+procedure TAggRasterizerCompoundAA.MasterAlpha(AStyle: Integer; alpha: Double);
 var
   Uv: Cardinal;
 begin
@@ -277,7 +277,7 @@ begin
           FMasterAlpha.Add(@Uv);
 
       PCardinal(FMasterAlpha[AStyle])^ :=
-        UnsignedRound(Alpha * CAggAntiAliasingMask);
+        UnsignedRound(alpha * CAggAntiAliasingMask);
     end;
 end;
 
@@ -317,26 +317,26 @@ begin
     FRasterizerConverter.Upscale(Y));
 end;
 
-procedure TAggRasterizerCompoundAA.EdgeInteger(X1, Y1, X2, Y2: Integer);
+procedure TAggRasterizerCompoundAA.EdgeInteger(x1, y1, x2, y2: Integer);
 begin
   if FOutline.Sorted then
       Reset;
 
-  FClipper.MoveTo(FRasterizerConverter.Downscale(X1),
-    FRasterizerConverter.Downscale(Y1));
-  FClipper.LineTo(FOutline, FRasterizerConverter.Downscale(X2),
-    FRasterizerConverter.Downscale(Y2));
+  FClipper.MoveTo(FRasterizerConverter.Downscale(x1),
+    FRasterizerConverter.Downscale(y1));
+  FClipper.LineTo(FOutline, FRasterizerConverter.Downscale(x2),
+    FRasterizerConverter.Downscale(y2));
 end;
 
-procedure TAggRasterizerCompoundAA.EdgeDouble(X1, Y1, X2, Y2: Double);
+procedure TAggRasterizerCompoundAA.EdgeDouble(x1, y1, x2, y2: Double);
 begin
   if FOutline.Sorted then
       Reset;
 
-  FClipper.MoveTo(FRasterizerConverter.Upscale(X1),
-    FRasterizerConverter.Upscale(Y1));
-  FClipper.LineTo(FOutline, FRasterizerConverter.Upscale(X2),
-    FRasterizerConverter.Upscale(Y2));
+  FClipper.MoveTo(FRasterizerConverter.Upscale(x1),
+    FRasterizerConverter.Upscale(y1));
+  FClipper.LineTo(FOutline, FRasterizerConverter.Upscale(x2),
+    FRasterizerConverter.Upscale(y2));
 end;
 
 procedure TAggRasterizerCompoundAA.AddPath(Vs: TAggCustomVertexSource;
@@ -424,15 +424,15 @@ end;
 
 function TAggRasterizerCompoundAA.SweepStyles: Cardinal;
 var
-  NumCells, NumStyles, I, StartCell, Uv, V, StyleID: Cardinal;
+  NumCells, NumStyles, i, StartCell, Uv, v, StyleID: Cardinal;
 
   CurrCell: PAggCellStyleAA;
-  TempStyle, St: PAggStyleInfo;
+  TempStyle, st: PAggStyleInfo;
 
   Cells: PPAggCellStyleAA;
   Cell: PAggCellInfo;
 
-  Ra: TAggRangeAdaptor;
+  RA: TAggRangeAdaptor;
 
 begin
   repeat
@@ -488,19 +488,19 @@ begin
         // Convert the Y-histogram into the array of starting indexes
         StartCell := 0;
 
-        I := 0;
+        i := 0;
 
-        while I < FActiveStyleTable.Size do
+        while i < FActiveStyleTable.Size do
           begin
-            St := PAggStyleInfo
-              (FStyles[PCardinal(FActiveStyleTable[I])^]);
+            st := PAggStyleInfo
+              (FStyles[PCardinal(FActiveStyleTable[i])^]);
 
-            V := St.StartCell;
+            v := st.StartCell;
 
-            St.StartCell := StartCell;
+            st.StartCell := StartCell;
 
-            Inc(StartCell, V);
-            Inc(I);
+            Inc(StartCell, v);
+            Inc(i);
           end;
 
         Cells := FOutline.ScanLineCells(FScanY);
@@ -581,14 +581,14 @@ begin
 
   if FLayerOrder <> loUnsorted then
     begin
-      Ra := TAggRangeAdaptor.Create(FActiveStyleTable, 1, FActiveStyleTable.Size - 1);
+      RA := TAggRangeAdaptor.Create(FActiveStyleTable, 1, FActiveStyleTable.Size - 1);
       try
         if FLayerOrder = loDirect then
-            QuickSort(Ra, @CardinalGreater)
+            QuickSort(RA, @CardinalGreater)
         else
-            QuickSort(Ra, @CardinalLess);
+            QuickSort(RA, @CardinalLess);
       finally
-          Ra.Free;
+          RA.Free;
       end;
     end;
 
@@ -652,12 +652,12 @@ begin
   Result := True;
 end;
 
-function TAggRasterizerCompoundAA.HitTest(Tx, Ty: Integer): Boolean;
+function TAggRasterizerCompoundAA.HitTest(TX, TY: Integer): Boolean;
 var
   NumStyles: Cardinal;
-  Sl: TAggScanLineHitTest;
+  SL: TAggScanLineHitTest;
 begin
-  if not NavigateScanLine(Ty) then
+  if not NavigateScanLine(TY) then
     begin
       Result := False;
 
@@ -673,13 +673,13 @@ begin
       Exit;
     end;
 
-  Sl := TAggScanLineHitTest.Create(Tx);
+  SL := TAggScanLineHitTest.Create(TX);
   try
-    SweepScanLine(@Sl, -1);
+    SweepScanLine(@SL, -1);
 
-    Result := Sl.Hit;
+    Result := SL.Hit;
   finally
-      Sl.Free;
+      SL.Free;
   end;
 end;
 
@@ -708,14 +708,14 @@ begin
   Result := ShrInt32(Cover * MasterAlpha + CAggAntiAliasingMask, CAggAntiAliasingShift);
 end;
 
-function TAggRasterizerCompoundAA.SweepScanLine(Sl: TAggCustomScanLine;
+function TAggRasterizerCompoundAA.SweepScanLine(SL: TAggCustomScanLine;
   StyleIndex: Integer): Boolean;
 var
   Scan_y, Cover, X, Area: Integer;
 
-  MasterAlpha, NumCells, Alpha: Cardinal;
+  MasterAlpha, NumCells, alpha: Cardinal;
 
-  St: PAggStyleInfo;
+  st: PAggStyleInfo;
 
   Cell: PAggCellInfo;
 
@@ -729,7 +729,7 @@ begin
       Exit;
     end;
 
-  Sl.ResetSpans;
+  SL.ResetSpans;
 
   MasterAlpha := CAggAntiAliasingMask;
 
@@ -743,9 +743,9 @@ begin
         (FMasterAlpha[PCardinal(FActiveStyleTable[StyleIndex])^ + FMinStyle - 1])^;
     end;
 
-  St := FStyles[PCardinal(FActiveStyleTable[StyleIndex])^];
-  NumCells := St.NumCells;
-  Cell := FCells[St.StartCell];
+  st := FStyles[PCardinal(FActiveStyleTable[StyleIndex])^];
+  NumCells := st.NumCells;
+  Cell := FCells[st.StartCell];
   Cover := 0;
 
   while NumCells <> 0 do
@@ -760,32 +760,32 @@ begin
 
       if Area <> 0 then
         begin
-          Alpha := CalculateAlpha((Cover shl (CAggPolySubpixelShift + 1)) - Area,
+          alpha := CalculateAlpha((Cover shl (CAggPolySubpixelShift + 1)) - Area,
             MasterAlpha);
 
-          Sl.AddCell(X, Alpha);
+          SL.AddCell(X, alpha);
 
           Inc(X);
         end;
 
       if (NumCells <> 0) and (Cell.X > X) then
         begin
-          Alpha := CalculateAlpha(Cover shl (CAggPolySubpixelShift + 1),
+          alpha := CalculateAlpha(Cover shl (CAggPolySubpixelShift + 1),
             MasterAlpha);
 
-          if Alpha <> 0 then
-              Sl.AddSpan(X, Cell.X - X, Alpha);
+          if alpha <> 0 then
+              SL.AddSpan(X, Cell.X - X, alpha);
         end;
     end;
 
-  if Sl.NumSpans = 0 then
+  if SL.NumSpans = 0 then
     begin
       Result := False;
 
       Exit;
     end;
 
-  Sl.Finalize(Scan_y);
+  SL.Finalize(Scan_y);
 
   Result := True;
 end;
@@ -955,4 +955,4 @@ begin
       FClipper.LineTo(FOutline, @FStart.X, @FStart.Y);
 end;
 
-end.
+end. 

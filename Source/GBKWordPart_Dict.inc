@@ -1,5 +1,5 @@
 type
-  T_WordPart_PackageBuffer = array [0..79862] of byte;
+  T_WordPart_PackageBuffer = array [0..79862] of Byte;
 
 const
   // compiled WordPart.ini package
@@ -2581,4 +2581,4 @@ const
    $02,$9C,$99,$6F,$FF,$83,$96,$70,$93,$31,$05,$BE,$5E,$39,$65,$B5,$D5,$24,$FB,$ED,$77,$D4,$F8,$7C,$81,$DD,$27,$BE,$51,$E1,$51,
    $32,$D9,$89,$3D,$A9,$FD,$4D,$9B,$A9,$A7,$77,$16,$7E,$35,$31,$7C,$E3,$2D,$D4,$9E,$A6,$7A,$1F,$28,$2D,$83,$D2,$3B,$9D,$EE,$84,
    $6B,$DA,$BF,$A4,$EB,$C3,$53);
-
+ 

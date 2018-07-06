@@ -39,7 +39,7 @@ unit AggSpanImageFilter;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -73,8 +73,8 @@ type
 
     function GetBackgroundColor: PAggColor;
 
-    procedure SetBackgroundColor(V: PAggColor);
-    procedure SetFilterOffset(DeltaX, DeltaY: Double); overload;
+    procedure SetBackgroundColor(v: PAggColor);
+    procedure SetFilterOffset(deltax, deltay: Double); overload;
     procedure SetFilterOffset(Delta: Double); overload;
 
     property Interpolator: TAggSpanInterpolator read FInterpolator write SetInterpolator;
@@ -132,7 +132,7 @@ end;
 
 procedure TAggSpanImageFilter.SetBackgroundColor;
 begin
-  FBackColor := V^;
+  FBackColor := v^;
 end;
 
 procedure TAggSpanImageFilter.SetInterpolator(Value: TAggSpanInterpolator);
@@ -145,11 +145,11 @@ begin
   FFilter := Value;
 end;
 
-procedure TAggSpanImageFilter.SetFilterOffset(DeltaX, DeltaY: Double);
+procedure TAggSpanImageFilter.SetFilterOffset(deltax, deltay: Double);
 begin
-  FDeltaDouble := PointDouble(DeltaX, DeltaY);
-  FDeltaXInt := Trunc(DeltaX * CAggImageSubpixelSize);
-  FDeltaYInt := Trunc(DeltaY * CAggImageSubpixelSize);
+  FDeltaDouble := PointDouble(deltax, deltay);
+  FDeltaXInt := Trunc(deltax * CAggImageSubpixelSize);
+  FDeltaYInt := Trunc(deltay * CAggImageSubpixelSize);
 end;
 
 procedure TAggSpanImageFilter.SetFilterOffset(Delta: Double);
@@ -157,4 +157,4 @@ begin
   SetFilterOffset(Delta, Delta);
 end;
 
-end.
+end. 

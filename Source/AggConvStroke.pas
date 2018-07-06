@@ -39,7 +39,7 @@ unit AggConvStroke;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -82,7 +82,7 @@ type
     property LineJoin: TAggLineJoin read GetLineJoin write SetLineJoin;
     property InnerJoin: TAggInnerJoin read GetInnerJoin write SetInnerJoin;
 
-    property Width: Double read GetWidth write SetWidth;
+    property width: Double read GetWidth write SetWidth;
     property MiterLimit: Double read GetMiterLimit write SetMiterLimit;
     property InnerMiterLimit: Double read GetInnerMiterLimit write SetInnerMiterLimit;
     property ApproximationScale: Double read GetApproximationScale write SetApproximationScale;
@@ -123,7 +123,7 @@ type
     property LineJoin: TAggLineJoin read GetLineJoin write SetLineJoin;
     property InnerJoin: TAggInnerJoin read GetInnerJoin write SetInnerJoin;
 
-    property Width: Double read GetWidth write SetWidth;
+    property width: Double read GetWidth write SetWidth;
     property MiterLimit: Double read GetMiterLimit write SetMiterLimit;
     property InnerMiterLimit: Double read GetInnerMiterLimit write SetInnerMiterLimit;
     property ApproximationScale: Double read GetApproximationScale write SetApproximationScale;
@@ -182,7 +182,7 @@ end;
 
 procedure TAggConvStroke.SetWidth(Value: Double);
 begin
-  TAggVcgenStroke(Generator).Width := Value;
+  TAggVcgenStroke(Generator).width := Value;
 end;
 
 procedure TAggConvStroke.SetMiterLimit(Value: Double);
@@ -207,7 +207,7 @@ end;
 
 function TAggConvStroke.GetWidth: Double;
 begin
-  Result := TAggVcgenStroke(Generator).Width;
+  Result := TAggVcgenStroke(Generator).width;
 end;
 
 function TAggConvStroke.GetMiterLimit: Double;
@@ -283,7 +283,7 @@ end;
 
 procedure TAggConvStrokeMath.SetWidth(Value: Double);
 begin
-  TAggVcgenStrokeMath(Generator).Width := Value;
+  TAggVcgenStrokeMath(Generator).width := Value;
 end;
 
 procedure TAggConvStrokeMath.SetMiterLimit(Value: Double);
@@ -308,7 +308,7 @@ end;
 
 function TAggConvStrokeMath.GetWidth: Double;
 begin
-  Result := TAggVcgenStrokeMath(Generator).Width;
+  Result := TAggVcgenStrokeMath(Generator).width;
 end;
 
 function TAggConvStrokeMath.GetMiterLimit: Double;
@@ -336,4 +336,4 @@ begin
   Result := TAggVcgenStrokeMath(Generator).Shorten;
 end;
 
-end.
+end. 

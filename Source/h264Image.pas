@@ -12,12 +12,12 @@
 
 unit h264Image;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
 uses
-  h264Stdint, h264util, CoreClasses, MemoryRaster;
+  h264Stdint, h264Util, CoreClasses, MemoryRaster;
 
 const
   QPARAM_AUTO = 52;
@@ -36,8 +36,8 @@ type
     stride, stride_c: int32_t;        // plane strides
 
     property QParam: uint8_t read qp write SetQParam;
-    property Width: int32_t read w;
-    property Height: int32_t read h;
+    property width: int32_t read w;
+    property height: int32_t read h;
 
     constructor Create(const width_, height_: int32_t);
     destructor Destroy; override;
@@ -70,7 +70,7 @@ begin
   w := width_;
   h := height_;
   memsize := w * h + (w * h) div 2;
-  plane[0] := getMemory(memsize);
+  plane[0] := GetMemory(memsize);
   plane[1] := plane[0] + w * h;
   plane[2] := plane[1] + (w * h) div 4;
   stride := w;
@@ -80,7 +80,7 @@ end;
 
 destructor TPlanarImage.Destroy;
 begin
-  freemem(plane[0]);
+  FreeMem(plane[0]);
   inherited Destroy;
 end;
 
@@ -91,12 +91,12 @@ end;
 
 procedure TPlanarImage.LoadFromRaster(raster: TMemoryRaster);
 begin
-  RasterToYV12(raster, self);
+  RasterToYV12(raster, Self);
 end;
 
 procedure TPlanarImage.SaveToRaster(raster: TMemoryRaster);
 begin
-  YV12ToRaster(self, raster);
+  YV12ToRaster(Self, raster);
 end;
 
 procedure YV12ToRaster(const sour: TPlanarImage; const dest: TMemoryRaster);
@@ -109,4 +109,4 @@ begin
   RasterToYV12(sour, dest.plane[0], dest.plane[1], dest.plane[2], dest.w, dest.h);
 end;
 
-end.
+end.  

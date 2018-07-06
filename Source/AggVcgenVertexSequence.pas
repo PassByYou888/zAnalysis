@@ -39,7 +39,7 @@ unit AggVcgenVertexSequence;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -57,7 +57,7 @@ type
     FShorten: Double;
     FReady: Boolean;
 
-    procedure SetShorten(S: Double);
+    procedure SetShorten(s: Double);
     function GetShorten: Double;
   public
     constructor Create;
@@ -96,9 +96,9 @@ begin
   inherited;
 end;
 
-procedure TAggVcgenVertexSequence.SetShorten(S: Double);
+procedure TAggVcgenVertexSequence.SetShorten(s: Double);
 begin
-  FShorten := S;
+  FShorten := s;
 end;
 
 function TAggVcgenVertexSequence.GetShorten: Double;
@@ -118,18 +118,18 @@ end;
 
 procedure TAggVcgenVertexSequence.AddVertex;
 var
-  Vc: TAggVertexDistCmd;
+  VC: TAggVertexDistCmd;
 begin
   FReady := False;
 
-  Vc.Pos := PointDouble(X, Y);
-  Vc.Dist := 0;
-  Vc.Cmd := Cmd;
+  VC.pos := PointDouble(X, Y);
+  VC.Dist := 0;
+  VC.Cmd := Cmd;
 
   if IsMoveTo(Cmd) then
-      FSourceVertices.ModifyLast(@Vc)
+      FSourceVertices.ModifyLast(@VC)
   else if IsVertex(Cmd) then
-      FSourceVertices.Add(@Vc)
+      FSourceVertices.Add(@VC)
   else
       FFlags := Cmd and CAggPathFlagsMask;
 end;
@@ -149,7 +149,7 @@ end;
 
 function TAggVcgenVertexSequence.Vertex(X, Y: PDouble): Cardinal;
 var
-  V: PAggVertexDistCmd;
+  v: PAggVertexDistCmd;
 begin
   if not FReady then
       Rewind(0);
@@ -170,14 +170,15 @@ begin
       Exit;
     end;
 
-  V := FSourceVertices[FCurrentVertex];
+  v := FSourceVertices[FCurrentVertex];
 
   Inc(FCurrentVertex);
 
-  X^ := V.Pos.X;
-  Y^ := V.Pos.Y;
+  X^ := v.pos.X;
+  Y^ := v.pos.Y;
 
-  Result := V.Cmd;
+  Result := v.Cmd;
 end;
 
-end.
+end. 
+ 

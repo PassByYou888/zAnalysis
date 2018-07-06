@@ -9,10 +9,10 @@
 { * https://github.com/PassByYou888/zGameWare                                  * }
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
-procedure XSum(var W: TLVec; MX: TLFloat; N: TLInt;
+procedure XSum(var w: TLVec; mx: TLFloat; n: TLInt;
   var R: TLFloat; var RErr: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function XFastPow(R: TLFloat; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function XFastPow(R: TLFloat; n: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -33,40 +33,40 @@ function XFastPow(R: TLFloat; N: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} i
   during  calculation  of  (A,B)  and  errors  introduced by
   rounding of A and B to fit in TLFloat (about 1 ulp).
   ************************************************************************ *)
-procedure XDot(const A: TLVec; const B: TLVec; N: TLInt;
+procedure XDot(const A: TLVec; const b: TLVec; n: TLInt;
   var Temp: TLVec; var R: TLFloat; var RErr: TLFloat);
 var
-  I : TLInt;
-  MX: TLFloat;
-  V : TLFloat;
+  i : TLInt;
+  mx: TLFloat;
+  v : TLFloat;
 begin
 
   //
   // special cases:
   // * N=0
   //
-  if N = 0 then
+  if n = 0 then
     begin
       R := 0;
       RErr := 0;
       Exit;
     end;
-  MX := 0;
-  I := 0;
-  while I <= N - 1 do
+  mx := 0;
+  i := 0;
+  while i <= n - 1 do
     begin
-      V := A[I] * B[I];
-      Temp[I] := V;
-      MX := Max(MX, AbsReal(V));
-      Inc(I);
+      v := A[i] * b[i];
+      Temp[i] := v;
+      mx := Max(mx, AbsReal(v));
+      Inc(i);
     end;
-  if AP_FP_Eq(MX, 0) then
+  if AP_FP_Eq(mx, 0) then
     begin
       R := 0;
       RErr := 0;
       Exit;
     end;
-  XSum(Temp, MX, N, R, RErr);
+  XSum(Temp, mx, n, R, RErr);
 end;
 
 (* ************************************************************************
@@ -87,13 +87,13 @@ end;
   during  calculation  of  (A,B)  and  errors  introduced by
   rounding of A and B to fit in TLFloat (about 1 ulp).
   ************************************************************************ *)
-procedure XCDot(const A: TLComplexVec; const B: TLComplexVec;
-  N: TLInt; var Temp: TLVec; var R: TLComplex;
+procedure XCDot(const A: TLComplexVec; const b: TLComplexVec;
+  n: TLInt; var Temp: TLVec; var R: TLComplex;
   var RErr: TLFloat);
 var
-  I    : TLInt;
-  MX   : TLFloat;
-  V    : TLFloat;
+  i    : TLInt;
+  mx   : TLFloat;
+  v    : TLFloat;
   RErrX: TLFloat;
   RErrY: TLFloat;
 begin
@@ -102,7 +102,7 @@ begin
   // special cases:
   // * N=0
   //
-  if N = 0 then
+  if n = 0 then
     begin
       R := C_Complex(0);
       RErr := 0;
@@ -112,51 +112,51 @@ begin
   //
   // calculate real part
   //
-  MX := 0;
-  I := 0;
-  while I <= N - 1 do
+  mx := 0;
+  i := 0;
+  while i <= n - 1 do
     begin
-      V := A[I].X * B[I].X;
-      Temp[2 * I + 0] := V;
-      MX := Max(MX, AbsReal(V));
-      V := -A[I].Y * B[I].Y;
-      Temp[2 * I + 1] := V;
-      MX := Max(MX, AbsReal(V));
-      Inc(I);
+      v := A[i].X * b[i].X;
+      Temp[2 * i + 0] := v;
+      mx := Max(mx, AbsReal(v));
+      v := -A[i].Y * b[i].Y;
+      Temp[2 * i + 1] := v;
+      mx := Max(mx, AbsReal(v));
+      Inc(i);
     end;
-  if AP_FP_Eq(MX, 0) then
+  if AP_FP_Eq(mx, 0) then
     begin
       R.X := 0;
       RErrX := 0;
     end
   else
     begin
-      XSum(Temp, MX, 2 * N, R.X, RErrX);
+      XSum(Temp, mx, 2 * n, R.X, RErrX);
     end;
 
   //
   // calculate imaginary part
   //
-  MX := 0;
-  I := 0;
-  while I <= N - 1 do
+  mx := 0;
+  i := 0;
+  while i <= n - 1 do
     begin
-      V := A[I].X * B[I].Y;
-      Temp[2 * I + 0] := V;
-      MX := Max(MX, AbsReal(V));
-      V := A[I].Y * B[I].X;
-      Temp[2 * I + 1] := V;
-      MX := Max(MX, AbsReal(V));
-      Inc(I);
+      v := A[i].X * b[i].Y;
+      Temp[2 * i + 0] := v;
+      mx := Max(mx, AbsReal(v));
+      v := A[i].Y * b[i].X;
+      Temp[2 * i + 1] := v;
+      mx := Max(mx, AbsReal(v));
+      Inc(i);
     end;
-  if AP_FP_Eq(MX, 0) then
+  if AP_FP_Eq(mx, 0) then
     begin
       R.Y := 0;
       RErrY := 0;
     end
   else
     begin
-      XSum(Temp, MX, 2 * N, R.Y, RErrY);
+      XSum(Temp, mx, 2 * n, R.Y, RErrY);
     end;
 
   //
@@ -186,14 +186,14 @@ end;
   R   -   SUM(w[i])
   RErr-   error estimate for R
   ************************************************************************ *)
-procedure XSum(var W: TLVec; MX: TLFloat; N: TLInt;
+procedure XSum(var w: TLVec; mx: TLFloat; n: TLInt;
   var R: TLFloat; var RErr: TLFloat);
 var
-  I       : TLInt;
-  K       : TLInt;
+  i       : TLInt;
+  k       : TLInt;
   KS      : TLInt;
-  V       : TLFloat;
-  S       : TLFloat;
+  v       : TLFloat;
+  s       : TLFloat;
   LN2     : TLFloat;
   Chunk   : TLFloat;
   InvChunk: TLFloat;
@@ -205,43 +205,43 @@ begin
   // * N=0
   // * N is too large to use TLInt arithmetics
   //
-  if N = 0 then
+  if n = 0 then
     begin
       R := 0;
       RErr := 0;
       Exit;
     end;
-  if AP_FP_Eq(MX, 0) then
+  if AP_FP_Eq(mx, 0) then
     begin
       R := 0;
       RErr := 0;
       Exit;
     end;
-  Assert(N < 536870912, 'XDot: N is too large!');
+  Assert(n < 536870912, 'XDot: N is too large!');
 
   //
   // Prepare
   //
-  LN2 := Ln(2);
-  RErr := MX * MachineEpsilon;
+  LN2 := ln(2);
+  RErr := mx * MachineEpsilon;
 
   //
   // 1. find S such that 0.5<=S*MX<1
   // 2. multiply W by S, so task is normalized in some sense
   // 3. S:=1/S so we can obtain original vector multiplying by S
   //
-  K := Round(Ln(MX) / LN2);
-  S := XFastPow(2, -K);
-  while AP_FP_Greater_Eq(S * MX, 1) do
+  k := Round(ln(mx) / LN2);
+  s := XFastPow(2, -k);
+  while AP_FP_Greater_Eq(s * mx, 1) do
     begin
-      S := 0.5 * S;
+      s := 0.5 * s;
     end;
-  while AP_FP_Less(S * MX, 0.5) do
+  while AP_FP_Less(s * mx, 0.5) do
     begin
-      S := 2 * S;
+      s := 2 * s;
     end;
-  APVMul(@W[0], 0, N - 1, S);
-  S := 1 / S;
+  APVMul(@w[0], 0, n - 1, s);
+  s := 1 / s;
 
   //
   // find Chunk=2^M such that N*Chunk<2^29
@@ -250,8 +250,8 @@ begin
   // to tolerate possible problems with rounding and N's close
   // to the limit, so we don't want to be very strict here.
   //
-  K := Trunc(Ln(AP_Float(536870912) / N) / LN2);
-  Chunk := XFastPow(2, K);
+  k := Trunc(ln(AP_Float(536870912) / n) / LN2);
+  Chunk := XFastPow(2, k);
   if AP_FP_Less(Chunk, 2) then
     begin
       Chunk := 2;
@@ -262,28 +262,28 @@ begin
   // calculate result
   //
   R := 0;
-  APVMul(@W[0], 0, N - 1, Chunk);
+  APVMul(@w[0], 0, n - 1, Chunk);
   while True do
     begin
-      S := S * InvChunk;
+      s := s * InvChunk;
       AllZeros := True;
       KS := 0;
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          V := W[I];
-          K := Trunc(V);
-          if AP_FP_Neq(V, K) then
+          v := w[i];
+          k := Trunc(v);
+          if AP_FP_NEq(v, k) then
             begin
               AllZeros := False;
             end;
-          W[I] := Chunk * (V - K);
-          KS := KS + K;
-          Inc(I);
+          w[i] := Chunk * (v - k);
+          KS := KS + k;
+          Inc(i);
         end;
-      R := R + S * KS;
-      V := AbsReal(R);
-      if AllZeros or AP_FP_Eq(S * N + MX, MX) then
+      R := R + s * KS;
+      v := AbsReal(R);
+      if AllZeros or AP_FP_Eq(s * n + mx, mx) then
         begin
           Break;
         end;
@@ -298,157 +298,157 @@ end;
 (* ************************************************************************
   Fast Pow
   ************************************************************************ *)
-function XFastPow(R: TLFloat; N: TLInt): TLFloat;
+function XFastPow(R: TLFloat; n: TLInt): TLFloat;
 begin
-  if N > 0 then
+  if n > 0 then
     begin
-      if N mod 2 = 0 then
+      if n mod 2 = 0 then
         begin
-          Result := AP_Sqr(XFastPow(R, N div 2));
+          Result := AP_Sqr(XFastPow(R, n div 2));
         end
       else
         begin
-          Result := R * XFastPow(R, N - 1);
+          Result := R * XFastPow(R, n - 1);
         end;
       Exit;
     end;
-  if N = 0 then
+  if n = 0 then
     begin
       Result := 1;
     end;
-  if N < 0 then
+  if n < 0 then
     begin
-      Result := XFastPow(1 / R, -N);
+      Result := XFastPow(1 / R, -n);
     end;
 end;
 
 type
   TDenseSolverReport = packed record
-    R1: TLFloat;
+    r1: TLFloat;
     RInf: TLFloat;
   end;
 
   TDenseSolverLSReport = packed record
-    R2: TLFloat;
-    CX: TLMatrix;
-    N: TLInt;
-    K: TLInt;
+    r2: TLFloat;
+    Cx: TLMatrix;
+    n: TLInt;
+    k: TLInt;
   end;
 
-procedure RMatrixSolve(const A: TLMatrix; N: TLInt;
-  const B: TLVec; var Info: TLInt; var Rep: TDenseSolverReport;
+procedure RMatrixSolve(const A: TLMatrix; n: TLInt;
+  const b: TLVec; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixSolveM(const A: TLMatrix; N: TLInt;
-  const B: TLMatrix; M: TLInt; RFS: Boolean;
+procedure RMatrixSolveM(const A: TLMatrix; n: TLInt;
+  const b: TLMatrix; M: TLInt; RFS: Boolean;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixLUSolve(const LUA: TLMatrix; const P: TLIVec;
-  N: TLInt; const B: TLVec; var Info: TLInt;
+procedure RMatrixLUSolve(const LUA: TLMatrix; const p: TLIVec;
+  n: TLInt; const b: TLVec; var Info: TLInt;
   var Rep: TDenseSolverReport; var X: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixLUSolveM(const LUA: TLMatrix; const P: TLIVec;
-  N: TLInt; const B: TLMatrix; M: TLInt;
+procedure RMatrixLUSolveM(const LUA: TLMatrix; const p: TLIVec;
+  n: TLInt; const b: TLMatrix; M: TLInt;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixMixedSolve(const A: TLMatrix; const LUA: TLMatrix;
-  const P: TLIVec; N: TLInt; const B: TLVec;
+  const p: TLIVec; n: TLInt; const b: TLVec;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixMixedSolveM(const A: TLMatrix; const LUA: TLMatrix;
-  const P: TLIVec; N: TLInt; const B: TLMatrix;
+  const p: TLIVec; n: TLInt; const b: TLMatrix;
   M: TLInt; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure CMatrixSolveM(const A: TLComplexMatrix; N: TLInt;
-  const B: TLComplexMatrix; M: TLInt; RFS: Boolean;
+procedure CMatrixSolveM(const A: TLComplexMatrix; n: TLInt;
+  const b: TLComplexMatrix; M: TLInt; RFS: Boolean;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure CMatrixSolve(const A: TLComplexMatrix; N: TLInt;
-  const B: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixSolve(const A: TLComplexMatrix; n: TLInt;
+  const b: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure CMatrixLUSolveM(const LUA: TLComplexMatrix; const P: TLIVec;
-  N: TLInt; const B: TLComplexMatrix; M: TLInt;
+procedure CMatrixLUSolveM(const LUA: TLComplexMatrix; const p: TLIVec;
+  n: TLInt; const b: TLComplexMatrix; M: TLInt;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure CMatrixLUSolve(const LUA: TLComplexMatrix; const P: TLIVec;
-  N: TLInt; const B: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLUSolve(const LUA: TLComplexMatrix; const p: TLIVec;
+  n: TLInt; const b: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixMixedSolveM(const A: TLComplexMatrix;
-  const LUA: TLComplexMatrix; const P: TLIVec; N: TLInt;
-  const B: TLComplexMatrix; M: TLInt; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  const LUA: TLComplexMatrix; const p: TLIVec; n: TLInt;
+  const b: TLComplexMatrix; M: TLInt; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure CMatrixMixedSolve(const A: TLComplexMatrix;
-  const LUA: TLComplexMatrix; const P: TLIVec; N: TLInt;
-  const B: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  const LUA: TLComplexMatrix; const p: TLIVec; n: TLInt;
+  const b: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure SPDMatrixSolveM(const A: TLMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLMatrix; M: TLInt;
+procedure SPDMatrixSolveM(const A: TLMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLMatrix; M: TLInt;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure SPDMatrixSolve(const A: TLMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SPDMatrixSolve(const A: TLMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure SPDMatrixCholeskySolveM(const CHA: TLMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLMatrix; M: TLInt;
+procedure SPDMatrixCholeskySolveM(const CHA: TLMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLMatrix; M: TLInt;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure SPDMatrixCholeskySolve(const CHA: TLMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SPDMatrixCholeskySolve(const CHA: TLMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure HPDMatrixSolveM(const A: TLComplexMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLComplexMatrix; M: TLInt;
+procedure HPDMatrixSolveM(const A: TLComplexMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLComplexMatrix; M: TLInt;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure HPDMatrixSolve(const A: TLComplexMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure HPDMatrixSolve(const A: TLComplexMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure HPDMatrixCholeskySolveM(const CHA: TLComplexMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLComplexMatrix; M: TLInt;
+procedure HPDMatrixCholeskySolveM(const CHA: TLComplexMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLComplexMatrix; M: TLInt;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure HPDMatrixCholeskySolve(const CHA: TLComplexMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure HPDMatrixCholeskySolve(const CHA: TLComplexMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixSolveLS(const A: TLMatrix; NRows: TLInt;
-  NCols: TLInt; const B: TLVec; Threshold: TLFloat;
+  NCols: TLInt; const b: TLVec; Threshold: TLFloat;
   var Info: TLInt; var Rep: TDenseSolverLSReport; var X: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixLUSolveInternal(const LUA: TLMatrix;
-  const P: TLIVec; const ScaleA: TLFloat; N: TLInt;
-  const A: TLMatrix; HaveA: Boolean; const B: TLMatrix;
+  const p: TLIVec; const ScaleA: TLFloat; n: TLInt;
+  const A: TLMatrix; HaveA: Boolean; const b: TLMatrix;
   M: TLInt; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure SPDMatrixCholeskySolveInternal(const CHA: TLMatrix;
-  const SqrtScaleA: TLFloat; N: TLInt; IsUpper: Boolean;
-  const A: TLMatrix; HaveA: Boolean; const B: TLMatrix;
+  const SqrtScaleA: TLFloat; n: TLInt; IsUpper: Boolean;
+  const A: TLMatrix; HaveA: Boolean; const b: TLMatrix;
   M: TLInt; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixLUSolveInternal(const LUA: TLComplexMatrix;
-  const P: TLIVec; const ScaleA: TLFloat; N: TLInt;
-  const A: TLComplexMatrix; HaveA: Boolean; const B: TLComplexMatrix;
+  const p: TLIVec; const ScaleA: TLFloat; n: TLInt;
+  const A: TLComplexMatrix; HaveA: Boolean; const b: TLComplexMatrix;
   M: TLInt; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure HPDMatrixCholeskySolveInternal(const CHA: TLComplexMatrix;
-  const SqrtScaleA: TLFloat; N: TLInt; IsUpper: Boolean;
-  const A: TLComplexMatrix; HaveA: Boolean; const B: TLComplexMatrix;
+  const SqrtScaleA: TLFloat; n: TLInt; IsUpper: Boolean;
+  const A: TLComplexMatrix; HaveA: Boolean; const b: TLComplexMatrix;
   M: TLInt; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DenseSolverRFSMax(N: TLInt; R1: TLFloat; RInf: TLFloat)
+function DenseSolverRFSMax(n: TLInt; r1: TLFloat; RInf: TLFloat)
   : TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DenseSolverRFSMaxV2(N: TLInt; R2: TLFloat)
+function DenseSolverRFSMaxV2(n: TLInt; r2: TLFloat)
   : TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RBasicLUSolve(const LUA: TLMatrix; const P: TLIVec;
-  ScaleA: TLFloat; N: TLInt; var XB: TLVec;
-  var Tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RBasicLUSolve(const LUA: TLMatrix; const p: TLIVec;
+  ScaleA: TLFloat; n: TLInt; var XB: TLVec;
+  var tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure SPDBasicCholeskySolve(const CHA: TLMatrix;
-  SqrtScaleA: TLFloat; N: TLInt; IsUpper: Boolean;
-  var XB: TLVec; var Tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CBasicLUSolve(const LUA: TLComplexMatrix; const P: TLIVec;
-  ScaleA: TLFloat; N: TLInt; var XB: TLComplexVec;
-  var Tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  SqrtScaleA: TLFloat; n: TLInt; IsUpper: Boolean;
+  var XB: TLVec; var tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CBasicLUSolve(const LUA: TLComplexMatrix; const p: TLIVec;
+  ScaleA: TLFloat; n: TLInt; var XB: TLComplexVec;
+  var tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure HPDBasicCholeskySolve(const CHA: TLComplexMatrix;
-  SqrtScaleA: TLFloat; N: TLInt; IsUpper: Boolean;
-  var XB: TLComplexVec; var Tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  SqrtScaleA: TLFloat; n: TLInt; IsUpper: Boolean;
+  var XB: TLComplexVec; var tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -488,27 +488,27 @@ procedure HPDBasicCholeskySolve(const CHA: TLComplexMatrix;
   * R1        reciprocal of condition number: 1/cond(A), 1-norm.
   * RInf      reciprocal of condition number: 1/cond(A), inf-norm.
   ************************************************************************ *)
-procedure RMatrixSolve(const A: TLMatrix; N: TLInt;
-  const B: TLVec; var Info: TLInt; var Rep: TDenseSolverReport;
+procedure RMatrixSolve(const A: TLMatrix; n: TLInt;
+  const b: TLVec; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLVec);
 var
   BM: TLMatrix;
   XM: TLMatrix;
   i_: TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(BM, N, 1);
-  for i_ := 0 to N - 1 do
+  SetLength(BM, n, 1);
+  for i_ := 0 to n - 1 do
     begin
-      BM[i_, 0] := B[i_];
+      BM[i_, 0] := b[i_];
     end;
-  RMatrixSolveM(A, N, BM, 1, True, Info, Rep, XM);
-  SetLength(X, N);
-  for i_ := 0 to N - 1 do
+  RMatrixSolveM(A, n, BM, 1, True, Info, Rep, XM);
+  SetLength(X, n);
+  for i_ := 0 to n - 1 do
     begin
       X[i_] := XM[i_, 0];
     end;
@@ -542,27 +542,27 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure RMatrixSolveM(const A: TLMatrix; N: TLInt;
-  const B: TLMatrix; M: TLInt; RFS: Boolean;
+procedure RMatrixSolveM(const A: TLMatrix; n: TLInt;
+  const b: TLMatrix; M: TLInt; RFS: Boolean;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLMatrix);
 var
   DA    : TLMatrix;
   EmptyA: TLMatrix;
-  P     : TLIVec;
+  p     : TLIVec;
   ScaleA: TLFloat;
-  I     : TLInt;
+  i     : TLInt;
   J     : TLInt;
 begin
 
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(DA, N, N);
+  SetLength(DA, n, n);
 
   //
   // 1. scale matrix, max(|A[i,j]|)
@@ -570,36 +570,36 @@ begin
   // 3. solve
   //
   ScaleA := 0;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
       J := 0;
-      while J <= N - 1 do
+      while J <= n - 1 do
         begin
-          ScaleA := Max(ScaleA, AbsReal(A[I, J]));
+          ScaleA := Max(ScaleA, AbsReal(A[i, J]));
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
   if AP_FP_Eq(ScaleA, 0) then
     begin
       ScaleA := 1;
     end;
   ScaleA := 1 / ScaleA;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      APVMove(@DA[I][0], 0, N - 1, @A[I][0], 0, N - 1);
-      Inc(I);
+      APVMove(@DA[i][0], 0, n - 1, @A[i][0], 0, n - 1);
+      Inc(i);
     end;
-  RMatrixLU(DA, N, N, P);
+  RMatrixLU(DA, n, n, p);
   if RFS then
     begin
-      RMatrixLUSolveInternal(DA, P, ScaleA, N, A, True, B, M, Info, Rep, X);
+      RMatrixLUSolveInternal(DA, p, ScaleA, n, A, True, b, M, Info, Rep, X);
     end
   else
     begin
-      RMatrixLUSolveInternal(DA, P, ScaleA, N, EmptyA, False, B, M, Info, Rep, X);
+      RMatrixLUSolveInternal(DA, p, ScaleA, n, EmptyA, False, b, M, Info, Rep, X);
     end;
 end;
 
@@ -629,27 +629,27 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure RMatrixLUSolve(const LUA: TLMatrix; const P: TLIVec;
-  N: TLInt; const B: TLVec; var Info: TLInt;
+procedure RMatrixLUSolve(const LUA: TLMatrix; const p: TLIVec;
+  n: TLInt; const b: TLVec; var Info: TLInt;
   var Rep: TDenseSolverReport; var X: TLVec);
 var
   BM: TLMatrix;
   XM: TLMatrix;
   i_: TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(BM, N, 1);
-  for i_ := 0 to N - 1 do
+  SetLength(BM, n, 1);
+  for i_ := 0 to n - 1 do
     begin
-      BM[i_, 0] := B[i_];
+      BM[i_, 0] := b[i_];
     end;
-  RMatrixLUSolveM(LUA, P, N, BM, 1, Info, Rep, XM);
-  SetLength(X, N);
-  for i_ := 0 to N - 1 do
+  RMatrixLUSolveM(LUA, p, n, BM, 1, Info, Rep, XM);
+  SetLength(X, n);
+  for i_ := 0 to n - 1 do
     begin
       X[i_] := XM[i_, 0];
     end;
@@ -682,12 +682,12 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure RMatrixLUSolveM(const LUA: TLMatrix; const P: TLIVec;
-  N: TLInt; const B: TLMatrix; M: TLInt;
+procedure RMatrixLUSolveM(const LUA: TLMatrix; const p: TLIVec;
+  n: TLInt; const b: TLMatrix; M: TLInt;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLMatrix);
 var
   EmptyA: TLMatrix;
-  I     : TLInt;
+  i     : TLInt;
   J     : TLInt;
   ScaleA: TLFloat;
 begin
@@ -695,7 +695,7 @@ begin
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
@@ -707,23 +707,23 @@ begin
   // 2. solve
   //
   ScaleA := 0;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      J := I;
-      while J <= N - 1 do
+      J := i;
+      while J <= n - 1 do
         begin
-          ScaleA := Max(ScaleA, AbsReal(LUA[I, J]));
+          ScaleA := Max(ScaleA, AbsReal(LUA[i, J]));
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
   if AP_FP_Eq(ScaleA, 0) then
     begin
       ScaleA := 1;
     end;
   ScaleA := 1 / ScaleA;
-  RMatrixLUSolveInternal(LUA, P, ScaleA, N, EmptyA, False, B, M, Info, Rep, X);
+  RMatrixLUSolveInternal(LUA, p, ScaleA, n, EmptyA, False, b, M, Info, Rep, X);
 end;
 
 (* ************************************************************************
@@ -752,26 +752,26 @@ end;
   X       -   same as in RMatrixSolveM
   ************************************************************************ *)
 procedure RMatrixMixedSolve(const A: TLMatrix; const LUA: TLMatrix;
-  const P: TLIVec; N: TLInt; const B: TLVec;
+  const p: TLIVec; n: TLInt; const b: TLVec;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLVec);
 var
   BM: TLMatrix;
   XM: TLMatrix;
   i_: TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(BM, N, 1);
-  for i_ := 0 to N - 1 do
+  SetLength(BM, n, 1);
+  for i_ := 0 to n - 1 do
     begin
-      BM[i_, 0] := B[i_];
+      BM[i_, 0] := b[i_];
     end;
-  RMatrixMixedSolveM(A, LUA, P, N, BM, 1, Info, Rep, XM);
-  SetLength(X, N);
-  for i_ := 0 to N - 1 do
+  RMatrixMixedSolveM(A, LUA, p, n, BM, 1, Info, Rep, XM);
+  SetLength(X, n);
+  for i_ := 0 to n - 1 do
     begin
       X[i_] := XM[i_, 0];
     end;
@@ -803,19 +803,19 @@ end;
   X       -   same as in RMatrixSolveM
   ************************************************************************ *)
 procedure RMatrixMixedSolveM(const A: TLMatrix; const LUA: TLMatrix;
-  const P: TLIVec; N: TLInt; const B: TLMatrix;
+  const p: TLIVec; n: TLInt; const b: TLMatrix;
   M: TLInt; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLMatrix);
 var
   ScaleA: TLFloat;
-  I     : TLInt;
+  i     : TLInt;
   J     : TLInt;
 begin
 
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
@@ -827,23 +827,23 @@ begin
   // 3. solve
   //
   ScaleA := 0;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
       J := 0;
-      while J <= N - 1 do
+      while J <= n - 1 do
         begin
-          ScaleA := Max(ScaleA, AbsReal(A[I, J]));
+          ScaleA := Max(ScaleA, AbsReal(A[i, J]));
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
   if AP_FP_Eq(ScaleA, 0) then
     begin
       ScaleA := 1;
     end;
   ScaleA := 1 / ScaleA;
-  RMatrixLUSolveInternal(LUA, P, ScaleA, N, A, True, B, M, Info, Rep, X);
+  RMatrixLUSolveInternal(LUA, p, ScaleA, n, A, True, b, M, Info, Rep, X);
 end;
 
 (* ************************************************************************
@@ -871,15 +871,15 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure CMatrixSolveM(const A: TLComplexMatrix; N: TLInt;
-  const B: TLComplexMatrix; M: TLInt; RFS: Boolean;
+procedure CMatrixSolveM(const A: TLComplexMatrix; n: TLInt;
+  const b: TLComplexMatrix; M: TLInt; RFS: Boolean;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexMatrix);
 var
   DA    : TLComplexMatrix;
   EmptyA: TLComplexMatrix;
-  P     : TLIVec;
+  p     : TLIVec;
   ScaleA: TLFloat;
-  I     : TLInt;
+  i     : TLInt;
   J     : TLInt;
   i_    : TLInt;
 begin
@@ -887,12 +887,12 @@ begin
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(DA, N, N);
+  SetLength(DA, n, n);
 
   //
   // 1. scale matrix, max(|A[i,j]|)
@@ -900,39 +900,39 @@ begin
   // 3. solve
   //
   ScaleA := 0;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
       J := 0;
-      while J <= N - 1 do
+      while J <= n - 1 do
         begin
-          ScaleA := Max(ScaleA, AbsComplex(A[I, J]));
+          ScaleA := Max(ScaleA, AbsComplex(A[i, J]));
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
   if AP_FP_Eq(ScaleA, 0) then
     begin
       ScaleA := 1;
     end;
   ScaleA := 1 / ScaleA;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      for i_ := 0 to N - 1 do
+      for i_ := 0 to n - 1 do
         begin
-          DA[I, i_] := A[I, i_];
+          DA[i, i_] := A[i, i_];
         end;
-      Inc(I);
+      Inc(i);
     end;
-  CMatrixLU(DA, N, N, P);
+  CMatrixLU(DA, n, n, p);
   if RFS then
     begin
-      CMatrixLUSolveInternal(DA, P, ScaleA, N, A, True, B, M, Info, Rep, X);
+      CMatrixLUSolveInternal(DA, p, ScaleA, n, A, True, b, M, Info, Rep, X);
     end
   else
     begin
-      CMatrixLUSolveInternal(DA, P, ScaleA, N, EmptyA, False, B, M, Info, Rep, X);
+      CMatrixLUSolveInternal(DA, p, ScaleA, n, EmptyA, False, b, M, Info, Rep, X);
     end;
 end;
 
@@ -955,27 +955,27 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure CMatrixSolve(const A: TLComplexMatrix; N: TLInt;
-  const B: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport;
+procedure CMatrixSolve(const A: TLComplexMatrix; n: TLInt;
+  const b: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLComplexVec);
 var
   BM: TLComplexMatrix;
   XM: TLComplexMatrix;
   i_: TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(BM, N, 1);
-  for i_ := 0 to N - 1 do
+  SetLength(BM, n, 1);
+  for i_ := 0 to n - 1 do
     begin
-      BM[i_, 0] := B[i_];
+      BM[i_, 0] := b[i_];
     end;
-  CMatrixSolveM(A, N, BM, 1, True, Info, Rep, XM);
-  SetLength(X, N);
-  for i_ := 0 to N - 1 do
+  CMatrixSolveM(A, n, BM, 1, True, Info, Rep, XM);
+  SetLength(X, n);
+  for i_ := 0 to n - 1 do
     begin
       X[i_] := XM[i_, 0];
     end;
@@ -1005,12 +1005,12 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure CMatrixLUSolveM(const LUA: TLComplexMatrix; const P: TLIVec;
-  N: TLInt; const B: TLComplexMatrix; M: TLInt;
+procedure CMatrixLUSolveM(const LUA: TLComplexMatrix; const p: TLIVec;
+  n: TLInt; const b: TLComplexMatrix; M: TLInt;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexMatrix);
 var
   EmptyA: TLComplexMatrix;
-  I     : TLInt;
+  i     : TLInt;
   J     : TLInt;
   ScaleA: TLFloat;
 begin
@@ -1018,7 +1018,7 @@ begin
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
@@ -1030,23 +1030,23 @@ begin
   // 2. solve
   //
   ScaleA := 0;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      J := I;
-      while J <= N - 1 do
+      J := i;
+      while J <= n - 1 do
         begin
-          ScaleA := Max(ScaleA, AbsComplex(LUA[I, J]));
+          ScaleA := Max(ScaleA, AbsComplex(LUA[i, J]));
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
   if AP_FP_Eq(ScaleA, 0) then
     begin
       ScaleA := 1;
     end;
   ScaleA := 1 / ScaleA;
-  CMatrixLUSolveInternal(LUA, P, ScaleA, N, EmptyA, False, B, M, Info, Rep, X);
+  CMatrixLUSolveInternal(LUA, p, ScaleA, n, EmptyA, False, b, M, Info, Rep, X);
 end;
 
 (* ************************************************************************
@@ -1072,27 +1072,27 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure CMatrixLUSolve(const LUA: TLComplexMatrix; const P: TLIVec;
-  N: TLInt; const B: TLComplexVec; var Info: TLInt;
+procedure CMatrixLUSolve(const LUA: TLComplexMatrix; const p: TLIVec;
+  n: TLInt; const b: TLComplexVec; var Info: TLInt;
   var Rep: TDenseSolverReport; var X: TLComplexVec);
 var
   BM: TLComplexMatrix;
   XM: TLComplexMatrix;
   i_: TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(BM, N, 1);
-  for i_ := 0 to N - 1 do
+  SetLength(BM, n, 1);
+  for i_ := 0 to n - 1 do
     begin
-      BM[i_, 0] := B[i_];
+      BM[i_, 0] := b[i_];
     end;
-  CMatrixLUSolveM(LUA, P, N, BM, 1, Info, Rep, XM);
-  SetLength(X, N);
-  for i_ := 0 to N - 1 do
+  CMatrixLUSolveM(LUA, p, n, BM, 1, Info, Rep, XM);
+  SetLength(X, n);
+  for i_ := 0 to n - 1 do
     begin
       X[i_] := XM[i_, 0];
     end;
@@ -1121,19 +1121,19 @@ end;
   X       -   same as in RMatrixSolveM
   ************************************************************************ *)
 procedure CMatrixMixedSolveM(const A: TLComplexMatrix;
-  const LUA: TLComplexMatrix; const P: TLIVec; N: TLInt;
-  const B: TLComplexMatrix; M: TLInt; var Info: TLInt;
+  const LUA: TLComplexMatrix; const p: TLIVec; n: TLInt;
+  const b: TLComplexMatrix; M: TLInt; var Info: TLInt;
   var Rep: TDenseSolverReport; var X: TLComplexMatrix);
 var
   ScaleA: TLFloat;
-  I     : TLInt;
+  i     : TLInt;
   J     : TLInt;
 begin
 
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
@@ -1145,23 +1145,23 @@ begin
   // 3. solve
   //
   ScaleA := 0;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
       J := 0;
-      while J <= N - 1 do
+      while J <= n - 1 do
         begin
-          ScaleA := Max(ScaleA, AbsComplex(A[I, J]));
+          ScaleA := Max(ScaleA, AbsComplex(A[i, J]));
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
   if AP_FP_Eq(ScaleA, 0) then
     begin
       ScaleA := 1;
     end;
   ScaleA := 1 / ScaleA;
-  CMatrixLUSolveInternal(LUA, P, ScaleA, N, A, True, B, M, Info, Rep, X);
+  CMatrixLUSolveInternal(LUA, p, ScaleA, n, A, True, b, M, Info, Rep, X);
 end;
 
 (* ************************************************************************
@@ -1186,27 +1186,27 @@ end;
   X       -   same as in RMatrixSolveM
   ************************************************************************ *)
 procedure CMatrixMixedSolve(const A: TLComplexMatrix;
-  const LUA: TLComplexMatrix; const P: TLIVec; N: TLInt;
-  const B: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport;
+  const LUA: TLComplexMatrix; const p: TLIVec; n: TLInt;
+  const b: TLComplexVec; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLComplexVec);
 var
   BM: TLComplexMatrix;
   XM: TLComplexMatrix;
   i_: TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(BM, N, 1);
-  for i_ := 0 to N - 1 do
+  SetLength(BM, n, 1);
+  for i_ := 0 to n - 1 do
     begin
-      BM[i_, 0] := B[i_];
+      BM[i_, 0] := b[i_];
     end;
-  CMatrixMixedSolveM(A, LUA, P, N, BM, 1, Info, Rep, XM);
-  SetLength(X, N);
-  for i_ := 0 to N - 1 do
+  CMatrixMixedSolveM(A, LUA, p, n, BM, 1, Info, Rep, XM);
+  SetLength(X, n);
+  for i_ := 0 to n - 1 do
     begin
       X[i_] := XM[i_, 0];
     end;
@@ -1240,13 +1240,13 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure SPDMatrixSolveM(const A: TLMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLMatrix; M: TLInt;
+procedure SPDMatrixSolveM(const A: TLMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLMatrix; M: TLInt;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLMatrix);
 var
   DA        : TLMatrix;
   SqrtScaleA: TLFloat;
-  I         : TLInt;
+  i         : TLInt;
   J         : TLInt;
   J1        : TLInt;
   J2        : TLInt;
@@ -1255,12 +1255,12 @@ begin
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(DA, N, N);
+  SetLength(DA, n, n);
 
   //
   // 1. scale matrix, max(|A[i,j]|)
@@ -1268,26 +1268,26 @@ begin
   // 3. solve
   //
   SqrtScaleA := 0;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
       if IsUpper then
         begin
-          J1 := I;
-          J2 := N - 1;
+          J1 := i;
+          J2 := n - 1;
         end
       else
         begin
           J1 := 0;
-          J2 := I;
+          J2 := i;
         end;
       J := J1;
       while J <= J2 do
         begin
-          SqrtScaleA := Max(SqrtScaleA, AbsReal(A[I, J]));
+          SqrtScaleA := Max(SqrtScaleA, AbsReal(A[i, J]));
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
   if AP_FP_Eq(SqrtScaleA, 0) then
     begin
@@ -1295,43 +1295,43 @@ begin
     end;
   SqrtScaleA := 1 / SqrtScaleA;
   SqrtScaleA := Sqrt(SqrtScaleA);
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
       if IsUpper then
         begin
-          J1 := I;
-          J2 := N - 1;
+          J1 := i;
+          J2 := n - 1;
         end
       else
         begin
           J1 := 0;
-          J2 := I;
+          J2 := i;
         end;
-      APVMove(@DA[I][0], J1, J2, @A[I][0], J1, J2);
-      Inc(I);
+      APVMove(@DA[i][0], J1, J2, @A[i][0], J1, J2);
+      Inc(i);
     end;
-  if not SPDMatrixCholesky(DA, N, IsUpper) then
+  if not SPDMatrixCholesky(DA, n, IsUpper) then
     begin
-      SetLength(X, N, M);
-      I := 0;
-      while I <= N - 1 do
+      SetLength(X, n, M);
+      i := 0;
+      while i <= n - 1 do
         begin
           J := 0;
           while J <= M - 1 do
             begin
-              X[I, J] := 0;
+              X[i, J] := 0;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
-      Rep.R1 := 0;
+      Rep.r1 := 0;
       Rep.RInf := 0;
       Info := -3;
       Exit;
     end;
   Info := 1;
-  SPDMatrixCholeskySolveInternal(DA, SqrtScaleA, N, IsUpper, A, True, B, M,
+  SPDMatrixCholeskySolveInternal(DA, SqrtScaleA, n, IsUpper, A, True, b, M,
     Info, Rep, X);
 end;
 
@@ -1361,27 +1361,27 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure SPDMatrixSolve(const A: TLMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLVec; var Info: TLInt;
+procedure SPDMatrixSolve(const A: TLMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLVec; var Info: TLInt;
   var Rep: TDenseSolverReport; var X: TLVec);
 var
   BM: TLMatrix;
   XM: TLMatrix;
   i_: TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(BM, N, 1);
-  for i_ := 0 to N - 1 do
+  SetLength(BM, n, 1);
+  for i_ := 0 to n - 1 do
     begin
-      BM[i_, 0] := B[i_];
+      BM[i_, 0] := b[i_];
     end;
-  SPDMatrixSolveM(A, N, IsUpper, BM, 1, Info, Rep, XM);
-  SetLength(X, N);
-  for i_ := 0 to N - 1 do
+  SPDMatrixSolveM(A, n, IsUpper, BM, 1, Info, Rep, XM);
+  SetLength(X, n);
+  for i_ := 0 to n - 1 do
     begin
       X[i_] := XM[i_, 0];
     end;
@@ -1415,13 +1415,13 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure SPDMatrixCholeskySolveM(const CHA: TLMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLMatrix; M: TLInt;
+procedure SPDMatrixCholeskySolveM(const CHA: TLMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLMatrix; M: TLInt;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLMatrix);
 var
   EmptyA    : TLMatrix;
   SqrtScaleA: TLFloat;
-  I         : TLInt;
+  i         : TLInt;
   J         : TLInt;
   J1        : TLInt;
   J2        : TLInt;
@@ -1430,7 +1430,7 @@ begin
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
@@ -1442,33 +1442,33 @@ begin
   // 3. solve
   //
   SqrtScaleA := 0;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
       if IsUpper then
         begin
-          J1 := I;
-          J2 := N - 1;
+          J1 := i;
+          J2 := n - 1;
         end
       else
         begin
           J1 := 0;
-          J2 := I;
+          J2 := i;
         end;
       J := J1;
       while J <= J2 do
         begin
-          SqrtScaleA := Max(SqrtScaleA, AbsReal(CHA[I, J]));
+          SqrtScaleA := Max(SqrtScaleA, AbsReal(CHA[i, J]));
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
   if AP_FP_Eq(SqrtScaleA, 0) then
     begin
       SqrtScaleA := 1;
     end;
   SqrtScaleA := 1 / SqrtScaleA;
-  SPDMatrixCholeskySolveInternal(CHA, SqrtScaleA, N, IsUpper, EmptyA, False, B,
+  SPDMatrixCholeskySolveInternal(CHA, SqrtScaleA, n, IsUpper, EmptyA, False, b,
     M, Info, Rep, X);
 end;
 
@@ -1499,27 +1499,27 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure SPDMatrixCholeskySolve(const CHA: TLMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLVec; var Info: TLInt;
+procedure SPDMatrixCholeskySolve(const CHA: TLMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLVec; var Info: TLInt;
   var Rep: TDenseSolverReport; var X: TLVec);
 var
   BM: TLMatrix;
   XM: TLMatrix;
   i_: TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(BM, N, 1);
-  for i_ := 0 to N - 1 do
+  SetLength(BM, n, 1);
+  for i_ := 0 to n - 1 do
     begin
-      BM[i_, 0] := B[i_];
+      BM[i_, 0] := b[i_];
     end;
-  SPDMatrixCholeskySolveM(CHA, N, IsUpper, BM, 1, Info, Rep, XM);
-  SetLength(X, N);
-  for i_ := 0 to N - 1 do
+  SPDMatrixCholeskySolveM(CHA, n, IsUpper, BM, 1, Info, Rep, XM);
+  SetLength(X, n);
+  for i_ := 0 to n - 1 do
     begin
       X[i_] := XM[i_, 0];
     end;
@@ -1553,13 +1553,13 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure HPDMatrixSolveM(const A: TLComplexMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLComplexMatrix; M: TLInt;
+procedure HPDMatrixSolveM(const A: TLComplexMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLComplexMatrix; M: TLInt;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexMatrix);
 var
   DA        : TLComplexMatrix;
   SqrtScaleA: TLFloat;
-  I         : TLInt;
+  i         : TLInt;
   J         : TLInt;
   J1        : TLInt;
   J2        : TLInt;
@@ -1569,12 +1569,12 @@ begin
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(DA, N, N);
+  SetLength(DA, n, n);
 
   //
   // 1. scale matrix, max(|A[i,j]|)
@@ -1582,26 +1582,26 @@ begin
   // 3. solve
   //
   SqrtScaleA := 0;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
       if IsUpper then
         begin
-          J1 := I;
-          J2 := N - 1;
+          J1 := i;
+          J2 := n - 1;
         end
       else
         begin
           J1 := 0;
-          J2 := I;
+          J2 := i;
         end;
       J := J1;
       while J <= J2 do
         begin
-          SqrtScaleA := Max(SqrtScaleA, AbsComplex(A[I, J]));
+          SqrtScaleA := Max(SqrtScaleA, AbsComplex(A[i, J]));
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
   if AP_FP_Eq(SqrtScaleA, 0) then
     begin
@@ -1609,46 +1609,46 @@ begin
     end;
   SqrtScaleA := 1 / SqrtScaleA;
   SqrtScaleA := Sqrt(SqrtScaleA);
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
       if IsUpper then
         begin
-          J1 := I;
-          J2 := N - 1;
+          J1 := i;
+          J2 := n - 1;
         end
       else
         begin
           J1 := 0;
-          J2 := I;
+          J2 := i;
         end;
       for i_ := J1 to J2 do
         begin
-          DA[I, i_] := A[I, i_];
+          DA[i, i_] := A[i, i_];
         end;
-      Inc(I);
+      Inc(i);
     end;
-  if not HPDMatrixCholesky(DA, N, IsUpper) then
+  if not HPDMatrixCholesky(DA, n, IsUpper) then
     begin
-      SetLength(X, N, M);
-      I := 0;
-      while I <= N - 1 do
+      SetLength(X, n, M);
+      i := 0;
+      while i <= n - 1 do
         begin
           J := 0;
           while J <= M - 1 do
             begin
-              X[I, J] := C_Complex(0);
+              X[i, J] := C_Complex(0);
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
-      Rep.R1 := 0;
+      Rep.r1 := 0;
       Rep.RInf := 0;
       Info := -3;
       Exit;
     end;
   Info := 1;
-  HPDMatrixCholeskySolveInternal(DA, SqrtScaleA, N, IsUpper, A, True, B, M,
+  HPDMatrixCholeskySolveInternal(DA, SqrtScaleA, n, IsUpper, A, True, b, M,
     Info, Rep, X);
 end;
 
@@ -1679,27 +1679,27 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure HPDMatrixSolve(const A: TLComplexMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLComplexVec; var Info: TLInt;
+procedure HPDMatrixSolve(const A: TLComplexMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLComplexVec; var Info: TLInt;
   var Rep: TDenseSolverReport; var X: TLComplexVec);
 var
   BM: TLComplexMatrix;
   XM: TLComplexMatrix;
   i_: TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(BM, N, 1);
-  for i_ := 0 to N - 1 do
+  SetLength(BM, n, 1);
+  for i_ := 0 to n - 1 do
     begin
-      BM[i_, 0] := B[i_];
+      BM[i_, 0] := b[i_];
     end;
-  HPDMatrixSolveM(A, N, IsUpper, BM, 1, Info, Rep, XM);
-  SetLength(X, N);
-  for i_ := 0 to N - 1 do
+  HPDMatrixSolveM(A, n, IsUpper, BM, 1, Info, Rep, XM);
+  SetLength(X, n);
+  for i_ := 0 to n - 1 do
     begin
       X[i_] := XM[i_, 0];
     end;
@@ -1733,13 +1733,13 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure HPDMatrixCholeskySolveM(const CHA: TLComplexMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLComplexMatrix; M: TLInt;
+procedure HPDMatrixCholeskySolveM(const CHA: TLComplexMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLComplexMatrix; M: TLInt;
   var Info: TLInt; var Rep: TDenseSolverReport; var X: TLComplexMatrix);
 var
   EmptyA    : TLComplexMatrix;
   SqrtScaleA: TLFloat;
-  I         : TLInt;
+  i         : TLInt;
   J         : TLInt;
   J1        : TLInt;
   J2        : TLInt;
@@ -1748,7 +1748,7 @@ begin
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
@@ -1760,33 +1760,33 @@ begin
   // 3. solve
   //
   SqrtScaleA := 0;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
       if IsUpper then
         begin
-          J1 := I;
-          J2 := N - 1;
+          J1 := i;
+          J2 := n - 1;
         end
       else
         begin
           J1 := 0;
-          J2 := I;
+          J2 := i;
         end;
       J := J1;
       while J <= J2 do
         begin
-          SqrtScaleA := Max(SqrtScaleA, AbsComplex(CHA[I, J]));
+          SqrtScaleA := Max(SqrtScaleA, AbsComplex(CHA[i, J]));
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
   if AP_FP_Eq(SqrtScaleA, 0) then
     begin
       SqrtScaleA := 1;
     end;
   SqrtScaleA := 1 / SqrtScaleA;
-  HPDMatrixCholeskySolveInternal(CHA, SqrtScaleA, N, IsUpper, EmptyA, False, B,
+  HPDMatrixCholeskySolveInternal(CHA, SqrtScaleA, n, IsUpper, EmptyA, False, b,
     M, Info, Rep, X);
 end;
 
@@ -1817,27 +1817,27 @@ end;
   Rep     -   same as in RMatrixSolve
   X       -   same as in RMatrixSolve
   ************************************************************************ *)
-procedure HPDMatrixCholeskySolve(const CHA: TLComplexMatrix; N: TLInt;
-  IsUpper: Boolean; const B: TLComplexVec; var Info: TLInt;
+procedure HPDMatrixCholeskySolve(const CHA: TLComplexMatrix; n: TLInt;
+  IsUpper: Boolean; const b: TLComplexVec; var Info: TLInt;
   var Rep: TDenseSolverReport; var X: TLComplexVec);
 var
   BM: TLComplexMatrix;
   XM: TLComplexMatrix;
   i_: TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(BM, N, 1);
-  for i_ := 0 to N - 1 do
+  SetLength(BM, n, 1);
+  for i_ := 0 to n - 1 do
     begin
-      BM[i_, 0] := B[i_];
+      BM[i_, 0] := b[i_];
     end;
-  HPDMatrixCholeskySolveM(CHA, N, IsUpper, BM, 1, Info, Rep, XM);
-  SetLength(X, N);
-  for i_ := 0 to N - 1 do
+  HPDMatrixCholeskySolveM(CHA, n, IsUpper, BM, 1, Info, Rep, XM);
+  SetLength(X, n);
+  for i_ := 0 to n - 1 do
     begin
       X[i_] := XM[i_, 0];
     end;
@@ -1888,25 +1888,25 @@ end;
   Columns of CX store such vectors that A*CX[i]=0.
   ************************************************************************ *)
 procedure RMatrixSolveLS(const A: TLMatrix; NRows: TLInt;
-  NCols: TLInt; const B: TLVec; Threshold: TLFloat;
+  NCols: TLInt; const b: TLVec; Threshold: TLFloat;
   var Info: TLInt; var Rep: TDenseSolverLSReport; var X: TLVec);
 var
   SV               : TLVec;
-  U                : TLMatrix;
+  u                : TLMatrix;
   VT               : TLMatrix;
   RP               : TLVec;
   UTB              : TLVec;
   SUTB             : TLVec;
-  Tmp              : TLVec;
+  tmp              : TLVec;
   TA               : TLVec;
   TX               : TLVec;
   Buf              : TLVec;
-  W                : TLVec;
-  I                : TLInt;
+  w                : TLVec;
+  i                : TLInt;
   J                : TLInt;
   NSV              : TLInt;
   KernelIdx        : TLInt;
-  V                : TLFloat;
+  v                : TLFloat;
   VErr             : TLFloat;
   SVDFailed        : Boolean;
   ZeroA            : Boolean;
@@ -1929,7 +1929,7 @@ begin
   //
   // Factorize A first
   //
-  SVDFailed := not RMatrixSVD(A, NRows, NCols, 1, 2, 2, SV, U, VT);
+  SVDFailed := not RMatrixSVD(A, NRows, NCols, 1, 2, 2, SV, u, VT);
   ZeroA := AP_FP_Eq(SV[0], 0);
   if SVDFailed or ZeroA then
     begin
@@ -1942,46 +1942,46 @@ begin
           Info := 1;
         end;
       SetLength(X, NCols);
-      I := 0;
-      while I <= NCols - 1 do
+      i := 0;
+      while i <= NCols - 1 do
         begin
-          X[I] := 0;
-          Inc(I);
+          X[i] := 0;
+          Inc(i);
         end;
-      Rep.N := NCols;
-      Rep.K := NCols;
-      SetLength(Rep.CX, NCols, NCols);
-      I := 0;
-      while I <= NCols - 1 do
+      Rep.n := NCols;
+      Rep.k := NCols;
+      SetLength(Rep.Cx, NCols, NCols);
+      i := 0;
+      while i <= NCols - 1 do
         begin
           J := 0;
           while J <= NCols - 1 do
             begin
-              if I = J then
+              if i = J then
                 begin
-                  Rep.CX[I, J] := 1;
+                  Rep.Cx[i, J] := 1;
                 end
               else
                 begin
-                  Rep.CX[I, J] := 0;
+                  Rep.Cx[i, J] := 0;
                 end;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
-      Rep.R2 := 0;
+      Rep.r2 := 0;
       Exit;
     end;
   NSV := Min(NCols, NRows);
   if NSV = NCols then
     begin
-      Rep.R2 := SV[NSV - 1] / SV[0];
+      Rep.r2 := SV[NSV - 1] / SV[0];
     end
   else
     begin
-      Rep.R2 := 0;
+      Rep.r2 := 0;
     end;
-  Rep.N := NCols;
+  Rep.n := NCols;
   Info := 1;
 
   //
@@ -1999,29 +1999,29 @@ begin
   SetLength(UTB, NSV);
   SetLength(SUTB, NSV);
   SetLength(X, NCols);
-  SetLength(Tmp, NCols);
+  SetLength(tmp, NCols);
   SetLength(TA, NCols + 1);
   SetLength(TX, NCols + 1);
   SetLength(Buf, NCols + 1);
-  I := 0;
-  while I <= NCols - 1 do
+  i := 0;
+  while i <= NCols - 1 do
     begin
-      X[I] := 0;
-      Inc(I);
+      X[i] := 0;
+      Inc(i);
     end;
   KernelIdx := NSV;
-  I := 0;
-  while I <= NSV - 1 do
+  i := 0;
+  while i <= NSV - 1 do
     begin
-      if AP_FP_Less_Eq(SV[I], Threshold * SV[0]) then
+      if AP_FP_Less_Eq(SV[i], Threshold * SV[0]) then
         begin
-          KernelIdx := I;
+          KernelIdx := i;
           Break;
         end;
-      Inc(I);
+      Inc(i);
     end;
-  Rep.K := NCols - KernelIdx;
-  NRFS := DenseSolverRFSMaxV2(NCols, Rep.R2);
+  Rep.k := NCols - KernelIdx;
+  NRFS := DenseSolverRFSMaxV2(NCols, Rep.r2);
   TerminateNextTime := False;
   SetLength(RP, NRows);
   RFS := 0;
@@ -2037,22 +2037,22 @@ begin
       //
       if RFS = 0 then
         begin
-          APVMove(@RP[0], 0, NRows - 1, @B[0], 0, NRows - 1);
+          APVMove(@RP[0], 0, NRows - 1, @b[0], 0, NRows - 1);
         end
       else
         begin
           SmallErr := True;
-          I := 0;
-          while I <= NRows - 1 do
+          i := 0;
+          while i <= NRows - 1 do
             begin
-              APVMove(@TA[0], 0, NCols - 1, @A[I][0], 0, NCols - 1);
+              APVMove(@TA[0], 0, NCols - 1, @A[i][0], 0, NCols - 1);
               TA[NCols] := -1;
               APVMove(@TX[0], 0, NCols - 1, @X[0], 0, NCols - 1);
-              TX[NCols] := B[I];
-              XDot(TA, TX, NCols + 1, Buf, V, VErr);
-              RP[I] := -V;
-              SmallErr := SmallErr and AP_FP_Less(AbsReal(V), 4 * VErr);
-              Inc(I);
+              TX[NCols] := b[i];
+              XDot(TA, TX, NCols + 1, Buf, v, VErr);
+              RP[i] := -v;
+              SmallErr := SmallErr and AP_FP_Less(AbsReal(v), 4 * VErr);
+              Inc(i);
             end;
           if SmallErr then
             begin
@@ -2063,67 +2063,67 @@ begin
       //
       // solve A*dx = rp
       //
-      I := 0;
-      while I <= NCols - 1 do
+      i := 0;
+      while i <= NCols - 1 do
         begin
-          Tmp[I] := 0;
-          Inc(I);
+          tmp[i] := 0;
+          Inc(i);
         end;
-      I := 0;
-      while I <= NSV - 1 do
+      i := 0;
+      while i <= NSV - 1 do
         begin
-          UTB[I] := 0;
-          Inc(I);
+          UTB[i] := 0;
+          Inc(i);
         end;
-      I := 0;
-      while I <= NRows - 1 do
+      i := 0;
+      while i <= NRows - 1 do
         begin
-          V := RP[I];
-          APVAdd(@UTB[0], 0, NSV - 1, @U[I][0], 0, NSV - 1, V);
-          Inc(I);
+          v := RP[i];
+          APVAdd(@UTB[0], 0, NSV - 1, @u[i][0], 0, NSV - 1, v);
+          Inc(i);
         end;
-      I := 0;
-      while I <= NSV - 1 do
+      i := 0;
+      while i <= NSV - 1 do
         begin
-          if I < KernelIdx then
+          if i < KernelIdx then
             begin
-              SUTB[I] := UTB[I] / SV[I];
+              SUTB[i] := UTB[i] / SV[i];
             end
           else
             begin
-              SUTB[I] := 0;
+              SUTB[i] := 0;
             end;
-          Inc(I);
+          Inc(i);
         end;
-      I := 0;
-      while I <= NSV - 1 do
+      i := 0;
+      while i <= NSV - 1 do
         begin
-          V := SUTB[I];
-          APVAdd(@Tmp[0], 0, NCols - 1, @VT[I][0], 0, NCols - 1, V);
-          Inc(I);
+          v := SUTB[i];
+          APVAdd(@tmp[0], 0, NCols - 1, @VT[i][0], 0, NCols - 1, v);
+          Inc(i);
         end;
 
       //
       // update x:  x:=x+dx
       //
-      APVAdd(@X[0], 0, NCols - 1, @Tmp[0], 0, NCols - 1);
+      APVAdd(@X[0], 0, NCols - 1, @tmp[0], 0, NCols - 1);
       Inc(RFS);
     end;
 
   //
   // fill CX
   //
-  if Rep.K > 0 then
+  if Rep.k > 0 then
     begin
-      SetLength(Rep.CX, NCols, Rep.K);
-      I := 0;
-      while I <= Rep.K - 1 do
+      SetLength(Rep.Cx, NCols, Rep.k);
+      i := 0;
+      while i <= Rep.k - 1 do
         begin
           for i_ := 0 to NCols - 1 do
             begin
-              Rep.CX[i_, I] := VT[KernelIdx + I, i_];
+              Rep.Cx[i_, i] := VT[KernelIdx + i, i_];
             end;
-          Inc(I);
+          Inc(i);
         end;
     end;
 end;
@@ -2132,14 +2132,14 @@ end;
   Internal LU solver
   ************************************************************************ *)
 procedure RMatrixLUSolveInternal(const LUA: TLMatrix;
-  const P: TLIVec; const ScaleA: TLFloat; N: TLInt;
-  const A: TLMatrix; HaveA: Boolean; const B: TLMatrix;
+  const p: TLIVec; const ScaleA: TLFloat; n: TLInt;
+  const A: TLMatrix; HaveA: Boolean; const b: TLMatrix;
   M: TLInt; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLMatrix);
 var
-  I                : TLInt;
+  i                : TLInt;
   J                : TLInt;
-  K                : TLInt;
+  k                : TLInt;
   RFS              : TLInt;
   NRFS             : TLInt;
   XC               : TLVec;
@@ -2148,7 +2148,7 @@ var
   XA               : TLVec;
   XB               : TLVec;
   TX               : TLVec;
-  V                : TLFloat;
+  v                : TLFloat;
   VErr             : TLFloat;
   MXB              : TLFloat;
   ScaleRight       : TLFloat;
@@ -2161,49 +2161,49 @@ begin
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
     end;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      if (P[I] > N - 1) or (P[I] < I) then
+      if (p[i] > n - 1) or (p[i] < i) then
         begin
           Info := -1;
           Exit;
         end;
-      Inc(I);
+      Inc(i);
     end;
-  SetLength(X, N, M);
-  SetLength(Y, N);
-  SetLength(XC, N);
-  SetLength(BC, N);
-  SetLength(TX, N + 1);
-  SetLength(XA, N + 1);
-  SetLength(XB, N + 1);
+  SetLength(X, n, M);
+  SetLength(Y, n);
+  SetLength(XC, n);
+  SetLength(BC, n);
+  SetLength(TX, n + 1);
+  SetLength(XA, n + 1);
+  SetLength(XB, n + 1);
 
   //
   // estimate condition number, test for near singularity
   //
-  Rep.R1 := RMatrixLURCond1(LUA, N);
-  Rep.RInf := RMatrixLURCondInf(LUA, N);
-  if AP_FP_Less(Rep.R1, RCondThreshold) or AP_FP_Less(Rep.RInf, RCondThreshold)
+  Rep.r1 := RMatrixLURCond1(LUA, n);
+  Rep.RInf := RMatrixLURCondInf(LUA, n);
+  if AP_FP_Less(Rep.r1, RCondThreshold) or AP_FP_Less(Rep.RInf, RCondThreshold)
   then
     begin
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
           J := 0;
           while J <= M - 1 do
             begin
-              X[I, J] := 0;
+              X[i, J] := 0;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
-      Rep.R1 := 0;
+      Rep.r1 := 0;
       Rep.RInf := 0;
       Info := -3;
       Exit;
@@ -2213,16 +2213,16 @@ begin
   //
   // solve
   //
-  K := 0;
-  while K <= M - 1 do
+  k := 0;
+  while k <= M - 1 do
     begin
 
       //
       // copy B to contiguous storage
       //
-      for i_ := 0 to N - 1 do
+      for i_ := 0 to n - 1 do
         begin
-          BC[i_] := B[i_, K];
+          BC[i_] := b[i_, k];
         end;
 
       //
@@ -2232,11 +2232,11 @@ begin
       // it is chosen to make |scaleRight*b| close to 1.
       //
       MXB := 0;
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          MXB := Max(MXB, AbsReal(BC[I]));
-          Inc(I);
+          MXB := Max(MXB, AbsReal(BC[i]));
+          Inc(i);
         end;
       if AP_FP_Eq(MXB, 0) then
         begin
@@ -2249,8 +2249,8 @@ begin
       // We use separate code for this task because
       // XDot is quite slow and we want to save time.
       //
-      APVMove(@XC[0], 0, N - 1, @BC[0], 0, N - 1, ScaleRight);
-      RBasicLUSolve(LUA, P, ScaleA, N, XC, TX);
+      APVMove(@XC[0], 0, n - 1, @BC[0], 0, n - 1, ScaleRight);
+      RBasicLUSolve(LUA, p, ScaleA, n, XC, TX);
 
       //
       // Iterative refinement of xc:
@@ -2264,7 +2264,7 @@ begin
       //
       if HaveA then
         begin
-          NRFS := DenseSolverRFSMax(N, Rep.R1, Rep.RInf);
+          NRFS := DenseSolverRFSMax(n, Rep.r1, Rep.RInf);
           TerminateNextTime := False;
           RFS := 0;
           while RFS <= NRFS - 1 do
@@ -2278,17 +2278,17 @@ begin
               // generate right part
               //
               SmallErr := True;
-              APVMove(@XB[0], 0, N - 1, @XC[0], 0, N - 1);
-              I := 0;
-              while I <= N - 1 do
+              APVMove(@XB[0], 0, n - 1, @XC[0], 0, n - 1);
+              i := 0;
+              while i <= n - 1 do
                 begin
-                  APVMove(@XA[0], 0, N - 1, @A[I][0], 0, N - 1, ScaleA);
-                  XA[N] := -1;
-                  XB[N] := ScaleRight * BC[I];
-                  XDot(XA, XB, N + 1, TX, V, VErr);
-                  Y[I] := -V;
-                  SmallErr := SmallErr and AP_FP_Less(AbsReal(V), 4 * VErr);
-                  Inc(I);
+                  APVMove(@XA[0], 0, n - 1, @A[i][0], 0, n - 1, ScaleA);
+                  XA[n] := -1;
+                  XB[n] := ScaleRight * BC[i];
+                  XDot(XA, XB, n + 1, TX, v, VErr);
+                  Y[i] := -v;
+                  SmallErr := SmallErr and AP_FP_Less(AbsReal(v), 4 * VErr);
+                  Inc(i);
                 end;
               if SmallErr then
                 begin
@@ -2298,8 +2298,8 @@ begin
               //
               // solve and update
               //
-              RBasicLUSolve(LUA, P, ScaleA, N, Y, TX);
-              APVAdd(@XC[0], 0, N - 1, @Y[0], 0, N - 1);
+              RBasicLUSolve(LUA, p, ScaleA, n, Y, TX);
+              APVAdd(@XC[0], 0, n - 1, @Y[0], 0, n - 1);
               Inc(RFS);
             end;
         end;
@@ -2308,12 +2308,12 @@ begin
       // Store xc.
       // Post-scale result.
       //
-      V := ScaleA * MXB;
-      for i_ := 0 to N - 1 do
+      v := ScaleA * MXB;
+      for i_ := 0 to n - 1 do
         begin
-          X[i_, K] := V * XC[i_];
+          X[i_, k] := v * XC[i_];
         end;
-      Inc(K);
+      Inc(k);
     end;
 end;
 
@@ -2321,14 +2321,14 @@ end;
   Internal Cholesky solver
   ************************************************************************ *)
 procedure SPDMatrixCholeskySolveInternal(const CHA: TLMatrix;
-  const SqrtScaleA: TLFloat; N: TLInt; IsUpper: Boolean;
-  const A: TLMatrix; HaveA: Boolean; const B: TLMatrix;
+  const SqrtScaleA: TLFloat; n: TLInt; IsUpper: Boolean;
+  const A: TLMatrix; HaveA: Boolean; const b: TLMatrix;
   M: TLInt; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLMatrix);
 var
-  I                : TLInt;
+  i                : TLInt;
   J                : TLInt;
-  K                : TLInt;
+  k                : TLInt;
   RFS              : TLInt;
   NRFS             : TLInt;
   XC               : TLVec;
@@ -2337,7 +2337,7 @@ var
   XA               : TLVec;
   XB               : TLVec;
   TX               : TLVec;
-  V                : TLFloat;
+  v                : TLFloat;
   VErr             : TLFloat;
   MXB              : TLFloat;
   ScaleRight       : TLFloat;
@@ -2350,38 +2350,38 @@ begin
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(X, N, M);
-  SetLength(Y, N);
-  SetLength(XC, N);
-  SetLength(BC, N);
-  SetLength(TX, N + 1);
-  SetLength(XA, N + 1);
-  SetLength(XB, N + 1);
+  SetLength(X, n, M);
+  SetLength(Y, n);
+  SetLength(XC, n);
+  SetLength(BC, n);
+  SetLength(TX, n + 1);
+  SetLength(XA, n + 1);
+  SetLength(XB, n + 1);
 
   //
   // estimate condition number, test for near singularity
   //
-  Rep.R1 := SPDMatrixCholeskyRCond(CHA, N, IsUpper);
-  Rep.RInf := Rep.R1;
-  if AP_FP_Less(Rep.R1, RCondThreshold) then
+  Rep.r1 := SPDMatrixCholeskyRCond(CHA, n, IsUpper);
+  Rep.RInf := Rep.r1;
+  if AP_FP_Less(Rep.r1, RCondThreshold) then
     begin
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
           J := 0;
           while J <= M - 1 do
             begin
-              X[I, J] := 0;
+              X[i, J] := 0;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
-      Rep.R1 := 0;
+      Rep.r1 := 0;
       Rep.RInf := 0;
       Info := -3;
       Exit;
@@ -2391,16 +2391,16 @@ begin
   //
   // solve
   //
-  K := 0;
-  while K <= M - 1 do
+  k := 0;
+  while k <= M - 1 do
     begin
 
       //
       // copy B to contiguous storage
       //
-      for i_ := 0 to N - 1 do
+      for i_ := 0 to n - 1 do
         begin
-          BC[i_] := B[i_, K];
+          BC[i_] := b[i_, k];
         end;
 
       //
@@ -2410,11 +2410,11 @@ begin
       // it is chosen to make |scaleRight*b| close to 1.
       //
       MXB := 0;
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          MXB := Max(MXB, AbsReal(BC[I]));
-          Inc(I);
+          MXB := Max(MXB, AbsReal(BC[i]));
+          Inc(i);
         end;
       if AP_FP_Eq(MXB, 0) then
         begin
@@ -2427,19 +2427,19 @@ begin
       // We use separate code for this task because
       // XDot is quite slow and we want to save time.
       //
-      APVMove(@XC[0], 0, N - 1, @BC[0], 0, N - 1, ScaleRight);
-      SPDBasicCholeskySolve(CHA, SqrtScaleA, N, IsUpper, XC, TX);
+      APVMove(@XC[0], 0, n - 1, @BC[0], 0, n - 1, ScaleRight);
+      SPDBasicCholeskySolve(CHA, SqrtScaleA, n, IsUpper, XC, TX);
 
       //
       // Store xc.
       // Post-scale result.
       //
-      V := AP_Sqr(SqrtScaleA) * MXB;
-      for i_ := 0 to N - 1 do
+      v := AP_Sqr(SqrtScaleA) * MXB;
+      for i_ := 0 to n - 1 do
         begin
-          X[i_, K] := V * XC[i_];
+          X[i_, k] := v * XC[i_];
         end;
-      Inc(K);
+      Inc(k);
     end;
 end;
 
@@ -2447,14 +2447,14 @@ end;
   Internal LU solver
   ************************************************************************ *)
 procedure CMatrixLUSolveInternal(const LUA: TLComplexMatrix;
-  const P: TLIVec; const ScaleA: TLFloat; N: TLInt;
-  const A: TLComplexMatrix; HaveA: Boolean; const B: TLComplexMatrix;
+  const p: TLIVec; const ScaleA: TLFloat; n: TLInt;
+  const A: TLComplexMatrix; HaveA: Boolean; const b: TLComplexMatrix;
   M: TLInt; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLComplexMatrix);
 var
-  I                : TLInt;
+  i                : TLInt;
   J                : TLInt;
-  K                : TLInt;
+  k                : TLInt;
   RFS              : TLInt;
   NRFS             : TLInt;
   XC               : TLComplexVec;
@@ -2464,7 +2464,7 @@ var
   XB               : TLComplexVec;
   TX               : TLComplexVec;
   TmpBuf           : TLVec;
-  V                : TLComplex;
+  v                : TLComplex;
   VErr             : TLFloat;
   MXB              : TLFloat;
   ScaleRight       : TLFloat;
@@ -2477,50 +2477,50 @@ begin
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
     end;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      if (P[I] > N - 1) or (P[I] < I) then
+      if (p[i] > n - 1) or (p[i] < i) then
         begin
           Info := -1;
           Exit;
         end;
-      Inc(I);
+      Inc(i);
     end;
-  SetLength(X, N, M);
-  SetLength(Y, N);
-  SetLength(XC, N);
-  SetLength(BC, N);
-  SetLength(TX, N);
-  SetLength(XA, N + 1);
-  SetLength(XB, N + 1);
-  SetLength(TmpBuf, 2 * N + 2);
+  SetLength(X, n, M);
+  SetLength(Y, n);
+  SetLength(XC, n);
+  SetLength(BC, n);
+  SetLength(TX, n);
+  SetLength(XA, n + 1);
+  SetLength(XB, n + 1);
+  SetLength(TmpBuf, 2 * n + 2);
 
   //
   // estimate condition number, test for near singularity
   //
-  Rep.R1 := CMatrixLURCond1(LUA, N);
-  Rep.RInf := CMatrixLURCondInf(LUA, N);
-  if AP_FP_Less(Rep.R1, RCondThreshold) or AP_FP_Less(Rep.RInf, RCondThreshold)
+  Rep.r1 := CMatrixLURCond1(LUA, n);
+  Rep.RInf := CMatrixLURCondInf(LUA, n);
+  if AP_FP_Less(Rep.r1, RCondThreshold) or AP_FP_Less(Rep.RInf, RCondThreshold)
   then
     begin
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
           J := 0;
           while J <= M - 1 do
             begin
-              X[I, J] := C_Complex(0);
+              X[i, J] := C_Complex(0);
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
-      Rep.R1 := 0;
+      Rep.r1 := 0;
       Rep.RInf := 0;
       Info := -3;
       Exit;
@@ -2530,16 +2530,16 @@ begin
   //
   // solve
   //
-  K := 0;
-  while K <= M - 1 do
+  k := 0;
+  while k <= M - 1 do
     begin
 
       //
       // copy B to contiguous storage
       //
-      for i_ := 0 to N - 1 do
+      for i_ := 0 to n - 1 do
         begin
-          BC[i_] := B[i_, K];
+          BC[i_] := b[i_, k];
         end;
 
       //
@@ -2549,11 +2549,11 @@ begin
       // it is chosen to make |scaleRight*b| close to 1.
       //
       MXB := 0;
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          MXB := Max(MXB, AbsComplex(BC[I]));
-          Inc(I);
+          MXB := Max(MXB, AbsComplex(BC[i]));
+          Inc(i);
         end;
       if AP_FP_Eq(MXB, 0) then
         begin
@@ -2566,11 +2566,11 @@ begin
       // We use separate code for this task because
       // XDot is quite slow and we want to save time.
       //
-      for i_ := 0 to N - 1 do
+      for i_ := 0 to n - 1 do
         begin
           XC[i_] := C_MulR(BC[i_], ScaleRight);
         end;
-      CBasicLUSolve(LUA, P, ScaleA, N, XC, TX);
+      CBasicLUSolve(LUA, p, ScaleA, n, XC, TX);
 
       //
       // Iterative refinement of xc:
@@ -2584,7 +2584,7 @@ begin
       //
       if HaveA then
         begin
-          NRFS := DenseSolverRFSMax(N, Rep.R1, Rep.RInf);
+          NRFS := DenseSolverRFSMax(n, Rep.r1, Rep.RInf);
           TerminateNextTime := False;
           RFS := 0;
           while RFS <= NRFS - 1 do
@@ -2598,23 +2598,23 @@ begin
               // generate right part
               //
               SmallErr := True;
-              for i_ := 0 to N - 1 do
+              for i_ := 0 to n - 1 do
                 begin
                   XB[i_] := XC[i_];
                 end;
-              I := 0;
-              while I <= N - 1 do
+              i := 0;
+              while i <= n - 1 do
                 begin
-                  for i_ := 0 to N - 1 do
+                  for i_ := 0 to n - 1 do
                     begin
-                      XA[i_] := C_MulR(A[I, i_], ScaleA);
+                      XA[i_] := C_MulR(A[i, i_], ScaleA);
                     end;
-                  XA[N] := C_Complex(-1);
-                  XB[N] := C_MulR(BC[I], ScaleRight);
-                  XCDot(XA, XB, N + 1, TmpBuf, V, VErr);
-                  Y[I] := C_Opposite(V);
-                  SmallErr := SmallErr and AP_FP_Less(AbsComplex(V), 4 * VErr);
-                  Inc(I);
+                  XA[n] := C_Complex(-1);
+                  XB[n] := C_MulR(BC[i], ScaleRight);
+                  XCDot(XA, XB, n + 1, TmpBuf, v, VErr);
+                  Y[i] := C_Opposite(v);
+                  SmallErr := SmallErr and AP_FP_Less(AbsComplex(v), 4 * VErr);
+                  Inc(i);
                 end;
               if SmallErr then
                 begin
@@ -2624,8 +2624,8 @@ begin
               //
               // solve and update
               //
-              CBasicLUSolve(LUA, P, ScaleA, N, Y, TX);
-              for i_ := 0 to N - 1 do
+              CBasicLUSolve(LUA, p, ScaleA, n, Y, TX);
+              for i_ := 0 to n - 1 do
                 begin
                   XC[i_] := C_Add(XC[i_], Y[i_]);
                 end;
@@ -2637,12 +2637,12 @@ begin
       // Store xc.
       // Post-scale result.
       //
-      V := C_Complex(ScaleA * MXB);
-      for i_ := 0 to N - 1 do
+      v := C_Complex(ScaleA * MXB);
+      for i_ := 0 to n - 1 do
         begin
-          X[i_, K] := C_Mul(V, XC[i_]);
+          X[i_, k] := C_Mul(v, XC[i_]);
         end;
-      Inc(K);
+      Inc(k);
     end;
 end;
 
@@ -2650,14 +2650,14 @@ end;
   Internal Cholesky solver
   ************************************************************************ *)
 procedure HPDMatrixCholeskySolveInternal(const CHA: TLComplexMatrix;
-  const SqrtScaleA: TLFloat; N: TLInt; IsUpper: Boolean;
-  const A: TLComplexMatrix; HaveA: Boolean; const B: TLComplexMatrix;
+  const SqrtScaleA: TLFloat; n: TLInt; IsUpper: Boolean;
+  const A: TLComplexMatrix; HaveA: Boolean; const b: TLComplexMatrix;
   M: TLInt; var Info: TLInt; var Rep: TDenseSolverReport;
   var X: TLComplexMatrix);
 var
-  I                : TLInt;
+  i                : TLInt;
   J                : TLInt;
-  K                : TLInt;
+  k                : TLInt;
   RFS              : TLInt;
   NRFS             : TLInt;
   XC               : TLComplexVec;
@@ -2666,7 +2666,7 @@ var
   XA               : TLComplexVec;
   XB               : TLComplexVec;
   TX               : TLComplexVec;
-  V                : TLFloat;
+  v                : TLFloat;
   VErr             : TLFloat;
   MXB              : TLFloat;
   ScaleRight       : TLFloat;
@@ -2679,38 +2679,38 @@ begin
   //
   // prepare: check inputs, allocate space...
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Info := -1;
       Exit;
     end;
-  SetLength(X, N, M);
-  SetLength(Y, N);
-  SetLength(XC, N);
-  SetLength(BC, N);
-  SetLength(TX, N + 1);
-  SetLength(XA, N + 1);
-  SetLength(XB, N + 1);
+  SetLength(X, n, M);
+  SetLength(Y, n);
+  SetLength(XC, n);
+  SetLength(BC, n);
+  SetLength(TX, n + 1);
+  SetLength(XA, n + 1);
+  SetLength(XB, n + 1);
 
   //
   // estimate condition number, test for near singularity
   //
-  Rep.R1 := HPDMatrixCholeskyRCond(CHA, N, IsUpper);
-  Rep.RInf := Rep.R1;
-  if AP_FP_Less(Rep.R1, RCondThreshold) then
+  Rep.r1 := HPDMatrixCholeskyRCond(CHA, n, IsUpper);
+  Rep.RInf := Rep.r1;
+  if AP_FP_Less(Rep.r1, RCondThreshold) then
     begin
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
           J := 0;
           while J <= M - 1 do
             begin
-              X[I, J] := C_Complex(0);
+              X[i, J] := C_Complex(0);
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
-      Rep.R1 := 0;
+      Rep.r1 := 0;
       Rep.RInf := 0;
       Info := -3;
       Exit;
@@ -2720,16 +2720,16 @@ begin
   //
   // solve
   //
-  K := 0;
-  while K <= M - 1 do
+  k := 0;
+  while k <= M - 1 do
     begin
 
       //
       // copy B to contiguous storage
       //
-      for i_ := 0 to N - 1 do
+      for i_ := 0 to n - 1 do
         begin
-          BC[i_] := B[i_, K];
+          BC[i_] := b[i_, k];
         end;
 
       //
@@ -2739,11 +2739,11 @@ begin
       // it is chosen to make |scaleRight*b| close to 1.
       //
       MXB := 0;
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          MXB := Max(MXB, AbsComplex(BC[I]));
-          Inc(I);
+          MXB := Max(MXB, AbsComplex(BC[i]));
+          Inc(i);
         end;
       if AP_FP_Eq(MXB, 0) then
         begin
@@ -2756,22 +2756,22 @@ begin
       // We use separate code for this task because
       // XDot is quite slow and we want to save time.
       //
-      for i_ := 0 to N - 1 do
+      for i_ := 0 to n - 1 do
         begin
           XC[i_] := C_MulR(BC[i_], ScaleRight);
         end;
-      HPDBasicCholeskySolve(CHA, SqrtScaleA, N, IsUpper, XC, TX);
+      HPDBasicCholeskySolve(CHA, SqrtScaleA, n, IsUpper, XC, TX);
 
       //
       // Store xc.
       // Post-scale result.
       //
-      V := AP_Sqr(SqrtScaleA) * MXB;
-      for i_ := 0 to N - 1 do
+      v := AP_Sqr(SqrtScaleA) * MXB;
+      for i_ := 0 to n - 1 do
         begin
-          X[i_, K] := C_MulR(XC[i_], V);
+          X[i_, k] := C_MulR(XC[i_], v);
         end;
-      Inc(K);
+      Inc(k);
     end;
 end;
 
@@ -2782,7 +2782,7 @@ end;
   2. task size.
   3. condition number
   ************************************************************************ *)
-function DenseSolverRFSMax(N: TLInt; R1: TLFloat; RInf: TLFloat)
+function DenseSolverRFSMax(n: TLInt; r1: TLFloat; RInf: TLFloat)
   : TLInt;
 begin
   Result := 5;
@@ -2795,9 +2795,9 @@ end;
   2. task size.
   3. norm-2 condition number
   ************************************************************************ *)
-function DenseSolverRFSMaxV2(N: TLInt; R2: TLFloat): TLInt;
+function DenseSolverRFSMaxV2(n: TLInt; r2: TLFloat): TLInt;
 begin
-  Result := DenseSolverRFSMax(N, 0, 0);
+  Result := DenseSolverRFSMax(n, 0, 0);
 end;
 
 (* ************************************************************************
@@ -2807,39 +2807,39 @@ end;
   * L is well-scaled, and it is U which needs scaling by ScaleA.
   * A=PLU is well-conditioned, so no zero divisions or overflow may occur
   ************************************************************************ *)
-procedure RBasicLUSolve(const LUA: TLMatrix; const P: TLIVec;
-  ScaleA: TLFloat; N: TLInt; var XB: TLVec;
-  var Tmp: TLVec);
+procedure RBasicLUSolve(const LUA: TLMatrix; const p: TLIVec;
+  ScaleA: TLFloat; n: TLInt; var XB: TLVec;
+  var tmp: TLVec);
 var
-  I: TLInt;
-  V: TLFloat;
+  i: TLInt;
+  v: TLFloat;
 begin
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      if P[I] <> I then
+      if p[i] <> i then
         begin
-          V := XB[I];
-          XB[I] := XB[P[I]];
-          XB[P[I]] := V;
+          v := XB[i];
+          XB[i] := XB[p[i]];
+          XB[p[i]] := v;
         end;
-      Inc(I);
+      Inc(i);
     end;
-  I := 1;
-  while I <= N - 1 do
+  i := 1;
+  while i <= n - 1 do
     begin
-      V := APVDotProduct(@LUA[I][0], 0, I - 1, @XB[0], 0, I - 1);
-      XB[I] := XB[I] - V;
-      Inc(I);
+      v := APVDotProduct(@LUA[i][0], 0, i - 1, @XB[0], 0, i - 1);
+      XB[i] := XB[i] - v;
+      Inc(i);
     end;
-  XB[N - 1] := XB[N - 1] / (ScaleA * LUA[N - 1, N - 1]);
-  I := N - 2;
-  while I >= 0 do
+  XB[n - 1] := XB[n - 1] / (ScaleA * LUA[n - 1, n - 1]);
+  i := n - 2;
+  while i >= 0 do
     begin
-      APVMove(@Tmp[0], I + 1, N - 1, @LUA[I][0], I + 1, N - 1, ScaleA);
-      V := APVDotProduct(@Tmp[0], I + 1, N - 1, @XB[0], I + 1, N - 1);
-      XB[I] := (XB[I] - V) / (ScaleA * LUA[I, I]);
-      Dec(I);
+      APVMove(@tmp[0], i + 1, n - 1, @LUA[i][0], i + 1, n - 1, ScaleA);
+      v := APVDotProduct(@tmp[0], i + 1, n - 1, @XB[0], i + 1, n - 1);
+      XB[i] := (XB[i] - v) / (ScaleA * LUA[i, i]);
+      Dec(i);
     end;
 end;
 
@@ -2851,11 +2851,11 @@ end;
   * A is well-conditioned, so no zero divisions or overflow may occur
   ************************************************************************ *)
 procedure SPDBasicCholeskySolve(const CHA: TLMatrix;
-  SqrtScaleA: TLFloat; N: TLInt; IsUpper: Boolean;
-  var XB: TLVec; var Tmp: TLVec);
+  SqrtScaleA: TLFloat; n: TLInt; IsUpper: Boolean;
+  var XB: TLVec; var tmp: TLVec);
 var
-  I: TLInt;
-  V: TLFloat;
+  i: TLInt;
+  v: TLFloat;
 begin
 
   //
@@ -2867,33 +2867,33 @@ begin
       //
       // Solve U'*y=b first.
       //
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          XB[I] := XB[I] / (SqrtScaleA * CHA[I, I]);
-          if I < N - 1 then
+          XB[i] := XB[i] / (SqrtScaleA * CHA[i, i]);
+          if i < n - 1 then
             begin
-              V := XB[I];
-              APVMove(@Tmp[0], I + 1, N - 1, @CHA[I][0], I + 1, N - 1, SqrtScaleA);
-              APVSub(@XB[0], I + 1, N - 1, @Tmp[0], I + 1, N - 1, V);
+              v := XB[i];
+              APVMove(@tmp[0], i + 1, n - 1, @CHA[i][0], i + 1, n - 1, SqrtScaleA);
+              APVSub(@XB[0], i + 1, n - 1, @tmp[0], i + 1, n - 1, v);
             end;
-          Inc(I);
+          Inc(i);
         end;
 
       //
       // Solve U*x=y then.
       //
-      I := N - 1;
-      while I >= 0 do
+      i := n - 1;
+      while i >= 0 do
         begin
-          if I < N - 1 then
+          if i < n - 1 then
             begin
-              APVMove(@Tmp[0], I + 1, N - 1, @CHA[I][0], I + 1, N - 1, SqrtScaleA);
-              V := APVDotProduct(@Tmp[0], I + 1, N - 1, @XB[0], I + 1, N - 1);
-              XB[I] := XB[I] - V;
+              APVMove(@tmp[0], i + 1, n - 1, @CHA[i][0], i + 1, n - 1, SqrtScaleA);
+              v := APVDotProduct(@tmp[0], i + 1, n - 1, @XB[0], i + 1, n - 1);
+              XB[i] := XB[i] - v;
             end;
-          XB[I] := XB[I] / (SqrtScaleA * CHA[I, I]);
-          Dec(I);
+          XB[i] := XB[i] / (SqrtScaleA * CHA[i, i]);
+          Dec(i);
         end;
     end
   else
@@ -2902,33 +2902,33 @@ begin
       //
       // Solve L*y=b first
       //
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          if I > 0 then
+          if i > 0 then
             begin
-              APVMove(@Tmp[0], 0, I - 1, @CHA[I][0], 0, I - 1, SqrtScaleA);
-              V := APVDotProduct(@Tmp[0], 0, I - 1, @XB[0], 0, I - 1);
-              XB[I] := XB[I] - V;
+              APVMove(@tmp[0], 0, i - 1, @CHA[i][0], 0, i - 1, SqrtScaleA);
+              v := APVDotProduct(@tmp[0], 0, i - 1, @XB[0], 0, i - 1);
+              XB[i] := XB[i] - v;
             end;
-          XB[I] := XB[I] / (SqrtScaleA * CHA[I, I]);
-          Inc(I);
+          XB[i] := XB[i] / (SqrtScaleA * CHA[i, i]);
+          Inc(i);
         end;
 
       //
       // Solve L'*x=y then.
       //
-      I := N - 1;
-      while I >= 0 do
+      i := n - 1;
+      while i >= 0 do
         begin
-          XB[I] := XB[I] / (SqrtScaleA * CHA[I, I]);
-          if I > 0 then
+          XB[i] := XB[i] / (SqrtScaleA * CHA[i, i]);
+          if i > 0 then
             begin
-              V := XB[I];
-              APVMove(@Tmp[0], 0, I - 1, @CHA[I][0], 0, I - 1, SqrtScaleA);
-              APVSub(@XB[0], 0, I - 1, @Tmp[0], 0, I - 1, V);
+              v := XB[i];
+              APVMove(@tmp[0], 0, i - 1, @CHA[i][0], 0, i - 1, SqrtScaleA);
+              APVSub(@XB[0], 0, i - 1, @tmp[0], 0, i - 1, v);
             end;
-          Dec(I);
+          Dec(i);
         end;
     end;
 end;
@@ -2940,51 +2940,51 @@ end;
   * L is well-scaled, and it is U which needs scaling by ScaleA.
   * A=PLU is well-conditioned, so no zero divisions or overflow may occur
   ************************************************************************ *)
-procedure CBasicLUSolve(const LUA: TLComplexMatrix; const P: TLIVec;
-  ScaleA: TLFloat; N: TLInt; var XB: TLComplexVec;
-  var Tmp: TLComplexVec);
+procedure CBasicLUSolve(const LUA: TLComplexMatrix; const p: TLIVec;
+  ScaleA: TLFloat; n: TLInt; var XB: TLComplexVec;
+  var tmp: TLComplexVec);
 var
-  I : TLInt;
-  V : TLComplex;
+  i : TLInt;
+  v : TLComplex;
   i_: TLInt;
 begin
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      if P[I] <> I then
+      if p[i] <> i then
         begin
-          V := XB[I];
-          XB[I] := XB[P[I]];
-          XB[P[I]] := V;
+          v := XB[i];
+          XB[i] := XB[p[i]];
+          XB[p[i]] := v;
         end;
-      Inc(I);
+      Inc(i);
     end;
-  I := 1;
-  while I <= N - 1 do
+  i := 1;
+  while i <= n - 1 do
     begin
-      V := C_Complex(0.0);
-      for i_ := 0 to I - 1 do
+      v := C_Complex(0.0);
+      for i_ := 0 to i - 1 do
         begin
-          V := C_Add(V, C_Mul(LUA[I, i_], XB[i_]));
+          v := C_Add(v, C_Mul(LUA[i, i_], XB[i_]));
         end;
-      XB[I] := C_Sub(XB[I], V);
-      Inc(I);
+      XB[i] := C_Sub(XB[i], v);
+      Inc(i);
     end;
-  XB[N - 1] := C_Div(XB[N - 1], C_MulR(LUA[N - 1, N - 1], ScaleA));
-  I := N - 2;
-  while I >= 0 do
+  XB[n - 1] := C_Div(XB[n - 1], C_MulR(LUA[n - 1, n - 1], ScaleA));
+  i := n - 2;
+  while i >= 0 do
     begin
-      for i_ := I + 1 to N - 1 do
+      for i_ := i + 1 to n - 1 do
         begin
-          Tmp[i_] := C_MulR(LUA[I, i_], ScaleA);
+          tmp[i_] := C_MulR(LUA[i, i_], ScaleA);
         end;
-      V := C_Complex(0.0);
-      for i_ := I + 1 to N - 1 do
+      v := C_Complex(0.0);
+      for i_ := i + 1 to n - 1 do
         begin
-          V := C_Add(V, C_Mul(Tmp[i_], XB[i_]));
+          v := C_Add(v, C_Mul(tmp[i_], XB[i_]));
         end;
-      XB[I] := C_Div(C_Sub(XB[I], V), C_MulR(LUA[I, I], ScaleA));
-      Dec(I);
+      XB[i] := C_Div(C_Sub(XB[i], v), C_MulR(LUA[i, i], ScaleA));
+      Dec(i);
     end;
 end;
 
@@ -2996,11 +2996,11 @@ end;
   * A is well-conditioned, so no zero divisions or overflow may occur
   ************************************************************************ *)
 procedure HPDBasicCholeskySolve(const CHA: TLComplexMatrix;
-  SqrtScaleA: TLFloat; N: TLInt; IsUpper: Boolean;
-  var XB: TLComplexVec; var Tmp: TLComplexVec);
+  SqrtScaleA: TLFloat; n: TLInt; IsUpper: Boolean;
+  var XB: TLComplexVec; var tmp: TLComplexVec);
 var
-  I : TLInt;
-  V : TLComplex;
+  i : TLInt;
+  v : TLComplex;
   i_: TLInt;
 begin
 
@@ -3013,46 +3013,46 @@ begin
       //
       // Solve U'*y=b first.
       //
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          XB[I] := C_Div(XB[I], C_MulR(Conj(CHA[I, I]), SqrtScaleA));
-          if I < N - 1 then
+          XB[i] := C_Div(XB[i], C_MulR(Conj(CHA[i, i]), SqrtScaleA));
+          if i < n - 1 then
             begin
-              V := XB[I];
-              for i_ := I + 1 to N - 1 do
+              v := XB[i];
+              for i_ := i + 1 to n - 1 do
                 begin
-                  Tmp[i_] := C_MulR(Conj(CHA[I, i_]), SqrtScaleA);
+                  tmp[i_] := C_MulR(Conj(CHA[i, i_]), SqrtScaleA);
                 end;
-              for i_ := I + 1 to N - 1 do
+              for i_ := i + 1 to n - 1 do
                 begin
-                  XB[i_] := C_Sub(XB[i_], C_Mul(V, Tmp[i_]));
+                  XB[i_] := C_Sub(XB[i_], C_Mul(v, tmp[i_]));
                 end;
             end;
-          Inc(I);
+          Inc(i);
         end;
 
       //
       // Solve U*x=y then.
       //
-      I := N - 1;
-      while I >= 0 do
+      i := n - 1;
+      while i >= 0 do
         begin
-          if I < N - 1 then
+          if i < n - 1 then
             begin
-              for i_ := I + 1 to N - 1 do
+              for i_ := i + 1 to n - 1 do
                 begin
-                  Tmp[i_] := C_MulR(CHA[I, i_], SqrtScaleA);
+                  tmp[i_] := C_MulR(CHA[i, i_], SqrtScaleA);
                 end;
-              V := C_Complex(0.0);
-              for i_ := I + 1 to N - 1 do
+              v := C_Complex(0.0);
+              for i_ := i + 1 to n - 1 do
                 begin
-                  V := C_Add(V, C_Mul(Tmp[i_], XB[i_]));
+                  v := C_Add(v, C_Mul(tmp[i_], XB[i_]));
                 end;
-              XB[I] := C_Sub(XB[I], V);
+              XB[i] := C_Sub(XB[i], v);
             end;
-          XB[I] := C_Div(XB[I], C_MulR(CHA[I, I], SqrtScaleA));
-          Dec(I);
+          XB[i] := C_Div(XB[i], C_MulR(CHA[i, i], SqrtScaleA));
+          Dec(i);
         end;
     end
   else
@@ -3061,46 +3061,46 @@ begin
       //
       // Solve L*y=b first
       //
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          if I > 0 then
+          if i > 0 then
             begin
-              for i_ := 0 to I - 1 do
+              for i_ := 0 to i - 1 do
                 begin
-                  Tmp[i_] := C_MulR(CHA[I, i_], SqrtScaleA);
+                  tmp[i_] := C_MulR(CHA[i, i_], SqrtScaleA);
                 end;
-              V := C_Complex(0.0);
-              for i_ := 0 to I - 1 do
+              v := C_Complex(0.0);
+              for i_ := 0 to i - 1 do
                 begin
-                  V := C_Add(V, C_Mul(Tmp[i_], XB[i_]));
+                  v := C_Add(v, C_Mul(tmp[i_], XB[i_]));
                 end;
-              XB[I] := C_Sub(XB[I], V);
+              XB[i] := C_Sub(XB[i], v);
             end;
-          XB[I] := C_Div(XB[I], C_MulR(CHA[I, I], SqrtScaleA));
-          Inc(I);
+          XB[i] := C_Div(XB[i], C_MulR(CHA[i, i], SqrtScaleA));
+          Inc(i);
         end;
 
       //
       // Solve L'*x=y then.
       //
-      I := N - 1;
-      while I >= 0 do
+      i := n - 1;
+      while i >= 0 do
         begin
-          XB[I] := C_Div(XB[I], C_MulR(Conj(CHA[I, I]), SqrtScaleA));
-          if I > 0 then
+          XB[i] := C_Div(XB[i], C_MulR(Conj(CHA[i, i]), SqrtScaleA));
+          if i > 0 then
             begin
-              V := XB[I];
-              for i_ := 0 to I - 1 do
+              v := XB[i];
+              for i_ := 0 to i - 1 do
                 begin
-                  Tmp[i_] := C_MulR(Conj(CHA[I, i_]), SqrtScaleA);
+                  tmp[i_] := C_MulR(Conj(CHA[i, i_]), SqrtScaleA);
                 end;
-              for i_ := 0 to I - 1 do
+              for i_ := 0 to i - 1 do
                 begin
-                  XB[i_] := C_Sub(XB[i_], C_Mul(V, Tmp[i_]));
+                  XB[i_] := C_Sub(XB[i_], C_Mul(v, tmp[i_]));
                 end;
             end;
-          Dec(I);
+          Dec(i);
         end;
     end;
-end;
+end; 

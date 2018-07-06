@@ -1,9 +1,9 @@
-﻿
+
 {$REGION 'GBKLZPackage'}
 
 const
   {  Pinyin dictionary  }
-  C_FastGBKPackageBuffer: array [0 .. 71627] of Byte = (
+  C_FastGBKPackageBuffer: packed array [0 .. 71627] of Byte = (
     $23, $12, $03, $00, $00, $00, $00, $00, $78, $DA, $74, $BD, $57, $96, $6C, $C7, $AD, $AE, $FB, $7E, $C7, $38, $3D, $A9, $2E, $AC, $C6, $70, $4B, $14, $49, $89, $22, $37, $45, $AE, $2D, $91, $4F, $E9, $7D, $A5, $F7, $59, $E9, $4D, $A5, $F7, $DE, $76, $A6,
     $A6, $7B, $BA, $5D, $B8, $19, $C0, $8F, $C8, $2C, $9E, $7D, $C7, $58, $24, $BE, $40, $20, $10, $08, $44, $4C, $3F, $67, $D6, $FF, $7B, $BA, $39, $C5, $DB, $97, $6F, $5E, $BE, $FD, $3F, $FF, $8F, $91, $8B, $7C, $F9, $E6, $2E, $52, $9B, $7B, $F9, $FB, $FB,
     $BF, $6F, $5F, $FE, $71, $57, $DB, $FE, $D8, $BD, $FC, $FB, $37, $3F, $DD, $AB, $0A, $E3, $2F, $5A, $6F, $14, $7C, $F7, $C2, $AF, $DF, $DF, $9B, $38, $D9, $1C, $B5, $4C, $E6, $C9, $F2, $AE, $88, $A5, $95, $C2, $09, $78, $A5, $A9, $15, $5A, $7C, $F9, $E6,

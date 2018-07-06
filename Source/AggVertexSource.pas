@@ -46,7 +46,7 @@ unit AggVertexSource;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -67,7 +67,7 @@ type
 
   TAggVertexSource = class(TAggCustomVertexSource)
   protected
-    function GetPathID(Index: Cardinal): Cardinal; virtual;
+    function GetPathID(index: Cardinal): Cardinal; virtual;
   public
     procedure RemoveAll; virtual;
     procedure AddVertex(X, Y: Double; Cmd: Cardinal); virtual;
@@ -100,7 +100,7 @@ end;
 
 { TAggVertexSource }
 
-function TAggVertexSource.GetPathID(Index: Cardinal): Cardinal;
+function TAggVertexSource.GetPathID(index: Cardinal): Cardinal;
 begin
   Result := 0;
 end;
@@ -113,4 +113,5 @@ procedure TAggVertexSource.AddVertex;
 begin
 end;
 
-end.
+end. 
+ 

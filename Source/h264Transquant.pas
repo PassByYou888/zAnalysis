@@ -11,23 +11,23 @@
 { ****************************************************************************** }
 unit h264Transquant;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 {$POINTERMATH ON}
 
 interface
 
 uses h264Stdint, CoreClasses;
 
-procedure transqt(block: int16_p; const qp: uint8_t; const intra: boolean; const quant_start_idx: uint8_t = 0);
-procedure itransqt(block: int16_p; const qp: uint8_t; const quant_start_idx: uint8_t = 0);
+procedure transqt(Block: int16_p; const qp: uint8_t; const intra: Boolean; const quant_start_idx: uint8_t = 0);
+procedure itransqt(Block: int16_p; const qp: uint8_t; const quant_start_idx: uint8_t = 0);
 
-procedure transqt_dc_2x2(block: int16_p; const qp: uint8_t);
-procedure itransqt_dc_2x2(block: int16_p; const qp: uint8_t);
+procedure transqt_dc_2x2(Block: int16_p; const qp: uint8_t);
+procedure itransqt_dc_2x2(Block: int16_p; const qp: uint8_t);
 
-procedure transqt_dc_4x4(block: int16_p; const qp: uint8_t);
-procedure itransqt_dc_4x4(block: int16_p; const qp: uint8_t);
+procedure transqt_dc_4x4(Block: int16_p; const qp: uint8_t);
+procedure itransqt_dc_4x4(Block: int16_p; const qp: uint8_t);
 
-procedure itrans_dc(block: int16_p);
+procedure itrans_dc(Block: int16_p);
 
 implementation
 
@@ -84,56 +84,56 @@ var
 
 procedure init_tables;
 var
-  i, j: uint8_t;
+  i, J: uint8_t;
 begin
   for i := 0 to 5 do
     begin
-      for j := 0 to 15 do
+      for J := 0 to 15 do
         begin
-          mult_factor[i][j] := table_mf_coefs[i, coef_idx[j]];
-          resc_factor[i][j] := table_v_coefs[i, coef_idx[j]];
+          mult_factor[i][J] := table_mf_coefs[i, coef_idx[J]];
+          resc_factor[i][J] := table_v_coefs[i, coef_idx[J]];
         end;
     end;
 end;
 
 // Z = (|W| . MF + f) >> qbits
-procedure quant(a: int16_p; const qp: uint8_t; const intra: boolean; const sidx: uint8_t);
+procedure quant(A: int16_p; const qp: uint8_t; const intra: Boolean; const sidx: uint8_t);
 var
   i: int32_t;
-  f: int32_t;
+  F: int32_t;
   qbits: uint8_t;
-  mf: int16_p;
+  MF: int16_p;
 begin
   // multiply shift
   qbits := 15 + table_qp_div6[qp];
   // multiply factor
-  mf := @mult_factor[table_qp_mod6[qp]];
+  MF := @mult_factor[table_qp_mod6[qp]];
   // rounding factor
   if intra then
-      f := (1 shl qbits) div 3
+      F := (1 shl qbits) div 3
   else
-      f := (1 shl qbits) div 6;
+      F := (1 shl qbits) div 6;
 
-  inc(a, sidx);
-  inc(mf, sidx);
+  Inc(A, sidx);
+  Inc(MF, sidx);
   for i := sidx to 15 do
     begin
-      if a^ > 0 then
-          a^ := (a^ * mf^ + f) shr qbits
+      if A^ > 0 then
+          A^ := (A^ * MF^ + F) shr qbits
       else
-          a^ := -((f - a^ * mf^) shr qbits); // fix from x264
-      inc(a);
-      inc(mf);
+          A^ := -((F - A^ * MF^) shr qbits); // fix from x264
+      Inc(A);
+      Inc(MF);
     end;
 end;
 
-procedure core_4x4(block: int16_p);
+procedure core_4x4(Block: int16_p);
 var
-  m: matrix_t;
-  e, f, g, h: array [0 .. 3] of int16_t;
+  M: matrix_t;
+  E, F, g, h: array [0 .. 3] of int16_t;
   i: int32_t;
 begin
-  CopyPtr(block, @m, 16 * 2);
+  CopyPtr(Block, @M, 16 * 2);
 
   { aaaa
     bbbb
@@ -142,18 +142,18 @@ begin
   }
   for i := 0 to 3 do
     begin
-      e[i] := m[0][i] + m[3][i]; // a + d
-      f[i] := m[0][i] - m[3][i]; // a - d
-      g[i] := m[1][i] + m[2][i]; // b + c
-      h[i] := m[1][i] - m[2][i]; // b - c
+      E[i] := M[0][i] + M[3][i]; // a + d
+      F[i] := M[0][i] - M[3][i]; // a - d
+      g[i] := M[1][i] + M[2][i]; // b + c
+      h[i] := M[1][i] - M[2][i]; // b - c
     end;
 
   for i := 0 to 3 do
     begin
-      m[0][i] := e[i] + g[i];     // a + b +  c +  d
-      m[1][i] := 2 * f[i] + h[i]; // 2a + b -  c - 2d
-      m[2][i] := e[i] - g[i];     // a - b -  c +  d
-      m[3][i] := f[i] - h[i] * 2; // a -2b + 2c -  d
+      M[0][i] := E[i] + g[i];     // a + b +  c +  d
+      M[1][i] := 2 * F[i] + h[i]; // 2a + b -  c - 2d
+      M[2][i] := E[i] - g[i];     // a - b -  c +  d
+      M[3][i] := F[i] - h[i] * 2; // a -2b + 2c -  d
     end;
 
   { abcd
@@ -163,287 +163,287 @@ begin
   }
   for i := 0 to 3 do
     begin
-      e[i] := m[i][0] + m[i][3];
-      f[i] := m[i][0] - m[i][3];
-      g[i] := m[i][1] + m[i][2];
-      h[i] := m[i][1] - m[i][2];
+      E[i] := M[i][0] + M[i][3];
+      F[i] := M[i][0] - M[i][3];
+      g[i] := M[i][1] + M[i][2];
+      h[i] := M[i][1] - M[i][2];
     end;
 
   for i := 0 to 3 do
     begin
-      m[i][0] := e[i] + g[i];
-      m[i][1] := 2 * f[i] + h[i];
-      m[i][2] := e[i] - g[i];
-      m[i][3] := f[i] - h[i] * 2;
+      M[i][0] := E[i] + g[i];
+      M[i][1] := 2 * F[i] + h[i];
+      M[i][2] := E[i] - g[i];
+      M[i][3] := F[i] - h[i] * 2;
     end;
 
-  CopyPtr(@m, block, 16 * 2);
+  CopyPtr(@M, Block, 16 * 2);
 end;
 
-procedure transqt(block: int16_p; const qp: uint8_t; const intra: boolean; const quant_start_idx: uint8_t);
+procedure transqt(Block: int16_p; const qp: uint8_t; const intra: Boolean; const quant_start_idx: uint8_t);
 begin
-  core_4x4(block);
-  quant(block, qp, intra, quant_start_idx);
+  core_4x4(Block);
+  quant(Block, qp, intra, quant_start_idx);
 end;
 
 (* ******************************************************************************
   iHCT + dequant
 *)
-procedure iquant(a: int16_p; const qp: uint8_t; const sidx: uint8_t);
+procedure iquant(A: int16_p; const qp: uint8_t; const sidx: uint8_t);
 var
   i: int32_t;
-  shift: int32_t;
-  mf: int16_p;
+  Shift: int32_t;
+  MF: int16_p;
 begin
-  shift := table_qp_div6[qp];
-  mf := @resc_factor[table_qp_mod6[qp]];
-  inc(a, sidx);
-  inc(mf, sidx);
+  Shift := table_qp_div6[qp];
+  MF := @resc_factor[table_qp_mod6[qp]];
+  Inc(A, sidx);
+  Inc(MF, sidx);
   for i := sidx to 15 do
     begin
-      a^ := a^ * mf^ shl shift;
-      inc(a);
-      inc(mf);
+      A^ := A^ * MF^ shl Shift;
+      Inc(A);
+      Inc(MF);
     end;
 end;
 
-procedure icore_4x4(block: int16_p);
+procedure icore_4x4(Block: int16_p);
 var
-  m: matrix_t;
-  e, f, g, h: array [0 .. 3] of int16_t;
+  M: matrix_t;
+  E, F, g, h: array [0 .. 3] of int16_t;
   i: int32_t;
 begin
-  CopyPtr(block, @m, 16 * 2);
+  CopyPtr(Block, @M, 16 * 2);
 
   for i := 0 to 3 do
     begin
-      e[i] := m[i][0] + m[i][2];
-      f[i] := m[i][0] - m[i][2];
-      g[i] := m[i][1] + Sar16(m[i][3], 1);
-      h[i] := Sar16(m[i][1], 1) - m[i][3];
+      E[i] := M[i][0] + M[i][2];
+      F[i] := M[i][0] - M[i][2];
+      g[i] := M[i][1] + SAR16(M[i][3], 1);
+      h[i] := SAR16(M[i][1], 1) - M[i][3];
     end;
   for i := 0 to 3 do
     begin
-      m[i][0] := e[i] + g[i];
-      m[i][1] := f[i] + h[i];
-      m[i][2] := f[i] - h[i];
-      m[i][3] := e[i] - g[i];
+      M[i][0] := E[i] + g[i];
+      M[i][1] := F[i] + h[i];
+      M[i][2] := F[i] - h[i];
+      M[i][3] := E[i] - g[i];
     end;
 
   for i := 0 to 3 do
     begin
-      e[i] := m[0][i] + m[2][i];
-      f[i] := m[0][i] - m[2][i];
-      g[i] := m[1][i] + Sar16(m[3][i], 1);
-      h[i] := Sar16(m[1][i], 1) - m[3][i];
+      E[i] := M[0][i] + M[2][i];
+      F[i] := M[0][i] - M[2][i];
+      g[i] := M[1][i] + SAR16(M[3][i], 1);
+      h[i] := SAR16(M[1][i], 1) - M[3][i];
     end;
   for i := 0 to 3 do
     begin
-      m[0][i] := Sar16(e[i] + g[i] + 32, 6); // rescaling
-      m[1][i] := Sar16(f[i] + h[i] + 32, 6);
-      m[2][i] := Sar16(f[i] - h[i] + 32, 6);
-      m[3][i] := Sar16(e[i] - g[i] + 32, 6);
+      M[0][i] := SAR16(E[i] + g[i] + 32, 6); // rescaling
+      M[1][i] := SAR16(F[i] + h[i] + 32, 6);
+      M[2][i] := SAR16(F[i] - h[i] + 32, 6);
+      M[3][i] := SAR16(E[i] - g[i] + 32, 6);
     end;
 
-  CopyPtr(@m, block, 16 * 2);
+  CopyPtr(@M, Block, 16 * 2);
 end;
 
-procedure itransqt(block: int16_p; const qp: uint8_t; const quant_start_idx: uint8_t = 0);
+procedure itransqt(Block: int16_p; const qp: uint8_t; const quant_start_idx: uint8_t = 0);
 begin
-  iquant(block, qp, quant_start_idx);
-  icore_4x4(block);
+  iquant(Block, qp, quant_start_idx);
+  icore_4x4(Block);
 end;
 
 (* ******************************************************************************
   chroma DC
 *)
-procedure trans_dc_2x2(block: int16_p);
+procedure trans_dc_2x2(Block: int16_p);
 var
-  m: dc_matrix_t;
-  e, f, g, h: int32_t;
+  M: dc_matrix_t;
+  E, F, g, h: int32_t;
 begin
-  m := dc_matrix_p(block)^;
-  e := m[0, 0] + m[1, 0];
-  f := m[0, 0] - m[1, 0];
-  g := m[0, 1] + m[1, 1];
-  h := m[0, 1] - m[1, 1];
-  m[0, 0] := e + g;
-  m[0, 1] := e - g;
-  m[1, 0] := f + h;
-  m[1, 1] := f - h;
-  dc_matrix_p(block)^ := m;
+  M := dc_matrix_p(Block)^;
+  E := M[0, 0] + M[1, 0];
+  F := M[0, 0] - M[1, 0];
+  g := M[0, 1] + M[1, 1];
+  h := M[0, 1] - M[1, 1];
+  M[0, 0] := E + g;
+  M[0, 1] := E - g;
+  M[1, 0] := F + h;
+  M[1, 1] := F - h;
+  dc_matrix_p(Block)^ := M;
 end;
 
-procedure quant_dc_2x2(a: int16_p; const qp: uint8_t);
+procedure quant_dc_2x2(A: int16_p; const qp: uint8_t);
 var
   i: int32_t;
-  f: int32_t;
+  F: int32_t;
   qbits: uint8_t;
-  mf: int16_t;
+  MF: int16_t;
 begin
   // multiply factor
-  mf := mult_factor[table_qp_mod6[qp], 0];
+  MF := mult_factor[table_qp_mod6[qp], 0];
   // multiply shift
   qbits := 16 + table_qp_div6[qp];
-  f := 1 shl (qbits - 1);
+  F := 1 shl (qbits - 1);
 
   for i := 0 to 3 do
-    if a[i] > 0 then
-        a[i] := (a[i] * mf + f) shr qbits
+    if A[i] > 0 then
+        A[i] := (A[i] * MF + F) shr qbits
     else
-        a[i] := -((f - a[i] * mf) shr qbits);
+        A[i] := -((F - A[i] * MF) shr qbits);
 end;
 
-procedure iquant_dc_2x2(a: int16_p; const qp: uint8_t);
+procedure iquant_dc_2x2(A: int16_p; const qp: uint8_t);
 var
   i: int32_t;
-  shift: int32_t;
-  mf: int16_t;
+  Shift: int32_t;
+  MF: int16_t;
 begin
-  shift := table_qp_div6[qp] - 1;
-  mf := resc_factor[table_qp_mod6[qp], 0];
+  Shift := table_qp_div6[qp] - 1;
+  MF := resc_factor[table_qp_mod6[qp], 0];
   if qp >= 6 then
     begin
       for i := 0 to 3 do
-          a[i] := a[i] * mf shl shift;
+          A[i] := A[i] * MF shl Shift;
     end
   else
     for i := 0 to 3 do
-        a[i] := Sar16(a[i] * mf, 1);
+        A[i] := SAR16(A[i] * MF, 1);
 end;
 
-procedure transqt_dc_2x2(block: int16_p; const qp: uint8_t);
+procedure transqt_dc_2x2(Block: int16_p; const qp: uint8_t);
 begin
-  trans_dc_2x2(block);
-  quant_dc_2x2(block, qp);
+  trans_dc_2x2(Block);
+  quant_dc_2x2(Block, qp);
 end;
 
-procedure itransqt_dc_2x2(block: int16_p; const qp: uint8_t);
+procedure itransqt_dc_2x2(Block: int16_p; const qp: uint8_t);
 begin
-  trans_dc_2x2(block);
-  iquant_dc_2x2(block, qp);
+  trans_dc_2x2(Block);
+  iquant_dc_2x2(Block, qp);
 end;
 
-procedure itrans_dc(block: int16_p);
+procedure itrans_dc(Block: int16_p);
 var
-  dc: int16_t;
+  DC: int16_t;
   i: int32_t;
 begin
-  dc := Sar16(block[0] + 32, 6);
+  DC := SAR16(Block[0] + 32, 6);
   for i := 0 to 15 do
-      block[i] := dc;
+      Block[i] := DC;
 end;
 
 (* ******************************************************************************
   luma DC 4x4
 *)
-procedure core_4x4_dc(block: int16_p);
+procedure core_4x4_dc(Block: int16_p);
 var
-  m: matrix_t;
-  e, f, g, h: array [0 .. 3] of int16_t;
+  M: matrix_t;
+  E, F, g, h: array [0 .. 3] of int16_t;
   i: int32_t;
 begin
-  CopyPtr(block, @m, 16 * 2);
+  CopyPtr(Block, @M, 16 * 2);
 
   for i := 0 to 3 do
     begin
-      e[i] := m[0][i] + m[3][i]; // a + d
-      f[i] := m[0][i] - m[3][i]; // a - d
-      g[i] := m[1][i] + m[2][i]; // b + c
-      h[i] := m[1][i] - m[2][i]; // b - c
+      E[i] := M[0][i] + M[3][i]; // a + d
+      F[i] := M[0][i] - M[3][i]; // a - d
+      g[i] := M[1][i] + M[2][i]; // b + c
+      h[i] := M[1][i] - M[2][i]; // b - c
     end;
 
   for i := 0 to 3 do
     begin
-      m[0][i] := e[i] + g[i]; // a + b + c + d
-      m[1][i] := f[i] + h[i]; // a + b - c - d
-      m[2][i] := e[i] - g[i]; // a - b - c + d
-      m[3][i] := f[i] - h[i]; // a - b + c - d
+      M[0][i] := E[i] + g[i]; // a + b + c + d
+      M[1][i] := F[i] + h[i]; // a + b - c - d
+      M[2][i] := E[i] - g[i]; // a - b - c + d
+      M[3][i] := F[i] - h[i]; // a - b + c - d
     end;
 
   for i := 0 to 3 do
     begin
-      e[i] := m[i][0] + m[i][3];
-      f[i] := m[i][0] - m[i][3];
-      g[i] := m[i][1] + m[i][2];
-      h[i] := m[i][1] - m[i][2];
+      E[i] := M[i][0] + M[i][3];
+      F[i] := M[i][0] - M[i][3];
+      g[i] := M[i][1] + M[i][2];
+      h[i] := M[i][1] - M[i][2];
     end;
 
   for i := 0 to 3 do
     begin
-      m[i][0] := e[i] + g[i];
-      m[i][1] := f[i] + h[i];
-      m[i][2] := e[i] - g[i];
-      m[i][3] := f[i] - h[i];
+      M[i][0] := E[i] + g[i];
+      M[i][1] := F[i] + h[i];
+      M[i][2] := E[i] - g[i];
+      M[i][3] := F[i] - h[i];
     end;
 
-  CopyPtr(@m, block, 16 * 2);
+  CopyPtr(@M, Block, 16 * 2);
 end;
 
-procedure quant_dc_4x4(a: int16_p; const qp: uint8_t);
+procedure quant_dc_4x4(A: int16_p; const qp: uint8_t);
 var
   i: int32_t;
-  f: int32_t;
+  F: int32_t;
   qbits: uint8_t;
-  mf: int16_p;
+  MF: int16_p;
 begin
   // scale by 2
   for i := 0 to 15 do
-    if a[i] > 0 then
-        a[i] := (a[i] + 1) div 2
+    if A[i] > 0 then
+        A[i] := (A[i] + 1) div 2
     else
-        a[i] := (a[i] - 1) div 2;
+        A[i] := (A[i] - 1) div 2;
 
   // multiply factor
-  mf := @mult_factor[table_qp_mod6[qp]];
+  MF := @mult_factor[table_qp_mod6[qp]];
   // multiply shift
   qbits := 16 + table_qp_div6[qp];
-  f := 1 shl (qbits - 1);
+  F := 1 shl (qbits - 1);
 
   for i := 0 to 15 do
-    if a[i] > 0 then
-        a[i] := (a[i] * mf[0] + f) shr qbits
+    if A[i] > 0 then
+        A[i] := (A[i] * MF[0] + F) shr qbits
     else
-        a[i] := -((f - a[i] * mf[0]) shr qbits);
+        A[i] := -((F - A[i] * MF[0]) shr qbits);
 end;
 
-procedure iquant_dc_4x4(a: int16_p; const qp: uint8_t);
+procedure iquant_dc_4x4(A: int16_p; const qp: uint8_t);
 var
   i: int32_t;
-  f, shift: int32_t;
-  mf: int32_t;
+  F, Shift: int32_t;
+  MF: int32_t;
 begin
-  mf := resc_factor[table_qp_mod6[qp], 0];
+  MF := resc_factor[table_qp_mod6[qp], 0];
 
   if qp >= 12 then
     begin
-      shift := table_qp_div6[qp] - 2;
+      Shift := table_qp_div6[qp] - 2;
       for i := 0 to 15 do
-          a[i] := a[i] * mf shl shift;
+          A[i] := A[i] * MF shl Shift;
     end
   else
     begin
-      shift := 2 - table_qp_div6[qp];
-      f := 1 shl (1 - table_qp_div6[qp]);
+      Shift := 2 - table_qp_div6[qp];
+      F := 1 shl (1 - table_qp_div6[qp]);
       for i := 0 to 15 do
-          a[i] := Sar16(a[i] * mf + f, shift);
+          A[i] := SAR16(A[i] * MF + F, Shift);
     end;
 end;
 
-procedure transqt_dc_4x4(block: int16_p; const qp: uint8_t);
+procedure transqt_dc_4x4(Block: int16_p; const qp: uint8_t);
 begin
-  core_4x4_dc(block);
-  quant_dc_4x4(block, qp);
+  core_4x4_dc(Block);
+  quant_dc_4x4(Block, qp);
 end;
 
-procedure itransqt_dc_4x4(block: int16_p; const qp: uint8_t);
+procedure itransqt_dc_4x4(Block: int16_p; const qp: uint8_t);
 begin
-  core_4x4_dc(block);
-  iquant_dc_4x4(block, qp);
+  core_4x4_dc(Block);
+  iquant_dc_4x4(Block, qp);
 end;
 
 initialization
 
 init_tables;
 
-end.
+end.  

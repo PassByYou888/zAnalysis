@@ -39,7 +39,7 @@ unit AggGammaLUT;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -71,14 +71,14 @@ type
     function GetDir(Value: Cardinal): Cardinal; override;
     function GetInv(Value: Cardinal): Cardinal; override;
   public
-    constructor Create(GammaShift: Int8U = 8; HiResShift: Int8U = 8); overload;
-    constructor Create(GammaValue: Double; GammaShift: Int8U = 8; HiResShift: Int8U = 8); overload;
+    constructor Create(GammaShift: Int8u = 8; HiResShift: Int8u = 8); overload;
+    constructor Create(GammaValue: Double; GammaShift: Int8u = 8; HiResShift: Int8u = 8); overload;
     destructor Destroy; override;
   end;
 
   TAggGammaLUT8 = class(TCustomAggGammaLUT)
   private
-    FDirGamma, FInvGamma: array [0 .. $FF] of Int8U;
+    FDirGamma, FInvGamma: array [0 .. $FF] of Int8u;
   protected
     procedure GammaChanged; override;
     function GetDir(Value: Cardinal): Cardinal; override;
@@ -104,9 +104,9 @@ end;
 
 { TAggGammaLut }
 
-constructor TAggGammaLUT.Create(GammaShift: Int8U = 8; HiResShift: Int8U = 8);
+constructor TAggGammaLUT.Create(GammaShift: Int8u = 8; HiResShift: Int8u = 8);
 var
-  I: Cardinal;
+  i: Cardinal;
 begin
   FGammaShift := GammaShift;
   FGammaSize := 1 shl FGammaShift;
@@ -123,42 +123,42 @@ begin
   AggGetMem(Pointer(FInvGamma), FHiResSize * FLoResT);
 
   // dirGamma
-  for I := 0 to FGammaSize - 1 do
+  for i := 0 to FGammaSize - 1 do
     try
       case FHiResT of
         1:
-          PInt8u(PtrComp(FDirGamma) + I * FHiResT)^ :=
-            Int8U(I shl (FHiResShift - FGammaShift));
+          PInt8u(PtrComp(FDirGamma) + i * FHiResT)^ :=
+            Int8u(i shl (FHiResShift - FGammaShift));
         2:
-          PInt16u(PtrComp(FDirGamma) + I * FHiResT)^ :=
-            Int16u(I shl (FHiResShift - FGammaShift));
+          PInt16u(PtrComp(FDirGamma) + i * FHiResT)^ :=
+            Int16u(i shl (FHiResShift - FGammaShift));
         4:
-          PInt32u(PtrComp(FDirGamma) + I * FHiResT)^ :=
-            Int32u(I shl (FHiResShift - FGammaShift));
+          PInt32u(PtrComp(FDirGamma) + i * FHiResT)^ :=
+            Int32u(i shl (FHiResShift - FGammaShift));
       end;
     except
     end;
 
   // invGamma
-  for I := 0 to FHiResSize - 1 do
+  for i := 0 to FHiResSize - 1 do
     try
       case FLoResT of
         1:
-          PInt8u(PtrComp(FInvGamma) + I * FLoResT)^ :=
-            Int8U(I shr (FHiResShift - FGammaShift));
+          PInt8u(PtrComp(FInvGamma) + i * FLoResT)^ :=
+            Int8u(i shr (FHiResShift - FGammaShift));
         2:
-          PInt16u(PtrComp(FInvGamma) + I * FLoResT)^ :=
-            Int16u(I shr (FHiResShift - FGammaShift));
+          PInt16u(PtrComp(FInvGamma) + i * FLoResT)^ :=
+            Int16u(i shr (FHiResShift - FGammaShift));
         4:
-          PInt32u(PtrComp(FInvGamma) + I * FLoResT)^ :=
-            Int32u(I shr (FHiResShift - FGammaShift));
+          PInt32u(PtrComp(FInvGamma) + i * FLoResT)^ :=
+            Int32u(i shr (FHiResShift - FGammaShift));
       end;
     except
     end;
 end;
 
-constructor TAggGammaLUT.Create(GammaValue: Double; GammaShift: Int8U = 8;
-  HiResShift: Int8U = 8);
+constructor TAggGammaLUT.Create(GammaValue: Double; GammaShift: Int8u = 8;
+  HiResShift: Int8u = 8);
 begin
   FGammaShift := GammaShift;
   FGammaSize := 1 shl FGammaShift;
@@ -188,22 +188,22 @@ end;
 
 procedure TAggGammaLUT.GammaChanged;
 var
-  I: Cardinal;
+  i: Cardinal;
   InverseGamma: Double;
 begin
   // dirGamma
-  for I := 0 to FGammaSize - 1 do
+  for i := 0 to FGammaSize - 1 do
     try
       case FHiResT of
         1:
-          PInt8u(PtrComp(FDirGamma) + I * FHiResT)^ :=
-            Int8U(Trunc(Power(I / FGammaMask, FGamma) * FHiResMask + 0.5));
+          PInt8u(PtrComp(FDirGamma) + i * FHiResT)^ :=
+            Int8u(Trunc(Power(i / FGammaMask, FGamma) * FHiResMask + 0.5));
         2:
-          PInt16u(PtrComp(FDirGamma) + I * FHiResT)^ :=
-            Int16u(Trunc(Power(I / FGammaMask, FGamma) * FHiResMask + 0.5));
+          PInt16u(PtrComp(FDirGamma) + i * FHiResT)^ :=
+            Int16u(Trunc(Power(i / FGammaMask, FGamma) * FHiResMask + 0.5));
         4:
-          PInt32u(PtrComp(FDirGamma) + I * FHiResT)^ :=
-            Int32u(Trunc(Power(I / FGammaMask, FGamma) * FHiResMask + 0.5));
+          PInt32u(PtrComp(FDirGamma) + i * FHiResT)^ :=
+            Int32u(Trunc(Power(i / FGammaMask, FGamma) * FHiResMask + 0.5));
       end;
     except
     end;
@@ -215,18 +215,18 @@ begin
     begin
       InverseGamma := 1 / FGamma;
 
-      for I := 0 to FHiResSize - 1 do
+      for i := 0 to FHiResSize - 1 do
         try
           case FLoResT of
             1:
-              PInt8u(PtrComp(FInvGamma) + I * FLoResT)^ :=
-                Int8U(Trunc(Power(I / FHiResMask, InverseGamma) * FGammaMask + 0.5));
+              PInt8u(PtrComp(FInvGamma) + i * FLoResT)^ :=
+                Int8u(Trunc(Power(i / FHiResMask, InverseGamma) * FGammaMask + 0.5));
             2:
-              PInt16u(PtrComp(FInvGamma) + I * FLoResT)^ :=
-                Int16u(Trunc(Power(I / FHiResMask, InverseGamma) * FGammaMask + 0.5));
+              PInt16u(PtrComp(FInvGamma) + i * FLoResT)^ :=
+                Int16u(Trunc(Power(i / FHiResMask, InverseGamma) * FGammaMask + 0.5));
             4:
-              PInt32u(PtrComp(FInvGamma) + I * FLoResT)^ :=
-                Int32u(Trunc(Power(I / FHiResMask, InverseGamma) * FGammaMask + 0.5));
+              PInt32u(PtrComp(FInvGamma) + i * FLoResT)^ :=
+                Int32u(Trunc(Power(i / FHiResMask, InverseGamma) * FGammaMask + 0.5));
           end;
         except
         end;
@@ -265,15 +265,15 @@ end;
 
 constructor TAggGammaLUT8.Create;
 var
-  I: Cardinal;
+  i: Cardinal;
 begin
   // dirGamma
-  for I := 0 to $FF do
-      FDirGamma[I] := I;
+  for i := 0 to $FF do
+      FDirGamma[i] := i;
 
   // invGamma
-  for I := 0 to $FF do
-      FInvGamma[I] := I;
+  for i := 0 to $FF do
+      FInvGamma[i] := i;
 end;
 
 constructor TAggGammaLUT8.Create(GammaValue: Double);
@@ -284,14 +284,14 @@ end;
 
 procedure TAggGammaLUT8.GammaChanged;
 var
-  I: Cardinal;
+  i: Cardinal;
   InverseGamma: Double;
 const
   CScale: Double = 1 / $FF;
 begin
   // dirGamma
-  for I := 0 to $FF do
-      FDirGamma[I] := Int8U(Trunc(Power(I * CScale, FGamma) * $FF + 0.5));
+  for i := 0 to $FF do
+      FDirGamma[i] := Int8u(Trunc(Power(i * CScale, FGamma) * $FF + 0.5));
 
   // invGamma
   if FGamma = 0 then
@@ -300,8 +300,8 @@ begin
     begin
       InverseGamma := 1 / FGamma;
 
-      for I := 0 to $FF do
-          FInvGamma[I] := Int8U(Trunc(Power(I * CScale, InverseGamma) * $FF + 0.5));
+      for i := 0 to $FF do
+          FInvGamma[i] := Int8u(Trunc(Power(i * CScale, InverseGamma) * $FF + 0.5));
     end;
 end;
 
@@ -315,4 +315,4 @@ begin
   Result := FInvGamma[Value];
 end;
 
-end.
+end. 

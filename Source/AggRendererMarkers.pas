@@ -39,7 +39,7 @@ unit AggRendererMarkers;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -58,7 +58,7 @@ type
 
   TAggRendererMarkers = class(TAggRendererPrimitives)
   public
-    constructor Create(Rbuf: TAggRendererBase);
+    constructor Create(RBuf: TAggRendererBase);
 
     function Visible(X, Y, R: Integer): Boolean;
 
@@ -83,15 +83,15 @@ type
     procedure Cross(X, Y, R: Integer);
     procedure Xing(X, Y, R: Integer);
     procedure Dash(X, Y, R: Integer);
-    procedure Dot(X, Y, R: Integer);
+    procedure dot(X, Y, R: Integer);
     procedure Pixel(X, Y, R: Integer);
 
     procedure Marker(X, Y, R: Integer; MarkerType: TAggMarker);
 
-    procedure Markers(N: Integer; X, Y: PInteger; R: Integer; MarkerType: TAggMarker); overload;
-    procedure Markers(N: Integer; X, Y, R: PInteger; MarkerType: TAggMarker); overload;
-    procedure Markers(N: Integer; X, Y, R: PInteger; Fc: PAggColor; MarkerType: TAggMarker); overload;
-    procedure Markers(N: Integer; X, Y, R: PInteger; Fc, Lc: PAggColor; MarkerType: TAggMarker); overload;
+    procedure Markers(n: Integer; X, Y: PInteger; R: Integer; MarkerType: TAggMarker); overload;
+    procedure Markers(n: Integer; X, Y, R: PInteger; MarkerType: TAggMarker); overload;
+    procedure Markers(n: Integer; X, Y, R: PInteger; Fc: PAggColor; MarkerType: TAggMarker); overload;
+    procedure Markers(n: Integer; X, Y, R: PInteger; Fc, LC: PAggColor; MarkerType: TAggMarker); overload;
   end;
 
 implementation
@@ -99,19 +99,19 @@ implementation
 
 { TAggRendererMarkers }
 
-constructor TAggRendererMarkers.Create(Rbuf: TAggRendererBase);
+constructor TAggRendererMarkers.Create(RBuf: TAggRendererBase);
 begin
-  Assert(Rbuf is TAggRendererBase);
-  inherited Create(Rbuf);
+  Assert(RBuf is TAggRendererBase);
+  inherited Create(RBuf);
 end;
 
 function TAggRendererMarkers.Visible(X, Y, R: Integer): Boolean;
 var
-  Rc: TRectInteger;
+  RC: TRectInteger;
 begin
-  Rc := RectInteger(X - R, Y - R, X + Y, Y + R);
+  RC := RectInteger(X - R, Y - R, X + Y, Y + R);
 
-  Result := Rc.Clip(RenderBase.BoundingClipBox^);
+  Result := RC.Clip(RenderBase.BoundingClipBox^);
 end;
 
 procedure TAggRendererMarkers.Square(X, Y, R: Integer);
@@ -198,33 +198,33 @@ end;
 
 procedure TAggRendererMarkers.SemiEllipseLeft(X, Y, R: Integer);
 var
-  R8: Integer;
+  r8: Integer;
   Delta: TPointInteger;
   Ei: TAggEllipseBresenhamInterpolator;
 begin
   if Visible(X, Y, R) then
     if R <> 0 then
       begin
-        R8 := R * 4 div 5;
+        r8 := R * 4 div 5;
         Delta := PointInteger(0, -R);
 
-        Ei.Initialize(R * 3 div 5, R + R8);
+        Ei.Initialize(R * 3 div 5, R + r8);
 
         repeat
-          Inc(Delta.X, Ei.DeltaX);
-          Inc(Delta.Y, Ei.DeltaY);
+          Inc(Delta.X, Ei.deltax);
+          Inc(Delta.Y, Ei.deltay);
 
           RenderBase.BlendPixel(X + Delta.Y, Y + Delta.X, @FLineColor,
             CAggCoverFull);
           RenderBase.BlendPixel(X + Delta.Y, Y - Delta.X, @FLineColor,
             CAggCoverFull);
 
-          if (Ei.DeltaY <> 0) and (Delta.X <> 0) then
+          if (Ei.deltay <> 0) and (Delta.X <> 0) then
               RenderBase.BlendVerticalLine(X + Delta.Y, Y - Delta.X + 1,
               Y + Delta.X - 1, @FFillColor, CAggCoverFull);
 
           Ei.IncOperator;
-        until Delta.Y >= R8;
+        until Delta.Y >= r8;
 
         RenderBase.BlendVerticalLine(X + Delta.Y, Y - Delta.X, Y + Delta.X,
           @FLineColor, CAggCoverFull);
@@ -235,33 +235,33 @@ end;
 
 procedure TAggRendererMarkers.SemiEllipseRight(X, Y, R: Integer);
 var
-  R8: Integer;
+  r8: Integer;
   Delta: TPointInteger;
   Ei: TAggEllipseBresenhamInterpolator;
 begin
   if Visible(X, Y, R) then
     if R <> 0 then
       begin
-        R8 := R * 4 div 5;
+        r8 := R * 4 div 5;
         Delta := PointInteger(0, -R);
 
-        Ei.Initialize(R * 3 div 5, R + R8);
+        Ei.Initialize(R * 3 div 5, R + r8);
 
         repeat
-          Inc(Delta.X, Ei.DeltaX);
-          Inc(Delta.Y, Ei.DeltaY);
+          Inc(Delta.X, Ei.deltax);
+          Inc(Delta.Y, Ei.deltay);
 
           RenderBase.BlendPixel(X - Delta.Y, Y + Delta.X, @FLineColor,
             CAggCoverFull);
           RenderBase.BlendPixel(X - Delta.Y, Y - Delta.X, @FLineColor,
             CAggCoverFull);
 
-          if (Ei.DeltaY <> 0) and (Delta.X <> 0) then
+          if (Ei.deltay <> 0) and (Delta.X <> 0) then
               RenderBase.BlendVerticalLine(X - Delta.Y, Y - Delta.X + 1,
               Y + Delta.X - 1, @FFillColor, CAggCoverFull);
 
           Ei.IncOperator;
-        until Delta.Y >= R8;
+        until Delta.Y >= r8;
 
         RenderBase.BlendVerticalLine(X - Delta.Y, Y - Delta.X, Y + Delta.X,
           @FLineColor, CAggCoverFull);
@@ -272,33 +272,33 @@ end;
 
 procedure TAggRendererMarkers.SemiEllipseUp(X, Y, R: Integer);
 var
-  R8: Integer;
+  r8: Integer;
   Delta: TPointInteger;
   Ei: TAggEllipseBresenhamInterpolator;
 begin
   if Visible(X, Y, R) then
     if R <> 0 then
       begin
-        R8 := R * 4 div 5;
+        r8 := R * 4 div 5;
         Delta := PointInteger(0, -R);
 
-        Ei.Initialize(R * 3 div 5, R + R8);
+        Ei.Initialize(R * 3 div 5, R + r8);
 
         repeat
-          Inc(Delta.X, Ei.DeltaX);
-          Inc(Delta.Y, Ei.DeltaY);
+          Inc(Delta.X, Ei.deltax);
+          Inc(Delta.Y, Ei.deltay);
 
           RenderBase.BlendPixel(X + Delta.X, Y - Delta.Y, @FLineColor,
             CAggCoverFull);
           RenderBase.BlendPixel(X - Delta.X, Y - Delta.Y, @FLineColor,
             CAggCoverFull);
 
-          if (Ei.DeltaY <> 0) and (Delta.X <> 0) then
+          if (Ei.deltay <> 0) and (Delta.X <> 0) then
               RenderBase.BlendHorizontalLine(X - Delta.X + 1, Y - Delta.Y,
               X + Delta.X - 1, @FFillColor, CAggCoverFull);
 
           Ei.IncOperator;
-        until Delta.Y >= R8;
+        until Delta.Y >= r8;
 
         RenderBase.BlendHorizontalLine(X - Delta.X, Y - Delta.Y - 1, X + Delta.X,
           @FLineColor, CAggCoverFull);
@@ -309,33 +309,33 @@ end;
 
 procedure TAggRendererMarkers.SemiEllipseDown;
 var
-  R8: Integer;
+  r8: Integer;
   Delta: TPointInteger;
   Ei: TAggEllipseBresenhamInterpolator;
 begin
   if Visible(X, Y, R) then
     if R <> 0 then
       begin
-        R8 := R * 4 div 5;
+        r8 := R * 4 div 5;
         Delta := PointInteger(0, -R);
 
-        Ei.Initialize(R * 3 div 5, R + R8);
+        Ei.Initialize(R * 3 div 5, R + r8);
 
         repeat
-          Inc(Delta.X, Ei.DeltaX);
-          Inc(Delta.Y, Ei.DeltaY);
+          Inc(Delta.X, Ei.deltax);
+          Inc(Delta.Y, Ei.deltay);
 
           RenderBase.BlendPixel(X + Delta.X, Y + Delta.Y, @FLineColor,
             CAggCoverFull);
           RenderBase.BlendPixel(X - Delta.X, Y + Delta.Y, @FLineColor,
             CAggCoverFull);
 
-          if (Ei.DeltaY <> 0) and (Delta.X <> 0) then
+          if (Ei.deltay <> 0) and (Delta.X <> 0) then
               RenderBase.BlendHorizontalLine(X - Delta.X + 1, Y + Delta.Y,
               X + Delta.X - 1, @FFillColor, CAggCoverFull);
 
           Ei.IncOperator;
-        until Delta.Y >= R8;
+        until Delta.Y >= r8;
 
         RenderBase.BlendHorizontalLine(X - Delta.X, Y + Delta.Y + 1, X + Delta.X,
           @FLineColor, CAggCoverFull);
@@ -490,7 +490,7 @@ end;
 procedure TAggRendererMarkers.FourRays(X, Y, R: Integer);
 var
   Delta: TPointInteger;
-  Flip, R3: Integer;
+  Flip, r3: Integer;
 begin
   if Visible(X, Y, R) then
     if R <> 0 then
@@ -498,7 +498,7 @@ begin
         Delta.Y := -R;
         Delta.X := 0;
         Flip := 0;
-        R3 := -(R div 3);
+        r3 := -(R div 3);
 
         repeat
           RenderBase.BlendPixel(X - Delta.X, Y + Delta.Y, @FLineColor,
@@ -534,9 +534,9 @@ begin
           Inc(Delta.X, Flip);
 
           Flip := Flip xor 1;
-        until Delta.Y > R3;
+        until Delta.Y > r3;
 
-        SolidRectangle(X + R3 + 1, Y + R3 + 1, X - R3 - 1, Y - R3 - 1);
+        SolidRectangle(X + r3 + 1, Y + r3 + 1, X - r3 - 1, Y - r3 - 1);
       end
     else
         RenderBase.BlendPixel(X, Y, @FFillColor, CAggCoverFull);
@@ -557,21 +557,21 @@ end;
 
 procedure TAggRendererMarkers.Xing(X, Y, R: Integer);
 var
-  Dy: Integer;
+  dy: Integer;
 begin
   if Visible(X, Y, R) then
     if R <> 0 then
       begin
-        Dy := -R * 7 div 10;
+        dy := -R * 7 div 10;
 
         repeat
-          RenderBase.BlendPixel(X + Dy, Y + Dy, @FLineColor, CAggCoverFull);
-          RenderBase.BlendPixel(X - Dy, Y + Dy, @FLineColor, CAggCoverFull);
-          RenderBase.BlendPixel(X + Dy, Y - Dy, @FLineColor, CAggCoverFull);
-          RenderBase.BlendPixel(X - Dy, Y - Dy, @FLineColor, CAggCoverFull);
+          RenderBase.BlendPixel(X + dy, Y + dy, @FLineColor, CAggCoverFull);
+          RenderBase.BlendPixel(X - dy, Y + dy, @FLineColor, CAggCoverFull);
+          RenderBase.BlendPixel(X + dy, Y - dy, @FLineColor, CAggCoverFull);
+          RenderBase.BlendPixel(X - dy, Y - dy, @FLineColor, CAggCoverFull);
 
-          Inc(Dy);
-        until Dy >= 0;
+          Inc(dy);
+        until dy >= 0;
       end
     else
         RenderBase.BlendPixel(X, Y, @FFillColor, CAggCoverFull);
@@ -586,7 +586,7 @@ begin
         RenderBase.BlendPixel(X, Y, @FFillColor, CAggCoverFull);
 end;
 
-procedure TAggRendererMarkers.Dot(X, Y, R: Integer);
+procedure TAggRendererMarkers.dot(X, Y, R: Integer);
 begin
   if Visible(X, Y, R) then
     if R <> 0 then
@@ -636,16 +636,16 @@ begin
     meDash:
       Dash(X, Y, R);
     meDot:
-      Dot(X, Y, R);
+      dot(X, Y, R);
     mePixel:
       Pixel(X, Y, R);
   end;
 end;
 
-procedure TAggRendererMarkers.Markers(N: Integer; X, Y: PInteger; R: Integer;
+procedure TAggRendererMarkers.Markers(n: Integer; X, Y: PInteger; R: Integer;
   MarkerType: TAggMarker);
 begin
-  if N <= 0 then
+  if n <= 0 then
       Exit;
 
   if R = 0 then
@@ -655,8 +655,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
       Exit;
     end;
@@ -668,8 +668,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meDiamond:
       repeat
@@ -677,8 +677,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meCircle:
       repeat
@@ -686,8 +686,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meCrossedCircle:
       repeat
@@ -695,8 +695,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meSemiEllipseLeft:
       repeat
@@ -704,8 +704,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meSemiEllipseRight:
       repeat
@@ -713,8 +713,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meSemiEllipseUp:
       repeat
@@ -722,8 +722,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meSemiEllipseDown:
       repeat
@@ -731,8 +731,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meTriangleLeft:
       repeat
@@ -740,8 +740,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meTriangleRight:
       repeat
@@ -749,8 +749,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meTriangleUp:
       repeat
@@ -758,8 +758,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meTriangleDown:
       repeat
@@ -767,8 +767,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meFourRays:
       repeat
@@ -776,8 +776,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meCross:
       repeat
@@ -785,8 +785,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meX:
       repeat
@@ -794,8 +794,8 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meDash:
       repeat
@@ -803,17 +803,17 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     meDot:
       repeat
-        Dot(X^, Y^, R);
+        dot(X^, Y^, R);
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
 
     mePixel:
       repeat
@@ -821,15 +821,15 @@ begin
 
         Inc(X);
         Inc(Y);
-        Dec(N);
-      until N = 0;
+        Dec(n);
+      until n = 0;
     end;
   end;
 
-  procedure TAggRendererMarkers.Markers(N: Integer; X, Y, R: PInteger;
+  procedure TAggRendererMarkers.Markers(n: Integer; X, Y, R: PInteger;
     MarkerType: TAggMarker);
   begin
-    if N <= 0 then
+    if n <= 0 then
         Exit;
 
     case MarkerType of
@@ -840,8 +840,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meDiamond:
         repeat
@@ -850,8 +850,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meCircle:
         repeat
@@ -860,8 +860,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meCrossedCircle:
         repeat
@@ -870,8 +870,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meSemiEllipseLeft:
         repeat
@@ -880,8 +880,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meSemiEllipseRight:
         repeat
@@ -890,8 +890,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meSemiEllipseUp:
         repeat
@@ -900,8 +900,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meSemiEllipseDown:
         repeat
@@ -910,8 +910,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meTriangleLeft:
         repeat
@@ -920,8 +920,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meTriangleRight:
         repeat
@@ -930,8 +930,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meTriangleUp:
         repeat
@@ -940,8 +940,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meTriangleDown:
         repeat
@@ -950,8 +950,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meFourRays:
         repeat
@@ -960,8 +960,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meCross:
         repeat
@@ -970,8 +970,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meX:
         repeat
@@ -980,8 +980,8 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meDash:
         repeat
@@ -990,18 +990,18 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       meDot:
         repeat
-          Dot(X^, Y^, R^);
+          dot(X^, Y^, R^);
 
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
 
       mePixel:
         repeat
@@ -1010,15 +1010,15 @@ begin
           Inc(X);
           Inc(Y);
           Inc(R);
-          Dec(N);
-        until N = 0;
+          Dec(n);
+        until n = 0;
       end;
     end;
 
-    procedure TAggRendererMarkers.Markers(N: Integer; X, Y, R: PInteger; Fc: PAggColor;
+    procedure TAggRendererMarkers.Markers(n: Integer; X, Y, R: PInteger; Fc: PAggColor;
       MarkerType: TAggMarker);
     begin
-      if N <= 0 then
+      if n <= 0 then
           Exit;
 
       case MarkerType of
@@ -1032,8 +1032,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meDiamond:
           repeat
@@ -1045,8 +1045,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meCircle:
           repeat
@@ -1058,8 +1058,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meCrossedCircle:
           repeat
@@ -1071,8 +1071,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meSemiEllipseLeft:
           repeat
@@ -1084,8 +1084,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meSemiEllipseRight:
           repeat
@@ -1097,8 +1097,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meSemiEllipseUp:
           repeat
@@ -1110,8 +1110,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meSemiEllipseDown:
           repeat
@@ -1123,8 +1123,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meTriangleLeft:
           repeat
@@ -1136,8 +1136,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meTriangleRight:
           repeat
@@ -1149,8 +1149,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meTriangleUp:
           repeat
@@ -1162,8 +1162,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meTriangleDown:
           repeat
@@ -1175,8 +1175,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meFourRays:
           repeat
@@ -1188,8 +1188,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meCross:
           repeat
@@ -1201,8 +1201,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meX:
           repeat
@@ -1214,8 +1214,8 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meDash:
           repeat
@@ -1227,21 +1227,21 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         meDot:
           repeat
             FillColor := Fc^;
 
-            Dot(X^, Y^, R^);
+            dot(X^, Y^, R^);
 
             Inc(X);
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
 
         mePixel:
           repeat
@@ -1253,22 +1253,22 @@ begin
             Inc(Y);
             Inc(R);
             Inc(PtrComp(Fc), SizeOf(TAggColor));
-            Dec(N);
-          until N = 0;
+            Dec(n);
+          until n = 0;
         end;
       end;
 
-      procedure TAggRendererMarkers.Markers(N: Integer; X, Y, R: PInteger;
-        Fc, Lc: PAggColor; MarkerType: TAggMarker);
+      procedure TAggRendererMarkers.Markers(n: Integer; X, Y, R: PInteger;
+        Fc, LC: PAggColor; MarkerType: TAggMarker);
       begin
-        if N <= 0 then
+        if n <= 0 then
             Exit;
 
         case MarkerType of
           meSquare:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               Square(X^, Y^, R^);
 
@@ -1276,14 +1276,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meDiamond:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               Diamond(X^, Y^, R^);
 
@@ -1291,14 +1291,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meCircle:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               Circle(X^, Y^, R^);
 
@@ -1306,14 +1306,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meCrossedCircle:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               CrossedCircle(X^, Y^, R^);
 
@@ -1321,14 +1321,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meSemiEllipseLeft:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               SemiEllipseLeft(X^, Y^, R^);
 
@@ -1336,14 +1336,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meSemiEllipseRight:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               SemiEllipseRight(X^, Y^, R^);
 
@@ -1351,14 +1351,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meSemiEllipseUp:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               SemiEllipseUp(X^, Y^, R^);
 
@@ -1366,14 +1366,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meSemiEllipseDown:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               SemiEllipseDown(X^, Y^, R^);
 
@@ -1381,14 +1381,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meTriangleLeft:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               TriangleLeft(X^, Y^, R^);
 
@@ -1396,14 +1396,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meTriangleRight:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               TriangleRight(X^, Y^, R^);
 
@@ -1411,14 +1411,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meTriangleUp:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               TriangleUp(X^, Y^, R^);
 
@@ -1426,14 +1426,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meTriangleDown:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               TriangleDown(X^, Y^, R^);
 
@@ -1441,14 +1441,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meFourRays:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               FourRays(X^, Y^, R^);
 
@@ -1456,14 +1456,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meCross:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               Cross(X^, Y^, R^);
 
@@ -1471,14 +1471,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meX:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               Xing(X^, Y^, R^);
 
@@ -1486,14 +1486,14 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meDash:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               Dash(X^, Y^, R^);
 
@@ -1501,29 +1501,29 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           meDot:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
-              Dot(X^, Y^, R^);
+              dot(X^, Y^, R^);
 
               Inc(X);
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
 
           mePixel:
             repeat
               FillColor := Fc^;
-              LineColor := Lc^;
+              LineColor := LC^;
 
               Pixel(X^, Y^, R^);
 
@@ -1531,10 +1531,10 @@ begin
               Inc(Y);
               Inc(R);
               Inc(PtrComp(Fc), SizeOf(TAggColor));
-              Inc(PtrComp(Lc), SizeOf(TAggColor));
-              Dec(N);
-            until N = 0;
+              Inc(PtrComp(LC), SizeOf(TAggColor));
+              Dec(n);
+            until n = 0;
           end;
         end;
 
-end.
+end. 

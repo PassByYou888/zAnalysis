@@ -39,7 +39,7 @@ unit AggVcgenSmoothPoly1;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -61,10 +61,10 @@ type
     FSourceVertex: Cardinal;
 
     FControl: array [0 .. 1] of TPointDouble;
-    procedure SetSmoothValue(V: Double);
+    procedure SetSmoothValue(v: Double);
     function GetSmoothValue: Double;
   protected
-    procedure Calculate(V0, V1, V2, V3: PAggVertexDistance);
+    procedure Calculate(v0, v1, v2, v3: PAggVertexDistance);
   public
     constructor Create;
     destructor Destroy; override;
@@ -105,7 +105,7 @@ end;
 
 procedure TAggVcgenSmoothPoly1.SetSmoothValue;
 begin
-  FSmoothValue := V * 0.5;
+  FSmoothValue := v * 0.5;
 end;
 
 function TAggVcgenSmoothPoly1.GetSmoothValue;
@@ -123,23 +123,23 @@ end;
 
 procedure TAggVcgenSmoothPoly1.AddVertex;
 var
-  Vd: TAggVertexDistance;
+  VD: TAggVertexDistance;
 begin
   FStatus := seInitial;
 
   if IsMoveTo(Cmd) then
     begin
-      Vd.Pos := PointDouble(X, Y);
-      Vd.Dist := 0;
+      VD.pos := PointDouble(X, Y);
+      VD.Dist := 0;
 
-      FSourceVertices.ModifyLast(@Vd);
+      FSourceVertices.ModifyLast(@VD);
     end
   else if IsVertex(Cmd) then
     begin
-      Vd.Pos := PointDouble(X, Y);
-      Vd.Dist := 0;
+      VD.pos := PointDouble(X, Y);
+      VD.Dist := 0;
 
-      FSourceVertices.Add(@Vd);
+      FSourceVertices.Add(@VD);
     end
   else
       FClosed := GetCloseFlag(Cmd);
@@ -181,9 +181,9 @@ begin
           if FSourceVertices.Size = 2 then
             begin
               X^ := PAggVertexDistance
-                (FSourceVertices[FSourceVertex]).Pos.X;
+                (FSourceVertices[FSourceVertex]).pos.X;
               Y^ := PAggVertexDistance
-                (FSourceVertices[FSourceVertex]).Pos.Y;
+                (FSourceVertices[FSourceVertex]).pos.Y;
 
               Inc(FSourceVertex);
 
@@ -220,8 +220,8 @@ begin
           if FClosed <> 0 then
             if FSourceVertex >= FSourceVertices.Size then
               begin
-                X^ := PAggVertexDistance(FSourceVertices[0]).Pos.X;
-                Y^ := PAggVertexDistance(FSourceVertices[0]).Pos.Y;
+                X^ := PAggVertexDistance(FSourceVertices[0]).pos.X;
+                Y^ := PAggVertexDistance(FSourceVertices[0]).pos.Y;
 
                 FStatus := seEndPoly;
                 Result := CAggPathCmdCurve4;
@@ -232,9 +232,9 @@ begin
           else if FSourceVertex >= FSourceVertices.Size - 1 then
             begin
               X^ := PAggVertexDistance
-                (FSourceVertices[FSourceVertices.Size - 1]).Pos.X;
+                (FSourceVertices[FSourceVertices.Size - 1]).pos.X;
               Y^ := PAggVertexDistance
-                (FSourceVertices[FSourceVertices.Size - 1]).Pos.Y;
+                (FSourceVertices[FSourceVertices.Size - 1]).pos.Y;
 
               FStatus := seEndPoly;
               Result := CAggPathCmdCurve3;
@@ -247,8 +247,8 @@ begin
             FSourceVertices.Next(FSourceVertex),
             FSourceVertices.Next(FSourceVertex + 1));
 
-          X^ := PAggVertexDistance(FSourceVertices[FSourceVertex]).Pos.X;
-          Y^ := PAggVertexDistance(FSourceVertices[FSourceVertex]).Pos.Y;
+          X^ := PAggVertexDistance(FSourceVertices[FSourceVertex]).pos.X;
+          Y^ := PAggVertexDistance(FSourceVertices[FSourceVertex]).pos.Y;
 
           Inc(FSourceVertex);
 
@@ -341,20 +341,21 @@ end;
 
 procedure TAggVcgenSmoothPoly1.Calculate;
 var
-  K1, K2, Xm1, Ym1, Xm2, Ym2: Double;
+  k1, k2, Xm1, Ym1, Xm2, Ym2: Double;
 begin
-  K1 := V0.Dist / (V0.Dist + V1.Dist);
-  K2 := V1.Dist / (V1.Dist + V2.Dist);
+  k1 := v0.Dist / (v0.Dist + v1.Dist);
+  k2 := v1.Dist / (v1.Dist + v2.Dist);
 
-  Xm1 := V0.Pos.X + (V2.Pos.X - V0.Pos.X) * K1;
-  Ym1 := V0.Pos.Y + (V2.Pos.Y - V0.Pos.Y) * K1;
-  Xm2 := V1.Pos.X + (V3.Pos.X - V1.Pos.X) * K2;
-  Ym2 := V1.Pos.Y + (V3.Pos.Y - V1.Pos.Y) * K2;
+  Xm1 := v0.pos.X + (v2.pos.X - v0.pos.X) * k1;
+  Ym1 := v0.pos.Y + (v2.pos.Y - v0.pos.Y) * k1;
+  Xm2 := v1.pos.X + (v3.pos.X - v1.pos.X) * k2;
+  Ym2 := v1.pos.Y + (v3.pos.Y - v1.pos.Y) * k2;
 
-  FControl[0].X := V1.Pos.X + FSmoothValue * (V2.Pos.X - Xm1);
-  FControl[0].Y := V1.Pos.Y + FSmoothValue * (V2.Pos.Y - Ym1);
-  FControl[1].X := V2.Pos.X + FSmoothValue * (V1.Pos.X - Xm2);
-  FControl[1].Y := V2.Pos.Y + FSmoothValue * (V1.Pos.Y - Ym2);
+  FControl[0].X := v1.pos.X + FSmoothValue * (v2.pos.X - Xm1);
+  FControl[0].Y := v1.pos.Y + FSmoothValue * (v2.pos.Y - Ym1);
+  FControl[1].X := v2.pos.X + FSmoothValue * (v1.pos.X - Xm2);
+  FControl[1].Y := v2.pos.Y + FSmoothValue * (v1.pos.Y - Ym2);
 end;
 
-end.
+end. 
+ 

@@ -39,7 +39,7 @@ unit AggRendererBase;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -73,13 +73,13 @@ type
     constructor Create(PixelFormatProcessorClass: TAggPixelFormatProcessorClass; RenderingBuffer: TAggRenderingBuffer); overload; virtual;
     destructor Destroy; override;
 
-    function SetClipBox(X1, Y1, X2, Y2: Integer): Boolean; overload;
+    function SetClipBox(x1, y1, x2, y2: Integer): Boolean; overload;
     function SetClipBox(Bounds: TRectInteger): Boolean; overload;
     procedure ResetClipping(Visibility: Boolean); virtual;
-    procedure ClipBoxNaked(X1, Y1, X2, Y2: Integer);
+    procedure ClipBoxNaked(x1, y1, x2, y2: Integer);
 
-    function Inbox(X, Y: Integer): Boolean; overload;
-    function Inbox(Point: TPointInteger): Boolean; overload;
+    function InBox(X, Y: Integer): Boolean; overload;
+    function InBox(Point: TPointInteger): Boolean; overload;
 
     procedure FirstClipBox; virtual;
     function NextClipBox: Boolean; virtual;
@@ -95,43 +95,43 @@ type
     procedure BlendPixel(X, Y: Integer; C: PAggColor; Cover: Int8u); virtual;
     function Pixel(X, Y: Integer): TAggColor; virtual;
 
-    procedure CopyHorizontalLine(X1, Y, X2: Integer; C: PAggColor); virtual;
-    procedure CopyVerticalLine(X, Y1, Y2: Integer; C: PAggColor); virtual;
+    procedure CopyHorizontalLine(x1, Y, x2: Integer; C: PAggColor); virtual;
+    procedure CopyVerticalLine(X, y1, y2: Integer; C: PAggColor); virtual;
 
-    procedure BlendHorizontalLine(X1, Y, X2: Integer; C: PAggColor; Cover: Int8u); virtual;
-    procedure BlendVerticalLine(X, Y1, Y2: Integer; C: PAggColor; Cover: Int8u); virtual;
+    procedure BlendHorizontalLine(x1, Y, x2: Integer; C: PAggColor; Cover: Int8u); virtual;
+    procedure BlendVerticalLine(X, y1, y2: Integer; C: PAggColor; Cover: Int8u); virtual;
 
-    procedure CopyBar(X1, Y1, X2, Y2: Integer; C: PAggColor); virtual;
-    procedure BlendBar(X1, Y1, X2, Y2: Integer; C: PAggColor; Cover: Int8u); virtual;
+    procedure CopyBar(x1, y1, x2, y2: Integer; C: PAggColor); virtual;
+    procedure BlendBar(x1, y1, x2, y2: Integer; C: PAggColor; Cover: Int8u); virtual;
 
     function Span(X, Y: Integer; Len: Cardinal): Pointer;
 
     procedure BlendSolidHSpan(X, Y, Len: Integer; C: PAggColor; Covers: PInt8u); virtual;
     procedure BlendSolidVSpan(X, Y, Len: Integer; C: PAggColor; Covers: PInt8u); virtual;
 
-    procedure CopyColorHSpan(X, Y, Len: Integer; Colors: PAggColor); virtual;
-    procedure BlendColorHSpan(X, Y, Len: Integer; Colors: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull); virtual;
-    procedure BlendColorVSpan(X, Y, Len: Integer; Colors: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull); virtual;
+    procedure CopyColorHSpan(X, Y, Len: Integer; COLORS: PAggColor); virtual;
+    procedure BlendColorHSpan(X, Y, Len: Integer; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull); virtual;
+    procedure BlendColorVSpan(X, Y, Len: Integer; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull); virtual;
 
-    procedure CopyColorHSpanNoClip(X, Y, Len: Integer; Colors: PAggColor);
-    procedure BlendColorHSpanNoClip(X, Y, Len: Integer; Colors: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
-    procedure BlendColorVSpanNoClip(X, Y, Len: Integer; Colors: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
+    procedure CopyColorHSpanNoClip(X, Y, Len: Integer; COLORS: PAggColor);
+    procedure BlendColorHSpanNoClip(X, Y, Len: Integer; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
+    procedure BlendColorVSpanNoClip(X, Y, Len: Integer; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
 
     function ClipRectArea(var Dst, Src: TRectInteger; Wsrc, Hsrc: Integer): TRectInteger;
 
-    procedure CopyFrom(Src: TAggRenderingBuffer; RectSourcePointer: PRectInteger = nil; Dx: Integer = 0; Dy: Integer = 0); virtual;
-    procedure BlendFrom(Src: TAggPixelFormatProcessor; RectSourcePointer: PRectInteger = nil; Dx: Integer = 0; Dy: Integer = 0; Cover: Int8u = CAggCoverFull); virtual;
+    procedure CopyFrom(Src: TAggRenderingBuffer; RectSourcePointer: PRectInteger = nil; dx: Integer = 0; dy: Integer = 0); virtual;
+    procedure BlendFrom(Src: TAggPixelFormatProcessor; RectSourcePointer: PRectInteger = nil; dx: Integer = 0; dy: Integer = 0; Cover: Int8u = CAggCoverFull); virtual;
 
-    procedure BlendFromColor(Src: TAggPixelFormatProcessor; Color: PAggColor; RectSourcePointer: PRectInteger = nil; Dx: Integer = 0; Dy: Integer = 0; Cover: Int8u = CAggCoverFull);
+    procedure BlendFromColor(Src: TAggPixelFormatProcessor; COLOR: PAggColor; RectSourcePointer: PRectInteger = nil; dx: Integer = 0; dy: Integer = 0; Cover: Int8u = CAggCoverFull);
 
-    procedure BlendFromLUT(Src: TAggPixelFormatProcessor; AColorLUT: PAggColor; RectSourcePointer: PRectInteger = nil; Dx: Integer = 0; Dy: Integer = 0; Cover: Int8u = CAggCoverFull);
+    procedure BlendFromLUT(Src: TAggPixelFormatProcessor; AColorLUT: PAggColor; RectSourcePointer: PRectInteger = nil; dx: Integer = 0; dy: Integer = 0; Cover: Int8u = CAggCoverFull);
 
     property PixelFormatProcessor: TAggPixelFormatProcessor read FPixelFormatProcessor;
 
     property OwnPixelFormatProcessor: Boolean read FOwnPixelFormatProcessor write FOwnPixelFormatProcessor;
 
-    property Width: Cardinal read GetWidth;
-    property Height: Cardinal read GetHeight;
+    property width: Cardinal read GetWidth;
+    property height: Cardinal read GetHeight;
 
     property XMin: Integer read GetXMin;
     property YMin: Integer read GetYMin;
@@ -177,62 +177,62 @@ end;
 
 procedure TAggRendererBase.InitializePixelFormatProcessor;
 var
-  W, H: Integer;
+  w, h: Integer;
 begin
-  W := 0;
-  H := 0;
+  w := 0;
+  h := 0;
   if Assigned(FPixelFormatProcessor) then
     begin
-      if (FPixelFormatProcessor.Width > 0) then
-          W := FPixelFormatProcessor.Width - 1;
-      if (FPixelFormatProcessor.Height > 0) then
-          H := FPixelFormatProcessor.Height - 1;
+      if (FPixelFormatProcessor.width > 0) then
+          w := FPixelFormatProcessor.width - 1;
+      if (FPixelFormatProcessor.height > 0) then
+          h := FPixelFormatProcessor.height - 1;
     end;
 
-  FClipBox := RectInteger(0, 0, W, H);
+  FClipBox := RectInteger(0, 0, w, h);
 end;
 
 function TAggRendererBase.GetWidth: Cardinal;
 begin
-  Result := FPixelFormatProcessor.Width;
+  Result := FPixelFormatProcessor.width;
 end;
 
 function TAggRendererBase.GetHeight: Cardinal;
 begin
-  Result := FPixelFormatProcessor.Height;
+  Result := FPixelFormatProcessor.height;
 end;
 
-procedure TAggRendererBase.ClipBoxNaked(X1, Y1, X2, Y2: Integer);
+procedure TAggRendererBase.ClipBoxNaked(x1, y1, x2, y2: Integer);
 begin
-  FClipBox.X1 := X1;
-  FClipBox.Y1 := Y1;
-  FClipBox.X2 := X2;
-  FClipBox.Y2 := Y2;
+  FClipBox.x1 := x1;
+  FClipBox.y1 := y1;
+  FClipBox.x2 := x2;
+  FClipBox.y2 := y2;
 end;
 
-function TAggRendererBase.Inbox(X, Y: Integer): Boolean;
+function TAggRendererBase.InBox(X, Y: Integer): Boolean;
 begin
-  Result := (X >= FClipBox.X1) and (Y >= FClipBox.Y1) and
-    (X <= FClipBox.X2) and (Y <= FClipBox.Y2);
+  Result := (X >= FClipBox.x1) and (Y >= FClipBox.y1) and
+    (X <= FClipBox.x2) and (Y <= FClipBox.y2);
 end;
 
-function TAggRendererBase.Inbox(Point: TPointInteger): Boolean;
+function TAggRendererBase.InBox(Point: TPointInteger): Boolean;
 begin
-  Result := (Point.X >= FClipBox.X1) and (Point.Y >= FClipBox.Y1) and
-    (Point.X <= FClipBox.X2) and (Point.Y <= FClipBox.Y2);
+  Result := (Point.X >= FClipBox.x1) and (Point.Y >= FClipBox.y1) and
+    (Point.X <= FClipBox.x2) and (Point.Y <= FClipBox.y2);
 end;
 
-function TAggRendererBase.SetClipBox(X1, Y1, X2, Y2: Integer): Boolean;
+function TAggRendererBase.SetClipBox(x1, y1, x2, y2: Integer): Boolean;
 var
-  Cb, RectClip: TRectInteger;
+  CB, RectClip: TRectInteger;
 begin
-  Cb := RectInteger(X1, Y1, X2, Y2);
-  Cb.Normalize;
+  CB := RectInteger(x1, y1, x2, y2);
+  CB.Normalize;
 
-  RectClip := RectInteger(0, 0, Width - 1, Height - 1);
-  if Cb.Clip(RectClip) then
+  RectClip := RectInteger(0, 0, width - 1, height - 1);
+  if CB.Clip(RectClip) then
     begin
-      FClipBox := Cb;
+      FClipBox := CB;
       Result := True;
       Exit;
     end;
@@ -248,7 +248,7 @@ begin
   FClipBox := Bounds;
   FClipBox.Normalize;
 
-  RectClip := RectInteger(0, 0, Width - 1, Height - 1);
+  RectClip := RectInteger(0, 0, width - 1, height - 1);
 
   if FClipBox.Clip(RectClip) then
     begin
@@ -265,7 +265,7 @@ procedure TAggRendererBase.ResetClipping;
 begin
   if Visibility then
     begin
-      FClipBox := RectInteger(0, 0, Width - 1, Height - 1);
+      FClipBox := RectInteger(0, 0, width - 1, height - 1);
       Exit;
     end;
   FClipBox := RectInteger(1, 1, 0, 0);
@@ -287,22 +287,22 @@ end;
 
 function TAggRendererBase.GetXMin;
 begin
-  Result := FClipBox.X1;
+  Result := FClipBox.x1;
 end;
 
 function TAggRendererBase.GetYMin;
 begin
-  Result := FClipBox.Y1;
+  Result := FClipBox.y1;
 end;
 
 function TAggRendererBase.GetXMax;
 begin
-  Result := FClipBox.X2;
+  Result := FClipBox.x2;
 end;
 
 function TAggRendererBase.GetYMax;
 begin
-  Result := FClipBox.Y2;
+  Result := FClipBox.y2;
 end;
 
 function TAggRendererBase.BoundingClipBox: PRectInteger;
@@ -312,32 +312,32 @@ end;
 
 function TAggRendererBase.GetBoundingXMin;
 begin
-  Result := FClipBox.X1;
+  Result := FClipBox.x1;
 end;
 
 function TAggRendererBase.GetBoundingYMin;
 begin
-  Result := FClipBox.Y1;
+  Result := FClipBox.y1;
 end;
 
 function TAggRendererBase.GetBoundingXMax;
 begin
-  Result := FClipBox.X2;
+  Result := FClipBox.x2;
 end;
 
 function TAggRendererBase.GetBoundingYMax;
 begin
-  Result := FClipBox.Y2;
+  Result := FClipBox.y2;
 end;
 
 procedure TAggRendererBase.Clear(C: PAggColor);
 var
   Y: Cardinal;
 begin
-  if (Width > 0) and (Height > 0) then
+  if (width > 0) and (height > 0) then
     for Y := 0 to GetHeight - 1 do
         FPixelFormatProcessor.CopyHorizontalLine(FPixelFormatProcessor, 0, Y,
-        Width, C);
+        width, C);
 end;
 
 procedure TAggRendererBase.Clear(C: TAggRgba8);
@@ -346,39 +346,39 @@ var
   Y: Cardinal;
 begin
   AggColor32.Rgba8 := C;
-  if (Width > 0) and (Height > 0) then
-    for Y := 0 to Height - 1 do
+  if (width > 0) and (height > 0) then
+    for Y := 0 to height - 1 do
         FPixelFormatProcessor.CopyHorizontalLine(FPixelFormatProcessor, 0, Y,
-        Width, @AggColor32);
+        width, @AggColor32);
 end;
 
 procedure TAggRendererBase.CopyPixel(X, Y: Integer; C: PAggColor);
 begin
-  if Inbox(X, Y) then
+  if InBox(X, Y) then
       FPixelFormatProcessor.CopyPixel(FPixelFormatProcessor, X, Y, C);
 end;
 
 procedure TAggRendererBase.BlendPixel(X, Y: Integer; C: PAggColor; Cover: Int8u);
 begin
-  if Inbox(X, Y) then
+  if InBox(X, Y) then
       FPixelFormatProcessor.BlendPixel(FPixelFormatProcessor, X, Y, C, Cover);
 end;
 
 function TAggRendererBase.Pixel(X, Y: Integer): TAggColor;
 begin
-  if Inbox(X, Y) then
+  if InBox(X, Y) then
       Result := FPixelFormatProcessor.Pixel(FPixelFormatProcessor, X, Y);
 end;
 
-procedure TAggRendererBase.CopyHorizontalLine(X1, Y, X2: Integer; C: PAggColor);
+procedure TAggRendererBase.CopyHorizontalLine(x1, Y, x2: Integer; C: PAggColor);
 var
   T: Integer;
 begin
-  if X1 > X2 then
+  if x1 > x2 then
     begin
-      T := X2;
-      X2 := X1;
-      X1 := T;
+      T := x2;
+      x2 := x1;
+      x1 := T;
     end;
 
   if Y > GetYMax then
@@ -387,31 +387,31 @@ begin
   if Y < GetYMin then
       Exit;
 
-  if X1 > GetXMax then
+  if x1 > GetXMax then
       Exit;
 
-  if X2 < GetXMin then
+  if x2 < GetXMin then
       Exit;
 
-  if X1 < GetXMin then
-      X1 := GetXMin;
+  if x1 < GetXMin then
+      x1 := GetXMin;
 
-  if X2 > GetXMax then
-      X2 := GetXMax;
+  if x2 > GetXMax then
+      x2 := GetXMax;
 
-  FPixelFormatProcessor.CopyHorizontalLine(FPixelFormatProcessor, X1, Y,
-    X2 - X1 + 1, C);
+  FPixelFormatProcessor.CopyHorizontalLine(FPixelFormatProcessor, x1, Y,
+    x2 - x1 + 1, C);
 end;
 
-procedure TAggRendererBase.CopyVerticalLine(X, Y1, Y2: Integer; C: PAggColor);
+procedure TAggRendererBase.CopyVerticalLine(X, y1, y2: Integer; C: PAggColor);
 var
   T: Integer;
 begin
-  if Y1 > Y2 then
+  if y1 > y2 then
     begin
-      T := Y2;
-      Y2 := Y1;
-      Y1 := T;
+      T := y2;
+      y2 := y1;
+      y1 := T;
     end;
 
   if X > GetXMax then
@@ -420,32 +420,32 @@ begin
   if X < GetXMin then
       Exit;
 
-  if Y1 > GetYMax then
+  if y1 > GetYMax then
       Exit;
 
-  if Y2 < GetYMin then
+  if y2 < GetYMin then
       Exit;
 
-  if Y1 < GetYMin then
-      Y1 := GetYMin;
+  if y1 < GetYMin then
+      y1 := GetYMin;
 
-  if Y2 > GetYMax then
-      Y2 := GetYMax;
+  if y2 > GetYMax then
+      y2 := GetYMax;
 
-  FPixelFormatProcessor.CopyVerticalLine(FPixelFormatProcessor, X, Y1,
-    Y2 - Y1 + 1, C);
+  FPixelFormatProcessor.CopyVerticalLine(FPixelFormatProcessor, X, y1,
+    y2 - y1 + 1, C);
 end;
 
-procedure TAggRendererBase.BlendHorizontalLine(X1, Y, X2: Integer; C: PAggColor;
+procedure TAggRendererBase.BlendHorizontalLine(x1, Y, x2: Integer; C: PAggColor;
   Cover: Int8u);
 var
   T: Integer;
 begin
-  if X1 > X2 then
+  if x1 > x2 then
     begin
-      T := X2;
-      X2 := X1;
-      X1 := T;
+      T := x2;
+      x2 := x1;
+      x1 := T;
     end;
 
   if Y > GetYMax then
@@ -454,32 +454,32 @@ begin
   if Y < GetYMin then
       Exit;
 
-  if X1 > GetXMax then
+  if x1 > GetXMax then
       Exit;
 
-  if X2 < GetXMin then
+  if x2 < GetXMin then
       Exit;
 
-  if X1 < GetXMin then
-      X1 := GetXMin;
+  if x1 < GetXMin then
+      x1 := GetXMin;
 
-  if X2 > GetXMax then
-      X2 := GetXMax;
+  if x2 > GetXMax then
+      x2 := GetXMax;
 
-  FPixelFormatProcessor.BlendHorizontalLine(FPixelFormatProcessor, X1, Y,
-    X2 - X1 + 1, C, Cover);
+  FPixelFormatProcessor.BlendHorizontalLine(FPixelFormatProcessor, x1, Y,
+    x2 - x1 + 1, C, Cover);
 end;
 
-procedure TAggRendererBase.BlendVerticalLine(X, Y1, Y2: Integer; C: PAggColor;
+procedure TAggRendererBase.BlendVerticalLine(X, y1, y2: Integer; C: PAggColor;
   Cover: Int8u);
 var
   T: Integer;
 begin
-  if Y1 > Y2 then
+  if y1 > y2 then
     begin
-      T := Y2;
-      Y2 := Y1;
-      Y1 := T;
+      T := y2;
+      y2 := y1;
+      y1 := T;
     end;
 
   if X > GetXMax then
@@ -488,61 +488,61 @@ begin
   if X < GetXMin then
       Exit;
 
-  if Y1 > GetYMax then
+  if y1 > GetYMax then
       Exit;
 
-  if Y2 < GetYMin then
+  if y2 < GetYMin then
       Exit;
 
-  if Y1 < GetYMin then
-      Y1 := GetYMin;
+  if y1 < GetYMin then
+      y1 := GetYMin;
 
-  if Y2 > GetYMax then
-      Y2 := GetYMax;
+  if y2 > GetYMax then
+      y2 := GetYMax;
 
-  FPixelFormatProcessor.BlendVerticalLine(FPixelFormatProcessor, X, Y1,
-    Y2 - Y1 + 1, C, Cover);
+  FPixelFormatProcessor.BlendVerticalLine(FPixelFormatProcessor, X, y1,
+    y2 - y1 + 1, C, Cover);
 end;
 
-procedure TAggRendererBase.CopyBar(X1, Y1, X2, Y2: Integer; C: PAggColor);
+procedure TAggRendererBase.CopyBar(x1, y1, x2, y2: Integer; C: PAggColor);
 var
   Y: Integer;
   RectClip: TRectInteger;
 begin
-  RectClip := RectInteger(X1, Y1, X2, Y2);
+  RectClip := RectInteger(x1, y1, x2, y2);
   RectClip.Normalize;
 
   if RectClip.Clip(GetClipBox^) then
     begin
-      Y := RectClip.Y1;
+      Y := RectClip.y1;
 
-      while Y <= RectClip.Y2 do
+      while Y <= RectClip.y2 do
         begin
           FPixelFormatProcessor.CopyHorizontalLine(FPixelFormatProcessor,
-            RectClip.X1, Y, RectClip.X2 - RectClip.X1 + 1, C);
+            RectClip.x1, Y, RectClip.x2 - RectClip.x1 + 1, C);
 
           Inc(Y);
         end;
     end;
 end;
 
-procedure TAggRendererBase.BlendBar(X1, Y1, X2, Y2: Integer; C: PAggColor;
+procedure TAggRendererBase.BlendBar(x1, y1, x2, y2: Integer; C: PAggColor;
   Cover: Int8u);
 var
   RectClip: TRectInteger;
   Y: Integer;
 begin
-  RectClip := RectInteger(X1, Y1, X2, Y2);
+  RectClip := RectInteger(x1, y1, x2, y2);
   RectClip.Normalize;
 
   if RectClip.Clip(GetClipBox^) then
     begin
-      Y := RectClip.Y1;
+      Y := RectClip.y1;
 
-      while Y <= RectClip.Y2 do
+      while Y <= RectClip.y2 do
         begin
           FPixelFormatProcessor.BlendHorizontalLine(FPixelFormatProcessor,
-            RectClip.X1, Y, Cardinal(RectClip.X2 - RectClip.X1 + 1), C, Cover);
+            RectClip.x1, Y, Cardinal(RectClip.x2 - RectClip.x1 + 1), C, Cover);
 
           Inc(Y);
         end;
@@ -620,9 +620,9 @@ begin
 end;
 
 procedure TAggRendererBase.CopyColorHSpan(X, Y, Len: Integer;
-  Colors: PAggColor);
+  COLORS: PAggColor);
 var
-  D: Integer;
+  d: Integer;
 begin
   if Y > GetYMax then
       Exit;
@@ -632,14 +632,14 @@ begin
 
   if X < GetXMin then
     begin
-      D := GetXMin - X;
+      d := GetXMin - X;
 
-      Dec(Len, D);
+      Dec(Len, d);
 
       if Len <= 0 then
           Exit;
 
-      Inc(PtrComp(Colors), D * SizeOf(TAggColor));
+      Inc(PtrComp(COLORS), d * SizeOf(TAggColor));
 
       X := GetXMin;
     end;
@@ -653,13 +653,13 @@ begin
     end;
 
   FPixelFormatProcessor.CopyColorHSpan(FPixelFormatProcessor, X, Y, Len,
-    Colors);
+    COLORS);
 end;
 
 procedure TAggRendererBase.BlendColorHSpan(X, Y, Len: Integer;
-  Colors: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
+  COLORS: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
 var
-  D: Integer;
+  d: Integer;
 begin
   if Y > GetYMax then
       Exit;
@@ -669,17 +669,17 @@ begin
 
   if X < GetXMin then
     begin
-      D := GetXMin - X;
+      d := GetXMin - X;
 
-      Dec(Len, D);
+      Dec(Len, d);
 
       if Len <= 0 then
           Exit;
 
       if Covers <> nil then
-          Inc(PtrComp(Covers), D * SizeOf(Int8u));
+          Inc(PtrComp(Covers), d * SizeOf(Int8u));
 
-      Inc(PtrComp(Colors), D * SizeOf(TAggColor));
+      Inc(PtrComp(COLORS), d * SizeOf(TAggColor));
 
       X := GetXMin;
     end;
@@ -693,13 +693,13 @@ begin
     end;
 
   FPixelFormatProcessor.BlendColorHSpan(FPixelFormatProcessor, X, Y, Len,
-    Colors, Covers, Cover);
+    COLORS, Covers, Cover);
 end;
 
 procedure TAggRendererBase.BlendColorVSpan(X, Y, Len: Integer;
-  Colors: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
+  COLORS: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
 var
-  D: Integer;
+  d: Integer;
 begin
   if X > GetXMax then
       Exit;
@@ -709,17 +709,17 @@ begin
 
   if Y < GetYMin then
     begin
-      D := GetYMin - Y;
+      d := GetYMin - Y;
 
-      Dec(Len, D);
+      Dec(Len, d);
 
       if Len <= 0 then
           Exit;
 
       if Covers <> nil then
-          Inc(PtrComp(Covers), D * SizeOf(Int8u));
+          Inc(PtrComp(Covers), d * SizeOf(Int8u));
 
-      Inc(PtrComp(Colors), D * SizeOf(TAggColor));
+      Inc(PtrComp(COLORS), d * SizeOf(TAggColor));
 
       Y := GetYMin;
     end;
@@ -733,136 +733,136 @@ begin
     end;
 
   FPixelFormatProcessor.BlendColorVSpan(FPixelFormatProcessor, X, Y, Len,
-    Colors, Covers, Cover);
+    COLORS, Covers, Cover);
 end;
 
-procedure TAggRendererBase.CopyColorHSpanNoClip(X, Y, Len: Integer; Colors: PAggColor);
+procedure TAggRendererBase.CopyColorHSpanNoClip(X, Y, Len: Integer; COLORS: PAggColor);
 begin
   // not implemented
 end;
 
 procedure TAggRendererBase.BlendColorHSpanNoClip(X, Y, Len: Integer;
-  Colors: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
+  COLORS: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
 begin
   FPixelFormatProcessor.BlendColorHSpan(FPixelFormatProcessor, X, Y, Len,
-    Colors, Covers, Cover);
+    COLORS, Covers, Cover);
 end;
 
 procedure TAggRendererBase.BlendColorVSpanNoClip(X, Y, Len: Integer;
-  Colors: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
+  COLORS: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
 begin
   FPixelFormatProcessor.BlendColorVSpan(FPixelFormatProcessor, X, Y, Len,
-    Colors, Covers, Cover);
+    COLORS, Covers, Cover);
 end;
 
 function TAggRendererBase.ClipRectArea(var Dst, Src: TRectInteger; Wsrc,
   Hsrc: Integer): TRectInteger;
 var
-  RectClip, Cb: TRectInteger;
+  RectClip, CB: TRectInteger;
 begin
   RectClip := RectInteger(0, 0, 0, 0);
 
-  Cb := GetClipBox^;
+  CB := GetClipBox^;
 
-  Inc(Cb.X2);
-  Inc(Cb.Y2);
+  Inc(CB.x2);
+  Inc(CB.y2);
 
-  if Src.X1 < 0 then
+  if Src.x1 < 0 then
     begin
-      Dst.X1 := Dst.X1 - Src.X1;
-      Src.X1 := 0;
+      Dst.x1 := Dst.x1 - Src.x1;
+      Src.x1 := 0;
     end;
 
-  if Src.Y1 < 0 then
+  if Src.y1 < 0 then
     begin
-      Dst.Y1 := Dst.Y1 - Src.Y1;
-      Src.Y1 := 0;
+      Dst.y1 := Dst.y1 - Src.y1;
+      Src.y1 := 0;
     end;
 
-  if Src.X2 > Wsrc then
-      Src.X2 := Wsrc;
+  if Src.x2 > Wsrc then
+      Src.x2 := Wsrc;
 
-  if Src.Y2 > Hsrc then
-      Src.Y2 := Hsrc;
+  if Src.y2 > Hsrc then
+      Src.y2 := Hsrc;
 
-  if Dst.X1 < Cb.X1 then
+  if Dst.x1 < CB.x1 then
     begin
-      Src.X1 := Src.X1 + (Cb.X1 - Dst.X1);
-      Dst.X1 := Cb.X1;
+      Src.x1 := Src.x1 + (CB.x1 - Dst.x1);
+      Dst.x1 := CB.x1;
     end;
 
-  if Dst.Y1 < Cb.Y1 then
+  if Dst.y1 < CB.y1 then
     begin
-      Src.Y1 := Src.Y1 + (Cb.Y1 - Dst.Y1);
-      Dst.Y1 := Cb.Y1;
+      Src.y1 := Src.y1 + (CB.y1 - Dst.y1);
+      Dst.y1 := CB.y1;
     end;
 
-  if Dst.X2 > Cb.X2 then
-      Dst.X2 := Cb.X2;
+  if Dst.x2 > CB.x2 then
+      Dst.x2 := CB.x2;
 
-  if Dst.Y2 > Cb.Y2 then
-      Dst.Y2 := Cb.Y2;
+  if Dst.y2 > CB.y2 then
+      Dst.y2 := CB.y2;
 
-  RectClip.X2 := Dst.X2 - Dst.X1;
-  RectClip.Y2 := Dst.Y2 - Dst.Y1;
+  RectClip.x2 := Dst.x2 - Dst.x1;
+  RectClip.y2 := Dst.y2 - Dst.y1;
 
-  if RectClip.X2 > Src.X2 - Src.X1 then
-      RectClip.X2 := Src.X2 - Src.X1;
+  if RectClip.x2 > Src.x2 - Src.x1 then
+      RectClip.x2 := Src.x2 - Src.x1;
 
-  if RectClip.Y2 > Src.Y2 - Src.Y1 then
-      RectClip.Y2 := Src.Y2 - Src.Y1;
+  if RectClip.y2 > Src.y2 - Src.y1 then
+      RectClip.y2 := Src.y2 - Src.y1;
 
   Result := RectClip;
 end;
 
 procedure TAggRendererBase.CopyFrom(Src: TAggRenderingBuffer; RectSourcePointer:
-  PRectInteger = nil; Dx: Integer = 0; Dy: Integer = 0);
+  PRectInteger = nil; dx: Integer = 0; dy: Integer = 0);
 var
   RectSource, RectDest, RectClip: TRectInteger;
   IncY: Integer;
 begin
-  RectSource := RectInteger(0, 0, Src.Width, Src.Height);
+  RectSource := RectInteger(0, 0, Src.width, Src.height);
 
   if RectSourcePointer <> nil then
     begin
-      RectSource.X1 := RectSourcePointer.X1;
-      RectSource.Y1 := RectSourcePointer.Y1;
-      RectSource.X2 := RectSourcePointer.X2 + 1;
-      RectSource.Y2 := RectSourcePointer.Y2 + 1;
+      RectSource.x1 := RectSourcePointer.x1;
+      RectSource.y1 := RectSourcePointer.y1;
+      RectSource.x2 := RectSourcePointer.x2 + 1;
+      RectSource.y2 := RectSourcePointer.y2 + 1;
     end;
 
-  RectDest := RectInteger(RectSource.X1 + Dx, RectSource.Y1 + Dy,
-    RectSource.X2 + Dx, RectSource.Y2 + Dy);
+  RectDest := RectInteger(RectSource.x1 + dx, RectSource.y1 + dy,
+    RectSource.x2 + dx, RectSource.y2 + dy);
 
-  RectClip := ClipRectArea(RectDest, RectSource, Src.Width, Src.Height);
+  RectClip := ClipRectArea(RectDest, RectSource, Src.width, Src.height);
 
-  if RectClip.X2 > 0 then
+  if RectClip.x2 > 0 then
     begin
       IncY := 1;
 
-      if RectDest.Y1 > RectSource.Y1 then
+      if RectDest.y1 > RectSource.y1 then
         begin
-          RectSource.Y1 := RectSource.Y1 + (RectClip.Y2 - 1);
-          RectDest.Y1 := RectDest.Y1 + (RectClip.Y2 - 1);
+          RectSource.y1 := RectSource.y1 + (RectClip.y2 - 1);
+          RectDest.y1 := RectDest.y1 + (RectClip.y2 - 1);
 
           IncY := -1;
         end;
 
-      while RectClip.Y2 > 0 do
+      while RectClip.y2 > 0 do
         begin
-          FPixelFormatProcessor.CopyFrom(FPixelFormatProcessor, Src, RectDest.X1,
-            RectDest.Y1, RectSource.X1, RectSource.Y1, RectClip.X2);
+          FPixelFormatProcessor.CopyFrom(FPixelFormatProcessor, Src, RectDest.x1,
+            RectDest.y1, RectSource.x1, RectSource.y1, RectClip.x2);
 
-          RectDest.Y1 := RectDest.Y1 + IncY;
-          RectSource.Y1 := RectSource.Y1 + IncY;
+          RectDest.y1 := RectDest.y1 + IncY;
+          RectSource.y1 := RectSource.y1 + IncY;
 
-          Dec(RectClip.Y2);
+          Dec(RectClip.y2);
         end;
     end;
 end;
 
 procedure TAggRendererBase.BlendFrom(Src: TAggPixelFormatProcessor;
-  RectSourcePointer: PRectInteger = nil; Dx: Integer = 0; Dy: Integer = 0;
+  RectSourcePointer: PRectInteger = nil; dx: Integer = 0; dy: Integer = 0;
   Cover: Int8u = CAggCoverFull);
 var
   RectSource, RectDest, RectClip: TRectInteger;
@@ -871,210 +871,211 @@ var
 begin
   if RectSourcePointer <> nil then
     begin
-      RectSource.X1 := RectSourcePointer.X1;
-      RectSource.Y1 := RectSourcePointer.Y1;
-      RectSource.X2 := RectSourcePointer.X2 + 1;
-      RectSource.Y2 := RectSourcePointer.Y2 + 1;
+      RectSource.x1 := RectSourcePointer.x1;
+      RectSource.y1 := RectSourcePointer.y1;
+      RectSource.x2 := RectSourcePointer.x2 + 1;
+      RectSource.y2 := RectSourcePointer.y2 + 1;
     end
   else
     begin
-      RectSource.X1 := 0;
-      RectSource.Y1 := 0;
-      RectSource.X2 := Src.Width;
-      RectSource.Y2 := Src.Height;
+      RectSource.x1 := 0;
+      RectSource.y1 := 0;
+      RectSource.x2 := Src.width;
+      RectSource.y2 := Src.height;
     end;
 
-  RectDest := RectInteger(RectSource.X1 + Dx, RectSource.Y1 + Dy,
-    RectSource.X2 + Dx, RectSource.Y2 + Dy);
+  RectDest := RectInteger(RectSource.x1 + dx, RectSource.y1 + dy,
+    RectSource.x2 + dx, RectSource.y2 + dy);
 
-  RectClip := ClipRectArea(RectDest, RectSource, Src.Width, Src.Height);
+  RectClip := ClipRectArea(RectDest, RectSource, Src.width, Src.height);
 
-  if RectClip.X2 > 0 then
+  if RectClip.x2 > 0 then
     begin
       IncY := 1;
 
-      if RectDest.Y1 > RectSource.Y1 then
+      if RectDest.y1 > RectSource.y1 then
         begin
-          RectSource.Y1 := RectSource.Y1 + (RectClip.Y2 - 1);
-          RectDest.Y1 := RectDest.Y1 + (RectClip.Y2 - 1);
+          RectSource.y1 := RectSource.y1 + (RectClip.y2 - 1);
+          RectDest.y1 := RectDest.y1 + (RectClip.y2 - 1);
 
           IncY := -1;
         end;
 
-      while RectClip.Y2 > 0 do
+      while RectClip.y2 > 0 do
         begin
-          Rw := Src.Row(Src, RectSource.X1, RectSource.Y1);
+          Rw := Src.Row(Src, RectSource.x1, RectSource.y1);
 
-          if Rw.Ptr <> nil then
+          if Rw.PTR <> nil then
             begin
-              X1src := RectSource.X1;
-              X1dst := RectDest.X1;
-              Len := RectClip.X2;
+              X1src := RectSource.x1;
+              X1dst := RectDest.x1;
+              Len := RectClip.x2;
 
-              if Rw.X1 > X1src then
+              if Rw.x1 > X1src then
                 begin
-                  Inc(X1dst, Rw.X1 - X1src);
-                  Dec(Len, Rw.X1 - X1src);
+                  Inc(X1dst, Rw.x1 - X1src);
+                  Dec(Len, Rw.x1 - X1src);
 
-                  X1src := Rw.X1;
+                  X1src := Rw.x1;
                 end;
 
               if Len > 0 then
                 begin
-                  if X1src + Len - 1 > Rw.X2 then
-                      Dec(Len, X1src + Len - Rw.X2 - 1);
+                  if X1src + Len - 1 > Rw.x2 then
+                      Dec(Len, X1src + Len - Rw.x2 - 1);
 
                   if Len > 0 then
-                      FPixelFormatProcessor.BlendFrom(FPixelFormatProcessor, Src, Rw.Ptr,
-                      X1dst, RectDest.Y1, X1src, RectSource.Y1, Len, Cover);
+                      FPixelFormatProcessor.BlendFrom(FPixelFormatProcessor, Src, Rw.PTR,
+                      X1dst, RectDest.y1, X1src, RectSource.y1, Len, Cover);
                 end;
             end;
 
-          Inc(RectDest.Y1, IncY);
-          Inc(RectSource.Y1, IncY);
-          Dec(RectClip.Y2);
+          Inc(RectDest.y1, IncY);
+          Inc(RectSource.y1, IncY);
+          Dec(RectClip.y2);
         end;
     end;
 end;
 
 procedure TAggRendererBase.BlendFromColor(Src: TAggPixelFormatProcessor;
-  Color: PAggColor; RectSourcePointer: PRectInteger = nil; Dx: Integer = 0;
-  Dy: Integer = 0; Cover: Int8u = CAggCoverFull);
+  COLOR: PAggColor; RectSourcePointer: PRectInteger = nil; dx: Integer = 0;
+  dy: Integer = 0; Cover: Int8u = CAggCoverFull);
 var
   RectSource, RectDest, RectClip: TRectInteger;
   Rw: TAggRowDataType;
   IncY, X1src, X1dst, Len: Integer;
 begin
-  RectSource := RectInteger(0, 0, Src.Width, Src.Height);
+  RectSource := RectInteger(0, 0, Src.width, Src.height);
 
   if RectSourcePointer <> nil then
     begin
-      RectSource.X1 := RectSourcePointer.X1;
-      RectSource.Y1 := RectSourcePointer.Y1;
-      RectSource.X2 := RectSourcePointer.X2 + 1;
-      RectSource.Y2 := RectSourcePointer.Y2 + 1;
+      RectSource.x1 := RectSourcePointer.x1;
+      RectSource.y1 := RectSourcePointer.y1;
+      RectSource.x2 := RectSourcePointer.x2 + 1;
+      RectSource.y2 := RectSourcePointer.y2 + 1;
     end;
 
-  RectDest := RectInteger(RectSource.X1 + Dx, RectSource.Y1 + Dy,
-    RectSource.X2 + Dx, RectSource.Y2 + Dy);
+  RectDest := RectInteger(RectSource.x1 + dx, RectSource.y1 + dy,
+    RectSource.x2 + dx, RectSource.y2 + dy);
 
-  RectClip := ClipRectArea(RectDest, RectSource, Src.Width, Src.Height);
+  RectClip := ClipRectArea(RectDest, RectSource, Src.width, Src.height);
 
-  if RectClip.X2 > 0 then
+  if RectClip.x2 > 0 then
     begin
       IncY := 1;
 
-      if RectDest.Y1 > RectSource.Y1 then
+      if RectDest.y1 > RectSource.y1 then
         begin
-          RectSource.Y1 := RectSource.Y1 + RectClip.Y2 - 1;
-          RectDest.Y1 := RectDest.Y1 + RectClip.Y2 - 1;
+          RectSource.y1 := RectSource.y1 + RectClip.y2 - 1;
+          RectDest.y1 := RectDest.y1 + RectClip.y2 - 1;
           IncY := -1;
         end;
 
-      while RectClip.Y2 > 0 do
+      while RectClip.y2 > 0 do
         begin
-          Rw := Src.Row(Src, 0, RectSource.Y1);
+          Rw := Src.Row(Src, 0, RectSource.y1);
 
-          if Rw.Ptr <> nil then
+          if Rw.PTR <> nil then
             begin
-              X1src := RectSource.X1;
-              X1dst := RectDest.X1;
-              Len := RectClip.X2;
+              X1src := RectSource.x1;
+              X1dst := RectDest.x1;
+              Len := RectClip.x2;
 
-              if Rw.X1 > X1src then
+              if Rw.x1 > X1src then
                 begin
-                  Inc(X1dst, Rw.X1 - X1src);
-                  Dec(Len, Rw.X1 - X1src);
+                  Inc(X1dst, Rw.x1 - X1src);
+                  Dec(Len, Rw.x1 - X1src);
 
-                  X1src := Rw.X1;
+                  X1src := Rw.x1;
                 end;
 
               if Len > 0 then
                 begin
-                  if X1src + Len - 1 > Rw.X2 then
-                      Dec(Len, X1src + Len - Rw.X2 - 1);
+                  if X1src + Len - 1 > Rw.x2 then
+                      Dec(Len, X1src + Len - Rw.x2 - 1);
 
                   if Len > 0 then
                       FPixelFormatProcessor.BlendFromColor(FPixelFormatProcessor, Src,
-                      Color, X1dst, RectDest.Y1, X1src, RectSource.Y1, Len, Cover);
+                      COLOR, X1dst, RectDest.y1, X1src, RectSource.y1, Len, Cover);
                 end;
             end;
 
-          Inc(RectDest.Y1, IncY);
-          Inc(RectSource.Y1, IncY);
-          Dec(RectClip.Y2);
+          Inc(RectDest.y1, IncY);
+          Inc(RectSource.y1, IncY);
+          Dec(RectClip.y2);
         end;
     end;
 end;
 
 procedure TAggRendererBase.BlendFromLUT(Src: TAggPixelFormatProcessor;
-  AColorLUT: PAggColor; RectSourcePointer: PRectInteger = nil; Dx: Integer = 0;
-  Dy: Integer = 0; Cover: Int8u = CAggCoverFull);
+  AColorLUT: PAggColor; RectSourcePointer: PRectInteger = nil; dx: Integer = 0;
+  dy: Integer = 0; Cover: Int8u = CAggCoverFull);
 var
   RectSource, RectDest, RectClip: TRectInteger;
   Rw: TAggRowDataType;
   IncY, X1src, X1dst, Len: Integer;
 begin
-  RectSource := RectInteger(0, 0, Src.Width, Src.Height);
+  RectSource := RectInteger(0, 0, Src.width, Src.height);
 
   if RectSourcePointer <> nil then
     begin
-      RectSource.X1 := RectSourcePointer.X1;
-      RectSource.Y1 := RectSourcePointer.Y1;
-      RectSource.X2 := RectSourcePointer.X2 + 1;
-      RectSource.Y2 := RectSourcePointer.Y2 + 1;
+      RectSource.x1 := RectSourcePointer.x1;
+      RectSource.y1 := RectSourcePointer.y1;
+      RectSource.x2 := RectSourcePointer.x2 + 1;
+      RectSource.y2 := RectSourcePointer.y2 + 1;
     end;
 
-  RectDest := RectInteger(RectSource.X1 + Dx, RectSource.Y1 + Dy, RectSource.X2 + Dx,
-    RectSource.Y2 + Dy);
+  RectDest := RectInteger(RectSource.x1 + dx, RectSource.y1 + dy, RectSource.x2 + dx,
+    RectSource.y2 + dy);
 
-  RectClip := ClipRectArea(RectDest, RectSource, Src.Width, Src.Height);
+  RectClip := ClipRectArea(RectDest, RectSource, Src.width, Src.height);
 
-  if RectClip.X2 > 0 then
+  if RectClip.x2 > 0 then
     begin
       IncY := 1;
 
-      if RectDest.Y1 > RectSource.Y1 then
+      if RectDest.y1 > RectSource.y1 then
         begin
-          RectSource.Y1 := RectSource.Y1 + RectClip.Y2 - 1;
-          RectDest.Y1 := RectDest.Y1 + RectClip.Y2 - 1;
+          RectSource.y1 := RectSource.y1 + RectClip.y2 - 1;
+          RectDest.y1 := RectDest.y1 + RectClip.y2 - 1;
           IncY := -1;
         end;
 
-      while RectClip.Y2 > 0 do
+      while RectClip.y2 > 0 do
         begin
-          Rw := Src.Row(Src, 0, RectSource.Y1);
+          Rw := Src.Row(Src, 0, RectSource.y1);
 
-          if Rw.Ptr <> nil then
+          if Rw.PTR <> nil then
             begin
-              X1src := RectSource.X1;
-              X1dst := RectDest.X1;
-              Len := RectClip.X2;
+              X1src := RectSource.x1;
+              X1dst := RectDest.x1;
+              Len := RectClip.x2;
 
-              if Rw.X1 > X1src then
+              if Rw.x1 > X1src then
                 begin
-                  Inc(X1dst, Rw.X1 - X1src);
-                  Dec(Len, Rw.X1 - X1src);
+                  Inc(X1dst, Rw.x1 - X1src);
+                  Dec(Len, Rw.x1 - X1src);
 
-                  X1src := Rw.X1;
+                  X1src := Rw.x1;
                 end;
 
               if Len > 0 then
                 begin
-                  if X1src + Len - 1 > Rw.X2 then
-                      Dec(Len, X1src + Len - Rw.X2 - 1);
+                  if X1src + Len - 1 > Rw.x2 then
+                      Dec(Len, X1src + Len - Rw.x2 - 1);
 
                   if Len > 0 then
                       FPixelFormatProcessor.BlendFromLUT(FPixelFormatProcessor, Src,
-                      AColorLUT, X1dst, RectDest.Y1, X1src, RectSource.Y1, Len, Cover);
+                      AColorLUT, X1dst, RectDest.y1, X1src, RectSource.y1, Len, Cover);
                 end;
             end;
 
-          Inc(RectDest.Y1, IncY);
-          Inc(RectSource.Y1, IncY);
-          Dec(RectClip.Y2);
+          Inc(RectDest.y1, IncY);
+          Inc(RectSource.y1, IncY);
+          Dec(RectClip.y2);
         end;
     end;
 end;
 
-end.
+end. 
+ 

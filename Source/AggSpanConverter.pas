@@ -39,7 +39,7 @@ unit AggSpanConverter;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -58,7 +58,7 @@ type
     FSpanGen: TAggSpanGenerator;
     FConv: TAggSpanConvertor;
   public
-    constructor Create(SpanGen: TAggSpanGenerator; Conv: TAggSpanConvertor);
+    constructor Create(SpanGen: TAggSpanGenerator; conv: TAggSpanConvertor);
 
     procedure Prepare(MaxSpanLength: Cardinal); override;
     function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
@@ -70,10 +70,10 @@ implementation
 { TAggSpanConverter }
 
 constructor TAggSpanConverter.Create(SpanGen: TAggSpanGenerator;
-  Conv: TAggSpanConvertor);
+  conv: TAggSpanConvertor);
 begin
   FSpanGen := SpanGen;
-  FConv := Conv;
+  FConv := conv;
 end;
 
 procedure TAggSpanConverter.Prepare(MaxSpanLength: Cardinal);
@@ -90,4 +90,4 @@ begin
   Result := Span;
 end;
 
-end.
+end. 

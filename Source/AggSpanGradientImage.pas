@@ -39,7 +39,7 @@ unit AggSpanGradientImage;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -60,7 +60,7 @@ type
 
     function GetSize: Cardinal; override;
     function GetEntry: Cardinal; override;
-    function ArrayOperator(I: Cardinal): Pointer; override;
+    function ArrayOperator(i: Cardinal): Pointer; override;
   end;
 
   TAggGradientImage = class(TAggCustomGradient)
@@ -82,10 +82,10 @@ type
     constructor Create; override;
     destructor Destroy; override;
 
-    function ImageCreate(Width, Height: Integer): Pointer;
+    function ImageCreate(width, height: Integer): Pointer;
     function GetImageBuffer: Pointer;
 
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
 
     function GetColorFunction: TAggCustomArray;
 
@@ -114,7 +114,7 @@ begin
   Result := SizeOf(TAggColor);
 end;
 
-function TAggOneColorFunction.ArrayOperator(I: Cardinal): Pointer;
+function TAggOneColorFunction.ArrayOperator(i: Cardinal): Pointer;
 begin
   Result := @FColor;
 end;
@@ -154,7 +154,7 @@ begin
   inherited;
 end;
 
-function TAggGradientImage.ImageCreate(Width, Height: Integer): Pointer;
+function TAggGradientImage.ImageCreate(width, height: Integer): Pointer;
 var
   Row: Pointer;
   Rows: Cardinal;
@@ -166,17 +166,17 @@ begin
 
   FRenderingBuffer := nil;
 
-  if (Width > FAlocDeltaX) or (Height > FAlocDeltaY) then
+  if (width > FAlocDeltaX) or (height > FAlocDeltaY) then
     begin
       if FBuffer <> nil then
           AggFreeMem(FBuffer, FAlocDeltaX * FAlocDeltaY * 4);
 
       FBuffer := nil;
 
-      if AggGetMem(FBuffer, Width * Height * 4) then
+      if AggGetMem(FBuffer, width * height * 4) then
         begin
-          FAlocDeltaX := Width;
-          FAlocDeltaY := Height;
+          FAlocDeltaX := width;
+          FAlocDeltaY := height;
         end
       else
         begin
@@ -187,11 +187,11 @@ begin
 
   if FBuffer <> nil then
     begin
-      FWidth := Width;
-      FHeight := Height;
+      FWidth := width;
+      FHeight := height;
 
       Row := FBuffer;
-      Rows := Height;
+      Rows := height;
 
       while Rows > 0 do
         begin
@@ -220,7 +220,7 @@ begin
   Result := FAlocDeltaX * 4;
 end;
 
-function TAggGradientImage.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientImage.Calculate(X, Y, d: Integer): Integer;
 var
   Px, Py: Integer;
   Pixel: PAggRgba8;
@@ -245,15 +245,15 @@ begin
       Pixel := PAggRgba8(PtrComp(FBuffer) + Py * (FAlocDeltaX * 4) + Px * 4);
 
       FColor.Rgba8.R := Pixel.R;
-      FColor.Rgba8.G := Pixel.G;
-      FColor.Rgba8.B := Pixel.B;
+      FColor.Rgba8.g := Pixel.g;
+      FColor.Rgba8.b := Pixel.b;
       FColor.Rgba8.A := Pixel.A;
     end
   else
     begin
       FColor.Rgba8.R := 0;
-      FColor.Rgba8.G := 0;
-      FColor.Rgba8.B := 0;
+      FColor.Rgba8.g := 0;
+      FColor.Rgba8.b := 0;
       FColor.Rgba8.A := 0;
     end;
 end;
@@ -279,4 +279,4 @@ begin
   Result := FColorFunction;
 end;
 
-end.
+end. 

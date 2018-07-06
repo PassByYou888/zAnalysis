@@ -61,7 +61,7 @@ begin
   dn := n - k;
   if k = 0 then
     begin
-      dk := power(1.0 - p, dn);
+      dk := Power(1.0 - p, dn);
     end
   else
     begin
@@ -126,11 +126,11 @@ begin
     begin
       if AP_FP_Less(p, 0.01) then
         begin
-          dk := -expm1(dn * log1p(-p));
+          dk := -ExpM1(dn * Log1P(-p));
         end
       else
         begin
-          dk := 1.0 - power(1.0 - p, dn);
+          dk := 1.0 - Power(1.0 - p, dn);
         end;
     end
   else
@@ -169,7 +169,7 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvBinomialDistribution(const k, n: TLInt; const y: TLFloat): TLFloat;
+function InvBinomialDistribution(const k, n: TLInt; const Y: TLFloat): TLFloat;
 var
   dk: TLFloat;
   dn: TLFloat;
@@ -179,13 +179,13 @@ begin
   dn := n - k;
   if k = 0 then
     begin
-      if AP_FP_Greater(y, 0.8) then
+      if AP_FP_Greater(Y, 0.8) then
         begin
-          p := -expm1(log1p(y - 1.0) / dn);
+          p := -ExpM1(Log1P(Y - 1.0) / dn);
         end
       else
         begin
-          p := 1.0 - power(y, 1.0 / dn);
+          p := 1.0 - Power(Y, 1.0 / dn);
         end;
     end
   else
@@ -194,11 +194,11 @@ begin
       p := IncompleteBeta(dn, dk, 0.5);
       if AP_FP_Greater(p, 0.5) then
         begin
-          p := InvIncompleteBeta(dk, dn, 1.0 - y);
+          p := InvIncompleteBeta(dk, dn, 1.0 - Y);
         end
       else
         begin
-          p := 1.0 - InvIncompleteBeta(dn, dk, y);
+          p := 1.0 - InvIncompleteBeta(dn, dk, Y);
         end;
     end;
   Result := p;
@@ -232,7 +232,7 @@ end;
   ************************************************************************ *)
 procedure OneSampleSignTest(const X: TLVec; n: TLInt; Median: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  I    : TLInt;
+  i    : TLInt;
   GTCnt: TLInt;
   NECnt: TLInt;
 begin
@@ -251,18 +251,18 @@ begin
   //
   GTCnt := 0;
   NECnt := 0;
-  I := 0;
-  while I <= n - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      if AP_FP_Greater(X[I], Median) then
+      if AP_FP_Greater(X[i], Median) then
         begin
           GTCnt := GTCnt + 1;
         end;
-      if AP_FP_Neq(X[I], Median) then
+      if AP_FP_NEq(X[i], Median) then
         begin
           NECnt := NECnt + 1;
         end;
-      Inc(I);
+      Inc(i);
     end;
   if NECnt = 0 then
     begin
@@ -279,4 +279,4 @@ begin
   BothTails := 2 * BinomialDistribution(Min(GTCnt, NECnt - GTCnt), NECnt, 0.5);
   LeftTail := BinomialDistribution(GTCnt, NECnt, 0.5);
   RightTail := BinomialCDistribution(GTCnt - 1, NECnt, 0.5);
-end;
+end; 

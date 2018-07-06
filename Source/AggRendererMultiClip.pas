@@ -39,7 +39,7 @@ unit AggRendererMultiClip;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -72,30 +72,30 @@ type
 
     procedure ResetClipping(Visibility: Boolean); override;
 
-    procedure AddClipBox(X1, Y1, X2, Y2: Integer); overload;
+    procedure AddClipBox(x1, y1, x2, y2: Integer); overload;
     procedure AddClipBox(Rect: TRectInteger); overload;
 
     procedure CopyPixel(X, Y: Integer; C: PAggColor); override;
     procedure BlendPixel(X, Y: Integer; C: PAggColor; Cover: Int8u); override;
     function Pixel(X, Y: Integer): TAggColor; override;
 
-    procedure CopyHorizontalLine(X1, Y, X2: Integer; C: PAggColor); override;
-    procedure CopyVerticalLine(X, Y1, Y2: Integer; C: PAggColor); override;
+    procedure CopyHorizontalLine(x1, Y, x2: Integer; C: PAggColor); override;
+    procedure CopyVerticalLine(X, y1, y2: Integer; C: PAggColor); override;
 
-    procedure BlendHorizontalLine(X1, Y, X2: Integer; C: PAggColor; Cover: Int8u); override;
-    procedure BlendVerticalLine(X, Y1, Y2: Integer; C: PAggColor; Cover: Int8u); override;
+    procedure BlendHorizontalLine(x1, Y, x2: Integer; C: PAggColor; Cover: Int8u); override;
+    procedure BlendVerticalLine(X, y1, y2: Integer; C: PAggColor; Cover: Int8u); override;
 
-    procedure CopyBar(X1, Y1, X2, Y2: Integer; C: PAggColor); override;
-    procedure BlendBar(X1, Y1, X2, Y2: Integer; C: PAggColor; Cover: Int8u); override;
+    procedure CopyBar(x1, y1, x2, y2: Integer; C: PAggColor); override;
+    procedure BlendBar(x1, y1, x2, y2: Integer; C: PAggColor; Cover: Int8u); override;
 
     procedure BlendSolidHSpan(X, Y, Len: Integer; C: PAggColor; Covers: PInt8u); override;
     procedure BlendSolidVSpan(X, Y, Len: Integer; C: PAggColor; Covers: PInt8u); override;
 
-    procedure CopyColorHSpan(X, Y, Len: Integer; Colors: PAggColor); override;
-    procedure BlendColorHSpan(X, Y, Len: Integer; Colors: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull); override;
-    procedure BlendColorVSpan(X, Y, Len: Integer; Colors: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull); override;
+    procedure CopyColorHSpan(X, Y, Len: Integer; COLORS: PAggColor); override;
+    procedure BlendColorHSpan(X, Y, Len: Integer; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull); override;
+    procedure BlendColorVSpan(X, Y, Len: Integer; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull); override;
 
-    procedure CopyFrom(From: TAggRenderingBuffer; Rc: PRectInteger = nil; ToX: Integer = 0; ToY: Integer = 0); override;
+    procedure CopyFrom(From: TAggRenderingBuffer; RC: PRectInteger = nil; tox: Integer = 0; ToY: Integer = 0); override;
   end;
 
 implementation
@@ -127,49 +127,49 @@ end;
 
 function TAggRendererMultiClip.GetBoundingXMin;
 begin
-  Result := FBounds.X1;
+  Result := FBounds.x1;
 end;
 
 function TAggRendererMultiClip.GetBoundingYMin;
 begin
-  Result := FBounds.Y1;
+  Result := FBounds.y1;
 end;
 
 function TAggRendererMultiClip.GetBoundingXMax;
 begin
-  Result := FBounds.X2;
+  Result := FBounds.x2;
 end;
 
 function TAggRendererMultiClip.GetBoundingYMax;
 begin
-  Result := FBounds.Y2;
+  Result := FBounds.y2;
 end;
 
 procedure TAggRendererMultiClip.FirstClipBox;
 var
-  Cb: PRectInteger;
+  CB: PRectInteger;
 begin
   FCurrentClibBoxIndex := 0;
 
   if FClip.Size <> 0 then
     begin
-      Cb := FClip[0];
+      CB := FClip[0];
 
-      ClipBoxNaked(Cb.X1, Cb.Y1, Cb.X2, Cb.Y2);
+      ClipBoxNaked(CB.x1, CB.y1, CB.x2, CB.y2);
     end;
 end;
 
 function TAggRendererMultiClip.NextClipBox;
 var
-  Cb: PRectInteger;
+  CB: PRectInteger;
 begin
   Inc(FCurrentClibBoxIndex);
 
   if FCurrentClibBoxIndex < FClip.Size then
     begin
-      Cb := FClip[FCurrentClibBoxIndex];
+      CB := FClip[FCurrentClibBoxIndex];
 
-      ClipBoxNaked(Cb.X1, Cb.Y1, Cb.X2, Cb.Y2);
+      ClipBoxNaked(CB.x1, CB.y1, CB.x2, CB.y2);
 
       Result := True;
 
@@ -190,33 +190,33 @@ begin
   FBounds := GetClipBox^;
 end;
 
-procedure TAggRendererMultiClip.AddClipBox(X1, Y1, X2, Y2: Integer);
+procedure TAggRendererMultiClip.AddClipBox(x1, y1, x2, y2: Integer);
 begin
-  AddClipBox(RectInteger(X1, Y1, X2, Y2));
+  AddClipBox(RectInteger(x1, y1, x2, y2));
 end;
 
 procedure TAggRendererMultiClip.AddClipBox(Rect: TRectInteger);
 var
-  Rc: TRectInteger;
+  RC: TRectInteger;
 begin
   Rect.Normalize;
-  Rc := RectInteger(0, 0, Width - 1, Height - 1);
+  RC := RectInteger(0, 0, width - 1, height - 1);
 
-  if Rect.Clip(Rc) then
+  if Rect.Clip(RC) then
     begin
       FClip.Add(@Rect);
 
-      if Rect.X1 < FBounds.X1 then
-          FBounds.X1 := Rect.X1;
+      if Rect.x1 < FBounds.x1 then
+          FBounds.x1 := Rect.x1;
 
-      if Rect.Y1 < FBounds.Y1 then
-          FBounds.Y1 := Rect.Y1;
+      if Rect.y1 < FBounds.y1 then
+          FBounds.y1 := Rect.y1;
 
-      if Rect.X2 > FBounds.X2 then
-          FBounds.X2 := Rect.X2;
+      if Rect.x2 > FBounds.x2 then
+          FBounds.x2 := Rect.x2;
 
-      if Rect.Y2 > FBounds.Y2 then
-          FBounds.Y2 := Rect.Y2;
+      if Rect.y2 > FBounds.y2 then
+          FBounds.y2 := Rect.y2;
     end;
 end;
 
@@ -225,7 +225,7 @@ begin
   FirstClipBox;
 
   repeat
-    if Inbox(X, Y) then
+    if InBox(X, Y) then
       begin
         FPixelFormatProcessor.CopyPixel(FPixelFormatProcessor, X, Y, C);
 
@@ -239,7 +239,7 @@ begin
   FirstClipBox;
 
   repeat
-    if Inbox(X, Y) then
+    if InBox(X, Y) then
       begin
         FPixelFormatProcessor.BlendPixel(FPixelFormatProcessor, X, Y, C, Cover);
 
@@ -253,7 +253,7 @@ begin
   FirstClipBox;
 
   repeat
-    if Inbox(X, Y) then
+    if InBox(X, Y) then
       begin
         Result := FPixelFormatProcessor.Pixel(FPixelFormatProcessor, X, Y);
 
@@ -264,66 +264,66 @@ begin
   Result.Clear;
 end;
 
-procedure TAggRendererMultiClip.CopyHorizontalLine(X1, Y, X2: Integer;
+procedure TAggRendererMultiClip.CopyHorizontalLine(x1, Y, x2: Integer;
   C: PAggColor);
 begin
   FirstClipBox;
 
   repeat
-      inherited CopyHorizontalLine(X1, Y, X2, C);
+      inherited CopyHorizontalLine(x1, Y, x2, C);
   until not NextClipBox;
 end;
 
-procedure TAggRendererMultiClip.CopyVerticalLine(X, Y1, Y2: Integer;
+procedure TAggRendererMultiClip.CopyVerticalLine(X, y1, y2: Integer;
   C: PAggColor);
 begin
   FirstClipBox;
 
   repeat
-      inherited CopyVerticalLine(X, Y1, Y2, C);
+      inherited CopyVerticalLine(X, y1, y2, C);
 
   until not NextClipBox;
 end;
 
-procedure TAggRendererMultiClip.BlendHorizontalLine(X1, Y, X2: Integer;
+procedure TAggRendererMultiClip.BlendHorizontalLine(x1, Y, x2: Integer;
   C: PAggColor; Cover: Int8u);
 begin
   FirstClipBox;
 
   repeat
-      inherited BlendHorizontalLine(X1, Y, X2, C, Cover);
+      inherited BlendHorizontalLine(x1, Y, x2, C, Cover);
 
   until not NextClipBox;
 end;
 
-procedure TAggRendererMultiClip.BlendVerticalLine(X, Y1, Y2: Integer;
+procedure TAggRendererMultiClip.BlendVerticalLine(X, y1, y2: Integer;
   C: PAggColor; Cover: Int8u);
 begin
   FirstClipBox;
 
   repeat
-      inherited BlendVerticalLine(X, Y1, Y2, C, Cover);
+      inherited BlendVerticalLine(X, y1, y2, C, Cover);
 
   until not NextClipBox;
 end;
 
-procedure TAggRendererMultiClip.CopyBar(X1, Y1, X2, Y2: Integer; C: PAggColor);
+procedure TAggRendererMultiClip.CopyBar(x1, y1, x2, y2: Integer; C: PAggColor);
 begin
   FirstClipBox;
 
   repeat
-      inherited CopyBar(X1, Y1, X2, Y2, C);
+      inherited CopyBar(x1, y1, x2, y2, C);
 
   until not NextClipBox;
 end;
 
-procedure TAggRendererMultiClip.BlendBar(X1, Y1, X2, Y2: Integer; C: PAggColor;
+procedure TAggRendererMultiClip.BlendBar(x1, y1, x2, y2: Integer; C: PAggColor;
   Cover: Int8u);
 begin
   FirstClipBox;
 
   repeat
-      inherited BlendBar(X1, Y1, X2, Y2, C, Cover);
+      inherited BlendBar(x1, y1, x2, y2, C, Cover);
 
   until not NextClipBox;
 end;
@@ -351,47 +351,48 @@ begin
 end;
 
 procedure TAggRendererMultiClip.CopyColorHSpan(X, Y, Len: Integer;
-  Colors: PAggColor);
+  COLORS: PAggColor);
 begin
   FirstClipBox;
 
   repeat
-      inherited CopyColorHSpan(X, Y, Len, Colors);
+      inherited CopyColorHSpan(X, Y, Len, COLORS);
 
   until not NextClipBox;
 end;
 
 procedure TAggRendererMultiClip.BlendColorHSpan(X, Y, Len: Integer;
-  Colors: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
+  COLORS: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
 begin
   FirstClipBox;
 
   repeat
-      inherited BlendColorHSpan(X, Y, Len, Colors, Covers, Cover);
+      inherited BlendColorHSpan(X, Y, Len, COLORS, Covers, Cover);
 
   until not NextClipBox;
 end;
 
 procedure TAggRendererMultiClip.BlendColorVSpan(X, Y, Len: Integer;
-  Colors: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
+  COLORS: PAggColor; Covers: PInt8u; Cover: Int8u = CAggCoverFull);
 begin
   FirstClipBox;
 
   repeat
-      inherited BlendColorVSpan(X, Y, Len, Colors, Covers, Cover);
+      inherited BlendColorVSpan(X, Y, Len, COLORS, Covers, Cover);
 
   until not NextClipBox;
 end;
 
 procedure TAggRendererMultiClip.CopyFrom(From: TAggRenderingBuffer;
-  Rc: PRectInteger = nil; ToX: Integer = 0; ToY: Integer = 0);
+  RC: PRectInteger = nil; tox: Integer = 0; ToY: Integer = 0);
 begin
   FirstClipBox;
 
   repeat
-      inherited CopyFrom(From, Rc, ToX, ToY);
+      inherited CopyFrom(From, RC, tox, ToY);
 
   until not NextClipBox;
 end;
 
-end.
+end. 
+ 

@@ -37,7 +37,7 @@
 *)
 unit AggColor32;
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 interface
 
@@ -49,37 +49,37 @@ type
   PAggOrderRgb = ^TAggOrderRGB;
 
   TAggOrderRGB = packed record
-    R, G, B: Int8u;
+    R, g, b: Int8u;
   end;
 
   PAggOrderBgr = ^TAggOrderBGR;
 
   TAggOrderBGR = packed record
-    B, G, R: Int8u;
+    b, g, R: Int8u;
   end;
 
   PAggOrderRgba = ^TAggOrderRGBA;
 
   TAggOrderRGBA = packed record
-    R, G, B, A: Int8u;
+    R, g, b, A: Int8u;
   end;
 
   PAggOrderBgra = ^TAggOrderBGRA;
 
   TAggOrderBGRA = packed record
-    B, G, R, A: Int8u;
+    b, g, R, A: Int8u;
   end;
 
   PAggOrderArgb = ^TAggOrderARGB;
 
   TAggOrderARGB = packed record
-    A, R, G, B: Int8u;
+    A, R, g, b: Int8u;
   end;
 
   PAggOrderAbgr = ^TAggOrderABGR;
 
   TAggOrderABGR = packed record
-    A, B, G, R: Int8u;
+    A, b, g, R: Int8u;
   end;
 
   TAggOrder = TAggOrderRGBA;
@@ -89,12 +89,12 @@ const
   CAggBaseSize  = 1 shl CAggBaseShift;
   CAggBaseMask  = CAggBaseSize - 1;
 
-  CAggOrderRgb: TAggOrder  = (R: 0; G: 1; B: 2; A: 3);
-  CAggOrderBgr: TAggOrder  = (R: 2; G: 1; B: 0; A: 3);
-  CAggOrderRgba: TAggOrder = (R: 0; G: 1; B: 2; A: 3);
-  CAggOrderBgra: TAggOrder = (R: 2; G: 1; B: 0; A: 3);
-  CAggOrderArgb: TAggOrder = (R: 1; G: 2; B: 3; A: 0);
-  CAggOrderAbgr: TAggOrder = (R: 3; G: 2; B: 1; A: 0);
+  CAggOrderRgb: TAggOrder  = (R: 0; g: 1; b: 2; A: 3);
+  CAggOrderBgr: TAggOrder  = (R: 2; g: 1; b: 0; A: 3);
+  CAggOrderRgba: TAggOrder = (R: 0; g: 1; b: 2; A: 3);
+  CAggOrderBgra: TAggOrder = (R: 2; g: 1; b: 0; A: 3);
+  CAggOrderArgb: TAggOrder = (R: 1; g: 2; b: 3; A: 0);
+  CAggOrderAbgr: TAggOrder = (R: 3; g: 2; b: 1; A: 0);
 
 type
   TAggPackedRgba8 = Cardinal;
@@ -104,17 +104,17 @@ type
 
   TAggRgba8 = packed record
   public
-    procedure Initialize(R, G, B: Int8u; A: Cardinal = CAggBaseMask);
+    procedure Initialize(R, g, b: Int8u; A: Cardinal = CAggBaseMask);
 
     procedure NoColor;
     procedure Random;
     procedure Black;
     procedure White;
 
-    function Gradient(C: TAggRgba8; K: Double): TAggRgba8;
+    function Gradient(C: TAggRgba8; k: Double): TAggRgba8;
     case Integer of
       0: (ABGR: TAggPackedRgba8);
-      1: (R, G, B, A: Byte);
+      1: (R, g, b, A: Byte);
       2: (Bytes: array [0 .. 3] of Byte);
   end;
 
@@ -124,7 +124,7 @@ type
 
   TAggColor = packed record
     Rgba8: TAggRgba8;
-    V: Int8u;
+    v: Int8u;
   private
     function GetOpacity: Double;
     function GetBlue: Double;
@@ -136,14 +136,14 @@ type
     procedure SetRed(Value: Double);
     procedure CalculateValue;
   public
-    procedure FromRgba8(Rgba: TAggRgba8);
-    procedure FromValueInteger(Value: Cardinal; Alpha: Cardinal = CAggBaseMask);
-    procedure FromRgbaInteger(R, G, B: Cardinal; A: Cardinal = CAggBaseMask);
-    procedure FromRgbInteger(R, G, B: Cardinal; A: Double = 1.0);
-    procedure FromRgbaDouble(R, G, B: Double; A: Double = 1.0);
+    procedure FromRgba8(RGBA: TAggRgba8);
+    procedure FromValueInteger(Value: Cardinal; alpha: Cardinal = CAggBaseMask);
+    procedure FromRgbaInteger(R, g, b: Cardinal; A: Cardinal = CAggBaseMask);
+    procedure FromRgbInteger(R, g, b: Cardinal; A: Double = 1.0);
+    procedure FromRgbaDouble(R, g, b: Double; A: Double = 1.0);
     procedure FromWaveLength(WaveLength, Gamma: Double);
 
-    function Gradient8(const C: TAggColor; K: Double): TAggRgba8;
+    function Gradient8(const C: TAggColor; k: Double): TAggRgba8;
 
     procedure Add(C: PAggColor; Cover: Cardinal);
 
@@ -193,17 +193,17 @@ const
   CRgba8SemiFuchsia: TAggRgba8 = (ABGR: $FFFF00FF);
   CRgba8SemiAqua: TAggRgba8    = (ABGR: $FFFFFF00);
 
-function Rgb8Packed(V: TAggPackedRgba8): TAggRgba8; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function HueSaturationLuminanceToRgb8(H, S, L: Double): TAggRgba8;
+function Rgb8Packed(v: TAggPackedRgba8): TAggRgba8; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HueSaturationLuminanceToRgb8(h, s, L: Double): TAggRgba8;
 function RandomRgba8: TAggRgba8; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RandomRgba8(Alpha: Int8u): TAggRgba8; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function Gradient(const C1, C2: TAggColor; K: Double): TAggColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RandomRgba8(alpha: Int8u): TAggRgba8; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function Gradient(const c1, c2: TAggColor; k: Double): TAggColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 implementation
 
 
-function HueSaturationLuminanceToRgb8(H, S, L: Double): TAggRgba8;
+function HueSaturationLuminanceToRgb8(h, s, L: Double): TAggRgba8;
 const
   COneOverThree = 1 / 3;
 var
@@ -211,41 +211,41 @@ var
 
   function HueToColor(Hue: Single): Byte;
   var
-    V: Double;
+    v: Double;
   begin
     Hue := Hue - Floor(Hue);
     if 6 * Hue < 1 then
-        V := Temp[0] + (Temp[1] - Temp[0]) * Hue * 6
+        v := Temp[0] + (Temp[1] - Temp[0]) * Hue * 6
     else
       if 2 * Hue < 1 then
-        V := Temp[1]
+        v := Temp[1]
     else
       if 3 * Hue < 2 then
-        V := Temp[0] + (Temp[1] - Temp[0]) * (2 * COneOverThree - Hue) * 6
+        v := Temp[0] + (Temp[1] - Temp[0]) * (2 * COneOverThree - Hue) * 6
     else
-        V := Temp[0];
-    Result := Round(255 * V);
+        v := Temp[0];
+    Result := Round(255 * v);
   end;
 
 begin
-  if S = 0 then
+  if s = 0 then
     begin
       Result.R := Round(255 * L);
-      Result.G := Result.R;
-      Result.B := Result.R;
+      Result.g := Result.R;
+      Result.b := Result.R;
     end
   else
     begin
       if L <= 0.5 then
-          Temp[1] := L * (1 + S)
+          Temp[1] := L * (1 + s)
       else
-          Temp[1] := L + S - L * S;
+          Temp[1] := L + s - L * s;
 
       Temp[0] := 2 * L - Temp[1];
 
-      Result.R := HueToColor(H + COneOverThree);
-      Result.G := HueToColor(H);
-      Result.B := HueToColor(H - COneOverThree)
+      Result.R := HueToColor(h + COneOverThree);
+      Result.g := HueToColor(h);
+      Result.b := HueToColor(h - COneOverThree)
     end;
   Result.A := $FF;
 end;
@@ -255,75 +255,75 @@ begin
   Result.ABGR := System.Random($FFFFFFFF);
 end;
 
-function RandomRgba8(Alpha: Int8u): TAggRgba8; overload;
+function RandomRgba8(alpha: Int8u): TAggRgba8; overload;
 begin
-  Result.ABGR := System.Random($FFFFFF) + Alpha shl 24;
+  Result.ABGR := System.Random($FFFFFF) + alpha shl 24;
 end;
 
-function Gradient(const C1, C2: TAggColor; K: Double): TAggColor;
+function Gradient(const c1, c2: TAggColor; k: Double): TAggColor;
 var
   Ik: Cardinal;
 begin
-  Ik := Trunc(K * CAggBaseSize);
+  Ik := Trunc(k * CAggBaseSize);
 
-  Result.Rgba8.R := Int8u(C1.Rgba8.R + (((C2.Rgba8.R - C1.Rgba8.R) * Ik) shr CAggBaseShift));
-  Result.Rgba8.G := Int8u(C1.Rgba8.G + (((C2.Rgba8.G - C1.Rgba8.G) * Ik) shr CAggBaseShift));
-  Result.Rgba8.B := Int8u(C1.Rgba8.B + (((C2.Rgba8.B - C1.Rgba8.B) * Ik) shr CAggBaseShift));
-  Result.Rgba8.A := Int8u(C1.Rgba8.A + (((C2.Rgba8.A - C1.Rgba8.A) * Ik) shr CAggBaseShift));
+  Result.Rgba8.R := Int8u(c1.Rgba8.R + (((c2.Rgba8.R - c1.Rgba8.R) * Ik) shr CAggBaseShift));
+  Result.Rgba8.g := Int8u(c1.Rgba8.g + (((c2.Rgba8.g - c1.Rgba8.g) * Ik) shr CAggBaseShift));
+  Result.Rgba8.b := Int8u(c1.Rgba8.b + (((c2.Rgba8.b - c1.Rgba8.b) * Ik) shr CAggBaseShift));
+  Result.Rgba8.A := Int8u(c1.Rgba8.A + (((c2.Rgba8.A - c1.Rgba8.A) * Ik) shr CAggBaseShift));
 end;
 
-function Rgba8ToAggColor(Rgba: TAggRgba8): TAggColor;
+function Rgba8ToAggColor(RGBA: TAggRgba8): TAggColor;
 begin
   with Result do
     begin
-      Rgba8 := Rgba;
-      V := (Rgba8.R * 77 + Rgba8.G * 150 + Rgba8.B * 29) shr 8;
+      Rgba8 := RGBA;
+      v := (Rgba8.R * 77 + Rgba8.g * 150 + Rgba8.b * 29) shr 8;
     end;
 end;
 
-function RgbaIntegerToAggColor(R, G, B: Cardinal; A: Cardinal = CAggBaseMask):
+function RgbaIntegerToAggColor(R, g, b: Cardinal; A: Cardinal = CAggBaseMask):
   TAggColor;
 begin
   with Result do
     begin
       Rgba8.R := Int8u(R);
-      Rgba8.G := Int8u(G);
-      Rgba8.B := Int8u(B);
+      Rgba8.g := Int8u(g);
+      Rgba8.b := Int8u(b);
       Rgba8.A := A;
-      V := (Rgba8.R * 77 + Rgba8.G * 150 + Rgba8.B * 29) shr 8;
+      v := (Rgba8.R * 77 + Rgba8.g * 150 + Rgba8.b * 29) shr 8;
     end;
 end;
 
-function RgbIntegerToAggColor(R, G, B: Cardinal; A: Double = 1.0): TAggColor;
+function RgbIntegerToAggColor(R, g, b: Cardinal; A: Double = 1.0): TAggColor;
 begin
   with Result do
     begin
       Rgba8.R := Int8u(R);
-      Rgba8.G := Int8u(G);
-      Rgba8.B := Int8u(B);
+      Rgba8.g := Int8u(g);
+      Rgba8.b := Int8u(b);
       Rgba8.A := Trunc(A * CAggBaseMask + 0.5);
-      V := (Rgba8.R * 77 + Rgba8.G * 150 + Rgba8.B * 29) shr 8;
+      v := (Rgba8.R * 77 + Rgba8.g * 150 + Rgba8.b * 29) shr 8;
     end;
 end;
 
-function RgbaDoubleToAggColor(R, G, B, A: Double): TAggColor;
+function RgbaDoubleToAggColor(R, g, b, A: Double): TAggColor;
 begin
   with Result do
     begin
-      V := Trunc((0.299 * R + 0.587 * G + 0.114 * B) * CAggBaseMask + 0.5);
+      v := Trunc((0.299 * R + 0.587 * g + 0.114 * b) * CAggBaseMask + 0.5);
       Rgba8.R := Trunc(R * CAggBaseMask + 0.5);
-      Rgba8.G := Trunc(G * CAggBaseMask + 0.5);
-      Rgba8.B := Trunc(B * CAggBaseMask + 0.5);
+      Rgba8.g := Trunc(g * CAggBaseMask + 0.5);
+      Rgba8.b := Trunc(b * CAggBaseMask + 0.5);
       Rgba8.A := Trunc(A * CAggBaseMask + 0.5);
     end;
 end;
 
 { TAggRgba8 }
 
-procedure TAggRgba8.Initialize(R, G, B: Int8u; A: Cardinal = CAggBaseMask);
+procedure TAggRgba8.Initialize(R, g, b: Int8u; A: Cardinal = CAggBaseMask);
 begin
-  Self.B := Int8u(B);
-  Self.G := Int8u(G);
+  Self.b := Int8u(b);
+  Self.g := Int8u(g);
   Self.R := Int8u(R);
   Self.A := Int8u(A);
 end;
@@ -331,16 +331,16 @@ end;
 procedure TAggRgba8.NoColor;
 begin
   R := 0;
-  G := 0;
-  B := 0;
+  g := 0;
+  b := 0;
   A := 0;
 end;
 
 procedure TAggRgba8.Black;
 begin
   R := 0;
-  G := 0;
-  B := 0;
+  g := 0;
+  b := 0;
   A := $FF;
 end;
 
@@ -352,212 +352,212 @@ end;
 procedure TAggRgba8.White;
 begin
   R := $FF;
-  G := $FF;
-  B := $FF;
+  g := $FF;
+  b := $FF;
   A := $FF;
 end;
 
-function TAggRgba8.Gradient(C: TAggRgba8; K: Double): TAggRgba8;
+function TAggRgba8.Gradient(C: TAggRgba8; k: Double): TAggRgba8;
 var
   Ik: Int32u; // calc_type
 begin
-  Ik := Trunc(K * CAggBaseSize);
+  Ik := Trunc(k * CAggBaseSize);
 
   Result.R := Int8u(Int32u(R) + (((Int32u(C.R) - R) * Ik) shr CAggBaseShift));
-  Result.G := Int8u(Int32u(G) + (((Int32u(C.G) - G) * Ik) shr CAggBaseShift));
-  Result.B := Int8u(Int32u(B) + (((Int32u(C.B) - B) * Ik) shr CAggBaseShift));
+  Result.g := Int8u(Int32u(g) + (((Int32u(C.g) - g) * Ik) shr CAggBaseShift));
+  Result.b := Int8u(Int32u(b) + (((Int32u(C.b) - b) * Ik) shr CAggBaseShift));
   Result.A := Int8u(Int32u(A) + (((Int32u(C.A) - A) * Ik) shr CAggBaseShift));
 end;
 
 { TAggColor }
 
-procedure TAggColor.FromRgba8(Rgba: TAggRgba8);
+procedure TAggColor.FromRgba8(RGBA: TAggRgba8);
 begin
-  Rgba8 := Rgba;
+  Rgba8 := RGBA;
   CalculateValue;
 end;
 
-procedure TAggColor.FromRgbaInteger(R, G, B: Cardinal; A: Cardinal = CAggBaseMask);
+procedure TAggColor.FromRgbaInteger(R, g, b: Cardinal; A: Cardinal = CAggBaseMask);
 begin
   Rgba8.R := Int8u(R);
-  Rgba8.G := Int8u(G);
-  Rgba8.B := Int8u(B);
+  Rgba8.g := Int8u(g);
+  Rgba8.b := Int8u(b);
   Rgba8.A := A;
   CalculateValue;
 end;
 
-procedure TAggColor.FromRgbInteger(R, G, B: Cardinal; A: Double = 1.0);
+procedure TAggColor.FromRgbInteger(R, g, b: Cardinal; A: Double = 1.0);
 begin
   Rgba8.R := Int8u(R);
-  Rgba8.G := Int8u(G);
-  Rgba8.B := Int8u(B);
+  Rgba8.g := Int8u(g);
+  Rgba8.b := Int8u(b);
   Rgba8.A := Trunc(A * CAggBaseMask + 0.5);
   CalculateValue;
 end;
 
-procedure TAggColor.FromValueInteger(Value: Cardinal; Alpha: Cardinal);
+procedure TAggColor.FromValueInteger(Value: Cardinal; alpha: Cardinal);
 begin
-  V := Value;
+  v := Value;
   Rgba8.R := 0;
-  Rgba8.G := 0;
-  Rgba8.B := 0;
-  Rgba8.A := Alpha;
+  Rgba8.g := 0;
+  Rgba8.b := 0;
+  Rgba8.A := alpha;
 end;
 
-procedure TAggColor.FromRgbaDouble(R, G, B: Double; A: Double);
+procedure TAggColor.FromRgbaDouble(R, g, b: Double; A: Double);
 begin
-  V := Trunc((0.299 * R + 0.587 * G + 0.114 * B) * CAggBaseMask + 0.5);
+  v := Trunc((0.299 * R + 0.587 * g + 0.114 * b) * CAggBaseMask + 0.5);
   Rgba8.R := Trunc(R * CAggBaseMask + 0.5);
-  Rgba8.G := Trunc(G * CAggBaseMask + 0.5);
-  Rgba8.B := Trunc(B * CAggBaseMask + 0.5);
+  Rgba8.g := Trunc(g * CAggBaseMask + 0.5);
+  Rgba8.b := Trunc(b * CAggBaseMask + 0.5);
   Rgba8.A := Trunc(A * CAggBaseMask + 0.5);
 end;
 
 procedure TAggColor.FromWaveLength(WaveLength, Gamma: Double);
 var
-  Tr, Tg, Tb, S: Double;
+  tr, Tg, TB, s: Double;
 begin
-  Tr := 0;
+  tr := 0;
   Tg := 0;
-  Tb := 0;
+  TB := 0;
 
   if (WaveLength >= 380.0) and (WaveLength <= 440.0) then
     begin
-      Tr := (440.0 - WaveLength) / 60;
-      Tb := 1.0;
+      tr := (440.0 - WaveLength) / 60;
+      TB := 1.0;
     end
   else if (WaveLength >= 440.0) and (WaveLength <= 490.0) then
     begin
       Tg := (WaveLength - 440.0) * 0.02;
-      Tb := 1.0;
+      TB := 1.0;
     end
   else if (WaveLength >= 490.0) and (WaveLength <= 510.0) then
     begin
       Tg := 1.0;
-      Tb := (510 - WaveLength) * 0.05;
+      TB := (510 - WaveLength) * 0.05;
     end
   else if (WaveLength >= 510.0) and (WaveLength <= 580.0) then
     begin
-      Tr := (WaveLength - 510.0) / 70;
+      tr := (WaveLength - 510.0) / 70;
       Tg := 1.0;
     end
   else if (WaveLength >= 580.0) and (WaveLength <= 645.0) then
     begin
-      Tr := 1.0;
+      tr := 1.0;
       Tg := (645.0 - WaveLength) / 65;
     end
   else if (WaveLength >= 645.0) and (WaveLength <= 780.0) then
-      Tr := 1.0;
+      tr := 1.0;
 
-  S := 1.0;
+  s := 1.0;
 
   if WaveLength > 700.0 then
-      S := 0.3 + 0.7 * (780.0 - WaveLength) / 80
+      s := 0.3 + 0.7 * (780.0 - WaveLength) / 80
   else if WaveLength < 420.0 then
-      S := 0.3 + 0.7 * (WaveLength - 380.0) / 40;
+      s := 0.3 + 0.7 * (WaveLength - 380.0) / 40;
 
-  Tr := Power(Tr * S, Gamma);
-  Tg := Power(Tg * S, Gamma);
-  Tb := Power(Tb * S, Gamma);
+  tr := Power(tr * s, Gamma);
+  Tg := Power(Tg * s, Gamma);
+  TB := Power(TB * s, Gamma);
 
-  V := Trunc((0.299 * Tr + 0.587 * Tg + 0.114 * Tb) * CAggBaseMask + 0.5);
-  Rgba8.R := Trunc(Tr * CAggBaseMask + 0.5);
-  Rgba8.G := Trunc(Tg * CAggBaseMask + 0.5);
-  Rgba8.B := Trunc(Tb * CAggBaseMask + 0.5);
+  v := Trunc((0.299 * tr + 0.587 * Tg + 0.114 * TB) * CAggBaseMask + 0.5);
+  Rgba8.R := Trunc(tr * CAggBaseMask + 0.5);
+  Rgba8.g := Trunc(Tg * CAggBaseMask + 0.5);
+  Rgba8.b := Trunc(TB * CAggBaseMask + 0.5);
   Rgba8.A := $FF;
 end;
 
-function TAggColor.Gradient8(const C: TAggColor; K: Double): TAggRgba8;
+function TAggColor.Gradient8(const C: TAggColor; k: Double): TAggRgba8;
 var
   Ik: Cardinal;
 begin
-  Ik := Trunc(K * CAggBaseSize);
+  Ik := Trunc(k * CAggBaseSize);
 
   Result.R := Int8u(Rgba8.R + (((C.Rgba8.R - Rgba8.R) * Ik) shr CAggBaseShift));
-  Result.G := Int8u(Rgba8.G + (((C.Rgba8.G - Rgba8.G) * Ik) shr CAggBaseShift));
-  Result.B := Int8u(Rgba8.B + (((C.Rgba8.B - Rgba8.B) * Ik) shr CAggBaseShift));
+  Result.g := Int8u(Rgba8.g + (((C.Rgba8.g - Rgba8.g) * Ik) shr CAggBaseShift));
+  Result.b := Int8u(Rgba8.b + (((C.Rgba8.b - Rgba8.b) * Ik) shr CAggBaseShift));
   Result.A := Int8u(Rgba8.A + (((C.Rgba8.A - Rgba8.A) * Ik) shr CAggBaseShift));
 end;
 
 procedure TAggColor.Add(C: PAggColor; Cover: Cardinal);
 var
-  Cv, Cr, Cg, Cb, Ca: Int32u;
+  cv, CR, Cg, CB, ca: Int32u;
 begin
   if Cover = CAggCoverMask then
     if C.Rgba8.A = CAggBaseMask then
       begin
-        V := C^.V;
+        v := C^.v;
         Rgba8 := C^.Rgba8;
       end
     else
       begin
-        Cv := V + C.V;
+        cv := v + C.v;
 
-        if Cv > Int32u(CAggBaseMask) then
-            V := Int8u(CAggBaseMask)
+        if cv > Int32u(CAggBaseMask) then
+            v := Int8u(CAggBaseMask)
         else
-            V := Int8u(Cv);
+            v := Int8u(cv);
 
-        Cr := Rgba8.R + C.Rgba8.R;
+        CR := Rgba8.R + C.Rgba8.R;
 
-        if Cr > Int32u(CAggBaseMask) then
+        if CR > Int32u(CAggBaseMask) then
             Rgba8.R := Int8u(CAggBaseMask)
         else
-            Rgba8.R := Int8u(Cr);
+            Rgba8.R := Int8u(CR);
 
-        Cg := Rgba8.G + C.Rgba8.G;
+        Cg := Rgba8.g + C.Rgba8.g;
 
         if Cg > Int32u(CAggBaseMask) then
-            Rgba8.G := Int8u(CAggBaseMask)
+            Rgba8.g := Int8u(CAggBaseMask)
         else
-            Rgba8.G := Int8u(Cg);
+            Rgba8.g := Int8u(Cg);
 
-        Cb := Rgba8.B + C.Rgba8.B;
+        CB := Rgba8.b + C.Rgba8.b;
 
-        if Cb > Int32u(CAggBaseMask) then
-            Rgba8.B := Int8u(CAggBaseMask)
+        if CB > Int32u(CAggBaseMask) then
+            Rgba8.b := Int8u(CAggBaseMask)
         else
-            Rgba8.B := Int8u(Cb);
+            Rgba8.b := Int8u(CB);
 
-        Ca := Rgba8.A + C.Rgba8.A;
+        ca := Rgba8.A + C.Rgba8.A;
 
-        if Ca > Int32u(CAggBaseMask) then
+        if ca > Int32u(CAggBaseMask) then
             Rgba8.A := Int8u(CAggBaseMask)
         else
-            Rgba8.A := Int8u(Ca);
+            Rgba8.A := Int8u(ca);
       end
   else
     begin
-      Cv := V + ((C.V * Cover + CAggCoverMask div 2) shr CAggCoverShift);
-      Cr := Rgba8.R + ((C.Rgba8.R * Cover + CAggCoverMask div 2) shr CAggCoverShift);
-      Cg := Rgba8.G + ((C.Rgba8.G * Cover + CAggCoverMask div 2) shr CAggCoverShift);
-      Cb := Rgba8.B + ((C.Rgba8.B * Cover + CAggCoverMask div 2) shr CAggCoverShift);
-      Ca := Rgba8.A + ((C.Rgba8.A * Cover + CAggCoverMask div 2) shr CAggCoverShift);
+      cv := v + ((C.v * Cover + CAggCoverMask div 2) shr CAggCoverShift);
+      CR := Rgba8.R + ((C.Rgba8.R * Cover + CAggCoverMask div 2) shr CAggCoverShift);
+      Cg := Rgba8.g + ((C.Rgba8.g * Cover + CAggCoverMask div 2) shr CAggCoverShift);
+      CB := Rgba8.b + ((C.Rgba8.b * Cover + CAggCoverMask div 2) shr CAggCoverShift);
+      ca := Rgba8.A + ((C.Rgba8.A * Cover + CAggCoverMask div 2) shr CAggCoverShift);
 
-      if Cv > Int32u(CAggBaseMask) then
-          V := Int8u(CAggBaseMask)
+      if cv > Int32u(CAggBaseMask) then
+          v := Int8u(CAggBaseMask)
       else
-          V := Int8u(Cv);
+          v := Int8u(cv);
 
-      if Cr > Int32u(CAggBaseMask) then
+      if CR > Int32u(CAggBaseMask) then
           Rgba8.R := Int8u(CAggBaseMask)
       else
-          Rgba8.R := Int8u(Cr);
+          Rgba8.R := Int8u(CR);
 
       if Cg > Int32u(CAggBaseMask) then
-          Rgba8.G := Int8u(CAggBaseMask)
+          Rgba8.g := Int8u(CAggBaseMask)
       else
-          Rgba8.G := Int8u(Cg);
+          Rgba8.g := Int8u(Cg);
 
-      if Cb > Int32u(CAggBaseMask) then
-          Rgba8.B := Int8u(CAggBaseMask)
+      if CB > Int32u(CAggBaseMask) then
+          Rgba8.b := Int8u(CAggBaseMask)
       else
-          Rgba8.B := Int8u(Cb);
+          Rgba8.b := Int8u(CB);
 
-      if Ca > Int32u(CAggBaseMask) then
+      if ca > Int32u(CAggBaseMask) then
           Rgba8.A := Int8u(CAggBaseMask)
       else
-          Rgba8.A := Int8u(Ca);
+          Rgba8.A := Int8u(ca);
     end;
 end;
 
@@ -569,7 +569,7 @@ begin
   if Value > 1.0 then
       Value := 1.0;
 
-  Rgba8.B := Trunc(Value * CAggBaseMask + 0.5);
+  Rgba8.b := Trunc(Value * CAggBaseMask + 0.5);
 end;
 
 procedure TAggColor.SetGreen(Value: Double);
@@ -580,7 +580,7 @@ begin
   if Value > 1.0 then
       Value := 1.0;
 
-  Rgba8.G := Trunc(Value * CAggBaseMask + 0.5);
+  Rgba8.g := Trunc(Value * CAggBaseMask + 0.5);
 end;
 
 procedure TAggColor.SetRed(Value: Double);
@@ -607,12 +607,12 @@ end;
 
 function TAggColor.GetBlue: Double;
 begin
-  Result := Rgba8.B / CAggBaseMask;
+  Result := Rgba8.b / CAggBaseMask;
 end;
 
 function TAggColor.GetGreen: Double;
 begin
-  Result := Rgba8.G / CAggBaseMask;
+  Result := Rgba8.g / CAggBaseMask;
 end;
 
 function TAggColor.GetOpacity: Double;
@@ -627,15 +627,15 @@ end;
 
 procedure TAggColor.CalculateValue;
 begin
-  V := (Rgba8.R * 77 + Rgba8.G * 150 + Rgba8.B * 29) shr 8;
+  v := (Rgba8.R * 77 + Rgba8.g * 150 + Rgba8.b * 29) shr 8;
 end;
 
 procedure TAggColor.Clear;
 begin
-  V := 0;
+  v := 0;
   Rgba8.R := 0;
-  Rgba8.G := 0;
-  Rgba8.B := 0;
+  Rgba8.g := 0;
+  Rgba8.b := 0;
   Rgba8.A := 0;
 end;
 
@@ -646,45 +646,45 @@ begin
 
   if Rgba8.A = 0 then
     begin
-      V := 0;
+      v := 0;
       Rgba8.R := 0;
-      Rgba8.G := 0;
-      Rgba8.B := 0;
+      Rgba8.g := 0;
+      Rgba8.b := 0;
       Exit;
     end;
 
-  V := Int8u((V * Rgba8.A) shr CAggBaseShift);
+  v := Int8u((v * Rgba8.A) shr CAggBaseShift);
   Rgba8.R := Int8u((Rgba8.R * Rgba8.A) shr CAggBaseShift);
-  Rgba8.G := Int8u((Rgba8.G * Rgba8.A) shr CAggBaseShift);
-  Rgba8.B := Int8u((Rgba8.B * Rgba8.A) shr CAggBaseShift);
+  Rgba8.g := Int8u((Rgba8.g * Rgba8.A) shr CAggBaseShift);
+  Rgba8.b := Int8u((Rgba8.b * Rgba8.A) shr CAggBaseShift);
 end;
 
 procedure TAggColor.ApplyGammaDir(Gamma: TAggGamma);
 begin
-  V := Int8u(Gamma.Dir[V]);
-  Rgba8.R := Int8u(Gamma.Dir[Rgba8.R]);
-  Rgba8.G := Int8u(Gamma.Dir[Rgba8.G]);
-  Rgba8.B := Int8u(Gamma.Dir[Rgba8.B]);
+  v := Int8u(Gamma.dir[v]);
+  Rgba8.R := Int8u(Gamma.dir[Rgba8.R]);
+  Rgba8.g := Int8u(Gamma.dir[Rgba8.g]);
+  Rgba8.b := Int8u(Gamma.dir[Rgba8.b]);
 end;
 
 procedure TAggColor.Black;
 begin
-  V := 0;
+  v := 0;
   Rgba8 := CRgba8Black;
 end;
 
 procedure TAggColor.White;
 begin
-  V := $FF;
+  v := $FF;
   Rgba8 := CRgba8White;
 end;
 
-function Rgb8Packed(V: TAggPackedRgba8): TAggRgba8;
+function Rgb8Packed(v: TAggPackedRgba8): TAggRgba8;
 begin
-  Result.R := (V shr 16) and $FF;
-  Result.G := (V shr 8) and $FF;
-  Result.B := V and $FF;
+  Result.R := (v shr 16) and $FF;
+  Result.g := (v shr 8) and $FF;
+  Result.b := v and $FF;
   Result.A := CAggBaseMask;
 end;
 
-end.
+end. 

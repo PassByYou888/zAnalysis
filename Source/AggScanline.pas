@@ -35,11 +35,11 @@
   //                                                                            //
   ////////////////////////////////////////////////////////////////////////////////
 *)
-unit AggScanLine;
+unit AggScanline;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -96,7 +96,7 @@ type
 
   TAggEmbeddedScanLine = class(TAggCustomScanLine)
   public
-    procedure Init(Ptr: PInt8u; Dx, Dy: Integer); virtual; abstract;
+    procedure Init(PTR: PInt8u; dx, dy: Integer); virtual; abstract;
     procedure Setup(ScanLineIndex: Cardinal); virtual; abstract;
   end;
 
@@ -135,4 +135,4 @@ end;
   Result := False;
   end; }
 
-end.
+end. 

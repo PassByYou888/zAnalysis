@@ -22,7 +22,7 @@
 }
 unit JLSBitIO;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
@@ -30,14 +30,14 @@ uses
   CoreClasses, JLSGlobal;
 
 const
-  BUFSIZE    = ((16 * 1024) - NEGBUFFSIZE); { Size of input BYTE buffer }
+  BufSize    = ((16 * 1024) - NEGBUFFSIZE); { Size of input BYTE buffer }
   BITBUFSIZE = (8 * SizeOf(Cardinal));
 
 type
   TJLSBitIO = class
     FInputStream: TCoreClassStream;
     FOutputStream: TCoreClassStream;
-    zeroLUT: packed array [0 .. 255] of int; { table to find out number of leading zeros }
+    zeroLUT: packed array [0 .. 255] of Int; { table to find out number of leading zeros }
     { BIT I/O variables }
     reg: Cardinal; // ulong;     { BIT buffer for input/output }
     {
@@ -46,14 +46,14 @@ type
       the byte buffer when flushing the input bit buffer .
     }
 
-    fp: int;          { index into byte buffer }
-    truebufsize: int; { true size of byte buffer ( <= BUFSIZE) }
-    foundeof: boolean;
+    FP: Int;          { index into byte buffer }
+    truebufsize: Int; { true size of byte buffer ( <= BUFSIZE) }
+    foundeof: Boolean;
 
-    bits: int; { number of bits free in bit buffer (on output) }
+    Bits: Int; { number of bits free in bit buffer (on output) }
     { (number of bits free)-8 in bit buffer (on input) }
 
-    negbuff: packed array [0 .. BUFSIZE + NEGBUFFSIZE - 1] of Byte; { byte I/O buffer, allowing for 4 "negative" locations }
+    negbuff: packed array [0 .. BufSize + NEGBUFFSIZE - 1] of Byte; { byte I/O buffer, allowing for 4 "negative" locations }
     constructor Create(AInputStream: TCoreClassStream; AOutputStream: TCoreClassStream);
 
     procedure bitoinit;
@@ -62,19 +62,19 @@ type
     procedure bitiflush;
     function buff: PByteArray;
     function fillinbuff(fil: TCoreClassStream): Byte;
-    procedure myputc(c: Byte);
-    procedure flushbuff;
+    procedure myputc(C: Byte);
+    procedure FlushBuff;
     procedure fclose(fil: TCoreClassStream);
     function ftell(fil: TCoreClassStream): Int64;
-    function mygetc: int;
-    procedure myungetc(x: Byte; fil: TCoreClassStream);
+    function mygetc: Int;
+    procedure myungetc(X: Byte; fil: TCoreClassStream);
 
     procedure createzeroLUT;
     procedure bitiinit;
-    procedure fillbuffer(no: integer);
-    procedure putbits(x: int; n: int);
-    procedure put_ones(n: int);
-    procedure put_zeros(n: int);
+    procedure fillbuffer(no: Integer);
+    procedure putbits(X: Int; n: Int);
+    procedure put_ones(n: Int);
+    procedure put_zeros(n: Int);
   end;
 
 implementation
@@ -86,100 +86,100 @@ end;
 
 function TJLSBitIO.ftell(fil: TCoreClassStream): Int64;
 begin
-  result := fil.Position;
+  Result := fil.Position;
 end;
 
 { creates the bit counting look-up table. }
 procedure TJLSBitIO.createzeroLUT;
 var
-  i, j, k, l: int;
+  i, J, k, L: Int;
 begin
-  j := 1;
+  J := 1;
   k := 1;
-  l := 8;
+  L := 8;
   for i := 0 to pred(256) do
     begin
-      zeroLUT[i] := l;
-      dec(k);
+      zeroLUT[i] := L;
+      Dec(k);
       if (k = 0) then
         begin
-          k := j;
-          dec(l);
-          j := j * 2;
+          k := J;
+          Dec(L);
+          J := J * 2;
         end;
     end;
 end;
 
 { loads more data in the input buffer (inline code ) }
-procedure TJLSBitIO.fillbuffer(no: integer);
+procedure TJLSBitIO.fillbuffer(no: Integer);
 var
-  x: Byte;
+  X: Byte;
 begin
-  assert(no + bits <= 24);
+  Assert(no + Bits <= 24);
   reg := reg shl no;
-  bits := bits + no;
+  Bits := Bits + no;
 
-  while (bits >= 0) do
+  while (Bits >= 0) do
     begin
-      x := Byte(mygetc);
-      if (x = $FF) then
+      X := Byte(mygetc);
+      if (X = $FF) then
         begin
-          if (bits < 8) then
+          if (Bits < 8) then
             begin
               myungetc($FF, FInputStream);
-              break;
+              Break;
             end
           else begin
 
-              x := Byte(mygetc);
+              X := Byte(mygetc);
 
-              if (not IsTrue(x and $80)) then { non-marker: drop 0 }
+              if (not IsTrue(X and $80)) then { non-marker: drop 0 }
                 begin
-                  reg := reg or ($FF shl bits) or ((x and $7F) shl (bits - 7));
-                  bits := bits - 15;
+                  reg := reg or ($FF shl Bits) or ((X and $7F) shl (Bits - 7));
+                  Bits := Bits - 15;
                 end
               else begin
                   { marker: hope we know what we're doing }
                   { the "1" bit following ff is NOT dropped }
-                  reg := reg or ($FF shl bits) or (x shl (bits - 8));
-                  bits := bits - 16;
+                  reg := reg or ($FF shl Bits) or (X shl (Bits - 8));
+                  Bits := Bits - 16;
                 end;
 
-              continue;
+              Continue;
             end;
         end;
 
-      reg := reg or (x shl bits);
-      bits := bits - 8;
+      reg := reg or (X shl Bits);
+      Bits := Bits - 8;
     end;
 end;
 
 { Initializes the bit input routines }
 procedure TJLSBitIO.bitiinit;
 begin
-  bits := 0;
+  Bits := 0;
   reg := 0;
   fillbuffer(24);
 end;
 
 function TJLSBitIO.buff: PByteArray;
 begin
-  result := @negbuff[NEGBUFFSIZE];
+  Result := @negbuff[NEGBUFFSIZE];
 end;
 
 function TJLSBitIO.fillinbuff(fil: TCoreClassStream): Byte;
 var
-  i: int;
+  i: Int;
 begin
   { remember 4 last bytes of current buffer (for "undo") }
   for i := 0 to pred(NEGBUFFSIZE) do
     begin
-      negbuff[i] := negbuff[integer(fp + i)];
+      negbuff[i] := negbuff[Integer(FP + i)];
     end;
 
-  truebufsize := fil.Read(buff[0], BUFSIZE);
+  truebufsize := fil.read(buff[0], BufSize);
 
-  if (truebufsize < BUFSIZE) then
+  if (truebufsize < BufSize) then
     begin
       if (truebufsize <= 0) then
         begin
@@ -187,43 +187,43 @@ begin
             begin
               { second attempt to read past EOF }
               // fprintf(stderr,"*** Premature EOF in compressed file\n");
-              result := 10;
-              exit;
+              Result := 10;
+              Exit;
             end
           else
             begin
               { One attempt to read past EOF is OK }
-              foundeof := TRUE;
+              foundeof := True;
             end;
         end;
       { fill buffer with zeros }
-      FillChar(buff^[truebufsize], BUFSIZE - truebufsize, 0);
+      FillChar(buff^[truebufsize], BufSize - truebufsize, 0);
     end;
 
-  fp := 1;
-  result := buff^[0];
+  FP := 1;
+  Result := buff^[0];
 end;
 
-function TJLSBitIO.mygetc: int;
+function TJLSBitIO.mygetc: Int;
 begin
-  result := BUF_EOF;
-  if (FInputStream.Size = FInputStream.Position) and (fp >= BUFSIZE) then
-      exit;
+  Result := BUF_EOF;
+  if (FInputStream.Size = FInputStream.Position) and (FP >= BufSize) then
+      Exit;
 
-  if (fp >= BUFSIZE)
+  if (FP >= BufSize)
   then
-      result := fillinbuff(FInputStream)
+      Result := fillinbuff(FInputStream)
   else
     begin
-      result := buff^[fp];
-      inc(fp);
+      Result := buff^[FP];
+      Inc(FP);
     end;
 end;
 
-procedure TJLSBitIO.myungetc(x: Byte; fil: TCoreClassStream);
+procedure TJLSBitIO.myungetc(X: Byte; fil: TCoreClassStream);
 begin
-  dec(fp);
-  buff^[fp] := x;
+  Dec(FP);
+  buff^[FP] := X;
   // if  pByteArray(FDebugStream.Memory)[fp]<>buff^[fp]
   // then raise Exception.Create('Error Message');
 end;
@@ -232,19 +232,19 @@ end;
   *  OUTPUT ROUTINES
   **************************************************************************** }
 
-procedure TJLSBitIO.flushbuff;
+procedure TJLSBitIO.FlushBuff;
 begin
   { fwrite must work correctly, even if fp is equal to 0 }
-  FOutputStream.Write(buff[0], fp);
-  fp := 0;
+  FOutputStream.write(buff[0], FP);
+  FP := 0;
 end;
 
-procedure TJLSBitIO.myputc(c: Byte);
+procedure TJLSBitIO.myputc(C: Byte);
 begin
-  if (fp >= BUFSIZE) then
-      flushbuff;
-  buff^[fp] := c;
-  inc(fp);
+  if (FP >= BufSize) then
+      FlushBuff;
+  buff^[FP] := C;
+  Inc(FP);
 end;
 
 {
@@ -253,12 +253,12 @@ end;
 }
 procedure TJLSBitIO.bitiflush;
 var
-  filled, discard, dbytes, i, k, treg: int;
+  filled, discard, dbytes, i, k, treg: Int;
   bp: PByte;
 begin
   k := 0;
   treg := 0;
-  filled := 24 - bits; { how many bits at the MS part of reg
+  filled := 24 - Bits; { how many bits at the MS part of reg
     have unused data. These correspond to
     at most filled+2 bits from the input
     stream, as at most 2 '0' bits might have
@@ -271,10 +271,10 @@ begin
     by a marker, as will necessarily be the case with the standard JPEG
     format }
 
-  while TRUE do
+  while True do
     begin
       bp := @(buff^[0]);
-      inc(bp, fp - dbytes); { back-in the buffer }
+      Inc(bp, FP - dbytes); { back-in the buffer }
       treg := 0;
       k := 0;
       for i := 0 to pred(dbytes) do
@@ -292,8 +292,8 @@ begin
         end;
 
       if (k <= filled) then
-          break;
-      dec(dbytes);
+          Break;
+      Dec(dbytes);
     end;
 
   { check consistency }
@@ -301,65 +301,65 @@ begin
     begin
       // fprintf(stderr,"bitiflush: inconsistent bits=%d filled=%d k=%d\n",bits,filled,k);
       // Result:=10
-      exit;
+      Exit;
     end;
 
   discard := filled - k;
-  if (treg <> int((reg shl discard))) then
+  if (treg <> Int((reg shl discard))) then
     begin
       // fprintf(stderr,"bitiflush: inconsistent bits=%d discard=%d reg=%08x treg=%08x\n",bits, discard, reg, treg);
-      exit; // (10);
+      Exit; // (10);
     end;
 
   // if IsTrue( reg and (((1 shl discard)-1) shl (BITBUFSIZE-discard)) )
   // fprintf(stderr,"bitiflush: Warning: discarding nonzero bits; reg=%08x bits=%d discard=%d\n",reg,bits,discard);
 
-  fp := fp - dbytes; { do the unget }
-  if (buff^[fp - 1] = $FF) and (buff^[fp] = 0) then
-      inc(fp);
+  FP := FP - dbytes; { do the unget }
+  if (buff^[FP - 1] = $FF) and (buff^[FP] = 0) then
+      Inc(FP);
 
-  bits := 0;
+  Bits := 0;
   reg := 0;
 end;
 
 { Flushes the bit output buffer and the byte output buffer }
 procedure TJLSBitIO.bitoflush;
 var
-  outbyte: uint;
+  outbyte: UINT;
 begin
-  while (bits < 32) do
+  while (Bits < 32) do
     begin
       outbyte := shr_c(reg, 24);
       myputc(outbyte);
       if (outbyte = $FF) then
         begin
-          bits := bits + 7;
+          Bits := Bits + 7;
           reg := reg shl 7;
           reg := reg and (not(1 shl (8 * SizeOf(reg) - 1))); { stuff a 0 at MSB }
         end
       else begin
-          bits := bits + 8;
+          Bits := Bits + 8;
           reg := reg shl 8;
         end;
     end;
-  flushbuff;
+  FlushBuff;
   bitoinit();
 end;
 
 { Initializes the bit output routines }
 procedure TJLSBitIO.bitoinit;
 begin
-  bits := 32;
+  Bits := 32;
   reg := 0;
-  fp := 0;
+  FP := 0;
 end;
 
 procedure TJLSBitIO.bufiinit;
 begin
   { argument is ignored }
-  fp := BUFSIZE;
+  FP := BufSize;
   truebufsize := 0;
-  foundeof := FALSE;
+  foundeof := False;
 end;
 
 constructor TJLSBitIO.Create(AInputStream, AOutputStream: TCoreClassStream);
@@ -368,43 +368,43 @@ begin
   FOutputStream := AOutputStream;
 end;
 
-procedure TJLSBitIO.putbits(x: int; n: int);
+procedure TJLSBitIO.putbits(X: Int; n: Int);
 var
-  outbyte: uint;
+  outbyte: UINT;
 begin
-  assert((n <= 24) and (n >= 0) and ((1 shl n) > x));
-  bits := bits - n;
-  reg := reg or Cardinal(x shl bits);
-  while (bits <= 24) do
+  Assert((n <= 24) and (n >= 0) and ((1 shl n) > X));
+  Bits := Bits - n;
+  reg := reg or Cardinal(X shl Bits);
+  while (Bits <= 24) do
     begin
-      if (fp >= BUFSIZE) then
+      if (FP >= BufSize) then
         begin
-          FOutputStream.Write(buff[0], fp);
-          fp := 0;
+          FOutputStream.write(buff[0], FP);
+          FP := 0;
         end;
 
-      buff^[fp] := shr_c(reg, 24);
-      outbyte := buff^[fp];
-      inc(fp);
+      buff^[FP] := shr_c(reg, 24);
+      outbyte := buff^[FP];
+      Inc(FP);
 
       if (outbyte = $FF) then
         begin
-          bits := bits + 7;
+          Bits := Bits + 7;
           reg := reg shl 7;
           { stuff a 0 at MSB }
           reg := reg and (not(1 shl (8 * SizeOf(reg) - 1)));
         end
       else
         begin
-          bits := bits + 8;
+          Bits := Bits + 8;
           reg := reg shl 8;
         end;
     end;
 end;
 
-procedure TJLSBitIO.put_ones(n: int);
+procedure TJLSBitIO.put_ones(n: Int);
 var
-  nn: uint;
+  NN: UINT;
 begin
   if (n < 24) then
     begin
@@ -412,36 +412,37 @@ begin
     end
   else
     begin
-      nn := n;
+      NN := n;
 
-      while (nn >= 24) do
+      while (NN >= 24) do
         begin
           putbits((1 shl 24) - 1, 24);
-          nn := nn - 24;
+          NN := NN - 24;
         end;
 
-      if IsTrue(nn)
+      if IsTrue(NN)
       then
-          putbits((1 shl nn) - 1, nn);
+          putbits((1 shl NN) - 1, NN);
     end;
 end;
 
-procedure TJLSBitIO.put_zeros(n: int);
+procedure TJLSBitIO.put_zeros(n: Int);
 begin
-  bits := bits - n;
-  while (bits <= 24) do
+  Bits := Bits - n;
+  while (Bits <= 24) do
     begin
-      if (fp >= BUFSIZE) then
+      if (FP >= BufSize) then
         begin
-          FOutputStream.Write(buff[0], fp);
-          fp := 0;
+          FOutputStream.write(buff[0], FP);
+          FP := 0;
         end;
 
-      buff^[fp] := shr_c(reg, 24);
-      inc(fp);
+      buff^[FP] := shr_c(reg, 24);
+      Inc(FP);
       reg := reg shl 8;
-      bits := bits + 8;
+      Bits := Bits + 8;
     end;
 end;
 
-end.
+end. 
+ 

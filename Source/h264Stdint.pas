@@ -12,7 +12,7 @@
 
 unit h264Stdint;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 {$POINTERMATH ON}
 
 interface
@@ -21,7 +21,7 @@ type
   int8_t  = ShortInt;
   int16_t = SmallInt;
   int32_t = Integer;
-  int64_t = Int64;
+  Int64_t = Int64;
 
   uint8_t  = Byte;
   uint16_t = Word;
@@ -34,10 +34,10 @@ type
   int64_p = PInt64;
 
   uint8_p  = PByte;
-  uint16_p = PWord;
+  uint16_p = PWORD;
   uint32_p = PCardinal;
   uint64_p = PUInt64;
 
 implementation
 
-end.
+end.  

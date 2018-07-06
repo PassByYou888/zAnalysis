@@ -12,7 +12,7 @@
 
 unit h264Stats;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 {$POINTERMATH ON}
 
 interface
@@ -22,24 +22,24 @@ uses h264Stdint, CoreClasses;
 type
   TFrameStats = class
   public
-    pred: array [0 .. 8] of int64_t;
-    pred16: array [0 .. 3] of int64_t;
-    pred_8x8_chroma: array [0 .. 3] of int64_t;
-    ref: array [0 .. 15] of int64_t;
-    ptex_bits, itex_bits, mb_skip_count, mb_i4_count, mb_i16_count, mb_p_count: int64_t;
-    size_bytes: int64_t;
-    ssd: array [0 .. 2] of int64_t;
+    pred: array [0 .. 8] of Int64_t;
+    pred16: array [0 .. 3] of Int64_t;
+    pred_8x8_chroma: array [0 .. 3] of Int64_t;
+    ref: array [0 .. 15] of Int64_t;
+    ptex_bits, itex_bits, mb_skip_count, mb_i4_count, mb_i16_count, mb_p_count: Int64_t;
+    size_bytes: Int64_t;
+    ssd: array [0 .. 2] of Int64_t;
 
     constructor Create;
     procedure Clear; virtual;
-    procedure Add(a: TFrameStats);
+    procedure Add(A: TFrameStats);
   end;
 
   { TStreamStats }
 
   TStreamStats = class(TFrameStats)
   public
-    i_count, p_count: int64_t;
+    i_count, p_count: Int64_t;
     procedure Clear; override;
   end;
 
@@ -65,11 +65,11 @@ end;
 
 procedure TFrameStats.Clear;
 begin
-  FillPtrByte(@pred, sizeof(pred), 0);
-  FillPtrByte(@pred16, sizeof(pred16), 0);
-  FillPtrByte(@pred_8x8_chroma, sizeof(pred_8x8_chroma), 0);
-  FillPtrByte(@ref, sizeof(ref), 0);
-  FillPtrByte(@ssd, sizeof(ssd), 0);
+  FillPtrByte(@pred, SizeOf(pred), 0);
+  FillPtrByte(@pred16, SizeOf(pred16), 0);
+  FillPtrByte(@pred_8x8_chroma, SizeOf(pred_8x8_chroma), 0);
+  FillPtrByte(@ref, SizeOf(ref), 0);
+  FillPtrByte(@ssd, SizeOf(ssd), 0);
   ptex_bits := 0;
   itex_bits := 0;
   mb_skip_count := 0;
@@ -79,27 +79,27 @@ begin
   size_bytes := 0;
 end;
 
-procedure TFrameStats.Add(a: TFrameStats);
+procedure TFrameStats.Add(A: TFrameStats);
 var
   i: int32_t;
 begin
-  inc(itex_bits, a.itex_bits);
-  inc(ptex_bits, a.ptex_bits);
-  inc(mb_i4_count, a.mb_i4_count);
-  inc(mb_i16_count, a.mb_i16_count);
-  inc(mb_p_count, a.mb_p_count);
-  inc(mb_skip_count, a.mb_skip_count);
-  inc(size_bytes, a.size_bytes);
+  Inc(itex_bits, A.itex_bits);
+  Inc(ptex_bits, A.ptex_bits);
+  Inc(mb_i4_count, A.mb_i4_count);
+  Inc(mb_i16_count, A.mb_i16_count);
+  Inc(mb_p_count, A.mb_p_count);
+  Inc(mb_skip_count, A.mb_skip_count);
+  Inc(size_bytes, A.size_bytes);
   for i := 0 to 8 do
-      inc(pred[i], a.pred[i]);
+      Inc(pred[i], A.pred[i]);
   for i := 0 to 3 do
-      inc(pred16[i], a.pred16[i]);
+      Inc(pred16[i], A.pred16[i]);
   for i := 0 to 3 do
-      inc(pred_8x8_chroma[i], a.pred_8x8_chroma[i]);
+      Inc(pred_8x8_chroma[i], A.pred_8x8_chroma[i]);
   for i := 0 to 15 do
-      inc(ref[i], a.ref[i]);
+      Inc(ref[i], A.ref[i]);
   for i := 0 to 2 do
-      inc(ssd[i], a.ssd[i]);
+      Inc(ssd[i], A.ssd[i]);
 end;
 
-end.
+end.  

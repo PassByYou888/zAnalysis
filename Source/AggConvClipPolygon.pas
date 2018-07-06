@@ -39,7 +39,7 @@ unit AggConvClipPolygon;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -60,12 +60,12 @@ type
     constructor Create(Vs: TAggVertexSource);
     destructor Destroy; override;
 
-    procedure SetClipBox(X1, Y1, X2, Y2: Double);
+    procedure SetClipBox(x1, y1, x2, y2: Double);
 
-    property X1: Double read GetX1;
-    property Y1: Double read GetY1;
-    property X2: Double read GetX2;
-    property Y2: Double read GetY2;
+    property x1: Double read GetX1;
+    property y1: Double read GetY1;
+    property x2: Double read GetX2;
+    property y2: Double read GetY2;
   end;
 
 implementation
@@ -86,29 +86,29 @@ begin
   inherited;
 end;
 
-procedure TAggConvClipPolygon.SetClipBox(X1, Y1, X2, Y2: Double);
+procedure TAggConvClipPolygon.SetClipBox(x1, y1, x2, y2: Double);
 begin
-  TAggVpgenClipPolygon(Vpgen).SetClipBox(X1, Y1, X2, Y2);
+  TAggVpgenClipPolygon(Vpgen).SetClipBox(x1, y1, x2, y2);
 end;
 
 function TAggConvClipPolygon.GetX1: Double;
 begin
-  Result := TAggVpgenClipPolygon(Vpgen).X1;
+  Result := TAggVpgenClipPolygon(Vpgen).x1;
 end;
 
 function TAggConvClipPolygon.GetY1: Double;
 begin
-  Result := TAggVpgenClipPolygon(Vpgen).Y1;
+  Result := TAggVpgenClipPolygon(Vpgen).y1;
 end;
 
 function TAggConvClipPolygon.GetX2: Double;
 begin
-  Result := TAggVpgenClipPolygon(Vpgen).X2;
+  Result := TAggVpgenClipPolygon(Vpgen).x2;
 end;
 
 function TAggConvClipPolygon.GetY2: Double;
 begin
-  Result := TAggVpgenClipPolygon(Vpgen).Y2;
+  Result := TAggVpgenClipPolygon(Vpgen).y2;
 end;
 
-end.
+end. 

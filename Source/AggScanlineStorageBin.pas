@@ -35,19 +35,19 @@
   //                                                                            //
   ////////////////////////////////////////////////////////////////////////////////
 *)
-unit AggScanLineStorageBin;
+unit AggScanlineStorageBin;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
   AggArray,
-  AggScanLine,
+  AggScanline,
   AggRendererScanLine,
-  AggRenderScanLines,
+  AggRenderScanlines,
   AggRasterizerScanLine;
 
 type
@@ -122,7 +122,7 @@ type
     destructor Destroy; override;
 
     // Renderer Interface
-    procedure Prepare(U: Cardinal); override;
+    procedure Prepare(u: Cardinal); override;
     procedure Render(ScanLine: TAggCustomScanLine); override;
 
     function RewindScanLines: Boolean; virtual;                                       // override;
@@ -132,11 +132,11 @@ type
     function SweepScanLine(ScanLine: TAggEmbeddedScanLine): Boolean; overload; virtual; // override;
 
     function ByteSize: Cardinal;
-    procedure WriteInt32(Dst: PInt8u; Val: Int32);
+    procedure WriteInt32(Dst: PInt8u; val: Int32);
     procedure Serialize(Data: PInt8u);
 
-    function ScanLineByIndex(I: Cardinal): PAggScanLineData;
-    function SpanByIndex(I: Cardinal): PAggSpanData;
+    function ScanLineByIndex(i: Cardinal): PAggScanLineData;
+    function SpanByIndex(i: Cardinal): PAggSpanData;
   public
     property MinimumX: Integer read GetMinX;
     property MinimumY: Integer read GetMinY;
@@ -162,7 +162,7 @@ type
     end;
   private
     FInternalData: PInt8u;
-    FY: Integer;
+    fy: Integer;
 
     FNumSpans: Cardinal;
 
@@ -179,7 +179,7 @@ type
     function GetBegin: TAggCustomSpan; override;
 
     function ReadInt32: Integer;
-    procedure Init(Ptr: PInt8u; Dx, Dy: Integer); override;
+    procedure Init(PTR: PInt8u; dx, dy: Integer); override;
   end;
 
   TAggSerializedScanLinesAdaptorBin = class(TAggRasterizerScanLine)
@@ -195,9 +195,9 @@ type
   public
     constructor Create; overload;
     constructor Create(Data: PInt8u; Size: Cardinal;
-      Dx, Dy: Double); overload;
+      dx, dy: Double); overload;
 
-    procedure Init(Data: PInt8u; Size: Cardinal; Dx, Dy: Double);
+    procedure Init(Data: PInt8u; Size: Cardinal; dx, dy: Double);
     function ReadInt32: Integer;
 
     // Iterate ScanLines interface
@@ -311,7 +311,7 @@ begin
   inherited;
 end;
 
-procedure TAggScanLineStorageBin.Prepare(U: Cardinal);
+procedure TAggScanLineStorageBin.Prepare(u: Cardinal);
 begin
   FScanLines.RemoveAll;
   FSpans.RemoveAll;
@@ -326,13 +326,13 @@ end;
 
 procedure TAggScanLineStorageBin.Render(ScanLine: TAggCustomScanLine);
 var
-  Y, X1, X2: Integer;
+  Y, x1, x2: Integer;
 
   ScanLineData: TAggScanLineData;
   NumSpans: Cardinal;
 
   Span: TAggCustomSpan;
-  Sp: TAggSpanData;
+  sp: TAggSpanData;
 begin
   Y := ScanLine.Y;
 
@@ -351,19 +351,19 @@ begin
   Span := ScanLine.GetBegin;
 
   repeat
-    Sp.X := Span.X;
-    Sp.Len := Span.Len;
+    sp.X := Span.X;
+    sp.Len := Span.Len;
 
-    FSpans.Add(@Sp);
+    FSpans.Add(@sp);
 
-    X1 := Sp.X;
-    X2 := Sp.X + Sp.Len - 1;
+    x1 := sp.X;
+    x2 := sp.X + sp.Len - 1;
 
-    if X1 < FMin.X then
-        FMin.X := X1;
+    if x1 < FMin.X then
+        FMin.X := x1;
 
-    if X2 > FMax.X then
-        FMax.X := X2;
+    if x2 > FMax.X then
+        FMax.X := x2;
 
     Dec(NumSpans);
 
@@ -409,7 +409,7 @@ function TAggScanLineStorageBin.SweepScanLine(ScanLine: TAggCustomScanLine): Boo
 var
   ScanLineData: PAggScanLineData;
   NumSpans, SpanIndex: Cardinal;
-  Sp: PAggSpanData;
+  sp: PAggSpanData;
 begin
   ScanLine.ResetSpans;
 
@@ -427,11 +427,11 @@ begin
     SpanIndex := ScanLineData.Start_Span;
 
     repeat
-      Sp := FSpans[SpanIndex];
+      sp := FSpans[SpanIndex];
 
       Inc(SpanIndex);
 
-      ScanLine.AddSpan(Sp.X, Sp.Len, CAggCoverFull);
+      ScanLine.AddSpan(sp.X, sp.Len, CAggCoverFull);
 
       Dec(NumSpans);
 
@@ -472,37 +472,37 @@ end;
 
 function TAggScanLineStorageBin.ByteSize: Cardinal;
 var
-  I, Size: Cardinal;
+  i, Size: Cardinal;
 begin
   Size := SizeOf(Int32) * 4; // MinX, min_y, MaxX, max_y
 
-  I := 0;
+  i := 0;
 
-  while I < FScanLines.Size do
+  while i < FScanLines.Size do
     begin
       Size := Size + SizeOf(Int32) * 2 + // Y, NumSpans
-        Cardinal(PAggScanLineData(FScanLines[I]).NumSpans) *
+        Cardinal(PAggScanLineData(FScanLines[i]).NumSpans) *
         SizeOf(Int32) * 2; // X, Span_len
 
-      Inc(I);
+      Inc(i);
     end;
 
   Result := Size;
 end;
 
-procedure TAggScanLineStorageBin.WriteInt32(Dst: PInt8u; Val: Int32);
+procedure TAggScanLineStorageBin.WriteInt32(Dst: PInt8u; val: Int32);
 begin
-  PInt8u(Dst)^ := TInt32Int8uAccess(Val).Values[0];
-  PInt8u(PtrComp(Dst) + SizeOf(Int8u))^ := TInt32Int8uAccess(Val).Values[1];
-  PInt8u(PtrComp(Dst) + 2 * SizeOf(Int8u))^ := TInt32Int8uAccess(Val).Values[2];
-  PInt8u(PtrComp(Dst) + 3 * SizeOf(Int8u))^ := TInt32Int8uAccess(Val).Values[3];
+  PInt8u(Dst)^ := TInt32Int8uAccess(val).values[0];
+  PInt8u(PtrComp(Dst) + SizeOf(Int8u))^ := TInt32Int8uAccess(val).values[1];
+  PInt8u(PtrComp(Dst) + 2 * SizeOf(Int8u))^ := TInt32Int8uAccess(val).values[2];
+  PInt8u(PtrComp(Dst) + 3 * SizeOf(Int8u))^ := TInt32Int8uAccess(val).values[3];
 end;
 
 procedure TAggScanLineStorageBin.Serialize(Data: PInt8u);
 var
-  I, NumSpans, SpanIndex: Cardinal;
+  i, NumSpans, SpanIndex: Cardinal;
   ScanLineData: PAggScanLineData;
-  Sp: PAggSpanData;
+  sp: PAggSpanData;
 begin
   WriteInt32(Data, GetMinX); // MinX
   Inc(PtrComp(Data), SizeOf(Int32));
@@ -516,11 +516,11 @@ begin
   WriteInt32(Data, GetMaxY); // max_y
   Inc(PtrComp(Data), SizeOf(Int32));
 
-  I := 0;
+  i := 0;
 
-  while I < FScanLines.Size do
+  while i < FScanLines.Size do
     begin
-      ScanLineData := FScanLines[I];
+      ScanLineData := FScanLines[i];
 
       WriteInt32(Data, ScanLineData.Y); // Y
       Inc(PtrComp(Data), SizeOf(Int32));
@@ -532,36 +532,36 @@ begin
       SpanIndex := ScanLineData.Start_Span;
 
       repeat
-        Sp := FSpans[SpanIndex];
+        sp := FSpans[SpanIndex];
 
         Inc(SpanIndex);
 
-        WriteInt32(Data, Sp.X); // X
+        WriteInt32(Data, sp.X); // X
         Inc(PtrComp(Data), SizeOf(Int32));
 
-        WriteInt32(Data, Sp.Len); // len
+        WriteInt32(Data, sp.Len); // len
         Inc(PtrComp(Data), SizeOf(Int32));
 
         Dec(NumSpans);
 
       until NumSpans = 0;
 
-      Inc(I);
+      Inc(i);
     end;
 end;
 
-function TAggScanLineStorageBin.ScanLineByIndex(I: Cardinal): PAggScanLineData;
+function TAggScanLineStorageBin.ScanLineByIndex(i: Cardinal): PAggScanLineData;
 begin
-  if I < FScanLines.Size then
-      Result := FScanLines[I]
+  if i < FScanLines.Size then
+      Result := FScanLines[i]
   else
       Result := @FFakeScanLine;
 end;
 
-function TAggScanLineStorageBin.SpanByIndex(I: Cardinal): PAggSpanData;
+function TAggScanLineStorageBin.SpanByIndex(i: Cardinal): PAggSpanData;
 begin
-  if I < FSpans.Size then
-      Result := FSpans[I]
+  if i < FSpans.Size then
+      Result := FSpans[i]
   else
       Result := @FFakeSpan;
 end;
@@ -597,13 +597,13 @@ end;
 
 function TAggEmbeddedScanLineA.TConstIterator.ReadInt32: Integer;
 begin
-  TInt32Int8uAccess(Result).Values[0] := FInternalData^;
+  TInt32Int8uAccess(Result).values[0] := FInternalData^;
   Inc(PtrComp(FInternalData), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[1] := FInternalData^;
+  TInt32Int8uAccess(Result).values[1] := FInternalData^;
   Inc(PtrComp(FInternalData), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[2] := FInternalData^;
+  TInt32Int8uAccess(Result).values[2] := FInternalData^;
   Inc(PtrComp(FInternalData), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[3] := FInternalData^;
+  TInt32Int8uAccess(Result).values[3] := FInternalData^;
   Inc(PtrComp(FInternalData), SizeOf(Int8u));
 end;
 
@@ -612,7 +612,7 @@ end;
 constructor TAggEmbeddedScanLineA.Create;
 begin
   FInternalData := nil;
-  FY := 0;
+  fy := 0;
 
   FNumSpans := 0;
 end;
@@ -623,7 +623,7 @@ end;
 
 function TAggEmbeddedScanLineA.GetY: Integer;
 begin
-  Result := FY;
+  Result := fy;
 end;
 
 function TAggEmbeddedScanLineA.GetNumSpans: Cardinal;
@@ -643,22 +643,22 @@ end;
 
 function TAggEmbeddedScanLineA.ReadInt32: Integer;
 begin
-  TInt32Int8uAccess(Result).Values[0] := FInternalData^;
+  TInt32Int8uAccess(Result).values[0] := FInternalData^;
   Inc(PtrComp(FInternalData), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[1] := FInternalData^;
+  TInt32Int8uAccess(Result).values[1] := FInternalData^;
   Inc(PtrComp(FInternalData), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[2] := FInternalData^;
+  TInt32Int8uAccess(Result).values[2] := FInternalData^;
   Inc(PtrComp(FInternalData), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[3] := FInternalData^;
+  TInt32Int8uAccess(Result).values[3] := FInternalData^;
   Inc(PtrComp(FInternalData), SizeOf(Int8u));
 end;
 
-procedure TAggEmbeddedScanLineA.Init(Ptr: PInt8u; Dx, Dy: Integer);
+procedure TAggEmbeddedScanLineA.Init(PTR: PInt8u; dx, dy: Integer);
 begin
-  FInternalData := Ptr;
-  FY := ReadInt32 + Dy;
+  FInternalData := PTR;
+  fy := ReadInt32 + dy;
   FNumSpans := Cardinal(ReadInt32);
-  FDeltaX := Dx;
+  FDeltaX := dx;
 end;
 
 { TAggSerializedScanLinesAdaptorBin }
@@ -679,14 +679,14 @@ begin
 end;
 
 constructor TAggSerializedScanLinesAdaptorBin.Create(Data: PInt8u; Size: Cardinal;
-  Dx, Dy: Double);
+  dx, dy: Double);
 begin
   FData := Data;
   FEnd := PInt8u(PtrComp(Data) + Size);
   FInternalData := Data;
 
-  FDelta.X := Trunc(Dx + 0.5);
-  FDelta.Y := Trunc(Dy + 0.5);
+  FDelta.X := Trunc(dx + 0.5);
+  FDelta.Y := Trunc(dy + 0.5);
 
   FMin.X := $7FFFFFFF;
   FMin.Y := $7FFFFFFF;
@@ -695,14 +695,14 @@ begin
 end;
 
 procedure TAggSerializedScanLinesAdaptorBin.Init(Data: PInt8u; Size: Cardinal;
-  Dx, Dy: Double);
+  dx, dy: Double);
 begin
   FData := Data;
   FEnd := PInt8u(PtrComp(Data) + Size);
   FInternalData := Data;
 
-  FDelta.X := Trunc(Dx + 0.5);
-  FDelta.Y := Trunc(Dy + 0.5);
+  FDelta.X := Trunc(dx + 0.5);
+  FDelta.Y := Trunc(dy + 0.5);
 
   FMin.X := $7FFFFFFF;
   FMin.Y := $7FFFFFFF;
@@ -714,13 +714,13 @@ function TAggSerializedScanLinesAdaptorBin.ReadInt32: Integer;
 begin
   Result := 0;
 
-  TInt32Int8uAccess(Result).Values[0] := FInternalData^;
+  TInt32Int8uAccess(Result).values[0] := FInternalData^;
   Inc(PtrComp(FInternalData), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[1] := FInternalData^;
+  TInt32Int8uAccess(Result).values[1] := FInternalData^;
   Inc(PtrComp(FInternalData), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[2] := FInternalData^;
+  TInt32Int8uAccess(Result).values[2] := FInternalData^;
   Inc(PtrComp(FInternalData), SizeOf(Int8u));
-  TInt32Int8uAccess(Result).Values[3] := FInternalData^;
+  TInt32Int8uAccess(Result).values[3] := FInternalData^;
   Inc(PtrComp(FInternalData), SizeOf(Int8u));
 end;
 
@@ -830,4 +830,4 @@ begin
   Result := True;
 end;
 
-end.
+end. 

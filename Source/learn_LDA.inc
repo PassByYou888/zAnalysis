@@ -38,30 +38,30 @@
   *  2, if there was a multicollinearity in training set, but task has been solved.
   W           -   basis, array[0..NVars-1,0..NVars-1] columns of matrix stores basis vectors, sorted by quality of training set separation (in descending order)
   ************************************************************************ *)
-procedure FisherLDAN(const XY: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt; var Info: TLInt; var W: TLMatrix); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure FisherLDAN(const xy: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt; var Info: TLInt; var w: TLMatrix); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  I     : TLInt;
+  i     : TLInt;
   J     : TLInt;
-  K     : TLInt;
+  k     : TLInt;
   M     : TLInt;
-  V     : TLFloat;
+  v     : TLFloat;
   C     : TLIVec;
-  Mu    : TLVec;
+  MU    : TLVec;
   MuC   : TLMatrix;
   NC    : TLIVec;
   SW    : TLMatrix;
-  ST    : TLMatrix;
+  st    : TLMatrix;
   Z     : TLMatrix;
-  Z2    : TLMatrix;
+  z2    : TLMatrix;
   TM    : TLMatrix;
   SBRoot: TLMatrix;
   A     : TLMatrix;
   XYProj: TLMatrix;
   WProj : TLMatrix;
   TF    : TLVec;
-  D     : TLVec;
-  D2    : TLVec;
-  WORK  : TLVec;
+  d     : TLVec;
+  d2    : TLVec;
+  Work  : TLVec;
   i_    : TLInt;
 begin
 
@@ -73,15 +73,15 @@ begin
       Info := -1;
       Exit;
     end;
-  I := 0;
-  while I <= NPoints - 1 do
+  i := 0;
+  while i <= NPoints - 1 do
     begin
-      if (Round(XY[I, NVars]) < 0) or (Round(XY[I, NVars]) >= NClasses) then
+      if (Round(xy[i, NVars]) < 0) or (Round(xy[i, NVars]) >= NClasses) then
         begin
           Info := -2;
           Exit;
         end;
-      Inc(I);
+      Inc(i);
     end;
   Info := 1;
 
@@ -92,24 +92,24 @@ begin
   if NPoints <= 1 then
     begin
       Info := 2;
-      SetLength(W, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
-      I := 0;
-      while I <= NVars - 1 do
+      SetLength(w, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+      i := 0;
+      while i <= NVars - 1 do
         begin
           J := 0;
           while J <= NVars - 1 do
             begin
-              if I = J then
+              if i = J then
                 begin
-                  W[I, J] := 1;
+                  w[i, J] := 1;
                 end
               else
                 begin
-                  W[I, J] := 0;
+                  w[i, J] := 0;
                 end;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end;
@@ -118,119 +118,119 @@ begin
   // Prepare temporaries
   //
   SetLength(TF, NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(WORK, Max(NVars, NPoints) + 1);
+  SetLength(Work, Max(NVars, NPoints) + 1);
 
   //
   // Convert class labels from reals to integers (just for convenience)
   //
   SetLength(C, NPoints (* - 1 + 1 // optimized compiler *) );
-  I := 0;
-  while I <= NPoints - 1 do
+  i := 0;
+  while i <= NPoints - 1 do
     begin
-      C[I] := Round(XY[I, NVars]);
-      Inc(I);
+      C[i] := Round(xy[i, NVars]);
+      Inc(i);
     end;
 
   //
   // Calculate class sizes and means
   //
-  SetLength(Mu, NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(MU, NVars (* - 1 + 1 // optimized compiler *) );
   SetLength(MuC, NClasses (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
   SetLength(NC, NClasses (* - 1 + 1 // optimized compiler *) );
   J := 0;
   while J <= NVars - 1 do
     begin
-      Mu[J] := 0;
+      MU[J] := 0;
       Inc(J);
     end;
-  I := 0;
-  while I <= NClasses - 1 do
+  i := 0;
+  while i <= NClasses - 1 do
     begin
-      NC[I] := 0;
+      NC[i] := 0;
       J := 0;
       while J <= NVars - 1 do
         begin
-          MuC[I, J] := 0;
+          MuC[i, J] := 0;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
-  I := 0;
-  while I <= NPoints - 1 do
+  i := 0;
+  while i <= NPoints - 1 do
     begin
-      APVAdd(@Mu[0], 0, NVars - 1, @XY[I][0], 0, NVars - 1);
-      APVAdd(@MuC[C[I]][0], 0, NVars - 1, @XY[I][0], 0, NVars - 1);
-      NC[C[I]] := NC[C[I]] + 1;
-      Inc(I);
+      APVAdd(@MU[0], 0, NVars - 1, @xy[i][0], 0, NVars - 1);
+      APVAdd(@MuC[C[i]][0], 0, NVars - 1, @xy[i][0], 0, NVars - 1);
+      NC[C[i]] := NC[C[i]] + 1;
+      Inc(i);
     end;
-  I := 0;
-  while I <= NClasses - 1 do
+  i := 0;
+  while i <= NClasses - 1 do
     begin
-      V := AP_Float(1) / NC[I];
-      APVMul(@MuC[I][0], 0, NVars - 1, V);
-      Inc(I);
+      v := AP_Float(1) / NC[i];
+      APVMul(@MuC[i][0], 0, NVars - 1, v);
+      Inc(i);
     end;
-  V := AP_Float(1) / NPoints;
-  APVMul(@Mu[0], 0, NVars - 1, V);
+  v := AP_Float(1) / NPoints;
+  APVMul(@MU[0], 0, NVars - 1, v);
 
   //
   // Create ST matrix
   //
-  SetLength(ST, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
-  I := 0;
-  while I <= NVars - 1 do
+  SetLength(st, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+  i := 0;
+  while i <= NVars - 1 do
     begin
       J := 0;
       while J <= NVars - 1 do
         begin
-          ST[I, J] := 0;
+          st[i, J] := 0;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
-  K := 0;
-  while K <= NPoints - 1 do
+  k := 0;
+  while k <= NPoints - 1 do
     begin
-      APVMove(@TF[0], 0, NVars - 1, @XY[K][0], 0, NVars - 1);
-      APVSub(@TF[0], 0, NVars - 1, @Mu[0], 0, NVars - 1);
-      I := 0;
-      while I <= NVars - 1 do
+      APVMove(@TF[0], 0, NVars - 1, @xy[k][0], 0, NVars - 1);
+      APVSub(@TF[0], 0, NVars - 1, @MU[0], 0, NVars - 1);
+      i := 0;
+      while i <= NVars - 1 do
         begin
-          V := TF[I];
-          APVAdd(@ST[I][0], 0, NVars - 1, @TF[0], 0, NVars - 1, V);
-          Inc(I);
+          v := TF[i];
+          APVAdd(@st[i][0], 0, NVars - 1, @TF[0], 0, NVars - 1, v);
+          Inc(i);
         end;
-      Inc(K);
+      Inc(k);
     end;
 
   //
   // Create SW matrix
   //
   SetLength(SW, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
-  I := 0;
-  while I <= NVars - 1 do
+  i := 0;
+  while i <= NVars - 1 do
     begin
       J := 0;
       while J <= NVars - 1 do
         begin
-          SW[I, J] := 0;
+          SW[i, J] := 0;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
-  K := 0;
-  while K <= NPoints - 1 do
+  k := 0;
+  while k <= NPoints - 1 do
     begin
-      APVMove(@TF[0], 0, NVars - 1, @XY[K][0], 0, NVars - 1);
-      APVSub(@TF[0], 0, NVars - 1, @MuC[C[K]][0], 0, NVars - 1);
-      I := 0;
-      while I <= NVars - 1 do
+      APVMove(@TF[0], 0, NVars - 1, @xy[k][0], 0, NVars - 1);
+      APVSub(@TF[0], 0, NVars - 1, @MuC[C[k]][0], 0, NVars - 1);
+      i := 0;
+      while i <= NVars - 1 do
         begin
-          V := TF[I];
-          APVAdd(@SW[I][0], 0, NVars - 1, @TF[0], 0, NVars - 1, V);
-          Inc(I);
+          v := TF[i];
+          APVAdd(@SW[i][0], 0, NVars - 1, @TF[0], 0, NVars - 1, v);
+          Inc(i);
         end;
-      Inc(K);
+      Inc(k);
     end;
 
   //
@@ -249,40 +249,40 @@ begin
   // J = (v'*v) / (v'*(inv(root(D))*Z'*SW*Z*inv(root(D)))*v)  =
   // = (v'*v) / (v'*A*v)
   //
-  if not SMatrixEVD(ST, NVars, 1, True, D, Z) then
+  if not SMatrixEVD(st, NVars, 1, True, d, Z) then
     begin
       Info := -4;
       Exit;
     end;
-  SetLength(W, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
-  if AP_FP_Less_Eq(D[NVars - 1], 0) or
-    AP_FP_Less_Eq(D[0], 1000 * MachineEpsilon * D[NVars - 1]) then
+  SetLength(w, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+  if AP_FP_Less_Eq(d[NVars - 1], 0) or
+    AP_FP_Less_Eq(d[0], 1000 * MachineEpsilon * d[NVars - 1]) then
     begin
 
       //
       // Special case: D[NVars-1]<=0
       // Degenerate task (all variables takes the same value).
       //
-      if AP_FP_Less_Eq(D[NVars - 1], 0) then
+      if AP_FP_Less_Eq(d[NVars - 1], 0) then
         begin
           Info := 2;
-          I := 0;
-          while I <= NVars - 1 do
+          i := 0;
+          while i <= NVars - 1 do
             begin
               J := 0;
               while J <= NVars - 1 do
                 begin
-                  if I = J then
+                  if i = J then
                     begin
-                      W[I, J] := 1;
+                      w[i, J] := 1;
                     end
                   else
                     begin
-                      W[I, J] := 0;
+                      w[i, J] := 0;
                     end;
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -301,25 +301,25 @@ begin
       // factors to full N-dimensional subspace.
       //
       M := 0;
-      K := 0;
-      while K <= NVars - 1 do
+      k := 0;
+      while k <= NVars - 1 do
         begin
-          if AP_FP_Less_Eq(D[K], 1000 * MachineEpsilon * D[NVars - 1]) then
+          if AP_FP_Less_Eq(d[k], 1000 * MachineEpsilon * d[NVars - 1]) then
             begin
-              M := K + 1;
+              M := k + 1;
             end;
-          Inc(K);
+          Inc(k);
         end;
       Assert(M <> 0, 'FisherLDAN: internal error #1');
       SetLength(XYProj, NPoints (* - 1 + 1 // optimized compiler *) , NVars - M + 1);
-      MatrixMatrixMultiply(XY, 0, NPoints - 1, 0, NVars - 1, False, Z, 0,
+      MatrixMatrixMultiply(xy, 0, NPoints - 1, 0, NVars - 1, False, Z, 0,
         NVars - 1, M, NVars - 1, False, 1.0, XYProj, 0, NPoints - 1, 0,
-        NVars - M - 1, 0.0, WORK);
-      I := 0;
-      while I <= NPoints - 1 do
+        NVars - M - 1, 0.0, Work);
+      i := 0;
+      while i <= NPoints - 1 do
         begin
-          XYProj[I, NVars - M] := XY[I, NVars];
-          Inc(I);
+          XYProj[i, NVars - M] := xy[i, NVars];
+          Inc(i);
         end;
       FisherLDAN(XYProj, NPoints, NVars - M, NClasses, Info, WProj);
       if Info < 0 then
@@ -327,16 +327,16 @@ begin
           Exit;
         end;
       MatrixMatrixMultiply(Z, 0, NVars - 1, M, NVars - 1, False, WProj, 0,
-        NVars - M - 1, 0, NVars - M - 1, False, 1.0, W, 0, NVars - 1, 0,
-        NVars - M - 1, 0.0, WORK);
-      K := NVars - M;
-      while K <= NVars - 1 do
+        NVars - M - 1, 0, NVars - M - 1, False, 1.0, w, 0, NVars - 1, 0,
+        NVars - M - 1, 0.0, Work);
+      k := NVars - M;
+      while k <= NVars - 1 do
         begin
           for i_ := 0 to NVars - 1 do
             begin
-              W[i_, K] := Z[i_, K - (NVars - M)];
+              w[i_, k] := Z[i_, k - (NVars - M)];
             end;
-          Inc(K);
+          Inc(k);
         end;
       Info := 2;
     end
@@ -349,42 +349,42 @@ begin
       SetLength(TM, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
       SetLength(A, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
       MatrixMatrixMultiply(SW, 0, NVars - 1, 0, NVars - 1, False, Z, 0, NVars - 1,
-        0, NVars - 1, False, 1.0, TM, 0, NVars - 1, 0, NVars - 1, 0.0, WORK);
+        0, NVars - 1, False, 1.0, TM, 0, NVars - 1, 0, NVars - 1, 0.0, Work);
       MatrixMatrixMultiply(Z, 0, NVars - 1, 0, NVars - 1, True, TM, 0, NVars - 1,
-        0, NVars - 1, False, 1.0, A, 0, NVars - 1, 0, NVars - 1, 0.0, WORK);
-      I := 0;
-      while I <= NVars - 1 do
+        0, NVars - 1, False, 1.0, A, 0, NVars - 1, 0, NVars - 1, 0.0, Work);
+      i := 0;
+      while i <= NVars - 1 do
         begin
           J := 0;
           while J <= NVars - 1 do
             begin
-              A[I, J] := A[I, J] / Sqrt(D[I] * D[J]);
+              A[i, J] := A[i, J] / Sqrt(d[i] * d[J]);
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
-      if not SMatrixEVD(A, NVars, 1, True, D2, Z2) then
+      if not SMatrixEVD(A, NVars, 1, True, d2, z2) then
         begin
           Info := -4;
           Exit;
         end;
-      K := 0;
-      while K <= NVars - 1 do
+      k := 0;
+      while k <= NVars - 1 do
         begin
-          I := 0;
-          while I <= NVars - 1 do
+          i := 0;
+          while i <= NVars - 1 do
             begin
-              TF[I] := Z2[I, K] / Sqrt(D[I]);
-              Inc(I);
+              TF[i] := z2[i, k] / Sqrt(d[i]);
+              Inc(i);
             end;
-          I := 0;
-          while I <= NVars - 1 do
+          i := 0;
+          while i <= NVars - 1 do
             begin
-              V := APVDotProduct(@Z[I][0], 0, NVars - 1, @TF[0], 0, NVars - 1);
-              W[I, K] := V;
-              Inc(I);
+              v := APVDotProduct(@Z[i][0], 0, NVars - 1, @TF[0], 0, NVars - 1);
+              w[i, k] := v;
+              Inc(i);
             end;
-          Inc(K);
+          Inc(k);
         end;
     end;
 
@@ -393,34 +393,34 @@ begin
   // * normalization
   // * converting to non-negative form, if possible
   //
-  K := 0;
-  while K <= NVars - 1 do
+  k := 0;
+  while k <= NVars - 1 do
     begin
-      V := 0.0;
+      v := 0.0;
       for i_ := 0 to NVars - 1 do
         begin
-          V := V + W[i_, K] * W[i_, K];
+          v := v + w[i_, k] * w[i_, k];
         end;
-      V := 1 / Sqrt(V);
+      v := 1 / Sqrt(v);
       for i_ := 0 to NVars - 1 do
         begin
-          W[i_, K] := V * W[i_, K];
+          w[i_, k] := v * w[i_, k];
         end;
-      V := 0;
-      I := 0;
-      while I <= NVars - 1 do
+      v := 0;
+      i := 0;
+      while i <= NVars - 1 do
         begin
-          V := V + W[I, K];
-          Inc(I);
+          v := v + w[i, k];
+          Inc(i);
         end;
-      if AP_FP_Less(V, 0) then
+      if AP_FP_Less(v, 0) then
         begin
           for i_ := 0 to NVars - 1 do
             begin
-              W[i_, K] := -1 * W[i_, K];
+              w[i_, k] := -1 * w[i_, k];
             end;
         end;
-      Inc(K);
+      Inc(k);
     end;
 end;
 
@@ -448,17 +448,17 @@ end;
   *  2, if there was a multicollinearity in training set, but task has been solved.
   W           -   linear combination coefficients, array[0..NVars-1]
   ************************************************************************ *)
-procedure FisherLDA(const XY: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt; var Info: TLInt; var W: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure FisherLDA(const xy: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt; var Info: TLInt; var w: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
   W2: TLMatrix;
   i_: TLInt;
 begin
-  FisherLDAN(XY, NPoints, NVars, NClasses, Info, W2);
+  FisherLDAN(xy, NPoints, NVars, NClasses, Info, W2);
   if Info > 0 then
     begin
-      SetLength(W, NVars (* - 1 + 1 // optimized compiler *) );
+      SetLength(w, NVars (* - 1 + 1 // optimized compiler *) );
       for i_ := 0 to NVars - 1 do
-          W[i_] := W2[i_, 0];
+          w[i_] := W2[i_, 0];
     end;
 end;
-
+ 

@@ -42,7 +42,7 @@ unit AggMath;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -173,29 +173,29 @@ const
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7);
 
-function CalculatePointLocation(X1, Y1, X2, Y2, X, Y: Double): Double; overload;{$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CalculatePointLocation(x1, y1, x2, y2, X, Y: Double): Double; overload;{$IFDEF INLINE_ASM} inline; {$ENDIF}
 function CalculatePointLocation(Point1, Point2: TPointDouble; X, Y: Double): Double; overload;{$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function PointInTriangle(X1, Y1, X2, Y2, X3, Y3, X, Y: Double): Boolean; overload;{$IFDEF INLINE_ASM} inline; {$ENDIF}
+function PointInTriangle(x1, y1, x2, y2, x3, y3, X, Y: Double): Boolean; overload;{$IFDEF INLINE_ASM} inline; {$ENDIF}
 function PointInTriangle(Point1, Point2, Point3: TPointDouble; X, Y: Double): Boolean; overload;{$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function CalculateDistance(X1, Y1, X2, Y2: Double): Double; overload;{$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CalculateDistance(x1, y1, x2, y2: Double): Double; overload;{$IFDEF INLINE_ASM} inline; {$ENDIF}
 function CalculateDistance(Point1, Point2: TPointDouble): Double; overload;{$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function CalculateLinePointDistance(X1, Y1, X2, Y2, X, Y: Double): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CalculateIntersection(Ax, Ay, Bx, By, Cx, Cy, Dx, Dy: Double; X, Y: PDouble): Boolean;{$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CalculateLinePointDistance(x1, y1, x2, y2, X, Y: Double): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CalculateIntersection(Ax, Ay, Bx, By, Cx, Cy, dx, dy: Double; X, Y: PDouble): Boolean;{$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function IntersectionExists(X1, Y1, X2, Y2, X3, Y3, X4, Y4: Double): Boolean;{$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IntersectionExists(x1, y1, x2, y2, x3, y3, x4, y4: Double): Boolean;{$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure CalculateOrthogonal(Thickness, X1, Y1, X2, Y2: Double; X, Y: PDouble);{$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure DilateTriangle(X1, Y1, X2, Y2, X3, Y3: Double; X, Y: PDouble; D: Double);{$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CalculateOrthogonal(Thickness, x1, y1, x2, y2: Double; X, Y: PDouble);{$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure DilateTriangle(x1, y1, x2, y2, x3, y3: Double; X, Y: PDouble; d: Double);{$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function CalculateTriangleArea(X1, Y1, X2, Y2, X3, Y3: Double): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CalculatePolygonArea(St: PAggStorageXY): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CalculatePolygonAreaVertexSequence(St: TAggVertexSequence): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
-function FastSqrt(Val: Cardinal): Cardinal;{$IFDEF INLINE_ASM} inline; {$ENDIF}
-function Besj(X: Double; N: Integer): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CrossProduct(X1, Y1, X2, Y2, X, Y: Double): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CalculateTriangleArea(x1, y1, x2, y2, x3, y3: Double): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CalculatePolygonArea(st: PAggStorageXY): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CalculatePolygonAreaVertexSequence(st: TAggVertexSequence): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
+function FastSqrt(val: Cardinal): Cardinal;{$IFDEF INLINE_ASM} inline; {$ENDIF}
+function Besj(X: Double; n: Integer): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CrossProduct(x1, y1, x2, y2, X, Y: Double): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function Hypot(X, Y: Double): Double;{$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure SinCos(Theta: Double; out Sin, Cos: Double);{$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -204,9 +204,9 @@ procedure SinCosScale(Theta: Double; out Sin, Cos: Double; ScaleSin, ScaleCos: D
 
 implementation
 
-function CalculatePointLocation(X1, Y1, X2, Y2, X, Y: Double): Double;
+function CalculatePointLocation(x1, y1, x2, y2, X, Y: Double): Double;
 begin
-  Result := (X - X2) * (Y2 - Y1) - (Y - Y2) * (X2 - X1);
+  Result := (X - x2) * (y2 - y1) - (Y - y2) * (x2 - x1);
 end;
 
 function CalculatePointLocation(Point1, Point2: TPointDouble;
@@ -216,13 +216,13 @@ begin
     (Y - Point2.Y) * (Point2.X - Point1.X);
 end;
 
-function PointInTriangle(X1, Y1, X2, Y2, X3, Y3, X, Y: Double): Boolean;
+function PointInTriangle(x1, y1, x2, y2, x3, y3, X, Y: Double): Boolean;
 var
   PntLoc: array [0 .. 2] of Boolean;
 begin
-  PntLoc[0] := CalculatePointLocation(X1, Y1, X2, Y2, X, Y) < 0.0;
-  PntLoc[1] := CalculatePointLocation(X2, Y2, X3, Y3, X, Y) < 0.0;
-  PntLoc[2] := CalculatePointLocation(X3, Y3, X1, Y1, X, Y) < 0.0;
+  PntLoc[0] := CalculatePointLocation(x1, y1, x2, y2, X, Y) < 0.0;
+  PntLoc[1] := CalculatePointLocation(x2, y2, x3, y3, X, Y) < 0.0;
+  PntLoc[2] := CalculatePointLocation(x3, y3, x1, y1, X, Y) < 0.0;
 
   Result := (PntLoc[0] = PntLoc[1]) and (PntLoc[1] = PntLoc[2]) and
     (PntLoc[2] = PntLoc[0]);
@@ -241,12 +241,12 @@ begin
     (PntLoc[2] = PntLoc[0]);
 end;
 
-function CalculateDistance(X1, Y1, X2, Y2: Double): Double;
+function CalculateDistance(x1, y1, x2, y2: Double): Double;
 var
   Delta: TPointDouble;
 begin
-  Delta.X := X2 - X1;
-  Delta.Y := Y2 - Y1;
+  Delta.X := x2 - x1;
+  Delta.Y := y2 - y1;
 
   Result := Hypot(Delta.X, Delta.Y);
 end;
@@ -261,28 +261,28 @@ begin
   Result := Hypot(Delta.X, Delta.Y);
 end;
 
-function CalculateLinePointDistance(X1, Y1, X2, Y2, X, Y: Double): Double;
+function CalculateLinePointDistance(x1, y1, x2, y2, X, Y: Double): Double;
 var
-  D: Double;
+  d: Double;
   Delta: TPointDouble;
 begin
-  Delta.X := X2 - X1;
-  Delta.Y := Y2 - Y1;
-  D := Hypot(Delta.X, Delta.Y);
+  Delta.X := x2 - x1;
+  Delta.Y := y2 - y1;
+  d := Hypot(Delta.X, Delta.Y);
 
-  if D < CAggIntersectionEpsilon then
-      Result := CalculateDistance(X1, Y1, X, Y)
+  if d < CAggIntersectionEpsilon then
+      Result := CalculateDistance(x1, y1, X, Y)
   else
-      Result := ((X - X2) * Delta.Y - (Y - Y2) * Delta.X) / D;
+      Result := ((X - x2) * Delta.Y - (Y - y2) * Delta.X) / d;
 end;
 
-function CalculateIntersection(Ax, Ay, Bx, By, Cx, Cy, Dx, Dy: Double;
+function CalculateIntersection(Ax, Ay, Bx, By, Cx, Cy, dx, dy: Double;
   X, Y: PDouble): Boolean;
 var
   R, Num, Den: Double;
 begin
-  Num := (Ay - Cy) * (Dx - Cx) - (Ax - Cx) * (Dy - Cy);
-  Den := (Bx - Ax) * (Dy - Cy) - (By - Ay) * (Dx - Cx);
+  Num := (Ay - Cy) * (dx - Cx) - (Ax - Cx) * (dy - Cy);
+  Den := (Bx - Ax) * (dy - Cy) - (By - Ay) * (dx - Cx);
 
   if Abs(Den) < CAggIntersectionEpsilon then
       Result := False
@@ -297,35 +297,35 @@ begin
     end;
 end;
 
-function IntersectionExists(X1, Y1, X2, Y2, X3, Y3, X4, Y4: Double): Boolean;
+function IntersectionExists(x1, y1, x2, y2, x3, y3, x4, y4: Double): Boolean;
 var
   Delta: array [0 .. 1] of TPointDouble;
 begin
-  Delta[0].X := X2 - X1;
-  Delta[0].Y := Y2 - Y1;
-  Delta[1].X := X4 - X3;
-  Delta[1].Y := Y4 - Y3;
+  Delta[0].X := x2 - x1;
+  Delta[0].Y := y2 - y1;
+  Delta[1].X := x4 - x3;
+  Delta[1].Y := y4 - y3;
 
-  Result := (((X3 - X2) * Delta[0].Y - (Y3 - Y2) * Delta[0].X < 0.0) <>
-    ((X4 - X2) * Delta[0].Y - (Y4 - Y2) * Delta[0].X < 0.0)) and
-    (((X1 - X4) * Delta[1].Y - (Y1 - Y4) * Delta[1].X < 0.0) <>
-    ((X2 - X4) * Delta[1].Y - (Y2 - Y4) * Delta[1].X < 0.0));
+  Result := (((x3 - x2) * Delta[0].Y - (y3 - y2) * Delta[0].X < 0.0) <>
+    ((x4 - x2) * Delta[0].Y - (y4 - y2) * Delta[0].X < 0.0)) and
+    (((x1 - x4) * Delta[1].Y - (y1 - y4) * Delta[1].X < 0.0) <>
+    ((x2 - x4) * Delta[1].Y - (y2 - y4) * Delta[1].X < 0.0));
 end;
 
-procedure CalculateOrthogonal(Thickness, X1, Y1, X2, Y2: Double; X, Y: PDouble);
+procedure CalculateOrthogonal(Thickness, x1, y1, x2, y2: Double; X, Y: PDouble);
 var
-  D: Double;
+  d: Double;
   Delta: TPointDouble;
 begin
-  Delta.X := X2 - X1;
-  Delta.Y := Y2 - Y1;
-  D := Thickness / Hypot(Delta.X, Delta.Y);
-  X^ := Delta.Y * D;
-  Y^ := Delta.X * D;
+  Delta.X := x2 - x1;
+  Delta.Y := y2 - y1;
+  d := Thickness / Hypot(Delta.X, Delta.Y);
+  X^ := Delta.Y * d;
+  Y^ := Delta.X * d;
 end;
 
-procedure DilateTriangle(X1, Y1, X2, Y2, X3, Y3: Double; X, Y: PDouble;
-  D: Double);
+procedure DilateTriangle(x1, y1, x2, y2, x3, y3: Double; X, Y: PDouble;
+  d: Double);
 var
   Loc: Double;
   Delta: array [0 .. 3] of TPointDouble;
@@ -333,106 +333,106 @@ begin
   Delta[0] := PointDouble(0);
   Delta[1] := PointDouble(0);
   Delta[2] := PointDouble(0);
-  Loc := CalculatePointLocation(X1, Y1, X2, Y2, X3, Y3);
+  Loc := CalculatePointLocation(x1, y1, x2, y2, x3, y3);
 
   if Abs(Loc) > CAggIntersectionEpsilon then
     begin
-      if CalculatePointLocation(X1, Y1, X2, Y2, X3, Y3) > 0.0 then
-          D := -D;
+      if CalculatePointLocation(x1, y1, x2, y2, x3, y3) > 0.0 then
+          d := -d;
 
-      CalculateOrthogonal(D, X1, Y1, X2, Y2, @Delta[0].X, @Delta[0].Y);
-      CalculateOrthogonal(D, X2, Y2, X3, Y3, @Delta[1].X, @Delta[1].Y);
-      CalculateOrthogonal(D, X3, Y3, X1, Y1, @Delta[2].X, @Delta[2].Y);
+      CalculateOrthogonal(d, x1, y1, x2, y2, @Delta[0].X, @Delta[0].Y);
+      CalculateOrthogonal(d, x2, y2, x3, y3, @Delta[1].X, @Delta[1].Y);
+      CalculateOrthogonal(d, x3, y3, x1, y1, @Delta[2].X, @Delta[2].Y);
     end;
 
-  X^ := X1 + Delta[0].X;
+  X^ := x1 + Delta[0].X;
   Inc(X);
-  Y^ := Y1 - Delta[0].Y;
+  Y^ := y1 - Delta[0].Y;
   Inc(Y);
-  X^ := X2 + Delta[0].X;
+  X^ := x2 + Delta[0].X;
   Inc(X);
-  Y^ := Y2 - Delta[0].Y;
+  Y^ := y2 - Delta[0].Y;
   Inc(Y);
-  X^ := X2 + Delta[1].X;
+  X^ := x2 + Delta[1].X;
   Inc(X);
-  Y^ := Y2 - Delta[1].Y;
+  Y^ := y2 - Delta[1].Y;
   Inc(Y);
-  X^ := X3 + Delta[1].X;
+  X^ := x3 + Delta[1].X;
   Inc(X);
-  Y^ := Y3 - Delta[1].Y;
+  Y^ := y3 - Delta[1].Y;
   Inc(Y);
-  X^ := X3 + Delta[2].X;
+  X^ := x3 + Delta[2].X;
   Inc(X);
-  Y^ := Y3 - Delta[2].Y;
+  Y^ := y3 - Delta[2].Y;
   Inc(Y);
-  X^ := X1 + Delta[2].X;
+  X^ := x1 + Delta[2].X;
   Inc(X);
-  Y^ := Y1 - Delta[2].Y;
+  Y^ := y1 - Delta[2].Y;
   Inc(Y);
 end;
 
-function CalculateTriangleArea(X1, Y1, X2, Y2, X3, Y3: Double): Double;
+function CalculateTriangleArea(x1, y1, x2, y2, x3, y3: Double): Double;
 begin
-  Result := (X1 * Y2 - X2 * Y1 + X2 * Y3 - X3 * Y2 + X3 * Y1 - X1 * Y3) * 0.5;
+  Result := (x1 * y2 - x2 * y1 + x2 * y3 - x3 * y2 + x3 * y1 - x1 * y3) * 0.5;
 end;
 
-function CalculatePolygonArea(St: PAggStorageXY): Double;
+function CalculatePolygonArea(st: PAggStorageXY): Double;
 var
-  I: Cardinal;
-  V: PPointDouble;
-  X, Y, Sum, Xs, Ys: Double;
+  i: Cardinal;
+  v: PPointDouble;
+  X, Y, Sum, XS, YS: Double;
 begin
   Sum := 0.0;
-  X := St.Poly[0].X;
-  Y := St.Poly[0].Y;
-  Xs := X;
-  Ys := Y;
+  X := st.Poly[0].X;
+  Y := st.Poly[0].Y;
+  XS := X;
+  YS := Y;
 
-  if St.Size > 0 then
-    for I := 1 to St.Size - 1 do
+  if st.Size > 0 then
+    for i := 1 to st.Size - 1 do
       begin
-        V := @St.Poly[I];
+        v := @st.Poly[i];
 
-        Sum := Sum + (X * V.Y - Y * V.X);
+        Sum := Sum + (X * v.Y - Y * v.X);
 
-        X := V.X;
-        Y := V.Y;
+        X := v.X;
+        Y := v.Y;
       end;
 
-  Result := (Sum + X * Ys - Y * Xs) * 0.5;
+  Result := (Sum + X * YS - Y * XS) * 0.5;
 end;
 
-function CalculatePolygonAreaVertexSequence(St: TAggVertexSequence): Double;
+function CalculatePolygonAreaVertexSequence(st: TAggVertexSequence): Double;
 var
-  I: Cardinal;
-  V: PAggVertexDistance;
-  Pos: TPointDouble;
-  Sum, Xs, Ys: Double;
+  i: Cardinal;
+  v: PAggVertexDistance;
+  pos: TPointDouble;
+  Sum, XS, YS: Double;
 begin
   Sum := 0.0;
-  Pos := PAggVertexDistance(St[0]).Pos;
-  Xs := Pos.X;
-  Ys := Pos.Y;
+  pos := PAggVertexDistance(st[0]).pos;
+  XS := pos.X;
+  YS := pos.Y;
 
-  if St.Size > 0 then
-    for I := 1 to St.Size - 1 do
+  if st.Size > 0 then
+    for i := 1 to st.Size - 1 do
       begin
-        V := St[I];
+        v := st[i];
 
-        Sum := Sum + (Pos.X * V.Pos.Y - Pos.Y * V.Pos.X);
+        Sum := Sum + (pos.X * v.pos.Y - pos.Y * v.pos.X);
 
-        Pos := V.Pos;
+        pos := v.pos;
       end;
 
-  Result := (Sum + Pos.X * Ys - Pos.Y * Xs) * 0.5;
+  Result := (Sum + pos.X * YS - pos.Y * XS) * 0.5;
 end;
 
-function FastSqrt(Val: Cardinal): Cardinal;
+function FastSqrt(val: Cardinal): Cardinal;
 var
   Bit: Integer;
   T, Shift: Cardinal;
 begin
-  T := Val;
+  T := val;
   Bit := 0;
 
   Shift := 11;
@@ -470,10 +470,10 @@ begin
     begin
       Bit := (ShrInt32(Bit, 1)) + (Bit and 1);
       Shift := Shift - Bit;
-      Val := Val shr (Bit shl 1);
+      val := val shr (Bit shl 1);
     end;
 
-  Result := CAggSqrtTable[Val] shr Shift;
+  Result := CAggSqrtTable[val] shr Shift;
 end;
 
 // --------------------------------------------------------------------besj
@@ -498,24 +498,24 @@ end;
 // --------------------
 // Adapted for use in AGG library by Andy Wilk (castor.vulgaris@gmail.com)
 // ------------------------------------------------------------------------
-function Besj(X: Double; N: Integer): Double;
+function Besj(X: Double; n: Integer): Double;
 var
-  I, M1, M2, M8, Imax: Integer;
-  D, B, B1, C2, C3, C4, C6: Double;
+  i, m1, m2, M8, IMAX: Integer;
+  d, b, b1, c2, c3, c4, C6: Double;
 begin
-  if N < 0 then
+  if n < 0 then
     begin
       Result := 0;
 
       Exit;
     end;
 
-  D := 1E-6;
-  B := 0;
+  d := 1E-6;
+  b := 0;
 
-  if Abs(X) <= D then
+  if Abs(X) <= d then
     begin
-      if N <> 0 then
+      if n <> 0 then
           Result := 0
       else
           Result := 1;
@@ -523,69 +523,69 @@ begin
       Exit;
     end;
 
-  B1 := 0; // b1 is the value from the previous iteration
+  b1 := 0; // b1 is the value from the previous iteration
 
   // Set up a starting order for recurrence
-  M1 := Trunc(Abs(X) + 6);
+  m1 := Trunc(Abs(X) + 6);
 
   if Abs(X) > 5 then
-      M1 := Trunc(Abs(1.4 * X + 60 / X));
+      m1 := Trunc(Abs(1.4 * X + 60 / X));
 
-  M2 := Trunc(N + 2 + Abs(X) * 0.25);
+  m2 := Trunc(n + 2 + Abs(X) * 0.25);
 
-  if M1 > M2 then
-      M2 := M1;
+  if m1 > m2 then
+      m2 := m1;
 
   // Apply recurrence down from curent max order
   repeat
-    C3 := 0;
-    C2 := 1E-30;
-    C4 := 0;
+    c3 := 0;
+    c2 := 1E-30;
+    c4 := 0;
     M8 := 1;
 
-    if M2 div 2 * 2 = M2 then
+    if m2 div 2 * 2 = m2 then
         M8 := -1;
 
-    Imax := M2 - 2;
+    IMAX := m2 - 2;
 
-    for I := 1 to Imax do
+    for i := 1 to IMAX do
       begin
-        C6 := 2 * (M2 - I) * C2 / X - C3;
-        C3 := C2;
-        C2 := C6;
+        C6 := 2 * (m2 - i) * c2 / X - c3;
+        c3 := c2;
+        c2 := C6;
 
-        if M2 - I - 1 = N then
-            B := C6;
+        if m2 - i - 1 = n then
+            b := C6;
 
         M8 := -1 * M8;
 
         if M8 > 0 then
-            C4 := C4 + 2 * C6;
+            c4 := c4 + 2 * C6;
       end;
 
-    C6 := 2 * C2 / X - C3;
+    C6 := 2 * c2 / X - c3;
 
-    if N = 0 then
-        B := C6;
+    if n = 0 then
+        b := C6;
 
-    C4 := C4 + C6;
-    B := B / C4;
+    c4 := c4 + C6;
+    b := b / c4;
 
-    if Abs(B - B1) < D then
+    if Abs(b - b1) < d then
       begin
-        Result := B;
+        Result := b;
         Exit;
       end;
 
-    B1 := B;
+    b1 := b;
 
-    Inc(M2, 3);
+    Inc(m2, 3);
   until False;
 end;
 
-function CrossProduct(X1, Y1, X2, Y2, X, Y: Double): Double;
+function CrossProduct(x1, y1, x2, y2, X, Y: Double): Double;
 begin
-  Result := (X - X2) * (Y2 - Y1) - (Y - Y2) * (X2 - X1);
+  Result := (X - x2) * (y2 - y1) - (Y - y2) * (x2 - x1);
 end;
 
 procedure SinCosDouble(Theta: Double; out Sin, Cos: Double);
@@ -617,4 +617,5 @@ begin
   Cos := Cos * ScaleCos;
 end;
 
-end.
+end. 
+ 

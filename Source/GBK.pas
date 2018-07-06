@@ -1,4 +1,4 @@
-﻿{ ****************************************************************************** }
+{ ****************************************************************************** }
 { * BASE GBK support,  written by QQ 600585@qq.com                             * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
@@ -13,7 +13,7 @@ unit GBK;
 
 interface
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 
 uses DoStatusIO, CoreClasses, PascalStrings, MemoryStream64, ListEngine, UnicodeMixedLib,
@@ -23,7 +23,7 @@ uses DoStatusIO, CoreClasses, PascalStrings, MemoryStream64, ListEngine, Unicode
 function GBKString(const s: TUPascalString): TUPascalString;
 
 { Pinyin encoding conversion, support simplified port body }
-function PY(const s: TUPascalString; const multiPy: Boolean): TUPascalString;
+function Py(const s: TUPascalString; const multiPy: Boolean): TUPascalString;
 
 { Simplified to Traditional }
 function S2T(const s: TUPascalString): TUPascalString;
@@ -41,12 +41,12 @@ implementation
 
 uses FastGBK, GBKMediaCenter;
 
-function GBKChar(const c: TUPascalString): USystemString;
+function GBKChar(const C: TUPascalString): USystemString;
 begin
   {$IFDEF FPC}
-  Result := TUPascalString(CharDict.GetDefaultValue(TPascalString(c), TPascalString(c)));
+  Result := TUPascalString(CharDict.GetDefaultValue(TPascalString(C), TPascalString(C)));
   {$ELSE FPC}
-  Result := CharDict.GetDefaultValue(c, c);
+  Result := CharDict.GetDefaultValue(C, C);
   {$ENDIF FPC}
 end;
 
@@ -69,10 +69,10 @@ begin
       Result := s;
 end;
 
-function PY(const s: TUPascalString; const multiPy: Boolean): TUPascalString;
+function Py(const s: TUPascalString; const multiPy: Boolean): TUPascalString;
 var
-  ns, n2, n3: TUPascalString;
-  i, j      : Integer;
+  ns, N2, n3: TUPascalString;
+  i, J      : Integer;
   Successed : Boolean;
 begin
   ns := GBKString(s);
@@ -83,34 +83,34 @@ begin
   while i <= ns.Len do
     begin
       Successed := False;
-      j := umlMin(PYDict.HashList.MaxNameLen, ns.Len - i);
-      while j > 1 do
+      J := umlMin(PYDict.HashList.MaxNameLen, ns.Len - i);
+      while J > 1 do
         begin
-          n2 := ns.copy(i, j);
-          n3 := PY_Table(n2, Successed);
+          N2 := ns.Copy(i, J);
+          n3 := PY_Table(N2, Successed);
           if Successed then
             begin
               Result.Append(n3 + #32);
-              inc(i, j);
-              break;
+              Inc(i, J);
+              Break;
             end;
-          dec(j);
+          Dec(J);
         end;
 
       if not Successed then
         begin
-          n2 := PY_Table(ns[i], Successed);
+          N2 := PY_Table(ns[i], Successed);
           if Successed then
             begin
-              if n2.Exists(#32) then
+              if N2.Exists(#32) then
                 begin
                   if multiPy then
-                      Result.Append('(' + n2.ReplaceChar(#32, ',') + ')' + #32)
+                      Result.Append('(' + N2.ReplaceChar(#32, ',') + ')' + #32)
                   else
-                      Result.Append(umlGetFirstStr(n2.Text, #32).Text + #32);
+                      Result.Append(umlGetFirstStr(N2.Text, #32).Text + #32);
                 end
               else
-                  Result.Append(n2 + #32);
+                  Result.Append(N2 + #32);
             end
           else
             begin
@@ -119,7 +119,7 @@ begin
 
               Result.Append(FastPY(ns[i], multiPy));
             end;
-          inc(i);
+          Inc(i);
         end;
     end;
   if (Result.Len > 1) and (Result.Last = #32) then
@@ -136,8 +136,8 @@ end;
 
 function S2T(const s: TUPascalString): TUPascalString;
 var
-  ns, n2, n3: TUPascalString;
-  i, j      : Integer;
+  ns, N2, n3: TUPascalString;
+  i, J      : Integer;
   Successed : Boolean;
 begin
   ns := GBKString(s);
@@ -148,28 +148,28 @@ begin
   while i <= ns.Len do
     begin
       Successed := False;
-      j := umlMin(s2tDict.HashList.MaxNameLen, ns.Len - i);
-      while j > 1 do
+      J := umlMin(s2tDict.HashList.MaxNameLen, ns.Len - i);
+      while J > 1 do
         begin
-          n2 := ns.copy(i, j);
-          n3 := S2T_Table(n2, Successed);
+          N2 := ns.Copy(i, J);
+          n3 := S2T_Table(N2, Successed);
           if Successed then
             begin
               Result.Append(n3);
-              inc(i, j);
-              break;
+              Inc(i, J);
+              Break;
             end;
-          dec(j);
+          Dec(J);
         end;
 
       if not Successed then
         begin
-          n2 := S2T_Table(ns[i], Successed);
+          N2 := S2T_Table(ns[i], Successed);
           if Successed then
-              Result.Append(n2)
+              Result.Append(N2)
           else
               Result.Append(ns[i]);
-          inc(i);
+          Inc(i);
         end;
     end;
 end;
@@ -184,8 +184,8 @@ end;
 
 function S2HK(const s: TUPascalString): TUPascalString;
 var
-  ns, n2, n3: TUPascalString;
-  i, j      : Integer;
+  ns, N2, n3: TUPascalString;
+  i, J      : Integer;
   Successed : Boolean;
 begin
   ns := S2T(s);
@@ -196,28 +196,28 @@ begin
   while i <= ns.Len do
     begin
       Successed := False;
-      j := umlMin(t2hkDict.HashList.MaxNameLen, ns.Len - i);
-      while j > 1 do
+      J := umlMin(t2hkDict.HashList.MaxNameLen, ns.Len - i);
+      while J > 1 do
         begin
-          n2 := ns.copy(i, j);
-          n3 := t2HK_Table(n2, Successed);
+          N2 := ns.Copy(i, J);
+          n3 := t2HK_Table(N2, Successed);
           if Successed then
             begin
               Result.Append(n3);
-              inc(i, j);
-              break;
+              Inc(i, J);
+              Break;
             end;
-          dec(j);
+          Dec(J);
         end;
 
       if not Successed then
         begin
-          n2 := t2HK_Table(ns[i], Successed);
+          N2 := t2HK_Table(ns[i], Successed);
           if Successed then
-              Result.Append(n2)
+              Result.Append(N2)
           else
               Result.Append(ns[i]);
-          inc(i);
+          Inc(i);
         end;
     end;
 end;
@@ -232,8 +232,8 @@ end;
 
 function T2S(const s: TUPascalString): TUPascalString;
 var
-  ns, n2, n3: TUPascalString;
-  i, j      : Integer;
+  ns, N2, n3: TUPascalString;
+  i, J      : Integer;
   Successed : Boolean;
 begin
   ns := s;
@@ -244,28 +244,28 @@ begin
   while i <= ns.Len do
     begin
       Successed := False;
-      j := umlMin(t2sDict.HashList.MaxNameLen, ns.Len - i);
-      while j > 1 do
+      J := umlMin(t2sDict.HashList.MaxNameLen, ns.Len - i);
+      while J > 1 do
         begin
-          n2 := ns.copy(i, j);
-          n3 := t2s_Table(n2, Successed);
+          N2 := ns.Copy(i, J);
+          n3 := t2s_Table(N2, Successed);
           if Successed then
             begin
               Result.Append(n3);
-              inc(i, j);
-              break;
+              Inc(i, J);
+              Break;
             end;
-          dec(j);
+          Dec(J);
         end;
 
       if not Successed then
         begin
-          n2 := t2s_Table(ns[i], Successed);
+          N2 := t2s_Table(ns[i], Successed);
           if Successed then
-              Result.Append(n2)
+              Result.Append(N2)
           else
               Result.Append(ns[i]);
-          inc(i);
+          Inc(i);
         end;
     end;
 
@@ -282,8 +282,8 @@ end;
 
 function S2TW(const s: TUPascalString): TUPascalString;
 var
-  ns, n2, n3: TUPascalString;
-  i, j      : Integer;
+  ns, N2, n3: TUPascalString;
+  i, J      : Integer;
   Successed : Boolean;
 begin
   ns := S2T(s);
@@ -294,30 +294,30 @@ begin
   while i <= ns.Len do
     begin
       Successed := False;
-      j := umlMin(t2twDict.HashList.MaxNameLen, ns.Len - i);
-      while j > 1 do
+      J := umlMin(t2twDict.HashList.MaxNameLen, ns.Len - i);
+      while J > 1 do
         begin
-          n2 := ns.copy(i, j);
-          n3 := t2tw_Table(n2, Successed);
+          N2 := ns.Copy(i, J);
+          n3 := t2tw_Table(N2, Successed);
           if Successed then
             begin
               Result.Append(n3);
-              inc(i, j);
-              break;
+              Inc(i, J);
+              Break;
             end;
-          dec(j);
+          Dec(J);
         end;
 
       if not Successed then
         begin
-          n2 := t2tw_Table(ns[i], Successed);
+          N2 := t2tw_Table(ns[i], Successed);
           if Successed then
-              Result.Append(n2)
+              Result.Append(N2)
           else
               Result.Append(ns[i]);
-          inc(i);
+          Inc(i);
         end;
     end;
 end;
 
-end.
+end. 

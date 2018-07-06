@@ -39,7 +39,7 @@ unit AggSpanGradientAlpha;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -68,14 +68,14 @@ type
     procedure SetD2(Value: Double);
   public
     constructor Create; overload;
-    constructor Create(Inter: TAggSpanInterpolator;
+    constructor Create(inter: TAggSpanInterpolator;
       Gradient: TAggCustomGradient; Alpha_fnc: TAggGradientAlpha;
-      D1, D2: Double); overload;
+      d1, d2: Double); overload;
 
     procedure Convert(Span: PAggColor; X, Y: Integer; Len: Cardinal); override;
 
-    property D1: Double read GetD1 write SetD1;
-    property D2: Double read GetD2 write SetD2;
+    property d1: Double read GetD1 write SetD1;
+    property d2: Double read GetD2 write SetD2;
 
     property Interpolator: TAggSpanInterpolator read FInterpolator write FInterpolator;
     property GradientFunction: TAggCustomGradient read FGradientFunction write FGradientFunction;
@@ -114,17 +114,17 @@ begin
   FD2 := 0;
 end;
 
-constructor TAggSpanGradientAlpha.Create(Inter: TAggSpanInterpolator;
-  Gradient: TAggCustomGradient; Alpha_fnc: TAggGradientAlpha; D1, D2: Double);
+constructor TAggSpanGradientAlpha.Create(inter: TAggSpanInterpolator;
+  Gradient: TAggCustomGradient; Alpha_fnc: TAggGradientAlpha; d1, d2: Double);
 begin
-  FInterpolator := Inter;
+  FInterpolator := inter;
   FGradientFunction := Gradient;
   FAlphaFunction := Alpha_fnc;
 
   FDownscaleShift := FInterpolator.SubpixelShift - CAggGradientSubpixelShift;
 
-  FD1 := Trunc(D1 * CAggGradientSubpixelSize);
-  FD2 := Trunc(D2 * CAggGradientSubpixelSize);
+  FD1 := Trunc(d1 * CAggGradientSubpixelSize);
+  FD2 := Trunc(d2 * CAggGradientSubpixelSize);
 end;
 
 function TAggSpanGradientAlpha.GetD1;
@@ -150,30 +150,30 @@ end;
 procedure TAggSpanGradientAlpha.Convert(Span: PAggColor; X, Y: Integer;
   Len: Cardinal);
 var
-  Dd, D: Integer;
+  DD, d: Integer;
 begin
-  Dd := FD2 - FD1;
+  DD := FD2 - FD1;
 
-  if Dd < 1 then
-      Dd := 1;
+  if DD < 1 then
+      DD := 1;
 
   FInterpolator.SetBegin(X + 0.5, Y + 0.5, Len);
 
   repeat
     FInterpolator.Coordinates(@X, @Y);
 
-    D := FGradientFunction.Calculate(ShrInt32(X, FDownscaleShift),
+    d := FGradientFunction.Calculate(ShrInt32(X, FDownscaleShift),
       ShrInt32(Y, FDownscaleShift), FD2);
 
-    D := ((D - FD1) * FAlphaFunction.Size) div Dd;
+    d := ((d - FD1) * FAlphaFunction.Size) div DD;
 
-    if D < 0 then
-        D := 0;
+    if d < 0 then
+        d := 0;
 
-    if D >= FAlphaFunction.Size then
-        D := FAlphaFunction.Size - 1;
+    if d >= FAlphaFunction.Size then
+        d := FAlphaFunction.Size - 1;
 
-    Span.Rgba8.A := PInt8u(FAlphaFunction.ArrayOperator(D))^;
+    Span.Rgba8.A := PInt8u(FAlphaFunction.ArrayOperator(d))^;
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
 
@@ -204,4 +204,4 @@ begin
   Result := Int8u(255 - X);
 end;
 
-end.
+end. 

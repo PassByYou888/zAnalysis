@@ -39,7 +39,7 @@ unit AggTransBilinear;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -54,7 +54,7 @@ type
   private
     IncX, IncY, X, Y: Double;
   public
-    procedure Initialize(Tx, Ty, Step: Double; M: PDoubleArray42); overload;
+    procedure Initialize(TX, TY, Step: Double; M: PDoubleArray42); overload;
 
     procedure IncOperator;
   end;
@@ -70,22 +70,22 @@ type
     constructor Create(Src, Dst: PQuadDouble); overload;
 
     // Direct transformations
-    constructor Create(X1, Y1, X2, Y2: Double; Quad: PQuadDouble); overload;
+    constructor Create(x1, y1, x2, y2: Double; Quad: PQuadDouble); overload;
     constructor Create(Rect: TRectDouble; Quad: PQuadDouble); overload;
 
     // Reverse transformations
-    constructor Create(Quad: PQuadDouble; X1, Y1, X2, Y2: Double); overload;
+    constructor Create(Quad: PQuadDouble; x1, y1, x2, y2: Double); overload;
     constructor Create(Quad: PQuadDouble; Rect: TRectDouble); overload;
 
     // Set the transformations using two arbitrary quadrangles.
     procedure QuadToQuad(Src, Dst: PQuadDouble);
 
     // Set the direct transformations, i.e., rectangle -> quadrangle
-    procedure RectToQuad(X1, Y1, X2, Y2: Double; Quad: PQuadDouble); overload;
+    procedure RectToQuad(x1, y1, x2, y2: Double; Quad: PQuadDouble); overload;
     procedure RectToQuad(Rect: TRectDouble; Quad: PQuadDouble); overload;
 
     // Set the reverse transformations, i.e., quadrangle -> rectangle
-    procedure QuadToRect(Quad: PQuadDouble; X1, Y1, X2, Y2: Double); overload;
+    procedure QuadToRect(Quad: PQuadDouble; x1, y1, x2, y2: Double); overload;
     procedure QuadToRect(Quad: PQuadDouble; Rect: TRectDouble); overload;
 
     function GetBegin(X, Y, Step: Double): TAggIteratorX;
@@ -99,13 +99,13 @@ implementation
 
 { TAggIteratorX }
 
-procedure TAggIteratorX.Initialize(Tx, Ty, Step: Double; M: PDoubleArray42);
+procedure TAggIteratorX.Initialize(TX, TY, Step: Double; M: PDoubleArray42);
 begin
-  IncX := M^[1, 0] * Step * Ty + M^[2, 0] * Step;
-  IncY := M^[1, 1] * Step * Ty + M^[2, 1] * Step;
+  IncX := M^[1, 0] * Step * TY + M^[2, 0] * Step;
+  IncY := M^[1, 1] * Step * TY + M^[2, 1] * Step;
 
-  X := M^[0, 0] + M^[1, 0] * Tx * Ty + M^[2, 0] * Tx + M^[3, 0] * Ty;
-  Y := M^[0, 1] + M^[1, 1] * Tx * Ty + M^[2, 1] * Tx + M^[3, 1] * Ty;
+  X := M^[0, 0] + M^[1, 0] * TX * TY + M^[2, 0] * TX + M^[3, 0] * TY;
+  Y := M^[0, 1] + M^[1, 1] * TX * TY + M^[2, 1] * TX + M^[3, 1] * TY;
 end;
 
 procedure TAggIteratorX.IncOperator;
@@ -117,15 +117,15 @@ end;
 procedure BilinearTransform(This: TAggTransBilinear; X, Y: PDouble);
 var
   Temp: TPointDouble;
-  Xy: Double;
+  xy: Double;
 begin
   Temp.X := X^;
   Temp.Y := Y^;
-  Xy := Temp.X * Temp.Y;
+  xy := Temp.X * Temp.Y;
 
-  X^ := This.FMatrix[0, 0] + This.FMatrix[1, 0] * Xy +
+  X^ := This.FMatrix[0, 0] + This.FMatrix[1, 0] * xy +
     This.FMatrix[2, 0] * Temp.X + This.FMatrix[3, 0] * Temp.Y;
-  Y^ := This.FMatrix[0, 1] + This.FMatrix[1, 1] * Xy +
+  Y^ := This.FMatrix[0, 1] + This.FMatrix[1, 1] * xy +
     This.FMatrix[2, 1] * Temp.X + This.FMatrix[3, 1] * Temp.Y;
 end;
 
@@ -149,11 +149,11 @@ begin
   Transform := @BilinearTransform;
 end;
 
-constructor TAggTransBilinear.Create(X1, Y1, X2, Y2: Double; Quad: PQuadDouble);
+constructor TAggTransBilinear.Create(x1, y1, x2, y2: Double; Quad: PQuadDouble);
 begin
   inherited Create;
 
-  RectToQuad(X1, Y1, X2, Y2, Quad);
+  RectToQuad(x1, y1, x2, y2, Quad);
 
   Transform := @BilinearTransform;
 end;
@@ -167,11 +167,11 @@ begin
   Transform := @BilinearTransform;
 end;
 
-constructor TAggTransBilinear.Create(Quad: PQuadDouble; X1, Y1, X2, Y2: Double);
+constructor TAggTransBilinear.Create(Quad: PQuadDouble; x1, y1, x2, y2: Double);
 begin
   inherited Create;
 
-  QuadToRect(Quad, X1, Y1, X2, Y2);
+  QuadToRect(Quad, x1, y1, x2, y2);
 
   Transform := @BilinearTransform;
 end;
@@ -190,38 +190,38 @@ var
   Left: TDoubleMatrix4x4;
   Right: TDoubleArray42;
 
-  I, Ix, Iy: Cardinal;
+  i, ix, iy: Cardinal;
 begin
-  for I := 0 to 3 do
+  for i := 0 to 3 do
     begin
-      Ix := I * 2;
-      Iy := Ix + 1;
+      ix := i * 2;
+      iy := ix + 1;
 
-      Left[I, 0] := 1.0;
-      Left[I, 1] := PDouble(PtrComp(Src) + Ix * SizeOf(Double))^ *
-        PDouble(PtrComp(Src) + Iy * SizeOf(Double))^;
-      Left[I, 2] := PDouble(PtrComp(Src) + Ix * SizeOf(Double))^;
-      Left[I, 3] := PDouble(PtrComp(Src) + Iy * SizeOf(Double))^;
+      Left[i, 0] := 1.0;
+      Left[i, 1] := PDouble(PtrComp(Src) + ix * SizeOf(Double))^ *
+        PDouble(PtrComp(Src) + iy * SizeOf(Double))^;
+      Left[i, 2] := PDouble(PtrComp(Src) + ix * SizeOf(Double))^;
+      Left[i, 3] := PDouble(PtrComp(Src) + iy * SizeOf(Double))^;
 
-      Right[I, 0] := PDouble(PtrComp(Dst) + Ix * SizeOf(Double))^;
-      Right[I, 1] := PDouble(PtrComp(Dst) + Iy * SizeOf(Double))^;
+      Right[i, 0] := PDouble(PtrComp(Dst) + ix * SizeOf(Double))^;
+      Right[i, 1] := PDouble(PtrComp(Dst) + iy * SizeOf(Double))^;
     end;
 
   FValid := SimulEqSolve(@Left, @Right, @FMatrix, 4, 2);
 end;
 
-procedure TAggTransBilinear.RectToQuad(X1, Y1, X2, Y2: Double; Quad: PQuadDouble);
+procedure TAggTransBilinear.RectToQuad(x1, y1, x2, y2: Double; Quad: PQuadDouble);
 var
   Src: TQuadDouble;
 begin
-  Src.Values[0] := X1;
-  Src.Values[1] := Y1;
-  Src.Values[2] := X2;
-  Src.Values[3] := Y1;
-  Src.Values[4] := X2;
-  Src.Values[5] := Y2;
-  Src.Values[6] := X1;
-  Src.Values[7] := Y2;
+  Src.values[0] := x1;
+  Src.values[1] := y1;
+  Src.values[2] := x2;
+  Src.values[3] := y1;
+  Src.values[4] := x2;
+  Src.values[5] := y2;
+  Src.values[6] := x1;
+  Src.values[7] := y2;
 
   QuadToQuad(@Src, Quad);
 end;
@@ -234,18 +234,18 @@ begin
   QuadToQuad(@Src, Quad);
 end;
 
-procedure TAggTransBilinear.QuadToRect(Quad: PQuadDouble; X1, Y1, X2, Y2: Double);
+procedure TAggTransBilinear.QuadToRect(Quad: PQuadDouble; x1, y1, x2, y2: Double);
 var
   Dst: TQuadDouble;
 begin
-  Dst.Values[0] := X1;
-  Dst.Values[1] := Y1;
-  Dst.Values[2] := X2;
-  Dst.Values[3] := Y1;
-  Dst.Values[4] := X2;
-  Dst.Values[5] := Y2;
-  Dst.Values[6] := X1;
-  Dst.Values[7] := Y2;
+  Dst.values[0] := x1;
+  Dst.values[1] := y1;
+  Dst.values[2] := x2;
+  Dst.values[3] := y1;
+  Dst.values[4] := x2;
+  Dst.values[5] := y2;
+  Dst.values[6] := x1;
+  Dst.values[7] := y2;
 
   QuadToQuad(Quad, @Dst);
 end;
@@ -263,4 +263,4 @@ begin
   Result.Initialize(X, Y, Step, @FMatrix);
 end;
 
-end.
+end. 

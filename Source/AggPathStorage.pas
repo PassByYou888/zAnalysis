@@ -39,7 +39,7 @@ unit AggPathStorage;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -66,7 +66,7 @@ type
     FVertexIndex: Cardinal;
   public
     constructor Create; overload;
-    constructor Create(P: TAggPathStorage); overload;
+    constructor Create(p: TAggPathStorage); overload;
 
     procedure Rewind(PathID: Cardinal); override;
     function Vertex(X, Y: PDouble): Cardinal; override;
@@ -90,18 +90,18 @@ type
     FIterator: Cardinal;
 
     // Private
-    procedure AllocateBlock(Nb: Cardinal);
+    procedure AllocateBlock(nb: Cardinal);
     function StoragePtrs(Xy_ptr: PPDouble): PInt8u;
 
-    function PerceivePolygonOrientation(Start, Stop: Cardinal): Cardinal;
+    function PerceivePolygonOrientation(Start, stop: Cardinal): Cardinal;
 
     // Allows you to modify vertex command. The caller must know
     // the index of the vertex.
-    function GetCommand(Index: Cardinal): Cardinal;
-    procedure SetCommand(Index, Cmd: Cardinal);
+    function GetCommand(index: Cardinal): Cardinal;
+    procedure SetCommand(index, Cmd: Cardinal);
   public
     constructor Create; overload;
-    constructor Create(Ps: TAggPathStorage); overload;
+    constructor Create(ps: TAggPathStorage); overload;
     destructor Destroy; override;
 
     procedure RemoveAll; override;
@@ -115,30 +115,30 @@ type
     procedure RelativeToAbsolute(X, Y: PDouble);
 
     procedure MoveTo(X, Y: Double);
-    procedure MoveRelative(Dx, Dy: Double);
+    procedure MoveRelative(dx, dy: Double);
 
     procedure LineTo(X, Y: Double);
-    procedure LineRelative(Dx, Dy: Double);
+    procedure LineRelative(dx, dy: Double);
 
     procedure HorizontalLineTo(X: Double);
-    procedure HorizontalLineRelative(Dx: Double);
+    procedure HorizontalLineRelative(dx: Double);
 
     procedure VerticalLineTo(Y: Double);
-    procedure VerticalLineRelative(Dy: Double);
+    procedure VerticalLineRelative(dy: Double);
 
-    procedure ArcTo(Rx, Ry, Angle: Double; LargeArcFlag, SweepFlag: Boolean; X, Y: Double); overload;
-    procedure ArcRelative(Rx, Ry, Angle: Double; LargeArcFlag, SweepFlag: Boolean; Dx, Dy: Double); overload;
+    procedure ArcTo(RX, RY, angle: Double; LargeArcFlag, SweepFlag: Boolean; X, Y: Double); overload;
+    procedure ArcRelative(RX, RY, angle: Double; LargeArcFlag, SweepFlag: Boolean; dx, dy: Double); overload;
 
-    procedure Curve3(ControlX, ControlY, ToX, ToY: Double); overload;
+    procedure Curve3(ControlX, ControlY, tox, ToY: Double); overload;
     procedure Curve3Relative(DeltaControlX, DeltaControlY, DeltaToX, DeltaToY: Double); overload;
 
-    procedure Curve3(ToX, ToY: Double); overload;
+    procedure Curve3(tox, ToY: Double); overload;
     procedure Curve3Relative(DeltaToX, DeltaToY: Double); overload;
 
-    procedure Curve4(Control1X, Control1Y, Control2X, Control2Y, ToX, ToY: Double); overload;
+    procedure Curve4(Control1X, Control1Y, Control2X, Control2Y, tox, ToY: Double); overload;
     procedure Curve4Relative(DeltaControl1X, DeltaControl1Y, DeltaControl2X, DeltaControl2Y, DeltaToX, DeltaToY: Double); overload;
 
-    procedure Curve4(Control2X, Control2Y, ToX, ToY: Double); overload;
+    procedure Curve4(Control2X, Control2Y, tox, ToY: Double); overload;
     procedure Curve4Relative(DeltaControl2X, DeltaControl2Y, DeltaToX, DeltaToY: Double); overload;
 
     procedure EndPoly(Flags: Cardinal = CAggPathFlagsClose);
@@ -149,9 +149,9 @@ type
 
     function StartNewPath: Cardinal;
 
-    procedure CopyFrom(Ps: TAggPathStorage);
+    procedure CopyFrom(ps: TAggPathStorage);
 
-    function SetVertex(Index: Cardinal; X, Y: PDouble): Cardinal;
+    function SetVertex(index: Cardinal; X, Y: PDouble): Cardinal;
     procedure Rewind(PathID: Cardinal); override;
     function Vertex(X, Y: PDouble): Cardinal; override;
 
@@ -164,8 +164,8 @@ type
     procedure ArrangeOrientationsAllPaths(Orientation: Cardinal);
 
     // Flip all the vertices horizontally or vertically
-    procedure FlipX(X1, X2: Double);
-    procedure FlipY(Y1, Y2: Double);
+    procedure FlipX(x1, x2: Double);
+    procedure FlipY(y1, y2: Double);
 
     // This function adds a vertex with its flags directly. Since there's no
     // checking for errors, keeping proper path integrity is the responsibility
@@ -174,7 +174,7 @@ type
 
     // Allows you to modify vertex coordinates. The caller must know
     // the index of the vertex.
-    procedure ModifyVertex(Index: Cardinal; X, Y: Double);
+    procedure ModifyVertex(index: Cardinal; X, Y: Double);
 
     // Path Affine Transformations
     procedure Transform(Trans: TAggTransAffine; PathID: Cardinal = 0);
@@ -183,7 +183,7 @@ type
     // from 2.4
     procedure ConcatPath(Vs: TAggVertexSource; PathID: Cardinal = 0);
 
-    procedure InvertPolygon(Start, Stop: Cardinal); overload;
+    procedure InvertPolygon(Start, stop: Cardinal); overload;
     procedure InvertPolygon(Start: Cardinal); overload;
 
     property TotalVertices: Cardinal read FTotalVertices;
@@ -202,9 +202,9 @@ begin
   FVertexIndex := 0;
 end;
 
-constructor TAggPathStorageVertexSource.Create(P: TAggPathStorage);
+constructor TAggPathStorageVertexSource.Create(p: TAggPathStorage);
 begin
-  FPath := P;
+  FPath := p;
 
   FVertexIndex := 0;
 end;
@@ -240,7 +240,7 @@ begin
   FIterator := 0;
 end;
 
-constructor TAggPathStorage.Create(Ps: TAggPathStorage);
+constructor TAggPathStorage.Create(ps: TAggPathStorage);
 begin
   FTotalVertices := 0;
   FTotalBlocks := 0;
@@ -251,7 +251,7 @@ begin
 
   FIterator := 0;
 
-  CopyFrom(Ps);
+  CopyFrom(ps);
 end;
 
 destructor TAggPathStorage.Destroy;
@@ -268,7 +268,7 @@ begin
         begin
           DataSize := (CAggBlockSize * 2 +
             CAggBlockSize div (SizeOf(Double) div SizeOf(Int8u))) * SizeOf(Double);
-          AggFreeMem(TPointer32(CoordBulk^).Ptr, DataSize);
+          AggFreeMem(TPointer32(CoordBulk^).PTR, DataSize);
 
           Dec(PtrComp(CoordBulk), SizeOf(PDouble));
           Dec(FTotalBlocks);
@@ -304,7 +304,7 @@ end;
 
 function TAggPathStorage.LastX;
 var
-  Index: Cardinal;
+  index: Cardinal;
 begin
   if FTotalVertices <> 0 then
     begin
@@ -312,7 +312,7 @@ begin
 
       Result := PDouble
         (PtrComp(PPointer32(PtrComp(FCoordBlocks) + (index shr CAggBlockShift) *
-        SizeOf(PDouble)).Ptr) + ((index and CAggBlockMask) shl 1) *
+        SizeOf(PDouble)).PTR) + ((index and CAggBlockMask) shl 1) *
         SizeOf(Double))^;
     end
   else
@@ -321,7 +321,7 @@ end;
 
 function TAggPathStorage.LastY;
 var
-  Index: Cardinal;
+  index: Cardinal;
 begin
   if FTotalVertices <> 0 then
     begin
@@ -329,7 +329,7 @@ begin
 
       Result := PDouble
         (PtrComp(PPointer32(PtrComp(FCoordBlocks) + (index shr CAggBlockShift) *
-        SizeOf(PDouble)).Ptr) + (((index and CAggBlockMask) shl 1) + 1) *
+        SizeOf(PDouble)).PTR) + (((index and CAggBlockMask) shl 1) + 1) *
         SizeOf(Double))^;
     end
   else
@@ -338,13 +338,13 @@ end;
 
 procedure TAggPathStorage.RelativeToAbsolute;
 var
-  X2, Y2: Double;
+  x2, y2: Double;
 begin
   if FTotalVertices <> 0 then
-    if IsVertex(SetVertex(FTotalVertices - 1, @X2, @Y2)) then
+    if IsVertex(SetVertex(FTotalVertices - 1, @x2, @y2)) then
       begin
-        X^ := X^ + X2;
-        Y^ := Y^ + Y2;
+        X^ := X^ + x2;
+        Y^ := Y^ + y2;
       end;
 end;
 
@@ -355,8 +355,8 @@ end;
 
 procedure TAggPathStorage.MoveRelative;
 begin
-  RelativeToAbsolute(@Dx, @Dy);
-  AddVertex(Dx, Dy, CAggPathCmdMoveTo);
+  RelativeToAbsolute(@dx, @dy);
+  AddVertex(dx, dy, CAggPathCmdMoveTo);
 end;
 
 procedure TAggPathStorage.LineTo;
@@ -366,8 +366,8 @@ end;
 
 procedure TAggPathStorage.LineRelative;
 begin
-  RelativeToAbsolute(@Dx, @Dy);
-  AddVertex(Dx, Dy, CAggPathCmdLineTo);
+  RelativeToAbsolute(@dx, @dy);
+  AddVertex(dx, dy, CAggPathCmdLineTo);
 end;
 
 procedure TAggPathStorage.HorizontalLineTo;
@@ -377,12 +377,12 @@ end;
 
 procedure TAggPathStorage.HorizontalLineRelative;
 var
-  Dy: Double;
+  dy: Double;
 begin
-  Dy := 0;
+  dy := 0;
 
-  RelativeToAbsolute(@Dx, @Dy);
-  AddVertex(Dx, Dy, CAggPathCmdLineTo);
+  RelativeToAbsolute(@dx, @dy);
+  AddVertex(dx, dy, CAggPathCmdLineTo);
 end;
 
 procedure TAggPathStorage.VerticalLineTo;
@@ -392,19 +392,19 @@ end;
 
 procedure TAggPathStorage.VerticalLineRelative;
 var
-  Dx: Double;
+  dx: Double;
 begin
-  Dx := 0;
+  dx := 0;
 
-  RelativeToAbsolute(@Dx, @Dy);
-  AddVertex(Dx, Dy, CAggPathCmdLineTo);
+  RelativeToAbsolute(@dx, @dy);
+  AddVertex(dx, dy, CAggPathCmdLineTo);
 end;
 
-procedure TAggPathStorage.ArcTo(Rx, Ry, Angle: Double; LargeArcFlag,
+procedure TAggPathStorage.ArcTo(RX, RY, angle: Double; LargeArcFlag,
   SweepFlag: Boolean; X, Y: Double);
 var
   A: TAggBezierArcSvg;
-  X0, Y0, Epsilon: Double;
+  x0, y0, Epsilon: Double;
 begin
   A := nil;
 
@@ -412,16 +412,16 @@ begin
     begin
       Epsilon := 1E-30;
 
-      X0 := 0.0;
-      Y0 := 0.0;
+      x0 := 0.0;
+      y0 := 0.0;
 
-      LastVertex(@X0, @Y0);
+      LastVertex(@x0, @y0);
 
-      Rx := Abs(Rx);
-      Ry := Abs(Ry);
+      RX := Abs(RX);
+      RY := Abs(RY);
 
       // Ensure radii are valid
-      if (Rx < Epsilon) or (Ry < Epsilon) then
+      if (RX < Epsilon) or (RY < Epsilon) then
         begin
           LineTo(X, Y);
           Exit;
@@ -429,10 +429,10 @@ begin
 
       // If the endpoints (x, y) and (x0, y0) are identical, then this
       // is equivalent to omitting the elliptical arc segment entirely.
-      if CalculateDistance(X0, Y0, X, Y) < Epsilon then
+      if CalculateDistance(x0, y0, X, Y) < Epsilon then
           Exit;
 
-      A := TAggBezierArcSvg.Create(X0, Y0, Rx, Ry, Angle, LargeArcFlag,
+      A := TAggBezierArcSvg.Create(x0, y0, RX, RY, angle, LargeArcFlag,
         SweepFlag, X, Y);
 
       if A.RadiiOK then
@@ -447,17 +447,17 @@ begin
       A.Free;
 end;
 
-procedure TAggPathStorage.ArcRelative(Rx, Ry, Angle: Double;
-  LargeArcFlag, SweepFlag: Boolean; Dx, Dy: Double);
+procedure TAggPathStorage.ArcRelative(RX, RY, angle: Double;
+  LargeArcFlag, SweepFlag: Boolean; dx, dy: Double);
 begin
-  RelativeToAbsolute(@Dx, @Dy);
-  ArcTo(Rx, Ry, Angle, LargeArcFlag, SweepFlag, Dx, Dy);
+  RelativeToAbsolute(@dx, @dy);
+  ArcTo(RX, RY, angle, LargeArcFlag, SweepFlag, dx, dy);
 end;
 
-procedure TAggPathStorage.Curve3(ControlX, ControlY, ToX, ToY: Double);
+procedure TAggPathStorage.Curve3(ControlX, ControlY, tox, ToY: Double);
 begin
   AddVertex(ControlX, ControlY, CAggPathCmdCurve3);
-  AddVertex(ToX, ToY, CAggPathCmdCurve3);
+  AddVertex(tox, ToY, CAggPathCmdCurve3);
 end;
 
 procedure TAggPathStorage.Curve3Relative(DeltaControlX, DeltaControlY,
@@ -469,27 +469,27 @@ begin
   AddVertex(DeltaToX, DeltaToY, CAggPathCmdCurve3);
 end;
 
-procedure TAggPathStorage.Curve3(ToX, ToY: Double);
+procedure TAggPathStorage.Curve3(tox, ToY: Double);
 var
   Cmd: Cardinal;
-  X0, Y0, ControlX, ControlY: Double;
+  x0, y0, ControlX, ControlY: Double;
 begin
-  if IsVertex(LastVertex(@X0, @Y0)) then
+  if IsVertex(LastVertex(@x0, @y0)) then
     begin
       Cmd := PrevVertex(@ControlX, @ControlY);
 
       if IsCurve(Cmd) then
         begin
-          ControlX := X0 + X0 - ControlX;
-          ControlY := Y0 + Y0 - ControlY;
+          ControlX := x0 + x0 - ControlX;
+          ControlY := y0 + y0 - ControlY;
         end
       else
         begin
-          ControlX := X0;
-          ControlY := Y0;
+          ControlX := x0;
+          ControlY := y0;
         end;
 
-      Curve3(ControlX, ControlY, ToX, ToY);
+      Curve3(ControlX, ControlY, tox, ToY);
     end;
 end;
 
@@ -500,11 +500,11 @@ begin
 end;
 
 procedure TAggPathStorage.Curve4(Control1X, Control1Y, Control2X, Control2Y,
-  ToX, ToY: Double);
+  tox, ToY: Double);
 begin
   AddVertex(Control1X, Control1Y, CAggPathCmdCurve4);
   AddVertex(Control2X, Control2Y, CAggPathCmdCurve4);
-  AddVertex(ToX, ToY, CAggPathCmdCurve4);
+  AddVertex(tox, ToY, CAggPathCmdCurve4);
 end;
 
 procedure TAggPathStorage.Curve4Relative(DeltaControl1X, DeltaControl1Y,
@@ -518,27 +518,27 @@ begin
   AddVertex(DeltaToX, DeltaToY, CAggPathCmdCurve4);
 end;
 
-procedure TAggPathStorage.Curve4(Control2X, Control2Y, ToX, ToY: Double);
+procedure TAggPathStorage.Curve4(Control2X, Control2Y, tox, ToY: Double);
 var
   Cmd: Cardinal;
-  X0, Y0, Control1X, Control1Y: Double;
+  x0, y0, Control1X, Control1Y: Double;
 begin
-  if IsVertex(LastVertex(@X0, @Y0)) then
+  if IsVertex(LastVertex(@x0, @y0)) then
     begin
       Cmd := PrevVertex(@Control1X, @Control1Y);
 
       if IsCurve(Cmd) then
         begin
-          Control1X := X0 + X0 - Control1X;
-          Control1Y := Y0 + Y0 - Control1Y;
+          Control1X := x0 + x0 - Control1X;
+          Control1Y := y0 + y0 - Control1Y;
         end
       else
         begin
-          Control1X := X0;
-          Control1Y := Y0;
+          Control1X := x0;
+          Control1Y := y0;
         end;
 
-      Curve4(Control1X, Control1Y, Control2X, Control2Y, ToX, ToY);
+      Curve4(Control1X, Control1Y, Control2X, Control2Y, tox, ToY);
     end;
 end;
 
@@ -618,43 +618,43 @@ begin
   Result := FTotalVertices;
 end;
 
-procedure TAggPathStorage.CopyFrom(Ps: TAggPathStorage);
+procedure TAggPathStorage.CopyFrom(ps: TAggPathStorage);
 var
-  I, Cmd: Cardinal;
+  i, Cmd: Cardinal;
   X, Y: Double;
 begin
   RemoveAll;
 
-  for I := 0 to Ps.TotalVertices - 1 do
+  for i := 0 to ps.TotalVertices - 1 do
     begin
-      Cmd := Ps.SetVertex(I, @X, @Y);
+      Cmd := ps.SetVertex(i, @X, @Y);
 
       AddVertex(X, Y, Cmd);
     end;
 end;
 
-function TAggPathStorage.SetVertex(Index: Cardinal; X, Y: PDouble): Cardinal;
+function TAggPathStorage.SetVertex(index: Cardinal; X, Y: PDouble): Cardinal;
 var
-  Nb: Cardinal;
-  Pv: PDouble;
+  nb: Cardinal;
+  PV: PDouble;
 begin
-  Nb := index shr CAggBlockShift;
+  nb := index shr CAggBlockShift;
 
-  Pv := PDouble(PtrComp(PPointer32(PtrComp(FCoordBlocks) + Nb *
-    SizeOf(PDouble)).Ptr) + ((index and CAggBlockMask) shl 1) * SizeOf(Double));
+  PV := PDouble(PtrComp(PPointer32(PtrComp(FCoordBlocks) + nb *
+    SizeOf(PDouble)).PTR) + ((index and CAggBlockMask) shl 1) * SizeOf(Double));
 
-  X^ := Pv^;
-  Inc(PtrComp(Pv), SizeOf(Double));
-  Y^ := Pv^;
+  X^ := PV^;
+  Inc(PtrComp(PV), SizeOf(Double));
+  Y^ := PV^;
 
-  Result := PInt8u(PtrComp(PPointer32(PtrComp(FCmdBlocks) + Nb *
-    SizeOf(PInt8u)).Ptr) + (index and CAggBlockMask) * SizeOf(Int8u))^;
+  Result := PInt8u(PtrComp(PPointer32(PtrComp(FCmdBlocks) + nb *
+    SizeOf(PInt8u)).PTR) + (index and CAggBlockMask) * SizeOf(Int8u))^;
 end;
 
-function TAggPathStorage.GetCommand(Index: Cardinal): Cardinal;
+function TAggPathStorage.GetCommand(index: Cardinal): Cardinal;
 begin
   Result := PInt8u(PtrComp(PPointer32(PtrComp(FCmdBlocks) +
-    (index shr CAggBlockShift) * SizeOf(PInt8u)).Ptr) + (index and CAggBlockMask) *
+    (index shr CAggBlockShift) * SizeOf(PInt8u)).PTR) + (index and CAggBlockMask) *
     SizeOf(Int8u))^;
 end;
 
@@ -678,7 +678,7 @@ end;
 function TAggPathStorage.ArrangePolygonOrientation(Start, Orientation: Cardinal)
   : Cardinal;
 var
-  Cmd, Stop: Cardinal;
+  Cmd, stop: Cardinal;
 begin
   if Orientation = CAggPathFlagsNone then
     begin
@@ -697,30 +697,30 @@ begin
       Inc(Start);
 
   // Find the last vertex
-  Stop := Start + 1;
+  stop := Start + 1;
 
-  while (Stop < FTotalVertices) and not IsNextPoly(Command[Stop]) do
-      Inc(Stop);
+  while (stop < FTotalVertices) and not IsNextPoly(Command[stop]) do
+      Inc(stop);
 
-  if Stop - Start > 2 then
-    if PerceivePolygonOrientation(Start, Stop) <> Orientation then
+  if stop - Start > 2 then
+    if PerceivePolygonOrientation(Start, stop) <> Orientation then
       begin
         // Invert polygon, set orientation flag, and skip all end_poly
-        InvertPolygon(Start, Stop);
+        InvertPolygon(Start, stop);
 
-        Cmd := Command[Stop];
+        Cmd := Command[stop];
 
-        while (Stop < FTotalVertices) and IsEndPoly(Cmd) do
+        while (stop < FTotalVertices) and IsEndPoly(Cmd) do
           begin
-            Command[Stop] := SetOrientation(Cmd, Orientation);
+            Command[stop] := SetOrientation(Cmd, Orientation);
 
-            Inc(Stop);
+            Inc(stop);
 
-            Cmd := Command[Stop];
+            Cmd := Command[stop];
           end;
       end;
 
-  Result := Stop;
+  Result := stop;
 end;
 
 function TAggPathStorage.ArrangeOrientations(Start, Orientation: Cardinal):
@@ -755,33 +755,33 @@ begin
     end;
 end;
 
-procedure TAggPathStorage.FlipX(X1, X2: Double);
+procedure TAggPathStorage.FlipX(x1, x2: Double);
 var
-  I, Cmd: Cardinal;
+  i, Cmd: Cardinal;
   X, Y: Double;
 begin
   if FTotalVertices > 0 then
-    for I := 0 to FTotalVertices - 1 do
+    for i := 0 to FTotalVertices - 1 do
       begin
-        Cmd := SetVertex(I, @X, @Y);
+        Cmd := SetVertex(i, @X, @Y);
 
         if IsVertex(Cmd) then
-            ModifyVertex(I, X2 - X + X1, Y);
+            ModifyVertex(i, x2 - X + x1, Y);
       end;
 end;
 
-procedure TAggPathStorage.FlipY(Y1, Y2: Double);
+procedure TAggPathStorage.FlipY(y1, y2: Double);
 var
-  I, Cmd: Cardinal;
+  i, Cmd: Cardinal;
   X, Y: Double;
 begin
   if FTotalVertices > 0 then
-    for I := 0 to FTotalVertices - 1 do
+    for i := 0 to FTotalVertices - 1 do
       begin
-        Cmd := SetVertex(I, @X, @Y);
+        Cmd := SetVertex(i, @X, @Y);
 
         if IsVertex(Cmd) then
-            ModifyVertex(I, X, Y2 - Y + Y1);
+            ModifyVertex(i, X, y2 - Y + y1);
       end;
 end;
 
@@ -803,23 +803,23 @@ begin
   Inc(FTotalVertices);
 end;
 
-procedure TAggPathStorage.ModifyVertex(Index: Cardinal; X, Y: Double);
+procedure TAggPathStorage.ModifyVertex(index: Cardinal; X, Y: Double);
 var
-  Pv: PDouble;
+  PV: PDouble;
 begin
-  Pv := PDouble(PtrComp(PPointer32(PtrComp(FCoordBlocks) +
-    (index shr CAggBlockShift) * SizeOf(PDouble)).Ptr) +
+  PV := PDouble(PtrComp(PPointer32(PtrComp(FCoordBlocks) +
+    (index shr CAggBlockShift) * SizeOf(PDouble)).PTR) +
     ((index and CAggBlockMask) shl 1) * SizeOf(Double));
 
-  Pv^ := X;
-  Inc(PtrComp(Pv), SizeOf(Double));
-  Pv^ := Y;
+  PV^ := X;
+  Inc(PtrComp(PV), SizeOf(Double));
+  PV^ := Y;
 end;
 
-procedure TAggPathStorage.SetCommand(Index, Cmd: Cardinal);
+procedure TAggPathStorage.SetCommand(index, Cmd: Cardinal);
 begin
   PInt8u(PtrComp(PPointer32(PtrComp(FCmdBlocks) + (index shr CAggBlockShift) *
-    SizeOf(PInt8u)).Ptr) + (index and CAggBlockMask) * SizeOf(Int8u))^ :=
+    SizeOf(PInt8u)).PTR) + (index and CAggBlockMask) * SizeOf(Int8u))^ :=
     Int8u(Cmd);
 end;
 
@@ -849,7 +849,7 @@ end;
 procedure TAggPathStorage.TransformAllPaths(Trans: TAggTransAffine);
 var
   X, Y: Double;
-  Index: Cardinal;
+  index: Cardinal;
 begin
   index := 0;
 
@@ -865,14 +865,14 @@ begin
     end;
 end;
 
-procedure TAggPathStorage.AllocateBlock(Nb: Cardinal);
+procedure TAggPathStorage.AllocateBlock(nb: Cardinal);
 var
   NewCoords: PPDouble;
   NewCmds: PPInt8u;
   NewSize: Cardinal;
-  Ptr: PPDouble;
+  PTR: PPDouble;
 begin
-  if Nb >= FMaxBlocks then
+  if nb >= FMaxBlocks then
     begin
       AggGetMem(Pointer(NewCoords), 2 * (FMaxBlocks + CAggBlockPool) *
         SizeOf(PDouble));
@@ -896,12 +896,12 @@ begin
 
   NewSize := (CAggBlockSize * 2 + CAggBlockSize div
     (SizeOf(Double) div SizeOf(Int8u))) * SizeOf(Double);
-  Ptr := FCoordBlocks;
-  Inc(Ptr, Nb);
-  AggGetMem(Pointer(Ptr^), NewSize);
+  PTR := FCoordBlocks;
+  Inc(PTR, nb);
+  AggGetMem(Pointer(PTR^), NewSize);
 
-  PPointer32(PtrComp(FCmdBlocks) + Nb * SizeOf(PInt8u)).Ptr :=
-    Pointer(PtrComp(Ptr^) + 2 * CAggBlockSize * SizeOf(Double));
+  PPointer32(PtrComp(FCmdBlocks) + nb * SizeOf(PInt8u)).PTR :=
+    Pointer(PtrComp(PTR^) + 2 * CAggBlockSize * SizeOf(Double));
 
   Inc(FTotalBlocks);
 end;
@@ -916,30 +916,30 @@ begin
       AllocateBlock(NumBlocks);
 
   Xy_ptr^ := PDouble(PtrComp(PPointer32(PtrComp(FCoordBlocks) + NumBlocks *
-    SizeOf(PDouble)).Ptr) + ((FTotalVertices and CAggBlockMask) shl 1) *
+    SizeOf(PDouble)).PTR) + ((FTotalVertices and CAggBlockMask) shl 1) *
     SizeOf(Double));
 
   Result := PInt8u(PtrComp(PPointer32(PtrComp(FCmdBlocks) + NumBlocks *
-    SizeOf(PInt8u)).Ptr) + (FTotalVertices and CAggBlockMask) *
+    SizeOf(PInt8u)).PTR) + (FTotalVertices and CAggBlockMask) *
     SizeOf(Int8u));
 end;
 
 function TAggPathStorage.PerceivePolygonOrientation;
 var
-  Np, I: Cardinal;
-  Area, X1, Y1, X2, Y2: Double;
+  np, i: Cardinal;
+  Area, x1, y1, x2, y2: Double;
 begin
   // Calculate signed area (double area to be exact)
-  Np := Stop - Start;
+  np := stop - Start;
   Area := 0.0;
 
-  if Np > 0 then
-    for I := 0 to Np - 1 do
+  if np > 0 then
+    for i := 0 to np - 1 do
       begin
-        SetVertex(Start + I, @X1, @Y1);
-        SetVertex(Start + (I + 1) mod Np, @X2, @Y2);
+        SetVertex(Start + i, @x1, @y1);
+        SetVertex(Start + (i + 1) mod np, @x2, @y2);
 
-        Area := Area + (X1 * Y2 - Y1 * X2);
+        Area := Area + (x1 * y2 - y1 * x2);
       end;
 
   if Area < 0.0 then
@@ -948,41 +948,41 @@ begin
       Result := CAggPathFlagsCcw;
 end;
 
-procedure TAggPathStorage.InvertPolygon(Start, Stop: Cardinal);
+procedure TAggPathStorage.InvertPolygon(Start, stop: Cardinal);
 var
-  I, TmpCmd, StartNb, StopNb: Cardinal;
+  i, TmpCmd, StartNb, StopNb: Cardinal;
   StartPointer, StopPointer: PDouble;
   TmpXY: Double;
 begin
   TmpCmd := Command[Start];
 
-  Dec(Stop); // Make "end" inclusive
+  Dec(stop); // Make "end" inclusive
 
   // Shift all commands to one position
-  I := Start;
+  i := Start;
 
-  while I < Stop do
+  while i < stop do
     begin
-      Command[I] := Command[I + 1];
+      Command[i] := Command[i + 1];
 
-      Inc(I);
+      Inc(i);
     end;
 
   // Assign starting command to the ending command
-  Command[Stop] := TmpCmd;
+  Command[stop] := TmpCmd;
 
   // Reverse the polygon
-  while Stop > Start do
+  while stop > Start do
     begin
       StartNb := Start shr CAggBlockShift;
-      StopNb := Stop shr CAggBlockShift;
+      StopNb := stop shr CAggBlockShift;
 
       StartPointer := PDouble(PtrComp(PPointer32(PtrComp(FCoordBlocks) + StartNb *
-        SizeOf(PDouble)).Ptr) + ((Start and CAggBlockMask) shl 1) *
+        SizeOf(PDouble)).PTR) + ((Start and CAggBlockMask) shl 1) *
         SizeOf(Double));
 
       StopPointer := PDouble(PtrComp(PPointer32(PtrComp(FCoordBlocks) + StopNb *
-        SizeOf(PDouble)).Ptr) + ((Stop and CAggBlockMask) shl 1) *
+        SizeOf(PDouble)).PTR) + ((stop and CAggBlockMask) shl 1) *
         SizeOf(Double));
 
       TmpXY := StartPointer^;
@@ -996,24 +996,24 @@ begin
       StopPointer^ := TmpXY;
 
       TmpCmd := PInt8u(PtrComp(PPointer32(PtrComp(FCmdBlocks) + StartNb *
-        SizeOf(PInt8u)).Ptr) + (Start and CAggBlockMask) * SizeOf(Int8u))^;
+        SizeOf(PInt8u)).PTR) + (Start and CAggBlockMask) * SizeOf(Int8u))^;
 
       PInt8u(PtrComp(PPointer32(PtrComp(FCmdBlocks) + StartNb *
-        SizeOf(PInt8u)).Ptr) + (Start and CAggBlockMask) * SizeOf(Int8u))^ :=
+        SizeOf(PInt8u)).PTR) + (Start and CAggBlockMask) * SizeOf(Int8u))^ :=
         PInt8u(PtrComp(PPointer32(PtrComp(FCmdBlocks) + StopNb *
-        SizeOf(PInt8u)).Ptr) + (Stop and CAggBlockMask) * SizeOf(Int8u))^;
+        SizeOf(PInt8u)).PTR) + (stop and CAggBlockMask) * SizeOf(Int8u))^;
 
       PInt8u(PtrComp(PPointer32(PtrComp(FCmdBlocks) + StopNb * SizeOf(PInt8u)
-        ).Ptr) + (Stop and CAggBlockMask) * SizeOf(Int8u))^ := Int8u(TmpCmd);
+        ).PTR) + (stop and CAggBlockMask) * SizeOf(Int8u))^ := Int8u(TmpCmd);
 
       Inc(Start);
-      Dec(Stop);
+      Dec(stop);
     end;
 end;
 
 procedure TAggPathStorage.InvertPolygon(Start: Cardinal);
 var
-  Stop: Cardinal;
+  stop: Cardinal;
 begin
   // Skip all non-vertices at the beginning
   while (Start < FTotalVertices) and not IsVertex(Command[Start]) do
@@ -1025,12 +1025,12 @@ begin
       Inc(Start);
 
   // Find the last vertex
-  Stop := Start + 1;
+  stop := Start + 1;
 
-  while (Stop < FTotalVertices) and not IsNextPoly(Command[Stop]) do
-      Inc(Stop);
+  while (stop < FTotalVertices) and not IsNextPoly(Command[stop]) do
+      Inc(stop);
 
-  InvertPolygon(Start, Stop);
+  InvertPolygon(Start, stop);
 end;
 
 procedure TAggPathStorage.ConcatPath(Vs: TAggVertexSource;
@@ -1051,4 +1051,5 @@ begin
     end;
 end;
 
-end.
+end. 
+ 

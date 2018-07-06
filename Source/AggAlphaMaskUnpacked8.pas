@@ -39,7 +39,7 @@ unit AggAlphaMaskUnpacked8;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 uses
   AggBasics,
@@ -51,7 +51,7 @@ const
   CAggCoverFull = 255;
 
 type
-  TAggFuncMaskCalculate = function(P: PInt8u): Cardinal;
+  TAggFuncMaskCalculate = function(p: PInt8u): Cardinal;
 
   TAggCustomAlphaMask = class
   public
@@ -60,7 +60,7 @@ type
     function MaskFunction: TAggFuncMaskCalculate; virtual; abstract;
 
     function Pixel(X, Y: Integer): Int8u; virtual; abstract;
-    function CombinePixel(X, Y: Integer; Val: Int8u): Int8u; virtual; abstract;
+    function CombinePixel(X, Y: Integer; val: Int8u): Int8u; virtual; abstract;
 
     procedure FillHSpan(X, Y: Integer; Dst: PInt8u; NumPixel: Integer); virtual;
       abstract;
@@ -90,7 +90,7 @@ type
     function MaskFunction: TAggFuncMaskCalculate; override;
 
     function Pixel(X, Y: Integer): Int8u; override;
-    function CombinePixel(X, Y: Integer; Val: Int8u): Int8u; override;
+    function CombinePixel(X, Y: Integer; val: Int8u): Int8u; override;
 
     procedure FillHSpan(X, Y: Integer; Dst: PInt8u; NumPixel: Integer); override;
     procedure CombineHSpan(X, Y: Integer; Dst: PInt8u; NumPixel: Integer); override;
@@ -260,7 +260,7 @@ type
     function MaskFunction: TAggFuncMaskCalculate; override;
 
     function Pixel(X, Y: Integer): Int8u; override;
-    function CombinePixel(X, Y: Integer; Val: Int8u): Int8u; override;
+    function CombinePixel(X, Y: Integer; val: Int8u): Int8u; override;
 
     procedure FillHSpan(X, Y: Integer; Dst: PInt8u; NumPixel: Integer); override;
     procedure CombineHSpan(X, Y: Integer; Dst: PInt8u; NumPixel: Integer); override;
@@ -413,28 +413,28 @@ type
     constructor Create(RenderingBuffer: TAggRenderingBuffer);
   end;
 
-function OneComponentMaskUnpacked8(P: PInt8u): Cardinal;
-function RgbToGrayMaskUnpacked8_012(P: PInt8u): Cardinal;
-function RgbToGrayMaskUnpacked8_210(P: PInt8u): Cardinal;
+function OneComponentMaskUnpacked8(p: PInt8u): Cardinal;
+function RgbToGrayMaskUnpacked8_012(p: PInt8u): Cardinal;
+function RgbToGrayMaskUnpacked8_210(p: PInt8u): Cardinal;
 
 implementation
 
 function OneComponentMaskUnpacked8;
 begin
-  Result := P^;
+  Result := p^;
 end;
 
 function RgbToGrayMaskUnpacked8_012;
 begin
-  Result := Int8u(PInt8u(P)^ * 77 +
-    PInt8u(PtrComp(P) + SizeOf(Int8u))^ * 150 + PInt8u(PtrComp(P) + 2 *
+  Result := Int8u(PInt8u(p)^ * 77 +
+    PInt8u(PtrComp(p) + SizeOf(Int8u))^ * 150 + PInt8u(PtrComp(p) + 2 *
     SizeOf(Int8u))^ * 29 shr 8);
 end;
 
 function RgbToGrayMaskUnpacked8_210;
 begin
-  Result := Int8u(PInt8u(PtrComp(P) + 2 * SizeOf(Int8u))^ * 77 +
-    PInt8u(PtrComp(P) + SizeOf(Int8u))^ * 150 + PInt8u(P)^ * 29 shr 8);
+  Result := Int8u(PInt8u(PtrComp(p) + 2 * SizeOf(Int8u))^ * 77 +
+    PInt8u(PtrComp(p) + SizeOf(Int8u))^ * 150 + PInt8u(p)^ * 29 shr 8);
 end;
 
 
@@ -472,8 +472,8 @@ end;
 
 function TAggAlphaMaskUnpacked8.Pixel;
 begin
-  if (X >= 0) and (Y >= 0) and (X < FRenderingBuffer.Width) and
-    (Y < FRenderingBuffer.Height) then
+  if (X >= 0) and (Y >= 0) and (X < FRenderingBuffer.width) and
+    (Y < FRenderingBuffer.height) then
     Result := Int8u(FMaskFunction(PInt8u(PtrComp(FRenderingBuffer.Row(Y)) +
       (X * Step + Offset) * SizeOf(Int8u))))
   else
@@ -482,10 +482,10 @@ end;
 
 function TAggAlphaMaskUnpacked8.CombinePixel;
 begin
-  if (X >= 0) and (Y >= 0) and (X < FRenderingBuffer.Width) and
-    (Y < FRenderingBuffer.Height) then
+  if (X >= 0) and (Y >= 0) and (X < FRenderingBuffer.width) and
+    (Y < FRenderingBuffer.height) then
     Result := Int8u
-      ((CAggCoverFull + Val * FMaskFunction(PInt8u(PtrComp(FRenderingBuffer.Row(Y))
+      ((CAggCoverFull + val * FMaskFunction(PInt8u(PtrComp(FRenderingBuffer.Row(Y))
       + (X * Step + Offset) * SizeOf(Int8u)))) shr CAggCoverShift)
   else
     Result := 0;
@@ -493,16 +493,16 @@ end;
 
 procedure TAggAlphaMaskUnpacked8.FillHSpan;
 var
-  Xmax, Ymax, Count, Rest: Integer;
+  XMax, YMax, Count, Rest: Integer;
   Covers, Mask           : PInt8u;
 begin
-  Xmax := FRenderingBuffer.Width - 1;
-  Ymax := FRenderingBuffer.Height - 1;
+  XMax := FRenderingBuffer.width - 1;
+  YMax := FRenderingBuffer.height - 1;
 
   Count := NumPixel;
   Covers := Dst;
 
-  if (Y < 0) or (Y > Ymax) then
+  if (Y < 0) or (Y > YMax) then
   begin
     FillChar(Dst^, NumPixel * SizeOf(Int8u), 0);
 
@@ -527,9 +527,9 @@ begin
     X := 0;
   end;
 
-  if X + Count > Xmax then
+  if X + Count > XMax then
   begin
-    Rest := X + Count - Xmax - 1;
+    Rest := X + Count - XMax - 1;
 
     Dec(Count, Rest);
 
@@ -559,16 +559,16 @@ end;
 
 procedure TAggAlphaMaskUnpacked8.CombineHSpan;
 var
-  Xmax, Ymax, Count, Rest: Integer;
+  XMax, YMax, Count, Rest: Integer;
   Covers, Mask           : PInt8u;
 begin
-  Xmax := FRenderingBuffer.Width - 1;
-  Ymax := FRenderingBuffer.Height - 1;
+  XMax := FRenderingBuffer.width - 1;
+  YMax := FRenderingBuffer.height - 1;
 
   Count := NumPixel;
   Covers := Dst;
 
-  if (Y < 0) or (Y > Ymax) then
+  if (Y < 0) or (Y > YMax) then
   begin
     FillChar(Dst^, NumPixel * SizeOf(Int8u), 0);
     Exit;
@@ -589,9 +589,9 @@ begin
     X := 0;
   end;
 
-  if X + Count > Xmax then
+  if X + Count > XMax then
   begin
-    Rest := X + Count - Xmax - 1;
+    Rest := X + Count - XMax - 1;
     Dec(Count, Rest);
 
     if Count <= 0 then
@@ -620,18 +620,18 @@ end;
 
 procedure TAggAlphaMaskUnpacked8.FillVSpan;
 var
-  Xmax, Ymax, Count, Rest: Integer;
+  XMax, YMax, Count, Rest: Integer;
 
   Covers, Mask: PInt8u;
 
 begin
-  Xmax := FRenderingBuffer.Width - 1;
-  Ymax := FRenderingBuffer.Height - 1;
+  XMax := FRenderingBuffer.width - 1;
+  YMax := FRenderingBuffer.height - 1;
 
   Count := NumPixel;
   Covers := Dst;
 
-  if (X < 0) or (X > Xmax) then
+  if (X < 0) or (X > XMax) then
   begin
     FillChar(Dst^, NumPixel * SizeOf(Int8u), 0);
 
@@ -654,9 +654,9 @@ begin
     Y := 0;
   end;
 
-  if Y + Count > Ymax then
+  if Y + Count > YMax then
   begin
-    Rest := Y + Count - Ymax - 1;
+    Rest := Y + Count - YMax - 1;
     Dec(Count, Rest);
 
     if Count <= 0 then
@@ -673,25 +673,25 @@ begin
     Covers^ := Int8u(FMaskFunction(Mask));
 
     Inc(PtrComp(Covers), SizeOf(Int8u));
-    Inc(PtrComp(Mask), FRenderingBuffer.Stride);
+    Inc(PtrComp(Mask), FRenderingBuffer.stride);
     Dec(Count);
   until Count = 0;
 end;
 
 procedure TAggAlphaMaskUnpacked8.CombineVSpan;
 var
-  Xmax, Ymax, Count, Rest: Integer;
+  XMax, YMax, Count, Rest: Integer;
 
   Covers, Mask: PInt8u;
 
 begin
-  Xmax := FRenderingBuffer.Width - 1;
-  Ymax := FRenderingBuffer.Height - 1;
+  XMax := FRenderingBuffer.width - 1;
+  YMax := FRenderingBuffer.height - 1;
 
   Count := NumPixel;
   Covers := Dst;
 
-  if (X < 0) or (X > Xmax) then
+  if (X < 0) or (X > XMax) then
   begin
     FillChar(Dst^, NumPixel * SizeOf(Int8u), 0);
     Exit;
@@ -713,9 +713,9 @@ begin
     Y := 0;
   end;
 
-  if Y + Count > Ymax then
+  if Y + Count > YMax then
   begin
-    Rest := Y + Count - Ymax - 1;
+    Rest := Y + Count - YMax - 1;
     Dec(Count, Rest);
 
     if Count <= 0 then
@@ -735,7 +735,7 @@ begin
       shr CAggCoverShift);
 
     Inc(PtrComp(Covers), SizeOf(Int8u));
-    Inc(PtrComp(Mask), FRenderingBuffer.Stride);
+    Inc(PtrComp(Mask), FRenderingBuffer.stride);
     Dec(Count);
   until Count = 0;
 end;
@@ -1013,7 +1013,7 @@ end;
 
 function TAggAlphaMaskNoClipUnpack8.CombinePixel;
 begin
-  Result := Int8u((CAggCoverFull + Val *
+  Result := Int8u((CAggCoverFull + val *
     FMaskFunction(PInt8u(PtrComp(FRenderingBuffer.Row(Y)) + (X * Step + Offset)
     * SizeOf(Int8u)))) shr CAggCoverShift);
 end;
@@ -1063,7 +1063,7 @@ begin
     Dst^ := Int8u(FMaskFunction(Mask));
 
     Inc(PtrComp(Dst), SizeOf(Int8u));
-    Inc(PtrComp(Mask), FRenderingBuffer.Stride);
+    Inc(PtrComp(Mask), FRenderingBuffer.stride);
     Dec(NumPixel);
 
   until NumPixel = 0;
@@ -1080,7 +1080,7 @@ begin
     Dst^ := Int8u((CAggCoverFull + Dst^ * FMaskFunction(Mask)) shr CAggCoverShift);
 
     Inc(PtrComp(Dst), SizeOf(Int8u));
-    Inc(PtrComp(Mask), FRenderingBuffer.Stride);
+    Inc(PtrComp(Mask), FRenderingBuffer.stride);
     Dec(NumPixel);
 
   until NumPixel = 0;
@@ -1318,4 +1318,4 @@ begin
   inherited Create(RenderingBuffer, @RgbToGrayMaskUnpacked8_210, 4, 1);
 end;
 
-end.
+end. 

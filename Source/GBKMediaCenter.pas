@@ -1,4 +1,4 @@
-Ôªø{ ****************************************************************************** }
+{ ****************************************************************************** }
 { * GBK media Data support, writen by QQ 600585@qq.com                         * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
@@ -13,7 +13,7 @@ unit GBKMediaCenter;
 
 interface
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 
 uses DoStatusIO, CoreClasses, PascalStrings, UPascalStrings,
@@ -37,14 +37,14 @@ var
   BadEmotionDict, BadRepDict, GoodEmotionDict, GoodRepDict: THashList;
 
   // big key
-  BigKeyDict: THashStringList;
+  bigKeyDict: THashStringList;
 
   // big word
-  BigWordDict: THashList;
+  bigWordDict: THashList;
 
-  {$ENDREGION 'GBKMediaCenterDecl'}
+{$ENDREGION 'GBKMediaCenterDecl'}
 
-function LoadAndMergeDict(const root: TPascalString): NativeInt;
+function LoadAndMergeDict(const ROOT: TPascalString): nativeInt;
 
 implementation
 
@@ -60,38 +60,38 @@ type
 
 const
   cDictName: array [TDictStyle] of string = (
-    ('ÈîÆÂÄºËØçÂ∫ì-Â≠óÁ¨¶'),
-    ('ÈîÆÂÄºËØçÂ∫ì-ÊãºÈü≥'),
-    ('ÈîÆÂÄºËØçÂ∫ì-ÁÆÄ‰ΩìËΩ¨ÁπÅ‰Ωì'),
-    ('ÈîÆÂÄºËØçÂ∫ì-ÁπÅ‰ΩìËΩ¨Ê∏ØÁπÅ‰Ωì'),
-    ('ÈîÆÂÄºËØçÂ∫ì-ÁπÅ‰ΩìËΩ¨ÁÆÄ‰Ωì'),
-    ('ÈîÆÂÄºËØçÂ∫ì-ÁπÅ‰ΩìËΩ¨Âè∞Êπæ‰Ωì'),
-    ('ÂàÜÂùóÊñáÊú¨ËØçÂ∫ì-ËØçÊÄß'),
-    ('ÂàÜÂùóÊñáÊú¨ËØçÂ∫ì-ÊÑèÂøó'),
-    ('ÂàÜÂùóÊñáÊú¨ËØçÂ∫ì-Â∫¶Èáè'),
-    ('ÊñáÊú¨ËØçÂ∫ì-ÊÉÖÊÑüË¥üÂêë'),
-    ('ÊñáÊú¨ËØçÂ∫ì-ÂõûÈ¶àË¥üÂêë'),
-    ('ÊñáÊú¨ËØçÂ∫ì-ÊÉÖÊÑüÊ≠£Âêë'),
-    ('ÊñáÊú¨ËØçÂ∫ì-ÂõûÈ¶àÊ≠£Âêë'),
-    ('Â§ßËßÑÊ®°ÈîÆÂÄºËØçÂ∫ì-ÂàÜËØçÂ∫ì'),
-    ('Â§ßËßÑÊ®°ÊñáÊú¨ËØçÂ∫ì-ÂàÜËØçÂ∫ì')
+    ('º¸÷µ¥ ø‚-◊÷∑˚'),
+    ('º¸÷µ¥ ø‚-∆¥“Ù'),
+    ('º¸÷µ¥ ø‚-ºÚÃÂ◊™∑±ÃÂ'),
+    ('º¸÷µ¥ ø‚-∑±ÃÂ◊™∏€∑±ÃÂ'),
+    ('º¸÷µ¥ ø‚-∑±ÃÂ◊™ºÚÃÂ'),
+    ('º¸÷µ¥ ø‚-∑±ÃÂ◊™Ã®ÕÂÃÂ'),
+    ('∑÷øÈŒƒ±æ¥ ø‚-¥ –‘'),
+    ('∑÷øÈŒƒ±æ¥ ø‚-“‚÷æ'),
+    ('∑÷øÈŒƒ±æ¥ ø‚-∂»¡ø'),
+    ('Œƒ±æ¥ ø‚-«È∏–∏∫œÚ'),
+    ('Œƒ±æ¥ ø‚-ªÿ¿°∏∫œÚ'),
+    ('Œƒ±æ¥ ø‚-«È∏–’˝œÚ'),
+    ('Œƒ±æ¥ ø‚-ªÿ¿°’˝œÚ'),
+    ('¥ÛπÊƒ£º¸÷µ¥ ø‚-∑÷¥ ø‚'),
+    ('¥ÛπÊƒ£Œƒ±æ¥ ø‚-∑÷¥ ø‚')
     );
 
-function GBKStorePath(const root: TPascalString; const ds: TDictStyle): TPascalString;
+function GBKStorePath(const ROOT: TPascalString; const DS: TDictStyle): TPascalString;
 begin
-  Result := umlCombinePath(root, cDictName[ds]);
+  Result := umlCombinePath(ROOT, cDictName[DS]);
 end;
 
-function LoadPath(const Path, fileFilter: TPascalString; const mergeTo: THashStringList): NativeInt; overload;
+function LoadPath(const Path, fileFilter: TPascalString; const mergeTo: THashStringList): nativeInt; overload;
 var
-  fArry: umlStringDynArray;
-  pArry: umlStringDynArray;
-  i    : Integer;
-  ori  : NativeInt;
+  fArry: U_StringArray;
+  pArry: U_StringArray;
+  i: Integer;
+  ori: nativeInt;
 begin
   Result := 0;
   if not umlDirectoryExists(Path) then
-      exit;
+      Exit;
 
   fArry := umlGetFileListWithFullPath(Path);
   for i := low(fArry) to high(fArry) do
@@ -99,27 +99,27 @@ begin
       begin
         ori := mergeTo.Count;
         mergeTo.LoadFromFile(fArry[i]);
-        inc(Result, mergeTo.Count - ori);
+        Inc(Result, mergeTo.Count - ori);
       end;
   SetLength(fArry, 0);
 
   pArry := umlGetDirListWithFullPath(Path);
   for i := low(pArry) to high(pArry) do
-      inc(Result, LoadPath(pArry[i], fileFilter, mergeTo));
+      Inc(Result, LoadPath(pArry[i], fileFilter, mergeTo));
   SetLength(pArry, 0);
 end;
 
-function LoadPath(const Path, fileFilter: TPascalString; const mergeTo: THashList): NativeInt; overload;
+function LoadPath(const Path, fileFilter: TPascalString; const mergeTo: THashList): nativeInt; overload;
 var
-  fArry: umlStringDynArray;
-  pArry: umlStringDynArray;
-  i, j : Integer;
-  lst  : TListPascalString;
-  ori  : NativeInt;
+  fArry: U_StringArray;
+  pArry: U_StringArray;
+  i, J: Integer;
+  lst: TListPascalString;
+  ori: nativeInt;
 begin
   Result := 0;
   if not umlDirectoryExists(Path) then
-      exit;
+      Exit;
 
   fArry := umlGetFileListWithFullPath(Path);
   for i := low(fArry) to high(fArry) do
@@ -129,31 +129,31 @@ begin
 
         lst := TListPascalString.Create;
         lst.LoadFromFile(fArry[i]);
-        for j := 0 to lst.Count - 1 do
-            mergeTo.Add(lst[j], nil);
-        disposeObject(lst);
+        for J := 0 to lst.Count - 1 do
+            mergeTo.Add(lst[J], nil, True);
+        DisposeObject(lst);
 
-        inc(Result, mergeTo.Count - ori);
+        Inc(Result, mergeTo.Count - ori);
       end;
   SetLength(fArry, 0);
 
   pArry := umlGetDirListWithFullPath(Path);
   for i := low(pArry) to high(pArry) do
-      inc(Result, LoadPath(pArry[i], fileFilter, mergeTo));
+      Inc(Result, LoadPath(pArry[i], fileFilter, mergeTo));
   SetLength(pArry, 0);
 end;
 
-function LoadPath(const Path, fileFilter: TPascalString; const mergeTo: THashTextEngine): NativeInt; overload;
+function LoadPath(const Path, fileFilter: TPascalString; const mergeTo: THashTextEngine): nativeInt; overload;
 var
-  fArry: umlStringDynArray;
-  pArry: umlStringDynArray;
-  te   : THashTextEngine;
-  i    : Integer;
-  ori  : NativeInt;
+  fArry: U_StringArray;
+  pArry: U_StringArray;
+  te: THashTextEngine;
+  i: Integer;
+  ori: nativeInt;
 begin
   Result := 0;
   if not umlDirectoryExists(Path) then
-      exit;
+      Exit;
 
   fArry := umlGetFileListWithFullPath(Path);
   for i := low(fArry) to high(fArry) do
@@ -164,19 +164,19 @@ begin
         te := THashTextEngine.Create;
         te.LoadFromFile(fArry[i]);
         mergeTo.Merge(te);
-        disposeObject(te);
+        DisposeObject(te);
 
-        inc(Result, mergeTo.TotalCount - ori);
+        Inc(Result, mergeTo.TotalCount - ori);
       end;
   SetLength(fArry, 0);
 
   pArry := umlGetDirListWithFullPath(Path);
   for i := low(pArry) to high(pArry) do
-      inc(Result, LoadPath(pArry[i], fileFilter, mergeTo));
+      Inc(Result, LoadPath(pArry[i], fileFilter, mergeTo));
   SetLength(pArry, 0);
 end;
 
-function LoadAndMergeDict(const root: TPascalString): NativeInt;
+function LoadAndMergeDict(const ROOT: TPascalString): nativeInt;
 const
   cAllDict = [dsChar, dsPY, dsS2T, dsT2HK, dsT2S, dsT2TW,
     dsWordPart,
@@ -186,90 +186,91 @@ const
     dsBigKey, dsBigWord];
 
 var
-  ds: TDictStyle;
-  r : NativeInt;
+  DS: TDictStyle;
+  R: nativeInt;
   ph: TPascalString;
 begin
   Result := 0;
-  for ds in cAllDict do
+  for DS in cAllDict do
     begin
-      ph := GBKStorePath(root, ds);
+      ph := GBKStorePath(ROOT, DS);
       if not umlDirectoryExists(ph) then
           umlCreateDirectory(ph);
 
-      r := 0;
+      R := 0;
 
-      case ds of
-        dsChar: r := LoadPath(ph, '*.txt', CharDict);
-        dsPY: r := LoadPath(ph, '*.txt', PYDict);
-        dsS2T: r := LoadPath(ph, '*.txt', s2tDict);
-        dsT2HK: r := LoadPath(ph, '*.txt', t2hkDict);
-        dsT2S: r := LoadPath(ph, '*.txt', t2sDict);
-        dsT2TW: r := LoadPath(ph, '*.txt', t2twDict);
-        dsWordPart: r := LoadPath(ph, '*.ini;*.txt', WordPartDict);
-        dsWillVec: r := LoadPath(ph, '*.ini;*.txt', WillVecDict);
-        dsWordVec: r := LoadPath(ph, '*.ini;*.txt', WordVecDict);
-        dsBadEmotion: r := LoadPath(ph, '*.txt', BadEmotionDict);
-        dsBadRep: r := LoadPath(ph, '*.txt', BadRepDict);
-        dsGoodEmotion: r := LoadPath(ph, '*.txt', GoodEmotionDict);
-        dsGoodRep: r := LoadPath(ph, '*.txt', GoodRepDict);
-        dsBigKey: r := LoadPath(ph, '*.txt', BigKeyDict);
-        dsBigWord: r := LoadPath(ph, '*.txt', BigWordDict);
+      case DS of
+        dsChar: R := LoadPath(ph, '*.txt', CharDict);
+        dsPY: R := LoadPath(ph, '*.txt', PYDict);
+        dsS2T: R := LoadPath(ph, '*.txt', s2tDict);
+        dsT2HK: R := LoadPath(ph, '*.txt', t2hkDict);
+        dsT2S: R := LoadPath(ph, '*.txt', t2sDict);
+        dsT2TW: R := LoadPath(ph, '*.txt', t2twDict);
+        dsWordPart: R := LoadPath(ph, '*.ini;*.txt', WordPartDict);
+        dsWillVec: R := LoadPath(ph, '*.ini;*.txt', WillVecDict);
+        dsWordVec: R := LoadPath(ph, '*.ini;*.txt', WordVecDict);
+        dsBadEmotion: R := LoadPath(ph, '*.txt', BadEmotionDict);
+        dsBadRep: R := LoadPath(ph, '*.txt', BadRepDict);
+        dsGoodEmotion: R := LoadPath(ph, '*.txt', GoodEmotionDict);
+        dsGoodRep: R := LoadPath(ph, '*.txt', GoodRepDict);
+        dsBigKey: R := LoadPath(ph, '*.txt', bigKeyDict);
+        dsBigWord: R := LoadPath(ph, '*.txt', bigWordDict);
       end;
 
-      DoStatus('%s loaded %d ...', [cDictName[ds], r]);
-      inc(Result, r);
+      DoStatus('%s loaded %d ...', [cDictName[DS], R]);
+      Inc(Result, R);
     end;
 end;
 
-function GetGBKTextEngineDict(data: Pointer; siz, hashSiz: NativeInt): THashTextEngine;
+function GetGBKTextEngineDict(Data: Pointer; siz, hashSiz: nativeInt): THashTextEngine;
 var
-  Output: TMemoryStream64;
+  output: TMemoryStream64;
 begin
-  Output := TMemoryStream64.Create;
-  DecompressStream(data, siz, Output);
-  Output.Position := 0;
+  output := TMemoryStream64.Create;
+  DecompressStream(Data, siz, output);
+  output.Position := 0;
   Result := THashTextEngine.Create(hashSiz);
-  Result.LoadFromStream(Output);
-  disposeObject(Output);
+  Result.LoadFromStream(output);
+  DisposeObject(output);
 end;
 
-function GetGBKHashStringDict(data: Pointer; siz, hashSiz: NativeInt): THashStringList;
+function GetGBKHashStringDict(Data: Pointer; siz, hashSiz: nativeInt): THashStringList;
 var
-  Output: TMemoryStream64;
+  output: TMemoryStream64;
 begin
-  Output := TMemoryStream64.Create;
-  DecompressStream(data, siz, Output);
-  Output.Position := 0;
+  output := TMemoryStream64.Create;
+  DecompressStream(Data, siz, output);
+  output.Position := 0;
   Result := THashStringList.Create(hashSiz);
-  Result.LoadFromStream(Output);
-  disposeObject(Output);
+  Result.LoadFromStream(output);
+  DisposeObject(output);
 end;
 
-function GetGBKHashDict(data: Pointer; siz, hashSiz: NativeInt): THashList;
+function GetGBKHashDict(Data: Pointer; siz, hashSiz: nativeInt): THashList;
 var
-  Output: TMemoryStream64;
-  lst   : TListPascalString;
-  i     : Integer;
+  output: TMemoryStream64;
+  lst: TListPascalString;
+  i: Integer;
 begin
-  Output := TMemoryStream64.Create;
-  DecompressStream(data, siz, Output);
-  Output.Position := 0;
+  output := TMemoryStream64.Create;
+  DecompressStream(Data, siz, output);
+  output.Position := 0;
   Result := THashList.Create(hashSiz);
 
   lst := TListPascalString.Create;
-  lst.LoadFromStream(Output);
-  disposeObject(Output);
+  lst.LoadFromStream(output);
+  DisposeObject(output);
   for i := 0 to lst.Count - 1 do
-      Result.Add(lst[i], nil);
-  disposeObject(lst);
+      Result.Add(lst[i], nil, True);
+  DisposeObject(lst);
 end;
 
+{$INCLUDE GBK_Dict.inc}
+{$INCLUDE GBKVec_Dict.inc}
+{$INCLUDE GBKWordPart_Dict.inc}
+{$INCLUDE GBKBig_MiniDict.inc}
+
 procedure InitGBKMedia;
-{$I GBK_Dict.inc}
-{$I GBKVec_Dict.inc}
-{$I GBKWordPart_Dict.inc}
-{$I GBKBig_MiniDict.inc}
 begin
   // base gbk dict
   CharDict := GetGBKHashStringDict(@C_CharDictPackageBuffer[0], SizeOf(T_CharDict_PackageBuffer), 20000);
@@ -295,20 +296,20 @@ begin
   GoodRepDict := GetGBKHashDict(@C_GoodRepDictPackageBuffer[0], SizeOf(T_GoodRepDict_PackageBuffer), 20000);
 
   // big key
-  BigKeyDict := GetGBKHashStringDict(@C_MiniKeyDictPackageBuffer[0], SizeOf(T_MiniKeyDict_PackageBuffer), 200 * 10000);
+  bigKeyDict := GetGBKHashStringDict(@C_MiniKeyDictPackageBuffer[0], SizeOf(T_MiniKeyDict_PackageBuffer), 200 * 10000);
 
   // big word
-  BigWordDict := GetGBKHashDict(@C_MiniDictPackageBuffer[0], SizeOf(T_MiniDict_PackageBuffer), 200 * 10000);
+  bigWordDict := GetGBKHashDict(@C_miniDictPackageBuffer[0], SizeOf(T_miniDict_PackageBuffer), 200 * 10000);
 end;
 
 procedure FreeGBKMedia;
 begin
-  disposeObject([WordPartDict]);
-  disposeObject([WillVecDict, WordVecDict]);
-  disposeObject([BadEmotionDict, BadRepDict, GoodEmotionDict, GoodRepDict]);
-  disposeObject([CharDict, PYDict, s2tDict, t2hkDict, t2sDict, t2twDict]);
-  disposeObject(BigKeyDict);
-  disposeObject(BigWordDict);
+  DisposeObject([WordPartDict]);
+  DisposeObject([WillVecDict, WordVecDict]);
+  DisposeObject([BadEmotionDict, BadRepDict, GoodEmotionDict, GoodRepDict]);
+  DisposeObject([CharDict, PYDict, s2tDict, t2hkDict, t2sDict, t2twDict]);
+  DisposeObject(bigKeyDict);
+  DisposeObject(bigWordDict);
 end;
 
 initialization
@@ -319,4 +320,4 @@ finalization
 
 FreeGBKMedia;
 
-end.
+end. 

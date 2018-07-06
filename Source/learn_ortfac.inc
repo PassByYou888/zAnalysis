@@ -11,21 +11,21 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 procedure SymmetricMatrixVectorMultiply(const A: TLMatrix; IsUpper: Boolean;
-  I1: TLInt; I2: TLInt; const X: TLVec;
-  Alpha: TLFloat; var Y: TLVec);
+  i1: TLInt; i2: TLInt; const X: TLVec;
+  alpha: TLFloat; var Y: TLVec);
 var
-  I  : TLInt;
+  i  : TLInt;
   BA1: TLInt;
   BA2: TLInt;
   BY1: TLInt;
   BY2: TLInt;
   BX1: TLInt;
   BX2: TLInt;
-  N  : TLInt;
-  V  : TLFloat;
+  n  : TLInt;
+  v  : TLFloat;
 begin
-  N := I2 - I1 + 1;
-  if N <= 0 then
+  n := i2 - i1 + 1;
+  if n <= 0 then
     begin
       Exit;
     end;
@@ -40,11 +40,11 @@ begin
   //
   // Calculate D*x first
   //
-  I := I1;
-  while I <= I2 do
+  i := i1;
+  while i <= i2 do
     begin
-      Y[I - I1 + 1] := A[I, I] * X[I - I1 + 1];
-      Inc(I);
+      Y[i - i1 + 1] := A[i, i] * X[i - i1 + 1];
+      Inc(i);
     end;
 
   //
@@ -52,102 +52,102 @@ begin
   //
   if IsUpper then
     begin
-      I := I1;
-      while I <= I2 - 1 do
+      i := i1;
+      while i <= i2 - 1 do
         begin
 
           //
           // Add L*x to the result
           //
-          V := X[I - I1 + 1];
-          BY1 := I - I1 + 2;
-          BY2 := N;
-          BA1 := I + 1;
-          BA2 := I2;
-          APVAdd(@Y[0], BY1, BY2, @A[I][0], BA1, BA2, V);
+          v := X[i - i1 + 1];
+          BY1 := i - i1 + 2;
+          BY2 := n;
+          BA1 := i + 1;
+          BA2 := i2;
+          APVAdd(@Y[0], BY1, BY2, @A[i][0], BA1, BA2, v);
 
           //
           // Add U*x to the result
           //
-          BX1 := I - I1 + 2;
-          BX2 := N;
-          BA1 := I + 1;
-          BA2 := I2;
-          V := APVDotProduct(@X[0], BX1, BX2, @A[I][0], BA1, BA2);
-          Y[I - I1 + 1] := Y[I - I1 + 1] + V;
-          Inc(I);
+          BX1 := i - i1 + 2;
+          BX2 := n;
+          BA1 := i + 1;
+          BA2 := i2;
+          v := APVDotProduct(@X[0], BX1, BX2, @A[i][0], BA1, BA2);
+          Y[i - i1 + 1] := Y[i - i1 + 1] + v;
+          Inc(i);
         end;
     end
   else
     begin
-      I := I1 + 1;
-      while I <= I2 do
+      i := i1 + 1;
+      while i <= i2 do
         begin
 
           //
           // Add L*x to the result
           //
           BX1 := 1;
-          BX2 := I - I1;
-          BA1 := I1;
-          BA2 := I - 1;
-          V := APVDotProduct(@X[0], BX1, BX2, @A[I][0], BA1, BA2);
-          Y[I - I1 + 1] := Y[I - I1 + 1] + V;
+          BX2 := i - i1;
+          BA1 := i1;
+          BA2 := i - 1;
+          v := APVDotProduct(@X[0], BX1, BX2, @A[i][0], BA1, BA2);
+          Y[i - i1 + 1] := Y[i - i1 + 1] + v;
 
           //
           // Add U*x to the result
           //
-          V := X[I - I1 + 1];
+          v := X[i - i1 + 1];
           BY1 := 1;
-          BY2 := I - I1;
-          BA1 := I1;
-          BA2 := I - 1;
-          APVAdd(@Y[0], BY1, BY2, @A[I][0], BA1, BA2, V);
-          Inc(I);
+          BY2 := i - i1;
+          BA1 := i1;
+          BA2 := i - 1;
+          APVAdd(@Y[0], BY1, BY2, @A[i][0], BA1, BA2, v);
+          Inc(i);
         end;
     end;
-  APVMul(@Y[0], 1, N, Alpha);
+  APVMul(@Y[0], 1, n, alpha);
 end;
 
 procedure SymmetricRank2Update(var A: TLMatrix; IsUpper: Boolean;
-  I1: TLInt; I2: TLInt; const X: TLVec;
-  const Y: TLVec; var T: TLVec; Alpha: TLFloat);
+  i1: TLInt; i2: TLInt; const X: TLVec;
+  const Y: TLVec; var T: TLVec; alpha: TLFloat);
 var
-  I  : TLInt;
+  i  : TLInt;
   TP1: TLInt;
   TP2: TLInt;
-  V  : TLFloat;
+  v  : TLFloat;
 begin
   if IsUpper then
     begin
-      I := I1;
-      while I <= I2 do
+      i := i1;
+      while i <= i2 do
         begin
-          TP1 := I + 1 - I1;
-          TP2 := I2 - I1 + 1;
-          V := X[I + 1 - I1];
-          APVMove(@T[0], TP1, TP2, @Y[0], TP1, TP2, V);
-          V := Y[I + 1 - I1];
-          APVAdd(@T[0], TP1, TP2, @X[0], TP1, TP2, V);
-          APVMul(@T[0], TP1, TP2, Alpha);
-          APVAdd(@A[I][0], I, I2, @T[0], TP1, TP2);
-          Inc(I);
+          TP1 := i + 1 - i1;
+          TP2 := i2 - i1 + 1;
+          v := X[i + 1 - i1];
+          APVMove(@T[0], TP1, TP2, @Y[0], TP1, TP2, v);
+          v := Y[i + 1 - i1];
+          APVAdd(@T[0], TP1, TP2, @X[0], TP1, TP2, v);
+          APVMul(@T[0], TP1, TP2, alpha);
+          APVAdd(@A[i][0], i, i2, @T[0], TP1, TP2);
+          Inc(i);
         end;
     end
   else
     begin
-      I := I1;
-      while I <= I2 do
+      i := i1;
+      while i <= i2 do
         begin
           TP1 := 1;
-          TP2 := I + 1 - I1;
-          V := X[I + 1 - I1];
-          APVMove(@T[0], TP1, TP2, @Y[0], TP1, TP2, V);
-          V := Y[I + 1 - I1];
-          APVAdd(@T[0], TP1, TP2, @X[0], TP1, TP2, V);
-          APVMul(@T[0], TP1, TP2, Alpha);
-          APVAdd(@A[I][0], I1, I, @T[0], TP1, TP2);
-          Inc(I);
+          TP2 := i + 1 - i1;
+          v := X[i + 1 - i1];
+          APVMove(@T[0], TP1, TP2, @Y[0], TP1, TP2, v);
+          v := Y[i + 1 - i1];
+          APVAdd(@T[0], TP1, TP2, @X[0], TP1, TP2, v);
+          APVMul(@T[0], TP1, TP2, alpha);
+          APVAdd(@A[i][0], i1, i, @T[0], TP1, TP2);
+          Inc(i);
         end;
     end;
 end;
@@ -183,24 +183,24 @@ end;
   library. It has similar functionality except for the fact that it  doesn’t
   handle errors when intermediate results cause an overflow.
   ************************************************************************ *)
-procedure ComplexGenerateReflection(var X: TLComplexVec; N: TLInt;
-  var Tau: TLComplex);
+procedure ComplexGenerateReflection(var X: TLComplexVec; n: TLInt;
+  var TAU: TLComplex);
 var
   J    : TLInt;
-  Alpha: TLComplex;
+  alpha: TLComplex;
   ALPHI: TLFloat;
   ALPHR: TLFloat;
-  BETA : TLFloat;
+  beta : TLFloat;
   XNORM: TLFloat;
-  MX   : TLFloat;
+  mx   : TLFloat;
   T    : TLComplex;
-  S    : TLFloat;
-  V    : TLComplex;
+  s    : TLFloat;
+  v    : TLComplex;
   i_   : TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
-      Tau := C_Complex(0);
+      TAU := C_Complex(0);
       Exit;
     end;
 
@@ -208,32 +208,32 @@ begin
   // Scale if needed (to avoid overflow/underflow during intermediate
   // calculations).
   //
-  MX := 0;
+  mx := 0;
   J := 1;
-  while J <= N do
+  while J <= n do
     begin
-      MX := Max(AbsComplex(X[J]), MX);
+      mx := Max(AbsComplex(X[J]), mx);
       Inc(J);
     end;
-  S := 1;
-  if AP_FP_Neq(MX, 0) then
+  s := 1;
+  if AP_FP_NEq(mx, 0) then
     begin
-      if AP_FP_Less(MX, 1) then
+      if AP_FP_Less(mx, 1) then
         begin
-          S := Sqrt(MinRealNumber);
-          V := C_Complex(1 / S);
-          for i_ := 1 to N do
+          s := Sqrt(MinRealNumber);
+          v := C_Complex(1 / s);
+          for i_ := 1 to n do
             begin
-              X[i_] := C_Mul(V, X[i_]);
+              X[i_] := C_Mul(v, X[i_]);
             end;
         end
       else
         begin
-          S := Sqrt(MaxRealNumber);
-          V := C_Complex(1 / S);
-          for i_ := 1 to N do
+          s := Sqrt(MaxRealNumber);
+          v := C_Complex(1 / s);
+          for i_ := 1 to n do
             begin
-              X[i_] := C_Mul(V, X[i_]);
+              X[i_] := C_Mul(v, X[i_]);
             end;
         end;
     end;
@@ -241,59 +241,59 @@ begin
   //
   // calculate
   //
-  Alpha := X[1];
-  MX := 0;
+  alpha := X[1];
+  mx := 0;
   J := 2;
-  while J <= N do
+  while J <= n do
     begin
-      MX := Max(AbsComplex(X[J]), MX);
+      mx := Max(AbsComplex(X[J]), mx);
       Inc(J);
     end;
   XNORM := 0;
-  if AP_FP_Neq(MX, 0) then
+  if AP_FP_NEq(mx, 0) then
     begin
       J := 2;
-      while J <= N do
+      while J <= n do
         begin
-          T := C_DivR(X[J], MX);
+          T := C_DivR(X[J], mx);
           XNORM := XNORM + C_Mul(T, Conj(T)).X;
           Inc(J);
         end;
-      XNORM := Sqrt(XNORM) * MX;
+      XNORM := Sqrt(XNORM) * mx;
     end;
-  ALPHR := Alpha.X;
-  ALPHI := Alpha.Y;
+  ALPHR := alpha.X;
+  ALPHI := alpha.Y;
   if AP_FP_Eq(XNORM, 0) and AP_FP_Eq(ALPHI, 0) then
     begin
-      Tau := C_Complex(0);
-      X[1] := C_MulR(X[1], S);
+      TAU := C_Complex(0);
+      X[1] := C_MulR(X[1], s);
       Exit;
     end;
-  MX := Max(AbsReal(ALPHR), AbsReal(ALPHI));
-  MX := Max(MX, AbsReal(XNORM));
-  BETA := -MX * Sqrt(AP_Sqr(ALPHR / MX) + AP_Sqr(ALPHI / MX) +
-    AP_Sqr(XNORM / MX));
+  mx := Max(AbsReal(ALPHR), AbsReal(ALPHI));
+  mx := Max(mx, AbsReal(XNORM));
+  beta := -mx * Sqrt(AP_Sqr(ALPHR / mx) + AP_Sqr(ALPHI / mx) +
+    AP_Sqr(XNORM / mx));
   if AP_FP_Less(ALPHR, 0) then
     begin
-      BETA := -BETA;
+      beta := -beta;
     end;
-  Tau.X := (BETA - ALPHR) / BETA;
-  Tau.Y := -ALPHI / BETA;
-  Alpha := C_RDiv(1, C_SubR(Alpha, BETA));
-  if N > 1 then
+  TAU.X := (beta - ALPHR) / beta;
+  TAU.Y := -ALPHI / beta;
+  alpha := C_RDiv(1, C_SubR(alpha, beta));
+  if n > 1 then
     begin
-      for i_ := 2 to N do
+      for i_ := 2 to n do
         begin
-          X[i_] := C_Mul(Alpha, X[i_]);
+          X[i_] := C_Mul(alpha, X[i_]);
         end;
     end;
-  Alpha := C_Complex(BETA);
-  X[1] := Alpha;
+  alpha := C_Complex(beta);
+  X[1] := alpha;
 
   //
   // Scale back
   //
-  X[1] := C_MulR(X[1], S);
+  X[1] := C_MulR(X[1], s);
 end;
 
 (* ************************************************************************
@@ -323,15 +323,15 @@ end;
   If N1>N2 or M1>M2, C is not modified.
   ************************************************************************ *)
 procedure ComplexApplyReflectionFromTheLeft(var C: TLComplexMatrix;
-  Tau: TLComplex; const V: TLComplexVec; M1: TLInt; M2: TLInt;
-  N1: TLInt; N2: TLInt; var WORK: TLComplexVec);
+  TAU: TLComplex; const v: TLComplexVec; m1: TLInt; m2: TLInt;
+  N1: TLInt; N2: TLInt; var Work: TLComplexVec);
 var
   T : TLComplex;
-  I : TLInt;
+  i : TLInt;
   VM: TLInt;
   i_: TLInt;
 begin
-  if C_EqualR(Tau, 0) or (N1 > N2) or (M1 > M2) then
+  if C_EqualR(TAU, 0) or (N1 > N2) or (m1 > m2) then
     begin
       Exit;
     end;
@@ -339,36 +339,36 @@ begin
   //
   // w := C^T * conj(v)
   //
-  VM := M2 - M1 + 1;
-  I := N1;
-  while I <= N2 do
+  VM := m2 - m1 + 1;
+  i := N1;
+  while i <= N2 do
     begin
-      WORK[I] := C_Complex(0);
-      Inc(I);
+      Work[i] := C_Complex(0);
+      Inc(i);
     end;
-  I := M1;
-  while I <= M2 do
+  i := m1;
+  while i <= m2 do
     begin
-      T := Conj(V[I + 1 - M1]);
+      T := Conj(v[i + 1 - m1]);
       for i_ := N1 to N2 do
         begin
-          WORK[i_] := C_Add(WORK[i_], C_Mul(T, C[I, i_]));
+          Work[i_] := C_Add(Work[i_], C_Mul(T, C[i, i_]));
         end;
-      Inc(I);
+      Inc(i);
     end;
 
   //
   // C := C - tau * v * w^T
   //
-  I := M1;
-  while I <= M2 do
+  i := m1;
+  while i <= m2 do
     begin
-      T := C_Mul(V[I - M1 + 1], Tau);
+      T := C_Mul(v[i - m1 + 1], TAU);
       for i_ := N1 to N2 do
         begin
-          C[I, i_] := C_Sub(C[I, i_], C_Mul(T, WORK[i_]));
+          C[i, i_] := C_Sub(C[i, i_], C_Mul(T, Work[i_]));
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -396,16 +396,16 @@ end;
   If N1>N2 or M1>M2, C is not modified.
   ************************************************************************ *)
 procedure ComplexApplyReflectionFromTheRight(var C: TLComplexMatrix;
-  Tau: TLComplex; var V: TLComplexVec; M1: TLInt; M2: TLInt;
-  N1: TLInt; N2: TLInt; var WORK: TLComplexVec);
+  TAU: TLComplex; var v: TLComplexVec; m1: TLInt; m2: TLInt;
+  N1: TLInt; N2: TLInt; var Work: TLComplexVec);
 var
   T  : TLComplex;
-  I  : TLInt;
+  i  : TLInt;
   VM : TLInt;
   i_ : TLInt;
   i1_: TLInt;
 begin
-  if C_EqualR(Tau, 0) or (N1 > N2) or (M1 > M2) then
+  if C_EqualR(TAU, 0) or (N1 > N2) or (m1 > m2) then
     begin
       Exit;
     end;
@@ -414,17 +414,17 @@ begin
   // w := C * v
   //
   VM := N2 - N1 + 1;
-  I := M1;
-  while I <= M2 do
+  i := m1;
+  while i <= m2 do
     begin
       i1_ := (1) - (N1);
       T := C_Complex(0.0);
       for i_ := N1 to N2 do
         begin
-          T := C_Add(T, C_Mul(C[I, i_], V[i_ + i1_]));
+          T := C_Add(T, C_Mul(C[i, i_], v[i_ + i1_]));
         end;
-      WORK[I] := T;
-      Inc(I);
+      Work[i] := T;
+      Inc(i);
     end;
 
   //
@@ -432,22 +432,22 @@ begin
   //
   for i_ := 1 to VM do
     begin
-      V[i_] := Conj(V[i_]);
+      v[i_] := Conj(v[i_]);
     end;
-  I := M1;
-  while I <= M2 do
+  i := m1;
+  while i <= m2 do
     begin
-      T := C_Mul(WORK[I], Tau);
+      T := C_Mul(Work[i], TAU);
       i1_ := (1) - (N1);
       for i_ := N1 to N2 do
         begin
-          C[I, i_] := C_Sub(C[I, i_], C_Mul(T, V[i_ + i1_]));
+          C[i, i_] := C_Sub(C[i, i_], C_Mul(T, v[i_ + i1_]));
         end;
-      Inc(I);
+      Inc(i);
     end;
   for i_ := 1 to VM do
     begin
-      V[i_] := Conj(V[i_]);
+      v[i_] := Conj(v[i_]);
     end;
 end;
 
@@ -484,20 +484,20 @@ end;
   MODIFICATIONS:
   24.12.2005 sign(Alpha) was replaced with an analogous to the Fortran SIGN code.
   ************************************************************************ *)
-procedure GenerateReflection(var X: TLVec; N: TLInt;
-  var Tau: TLFloat);
+procedure GenerateReflection(var X: TLVec; n: TLInt;
+  var TAU: TLFloat);
 var
   J    : TLInt;
-  Alpha: TLFloat;
+  alpha: TLFloat;
   XNORM: TLFloat;
-  V    : TLFloat;
-  BETA : TLFloat;
-  MX   : TLFloat;
-  S    : TLFloat;
+  v    : TLFloat;
+  beta : TLFloat;
+  mx   : TLFloat;
+  s    : TLFloat;
 begin
-  if N <= 1 then
+  if n <= 1 then
     begin
-      Tau := 0;
+      TAU := 0;
       Exit;
     end;
 
@@ -505,31 +505,31 @@ begin
   // Scale if needed (to avoid overflow/underflow during intermediate
   // calculations).
   //
-  MX := 0;
+  mx := 0;
   J := 1;
-  while J <= N do
+  while J <= n do
     begin
-      MX := Max(AbsReal(X[J]), MX);
+      mx := Max(AbsReal(X[J]), mx);
       Inc(J);
     end;
-  S := 1;
-  if AP_FP_Neq(MX, 0) then
+  s := 1;
+  if AP_FP_NEq(mx, 0) then
     begin
-      if AP_FP_Less_Eq(MX, MinRealNumber / MachineEpsilon) then
+      if AP_FP_Less_Eq(mx, MinRealNumber / MachineEpsilon) then
         begin
-          S := MinRealNumber / MachineEpsilon;
-          V := 1 / S;
-          APVMul(@X[0], 1, N, V);
-          MX := MX * V;
+          s := MinRealNumber / MachineEpsilon;
+          v := 1 / s;
+          APVMul(@X[0], 1, n, v);
+          mx := mx * v;
         end
       else
         begin
-          if AP_FP_Greater_Eq(MX, MaxRealNumber * MachineEpsilon) then
+          if AP_FP_Greater_Eq(mx, MaxRealNumber * MachineEpsilon) then
             begin
-              S := MaxRealNumber * MachineEpsilon;
-              V := 1 / S;
-              APVMul(@X[0], 1, N, V);
-              MX := MX * V;
+              s := MaxRealNumber * MachineEpsilon;
+              v := 1 / s;
+              APVMul(@X[0], 1, n, v);
+              mx := mx * v;
             end;
         end;
     end;
@@ -537,17 +537,17 @@ begin
   //
   // XNORM = DNRM2( N-1, X, INCX )
   //
-  Alpha := X[1];
+  alpha := X[1];
   XNORM := 0;
-  if AP_FP_Neq(MX, 0) then
+  if AP_FP_NEq(mx, 0) then
     begin
       J := 2;
-      while J <= N do
+      while J <= n do
         begin
-          XNORM := XNORM + AP_Sqr(X[J] / MX);
+          XNORM := XNORM + AP_Sqr(X[J] / mx);
           Inc(J);
         end;
-      XNORM := Sqrt(XNORM) * MX;
+      XNORM := Sqrt(XNORM) * mx;
     end;
   if AP_FP_Eq(XNORM, 0) then
     begin
@@ -555,29 +555,29 @@ begin
       //
       // H  =  I
       //
-      Tau := 0;
-      X[1] := X[1] * S;
+      TAU := 0;
+      X[1] := X[1] * s;
       Exit;
     end;
 
   //
   // general case
   //
-  MX := Max(AbsReal(Alpha), AbsReal(XNORM));
-  BETA := -MX * Sqrt(AP_Sqr(Alpha / MX) + AP_Sqr(XNORM / MX));
-  if AP_FP_Less(Alpha, 0) then
+  mx := Max(AbsReal(alpha), AbsReal(XNORM));
+  beta := -mx * Sqrt(AP_Sqr(alpha / mx) + AP_Sqr(XNORM / mx));
+  if AP_FP_Less(alpha, 0) then
     begin
-      BETA := -BETA;
+      beta := -beta;
     end;
-  Tau := (BETA - Alpha) / BETA;
-  V := 1 / (Alpha - BETA);
-  APVMul(@X[0], 2, N, V);
-  X[1] := BETA;
+  TAU := (beta - alpha) / beta;
+  v := 1 / (alpha - beta);
+  APVMul(@X[0], 2, n, v);
+  X[1] := beta;
 
   //
   // Scale back outputs
   //
-  X[1] := X[1] * S;
+  X[1] := X[1] * s;
 end;
 
 (* ************************************************************************
@@ -603,15 +603,15 @@ end;
   transformation matrix which is given by Tau and V.
   If N1>N2 or M1>M2, C is not modified.
   ************************************************************************ *)
-procedure ApplyReflectionFromTheLeft(var C: TLMatrix; Tau: TLFloat;
-  const V: TLVec; M1: TLInt; M2: TLInt;
-  N1: TLInt; N2: TLInt; var WORK: TLVec);
+procedure ApplyReflectionFromTheLeft(var C: TLMatrix; TAU: TLFloat;
+  const v: TLVec; m1: TLInt; m2: TLInt;
+  N1: TLInt; N2: TLInt; var Work: TLVec);
 var
   T : TLFloat;
-  I : TLInt;
+  i : TLInt;
   VM: TLInt;
 begin
-  if AP_FP_Eq(Tau, 0) or (N1 > N2) or (M1 > M2) then
+  if AP_FP_Eq(TAU, 0) or (N1 > N2) or (m1 > m2) then
     begin
       Exit;
     end;
@@ -619,30 +619,30 @@ begin
   //
   // w := C' * v
   //
-  VM := M2 - M1 + 1;
-  I := N1;
-  while I <= N2 do
+  VM := m2 - m1 + 1;
+  i := N1;
+  while i <= N2 do
     begin
-      WORK[I] := 0;
-      Inc(I);
+      Work[i] := 0;
+      Inc(i);
     end;
-  I := M1;
-  while I <= M2 do
+  i := m1;
+  while i <= m2 do
     begin
-      T := V[I + 1 - M1];
-      APVAdd(@WORK[0], N1, N2, @C[I][0], N1, N2, T);
-      Inc(I);
+      T := v[i + 1 - m1];
+      APVAdd(@Work[0], N1, N2, @C[i][0], N1, N2, T);
+      Inc(i);
     end;
 
   //
   // C := C - tau * v * w'
   //
-  I := M1;
-  while I <= M2 do
+  i := m1;
+  while i <= m2 do
     begin
-      T := V[I - M1 + 1] * Tau;
-      APVSub(@C[I][0], N1, N2, @WORK[0], N1, N2, T);
-      Inc(I);
+      T := v[i - m1 + 1] * TAU;
+      APVSub(@C[i][0], N1, N2, @Work[0], N1, N2, T);
+      Inc(i);
     end;
 end;
 
@@ -669,47 +669,47 @@ end;
   transformation matrix which is given by Tau and V.
   If N1>N2 or M1>M2, C is not modified.
   ************************************************************************ *)
-procedure ApplyReflectionFromTheRight(var C: TLMatrix; Tau: TLFloat;
-  const V: TLVec; M1: TLInt; M2: TLInt;
-  N1: TLInt; N2: TLInt; var WORK: TLVec);
+procedure ApplyReflectionFromTheRight(var C: TLMatrix; TAU: TLFloat;
+  const v: TLVec; m1: TLInt; m2: TLInt;
+  N1: TLInt; N2: TLInt; var Work: TLVec);
 var
   T : TLFloat;
-  I : TLInt;
+  i : TLInt;
   VM: TLInt;
 begin
-  if AP_FP_Eq(Tau, 0) or (N1 > N2) or (M1 > M2) then
+  if AP_FP_Eq(TAU, 0) or (N1 > N2) or (m1 > m2) then
     begin
       Exit;
     end;
   VM := N2 - N1 + 1;
-  I := M1;
-  while I <= M2 do
+  i := m1;
+  while i <= m2 do
     begin
-      T := APVDotProduct(@C[I][0], N1, N2, @V[0], 1, VM);
-      T := T * Tau;
-      APVSub(@C[I][0], N1, N2, @V[0], 1, VM, T);
-      Inc(I);
+      T := APVDotProduct(@C[i][0], N1, N2, @v[0], 1, VM);
+      T := T * TAU;
+      APVSub(@C[i][0], N1, N2, @v[0], 1, VM, T);
+      Inc(i);
     end;
 end;
 
 procedure HermitianMatrixVectorMultiply(const A: TLComplexMatrix;
-  IsUpper: Boolean; I1: TLInt; I2: TLInt;
-  const X: TLComplexVec; Alpha: TLComplex; var Y: TLComplexVec);
+  IsUpper: Boolean; i1: TLInt; i2: TLInt;
+  const X: TLComplexVec; alpha: TLComplex; var Y: TLComplexVec);
 var
-  I  : TLInt;
+  i  : TLInt;
   BA1: TLInt;
   BA2: TLInt;
   BY1: TLInt;
   BY2: TLInt;
   BX1: TLInt;
   BX2: TLInt;
-  N  : TLInt;
-  V  : TLComplex;
+  n  : TLInt;
+  v  : TLComplex;
   i_ : TLInt;
   i1_: TLInt;
 begin
-  N := I2 - I1 + 1;
-  if N <= 0 then
+  n := i2 - i1 + 1;
+  if n <= 0 then
     begin
       Exit;
     end;
@@ -724,11 +724,11 @@ begin
   //
   // Calculate D*x first
   //
-  I := I1;
-  while I <= I2 do
+  i := i1;
+  while i <= i2 do
     begin
-      Y[I - I1 + 1] := C_Mul(A[I, I], X[I - I1 + 1]);
-      Inc(I);
+      Y[i - i1 + 1] := C_Mul(A[i, i], X[i - i1 + 1]);
+      Inc(i);
     end;
 
   //
@@ -736,206 +736,206 @@ begin
   //
   if IsUpper then
     begin
-      I := I1;
-      while I <= I2 - 1 do
+      i := i1;
+      while i <= i2 - 1 do
         begin
 
           //
           // Add L*x to the result
           //
-          V := X[I - I1 + 1];
-          BY1 := I - I1 + 2;
-          BY2 := N;
-          BA1 := I + 1;
-          BA2 := I2;
+          v := X[i - i1 + 1];
+          BY1 := i - i1 + 2;
+          BY2 := n;
+          BA1 := i + 1;
+          BA2 := i2;
           i1_ := (BA1) - (BY1);
           for i_ := BY1 to BY2 do
             begin
-              Y[i_] := C_Add(Y[i_], C_Mul(V, Conj(A[I, i_ + i1_])));
+              Y[i_] := C_Add(Y[i_], C_Mul(v, Conj(A[i, i_ + i1_])));
             end;
 
           //
           // Add U*x to the result
           //
-          BX1 := I - I1 + 2;
-          BX2 := N;
-          BA1 := I + 1;
-          BA2 := I2;
+          BX1 := i - i1 + 2;
+          BX2 := n;
+          BA1 := i + 1;
+          BA2 := i2;
           i1_ := (BA1) - (BX1);
-          V := C_Complex(0.0);
+          v := C_Complex(0.0);
           for i_ := BX1 to BX2 do
             begin
-              V := C_Add(V, C_Mul(X[i_], A[I, i_ + i1_]));
+              v := C_Add(v, C_Mul(X[i_], A[i, i_ + i1_]));
             end;
-          Y[I - I1 + 1] := C_Add(Y[I - I1 + 1], V);
-          Inc(I);
+          Y[i - i1 + 1] := C_Add(Y[i - i1 + 1], v);
+          Inc(i);
         end;
     end
   else
     begin
-      I := I1 + 1;
-      while I <= I2 do
+      i := i1 + 1;
+      while i <= i2 do
         begin
 
           //
           // Add L*x to the result
           //
           BX1 := 1;
-          BX2 := I - I1;
-          BA1 := I1;
-          BA2 := I - 1;
+          BX2 := i - i1;
+          BA1 := i1;
+          BA2 := i - 1;
           i1_ := (BA1) - (BX1);
-          V := C_Complex(0.0);
+          v := C_Complex(0.0);
           for i_ := BX1 to BX2 do
             begin
-              V := C_Add(V, C_Mul(X[i_], A[I, i_ + i1_]));
+              v := C_Add(v, C_Mul(X[i_], A[i, i_ + i1_]));
             end;
-          Y[I - I1 + 1] := C_Add(Y[I - I1 + 1], V);
+          Y[i - i1 + 1] := C_Add(Y[i - i1 + 1], v);
 
           //
           // Add U*x to the result
           //
-          V := X[I - I1 + 1];
+          v := X[i - i1 + 1];
           BY1 := 1;
-          BY2 := I - I1;
-          BA1 := I1;
-          BA2 := I - 1;
+          BY2 := i - i1;
+          BA1 := i1;
+          BA2 := i - 1;
           i1_ := (BA1) - (BY1);
           for i_ := BY1 to BY2 do
             begin
-              Y[i_] := C_Add(Y[i_], C_Mul(V, Conj(A[I, i_ + i1_])));
+              Y[i_] := C_Add(Y[i_], C_Mul(v, Conj(A[i, i_ + i1_])));
             end;
-          Inc(I);
+          Inc(i);
         end;
     end;
-  for i_ := 1 to N do
+  for i_ := 1 to n do
     begin
-      Y[i_] := C_Mul(Alpha, Y[i_]);
+      Y[i_] := C_Mul(alpha, Y[i_]);
     end;
 end;
 
 procedure HermitianRank2Update(var A: TLComplexMatrix; IsUpper: Boolean;
-  I1: TLInt; I2: TLInt; const X: TLComplexVec;
-  const Y: TLComplexVec; var T: TLComplexVec; Alpha: TLComplex);
+  i1: TLInt; i2: TLInt; const X: TLComplexVec;
+  const Y: TLComplexVec; var T: TLComplexVec; alpha: TLComplex);
 var
-  I  : TLInt;
+  i  : TLInt;
   TP1: TLInt;
   TP2: TLInt;
-  V  : TLComplex;
+  v  : TLComplex;
   i_ : TLInt;
   i1_: TLInt;
 begin
   if IsUpper then
     begin
-      I := I1;
-      while I <= I2 do
+      i := i1;
+      while i <= i2 do
         begin
-          TP1 := I + 1 - I1;
-          TP2 := I2 - I1 + 1;
-          V := C_Mul(Alpha, X[I + 1 - I1]);
+          TP1 := i + 1 - i1;
+          TP2 := i2 - i1 + 1;
+          v := C_Mul(alpha, X[i + 1 - i1]);
           for i_ := TP1 to TP2 do
             begin
-              T[i_] := C_Mul(V, Conj(Y[i_]));
+              T[i_] := C_Mul(v, Conj(Y[i_]));
             end;
-          V := C_Mul(Conj(Alpha), Y[I + 1 - I1]);
+          v := C_Mul(Conj(alpha), Y[i + 1 - i1]);
           for i_ := TP1 to TP2 do
             begin
-              T[i_] := C_Add(T[i_], C_Mul(V, Conj(X[i_])));
+              T[i_] := C_Add(T[i_], C_Mul(v, Conj(X[i_])));
             end;
-          i1_ := (TP1) - (I);
-          for i_ := I to I2 do
+          i1_ := (TP1) - (i);
+          for i_ := i to i2 do
             begin
-              A[I, i_] := C_Add(A[I, i_], T[i_ + i1_]);
+              A[i, i_] := C_Add(A[i, i_], T[i_ + i1_]);
             end;
-          Inc(I);
+          Inc(i);
         end;
     end
   else
     begin
-      I := I1;
-      while I <= I2 do
+      i := i1;
+      while i <= i2 do
         begin
           TP1 := 1;
-          TP2 := I + 1 - I1;
-          V := C_Mul(Alpha, X[I + 1 - I1]);
+          TP2 := i + 1 - i1;
+          v := C_Mul(alpha, X[i + 1 - i1]);
           for i_ := TP1 to TP2 do
             begin
-              T[i_] := C_Mul(V, Conj(Y[i_]));
+              T[i_] := C_Mul(v, Conj(Y[i_]));
             end;
-          V := C_Mul(Conj(Alpha), Y[I + 1 - I1]);
+          v := C_Mul(Conj(alpha), Y[i + 1 - i1]);
           for i_ := TP1 to TP2 do
             begin
-              T[i_] := C_Add(T[i_], C_Mul(V, Conj(X[i_])));
+              T[i_] := C_Add(T[i_], C_Mul(v, Conj(X[i_])));
             end;
-          i1_ := (TP1) - (I1);
-          for i_ := I1 to I do
+          i1_ := (TP1) - (i1);
+          for i_ := i1 to i do
             begin
-              A[I, i_] := C_Add(A[I, i_], T[i_ + i1_]);
+              A[i, i_] := C_Add(A[i, i_], T[i_ + i1_]);
             end;
-          Inc(I);
+          Inc(i);
         end;
     end;
 end;
 
-procedure RMatrixQR(var A: TLMatrix; M: TLInt; N: TLInt; var Tau: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixLQ(var A: TLMatrix; M: TLInt; N: TLInt; var Tau: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixQR(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Tau: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLQ(var A: TLComplexMatrix; M: TLInt; N: TLInt; var Tau: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixQRUnpackQ(const A: TLMatrix; M: TLInt; N: TLInt; const Tau: TLVec; QColumns: TLInt; var Q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixQR(var A: TLMatrix; M: TLInt; n: TLInt; var TAU: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLQ(var A: TLMatrix; M: TLInt; n: TLInt; var TAU: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixQR(var A: TLComplexMatrix; M: TLInt; n: TLInt; var TAU: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLQ(var A: TLComplexMatrix; M: TLInt; n: TLInt; var TAU: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixQRUnpackQ(const A: TLMatrix; M: TLInt; n: TLInt; const TAU: TLVec; QColumns: TLInt; var q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixQRUnpackR(const A: TLMatrix; M: TLInt; N: TLInt; var R: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixLQUnpackQ(const A: TLMatrix; M: TLInt; N: TLInt; const Tau: TLVec; QRows: TLInt; var Q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixQRUnpackR(const A: TLMatrix; M: TLInt; n: TLInt; var R: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLQUnpackQ(const A: TLMatrix; M: TLInt; n: TLInt; const TAU: TLVec; QRows: TLInt; var q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixLQUnpackL(const A: TLMatrix; M: TLInt; N: TLInt; var L: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixQRUnpackQ(const A: TLComplexMatrix; M: TLInt; N: TLInt; const Tau: TLComplexVec; QColumns: TLInt; var Q: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixQRUnpackR(const A: TLComplexMatrix; M: TLInt; N: TLInt; var R: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLQUnpackQ(const A: TLComplexMatrix; M: TLInt; N: TLInt; const Tau: TLComplexVec; QRows: TLInt; var Q: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLQUnpackL(const A: TLComplexMatrix; M: TLInt; N: TLInt; var L: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixBD(var A: TLMatrix; M: TLInt; N: TLInt; var TauQ: TLVec; var TauP: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixBDUnpackQ(const QP: TLMatrix; M: TLInt; N: TLInt; const TauQ: TLVec; QColumns: TLInt; var Q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLQUnpackL(const A: TLMatrix; M: TLInt; n: TLInt; var L: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixQRUnpackQ(const A: TLComplexMatrix; M: TLInt; n: TLInt; const TAU: TLComplexVec; QColumns: TLInt; var q: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixQRUnpackR(const A: TLComplexMatrix; M: TLInt; n: TLInt; var R: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLQUnpackQ(const A: TLComplexMatrix; M: TLInt; n: TLInt; const TAU: TLComplexVec; QRows: TLInt; var q: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLQUnpackL(const A: TLComplexMatrix; M: TLInt; n: TLInt; var L: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBD(var A: TLMatrix; M: TLInt; n: TLInt; var TauQ: TLVec; var TauP: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBDUnpackQ(const qp: TLMatrix; M: TLInt; n: TLInt; const TauQ: TLVec; QColumns: TLInt; var q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixBDMultiplyByQ(const QP: TLMatrix; M: TLInt;
-  N: TLInt; const TauQ: TLVec; var Z: TLMatrix;
+procedure RMatrixBDMultiplyByQ(const qp: TLMatrix; M: TLInt;
+  n: TLInt; const TauQ: TLVec; var Z: TLMatrix;
   ZRows: TLInt; ZColumns: TLInt; FromTheRight: Boolean; DoTranspose: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixBDUnpackPT(const QP: TLMatrix; M: TLInt;
-  N: TLInt; const TauP: TLVec; PTRows: TLInt; var PT: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBDUnpackPT(const qp: TLMatrix; M: TLInt;
+  n: TLInt; const TauP: TLVec; PTRows: TLInt; var pt: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixBDMultiplyByP(const QP: TLMatrix; M: TLInt;
-  N: TLInt; const TauP: TLVec; var Z: TLMatrix;
+procedure RMatrixBDMultiplyByP(const qp: TLMatrix; M: TLInt;
+  n: TLInt; const TauP: TLVec; var Z: TLMatrix;
   ZRows: TLInt; ZColumns: TLInt; FromTheRight: Boolean; DoTranspose: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixBDUnpackDiagonals(const B: TLMatrix; M: TLInt;
-  N: TLInt; var IsUpper: Boolean; var D: TLVec; var E: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBDUnpackDiagonals(const b: TLMatrix; M: TLInt;
+  n: TLInt; var IsUpper: Boolean; var d: TLVec; var E: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixHessenberg(var A: TLMatrix; N: TLInt; var Tau: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixHessenberg(var A: TLMatrix; n: TLInt; var TAU: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure RMatrixHessenbergUnpackQ(const A: TLMatrix; N: TLInt; const Tau: TLVec; var Q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixHessenbergUnpackH(const A: TLMatrix; N: TLInt; var H: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure SMatrixTD(var A: TLMatrix; N: TLInt; IsUpper: Boolean; var Tau: TLVec; var D: TLVec; var E: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure SMatrixTDUnpackQ(const A: TLMatrix; const N: TLInt; const IsUpper: Boolean; const Tau: TLVec; var Q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure HMatrixTD(var A: TLComplexMatrix; N: TLInt; IsUpper: Boolean; var Tau: TLComplexVec; var D: TLVec; var E: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure HMatrixTDUnpackQ(const A: TLComplexMatrix; const N: TLInt; const IsUpper: Boolean; const Tau: TLComplexVec; var Q: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixHessenbergUnpackQ(const A: TLMatrix; n: TLInt; const TAU: TLVec; var q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixHessenbergUnpackH(const A: TLMatrix; n: TLInt; var h: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SMatrixTD(var A: TLMatrix; n: TLInt; IsUpper: Boolean; var TAU: TLVec; var d: TLVec; var E: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SMatrixTDUnpackQ(const A: TLMatrix; const n: TLInt; const IsUpper: Boolean; const TAU: TLVec; var q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure HMatrixTD(var A: TLComplexMatrix; n: TLInt; IsUpper: Boolean; var TAU: TLComplexVec; var d: TLVec; var E: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure HMatrixTDUnpackQ(const A: TLComplexMatrix; const n: TLInt; const IsUpper: Boolean; const TAU: TLComplexVec; var q: TLComplexMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure RMatrixQRBaseCase(var A: TLMatrix; M: TLInt;
-  N: TLInt; var WORK: TLVec; var T: TLVec;
-  var Tau: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  n: TLInt; var Work: TLVec; var T: TLVec;
+  var TAU: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure RMatrixLQBaseCase(var A: TLMatrix; M: TLInt;
-  N: TLInt; var WORK: TLVec; var T: TLVec;
-  var Tau: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  n: TLInt; var Work: TLVec; var T: TLVec;
+  var TAU: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixQRBaseCase(var A: TLComplexMatrix; M: TLInt;
-  N: TLInt; var WORK: TLComplexVec; var T: TLComplexVec;
-  var Tau: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  n: TLInt; var Work: TLComplexVec; var T: TLComplexVec;
+  var TAU: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixLQBaseCase(var A: TLComplexMatrix; M: TLInt;
-  N: TLInt; var WORK: TLComplexVec; var T: TLComplexVec;
-  var Tau: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixBlockReflector(var A: TLMatrix; var Tau: TLVec;
+  n: TLInt; var Work: TLComplexVec; var T: TLComplexVec;
+  var TAU: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixBlockReflector(var A: TLMatrix; var TAU: TLVec;
   ColumnwiseA: Boolean; LengthA: TLInt; BlockSize: TLInt;
-  var T: TLMatrix; var WORK: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var T: TLMatrix; var Work: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure CMatrixBlockReflector(var A: TLComplexMatrix;
-  var Tau: TLComplexVec; ColumnwiseA: Boolean; LengthA: TLInt;
+  var TAU: TLComplexVec; ColumnwiseA: Boolean; LengthA: TLInt;
   BlockSize: TLInt; var T: TLComplexMatrix;
-  var WORK: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Work: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -969,10 +969,10 @@ procedure CMatrixBlockReflector(var A: TLComplexMatrix;
   where tau is a scalar stored in Tau[I]; v - real vector,
   so that v(0:i-1) = 0, v(i) = 1, v(i+1:m-1) stored in A(i+1:m-1,i).
   ************************************************************************ *)
-procedure RMatrixQR(var A: TLMatrix; M: TLInt; N: TLInt;
-  var Tau: TLVec);
+procedure RMatrixQR(var A: TLMatrix; M: TLInt; n: TLInt;
+  var TAU: TLVec);
 var
-  WORK      : TLVec;
+  Work      : TLVec;
   T         : TLVec;
   TauBuf    : TLVec;
   MinMN     : TLInt;
@@ -982,25 +982,25 @@ var
   BlockStart: TLInt;
   BlockSize : TLInt;
   RowsCount : TLInt;
-  I         : TLInt;
+  i         : TLInt;
   J         : TLInt;
-  K         : TLInt;
-  V         : TLFloat;
+  k         : TLInt;
+  v         : TLFloat;
   i_        : TLInt;
   i1_       : TLInt;
 begin
-  if (M <= 0) or (N <= 0) then
+  if (M <= 0) or (n <= 0) then
     begin
       Exit;
     end;
-  MinMN := Min(M, N);
-  SetLength(WORK, Max(M, N) + 1);
-  SetLength(T, Max(M, N) + 1);
-  SetLength(Tau, MinMN);
+  MinMN := Min(M, n);
+  SetLength(Work, Max(M, n) + 1);
+  SetLength(T, Max(M, n) + 1);
+  SetLength(TAU, MinMN);
   SetLength(TauBuf, MinMN);
   SetLength(TmpA, M, ABLASBlockSize(A));
   SetLength(TmpT, ABLASBlockSize(A), 2 * ABLASBlockSize(A));
-  SetLength(TmpR, 2 * ABLASBlockSize(A), N);
+  SetLength(TmpR, 2 * ABLASBlockSize(A), n);
 
   //
   // Blocked code
@@ -1026,9 +1026,9 @@ begin
       // access pattern.
       //
       RMatrixCopy(RowsCount, BlockSize, A, BlockStart, BlockStart, TmpA, 0, 0);
-      RMatrixQRBaseCase(TmpA, RowsCount, BlockSize, WORK, T, TauBuf);
+      RMatrixQRBaseCase(TmpA, RowsCount, BlockSize, Work, T, TauBuf);
       RMatrixCopy(RowsCount, BlockSize, TmpA, 0, 0, A, BlockStart, BlockStart);
-      APVMove(@Tau[0], BlockStart, BlockStart + BlockSize - 1, @TauBuf[0], 0,
+      APVMove(@TAU[0], BlockStart, BlockStart + BlockSize - 1, @TauBuf[0], 0,
         BlockSize - 1);
 
       //
@@ -1038,9 +1038,9 @@ begin
       // representation for products of Householder transformations',
       // by R. Schreiber and C. Van Loan.
       //
-      if BlockStart + BlockSize <= N - 1 then
+      if BlockStart + BlockSize <= n - 1 then
         begin
-          if (N - BlockStart - BlockSize >= 2 * ABLASBlockSize(A)) or
+          if (n - BlockStart - BlockSize >= 2 * ABLASBlockSize(A)) or
             (RowsCount >= 4 * ABLASBlockSize(A)) then
             begin
 
@@ -1048,7 +1048,7 @@ begin
               // Prepare block reflector
               //
               RMatrixBlockReflector(TmpA, TauBuf, True, RowsCount, BlockSize,
-                TmpT, WORK);
+                TmpT, Work);
 
               //
               // Multiply the rest of A by Q'.
@@ -1056,11 +1056,11 @@ begin
               // Q  = E + Y*T*Y'  = E + TmpA*TmpT*TmpA'
               // Q' = E + Y*T'*Y' = E + TmpA*TmpT'*TmpA'
               //
-              RMatrixGEMM(BlockSize, N - BlockStart - BlockSize, RowsCount, 1.0, TmpA,
+              RMatrixGEMM(BlockSize, n - BlockStart - BlockSize, RowsCount, 1.0, TmpA,
                 0, 0, 1, A, BlockStart, BlockStart + BlockSize, 0, 0.0, TmpR, 0, 0);
-              RMatrixGEMM(BlockSize, N - BlockStart - BlockSize, BlockSize, 1.0, TmpT,
+              RMatrixGEMM(BlockSize, n - BlockStart - BlockSize, BlockSize, 1.0, TmpT,
                 0, 0, 1, TmpR, 0, 0, 0, 0.0, TmpR, BlockSize, 0);
-              RMatrixGEMM(RowsCount, N - BlockStart - BlockSize, BlockSize, 1.0, TmpA,
+              RMatrixGEMM(RowsCount, n - BlockStart - BlockSize, BlockSize, 1.0, TmpA,
                 0, 0, 0, TmpR, BlockSize, 0, 0, 1.0, A, BlockStart,
                 BlockStart + BlockSize);
             end
@@ -1070,18 +1070,18 @@ begin
               //
               // Level 2 algorithm
               //
-              I := 0;
-              while I <= BlockSize - 1 do
+              i := 0;
+              while i <= BlockSize - 1 do
                 begin
-                  i1_ := (I) - (1);
-                  for i_ := 1 to RowsCount - I do
+                  i1_ := (i) - (1);
+                  for i_ := 1 to RowsCount - i do
                     begin
-                      T[i_] := TmpA[i_ + i1_, I];
+                      T[i_] := TmpA[i_ + i1_, i];
                     end;
                   T[1] := 1;
-                  ApplyReflectionFromTheLeft(A, TauBuf[I], T, BlockStart + I, M - 1,
-                    BlockStart + BlockSize, N - 1, WORK);
-                  Inc(I);
+                  ApplyReflectionFromTheLeft(A, TauBuf[i], T, BlockStart + i, M - 1,
+                    BlockStart + BlockSize, n - 1, Work);
+                  Inc(i);
                 end;
             end;
         end;
@@ -1124,10 +1124,10 @@ end;
   where tau is a scalar stored in Tau[I]; v - real vector, so that v(0:i-1)=0,
   v(i) = 1, v(i+1:n-1) stored in A(i,i+1:n-1).
   ************************************************************************ *)
-procedure RMatrixLQ(var A: TLMatrix; M: TLInt; N: TLInt;
-  var Tau: TLVec);
+procedure RMatrixLQ(var A: TLMatrix; M: TLInt; n: TLInt;
+  var TAU: TLVec);
 var
-  WORK        : TLVec;
+  Work        : TLVec;
   T           : TLVec;
   TauBuf      : TLVec;
   MinMN       : TLInt;
@@ -1137,21 +1137,21 @@ var
   BlockStart  : TLInt;
   BlockSize   : TLInt;
   ColumnsCount: TLInt;
-  I           : TLInt;
+  i           : TLInt;
   J           : TLInt;
-  K           : TLInt;
-  V           : TLFloat;
+  k           : TLInt;
+  v           : TLFloat;
 begin
-  if (M <= 0) or (N <= 0) then
+  if (M <= 0) or (n <= 0) then
     begin
       Exit;
     end;
-  MinMN := Min(M, N);
-  SetLength(WORK, Max(M, N) + 1);
-  SetLength(T, Max(M, N) + 1);
-  SetLength(Tau, MinMN);
+  MinMN := Min(M, n);
+  SetLength(Work, Max(M, n) + 1);
+  SetLength(T, Max(M, n) + 1);
+  SetLength(TAU, MinMN);
   SetLength(TauBuf, MinMN);
-  SetLength(TmpA, ABLASBlockSize(A), N);
+  SetLength(TmpA, ABLASBlockSize(A), n);
   SetLength(TmpT, ABLASBlockSize(A), 2 * ABLASBlockSize(A));
   SetLength(TmpR, M, 2 * ABLASBlockSize(A));
 
@@ -1170,7 +1170,7 @@ begin
         begin
           BlockSize := ABLASBlockSize(A);
         end;
-      ColumnsCount := N - BlockStart;
+      ColumnsCount := n - BlockStart;
 
       //
       // LQ decomposition of submatrix.
@@ -1179,9 +1179,9 @@ begin
       // access pattern.
       //
       RMatrixCopy(BlockSize, ColumnsCount, A, BlockStart, BlockStart, TmpA, 0, 0);
-      RMatrixLQBaseCase(TmpA, BlockSize, ColumnsCount, WORK, T, TauBuf);
+      RMatrixLQBaseCase(TmpA, BlockSize, ColumnsCount, Work, T, TauBuf);
       RMatrixCopy(BlockSize, ColumnsCount, TmpA, 0, 0, A, BlockStart, BlockStart);
-      APVMove(@Tau[0], BlockStart, BlockStart + BlockSize - 1, @TauBuf[0], 0,
+      APVMove(@TAU[0], BlockStart, BlockStart + BlockSize - 1, @TauBuf[0], 0,
         BlockSize - 1);
 
       //
@@ -1200,7 +1200,7 @@ begin
               // Prepare block reflector
               //
               RMatrixBlockReflector(TmpA, TauBuf, False, ColumnsCount, BlockSize,
-                TmpT, WORK);
+                TmpT, Work);
 
               //
               // Multiply the rest of A by Q.
@@ -1222,14 +1222,14 @@ begin
               //
               // Level 2 algorithm
               //
-              I := 0;
-              while I <= BlockSize - 1 do
+              i := 0;
+              while i <= BlockSize - 1 do
                 begin
-                  APVMove(@T[0], 1, ColumnsCount - I, @TmpA[I][0], I, ColumnsCount - 1);
+                  APVMove(@T[0], 1, ColumnsCount - i, @TmpA[i][0], i, ColumnsCount - 1);
                   T[1] := 1;
-                  ApplyReflectionFromTheRight(A, TauBuf[I], T, BlockStart + BlockSize,
-                    M - 1, BlockStart + I, N - 1, WORK);
-                  Inc(I);
+                  ApplyReflectionFromTheRight(A, TauBuf[i], T, BlockStart + BlockSize,
+                    M - 1, BlockStart + i, n - 1, Work);
+                  Inc(i);
                 end;
             end;
         end;
@@ -1257,10 +1257,10 @@ end;
   Matrix A is represented as A = QR, where Q is an orthogonal matrix of size
   MxM, R - upper triangular (or upper trapezoid) matrix of size MxN.
   ************************************************************************ *)
-procedure CMatrixQR(var A: TLComplexMatrix; M: TLInt; N: TLInt;
-  var Tau: TLComplexVec);
+procedure CMatrixQR(var A: TLComplexMatrix; M: TLInt; n: TLInt;
+  var TAU: TLComplexVec);
 var
-  WORK      : TLComplexVec;
+  Work      : TLComplexVec;
   T         : TLComplexVec;
   TauBuf    : TLComplexVec;
   MinMN     : TLInt;
@@ -1270,25 +1270,25 @@ var
   BlockStart: TLInt;
   BlockSize : TLInt;
   RowsCount : TLInt;
-  I         : TLInt;
+  i         : TLInt;
   J         : TLInt;
-  K         : TLInt;
-  V         : TLComplex;
+  k         : TLInt;
+  v         : TLComplex;
   i_        : TLInt;
   i1_       : TLInt;
 begin
-  if (M <= 0) or (N <= 0) then
+  if (M <= 0) or (n <= 0) then
     begin
       Exit;
     end;
-  MinMN := Min(M, N);
-  SetLength(WORK, Max(M, N) + 1);
-  SetLength(T, Max(M, N) + 1);
-  SetLength(Tau, MinMN);
+  MinMN := Min(M, n);
+  SetLength(Work, Max(M, n) + 1);
+  SetLength(T, Max(M, n) + 1);
+  SetLength(TAU, MinMN);
   SetLength(TauBuf, MinMN);
   SetLength(TmpA, M, ABLASComplexBlockSize(A));
   SetLength(TmpT, ABLASComplexBlockSize(A), ABLASComplexBlockSize(A));
-  SetLength(TmpR, 2 * ABLASComplexBlockSize(A), N);
+  SetLength(TmpR, 2 * ABLASComplexBlockSize(A), n);
 
   //
   // Blocked code
@@ -1314,12 +1314,12 @@ begin
       // access pattern.
       //
       CMatrixCopy(RowsCount, BlockSize, A, BlockStart, BlockStart, TmpA, 0, 0);
-      CMatrixQRBaseCase(TmpA, RowsCount, BlockSize, WORK, T, TauBuf);
+      CMatrixQRBaseCase(TmpA, RowsCount, BlockSize, Work, T, TauBuf);
       CMatrixCopy(RowsCount, BlockSize, TmpA, 0, 0, A, BlockStart, BlockStart);
       i1_ := (0) - (BlockStart);
       for i_ := BlockStart to BlockStart + BlockSize - 1 do
         begin
-          Tau[i_] := TauBuf[i_ + i1_];
+          TAU[i_] := TauBuf[i_ + i1_];
         end;
 
       //
@@ -1329,16 +1329,16 @@ begin
       // representation for products of Householder transformations',
       // by R. Schreiber and C. Van Loan.
       //
-      if BlockStart + BlockSize <= N - 1 then
+      if BlockStart + BlockSize <= n - 1 then
         begin
-          if N - BlockStart - BlockSize >= 2 * ABLASComplexBlockSize(A) then
+          if n - BlockStart - BlockSize >= 2 * ABLASComplexBlockSize(A) then
             begin
 
               //
               // Prepare block reflector
               //
               CMatrixBlockReflector(TmpA, TauBuf, True, RowsCount, BlockSize,
-                TmpT, WORK);
+                TmpT, Work);
 
               //
               // Multiply the rest of A by Q'.
@@ -1346,13 +1346,13 @@ begin
               // Q  = E + Y*T*Y'  = E + TmpA*TmpT*TmpA'
               // Q' = E + Y*T'*Y' = E + TmpA*TmpT'*TmpA'
               //
-              CMatrixGEMM(BlockSize, N - BlockStart - BlockSize, RowsCount,
+              CMatrixGEMM(BlockSize, n - BlockStart - BlockSize, RowsCount,
                 C_Complex(1.0), TmpA, 0, 0, 2, A, BlockStart, BlockStart + BlockSize,
                 0, C_Complex(0.0), TmpR, 0, 0);
-              CMatrixGEMM(BlockSize, N - BlockStart - BlockSize, BlockSize,
+              CMatrixGEMM(BlockSize, n - BlockStart - BlockSize, BlockSize,
                 C_Complex(1.0), TmpT, 0, 0, 2, TmpR, 0, 0, 0, C_Complex(0.0), TmpR,
                 BlockSize, 0);
-              CMatrixGEMM(RowsCount, N - BlockStart - BlockSize, BlockSize,
+              CMatrixGEMM(RowsCount, n - BlockStart - BlockSize, BlockSize,
                 C_Complex(1.0), TmpA, 0, 0, 0, TmpR, BlockSize, 0, 0, C_Complex(1.0),
                 A, BlockStart, BlockStart + BlockSize);
             end
@@ -1362,18 +1362,18 @@ begin
               //
               // Level 2 algorithm
               //
-              I := 0;
-              while I <= BlockSize - 1 do
+              i := 0;
+              while i <= BlockSize - 1 do
                 begin
-                  i1_ := (I) - (1);
-                  for i_ := 1 to RowsCount - I do
+                  i1_ := (i) - (1);
+                  for i_ := 1 to RowsCount - i do
                     begin
-                      T[i_] := TmpA[i_ + i1_, I];
+                      T[i_] := TmpA[i_ + i1_, i];
                     end;
                   T[1] := C_Complex(1);
-                  ComplexApplyReflectionFromTheLeft(A, Conj(TauBuf[I]), T,
-                    BlockStart + I, M - 1, BlockStart + BlockSize, N - 1, WORK);
-                  Inc(I);
+                  ComplexApplyReflectionFromTheLeft(A, Conj(TauBuf[i]), T,
+                    BlockStart + i, M - 1, BlockStart + BlockSize, n - 1, Work);
+                  Inc(i);
                 end;
             end;
         end;
@@ -1401,10 +1401,10 @@ end;
   Matrix A is represented as A = LQ, where Q is an orthogonal matrix of size
   MxM, L - lower triangular (or lower trapezoid) matrix of size MxN.
   ************************************************************************ *)
-procedure CMatrixLQ(var A: TLComplexMatrix; M: TLInt; N: TLInt;
-  var Tau: TLComplexVec);
+procedure CMatrixLQ(var A: TLComplexMatrix; M: TLInt; n: TLInt;
+  var TAU: TLComplexVec);
 var
-  WORK        : TLComplexVec;
+  Work        : TLComplexVec;
   T           : TLComplexVec;
   TauBuf      : TLComplexVec;
   MinMN       : TLInt;
@@ -1414,23 +1414,23 @@ var
   BlockStart  : TLInt;
   BlockSize   : TLInt;
   ColumnsCount: TLInt;
-  I           : TLInt;
+  i           : TLInt;
   J           : TLInt;
-  K           : TLInt;
-  V           : TLComplex;
+  k           : TLInt;
+  v           : TLComplex;
   i_          : TLInt;
   i1_         : TLInt;
 begin
-  if (M <= 0) or (N <= 0) then
+  if (M <= 0) or (n <= 0) then
     begin
       Exit;
     end;
-  MinMN := Min(M, N);
-  SetLength(WORK, Max(M, N) + 1);
-  SetLength(T, Max(M, N) + 1);
-  SetLength(Tau, MinMN);
+  MinMN := Min(M, n);
+  SetLength(Work, Max(M, n) + 1);
+  SetLength(T, Max(M, n) + 1);
+  SetLength(TAU, MinMN);
   SetLength(TauBuf, MinMN);
-  SetLength(TmpA, ABLASComplexBlockSize(A), N);
+  SetLength(TmpA, ABLASComplexBlockSize(A), n);
   SetLength(TmpT, ABLASComplexBlockSize(A), ABLASComplexBlockSize(A));
   SetLength(TmpR, M, 2 * ABLASComplexBlockSize(A));
 
@@ -1449,7 +1449,7 @@ begin
         begin
           BlockSize := ABLASComplexBlockSize(A);
         end;
-      ColumnsCount := N - BlockStart;
+      ColumnsCount := n - BlockStart;
 
       //
       // LQ decomposition of submatrix.
@@ -1458,12 +1458,12 @@ begin
       // access pattern.
       //
       CMatrixCopy(BlockSize, ColumnsCount, A, BlockStart, BlockStart, TmpA, 0, 0);
-      CMatrixLQBaseCase(TmpA, BlockSize, ColumnsCount, WORK, T, TauBuf);
+      CMatrixLQBaseCase(TmpA, BlockSize, ColumnsCount, Work, T, TauBuf);
       CMatrixCopy(BlockSize, ColumnsCount, TmpA, 0, 0, A, BlockStart, BlockStart);
       i1_ := (0) - (BlockStart);
       for i_ := BlockStart to BlockStart + BlockSize - 1 do
         begin
-          Tau[i_] := TauBuf[i_ + i1_];
+          TAU[i_] := TauBuf[i_ + i1_];
         end;
 
       //
@@ -1482,7 +1482,7 @@ begin
               // Prepare block reflector
               //
               CMatrixBlockReflector(TmpA, TauBuf, False, ColumnsCount, BlockSize,
-                TmpT, WORK);
+                TmpT, Work);
 
               //
               // Multiply the rest of A by Q.
@@ -1505,18 +1505,18 @@ begin
               //
               // Level 2 algorithm
               //
-              I := 0;
-              while I <= BlockSize - 1 do
+              i := 0;
+              while i <= BlockSize - 1 do
                 begin
-                  i1_ := (I) - (1);
-                  for i_ := 1 to ColumnsCount - I do
+                  i1_ := (i) - (1);
+                  for i_ := 1 to ColumnsCount - i do
                     begin
-                      T[i_] := Conj(TmpA[I, i_ + i1_]);
+                      T[i_] := Conj(TmpA[i, i_ + i1_]);
                     end;
                   T[1] := C_Complex(1);
-                  ComplexApplyReflectionFromTheRight(A, TauBuf[I], T,
-                    BlockStart + BlockSize, M - 1, BlockStart + I, N - 1, WORK);
-                  Inc(I);
+                  ComplexApplyReflectionFromTheRight(A, TauBuf[i], T,
+                    BlockStart + BlockSize, M - 1, BlockStart + i, n - 1, Work);
+                  Inc(i);
                 end;
             end;
         end;
@@ -1546,10 +1546,10 @@ end;
   If QColumns=0, the array remains unchanged.
   ************************************************************************ *)
 procedure RMatrixQRUnpackQ(const A: TLMatrix; M: TLInt;
-  N: TLInt; const Tau: TLVec; QColumns: TLInt;
-  var Q: TLMatrix);
+  n: TLInt; const TAU: TLVec; QColumns: TLInt;
+  var q: TLMatrix);
 var
-  WORK      : TLVec;
+  Work      : TLVec;
   T         : TLVec;
   TauBuf    : TLVec;
   MinMN     : TLInt;
@@ -1560,15 +1560,15 @@ var
   BlockStart: TLInt;
   BlockSize : TLInt;
   RowsCount : TLInt;
-  I         : TLInt;
+  i         : TLInt;
   J         : TLInt;
-  K         : TLInt;
-  V         : TLFloat;
+  k         : TLInt;
+  v         : TLFloat;
   i_        : TLInt;
   i1_       : TLInt;
 begin
   Assert(QColumns <= M, 'UnpackQFromQR: QColumns>M!');
-  if (M <= 0) or (N <= 0) or (QColumns <= 0) then
+  if (M <= 0) or (n <= 0) or (QColumns <= 0) then
     begin
       Exit;
     end;
@@ -1576,28 +1576,28 @@ begin
   //
   // init
   //
-  MinMN := Min(M, N);
+  MinMN := Min(M, n);
   RefCnt := Min(MinMN, QColumns);
-  SetLength(Q, M, QColumns);
-  I := 0;
-  while I <= M - 1 do
+  SetLength(q, M, QColumns);
+  i := 0;
+  while i <= M - 1 do
     begin
       J := 0;
       while J <= QColumns - 1 do
         begin
-          if I = J then
+          if i = J then
             begin
-              Q[I, J] := 1;
+              q[i, J] := 1;
             end
           else
             begin
-              Q[I, J] := 0;
+              q[i, J] := 0;
             end;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
-  SetLength(WORK, Max(M, QColumns) + 1);
+  SetLength(Work, Max(M, QColumns) + 1);
   SetLength(T, Max(M, QColumns) + 1);
   SetLength(TauBuf, MinMN);
   SetLength(TmpA, M, ABLASBlockSize(A));
@@ -1617,7 +1617,7 @@ begin
       // Copy current block
       //
       RMatrixCopy(RowsCount, BlockSize, A, BlockStart, BlockStart, TmpA, 0, 0);
-      APVMove(@TauBuf[0], 0, BlockSize - 1, @Tau[0], BlockStart,
+      APVMove(@TauBuf[0], 0, BlockSize - 1, @TAU[0], BlockStart,
         BlockStart + BlockSize - 1);
 
       //
@@ -1634,19 +1634,19 @@ begin
           // Prepare block reflector
           //
           RMatrixBlockReflector(TmpA, TauBuf, True, RowsCount, BlockSize,
-            TmpT, WORK);
+            TmpT, Work);
 
           //
           // Multiply matrix by Q.
           //
           // Q  = E + Y*T*Y'  = E + TmpA*TmpT*TmpA'
           //
-          RMatrixGEMM(BlockSize, QColumns, RowsCount, 1.0, TmpA, 0, 0, 1, Q,
+          RMatrixGEMM(BlockSize, QColumns, RowsCount, 1.0, TmpA, 0, 0, 1, q,
             BlockStart, 0, 0, 0.0, TmpR, 0, 0);
           RMatrixGEMM(BlockSize, QColumns, BlockSize, 1.0, TmpT, 0, 0, 0, TmpR, 0,
             0, 0, 0.0, TmpR, BlockSize, 0);
           RMatrixGEMM(RowsCount, QColumns, BlockSize, 1.0, TmpA, 0, 0, 0, TmpR,
-            BlockSize, 0, 0, 1.0, Q, BlockStart, 0);
+            BlockSize, 0, 0, 1.0, q, BlockStart, 0);
         end
       else
         begin
@@ -1654,18 +1654,18 @@ begin
           //
           // Level 2 algorithm
           //
-          I := BlockSize - 1;
-          while I >= 0 do
+          i := BlockSize - 1;
+          while i >= 0 do
             begin
-              i1_ := (I) - (1);
-              for i_ := 1 to RowsCount - I do
+              i1_ := (i) - (1);
+              for i_ := 1 to RowsCount - i do
                 begin
-                  T[i_] := TmpA[i_ + i1_, I];
+                  T[i_] := TmpA[i_ + i1_, i];
                 end;
               T[1] := 1;
-              ApplyReflectionFromTheLeft(Q, TauBuf[I], T, BlockStart + I, M - 1, 0,
-                QColumns - 1, WORK);
-              Dec(I);
+              ApplyReflectionFromTheLeft(q, TauBuf[i], T, BlockStart + i, M - 1, 0,
+                QColumns - 1, Work);
+              Dec(i);
             end;
         end;
 
@@ -1690,34 +1690,34 @@ end;
   R       -   matrix R, array[0..M-1, 0..N-1].
   ************************************************************************ *)
 procedure RMatrixQRUnpackR(const A: TLMatrix; M: TLInt;
-  N: TLInt; var R: TLMatrix);
+  n: TLInt; var R: TLMatrix);
 var
-  I: TLInt;
-  K: TLInt;
+  i: TLInt;
+  k: TLInt;
 begin
-  if (M <= 0) or (N <= 0) then
+  if (M <= 0) or (n <= 0) then
     begin
       Exit;
     end;
-  K := Min(M, N);
-  SetLength(R, M, N);
-  I := 0;
-  while I <= N - 1 do
+  k := Min(M, n);
+  SetLength(R, M, n);
+  i := 0;
+  while i <= n - 1 do
     begin
-      R[0, I] := 0;
-      Inc(I);
+      R[0, i] := 0;
+      Inc(i);
     end;
-  I := 1;
-  while I <= M - 1 do
+  i := 1;
+  while i <= M - 1 do
     begin
-      APVMove(@R[I][0], 0, N - 1, @R[0][0], 0, N - 1);
-      Inc(I);
+      APVMove(@R[i][0], 0, n - 1, @R[0][0], 0, n - 1);
+      Inc(i);
     end;
-  I := 0;
-  while I <= K - 1 do
+  i := 0;
+  while i <= k - 1 do
     begin
-      APVMove(@R[I][0], I, N - 1, @A[I][0], I, N - 1);
-      Inc(I);
+      APVMove(@R[i][0], i, n - 1, @A[i][0], i, n - 1);
+      Inc(i);
     end;
 end;
 
@@ -1739,10 +1739,10 @@ end;
   unchanged.
   ************************************************************************ *)
 procedure RMatrixLQUnpackQ(const A: TLMatrix; M: TLInt;
-  N: TLInt; const Tau: TLVec; QRows: TLInt;
-  var Q: TLMatrix);
+  n: TLInt; const TAU: TLVec; QRows: TLInt;
+  var q: TLMatrix);
 var
-  WORK        : TLVec;
+  Work        : TLVec;
   T           : TLVec;
   TauBuf      : TLVec;
   MinMN       : TLInt;
@@ -1753,13 +1753,13 @@ var
   BlockStart  : TLInt;
   BlockSize   : TLInt;
   ColumnsCount: TLInt;
-  I           : TLInt;
+  i           : TLInt;
   J           : TLInt;
-  K           : TLInt;
-  V           : TLFloat;
+  k           : TLInt;
+  v           : TLFloat;
 begin
-  Assert(QRows <= N, 'RMatrixLQUnpackQ: QRows>N!');
-  if (M <= 0) or (N <= 0) or (QRows <= 0) then
+  Assert(QRows <= n, 'RMatrixLQUnpackQ: QRows>N!');
+  if (M <= 0) or (n <= 0) or (QRows <= 0) then
     begin
       Exit;
     end;
@@ -1767,32 +1767,32 @@ begin
   //
   // init
   //
-  MinMN := Min(M, N);
+  MinMN := Min(M, n);
   RefCnt := Min(MinMN, QRows);
-  SetLength(WORK, Max(M, N) + 1);
-  SetLength(T, Max(M, N) + 1);
+  SetLength(Work, Max(M, n) + 1);
+  SetLength(T, Max(M, n) + 1);
   SetLength(TauBuf, MinMN);
-  SetLength(TmpA, ABLASBlockSize(A), N);
+  SetLength(TmpA, ABLASBlockSize(A), n);
   SetLength(TmpT, ABLASBlockSize(A), 2 * ABLASBlockSize(A));
   SetLength(TmpR, QRows, 2 * ABLASBlockSize(A));
-  SetLength(Q, QRows, N);
-  I := 0;
-  while I <= QRows - 1 do
+  SetLength(q, QRows, n);
+  i := 0;
+  while i <= QRows - 1 do
     begin
       J := 0;
-      while J <= N - 1 do
+      while J <= n - 1 do
         begin
-          if I = J then
+          if i = J then
             begin
-              Q[I, J] := 1;
+              q[i, J] := 1;
             end
           else
             begin
-              Q[I, J] := 0;
+              q[i, J] := 0;
             end;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
 
   //
@@ -1802,13 +1802,13 @@ begin
   BlockSize := RefCnt - BlockStart;
   while BlockStart >= 0 do
     begin
-      ColumnsCount := N - BlockStart;
+      ColumnsCount := n - BlockStart;
 
       //
       // Copy submatrix
       //
       RMatrixCopy(BlockSize, ColumnsCount, A, BlockStart, BlockStart, TmpA, 0, 0);
-      APVMove(@TauBuf[0], 0, BlockSize - 1, @Tau[0], BlockStart,
+      APVMove(@TauBuf[0], 0, BlockSize - 1, @TAU[0], BlockStart,
         BlockStart + BlockSize - 1);
 
       //
@@ -1825,19 +1825,19 @@ begin
           // Prepare block reflector
           //
           RMatrixBlockReflector(TmpA, TauBuf, False, ColumnsCount, BlockSize,
-            TmpT, WORK);
+            TmpT, Work);
 
           //
           // Multiply the rest of A by Q'.
           //
           // Q'  = E + Y*T'*Y'  = E + TmpA'*TmpT'*TmpA
           //
-          RMatrixGEMM(QRows, BlockSize, ColumnsCount, 1.0, Q, 0, BlockStart, 0,
+          RMatrixGEMM(QRows, BlockSize, ColumnsCount, 1.0, q, 0, BlockStart, 0,
             TmpA, 0, 0, 1, 0.0, TmpR, 0, 0);
           RMatrixGEMM(QRows, BlockSize, BlockSize, 1.0, TmpR, 0, 0, 0, TmpT, 0, 0,
             1, 0.0, TmpR, 0, BlockSize);
           RMatrixGEMM(QRows, ColumnsCount, BlockSize, 1.0, TmpR, 0, BlockSize, 0,
-            TmpA, 0, 0, 0, 1.0, Q, 0, BlockStart);
+            TmpA, 0, 0, 0, 1.0, q, 0, BlockStart);
         end
       else
         begin
@@ -1845,14 +1845,14 @@ begin
           //
           // Level 2 algorithm
           //
-          I := BlockSize - 1;
-          while I >= 0 do
+          i := BlockSize - 1;
+          while i >= 0 do
             begin
-              APVMove(@T[0], 1, ColumnsCount - I, @TmpA[I][0], I, ColumnsCount - 1);
+              APVMove(@T[0], 1, ColumnsCount - i, @TmpA[i][0], i, ColumnsCount - 1);
               T[1] := 1;
-              ApplyReflectionFromTheRight(Q, TauBuf[I], T, 0, QRows - 1,
-                BlockStart + I, N - 1, WORK);
-              Dec(I);
+              ApplyReflectionFromTheRight(q, TauBuf[i], T, 0, QRows - 1,
+                BlockStart + i, n - 1, Work);
+              Dec(i);
             end;
         end;
 
@@ -1877,34 +1877,34 @@ end;
   L       -   matrix L, array[0..M-1, 0..N-1].
   ************************************************************************ *)
 procedure RMatrixLQUnpackL(const A: TLMatrix; M: TLInt;
-  N: TLInt; var L: TLMatrix);
+  n: TLInt; var L: TLMatrix);
 var
-  I: TLInt;
-  K: TLInt;
+  i: TLInt;
+  k: TLInt;
 begin
-  if (M <= 0) or (N <= 0) then
+  if (M <= 0) or (n <= 0) then
     begin
       Exit;
     end;
-  SetLength(L, M, N);
-  I := 0;
-  while I <= N - 1 do
+  SetLength(L, M, n);
+  i := 0;
+  while i <= n - 1 do
     begin
-      L[0, I] := 0;
-      Inc(I);
+      L[0, i] := 0;
+      Inc(i);
     end;
-  I := 1;
-  while I <= M - 1 do
+  i := 1;
+  while i <= M - 1 do
     begin
-      APVMove(@L[I][0], 0, N - 1, @L[0][0], 0, N - 1);
-      Inc(I);
+      APVMove(@L[i][0], 0, n - 1, @L[0][0], 0, n - 1);
+      Inc(i);
     end;
-  I := 0;
-  while I <= M - 1 do
+  i := 0;
+  while i <= M - 1 do
     begin
-      K := Min(I, N - 1);
-      APVMove(@L[I][0], 0, K, @A[I][0], 0, K);
-      Inc(I);
+      k := Min(i, n - 1);
+      APVMove(@L[i][0], 0, k, @A[i][0], 0, k);
+      Inc(i);
     end;
 end;
 
@@ -1926,10 +1926,10 @@ end;
   If QColumns=0, array isn't changed.
   ************************************************************************ *)
 procedure CMatrixQRUnpackQ(const A: TLComplexMatrix; M: TLInt;
-  N: TLInt; const Tau: TLComplexVec; QColumns: TLInt;
-  var Q: TLComplexMatrix);
+  n: TLInt; const TAU: TLComplexVec; QColumns: TLInt;
+  var q: TLComplexMatrix);
 var
-  WORK      : TLComplexVec;
+  Work      : TLComplexVec;
   T         : TLComplexVec;
   TauBuf    : TLComplexVec;
   MinMN     : TLInt;
@@ -1940,15 +1940,15 @@ var
   BlockStart: TLInt;
   BlockSize : TLInt;
   RowsCount : TLInt;
-  I         : TLInt;
+  i         : TLInt;
   J         : TLInt;
-  K         : TLInt;
-  V         : TLComplex;
+  k         : TLInt;
+  v         : TLComplex;
   i_        : TLInt;
   i1_       : TLInt;
 begin
   Assert(QColumns <= M, 'UnpackQFromQR: QColumns>M!');
-  if (M <= 0) or (N <= 0) then
+  if (M <= 0) or (n <= 0) then
     begin
       Exit;
     end;
@@ -1956,32 +1956,32 @@ begin
   //
   // init
   //
-  MinMN := Min(M, N);
+  MinMN := Min(M, n);
   RefCnt := Min(MinMN, QColumns);
-  SetLength(WORK, Max(M, N) + 1);
-  SetLength(T, Max(M, N) + 1);
+  SetLength(Work, Max(M, n) + 1);
+  SetLength(T, Max(M, n) + 1);
   SetLength(TauBuf, MinMN);
   SetLength(TmpA, M, ABLASComplexBlockSize(A));
   SetLength(TmpT, ABLASComplexBlockSize(A), ABLASComplexBlockSize(A));
   SetLength(TmpR, 2 * ABLASComplexBlockSize(A), QColumns);
-  SetLength(Q, M, QColumns);
-  I := 0;
-  while I <= M - 1 do
+  SetLength(q, M, QColumns);
+  i := 0;
+  while i <= M - 1 do
     begin
       J := 0;
       while J <= QColumns - 1 do
         begin
-          if I = J then
+          if i = J then
             begin
-              Q[I, J] := C_Complex(1);
+              q[i, J] := C_Complex(1);
             end
           else
             begin
-              Q[I, J] := C_Complex(0);
+              q[i, J] := C_Complex(0);
             end;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
 
   //
@@ -2004,7 +2004,7 @@ begin
       i1_ := (BlockStart) - (0);
       for i_ := 0 to BlockSize - 1 do
         begin
-          TauBuf[i_] := Tau[i_ + i1_];
+          TauBuf[i_] := TAU[i_ + i1_];
         end;
 
       //
@@ -2021,7 +2021,7 @@ begin
           // Prepare block reflector
           //
           CMatrixBlockReflector(TmpA, TauBuf, True, RowsCount, BlockSize,
-            TmpT, WORK);
+            TmpT, Work);
 
           //
           // Multiply the rest of A by Q.
@@ -2029,11 +2029,11 @@ begin
           // Q  = E + Y*T*Y'  = E + TmpA*TmpT*TmpA'
           //
           CMatrixGEMM(BlockSize, QColumns, RowsCount, C_Complex(1.0), TmpA, 0, 0, 2,
-            Q, BlockStart, 0, 0, C_Complex(0.0), TmpR, 0, 0);
+            q, BlockStart, 0, 0, C_Complex(0.0), TmpR, 0, 0);
           CMatrixGEMM(BlockSize, QColumns, BlockSize, C_Complex(1.0), TmpT, 0, 0, 0,
             TmpR, 0, 0, 0, C_Complex(0.0), TmpR, BlockSize, 0);
           CMatrixGEMM(RowsCount, QColumns, BlockSize, C_Complex(1.0), TmpA, 0, 0, 0,
-            TmpR, BlockSize, 0, 0, C_Complex(1.0), Q, BlockStart, 0);
+            TmpR, BlockSize, 0, 0, C_Complex(1.0), q, BlockStart, 0);
         end
       else
         begin
@@ -2041,18 +2041,18 @@ begin
           //
           // Level 2 algorithm
           //
-          I := BlockSize - 1;
-          while I >= 0 do
+          i := BlockSize - 1;
+          while i >= 0 do
             begin
-              i1_ := (I) - (1);
-              for i_ := 1 to RowsCount - I do
+              i1_ := (i) - (1);
+              for i_ := 1 to RowsCount - i do
                 begin
-                  T[i_] := TmpA[i_ + i1_, I];
+                  T[i_] := TmpA[i_ + i1_, i];
                 end;
               T[1] := C_Complex(1);
-              ComplexApplyReflectionFromTheLeft(Q, TauBuf[I], T, BlockStart + I,
-                M - 1, 0, QColumns - 1, WORK);
-              Dec(I);
+              ComplexApplyReflectionFromTheLeft(q, TauBuf[i], T, BlockStart + i,
+                M - 1, 0, QColumns - 1, Work);
+              Dec(i);
             end;
         end;
 
@@ -2077,41 +2077,41 @@ end;
   R       -   matrix R, array[0..M-1, 0..N-1].
   ************************************************************************ *)
 procedure CMatrixQRUnpackR(const A: TLComplexMatrix; M: TLInt;
-  N: TLInt; var R: TLComplexMatrix);
+  n: TLInt; var R: TLComplexMatrix);
 var
-  I : TLInt;
-  K : TLInt;
+  i : TLInt;
+  k : TLInt;
   i_: TLInt;
 begin
-  if (M <= 0) or (N <= 0) then
+  if (M <= 0) or (n <= 0) then
     begin
       Exit;
     end;
-  K := Min(M, N);
-  SetLength(R, M, N);
-  I := 0;
-  while I <= N - 1 do
+  k := Min(M, n);
+  SetLength(R, M, n);
+  i := 0;
+  while i <= n - 1 do
     begin
-      R[0, I] := C_Complex(0);
-      Inc(I);
+      R[0, i] := C_Complex(0);
+      Inc(i);
     end;
-  I := 1;
-  while I <= M - 1 do
+  i := 1;
+  while i <= M - 1 do
     begin
-      for i_ := 0 to N - 1 do
+      for i_ := 0 to n - 1 do
         begin
-          R[I, i_] := R[0, i_];
+          R[i, i_] := R[0, i_];
         end;
-      Inc(I);
+      Inc(i);
     end;
-  I := 0;
-  while I <= K - 1 do
+  i := 0;
+  while i <= k - 1 do
     begin
-      for i_ := I to N - 1 do
+      for i_ := i to n - 1 do
         begin
-          R[I, i_] := A[I, i_];
+          R[i, i_] := A[i, i_];
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -2133,10 +2133,10 @@ end;
   If QRows=0, array isn't changed.
   ************************************************************************ *)
 procedure CMatrixLQUnpackQ(const A: TLComplexMatrix; M: TLInt;
-  N: TLInt; const Tau: TLComplexVec; QRows: TLInt;
-  var Q: TLComplexMatrix);
+  n: TLInt; const TAU: TLComplexVec; QRows: TLInt;
+  var q: TLComplexMatrix);
 var
-  WORK        : TLComplexVec;
+  Work        : TLComplexVec;
   T           : TLComplexVec;
   TauBuf      : TLComplexVec;
   MinMN       : TLInt;
@@ -2147,14 +2147,14 @@ var
   BlockStart  : TLInt;
   BlockSize   : TLInt;
   ColumnsCount: TLInt;
-  I           : TLInt;
+  i           : TLInt;
   J           : TLInt;
-  K           : TLInt;
-  V           : TLComplex;
+  k           : TLInt;
+  v           : TLComplex;
   i_          : TLInt;
   i1_         : TLInt;
 begin
-  if (M <= 0) or (N <= 0) then
+  if (M <= 0) or (n <= 0) then
     begin
       Exit;
     end;
@@ -2162,32 +2162,32 @@ begin
   //
   // Init
   //
-  MinMN := Min(M, N);
+  MinMN := Min(M, n);
   RefCnt := Min(MinMN, QRows);
-  SetLength(WORK, Max(M, N) + 1);
-  SetLength(T, Max(M, N) + 1);
+  SetLength(Work, Max(M, n) + 1);
+  SetLength(T, Max(M, n) + 1);
   SetLength(TauBuf, MinMN);
-  SetLength(TmpA, ABLASComplexBlockSize(A), N);
+  SetLength(TmpA, ABLASComplexBlockSize(A), n);
   SetLength(TmpT, ABLASComplexBlockSize(A), ABLASComplexBlockSize(A));
   SetLength(TmpR, QRows, 2 * ABLASComplexBlockSize(A));
-  SetLength(Q, QRows, N);
-  I := 0;
-  while I <= QRows - 1 do
+  SetLength(q, QRows, n);
+  i := 0;
+  while i <= QRows - 1 do
     begin
       J := 0;
-      while J <= N - 1 do
+      while J <= n - 1 do
         begin
-          if I = J then
+          if i = J then
             begin
-              Q[I, J] := C_Complex(1);
+              q[i, J] := C_Complex(1);
             end
           else
             begin
-              Q[I, J] := C_Complex(0);
+              q[i, J] := C_Complex(0);
             end;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
 
   //
@@ -2198,7 +2198,7 @@ begin
   BlockSize := RefCnt - BlockStart;
   while BlockStart >= 0 do
     begin
-      ColumnsCount := N - BlockStart;
+      ColumnsCount := n - BlockStart;
 
       //
       // LQ decomposition of submatrix.
@@ -2210,7 +2210,7 @@ begin
       i1_ := (BlockStart) - (0);
       for i_ := 0 to BlockSize - 1 do
         begin
-          TauBuf[i_] := Tau[i_ + i1_];
+          TauBuf[i_] := TAU[i_ + i1_];
         end;
 
       //
@@ -2227,19 +2227,19 @@ begin
           // Prepare block reflector
           //
           CMatrixBlockReflector(TmpA, TauBuf, False, ColumnsCount, BlockSize,
-            TmpT, WORK);
+            TmpT, Work);
 
           //
           // Multiply the rest of A by Q'.
           //
           // Q'  = E + Y*T'*Y'  = E + TmpA'*TmpT'*TmpA
           //
-          CMatrixGEMM(QRows, BlockSize, ColumnsCount, C_Complex(1.0), Q, 0,
+          CMatrixGEMM(QRows, BlockSize, ColumnsCount, C_Complex(1.0), q, 0,
             BlockStart, 0, TmpA, 0, 0, 2, C_Complex(0.0), TmpR, 0, 0);
           CMatrixGEMM(QRows, BlockSize, BlockSize, C_Complex(1.0), TmpR, 0, 0, 0,
             TmpT, 0, 0, 2, C_Complex(0.0), TmpR, 0, BlockSize);
           CMatrixGEMM(QRows, ColumnsCount, BlockSize, C_Complex(1.0), TmpR, 0,
-            BlockSize, 0, TmpA, 0, 0, 0, C_Complex(1.0), Q, 0, BlockStart);
+            BlockSize, 0, TmpA, 0, 0, 0, C_Complex(1.0), q, 0, BlockStart);
         end
       else
         begin
@@ -2247,18 +2247,18 @@ begin
           //
           // Level 2 algorithm
           //
-          I := BlockSize - 1;
-          while I >= 0 do
+          i := BlockSize - 1;
+          while i >= 0 do
             begin
-              i1_ := (I) - (1);
-              for i_ := 1 to ColumnsCount - I do
+              i1_ := (i) - (1);
+              for i_ := 1 to ColumnsCount - i do
                 begin
-                  T[i_] := Conj(TmpA[I, i_ + i1_]);
+                  T[i_] := Conj(TmpA[i, i_ + i1_]);
                 end;
               T[1] := C_Complex(1);
-              ComplexApplyReflectionFromTheRight(Q, Conj(TauBuf[I]), T, 0, QRows - 1,
-                BlockStart + I, N - 1, WORK);
-              Dec(I);
+              ComplexApplyReflectionFromTheRight(q, Conj(TauBuf[i]), T, 0, QRows - 1,
+                BlockStart + i, n - 1, Work);
+              Dec(i);
             end;
         end;
 
@@ -2283,41 +2283,41 @@ end;
   L       -   matrix L, array[0..M-1, 0..N-1].
   ************************************************************************ *)
 procedure CMatrixLQUnpackL(const A: TLComplexMatrix; M: TLInt;
-  N: TLInt; var L: TLComplexMatrix);
+  n: TLInt; var L: TLComplexMatrix);
 var
-  I : TLInt;
-  K : TLInt;
+  i : TLInt;
+  k : TLInt;
   i_: TLInt;
 begin
-  if (M <= 0) or (N <= 0) then
+  if (M <= 0) or (n <= 0) then
     begin
       Exit;
     end;
-  SetLength(L, M, N);
-  I := 0;
-  while I <= N - 1 do
+  SetLength(L, M, n);
+  i := 0;
+  while i <= n - 1 do
     begin
-      L[0, I] := C_Complex(0);
-      Inc(I);
+      L[0, i] := C_Complex(0);
+      Inc(i);
     end;
-  I := 1;
-  while I <= M - 1 do
+  i := 1;
+  while i <= M - 1 do
     begin
-      for i_ := 0 to N - 1 do
+      for i_ := 0 to n - 1 do
         begin
-          L[I, i_] := L[0, i_];
+          L[i, i_] := L[0, i_];
         end;
-      Inc(I);
+      Inc(i);
     end;
-  I := 0;
-  while I <= M - 1 do
+  i := 0;
+  while i <= M - 1 do
     begin
-      K := Min(I, N - 1);
-      for i_ := 0 to K do
+      k := Min(i, n - 1);
+      for i_ := 0 to k do
         begin
-          L[I, i_] := A[I, i_];
+          L[i, i_] := A[i, i_];
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -2371,14 +2371,14 @@ end;
   Here vi and ui are vectors which form H(i) and G(i), and d and e -
   are the diagonal and off-diagonal elements of matrix B.
   ************************************************************************ *)
-procedure RMatrixBD(var A: TLMatrix; M: TLInt; N: TLInt;
+procedure RMatrixBD(var A: TLMatrix; M: TLInt; n: TLInt;
   var TauQ: TLVec; var TauP: TLVec);
 var
-  WORK : TLVec;
+  Work : TLVec;
   T    : TLVec;
   MinMN: TLInt;
   MaxMN: TLInt;
-  I    : TLInt;
+  i    : TLInt;
   LTau : TLFloat;
   i_   : TLInt;
   i1_  : TLInt;
@@ -2387,79 +2387,79 @@ begin
   //
   // Prepare
   //
-  if (N <= 0) or (M <= 0) then
+  if (n <= 0) or (M <= 0) then
     begin
       Exit;
     end;
-  MinMN := Min(M, N);
-  MaxMN := Max(M, N);
-  SetLength(WORK, MaxMN + 1);
+  MinMN := Min(M, n);
+  MaxMN := Max(M, n);
+  SetLength(Work, MaxMN + 1);
   SetLength(T, MaxMN + 1);
-  if M >= N then
+  if M >= n then
     begin
-      SetLength(TauQ, N);
-      SetLength(TauP, N);
+      SetLength(TauQ, n);
+      SetLength(TauP, n);
     end
   else
     begin
       SetLength(TauQ, M);
       SetLength(TauP, M);
     end;
-  if M >= N then
+  if M >= n then
     begin
 
       //
       // Reduce to upper bidiagonal form
       //
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
 
           //
           // Generate elementary reflector H(i) to annihilate A(i+1:m-1,i)
           //
-          i1_ := (I) - (1);
-          for i_ := 1 to M - I do
+          i1_ := (i) - (1);
+          for i_ := 1 to M - i do
             begin
-              T[i_] := A[i_ + i1_, I];
+              T[i_] := A[i_ + i1_, i];
             end;
-          GenerateReflection(T, M - I, LTau);
-          TauQ[I] := LTau;
-          i1_ := (1) - (I);
-          for i_ := I to M - 1 do
+          GenerateReflection(T, M - i, LTau);
+          TauQ[i] := LTau;
+          i1_ := (1) - (i);
+          for i_ := i to M - 1 do
             begin
-              A[i_, I] := T[i_ + i1_];
+              A[i_, i] := T[i_ + i1_];
             end;
           T[1] := 1;
 
           //
           // Apply H(i) to A(i:m-1,i+1:n-1) from the left
           //
-          ApplyReflectionFromTheLeft(A, LTau, T, I, M - 1, I + 1, N - 1, WORK);
-          if I < N - 1 then
+          ApplyReflectionFromTheLeft(A, LTau, T, i, M - 1, i + 1, n - 1, Work);
+          if i < n - 1 then
             begin
 
               //
               // Generate elementary reflector G(i) to annihilate
               // A(i,i+2:n-1)
               //
-              APVMove(@T[0], 1, N - I - 1, @A[I][0], I + 1, N - 1);
-              GenerateReflection(T, N - 1 - I, LTau);
-              TauP[I] := LTau;
-              APVMove(@A[I][0], I + 1, N - 1, @T[0], 1, N - 1 - I);
+              APVMove(@T[0], 1, n - i - 1, @A[i][0], i + 1, n - 1);
+              GenerateReflection(T, n - 1 - i, LTau);
+              TauP[i] := LTau;
+              APVMove(@A[i][0], i + 1, n - 1, @T[0], 1, n - 1 - i);
               T[1] := 1;
 
               //
               // Apply G(i) to A(i+1:m-1,i+1:n-1) from the right
               //
-              ApplyReflectionFromTheRight(A, LTau, T, I + 1, M - 1, I + 1,
-                N - 1, WORK);
+              ApplyReflectionFromTheRight(A, LTau, T, i + 1, M - 1, i + 1,
+                n - 1, Work);
             end
           else
             begin
-              TauP[I] := 0;
+              TauP[i] := 0;
             end;
-          Inc(I);
+          Inc(i);
         end;
     end
   else
@@ -2468,55 +2468,55 @@ begin
       //
       // Reduce to lower bidiagonal form
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
 
           //
           // Generate elementary reflector G(i) to annihilate A(i,i+1:n-1)
           //
-          APVMove(@T[0], 1, N - I, @A[I][0], I, N - 1);
-          GenerateReflection(T, N - I, LTau);
-          TauP[I] := LTau;
-          APVMove(@A[I][0], I, N - 1, @T[0], 1, N - I);
+          APVMove(@T[0], 1, n - i, @A[i][0], i, n - 1);
+          GenerateReflection(T, n - i, LTau);
+          TauP[i] := LTau;
+          APVMove(@A[i][0], i, n - 1, @T[0], 1, n - i);
           T[1] := 1;
 
           //
           // Apply G(i) to A(i+1:m-1,i:n-1) from the right
           //
-          ApplyReflectionFromTheRight(A, LTau, T, I + 1, M - 1, I, N - 1, WORK);
-          if I < M - 1 then
+          ApplyReflectionFromTheRight(A, LTau, T, i + 1, M - 1, i, n - 1, Work);
+          if i < M - 1 then
             begin
 
               //
               // Generate elementary reflector H(i) to annihilate
               // A(i+2:m-1,i)
               //
-              i1_ := (I + 1) - (1);
-              for i_ := 1 to M - 1 - I do
+              i1_ := (i + 1) - (1);
+              for i_ := 1 to M - 1 - i do
                 begin
-                  T[i_] := A[i_ + i1_, I];
+                  T[i_] := A[i_ + i1_, i];
                 end;
-              GenerateReflection(T, M - 1 - I, LTau);
-              TauQ[I] := LTau;
-              i1_ := (1) - (I + 1);
-              for i_ := I + 1 to M - 1 do
+              GenerateReflection(T, M - 1 - i, LTau);
+              TauQ[i] := LTau;
+              i1_ := (1) - (i + 1);
+              for i_ := i + 1 to M - 1 do
                 begin
-                  A[i_, I] := T[i_ + i1_];
+                  A[i_, i] := T[i_ + i1_];
                 end;
               T[1] := 1;
 
               //
               // Apply H(i) to A(i+1:m-1,i+1:n-1) from the left
               //
-              ApplyReflectionFromTheLeft(A, LTau, T, I + 1, M - 1, I + 1,
-                N - 1, WORK);
+              ApplyReflectionFromTheLeft(A, LTau, T, i + 1, M - 1, i + 1,
+                n - 1, Work);
             end
           else
             begin
-              TauQ[I] := 0;
+              TauQ[i] := 0;
             end;
-          Inc(I);
+          Inc(i);
         end;
     end;
 end;
@@ -2539,16 +2539,16 @@ end;
   Array[0..M-1, 0..QColumns-1]
   If QColumns=0, the array is not modified.
   ************************************************************************ *)
-procedure RMatrixBDUnpackQ(const QP: TLMatrix; M: TLInt;
-  N: TLInt; const TauQ: TLVec; QColumns: TLInt;
-  var Q: TLMatrix);
+procedure RMatrixBDUnpackQ(const qp: TLMatrix; M: TLInt;
+  n: TLInt; const TauQ: TLVec; QColumns: TLInt;
+  var q: TLMatrix);
 var
-  I: TLInt;
+  i: TLInt;
   J: TLInt;
 begin
   Assert(QColumns <= M, 'RMatrixBDUnpackQ: QColumns>M!');
   Assert(QColumns >= 0, 'RMatrixBDUnpackQ: QColumns<0!');
-  if (M = 0) or (N = 0) or (QColumns = 0) then
+  if (M = 0) or (n = 0) or (QColumns = 0) then
     begin
       Exit;
     end;
@@ -2556,30 +2556,30 @@ begin
   //
   // prepare Q
   //
-  SetLength(Q, M, QColumns);
-  I := 0;
-  while I <= M - 1 do
+  SetLength(q, M, QColumns);
+  i := 0;
+  while i <= M - 1 do
     begin
       J := 0;
       while J <= QColumns - 1 do
         begin
-          if I = J then
+          if i = J then
             begin
-              Q[I, J] := 1;
+              q[i, J] := 1;
             end
           else
             begin
-              Q[I, J] := 0;
+              q[i, J] := 0;
             end;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
 
   //
   // Calculate
   //
-  RMatrixBDMultiplyByQ(QP, M, N, TauQ, Q, M, QColumns, False, False);
+  RMatrixBDMultiplyByQ(qp, M, n, TauQ, q, M, QColumns, False, False);
 end;
 
 (* ************************************************************************
@@ -2608,22 +2608,22 @@ end;
   Array[0..ZRows-1,0..ZColumns-1]
   If ZRows=0 or ZColumns=0, the array is not modified.
   ************************************************************************ *)
-procedure RMatrixBDMultiplyByQ(const QP: TLMatrix; M: TLInt;
-  N: TLInt; const TauQ: TLVec; var Z: TLMatrix;
+procedure RMatrixBDMultiplyByQ(const qp: TLMatrix; M: TLInt;
+  n: TLInt; const TauQ: TLVec; var Z: TLMatrix;
   ZRows: TLInt; ZColumns: TLInt; FromTheRight: Boolean;
   DoTranspose: Boolean);
 var
-  I    : TLInt;
-  I1   : TLInt;
-  I2   : TLInt;
+  i    : TLInt;
+  i1   : TLInt;
+  i2   : TLInt;
   IStep: TLInt;
-  V    : TLVec;
-  WORK : TLVec;
-  MX   : TLInt;
+  v    : TLVec;
+  Work : TLVec;
+  mx   : TLInt;
   i_   : TLInt;
   i1_  : TLInt;
 begin
-  if (M <= 0) or (N <= 0) or (ZRows <= 0) or (ZColumns <= 0) then
+  if (M <= 0) or (n <= 0) or (ZRows <= 0) or (ZColumns <= 0) then
     begin
       Exit;
     end;
@@ -2633,12 +2633,12 @@ begin
   //
   // init
   //
-  MX := Max(M, N);
-  MX := Max(MX, ZRows);
-  MX := Max(MX, ZColumns);
-  SetLength(V, MX + 1);
-  SetLength(WORK, MX + 1);
-  if M >= N then
+  mx := Max(M, n);
+  mx := Max(mx, ZRows);
+  mx := Max(mx, ZColumns);
+  SetLength(v, mx + 1);
+  SetLength(Work, mx + 1);
+  if M >= n then
     begin
 
       //
@@ -2646,47 +2646,47 @@ begin
       //
       if FromTheRight then
         begin
-          I1 := 0;
-          I2 := N - 1;
+          i1 := 0;
+          i2 := n - 1;
           IStep := +1;
         end
       else
         begin
-          I1 := N - 1;
-          I2 := 0;
+          i1 := n - 1;
+          i2 := 0;
           IStep := -1;
         end;
       if DoTranspose then
         begin
-          I := I1;
-          I1 := I2;
-          I2 := I;
+          i := i1;
+          i1 := i2;
+          i2 := i;
           IStep := -IStep;
         end;
 
       //
       // Process
       //
-      I := I1;
+      i := i1;
       repeat
-        i1_ := (I) - (1);
-        for i_ := 1 to M - I do
+        i1_ := (i) - (1);
+        for i_ := 1 to M - i do
           begin
-            V[i_] := QP[i_ + i1_, I];
+            v[i_] := qp[i_ + i1_, i];
           end;
-        V[1] := 1;
+        v[1] := 1;
         if FromTheRight then
           begin
-            ApplyReflectionFromTheRight(Z, TauQ[I], V, 0, ZRows - 1, I,
-              M - 1, WORK);
+            ApplyReflectionFromTheRight(Z, TauQ[i], v, 0, ZRows - 1, i,
+              M - 1, Work);
           end
         else
           begin
-            ApplyReflectionFromTheLeft(Z, TauQ[I], V, I, M - 1, 0,
-              ZColumns - 1, WORK);
+            ApplyReflectionFromTheLeft(Z, TauQ[i], v, i, M - 1, 0,
+              ZColumns - 1, Work);
           end;
-        I := I + IStep;
-      until I = I2 + IStep;
+        i := i + IStep;
+      until i = i2 + IStep;
     end
   else
     begin
@@ -2696,21 +2696,21 @@ begin
       //
       if FromTheRight then
         begin
-          I1 := 0;
-          I2 := M - 2;
+          i1 := 0;
+          i2 := M - 2;
           IStep := +1;
         end
       else
         begin
-          I1 := M - 2;
-          I2 := 0;
+          i1 := M - 2;
+          i2 := 0;
           IStep := -1;
         end;
       if DoTranspose then
         begin
-          I := I1;
-          I1 := I2;
-          I2 := I;
+          i := i1;
+          i1 := i2;
+          i2 := i;
           IStep := -IStep;
         end;
 
@@ -2719,26 +2719,26 @@ begin
       //
       if M - 1 > 0 then
         begin
-          I := I1;
+          i := i1;
           repeat
-            i1_ := (I + 1) - (1);
-            for i_ := 1 to M - I - 1 do
+            i1_ := (i + 1) - (1);
+            for i_ := 1 to M - i - 1 do
               begin
-                V[i_] := QP[i_ + i1_, I];
+                v[i_] := qp[i_ + i1_, i];
               end;
-            V[1] := 1;
+            v[1] := 1;
             if FromTheRight then
               begin
-                ApplyReflectionFromTheRight(Z, TauQ[I], V, 0, ZRows - 1, I + 1,
-                  M - 1, WORK);
+                ApplyReflectionFromTheRight(Z, TauQ[i], v, 0, ZRows - 1, i + 1,
+                  M - 1, Work);
               end
             else
               begin
-                ApplyReflectionFromTheLeft(Z, TauQ[I], V, I + 1, M - 1, 0,
-                  ZColumns - 1, WORK);
+                ApplyReflectionFromTheLeft(Z, TauQ[i], v, i + 1, M - 1, 0,
+                  ZColumns - 1, Work);
               end;
-            I := I + IStep;
-          until I = I2 + IStep;
+            i := i + IStep;
+          until i = i2 + IStep;
         end;
     end;
 end;
@@ -2761,16 +2761,16 @@ end;
   Array[0..PTRows-1, 0..N-1]
   If PTRows=0, the array is not modified.
   ************************************************************************ *)
-procedure RMatrixBDUnpackPT(const QP: TLMatrix; M: TLInt;
-  N: TLInt; const TauP: TLVec; PTRows: TLInt;
-  var PT: TLMatrix);
+procedure RMatrixBDUnpackPT(const qp: TLMatrix; M: TLInt;
+  n: TLInt; const TauP: TLVec; PTRows: TLInt;
+  var pt: TLMatrix);
 var
-  I: TLInt;
+  i: TLInt;
   J: TLInt;
 begin
-  Assert(PTRows <= N, 'RMatrixBDUnpackPT: PTRows>N!');
+  Assert(PTRows <= n, 'RMatrixBDUnpackPT: PTRows>N!');
   Assert(PTRows >= 0, 'RMatrixBDUnpackPT: PTRows<0!');
-  if (M = 0) or (N = 0) or (PTRows = 0) then
+  if (M = 0) or (n = 0) or (PTRows = 0) then
     begin
       Exit;
     end;
@@ -2778,30 +2778,30 @@ begin
   //
   // prepare PT
   //
-  SetLength(PT, PTRows, N);
-  I := 0;
-  while I <= PTRows - 1 do
+  SetLength(pt, PTRows, n);
+  i := 0;
+  while i <= PTRows - 1 do
     begin
       J := 0;
-      while J <= N - 1 do
+      while J <= n - 1 do
         begin
-          if I = J then
+          if i = J then
             begin
-              PT[I, J] := 1;
+              pt[i, J] := 1;
             end
           else
             begin
-              PT[I, J] := 0;
+              pt[i, J] := 0;
             end;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
 
   //
   // Calculate
   //
-  RMatrixBDMultiplyByP(QP, M, N, TauP, PT, PTRows, N, True, True);
+  RMatrixBDMultiplyByP(qp, M, n, TauP, pt, PTRows, n, True, True);
 end;
 
 (* ************************************************************************
@@ -2830,35 +2830,35 @@ end;
   Array whose indexes range within [0..ZRows-1,0..ZColumns-1].
   If ZRows=0 or ZColumns=0, the array is not modified.
   ************************************************************************ *)
-procedure RMatrixBDMultiplyByP(const QP: TLMatrix; M: TLInt;
-  N: TLInt; const TauP: TLVec; var Z: TLMatrix;
+procedure RMatrixBDMultiplyByP(const qp: TLMatrix; M: TLInt;
+  n: TLInt; const TauP: TLVec; var Z: TLMatrix;
   ZRows: TLInt; ZColumns: TLInt; FromTheRight: Boolean;
   DoTranspose: Boolean);
 var
-  I    : TLInt;
-  V    : TLVec;
-  WORK : TLVec;
-  MX   : TLInt;
-  I1   : TLInt;
-  I2   : TLInt;
+  i    : TLInt;
+  v    : TLVec;
+  Work : TLVec;
+  mx   : TLInt;
+  i1   : TLInt;
+  i2   : TLInt;
   IStep: TLInt;
 begin
-  if (M <= 0) or (N <= 0) or (ZRows <= 0) or (ZColumns <= 0) then
+  if (M <= 0) or (n <= 0) or (ZRows <= 0) or (ZColumns <= 0) then
     begin
       Exit;
     end;
-  Assert(FromTheRight and (ZColumns = N) or not FromTheRight and (ZRows = N),
+  Assert(FromTheRight and (ZColumns = n) or not FromTheRight and (ZRows = n),
     'RMatrixBDMultiplyByP: incorrect Z size!');
 
   //
   // init
   //
-  MX := Max(M, N);
-  MX := Max(MX, ZRows);
-  MX := Max(MX, ZColumns);
-  SetLength(V, MX + 1);
-  SetLength(WORK, MX + 1);
-  if M >= N then
+  mx := Max(M, n);
+  mx := Max(mx, ZRows);
+  mx := Max(mx, ZColumns);
+  SetLength(v, mx + 1);
+  SetLength(Work, mx + 1);
+  if M >= n then
     begin
 
       //
@@ -2866,45 +2866,45 @@ begin
       //
       if FromTheRight then
         begin
-          I1 := N - 2;
-          I2 := 0;
+          i1 := n - 2;
+          i2 := 0;
           IStep := -1;
         end
       else
         begin
-          I1 := 0;
-          I2 := N - 2;
+          i1 := 0;
+          i2 := n - 2;
           IStep := +1;
         end;
       if not DoTranspose then
         begin
-          I := I1;
-          I1 := I2;
-          I2 := I;
+          i := i1;
+          i1 := i2;
+          i2 := i;
           IStep := -IStep;
         end;
 
       //
       // Process
       //
-      if N - 1 > 0 then
+      if n - 1 > 0 then
         begin
-          I := I1;
+          i := i1;
           repeat
-            APVMove(@V[0], 1, N - 1 - I, @QP[I][0], I + 1, N - 1);
-            V[1] := 1;
+            APVMove(@v[0], 1, n - 1 - i, @qp[i][0], i + 1, n - 1);
+            v[1] := 1;
             if FromTheRight then
               begin
-                ApplyReflectionFromTheRight(Z, TauP[I], V, 0, ZRows - 1, I + 1,
-                  N - 1, WORK);
+                ApplyReflectionFromTheRight(Z, TauP[i], v, 0, ZRows - 1, i + 1,
+                  n - 1, Work);
               end
             else
               begin
-                ApplyReflectionFromTheLeft(Z, TauP[I], V, I + 1, N - 1, 0,
-                  ZColumns - 1, WORK);
+                ApplyReflectionFromTheLeft(Z, TauP[i], v, i + 1, n - 1, 0,
+                  ZColumns - 1, Work);
               end;
-            I := I + IStep;
-          until I = I2 + IStep;
+            i := i + IStep;
+          until i = i2 + IStep;
         end;
     end
   else
@@ -2915,43 +2915,43 @@ begin
       //
       if FromTheRight then
         begin
-          I1 := M - 1;
-          I2 := 0;
+          i1 := M - 1;
+          i2 := 0;
           IStep := -1;
         end
       else
         begin
-          I1 := 0;
-          I2 := M - 1;
+          i1 := 0;
+          i2 := M - 1;
           IStep := +1;
         end;
       if not DoTranspose then
         begin
-          I := I1;
-          I1 := I2;
-          I2 := I;
+          i := i1;
+          i1 := i2;
+          i2 := i;
           IStep := -IStep;
         end;
 
       //
       // Process
       //
-      I := I1;
+      i := i1;
       repeat
-        APVMove(@V[0], 1, N - I, @QP[I][0], I, N - 1);
-        V[1] := 1;
+        APVMove(@v[0], 1, n - i, @qp[i][0], i, n - 1);
+        v[1] := 1;
         if FromTheRight then
           begin
-            ApplyReflectionFromTheRight(Z, TauP[I], V, 0, ZRows - 1, I,
-              N - 1, WORK);
+            ApplyReflectionFromTheRight(Z, TauP[i], v, 0, ZRows - 1, i,
+              n - 1, Work);
           end
         else
           begin
-            ApplyReflectionFromTheLeft(Z, TauP[I], V, I, N - 1, 0,
-              ZColumns - 1, WORK);
+            ApplyReflectionFromTheLeft(Z, TauP[i], v, i, n - 1, 0,
+              ZColumns - 1, Work);
           end;
-        I := I + IStep;
-      until I = I2 + IStep;
+        i := i + IStep;
+      until i = i2 + IStep;
     end;
 end;
 
@@ -2974,42 +2974,42 @@ end;
   Array index ranges within [0..Min(M,N)-1], the last
   element is not used.
   ************************************************************************ *)
-procedure RMatrixBDUnpackDiagonals(const B: TLMatrix; M: TLInt;
-  N: TLInt; var IsUpper: Boolean; var D: TLVec;
+procedure RMatrixBDUnpackDiagonals(const b: TLMatrix; M: TLInt;
+  n: TLInt; var IsUpper: Boolean; var d: TLVec;
   var E: TLVec);
 var
-  I: TLInt;
+  i: TLInt;
 begin
-  IsUpper := M >= N;
-  if (M <= 0) or (N <= 0) then
+  IsUpper := M >= n;
+  if (M <= 0) or (n <= 0) then
     begin
       Exit;
     end;
   if IsUpper then
     begin
-      SetLength(D, N);
-      SetLength(E, N);
-      I := 0;
-      while I <= N - 2 do
+      SetLength(d, n);
+      SetLength(E, n);
+      i := 0;
+      while i <= n - 2 do
         begin
-          D[I] := B[I, I];
-          E[I] := B[I, I + 1];
-          Inc(I);
+          d[i] := b[i, i];
+          E[i] := b[i, i + 1];
+          Inc(i);
         end;
-      D[N - 1] := B[N - 1, N - 1];
+      d[n - 1] := b[n - 1, n - 1];
     end
   else
     begin
-      SetLength(D, M);
+      SetLength(d, M);
       SetLength(E, M);
-      I := 0;
-      while I <= M - 2 do
+      i := 0;
+      while i <= M - 2 do
         begin
-          D[I] := B[I, I];
-          E[I] := B[I + 1, I];
-          Inc(I);
+          d[i] := b[i, i];
+          E[i] := b[i + 1, i];
+          Inc(i);
         end;
-      D[M - 1] := B[M - 1, M - 1];
+      d[M - 1] := b[M - 1, M - 1];
     end;
 end;
 
@@ -3042,59 +3042,59 @@ end;
   where tau is a scalar stored in Tau[I]; v - is a real vector,
   so that v(0:i) = 0, v(i+1) = 1, v(i+2:n-1) stored in A(i+2:n-1,i).
   ************************************************************************ *)
-procedure RMatrixHessenberg(var A: TLMatrix; N: TLInt;
-  var Tau: TLVec);
+procedure RMatrixHessenberg(var A: TLMatrix; n: TLInt;
+  var TAU: TLVec);
 var
-  I   : TLInt;
-  V   : TLFloat;
+  i   : TLInt;
+  v   : TLFloat;
   T   : TLVec;
-  WORK: TLVec;
+  Work: TLVec;
   i_  : TLInt;
   i1_ : TLInt;
 begin
-  Assert(N >= 0, 'RMatrixHessenberg: incorrect N!');
+  Assert(n >= 0, 'RMatrixHessenberg: incorrect N!');
 
   //
   // Quick return if possible
   //
-  if N <= 1 then
+  if n <= 1 then
     begin
       Exit;
     end;
-  SetLength(Tau, N - 2 + 1);
-  SetLength(T, N + 1);
-  SetLength(WORK, N (* - 1 + 1 // optimized compiler *) );
-  I := 0;
-  while I <= N - 2 do
+  SetLength(TAU, n - 2 + 1);
+  SetLength(T, n + 1);
+  SetLength(Work, n (* - 1 + 1 // optimized compiler *) );
+  i := 0;
+  while i <= n - 2 do
     begin
 
       //
       // Compute elementary reflector H(i) to annihilate A(i+2:ihi,i)
       //
-      i1_ := (I + 1) - (1);
-      for i_ := 1 to N - I - 1 do
+      i1_ := (i + 1) - (1);
+      for i_ := 1 to n - i - 1 do
         begin
-          T[i_] := A[i_ + i1_, I];
+          T[i_] := A[i_ + i1_, i];
         end;
-      GenerateReflection(T, N - I - 1, V);
-      i1_ := (1) - (I + 1);
-      for i_ := I + 1 to N - 1 do
+      GenerateReflection(T, n - i - 1, v);
+      i1_ := (1) - (i + 1);
+      for i_ := i + 1 to n - 1 do
         begin
-          A[i_, I] := T[i_ + i1_];
+          A[i_, i] := T[i_ + i1_];
         end;
-      Tau[I] := V;
+      TAU[i] := v;
       T[1] := 1;
 
       //
       // Apply H(i) to A(1:ihi,i+1:ihi) from the right
       //
-      ApplyReflectionFromTheRight(A, V, T, 0, N - 1, I + 1, N - 1, WORK);
+      ApplyReflectionFromTheRight(A, v, T, 0, n - 1, i + 1, n - 1, Work);
 
       //
       // Apply H(i) to A(i+1:ihi,i+1:n) from the left
       //
-      ApplyReflectionFromTheLeft(A, V, T, I + 1, N - 1, I + 1, N - 1, WORK);
-      Inc(I);
+      ApplyReflectionFromTheLeft(A, v, T, i + 1, n - 1, i + 1, n - 1, Work);
+      Inc(i);
     end;
 end;
 
@@ -3111,17 +3111,17 @@ end;
   Q   -   matrix Q.
   Array whose indexes range within [0..N-1, 0..N-1].
   ************************************************************************ *)
-procedure RMatrixHessenbergUnpackQ(const A: TLMatrix; N: TLInt;
-  const Tau: TLVec; var Q: TLMatrix);
+procedure RMatrixHessenbergUnpackQ(const A: TLMatrix; n: TLInt;
+  const TAU: TLVec; var q: TLMatrix);
 var
-  I   : TLInt;
+  i   : TLInt;
   J   : TLInt;
-  V   : TLVec;
-  WORK: TLVec;
+  v   : TLVec;
+  Work: TLVec;
   i_  : TLInt;
   i1_ : TLInt;
 begin
-  if N = 0 then
+  if n = 0 then
     begin
       Exit;
     end;
@@ -3129,46 +3129,46 @@ begin
   //
   // init
   //
-  SetLength(Q, N (* - 1 + 1 // optimized compiler *) , N (* - 1 + 1 // optimized compiler *) );
-  SetLength(V, N (* - 1 + 1 // optimized compiler *) );
-  SetLength(WORK, N (* - 1 + 1 // optimized compiler *) );
-  I := 0;
-  while I <= N - 1 do
+  SetLength(q, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+  SetLength(v, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(Work, n (* - 1 + 1 // optimized compiler *) );
+  i := 0;
+  while i <= n - 1 do
     begin
       J := 0;
-      while J <= N - 1 do
+      while J <= n - 1 do
         begin
-          if I = J then
+          if i = J then
             begin
-              Q[I, J] := 1;
+              q[i, J] := 1;
             end
           else
             begin
-              Q[I, J] := 0;
+              q[i, J] := 0;
             end;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
 
   //
   // unpack Q
   //
-  I := 0;
-  while I <= N - 2 do
+  i := 0;
+  while i <= n - 2 do
     begin
 
       //
       // Apply H(i)
       //
-      i1_ := (I + 1) - (1);
-      for i_ := 1 to N - I - 1 do
+      i1_ := (i + 1) - (1);
+      for i_ := 1 to n - i - 1 do
         begin
-          V[i_] := A[i_ + i1_, I];
+          v[i_] := A[i_ + i1_, i];
         end;
-      V[1] := 1;
-      ApplyReflectionFromTheRight(Q, Tau[I], V, 0, N - 1, I + 1, N - 1, WORK);
-      Inc(I);
+      v[1] := 1;
+      ApplyReflectionFromTheRight(q, TAU[i], v, 0, n - 1, i + 1, n - 1, Work);
+      Inc(i);
     end;
 end;
 
@@ -3182,31 +3182,31 @@ end;
   Output parameters:
   H   -   matrix H. Array whose indexes range within [0..N-1, 0..N-1].
   ************************************************************************ *)
-procedure RMatrixHessenbergUnpackH(const A: TLMatrix; N: TLInt;
-  var H: TLMatrix);
+procedure RMatrixHessenbergUnpackH(const A: TLMatrix; n: TLInt;
+  var h: TLMatrix);
 var
-  I   : TLInt;
+  i   : TLInt;
   J   : TLInt;
-  V   : TLVec;
-  WORK: TLVec;
+  v   : TLVec;
+  Work: TLVec;
 begin
-  if N = 0 then
+  if n = 0 then
     begin
       Exit;
     end;
-  SetLength(H, N (* - 1 + 1 // optimized compiler *) , N (* - 1 + 1 // optimized compiler *) );
-  I := 0;
-  while I <= N - 1 do
+  SetLength(h, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+  i := 0;
+  while i <= n - 1 do
     begin
       J := 0;
-      while J <= I - 2 do
+      while J <= i - 2 do
         begin
-          H[I, J] := 0;
+          h[i, J] := 0;
           Inc(J);
         end;
-      J := Max(0, I - 1);
-      APVMove(@H[I][0], J, N - 1, @A[I][0], J, N - 1);
-      Inc(I);
+      J := Max(0, i - 1);
+      APVMove(@h[i][0], J, n - 1, @A[i][0], J, n - 1);
+      Inc(i);
     end;
 end;
 
@@ -3274,34 +3274,34 @@ end;
   where d and e denote diagonal and off-diagonal elements of T, and vi
   denotes an element of the vector defining H(i).
   ************************************************************************ *)
-procedure SMatrixTD(var A: TLMatrix; N: TLInt; IsUpper: Boolean;
-  var Tau: TLVec; var D: TLVec; var E: TLVec);
+procedure SMatrixTD(var A: TLMatrix; n: TLInt; IsUpper: Boolean;
+  var TAU: TLVec; var d: TLVec; var E: TLVec);
 var
-  I    : TLInt;
-  Alpha: TLFloat;
+  i    : TLInt;
+  alpha: TLFloat;
   TAUI : TLFloat;
-  V    : TLFloat;
+  v    : TLFloat;
   T    : TLVec;
-  T2   : TLVec;
-  T3   : TLVec;
+  t2   : TLVec;
+  t3   : TLVec;
   i_   : TLInt;
   i1_  : TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
       Exit;
     end;
-  SetLength(T, N + 1);
-  SetLength(T2, N + 1);
-  SetLength(T3, N + 1);
-  if N > 1 then
+  SetLength(T, n + 1);
+  SetLength(t2, n + 1);
+  SetLength(t3, n + 1);
+  if n > 1 then
     begin
-      SetLength(Tau, N - 2 + 1);
+      SetLength(TAU, n - 2 + 1);
     end;
-  SetLength(D, N (* - 1 + 1 // optimized compiler *) );
-  if N > 1 then
+  SetLength(d, n (* - 1 + 1 // optimized compiler *) );
+  if n > 1 then
     begin
-      SetLength(E, N - 2 + 1);
+      SetLength(E, n - 2 + 1);
     end;
   if IsUpper then
     begin
@@ -3309,64 +3309,64 @@ begin
       //
       // Reduce the upper triangle of A
       //
-      I := N - 2;
-      while I >= 0 do
+      i := n - 2;
+      while i >= 0 do
         begin
 
           //
           // Generate elementary reflector H() = E - tau * v * v'
           //
-          if I >= 1 then
+          if i >= 1 then
             begin
               i1_ := (0) - (2);
-              for i_ := 2 to I + 1 do
+              for i_ := 2 to i + 1 do
                 begin
-                  T[i_] := A[i_ + i1_, I + 1];
+                  T[i_] := A[i_ + i1_, i + 1];
                 end;
             end;
-          T[1] := A[I, I + 1];
-          GenerateReflection(T, I + 1, TAUI);
-          if I >= 1 then
+          T[1] := A[i, i + 1];
+          GenerateReflection(T, i + 1, TAUI);
+          if i >= 1 then
             begin
               i1_ := (2) - (0);
-              for i_ := 0 to I - 1 do
+              for i_ := 0 to i - 1 do
                 begin
-                  A[i_, I + 1] := T[i_ + i1_];
+                  A[i_, i + 1] := T[i_ + i1_];
                 end;
             end;
-          A[I, I + 1] := T[1];
-          E[I] := A[I, I + 1];
-          if AP_FP_Neq(TAUI, 0) then
+          A[i, i + 1] := T[1];
+          E[i] := A[i, i + 1];
+          if AP_FP_NEq(TAUI, 0) then
             begin
 
               //
               // Apply H from both sides to A
               //
-              A[I, I + 1] := 1;
+              A[i, i + 1] := 1;
 
               //
               // Compute  x := tau * A * v  storing x in TAU
               //
               i1_ := (0) - (1);
-              for i_ := 1 to I + 1 do
+              for i_ := 1 to i + 1 do
                 begin
-                  T[i_] := A[i_ + i1_, I + 1];
+                  T[i_] := A[i_ + i1_, i + 1];
                 end;
-              SymmetricMatrixVectorMultiply(A, IsUpper, 0, I, T, TAUI, T3);
-              APVMove(@Tau[0], 0, I, @T3[0], 1, I + 1);
+              SymmetricMatrixVectorMultiply(A, IsUpper, 0, i, T, TAUI, t3);
+              APVMove(@TAU[0], 0, i, @t3[0], 1, i + 1);
 
               //
               // Compute  w := x - 1/2 * tau * (x'*v) * v
               //
-              V := 0.0;
-              for i_ := 0 to I do
+              v := 0.0;
+              for i_ := 0 to i do
                 begin
-                  V := V + Tau[i_] * A[i_, I + 1];
+                  v := v + TAU[i_] * A[i_, i + 1];
                 end;
-              Alpha := -0.5 * TAUI * V;
-              for i_ := 0 to I do
+              alpha := -0.5 * TAUI * v;
+              for i_ := 0 to i do
                 begin
-                  Tau[i_] := Tau[i_] + Alpha * A[i_, I + 1];
+                  TAU[i_] := TAU[i_] + alpha * A[i_, i + 1];
                 end;
 
               //
@@ -3374,19 +3374,19 @@ begin
               // A := A - v * w' - w * v'
               //
               i1_ := (0) - (1);
-              for i_ := 1 to I + 1 do
+              for i_ := 1 to i + 1 do
                 begin
-                  T[i_] := A[i_ + i1_, I + 1];
+                  T[i_] := A[i_ + i1_, i + 1];
                 end;
-              APVMove(@T3[0], 1, I + 1, @Tau[0], 0, I);
-              SymmetricRank2Update(A, IsUpper, 0, I, T, T3, T2, -1);
-              A[I, I + 1] := E[I];
+              APVMove(@t3[0], 1, i + 1, @TAU[0], 0, i);
+              SymmetricRank2Update(A, IsUpper, 0, i, T, t3, t2, -1);
+              A[i, i + 1] := E[i];
             end;
-          D[I + 1] := A[I + 1, I + 1];
-          Tau[I] := TAUI;
-          Dec(I);
+          d[i + 1] := A[i + 1, i + 1];
+          TAU[i] := TAUI;
+          Dec(i);
         end;
-      D[0] := A[0, 0];
+      d[0] := A[0, 0];
     end
   else
     begin
@@ -3394,58 +3394,58 @@ begin
       //
       // Reduce the lower triangle of A
       //
-      I := 0;
-      while I <= N - 2 do
+      i := 0;
+      while i <= n - 2 do
         begin
 
           //
           // Generate elementary reflector H = E - tau * v * v'
           //
-          i1_ := (I + 1) - (1);
-          for i_ := 1 to N - I - 1 do
+          i1_ := (i + 1) - (1);
+          for i_ := 1 to n - i - 1 do
             begin
-              T[i_] := A[i_ + i1_, I];
+              T[i_] := A[i_ + i1_, i];
             end;
-          GenerateReflection(T, N - I - 1, TAUI);
-          i1_ := (1) - (I + 1);
-          for i_ := I + 1 to N - 1 do
+          GenerateReflection(T, n - i - 1, TAUI);
+          i1_ := (1) - (i + 1);
+          for i_ := i + 1 to n - 1 do
             begin
-              A[i_, I] := T[i_ + i1_];
+              A[i_, i] := T[i_ + i1_];
             end;
-          E[I] := A[I + 1, I];
-          if AP_FP_Neq(TAUI, 0) then
+          E[i] := A[i + 1, i];
+          if AP_FP_NEq(TAUI, 0) then
             begin
 
               //
               // Apply H from both sides to A
               //
-              A[I + 1, I] := 1;
+              A[i + 1, i] := 1;
 
               //
               // Compute  x := tau * A * v  storing y in TAU
               //
-              i1_ := (I + 1) - (1);
-              for i_ := 1 to N - I - 1 do
+              i1_ := (i + 1) - (1);
+              for i_ := 1 to n - i - 1 do
                 begin
-                  T[i_] := A[i_ + i1_, I];
+                  T[i_] := A[i_ + i1_, i];
                 end;
-              SymmetricMatrixVectorMultiply(A, IsUpper, I + 1, N - 1, T, TAUI, T2);
-              APVMove(@Tau[0], I, N - 2, @T2[0], 1, N - I - 1);
+              SymmetricMatrixVectorMultiply(A, IsUpper, i + 1, n - 1, T, TAUI, t2);
+              APVMove(@TAU[0], i, n - 2, @t2[0], 1, n - i - 1);
 
               //
               // Compute  w := x - 1/2 * tau * (x'*v) * v
               //
-              i1_ := (I + 1) - (I);
-              V := 0.0;
-              for i_ := I to N - 2 do
+              i1_ := (i + 1) - (i);
+              v := 0.0;
+              for i_ := i to n - 2 do
                 begin
-                  V := V + Tau[i_] * A[i_ + i1_, I];
+                  v := v + TAU[i_] * A[i_ + i1_, i];
                 end;
-              Alpha := -0.5 * TAUI * V;
-              i1_ := (I + 1) - (I);
-              for i_ := I to N - 2 do
+              alpha := -0.5 * TAUI * v;
+              i1_ := (i + 1) - (i);
+              for i_ := i to n - 2 do
                 begin
-                  Tau[i_] := Tau[i_] + Alpha * A[i_ + i1_, I];
+                  TAU[i_] := TAU[i_] + alpha * A[i_ + i1_, i];
                 end;
 
               //
@@ -3453,20 +3453,20 @@ begin
               // A := A - v * w' - w * v'
               //
               //
-              i1_ := (I + 1) - (1);
-              for i_ := 1 to N - I - 1 do
+              i1_ := (i + 1) - (1);
+              for i_ := 1 to n - i - 1 do
                 begin
-                  T[i_] := A[i_ + i1_, I];
+                  T[i_] := A[i_ + i1_, i];
                 end;
-              APVMove(@T2[0], 1, N - I - 1, @Tau[0], I, N - 2);
-              SymmetricRank2Update(A, IsUpper, I + 1, N - 1, T, T2, T3, -1);
-              A[I + 1, I] := E[I];
+              APVMove(@t2[0], 1, n - i - 1, @TAU[0], i, n - 2);
+              SymmetricRank2Update(A, IsUpper, i + 1, n - 1, T, t2, t3, -1);
+              A[i + 1, i] := E[i];
             end;
-          D[I] := A[I, I];
-          Tau[I] := TAUI;
-          Inc(I);
+          d[i] := A[i, i];
+          TAU[i] := TAUI;
+          Inc(i);
         end;
-      D[N - 1] := A[N - 1, N - 1];
+      d[n - 1] := A[n - 1, n - 1];
     end;
 end;
 
@@ -3484,17 +3484,17 @@ end;
   Q       -   transformation matrix.
   array with elements [0..N-1, 0..N-1].
   ************************************************************************ *)
-procedure SMatrixTDUnpackQ(const A: TLMatrix; const N: TLInt;
-  const IsUpper: Boolean; const Tau: TLVec; var Q: TLMatrix);
+procedure SMatrixTDUnpackQ(const A: TLMatrix; const n: TLInt;
+  const IsUpper: Boolean; const TAU: TLVec; var q: TLMatrix);
 var
-  I   : TLInt;
+  i   : TLInt;
   J   : TLInt;
-  V   : TLVec;
-  WORK: TLVec;
+  v   : TLVec;
+  Work: TLVec;
   i_  : TLInt;
   i1_ : TLInt;
 begin
-  if N = 0 then
+  if n = 0 then
     begin
       Exit;
     end;
@@ -3502,26 +3502,26 @@ begin
   //
   // init
   //
-  SetLength(Q, N (* - 1 + 1 // optimized compiler *) , N (* - 1 + 1 // optimized compiler *) );
-  SetLength(V, N + 1);
-  SetLength(WORK, N (* - 1 + 1 // optimized compiler *) );
-  I := 0;
-  while I <= N - 1 do
+  SetLength(q, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+  SetLength(v, n + 1);
+  SetLength(Work, n (* - 1 + 1 // optimized compiler *) );
+  i := 0;
+  while i <= n - 1 do
     begin
       J := 0;
-      while J <= N - 1 do
+      while J <= n - 1 do
         begin
-          if I = J then
+          if i = J then
             begin
-              Q[I, J] := 1;
+              q[i, J] := 1;
             end
           else
             begin
-              Q[I, J] := 0;
+              q[i, J] := 0;
             end;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
 
   //
@@ -3529,40 +3529,40 @@ begin
   //
   if IsUpper then
     begin
-      I := 0;
-      while I <= N - 2 do
+      i := 0;
+      while i <= n - 2 do
         begin
 
           //
           // Apply H(i)
           //
           i1_ := (0) - (1);
-          for i_ := 1 to I + 1 do
+          for i_ := 1 to i + 1 do
             begin
-              V[i_] := A[i_ + i1_, I + 1];
+              v[i_] := A[i_ + i1_, i + 1];
             end;
-          V[I + 1] := 1;
-          ApplyReflectionFromTheLeft(Q, Tau[I], V, 0, I, 0, N - 1, WORK);
-          Inc(I);
+          v[i + 1] := 1;
+          ApplyReflectionFromTheLeft(q, TAU[i], v, 0, i, 0, n - 1, Work);
+          Inc(i);
         end;
     end
   else
     begin
-      I := N - 2;
-      while I >= 0 do
+      i := n - 2;
+      while i >= 0 do
         begin
 
           //
           // Apply H(i)
           //
-          i1_ := (I + 1) - (1);
-          for i_ := 1 to N - I - 1 do
+          i1_ := (i + 1) - (1);
+          for i_ := 1 to n - i - 1 do
             begin
-              V[i_] := A[i_ + i1_, I];
+              v[i_] := A[i_ + i1_, i];
             end;
-          V[1] := 1;
-          ApplyReflectionFromTheLeft(Q, Tau[I], V, I + 1, N - 1, 0, N - 1, WORK);
-          Dec(I);
+          v[1] := 1;
+          ApplyReflectionFromTheLeft(q, TAU[i], v, i + 1, n - 1, 0, n - 1, Work);
+          Dec(i);
         end;
     end;
 end;
@@ -3631,108 +3631,108 @@ end;
   where d and e denote diagonal and off-diagonal elements of T, and vi
   denotes an element of the vector defining H(i).
   ************************************************************************ *)
-procedure HMatrixTD(var A: TLComplexMatrix; N: TLInt; IsUpper: Boolean;
-  var Tau: TLComplexVec; var D: TLVec; var E: TLVec);
+procedure HMatrixTD(var A: TLComplexMatrix; n: TLInt; IsUpper: Boolean;
+  var TAU: TLComplexVec; var d: TLVec; var E: TLVec);
 var
-  I    : TLInt;
-  Alpha: TLComplex;
+  i    : TLInt;
+  alpha: TLComplex;
   TAUI : TLComplex;
-  V    : TLComplex;
+  v    : TLComplex;
   T    : TLComplexVec;
-  T2   : TLComplexVec;
-  T3   : TLComplexVec;
+  t2   : TLComplexVec;
+  t3   : TLComplexVec;
   i_   : TLInt;
   i1_  : TLInt;
 begin
-  if N <= 0 then
+  if n <= 0 then
     begin
       Exit;
     end;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      Assert(AP_FP_Eq(A[I, I].Y, 0));
-      Inc(I);
+      Assert(AP_FP_Eq(A[i, i].Y, 0));
+      Inc(i);
     end;
-  if N > 1 then
+  if n > 1 then
     begin
-      SetLength(Tau, N - 2 + 1);
-      SetLength(E, N - 2 + 1);
+      SetLength(TAU, n - 2 + 1);
+      SetLength(E, n - 2 + 1);
     end;
-  SetLength(D, N (* - 1 + 1 // optimized compiler *) );
-  SetLength(T, N (* - 1 + 1 // optimized compiler *) );
-  SetLength(T2, N (* - 1 + 1 // optimized compiler *) );
-  SetLength(T3, N (* - 1 + 1 // optimized compiler *) );
+  SetLength(d, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(T, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(t2, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(t3, n (* - 1 + 1 // optimized compiler *) );
   if IsUpper then
     begin
 
       //
       // Reduce the upper triangle of A
       //
-      A[N - 1, N - 1] := C_Complex(A[N - 1, N - 1].X);
-      I := N - 2;
-      while I >= 0 do
+      A[n - 1, n - 1] := C_Complex(A[n - 1, n - 1].X);
+      i := n - 2;
+      while i >= 0 do
         begin
 
           //
           // Generate elementary reflector H = I+1 - tau * v * v'
           //
-          Alpha := A[I, I + 1];
-          T[1] := Alpha;
-          if I >= 1 then
+          alpha := A[i, i + 1];
+          T[1] := alpha;
+          if i >= 1 then
             begin
               i1_ := (0) - (2);
-              for i_ := 2 to I + 1 do
+              for i_ := 2 to i + 1 do
                 begin
-                  T[i_] := A[i_ + i1_, I + 1];
+                  T[i_] := A[i_ + i1_, i + 1];
                 end;
             end;
-          ComplexGenerateReflection(T, I + 1, TAUI);
-          if I >= 1 then
+          ComplexGenerateReflection(T, i + 1, TAUI);
+          if i >= 1 then
             begin
               i1_ := (2) - (0);
-              for i_ := 0 to I - 1 do
+              for i_ := 0 to i - 1 do
                 begin
-                  A[i_, I + 1] := T[i_ + i1_];
+                  A[i_, i + 1] := T[i_ + i1_];
                 end;
             end;
-          Alpha := T[1];
-          E[I] := Alpha.X;
+          alpha := T[1];
+          E[i] := alpha.X;
           if C_NotEqualR(TAUI, 0) then
             begin
 
               //
               // Apply H(I+1) from both sides to A
               //
-              A[I, I + 1] := C_Complex(1);
+              A[i, i + 1] := C_Complex(1);
 
               //
               // Compute  x := tau * A * v  storing x in TAU
               //
               i1_ := (0) - (1);
-              for i_ := 1 to I + 1 do
+              for i_ := 1 to i + 1 do
                 begin
-                  T[i_] := A[i_ + i1_, I + 1];
+                  T[i_] := A[i_ + i1_, i + 1];
                 end;
-              HermitianMatrixVectorMultiply(A, IsUpper, 0, I, T, TAUI, T2);
+              HermitianMatrixVectorMultiply(A, IsUpper, 0, i, T, TAUI, t2);
               i1_ := (1) - (0);
-              for i_ := 0 to I do
+              for i_ := 0 to i do
                 begin
-                  Tau[i_] := T2[i_ + i1_];
+                  TAU[i_] := t2[i_ + i1_];
                 end;
 
               //
               // Compute  w := x - 1/2 * tau * (x'*v) * v
               //
-              V := C_Complex(0.0);
-              for i_ := 0 to I do
+              v := C_Complex(0.0);
+              for i_ := 0 to i do
                 begin
-                  V := C_Add(V, C_Mul(Conj(Tau[i_]), A[i_, I + 1]));
+                  v := C_Add(v, C_Mul(Conj(TAU[i_]), A[i_, i + 1]));
                 end;
-              Alpha := C_Opposite(C_Mul(C_MulR(TAUI, 0.5), V));
-              for i_ := 0 to I do
+              alpha := C_Opposite(C_Mul(C_MulR(TAUI, 0.5), v));
+              for i_ := 0 to i do
                 begin
-                  Tau[i_] := C_Add(Tau[i_], C_Mul(Alpha, A[i_, I + 1]));
+                  TAU[i_] := C_Add(TAU[i_], C_Mul(alpha, A[i_, i + 1]));
                 end;
 
               //
@@ -3740,27 +3740,27 @@ begin
               // A := A - v * w' - w * v'
               //
               i1_ := (0) - (1);
-              for i_ := 1 to I + 1 do
+              for i_ := 1 to i + 1 do
                 begin
-                  T[i_] := A[i_ + i1_, I + 1];
+                  T[i_] := A[i_ + i1_, i + 1];
                 end;
               i1_ := (0) - (1);
-              for i_ := 1 to I + 1 do
+              for i_ := 1 to i + 1 do
                 begin
-                  T3[i_] := Tau[i_ + i1_];
+                  t3[i_] := TAU[i_ + i1_];
                 end;
-              HermitianRank2Update(A, IsUpper, 0, I, T, T3, T2, C_Complex(-1));
+              HermitianRank2Update(A, IsUpper, 0, i, T, t3, t2, C_Complex(-1));
             end
           else
             begin
-              A[I, I] := C_Complex(A[I, I].X);
+              A[i, i] := C_Complex(A[i, i].X);
             end;
-          A[I, I + 1] := C_Complex(E[I]);
-          D[I + 1] := A[I + 1, I + 1].X;
-          Tau[I] := TAUI;
-          Dec(I);
+          A[i, i + 1] := C_Complex(E[i]);
+          d[i + 1] := A[i + 1, i + 1].X;
+          TAU[i] := TAUI;
+          Dec(i);
         end;
-      D[0] := A[0, 0].X;
+      d[0] := A[0, 0].X;
     end
   else
     begin
@@ -3769,91 +3769,91 @@ begin
       // Reduce the lower triangle of A
       //
       A[0, 0] := C_Complex(A[0, 0].X);
-      I := 0;
-      while I <= N - 2 do
+      i := 0;
+      while i <= n - 2 do
         begin
 
           //
           // Generate elementary reflector H = I - tau * v * v'
           //
-          i1_ := (I + 1) - (1);
-          for i_ := 1 to N - I - 1 do
+          i1_ := (i + 1) - (1);
+          for i_ := 1 to n - i - 1 do
             begin
-              T[i_] := A[i_ + i1_, I];
+              T[i_] := A[i_ + i1_, i];
             end;
-          ComplexGenerateReflection(T, N - I - 1, TAUI);
-          i1_ := (1) - (I + 1);
-          for i_ := I + 1 to N - 1 do
+          ComplexGenerateReflection(T, n - i - 1, TAUI);
+          i1_ := (1) - (i + 1);
+          for i_ := i + 1 to n - 1 do
             begin
-              A[i_, I] := T[i_ + i1_];
+              A[i_, i] := T[i_ + i1_];
             end;
-          E[I] := A[I + 1, I].X;
+          E[i] := A[i + 1, i].X;
           if C_NotEqualR(TAUI, 0) then
             begin
 
               //
               // Apply H(i) from both sides to A(i+1:n,i+1:n)
               //
-              A[I + 1, I] := C_Complex(1);
+              A[i + 1, i] := C_Complex(1);
 
               //
               // Compute  x := tau * A * v  storing y in TAU
               //
-              i1_ := (I + 1) - (1);
-              for i_ := 1 to N - I - 1 do
+              i1_ := (i + 1) - (1);
+              for i_ := 1 to n - i - 1 do
                 begin
-                  T[i_] := A[i_ + i1_, I];
+                  T[i_] := A[i_ + i1_, i];
                 end;
-              HermitianMatrixVectorMultiply(A, IsUpper, I + 1, N - 1, T, TAUI, T2);
-              i1_ := (1) - (I);
-              for i_ := I to N - 2 do
+              HermitianMatrixVectorMultiply(A, IsUpper, i + 1, n - 1, T, TAUI, t2);
+              i1_ := (1) - (i);
+              for i_ := i to n - 2 do
                 begin
-                  Tau[i_] := T2[i_ + i1_];
+                  TAU[i_] := t2[i_ + i1_];
                 end;
 
               //
               // Compute  w := x - 1/2 * tau * (x'*v) * v
               //
-              i1_ := (I + 1) - (I);
-              V := C_Complex(0.0);
-              for i_ := I to N - 2 do
+              i1_ := (i + 1) - (i);
+              v := C_Complex(0.0);
+              for i_ := i to n - 2 do
                 begin
-                  V := C_Add(V, C_Mul(Conj(Tau[i_]), A[i_ + i1_, I]));
+                  v := C_Add(v, C_Mul(Conj(TAU[i_]), A[i_ + i1_, i]));
                 end;
-              Alpha := C_Opposite(C_Mul(C_MulR(TAUI, 0.5), V));
-              i1_ := (I + 1) - (I);
-              for i_ := I to N - 2 do
+              alpha := C_Opposite(C_Mul(C_MulR(TAUI, 0.5), v));
+              i1_ := (i + 1) - (i);
+              for i_ := i to n - 2 do
                 begin
-                  Tau[i_] := C_Add(Tau[i_], C_Mul(Alpha, A[i_ + i1_, I]));
+                  TAU[i_] := C_Add(TAU[i_], C_Mul(alpha, A[i_ + i1_, i]));
                 end;
 
               //
               // Apply the transformation as a rank-2 update:
               // A := A - v * w' - w * v'
               //
-              i1_ := (I + 1) - (1);
-              for i_ := 1 to N - I - 1 do
+              i1_ := (i + 1) - (1);
+              for i_ := 1 to n - i - 1 do
                 begin
-                  T[i_] := A[i_ + i1_, I];
+                  T[i_] := A[i_ + i1_, i];
                 end;
-              i1_ := (I) - (1);
-              for i_ := 1 to N - I - 1 do
+              i1_ := (i) - (1);
+              for i_ := 1 to n - i - 1 do
                 begin
-                  T2[i_] := Tau[i_ + i1_];
+                  t2[i_] := TAU[i_ + i1_];
                 end;
-              HermitianRank2Update(A, IsUpper, I + 1, N - 1, T, T2, T3,
+              HermitianRank2Update(A, IsUpper, i + 1, n - 1, T, t2, t3,
                 C_Complex(-1));
             end
           else
             begin
-              A[I + 1, I + 1] := C_Complex(A[I + 1, I + 1].X);
+              A[i + 1, i + 1] := C_Complex(A[i + 1, i + 1].X);
             end;
-          A[I + 1, I] := C_Complex(E[I]);
-          D[I] := A[I, I].X;
-          Tau[I] := TAUI;
-          Inc(I);
+          A[i + 1, i] := C_Complex(E[i]);
+          d[i] := A[i, i].X;
+          TAU[i] := TAUI;
+          Inc(i);
         end;
-      D[N - 1] := A[N - 1, N - 1].X;
+      d[n - 1] := A[n - 1, n - 1].X;
     end;
 end;
 
@@ -3871,17 +3871,17 @@ end;
   Q       -   transformation matrix.
   array with elements [0..N-1, 0..N-1].
   ************************************************************************ *)
-procedure HMatrixTDUnpackQ(const A: TLComplexMatrix; const N: TLInt;
-  const IsUpper: Boolean; const Tau: TLComplexVec; var Q: TLComplexMatrix);
+procedure HMatrixTDUnpackQ(const A: TLComplexMatrix; const n: TLInt;
+  const IsUpper: Boolean; const TAU: TLComplexVec; var q: TLComplexMatrix);
 var
-  I   : TLInt;
+  i   : TLInt;
   J   : TLInt;
-  V   : TLComplexVec;
-  WORK: TLComplexVec;
+  v   : TLComplexVec;
+  Work: TLComplexVec;
   i_  : TLInt;
   i1_ : TLInt;
 begin
-  if N = 0 then
+  if n = 0 then
     begin
       Exit;
     end;
@@ -3889,26 +3889,26 @@ begin
   //
   // init
   //
-  SetLength(Q, N (* - 1 + 1 // optimized compiler *) , N (* - 1 + 1 // optimized compiler *) );
-  SetLength(V, N + 1);
-  SetLength(WORK, N (* - 1 + 1 // optimized compiler *) );
-  I := 0;
-  while I <= N - 1 do
+  SetLength(q, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+  SetLength(v, n + 1);
+  SetLength(Work, n (* - 1 + 1 // optimized compiler *) );
+  i := 0;
+  while i <= n - 1 do
     begin
       J := 0;
-      while J <= N - 1 do
+      while J <= n - 1 do
         begin
-          if I = J then
+          if i = J then
             begin
-              Q[I, J] := C_Complex(1);
+              q[i, J] := C_Complex(1);
             end
           else
             begin
-              Q[I, J] := C_Complex(0);
+              q[i, J] := C_Complex(0);
             end;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
 
   //
@@ -3916,41 +3916,41 @@ begin
   //
   if IsUpper then
     begin
-      I := 0;
-      while I <= N - 2 do
+      i := 0;
+      while i <= n - 2 do
         begin
 
           //
           // Apply H(i)
           //
           i1_ := (0) - (1);
-          for i_ := 1 to I + 1 do
+          for i_ := 1 to i + 1 do
             begin
-              V[i_] := A[i_ + i1_, I + 1];
+              v[i_] := A[i_ + i1_, i + 1];
             end;
-          V[I + 1] := C_Complex(1);
-          ComplexApplyReflectionFromTheLeft(Q, Tau[I], V, 0, I, 0, N - 1, WORK);
-          Inc(I);
+          v[i + 1] := C_Complex(1);
+          ComplexApplyReflectionFromTheLeft(q, TAU[i], v, 0, i, 0, n - 1, Work);
+          Inc(i);
         end;
     end
   else
     begin
-      I := N - 2;
-      while I >= 0 do
+      i := n - 2;
+      while i >= 0 do
         begin
 
           //
           // Apply H(i)
           //
-          i1_ := (I + 1) - (1);
-          for i_ := 1 to N - I - 1 do
+          i1_ := (i + 1) - (1);
+          for i_ := 1 to n - i - 1 do
             begin
-              V[i_] := A[i_ + i1_, I];
+              v[i_] := A[i_ + i1_, i];
             end;
-          V[1] := C_Complex(1);
-          ComplexApplyReflectionFromTheLeft(Q, Tau[I], V, I + 1, N - 1, 0,
-            N - 1, WORK);
-          Dec(I);
+          v[1] := C_Complex(1);
+          ComplexApplyReflectionFromTheLeft(q, TAU[i], v, i + 1, n - 1, 0,
+            n - 1, Work);
+          Dec(i);
         end;
     end;
 end;
@@ -3959,51 +3959,51 @@ end;
   Base case for real QR
   ************************************************************************ *)
 procedure RMatrixQRBaseCase(var A: TLMatrix; M: TLInt;
-  N: TLInt; var WORK: TLVec; var T: TLVec;
-  var Tau: TLVec);
+  n: TLInt; var Work: TLVec; var T: TLVec;
+  var TAU: TLVec);
 var
-  I    : TLInt;
-  K    : TLInt;
+  i    : TLInt;
+  k    : TLInt;
   MinMN: TLInt;
-  Tmp  : TLFloat;
+  tmp  : TLFloat;
   i_   : TLInt;
   i1_  : TLInt;
 begin
-  MinMN := Min(M, N);
+  MinMN := Min(M, n);
 
   //
   // Test the input arguments
   //
-  K := MinMN;
-  I := 0;
-  while I <= K - 1 do
+  k := MinMN;
+  i := 0;
+  while i <= k - 1 do
     begin
 
       //
       // Generate elementary reflector H(i) to annihilate A(i+1:m,i)
       //
-      i1_ := (I) - (1);
-      for i_ := 1 to M - I do
+      i1_ := (i) - (1);
+      for i_ := 1 to M - i do
         begin
-          T[i_] := A[i_ + i1_, I];
+          T[i_] := A[i_ + i1_, i];
         end;
-      GenerateReflection(T, M - I, Tmp);
-      Tau[I] := Tmp;
-      i1_ := (1) - (I);
-      for i_ := I to M - 1 do
+      GenerateReflection(T, M - i, tmp);
+      TAU[i] := tmp;
+      i1_ := (1) - (i);
+      for i_ := i to M - 1 do
         begin
-          A[i_, I] := T[i_ + i1_];
+          A[i_, i] := T[i_ + i1_];
         end;
       T[1] := 1;
-      if I < N then
+      if i < n then
         begin
 
           //
           // Apply H(i) to A(i:m-1,i+1:n-1) from the left
           //
-          ApplyReflectionFromTheLeft(A, Tau[I], T, I, M - 1, I + 1, N - 1, WORK);
+          ApplyReflectionFromTheLeft(A, TAU[i], T, i, M - 1, i + 1, n - 1, Work);
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -4011,37 +4011,37 @@ end;
   Base case for real LQ
   ************************************************************************ *)
 procedure RMatrixLQBaseCase(var A: TLMatrix; M: TLInt;
-  N: TLInt; var WORK: TLVec; var T: TLVec;
-  var Tau: TLVec);
+  n: TLInt; var Work: TLVec; var T: TLVec;
+  var TAU: TLVec);
 var
-  I    : TLInt;
-  K    : TLInt;
+  i    : TLInt;
+  k    : TLInt;
   MinMN: TLInt;
-  Tmp  : TLFloat;
+  tmp  : TLFloat;
 begin
-  MinMN := Min(M, N);
-  K := Min(M, N);
-  I := 0;
-  while I <= K - 1 do
+  MinMN := Min(M, n);
+  k := Min(M, n);
+  i := 0;
+  while i <= k - 1 do
     begin
 
       //
       // Generate elementary reflector H(i) to annihilate A(i,i+1:n-1)
       //
-      APVMove(@T[0], 1, N - I, @A[I][0], I, N - 1);
-      GenerateReflection(T, N - I, Tmp);
-      Tau[I] := Tmp;
-      APVMove(@A[I][0], I, N - 1, @T[0], 1, N - I);
+      APVMove(@T[0], 1, n - i, @A[i][0], i, n - 1);
+      GenerateReflection(T, n - i, tmp);
+      TAU[i] := tmp;
+      APVMove(@A[i][0], i, n - 1, @T[0], 1, n - i);
       T[1] := 1;
-      if I < N then
+      if i < n then
         begin
 
           //
           // Apply H(i) to A(i+1:m,i:n) from the right
           //
-          ApplyReflectionFromTheRight(A, Tau[I], T, I + 1, M - 1, I, N - 1, WORK);
+          ApplyReflectionFromTheRight(A, TAU[i], T, i + 1, M - 1, i, n - 1, Work);
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -4049,18 +4049,18 @@ end;
   Base case for TLComplex QR
   ************************************************************************ *)
 procedure CMatrixQRBaseCase(var A: TLComplexMatrix; M: TLInt;
-  N: TLInt; var WORK: TLComplexVec; var T: TLComplexVec;
-  var Tau: TLComplexVec);
+  n: TLInt; var Work: TLComplexVec; var T: TLComplexVec;
+  var TAU: TLComplexVec);
 var
-  I    : TLInt;
-  K    : TLInt;
+  i    : TLInt;
+  k    : TLInt;
   MMI  : TLInt;
   MinMN: TLInt;
-  Tmp  : TLComplex;
+  tmp  : TLComplex;
   i_   : TLInt;
   i1_  : TLInt;
 begin
-  MinMN := Min(M, N);
+  MinMN := Min(M, n);
   if MinMN <= 0 then
     begin
       Exit;
@@ -4069,38 +4069,38 @@ begin
   //
   // Test the input arguments
   //
-  K := Min(M, N);
-  I := 0;
-  while I <= K - 1 do
+  k := Min(M, n);
+  i := 0;
+  while i <= k - 1 do
     begin
 
       //
       // Generate elementary reflector H(i) to annihilate A(i+1:m,i)
       //
-      MMI := M - I;
-      i1_ := (I) - (1);
+      MMI := M - i;
+      i1_ := (i) - (1);
       for i_ := 1 to MMI do
         begin
-          T[i_] := A[i_ + i1_, I];
+          T[i_] := A[i_ + i1_, i];
         end;
-      ComplexGenerateReflection(T, MMI, Tmp);
-      Tau[I] := Tmp;
-      i1_ := (1) - (I);
-      for i_ := I to M - 1 do
+      ComplexGenerateReflection(T, MMI, tmp);
+      TAU[i] := tmp;
+      i1_ := (1) - (i);
+      for i_ := i to M - 1 do
         begin
-          A[i_, I] := T[i_ + i1_];
+          A[i_, i] := T[i_ + i1_];
         end;
       T[1] := C_Complex(1);
-      if I < N - 1 then
+      if i < n - 1 then
         begin
 
           //
           // Apply H'(i) to A(i:m,i+1:n) from the left
           //
-          ComplexApplyReflectionFromTheLeft(A, Conj(Tau[I]), T, I, M - 1, I + 1,
-            N - 1, WORK);
+          ComplexApplyReflectionFromTheLeft(A, Conj(TAU[i]), T, i, M - 1, i + 1,
+            n - 1, Work);
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -4108,16 +4108,16 @@ end;
   Base case for TLComplex LQ
   ************************************************************************ *)
 procedure CMatrixLQBaseCase(var A: TLComplexMatrix; M: TLInt;
-  N: TLInt; var WORK: TLComplexVec; var T: TLComplexVec;
-  var Tau: TLComplexVec);
+  n: TLInt; var Work: TLComplexVec; var T: TLComplexVec;
+  var TAU: TLComplexVec);
 var
-  I    : TLInt;
+  i    : TLInt;
   MinMN: TLInt;
-  Tmp  : TLComplex;
+  tmp  : TLComplex;
   i_   : TLInt;
   i1_  : TLInt;
 begin
-  MinMN := Min(M, N);
+  MinMN := Min(M, n);
   if MinMN <= 0 then
     begin
       Exit;
@@ -4126,8 +4126,8 @@ begin
   //
   // Test the input arguments
   //
-  I := 0;
-  while I <= MinMN - 1 do
+  i := 0;
+  while i <= MinMN - 1 do
     begin
 
       //
@@ -4138,29 +4138,29 @@ begin
       // need RIGHT reflector. So we replace H=E-tau*v*v' by H^H,
       // which changes v to conj(v).
       //
-      i1_ := (I) - (1);
-      for i_ := 1 to N - I do
+      i1_ := (i) - (1);
+      for i_ := 1 to n - i do
         begin
-          T[i_] := Conj(A[I, i_ + i1_]);
+          T[i_] := Conj(A[i, i_ + i1_]);
         end;
-      ComplexGenerateReflection(T, N - I, Tmp);
-      Tau[I] := Tmp;
-      i1_ := (1) - (I);
-      for i_ := I to N - 1 do
+      ComplexGenerateReflection(T, n - i, tmp);
+      TAU[i] := tmp;
+      i1_ := (1) - (i);
+      for i_ := i to n - 1 do
         begin
-          A[I, i_] := Conj(T[i_ + i1_]);
+          A[i, i_] := Conj(T[i_ + i1_]);
         end;
       T[1] := C_Complex(1);
-      if I < M - 1 then
+      if i < M - 1 then
         begin
 
           //
           // Apply H'(i)
           //
-          ComplexApplyReflectionFromTheRight(A, Tau[I], T, I + 1, M - 1, I,
-            N - 1, WORK);
+          ComplexApplyReflectionFromTheRight(A, TAU[i], T, i + 1, M - 1, i,
+            n - 1, Work);
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -4183,14 +4183,14 @@ end;
   submatrix stores triangular factor on exit.
   WORK        -   array[BlockSize]
   ************************************************************************ *)
-procedure RMatrixBlockReflector(var A: TLMatrix; var Tau: TLVec;
+procedure RMatrixBlockReflector(var A: TLMatrix; var TAU: TLVec;
   ColumnwiseA: Boolean; LengthA: TLInt; BlockSize: TLInt;
-  var T: TLMatrix; var WORK: TLVec);
+  var T: TLMatrix; var Work: TLVec);
 var
-  I  : TLInt;
+  i  : TLInt;
   J  : TLInt;
-  K  : TLInt;
-  V  : TLFloat;
+  k  : TLInt;
+  v  : TLFloat;
   i_ : TLInt;
   i1_: TLInt;
 begin
@@ -4199,106 +4199,106 @@ begin
   // fill beginning of new column with zeros,
   // load 1.0 in the first non-zero element
   //
-  K := 0;
-  while K <= BlockSize - 1 do
+  k := 0;
+  while k <= BlockSize - 1 do
     begin
       if ColumnwiseA then
         begin
-          I := 0;
-          while I <= K - 1 do
+          i := 0;
+          while i <= k - 1 do
             begin
-              A[I, K] := 0;
-              Inc(I);
+              A[i, k] := 0;
+              Inc(i);
             end;
         end
       else
         begin
-          I := 0;
-          while I <= K - 1 do
+          i := 0;
+          while i <= k - 1 do
             begin
-              A[K, I] := 0;
-              Inc(I);
+              A[k, i] := 0;
+              Inc(i);
             end;
         end;
-      A[K, K] := 1;
-      Inc(K);
+      A[k, k] := 1;
+      Inc(k);
     end;
 
   //
   // Calculate Gram matrix of A
   //
-  I := 0;
-  while I <= BlockSize - 1 do
+  i := 0;
+  while i <= BlockSize - 1 do
     begin
       J := 0;
       while J <= BlockSize - 1 do
         begin
-          T[I, BlockSize + J] := 0;
+          T[i, BlockSize + J] := 0;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
-  K := 0;
-  while K <= LengthA - 1 do
+  k := 0;
+  while k <= LengthA - 1 do
     begin
       J := 1;
       while J <= BlockSize - 1 do
         begin
           if ColumnwiseA then
             begin
-              V := A[K, J];
-              if AP_FP_Neq(V, 0) then
+              v := A[k, J];
+              if AP_FP_NEq(v, 0) then
                 begin
-                  APVAdd(@T[J][0], BlockSize, BlockSize + J - 1, @A[K][0], 0, J - 1, V);
+                  APVAdd(@T[J][0], BlockSize, BlockSize + J - 1, @A[k][0], 0, J - 1, v);
                 end;
             end
           else
             begin
-              V := A[J, K];
-              if AP_FP_Neq(V, 0) then
+              v := A[J, k];
+              if AP_FP_NEq(v, 0) then
                 begin
                   i1_ := (0) - (BlockSize);
                   for i_ := BlockSize to BlockSize + J - 1 do
                     begin
-                      T[J, i_] := T[J, i_] + V * A[i_ + i1_, K];
+                      T[J, i_] := T[J, i_] + v * A[i_ + i1_, k];
                     end;
                 end;
             end;
           Inc(J);
         end;
-      Inc(K);
+      Inc(k);
     end;
 
   //
   // Prepare Y (stored in TmpA) and T (stored in TmpT)
   //
-  K := 0;
-  while K <= BlockSize - 1 do
+  k := 0;
+  while k <= BlockSize - 1 do
     begin
 
       //
       // fill non-zero part of T, use pre-calculated Gram matrix
       //
-      APVMove(@WORK[0], 0, K - 1, @T[K][0], BlockSize, BlockSize + K - 1);
-      I := 0;
-      while I <= K - 1 do
+      APVMove(@Work[0], 0, k - 1, @T[k][0], BlockSize, BlockSize + k - 1);
+      i := 0;
+      while i <= k - 1 do
         begin
-          V := APVDotProduct(@T[I][0], I, K - 1, @WORK[0], I, K - 1);
-          T[I, K] := -Tau[K] * V;
-          Inc(I);
+          v := APVDotProduct(@T[i][0], i, k - 1, @Work[0], i, k - 1);
+          T[i, k] := -TAU[k] * v;
+          Inc(i);
         end;
-      T[K, K] := -Tau[K];
+      T[k, k] := -TAU[k];
 
       //
       // Rest of T is filled by zeros
       //
-      I := K + 1;
-      while I <= BlockSize - 1 do
+      i := k + 1;
+      while i <= BlockSize - 1 do
         begin
-          T[I, K] := 0;
-          Inc(I);
+          T[i, k] := 0;
+          Inc(i);
         end;
-      Inc(K);
+      Inc(k);
     end;
 end;
 
@@ -4309,20 +4309,20 @@ end;
   * generate triangular factor T
   ************************************************************************ *)
 procedure CMatrixBlockReflector(var A: TLComplexMatrix;
-  var Tau: TLComplexVec; ColumnwiseA: Boolean; LengthA: TLInt;
-  BlockSize: TLInt; var T: TLComplexMatrix; var WORK: TLComplexVec);
+  var TAU: TLComplexVec; ColumnwiseA: Boolean; LengthA: TLInt;
+  BlockSize: TLInt; var T: TLComplexMatrix; var Work: TLComplexVec);
 var
-  I : TLInt;
-  K : TLInt;
-  V : TLComplex;
+  i : TLInt;
+  k : TLInt;
+  v : TLComplex;
   i_: TLInt;
 begin
 
   //
   // Prepare Y (stored in TmpA) and T (stored in TmpT)
   //
-  K := 0;
-  while K <= BlockSize - 1 do
+  k := 0;
+  while k <= BlockSize - 1 do
     begin
 
       //
@@ -4331,71 +4331,71 @@ begin
       //
       if ColumnwiseA then
         begin
-          I := 0;
-          while I <= K - 1 do
+          i := 0;
+          while i <= k - 1 do
             begin
-              A[I, K] := C_Complex(0);
-              Inc(I);
+              A[i, k] := C_Complex(0);
+              Inc(i);
             end;
         end
       else
         begin
-          I := 0;
-          while I <= K - 1 do
+          i := 0;
+          while i <= k - 1 do
             begin
-              A[K, I] := C_Complex(0);
-              Inc(I);
+              A[k, i] := C_Complex(0);
+              Inc(i);
             end;
         end;
-      A[K, K] := C_Complex(1);
+      A[k, k] := C_Complex(1);
 
       //
       // fill non-zero part of T,
       //
-      I := 0;
-      while I <= K - 1 do
+      i := 0;
+      while i <= k - 1 do
         begin
           if ColumnwiseA then
             begin
-              V := C_Complex(0.0);
-              for i_ := K to LengthA - 1 do
+              v := C_Complex(0.0);
+              for i_ := k to LengthA - 1 do
                 begin
-                  V := C_Add(V, C_Mul(Conj(A[i_, I]), A[i_, K]));
+                  v := C_Add(v, C_Mul(Conj(A[i_, i]), A[i_, k]));
                 end;
             end
           else
             begin
-              V := C_Complex(0.0);
-              for i_ := K to LengthA - 1 do
+              v := C_Complex(0.0);
+              for i_ := k to LengthA - 1 do
                 begin
-                  V := C_Add(V, C_Mul(A[I, i_], Conj(A[K, i_])));
+                  v := C_Add(v, C_Mul(A[i, i_], Conj(A[k, i_])));
                 end;
             end;
-          WORK[I] := V;
-          Inc(I);
+          Work[i] := v;
+          Inc(i);
         end;
-      I := 0;
-      while I <= K - 1 do
+      i := 0;
+      while i <= k - 1 do
         begin
-          V := C_Complex(0.0);
-          for i_ := I to K - 1 do
+          v := C_Complex(0.0);
+          for i_ := i to k - 1 do
             begin
-              V := C_Add(V, C_Mul(T[I, i_], WORK[i_]));
+              v := C_Add(v, C_Mul(T[i, i_], Work[i_]));
             end;
-          T[I, K] := C_Opposite(C_Mul(Tau[K], V));
-          Inc(I);
+          T[i, k] := C_Opposite(C_Mul(TAU[k], v));
+          Inc(i);
         end;
-      T[K, K] := C_Opposite(Tau[K]);
+      T[k, k] := C_Opposite(TAU[k]);
 
       //
       // Rest of T is filled by zeros
       //
-      I := K + 1;
-      while I <= BlockSize - 1 do
+      i := k + 1;
+      while i <= BlockSize - 1 do
         begin
-          T[I, K] := C_Complex(0);
-          Inc(I);
+          T[i, k] := C_Complex(0);
+          Inc(i);
         end;
-      Inc(K);
+      Inc(k);
     end;
-end;
+end; 

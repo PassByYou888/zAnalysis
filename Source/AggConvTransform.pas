@@ -39,7 +39,7 @@ unit AggConvTransform;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -53,10 +53,10 @@ type
     FSource: TAggVertexSource;
     FTrans: TAggTransAffine;
   protected
-    function GetPathID(Index: Cardinal): Cardinal; override;
+    function GetPathID(index: Cardinal): Cardinal; override;
     function GetPathCount: Cardinal; override;
   public
-    constructor Create(Source: TAggVertexSource; Tr: TAggTransAffine);
+    constructor Create(Source: TAggVertexSource; tr: TAggTransAffine);
 
     procedure Rewind(PathID: Cardinal); override;
     function Vertex(X, Y: PDouble): Cardinal; override;
@@ -70,12 +70,12 @@ implementation
 
 { TAggConvTransform }
 
-constructor TAggConvTransform.Create(Source: TAggVertexSource; Tr: TAggTransAffine);
+constructor TAggConvTransform.Create(Source: TAggVertexSource; tr: TAggTransAffine);
 begin
   inherited Create;
 
   FSource := Source;
-  FTrans := Tr;
+  FTrans := tr;
 end;
 
 function TAggConvTransform.GetPathCount: Cardinal;
@@ -83,7 +83,7 @@ begin
   Result := FSource.PathCount;
 end;
 
-function TAggConvTransform.GetPathID(Index: Cardinal): Cardinal;
+function TAggConvTransform.GetPathID(index: Cardinal): Cardinal;
 begin
   Result := FSource.PathID[index];
 end;
@@ -105,4 +105,5 @@ begin
   Result := Cmd;
 end;
 
-end.
+end. 
+ 

@@ -1,11 +1,11 @@
-constructor TMemoryRaster_AggImage.Create(Raster: TMemoryRaster);
+constructor TMemoryRaster_AggImage.Create(raster: TMemoryRaster);
 begin
-  inherited Create(PInt8U(Raster.ScanLine[0]), Raster.Width, Raster.Height, 4 * Raster.Width);
+  inherited Create(PInt8u(raster.ScanLine[0]), raster.width, raster.height, 4 * raster.width);
 end;
 
-procedure TMemoryRaster_AggImage.Attach(Raster: TMemoryRaster);
+procedure TMemoryRaster_AggImage.Attach(raster: TMemoryRaster);
 begin
-  inherited Attach(PInt8U(Raster.ScanLine[0]), Raster.Width, Raster.Height, 4 * Raster.Width);
+  inherited Attach(PInt8u(raster.ScanLine[0]), raster.width, raster.height, 4 * raster.width);
 end;
 
 function TMemoryRaster_Agg2D.GetImageBlendColor: TRasterColor;
@@ -38,37 +38,37 @@ begin
   inherited LineColor := AggColor(Value);
 end;
 
-procedure TMemoryRaster_Agg2D.Attach(Raster: TMemoryRaster);
+procedure TMemoryRaster_Agg2D.Attach(raster: TMemoryRaster);
 begin
-  inherited Attach(PInt8U(Raster.ScanLine[0]), Raster.Width, Raster.Height, 4 * Raster.Width);
+  inherited Attach(PInt8u(raster.ScanLine[0]), raster.width, raster.height, 4 * raster.width);
 end;
 
-procedure TMemoryRaster_Agg2D.FillLinearGradient(X1, Y1, X2, Y2: Double; C1, C2: TRasterColor; Profile: Double);
+procedure TMemoryRaster_Agg2D.FillLinearGradient(x1, y1, x2, y2: Double; c1, c2: TRasterColor; Profile: Double);
 begin
-  inherited FillLinearGradient(X1, Y1, X2, Y2, AggColor(C1), AggColor(C2), Profile);
+  inherited FillLinearGradient(x1, y1, x2, y2, AggColor(c1), AggColor(c2), Profile);
 end;
 
-procedure TMemoryRaster_Agg2D.LineLinearGradient(X1, Y1, X2, Y2: Double; C1, C2: TRasterColor; Profile: Double);
+procedure TMemoryRaster_Agg2D.LineLinearGradient(x1, y1, x2, y2: Double; c1, c2: TRasterColor; Profile: Double);
 begin
-  inherited LineLinearGradient(X1, Y1, X2, Y2, AggColor(C1), AggColor(C2), Profile);
+  inherited LineLinearGradient(x1, y1, x2, y2, AggColor(c1), AggColor(c2), Profile);
 end;
 
-procedure TMemoryRaster_Agg2D.FillRadialGradient(X, Y, R: Double; C1, C2: TRasterColor; Profile: Double);
+procedure TMemoryRaster_Agg2D.FillRadialGradient(X, Y, R: Double; c1, c2: TRasterColor; Profile: Double);
 begin
-  inherited FillRadialGradient(X, Y, R, AggColor(C1), AggColor(C2), Profile);
+  inherited FillRadialGradient(X, Y, R, AggColor(c1), AggColor(c2), Profile);
 end;
 
-procedure TMemoryRaster_Agg2D.LineRadialGradient(X, Y, R: Double; C1, C2: TRasterColor; Profile: Double);
+procedure TMemoryRaster_Agg2D.LineRadialGradient(X, Y, R: Double; c1, c2: TRasterColor; Profile: Double);
 begin
-  inherited LineRadialGradient(X, Y, R, AggColor(C1), AggColor(C2), Profile);
+  inherited LineRadialGradient(X, Y, R, AggColor(c1), AggColor(c2), Profile);
 end;
 
-procedure TMemoryRaster_Agg2D.FillRadialGradient(X, Y, R: Double; C1, C2, C3: TRasterColor);
+procedure TMemoryRaster_Agg2D.FillRadialGradient(X, Y, R: Double; c1, c2, c3: TRasterColor);
 begin
-  inherited FillRadialGradient(X, Y, R, AggColor(C1), AggColor(C2), AggColor(C3));
+  inherited FillRadialGradient(X, Y, R, AggColor(c1), AggColor(c2), AggColor(c3));
 end;
 
-procedure TMemoryRaster_Agg2D.LineRadialGradient(X, Y, R: Double; C1, C2, C3: TRasterColor);
+procedure TMemoryRaster_Agg2D.LineRadialGradient(X, Y, R: Double; c1, c2, c3: TRasterColor);
 begin
-  inherited LineRadialGradient(X, Y, R, AggColor(C1), AggColor(C2), AggColor(C3));
-end;
+  inherited LineRadialGradient(X, Y, R, AggColor(c1), AggColor(c2), AggColor(c3));
+end; 

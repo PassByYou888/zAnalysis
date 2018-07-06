@@ -39,7 +39,7 @@ unit AggVertexSequence;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -47,7 +47,7 @@ uses
   AggArray;
 
 type
-  TAggFuncVertexSequence = function(This, Val: Pointer): Boolean;
+  TAggFuncVertexSequence = function(This, val: Pointer): Boolean;
 
   // Modified TAggPodDeque. The data is interpreted as a sequence of vertices.
   TAggVertexSequence = class(TAggPodDeque)
@@ -56,8 +56,8 @@ type
 
     constructor Create(EntrySize: Cardinal; Shift: Cardinal = 6; Fovs: TAggFuncVertexSequence = nil);
 
-    procedure Add(Val: Pointer); override;
-    procedure ModifyLast(Val: Pointer); override;
+    procedure Add(val: Pointer); override;
+    procedure ModifyLast(val: Pointer); override;
     procedure Close(RemoveFlag: Boolean);
   end;
 
@@ -72,37 +72,37 @@ type
   PAggVertexDistance = ^TAggVertexDistance;
 
   TAggVertexDistance = packed record
-    Pos: TPointDouble;
+    pos: TPointDouble;
     Dist: Double;
   end;
 
   PAggVertexDistCmd = ^TAggVertexDistCmd;
 
   TAggVertexDistCmd = packed record
-    Pos: TPointDouble;
+    pos: TPointDouble;
     Dist: Double;
     Cmd: Cardinal;
   end;
 
-function VertexDisTAggFuncOperator(This, Val: PAggVertexDistance): Boolean;
+function VertexDisTAggFuncOperator(This, val: PAggVertexDistance): Boolean;
 
 implementation
 
 uses
   AggMath;
 
-function VertexDisTAggFuncOperator(This, Val: PAggVertexDistance): Boolean;
+function VertexDisTAggFuncOperator(This, val: PAggVertexDistance): Boolean;
 var
-  Ret: Boolean;
+  ret: Boolean;
 begin
-  This.Dist := CalculateDistance(This.Pos, Val.Pos);
+  This.Dist := CalculateDistance(This.pos, val.pos);
 
-  Ret := This.Dist > CAggVertexDistEpsilon;
+  ret := This.Dist > CAggVertexDistEpsilon;
 
-  if not Ret then
+  if not ret then
       This.Dist := 1 / CAggVertexDistEpsilon;
 
-  Result := Ret;
+  Result := ret;
 end;
 
 { TAggVertexSequence }
@@ -118,21 +118,21 @@ begin
       FuncOperatorVertexSequence := Fovs;
 end;
 
-procedure TAggVertexSequence.Add(Val: Pointer);
+procedure TAggVertexSequence.Add(val: Pointer);
 begin
   if Size > 1 then
     if not FuncOperatorVertexSequence(ArrayOperator(Size - 2),
       ArrayOperator(Size - 1)) then
         RemoveLast;
 
-  inherited Add(Val);
+  inherited Add(val);
 end;
 
-procedure TAggVertexSequence.ModifyLast(Val: Pointer);
+procedure TAggVertexSequence.ModifyLast(val: Pointer);
 begin
   RemoveLast;
 
-  Add(Val);
+  Add(val);
 end;
 
 procedure TAggVertexSequence.Close(RemoveFlag: Boolean);
@@ -162,4 +162,5 @@ begin
       end;
 end;
 
-end.
+end. 
+ 

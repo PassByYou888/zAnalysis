@@ -22,7 +22,7 @@
 }
 unit JLSCodec;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
@@ -34,45 +34,45 @@ type
   TJlsParameters       = JLSGlobal.TJlsParameters;
   TJlsCustomParameters = JLSGlobal.TJlsCustomParameters;
 
-function jpegls_decompress(SourceStream, OutputStream: TCoreClassStream; info: PJlsParameters): Boolean;
-function jpegls_compress(SourceStream, OutputStream: TCoreClassStream; info: PJlsParameters): Boolean;
+function jpegls_decompress(SourceStream, OutputStream: TCoreClassStream; Info: PJlsParameters): Boolean;
+function jpegls_compress(SourceStream, OutputStream: TCoreClassStream; Info: PJlsParameters): Boolean;
 
 implementation
 
-function jpegls_decompress(SourceStream, OutputStream: TCoreClassStream; info: PJlsParameters): Boolean;
+function jpegls_decompress(SourceStream, OutputStream: TCoreClassStream; Info: PJlsParameters): Boolean;
 var
-  dec: TJLSDecoder;
+  Dec: TJLSDecoder;
 begin
   Result := False;
-  dec := TJLSDecoder.Create;
+  Dec := TJLSDecoder.Create;
   try
-    dec.InputStream := SourceStream;
-    dec.OutputStream := OutputStream;
+    Dec.InputStream := SourceStream;
+    Dec.OutputStream := OutputStream;
 
-    if dec.Execute then
+    if Dec.Execute then
       begin
-        if info <> nil then
+        if Info <> nil then
           begin
-            info^.Width := dec.Width;
-            info^.Height := dec.Height;
-            info^.BitsPerSample := dec.bpp;
-            info^.Components := dec.Components;
-            info^.AllowedLossyError := dec._near;
-            info^.Custom.T1 := dec.T1;
-            info^.Custom.T2 := dec.T2;
-            info^.Custom.T3 := dec.T3;
-            info^.Custom.RESET := dec.RESET;
-            info^.Custom.MAXVAL := dec.MAXVAL;
+            Info^.width := Dec.width;
+            Info^.height := Dec.height;
+            Info^.BitsPerSample := Dec.bpp;
+            Info^.Components := Dec.Components;
+            Info^.AllowedLossyError := Dec._near;
+            Info^.Custom.t1 := Dec.t1;
+            Info^.Custom.t2 := Dec.t2;
+            Info^.Custom.t3 := Dec.t3;
+            Info^.Custom.Reset := Dec.Reset;
+            Info^.Custom.MaxVal := Dec.MaxVal;
           end;
         Result := True;
       end;
 
   finally
-      dec.Free;
+      Dec.Free;
   end;
 end;
 
-function jpegls_compress(SourceStream, OutputStream: TCoreClassStream; info: PJlsParameters): Boolean;
+function jpegls_compress(SourceStream, OutputStream: TCoreClassStream; Info: PJlsParameters): Boolean;
 var
   enc: TJLSEncoder;
 begin
@@ -82,16 +82,16 @@ begin
     enc.InputStream := SourceStream;
     enc.OutputStream := OutputStream;
 
-    enc.Width := info^.Width;
-    enc.Height := info^.Height;
-    enc.bpp := info^.BitsPerSample;
-    enc.Components := info^.Components;
-    enc.T1 := info^.Custom.T1;
-    enc.T2 := info^.Custom.T2;
-    enc.T3 := info^.Custom.T3;
-    enc.RESET := info^.Custom.RESET;
-    enc._near := info^.AllowedLossyError;
-    enc.MAXVAL := info^.Custom.MAXVAL;
+    enc.width := Info^.width;
+    enc.height := Info^.height;
+    enc.bpp := Info^.BitsPerSample;
+    enc.Components := Info^.Components;
+    enc.t1 := Info^.Custom.t1;
+    enc.t2 := Info^.Custom.t2;
+    enc.t3 := Info^.Custom.t3;
+    enc.Reset := Info^.Custom.Reset;
+    enc._near := Info^.AllowedLossyError;
+    enc.MaxVal := Info^.Custom.MaxVal;
 
     if enc.Execute then
       begin
@@ -103,4 +103,4 @@ begin
   end;
 end;
 
-end.
+end. 

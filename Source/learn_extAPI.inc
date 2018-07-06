@@ -1,24 +1,24 @@
 {$REGION 'extAPI'}
 
 
-procedure LAdd(var f: TLFloat; const Value: TLFloat);
+procedure LAdd(var F: TLFloat; const Value: TLFloat);
 begin
-  f := f + Value;
+  F := F + Value;
 end;
 
-procedure LSub(var f: TLFloat; const Value: TLFloat);
+procedure LSub(var F: TLFloat; const Value: TLFloat);
 begin
-  f := f - Value;
+  F := F - Value;
 end;
 
-procedure LMul(var f: TLFloat; const Value: TLFloat);
+procedure LMul(var F: TLFloat; const Value: TLFloat);
 begin
-  f := f * Value;
+  F := F * Value;
 end;
 
-procedure LDiv(var f: TLFloat; const Value: TLFloat);
+procedure LDiv(var F: TLFloat; const Value: TLFloat);
 begin
-  f := LSafeDivF(f, Value);
+  F := LSafeDivF(F, Value);
 end;
 
 function LSafeDivF(const s, d: TLFloat): TLFloat;
@@ -30,370 +30,370 @@ end;
 
 procedure LSetVec(var v: TLVec; const VDef: TLFloat);
 var
-  I: TLInt;
+  i: TLInt;
 begin
-  for I := 0 to Length(v) - 1 do
-      v[I] := VDef;
+  for i := 0 to length(v) - 1 do
+      v[i] := VDef;
 end;
 
 procedure LSetVec(var v: TLIVec; const VDef: TLInt);
 var
-  I: TLInt;
+  i: TLInt;
 begin
-  for I := 0 to Length(v) - 1 do
-      v[I] := VDef;
+  for i := 0 to length(v) - 1 do
+      v[i] := VDef;
 end;
 
 procedure LSetVec(var v: TLBVec; const VDef: Boolean);
 var
-  I: TLInt;
+  i: TLInt;
 begin
-  for I := 0 to Length(v) - 1 do
-      v[I] := VDef;
+  for i := 0 to length(v) - 1 do
+      v[i] := VDef;
 end;
 
-procedure LSetMatrix(var m: TLMatrix; const VDef: TLFloat);
+procedure LSetMatrix(var M: TLMatrix; const VDef: TLFloat);
 var
-  I: Integer;
+  i: Integer;
 begin
-  for I := 0 to Length(m) - 1 do
-      LSetVec(m[I], VDef);
+  for i := 0 to length(M) - 1 do
+      LSetVec(M[i], VDef);
 end;
 
-procedure LSetMatrix(var m: TLIMatrix; const VDef: TLInt);
+procedure LSetMatrix(var M: TLIMatrix; const VDef: TLInt);
 var
-  I: Integer;
+  i: Integer;
 begin
-  for I := 0 to Length(m) - 1 do
-      LSetVec(m[I], VDef);
+  for i := 0 to length(M) - 1 do
+      LSetVec(M[i], VDef);
 end;
 
-procedure LSetMatrix(var m: TLBMatrix; const VDef: Boolean);
+procedure LSetMatrix(var M: TLBMatrix; const VDef: Boolean);
 var
-  I: Integer;
+  i: Integer;
 begin
-  for I := 0 to Length(m) - 1 do
-      LSetVec(m[I], VDef);
+  for i := 0 to length(M) - 1 do
+      LSetVec(M[i], VDef);
 end;
 
 function LVecCopy(const v: TLVec): TLVec;
 var
-  I: Integer;
+  i: Integer;
 begin
-  SetLength(Result, Length(v));
-  for I := 0 to Length(v) - 1 do
-      Result[I] := v[I];
+  SetLength(Result, length(v));
+  for i := 0 to length(v) - 1 do
+      Result[i] := v[i];
 end;
 
 function LVecCopy(const v: TLIVec): TLIVec;
 var
-  I: Integer;
+  i: Integer;
 begin
-  SetLength(Result, Length(v));
-  for I := 0 to Length(v) - 1 do
-      Result[I] := v[I];
+  SetLength(Result, length(v));
+  for i := 0 to length(v) - 1 do
+      Result[i] := v[i];
 end;
 
 function LVecCopy(const v: TLBVec): TLBVec;
 var
-  I: Integer;
+  i: Integer;
 begin
-  SetLength(Result, Length(v));
-  for I := 0 to Length(v) - 1 do
-      Result[I] := v[I];
+  SetLength(Result, length(v));
+  for i := 0 to length(v) - 1 do
+      Result[i] := v[i];
 end;
 
 function LMatrixCopy(const v: TLMatrix): TLMatrix;
 var
-  I: Integer;
+  i: Integer;
 begin
-  SetLength(Result, Length(v));
-  for I := 0 to Length(v) - 1 do
-      Result[I] := LVecCopy(v[I]);
+  SetLength(Result, length(v));
+  for i := 0 to length(v) - 1 do
+      Result[i] := LVecCopy(v[i]);
 end;
 
 function LMatrixCopy(const v: TLIMatrix): TLIMatrix;
 var
-  I: Integer;
+  i: Integer;
 begin
-  SetLength(Result, Length(v));
-  for I := 0 to Length(v) - 1 do
-      Result[I] := LVecCopy(v[I]);
+  SetLength(Result, length(v));
+  for i := 0 to length(v) - 1 do
+      Result[i] := LVecCopy(v[i]);
 end;
 
 function LMatrixCopy(const v: TLBMatrix): TLBMatrix;
 var
-  I: Integer;
+  i: Integer;
 begin
-  SetLength(Result, Length(v));
-  for I := 0 to Length(v) - 1 do
-      Result[I] := LVecCopy(v[I]);
+  SetLength(Result, length(v));
+  for i := 0 to length(v) - 1 do
+      Result[i] := LVecCopy(v[i]);
 end;
 
-function LVec(const veclen: TLInt; const VDef: TLFloat): TLVec;
+function lvec(const veclen: TLInt; const VDef: TLFloat): TLVec;
 begin
   SetLength(Result, veclen);
   LSetVec(Result, VDef);
 end;
 
-function LVec(const veclen: TLInt): TLVec;
+function lvec(const veclen: TLInt): TLVec;
 begin
   SetLength(Result, veclen);
 end;
 
-function LVec(const v: TLVec): TPascalString;
+function lvec(const v: TLVec): TPascalString;
 begin
   Result := TKDTree.KDTreeVec(v);
 end;
 
-function LVec(const m: TLMatrix; const veclen: TLInt): TLVec;
+function lvec(const M: TLMatrix; const veclen: TLInt): TLVec;
 var
-  I, J, id: TLInt;
+  i, J, ID: TLInt;
 begin
-  id := 0;
-  Result := LVec(veclen);
-  for I := 0 to Length(m) - 1 do
-    for J := 0 to Length(m[I]) - 1 do
-      if id < veclen then
+  ID := 0;
+  Result := lvec(veclen);
+  for i := 0 to length(M) - 1 do
+    for J := 0 to length(M[i]) - 1 do
+      if ID < veclen then
         begin
-          Result[id] := m[I, J];
-          inc(id);
+          Result[ID] := M[i, J];
+          Inc(ID);
         end
       else
-          exit;
+          Exit;
 end;
 
-function LVec(const m: TLMatrix): TLVec;
+function lvec(const M: TLMatrix): TLVec;
 var
-  I, l: TLInt;
+  i, L: TLInt;
 begin
-  l := 0;
-  for I := 0 to Length(m) - 1 do
-      inc(l, Length(m[I]));
-  Result := LVec(m, l);
+  L := 0;
+  for i := 0 to length(M) - 1 do
+      Inc(L, length(M[i]));
+  Result := lvec(M, L);
 end;
 
-function LVec(const s: TPascalString; const veclen: TLInt): TLVec;
+function lvec(const s: TPascalString; const veclen: TLInt): TLVec;
 var
-  I: TLInt;
+  i: TLInt;
   v: TLVec;
 begin
   v := TKDTree.KDTreeVec(s.Text);
-  Result := LVec(veclen);
-  for I := 0 to Length(v) - 1 do
-    if I < veclen then
-        Result[I] := v[I]
+  Result := lvec(veclen);
+  for i := 0 to length(v) - 1 do
+    if i < veclen then
+        Result[i] := v[i]
     else
-        break;
+        Break;
 end;
 
-function LVec(const v: TLVec; const ShortFloat: Boolean): TPascalString;
+function lvec(const v: TLVec; const ShortFloat: Boolean): TPascalString;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := '';
-  for I := 0 to Length(v) - 1 do
+  for i := 0 to length(v) - 1 do
     begin
-      if I > 0 then
+      if i > 0 then
           Result.Append(' ');
 
       if ShortFloat then
-          Result.Append(umlShortFloatToStr(v[I]))
+          Result.Append(umlShortFloatToStr(v[i]))
       else
-          Result.Append(umlFloatToStr(v[I]));
+          Result.Append(umlFloatToStr(v[i]));
     end;
 end;
 
-function LVec(const m: TLBMatrix; const veclen: TLInt): TLBVec;
+function lvec(const M: TLBMatrix; const veclen: TLInt): TLBVec;
 var
-  I, J, id: TLInt;
+  i, J, ID: TLInt;
 begin
-  id := 0;
+  ID := 0;
   SetLength(Result, veclen);
-  for I := 0 to Length(m) - 1 do
-    for J := 0 to Length(m[I]) - 1 do
-      if id < veclen then
+  for i := 0 to length(M) - 1 do
+    for J := 0 to length(M[i]) - 1 do
+      if ID < veclen then
         begin
-          Result[id] := m[I, J];
-          inc(id);
+          Result[ID] := M[i, J];
+          Inc(ID);
         end
       else
-          exit;
+          Exit;
 end;
 
-function LVec(const m: TLBMatrix): TLBVec;
+function lvec(const M: TLBMatrix): TLBVec;
 var
-  I, l: TLInt;
+  i, L: TLInt;
 begin
-  l := 0;
-  for I := 0 to Length(m) - 1 do
-      inc(l, Length(m[I]));
-  Result := LVec(m, l);
+  L := 0;
+  for i := 0 to length(M) - 1 do
+      Inc(L, length(M[i]));
+  Result := lvec(M, L);
 end;
 
-function LVec(const m: TLIMatrix; const veclen: TLInt): TLIVec;
+function lvec(const M: TLIMatrix; const veclen: TLInt): TLIVec;
 var
-  I, J, id: TLInt;
+  i, J, ID: TLInt;
 begin
-  id := 0;
+  ID := 0;
   SetLength(Result, veclen);
-  for I := 0 to Length(m) - 1 do
-    for J := 0 to Length(m[I]) - 1 do
-      if id < veclen then
+  for i := 0 to length(M) - 1 do
+    for J := 0 to length(M[i]) - 1 do
+      if ID < veclen then
         begin
-          Result[id] := m[I, J];
-          inc(id);
+          Result[ID] := M[i, J];
+          Inc(ID);
         end
       else
-          exit;
+          Exit;
 end;
 
-function LVec(const m: TLIMatrix): TLIVec;
+function lvec(const M: TLIMatrix): TLIVec;
 var
-  I, l: TLInt;
+  i, L: TLInt;
 begin
-  l := 0;
-  for I := 0 to Length(m) - 1 do
-      inc(l, Length(m[I]));
-  Result := LVec(m, l);
+  L := 0;
+  for i := 0 to length(M) - 1 do
+      Inc(L, length(M[i]));
+  Result := lvec(M, L);
 end;
 
-function LSpearmanVec(const m: TLMatrix; const veclen: TLInt): TLVec;
+function LSpearmanVec(const M: TLMatrix; const veclen: TLInt): TLVec;
 begin
-  Result := LVec(m, veclen);
-  SpearmanRank(Result, Length(Result));
+  Result := lvec(M, veclen);
+  SpearmanRank(Result, length(Result));
 end;
 
 function LAbsMaxVec(const v: TLVec): TLFloat;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := AbsReal(v[0]);
 
-  if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-        Result := Max(Result, AbsReal(v[I]));
+  if length(v) > 1 then
+    for i := 1 to length(v) - 1 do
+        Result := Max(Result, AbsReal(v[i]));
 end;
 
 function LMaxVec(const v: TLVec): TLFloat;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := v[0];
 
-  if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-        Result := Max(Result, v[I]);
+  if length(v) > 1 then
+    for i := 1 to length(v) - 1 do
+        Result := Max(Result, v[i]);
 end;
 
 function LMaxVec(const v: TLIVec): TLInt;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := v[0];
 
-  if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-        Result := Max(Result, v[I]);
+  if length(v) > 1 then
+    for i := 1 to length(v) - 1 do
+        Result := Max(Result, v[i]);
 end;
 
 function LMaxVec(const v: TLMatrix): TLFloat;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := LMaxVec(v[0]);
 
-  if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-        Result := Max(Result, LMaxVec(v[I]));
+  if length(v) > 1 then
+    for i := 1 to length(v) - 1 do
+        Result := Max(Result, LMaxVec(v[i]));
 end;
 
 function LMaxVec(const v: TLIMatrix): TLInt;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := LMaxVec(v[0]);
 
-  if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-        Result := Max(Result, LMaxVec(v[I]));
+  if length(v) > 1 then
+    for i := 1 to length(v) - 1 do
+        Result := Max(Result, LMaxVec(v[i]));
 end;
 
 function LMinVec(const v: TLVec): TLFloat;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := v[0];
 
-  if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-        Result := Min(Result, v[I]);
+  if length(v) > 1 then
+    for i := 1 to length(v) - 1 do
+        Result := Min(Result, v[i]);
 end;
 
 function LMinVec(const v: TLIVec): TLInt;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := v[0];
 
-  if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-        Result := Min(Result, v[I]);
+  if length(v) > 1 then
+    for i := 1 to length(v) - 1 do
+        Result := Min(Result, v[i]);
 end;
 
 function LMinVec(const v: TLMatrix): TLFloat;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := LMinVec(v[0]);
 
-  if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-        Result := Min(Result, LMinVec(v[I]));
+  if length(v) > 1 then
+    for i := 1 to length(v) - 1 do
+        Result := Min(Result, LMinVec(v[i]));
 end;
 
 function LMinVec(const v: TLIMatrix): TLInt;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := LMinVec(v[0]);
 
-  if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-        Result := Min(Result, LMinVec(v[I]));
+  if length(v) > 1 then
+    for i := 1 to length(v) - 1 do
+        Result := Min(Result, LMinVec(v[i]));
 end;
 
 function LMaxVecIndex(const v: TLVec): TLInt;
 var
-  I: TLInt;
+  i: TLInt;
   k: TLFloat;
 begin
   k := v[0];
   Result := 0;
 
-  if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-      if v[I] > k then
+  if length(v) > 1 then
+    for i := 1 to length(v) - 1 do
+      if v[i] > k then
         begin
-          Result := I;
-          k := v[I];
+          Result := i;
+          k := v[i];
         end;
 end;
 
 function LMinVecIndex(const v: TLVec): TLInt;
 var
-  I: TLInt;
+  i: TLInt;
   k: TLFloat;
 begin
   k := v[0];
   Result := 0;
 
-  if Length(v) > 1 then
-    for I := 1 to Length(v) - 1 do
-      if v[I] < k then
+  if length(v) > 1 then
+    for i := 1 to length(v) - 1 do
+      if v[i] < k then
         begin
-          Result := I;
-          k := v[I];
+          Result := i;
+          k := v[i];
         end;
 end;
 
@@ -404,80 +404,80 @@ end;
 
 function LHamming(const v1, v2: TLVec): TLInt;
 var
-  I: TLInt;
-  I1, I2: TLInt;
+  i: TLInt;
+  i1, i2: TLInt;
 begin
   Result := 0;
-  for I := 0 to Length(v1) - 1 do
+  for i := 0 to length(v1) - 1 do
     begin
-      I1 := Trunc(v1[I]);
-      I2 := Trunc(v2[I]);
-      inc(Result, I1 xor I2);
+      i1 := Trunc(v1[i]);
+      i2 := Trunc(v2[i]);
+      Inc(Result, i1 xor i2);
     end;
 end;
 
 function LHamming(const v1, v2: TLIVec): TLInt;
 var
-  I: TLInt;
+  i: TLInt;
 begin
   Result := 0;
-  for I := 0 to Length(v1) - 1 do
-      inc(Result, v1[I] xor v2[I]);
+  for i := 0 to length(v1) - 1 do
+      Inc(Result, v1[i] xor v2[i]);
 end;
 
-procedure LClampF(var AValue: TLFloat; const AMin, AMax: TLFloat);
+procedure LClampF(var AValue: TLFloat; const aMin, aMax: TLFloat);
 begin
-  if AMin > AMax then
-      LClampF(AValue, AMax, AMin)
-  else if AValue > AMax then
-      AValue := AMax
-  else if AValue < AMin then
-      AValue := AMin;
+  if aMin > aMax then
+      LClampF(AValue, aMax, aMin)
+  else if AValue > aMax then
+      AValue := aMax
+  else if AValue < aMin then
+      AValue := aMin;
 end;
 
-procedure LClampI(var AValue: TLInt; const AMin, AMax: TLInt);
+procedure LClampI(var AValue: TLInt; const aMin, aMax: TLInt);
 begin
-  if AMin > AMax then
-      LClampI(AValue, AMax, AMin)
-  else if AValue > AMax then
-      AValue := AMax
-  else if AValue < AMin then
-      AValue := AMin;
+  if aMin > aMax then
+      LClampI(AValue, aMax, aMin)
+  else if AValue > aMax then
+      AValue := aMax
+  else if AValue < aMin then
+      AValue := aMin;
 end;
 
-function LClamp(const AValue: TLFloat; const AMin, AMax: TLFloat): TLFloat;
+function LClamp(const AValue: TLFloat; const aMin, aMax: TLFloat): TLFloat;
 begin
-  if AMin > AMax then
-      Result := LClamp(AValue, AMax, AMin)
-  else if AValue > AMax then
-      Result := AMax
-  else if AValue < AMin then
-      Result := AMin
+  if aMin > aMax then
+      Result := LClamp(AValue, aMax, aMin)
+  else if AValue > aMax then
+      Result := aMax
+  else if AValue < aMin then
+      Result := aMin
   else
       Result := AValue;
 end;
 
-function LClamp(const AValue: TLInt; const AMin, AMax: TLInt): TLInt;
+function LClamp(const AValue: TLInt; const aMin, aMax: TLInt): TLInt;
 begin
-  if AMin > AMax then
-      Result := LClamp(AValue, AMax, AMin)
-  else if AValue > AMax then
-      Result := AMax
-  else if AValue < AMin then
-      Result := AMin
+  if aMin > aMax then
+      Result := LClamp(AValue, aMax, aMin)
+  else if AValue > aMax then
+      Result := aMax
+  else if AValue < aMin then
+      Result := aMin
   else
       Result := AValue;
 end;
 
 procedure LFeatureSamplerWithSift(const mr: TMemoryRaster; ln: TLearn; lOut: TLVec);
 var
-  f: TFeature;
-  I: TLInt;
+  F: TFeature;
+  i: TLInt;
 begin
-  f := TFeature.CreateWithRaster(mr);
-  for I := 0 to f.Count - 1 do
-      ln.AddMemory(f[I]^.descriptor, lOut);
-  disposeObject(f);
+  F := TFeature.CreateWithRaster(mr);
+  for i := 0 to F.Count - 1 do
+      ln.AddMemory(F[i]^.descriptor, lOut);
+  DisposeObject(F);
 end;
 
 function LMatrixSamplerWithHOG(const mr: TMemoryRaster): TLMatrix;
@@ -489,77 +489,77 @@ begin
   nmr.NoLineZoomFrom(mr, SYSTEM_HOGCELLSIZE * (SYSTEM_HOGSAMPLERSIZE - 2), SYSTEM_HOGCELLSIZE * (SYSTEM_HOGSAMPLERSIZE - 2));
 
   HOG := THOG.CreateAntiLight(System_HOGTable, nmr);
-  disposeObject(nmr);
+  DisposeObject(nmr);
   HOG.BuildFeatureMatrix(Result);
-  disposeObject(HOG);
+  DisposeObject(HOG);
 end;
 
 function LMatrixSampler(const mr: TMemoryRaster): TLMatrix;
 var
-  I, J: Integer;
+  i, J: Integer;
 begin
-  SetLength(Result, mr.Height, mr.Width);
-  for J := 0 to mr.Height - 1 do
-    for I := 0 to mr.Width - 1 do
-        Result[J, I] := mr.PixelGrayD[I, J];
+  SetLength(Result, mr.height, mr.width);
+  for J := 0 to mr.height - 1 do
+    for i := 0 to mr.width - 1 do
+        Result[J, i] := mr.PixelGrayD[i, J];
 end;
 
 function LMatrixSampler(const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix;
 var
-  N: TMemoryRaster;
-  I, J: TLInt;
+  n: TMemoryRaster;
+  i, J: TLInt;
 begin
-  if (mr.Width = SamplerSize) and (mr.Height = SamplerSize) then
+  if (mr.width = SamplerSize) and (mr.height = SamplerSize) then
     begin
       SetLength(Result, SamplerSize, SamplerSize);
-      for I := 0 to SamplerSize - 1 do
+      for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[J, I] := N.PixelGrayD[I, J];
+            Result[J, i] := n.PixelGrayD[i, J];
     end
   else
     begin
-      N := TMemoryRaster.Create;
-      N.ZoomFrom(mr, SamplerSize, SamplerSize);
+      n := TMemoryRaster.Create;
+      n.ZoomFrom(mr, SamplerSize, SamplerSize);
 
       SetLength(Result, SamplerSize, SamplerSize);
-      for I := 0 to SamplerSize - 1 do
+      for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[J, I] := N.PixelGrayD[I, J];
+            Result[J, i] := n.PixelGrayD[i, J];
 
-      disposeObject(N);
+      DisposeObject(n);
     end;
 end;
 
 function LMatrixSampler(const Antialiasing: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix;
 var
-  N: TMemoryRaster;
-  I, J: TLInt;
+  n: TMemoryRaster;
+  i, J: TLInt;
 begin
-  if (mr.Width = SamplerSize) and (mr.Height = SamplerSize) then
+  if (mr.width = SamplerSize) and (mr.height = SamplerSize) then
     begin
       SetLength(Result, SamplerSize, SamplerSize);
-      for I := 0 to SamplerSize - 1 do
+      for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[J, I] := mr.PixelGrayD[I, J];
+            Result[J, i] := mr.PixelGrayD[i, J];
     end
   else
     begin
-      N := TMemoryRaster.Create;
+      n := TMemoryRaster.Create;
       if Antialiasing then
-          N.GaussianBlurZoomFrom(mr, SamplerSize, SamplerSize)
+          n.GaussianBlurZoomFrom(mr, SamplerSize, SamplerSize)
       else
-          N.ZoomFrom(mr, SamplerSize, SamplerSize);
+          n.ZoomFrom(mr, SamplerSize, SamplerSize);
 
       SetLength(Result, SamplerSize, SamplerSize);
-      for I := 0 to SamplerSize - 1 do
+      for i := 0 to SamplerSize - 1 do
         for J := 0 to SamplerSize - 1 do
-            Result[J, I] := N.PixelGrayD[I, J];
+            Result[J, i] := n.PixelGrayD[i, J];
 
-      disposeObject(N);
+      DisposeObject(n);
     end;
 end;
 
-procedure ZoomLineF(const source, dest: PLMatrix; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
+procedure ZoomLineF(const Source, dest: PLMatrix; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
 var
   J: TLInt;
   SourceIInt, SourceJInt: TLInt;
@@ -568,11 +568,11 @@ begin
     begin
       SourceIInt := Round(pass / (DestWidth - 1) * (SourceWidth - 1));
       SourceJInt := Round(J / (DestHeight - 1) * (SourceHeight - 1));
-      dest^[J, pass] := source^[SourceJInt, SourceIInt];
+      dest^[J, pass] := Source^[SourceJInt, SourceIInt];
     end;
 end;
 
-procedure LZoomMatrix(var source, dest: TLMatrix; const DestWidth, DestHeight: TLInt);
+procedure LZoomMatrix(var Source, dest: TLMatrix; const DestWidth, DestHeight: TLInt);
 var
   SourceWidth, SourceHeight: TLInt;
   SourceP, DestP: PLMatrix;
@@ -594,20 +594,20 @@ var
 
 
 begin
-  SourceWidth := Length(source[0]);
-  SourceHeight := Length(source);
+  SourceWidth := length(Source[0]);
+  SourceHeight := length(Source);
   SetLength(dest, DestHeight, DestWidth);
 
   if (SourceWidth > 1) and (SourceWidth > 1) and (DestWidth > 1) and (DestHeight > 1) then
     begin
-      SourceP := @source;
+      SourceP := @Source;
       DestP := @dest;
 
 {$IFDEF parallel}
 {$IFDEF FPC}
       ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, DestWidth - 1);
 {$ELSE FPC}
-      TParallel.For(0, DestWidth - 1, procedure(pass: Integer)
+      TParallel.for(0, DestWidth - 1, procedure(pass: Integer)
         begin
           ZoomLineF(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
         end);
@@ -618,7 +618,7 @@ begin
     end;
 end;
 
-procedure ZoomLineI(const source, dest: PLIMatrix; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
+procedure ZoomLineI(const Source, dest: PLIMatrix; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
 var
   J: TLInt;
   SourceIInt, SourceJInt: TLInt;
@@ -627,11 +627,11 @@ begin
     begin
       SourceIInt := Round(pass / (DestWidth - 1) * (SourceWidth - 1));
       SourceJInt := Round(J / (DestHeight - 1) * (SourceHeight - 1));
-      dest^[J, pass] := source^[SourceJInt, SourceIInt];
+      dest^[J, pass] := Source^[SourceJInt, SourceIInt];
     end;
 end;
 
-procedure LZoomMatrix(var source, dest: TLIMatrix; const DestWidth, DestHeight: TLInt);
+procedure LZoomMatrix(var Source, dest: TLIMatrix; const DestWidth, DestHeight: TLInt);
 var
   SourceWidth, SourceHeight: TLInt;
   SourceP, DestP: PLIMatrix;
@@ -653,20 +653,20 @@ var
 
 
 begin
-  SourceWidth := Length(source[0]);
-  SourceHeight := Length(source);
+  SourceWidth := length(Source[0]);
+  SourceHeight := length(Source);
   SetLength(dest, DestHeight, DestWidth);
 
   if (SourceWidth > 1) and (SourceWidth > 1) and (DestWidth > 1) and (DestHeight > 1) then
     begin
-      SourceP := @source;
+      SourceP := @Source;
       DestP := @dest;
 
 {$IFDEF parallel}
 {$IFDEF FPC}
       ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, DestWidth - 1);
 {$ELSE FPC}
-      TParallel.For(0, DestWidth - 1, procedure(pass: Integer)
+      TParallel.for(0, DestWidth - 1, procedure(pass: Integer)
         begin
           ZoomLineI(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
         end);
@@ -677,7 +677,7 @@ begin
     end;
 end;
 
-procedure ZoomLineB(const source, dest: PLBMatrix; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
+procedure ZoomLineB(const Source, dest: PLBMatrix; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
 var
   J: TLInt;
   SourceIInt, SourceJInt: TLInt;
@@ -686,11 +686,11 @@ begin
     begin
       SourceIInt := Round(pass / (DestWidth - 1) * (SourceWidth - 1));
       SourceJInt := Round(J / (DestHeight - 1) * (SourceHeight - 1));
-      dest^[J, pass] := source^[SourceJInt, SourceIInt];
+      dest^[J, pass] := Source^[SourceJInt, SourceIInt];
     end;
 end;
 
-procedure LZoomMatrix(var source, dest: TLBMatrix; const DestWidth, DestHeight: TLInt);
+procedure LZoomMatrix(var Source, dest: TLBMatrix; const DestWidth, DestHeight: TLInt);
 var
   SourceWidth, SourceHeight: TLInt;
   SourceP, DestP: PLBMatrix;
@@ -712,20 +712,20 @@ var
 
 
 begin
-  SourceWidth := Length(source[0]);
-  SourceHeight := Length(source);
+  SourceWidth := length(Source[0]);
+  SourceHeight := length(Source);
   SetLength(dest, DestHeight, DestWidth);
 
   if (SourceWidth > 1) and (SourceWidth > 1) and (DestWidth > 1) and (DestHeight > 1) then
     begin
-      SourceP := @source;
+      SourceP := @Source;
       DestP := @dest;
 
 {$IFDEF parallel}
 {$IFDEF FPC}
       ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, DestWidth - 1);
 {$ELSE FPC}
-      TParallel.For(0, DestWidth - 1, procedure(pass: Integer)
+      TParallel.for(0, DestWidth - 1, procedure(pass: Integer)
         begin
           ZoomLineB(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
         end);
@@ -736,194 +736,194 @@ begin
     end;
 end;
 
-procedure LSampler(var source: TLBMatrix; const dest: TMemoryRaster);
+procedure LSampler(var Source: TLBMatrix; const dest: TMemoryRaster);
 var
-  I, J: TLInt;
+  i, J: TLInt;
 begin
-  dest.SetSize(Length(source[0]), Length(source));
-  for J := 0 to dest.Height - 1 do
-    for I := 0 to dest.Width - 1 do
-        dest.PixelGray[I, J] := IfThen(source[J, I], 255, 0);
+  dest.SetSize(length(Source[0]), length(Source));
+  for J := 0 to dest.height - 1 do
+    for i := 0 to dest.width - 1 do
+        dest.PixelGray[i, J] := IfThen(Source[J, i], 255, 0);
 end;
 
-procedure LSampler(var source: TLMatrix; const MaxF: TLFloat; const dest: TMemoryRaster);
+procedure LSampler(var Source: TLMatrix; const MaxF: TLFloat; const dest: TMemoryRaster);
 var
-  I, J: TLInt;
+  i, J: TLInt;
 begin
-  dest.SetSize(Length(source[0]), Length(source));
-  for J := 0 to dest.Height - 1 do
-    for I := 0 to dest.Width - 1 do
-        dest.PixelGrayD[I, J] := Round(source[J, I] / MaxF * 255);
+  dest.SetSize(length(Source[0]), length(Source));
+  for J := 0 to dest.height - 1 do
+    for i := 0 to dest.width - 1 do
+        dest.PixelGrayD[i, J] := Round(Source[J, i] / MaxF * 255);
 end;
 
-procedure LSampler(var source: TLMatrix; const dest: TMemoryRaster);
+procedure LSampler(var Source: TLMatrix; const dest: TMemoryRaster);
 begin
-  LSampler(source, LMaxVec(source), dest);
+  LSampler(Source, LMaxVec(Source), dest);
 end;
 
-procedure LSampler(var source: TLIMatrix; const MaxI: TLInt; const dest: TMemoryRaster);
+procedure LSampler(var Source: TLIMatrix; const MaxI: TLInt; const dest: TMemoryRaster);
 var
-  I, J: TLInt;
+  i, J: TLInt;
 begin
-  dest.SetSize(Length(source[0]), Length(source));
-  for J := 0 to dest.Height - 1 do
-    for I := 0 to dest.Width - 1 do
-        dest.PixelGrayD[I, J] := Round(source[J, I] / MaxI * 255);
+  dest.SetSize(length(Source[0]), length(Source));
+  for J := 0 to dest.height - 1 do
+    for i := 0 to dest.width - 1 do
+        dest.PixelGrayD[i, J] := Round(Source[J, i] / MaxI * 255);
 end;
 
-procedure LSampler(var source: TLIMatrix; const dest: TMemoryRaster);
+procedure LSampler(var Source: TLIMatrix; const dest: TMemoryRaster);
 begin
-  LSampler(source, LMaxVec(source), dest);
+  LSampler(Source, LMaxVec(Source), dest);
 end;
 
-procedure LSaveMatrix(var source: TLMatrix; dest: TCoreClassStream);
-var
-  J: TLInt;
-  W, H: TLInt;
-begin
-  H := Length(source);
-  W := Length(source[0]);
-  dest.Write(H, SizeOf(TLInt));
-  dest.Write(W, SizeOf(TLInt));
-
-  for J := 0 to H - 1 do
-      dest.Write(source[J][0], W * SizeOf(TLFloat));
-end;
-
-procedure LLoadMatrix(source: TCoreClassStream; var dest: TLMatrix);
+procedure LSaveMatrix(var Source: TLMatrix; dest: TCoreClassStream);
 var
   J: TLInt;
-  W, H: TLInt;
+  w, h: TLInt;
 begin
-  source.Read(H, SizeOf(TLInt));
-  source.Read(W, SizeOf(TLInt));
-  SetLength(dest, H, W);
+  h := length(Source);
+  w := length(Source[0]);
+  dest.write(h, SizeOf(TLInt));
+  dest.write(w, SizeOf(TLInt));
 
-  for J := 0 to H - 1 do
-      source.Read(dest[J][0], W * SizeOf(TLFloat));
+  for J := 0 to h - 1 do
+      dest.write(Source[J][0], w * SizeOf(TLFloat));
 end;
 
-procedure LSaveMatrix(var source: TLIMatrix; dest: TCoreClassStream);
+procedure LLoadMatrix(Source: TCoreClassStream; var dest: TLMatrix);
 var
   J: TLInt;
-  W, H: TLInt;
+  w, h: TLInt;
 begin
-  H := Length(source);
-  W := Length(source[0]);
-  dest.Write(H, SizeOf(TLInt));
-  dest.Write(W, SizeOf(TLInt));
+  Source.read(h, SizeOf(TLInt));
+  Source.read(w, SizeOf(TLInt));
+  SetLength(dest, h, w);
 
-  for J := 0 to H - 1 do
-      dest.Write(source[J][0], W * SizeOf(TLInt));
+  for J := 0 to h - 1 do
+      Source.read(dest[J][0], w * SizeOf(TLFloat));
 end;
 
-procedure LLoadMatrix(source: TCoreClassStream; var dest: TLIMatrix);
+procedure LSaveMatrix(var Source: TLIMatrix; dest: TCoreClassStream);
 var
   J: TLInt;
-  W, H: TLInt;
+  w, h: TLInt;
 begin
-  source.Read(H, SizeOf(TLInt));
-  source.Read(W, SizeOf(TLInt));
-  SetLength(dest, H, W);
+  h := length(Source);
+  w := length(Source[0]);
+  dest.write(h, SizeOf(TLInt));
+  dest.write(w, SizeOf(TLInt));
 
-  for J := 0 to H - 1 do
-      source.Read(dest[J][0], W * SizeOf(TLInt));
+  for J := 0 to h - 1 do
+      dest.write(Source[J][0], w * SizeOf(TLInt));
 end;
 
-procedure LSaveMatrix(var source: TLBMatrix; dest: TCoreClassStream);
+procedure LLoadMatrix(Source: TCoreClassStream; var dest: TLIMatrix);
 var
   J: TLInt;
-  W, H: TLInt;
+  w, h: TLInt;
 begin
-  H := Length(source);
-  W := Length(source[0]);
-  dest.Write(H, SizeOf(TLInt));
-  dest.Write(W, SizeOf(TLInt));
+  Source.read(h, SizeOf(TLInt));
+  Source.read(w, SizeOf(TLInt));
+  SetLength(dest, h, w);
 
-  for J := 0 to H - 1 do
-      dest.Write(source[J][0], W);
+  for J := 0 to h - 1 do
+      Source.read(dest[J][0], w * SizeOf(TLInt));
 end;
 
-procedure LLoadMatrix(source: TCoreClassStream; var dest: TLBMatrix);
+procedure LSaveMatrix(var Source: TLBMatrix; dest: TCoreClassStream);
 var
   J: TLInt;
-  W, H: TLInt;
+  w, h: TLInt;
 begin
-  source.Read(H, SizeOf(TLInt));
-  source.Read(W, SizeOf(TLInt));
-  SetLength(dest, H, W);
+  h := length(Source);
+  w := length(Source[0]);
+  dest.write(h, SizeOf(TLInt));
+  dest.write(w, SizeOf(TLInt));
 
-  for J := 0 to H - 1 do
-      source.Read(dest[J][0], W);
+  for J := 0 to h - 1 do
+      dest.write(Source[J][0], w);
 end;
 
-procedure LSaveSampler(var source: TLBMatrix; const fn: SystemString);
+procedure LLoadMatrix(Source: TCoreClassStream; var dest: TLBMatrix);
 var
-  m: TMemoryRaster;
+  J: TLInt;
+  w, h: TLInt;
 begin
-  m := NewRaster();
-  LSampler(source, m);
-  SaveRaster(m, fn);
-  disposeObject(m);
+  Source.read(h, SizeOf(TLInt));
+  Source.read(w, SizeOf(TLInt));
+  SetLength(dest, h, w);
+
+  for J := 0 to h - 1 do
+      Source.read(dest[J][0], w);
 end;
 
-procedure LSaveSampler(var source: TLIMatrix; const fn: SystemString);
+procedure LSaveSampler(var Source: TLBMatrix; const fn: SystemString);
 var
-  m: TMemoryRaster;
+  M: TMemoryRaster;
 begin
-  m := NewRaster();
-  LSampler(source, m);
-  SaveRaster(m, fn);
-  disposeObject(m);
+  M := NewRaster();
+  LSampler(Source, M);
+  SaveRaster(M, fn);
+  DisposeObject(M);
 end;
 
-procedure LSaveSampler(var source: TLIMatrix; const MaxI: TLInt; const fn: SystemString);
+procedure LSaveSampler(var Source: TLIMatrix; const fn: SystemString);
 var
-  m: TMemoryRaster;
+  M: TMemoryRaster;
 begin
-  m := NewRaster();
-  LSampler(source, MaxI, m);
-  SaveRaster(m, fn);
-  disposeObject(m);
+  M := NewRaster();
+  LSampler(Source, M);
+  SaveRaster(M, fn);
+  DisposeObject(M);
 end;
 
-procedure LSaveSampler(var source: TLMatrix; const fn: SystemString);
+procedure LSaveSampler(var Source: TLIMatrix; const MaxI: TLInt; const fn: SystemString);
 var
-  m: TMemoryRaster;
+  M: TMemoryRaster;
 begin
-  m := NewRaster();
-  LSampler(source, m);
-  SaveRaster(m, fn);
-  disposeObject(m);
+  M := NewRaster();
+  LSampler(Source, MaxI, M);
+  SaveRaster(M, fn);
+  DisposeObject(M);
 end;
 
-procedure LSaveSampler(var source: TLMatrix; const MaxF: TLFloat; const fn: SystemString);
+procedure LSaveSampler(var Source: TLMatrix; const fn: SystemString);
 var
-  m: TMemoryRaster;
+  M: TMemoryRaster;
 begin
-  m := NewRaster();
-  LSampler(source, MaxF, m);
-  SaveRaster(m, fn);
-  disposeObject(m);
+  M := NewRaster();
+  LSampler(Source, M);
+  SaveRaster(M, fn);
+  DisposeObject(M);
 end;
 
-function LDA(const m: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo: SystemString; var output: TLMatrix): Boolean;
+procedure LSaveSampler(var Source: TLMatrix; const MaxF: TLFloat; const fn: SystemString);
+var
+  M: TMemoryRaster;
+begin
+  M := NewRaster();
+  LSampler(Source, MaxF, M);
+  SaveRaster(M, fn);
+  DisposeObject(M);
+end;
+
+function LDA(const M: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo: SystemString; var output: TLMatrix): Boolean;
 var
   rInfo: TLInt;
   buff: TLMatrix;
-  W, H, cl, J: TLInt;
+  w, h, cl, J: TLInt;
 begin
-  H := Length(m);
-  W := Length(m[0]);
-  cl := Length(cv);
-  SetLength(buff, H, W + 1);
-  for J := 0 to Length(m) - 1 do
+  h := length(M);
+  w := length(M[0]);
+  cl := length(cv);
+  SetLength(buff, h, w + 1);
+  for J := 0 to length(M) - 1 do
     begin
-      CopyPtr(@m[J][0], @buff[J][0], W * SizeOf(TLFloat));
-      buff[J][W] := cv[J];
+      CopyPtr(@M[J][0], @buff[J][0], w * SizeOf(TLFloat));
+      buff[J][w] := cv[J];
     end;
 
-  FisherLDAN(buff, H, W, Nclass, rInfo, output);
+  FisherLDAN(buff, h, w, Nclass, rInfo, output);
 
   SetLength(buff, 0, 0);
 
@@ -939,23 +939,23 @@ begin
   Result := rInfo in [1, 2];
 end;
 
-function LDA(const m: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo: SystemString; var output: TLVec): Boolean;
+function LDA(const M: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo: SystemString; var output: TLVec): Boolean;
 var
   rInfo: TLInt;
   buff: TLMatrix;
-  W, H, cl, J: TLInt;
+  w, h, cl, J: TLInt;
 begin
-  H := Length(m);
-  W := Length(m[0]);
-  cl := Length(cv);
-  SetLength(buff, H, W + 1);
-  for J := 0 to Length(m) - 1 do
+  h := length(M);
+  w := length(M[0]);
+  cl := length(cv);
+  SetLength(buff, h, w + 1);
+  for J := 0 to length(M) - 1 do
     begin
-      CopyPtr(@m[J][0], @buff[J][0], W * SizeOf(TLFloat));
-      buff[J][W] := cv[J];
+      CopyPtr(@M[J][0], @buff[J][0], w * SizeOf(TLFloat));
+      buff[J][w] := cv[J];
     end;
 
-  FisherLDA(buff, H, W, Nclass + 1, rInfo, output);
+  FisherLDA(buff, h, w, Nclass + 1, rInfo, output);
 
   SetLength(buff, 0, 0);
 
@@ -974,41 +974,41 @@ end;
 function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean;
 var
   k: TLFloat;
-  mrblur, N: TMemoryRaster;
-  I, J: TLInt;
+  mrblur, n: TMemoryRaster;
+  i, J: TLInt;
   buff: TLMatrix;
   rInfo: TLInt;
 begin
-  k := SamplerSize / mr.Width;
+  k := SamplerSize / mr.width;
 
-  N := TMemoryRaster.Create;
+  n := TMemoryRaster.Create;
   if (not Fast) and (k < 1.0) then
     begin
       mrblur := TMemoryRaster.Create;
       // preprocess liner zoom
-      GrayscaleBlur(mr, mrblur, mr.Width / SamplerSize, mr.BoundsRect);
+      GrayscaleBlur(mr, mrblur, mr.width / SamplerSize, mr.BoundsRect);
       // zoom
-      N.ZoomFrom(mrblur, SamplerSize, Round(mrblur.Height * k));
-      disposeObject(mrblur);
+      n.ZoomFrom(mrblur, SamplerSize, Round(mrblur.height * k));
+      DisposeObject(mrblur);
     end
   else
     begin
       // zoom
-      N.ZoomFrom(mr, SamplerSize, Round(mr.Height * k));
+      n.ZoomFrom(mr, SamplerSize, Round(mr.height * k));
       if not Fast then
-          GrayscaleBlur(N, SamplerSize / mr.Width, N.BoundsRect);
+          GrayscaleBlur(n, SamplerSize / mr.width, n.BoundsRect);
     end;
 
-  SetLength(buff, N.Height, SamplerSize + 1);
+  SetLength(buff, n.height, SamplerSize + 1);
 
-  for I := 0 to N.Height - 1 do
+  for i := 0 to n.height - 1 do
     begin
       for J := 0 to SamplerSize - 1 do
-          buff[I, J] := N.PixelGrayD[J, I];
-      buff[I, SamplerSize] := I;
+          buff[i, J] := n.PixelGrayD[J, i];
+      buff[i, SamplerSize] := i;
     end;
 
-  FisherLDAN(buff, N.Height, SamplerSize, SamplerSize + 1, rInfo, output);
+  FisherLDAN(buff, n.height, SamplerSize, SamplerSize + 1, rInfo, output);
 
   case rInfo of
     1: sInfo := 'task is solved';
@@ -1022,7 +1022,7 @@ begin
   Result := rInfo in [1, 2];
 
   SetLength(buff, 0, 0);
-  disposeObject(N);
+  DisposeObject(n);
 end;
 
 function PCA(const buff: TLMatrix; const NPoints, NVars: TLInt; var v: TLMatrix): TLInt;
@@ -1036,40 +1036,40 @@ end;
 function PCA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean;
 var
   k: TLFloat;
-  mrblur, N: TMemoryRaster;
-  I, J: TLInt;
+  mrblur, n: TMemoryRaster;
+  i, J: TLInt;
   buff: TLMatrix;
   rInfo: TLInt;
 begin
   Result := False;
 
-  k := SamplerSize / mr.Width;
+  k := SamplerSize / mr.width;
 
-  N := TMemoryRaster.Create;
+  n := TMemoryRaster.Create;
   if (not Fast) and (k < 1.0) then
     begin
       mrblur := TMemoryRaster.Create;
       // preprocess liner zoom
-      GrayscaleBlur(mr, mrblur, mr.Width / SamplerSize, mr.BoundsRect);
+      GrayscaleBlur(mr, mrblur, mr.width / SamplerSize, mr.BoundsRect);
       // zoom
-      N.ZoomFrom(mrblur, SamplerSize, Round(mrblur.Height * k));
-      disposeObject(mrblur);
+      n.ZoomFrom(mrblur, SamplerSize, Round(mrblur.height * k));
+      DisposeObject(mrblur);
     end
   else
     begin
       // zoom
-      N.ZoomFrom(mr, SamplerSize, Round(mr.Height * k));
+      n.ZoomFrom(mr, SamplerSize, Round(mr.height * k));
       if not Fast then
-          GrayscaleBlur(N, SamplerSize / mr.Width, N.BoundsRect);
+          GrayscaleBlur(n, SamplerSize / mr.width, n.BoundsRect);
     end;
 
-  SetLength(buff, N.Height, SamplerSize);
+  SetLength(buff, n.height, SamplerSize);
 
-  for I := 0 to N.Height - 1 do
-    for J := 0 to N.Width - 1 do
-        buff[I, J] := N.PixelGrayD[J, I];
+  for i := 0 to n.height - 1 do
+    for J := 0 to n.width - 1 do
+        buff[i, J] := n.PixelGrayD[J, i];
 
-  rInfo := PCA(buff, N.Height, N.Width, output);
+  rInfo := PCA(buff, n.height, n.width, output);
 
   case rInfo of
     1: sInfo := 'task is solved';
@@ -1081,10 +1081,10 @@ begin
   Result := rInfo = 1;
 
   SetLength(buff, 0, 0);
-  disposeObject(N);
+  DisposeObject(n);
 end;
 
-function KMeans(const source: TLMatrix; const NVars, k: TLInt; var KArray: TLMatrix; var kIndex: TLIVec): Boolean;
+function KMeans(const Source: TLMatrix; const NVars, k: TLInt; var KArray: TLMatrix; var kIndex: TLIVec): Boolean;
 var
   bakseed: TLInt;
 begin
@@ -1092,25 +1092,25 @@ begin
   RandSeed := 0;
 
   try
-      Result := KMeansCluster(source, NVars, k, 1, KArray, kIndex) = 1;
+      Result := KMeansCluster(Source, NVars, k, 1, KArray, kIndex) = 1;
   finally
       RandSeed := bakseed;
   end;
 end;
 
-function LMatrix(const l1, l2: TLInt): TLMatrix;
+function LMatrix(const L1, l2: TLInt): TLMatrix;
 begin
-  SetLength(Result, l1, l2);
+  SetLength(Result, L1, l2);
 end;
 
-function LBMatrix(const l1, l2: TLInt): TLBMatrix;
+function LBMatrix(const L1, l2: TLInt): TLBMatrix;
 begin
-  SetLength(Result, l1, l2);
+  SetLength(Result, L1, l2);
 end;
 
-function LIMatrix(const l1, l2: TLInt): TLIMatrix;
+function LIMatrix(const L1, l2: TLInt): TLIMatrix;
 begin
-  SetLength(Result, l1, l2);
+  SetLength(Result, L1, l2);
 end;
 
-{$ENDREGION 'extAPI'}
+{$ENDREGION 'extAPI'} 

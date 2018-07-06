@@ -39,7 +39,7 @@ unit AggTransDoublePath;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -62,10 +62,10 @@ type
 
     FPreserveXScale: Boolean;
 
-    procedure SetBaseLength(V: Double);
+    procedure SetBaseLength(v: Double);
     function GetBaseLength: Double;
 
-    procedure SetBaseHeight(V: Double);
+    procedure SetBaseHeight(v: Double);
     function GetBaseHeight: Double;
 
     procedure SetPreserveXScale(F: Boolean);
@@ -89,7 +89,7 @@ type
 
     function FinalizePath(Vertices: TAggVertexSequence): Double;
 
-    procedure Transform1(Vertices: TAggVertexSequence; Kindex, Kx: Double; X, Y: PDouble);
+    procedure Transform1(Vertices: TAggVertexSequence; kIndex, KX: Double; X, Y: PDouble);
 
     property BaseLength: Double read GetBaseLength write SetBaseLength;
     property BaseHeight: Double read GetBaseHeight write SetBaseHeight;
@@ -102,7 +102,7 @@ implementation
 procedure DoublePathTransform(This: TAggTransDoublePath; X, Y: PDouble);
 var
   Rect: TRectDouble;
-  Dd: Double;
+  DD: Double;
 begin
   if (This.FStatus[0] = siReady) and (This.FStatus[1] = siReady) then
     begin
@@ -110,22 +110,22 @@ begin
           X^ := X^ * (PAggVertexDistance(This.FSourceVertices[0][
           This.FSourceVertices[0].Size - 1]).Dist / This.FBaseLength);
 
-      Rect.X1 := X^;
-      Rect.Y1 := Y^;
-      Rect.X2 := X^;
-      Rect.Y2 := Y^;
-      Dd := PAggVertexDistance(This.FSourceVertices[1][
+      Rect.x1 := X^;
+      Rect.y1 := Y^;
+      Rect.x2 := X^;
+      Rect.y2 := Y^;
+      DD := PAggVertexDistance(This.FSourceVertices[1][
         This.FSourceVertices[1].Size - 1]).Dist /
         PAggVertexDistance(This.FSourceVertices[0][
         This.FSourceVertices[0].Size - 1]).Dist;
 
-      This.Transform1(This.FSourceVertices[0], This.FKIndex[0], 1.0, @Rect.X1,
-        @Rect.Y1);
-      This.Transform1(This.FSourceVertices[1], This.FKIndex[1], Dd, @Rect.X2,
-        @Rect.Y2);
+      This.Transform1(This.FSourceVertices[0], This.FKIndex[0], 1.0, @Rect.x1,
+        @Rect.y1);
+      This.Transform1(This.FSourceVertices[1], This.FKIndex[1], DD, @Rect.x2,
+        @Rect.y2);
 
-      X^ := Rect.X1 + Y^ * (Rect.X2 - Rect.X1) / This.FBaseHeight;
-      Y^ := Rect.Y1 + Y^ * (Rect.Y2 - Rect.Y1) / This.FBaseHeight;
+      X^ := Rect.x1 + Y^ * (Rect.x2 - Rect.x1) / This.FBaseHeight;
+      Y^ := Rect.y1 + Y^ * (Rect.y2 - Rect.y1) / This.FBaseHeight;
     end;
 end;
 
@@ -161,7 +161,7 @@ end;
 
 procedure TAggTransDoublePath.SetBaseLength;
 begin
-  FBaseLength := V;
+  FBaseLength := v;
 end;
 
 function TAggTransDoublePath.GetBaseLength;
@@ -171,7 +171,7 @@ end;
 
 procedure TAggTransDoublePath.SetBaseHeight;
 begin
-  FBaseHeight := V;
+  FBaseHeight := v;
 end;
 
 function TAggTransDoublePath.GetBaseHeight;
@@ -202,15 +202,15 @@ end;
 
 procedure TAggTransDoublePath.MoveTo1;
 var
-  Vd: TAggVertexDistance;
+  VD: TAggVertexDistance;
 begin
   if FStatus[0] = siInitial then
     begin
-      Vd.Pos := PointDouble(X, Y);
+      VD.pos := PointDouble(X, Y);
 
-      Vd.Dist := 0;
+      VD.Dist := 0;
 
-      FSourceVertices[0].ModifyLast(@Vd);
+      FSourceVertices[0].ModifyLast(@VD);
 
       FStatus[0] := siMakingPath;
     end
@@ -220,29 +220,29 @@ end;
 
 procedure TAggTransDoublePath.LineTo1;
 var
-  Vd: TAggVertexDistance;
+  VD: TAggVertexDistance;
 begin
   if FStatus[0] = siMakingPath then
     begin
-      Vd.Pos := PointDouble(X, Y);
+      VD.pos := PointDouble(X, Y);
 
-      Vd.Dist := 0;
+      VD.Dist := 0;
 
-      FSourceVertices[0].Add(@Vd);
+      FSourceVertices[0].Add(@VD);
     end;
 end;
 
 procedure TAggTransDoublePath.MoveTo2;
 var
-  Vd: TAggVertexDistance;
+  VD: TAggVertexDistance;
 begin
   if FStatus[1] = siInitial then
     begin
-      Vd.Pos := PointDouble(X, Y);
+      VD.pos := PointDouble(X, Y);
 
-      Vd.Dist := 0;
+      VD.Dist := 0;
 
-      FSourceVertices[1].ModifyLast(@Vd);
+      FSourceVertices[1].ModifyLast(@VD);
 
       FStatus[1] := siMakingPath;
     end
@@ -252,15 +252,15 @@ end;
 
 procedure TAggTransDoublePath.LineTo2;
 var
-  Vd: TAggVertexDistance;
+  VD: TAggVertexDistance;
 begin
   if FStatus[1] = siMakingPath then
     begin
-      Vd.Pos := PointDouble(X, Y);
+      VD.pos := PointDouble(X, Y);
 
-      Vd.Dist := 0;
+      VD.Dist := 0;
 
-      FSourceVertices[1].Add(@Vd);
+      FSourceVertices[1].Add(@VD);
     end;
 end;
 
@@ -336,10 +336,10 @@ end;
 
 function TAggTransDoublePath.FinalizePath;
 var
-  I: Cardinal;
-  V: PAggVertexDistance;
+  i: Cardinal;
+  v: PAggVertexDistance;
 
-  D, Dist: Double;
+  d, Dist: Double;
 
 begin
   Vertices.Close(False);
@@ -348,7 +348,7 @@ begin
     if PAggVertexDistance(Vertices[Vertices.Size - 2]).Dist * 10 <
       PAggVertexDistance(Vertices[Vertices.Size - 3]).Dist then
       begin
-        D := PAggVertexDistance(Vertices[Vertices.Size - 3]).Dist +
+        d := PAggVertexDistance(Vertices[Vertices.Size - 3]).Dist +
           PAggVertexDistance(Vertices[Vertices.Size - 2]).Dist;
 
         Move(Vertices[Vertices.Size - 1]^, Vertices[Vertices.Size - 2]^,
@@ -356,106 +356,107 @@ begin
 
         Vertices.RemoveLast;
 
-        PAggVertexDistance(Vertices[Vertices.Size - 2]).Dist := D;
+        PAggVertexDistance(Vertices[Vertices.Size - 2]).Dist := d;
       end;
 
   Dist := 0;
 
-  for I := 0 to Vertices.Size - 1 do
+  for i := 0 to Vertices.Size - 1 do
     begin
-      V := Vertices[I];
-      D := V.Dist;
+      v := Vertices[i];
+      d := v.Dist;
 
-      V.Dist := Dist;
-      Dist := Dist + D;
+      v.Dist := Dist;
+      Dist := Dist + d;
     end;
 
   Result := (Vertices.Size - 1) / Dist;
 end;
 
 procedure TAggTransDoublePath.Transform1(Vertices: TAggVertexSequence;
-  Kindex, Kx: Double; X, Y: PDouble);
+  kIndex, KX: Double; X, Y: PDouble);
 var
   Delta: TPointDouble;
-  X1, Y1, D, Dd: Double;
-  I, J, K: Cardinal;
+  x1, y1, d, DD: Double;
+  i, J, k: Cardinal;
 begin
-  X1 := 0;
-  Y1 := 0;
+  x1 := 0;
+  y1 := 0;
   Delta.X := 1;
   Delta.Y := 1;
-  D := 0;
-  Dd := 1;
+  d := 0;
+  DD := 1;
 
-  X^ := X^ * Kx;
+  X^ := X^ * KX;
 
   if X^ < 0.0 then
     begin
       // Extrapolation on the left
-      X1 := PAggVertexDistance(Vertices[0]).Pos.X;
-      Y1 := PAggVertexDistance(Vertices[0]).Pos.Y;
-      Delta.X := PAggVertexDistance(Vertices[1]).Pos.X - X1;
-      Delta.Y := PAggVertexDistance(Vertices[1]).Pos.Y - Y1;
-      Dd := PAggVertexDistance(Vertices[1]).Dist -
+      x1 := PAggVertexDistance(Vertices[0]).pos.X;
+      y1 := PAggVertexDistance(Vertices[0]).pos.Y;
+      Delta.X := PAggVertexDistance(Vertices[1]).pos.X - x1;
+      Delta.Y := PAggVertexDistance(Vertices[1]).pos.Y - y1;
+      DD := PAggVertexDistance(Vertices[1]).Dist -
         PAggVertexDistance(Vertices[0]).Dist;
-      D := X^;
+      d := X^;
     end
   else
     if X^ > PAggVertexDistance(Vertices[Vertices.Size - 1]).Dist then
     begin
-      I := Vertices.Size - 2;
+      i := Vertices.Size - 2;
       J := Vertices.Size - 1;
 
-      X1 := PAggVertexDistance(Vertices[J]).Pos.X;
-      Y1 := PAggVertexDistance(Vertices[J]).Pos.Y;
-      Delta.X := X1 - PAggVertexDistance(Vertices[I]).Pos.X;
-      Delta.Y := Y1 - PAggVertexDistance(Vertices[I]).Pos.Y;
-      Dd := PAggVertexDistance(Vertices[J]).Dist -
-        PAggVertexDistance(Vertices[I]).Dist;
-      D := X^ - PAggVertexDistance(Vertices[J]).Dist;
+      x1 := PAggVertexDistance(Vertices[J]).pos.X;
+      y1 := PAggVertexDistance(Vertices[J]).pos.Y;
+      Delta.X := x1 - PAggVertexDistance(Vertices[i]).pos.X;
+      Delta.Y := y1 - PAggVertexDistance(Vertices[i]).pos.Y;
+      DD := PAggVertexDistance(Vertices[J]).Dist -
+        PAggVertexDistance(Vertices[i]).Dist;
+      d := X^ - PAggVertexDistance(Vertices[J]).Dist;
     end
   else
     begin
       // Interpolation
-      I := 0;
+      i := 0;
       J := Vertices.Size - 1;
 
       if FPreserveXScale then
         begin
-          I := 0;
+          i := 0;
 
-          while J - I > 1 do
+          while J - i > 1 do
             begin
-              K := (I + J) shr 1;
+              k := (i + J) shr 1;
 
-              if X^ < PAggVertexDistance(Vertices[K]).Dist then
-                  J := K
+              if X^ < PAggVertexDistance(Vertices[k]).Dist then
+                  J := k
               else
-                  I := K;
+                  i := k;
             end;
 
-          D := PAggVertexDistance(Vertices[I]).Dist;
-          Dd := PAggVertexDistance(Vertices[J]).Dist - D;
-          D := X^ - D;
+          d := PAggVertexDistance(Vertices[i]).Dist;
+          DD := PAggVertexDistance(Vertices[J]).Dist - d;
+          d := X^ - d;
         end
       else
         begin
-          I := Trunc(X^ * Kindex);
-          J := I + 1;
-          Dd := PAggVertexDistance(Vertices[J]).Dist -
-            PAggVertexDistance(Vertices[I]).Dist;
-          D := ((X^ * Kindex) - I) * Dd;
+          i := Trunc(X^ * kIndex);
+          J := i + 1;
+          DD := PAggVertexDistance(Vertices[J]).Dist -
+            PAggVertexDistance(Vertices[i]).Dist;
+          d := ((X^ * kIndex) - i) * DD;
         end;
 
-      X1 := PAggVertexDistance(Vertices[I]).Pos.X;
-      Y1 := PAggVertexDistance(Vertices[I]).Pos.Y;
-      Delta.X := PAggVertexDistance(Vertices[J]).Pos.X - X1;
-      Delta.Y := PAggVertexDistance(Vertices[J]).Pos.Y - Y1;
+      x1 := PAggVertexDistance(Vertices[i]).pos.X;
+      y1 := PAggVertexDistance(Vertices[i]).pos.Y;
+      Delta.X := PAggVertexDistance(Vertices[J]).pos.X - x1;
+      Delta.Y := PAggVertexDistance(Vertices[J]).pos.Y - y1;
     end;
 
-  Dd := D / Dd;
-  X^ := X1 + Delta.X * Dd;
-  Y^ := Y1 + Delta.Y * Dd;
+  DD := d / DD;
+  X^ := x1 + Delta.X * DD;
+  Y^ := y1 + Delta.Y * DD;
 end;
 
-end.
+end. 
+ 

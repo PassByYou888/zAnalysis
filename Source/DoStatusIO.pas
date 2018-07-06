@@ -12,18 +12,19 @@
 
 unit DoStatusIO;
 
+{$INCLUDE zDefine.inc}
+
 interface
 
 uses
   {$IF Defined(WIN32) or Defined(WIN64)}
   Windows,
   {$ELSEIF not Defined(Linux)}
+  {$IFNDEF FPC}
   FMX.Types,
+  {$IFEND FPC}
   {$IFEND}
-  Sysutils, Classes, PascalStrings, UPascalStrings, UnicodeMixedLib, CoreClasses, MemoryStream64;
-
-{$I zDefine.inc}
-
+  SysUtils, Classes, PascalStrings, UPascalStrings, UnicodeMixedLib, CoreClasses, MemoryStream64;
 
 type
   TDoStatusMethod = procedure(AText: SystemString; const ID: Integer) of object;
@@ -36,11 +37,11 @@ procedure DeleteDoStatusHook(TokenObj: TCoreClassObject);
 procedure DisableStatus;
 procedure EnabledStatus;
 
-procedure DoStatus(const v: Pointer; siz, width: NativeInt); overload;
-procedure DoStatus(prefix: SystemString; v: Pointer; siz, width: NativeInt); overload;
+procedure DoStatus(const v: Pointer; siz, width: nativeInt); overload;
+procedure DoStatus(prefix: SystemString; v: Pointer; siz, width: nativeInt); overload;
 procedure DoStatus(const v: TMemoryStream64); overload;
 procedure DoStatus(const v: TCoreClassStrings); overload;
-procedure DoStatus(const v: int64); overload;
+procedure DoStatus(const v: Int64); overload;
 procedure DoStatus(const v: Integer); overload;
 procedure DoStatus(const v: Single); overload;
 procedure DoStatus(const v: Double); overload;
@@ -64,21 +65,21 @@ var
 
 implementation
 
-procedure bufHashToString(hash: Pointer; Size: NativeInt; var Output: TPascalString);
+procedure bufHashToString(hash: Pointer; Size: nativeInt; var output: TPascalString);
 const
   HexArr: array [0 .. 15] of SystemChar = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F');
 var
   i: Integer;
 begin
-  Output.Len := Size * 2;
+  output.Len := Size * 2;
   for i := 0 to Size - 1 do
     begin
-      Output.buff[i * 2] := HexArr[(PByte(nativeUInt(hash) + i)^ shr 4) and $0F];
-      Output.buff[i * 2 + 1] := HexArr[PByte(nativeUInt(hash) + i)^ and $0F];
+      output.buff[i * 2] := HexArr[(PByte(nativeUInt(hash) + i)^ shr 4) and $0F];
+      output.buff[i * 2 + 1] := HexArr[PByte(nativeUInt(hash) + i)^ and $0F];
     end;
 end;
 
-procedure DoStatus(const v: Pointer; siz, width: NativeInt);
+procedure DoStatus(const v: Pointer; siz, width: nativeInt);
 var
   s: TPascalString;
   i: Integer;
@@ -103,7 +104,7 @@ begin
       DoStatus(n);
 end;
 
-procedure DoStatus(prefix: SystemString; v: Pointer; siz, width: NativeInt);
+procedure DoStatus(prefix: SystemString; v: Pointer; siz, width: nativeInt);
 var
   s: TPascalString;
   i: Integer;
@@ -141,9 +142,9 @@ begin
           n := n + ',' + IntToStr(p^)
       else
           n := IntToStr(p^);
-      inc(p);
+      Inc(p);
     end;
-  DoStatus(IntToHex(NativeInt(v), SizeOf(Pointer)) + ':' + n);
+  DoStatus(IntToHex(nativeInt(v), SizeOf(Pointer)) + ':' + n);
 end;
 
 procedure DoStatus(const v: TCoreClassStrings);
@@ -154,7 +155,7 @@ begin
       DoStatus(v[i]);
 end;
 
-procedure DoStatus(const v: int64);
+procedure DoStatus(const v: Int64);
 begin
   DoStatus(IntToStr(v));
 end;
@@ -227,14 +228,14 @@ var
 
 procedure DoStatusNoLn(const v: TPascalString);
 var
-  l, i: Integer;
+  L, i: Integer;
   ps: PSystemString;
 begin
   LockObject(HookDoStatus);
   try
-    l := v.Len;
+    L := v.Len;
     i := 1;
-    while i <= l do
+    while i <= L do
       begin
         if CharIn(v[i], [#13, #10]) then
           begin
@@ -246,13 +247,13 @@ begin
                 ReservedStatus.Add(ps);
               end;
             repeat
-                inc(i);
-            until (i > l) or (not CharIn(v[i], [#13, #10]));
+                Inc(i);
+            until (i > L) or (not CharIn(v[i], [#13, #10]));
           end
         else
           begin
             LastDoStatusNoLn.Append(v[i]);
-            inc(i);
+            Inc(i);
           end;
       end;
   finally
@@ -304,7 +305,7 @@ begin
       FMX.Types.Log.d('"' + Text_Ptr^ + '"');
       {$IFEND}
     end;
-  {$IFEND}
+  {$IFEND FPC}
   if ((ConsoleOutput) or (ID = 2)) and (IsConsole) then
       Writeln(Text_Ptr^);
 end;
@@ -326,7 +327,7 @@ begin
       finally
           UnLockObject(HookDoStatus);
       end;
-      exit;
+      Exit;
     end;
 
   LockObject(HookDoStatus);
@@ -389,7 +390,7 @@ begin
           HookDoStatus.Delete(i);
         end
       else
-          inc(i);
+          Inc(i);
     end;
 end;
 
@@ -407,7 +408,7 @@ type
   TOutputStatusCheckTh = class(TCoreClassThread)
   protected
     procedure Sync_CheckOutput;
-    procedure execute; override;
+    procedure Execute; override;
   end;
 
 var
@@ -434,7 +435,7 @@ begin
     end;
 end;
 
-procedure TOutputStatusCheckTh.execute;
+procedure TOutputStatusCheckTh.Execute;
 begin
   while _OutputStatusCheckTh_Runing do
     begin
@@ -491,4 +492,4 @@ finalization
 
 _DoFree;
 
-end.
+end. 

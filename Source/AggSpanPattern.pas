@@ -39,7 +39,7 @@ unit AggSpanPattern;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -59,21 +59,21 @@ type
     FOffsetX, FOffsetY: Cardinal;
     FAlpha: Int8u;
     function GetAlpha: Double;
-    procedure SetAlpha(V: Double);
-    procedure SetOffsetX(V: Cardinal);
-    procedure SetOffsetY(V: Cardinal);
+    procedure SetAlpha(v: Double);
+    procedure SetOffsetX(v: Cardinal);
+    procedure SetOffsetY(v: Cardinal);
   protected
     function GetSourceImage: TAggRenderingBuffer;
-    procedure SetSourceImage(V: TAggRenderingBuffer); virtual;
+    procedure SetSourceImage(v: TAggRenderingBuffer); virtual;
   public
     constructor Create(Alloc: TAggSpanAllocator); overload;
-    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; OffsetX, OffsetY: Cardinal; Alpha: Double); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; OffsetX, OffsetY: Cardinal; alpha: Double); overload;
 
     function GetAlphaInt: Int8u;
 
     property OffsetX: Cardinal read FOffsetX write SetOffsetX;
     property OffsetY: Cardinal read FOffsetY write SetOffsetY;
-    property Alpha: Double read GetAlpha write SetAlpha;
+    property alpha: Double read GetAlpha write SetAlpha;
     property SourceImage: TAggRenderingBuffer read GetSourceImage write SetSourceImage;
   end;
 
@@ -84,7 +84,7 @@ type
     procedure Init(Size: Cardinal); virtual;
     procedure Reset; virtual;
 
-    function FuncOperator(V: Integer): Cardinal; virtual; abstract;
+    function FuncOperator(v: Integer): Cardinal; virtual; abstract;
     function IncOperator: Cardinal; virtual; abstract;
   end;
 
@@ -94,7 +94,7 @@ type
   public
     procedure Init(Size: Cardinal); override;
 
-    function FuncOperator(V: Integer): Cardinal; override;
+    function FuncOperator(v: Integer): Cardinal; override;
     function IncOperator: Cardinal; override;
   end;
 
@@ -104,7 +104,7 @@ type
   public
     procedure Init(Size: Cardinal); override;
 
-    function FuncOperator(V: Integer): Cardinal; override;
+    function FuncOperator(v: Integer): Cardinal; override;
     function IncOperator: Cardinal; override;
   end;
 
@@ -114,7 +114,7 @@ type
   public
     procedure Init(Size: Cardinal); override;
 
-    function FuncOperator(V: Integer): Cardinal; override;
+    function FuncOperator(v: Integer): Cardinal; override;
     function IncOperator: Cardinal; override;
   end;
 
@@ -124,7 +124,7 @@ type
   public
     procedure Init(Size: Cardinal); override;
 
-    function FuncOperator(V: Integer): Cardinal; override;
+    function FuncOperator(v: Integer): Cardinal; override;
     function IncOperator: Cardinal; override;
   end;
 
@@ -134,7 +134,7 @@ type
   public
     procedure Init(Size: Cardinal); override;
 
-    function FuncOperator(V: Integer): Cardinal; override;
+    function FuncOperator(v: Integer): Cardinal; override;
     function IncOperator: Cardinal; override;
   end;
 
@@ -144,7 +144,7 @@ type
   public
     procedure Init(Size: Cardinal); override;
 
-    function FuncOperator(V: Integer): Cardinal; override;
+    function FuncOperator(v: Integer): Cardinal; override;
     function IncOperator: Cardinal; override;
   end;
 
@@ -164,14 +164,14 @@ begin
 end;
 
 constructor TAggSpanPatternBase.Create(Alloc: TAggSpanAllocator;
-  Src: TAggRenderingBuffer; OffsetX, OffsetY: Cardinal; Alpha: Double);
+  Src: TAggRenderingBuffer; OffsetX, OffsetY: Cardinal; alpha: Double);
 begin
   inherited Create(Alloc);
 
   FSource := Src;
   FOffsetX := OffsetX;
   FOffsetY := OffsetY;
-  FAlpha := Int8u(Trunc(Alpha * CAggBaseMask));
+  FAlpha := Int8u(Trunc(alpha * CAggBaseMask));
 end;
 
 function TAggSpanPatternBase.GetSourceImage;
@@ -191,22 +191,22 @@ end;
 
 procedure TAggSpanPatternBase.SetSourceImage;
 begin
-  FSource := V;
+  FSource := v;
 end;
 
 procedure TAggSpanPatternBase.SetOffsetX;
 begin
-  FOffsetX := V;
+  FOffsetX := v;
 end;
 
 procedure TAggSpanPatternBase.SetOffsetY;
 begin
-  FOffsetY := V;
+  FOffsetY := v;
 end;
 
 procedure TAggSpanPatternBase.SetAlpha;
 begin
-  FAlpha := Int8u(Trunc(V * CAggBaseMask));
+  FAlpha := Int8u(Trunc(v * CAggBaseMask));
 end;
 
 { TAggWrapMode }
@@ -230,9 +230,9 @@ begin
   FAdd := Size * ($3FFFFFFF div Size);
 end;
 
-function TAggWrapModeRepeat.FuncOperator(V: Integer): Cardinal;
+function TAggWrapModeRepeat.FuncOperator(v: Integer): Cardinal;
 begin
-  FValue := (Cardinal(V) + FAdd) mod FSize;
+  FValue := (Cardinal(v) + FAdd) mod FSize;
   Result := FValue;
 end;
 
@@ -259,9 +259,9 @@ begin
   FMask := FMask shr 1;
 end;
 
-function TAggWrapModeRepeatPow2.FuncOperator(V: Integer): Cardinal;
+function TAggWrapModeRepeatPow2.FuncOperator(v: Integer): Cardinal;
 begin
-  FValue := Cardinal(V) and FMask;
+  FValue := Cardinal(v) and FMask;
   Result := FValue;
 end;
 
@@ -290,16 +290,16 @@ begin
       FMask := FSize - 1;
 end;
 
-function TAggWrapModeRepeatAutoPow2.FuncOperator(V: Integer): Cardinal;
+function TAggWrapModeRepeatAutoPow2.FuncOperator(v: Integer): Cardinal;
 begin
   if FMask <> 0 then
     begin
-      FValue := Cardinal(Cardinal(V) and FMask);
+      FValue := Cardinal(Cardinal(v) and FMask);
       Result := FValue;
     end
   else
     begin
-      FValue := Cardinal((Cardinal(V) + FAdd) mod FSize);
+      FValue := Cardinal((Cardinal(v) + FAdd) mod FSize);
       Result := FValue;
     end;
 end;
@@ -325,9 +325,9 @@ begin
   FAdd := FSize2 * ($3FFFFFFF div FSize2);
 end;
 
-function TAggWrapModeReflect.FuncOperator(V: Integer): Cardinal;
+function TAggWrapModeReflect.FuncOperator(v: Integer): Cardinal;
 begin
-  FValue := (Cardinal(V) + FAdd) mod FSize2;
+  FValue := (Cardinal(v) + FAdd) mod FSize2;
 
   if FValue >= FSize then
       Result := FSize2 - FValue - 1
@@ -364,9 +364,9 @@ begin
     end;
 end;
 
-function TAggWrapModeReflectPow2.FuncOperator(V: Integer): Cardinal;
+function TAggWrapModeReflectPow2.FuncOperator(v: Integer): Cardinal;
 begin
-  FValue := Cardinal(V) and FMask;
+  FValue := Cardinal(v) and FMask;
 
   if FValue >= FSize then
       Result := FMask - FValue
@@ -402,12 +402,12 @@ begin
       FMask := FSize2 - 1;
 end;
 
-function TAggWrapModeReflectAutoPow2.FuncOperator(V: Integer): Cardinal;
+function TAggWrapModeReflectAutoPow2.FuncOperator(v: Integer): Cardinal;
 begin
   if FMask <> 0 then
-      FValue := Cardinal(V) and FMask
+      FValue := Cardinal(v) and FMask
   else
-      FValue := (Cardinal(V) + FAdd) mod FSize2;
+      FValue := (Cardinal(v) + FAdd) mod FSize2;
 
   if FValue >= FSize then
       Result := FSize2 - FValue - 1
@@ -428,4 +428,4 @@ begin
       Result := FValue;
 end;
 
-end.
+end. 

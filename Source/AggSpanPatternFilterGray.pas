@@ -39,7 +39,7 @@ unit AggSpanPatternFilterGray;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -63,8 +63,8 @@ type
   protected
     procedure SetSourceImage(Src: TAggRenderingBuffer); override;
   public
-    constructor Create(Alloc: TAggSpanAllocator; WX, WY: TAggWrapMode); overload;
-    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator; WX, WY: TAggWrapMode); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Wx, Wy: TAggWrapMode); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator; Wx, Wy: TAggWrapMode); overload;
 
     function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
   end;
@@ -75,8 +75,8 @@ type
   protected
     procedure SetSourceImage(Src: TAggRenderingBuffer); override;
   public
-    constructor Create(Alloc: TAggSpanAllocator; WX, WY: TAggWrapMode); overload;
-    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator; WX, WY: TAggWrapMode); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Wx, Wy: TAggWrapMode); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator; Wx, Wy: TAggWrapMode); overload;
 
     function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
   end;
@@ -87,8 +87,8 @@ type
   protected
     procedure SetSourceImage(Src: TAggRenderingBuffer); override;
   public
-    constructor Create(Alloc: TAggSpanAllocator; WX, WY: TAggWrapMode); overload;
-    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator; Filter: TAggImageFilterLUT; WX, WY: TAggWrapMode); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Wx, Wy: TAggWrapMode); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator; Filter: TAggImageFilterLUT; Wx, Wy: TAggWrapMode); overload;
 
     function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
   end;
@@ -99,8 +99,8 @@ type
   protected
     procedure SetSourceImage(Src: TAggRenderingBuffer); override;
   public
-    constructor Create(Alloc: TAggSpanAllocator; WX, WY: TAggWrapMode); overload;
-    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator; Filter: TAggImageFilterLUT; WX, WY: TAggWrapMode); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Wx, Wy: TAggWrapMode); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator; Filter: TAggImageFilterLUT; Wx, Wy: TAggWrapMode); overload;
 
     function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
   end;
@@ -111,12 +111,12 @@ implementation
 { TAggSpanPatternFilterGrayNN }
 
 constructor TAggSpanPatternFilterGrayNN.Create(Alloc: TAggSpanAllocator;
-  WX, WY: TAggWrapMode);
+  Wx, Wy: TAggWrapMode);
 begin
   inherited Create(Alloc);
 
-  FWrapModeX := WX;
-  FWrapModeY := WY;
+  FWrapModeX := Wx;
+  FWrapModeY := Wy;
 
   FWrapModeX.Init(1);
   FWrapModeY.Init(1);
@@ -124,28 +124,28 @@ end;
 
 constructor TAggSpanPatternFilterGrayNN.Create(Alloc: TAggSpanAllocator;
   Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator;
-  WX, WY: TAggWrapMode);
+  Wx, Wy: TAggWrapMode);
 var
-  Rgba: TAggColor;
+  RGBA: TAggColor;
 
 begin
-  Rgba.Clear;
+  RGBA.Clear;
 
-  inherited Create(Alloc, Src, @Rgba, Interpolator, nil);
+  inherited Create(Alloc, Src, @RGBA, Interpolator, nil);
 
-  FWrapModeX := WX;
-  FWrapModeY := WY;
+  FWrapModeX := Wx;
+  FWrapModeY := Wy;
 
-  FWrapModeX.Init(Src.Width);
-  FWrapModeY.Init(Src.Height);
+  FWrapModeX.Init(Src.width);
+  FWrapModeY.Init(Src.height);
 end;
 
 procedure TAggSpanPatternFilterGrayNN.SetSourceImage;
 begin
   inherited SetSourceImage(Src);
 
-  FWrapModeX.Init(Src.Width);
-  FWrapModeY.Init(Src.Height);
+  FWrapModeX.Init(Src.width);
+  FWrapModeY.Init(Src.height);
 end;
 
 function TAggSpanPatternFilterGrayNN.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
@@ -162,7 +162,7 @@ begin
     X := FWrapModeX.FuncOperator(ShrInt32(X, CAggImageSubpixelShift));
     Y := FWrapModeY.FuncOperator(ShrInt32(Y, CAggImageSubpixelShift));
 
-    Span.V := PInt8u(PtrComp(SourceImage.Row(Y)) + X * SizeOf(Int8u))^;
+    Span.v := PInt8u(PtrComp(SourceImage.Row(Y)) + X * SizeOf(Int8u))^;
     Span.Rgba8.A := CAggBaseMask;
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -178,12 +178,12 @@ end;
 { TAggSpanPatternFilterGrayBilinear }
 
 constructor TAggSpanPatternFilterGrayBilinear.Create
-  (Alloc: TAggSpanAllocator; WX, WY: TAggWrapMode);
+  (Alloc: TAggSpanAllocator; Wx, Wy: TAggWrapMode);
 begin
   inherited Create(Alloc);
 
-  FWrapModeX := WX;
-  FWrapModeY := WY;
+  FWrapModeX := Wx;
+  FWrapModeY := Wy;
 
   FWrapModeX.Init(1);
   FWrapModeY.Init(1);
@@ -191,33 +191,33 @@ end;
 
 constructor TAggSpanPatternFilterGrayBilinear.Create
   (Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer;
-  Interpolator: TAggSpanInterpolator; WX, WY: TAggWrapMode);
+  Interpolator: TAggSpanInterpolator; Wx, Wy: TAggWrapMode);
 var
-  Rgba: TAggColor;
+  RGBA: TAggColor;
 
 begin
-  Rgba.Clear;
+  RGBA.Clear;
 
-  inherited Create(Alloc, Src, @Rgba, Interpolator, nil);
+  inherited Create(Alloc, Src, @RGBA, Interpolator, nil);
 
-  FWrapModeX := WX;
-  FWrapModeY := WY;
+  FWrapModeX := Wx;
+  FWrapModeY := Wy;
 
-  FWrapModeX.Init(Src.Width);
-  FWrapModeY.Init(Src.Height);
+  FWrapModeX.Init(Src.width);
+  FWrapModeY.Init(Src.height);
 end;
 
 procedure TAggSpanPatternFilterGrayBilinear.SetSourceImage;
 begin
   inherited SetSourceImage(Src);
 
-  FWrapModeX.Init(Src.Width);
-  FWrapModeY.Init(Src.Height);
+  FWrapModeX.Init(Src.width);
+  FWrapModeY.Init(Src.height);
 end;
 
 function TAggSpanPatternFilterGrayBilinear.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
 var
-  Fg, X1, X2, Y1, Y2: Cardinal;
+  Fg, x1, x2, y1, y2: Cardinal;
 
   HiRes, LoRes: TPointInteger;
 
@@ -238,29 +238,29 @@ begin
     LoRes.X := ShrInt32(HiRes.X, CAggImageSubpixelShift);
     LoRes.Y := ShrInt32(HiRes.Y, CAggImageSubpixelShift);
 
-    X1 := FWrapModeX.FuncOperator(LoRes.X);
-    X2 := FWrapModeX.IncOperator;
+    x1 := FWrapModeX.FuncOperator(LoRes.X);
+    x2 := FWrapModeX.IncOperator;
 
-    Y1 := FWrapModeY.FuncOperator(LoRes.Y);
-    Y2 := FWrapModeY.IncOperator;
+    y1 := FWrapModeY.FuncOperator(LoRes.Y);
+    y2 := FWrapModeY.IncOperator;
 
-    Ptr1 := SourceImage.Row(Y1);
-    Ptr2 := SourceImage.Row(Y2);
+    Ptr1 := SourceImage.Row(y1);
+    Ptr2 := SourceImage.Row(y2);
 
     Fg := CAggImageSubpixelSize * CAggImageSubpixelSize div 2;
 
     HiRes.X := HiRes.X and CAggImageSubpixelMask;
     HiRes.Y := HiRes.Y and CAggImageSubpixelMask;
 
-    Inc(Fg, PInt8u(PtrComp(Ptr1) + X1 * SizeOf(Int8u))^ *
+    Inc(Fg, PInt8u(PtrComp(Ptr1) + x1 * SizeOf(Int8u))^ *
       (CAggImageSubpixelSize - HiRes.X) * (CAggImageSubpixelSize - HiRes.Y));
-    Inc(Fg, PInt8u(PtrComp(Ptr1) + X2 * SizeOf(Int8u))^ * HiRes.X *
+    Inc(Fg, PInt8u(PtrComp(Ptr1) + x2 * SizeOf(Int8u))^ * HiRes.X *
       (CAggImageSubpixelSize - HiRes.Y));
-    Inc(Fg, PInt8u(PtrComp(Ptr2) + X1 * SizeOf(Int8u))^ *
+    Inc(Fg, PInt8u(PtrComp(Ptr2) + x1 * SizeOf(Int8u))^ *
       (CAggImageSubpixelSize - HiRes.X) * HiRes.Y);
-    Inc(Fg, PInt8u(PtrComp(Ptr2) + X2 * SizeOf(Int8u))^ * HiRes.X * HiRes.Y);
+    Inc(Fg, PInt8u(PtrComp(Ptr2) + x2 * SizeOf(Int8u))^ * HiRes.X * HiRes.Y);
 
-    Span.V := Int8u(Fg shr (CAggImageSubpixelShift * 2));
+    Span.v := Int8u(Fg shr (CAggImageSubpixelShift * 2));
     Span.Rgba8.A := CAggBaseMask;
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -276,12 +276,12 @@ end;
 { TAggSpanPatternFilterGray2x2 }
 
 constructor TAggSpanPatternFilterGray2x2.Create(Alloc: TAggSpanAllocator;
-  WX, WY: TAggWrapMode);
+  Wx, Wy: TAggWrapMode);
 begin
   inherited Create(Alloc);
 
-  FWrapModeX := WX;
-  FWrapModeY := WY;
+  FWrapModeX := Wx;
+  FWrapModeY := Wy;
 
   FWrapModeX.Init(1);
   FWrapModeY.Init(1);
@@ -289,33 +289,33 @@ end;
 
 constructor TAggSpanPatternFilterGray2x2.Create(Alloc: TAggSpanAllocator;
   Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator;
-  Filter: TAggImageFilterLUT; WX, WY: TAggWrapMode);
+  Filter: TAggImageFilterLUT; Wx, Wy: TAggWrapMode);
 var
-  Rgba: TAggColor;
+  RGBA: TAggColor;
 
 begin
-  Rgba.Clear;
+  RGBA.Clear;
 
-  inherited Create(Alloc, Src, @Rgba, Interpolator, Filter);
+  inherited Create(Alloc, Src, @RGBA, Interpolator, Filter);
 
-  FWrapModeX := WX;
-  FWrapModeY := WY;
+  FWrapModeX := Wx;
+  FWrapModeY := Wy;
 
-  FWrapModeX.Init(Src.Width);
-  FWrapModeY.Init(Src.Height);
+  FWrapModeX.Init(Src.width);
+  FWrapModeY.Init(Src.height);
 end;
 
 procedure TAggSpanPatternFilterGray2x2.SetSourceImage(Src: TAggRenderingBuffer);
 begin
   inherited SetSourceImage(Src);
 
-  FWrapModeX.Init(Src.Width);
-  FWrapModeY.Init(Src.Height);
+  FWrapModeX.Init(Src.width);
+  FWrapModeY.Init(Src.height);
 end;
 
 function TAggSpanPatternFilterGray2x2.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
 var
-  Fg, X1, X2, Y1, Y2: Cardinal;
+  Fg, x1, x2, y1, y2: Cardinal;
 
   HiRes, LoRes: TPointInteger;
 
@@ -341,37 +341,37 @@ begin
     LoRes.X := ShrInt32(HiRes.X, CAggImageSubpixelShift);
     LoRes.Y := ShrInt32(HiRes.Y, CAggImageSubpixelShift);
 
-    X1 := FWrapModeX.FuncOperator(LoRes.X);
-    X2 := FWrapModeX.IncOperator;
+    x1 := FWrapModeX.FuncOperator(LoRes.X);
+    x2 := FWrapModeX.IncOperator;
 
-    Y1 := FWrapModeY.FuncOperator(LoRes.Y);
-    Y2 := FWrapModeY.IncOperator;
+    y1 := FWrapModeY.FuncOperator(LoRes.Y);
+    y2 := FWrapModeY.IncOperator;
 
-    Ptr1 := SourceImage.Row(Y1);
-    Ptr2 := SourceImage.Row(Y2);
+    Ptr1 := SourceImage.Row(y1);
+    Ptr2 := SourceImage.Row(y2);
 
     Fg := CAggImageFilterSize div 2;
 
     HiRes.X := HiRes.X and CAggImageSubpixelMask;
     HiRes.Y := HiRes.Y and CAggImageSubpixelMask;
 
-    Inc(Fg, PInt8u(PtrComp(Ptr1) + X1 * SizeOf(Int8u))^ *
+    Inc(Fg, PInt8u(PtrComp(Ptr1) + x1 * SizeOf(Int8u))^ *
       ShrInt32(PInt16(PtrComp(WeightArray) + (HiRes.X + CAggImageSubpixelSize) *
       SizeOf(Int16))^ * PInt16(PtrComp(WeightArray) +
       (HiRes.Y + CAggImageSubpixelSize) * SizeOf(Int16))^ + CAggImageFilterSize div 2,
       CAggImageFilterShift));
 
-    Inc(Fg, PInt8u(PtrComp(Ptr1) + X2 * SizeOf(Int8u))^ *
+    Inc(Fg, PInt8u(PtrComp(Ptr1) + x2 * SizeOf(Int8u))^ *
       ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.X * SizeOf(Int16))^ *
       PInt16(PtrComp(WeightArray) + (HiRes.Y + CAggImageSubpixelSize) *
       SizeOf(Int16))^ + CAggImageFilterSize div 2, CAggImageFilterShift));
 
-    Inc(Fg, PInt8u(PtrComp(Ptr2) + X1 * SizeOf(Int8u))^ *
+    Inc(Fg, PInt8u(PtrComp(Ptr2) + x1 * SizeOf(Int8u))^ *
       ShrInt32(PInt16(PtrComp(WeightArray) + (HiRes.X + CAggImageSubpixelSize) *
       SizeOf(Int16))^ * PInt16(PtrComp(WeightArray) + HiRes.Y * SizeOf(Int16))^
       + CAggImageFilterSize div 2, CAggImageFilterShift));
 
-    Inc(Fg, PInt8u(PtrComp(Ptr2) + X2 * SizeOf(Int8u))^ *
+    Inc(Fg, PInt8u(PtrComp(Ptr2) + x2 * SizeOf(Int8u))^ *
       ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.X * SizeOf(Int16))^ *
       PInt16(PtrComp(WeightArray) + HiRes.Y * SizeOf(Int16))^ +
       CAggImageFilterSize div 2, CAggImageFilterShift));
@@ -381,7 +381,7 @@ begin
     if Fg > CAggBaseMask then
         Fg := CAggBaseMask;
 
-    Span.V := Int8u(Fg);
+    Span.v := Int8u(Fg);
     Span.Rgba8.A := CAggBaseMask;
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -398,12 +398,12 @@ end;
 { TAggSpanPatternFilterGray }
 
 constructor TAggSpanPatternFilterGray.Create(Alloc: TAggSpanAllocator;
-  WX, WY: TAggWrapMode);
+  Wx, Wy: TAggWrapMode);
 begin
   inherited Create(Alloc);
 
-  FWrapModeX := WX;
-  FWrapModeY := WY;
+  FWrapModeX := Wx;
+  FWrapModeY := Wy;
 
   FWrapModeX.Init(1);
   FWrapModeY.Init(1);
@@ -411,28 +411,28 @@ end;
 
 constructor TAggSpanPatternFilterGray.Create(Alloc: TAggSpanAllocator;
   Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator;
-  Filter: TAggImageFilterLUT; WX, WY: TAggWrapMode);
+  Filter: TAggImageFilterLUT; Wx, Wy: TAggWrapMode);
 var
-  Rgba: TAggColor;
+  RGBA: TAggColor;
 
 begin
-  Rgba.Clear;
+  RGBA.Clear;
 
-  inherited Create(Alloc, Src, @Rgba, Interpolator, Filter);
+  inherited Create(Alloc, Src, @RGBA, Interpolator, Filter);
 
-  FWrapModeX := WX;
-  FWrapModeY := WY;
+  FWrapModeX := Wx;
+  FWrapModeY := Wy;
 
-  FWrapModeX.Init(Src.Width);
-  FWrapModeY.Init(Src.Height);
+  FWrapModeX.Init(Src.width);
+  FWrapModeY.Init(Src.height);
 end;
 
 procedure TAggSpanPatternFilterGray.SetSourceImage(Src: TAggRenderingBuffer);
 begin
   inherited SetSourceImage(Src);
 
-  FWrapModeX.Init(Src.Width);
-  FWrapModeY.Init(Src.Height);
+  FWrapModeX.Init(Src.width);
+  FWrapModeY.Init(Src.height);
 end;
 
 function TAggSpanPatternFilterGray.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
@@ -510,7 +510,7 @@ begin
     if Fg > CAggBaseMask then
         Fg := CAggBaseMask;
 
-    Span.V := Int8u(Fg);
+    Span.v := Int8u(Fg);
     Span.Rgba8.A := CAggBaseMask;
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -523,4 +523,4 @@ begin
   Result := Allocator.Span;
 end;
 
-end.
+end. 

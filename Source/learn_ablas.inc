@@ -10,42 +10,42 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
-procedure ABLASInternalSplitLength(N: TLInt; NB: TLInt;
+procedure ABLASInternalSplitLength(n: TLInt; nb: TLInt;
   var N1: TLInt; var N2: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixRightTRSM2(M: TLInt; N: TLInt;
-  const A: TLComplexMatrix; I1: TLInt; J1: TLInt;
+procedure CMatrixRightTRSM2(M: TLInt; n: TLInt;
+  const A: TLComplexMatrix; i1: TLInt; J1: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt;
-  var X: TLComplexMatrix; I2: TLInt; J2: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLeftTRSM2(M: TLInt; N: TLInt;
-  const A: TLComplexMatrix; I1: TLInt; J1: TLInt;
+  var X: TLComplexMatrix; i2: TLInt; J2: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLeftTRSM2(M: TLInt; n: TLInt;
+  const A: TLComplexMatrix; i1: TLInt; J1: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt;
-  var X: TLComplexMatrix; I2: TLInt; J2: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixRightTRSM2(M: TLInt; N: TLInt;
-  const A: TLMatrix; I1: TLInt; J1: TLInt; IsUpper: Boolean;
+  var X: TLComplexMatrix; i2: TLInt; J2: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixRightTRSM2(M: TLInt; n: TLInt;
+  const A: TLMatrix; i1: TLInt; J1: TLInt; IsUpper: Boolean;
   IsUnit: Boolean; OpType: TLInt; var X: TLMatrix;
-  I2: TLInt; J2: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixLeftTRSM2(M: TLInt; N: TLInt;
-  const A: TLMatrix; I1: TLInt; J1: TLInt; IsUpper: Boolean;
+  i2: TLInt; J2: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLeftTRSM2(M: TLInt; n: TLInt;
+  const A: TLMatrix; i1: TLInt; J1: TLInt; IsUpper: Boolean;
   IsUnit: Boolean; OpType: TLInt; var X: TLMatrix;
-  I2: TLInt; J2: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixSYRK2(N: TLInt; k: TLInt; Alpha: TLFloat;
-  const A: TLComplexMatrix; IA: TLInt; JA: TLInt;
-  OpTypeA: TLInt; Beta: TLFloat; var C: TLComplexMatrix;
+  i2: TLInt; J2: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixSYRK2(n: TLInt; k: TLInt; alpha: TLFloat;
+  const A: TLComplexMatrix; IA: TLInt; ja: TLInt;
+  OpTypeA: TLInt; beta: TLFloat; var C: TLComplexMatrix;
   IC: TLInt; JC: TLInt; IsUpper: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixSYRK2(N: TLInt; k: TLInt; Alpha: TLFloat;
-  const A: TLMatrix; IA: TLInt; JA: TLInt;
-  OpTypeA: TLInt; Beta: TLFloat; var C: TLMatrix;
+procedure RMatrixSYRK2(n: TLInt; k: TLInt; alpha: TLFloat;
+  const A: TLMatrix; IA: TLInt; ja: TLInt;
+  OpTypeA: TLInt; beta: TLFloat; var C: TLMatrix;
   IC: TLInt; JC: TLInt; IsUpper: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixGEMMK(M: TLInt; N: TLInt; k: TLInt;
-  Alpha: TLComplex; const A: TLComplexMatrix; IA: TLInt;
-  JA: TLInt; OpTypeA: TLInt; const B: TLComplexMatrix;
-  IB: TLInt; JB: TLInt; OpTypeB: TLInt; Beta: TLComplex;
+procedure CMatrixGEMMK(M: TLInt; n: TLInt; k: TLInt;
+  alpha: TLComplex; const A: TLComplexMatrix; IA: TLInt;
+  ja: TLInt; OpTypeA: TLInt; const b: TLComplexMatrix;
+  IB: TLInt; JB: TLInt; OpTypeB: TLInt; beta: TLComplex;
   var C: TLComplexMatrix; IC: TLInt; JC: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixGEMMK(M: TLInt; N: TLInt; k: TLInt;
-  Alpha: TLFloat; const A: TLMatrix; IA: TLInt;
-  JA: TLInt; OpTypeA: TLInt; const B: TLMatrix;
+procedure RMatrixGEMMK(M: TLInt; n: TLInt; k: TLInt;
+  alpha: TLFloat; const A: TLMatrix; IA: TLInt;
+  ja: TLInt; OpTypeA: TLInt; const b: TLMatrix;
   IB: TLInt; JB: TLInt; OpTypeB: TLInt;
-  Beta: TLFloat; var C: TLMatrix; IC: TLInt;
+  beta: TLFloat; var C: TLMatrix; IC: TLInt;
   JC: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
@@ -62,32 +62,32 @@ procedure RMatrixGEMMK(M: TLInt; N: TLInt; k: TLInt;
 
   N1+N2=N, N1>=N2, N2 may be zero
   ************************************************************************ *)
-procedure ABLASSplitLength(const A: TLMatrix; N: TLInt;
+procedure ABLASSplitLength(const A: TLMatrix; n: TLInt;
   var N1: TLInt; var N2: TLInt);
 begin
-  if N > ABLASBlockSize(A) then
+  if n > ABLASBlockSize(A) then
     begin
-      ABLASInternalSplitLength(N, ABLASBlockSize(A), N1, N2);
+      ABLASInternalSplitLength(n, ABLASBlockSize(A), N1, N2);
     end
   else
     begin
-      ABLASInternalSplitLength(N, ABLASMicroBlockSize, N1, N2);
+      ABLASInternalSplitLength(n, ABLASMicroBlockSize, N1, N2);
     end;
 end;
 
 (* ************************************************************************
   TLComplex ABLASSplitLength
   ************************************************************************ *)
-procedure ABLASComplexSplitLength(const A: TLComplexMatrix; N: TLInt;
+procedure ABLASComplexSplitLength(const A: TLComplexMatrix; n: TLInt;
   var N1: TLInt; var N2: TLInt);
 begin
-  if N > ABLASComplexBlockSize(A) then
+  if n > ABLASComplexBlockSize(A) then
     begin
-      ABLASInternalSplitLength(N, ABLASComplexBlockSize(A), N1, N2);
+      ABLASInternalSplitLength(n, ABLASComplexBlockSize(A), N1, N2);
     end
   else
     begin
-      ABLASInternalSplitLength(N, ABLASMicroBlockSize, N1, N2);
+      ABLASInternalSplitLength(n, ABLASMicroBlockSize, N1, N2);
     end;
 end;
 
@@ -131,32 +131,32 @@ end;
   IB  -   submatrix offset (row index)
   JB  -   submatrix offset (column index)
   ************************************************************************ *)
-procedure CMatrixTranspose(M: TLInt; N: TLInt;
-  const A: TLComplexMatrix; IA: TLInt; JA: TLInt;
-  var B: TLComplexMatrix; IB: TLInt; JB: TLInt);
+procedure CMatrixTranspose(M: TLInt; n: TLInt;
+  const A: TLComplexMatrix; IA: TLInt; ja: TLInt;
+  var b: TLComplexMatrix; IB: TLInt; JB: TLInt);
 var
-  I  : TLInt;
-  S1 : TLInt;
-  S2 : TLInt;
+  i  : TLInt;
+  s1 : TLInt;
+  s2 : TLInt;
   i_ : TLInt;
   i1_: TLInt;
 begin
-  if (M <= 2 * ABLASComplexBlockSize(A)) and (N <= 2 * ABLASComplexBlockSize(A))
+  if (M <= 2 * ABLASComplexBlockSize(A)) and (n <= 2 * ABLASComplexBlockSize(A))
   then
     begin
 
       //
       // base case
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
-          i1_ := (JA) - (IB);
-          for i_ := IB to IB + N - 1 do
+          i1_ := (ja) - (IB);
+          for i_ := IB to IB + n - 1 do
             begin
-              B[i_, JB + I] := A[IA + I, i_ + i1_];
+              b[i_, JB + i] := A[IA + i, i_ + i1_];
             end;
-          Inc(I);
+          Inc(i);
         end;
     end
   else
@@ -165,17 +165,17 @@ begin
       //
       // Cache-oblivious recursion
       //
-      if M > N then
+      if M > n then
         begin
-          ABLASComplexSplitLength(A, M, S1, S2);
-          CMatrixTranspose(S1, N, A, IA, JA, B, IB, JB);
-          CMatrixTranspose(S2, N, A, IA + S1, JA, B, IB, JB + S1);
+          ABLASComplexSplitLength(A, M, s1, s2);
+          CMatrixTranspose(s1, n, A, IA, ja, b, IB, JB);
+          CMatrixTranspose(s2, n, A, IA + s1, ja, b, IB, JB + s1);
         end
       else
         begin
-          ABLASComplexSplitLength(A, N, S1, S2);
-          CMatrixTranspose(M, S1, A, IA, JA, B, IB, JB);
-          CMatrixTranspose(M, S2, A, IA, JA + S1, B, IB + S1, JB);
+          ABLASComplexSplitLength(A, n, s1, s2);
+          CMatrixTranspose(M, s1, A, IA, ja, b, IB, JB);
+          CMatrixTranspose(M, s2, A, IA, ja + s1, b, IB + s1, JB);
         end;
     end;
 end;
@@ -193,31 +193,31 @@ end;
   IB  -   submatrix offset (row index)
   JB  -   submatrix offset (column index)
   ************************************************************************ *)
-procedure RMatrixTranspose(M: TLInt; N: TLInt;
-  const A: TLMatrix; IA: TLInt; JA: TLInt;
-  var B: TLMatrix; IB: TLInt; JB: TLInt);
+procedure RMatrixTranspose(M: TLInt; n: TLInt;
+  const A: TLMatrix; IA: TLInt; ja: TLInt;
+  var b: TLMatrix; IB: TLInt; JB: TLInt);
 var
-  I  : TLInt;
-  S1 : TLInt;
-  S2 : TLInt;
+  i  : TLInt;
+  s1 : TLInt;
+  s2 : TLInt;
   i_ : TLInt;
   i1_: TLInt;
 begin
-  if (M <= 2 * ABLASBlockSize(A)) and (N <= 2 * ABLASBlockSize(A)) then
+  if (M <= 2 * ABLASBlockSize(A)) and (n <= 2 * ABLASBlockSize(A)) then
     begin
 
       //
       // base case
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
-          i1_ := (JA) - (IB);
-          for i_ := IB to IB + N - 1 do
+          i1_ := (ja) - (IB);
+          for i_ := IB to IB + n - 1 do
             begin
-              B[i_, JB + I] := A[IA + I, i_ + i1_];
+              b[i_, JB + i] := A[IA + i, i_ + i1_];
             end;
-          Inc(I);
+          Inc(i);
         end;
     end
   else
@@ -226,17 +226,17 @@ begin
       //
       // Cache-oblivious recursion
       //
-      if M > N then
+      if M > n then
         begin
-          ABLASSplitLength(A, M, S1, S2);
-          RMatrixTranspose(S1, N, A, IA, JA, B, IB, JB);
-          RMatrixTranspose(S2, N, A, IA + S1, JA, B, IB, JB + S1);
+          ABLASSplitLength(A, M, s1, s2);
+          RMatrixTranspose(s1, n, A, IA, ja, b, IB, JB);
+          RMatrixTranspose(s2, n, A, IA + s1, ja, b, IB, JB + s1);
         end
       else
         begin
-          ABLASSplitLength(A, N, S1, S2);
-          RMatrixTranspose(M, S1, A, IA, JA, B, IB, JB);
-          RMatrixTranspose(M, S2, A, IA, JA + S1, B, IB + S1, JB);
+          ABLASSplitLength(A, n, s1, s2);
+          RMatrixTranspose(M, s1, A, IA, ja, b, IB, JB);
+          RMatrixTranspose(M, s2, A, IA, ja + s1, b, IB + s1, JB);
         end;
     end;
 end;
@@ -254,23 +254,23 @@ end;
   IB  -   submatrix offset (row index)
   JB  -   submatrix offset (column index)
   ************************************************************************ *)
-procedure CMatrixCopy(M: TLInt; N: TLInt;
-  const A: TLComplexMatrix; IA: TLInt; JA: TLInt;
-  var B: TLComplexMatrix; IB: TLInt; JB: TLInt);
+procedure CMatrixCopy(M: TLInt; n: TLInt;
+  const A: TLComplexMatrix; IA: TLInt; ja: TLInt;
+  var b: TLComplexMatrix; IB: TLInt; JB: TLInt);
 var
-  I  : TLInt;
+  i  : TLInt;
   i_ : TLInt;
   i1_: TLInt;
 begin
-  I := 0;
-  while I <= M - 1 do
+  i := 0;
+  while i <= M - 1 do
     begin
-      i1_ := (JA) - (JB);
-      for i_ := JB to JB + N - 1 do
+      i1_ := (ja) - (JB);
+      for i_ := JB to JB + n - 1 do
         begin
-          B[IB + I, i_] := A[IA + I, i_ + i1_];
+          b[IB + i, i_] := A[IA + i, i_ + i1_];
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -287,17 +287,17 @@ end;
   IB  -   submatrix offset (row index)
   JB  -   submatrix offset (column index)
   ************************************************************************ *)
-procedure RMatrixCopy(M: TLInt; N: TLInt; const A: TLMatrix;
-  IA: TLInt; JA: TLInt; var B: TLMatrix; IB: TLInt;
+procedure RMatrixCopy(M: TLInt; n: TLInt; const A: TLMatrix;
+  IA: TLInt; ja: TLInt; var b: TLMatrix; IB: TLInt;
   JB: TLInt);
 var
-  I: TLInt;
+  i: TLInt;
 begin
-  I := 0;
-  while I <= M - 1 do
+  i := 0;
+  while i <= M - 1 do
     begin
-      APVMove(@B[IB + I][0], JB, JB + N - 1, @A[IA + I][0], JA, JA + N - 1);
-      Inc(I);
+      APVMove(@b[IB + i][0], JB, JB + n - 1, @A[IA + i][0], ja, ja + n - 1);
+      Inc(i);
     end;
 end;
 
@@ -315,28 +315,28 @@ end;
   V   -   vector #2
   IV  -   subvector offset
   ************************************************************************ *)
-procedure CMatrixRank1(M: TLInt; N: TLInt;
-  var A: TLComplexMatrix; IA: TLInt; JA: TLInt;
-  var U: TLComplexVec; IU: TLInt; var v: TLComplexVec;
+procedure CMatrixRank1(M: TLInt; n: TLInt;
+  var A: TLComplexMatrix; IA: TLInt; ja: TLInt;
+  var u: TLComplexVec; IU: TLInt; var v: TLComplexVec;
   IV: TLInt);
 var
-  I  : TLInt;
-  S  : TLComplex;
+  i  : TLInt;
+  s  : TLComplex;
   i_ : TLInt;
   i1_: TLInt;
 begin
-  if (M = 0) or (N = 0) then
+  if (M = 0) or (n = 0) then
       Exit;
-  I := 0;
-  while I <= M - 1 do
+  i := 0;
+  while i <= M - 1 do
     begin
-      S := U[IU + I];
-      i1_ := (IV) - (JA);
-      for i_ := JA to JA + N - 1 do
+      s := u[IU + i];
+      i1_ := (IV) - (ja);
+      for i_ := ja to ja + n - 1 do
         begin
-          A[IA + I, i_] := C_Add(A[IA + I, i_], C_Mul(S, v[i_ + i1_]));
+          A[IA + i, i_] := C_Add(A[IA + i, i_], C_Mul(s, v[i_ + i1_]));
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -354,21 +354,21 @@ end;
   V   -   vector #2
   IV  -   subvector offset
   ************************************************************************ *)
-procedure RMatrixRank1(M: TLInt; N: TLInt; var A: TLMatrix;
-  IA: TLInt; JA: TLInt; var U: TLVec; IU: TLInt;
+procedure RMatrixRank1(M: TLInt; n: TLInt; var A: TLMatrix;
+  IA: TLInt; ja: TLInt; var u: TLVec; IU: TLInt;
   var v: TLVec; IV: TLInt);
 var
-  I: TLInt;
-  S: TLFloat;
+  i: TLInt;
+  s: TLFloat;
 begin
-  if (M = 0) or (N = 0) then
+  if (M = 0) or (n = 0) then
       Exit;
-  I := 0;
-  while I <= M - 1 do
+  i := 0;
+  while i <= M - 1 do
     begin
-      S := U[IU + I];
-      APVAdd(@A[IA + I][0], JA, JA + N - 1, @v[0], IV, IV + N - 1, S);
-      Inc(I);
+      s := u[IU + i];
+      APVAdd(@A[IA + i][0], ja, ja + n - 1, @v[0], IV, IV + n - 1, s);
+      Inc(i);
     end;
 end;
 
@@ -397,25 +397,25 @@ end;
   if M=0, then subroutine does nothing.
   if N=0, Y is filled by zeros.
   ************************************************************************ *)
-procedure CMatrixMV(M: TLInt; N: TLInt; var A: TLComplexMatrix;
-  IA: TLInt; JA: TLInt; OpA: TLInt;
-  var X: TLComplexVec; IX: TLInt; var Y: TLComplexVec;
-  IY: TLInt);
+procedure CMatrixMV(M: TLInt; n: TLInt; var A: TLComplexMatrix;
+  IA: TLInt; ja: TLInt; OpA: TLInt;
+  var X: TLComplexVec; ix: TLInt; var Y: TLComplexVec;
+  iy: TLInt);
 var
-  I  : TLInt;
+  i  : TLInt;
   v  : TLComplex;
   i_ : TLInt;
   i1_: TLInt;
 begin
   if M = 0 then
       Exit;
-  if N = 0 then
+  if n = 0 then
     begin
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
-          Y[IY + I] := C_Complex(0);
-          Inc(I);
+          Y[iy + i] := C_Complex(0);
+          Inc(i);
         end;
       Exit;
     end;
@@ -425,17 +425,17 @@ begin
       //
       // y = A*x
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
-          i1_ := (IX) - (JA);
+          i1_ := (ix) - (ja);
           v := C_Complex(0.0);
-          for i_ := JA to JA + N - 1 do
+          for i_ := ja to ja + n - 1 do
             begin
-              v := C_Add(v, C_Mul(A[IA + I, i_], X[i_ + i1_]));
+              v := C_Add(v, C_Mul(A[IA + i, i_], X[i_ + i1_]));
             end;
-          Y[IY + I] := v;
-          Inc(I);
+          Y[iy + i] := v;
+          Inc(i);
         end;
       Exit;
     end;
@@ -445,22 +445,22 @@ begin
       //
       // y = A^T*x
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
-          Y[IY + I] := C_Complex(0);
-          Inc(I);
+          Y[iy + i] := C_Complex(0);
+          Inc(i);
         end;
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          v := X[IX + I];
-          i1_ := (JA) - (IY);
-          for i_ := IY to IY + M - 1 do
+          v := X[ix + i];
+          i1_ := (ja) - (iy);
+          for i_ := iy to iy + M - 1 do
             begin
-              Y[i_] := C_Add(Y[i_], C_Mul(v, A[IA + I, i_ + i1_]));
+              Y[i_] := C_Add(Y[i_], C_Mul(v, A[IA + i, i_ + i1_]));
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end;
@@ -470,22 +470,22 @@ begin
       //
       // y = A^H*x
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
-          Y[IY + I] := C_Complex(0);
-          Inc(I);
+          Y[iy + i] := C_Complex(0);
+          Inc(i);
         end;
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          v := X[IX + I];
-          i1_ := (JA) - (IY);
-          for i_ := IY to IY + M - 1 do
+          v := X[ix + i];
+          i1_ := (ja) - (iy);
+          for i_ := iy to iy + M - 1 do
             begin
-              Y[i_] := C_Add(Y[i_], C_Mul(v, Conj(A[IA + I, i_ + i1_])));
+              Y[i_] := C_Add(Y[i_], C_Mul(v, Conj(A[IA + i, i_ + i1_])));
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end;
@@ -513,22 +513,22 @@ end;
   if M=0, then subroutine does nothing.
   if N=0, Y is filled by zeros.
   ************************************************************************ *)
-procedure RMatrixMV(M: TLInt; N: TLInt; var A: TLMatrix;
-  IA: TLInt; JA: TLInt; OpA: TLInt; var X: TLVec;
-  IX: TLInt; var Y: TLVec; IY: TLInt);
+procedure RMatrixMV(M: TLInt; n: TLInt; var A: TLMatrix;
+  IA: TLInt; ja: TLInt; OpA: TLInt; var X: TLVec;
+  ix: TLInt; var Y: TLVec; iy: TLInt);
 var
-  I: TLInt;
+  i: TLInt;
   v: TLFloat;
 begin
   if M = 0 then
       Exit;
-  if N = 0 then
+  if n = 0 then
     begin
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
-          Y[IY + I] := 0;
-          Inc(I);
+          Y[iy + i] := 0;
+          Inc(i);
         end;
       Exit;
     end;
@@ -538,12 +538,12 @@ begin
       //
       // y = A*x
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
-          v := APVDotProduct(@A[IA + I][0], JA, JA + N - 1, @X[0], IX, IX + N - 1);
-          Y[IY + I] := v;
-          Inc(I);
+          v := APVDotProduct(@A[IA + i][0], ja, ja + n - 1, @X[0], ix, ix + n - 1);
+          Y[iy + i] := v;
+          Inc(i);
         end;
       Exit;
     end;
@@ -553,18 +553,18 @@ begin
       //
       // y = A^T*x
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
-          Y[IY + I] := 0;
-          Inc(I);
+          Y[iy + i] := 0;
+          Inc(i);
         end;
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          v := X[IX + I];
-          APVAdd(@Y[0], IY, IY + M - 1, @A[IA + I][0], JA, JA + M - 1, v);
-          Inc(I);
+          v := X[ix + i];
+          APVAdd(@Y[0], iy, iy + M - 1, @A[IA + i][0], ja, ja + M - 1, v);
+          Inc(i);
         end;
       Exit;
     end;
@@ -595,30 +595,30 @@ end;
   I2  -   submatrix offset
   J2  -   submatrix offset
   ************************************************************************ *)
-procedure CMatrixRightTRSM(M: TLInt; N: TLInt;
-  const A: TLComplexMatrix; I1: TLInt; J1: TLInt;
+procedure CMatrixRightTRSM(M: TLInt; n: TLInt;
+  const A: TLComplexMatrix; i1: TLInt; J1: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt;
-  var X: TLComplexMatrix; I2: TLInt; J2: TLInt);
+  var X: TLComplexMatrix; i2: TLInt; J2: TLInt);
 var
-  S1: TLInt;
-  S2: TLInt;
-  BS: TLInt;
+  s1: TLInt;
+  s2: TLInt;
+  bs: TLInt;
 begin
-  BS := ABLASComplexBlockSize(A);
-  if (M <= BS) and (N <= BS) then
+  bs := ABLASComplexBlockSize(A);
+  if (M <= bs) and (n <= bs) then
     begin
-      CMatrixRightTRSM2(M, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
+      CMatrixRightTRSM2(M, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
       Exit;
     end;
-  if M >= N then
+  if M >= n then
     begin
 
       //
       // Split X: X*A = (X1 X2)^T*A
       //
-      ABLASComplexSplitLength(A, M, S1, S2);
-      CMatrixRightTRSM(S1, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
-      CMatrixRightTRSM(S2, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2 + S1, J2);
+      ABLASComplexSplitLength(A, M, s1, s2);
+      CMatrixRightTRSM(s1, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
+      CMatrixRightTRSM(s2, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2 + s1, J2);
     end
   else
     begin
@@ -632,7 +632,7 @@ begin
       // Different variants depending on
       // IsUpper/OpType combinations
       //
-      ABLASComplexSplitLength(A, N, S1, S2);
+      ABLASComplexSplitLength(A, n, s1, s2);
       if IsUpper and (OpType = 0) then
         begin
 
@@ -641,11 +641,11 @@ begin
           // X*A^-1 = (X1 X2)*(       )
           // (     A2)
           //
-          CMatrixRightTRSM(M, S1, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
-          CMatrixGEMM(M, S2, S1, C_Complex(-1.0), X, I2, J2, 0, A, I1, J1 + S1, 0,
-            C_Complex(1.0), X, I2, J2 + S1);
-          CMatrixRightTRSM(M, S2, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2, J2 + S1);
+          CMatrixRightTRSM(M, s1, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
+          CMatrixGEMM(M, s2, s1, C_Complex(-1.0), X, i2, J2, 0, A, i1, J1 + s1, 0,
+            C_Complex(1.0), X, i2, J2 + s1);
+          CMatrixRightTRSM(M, s2, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2, J2 + s1);
           Exit;
         end;
       if IsUpper and (OpType <> 0) then
@@ -656,11 +656,11 @@ begin
           // X*A^-1 = (X1 X2)*(        )
           // (A12' A2')
           //
-          CMatrixRightTRSM(M, S2, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2, J2 + S1);
-          CMatrixGEMM(M, S1, S2, C_Complex(-1.0), X, I2, J2 + S1, 0, A, I1, J1 + S1,
-            OpType, C_Complex(1.0), X, I2, J2);
-          CMatrixRightTRSM(M, S1, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
+          CMatrixRightTRSM(M, s2, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2, J2 + s1);
+          CMatrixGEMM(M, s1, s2, C_Complex(-1.0), X, i2, J2 + s1, 0, A, i1, J1 + s1,
+            OpType, C_Complex(1.0), X, i2, J2);
+          CMatrixRightTRSM(M, s1, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
           Exit;
         end;
       if not IsUpper and (OpType = 0) then
@@ -671,11 +671,11 @@ begin
           // X*A^-1 = (X1 X2)*(       )
           // (A21  A2)
           //
-          CMatrixRightTRSM(M, S2, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2, J2 + S1);
-          CMatrixGEMM(M, S1, S2, C_Complex(-1.0), X, I2, J2 + S1, 0, A, I1 + S1, J1,
-            0, C_Complex(1.0), X, I2, J2);
-          CMatrixRightTRSM(M, S1, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
+          CMatrixRightTRSM(M, s2, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2, J2 + s1);
+          CMatrixGEMM(M, s1, s2, C_Complex(-1.0), X, i2, J2 + s1, 0, A, i1 + s1, J1,
+            0, C_Complex(1.0), X, i2, J2);
+          CMatrixRightTRSM(M, s1, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
           Exit;
         end;
       if not IsUpper and (OpType <> 0) then
@@ -686,11 +686,11 @@ begin
           // X*A^-1 = (X1 X2)*(        )
           // (     A2')
           //
-          CMatrixRightTRSM(M, S1, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
-          CMatrixGEMM(M, S2, S1, C_Complex(-1.0), X, I2, J2, 0, A, I1 + S1, J1,
-            OpType, C_Complex(1.0), X, I2, J2 + S1);
-          CMatrixRightTRSM(M, S2, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2, J2 + S1);
+          CMatrixRightTRSM(M, s1, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
+          CMatrixGEMM(M, s2, s1, C_Complex(-1.0), X, i2, J2, 0, A, i1 + s1, J1,
+            OpType, C_Complex(1.0), X, i2, J2 + s1);
+          CMatrixRightTRSM(M, s2, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2, J2 + s1);
           Exit;
         end;
     end;
@@ -721,30 +721,30 @@ end;
   I2  -   submatrix offset
   J2  -   submatrix offset
   ************************************************************************ *)
-procedure CMatrixLeftTRSM(M: TLInt; N: TLInt;
-  const A: TLComplexMatrix; I1: TLInt; J1: TLInt;
+procedure CMatrixLeftTRSM(M: TLInt; n: TLInt;
+  const A: TLComplexMatrix; i1: TLInt; J1: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt;
-  var X: TLComplexMatrix; I2: TLInt; J2: TLInt);
+  var X: TLComplexMatrix; i2: TLInt; J2: TLInt);
 var
-  S1: TLInt;
-  S2: TLInt;
-  BS: TLInt;
+  s1: TLInt;
+  s2: TLInt;
+  bs: TLInt;
 begin
-  BS := ABLASComplexBlockSize(A);
-  if (M <= BS) and (N <= BS) then
+  bs := ABLASComplexBlockSize(A);
+  if (M <= bs) and (n <= bs) then
     begin
-      CMatrixLeftTRSM2(M, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
+      CMatrixLeftTRSM2(M, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
       Exit;
     end;
-  if N >= M then
+  if n >= M then
     begin
 
       //
       // Split X: op(A)^-1*X = op(A)^-1*(X1 X2)
       //
-      ABLASComplexSplitLength(X, N, S1, S2);
-      CMatrixLeftTRSM(M, S1, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
-      CMatrixLeftTRSM(M, S2, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2 + S1);
+      ABLASComplexSplitLength(X, n, s1, s2);
+      CMatrixLeftTRSM(M, s1, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
+      CMatrixLeftTRSM(M, s2, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2 + s1);
     end
   else
     begin
@@ -752,7 +752,7 @@ begin
       //
       // Split A
       //
-      ABLASComplexSplitLength(A, M, S1, S2);
+      ABLASComplexSplitLength(A, M, s1, s2);
       if IsUpper and (OpType = 0) then
         begin
 
@@ -761,11 +761,11 @@ begin
           // A^-1*X* = (       )   *(    )
           // (     A2)    ( X2 )
           //
-          CMatrixLeftTRSM(S2, N, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2 + S1, J2);
-          CMatrixGEMM(S1, N, S2, C_Complex(-1.0), A, I1, J1 + S1, 0, X, I2 + S1, J2,
-            0, C_Complex(1.0), X, I2, J2);
-          CMatrixLeftTRSM(S1, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
+          CMatrixLeftTRSM(s2, n, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2 + s1, J2);
+          CMatrixGEMM(s1, n, s2, C_Complex(-1.0), A, i1, J1 + s1, 0, X, i2 + s1, J2,
+            0, C_Complex(1.0), X, i2, J2);
+          CMatrixLeftTRSM(s1, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
           Exit;
         end;
       if IsUpper and (OpType <> 0) then
@@ -776,11 +776,11 @@ begin
           // A^-1*X = (        )  *(    )
           // (A12' A2')   ( X2 )
           //
-          CMatrixLeftTRSM(S1, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
-          CMatrixGEMM(S2, N, S1, C_Complex(-1.0), A, I1, J1 + S1, OpType, X, I2, J2,
-            0, C_Complex(1.0), X, I2 + S1, J2);
-          CMatrixLeftTRSM(S2, N, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2 + S1, J2);
+          CMatrixLeftTRSM(s1, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
+          CMatrixGEMM(s2, n, s1, C_Complex(-1.0), A, i1, J1 + s1, OpType, X, i2, J2,
+            0, C_Complex(1.0), X, i2 + s1, J2);
+          CMatrixLeftTRSM(s2, n, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2 + s1, J2);
           Exit;
         end;
       if not IsUpper and (OpType = 0) then
@@ -791,11 +791,11 @@ begin
           // A^-1*X = (       )  *(    )
           // (A21  A2)   ( X2 )
           //
-          CMatrixLeftTRSM(S1, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
-          CMatrixGEMM(S2, N, S1, C_Complex(-1.0), A, I1 + S1, J1, 0, X, I2, J2, 0,
-            C_Complex(1.0), X, I2 + S1, J2);
-          CMatrixLeftTRSM(S2, N, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2 + S1, J2);
+          CMatrixLeftTRSM(s1, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
+          CMatrixGEMM(s2, n, s1, C_Complex(-1.0), A, i1 + s1, J1, 0, X, i2, J2, 0,
+            C_Complex(1.0), X, i2 + s1, J2);
+          CMatrixLeftTRSM(s2, n, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2 + s1, J2);
           Exit;
         end;
       if not IsUpper and (OpType <> 0) then
@@ -806,11 +806,11 @@ begin
           // A^-1*X = (        )  *(    )
           // (     A2')   ( X2 )
           //
-          CMatrixLeftTRSM(S2, N, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2 + S1, J2);
-          CMatrixGEMM(S1, N, S2, C_Complex(-1.0), A, I1 + S1, J1, OpType, X,
-            I2 + S1, J2, 0, C_Complex(1.0), X, I2, J2);
-          CMatrixLeftTRSM(S1, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
+          CMatrixLeftTRSM(s2, n, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2 + s1, J2);
+          CMatrixGEMM(s1, n, s2, C_Complex(-1.0), A, i1 + s1, J1, OpType, X,
+            i2 + s1, J2, 0, C_Complex(1.0), X, i2, J2);
+          CMatrixLeftTRSM(s1, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
           Exit;
         end;
     end;
@@ -821,30 +821,30 @@ end;
 
   OpType may be only 0 or 1.
   ************************************************************************ *)
-procedure RMatrixRightTRSM(M: TLInt; N: TLInt;
-  const A: TLMatrix; I1: TLInt; J1: TLInt; IsUpper: Boolean;
+procedure RMatrixRightTRSM(M: TLInt; n: TLInt;
+  const A: TLMatrix; i1: TLInt; J1: TLInt; IsUpper: Boolean;
   IsUnit: Boolean; OpType: TLInt; var X: TLMatrix;
-  I2: TLInt; J2: TLInt);
+  i2: TLInt; J2: TLInt);
 var
-  S1: TLInt;
-  S2: TLInt;
-  BS: TLInt;
+  s1: TLInt;
+  s2: TLInt;
+  bs: TLInt;
 begin
-  BS := ABLASBlockSize(A);
-  if (M <= BS) and (N <= BS) then
+  bs := ABLASBlockSize(A);
+  if (M <= bs) and (n <= bs) then
     begin
-      RMatrixRightTRSM2(M, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
+      RMatrixRightTRSM2(M, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
       Exit;
     end;
-  if M >= N then
+  if M >= n then
     begin
 
       //
       // Split X: X*A = (X1 X2)^T*A
       //
-      ABLASSplitLength(A, M, S1, S2);
-      RMatrixRightTRSM(S1, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
-      RMatrixRightTRSM(S2, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2 + S1, J2);
+      ABLASSplitLength(A, M, s1, s2);
+      RMatrixRightTRSM(s1, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
+      RMatrixRightTRSM(s2, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2 + s1, J2);
     end
   else
     begin
@@ -858,7 +858,7 @@ begin
       // Different variants depending on
       // IsUpper/OpType combinations
       //
-      ABLASSplitLength(A, N, S1, S2);
+      ABLASSplitLength(A, n, s1, s2);
       if IsUpper and (OpType = 0) then
         begin
 
@@ -867,11 +867,11 @@ begin
           // X*A^-1 = (X1 X2)*(       )
           // (     A2)
           //
-          RMatrixRightTRSM(M, S1, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
-          RMatrixGEMM(M, S2, S1, -1.0, X, I2, J2, 0, A, I1, J1 + S1, 0, 1.0, X,
-            I2, J2 + S1);
-          RMatrixRightTRSM(M, S2, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2, J2 + S1);
+          RMatrixRightTRSM(M, s1, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
+          RMatrixGEMM(M, s2, s1, -1.0, X, i2, J2, 0, A, i1, J1 + s1, 0, 1.0, X,
+            i2, J2 + s1);
+          RMatrixRightTRSM(M, s2, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2, J2 + s1);
           Exit;
         end;
       if IsUpper and (OpType <> 0) then
@@ -882,11 +882,11 @@ begin
           // X*A^-1 = (X1 X2)*(        )
           // (A12' A2')
           //
-          RMatrixRightTRSM(M, S2, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2, J2 + S1);
-          RMatrixGEMM(M, S1, S2, -1.0, X, I2, J2 + S1, 0, A, I1, J1 + S1, OpType,
-            1.0, X, I2, J2);
-          RMatrixRightTRSM(M, S1, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
+          RMatrixRightTRSM(M, s2, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2, J2 + s1);
+          RMatrixGEMM(M, s1, s2, -1.0, X, i2, J2 + s1, 0, A, i1, J1 + s1, OpType,
+            1.0, X, i2, J2);
+          RMatrixRightTRSM(M, s1, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
           Exit;
         end;
       if not IsUpper and (OpType = 0) then
@@ -897,11 +897,11 @@ begin
           // X*A^-1 = (X1 X2)*(       )
           // (A21  A2)
           //
-          RMatrixRightTRSM(M, S2, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2, J2 + S1);
-          RMatrixGEMM(M, S1, S2, -1.0, X, I2, J2 + S1, 0, A, I1 + S1, J1, 0, 1.0,
-            X, I2, J2);
-          RMatrixRightTRSM(M, S1, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
+          RMatrixRightTRSM(M, s2, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2, J2 + s1);
+          RMatrixGEMM(M, s1, s2, -1.0, X, i2, J2 + s1, 0, A, i1 + s1, J1, 0, 1.0,
+            X, i2, J2);
+          RMatrixRightTRSM(M, s1, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
           Exit;
         end;
       if not IsUpper and (OpType <> 0) then
@@ -912,11 +912,11 @@ begin
           // X*A^-1 = (X1 X2)*(        )
           // (     A2')
           //
-          RMatrixRightTRSM(M, S1, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
-          RMatrixGEMM(M, S2, S1, -1.0, X, I2, J2, 0, A, I1 + S1, J1, OpType, 1.0, X,
-            I2, J2 + S1);
-          RMatrixRightTRSM(M, S2, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2, J2 + S1);
+          RMatrixRightTRSM(M, s1, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
+          RMatrixGEMM(M, s2, s1, -1.0, X, i2, J2, 0, A, i1 + s1, J1, OpType, 1.0, X,
+            i2, J2 + s1);
+          RMatrixRightTRSM(M, s2, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2, J2 + s1);
           Exit;
         end;
     end;
@@ -927,30 +927,30 @@ end;
 
   OpType may be only 0 or 1.
   ************************************************************************ *)
-procedure RMatrixLeftTRSM(M: TLInt; N: TLInt;
-  const A: TLMatrix; I1: TLInt; J1: TLInt; IsUpper: Boolean;
+procedure RMatrixLeftTRSM(M: TLInt; n: TLInt;
+  const A: TLMatrix; i1: TLInt; J1: TLInt; IsUpper: Boolean;
   IsUnit: Boolean; OpType: TLInt; var X: TLMatrix;
-  I2: TLInt; J2: TLInt);
+  i2: TLInt; J2: TLInt);
 var
-  S1: TLInt;
-  S2: TLInt;
-  BS: TLInt;
+  s1: TLInt;
+  s2: TLInt;
+  bs: TLInt;
 begin
-  BS := ABLASBlockSize(A);
-  if (M <= BS) and (N <= BS) then
+  bs := ABLASBlockSize(A);
+  if (M <= bs) and (n <= bs) then
     begin
-      RMatrixLeftTRSM2(M, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
+      RMatrixLeftTRSM2(M, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
       Exit;
     end;
-  if N >= M then
+  if n >= M then
     begin
 
       //
       // Split X: op(A)^-1*X = op(A)^-1*(X1 X2)
       //
-      ABLASSplitLength(X, N, S1, S2);
-      RMatrixLeftTRSM(M, S1, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
-      RMatrixLeftTRSM(M, S2, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2 + S1);
+      ABLASSplitLength(X, n, s1, s2);
+      RMatrixLeftTRSM(M, s1, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
+      RMatrixLeftTRSM(M, s2, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2 + s1);
     end
   else
     begin
@@ -958,7 +958,7 @@ begin
       //
       // Split A
       //
-      ABLASSplitLength(A, M, S1, S2);
+      ABLASSplitLength(A, M, s1, s2);
       if IsUpper and (OpType = 0) then
         begin
 
@@ -967,11 +967,11 @@ begin
           // A^-1*X* = (       )   *(    )
           // (     A2)    ( X2 )
           //
-          RMatrixLeftTRSM(S2, N, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2 + S1, J2);
-          RMatrixGEMM(S1, N, S2, -1.0, A, I1, J1 + S1, 0, X, I2 + S1, J2, 0, 1.0,
-            X, I2, J2);
-          RMatrixLeftTRSM(S1, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
+          RMatrixLeftTRSM(s2, n, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2 + s1, J2);
+          RMatrixGEMM(s1, n, s2, -1.0, A, i1, J1 + s1, 0, X, i2 + s1, J2, 0, 1.0,
+            X, i2, J2);
+          RMatrixLeftTRSM(s1, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
           Exit;
         end;
       if IsUpper and (OpType <> 0) then
@@ -982,11 +982,11 @@ begin
           // A^-1*X = (        )  *(    )
           // (A12' A2')   ( X2 )
           //
-          RMatrixLeftTRSM(S1, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
-          RMatrixGEMM(S2, N, S1, -1.0, A, I1, J1 + S1, OpType, X, I2, J2, 0, 1.0, X,
-            I2 + S1, J2);
-          RMatrixLeftTRSM(S2, N, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2 + S1, J2);
+          RMatrixLeftTRSM(s1, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
+          RMatrixGEMM(s2, n, s1, -1.0, A, i1, J1 + s1, OpType, X, i2, J2, 0, 1.0, X,
+            i2 + s1, J2);
+          RMatrixLeftTRSM(s2, n, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2 + s1, J2);
           Exit;
         end;
       if not IsUpper and (OpType = 0) then
@@ -997,11 +997,11 @@ begin
           // A^-1*X = (       )  *(    )
           // (A21  A2)   ( X2 )
           //
-          RMatrixLeftTRSM(S1, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
-          RMatrixGEMM(S2, N, S1, -1.0, A, I1 + S1, J1, 0, X, I2, J2, 0, 1.0, X,
-            I2 + S1, J2);
-          RMatrixLeftTRSM(S2, N, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2 + S1, J2);
+          RMatrixLeftTRSM(s1, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
+          RMatrixGEMM(s2, n, s1, -1.0, A, i1 + s1, J1, 0, X, i2, J2, 0, 1.0, X,
+            i2 + s1, J2);
+          RMatrixLeftTRSM(s2, n, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2 + s1, J2);
           Exit;
         end;
       if not IsUpper and (OpType <> 0) then
@@ -1012,11 +1012,11 @@ begin
           // A^-1*X = (        )  *(    )
           // (     A2')   ( X2 )
           //
-          RMatrixLeftTRSM(S2, N, A, I1 + S1, J1 + S1, IsUpper, IsUnit, OpType, X,
-            I2 + S1, J2);
-          RMatrixGEMM(S1, N, S2, -1.0, A, I1 + S1, J1, OpType, X, I2 + S1, J2, 0,
-            1.0, X, I2, J2);
-          RMatrixLeftTRSM(S1, N, A, I1, J1, IsUpper, IsUnit, OpType, X, I2, J2);
+          RMatrixLeftTRSM(s2, n, A, i1 + s1, J1 + s1, IsUpper, IsUnit, OpType, X,
+            i2 + s1, J2);
+          RMatrixGEMM(s1, n, s2, -1.0, A, i1 + s1, J1, OpType, X, i2 + s1, J2, 0,
+            1.0, X, i2, J2);
+          RMatrixLeftTRSM(s1, n, A, i1, J1, IsUpper, IsUnit, OpType, X, i2, J2);
           Exit;
         end;
     end;
@@ -1051,38 +1051,38 @@ end;
   JC      -   submatrix offset
   IsUpper -   whether C is upper triangular or lower triangular
   ************************************************************************ *)
-procedure CMatrixSYRK(N: TLInt; k: TLInt; Alpha: TLFloat;
-  const A: TLComplexMatrix; IA: TLInt; JA: TLInt;
-  OpTypeA: TLInt; Beta: TLFloat; var C: TLComplexMatrix;
+procedure CMatrixSYRK(n: TLInt; k: TLInt; alpha: TLFloat;
+  const A: TLComplexMatrix; IA: TLInt; ja: TLInt;
+  OpTypeA: TLInt; beta: TLFloat; var C: TLComplexMatrix;
   IC: TLInt; JC: TLInt; IsUpper: Boolean);
 var
-  S1: TLInt;
-  S2: TLInt;
-  BS: TLInt;
+  s1: TLInt;
+  s2: TLInt;
+  bs: TLInt;
 begin
-  BS := ABLASComplexBlockSize(A);
-  if (N <= BS) and (k <= BS) then
+  bs := ABLASComplexBlockSize(A);
+  if (n <= bs) and (k <= bs) then
     begin
-      CMatrixSYRK2(N, k, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
+      CMatrixSYRK2(n, k, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
       Exit;
     end;
-  if k >= N then
+  if k >= n then
     begin
 
       //
       // Split K
       //
-      ABLASComplexSplitLength(A, k, S1, S2);
+      ABLASComplexSplitLength(A, k, s1, s2);
       if OpTypeA = 0 then
         begin
-          CMatrixSYRK(N, S1, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
-          CMatrixSYRK(N, S2, Alpha, A, IA, JA + S1, OpTypeA, 1.0, C, IC,
+          CMatrixSYRK(n, s1, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
+          CMatrixSYRK(n, s2, alpha, A, IA, ja + s1, OpTypeA, 1.0, C, IC,
             JC, IsUpper);
         end
       else
         begin
-          CMatrixSYRK(N, S1, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
-          CMatrixSYRK(N, S2, Alpha, A, IA + S1, JA, OpTypeA, 1.0, C, IC,
+          CMatrixSYRK(n, s1, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
+          CMatrixSYRK(n, s2, alpha, A, IA + s1, ja, OpTypeA, 1.0, C, IC,
             JC, IsUpper);
         end;
     end
@@ -1092,41 +1092,41 @@ begin
       //
       // Split N
       //
-      ABLASComplexSplitLength(A, N, S1, S2);
+      ABLASComplexSplitLength(A, n, s1, s2);
       if (OpTypeA = 0) and IsUpper then
         begin
-          CMatrixSYRK(S1, k, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
-          CMatrixGEMM(S1, S2, k, C_Complex(Alpha), A, IA, JA, 0, A, IA + S1, JA, 2,
-            C_Complex(Beta), C, IC, JC + S1);
-          CMatrixSYRK(S2, k, Alpha, A, IA + S1, JA, OpTypeA, Beta, C, IC + S1,
-            JC + S1, IsUpper);
+          CMatrixSYRK(s1, k, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
+          CMatrixGEMM(s1, s2, k, C_Complex(alpha), A, IA, ja, 0, A, IA + s1, ja, 2,
+            C_Complex(beta), C, IC, JC + s1);
+          CMatrixSYRK(s2, k, alpha, A, IA + s1, ja, OpTypeA, beta, C, IC + s1,
+            JC + s1, IsUpper);
           Exit;
         end;
       if (OpTypeA = 0) and not IsUpper then
         begin
-          CMatrixSYRK(S1, k, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
-          CMatrixGEMM(S2, S1, k, C_Complex(Alpha), A, IA + S1, JA, 0, A, IA, JA, 2,
-            C_Complex(Beta), C, IC + S1, JC);
-          CMatrixSYRK(S2, k, Alpha, A, IA + S1, JA, OpTypeA, Beta, C, IC + S1,
-            JC + S1, IsUpper);
+          CMatrixSYRK(s1, k, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
+          CMatrixGEMM(s2, s1, k, C_Complex(alpha), A, IA + s1, ja, 0, A, IA, ja, 2,
+            C_Complex(beta), C, IC + s1, JC);
+          CMatrixSYRK(s2, k, alpha, A, IA + s1, ja, OpTypeA, beta, C, IC + s1,
+            JC + s1, IsUpper);
           Exit;
         end;
       if (OpTypeA <> 0) and IsUpper then
         begin
-          CMatrixSYRK(S1, k, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
-          CMatrixGEMM(S1, S2, k, C_Complex(Alpha), A, IA, JA, 2, A, IA, JA + S1, 0,
-            C_Complex(Beta), C, IC, JC + S1);
-          CMatrixSYRK(S2, k, Alpha, A, IA, JA + S1, OpTypeA, Beta, C, IC + S1,
-            JC + S1, IsUpper);
+          CMatrixSYRK(s1, k, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
+          CMatrixGEMM(s1, s2, k, C_Complex(alpha), A, IA, ja, 2, A, IA, ja + s1, 0,
+            C_Complex(beta), C, IC, JC + s1);
+          CMatrixSYRK(s2, k, alpha, A, IA, ja + s1, OpTypeA, beta, C, IC + s1,
+            JC + s1, IsUpper);
           Exit;
         end;
       if (OpTypeA <> 0) and not IsUpper then
         begin
-          CMatrixSYRK(S1, k, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
-          CMatrixGEMM(S2, S1, k, C_Complex(Alpha), A, IA, JA + S1, 2, A, IA, JA, 0,
-            C_Complex(Beta), C, IC + S1, JC);
-          CMatrixSYRK(S2, k, Alpha, A, IA, JA + S1, OpTypeA, Beta, C, IC + S1,
-            JC + S1, IsUpper);
+          CMatrixSYRK(s1, k, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
+          CMatrixGEMM(s2, s1, k, C_Complex(alpha), A, IA, ja + s1, 2, A, IA, ja, 0,
+            C_Complex(beta), C, IC + s1, JC);
+          CMatrixSYRK(s2, k, alpha, A, IA, ja + s1, OpTypeA, beta, C, IC + s1,
+            JC + s1, IsUpper);
           Exit;
         end;
     end;
@@ -1137,38 +1137,38 @@ end;
 
   OpType may be only 0 or 1.
   ************************************************************************ *)
-procedure RMatrixSYRK(N: TLInt; k: TLInt; Alpha: TLFloat;
-  const A: TLMatrix; IA: TLInt; JA: TLInt;
-  OpTypeA: TLInt; Beta: TLFloat; var C: TLMatrix;
+procedure RMatrixSYRK(n: TLInt; k: TLInt; alpha: TLFloat;
+  const A: TLMatrix; IA: TLInt; ja: TLInt;
+  OpTypeA: TLInt; beta: TLFloat; var C: TLMatrix;
   IC: TLInt; JC: TLInt; IsUpper: Boolean);
 var
-  S1: TLInt;
-  S2: TLInt;
-  BS: TLInt;
+  s1: TLInt;
+  s2: TLInt;
+  bs: TLInt;
 begin
-  BS := ABLASBlockSize(A);
-  if (N <= BS) and (k <= BS) then
+  bs := ABLASBlockSize(A);
+  if (n <= bs) and (k <= bs) then
     begin
-      RMatrixSYRK2(N, k, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
+      RMatrixSYRK2(n, k, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
       Exit;
     end;
-  if k >= N then
+  if k >= n then
     begin
 
       //
       // Split K
       //
-      ABLASSplitLength(A, k, S1, S2);
+      ABLASSplitLength(A, k, s1, s2);
       if OpTypeA = 0 then
         begin
-          RMatrixSYRK(N, S1, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
-          RMatrixSYRK(N, S2, Alpha, A, IA, JA + S1, OpTypeA, 1.0, C, IC,
+          RMatrixSYRK(n, s1, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
+          RMatrixSYRK(n, s2, alpha, A, IA, ja + s1, OpTypeA, 1.0, C, IC,
             JC, IsUpper);
         end
       else
         begin
-          RMatrixSYRK(N, S1, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
-          RMatrixSYRK(N, S2, Alpha, A, IA + S1, JA, OpTypeA, 1.0, C, IC,
+          RMatrixSYRK(n, s1, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
+          RMatrixSYRK(n, s2, alpha, A, IA + s1, ja, OpTypeA, 1.0, C, IC,
             JC, IsUpper);
         end;
     end
@@ -1178,41 +1178,41 @@ begin
       //
       // Split N
       //
-      ABLASSplitLength(A, N, S1, S2);
+      ABLASSplitLength(A, n, s1, s2);
       if (OpTypeA = 0) and IsUpper then
         begin
-          RMatrixSYRK(S1, k, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
-          RMatrixGEMM(S1, S2, k, Alpha, A, IA, JA, 0, A, IA + S1, JA, 1, Beta, C,
-            IC, JC + S1);
-          RMatrixSYRK(S2, k, Alpha, A, IA + S1, JA, OpTypeA, Beta, C, IC + S1,
-            JC + S1, IsUpper);
+          RMatrixSYRK(s1, k, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
+          RMatrixGEMM(s1, s2, k, alpha, A, IA, ja, 0, A, IA + s1, ja, 1, beta, C,
+            IC, JC + s1);
+          RMatrixSYRK(s2, k, alpha, A, IA + s1, ja, OpTypeA, beta, C, IC + s1,
+            JC + s1, IsUpper);
           Exit;
         end;
       if (OpTypeA = 0) and not IsUpper then
         begin
-          RMatrixSYRK(S1, k, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
-          RMatrixGEMM(S2, S1, k, Alpha, A, IA + S1, JA, 0, A, IA, JA, 1, Beta, C,
-            IC + S1, JC);
-          RMatrixSYRK(S2, k, Alpha, A, IA + S1, JA, OpTypeA, Beta, C, IC + S1,
-            JC + S1, IsUpper);
+          RMatrixSYRK(s1, k, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
+          RMatrixGEMM(s2, s1, k, alpha, A, IA + s1, ja, 0, A, IA, ja, 1, beta, C,
+            IC + s1, JC);
+          RMatrixSYRK(s2, k, alpha, A, IA + s1, ja, OpTypeA, beta, C, IC + s1,
+            JC + s1, IsUpper);
           Exit;
         end;
       if (OpTypeA <> 0) and IsUpper then
         begin
-          RMatrixSYRK(S1, k, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
-          RMatrixGEMM(S1, S2, k, Alpha, A, IA, JA, 1, A, IA, JA + S1, 0, Beta, C,
-            IC, JC + S1);
-          RMatrixSYRK(S2, k, Alpha, A, IA, JA + S1, OpTypeA, Beta, C, IC + S1,
-            JC + S1, IsUpper);
+          RMatrixSYRK(s1, k, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
+          RMatrixGEMM(s1, s2, k, alpha, A, IA, ja, 1, A, IA, ja + s1, 0, beta, C,
+            IC, JC + s1);
+          RMatrixSYRK(s2, k, alpha, A, IA, ja + s1, OpTypeA, beta, C, IC + s1,
+            JC + s1, IsUpper);
           Exit;
         end;
       if (OpTypeA <> 0) and not IsUpper then
         begin
-          RMatrixSYRK(S1, k, Alpha, A, IA, JA, OpTypeA, Beta, C, IC, JC, IsUpper);
-          RMatrixGEMM(S2, S1, k, Alpha, A, IA, JA + S1, 1, A, IA, JA, 0, Beta, C,
-            IC + S1, JC);
-          RMatrixSYRK(S2, k, Alpha, A, IA, JA + S1, OpTypeA, Beta, C, IC + S1,
-            JC + S1, IsUpper);
+          RMatrixSYRK(s1, k, alpha, A, IA, ja, OpTypeA, beta, C, IC, JC, IsUpper);
+          RMatrixGEMM(s2, s1, k, alpha, A, IA, ja + s1, 1, A, IA, ja, 0, beta, C,
+            IC + s1, JC);
+          RMatrixSYRK(s2, k, alpha, A, IA, ja + s1, OpTypeA, beta, C, IC + s1,
+            JC + s1, IsUpper);
           Exit;
         end;
     end;
@@ -1256,100 +1256,100 @@ end;
   IC      -   submatrix offset
   JC      -   submatrix offset
   ************************************************************************ *)
-procedure CMatrixGEMM(M: TLInt; N: TLInt; k: TLInt;
-  Alpha: TLComplex; const A: TLComplexMatrix; IA: TLInt;
-  JA: TLInt; OpTypeA: TLInt; const B: TLComplexMatrix;
-  IB: TLInt; JB: TLInt; OpTypeB: TLInt; Beta: TLComplex;
+procedure CMatrixGEMM(M: TLInt; n: TLInt; k: TLInt;
+  alpha: TLComplex; const A: TLComplexMatrix; IA: TLInt;
+  ja: TLInt; OpTypeA: TLInt; const b: TLComplexMatrix;
+  IB: TLInt; JB: TLInt; OpTypeB: TLInt; beta: TLComplex;
   var C: TLComplexMatrix; IC: TLInt; JC: TLInt);
 var
-  S1: TLInt;
-  S2: TLInt;
-  BS: TLInt;
+  s1: TLInt;
+  s2: TLInt;
+  bs: TLInt;
 begin
-  BS := ABLASComplexBlockSize(A);
-  if (M <= BS) and (N <= BS) and (k <= BS) then
+  bs := ABLASComplexBlockSize(A);
+  if (M <= bs) and (n <= bs) and (k <= bs) then
     begin
-      CMatrixGEMMK(M, N, k, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+      CMatrixGEMMK(M, n, k, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
         C, IC, JC);
       Exit;
     end;
-  if (M >= N) and (M >= k) then
+  if (M >= n) and (M >= k) then
     begin
 
       //
       // A*B = (A1 A2)^T*B
       //
-      ABLASComplexSplitLength(A, M, S1, S2);
-      CMatrixGEMM(S1, N, k, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+      ABLASComplexSplitLength(A, M, s1, s2);
+      CMatrixGEMM(s1, n, k, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
         C, IC, JC);
       if OpTypeA = 0 then
         begin
-          CMatrixGEMM(S2, N, k, Alpha, A, IA + S1, JA, OpTypeA, B, IB, JB, OpTypeB,
-            Beta, C, IC + S1, JC);
+          CMatrixGEMM(s2, n, k, alpha, A, IA + s1, ja, OpTypeA, b, IB, JB, OpTypeB,
+            beta, C, IC + s1, JC);
         end
       else
         begin
-          CMatrixGEMM(S2, N, k, Alpha, A, IA, JA + S1, OpTypeA, B, IB, JB, OpTypeB,
-            Beta, C, IC + S1, JC);
+          CMatrixGEMM(s2, n, k, alpha, A, IA, ja + s1, OpTypeA, b, IB, JB, OpTypeB,
+            beta, C, IC + s1, JC);
         end;
       Exit;
     end;
-  if (N >= M) and (N >= k) then
+  if (n >= M) and (n >= k) then
     begin
 
       //
       // A*B = A*(B1 B2)
       //
-      ABLASComplexSplitLength(A, N, S1, S2);
+      ABLASComplexSplitLength(A, n, s1, s2);
       if OpTypeB = 0 then
         begin
-          CMatrixGEMM(M, S1, k, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          CMatrixGEMM(M, s1, k, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          CMatrixGEMM(M, S2, k, Alpha, A, IA, JA, OpTypeA, B, IB, JB + S1, OpTypeB,
-            Beta, C, IC, JC + S1);
+          CMatrixGEMM(M, s2, k, alpha, A, IA, ja, OpTypeA, b, IB, JB + s1, OpTypeB,
+            beta, C, IC, JC + s1);
         end
       else
         begin
-          CMatrixGEMM(M, S1, k, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          CMatrixGEMM(M, s1, k, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          CMatrixGEMM(M, S2, k, Alpha, A, IA, JA, OpTypeA, B, IB + S1, JB, OpTypeB,
-            Beta, C, IC, JC + S1);
+          CMatrixGEMM(M, s2, k, alpha, A, IA, ja, OpTypeA, b, IB + s1, JB, OpTypeB,
+            beta, C, IC, JC + s1);
         end;
       Exit;
     end;
-  if (k >= M) and (k >= N) then
+  if (k >= M) and (k >= n) then
     begin
 
       //
       // A*B = (A1 A2)*(B1 B2)^T
       //
-      ABLASComplexSplitLength(A, k, S1, S2);
+      ABLASComplexSplitLength(A, k, s1, s2);
       if (OpTypeA = 0) and (OpTypeB = 0) then
         begin
-          CMatrixGEMM(M, N, S1, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          CMatrixGEMM(M, n, s1, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          CMatrixGEMM(M, N, S2, Alpha, A, IA, JA + S1, OpTypeA, B, IB + S1, JB,
+          CMatrixGEMM(M, n, s2, alpha, A, IA, ja + s1, OpTypeA, b, IB + s1, JB,
             OpTypeB, C_Complex(1.0), C, IC, JC);
         end;
       if (OpTypeA = 0) and (OpTypeB <> 0) then
         begin
-          CMatrixGEMM(M, N, S1, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          CMatrixGEMM(M, n, s1, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          CMatrixGEMM(M, N, S2, Alpha, A, IA, JA + S1, OpTypeA, B, IB, JB + S1,
+          CMatrixGEMM(M, n, s2, alpha, A, IA, ja + s1, OpTypeA, b, IB, JB + s1,
             OpTypeB, C_Complex(1.0), C, IC, JC);
         end;
       if (OpTypeA <> 0) and (OpTypeB = 0) then
         begin
-          CMatrixGEMM(M, N, S1, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          CMatrixGEMM(M, n, s1, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          CMatrixGEMM(M, N, S2, Alpha, A, IA + S1, JA, OpTypeA, B, IB + S1, JB,
+          CMatrixGEMM(M, n, s2, alpha, A, IA + s1, ja, OpTypeA, b, IB + s1, JB,
             OpTypeB, C_Complex(1.0), C, IC, JC);
         end;
       if (OpTypeA <> 0) and (OpTypeB <> 0) then
         begin
-          CMatrixGEMM(M, N, S1, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          CMatrixGEMM(M, n, s1, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          CMatrixGEMM(M, N, S2, Alpha, A, IA + S1, JA, OpTypeA, B, IB, JB + S1,
+          CMatrixGEMM(M, n, s2, alpha, A, IA + s1, ja, OpTypeA, b, IB, JB + s1,
             OpTypeB, C_Complex(1.0), C, IC, JC);
         end;
       Exit;
@@ -1360,102 +1360,102 @@ end;
   Same as CMatrixGEMM, but for real numbers.
   OpType may be only 0 or 1.
   ************************************************************************ *)
-procedure RMatrixGEMM(M: TLInt; N: TLInt; k: TLInt;
-  Alpha: TLFloat; const A: TLMatrix; IA: TLInt;
-  JA: TLInt; OpTypeA: TLInt; const B: TLMatrix;
+procedure RMatrixGEMM(M: TLInt; n: TLInt; k: TLInt;
+  alpha: TLFloat; const A: TLMatrix; IA: TLInt;
+  ja: TLInt; OpTypeA: TLInt; const b: TLMatrix;
   IB: TLInt; JB: TLInt; OpTypeB: TLInt;
-  Beta: TLFloat; var C: TLMatrix; IC: TLInt; JC: TLInt);
+  beta: TLFloat; var C: TLMatrix; IC: TLInt; JC: TLInt);
 var
-  S1: TLInt;
-  S2: TLInt;
-  BS: TLInt;
+  s1: TLInt;
+  s2: TLInt;
+  bs: TLInt;
 begin
-  BS := ABLASBlockSize(A);
-  if (M <= BS) and (N <= BS) and (k <= BS) then
+  bs := ABLASBlockSize(A);
+  if (M <= bs) and (n <= bs) and (k <= bs) then
     begin
-      RMatrixGEMMK(M, N, k, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+      RMatrixGEMMK(M, n, k, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
         C, IC, JC);
       Exit;
     end;
-  if (M >= N) and (M >= k) then
+  if (M >= n) and (M >= k) then
     begin
 
       //
       // A*B = (A1 A2)^T*B
       //
-      ABLASSplitLength(A, M, S1, S2);
+      ABLASSplitLength(A, M, s1, s2);
       if OpTypeA = 0 then
         begin
-          RMatrixGEMM(S1, N, k, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          RMatrixGEMM(s1, n, k, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          RMatrixGEMM(S2, N, k, Alpha, A, IA + S1, JA, OpTypeA, B, IB, JB, OpTypeB,
-            Beta, C, IC + S1, JC);
+          RMatrixGEMM(s2, n, k, alpha, A, IA + s1, ja, OpTypeA, b, IB, JB, OpTypeB,
+            beta, C, IC + s1, JC);
         end
       else
         begin
-          RMatrixGEMM(S1, N, k, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          RMatrixGEMM(s1, n, k, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          RMatrixGEMM(S2, N, k, Alpha, A, IA, JA + S1, OpTypeA, B, IB, JB, OpTypeB,
-            Beta, C, IC + S1, JC);
+          RMatrixGEMM(s2, n, k, alpha, A, IA, ja + s1, OpTypeA, b, IB, JB, OpTypeB,
+            beta, C, IC + s1, JC);
         end;
       Exit;
     end;
-  if (N >= M) and (N >= k) then
+  if (n >= M) and (n >= k) then
     begin
 
       //
       // A*B = A*(B1 B2)
       //
-      ABLASSplitLength(A, N, S1, S2);
+      ABLASSplitLength(A, n, s1, s2);
       if OpTypeB = 0 then
         begin
-          RMatrixGEMM(M, S1, k, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          RMatrixGEMM(M, s1, k, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          RMatrixGEMM(M, S2, k, Alpha, A, IA, JA, OpTypeA, B, IB, JB + S1, OpTypeB,
-            Beta, C, IC, JC + S1);
+          RMatrixGEMM(M, s2, k, alpha, A, IA, ja, OpTypeA, b, IB, JB + s1, OpTypeB,
+            beta, C, IC, JC + s1);
         end
       else
         begin
-          RMatrixGEMM(M, S1, k, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          RMatrixGEMM(M, s1, k, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          RMatrixGEMM(M, S2, k, Alpha, A, IA, JA, OpTypeA, B, IB + S1, JB, OpTypeB,
-            Beta, C, IC, JC + S1);
+          RMatrixGEMM(M, s2, k, alpha, A, IA, ja, OpTypeA, b, IB + s1, JB, OpTypeB,
+            beta, C, IC, JC + s1);
         end;
       Exit;
     end;
-  if (k >= M) and (k >= N) then
+  if (k >= M) and (k >= n) then
     begin
 
       //
       // A*B = (A1 A2)*(B1 B2)^T
       //
-      ABLASSplitLength(A, k, S1, S2);
+      ABLASSplitLength(A, k, s1, s2);
       if (OpTypeA = 0) and (OpTypeB = 0) then
         begin
-          RMatrixGEMM(M, N, S1, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          RMatrixGEMM(M, n, s1, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          RMatrixGEMM(M, N, S2, Alpha, A, IA, JA + S1, OpTypeA, B, IB + S1, JB,
+          RMatrixGEMM(M, n, s2, alpha, A, IA, ja + s1, OpTypeA, b, IB + s1, JB,
             OpTypeB, 1.0, C, IC, JC);
         end;
       if (OpTypeA = 0) and (OpTypeB <> 0) then
         begin
-          RMatrixGEMM(M, N, S1, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          RMatrixGEMM(M, n, s1, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          RMatrixGEMM(M, N, S2, Alpha, A, IA, JA + S1, OpTypeA, B, IB, JB + S1,
+          RMatrixGEMM(M, n, s2, alpha, A, IA, ja + s1, OpTypeA, b, IB, JB + s1,
             OpTypeB, 1.0, C, IC, JC);
         end;
       if (OpTypeA <> 0) and (OpTypeB = 0) then
         begin
-          RMatrixGEMM(M, N, S1, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          RMatrixGEMM(M, n, s1, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          RMatrixGEMM(M, N, S2, Alpha, A, IA + S1, JA, OpTypeA, B, IB + S1, JB,
+          RMatrixGEMM(M, n, s2, alpha, A, IA + s1, ja, OpTypeA, b, IB + s1, JB,
             OpTypeB, 1.0, C, IC, JC);
         end;
       if (OpTypeA <> 0) and (OpTypeB <> 0) then
         begin
-          RMatrixGEMM(M, N, S1, Alpha, A, IA, JA, OpTypeA, B, IB, JB, OpTypeB, Beta,
+          RMatrixGEMM(M, n, s1, alpha, A, IA, ja, OpTypeA, b, IB, JB, OpTypeB, beta,
             C, IC, JC);
-          RMatrixGEMM(M, N, S2, Alpha, A, IA + S1, JA, OpTypeA, B, IB, JB + S1,
+          RMatrixGEMM(M, n, s2, alpha, A, IA + s1, ja, OpTypeA, b, IB, JB + s1,
             OpTypeB, 1.0, C, IC, JC);
         end;
       Exit;
@@ -1465,18 +1465,18 @@ end;
 (* ************************************************************************
   TLComplex ABLASSplitLength
   ************************************************************************ *)
-procedure ABLASInternalSplitLength(N: TLInt; NB: TLInt;
+procedure ABLASInternalSplitLength(n: TLInt; nb: TLInt;
   var N1: TLInt; var N2: TLInt);
 var
   R: TLInt;
 begin
-  if N <= NB then
+  if n <= nb then
     begin
 
       //
       // Block size, no further splitting
       //
-      N1 := N;
+      N1 := n;
       N2 := 0;
     end
   else
@@ -1485,14 +1485,14 @@ begin
       //
       // Greater than block size
       //
-      if N mod NB <> 0 then
+      if n mod nb <> 0 then
         begin
 
           //
           // Split remainder
           //
-          N2 := N mod NB;
-          N1 := N - N2;
+          N2 := n mod nb;
+          N1 := n - N2;
         end
       else
         begin
@@ -1500,11 +1500,11 @@ begin
           //
           // Split on block boundaries
           //
-          N2 := N div 2;
-          N1 := N - N2;
-          if N1 mod NB = 0 then
+          N2 := n div 2;
+          N1 := n - N2;
+          if N1 mod nb = 0 then
               Exit;
-          R := NB - N1 mod NB;
+          R := nb - N1 mod nb;
           N1 := N1 + R;
           N2 := N2 - R;
         end;
@@ -1514,12 +1514,12 @@ end;
 (* ************************************************************************
   Level 2 variant of CMatrixRightTRSM
   ************************************************************************ *)
-procedure CMatrixRightTRSM2(M: TLInt; N: TLInt;
-  const A: TLComplexMatrix; I1: TLInt; J1: TLInt;
+procedure CMatrixRightTRSM2(M: TLInt; n: TLInt;
+  const A: TLComplexMatrix; i1: TLInt; J1: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt;
-  var X: TLComplexMatrix; I2: TLInt; J2: TLInt);
+  var X: TLComplexMatrix; i2: TLInt; J2: TLInt);
 var
-  I  : TLInt;
+  i  : TLInt;
   J  : TLInt;
   VC : TLComplex;
   VD : TLComplex;
@@ -1530,7 +1530,7 @@ begin
   //
   // Special case
   //
-  if N * M = 0 then
+  if n * M = 0 then
       Exit;
 
   //
@@ -1548,11 +1548,11 @@ begin
           //
           // X*A^(-1)
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               J := 0;
-              while J <= N - 1 do
+              while J <= n - 1 do
                 begin
                   if IsUnit then
                     begin
@@ -1560,22 +1560,22 @@ begin
                     end
                   else
                     begin
-                      VD := A[I1 + J, J1 + J];
+                      VD := A[i1 + J, J1 + J];
                     end;
-                  X[I2 + I, J2 + J] := C_Div(X[I2 + I, J2 + J], VD);
-                  if J < N - 1 then
+                  X[i2 + i, J2 + J] := C_Div(X[i2 + i, J2 + J], VD);
+                  if J < n - 1 then
                     begin
-                      VC := X[I2 + I, J2 + J];
+                      VC := X[i2 + i, J2 + J];
                       i1_ := (J1 + J + 1) - (J2 + J + 1);
-                      for i_ := J2 + J + 1 to J2 + N - 1 do
+                      for i_ := J2 + J + 1 to J2 + n - 1 do
                         begin
-                          X[I2 + I, i_] := C_Sub(X[I2 + I, i_],
-                            C_Mul(VC, A[I1 + J, i_ + i1_]));
+                          X[i2 + i, i_] := C_Sub(X[i2 + i, i_],
+                            C_Mul(VC, A[i1 + J, i_ + i1_]));
                         end;
                     end;
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -1585,31 +1585,31 @@ begin
           //
           // X*A^(-T)
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
-              J := N - 1;
+              J := n - 1;
               while J >= 0 do
                 begin
                   VC := C_Complex(0);
                   VD := C_Complex(1);
-                  if J < N - 1 then
+                  if J < n - 1 then
                     begin
                       i1_ := (J1 + J + 1) - (J2 + J + 1);
                       VC := C_Complex(0.0);
-                      for i_ := J2 + J + 1 to J2 + N - 1 do
+                      for i_ := J2 + J + 1 to J2 + n - 1 do
                         begin
-                          VC := C_Add(VC, C_Mul(X[I2 + I, i_], A[I1 + J, i_ + i1_]));
+                          VC := C_Add(VC, C_Mul(X[i2 + i, i_], A[i1 + J, i_ + i1_]));
                         end;
                     end;
                   if not IsUnit then
                     begin
-                      VD := A[I1 + J, J1 + J];
+                      VD := A[i1 + J, J1 + J];
                     end;
-                  X[I2 + I, J2 + J] := C_Div(C_Sub(X[I2 + I, J2 + J], VC), VD);
+                  X[i2 + i, J2 + J] := C_Div(C_Sub(X[i2 + i, J2 + J], VC), VD);
                   Dec(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -1619,31 +1619,31 @@ begin
           //
           // X*A^(-H)
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
-              J := N - 1;
+              J := n - 1;
               while J >= 0 do
                 begin
                   VC := C_Complex(0);
                   VD := C_Complex(1);
-                  if J < N - 1 then
+                  if J < n - 1 then
                     begin
                       i1_ := (J1 + J + 1) - (J2 + J + 1);
                       VC := C_Complex(0.0);
-                      for i_ := J2 + J + 1 to J2 + N - 1 do
+                      for i_ := J2 + J + 1 to J2 + n - 1 do
                         begin
-                          VC := C_Add(VC, C_Mul(X[I2 + I, i_], Conj(A[I1 + J, i_ + i1_])));
+                          VC := C_Add(VC, C_Mul(X[i2 + i, i_], Conj(A[i1 + J, i_ + i1_])));
                         end;
                     end;
                   if not IsUnit then
                     begin
-                      VD := Conj(A[I1 + J, J1 + J]);
+                      VD := Conj(A[i1 + J, J1 + J]);
                     end;
-                  X[I2 + I, J2 + J] := C_Div(C_Sub(X[I2 + I, J2 + J], VC), VD);
+                  X[i2 + i, J2 + J] := C_Div(C_Sub(X[i2 + i, J2 + J], VC), VD);
                   Dec(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -1660,10 +1660,10 @@ begin
           //
           // X*A^(-1)
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
-              J := N - 1;
+              J := n - 1;
               while J >= 0 do
                 begin
                   if IsUnit then
@@ -1672,22 +1672,22 @@ begin
                     end
                   else
                     begin
-                      VD := A[I1 + J, J1 + J];
+                      VD := A[i1 + J, J1 + J];
                     end;
-                  X[I2 + I, J2 + J] := C_Div(X[I2 + I, J2 + J], VD);
+                  X[i2 + i, J2 + J] := C_Div(X[i2 + i, J2 + J], VD);
                   if J > 0 then
                     begin
-                      VC := X[I2 + I, J2 + J];
+                      VC := X[i2 + i, J2 + J];
                       i1_ := (J1) - (J2);
                       for i_ := J2 to J2 + J - 1 do
                         begin
-                          X[I2 + I, i_] := C_Sub(X[I2 + I, i_],
-                            C_Mul(VC, A[I1 + J, i_ + i1_]));
+                          X[i2 + i, i_] := C_Sub(X[i2 + i, i_],
+                            C_Mul(VC, A[i1 + J, i_ + i1_]));
                         end;
                     end;
                   Dec(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -1697,11 +1697,11 @@ begin
           //
           // X*A^(-T)
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               J := 0;
-              while J <= N - 1 do
+              while J <= n - 1 do
                 begin
                   VC := C_Complex(0);
                   VD := C_Complex(1);
@@ -1711,17 +1711,17 @@ begin
                       VC := C_Complex(0.0);
                       for i_ := J2 to J2 + J - 1 do
                         begin
-                          VC := C_Add(VC, C_Mul(X[I2 + I, i_], A[I1 + J, i_ + i1_]));
+                          VC := C_Add(VC, C_Mul(X[i2 + i, i_], A[i1 + J, i_ + i1_]));
                         end;
                     end;
                   if not IsUnit then
                     begin
-                      VD := A[I1 + J, J1 + J];
+                      VD := A[i1 + J, J1 + J];
                     end;
-                  X[I2 + I, J2 + J] := C_Div(C_Sub(X[I2 + I, J2 + J], VC), VD);
+                  X[i2 + i, J2 + J] := C_Div(C_Sub(X[i2 + i, J2 + J], VC), VD);
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -1731,11 +1731,11 @@ begin
           //
           // X*A^(-H)
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               J := 0;
-              while J <= N - 1 do
+              while J <= n - 1 do
                 begin
                   VC := C_Complex(0);
                   VD := C_Complex(1);
@@ -1745,17 +1745,17 @@ begin
                       VC := C_Complex(0.0);
                       for i_ := J2 to J2 + J - 1 do
                         begin
-                          VC := C_Add(VC, C_Mul(X[I2 + I, i_], Conj(A[I1 + J, i_ + i1_])));
+                          VC := C_Add(VC, C_Mul(X[i2 + i, i_], Conj(A[i1 + J, i_ + i1_])));
                         end;
                     end;
                   if not IsUnit then
                     begin
-                      VD := Conj(A[I1 + J, J1 + J]);
+                      VD := Conj(A[i1 + J, J1 + J]);
                     end;
-                  X[I2 + I, J2 + J] := C_Div(C_Sub(X[I2 + I, J2 + J], VC), VD);
+                  X[i2 + i, J2 + J] := C_Div(C_Sub(X[i2 + i, J2 + J], VC), VD);
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -1765,12 +1765,12 @@ end;
 (* ************************************************************************
   Level-2 subroutine
   ************************************************************************ *)
-procedure CMatrixLeftTRSM2(M: TLInt; N: TLInt;
-  const A: TLComplexMatrix; I1: TLInt; J1: TLInt;
+procedure CMatrixLeftTRSM2(M: TLInt; n: TLInt;
+  const A: TLComplexMatrix; i1: TLInt; J1: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt;
-  var X: TLComplexMatrix; I2: TLInt; J2: TLInt);
+  var X: TLComplexMatrix; i2: TLInt; J2: TLInt);
 var
-  I : TLInt;
+  i : TLInt;
   J : TLInt;
   VC: TLComplex;
   VD: TLComplex;
@@ -1780,7 +1780,7 @@ begin
   //
   // Special case
   //
-  if N * M = 0 then
+  if n * M = 0 then
       Exit;
 
   //
@@ -1798,28 +1798,28 @@ begin
           //
           // A^(-1)*X
           //
-          I := M - 1;
-          while I >= 0 do
+          i := M - 1;
+          while i >= 0 do
             begin
-              J := I + 1;
+              J := i + 1;
               while J <= M - 1 do
                 begin
-                  VC := A[I1 + I, J1 + J];
-                  for i_ := J2 to J2 + N - 1 do
+                  VC := A[i1 + i, J1 + J];
+                  for i_ := J2 to J2 + n - 1 do
                     begin
-                      X[I2 + I, i_] := C_Sub(X[I2 + I, i_], C_Mul(VC, X[I2 + J, i_]));
+                      X[i2 + i, i_] := C_Sub(X[i2 + i, i_], C_Mul(VC, X[i2 + J, i_]));
                     end;
                   Inc(J);
                 end;
               if not IsUnit then
                 begin
-                  VD := C_RDiv(1, A[I1 + I, J1 + I]);
-                  for i_ := J2 to J2 + N - 1 do
+                  VD := C_RDiv(1, A[i1 + i, J1 + i]);
+                  for i_ := J2 to J2 + n - 1 do
                     begin
-                      X[I2 + I, i_] := C_Mul(VD, X[I2 + I, i_]);
+                      X[i2 + i, i_] := C_Mul(VD, X[i2 + i, i_]);
                     end;
                 end;
-              Dec(I);
+              Dec(i);
             end;
           Exit;
         end;
@@ -1829,8 +1829,8 @@ begin
           //
           // A^(-T)*X
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               if IsUnit then
                 begin
@@ -1838,23 +1838,23 @@ begin
                 end
               else
                 begin
-                  VD := C_RDiv(1, A[I1 + I, J1 + I]);
+                  VD := C_RDiv(1, A[i1 + i, J1 + i]);
                 end;
-              for i_ := J2 to J2 + N - 1 do
+              for i_ := J2 to J2 + n - 1 do
                 begin
-                  X[I2 + I, i_] := C_Mul(VD, X[I2 + I, i_]);
+                  X[i2 + i, i_] := C_Mul(VD, X[i2 + i, i_]);
                 end;
-              J := I + 1;
+              J := i + 1;
               while J <= M - 1 do
                 begin
-                  VC := A[I1 + I, J1 + J];
-                  for i_ := J2 to J2 + N - 1 do
+                  VC := A[i1 + i, J1 + J];
+                  for i_ := J2 to J2 + n - 1 do
                     begin
-                      X[I2 + J, i_] := C_Sub(X[I2 + J, i_], C_Mul(VC, X[I2 + I, i_]));
+                      X[i2 + J, i_] := C_Sub(X[i2 + J, i_], C_Mul(VC, X[i2 + i, i_]));
                     end;
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -1864,8 +1864,8 @@ begin
           //
           // A^(-H)*X
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               if IsUnit then
                 begin
@@ -1873,23 +1873,23 @@ begin
                 end
               else
                 begin
-                  VD := C_RDiv(1, Conj(A[I1 + I, J1 + I]));
+                  VD := C_RDiv(1, Conj(A[i1 + i, J1 + i]));
                 end;
-              for i_ := J2 to J2 + N - 1 do
+              for i_ := J2 to J2 + n - 1 do
                 begin
-                  X[I2 + I, i_] := C_Mul(VD, X[I2 + I, i_]);
+                  X[i2 + i, i_] := C_Mul(VD, X[i2 + i, i_]);
                 end;
-              J := I + 1;
+              J := i + 1;
               while J <= M - 1 do
                 begin
-                  VC := Conj(A[I1 + I, J1 + J]);
-                  for i_ := J2 to J2 + N - 1 do
+                  VC := Conj(A[i1 + i, J1 + J]);
+                  for i_ := J2 to J2 + n - 1 do
                     begin
-                      X[I2 + J, i_] := C_Sub(X[I2 + J, i_], C_Mul(VC, X[I2 + I, i_]));
+                      X[i2 + J, i_] := C_Sub(X[i2 + J, i_], C_Mul(VC, X[i2 + i, i_]));
                     end;
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -1906,16 +1906,16 @@ begin
           //
           // A^(-1)*X
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               J := 0;
-              while J <= I - 1 do
+              while J <= i - 1 do
                 begin
-                  VC := A[I1 + I, J1 + J];
-                  for i_ := J2 to J2 + N - 1 do
+                  VC := A[i1 + i, J1 + J];
+                  for i_ := J2 to J2 + n - 1 do
                     begin
-                      X[I2 + I, i_] := C_Sub(X[I2 + I, i_], C_Mul(VC, X[I2 + J, i_]));
+                      X[i2 + i, i_] := C_Sub(X[i2 + i, i_], C_Mul(VC, X[i2 + J, i_]));
                     end;
                   Inc(J);
                 end;
@@ -1925,13 +1925,13 @@ begin
                 end
               else
                 begin
-                  VD := C_RDiv(1, A[I1 + J, J1 + J]);
+                  VD := C_RDiv(1, A[i1 + J, J1 + J]);
                 end;
-              for i_ := J2 to J2 + N - 1 do
+              for i_ := J2 to J2 + n - 1 do
                 begin
-                  X[I2 + I, i_] := C_Mul(VD, X[I2 + I, i_]);
+                  X[i2 + i, i_] := C_Mul(VD, X[i2 + i, i_]);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -1941,8 +1941,8 @@ begin
           //
           // A^(-T)*X
           //
-          I := M - 1;
-          while I >= 0 do
+          i := M - 1;
+          while i >= 0 do
             begin
               if IsUnit then
                 begin
@@ -1950,23 +1950,23 @@ begin
                 end
               else
                 begin
-                  VD := C_RDiv(1, A[I1 + I, J1 + I]);
+                  VD := C_RDiv(1, A[i1 + i, J1 + i]);
                 end;
-              for i_ := J2 to J2 + N - 1 do
+              for i_ := J2 to J2 + n - 1 do
                 begin
-                  X[I2 + I, i_] := C_Mul(VD, X[I2 + I, i_]);
+                  X[i2 + i, i_] := C_Mul(VD, X[i2 + i, i_]);
                 end;
-              J := I - 1;
+              J := i - 1;
               while J >= 0 do
                 begin
-                  VC := A[I1 + I, J1 + J];
-                  for i_ := J2 to J2 + N - 1 do
+                  VC := A[i1 + i, J1 + J];
+                  for i_ := J2 to J2 + n - 1 do
                     begin
-                      X[I2 + J, i_] := C_Sub(X[I2 + J, i_], C_Mul(VC, X[I2 + I, i_]));
+                      X[i2 + J, i_] := C_Sub(X[i2 + J, i_], C_Mul(VC, X[i2 + i, i_]));
                     end;
                   Dec(J);
                 end;
-              Dec(I);
+              Dec(i);
             end;
           Exit;
         end;
@@ -1976,8 +1976,8 @@ begin
           //
           // A^(-H)*X
           //
-          I := M - 1;
-          while I >= 0 do
+          i := M - 1;
+          while i >= 0 do
             begin
               if IsUnit then
                 begin
@@ -1985,23 +1985,23 @@ begin
                 end
               else
                 begin
-                  VD := C_RDiv(1, Conj(A[I1 + I, J1 + I]));
+                  VD := C_RDiv(1, Conj(A[i1 + i, J1 + i]));
                 end;
-              for i_ := J2 to J2 + N - 1 do
+              for i_ := J2 to J2 + n - 1 do
                 begin
-                  X[I2 + I, i_] := C_Mul(VD, X[I2 + I, i_]);
+                  X[i2 + i, i_] := C_Mul(VD, X[i2 + i, i_]);
                 end;
-              J := I - 1;
+              J := i - 1;
               while J >= 0 do
                 begin
-                  VC := Conj(A[I1 + I, J1 + J]);
-                  for i_ := J2 to J2 + N - 1 do
+                  VC := Conj(A[i1 + i, J1 + J]);
+                  for i_ := J2 to J2 + n - 1 do
                     begin
-                      X[I2 + J, i_] := C_Sub(X[I2 + J, i_], C_Mul(VC, X[I2 + I, i_]));
+                      X[i2 + J, i_] := C_Sub(X[i2 + J, i_], C_Mul(VC, X[i2 + i, i_]));
                     end;
                   Dec(J);
                 end;
-              Dec(I);
+              Dec(i);
             end;
           Exit;
         end;
@@ -2011,21 +2011,21 @@ end;
 (* ************************************************************************
   Level 2 subroutine
   ************************************************************************ *)
-procedure RMatrixRightTRSM2(M: TLInt; N: TLInt;
-  const A: TLMatrix; I1: TLInt; J1: TLInt; IsUpper: Boolean;
+procedure RMatrixRightTRSM2(M: TLInt; n: TLInt;
+  const A: TLMatrix; i1: TLInt; J1: TLInt; IsUpper: Boolean;
   IsUnit: Boolean; OpType: TLInt; var X: TLMatrix;
-  I2: TLInt; J2: TLInt);
+  i2: TLInt; J2: TLInt);
 var
-  I : TLInt;
+  i : TLInt;
   J : TLInt;
-  VR: TLFloat;
+  vr: TLFloat;
   VD: TLFloat;
 begin
 
   //
   // Special case
   //
-  if N * M = 0 then
+  if n * M = 0 then
       Exit;
 
   //
@@ -2043,11 +2043,11 @@ begin
           //
           // X*A^(-1)
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               J := 0;
-              while J <= N - 1 do
+              while J <= n - 1 do
                 begin
                   if IsUnit then
                     begin
@@ -2055,18 +2055,18 @@ begin
                     end
                   else
                     begin
-                      VD := A[I1 + J, J1 + J];
+                      VD := A[i1 + J, J1 + J];
                     end;
-                  X[I2 + I, J2 + J] := X[I2 + I, J2 + J] / VD;
-                  if J < N - 1 then
+                  X[i2 + i, J2 + J] := X[i2 + i, J2 + J] / VD;
+                  if J < n - 1 then
                     begin
-                      VR := X[I2 + I, J2 + J];
-                      APVSub(@X[I2 + I][0], J2 + J + 1, J2 + N - 1, @A[I1 + J][0],
-                        J1 + J + 1, J1 + N - 1, VR);
+                      vr := X[i2 + i, J2 + J];
+                      APVSub(@X[i2 + i][0], J2 + J + 1, J2 + n - 1, @A[i1 + J][0],
+                        J1 + J + 1, J1 + n - 1, vr);
                     end;
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -2076,27 +2076,27 @@ begin
           //
           // X*A^(-T)
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
-              J := N - 1;
+              J := n - 1;
               while J >= 0 do
                 begin
-                  VR := 0;
+                  vr := 0;
                   VD := 1;
-                  if J < N - 1 then
+                  if J < n - 1 then
                     begin
-                      VR := APVDotProduct(@X[I2 + I][0], J2 + J + 1, J2 + N - 1,
-                        @A[I1 + J][0], J1 + J + 1, J1 + N - 1);
+                      vr := APVDotProduct(@X[i2 + i][0], J2 + J + 1, J2 + n - 1,
+                        @A[i1 + J][0], J1 + J + 1, J1 + n - 1);
                     end;
                   if not IsUnit then
                     begin
-                      VD := A[I1 + J, J1 + J];
+                      VD := A[i1 + J, J1 + J];
                     end;
-                  X[I2 + I, J2 + J] := (X[I2 + I, J2 + J] - VR) / VD;
+                  X[i2 + i, J2 + J] := (X[i2 + i, J2 + J] - vr) / VD;
                   Dec(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -2113,10 +2113,10 @@ begin
           //
           // X*A^(-1)
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
-              J := N - 1;
+              J := n - 1;
               while J >= 0 do
                 begin
                   if IsUnit then
@@ -2125,18 +2125,18 @@ begin
                     end
                   else
                     begin
-                      VD := A[I1 + J, J1 + J];
+                      VD := A[i1 + J, J1 + J];
                     end;
-                  X[I2 + I, J2 + J] := X[I2 + I, J2 + J] / VD;
+                  X[i2 + i, J2 + J] := X[i2 + i, J2 + J] / VD;
                   if J > 0 then
                     begin
-                      VR := X[I2 + I, J2 + J];
-                      APVSub(@X[I2 + I][0], J2, J2 + J - 1, @A[I1 + J][0], J1,
-                        J1 + J - 1, VR);
+                      vr := X[i2 + i, J2 + J];
+                      APVSub(@X[i2 + i][0], J2, J2 + J - 1, @A[i1 + J][0], J1,
+                        J1 + J - 1, vr);
                     end;
                   Dec(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -2146,27 +2146,27 @@ begin
           //
           // X*A^(-T)
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               J := 0;
-              while J <= N - 1 do
+              while J <= n - 1 do
                 begin
-                  VR := 0;
+                  vr := 0;
                   VD := 1;
                   if J > 0 then
                     begin
-                      VR := APVDotProduct(@X[I2 + I][0], J2, J2 + J - 1, @A[I1 + J][0],
+                      vr := APVDotProduct(@X[i2 + i][0], J2, J2 + J - 1, @A[i1 + J][0],
                         J1, J1 + J - 1);
                     end;
                   if not IsUnit then
                     begin
-                      VD := A[I1 + J, J1 + J];
+                      VD := A[i1 + J, J1 + J];
                     end;
-                  X[I2 + I, J2 + J] := (X[I2 + I, J2 + J] - VR) / VD;
+                  X[i2 + i, J2 + J] := (X[i2 + i, J2 + J] - vr) / VD;
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -2176,21 +2176,21 @@ end;
 (* ************************************************************************
   Level 2 subroutine
   ************************************************************************ *)
-procedure RMatrixLeftTRSM2(M: TLInt; N: TLInt;
-  const A: TLMatrix; I1: TLInt; J1: TLInt; IsUpper: Boolean;
+procedure RMatrixLeftTRSM2(M: TLInt; n: TLInt;
+  const A: TLMatrix; i1: TLInt; J1: TLInt; IsUpper: Boolean;
   IsUnit: Boolean; OpType: TLInt; var X: TLMatrix;
-  I2: TLInt; J2: TLInt);
+  i2: TLInt; J2: TLInt);
 var
-  I : TLInt;
+  i : TLInt;
   J : TLInt;
-  VR: TLFloat;
+  vr: TLFloat;
   VD: TLFloat;
 begin
 
   //
   // Special case
   //
-  if N * M = 0 then
+  if n * M = 0 then
       Exit;
 
   //
@@ -2208,23 +2208,23 @@ begin
           //
           // A^(-1)*X
           //
-          I := M - 1;
-          while I >= 0 do
+          i := M - 1;
+          while i >= 0 do
             begin
-              J := I + 1;
+              J := i + 1;
               while J <= M - 1 do
                 begin
-                  VR := A[I1 + I, J1 + J];
-                  APVSub(@X[I2 + I][0], J2, J2 + N - 1, @X[I2 + J][0], J2,
-                    J2 + N - 1, VR);
+                  vr := A[i1 + i, J1 + J];
+                  APVSub(@X[i2 + i][0], J2, J2 + n - 1, @X[i2 + J][0], J2,
+                    J2 + n - 1, vr);
                   Inc(J);
                 end;
               if not IsUnit then
                 begin
-                  VD := 1 / A[I1 + I, J1 + I];
-                  APVMul(@X[I2 + I][0], J2, J2 + N - 1, VD);
+                  VD := 1 / A[i1 + i, J1 + i];
+                  APVMul(@X[i2 + i][0], J2, J2 + n - 1, VD);
                 end;
-              Dec(I);
+              Dec(i);
             end;
           Exit;
         end;
@@ -2234,8 +2234,8 @@ begin
           //
           // A^(-T)*X
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               if IsUnit then
                 begin
@@ -2243,18 +2243,18 @@ begin
                 end
               else
                 begin
-                  VD := 1 / A[I1 + I, J1 + I];
+                  VD := 1 / A[i1 + i, J1 + i];
                 end;
-              APVMul(@X[I2 + I][0], J2, J2 + N - 1, VD);
-              J := I + 1;
+              APVMul(@X[i2 + i][0], J2, J2 + n - 1, VD);
+              J := i + 1;
               while J <= M - 1 do
                 begin
-                  VR := A[I1 + I, J1 + J];
-                  APVSub(@X[I2 + J][0], J2, J2 + N - 1, @X[I2 + I][0], J2,
-                    J2 + N - 1, VR);
+                  vr := A[i1 + i, J1 + J];
+                  APVSub(@X[i2 + J][0], J2, J2 + n - 1, @X[i2 + i][0], J2,
+                    J2 + n - 1, vr);
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
           Exit;
         end;
@@ -2271,15 +2271,15 @@ begin
           //
           // A^(-1)*X
           //
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               J := 0;
-              while J <= I - 1 do
+              while J <= i - 1 do
                 begin
-                  VR := A[I1 + I, J1 + J];
-                  APVSub(@X[I2 + I][0], J2, J2 + N - 1, @X[I2 + J][0], J2,
-                    J2 + N - 1, VR);
+                  vr := A[i1 + i, J1 + J];
+                  APVSub(@X[i2 + i][0], J2, J2 + n - 1, @X[i2 + J][0], J2,
+                    J2 + n - 1, vr);
                   Inc(J);
                 end;
               if IsUnit then
@@ -2288,10 +2288,10 @@ begin
                 end
               else
                 begin
-                  VD := 1 / A[I1 + J, J1 + J];
+                  VD := 1 / A[i1 + J, J1 + J];
                 end;
-              APVMul(@X[I2 + I][0], J2, J2 + N - 1, VD);
-              Inc(I);
+              APVMul(@X[i2 + i][0], J2, J2 + n - 1, VD);
+              Inc(i);
             end;
           Exit;
         end;
@@ -2301,8 +2301,8 @@ begin
           //
           // A^(-T)*X
           //
-          I := M - 1;
-          while I >= 0 do
+          i := M - 1;
+          while i >= 0 do
             begin
               if IsUnit then
                 begin
@@ -2310,18 +2310,18 @@ begin
                 end
               else
                 begin
-                  VD := 1 / A[I1 + I, J1 + I];
+                  VD := 1 / A[i1 + i, J1 + i];
                 end;
-              APVMul(@X[I2 + I][0], J2, J2 + N - 1, VD);
-              J := I - 1;
+              APVMul(@X[i2 + i][0], J2, J2 + n - 1, VD);
+              J := i - 1;
               while J >= 0 do
                 begin
-                  VR := A[I1 + I, J1 + J];
-                  APVSub(@X[I2 + J][0], J2, J2 + N - 1, @X[I2 + I][0], J2,
-                    J2 + N - 1, VR);
+                  vr := A[i1 + i, J1 + J];
+                  APVSub(@X[i2 + J][0], J2, J2 + n - 1, @X[i2 + i][0], J2,
+                    J2 + n - 1, vr);
                   Dec(J);
                 end;
-              Dec(I);
+              Dec(i);
             end;
           Exit;
         end;
@@ -2331,12 +2331,12 @@ end;
 (* ************************************************************************
   Level 2 subroutine
   ************************************************************************ *)
-procedure CMatrixSYRK2(N: TLInt; k: TLInt; Alpha: TLFloat;
-  const A: TLComplexMatrix; IA: TLInt; JA: TLInt;
-  OpTypeA: TLInt; Beta: TLFloat; var C: TLComplexMatrix;
+procedure CMatrixSYRK2(n: TLInt; k: TLInt; alpha: TLFloat;
+  const A: TLComplexMatrix; IA: TLInt; ja: TLInt;
+  OpTypeA: TLInt; beta: TLFloat; var C: TLComplexMatrix;
   IC: TLInt; JC: TLInt; IsUpper: Boolean);
 var
-  I  : TLInt;
+  i  : TLInt;
   J  : TLInt;
   J1 : TLInt;
   J2 : TLInt;
@@ -2348,7 +2348,7 @@ begin
   //
   // Fast exit (nothing to be done)
   //
-  if (AP_FP_Eq(Alpha, 0) or (k = 0)) and AP_FP_Eq(Beta, 1) then
+  if (AP_FP_Eq(alpha, 0) or (k = 0)) and AP_FP_Eq(beta, 1) then
     begin
       Exit;
     end;
@@ -2362,46 +2362,46 @@ begin
       //
       // C=alpha*A*A^H+beta*C
       //
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
           if IsUpper then
             begin
-              J1 := I;
-              J2 := N - 1;
+              J1 := i;
+              J2 := n - 1;
             end
           else
             begin
               J1 := 0;
-              J2 := I;
+              J2 := i;
             end;
           J := J1;
           while J <= J2 do
             begin
-              if AP_FP_Neq(Alpha, 0) and (k > 0) then
+              if AP_FP_NEq(alpha, 0) and (k > 0) then
                 begin
                   v := C_Complex(0.0);
-                  for i_ := JA to JA + k - 1 do
+                  for i_ := ja to ja + k - 1 do
                     begin
-                      v := C_Add(v, C_Mul(A[IA + I, i_], Conj(A[IA + J, i_])));
+                      v := C_Add(v, C_Mul(A[IA + i, i_], Conj(A[IA + J, i_])));
                     end;
                 end
               else
                 begin
                   v := C_Complex(0);
                 end;
-              if AP_FP_Eq(Beta, 0) then
+              if AP_FP_Eq(beta, 0) then
                 begin
-                  C[IC + I, JC + J] := C_MulR(v, Alpha);
+                  C[IC + i, JC + J] := C_MulR(v, alpha);
                 end
               else
                 begin
-                  C[IC + I, JC + J] := C_Add(C_MulR(C[IC + I, JC + J], Beta),
-                    C_MulR(v, Alpha));
+                  C[IC + i, JC + J] := C_Add(C_MulR(C[IC + i, JC + J], beta),
+                    C_MulR(v, alpha));
                 end;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end
@@ -2411,25 +2411,25 @@ begin
       //
       // C=alpha*A^H*A+beta*C
       //
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
           if IsUpper then
             begin
-              J1 := I;
-              J2 := N - 1;
+              J1 := i;
+              J2 := n - 1;
             end
           else
             begin
               J1 := 0;
-              J2 := I;
+              J2 := i;
             end;
-          if AP_FP_Eq(Beta, 0) then
+          if AP_FP_Eq(beta, 0) then
             begin
               J := J1;
               while J <= J2 do
                 begin
-                  C[IC + I, JC + J] := C_Complex(0);
+                  C[IC + i, JC + J] := C_Complex(0);
                   Inc(J);
                 end;
             end
@@ -2437,36 +2437,36 @@ begin
             begin
               for i_ := JC + J1 to JC + J2 do
                 begin
-                  C[IC + I, i_] := C_MulR(C[IC + I, i_], Beta);
+                  C[IC + i, i_] := C_MulR(C[IC + i, i_], beta);
                 end;
             end;
-          Inc(I);
+          Inc(i);
         end;
-      I := 0;
-      while I <= k - 1 do
+      i := 0;
+      while i <= k - 1 do
         begin
           J := 0;
-          while J <= N - 1 do
+          while J <= n - 1 do
             begin
               if IsUpper then
                 begin
                   J1 := J;
-                  J2 := N - 1;
+                  J2 := n - 1;
                 end
               else
                 begin
                   J1 := 0;
                   J2 := J;
                 end;
-              v := C_MulR(Conj(A[IA + I, JA + J]), Alpha);
-              i1_ := (JA + J1) - (JC + J1);
+              v := C_MulR(Conj(A[IA + i, ja + J]), alpha);
+              i1_ := (ja + J1) - (JC + J1);
               for i_ := JC + J1 to JC + J2 do
                 begin
-                  C[IC + J, i_] := C_Add(C[IC + J, i_], C_Mul(v, A[IA + I, i_ + i1_]));
+                  C[IC + J, i_] := C_Add(C[IC + J, i_], C_Mul(v, A[IA + i, i_ + i1_]));
                 end;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end;
@@ -2475,12 +2475,12 @@ end;
 (* ************************************************************************
   Level 2 subrotuine
   ************************************************************************ *)
-procedure RMatrixSYRK2(N: TLInt; k: TLInt; Alpha: TLFloat;
-  const A: TLMatrix; IA: TLInt; JA: TLInt;
-  OpTypeA: TLInt; Beta: TLFloat; var C: TLMatrix;
+procedure RMatrixSYRK2(n: TLInt; k: TLInt; alpha: TLFloat;
+  const A: TLMatrix; IA: TLInt; ja: TLInt;
+  OpTypeA: TLInt; beta: TLFloat; var C: TLMatrix;
   IC: TLInt; JC: TLInt; IsUpper: Boolean);
 var
-  I : TLInt;
+  i : TLInt;
   J : TLInt;
   J1: TLInt;
   J2: TLInt;
@@ -2490,7 +2490,7 @@ begin
   //
   // Fast exit (nothing to be done)
   //
-  if (AP_FP_Eq(Alpha, 0) or (k = 0)) and AP_FP_Eq(Beta, 1) then
+  if (AP_FP_Eq(alpha, 0) or (k = 0)) and AP_FP_Eq(beta, 1) then
     begin
       Exit;
     end;
@@ -2504,42 +2504,42 @@ begin
       //
       // C=alpha*A*A^H+beta*C
       //
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
           if IsUpper then
             begin
-              J1 := I;
-              J2 := N - 1;
+              J1 := i;
+              J2 := n - 1;
             end
           else
             begin
               J1 := 0;
-              J2 := I;
+              J2 := i;
             end;
           J := J1;
           while J <= J2 do
             begin
-              if AP_FP_Neq(Alpha, 0) and (k > 0) then
+              if AP_FP_NEq(alpha, 0) and (k > 0) then
                 begin
-                  v := APVDotProduct(@A[IA + I][0], JA, JA + k - 1, @A[IA + J][0],
-                    JA, JA + k - 1);
+                  v := APVDotProduct(@A[IA + i][0], ja, ja + k - 1, @A[IA + J][0],
+                    ja, ja + k - 1);
                 end
               else
                 begin
                   v := 0;
                 end;
-              if AP_FP_Eq(Beta, 0) then
+              if AP_FP_Eq(beta, 0) then
                 begin
-                  C[IC + I, JC + J] := Alpha * v;
+                  C[IC + i, JC + J] := alpha * v;
                 end
               else
                 begin
-                  C[IC + I, JC + J] := Beta * C[IC + I, JC + J] + Alpha * v;
+                  C[IC + i, JC + J] := beta * C[IC + i, JC + J] + alpha * v;
                 end;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end
@@ -2549,56 +2549,56 @@ begin
       //
       // C=alpha*A^H*A+beta*C
       //
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
           if IsUpper then
             begin
-              J1 := I;
-              J2 := N - 1;
+              J1 := i;
+              J2 := n - 1;
             end
           else
             begin
               J1 := 0;
-              J2 := I;
+              J2 := i;
             end;
-          if AP_FP_Eq(Beta, 0) then
+          if AP_FP_Eq(beta, 0) then
             begin
               J := J1;
               while J <= J2 do
                 begin
-                  C[IC + I, JC + J] := 0;
+                  C[IC + i, JC + J] := 0;
                   Inc(J);
                 end;
             end
           else
             begin
-              APVMul(@C[IC + I][0], JC + J1, JC + J2, Beta);
+              APVMul(@C[IC + i][0], JC + J1, JC + J2, beta);
             end;
-          Inc(I);
+          Inc(i);
         end;
-      I := 0;
-      while I <= k - 1 do
+      i := 0;
+      while i <= k - 1 do
         begin
           J := 0;
-          while J <= N - 1 do
+          while J <= n - 1 do
             begin
               if IsUpper then
                 begin
                   J1 := J;
-                  J2 := N - 1;
+                  J2 := n - 1;
                 end
               else
                 begin
                   J1 := 0;
                   J2 := J;
                 end;
-              v := Alpha * A[IA + I, JA + J];
-              APVAdd(@C[IC + J][0], JC + J1, JC + J2, @A[IA + I][0], JA + J1,
-                JA + J2, v);
+              v := alpha * A[IA + i, ja + J];
+              APVAdd(@C[IC + J][0], JC + J1, JC + J2, @A[IA + i][0], ja + J1,
+                ja + J2, v);
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end;
@@ -2607,13 +2607,13 @@ end;
 (* ************************************************************************
   GEMM kernel
   ************************************************************************ *)
-procedure CMatrixGEMMK(M: TLInt; N: TLInt; k: TLInt;
-  Alpha: TLComplex; const A: TLComplexMatrix; IA: TLInt;
-  JA: TLInt; OpTypeA: TLInt; const B: TLComplexMatrix;
-  IB: TLInt; JB: TLInt; OpTypeB: TLInt; Beta: TLComplex;
+procedure CMatrixGEMMK(M: TLInt; n: TLInt; k: TLInt;
+  alpha: TLComplex; const A: TLComplexMatrix; IA: TLInt;
+  ja: TLInt; OpTypeA: TLInt; const b: TLComplexMatrix;
+  IB: TLInt; JB: TLInt; OpTypeB: TLInt; beta: TLComplex;
   var C: TLComplexMatrix; IC: TLInt; JC: TLInt);
 var
-  I  : TLInt;
+  i  : TLInt;
   J  : TLInt;
   v  : TLComplex;
   i_ : TLInt;
@@ -2623,7 +2623,7 @@ begin
   //
   // Special case
   //
-  if M * N = 0 then
+  if M * n = 0 then
     begin
       Exit;
     end;
@@ -2633,32 +2633,32 @@ begin
   //
   if k = 0 then
     begin
-      if C_NotEqualR(Beta, 0) then
+      if C_NotEqualR(beta, 0) then
         begin
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               J := 0;
-              while J <= N - 1 do
+              while J <= n - 1 do
                 begin
-                  C[IC + I, JC + J] := C_Mul(Beta, C[IC + I, JC + J]);
+                  C[IC + i, JC + J] := C_Mul(beta, C[IC + i, JC + J]);
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
         end
       else
         begin
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               J := 0;
-              while J <= N - 1 do
+              while J <= n - 1 do
                 begin
-                  C[IC + I, JC + J] := C_Complex(0);
+                  C[IC + i, JC + J] := C_Complex(0);
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
         end;
       Exit;
@@ -2673,13 +2673,13 @@ begin
       //
       // A*B'
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
           J := 0;
-          while J <= N - 1 do
+          while J <= n - 1 do
             begin
-              if (k = 0) or C_EqualR(Alpha, 0) then
+              if (k = 0) or C_EqualR(alpha, 0) then
                 begin
                   v := C_Complex(0);
                 end
@@ -2687,35 +2687,35 @@ begin
                 begin
                   if OpTypeB = 1 then
                     begin
-                      i1_ := (JB) - (JA);
+                      i1_ := (JB) - (ja);
                       v := C_Complex(0.0);
-                      for i_ := JA to JA + k - 1 do
+                      for i_ := ja to ja + k - 1 do
                         begin
-                          v := C_Add(v, C_Mul(A[IA + I, i_], B[IB + J, i_ + i1_]));
+                          v := C_Add(v, C_Mul(A[IA + i, i_], b[IB + J, i_ + i1_]));
                         end;
                     end
                   else
                     begin
-                      i1_ := (JB) - (JA);
+                      i1_ := (JB) - (ja);
                       v := C_Complex(0.0);
-                      for i_ := JA to JA + k - 1 do
+                      for i_ := ja to ja + k - 1 do
                         begin
-                          v := C_Add(v, C_Mul(A[IA + I, i_], Conj(B[IB + J, i_ + i1_])));
+                          v := C_Add(v, C_Mul(A[IA + i, i_], Conj(b[IB + J, i_ + i1_])));
                         end;
                     end;
                 end;
-              if C_EqualR(Beta, 0) then
+              if C_EqualR(beta, 0) then
                 begin
-                  C[IC + I, JC + J] := C_Mul(Alpha, v);
+                  C[IC + i, JC + J] := C_Mul(alpha, v);
                 end
               else
                 begin
-                  C[IC + I, JC + J] := C_Add(C_Mul(Beta, C[IC + I, JC + J]),
-                    C_Mul(Alpha, v));
+                  C[IC + i, JC + J] := C_Add(C_Mul(beta, C[IC + i, JC + J]),
+                    C_Mul(alpha, v));
                 end;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end;
@@ -2725,41 +2725,41 @@ begin
       //
       // A*B
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
-          if C_NotEqualR(Beta, 0) then
+          if C_NotEqualR(beta, 0) then
             begin
-              for i_ := JC to JC + N - 1 do
+              for i_ := JC to JC + n - 1 do
                 begin
-                  C[IC + I, i_] := C_Mul(Beta, C[IC + I, i_]);
+                  C[IC + i, i_] := C_Mul(beta, C[IC + i, i_]);
                 end;
             end
           else
             begin
               J := 0;
-              while J <= N - 1 do
+              while J <= n - 1 do
                 begin
-                  C[IC + I, JC + J] := C_Complex(0);
+                  C[IC + i, JC + J] := C_Complex(0);
                   Inc(J);
                 end;
             end;
-          if C_NotEqualR(Alpha, 0) then
+          if C_NotEqualR(alpha, 0) then
             begin
               J := 0;
               while J <= k - 1 do
                 begin
-                  v := C_Mul(Alpha, A[IA + I, JA + J]);
+                  v := C_Mul(alpha, A[IA + i, ja + J]);
                   i1_ := (JB) - (JC);
-                  for i_ := JC to JC + N - 1 do
+                  for i_ := JC to JC + n - 1 do
                     begin
-                      C[IC + I, i_] := C_Add(C[IC + I, i_],
-                        C_Mul(v, B[IB + J, i_ + i1_]));
+                      C[IC + i, i_] := C_Add(C[IC + i, i_],
+                        C_Mul(v, b[IB + J, i_ + i1_]));
                     end;
                   Inc(J);
                 end;
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end;
@@ -2769,13 +2769,13 @@ begin
       //
       // A'*B'
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
           J := 0;
-          while J <= N - 1 do
+          while J <= n - 1 do
             begin
-              if C_EqualR(Alpha, 0) then
+              if C_EqualR(alpha, 0) then
                 begin
                   v := C_Complex(0);
                 end
@@ -2789,7 +2789,7 @@ begin
                           v := C_Complex(0.0);
                           for i_ := IA to IA + k - 1 do
                             begin
-                              v := C_Add(v, C_Mul(A[i_, JA + I], B[IB + J, i_ + i1_]));
+                              v := C_Add(v, C_Mul(A[i_, ja + i], b[IB + J, i_ + i1_]));
                             end;
                         end
                       else
@@ -2798,7 +2798,7 @@ begin
                           v := C_Complex(0.0);
                           for i_ := IA to IA + k - 1 do
                             begin
-                              v := C_Add(v, C_Mul(A[i_, JA + I], Conj(B[IB + J, i_ + i1_])));
+                              v := C_Add(v, C_Mul(A[i_, ja + i], Conj(b[IB + J, i_ + i1_])));
                             end;
                         end;
                     end
@@ -2810,7 +2810,7 @@ begin
                           v := C_Complex(0.0);
                           for i_ := IA to IA + k - 1 do
                             begin
-                              v := C_Add(v, C_Mul(Conj(A[i_, JA + I]), B[IB + J, i_ + i1_]));
+                              v := C_Add(v, C_Mul(Conj(A[i_, ja + i]), b[IB + J, i_ + i1_]));
                             end;
                         end
                       else
@@ -2819,24 +2819,24 @@ begin
                           v := C_Complex(0.0);
                           for i_ := IA to IA + k - 1 do
                             begin
-                              v := C_Add(v, C_Mul(Conj(A[i_, JA + I]),
-                                Conj(B[IB + J, i_ + i1_])));
+                              v := C_Add(v, C_Mul(Conj(A[i_, ja + i]),
+                                Conj(b[IB + J, i_ + i1_])));
                             end;
                         end;
                     end;
                 end;
-              if C_EqualR(Beta, 0) then
+              if C_EqualR(beta, 0) then
                 begin
-                  C[IC + I, JC + J] := C_Mul(Alpha, v);
+                  C[IC + i, JC + J] := C_Mul(alpha, v);
                 end
               else
                 begin
-                  C[IC + I, JC + J] := C_Add(C_Mul(Beta, C[IC + I, JC + J]),
-                    C_Mul(Alpha, v));
+                  C[IC + i, JC + J] := C_Add(C_Mul(beta, C[IC + i, JC + J]),
+                    C_Mul(alpha, v));
                 end;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end;
@@ -2846,55 +2846,55 @@ begin
       //
       // A'*B
       //
-      if C_EqualR(Beta, 0) then
+      if C_EqualR(beta, 0) then
         begin
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               J := 0;
-              while J <= N - 1 do
+              while J <= n - 1 do
                 begin
-                  C[IC + I, JC + J] := C_Complex(0);
+                  C[IC + i, JC + J] := C_Complex(0);
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
         end
       else
         begin
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
-              for i_ := JC to JC + N - 1 do
+              for i_ := JC to JC + n - 1 do
                 begin
-                  C[IC + I, i_] := C_Mul(Beta, C[IC + I, i_]);
+                  C[IC + i, i_] := C_Mul(beta, C[IC + i, i_]);
                 end;
-              Inc(I);
+              Inc(i);
             end;
         end;
-      if C_NotEqualR(Alpha, 0) then
+      if C_NotEqualR(alpha, 0) then
         begin
           J := 0;
           while J <= k - 1 do
             begin
-              I := 0;
-              while I <= M - 1 do
+              i := 0;
+              while i <= M - 1 do
                 begin
                   if OpTypeA = 1 then
                     begin
-                      v := C_Mul(Alpha, A[IA + J, JA + I]);
+                      v := C_Mul(alpha, A[IA + J, ja + i]);
                     end
                   else
                     begin
-                      v := C_Mul(Alpha, Conj(A[IA + J, JA + I]));
+                      v := C_Mul(alpha, Conj(A[IA + J, ja + i]));
                     end;
                   i1_ := (JB) - (JC);
-                  for i_ := JC to JC + N - 1 do
+                  for i_ := JC to JC + n - 1 do
                     begin
-                      C[IC + I, i_] := C_Add(C[IC + I, i_],
-                        C_Mul(v, B[IB + J, i_ + i1_]));
+                      C[IC + i, i_] := C_Add(C[IC + i, i_],
+                        C_Mul(v, b[IB + J, i_ + i1_]));
                     end;
-                  Inc(I);
+                  Inc(i);
                 end;
               Inc(J);
             end;
@@ -2906,13 +2906,13 @@ end;
 (* ************************************************************************
   GEMM kernel
   ************************************************************************ *)
-procedure RMatrixGEMMK(M: TLInt; N: TLInt; k: TLInt;
-  Alpha: TLFloat; const A: TLMatrix; IA: TLInt;
-  JA: TLInt; OpTypeA: TLInt; const B: TLMatrix;
+procedure RMatrixGEMMK(M: TLInt; n: TLInt; k: TLInt;
+  alpha: TLFloat; const A: TLMatrix; IA: TLInt;
+  ja: TLInt; OpTypeA: TLInt; const b: TLMatrix;
   IB: TLInt; JB: TLInt; OpTypeB: TLInt;
-  Beta: TLFloat; var C: TLMatrix; IC: TLInt; JC: TLInt);
+  beta: TLFloat; var C: TLMatrix; IC: TLInt; JC: TLInt);
 var
-  I  : TLInt;
+  i  : TLInt;
   J  : TLInt;
   v  : TLFloat;
   i_ : TLInt;
@@ -2922,7 +2922,7 @@ begin
   //
   // if matrix size is zero
   //
-  if M * N = 0 then
+  if M * n = 0 then
     begin
       Exit;
     end;
@@ -2932,34 +2932,34 @@ begin
   //
   if k = 0 then
     begin
-      if AP_FP_Neq(Beta, 1) then
+      if AP_FP_NEq(beta, 1) then
         begin
-          if AP_FP_Neq(Beta, 0) then
+          if AP_FP_NEq(beta, 0) then
             begin
-              I := 0;
-              while I <= M - 1 do
+              i := 0;
+              while i <= M - 1 do
                 begin
                   J := 0;
-                  while J <= N - 1 do
+                  while J <= n - 1 do
                     begin
-                      C[IC + I, JC + J] := Beta * C[IC + I, JC + J];
+                      C[IC + i, JC + J] := beta * C[IC + i, JC + J];
                       Inc(J);
                     end;
-                  Inc(I);
+                  Inc(i);
                 end;
             end
           else
             begin
-              I := 0;
-              while I <= M - 1 do
+              i := 0;
+              while i <= M - 1 do
                 begin
                   J := 0;
-                  while J <= N - 1 do
+                  while J <= n - 1 do
                     begin
-                      C[IC + I, JC + J] := 0;
+                      C[IC + i, JC + J] := 0;
                       Inc(J);
                     end;
-                  Inc(I);
+                  Inc(i);
                 end;
             end;
         end;
@@ -2975,32 +2975,32 @@ begin
       //
       // A*B'
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
           J := 0;
-          while J <= N - 1 do
+          while J <= n - 1 do
             begin
-              if (k = 0) or AP_FP_Eq(Alpha, 0) then
+              if (k = 0) or AP_FP_Eq(alpha, 0) then
                 begin
                   v := 0;
                 end
               else
                 begin
-                  v := APVDotProduct(@A[IA + I][0], JA, JA + k - 1, @B[IB + J][0],
+                  v := APVDotProduct(@A[IA + i][0], ja, ja + k - 1, @b[IB + J][0],
                     JB, JB + k - 1);
                 end;
-              if AP_FP_Eq(Beta, 0) then
+              if AP_FP_Eq(beta, 0) then
                 begin
-                  C[IC + I, JC + J] := Alpha * v;
+                  C[IC + i, JC + J] := alpha * v;
                 end
               else
                 begin
-                  C[IC + I, JC + J] := Beta * C[IC + I, JC + J] + Alpha * v;
+                  C[IC + i, JC + J] := beta * C[IC + i, JC + J] + alpha * v;
                 end;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end;
@@ -3010,34 +3010,34 @@ begin
       //
       // A*B
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
-          if AP_FP_Neq(Beta, 0) then
+          if AP_FP_NEq(beta, 0) then
             begin
-              APVMul(@C[IC + I][0], JC, JC + N - 1, Beta);
+              APVMul(@C[IC + i][0], JC, JC + n - 1, beta);
             end
           else
             begin
               J := 0;
-              while J <= N - 1 do
+              while J <= n - 1 do
                 begin
-                  C[IC + I, JC + J] := 0;
+                  C[IC + i, JC + J] := 0;
                   Inc(J);
                 end;
             end;
-          if AP_FP_Neq(Alpha, 0) then
+          if AP_FP_NEq(alpha, 0) then
             begin
               J := 0;
               while J <= k - 1 do
                 begin
-                  v := Alpha * A[IA + I, JA + J];
-                  APVAdd(@C[IC + I][0], JC, JC + N - 1, @B[IB + J][0], JB,
-                    JB + N - 1, v);
+                  v := alpha * A[IA + i, ja + J];
+                  APVAdd(@C[IC + i][0], JC, JC + n - 1, @b[IB + J][0], JB,
+                    JB + n - 1, v);
                   Inc(J);
                 end;
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end;
@@ -3047,13 +3047,13 @@ begin
       //
       // A'*B'
       //
-      I := 0;
-      while I <= M - 1 do
+      i := 0;
+      while i <= M - 1 do
         begin
           J := 0;
-          while J <= N - 1 do
+          while J <= n - 1 do
             begin
-              if AP_FP_Eq(Alpha, 0) then
+              if AP_FP_Eq(alpha, 0) then
                 begin
                   v := 0;
                 end
@@ -3063,20 +3063,20 @@ begin
                   v := 0.0;
                   for i_ := IA to IA + k - 1 do
                     begin
-                      v := v + A[i_, JA + I] * B[IB + J, i_ + i1_];
+                      v := v + A[i_, ja + i] * b[IB + J, i_ + i1_];
                     end;
                 end;
-              if AP_FP_Eq(Beta, 0) then
+              if AP_FP_Eq(beta, 0) then
                 begin
-                  C[IC + I, JC + J] := Alpha * v;
+                  C[IC + i, JC + J] := alpha * v;
                 end
               else
                 begin
-                  C[IC + I, JC + J] := Beta * C[IC + I, JC + J] + Alpha * v;
+                  C[IC + i, JC + J] := beta * C[IC + i, JC + J] + alpha * v;
                 end;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end;
@@ -3086,45 +3086,45 @@ begin
       //
       // A'*B
       //
-      if AP_FP_Eq(Beta, 0) then
+      if AP_FP_Eq(beta, 0) then
         begin
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
               J := 0;
-              while J <= N - 1 do
+              while J <= n - 1 do
                 begin
-                  C[IC + I, JC + J] := 0;
+                  C[IC + i, JC + J] := 0;
                   Inc(J);
                 end;
-              Inc(I);
+              Inc(i);
             end;
         end
       else
         begin
-          I := 0;
-          while I <= M - 1 do
+          i := 0;
+          while i <= M - 1 do
             begin
-              APVMul(@C[IC + I][0], JC, JC + N - 1, Beta);
-              Inc(I);
+              APVMul(@C[IC + i][0], JC, JC + n - 1, beta);
+              Inc(i);
             end;
         end;
-      if AP_FP_Neq(Alpha, 0) then
+      if AP_FP_NEq(alpha, 0) then
         begin
           J := 0;
           while J <= k - 1 do
             begin
-              I := 0;
-              while I <= M - 1 do
+              i := 0;
+              while i <= M - 1 do
                 begin
-                  v := Alpha * A[IA + J, JA + I];
-                  APVAdd(@C[IC + I][0], JC, JC + N - 1, @B[IB + J][0], JB,
-                    JB + N - 1, v);
-                  Inc(I);
+                  v := alpha * A[IA + J, ja + i];
+                  APVAdd(@C[IC + i][0], JC, JC + n - 1, @b[IB + J][0], JB,
+                    JB + n - 1, v);
+                  Inc(i);
                 end;
               Inc(J);
             end;
         end;
       Exit;
     end;
-end;
+end; 

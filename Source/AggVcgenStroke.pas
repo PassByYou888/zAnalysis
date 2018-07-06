@@ -39,7 +39,7 @@ unit AggVcgenStroke;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -94,7 +94,7 @@ type
     property InnerJoin: TAggInnerJoin read FInnerJoin write SetInnerJoin;
     property Shorten: Double read FShorten write SetShorten;
 
-    property Width: Double read GetWidth write SetWidth;
+    property width: Double read GetWidth write SetWidth;
     property MiterLimit: Double read FMiterLimit write SetMiterLimit;
     property InnerMiterLimit: Double read FInnerMiterLimit write SetInnerMiterLimit;
     property ApproximationScale: Double read FApproxScale write SetApproximationScale;
@@ -149,7 +149,7 @@ type
     property InnerJoin: TAggInnerJoin read GetInnerJoin write SetInnerJoin;
     property Shorten: Double read FShorten write SetShorten;
 
-    property Width: Double read GetWidth write SetWidth;
+    property width: Double read GetWidth write SetWidth;
     property MiterLimit: Double read GetMiterLimit write SetMiterLimit;
     property InnerMiterLimit: Double read GetInnerMiterLimit write SetInnerMiterLimit;
     property ApproximationScale: Double read GetApproximationScale write SetApproximationScale;
@@ -246,36 +246,36 @@ end;
 
 procedure TAggVcgenStroke.AddVertex(X, Y: Double; Cmd: Cardinal);
 var
-  Vd: TAggVertexDistance;
+  VD: TAggVertexDistance;
 begin
   FStatus := seInitial;
 
-  Vd.Pos.X := X;
-  Vd.Pos.Y := Y;
+  VD.pos.X := X;
+  VD.pos.Y := Y;
 
-  Vd.Dist := 0;
+  VD.Dist := 0;
 
   if IsMoveTo(Cmd) then
-      FSourceVertices.ModifyLast(@Vd)
+      FSourceVertices.ModifyLast(@VD)
   else if IsVertex(Cmd) then
-      FSourceVertices.Add(@Vd)
+      FSourceVertices.Add(@VD)
   else
       FClosed := GetCloseFlag(Cmd);
 end;
 
-procedure CalculateButtCap(Cap: PDoubleArray4; V0, V1: PAggVertexDistance;
-  Len, Width: Double);
+procedure CalculateButtCap(Cap: PDoubleArray4; v0, v1: PAggVertexDistance;
+  Len, width: Double);
 var
-  Dx, Dy, Temp: Double;
+  dx, dy, Temp: Double;
 begin
-  Temp := Width / Len;
-  Dx := (V1.Pos.Y - V0.Pos.Y) * Temp;
-  Dy := (V1.Pos.X - V0.Pos.X) * Temp;
+  Temp := width / Len;
+  dx := (v1.pos.Y - v0.pos.Y) * Temp;
+  dy := (v1.pos.X - v0.pos.X) * Temp;
 
-  Cap^[0] := V0.Pos.X - Dx;
-  Cap^[1] := V0.Pos.Y + Dy;
-  Cap^[2] := V0.Pos.X + Dx;
-  Cap^[3] := V0.Pos.Y - Dy;
+  Cap^[0] := v0.pos.X - dx;
+  Cap^[1] := v0.pos.Y + dy;
+  Cap^[2] := v0.pos.X + dx;
+  Cap^[3] := v0.pos.Y - dy;
 end;
 
 procedure TAggVcgenStroke.Rewind(PathID: Cardinal);
@@ -301,7 +301,7 @@ var
   C: PPointDouble;
   Cmd: Cardinal;
 label
-  Rdy, Out2;
+  RDY, Out2;
 begin
   Cmd := CAggPathCmdLineTo;
 
@@ -311,12 +311,12 @@ begin
         seInitial:
           begin
             Rewind(0);
-            goto Rdy;
+            goto RDY;
           end;
 
         seReady:
           begin
-          Rdy:
+          RDY:
             if FSourceVertices.Size < 2 + Cardinal(FClosed <> 0) then
               begin
                 Cmd := CAggPathCmdStop;
@@ -525,7 +525,7 @@ end;
 
 procedure TAggVcgenStrokeMath.SetWidth(Value: Double);
 begin
-  FStroker.Width := Value;
+  FStroker.width := Value;
 end;
 
 procedure TAggVcgenStrokeMath.SetMiterLimit(Value: Double);
@@ -550,7 +550,7 @@ end;
 
 function TAggVcgenStrokeMath.GetWidth: Double;
 begin
-  Result := FStroker.Width;
+  Result := FStroker.width;
 end;
 
 function TAggVcgenStrokeMath.GetMiterLimit: Double;
@@ -583,17 +583,17 @@ end;
 
 procedure TAggVcgenStrokeMath.AddVertex(X, Y: Double; Cmd: Cardinal);
 var
-  Vd: TAggVertexDistance;
+  VD: TAggVertexDistance;
 begin
   FStatus := seInitial;
 
-  Vd.Pos := PointDouble(X, Y);
-  Vd.Dist := 0;
+  VD.pos := PointDouble(X, Y);
+  VD.Dist := 0;
 
   if IsMoveTo(Cmd) then
-      FSourceVertices.ModifyLast(@Vd)
+      FSourceVertices.ModifyLast(@VD)
   else if IsVertex(Cmd) then
-      FSourceVertices.Add(@Vd)
+      FSourceVertices.Add(@VD)
   else
       FClosed := GetCloseFlag(Cmd);
 end;
@@ -791,4 +791,5 @@ begin
   Result := Cmd;
 end;
 
-end.
+end. 
+ 

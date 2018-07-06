@@ -39,7 +39,7 @@ unit AggVpGenSegmentator;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -54,7 +54,7 @@ type
     FDeltaL, FDeltaDeltaL: Double;
     FDelta: TPointDouble;
     FCmd: Cardinal;
-    procedure SetApproximationScale(S: Double);
+    procedure SetApproximationScale(s: Double);
     function GetAutoClose: Boolean;
     function GetAutoUnclose: Boolean;
   public
@@ -91,7 +91,7 @@ end;
 
 procedure TAggVpgenSegmentator.SetApproximationScale;
 begin
-  FApproximationScale := S;
+  FApproximationScale := s;
 end;
 
 function TAggVpgenSegmentator.GetAutoClose;
@@ -180,4 +180,4 @@ begin
     end;
 end;
 
-end.
+end. 

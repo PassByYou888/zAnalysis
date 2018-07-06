@@ -35,72 +35,72 @@
   //                                                                            //
   ////////////////////////////////////////////////////////////////////////////////
 *)
-unit AggRenderScanLines;
+unit AggRenderScanlines;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
   AggColor32,
   AggRasterizerScanLine,
-  AggScanLine,
+  AggScanline,
   AggRendererScanLine,
   AggVertexSource;
 
-procedure RenderScanLines(Ras: TAggRasterizerScanLine; Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
-procedure RenderAllPaths(Ras: TAggRasterizerScanLine; Sl: TAggCustomScanLine; R: TAggCustomRendererScanLineSolid; Vs: TAggVertexSource; Cs: PAggColor; PathID: PCardinal; PathCount: Cardinal);
+procedure RenderScanLines(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure RenderAllPaths(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine; R: TAggCustomRendererScanLineSolid; Vs: TAggVertexSource; cs: PAggColor; PathID: PCardinal; PathCount: Cardinal);
 
 implementation
 
-procedure RenderScanLines(Ras: TAggRasterizerScanLine; Sl: TAggCustomScanLine;
+procedure RenderScanLines(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine;
   Ren: TAggCustomRendererScanLine);
 var
-  SlEm: TAggEmbeddedScanline;
+  SlEm: TAggEmbeddedScanLine;
 begin
   if Ras.RewindScanLines then
     begin
-      Sl.Reset(Ras.MinimumX, Ras.MaximumX);
+      SL.Reset(Ras.MinimumX, Ras.MaximumX);
       Ren.Prepare(Cardinal(Ras.MaximumX - Ras.MinimumX + 2));
 
       { if Sl.IsEmbedded then
         while Ras.SweepScanLineEm(Sl) do
         Ren.Render(Sl)
         else }
-      if Sl is TAggEmbeddedScanline then
+      if SL is TAggEmbeddedScanLine then
         begin
-          SlEm := Sl as TAggEmbeddedScanline;
+          SlEm := SL as TAggEmbeddedScanLine;
           while Ras.SweepScanLine(SlEm) do
               Ren.Render(SlEm)
         end
       else
-        while Ras.SweepScanLine(Sl) do
-            Ren.Render(Sl);
+        while Ras.SweepScanLine(SL) do
+            Ren.Render(SL);
     end;
 end;
 
-procedure RenderAllPaths(Ras: TAggRasterizerScanLine; Sl: TAggCustomScanLine;
-  R: TAggCustomRendererScanLineSolid; Vs: TAggVertexSource; Cs: PAggColor;
+procedure RenderAllPaths(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine;
+  R: TAggCustomRendererScanLineSolid; Vs: TAggVertexSource; cs: PAggColor;
   PathID: PCardinal; PathCount: Cardinal);
 var
-  I: Cardinal;
+  i: Cardinal;
 begin
-  I := 0;
+  i := 0;
 
-  while I < PathCount do
+  while i < PathCount do
     begin
       Ras.Reset;
       Ras.AddPath(Vs, PathID^);
-      R.SetColor(Cs);
+      R.SetColor(cs);
 
-      RenderScanLines(Ras, Sl, R);
+      RenderScanLines(Ras, SL, R);
 
-      Inc(PtrComp(Cs), SizeOf(TAggColor));
+      Inc(PtrComp(cs), SizeOf(TAggColor));
       Inc(PtrComp(PathID), SizeOf(Cardinal));
-      Inc(I);
+      Inc(i);
     end;
 end;
 
-end.
+end. 

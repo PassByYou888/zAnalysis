@@ -43,66 +43,66 @@ begin
     end;
 end;
 
-class function TSequenceMemoryRaster.CanLoadStream(Stream: TCoreClassStream): Boolean;
+class function TSequenceMemoryRaster.CanLoadStream(stream: TCoreClassStream): Boolean;
 var
-  fp: Int64;
+  FP: Int64;
   hflag: Word;
-  ATotal, AColumn: Integer;
+  ATotal, aColumn: Integer;
 begin
   Result := False;
-  fp := Stream.Position;
-  if Stream.Read(hflag, 2) <> 2 then
+  FP := stream.Position;
+  if stream.read(hflag, 2) <> 2 then
       Exit;
   try
     if hflag = $8888 then
       begin
-        if Stream.Read(ATotal, 4) <> 4 then
+        if stream.read(ATotal, 4) <> 4 then
             Exit;
-        if Stream.Read(AColumn, 4) <> 4 then
+        if stream.read(aColumn, 4) <> 4 then
             Exit;
-        Result := inherited CanLoadStream(Stream);
-        Stream.Position := fp;
+        Result := inherited CanLoadStream(stream);
+        stream.Position := FP;
       end
     else
       begin
-        Stream.Position := fp;
-        Result := inherited CanLoadStream(Stream);
+        stream.Position := FP;
+        Result := inherited CanLoadStream(stream);
       end;
   except
   end;
 end;
 
-procedure TSequenceMemoryRaster.LoadFromStream(Stream: TCoreClassStream);
+procedure TSequenceMemoryRaster.LoadFromStream(stream: TCoreClassStream);
 var
-  fp: Int64;
+  FP: Int64;
   hflag: Word;
-  ATotal, AColumn: Integer;
+  ATotal, aColumn: Integer;
   deStream: TMemoryStream64;
 begin
   Reset;
-  fp := Stream.Position;
-  if Stream.Read(hflag, 2) <> 2 then
+  FP := stream.Position;
+  if stream.read(hflag, 2) <> 2 then
       Exit;
   if hflag = $8888 then
     begin
-      if Stream.Read(ATotal, 4) <> 4 then
+      if stream.read(ATotal, 4) <> 4 then
           Exit;
-      if Stream.Read(AColumn, 4) <> 4 then
+      if stream.read(aColumn, 4) <> 4 then
           Exit;
-      inherited LoadFromStream(Stream);
+      inherited LoadFromStream(stream);
       FTotal := ATotal;
-      FColumn := AColumn;
+      FColumn := aColumn;
     end
   else
     begin
-      Stream.Position := fp;
-      inherited LoadFromStream(Stream);
+      stream.Position := FP;
+      inherited LoadFromStream(stream);
       FTotal := 1;
       FColumn := 1;
     end;
 end;
 
-procedure TSequenceMemoryRaster.SaveToStream(Stream: TCoreClassStream);
+procedure TSequenceMemoryRaster.SaveToStream(stream: TCoreClassStream);
 var
   hflag: Word;
   cStream: TMemoryStream64;
@@ -110,13 +110,13 @@ begin
   if FTotal > 1 then
     begin
       hflag := $8888;
-      Stream.Write(hflag, 2);
-      Stream.Write(FTotal, 4);
-      Stream.Write(FColumn, 4);
-      inherited SaveToZLibCompressStream(Stream);
+      stream.write(hflag, 2);
+      stream.write(FTotal, 4);
+      stream.write(FColumn, 4);
+      inherited SaveToZLibCompressStream(stream);
       Exit;
     end;
-  inherited SaveToStream(Stream);
+  inherited SaveToStream(stream);
 end;
 
 function TSequenceMemoryRaster.SequenceFrameRect(index: Integer): TRect;
@@ -124,50 +124,50 @@ begin
   Result := GetSequenceFrameRect(Self, Total, Column, index);
 end;
 
-procedure TSequenceMemoryRaster.ExportSequenceFrame(index: Integer; Output: TMemoryRaster);
+procedure TSequenceMemoryRaster.ExportSequenceFrame(index: Integer; output: TMemoryRaster);
 begin
-  GetSequenceFrameOutput(Self, Total, Column, index, Output);
+  GetSequenceFrameOutput(Self, Total, Column, index, output);
 end;
 
-procedure TSequenceMemoryRaster.ReverseSequence(Output: TSequenceMemoryRaster);
+procedure TSequenceMemoryRaster.ReverseSequence(output: TSequenceMemoryRaster);
 var
-  I: Integer;
+  i: Integer;
   R: TRect;
 begin
-  Output.SetSize(Width, Height);
-  for I := 0 to Total - 1 do
+  output.SetSize(width, height);
+  for i := 0 to Total - 1 do
     begin
-      R := SequenceFrameRect(I);
-      BlockTransfer(Output, R.Left, R.Top, Output.BoundsRect, Self, SequenceFrameRect(Total - 1 - I), dmOpaque);
+      R := SequenceFrameRect(i);
+      BlockTransfer(output, R.Left, R.Top, output.BoundsRect, Self, SequenceFrameRect(Total - 1 - i), dmOpaque);
     end;
-  Output.FTotal := FTotal;
-  Output.FColumn := FColumn;
+  output.FTotal := FTotal;
+  output.FColumn := FColumn;
 end;
 
-procedure TSequenceMemoryRaster.GradientSequence(Output: TSequenceMemoryRaster);
+procedure TSequenceMemoryRaster.GradientSequence(output: TSequenceMemoryRaster);
 var
-  I, J: Integer;
-  sr, dr: TRect;
+  i, J: Integer;
+  SR, dr: TRect;
 begin
-  Output.SetSize(FrameWidth * (Total * 2), FrameHeight);
-  Output.Column := Total * 2;
-  Output.Total := Output.Column;
+  output.SetSize(FrameWidth * (Total * 2), FrameHeight);
+  output.Column := Total * 2;
+  output.Total := output.Column;
 
   J := 0;
 
-  for I := 0 to Total - 1 do
+  for i := 0 to Total - 1 do
     begin
-      dr := Output.SequenceFrameRect(J);
-      sr := SequenceFrameRect(I);
-      BlockTransfer(Output, dr.Left, dr.Top, Output.BoundsRect, Self, sr, dmOpaque);
+      dr := output.SequenceFrameRect(J);
+      SR := SequenceFrameRect(i);
+      BlockTransfer(output, dr.Left, dr.Top, output.BoundsRect, Self, SR, dmOpaque);
       Inc(J);
     end;
 
-  for I := Total - 1 downto 0 do
+  for i := Total - 1 downto 0 do
     begin
-      dr := Output.SequenceFrameRect(J);
-      sr := SequenceFrameRect(I);
-      BlockTransfer(Output, dr.Left, dr.Top, Output.BoundsRect, Self, sr, dmOpaque);
+      dr := output.SequenceFrameRect(J);
+      SR := SequenceFrameRect(i);
+      BlockTransfer(output, dr.Left, dr.Top, output.BoundsRect, Self, SR, dmOpaque);
       Inc(J);
     end;
 end;
@@ -192,4 +192,5 @@ end;
 function TSequenceMemoryRaster.FrameRect: TRect;
 begin
   Result := Rect(0, 0, FrameWidth, FrameHeight);
-end;
+end; 
+ 

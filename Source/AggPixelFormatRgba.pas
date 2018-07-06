@@ -39,7 +39,7 @@ unit AggPixelFormatRgba;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -58,21 +58,21 @@ procedure PixelFormatRgba32Pre(out PixelFormatProcessor: TAggPixelFormatProcesso
 procedure PixelFormatArgb32Pre(out PixelFormatProcessor: TAggPixelFormatProcessor; RenderingBuffer: TAggRenderingBuffer);
 procedure PixelFormatAbgr32Pre(out PixelFormatProcessor: TAggPixelFormatProcessor; RenderingBuffer: TAggRenderingBuffer);
 
-procedure BlendModeAdaptorRgba(This: TAggPixelFormatProcessor; BlendMode: TAggBlendMode; P: PInt8u; Cr, Cg, Cb, Ca, Cover: Cardinal);
-procedure BlendModeAdaptorClipToDestinationRgbaPre(This: TAggPixelFormatProcessor; BlendMode: TAggBlendMode; P: PInt8u; Cr, Cg, Cb, Ca, Cover: Cardinal);
+procedure BlendModeAdaptorRgba(This: TAggPixelFormatProcessor; BlendMode: TAggBlendMode; p: PInt8u; CR, Cg, CB, ca, Cover: Cardinal);
+procedure BlendModeAdaptorClipToDestinationRgbaPre(This: TAggPixelFormatProcessor; BlendMode: TAggBlendMode; p: PInt8u; CR, Cg, CB, ca, Cover: Cardinal);
 
 procedure PixelFormatAlphaBlendRgba(out PixelFormatProcessor: TAggPixelFormatProcessor; RenderingBuffer: TAggRenderingBuffer; Order: TAggOrder);
-procedure PixelFormatCustomBlendRgba(out PixelFormatProcessor: TAggPixelFormatProcessor; RenderingBuffer: TAggRenderingBuffer; Bl: TAggFuncBlender; Order: TAggOrder);
+procedure PixelFormatCustomBlendRgba(out PixelFormatProcessor: TAggPixelFormatProcessor; RenderingBuffer: TAggRenderingBuffer; BL: TAggFuncBlender; Order: TAggOrder);
 
 implementation
 
 function Format32Row(This: TAggPixelFormatProcessor; X, Y: Integer): TAggRowDataType;
 var
-  P: PCardinal;
+  p: PCardinal;
 begin
-  P := PCardinal(This.RenderingBuffer.Row(Y));
-  Inc(P, X);
-  Result.Initialize(X, This.Width - 1, PInt8u(P));
+  p := PCardinal(This.RenderingBuffer.Row(Y));
+  Inc(p, X);
+  Result.Initialize(X, This.width - 1, PInt8u(p));
 end;
 
 procedure Format32CopyFrom(This: TAggPixelFormatProcessor; From: TAggRenderingBuffer;
@@ -92,20 +92,20 @@ end;
 procedure Order32ForEachPixel(This: TAggPixelFormatProcessor; F: TAggFuncApplyGamma);
 var
   Y, Len: Cardinal;
-  P: PInt8u;
+  p: PInt8u;
 begin
   Y := 0;
 
-  while Y < This.Height do
+  while Y < This.height do
     begin
-      Len := This.Width;
+      Len := This.width;
 
-      P := This.RenderingBuffer.Row(Y);
+      p := This.RenderingBuffer.Row(Y);
 
       repeat
-        F(This, P);
+        F(This, p);
 
-        Inc(PtrComp(P), 4);
+        Inc(PtrComp(p), 4);
         Dec(Len);
       until Len = 0;
 
@@ -113,90 +113,90 @@ begin
     end;
 end;
 
-procedure Order32GammaDirApply(This: TAggPixelFormatProcessor; P: PInt8u); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure Order32GammaDirApply(This: TAggPixelFormatProcessor; p: PInt8u); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u(This.Apply.Dir[PInt8u(PtrComp(P) + This.Order.R)^]);
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u(This.Apply.Dir[PInt8u(PtrComp(P) + This.Order.G)^]);
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u(This.Apply.Dir[PInt8u(PtrComp(P) + This.Order.B)^]);
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u(This.Apply.dir[PInt8u(PtrComp(p) + This.Order.R)^]);
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u(This.Apply.dir[PInt8u(PtrComp(p) + This.Order.g)^]);
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u(This.Apply.dir[PInt8u(PtrComp(p) + This.Order.b)^]);
 end;
 
-procedure Order32GammaInvApply(This: TAggPixelFormatProcessor; P: PInt8u); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure Order32GammaInvApply(This: TAggPixelFormatProcessor; p: PInt8u); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u(This.Apply.Inv[PInt8u(PtrComp(P) + This.Order.R)^]);
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u(This.Apply.Inv[PInt8u(PtrComp(P) + This.Order.G)^]);
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u(This.Apply.Inv[PInt8u(PtrComp(P) + This.Order.B)^]);
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u(This.Apply.Inv[PInt8u(PtrComp(p) + This.Order.R)^]);
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u(This.Apply.Inv[PInt8u(PtrComp(p) + This.Order.g)^]);
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u(This.Apply.Inv[PInt8u(PtrComp(p) + This.Order.b)^]);
 end;
 
-procedure Order32PixelPreMultiply(This: TAggPixelFormatProcessor; P: PInt8u);
+procedure Order32PixelPreMultiply(This: TAggPixelFormatProcessor; p: PInt8u);
 var
   A: Cardinal;
 begin
-  A := PInt8u(PtrComp(P) + This.Order.A)^;
+  A := PInt8u(PtrComp(p) + This.Order.A)^;
 
   if A = 0 then
     begin
-      PInt8u(PtrComp(P) + This.Order.R)^ := 0;
-      PInt8u(PtrComp(P) + This.Order.G)^ := 0;
-      PInt8u(PtrComp(P) + This.Order.B)^ := 0;
+      PInt8u(PtrComp(p) + This.Order.R)^ := 0;
+      PInt8u(PtrComp(p) + This.Order.g)^ := 0;
+      PInt8u(PtrComp(p) + This.Order.b)^ := 0;
     end
   else
     begin
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-        Int8u((PInt8u(PtrComp(P) + This.Order.R)^ * A + CAggBaseMask)
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+        Int8u((PInt8u(PtrComp(p) + This.Order.R)^ * A + CAggBaseMask)
         shr CAggBaseShift);
 
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-        Int8u((PInt8u(PtrComp(P) + This.Order.G)^ * A + CAggBaseMask)
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+        Int8u((PInt8u(PtrComp(p) + This.Order.g)^ * A + CAggBaseMask)
         shr CAggBaseShift);
 
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-        Int8u((PInt8u(PtrComp(P) + This.Order.B)^ * A + CAggBaseMask)
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+        Int8u((PInt8u(PtrComp(p) + This.Order.b)^ * A + CAggBaseMask)
         shr CAggBaseShift);
     end;
 end;
 
-procedure Order32PixelDeMultiply(This: TAggPixelFormatProcessor; P: PInt8u);
+procedure Order32PixelDeMultiply(This: TAggPixelFormatProcessor; p: PInt8u);
 var
-  R, G, B, A: Cardinal;
+  R, g, b, A: Cardinal;
 begin
-  A := PInt8u(PtrComp(P) + This.Order.A)^;
+  A := PInt8u(PtrComp(p) + This.Order.A)^;
 
   if A = 0 then
     begin
-      PInt8u(PtrComp(P) + This.Order.R)^ := 0;
-      PInt8u(PtrComp(P) + This.Order.G)^ := 0;
-      PInt8u(PtrComp(P) + This.Order.B)^ := 0;
+      PInt8u(PtrComp(p) + This.Order.R)^ := 0;
+      PInt8u(PtrComp(p) + This.Order.g)^ := 0;
+      PInt8u(PtrComp(p) + This.Order.b)^ := 0;
     end
   else
     begin
-      R := (PInt8u(PtrComp(P) + This.Order.R)^ * CAggBaseMask) div A;
-      G := (PInt8u(PtrComp(P) + This.Order.G)^ * CAggBaseMask) div A;
-      B := (PInt8u(PtrComp(P) + This.Order.B)^ * CAggBaseMask) div A;
+      R := (PInt8u(PtrComp(p) + This.Order.R)^ * CAggBaseMask) div A;
+      g := (PInt8u(PtrComp(p) + This.Order.g)^ * CAggBaseMask) div A;
+      b := (PInt8u(PtrComp(p) + This.Order.b)^ * CAggBaseMask) div A;
 
       if R > CAggBaseMask then
-          PInt8u(PtrComp(P) + This.Order.R)^ := CAggBaseMask
+          PInt8u(PtrComp(p) + This.Order.R)^ := CAggBaseMask
       else
-          PInt8u(PtrComp(P) + This.Order.R)^ := R;
+          PInt8u(PtrComp(p) + This.Order.R)^ := R;
 
-      if G > CAggBaseMask then
-          PInt8u(PtrComp(P) + This.Order.G)^ := CAggBaseMask
+      if g > CAggBaseMask then
+          PInt8u(PtrComp(p) + This.Order.g)^ := CAggBaseMask
       else
-          PInt8u(PtrComp(P) + This.Order.G)^ := G;
+          PInt8u(PtrComp(p) + This.Order.g)^ := g;
 
-      if B > CAggBaseMask then
-          PInt8u(PtrComp(P) + This.Order.B)^ := CAggBaseMask
+      if b > CAggBaseMask then
+          PInt8u(PtrComp(p) + This.Order.b)^ := CAggBaseMask
       else
-          PInt8u(PtrComp(P) + This.Order.B)^ := B;
+          PInt8u(PtrComp(p) + This.Order.b)^ := b;
     end;
 end;
 
-{$I AggPixelFormatBgra32.inc }
+{$INCLUDE AggPixelFormatBgra32.inc }
 
 
 procedure PixelFormatBgra32(out PixelFormatProcessor: TAggPixelFormatProcessor;
@@ -242,7 +242,7 @@ begin
   PixelFormatProcessor.PixelDeMultiply := @Order32PixelDeMultiply;
 end;
 
-{$I AggPixelFormatRgba32.inc }
+{$INCLUDE AggPixelFormatRgba32.inc }
 
 
 procedure PixelFormatRgba32(out PixelFormatProcessor: TAggPixelFormatProcessor;
@@ -289,7 +289,7 @@ begin
   PixelFormatProcessor.PixelDeMultiply := @Order32PixelDeMultiply;
 end;
 
-{$I AggPixelFormatArgb32.inc }
+{$INCLUDE AggPixelFormatArgb32.inc }
 
 
 procedure PixelFormatArgb32(out PixelFormatProcessor: TAggPixelFormatProcessor;
@@ -301,32 +301,32 @@ begin
 
   PixelFormatProcessor.PixWidth := 4;
 
-  PixelFormatProcessor.CopyPixel := @Argb32CopyPixel;
-  PixelFormatProcessor.BlendPixel := @Argb32BlendPixel;
+  PixelFormatProcessor.CopyPixel := @ARGB32CopyPixel;
+  PixelFormatProcessor.BlendPixel := @ARGB32BlendPixel;
 
-  PixelFormatProcessor.Pixel := @Argb32Pixel;
+  PixelFormatProcessor.Pixel := @ARGB32Pixel;
   PixelFormatProcessor.Row := @Format32Row;
 
-  PixelFormatProcessor.CopyHorizontalLine := @Argb32CopyHorizontalLine;
-  PixelFormatProcessor.CopyVerticalLine := @Argb32CopyVerticalLine;
+  PixelFormatProcessor.CopyHorizontalLine := @ARGB32CopyHorizontalLine;
+  PixelFormatProcessor.CopyVerticalLine := @ARGB32CopyVerticalLine;
 
-  PixelFormatProcessor.BlendHorizontalLine := @Argb32BlendHorizontalLine;
-  PixelFormatProcessor.BlendVerticalLine := @Argb32BlendVerticalLine;
+  PixelFormatProcessor.BlendHorizontalLine := @ARGB32BlendHorizontalLine;
+  PixelFormatProcessor.BlendVerticalLine := @ARGB32BlendVerticalLine;
 
-  PixelFormatProcessor.BlendSolidHSpan := @Argb32BlendSolidHSpan;
-  PixelFormatProcessor.BlendSolidVSpan := @Argb32BlendSolidVSpan;
+  PixelFormatProcessor.BlendSolidHSpan := @ARGB32BlendSolidHSpan;
+  PixelFormatProcessor.BlendSolidVSpan := @ARGB32BlendSolidVSpan;
 
-  PixelFormatProcessor.CopyColorHSpan := @Argb32CopyColorHSpan;
-  PixelFormatProcessor.CopyColorVSpan := @Argb32CopyColorVSpan;
+  PixelFormatProcessor.CopyColorHSpan := @ARGB32CopyColorHSpan;
+  PixelFormatProcessor.CopyColorVSpan := @ARGB32CopyColorVSpan;
 
-  PixelFormatProcessor.BlendColorHSpan := @Argb32BlendColorHSpan;
-  PixelFormatProcessor.BlendColorVSpan := @Argb32BlendColorVSpan;
+  PixelFormatProcessor.BlendColorHSpan := @ARGB32BlendColorHSpan;
+  PixelFormatProcessor.BlendColorVSpan := @ARGB32BlendColorVSpan;
 
   PixelFormatProcessor.CopyFrom := @Format32CopyFrom;
-  PixelFormatProcessor.BlendFrom := @Argb32BlendFrom;
+  PixelFormatProcessor.BlendFrom := @ARGB32BlendFrom;
 
-  PixelFormatProcessor.BlendFromColor := @Argb32BlendFromColor;
-  PixelFormatProcessor.BlendFromLUT := @Argb32BlendFromLUT;
+  PixelFormatProcessor.BlendFromColor := @ARGB32BlendFromColor;
+  PixelFormatProcessor.BlendFromLUT := @ARGB32BlendFromLUT;
 
   PixelFormatProcessor.ForEachPixel := @Order32ForEachPixel;
   PixelFormatProcessor.GammaDirApply := @Order32GammaDirApply;
@@ -336,7 +336,7 @@ begin
   PixelFormatProcessor.PixelDeMultiply := @Order32PixelDeMultiply;
 end;
 
-{$I AggPixelFormatAbgr32.inc }
+{$INCLUDE AggPixelFormatAbgr32.inc }
 
 
 procedure PixelFormatAbgr32(out PixelFormatProcessor: TAggPixelFormatProcessor;
@@ -383,7 +383,7 @@ begin
   PixelFormatProcessor.PixelDeMultiply := @Order32PixelDeMultiply;
 end;
 
-{$I AggPixelFormatBgra32Pre.inc }
+{$INCLUDE AggPixelFormatBgra32Pre.inc }
 
 
 procedure PixelFormatBgra32Pre(out PixelFormatProcessor: TAggPixelFormatProcessor;
@@ -430,7 +430,7 @@ begin
   PixelFormatProcessor.PixelDeMultiply := @Order32PixelDeMultiply;
 end;
 
-{$I AggPixelFormatRgba32Pre.inc }
+{$INCLUDE AggPixelFormatRgba32Pre.inc }
 
 
 procedure PixelFormatRgba32Pre(
@@ -478,7 +478,7 @@ begin
   PixelFormatProcessor.PixelDeMultiply := @Order32PixelDeMultiply;
 end;
 
-{$I AggPixelFormatArgb32Pre.inc }
+{$INCLUDE AggPixelFormatArgb32Pre.inc }
 
 
 procedure PixelFormatArgb32Pre(
@@ -491,32 +491,32 @@ begin
 
   PixelFormatProcessor.PixWidth := 4;
 
-  PixelFormatProcessor.CopyPixel := @Argb32CopyPixel;
-  PixelFormatProcessor.BlendPixel := @Argb32PreBlendPixel;
+  PixelFormatProcessor.CopyPixel := @ARGB32CopyPixel;
+  PixelFormatProcessor.BlendPixel := @ARGB32PreBlendPixel;
 
-  PixelFormatProcessor.Pixel := @Argb32Pixel;
+  PixelFormatProcessor.Pixel := @ARGB32Pixel;
   PixelFormatProcessor.Row := @Format32Row;
 
-  PixelFormatProcessor.CopyHorizontalLine := @Argb32CopyHorizontalLine;
-  PixelFormatProcessor.CopyVerticalLine := @Argb32CopyVerticalLine;
+  PixelFormatProcessor.CopyHorizontalLine := @ARGB32CopyHorizontalLine;
+  PixelFormatProcessor.CopyVerticalLine := @ARGB32CopyVerticalLine;
 
-  PixelFormatProcessor.BlendHorizontalLine := @Argb32PreBlendHorizontalLine;
-  PixelFormatProcessor.BlendVerticalLine := @Argb32PreBlendVerticalLine;
+  PixelFormatProcessor.BlendHorizontalLine := @ARGB32PreBlendHorizontalLine;
+  PixelFormatProcessor.BlendVerticalLine := @ARGB32PreBlendVerticalLine;
 
-  PixelFormatProcessor.BlendSolidHSpan := @Argb32PreBlendSolidHSpan;
-  PixelFormatProcessor.BlendSolidVSpan := @Argb32PreBlendSolidVSpan;
+  PixelFormatProcessor.BlendSolidHSpan := @ARGB32PreBlendSolidHSpan;
+  PixelFormatProcessor.BlendSolidVSpan := @ARGB32PreBlendSolidVSpan;
 
-  PixelFormatProcessor.CopyColorHSpan := Argb32CopyColorHSpan;
-  PixelFormatProcessor.CopyColorVSpan := Argb32CopyColorVSpan;
+  PixelFormatProcessor.CopyColorHSpan := ARGB32CopyColorHSpan;
+  PixelFormatProcessor.CopyColorVSpan := ARGB32CopyColorVSpan;
 
-  PixelFormatProcessor.BlendColorHSpan := @Argb32PreBlendColorHSpan;
-  PixelFormatProcessor.BlendColorVSpan := @Argb32PreBlendColorVSpan;
+  PixelFormatProcessor.BlendColorHSpan := @ARGB32PreBlendColorHSpan;
+  PixelFormatProcessor.BlendColorVSpan := @ARGB32PreBlendColorVSpan;
 
   PixelFormatProcessor.CopyFrom := @Format32CopyFrom;
-  PixelFormatProcessor.BlendFrom := @Argb32PreBlendFrom;
+  PixelFormatProcessor.BlendFrom := @ARGB32PreBlendFrom;
 
-  PixelFormatProcessor.BlendFromColor := @Argb32PreBlendFromColor;
-  PixelFormatProcessor.BlendFromLUT := @Argb32PreBlendFromLUT;
+  PixelFormatProcessor.BlendFromColor := @ARGB32PreBlendFromColor;
+  PixelFormatProcessor.BlendFromLUT := @ARGB32PreBlendFromLut;
 
   PixelFormatProcessor.ForEachPixel := @Order32ForEachPixel;
   PixelFormatProcessor.GammaDirApply := @Order32GammaDirApply;
@@ -526,7 +526,7 @@ begin
   PixelFormatProcessor.PixelDeMultiply := @Order32PixelDeMultiply;
 end;
 
-{$I AggPixelFormatAbgr32Pre.inc}
+{$INCLUDE AggPixelFormatAbgr32Pre.inc}
 
 
 procedure PixelFormatAbgr32Pre(
@@ -574,7 +574,7 @@ begin
   PixelFormatProcessor.PixelDeMultiply := @Order32PixelDeMultiply;
 end;
 
-{$I AggPixelFormatAlpha32.inc }
+{$INCLUDE AggPixelFormatAlpha32.inc }
 
 
 procedure PixelFormatAlphaBlendRgba(
@@ -622,17 +622,17 @@ begin
   PixelFormatProcessor.PixelDeMultiply := @Order32PixelDeMultiply;
 end;
 
-{$I AggPixelFormatCubl32.inc }
+{$INCLUDE AggPixelFormatCubl32.inc }
 
 
 procedure PixelFormatCustomBlendRgba(
   out PixelFormatProcessor: TAggPixelFormatProcessor;
-  RenderingBuffer: TAggRenderingBuffer; Bl: TAggFuncBlender; Order: TAggOrder);
+  RenderingBuffer: TAggRenderingBuffer; BL: TAggFuncBlender; Order: TAggOrder);
 begin
   PixelFormatProcessor := TAggPixelFormatProcessor.Create(RenderingBuffer);
 
   PixelFormatProcessor.Order := Order;
-  PixelFormatProcessor.Blender := Bl;
+  PixelFormatProcessor.Blender := BL;
 
   PixelFormatProcessor.PixWidth := 4;
 
@@ -671,519 +671,519 @@ begin
   PixelFormatProcessor.PixelDeMultiply := @Order32PixelDeMultiply;
 end;
 
-procedure coRgbaClear(This: TAggPixelFormatProcessor; P: PInt8u;
-  Cr, Cg, Cb, Alpha, Cover: Cardinal);
+procedure coRgbaClear(This: TAggPixelFormatProcessor; p: PInt8u;
+  CR, Cg, CB, alpha, Cover: Cardinal);
 begin
   if Cover < 255 then
     begin
       Cover := 255 - Cover;
 
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-        Int8u((PInt8u(PtrComp(P) + This.Order.R)^ * Cover + 255) shr 8);
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-        Int8u((PInt8u(PtrComp(P) + This.Order.G)^ * Cover + 255) shr 8);
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-        Int8u((PInt8u(PtrComp(P) + This.Order.B)^ * Cover + 255) shr 8);
-      PInt8u(PtrComp(P) + This.Order.A)^ :=
-        Int8u((PInt8u(PtrComp(P) + This.Order.A)^ * Cover + 255) shr 8);
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+        Int8u((PInt8u(PtrComp(p) + This.Order.R)^ * Cover + 255) shr 8);
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+        Int8u((PInt8u(PtrComp(p) + This.Order.g)^ * Cover + 255) shr 8);
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+        Int8u((PInt8u(PtrComp(p) + This.Order.b)^ * Cover + 255) shr 8);
+      PInt8u(PtrComp(p) + This.Order.A)^ :=
+        Int8u((PInt8u(PtrComp(p) + This.Order.A)^ * Cover + 255) shr 8);
     end
   else
-      PCardinal(P)^ := 0;
+      PCardinal(p)^ := 0;
 end;
 
-procedure coRgbaSrc(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaSrc(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  Alpha: Cardinal;
+  alpha: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Alpha := 255 - Cover;
+      alpha := 255 - Cover;
 
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.R)^ * Alpha + 255) shr 8) +
-        ((Sr * Cover + 255) shr 8));
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.G)^ * Alpha + 255) shr 8) +
-        ((Sg * Cover + 255) shr 8));
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.B)^ * Alpha + 255) shr 8) +
-        ((Sb * Cover + 255) shr 8));
-      PInt8u(PtrComp(P) + This.Order.A)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.A)^ * Alpha + 255) shr 8) +
-        ((Sa * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.R)^ * alpha + 255) shr 8) +
+        ((SR * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.g)^ * alpha + 255) shr 8) +
+        ((sg * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.b)^ * alpha + 255) shr 8) +
+        ((SB * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.A)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.A)^ * alpha + 255) shr 8) +
+        ((SA * Cover + 255) shr 8));
     end
   else
     begin
-      PInt8u(PtrComp(P) + This.Order.R)^ := Sr;
-      PInt8u(PtrComp(P) + This.Order.G)^ := Sg;
-      PInt8u(PtrComp(P) + This.Order.B)^ := Sb;
-      PInt8u(PtrComp(P) + This.Order.A)^ := Sa;
+      PInt8u(PtrComp(p) + This.Order.R)^ := SR;
+      PInt8u(PtrComp(p) + This.Order.g)^ := sg;
+      PInt8u(PtrComp(p) + This.Order.b)^ := SB;
+      PInt8u(PtrComp(p) + This.Order.A)^ := SA;
     end;
 end;
 
-procedure coRgbaDst(This: TAggPixelFormatProcessor; P: PInt8u;
-  Cr, Cg, Cb, Alpha, Cover: Cardinal);
+procedure coRgbaDst(This: TAggPixelFormatProcessor; p: PInt8u;
+  CR, Cg, CB, alpha, Cover: Cardinal);
 begin
 end;
 
 // Dca' = Sca + Dca.(1 - Sa)
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaSrcOver(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaSrcOver(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
   S1a: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  S1a := CAggBaseMask - Sa;
+  S1a := CAggBaseMask - SA;
 
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u(Sr + ((PInt8u(PtrComp(P) + This.Order.R)^ * S1a + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u(SR + ((PInt8u(PtrComp(p) + This.Order.R)^ * S1a + CAggBaseMask)
     shr CAggBaseShift));
 
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u(Sg + ((PInt8u(PtrComp(P) + This.Order.G)^ * S1a + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u(sg + ((PInt8u(PtrComp(p) + This.Order.g)^ * S1a + CAggBaseMask)
     shr CAggBaseShift));
 
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u(Sb + ((PInt8u(PtrComp(P) + This.Order.B)^ * S1a + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u(SB + ((PInt8u(PtrComp(p) + This.Order.b)^ * S1a + CAggBaseMask)
     shr CAggBaseShift));
 
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + PInt8u(PtrComp(P) + This.Order.A)^ -
-    ((Sa * PInt8u(PtrComp(P) + This.Order.A)^ + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + PInt8u(PtrComp(p) + This.Order.A)^ -
+    ((SA * PInt8u(PtrComp(p) + This.Order.A)^ + CAggBaseMask)
     shr CAggBaseShift));
 end;
 
 // Dca' = Dca + Sca.(1 - Da)
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaDstOver(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaDstOver(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
   D1a: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  D1a := CAggBaseMask - PInt8u(PtrComp(P) + This.Order.A)^;
+  D1a := CAggBaseMask - PInt8u(PtrComp(p) + This.Order.A)^;
 
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u(PInt8u(PtrComp(P) + This.Order.R)^ +
-    ((Sr * D1a + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u(PInt8u(PtrComp(p) + This.Order.R)^ +
+    ((SR * D1a + CAggBaseMask) shr CAggBaseShift));
 
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u(PInt8u(PtrComp(P) + This.Order.G)^ +
-    ((Sg * D1a + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u(PInt8u(PtrComp(p) + This.Order.g)^ +
+    ((sg * D1a + CAggBaseMask) shr CAggBaseShift));
 
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u(PInt8u(PtrComp(P) + This.Order.B)^ +
-    ((Sb * D1a + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u(PInt8u(PtrComp(p) + This.Order.b)^ +
+    ((SB * D1a + CAggBaseMask) shr CAggBaseShift));
 
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + PInt8u(PtrComp(P) + This.Order.A)^ -
-    ((Sa * PInt8u(PtrComp(P) + This.Order.A)^ + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + PInt8u(PtrComp(p) + This.Order.A)^ -
+    ((SA * PInt8u(PtrComp(p) + This.Order.A)^ + CAggBaseMask)
     shr CAggBaseShift));
 end;
 
 // Dca' = Sca.Da
 // Da'  = Sa.Da
-procedure coRgbaSrcIn(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaSrcIn(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  Da, Alpha: Cardinal;
+  DA, alpha: Cardinal;
 begin
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
 
   if Cover < 255 then
     begin
-      Alpha := 255 - Cover;
+      alpha := 255 - Cover;
 
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.R)^ * Alpha + 255) shr 8) +
-        ((((Sr * Da + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.R)^ * alpha + 255) shr 8) +
+        ((((SR * DA + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
 
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.G)^ * Alpha + 255) shr 8) +
-        ((((Sg * Da + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.g)^ * alpha + 255) shr 8) +
+        ((((sg * DA + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
 
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.B)^ * Alpha + 255) shr 8) +
-        ((((Sb * Da + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.b)^ * alpha + 255) shr 8) +
+        ((((SB * DA + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
 
-      PInt8u(PtrComp(P) + This.Order.A)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.A)^ * Alpha + 255) shr 8) +
-        ((((Sa * Da + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.A)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.A)^ * alpha + 255) shr 8) +
+        ((((SA * DA + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
     end
   else
     begin
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-        Int8u((Sr * Da + CAggBaseMask) shr CAggBaseShift);
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-        Int8u((Sg * Da + CAggBaseMask) shr CAggBaseShift);
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-        Int8u((Sb * Da + CAggBaseMask) shr CAggBaseShift);
-      PInt8u(PtrComp(P) + This.Order.A)^ :=
-        Int8u((Sa * Da + CAggBaseMask) shr CAggBaseShift);
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+        Int8u((SR * DA + CAggBaseMask) shr CAggBaseShift);
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+        Int8u((sg * DA + CAggBaseMask) shr CAggBaseShift);
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+        Int8u((SB * DA + CAggBaseMask) shr CAggBaseShift);
+      PInt8u(PtrComp(p) + This.Order.A)^ :=
+        Int8u((SA * DA + CAggBaseMask) shr CAggBaseShift);
     end;
 end;
 
 // Dca' = Dca.Sa
 // Da'  = Sa.Da
-procedure coRgbaDstIn(This: TAggPixelFormatProcessor; P: PInt8u;
-  Cr, Cg, Cb, Sa, Cover: Cardinal);
+procedure coRgbaDstIn(This: TAggPixelFormatProcessor; p: PInt8u;
+  CR, Cg, CB, SA, Cover: Cardinal);
 begin
   if Cover < 255 then
-      Sa := CAggBaseMask - ((Cover * (CAggBaseMask - Sa) + 255) shr 8);
+      SA := CAggBaseMask - ((Cover * (CAggBaseMask - SA) + 255) shr 8);
 
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u((PInt8u(PtrComp(P) + This.Order.R)^ * Sa + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u((PInt8u(PtrComp(p) + This.Order.R)^ * SA + CAggBaseMask)
     shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u((PInt8u(PtrComp(P) + This.Order.G)^ * Sa + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u((PInt8u(PtrComp(p) + This.Order.g)^ * SA + CAggBaseMask)
     shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u((PInt8u(PtrComp(P) + This.Order.B)^ * Sa + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u((PInt8u(PtrComp(p) + This.Order.b)^ * SA + CAggBaseMask)
     shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u((PInt8u(PtrComp(P) + This.Order.A)^ * Sa + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u((PInt8u(PtrComp(p) + This.Order.A)^ * SA + CAggBaseMask)
     shr CAggBaseShift);
 end;
 
 // Dca' = Sca.(1 - Da)
 // Da'  = Sa.(1 - Da)
-procedure coRgbaSrcOut(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaSrcOut(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  Da, Alpha: Cardinal;
+  DA, alpha: Cardinal;
 begin
-  Da := CAggBaseMask - PInt8u(PtrComp(P) + This.Order.A)^;
+  DA := CAggBaseMask - PInt8u(PtrComp(p) + This.Order.A)^;
 
   if Cover < 255 then
     begin
-      Alpha := 255 - Cover;
+      alpha := 255 - Cover;
 
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.R)^ * Alpha + 255) shr 8) +
-        ((((Sr * Da + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.R)^ * alpha + 255) shr 8) +
+        ((((SR * DA + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
 
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.G)^ * Alpha + 255) shr 8) +
-        ((((Sg * Da + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.g)^ * alpha + 255) shr 8) +
+        ((((sg * DA + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
 
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.B)^ * Alpha + 255) shr 8) +
-        ((((Sb * Da + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.b)^ * alpha + 255) shr 8) +
+        ((((SB * DA + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
 
-      PInt8u(PtrComp(P) + This.Order.A)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.A)^ * Alpha + 255) shr 8) +
-        ((((Sa * Da + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.A)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.A)^ * alpha + 255) shr 8) +
+        ((((SA * DA + CAggBaseMask) shr CAggBaseShift) * Cover + 255) shr 8));
     end
   else
     begin
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-        Int8u((Sr * Da + CAggBaseMask) shr CAggBaseShift);
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-        Int8u((Sg * Da + CAggBaseMask) shr CAggBaseShift);
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-        Int8u((Sb * Da + CAggBaseMask) shr CAggBaseShift);
-      PInt8u(PtrComp(P) + This.Order.A)^ :=
-        Int8u((Sa * Da + CAggBaseMask) shr CAggBaseShift);
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+        Int8u((SR * DA + CAggBaseMask) shr CAggBaseShift);
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+        Int8u((sg * DA + CAggBaseMask) shr CAggBaseShift);
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+        Int8u((SB * DA + CAggBaseMask) shr CAggBaseShift);
+      PInt8u(PtrComp(p) + This.Order.A)^ :=
+        Int8u((SA * DA + CAggBaseMask) shr CAggBaseShift);
     end;
 end;
 
 // Dca' = Dca.(1 - Sa)
 // Da'  = Da.(1 - Sa)
-procedure coRgbaDstOut(This: TAggPixelFormatProcessor; P: PInt8u;
-  Cr, Cg, Cb, Sa, Cover: Cardinal);
+procedure coRgbaDstOut(This: TAggPixelFormatProcessor; p: PInt8u;
+  CR, Cg, CB, SA, Cover: Cardinal);
 begin
   if Cover < 255 then
-      Sa := (Sa * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
 
-  Sa := CAggBaseMask - Sa;
+  SA := CAggBaseMask - SA;
 
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u((PInt8u(PtrComp(P) + This.Order.R)^ * Sa + CAggBaseShift)
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u((PInt8u(PtrComp(p) + This.Order.R)^ * SA + CAggBaseShift)
     shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u((PInt8u(PtrComp(P) + This.Order.G)^ * Sa + CAggBaseShift)
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u((PInt8u(PtrComp(p) + This.Order.g)^ * SA + CAggBaseShift)
     shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u((PInt8u(PtrComp(P) + This.Order.B)^ * Sa + CAggBaseShift)
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u((PInt8u(PtrComp(p) + This.Order.b)^ * SA + CAggBaseShift)
     shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u((PInt8u(PtrComp(P) + This.Order.A)^ * Sa + CAggBaseShift)
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u((PInt8u(PtrComp(p) + This.Order.A)^ * SA + CAggBaseShift)
     shr CAggBaseShift);
 end;
 
 // Dca' = Sca.Da + Dca.(1 - Sa)
 // Da'  = Da
-procedure coRgbaSrcATop(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaSrcATop(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  Da: Cardinal;
+  DA: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
-  Sa := CAggBaseMask - Sa;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
+  SA := CAggBaseMask - SA;
 
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u((Sr * Da + PInt8u(PtrComp(P) + This.Order.R)^ * Sa + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u((SR * DA + PInt8u(PtrComp(p) + This.Order.R)^ * SA + CAggBaseMask)
     shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u((Sg * Da + PInt8u(PtrComp(P) + This.Order.G)^ * Sa + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u((sg * DA + PInt8u(PtrComp(p) + This.Order.g)^ * SA + CAggBaseMask)
     shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u((Sb * Da + PInt8u(PtrComp(P) + This.Order.B)^ * Sa + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u((SB * DA + PInt8u(PtrComp(p) + This.Order.b)^ * SA + CAggBaseMask)
     shr CAggBaseShift);
 end;
 
 // Dca' = Dca.Sa + Sca.(1 - Da)
 // Da'  = Sa
-procedure coRgbaDstATop(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaDstATop(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  Da, Alpha: Cardinal;
+  DA, alpha: Cardinal;
 begin
-  Da := CAggBaseMask - PInt8u(PtrComp(P) + This.Order.A)^;
+  DA := CAggBaseMask - PInt8u(PtrComp(p) + This.Order.A)^;
 
   if Cover < 255 then
     begin
-      Alpha := 255 - Cover;
+      alpha := 255 - Cover;
 
-      Sr := (PInt8u(PtrComp(P) + This.Order.R)^ * Sa + Sr * Da + CAggBaseMask)
+      SR := (PInt8u(PtrComp(p) + This.Order.R)^ * SA + SR * DA + CAggBaseMask)
         shr CAggBaseShift;
-      Sg := (PInt8u(PtrComp(P) + This.Order.G)^ * Sa + Sg * Da + CAggBaseMask)
+      sg := (PInt8u(PtrComp(p) + This.Order.g)^ * SA + sg * DA + CAggBaseMask)
         shr CAggBaseShift;
-      Sb := (PInt8u(PtrComp(P) + This.Order.B)^ * Sa + Sb * Da + CAggBaseMask)
+      SB := (PInt8u(PtrComp(p) + This.Order.b)^ * SA + SB * DA + CAggBaseMask)
         shr CAggBaseShift;
 
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.R)^ * Alpha + 255) shr 8) +
-        ((Sr * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.R)^ * alpha + 255) shr 8) +
+        ((SR * Cover + 255) shr 8));
 
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.G)^ * Alpha + 255) shr 8) +
-        ((Sg * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.g)^ * alpha + 255) shr 8) +
+        ((sg * Cover + 255) shr 8));
 
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.B)^ * Alpha + 255) shr 8) +
-        ((Sb * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.b)^ * alpha + 255) shr 8) +
+        ((SB * Cover + 255) shr 8));
 
-      PInt8u(PtrComp(P) + This.Order.A)^ :=
-        Int8u(((PInt8u(PtrComp(P) + This.Order.A)^ * Alpha + 255) shr 8) +
-        ((Sa * Cover + 255) shr 8));
+      PInt8u(PtrComp(p) + This.Order.A)^ :=
+        Int8u(((PInt8u(PtrComp(p) + This.Order.A)^ * alpha + 255) shr 8) +
+        ((SA * Cover + 255) shr 8));
     end
   else
     begin
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-        Int8u((PInt8u(PtrComp(P) + This.Order.R)^ * Sa + Sr * Da + CAggBaseMask)
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+        Int8u((PInt8u(PtrComp(p) + This.Order.R)^ * SA + SR * DA + CAggBaseMask)
         shr CAggBaseShift);
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-        Int8u((PInt8u(PtrComp(P) + This.Order.G)^ * Sa + Sg * Da + CAggBaseMask)
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+        Int8u((PInt8u(PtrComp(p) + This.Order.g)^ * SA + sg * DA + CAggBaseMask)
         shr CAggBaseShift);
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-        Int8u((PInt8u(PtrComp(P) + This.Order.B)^ * Sa + Sb * Da + CAggBaseMask)
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+        Int8u((PInt8u(PtrComp(p) + This.Order.b)^ * SA + SB * DA + CAggBaseMask)
         shr CAggBaseShift);
-      PInt8u(PtrComp(P) + This.Order.A)^ := Int8u(Sa);
+      PInt8u(PtrComp(p) + This.Order.A)^ := Int8u(SA);
     end;
 end;
 
 // Dca' = Sca.(1 - Da) + Dca.(1 - Sa)
 // Da'  = Sa + Da - 2.Sa.Da
-procedure coRgbaXor(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaXor(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
   S1a, D1a: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  S1a := CAggBaseMask - Sa;
-  D1a := CAggBaseMask - PInt8u(PtrComp(P) + This.Order.A)^;
+  S1a := CAggBaseMask - SA;
+  D1a := CAggBaseMask - PInt8u(PtrComp(p) + This.Order.A)^;
 
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u((PInt8u(PtrComp(P) + This.Order.R)^ * S1a + Sr * D1a + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u((PInt8u(PtrComp(p) + This.Order.R)^ * S1a + SR * D1a + CAggBaseMask)
     shr CAggBaseShift);
 
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u((PInt8u(PtrComp(P) + This.Order.G)^ * S1a + Sg * D1a + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u((PInt8u(PtrComp(p) + This.Order.g)^ * S1a + sg * D1a + CAggBaseMask)
     shr CAggBaseShift);
 
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u((PInt8u(PtrComp(P) + This.Order.B)^ * S1a + Sb * D1a + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u((PInt8u(PtrComp(p) + This.Order.b)^ * S1a + SB * D1a + CAggBaseMask)
     shr CAggBaseShift);
 
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + PInt8u(PtrComp(P) + This.Order.A)^ -
-    ((Sa * PInt8u(PtrComp(P) + This.Order.A)^ + CAggBaseMask div 2)
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + PInt8u(PtrComp(p) + This.Order.A)^ -
+    ((SA * PInt8u(PtrComp(p) + This.Order.A)^ + CAggBaseMask div 2)
     shr (CAggBaseShift - 1)));
 end;
 
 // Dca' = Sca + Dca
 // Da'  = Sa + Da
-procedure coRgbaPlus(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaPlus(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  Dr, Dg, Db, Da: Cardinal;
+  dr, DG, db, DA: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^ + Sr;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^ + Sg;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^ + Sb;
-  Da := PInt8u(PtrComp(P) + This.Order.A)^ + Sa;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^ + SR;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^ + sg;
+  db := PInt8u(PtrComp(p) + This.Order.b)^ + SB;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^ + SA;
 
-  if Dr > CAggBaseMask then
-      PInt8u(PtrComp(P) + This.Order.R)^ := CAggBaseMask
+  if dr > CAggBaseMask then
+      PInt8u(PtrComp(p) + This.Order.R)^ := CAggBaseMask
   else
-      PInt8u(PtrComp(P) + This.Order.R)^ := Int8u(Dr);
+      PInt8u(PtrComp(p) + This.Order.R)^ := Int8u(dr);
 
-  if Dg > CAggBaseMask then
-      PInt8u(PtrComp(P) + This.Order.G)^ := CAggBaseMask
+  if DG > CAggBaseMask then
+      PInt8u(PtrComp(p) + This.Order.g)^ := CAggBaseMask
   else
-      PInt8u(PtrComp(P) + This.Order.G)^ := Int8u(Dg);
+      PInt8u(PtrComp(p) + This.Order.g)^ := Int8u(DG);
 
-  if Db > CAggBaseMask then
-      PInt8u(PtrComp(P) + This.Order.B)^ := CAggBaseMask
+  if db > CAggBaseMask then
+      PInt8u(PtrComp(p) + This.Order.b)^ := CAggBaseMask
   else
-      PInt8u(PtrComp(P) + This.Order.B)^ := Int8u(Db);
+      PInt8u(PtrComp(p) + This.Order.b)^ := Int8u(db);
 
-  if Da > CAggBaseMask then
-      PInt8u(PtrComp(P) + This.Order.A)^ := CAggBaseMask
+  if DA > CAggBaseMask then
+      PInt8u(PtrComp(p) + This.Order.A)^ := CAggBaseMask
   else
-      PInt8u(PtrComp(P) + This.Order.A)^ := Int8u(Da);
+      PInt8u(PtrComp(p) + This.Order.A)^ := Int8u(DA);
 end;
 
 // Dca' = Dca - Sca
 // Da' = 1 - (1 - Sa).(1 - Da)
-procedure coRgbaMinus(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaMinus(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  Dr, Dg, Db: Cardinal;
+  dr, DG, db: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^ - Sr;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^ - Sg;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^ - Sb;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^ - SR;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^ - sg;
+  db := PInt8u(PtrComp(p) + This.Order.b)^ - SB;
 
-  if Dr > CAggBaseMask then
-      PInt8u(PtrComp(P) + This.Order.R)^ := 0
+  if dr > CAggBaseMask then
+      PInt8u(PtrComp(p) + This.Order.R)^ := 0
   else
-      PInt8u(PtrComp(P) + This.Order.R)^ := Int8u(Dr);
+      PInt8u(PtrComp(p) + This.Order.R)^ := Int8u(dr);
 
-  if Dg > CAggBaseMask then
-      PInt8u(PtrComp(P) + This.Order.G)^ := 0
+  if DG > CAggBaseMask then
+      PInt8u(PtrComp(p) + This.Order.g)^ := 0
   else
-      PInt8u(PtrComp(P) + This.Order.G)^ := Int8u(Dg);
+      PInt8u(PtrComp(p) + This.Order.g)^ := Int8u(DG);
 
-  if Db > CAggBaseMask then
-      PInt8u(PtrComp(P) + This.Order.B)^ := 0
+  if db > CAggBaseMask then
+      PInt8u(PtrComp(p) + This.Order.b)^ := 0
   else
-      PInt8u(PtrComp(P) + This.Order.B)^ := Int8u(Db);
+      PInt8u(PtrComp(p) + This.Order.b)^ := Int8u(db);
 
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(CAggBaseMask - (((CAggBaseMask - Sa) * (CAggBaseMask -
-    PInt8u(PtrComp(P) + This.Order.A)^) + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(CAggBaseMask - (((CAggBaseMask - SA) * (CAggBaseMask -
+    PInt8u(PtrComp(p) + This.Order.A)^) + CAggBaseMask) shr CAggBaseShift));
 end;
 
 // Dca' = Sca.Dca + Sca.(1 - Da) + Dca.(1 - Sa)
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaMultiply(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaMultiply(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  S1a, D1a, Dr, Dg, Db: Cardinal;
+  S1a, D1a, dr, DG, db: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  S1a := CAggBaseMask - Sa;
-  D1a := CAggBaseMask - PInt8u(PtrComp(P) + This.Order.A)^;
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^;
+  S1a := CAggBaseMask - SA;
+  D1a := CAggBaseMask - PInt8u(PtrComp(p) + This.Order.A)^;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^;
+  db := PInt8u(PtrComp(p) + This.Order.b)^;
 
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u((Sr * Dr + Sr * D1a + Dr * S1a + CAggBaseMask) shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u((Sg * Dg + Sg * D1a + Dg * S1a + CAggBaseMask) shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u((Sb * Db + Sb * D1a + Db * S1a + CAggBaseMask) shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + PInt8u(PtrComp(P) + This.Order.A)^ -
-    ((Sa * PInt8u(PtrComp(P) + This.Order.A)^ + CAggBaseMask)
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u((SR * dr + SR * D1a + dr * S1a + CAggBaseMask) shr CAggBaseShift);
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u((sg * DG + sg * D1a + DG * S1a + CAggBaseMask) shr CAggBaseShift);
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u((SB * db + SB * D1a + db * S1a + CAggBaseMask) shr CAggBaseShift);
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + PInt8u(PtrComp(p) + This.Order.A)^ -
+    ((SA * PInt8u(PtrComp(p) + This.Order.A)^ + CAggBaseMask)
     shr CAggBaseShift));
 end;
 
 // Dca' = Sca + Dca - Sca.Dca
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaScreen(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaScreen(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  Dr, Dg, Db, Da: Cardinal;
+  dr, DG, db, DA: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^;
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^;
+  db := PInt8u(PtrComp(p) + This.Order.b)^;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
 
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u(Sr + Dr - ((Sr * Dr + CAggBaseMask) shr CAggBaseShift));
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u(Sg + Dg - ((Sg * Dg + CAggBaseMask) shr CAggBaseShift));
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u(Sb + Db - ((Sb * Db + CAggBaseMask) shr CAggBaseShift));
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + Da - ((Sa * Da + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u(SR + dr - ((SR * dr + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u(sg + DG - ((sg * DG + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u(SB + db - ((SB * db + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + DA - ((SA * DA + CAggBaseMask) shr CAggBaseShift));
 end;
 
 // if 2.Dca < Da
@@ -1192,133 +1192,133 @@ end;
 // Dca' = Sa.Da - 2.(Da - Dca).(Sa - Sca) + Sca.(1 - Da) + Dca.(1 - Sa)
 //
 // Da' = Sa + Da - Sa.Da
-procedure coRgbaOverlay(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaOverlay(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  D1a, S1a, Dr, Dg, Db, Da, Sada: Cardinal;
+  D1a, S1a, dr, DG, db, DA, Sada: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  D1a := CAggBaseMask - PInt8u(PtrComp(P) + This.Order.A)^;
-  S1a := CAggBaseMask - Sa;
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^;
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
-  Sada := Sa * PInt8u(PtrComp(P) + This.Order.A)^;
+  D1a := CAggBaseMask - PInt8u(PtrComp(p) + This.Order.A)^;
+  S1a := CAggBaseMask - SA;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^;
+  db := PInt8u(PtrComp(p) + This.Order.b)^;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
+  Sada := SA * PInt8u(PtrComp(p) + This.Order.A)^;
 
-  if 2 * Dr < Da then
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-      Int8u((2 * Sr * Dr + Sr * D1a + Dr * S1a) shr CAggBaseShift)
+  if 2 * dr < DA then
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+      Int8u((2 * SR * dr + SR * D1a + dr * S1a) shr CAggBaseShift)
   else
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-      Int8u((Sada - 2 * (Da - Dr) * (Sa - Sr) + Sr * D1a + Dr * S1a)
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+      Int8u((Sada - 2 * (DA - dr) * (SA - SR) + SR * D1a + dr * S1a)
       shr CAggBaseShift);
 
-  if 2 * Dg < Da then
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-      Int8u((2 * Sg * Dg + Sg * D1a + Dg * S1a) shr CAggBaseShift)
+  if 2 * DG < DA then
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+      Int8u((2 * sg * DG + sg * D1a + DG * S1a) shr CAggBaseShift)
   else
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-      Int8u((Sada - 2 * (Da - Dg) * (Sa - Sg) + Sg * D1a + Dg * S1a)
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+      Int8u((Sada - 2 * (DA - DG) * (SA - sg) + sg * D1a + DG * S1a)
       shr CAggBaseShift);
 
-  if 2 * Db < Da then
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-      Int8u((2 * Sb * Db + Sb * D1a + Db * S1a) shr CAggBaseShift)
+  if 2 * db < DA then
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+      Int8u((2 * SB * db + SB * D1a + db * S1a) shr CAggBaseShift)
   else
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-      Int8u((Sada - 2 * (Da - Db) * (Sa - Sb) + Sb * D1a + Db * S1a)
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+      Int8u((Sada - 2 * (DA - db) * (SA - SB) + SB * D1a + db * S1a)
       shr CAggBaseShift);
 
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + Da - ((Sa * Da + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + DA - ((SA * DA + CAggBaseMask) shr CAggBaseShift));
 end;
 
-function Sd_min(A, B: Cardinal): Cardinal; inline;
+function Sd_min(A, b: Cardinal): Cardinal; inline;
 begin
-  if A < B then
+  if A < b then
       Result := A
   else
-      Result := B;
+      Result := b;
 end;
 
-function Sd_max(A, B: Cardinal): Cardinal; inline;
+function Sd_max(A, b: Cardinal): Cardinal; inline;
 begin
-  if A > B then
+  if A > b then
       Result := A
   else
-      Result := B;
+      Result := b;
 end;
 
 // Dca' = min(Sca.Da, Dca.Sa) + Sca.(1 - Da) + Dca.(1 - Sa)
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaDarken(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaDarken(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  D1a, S1a, Dr, Dg, Db, Da: Cardinal;
+  D1a, S1a, dr, DG, db, DA: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  D1a := CAggBaseMask - PInt8u(PtrComp(P) + This.Order.A)^;
-  S1a := CAggBaseMask - Sa;
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^;
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
+  D1a := CAggBaseMask - PInt8u(PtrComp(p) + This.Order.A)^;
+  S1a := CAggBaseMask - SA;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^;
+  db := PInt8u(PtrComp(p) + This.Order.b)^;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
 
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u((Sd_min(Sr * Da, Dr * Sa) + Sr * D1a + Dr * S1a) shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u((Sd_min(Sg * Da, Dg * Sa) + Sg * D1a + Dg * S1a) shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u((Sd_min(Sb * Da, Db * Sa) + Sb * D1a + Db * S1a) shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + Da - ((Sa * Da + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u((Sd_min(SR * DA, dr * SA) + SR * D1a + dr * S1a) shr CAggBaseShift);
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u((Sd_min(sg * DA, DG * SA) + sg * D1a + DG * S1a) shr CAggBaseShift);
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u((Sd_min(SB * DA, db * SA) + SB * D1a + db * S1a) shr CAggBaseShift);
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + DA - ((SA * DA + CAggBaseMask) shr CAggBaseShift));
 end;
 
 // Dca' = max(Sca.Da, Dca.Sa) + Sca.(1 - Da) + Dca.(1 - Sa)
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaLighten(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaLighten(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  D1a, S1a, Dr, Dg, Db, Da: Cardinal;
+  D1a, S1a, dr, DG, db, DA: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  D1a := CAggBaseMask - PInt8u(PtrComp(P) + This.Order.A)^;
-  S1a := CAggBaseMask - Sa;
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^;
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
+  D1a := CAggBaseMask - PInt8u(PtrComp(p) + This.Order.A)^;
+  S1a := CAggBaseMask - SA;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^;
+  db := PInt8u(PtrComp(p) + This.Order.b)^;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
 
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u((Sd_max(Sr * Da, Dr * Sa) + Sr * D1a + Dr * S1a) shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u((Sd_max(Sg * Da, Dg * Sa) + Sg * D1a + Dg * S1a) shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u((Sd_max(Sb * Da, Db * Sa) + Sb * D1a + Db * S1a) shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + Da - ((Sa * Da + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u((Sd_max(SR * DA, dr * SA) + SR * D1a + dr * S1a) shr CAggBaseShift);
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u((Sd_max(sg * DA, DG * SA) + sg * D1a + DG * S1a) shr CAggBaseShift);
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u((Sd_max(SB * DA, db * SA) + SB * D1a + db * S1a) shr CAggBaseShift);
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + DA - ((SA * DA + CAggBaseMask) shr CAggBaseShift));
 end;
 
 // if Sca.Da + Dca.Sa >= Sa.Da
@@ -1327,60 +1327,60 @@ end;
 // Dca' = Dca.Sa/(1-Sca/Sa) + Sca.(1 - Da) + Dca.(1 - Sa)
 //
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaColorDodge(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaColorDodge(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  D1a, S1a, Dr, Dg, Db, Da: Cardinal;
+  D1a, S1a, dr, DG, db, DA: Cardinal;
   Drsa, Dgsa, Dbsa, Srda, Sgda, Sbda, Sada: Integer;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  D1a := CAggBaseMask - PInt8u(PtrComp(P) + This.Order.A)^;
-  S1a := CAggBaseMask - Sa;
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^;
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
-  Drsa := Dr * Sa;
-  Dgsa := Dg * Sa;
-  Dbsa := Db * Sa;
-  Srda := Sr * Da;
-  Sgda := Sg * Da;
-  Sbda := Sb * Da;
-  Sada := Sa * Da;
+  D1a := CAggBaseMask - PInt8u(PtrComp(p) + This.Order.A)^;
+  S1a := CAggBaseMask - SA;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^;
+  db := PInt8u(PtrComp(p) + This.Order.b)^;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
+  Drsa := dr * SA;
+  Dgsa := DG * SA;
+  Dbsa := db * SA;
+  Srda := SR * DA;
+  Sgda := sg * DA;
+  Sbda := SB * DA;
+  Sada := SA * DA;
 
   if Srda + Drsa >= Sada then
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-      Int8u(ShrInt32(Sada + Sr * D1a + Dr * S1a, CAggBaseShift))
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+      Int8u(ShrInt32(Sada + SR * D1a + dr * S1a, CAggBaseShift))
   else
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-      Int8u(Drsa div (CAggBaseMask - (Sr shl CAggBaseShift) div Sa) +
-      ((Sr * D1a + Dr * S1a) shr CAggBaseShift));
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+      Int8u(Drsa div (CAggBaseMask - (SR shl CAggBaseShift) div SA) +
+      ((SR * D1a + dr * S1a) shr CAggBaseShift));
 
   if Sgda + Dgsa >= Sada then
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-      Int8u(ShrInt32(Sada + Sg * D1a + Dg * S1a, CAggBaseShift))
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+      Int8u(ShrInt32(Sada + sg * D1a + DG * S1a, CAggBaseShift))
   else
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-      Int8u(Dgsa div (CAggBaseMask - (Sg shl CAggBaseShift) div Sa) +
-      ((Sg * D1a + Dg * S1a) shr CAggBaseShift));
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+      Int8u(Dgsa div (CAggBaseMask - (sg shl CAggBaseShift) div SA) +
+      ((sg * D1a + DG * S1a) shr CAggBaseShift));
 
   if Sbda + Dbsa >= Sada then
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-      Int8u(ShrInt32(Sada + Sb * D1a + Db * S1a, CAggBaseShift))
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+      Int8u(ShrInt32(Sada + SB * D1a + db * S1a, CAggBaseShift))
   else
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-      Int8u(Dbsa div (CAggBaseMask - (Sb shl CAggBaseShift) div Sa) +
-      ((Sb * D1a + Db * S1a) shr CAggBaseShift));
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+      Int8u(Dbsa div (CAggBaseMask - (SB shl CAggBaseShift) div SA) +
+      ((SB * D1a + db * S1a) shr CAggBaseShift));
 
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + Da - ((Sa * Da + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + DA - ((SA * DA + CAggBaseMask) shr CAggBaseShift));
 end;
 
 // if Sca.Da + Dca.Sa <= Sa.Da
@@ -1389,62 +1389,62 @@ end;
 // Dca' = Sa.(Sca.Da + Dca.Sa - Sa.Da)/Sca + Sca.(1 - Da) + Dca.(1 - Sa)
 //
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaColorBurn(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaColorBurn(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  D1a, S1a, Dr, Dg, Db, Da: Cardinal;
+  D1a, S1a, dr, DG, db, DA: Cardinal;
 
   Drsa, Dgsa, Dbsa, Srda, Sgda, Sbda, Sada: Integer;
 
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  D1a := CAggBaseMask - PInt8u(PtrComp(P) + This.Order.A)^;
-  S1a := CAggBaseMask - Sa;
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^;
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
-  Drsa := Dr * Sa;
-  Dgsa := Dg * Sa;
-  Dbsa := Db * Sa;
-  Srda := Sr * Da;
-  Sgda := Sg * Da;
-  Sbda := Sb * Da;
-  Sada := Sa * Da;
+  D1a := CAggBaseMask - PInt8u(PtrComp(p) + This.Order.A)^;
+  S1a := CAggBaseMask - SA;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^;
+  db := PInt8u(PtrComp(p) + This.Order.b)^;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
+  Drsa := dr * SA;
+  Dgsa := DG * SA;
+  Dbsa := db * SA;
+  Srda := SR * DA;
+  Sgda := sg * DA;
+  Sbda := SB * DA;
+  Sada := SA * DA;
 
   if Srda + Drsa <= Sada then
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-      Int8u((Sr * D1a + Dr * S1a) shr CAggBaseShift)
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+      Int8u((SR * D1a + dr * S1a) shr CAggBaseShift)
   else
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-      Int8u(ShrInt32(Sa * (Srda + Drsa - Sada) div Sr + Sr * D1a + Dr * S1a,
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+      Int8u(ShrInt32(SA * (Srda + Drsa - Sada) div SR + SR * D1a + dr * S1a,
       CAggBaseShift));
 
   if Sgda + Dgsa <= Sada then
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-      Int8u((Sg * D1a + Dg * S1a) shr CAggBaseShift)
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+      Int8u((sg * D1a + DG * S1a) shr CAggBaseShift)
   else
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-      Int8u(ShrInt32(Sa * (Sgda + Dgsa - Sada) div Sg + Sg * D1a + Dg * S1a,
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+      Int8u(ShrInt32(SA * (Sgda + Dgsa - Sada) div sg + sg * D1a + DG * S1a,
       CAggBaseShift));
 
   if Sbda + Dbsa <= Sada then
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-      Int8u((Sb * D1a + Db * S1a) shr CAggBaseShift)
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+      Int8u((SB * D1a + db * S1a) shr CAggBaseShift)
   else
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-      Int8u(ShrInt32(Sa * (Sbda + Dbsa - Sada) div Sb + Sb * D1a + Db * S1a,
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+      Int8u(ShrInt32(SA * (Sbda + Dbsa - Sada) div SB + SB * D1a + db * S1a,
       CAggBaseShift));
 
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + Da - ((Sa * Da + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + DA - ((SA * DA + CAggBaseMask) shr CAggBaseShift));
 end;
 
 // if 2.Sca < Sa
@@ -1453,53 +1453,53 @@ end;
 // Dca' = Sa.Da - 2.(Da - Dca).(Sa - Sca) + Sca.(1 - Da) + Dca.(1 - Sa)
 //
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaHardLight(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaHardLight(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  D1a, S1a, Dr, Dg, Db, Da, Sada: Cardinal;
+  D1a, S1a, dr, DG, db, DA, Sada: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  D1a := CAggBaseMask - PInt8u(PtrComp(P) + This.Order.A)^;
-  S1a := CAggBaseMask - Sa;
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^;
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
-  Sada := Sa * Da;
+  D1a := CAggBaseMask - PInt8u(PtrComp(p) + This.Order.A)^;
+  S1a := CAggBaseMask - SA;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^;
+  db := PInt8u(PtrComp(p) + This.Order.b)^;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
+  Sada := SA * DA;
 
-  if 2 * Sr < Sa then
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-      Int8u((2 * Sr * Dr + Sr * D1a + Dr * S1a) shr CAggBaseShift)
+  if 2 * SR < SA then
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+      Int8u((2 * SR * dr + SR * D1a + dr * S1a) shr CAggBaseShift)
   else
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-      Int8u((Sada - 2 * (Da - Dr) * (Sa - Sr) + Sr * D1a + Dr * S1a)
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+      Int8u((Sada - 2 * (DA - dr) * (SA - SR) + SR * D1a + dr * S1a)
       shr CAggBaseShift);
 
-  if 2 * Sg < Sa then
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-      Int8u((2 * Sg * Dg + Sg * D1a + Dg * S1a) shr CAggBaseShift)
+  if 2 * sg < SA then
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+      Int8u((2 * sg * DG + sg * D1a + DG * S1a) shr CAggBaseShift)
   else
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-      Int8u((Sada - 2 * (Da - Dg) * (Sa - Sg) + Sg * D1a + Dg * S1a)
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+      Int8u((Sada - 2 * (DA - DG) * (SA - sg) + sg * D1a + DG * S1a)
       shr CAggBaseShift);
 
-  if 2 * Sb < Sa then
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-      Int8u((2 * Sb * Db + Sb * D1a + Db * S1a) shr CAggBaseShift)
+  if 2 * SB < SA then
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+      Int8u((2 * SB * db + SB * D1a + db * S1a) shr CAggBaseShift)
   else
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-      Int8u((Sada - 2 * (Da - Db) * (Sa - Sb) + Sb * D1a + Db * S1a)
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+      Int8u((Sada - 2 * (DA - db) * (SA - SB) + SB * D1a + db * S1a)
       shr CAggBaseShift);
 
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + Da - ((Sa * Da + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + DA - ((SA * DA + CAggBaseMask) shr CAggBaseShift));
 end;
 
 // if 2.Sca < Sa
@@ -1510,257 +1510,257 @@ end;
 // Dca' = (Dca.Sa + ((Dca/Da)^(0.5).Da - Dca).(2.Sca - Sa)) + Sca.(1 - Da) + Dca.(1 - Sa)
 //
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaSoftLight(This: TAggPixelFormatProcessor; P: PInt8u;
-  R, G, B, A, Cover: Cardinal);
+procedure coRgbaSoftLight(This: TAggPixelFormatProcessor; p: PInt8u;
+  R, g, b, A, Cover: Cardinal);
 var
-  Sr, Sg, Sb, Sa, Dr, Dg, Db, Da: Double;
+  SR, sg, SB, SA, dr, DG, db, DA: Double;
 begin
-  Sr := (R * Cover) / (CAggBaseMask * 255);
-  Sg := (G * Cover) / (CAggBaseMask * 255);
-  Sb := (B * Cover) / (CAggBaseMask * 255);
-  Sa := (A * Cover) / (CAggBaseMask * 255);
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^ / CAggBaseMask;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^ / CAggBaseMask;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^ / CAggBaseMask;
+  SR := (R * Cover) / (CAggBaseMask * 255);
+  sg := (g * Cover) / (CAggBaseMask * 255);
+  SB := (b * Cover) / (CAggBaseMask * 255);
+  SA := (A * Cover) / (CAggBaseMask * 255);
+  dr := PInt8u(PtrComp(p) + This.Order.R)^ / CAggBaseMask;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^ / CAggBaseMask;
+  db := PInt8u(PtrComp(p) + This.Order.b)^ / CAggBaseMask;
 
-  if PInt8u(PtrComp(P) + This.Order.A)^ <> 0 then
-      Da := PInt8u(PtrComp(P) + This.Order.A)^ / CAggBaseMask
+  if PInt8u(PtrComp(p) + This.Order.A)^ <> 0 then
+      DA := PInt8u(PtrComp(p) + This.Order.A)^ / CAggBaseMask
   else
-      Da := 1 / CAggBaseMask;
+      DA := 1 / CAggBaseMask;
 
   if Cover < 255 then
       A := (A * Cover + 255) shr 8;
 
-  if 2 * Sr < Sa then
-      Dr := Dr * (Sa + (1 - Dr / Da) * (2 * Sr - Sa)) + Sr * (1 - Da) + Dr
-      * (1 - Sa)
-  else if 8 * Dr <= Da then
-      Dr := Dr * (Sa + (1 - Dr / Da) * (2 * Sr - Sa) * (3 - 8 * Dr / Da)) + Sr *
-      (1 - Da) + Dr * (1 - Sa)
+  if 2 * SR < SA then
+      dr := dr * (SA + (1 - dr / DA) * (2 * SR - SA)) + SR * (1 - DA) + dr
+      * (1 - SA)
+  else if 8 * dr <= DA then
+      dr := dr * (SA + (1 - dr / DA) * (2 * SR - SA) * (3 - 8 * dr / DA)) + SR *
+      (1 - DA) + dr * (1 - SA)
   else
-      Dr := (Dr * Sa + (Sqrt(Dr / Da) * Da - Dr) * (2 * Sr - Sa)) + Sr * (1 - Da)
-      + Dr * (1 - Sa);
+      dr := (dr * SA + (Sqrt(dr / DA) * DA - dr) * (2 * SR - SA)) + SR * (1 - DA)
+      + dr * (1 - SA);
 
-  if 2 * Sg < Sa then
-      Dg := Dg * (Sa + (1 - Dg / Da) * (2 * Sg - Sa)) + Sg * (1 - Da) + Dg
-      * (1 - Sa)
-  else if 8 * Dg <= Da then
-      Dg := Dg * (Sa + (1 - Dg / Da) * (2 * Sg - Sa) * (3 - 8 * Dg / Da)) + Sg *
-      (1 - Da) + Dg * (1 - Sa)
+  if 2 * sg < SA then
+      DG := DG * (SA + (1 - DG / DA) * (2 * sg - SA)) + sg * (1 - DA) + DG
+      * (1 - SA)
+  else if 8 * DG <= DA then
+      DG := DG * (SA + (1 - DG / DA) * (2 * sg - SA) * (3 - 8 * DG / DA)) + sg *
+      (1 - DA) + DG * (1 - SA)
   else
-      Dg := (Dg * Sa + (Sqrt(Dg / Da) * Da - Dg) * (2 * Sg - Sa)) + Sg * (1 - Da)
-      + Dg * (1 - Sa);
+      DG := (DG * SA + (Sqrt(DG / DA) * DA - DG) * (2 * sg - SA)) + sg * (1 - DA)
+      + DG * (1 - SA);
 
-  if 2 * Sb < Sa then
-      Db := Db * (Sa + (1 - Db / Da) * (2 * Sb - Sa)) + Sb * (1 - Da) + Db
-      * (1 - Sa)
-  else if 8 * Db <= Da then
-      Db := Db * (Sa + (1 - Db / Da) * (2 * Sb - Sa) * (3 - 8 * Db / Da)) + Sb *
-      (1 - Da) + Db * (1 - Sa)
+  if 2 * SB < SA then
+      db := db * (SA + (1 - db / DA) * (2 * SB - SA)) + SB * (1 - DA) + db
+      * (1 - SA)
+  else if 8 * db <= DA then
+      db := db * (SA + (1 - db / DA) * (2 * SB - SA) * (3 - 8 * db / DA)) + SB *
+      (1 - DA) + db * (1 - SA)
   else
-      Db := (Db * Sa + (Sqrt(Db / Da) * Da - Db) * (2 * Sb - Sa)) + Sb * (1 - Da)
-      + Db * (1 - Sa);
+      db := (db * SA + (Sqrt(db / DA) * DA - db) * (2 * SB - SA)) + SB * (1 - DA)
+      + db * (1 - SA);
 
-  PInt8u(PtrComp(P) + This.Order.R)^ := Int8u(Trunc(Dr * CAggBaseMask));
-  PInt8u(PtrComp(P) + This.Order.G)^ := Int8u(Trunc(Dg * CAggBaseMask));
-  PInt8u(PtrComp(P) + This.Order.B)^ := Int8u(Trunc(Db * CAggBaseMask));
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(A + PInt8u(PtrComp(P) + This.Order.A)^ -
-    ((A * PInt8u(PtrComp(P) + This.Order.A)^ + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.R)^ := Int8u(Trunc(dr * CAggBaseMask));
+  PInt8u(PtrComp(p) + This.Order.g)^ := Int8u(Trunc(DG * CAggBaseMask));
+  PInt8u(PtrComp(p) + This.Order.b)^ := Int8u(Trunc(db * CAggBaseMask));
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(A + PInt8u(PtrComp(p) + This.Order.A)^ -
+    ((A * PInt8u(PtrComp(p) + This.Order.A)^ + CAggBaseMask) shr CAggBaseShift));
 end;
 
 // Dca' = Sca + Dca - 2.min(Sca.Da, Dca.Sa)
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaDifference(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaDifference(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  Dr, Dg, Db, Da: Cardinal;
+  dr, DG, db, DA: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^;
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^;
+  db := PInt8u(PtrComp(p) + This.Order.b)^;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
 
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u(Sr + Dr - ((2 * Sd_min(Sr * Da, Dr * Sa)) shr CAggBaseShift));
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u(Sg + Dg - ((2 * Sd_min(Sg * Da, Dg * Sa)) shr CAggBaseShift));
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u(Sb + Db - ((2 * Sd_min(Sb * Da, Db * Sa)) shr CAggBaseShift));
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + Da - ((Sa * Da + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u(SR + dr - ((2 * Sd_min(SR * DA, dr * SA)) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u(sg + DG - ((2 * Sd_min(sg * DA, DG * SA)) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u(SB + db - ((2 * Sd_min(SB * DA, db * SA)) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + DA - ((SA * DA + CAggBaseMask) shr CAggBaseShift));
 end;
 
 // Dca' = (Sca.Da + Dca.Sa - 2.Sca.Dca) + Sca.(1 - Da) + Dca.(1 - Sa)
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaExclusion(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaExclusion(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  D1a, S1a, Dr, Dg, Db, Da: Cardinal;
+  D1a, S1a, dr, DG, db, DA: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  D1a := CAggBaseMask - PInt8u(PtrComp(P) + This.Order.A)^;
-  S1a := CAggBaseMask - Sa;
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^;
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
+  D1a := CAggBaseMask - PInt8u(PtrComp(p) + This.Order.A)^;
+  S1a := CAggBaseMask - SA;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^;
+  db := PInt8u(PtrComp(p) + This.Order.b)^;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
 
-  PInt8u(PtrComp(P) + This.Order.R)^ :=
-    Int8u((Sr * Da + Dr * Sa - 2 * Sr * Dr + Sr * D1a + Dr * S1a)
+  PInt8u(PtrComp(p) + This.Order.R)^ :=
+    Int8u((SR * DA + dr * SA - 2 * SR * dr + SR * D1a + dr * S1a)
     shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.G)^ :=
-    Int8u((Sg * Da + Dg * Sa - 2 * Sg * Dg + Sg * D1a + Dg * S1a)
+  PInt8u(PtrComp(p) + This.Order.g)^ :=
+    Int8u((sg * DA + DG * SA - 2 * sg * DG + sg * D1a + DG * S1a)
     shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.B)^ :=
-    Int8u((Sb * Da + Db * Sa - 2 * Sb * Db + Sb * D1a + Db * S1a)
+  PInt8u(PtrComp(p) + This.Order.b)^ :=
+    Int8u((SB * DA + db * SA - 2 * SB * db + SB * D1a + db * S1a)
     shr CAggBaseShift);
-  PInt8u(PtrComp(P) + This.Order.A)^ :=
-    Int8u(Sa + Da - ((Sa * Da + CAggBaseMask) shr CAggBaseShift));
+  PInt8u(PtrComp(p) + This.Order.A)^ :=
+    Int8u(SA + DA - ((SA * DA + CAggBaseMask) shr CAggBaseShift));
 end;
 
-procedure coRgbaContrast(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaContrast(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  Dr, Dg, Db, Da, D2a, R, G, B: Integer;
+  dr, DG, db, DA, D2a, R, g, b: Integer;
   S2a: Cardinal;
 begin
   if Cover < 255 then
     begin
-      Sr := (Sr * Cover + 255) shr 8;
-      Sg := (Sg * Cover + 255) shr 8;
-      Sb := (Sb * Cover + 255) shr 8;
-      Sa := (Sa * Cover + 255) shr 8;
+      SR := (SR * Cover + 255) shr 8;
+      sg := (sg * Cover + 255) shr 8;
+      SB := (SB * Cover + 255) shr 8;
+      SA := (SA * Cover + 255) shr 8;
     end;
 
-  Dr := PInt8u(PtrComp(P) + This.Order.R)^;
-  Dg := PInt8u(PtrComp(P) + This.Order.G)^;
-  Db := PInt8u(PtrComp(P) + This.Order.B)^;
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
-  D2a := ShrInt32(Da, 1);
-  S2a := Sa shr 1;
+  dr := PInt8u(PtrComp(p) + This.Order.R)^;
+  DG := PInt8u(PtrComp(p) + This.Order.g)^;
+  db := PInt8u(PtrComp(p) + This.Order.b)^;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
+  D2a := ShrInt32(DA, 1);
+  S2a := SA shr 1;
 
-  R := ShrInt32((Dr - D2a) * ((Sr - S2a) * 2 + CAggBaseMask), CAggBaseShift) + D2a;
-  G := ShrInt32((Dg - D2a) * ((Sg - S2a) * 2 + CAggBaseMask), CAggBaseShift) + D2a;
-  B := ShrInt32((Db - D2a) * ((Sb - S2a) * 2 + CAggBaseMask), CAggBaseShift) + D2a;
+  R := ShrInt32((dr - D2a) * ((SR - S2a) * 2 + CAggBaseMask), CAggBaseShift) + D2a;
+  g := ShrInt32((DG - D2a) * ((sg - S2a) * 2 + CAggBaseMask), CAggBaseShift) + D2a;
+  b := ShrInt32((db - D2a) * ((SB - S2a) * 2 + CAggBaseMask), CAggBaseShift) + D2a;
 
   if R < 0 then
       R := 0;
 
-  if G < 0 then
-      G := 0;
+  if g < 0 then
+      g := 0;
 
-  if B < 0 then
-      B := 0;
+  if b < 0 then
+      b := 0;
 
-  if R > Da then
-      PInt8u(PtrComp(P) + This.Order.R)^ := Int8u(Trunc(Da))
+  if R > DA then
+      PInt8u(PtrComp(p) + This.Order.R)^ := Int8u(Trunc(DA))
   else
-      PInt8u(PtrComp(P) + This.Order.R)^ := Int8u(Trunc(R));
+      PInt8u(PtrComp(p) + This.Order.R)^ := Int8u(Trunc(R));
 
-  if G > Da then
-      PInt8u(PtrComp(P) + This.Order.G)^ := Int8u(Trunc(Da))
+  if g > DA then
+      PInt8u(PtrComp(p) + This.Order.g)^ := Int8u(Trunc(DA))
   else
-      PInt8u(PtrComp(P) + This.Order.G)^ := Int8u(Trunc(G));
+      PInt8u(PtrComp(p) + This.Order.g)^ := Int8u(Trunc(g));
 
-  if B > Da then
-      PInt8u(PtrComp(P) + This.Order.B)^ := Int8u(Trunc(Da))
+  if b > DA then
+      PInt8u(PtrComp(p) + This.Order.b)^ := Int8u(Trunc(DA))
   else
-      PInt8u(PtrComp(P) + This.Order.B)^ := Int8u(Trunc(B));
+      PInt8u(PtrComp(p) + This.Order.b)^ := Int8u(Trunc(b));
 end;
 
 // Dca' = (Da - Dca) * Sa + Dca.(1 - Sa)
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaInvert(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaInvert(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  Da, Dr, Dg, Db, S1a: Integer;
+  DA, dr, DG, db, S1a: Integer;
 begin
-  Sa := (Sa * Cover + 255) shr 8;
+  SA := (SA * Cover + 255) shr 8;
 
-  if Sa <> 0 then
+  if SA <> 0 then
     begin
-      Da := PInt8u(PtrComp(P) + This.Order.A)^;
-      Dr := ShrInt32((Da - PInt8u(PtrComp(P) + This.Order.R)^) * Sa +
+      DA := PInt8u(PtrComp(p) + This.Order.A)^;
+      dr := ShrInt32((DA - PInt8u(PtrComp(p) + This.Order.R)^) * SA +
         CAggBaseMask, CAggBaseShift);
-      Dg := ShrInt32((Da - PInt8u(PtrComp(P) + This.Order.G)^) * Sa +
+      DG := ShrInt32((DA - PInt8u(PtrComp(p) + This.Order.g)^) * SA +
         CAggBaseMask, CAggBaseShift);
-      Db := ShrInt32((Da - PInt8u(PtrComp(P) + This.Order.B)^) * Sa +
+      db := ShrInt32((DA - PInt8u(PtrComp(p) + This.Order.b)^) * SA +
         CAggBaseMask, CAggBaseShift);
-      S1a := CAggBaseMask - Sa;
+      S1a := CAggBaseMask - SA;
 
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-        Int8u(Dr + ShrInt32(PInt8u(PtrComp(P) + This.Order.R)^ * S1a +
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+        Int8u(dr + ShrInt32(PInt8u(PtrComp(p) + This.Order.R)^ * S1a +
         CAggBaseMask, CAggBaseShift));
 
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-        Int8u(Dg + ShrInt32(PInt8u(PtrComp(P) + This.Order.G)^ * S1a +
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+        Int8u(DG + ShrInt32(PInt8u(PtrComp(p) + This.Order.g)^ * S1a +
         CAggBaseMask, CAggBaseShift));
 
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-        Int8u(Db + ShrInt32(PInt8u(PtrComp(P) + This.Order.B)^ * S1a +
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+        Int8u(db + ShrInt32(PInt8u(PtrComp(p) + This.Order.b)^ * S1a +
         CAggBaseMask, CAggBaseShift));
 
-      PInt8u(PtrComp(P) + This.Order.A)^ :=
-        Int8u(Sa + Da - ShrInt32(Sa * Da + CAggBaseMask, CAggBaseShift));
+      PInt8u(PtrComp(p) + This.Order.A)^ :=
+        Int8u(SA + DA - ShrInt32(SA * DA + CAggBaseMask, CAggBaseShift));
     end;
 end;
 
 // Dca' = (Da - Dca) * Sca + Dca.(1 - Sa)
 // Da'  = Sa + Da - Sa.Da
-procedure coRgbaInvertRgb(This: TAggPixelFormatProcessor; P: PInt8u;
-  Sr, Sg, Sb, Sa, Cover: Cardinal);
+procedure coRgbaInvertRgb(This: TAggPixelFormatProcessor; p: PInt8u;
+  SR, sg, SB, SA, Cover: Cardinal);
 var
-  Da, Dr, Dg, Db, S1a: Integer;
+  DA, dr, DG, db, S1a: Integer;
 begin
   if Cover < 255 then
     begin
-      Sr := ShrInt32(Sr * Cover + 255, 8);
-      Sg := ShrInt32(Sg * Cover + 255, 8);
-      Sb := ShrInt32(Sb * Cover + 255, 8);
-      Sa := ShrInt32(Sa * Cover + 255, 8);
+      SR := ShrInt32(SR * Cover + 255, 8);
+      sg := ShrInt32(sg * Cover + 255, 8);
+      SB := ShrInt32(SB * Cover + 255, 8);
+      SA := ShrInt32(SA * Cover + 255, 8);
     end;
 
-  if Sa <> 0 then
+  if SA <> 0 then
     begin
-      Da := PInt8u(PtrComp(P) + This.Order.A)^;
-      Dr := ShrInt32((Da - PInt8u(PtrComp(P) + This.Order.R)^) * Sr +
+      DA := PInt8u(PtrComp(p) + This.Order.A)^;
+      dr := ShrInt32((DA - PInt8u(PtrComp(p) + This.Order.R)^) * SR +
         CAggBaseMask, CAggBaseShift);
-      Dg := ShrInt32((Da - PInt8u(PtrComp(P) + This.Order.G)^) * Sg +
+      DG := ShrInt32((DA - PInt8u(PtrComp(p) + This.Order.g)^) * sg +
         CAggBaseMask, CAggBaseShift);
-      Db := ShrInt32((Da - PInt8u(PtrComp(P) + This.Order.B)^) * Sb +
+      db := ShrInt32((DA - PInt8u(PtrComp(p) + This.Order.b)^) * SB +
         CAggBaseMask, CAggBaseShift);
-      S1a := CAggBaseMask - Sa;
+      S1a := CAggBaseMask - SA;
 
-      PInt8u(PtrComp(P) + This.Order.R)^ :=
-        Int8u(Dr + ShrInt32(PInt8u(PtrComp(P) + This.Order.R)^ * S1a +
+      PInt8u(PtrComp(p) + This.Order.R)^ :=
+        Int8u(dr + ShrInt32(PInt8u(PtrComp(p) + This.Order.R)^ * S1a +
         CAggBaseMask, CAggBaseShift));
 
-      PInt8u(PtrComp(P) + This.Order.G)^ :=
-        Int8u(Dg + ShrInt32(PInt8u(PtrComp(P) + This.Order.G)^ * S1a +
+      PInt8u(PtrComp(p) + This.Order.g)^ :=
+        Int8u(DG + ShrInt32(PInt8u(PtrComp(p) + This.Order.g)^ * S1a +
         CAggBaseMask, CAggBaseShift));
 
-      PInt8u(PtrComp(P) + This.Order.B)^ :=
-        Int8u(Db + ShrInt32(PInt8u(PtrComp(P) + This.Order.B)^ * S1a +
+      PInt8u(PtrComp(p) + This.Order.b)^ :=
+        Int8u(db + ShrInt32(PInt8u(PtrComp(p) + This.Order.b)^ * S1a +
         CAggBaseMask, CAggBaseShift));
 
-      PInt8u(PtrComp(P) + This.Order.A)^ :=
-        Int8u(Sa + Da - ShrInt32(Sa * Da + CAggBaseMask, CAggBaseShift));
+      PInt8u(PtrComp(p) + This.Order.A)^ :=
+        Int8u(SA + DA - ShrInt32(SA * DA + CAggBaseMask, CAggBaseShift));
     end;
 end;
 
@@ -1774,23 +1774,23 @@ const
     coRgbaExclusion, coRgbaContrast, coRgbaInvert, coRgbaInvertRgb, nil);
 
 procedure BlendModeAdaptorRgba(This: TAggPixelFormatProcessor;
-  BlendMode: TAggBlendMode; P: PInt8u; Cr, Cg, Cb, Ca, Cover: Cardinal);
+  BlendMode: TAggBlendMode; p: PInt8u; CR, Cg, CB, ca, Cover: Cardinal);
 begin
-  CBlendModeTableRgba[BlendMode](This, P, (Cr * Ca + CAggBaseMask) shr CAggBaseShift,
-    (Cg * Ca + CAggBaseMask) shr CAggBaseShift, (Cb * Ca + CAggBaseMask) shr CAggBaseShift,
-    Ca, Cover);
+  CBlendModeTableRgba[BlendMode](This, p, (CR * ca + CAggBaseMask) shr CAggBaseShift,
+    (Cg * ca + CAggBaseMask) shr CAggBaseShift, (CB * ca + CAggBaseMask) shr CAggBaseShift,
+    ca, Cover);
 end;
 
 procedure BlendModeAdaptorClipToDestinationRgbaPre(This: TAggPixelFormatProcessor;
-  BlendMode: TAggBlendMode; P: PInt8u; Cr, Cg, Cb, Ca, Cover: Cardinal);
+  BlendMode: TAggBlendMode; p: PInt8u; CR, Cg, CB, ca, Cover: Cardinal);
 var
-  Da: Cardinal;
+  DA: Cardinal;
 begin
-  Da := PInt8u(PtrComp(P) + This.Order.A)^;
+  DA := PInt8u(PtrComp(p) + This.Order.A)^;
 
-  CBlendModeTableRgba[BlendMode](This, P, (Cr * Da + CAggBaseMask) shr CAggBaseShift,
-    (Cg * Da + CAggBaseMask) shr CAggBaseShift, (Cb * Da + CAggBaseMask) shr CAggBaseShift,
-    (Ca * Da + CAggBaseMask) shr CAggBaseShift, Cover);
+  CBlendModeTableRgba[BlendMode](This, p, (CR * DA + CAggBaseMask) shr CAggBaseShift,
+    (Cg * DA + CAggBaseMask) shr CAggBaseShift, (CB * DA + CAggBaseMask) shr CAggBaseShift,
+    (ca * DA + CAggBaseMask) shr CAggBaseShift, Cover);
 end;
 
-end.
+end. 

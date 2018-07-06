@@ -1,10 +1,10 @@
-﻿type
-  T_CharDict_PackageBuffer = array [0..23394] of byte;
-  T_PYDict_PackageBuffer = array [0..207296] of byte;
-  T_s2t_PackageBuffer = array [0..421753] of byte;
-  T_t2hk_PackageBuffer = array [0..522] of byte;
-  T_t2s_PackageBuffer = array [0..67805] of byte;
-  T_t2tw_PackageBuffer = array [0..5088] of byte;
+type
+  T_CharDict_PackageBuffer = packed array [0..23394] of Byte;
+  T_PYDict_PackageBuffer = packed array [0..207296] of Byte;
+  T_s2t_PackageBuffer = packed array [0..421753] of Byte;
+  T_t2hk_PackageBuffer = packed array [0..522] of Byte;
+  T_t2s_PackageBuffer = packed array [0..67805] of Byte;
+  T_t2tw_PackageBuffer = packed array [0..5088] of Byte;
 
 const
   C_CharDictPackageBuffer : T_CharDict_PackageBuffer = (
@@ -23441,4 +23441,4 @@ const
    $04,$DD,$33,$7F,$BC,$C5,$5F,$EB,$24,$37,$22,$DA,$B7,$DC,$6F,$46,$76,$57,$18,$91,$1D,$45,$B5,$0D,$42,$34,$FC,$7C,$EE,$47,$FF,
    $01,$32,$A0,$EC,$61);
 
- 
+  

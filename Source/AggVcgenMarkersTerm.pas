@@ -39,7 +39,7 @@ unit AggVcgenMarkersTerm;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -93,7 +93,7 @@ end;
 
 procedure TAggVcgenMarkersTerm.AddVertex(X, Y: Double; Cmd: Cardinal);
 var
-  Ct: TPointDouble;
+  ct: TPointDouble;
 begin
   if IsMoveTo(Cmd) then
     if FMarkers.Size and 1 <> 0 then
@@ -101,33 +101,33 @@ begin
         // Initial state, the first coordinate was added.
         // If two of more calls of StartVertex() occures
         // we just modify the last one.
-        Ct := PointDouble(X, Y);
-        FMarkers.ModifyLast(@Ct);
+        ct := PointDouble(X, Y);
+        FMarkers.ModifyLast(@ct);
       end
     else
       begin
-        Ct := PointDouble(X, Y);
-        FMarkers.Add(@Ct);
+        ct := PointDouble(X, Y);
+        FMarkers.Add(@ct);
       end
   else if IsVertex(Cmd) then
     if FMarkers.Size and 1 <> 0 then
       begin
         // Initial state, the first coordinate was added.
         // Add three more points, 0,1,1,0
-        Ct := PointDouble(X, Y);
-        FMarkers.Add(@Ct);
+        ct := PointDouble(X, Y);
+        FMarkers.Add(@ct);
         FMarkers.Add(FMarkers[FMarkers.Size - 1]);
         FMarkers.Add(FMarkers[FMarkers.Size - 3]);
       end
     else if FMarkers.Size <> 0 then
       begin
         // Replace two last points: 0,1,1,0 -> 0,1,2,1
-        Ct := PointDouble(X, Y);
+        ct := PointDouble(X, Y);
 
         Move(FMarkers[FMarkers.Size - 2]^,
           FMarkers[FMarkers.Size - 1]^, SizeOf(TPointDouble));
 
-        Move(Ct, FMarkers[FMarkers.Size - 2]^,
+        Move(ct, FMarkers[FMarkers.Size - 2]^,
           SizeOf(TPointDouble));
       end;
 end;
@@ -168,4 +168,4 @@ begin
   Result := CAggPathCmdMoveTo;
 end;
 
-end.
+end. 

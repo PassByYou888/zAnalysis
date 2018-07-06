@@ -21,6 +21,9 @@
         <Projects Include="FontBuild\FontBuild.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="PascalCodeUnification\PascalCodeUnification.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -83,14 +86,23 @@
     <Target Name="FontBuild:Make">
         <MSBuild Projects="FontBuild\FontBuild.dproj" Targets="Make"/>
     </Target>
+    <Target Name="PascalCodeUnification">
+        <MSBuild Projects="PascalCodeUnification\PascalCodeUnification.dproj"/>
+    </Target>
+    <Target Name="PascalCodeUnification:Clean">
+        <MSBuild Projects="PascalCodeUnification\PascalCodeUnification.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PascalCodeUnification:Make">
+        <MSBuild Projects="PascalCodeUnification\PascalCodeUnification.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="ImgFmtConver2PNG;BitmapConver;FilePackageWithZDB;ConvFile2Pascal;StringTranslate;FontBuild"/>
+        <CallTarget Targets="ImgFmtConver2PNG;BitmapConver;FilePackageWithZDB;ConvFile2Pascal;StringTranslate;FontBuild;PascalCodeUnification"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="ImgFmtConver2PNG:Clean;BitmapConver:Clean;FilePackageWithZDB:Clean;ConvFile2Pascal:Clean;StringTranslate:Clean;FontBuild:Clean"/>
+        <CallTarget Targets="ImgFmtConver2PNG:Clean;BitmapConver:Clean;FilePackageWithZDB:Clean;ConvFile2Pascal:Clean;StringTranslate:Clean;FontBuild:Clean;PascalCodeUnification:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="ImgFmtConver2PNG:Make;BitmapConver:Make;FilePackageWithZDB:Make;ConvFile2Pascal:Make;StringTranslate:Make;FontBuild:Make"/>
+        <CallTarget Targets="ImgFmtConver2PNG:Make;BitmapConver:Make;FilePackageWithZDB:Make;ConvFile2Pascal:Make;StringTranslate:Make;FontBuild:Make;PascalCodeUnification:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

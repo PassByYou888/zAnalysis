@@ -22,13 +22,13 @@
 }
 unit JLSBaseCodec;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
 uses
   JLSGlobal, JLSJpegmark, JLSBitIO, JLSMelcode, CoreClasses, PascalStrings, ListEngine,
-  JLSLossless, JLSLossy, math;
+  JLSLossless, JLSLossy, Math;
 
 type
 
@@ -122,17 +122,17 @@ type
     constructor Create; virtual;
     destructor Destroy; override;
     function Execute: Boolean; virtual;
-    property Height: Int read GetHeight write SetHeight;
-    property Width: Int read GetWidth write SetWidth;
-    property RESET: Int read GetRESET write SetRESET;
+    property height: Int read GetHeight write SetHeight;
+    property width: Int read GetWidth write SetWidth;
+    property Reset: Int read GetRESET write SetRESET;
     property _near: Int read GetNEAR write SetNEAR;
     property Components: Int read GetComponents write SetComponents;
-    property T3: Int read FT3 write SetT3;
-    property T2: Int read FT2 write SetT2;
-    property T1: Int read FT1 write SetT1;
-    property MAXVAL: Int read alpha0 write SetMAXVAL;
+    property t3: Int read FT3 write SetT3;
+    property t2: Int read FT2 write SetT2;
+    property t1: Int read FT1 write SetT1;
+    property MaxVal: Int read alpha0 write SetMAXVAL;
     property Limit: Integer read GetLimit write SetLimit;
-    property Alpha: Integer read GetAlpha write SetAlpha;
+    property alpha: Integer read GetAlpha write SetAlpha;
     property InterleavedMode: Integer read color_mode write SetInterleaveMode;
     property RestartInterval: Integer read restart_interval write SetRestartInterval;
     property InputStream: TCoreClassStream read GetInputStream write SetInputStream;
@@ -160,10 +160,10 @@ begin
   FT2 := -1;
   FT1 := -1;
   FTa := -1;
-  FImageInfo.RESET := 64;
-  FEnableLog := false;
-  nopause := true;
-  nolegal := true;
+  FImageInfo.Reset := 64;
+  FEnableLog := False;
+  nopause := True;
+  nolegal := True;
 end;
 
 destructor TJLSBaseCodec.Destroy;
@@ -178,7 +178,7 @@ end;
 
 function TJLSBaseCodec.Execute: Boolean;
 begin
-  Result := false;
+  Result := False;
 end;
 
 function TJLSBaseCodec.GetInputStream: TCoreClassStream;
@@ -203,7 +203,7 @@ end;
 
 function TJLSBaseCodec.GetRESET: Int;
 begin
-  Result := FImageInfo.RESET;
+  Result := FImageInfo.Reset;
 end;
 
 { Initialize A[], B[], C[], and N[] arrays }
@@ -220,15 +220,15 @@ begin
   for i := 0 to pred(TOT_CONTEXTS) do
     begin
       FImageInfo.C[i] := 0;
-      FImageInfo.B[i] := 0;
-      FImageInfo.N[i] := INITNSTAT;
+      FImageInfo.b[i] := 0;
+      FImageInfo.n[i] := INITNSTAT;
       FImageInfo.A[i] := initabstat;
     end;
 end;
 
 function TJLSBaseCodec.GetAlpha: Integer;
 begin
-  Result := FImageInfo.Alpha;
+  Result := FImageInfo.alpha;
 end;
 
 function TJLSBaseCodec.GetComponents: Int;
@@ -238,17 +238,17 @@ end;
 
 function TJLSBaseCodec.GetHeight: Int;
 begin
-  Result := FImageInfo.Height;
+  Result := FImageInfo.height;
 end;
 
 function TJLSBaseCodec.GetWidth: Int;
 begin
-  Result := FImageInfo.Width;
+  Result := FImageInfo.width;
 end;
 
 procedure TJLSBaseCodec.SetAlpha(const Value: Integer);
 begin
-  FImageInfo.Alpha := Value;
+  FImageInfo.alpha := Value;
 end;
 
 procedure TJLSBaseCodec.SetComponents(AValue: Int);
@@ -258,18 +258,18 @@ end;
 
 procedure TJLSBaseCodec.SetHeight(AValue: Int);
 begin
-  FImageInfo.Height := AValue;
+  FImageInfo.height := AValue;
 end;
 
 procedure TJLSBaseCodec.SetWidth(AValue: Int);
 begin
-  FImageInfo.Width := AValue;
+  FImageInfo.width := AValue;
 end;
 
 procedure TJLSBaseCodec.set_thresholds(alfa, AnNEAR: Int; T1p, T2p,
   T3p: pint);
 var
-  lambda, ilambda, quant_: Int;
+  LAMBDA, ilambda, quant_: Int;
 begin
   ilambda := 256 div alfa;
   quant_ := 2 * AnNEAR + 1;
@@ -278,15 +278,15 @@ begin
   FT3 := T3p^;
 
   if (alfa < 4096) then
-      lambda := (alfa + 127) div 256
+      LAMBDA := (alfa + 127) div 256
   else
-      lambda := (4096 + 127) div 256;
+      LAMBDA := (4096 + 127) div 256;
 
   if (FT1 <= 0) then
     begin
       { compute lossless default }
-      if (IsTrue(lambda)) then
-          FT1 := lambda * (BASIC_T1 - 2) + 2
+      if (IsTrue(LAMBDA)) then
+          FT1 := LAMBDA * (BASIC_T1 - 2) + 2
       else begin { alphabet < 8 bits }
           FT1 := BASIC_T1 div ilambda;
           if (FT1 < 2) then
@@ -303,8 +303,8 @@ begin
   if (FT2 <= 0) then
     begin
       { compute lossless default }
-      if (IsTrue(lambda)) then
-          FT2 := lambda * (BASIC_T2 - 3) + 3
+      if (IsTrue(LAMBDA)) then
+          FT2 := LAMBDA * (BASIC_T2 - 3) + 3
       else begin
           FT2 := BASIC_T2 div ilambda;
           if (FT2 < 3) then
@@ -321,8 +321,8 @@ begin
   if (FT3 <= 0) then
     begin
       { compute lossless default }
-      if (IsTrue(lambda)) then
-          FT3 := lambda * (BASIC_T3 - 4) + 4
+      if (IsTrue(LAMBDA)) then
+          FT3 := LAMBDA * (BASIC_T3 - 4) + 4
       else begin
           FT3 := BASIC_T3 div ilambda;
           if (FT3 < 4) then
@@ -344,25 +344,25 @@ end;
 { Setup Look Up Tables for quantized gradient merging }
 function TJLSBaseCodec.prepareLUTs: Int;
 var
-  i, j, idx, lmax: Int;
-  k: byte;
-  q1, q2, q3, n1, n2, n3, ineg, sgn: Int;
+  i, J, idx, lmax: Int;
+  k: Byte;
+  q1, q2, Q3, N1, N2, n3, ineg, sgn: Int;
 
 begin
   Result := 0;
 
-  lmax := min(FImageInfo.Alpha, lutmax);
+  lmax := Min(FImageInfo.alpha, lutmax);
 
   { implementation limitation: }
   if (FT3 > lmax - 1) then begin
       DoStatus('ERROR : Sorry, current implementation does not support threshold T3 > %d, got %d', [lmax - 1, FT3]);
       Result := 10;
-      exit;
+      Exit;
     end;
 
   { Build classification tables (lossless or lossy) }
 
-  if (lossy = false) then
+  if (lossy = False) then
     begin
 
       for i := -lmax + 1 to pred(lmax) do
@@ -400,7 +400,7 @@ begin
       for i := -lmax + 1 to pred(lmax) do
         begin
 
-          if (FImageInfo._near >= (FImageInfo.Alpha - 1)) then
+          if (FImageInfo._near >= (FImageInfo.alpha - 1)) then
               idx := 0 { degenerate case, regardless of thresholds }
           else
 
@@ -434,22 +434,22 @@ begin
 
   { prepare context mapping table (symmetric context merging) }
   FImageInfo.classmap[0] := 0;
-  j := 0;
+  J := 0;
 
   for i := 1 to pred(CONTEXTS1) do
     begin
-      n1 := 0;
-      n2 := 0;
+      N1 := 0;
+      N2 := 0;
       n3 := 0;
 
       if (IsTrue(FImageInfo.classmap[i])) then
-          continue;
+          Continue;
 
       q1 := i div (CREGIONS * CREGIONS);   { first digit }
       q2 := (i div CREGIONS) mod CREGIONS; { second digit }
-      q3 := i mod CREGIONS;                { third digit }
+      Q3 := i mod CREGIONS;                { third digit }
 
-      if (IsTrue(q1 mod 2)) or ((q1 = 0) and IsTrue(q2 mod 2)) or ((q1 = 0) and (q2 = 0) and IsTrue(q3 mod 2)) then
+      if (IsTrue(q1 mod 2)) or ((q1 = 0) and IsTrue(q2 mod 2)) or ((q1 = 0) and (q2 = 0) and IsTrue(Q3 mod 2)) then
           sgn := -1
       else
           sgn := 1;
@@ -458,31 +458,31 @@ begin
       if IsTrue(q1) then
         begin
           if IsTrue(q1 mod 2) then
-              n1 := q1 + 1
+              N1 := q1 + 1
           else
-              n1 := q1 - 1;
+              N1 := q1 - 1;
         end;
 
       if IsTrue(q2) then
         begin
           if IsTrue(q2 mod 2) then
-              n2 := q2 + 1
+              N2 := q2 + 1
           else
-              n2 := q2 - 1;
+              N2 := q2 - 1;
         end;
 
-      if IsTrue(q3) then
+      if IsTrue(Q3) then
         begin
-          if IsTrue(q3 mod 2) then
-              n3 := q3 + 1
+          if IsTrue(Q3 mod 2) then
+              n3 := Q3 + 1
           else
-              n3 := q3 - 1;
+              n3 := Q3 - 1;
         end;
 
-      ineg := (n1 * CREGIONS + n2) * CREGIONS + n3;
-      Inc(j); { next class number }
-      FImageInfo.classmap[i] := sgn * j;
-      FImageInfo.classmap[ineg] := -sgn * j;
+      ineg := (N1 * CREGIONS + N2) * CREGIONS + n3;
+      Inc(J); { next class number }
+      FImageInfo.classmap[i] := sgn * J;
+      FImageInfo.classmap[ineg] := -sgn * J;
     end;
 
 end;
@@ -490,7 +490,7 @@ end;
 { prepare quantization tables for _near-lossless quantization }
 function TJLSBaseCodec.prepare_qtables(absize: Int; AnNEAR: Int): Int;
 var
-  diff, qdiff: Int;
+  Diff, qdiff: Int;
   beta_, quant_: Int;
   arrpos: Int;
 begin
@@ -499,24 +499,24 @@ begin
   quant_ := 2 * AnNEAR + 1;
   beta_ := absize;
 
-  GetMem(FImageInfo.qdiv0, (2 * absize - 1) * sizeof(Int));
+  GetMem(FImageInfo.qdiv0, (2 * absize - 1) * SizeOf(Int));
   if (FImageInfo.qdiv0 = nil) then
     begin
       DoStatus('ERROR : qdiv  table');
       Result := 10;
-      exit;
+      Exit;
     end;
 
   FImageInfo.qdiv := Pointer(FImageInfo.qdiv0);
   Inc(FImageInfo.qdiv, absize - 1);
 
-  GetMem(FImageInfo.qmul0, (2 * beta_ - 1) * sizeof(Int));
+  GetMem(FImageInfo.qmul0, (2 * beta_ - 1) * SizeOf(Int));
 
   if (FImageInfo.qmul0 = nil) then
     begin
       DoStatus('ERROR : qmul  table');
       Result := 10;
-      exit;
+      Exit;
     end;
 
   FImageInfo.qmul := Pointer(FImageInfo.qmul0);
@@ -524,20 +524,20 @@ begin
 
   arrpos := beta_ - 1;
 
-  for diff := -(absize - 1) to pred(absize) do
+  for Diff := -(absize - 1) to pred(absize) do
     begin
-      if (diff < 0) then
-          qdiff := -((AnNEAR - diff) div quant_)
+      if (Diff < 0) then
+          qdiff := -((AnNEAR - Diff) div quant_)
       else
-          qdiff := (AnNEAR + diff) div quant_;
+          qdiff := (AnNEAR + Diff) div quant_;
 
-      FImageInfo.qdiv0^[diff + arrpos] := qdiff;
+      FImageInfo.qdiv0^[Diff + arrpos] := qdiff;
     end;
 
   for qdiff := -(beta_ - 1) to pred(beta_) do
     begin
-      diff := quant * qdiff;
-      FImageInfo.qmul0^[qdiff + arrpos] := diff;
+      Diff := quant * qdiff;
+      FImageInfo.qmul0^[qdiff + arrpos] := Diff;
     end;
 
 end;
@@ -580,9 +580,9 @@ end;
 procedure TJLSBaseCodec.SetRESET(const Value: Int);
 begin
   { Reset value }
-  if (FImageInfo.RESET <> DEFAULT_RESET) and (Value > 0) then
+  if (FImageInfo.Reset <> DEFAULT_RESET) and (Value > 0) then
     begin
-      FImageInfo.RESET := Value;
+      FImageInfo.Reset := Value;
       need_lse := 1;
     end;
 end;
@@ -620,4 +620,4 @@ begin
     end;
 end;
 
-end.
+end. 

@@ -11,9 +11,9 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
-procedure PCABuildBasis(const X: TLMatrix; NPoints: TLInt; NVars: TLInt; var Info: TLInt; var S2: TLVec; var V: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure PCABuildBasis(const X: TLMatrix; NPoints: TLInt; NVars: TLInt; var Info: TLInt; var s2: TLVec; var v: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure InternalStatHeapSort(var Arr: TLVec; N: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalStatHeapSort(var Arr: TLVec; n: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -29,12 +29,12 @@ procedure InternalStatHeapSort(var Arr: TLVec; N: TLInt); forward; {$IFDEF INLIN
   Skewness-   skewness (if variance<>0; zero otherwise).
   Kurtosis-   kurtosis (if variance<>0; zero otherwise).
   ************************************************************************ *)
-procedure CalculateMoments(const X: TLVec; N: TLInt; var Mean: TLFloat; var Variance: TLFloat; var Skewness: TLFloat; var Kurtosis: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CalculateMoments(const X: TLVec; n: TLInt; var Mean: TLFloat; var Variance: TLFloat; var Skewness: TLFloat; var Kurtosis: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  I     : TLInt;
-  V     : TLFloat;
-  V1    : TLFloat;
-  V2    : TLFloat;
+  i     : TLInt;
+  v     : TLFloat;
+  v1    : TLFloat;
+  v2    : TLFloat;
   StdDev: TLFloat;
 begin
   Mean := 0;
@@ -42,7 +42,7 @@ begin
   Skewness := 0;
   Kurtosis := 0;
   StdDev := 0;
-  if N <= 0 then
+  if n <= 0 then
     begin
       Exit;
     end;
@@ -50,35 +50,35 @@ begin
   //
   // Mean
   //
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      Mean := Mean + X[I];
-      Inc(I);
+      Mean := Mean + X[i];
+      Inc(i);
     end;
-  Mean := Mean / N;
+  Mean := Mean / n;
 
   //
   // Variance (using corrected two-pass algorithm)
   //
-  if N <> 1 then
+  if n <> 1 then
     begin
-      V1 := 0;
-      I := 0;
-      while I <= N - 1 do
+      v1 := 0;
+      i := 0;
+      while i <= n - 1 do
         begin
-          V1 := V1 + AP_Sqr(X[I] - Mean);
-          Inc(I);
+          v1 := v1 + AP_Sqr(X[i] - Mean);
+          Inc(i);
         end;
-      V2 := 0;
-      I := 0;
-      while I <= N - 1 do
+      v2 := 0;
+      i := 0;
+      while i <= n - 1 do
         begin
-          V2 := V2 + (X[I] - Mean);
-          Inc(I);
+          v2 := v2 + (X[i] - Mean);
+          Inc(i);
         end;
-      V2 := AP_Sqr(V2) / N;
-      Variance := (V1 - V2) / (N - 1);
+      v2 := AP_Sqr(v2) / n;
+      Variance := (v1 - v2) / (n - 1);
       if AP_FP_Less(Variance, 0) then
         begin
           Variance := 0;
@@ -89,19 +89,19 @@ begin
   //
   // Skewness and kurtosis
   //
-  if AP_FP_Neq(StdDev, 0) then
+  if AP_FP_NEq(StdDev, 0) then
     begin
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          V := (X[I] - Mean) / StdDev;
-          V2 := AP_Sqr(V);
-          Skewness := Skewness + V2 * V;
-          Kurtosis := Kurtosis + AP_Sqr(V2);
-          Inc(I);
+          v := (X[i] - Mean) / StdDev;
+          v2 := AP_Sqr(v);
+          Skewness := Skewness + v2 * v;
+          Kurtosis := Kurtosis + AP_Sqr(v2);
+          Inc(i);
         end;
-      Skewness := Skewness / N;
-      Kurtosis := Kurtosis / N - 3;
+      Skewness := Skewness / n;
+      Kurtosis := Kurtosis / n - 3;
     end;
 end;
 
@@ -115,14 +115,14 @@ end;
   Output parameters:
   ADev-   ADev
   ************************************************************************ *)
-procedure CalculateADev(const X: TLVec; const N: TLInt; var ADev: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CalculateADev(const X: TLVec; const n: TLInt; var ADev: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  I   : TLInt;
+  i   : TLInt;
   Mean: TLFloat;
 begin
   Mean := 0;
   ADev := 0;
-  if N <= 0 then
+  if n <= 0 then
     begin
       Exit;
     end;
@@ -130,24 +130,24 @@ begin
   //
   // Mean
   //
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      Mean := Mean + X[I];
-      Inc(I);
+      Mean := Mean + X[i];
+      Inc(i);
     end;
-  Mean := Mean / N;
+  Mean := Mean / n;
 
   //
   // ADev
   //
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      ADev := ADev + AbsReal(X[I] - Mean);
-      Inc(I);
+      ADev := ADev + AbsReal(X[i] - Mean);
+      Inc(i);
     end;
-  ADev := ADev / N;
+  ADev := ADev / n;
 end;
 
 (* ************************************************************************
@@ -160,31 +160,31 @@ end;
   Output parameters:
   Median
   ************************************************************************ *)
-procedure CalculateMedian(const X: TLVec; const N: TLInt; var Median: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CalculateMedian(const X: TLVec; const n: TLInt; var Median: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  I   : TLInt;
-  ir  : TLInt;
-  j   : TLInt;
-  l   : TLInt;
+  i   : TLInt;
+  IR  : TLInt;
+  J   : TLInt;
+  L   : TLInt;
   midp: TLInt;
-  K   : TLInt;
-  a   : TLFloat;
+  k   : TLInt;
+  A   : TLFloat;
   tval: TLFloat;
 begin
   //
   // Some degenerate cases
   //
   Median := 0;
-  if N <= 0 then
+  if n <= 0 then
     begin
       Exit;
     end;
-  if N = 1 then
+  if n = 1 then
     begin
       Median := X[0];
       Exit;
     end;
-  if N = 2 then
+  if n = 2 then
     begin
       Median := 0.5 * (X[0] + X[1]);
       Exit;
@@ -194,77 +194,77 @@ begin
   // Common case, N>=3.
   // Choose X[(N-1)/2]
   //
-  l := 0;
-  ir := N - 1;
-  K := (N - 1) div 2;
+  L := 0;
+  IR := n - 1;
+  k := (n - 1) div 2;
   while True do
     begin
-      if ir <= l + 1 then
+      if IR <= L + 1 then
         begin
 
           //
           // 1 or 2 elements in partition
           //
-          if (ir = l + 1) and AP_FP_Less(X[ir], X[l]) then
+          if (IR = L + 1) and AP_FP_Less(X[IR], X[L]) then
             begin
-              tval := X[l];
-              X[l] := X[ir];
-              X[ir] := tval;
+              tval := X[L];
+              X[L] := X[IR];
+              X[IR] := tval;
             end;
           Break;
         end
       else
         begin
-          midp := (l + ir) div 2;
+          midp := (L + IR) div 2;
           tval := X[midp];
-          X[midp] := X[l + 1];
-          X[l + 1] := tval;
-          if AP_FP_Greater(X[l], X[ir]) then
+          X[midp] := X[L + 1];
+          X[L + 1] := tval;
+          if AP_FP_Greater(X[L], X[IR]) then
             begin
-              tval := X[l];
-              X[l] := X[ir];
-              X[ir] := tval;
+              tval := X[L];
+              X[L] := X[IR];
+              X[IR] := tval;
             end;
-          if AP_FP_Greater(X[l + 1], X[ir]) then
+          if AP_FP_Greater(X[L + 1], X[IR]) then
             begin
-              tval := X[l + 1];
-              X[l + 1] := X[ir];
-              X[ir] := tval;
+              tval := X[L + 1];
+              X[L + 1] := X[IR];
+              X[IR] := tval;
             end;
-          if AP_FP_Greater(X[l], X[l + 1]) then
+          if AP_FP_Greater(X[L], X[L + 1]) then
             begin
-              tval := X[l];
-              X[l] := X[l + 1];
-              X[l + 1] := tval;
+              tval := X[L];
+              X[L] := X[L + 1];
+              X[L + 1] := tval;
             end;
-          I := l + 1;
-          j := ir;
-          a := X[l + 1];
+          i := L + 1;
+          J := IR;
+          A := X[L + 1];
           while True do
             begin
               repeat
-                  I := I + 1;
-              until AP_FP_Greater_Eq(X[I], a);
+                  i := i + 1;
+              until AP_FP_Greater_Eq(X[i], A);
               repeat
-                  j := j - 1;
-              until AP_FP_Less_Eq(X[j], a);
-              if j < I then
+                  J := J - 1;
+              until AP_FP_Less_Eq(X[J], A);
+              if J < i then
                 begin
                   Break;
                 end;
-              tval := X[I];
-              X[I] := X[j];
-              X[j] := tval;
+              tval := X[i];
+              X[i] := X[J];
+              X[J] := tval;
             end;
-          X[l + 1] := X[j];
-          X[j] := a;
-          if j >= K then
+          X[L + 1] := X[J];
+          X[J] := A;
+          if J >= k then
             begin
-              ir := j - 1;
+              IR := J - 1;
             end;
-          if j <= K then
+          if J <= k then
             begin
-              l := I;
+              L := i;
             end;
         end;
     end;
@@ -272,22 +272,22 @@ begin
   //
   // If N is odd, return result
   //
-  if N mod 2 = 1 then
+  if n mod 2 = 1 then
     begin
-      Median := X[K];
+      Median := X[k];
       Exit;
     end;
-  a := X[N - 1];
-  I := K + 1;
-  while I <= N - 1 do
+  A := X[n - 1];
+  i := k + 1;
+  while i <= n - 1 do
     begin
-      if AP_FP_Less(X[I], a) then
+      if AP_FP_Less(X[i], A) then
         begin
-          a := X[I];
+          A := X[i];
         end;
-      Inc(I);
+      Inc(i);
     end;
-  Median := 0.5 * (X[K] + a);
+  Median := 0.5 * (X[k] + A);
 end;
 
 (* ************************************************************************
@@ -301,101 +301,101 @@ end;
   Output parameters:
   V   -   percentile
   ************************************************************************ *)
-procedure CalculatePercentile(const X: TLVec; const N: TLInt; const P: TLFloat; var V: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CalculatePercentile(const X: TLVec; const n: TLInt; const p: TLFloat; var v: TLFloat); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  NX: TLVec;
-  I1: TLInt;
+  Nx: TLVec;
+  i1: TLInt;
   T : TLFloat;
 begin
-  NX := DynamicArrayCopy(X);
-  Assert(N > 1, 'CalculatePercentile: N<=1!');
-  Assert(AP_FP_Greater_Eq(P, 0) and AP_FP_Less_Eq(P, 1),
+  Nx := DynamicArrayCopy(X);
+  Assert(n > 1, 'CalculatePercentile: N<=1!');
+  Assert(AP_FP_Greater_Eq(p, 0) and AP_FP_Less_Eq(p, 1),
     'CalculatePercentile: incorrect P!');
-  InternalStatHeapSort(NX, N);
-  if AP_FP_Eq(P, 0) then
+  InternalStatHeapSort(Nx, n);
+  if AP_FP_Eq(p, 0) then
     begin
-      V := NX[0];
+      v := Nx[0];
       Exit;
     end;
-  if AP_FP_Eq(P, 1) then
+  if AP_FP_Eq(p, 1) then
     begin
-      V := NX[N - 1];
+      v := Nx[n - 1];
       Exit;
     end;
-  T := P * (N - 1);
-  I1 := Floor(T);
+  T := p * (n - 1);
+  i1 := Floor(T);
   T := T - Floor(T);
-  V := NX[I1] * (1 - T) + NX[I1 + 1] * T;
+  v := Nx[i1] * (1 - T) + Nx[i1 + 1] * T;
 end;
 
-procedure InternalStatHeapSort(var Arr: TLVec; N: TLInt);
+procedure InternalStatHeapSort(var Arr: TLVec; n: TLInt);
 var
-  I  : TLInt;
-  K  : TLInt;
+  i  : TLInt;
+  k  : TLInt;
   T  : TLInt;
-  Tmp: TLFloat;
+  tmp: TLFloat;
 begin
-  if N = 1 then
+  if n = 1 then
     begin
       Exit;
     end;
-  I := 2;
+  i := 2;
   repeat
-    T := I;
+    T := i;
     while T <> 1 do
       begin
-        K := T div 2;
-        if AP_FP_Greater_Eq(Arr[K - 1], Arr[T - 1]) then
+        k := T div 2;
+        if AP_FP_Greater_Eq(Arr[k - 1], Arr[T - 1]) then
           begin
             T := 1;
           end
         else
           begin
-            Tmp := Arr[K - 1];
-            Arr[K - 1] := Arr[T - 1];
-            Arr[T - 1] := Tmp;
-            T := K;
+            tmp := Arr[k - 1];
+            Arr[k - 1] := Arr[T - 1];
+            Arr[T - 1] := tmp;
+            T := k;
           end;
       end;
-    I := I + 1;
-  until not(I <= N);
-  I := N - 1;
+    i := i + 1;
+  until not(i <= n);
+  i := n - 1;
   repeat
-    Tmp := Arr[I];
-    Arr[I] := Arr[0];
-    Arr[0] := Tmp;
+    tmp := Arr[i];
+    Arr[i] := Arr[0];
+    Arr[0] := tmp;
     T := 1;
     while T <> 0 do
       begin
-        K := 2 * T;
-        if K > I then
+        k := 2 * T;
+        if k > i then
           begin
             T := 0;
           end
         else
           begin
-            if K < I then
+            if k < i then
               begin
-                if AP_FP_Greater(Arr[K], Arr[K - 1]) then
+                if AP_FP_Greater(Arr[k], Arr[k - 1]) then
                   begin
-                    K := K + 1;
+                    k := k + 1;
                   end;
               end;
-            if AP_FP_Greater_Eq(Arr[T - 1], Arr[K - 1]) then
+            if AP_FP_Greater_Eq(Arr[T - 1], Arr[k - 1]) then
               begin
                 T := 0;
               end
             else
               begin
-                Tmp := Arr[K - 1];
-                Arr[K - 1] := Arr[T - 1];
-                Arr[T - 1] := Tmp;
-                T := K;
+                tmp := Arr[k - 1];
+                Arr[k - 1] := Arr[T - 1];
+                Arr[T - 1] := tmp;
+                T := k;
               end;
           end;
       end;
-    I := I - 1;
-  until not(I >= 1);
+    i := i - 1;
+  until not(i >= 1);
 end;
 
 (* ************************************************************************
@@ -419,15 +419,15 @@ end;
   S2          -   array[0..NVars-1]. variance values corresponding to basis vectors.
   V           -   array[0..NVars-1,0..NVars-1] matrix, whose columns store basis vectors.
   ************************************************************************ *)
-procedure PCABuildBasis(const X: TLMatrix; NPoints: TLInt; NVars: TLInt; var Info: TLInt; var S2: TLVec; var V: TLMatrix);
+procedure PCABuildBasis(const X: TLMatrix; NPoints: TLInt; NVars: TLInt; var Info: TLInt; var s2: TLVec; var v: TLMatrix);
 var
-  a       : TLMatrix;
-  U       : TLMatrix;
+  A       : TLMatrix;
+  u       : TLMatrix;
   VT      : TLMatrix;
   M       : TLVec;
   T       : TLVec;
-  I       : TLInt;
-  j       : TLInt;
+  i       : TLInt;
+  J       : TLInt;
   Mean    : TLFloat;
   Variance: TLFloat;
   Skewness: TLFloat;
@@ -450,31 +450,31 @@ begin
   //
   if NPoints = 0 then
     begin
-      SetLength(S2, NVars (* - 1 + 1 // optimized compiler *) );
-      SetLength(V, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
-      I := 0;
-      while I <= NVars - 1 do
+      SetLength(s2, NVars (* - 1 + 1 // optimized compiler *) );
+      SetLength(v, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+      i := 0;
+      while i <= NVars - 1 do
         begin
-          S2[I] := 0;
-          Inc(I);
+          s2[i] := 0;
+          Inc(i);
         end;
-      I := 0;
-      while I <= NVars - 1 do
+      i := 0;
+      while i <= NVars - 1 do
         begin
-          j := 0;
-          while j <= NVars - 1 do
+          J := 0;
+          while J <= NVars - 1 do
             begin
-              if I = j then
+              if i = J then
                 begin
-                  V[I, j] := 1;
+                  v[i, J] := 1;
                 end
               else
                 begin
-                  V[I, j] := 0;
+                  v[i, J] := 0;
                 end;
-              Inc(j);
+              Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
       Exit;
     end;
@@ -484,54 +484,54 @@ begin
   //
   SetLength(M, NVars (* - 1 + 1 // optimized compiler *) );
   SetLength(T, NPoints (* - 1 + 1 // optimized compiler *) );
-  j := 0;
-  while j <= NVars - 1 do
+  J := 0;
+  while J <= NVars - 1 do
     begin
       for i_ := 0 to NPoints - 1 do
         begin
-          T[i_] := X[i_, j];
+          T[i_] := X[i_, J];
         end;
       CalculateMoments(T, NPoints, Mean, Variance, Skewness, Kurtosis);
-      M[j] := Mean;
-      Inc(j);
+      M[J] := Mean;
+      Inc(J);
     end;
 
   //
   // Center, apply SVD, prepare output
   //
-  SetLength(a, Max(NPoints, NVars) (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
-  I := 0;
-  while I <= NPoints - 1 do
+  SetLength(A, Max(NPoints, NVars) (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+  i := 0;
+  while i <= NPoints - 1 do
     begin
-      APVMove(@a[I][0], 0, NVars - 1, @X[I][0], 0, NVars - 1);
-      APVSub(@a[I][0], 0, NVars - 1, @M[0], 0, NVars - 1);
-      Inc(I);
+      APVMove(@A[i][0], 0, NVars - 1, @X[i][0], 0, NVars - 1);
+      APVSub(@A[i][0], 0, NVars - 1, @M[0], 0, NVars - 1);
+      Inc(i);
     end;
-  I := NPoints;
-  while I <= NVars - 1 do
+  i := NPoints;
+  while i <= NVars - 1 do
     begin
-      j := 0;
-      while j <= NVars - 1 do
+      J := 0;
+      while J <= NVars - 1 do
         begin
-          a[I, j] := 0;
-          Inc(j);
+          A[i, J] := 0;
+          Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
-  if not RMatrixSVD(a, Max(NPoints, NVars), NVars, 0, 1, 2, S2, U, VT) then
+  if not RMatrixSVD(A, Max(NPoints, NVars), NVars, 0, 1, 2, s2, u, VT) then
     begin
       Info := -4;
       Exit;
     end;
   if NPoints <> 1 then
     begin
-      I := 0;
-      while I <= NVars - 1 do
+      i := 0;
+      while i <= NVars - 1 do
         begin
-          S2[I] := AP_Sqr(S2[I]) / (NPoints - 1);
-          Inc(I);
+          s2[i] := AP_Sqr(s2[i]) / (NPoints - 1);
+          Inc(i);
         end;
     end;
-  SetLength(V, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
-  CopyAndTranspose(VT, 0, NVars - 1, 0, NVars - 1, V, 0, NVars - 1, 0, NVars - 1);
-end;
+  SetLength(v, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+  CopyAndTranspose(VT, 0, NVars - 1, 0, NVars - 1, v, 0, NVars - 1, 0, NVars - 1);
+end; 

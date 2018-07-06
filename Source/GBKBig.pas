@@ -13,7 +13,7 @@ unit GBKBig;
 
 interface
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 
 uses DoStatusIO, CoreClasses, PascalStrings, MemoryStream64, ListEngine, UnicodeMixedLib,
@@ -34,12 +34,12 @@ uses GBKMediaCenter, GBK, GBKVec;
 type
   TBigKeyAnalysis = class
     output: THashVariantList;
-    procedure doProgress(Sender: THashStringList; Name: PSystemString; const V: SystemString);
+    procedure doProgress(Sender: THashStringList; Name: PSystemString; const v: SystemString);
   end;
 
-procedure TBigKeyAnalysis.doProgress(Sender: THashStringList; Name: PSystemString; const V: SystemString);
+procedure TBigKeyAnalysis.doProgress(Sender: THashStringList; Name: PSystemString; const v: SystemString);
 begin
-  umlSeparatorText(V, output, ',;'#9);
+  umlSeparatorText(v, output, ',;'#9);
 end;
 
 procedure BigKeyAnalysis(const Analysis: THashVariantList);
@@ -53,13 +53,13 @@ begin
   {$ELSE FPC}
   bigKeyDict.Progress(tmp.doProgress);
   {$ENDIF FPC}
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 function BigKey(const s: TUPascalString; const MatchSingleWord: Boolean; const Unidentified, Completed: TListPascalString): Integer;
 var
-  ns, n2   : TUPascalString;
-  i, j     : Integer;
+  ns, N2   : TUPascalString;
+  i, J     : Integer;
   Successed: Boolean;
 begin
   ns := GBKString(s);
@@ -69,19 +69,19 @@ begin
   while i <= ns.Len do
     begin
       Successed := False;
-      j := umlMin(bigKeyDict.HashList.MaxNameLen, ns.Len - i);
-      while j > 1 do
+      J := umlMin(bigKeyDict.HashList.MaxNameLen, ns.Len - i);
+      while J > 1 do
         begin
-          n2 := ns.copy(i, j);
-          Successed := bigKeyDict.Exists(n2);
+          N2 := ns.Copy(i, J);
+          Successed := bigKeyDict.Exists(N2);
           if Successed then
             begin
-              Completed.Add(n2.Text);
-              inc(Result);
-              inc(i, j);
-              break;
+              Completed.Add(N2.Text);
+              Inc(Result);
+              Inc(i, J);
+              Break;
             end;
-          dec(j);
+          Dec(J);
         end;
 
       if not Successed then
@@ -90,13 +90,13 @@ begin
           if Successed then
             begin
               Completed.Add(ns[i]);
-              inc(Result);
+              Inc(Result);
             end
           else
             begin
               Unidentified.Add(ns[i]);
             end;
-          inc(i);
+          Inc(i);
         end;
     end;
 end;
@@ -114,7 +114,7 @@ begin
   if Result > 0 then
     for i := 0 to Completed.Count - 1 do
         umlSeparatorText(bigKeyDict.GetDefaultValue(Completed[i], ''), Analysis, ',;'#9);
-  disposeObject([Unidentified, Completed]);
+  DisposeObject([Unidentified, Completed]);
 end;
 
 function BigKeyWord(const s: TUPascalString; const MatchSingleWord: Boolean): TPascalString;
@@ -135,13 +135,13 @@ begin
           Result.Append(Completed[i]);
         end;
     end;
-  disposeObject([Unidentified, Completed]);
+  DisposeObject([Unidentified, Completed]);
 end;
 
 function BigWord(const s: TUPascalString; const MatchSingleWord: Boolean; const Unidentified, Completed: TListPascalString): Integer;
 var
-  ns, n2   : TUPascalString;
-  i, j     : Integer;
+  ns, N2   : TUPascalString;
+  i, J     : Integer;
   Successed: Boolean;
 begin
   ns := GBKString(s);
@@ -151,19 +151,19 @@ begin
   while i <= ns.Len do
     begin
       Successed := False;
-      j := umlMin(bigWordDict.MaxNameLen, ns.Len - i);
-      while j > 1 do
+      J := umlMin(bigWordDict.MaxNameLen, ns.Len - i);
+      while J > 1 do
         begin
-          n2 := ns.copy(i, j);
-          Successed := bigWordDict.Exists(n2);
+          N2 := ns.Copy(i, J);
+          Successed := bigWordDict.Exists(N2);
           if Successed then
             begin
-              Completed.Add(n2.Text);
-              inc(Result);
-              inc(i, j);
-              break;
+              Completed.Add(N2.Text);
+              Inc(Result);
+              Inc(i, J);
+              Break;
             end;
-          dec(j);
+          Dec(J);
         end;
 
       if not Successed then
@@ -172,13 +172,13 @@ begin
           if Successed then
             begin
               Completed.Add(ns[i]);
-              inc(Result);
+              Inc(Result);
             end
           else
             begin
               Unidentified.Add(ns[i]);
             end;
-          inc(i);
+          Inc(i);
         end;
     end;
 end;
@@ -201,9 +201,9 @@ begin
           Result.Append(Completed[i]);
         end;
     end;
-  disposeObject([Unidentified, Completed]);
+  DisposeObject([Unidentified, Completed]);
 end;
 
 initialization
 
-end.
+end. 

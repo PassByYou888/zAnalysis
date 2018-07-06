@@ -35,17 +35,17 @@
   //                                                                            //
   ////////////////////////////////////////////////////////////////////////////////
 *)
-unit AggScanLineBooleanAlgebra;
+unit AggScanlineBooleanAlgebra;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
   AggRasterizerScanLine,
-  AggScanLine,
+  AggScanline,
   AggRendererScanLine;
 
 type
@@ -53,9 +53,9 @@ type
 
   TAggBoolScanLineFunctor = class;
 
-  TAggBoolScanLineFunctor1 = procedure(This: TAggBoolScanLineFunctor; Span: TAggCustomSpan; X: Integer; Len: Cardinal; Sl: TAggCustomScanLine);
-  TAggBoolScanLineFunctor2 = procedure(This: TAggBoolScanLineFunctor; Span1, Span2: TAggCustomSpan; X: Integer; Len: Cardinal; Sl: TAggCustomScanLine);
-  TAggBoolScanLineFormula  = function(This: TAggBoolScanLineFunctor; A, B: Cardinal): Cardinal;
+  TAggBoolScanLineFunctor1 = procedure(This: TAggBoolScanLineFunctor; Span: TAggCustomSpan; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  TAggBoolScanLineFunctor2 = procedure(This: TAggBoolScanLineFunctor; Span1, Span2: TAggCustomSpan; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  TAggBoolScanLineFormula  = function(This: TAggBoolScanLineFunctor; A, b: Cardinal): Cardinal;
 
   TAggBoolScanLineFunctor = class
   private
@@ -65,40 +65,40 @@ type
     Functor2: TAggBoolScanLineFunctor2;
     Formula: TAggBoolScanLineFormula;
 
-    constructor Create1(F1: TAggBoolScanLineFunctor1; CoverShift: Cardinal = AggBasics.CAggCoverShift);
-    constructor Create2(F2: TAggBoolScanLineFunctor2; CoverShift: Cardinal = AggBasics.CAggCoverShift);
+    constructor Create1(f1: TAggBoolScanLineFunctor1; CoverShift: Cardinal = AggBasics.CAggCoverShift);
+    constructor Create2(f2: TAggBoolScanLineFunctor2; CoverShift: Cardinal = AggBasics.CAggCoverShift);
   end;
 
-procedure BoolScanLineSubtractShapesAA(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure BoolScanLineSubtractShapesAA(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 
-procedure BoolScanLineXORShapesAbsDiffAA(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure BoolScanLineXORShapesAbsDiffAA(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 
-procedure BoolScanLineXORShapesSaddleAA(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure BoolScanLineXORShapesSaddleAA(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 
-procedure BoolScanLineXORShapesAA(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure BoolScanLineXORShapesAA(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 
-procedure BoolScanLineIntersectShapesAA(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure BoolScanLineIntersectShapesAA(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 
-procedure BoolScanLineUniteShapesAA(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure BoolScanLineUniteShapesAA(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 
-procedure BoolScanLineCombineShapesAA(Op: TAggBoolScanLineOp; Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure BoolScanLineCombineShapesAA(Op: TAggBoolScanLineOp; Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 
-procedure BoolScanLineSubtractShapesBin(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure BoolScanLineSubtractShapesBin(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 
-procedure BoolScanLineXORShapesBin(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure BoolScanLineXORShapesBin(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 
-procedure BoolScanLineIntersectShapesBin(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure BoolScanLineIntersectShapesBin(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 
-procedure BoolScanLineUniteShapesBin(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure BoolScanLineUniteShapesBin(Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 
-procedure BoolScanLineCombineShapesBin(Op: TAggBoolScanLineOp; Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+procedure BoolScanLineCombineShapesBin(Op: TAggBoolScanLineOp; Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 
 implementation
 
 
 { TAggBoolScanLineFunctor }
 
-constructor TAggBoolScanLineFunctor.Create1(F1: TAggBoolScanLineFunctor1;
+constructor TAggBoolScanLineFunctor.Create1(f1: TAggBoolScanLineFunctor1;
   CoverShift: Cardinal = AggBasics.CAggCoverShift);
 begin
   FCoverShift := CoverShift;
@@ -106,12 +106,12 @@ begin
   FCoverMask := FCoverSize - 1;
   FCoverFull := FCoverMask;
 
-  Functor1 := F1;
+  Functor1 := f1;
   Functor2 := nil;
   Formula := nil;
 end;
 
-constructor TAggBoolScanLineFunctor.Create2(F2: TAggBoolScanLineFunctor2;
+constructor TAggBoolScanLineFunctor.Create2(f2: TAggBoolScanLineFunctor2;
   CoverShift: Cardinal = AggBasics.CAggCoverShift);
 begin
   FCoverShift := CoverShift;
@@ -120,14 +120,14 @@ begin
   FCoverFull := FCoverMask;
 
   Functor1 := nil;
-  Functor2 := F2;
+  Functor2 := f2;
   Formula := nil;
 end;
 
 // Functor.
 // Add nothing. Used in conbine_shapes_sub
 procedure BoolScanLineAddSpanEmpty(This: TAggBoolScanLineFunctor; Span: PAggSpanRecord;
-  X: Integer; Len: Cardinal; Sl: TAggCustomScanLine);
+  X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 begin
 end;
 
@@ -135,7 +135,7 @@ end;
 // Combine two Spans as empty ones. The functor does nothing
 // and is used to XOR binary Spans.
 procedure BoolScanLineCombineSpansEmpty(This: TAggBoolScanLineFunctor;
-  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; Sl: TAggCustomScanLine);
+  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 begin
 end;
 
@@ -144,12 +144,12 @@ end;
 // anti-aliasing information, but only X and Length. The function
 // is compatible with any type of ScanLines.
 procedure BoolScanLineAddSpanAA(This: TAggBoolScanLineFunctor; Span: PAggSpanRecord;
-  X: Integer; Len: Cardinal; Sl: TAggCustomScanLine);
+  X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 var
   Covers: PInt8u;
 begin
   if Span.Len < 0 then
-      Sl.AddSpan(X, Len, Span.Covers^)
+      SL.AddSpan(X, Len, Span.Covers^)
   else if Span.Len > 0 then
     begin
       Covers := Span.Covers;
@@ -157,7 +157,7 @@ begin
       if Span.X < X then
           Inc(PtrComp(Covers), X - Span.X);
 
-      Sl.AddCells(X, Len, Covers);
+      SL.AddCells(X, Len, Covers);
     end;
 end;
 
@@ -165,7 +165,7 @@ end;
 // Unite two Spans preserving the anti-aliasing information.
 // The result is added to the "sl" ScanLine.
 procedure BoolScanLineUniteSpansAA(This: TAggBoolScanLineFunctor;
-  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; Sl: TAggCustomScanLine);
+  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 var
   Cover: Cardinal;
   Covers1, Covers2: PInt8u;
@@ -196,9 +196,9 @@ begin
           Inc(PtrComp(Covers2), SizeOf(Int8u));
 
           if Cover = This.FCoverFull * This.FCoverFull then
-              Sl.AddCell(X, This.FCoverFull)
+              SL.AddCell(X, This.FCoverFull)
           else
-              Sl.AddCell(X, Cover shr This.FCoverShift);
+              SL.AddCell(X, Cover shr This.FCoverShift);
 
           Inc(X);
           Dec(Len);
@@ -214,7 +214,7 @@ begin
             Inc(PtrComp(Covers2), (X - Span2.X) * SizeOf(Int8u));
 
         if Span1.Covers^ = This.FCoverFull then
-            Sl.AddSpan(X, Len, This.FCoverFull)
+            SL.AddSpan(X, Len, This.FCoverFull)
         else
           repeat
             Cover := This.FCoverMask * This.FCoverMask -
@@ -223,9 +223,9 @@ begin
             Inc(PtrComp(Covers2), SizeOf(Int8u));
 
             if Cover = This.FCoverFull * This.FCoverFull then
-                Sl.AddCell(X, This.FCoverFull)
+                SL.AddCell(X, This.FCoverFull)
             else
-                Sl.AddCell(X, Cover shr This.FCoverShift);
+                SL.AddCell(X, Cover shr This.FCoverShift);
 
             Inc(X);
             Dec(Len);
@@ -241,7 +241,7 @@ begin
             Inc(PtrComp(Covers1), (X - Span1.X) * SizeOf(Int8u));
 
         if Span2.Covers^ = This.FCoverFull then
-            Sl.AddSpan(X, Len, This.FCoverFull)
+            SL.AddSpan(X, Len, This.FCoverFull)
         else
           repeat
             Cover := This.FCoverMask * This.FCoverMask -
@@ -250,9 +250,9 @@ begin
             Inc(PtrComp(Covers1), SizeOf(Int8u));
 
             if Cover = This.FCoverFull * This.FCoverFull then
-                Sl.AddCell(X, This.FCoverFull)
+                SL.AddCell(X, This.FCoverFull)
             else
-                Sl.AddCell(X, Cover shr This.FCoverShift);
+                SL.AddCell(X, Cover shr This.FCoverShift);
 
             Inc(X);
             Dec(Len);
@@ -266,9 +266,9 @@ begin
           (This.FCoverMask - Span1.Covers^) * (This.FCoverMask - Span2.Covers^);
 
         if Cover = This.FCoverFull * This.FCoverFull then
-            Sl.AddSpan(X, Len, This.FCoverFull)
+            SL.AddSpan(X, Len, This.FCoverFull)
         else
-            Sl.AddSpan(X, Len, Cover shr This.FCoverShift);
+            SL.AddSpan(X, Len, Cover shr This.FCoverShift);
       end;
   end;
 end;
@@ -278,24 +278,24 @@ end;
 // anti-aliasing information, but only X and Length. The function
 // is compatible with any type of ScanLines.
 procedure BoolScanLineCombineSpansBin(This: TAggBoolScanLineFunctor;
-  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; Sl: TAggCustomScanLine);
+  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 begin
-  Sl.AddSpan(X, Len, This.FCoverFull);
+  SL.AddSpan(X, Len, This.FCoverFull);
 end;
 
 // Functor.
 // Add a binary Span
 procedure BoolScanLineAddSpanBin(This: TAggBoolScanLineFunctor; Span: PAggSpanRecord;
-  X: Integer; Len: Cardinal; Sl: TAggCustomScanLine);
+  X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 begin
-  Sl.AddSpan(X, Len, This.FCoverFull);
+  SL.AddSpan(X, Len, This.FCoverFull);
 end;
 
 // Functor.
 // Intersect two Spans preserving the anti-aliasing information.
 // The result is added to the "sl" ScanLine.
 procedure SboolIntersecTAggSpansAA(This: TAggBoolScanLineFunctor;
-  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; Sl: TAggCustomScanLine);
+  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 var
   Cover: Cardinal;
   Covers1, Covers2: PInt8u;
@@ -325,9 +325,9 @@ begin
           Inc(PtrComp(Covers2), SizeOf(Int8u));
 
           if Cover = This.FCoverFull * This.FCoverFull then
-              Sl.AddCell(X, This.FCoverFull)
+              SL.AddCell(X, This.FCoverFull)
           else
-              Sl.AddCell(X, Cover shr This.FCoverShift);
+              SL.AddCell(X, Cover shr This.FCoverShift);
 
           Inc(X);
           Dec(Len);
@@ -343,7 +343,7 @@ begin
             Inc(PtrComp(Covers2), (X - Span2.X));
 
         if Span1.Covers^ = This.FCoverFull then
-            Sl.AddCells(X, Len, Covers2)
+            SL.AddCells(X, Len, Covers2)
         else
           repeat
             Cover := Span1.Covers^ * Covers2^;
@@ -351,9 +351,9 @@ begin
             Inc(PtrComp(Covers2), SizeOf(Int8u));
 
             if Cover = This.FCoverFull * This.FCoverFull then
-                Sl.AddCell(X, This.FCoverFull)
+                SL.AddCell(X, This.FCoverFull)
             else
-                Sl.AddCell(X, Cover shr This.FCoverShift);
+                SL.AddCell(X, Cover shr This.FCoverShift);
 
             Inc(X);
             Dec(Len);
@@ -369,7 +369,7 @@ begin
             Inc(PtrComp(Covers1), (X - Span1.X) * SizeOf(Int8u));
 
         if Span2.Covers^ = This.FCoverFull then
-            Sl.AddCells(X, Len, Covers1)
+            SL.AddCells(X, Len, Covers1)
         else
           repeat
             Cover := Covers1^ * Span2.Covers^;
@@ -377,9 +377,9 @@ begin
             Inc(PtrComp(Covers1), SizeOf(Int8u));
 
             if Cover = This.FCoverFull * This.FCoverFull then
-                Sl.AddCell(X, This.FCoverFull)
+                SL.AddCell(X, This.FCoverFull)
             else
-                Sl.AddCell(X, Cover shr This.FCoverShift);
+                SL.AddCell(X, Cover shr This.FCoverShift);
 
             Inc(X);
             Dec(Len);
@@ -392,9 +392,9 @@ begin
         Cover := Span1.Covers^ * Span2.Covers^;
 
         if Cover = This.FCoverFull * This.FCoverFull then
-            Sl.AddSpan(X, Len, This.FCoverFull)
+            SL.AddSpan(X, Len, This.FCoverFull)
         else
-            Sl.AddSpan(X, Len, Cover shr This.FCoverShift);
+            SL.AddSpan(X, Len, Cover shr This.FCoverShift);
       end;
   end;
 end;
@@ -403,7 +403,7 @@ end;
 // XOR two Spans preserving the anti-aliasing information.
 // The result is added to the "sl" ScanLine.
 procedure BoolScanLineXORSpansAA(This: TAggBoolScanLineFunctor; Span1,
-  Span2: PAggSpanRecord; X: Integer; Len: Cardinal; Sl: TAggCustomScanLine);
+  Span2: PAggSpanRecord; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 var
   Cover: Cardinal;
   Covers1, Covers2: PInt8u;
@@ -433,7 +433,7 @@ begin
           Inc(PtrComp(Covers2), SizeOf(Int8u));
 
           if Cover <> 0 then
-              Sl.AddCell(X, Cover);
+              SL.AddCell(X, Cover);
 
           Inc(X);
           Dec(Len);
@@ -454,7 +454,7 @@ begin
           Inc(PtrComp(Covers2), SizeOf(Int8u));
 
           if Cover <> 0 then
-              Sl.AddCell(X, Cover);
+              SL.AddCell(X, Cover);
 
           Inc(X);
           Dec(Len);
@@ -475,7 +475,7 @@ begin
           Inc(PtrComp(Covers1), SizeOf(Int8u));
 
           if Cover <> 0 then
-              Sl.AddCell(X, Cover);
+              SL.AddCell(X, Cover);
 
           Inc(X);
           Dec(Len);
@@ -488,7 +488,7 @@ begin
         Cover := This.Formula(This, Span1.Covers^, Span2.Covers^);
 
         if Cover <> 0 then
-            Sl.AddSpan(X, Len, Cover);
+            SL.AddSpan(X, Len, Cover);
       end;
   end;
 end;
@@ -497,7 +497,7 @@ end;
 // Unite two Spans preserving the anti-aliasing information.
 // The result is added to the "sl" ScanLine.
 procedure BoolScanLineSubtracTAggSpansAA(This: TAggBoolScanLineFunctor;
-  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; Sl: TAggCustomScanLine);
+  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 var
   Cover: Cardinal;
   Covers1, Covers2: PInt8u;
@@ -528,9 +528,9 @@ begin
 
           if Cover <> 0 then
             if Cover = This.FCoverFull * This.FCoverFull then
-                Sl.AddCell(X, This.FCoverFull)
+                SL.AddCell(X, This.FCoverFull)
             else
-                Sl.AddCell(X, Cover shr This.FCoverShift);
+                SL.AddCell(X, Cover shr This.FCoverShift);
 
           Inc(X);
           Dec(Len);
@@ -552,9 +552,9 @@ begin
 
           if Cover <> 0 then
             if Cover = This.FCoverFull * This.FCoverFull then
-                Sl.AddCell(X, This.FCoverFull)
+                SL.AddCell(X, This.FCoverFull)
             else
-                Sl.AddCell(X, Cover shr This.FCoverShift);
+                SL.AddCell(X, Cover shr This.FCoverShift);
 
           Inc(X);
           Dec(Len);
@@ -577,9 +577,9 @@ begin
 
             if Cover <> 0 then
               if Cover = This.FCoverFull * This.FCoverFull then
-                  Sl.AddCell(X, This.FCoverFull)
+                  SL.AddCell(X, This.FCoverFull)
               else
-                  Sl.AddCell(X, Cover shr This.FCoverShift);
+                  SL.AddCell(X, Cover shr This.FCoverShift);
 
             Inc(X);
             Dec(Len);
@@ -593,19 +593,19 @@ begin
 
         if Cover <> 0 then
           if Cover = This.FCoverFull * This.FCoverFull then
-              Sl.AddSpan(X, Len, This.FCoverFull)
+              SL.AddSpan(X, Len, This.FCoverFull)
           else
-              Sl.AddSpan(X, Len, Cover shr This.FCoverShift);
+              SL.AddSpan(X, Len, Cover shr This.FCoverShift);
       end;
   end;
 end;
 
-function BoolScanLineXORFormulaLinear(This: TAggBoolScanLineFunctor; A, B: Cardinal)
+function BoolScanLineXORFormulaLinear(This: TAggBoolScanLineFunctor; A, b: Cardinal)
   : Cardinal;
 var
   Cover: Cardinal;
 begin
-  Cover := A + B;
+  Cover := A + b;
 
   if Cover > This.FCoverMask then
       Cover := This.FCoverMask + This.FCoverMask - Cover;
@@ -613,32 +613,32 @@ begin
   Result := Cover;
 end;
 
-function BoolScanLineXORFormulaSaddle(This: TAggBoolScanLineFunctor; A, B: Integer): Cardinal;
+function BoolScanLineXORFormulaSaddle(This: TAggBoolScanLineFunctor; A, b: Integer): Cardinal;
 var
-  K: Cardinal;
+  k: Cardinal;
 begin
-  K := A * B;
+  k := A * b;
 
-  if K = This.FCoverMask * This.FCoverMask then
+  if k = This.FCoverMask * This.FCoverMask then
       Result := 0
   else
     begin
-      A := (This.FCoverMask * This.FCoverMask - (A shl This.FCoverShift) + K)
+      A := (This.FCoverMask * This.FCoverMask - (A shl This.FCoverShift) + k)
         shr This.FCoverShift;
-      B := (This.FCoverMask * This.FCoverMask - (B shl This.FCoverShift) + K)
+      b := (This.FCoverMask * This.FCoverMask - (b shl This.FCoverShift) + k)
         shr This.FCoverShift;
 
-      Result := This.FCoverMask - ((A * B) shr This.FCoverShift);
+      Result := This.FCoverMask - ((A * b) shr This.FCoverShift);
     end;
 end;
 
-function BoolScanLineXORFormulaAbsDiff(This: TAggBoolScanLineFunctor; A, B: Integer)
+function BoolScanLineXORFormulaAbsDiff(This: TAggBoolScanLineFunctor; A, b: Integer)
   : Cardinal;
 begin
-  Result := Abs(A - B);
+  Result := Abs(A - b);
 end;
 
-procedure BoolScanLineAddSpansAndRender(Sl1, Sl: TAggCustomScanLine;
+procedure BoolScanLineAddSpansAndRender(Sl1, SL: TAggCustomScanLine;
   Ren: TAggCustomRendererScanLine; AddSpan: TAggBoolScanLineFunctor);
 var
   // Ss: Cardinal;
@@ -646,14 +646,14 @@ var
   NumSpans: Cardinal;
   Span: TAggCustomSpan;
 begin
-  Sl.ResetSpans;
+  SL.ResetSpans;
 
   // Ss := Sl1.SizeOfSpan;
   Span := Sl1.GetBegin;
   NumSpans := Sl1.NumSpans;
 
   repeat
-    AddSpan.Functor1(AddSpan, Span, Span.X, Abs(Span.Len), Sl);
+    AddSpan.Functor1(AddSpan, Span, Span.X, Abs(Span.Len), SL);
 
     Dec(NumSpans);
 
@@ -666,8 +666,8 @@ begin
 
   Span.Free;
 
-  Sl.Finalize(Sl1.Y);
-  Ren.Render(Sl);
+  SL.Finalize(Sl1.Y);
+  Ren.Render(SL);
 end;
 
 // Unite two ScanLines, "sl1" and "sl2" and generate a new "sl" one.
@@ -675,19 +675,19 @@ end;
 // SboolIntersecTAggSpansAA. First is a general functor to combine
 // two Spans without Anti-Aliasing, the second preserves the AA
 // information, but works sLower
-procedure BoolScanLineUniteScanLines(Sl1, Sl2, Sl: TAggCustomScanLine;
+procedure BoolScanLineUniteScanLines(Sl1, Sl2, SL: TAggCustomScanLine;
   AddSpan1, AddSpan2, CombineSpans: TAggBoolScanLineFunctor);
 const
   CInvalidB = $FFFFFFF;
   CInvalidE = CInvalidB - 1;
 var
   Num1, Num2: Cardinal;
-  Xb1, Xb2, Xe1, Xe2, Xb, Xe, Len: Integer;
+  Xb1, Xb2, Xe1, Xe2, XB, XE, Len: Integer;
   // Ss1, Ss2: Cardinal;
   // Span1, Span2: PAggSpanRecord;
   Span1, Span2: TAggCustomSpan;
 begin
-  Sl.ResetSpans;
+  SL.ResetSpans;
 
   Num1 := Sl1.NumSpans;
   Num2 := Sl2.NumSpans;
@@ -750,16 +750,16 @@ begin
         Break;
 
     // Calculate the intersection
-    Xb := Xb1;
-    Xe := Xe1;
+    XB := Xb1;
+    XE := Xe1;
 
-    if Xb < Xb2 then
-        Xb := Xb2;
+    if XB < Xb2 then
+        XB := Xb2;
 
-    if Xe > Xe2 then
-        Xe := Xe2;
+    if XE > Xe2 then
+        XE := Xe2;
 
-    Len := Xe - Xb + 1; // The length of the intersection
+    Len := XE - XB + 1; // The length of the intersection
 
     if Len > 0 then
       begin
@@ -767,19 +767,19 @@ begin
         // add the beginning of the Span
         if Xb1 < Xb2 then
           begin
-            AddSpan1.Functor1(AddSpan1, Span1, Xb1, Xb2 - Xb1, Sl);
+            AddSpan1.Functor1(AddSpan1, Span1, Xb1, Xb2 - Xb1, SL);
 
             Xb1 := Xb2;
           end
         else if Xb2 < Xb1 then
           begin
-            AddSpan2.Functor1(AddSpan2, Span2, Xb2, Xb1 - Xb2, Sl);
+            AddSpan2.Functor1(AddSpan2, Span2, Xb2, Xb1 - Xb2, SL);
 
             Xb2 := Xb1;
           end;
 
         // Add the combination part of the Spans
-        CombineSpans.Functor2(CombineSpans, Span1, Span2, Xb, Len, Sl);
+        CombineSpans.Functor2(CombineSpans, Span1, Span2, XB, Len, SL);
 
         // Invalidate the fully processed Span or both
         if Xe1 < Xe2 then
@@ -814,7 +814,7 @@ begin
         begin
           // Advance Span1
           if Xb1 <= Xe1 then
-              AddSpan1.Functor1(AddSpan1, Span1, Xb1, Xe1 - Xb1 + 1, Sl);
+              AddSpan1.Functor1(AddSpan1, Span1, Xb1, Xe1 - Xb1 + 1, SL);
 
           Xb1 := CInvalidB; // Invalidate
           Xe1 := CInvalidE;
@@ -823,7 +823,7 @@ begin
         begin
           // Advance Span2
           if Xb2 <= Xe2 then
-              AddSpan2.Functor1(AddSpan2, Span2, Xb2, Xe2 - Xb2 + 1, Sl);
+              AddSpan2.Functor1(AddSpan2, Span2, Xb2, Xe2 - Xb2 + 1, SL);
 
           Xb2 := CInvalidB; // Invalidate
           Xe2 := CInvalidE;
@@ -831,10 +831,10 @@ begin
 
   until False;
 
-  if assigned(Span1) then
+  if Assigned(Span1) then
       Span1.Free;
 
-  if assigned(Span2) then
+  if Assigned(Span2) then
       Span2.Free;
 end;
 
@@ -850,11 +850,11 @@ end;
 // the function calls BoolScanLineUniteScanLines with CombineSpansFunctor
 // as the last argument. See BoolScanLineUniteScanLines for details.
 procedure BoolScanLineUniteShapes(Sg1, Sg2: TAggRasterizerScanLine;
-  Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine;
+  Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine;
   AddSpan1, AddSpan2, CombineSpans: TAggBoolScanLineFunctor);
 var
   Flag1, Flag2: Boolean;
-  R1, R2, Ur: TRectInteger;
+  r1, r2, Ur: TRectInteger;
 begin
   // Prepare the ScanLine generators.
   // If anyone of them doesn't contain
@@ -866,19 +866,19 @@ begin
       Exit;
 
   // Get the bounding boxes
-  R1 := RectInteger(Sg1.MinimumX, Sg1.MinimumY, Sg1.MaximumX, Sg1.MaximumY);
-  R2 := RectInteger(Sg2.MinimumX, Sg2.MinimumY, Sg2.MaximumX, Sg2.MaximumY);
+  r1 := RectInteger(Sg1.MinimumX, Sg1.MinimumY, Sg1.MaximumX, Sg1.MaximumY);
+  r2 := RectInteger(Sg2.MinimumX, Sg2.MinimumY, Sg2.MaximumX, Sg2.MaximumY);
 
   // Calculate the union of the bounding boxes
-  Ur := UniteRectangles(R1, R2);
+  Ur := UniteRectangles(r1, r2);
 
   if not Ur.IsValid then
       Exit;
 
-  Ren.Prepare(Cardinal(Ur.X2 - Ur.X2 + 2));
+  Ren.Prepare(Cardinal(Ur.x2 - Ur.x2 + 2));
 
   // Reset the ScanLines and get two first ones
-  Sl.Reset(Ur.X1, Ur.X2);
+  SL.Reset(Ur.x1, Ur.x2);
 
   if Flag1 then
     begin
@@ -904,13 +904,13 @@ begin
           // The Y coordinates are the same.
           // Combine the ScanLines, render if they contain any Spans,
           // and advance both generators to the next ScanLines
-          BoolScanLineUniteScanLines(Sl1, Sl2, Sl, AddSpan1, AddSpan2,
+          BoolScanLineUniteScanLines(Sl1, Sl2, SL, AddSpan1, AddSpan2,
             CombineSpans);
 
-          if Sl.NumSpans <> 0 then
+          if SL.NumSpans <> 0 then
             begin
-              Sl.Finalize(Sl1.Y);
-              Ren.Render(Sl);
+              SL.Finalize(Sl1.Y);
+              Ren.Render(SL);
             end;
 
           Flag1 := Sg1.SweepScanLine(Sl1);
@@ -918,13 +918,13 @@ begin
         end
       else if Sl1.Y < Sl2.Y then
         begin
-          BoolScanLineAddSpansAndRender(Sl1, Sl, Ren, AddSpan1);
+          BoolScanLineAddSpansAndRender(Sl1, SL, Ren, AddSpan1);
 
           Flag1 := Sg1.SweepScanLine(Sl1);
         end
       else
         begin
-          BoolScanLineAddSpansAndRender(Sl2, Sl, Ren, AddSpan2);
+          BoolScanLineAddSpansAndRender(Sl2, SL, Ren, AddSpan2);
 
           Flag2 := Sg2.SweepScanLine(Sl2);
         end
@@ -932,14 +932,14 @@ begin
       begin
         if Flag1 then
           begin
-            BoolScanLineAddSpansAndRender(Sl1, Sl, Ren, AddSpan1);
+            BoolScanLineAddSpansAndRender(Sl1, SL, Ren, AddSpan1);
 
             Flag1 := Sg1.SweepScanLine(Sl1);
           end;
 
         if Flag2 then
           begin
-            BoolScanLineAddSpansAndRender(Sl2, Sl, Ren, AddSpan2);
+            BoolScanLineAddSpansAndRender(Sl2, SL, Ren, AddSpan2);
 
             Flag2 := Sg2.SweepScanLine(Sl2);
           end;
@@ -951,7 +951,7 @@ end;
 // SboolIntersecTAggSpansAA. First is a general functor to combine
 // two Spans without Anti-Aliasing, the second preserves the AA
 // information, but works sLower
-procedure BoolScanLineIntersecTAggScanLines(Sl1, Sl2, Sl: TAggCustomScanLine;
+procedure BoolScanLineIntersecTAggScanLines(Sl1, Sl2, SL: TAggCustomScanLine;
   CombineSpans: TAggBoolScanLineFunctor);
 var
   Num1, Num2: Cardinal;
@@ -964,7 +964,7 @@ var
   Advance_Span1, Advance_both: Boolean;
 
 begin
-  Sl.ResetSpans;
+  SL.ResetSpans;
 
   Num1 := Sl1.NumSpans;
 
@@ -1005,7 +1005,7 @@ begin
 
       if Xb1 <= Xe1 then
           CombineSpans.Functor2(CombineSpans, Span1, Span2, Xb1,
-          Xe1 - Xb1 + 1, Sl);
+          Xe1 - Xb1 + 1, SL);
 
       // Advance the Spans
       if Advance_both then
@@ -1055,10 +1055,10 @@ end;
 // the function calls BoolScanLineIntersecTAggScanLines with CombineSpansFunctor
 // as the last argument. See BoolScanLineIntersecTAggScanLines for details.
 procedure BoolScanLineIntersectShapes(Sg1, Sg2: TAggRasterizerScanLine;
-  Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine;
+  Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine;
   CombineSpans: TAggBoolScanLineFunctor);
 var
-  R1, R2, Ir: TRectInteger;
+  r1, r2, IR: TRectInteger;
 begin
   // Prepare the ScanLine generators.
   // If anyone of them doesn't contain
@@ -1070,18 +1070,18 @@ begin
       Exit;
 
   // Get the bounding boxes
-  R1 := RectInteger(Sg1.MinimumX, Sg1.MinimumY, Sg1.MaximumX, Sg1.MaximumY);
-  R2 := RectInteger(Sg2.MinimumX, Sg2.MinimumY, Sg2.MaximumX, Sg2.MaximumY);
+  r1 := RectInteger(Sg1.MinimumX, Sg1.MinimumY, Sg1.MaximumX, Sg1.MaximumY);
+  r2 := RectInteger(Sg2.MinimumX, Sg2.MinimumY, Sg2.MaximumX, Sg2.MaximumY);
 
   // Calculate the intersection of the bounding
   // boxes and return if they don't intersect.
-  Ir := IntersectRectangles(R1, R2);
+  IR := IntersectRectangles(r1, r2);
 
-  if not Ir.IsValid then
+  if not IR.IsValid then
       Exit;
 
   // Reset the ScanLines and get two first ones
-  Sl.Reset(Ir.X1, Ir.X2);
+  SL.Reset(IR.x1, IR.x2);
   Sl1.Reset(Sg1.MinimumX, Sg1.MaximumX);
   Sl2.Reset(Sg2.MinimumX, Sg2.MaximumX);
 
@@ -1091,7 +1091,7 @@ begin
   if not Sg2.SweepScanLine(Sl2) then
       Exit;
 
-  Ren.Prepare(Cardinal(Ir.X2 - Ir.X1 + 2));
+  Ren.Prepare(Cardinal(IR.x2 - IR.x1 + 2));
 
   // The main loop
   // Here we synchronize the ScanLines with
@@ -1112,12 +1112,12 @@ begin
         // The Y coordinates are the same.
         // Combine the ScanLines, render if they contain any Spans,
         // and advance both generators to the next ScanLines
-        BoolScanLineIntersecTAggScanLines(Sl1, Sl2, Sl, CombineSpans);
+        BoolScanLineIntersecTAggScanLines(Sl1, Sl2, SL, CombineSpans);
 
-        if Sl.NumSpans <> 0 then
+        if SL.NumSpans <> 0 then
           begin
-            Sl.Finalize(Sl1.Y);
-            Ren.Render(Sl);
+            SL.Finalize(Sl1.Y);
+            Ren.Render(SL);
           end;
 
         if not Sg1.SweepScanLine(Sl1) then
@@ -1141,10 +1141,10 @@ end;
 // the function calls BoolScanLineIntersecTAggScanLines with CombineSpansFunctor
 // as the last argument. See combine_ScanLines_sub for details.
 procedure BoolScanLineSubtractShapes(Sg1, Sg2: TAggRasterizerScanLine;
-  Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine;
+  Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine;
   AddSpan1, CombineSpans: TAggBoolScanLineFunctor);
 var
-  R1: TRectInteger;
+  r1: TRectInteger;
   Flag1, Flag2: Boolean;
   AddSpan2: TAggBoolScanLineFunctor;
 begin
@@ -1156,10 +1156,10 @@ begin
   Flag2 := Sg2.RewindScanLines;
 
   // Get the bounding box
-  R1 := RectInteger(Sg1.MinimumX, Sg1.MinimumY, Sg1.MaximumX, Sg1.MaximumY);
+  r1 := RectInteger(Sg1.MinimumX, Sg1.MinimumY, Sg1.MaximumX, Sg1.MaximumY);
 
   // Reset the ScanLines and get two first ones
-  Sl.Reset(Sg1.MinimumX, Sg1.MaximumX);
+  SL.Reset(Sg1.MinimumX, Sg1.MaximumX);
   Sl1.Reset(Sg1.MinimumX, Sg1.MaximumX);
   Sl2.Reset(Sg2.MinimumX, Sg2.MaximumX);
 
@@ -1190,16 +1190,16 @@ begin
         begin
           // The Y coordinates are the same.
           // Combine the ScanLines and render if they contain any Spans.
-          BoolScanLineUniteScanLines(Sl1, Sl2, Sl, AddSpan1, AddSpan2, CombineSpans);
+          BoolScanLineUniteScanLines(Sl1, Sl2, SL, AddSpan1, AddSpan2, CombineSpans);
 
-          if Sl.NumSpans <> 0 then
+          if SL.NumSpans <> 0 then
             begin
-              Sl.Finalize(Sl1.Y);
-              Ren.Render(Sl);
+              SL.Finalize(Sl1.Y);
+              Ren.Render(SL);
             end;
         end
       else
-          BoolScanLineAddSpansAndRender(Sl1, Sl, Ren, AddSpan1);
+          BoolScanLineAddSpansAndRender(Sl1, SL, Ren, AddSpan1);
 
       // Advance the "master"
       Flag1 := Sg1.SweepScanLine(Sl1);
@@ -1218,7 +1218,7 @@ begin
   AddFunctor := TAggBoolScanLineFunctor.Create1(@BoolScanLineAddSpanAA);
   CombineFunctor := TAggBoolScanLineFunctor.Create2(@BoolScanLineSubtracTAggSpansAA);
   try
-      BoolScanLineSubtractShapes(Sg1, Sg2, Sl1, Sl2, Sl, Ren, AddFunctor,
+      BoolScanLineSubtractShapes(Sg1, Sg2, Sl1, Sl2, SL, Ren, AddFunctor,
       CombineFunctor);
   finally
     AddFunctor.Free;
@@ -1240,7 +1240,7 @@ begin
   try
     CombineFunctor.Formula := @BoolScanLineXORFormulaAbsDiff;
 
-    BoolScanLineUniteShapes(Sg1, Sg2, Sl1, Sl2, Sl, Ren, AddFunctor, AddFunctor,
+    BoolScanLineUniteShapes(Sg1, Sg2, Sl1, Sl2, SL, Ren, AddFunctor, AddFunctor,
       CombineFunctor);
   finally
     AddFunctor.Free;
@@ -1263,7 +1263,7 @@ begin
   try
     CombineFunctor.Formula := @BoolScanLineXORFormulaSaddle;
 
-    BoolScanLineUniteShapes(Sg1, Sg2, Sl1, Sl2, Sl, Ren, AddFunctor, AddFunctor,
+    BoolScanLineUniteShapes(Sg1, Sg2, Sl1, Sl2, SL, Ren, AddFunctor, AddFunctor,
       CombineFunctor);
   finally
     AddFunctor.Free;
@@ -1286,7 +1286,7 @@ begin
   try
     CombineFunctor.Formula := @BoolScanLineXORFormulaLinear;
 
-    BoolScanLineUniteShapes(Sg1, Sg2, Sl1, Sl2, Sl, Ren, AddFunctor,
+    BoolScanLineUniteShapes(Sg1, Sg2, Sl1, Sl2, SL, Ren, AddFunctor,
       AddFunctor, CombineFunctor);
   finally
     AddFunctor.Free;
@@ -1304,13 +1304,13 @@ end;
 // The external "sl1" and "sl2" are used only for the sake of
 // optimization and reusing of the scanline objects.
 procedure BoolScanLineIntersectShapesAA(Sg1, Sg2: TAggRasterizerScanLine;
-  Sl1, Sl2, Sl: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
+  Sl1, Sl2, SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
 var
   CombineFunctor: TAggBoolScanLineFunctor;
 begin
   CombineFunctor := TAggBoolScanLineFunctor.Create2(@SboolIntersecTAggSpansAA);
   try
-      BoolScanLineIntersectShapes(Sg1, Sg2, Sl1, Sl2, Sl, Ren, CombineFunctor);
+      BoolScanLineIntersectShapes(Sg1, Sg2, Sl1, Sl2, SL, Ren, CombineFunctor);
   finally
       CombineFunctor.Free;
   end;
@@ -1325,7 +1325,7 @@ begin
   AddFunctor := TAggBoolScanLineFunctor.Create1(@BoolScanLineAddSpanAA);
   CombineFunctor := TAggBoolScanLineFunctor.Create2(@BoolScanLineUniteSpansAA);
   try
-      BoolScanLineUniteShapes(Sg1, Sg2, Sl1, Sl2, Sl, Ren, AddFunctor,
+      BoolScanLineUniteShapes(Sg1, Sg2, Sl1, Sl2, SL, Ren, AddFunctor,
       AddFunctor, CombineFunctor);
   finally
     AddFunctor.Free;
@@ -1334,30 +1334,30 @@ begin
 end;
 
 procedure BoolScanLineCombineShapesAA(Op: TAggBoolScanLineOp;
-  Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine;
+  Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine;
   Ren: TAggCustomRendererScanLine);
 begin
   case Op of
     bsoOr:
-      BoolScanLineUniteShapesAA(Sg1, Sg2, Sl1, Sl2, Sl, Ren);
+      BoolScanLineUniteShapesAA(Sg1, Sg2, Sl1, Sl2, SL, Ren);
 
     bsoAnd:
-      BoolScanLineIntersectShapesAA(Sg1, Sg2, Sl1, Sl2, Sl, Ren);
+      BoolScanLineIntersectShapesAA(Sg1, Sg2, Sl1, Sl2, SL, Ren);
 
     bsoXor:
-      BoolScanLineXORShapesAA(Sg1, Sg2, Sl1, Sl2, Sl, Ren);
+      BoolScanLineXORShapesAA(Sg1, Sg2, Sl1, Sl2, SL, Ren);
 
     bsoXorSaddle:
-      BoolScanLineXORShapesSaddleAA(Sg1, Sg2, Sl1, Sl2, Sl, Ren);
+      BoolScanLineXORShapesSaddleAA(Sg1, Sg2, Sl1, Sl2, SL, Ren);
 
     bsoXorAbsDiff:
-      BoolScanLineXORShapesAbsDiffAA(Sg1, Sg2, Sl1, Sl2, Sl, Ren);
+      BoolScanLineXORShapesAbsDiffAA(Sg1, Sg2, Sl1, Sl2, SL, Ren);
 
     bsoAMinusB:
-      BoolScanLineSubtractShapesAA(Sg1, Sg2, Sl1, Sl2, Sl, Ren);
+      BoolScanLineSubtractShapesAA(Sg1, Sg2, Sl1, Sl2, SL, Ren);
 
     bsoBMinusA:
-      BoolScanLineSubtractShapesAA(Sg2, Sg1, Sl2, Sl1, Sl, Ren);
+      BoolScanLineSubtractShapesAA(Sg2, Sg1, Sl2, Sl1, SL, Ren);
   end;
 end;
 
@@ -1368,7 +1368,7 @@ begin
   AddFunctor := TAggBoolScanLineFunctor.Create1(@BoolScanLineAddSpanBin);
   CombineFunctor := TAggBoolScanLineFunctor.Create2(@BoolScanLineCombineSpansEmpty);
   try
-      BoolScanLineSubtractShapes(Sg1, Sg2, Sl1, Sl2, Sl, Ren, AddFunctor,
+      BoolScanLineSubtractShapes(Sg1, Sg2, Sl1, Sl2, SL, Ren, AddFunctor,
       CombineFunctor);
   finally
     AddFunctor.Free;
@@ -1385,7 +1385,7 @@ begin
   CombineFunctor := TAggBoolScanLineFunctor.Create2(@BoolScanLineCombineSpansEmpty);
 
   try
-      BoolScanLineUniteShapes(Sg1, Sg2, Sl1, Sl2, Sl, Ren, AddFunctor,
+      BoolScanLineUniteShapes(Sg1, Sg2, Sl1, Sl2, SL, Ren, AddFunctor,
       AddFunctor, CombineFunctor);
   finally
     AddFunctor.Free;
@@ -1400,7 +1400,7 @@ begin
   CombineFunctor := TAggBoolScanLineFunctor.Create2(@BoolScanLineCombineSpansBin);
 
   try
-      BoolScanLineIntersectShapes(Sg1, Sg2, Sl1, Sl2, Sl, Ren, CombineFunctor);
+      BoolScanLineIntersectShapes(Sg1, Sg2, Sl1, Sl2, SL, Ren, CombineFunctor);
   finally
       CombineFunctor.Free;
   end;
@@ -1414,7 +1414,7 @@ begin
   CombineFunctor := TAggBoolScanLineFunctor.Create2(@BoolScanLineCombineSpansBin);
 
   try
-      BoolScanLineUniteShapes(Sg1, Sg2, Sl1, Sl2, Sl, Ren, AddFunctor,
+      BoolScanLineUniteShapes(Sg1, Sg2, Sl1, Sl2, SL, Ren, AddFunctor,
       AddFunctor, CombineFunctor);
   finally
     AddFunctor.Free;
@@ -1423,25 +1423,25 @@ begin
 end;
 
 procedure BoolScanLineCombineShapesBin(Op: TAggBoolScanLineOp;
-  Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, Sl: TAggCustomScanLine;
+  Sg1, Sg2: TAggRasterizerScanLine; Sl1, Sl2, SL: TAggCustomScanLine;
   Ren: TAggCustomRendererScanLine);
 begin
   case Op of
     bsoOr:
-      BoolScanLineUniteShapesBin(Sg1, Sg2, Sl1, Sl2, Sl, Ren);
+      BoolScanLineUniteShapesBin(Sg1, Sg2, Sl1, Sl2, SL, Ren);
 
     bsoAnd:
-      BoolScanLineIntersectShapesBin(Sg1, Sg2, Sl1, Sl2, Sl, Ren);
+      BoolScanLineIntersectShapesBin(Sg1, Sg2, Sl1, Sl2, SL, Ren);
 
     bsoXor, bsoXorSaddle, bsoXorAbsDiff:
-      BoolScanLineXORShapesBin(Sg1, Sg2, Sl1, Sl2, Sl, Ren);
+      BoolScanLineXORShapesBin(Sg1, Sg2, Sl1, Sl2, SL, Ren);
 
     bsoAMinusB:
-      BoolScanLineSubtractShapesBin(Sg1, Sg2, Sl1, Sl2, Sl, Ren);
+      BoolScanLineSubtractShapesBin(Sg1, Sg2, Sl1, Sl2, SL, Ren);
 
     bsoBMinusA:
-      BoolScanLineSubtractShapesBin(Sg2, Sg1, Sl2, Sl1, Sl, Ren);
+      BoolScanLineSubtractShapesBin(Sg2, Sg1, Sl2, Sl1, SL, Ren);
   end;
 end;
 
-end.
+end. 

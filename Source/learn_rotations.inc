@@ -34,16 +34,16 @@
   Output parameters:
   A           -   transformed matrix.
   ************************************************************************ *)
-procedure ApplyRotationsFromTheLeft(IsForward: Boolean; M1: TLInt; M2: TLInt; N1: TLInt; N2: TLInt;
-  const C: TLVec; const S: TLVec; var A: TLMatrix; var WORK: TLVec);
+procedure ApplyRotationsFromTheLeft(IsForward: Boolean; m1: TLInt; m2: TLInt; N1: TLInt; N2: TLInt;
+  const C: TLVec; const s: TLVec; var A: TLMatrix; var Work: TLVec);
 var
   J    : TLInt;
   JP1  : TLInt;
-  CTEMP: TLFloat;
+  CTemp: TLFloat;
   STEMP: TLFloat;
-  TEMP : TLFloat;
+  Temp : TLFloat;
 begin
-  if (M1 > M2) or (N1 > N2) then
+  if (m1 > m2) or (N1 > N2) then
     begin
       Exit;
     end;
@@ -59,19 +59,19 @@ begin
           //
           // Common case: N1<>N2
           //
-          J := M1;
-          while J <= M2 - 1 do
+          J := m1;
+          while J <= m2 - 1 do
             begin
-              CTEMP := C[J - M1 + 1];
-              STEMP := S[J - M1 + 1];
-              if AP_FP_Neq(CTEMP, 1) or AP_FP_Neq(STEMP, 0) then
+              CTemp := C[J - m1 + 1];
+              STEMP := s[J - m1 + 1];
+              if AP_FP_NEq(CTemp, 1) or AP_FP_NEq(STEMP, 0) then
                 begin
                   JP1 := J + 1;
-                  APVMove(@WORK[0], N1, N2, @A[JP1][0], N1, N2, CTEMP);
-                  APVSub(@WORK[0], N1, N2, @A[J][0], N1, N2, STEMP);
-                  APVMul(@A[J][0], N1, N2, CTEMP);
+                  APVMove(@Work[0], N1, N2, @A[JP1][0], N1, N2, CTemp);
+                  APVSub(@Work[0], N1, N2, @A[J][0], N1, N2, STEMP);
+                  APVMul(@A[J][0], N1, N2, CTemp);
                   APVAdd(@A[J][0], N1, N2, @A[JP1][0], N1, N2, STEMP);
-                  APVMove(@A[JP1][0], N1, N2, @WORK[0], N1, N2);
+                  APVMove(@A[JP1][0], N1, N2, @Work[0], N1, N2);
                 end;
               Inc(J);
             end;
@@ -82,16 +82,16 @@ begin
           //
           // Special case: N1=N2
           //
-          J := M1;
-          while J <= M2 - 1 do
+          J := m1;
+          while J <= m2 - 1 do
             begin
-              CTEMP := C[J - M1 + 1];
-              STEMP := S[J - M1 + 1];
-              if AP_FP_Neq(CTEMP, 1) or AP_FP_Neq(STEMP, 0) then
+              CTemp := C[J - m1 + 1];
+              STEMP := s[J - m1 + 1];
+              if AP_FP_NEq(CTemp, 1) or AP_FP_NEq(STEMP, 0) then
                 begin
-                  TEMP := A[J + 1, N1];
-                  A[J + 1, N1] := CTEMP * TEMP - STEMP * A[J, N1];
-                  A[J, N1] := STEMP * TEMP + CTEMP * A[J, N1];
+                  Temp := A[J + 1, N1];
+                  A[J + 1, N1] := CTemp * Temp - STEMP * A[J, N1];
+                  A[J, N1] := STEMP * Temp + CTemp * A[J, N1];
                 end;
               Inc(J);
             end;
@@ -105,19 +105,19 @@ begin
           //
           // Common case: N1<>N2
           //
-          J := M2 - 1;
-          while J >= M1 do
+          J := m2 - 1;
+          while J >= m1 do
             begin
-              CTEMP := C[J - M1 + 1];
-              STEMP := S[J - M1 + 1];
-              if AP_FP_Neq(CTEMP, 1) or AP_FP_Neq(STEMP, 0) then
+              CTemp := C[J - m1 + 1];
+              STEMP := s[J - m1 + 1];
+              if AP_FP_NEq(CTemp, 1) or AP_FP_NEq(STEMP, 0) then
                 begin
                   JP1 := J + 1;
-                  APVMove(@WORK[0], N1, N2, @A[JP1][0], N1, N2, CTEMP);
-                  APVSub(@WORK[0], N1, N2, @A[J][0], N1, N2, STEMP);
-                  APVMul(@A[J][0], N1, N2, CTEMP);
+                  APVMove(@Work[0], N1, N2, @A[JP1][0], N1, N2, CTemp);
+                  APVSub(@Work[0], N1, N2, @A[J][0], N1, N2, STEMP);
+                  APVMul(@A[J][0], N1, N2, CTemp);
                   APVAdd(@A[J][0], N1, N2, @A[JP1][0], N1, N2, STEMP);
-                  APVMove(@A[JP1][0], N1, N2, @WORK[0], N1, N2);
+                  APVMove(@A[JP1][0], N1, N2, @Work[0], N1, N2);
                 end;
               Dec(J);
             end;
@@ -128,16 +128,16 @@ begin
           //
           // Special case: N1=N2
           //
-          J := M2 - 1;
-          while J >= M1 do
+          J := m2 - 1;
+          while J >= m1 do
             begin
-              CTEMP := C[J - M1 + 1];
-              STEMP := S[J - M1 + 1];
-              if AP_FP_Neq(CTEMP, 1) or AP_FP_Neq(STEMP, 0) then
+              CTemp := C[J - m1 + 1];
+              STEMP := s[J - m1 + 1];
+              if AP_FP_NEq(CTemp, 1) or AP_FP_NEq(STEMP, 0) then
                 begin
-                  TEMP := A[J + 1, N1];
-                  A[J + 1, N1] := CTEMP * TEMP - STEMP * A[J, N1];
-                  A[J, N1] := STEMP * TEMP + CTEMP * A[J, N1];
+                  Temp := A[J + 1, N1];
+                  A[J + 1, N1] := CTemp * Temp - STEMP * A[J, N1];
+                  A[J, N1] := STEMP * Temp + CTemp * A[J, N1];
                 end;
               Dec(J);
             end;
@@ -168,14 +168,14 @@ end;
   Output parameters:
   A           -   transformed matrix.
   ************************************************************************ *)
-procedure ApplyRotationsFromTheRight(IsForward: Boolean; M1: TLInt; M2: TLInt; N1: TLInt; N2: TLInt;
-  const C: TLVec; const S: TLVec; var A: TLMatrix; var WORK: TLVec);
+procedure ApplyRotationsFromTheRight(IsForward: Boolean; m1: TLInt; m2: TLInt; N1: TLInt; N2: TLInt;
+  const C: TLVec; const s: TLVec; var A: TLMatrix; var Work: TLVec);
 var
   J    : TLInt;
   JP1  : TLInt;
-  CTEMP: TLFloat;
+  CTemp: TLFloat;
   STEMP: TLFloat;
-  TEMP : TLFloat;
+  Temp : TLFloat;
   i_   : TLInt;
 begin
 
@@ -184,7 +184,7 @@ begin
   //
   if IsForward then
     begin
-      if M1 <> M2 then
+      if m1 <> m2 then
         begin
 
           //
@@ -193,30 +193,30 @@ begin
           J := N1;
           while J <= N2 - 1 do
             begin
-              CTEMP := C[J - N1 + 1];
-              STEMP := S[J - N1 + 1];
-              if AP_FP_Neq(CTEMP, 1) or AP_FP_Neq(STEMP, 0) then
+              CTemp := C[J - N1 + 1];
+              STEMP := s[J - N1 + 1];
+              if AP_FP_NEq(CTemp, 1) or AP_FP_NEq(STEMP, 0) then
                 begin
                   JP1 := J + 1;
-                  for i_ := M1 to M2 do
+                  for i_ := m1 to m2 do
                     begin
-                      WORK[i_] := CTEMP * A[i_, JP1];
+                      Work[i_] := CTemp * A[i_, JP1];
                     end;
-                  for i_ := M1 to M2 do
+                  for i_ := m1 to m2 do
                     begin
-                      WORK[i_] := WORK[i_] - STEMP * A[i_, J];
+                      Work[i_] := Work[i_] - STEMP * A[i_, J];
                     end;
-                  for i_ := M1 to M2 do
+                  for i_ := m1 to m2 do
                     begin
-                      A[i_, J] := CTEMP * A[i_, J];
+                      A[i_, J] := CTemp * A[i_, J];
                     end;
-                  for i_ := M1 to M2 do
+                  for i_ := m1 to m2 do
                     begin
                       A[i_, J] := A[i_, J] + STEMP * A[i_, JP1];
                     end;
-                  for i_ := M1 to M2 do
+                  for i_ := m1 to m2 do
                     begin
-                      A[i_, JP1] := WORK[i_];
+                      A[i_, JP1] := Work[i_];
                     end;
                 end;
               Inc(J);
@@ -231,13 +231,13 @@ begin
           J := N1;
           while J <= N2 - 1 do
             begin
-              CTEMP := C[J - N1 + 1];
-              STEMP := S[J - N1 + 1];
-              if AP_FP_Neq(CTEMP, 1) or AP_FP_Neq(STEMP, 0) then
+              CTemp := C[J - N1 + 1];
+              STEMP := s[J - N1 + 1];
+              if AP_FP_NEq(CTemp, 1) or AP_FP_NEq(STEMP, 0) then
                 begin
-                  TEMP := A[M1, J + 1];
-                  A[M1, J + 1] := CTEMP * TEMP - STEMP * A[M1, J];
-                  A[M1, J] := STEMP * TEMP + CTEMP * A[M1, J];
+                  Temp := A[m1, J + 1];
+                  A[m1, J + 1] := CTemp * Temp - STEMP * A[m1, J];
+                  A[m1, J] := STEMP * Temp + CTemp * A[m1, J];
                 end;
               Inc(J);
             end;
@@ -245,7 +245,7 @@ begin
     end
   else
     begin
-      if M1 <> M2 then
+      if m1 <> m2 then
         begin
 
           //
@@ -254,30 +254,30 @@ begin
           J := N2 - 1;
           while J >= N1 do
             begin
-              CTEMP := C[J - N1 + 1];
-              STEMP := S[J - N1 + 1];
-              if AP_FP_Neq(CTEMP, 1) or AP_FP_Neq(STEMP, 0) then
+              CTemp := C[J - N1 + 1];
+              STEMP := s[J - N1 + 1];
+              if AP_FP_NEq(CTemp, 1) or AP_FP_NEq(STEMP, 0) then
                 begin
                   JP1 := J + 1;
-                  for i_ := M1 to M2 do
+                  for i_ := m1 to m2 do
                     begin
-                      WORK[i_] := CTEMP * A[i_, JP1];
+                      Work[i_] := CTemp * A[i_, JP1];
                     end;
-                  for i_ := M1 to M2 do
+                  for i_ := m1 to m2 do
                     begin
-                      WORK[i_] := WORK[i_] - STEMP * A[i_, J];
+                      Work[i_] := Work[i_] - STEMP * A[i_, J];
                     end;
-                  for i_ := M1 to M2 do
+                  for i_ := m1 to m2 do
                     begin
-                      A[i_, J] := CTEMP * A[i_, J];
+                      A[i_, J] := CTemp * A[i_, J];
                     end;
-                  for i_ := M1 to M2 do
+                  for i_ := m1 to m2 do
                     begin
                       A[i_, J] := A[i_, J] + STEMP * A[i_, JP1];
                     end;
-                  for i_ := M1 to M2 do
+                  for i_ := m1 to m2 do
                     begin
-                      A[i_, JP1] := WORK[i_];
+                      A[i_, JP1] := Work[i_];
                     end;
                 end;
               Dec(J);
@@ -292,13 +292,13 @@ begin
           J := N2 - 1;
           while J >= N1 do
             begin
-              CTEMP := C[J - N1 + 1];
-              STEMP := S[J - N1 + 1];
-              if AP_FP_Neq(CTEMP, 1) or AP_FP_Neq(STEMP, 0) then
+              CTemp := C[J - N1 + 1];
+              STEMP := s[J - N1 + 1];
+              if AP_FP_NEq(CTemp, 1) or AP_FP_NEq(STEMP, 0) then
                 begin
-                  TEMP := A[M1, J + 1];
-                  A[M1, J + 1] := CTEMP * TEMP - STEMP * A[M1, J];
-                  A[M1, J] := STEMP * TEMP + CTEMP * A[M1, J];
+                  Temp := A[m1, J + 1];
+                  A[m1, J + 1] := CTemp * Temp - STEMP * A[m1, J];
+                  A[m1, J] := STEMP * Temp + CTemp * A[m1, J];
                 end;
               Dec(J);
             end;
@@ -314,45 +314,45 @@ end;
 
   CS**2 + SN**2 = 1
   ************************************************************************ *)
-procedure GenerateRotation(F: TLFloat; G: TLFloat; var CS: TLFloat; var SN: TLFloat; var R: TLFloat);
+procedure GenerateRotation(F: TLFloat; g: TLFloat; var cs: TLFloat; var sn: TLFloat; var R: TLFloat);
 var
-  F1: TLFloat;
+  f1: TLFloat;
   G1: TLFloat;
 begin
-  if AP_FP_Eq(G, 0) then
+  if AP_FP_Eq(g, 0) then
     begin
-      CS := 1;
-      SN := 0;
+      cs := 1;
+      sn := 0;
       R := F;
     end
   else
     begin
       if AP_FP_Eq(F, 0) then
         begin
-          CS := 0;
-          SN := 1;
-          R := G;
+          cs := 0;
+          sn := 1;
+          R := g;
         end
       else
         begin
-          F1 := F;
-          G1 := G;
-          if AP_FP_Greater(AbsReal(F1), AbsReal(G1)) then
+          f1 := F;
+          G1 := g;
+          if AP_FP_Greater(AbsReal(f1), AbsReal(G1)) then
             begin
-              R := AbsReal(F1) * SQRT(1 + AP_Sqr(G1 / F1));
+              R := AbsReal(f1) * Sqrt(1 + AP_Sqr(G1 / f1));
             end
           else
             begin
-              R := AbsReal(G1) * SQRT(1 + AP_Sqr(F1 / G1));
+              R := AbsReal(G1) * Sqrt(1 + AP_Sqr(f1 / G1));
             end;
-          CS := F1 / R;
-          SN := G1 / R;
-          if AP_FP_Greater(AbsReal(F), AbsReal(G)) and AP_FP_Less(CS, 0) then
+          cs := f1 / R;
+          sn := G1 / R;
+          if AP_FP_Greater(AbsReal(F), AbsReal(g)) and AP_FP_Less(cs, 0) then
             begin
-              CS := -CS;
-              SN := -SN;
+              cs := -cs;
+              sn := -sn;
               R := -R;
             end;
         end;
     end;
-end;
+end; 

@@ -12,23 +12,23 @@
 { ****************************************************************************** }
 
 
-procedure InternalSchurDecomposition(var H: TLMatrix; N: TLInt; TNeeded: TLInt; ZNeeded: TLInt;
-  var WR: TLVec; var WI: TLVec; var Z: TLMatrix; var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalSchurDecomposition(var h: TLMatrix; n: TLInt; TNeeded: TLInt; ZNeeded: TLInt;
+  var WR: TLVec; var WI: TLVec; var Z: TLMatrix; var Info: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure InternalAuxSchur(WANTT: Boolean; WANTZ: Boolean; N: TLInt;
-  ILO: TLInt; IHI: TLInt; var H: TLMatrix;
+procedure InternalAuxSchur(WANTT: Boolean; WANTZ: Boolean; n: TLInt;
+  ILO: TLInt; IHI: TLInt; var h: TLMatrix;
   var WR: TLVec; var WI: TLVec; ILOZ: TLInt;
-  IHIZ: TLInt; var Z: TLMatrix; var WORK: TLVec;
+  IHIZ: TLInt; var Z: TLMatrix; var Work: TLVec;
   var WORKV3: TLVec; var WORKC1: TLVec; var WORKS1: TLVec;
-  var INFO: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Info: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure Aux2X2Schur(var A: TLFloat; var B: TLFloat;
-  var C: TLFloat; var D: TLFloat; var RT1R: TLFloat;
+procedure Aux2X2Schur(var A: TLFloat; var b: TLFloat;
+  var C: TLFloat; var d: TLFloat; var RT1R: TLFloat;
   var RT1I: TLFloat; var RT2R: TLFloat; var RT2I: TLFloat;
-  var CS: TLFloat; var SN: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var cs: TLFloat; var sn: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function ExtSchurSign(A: TLFloat; B: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ExtSchurSignToOne(B: TLFloat): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ExtSchurSign(A: TLFloat; b: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ExtSchurSignToOne(b: TLFloat): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
 (* ************************************************************************
@@ -67,23 +67,23 @@ function ExtSchurSignToOne(B: TLFloat): TLInt; forward; {$IFDEF INLINE_ASM} inli
   True,  if the algorithm has converged and parameters A and S contain the result.
   False, if the algorithm has not converged.
   ************************************************************************ *)
-function RMatrixSchur(var A: TLMatrix; N: TLInt; var S: TLMatrix): Boolean;
+function RMatrixSchur(var A: TLMatrix; n: TLInt; var s: TLMatrix): Boolean;
 var
-  Tau: TLVec;
+  TAU: TLVec;
   WI: TLVec;
   WR: TLVec;
-  A1: TLMatrix;
-  S1: TLMatrix;
-  INFO: TLInt;
-  I: TLInt;
+  a1: TLMatrix;
+  s1: TLMatrix;
+  Info: TLInt;
+  i: TLInt;
   J: TLInt;
 begin
 
   //
   // Upper Hessenberg form of the 0-based matrix
   //
-  RMatrixHessenberg(A, N, Tau);
-  RMatrixHessenbergUnpackQ(A, N, Tau, S);
+  RMatrixHessenberg(A, n, TAU);
+  RMatrixHessenbergUnpackQ(A, n, TAU, s);
 
   //
   // Convert from 0-based arrays to 1-based,
@@ -92,37 +92,37 @@ begin
   // is too TLComplex to fix it.
   //
   //
-  SetLength(A1, N + 1, N + 1);
-  SetLength(S1, N + 1, N + 1);
-  I := 1;
-  while I <= N do
+  SetLength(a1, n + 1, n + 1);
+  SetLength(s1, n + 1, n + 1);
+  i := 1;
+  while i <= n do
     begin
       J := 1;
-      while J <= N do
+      while J <= n do
         begin
-          A1[I, J] := A[I - 1, J - 1];
-          S1[I, J] := S[I - 1, J - 1];
+          a1[i, J] := A[i - 1, J - 1];
+          s1[i, J] := s[i - 1, J - 1];
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
-  InternalSchurDecomposition(A1, N, 1, 1, WR, WI, S1, INFO);
-  Result := INFO = 0;
+  InternalSchurDecomposition(a1, n, 1, 1, WR, WI, s1, Info);
+  Result := Info = 0;
 
   //
   // convert from 1-based arrays to -based
   //
-  I := 1;
-  while I <= N do
+  i := 1;
+  while i <= n do
     begin
       J := 1;
-      while J <= N do
+      while J <= n do
         begin
-          A[I - 1, J - 1] := A1[I, J];
-          S[I - 1, J - 1] := S1[I, J];
+          A[i - 1, J - 1] := a1[i, J];
+          s[i - 1, J - 1] := s1[i, J];
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
@@ -164,46 +164,46 @@ end;
 
   Algorithm implemented on the basis of subroutine DHSEQR (LAPACK 3.0 library).
   ************************************************************************ *)
-function UpperHessenbergSchurDecomposition(var H: TLMatrix;
-  N: TLInt; var S: TLMatrix): Boolean;
+function UpperHessenbergSchurDecomposition(var h: TLMatrix;
+  n: TLInt; var s: TLMatrix): Boolean;
 var
   WI: TLVec;
   WR: TLVec;
-  INFO: TLInt;
+  Info: TLInt;
 begin
-  InternalSchurDecomposition(H, N, 1, 2, WR, WI, S, INFO);
-  Result := INFO = 0;
+  InternalSchurDecomposition(h, n, 1, 2, WR, WI, s, Info);
+  Result := Info = 0;
 end;
 
-procedure InternalSchurDecomposition(var H: TLMatrix; N: TLInt; TNeeded: TLInt; ZNeeded: TLInt;
-  var WR: TLVec; var WI: TLVec; var Z: TLMatrix; var INFO: TLInt);
+procedure InternalSchurDecomposition(var h: TLMatrix; n: TLInt; TNeeded: TLInt; ZNeeded: TLInt;
+  var WR: TLVec; var WI: TLVec; var Z: TLMatrix; var Info: TLInt);
 var
-  WORK: TLVec;
-  I: TLInt;
-  I1: TLInt;
-  I2: TLInt;
+  Work: TLVec;
+  i: TLInt;
+  i1: TLInt;
+  i2: TLInt;
   IERR: TLInt;
   II: TLInt;
   ITEMP: TLInt;
   ITN: TLInt;
   ITS: TLInt;
   J: TLInt;
-  K: TLInt;
+  k: TLInt;
   L: TLInt;
   MAXB: TLInt;
   NR: TLInt;
-  NS: TLInt;
+  ns: TLInt;
   NV: TLInt;
   ABSW: TLFloat;
   OVFL: TLFloat;
   SMLNUM: TLFloat;
-  Tau: TLFloat;
-  TEMP: TLFloat;
+  TAU: TLFloat;
+  Temp: TLFloat;
   TST1: TLFloat;
   ULP: TLFloat;
   UNFL: TLFloat;
-  S: TLMatrix;
-  V: TLVec;
+  s: TLMatrix;
+  v: TLVec;
   VV: TLVec;
   WORKC1: TLVec;
   WORKS1: TLVec;
@@ -215,8 +215,8 @@ var
   WANTZ: Boolean;
   CNST: TLFloat;
   FailFlag: Boolean;
-  P1: TLInt;
-  P2: TLInt;
+  p1: TLInt;
+  p2: TLInt;
   VT: TLFloat;
   i_: TLInt;
   i1_: TLInt;
@@ -226,74 +226,74 @@ begin
   // Set the order of the multi-shift QR algorithm to be used.
   // If you want to tune algorithm, change this values
   //
-  NS := 12;
+  ns := 12;
   MAXB := 50;
 
   //
   // Now 2 < NS <= MAXB < NH.
   //
   MAXB := Max(3, MAXB);
-  NS := Min(MAXB, NS);
+  ns := Min(MAXB, ns);
 
   //
   // Initialize
   //
   CNST := 1.5;
-  SetLength(WORK, Max(N, 1) + 1);
-  SetLength(S, NS + 1, NS + 1);
-  SetLength(V, NS + 1 + 1);
-  SetLength(VV, NS + 1 + 1);
-  SetLength(WR, Max(N, 1) + 1);
-  SetLength(WI, Max(N, 1) + 1);
+  SetLength(Work, Max(n, 1) + 1);
+  SetLength(s, ns + 1, ns + 1);
+  SetLength(v, ns + 1 + 1);
+  SetLength(VV, ns + 1 + 1);
+  SetLength(WR, Max(n, 1) + 1);
+  SetLength(WI, Max(n, 1) + 1);
   SetLength(WORKC1, 1 + 1);
   SetLength(WORKS1, 1 + 1);
   SetLength(WORKV3, 3 + 1);
-  SetLength(TmpWR, Max(N, 1) + 1);
-  SetLength(TmpWI, Max(N, 1) + 1);
-  Assert(N >= 0, 'InternalSchurDecomposition: incorrect N!');
+  SetLength(TmpWR, Max(n, 1) + 1);
+  SetLength(TmpWI, Max(n, 1) + 1);
+  Assert(n >= 0, 'InternalSchurDecomposition: incorrect N!');
   Assert((TNeeded = 0) or (TNeeded = 1), 'InternalSchurDecomposition: incorrect TNeeded!');
   Assert((ZNeeded = 0) or (ZNeeded = 1) or (ZNeeded = 2), 'InternalSchurDecomposition: incorrect ZNeeded!');
   WANTT := TNeeded = 1;
   INITZ := ZNeeded = 2;
   WANTZ := ZNeeded <> 0;
-  INFO := 0;
+  Info := 0;
 
   //
   // Initialize Z, if necessary
   //
   if INITZ then
     begin
-      SetLength(Z, N + 1, N + 1);
-      I := 1;
-      while I <= N do
+      SetLength(Z, n + 1, n + 1);
+      i := 1;
+      while i <= n do
         begin
           J := 1;
-          while J <= N do
+          while J <= n do
             begin
-              if I = J then
+              if i = J then
                 begin
-                  Z[I, J] := 1;
+                  Z[i, J] := 1;
                 end
               else
                 begin
-                  Z[I, J] := 0;
+                  Z[i, J] := 0;
                 end;
               Inc(J);
             end;
-          Inc(I);
+          Inc(i);
         end;
     end;
 
   //
   // Quick return if possible
   //
-  if N = 0 then
+  if n = 0 then
     begin
       Exit;
     end;
-  if N = 1 then
+  if n = 1 then
     begin
-      WR[1] := H[1, 1];
+      WR[1] := h[1, 1];
       WI[1] := 0;
       Exit;
     end;
@@ -303,13 +303,13 @@ begin
   // subdiagonal.
   //
   J := 1;
-  while J <= N - 2 do
+  while J <= n - 2 do
     begin
-      I := J + 2;
-      while I <= N do
+      i := J + 2;
+      while i <= n do
         begin
-          H[I, J] := 0;
-          Inc(I);
+          h[i, J] := 0;
+          Inc(i);
         end;
       Inc(J);
     end;
@@ -317,13 +317,13 @@ begin
   //
   // Test if N is sufficiently small
   //
-  if (NS <= 2) or (NS > N) or (MAXB >= N) then
+  if (ns <= 2) or (ns > n) or (MAXB >= n) then
     begin
 
       //
       // Use the standard TLFloat-shift algorithm
       //
-      InternalAuxSchur(WANTT, WANTZ, N, 1, N, H, WR, WI, 1, N, Z, WORK, WORKV3, WORKC1, WORKS1, INFO);
+      InternalAuxSchur(WANTT, WANTZ, n, 1, n, h, WR, WI, 1, n, Z, Work, WORKV3, WORKC1, WORKS1, Info);
 
       //
       // fill entries under diagonal blocks of T with zeros
@@ -331,26 +331,26 @@ begin
       if WANTT then
         begin
           J := 1;
-          while J <= N do
+          while J <= n do
             begin
               if AP_FP_Eq(WI[J], 0) then
                 begin
-                  I := J + 1;
-                  while I <= N do
+                  i := J + 1;
+                  while i <= n do
                     begin
-                      H[I, J] := 0;
-                      Inc(I);
+                      h[i, J] := 0;
+                      Inc(i);
                     end;
                   J := J + 1;
                 end
               else
                 begin
-                  I := J + 2;
-                  while I <= N do
+                  i := J + 2;
+                  while i <= n do
                     begin
-                      H[I, J] := 0;
-                      H[I, J + 1] := 0;
-                      Inc(I);
+                      h[i, J] := 0;
+                      h[i, J + 1] := 0;
+                      Inc(i);
                     end;
                   J := J + 2;
                 end;
@@ -361,20 +361,20 @@ begin
   UNFL := MinRealNumber;
   OVFL := 1 / UNFL;
   ULP := 2 * MachineEpsilon;
-  SMLNUM := UNFL * (N / ULP);
+  SMLNUM := UNFL * (n / ULP);
 
   //
   // I1 and I2 are the indices of the first row and last column of H
   // to which transformations must be applied. If eigenvalues only are
   // being computed, I1 and I2 are set inside the main loop.
   //
-  I1 := 1;
-  I2 := N;
+  i1 := 1;
+  i2 := n;
 
   //
   // ITN is the total number of multiple-shift QR iterations allowed.
   //
-  ITN := 30 * N;
+  ITN := 30 * n;
 
   //
   // The main loop begins here. I is the loop index and decreases from
@@ -383,11 +383,11 @@ begin
   // Eigenvalues I+1 to IHI have already converged. Either L = ILO or
   // H(L,L-1) is negligible so that the matrix splits.
   //
-  I := N;
+  i := n;
   while True do
     begin
       L := 1;
-      if I < 1 then
+      if i < 1 then
         begin
 
           //
@@ -396,26 +396,26 @@ begin
           if WANTT then
             begin
               J := 1;
-              while J <= N do
+              while J <= n do
                 begin
                   if AP_FP_Eq(WI[J], 0) then
                     begin
-                      I := J + 1;
-                      while I <= N do
+                      i := J + 1;
+                      while i <= n do
                         begin
-                          H[I, J] := 0;
-                          Inc(I);
+                          h[i, J] := 0;
+                          Inc(i);
                         end;
                       J := J + 1;
                     end
                   else
                     begin
-                      I := J + 2;
-                      while I <= N do
+                      i := J + 2;
+                      while i <= n do
                         begin
-                          H[I, J] := 0;
-                          H[I, J + 1] := 0;
-                          Inc(I);
+                          h[i, J] := 0;
+                          h[i, J + 1] := 0;
+                          Inc(i);
                         end;
                       J := J + 2;
                     end;
@@ -441,34 +441,34 @@ begin
           //
           // Look for a TLFloat small subdiagonal element.
           //
-          K := I;
-          while K >= L + 1 do
+          k := i;
+          while k >= L + 1 do
             begin
-              TST1 := ABSReal(H[K - 1, K - 1]) + ABSReal(H[K, K]);
+              TST1 := AbsReal(h[k - 1, k - 1]) + AbsReal(h[k, k]);
               if AP_FP_Eq(TST1, 0) then
                 begin
-                  TST1 := UpperHessenberg1Norm(H, L, I, L, I, WORK);
+                  TST1 := UpperHessenberg1Norm(h, L, i, L, i, Work);
                 end;
-              if AP_FP_Less_Eq(ABSReal(H[K, K - 1]), Max(ULP * TST1, SMLNUM)) then
+              if AP_FP_Less_Eq(AbsReal(h[k, k - 1]), Max(ULP * TST1, SMLNUM)) then
                 begin
                   Break;
                 end;
-              Dec(K);
+              Dec(k);
             end;
-          L := K;
+          L := k;
           if L > 1 then
             begin
 
               //
               // H(L,L-1) is negligible.
               //
-              H[L, L - 1] := 0;
+              h[L, L - 1] := 0;
             end;
 
           //
           // Exit from loop if a submatrix of order <= MAXB has split off.
           //
-          if L >= I - MAXB + 1 then
+          if L >= i - MAXB + 1 then
             begin
               FailFlag := False;
               Break;
@@ -485,10 +485,10 @@ begin
               //
               // Exceptional shifts.
               //
-              II := I - NS + 1;
-              while II <= I do
+              II := i - ns + 1;
+              while II <= i do
                 begin
-                  WR[II] := CNST * (ABSReal(H[II, II - 1]) + ABSReal(H[II, II]));
+                  WR[II] := CNST * (AbsReal(h[II, II - 1]) + AbsReal(h[II, II]));
                   WI[II] := 0;
                   Inc(II);
                 end;
@@ -499,15 +499,15 @@ begin
               //
               // Use eigenvalues of trailing submatrix of order NS as shifts.
               //
-              CopyMatrix(H, I - NS + 1, I, I - NS + 1, I, S, 1, NS, 1, NS);
-              InternalAuxSchur(False, False, NS, 1, NS, S, TmpWR, TmpWI, 1, NS, Z,
-                WORK, WORKV3, WORKC1, WORKS1, IERR);
-              P1 := 1;
-              while P1 <= NS do
+              CopyMatrix(h, i - ns + 1, i, i - ns + 1, i, s, 1, ns, 1, ns);
+              InternalAuxSchur(False, False, ns, 1, ns, s, TmpWR, TmpWI, 1, ns, Z,
+                Work, WORKV3, WORKC1, WORKS1, IERR);
+              p1 := 1;
+              while p1 <= ns do
                 begin
-                  WR[I - NS + P1] := TmpWR[P1];
-                  WI[I - NS + P1] := TmpWI[P1];
-                  Inc(P1);
+                  WR[i - ns + p1] := TmpWR[p1];
+                  WI[i - ns + p1] := TmpWI[p1];
+                  Inc(p1);
                 end;
               if IERR > 0 then
                 begin
@@ -519,8 +519,8 @@ begin
                   II := 1;
                   while II <= IERR do
                     begin
-                      WR[I - NS + II] := S[II, II];
-                      WI[I - NS + II] := 0;
+                      WR[i - ns + II] := s[II, II];
+                      WI[i - ns + II] := 0;
                       Inc(II);
                     end;
                 end;
@@ -532,16 +532,16 @@ begin
           // the vector of shifts (stored in WR and WI). The result is
           // stored in the local array V.
           //
-          V[1] := 1;
+          v[1] := 1;
           II := 2;
-          while II <= NS + 1 do
+          while II <= ns + 1 do
             begin
-              V[II] := 0;
+              v[II] := 0;
               Inc(II);
             end;
           NV := 1;
-          J := I - NS + 1;
-          while J <= I do
+          J := i - ns + 1;
+          while J <= i do
             begin
               if AP_FP_Greater_Eq(WI[J], 0) then
                 begin
@@ -551,10 +551,10 @@ begin
                       //
                       // real shift
                       //
-                      P1 := NV + 1;
-                      APVMove(@VV[0], 1, P1, @V[0], 1, P1);
-                      MatrixVectorMultiply(H, L, L + NV, L, L + NV - 1, False, VV, 1, NV,
-                        1.0, V, 1, NV + 1, -WR[J]);
+                      p1 := NV + 1;
+                      APVMove(@VV[0], 1, p1, @v[0], 1, p1);
+                      MatrixVectorMultiply(h, L, L + NV, L, L + NV - 1, False, VV, 1, NV,
+                        1.0, v, 1, NV + 1, -WR[J]);
                       NV := NV + 1;
                     end
                   else
@@ -565,16 +565,16 @@ begin
                           //
                           // complex conjugate pair of shifts
                           //
-                          P1 := NV + 1;
-                          APVMove(@VV[0], 1, P1, @V[0], 1, P1);
-                          MatrixVectorMultiply(H, L, L + NV, L, L + NV - 1, False, V, 1, NV, 1.0, VV, 1, NV + 1, -2 * WR[J]);
+                          p1 := NV + 1;
+                          APVMove(@VV[0], 1, p1, @v[0], 1, p1);
+                          MatrixVectorMultiply(h, L, L + NV, L, L + NV - 1, False, v, 1, NV, 1.0, VV, 1, NV + 1, -2 * WR[J]);
                           ITEMP := VectorIdxAbsMax(VV, 1, NV + 1);
-                          TEMP := 1 / Max(ABSReal(VV[ITEMP]), SMLNUM);
-                          P1 := NV + 1;
-                          APVMul(@VV[0], 1, P1, TEMP);
+                          Temp := 1 / Max(AbsReal(VV[ITEMP]), SMLNUM);
+                          p1 := NV + 1;
+                          APVMul(@VV[0], 1, p1, Temp);
                           ABSW := Pythag2(WR[J], WI[J]);
-                          TEMP := TEMP * ABSW * ABSW;
-                          MatrixVectorMultiply(H, L, L + NV + 1, L, L + NV, False, VV, 1, NV + 1, 1.0, V, 1, NV + 2, TEMP);
+                          Temp := Temp * ABSW * ABSW;
+                          MatrixVectorMultiply(h, L, L + NV + 1, L, L + NV, False, VV, 1, NV + 1, 1.0, v, 1, NV + 2, Temp);
                           NV := NV + 2;
                         end;
                     end;
@@ -583,23 +583,23 @@ begin
                   // Scale V(1:NV) so that max(abs(V(i))) = 1. If V is zero,
                   // reset it to the unit vector.
                   //
-                  ITEMP := VectorIdxAbsMax(V, 1, NV);
-                  TEMP := ABSReal(V[ITEMP]);
-                  if AP_FP_Eq(TEMP, 0) then
+                  ITEMP := VectorIdxAbsMax(v, 1, NV);
+                  Temp := AbsReal(v[ITEMP]);
+                  if AP_FP_Eq(Temp, 0) then
                     begin
-                      V[1] := 1;
+                      v[1] := 1;
                       II := 2;
                       while II <= NV do
                         begin
-                          V[II] := 0;
+                          v[II] := 0;
                           Inc(II);
                         end;
                     end
                   else
                     begin
-                      TEMP := Max(TEMP, SMLNUM);
-                      VT := 1 / TEMP;
-                      APVMul(@V[0], 1, NV, VT);
+                      Temp := Max(Temp, SMLNUM);
+                      VT := 1 / Temp;
+                      APVMul(@v[0], 1, NV, VT);
                     end;
                 end;
               Inc(J);
@@ -608,8 +608,8 @@ begin
           //
           // Multiple-shift QR step
           //
-          K := L;
-          while K <= I - 1 do
+          k := L;
+          while k <= i - 1 do
             begin
 
               //
@@ -622,51 +622,51 @@ begin
               // chases the bulge one step toward the bottom of the active
               // submatrix. NR is the order of G.
               //
-              NR := Min(NS + 1, I - K + 1);
-              if K > L then
+              NR := Min(ns + 1, i - k + 1);
+              if k > L then
                 begin
-                  P1 := K - 1;
-                  P2 := K + NR - 1;
-                  i1_ := (K) - (1);
+                  p1 := k - 1;
+                  p2 := k + NR - 1;
+                  i1_ := (k) - (1);
                   for i_ := 1 to NR do
                     begin
-                      V[i_] := H[i_ + i1_, P1];
+                      v[i_] := h[i_ + i1_, p1];
                     end;
                 end;
-              GenerateReflection(V, NR, Tau);
-              if K > L then
+              GenerateReflection(v, NR, TAU);
+              if k > L then
                 begin
-                  H[K, K - 1] := V[1];
-                  II := K + 1;
-                  while II <= I do
+                  h[k, k - 1] := v[1];
+                  II := k + 1;
+                  while II <= i do
                     begin
-                      H[II, K - 1] := 0;
+                      h[II, k - 1] := 0;
                       Inc(II);
                     end;
                 end;
-              V[1] := 1;
+              v[1] := 1;
 
               //
               // Apply G from the left to transform the rows of the matrix in
               // columns K to I2.
               //
-              ApplyReflectionFromTheLeft(H, Tau, V, K, K + NR - 1, K, I2, WORK);
+              ApplyReflectionFromTheLeft(h, TAU, v, k, k + NR - 1, k, i2, Work);
 
               //
               // Apply G from the right to transform the columns of the
               // matrix in rows I1 to min(K+NR,I).
               //
-              ApplyReflectionFromTheRight(H, Tau, V, I1, Min(K + NR, I), K,
-                K + NR - 1, WORK);
+              ApplyReflectionFromTheRight(h, TAU, v, i1, Min(k + NR, i), k,
+                k + NR - 1, Work);
               if WANTZ then
                 begin
 
                   //
                   // Accumulate transformations in the matrix Z
                   //
-                  ApplyReflectionFromTheRight(Z, Tau, V, 1, N, K, K + NR - 1, WORK);
+                  ApplyReflectionFromTheRight(Z, TAU, v, 1, n, k, k + NR - 1, Work);
                 end;
-              Inc(K);
+              Inc(k);
             end;
           Inc(ITS);
         end;
@@ -676,7 +676,7 @@ begin
       //
       if FailFlag then
         begin
-          INFO := I;
+          Info := i;
           Exit;
         end;
 
@@ -684,9 +684,9 @@ begin
       // A submatrix of order <= MAXB in rows and columns L to I has split
       // off. Use the TLFloat-shift QR algorithm to handle it.
       //
-      InternalAuxSchur(WANTT, WANTZ, N, L, I, H, WR, WI, 1, N, Z, WORK, WORKV3,
-        WORKC1, WORKS1, INFO);
-      if INFO > 0 then
+      InternalAuxSchur(WANTT, WANTZ, n, L, i, h, WR, WI, 1, n, Z, Work, WORKV3,
+        WORKC1, WORKS1, Info);
+      if Info > 0 then
         begin
           Exit;
         end;
@@ -696,31 +696,31 @@ begin
       // the main loop with a new value of I.
       //
       ITN := ITN - ITS;
-      I := L - 1;
+      i := L - 1;
     end;
 end;
 
-procedure InternalAuxSchur(WANTT: Boolean; WANTZ: Boolean; N: TLInt;
-  ILO: TLInt; IHI: TLInt; var H: TLMatrix;
+procedure InternalAuxSchur(WANTT: Boolean; WANTZ: Boolean; n: TLInt;
+  ILO: TLInt; IHI: TLInt; var h: TLMatrix;
   var WR: TLVec; var WI: TLVec; ILOZ: TLInt;
-  IHIZ: TLInt; var Z: TLMatrix; var WORK: TLVec;
+  IHIZ: TLInt; var Z: TLMatrix; var Work: TLVec;
   var WORKV3: TLVec; var WORKC1: TLVec; var WORKS1: TLVec;
-  var INFO: TLInt);
+  var Info: TLInt);
 var
-  I: TLInt;
-  I1: TLInt;
-  I2: TLInt;
+  i: TLInt;
+  i1: TLInt;
+  i2: TLInt;
   ITN: TLInt;
   ITS: TLInt;
   J: TLInt;
-  K: TLInt;
+  k: TLInt;
   L: TLInt;
   M: TLInt;
   NH: TLInt;
   NR: TLInt;
-  NZ: TLInt;
+  Nz: TLInt;
   AVE: TLFloat;
-  CS: TLFloat;
+  cs: TLFloat;
   DISC: TLFloat;
   H00: TLFloat;
   H10: TLFloat;
@@ -734,22 +734,22 @@ var
   H44: TLFloat;
   H44S: TLFloat;
   OVFL: TLFloat;
-  S: TLFloat;
+  s: TLFloat;
   SMLNUM: TLFloat;
-  SN: TLFloat;
-  SUM: TLFloat;
-  T1: TLFloat;
-  T2: TLFloat;
-  T3: TLFloat;
+  sn: TLFloat;
+  Sum: TLFloat;
+  t1: TLFloat;
+  t2: TLFloat;
+  t3: TLFloat;
   TST1: TLFloat;
   UNFL: TLFloat;
-  V1: TLFloat;
-  V2: TLFloat;
-  V3: TLFloat;
+  v1: TLFloat;
+  v2: TLFloat;
+  v3: TLFloat;
   FailFlag: Boolean;
   DAT1: TLFloat;
   DAT2: TLFloat;
-  P1: TLInt;
+  p1: TLInt;
   HIM1IM1: TLFloat;
   HIM1I: TLFloat;
   HIIM1: TLFloat;
@@ -760,7 +760,7 @@ var
   WII: TLFloat;
   ULP: TLFloat;
 begin
-  INFO := 0;
+  Info := 0;
   DAT1 := 0.75;
   DAT2 := -0.4375;
   ULP := MachineEpsilon;
@@ -768,18 +768,18 @@ begin
   //
   // Quick return if possible
   //
-  if N = 0 then
+  if n = 0 then
     begin
       Exit;
     end;
   if ILO = IHI then
     begin
-      WR[ILO] := H[ILO, ILO];
+      WR[ILO] := h[ILO, ILO];
       WI[ILO] := 0;
       Exit;
     end;
   NH := IHI - ILO + 1;
-  NZ := IHIZ - ILOZ + 1;
+  Nz := IHIZ - ILOZ + 1;
 
   //
   // Set machine-dependent constants for the stopping criterion.
@@ -794,8 +794,8 @@ begin
   // to which transformations must be applied. If eigenvalues only are
   // being computed, I1 and I2 are set inside the main loop.
   //
-  I1 := 1;
-  I2 := N;
+  i1 := 1;
+  i2 := n;
 
   //
   // ITN is the total number of QR iterations allowed.
@@ -809,11 +809,11 @@ begin
   // Eigenvalues I+1 to IHI have already converged. Either L = ILO or
   // H(L,L-1) is negligible so that the matrix splits.
   //
-  I := IHI;
+  i := IHI;
   while True do
     begin
       L := ILO;
-      if I < ILO then
+      if i < ILO then
         begin
           Exit;
         end;
@@ -831,34 +831,34 @@ begin
           //
           // Look for a TLFloat small subdiagonal element.
           //
-          K := I;
-          while K >= L + 1 do
+          k := i;
+          while k >= L + 1 do
             begin
-              TST1 := ABSReal(H[K - 1, K - 1]) + ABSReal(H[K, K]);
+              TST1 := AbsReal(h[k - 1, k - 1]) + AbsReal(h[k, k]);
               if AP_FP_Eq(TST1, 0) then
                 begin
-                  TST1 := UpperHessenberg1Norm(H, L, I, L, I, WORK);
+                  TST1 := UpperHessenberg1Norm(h, L, i, L, i, Work);
                 end;
-              if AP_FP_Less_Eq(ABSReal(H[K, K - 1]), Max(ULP * TST1, SMLNUM)) then
+              if AP_FP_Less_Eq(AbsReal(h[k, k - 1]), Max(ULP * TST1, SMLNUM)) then
                 begin
                   Break;
                 end;
-              Dec(K);
+              Dec(k);
             end;
-          L := K;
+          L := k;
           if L > ILO then
             begin
 
               //
               // H(L,L-1) is negligible
               //
-              H[L, L - 1] := 0;
+              h[L, L - 1] := 0;
             end;
 
           //
           // Exit from loop if a submatrix of order 1 or 2 has split off.
           //
-          if L >= I - 1 then
+          if L >= i - 1 then
             begin
               FailFlag := False;
               Break;
@@ -875,10 +875,10 @@ begin
               //
               // Exceptional shift.
               //
-              S := ABSReal(H[I, I - 1]) + ABSReal(H[I - 1, I - 2]);
-              H44 := DAT1 * S + H[I, I];
+              s := AbsReal(h[i, i - 1]) + AbsReal(h[i - 1, i - 2]);
+              H44 := DAT1 * s + h[i, i];
               H33 := H44;
-              H43H34 := DAT2 * S * S;
+              H43H34 := DAT2 * s * s;
             end
           else
             begin
@@ -887,10 +887,10 @@ begin
               // Prepare to use Francis' TLFloat shift
               // (i.e. 2nd degree generalized Rayleigh quotient)
               //
-              H44 := H[I, I];
-              H33 := H[I - 1, I - 1];
-              H43H34 := H[I, I - 1] * H[I - 1, I];
-              S := H[I - 1, I - 2] * H[I - 1, I - 2];
+              H44 := h[i, i];
+              H33 := h[i - 1, i - 1];
+              H43H34 := h[i, i - 1] * h[i - 1, i];
+              s := h[i - 1, i - 2] * h[i - 1, i - 2];
               DISC := (H33 - H44) * 0.5;
               DISC := DISC * DISC + H43H34;
               if AP_FP_Greater(DISC, 0) then
@@ -899,9 +899,9 @@ begin
                   //
                   // Real roots: use Wilkinson's shift twice
                   //
-                  DISC := SQRT(DISC);
+                  DISC := Sqrt(DISC);
                   AVE := 0.5 * (H33 + H44);
-                  if AP_FP_Greater(ABSReal(H33) - ABSReal(H44), 0) then
+                  if AP_FP_Greater(AbsReal(H33) - AbsReal(H44), 0) then
                     begin
                       H33 := H33 * H44 - H43H34;
                       H44 := H33 / (ExtSchurSign(DISC, AVE) + AVE);
@@ -918,7 +918,7 @@ begin
           //
           // Look for two consecutive small subdiagonal elements.
           //
-          M := I - 2;
+          M := i - 2;
           while M >= L do
             begin
 
@@ -927,30 +927,30 @@ begin
               // iteration at row M, and see if this would make H(M,M-1)
               // negligible.
               //
-              H11 := H[M, M];
-              H22 := H[M + 1, M + 1];
-              H21 := H[M + 1, M];
-              H12 := H[M, M + 1];
+              H11 := h[M, M];
+              H22 := h[M + 1, M + 1];
+              H21 := h[M + 1, M];
+              H12 := h[M, M + 1];
               H44S := H44 - H11;
               H33S := H33 - H11;
-              V1 := (H33S * H44S - H43H34) / H21 + H12;
-              V2 := H22 - H11 - H33S - H44S;
-              V3 := H[M + 2, M + 1];
-              S := ABSReal(V1) + ABSReal(V2) + ABSReal(V3);
-              V1 := V1 / S;
-              V2 := V2 / S;
-              V3 := V3 / S;
-              WORKV3[1] := V1;
-              WORKV3[2] := V2;
-              WORKV3[3] := V3;
+              v1 := (H33S * H44S - H43H34) / H21 + H12;
+              v2 := H22 - H11 - H33S - H44S;
+              v3 := h[M + 2, M + 1];
+              s := AbsReal(v1) + AbsReal(v2) + AbsReal(v3);
+              v1 := v1 / s;
+              v2 := v2 / s;
+              v3 := v3 / s;
+              WORKV3[1] := v1;
+              WORKV3[2] := v2;
+              WORKV3[3] := v3;
               if M = L then
                 begin
                   Break;
                 end;
-              H00 := H[M - 1, M - 1];
-              H10 := H[M, M - 1];
-              TST1 := ABSReal(V1) * (ABSReal(H00) + ABSReal(H11) + ABSReal(H22));
-              if AP_FP_Less_Eq(ABSReal(H10) * (ABSReal(V2) + ABSReal(V3)), ULP * TST1)
+              H00 := h[M - 1, M - 1];
+              H10 := h[M, M - 1];
+              TST1 := AbsReal(v1) * (AbsReal(H00) + AbsReal(H11) + AbsReal(H22));
+              if AP_FP_Less_Eq(AbsReal(H10) * (AbsReal(v2) + AbsReal(v3)), ULP * TST1)
               then
                 begin
                   Break;
@@ -961,8 +961,8 @@ begin
           //
           // TLFloat-shift QR step
           //
-          K := M;
-          while K <= I - 1 do
+          k := M;
+          while k <= i - 1 do
             begin
 
               //
@@ -975,51 +975,51 @@ begin
               // chases the bulge one step toward the bottom of the active
               // submatrix. NR is the order of G.
               //
-              NR := Min(3, I - K + 1);
-              if K > M then
+              NR := Min(3, i - k + 1);
+              if k > M then
                 begin
-                  P1 := 1;
-                  while P1 <= NR do
+                  p1 := 1;
+                  while p1 <= NR do
                     begin
-                      WORKV3[P1] := H[K + P1 - 1, K - 1];
-                      Inc(P1);
+                      WORKV3[p1] := h[k + p1 - 1, k - 1];
+                      Inc(p1);
                     end;
                 end;
-              GenerateReflection(WORKV3, NR, T1);
-              if K > M then
+              GenerateReflection(WORKV3, NR, t1);
+              if k > M then
                 begin
-                  H[K, K - 1] := WORKV3[1];
-                  H[K + 1, K - 1] := 0;
-                  if K < I - 1 then
+                  h[k, k - 1] := WORKV3[1];
+                  h[k + 1, k - 1] := 0;
+                  if k < i - 1 then
                     begin
-                      H[K + 2, K - 1] := 0;
+                      h[k + 2, k - 1] := 0;
                     end;
                 end
               else
                 begin
                   if M > L then
                     begin
-                      H[K, K - 1] := -H[K, K - 1];
+                      h[k, k - 1] := -h[k, k - 1];
                     end;
                 end;
-              V2 := WORKV3[2];
-              T2 := T1 * V2;
+              v2 := WORKV3[2];
+              t2 := t1 * v2;
               if NR = 3 then
                 begin
-                  V3 := WORKV3[3];
-                  T3 := T1 * V3;
+                  v3 := WORKV3[3];
+                  t3 := t1 * v3;
 
                   //
                   // Apply G from the left to transform the rows of the matrix
                   // in columns K to I2.
                   //
-                  J := K;
-                  while J <= I2 do
+                  J := k;
+                  while J <= i2 do
                     begin
-                      SUM := H[K, J] + V2 * H[K + 1, J] + V3 * H[K + 2, J];
-                      H[K, J] := H[K, J] - SUM * T1;
-                      H[K + 1, J] := H[K + 1, J] - SUM * T2;
-                      H[K + 2, J] := H[K + 2, J] - SUM * T3;
+                      Sum := h[k, J] + v2 * h[k + 1, J] + v3 * h[k + 2, J];
+                      h[k, J] := h[k, J] - Sum * t1;
+                      h[k + 1, J] := h[k + 1, J] - Sum * t2;
+                      h[k + 2, J] := h[k + 2, J] - Sum * t3;
                       Inc(J);
                     end;
 
@@ -1027,13 +1027,13 @@ begin
                   // Apply G from the right to transform the columns of the
                   // matrix in rows I1 to min(K+3,I).
                   //
-                  J := I1;
-                  while J <= Min(K + 3, I) do
+                  J := i1;
+                  while J <= Min(k + 3, i) do
                     begin
-                      SUM := H[J, K] + V2 * H[J, K + 1] + V3 * H[J, K + 2];
-                      H[J, K] := H[J, K] - SUM * T1;
-                      H[J, K + 1] := H[J, K + 1] - SUM * T2;
-                      H[J, K + 2] := H[J, K + 2] - SUM * T3;
+                      Sum := h[J, k] + v2 * h[J, k + 1] + v3 * h[J, k + 2];
+                      h[J, k] := h[J, k] - Sum * t1;
+                      h[J, k + 1] := h[J, k + 1] - Sum * t2;
+                      h[J, k + 2] := h[J, k + 2] - Sum * t3;
                       Inc(J);
                     end;
                   if WANTZ then
@@ -1045,10 +1045,10 @@ begin
                       J := ILOZ;
                       while J <= IHIZ do
                         begin
-                          SUM := Z[J, K] + V2 * Z[J, K + 1] + V3 * Z[J, K + 2];
-                          Z[J, K] := Z[J, K] - SUM * T1;
-                          Z[J, K + 1] := Z[J, K + 1] - SUM * T2;
-                          Z[J, K + 2] := Z[J, K + 2] - SUM * T3;
+                          Sum := Z[J, k] + v2 * Z[J, k + 1] + v3 * Z[J, k + 2];
+                          Z[J, k] := Z[J, k] - Sum * t1;
+                          Z[J, k + 1] := Z[J, k + 1] - Sum * t2;
+                          Z[J, k + 2] := Z[J, k + 2] - Sum * t3;
                           Inc(J);
                         end;
                     end;
@@ -1062,12 +1062,12 @@ begin
                       // Apply G from the left to transform the rows of the matrix
                       // in columns K to I2.
                       //
-                      J := K;
-                      while J <= I2 do
+                      J := k;
+                      while J <= i2 do
                         begin
-                          SUM := H[K, J] + V2 * H[K + 1, J];
-                          H[K, J] := H[K, J] - SUM * T1;
-                          H[K + 1, J] := H[K + 1, J] - SUM * T2;
+                          Sum := h[k, J] + v2 * h[k + 1, J];
+                          h[k, J] := h[k, J] - Sum * t1;
+                          h[k + 1, J] := h[k + 1, J] - Sum * t2;
                           Inc(J);
                         end;
 
@@ -1075,12 +1075,12 @@ begin
                       // Apply G from the right to transform the columns of the
                       // matrix in rows I1 to min(K+3,I).
                       //
-                      J := I1;
-                      while J <= I do
+                      J := i1;
+                      while J <= i do
                         begin
-                          SUM := H[J, K] + V2 * H[J, K + 1];
-                          H[J, K] := H[J, K] - SUM * T1;
-                          H[J, K + 1] := H[J, K + 1] - SUM * T2;
+                          Sum := h[J, k] + v2 * h[J, k + 1];
+                          h[J, k] := h[J, k] - Sum * t1;
+                          h[J, k + 1] := h[J, k + 1] - Sum * t2;
                           Inc(J);
                         end;
                       if WANTZ then
@@ -1092,15 +1092,15 @@ begin
                           J := ILOZ;
                           while J <= IHIZ do
                             begin
-                              SUM := Z[J, K] + V2 * Z[J, K + 1];
-                              Z[J, K] := Z[J, K] - SUM * T1;
-                              Z[J, K + 1] := Z[J, K + 1] - SUM * T2;
+                              Sum := Z[J, k] + v2 * Z[J, k + 1];
+                              Z[J, k] := Z[J, k] - Sum * t1;
+                              Z[J, k + 1] := Z[J, k + 1] - Sum * t2;
                               Inc(J);
                             end;
                         end;
                     end;
                 end;
-              Inc(K);
+              Inc(k);
             end;
           Inc(ITS);
         end;
@@ -1110,21 +1110,21 @@ begin
           //
           // Failure to converge in remaining number of iterations
           //
-          INFO := I;
+          Info := i;
           Exit;
         end;
-      if L = I then
+      if L = i then
         begin
 
           //
           // H(I,I-1) is negligible: one eigenvalue has converged.
           //
-          WR[I] := H[I, I];
-          WI[I] := 0;
+          WR[i] := h[i, i];
+          WI[i] := 0;
         end
       else
         begin
-          if L = I - 1 then
+          if L = i - 1 then
             begin
 
               //
@@ -1133,36 +1133,36 @@ begin
               // Transform the 2-by-2 submatrix to standard Schur form,
               // and compute and store the eigenvalues.
               //
-              HIM1IM1 := H[I - 1, I - 1];
-              HIM1I := H[I - 1, I];
-              HIIM1 := H[I, I - 1];
-              HII := H[I, I];
-              Aux2X2Schur(HIM1IM1, HIM1I, HIIM1, HII, WRIM1, WIIM1, WRI, WII, CS, SN);
-              WR[I - 1] := WRIM1;
-              WI[I - 1] := WIIM1;
-              WR[I] := WRI;
-              WI[I] := WII;
-              H[I - 1, I - 1] := HIM1IM1;
-              H[I - 1, I] := HIM1I;
-              H[I, I - 1] := HIIM1;
-              H[I, I] := HII;
+              HIM1IM1 := h[i - 1, i - 1];
+              HIM1I := h[i - 1, i];
+              HIIM1 := h[i, i - 1];
+              HII := h[i, i];
+              Aux2X2Schur(HIM1IM1, HIM1I, HIIM1, HII, WRIM1, WIIM1, WRI, WII, cs, sn);
+              WR[i - 1] := WRIM1;
+              WI[i - 1] := WIIM1;
+              WR[i] := WRI;
+              WI[i] := WII;
+              h[i - 1, i - 1] := HIM1IM1;
+              h[i - 1, i] := HIM1I;
+              h[i, i - 1] := HIIM1;
+              h[i, i] := HII;
               if WANTT then
                 begin
 
                   //
                   // Apply the transformation to the rest of H.
                   //
-                  if I2 > I then
+                  if i2 > i then
                     begin
-                      WORKC1[1] := CS;
-                      WORKS1[1] := SN;
-                      ApplyRotationsFromTheLeft(True, I - 1, I, I + 1, I2, WORKC1,
-                        WORKS1, H, WORK);
+                      WORKC1[1] := cs;
+                      WORKS1[1] := sn;
+                      ApplyRotationsFromTheLeft(True, i - 1, i, i + 1, i2, WORKC1,
+                        WORKS1, h, Work);
                     end;
-                  WORKC1[1] := CS;
-                  WORKS1[1] := SN;
-                  ApplyRotationsFromTheRight(True, I1, I - 2, I - 1, I, WORKC1,
-                    WORKS1, H, WORK);
+                  WORKC1[1] := cs;
+                  WORKS1[1] := sn;
+                  ApplyRotationsFromTheRight(True, i1, i - 2, i - 1, i, WORKC1,
+                    WORKS1, h, Work);
                 end;
               if WANTZ then
                 begin
@@ -1170,10 +1170,10 @@ begin
                   //
                   // Apply the transformation to Z.
                   //
-                  WORKC1[1] := CS;
-                  WORKS1[1] := SN;
-                  ApplyRotationsFromTheRight(True, ILOZ, ILOZ + NZ - 1, I - 1, I,
-                    WORKC1, WORKS1, Z, WORK);
+                  WORKC1[1] := cs;
+                  WORKS1[1] := sn;
+                  ApplyRotationsFromTheRight(True, ILOZ, ILOZ + Nz - 1, i - 1, i,
+                    WORKC1, WORKS1, Z, Work);
                 end;
             end;
         end;
@@ -1183,14 +1183,14 @@ begin
       // the main loop with new value of I.
       //
       ITN := ITN - ITS;
-      I := L - 1;
+      i := L - 1;
     end;
 end;
 
-procedure Aux2X2Schur(var A: TLFloat; var B: TLFloat;
-  var C: TLFloat; var D: TLFloat; var RT1R: TLFloat;
+procedure Aux2X2Schur(var A: TLFloat; var b: TLFloat;
+  var C: TLFloat; var d: TLFloat; var RT1R: TLFloat;
   var RT1I: TLFloat; var RT2R: TLFloat; var RT2I: TLFloat;
-  var CS: TLFloat; var SN: TLFloat);
+  var cs: TLFloat; var sn: TLFloat);
 var
   MULTPL: TLFloat;
   AA: TLFloat;
@@ -1200,79 +1200,79 @@ var
   CC: TLFloat;
   CS1: TLFloat;
   DD: TLFloat;
-  EPS: TLFloat;
-  P: TLFloat;
+  Eps: TLFloat;
+  p: TLFloat;
   SAB: TLFloat;
   SAC: TLFloat;
   SCL: TLFloat;
   SIGMA: TLFloat;
   SN1: TLFloat;
-  Tau: TLFloat;
-  TEMP: TLFloat;
+  TAU: TLFloat;
+  Temp: TLFloat;
   Z: TLFloat;
 begin
   MULTPL := 4.0;
-  EPS := MachineEpsilon;
+  Eps := MachineEpsilon;
   if AP_FP_Eq(C, 0) then
     begin
-      CS := 1;
-      SN := 0;
+      cs := 1;
+      sn := 0;
     end
   else
     begin
-      if AP_FP_Eq(B, 0) then
+      if AP_FP_Eq(b, 0) then
         begin
 
           //
           // Swap rows and columns
           //
-          CS := 0;
-          SN := 1;
-          TEMP := D;
-          D := A;
-          A := TEMP;
-          B := -C;
+          cs := 0;
+          sn := 1;
+          Temp := d;
+          d := A;
+          A := Temp;
+          b := -C;
           C := 0;
         end
       else
         begin
-          if AP_FP_Eq(A - D, 0) and (ExtSchurSignToOne(B) <> ExtSchurSignToOne(C))
+          if AP_FP_Eq(A - d, 0) and (ExtSchurSignToOne(b) <> ExtSchurSignToOne(C))
           then
             begin
-              CS := 1;
-              SN := 0;
+              cs := 1;
+              sn := 0;
             end
           else
             begin
-              TEMP := A - D;
-              P := 0.5 * TEMP;
-              BCMAX := Max(ABSReal(B), ABSReal(C));
-              BCMIS := Min(ABSReal(B), ABSReal(C)) * ExtSchurSignToOne(B) *
+              Temp := A - d;
+              p := 0.5 * Temp;
+              BCMAX := Max(AbsReal(b), AbsReal(C));
+              BCMIS := Min(AbsReal(b), AbsReal(C)) * ExtSchurSignToOne(b) *
                 ExtSchurSignToOne(C);
-              SCL := Max(ABSReal(P), BCMAX);
-              Z := P / SCL * P + BCMAX / SCL * BCMIS;
+              SCL := Max(AbsReal(p), BCMAX);
+              Z := p / SCL * p + BCMAX / SCL * BCMIS;
 
               //
               // If Z is of the order of the machine accuracy, postpone the
               // decision on the nature of eigenvalues
               //
-              if AP_FP_Greater_Eq(Z, MULTPL * EPS) then
+              if AP_FP_Greater_Eq(Z, MULTPL * Eps) then
                 begin
 
                   //
                   // Real eigenvalues. Compute A and D.
                   //
-                  Z := P + ExtSchurSign(SQRT(SCL) * SQRT(Z), P);
-                  A := D + Z;
-                  D := D - BCMAX / Z * BCMIS;
+                  Z := p + ExtSchurSign(Sqrt(SCL) * Sqrt(Z), p);
+                  A := d + Z;
+                  d := d - BCMAX / Z * BCMIS;
 
                   //
                   // Compute B and the rotation matrix
                   //
-                  Tau := Pythag2(C, Z);
-                  CS := Z / Tau;
-                  SN := C / Tau;
-                  B := B - C;
+                  TAU := Pythag2(C, Z);
+                  cs := Z / TAU;
+                  sn := C / TAU;
+                  b := b - C;
                   C := 0;
                 end
               else
@@ -1282,63 +1282,63 @@ begin
                   // Complex eigenvalues, or real (almost) equal eigenvalues.
                   // Make diagonal elements equal.
                   //
-                  SIGMA := B + C;
-                  Tau := Pythag2(SIGMA, TEMP);
-                  CS := SQRT(0.5 * (1 + ABSReal(SIGMA) / Tau));
-                  SN := -P / (Tau * CS) * ExtSchurSign(1, SIGMA);
+                  SIGMA := b + C;
+                  TAU := Pythag2(SIGMA, Temp);
+                  cs := Sqrt(0.5 * (1 + AbsReal(SIGMA) / TAU));
+                  sn := -p / (TAU * cs) * ExtSchurSign(1, SIGMA);
 
                   //
                   // Compute [ AA  BB ] = [ A  B ] [ CS -SN ]
                   // [ CC  DD ]   [ C  D ] [ SN  CS ]
                   //
-                  AA := A * CS + B * SN;
-                  BB := -A * SN + B * CS;
-                  CC := C * CS + D * SN;
-                  DD := -C * SN + D * CS;
+                  AA := A * cs + b * sn;
+                  BB := -A * sn + b * cs;
+                  CC := C * cs + d * sn;
+                  DD := -C * sn + d * cs;
 
                   //
                   // Compute [ A  B ] = [ CS  SN ] [ AA  BB ]
                   // [ C  D ]   [-SN  CS ] [ CC  DD ]
                   //
-                  A := AA * CS + CC * SN;
-                  B := BB * CS + DD * SN;
-                  C := -AA * SN + CC * CS;
-                  D := -BB * SN + DD * CS;
-                  TEMP := 0.5 * (A + D);
-                  A := TEMP;
-                  D := TEMP;
-                  if AP_FP_Neq(C, 0) then
+                  A := AA * cs + CC * sn;
+                  b := BB * cs + DD * sn;
+                  C := -AA * sn + CC * cs;
+                  d := -BB * sn + DD * cs;
+                  Temp := 0.5 * (A + d);
+                  A := Temp;
+                  d := Temp;
+                  if AP_FP_NEq(C, 0) then
                     begin
-                      if AP_FP_Neq(B, 0) then
+                      if AP_FP_NEq(b, 0) then
                         begin
-                          if ExtSchurSignToOne(B) = ExtSchurSignToOne(C) then
+                          if ExtSchurSignToOne(b) = ExtSchurSignToOne(C) then
                             begin
 
                               //
                               // Real eigenvalues: reduce to upper triangular form
                               //
-                              SAB := SQRT(ABSReal(B));
-                              SAC := SQRT(ABSReal(C));
-                              P := ExtSchurSign(SAB * SAC, C);
-                              Tau := 1 / SQRT(ABSReal(B + C));
-                              A := TEMP + P;
-                              D := TEMP - P;
-                              B := B - C;
+                              SAB := Sqrt(AbsReal(b));
+                              SAC := Sqrt(AbsReal(C));
+                              p := ExtSchurSign(SAB * SAC, C);
+                              TAU := 1 / Sqrt(AbsReal(b + C));
+                              A := Temp + p;
+                              d := Temp - p;
+                              b := b - C;
                               C := 0;
-                              CS1 := SAB * Tau;
-                              SN1 := SAC * Tau;
-                              TEMP := CS * CS1 - SN * SN1;
-                              SN := CS * SN1 + SN * CS1;
-                              CS := TEMP;
+                              CS1 := SAB * TAU;
+                              SN1 := SAC * TAU;
+                              Temp := cs * CS1 - sn * SN1;
+                              sn := cs * SN1 + sn * CS1;
+                              cs := Temp;
                             end;
                         end
                       else
                         begin
-                          B := -C;
+                          b := -C;
                           C := 0;
-                          TEMP := CS;
-                          CS := -SN;
-                          SN := TEMP;
+                          Temp := cs;
+                          cs := -sn;
+                          sn := Temp;
                         end;
                     end;
                 end;
@@ -1350,7 +1350,7 @@ begin
   // Store eigenvalues in (RT1R,RT1I) and (RT2R,RT2I).
   //
   RT1R := A;
-  RT2R := D;
+  RT2R := d;
   if AP_FP_Eq(C, 0) then
     begin
       RT1I := 0;
@@ -1358,26 +1358,26 @@ begin
     end
   else
     begin
-      RT1I := SQRT(ABSReal(B)) * SQRT(ABSReal(C));
+      RT1I := Sqrt(AbsReal(b)) * Sqrt(AbsReal(C));
       RT2I := -RT1I;
     end;
 end;
 
-function ExtSchurSign(A: TLFloat; B: TLFloat): TLFloat;
+function ExtSchurSign(A: TLFloat; b: TLFloat): TLFloat;
 begin
-  if AP_FP_Greater_Eq(B, 0) then
+  if AP_FP_Greater_Eq(b, 0) then
     begin
-      Result := ABSReal(A);
+      Result := AbsReal(A);
     end
   else
     begin
-      Result := -ABSReal(A);
+      Result := -AbsReal(A);
     end;
 end;
 
-function ExtSchurSignToOne(B: TLFloat): TLInt;
+function ExtSchurSignToOne(b: TLFloat): TLInt;
 begin
-  if AP_FP_Greater_Eq(B, 0) then
+  if AP_FP_Greater_Eq(b, 0) then
     begin
       Result := 1;
     end
@@ -1385,4 +1385,4 @@ begin
     begin
       Result := -1;
     end;
-end;
+end; 

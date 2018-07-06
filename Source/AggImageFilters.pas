@@ -49,7 +49,7 @@ unit AggImageFilters;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -76,7 +76,7 @@ type
 
     function CalculateWeight(X: Double): Double; virtual; abstract;
 
-    property Radius: Double read GetRadius write SetRadius;
+    property radius: Double read GetRadius write SetRadius;
   end;
 
   TAggImageFilterLUT = class
@@ -103,7 +103,7 @@ type
 
     function WeightArray: PInt16;
 
-    property Radius: Double read GetRadius;
+    property radius: Double read GetRadius;
     property Diameter: Cardinal read GetDiameter;
     property Start: Integer read GetStart;
   end;
@@ -157,7 +157,7 @@ type
   private
     A, I0a, Epsilon: Double;
   public
-    constructor Create(B: Double = 6.33);
+    constructor Create(b: Double = 6.33);
 
     function GetRadius: Double; override;
     function CalculateWeight(X: Double): Double; override;
@@ -173,9 +173,9 @@ type
 
   TAggImageFilterMitchell = class(TAggCustomImageFilter)
   private
-    P0, P2, P3, Q0, Q1, Q2, Q3: Double;
+    P0, p2, p3, Q0, q1, q2, Q3: Double;
   public
-    constructor Create(B: Double = 1 / 3; C: Double = 1 / 3);
+    constructor Create(b: Double = 1 / 3; C: Double = 1 / 3);
 
     function GetRadius: Double; override;
     function CalculateWeight(X: Double): Double; override;
@@ -371,34 +371,34 @@ procedure TAggImageFilterLUT.Calculate(Filter: TAggCustomImageFilter;
   Normalization: Boolean = True);
 var
   R, X, Y: Double;
-  I, Pivot, Stop: Cardinal;
+  i, Pivot, stop: Cardinal;
 begin
-  R := Filter.Radius;
+  R := Filter.radius;
 
   ReallocLut(R);
 
   Pivot := Diameter shl (CAggImageSubpixelShift - 1);
 
-  I := 0;
+  i := 0;
 
-  while I < Pivot do
+  while i < Pivot do
     begin
-      X := I / CAggImageSubpixelSize;
+      X := i / CAggImageSubpixelSize;
       Y := Filter.CalculateWeight(X);
 
-      PInt16(PtrComp(FWeightArray) + (Pivot + I) * SizeOf(Int16))^ :=
+      PInt16(PtrComp(FWeightArray) + (Pivot + i) * SizeOf(Int16))^ :=
         Int16(Trunc(Y * CAggImageFilterSize + 0.5));
 
-      PInt16(PtrComp(FWeightArray) + (Pivot - I) * SizeOf(Int16))^ :=
-        PInt16(PtrComp(FWeightArray) + (Pivot + I) * SizeOf(Int16))^;
+      PInt16(PtrComp(FWeightArray) + (Pivot - i) * SizeOf(Int16))^ :=
+        PInt16(PtrComp(FWeightArray) + (Pivot + i) * SizeOf(Int16))^;
 
-      Inc(I);
+      Inc(i);
     end;
 
-  Stop := (Diameter shl CAggImageSubpixelShift) - 1;
+  stop := (Diameter shl CAggImageSubpixelShift) - 1;
 
   PInt16(FWeightArray)^ := PInt16(PtrComp(FWeightArray) +
-    Stop * SizeOf(Int16))^;
+    stop * SizeOf(Int16))^;
 
   if Normalization then
       Normalize;
@@ -431,39 +431,39 @@ end;
 // So, the filter function must produce a graph of the proper shape.
 procedure TAggImageFilterLUT.Normalize;
 var
-  K: Double;
+  k: Double;
 
-  I, J, Idx, Pivot, Stop: Cardinal;
+  i, J, idx, Pivot, stop: Cardinal;
 
-  Flip, Sum, IncValue, V: Integer;
+  Flip, Sum, IncValue, v: Integer;
 begin
   Flip := 1;
-  I := 0;
+  i := 0;
 
-  while I < CAggImageSubpixelSize do
+  while i < CAggImageSubpixelSize do
     begin
       repeat
         Sum := 0;
 
         for J := 0 to FDiameter - 1 do
             Inc(Sum, PInt16(PtrComp(FWeightArray) + (J * CAggImageSubpixelSize +
-            I) * SizeOf(Int16))^);
+            i) * SizeOf(Int16))^);
 
         if Sum = CAggImageFilterSize then
             Break;
 
-        K := CAggImageFilterSize / Sum;
+        k := CAggImageFilterSize / Sum;
         Sum := 0;
 
         for J := 0 to FDiameter - 1 do
           begin
-            PInt16(PtrComp(FWeightArray) + (J * CAggImageSubpixelSize + I) *
+            PInt16(PtrComp(FWeightArray) + (J * CAggImageSubpixelSize + i) *
               SizeOf(Int16))^ :=
               Int16(Trunc(PInt16(PtrComp(FWeightArray) +
-              (J * CAggImageSubpixelSize + I) * SizeOf(Int16))^ * K));
+              (J * CAggImageSubpixelSize + i) * SizeOf(Int16))^ * k));
 
             Inc(Sum, PInt16(PtrComp(FWeightArray) + (J * CAggImageSubpixelSize +
-              I) * SizeOf(Int16))^);
+              i) * SizeOf(Int16))^);
           end;
 
         Dec(Sum, CAggImageFilterSize);
@@ -480,17 +480,17 @@ begin
             Flip := Flip xor 1;
 
             if Flip <> 0 then
-                Idx := FDiameter div 2 + J div 2
+                idx := FDiameter div 2 + J div 2
             else
-                Idx := FDiameter div 2 - J div 2;
+                idx := FDiameter div 2 - J div 2;
 
-            V := PInt16(PtrComp(FWeightArray) + (Idx * CAggImageSubpixelSize + I)
+            v := PInt16(PtrComp(FWeightArray) + (idx * CAggImageSubpixelSize + i)
               * SizeOf(Int16))^;
 
-            if V < CAggImageFilterSize then
+            if v < CAggImageFilterSize then
               begin
-                Inc(PInt16(PtrComp(FWeightArray) + (Idx * CAggImageSubpixelSize +
-                  I) * SizeOf(Int16))^, IncValue);
+                Inc(PInt16(PtrComp(FWeightArray) + (idx * CAggImageSubpixelSize +
+                  i) * SizeOf(Int16))^, IncValue);
 
                 Inc(Sum, IncValue);
               end;
@@ -500,19 +500,19 @@ begin
 
       until False;
 
-      Inc(I);
+      Inc(i);
     end;
 
   Pivot := FDiameter shl (CAggImageSubpixelShift - 1);
 
-  for I := 0 to Pivot - 1 do
-      PInt16(PtrComp(FWeightArray) + (Pivot + I) * SizeOf(Int16))^ :=
-      PInt16(PtrComp(FWeightArray) + (Pivot - I) * SizeOf(Int16))^;
+  for i := 0 to Pivot - 1 do
+      PInt16(PtrComp(FWeightArray) + (Pivot + i) * SizeOf(Int16))^ :=
+      PInt16(PtrComp(FWeightArray) + (Pivot - i) * SizeOf(Int16))^;
 
-  Stop := (Diameter shl CAggImageSubpixelShift) - 1;
+  stop := (Diameter shl CAggImageSubpixelShift) - 1;
 
   PInt16(FWeightArray)^ := PInt16(PtrComp(FWeightArray) +
-    Stop * SizeOf(Int16))^;
+    stop * SizeOf(Int16))^;
 end;
 
 procedure TAggImageFilterLUT.ReallocLut(ARadius: Double);
@@ -565,7 +565,7 @@ end;
 
 function TAggImageFilterHanning.CalculateWeight;
 begin
-  Result := 0.5 + 0.5 * Cos(Pi * X);
+  Result := 0.5 + 0.5 * Cos(pi * X);
 end;
 
 { TAggImageFilterHamming }
@@ -577,7 +577,7 @@ end;
 
 function TAggImageFilterHamming.CalculateWeight;
 begin
-  Result := 0.54 + 0.46 * Cos(Pi * X);
+  Result := 0.54 + 0.46 * Cos(pi * X);
 end;
 
 { TAggImageFilterHermite }
@@ -642,11 +642,11 @@ end;
 
 constructor TAggImageFilterKaiser.Create;
 begin
-  A := B;
+  A := b;
 
   Epsilon := 1E-12;
 
-  I0a := 1.0 / Bessel_i0(B);
+  I0a := 1.0 / Bessel_i0(b);
 end;
 
 function TAggImageFilterKaiser.GetRadius: Double;
@@ -661,22 +661,22 @@ end;
 
 function TAggImageFilterKaiser.Bessel_i0(X: Double): Double;
 var
-  I: Integer;
+  i: Integer;
   Sum, Y, T: Double;
 begin
   Sum := 1;
 
   Y := Sqr(0.5 * X);
   T := Y;
-  I := 2;
+  i := 2;
 
   while T > Epsilon do
     begin
       Sum := Sum + T;
 
-      T := T * (Y / (I * I));
+      T := T * (Y / (i * i));
 
-      Inc(I);
+      Inc(i);
     end;
 
   Result := Sum;
@@ -703,13 +703,13 @@ end;
 
 constructor TAggImageFilterMitchell.Create;
 begin
-  P0 := (6.0 - 2.0 * B) / 6.0;
-  P2 := (-18.0 + 12.0 * B + 6.0 * C) / 6.0;
-  P3 := (12.0 - 9.0 * B - 6.0 * C) / 6.0;
-  Q0 := (8.0 * B + 24.0 * C) / 6.0;
-  Q1 := (-12.0 * B - 48.0 * C) / 6.0;
-  Q2 := (6.0 * B + 30.0 * C) / 6.0;
-  Q3 := (-B - 6.0 * C) / 6.0;
+  P0 := (6.0 - 2.0 * b) / 6.0;
+  p2 := (-18.0 + 12.0 * b + 6.0 * C) / 6.0;
+  p3 := (12.0 - 9.0 * b - 6.0 * C) / 6.0;
+  Q0 := (8.0 * b + 24.0 * C) / 6.0;
+  q1 := (-12.0 * b - 48.0 * C) / 6.0;
+  q2 := (6.0 * b + 30.0 * C) / 6.0;
+  Q3 := (-b - 6.0 * C) / 6.0;
 end;
 
 function TAggImageFilterMitchell.GetRadius: Double;
@@ -720,9 +720,9 @@ end;
 function TAggImageFilterMitchell.CalculateWeight;
 begin
   if X < 1.0 then
-      Result := P0 + X * X * (P2 + X * P3)
+      Result := P0 + X * X * (p2 + X * p3)
   else if X < 2.0 then
-      Result := Q0 + X * (Q1 + X * (Q2 + X * Q3))
+      Result := Q0 + X * (q1 + X * (q2 + X * Q3))
   else
       Result := 0.0;
 end;
@@ -771,7 +771,7 @@ end;
 
 function TAggImageFilterGaussian.CalculateWeight;
 begin
-  Result := Exp(-2.0 * X * X) * Sqrt(2.0 / Pi);
+  Result := Exp(-2.0 * X * X) * Sqrt(2.0 / pi);
 end;
 
 { TAggImageFilterBessel }
@@ -784,9 +784,9 @@ end;
 function TAggImageFilterBessel.CalculateWeight;
 begin
   if X = 0.0 then
-      Result := Pi / 4.0
+      Result := pi / 4.0
   else
-      Result := Besj(Pi * X, 1) / (2.0 * X);
+      Result := Besj(pi * X, 1) / (2.0 * X);
 end;
 
 { TAggImageFilterSinc }
@@ -810,7 +810,7 @@ begin
       Result := 1.0
   else
     begin
-      X := X * Pi;
+      X := X * pi;
 
       Result := Sin(X) / X;
     end;
@@ -850,7 +850,7 @@ begin
       Result := 0.0
   else
     begin
-      X := X * Pi;
+      X := X * pi;
       Xr := X / FRadius;
 
       Result := (Sin(X) / X) * (Sin(Xr) / Xr);
@@ -891,7 +891,7 @@ begin
       Result := 0.0
   else
     begin
-      X := X * Pi;
+      X := X * pi;
       Xr := X / FRadius;
 
       Result := (Sin(X) / X) * (0.42 + 0.5 * Cos(Xr) + 0.08 * Cos(2 * Xr));
@@ -1032,4 +1032,4 @@ begin
   inherited Create(8.0);
 end;
 
-end.
+end. 

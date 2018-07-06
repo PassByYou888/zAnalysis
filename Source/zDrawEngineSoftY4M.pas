@@ -13,19 +13,19 @@
 { ****************************************************************************** }
 unit zDrawEngineSoftY4M;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
 uses Math, Geometry3DUnit, ListEngine, PascalStrings, CoreClasses, zDrawEngine, UnicodeMixedLib, Geometry2DUnit,
-  MemoryRaster, Y4M, h264image, h264StdInt;
+  MemoryRaster, Y4M, h264Image, h264Stdint;
 
 type
   TDrawEngine_YUV4MPEG = class(TDrawEngine_Raster)
   private
     FYW: TY4MWriter;
   public
-    constructor Create(const w, h, psf: uint16_t; const filename: SystemString); overload;
+    constructor Create(const w, h, psf: uint16_t; const fileName: SystemString); overload;
     constructor Create(const w, h, psf: uint16_t; const stream: TCoreClassStream); overload;
 
     destructor Destroy; override;
@@ -40,26 +40,26 @@ type
 
 implementation
 
-constructor TDrawEngine_YUV4MPEG.Create(const w, h, psf: uint16_t; const filename: SystemString);
+constructor TDrawEngine_YUV4MPEG.Create(const w, h, psf: uint16_t; const fileName: SystemString);
 var
-  nw, nh: uint16_t;
+  NW, NH: uint16_t;
 begin
   inherited Create;
-  nw := w - (w mod 2);
-  nh := h - (h mod 2);
-  FYW := TY4MWriter.Create(nw, nh, psf, filename);
-  memory.SetSize(nw, nh);
+  NW := w - (w mod 2);
+  NH := h - (h mod 2);
+  FYW := TY4MWriter.Create(NW, NH, psf, fileName);
+  Memory.SetSize(NW, NH);
 end;
 
 constructor TDrawEngine_YUV4MPEG.Create(const w, h, psf: uint16_t; const stream: TCoreClassStream);
 var
-  nw, nh: uint16_t;
+  NW, NH: uint16_t;
 begin
   inherited Create;
-  nw := w - (w mod 2);
-  nh := h - (h mod 2);
-  FYW := TY4MWriter.Create(nw, nh, psf, stream);
-  memory.SetSize(nw, nh);
+  NW := w - (w mod 2);
+  NH := h - (h mod 2);
+  FYW := TY4MWriter.Create(NW, NH, psf, stream);
+  Memory.SetSize(NW, NH);
 end;
 
 destructor TDrawEngine_YUV4MPEG.Destroy;
@@ -76,7 +76,7 @@ end;
 procedure TDrawEngine_YUV4MPEG.Flush;
 begin
   inherited Flush;
-  FYW.WriteFrame(memory);
+  FYW.WriteFrame(Memory);
   FYW.Flush;
 end;
 
@@ -95,4 +95,5 @@ begin
   Result := FYW.PerSecondFrame;
 end;
 
-end.
+end.  
+ 

@@ -12,7 +12,7 @@
 { ****************************************************************************** }
 unit zSound;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
@@ -27,39 +27,39 @@ type
     FCacheFileList        : THashVariantList;
     FLastPlaySoundFilename: SystemString;
 
-    procedure DoPrepareMusic(filename: SystemString); virtual; abstract;
-    procedure DoPlayMusic(filename: SystemString); virtual; abstract;
+    procedure DoPrepareMusic(fileName: SystemString); virtual; abstract;
+    procedure DoPlayMusic(fileName: SystemString); virtual; abstract;
     procedure DoStopMusic; virtual; abstract;
 
-    procedure DoPrepareAmbient(filename: SystemString); virtual; abstract;
-    procedure DoPlayAmbient(filename: SystemString); virtual; abstract;
+    procedure DoPrepareAmbient(fileName: SystemString); virtual; abstract;
+    procedure DoPlayAmbient(fileName: SystemString); virtual; abstract;
     procedure DoStopAmbient; virtual; abstract;
 
-    procedure DoPrepareSound(filename: SystemString); virtual; abstract;
-    procedure DoPlaySound(filename: SystemString); virtual; abstract;
-    procedure DoStopSound(filename: SystemString); virtual; abstract;
+    procedure DoPrepareSound(fileName: SystemString); virtual; abstract;
+    procedure DoPlaySound(fileName: SystemString); virtual; abstract;
+    procedure DoStopSound(fileName: SystemString); virtual; abstract;
 
     procedure DoStopAll; virtual; abstract;
 
-    function DoIsPlaying(filename: SystemString): Boolean; virtual; abstract;
+    function DoIsPlaying(fileName: SystemString): Boolean; virtual; abstract;
 
-    function SaveSoundAsLocalFile(filename: SystemString): SystemString; virtual;
-    function SoundReadyOk(filename: SystemString): Boolean; virtual;
+    function SaveSoundAsLocalFile(fileName: SystemString): SystemString; virtual;
+    function SoundReadyOk(fileName: SystemString): Boolean; virtual;
   public
     constructor Create(ATempPath: SystemString); virtual;
     destructor Destroy; override;
 
-    procedure PrepareMusic(filename: SystemString);
-    procedure PlayMusic(filename: SystemString);
+    procedure PrepareMusic(fileName: SystemString);
+    procedure PlayMusic(fileName: SystemString);
     procedure StopMusic;
 
-    procedure PrepareAmbient(filename: SystemString);
-    procedure PlayAmbient(filename: SystemString);
+    procedure PrepareAmbient(fileName: SystemString);
+    procedure PlayAmbient(fileName: SystemString);
     procedure StopAmbient;
 
-    procedure PrepareSound(filename: SystemString);
-    procedure PlaySound(filename: SystemString);
-    procedure StopSound(filename: SystemString);
+    procedure PrepareSound(fileName: SystemString);
+    procedure PlaySound(fileName: SystemString);
+    procedure StopSound(fileName: SystemString);
 
     procedure StopAll;
 
@@ -78,12 +78,12 @@ implementation
 
 uses MediaCenter;
 
-function TzSound.SaveSoundAsLocalFile(filename: SystemString): SystemString;
+function TzSound.SaveSoundAsLocalFile(fileName: SystemString): SystemString;
 begin
-  Result := filename;
+  Result := fileName;
 end;
 
-function TzSound.SoundReadyOk(filename: SystemString): Boolean;
+function TzSound.SoundReadyOk(fileName: SystemString): Boolean;
 begin
   Result := False;
 end;
@@ -103,24 +103,24 @@ begin
   inherited Destroy;
 end;
 
-procedure TzSound.PrepareMusic(filename: SystemString);
+procedure TzSound.PrepareMusic(fileName: SystemString);
 begin
   try
-    if SoundReadyOk(filename) then
-        DoPrepareMusic(filename)
+    if SoundReadyOk(fileName) then
+        DoPrepareMusic(fileName)
     else
-        DoPrepareMusic(SaveSoundAsLocalFile(filename));
+        DoPrepareMusic(SaveSoundAsLocalFile(fileName));
   except
   end;
 end;
 
-procedure TzSound.PlayMusic(filename: SystemString);
+procedure TzSound.PlayMusic(fileName: SystemString);
 begin
   try
-    if SoundReadyOk(filename) then
-        DoPlayMusic(filename)
+    if SoundReadyOk(fileName) then
+        DoPlayMusic(fileName)
     else
-        DoPlayMusic(SaveSoundAsLocalFile(filename));
+        DoPlayMusic(SaveSoundAsLocalFile(fileName));
   except
   end;
 end;
@@ -133,24 +133,24 @@ begin
   end;
 end;
 
-procedure TzSound.PrepareAmbient(filename: SystemString);
+procedure TzSound.PrepareAmbient(fileName: SystemString);
 begin
   try
-    if SoundReadyOk(filename) then
-        DoPrepareAmbient(filename)
+    if SoundReadyOk(fileName) then
+        DoPrepareAmbient(fileName)
     else
-        DoPrepareAmbient(SaveSoundAsLocalFile(filename));
+        DoPrepareAmbient(SaveSoundAsLocalFile(fileName));
   except
   end;
 end;
 
-procedure TzSound.PlayAmbient(filename: SystemString);
+procedure TzSound.PlayAmbient(fileName: SystemString);
 begin
   try
-    if SoundReadyOk(filename) then
-        DoPlayAmbient(filename)
+    if SoundReadyOk(fileName) then
+        DoPlayAmbient(fileName)
     else
-        DoPlayAmbient(SaveSoundAsLocalFile(filename));
+        DoPlayAmbient(SaveSoundAsLocalFile(fileName));
   except
   end;
 end;
@@ -163,38 +163,38 @@ begin
   end;
 end;
 
-procedure TzSound.PrepareSound(filename: SystemString);
+procedure TzSound.PrepareSound(fileName: SystemString);
 begin
   try
-    if SoundReadyOk(filename) then
-        DoPrepareSound(filename)
+    if SoundReadyOk(fileName) then
+        DoPrepareSound(fileName)
     else
-        DoPrepareSound(SaveSoundAsLocalFile(filename));
+        DoPrepareSound(SaveSoundAsLocalFile(fileName));
   except
   end;
 end;
 
-procedure TzSound.PlaySound(filename: SystemString);
+procedure TzSound.PlaySound(fileName: SystemString);
 begin
   try
-    FLastPlaySoundFilename := filename;
-    if SoundReadyOk(filename) then
+    FLastPlaySoundFilename := fileName;
+    if SoundReadyOk(fileName) then
       begin
-        DoPlaySound(filename);
+        DoPlaySound(fileName);
       end
     else
-        DoPlaySound(SaveSoundAsLocalFile(filename));
+        DoPlaySound(SaveSoundAsLocalFile(fileName));
   except
   end;
 end;
 
-procedure TzSound.StopSound(filename: SystemString);
+procedure TzSound.StopSound(fileName: SystemString);
 begin
   try
-    if FCacheFileList.Exists(filename) then
-        DoStopSound(FCacheFileList[filename])
-    else if SoundReadyOk(filename) then
-        DoStopSound(filename);
+    if FCacheFileList.Exists(fileName) then
+        DoStopSound(FCacheFileList[fileName])
+    else if SoundReadyOk(fileName) then
+        DoStopSound(fileName);
   except
   end;
 end;
@@ -215,4 +215,5 @@ initialization
 
 DefaultSoundEngineClass := TzSound;
 
-end.
+end. 
+ 

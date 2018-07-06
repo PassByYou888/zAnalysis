@@ -9,7 +9,7 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
-unit GPC;
+unit gpc;
 
 (*
   ===========================================================================
@@ -47,9 +47,9 @@ unit GPC;
   Mar. 18, 2009 Correction submitted by (cesar.aguilar@gmx.net)
 *)
 
-{$I AggCompiler.inc}
-
 interface
+
+{$INCLUDE AggCompiler.inc}
 
 uses CoreClasses, Math;
 
@@ -71,7 +71,7 @@ type
   end;
 
   PGpcVertexArray = ^TGpcVertexArray; { Helper Type for indexing }
-  TGpcVertexArray = array [0 .. MaxInt div Sizeof(TGpcVertex) - 1] of TGpcVertex;
+  TGpcVertexArray = array [0 .. MaxInt div SizeOf(TGpcVertex) - 1] of TGpcVertex;
 
   PGpcVertexList = ^TGpcVertexList; { Vertex list structure }
 
@@ -81,10 +81,10 @@ type
   end;
 
   PIntegerArray = ^TIntegerArray;
-  TIntegerArray = array [0 .. MaxInt div Sizeof(Integer) - 1] of Integer;
+  TIntegerArray = array [0 .. MaxInt div SizeOf(Integer) - 1] of Integer;
 
   PGpcVertexListArray = ^TGpcVertexListArray; { Helper Type for indexing }
-  TGpcVertexListArray = array [0 .. MaxInt div Sizeof(TGpcVertexList) - 1] of TGpcVertexList;
+  TGpcVertexListArray = array [0 .. MaxInt div SizeOf(TGpcVertexList) - 1] of TGpcVertexList;
 
   PGpcPolygon = ^TGpcPolygon;
 
@@ -104,7 +104,7 @@ type
 procedure GpcAddContour(Polygon: PGpcPolygon; Contour: PGpcVertexList; Hole: Integer); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure GpcPolygonClip(SetOperation: TGpcOp; SubjectPolygon: PGpcPolygon; ClipPolygon: PGpcPolygon; ResultPolygon: PGpcPolygon);
 procedure GpcTristripClip(Op: TGpcOp; CSubj: PGpcPolygon; CClip: PGpcPolygon; Result: PGpcTristrip);
-procedure GpcPolygonToTristrip(S: PGpcPolygon; T: PGpcTristrip); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure GpcPolygonToTristrip(s: PGpcPolygon; T: PGpcTristrip); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure GpcFreePolygon(Polygon: PGpcPolygon); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure GpcFreeTristrip(TriStrip: PGpcTristrip); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
@@ -178,7 +178,7 @@ type
   TPolygonNode = packed record
     Active: Integer;
     Hole: Integer;
-    V: array [0 .. 1] of PVertexNode;
+    v: array [0 .. 1] of PVertexNode;
     Next: PPolygonNode;
     Proxy: PPolygonNode;
   end;
@@ -190,9 +190,9 @@ type
     Vertex: TGpcVertex;                        { Piggy-backed Contour Vertex data }
     Bot: TGpcVertex;                           { Edge lower (x, y) coordinate }
     Top: TGpcVertex;                           { Edge upper (x, y) coordinate }
-    Xb: Double;                                { Scanbeam bottom x coordinate }
-    Xt: Double;                                { Scanbeam top x coordinate }
-    Dx: Double;                                { Change in x for a unit y increase }
+    XB: Double;                                { Scanbeam bottom x coordinate }
+    xt: Double;                                { Scanbeam top x coordinate }
+    dx: Double;                                { Change in x for a unit y increase }
     Typ: Integer;                              { CClip / subject edge flag }
     Bundle: array [0 .. 1, 0 .. 1] of Integer; { Bundle edge flags }
     Bside: array [0 .. 1] of Integer;          { Bundle CLeft / CRight indicators }
@@ -200,14 +200,14 @@ type
     Outp: array [0 .. 1] of PPolygonNode;      { Output Polygon / TriStrip pointer }
     Prev: PEdgeNode;                           { Previous edge in the AET }
     Next: PEdgeNode;                           { Next edge in the AET }
-    Pred: PEdgeNode;                           { Edge connected at the lower end }
+    pred: PEdgeNode;                           { Edge connected at the lower end }
     Succ: PEdgeNode;                           { Edge connected at the upper end }
     Next_bound: PEdgeNode;                     { Pointer to next bound in LocalMinimaTable }
   end;
 
   PPEdgeNodeArray = ^PEdgeNodeArray;
   PEdgeNodeArray  = ^TEdgeNodeArray;
-  TEdgeNodeArray  = array [0 .. MaxInt div Sizeof(TEdgeNode) - 1] of TEdgeNode;
+  TEdgeNodeArray  = array [0 .. MaxInt div SizeOf(TEdgeNode) - 1] of TEdgeNode;
 
   PPLocalMinimaTableNode = ^PLocalMinimaTableNode;
   PLocalMinimaTableNode  = ^TLocalMinimaTableNode;
@@ -231,7 +231,7 @@ type
   PIntersectionNode  = ^TIntersectionNode; { Intersection table }
 
   TIntersectionNode = packed record
-    Ie: array [0 .. 1] of PEdgeNode; { Intersecting edge (bundle) pair }
+    IE: array [0 .. 1] of PEdgeNode; { Intersecting edge (bundle) pair }
     Point: TGpcVertex;               { Point of intersection }
     Next: PIntersectionNode;         { The next intersection table node }
   end;
@@ -240,27 +240,27 @@ type
   PSortedEdgeTableNode  = ^TSortedEdgeTableNode; { Sorted edge table }
 
   TSortedEdgeTableNode = packed record
-    Edge: PEdgeNode;            { Pointer to AET edge }
-    Xb: Double;                 { Scanbeam bottom x coordinate }
-    Xt: Double;                 { Scanbeam top x coordinate }
-    Dx: Double;                 { Change in x for a unit y increase }
+    edge: PEdgeNode;            { Pointer to AET edge }
+    XB: Double;                 { Scanbeam bottom x coordinate }
+    xt: Double;                 { Scanbeam top x coordinate }
+    dx: Double;                 { Change in x for a unit y increase }
     Prev: PSortedEdgeTableNode; { Previous edge in sorted list }
   end;
 
   PBoundingBox = ^TBoundingBox;
 
   TBoundingBox = packed record { Contour axis-aligned bounding box }
-    Xmin: Double;              { Minimum x coordinate }
-    Ymin: Double;              { Minimum y coordinate }
-    Xmax: Double;              { Maximum x coordinate }
-    Ymax: Double;              { Maximum y coordinate }
+    XMin: Double;              { Minimum x coordinate }
+    YMin: Double;              { Minimum y coordinate }
+    XMax: Double;              { Maximum x coordinate }
+    YMax: Double;              { Maximum y coordinate }
   end;
 
   PBoundingBoxArray = ^TBoundingBoxArray;
-  TBoundingBoxArray = array [0 .. MaxInt div Sizeof(TBoundingBox) - 1] of TBoundingBox;
+  TBoundingBoxArray = array [0 .. MaxInt div SizeOf(TBoundingBox) - 1] of TBoundingBox;
 
   PDoubleArray = ^TDoubleArray;
-  TDoubleArray = array [0 .. MaxInt div Sizeof(Double) - 1] of Double;
+  TDoubleArray = array [0 .. MaxInt div SizeOf(Double) - 1] of Double;
 
 
 
@@ -268,104 +268,104 @@ type
   // C Macros, defined as function for PASCAL
   // ===========================================================================
 
-function EQ(A, B: Double): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function EQ(A, b: Double): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  EQ := Abs(A - B) <= CGPCEpsilon
+  EQ := Abs(A - b) <= CGPCEpsilon
 end;
 
-function PREV_INDEX(I, N: Integer): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function PREV_INDEX(i, n: Integer): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  PREV_INDEX := ((I - 1 + N) mod N);
+  PREV_INDEX := ((i - 1 + n) mod n);
 end;
 
-function NEXT_INDEX(I, N: Integer): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function NEXT_INDEX(i, n: Integer): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  NEXT_INDEX := ((I + 1) mod N);
+  NEXT_INDEX := ((i + 1) mod n);
 end;
 
-function OPTIMAL(V: PGpcVertexArray; I, N: Integer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function OPTIMAL(v: PGpcVertexArray; i, n: Integer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  OPTIMAL := (V[PREV_INDEX(I, N)].Y <> V[I].Y) or
-    (V[NEXT_INDEX(I, N)].Y <> V[I].Y);
+  OPTIMAL := (v[PREV_INDEX(i, n)].Y <> v[i].Y) or
+    (v[NEXT_INDEX(i, n)].Y <> v[i].Y);
 end;
 
-function FWD_MIN(V: PEdgeNodeArray; I, N: Integer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function FWD_MIN(v: PEdgeNodeArray; i, n: Integer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  FWD_MIN := (V[PREV_INDEX(I, N)].Vertex.Y >= V[I].Vertex.Y) and
-    (V[NEXT_INDEX(I, N)].Vertex.Y > V[I].Vertex.Y);
+  FWD_MIN := (v[PREV_INDEX(i, n)].Vertex.Y >= v[i].Vertex.Y) and
+    (v[NEXT_INDEX(i, n)].Vertex.Y > v[i].Vertex.Y);
 end;
 
-function NOT_FMAX(V: PEdgeNodeArray; I, N: Integer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function NOT_FMAX(v: PEdgeNodeArray; i, n: Integer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  NOT_FMAX := (V[NEXT_INDEX(I, N)].Vertex.Y > V[I].Vertex.Y);
+  NOT_FMAX := (v[NEXT_INDEX(i, n)].Vertex.Y > v[i].Vertex.Y);
 end;
 
-function REV_MIN(V: PEdgeNodeArray; I, N: Integer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function REV_MIN(v: PEdgeNodeArray; i, n: Integer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  REV_MIN := (V[PREV_INDEX(I, N)].Vertex.Y > V[I].Vertex.Y) and
-    (V[NEXT_INDEX(I, N)].Vertex.Y >= V[I].Vertex.Y);
+  REV_MIN := (v[PREV_INDEX(i, n)].Vertex.Y > v[i].Vertex.Y) and
+    (v[NEXT_INDEX(i, n)].Vertex.Y >= v[i].Vertex.Y);
 end;
 
-function NOT_RMAX(V: PEdgeNodeArray; I, N: Integer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function NOT_RMAX(v: PEdgeNodeArray; i, n: Integer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  NOT_RMAX := (V[PREV_INDEX(I, N)].Vertex.Y > V[I].Vertex.Y);
+  NOT_RMAX := (v[PREV_INDEX(i, n)].Vertex.Y > v[i].Vertex.Y);
 end;
 
-procedure MALLOC(var P: Pointer; B: Integer; S: string); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MALLOC(var p: Pointer; b: Integer; s: string); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  GetMem(P, B);
-  if (P = nil) and (B <> 0) then
-      RaiseInfo('gpc malloc failure: %s', [S]);
+  GetMem(p, b);
+  if (p = nil) and (b <> 0) then
+      RaiseInfo('gpc malloc failure: %s', [s]);
 end;
 
-procedure AddVertex(var P: PVertexNode; X, Y: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure AddVertex(var p: PVertexNode; X, Y: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  if P = nil then
+  if p = nil then
     begin
-      MALLOC(Pointer(P), Sizeof(TVertexNode), 'tristrip vertex creation');
-      P.X := X;
-      P.Y := Y;
-      P.Next := nil;
+      MALLOC(Pointer(p), SizeOf(TVertexNode), 'tristrip vertex creation');
+      p.X := X;
+      p.Y := Y;
+      p.Next := nil;
     end
   else
     { Head further down the list }
-      AddVertex(P.Next, X, Y);
+      AddVertex(p.Next, X, Y);
 end;
 
-procedure Vertex(var E: PEdgeNode; P, S: Integer; var X, Y: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure Vertex(var E: PEdgeNode; p, s: Integer; var X, Y: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  AddVertex(E.Outp[P].V[S], X, Y);
-  Inc(E.Outp[P].Active);
+  AddVertex(E.Outp[p].v[s], X, Y);
+  Inc(E.Outp[p].Active);
 end;
 
-procedure P_EDGE(var D, E: PEdgeNode; P: Integer; var I, J: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure P_EDGE(var d, E: PEdgeNode; p: Integer; var i, J: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  D := E;
+  d := E;
   repeat
-      D := D.Prev
-  until D.Outp[P] <> nil;
-  I := D.Bot.X + D.Dx * (J - D.Bot.Y);
+      d := d.Prev
+  until d.Outp[p] <> nil;
+  i := d.Bot.X + d.dx * (J - d.Bot.Y);
 end;
 
-procedure N_EDGE(var D, E: PEdgeNode; P: Integer; var I, J: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure N_EDGE(var d, E: PEdgeNode; p: Integer; var i, J: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  D := E;
+  d := E;
   repeat
-      D := D.Next;
-  until D.Outp[P] <> nil;
-  I := D.Bot.X + D.Dx * (J - D.Bot.Y);
+      d := d.Next;
+  until d.Outp[p] <> nil;
+  i := d.Bot.X + d.dx * (J - d.Bot.Y);
 end;
 
-procedure Free(var P: Pointer); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure Free(var p: Pointer); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  FreeMem(P);
-  P := nil;
+  FreeMem(p);
+  p := nil;
 end;
 
-procedure CFree(var P: Pointer); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CFree(var p: Pointer); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  if P <> nil then
-      Free(P);
+  if p <> nil then
+      Free(p);
 end;
 
 
@@ -392,13 +392,13 @@ const
 
 procedure Reset_it(var It: PIntersectionNode); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  Itn: PIntersectionNode;
+  ITN: PIntersectionNode;
 begin
   while (It <> nil) do
     begin
-      Itn := It.Next;
+      ITN := It.Next;
       Free(Pointer(It));
-      It := Itn;
+      It := ITN;
     end;
 end;
 
@@ -414,47 +414,47 @@ begin
     end;
 end;
 
-procedure InsertBound(B: PPEdgeNodeArray; E: PEdgeNodeArray); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InsertBound(b: PPEdgeNodeArray; E: PEdgeNodeArray); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
   Existing_bound: Pointer;
 begin
-  if B^ = nil then
+  if b^ = nil then
     begin
       { Link node e to the tail of the list }
-      B^ := E;
+      b^ := E;
     end
   else
     begin
       { Do primary sort on the x field }
-      if ((E[0].Bot.X < B^[0].Bot.X)) then
+      if ((E[0].Bot.X < b^[0].Bot.X)) then
         begin
           { Insert a new node mid-list }
-          Existing_bound := B^;
-          B^ := E;
-          B^[0].Next_bound := Existing_bound;
+          Existing_bound := b^;
+          b^ := E;
+          b^[0].Next_bound := Existing_bound;
         end
       else
         begin
-          if ((E[0].Bot.X = B^[0].Bot.X)) then
+          if ((E[0].Bot.X = b^[0].Bot.X)) then
             begin
               { Do secondary sort on the dx field }
-              if ((E[0].Dx < B^[0].Dx)) then
+              if ((E[0].dx < b^[0].dx)) then
                 begin
                   { Insert a new node mid-list }
-                  Existing_bound := B^;
-                  B^ := E;
-                  B^[0].Next_bound := Existing_bound;
+                  Existing_bound := b^;
+                  b^ := E;
+                  b^[0].Next_bound := Existing_bound;
                 end
               else
                 begin
                   { Head further down the list }
-                  InsertBound(@(B^[0].Next_bound), E);
+                  InsertBound(@(b^[0].Next_bound), E);
                 end;
             end
           else
             begin
               { Head further down the list }
-              InsertBound(@(B^[0].Next_bound), E);
+              InsertBound(@(b^[0].Next_bound), E);
             end;
         end;
     end;
@@ -467,7 +467,7 @@ begin
   if LocalMinimaTable = nil then
     begin
       { Add node onto the tail end of the LocalMinimaTable }
-      MALLOC(Pointer(LocalMinimaTable), Sizeof(TLocalMinimaTableNode), 'LMT insertion');
+      MALLOC(Pointer(LocalMinimaTable), SizeOf(TLocalMinimaTableNode), 'LMT insertion');
       LocalMinimaTable.Y := Y;
       LocalMinimaTable.FirstBound := nil;
       LocalMinimaTable.Next := nil;
@@ -477,7 +477,7 @@ begin
     begin
       { Insert a new LocalMinimaTable node before the current node }
       Existing_node := LocalMinimaTable;
-      MALLOC(Pointer(LocalMinimaTable), Sizeof(TLocalMinimaTableNode), 'LMT insertion');
+      MALLOC(Pointer(LocalMinimaTable), SizeOf(TLocalMinimaTableNode), 'LMT insertion');
       LocalMinimaTable.Y := Y;
       LocalMinimaTable.FirstBound := nil;
       LocalMinimaTable.Next := Existing_node;
@@ -496,7 +496,7 @@ begin
   if SbTree = nil then
     begin
       { Add a new tree node here }
-      MALLOC(Pointer(SbTree), Sizeof(TScanBeamTree), 'scanbeam tree insertion');
+      MALLOC(Pointer(SbTree), SizeOf(TScanBeamTree), 'scanbeam tree insertion');
       SbTree.Y := Y;
       SbTree.Less := nil;
       SbTree.More := nil;
@@ -542,54 +542,54 @@ end;
 
 function CountOptimalVertices(C: TGpcVertexList): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  I: Integer;
+  i: Integer;
 begin
   Result := 0;
 
   { Ignore non-contributing contours }
   if C.NumVertices > 0 then
     begin
-      for I := 0 to C.NumVertices - 1 do
+      for i := 0 to C.NumVertices - 1 do
         { Ignore superfluous vertices embedded in horizontal edges }
-        if OPTIMAL(C.Vertex, I, C.NumVertices) then
+        if OPTIMAL(C.Vertex, i, C.NumVertices) then
             Inc(Result);
     end;
 end;
 
 function BuildLocalMinimaTable(var LocalMinimaTable: PLocalMinimaTableNode; var SbTree: PScanBeamTree; var Sbt_entries: Integer;
-  const P: PGpcPolygon; const Typ: Integer; const Op: TGpcOp): PEdgeNodeArray; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  const p: PGpcPolygon; const Typ: Integer; const Op: TGpcOp): PEdgeNodeArray; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 var
-  C, I, Min, Max, NumEdges, V, NumVertices: Integer;
+  C, i, Min, Max, NumEdges, v, NumVertices: Integer;
   TotalVertices, E_index: Integer;
   E, EdgeTable: PEdgeNodeArray;
 begin
   TotalVertices := 0;
   E_index := 0;
 
-  for C := 0 to P.NumContours - 1 do
-      Inc(TotalVertices, CountOptimalVertices(P.Contour[C]));
+  for C := 0 to p.NumContours - 1 do
+      Inc(TotalVertices, CountOptimalVertices(p.Contour[C]));
 
   { Create the entire input Polygon edge table in one go }
-  MALLOC(Pointer(EdgeTable), TotalVertices * Sizeof(TEdgeNode),
+  MALLOC(Pointer(EdgeTable), TotalVertices * SizeOf(TEdgeNode),
     'edge table creation');
 
-  for C := 0 to P.NumContours - 1 do
+  for C := 0 to p.NumContours - 1 do
     begin
-      if P.Contour[C].NumVertices < 0 then
+      if p.Contour[C].NumVertices < 0 then
         begin
           { Ignore the non-contributing Contour and repair the Vertex count }
-          P.Contour[C].NumVertices := -P.Contour[C].NumVertices;
+          p.Contour[C].NumVertices := -p.Contour[C].NumVertices;
         end
       else
         begin
           { Perform Contour optimisation }
           NumVertices := 0;
-          for I := 0 to P.Contour[C].NumVertices - 1 do
-            if (OPTIMAL(P.Contour[C].Vertex, I, P.Contour[C].NumVertices)) then
+          for i := 0 to p.Contour[C].NumVertices - 1 do
+            if (OPTIMAL(p.Contour[C].Vertex, i, p.Contour[C].NumVertices)) then
               begin
-                EdgeTable[NumVertices].Vertex.X := P.Contour[C].Vertex[I].X;
-                EdgeTable[NumVertices].Vertex.Y := P.Contour[C].Vertex[I].Y;
+                EdgeTable[NumVertices].Vertex.X := p.Contour[C].Vertex[i].X;
+                EdgeTable[NumVertices].Vertex.Y := p.Contour[C].Vertex[i].Y;
 
                 { record Vertex in the scanbeam table }
                 AddToScanBeamTree(Sbt_entries, SbTree, EdgeTable[NumVertices].Vertex.Y);
@@ -615,41 +615,41 @@ begin
                   { Build the next edge list }
                   E := @EdgeTable[E_index];
                   Inc(E_index, NumEdges);
-                  V := Min;
+                  v := Min;
                   E[0].Bstate[CBelow] := UNBUNDLED;
                   E[0].Bundle[CBelow][CClip] := FFALSE;
                   E[0].Bundle[CBelow][CSubj] := FFALSE;
-                  for I := 0 to NumEdges - 1 do
+                  for i := 0 to NumEdges - 1 do
                     begin
-                      E[I].Xb := EdgeTable[V].Vertex.X;
-                      E[I].Bot.X := EdgeTable[V].Vertex.X;
-                      E[I].Bot.Y := EdgeTable[V].Vertex.Y;
+                      E[i].XB := EdgeTable[v].Vertex.X;
+                      E[i].Bot.X := EdgeTable[v].Vertex.X;
+                      E[i].Bot.Y := EdgeTable[v].Vertex.Y;
 
-                      V := NEXT_INDEX(V, NumVertices);
+                      v := NEXT_INDEX(v, NumVertices);
 
-                      E[I].Top.X := EdgeTable[V].Vertex.X;
-                      E[I].Top.Y := EdgeTable[V].Vertex.Y;
-                      E[I].Dx := (EdgeTable[V].Vertex.X - E[I].Bot.X) /
-                        (E[I].Top.Y - E[I].Bot.Y);
-                      E[I].Typ := Typ;
-                      E[I].Outp[CAbove] := nil;
-                      E[I].Outp[CBelow] := nil;
-                      E[I].Next := nil;
-                      E[I].Prev := nil;
-                      if (NumEdges > 1) and (I < (NumEdges - 1)) then
-                          E[I].Succ := @E[I + 1]
+                      E[i].Top.X := EdgeTable[v].Vertex.X;
+                      E[i].Top.Y := EdgeTable[v].Vertex.Y;
+                      E[i].dx := (EdgeTable[v].Vertex.X - E[i].Bot.X) /
+                        (E[i].Top.Y - E[i].Bot.Y);
+                      E[i].Typ := Typ;
+                      E[i].Outp[CAbove] := nil;
+                      E[i].Outp[CBelow] := nil;
+                      E[i].Next := nil;
+                      E[i].Prev := nil;
+                      if (NumEdges > 1) and (i < (NumEdges - 1)) then
+                          E[i].Succ := @E[i + 1]
                       else
-                          E[I].Succ := nil;
-                      if (NumEdges > 1) and (I > 0) then
-                          E[I].Pred := @E[I - 1]
+                          E[i].Succ := nil;
+                      if (NumEdges > 1) and (i > 0) then
+                          E[i].pred := @E[i - 1]
                       else
-                          E[I].Pred := nil;
-                      E[I].Next_bound := nil;
+                          E[i].pred := nil;
+                      E[i].Next_bound := nil;
                       if Op = goDiff then
-                          E[I].Bside[CClip] := CRight
+                          E[i].Bside[CClip] := CRight
                       else
-                          E[I].Bside[CClip] := CLeft;
-                      E[I].Bside[CSubj] := CLeft;
+                          E[i].Bside[CClip] := CLeft;
+                      E[i].Bside[CSubj] := CLeft;
                     end;
                   InsertBound(BoundList(LocalMinimaTable, EdgeTable[Min].Vertex.Y), E);
                 end;
@@ -673,41 +673,41 @@ begin
                   { Build the previous edge list }
                   E := @EdgeTable[E_index];
                   Inc(E_index, NumEdges);
-                  V := Min;
+                  v := Min;
                   E[0].Bstate[CBelow] := UNBUNDLED;
                   E[0].Bundle[CBelow][CClip] := FFALSE;
                   E[0].Bundle[CBelow][CSubj] := FFALSE;
-                  for I := 0 to NumEdges - 1 do
+                  for i := 0 to NumEdges - 1 do
                     begin
-                      E[I].Xb := EdgeTable[V].Vertex.X;
-                      E[I].Bot.X := EdgeTable[V].Vertex.X;
-                      E[I].Bot.Y := EdgeTable[V].Vertex.Y;
+                      E[i].XB := EdgeTable[v].Vertex.X;
+                      E[i].Bot.X := EdgeTable[v].Vertex.X;
+                      E[i].Bot.Y := EdgeTable[v].Vertex.Y;
 
-                      V := PREV_INDEX(V, NumVertices);
+                      v := PREV_INDEX(v, NumVertices);
 
-                      E[I].Top.X := EdgeTable[V].Vertex.X;
-                      E[I].Top.Y := EdgeTable[V].Vertex.Y;
-                      E[I].Dx := (EdgeTable[V].Vertex.X - E[I].Bot.X) /
-                        (E[I].Top.Y - E[I].Bot.Y);
-                      E[I].Typ := Typ;
-                      E[I].Outp[CAbove] := nil;
-                      E[I].Outp[CBelow] := nil;
-                      E[I].Next := nil;
-                      E[I].Prev := nil;
-                      if (NumEdges > 1) and (I < (NumEdges - 1)) then
-                          E[I].Succ := @E[I + 1]
+                      E[i].Top.X := EdgeTable[v].Vertex.X;
+                      E[i].Top.Y := EdgeTable[v].Vertex.Y;
+                      E[i].dx := (EdgeTable[v].Vertex.X - E[i].Bot.X) /
+                        (E[i].Top.Y - E[i].Bot.Y);
+                      E[i].Typ := Typ;
+                      E[i].Outp[CAbove] := nil;
+                      E[i].Outp[CBelow] := nil;
+                      E[i].Next := nil;
+                      E[i].Prev := nil;
+                      if (NumEdges > 1) and (i < (NumEdges - 1)) then
+                          E[i].Succ := @E[i + 1]
                       else
-                          E[I].Succ := nil;
-                      if (NumEdges > 1) and (I > 0) then
-                          E[I].Pred := @E[I - 1]
+                          E[i].Succ := nil;
+                      if (NumEdges > 1) and (i > 0) then
+                          E[i].pred := @E[i - 1]
                       else
-                          E[I].Pred := nil;
-                      E[I].Next_bound := nil;
+                          E[i].pred := nil;
+                      E[i].Next_bound := nil;
                       if Op = goDiff then
-                          E[I].Bside[CClip] := CRight
+                          E[i].Bside[CClip] := CRight
                       else
-                          E[I].Bside[CClip] := CLeft;
-                      E[I].Bside[CSubj] := CLeft;
+                          E[i].Bside[CClip] := CLeft;
+                      E[i].Bside[CSubj] := CLeft;
                     end;
                   InsertBound(BoundList(LocalMinimaTable, EdgeTable[Min].Vertex.Y), E);
                 end;
@@ -717,49 +717,49 @@ begin
   Result := EdgeTable;
 end;
 
-procedure AddEdgeToAET(var Aet: PEdgeNode; const Edge: PEdgeNode; const Prev: PEdgeNode); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure AddEdgeToAET(var Aet: PEdgeNode; const edge: PEdgeNode; const Prev: PEdgeNode); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
   if Aet = nil then
     begin
       { Append edge onto the tail end of the AET }
-      Aet := Edge;
-      Edge.Prev := Prev;
-      Edge.Next := nil;
+      Aet := edge;
+      edge.Prev := Prev;
+      edge.Next := nil;
     end
   else
     begin
       { Do primary sort on the xb field }
-      if (Edge.Xb < Aet.Xb) then
+      if (edge.XB < Aet.XB) then
         begin
           { Insert edge here (before the AET edge) }
-          Edge.Prev := Prev;
-          Edge.Next := Aet;
-          Aet.Prev := Edge;
-          Aet := Edge;
+          edge.Prev := Prev;
+          edge.Next := Aet;
+          Aet.Prev := edge;
+          Aet := edge;
         end
       else
         begin
-          if (Edge.Xb = Aet.Xb) then
+          if (edge.XB = Aet.XB) then
             begin
               { Do secondary sort on the dx field }
-              if (Edge.Dx < Aet.Dx) then
+              if (edge.dx < Aet.dx) then
                 begin
                   { Insert edge here (before the AET edge) }
-                  Edge.Prev := Prev;
-                  Edge.Next := Aet;
-                  Aet.Prev := Edge;
-                  Aet := Edge;
+                  edge.Prev := Prev;
+                  edge.Next := Aet;
+                  Aet.Prev := edge;
+                  Aet := edge;
                 end
               else
                 begin
                   { Head further into the AET }
-                  AddEdgeToAET(Aet.Next, Edge, Aet);
+                  AddEdgeToAET(Aet.Next, edge, Aet);
                 end;
             end
           else
             begin
               { Head further into the AET }
-              AddEdgeToAET(Aet.Next, Edge, Aet);
+              AddEdgeToAET(Aet.Next, edge, Aet);
             end;
         end;
     end;
@@ -773,9 +773,9 @@ begin
   if It = nil then
     begin
       { Append a new node to the tail of the list }
-      MALLOC(Pointer(It), Sizeof(TIntersectionNode), 'IT insertion');
-      It.Ie[0] := Edge0;
-      It.Ie[1] := Edge1;
+      MALLOC(Pointer(It), SizeOf(TIntersectionNode), 'IT insertion');
+      It.IE[0] := Edge0;
+      It.IE[1] := Edge1;
       It.Point.X := X;
       It.Point.Y := Y;
       It.Next := nil;
@@ -786,9 +786,9 @@ begin
         begin
           { Insert a new node mid-list }
           Existing_node := It;
-          MALLOC(Pointer(It), Sizeof(TIntersectionNode), 'IT insertion');
-          It.Ie[0] := Edge0;
-          It.Ie[1] := Edge1;
+          MALLOC(Pointer(It), SizeOf(TIntersectionNode), 'IT insertion');
+          It.IE[0] := Edge0;
+          It.IE[1] := Edge1;
           It.Point.X := X;
           It.Point.Y := Y;
           It.Next := Existing_node;
@@ -799,88 +799,88 @@ begin
     end;
 end;
 
-procedure AddSortedTableEdge(var St: PSortedEdgeTableNode; var It: PIntersectionNode; const Edge: PEdgeNode; const Dy: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure AddSortedTableEdge(var st: PSortedEdgeTableNode; var It: PIntersectionNode; const edge: PEdgeNode; const dy: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
   Existing_node: PSortedEdgeTableNode;
   Den, X, Y, R: Double;
 begin
-  if St = nil then
+  if st = nil then
     begin
       { Append edge onto the tail end of the ST }
-      MALLOC(Pointer(St), Sizeof(TSortedEdgeTableNode), 'ST insertion');
-      St.Edge := Edge;
-      St.Xb := Edge.Xb;
-      St.Xt := Edge.Xt;
-      St.Dx := Edge.Dx;
-      St.Prev := nil;
+      MALLOC(Pointer(st), SizeOf(TSortedEdgeTableNode), 'ST insertion');
+      st.edge := edge;
+      st.XB := edge.XB;
+      st.xt := edge.xt;
+      st.dx := edge.dx;
+      st.Prev := nil;
     end
   else
     begin
-      Den := (St.Xt - St.Xb) - (Edge.Xt - Edge.Xb);
+      Den := (st.xt - st.XB) - (edge.xt - edge.XB);
 
       { If new edge and ST edge don't cross }
-      if ((Edge.Xt >= St.Xt) or (Edge.Dx = St.Dx) or (Abs(Den) <= CGPCEpsilon))
+      if ((edge.xt >= st.xt) or (edge.dx = st.dx) or (Abs(Den) <= CGPCEpsilon))
       then
         begin
           { No intersection - insert edge here (before the ST edge) }
-          Existing_node := St;
-          MALLOC(Pointer(St), Sizeof(TSortedEdgeTableNode), 'ST insertion');
-          St.Edge := Edge;
-          St.Xb := Edge.Xb;
-          St.Xt := Edge.Xt;
-          St.Dx := Edge.Dx;
-          St.Prev := Existing_node;
+          Existing_node := st;
+          MALLOC(Pointer(st), SizeOf(TSortedEdgeTableNode), 'ST insertion');
+          st.edge := edge;
+          st.XB := edge.XB;
+          st.xt := edge.xt;
+          st.dx := edge.dx;
+          st.Prev := Existing_node;
         end
       else
         begin
           { Compute intersection between new edge and ST edge }
-          R := (Edge.Xb - St.Xb) / Den;
-          X := St.Xb + R * (St.Xt - St.Xb);
-          Y := R * Dy;
+          R := (edge.XB - st.XB) / Den;
+          X := st.XB + R * (st.xt - st.XB);
+          Y := R * dy;
 
           { Insert the edge pointers and the intersection point in the IT }
-          AddIntersection(It, St.Edge, Edge, X, Y);
+          AddIntersection(It, st.edge, edge, X, Y);
 
           { Head further into the ST }
-          AddSortedTableEdge(St.Prev, It, Edge, Dy);
+          AddSortedTableEdge(st.Prev, It, edge, dy);
 
         end;
     end;
 end;
 
-procedure BuildIntersectionTable(var It: PIntersectionNode; const Aet: PEdgeNode; const Dy: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure BuildIntersectionTable(var It: PIntersectionNode; const Aet: PEdgeNode; const dy: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  St, Stp: PSortedEdgeTableNode;
-  Edge: PEdgeNode;
+  st, Stp: PSortedEdgeTableNode;
+  edge: PEdgeNode;
 begin
 
   { Build intersection table for the current scanbeam }
   Reset_it(It);
-  St := nil;
+  st := nil;
 
   { Process each AET edge }
-  Edge := Aet;
-  while Edge <> nil do
+  edge := Aet;
+  while edge <> nil do
     begin
-      if (Edge.Bstate[CAbove] = BUNDLE_HEAD) or (Edge.Bundle[CAbove][CClip] <> 0) or
-        (Edge.Bundle[CAbove][CSubj] <> 0) then
-          AddSortedTableEdge(St, It, Edge, Dy);
-      Edge := Edge.Next;
+      if (edge.Bstate[CAbove] = BUNDLE_HEAD) or (edge.Bundle[CAbove][CClip] <> 0) or
+        (edge.Bundle[CAbove][CSubj] <> 0) then
+          AddSortedTableEdge(st, It, edge, dy);
+      edge := edge.Next;
     end;
 
   { Free the sorted edge table }
-  while St <> nil do
+  while st <> nil do
     begin
-      Stp := St.Prev;
-      Free(Pointer(St));
-      St := Stp;
+      Stp := st.Prev;
+      Free(Pointer(st));
+      st := Stp;
     end;
 end;
 
 function CountContours(Polygon: PPolygonNode): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  Nv: Integer;
-  V, Nextv: PVertexNode;
+  NV: Integer;
+  v, Nextv: PVertexNode;
 begin
 
   Result := 0;
@@ -889,29 +889,29 @@ begin
       if Polygon.Active <> 0 then
         begin
           { Count the vertices in the current Contour }
-          Nv := 0;
-          V := Polygon.Proxy.V[CLeft];
-          while V <> nil do
+          NV := 0;
+          v := Polygon.Proxy.v[CLeft];
+          while v <> nil do
             begin
-              Inc(Nv);
-              V := V.Next;
+              Inc(NV);
+              v := v.Next;
             end;
 
           { record valid Vertex counts in the Active field }
-          if (Nv > 2) then
+          if (NV > 2) then
             begin
-              Polygon.Active := Nv;
+              Polygon.Active := NV;
               Inc(Result);
             end
           else
             begin
               { Invalid Contour: just Free the heap }
-              V := Polygon.Proxy.V[CLeft];
-              while V <> nil do
+              v := Polygon.Proxy.v[CLeft];
+              while v <> nil do
                 begin
-                  Nextv := V.Next;
-                  Free(Pointer(V));
-                  V := Nextv;
+                  Nextv := v.Next;
+                  Free(Pointer(v));
+                  v := Nextv;
                 end;
               Polygon.Active := 0;
             end;
@@ -921,176 +921,176 @@ begin
     end;
 end;
 
-procedure AddLeft(const P: PPolygonNode; const X, Y: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure AddLeft(const p: PPolygonNode; const X, Y: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  Nv: PVertexNode;
+  NV: PVertexNode;
 begin
   { Create a new Vertex node and set its fields }
-  MALLOC(Pointer(Nv), Sizeof(TVertexNode), 'vertex node creation');
-  Nv.X := X;
-  Nv.Y := Y;
+  MALLOC(Pointer(NV), SizeOf(TVertexNode), 'vertex node creation');
+  NV.X := X;
+  NV.Y := Y;
 
   { Add Vertex nv to the CLeft end of the Polygon's vertex list }
-  Nv.Next := P.Proxy.V[CLeft];
+  NV.Next := p.Proxy.v[CLeft];
 
   { Update Proxy[CLeft] to point to nv }
-  P.Proxy.V[CLeft] := Nv;
+  p.Proxy.v[CLeft] := NV;
 end;
 
-procedure MergeLeft(const P, Q: PPolygonNode; List: PPolygonNode); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MergeLeft(const p, q: PPolygonNode; List: PPolygonNode); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
   Target: PPolygonNode;
 begin
   { Label Contour as a Hole }
-  Q.Proxy.Hole := FTRUE;
+  q.Proxy.Hole := FTRUE;
 
-  if P.Proxy <> Q.Proxy then
+  if p.Proxy <> q.Proxy then
     begin
       { Assign P's vertex list to the left end of Q's list }
-      P.Proxy.V[CRight].Next := Q.Proxy.V[CLeft];
-      Q.Proxy.V[CLeft] := P.Proxy.V[CLeft];
+      p.Proxy.v[CRight].Next := q.Proxy.v[CLeft];
+      q.Proxy.v[CLeft] := p.Proxy.v[CLeft];
 
       { Redirect any P->Proxy references to Q->Proxy }
-      Target := P.Proxy;
+      Target := p.Proxy;
       while List <> nil do
         begin
           if List.Proxy = Target then
             begin
               List.Active := FFALSE;
-              List.Proxy := Q.Proxy;
+              List.Proxy := q.Proxy;
             end;
           List := List.Next;
         end;
     end;
 end;
 
-procedure AddRight(const P: PPolygonNode; const X, Y: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure AddRight(const p: PPolygonNode; const X, Y: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  Nv: PVertexNode;
+  NV: PVertexNode;
 begin
   { Create a new Vertex node and set its fields }
-  MALLOC(Pointer(Nv), Sizeof(TVertexNode), 'vertex node creation');
-  Nv.X := X;
-  Nv.Y := Y;
-  Nv.Next := nil;
+  MALLOC(Pointer(NV), SizeOf(TVertexNode), 'vertex node creation');
+  NV.X := X;
+  NV.Y := Y;
+  NV.Next := nil;
 
   { Add Vertex nv to the CRight end of the Polygon's vertex list }
-  P.Proxy.V[CRight].Next := Nv;
+  p.Proxy.v[CRight].Next := NV;
 
   { Update Proxy.v[CRight] to point to nv }
-  P.Proxy.V[CRight] := Nv;
+  p.Proxy.v[CRight] := NV;
 end;
 
-procedure MergeRight(const P, Q: PPolygonNode; List: PPolygonNode); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MergeRight(const p, q: PPolygonNode; List: PPolygonNode); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
   Target: PPolygonNode;
 begin
   { Label Contour as external }
-  Q.Proxy.Hole := FFALSE;
+  q.Proxy.Hole := FFALSE;
 
-  if P.Proxy <> Q.Proxy then
+  if p.Proxy <> q.Proxy then
     begin
       { Assign P's vertex list to the right end of Q's list }
-      Q.Proxy.V[CRight].Next := P.Proxy.V[CLeft];
-      Q.Proxy.V[CRight] := P.Proxy.V[CRight];
+      q.Proxy.v[CRight].Next := p.Proxy.v[CLeft];
+      q.Proxy.v[CRight] := p.Proxy.v[CRight];
 
       { Redirect any P->Proxy references to Q->Proxy }
-      Target := P.Proxy;
+      Target := p.Proxy;
       while List <> nil do
         begin
           if List.Proxy = Target then
             begin
               List.Active := FFALSE;
-              List.Proxy := Q.Proxy;
+              List.Proxy := q.Proxy;
             end;
           List := List.Next;
         end;
     end;
 end;
 
-procedure AddLocalMin(const P: PPpolygonNode; const Edge: PEdgeNode; const X, Y: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure AddLocalMin(const p: PPpolygonNode; const edge: PEdgeNode; const X, Y: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  Nv: PVertexNode;
+  NV: PVertexNode;
   Existing_min: PPolygonNode;
 begin
-  Existing_min := P^;
+  Existing_min := p^;
 
-  MALLOC(Pointer(P^), Sizeof(TPolygonNode), 'polygon node creation');
+  MALLOC(Pointer(p^), SizeOf(TPolygonNode), 'polygon node creation');
 
   { Create a new Vertex node and set its fields }
-  MALLOC(Pointer(Nv), Sizeof(TVertexNode), 'vertex node creation');
-  Nv.X := X;
-  Nv.Y := Y;
-  Nv.Next := nil;
+  MALLOC(Pointer(NV), SizeOf(TVertexNode), 'vertex node creation');
+  NV.X := X;
+  NV.Y := Y;
+  NV.Next := nil;
 
   { Initialise Proxy to point to p itself }
-  P^.Proxy := P^;
-  P^.Active := FTRUE;
-  P^.Next := Existing_min;
+  p^.Proxy := p^;
+  p^.Active := FTRUE;
+  p^.Next := Existing_min;
 
   { Make v[CLeft] and v[CRight] point to new Vertex nv }
-  P^.V[CLeft] := Nv;
-  P^.V[CRight] := Nv;
+  p^.v[CLeft] := NV;
+  p^.v[CRight] := NV;
 
   { Assign Polygon p to the edge }
-  Edge.Outp[CAbove] := P^;
+  edge.Outp[CAbove] := p^;
 end;
 
-function CountTristrips(Tn: PPolygonNode): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CountTristrips(tN: PPolygonNode): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
   Result := 0;
 
-  while Tn <> nil do
+  while tN <> nil do
     begin
-      if Tn.Active > 2 then
+      if tN.Active > 2 then
           Inc(Result);
-      Tn := Tn.Next;
+      tN := tN.Next;
     end;
 end;
 
-procedure NewTristrip(var Tn: PPolygonNode; const Edge: PEdgeNode; const X, Y: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure NewTristrip(var tN: PPolygonNode; const edge: PEdgeNode; const X, Y: Double); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 begin
-  if Tn = nil then
+  if tN = nil then
     begin
-      MALLOC(Pointer(Tn), Sizeof(TPolygonNode), 'tristrip node creation');
-      Tn.Next := nil;
-      Tn.V[CLeft] := nil;
-      Tn.V[CRight] := nil;
-      Tn.Active := 1;
-      AddVertex(Tn.V[CLeft], X, Y);
-      Edge.Outp[CAbove] := Tn;
+      MALLOC(Pointer(tN), SizeOf(TPolygonNode), 'tristrip node creation');
+      tN.Next := nil;
+      tN.v[CLeft] := nil;
+      tN.v[CRight] := nil;
+      tN.Active := 1;
+      AddVertex(tN.v[CLeft], X, Y);
+      edge.Outp[CAbove] := tN;
     end
   else
     { Head further down the list }
-      NewTristrip(Tn.Next, Edge, X, Y);
+      NewTristrip(tN.Next, edge, X, Y);
 end;
 
-function CreateContourBoundingBoxes(const P: PGpcPolygon): PBoundingBoxArray; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CreateContourBoundingBoxes(const p: PGpcPolygon): PBoundingBoxArray; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 var
-  C, V: Integer;
+  C, v: Integer;
 begin
-  MALLOC(Pointer(Result), P.NumContours * Sizeof(TBoundingBox), 'Bounding box creation');
+  MALLOC(Pointer(Result), p.NumContours * SizeOf(TBoundingBox), 'Bounding box creation');
 
   { Construct Contour bounding boxes }
-  for C := 0 to P.NumContours - 1 do
+  for C := 0 to p.NumContours - 1 do
     begin
       { Initialise bounding box extent }
-      Result[C].Xmin := CDoubleMax;
-      Result[C].Ymin := CDoubleMax;
-      Result[C].Xmax := -CDoubleMax;
-      Result[C].Ymax := -CDoubleMax;
+      Result[C].XMin := CDoubleMax;
+      Result[C].YMin := CDoubleMax;
+      Result[C].XMax := -CDoubleMax;
+      Result[C].YMax := -CDoubleMax;
 
-      for V := 0 to P.Contour[C].NumVertices - 1 do
+      for v := 0 to p.Contour[C].NumVertices - 1 do
         begin
           { Adjust bounding Result }
-          if (P.Contour[C].Vertex[V].X < Result[C].Xmin) then
-              Result[C].Xmin := P.Contour[C].Vertex[V].X;
-          if (P.Contour[C].Vertex[V].Y < Result[C].Ymin) then
-              Result[C].Ymin := P.Contour[C].Vertex[V].Y;
-          if (P.Contour[C].Vertex[V].X > Result[C].Xmax) then
-              Result[C].Xmax := P.Contour[C].Vertex[V].X;
-          if (P.Contour[C].Vertex[V].Y > Result[C].Ymax) then
-              Result[C].Ymax := P.Contour[C].Vertex[V].Y;
+          if (p.Contour[C].Vertex[v].X < Result[C].XMin) then
+              Result[C].XMin := p.Contour[C].Vertex[v].X;
+          if (p.Contour[C].Vertex[v].Y < Result[C].YMin) then
+              Result[C].YMin := p.Contour[C].Vertex[v].Y;
+          if (p.Contour[C].Vertex[v].X > Result[C].XMax) then
+              Result[C].XMax := p.Contour[C].Vertex[v].X;
+          if (p.Contour[C].Vertex[v].Y > Result[C].YMax) then
+              Result[C].YMax := p.Contour[C].Vertex[v].Y;
         end;
     end;
 end;
@@ -1098,7 +1098,7 @@ end;
 procedure MinimaxTest(CSubj: PGpcPolygon; CClip: PGpcPolygon; Op: TGpcOp);
 var
   S_bbox, C_bbox: PBoundingBoxArray;
-  S, C: Integer;
+  s, C: Integer;
   OverlapTable: PIntegerArray;
   Overlap: Integer;
 begin
@@ -1106,26 +1106,26 @@ begin
   C_bbox := CreateContourBoundingBoxes(CClip);
 
   MALLOC(Pointer(OverlapTable), CSubj.NumContours * CClip.NumContours *
-    Sizeof(Integer), 'overlap table creation');
+    SizeOf(Integer), 'overlap table creation');
 
   { Check all subject Contour bounding boxes against CClip boxes }
-  for S := 0 to CSubj.NumContours - 1 do
+  for s := 0 to CSubj.NumContours - 1 do
     for C := 0 to CClip.NumContours - 1 do
-        OverlapTable[C * CSubj.NumContours + S] :=
-        Integer((not((S_bbox[S].Xmax < C_bbox[C].Xmin) or
-        (S_bbox[S].Xmin > C_bbox[C].Xmax))) and
-        (not((S_bbox[S].Ymax < C_bbox[C].Ymin) or
-        (S_bbox[S].Ymin > C_bbox[C].Ymax))));
+        OverlapTable[C * CSubj.NumContours + s] :=
+        Integer((not((S_bbox[s].XMax < C_bbox[C].XMin) or
+        (S_bbox[s].XMin > C_bbox[C].XMax))) and
+        (not((S_bbox[s].YMax < C_bbox[C].YMin) or
+        (S_bbox[s].YMin > C_bbox[C].YMax))));
 
   { For each CClip Contour, search for any subject Contour overlaps }
   for C := 0 to CClip.NumContours - 1 do
     begin
       Overlap := 0;
-      S := 0;
-      while (Overlap = 0) and (S < CSubj.NumContours) do
+      s := 0;
+      while (Overlap = 0) and (s < CSubj.NumContours) do
         begin
-          Overlap := OverlapTable[C * CSubj.NumContours + S];
-          Inc(S);
+          Overlap := OverlapTable[C * CSubj.NumContours + s];
+          Inc(s);
         end;
 
       if Overlap = 0 then
@@ -1136,19 +1136,19 @@ begin
   if (Op = goInt) then
     begin
       { For each subject Contour, search for any CClip Contour overlaps }
-      for S := 0 to CSubj.NumContours - 1 do
+      for s := 0 to CSubj.NumContours - 1 do
         begin
           Overlap := 0;
           C := 0;
           while (Overlap = 0) and (C < CClip.NumContours) do
             begin
-              Overlap := OverlapTable[C * CSubj.NumContours + S];
+              Overlap := OverlapTable[C * CSubj.NumContours + s];
               Inc(C);
             end;
 
           if Overlap = 0 then
             { Flag non contributing status by negating Vertex count }
-              CSubj.Contour[S].NumVertices := -CSubj.Contour[S].NumVertices;
+              CSubj.Contour[s].NumVertices := -CSubj.Contour[s].NumVertices;
         end;
     end;
 
@@ -1177,18 +1177,18 @@ end;
 procedure GpcAddContour(Polygon: PGpcPolygon; Contour: PGpcVertexList;
   Hole: Integer);
 var
-  C, V: Integer;
+  C, v: Integer;
   Extended_hole: PIntegerArray;
   Extended_contour: PGpcVertexListArray;
 begin
 
   { Create an extended Hole array }
-  MALLOC(Pointer(Extended_hole), (Polygon.NumContours + 1) * Sizeof(Integer),
+  MALLOC(Pointer(Extended_hole), (Polygon.NumContours + 1) * SizeOf(Integer),
     'contour hole addition');
 
   { Create an extended Contour array }
   MALLOC(Pointer(Extended_contour), (Polygon.NumContours + 1) *
-    Sizeof(TGpcVertexList), 'contour addition');
+    SizeOf(TGpcVertexList), 'contour addition');
 
   { Copy the old Contour into the extended Contour array }
   for C := 0 to Polygon.NumContours - 1 do
@@ -1202,9 +1202,9 @@ begin
   Extended_hole[C] := Hole;
   Extended_contour[C].NumVertices := Contour.NumVertices;
   MALLOC(Pointer(Extended_contour[C].Vertex), Contour.NumVertices *
-    Sizeof(TGpcVertex), 'contour addition');
-  for V := 0 to Contour.NumVertices - 1 do
-      Extended_contour[C].Vertex[V] := Contour.Vertex[V];
+    SizeOf(TGpcVertex), 'contour addition');
+  for v := 0 to Contour.NumVertices - 1 do
+      Extended_contour[C].Vertex[v] := Contour.Vertex[v];
 
   { Dispose of the old Contour }
   CFree(Pointer(Polygon.Contour));
@@ -1221,21 +1221,21 @@ procedure GpcPolygonClip(SetOperation: TGpcOp; SubjectPolygon: PGpcPolygon;
 var
   SbTree: PScanBeamTree;
   It, Intersect: PIntersectionNode;
-  Edge, PrevEdge, NextEdge, SuccEdge: PEdgeNode;
-  E0, E1: PEdgeNode;
+  edge, PrevEdge, NextEdge, SuccEdge: PEdgeNode;
+  E0, e1: PEdgeNode;
   Aet: PEdgeNode;
   C_heap, S_heap: PEdgeNodeArray;
   LocalMinimaTable, LocalMin: PLocalMinimaTableNode;
-  OutPoly, P, Q, Poly, Npoly, Cf: PPolygonNode;
-  Vtx, Nv: PVertexNode;
+  OutPoly, p, q, Poly, Npoly, Cf: PPolygonNode;
+  Vtx, NV: PVertexNode;
   Horiz: array [0 .. 1] of THorizontalEdgeState;
   Inn, Exists, Parity: array [0 .. 1] of Integer;
-  C, V, Contributing, Search, Scanbeam: Integer;
-  SbtEntries, _class, Bl, Br, Tl, Tr: Integer;
+  C, v, Contributing, Search, Scanbeam: Integer;
+  SbtEntries, _class, BL, BR, TL, tr: Integer;
   Sbt: PDoubleArray;
-  Xb, Px, Yb, Yt, Dy, Ix, Iy: Double;
+  XB, Px, Yb, Yt, dy, ix, iy: Double;
 begin
-  Edge := nil;
+  edge := nil;
   SbTree := nil;
   It := nil;
   Aet := nil;
@@ -1292,7 +1292,7 @@ begin
     end;
 
   { Build scanbeam table from scanbeam tree }
-  MALLOC(Pointer(Sbt), SbtEntries * Sizeof(Double), 'sbt creation');
+  MALLOC(Pointer(Sbt), SbtEntries * SizeOf(Double), 'sbt creation');
   BuildScanBeamTree(Scanbeam, Sbt, SbTree);
   Scanbeam := 0;
   FreeScanBeamTree(SbTree);
@@ -1318,7 +1318,7 @@ begin
       if Scanbeam < SbtEntries then
         begin
           Yt := Sbt[Scanbeam];
-          Dy := Yt - Yb;
+          dy := Yt - Yb;
         end;
 
       { === SCANBEAM BOUNDARY PROCESSING ================================ }
@@ -1329,11 +1329,11 @@ begin
           if (LocalMin.Y = Yb) then
             begin
               { Add edges starting at this local minimum to the AET }
-              Edge := LocalMin.FirstBound;
-              while Edge <> nil do
+              edge := LocalMin.FirstBound;
+              while edge <> nil do
                 begin
-                  AddEdgeToAET(Aet, Edge, nil);
-                  Edge := Edge.Next_bound;
+                  AddEdgeToAET(Aet, edge, nil);
+                  edge := edge.Next_bound;
                 end;
               LocalMin := LocalMin.Next;
             end;
@@ -1344,7 +1344,7 @@ begin
 
       { Create bundles within AET }
       E0 := Aet;
-      E1 := Aet;
+      e1 := Aet;
 
       { Set up bundle fields of first edge }
       Aet.Bundle[CAbove][Integer(Aet.Typ <> 0)] := Integer((Aet.Top.Y <> Yb));
@@ -1364,7 +1364,7 @@ begin
           { Bundle edges CAbove the scanbeam boundary if they coincide }
           if NextEdge.Bundle[CAbove][NextEdge.Typ] <> 0 then
             begin
-              if (EQ(E0.Xb, NextEdge.Xb) and EQ(E0.Dx, NextEdge.Dx) and
+              if (EQ(E0.XB, NextEdge.XB) and EQ(E0.dx, NextEdge.dx) and
                 (E0.Top.Y <> Yb)) then
                 begin
                   NextEdge.Bundle[CAbove][NextEdge.Typ] := NextEdge.Bundle[CAbove]
@@ -1385,19 +1385,19 @@ begin
       Horiz[CSubj] := hesNH;
 
       { Process each edge at this scanbeam boundary }
-      Edge := Aet;
-      while Edge <> nil do
+      edge := Aet;
+      while edge <> nil do
         begin
-          Exists[CClip] := Edge.Bundle[CAbove][CClip] +
-            (Edge.Bundle[CBelow][CClip] shl 1);
-          Exists[CSubj] := Edge.Bundle[CAbove][CSubj] +
-            (Edge.Bundle[CBelow][CSubj] shl 1);
+          Exists[CClip] := edge.Bundle[CAbove][CClip] +
+            (edge.Bundle[CBelow][CClip] shl 1);
+          Exists[CSubj] := edge.Bundle[CAbove][CSubj] +
+            (edge.Bundle[CBelow][CSubj] shl 1);
 
           if (Exists[CClip] <> 0) or (Exists[CSubj] <> 0) then
             begin
               { Set bundle side }
-              Edge.Bside[CClip] := Parity[CClip];
-              Edge.Bside[CSubj] := Parity[CSubj];
+              edge.Bside[CClip] := Parity[CClip];
+              edge.Bside[CSubj] := Parity[CSubj];
 
               { Determine contributing status and quadrant occupancies }
               case SetOperation of
@@ -1409,15 +1409,15 @@ begin
                       ((Parity[CClip] <> 0) or (Horiz[CClip] <> hesNH))) or
                       ((Exists[CClip] <> 0) and (Exists[CSubj] <> 0) and
                       (Parity[CClip] = Parity[CSubj])));
-                    Br := Integer((Parity[CClip] <> 0) and (Parity[CSubj] <> 0));
-                    Bl := Integer(((Parity[CClip] xor Edge.Bundle[CAbove][CClip]) <> 0)
-                      and ((Parity[CSubj] xor Edge.Bundle[CAbove][CSubj]) <> 0));
-                    Tr := Integer(((Parity[CClip] xor Integer(Horiz[CClip] <> hesNH)) <> 0)
+                    BR := Integer((Parity[CClip] <> 0) and (Parity[CSubj] <> 0));
+                    BL := Integer(((Parity[CClip] xor edge.Bundle[CAbove][CClip]) <> 0)
+                      and ((Parity[CSubj] xor edge.Bundle[CAbove][CSubj]) <> 0));
+                    tr := Integer(((Parity[CClip] xor Integer(Horiz[CClip] <> hesNH)) <> 0)
                       and ((Parity[CSubj] xor Integer(Horiz[CSubj] <> hesNH)) <> 0));
-                    Tl := Integer
-                      (((Parity[CClip] xor Integer(Horiz[CClip] <> hesNH) xor Edge.Bundle
+                    TL := Integer
+                      (((Parity[CClip] xor Integer(Horiz[CClip] <> hesNH) xor edge.Bundle
                       [CBelow][CClip]) <> 0) and
-                      ((Parity[CSubj] xor Integer(Horiz[CSubj] <> hesNH) xor Edge.Bundle
+                      ((Parity[CSubj] xor Integer(Horiz[CSubj] <> hesNH) xor edge.Bundle
                       [CBelow][CSubj]) <> 0));
                   end;
 
@@ -1425,16 +1425,16 @@ begin
                   begin
                     Contributing := Integer((Exists[CClip] <> 0) or
                       (Exists[CSubj] <> 0));
-                    Br := Integer(Parity[CClip] xor Parity[CSubj]);
-                    Bl := Integer(((Parity[CClip] xor Edge.Bundle[CAbove][CClip]) <> 0)
-                      xor ((Parity[CSubj] xor Edge.Bundle[CAbove][CSubj]) <> 0));
-                    Tr := Integer(((Parity[CClip] xor Integer(Horiz[CClip] <> hesNH)) <> 0)
+                    BR := Integer(Parity[CClip] xor Parity[CSubj]);
+                    BL := Integer(((Parity[CClip] xor edge.Bundle[CAbove][CClip]) <> 0)
+                      xor ((Parity[CSubj] xor edge.Bundle[CAbove][CSubj]) <> 0));
+                    tr := Integer(((Parity[CClip] xor Integer(Horiz[CClip] <> hesNH)) <> 0)
                       xor ((Parity[CSubj] xor Integer(Horiz[CSubj] <> hesNH)) <> 0));
-                    Tl := Integer
-                      (((Parity[CClip] xor Integer(Horiz[CClip] <> hesNH) xor Edge.Bundle
+                    TL := Integer
+                      (((Parity[CClip] xor Integer(Horiz[CClip] <> hesNH) xor edge.Bundle
                       [CBelow][CClip]) <> 0)
                       xor ((Parity[CSubj] xor Integer(Horiz[CSubj] <> hesNH)
-                      xor Edge.Bundle[CBelow][CSubj]) <> 0));
+                      xor edge.Bundle[CBelow][CSubj]) <> 0));
                   end;
 
                 goUnion:
@@ -1446,15 +1446,15 @@ begin
                       ((Exists[CClip] <> 0) and (Exists[CSubj] <> 0) and
                       (Parity[CClip] = Parity[CSubj])));
 
-                    Br := Integer((Parity[CClip] <> 0) or (Parity[CSubj] <> 0));
-                    Bl := Integer(((Parity[CClip] xor Edge.Bundle[CAbove][CClip]) <> 0)
-                      or ((Parity[CSubj] xor Edge.Bundle[CAbove][CSubj]) <> 0));
-                    Tr := Integer(((Parity[CClip] xor Integer(Horiz[CClip] <> hesNH)) <> 0)
+                    BR := Integer((Parity[CClip] <> 0) or (Parity[CSubj] <> 0));
+                    BL := Integer(((Parity[CClip] xor edge.Bundle[CAbove][CClip]) <> 0)
+                      or ((Parity[CSubj] xor edge.Bundle[CAbove][CSubj]) <> 0));
+                    tr := Integer(((Parity[CClip] xor Integer(Horiz[CClip] <> hesNH)) <> 0)
                       or ((Parity[CSubj] xor Integer(Horiz[CSubj] <> hesNH)) <> 0));
-                    Tl := Integer
-                      (((Parity[CClip] xor Integer(Horiz[CClip] <> hesNH) xor Edge.Bundle
+                    TL := Integer
+                      (((Parity[CClip] xor Integer(Horiz[CClip] <> hesNH) xor edge.Bundle
                       [CBelow][CClip]) <> 0) or
-                      ((Parity[CSubj] xor Integer(Horiz[CSubj] <> hesNH) xor Edge.Bundle
+                      ((Parity[CSubj] xor Integer(Horiz[CSubj] <> hesNH) xor edge.Bundle
                       [CBelow][CSubj]) <> 0));
                   end;
               end; { case }
@@ -1463,8 +1463,8 @@ begin
               (* parity[CClip] := Integer((parity[CClip] <> 0) xor (edge.bundle[CAbove][CClip] <> 0));
                 parity[CSubj] := Integer((parity[CSubj] <> 0) xor (edge.bundle[CAbove][CSubj] <> 0));
               *)
-              Parity[CClip] := Parity[CClip] xor Edge.Bundle[CAbove][CClip];
-              Parity[CSubj] := Parity[CSubj] xor Edge.Bundle[CAbove][CSubj];
+              Parity[CClip] := Parity[CClip] xor edge.Bundle[CAbove][CClip];
+              Parity[CSubj] := Parity[CSubj] xor edge.Bundle[CAbove][CSubj];
 
               { Update horizontal state }
               if Exists[CClip] <> 0 then
@@ -1474,126 +1474,126 @@ begin
                   Horiz[CSubj] := CNextHorizontalEdgeState[Integer(Horiz[CSubj])
                   ][((Exists[CSubj] - 1) shl 1) + Parity[CSubj]];
 
-              _class := Tr + (Tl shl 1) + (Br shl 2) + (Bl shl 3);
+              _class := tr + (TL shl 1) + (BR shl 2) + (BL shl 3);
 
               if Contributing <> 0 then
                 begin
-                  Xb := Edge.Xb;
+                  XB := edge.XB;
 
                   case TVertexType(_class) of
                     vtEMN, vtIMN:
                       begin
-                        AddLocalMin(@OutPoly, Edge, Xb, Yb);
-                        Px := Xb;
-                        Cf := Edge.Outp[CAbove];
+                        AddLocalMin(@OutPoly, edge, XB, Yb);
+                        Px := XB;
+                        Cf := edge.Outp[CAbove];
                       end;
                     vtERI:
                       begin
-                        if (Xb <> Px) then
+                        if (XB <> Px) then
                           begin
-                            AddRight(Cf, Xb, Yb);
-                            Px := Xb;
+                            AddRight(Cf, XB, Yb);
+                            Px := XB;
                           end;
-                        Edge.Outp[CAbove] := Cf;
+                        edge.Outp[CAbove] := Cf;
                         Cf := nil;
                       end;
                     vtELI:
                       begin
-                        AddLeft(Edge.Outp[CBelow], Xb, Yb);
-                        Px := Xb;
-                        Cf := Edge.Outp[CBelow];
+                        AddLeft(edge.Outp[CBelow], XB, Yb);
+                        Px := XB;
+                        Cf := edge.Outp[CBelow];
                       end;
                     vtEMX:
                       begin
-                        if (Xb <> Px) then
+                        if (XB <> Px) then
                           begin
-                            AddLeft(Cf, Xb, Yb);
-                            Px := Xb;
+                            AddLeft(Cf, XB, Yb);
+                            Px := XB;
                           end;
-                        MergeRight(Cf, Edge.Outp[CBelow], OutPoly);
+                        MergeRight(Cf, edge.Outp[CBelow], OutPoly);
                         Cf := nil;
                       end;
                     vtILI:
                       begin
-                        if (Xb <> Px) then
+                        if (XB <> Px) then
                           begin
-                            AddLeft(Cf, Xb, Yb);
-                            Px := Xb;
+                            AddLeft(Cf, XB, Yb);
+                            Px := XB;
                           end;
-                        Edge.Outp[CAbove] := Cf;
+                        edge.Outp[CAbove] := Cf;
                         Cf := nil;
                       end;
                     vtIRI:
                       begin
-                        AddRight(Edge.Outp[CBelow], Xb, Yb);
-                        Px := Xb;
-                        Cf := Edge.Outp[CBelow];
-                        Edge.Outp[CBelow] := nil;
+                        AddRight(edge.Outp[CBelow], XB, Yb);
+                        Px := XB;
+                        Cf := edge.Outp[CBelow];
+                        edge.Outp[CBelow] := nil;
                       end;
                     vtIMX:
                       begin
-                        if (Xb <> Px) then
+                        if (XB <> Px) then
                           begin
-                            AddRight(Cf, Xb, Yb);
-                            Px := Xb;
+                            AddRight(Cf, XB, Yb);
+                            Px := XB;
                           end;
-                        MergeLeft(Cf, Edge.Outp[CBelow], OutPoly);
+                        MergeLeft(Cf, edge.Outp[CBelow], OutPoly);
                         Cf := nil;
-                        Edge.Outp[CBelow] := nil;
+                        edge.Outp[CBelow] := nil;
                       end;
                     vtIMM:
                       begin
-                        if (Xb <> Px) then
+                        if (XB <> Px) then
                           begin
-                            AddRight(Cf, Xb, Yb);
-                            Px := Xb;
+                            AddRight(Cf, XB, Yb);
+                            Px := XB;
                           end;
-                        MergeLeft(Cf, Edge.Outp[CBelow], OutPoly);
-                        Edge.Outp[CBelow] := nil;
-                        AddLocalMin(@OutPoly, Edge, Xb, Yb);
-                        Cf := Edge.Outp[CAbove];
+                        MergeLeft(Cf, edge.Outp[CBelow], OutPoly);
+                        edge.Outp[CBelow] := nil;
+                        AddLocalMin(@OutPoly, edge, XB, Yb);
+                        Cf := edge.Outp[CAbove];
                       end;
                     vtEMM:
                       begin
-                        if (Xb <> Px) then
+                        if (XB <> Px) then
                           begin
-                            AddLeft(Cf, Xb, Yb);
-                            Px := Xb;
+                            AddLeft(Cf, XB, Yb);
+                            Px := XB;
                           end;
-                        MergeRight(Cf, Edge.Outp[CBelow], OutPoly);
-                        Edge.Outp[CBelow] := nil;
-                        AddLocalMin(@OutPoly, Edge, Xb, Yb);
-                        Cf := Edge.Outp[CAbove];
+                        MergeRight(Cf, edge.Outp[CBelow], OutPoly);
+                        edge.Outp[CBelow] := nil;
+                        AddLocalMin(@OutPoly, edge, XB, Yb);
+                        Cf := edge.Outp[CAbove];
                       end;
                     vtLED:
                       begin
-                        if (Edge.Bot.Y = Yb) then
-                            AddLeft(Edge.Outp[CBelow], Xb, Yb);
-                        Edge.Outp[CAbove] := Edge.Outp[CBelow];
-                        Px := Xb;
+                        if (edge.Bot.Y = Yb) then
+                            AddLeft(edge.Outp[CBelow], XB, Yb);
+                        edge.Outp[CAbove] := edge.Outp[CBelow];
+                        Px := XB;
                       end;
                     vtRED:
                       begin
-                        if (Edge.Bot.Y = Yb) then
-                            AddRight(Edge.Outp[CBelow], Xb, Yb);
-                        Edge.Outp[CAbove] := Edge.Outp[CBelow];
-                        Px := Xb;
+                        if (edge.Bot.Y = Yb) then
+                            AddRight(edge.Outp[CBelow], XB, Yb);
+                        edge.Outp[CAbove] := edge.Outp[CBelow];
+                        Px := XB;
                       end;
                     else
                   end; { End of case }
                 end;   { End of contributing conditional }
             end;       { End of edge exists conditional }
-          Edge := Edge.Next;
+          edge := edge.Next;
         end; { End of AET loop }
 
       { Delete terminating edges from the AET, otherwise compute xt }
-      Edge := Aet;
-      while Edge <> nil do
+      edge := Aet;
+      while edge <> nil do
         begin
-          if (Edge.Top.Y = Yb) then
+          if (edge.Top.Y = Yb) then
             begin
-              PrevEdge := Edge.Prev;
-              NextEdge := Edge.Next;
+              PrevEdge := edge.Prev;
+              NextEdge := edge.Next;
               if PrevEdge <> nil then
                   PrevEdge.Next := NextEdge
               else
@@ -1602,11 +1602,11 @@ begin
                   NextEdge.Prev := PrevEdge;
 
               { Copy bundle head state to the adjacent tail edge if required }
-              if (Edge.Bstate[CBelow] = BUNDLE_HEAD) and (PrevEdge <> nil) then
+              if (edge.Bstate[CBelow] = BUNDLE_HEAD) and (PrevEdge <> nil) then
                 begin
                   if PrevEdge.Bstate[CBelow] = BUNDLE_TAIL then
                     begin
-                      PrevEdge.Outp[CBelow] := Edge.Outp[CBelow];
+                      PrevEdge.Outp[CBelow] := edge.Outp[CBelow];
                       PrevEdge.Bstate[CBelow] := UNBUNDLED;
                       if PrevEdge.Prev <> nil then
                         if PrevEdge.Prev.Bstate[CBelow] = BUNDLE_TAIL then
@@ -1616,181 +1616,181 @@ begin
             end
           else
             begin
-              if (Edge.Top.Y = Yt) then
-                  Edge.Xt := Edge.Top.X
+              if (edge.Top.Y = Yt) then
+                  edge.xt := edge.Top.X
               else
-                  Edge.Xt := Edge.Bot.X + Edge.Dx * (Yt - Edge.Bot.Y);
+                  edge.xt := edge.Bot.X + edge.dx * (Yt - edge.Bot.Y);
             end;
 
-          Edge := Edge.Next;
+          edge := edge.Next;
         end;
 
       if Scanbeam < SbtEntries then
         begin
           { === SCANBEAM INTERIOR PROCESSING ============================== }
 
-          BuildIntersectionTable(It, Aet, Dy);
+          BuildIntersectionTable(It, Aet, dy);
 
           { Process each node in the intersection table }
           Intersect := It;
           while Intersect <> nil do
             begin
-              E0 := Intersect.Ie[0];
-              E1 := Intersect.Ie[1];
+              E0 := Intersect.IE[0];
+              e1 := Intersect.IE[1];
 
               { Only generate output for contributing intersections }
               if ((E0.Bundle[CAbove][CClip] <> 0) or (E0.Bundle[CAbove][CSubj] <> 0)) and
-                ((E1.Bundle[CAbove][CClip] <> 0) or (E1.Bundle[CAbove][CSubj] <> 0)) then
+                ((e1.Bundle[CAbove][CClip] <> 0) or (e1.Bundle[CAbove][CSubj] <> 0)) then
                 begin
-                  P := E0.Outp[CAbove];
-                  Q := E1.Outp[CAbove];
-                  Ix := Intersect.Point.X;
-                  Iy := Intersect.Point.Y + Yb;
+                  p := E0.Outp[CAbove];
+                  q := e1.Outp[CAbove];
+                  ix := Intersect.Point.X;
+                  iy := Intersect.Point.Y + Yb;
 
                   Inn[CClip] :=
                     Integer(((E0.Bundle[CAbove][CClip] <> 0) and (E0.Bside[CClip] = 0)) or
-                    ((E1.Bundle[CAbove][CClip] <> 0) and (E1.Bside[CClip] <> 0)) or
-                    ((E0.Bundle[CAbove][CClip] = 0) and (E1.Bundle[CAbove][CClip] = 0) and
-                    (E0.Bside[CClip] <> 0) and (E1.Bside[CClip] <> 0)));
+                    ((e1.Bundle[CAbove][CClip] <> 0) and (e1.Bside[CClip] <> 0)) or
+                    ((E0.Bundle[CAbove][CClip] = 0) and (e1.Bundle[CAbove][CClip] = 0) and
+                    (E0.Bside[CClip] <> 0) and (e1.Bside[CClip] <> 0)));
 
                   Inn[CSubj] :=
                     Integer(((E0.Bundle[CAbove][CSubj] <> 0) and (E0.Bside[CSubj] = 0)) or
-                    ((E1.Bundle[CAbove][CSubj] <> 0) and (E1.Bside[CSubj] <> 0)) or
-                    ((E0.Bundle[CAbove][CSubj] = 0) and (E1.Bundle[CAbove][CSubj] = 0) and
-                    (E0.Bside[CSubj] <> 0) and (E1.Bside[CSubj] <> 0)));
+                    ((e1.Bundle[CAbove][CSubj] <> 0) and (e1.Bside[CSubj] <> 0)) or
+                    ((E0.Bundle[CAbove][CSubj] = 0) and (e1.Bundle[CAbove][CSubj] = 0) and
+                    (E0.Bside[CSubj] <> 0) and (e1.Bside[CSubj] <> 0)));
 
                   { Determine quadrant occupancies }
                   case SetOperation of
 
                     goDiff, goInt:
                       begin
-                        Tr := Integer((Inn[CClip] <> 0) and (Inn[CSubj] <> 0));
-                        Tl := Integer(((Inn[CClip] xor E1.Bundle[CAbove][CClip]) <> 0) and
-                          ((Inn[CSubj] xor E1.Bundle[CAbove][CSubj]) <> 0));
-                        Br := Integer(((Inn[CClip] xor E0.Bundle[CAbove][CClip]) <> 0) and
+                        tr := Integer((Inn[CClip] <> 0) and (Inn[CSubj] <> 0));
+                        TL := Integer(((Inn[CClip] xor e1.Bundle[CAbove][CClip]) <> 0) and
+                          ((Inn[CSubj] xor e1.Bundle[CAbove][CSubj]) <> 0));
+                        BR := Integer(((Inn[CClip] xor E0.Bundle[CAbove][CClip]) <> 0) and
                           ((Inn[CSubj] xor E0.Bundle[CAbove][CSubj]) <> 0));
-                        Bl := Integer
-                          (((Inn[CClip] xor E1.Bundle[CAbove][CClip] xor E0.Bundle[CAbove]
+                        BL := Integer
+                          (((Inn[CClip] xor e1.Bundle[CAbove][CClip] xor E0.Bundle[CAbove]
                           [CClip]) <> 0) and
-                          ((Inn[CSubj] xor E1.Bundle[CAbove][CSubj] xor E0.Bundle[CAbove]
+                          ((Inn[CSubj] xor e1.Bundle[CAbove][CSubj] xor E0.Bundle[CAbove]
                           [CSubj]) <> 0));
                       end;
 
                     goXor:
                       begin
-                        Tr := Integer((Inn[CClip] <> 0) xor (Inn[CSubj] <> 0));
-                        Tl := Integer((Inn[CClip] xor E1.Bundle[CAbove][CClip])
-                          xor (Inn[CSubj] xor E1.Bundle[CAbove][CSubj]));
-                        Br := Integer((Inn[CClip] xor E0.Bundle[CAbove][CClip])
+                        tr := Integer((Inn[CClip] <> 0) xor (Inn[CSubj] <> 0));
+                        TL := Integer((Inn[CClip] xor e1.Bundle[CAbove][CClip])
+                          xor (Inn[CSubj] xor e1.Bundle[CAbove][CSubj]));
+                        BR := Integer((Inn[CClip] xor E0.Bundle[CAbove][CClip])
                           xor (Inn[CSubj] xor E0.Bundle[CAbove][CSubj]));
-                        Bl := Integer
-                          ((Inn[CClip] xor E1.Bundle[CAbove][CClip] xor E0.Bundle[CAbove]
-                          [CClip]) xor (Inn[CSubj] xor E1.Bundle[CAbove][CSubj]
+                        BL := Integer
+                          ((Inn[CClip] xor e1.Bundle[CAbove][CClip] xor E0.Bundle[CAbove]
+                          [CClip]) xor (Inn[CSubj] xor e1.Bundle[CAbove][CSubj]
                           xor E0.Bundle[CAbove][CSubj]));
                       end;
 
                     goUnion:
                       begin
-                        Tr := Integer((Inn[CClip] <> 0) or (Inn[CSubj] <> 0));
-                        Tl := Integer(((Inn[CClip] xor E1.Bundle[CAbove][CClip]) <> 0) or
-                          ((Inn[CSubj] xor E1.Bundle[CAbove][CSubj]) <> 0));
-                        Br := Integer(((Inn[CClip] xor E0.Bundle[CAbove][CClip]) <> 0) or
+                        tr := Integer((Inn[CClip] <> 0) or (Inn[CSubj] <> 0));
+                        TL := Integer(((Inn[CClip] xor e1.Bundle[CAbove][CClip]) <> 0) or
+                          ((Inn[CSubj] xor e1.Bundle[CAbove][CSubj]) <> 0));
+                        BR := Integer(((Inn[CClip] xor E0.Bundle[CAbove][CClip]) <> 0) or
                           ((Inn[CSubj] xor E0.Bundle[CAbove][CSubj]) <> 0));
-                        Bl := Integer
-                          (((Inn[CClip] xor E1.Bundle[CAbove][CClip] xor E0.Bundle[CAbove]
+                        BL := Integer
+                          (((Inn[CClip] xor e1.Bundle[CAbove][CClip] xor E0.Bundle[CAbove]
                           [CClip]) <> 0) or
-                          ((Inn[CSubj] xor E1.Bundle[CAbove][CSubj] xor E0.Bundle[CAbove]
+                          ((Inn[CSubj] xor e1.Bundle[CAbove][CSubj] xor E0.Bundle[CAbove]
                           [CSubj]) <> 0));
                       end;
                   end; { case }
 
-                  _class := Tr + (Tl shl 1) + (Br shl 2) + (Bl shl 3);
+                  _class := tr + (TL shl 1) + (BR shl 2) + (BL shl 3);
 
                   case TVertexType(_class) of
                     vtEMN:
                       begin
-                        AddLocalMin(@OutPoly, E0, Ix, Iy);
-                        E1.Outp[CAbove] := E0.Outp[CAbove];
+                        AddLocalMin(@OutPoly, E0, ix, iy);
+                        e1.Outp[CAbove] := E0.Outp[CAbove];
                       end;
                     vtERI:
                       begin
-                        if P <> nil then
+                        if p <> nil then
                           begin
-                            AddRight(P, Ix, Iy);
-                            E1.Outp[CAbove] := P;
+                            AddRight(p, ix, iy);
+                            e1.Outp[CAbove] := p;
                             E0.Outp[CAbove] := nil;
                           end;
                       end;
                     vtELI:
                       begin
-                        if Q <> nil then
+                        if q <> nil then
                           begin
-                            AddLeft(Q, Ix, Iy);
-                            E0.Outp[CAbove] := Q;
-                            E1.Outp[CAbove] := nil;
+                            AddLeft(q, ix, iy);
+                            E0.Outp[CAbove] := q;
+                            e1.Outp[CAbove] := nil;
                           end;
                       end;
                     vtEMX:
                       begin
-                        if (P <> nil) and (Q <> nil) then
+                        if (p <> nil) and (q <> nil) then
                           begin
-                            AddLeft(P, Ix, Iy);
-                            MergeRight(P, Q, OutPoly);
+                            AddLeft(p, ix, iy);
+                            MergeRight(p, q, OutPoly);
                             E0.Outp[CAbove] := nil;
-                            E1.Outp[CAbove] := nil;
+                            e1.Outp[CAbove] := nil;
                           end;
                       end;
                     vtIMN:
                       begin
-                        AddLocalMin(@OutPoly, E0, Ix, Iy);
-                        E1.Outp[CAbove] := E0.Outp[CAbove];
+                        AddLocalMin(@OutPoly, E0, ix, iy);
+                        e1.Outp[CAbove] := E0.Outp[CAbove];
                       end;
                     vtILI:
                       begin
-                        if P <> nil then
+                        if p <> nil then
                           begin
-                            AddLeft(P, Ix, Iy);
-                            E1.Outp[CAbove] := P;
+                            AddLeft(p, ix, iy);
+                            e1.Outp[CAbove] := p;
                             E0.Outp[CAbove] := nil;
                           end;
                       end;
                     vtIRI:
                       begin
-                        if Q <> nil then
+                        if q <> nil then
                           begin
-                            AddRight(Q, Ix, Iy);
-                            E0.Outp[CAbove] := Q;
-                            E1.Outp[CAbove] := nil;
+                            AddRight(q, ix, iy);
+                            E0.Outp[CAbove] := q;
+                            e1.Outp[CAbove] := nil;
                           end;
                       end;
                     vtIMX:
                       begin
-                        if (P <> nil) and (Q <> nil) then
+                        if (p <> nil) and (q <> nil) then
                           begin
-                            AddRight(P, Ix, Iy);
-                            MergeLeft(P, Q, OutPoly);
+                            AddRight(p, ix, iy);
+                            MergeLeft(p, q, OutPoly);
                             E0.Outp[CAbove] := nil;
-                            E1.Outp[CAbove] := nil;
+                            e1.Outp[CAbove] := nil;
                           end;
                       end;
                     vtIMM:
                       begin
-                        if (P <> nil) and (Q <> nil) then
+                        if (p <> nil) and (q <> nil) then
                           begin
-                            AddRight(P, Ix, Iy);
-                            MergeLeft(P, Q, OutPoly);
-                            AddLocalMin(@OutPoly, E0, Ix, Iy);
-                            E1.Outp[CAbove] := E0.Outp[CAbove];
+                            AddRight(p, ix, iy);
+                            MergeLeft(p, q, OutPoly);
+                            AddLocalMin(@OutPoly, E0, ix, iy);
+                            e1.Outp[CAbove] := E0.Outp[CAbove];
                           end;
                       end;
                     vtEMM:
                       begin
-                        if (P <> nil) and (Q <> nil) then
+                        if (p <> nil) and (q <> nil) then
                           begin
-                            AddLeft(P, Ix, Iy);
-                            MergeRight(P, Q, OutPoly);
-                            AddLocalMin(@OutPoly, E0, Ix, Iy);
-                            E1.Outp[CAbove] := E0.Outp[CAbove];
+                            AddLeft(p, ix, iy);
+                            MergeRight(p, q, OutPoly);
+                            AddLocalMin(@OutPoly, E0, ix, iy);
+                            e1.Outp[CAbove] := E0.Outp[CAbove];
                           end;
                       end;
                     else
@@ -1799,17 +1799,17 @@ begin
 
               { Swap bundle sides in response to edge crossing }
               if (E0.Bundle[CAbove][CClip] <> 0) then
-                  E1.Bside[CClip] := Integer(E1.Bside[CClip] = 0);
-              if (E1.Bundle[CAbove][CClip] <> 0) then
+                  e1.Bside[CClip] := Integer(e1.Bside[CClip] = 0);
+              if (e1.Bundle[CAbove][CClip] <> 0) then
                   E0.Bside[CClip] := Integer(E0.Bside[CClip] = 0);
               if (E0.Bundle[CAbove][CSubj] <> 0) then
-                  E1.Bside[CSubj] := Integer(E1.Bside[CSubj] = 0);
-              if (E1.Bundle[CAbove][CSubj] <> 0) then
+                  e1.Bside[CSubj] := Integer(e1.Bside[CSubj] = 0);
+              if (e1.Bundle[CAbove][CSubj] <> 0) then
                   E0.Bside[CSubj] := Integer(E0.Bside[CSubj] = 0);
 
               { Swap e0 and e1 bundles in the AET }
               PrevEdge := E0.Prev;
-              NextEdge := E1.Next;
+              NextEdge := e1.Next;
               if NextEdge <> nil then
                   NextEdge.Prev := E0;
 
@@ -1830,38 +1830,38 @@ begin
                 end;
               if PrevEdge = nil then
                 begin
-                  Aet.Prev := E1;
-                  E1.Next := Aet;
+                  Aet.Prev := e1;
+                  e1.Next := Aet;
                   Aet := E0.Next;
                 end
               else
                 begin
-                  PrevEdge.Next.Prev := E1;
-                  E1.Next := PrevEdge.Next;
+                  PrevEdge.Next.Prev := e1;
+                  e1.Next := PrevEdge.Next;
                   PrevEdge.Next := E0.Next;
                 end;
               E0.Next.Prev := PrevEdge;
-              E1.Next.Prev := E1;
+              e1.Next.Prev := e1;
               E0.Next := NextEdge;
 
               Intersect := Intersect.Next;
             end; { End of IT loop }
 
           { Prepare for next scanbeam }
-          Edge := Aet;
-          while Edge <> nil do
+          edge := Aet;
+          while edge <> nil do
             begin
-              NextEdge := Edge.Next;
-              SuccEdge := Edge.Succ;
+              NextEdge := edge.Next;
+              SuccEdge := edge.Succ;
 
-              if (Edge.Top.Y = Yt) and (SuccEdge <> nil) then
+              if (edge.Top.Y = Yt) and (SuccEdge <> nil) then
                 begin
                   { Replace AET edge by its successor }
-                  SuccEdge.Outp[CBelow] := Edge.Outp[CAbove];
-                  SuccEdge.Bstate[CBelow] := Edge.Bstate[CAbove];
-                  SuccEdge.Bundle[CBelow][CClip] := Edge.Bundle[CAbove][CClip];
-                  SuccEdge.Bundle[CBelow][CSubj] := Edge.Bundle[CAbove][CSubj];
-                  PrevEdge := Edge.Prev;
+                  SuccEdge.Outp[CBelow] := edge.Outp[CAbove];
+                  SuccEdge.Bstate[CBelow] := edge.Bstate[CAbove];
+                  SuccEdge.Bundle[CBelow][CClip] := edge.Bundle[CAbove][CClip];
+                  SuccEdge.Bundle[CBelow][CSubj] := edge.Bundle[CAbove][CSubj];
+                  PrevEdge := edge.Prev;
                   if PrevEdge <> nil then
                       PrevEdge.Next := SuccEdge
                   else
@@ -1874,14 +1874,14 @@ begin
               else
                 begin
                   { Update this edge }
-                  Edge.Outp[CBelow] := Edge.Outp[CAbove];
-                  Edge.Bstate[CBelow] := Edge.Bstate[CAbove];
-                  Edge.Bundle[CBelow][CClip] := Edge.Bundle[CAbove][CClip];
-                  Edge.Bundle[CBelow][CSubj] := Edge.Bundle[CAbove][CSubj];
-                  Edge.Xb := Edge.Xt;
+                  edge.Outp[CBelow] := edge.Outp[CAbove];
+                  edge.Bstate[CBelow] := edge.Bstate[CAbove];
+                  edge.Bundle[CBelow][CClip] := edge.Bundle[CAbove][CClip];
+                  edge.Bundle[CBelow][CSubj] := edge.Bundle[CAbove][CSubj];
+                  edge.XB := edge.xt;
                 end;
-              Edge.Outp[CAbove] := nil;
-              Edge := NextEdge;
+              edge.Outp[CAbove] := nil;
+              edge := NextEdge;
             end;
         end;
     end; { === END OF SCANBEAM PROCESSING ================================== }
@@ -1893,9 +1893,9 @@ begin
   if ResultPolygon.NumContours > 0 then
     begin
       MALLOC(Pointer(ResultPolygon.Hole), ResultPolygon.NumContours *
-        Sizeof(Integer), 'hole flag table creation');
+        SizeOf(Integer), 'hole flag table creation');
       MALLOC(Pointer(ResultPolygon.Contour), ResultPolygon.NumContours *
-        Sizeof(TGpcVertexList), 'contour creation');
+        SizeOf(TGpcVertexList), 'contour creation');
       Poly := OutPoly;
       C := 0;
 
@@ -1907,19 +1907,19 @@ begin
               ResultPolygon.Hole[C] := Poly.Proxy.Hole;
               ResultPolygon.Contour[C].NumVertices := Poly.Active;
               MALLOC(Pointer(ResultPolygon.Contour[C].Vertex),
-                ResultPolygon.Contour[C].NumVertices * Sizeof(TGpcVertex),
+                ResultPolygon.Contour[C].NumVertices * SizeOf(TGpcVertex),
                 'vertex creation');
 
-              V := ResultPolygon.Contour[C].NumVertices - 1;
-              Vtx := Poly.Proxy.V[CLeft];
+              v := ResultPolygon.Contour[C].NumVertices - 1;
+              Vtx := Poly.Proxy.v[CLeft];
               while Vtx <> nil do
                 begin
-                  Nv := Vtx.Next;
-                  ResultPolygon.Contour[C].Vertex[V].X := Vtx.X;
-                  ResultPolygon.Contour[C].Vertex[V].Y := Vtx.Y;
+                  NV := Vtx.Next;
+                  ResultPolygon.Contour[C].Vertex[v].X := Vtx.X;
+                  ResultPolygon.Contour[C].Vertex[v].Y := Vtx.Y;
                   Free(Pointer(Vtx));
-                  Dec(V);
-                  Vtx := Nv;
+                  Dec(v);
+                  Vtx := NV;
                 end;
               Inc(C);
             end;
@@ -1949,22 +1949,22 @@ end;
 
 procedure GpcFreeTristrip(TriStrip: PGpcTristrip);
 var
-  S: Integer;
+  s: Integer;
 begin
-  for S := 0 to TriStrip.NumStrips - 1 do
-      CFree(Pointer(TriStrip.Strip[S].Vertex));
+  for s := 0 to TriStrip.NumStrips - 1 do
+      CFree(Pointer(TriStrip.Strip[s].Vertex));
   CFree(Pointer(TriStrip.Strip));
   TriStrip.NumStrips := 0;
 end;
 
-procedure GpcPolygonToTristrip(S: PGpcPolygon; T: PGpcTristrip);
+procedure GpcPolygonToTristrip(s: PGpcPolygon; T: PGpcTristrip);
 var
   C: TGpcPolygon;
 begin
   C.NumContours := 0;
   C.Hole := nil;
   C.Contour := nil;
-  GpcTristripClip(goDiff, S, @C, T);
+  GpcTristripClip(goDiff, s, @C, T);
 end;
 
 procedure GpcTristripClip(Op: TGpcOp; CSubj: PGpcPolygon; CClip: PGpcPolygon;
@@ -1973,22 +1973,22 @@ var
   SbTree: PScanBeamTree;
   It: PIntersectionNode;
   Intersect: PIntersectionNode;
-  Edge, Prev_edge, Next_edge, Succ_edge, E0, E1: PEdgeNode;
+  edge, Prev_edge, Next_edge, Succ_edge, E0, e1: PEdgeNode;
   Aet: PEdgeNode;
   C_heap, S_heap: PEdgeNodeArray;
   Cf: PEdgeNode;
   LocalMinimaTable, Local_min: PLocalMinimaTableNode;
-  Tlist, Tn, Tnn, P, Q: PPolygonNode;
-  Lt, Ltn, Rt, Rtn: PVertexNode;
+  TList, tN, Tnn, p, q: PPolygonNode;
+  lt, Ltn, RT, Rtn: PVertexNode;
   Horiz: array [0 .. 1] of THorizontalEdgeState;
   Cft: TVertexType;
   InArray: array [0 .. 1] of Integer;
   Exists: array [0 .. 1] of Integer;
   Parity: array [0 .. 1] of Integer;
-  S, V, Contributing, Search, Scanbeam, Sbt_entries: Integer;
-  Vclass, Bl, Br, Tl, Tr: Integer;
+  s, v, Contributing, Search, Scanbeam, Sbt_entries: Integer;
+  Vclass, BL, BR, TL, tr: Integer;
   Sbt: PDoubleArray;
-  Xb, Px, Nx, Yb, Yt, Dy, Ix, Iy: Double;
+  XB, Px, Nx, Yb, Yt, dy, ix, iy: Double;
 begin
   SbTree := nil;
   It := nil;
@@ -1996,7 +1996,7 @@ begin
   C_heap := nil;
   S_heap := nil;
   LocalMinimaTable := nil;
-  Tlist := nil;
+  TList := nil;
   Parity[0] := CLeft;
   Parity[1] := CLeft;
   Scanbeam := 0;
@@ -2022,9 +2022,9 @@ begin
 
   // * Build LocalMinimaTable */
   if (CSubj.NumContours > 0) then
-      S_heap := BuildLocalMinimaTable(LocalMinimaTable, SbTree, Sbt_entries, CSubj, GPC.CSubj, Op);
+      S_heap := BuildLocalMinimaTable(LocalMinimaTable, SbTree, Sbt_entries, CSubj, gpc.CSubj, Op);
   if (CClip.NumContours > 0) then
-      C_heap := BuildLocalMinimaTable(LocalMinimaTable, SbTree, Sbt_entries, CClip, GPC.CClip, Op);
+      C_heap := BuildLocalMinimaTable(LocalMinimaTable, SbTree, Sbt_entries, CClip, gpc.CClip, Op);
 
   // * Return a NULL Result if no contours contribute */
   if (LocalMinimaTable = nil) then
@@ -2038,14 +2038,14 @@ begin
     end;
 
   // * Build scanbeam table from scanbeam tree */
-  MALLOC(Pointer(Sbt), Sbt_entries * Sizeof(Double), 'sbt creation');
+  MALLOC(Pointer(Sbt), Sbt_entries * SizeOf(Double), 'sbt creation');
   BuildScanBeamTree(Scanbeam, Sbt, SbTree);
   Scanbeam := 0;
   FreeScanBeamTree(SbTree);
 
   // * Invert CClip Polygon for difference operation */
   if (Op = goDiff) then
-      Parity[GPC.CClip] := CRight;
+      Parity[gpc.CClip] := CRight;
 
   Local_min := LocalMinimaTable;
 
@@ -2058,7 +2058,7 @@ begin
       if (Scanbeam < Sbt_entries) then
         begin
           Yt := Sbt[Scanbeam];
-          Dy := Yt - Yb;
+          dy := Yt - Yb;
         end;
 
       // * === SCANBEAM BOUNDARY PROCESSING ================================ */
@@ -2069,11 +2069,11 @@ begin
           if (Local_min.Y = Yb) then
             begin
               // * Add edges starting at this local minimum to the AET */
-              Edge := Local_min.FirstBound;
-              while Edge <> nil do
+              edge := Local_min.FirstBound;
+              while edge <> nil do
                 begin
-                  AddEdgeToAET(Aet, Edge, nil);
-                  Edge := Edge.Next_bound;
+                  AddEdgeToAET(Aet, edge, nil);
+                  edge := edge.Next_bound;
                 end;
               Local_min := Local_min.Next;
             end;
@@ -2084,7 +2084,7 @@ begin
 
       // * Create bundles within AET */
       E0 := Aet;
-      E1 := Aet;
+      e1 := Aet;
 
       // * Set up bundle fields of first edge */
       Aet.Bundle[CAbove][Aet.Typ] := Ord(Aet.Top.Y <> Yb);
@@ -2103,7 +2103,7 @@ begin
           // * Bundle edges CAbove the scanbeam boundary if they coincide */
           if (Next_edge.Bundle[CAbove][Next_edge.Typ] <> 0) then
             begin
-              if (EQ(E0.Xb, Next_edge.Xb) and EQ(E0.Dx, Next_edge.Dx) and
+              if (EQ(E0.XB, Next_edge.XB) and EQ(E0.dx, Next_edge.dx) and
                 (E0.Top.Y <> Yb)) then
                 begin
                   Next_edge.Bundle[CAbove][Next_edge.Typ] := Next_edge.Bundle[CAbove]
@@ -2111,8 +2111,8 @@ begin
                   Next_edge.Bundle[CAbove][Ord(Next_edge.Typ = 0)] :=
                     E0.Bundle[CAbove][Ord(Next_edge.Typ = 0)];
                   Next_edge.Bstate[CAbove] := BUNDLE_HEAD;
-                  E0.Bundle[CAbove][GPC.CClip] := FFALSE;
-                  E0.Bundle[CAbove][GPC.CSubj] := FFALSE;
+                  E0.Bundle[CAbove][gpc.CClip] := FFALSE;
+                  E0.Bundle[CAbove][gpc.CSubj] := FFALSE;
                   E0.Bstate[CAbove] := BUNDLE_TAIL;
                 end;
               E0 := Next_edge;
@@ -2120,23 +2120,23 @@ begin
           Next_edge := Next_edge.Next;
         end;
 
-      Horiz[GPC.CClip] := hesNH;
-      Horiz[GPC.CSubj] := hesNH;
+      Horiz[gpc.CClip] := hesNH;
+      Horiz[gpc.CSubj] := hesNH;
 
       // * Process each edge at this scanbeam boundary */
-      Edge := Aet;
-      while Edge <> nil do
+      edge := Aet;
+      while edge <> nil do
         begin
-          Exists[GPC.CClip] := Edge.Bundle[CAbove][GPC.CClip] +
-            (Edge.Bundle[CBelow][GPC.CClip] shl 1);
-          Exists[GPC.CSubj] := Edge.Bundle[CAbove][GPC.CSubj] +
-            (Edge.Bundle[CBelow][GPC.CSubj] shl 1);
+          Exists[gpc.CClip] := edge.Bundle[CAbove][gpc.CClip] +
+            (edge.Bundle[CBelow][gpc.CClip] shl 1);
+          Exists[gpc.CSubj] := edge.Bundle[CAbove][gpc.CSubj] +
+            (edge.Bundle[CBelow][gpc.CSubj] shl 1);
 
-          if ((Exists[GPC.CClip] <> 0) or (Exists[GPC.CSubj] <> 0)) then
+          if ((Exists[gpc.CClip] <> 0) or (Exists[gpc.CSubj] <> 0)) then
             begin
               // * Set bundle side */
-              Edge.Bside[GPC.CClip] := Parity[GPC.CClip];
-              Edge.Bside[GPC.CSubj] := Parity[GPC.CSubj];
+              edge.Bside[gpc.CClip] := Parity[gpc.CClip];
+              edge.Bside[gpc.CSubj] := Parity[gpc.CSubj];
 
               // * Determine contributing status and quadrant occupancies */
               case (Op) of
@@ -2144,97 +2144,97 @@ begin
                 goDiff, goInt:
                   begin
                     Contributing :=
-                      Ord(((Exists[GPC.CClip] <> 0) and ((Parity[GPC.CSubj] <> 0) or
-                      (Horiz[GPC.CSubj] <> hesNH))) or ((Exists[GPC.CSubj] <> 0) and
-                      ((Parity[GPC.CClip] <> 0) or (Horiz[GPC.CClip] <> hesNH))) or
-                      ((Exists[GPC.CClip] <> 0) and (Exists[GPC.CSubj] <> 0) and
-                      (Parity[GPC.CClip] = Parity[GPC.CSubj])));
-                    Br := (Parity[GPC.CClip]) and (Parity[GPC.CSubj]);
-                    Bl := (Parity[GPC.CClip] xor Edge.Bundle[CAbove][GPC.CClip]) and
-                      (Parity[GPC.CSubj] xor Edge.Bundle[CAbove][GPC.CSubj]);
-                    Tr := (Parity[GPC.CClip] xor Ord(Horiz[GPC.CClip] <> hesNH)) and
-                      (Parity[GPC.CSubj] xor Ord(Horiz[GPC.CSubj] <> hesNH));
-                    Tl := (Parity[GPC.CClip] xor (Ord(Horiz[GPC.CClip] <> hesNH)
-                      xor Edge.Bundle[CBelow][GPC.CClip])) and
-                      (Parity[GPC.CSubj] xor (Ord(Horiz[GPC.CSubj] <> hesNH)
-                      xor Edge.Bundle[CBelow][GPC.CSubj]));
+                      Ord(((Exists[gpc.CClip] <> 0) and ((Parity[gpc.CSubj] <> 0) or
+                      (Horiz[gpc.CSubj] <> hesNH))) or ((Exists[gpc.CSubj] <> 0) and
+                      ((Parity[gpc.CClip] <> 0) or (Horiz[gpc.CClip] <> hesNH))) or
+                      ((Exists[gpc.CClip] <> 0) and (Exists[gpc.CSubj] <> 0) and
+                      (Parity[gpc.CClip] = Parity[gpc.CSubj])));
+                    BR := (Parity[gpc.CClip]) and (Parity[gpc.CSubj]);
+                    BL := (Parity[gpc.CClip] xor edge.Bundle[CAbove][gpc.CClip]) and
+                      (Parity[gpc.CSubj] xor edge.Bundle[CAbove][gpc.CSubj]);
+                    tr := (Parity[gpc.CClip] xor Ord(Horiz[gpc.CClip] <> hesNH)) and
+                      (Parity[gpc.CSubj] xor Ord(Horiz[gpc.CSubj] <> hesNH));
+                    TL := (Parity[gpc.CClip] xor (Ord(Horiz[gpc.CClip] <> hesNH)
+                      xor edge.Bundle[CBelow][gpc.CClip])) and
+                      (Parity[gpc.CSubj] xor (Ord(Horiz[gpc.CSubj] <> hesNH)
+                      xor edge.Bundle[CBelow][gpc.CSubj]));
                   end;
                 goXor:
                   begin
-                    Contributing := Exists[GPC.CClip] or Exists[GPC.CSubj];
-                    Br := (Parity[GPC.CClip]) xor (Parity[GPC.CSubj]);
-                    Bl := (Parity[GPC.CClip] xor Edge.Bundle[CAbove][GPC.CClip])
-                      xor (Parity[GPC.CSubj] xor Edge.Bundle[CAbove][GPC.CSubj]);
-                    Tr := (Parity[GPC.CClip] xor Ord(Horiz[GPC.CClip] <> hesNH))
-                      xor (Parity[GPC.CSubj] xor Ord(Horiz[GPC.CSubj] <> hesNH));
-                    Tl := (Parity[GPC.CClip] xor (Ord(Horiz[GPC.CClip] <> hesNH)
-                      xor Edge.Bundle[CBelow][GPC.CClip]))
-                      xor (Parity[GPC.CSubj] xor (Ord(Horiz[GPC.CSubj] <> hesNH)
-                      xor Edge.Bundle[CBelow][GPC.CSubj]));
+                    Contributing := Exists[gpc.CClip] or Exists[gpc.CSubj];
+                    BR := (Parity[gpc.CClip]) xor (Parity[gpc.CSubj]);
+                    BL := (Parity[gpc.CClip] xor edge.Bundle[CAbove][gpc.CClip])
+                      xor (Parity[gpc.CSubj] xor edge.Bundle[CAbove][gpc.CSubj]);
+                    tr := (Parity[gpc.CClip] xor Ord(Horiz[gpc.CClip] <> hesNH))
+                      xor (Parity[gpc.CSubj] xor Ord(Horiz[gpc.CSubj] <> hesNH));
+                    TL := (Parity[gpc.CClip] xor (Ord(Horiz[gpc.CClip] <> hesNH)
+                      xor edge.Bundle[CBelow][gpc.CClip]))
+                      xor (Parity[gpc.CSubj] xor (Ord(Horiz[gpc.CSubj] <> hesNH)
+                      xor edge.Bundle[CBelow][gpc.CSubj]));
                   end;
                 goUnion:
                   begin
                     Contributing :=
-                      Ord(((Exists[GPC.CClip] <> 0) and ((Parity[GPC.CSubj] = 0) or
-                      (Horiz[GPC.CSubj] <> hesNH))) or ((Exists[GPC.CSubj] <> 0) and
-                      ((Parity[GPC.CClip] = 0) or (Horiz[GPC.CClip] <> hesNH))) or
-                      ((Exists[GPC.CClip] <> 0) and (Exists[GPC.CSubj] <> 0) and
-                      (Parity[GPC.CClip] = Parity[GPC.CSubj])));
-                    Br := (Parity[GPC.CClip]) or (Parity[GPC.CSubj]);
-                    Bl := (Parity[GPC.CClip] xor Edge.Bundle[CAbove][GPC.CClip]) or
-                      (Parity[GPC.CSubj] xor Edge.Bundle[CAbove][GPC.CSubj]);
-                    Tr := (Parity[GPC.CClip] xor Ord(Horiz[GPC.CClip] <> hesNH)) or
-                      (Parity[GPC.CSubj] xor Ord(Horiz[GPC.CSubj] <> hesNH));
-                    Tl := (Parity[GPC.CClip] xor (Ord(Horiz[GPC.CClip] <> hesNH)
-                      xor Edge.Bundle[CBelow][GPC.CClip])) or
-                      (Parity[GPC.CSubj] xor (Ord(Horiz[GPC.CSubj] <> hesNH)
-                      xor Edge.Bundle[CBelow][GPC.CSubj]));
+                      Ord(((Exists[gpc.CClip] <> 0) and ((Parity[gpc.CSubj] = 0) or
+                      (Horiz[gpc.CSubj] <> hesNH))) or ((Exists[gpc.CSubj] <> 0) and
+                      ((Parity[gpc.CClip] = 0) or (Horiz[gpc.CClip] <> hesNH))) or
+                      ((Exists[gpc.CClip] <> 0) and (Exists[gpc.CSubj] <> 0) and
+                      (Parity[gpc.CClip] = Parity[gpc.CSubj])));
+                    BR := (Parity[gpc.CClip]) or (Parity[gpc.CSubj]);
+                    BL := (Parity[gpc.CClip] xor edge.Bundle[CAbove][gpc.CClip]) or
+                      (Parity[gpc.CSubj] xor edge.Bundle[CAbove][gpc.CSubj]);
+                    tr := (Parity[gpc.CClip] xor Ord(Horiz[gpc.CClip] <> hesNH)) or
+                      (Parity[gpc.CSubj] xor Ord(Horiz[gpc.CSubj] <> hesNH));
+                    TL := (Parity[gpc.CClip] xor (Ord(Horiz[gpc.CClip] <> hesNH)
+                      xor edge.Bundle[CBelow][gpc.CClip])) or
+                      (Parity[gpc.CSubj] xor (Ord(Horiz[gpc.CSubj] <> hesNH)
+                      xor edge.Bundle[CBelow][gpc.CSubj]));
                   end;
               end;
 
               // * Update parity */
-              Parity[GPC.CClip] := Parity[GPC.CClip] xor Edge.Bundle[CAbove][GPC.CClip];
-              Parity[GPC.CSubj] := Parity[GPC.CSubj] xor Edge.Bundle[CAbove][GPC.CSubj];
+              Parity[gpc.CClip] := Parity[gpc.CClip] xor edge.Bundle[CAbove][gpc.CClip];
+              Parity[gpc.CSubj] := Parity[gpc.CSubj] xor edge.Bundle[CAbove][gpc.CSubj];
 
               // * Update horizontal state */
-              if (Exists[GPC.CClip] <> 0) then
-                  Horiz[GPC.CClip] := CNextHorizontalEdgeState[Ord(Horiz[GPC.CClip])]
-                  [((Exists[GPC.CClip] - 1) shl 1) + Parity[GPC.CClip]];
-              if (Exists[GPC.CSubj] <> 0) then
-                  Horiz[GPC.CSubj] := CNextHorizontalEdgeState[Ord(Horiz[GPC.CSubj])]
-                  [((Exists[GPC.CSubj] - 1) shl 1) + Parity[GPC.CSubj]];
+              if (Exists[gpc.CClip] <> 0) then
+                  Horiz[gpc.CClip] := CNextHorizontalEdgeState[Ord(Horiz[gpc.CClip])]
+                  [((Exists[gpc.CClip] - 1) shl 1) + Parity[gpc.CClip]];
+              if (Exists[gpc.CSubj] <> 0) then
+                  Horiz[gpc.CSubj] := CNextHorizontalEdgeState[Ord(Horiz[gpc.CSubj])]
+                  [((Exists[gpc.CSubj] - 1) shl 1) + Parity[gpc.CSubj]];
 
-              Vclass := Tr + (Tl shl 1) + (Br shl 2) + (Bl shl 3);
+              Vclass := tr + (TL shl 1) + (BR shl 2) + (BL shl 3);
 
               if (Contributing <> 0) then
                 begin
-                  Xb := Edge.Xb;
+                  XB := edge.XB;
 
                   case TVertexType(Vclass) of
 
                     vtEMN:
                       begin
-                        NewTristrip(Tlist, Edge, Xb, Yb);
-                        Cf := Edge;
+                        NewTristrip(TList, edge, XB, Yb);
+                        Cf := edge;
                       end;
                     vtERI:
                       begin
-                        Edge.Outp[CAbove] := Cf.Outp[CAbove];
-                        if (Xb <> Cf.Xb) then
-                            Vertex(Edge, CAbove, CRight, Xb, Yb);
+                        edge.Outp[CAbove] := Cf.Outp[CAbove];
+                        if (XB <> Cf.XB) then
+                            Vertex(edge, CAbove, CRight, XB, Yb);
                         Cf := nil;
                       end;
                     vtELI:
                       begin
-                        Vertex(Edge, CBelow, CLeft, Xb, Yb);
-                        Edge.Outp[CAbove] := nil;
-                        Cf := Edge;
+                        Vertex(edge, CBelow, CLeft, XB, Yb);
+                        edge.Outp[CAbove] := nil;
+                        Cf := edge;
                       end;
                     vtEMX:
                       begin
-                        if (Xb <> Cf.Xb) then
-                            Vertex(Edge, CBelow, CRight, Xb, Yb);
-                        Edge.Outp[CAbove] := nil;
+                        if (XB <> Cf.XB) then
+                            Vertex(edge, CBelow, CRight, XB, Yb);
+                        edge.Outp[CAbove] := nil;
                         Cf := nil;
                       end;
                     vtIMN:
@@ -2242,16 +2242,16 @@ begin
                         if (Cft = vtLED) then
                           begin
                             if (Cf.Bot.Y <> Yb) then
-                                Vertex(Cf, CBelow, CLeft, Cf.Xb, Yb);
-                            NewTristrip(Tlist, Cf, Cf.Xb, Yb);
+                                Vertex(Cf, CBelow, CLeft, Cf.XB, Yb);
+                            NewTristrip(TList, Cf, Cf.XB, Yb);
                           end;
-                        Edge.Outp[CAbove] := Cf.Outp[CAbove];
-                        Vertex(Edge, CAbove, CRight, Xb, Yb);
+                        edge.Outp[CAbove] := Cf.Outp[CAbove];
+                        Vertex(edge, CAbove, CRight, XB, Yb);
                       end;
                     vtILI:
                       begin
-                        NewTristrip(Tlist, Edge, Xb, Yb);
-                        Cf := Edge;
+                        NewTristrip(TList, edge, XB, Yb);
+                        Cf := edge;
                         Cft := vtILI;
                       end;
                     vtIRI:
@@ -2259,58 +2259,58 @@ begin
                         if (Cft = vtLED) then
                           begin
                             if (Cf.Bot.Y <> Yb) then
-                                Vertex(Cf, CBelow, CLeft, Cf.Xb, Yb);
-                            NewTristrip(Tlist, Cf, Cf.Xb, Yb);
+                                Vertex(Cf, CBelow, CLeft, Cf.XB, Yb);
+                            NewTristrip(TList, Cf, Cf.XB, Yb);
                           end;
-                        Vertex(Edge, CBelow, CRight, Xb, Yb);
-                        Edge.Outp[CAbove] := nil;
+                        Vertex(edge, CBelow, CRight, XB, Yb);
+                        edge.Outp[CAbove] := nil;
                       end;
                     vtIMX:
                       begin
-                        Vertex(Edge, CBelow, CLeft, Xb, Yb);
-                        Edge.Outp[CAbove] := nil;
+                        Vertex(edge, CBelow, CLeft, XB, Yb);
+                        edge.Outp[CAbove] := nil;
                         Cft := vtIMX;
                       end;
                     vtIMM:
                       begin
-                        Vertex(Edge, CBelow, CLeft, Xb, Yb);
-                        Edge.Outp[CAbove] := Cf.Outp[CAbove];
-                        if (Xb <> Cf.Xb) then
-                            Vertex(Cf, CAbove, CRight, Xb, Yb);
-                        Cf := Edge;
+                        Vertex(edge, CBelow, CLeft, XB, Yb);
+                        edge.Outp[CAbove] := Cf.Outp[CAbove];
+                        if (XB <> Cf.XB) then
+                            Vertex(Cf, CAbove, CRight, XB, Yb);
+                        Cf := edge;
                       end;
                     vtEMM:
                       begin
-                        Vertex(Edge, CBelow, CRight, Xb, Yb);
-                        Edge.Outp[CAbove] := nil;
-                        NewTristrip(Tlist, Edge, Xb, Yb);
-                        Cf := Edge;
+                        Vertex(edge, CBelow, CRight, XB, Yb);
+                        edge.Outp[CAbove] := nil;
+                        NewTristrip(TList, edge, XB, Yb);
+                        Cf := edge;
                       end;
                     vtLED:
                       begin
-                        if (Edge.Bot.Y = Yb) then
-                            Vertex(Edge, CBelow, CLeft, Xb, Yb);
-                        Edge.Outp[CAbove] := Edge.Outp[CBelow];
-                        Cf := Edge;
+                        if (edge.Bot.Y = Yb) then
+                            Vertex(edge, CBelow, CLeft, XB, Yb);
+                        edge.Outp[CAbove] := edge.Outp[CBelow];
+                        Cf := edge;
                         Cft := vtLED;
                       end;
                     vtRED:
                       begin
-                        Edge.Outp[CAbove] := Cf.Outp[CAbove];
+                        edge.Outp[CAbove] := Cf.Outp[CAbove];
                         if (Cft = vtLED) then
                           begin
                             if (Cf.Bot.Y = Yb) then
-                                Vertex(Edge, CBelow, CRight, Xb, Yb)
-                            else if (Edge.Bot.Y = Yb) then
+                                Vertex(edge, CBelow, CRight, XB, Yb)
+                            else if (edge.Bot.Y = Yb) then
                               begin
-                                Vertex(Cf, CBelow, CLeft, Cf.Xb, Yb);
-                                Vertex(Edge, CBelow, CRight, Xb, Yb);
+                                Vertex(Cf, CBelow, CLeft, Cf.XB, Yb);
+                                Vertex(edge, CBelow, CRight, XB, Yb);
                               end;
                           end
                         else
                           begin
-                            Vertex(Edge, CBelow, CRight, Xb, Yb);
-                            Vertex(Edge, CAbove, CRight, Xb, Yb);
+                            Vertex(edge, CBelow, CRight, XB, Yb);
+                            Vertex(edge, CAbove, CRight, XB, Yb);
                           end;
                         Cf := nil;
                       end;
@@ -2323,17 +2323,17 @@ begin
             end;
           // * End of AET loop */
 
-          Edge := Edge.Next
+          edge := edge.Next
         end;
 
       // * Delete terminating edges from the AET, otherwise compute xt */
-      Edge := Aet;
-      while Edge <> nil do
+      edge := Aet;
+      while edge <> nil do
         begin
-          if (Edge.Top.Y = Yb) then
+          if (edge.Top.Y = Yb) then
             begin
-              Prev_edge := Edge.Prev;
-              Next_edge := Edge.Next;
+              Prev_edge := edge.Prev;
+              Next_edge := edge.Next;
               if (Prev_edge <> nil) then
                   Prev_edge.Next := Next_edge
               else
@@ -2342,11 +2342,11 @@ begin
                   Next_edge.Prev := Prev_edge;
 
               // * Copy bundle head state to the adjacent tail edge if required */
-              if ((Edge.Bstate[CBelow] = BUNDLE_HEAD) and (Prev_edge <> nil)) then
+              if ((edge.Bstate[CBelow] = BUNDLE_HEAD) and (Prev_edge <> nil)) then
                 begin
                   if (Prev_edge.Bstate[CBelow] = BUNDLE_TAIL) then
                     begin
-                      Prev_edge.Outp[CBelow] := Edge.Outp[CBelow];
+                      Prev_edge.Outp[CBelow] := edge.Outp[CBelow];
                       Prev_edge.Bstate[CBelow] := UNBUNDLED;
                       if (Prev_edge.Prev <> nil) then
                         if (Prev_edge.Prev.Bstate[CBelow] = BUNDLE_TAIL) then
@@ -2356,229 +2356,229 @@ begin
             end
           else
             begin
-              if (Edge.Top.Y = Yt) then
-                  Edge.Xt := Edge.Top.X
+              if (edge.Top.Y = Yt) then
+                  edge.xt := edge.Top.X
               else
-                  Edge.Xt := Edge.Bot.X + Edge.Dx * (Yt - Edge.Bot.Y);
+                  edge.xt := edge.Bot.X + edge.dx * (Yt - edge.Bot.Y);
             end;
 
-          Edge := Edge.Next
+          edge := edge.Next
         end;
 
       if (Scanbeam < Sbt_entries) then
         begin
           // * === SCANBEAM INTERIOR PROCESSING ============================== */
 
-          BuildIntersectionTable(It, Aet, Dy);
+          BuildIntersectionTable(It, Aet, dy);
 
           // * Process each node in the intersection table */
           Intersect := It;
           while (Intersect <> nil) do
             begin
-              E0 := Intersect.Ie[0];
-              E1 := Intersect.Ie[1];
+              E0 := Intersect.IE[0];
+              e1 := Intersect.IE[1];
 
               // * Only generate output for contributing intersections */
-              if (((E0.Bundle[CAbove][GPC.CClip] <> 0) or (E0.Bundle[CAbove][GPC.CSubj] <>
-                0)) and ((E1.Bundle[CAbove][GPC.CClip] <> 0) or
-                (E1.Bundle[CAbove][GPC.CSubj] <> 0))) then
+              if (((E0.Bundle[CAbove][gpc.CClip] <> 0) or (E0.Bundle[CAbove][gpc.CSubj] <>
+                0)) and ((e1.Bundle[CAbove][gpc.CClip] <> 0) or
+                (e1.Bundle[CAbove][gpc.CSubj] <> 0))) then
                 begin
-                  P := E0.Outp[CAbove];
-                  Q := E1.Outp[CAbove];
-                  Ix := Intersect.Point.X;
-                  Iy := Intersect.Point.Y + Yb;
+                  p := E0.Outp[CAbove];
+                  q := e1.Outp[CAbove];
+                  ix := Intersect.Point.X;
+                  iy := Intersect.Point.Y + Yb;
 
-                  InArray[GPC.CClip] :=
-                    Ord(((E0.Bundle[CAbove][GPC.CClip] <> 0) and (E0.Bside[GPC.CClip] = 0))
-                    or ((E1.Bundle[CAbove][GPC.CClip] <> 0) and (E1.Bside[GPC.CClip] <> 0))
-                    or ((E0.Bundle[CAbove][GPC.CClip] = 0) and
-                    (E1.Bundle[CAbove][GPC.CClip] = 0) and (E0.Bside[GPC.CClip] <> 0) and
-                    (E1.Bside[GPC.CClip] <> 0)));
-                  InArray[GPC.CSubj] :=
-                    Ord(((E0.Bundle[CAbove][GPC.CSubj] <> 0) and (E0.Bside[GPC.CSubj] = 0))
-                    or ((E1.Bundle[CAbove][GPC.CSubj] <> 0) and (E1.Bside[GPC.CSubj] <> 0))
-                    or ((E0.Bundle[CAbove][GPC.CSubj] = 0) and
-                    (E1.Bundle[CAbove][GPC.CSubj] = 0) and (E0.Bside[GPC.CSubj] <> 0) and
-                    (E1.Bside[GPC.CSubj] <> 0)));
+                  InArray[gpc.CClip] :=
+                    Ord(((E0.Bundle[CAbove][gpc.CClip] <> 0) and (E0.Bside[gpc.CClip] = 0))
+                    or ((e1.Bundle[CAbove][gpc.CClip] <> 0) and (e1.Bside[gpc.CClip] <> 0))
+                    or ((E0.Bundle[CAbove][gpc.CClip] = 0) and
+                    (e1.Bundle[CAbove][gpc.CClip] = 0) and (E0.Bside[gpc.CClip] <> 0) and
+                    (e1.Bside[gpc.CClip] <> 0)));
+                  InArray[gpc.CSubj] :=
+                    Ord(((E0.Bundle[CAbove][gpc.CSubj] <> 0) and (E0.Bside[gpc.CSubj] = 0))
+                    or ((e1.Bundle[CAbove][gpc.CSubj] <> 0) and (e1.Bside[gpc.CSubj] <> 0))
+                    or ((E0.Bundle[CAbove][gpc.CSubj] = 0) and
+                    (e1.Bundle[CAbove][gpc.CSubj] = 0) and (E0.Bside[gpc.CSubj] <> 0) and
+                    (e1.Bside[gpc.CSubj] <> 0)));
 
                   // * Determine quadrant occupancies */
                   case (Op) of
 
                     goDiff, goInt:
                       begin
-                        Tr := (InArray[GPC.CClip]) and (InArray[GPC.CSubj]);
-                        Tl := (InArray[GPC.CClip] xor E1.Bundle[CAbove][GPC.CClip]) and
-                          (InArray[GPC.CSubj] xor E1.Bundle[CAbove][GPC.CSubj]);
-                        Br := (InArray[GPC.CClip] xor E0.Bundle[CAbove][GPC.CClip]) and
-                          (InArray[GPC.CSubj] xor E0.Bundle[CAbove][GPC.CSubj]);
-                        Bl := (InArray[GPC.CClip] xor E1.Bundle[CAbove][GPC.CClip]
-                          xor E0.Bundle[CAbove][GPC.CClip]) and
-                          (InArray[GPC.CSubj] xor E1.Bundle[CAbove][GPC.CSubj]
-                          xor E0.Bundle[CAbove][GPC.CSubj]);
+                        tr := (InArray[gpc.CClip]) and (InArray[gpc.CSubj]);
+                        TL := (InArray[gpc.CClip] xor e1.Bundle[CAbove][gpc.CClip]) and
+                          (InArray[gpc.CSubj] xor e1.Bundle[CAbove][gpc.CSubj]);
+                        BR := (InArray[gpc.CClip] xor E0.Bundle[CAbove][gpc.CClip]) and
+                          (InArray[gpc.CSubj] xor E0.Bundle[CAbove][gpc.CSubj]);
+                        BL := (InArray[gpc.CClip] xor e1.Bundle[CAbove][gpc.CClip]
+                          xor E0.Bundle[CAbove][gpc.CClip]) and
+                          (InArray[gpc.CSubj] xor e1.Bundle[CAbove][gpc.CSubj]
+                          xor E0.Bundle[CAbove][gpc.CSubj]);
 
                       end;
                     goXor:
                       begin
-                        Tr := (InArray[GPC.CClip]) xor (InArray[GPC.CSubj]);
-                        Tl := (InArray[GPC.CClip] xor E1.Bundle[CAbove][GPC.CClip])
-                          xor (InArray[GPC.CSubj] xor E1.Bundle[CAbove][GPC.CSubj]);
-                        Br := (InArray[GPC.CClip] xor E0.Bundle[CAbove][GPC.CClip])
-                          xor (InArray[GPC.CSubj] xor E0.Bundle[CAbove][GPC.CSubj]);
-                        Bl := (InArray[GPC.CClip] xor E1.Bundle[CAbove][GPC.CClip]
-                          xor E0.Bundle[CAbove][GPC.CClip])
-                          xor (InArray[GPC.CSubj] xor E1.Bundle[CAbove][GPC.CSubj]
-                          xor E0.Bundle[CAbove][GPC.CSubj]);
+                        tr := (InArray[gpc.CClip]) xor (InArray[gpc.CSubj]);
+                        TL := (InArray[gpc.CClip] xor e1.Bundle[CAbove][gpc.CClip])
+                          xor (InArray[gpc.CSubj] xor e1.Bundle[CAbove][gpc.CSubj]);
+                        BR := (InArray[gpc.CClip] xor E0.Bundle[CAbove][gpc.CClip])
+                          xor (InArray[gpc.CSubj] xor E0.Bundle[CAbove][gpc.CSubj]);
+                        BL := (InArray[gpc.CClip] xor e1.Bundle[CAbove][gpc.CClip]
+                          xor E0.Bundle[CAbove][gpc.CClip])
+                          xor (InArray[gpc.CSubj] xor e1.Bundle[CAbove][gpc.CSubj]
+                          xor E0.Bundle[CAbove][gpc.CSubj]);
                       end;
                     goUnion:
                       begin
-                        Tr := (InArray[GPC.CClip]) or (InArray[GPC.CSubj]);
-                        Tl := (InArray[GPC.CClip] xor E1.Bundle[CAbove][GPC.CClip]) or
-                          (InArray[GPC.CSubj] xor E1.Bundle[CAbove][GPC.CSubj]);
-                        Br := (InArray[GPC.CClip] xor E0.Bundle[CAbove][GPC.CClip]) or
-                          (InArray[GPC.CSubj] xor E0.Bundle[CAbove][GPC.CSubj]);
-                        Bl := (InArray[GPC.CClip] xor E1.Bundle[CAbove][GPC.CClip]
-                          xor E0.Bundle[CAbove][GPC.CClip]) or
-                          (InArray[GPC.CSubj] xor E1.Bundle[CAbove][GPC.CSubj]
-                          xor E0.Bundle[CAbove][GPC.CSubj]);
+                        tr := (InArray[gpc.CClip]) or (InArray[gpc.CSubj]);
+                        TL := (InArray[gpc.CClip] xor e1.Bundle[CAbove][gpc.CClip]) or
+                          (InArray[gpc.CSubj] xor e1.Bundle[CAbove][gpc.CSubj]);
+                        BR := (InArray[gpc.CClip] xor E0.Bundle[CAbove][gpc.CClip]) or
+                          (InArray[gpc.CSubj] xor E0.Bundle[CAbove][gpc.CSubj]);
+                        BL := (InArray[gpc.CClip] xor e1.Bundle[CAbove][gpc.CClip]
+                          xor E0.Bundle[CAbove][gpc.CClip]) or
+                          (InArray[gpc.CSubj] xor e1.Bundle[CAbove][gpc.CSubj]
+                          xor E0.Bundle[CAbove][gpc.CSubj]);
                       end;
                   end;
 
-                  Vclass := Tr + (Tl shl 1) + (Br shl 2) + (Bl shl 3);
+                  Vclass := tr + (TL shl 1) + (BR shl 2) + (BL shl 3);
 
                   case TVertexType(Vclass) of
                     vtEMN:
                       begin
-                        NewTristrip(Tlist, E1, Ix, Iy);
-                        E0.Outp[CAbove] := E1.Outp[CAbove];
+                        NewTristrip(TList, e1, ix, iy);
+                        E0.Outp[CAbove] := e1.Outp[CAbove];
                       end;
                     vtERI:
                       begin
-                        if (P <> nil) then
+                        if (p <> nil) then
                           begin
-                            P_EDGE(Prev_edge, E0, CAbove, Px, Iy);
-                            Vertex(Prev_edge, CAbove, CLeft, Px, Iy);
-                            Vertex(E0, CAbove, CRight, Ix, Iy);
-                            E1.Outp[CAbove] := E0.Outp[CAbove];
+                            P_EDGE(Prev_edge, E0, CAbove, Px, iy);
+                            Vertex(Prev_edge, CAbove, CLeft, Px, iy);
+                            Vertex(E0, CAbove, CRight, ix, iy);
+                            e1.Outp[CAbove] := E0.Outp[CAbove];
                             E0.Outp[CAbove] := nil;
                           end;
                       end;
                     vtELI:
                       begin
-                        if (Q <> nil) then
+                        if (q <> nil) then
                           begin
-                            N_EDGE(Next_edge, E1, CAbove, Nx, Iy);
-                            Vertex(E1, CAbove, CLeft, Ix, Iy);
-                            Vertex(Next_edge, CAbove, CRight, Nx, Iy);
-                            E0.Outp[CAbove] := E1.Outp[CAbove];
-                            E1.Outp[CAbove] := nil;
+                            N_EDGE(Next_edge, e1, CAbove, Nx, iy);
+                            Vertex(e1, CAbove, CLeft, ix, iy);
+                            Vertex(Next_edge, CAbove, CRight, Nx, iy);
+                            E0.Outp[CAbove] := e1.Outp[CAbove];
+                            e1.Outp[CAbove] := nil;
                           end
                       end;
                     vtEMX:
                       begin
-                        if ((P <> nil) and (Q <> nil)) then
+                        if ((p <> nil) and (q <> nil)) then
                           begin
-                            Vertex(E0, CAbove, CLeft, Ix, Iy);
+                            Vertex(E0, CAbove, CLeft, ix, iy);
                             E0.Outp[CAbove] := nil;
-                            E1.Outp[CAbove] := nil;
+                            e1.Outp[CAbove] := nil;
                           end
                       end;
                     vtIMN:
                       begin
-                        P_EDGE(Prev_edge, E0, CAbove, Px, Iy);
-                        Vertex(Prev_edge, CAbove, CLeft, Px, Iy);
-                        N_EDGE(Next_edge, E1, CAbove, Nx, Iy);
-                        Vertex(Next_edge, CAbove, CRight, Nx, Iy);
-                        NewTristrip(Tlist, Prev_edge, Px, Iy);
-                        E1.Outp[CAbove] := Prev_edge.Outp[CAbove];
-                        Vertex(E1, CAbove, CRight, Ix, Iy);
-                        NewTristrip(Tlist, E0, Ix, Iy);
+                        P_EDGE(Prev_edge, E0, CAbove, Px, iy);
+                        Vertex(Prev_edge, CAbove, CLeft, Px, iy);
+                        N_EDGE(Next_edge, e1, CAbove, Nx, iy);
+                        Vertex(Next_edge, CAbove, CRight, Nx, iy);
+                        NewTristrip(TList, Prev_edge, Px, iy);
+                        e1.Outp[CAbove] := Prev_edge.Outp[CAbove];
+                        Vertex(e1, CAbove, CRight, ix, iy);
+                        NewTristrip(TList, E0, ix, iy);
                         Next_edge.Outp[CAbove] := E0.Outp[CAbove];
-                        Vertex(Next_edge, CAbove, CRight, Nx, Iy);
+                        Vertex(Next_edge, CAbove, CRight, Nx, iy);
                       end;
                     vtILI:
                       begin
-                        if (P <> nil) then
+                        if (p <> nil) then
                           begin
-                            Vertex(E0, CAbove, CLeft, Ix, Iy);
-                            N_EDGE(Next_edge, E1, CAbove, Nx, Iy);
-                            Vertex(Next_edge, CAbove, CRight, Nx, Iy);
-                            E1.Outp[CAbove] := E0.Outp[CAbove];
+                            Vertex(E0, CAbove, CLeft, ix, iy);
+                            N_EDGE(Next_edge, e1, CAbove, Nx, iy);
+                            Vertex(Next_edge, CAbove, CRight, Nx, iy);
+                            e1.Outp[CAbove] := E0.Outp[CAbove];
                             E0.Outp[CAbove] := nil;
                           end;
                       end;
                     vtIRI:
                       begin
-                        if (Q <> nil) then
+                        if (q <> nil) then
                           begin
-                            Vertex(E1, CAbove, CRight, Ix, Iy);
-                            P_EDGE(Prev_edge, E0, CAbove, Px, Iy);
-                            Vertex(Prev_edge, CAbove, CLeft, Px, Iy);
-                            E0.Outp[CAbove] := E1.Outp[CAbove];
-                            E1.Outp[CAbove] := nil;
+                            Vertex(e1, CAbove, CRight, ix, iy);
+                            P_EDGE(Prev_edge, E0, CAbove, Px, iy);
+                            Vertex(Prev_edge, CAbove, CLeft, Px, iy);
+                            E0.Outp[CAbove] := e1.Outp[CAbove];
+                            e1.Outp[CAbove] := nil;
                           end;
                       end;
                     vtIMX:
                       begin
-                        if ((P <> nil) and (Q <> nil)) then
+                        if ((p <> nil) and (q <> nil)) then
                           begin
-                            Vertex(E0, CAbove, CRight, Ix, Iy);
-                            Vertex(E1, CAbove, CLeft, Ix, Iy);
+                            Vertex(E0, CAbove, CRight, ix, iy);
+                            Vertex(e1, CAbove, CLeft, ix, iy);
                             E0.Outp[CAbove] := nil;
-                            E1.Outp[CAbove] := nil;
-                            P_EDGE(Prev_edge, E0, CAbove, Px, Iy);
-                            Vertex(Prev_edge, CAbove, CLeft, Px, Iy);
-                            NewTristrip(Tlist, Prev_edge, Px, Iy);
-                            N_EDGE(Next_edge, E1, CAbove, Nx, Iy);
-                            Vertex(Next_edge, CAbove, CRight, Nx, Iy);
+                            e1.Outp[CAbove] := nil;
+                            P_EDGE(Prev_edge, E0, CAbove, Px, iy);
+                            Vertex(Prev_edge, CAbove, CLeft, Px, iy);
+                            NewTristrip(TList, Prev_edge, Px, iy);
+                            N_EDGE(Next_edge, e1, CAbove, Nx, iy);
+                            Vertex(Next_edge, CAbove, CRight, Nx, iy);
                             Next_edge.Outp[CAbove] := Prev_edge.Outp[CAbove];
-                            Vertex(Next_edge, CAbove, CRight, Nx, Iy);
+                            Vertex(Next_edge, CAbove, CRight, Nx, iy);
                           end;
                       end;
                     vtIMM:
                       begin
-                        if ((P <> nil) and (Q <> nil)) then
+                        if ((p <> nil) and (q <> nil)) then
                           begin
-                            Vertex(E0, CAbove, CRight, Ix, Iy);
-                            Vertex(E1, CAbove, CLeft, Ix, Iy);
-                            P_EDGE(Prev_edge, E0, CAbove, Px, Iy);
-                            Vertex(Prev_edge, CAbove, CLeft, Px, Iy);
-                            NewTristrip(Tlist, Prev_edge, Px, Iy);
-                            N_EDGE(Next_edge, E1, CAbove, Nx, Iy);
-                            Vertex(Next_edge, CAbove, CRight, Nx, Iy);
-                            E1.Outp[CAbove] := Prev_edge.Outp[CAbove];
-                            Vertex(E1, CAbove, CRight, Ix, Iy);
-                            NewTristrip(Tlist, E0, Ix, Iy);
+                            Vertex(E0, CAbove, CRight, ix, iy);
+                            Vertex(e1, CAbove, CLeft, ix, iy);
+                            P_EDGE(Prev_edge, E0, CAbove, Px, iy);
+                            Vertex(Prev_edge, CAbove, CLeft, Px, iy);
+                            NewTristrip(TList, Prev_edge, Px, iy);
+                            N_EDGE(Next_edge, e1, CAbove, Nx, iy);
+                            Vertex(Next_edge, CAbove, CRight, Nx, iy);
+                            e1.Outp[CAbove] := Prev_edge.Outp[CAbove];
+                            Vertex(e1, CAbove, CRight, ix, iy);
+                            NewTristrip(TList, E0, ix, iy);
                             Next_edge.Outp[CAbove] := E0.Outp[CAbove];
-                            Vertex(Next_edge, CAbove, CRight, Nx, Iy);
+                            Vertex(Next_edge, CAbove, CRight, Nx, iy);
                           end;
                       end;
                     vtEMM:
                       begin
-                        if ((P <> nil) and (Q <> nil)) then
+                        if ((p <> nil) and (q <> nil)) then
                           begin
-                            Vertex(E0, CAbove, CLeft, Ix, Iy);
-                            NewTristrip(Tlist, E1, Ix, Iy);
-                            E0.Outp[CAbove] := E1.Outp[CAbove];
+                            Vertex(E0, CAbove, CLeft, ix, iy);
+                            NewTristrip(TList, e1, ix, iy);
+                            E0.Outp[CAbove] := e1.Outp[CAbove];
                           end;
                       end;
                   end; // * End of switch */
                 end;   // * End of contributing intersection conditional */
 
               // * Swap bundle sides in response to edge crossing */
-              if (E0.Bundle[CAbove][GPC.CClip] <> 0) then
-                  E1.Bside[GPC.CClip] := Ord(E1.Bside[GPC.CClip] = 0);
-              if (E1.Bundle[CAbove][GPC.CClip] <> 0) then
-                  E0.Bside[GPC.CClip] := Ord(E0.Bside[GPC.CClip] = 0);
-              if (E0.Bundle[CAbove][GPC.CSubj] <> 0) then
-                  E1.Bside[GPC.CSubj] := Ord(E1.Bside[GPC.CSubj] = 0);
-              if (E1.Bundle[CAbove][GPC.CSubj] <> 0) then
-                  E0.Bside[GPC.CSubj] := Ord(E0.Bside[GPC.CSubj] = 0);
+              if (E0.Bundle[CAbove][gpc.CClip] <> 0) then
+                  e1.Bside[gpc.CClip] := Ord(e1.Bside[gpc.CClip] = 0);
+              if (e1.Bundle[CAbove][gpc.CClip] <> 0) then
+                  E0.Bside[gpc.CClip] := Ord(E0.Bside[gpc.CClip] = 0);
+              if (E0.Bundle[CAbove][gpc.CSubj] <> 0) then
+                  e1.Bside[gpc.CSubj] := Ord(e1.Bside[gpc.CSubj] = 0);
+              if (e1.Bundle[CAbove][gpc.CSubj] <> 0) then
+                  E0.Bside[gpc.CSubj] := Ord(E0.Bside[gpc.CSubj] = 0);
 
               // * Swap e0 and e1 bundles in the AET */
               Prev_edge := E0.Prev;
-              Next_edge := E1.Next;
-              if (E1.Next <> nil) then
-                  E1.Next.Prev := E0;
+              Next_edge := e1.Next;
+              if (e1.Next <> nil) then
+                  e1.Next.Prev := E0;
 
               if (E0.Bstate[CAbove] = BUNDLE_HEAD) then
                 begin
@@ -2588,8 +2588,8 @@ begin
                       Prev_edge := Prev_edge.Prev;
                       if (Prev_edge <> nil) then
                         begin
-                          if ((Prev_edge.Bundle[CAbove][GPC.CClip] <> 0) or
-                            (Prev_edge.Bundle[CAbove][GPC.CSubj] <> 0) or
+                          if ((Prev_edge.Bundle[CAbove][gpc.CClip] <> 0) or
+                            (Prev_edge.Bundle[CAbove][gpc.CSubj] <> 0) or
                             (Prev_edge.Bstate[CAbove] = BUNDLE_HEAD)) then
                               Search := FFALSE;
                         end
@@ -2599,35 +2599,35 @@ begin
                 end;
               if (Prev_edge = nil) then
                 begin
-                  E1.Next := Aet;
+                  e1.Next := Aet;
                   Aet := E0.Next;
                 end
               else
                 begin
-                  E1.Next := Prev_edge.Next;
+                  e1.Next := Prev_edge.Next;
                   Prev_edge.Next := E0.Next;
                 end;
               E0.Next.Prev := Prev_edge;
-              E1.Next.Prev := E1;
+              e1.Next.Prev := e1;
               E0.Next := Next_edge;
               Intersect := Intersect.Next;
             end; // * End of IT loop*/
 
           // * Prepare for next scanbeam */
-          Edge := Aet;
-          while (Edge <> nil) do
+          edge := Aet;
+          while (edge <> nil) do
             begin
-              Next_edge := Edge.Next;
-              Succ_edge := Edge.Succ;
+              Next_edge := edge.Next;
+              Succ_edge := edge.Succ;
 
-              if ((Edge.Top.Y = Yt) and (Succ_edge <> nil)) then
+              if ((edge.Top.Y = Yt) and (Succ_edge <> nil)) then
                 begin
                   // * Replace AET edge by its successor */
-                  Succ_edge.Outp[CBelow] := Edge.Outp[CAbove];
-                  Succ_edge.Bstate[CBelow] := Edge.Bstate[CAbove];
-                  Succ_edge.Bundle[CBelow][GPC.CClip] := Edge.Bundle[CAbove][GPC.CClip];
-                  Succ_edge.Bundle[CBelow][GPC.CSubj] := Edge.Bundle[CAbove][GPC.CSubj];
-                  Prev_edge := Edge.Prev;
+                  Succ_edge.Outp[CBelow] := edge.Outp[CAbove];
+                  Succ_edge.Bstate[CBelow] := edge.Bstate[CAbove];
+                  Succ_edge.Bundle[CBelow][gpc.CClip] := edge.Bundle[CAbove][gpc.CClip];
+                  Succ_edge.Bundle[CBelow][gpc.CSubj] := edge.Bundle[CAbove][gpc.CSubj];
+                  Prev_edge := edge.Prev;
                   if (Prev_edge <> nil) then
                       Prev_edge.Next := Succ_edge
                   else
@@ -2640,93 +2640,93 @@ begin
               else
                 begin
                   // * Update this edge */
-                  Edge.Outp[CBelow] := Edge.Outp[CAbove];
-                  Edge.Bstate[CBelow] := Edge.Bstate[CAbove];
-                  Edge.Bundle[CBelow][GPC.CClip] := Edge.Bundle[CAbove][GPC.CClip];
-                  Edge.Bundle[CBelow][GPC.CSubj] := Edge.Bundle[CAbove][GPC.CSubj];
-                  Edge.Xb := Edge.Xt;
+                  edge.Outp[CBelow] := edge.Outp[CAbove];
+                  edge.Bstate[CBelow] := edge.Bstate[CAbove];
+                  edge.Bundle[CBelow][gpc.CClip] := edge.Bundle[CAbove][gpc.CClip];
+                  edge.Bundle[CBelow][gpc.CSubj] := edge.Bundle[CAbove][gpc.CSubj];
+                  edge.XB := edge.xt;
                 end;
-              Edge.Outp[CAbove] := nil;
-              Edge := Next_edge;
+              edge.Outp[CAbove] := nil;
+              edge := Next_edge;
             end;
         end;
     end; // * === END OF SCANBEAM PROCESSING ================================== */
 
   // * Generate Result TriStrip from tlist */
   Result.Strip := nil;
-  Result.NumStrips := CountTristrips(Tlist);
+  Result.NumStrips := CountTristrips(TList);
   if (Result.NumStrips > 0) then
     begin
-      MALLOC(Pointer(Result.Strip), Result.NumStrips * Sizeof(TGpcVertexList),
+      MALLOC(Pointer(Result.Strip), Result.NumStrips * SizeOf(TGpcVertexList),
         'tristrip list creation');
 
-      S := 0;
-      Tn := Tlist;
-      while (Tn <> nil) do
+      s := 0;
+      tN := TList;
+      while (tN <> nil) do
         begin
-          Tnn := Tn.Next;
+          Tnn := tN.Next;
 
-          if (Tn.Active > 2) then
+          if (tN.Active > 2) then
             begin
               // * Valid TriStrip: copy the vertices and Free the heap */
-              Result.Strip[S].NumVertices := Tn.Active;
-              MALLOC(Pointer(Result.Strip[S].Vertex), Tn.Active * Sizeof(TGpcVertex),
+              Result.Strip[s].NumVertices := tN.Active;
+              MALLOC(Pointer(Result.Strip[s].Vertex), tN.Active * SizeOf(TGpcVertex),
                 'tristrip creation');
-              V := 0;
+              v := 0;
               if (CInvertTriStrips <> 0) then
                 begin
-                  Lt := Tn.V[CRight];
-                  Rt := Tn.V[CLeft];
+                  lt := tN.v[CRight];
+                  RT := tN.v[CLeft];
                 end
               else
                 begin
-                  Lt := Tn.V[CLeft];
-                  Rt := Tn.V[CRight];
+                  lt := tN.v[CLeft];
+                  RT := tN.v[CRight];
                 end;
-              while ((Lt <> nil) or (Rt <> nil)) do
+              while ((lt <> nil) or (RT <> nil)) do
                 begin
-                  if (Lt <> nil) then
+                  if (lt <> nil) then
                     begin
-                      Ltn := Lt.Next;
-                      Result.Strip[S].Vertex[V].X := Lt.X;
-                      Result.Strip[S].Vertex[V].Y := Lt.Y;
-                      Inc(V);
-                      Free(Pointer(Lt));
-                      Lt := Ltn;
+                      Ltn := lt.Next;
+                      Result.Strip[s].Vertex[v].X := lt.X;
+                      Result.Strip[s].Vertex[v].Y := lt.Y;
+                      Inc(v);
+                      Free(Pointer(lt));
+                      lt := Ltn;
                     end;
-                  if (Rt <> nil) then
+                  if (RT <> nil) then
                     begin
-                      Rtn := Rt.Next;
-                      Result.Strip[S].Vertex[V].X := Rt.X;
-                      Result.Strip[S].Vertex[V].Y := Rt.Y;
-                      Inc(V);
-                      Free(Pointer(Rt));
-                      Rt := Rtn;
+                      Rtn := RT.Next;
+                      Result.Strip[s].Vertex[v].X := RT.X;
+                      Result.Strip[s].Vertex[v].Y := RT.Y;
+                      Inc(v);
+                      Free(Pointer(RT));
+                      RT := Rtn;
                     end;
                 end;
-              Inc(S);
+              Inc(s);
             end
           else
             begin
               // * Invalid TriStrip: just Free the heap */
-              Lt := Tn.V[CLeft];
-              while (Lt <> nil) do
+              lt := tN.v[CLeft];
+              while (lt <> nil) do
                 begin
-                  Ltn := Lt.Next;
-                  Free(Pointer(Lt));
-                  Lt := Ltn
+                  Ltn := lt.Next;
+                  Free(Pointer(lt));
+                  lt := Ltn
                 end;
-              Rt := Tn.V[CRight];
-              while (Rt <> nil) do
+              RT := tN.v[CRight];
+              while (RT <> nil) do
                 begin
-                  Rtn := Rt.Next;
-                  Free(Pointer(Rt));
-                  Rt := Rtn
+                  Rtn := RT.Next;
+                  Free(Pointer(RT));
+                  RT := Rtn
                 end;
             end;
-          Free(Pointer(Tn));
+          Free(Pointer(tN));
 
-          Tn := Tnn;
+          tN := Tnn;
         end;
     end;
 
@@ -2738,4 +2738,4 @@ begin
   Free(Pointer(Sbt));
 end;
 
-end.
+end.   

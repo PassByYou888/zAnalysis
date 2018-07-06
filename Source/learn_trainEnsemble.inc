@@ -41,13 +41,13 @@ procedure MLPECreate0(NIn, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble
 procedure MLPECreate1(NIn, NHid, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreate2(NIn, NHid1, NHid2, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPECreateB0(NIn, NOut: TLInt; B, D: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateB1(NIn, NHid, NOut: TLInt; B, D: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateB2(NIn, NHid1, NHid2, NOut: TLInt; B, D: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreateB0(NIn, NOut: TLInt; b, d: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreateB1(NIn, NHid, NOut: TLInt; b, d: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreateB2(NIn, NHid1, NHid2, NOut: TLInt; b, d: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPECreateR0(NIn, NOut: TLInt; A, B: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateR1(NIn, NHid, NOut: TLInt; A, B: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPECreateR2(NIn, NHid1, NHid2, NOut: TLInt; A, B: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreateR0(NIn, NOut: TLInt; A, b: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreateR1(NIn, NHid, NOut: TLInt; A, b: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPECreateR2(NIn, NHid1, NHid2, NOut: TLInt; A, b: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPECreateC0(NIn, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPECreateC1(NIn, NHid, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -57,7 +57,7 @@ procedure MLPECreateFromNetwork(const Network: TMultiLayerPerceptron; EnsembleSi
 
 procedure MLPECopy(const Ensemble1: TMLPEnsemble; var Ensemble2: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPESerialize(var Ensemble: TMLPEnsemble; var RA: TLVec; var RLen: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPEUnserialize(const RA: TLVec; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPEUNSerialize(const RA: TLVec; var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure MLPERandomize(var Ensemble: TMLPEnsemble); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
@@ -67,19 +67,19 @@ function MLPEIsSoftmax(const Ensemble: TMLPEnsemble): Boolean; forward; {$IFDEF 
 
 procedure MLPEProcess(var Ensemble: TMLPEnsemble; const X: TLVec; var Y: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function MLPERelClsError(var Ensemble: TMLPEnsemble; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPEAvgCE(var Ensemble: TMLPEnsemble; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPERMSError(var Ensemble: TMLPEnsemble; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPEAvgError(var Ensemble: TMLPEnsemble; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const XY: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPERelClsError(var Ensemble: TMLPEnsemble; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPEAvgCE(var Ensemble: TMLPEnsemble; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPERMSError(var Ensemble: TMLPEnsemble; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPEAvgError(var Ensemble: TMLPEnsemble; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPEBaggingLM(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+procedure MLPEBaggingLM(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
   var Info: TLInt; var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure MLPEBaggingLBFGS(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+procedure MLPEBaggingLBFGS(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
-  WStep: TLFloat; MaxIts: TLInt; var Info: TLInt;
+  WStep: TLFloat; MAXITS: TLInt; var Info: TLInt;
   var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 
@@ -87,12 +87,12 @@ const
   MLPNTotalOffset = 3;
   MLPEVNum        = 9;
 
-procedure MLPEAllErrors(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+procedure MLPEAllErrors(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt; var RelCls: TLFloat; var AvgCE: TLFloat;
   var RMS: TLFloat; var Avg: TLFloat; var AvgRel: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure MLPEBaggingInternal(const MultiThread: Boolean; var Ensemble: TMLPEnsemble;
-  const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
-  Restarts: TLInt; WStep: TLFloat; MaxIts: TLInt;
+  const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+  Restarts: TLInt; WStep: TLFloat; MAXITS: TLInt;
   LMAlgorithm: Boolean; var Info: TLInt; var Rep: TMLPReport;
   var OOBErrors: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
@@ -115,10 +115,10 @@ var
   NClasses: TLInt;
   NOut    : TLInt;
   Offs    : TLInt;
-  MMax    : TLInt;
-  RMax    : TLInt;
+  MMAX    : TLInt;
+  rmax    : TLInt;
   J       : TLInt;
-  V       : TLFloat;
+  v       : TLFloat;
   EV      : TLFloat;
 begin
   Offs := 5;
@@ -129,34 +129,34 @@ begin
       //
       // Classification
       //
-      RMax := Round(DesiredY[0]);
-      MMax := 0;
+      rmax := Round(DesiredY[0]);
+      MMAX := 0;
       J := 1;
       while J <= NClasses - 1 do
         begin
-          if AP_FP_Greater(Y[J], Y[MMax]) then
+          if AP_FP_Greater(Y[J], Y[MMAX]) then
             begin
-              MMax := J;
+              MMAX := J;
             end;
           Inc(J);
         end;
-      if MMax <> RMax then
+      if MMAX <> rmax then
         begin
           Buf[0] := Buf[0] + 1;
         end;
-      if AP_FP_Greater(Y[RMax], 0) then
+      if AP_FP_Greater(Y[rmax], 0) then
         begin
-          Buf[1] := Buf[1] - Ln(Y[RMax]);
+          Buf[1] := Buf[1] - ln(Y[rmax]);
         end
       else
         begin
-          Buf[1] := Buf[1] + Ln(MaxRealNumber);
+          Buf[1] := Buf[1] + ln(MaxRealNumber);
         end;
       J := 0;
       while J <= NClasses - 1 do
         begin
-          V := Y[J];
-          if J = RMax then
+          v := Y[J];
+          if J = rmax then
             begin
               EV := 1;
             end
@@ -164,11 +164,11 @@ begin
             begin
               EV := 0;
             end;
-          Buf[2] := Buf[2] + AP_Sqr(V - EV);
-          Buf[3] := Buf[3] + AbsReal(V - EV);
-          if AP_FP_Neq(EV, 0) then
+          Buf[2] := Buf[2] + AP_Sqr(v - EV);
+          Buf[3] := Buf[3] + AbsReal(v - EV);
+          if AP_FP_NEq(EV, 0) then
             begin
-              Buf[4] := Buf[4] + AbsReal((V - EV) / EV);
+              Buf[4] := Buf[4] + AbsReal((v - EV) / EV);
               Buf[Offs + 2] := Buf[Offs + 2] + 1;
             end;
           Inc(J);
@@ -182,40 +182,40 @@ begin
       // Regression
       //
       NOut := -NClasses;
-      RMax := 0;
+      rmax := 0;
       J := 1;
       while J <= NOut - 1 do
         begin
-          if AP_FP_Greater(DesiredY[J], DesiredY[RMax]) then
+          if AP_FP_Greater(DesiredY[J], DesiredY[rmax]) then
             begin
-              RMax := J;
+              rmax := J;
             end;
           Inc(J);
         end;
-      MMax := 0;
+      MMAX := 0;
       J := 1;
       while J <= NOut - 1 do
         begin
-          if AP_FP_Greater(Y[J], Y[MMax]) then
+          if AP_FP_Greater(Y[J], Y[MMAX]) then
             begin
-              MMax := J;
+              MMAX := J;
             end;
           Inc(J);
         end;
-      if MMax <> RMax then
+      if MMAX <> rmax then
         begin
           Buf[0] := Buf[0] + 1;
         end;
       J := 0;
       while J <= NOut - 1 do
         begin
-          V := Y[J];
+          v := Y[J];
           EV := DesiredY[J];
-          Buf[2] := Buf[2] + AP_Sqr(V - EV);
-          Buf[3] := Buf[3] + AbsReal(V - EV);
-          if AP_FP_Neq(EV, 0) then
+          Buf[2] := Buf[2] + AP_Sqr(v - EV);
+          Buf[3] := Buf[3] + AbsReal(v - EV);
+          if AP_FP_NEq(EV, 0) then
             begin
-              Buf[4] := Buf[4] + AbsReal((V - EV) / EV);
+              Buf[4] := Buf[4] + AbsReal((v - EV) / EV);
               Buf[Offs + 2] := Buf[Offs + 2] + 1;
             end;
           Inc(J);
@@ -231,14 +231,14 @@ var
 begin
   Offs := 5;
   NOut := AbsInt(Round(Buf[Offs]));
-  if AP_FP_Neq(Buf[Offs + 1], 0) then
+  if AP_FP_NEq(Buf[Offs + 1], 0) then
     begin
       Buf[0] := Buf[0] / Buf[Offs + 1];
       Buf[1] := Buf[1] / Buf[Offs + 1];
       Buf[2] := Sqrt(Buf[2] / (NOut * Buf[Offs + 1]));
       Buf[3] := Buf[3] / (NOut * Buf[Offs + 1]);
     end;
-  if AP_FP_Neq(Buf[Offs + 2], 0) then
+  if AP_FP_NEq(Buf[Offs + 2], 0) then
     begin
       Buf[4] := Buf[4] / Buf[Offs + 2];
     end;
@@ -249,10 +249,10 @@ end;
   ************************************************************************ *)
 procedure MLPECreate0(NIn, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  Net: TMultiLayerPerceptron;
+  NET: TMultiLayerPerceptron;
 begin
-  MLPCreate0(NIn, NOut, Net);
-  MLPECreateFromNetwork(Net, EnsembleSize, Ensemble);
+  MLPCreate0(NIn, NOut, NET);
+  MLPECreateFromNetwork(NET, EnsembleSize, Ensemble);
 end;
 
 (* ************************************************************************
@@ -260,10 +260,10 @@ end;
   ************************************************************************ *)
 procedure MLPECreate1(NIn, NHid, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  Net: TMultiLayerPerceptron;
+  NET: TMultiLayerPerceptron;
 begin
-  MLPCreate1(NIn, NHid, NOut, Net);
-  MLPECreateFromNetwork(Net, EnsembleSize, Ensemble);
+  MLPCreate1(NIn, NHid, NOut, NET);
+  MLPECreateFromNetwork(NET, EnsembleSize, Ensemble);
 end;
 
 (* ************************************************************************
@@ -271,76 +271,76 @@ end;
   ************************************************************************ *)
 procedure MLPECreate2(NIn, NHid1, NHid2, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  Net: TMultiLayerPerceptron;
+  NET: TMultiLayerPerceptron;
 begin
-  MLPCreate2(NIn, NHid1, NHid2, NOut, Net);
-  MLPECreateFromNetwork(Net, EnsembleSize, Ensemble);
+  MLPCreate2(NIn, NHid1, NHid2, NOut, NET);
+  MLPECreateFromNetwork(NET, EnsembleSize, Ensemble);
 end;
 
 (* ************************************************************************
   Like MLPCreateB0, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateB0(NIn, NOut: TLInt; B, D: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
+procedure MLPECreateB0(NIn, NOut: TLInt; b, d: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  Net: TMultiLayerPerceptron;
+  NET: TMultiLayerPerceptron;
 begin
-  MLPCreateB0(NIn, NOut, B, D, Net);
-  MLPECreateFromNetwork(Net, EnsembleSize, Ensemble);
+  MLPCreateB0(NIn, NOut, b, d, NET);
+  MLPECreateFromNetwork(NET, EnsembleSize, Ensemble);
 end;
 
 (* ************************************************************************
   Like MLPCreateB1, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateB1(NIn, NHid, NOut: TLInt; B, D: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
+procedure MLPECreateB1(NIn, NHid, NOut: TLInt; b, d: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  Net: TMultiLayerPerceptron;
+  NET: TMultiLayerPerceptron;
 begin
-  MLPCreateB1(NIn, NHid, NOut, B, D, Net);
-  MLPECreateFromNetwork(Net, EnsembleSize, Ensemble);
+  MLPCreateB1(NIn, NHid, NOut, b, d, NET);
+  MLPECreateFromNetwork(NET, EnsembleSize, Ensemble);
 end;
 
 (* ************************************************************************
   Like MLPCreateB2, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateB2(NIn, NHid1, NHid2, NOut: TLInt; B, D: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
+procedure MLPECreateB2(NIn, NHid1, NHid2, NOut: TLInt; b, d: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  Net: TMultiLayerPerceptron;
+  NET: TMultiLayerPerceptron;
 begin
-  MLPCreateB2(NIn, NHid1, NHid2, NOut, B, D, Net);
-  MLPECreateFromNetwork(Net, EnsembleSize, Ensemble);
+  MLPCreateB2(NIn, NHid1, NHid2, NOut, b, d, NET);
+  MLPECreateFromNetwork(NET, EnsembleSize, Ensemble);
 end;
 
 (* ************************************************************************
   Like MLPCreateR0, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateR0(NIn, NOut: TLInt; A, B: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
+procedure MLPECreateR0(NIn, NOut: TLInt; A, b: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  Net: TMultiLayerPerceptron;
+  NET: TMultiLayerPerceptron;
 begin
-  MLPCreateR0(NIn, NOut, A, B, Net);
-  MLPECreateFromNetwork(Net, EnsembleSize, Ensemble);
+  MLPCreateR0(NIn, NOut, A, b, NET);
+  MLPECreateFromNetwork(NET, EnsembleSize, Ensemble);
 end;
 
 (* ************************************************************************
   Like MLPCreateR1, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateR1(NIn, NHid, NOut: TLInt; A, B: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
+procedure MLPECreateR1(NIn, NHid, NOut: TLInt; A, b: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  Net: TMultiLayerPerceptron;
+  NET: TMultiLayerPerceptron;
 begin
-  MLPCreateR1(NIn, NHid, NOut, A, B, Net);
-  MLPECreateFromNetwork(Net, EnsembleSize, Ensemble);
+  MLPCreateR1(NIn, NHid, NOut, A, b, NET);
+  MLPECreateFromNetwork(NET, EnsembleSize, Ensemble);
 end;
 
 (* ************************************************************************
   Like MLPCreateR2, but for ensembles.
   ************************************************************************ *)
-procedure MLPECreateR2(NIn, NHid1, NHid2, NOut: TLInt; A, B: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
+procedure MLPECreateR2(NIn, NHid1, NHid2, NOut: TLInt; A, b: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  Net: TMultiLayerPerceptron;
+  NET: TMultiLayerPerceptron;
 begin
-  MLPCreateR2(NIn, NHid1, NHid2, NOut, A, B, Net);
-  MLPECreateFromNetwork(Net, EnsembleSize, Ensemble);
+  MLPCreateR2(NIn, NHid1, NHid2, NOut, A, b, NET);
+  MLPECreateFromNetwork(NET, EnsembleSize, Ensemble);
 end;
 
 (* ************************************************************************
@@ -348,10 +348,10 @@ end;
   ************************************************************************ *)
 procedure MLPECreateC0(NIn, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  Net: TMultiLayerPerceptron;
+  NET: TMultiLayerPerceptron;
 begin
-  MLPCreateC0(NIn, NOut, Net);
-  MLPECreateFromNetwork(Net, EnsembleSize, Ensemble);
+  MLPCreateC0(NIn, NOut, NET);
+  MLPECreateFromNetwork(NET, EnsembleSize, Ensemble);
 end;
 
 (* ************************************************************************
@@ -359,10 +359,10 @@ end;
   ************************************************************************ *)
 procedure MLPECreateC1(NIn, NHid, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  Net: TMultiLayerPerceptron;
+  NET: TMultiLayerPerceptron;
 begin
-  MLPCreateC1(NIn, NHid, NOut, Net);
-  MLPECreateFromNetwork(Net, EnsembleSize, Ensemble);
+  MLPCreateC1(NIn, NHid, NOut, NET);
+  MLPECreateFromNetwork(NET, EnsembleSize, Ensemble);
 end;
 
 (* ************************************************************************
@@ -370,10 +370,10 @@ end;
   ************************************************************************ *)
 procedure MLPECreateC2(NIn, NHid1, NHid2, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  Net: TMultiLayerPerceptron;
+  NET: TMultiLayerPerceptron;
 begin
-  MLPCreateC2(NIn, NHid1, NHid2, NOut, Net);
-  MLPECreateFromNetwork(Net, EnsembleSize, Ensemble);
+  MLPCreateC2(NIn, NHid1, NHid2, NOut, NET);
+  MLPECreateFromNetwork(NET, EnsembleSize, Ensemble);
 end;
 
 (* ************************************************************************
@@ -381,7 +381,7 @@ end;
   ************************************************************************ *)
 procedure MLPECreateFromNetwork(const Network: TMultiLayerPerceptron; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  I     : TLInt;
+  i     : TLInt;
   CCount: TLInt;
 begin
   Assert(EnsembleSize > 0, 'MLPECreate: incorrect ensemble size!');
@@ -406,11 +406,11 @@ begin
   // structure information
   //
   SetLength(Ensemble.StructInfo, Network.StructInfo[0] (* - 1 + 1 // optimized compiler *) );
-  I := 0;
-  while I <= Network.StructInfo[0] - 1 do
+  i := 0;
+  while i <= Network.StructInfo[0] - 1 do
     begin
-      Ensemble.StructInfo[I] := Network.StructInfo[I];
-      Inc(I);
+      Ensemble.StructInfo[i] := Network.StructInfo[i];
+      Inc(i);
     end;
 
   //
@@ -419,20 +419,20 @@ begin
   SetLength(Ensemble.Weights, EnsembleSize * Ensemble.WCount (* - 1 + 1 // optimized compiler *) );
   SetLength(Ensemble.ColumnMeans, EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
   SetLength(Ensemble.ColumnSigmas, EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
-  I := 0;
-  while I <= EnsembleSize * Ensemble.WCount - 1 do
+  i := 0;
+  while i <= EnsembleSize * Ensemble.WCount - 1 do
     begin
-      Ensemble.Weights[I] := RandomReal - 0.5;
-      Inc(I);
+      Ensemble.Weights[i] := RandomReal - 0.5;
+      Inc(i);
     end;
-  I := 0;
-  while I <= EnsembleSize - 1 do
+  i := 0;
+  while i <= EnsembleSize - 1 do
     begin
-      APVMove(@Ensemble.ColumnMeans[0], I * CCount, (I + 1) * CCount - 1,
+      APVMove(@Ensemble.ColumnMeans[0], i * CCount, (i + 1) * CCount - 1,
         @Network.ColumnMeans[0], 0, CCount - 1);
-      APVMove(@Ensemble.ColumnSigmas[0], I * CCount, (I + 1) * CCount - 1,
+      APVMove(@Ensemble.ColumnSigmas[0], i * CCount, (i + 1) * CCount - 1,
         @Network.ColumnSigmas[0], 0, CCount - 1);
-      Inc(I);
+      Inc(i);
     end;
 
   //
@@ -462,7 +462,7 @@ end;
   ************************************************************************ *)
 procedure MLPECopy(const Ensemble1: TMLPEnsemble; var Ensemble2: TMLPEnsemble);
 var
-  I     : TLInt;
+  i     : TLInt;
   SSize : TLInt;
   CCount: TLInt;
   NTotal: TLInt;
@@ -508,11 +508,11 @@ begin
   Ensemble2.IsSoftmax := Ensemble1.IsSoftmax;
   Ensemble2.PostProcessing := Ensemble1.PostProcessing;
   Ensemble2.SerializedLen := Ensemble1.SerializedLen;
-  I := 0;
-  while I <= SSize - 1 do
+  i := 0;
+  while i <= SSize - 1 do
     begin
-      Ensemble2.StructInfo[I] := Ensemble1.StructInfo[I];
-      Inc(I);
+      Ensemble2.StructInfo[i] := Ensemble1.StructInfo[i];
+      Inc(i);
     end;
   APVMove(@Ensemble2.Weights[0], 0, Ensemble1.EnsembleSize * Ensemble1.WCount -
     1, @Ensemble1.Weights[0], 0, Ensemble1.EnsembleSize * Ensemble1.WCount - 1);
@@ -538,7 +538,7 @@ end;
 procedure MLPESerialize(var Ensemble: TMLPEnsemble; var RA: TLVec;
   var RLen: TLInt);
 var
-  I     : TLInt;
+  i     : TLInt;
   SSize : TLInt;
   NTotal: TLInt;
   CCount: TLInt;
@@ -609,11 +609,11 @@ begin
   RA[11] := HSize;
   RA[12] := Ensemble.SerializedLen;
   Offs := HSize;
-  I := Offs;
-  while I <= Offs + SSize - 1 do
+  i := Offs;
+  while i <= Offs + SSize - 1 do
     begin
-      RA[I] := Ensemble.StructInfo[I - Offs];
-      Inc(I);
+      RA[i] := Ensemble.StructInfo[i - Offs];
+      Inc(i);
     end;
   Offs := Offs + SSize;
   APVMove(@RA[0], Offs, Offs + Ensemble.EnsembleSize * Ensemble.WCount - 1,
@@ -639,9 +639,9 @@ end;
   OUTPUT PARAMETERS:
   Ensemble-   restored structure
   ************************************************************************ *)
-procedure MLPEUnserialize(const RA: TLVec; var Ensemble: TMLPEnsemble);
+procedure MLPEUNSerialize(const RA: TLVec; var Ensemble: TMLPEnsemble);
 var
-  I     : TLInt;
+  i     : TLInt;
   SSize : TLInt;
   NTotal: TLInt;
   CCount: TLInt;
@@ -684,11 +684,11 @@ begin
   //
   // load data
   //
-  I := Offs;
-  while I <= Offs + SSize - 1 do
+  i := Offs;
+  while i <= Offs + SSize - 1 do
     begin
-      Ensemble.StructInfo[I - Offs] := Round(RA[I]);
-      Inc(I);
+      Ensemble.StructInfo[i - Offs] := Round(RA[i]);
+      Inc(i);
     end;
   Offs := Offs + SSize;
   APVMove(@Ensemble.Weights[0], 0, Ensemble.EnsembleSize * Ensemble.WCount - 1,
@@ -710,13 +710,13 @@ end;
   ************************************************************************ *)
 procedure MLPERandomize(var Ensemble: TMLPEnsemble);
 var
-  I: TLInt;
+  i: TLInt;
 begin
-  I := 0;
-  while I <= Ensemble.EnsembleSize * Ensemble.WCount - 1 do
+  i := 0;
+  while i <= Ensemble.EnsembleSize * Ensemble.WCount - 1 do
     begin
-      Ensemble.Weights[I] := RandomReal - 0.5;
-      Inc(I);
+      Ensemble.Weights[i] := RandomReal - 0.5;
+      Inc(i);
     end;
 end;
 
@@ -755,11 +755,11 @@ end;
 procedure MLPEProcess(var Ensemble: TMLPEnsemble; const X: TLVec;
   var Y: TLVec);
 var
-  I : TLInt;
+  i : TLInt;
   ES: TLInt;
   WC: TLInt;
   CC: TLInt;
-  V : TLFloat;
+  v : TLFloat;
 begin
   ES := Ensemble.EnsembleSize;
   WC := Ensemble.WCount;
@@ -771,28 +771,28 @@ begin
     begin
       CC := Ensemble.NIn + Ensemble.NOut;
     end;
-  V := AP_Float(1) / ES;
-  I := 0;
-  while I <= Ensemble.NOut - 1 do
+  v := AP_Float(1) / ES;
+  i := 0;
+  while i <= Ensemble.NOut - 1 do
     begin
-      Y[I] := 0;
-      Inc(I);
+      Y[i] := 0;
+      Inc(i);
     end;
-  I := 0;
-  while I <= ES - 1 do
+  i := 0;
+  while i <= ES - 1 do
     begin
-      APVMove(@Ensemble.TmpWeights[0], 0, WC - 1, @Ensemble.Weights[0], I * WC,
-        (I + 1) * WC - 1);
-      APVMove(@Ensemble.TmpMeans[0], 0, CC - 1, @Ensemble.ColumnMeans[0], I * CC,
-        (I + 1) * CC - 1);
+      APVMove(@Ensemble.TmpWeights[0], 0, WC - 1, @Ensemble.Weights[0], i * WC,
+        (i + 1) * WC - 1);
+      APVMove(@Ensemble.TmpMeans[0], 0, CC - 1, @Ensemble.ColumnMeans[0], i * CC,
+        (i + 1) * CC - 1);
       APVMove(@Ensemble.TmpSigmas[0], 0, CC - 1, @Ensemble.ColumnSigmas[0],
-        I * CC, (I + 1) * CC - 1);
+        i * CC, (i + 1) * CC - 1);
       MLPInternalProcessVector(Ensemble.StructInfo, Ensemble.TmpWeights,
         Ensemble.TmpMeans, Ensemble.TmpSigmas, Ensemble.Neurons, Ensemble.DFDNET,
         X, Ensemble.Y);
       APVAdd(@Y[0], 0, Ensemble.NOut - 1, @Ensemble.Y[0], 0,
-        Ensemble.NOut - 1, V);
-      Inc(I);
+        Ensemble.NOut - 1, v);
+      Inc(i);
     end;
 end;
 
@@ -809,7 +809,7 @@ end;
   Works both for classifier betwork and for regression networks which
   are used as classifiers.
   ************************************************************************ *)
-function MLPERelClsError(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+function MLPERelClsError(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
@@ -818,7 +818,7 @@ var
   Avg   : TLFloat;
   AvgRel: TLFloat;
 begin
-  MLPEAllErrors(Ensemble, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
+  MLPEAllErrors(Ensemble, xy, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := RelCls;
 end;
 
@@ -834,7 +834,7 @@ end;
   CrossEntropy/(NPoints*LN(2)).
   Zero if ensemble solves regression task.
   ************************************************************************ *)
-function MLPEAvgCE(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+function MLPEAvgCE(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
@@ -843,7 +843,7 @@ var
   Avg   : TLFloat;
   AvgRel: TLFloat;
 begin
-  MLPEAllErrors(Ensemble, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
+  MLPEAllErrors(Ensemble, xy, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := AvgCE;
 end;
 
@@ -860,7 +860,7 @@ end;
   Its meaning for regression task is obvious. As for classification task
   RMS error means error when estimating posterior probabilities.
   ************************************************************************ *)
-function MLPERMSError(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+function MLPERMSError(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
@@ -869,7 +869,7 @@ var
   Avg   : TLFloat;
   AvgRel: TLFloat;
 begin
-  MLPEAllErrors(Ensemble, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
+  MLPEAllErrors(Ensemble, xy, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := RMS;
 end;
 
@@ -885,7 +885,7 @@ end;
   Its meaning for regression task is obvious. As for classification task
   it means average error when estimating posterior probabilities.
   ************************************************************************ *)
-function MLPEAvgError(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+function MLPEAvgError(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
@@ -894,7 +894,7 @@ var
   Avg   : TLFloat;
   AvgRel: TLFloat;
 begin
-  MLPEAllErrors(Ensemble, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
+  MLPEAllErrors(Ensemble, xy, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := Avg;
 end;
 
@@ -910,7 +910,7 @@ end;
   Its meaning for regression task is obvious. As for classification task
   it means average relative error when estimating posterior probabilities.
   ************************************************************************ *)
-function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
@@ -919,7 +919,7 @@ var
   Avg   : TLFloat;
   AvgRel: TLFloat;
 begin
-  MLPEAllErrors(Ensemble, XY, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
+  MLPEAllErrors(Ensemble, xy, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
   Result := AvgRel;
 end;
 
@@ -944,11 +944,11 @@ end;
   Rep         -   training report.
   OOBErrors   -   out-of-bag generalization error estimate
   ************************************************************************ *)
-procedure MLPEBaggingLM(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+procedure MLPEBaggingLM(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
   var Info: TLInt; var Rep: TMLPReport; var OOBErrors: TMLPCVReport);
 begin
-  MLPEBaggingInternal(MultiThread, Ensemble, XY, NPoints, Decay, Restarts, 0.0, 0, True,
+  MLPEBaggingInternal(MultiThread, Ensemble, xy, NPoints, Decay, Restarts, 0.0, 0, True,
     Info, Rep, OOBErrors);
 end;
 
@@ -976,56 +976,56 @@ end;
   Rep         -   training report.
   OOBErrors   -   out-of-bag generalization error estimate
   ************************************************************************ *)
-procedure MLPEBaggingLBFGS(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+procedure MLPEBaggingLBFGS(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
-  WStep: TLFloat; MaxIts: TLInt; var Info: TLInt;
+  WStep: TLFloat; MAXITS: TLInt; var Info: TLInt;
   var Rep: TMLPReport; var OOBErrors: TMLPCVReport);
 begin
-  MLPEBaggingInternal(MultiThread, Ensemble, XY, NPoints, Decay, Restarts, WStep, MaxIts,
+  MLPEBaggingInternal(MultiThread, Ensemble, xy, NPoints, Decay, Restarts, WStep, MAXITS,
     False, Info, Rep, OOBErrors);
 end;
 
 (* ************************************************************************
   Calculation of all types of errors
   ************************************************************************ *)
-procedure MLPEAllErrors(var Ensemble: TMLPEnsemble; const XY: TLMatrix;
+procedure MLPEAllErrors(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt; var RelCls: TLFloat; var AvgCE: TLFloat;
   var RMS: TLFloat; var Avg: TLFloat; var AvgRel: TLFloat);
 var
-  I    : TLInt;
+  i    : TLInt;
   Buf  : TLVec;
   WorkX: TLVec;
   Y    : TLVec;
-  DY   : TLVec;
+  dy   : TLVec;
 begin
   SetLength(WorkX, Ensemble.NIn (* - 1 + 1 // optimized compiler *) );
   SetLength(Y, Ensemble.NOut (* - 1 + 1 // optimized compiler *) );
   if Ensemble.IsSoftmax then
     begin
-      SetLength(DY, 0 + 1);
+      SetLength(dy, 0 + 1);
       DSErrAllocate(Ensemble.NOut, Buf);
     end
   else
     begin
-      SetLength(DY, Ensemble.NOut (* - 1 + 1 // optimized compiler *) );
+      SetLength(dy, Ensemble.NOut (* - 1 + 1 // optimized compiler *) );
       DSErrAllocate(-Ensemble.NOut, Buf);
     end;
-  I := 0;
-  while I <= NPoints - 1 do
+  i := 0;
+  while i <= NPoints - 1 do
     begin
-      APVMove(@WorkX[0], 0, Ensemble.NIn - 1, @XY[I][0], 0, Ensemble.NIn - 1);
+      APVMove(@WorkX[0], 0, Ensemble.NIn - 1, @xy[i][0], 0, Ensemble.NIn - 1);
       MLPEProcess(Ensemble, WorkX, Y);
       if Ensemble.IsSoftmax then
         begin
-          DY[0] := XY[I, Ensemble.NIn];
+          dy[0] := xy[i, Ensemble.NIn];
         end
       else
         begin
-          APVMove(@DY[0], 0, Ensemble.NOut - 1, @XY[I][0], Ensemble.NIn,
+          APVMove(@dy[0], 0, Ensemble.NOut - 1, @xy[i][0], Ensemble.NIn,
             Ensemble.NIn + Ensemble.NOut - 1);
         end;
-      DSErrAccumulate(Buf, Y, DY);
-      Inc(I);
+      DSErrAccumulate(Buf, Y, dy);
+      Inc(i);
     end;
   DSErrFinish(Buf);
   RelCls := Buf[0];
@@ -1039,27 +1039,27 @@ end;
   Internal bagging subroutine.
   ************************************************************************ *)
 procedure MLPEBaggingInternal(const MultiThread: Boolean; var Ensemble: TMLPEnsemble;
-  const XY: TLMatrix; NPoints: TLInt; Decay: TLFloat;
-  Restarts: TLInt; WStep: TLFloat; MaxIts: TLInt;
+  const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
+  Restarts: TLInt; WStep: TLFloat; MAXITS: TLInt;
   LMAlgorithm: Boolean; var Info: TLInt; var Rep: TMLPReport;
   var OOBErrors: TMLPCVReport);
 var
   XYS         : TLMatrix;
-  S           : TLBVec;
+  s           : TLBVec;
   OOBBuf      : TLMatrix;
   OOBCntBuf   : TLIVec;
   X           : TLVec;
   Y           : TLVec;
-  DY          : TLVec;
+  dy          : TLVec;
   DSBuf       : TLVec;
   NIn         : TLInt;
   NOut        : TLInt;
   CCnt        : TLInt;
   PCnt        : TLInt;
-  I           : TLInt;
+  i           : TLInt;
   J           : TLInt;
-  K           : TLInt;
-  V           : TLFloat;
+  k           : TLInt;
+  v           : TLFloat;
   TmpRep      : TMLPReport;
   Network     : TMultiLayerPerceptron;
   IsTerminated: Boolean;
@@ -1069,12 +1069,12 @@ begin
   //
   // Test for inputs
   //
-  if not LMAlgorithm and AP_FP_Eq(WStep, 0) and (MaxIts = 0) then
+  if not LMAlgorithm and AP_FP_Eq(WStep, 0) and (MAXITS = 0) then
     begin
       Info := -8;
       Exit;
     end;
-  if (NPoints <= 0) or (Restarts < 1) or AP_FP_Less(WStep, 0) or (MaxIts < 0)
+  if (NPoints <= 0) or (Restarts < 1) or AP_FP_Less(WStep, 0) or (MAXITS < 0)
   then
     begin
       Info := -1;
@@ -1082,16 +1082,16 @@ begin
     end;
   if Ensemble.IsSoftmax then
     begin
-      I := 0;
-      while I <= NPoints - 1 do
+      i := 0;
+      while i <= NPoints - 1 do
         begin
-          if (Round(XY[I, Ensemble.NIn]) < 0) or
-            (Round(XY[I, Ensemble.NIn]) >= Ensemble.NOut) then
+          if (Round(xy[i, Ensemble.NIn]) < 0) or
+            (Round(xy[i, Ensemble.NIn]) >= Ensemble.NOut) then
             begin
               Info := -2;
               Exit;
             end;
-          Inc(I);
+          Inc(i);
         end;
     end;
 
@@ -1120,61 +1120,61 @@ begin
       PCnt := NIn + NOut;
     end;
   SetLength(XYS, NPoints (* - 1 + 1 // optimized compiler *) , CCnt (* - 1 + 1 // optimized compiler *) );
-  SetLength(S, NPoints (* - 1 + 1 // optimized compiler *) );
+  SetLength(s, NPoints (* - 1 + 1 // optimized compiler *) );
   SetLength(OOBBuf, NPoints (* - 1 + 1 // optimized compiler *) , NOut (* - 1 + 1 // optimized compiler *) );
   SetLength(OOBCntBuf, NPoints (* - 1 + 1 // optimized compiler *) );
   SetLength(X, NIn (* - 1 + 1 // optimized compiler *) );
   SetLength(Y, NOut (* - 1 + 1 // optimized compiler *) );
   if Ensemble.IsSoftmax then
     begin
-      SetLength(DY, 0 + 1);
+      SetLength(dy, 0 + 1);
     end
   else
     begin
-      SetLength(DY, NOut (* - 1 + 1 // optimized compiler *) );
+      SetLength(dy, NOut (* - 1 + 1 // optimized compiler *) );
     end;
-  I := 0;
-  while I <= NPoints - 1 do
+  i := 0;
+  while i <= NPoints - 1 do
     begin
       J := 0;
       while J <= NOut - 1 do
         begin
-          OOBBuf[I, J] := 0;
+          OOBBuf[i, J] := 0;
           Inc(J);
         end;
-      Inc(I);
+      Inc(i);
     end;
-  I := 0;
-  while I <= NPoints - 1 do
+  i := 0;
+  while i <= NPoints - 1 do
     begin
-      OOBCntBuf[I] := 0;
-      Inc(I);
+      OOBCntBuf[i] := 0;
+      Inc(i);
     end;
-  MLPUnserialize(Ensemble.SerializedMLP, Network);
+  MLPUNSerialize(Ensemble.SerializedMLP, Network);
 
   //
   // main bagging cycle
   //
-  K := 0;
-  while K <= Ensemble.EnsembleSize - 1 do
+  k := 0;
+  while k <= Ensemble.EnsembleSize - 1 do
     begin
 
       //
       // prepare dataset
       //
-      I := 0;
-      while I <= NPoints - 1 do
+      i := 0;
+      while i <= NPoints - 1 do
         begin
-          S[I] := False;
-          Inc(I);
+          s[i] := False;
+          Inc(i);
         end;
-      I := 0;
-      while I <= NPoints - 1 do
+      i := 0;
+      while i <= NPoints - 1 do
         begin
           J := RandomInteger(NPoints);
-          S[J] := True;
-          APVMove(@XYS[I][0], 0, CCnt - 1, @XY[J][0], 0, CCnt - 1);
-          Inc(I);
+          s[J] := True;
+          APVMove(@XYS[i][0], 0, CCnt - 1, @xy[J][0], 0, CCnt - 1);
+          Inc(i);
         end;
 
       //
@@ -1192,9 +1192,9 @@ begin
           IsTerminated := False;
 
           if MultiThread then
-              MLPTrainLBFGS_MT(Network, XYS, NPoints, Decay, Restarts, WStep, MaxIts, Info, TmpRep)
+              MLPTrainLBFGS_MT(Network, XYS, NPoints, Decay, Restarts, WStep, MAXITS, Info, TmpRep)
           else
-              MLPTrainLBFGS(Network, XYS, NPoints, Decay, Restarts, WStep, MaxIts, Info, TmpRep, @IsTerminated, EBest);
+              MLPTrainLBFGS(Network, XYS, NPoints, Decay, Restarts, WStep, MAXITS, Info, TmpRep, @IsTerminated, EBest);
         end;
       if Info < 0 then
         begin
@@ -1207,29 +1207,29 @@ begin
       Rep.NGrad := Rep.NGrad + TmpRep.NGrad;
       Rep.NHess := Rep.NHess + TmpRep.NHess;
       Rep.NCholesky := Rep.NCholesky + TmpRep.NCholesky;
-      APVMove(@Ensemble.Weights[0], K * Ensemble.WCount, (K + 1) * Ensemble.WCount
+      APVMove(@Ensemble.Weights[0], k * Ensemble.WCount, (k + 1) * Ensemble.WCount
         - 1, @Network.Weights[0], 0, Ensemble.WCount - 1);
-      APVMove(@Ensemble.ColumnMeans[0], K * PCnt, (K + 1) * PCnt - 1,
+      APVMove(@Ensemble.ColumnMeans[0], k * PCnt, (k + 1) * PCnt - 1,
         @Network.ColumnMeans[0], 0, PCnt - 1);
-      APVMove(@Ensemble.ColumnSigmas[0], K * PCnt, (K + 1) * PCnt - 1,
+      APVMove(@Ensemble.ColumnSigmas[0], k * PCnt, (k + 1) * PCnt - 1,
         @Network.ColumnSigmas[0], 0, PCnt - 1);
 
       //
       // OOB estimates
       //
-      I := 0;
-      while I <= NPoints - 1 do
+      i := 0;
+      while i <= NPoints - 1 do
         begin
-          if not S[I] then
+          if not s[i] then
             begin
-              APVMove(@X[0], 0, NIn - 1, @XY[I][0], 0, NIn - 1);
+              APVMove(@X[0], 0, NIn - 1, @xy[i][0], 0, NIn - 1);
               MLPProcess(Network, X, Y);
-              APVAdd(@OOBBuf[I][0], 0, NOut - 1, @Y[0], 0, NOut - 1);
-              OOBCntBuf[I] := OOBCntBuf[I] + 1;
+              APVAdd(@OOBBuf[i][0], 0, NOut - 1, @Y[0], 0, NOut - 1);
+              OOBCntBuf[i] := OOBCntBuf[i] + 1;
             end;
-          Inc(I);
+          Inc(i);
         end;
-      Inc(K);
+      Inc(k);
     end;
 
   //
@@ -1243,24 +1243,24 @@ begin
     begin
       DSErrAllocate(-NOut, DSBuf);
     end;
-  I := 0;
-  while I <= NPoints - 1 do
+  i := 0;
+  while i <= NPoints - 1 do
     begin
-      if OOBCntBuf[I] <> 0 then
+      if OOBCntBuf[i] <> 0 then
         begin
-          V := AP_Float(1) / OOBCntBuf[I];
-          APVMove(@Y[0], 0, NOut - 1, @OOBBuf[I][0], 0, NOut - 1, V);
+          v := AP_Float(1) / OOBCntBuf[i];
+          APVMove(@Y[0], 0, NOut - 1, @OOBBuf[i][0], 0, NOut - 1, v);
           if Ensemble.IsSoftmax then
             begin
-              DY[0] := XY[I, NIn];
+              dy[0] := xy[i, NIn];
             end
           else
             begin
-              APVMove(@DY[0], 0, NOut - 1, @XY[I][0], NIn, NIn + NOut - 1, V);
+              APVMove(@dy[0], 0, NOut - 1, @xy[i][0], NIn, NIn + NOut - 1, v);
             end;
-          DSErrAccumulate(DSBuf, Y, DY);
+          DSErrAccumulate(DSBuf, Y, dy);
         end;
-      Inc(I);
+      Inc(i);
     end;
   DSErrFinish(DSBuf);
   OOBErrors.RelClsError := DSBuf[0];
@@ -1268,4 +1268,4 @@ begin
   OOBErrors.RMSError := DSBuf[2];
   OOBErrors.AvgError := DSBuf[3];
   OOBErrors.AvgRelError := DSBuf[4];
-end;
+end; 

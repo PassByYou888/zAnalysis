@@ -39,13 +39,13 @@ unit AggConvClipPolyline;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
   AggConvAdaptorVpgen,
-  AggVpgenClipPolyline,
+  AggVpGenClipPolyline,
   AggVertexSource;
 
 type
@@ -60,13 +60,13 @@ type
     constructor Create(Vs: TAggVertexSource);
     destructor Destroy; override;
 
-    procedure SetClipBox(X1, Y1, X2, Y2: Double); overload;
+    procedure SetClipBox(x1, y1, x2, y2: Double); overload;
     procedure SetClipBox(Bounds: TRectDouble); overload;
 
-    property X1: Double read GetX1;
-    property Y1: Double read GetY1;
-    property X2: Double read GetX2;
-    property Y2: Double read GetY2;
+    property x1: Double read GetX1;
+    property y1: Double read GetY1;
+    property x2: Double read GetX2;
+    property y2: Double read GetY2;
   end;
 
 implementation
@@ -90,32 +90,32 @@ end;
 
 function TAggConvClipPolyline.GetX1: Double;
 begin
-  Result := TAggVpgenClipPolyline(FVpgen).X1;
+  Result := TAggVpgenClipPolyline(FVpGen).x1;
 end;
 
 function TAggConvClipPolyline.GetY1: Double;
 begin
-  Result := TAggVpgenClipPolyline(FVpgen).Y1;
+  Result := TAggVpgenClipPolyline(FVpGen).y1;
 end;
 
 function TAggConvClipPolyline.GetX2: Double;
 begin
-  Result := TAggVpgenClipPolyline(FVpgen).X2;
+  Result := TAggVpgenClipPolyline(FVpGen).x2;
 end;
 
 function TAggConvClipPolyline.GetY2: Double;
 begin
-  Result := TAggVpgenClipPolyline(FVpgen).Y2;
+  Result := TAggVpgenClipPolyline(FVpGen).y2;
 end;
 
-procedure TAggConvClipPolyline.SetClipBox(X1, Y1, X2, Y2: Double);
+procedure TAggConvClipPolyline.SetClipBox(x1, y1, x2, y2: Double);
 begin
-  TAggVpgenClipPolyline(FVpgen).SetClipBox(X1, Y1, X2, Y2);
+  TAggVpgenClipPolyline(FVpGen).SetClipBox(x1, y1, x2, y2);
 end;
 
 procedure TAggConvClipPolyline.SetClipBox(Bounds: TRectDouble);
 begin
-  TAggVpgenClipPolyline(FVpgen).SetClipBox(Bounds);
+  TAggVpgenClipPolyline(FVpGen).SetClipBox(Bounds);
 end;
 
-end.
+end. 

@@ -39,7 +39,7 @@ unit AggVcgenBSpline;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -123,23 +123,23 @@ end;
 
 procedure TAggVcgenBSpline.AddVertex(X, Y: Double; Cmd: Cardinal);
 var
-  Pt: TPointDouble;
+  pt: TPointDouble;
 begin
   FStatus := siInitial;
 
   if IsMoveTo(Cmd) then
     begin
-      Pt.X := X;
-      Pt.Y := Y;
+      pt.X := X;
+      pt.Y := Y;
 
-      FSourceVertices.ModifyLast(@Pt);
+      FSourceVertices.ModifyLast(@pt);
     end
   else if IsVertex(Cmd) then
     begin
-      Pt.X := X;
-      Pt.Y := Y;
+      pt.X := X;
+      pt.Y := Y;
 
-      FSourceVertices.Add(@Pt);
+      FSourceVertices.Add(@pt);
     end
   else
       FClosed := GetCloseFlag(Cmd);
@@ -147,7 +147,7 @@ end;
 
 procedure TAggVcgenBSpline.Rewind(PathID: Cardinal);
 var
-  I: Cardinal;
+  i: Cardinal;
   X: Double;
 begin
   FCurrentAbscissa := 0.0;
@@ -185,17 +185,17 @@ begin
           FSplineY.Init(FSourceVertices.Size);
         end;
 
-      for I := 0 to FSourceVertices.Size - 1 do
+      for i := 0 to FSourceVertices.Size - 1 do
         begin
           if FClosed <> 0 then
-              X := I + 4
+              X := i + 4
           else
-              X := I;
+              X := i;
 
           FSplineX.AddPoint(X,
-            PPointDouble(FSourceVertices[I])^.X);
+            PPointDouble(FSourceVertices[i])^.X);
           FSplineY.AddPoint(X,
-            PPointDouble(FSourceVertices[I])^.Y);
+            PPointDouble(FSourceVertices[i])^.Y);
         end;
 
       FCurrentAbscissa := 0.0;
@@ -359,4 +359,4 @@ _next:
   Result := Cmd;
 end;
 
-end.
+end. 

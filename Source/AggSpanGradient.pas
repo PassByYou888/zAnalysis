@@ -39,7 +39,7 @@ unit AggSpanGradient;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -76,13 +76,13 @@ type
   public
     constructor Create(Alloc: TAggSpanAllocator); overload;
     constructor Create(Alloc: TAggSpanAllocator;
-      Inter: TAggSpanInterpolator; GradientFunction: TAggCustomGradient;
+      inter: TAggSpanInterpolator; GradientFunction: TAggCustomGradient;
       ColorFunction: TAggCustomArray; AD1, AD2: Double); overload;
 
     function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
 
-    property D1: Double read GetD1 write SetD1;
-    property D2: Double read GetD2 write SetD2;
+    property d1: Double read GetD1 write SetD1;
+    property d2: Double read GetD2 write SetD2;
 
     property Interpolator: TAggSpanInterpolator read FInterpolator write FInterpolator;
     property GradientFunction: TAggCustomGradient read FGradientFunction write FGradientFunction;
@@ -94,24 +94,24 @@ type
     FC1, FC2, FRes: TAggColor;
   protected
     function GetSize: Cardinal; override;
-    function ArrayOperator(I: Cardinal): Pointer; override;
+    function ArrayOperator(i: Cardinal): Pointer; override;
   public
-    constructor Create(C1, C2: PAggColor; ASize: Cardinal = 256);
+    constructor Create(c1, c2: PAggColor; ASize: Cardinal = 256);
 
-    procedure SetColors(C1, C2: PAggColor; ASize: Cardinal = 256);
+    procedure SetColors(c1, c2: PAggColor; ASize: Cardinal = 256);
   end;
 
   TAggCustomGradient = class
   public
     constructor Create; virtual;
-    function Calculate(X, Y, D: Integer): Integer; virtual; abstract;
+    function Calculate(X, Y, d: Integer): Integer; virtual; abstract;
   end;
 
   TAggCustomGradientClass = class of TAggCustomGradient;
 
   TAggGradientRadial = class(TAggCustomGradient)
   public
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
   end;
 
   // Actually the same as radial. Just for compatibility
@@ -119,7 +119,7 @@ type
 
   TAggGradientRadialDouble = class(TAggCustomGradient)
   public
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
   end;
 
   TAggGradientRadialFocus = class(TAggCustomGradient)
@@ -130,15 +130,15 @@ type
     FRadius2, FTrivial: Double;
   public
     constructor Create; overload; override;
-    constructor Create(R, Fx, Fy: Double); overload;
+    constructor Create(R, fx, fy: Double); overload;
 
-    procedure Init(R, Fx, Fy: Double);
+    procedure Init(R, fx, fy: Double);
 
-    function Radius: Double;
+    function radius: Double;
     function GetFocusX: Double;
     function GetFocusY: Double;
 
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
 
     procedure UpdateValues;
   end;
@@ -151,47 +151,47 @@ type
     FFocusSquared: TPointDouble;
   public
     constructor Create; overload; override;
-    constructor Create(R, Fx, Fy: Double); overload;
+    constructor Create(R, fx, fy: Double); overload;
 
-    procedure Init(R, Fx, Fy: Double);
+    procedure Init(R, fx, fy: Double);
 
-    function Radius: Double;
+    function radius: Double;
     function GetFocusX: Double;
     function GetFocusY: Double;
 
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
 
     procedure UpdateValues;
   end;
 
   TAggGradientX = class(TAggCustomGradient)
   public
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
   end;
 
   TAggGradientY = class(TAggCustomGradient)
   public
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
   end;
 
   TAggGradientDiamond = class(TAggCustomGradient)
   public
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
   end;
 
   TAggGradientXY = class(TAggCustomGradient)
   public
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
   end;
 
   TAggGradientSqrtXY = class(TAggCustomGradient)
   public
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
   end;
 
   TAggGradientConic = class(TAggCustomGradient)
   public
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
   end;
 
   TAggGradientRepeatAdaptor = class(TAggCustomGradient)
@@ -200,7 +200,7 @@ type
   public
     constructor Create(Gradient: TAggCustomGradient);
 
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
   end;
 
   TAggGradientReflectAdaptor = class(TAggCustomGradient)
@@ -209,7 +209,7 @@ type
   public
     constructor Create(Gradient: TAggCustomGradient);
 
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
   end;
 
 implementation
@@ -227,12 +227,12 @@ begin
 end;
 
 constructor TAggSpanGradient.Create(Alloc: TAggSpanAllocator;
-  Inter: TAggSpanInterpolator; GradientFunction: TAggCustomGradient;
+  inter: TAggSpanInterpolator; GradientFunction: TAggCustomGradient;
   ColorFunction: TAggCustomArray; AD1, AD2: Double);
 begin
   inherited Create(Alloc);
 
-  FInterpolator := Inter;
+  FInterpolator := inter;
   FGradientFunction := GradientFunction;
   FColorFunction := ColorFunction;
 
@@ -265,32 +265,32 @@ end;
 function TAggSpanGradient.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
 var
   Span: PAggColor;
-  Dd, D: Integer;
+  DD, d: Integer;
 begin
   Span := Allocator.Span;
 
-  Dd := FD2 - FD1;
+  DD := FD2 - FD1;
 
-  if Dd < 1 then
-      Dd := 1;
+  if DD < 1 then
+      DD := 1;
 
   FInterpolator.SetBegin(X + 0.5, Y + 0.5, Len);
 
   repeat
     FInterpolator.Coordinates(@X, @Y);
 
-    D := FGradientFunction.Calculate(ShrInt32(X, FDownscaleShift),
+    d := FGradientFunction.Calculate(ShrInt32(X, FDownscaleShift),
       ShrInt32(Y, FDownscaleShift), FD2);
 
-    D := ((D - FD1) * FColorFunction.Size) div Dd;
+    d := ((d - FD1) * FColorFunction.Size) div DD;
 
-    if D < 0 then
-        D := 0;
+    if d < 0 then
+        d := 0;
 
-    if D >= FColorFunction.Size then
-        D := FColorFunction.Size - 1;
+    if d >= FColorFunction.Size then
+        d := FColorFunction.Size - 1;
 
-    Span^ := PAggColor(FColorFunction[D])^;
+    Span^ := PAggColor(FColorFunction[d])^;
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
 
@@ -304,11 +304,11 @@ end;
 
 { TAggGradientLinearColor }
 
-constructor TAggGradientLinearColor.Create(C1, C2: PAggColor;
+constructor TAggGradientLinearColor.Create(c1, c2: PAggColor;
   ASize: Cardinal = 256);
 begin
-  FC1 := C1^;
-  FC2 := C2^;
+  FC1 := c1^;
+  FC2 := c2^;
 
   FSize := ASize;
 end;
@@ -318,17 +318,17 @@ begin
   Result := FSize;
 end;
 
-function TAggGradientLinearColor.ArrayOperator(I: Cardinal): Pointer;
+function TAggGradientLinearColor.ArrayOperator(i: Cardinal): Pointer;
 begin
-  FRes := Gradient(FC1, FC2, I / (FSize - 1));
+  FRes := Gradient(FC1, FC2, i / (FSize - 1));
   Result := @FRes;
 end;
 
-procedure TAggGradientLinearColor.SetColors(C1, C2: PAggColor;
+procedure TAggGradientLinearColor.SetColors(c1, c2: PAggColor;
   ASize: Cardinal = 256);
 begin
-  FC1 := C1^;
-  FC2 := C2^;
+  FC1 := c1^;
+  FC2 := c2^;
 
   FSize := Size;
 end;
@@ -341,14 +341,14 @@ end;
 
 { TAggGradientRadial }
 
-function TAggGradientRadial.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientRadial.Calculate(X, Y, d: Integer): Integer;
 begin
   Result := FastSqrt(X * X + Y * Y);
 end;
 
 { TAggGradientRadialDouble }
 
-function TAggGradientRadialDouble.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientRadialDouble.Calculate(X, Y, d: Integer): Integer;
 begin
   Result := Trunc(Hypot(X, Y));
 end;
@@ -363,11 +363,11 @@ begin
   UpdateValues;
 end;
 
-constructor TAggGradientRadialFocus.Create(R, Fx, Fy: Double);
+constructor TAggGradientRadialFocus.Create(R, fx, fy: Double);
 begin
   FRadius := Trunc(R * CAggGradientSubpixelSize);
-  FFocus.X := Trunc(Fx * CAggGradientSubpixelSize);
-  FFocus.Y := Trunc(Fy * CAggGradientSubpixelSize);
+  FFocus.X := Trunc(fx * CAggGradientSubpixelSize);
+  FFocus.Y := Trunc(fy * CAggGradientSubpixelSize);
 
   UpdateValues;
 end;
@@ -375,13 +375,13 @@ end;
 procedure TAggGradientRadialFocus.Init;
 begin
   FRadius := Trunc(R * CAggGradientSubpixelSize);
-  FFocus.X := Trunc(Fx * CAggGradientSubpixelSize);
-  FFocus.Y := Trunc(Fy * CAggGradientSubpixelSize);
+  FFocus.X := Trunc(fx * CAggGradientSubpixelSize);
+  FFocus.Y := Trunc(fy * CAggGradientSubpixelSize);
 
   UpdateValues;
 end;
 
-function TAggGradientRadialFocus.Radius;
+function TAggGradientRadialFocus.radius;
 begin
   Result := FRadius / CAggGradientSubpixelSize;
 end;
@@ -396,10 +396,10 @@ begin
   Result := FFocus.Y / CAggGradientSubpixelSize;
 end;
 
-function TAggGradientRadialFocus.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientRadialFocus.Calculate(X, Y, d: Integer): Integer;
 var
   Solution: TPointDouble;
-  Slope, Yint, A, B, C, Det, IntToFocus, CurToFocus: Double;
+  Slope, Yint, A, b, C, det, IntToFocus, CurToFocus: Double;
 begin
   // Special case to avoid divide by zero or very near zero
   if X = FFocus.X then
@@ -422,19 +422,19 @@ begin
       // Use the classical quadratic formula to calculate
       // the intersection point
       A := Sqr(Slope) + 1;
-      B := 2 * Slope * Yint;
+      b := 2 * Slope * Yint;
       C := Sqr(Yint) - FRadius2;
 
-      Det := Sqrt(Sqr(B) - (4 * A * C));
+      det := Sqrt(Sqr(b) - (4 * A * C));
 
-      Solution.X := -B;
+      Solution.X := -b;
 
       // Choose the positive or negative root depending
       // on where the X coord lies with respect to the focus.
       if X < FFocus.X then
-          Solution.X := Solution.X - Det
+          Solution.X := Solution.X - det
       else
-          Solution.X := Solution.X + Det;
+          Solution.X := Solution.X + det;
 
       Solution.X := Solution.X / (2 * A);
 
@@ -456,7 +456,7 @@ end;
 procedure TAggGradientRadialFocus.UpdateValues;
 var
   Dist, R: Double;
-  Sn, Cn: Double;
+  sn, CN: Double;
 begin
   // For use in the quadratic equation
   FRadius2 := Sqr(FRadius);
@@ -472,9 +472,9 @@ begin
     begin
       // clamp focus to radius
       // x = r cos theta, y = r sin theta
-      SinCos(ArcTan2(FFocus.Y, FFocus.X), Sn, Cn);
-      FFocus.X := Trunc(R * Cn);
-      FFocus.Y := Trunc(R * Sn);
+      SinCos(ArcTan2(FFocus.Y, FFocus.X), sn, CN);
+      FFocus.X := Trunc(R * CN);
+      FFocus.Y := Trunc(R * sn);
     end;
 
   // Calculate the solution to be used in the case where x == GetFocusX
@@ -491,25 +491,25 @@ begin
   UpdateValues;
 end;
 
-constructor TAggGradientRadialFocusExtended.Create(R, Fx, Fy: Double);
+constructor TAggGradientRadialFocusExtended.Create(R, fx, fy: Double);
 begin
   FRadius := IntegerRound(R * CAggGradientSubpixelSize);
-  FFocus.X := IntegerRound(Fx * CAggGradientSubpixelSize);
-  FFocus.Y := IntegerRound(Fy * CAggGradientSubpixelSize);
+  FFocus.X := IntegerRound(fx * CAggGradientSubpixelSize);
+  FFocus.Y := IntegerRound(fy * CAggGradientSubpixelSize);
 
   UpdateValues;
 end;
 
-procedure TAggGradientRadialFocusExtended.Init(R, Fx, Fy: Double);
+procedure TAggGradientRadialFocusExtended.Init(R, fx, fy: Double);
 begin
   FRadius := IntegerRound(R * CAggGradientSubpixelSize);
-  FFocus.X := IntegerRound(Fx * CAggGradientSubpixelSize);
-  FFocus.Y := IntegerRound(Fy * CAggGradientSubpixelSize);
+  FFocus.X := IntegerRound(fx * CAggGradientSubpixelSize);
+  FFocus.Y := IntegerRound(fy * CAggGradientSubpixelSize);
 
   UpdateValues;
 end;
 
-function TAggGradientRadialFocusExtended.Radius: Double;
+function TAggGradientRadialFocusExtended.radius: Double;
 begin
   Result := FRadius / CAggGradientSubpixelSize;
 end;
@@ -524,17 +524,17 @@ begin
   Result := FFocus.Y / CAggGradientSubpixelSize;
 end;
 
-function TAggGradientRadialFocusExtended.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientRadialFocusExtended.Calculate(X, Y, d: Integer): Integer;
 var
-  Dx, Dy, D2, D3: Double;
+  dx, dy, d2, d3: Double;
 
 begin
-  Dx := X - FFocus.X;
-  Dy := Y - FFocus.Y;
-  D2 := Dx * FFocus.Y - Dy * FFocus.X;
-  D3 := FRadius2 * (Sqr(Dx) + Sqr(Dy)) - Sqr(D2);
+  dx := X - FFocus.X;
+  dy := Y - FFocus.Y;
+  d2 := dx * FFocus.Y - dy * FFocus.X;
+  d3 := FRadius2 * (Sqr(dx) + Sqr(dy)) - Sqr(d2);
 
-  Result := IntegerRound((Dx * FFocus.X + Dy * FFocus.Y + Sqrt(Abs(D3))) * FMul);
+  Result := IntegerRound((dx * FFocus.X + dy * FFocus.Y + Sqrt(Abs(d3))) * FMul);
 end;
 
 // Calculate the invariant values. In case the focal center
@@ -544,14 +544,14 @@ end;
 // and calculate the values again.
 procedure TAggGradientRadialFocusExtended.UpdateValues;
 var
-  D: Double;
+  d: Double;
 begin
   FRadius2 := Sqr(FRadius);
   FFocusSquared := PointDouble(Sqr(FFocus.X), Sqr(FFocus.Y));
 
-  D := (FRadius2 - (FFocusSquared.X + FFocusSquared.Y));
+  d := (FRadius2 - (FFocusSquared.X + FFocusSquared.Y));
 
-  if D = 0 then
+  if d = 0 then
     begin
       if FFocus.X <> 0 then
         if FFocus.X < 0 then
@@ -567,29 +567,29 @@ begin
 
       FFocusSquared := PointDouble(Sqr(FFocus.X), Sqr(FFocus.Y));
 
-      D := (FRadius2 - (FFocusSquared.X + FFocusSquared.Y));
+      d := (FRadius2 - (FFocusSquared.X + FFocusSquared.Y));
     end;
 
-  FMul := FRadius / D;
+  FMul := FRadius / d;
 end;
 
 { TAggGradientX }
 
-function TAggGradientX.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientX.Calculate(X, Y, d: Integer): Integer;
 begin
   Result := X;
 end;
 
 { TAggGradientY }
 
-function TAggGradientY.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientY.Calculate(X, Y, d: Integer): Integer;
 begin
   Result := Y;
 end;
 
 { TAggGradientDiamond }
 
-function TAggGradientDiamond.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientDiamond.Calculate(X, Y, d: Integer): Integer;
 var
   Ax, Ay: Integer;
 begin
@@ -604,26 +604,26 @@ end;
 
 { TAggGradientXY }
 
-function TAggGradientXY.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientXY.Calculate(X, Y, d: Integer): Integer;
 begin
-  if D = 0 then
+  if d = 0 then
       Result := 0
   else
-      Result := Abs(X) * Abs(Y) div D;
+      Result := Abs(X) * Abs(Y) div d;
 end;
 
 { TAggGradientSqrtXY }
 
-function TAggGradientSqrtXY.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientSqrtXY.Calculate(X, Y, d: Integer): Integer;
 begin
   Result := FastSqrt(Abs(X) * Abs(Y));
 end;
 
 { TAggGradientConic }
 
-function TAggGradientConic.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientConic.Calculate(X, Y, d: Integer): Integer;
 begin
-  Result := Trunc(Abs(ArcTan2(Y, X)) * D / Pi);
+  Result := Trunc(Abs(ArcTan2(Y, X)) * d / pi);
 end;
 
 { TAggGradientRepeatAdaptor }
@@ -634,15 +634,15 @@ begin
   FGradient := Gradient;
 end;
 
-function TAggGradientRepeatAdaptor.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientRepeatAdaptor.Calculate(X, Y, d: Integer): Integer;
 begin
-  if D = 0 then
+  if d = 0 then
       Result := 0
   else
-      Result := FGradient.Calculate(X, Y, D) mod D;
+      Result := FGradient.Calculate(X, Y, d) mod d;
 
   if Result < 0 then
-      Inc(Result, D);
+      Inc(Result, d);
 end;
 
 { TAggGradientReflectAdaptor }
@@ -653,22 +653,22 @@ begin
   FGradient := Gradient;
 end;
 
-function TAggGradientReflectAdaptor.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientReflectAdaptor.Calculate(X, Y, d: Integer): Integer;
 var
-  D2: Integer;
+  d2: Integer;
 begin
-  D2 := D shl 1;
+  d2 := d shl 1;
 
-  if D2 = 0 then
+  if d2 = 0 then
       Result := 0
   else
-      Result := FGradient.Calculate(X, Y, D) mod D2;
+      Result := FGradient.Calculate(X, Y, d) mod d2;
 
   if Result < 0 then
-      Inc(Result, D2);
+      Inc(Result, d2);
 
-  if Result >= D then
-      Result := D2 - Result;
+  if Result >= d then
+      Result := d2 - Result;
 end;
 
-end.
+end. 

@@ -10,10 +10,12 @@
 {$IFDEF FPC}
   {$MODE objfpc}
   {$MODESWITCH AdvancedRecords}
-  {$STACKFRAMES ON}
   {$NOTES OFF}
-  {$ASMMODE intel}
+
+  {$DEFINE LITTLE_ENDIAN}
+  {$UNDEF BIG_ENDIAN}
   {$IFDEF FPC_BIG_ENDIAN}
+    {$UNDEF LITTLE_ENDIAN}
     {$DEFINE BIG_ENDIAN}
   {$ENDIF}
 
@@ -24,7 +26,12 @@
   {$DEFINE parallel}
   {$DEFINE OptimizationMemoryStreamMD5}
   {$DEFINE CriticalSimulateAtomic}
+  {$DEFINE release}
+  {$DEFINE INLINE_ASM}
 {$ELSE}
+  {$DEFINE LITTLE_ENDIAN}
+  {$UNDEF BIG_ENDIAN}
+
   {$IFDEF ANDROID}
     {$DEFINE FirstCharInZero}
   {$ENDIF}
@@ -46,6 +53,11 @@
     {$DEFINE CriticalSimulateAtomic}
   {$ENDIF}
 
+  {$IFDEF release}
+    {$DEFINE INLINE_ASM}
+  {$ELSE}
+    {$UNDEF INLINE_ASM}
+  {$ENDIF}
 
 {$ENDIF}
 
@@ -53,41 +65,11 @@
 {$HINTS OFF}
 {$H+} { long string }
 {$A+} { Word Align Data }
-{$R-} { range check }
 {$O-} { optimization }
 {$Q-} { Overflow checking }
 {$B-} { Complete boolean evaluation }
 {$I+} { Input output checking }
-
-(*
-  {$IFDEF FPC}
-  {$ELSE FPC}
-  {$ENDIF FPC}
-
-  {$IFDEF FPC}
-  {$ENDIF FPC}
-
-  {$IFDEF FPC}@{$ENDIF FPC}
-
-  {$IFNDEF FPC}
-  {$ENDIF FPC}
-
-  {$IFDEF parallel}
-  {$ELSE parallel}
-  {$ENDIF parallel}
-
-  {$IFNDEF parallel}
-  {$ENDIF parallel}
-
-  {$Region 'RegionName'}
-  {$EndRegion 'RegionName'}
-*)
-
-{$IFDEF release}
-  {$DEFINE INLINE_ASM}
-{$ELSE}
-  {$UNDEF INLINE_ASM}
-{$ENDIF}
+{$R-} { range check }
 
 {$UNDEF CPU64}
 
@@ -102,4 +84,3 @@
 {$IFNDEF CPU64}
   {$DEFINE CPU32}
 {$ENDIF}
-

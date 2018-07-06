@@ -39,7 +39,7 @@ unit AggVpGenClipPolyline;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -59,7 +59,7 @@ type
     FF1: TAggClippingFlags;
     FF2: TAggClippingFlags;
 
-    FX, FY: array [0 .. 1] of Double;
+    fx, fy: array [0 .. 1] of Double;
     FCmd: array [0 .. 1] of Cardinal;
 
     FNumVertices, FVertex: Cardinal;
@@ -90,13 +90,13 @@ type
 
     function Vertex(X, Y: PDouble): Cardinal; override;
 
-    procedure SetClipBox(X1, Y1, X2, Y2: Double); overload;
+    procedure SetClipBox(x1, y1, x2, y2: Double); overload;
     procedure SetClipBox(Bounds: TRectDouble); overload;
 
-    property X1: Double read GetX1;
-    property Y1: Double read GetY1;
-    property X2: Double read GetX2;
-    property Y2: Double read GetY2;
+    property x1: Double read GetX1;
+    property y1: Double read GetY1;
+    property x2: Double read GetX2;
+    property y2: Double read GetY2;
   end;
 
 implementation
@@ -119,9 +119,9 @@ begin
   FVertex := 0;
 end;
 
-procedure TAggVpgenClipPolyline.SetClipBox(X1, Y1, X2, Y2: Double);
+procedure TAggVpgenClipPolyline.SetClipBox(x1, y1, x2, y2: Double);
 begin
-  FClipBox := RectDouble(X1, Y1, X2, Y2);
+  FClipBox := RectDouble(x1, y1, x2, y2);
   FClipBox.Normalize;
 end;
 
@@ -133,22 +133,22 @@ end;
 
 function TAggVpgenClipPolyline.GetX1;
 begin
-  Result := FClipBox.X1;
+  Result := FClipBox.x1;
 end;
 
 function TAggVpgenClipPolyline.GetY1;
 begin
-  Result := FClipBox.Y1;
+  Result := FClipBox.y1;
 end;
 
 function TAggVpgenClipPolyline.GetX2;
 begin
-  Result := FClipBox.X2;
+  Result := FClipBox.x2;
 end;
 
 function TAggVpgenClipPolyline.GetY2;
 begin
-  Result := FClipBox.Y2;
+  Result := FClipBox.y2;
 end;
 
 function TAggVpgenClipPolyline.GetAutoClose;
@@ -176,8 +176,8 @@ begin
 
   if FF1 = [] then
     begin
-      FX[0] := X;
-      FY[0] := Y;
+      fx[0] := X;
+      fy[0] := Y;
 
       FCmd[0] := CAggPathCmdMoveTo;
 
@@ -203,8 +203,8 @@ begin
   if FF2 = FF1 then
     if FF2 = [] then
       begin
-        FX[0] := X;
-        FY[0] := Y;
+        fx[0] := X;
+        fy[0] := Y;
 
         FCmd[0] := CAggPathCmdLineTo;
 
@@ -223,8 +223,8 @@ function TAggVpgenClipPolyline.Vertex(X, Y: PDouble): Cardinal;
 begin
   if FVertex < FNumVertices then
     begin
-      X^ := FX[FVertex];
-      Y^ := FY[FVertex];
+      X^ := fx[FVertex];
+      Y^ := fy[FVertex];
 
       Result := FCmd[FVertex];
 
@@ -240,10 +240,10 @@ var
 begin
   F := [];
 
-  if X < FClipBox.X1 then
+  if X < FClipBox.x1 then
       F := F + [cfX1];
 
-  if X > FClipBox.X2 then
+  if X > FClipBox.x2 then
       F := F + [cfX2];
 
   Result := F;
@@ -255,10 +255,10 @@ var
 begin
   F := [];
 
-  if Y < FClipBox.Y1 then
+  if Y < FClipBox.y1 then
       F := F + [cfY1];
 
-  if Y > FClipBox.Y2 then
+  if Y > FClipBox.y2 then
       F := F + [cfY2];
 
   Result := F;
@@ -276,9 +276,9 @@ begin
   if (cfX1 in Flags) or (cfX2 in Flags) then
     begin
       if cfX1 in Flags then
-          Bound := FClipBox.X1
+          Bound := FClipBox.x1
       else
-          Bound := FClipBox.X2;
+          Bound := FClipBox.x2;
 
       Y^ := (Bound - FPoint[0].X) * (FPoint[1].Y - FPoint[0].Y) /
         (FPoint[1].X - FPoint[0].X) + FPoint[0].Y;
@@ -298,9 +298,9 @@ begin
   if (cfY1 in Flags) or (cfY2 in Flags) then
     begin
       if cfY1 in Flags then
-          Bound := FClipBox.Y1
+          Bound := FClipBox.y1
       else
-          Bound := FClipBox.Y2;
+          Bound := FClipBox.y2;
 
       X^ := (Bound - FPoint[0].Y) * (FPoint[1].X - FPoint[0].X) /
         (FPoint[1].Y - FPoint[0].Y) + FPoint[0].X;
@@ -323,8 +323,8 @@ begin
           if FF1 <> [] then
               Exit;
 
-          FX[0] := FPoint[0].X;
-          FY[0] := FPoint[0].Y;
+          fx[0] := FPoint[0].X;
+          fy[0] := FPoint[0].Y;
 
           FCmd[0] := CAggPathCmdMoveTo;
 
@@ -335,8 +335,8 @@ begin
         if not MovePoint(@FPoint[1].X, @FPoint[1].Y, FF2) then
             Exit;
 
-      FX[FNumVertices] := FPoint[1].X;
-      FY[FNumVertices] := FPoint[1].Y;
+      fx[FNumVertices] := FPoint[1].X;
+      fy[FNumVertices] := FPoint[1].Y;
 
       FCmd[FNumVertices] := CAggPathCmdLineTo;
 
@@ -344,4 +344,4 @@ begin
     end;
 end;
 
-end.
+end. 

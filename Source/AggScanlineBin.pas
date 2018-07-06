@@ -35,16 +35,16 @@
   //                                                                            //
   ////////////////////////////////////////////////////////////////////////////////
 *)
-unit AggScanLineBin;
+unit AggScanlineBin;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
   AggBasics,
-  AggScanLine;
+  AggScanline;
 
 type
   PAggSpanBin = ^TAggSpanBin;
@@ -71,7 +71,7 @@ type
     end;
   private
     FMaxLength: Cardinal;
-    FLastX, FY: Integer;
+    FLastX, fy: Integer;
 
     FSpans, FCurrentSpan: PAggSpanBin;
   protected
@@ -162,7 +162,7 @@ end;
 
 procedure TAggScanLineBin.Finalize(Y: Integer);
 begin
-  FY := Y;
+  fy := Y;
 end;
 
 procedure TAggScanLineBin.AddCell(X: Integer; Cover: Cardinal);
@@ -197,7 +197,7 @@ end;
 
 function TAggScanLineBin.GetY: Integer;
 begin
-  Result := FY
+  Result := fy
 end;
 
 function TAggScanLineBin.GetNumSpans: Cardinal;
@@ -220,4 +220,4 @@ end;
   Result := SizeOf(TAggSpanBin);
   end; }
 
-end.
+end. 

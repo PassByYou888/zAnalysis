@@ -39,7 +39,7 @@ unit AggSpanGouraudGray;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -59,11 +59,11 @@ type
 
   TAggGrayCalc = packed record
   private
-    F1, FDelta: TPointDouble;
+    f1, FDelta: TPointDouble;
     FColorC1V, FColorC1A, FColorDeltaV, FColorDeltaA,
-      FColorV, FColorA, FX: Integer;
+      FColorV, FColorA, fx: Integer;
   public
-    procedure Init(C1, C2: PAggCoordType);
+    procedure Init(c1, c2: PAggCoordType);
     procedure Calculate(Y: Double);
   end;
 
@@ -74,7 +74,7 @@ type
     FC1, FC2, FC3: TAggGrayCalc;
   public
     constructor Create(Alloc: TAggSpanAllocator); overload;
-    constructor Create(Alloc: TAggSpanAllocator; C1, C2, C3: PAggColor; X1, Y1, X2, Y2, X3, Y3, D: Double); overload;
+    constructor Create(Alloc: TAggSpanAllocator; c1, c2, c3: PAggColor; x1, y1, x2, y2, x3, y3, d: Double); overload;
 
     procedure Prepare(MaxSpanLength: Cardinal); override;
     function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
@@ -87,33 +87,33 @@ implementation
 
 procedure TAggGrayCalc.Init;
 var
-  Dy: Double;
+  dy: Double;
 begin
-  F1 := PointDouble(C1.X - 0.5, C1.Y - 0.5);
-  FDelta.X := C2.X - C1.X;
+  f1 := PointDouble(c1.X - 0.5, c1.Y - 0.5);
+  FDelta.X := c2.X - c1.X;
 
-  Dy := C2.Y - C1.Y;
+  dy := c2.Y - c1.Y;
 
-  if Abs(Dy) < 1E-10 then
+  if Abs(dy) < 1E-10 then
       FDelta.Y := 1E10
   else
-      FDelta.Y := 1.0 / Dy;
+      FDelta.Y := 1.0 / dy;
 
-  FColorC1V := C1.Color.V;
-  FColorC1A := C1.Color.Rgba8.A;
-  FColorDeltaV := C2.Color.V - FColorC1V;
-  FColorDeltaA := C2.Color.Rgba8.A - FColorC1A;
+  FColorC1V := c1.COLOR.v;
+  FColorC1A := c1.COLOR.Rgba8.A;
+  FColorDeltaV := c2.COLOR.v - FColorC1V;
+  FColorDeltaA := c2.COLOR.Rgba8.A - FColorC1A;
 end;
 
 procedure TAggGrayCalc.Calculate;
 var
-  K: Double;
+  k: Double;
 begin
-  K := EnsureRange((Y - F1.Y) * FDelta.Y, 0, 1);
+  k := EnsureRange((Y - f1.Y) * FDelta.Y, 0, 1);
 
-  FColorV := FColorC1V + IntegerRound(FColorDeltaV * K);
-  FColorA := FColorC1A + IntegerRound(FColorDeltaA * K);
-  FX := IntegerRound((F1.X + FDelta.X * K) * CAggSubpixelSize);
+  FColorV := FColorC1V + IntegerRound(FColorDeltaV * k);
+  FColorA := FColorC1A + IntegerRound(FColorDeltaA * k);
+  fx := IntegerRound((f1.X + FDelta.X * k) * CAggSubpixelSize);
 end;
 
 { TAggSpanGouraudGray }
@@ -124,9 +124,9 @@ begin
 end;
 
 constructor TAggSpanGouraudGray.Create(Alloc: TAggSpanAllocator;
-  C1, C2, C3: PAggColor; X1, Y1, X2, Y2, X3, Y3, D: Double);
+  c1, c2, c3: PAggColor; x1, y1, x2, y2, x3, y3, d: Double);
 begin
-  inherited Create(Alloc, C1, C2, C3, X1, Y1, X2, Y2, X3, Y3, D);
+  inherited Create(Alloc, c1, c2, c3, x1, y1, x2, y2, x3, y3, d);
 end;
 
 procedure TAggSpanGouraudGray.Prepare;
@@ -151,17 +151,17 @@ function TAggSpanGouraudGray.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
 const
   CLim = AggColor32.CAggBaseMask;
 var
-  Pc1, Pc2, T: PAggGrayCalc;
+  PC1, PC2, T: PAggGrayCalc;
 
   Nlen, Start: Integer;
 
-  V, A: TAggDdaLineInterpolator;
+  v, A: TAggDdaLineInterpolator;
   Span: PAggColor;
 begin
   FC1.Calculate(Y);
 
-  Pc1 := @FC1;
-  Pc2 := @FC2;
+  PC1 := @FC1;
+  PC2 := @FC2;
 
   if Y < FY2 then
     // Bottom part of the triangle (first subtriangle)
@@ -171,35 +171,35 @@ begin
       // Upper part (second subtriangle)
       FC3.Calculate(Y - FC3.FDelta.Y);
 
-      Pc2 := @FC3;
+      PC2 := @FC3;
     end;
 
   // It means that the triangle is oriented clockwise,
   // so that we need to swap the controlling structures
   if FSwap then
     begin
-      T := Pc2;
-      Pc2 := Pc1;
-      Pc1 := T;
+      T := PC2;
+      PC2 := PC1;
+      PC1 := T;
     end;
 
   // Get the horizontal length with subpixel accuracy
   // and protect it from division by zero
-  Nlen := Abs(Pc2.FX - Pc1.FX);
+  Nlen := Abs(PC2.fx - PC1.fx);
 
   if Nlen <= 0 then
       Nlen := 1;
 
-  V.Initialize(Pc1.FColorV, Pc2.FColorV, Nlen, 14);
-  A.Initialize(Pc1.FColorA, Pc2.FColorA, Nlen, 14);
+  v.Initialize(PC1.FColorV, PC2.FColorV, Nlen, 14);
+  A.Initialize(PC1.FColorA, PC2.FColorA, Nlen, 14);
 
   // Calculate the starting point of the Gradient with subpixel
   // accuracy and correct (roll back) the interpolators.
   // This operation will also clip the beginning of the Span
   // if necessary.
-  Start := Pc1.FX - (X shl CAggSubpixelShift);
+  Start := PC1.fx - (X shl CAggSubpixelShift);
 
-  V.DecOperator(Start);
+  v.DecOperator(Start);
   A.DecOperator(Start);
 
   Inc(Nlen, Start);
@@ -213,10 +213,10 @@ begin
   // typically it's 1-2 pixels, but may be more in some cases.
   while (Len <> 0) and (Start > 0) do
     begin
-      Span.V := Int8u(EnsureRange(V.Y, 0, CLim));
+      Span.v := Int8u(EnsureRange(v.Y, 0, CLim));
       Span.Rgba8.A := Int8u(EnsureRange(A.Y, 0, CLim));
 
-      V.IncOperator(CAggSubpixelSize);
+      v.IncOperator(CAggSubpixelSize);
       A.IncOperator(CAggSubpixelSize);
 
       Dec(Nlen, CAggSubpixelSize);
@@ -231,10 +231,10 @@ begin
   // overfLow. But while "nlen" is positive we are safe.
   while (Len <> 0) and (Nlen > 0) do
     begin
-      Span.V := Int8u(V.Y);
+      Span.v := Int8u(v.Y);
       Span.Rgba8.A := Int8u(A.Y);
 
-      V.IncOperator(CAggSubpixelSize);
+      v.IncOperator(CAggSubpixelSize);
       A.IncOperator(CAggSubpixelSize);
 
       Dec(Nlen, CAggSubpixelSize);
@@ -246,10 +246,10 @@ begin
   // Typically it's 1-2 pixels, but may be more in some cases.
   while Len <> 0 do
     begin
-      Span.V := Int8u(EnsureRange(V.Y, 0, CLim));
+      Span.v := Int8u(EnsureRange(v.Y, 0, CLim));
       Span.Rgba8.A := Int8u(EnsureRange(A.Y, 0, CLim));
 
-      V.IncOperator(CAggSubpixelSize);
+      v.IncOperator(CAggSubpixelSize);
       A.IncOperator(CAggSubpixelSize);
 
       Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -259,4 +259,4 @@ begin
   Result := Allocator.Span;
 end;
 
-end.
+end. 

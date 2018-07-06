@@ -1,4 +1,4 @@
-﻿{ ****************************************************************************** }
+{ ****************************************************************************** }
 { * Core class library  written by QQ 600585@qq.com                            * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
@@ -13,21 +13,21 @@ unit FastGBK;
 
 interface
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 
 uses DoStatusIO, CoreClasses, PascalStrings, MemoryStream64, ListEngine, UnicodeMixedLib,
   UPascalStrings;
 
 { Quick query characters using the GBK encoding table }
-function FastGBKChar(const c: USystemChar): Boolean; overload; inline;
+function FastGBKChar(const C: USystemChar): Boolean; overload; inline;
 { Quick query string using the GBK encoding table }
 function FastGBKString(const s: TUPascalString): Boolean; overload; inline;
 { Fast translation of Pinyin with GBK encoding table (not supporting phonetic) }
-function FastPY(const s: TUPascalString; const multiPy: Boolean = False): TUPascalString;
+function FastPY(const s: TUPascalString; const multiPy: Boolean): TUPascalString;
 
 { Using the GBK coding table to sort out the phonetic alphabet quickly }
-procedure FastPYSort(const inverse: Boolean; const InBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr);
+procedure FastPYSort(const inverse: Boolean; const inBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr);
 
 { custom sort }
 type
@@ -36,9 +36,9 @@ type
 
   {$IFNDEF FPC} TFastCompareFuncProc = reference to function(const v1, v2: PPascalString): ShortInt; {$ENDIF FPC}
 
-procedure FastCustomSort(const InBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr; const OnCompare: TFastCompareFuncCall); overload;
-procedure FastCustomSort(const InBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr; const OnCompare: TFastCompareFuncMethod); overload;
-{$IFNDEF FPC} procedure FastCustomSort(const InBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr; const OnCompare: TFastCompareFuncProc); overload; {$ENDIF FPC}
+procedure FastCustomSort(const inBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr; const OnCompare: TFastCompareFuncCall); overload;
+procedure FastCustomSort(const inBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr; const OnCompare: TFastCompareFuncMethod); overload;
+{$IFNDEF FPC} procedure FastCustomSort(const inBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr; const OnCompare: TFastCompareFuncProc); overload; {$ENDIF FPC}
 
 
 var
@@ -48,14 +48,14 @@ implementation
 
 uses SysUtils;
 
-function FastGBKChar(const c: USystemChar): Boolean;
+function FastGBKChar(const C: USystemChar): Boolean;
 var
-  id: Cardinal;
+  ID: Cardinal;
   n : TUPascalString;
 begin
-  id := ord(c);
-  if (id >= $FF) and (id <= $FFFF) then
-      n := GBKCache[id]
+  ID := Ord(C);
+  if (ID >= $FF) and (ID <= $FFFF) then
+      n := GBKCache[ID]
   else
       n := '';
   Result := n.Len > 0;
@@ -67,27 +67,27 @@ var
 begin
   Result := False;
   if s.Len = 0 then
-      exit;
+      Exit;
   for i := 1 to s.Len do
     if not FastGBKChar(s[i]) then
-        exit;
+        Exit;
   Result := True;
 end;
 
 function FastPY(const s: TUPascalString; const multiPy: Boolean): TUPascalString;
 var
   n      : TUPascalString;
-  c      : USystemChar;
+  C      : USystemChar;
   LastGBK: Boolean;
-  id     : Cardinal;
+  ID     : Cardinal;
 begin
   Result := '';
   LastGBK := False;
-  for c in s.Buff do
+  for C in s.buff do
     begin
-      id := ord(c);
-      if (id >= $FF) and (id <= $FFFF) then
-          n := GBKCache[id]
+      ID := Ord(C);
+      if (ID >= $FF) and (ID <= $FFFF) then
+          n := GBKCache[ID]
       else
           n := '';
 
@@ -111,7 +111,7 @@ begin
         end
       else
         begin
-          n := c;
+          n := C;
 
           if LastGBK then
             begin
@@ -124,25 +124,25 @@ begin
   n := '';
 end;
 
-procedure FastPYSort(const inverse: Boolean; const InBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr);
+procedure FastPYSort(const inverse: Boolean; const inBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr);
 
-  function cv(const A, B: Integer): Integer; inline;
+  function cv(const A, b: Integer): Integer; inline;
   begin
-    if A = B then
+    if A = b then
         Result := 0
-    else if A < B then
+    else if A < b then
         Result := -1
     else
         Result := 1;
   end;
 
-  function WasWide(const t: PPascalString): Byte; inline;
+  function WasWide(const T: PPascalString): Byte; inline;
   var
-    c: USystemChar;
+    C: USystemChar;
   begin
-    for c in t^.Buff do
-      if FastGBKChar(c) then
-          exit(1);
+    for C in T^.buff do
+      if FastGBKChar(C) then
+          Exit(1);
     Result := 0;
   end;
 
@@ -166,132 +166,132 @@ procedure FastPYSort(const inverse: Boolean; const InBuff: PArrayPascalString; v
       end;
   end;
 
-  procedure QuickSortList(var SortList: TArrayPascalStringPtr; l, r: Integer);
+  procedure QuickSortList(var SortList: TArrayPascalStringPtr; L, R: Integer);
   var
-    i, j: Integer;
-    p, t: PPascalString;
+    i, J: Integer;
+    p, T: PPascalString;
   begin
     repeat
-      i := l;
-      j := r;
-      p := SortList[(l + r) shr 1];
+      i := L;
+      J := R;
+      p := SortList[(L + R) shr 1];
       repeat
         while CompText(SortList[i], p) < 0 do
-            inc(i);
-        while CompText(SortList[j], p) > 0 do
-            Dec(j);
-        if i <= j then
+            Inc(i);
+        while CompText(SortList[J], p) > 0 do
+            Dec(J);
+        if i <= J then
           begin
-            if i <> j then
+            if i <> J then
               begin
-                t := SortList[i];
-                SortList[i] := SortList[j];
-                SortList[j] := t;
+                T := SortList[i];
+                SortList[i] := SortList[J];
+                SortList[J] := T;
               end;
-            inc(i);
-            Dec(j);
+            Inc(i);
+            Dec(J);
           end;
-      until i > j;
-      if l < j then
-          QuickSortList(SortList, l, j);
-      l := i;
-    until i >= r;
+      until i > J;
+      if L < J then
+          QuickSortList(SortList, L, J);
+      L := i;
+    until i >= R;
   end;
 
 var
   i: Integer;
 begin
-  SetLength(OutBuff, length(InBuff^));
-  for i := low(InBuff^) to high(InBuff^) do
-      OutBuff[i] := @InBuff^[i];
+  SetLength(OutBuff, length(inBuff^));
+  for i := low(inBuff^) to high(inBuff^) do
+      OutBuff[i] := @inBuff^[i];
 
   if length(OutBuff) > 1 then
       QuickSortList(OutBuff, low(OutBuff), high(OutBuff));
 end;
 
-procedure FastCustomSort(const InBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr; const OnCompare: TFastCompareFuncCall);
-  procedure QuickSortList(var SortList: TArrayPascalStringPtr; l, r: Integer);
+procedure FastCustomSort(const inBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr; const OnCompare: TFastCompareFuncCall);
+  procedure QuickSortList(var SortList: TArrayPascalStringPtr; L, R: Integer);
   var
-    i, j: Integer;
-    p, t: PPascalString;
+    i, J: Integer;
+    p, T: PPascalString;
   begin
     repeat
-      i := l;
-      j := r;
-      p := SortList[(l + r) shr 1];
+      i := L;
+      J := R;
+      p := SortList[(L + R) shr 1];
       repeat
         while OnCompare(SortList[i], p) < 0 do
-            inc(i);
-        while OnCompare(SortList[j], p) > 0 do
-            Dec(j);
-        if i <= j then
+            Inc(i);
+        while OnCompare(SortList[J], p) > 0 do
+            Dec(J);
+        if i <= J then
           begin
-            if i <> j then
+            if i <> J then
               begin
-                t := SortList[i];
-                SortList[i] := SortList[j];
-                SortList[j] := t;
+                T := SortList[i];
+                SortList[i] := SortList[J];
+                SortList[J] := T;
               end;
-            inc(i);
-            Dec(j);
+            Inc(i);
+            Dec(J);
           end;
-      until i > j;
-      if l < j then
-          QuickSortList(SortList, l, j);
-      l := i;
-    until i >= r;
+      until i > J;
+      if L < J then
+          QuickSortList(SortList, L, J);
+      L := i;
+    until i >= R;
   end;
 
 var
   i: Integer;
 begin
-  SetLength(OutBuff, length(InBuff^));
-  for i := low(InBuff^) to high(InBuff^) do
-      OutBuff[i] := @InBuff^[i];
+  SetLength(OutBuff, length(inBuff^));
+  for i := low(inBuff^) to high(inBuff^) do
+      OutBuff[i] := @inBuff^[i];
 
   if length(OutBuff) > 1 then
       QuickSortList(OutBuff, low(OutBuff), high(OutBuff));
 end;
 
-procedure FastCustomSort(const InBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr; const OnCompare: TFastCompareFuncMethod);
-  procedure QuickSortList(var SortList: TArrayPascalStringPtr; l, r: Integer);
+procedure FastCustomSort(const inBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr; const OnCompare: TFastCompareFuncMethod);
+  procedure QuickSortList(var SortList: TArrayPascalStringPtr; L, R: Integer);
   var
-    i, j: Integer;
-    p, t: PPascalString;
+    i, J: Integer;
+    p, T: PPascalString;
   begin
     repeat
-      i := l;
-      j := r;
-      p := SortList[(l + r) shr 1];
+      i := L;
+      J := R;
+      p := SortList[(L + R) shr 1];
       repeat
         while OnCompare(SortList[i], p) < 0 do
-            inc(i);
-        while OnCompare(SortList[j], p) > 0 do
-            Dec(j);
-        if i <= j then
+            Inc(i);
+        while OnCompare(SortList[J], p) > 0 do
+            Dec(J);
+        if i <= J then
           begin
-            if i <> j then
+            if i <> J then
               begin
-                t := SortList[i];
-                SortList[i] := SortList[j];
-                SortList[j] := t;
+                T := SortList[i];
+                SortList[i] := SortList[J];
+                SortList[J] := T;
               end;
-            inc(i);
-            Dec(j);
+            Inc(i);
+            Dec(J);
           end;
-      until i > j;
-      if l < j then
-          QuickSortList(SortList, l, j);
-      l := i;
-    until i >= r;
+      until i > J;
+      if L < J then
+          QuickSortList(SortList, L, J);
+      L := i;
+    until i >= R;
   end;
 
 var
   i: Integer;
 begin
-  SetLength(OutBuff, length(InBuff^));
-  for i := low(InBuff^) to high(InBuff^) do
-      OutBuff[i] := @InBuff^[i];
+  SetLength(OutBuff, length(inBuff^));
+  for i := low(inBuff^) to high(inBuff^) do
+      OutBuff[i] := @inBuff^[i];
 
   if length(OutBuff) > 1 then
       QuickSortList(OutBuff, low(OutBuff), high(OutBuff));
@@ -300,67 +300,67 @@ end;
 {$IFNDEF FPC}
 
 
-procedure FastCustomSort(const InBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr; const OnCompare: TFastCompareFuncProc);
-  procedure QuickSortList(var SortList: TArrayPascalStringPtr; l, r: Integer);
+procedure FastCustomSort(const inBuff: PArrayPascalString; var OutBuff: TArrayPascalStringPtr; const OnCompare: TFastCompareFuncProc);
+  procedure QuickSortList(var SortList: TArrayPascalStringPtr; L, R: Integer);
   var
-    i, j: Integer;
-    p, t: PPascalString;
+    i, J: Integer;
+    p, T: PPascalString;
   begin
     repeat
-      i := l;
-      j := r;
-      p := SortList[(l + r) shr 1];
+      i := L;
+      J := R;
+      p := SortList[(L + R) shr 1];
       repeat
         while OnCompare(SortList[i], p) < 0 do
-            inc(i);
-        while OnCompare(SortList[j], p) > 0 do
-            Dec(j);
-        if i <= j then
+            Inc(i);
+        while OnCompare(SortList[J], p) > 0 do
+            Dec(J);
+        if i <= J then
           begin
-            if i <> j then
+            if i <> J then
               begin
-                t := SortList[i];
-                SortList[i] := SortList[j];
-                SortList[j] := t;
+                T := SortList[i];
+                SortList[i] := SortList[J];
+                SortList[J] := T;
               end;
-            inc(i);
-            Dec(j);
+            Inc(i);
+            Dec(J);
           end;
-      until i > j;
-      if l < j then
-          QuickSortList(SortList, l, j);
-      l := i;
-    until i >= r;
+      until i > J;
+      if L < J then
+          QuickSortList(SortList, L, J);
+      L := i;
+    until i >= R;
   end;
 
 var
   i: Integer;
 begin
-  SetLength(OutBuff, length(InBuff^));
-  for i := low(InBuff^) to high(InBuff^) do
-      OutBuff[i] := @InBuff^[i];
+  SetLength(OutBuff, length(inBuff^));
+  for i := low(inBuff^) to high(inBuff^) do
+      OutBuff[i] := @inBuff^[i];
 
   if length(OutBuff) > 1 then
       QuickSortList(OutBuff, low(OutBuff), high(OutBuff));
 end;
 {$ENDIF FPC}
 
+{$INCLUDE FastGBK_Dict.inc}
 
 procedure InitGBK;
 // gbk with unpack format(unicode)
 // char=py1,py2,py3
-{$I FastGBK_Dict.inc}
 var
-  Output: TMemoryStream64;
+  output: TMemoryStream64;
   lst   : TListPascalString;
   n     : TUPascalString;
   i     : Integer;
 begin
-  Output := TMemoryStream64.Create;
-  DecompressStream(@C_FastGBKPackageBuffer[0], 71628, Output);
-  Output.Position := 0;
+  output := TMemoryStream64.Create;
+  DecompressStream(@C_FastGBKPackageBuffer[0], 71628, output);
+  output.Position := 0;
   lst := TListPascalString.Create;
-  lst.LoadFromStream(Output);
+  lst.LoadFromStream(output);
 
   for i := low(GBKCache) to high(GBKCache) do
       GBKCache[i] := '';
@@ -368,9 +368,9 @@ begin
   for i := 0 to lst.Count - 1 do
     begin
       n := lst[i];
-      GBKCache[ord(TUPascalString(umlGetFirstStr(n.Text, '=')).First)] := umlDeleteFirstStr(n.Text, '=');
+      GBKCache[Ord(TUPascalString(umlGetFirstStr(n.Text, '=')).First)] := umlDeleteFirstStr(n.Text, '=');
     end;
-  disposeObject([lst, Output]);
+  DisposeObject([lst, output]);
 end;
 
 procedure FreeGBK;
@@ -389,4 +389,4 @@ finalization
 
 FreeGBK;
 
-end.
+end. 

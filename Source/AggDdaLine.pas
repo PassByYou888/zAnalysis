@@ -39,7 +39,7 @@ unit AggDdaLine;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -53,27 +53,27 @@ const
 type
   TAggDdaLineInterpolator = packed record
   private
-    FY, FInc, FDeltaY, FFractionShift, YShift: Integer;
+    fy, FInc, FDeltaY, FFractionShift, YShift: Integer;
     function GetY: Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
   public
-    procedure Initialize(FS: Integer; YS: Integer = 0); overload;
-    procedure Initialize(Y1, Y2: Integer; Count: Cardinal; FS: Integer;
+    procedure Initialize(fs: Integer; YS: Integer = 0); overload;
+    procedure Initialize(y1, y2: Integer; Count: Cardinal; fs: Integer;
       YS: Integer = 0); overload;
 
     procedure PlusOperator;
     procedure MinusOperator;
-    procedure IncOperator(N: Integer);
-    procedure DecOperator(N: Integer);
+    procedure IncOperator(n: Integer);
+    procedure DecOperator(n: Integer);
 
     property Y: Integer read GetY;
-    property DeltaY: Integer read FDeltaY;
+    property deltay: Integer read FDeltaY;
   end;
 
   TAggDda2LineInterpolator = packed record
   private
-    FCount, FLft, FRem, FMod, FY: Integer;
+    FCount, FLft, FRem, FMod, fy: Integer;
   public
-    procedure Initialize(Y1, Y2, Count: Integer); overload; // Forward-adjusted line
+    procedure Initialize(y1, y2, Count: Integer); overload; // Forward-adjusted line
     procedure Initialize(Y, Count: Integer); overload;      // Backward-adjusted line
 
     procedure PlusOperator;
@@ -85,7 +85,7 @@ type
     property ModValue: Integer read FMod;
     property RemValue: Integer read FRem;
     property Lft: Integer read FLft;
-    property Y: Integer read FY;
+    property Y: Integer read fy;
   end;
 
   TAggLineBresenhamInterpolator = packed record
@@ -102,22 +102,22 @@ type
     function GetX2HighResolution: Integer;
     function GetY2HighResolution: Integer;
   public
-    procedure Initialize(X1, Y1, X2, Y2: Integer); overload;
+    procedure Initialize(x1, y1, x2, y2: Integer); overload;
     procedure Initialize(Point1, Point2: TPointInteger); overload;
 
-    function LineLowResolution(V: Integer): Integer;
+    function LineLowResolution(v: Integer): Integer;
 
     function Inc: Integer;
 
-    procedure Hstep;
+    procedure HStep;
     procedure Vstep;
 
     property IsVer: Boolean read FVer;
-    property Length: Cardinal read FLength;
-    property X1: Integer read FLowResolution.X1;
-    property Y1: Integer read FLowResolution.Y1;
-    property X2: Integer read GetX2;
-    property Y2: Integer read GetY2;
+    property length: Cardinal read FLength;
+    property x1: Integer read FLowResolution.x1;
+    property y1: Integer read FLowResolution.y1;
+    property x2: Integer read GetX2;
+    property y2: Integer read GetY2;
     property X2HighResolution: Integer read GetX2HighResolution;
     property Y2HighResolution: Integer read GetY2HighResolution;
   end;
@@ -127,20 +127,20 @@ implementation
 
 { TAggDdaLineInterpolator }
 
-procedure TAggDdaLineInterpolator.Initialize(FS: Integer; YS: Integer = 0);
+procedure TAggDdaLineInterpolator.Initialize(fs: Integer; YS: Integer = 0);
 begin
-  FFractionShift := FS;
+  FFractionShift := fs;
 
   YShift := YS;
 end;
 
-procedure TAggDdaLineInterpolator.Initialize(Y1, Y2: Integer; Count: Cardinal;
-  FS: Integer; YS: Integer = 0);
+procedure TAggDdaLineInterpolator.Initialize(y1, y2: Integer; Count: Cardinal;
+  fs: Integer; YS: Integer = 0);
 begin
-  Initialize(FS, YS);
+  Initialize(fs, YS);
 
-  FY := Y1;
-  FInc := ((Y2 - Y1) shl FFractionShift) div Count;
+  fy := y1;
+  FInc := ((y2 - y1) shl FFractionShift) div Count;
   FDeltaY := 0;
 end;
 
@@ -154,34 +154,34 @@ begin
   Dec(FDeltaY, FInc);
 end;
 
-procedure TAggDdaLineInterpolator.IncOperator(N: Integer);
+procedure TAggDdaLineInterpolator.IncOperator(n: Integer);
 begin
-  Inc(FDeltaY, FInc * N);
+  Inc(FDeltaY, FInc * n);
 end;
 
-procedure TAggDdaLineInterpolator.DecOperator(N: Integer);
+procedure TAggDdaLineInterpolator.DecOperator(n: Integer);
 begin
-  Dec(FDeltaY, FInc * N);
+  Dec(FDeltaY, FInc * n);
 end;
 
 function TAggDdaLineInterpolator.GetY: Integer;
 begin
-  Result := FY + (ShrInt32(FDeltaY, FFractionShift - YShift));
+  Result := fy + (ShrInt32(FDeltaY, FFractionShift - YShift));
 end;
 
 { TAggDda2LineInterpolator }
 
-procedure TAggDda2LineInterpolator.Initialize(Y1, Y2, Count: Integer);
+procedure TAggDda2LineInterpolator.Initialize(y1, y2, Count: Integer);
 begin
   if Count <= 0 then
       FCount := 1
   else
       FCount := Count;
 
-  FLft := Trunc((Y2 - Y1) / FCount);
-  FRem := Trunc((Y2 - Y1) mod FCount);
+  FLft := Trunc((y2 - y1) / FCount);
+  FRem := Trunc((y2 - y1) mod FCount);
   FMod := FRem;
-  FY := Y1;
+  fy := y1;
 
   if FMod <= 0 then
     begin
@@ -204,7 +204,7 @@ begin
   FLft := Y div FCount;
   FRem := Y mod FCount;
   FMod := FRem;
-  FY := 0;
+  fy := 0;
 
   if FMod <= 0 then
     begin
@@ -217,12 +217,12 @@ end;
 procedure TAggDda2LineInterpolator.PlusOperator;
 begin
   Inc(FMod, FRem);
-  Inc(FY, FLft);
+  Inc(fy, FLft);
 
   if FMod > 0 then
     begin
       Dec(FMod, FCount);
-      Inc(FY);
+      Inc(fy);
     end;
 end;
 
@@ -231,11 +231,11 @@ begin
   if FMod <= FRem then
     begin
       Inc(FMod, FCount);
-      Dec(FY);
+      Dec(fy);
     end;
 
   Dec(FMod, FRem);
-  Dec(FY, FLft);
+  Dec(fy, FLft);
 end;
 
 procedure TAggDda2LineInterpolator.AdjustForward;
@@ -250,34 +250,34 @@ end;
 
 { TAggLineBresenhamInterpolator }
 
-procedure TAggLineBresenhamInterpolator.Initialize(X1, Y1, X2, Y2: Integer);
+procedure TAggLineBresenhamInterpolator.Initialize(x1, y1, x2, y2: Integer);
 begin
-  FLowResolution.X1 := LineLowResolution(X1);
-  FLowResolution.Y1 := LineLowResolution(Y1);
-  FLowResolution.X2 := LineLowResolution(X2);
-  FLowResolution.Y2 := LineLowResolution(Y2);
+  FLowResolution.x1 := LineLowResolution(x1);
+  FLowResolution.y1 := LineLowResolution(y1);
+  FLowResolution.x2 := LineLowResolution(x2);
+  FLowResolution.y2 := LineLowResolution(y2);
 
-  FVer := Abs(FLowResolution.X2 - FLowResolution.X1) < Abs(FLowResolution.Y2 - FLowResolution.Y1);
+  FVer := Abs(FLowResolution.x2 - FLowResolution.x1) < Abs(FLowResolution.y2 - FLowResolution.y1);
 
   if FVer then
-      FLength := Abs(FLowResolution.Y2 - FLowResolution.Y1)
+      FLength := Abs(FLowResolution.y2 - FLowResolution.y1)
   else
-      FLength := Abs(FLowResolution.X2 - FLowResolution.X1);
+      FLength := Abs(FLowResolution.x2 - FLowResolution.x1);
 
   if FVer then
-    if Y2 > Y1 then
+    if y2 > y1 then
         FInc := 1
     else
         FInc := -1
-  else if X2 > X1 then
+  else if x2 > x1 then
       FInc := 1
   else
       FInc := -1;
 
   if FVer then
-      FInterpolator.Initialize(X1, X2, FLength)
+      FInterpolator.Initialize(x1, x2, FLength)
   else
-      FInterpolator.Initialize(Y1, Y2, FLength);
+      FInterpolator.Initialize(y1, y2, FLength);
 end;
 
 procedure TAggLineBresenhamInterpolator.Initialize(Point1,
@@ -286,32 +286,32 @@ begin
   FLowResolution.Point1 := Point1;
   FLowResolution.Point2 := Point2;
 
-  FVer := Abs(FLowResolution.X2 - FLowResolution.X1) < Abs(FLowResolution.Y2 - FLowResolution.Y1);
+  FVer := Abs(FLowResolution.x2 - FLowResolution.x1) < Abs(FLowResolution.y2 - FLowResolution.y1);
 
   if FVer then
-      FLength := Abs(FLowResolution.Y2 - FLowResolution.Y1)
+      FLength := Abs(FLowResolution.y2 - FLowResolution.y1)
   else
-      FLength := Abs(FLowResolution.X2 - FLowResolution.X1);
+      FLength := Abs(FLowResolution.x2 - FLowResolution.x1);
 
   if FVer then
-    if Y2 > Y1 then
+    if y2 > y1 then
         FInc := 1
     else
         FInc := -1
-  else if X2 > X1 then
+  else if x2 > x1 then
       FInc := 1
   else
       FInc := -1;
 
   if FVer then
-      FInterpolator.Initialize(X1, X2, FLength)
+      FInterpolator.Initialize(x1, x2, FLength)
   else
-      FInterpolator.Initialize(Y1, Y2, FLength);
+      FInterpolator.Initialize(y1, y2, FLength);
 end;
 
-function TAggLineBresenhamInterpolator.LineLowResolution(V: Integer): Integer;
+function TAggLineBresenhamInterpolator.LineLowResolution(v: Integer): Integer;
 begin
-  Result := ShrInt32(V, CAggSubpixelShift);
+  Result := ShrInt32(v, CAggSubpixelShift);
 end;
 
 function TAggLineBresenhamInterpolator.Inc;
@@ -319,18 +319,18 @@ begin
   Result := FInc;
 end;
 
-procedure TAggLineBresenhamInterpolator.Hstep;
+procedure TAggLineBresenhamInterpolator.HStep;
 begin
   FInterpolator.PlusOperator;
 
-  FLowResolution.X1 := FLowResolution.X1 + FInc;
+  FLowResolution.x1 := FLowResolution.x1 + FInc;
 end;
 
 procedure TAggLineBresenhamInterpolator.Vstep;
 begin
   FInterpolator.PlusOperator;
 
-  FLowResolution.Y1 := FLowResolution.Y1 + FInc;
+  FLowResolution.y1 := FLowResolution.y1 + FInc;
 end;
 
 function TAggLineBresenhamInterpolator.GetX2: Integer;
@@ -353,4 +353,4 @@ begin
   Result := FInterpolator.Y;
 end;
 
-end.
+end. 

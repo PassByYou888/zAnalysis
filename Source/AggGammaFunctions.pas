@@ -39,7 +39,7 @@ unit AggGammaFunctions;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -94,7 +94,7 @@ type
     FMul: Double;
   public
     constructor Create; overload;
-    constructor Create(V: Double); overload;
+    constructor Create(v: Double); overload;
 
     function FuncOperatorGamma(X: Double): Double; override;
 
@@ -184,9 +184,9 @@ begin
   FMul := 1.0;
 end;
 
-constructor TAggGammaMultiply.Create(V: Double);
+constructor TAggGammaMultiply.Create(v: Double);
 begin
-  FMul := V;
+  FMul := v;
 end;
 
 function TAggGammaMultiply.FuncOperatorGamma;
@@ -201,4 +201,4 @@ begin
   Result := Y;
 end;
 
-end.
+end. 

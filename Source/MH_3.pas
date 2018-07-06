@@ -17,7 +17,7 @@
 
 unit MH_3;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
@@ -26,8 +26,8 @@ uses ListEngine, CoreClasses;
 procedure BeginMemoryHook; overload;
 procedure BeginMemoryHook(cacheLen: Integer); overload;
 procedure EndMemoryHook;
-function GetHookMemorySize: NativeUInt; overload;
-function GetHookMemorySize(p: Pointer): NativeUInt; overload;
+function GetHookMemorySize: nativeUInt; overload;
+function GetHookMemorySize(p: Pointer): nativeUInt; overload;
 function GetHookMemoryMinimizePtr: Pointer;
 function GetHookMemoryMaximumPtr: Pointer;
 
@@ -40,9 +40,9 @@ var
 implementation
 
 {$IFDEF FPC}
-{$I MH_fpc.inc}
+{$INCLUDE MH_fpc.inc}
 {$ELSE}
-{$I MH_delphi.inc}
+{$INCLUDE MH_delphi.inc}
 {$ENDIF}
 
 initialization
@@ -54,4 +54,4 @@ finalization
 UnInstallMemoryHook;
 
 end.
-
+ 

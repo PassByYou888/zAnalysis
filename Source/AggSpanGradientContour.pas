@@ -39,7 +39,7 @@ unit AggSpanGradientContour;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -57,10 +57,10 @@ uses
   AggRendererBase,
   AggRendererScanLine,
   AggRendererPrimitives,
-  AggRenderScanLines,
+  AggRenderScanlines,
   AggRasterizerOutline,
   AggRasterizerScanLineAA,
-  AggScanLine,
+  AggScanline,
   AggScanlineUnpacked,
   AggPixelFormat,
   AggPixelFormatGray;
@@ -81,22 +81,22 @@ type
 
     procedure SetFrame(F: Integer); overload;
 
-    function Calculate(X, Y, D: Integer): Integer; override;
+    function Calculate(X, Y, d: Integer): Integer; override;
 
-    procedure SetD1(D: Double);
-    procedure SetD2(D: Double);
+    procedure SetD1(d: Double);
+    procedure SetD2(d: Double);
   public
     constructor Create(AD1: Double = 0; AD2: Double = 100);
     destructor Destroy; override;
 
-    function ContourCreate(Ps: TAggPathStorage): Pointer;
+    function ContourCreate(ps: TAggPathStorage): Pointer;
 
-    property Frame: Integer read FFrame write SetFrame;
+    property frame: Integer read FFrame write SetFrame;
     property ContourWidth: Integer read FWidth;
     property ContourHeight: Integer read FHeight;
 
-    property D1: Double read FD1 write SetD1;
-    property D2: Double read FD2 write SetD2;
+    property d1: Double read FD1 write SetD1;
+    property d2: Double read FD2 write SetD2;
   end;
 
 implementation
@@ -131,118 +131,118 @@ begin
 end;
 
 // DT algorithm by: Pedro Felzenszwalb
-procedure Dt(Spanf, Spang, Spanr: PAggSingleArray; Spann: PAggIntArray;
-  Length: Integer);
+procedure dt(Spanf, Spang, Spanr: PAggSingleArray; Spann: PAggIntArray;
+  length: Integer);
 var
-  K, Q: Integer;
-  S: Single;
+  k, q: Integer;
+  s: Single;
 begin
-  K := 0;
+  k := 0;
 
   Spann[0] := 0;
   Spang[0] := -CInfinity;
   Spang[1] := +CInfinity;
 
-  Q := 1;
+  q := 1;
 
-  while Q <= Length - 1 do
+  while q <= length - 1 do
     begin
-      S := ((Spanf[Q] + Square(Q)) - (Spanf[Spann[K]] + Square(Spann[K]))) /
-        (2 * Q - 2 * Spann[K]);
+      s := ((Spanf[q] + Square(q)) - (Spanf[Spann[k]] + Square(Spann[k]))) /
+        (2 * q - 2 * Spann[k]);
 
-      while S <= Spang[K] do
+      while s <= Spang[k] do
         begin
-          Dec(K);
+          Dec(k);
 
-          S := ((Spanf[Q] + Square(Q)) - (Spanf[Spann[K]] + Square(Spann[K]))) /
-            (2 * Q - 2 * Spann[K]);
+          s := ((Spanf[q] + Square(q)) - (Spanf[Spann[k]] + Square(Spann[k]))) /
+            (2 * q - 2 * Spann[k]);
         end;
 
-      Inc(K);
+      Inc(k);
 
-      Spann[K] := Q;
-      Spang[K] := S;
+      Spann[k] := q;
+      Spang[k] := s;
 
-      Spang[K + 1] := +CInfinity;
+      Spang[k + 1] := +CInfinity;
 
-      Inc(Q);
+      Inc(q);
     end;
 
-  K := 0;
-  Q := 0;
+  k := 0;
+  q := 0;
 
-  while Q <= Length - 1 do
+  while q <= length - 1 do
     begin
-      while Spang[K + 1] < Q do
-          Inc(K);
+      while Spang[k + 1] < q do
+          Inc(k);
 
-      Spanr[Q] := Square(Q - Spann[K]) + Spanf[Spann[K]];
+      Spanr[q] := Square(q - Spann[k]) + Spanf[Spann[k]];
 
-      Inc(Q);
+      Inc(q);
     end;
 end;
 
-function TAggGradientContour.ContourCreate(Ps: TAggPathStorage): Pointer;
+function TAggGradientContour.ContourCreate(ps: TAggPathStorage): Pointer;
 var
-  Rb: TAggRenderingBuffer;
-  Pf: TAggPixelFormatProcessor;
+  rb: TAggRenderingBuffer;
+  pf: TAggPixelFormatProcessor;
 
   Ras: TAggRasterizerOutline;
   Mtx: TAggTransAffine;
 
-  Rgba: TAggColor;
+  RGBA: TAggColor;
   Renb: TAggRendererBase;
   Prim: TAggRendererPrimitives;
-  Conv: TAggConvCurve;
+  conv: TAggConvCurve;
 
   Trans: TAggConvTransform;
 
   Min, Max, Scale: Single;
 
-  X1, Y1, X2, Y2: Double;
-  Width, Height, Length, Fcx, Fcy: Integer;
-  Buffer, Image: Pointer;
+  x1, y1, x2, y2: Double;
+  width, height, length, Fcx, Fcy: Integer;
+  buffer, Image: Pointer;
   Src: PInt8u;
-  Dst, Im, Spanf, Spang, Spanr: PSingle;
+  Dst, IM, Spanf, Spang, Spanr: PSingle;
   Spann: PInteger;
 begin
   Result := nil;
-  Buffer := nil;
+  buffer := nil;
 
-  if Ps <> nil then
+  if ps <> nil then
     begin
       { I. Render Black And White NonAA Stroke of the Path }
       { Path Bounding Box + Some GetFrame Space Around [configurable] }
-      Conv := TAggConvCurve.Create(Ps);
+      conv := TAggConvCurve.Create(ps);
       try
-        if BoundingRectSingle(Conv, 0, @X1, @Y1, @X2, @Y2) then
+        if BoundingRectSingle(conv, 0, @x1, @y1, @x2, @y2) then
           begin
             { Create BW Rendering Surface }
-            Width := Ceil(X2 - X1) + FFrame * 2 + 1;
-            Height := Ceil(Y2 - Y1) + FFrame * 2 + 1;
+            width := Ceil(x2 - x1) + FFrame * 2 + 1;
+            height := Ceil(y2 - y1) + FFrame * 2 + 1;
 
-            if AggGetMem(Buffer, Width * Height) then
+            if AggGetMem(buffer, width * height) then
               begin
-                FillChar(Buffer^, Width * Height, 255);
+                FillChar(buffer^, width * height, 255);
 
                 { Setup VG Engine & Render }
-                Rb := TAggRenderingBuffer.Create;
-                Rb.Attach(Buffer, Width, Height, Width);
+                rb := TAggRenderingBuffer.Create;
+                rb.Attach(buffer, width, height, width);
 
-                PixelFormatGray8(Pf, Rb);
+                PixelFormatGray8(pf, rb);
 
-                Renb := TAggRendererBase.Create(Pf, True);
+                Renb := TAggRendererBase.Create(pf, True);
                 Prim := TAggRendererPrimitives.Create(Renb);
                 Ras := TAggRasterizerOutline.Create(Prim);
                 try
                   Mtx := TAggTransAffine.Create;
                   try
-                    Mtx.Translate(FFrame - X1, FFrame - Y1);
+                    Mtx.Translate(FFrame - x1, FFrame - y1);
 
-                    Trans := TAggConvTransform.Create(Conv, Mtx);
+                    Trans := TAggConvTransform.Create(conv, Mtx);
                     try
-                      Rgba.Black;
-                      Prim.LineColor := Rgba;
+                      RGBA.Black;
+                      Prim.LineColor := RGBA;
                       Ras.AddPath(Trans);
                     finally
                         Trans.Free;
@@ -250,7 +250,7 @@ begin
                   finally
                       Mtx.Free;
                   end;
-                  Rb.Free;
+                  rb.Free;
                 finally
                   Ras.Free;
                   Prim.Free;
@@ -259,13 +259,13 @@ begin
 
                 { II. Distance Transform }
                 { Create Float Buffer + 0 vs CInfinity (1e20) assignment }
-                if AggGetMem(Image, Width * Height * SizeOf(Single)) then
+                if AggGetMem(Image, width * height * SizeOf(Single)) then
                   begin
-                    Src := Buffer;
+                    Src := buffer;
                     Dst := Image;
 
-                    for Fcy := 0 to Height - 1 do
-                      for Fcx := 0 to Width - 1 do
+                    for Fcy := 0 to height - 1 do
+                      for Fcx := 0 to width - 1 do
                         begin
                           if Src^ = 0 then
                               Dst^ := 0
@@ -278,78 +278,78 @@ begin
 
                     { DT of 2d }
                     { SubBuff<float> max width,height }
-                    Length := Width;
+                    length := width;
 
-                    if Height > Length then
-                        Length := Height;
+                    if height > length then
+                        length := height;
 
                     Spanf := nil;
                     Spang := nil;
                     Spanr := nil;
                     Spann := nil;
 
-                    if AggGetMem(Pointer(Spanf), Length * SizeOf(Single)) and
-                      AggGetMem(Pointer(Spang), (Length + 1) * SizeOf(Single)) and
-                      AggGetMem(Pointer(Spanr), Length * SizeOf(Single)) and
-                      AggGetMem(Pointer(Spann), Length * SizeOf(Integer)) then
+                    if AggGetMem(Pointer(Spanf), length * SizeOf(Single)) and
+                      AggGetMem(Pointer(Spang), (length + 1) * SizeOf(Single)) and
+                      AggGetMem(Pointer(Spanr), length * SizeOf(Single)) and
+                      AggGetMem(Pointer(Spann), length * SizeOf(Integer)) then
                       begin
                         { Transform along columns }
-                        for Fcx := 0 to Width - 1 do
+                        for Fcx := 0 to width - 1 do
                           begin
-                            Im := Pointer(PtrComp(Image) + Fcx * SizeOf(Single));
+                            IM := Pointer(PtrComp(Image) + Fcx * SizeOf(Single));
                             Dst := Spanf;
 
-                            for Fcy := 0 to Height - 1 do
+                            for Fcy := 0 to height - 1 do
                               begin
-                                Dst^ := Im^;
+                                Dst^ := IM^;
 
                                 Inc(PtrComp(Dst), SizeOf(Single));
-                                Inc(PtrComp(Im), Width * SizeOf(Single));
+                                Inc(PtrComp(IM), width * SizeOf(Single));
                               end;
 
                             { DT of 1d }
-                            Dt(Pointer(Spanf), Pointer(Spang), Pointer(Spanr),
-                              Pointer(Spann), Height);
+                            dt(Pointer(Spanf), Pointer(Spang), Pointer(Spanr),
+                              Pointer(Spann), height);
 
-                            Im := Pointer(PtrComp(Image) + Fcx * SizeOf(Single));
+                            IM := Pointer(PtrComp(Image) + Fcx * SizeOf(Single));
                             Dst := Spanr;
 
-                            for Fcy := 0 to Height - 1 do
+                            for Fcy := 0 to height - 1 do
                               begin
-                                Im^ := Dst^;
+                                IM^ := Dst^;
 
                                 Inc(PtrComp(Dst), SizeOf(Single));
-                                Inc(PtrComp(Im), Width * SizeOf(Single));
+                                Inc(PtrComp(IM), width * SizeOf(Single));
                               end;
                           end;
 
                         { Transform along rows }
-                        for Fcy := 0 to Height - 1 do
+                        for Fcy := 0 to height - 1 do
                           begin
-                            Im := Pointer(PtrComp(Image) + Fcy * Width * SizeOf(Single));
+                            IM := Pointer(PtrComp(Image) + Fcy * width * SizeOf(Single));
                             Dst := Spanf;
 
-                            for Fcx := 0 to Width - 1 do
+                            for Fcx := 0 to width - 1 do
                               begin
-                                Dst^ := Im^;
+                                Dst^ := IM^;
 
                                 Inc(PtrComp(Dst), SizeOf(Single));
-                                Inc(PtrComp(Im), SizeOf(Single));
+                                Inc(PtrComp(IM), SizeOf(Single));
                               end;
 
                             { DT of 1d }
-                            Dt(Pointer(Spanf), Pointer(Spang), Pointer(Spanr),
-                              Pointer(Spann), Width);
+                            dt(Pointer(Spanf), Pointer(Spang), Pointer(Spanr),
+                              Pointer(Spann), width);
 
-                            Im := Pointer(PtrComp(Image) + Fcy * Width * SizeOf(Single));
+                            IM := Pointer(PtrComp(Image) + Fcy * width * SizeOf(Single));
                             Dst := Spanr;
 
-                            for Fcx := 0 to Width - 1 do
+                            for Fcx := 0 to width - 1 do
                               begin
-                                Im^ := Dst^;
+                                IM^ := Dst^;
 
                                 Inc(PtrComp(Dst), SizeOf(Single));
-                                Inc(PtrComp(Im), SizeOf(Single));
+                                Inc(PtrComp(IM), SizeOf(Single));
                               end;
                           end;
 
@@ -358,8 +358,8 @@ begin
                         Min := Sqrt(Dst^);
                         Max := Min;
 
-                        for Fcy := 0 to Height - 1 do
-                          for Fcx := 0 to Width - 1 do
+                        for Fcy := 0 to height - 1 do
+                          for Fcx := 0 to width - 1 do
                             begin
                               Dst^ := Sqrt(Dst^);
 
@@ -374,16 +374,16 @@ begin
 
                         { III. Convert To Grayscale }
                         if Min = Max then
-                            FillChar(Buffer^, Width * Height, 0)
+                            FillChar(buffer^, width * height, 0)
                         else
                           begin
                             Scale := 255 / (Max - Min);
 
-                            Src := Buffer;
+                            Src := buffer;
                             Dst := Image;
 
-                            for Fcy := 0 to Height - 1 do
-                              for Fcx := 0 to Width - 1 do
+                            for Fcy := 0 to height - 1 do
+                              for Fcx := 0 to width - 1 do
                                 begin
                                   Src^ := Int8u(Trunc((Dst^ - Min) * Scale));
 
@@ -396,47 +396,47 @@ begin
                         if FBuffer <> nil then
                             AggFreeMem(FBuffer, FWidth * FHeight);
 
-                        FBuffer := Buffer;
-                        FWidth := Width;
-                        FHeight := Height;
+                        FBuffer := buffer;
+                        FWidth := width;
+                        FHeight := height;
 
-                        Buffer := nil;
+                        buffer := nil;
                         Result := FBuffer;
                       end;
 
                     if Spanf <> nil then
-                        AggFreeMem(Pointer(Spanf), Length * SizeOf(Single));
+                        AggFreeMem(Pointer(Spanf), length * SizeOf(Single));
 
                     if Spang <> nil then
-                        AggFreeMem(Pointer(Spang), (Length + 1) * SizeOf(Single));
+                        AggFreeMem(Pointer(Spang), (length + 1) * SizeOf(Single));
 
                     if Spanr <> nil then
-                        AggFreeMem(Pointer(Spanr), Length * SizeOf(Single));
+                        AggFreeMem(Pointer(Spanr), length * SizeOf(Single));
 
                     if Spann <> nil then
-                        AggFreeMem(Pointer(Spann), Length * SizeOf(Integer));
+                        AggFreeMem(Pointer(Spann), length * SizeOf(Integer));
 
-                    AggFreeMem(Image, Width * Height * SizeOf(Single));
+                    AggFreeMem(Image, width * height * SizeOf(Single));
                   end;
               end;
           end;
       finally
-          Conv.Free;
+          conv.Free;
       end;
 
-      if Buffer <> nil then
-          AggFreeMem(Buffer, Width * Height);
+      if buffer <> nil then
+          AggFreeMem(buffer, width * height);
     end;
 end;
 
-procedure TAggGradientContour.SetD1(D: Double);
+procedure TAggGradientContour.SetD1(d: Double);
 begin
-  FD1 := D;
+  FD1 := d;
 end;
 
-procedure TAggGradientContour.SetD2(D: Double);
+procedure TAggGradientContour.SetD2(d: Double);
 begin
-  FD2 := D;
+  FD2 := d;
 end;
 
 procedure TAggGradientContour.SetFrame(F: Integer);
@@ -444,7 +444,7 @@ begin
   FFrame := F;
 end;
 
-function TAggGradientContour.Calculate(X, Y, D: Integer): Integer;
+function TAggGradientContour.Calculate(X, Y, d: Integer): Integer;
 var
   Px, Py: Integer;
   Pixel: PInt8u;
@@ -471,4 +471,4 @@ begin
       Result := 0;
 end;
 
-end.
+end. 

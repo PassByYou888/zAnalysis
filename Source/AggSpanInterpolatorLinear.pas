@@ -39,7 +39,7 @@ unit AggSpanInterpolatorLinear;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -58,7 +58,7 @@ type
 
     procedure SetBegin(X, Y: Double; Len: Cardinal); virtual; abstract;
 
-    procedure Resynchronize(Xe, Ye: Double; Len: Cardinal); virtual; abstract;
+    procedure Resynchronize(XE, Ye: Double; Len: Cardinal); virtual; abstract;
 
     procedure IncOperator; virtual; abstract;
     procedure Coordinates(X, Y: PInteger); overload; virtual; abstract;
@@ -84,7 +84,7 @@ type
 
     procedure SetBegin(X, Y: Double; Len: Cardinal); override;
 
-    procedure Resynchronize(Xe, Ye: Double; Len: Cardinal); override;
+    procedure Resynchronize(XE, Ye: Double; Len: Cardinal); override;
 
     procedure IncOperator; override;
     procedure Coordinates(X, Y: PInteger); override;
@@ -100,7 +100,7 @@ type
 
     FSourceX: Integer;
     FSourceY: Double;
-    FPos, FLength: Cardinal;
+    fPos, FLength: Cardinal;
 
     procedure SetSubdivShift(Shift: Cardinal);
   protected
@@ -175,34 +175,34 @@ end;
 
 procedure TAggSpanInterpolatorLinear.SetBegin(X, Y: Double; Len: Cardinal);
 var
-  Tx, Ty: Double;
-  X1, Y1, X2, Y2: Integer;
+  TX, TY: Double;
+  x1, y1, x2, y2: Integer;
 begin
-  Tx := X;
-  Ty := Y;
+  TX := X;
+  TY := Y;
 
-  FTrans.Transform(FTrans, @Tx, @Ty);
+  FTrans.Transform(FTrans, @TX, @TY);
 
-  X1 := Trunc(Tx * FSubpixelSize);
-  Y1 := Trunc(Ty * FSubpixelSize);
+  x1 := Trunc(TX * FSubpixelSize);
+  y1 := Trunc(TY * FSubpixelSize);
 
-  Tx := X + Len;
-  Ty := Y;
+  TX := X + Len;
+  TY := Y;
 
-  FTrans.Transform(FTrans, @Tx, @Ty);
+  FTrans.Transform(FTrans, @TX, @TY);
 
-  X2 := Trunc(Tx * FSubpixelSize);
-  Y2 := Trunc(Ty * FSubpixelSize);
+  x2 := Trunc(TX * FSubpixelSize);
+  y2 := Trunc(TY * FSubpixelSize);
 
-  FLineInterpolatorX.Initialize(X1, X2, Len);
-  FLineInterpolatorY.Initialize(Y1, Y2, Len);
+  FLineInterpolatorX.Initialize(x1, x2, Len);
+  FLineInterpolatorY.Initialize(y1, y2, Len);
 end;
 
 procedure TAggSpanInterpolatorLinear.Resynchronize;
 begin
-  FTrans.Transform(FTrans, @Xe, @Ye);
+  FTrans.Transform(FTrans, @XE, @Ye);
 
-  FLineInterpolatorX.Initialize(FLineInterpolatorX.Y, Trunc(Xe * FSubpixelSize), Len);
+  FLineInterpolatorX.Initialize(FLineInterpolatorX.Y, Trunc(XE * FSubpixelSize), Len);
   FLineInterpolatorY.Initialize(FLineInterpolatorY.Y, Trunc(Ye * FSubpixelSize), Len);
 end;
 
@@ -274,10 +274,10 @@ end;
 
 procedure TAggSpanInterpolatorLinearSubdiv.SetBegin;
 var
-  Tx, Ty: Double;
-  X1, Y1: Integer;
+  TX, TY: Double;
+  x1, y1: Integer;
 begin
-  FPos := 1;
+  fPos := 1;
   FSourceX := Trunc(X * FSubpixelSize) + FSubpixelSize;
   FSourceY := Y;
   FLength := Len;
@@ -285,51 +285,51 @@ begin
   if Len > FSubdivSize then
       Len := FSubdivSize;
 
-  Tx := X;
-  Ty := Y;
+  TX := X;
+  TY := Y;
 
-  FTrans.Transform(FTrans, @Tx, @Ty);
+  FTrans.Transform(FTrans, @TX, @TY);
 
-  X1 := Trunc(Tx * FSubpixelSize);
-  Y1 := Trunc(Ty * FSubpixelSize);
+  x1 := Trunc(TX * FSubpixelSize);
+  y1 := Trunc(TY * FSubpixelSize);
 
-  Tx := X + Len;
-  Ty := Y;
+  TX := X + Len;
+  TY := Y;
 
-  FTrans.Transform(FTrans, @Tx, @Ty);
+  FTrans.Transform(FTrans, @TX, @TY);
 
-  FLineInterpolatorX.Initialize(X1, Trunc(Tx * FSubpixelSize), Len);
-  FLineInterpolatorY.Initialize(Y1, Trunc(Ty * FSubpixelSize), Len);
+  FLineInterpolatorX.Initialize(x1, Trunc(TX * FSubpixelSize), Len);
+  FLineInterpolatorY.Initialize(y1, Trunc(TY * FSubpixelSize), Len);
 end;
 
 procedure TAggSpanInterpolatorLinearSubdiv.IncOperator;
 var
-  Tx, Ty: Double;
+  TX, TY: Double;
   Len: Cardinal;
 begin
   FLineInterpolatorX.PlusOperator;
   FLineInterpolatorY.PlusOperator;
 
-  if FPos >= FSubdivSize then
+  if fPos >= FSubdivSize then
     begin
       Len := FLength;
 
       if Len > FSubdivSize then
           Len := FSubdivSize;
 
-      Tx := FSourceX / FSubpixelSize + Len;
-      Ty := FSourceY;
+      TX := FSourceX / FSubpixelSize + Len;
+      TY := FSourceY;
 
-      FTrans.Transform(FTrans, @Tx, @Ty);
+      FTrans.Transform(FTrans, @TX, @TY);
 
-      FLineInterpolatorX.Initialize(FLineInterpolatorX.Y, Trunc(Tx * FSubpixelSize), Len);
-      FLineInterpolatorY.Initialize(FLineInterpolatorY.Y, Trunc(Ty * FSubpixelSize), Len);
+      FLineInterpolatorX.Initialize(FLineInterpolatorX.Y, Trunc(TX * FSubpixelSize), Len);
+      FLineInterpolatorY.Initialize(FLineInterpolatorY.Y, Trunc(TY * FSubpixelSize), Len);
 
-      FPos := 0;
+      fPos := 0;
     end;
 
   Inc(FSourceX, FSubpixelSize);
-  Inc(FPos);
+  Inc(fPos);
   Dec(FLength);
 end;
 
@@ -345,4 +345,4 @@ begin
   Y := FLineInterpolatorY.Y;
 end;
 
-end.
+end. 

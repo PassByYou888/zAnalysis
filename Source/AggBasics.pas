@@ -37,14 +37,14 @@
 *)
 unit AggBasics;
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 interface
 
 type
   Int8    = ShortInt;
   Int8u   = Byte;
-  Int16   = Smallint;
+  Int16   = SmallInt;
   Int16u  = Word;
   Int32   = Integer;
   Int32u  = Cardinal;
@@ -77,7 +77,7 @@ type
   end;
 
   TInt32Int8uAccess = packed record
-    Values: array [0 .. 3] of Int8u;
+    values: array [0 .. 3] of Int8u;
   end;
 
   TInt32uAccess = packed record
@@ -100,7 +100,7 @@ type
     sizes. If you allocate records with fixed sizes, and not with new or with
     getmem (<x>,SizeOf(<x>)), this will have to be fixed. }
   // Pascal Pointer Computation Type
-  PtrComp = NativeUInt;
+  PtrComp = nativeUInt;
 
   // Pascal's pointer-in-an-array-access helper structures
   PPointer32 = ^TPointer32;
@@ -108,7 +108,7 @@ type
   TPointer32 = packed record
     case Integer of
       1: (PTR: Pointer);
-      2: (Int: NativeUInt);
+      2: (Int: nativeUInt);
   end;
 
   PPDouble = ^PDouble;
@@ -142,7 +142,7 @@ type
     function GetDir(Value: Cardinal): Cardinal; virtual; abstract;
     function GetInv(Value: Cardinal): Cardinal; virtual; abstract;
   public
-    property Dir[Value: Cardinal]: Cardinal read GetDir;
+    property dir[Value: Cardinal]: Cardinal read GetDir;
     property Inv[Value: Cardinal]: Cardinal read GetInv;
   end;
 
@@ -186,8 +186,8 @@ const
   CAggPathFlagsClose = $40;
   CAggPathFlagsMask  = $F0;
 
-  CDeg2Rad: Double = Pi / 180;
-  CRad2Deg: Double = 180 / Pi;
+  CDeg2Rad: Double = pi / 180;
+  CRad2Deg: Double = 180 / pi;
 
 type
   PPointDouble = ^TPointDouble;
@@ -216,7 +216,7 @@ type
     function GetHeight: Integer;
   public
 {$IFNDEF FPC}
-    constructor Create(X1, Y1, X2, Y2: Integer); overload;
+    constructor Create(x1, y1, x2, y2: Integer); overload;
     constructor Create(Rect: TRectInteger); overload;
 {$ENDIF}
     class operator Equal(const Lhs, Rhs: TRectInteger): Boolean;
@@ -229,12 +229,12 @@ type
     function Clip(var Rect: TRectInteger): Boolean;
     function IsValid: Boolean;
 
-    property Width: Integer read GetWidth;
-    property Height: Integer read GetHeight;
+    property width: Integer read GetWidth;
+    property height: Integer read GetHeight;
 
     case Integer of
-      0: (X1, Y1, X2, Y2: Integer);
-      1: (Values: array [0 .. 3] of Integer);
+      0: (x1, y1, x2, y2: Integer);
+      1: (values: array [0 .. 3] of Integer);
       2: (Point1, Point2: TPointInteger);
       3: (Points: array [0 .. 1] of TPointInteger);
   end;
@@ -247,7 +247,7 @@ type
     function GetCenterY: Double;
   public
 {$IFNDEF FPC}
-    constructor Create(X1, Y1, X2, Y2: Double); overload;
+    constructor Create(x1, y1, x2, y2: Double); overload;
     constructor Create(Rect: TRectDouble); overload;
 {$ENDIF}
     // operator overloads
@@ -268,8 +268,8 @@ type
     property CenterX: Double read GetCenterX;
     property CenterY: Double read GetCenterY;
     case Integer of
-      0: (X1, Y1, X2, Y2: Double);
-      1: (Values: array [0 .. 3] of Double);
+      0: (x1, y1, x2, y2: Double);
+      1: (values: array [0 .. 3] of Double);
       2: (Point1, Point2: TPointDouble);
       3: (Points: array [0 .. 1] of TPointDouble);
   end;
@@ -278,7 +278,7 @@ type
 
   TQuadDouble = packed record
     case Integer of
-      0: (Values: array [0 .. 7] of Double);
+      0: (values: array [0 .. 7] of Double);
       1: (Points: array [0 .. 3] of TPointDouble);
   end;
 
@@ -289,53 +289,53 @@ type
 
   TCardinalList = class
   protected
-    function GetItem(Index: Cardinal): Cardinal; virtual; abstract;
+    function GetItem(index: Cardinal): Cardinal; virtual; abstract;
   public
     property Item[index: Cardinal]: Cardinal read GetItem; default;
   end;
 
-function AggGetMem(out Buf: Pointer; Sz: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AggFreeMem(var Buf: Pointer; Sz: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AggGetMem(out Buf: Pointer; SZ: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AggFreeMem(var Buf: Pointer; SZ: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function Deg2Rad(Deg: Double): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function Rad2Deg(Rad: Double): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function IntersectRectangles(const R1, R2: TRectInteger): TRectInteger;
-function IntersectRectanglesDouble(const R1, R2: TRectDouble): TRectDouble;
+function IntersectRectangles(const r1, r2: TRectInteger): TRectInteger;
+function IntersectRectanglesDouble(const r1, r2: TRectDouble): TRectDouble;
 
-function UniteRectangles(const R1, R2: TRectInteger): TRectInteger;
-function UniteRectanglesDouble(const R1, R2: TRectDouble): TRectDouble;
+function UniteRectangles(const r1, r2: TRectInteger): TRectInteger;
+function UniteRectanglesDouble(const r1, r2: TRectDouble): TRectDouble;
 
-function IsVertex(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsDrawing(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsStop(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsMove(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsLineTo(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsMoveTo(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsCurve(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsCurve3(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsCurve4(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsEndPoly(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsClose(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsNextPoly(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsClockwise(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsCounterClockwise(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsOriented(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IsClosed(CX: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsVertex(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsDrawing(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsStop(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsMove(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsLineTo(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsMoveTo(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsCurve(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsCurve3(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsCurve4(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsEndPoly(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsClose(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsNextPoly(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsClockwise(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsCounterClockwise(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsOriented(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsClosed(Cx: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function GetCloseFlag(CX: Cardinal): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ClearOrientation(CX: Cardinal): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function GetOrientation(CX: Cardinal): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SetOrientation(CX, O: Cardinal): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function GetCloseFlag(Cx: Cardinal): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ClearOrientation(Cx: Cardinal): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function GetOrientation(Cx: Cardinal): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SetOrientation(Cx, O: Cardinal): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure SwapPointers(A, B: Pointer); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IntToDouble(I: Integer): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SwapPointers(A, b: Pointer); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IntToDouble(i: Integer): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function RandomMinMax(Min, Max: Double): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function RectInteger(X1, Y1, X2, Y2: Integer): TRectInteger; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RectInteger(x1, y1, x2, y2: Integer): TRectInteger; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function RectInteger(Point1, Point2: TPointInteger): TRectInteger; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RectDouble(X1, Y1, X2, Y2: Double): TRectDouble; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RectDouble(x1, y1, x2, y2: Double): TRectDouble; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function RectDouble(Point1, Point2: TPointDouble): TRectDouble; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function PointInteger(X, Y: Integer): TPointInteger; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -360,47 +360,42 @@ function QuadDouble(RectDouble: TRectDouble): TQuadDouble; {$IFDEF INLINE_ASM} i
 
 function EnsureRange(const Value, Min, Max: Integer): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
 function EnsureRange(const Value, Min, Max: Double): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
-function UnsignedRound(V: Double): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IntegerRound(V: Double): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function UnsignedRound(v: Double): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IntegerRound(v: Double): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function SaturationIntegerRound(Limit: Integer; V: Double): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
-// NoP = No Operation. It's the empty function, whose purpose is only for the
-// debugging, or for the piece of code where intentionaly nothing is planned
-// to be.
-procedure NoP;
+function SaturationIntegerRound(Limit: Integer; v: Double): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 // SHR for signed integers is differently implemented in pascal compilers
 // than in C++ compilers. On the assembler level, C++ is using the SAR and
 // pascal is using SHR. That gives completely different Result, when the
 // number is negative. We have to be compatible with C++ implementation,
 // thus instead of directly using SHR we emulate C++ solution.
-function ShrInt8(I, Shift: Int8): Int8; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ShrInt16(I, Shift: Int16): Int16; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ShrInt32(I, Shift: Integer): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ShrInt8(i, Shift: Int8): Int8; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ShrInt16(i, Shift: Int16): Int16; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ShrInt32(i, Shift: Integer): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 procedure Fill32Bit(var X; Count: Cardinal; var Value);
 
 implementation
 
-function AggGetMem(out Buf: Pointer; Sz: Cardinal): Boolean;
+function AggGetMem(out Buf: Pointer; SZ: Cardinal): Boolean;
 begin
   Result := False;
   try
-    GetMem(Buf, Sz);
+    GetMem(Buf, SZ);
     Result := True;
   except
       Buf := nil;
   end;
 end;
 
-function AggFreeMem(var Buf: Pointer; Sz: Cardinal): Boolean;
+function AggFreeMem(var Buf: Pointer; SZ: Cardinal): Boolean;
 begin
   if Buf = nil then
       Result := True
   else
     try
-      FreeMem(Buf, Sz);
+      FreeMem(Buf, SZ);
       Buf := nil;
       Result := True;
     except
@@ -447,20 +442,20 @@ end;
 {$IFNDEF FPC}
 
 
-constructor TRectInteger.Create(X1, Y1, X2, Y2: Integer);
+constructor TRectInteger.Create(x1, y1, x2, y2: Integer);
 begin
-  Self.X1 := X1;
-  Self.Y1 := Y1;
-  Self.X2 := X2;
-  Self.Y2 := Y2;
+  Self.x1 := x1;
+  Self.y1 := y1;
+  Self.x2 := x2;
+  Self.y2 := y2;
 end;
 
 constructor TRectInteger.Create(Rect: TRectInteger);
 begin
-  Self.X1 := Rect.X1;
-  Self.Y1 := Rect.Y1;
-  Self.X2 := Rect.X2;
-  Self.Y2 := Rect.Y2;
+  Self.x1 := Rect.x1;
+  Self.y1 := Rect.y1;
+  Self.x2 := Rect.x2;
+  Self.y2 := Rect.y2;
 end;
 {$ENDIF}
 
@@ -477,18 +472,18 @@ end;
 
 class operator TRectInteger.Add(const Lhs, Rhs: TRectInteger): TRectInteger;
 begin
-  Result.X1 := Lhs.X1 + Rhs.X1;
-  Result.Y1 := Lhs.Y1 + Rhs.Y1;
-  Result.X2 := Lhs.X2 + Rhs.X2;
-  Result.Y2 := Lhs.Y2 + Rhs.Y2;
+  Result.x1 := Lhs.x1 + Rhs.x1;
+  Result.y1 := Lhs.y1 + Rhs.y1;
+  Result.x2 := Lhs.x2 + Rhs.x2;
+  Result.y2 := Lhs.y2 + Rhs.y2;
 end;
 
 class operator TRectInteger.Subtract(const Lhs, Rhs: TRectInteger): TRectInteger;
 begin
-  Result.X1 := Lhs.X1 - Rhs.X1;
-  Result.Y1 := Lhs.Y1 - Rhs.Y1;
-  Result.X2 := Lhs.X2 - Rhs.X2;
-  Result.Y2 := Lhs.Y2 - Rhs.Y2;
+  Result.x1 := Lhs.x1 - Rhs.x1;
+  Result.y1 := Lhs.y1 - Rhs.y1;
+  Result.x2 := Lhs.x2 - Rhs.x2;
+  Result.y2 := Lhs.y2 - Rhs.y2;
 end;
 
 class function TRectInteger.Zero: TRectInteger;
@@ -498,42 +493,42 @@ end;
 
 function TRectInteger.Clip(var Rect: TRectInteger): Boolean;
 begin
-  if X2 > Rect.X2 then
-      X2 := Rect.X2;
+  if x2 > Rect.x2 then
+      x2 := Rect.x2;
 
-  if Y2 > Rect.Y2 then
-      Y2 := Rect.Y2;
+  if y2 > Rect.y2 then
+      y2 := Rect.y2;
 
-  if X1 < Rect.X1 then
-      X1 := Rect.X1;
+  if x1 < Rect.x1 then
+      x1 := Rect.x1;
 
-  if Y1 < Rect.Y1 then
-      Y1 := Rect.Y1;
+  if y1 < Rect.y1 then
+      y1 := Rect.y1;
 
-  Result := (X1 <= X2) and (Y1 <= Y2);
+  Result := (x1 <= x2) and (y1 <= y2);
 end;
 
 function TRectInteger.IsValid: Boolean;
 begin
-  Result := (X1 <= X2) and (Y1 <= Y2);
+  Result := (x1 <= x2) and (y1 <= y2);
 end;
 
 procedure TRectInteger.Normalize;
 var
   T: Integer;
 begin
-  if X1 > X2 then
+  if x1 > x2 then
     begin
-      T := X1;
-      X1 := X2;
-      X2 := T;
+      T := x1;
+      x1 := x2;
+      x2 := T;
     end;
 
-  if Y1 > Y2 then
+  if y1 > y2 then
     begin
-      T := Y1;
-      Y1 := Y2;
-      Y2 := T;
+      T := y1;
+      y1 := y2;
+      y2 := T;
     end;
 end;
 
@@ -542,60 +537,60 @@ end;
 {$IFNDEF FPC}
 
 
-constructor TRectDouble.Create(X1, Y1, X2, Y2: Double);
+constructor TRectDouble.Create(x1, y1, x2, y2: Double);
 begin
-  Self.X1 := X1;
-  Self.Y1 := Y1;
-  Self.X2 := X2;
-  Self.Y2 := Y2;
+  Self.x1 := x1;
+  Self.y1 := y1;
+  Self.x2 := x2;
+  Self.y2 := y2;
 end;
 
 constructor TRectDouble.Create(Rect: TRectDouble);
 begin
-  Self.X1 := Rect.X1;
-  Self.Y1 := Rect.Y1;
-  Self.X2 := Rect.X2;
-  Self.Y2 := Rect.Y2;
+  Self.x1 := Rect.x1;
+  Self.y1 := Rect.y1;
+  Self.x2 := Rect.x2;
+  Self.y2 := Rect.y2;
 end;
 {$ENDIF}
 
 
 function TRectDouble.GetCenterX: Double;
 begin
-  Result := 0.5 * (X1 + X2);
+  Result := 0.5 * (x1 + x2);
 end;
 
 function TRectDouble.GetCenterY: Double;
 begin
-  Result := 0.5 * (Y1 + Y2);
+  Result := 0.5 * (y1 + y2);
 end;
 
 function TRectInteger.GetHeight: Integer;
 begin
-  Result := Abs(X2 - X1);
+  Result := Abs(x2 - x1);
 end;
 
 function TRectInteger.GetWidth: Integer;
 begin
-  Result := Abs(Y2 - Y1);
+  Result := Abs(y2 - y1);
 end;
 
 procedure TRectDouble.Normalize;
 var
   T: Double;
 begin
-  if X1 > X2 then
+  if x1 > x2 then
     begin
-      T := X1;
-      X1 := X2;
-      X2 := T;
+      T := x1;
+      x1 := x2;
+      x2 := T;
     end;
 
-  if Y1 > Y2 then
+  if y1 > y2 then
     begin
-      T := Y1;
-      Y1 := Y2;
-      Y2 := T;
+      T := y1;
+      y1 := y2;
+      y2 := T;
     end;
 end;
 
@@ -611,10 +606,10 @@ end;
 
 class operator TRectDouble.Subtract(const Lhs, Rhs: TRectDouble): TRectDouble;
 begin
-  Result.X1 := Lhs.X1 - Rhs.X1;
-  Result.Y1 := Lhs.Y1 - Rhs.Y1;
-  Result.X2 := Lhs.X2 - Rhs.X2;
-  Result.Y2 := Lhs.Y2 - Rhs.Y2;
+  Result.x1 := Lhs.x1 - Rhs.x1;
+  Result.y1 := Lhs.y1 - Rhs.y1;
+  Result.x2 := Lhs.x2 - Rhs.x2;
+  Result.y2 := Lhs.y2 - Rhs.y2;
 end;
 
 class function TRectDouble.Zero: TRectDouble;
@@ -624,27 +619,27 @@ end;
 
 function TRectDouble.Clip(R: PRectDouble): Boolean;
 begin
-  if X2 > R.X2 then
-      X2 := R.X2;
+  if x2 > R.x2 then
+      x2 := R.x2;
 
-  if Y2 > R.Y2 then
-      Y2 := R.Y2;
+  if y2 > R.y2 then
+      y2 := R.y2;
 
-  if X1 < R.X1 then
-      X1 := R.X1;
+  if x1 < R.x1 then
+      x1 := R.x1;
 
-  if Y1 < R.Y1 then
-      Y1 := R.Y1;
+  if y1 < R.y1 then
+      y1 := R.y1;
 
-  Result := (X1 <= X2) and (Y1 <= Y2);
+  Result := (x1 <= x2) and (y1 <= y2);
 end;
 
 class operator TRectDouble.Add(const Lhs, Rhs: TRectDouble): TRectDouble;
 begin
-  Result.X1 := Lhs.X1 + Rhs.X1;
-  Result.Y1 := Lhs.Y1 + Rhs.Y1;
-  Result.X2 := Lhs.X2 + Rhs.X2;
-  Result.Y2 := Lhs.Y2 + Rhs.Y2;
+  Result.x1 := Lhs.x1 + Rhs.x1;
+  Result.y1 := Lhs.y1 + Rhs.y1;
+  Result.x2 := Lhs.x2 + Rhs.x2;
+  Result.y2 := Lhs.y2 + Rhs.y2;
 end;
 
 function TRectDouble.Clip(var R: TRectDouble): Boolean;
@@ -654,15 +649,15 @@ end;
 
 class operator TRectDouble.Implicit(const Value: TRectInteger): TRectDouble;
 begin
-  Result.X1 := Value.X1;
-  Result.Y1 := Value.Y1;
-  Result.X2 := Value.X2;
-  Result.Y2 := Value.Y2;
+  Result.x1 := Value.x1;
+  Result.y1 := Value.y1;
+  Result.x2 := Value.x2;
+  Result.y2 := Value.y2;
 end;
 
 function TRectDouble.IsValid;
 begin
-  Result := (X1 <= X2) and (Y1 <= Y2);
+  Result := (x1 <= x2) and (y1 <= y2);
 end;
 
 { TVertex }
@@ -671,18 +666,18 @@ procedure NormalizeRect(var This: TRectInteger);
 var
   T: Integer;
 begin
-  if This.X1 > This.X2 then
+  if This.x1 > This.x2 then
     begin
-      T := This.X1;
-      This.X1 := This.X2;
-      This.X2 := T;
+      T := This.x1;
+      This.x1 := This.x2;
+      This.x2 := T;
     end;
 
-  if This.Y1 > This.Y2 then
+  if This.y1 > This.y2 then
     begin
-      T := This.Y1;
-      This.Y1 := This.Y2;
-      This.Y2 := T;
+      T := This.y1;
+      This.y1 := This.y2;
+      This.y2 := T;
     end;
 end;
 
@@ -690,246 +685,246 @@ procedure NormalizeRectDouble(var This: TRectDouble);
 var
   T: Double;
 begin
-  if This.X1 > This.X2 then
+  if This.x1 > This.x2 then
     begin
-      T := This.X1;
-      This.X1 := This.X2;
-      This.X2 := T;
+      T := This.x1;
+      This.x1 := This.x2;
+      This.x2 := T;
     end;
 
-  if This.Y1 > This.Y2 then
+  if This.y1 > This.y2 then
     begin
-      T := This.Y1;
-      This.Y1 := This.Y2;
-      This.Y2 := T;
+      T := This.y1;
+      This.y1 := This.y2;
+      This.y2 := T;
     end;
 end;
 
 function ClipRect(var This: TRectInteger; R: PRectInteger): Boolean;
 begin
-  if This.X2 > R.X2 then
-      This.X2 := R.X2;
+  if This.x2 > R.x2 then
+      This.x2 := R.x2;
 
-  if This.Y2 > R.Y2 then
-      This.Y2 := R.Y2;
+  if This.y2 > R.y2 then
+      This.y2 := R.y2;
 
-  if This.X1 < R.X1 then
-      This.X1 := R.X1;
+  if This.x1 < R.x1 then
+      This.x1 := R.x1;
 
-  if This.Y1 < R.Y1 then
-      This.Y1 := R.Y1;
+  if This.y1 < R.y1 then
+      This.y1 := R.y1;
 
-  Result := (This.X1 <= This.X2) and (This.Y1 <= This.Y2);
+  Result := (This.x1 <= This.x2) and (This.y1 <= This.y2);
 end;
 
 function ClipRectDouble(var This: TRectDouble; R: PRectDouble): Boolean;
 begin
-  if This.X2 > R.X2 then
-      This.X2 := R.X2;
+  if This.x2 > R.x2 then
+      This.x2 := R.x2;
 
-  if This.Y2 > R.Y2 then
-      This.Y2 := R.Y2;
+  if This.y2 > R.y2 then
+      This.y2 := R.y2;
 
-  if This.X1 < R.X1 then
-      This.X1 := R.X1;
+  if This.x1 < R.x1 then
+      This.x1 := R.x1;
 
-  if This.Y1 < R.Y1 then
-      This.Y1 := R.Y1;
+  if This.y1 < R.y1 then
+      This.y1 := R.y1;
 
-  Result := (This.X1 <= This.X2) and (This.Y1 <= This.Y2);
+  Result := (This.x1 <= This.x2) and (This.y1 <= This.y2);
 end;
 
 function IsValidRect(var This: TRectInteger): Boolean;
 begin
-  Result := (This.X1 <= This.X2) and (This.Y1 <= This.Y2);
+  Result := (This.x1 <= This.x2) and (This.y1 <= This.y2);
 end;
 
 function IsValidRectDouble(var This: TRectDouble): Boolean;
 begin
-  Result := (This.X1 <= This.X2) and (This.Y1 <= This.Y2);
+  Result := (This.x1 <= This.x2) and (This.y1 <= This.y2);
 end;
 
-function IntersectRectangles(const R1, R2: TRectInteger): TRectInteger;
+function IntersectRectangles(const r1, r2: TRectInteger): TRectInteger;
 begin
-  Result := R1;
+  Result := r1;
 
-  if Result.X2 > R2.X2 then
-      Result.X2 := R2.X2;
+  if Result.x2 > r2.x2 then
+      Result.x2 := r2.x2;
 
-  if Result.Y2 > R2.Y2 then
-      Result.Y2 := R2.Y2;
+  if Result.y2 > r2.y2 then
+      Result.y2 := r2.y2;
 
-  if Result.X1 < R2.X1 then
-      Result.X1 := R2.X1;
+  if Result.x1 < r2.x1 then
+      Result.x1 := r2.x1;
 
-  if Result.Y1 < R2.Y1 then
-      Result.Y1 := R2.Y1;
+  if Result.y1 < r2.y1 then
+      Result.y1 := r2.y1;
 end;
 
-function IntersectRectanglesDouble(const R1, R2: TRectDouble): TRectDouble;
+function IntersectRectanglesDouble(const r1, r2: TRectDouble): TRectDouble;
 begin
-  Result := R1;
+  Result := r1;
 
-  if Result.X2 > R2.X2 then
-      Result.X2 := R2.X2;
+  if Result.x2 > r2.x2 then
+      Result.x2 := r2.x2;
 
-  if Result.Y2 > R2.Y2 then
-      Result.Y2 := R2.Y2;
+  if Result.y2 > r2.y2 then
+      Result.y2 := r2.y2;
 
-  if Result.X1 < R2.X1 then
-      Result.X1 := R2.X1;
+  if Result.x1 < r2.x1 then
+      Result.x1 := r2.x1;
 
-  if Result.Y1 < R2.Y1 then
-      Result.Y1 := R2.Y1;
+  if Result.y1 < r2.y1 then
+      Result.y1 := r2.y1;
 end;
 
-function UniteRectangles(const R1, R2: TRectInteger): TRectInteger;
+function UniteRectangles(const r1, r2: TRectInteger): TRectInteger;
 begin
-  Result := R1;
+  Result := r1;
 
-  if Result.X2 < R2.X2 then
-      Result.X2 := R2.X2;
+  if Result.x2 < r2.x2 then
+      Result.x2 := r2.x2;
 
-  if Result.Y2 < R2.Y2 then
-      Result.Y2 := R2.Y2;
+  if Result.y2 < r2.y2 then
+      Result.y2 := r2.y2;
 
-  if Result.X1 > R2.X1 then
-      Result.X1 := R2.X1;
+  if Result.x1 > r2.x1 then
+      Result.x1 := r2.x1;
 
-  if Result.Y1 > R2.Y1 then
-      Result.Y1 := R2.Y1;
+  if Result.y1 > r2.y1 then
+      Result.y1 := r2.y1;
 end;
 
-function UniteRectanglesDouble(const R1, R2: TRectDouble): TRectDouble;
+function UniteRectanglesDouble(const r1, r2: TRectDouble): TRectDouble;
 begin
-  Result := R1;
+  Result := r1;
 
-  if Result.X2 < R2.X2 then
-      Result.X2 := R2.X2;
+  if Result.x2 < r2.x2 then
+      Result.x2 := r2.x2;
 
-  if Result.Y2 < R2.Y2 then
-      Result.Y2 := R2.Y2;
+  if Result.y2 < r2.y2 then
+      Result.y2 := r2.y2;
 
-  if Result.X1 > R2.X1 then
-      Result.X1 := R2.X1;
+  if Result.x1 > r2.x1 then
+      Result.x1 := r2.x1;
 
-  if Result.Y1 > R2.Y1 then
-      Result.Y1 := R2.Y1;
+  if Result.y1 > r2.y1 then
+      Result.y1 := r2.y1;
 end;
 
-function IsVertex(CX: Cardinal): Boolean;
+function IsVertex(Cx: Cardinal): Boolean;
 begin
-  Result := (CX >= CAggPathCmdMoveTo) and (CX < CAggPathCmdEndPoly);
+  Result := (Cx >= CAggPathCmdMoveTo) and (Cx < CAggPathCmdEndPoly);
 end;
 
-function IsDrawing(CX: Cardinal): Boolean;
+function IsDrawing(Cx: Cardinal): Boolean;
 begin
-  Result := (CX >= CAggPathCmdLineTo) and (CX < CAggPathCmdEndPoly);
+  Result := (Cx >= CAggPathCmdLineTo) and (Cx < CAggPathCmdEndPoly);
 end;
 
-function IsStop(CX: Cardinal): Boolean;
+function IsStop(Cx: Cardinal): Boolean;
 begin
-  Result := (CX = CAggPathCmdStop);
+  Result := (Cx = CAggPathCmdStop);
 end;
 
-function IsMove(CX: Cardinal): Boolean;
+function IsMove(Cx: Cardinal): Boolean;
 begin
-  Result := (CX = CAggPathCmdMoveTo);
+  Result := (Cx = CAggPathCmdMoveTo);
 end;
 
-function IsLineTo(CX: Cardinal): Boolean;
+function IsLineTo(Cx: Cardinal): Boolean;
 begin
-  Result := (CX = CAggPathCmdLineTo);
+  Result := (Cx = CAggPathCmdLineTo);
 end;
 
-function IsMoveTo(CX: Cardinal): Boolean;
+function IsMoveTo(Cx: Cardinal): Boolean;
 begin
-  Result := (CX = CAggPathCmdMoveTo);
+  Result := (Cx = CAggPathCmdMoveTo);
 end;
 
-function IsCurve(CX: Cardinal): Boolean;
+function IsCurve(Cx: Cardinal): Boolean;
 begin
-  Result := (CX = CAggPathCmdCurve3) or (CX = CAggPathCmdCurve4);
+  Result := (Cx = CAggPathCmdCurve3) or (Cx = CAggPathCmdCurve4);
 end;
 
-function IsCurve3(CX: Cardinal): Boolean;
+function IsCurve3(Cx: Cardinal): Boolean;
 begin
-  Result := (CX = CAggPathCmdCurve3);
+  Result := (Cx = CAggPathCmdCurve3);
 end;
 
-function IsCurve4(CX: Cardinal): Boolean;
+function IsCurve4(Cx: Cardinal): Boolean;
 begin
-  Result := (CX = CAggPathCmdCurve4);
+  Result := (Cx = CAggPathCmdCurve4);
 end;
 
-function IsEndPoly(CX: Cardinal): Boolean;
+function IsEndPoly(Cx: Cardinal): Boolean;
 begin
-  Result := ((CX and CAggPathCmdMask) = CAggPathCmdEndPoly);
+  Result := ((Cx and CAggPathCmdMask) = CAggPathCmdEndPoly);
 end;
 
-function IsClose(CX: Cardinal): Boolean;
+function IsClose(Cx: Cardinal): Boolean;
 begin
-  Result := (CX and not(CAggPathFlagsCw or CAggPathFlagsCcw))
+  Result := (Cx and not(CAggPathFlagsCw or CAggPathFlagsCcw))
     = (CAggPathCmdEndPoly or CAggPathFlagsClose)
 end;
 
-function IsNextPoly(CX: Cardinal): Boolean;
+function IsNextPoly(Cx: Cardinal): Boolean;
 begin
-  Result := IsStop(CX) or IsMoveTo(CX) or IsEndPoly(CX);
+  Result := IsStop(Cx) or IsMoveTo(Cx) or IsEndPoly(Cx);
 end;
 
-function IsClockwise(CX: Cardinal): Boolean;
+function IsClockwise(Cx: Cardinal): Boolean;
 begin
-  Result := not((CX and CAggPathFlagsCw) = 0);
+  Result := not((Cx and CAggPathFlagsCw) = 0);
 end;
 
-function IsCounterClockwise(CX: Cardinal): Boolean;
+function IsCounterClockwise(Cx: Cardinal): Boolean;
 begin
-  Result := not((CX and CAggPathFlagsCcw) = 0);
+  Result := not((Cx and CAggPathFlagsCcw) = 0);
 end;
 
-function IsOriented(CX: Cardinal): Boolean;
+function IsOriented(Cx: Cardinal): Boolean;
 begin
-  Result := not((CX and (CAggPathFlagsCw or CAggPathFlagsCcw)) = 0);
+  Result := not((Cx and (CAggPathFlagsCw or CAggPathFlagsCcw)) = 0);
 end;
 
-function IsClosed(CX: Cardinal): Boolean;
+function IsClosed(Cx: Cardinal): Boolean;
 begin
-  Result := not((CX and CAggPathFlagsClose) = 0);
+  Result := not((Cx and CAggPathFlagsClose) = 0);
 end;
 
-function GetCloseFlag(CX: Cardinal): Cardinal;
+function GetCloseFlag(Cx: Cardinal): Cardinal;
 begin
-  Result := CX and CAggPathFlagsClose;
+  Result := Cx and CAggPathFlagsClose;
 end;
 
-function ClearOrientation(CX: Cardinal): Cardinal;
+function ClearOrientation(Cx: Cardinal): Cardinal;
 begin
-  Result := CX and not(CAggPathFlagsCw or CAggPathFlagsCcw);
+  Result := Cx and not(CAggPathFlagsCw or CAggPathFlagsCcw);
 end;
 
-function GetOrientation(CX: Cardinal): Cardinal;
+function GetOrientation(Cx: Cardinal): Cardinal;
 begin
-  Result := CX and (CAggPathFlagsCw or CAggPathFlagsCcw);
+  Result := Cx and (CAggPathFlagsCw or CAggPathFlagsCcw);
 end;
 
-function SetOrientation(CX, O: Cardinal): Cardinal;
+function SetOrientation(Cx, O: Cardinal): Cardinal;
 begin
-  Result := ClearOrientation(CX) or O;
+  Result := ClearOrientation(Cx) or O;
 end;
 
-procedure SwapPointers(A, B: Pointer);
+procedure SwapPointers(A, b: Pointer);
 var
   Temp: Pointer;
 begin
   Temp := PPointer(A)^;
-  PPointer(A)^ := PPointer(B)^;
-  PPointer(B)^ := Temp;
+  PPointer(A)^ := PPointer(b)^;
+  PPointer(b)^ := Temp;
 end;
 
-function IntToDouble(I: Integer): Double;
+function IntToDouble(i: Integer): Double;
 begin
-  Result := I;
+  Result := i;
 end;
 
 function RandomMinMax(Min, Max: Double): Double;
@@ -937,12 +932,12 @@ begin
   Result := (Max - Min) * Random + Min;
 end;
 
-function RectInteger(X1, Y1, X2, Y2: Integer): TRectInteger;
+function RectInteger(x1, y1, x2, y2: Integer): TRectInteger;
 begin
-  Result.X1 := X1;
-  Result.Y1 := Y1;
-  Result.X2 := X2;
-  Result.Y2 := Y2;
+  Result.x1 := x1;
+  Result.y1 := y1;
+  Result.x2 := x2;
+  Result.y2 := y2;
 end;
 
 function RectInteger(Point1, Point2: TPointInteger): TRectInteger;
@@ -951,12 +946,12 @@ begin
   Result.Point2 := Point2;
 end;
 
-function RectDouble(X1, Y1, X2, Y2: Double): TRectDouble;
+function RectDouble(x1, y1, x2, y2: Double): TRectDouble;
 begin
-  Result.X1 := X1;
-  Result.Y1 := Y1;
-  Result.X2 := X2;
-  Result.Y2 := Y2;
+  Result.x1 := x1;
+  Result.y1 := y1;
+  Result.x2 := x2;
+  Result.y2 := y2;
 end;
 
 function RectDouble(Point1, Point2: TPointDouble): TRectDouble;
@@ -1017,12 +1012,12 @@ end;
 function QuadDouble(RectDouble: TRectDouble): TQuadDouble;
 begin
   Result.Points[0] := RectDouble.Point1;
-  Result.Values[2] := RectDouble.X2;
-  Result.Values[3] := RectDouble.Y1;
+  Result.values[2] := RectDouble.x2;
+  Result.values[3] := RectDouble.y1;
   Result.Points[2] := RectDouble.Point2;
-  Result.Values[5] := RectDouble.Y2;
-  Result.Values[6] := RectDouble.X1;
-  Result.Values[7] := RectDouble.Y2;
+  Result.values[5] := RectDouble.y2;
+  Result.values[6] := RectDouble.x1;
+  Result.values[7] := RectDouble.y2;
 end;
 
 function EnsureRange(const Value, Min, Max: Integer): Integer;
@@ -1043,56 +1038,53 @@ begin
       Result := Max;
 end;
 
-function UnsignedRound(V: Double): Cardinal;
+function UnsignedRound(v: Double): Cardinal;
 begin
-  Result := Cardinal(Trunc(V + 0.5));
+  Result := Cardinal(Trunc(v + 0.5));
 end;
 
-function IntegerRound(V: Double): Integer;
+function IntegerRound(v: Double): Integer;
 begin
-  if V < 0.0 then
-      Result := Integer(Trunc(V - 0.5))
+  if v < 0.0 then
+      Result := Integer(Trunc(v - 0.5))
   else
-      Result := Integer(Trunc(V + 0.5));
+      Result := Integer(Trunc(v + 0.5));
 end;
 
-function SaturationIntegerRound(Limit: Integer; V: Double): Integer;
+function SaturationIntegerRound(Limit: Integer; v: Double): Integer;
 begin
-  if V < -Limit then
+  if v < -Limit then
       Result := -Limit
-  else if V > Limit then
+  else if v > Limit then
       Result := Limit
   else
-      Result := IntegerRound(V);
+      Result := IntegerRound(v);
 end;
 
-procedure NoP;
+function ShrInt8(i, Shift: Int8): Int8;
 begin
+  Result := i div (1 shl Shift);
 end;
 
-function ShrInt8(I, Shift: Int8): Int8;
+function ShrInt16(i, Shift: Int16): Int16;
 begin
-  Result := I div (1 shl Shift);
+  Result := i div (1 shl Shift);
 end;
 
-function ShrInt16(I, Shift: Int16): Int16;
+function ShrInt32(i, Shift: Integer): Integer;
 begin
-  Result := I div (1 shl Shift);
-end;
-
-function ShrInt32(I, Shift: Integer): Integer;
-begin
-  Result := I div (1 shl Shift);
+  Result := i div (1 shl Shift);
 end;
 
 procedure Fill32Bit(var X; Count: Cardinal; var Value);
 var
-  I: Integer;
-  P: PIntegerArray;
+  i: Integer;
+  p: PIntegerArray;
 begin
-  P := PIntegerArray(@X);
-  for I := Count - 1 downto 0 do
-      P[I] := Integer(Value);
+  p := PIntegerArray(@X);
+  for i := Count - 1 downto 0 do
+      p[i] := Integer(Value);
 end;
 
-end.
+end. 
+ 

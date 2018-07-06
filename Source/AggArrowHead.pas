@@ -39,7 +39,7 @@ unit AggArrowHead;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 uses
   AggBasics,
@@ -66,8 +66,8 @@ type
     procedure Tail;
     procedure NoTail;
 
-    procedure SetHead(D1, D2, D3, D4: Double);
-    procedure SetTail(D1, D2, D3, D4: Double);
+    procedure SetHead(d1, d2, d3, d4: Double);
+    procedure SetTail(d1, d2, d3, d4: Double);
 
     procedure Rewind(PathID: Cardinal); override;
     function Vertex(X, Y: PDouble): Cardinal; override;
@@ -99,12 +99,12 @@ begin
   FCurrentCoord := 0;
 end;
 
-procedure TAggArrowHead.SetHead(D1, D2, D3, D4: Double);
+procedure TAggArrowHead.SetHead(d1, d2, d3, d4: Double);
 begin
-  FHead[0] := D1;
-  FHead[1] := D2;
-  FHead[2] := D3;
-  FHead[3] := D4;
+  FHead[0] := d1;
+  FHead[1] := d2;
+  FHead[2] := d3;
+  FHead[3] := d4;
 
   FHeadFlag := True;
 end;
@@ -119,12 +119,12 @@ begin
   FHeadFlag := False;
 end;
 
-procedure TAggArrowHead.SetTail(D1, D2, D3, D4: Double);
+procedure TAggArrowHead.SetTail(d1, d2, d3, d4: Double);
 begin
-  FTail[0] := D1;
-  FTail[1] := D2;
-  FTail[2] := D3;
-  FTail[3] := D4;
+  FTail[0] := d1;
+  FTail[1] := d2;
+  FTail[2] := d3;
+  FTail[3] := d4;
 
   FTailFlag := True;
 end;
@@ -222,4 +222,4 @@ begin
     Result := CAggPathCmdStop;
 end;
 
-end.
+end. 

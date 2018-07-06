@@ -10,34 +10,34 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
-procedure JarqueBeraStatistic(const X: TLVec; const N: TLInt; var S: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JarqueBeraApprox(N: TLInt; S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl5(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl6(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl7(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl8(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl9(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl10(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl11(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl12(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl13(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl14(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl15(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl16(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl17(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl18(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl19(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl20(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl30(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl50(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl65(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl100(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl130(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl200(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl301(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl501(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl701(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function JBTbl1401(const S: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure JarqueBeraStatistic(const X: TLVec; const n: TLInt; var s: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JarqueBeraApprox(n: TLInt; s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl5(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl6(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl7(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl8(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl9(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl10(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl11(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl12(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl13(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl14(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl15(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl16(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl17(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl18(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl19(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl20(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl30(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl50(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl65(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl100(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl130(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl200(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl301(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl501(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl701(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function JBTbl1401(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 procedure JBCheb(const X, C: TLFloat; var TJ: TLFloat; var TJ1: TLFloat; var R: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 (* ************************************************************************
@@ -68,33 +68,33 @@ procedure JBCheb(const X, C: TLFloat; var TJ: TLFloat; var TJ1: TLFloat; var R: 
 
   For N>1951 accuracy wasn't measured but it shouldn't be sharply  different from table values.
   ************************************************************************ *)
-procedure JarqueBeraTest(const X: TLVec; const N: TLInt; var P: TLFloat);
+procedure JarqueBeraTest(const X: TLVec; const n: TLInt; var p: TLFloat);
 var
-  S: TLFloat;
+  s: TLFloat;
 begin
 
   //
   // N is too small
   //
-  if N < 5 then
+  if n < 5 then
     begin
-      P := 1.0;
+      p := 1.0;
       Exit;
     end;
 
   //
   // N is large enough
   //
-  JarqueBeraStatistic(X, N, S);
-  P := JarqueBeraApprox(N, S);
+  JarqueBeraStatistic(X, n, s);
+  p := JarqueBeraApprox(n, s);
 end;
 
-procedure JarqueBeraStatistic(const X: TLVec; const N: TLInt; var S: TLFloat);
+procedure JarqueBeraStatistic(const X: TLVec; const n: TLInt; var s: TLFloat);
 var
-  I       : TLInt;
-  V       : TLFloat;
-  V1      : TLFloat;
-  V2      : TLFloat;
+  i       : TLInt;
+  v       : TLFloat;
+  v1      : TLFloat;
+  v2      : TLFloat;
   StdDev  : TLFloat;
   Mean    : TLFloat;
   Variance: TLFloat;
@@ -106,40 +106,40 @@ begin
   Skewness := 0;
   Kurtosis := 0;
   StdDev := 0;
-  Assert(N > 1);
+  Assert(n > 1);
 
   //
   // Mean
   //
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      Mean := Mean + X[I];
-      Inc(I);
+      Mean := Mean + X[i];
+      Inc(i);
     end;
-  Mean := Mean / N;
+  Mean := Mean / n;
 
   //
   // Variance (using corrected two-pass algorithm)
   //
-  if N <> 1 then
+  if n <> 1 then
     begin
-      V1 := 0;
-      I := 0;
-      while I <= N - 1 do
+      v1 := 0;
+      i := 0;
+      while i <= n - 1 do
         begin
-          V1 := V1 + AP_Sqr(X[I] - Mean);
-          Inc(I);
+          v1 := v1 + AP_Sqr(X[i] - Mean);
+          Inc(i);
         end;
-      V2 := 0;
-      I := 0;
-      while I <= N - 1 do
+      v2 := 0;
+      i := 0;
+      while i <= n - 1 do
         begin
-          V2 := V2 + (X[I] - Mean);
-          Inc(I);
+          v2 := v2 + (X[i] - Mean);
+          Inc(i);
         end;
-      V2 := AP_Sqr(V2) / N;
-      Variance := (V1 - V2) / (N - 1);
+      v2 := AP_Sqr(v2) / n;
+      Variance := (v1 - v2) / (n - 1);
       if AP_FP_Less(Variance, 0) then
         begin
           Variance := 0;
@@ -150,46 +150,46 @@ begin
   //
   // Skewness and kurtosis
   //
-  if AP_FP_Neq(StdDev, 0) then
+  if AP_FP_NEq(StdDev, 0) then
     begin
-      I := 0;
-      while I <= N - 1 do
+      i := 0;
+      while i <= n - 1 do
         begin
-          V := (X[I] - Mean) / StdDev;
-          V2 := AP_Sqr(V);
-          Skewness := Skewness + V2 * V;
-          Kurtosis := Kurtosis + AP_Sqr(V2);
-          Inc(I);
+          v := (X[i] - Mean) / StdDev;
+          v2 := AP_Sqr(v);
+          Skewness := Skewness + v2 * v;
+          Kurtosis := Kurtosis + AP_Sqr(v2);
+          Inc(i);
         end;
-      Skewness := Skewness / N;
-      Kurtosis := Kurtosis / N - 3;
+      Skewness := Skewness / n;
+      Kurtosis := Kurtosis / n - 3;
     end;
 
   //
   // Statistic
   //
-  S := AP_Float(N) / 6 * (AP_Sqr(Skewness) + AP_Sqr(Kurtosis) / 4);
+  s := AP_Float(n) / 6 * (AP_Sqr(Skewness) + AP_Sqr(Kurtosis) / 4);
 end;
 
-function JarqueBeraApprox(N: TLInt; S: TLFloat): TLFloat;
+function JarqueBeraApprox(n: TLInt; s: TLFloat): TLFloat;
 var
-  VX  : TLVec;
-  VY  : TLVec;
+  Vx  : TLVec;
+  Vy  : TLVec;
   CTbl: TLMatrix;
-  T1  : TLFloat;
-  T2  : TLFloat;
-  T3  : TLFloat;
+  t1  : TLFloat;
+  t2  : TLFloat;
+  t3  : TLFloat;
   T   : TLFloat;
-  F1  : TLFloat;
-  F2  : TLFloat;
+  f1  : TLFloat;
+  f2  : TLFloat;
   F3  : TLFloat;
   F12 : TLFloat;
   F23 : TLFloat;
   X   : TLFloat;
 begin
   Result := 1;
-  X := S;
-  if N < 5 then
+  X := s;
+  if n < 5 then
     begin
       Exit;
     end;
@@ -197,69 +197,69 @@ begin
   //
   // N = 5..20 are tabulated
   //
-  if (N >= 5) and (N <= 20) then
+  if (n >= 5) and (n <= 20) then
     begin
-      if N = 5 then
+      if n = 5 then
         begin
           Result := Exp(JBTbl5(X));
         end;
-      if N = 6 then
+      if n = 6 then
         begin
           Result := Exp(JBTbl6(X));
         end;
-      if N = 7 then
+      if n = 7 then
         begin
           Result := Exp(JBTbl7(X));
         end;
-      if N = 8 then
+      if n = 8 then
         begin
           Result := Exp(JBTbl8(X));
         end;
-      if N = 9 then
+      if n = 9 then
         begin
           Result := Exp(JBTbl9(X));
         end;
-      if N = 10 then
+      if n = 10 then
         begin
           Result := Exp(JBTbl10(X));
         end;
-      if N = 11 then
+      if n = 11 then
         begin
           Result := Exp(JBTbl11(X));
         end;
-      if N = 12 then
+      if n = 12 then
         begin
           Result := Exp(JBTbl12(X));
         end;
-      if N = 13 then
+      if n = 13 then
         begin
           Result := Exp(JBTbl13(X));
         end;
-      if N = 14 then
+      if n = 14 then
         begin
           Result := Exp(JBTbl14(X));
         end;
-      if N = 15 then
+      if n = 15 then
         begin
           Result := Exp(JBTbl15(X));
         end;
-      if N = 16 then
+      if n = 16 then
         begin
           Result := Exp(JBTbl16(X));
         end;
-      if N = 17 then
+      if n = 17 then
         begin
           Result := Exp(JBTbl17(X));
         end;
-      if N = 18 then
+      if n = 18 then
         begin
           Result := Exp(JBTbl18(X));
         end;
-      if N = 19 then
+      if n = 19 then
         begin
           Result := Exp(JBTbl19(X));
         end;
-      if N = 20 then
+      if n = 20 then
         begin
           Result := Exp(JBTbl20(X));
         end;
@@ -271,18 +271,18 @@ begin
   // In-between values are interpolated
   // using interpolating polynomial of the second degree.
   //
-  if (N > 20) and (N <= 50) then
+  if (n > 20) and (n <= 50) then
     begin
-      T1 := -1.0 / 20.0;
-      T2 := -1.0 / 30.0;
-      T3 := -1.0 / 50.0;
-      T := -1.0 / N;
-      F1 := JBTbl20(X);
-      F2 := JBTbl30(X);
+      t1 := -1.0 / 20.0;
+      t2 := -1.0 / 30.0;
+      t3 := -1.0 / 50.0;
+      T := -1.0 / n;
+      f1 := JBTbl20(X);
+      f2 := JBTbl30(X);
       F3 := JBTbl50(X);
-      F12 := ((T - T2) * F1 + (T1 - T) * F2) / (T1 - T2);
-      F23 := ((T - T3) * F2 + (T2 - T) * F3) / (T2 - T3);
-      Result := ((T - T3) * F12 + (T1 - T) * F23) / (T1 - T3);
+      F12 := ((T - t2) * f1 + (t1 - T) * f2) / (t1 - t2);
+      F23 := ((T - t3) * f2 + (t2 - T) * F3) / (t2 - t3);
+      Result := ((T - t3) * F12 + (t1 - T) * F23) / (t1 - t3);
       if AP_FP_Greater(Result, 0) then
         begin
           Result := 0;
@@ -296,18 +296,18 @@ begin
   // In-between values are interpolated
   // using interpolating polynomial of the second degree.
   //
-  if (N > 50) and (N <= 100) then
+  if (n > 50) and (n <= 100) then
     begin
-      T1 := -1.0 / 50.0;
-      T2 := -1.0 / 65.0;
-      T3 := -1.0 / 100.0;
-      T := -1.0 / N;
-      F1 := JBTbl50(X);
-      F2 := JBTbl65(X);
+      t1 := -1.0 / 50.0;
+      t2 := -1.0 / 65.0;
+      t3 := -1.0 / 100.0;
+      T := -1.0 / n;
+      f1 := JBTbl50(X);
+      f2 := JBTbl65(X);
       F3 := JBTbl100(X);
-      F12 := ((T - T2) * F1 + (T1 - T) * F2) / (T1 - T2);
-      F23 := ((T - T3) * F2 + (T2 - T) * F3) / (T2 - T3);
-      Result := ((T - T3) * F12 + (T1 - T) * F23) / (T1 - T3);
+      F12 := ((T - t2) * f1 + (t1 - T) * f2) / (t1 - t2);
+      F23 := ((T - t3) * f2 + (t2 - T) * F3) / (t2 - t3);
+      Result := ((T - t3) * F12 + (t1 - T) * F23) / (t1 - t3);
       if AP_FP_Greater(Result, 0) then
         begin
           Result := 0;
@@ -321,18 +321,18 @@ begin
   // In-between values are interpolated
   // using interpolating polynomial of the second degree.
   //
-  if (N > 100) and (N <= 200) then
+  if (n > 100) and (n <= 200) then
     begin
-      T1 := -1.0 / 100.0;
-      T2 := -1.0 / 130.0;
-      T3 := -1.0 / 200.0;
-      T := -1.0 / N;
-      F1 := JBTbl100(X);
-      F2 := JBTbl130(X);
+      t1 := -1.0 / 100.0;
+      t2 := -1.0 / 130.0;
+      t3 := -1.0 / 200.0;
+      T := -1.0 / n;
+      f1 := JBTbl100(X);
+      f2 := JBTbl130(X);
       F3 := JBTbl200(X);
-      F12 := ((T - T2) * F1 + (T1 - T) * F2) / (T1 - T2);
-      F23 := ((T - T3) * F2 + (T2 - T) * F3) / (T2 - T3);
-      Result := ((T - T3) * F12 + (T1 - T) * F23) / (T1 - T3);
+      F12 := ((T - t2) * f1 + (t1 - T) * f2) / (t1 - t2);
+      F23 := ((T - t3) * f2 + (t2 - T) * F3) / (t2 - t3);
+      Result := ((T - t3) * F12 + (t1 - T) * F23) / (t1 - t3);
       if AP_FP_Greater(Result, 0) then
         begin
           Result := 0;
@@ -346,18 +346,18 @@ begin
   // In-between values are interpolated
   // using interpolating polynomial of the second degree.
   //
-  if (N > 200) and (N <= 501) then
+  if (n > 200) and (n <= 501) then
     begin
-      T1 := -1.0 / 200.0;
-      T2 := -1.0 / 301.0;
-      T3 := -1.0 / 501.0;
-      T := -1.0 / N;
-      F1 := JBTbl200(X);
-      F2 := JBTbl301(X);
+      t1 := -1.0 / 200.0;
+      t2 := -1.0 / 301.0;
+      t3 := -1.0 / 501.0;
+      T := -1.0 / n;
+      f1 := JBTbl200(X);
+      f2 := JBTbl301(X);
       F3 := JBTbl501(X);
-      F12 := ((T - T2) * F1 + (T1 - T) * F2) / (T1 - T2);
-      F23 := ((T - T3) * F2 + (T2 - T) * F3) / (T2 - T3);
-      Result := ((T - T3) * F12 + (T1 - T) * F23) / (T1 - T3);
+      F12 := ((T - t2) * f1 + (t1 - T) * f2) / (t1 - t2);
+      F23 := ((T - t3) * f2 + (t2 - T) * F3) / (t2 - t3);
+      Result := ((T - t3) * F12 + (t1 - T) * F23) / (t1 - t3);
       if AP_FP_Greater(Result, 0) then
         begin
           Result := 0;
@@ -371,18 +371,18 @@ begin
   // In-between values are interpolated
   // using interpolating polynomial of the second degree.
   //
-  if (N > 501) and (N <= 1401) then
+  if (n > 501) and (n <= 1401) then
     begin
-      T1 := -1.0 / 501.0;
-      T2 := -1.0 / 701.0;
-      T3 := -1.0 / 1401.0;
-      T := -1.0 / N;
-      F1 := JBTbl501(X);
-      F2 := JBTbl701(X);
+      t1 := -1.0 / 501.0;
+      t2 := -1.0 / 701.0;
+      t3 := -1.0 / 1401.0;
+      T := -1.0 / n;
+      f1 := JBTbl501(X);
+      f2 := JBTbl701(X);
       F3 := JBTbl1401(X);
-      F12 := ((T - T2) * F1 + (T1 - T) * F2) / (T1 - T2);
-      F23 := ((T - T3) * F2 + (T2 - T) * F3) / (T2 - T3);
-      Result := ((T - T3) * F12 + (T1 - T) * F23) / (T1 - T3);
+      F12 := ((T - t2) * f1 + (t1 - T) * f2) / (t1 - t2);
+      F23 := ((T - t3) * f2 + (t2 - T) * F3) / (t2 - t3);
+      Result := ((T - t3) * F12 + (t1 - T) * F23) / (t1 - t3);
       if AP_FP_Greater(Result, 0) then
         begin
           Result := 0;
@@ -394,9 +394,9 @@ begin
   //
   // Asymptotic expansion
   //
-  if N > 1401 then
+  if n > 1401 then
     begin
-      Result := -0.5 * X + (JBTbl1401(X) + 0.5 * X) * Sqrt(AP_Float(1401) / N);
+      Result := -0.5 * X + (JBTbl1401(X) + 0.5 * X) * Sqrt(AP_Float(1401) / n);
       if AP_FP_Greater(Result, 0) then
         begin
           Result := 0;
@@ -406,16 +406,16 @@ begin
     end;
 end;
 
-function JBTbl5(const S: TLFloat): TLFloat;
+function JBTbl5(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 0.4000) then
+  if AP_FP_Less_Eq(s, 0.4000) then
     begin
-      X := 2 * (S - 0.000000) / 0.400000 - 1;
+      X := 2 * (s - 0.000000) / 0.400000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.097885E-20, TJ, TJ1, Result);
@@ -427,9 +427,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 1.1000) then
+  if AP_FP_Less_Eq(s, 1.1000) then
     begin
-      X := 2 * (S - 0.400000) / 0.700000 - 1;
+      X := 2 * (s - 0.400000) / 0.700000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.324545E+00, TJ, TJ1, Result);
@@ -454,19 +454,19 @@ begin
         end;
       Exit;
     end;
-  Result := -5.188419E+02 * (S - 1.100000E+00) - 4.767297E+00;
+  Result := -5.188419E+02 * (s - 1.100000E+00) - 4.767297E+00;
 end;
 
-function JBTbl6(const S: TLFloat): TLFloat;
+function JBTbl6(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 0.2500) then
+  if AP_FP_Less_Eq(s, 0.2500) then
     begin
-      X := 2 * (S - 0.000000) / 0.250000 - 1;
+      X := 2 * (s - 0.000000) / 0.250000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -2.274707E-04, TJ, TJ1, Result);
@@ -478,9 +478,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 1.3000) then
+  if AP_FP_Less_Eq(s, 1.3000) then
     begin
-      X := 2 * (S - 0.250000) / 1.050000 - 1;
+      X := 2 * (s - 0.250000) / 1.050000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.339000E+00, TJ, TJ1, Result);
@@ -502,9 +502,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 1.8500) then
+  if AP_FP_Less_Eq(s, 1.8500) then
     begin
-      X := 2 * (S - 1.300000) / 0.550000 - 1;
+      X := 2 * (s - 1.300000) / 0.550000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.794311E+00, TJ, TJ1, Result);
@@ -524,19 +524,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.770029E+02 * (S - 1.850000E+00) - 1.371015E+01;
+  Result := -1.770029E+02 * (s - 1.850000E+00) - 1.371015E+01;
 end;
 
-function JBTbl7(const S: TLFloat): TLFloat;
+function JBTbl7(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 1.4000) then
+  if AP_FP_Less_Eq(s, 1.4000) then
     begin
-      X := 2 * (S - 0.000000) / 1.400000 - 1;
+      X := 2 * (s - 0.000000) / 1.400000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.093681E+00, TJ, TJ1, Result);
@@ -556,9 +556,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 3.0000) then
+  if AP_FP_Less_Eq(s, 3.0000) then
     begin
-      X := 2 * (S - 1.400000) / 1.600000 - 1;
+      X := 2 * (s - 1.400000) / 1.600000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -5.947854E+00, TJ, TJ1, Result);
@@ -580,9 +580,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 3.2000) then
+  if AP_FP_Less_Eq(s, 3.2000) then
     begin
-      X := 2 * (S - 3.000000) / 0.200000 - 1;
+      X := 2 * (s - 3.000000) / 0.200000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -7.511008E+00, TJ, TJ1, Result);
@@ -602,19 +602,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.824116E+03 * (S - 3.200000E+00) - 1.440330E+01;
+  Result := -1.824116E+03 * (s - 3.200000E+00) - 1.440330E+01;
 end;
 
-function JBTbl8(const S: TLFloat): TLFloat;
+function JBTbl8(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 1.3000) then
+  if AP_FP_Less_Eq(s, 1.3000) then
     begin
-      X := 2 * (S - 0.000000) / 1.300000 - 1;
+      X := 2 * (s - 0.000000) / 1.300000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -7.199015E-01, TJ, TJ1, Result);
@@ -632,9 +632,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 2.0000) then
+  if AP_FP_Less_Eq(s, 2.0000) then
     begin
-      X := 2 * (S - 1.300000) / 0.700000 - 1;
+      X := 2 * (s - 1.300000) / 0.700000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -3.378966E+00, TJ, TJ1, Result);
@@ -652,9 +652,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 5.0000) then
+  if AP_FP_Less_Eq(s, 5.0000) then
     begin
-      X := 2 * (S - 2.000000) / 3.000000 - 1;
+      X := 2 * (s - 2.000000) / 3.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.828366E+00, TJ, TJ1, Result);
@@ -674,19 +674,19 @@ begin
         end;
       Exit;
     end;
-  Result := -5.087028E+00 * (S - 5.000000E+00) - 1.071300E+01;
+  Result := -5.087028E+00 * (s - 5.000000E+00) - 1.071300E+01;
 end;
 
-function JBTbl9(const S: TLFloat): TLFloat;
+function JBTbl9(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 1.3000) then
+  if AP_FP_Less_Eq(s, 1.3000) then
     begin
-      X := 2 * (S - 0.000000) / 1.300000 - 1;
+      X := 2 * (s - 0.000000) / 1.300000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.279320E-01, TJ, TJ1, Result);
@@ -704,9 +704,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 2.0000) then
+  if AP_FP_Less_Eq(s, 2.0000) then
     begin
-      X := 2 * (S - 1.300000) / 0.700000 - 1;
+      X := 2 * (s - 1.300000) / 0.700000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -2.981430E+00, TJ, TJ1, Result);
@@ -724,9 +724,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 7.0000) then
+  if AP_FP_Less_Eq(s, 7.0000) then
     begin
-      X := 2 * (S - 2.000000) / 5.000000 - 1;
+      X := 2 * (s - 2.000000) / 5.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.387463E+00, TJ, TJ1, Result);
@@ -746,19 +746,19 @@ begin
         end;
       Exit;
     end;
-  Result := -2.020952E+00 * (S - 7.000000E+00) - 9.516623E+00;
+  Result := -2.020952E+00 * (s - 7.000000E+00) - 9.516623E+00;
 end;
 
-function JBTbl10(const S: TLFloat): TLFloat;
+function JBTbl10(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 1.2000) then
+  if AP_FP_Less_Eq(s, 1.2000) then
     begin
-      X := 2 * (S - 0.000000) / 1.200000 - 1;
+      X := 2 * (s - 0.000000) / 1.200000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -4.590993E-01, TJ, TJ1, Result);
@@ -776,9 +776,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 2.0000) then
+  if AP_FP_Less_Eq(s, 2.0000) then
     begin
-      X := 2 * (S - 1.200000) / 0.800000 - 1;
+      X := 2 * (s - 1.200000) / 0.800000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -2.537658E+00, TJ, TJ1, Result);
@@ -796,9 +796,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 7.0000) then
+  if AP_FP_Less_Eq(s, 7.0000) then
     begin
-      X := 2 * (S - 2.000000) / 5.000000 - 1;
+      X := 2 * (s - 2.000000) / 5.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -5.337524E+00, TJ, TJ1, Result);
@@ -813,19 +813,19 @@ begin
         end;
       Exit;
     end;
-  Result := -8.711035E-01 * (S - 7.000000E+00) - 7.212811E+00;
+  Result := -8.711035E-01 * (s - 7.000000E+00) - 7.212811E+00;
 end;
 
-function JBTbl11(const S: TLFloat): TLFloat;
+function JBTbl11(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 1.2000) then
+  if AP_FP_Less_Eq(s, 1.2000) then
     begin
-      X := 2 * (S - 0.000000) / 1.200000 - 1;
+      X := 2 * (s - 0.000000) / 1.200000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -4.339517E-01, TJ, TJ1, Result);
@@ -843,9 +843,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 2.2500) then
+  if AP_FP_Less_Eq(s, 2.2500) then
     begin
-      X := 2 * (S - 1.200000) / 1.050000 - 1;
+      X := 2 * (s - 1.200000) / 1.050000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -2.523221E+00, TJ, TJ1, Result);
@@ -863,9 +863,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 8.0000) then
+  if AP_FP_Less_Eq(s, 8.0000) then
     begin
-      X := 2 * (S - 2.250000) / 5.750000 - 1;
+      X := 2 * (s - 2.250000) / 5.750000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -5.212179E+00, TJ, TJ1, Result);
@@ -880,19 +880,19 @@ begin
         end;
       Exit;
     end;
-  Result := -5.715445E-01 * (S - 8.000000E+00) - 6.845834E+00;
+  Result := -5.715445E-01 * (s - 8.000000E+00) - 6.845834E+00;
 end;
 
-function JBTbl12(const S: TLFloat): TLFloat;
+function JBTbl12(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 1.0000) then
+  if AP_FP_Less_Eq(s, 1.0000) then
     begin
-      X := 2 * (S - 0.000000) / 1.000000 - 1;
+      X := 2 * (s - 0.000000) / 1.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -2.736742E-01, TJ, TJ1, Result);
@@ -910,9 +910,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 3.0000) then
+  if AP_FP_Less_Eq(s, 3.0000) then
     begin
-      X := 2 * (S - 1.000000) / 2.000000 - 1;
+      X := 2 * (s - 1.000000) / 2.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -2.573947E+00, TJ, TJ1, Result);
@@ -932,9 +932,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 12.0000) then
+  if AP_FP_Less_Eq(s, 12.0000) then
     begin
-      X := 2 * (S - 3.000000) / 9.000000 - 1;
+      X := 2 * (s - 3.000000) / 9.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -5.947819E+00, TJ, TJ1, Result);
@@ -954,19 +954,19 @@ begin
         end;
       Exit;
     end;
-  Result := -2.877243E-01 * (S - 1.200000E+01) - 7.936839E+00;
+  Result := -2.877243E-01 * (s - 1.200000E+01) - 7.936839E+00;
 end;
 
-function JBTbl13(const S: TLFloat): TLFloat;
+function JBTbl13(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 1.0000) then
+  if AP_FP_Less_Eq(s, 1.0000) then
     begin
-      X := 2 * (S - 0.000000) / 1.000000 - 1;
+      X := 2 * (s - 0.000000) / 1.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -2.713276E-01, TJ, TJ1, Result);
@@ -984,9 +984,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 3.0000) then
+  if AP_FP_Less_Eq(s, 3.0000) then
     begin
-      X := 2 * (S - 1.000000) / 2.000000 - 1;
+      X := 2 * (s - 1.000000) / 2.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -2.454383E+00, TJ, TJ1, Result);
@@ -1006,9 +1006,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 13.0000) then
+  if AP_FP_Less_Eq(s, 13.0000) then
     begin
-      X := 2 * (S - 3.000000) / 10.000000 - 1;
+      X := 2 * (s - 3.000000) / 10.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -5.736127E+00, TJ, TJ1, Result);
@@ -1028,19 +1028,19 @@ begin
         end;
       Exit;
     end;
-  Result := -2.799944E-01 * (S - 1.300000E+01) - 7.566269E+00;
+  Result := -2.799944E-01 * (s - 1.300000E+01) - 7.566269E+00;
 end;
 
-function JBTbl14(const S: TLFloat): TLFloat;
+function JBTbl14(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 1.0000) then
+  if AP_FP_Less_Eq(s, 1.0000) then
     begin
-      X := 2 * (S - 0.000000) / 1.000000 - 1;
+      X := 2 * (s - 0.000000) / 1.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -2.698527E-01, TJ, TJ1, Result);
@@ -1058,9 +1058,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 3.0000) then
+  if AP_FP_Less_Eq(s, 3.0000) then
     begin
-      X := 2 * (S - 1.000000) / 2.000000 - 1;
+      X := 2 * (s - 1.000000) / 2.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -2.350359E+00, TJ, TJ1, Result);
@@ -1080,9 +1080,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 15.0000) then
+  if AP_FP_Less_Eq(s, 15.0000) then
     begin
-      X := 2 * (S - 3.000000) / 12.000000 - 1;
+      X := 2 * (s - 3.000000) / 12.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -5.746892E+00, TJ, TJ1, Result);
@@ -1102,19 +1102,19 @@ begin
         end;
       Exit;
     end;
-  Result := -2.590621E-01 * (S - 1.500000E+01) - 7.632238E+00;
+  Result := -2.590621E-01 * (s - 1.500000E+01) - 7.632238E+00;
 end;
 
-function JBTbl15(const S: TLFloat): TLFloat;
+function JBTbl15(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 2.0000) then
+  if AP_FP_Less_Eq(s, 2.0000) then
     begin
-      X := 2 * (S - 0.000000) / 2.000000 - 1;
+      X := 2 * (s - 0.000000) / 2.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.043660E+00, TJ, TJ1, Result);
@@ -1130,9 +1130,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 5.0000) then
+  if AP_FP_Less_Eq(s, 5.0000) then
     begin
-      X := 2 * (S - 2.000000) / 3.000000 - 1;
+      X := 2 * (s - 2.000000) / 3.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -3.582778E+00, TJ, TJ1, Result);
@@ -1148,9 +1148,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 17.0000) then
+  if AP_FP_Less_Eq(s, 17.0000) then
     begin
-      X := 2 * (S - 5.000000) / 12.000000 - 1;
+      X := 2 * (s - 5.000000) / 12.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.115476E+00, TJ, TJ1, Result);
@@ -1170,19 +1170,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.927937E-01 * (S - 1.700000E+01) - 7.700983E+00;
+  Result := -1.927937E-01 * (s - 1.700000E+01) - 7.700983E+00;
 end;
 
-function JBTbl16(const S: TLFloat): TLFloat;
+function JBTbl16(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 2.0000) then
+  if AP_FP_Less_Eq(s, 2.0000) then
     begin
-      X := 2 * (S - 0.000000) / 2.000000 - 1;
+      X := 2 * (s - 0.000000) / 2.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.002570E+00, TJ, TJ1, Result);
@@ -1198,9 +1198,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 5.0000) then
+  if AP_FP_Less_Eq(s, 5.0000) then
     begin
-      X := 2 * (S - 2.000000) / 3.000000 - 1;
+      X := 2 * (s - 2.000000) / 3.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -3.486198E+00, TJ, TJ1, Result);
@@ -1216,9 +1216,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 20.0000) then
+  if AP_FP_Less_Eq(s, 20.0000) then
     begin
-      X := 2 * (S - 5.000000) / 15.000000 - 1;
+      X := 2 * (s - 5.000000) / 15.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.241608E+00, TJ, TJ1, Result);
@@ -1238,19 +1238,19 @@ begin
         end;
       Exit;
     end;
-  Result := -2.391580E-01 * (S - 2.000000E+01) - 7.963205E+00;
+  Result := -2.391580E-01 * (s - 2.000000E+01) - 7.963205E+00;
 end;
 
-function JBTbl17(const S: TLFloat): TLFloat;
+function JBTbl17(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 3.0000) then
+  if AP_FP_Less_Eq(s, 3.0000) then
     begin
-      X := 2 * (S - 0.000000) / 3.000000 - 1;
+      X := 2 * (s - 0.000000) / 3.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.566973E+00, TJ, TJ1, Result);
@@ -1268,9 +1268,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 6.0000) then
+  if AP_FP_Less_Eq(s, 6.0000) then
     begin
-      X := 2 * (S - 3.000000) / 3.000000 - 1;
+      X := 2 * (s - 3.000000) / 3.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -3.905684E+00, TJ, TJ1, Result);
@@ -1288,9 +1288,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 24.0000) then
+  if AP_FP_Less_Eq(s, 24.0000) then
     begin
-      X := 2 * (S - 6.000000) / 18.000000 - 1;
+      X := 2 * (s - 6.000000) / 18.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.594282E+00, TJ, TJ1, Result);
@@ -1310,19 +1310,19 @@ begin
         end;
       Exit;
     end;
-  Result := -2.127771E-01 * (S - 2.400000E+01) - 8.400197E+00;
+  Result := -2.127771E-01 * (s - 2.400000E+01) - 8.400197E+00;
 end;
 
-function JBTbl18(const S: TLFloat): TLFloat;
+function JBTbl18(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 3.0000) then
+  if AP_FP_Less_Eq(s, 3.0000) then
     begin
-      X := 2 * (S - 0.000000) / 3.000000 - 1;
+      X := 2 * (s - 0.000000) / 3.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.526802E+00, TJ, TJ1, Result);
@@ -1340,9 +1340,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 6.0000) then
+  if AP_FP_Less_Eq(s, 6.0000) then
     begin
-      X := 2 * (S - 3.000000) / 3.000000 - 1;
+      X := 2 * (s - 3.000000) / 3.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -3.818669E+00, TJ, TJ1, Result);
@@ -1360,9 +1360,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 20.0000) then
+  if AP_FP_Less_Eq(s, 20.0000) then
     begin
-      X := 2 * (S - 6.000000) / 14.000000 - 1;
+      X := 2 * (s - 6.000000) / 14.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.010656E+00, TJ, TJ1, Result);
@@ -1382,19 +1382,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.684623E-01 * (S - 2.000000E+01) - 7.428883E+00;
+  Result := -1.684623E-01 * (s - 2.000000E+01) - 7.428883E+00;
 end;
 
-function JBTbl19(const S: TLFloat): TLFloat;
+function JBTbl19(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 3.0000) then
+  if AP_FP_Less_Eq(s, 3.0000) then
     begin
-      X := 2 * (S - 0.000000) / 3.000000 - 1;
+      X := 2 * (s - 0.000000) / 3.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.490213E+00, TJ, TJ1, Result);
@@ -1412,9 +1412,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 6.0000) then
+  if AP_FP_Less_Eq(s, 6.0000) then
     begin
-      X := 2 * (S - 3.000000) / 3.000000 - 1;
+      X := 2 * (s - 3.000000) / 3.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -3.744750E+00, TJ, TJ1, Result);
@@ -1432,9 +1432,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 20.0000) then
+  if AP_FP_Less_Eq(s, 20.0000) then
     begin
-      X := 2 * (S - 6.000000) / 14.000000 - 1;
+      X := 2 * (s - 6.000000) / 14.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -5.872768E+00, TJ, TJ1, Result);
@@ -1454,19 +1454,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.539373E-01 * (S - 2.000000E+01) - 7.206941E+00;
+  Result := -1.539373E-01 * (s - 2.000000E+01) - 7.206941E+00;
 end;
 
-function JBTbl20(const S: TLFloat): TLFloat;
+function JBTbl20(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 4.0000) then
+  if AP_FP_Less_Eq(s, 4.0000) then
     begin
-      X := 2 * (S - 0.000000) / 4.000000 - 1;
+      X := 2 * (s - 0.000000) / 4.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.854794E+00, TJ, TJ1, Result);
@@ -1491,9 +1491,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 15.0000) then
+  if AP_FP_Less_Eq(s, 15.0000) then
     begin
-      X := 2 * (S - 4.000000) / 11.000000 - 1;
+      X := 2 * (s - 4.000000) / 11.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -5.030989E+00, TJ, TJ1, Result);
@@ -1518,9 +1518,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 25.0000) then
+  if AP_FP_Less_Eq(s, 25.0000) then
     begin
-      X := 2 * (S - 15.000000) / 10.000000 - 1;
+      X := 2 * (s - 15.000000) / 10.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -7.015854E+00, TJ, TJ1, Result);
@@ -1532,19 +1532,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.318007E-01 * (S - 2.500000E+01) - 7.742185E+00;
+  Result := -1.318007E-01 * (s - 2.500000E+01) - 7.742185E+00;
 end;
 
-function JBTbl30(const S: TLFloat): TLFloat;
+function JBTbl30(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 4.0000) then
+  if AP_FP_Less_Eq(s, 4.0000) then
     begin
-      X := 2 * (S - 0.000000) / 4.000000 - 1;
+      X := 2 * (s - 0.000000) / 4.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.630822E+00, TJ, TJ1, Result);
@@ -1569,9 +1569,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 15.0000) then
+  if AP_FP_Less_Eq(s, 15.0000) then
     begin
-      X := 2 * (S - 4.000000) / 11.000000 - 1;
+      X := 2 * (s - 4.000000) / 11.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -4.539322E+00, TJ, TJ1, Result);
@@ -1591,9 +1591,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 25.0000) then
+  if AP_FP_Less_Eq(s, 25.0000) then
     begin
-      X := 2 * (S - 15.000000) / 10.000000 - 1;
+      X := 2 * (s - 15.000000) / 10.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.263462E+00, TJ, TJ1, Result);
@@ -1605,19 +1605,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.028212E-01 * (S - 2.500000E+01) - 6.855288E+00;
+  Result := -1.028212E-01 * (s - 2.500000E+01) - 6.855288E+00;
 end;
 
-function JBTbl50(const S: TLFloat): TLFloat;
+function JBTbl50(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 4.0000) then
+  if AP_FP_Less_Eq(s, 4.0000) then
     begin
-      X := 2 * (S - 0.000000) / 4.000000 - 1;
+      X := 2 * (s - 0.000000) / 4.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.436279E+00, TJ, TJ1, Result);
@@ -1637,9 +1637,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 15.0000) then
+  if AP_FP_Less_Eq(s, 15.0000) then
     begin
-      X := 2 * (S - 4.000000) / 11.000000 - 1;
+      X := 2 * (s - 4.000000) / 11.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -4.234645E+00, TJ, TJ1, Result);
@@ -1659,9 +1659,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 25.0000) then
+  if AP_FP_Less_Eq(s, 25.0000) then
     begin
-      X := 2 * (S - 15.000000) / 10.000000 - 1;
+      X := 2 * (s - 15.000000) / 10.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -5.921095E+00, TJ, TJ1, Result);
@@ -1673,19 +1673,19 @@ begin
         end;
       Exit;
     end;
-  Result := -9.313116E-02 * (S - 2.500000E+01) - 6.479154E+00;
+  Result := -9.313116E-02 * (s - 2.500000E+01) - 6.479154E+00;
 end;
 
-function JBTbl65(const S: TLFloat): TLFloat;
+function JBTbl65(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 4.0000) then
+  if AP_FP_Less_Eq(s, 4.0000) then
     begin
-      X := 2 * (S - 0.000000) / 4.000000 - 1;
+      X := 2 * (s - 0.000000) / 4.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.360024E+00, TJ, TJ1, Result);
@@ -1701,9 +1701,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 15.0000) then
+  if AP_FP_Less_Eq(s, 15.0000) then
     begin
-      X := 2 * (S - 4.000000) / 11.000000 - 1;
+      X := 2 * (s - 4.000000) / 11.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -4.148601E+00, TJ, TJ1, Result);
@@ -1723,9 +1723,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 25.0000) then
+  if AP_FP_Less_Eq(s, 25.0000) then
     begin
-      X := 2 * (S - 15.000000) / 10.000000 - 1;
+      X := 2 * (s - 15.000000) / 10.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -5.858951E+00, TJ, TJ1, Result);
@@ -1737,19 +1737,19 @@ begin
         end;
       Exit;
     end;
-  Result := -9.443768E-02 * (S - 2.500000E+01) - 6.419137E+00;
+  Result := -9.443768E-02 * (s - 2.500000E+01) - 6.419137E+00;
 end;
 
-function JBTbl100(const S: TLFloat): TLFloat;
+function JBTbl100(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 4.0000) then
+  if AP_FP_Less_Eq(s, 4.0000) then
     begin
-      X := 2 * (S - 0.000000) / 4.000000 - 1;
+      X := 2 * (s - 0.000000) / 4.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.257021E+00, TJ, TJ1, Result);
@@ -1765,9 +1765,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 15.0000) then
+  if AP_FP_Less_Eq(s, 15.0000) then
     begin
-      X := 2 * (S - 4.000000) / 11.000000 - 1;
+      X := 2 * (s - 4.000000) / 11.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -4.056508E+00, TJ, TJ1, Result);
@@ -1783,9 +1783,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 25.0000) then
+  if AP_FP_Less_Eq(s, 25.0000) then
     begin
-      X := 2 * (S - 15.000000) / 10.000000 - 1;
+      X := 2 * (s - 15.000000) / 10.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -5.866099E+00, TJ, TJ1, Result);
@@ -1797,19 +1797,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.080097E-01 * (S - 2.500000E+01) - 6.481094E+00;
+  Result := -1.080097E-01 * (s - 2.500000E+01) - 6.481094E+00;
 end;
 
-function JBTbl130(const S: TLFloat): TLFloat;
+function JBTbl130(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 4.0000) then
+  if AP_FP_Less_Eq(s, 4.0000) then
     begin
-      X := 2 * (S - 0.000000) / 4.000000 - 1;
+      X := 2 * (s - 0.000000) / 4.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.207999E+00, TJ, TJ1, Result);
@@ -1825,9 +1825,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 15.0000) then
+  if AP_FP_Less_Eq(s, 15.0000) then
     begin
-      X := 2 * (S - 4.000000) / 11.000000 - 1;
+      X := 2 * (s - 4.000000) / 11.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -4.026324E+00, TJ, TJ1, Result);
@@ -1843,9 +1843,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 25.0000) then
+  if AP_FP_Less_Eq(s, 25.0000) then
     begin
-      X := 2 * (S - 15.000000) / 10.000000 - 1;
+      X := 2 * (s - 15.000000) / 10.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -5.893951E+00, TJ, TJ1, Result);
@@ -1857,19 +1857,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.045722E-01 * (S - 2.500000E+01) - 6.510314E+00;
+  Result := -1.045722E-01 * (s - 2.500000E+01) - 6.510314E+00;
 end;
 
-function JBTbl200(const S: TLFloat): TLFloat;
+function JBTbl200(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 4.0000) then
+  if AP_FP_Less_Eq(s, 4.0000) then
     begin
-      X := 2 * (S - 0.000000) / 4.000000 - 1;
+      X := 2 * (s - 0.000000) / 4.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.146155E+00, TJ, TJ1, Result);
@@ -1885,9 +1885,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 15.0000) then
+  if AP_FP_Less_Eq(s, 15.0000) then
     begin
-      X := 2 * (S - 4.000000) / 11.000000 - 1;
+      X := 2 * (s - 4.000000) / 11.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -4.034235E+00, TJ, TJ1, Result);
@@ -1903,9 +1903,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 25.0000) then
+  if AP_FP_Less_Eq(s, 25.0000) then
     begin
-      X := 2 * (S - 15.000000) / 10.000000 - 1;
+      X := 2 * (s - 15.000000) / 10.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.086071E+00, TJ, TJ1, Result);
@@ -1917,19 +1917,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.132404E-01 * (S - 2.500000E+01) - 6.764034E+00;
+  Result := -1.132404E-01 * (s - 2.500000E+01) - 6.764034E+00;
 end;
 
-function JBTbl301(const S: TLFloat): TLFloat;
+function JBTbl301(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 4.0000) then
+  if AP_FP_Less_Eq(s, 4.0000) then
     begin
-      X := 2 * (S - 0.000000) / 4.000000 - 1;
+      X := 2 * (s - 0.000000) / 4.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.104290E+00, TJ, TJ1, Result);
@@ -1945,9 +1945,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 15.0000) then
+  if AP_FP_Less_Eq(s, 15.0000) then
     begin
-      X := 2 * (S - 4.000000) / 11.000000 - 1;
+      X := 2 * (s - 4.000000) / 11.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -4.065955E+00, TJ, TJ1, Result);
@@ -1963,9 +1963,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 25.0000) then
+  if AP_FP_Less_Eq(s, 25.0000) then
     begin
-      X := 2 * (S - 15.000000) / 10.000000 - 1;
+      X := 2 * (s - 15.000000) / 10.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.311384E+00, TJ, TJ1, Result);
@@ -1977,19 +1977,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.293626E-01 * (S - 2.500000E+01) - 7.066995E+00;
+  Result := -1.293626E-01 * (s - 2.500000E+01) - 7.066995E+00;
 end;
 
-function JBTbl501(const S: TLFloat): TLFloat;
+function JBTbl501(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 4.0000) then
+  if AP_FP_Less_Eq(s, 4.0000) then
     begin
-      X := 2 * (S - 0.000000) / 4.000000 - 1;
+      X := 2 * (s - 0.000000) / 4.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.067426E+00, TJ, TJ1, Result);
@@ -2002,9 +2002,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 15.0000) then
+  if AP_FP_Less_Eq(s, 15.0000) then
     begin
-      X := 2 * (S - 4.000000) / 11.000000 - 1;
+      X := 2 * (s - 4.000000) / 11.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -4.127574E+00, TJ, TJ1, Result);
@@ -2019,9 +2019,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 25.0000) then
+  if AP_FP_Less_Eq(s, 25.0000) then
     begin
-      X := 2 * (S - 15.000000) / 10.000000 - 1;
+      X := 2 * (s - 15.000000) / 10.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.628194E+00, TJ, TJ1, Result);
@@ -2033,19 +2033,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.418332E-01 * (S - 2.500000E+01) - 7.468952E+00;
+  Result := -1.418332E-01 * (s - 2.500000E+01) - 7.468952E+00;
 end;
 
-function JBTbl701(const S: TLFloat): TLFloat;
+function JBTbl701(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 4.0000) then
+  if AP_FP_Less_Eq(s, 4.0000) then
     begin
-      X := 2 * (S - 0.000000) / 4.000000 - 1;
+      X := 2 * (s - 0.000000) / 4.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.050999E+00, TJ, TJ1, Result);
@@ -2058,9 +2058,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 15.0000) then
+  if AP_FP_Less_Eq(s, 15.0000) then
     begin
-      X := 2 * (S - 4.000000) / 11.000000 - 1;
+      X := 2 * (s - 4.000000) / 11.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -4.192182E+00, TJ, TJ1, Result);
@@ -2075,9 +2075,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 25.0000) then
+  if AP_FP_Less_Eq(s, 25.0000) then
     begin
-      X := 2 * (S - 15.000000) / 10.000000 - 1;
+      X := 2 * (s - 15.000000) / 10.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -6.917851E+00, TJ, TJ1, Result);
@@ -2089,19 +2089,19 @@ begin
         end;
       Exit;
     end;
-  Result := -1.532706E-01 * (S - 2.500000E+01) - 7.845715E+00;
+  Result := -1.532706E-01 * (s - 2.500000E+01) - 7.845715E+00;
 end;
 
-function JBTbl1401(const S: TLFloat): TLFloat;
+function JBTbl1401(const s: TLFloat): TLFloat;
 var
   X  : TLFloat;
   TJ : TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
-  if AP_FP_Less_Eq(S, 4.0000) then
+  if AP_FP_Less_Eq(s, 4.0000) then
     begin
-      X := 2 * (S - 0.000000) / 4.000000 - 1;
+      X := 2 * (s - 0.000000) / 4.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -1.026266E+00, TJ, TJ1, Result);
@@ -2114,9 +2114,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 15.0000) then
+  if AP_FP_Less_Eq(s, 15.0000) then
     begin
-      X := 2 * (S - 4.000000) / 11.000000 - 1;
+      X := 2 * (s - 4.000000) / 11.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -4.329849E+00, TJ, TJ1, Result);
@@ -2131,9 +2131,9 @@ begin
         end;
       Exit;
     end;
-  if AP_FP_Less_Eq(S, 25.0000) then
+  if AP_FP_Less_Eq(s, 25.0000) then
     begin
-      X := 2 * (S - 15.000000) / 10.000000 - 1;
+      X := 2 * (s - 15.000000) / 10.000000 - 1;
       TJ := 1;
       TJ1 := X;
       JBCheb(X, -7.544330E+00, TJ, TJ1, Result);
@@ -2145,7 +2145,7 @@ begin
         end;
       Exit;
     end;
-  Result := -2.019375E-01 * (S - 2.500000E+01) - 8.715788E+00;
+  Result := -2.019375E-01 * (s - 2.500000E+01) - 8.715788E+00;
 end;
 
 procedure JBCheb(const X, C: TLFloat; var TJ: TLFloat; var TJ1: TLFloat; var R: TLFloat);
@@ -2156,4 +2156,4 @@ begin
   T := 2 * X * TJ1 - TJ;
   TJ := TJ1;
   TJ1 := T;
-end;
+end; 

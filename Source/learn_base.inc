@@ -16,7 +16,7 @@ type
     IA: TLIVec;
     BA: TLBVec;
     RA: TLVec;
-    CA: TLComplexVec;
+    ca: TLComplexVec;
   end;
 
   /// //////////////////////////////////////////////////////////////////////
@@ -31,13 +31,13 @@ begin
       AbsReal := -X;
 end;
 
-function AbsInt(I: TLInt): TLInt;
+function AbsInt(i: TLInt): TLInt;
 begin
   // Result := Abs(I);
-  if I >= 0 then
-      AbsInt := I
+  if i >= 0 then
+      AbsInt := i
   else
-      AbsInt := -I;
+      AbsInt := -i;
 end;
 
 function RandomReal(): TLFloat;
@@ -45,9 +45,9 @@ begin
   RandomReal := Random;
 end;
 
-function RandomInteger(I: TLInt): TLInt;
+function RandomInteger(i: TLInt): TLInt;
 begin
-  RandomInteger := Random(I);
+  RandomInteger := Random(i);
 end;
 
 function Sign(X: TLFloat): TLInt;
@@ -70,89 +70,89 @@ end;
 /// //////////////////////////////////////////////////////////////////////
 function DynamicArrayCopy(const A: TLIVec): TLIVec; overload;
 var
-  I: TLInt;
+  i: TLInt;
 begin
-  SetLength(Result, Length(A));
-  for I := low(A) to high(A) do
-      Result[I] := A[I];
+  SetLength(Result, length(A));
+  for i := low(A) to high(A) do
+      Result[i] := A[i];
 end;
 
 function DynamicArrayCopy(const A: TLVec): TLVec; overload;
 var
-  I: TLInt;
+  i: TLInt;
 begin
-  SetLength(Result, Length(A));
-  for I := low(A) to high(A) do
-      Result[I] := A[I];
+  SetLength(Result, length(A));
+  for i := low(A) to high(A) do
+      Result[i] := A[i];
 end;
 
 function DynamicArrayCopy(const A: TLComplexVec): TLComplexVec; overload;
 var
-  I: TLInt;
+  i: TLInt;
 begin
-  SetLength(Result, Length(A));
-  for I := low(A) to high(A) do
-      Result[I] := A[I];
+  SetLength(Result, length(A));
+  for i := low(A) to high(A) do
+      Result[i] := A[i];
 end;
 
 function DynamicArrayCopy(const A: TLBVec): TLBVec; overload;
 var
-  I: TLInt;
+  i: TLInt;
 begin
-  SetLength(Result, Length(A));
-  for I := low(A) to high(A) do
-      Result[I] := A[I];
+  SetLength(Result, length(A));
+  for i := low(A) to high(A) do
+      Result[i] := A[i];
 end;
 
 function DynamicArrayCopy(const A: TLIMatrix): TLIMatrix; overload;
 var
-  I, J: TLInt;
+  i, J: TLInt;
 begin
-  SetLength(Result, Length(A));
-  for I := low(A) to high(A) do
+  SetLength(Result, length(A));
+  for i := low(A) to high(A) do
     begin
-      SetLength(Result[I], Length(A[I]));
-      for J := low(A[I]) to high(A[I]) do
-          Result[I, J] := A[I, J];
+      SetLength(Result[i], length(A[i]));
+      for J := low(A[i]) to high(A[i]) do
+          Result[i, J] := A[i, J];
     end;
 end;
 
 function DynamicArrayCopy(const A: TLMatrix): TLMatrix; overload;
 var
-  I, J: TLInt;
+  i, J: TLInt;
 begin
-  SetLength(Result, Length(A));
-  for I := low(A) to high(A) do
+  SetLength(Result, length(A));
+  for i := low(A) to high(A) do
     begin
-      SetLength(Result[I], Length(A[I]));
-      for J := low(A[I]) to high(A[I]) do
-          Result[I, J] := A[I, J];
+      SetLength(Result[i], length(A[i]));
+      for J := low(A[i]) to high(A[i]) do
+          Result[i, J] := A[i, J];
     end;
 end;
 
 function DynamicArrayCopy(const A: TLComplexMatrix): TLComplexMatrix; overload;
 var
-  I, J: TLInt;
+  i, J: TLInt;
 begin
-  SetLength(Result, Length(A));
-  for I := low(A) to high(A) do
+  SetLength(Result, length(A));
+  for i := low(A) to high(A) do
     begin
-      SetLength(Result[I], Length(A[I]));
-      for J := low(A[I]) to high(A[I]) do
-          Result[I, J] := A[I, J];
+      SetLength(Result[i], length(A[i]));
+      for J := low(A[i]) to high(A[i]) do
+          Result[i, J] := A[i, J];
     end;
 end;
 
 function DynamicArrayCopy(const A: TLBMatrix): TLBMatrix; overload;
 var
-  I, J: TLInt;
+  i, J: TLInt;
 begin
-  SetLength(Result, Length(A));
-  for I := low(A) to high(A) do
+  SetLength(Result, length(A));
+  for i := low(A) to high(A) do
     begin
-      SetLength(Result[I], Length(A[I]));
-      for J := low(A[I]) to high(A[I]) do
-          Result[I, J] := A[I, J];
+      SetLength(Result[i], length(A[i]));
+      for J := low(A[i]) to high(A[i]) do
+          Result[i, J] := A[i, J];
     end;
 end;
 
@@ -161,22 +161,22 @@ end;
 /// //////////////////////////////////////////////////////////////////////
 function AbsComplex(const Z: TLComplex): TLFloat;
 var
-  W: TLFloat;
+  w: TLFloat;
   XABS: TLFloat;
   YABS: TLFloat;
-  V: TLFloat;
+  v: TLFloat;
 begin
   XABS := AbsReal(Z.X);
   YABS := AbsReal(Z.Y);
-  W := Max(XABS, YABS);
-  V := Min(XABS, YABS);
-  if V = 0 then
+  w := Max(XABS, YABS);
+  v := Min(XABS, YABS);
+  if v = 0 then
     begin
-      AbsComplex := W;
+      AbsComplex := w;
     end
   else
     begin
-      AbsComplex := W * SQRT(1 + Sqr(V / W));
+      AbsComplex := w * Sqrt(1 + Sqr(v / w));
     end;
 end;
 
@@ -204,306 +204,306 @@ begin
   C_Opposite.Y := -Z.Y;
 end;
 
-function C_Add(const Z1: TLComplex; const Z2: TLComplex): TLComplex;
+function C_Add(const z1: TLComplex; const z2: TLComplex): TLComplex;
 begin
-  C_Add.X := Z1.X + Z2.X;
-  C_Add.Y := Z1.Y + Z2.Y;
+  C_Add.X := z1.X + z2.X;
+  C_Add.Y := z1.Y + z2.Y;
 end;
 
-function C_Mul(const Z1: TLComplex; const Z2: TLComplex): TLComplex;
+function C_Mul(const z1: TLComplex; const z2: TLComplex): TLComplex;
 begin
-  C_Mul.X := Z1.X * Z2.X - Z1.Y * Z2.Y;
-  C_Mul.Y := Z1.X * Z2.Y + Z1.Y * Z2.X;
+  C_Mul.X := z1.X * z2.X - z1.Y * z2.Y;
+  C_Mul.Y := z1.X * z2.Y + z1.Y * z2.X;
 end;
 
-function C_AddR(const Z1: TLComplex; const R: TLFloat): TLComplex;
+function C_AddR(const z1: TLComplex; const R: TLFloat): TLComplex;
 begin
-  C_AddR.X := Z1.X + R;
-  C_AddR.Y := Z1.Y;
+  C_AddR.X := z1.X + R;
+  C_AddR.Y := z1.Y;
 end;
 
-function C_MulR(const Z1: TLComplex; const R: TLFloat): TLComplex;
+function C_MulR(const z1: TLComplex; const R: TLFloat): TLComplex;
 begin
-  C_MulR.X := Z1.X * R;
-  C_MulR.Y := Z1.Y * R;
+  C_MulR.X := z1.X * R;
+  C_MulR.Y := z1.Y * R;
 end;
 
-function C_Sub(const Z1: TLComplex; const Z2: TLComplex): TLComplex;
+function C_Sub(const z1: TLComplex; const z2: TLComplex): TLComplex;
 begin
-  C_Sub.X := Z1.X - Z2.X;
-  C_Sub.Y := Z1.Y - Z2.Y;
+  C_Sub.X := z1.X - z2.X;
+  C_Sub.Y := z1.Y - z2.Y;
 end;
 
-function C_SubR(const Z1: TLComplex; const R: TLFloat): TLComplex;
+function C_SubR(const z1: TLComplex; const R: TLFloat): TLComplex;
 begin
-  C_SubR.X := Z1.X - R;
-  C_SubR.Y := Z1.Y;
+  C_SubR.X := z1.X - R;
+  C_SubR.Y := z1.Y;
 end;
 
-function C_RSub(const R: TLFloat; const Z1: TLComplex): TLComplex;
+function C_RSub(const R: TLFloat; const z1: TLComplex): TLComplex;
 begin
-  C_RSub.X := R - Z1.X;
-  C_RSub.Y := -Z1.Y;
+  C_RSub.X := R - z1.X;
+  C_RSub.Y := -z1.Y;
 end;
 
-function C_Div(const Z1: TLComplex; const Z2: TLComplex): TLComplex;
+function C_Div(const z1: TLComplex; const z2: TLComplex): TLComplex;
 var
   A: TLFloat;
-  B: TLFloat;
+  b: TLFloat;
   C: TLFloat;
-  D: TLFloat;
+  d: TLFloat;
   E: TLFloat;
   F: TLFloat;
 begin
-  A := Z1.X;
-  B := Z1.Y;
-  C := Z2.X;
-  D := Z2.Y;
-  if AbsReal(D) < AbsReal(C) then
+  A := z1.X;
+  b := z1.Y;
+  C := z2.X;
+  d := z2.Y;
+  if AbsReal(d) < AbsReal(C) then
     begin
-      E := D / C;
-      F := C + D * E;
-      C_Div.X := (A + B * E) / F;
-      C_Div.Y := (B - A * E) / F;
+      E := d / C;
+      F := C + d * E;
+      C_Div.X := (A + b * E) / F;
+      C_Div.Y := (b - A * E) / F;
     end
   else
     begin
-      E := C / D;
-      F := D + C * E;
-      C_Div.X := (B + A * E) / F;
-      C_Div.Y := (-A + B * E) / F;
+      E := C / d;
+      F := d + C * E;
+      C_Div.X := (b + A * E) / F;
+      C_Div.Y := (-A + b * E) / F;
     end;
 end;
 
-function C_DivR(const Z1: TLComplex; const R: TLFloat): TLComplex;
+function C_DivR(const z1: TLComplex; const R: TLFloat): TLComplex;
 begin
-  C_DivR.X := Z1.X / R;
-  C_DivR.Y := Z1.Y / R;
+  C_DivR.X := z1.X / R;
+  C_DivR.Y := z1.Y / R;
 end;
 
-function C_RDiv(const R: TLFloat; const Z2: TLComplex): TLComplex;
+function C_RDiv(const R: TLFloat; const z2: TLComplex): TLComplex;
 var
   A: TLFloat;
   C: TLFloat;
-  D: TLFloat;
+  d: TLFloat;
   E: TLFloat;
   F: TLFloat;
 begin
   A := R;
-  C := Z2.X;
-  D := Z2.Y;
-  if AbsReal(D) < AbsReal(C) then
+  C := z2.X;
+  d := z2.Y;
+  if AbsReal(d) < AbsReal(C) then
     begin
-      E := D / C;
-      F := C + D * E;
+      E := d / C;
+      F := C + d * E;
       C_RDiv.X := A / F;
       C_RDiv.Y := -A * E / F;
     end
   else
     begin
-      E := C / D;
-      F := D + C * E;
+      E := C / d;
+      F := d + C * E;
       C_RDiv.X := A * E / F;
       C_RDiv.Y := -A / F;
     end;
 end;
 
-function C_Equal(const Z1: TLComplex; const Z2: TLComplex): Boolean;
+function C_Equal(const z1: TLComplex; const z2: TLComplex): Boolean;
 begin
-  C_Equal := (Z1.X = Z2.X) and (Z1.Y = Z2.Y);
+  C_Equal := (z1.X = z2.X) and (z1.Y = z2.Y);
 end;
 
-function C_NotEqual(const Z1: TLComplex; const Z2: TLComplex): Boolean;
+function C_NotEqual(const z1: TLComplex; const z2: TLComplex): Boolean;
 begin
-  C_NotEqual := (Z1.X <> Z2.X) or (Z1.Y <> Z2.Y);
+  C_NotEqual := (z1.X <> z2.X) or (z1.Y <> z2.Y);
 end;
 
-function C_EqualR(const Z1: TLComplex; const R: TLFloat): Boolean;
+function C_EqualR(const z1: TLComplex; const R: TLFloat): Boolean;
 begin
-  C_EqualR := (Z1.X = R) and (Z1.Y = 0);
+  C_EqualR := (z1.X = R) and (z1.Y = 0);
 end;
 
-function C_NotEqualR(const Z1: TLComplex; const R: TLFloat): Boolean;
+function C_NotEqualR(const z1: TLComplex; const R: TLFloat): Boolean;
 begin
-  C_NotEqualR := (Z1.X <> R) or (Z1.Y <> 0);
+  C_NotEqualR := (z1.X <> R) or (z1.Y <> 0);
 end;
 
-function APVDotProduct(V1: PLFloat; I11, I12: TLInt; V2: PLFloat; I21, I22: TLInt): TLFloat;
+function APVDotProduct(v1: PLFloat; i11, i12: TLInt; v2: PLFloat; i21, i22: TLInt): TLFloat;
 var
-  I, C: TLInt;
+  i, C: TLInt;
   R: TLFloat;
 begin
-  Assert(I12 - I11 = I22 - I21, 'APVDotProduct: arrays of different size!');
-  Inc(V1, I11);
-  Inc(V2, I21);
+  Assert(i12 - i11 = i22 - i21, 'APVDotProduct: arrays of different size!');
+  Inc(v1, i11);
+  Inc(v2, i21);
 
   //
   // Generic pascal code
   //
-  C := I12 - I11;
+  C := i12 - i11;
   R := 0;
-  for I := 0 to C do
+  for i := 0 to C do
     begin
-      R := R + V1^ * V2^;
-      Inc(V1);
-      Inc(V2);
+      R := R + v1^ * v2^;
+      Inc(v1);
+      Inc(v2);
     end;
   APVDotProduct := R;
 end;
 
-procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
-  I21, I22: TLInt); overload;
+procedure APVMove(VDst: PLFloat; i11, i12: TLInt; vSrc: PLFloat;
+  i21, i22: TLInt); overload;
 var
-  I, C: TLInt;
+  i, C: TLInt;
 begin
-  Assert(I12 - I11 = I22 - I21, 'APVMove: arrays of different size!');
-  Inc(VDst, I11);
-  Inc(VSrc, I21);
+  Assert(i12 - i11 = i22 - i21, 'APVMove: arrays of different size!');
+  Inc(VDst, i11);
+  Inc(vSrc, i21);
 
   //
   // Generic pascal code
   //
-  C := I12 - I11;
-  for I := 0 to C do
+  C := i12 - i11;
+  for i := 0 to C do
     begin
-      VDst^ := VSrc^;
+      VDst^ := vSrc^;
       Inc(VDst);
-      Inc(VSrc);
+      Inc(vSrc);
     end;
 end;
 
-procedure APVMove(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
-  I21, I22: TLInt; s: TLFloat); overload;
+procedure APVMove(VDst: PLFloat; i11, i12: TLInt; vSrc: PLFloat;
+  i21, i22: TLInt; s: TLFloat); overload;
 var
-  I, C: TLInt;
+  i, C: TLInt;
 begin
-  Assert(I12 - I11 = I22 - I21, 'APVMove: arrays of different size!');
-  Inc(VDst, I11);
-  Inc(VSrc, I21);
+  Assert(i12 - i11 = i22 - i21, 'APVMove: arrays of different size!');
+  Inc(VDst, i11);
+  Inc(vSrc, i21);
 
   //
   // Generic pascal code
   //
-  C := I12 - I11;
-  for I := 0 to C do
+  C := i12 - i11;
+  for i := 0 to C do
     begin
-      VDst^ := s * VSrc^;
+      VDst^ := s * vSrc^;
       Inc(VDst);
-      Inc(VSrc);
+      Inc(vSrc);
     end;
 end;
 
-procedure APVMoveNeg(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
-  I21, I22: TLInt);
+procedure APVMoveNeg(VDst: PLFloat; i11, i12: TLInt; vSrc: PLFloat;
+  i21, i22: TLInt);
 var
-  I, C: TLInt;
+  i, C: TLInt;
 begin
-  Assert(I12 - I11 = I22 - I21, 'APVMoveNeg: arrays of different size!');
-  Inc(VDst, I11);
-  Inc(VSrc, I21);
+  Assert(i12 - i11 = i22 - i21, 'APVMoveNeg: arrays of different size!');
+  Inc(VDst, i11);
+  Inc(vSrc, i21);
 
   //
   // Generic pascal code
   //
-  C := I12 - I11;
-  for I := 0 to C do
+  C := i12 - i11;
+  for i := 0 to C do
     begin
-      VDst^ := -VSrc^;
+      VDst^ := -vSrc^;
       Inc(VDst);
-      Inc(VSrc);
+      Inc(vSrc);
     end;
 end;
 
-procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
-  I21, I22: TLInt); overload;
+procedure APVAdd(VDst: PLFloat; i11, i12: TLInt; vSrc: PLFloat;
+  i21, i22: TLInt); overload;
 var
-  I, C: TLInt;
+  i, C: TLInt;
 begin
-  Assert(I12 - I11 = I22 - I21, 'APVAdd: arrays of different size!');
-  Inc(VDst, I11);
-  Inc(VSrc, I21);
+  Assert(i12 - i11 = i22 - i21, 'APVAdd: arrays of different size!');
+  Inc(VDst, i11);
+  Inc(vSrc, i21);
 
   //
   // Generic pascal code
   //
-  C := I12 - I11;
-  for I := 0 to C do
+  C := i12 - i11;
+  for i := 0 to C do
     begin
-      VDst^ := VDst^ + VSrc^;
+      VDst^ := VDst^ + vSrc^;
       Inc(VDst);
-      Inc(VSrc);
+      Inc(vSrc);
     end;
 end;
 
-procedure APVAdd(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
-  I21, I22: TLInt; s: TLFloat); overload;
+procedure APVAdd(VDst: PLFloat; i11, i12: TLInt; vSrc: PLFloat;
+  i21, i22: TLInt; s: TLFloat); overload;
 var
-  I, C: TLInt;
+  i, C: TLInt;
 begin
-  Assert(I12 - I11 = I22 - I21, 'APVAdd: arrays of different size!');
-  Inc(VDst, I11);
-  Inc(VSrc, I21);
+  Assert(i12 - i11 = i22 - i21, 'APVAdd: arrays of different size!');
+  Inc(VDst, i11);
+  Inc(vSrc, i21);
 
   //
   // Generic pascal code
   //
-  C := I12 - I11;
-  for I := 0 to C do
+  C := i12 - i11;
+  for i := 0 to C do
     begin
-      VDst^ := VDst^ + s * VSrc^;
+      VDst^ := VDst^ + s * vSrc^;
       Inc(VDst);
-      Inc(VSrc);
+      Inc(vSrc);
     end;
 end;
 
-procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
-  I21, I22: TLInt); overload;
+procedure APVSub(VDst: PLFloat; i11, i12: TLInt; vSrc: PLFloat;
+  i21, i22: TLInt); overload;
 var
-  I, C: TLInt;
+  i, C: TLInt;
 begin
-  Assert(I12 - I11 = I22 - I21, 'APVSub arrays of different size!');
-  Inc(VDst, I11);
-  Inc(VSrc, I21);
+  Assert(i12 - i11 = i22 - i21, 'APVSub arrays of different size!');
+  Inc(VDst, i11);
+  Inc(vSrc, i21);
 
   //
   // Generic pascal code
   //
-  C := I12 - I11;
-  for I := 0 to C do
+  C := i12 - i11;
+  for i := 0 to C do
     begin
-      VDst^ := VDst^ - VSrc^;
+      VDst^ := VDst^ - vSrc^;
       Inc(VDst);
-      Inc(VSrc);
+      Inc(vSrc);
     end;
 end;
 
-procedure APVSub(VDst: PLFloat; I11, I12: TLInt; VSrc: PLFloat;
-  I21, I22: TLInt; s: TLFloat); overload;
+procedure APVSub(VDst: PLFloat; i11, i12: TLInt; vSrc: PLFloat;
+  i21, i22: TLInt; s: TLFloat); overload;
 begin
-  Assert(I12 - I11 = I22 - I21, 'APVSub: arrays of different size!');
-  APVAdd(VDst, I11, I12, VSrc, I21, I22, -s);
+  Assert(i12 - i11 = i22 - i21, 'APVSub: arrays of different size!');
+  APVAdd(VDst, i11, i12, vSrc, i21, i22, -s);
 end;
 
-procedure APVMul(VOp: PLFloat; I1, I2: TLInt; s: TLFloat);
+procedure APVMul(VOp: PLFloat; i1, i2: TLInt; s: TLFloat);
 var
-  I, C: TLInt;
+  i, C: TLInt;
 begin
-  Inc(VOp, I1);
-  C := I2 - I1;
-  for I := 0 to C do
+  Inc(VOp, i1);
+  C := i2 - i1;
+  for i := 0 to C do
     begin
       VOp^ := s * VOp^;
       Inc(VOp);
     end;
 end;
 
-procedure APVFillValue(VOp: PLFloat; I1, I2: TLInt; s: TLFloat);
+procedure APVFillValue(VOp: PLFloat; i1, i2: TLInt; s: TLFloat);
 var
-  I, C: TLInt;
+  i, C: TLInt;
 begin
-  Inc(VOp, I1);
-  C := I2 - I1;
-  for I := 0 to C do
+  Inc(VOp, i1);
+  C := i2 - i1;
+  for i := 0 to C do
     begin
       VOp^ := s;
       Inc(VOp);
@@ -549,9 +549,9 @@ begin
   AP_FP_Greater_Eq := X >= Y;
 end;
 
-procedure TagSort(var A: TLVec; const N: TLInt; var P1: TLIVec; var P2: TLIVec);
+procedure TagSort(var A: TLVec; const n: TLInt; var p1: TLIVec; var p2: TLIVec);
 var
-  I: TLInt;
+  i: TLInt;
   PV: TLIVec;
   VP: TLIVec;
   LV: TLInt;
@@ -563,34 +563,34 @@ begin
   //
   // Special cases
   //
-  if N <= 0 then
+  if n <= 0 then
     begin
       Exit;
     end;
-  if N = 1 then
+  if n = 1 then
     begin
-      SetLength(P1, 0 + 1);
-      SetLength(P2, 0 + 1);
-      P1[0] := 0;
-      P2[0] := 0;
+      SetLength(p1, 0 + 1);
+      SetLength(p2, 0 + 1);
+      p1[0] := 0;
+      p2[0] := 0;
       Exit;
     end;
 
   //
   // General case, N>1: prepare permutations table P1
   //
-  SetLength(P1, N (* - 1 + 1 // optimized compler *) );
-  I := 0;
-  while I <= N - 1 do
+  SetLength(p1, n (* - 1 + 1 // optimized compler *) );
+  i := 0;
+  while i <= n - 1 do
     begin
-      P1[I] := I;
-      Inc(I);
+      p1[i] := i;
+      Inc(i);
     end;
 
   //
   // General case, N>1: sort, update P1
   //
-  TagSortFastI(A, P1, N);
+  TagSortFastI(A, p1, n);
 
   //
   // General case, N>1: fill permutations table P2
@@ -604,32 +604,32 @@ begin
   // and Right, which is given by RP/RV
   // and updating PV[] and VP[] correspondingly.
   //
-  SetLength(PV, N (* - 1 + 1 // optimized compler *) );
-  SetLength(VP, N (* - 1 + 1 // optimized compler *) );
-  SetLength(P2, N (* - 1 + 1 // optimized compler *) );
-  I := 0;
-  while I <= N - 1 do
+  SetLength(PV, n (* - 1 + 1 // optimized compler *) );
+  SetLength(VP, n (* - 1 + 1 // optimized compler *) );
+  SetLength(p2, n (* - 1 + 1 // optimized compler *) );
+  i := 0;
+  while i <= n - 1 do
     begin
-      PV[I] := I;
-      VP[I] := I;
-      Inc(I);
+      PV[i] := i;
+      VP[i] := i;
+      Inc(i);
     end;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
 
       //
       // calculate LP, LV, RP, RV
       //
-      LP := I;
+      LP := i;
       LV := VP[LP];
-      RV := P1[I];
+      RV := p1[i];
       RP := PV[RV];
 
       //
       // Fill P2
       //
-      P2[I] := RP;
+      p2[i] := RP;
 
       //
       // update PV and VP
@@ -638,23 +638,23 @@ begin
       VP[RP] := LV;
       PV[LV] := RP;
       PV[RV] := LP;
-      Inc(I);
+      Inc(i);
     end;
 end;
 
-procedure TagSortFastI(var A: TLVec; var B: TLIVec; N: TLInt);
+procedure TagSortFastI(var A: TLVec; var b: TLIVec; n: TLInt);
 var
-  I: TLInt;
-  K: TLInt;
+  i: TLInt;
+  k: TLInt;
   T: TLInt;
-  Tmp: TLFloat;
+  tmp: TLFloat;
   TmpI: TLInt;
 begin
 
   //
   // Special cases
   //
-  if N <= 1 then
+  if n <= 1 then
     begin
       Exit;
     end;
@@ -662,88 +662,88 @@ begin
   //
   // General case, N>1: sort, update B
   //
-  I := 2;
+  i := 2;
   repeat
-    T := I;
+    T := i;
     while T <> 1 do
       begin
-        K := T div 2;
-        if AP_FP_Greater_Eq(A[K - 1], A[T - 1]) then
+        k := T div 2;
+        if AP_FP_Greater_Eq(A[k - 1], A[T - 1]) then
           begin
             T := 1;
           end
         else
           begin
-            Tmp := A[K - 1];
-            A[K - 1] := A[T - 1];
-            A[T - 1] := Tmp;
-            TmpI := B[K - 1];
-            B[K - 1] := B[T - 1];
-            B[T - 1] := TmpI;
-            T := K;
+            tmp := A[k - 1];
+            A[k - 1] := A[T - 1];
+            A[T - 1] := tmp;
+            TmpI := b[k - 1];
+            b[k - 1] := b[T - 1];
+            b[T - 1] := TmpI;
+            T := k;
           end;
       end;
-    I := I + 1;
-  until not(I <= N);
-  I := N - 1;
+    i := i + 1;
+  until not(i <= n);
+  i := n - 1;
   repeat
-    Tmp := A[I];
-    A[I] := A[0];
-    A[0] := Tmp;
-    TmpI := B[I];
-    B[I] := B[0];
-    B[0] := TmpI;
+    tmp := A[i];
+    A[i] := A[0];
+    A[0] := tmp;
+    TmpI := b[i];
+    b[i] := b[0];
+    b[0] := TmpI;
     T := 1;
     while T <> 0 do
       begin
-        K := 2 * T;
-        if K > I then
+        k := 2 * T;
+        if k > i then
           begin
             T := 0;
           end
         else
           begin
-            if K < I then
+            if k < i then
               begin
-                if AP_FP_Greater(A[K], A[K - 1]) then
+                if AP_FP_Greater(A[k], A[k - 1]) then
                   begin
-                    K := K + 1;
+                    k := k + 1;
                   end;
               end;
-            if AP_FP_Greater_Eq(A[T - 1], A[K - 1]) then
+            if AP_FP_Greater_Eq(A[T - 1], A[k - 1]) then
               begin
                 T := 0;
               end
             else
               begin
-                Tmp := A[K - 1];
-                A[K - 1] := A[T - 1];
-                A[T - 1] := Tmp;
-                TmpI := B[K - 1];
-                B[K - 1] := B[T - 1];
-                B[T - 1] := TmpI;
-                T := K;
+                tmp := A[k - 1];
+                A[k - 1] := A[T - 1];
+                A[T - 1] := tmp;
+                TmpI := b[k - 1];
+                b[k - 1] := b[T - 1];
+                b[T - 1] := TmpI;
+                T := k;
               end;
           end;
       end;
-    I := I - 1;
-  until not(I >= 1);
+    i := i - 1;
+  until not(i >= 1);
 end;
 
-procedure TagSortFastR(var A: TLVec; var B: TLVec;
-  N: TLInt);
+procedure TagSortFastR(var A: TLVec; var b: TLVec;
+  n: TLInt);
 var
-  I: TLInt;
-  K: TLInt;
+  i: TLInt;
+  k: TLInt;
   T: TLInt;
-  Tmp: TLFloat;
+  tmp: TLFloat;
   TmpR: TLFloat;
 begin
 
   //
   // Special cases
   //
-  if N <= 1 then
+  if n <= 1 then
     begin
       Exit;
     end;
@@ -751,86 +751,86 @@ begin
   //
   // General case, N>1: sort, update B
   //
-  I := 2;
+  i := 2;
   repeat
-    T := I;
+    T := i;
     while T <> 1 do
       begin
-        K := T div 2;
-        if AP_FP_Greater_Eq(A[K - 1], A[T - 1]) then
+        k := T div 2;
+        if AP_FP_Greater_Eq(A[k - 1], A[T - 1]) then
           begin
             T := 1;
           end
         else
           begin
-            Tmp := A[K - 1];
-            A[K - 1] := A[T - 1];
-            A[T - 1] := Tmp;
-            TmpR := B[K - 1];
-            B[K - 1] := B[T - 1];
-            B[T - 1] := TmpR;
-            T := K;
+            tmp := A[k - 1];
+            A[k - 1] := A[T - 1];
+            A[T - 1] := tmp;
+            TmpR := b[k - 1];
+            b[k - 1] := b[T - 1];
+            b[T - 1] := TmpR;
+            T := k;
           end;
       end;
-    I := I + 1;
-  until not(I <= N);
-  I := N - 1;
+    i := i + 1;
+  until not(i <= n);
+  i := n - 1;
   repeat
-    Tmp := A[I];
-    A[I] := A[0];
-    A[0] := Tmp;
-    TmpR := B[I];
-    B[I] := B[0];
-    B[0] := TmpR;
+    tmp := A[i];
+    A[i] := A[0];
+    A[0] := tmp;
+    TmpR := b[i];
+    b[i] := b[0];
+    b[0] := TmpR;
     T := 1;
     while T <> 0 do
       begin
-        K := 2 * T;
-        if K > I then
+        k := 2 * T;
+        if k > i then
           begin
             T := 0;
           end
         else
           begin
-            if K < I then
+            if k < i then
               begin
-                if AP_FP_Greater(A[K], A[K - 1]) then
+                if AP_FP_Greater(A[k], A[k - 1]) then
                   begin
-                    K := K + 1;
+                    k := k + 1;
                   end;
               end;
-            if AP_FP_Greater_Eq(A[T - 1], A[K - 1]) then
+            if AP_FP_Greater_Eq(A[T - 1], A[k - 1]) then
               begin
                 T := 0;
               end
             else
               begin
-                Tmp := A[K - 1];
-                A[K - 1] := A[T - 1];
-                A[T - 1] := Tmp;
-                TmpR := B[K - 1];
-                B[K - 1] := B[T - 1];
-                B[T - 1] := TmpR;
-                T := K;
+                tmp := A[k - 1];
+                A[k - 1] := A[T - 1];
+                A[T - 1] := tmp;
+                TmpR := b[k - 1];
+                b[k - 1] := b[T - 1];
+                b[T - 1] := TmpR;
+                T := k;
               end;
           end;
       end;
-    I := I - 1;
-  until not(I >= 1);
+    i := i - 1;
+  until not(i >= 1);
 end;
 
-procedure TagSortFast(var A: TLVec; const N: TLInt);
+procedure TagSortFast(var A: TLVec; const n: TLInt);
 var
-  I: TLInt;
-  K: TLInt;
+  i: TLInt;
+  k: TLInt;
   T: TLInt;
-  Tmp: TLFloat;
+  tmp: TLFloat;
 begin
 
   //
   // Special cases
   //
-  if N <= 1 then
+  if n <= 1 then
     begin
       Exit;
     end;
@@ -838,63 +838,63 @@ begin
   //
   // General case, N>1: sort, update B
   //
-  I := 2;
+  i := 2;
   repeat
-    T := I;
+    T := i;
     while T <> 1 do
       begin
-        K := T div 2;
-        if AP_FP_Greater_Eq(A[K - 1], A[T - 1]) then
+        k := T div 2;
+        if AP_FP_Greater_Eq(A[k - 1], A[T - 1]) then
           begin
             T := 1;
           end
         else
           begin
-            Tmp := A[K - 1];
-            A[K - 1] := A[T - 1];
-            A[T - 1] := Tmp;
-            T := K;
+            tmp := A[k - 1];
+            A[k - 1] := A[T - 1];
+            A[T - 1] := tmp;
+            T := k;
           end;
       end;
-    I := I + 1;
-  until not(I <= N);
-  I := N - 1;
+    i := i + 1;
+  until not(i <= n);
+  i := n - 1;
   repeat
-    Tmp := A[I];
-    A[I] := A[0];
-    A[0] := Tmp;
+    tmp := A[i];
+    A[i] := A[0];
+    A[0] := tmp;
     T := 1;
     while T <> 0 do
       begin
-        K := 2 * T;
-        if K > I then
+        k := 2 * T;
+        if k > i then
           begin
             T := 0;
           end
         else
           begin
-            if K < I then
+            if k < i then
               begin
-                if AP_FP_Greater(A[K], A[K - 1]) then
+                if AP_FP_Greater(A[k], A[k - 1]) then
                   begin
-                    K := K + 1;
+                    k := k + 1;
                   end;
               end;
-            if AP_FP_Greater_Eq(A[T - 1], A[K - 1]) then
+            if AP_FP_Greater_Eq(A[T - 1], A[k - 1]) then
               begin
                 T := 0;
               end
             else
               begin
-                Tmp := A[K - 1];
-                A[K - 1] := A[T - 1];
-                A[T - 1] := Tmp;
-                T := K;
+                tmp := A[k - 1];
+                A[k - 1] := A[T - 1];
+                A[T - 1] := tmp;
+                T := k;
               end;
           end;
       end;
-    I := I - 1;
-  until not(I >= 1);
+    i := i - 1;
+  until not(i >= 1);
 end;
 
 (* ************************************************************************
@@ -909,14 +909,14 @@ end;
   VA      -   value of the element being added
   VB      -   value of the tag
   ************************************************************************ *)
-procedure TagHeapPushI(var A: TLVec; var B: TLIVec;
-  var N: TLInt; const VA: TLFloat; const VB: TLInt);
+procedure TagHeapPushI(var A: TLVec; var b: TLIVec;
+  var n: TLInt; const VA: TLFloat; const VB: TLInt);
 var
   J: TLInt;
-  K: TLInt;
-  V: TLFloat;
+  k: TLInt;
+  v: TLFloat;
 begin
-  if N < 0 then
+  if n < 0 then
     begin
       Exit;
     end;
@@ -924,11 +924,11 @@ begin
   //
   // N=0 is a special case
   //
-  if N = 0 then
+  if n = 0 then
     begin
       A[0] := VA;
-      B[0] := VB;
-      N := N + 1;
+      b[0] := VB;
+      n := n + 1;
       Exit;
     end;
 
@@ -940,21 +940,21 @@ begin
   // until its final position is determined
   // (it allow us to reduce number of array access operations)
   //
-  J := N;
-  N := N + 1;
+  J := n;
+  n := n + 1;
   while J > 0 do
     begin
-      K := (J - 1) div 2;
-      V := A[K];
-      if AP_FP_Less(V, VA) then
+      k := (J - 1) div 2;
+      v := A[k];
+      if AP_FP_Less(v, VA) then
         begin
 
           //
           // swap with higher element
           //
-          A[J] := V;
-          B[J] := B[K];
-          J := K;
+          A[J] := v;
+          b[J] := b[k];
+          J := k;
         end
       else
         begin
@@ -966,7 +966,7 @@ begin
         end;
     end;
   A[J] := VA;
-  B[J] := VB;
+  b[J] := VB;
 end;
 
 (* ************************************************************************
@@ -981,17 +981,17 @@ end;
   VA      -   value of the element which replaces top element
   VB      -   value of the tag
   ************************************************************************ *)
-procedure TagHeapReplaceTopI(var A: TLVec; var B: TLIVec;
-  const N: TLInt; const VA: TLFloat; const VB: TLInt);
+procedure TagHeapReplaceTopI(var A: TLVec; var b: TLIVec;
+  const n: TLInt; const VA: TLFloat; const VB: TLInt);
 var
   J: TLInt;
-  K1: TLInt;
-  K2: TLInt;
-  V: TLFloat;
-  V1: TLFloat;
-  V2: TLFloat;
+  k1: TLInt;
+  k2: TLInt;
+  v: TLFloat;
+  v1: TLFloat;
+  v2: TLFloat;
 begin
-  if N < 1 then
+  if n < 1 then
     begin
       Exit;
     end;
@@ -999,10 +999,10 @@ begin
   //
   // N=1 is a special case
   //
-  if N = 1 then
+  if n = 1 then
     begin
       A[0] := VA;
-      B[0] := VB;
+      b[0] := VB;
       Exit;
     end;
 
@@ -1017,11 +1017,11 @@ begin
   // (it allow us to reduce number of array access operations)
   //
   J := 0;
-  K1 := 1;
-  K2 := 2;
-  while K1 < N do
+  k1 := 1;
+  k2 := 2;
+  while k1 < n do
     begin
-      if K2 >= N then
+      if k2 >= n then
         begin
 
           //
@@ -1030,12 +1030,12 @@ begin
           // swap and terminate (because this child
           // have no siblings due to heap structure)
           //
-          V := A[K1];
-          if AP_FP_Greater(V, VA) then
+          v := A[k1];
+          if AP_FP_Greater(v, VA) then
             begin
-              A[J] := V;
-              B[J] := B[K1];
-              J := K1;
+              A[J] := v;
+              b[J] := b[k1];
+              J := k1;
             end;
           Break;
         end
@@ -1045,15 +1045,15 @@ begin
           //
           // two childs
           //
-          V1 := A[K1];
-          V2 := A[K2];
-          if AP_FP_Greater(V1, V2) then
+          v1 := A[k1];
+          v2 := A[k2];
+          if AP_FP_Greater(v1, v2) then
             begin
-              if AP_FP_Less(VA, V1) then
+              if AP_FP_Less(VA, v1) then
                 begin
-                  A[J] := V1;
-                  B[J] := B[K1];
-                  J := K1;
+                  A[J] := v1;
+                  b[J] := b[k1];
+                  J := k1;
                 end
               else
                 begin
@@ -1062,23 +1062,23 @@ begin
             end
           else
             begin
-              if AP_FP_Less(VA, V2) then
+              if AP_FP_Less(VA, v2) then
                 begin
-                  A[J] := V2;
-                  B[J] := B[K2];
-                  J := K2;
+                  A[J] := v2;
+                  b[J] := b[k2];
+                  J := k2;
                 end
               else
                 begin
                   Break;
                 end;
             end;
-          K1 := 2 * J + 1;
-          K2 := 2 * J + 2;
+          k1 := 2 * J + 1;
+          k2 := 2 * J + 2;
         end;
     end;
   A[J] := VA;
-  B[J] := VB;
+  b[J] := VB;
 end;
 
 (* ************************************************************************
@@ -1093,12 +1093,12 @@ end;
   On output top element is moved to A[N-1], B[N-1], heap is reordered, N is
   decreased by 1.
   ************************************************************************ *)
-procedure TagHeapPopI(var A: TLVec; var B: TLIVec; var N: TLInt);
+procedure TagHeapPopI(var A: TLVec; var b: TLIVec; var n: TLInt);
 var
   VA: TLFloat;
   VB: TLInt;
 begin
-  if N < 1 then
+  if n < 1 then
     begin
       Exit;
     end;
@@ -1106,9 +1106,9 @@ begin
   //
   // N=1 is a special case
   //
-  if N = 1 then
+  if n = 1 then
     begin
-      N := 0;
+      n := 0;
       Exit;
     end;
 
@@ -1116,10 +1116,10 @@ begin
   // swap top element and last element,
   // then reorder heap
   //
-  VA := A[N - 1];
-  VB := B[N - 1];
-  A[N - 1] := A[0];
-  B[N - 1] := B[0];
-  N := N - 1;
-  TagHeapReplaceTopI(A, B, N, VA, VB);
-end;
+  VA := A[n - 1];
+  VB := b[n - 1];
+  A[n - 1] := A[0];
+  b[n - 1] := b[0];
+  n := n - 1;
+  TagHeapReplaceTopI(A, b, n, VA, VB);
+end; 

@@ -12,13 +12,13 @@
 
 unit h264Encoder;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
 uses
-  sysutils, h264Stdint, h264Common, h264Util, h264Parameters, h264Frame, h264stream, h264Stats, h264loopfilter,
-  h264intra_pred, h264motion_comp, h264motion_est, h264ratecontrol, h264image, h264mb_encoder, CoreClasses;
+  SysUtils, h264Stdint, h264Common, h264Util, h264Parameters, h264Frame, h264stream, h264Stats, h264Loopfilter,
+  h264Intra_pred, h264Motion_comp, h264Motion_est, h264RateControl, h264Image, h264MB_encoder, CoreClasses;
 
 type
   TFevh264Encoder = class
@@ -41,14 +41,14 @@ type
 
     // classes
     frames: TFrameManager;
-    rc: TRatecontrol;
+    RC: TRatecontrol;
     mc: TMotionCompensation;
     me: TMotionEstimator;
 
     procedure SetISlice;
     procedure SetPSlice;
-    function TryEncodeFrame(const img: TPlanarImage): boolean;
-    function SceneCut(const mbrow: int32_t): boolean;
+    function TryEncodeFrame(const img: TPlanarImage): Boolean;
+    function SceneCut(const mbrow: int32_t): Boolean;
     procedure GetFrameSSD;
     procedure UpdateStats;
   public
@@ -56,45 +56,45 @@ type
       Create encoder with desired parameters.
       Param instance is bound to encoder and shouldn't be modified until the encoder is freed
     }
-    constructor Create(var param: TEncodingParameters);
-    destructor destroy; override;
+    constructor Create(var Param: TEncodingParameters);
+    destructor Destroy; override;
     procedure EncodeFrame(const img: TPlanarImage; buffer: uint8_p; out stream_size: uint32_t);
-    procedure GetLastFrameSSD(out ssd: array of int64_t);
+    procedure GetLastFrameSSD(out ssd: array of Int64_t);
     procedure GetLastFrame(out last_frame: TFrame);
   end;
 
 implementation
 
 
-constructor TFevh264Encoder.Create(var param: TEncodingParameters);
+constructor TFevh264Encoder.Create(var Param: TEncodingParameters);
 begin
   inherited Create;
 
-  _param := param;
+  _param := Param;
 
   // check&set params
-  width := param.FrameWidth;
-  height := param.FrameHeight;
-  num_ref_frames := param.NumReferenceFrames;
-  key_interval := param.KeyFrameInterval;
+  width := Param.FrameWidth;
+  height := Param.FrameHeight;
+  num_ref_frames := Param.NumReferenceFrames;
+  key_interval := Param.KeyFrameInterval;
 
   frame_num := 0;
   last_keyframe_num := 0;
   mb_width := width div 16;
   mb_height := height div 16;
   if (width and $F) > 0 then
-      inc(mb_width);
+      Inc(mb_width);
   if (height and $F) > 0 then
-      inc(mb_height);
+      Inc(mb_height);
   mb_count := mb_width * mb_height;
 
   // stream settings
   h264s := TH264Stream.Create(width, height, mb_width, mb_height);
-  h264s.QP := param.QParam;
-  h264s.ChromaQPOffset := param.ChromaQParamOffset;
+  h264s.qp := Param.QParam;
+  h264s.ChromaQPOffset := Param.ChromaQParamOffset;
   h264s.KeyInterval := key_interval;
   h264s.NumRefFrames := num_ref_frames;
-  if not param.LoopFilterEnabled then
+  if not Param.LoopFilterEnabled then
       h264s.DisableLoopFilter;
 
   // allocate frames
@@ -103,53 +103,53 @@ begin
   // inter pred
   mc := TMotionCompensation.Create;
   me := TMotionEstimator.Create(width, height, mb_width, mb_height, mc, h264s.GetInterPredCostEvaluator);
-  me.subme := param.SubpixelMELevel;
+  me.subme := Param.SubpixelMELevel;
 
   // ratecontrol
-  rc := TRatecontrol.Create;
-  if param.ABRRateControlEnabled then
-      rc.Set2pass(param.Bitrate, param.FrameCount, param.FrameRate)
+  RC := TRatecontrol.Create;
+  if Param.ABRRateControlEnabled then
+      RC.Set2pass(Param.Bitrate, Param.FrameCount, Param.FrameRate)
   else
-      rc.SetConstQP(param.QParam);
+      RC.SetConstQP(Param.QParam);
 
   // mb encoder
-  case param.AnalysisLevel of
+  case Param.AnalysisLevel of
     0: mb_enc := TMBEncoderNoAnalyse.Create;
     1: mb_enc := TMBEncoderQuickAnalyse.Create;
     2: mb_enc := TMBEncoderQuickAnalyseSATD.Create;
     else mb_enc := TMBEncoderRateAnalyse.Create;
   end;
   mb_enc.num_ref_frames := num_ref_frames;
-  mb_enc.chroma_coding := true;
+  mb_enc.chroma_coding := True;
   mb_enc.mc := mc;
   mb_enc.me := me;
   mb_enc.h264s := h264s;
-  mb_enc.ChromaQPOffset := param.ChromaQParamOffset;
-  mb_enc.chroma_coding := not param.IgnoreChroma;
-  mb_enc.loopfilter := param.LoopFilterEnabled;
+  mb_enc.ChromaQPOffset := Param.ChromaQParamOffset;
+  mb_enc.chroma_coding := not Param.IgnoreChroma;
+  mb_enc.loopfilter := Param.LoopFilterEnabled;
 
   // stats
   stats := TStreamStats.Create;
-  h264s.SEIString := param.ToPascalString;
+  h264s.SEIString := Param.ToPascalString;
 end;
 
-destructor TFevh264Encoder.destroy;
+destructor TFevh264Encoder.Destroy;
 begin
-  rc.Free;
+  RC.Free;
   frames.Free;
   me.Free;
   mc.Free;
   h264s.Free;
   mb_enc.Free;
   stats.Free;
-  inherited destroy;
+  inherited Destroy;
 end;
 
 procedure TFevh264Encoder.EncodeFrame(const img: TPlanarImage; buffer: uint8_p; out stream_size: uint32_t);
 begin
   frames.GetFree(fenc);
   frame_img2frame_copy(fenc, img);
-  fenc.num := frame_num;
+  fenc.Num := frame_num;
 
   // set frame params
   if (frame_num = 0) or (frame_num - last_keyframe_num >= key_interval) then
@@ -158,7 +158,7 @@ begin
       SetPSlice;
 
   // encode frame (or reencode P as I)
-  if TryEncodeFrame(img) = false then
+  if TryEncodeFrame(img) = False then
     begin
       SetISlice;
       TryEncodeFrame(img);
@@ -173,13 +173,13 @@ begin
   h264s.GetSliceBitstream(buffer, stream_size);
 
   // stats
-  rc.Update(frame_num, stream_size * 8, fenc);
+  RC.Update(frame_num, stream_size * 8, fenc);
   fenc.stats.size_bytes := stream_size;
   UpdateStats;
 
   // advance
   frames.InsertRef(fenc);
-  inc(frame_num);
+  Inc(frame_num);
 end;
 
 procedure TFevh264Encoder.SetISlice;
@@ -190,26 +190,26 @@ end;
 
 procedure TFevh264Encoder.SetPSlice;
 begin
-  fenc.num_ref_frames := min(num_ref_frames, frame_num - last_keyframe_num);
+  fenc.num_ref_frames := Min(num_ref_frames, frame_num - last_keyframe_num);
   fenc.ftype := SLICE_P;
   frames.SetRefs(fenc, frame_num, fenc.num_ref_frames);
   me.NumReferences := fenc.num_ref_frames;
 end;
 
-function TFevh264Encoder.TryEncodeFrame(const img: TPlanarImage): boolean;
+function TFevh264Encoder.TryEncodeFrame(const img: TPlanarImage): Boolean;
 var
-  x, y: int32_t;
+  X, Y: int32_t;
   deblocker: IDeblocker;
-  loopfilter: boolean;
+  loopfilter: Boolean;
 begin
-  result := true;
+  Result := True;
 
   // init slice bitstream
   if img.QParam <> QPARAM_AUTO then
-      fenc.QP := img.QParam
+      fenc.qp := img.QParam
   else
-      fenc.QP := rc.GetQP(frame_num, fenc.ftype);
-  h264s.InitSlice(fenc.ftype, fenc.QP, fenc.num_ref_frames, fenc.bs_buf);
+      fenc.qp := RC.GetQP(frame_num, fenc.ftype);
+  h264s.InitSlice(fenc.ftype, fenc.qp, fenc.num_ref_frames, fenc.bs_buf);
 
   // frame encoding setup
   fenc.stats.Clear;
@@ -219,16 +219,16 @@ begin
       deblocker := GetNewDeblocker(fenc, not(_param.AdaptiveQuant), _param.FilterThreadEnabled);
 
   // encode rows
-  for y := 0 to (mb_height - 1) do
+  for Y := 0 to (mb_height - 1) do
     begin
-      for x := 0 to (mb_width - 1) do
-          mb_enc.Encode(x, y);
+      for X := 0 to (mb_width - 1) do
+          mb_enc.Encode(X, Y);
 
-      if SceneCut(y) then
+      if SceneCut(Y) then
         begin
-          result := false;
+          Result := False;
           h264s.AbortSlice;
-          break;
+          Break;
         end;
 
       if loopfilter then
@@ -240,27 +240,27 @@ begin
     begin
       deblocker.FrameFinished;
       deblocker.Free;
-      if result then
+      if Result then
           GetFrameSSD;
     end;
 end;
 
-function TFevh264Encoder.SceneCut(const mbrow: int32_t): boolean;
+function TFevh264Encoder.SceneCut(const mbrow: int32_t): Boolean;
 begin
-  result := false;
+  Result := False;
   if (fenc.ftype = SLICE_P) and (mbrow > mb_height div 2) then
     begin
       if (2 * fenc.stats.mb_i4_count > mb_count)
         or (4 * int32_t(fenc.stats.mb_i16_count) > 3 * mb_count)
         or (8 * int32_t(fenc.stats.mb_i4_count + fenc.stats.mb_i16_count) > 7 * mb_count)
       then
-          result := true;
+          Result := True;
     end;
 end;
 
-procedure TFevh264Encoder.GetLastFrameSSD(out ssd: array of int64_t);
+procedure TFevh264Encoder.GetLastFrameSSD(out ssd: array of Int64_t);
 begin
-  case Length(ssd) of
+  case length(ssd) of
     0:
       ;
     1 .. 2:
@@ -283,29 +283,29 @@ end;
 procedure TFevh264Encoder.UpdateStats;
 begin
   if fenc.ftype = SLICE_I then
-      inc(stats.i_count)
+      Inc(stats.i_count)
   else
-      inc(stats.p_count);
+      Inc(stats.p_count);
   stats.Add(fenc.stats);
 end;
 
 procedure TFevh264Encoder.GetFrameSSD;
 var
-  x, y: int32_t;
+  X, Y: int32_t;
   mb: PMacroblock;
 begin
-  for y := 0 to (mb_height - 1) do
+  for Y := 0 to (mb_height - 1) do
     begin
-      for x := 0 to (mb_width - 1) do
+      for X := 0 to (mb_width - 1) do
         begin
-          mb := @fenc.mbs[y * mb_width + x];
+          mb := @fenc.mbs[Y * mb_width + X];
           DSP.pixel_load_16x16(mb^.pixels, mb^.pfdec, fenc.stride);
           DSP.pixel_load_8x8(mb^.pixels_c[0], mb^.pfdec_c[0], fenc.stride_c);
           DSP.pixel_load_8x8(mb^.pixels_c[1], mb^.pfdec_c[1], fenc.stride_c);
 
-          inc(fenc.stats.ssd[0], DSP.ssd_16x16(mb^.pixels, mb^.pfenc, fenc.stride));
-          inc(fenc.stats.ssd[1], DSP.ssd_8x8(mb^.pixels_c[0], mb^.pfenc_c[0], fenc.stride_c));
-          inc(fenc.stats.ssd[2], DSP.ssd_8x8(mb^.pixels_c[1], mb^.pfenc_c[1], fenc.stride_c));
+          Inc(fenc.stats.ssd[0], DSP.ssd_16x16(mb^.pixels, mb^.pfenc, fenc.stride));
+          Inc(fenc.stats.ssd[1], DSP.ssd_8x8(mb^.pixels_c[0], mb^.pfenc_c[0], fenc.stride_c));
+          Inc(fenc.stats.ssd[2], DSP.ssd_8x8(mb^.pixels_c[1], mb^.pfenc_c[1], fenc.stride_c));
         end;
     end;
 end;
@@ -320,6 +320,6 @@ DSP := TDSP.Create;
 
 finalization
 
-disposeObject(DSP);
+DisposeObject(DSP);
 
-end.
+end.  

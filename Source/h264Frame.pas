@@ -12,13 +12,13 @@
 
 unit h264Frame;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 {$POINTERMATH ON}
 
 interface
 
 uses
-  sysutils, h264Stdint, h264stats, h264common, h264image, h264pixel, h264util, CoreClasses;
+  SysUtils, h264Stdint, h264Stats, h264Common, h264Image, h264Pixel, h264Util, CoreClasses;
 
 const
   FRAME_PADDING_W = 16;
@@ -29,13 +29,13 @@ type
   private
     listL0: array of TFrame;
     ifree: int32_t;
-    procedure GetRef(out f: PFrame; const frame_num: int32_t);
+    procedure GetRef(out F: PFrame; const frame_num: int32_t);
   public
-    procedure InsertRef(var f: TFrame);
-    procedure SetRefs(var f: TFrame; const frame_num, nrefs: int32_t);
-    procedure GetFree(var f: TFrame);
+    procedure InsertRef(var F: TFrame);
+    procedure SetRefs(var F: TFrame; const frame_num, nrefs: int32_t);
+    procedure GetFree(var F: TFrame);
     constructor Create(const ref_count, mb_w, mb_h: int32_t);
-    destructor destroy; override;
+    destructor Destroy; override;
   end;
 
 procedure frame_new(var frame: TFrame; const mb_width, mb_height: int32_t);
@@ -47,59 +47,59 @@ procedure frame_hpel_interpolate(var frame: TFrame);
 
 implementation
 
-procedure TFrameManager.GetRef(out f: PFrame; const frame_num: int32_t);
+procedure TFrameManager.GetRef(out F: PFrame; const frame_num: int32_t);
 var
   i: int32_t;
 begin
-  for i := 0 to Length(listL0) - 1 do
-    if listL0[i].num = frame_num then
+  for i := 0 to length(listL0) - 1 do
+    if listL0[i].Num = frame_num then
       begin
-        f := @listL0[i];
-        exit;
+        F := @listL0[i];
+        Exit;
       end;
   RaiseInfo('GetRef - ref not found! %d', [frame_num]);
 end;
 
 // insert ref. frame to oldest slot, mark oldest taken slot as free
-procedure TFrameManager.InsertRef(var f: TFrame);
+procedure TFrameManager.InsertRef(var F: TFrame);
 var
   i, oldest: int32_t;
 begin
   oldest := MaxInt;
-  for i := 0 to Length(listL0) - 1 do
-    if listL0[i].num < oldest then
+  for i := 0 to length(listL0) - 1 do
+    if listL0[i].Num < oldest then
       begin
         ifree := i;
-        oldest := listL0[i].num;
+        oldest := listL0[i].Num;
       end;
-  listL0[ifree] := f;
+  listL0[ifree] := F;
 
   oldest := MaxInt;
-  for i := 0 to Length(listL0) - 1 do
-    if listL0[i].num < oldest then
+  for i := 0 to length(listL0) - 1 do
+    if listL0[i].Num < oldest then
       begin
         ifree := i;
-        oldest := listL0[i].num;
+        oldest := listL0[i].Num;
       end;
 end;
 
-procedure TFrameManager.SetRefs(var f: TFrame; const frame_num, nrefs: int32_t);
+procedure TFrameManager.SetRefs(var F: TFrame; const frame_num, nrefs: int32_t);
 var
   i: int32_t;
-  t: PFrame;
+  T: PFrame;
 begin
   for i := 1 to nrefs do
     begin
-      GetRef(t, frame_num - i);
-      f.refs[i - 1] := t;
+      GetRef(T, frame_num - i);
+      F.refs[i - 1] := T;
     end;
 end;
 
-procedure TFrameManager.GetFree(var f: TFrame);
+procedure TFrameManager.GetFree(var F: TFrame);
 begin
   if ifree = -1 then
       RaiseInfo('GetFree - no free frame!');
-  f := listL0[ifree];
+  F := listL0[ifree];
   ifree := -1;
 end;
 
@@ -113,18 +113,18 @@ begin
   for i := 0 to ref_count do
     begin
       frame_new(listL0[i], mb_w, mb_h);
-      listL0[i].num := -1;
+      listL0[i].Num := -1;
     end;
 end;
 
-destructor TFrameManager.destroy;
+destructor TFrameManager.Destroy;
 var
   i: int32_t;
 begin
-  for i := 0 to Length(listL0) - 1 do
+  for i := 0 to length(listL0) - 1 do
       frame_free(listL0[i]);
   listL0 := nil;
-  inherited destroy;
+  inherited Destroy;
 end;
 
 procedure frame_new(var frame: TFrame; const mb_width, mb_height: int32_t);
@@ -156,11 +156,11 @@ begin
   frame_mem_offset := FRAME_PADDING_W * padded_width + FRAME_PADDING_W;
   frame_mem_offset_cr := FRAME_PADDING_W * padded_width div 4 + FRAME_PADDING_W div 2;
 
-  frame.mbs := fev_malloc(mb_width * mb_height * sizeof(TMacroblock));
+  frame.mbs := fev_malloc(mb_width * mb_height * SizeOf(TMacroblock));
   frame.aq_table := fev_malloc(mb_width * mb_height);
   frame.qp := 0;
   frame.qp_avg := 0;
-  frame.num := 0;
+  frame.Num := 0;
 
   frame.frame_mem_offset := frame_mem_offset;
   frame.frame_mem_offset_cr := frame_mem_offset_cr;
@@ -248,13 +248,13 @@ begin
   frame.h := 0;
 end;
 
-procedure frame_swap(var a, b: TFrame);
+procedure frame_swap(var A, b: TFrame);
 var
-  t: TFrame;
+  T: TFrame;
 begin
-  t := a;
-  a := b;
-  b := t;
+  T := A;
+  A := b;
+  b := T;
 end;
 
 (* ******************************************************************************
@@ -269,72 +269,72 @@ const
   VAR_SHIFT = 14;
 
 var
-  x, y: int32_t;
+  X, Y: int32_t;
   vari: int32_t;
   qp: int32_t;
   pfenc, pix: uint8_p;
-  stride, avg: int32_t;
+  stride, Avg: int32_t;
 
 begin
   stride := frame.mbw;
   pix := pixbuffer;
 
   // derive qp from variance
-  avg := 0;
-  for y := 0 to (frame.mbh - 1) do
+  Avg := 0;
+  for Y := 0 to (frame.mbh - 1) do
     begin
-      pfenc := frame.plane[0] + y * 16 * frame.stride;
+      pfenc := frame.plane[0] + Y * 16 * frame.stride;
 
-      for x := 0 to (frame.mbw - 1) do
+      for X := 0 to (frame.mbw - 1) do
         begin
           pixel_load_16x16(pix, pfenc, frame.stride);
-          vari := dsp.var_16x16(pix);
-          inc(pfenc, 16);
+          vari := DSP.var_16x16(pix);
+          Inc(pfenc, 16);
           qp := base_qp - QP_RANGE;
-          qp := clip3(QP_MIN, qp + min(vari shr VAR_SHIFT, QP_RANGE * 2), QP_MAX);
-          inc(avg, qp);
-          frame.aq_table[y * stride + x] := qp;
+          qp := clip3(QP_MIN, qp + Min(vari shr VAR_SHIFT, QP_RANGE * 2), QP_MAX);
+          Inc(Avg, qp);
+          frame.aq_table[Y * stride + X] := qp;
         end;
     end;
 
   frame.aq_table[0] := base_qp;
-  frame.qp_avg := avg / (frame.mbw * frame.mbh);
+  frame.qp_avg := Avg / (frame.mbw * frame.mbh);
 end;
 
 { skopirovanie dat do zarovnanej oblasti pamate spolu s vyplnou na okrajoch
 }
-procedure paint_edge_vert(src, dst: uint8_p; stride, h: int32_t; const edge_width: uint8_t);
+procedure paint_edge_vert(Src, Dst: uint8_p; stride, h: int32_t; const edge_width: uint8_t);
 var
-  i, j: int32_t;
+  i, J: int32_t;
 begin
   for i := 0 to h - 1 do
     begin
-      for j := 0 to edge_width - 1 do
-          dst[j] := src^;
-      inc(dst, stride);
-      inc(src, stride);
+      for J := 0 to edge_width - 1 do
+          Dst[J] := Src^;
+      Inc(Dst, stride);
+      Inc(Src, stride);
     end;
 end;
 
-procedure paint_edge_horiz(src, dst: uint8_p; stride: int32_t; const edge_width: uint8_t);
+procedure paint_edge_horiz(Src, Dst: uint8_p; stride: int32_t; const edge_width: uint8_t);
 var
   i: int32_t;
 begin
   for i := 0 to edge_width - 1 do
     begin
-      CopyPtr(src, dst, stride);
-      inc(dst, stride);
+      CopyPtr(Src, Dst, stride);
+      Inc(Dst, stride);
     end;
 end;
 
 procedure frame_img2frame_copy(var frame: TFrame; const img: TPlanarImage);
 var
-  w, h, i, j: int32_t;
+  w, h, i, J: int32_t;
   dstride, sstride, edge_width: int32_t;
   s, d: uint8_p;
 begin
-  w := img.Width;
-  h := img.Height;
+  w := img.width;
+  h := img.height;
   // y
   dstride := frame.stride;
   sstride := img.stride;
@@ -343,35 +343,35 @@ begin
   for i := 0 to h - 1 do
     begin
       CopyPtr(s, d, w);
-      inc(s, sstride);
-      inc(d, dstride);
+      Inc(s, sstride);
+      Inc(d, dstride);
     end;
   // u/v
   dstride := frame.stride_c;
   sstride := img.stride_c;
-  for j := 1 to 2 do
+  for J := 1 to 2 do
     begin
-      d := frame.plane[j];
-      s := img.plane[j];
+      d := frame.plane[J];
+      s := img.plane[J];
       for i := 0 to h div 2 - 1 do
         begin
           CopyPtr(s, d, w div 2);
-          inc(s, sstride);
-          inc(d, dstride);
+          Inc(s, sstride);
+          Inc(d, dstride);
         end;
     end;
 
   // fill non-mod16 edges
   if (w and $F) > 0 then
     begin
-      edge_width := 16 - (img.Width and $F);
+      edge_width := 16 - (img.width and $F);
       paint_edge_vert(frame.plane[0] + w - 1, frame.plane[0] + w, frame.stride, frame.h, edge_width);
       for i := 1 to 2 do
           paint_edge_vert(frame.plane[i] + w div 2 - 1, frame.plane[i] + w div 2, frame.stride_c, frame.h_cr, edge_width div 2);
     end;
   if (h and $F) > 0 then
     begin
-      edge_width := 16 - (img.Height and $F);
+      edge_width := 16 - (img.height and $F);
       paint_edge_horiz(frame.plane[0] - 16 + frame.stride * (h - 1), frame.plane[0] - 16 + frame.stride * h, frame.stride, edge_width);
       for i := 1 to 2 do
           paint_edge_horiz(frame.plane[i] - 8 + frame.stride_c * (h div 2 - 1), frame.plane[i] - 8 + frame.stride_c * h div 2, frame.stride_c, edge_width);
@@ -404,82 +404,82 @@ end;
 *)
 procedure frame_hpel_interpolate(var frame: TFrame);
 var
-  Width, Height: int32_t;
+  width, height: int32_t;
   stride: int32_t;
-  src: uint8_p;
-  dst: array [0 .. 2] of uint8_p;
-  row: array [-2 .. 3] of uint8_p;
-  x, y, i, j: int32_t;
-  t: array [-2 .. 3] of int32_t;
+  Src: uint8_p;
+  Dst: array [0 .. 2] of uint8_p;
+  Row: array [-2 .. 3] of uint8_p;
+  X, Y, i, J: int32_t;
+  T: array [-2 .. 3] of int32_t;
   edge_offset: int32_t;
 
-  function clip(i: int32_t): uint8_t; inline;
+  function Clip(i: int32_t): uint8_t; inline;
   begin
     if i > 255 then
         i := 255
     else if i < 0 then
         i := 0;
-    result := uint8_t(i);
+    Result := uint8_t(i);
   end;
 
 begin
-  Width := frame.w;
-  Height := frame.h;
+  width := frame.w;
+  height := frame.h;
   stride := frame.stride;
   edge_offset := FRAME_EDGE_W + FRAME_EDGE_W * stride;
-  src := frame.plane_dec[0] - edge_offset;
+  Src := frame.plane_dec[0] - edge_offset;
   for i := 0 to 2 do
-      dst[i] := frame.luma_mc[i + 1] - edge_offset;
+      Dst[i] := frame.luma_mc[i + 1] - edge_offset;
 
   // horizontal
-  for y := 0 to Height - 1 + FRAME_EDGE_W * 2 do
+  for Y := 0 to height - 1 + FRAME_EDGE_W * 2 do
     begin
-      for x := 0 to Width - 1 + FRAME_EDGE_W * 2 do
+      for X := 0 to width - 1 + FRAME_EDGE_W * 2 do
         begin
-          i := src[-2 + x] - 5 * src[-1 + x] + 20 * src[0 + x] + 20 * src[1 + x] - 5 * src[2 + x] + src[3 + x] + 16;
+          i := Src[-2 + X] - 5 * Src[-1 + X] + 20 * Src[0 + X] + 20 * Src[1 + X] - 5 * Src[2 + X] + Src[3 + X] + 16;
           if i < 0 then
               i := 0;
-          dst[0][x] := clip(i shr 5);
+          Dst[0][X] := Clip(i shr 5);
         end;
-      inc(src, stride);
-      inc(dst[0], stride);
+      Inc(Src, stride);
+      Inc(Dst[0], stride);
     end;
 
   // vertical + hv
-  src := frame.plane_dec[0] - edge_offset;
+  Src := frame.plane_dec[0] - edge_offset;
   for i := -2 to 3 do
-      row[i] := src + i * stride;
+      Row[i] := Src + i * stride;
 
-  for y := 0 to Height - 1 + FRAME_EDGE_W * 2 do
+  for Y := 0 to height - 1 + FRAME_EDGE_W * 2 do
     begin
       // fill temps first
-      x := -1;
-      for j := x - 2 to x + 3 do
-          t[j - x] := row[-2, j] - 5 * row[-1, j] + 20 * row[0, j] + 20 * row[1, j] - 5 * row[2, j] + row[3, j];
+      X := -1;
+      for J := X - 2 to X + 3 do
+          T[J - X] := Row[-2, J] - 5 * Row[-1, J] + 20 * Row[0, J] + 20 * Row[1, J] - 5 * Row[2, J] + Row[3, J];
 
-      for x := 0 to Width - 1 + FRAME_EDGE_W * 2 do
+      for X := 0 to width - 1 + FRAME_EDGE_W * 2 do
         begin
           // reuse coefs from last run
-          for j := -1 to 3 do
-              t[j - 1] := t[j];
+          for J := -1 to 3 do
+              T[J - 1] := T[J];
           // get new vertical intermed
-          j := x + 3;
-          t[3] := row[-2, j] - 5 * row[-1, j] + 20 * row[0, j] + 20 * row[1, j] - 5 * row[2, j] + row[3, j];
+          J := X + 3;
+          T[3] := Row[-2, J] - 5 * Row[-1, J] + 20 * Row[0, J] + 20 * Row[1, J] - 5 * Row[2, J] + Row[3, J];
           // vert
-          i := t[0] + 16;
+          i := T[0] + 16;
           if i < 0 then
               i := 0;
-          dst[1][y * stride + x] := clip(i shr 5);
+          Dst[1][Y * stride + X] := Clip(i shr 5);
           // vert + horiz
-          i := t[-2] - 5 * t[-1] + 20 * t[0] + 20 * t[1] - 5 * t[2] + t[3] + 512;
+          i := T[-2] - 5 * T[-1] + 20 * T[0] + 20 * T[1] - 5 * T[2] + T[3] + 512;
           if i < 0 then
               i := 0;
-          dst[2][y * stride + x] := clip(i shr 10);
+          Dst[2][Y * stride + X] := Clip(i shr 10);
         end;
 
       for i := -2 to 3 do
-          inc(row[i], stride);
+          Inc(Row[i], stride);
     end;
 end;
 
-end.
+end.  

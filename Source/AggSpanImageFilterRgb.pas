@@ -39,7 +39,7 @@ unit AggSpanImageFilterRgb;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -61,7 +61,7 @@ type
     FOrder: TAggOrder;
   public
     constructor Create(Alloc: TAggSpanAllocator; Order: TAggOrder); overload;
-    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; BackColor: PAggColor; Inter: TAggSpanInterpolator; Order: TAggOrder); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; BackColor: PAggColor; inter: TAggSpanInterpolator; Order: TAggOrder); overload;
 
     function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
   end;
@@ -71,7 +71,7 @@ type
     FOrder: TAggOrder;
   public
     constructor Create(Alloc: TAggSpanAllocator; Order: TAggOrder); overload;
-    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; BackColor: PAggColor; Inter: TAggSpanInterpolator; Order: TAggOrder); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; BackColor: PAggColor; inter: TAggSpanInterpolator; Order: TAggOrder); overload;
 
     function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
   end;
@@ -81,7 +81,7 @@ type
     FOrder: TAggOrder;
   public
     constructor Create(Alloc: TAggSpanAllocator; Order: TAggOrder); overload;
-    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; BackColor: PAggColor; Inter: TAggSpanInterpolator; Filter: TAggImageFilterLUT; Order: TAggOrder); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; BackColor: PAggColor; inter: TAggSpanInterpolator; Filter: TAggImageFilterLUT; Order: TAggOrder); overload;
 
     function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
   end;
@@ -91,7 +91,7 @@ type
     FOrder: TAggOrder;
   public
     constructor Create(Alloc: TAggSpanAllocator; Order: TAggOrder); overload;
-    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; BackColor: PAggColor; Inter: TAggSpanInterpolator; Filter: TAggImageFilterLUT; Order: TAggOrder); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; BackColor: PAggColor; inter: TAggSpanInterpolator; Filter: TAggImageFilterLUT; Order: TAggOrder); overload;
 
     function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
   end;
@@ -110,10 +110,10 @@ begin
 end;
 
 constructor TAggSpanImageFilterRgbNN.Create(Alloc: TAggSpanAllocator;
-  Src: TAggRenderingBuffer; BackColor: PAggColor; Inter: TAggSpanInterpolator;
+  Src: TAggRenderingBuffer; BackColor: PAggColor; inter: TAggSpanInterpolator;
   Order: TAggOrder);
 begin
-  inherited Create(Alloc, Src, BackColor, Inter, nil);
+  inherited Create(Alloc, Src, BackColor, inter, nil);
 
   FOrder := Order;
 end;
@@ -130,8 +130,8 @@ begin
 
   Span := Allocator.Span;
 
-  Max.X := SourceImage.Width - 1;
-  Max.Y := SourceImage.Height - 1;
+  Max.X := SourceImage.width - 1;
+  Max.Y := SourceImage.height - 1;
 
   repeat
     Interpolator.Coordinates(@X, @Y);
@@ -157,14 +157,14 @@ begin
     else
       begin
         Fg[FOrder.R] := GetBackgroundColor.Rgba8.R;
-        Fg[FOrder.G] := GetBackgroundColor.Rgba8.G;
-        Fg[FOrder.B] := GetBackgroundColor.Rgba8.B;
+        Fg[FOrder.g] := GetBackgroundColor.Rgba8.g;
+        Fg[FOrder.b] := GetBackgroundColor.Rgba8.b;
         SrcAlpha := GetBackgroundColor.Rgba8.A;
       end;
 
     Span.Rgba8.R := Int8u(Fg[FOrder.R]);
-    Span.Rgba8.G := Int8u(Fg[FOrder.G]);
-    Span.Rgba8.B := Int8u(Fg[FOrder.B]);
+    Span.Rgba8.g := Int8u(Fg[FOrder.g]);
+    Span.Rgba8.b := Int8u(Fg[FOrder.b]);
     Span.Rgba8.A := Int8u(SrcAlpha);
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -188,10 +188,10 @@ begin
 end;
 
 constructor TAggSpanImageFilterRgbBilinear.Create(Alloc: TAggSpanAllocator;
-  Src: TAggRenderingBuffer; BackColor: PAggColor; Inter: TAggSpanInterpolator;
+  Src: TAggRenderingBuffer; BackColor: PAggColor; inter: TAggSpanInterpolator;
   Order: TAggOrder);
 begin
-  inherited Create(Alloc, Src, BackColor, Inter, nil);
+  inherited Create(Alloc, Src, BackColor, inter, nil);
 
   FOrder := Order;
 end;
@@ -211,8 +211,8 @@ begin
 
   Span := Allocator.Span;
 
-  Max.X := SourceImage.Width - 1;
-  Max.Y := SourceImage.Height - 1;
+  Max.X := SourceImage.width - 1;
+  Max.Y := SourceImage.height - 1;
 
   repeat
     Interpolator.Coordinates(@HiRes.X, @HiRes.Y);
@@ -283,8 +283,8 @@ begin
         if (LoRes.X < -1) or (LoRes.Y < -1) or (LoRes.X > Max.X) or (LoRes.Y > Max.Y) then
           begin
             Fg[FOrder.R] := Backup.R;
-            Fg[FOrder.G] := Backup.G;
-            Fg[FOrder.B] := Backup.B;
+            Fg[FOrder.g] := Backup.g;
+            Fg[FOrder.b] := Backup.b;
             SrcAlpha := Backup.A;
           end
         else
@@ -317,8 +317,8 @@ begin
             else
               begin
                 Inc(Fg[FOrder.R], Backup.R * Weight);
-                Inc(Fg[FOrder.G], Backup.G * Weight);
-                Inc(Fg[FOrder.B], Backup.B * Weight);
+                Inc(Fg[FOrder.g], Backup.g * Weight);
+                Inc(Fg[FOrder.b], Backup.b * Weight);
 
                 Inc(SrcAlpha, Backup.A * Weight);
               end;
@@ -345,8 +345,8 @@ begin
             else
               begin
                 Inc(Fg[FOrder.R], Backup.R * Weight);
-                Inc(Fg[FOrder.G], Backup.G * Weight);
-                Inc(Fg[FOrder.B], Backup.B * Weight);
+                Inc(Fg[FOrder.g], Backup.g * Weight);
+                Inc(Fg[FOrder.b], Backup.b * Weight);
 
                 Inc(SrcAlpha, Backup.A * Weight);
               end;
@@ -374,8 +374,8 @@ begin
             else
               begin
                 Inc(Fg[FOrder.R], Backup.R * Weight);
-                Inc(Fg[FOrder.G], Backup.G * Weight);
-                Inc(Fg[FOrder.B], Backup.B * Weight);
+                Inc(Fg[FOrder.g], Backup.g * Weight);
+                Inc(Fg[FOrder.b], Backup.b * Weight);
 
                 Inc(SrcAlpha, Backup.A * Weight);
               end;
@@ -402,8 +402,8 @@ begin
             else
               begin
                 Inc(Fg[FOrder.R], Backup.R * Weight);
-                Inc(Fg[FOrder.G], Backup.G * Weight);
-                Inc(Fg[FOrder.B], Backup.B * Weight);
+                Inc(Fg[FOrder.g], Backup.g * Weight);
+                Inc(Fg[FOrder.b], Backup.b * Weight);
 
                 Inc(SrcAlpha, Backup.A * Weight);
               end;
@@ -417,8 +417,8 @@ begin
       end;
 
     Span.Rgba8.R := Int8u(Fg[FOrder.R]);
-    Span.Rgba8.G := Int8u(Fg[FOrder.G]);
-    Span.Rgba8.B := Int8u(Fg[FOrder.B]);
+    Span.Rgba8.g := Int8u(Fg[FOrder.g]);
+    Span.Rgba8.b := Int8u(Fg[FOrder.b]);
     Span.Rgba8.A := Int8u(SrcAlpha);
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -442,10 +442,10 @@ begin
 end;
 
 constructor TAggSpanImageFilterRgb2x2.Create(Alloc: TAggSpanAllocator;
-  Src: TAggRenderingBuffer; BackColor: PAggColor; Inter: TAggSpanInterpolator;
+  Src: TAggRenderingBuffer; BackColor: PAggColor; inter: TAggSpanInterpolator;
   Filter: TAggImageFilterLUT; Order: TAggOrder);
 begin
-  inherited Create(Alloc, Src, BackColor, Inter, Filter);
+  inherited Create(Alloc, Src, BackColor, inter, Filter);
 
   FOrder := Order;
 end;
@@ -469,7 +469,7 @@ begin
   WeightArray := PInt16(PtrComp(Filter.WeightArray) +
     ((Filter.Diameter div 2 - 1) shl CAggImageSubpixelShift) * SizeOf(Int16));
 
-  Max := PointInteger(SourceImage.Width - 1, SourceImage.Height - 1);
+  Max := PointInteger(SourceImage.width - 1, SourceImage.height - 1);
 
   repeat
     Interpolator.Coordinates(@HiRes.X, @HiRes.Y);
@@ -559,8 +559,8 @@ begin
         if (LoRes.X < -1) or (LoRes.Y < -1) or (LoRes.X > Max.X) or (LoRes.Y > Max.Y) then
           begin
             Fg[FOrder.R] := Backup.R;
-            Fg[FOrder.G] := Backup.G;
-            Fg[FOrder.B] := Backup.B;
+            Fg[FOrder.g] := Backup.g;
+            Fg[FOrder.b] := Backup.b;
             SrcAlpha := Backup.A;
           end
         else
@@ -596,8 +596,8 @@ begin
             else
               begin
                 Inc(Fg[FOrder.R], Backup.R * Weight);
-                Inc(Fg[FOrder.G], Backup.G * Weight);
-                Inc(Fg[FOrder.B], Backup.B * Weight);
+                Inc(Fg[FOrder.g], Backup.g * Weight);
+                Inc(Fg[FOrder.b], Backup.b * Weight);
 
                 Inc(SrcAlpha, Backup.A * Weight);
               end;
@@ -627,8 +627,8 @@ begin
             else
               begin
                 Inc(Fg[FOrder.R], Backup.R * Weight);
-                Inc(Fg[FOrder.G], Backup.G * Weight);
-                Inc(Fg[FOrder.B], Backup.B * Weight);
+                Inc(Fg[FOrder.g], Backup.g * Weight);
+                Inc(Fg[FOrder.b], Backup.b * Weight);
 
                 Inc(SrcAlpha, Backup.A * Weight);
               end;
@@ -659,8 +659,8 @@ begin
             else
               begin
                 Inc(Fg[FOrder.R], Backup.R * Weight);
-                Inc(Fg[FOrder.G], Backup.G * Weight);
-                Inc(Fg[FOrder.B], Backup.B * Weight);
+                Inc(Fg[FOrder.g], Backup.g * Weight);
+                Inc(Fg[FOrder.b], Backup.b * Weight);
 
                 Inc(SrcAlpha, Backup.A * Weight);
               end;
@@ -689,8 +689,8 @@ begin
             else
               begin
                 Inc(Fg[FOrder.R], Backup.R * Weight);
-                Inc(Fg[FOrder.G], Backup.G * Weight);
-                Inc(Fg[FOrder.B], Backup.B * Weight);
+                Inc(Fg[FOrder.g], Backup.g * Weight);
+                Inc(Fg[FOrder.b], Backup.b * Weight);
 
                 Inc(SrcAlpha, Backup.A * Weight);
               end;
@@ -716,8 +716,8 @@ begin
       end;
 
     Span.Rgba8.R := Int8u(Fg[FOrder.R]);
-    Span.Rgba8.G := Int8u(Fg[FOrder.G]);
-    Span.Rgba8.B := Int8u(Fg[FOrder.B]);
+    Span.Rgba8.g := Int8u(Fg[FOrder.g]);
+    Span.Rgba8.b := Int8u(Fg[FOrder.b]);
     Span.Rgba8.A := Int8u(SrcAlpha);
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -741,10 +741,10 @@ begin
 end;
 
 constructor TAggSpanImageFilterRgb.Create(Alloc: TAggSpanAllocator;
-  Src: TAggRenderingBuffer; BackColor: PAggColor; Inter: TAggSpanInterpolator;
+  Src: TAggRenderingBuffer; BackColor: PAggColor; inter: TAggSpanInterpolator;
   Filter: TAggImageFilterLUT; Order: TAggOrder);
 begin
-  inherited Create(Alloc, Src, BackColor, Inter, Filter);
+  inherited Create(Alloc, Src, BackColor, inter, Filter);
 
   FOrder := Order;
 end;
@@ -775,11 +775,11 @@ begin
 
   Span := Allocator.Span;
 
-  Max.X := SourceImage.Width + Start - 2;
-  Max.Y := SourceImage.Height + Start - 2;
+  Max.X := SourceImage.width + Start - 2;
+  Max.Y := SourceImage.height + Start - 2;
 
-  Max2.X := SourceImage.Width - Start - 1;
-  Max2.Y := SourceImage.Height - Start - 1;
+  Max2.X := SourceImage.width - Start - 1;
+  Max2.Y := SourceImage.height - Start - 1;
 
   repeat
     Interpolator.Coordinates(@X, @Y);
@@ -865,8 +865,8 @@ begin
           (LoRes.Y > Max2.Y) then
           begin
             Fg[FOrder.R] := Backup.R;
-            Fg[FOrder.G] := Backup.G;
-            Fg[FOrder.B] := Backup.B;
+            Fg[FOrder.g] := Backup.g;
+            Fg[FOrder.b] := Backup.b;
             SrcAlpha := Backup.A;
           end
         else
@@ -889,8 +889,8 @@ begin
                   CAggImageFilterShift);
 
                 if (LoRes.X >= 0) and (LoRes.Y >= 0) and
-                  (LoRes.X < Trunc(SourceImage.Width)) and
-                  (LoRes.Y < Trunc(SourceImage.Height)) then
+                  (LoRes.X < Trunc(SourceImage.width)) and
+                  (LoRes.Y < Trunc(SourceImage.height)) then
                   begin
                     ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) +
                       LoRes.X * 3 * SizeOf(Int8u));
@@ -907,8 +907,8 @@ begin
                 else
                   begin
                     Inc(Fg[FOrder.R], Backup.R * Weight);
-                    Inc(Fg[FOrder.G], Backup.G * Weight);
-                    Inc(Fg[FOrder.B], Backup.B * Weight);
+                    Inc(Fg[FOrder.g], Backup.g * Weight);
+                    Inc(Fg[FOrder.b], Backup.b * Weight);
 
                     Inc(SrcAlpha, Backup.A * Weight);
                   end;
@@ -957,8 +957,8 @@ begin
       end;
 
     Span.Rgba8.R := Int8u(Fg[FOrder.R]);
-    Span.Rgba8.G := Int8u(Fg[FOrder.G]);
-    Span.Rgba8.B := Int8u(Fg[FOrder.B]);
+    Span.Rgba8.g := Int8u(Fg[FOrder.g]);
+    Span.Rgba8.b := Int8u(Fg[FOrder.b]);
     Span.Rgba8.A := Int8u(SrcAlpha);
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -971,4 +971,4 @@ begin
   Result := Allocator.Span;
 end;
 
-end.
+end. 

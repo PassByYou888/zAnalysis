@@ -39,7 +39,7 @@ unit AggSpanImageFilterRgba;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -130,8 +130,8 @@ begin
 
   Span := Allocator.Span;
 
-  Max.X := SourceImage.Width - 1;
-  Max.Y := SourceImage.Height - 1;
+  Max.X := SourceImage.width - 1;
+  Max.Y := SourceImage.height - 1;
 
   repeat
     Interpolator.Coordinates(@X, @Y);
@@ -156,14 +156,14 @@ begin
     else
       begin
         ForeGround[FOrder.R] := GetBackgroundColor.Rgba8.R;
-        ForeGround[FOrder.G] := GetBackgroundColor.Rgba8.G;
-        ForeGround[FOrder.B] := GetBackgroundColor.Rgba8.B;
+        ForeGround[FOrder.g] := GetBackgroundColor.Rgba8.g;
+        ForeGround[FOrder.b] := GetBackgroundColor.Rgba8.b;
         ForeGround[FOrder.A] := GetBackgroundColor.Rgba8.A;
       end;
 
     Span.Rgba8.R := ForeGround[FOrder.R];
-    Span.Rgba8.G := ForeGround[FOrder.G];
-    Span.Rgba8.B := ForeGround[FOrder.B];
+    Span.Rgba8.g := ForeGround[FOrder.g];
+    Span.Rgba8.b := ForeGround[FOrder.b];
     Span.Rgba8.A := ForeGround[FOrder.A];
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -208,14 +208,14 @@ begin
   Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
 
   Backup.R := GetBackgroundColor.Rgba8.R;
-  Backup.G := GetBackgroundColor.Rgba8.G;
-  Backup.B := GetBackgroundColor.Rgba8.B;
+  Backup.g := GetBackgroundColor.Rgba8.g;
+  Backup.b := GetBackgroundColor.Rgba8.b;
   Backup.A := GetBackgroundColor.Rgba8.A;
 
   Span := Allocator.Span;
 
-  Max.X := SourceImage.Width - 1;
-  Max.Y := SourceImage.Height - 1;
+  Max.X := SourceImage.width - 1;
+  Max.Y := SourceImage.height - 1;
 
   repeat
     Interpolator.Coordinates(@HiRes.X, @HiRes.Y);
@@ -297,8 +297,8 @@ begin
           (LoRes.Y > Max.Y) then
           begin
             ForeGround[FOrder.R] := Backup.R;
-            ForeGround[FOrder.G] := Backup.G;
-            ForeGround[FOrder.B] := Backup.B;
+            ForeGround[FOrder.g] := Backup.g;
+            ForeGround[FOrder.b] := Backup.b;
             ForeGround[FOrder.A] := Backup.A;
           end
         else
@@ -332,8 +332,8 @@ begin
             else
               begin
                 Inc(ForeGround[FOrder.R], Backup.R * Weight);
-                Inc(ForeGround[FOrder.G], Backup.G * Weight);
-                Inc(ForeGround[FOrder.B], Backup.B * Weight);
+                Inc(ForeGround[FOrder.g], Backup.g * Weight);
+                Inc(ForeGround[FOrder.b], Backup.b * Weight);
                 Inc(ForeGround[FOrder.A], Backup.A * Weight);
               end;
 
@@ -359,8 +359,8 @@ begin
             else
               begin
                 Inc(ForeGround[FOrder.R], Backup.R * Weight);
-                Inc(ForeGround[FOrder.G], Backup.G * Weight);
-                Inc(ForeGround[FOrder.B], Backup.B * Weight);
+                Inc(ForeGround[FOrder.g], Backup.g * Weight);
+                Inc(ForeGround[FOrder.b], Backup.b * Weight);
                 Inc(ForeGround[FOrder.A], Backup.A * Weight);
               end;
 
@@ -387,8 +387,8 @@ begin
             else
               begin
                 Inc(ForeGround[FOrder.R], Backup.R * Weight);
-                Inc(ForeGround[FOrder.G], Backup.G * Weight);
-                Inc(ForeGround[FOrder.B], Backup.B * Weight);
+                Inc(ForeGround[FOrder.g], Backup.g * Weight);
+                Inc(ForeGround[FOrder.b], Backup.b * Weight);
                 Inc(ForeGround[FOrder.A], Backup.A * Weight);
               end;
 
@@ -414,8 +414,8 @@ begin
             else
               begin
                 Inc(ForeGround[FOrder.R], Backup.R * Weight);
-                Inc(ForeGround[FOrder.G], Backup.G * Weight);
-                Inc(ForeGround[FOrder.B], Backup.B * Weight);
+                Inc(ForeGround[FOrder.g], Backup.g * Weight);
+                Inc(ForeGround[FOrder.b], Backup.b * Weight);
                 Inc(ForeGround[FOrder.A], Backup.A * Weight);
               end;
 
@@ -427,8 +427,8 @@ begin
       end;
 
     Span.Rgba8.R := Int8u(ForeGround[FOrder.R]);
-    Span.Rgba8.G := Int8u(ForeGround[FOrder.G]);
-    Span.Rgba8.B := Int8u(ForeGround[FOrder.B]);
+    Span.Rgba8.g := Int8u(ForeGround[FOrder.g]);
+    Span.Rgba8.b := Int8u(ForeGround[FOrder.b]);
     Span.Rgba8.A := Int8u(ForeGround[FOrder.A]);
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -482,8 +482,8 @@ begin
   WeightArray := PInt16(PtrComp(Filter.WeightArray) +
     ((Filter.Diameter div 2 - 1) shl CAggImageSubpixelShift) * SizeOf(Int16));
 
-  Max.X := SourceImage.Width - 1;
-  Max.Y := SourceImage.Height - 1;
+  Max.X := SourceImage.width - 1;
+  Max.Y := SourceImage.height - 1;
 
   repeat
     Interpolator.Coordinates(@HiRes.X, @HiRes.Y);
@@ -574,11 +574,11 @@ begin
         if ForeGround[FOrder.R] > ForeGround[FOrder.A] then
             ForeGround[FOrder.R] := ForeGround[FOrder.A];
 
-        if ForeGround[FOrder.G] > ForeGround[FOrder.A] then
-            ForeGround[FOrder.G] := ForeGround[FOrder.A];
+        if ForeGround[FOrder.g] > ForeGround[FOrder.A] then
+            ForeGround[FOrder.g] := ForeGround[FOrder.A];
 
-        if ForeGround[FOrder.B] > ForeGround[FOrder.A] then
-            ForeGround[FOrder.B] := ForeGround[FOrder.A];
+        if ForeGround[FOrder.b] > ForeGround[FOrder.A] then
+            ForeGround[FOrder.b] := ForeGround[FOrder.A];
       end
     else
       begin
@@ -586,8 +586,8 @@ begin
           (LoRes.Y > Max.Y) then
           begin
             ForeGround[FOrder.R] := Backup.R;
-            ForeGround[FOrder.G] := Backup.G;
-            ForeGround[FOrder.B] := Backup.B;
+            ForeGround[FOrder.g] := Backup.g;
+            ForeGround[FOrder.b] := Backup.b;
             ForeGround[FOrder.A] := Backup.A;
           end
         else
@@ -618,8 +618,8 @@ begin
             else
               begin
                 Inc(ForeGround[FOrder.R], Backup.R * Weight);
-                Inc(ForeGround[FOrder.G], Backup.G * Weight);
-                Inc(ForeGround[FOrder.B], Backup.B * Weight);
+                Inc(ForeGround[FOrder.g], Backup.g * Weight);
+                Inc(ForeGround[FOrder.b], Backup.b * Weight);
                 Inc(ForeGround[FOrder.A], Backup.A * Weight);
               end;
 
@@ -648,8 +648,8 @@ begin
             else
               begin
                 Inc(ForeGround[FOrder.R], Backup.R * Weight);
-                Inc(ForeGround[FOrder.G], Backup.G * Weight);
-                Inc(ForeGround[FOrder.B], Backup.B * Weight);
+                Inc(ForeGround[FOrder.g], Backup.g * Weight);
+                Inc(ForeGround[FOrder.b], Backup.b * Weight);
                 Inc(ForeGround[FOrder.A], Backup.A * Weight);
               end;
 
@@ -679,8 +679,8 @@ begin
             else
               begin
                 Inc(ForeGround[FOrder.R], Backup.R * Weight);
-                Inc(ForeGround[FOrder.G], Backup.G * Weight);
-                Inc(ForeGround[FOrder.B], Backup.B * Weight);
+                Inc(ForeGround[FOrder.g], Backup.g * Weight);
+                Inc(ForeGround[FOrder.b], Backup.b * Weight);
                 Inc(ForeGround[FOrder.A], Backup.A * Weight);
               end;
 
@@ -708,8 +708,8 @@ begin
             else
               begin
                 Inc(ForeGround[FOrder.R], Backup.R * Weight);
-                Inc(ForeGround[FOrder.G], Backup.G * Weight);
-                Inc(ForeGround[FOrder.B], Backup.B * Weight);
+                Inc(ForeGround[FOrder.g], Backup.g * Weight);
+                Inc(ForeGround[FOrder.b], Backup.b * Weight);
                 Inc(ForeGround[FOrder.A], Backup.A * Weight);
               end;
 
@@ -724,17 +724,17 @@ begin
             if ForeGround[FOrder.R] > ForeGround[FOrder.A] then
                 ForeGround[FOrder.R] := ForeGround[FOrder.A];
 
-            if ForeGround[FOrder.G] > ForeGround[FOrder.A] then
-                ForeGround[FOrder.G] := ForeGround[FOrder.A];
+            if ForeGround[FOrder.g] > ForeGround[FOrder.A] then
+                ForeGround[FOrder.g] := ForeGround[FOrder.A];
 
-            if ForeGround[FOrder.B] > ForeGround[FOrder.A] then
-                ForeGround[FOrder.B] := ForeGround[FOrder.A];
+            if ForeGround[FOrder.b] > ForeGround[FOrder.A] then
+                ForeGround[FOrder.b] := ForeGround[FOrder.A];
           end;
       end;
 
     Span.Rgba8.R := Int8u(ForeGround[FOrder.R]);
-    Span.Rgba8.G := Int8u(ForeGround[FOrder.G]);
-    Span.Rgba8.B := Int8u(ForeGround[FOrder.B]);
+    Span.Rgba8.g := Int8u(ForeGround[FOrder.g]);
+    Span.Rgba8.b := Int8u(ForeGround[FOrder.b]);
     Span.Rgba8.A := Int8u(ForeGround[FOrder.A]);
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -795,11 +795,11 @@ begin
 
   Span := Allocator.Span;
 
-  Max.X := SourceImage.Width + Start - 2;
-  Max.Y := SourceImage.Height + Start - 2;
+  Max.X := SourceImage.width + Start - 2;
+  Max.Y := SourceImage.height + Start - 2;
 
-  Max2.X := SourceImage.Width - Start - 1;
-  Max2.Y := SourceImage.Height - Start - 1;
+  Max2.X := SourceImage.width - Start - 1;
+  Max2.Y := SourceImage.height - Start - 1;
 
   repeat
     Interpolator.Coordinates(@X, @Y);
@@ -882,11 +882,11 @@ begin
         if ForeGround[FOrder.R] > ForeGround[FOrder.A] then
             ForeGround[FOrder.R] := ForeGround[FOrder.A];
 
-        if ForeGround[FOrder.G] > ForeGround[FOrder.A] then
-            ForeGround[FOrder.G] := ForeGround[FOrder.A];
+        if ForeGround[FOrder.g] > ForeGround[FOrder.A] then
+            ForeGround[FOrder.g] := ForeGround[FOrder.A];
 
-        if ForeGround[FOrder.B] > ForeGround[FOrder.A] then
-            ForeGround[FOrder.B] := ForeGround[FOrder.A];
+        if ForeGround[FOrder.b] > ForeGround[FOrder.A] then
+            ForeGround[FOrder.b] := ForeGround[FOrder.A];
       end
     else
       begin
@@ -894,8 +894,8 @@ begin
           (LoRes.Y > Max2.Y) then
           begin
             ForeGround[FOrder.R] := Backup.R;
-            ForeGround[FOrder.G] := Backup.G;
-            ForeGround[FOrder.B] := Backup.B;
+            ForeGround[FOrder.g] := Backup.g;
+            ForeGround[FOrder.b] := Backup.b;
             ForeGround[FOrder.A] := Backup.A;
           end
         else
@@ -916,8 +916,8 @@ begin
                   CAggImageFilterShift);
 
                 if (LoRes.X >= 0) and (LoRes.Y >= 0) and
-                  (LoRes.X < Trunc(SourceImage.Width)) and
-                  (LoRes.Y < Trunc(SourceImage.Height)) then
+                  (LoRes.X < Trunc(SourceImage.width)) and
+                  (LoRes.Y < Trunc(SourceImage.height)) then
                   begin
                     ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) +
                       (LoRes.X shl 2) * SizeOf(Int8u));
@@ -934,8 +934,8 @@ begin
                 else
                   begin
                     Inc(ForeGround[FOrder.R], Backup.R * Weight);
-                    Inc(ForeGround[FOrder.G], Backup.G * Weight);
-                    Inc(ForeGround[FOrder.B], Backup.B * Weight);
+                    Inc(ForeGround[FOrder.g], Backup.g * Weight);
+                    Inc(ForeGround[FOrder.b], Backup.b * Weight);
                     Inc(ForeGround[FOrder.A], Backup.A * Weight);
                   end;
 
@@ -972,17 +972,17 @@ begin
             if ForeGround[FOrder.R] > ForeGround[FOrder.A] then
                 ForeGround[FOrder.R] := ForeGround[FOrder.A];
 
-            if ForeGround[FOrder.G] > ForeGround[FOrder.A] then
-                ForeGround[FOrder.G] := ForeGround[FOrder.A];
+            if ForeGround[FOrder.g] > ForeGround[FOrder.A] then
+                ForeGround[FOrder.g] := ForeGround[FOrder.A];
 
-            if ForeGround[FOrder.B] > ForeGround[FOrder.A] then
-                ForeGround[FOrder.B] := ForeGround[FOrder.A];
+            if ForeGround[FOrder.b] > ForeGround[FOrder.A] then
+                ForeGround[FOrder.b] := ForeGround[FOrder.A];
           end;
       end;
 
     Span.Rgba8.R := ForeGround[FOrder.R];
-    Span.Rgba8.G := ForeGround[FOrder.G];
-    Span.Rgba8.B := ForeGround[FOrder.B];
+    Span.Rgba8.g := ForeGround[FOrder.g];
+    Span.Rgba8.b := ForeGround[FOrder.b];
     Span.Rgba8.A := ForeGround[FOrder.A];
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
@@ -995,4 +995,4 @@ begin
   Result := Allocator.Span;
 end;
 
-end.
+end. 

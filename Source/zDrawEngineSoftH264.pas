@@ -13,19 +13,19 @@
 { ****************************************************************************** }
 unit zDrawEngineSoftH264;
 
-{$I zDefine.inc}
+{$INCLUDE zDefine.inc}
 
 interface
 
 uses Math, Geometry3DUnit, ListEngine, PascalStrings, CoreClasses, zDrawEngine, UnicodeMixedLib, Geometry2DUnit,
-  MemoryRaster, H264, h264image, h264StdInt;
+  MemoryRaster, h264, h264Image, h264Stdint;
 
 type
   TDrawEngine_H264 = class(TDrawEngine_Raster)
   private
     FH264W: TH264Writer;
   public
-    constructor Create(const w, h, totalframe: int32_t; psf: Single; const filename: SystemString); overload;
+    constructor Create(const w, h, totalframe: int32_t; psf: Single; const fileName: SystemString); overload;
     constructor Create(const w, h, totalframe: int32_t; psf: Single; const stream: TCoreClassStream); overload;
 
     destructor Destroy; override;
@@ -40,26 +40,26 @@ type
 
 implementation
 
-constructor TDrawEngine_H264.Create(const w, h, totalframe: int32_t; psf: Single; const filename: SystemString);
+constructor TDrawEngine_H264.Create(const w, h, totalframe: int32_t; psf: Single; const fileName: SystemString);
 var
-  nw, nh: int32_t;
+  NW, NH: int32_t;
 begin
   inherited Create;
-  nw := w - (w mod 2);
-  nh := h - (h mod 2);
-  FH264W := TH264Writer.Create(nw, nh, totalframe, psf, filename);
-  memory.SetSize(nw, nh);
+  NW := w - (w mod 2);
+  NH := h - (h mod 2);
+  FH264W := TH264Writer.Create(NW, NH, totalframe, psf, fileName);
+  Memory.SetSize(NW, NH);
 end;
 
 constructor TDrawEngine_H264.Create(const w, h, totalframe: int32_t; psf: Single; const stream: TCoreClassStream);
 var
-  nw, nh: int32_t;
+  NW, NH: int32_t;
 begin
   inherited Create;
-  nw := w - (w mod 2);
-  nh := h - (h mod 2);
-  FH264W := TH264Writer.Create(nw, nh, totalframe, psf, stream);
-  memory.SetSize(nw, nh);
+  NW := w - (w mod 2);
+  NH := h - (h mod 2);
+  FH264W := TH264Writer.Create(NW, NH, totalframe, psf, stream);
+  Memory.SetSize(NW, NH);
 end;
 
 destructor TDrawEngine_H264.Destroy;
@@ -76,7 +76,7 @@ end;
 procedure TDrawEngine_H264.Flush;
 begin
   inherited Flush;
-  FH264W.WriteFrame(memory);
+  FH264W.WriteFrame(Memory);
   FH264W.Flush;
 end;
 
@@ -95,4 +95,5 @@ begin
   Result := FH264W.PerSecondFrame;
 end;
 
-end.
+end.  
+ 

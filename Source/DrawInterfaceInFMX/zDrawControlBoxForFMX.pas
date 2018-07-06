@@ -6,28 +6,30 @@
 { * https://github.com/PassByYou888/zTranslate                                 * }
 { * https://github.com/PassByYou888/zSound                                     * }
 { * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 unit zDrawControlBoxForFMX;
 
-{$I ..\zDefine.inc}
+{$INCLUDE ..\zDefine.inc}
 
 interface
 
 uses System.Types, FMX.Controls, zDrawEngine, Geometry2DUnit, Geometry3DUnit;
 
-procedure DrawChildrenControl(WorkCtrl: TControl; DrawEng: TDrawEngine; ctrl: TControl; color: TDEColor; LineWidth:TDEFloat);
+procedure DrawChildrenControl(WorkCtrl: TControl; DrawEng: TDrawEngine; ctrl: TControl; COLOR: TDEColor; LineWidth:TDEFloat);
 
 implementation
 
-procedure DrawChildrenControl(WorkCtrl: TControl; DrawEng: TDrawEngine; ctrl: TControl; color: TDEColor; LineWidth:TDEFloat);
-  procedure DrawControlRect(c: TControl);
+procedure DrawChildrenControl(WorkCtrl: TControl; DrawEng: TDrawEngine; ctrl: TControl; COLOR: TDEColor; LineWidth:TDEFloat);
+  procedure DrawControlRect(C: TControl);
   var
     r4: TRectf;
-    r: TDERect;
+    R: TDERect;
   begin
-    r4 := c.AbsoluteRect;
-    r := MakeRectV2(Make2DPoint(WorkCtrl.AbsoluteToLocal(r4.TopLeft)), Make2DPoint(WorkCtrl.AbsoluteToLocal(r4.BottomRight)));
-    DrawEng.DrawBoxInScene(r, color, LineWidth);
+    r4 := C.AbsoluteRect;
+    R := MakeRectV2(Make2DPoint(WorkCtrl.AbsoluteToLocal(r4.TopLeft)), Make2DPoint(WorkCtrl.AbsoluteToLocal(r4.BottomRight)));
+    DrawEng.DrawBoxInScene(R, COLOR, LineWidth);
   end;
 
 var
@@ -37,10 +39,10 @@ begin
     begin
       if (ctrl.Children[i] is TControl) and (TControl(ctrl.Children[i]).Visible) then
         begin
-          DrawChildrenControl(WorkCtrl, DrawEng, TControl(ctrl.Children[i]), color, LineWidth);
+          DrawChildrenControl(WorkCtrl, DrawEng, TControl(ctrl.Children[i]), COLOR, LineWidth);
           DrawControlRect(TControl(ctrl.Children[i]));
         end;
     end;
 end;
 
-end.
+end. 

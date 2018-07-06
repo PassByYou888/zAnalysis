@@ -1,6 +1,6 @@
 type
-  T_miniDict_PackageBuffer = array [0..394836] of byte;
-  T_MiniKeyDict_PackageBuffer = array [0..420676] of byte;
+  T_miniDict_PackageBuffer = array [0..394836] of Byte;
+  T_MiniKeyDict_PackageBuffer = array [0..420676] of Byte;
 
 const
   // compiled miniDict.txt package
@@ -17738,4 +17738,4 @@ const
    $26,$E3,$C4,$A0,$DB,$CF,$3A,$A9,$2E,$69,$9F,$3B,$D6,$C5,$15,$79,$33,$AB,$24,$91,$20,$3D,$CB,$C6,$56,$55,$9B,$C9,$ED,$51,$25,$7B,$15,$67,$A9,$DA,$28,$E3,$87,$57,$6B,$B2,$DF,$5F,$A2,$8B,
    $30,$37,$A4,$FF,$32,$09,$1B,$5A,$1D,$ED,$4F,$AF,$0F,$2A,$3C,$0A,$2B,$2F,$7D,$41,$CE,$1E,$0C,$04,$3A,$4B,$C0,$EB,$F1,$E2,$61,$B5,$91,$25,$B0,$8A,$3F,$84,$38,$C9,$AE,$24,$ED,$5F,$A6,$89,
    $25,$FF,$07,$A4,$D8,$15,$47);
-
+ 

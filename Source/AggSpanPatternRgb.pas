@@ -39,7 +39,7 @@ unit AggSpanPatternRgb;
 
 interface
 
-{$I AggCompiler.inc}
+{$INCLUDE AggCompiler.inc}
 
 
 uses
@@ -63,8 +63,8 @@ type
   protected
     procedure SetSourceImage(Src: TAggRenderingBuffer); override;
   public
-    constructor Create(Alloc: TAggSpanAllocator; WX, WY: TAggWrapMode; Order: TAggOrder); overload;
-    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; OffsetX, OffsetY: Cardinal; WX, WY: TAggWrapMode; Order: TAggOrder; Alpha: Int8u = CAggBaseMask); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Wx, Wy: TAggWrapMode; Order: TAggOrder); overload;
+    constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; OffsetX, OffsetY: Cardinal; Wx, Wy: TAggWrapMode; Order: TAggOrder; alpha: Int8u = CAggBaseMask); overload;
 
     function Generate(X, Y: Integer; Len: Cardinal): PAggColor; virtual;
   end;
@@ -75,14 +75,14 @@ implementation
 { TAggSpanPatternRgb }
 
 constructor TAggSpanPatternRgb.Create(Alloc: TAggSpanAllocator;
-  WX, WY: TAggWrapMode; Order: TAggOrder);
+  Wx, Wy: TAggWrapMode; Order: TAggOrder);
 begin
   inherited Create(Alloc);
 
   FOrder := Order;
 
-  FWrapModeX := WX;
-  FWrapModeY := WY;
+  FWrapModeX := Wx;
+  FWrapModeY := Wy;
 
   FWrapModeX.Init(1);
   FWrapModeY.Init(1);
@@ -90,47 +90,47 @@ end;
 
 constructor TAggSpanPatternRgb.Create(Alloc: TAggSpanAllocator;
   Src: TAggRenderingBuffer; OffsetX, OffsetY: Cardinal;
-  WX, WY: TAggWrapMode; Order: TAggOrder; Alpha: Int8u = CAggBaseMask);
+  Wx, Wy: TAggWrapMode; Order: TAggOrder; alpha: Int8u = CAggBaseMask);
 begin
-  inherited Create(Alloc, Src, OffsetX, OffsetY, Alpha);
+  inherited Create(Alloc, Src, OffsetX, OffsetY, alpha);
 
   FOrder := Order;
 
-  FWrapModeX := WX;
-  FWrapModeY := WY;
+  FWrapModeX := Wx;
+  FWrapModeY := Wy;
 
-  FWrapModeX.Init(Src.Width);
-  FWrapModeY.Init(Src.Height);
+  FWrapModeX.Init(Src.width);
+  FWrapModeY.Init(Src.height);
 end;
 
 procedure TAggSpanPatternRgb.SetSourceImage(Src: TAggRenderingBuffer);
 begin
   inherited SetSourceImage(Src);
 
-  FWrapModeX.Init(Src.Width);
-  FWrapModeY.Init(Src.Height);
+  FWrapModeX.Init(Src.width);
+  FWrapModeY.Init(Src.height);
 end;
 
 function TAggSpanPatternRgb.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
 var
   Span: PAggColor;
-  Sx: Cardinal;
-  RowPointer, P: PInt8u;
+  SX: Cardinal;
+  RowPointer, p: PInt8u;
 begin
   Span := Allocator.Span;
-  Sx := FWrapModeX.FuncOperator(OffsetX + X);
+  SX := FWrapModeX.FuncOperator(OffsetX + X);
 
   RowPointer := GetSourceImage.Row(FWrapModeY.FuncOperator(OffsetY + Y));
 
   repeat
-    P := PInt8u(PtrComp(RowPointer) + (Sx + Sx + Sx) * SizeOf(Int8u));
+    p := PInt8u(PtrComp(RowPointer) + (SX + SX + SX) * SizeOf(Int8u));
 
-    Span.Rgba8.R := PInt8u(PtrComp(P) + FOrder.R * SizeOf(Int8u))^;
-    Span.Rgba8.G := PInt8u(PtrComp(P) + FOrder.G * SizeOf(Int8u))^;
-    Span.Rgba8.B := PInt8u(PtrComp(P) + FOrder.B * SizeOf(Int8u))^;
+    Span.Rgba8.R := PInt8u(PtrComp(p) + FOrder.R * SizeOf(Int8u))^;
+    Span.Rgba8.g := PInt8u(PtrComp(p) + FOrder.g * SizeOf(Int8u))^;
+    Span.Rgba8.b := PInt8u(PtrComp(p) + FOrder.b * SizeOf(Int8u))^;
     Span.Rgba8.A := GetAlphaInt;
 
-    Sx := FWrapModeX.IncOperator;
+    SX := FWrapModeX.IncOperator;
 
     Inc(PtrComp(Span), SizeOf(TAggColor));
     Dec(Len);
@@ -139,4 +139,4 @@ begin
   Result := Allocator.Span;
 end;
 
-end.
+end. 

@@ -43,10 +43,10 @@
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1984, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function ChiSquareDistribution(const v, x: TLFloat): TLFloat;
+function ChiSquareDistribution(const v, X: TLFloat): TLFloat;
 begin
-  Assert(AP_FP_Greater_Eq(x, 0) and AP_FP_Greater_Eq(v, 1), 'Domain error in ChiSquareDistribution');
-  Result := IncompleteGamma(v / 2.0, x / 2.0);
+  Assert(AP_FP_Greater_Eq(X, 0) and AP_FP_Greater_Eq(v, 1), 'Domain error in ChiSquareDistribution');
+  Result := IncompleteGamma(v / 2.0, X / 2.0);
 end;
 
 (* ************************************************************************
@@ -80,10 +80,10 @@ end;
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1984, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function ChiSquareCDistribution(const v, x: TLFloat): TLFloat;
+function ChiSquareCDistribution(const v, X: TLFloat): TLFloat;
 begin
-  Assert(AP_FP_Greater_Eq(x, 0) and AP_FP_Greater_Eq(v, 1), 'Domain error in ChiSquareDistributionC');
-  Result := IncompleteGammaC(v / 2.0, x / 2.0);
+  Assert(AP_FP_Greater_Eq(X, 0) and AP_FP_Greater_Eq(v, 1), 'Domain error in ChiSquareDistributionC');
+  Result := IncompleteGammaC(v / 2.0, X / 2.0);
 end;
 
 (* ************************************************************************
@@ -106,10 +106,10 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvChiSquareDistribution(const v, y: TLFloat): TLFloat;
+function InvChiSquareDistribution(const v, Y: TLFloat): TLFloat;
 begin
-  Assert(AP_FP_Greater_Eq(y, 0) and AP_FP_Less_Eq(y, 1) and AP_FP_Greater_Eq(v, 1), 'Domain error in InvChiSquareDistribution');
-  Result := 2 * InvIncompleteGammaC(0.5 * v, y);
+  Assert(AP_FP_Greater_Eq(Y, 0) and AP_FP_Less_Eq(Y, 1) and AP_FP_Greater_Eq(v, 1), 'Domain error in InvChiSquareDistribution');
+  Result := 2 * InvIncompleteGammaC(0.5 * v, Y);
 end;
 
 (* ************************************************************************
@@ -134,15 +134,15 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure OneSampleVarianceTest(const x: TLVec; N: TLInt; Variance: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
+procedure OneSampleVarianceTest(const X: TLVec; n: TLInt; Variance: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  I    : TLInt;
+  i    : TLInt;
   XMean: TLFloat;
   XVar : TLFloat;
-  S    : TLFloat;
+  s    : TLFloat;
   Stat : TLFloat;
 begin
-  if N <= 1 then
+  if n <= 1 then
     begin
       BothTails := 1.0;
       LeftTail := 1.0;
@@ -154,25 +154,25 @@ begin
   // Mean
   //
   XMean := 0;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      XMean := XMean + x[I];
-      Inc(I);
+      XMean := XMean + X[i];
+      Inc(i);
     end;
-  XMean := XMean / N;
+  XMean := XMean / n;
 
   //
   // Variance
   //
   XVar := 0;
-  I := 0;
-  while I <= N - 1 do
+  i := 0;
+  while i <= n - 1 do
     begin
-      XVar := XVar + AP_Sqr(x[I] - XMean);
-      Inc(I);
+      XVar := XVar + AP_Sqr(X[i] - XMean);
+      Inc(i);
     end;
-  XVar := XVar / (N - 1);
+  XVar := XVar / (n - 1);
   if AP_FP_Eq(XVar, 0) then
     begin
       BothTails := 1.0;
@@ -184,9 +184,9 @@ begin
   //
   // Statistic
   //
-  Stat := (N - 1) * XVar / Variance;
-  S := ChiSquareDistribution(N - 1, Stat);
-  BothTails := 2 * Min(S, 1 - S);
-  LeftTail := S;
+  Stat := (n - 1) * XVar / Variance;
+  s := ChiSquareDistribution(n - 1, Stat);
+  BothTails := 2 * Min(s, 1 - s);
+  LeftTail := s;
   RightTail := 1 - LeftTail;
-end;
+end; 

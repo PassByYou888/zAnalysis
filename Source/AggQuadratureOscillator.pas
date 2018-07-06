@@ -63,8 +63,8 @@ type
 
     property Amplitude: Double read FAmplitude write SetAmplitude;
     property Frequency: Double read FFrequency write SetFrequency;
-    property Sine: Double read FPosition.Y;
-    property Cosine: Double read FPosition.X;
+    property sine: Double read FPosition.Y;
+    property cosine: Double read FPosition.X;
     property Phase: Double read GetPhase write SetPhase;
   end;
 
@@ -144,4 +144,4 @@ begin
   FPosition.X := FPosition.X * -FAmplitude;
 end;
 
-end.
+end. 
