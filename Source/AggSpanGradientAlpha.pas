@@ -37,11 +37,8 @@
 *)
 unit AggSpanGradientAlpha;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -72,7 +69,7 @@ type
       Gradient: TAggCustomGradient; Alpha_fnc: TAggGradientAlpha;
       d1, d2: Double); overload;
 
-    procedure Convert(Span: PAggColor; X, Y: Integer; Len: Cardinal); override;
+    procedure Convert(Span: PAggColor; x, y: Integer; Len: Cardinal); override;
 
     property d1: Double read GetD1 write SetD1;
     property d2: Double read GetD2 write SetD2;
@@ -84,17 +81,17 @@ type
 
   TAggGradientAlphaX = class
   public
-    function ArrayOperator(X: TAggColor): TAggColor;
+    function ArrayOperator(x: TAggColor): TAggColor;
   end;
 
   TAggGradientAlphaXU8 = class
   public
-    function ArrayOperator(X: Integer): Int8u;
+    function ArrayOperator(x: Integer): Int8u;
   end;
 
   TAggGradientAlphaOneMinusXU8 = class
   public
-    function ArrayOperator(X: Integer): Int8u;
+    function ArrayOperator(x: Integer): Int8u;
   end;
 
 implementation
@@ -147,7 +144,7 @@ begin
   FD2 := Trunc(Value * CAggGradientSubpixelSize);
 end;
 
-procedure TAggSpanGradientAlpha.Convert(Span: PAggColor; X, Y: Integer;
+procedure TAggSpanGradientAlpha.Convert(Span: PAggColor; x, y: Integer;
   Len: Cardinal);
 var
   DD, d: Integer;
@@ -157,13 +154,13 @@ begin
   if DD < 1 then
       DD := 1;
 
-  FInterpolator.SetBegin(X + 0.5, Y + 0.5, Len);
+  FInterpolator.SetBegin(x + 0.5, y + 0.5, Len);
 
   repeat
-    FInterpolator.Coordinates(@X, @Y);
+    FInterpolator.Coordinates(@x, @y);
 
-    d := FGradientFunction.Calculate(ShrInt32(X, FDownscaleShift),
-      ShrInt32(Y, FDownscaleShift), FD2);
+    d := FGradientFunction.Calculate(ShrInt32(x, FDownscaleShift),
+      ShrInt32(y, FDownscaleShift), FD2);
 
     d := ((d - FD1) * FAlphaFunction.Size) div DD;
 
@@ -173,35 +170,37 @@ begin
     if d >= FAlphaFunction.Size then
         d := FAlphaFunction.Size - 1;
 
-    Span.Rgba8.A := PInt8u(FAlphaFunction.ArrayOperator(d))^;
+    Span.Rgba8.a := PInt8u(FAlphaFunction.ArrayOperator(d))^;
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
+    inc(PtrComp(Span), SizeOf(TAggColor));
 
     FInterpolator.IncOperator;
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 end;
 
 { TAggGradientAlphaX }
 
-function TAggGradientAlphaX.ArrayOperator(X: TAggColor): TAggColor;
+function TAggGradientAlphaX.ArrayOperator(x: TAggColor): TAggColor;
 begin
-  Result := X;
+  Result := x;
 end;
 
 { TAggGradientAlphaXU8 }
 
-function TAggGradientAlphaXU8.ArrayOperator(X: Integer): Int8u;
+function TAggGradientAlphaXU8.ArrayOperator(x: Integer): Int8u;
 begin
-  Result := Int8u(X);
+  Result := Int8u(x);
 end;
 
 { TAggGradientAlphaOneMinusXU8 }
 
-function TAggGradientAlphaOneMinusXU8.ArrayOperator(X: Integer): Int8u;
+function TAggGradientAlphaOneMinusXU8.ArrayOperator(x: Integer): Int8u;
 begin
-  Result := Int8u(255 - X);
+  Result := Int8u(255 - x);
 end;
 
 end. 
+ 
+ 

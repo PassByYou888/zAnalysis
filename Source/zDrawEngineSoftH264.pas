@@ -18,14 +18,14 @@ unit zDrawEngineSoftH264;
 interface
 
 uses Math, Geometry3DUnit, ListEngine, PascalStrings, CoreClasses, zDrawEngine, UnicodeMixedLib, Geometry2DUnit,
-  MemoryRaster, h264, h264Image, h264Stdint;
+  MemoryRaster, h264, h264Image, h264Types;
 
 type
   TDrawEngine_H264 = class(TDrawEngine_Raster)
   private
     FH264W: TH264Writer;
   public
-    constructor Create(const w, h, totalframe: int32_t; psf: Single; const fileName: SystemString); overload;
+    constructor Create(const w, h, totalframe: int32_t; psf: Single; const FileName: SystemString); overload;
     constructor Create(const w, h, totalframe: int32_t; psf: Single; const stream: TCoreClassStream); overload;
 
     destructor Destroy; override;
@@ -40,14 +40,14 @@ type
 
 implementation
 
-constructor TDrawEngine_H264.Create(const w, h, totalframe: int32_t; psf: Single; const fileName: SystemString);
+constructor TDrawEngine_H264.Create(const w, h, totalframe: int32_t; psf: Single; const FileName: SystemString);
 var
   NW, NH: int32_t;
 begin
   inherited Create;
   NW := w - (w mod 2);
   NH := h - (h mod 2);
-  FH264W := TH264Writer.Create(NW, NH, totalframe, psf, fileName);
+  FH264W := TH264Writer.Create(NW, NH, totalframe, psf, FileName);
   Memory.SetSize(NW, NH);
 end;
 
@@ -96,4 +96,6 @@ begin
 end;
 
 end.  
+ 
+ 
  

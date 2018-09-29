@@ -16,7 +16,7 @@ unit h264;
 interface
 
 uses SysUtils, CoreClasses, PascalStrings, UnicodeMixedLib, MemoryRaster,
-  h264Image, h264Stdint, h264Encoder, h264Parameters, Y4M;
+  h264Image, h264Types, h264Encoder, h264Parameters, Y4M;
 
 type
   TH264Writer = class
@@ -25,16 +25,16 @@ type
     FFrameCount: uint32_t;
     img: TPlanarImage;
     Param: TEncodingParameters;
-    encoder: TFevh264Encoder;
+    Encoder: TFevh264Encoder;
     buffer: PByte;
   public
-    constructor Create(const w, h, totalframe: int32_t; psf: Single; const fileName: TPascalString); overload;
+    constructor Create(const w, h, totalframe: int32_t; psf: Single; const FileName: TPascalString); overload;
     constructor Create(const w, h, totalframe: int32_t; psf: Single; const stream: TCoreClassStream); overload;
 
     destructor Destroy; override;
 
     procedure WriteFrame(raster: TMemoryRaster);
-    procedure WriteY4M(R: TY4MReader);
+    procedure WriteY4M(r: TY4MReader);
     procedure Flush;
 
     property FrameCount: uint32_t read FFrameCount;
@@ -46,16 +46,16 @@ type
 
 implementation
 
-constructor TH264Writer.Create(const w, h, totalframe: int32_t; psf: Single; const fileName: TPascalString);
+constructor TH264Writer.Create(const w, h, totalframe: int32_t; psf: Single; const FileName: TPascalString);
 begin
   inherited Create;
-  umlFileCreate(fileName, ioHandle);
+  umlFileCreate(FileName, ioHandle);
   FFrameCount := 0;
   img := TPlanarImage.Create(w, h);
   Param := TEncodingParameters.Create;
   Param.SetStreamParams(w, h, totalframe, psf);
   Param.AnalysisLevel := 2;
-  encoder := TFevh264Encoder.Create(Param);
+  Encoder := TFevh264Encoder.Create(Param);
   buffer := GetMemory(w * h * 4);
 end;
 
@@ -68,7 +68,7 @@ begin
   Param := TEncodingParameters.Create;
   Param.SetStreamParams(w, h, totalframe, psf);
   Param.AnalysisLevel := 2;
-  encoder := TFevh264Encoder.Create(Param);
+  Encoder := TFevh264Encoder.Create(Param);
   buffer := GetMemory(w * h * 4);
 end;
 
@@ -76,7 +76,7 @@ destructor TH264Writer.Destroy;
 begin
   FreeMemory(buffer);
   DisposeObject(Param);
-  DisposeObject(encoder);
+  DisposeObject(Encoder);
   DisposeObject(img);
   umlFileClose(ioHandle);
   inherited Destroy;
@@ -97,26 +97,26 @@ begin
   pixl := t2 - t1;
 
   t1 := t2;
-  encoder.EncodeFrame(img, buffer, oSiz);
+  Encoder.EncodeFrame(img, buffer, oSiz);
   t2 := GetTimeTick;
   enl := t2 - t1;
 
   umlFileWrite(ioHandle, oSiz, buffer^);
 
-  Inc(FFrameCount);
+  inc(FFrameCount);
 end;
 
-procedure TH264Writer.WriteY4M(R: TY4MReader);
+procedure TH264Writer.WriteY4M(r: TY4MReader);
 var
   i: int32_t;
   p_img: TPlanarImage;
   raster: TMemoryRaster;
 begin
   raster := TMemoryRaster.Create;
-  R.SeekFirstFrame;
-  for i := R.CurrentFrame to R.FrameCount - 1 do
+  r.SeekFirstFrame;
+  for i := r.CurrentFrame to r.FrameCount - 1 do
     begin
-      p_img := R.ReadFrame;
+      p_img := r.ReadFrame;
       p_img.SaveToRaster(raster);
       WriteFrame(raster);
     end;
@@ -149,4 +149,6 @@ begin
 end;
 
 end.  
+ 
+ 
  

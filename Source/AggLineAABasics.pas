@@ -37,11 +37,8 @@
 *)
 unit AggLineAABasics;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics;
 
@@ -57,7 +54,7 @@ const
 type
   PAggLineParameters = ^TAggLineParameters;
 
-  TAggLineParameters = packed record
+  TAggLineParameters = record
     x1, y1, x2, y2, SX, SY: Integer;
     Delta: TPointInteger;
     Vertical: Boolean;
@@ -72,16 +69,16 @@ type
     function SameDiagonalQuadrant(LP: PAggLineParameters): Boolean;
   end;
 
-function LineMedResolution(X: Integer): Integer;
-function LineHighResolution(X: Integer): Integer;
+function LineMedResolution(x: Integer): Integer;
+function LineHighResolution(x: Integer): Integer;
 
-function LineDoubleHighResolution(X: Integer): Integer;
-function LineCoord(X: Double): Integer;
+function LineDoubleHighResolution(x: Integer): Integer;
+function LineCoord(x: Double): Integer;
 
-procedure Bisectrix(L1, l2: PAggLineParameters; X, Y: PInteger);
+procedure Bisectrix(L1, l2: PAggLineParameters; x, y: PInteger);
 
-procedure FixDegenerateBisectrixStart(LP: PAggLineParameters; X, Y: PInteger);
-procedure FixDegenerateBisectrixEnd(LP: PAggLineParameters; X, Y: PInteger);
+procedure FixDegenerateBisectrixStart(LP: PAggLineParameters; x, y: PInteger);
+procedure FixDegenerateBisectrixEnd(LP: PAggLineParameters; x, y: PInteger);
 
 implementation
 
@@ -121,8 +118,8 @@ begin
   Self.y1 := y1;
   Self.x2 := x2;
   Self.y2 := y2;
-  Self.Delta.X := Abs(x2 - x1);
-  Self.Delta.Y := Abs(y2 - y1);
+  Self.Delta.x := Abs(x2 - x1);
+  Self.Delta.y := Abs(y2 - y1);
 
   if x2 > x1 then
       SX := 1
@@ -134,7 +131,7 @@ begin
   else
       SY := -1;
 
-  Vertical := Self.Delta.Y >= Self.Delta.X;
+  Vertical := Self.Delta.y >= Self.Delta.x;
 
   if Vertical then
       IncValue := SY
@@ -168,25 +165,25 @@ end;
 
 function LineMedResolution;
 begin
-  Result := ShrInt32(X, CAggLineSubpixelShift - CAggLineMrSubpixelShift);
+  Result := ShrInt32(x, CAggLineSubpixelShift - CAggLineMrSubpixelShift);
 end;
 
 function LineHighResolution;
 begin
-  Result := X shl (CAggLineSubpixelShift - CAggLineMrSubpixelShift);
+  Result := x shl (CAggLineSubpixelShift - CAggLineMrSubpixelShift);
 end;
 
 function LineDoubleHighResolution;
 begin
-  Result := X shl CAggLineSubpixelShift;
+  Result := x shl CAggLineSubpixelShift;
 end;
 
 function LineCoord;
 begin
-  Result := Trunc(X * CAggLineSubpixelSize);
+  Result := Trunc(x * CAggLineSubpixelSize);
 end;
 
-procedure Bisectrix(L1, l2: PAggLineParameters; X, Y: PInteger);
+procedure Bisectrix(L1, l2: PAggLineParameters; x, y: PInteger);
 var
   k, TX, TY, dx, dy: Double;
 begin
@@ -211,45 +208,47 @@ begin
 
   if Trunc(Sqrt(Sqr(dx) + Sqr(dy))) < CAggLineSubpixelSize then
     begin
-      X^ := ShrInt32(l2.x1 + l2.x1 + (l2.y1 - L1.y1) + (l2.y2 - l2.y1), 1);
-      Y^ := ShrInt32(l2.y1 + l2.y1 - (l2.x1 - L1.x1) - (l2.x2 - l2.x1), 1);
+      x^ := ShrInt32(l2.x1 + l2.x1 + (l2.y1 - L1.y1) + (l2.y2 - l2.y1), 1);
+      y^ := ShrInt32(l2.y1 + l2.y1 - (l2.x1 - L1.x1) - (l2.x2 - l2.x1), 1);
 
       Exit;
     end;
 
-  X^ := Trunc(TX);
-  Y^ := Trunc(TY);
+  x^ := Trunc(TX);
+  y^ := Trunc(TY);
 end;
 
 procedure FixDegenerateBisectrixStart(LP: PAggLineParameters;
-  X, Y: PInteger);
+  x, y: PInteger);
 var
   d: Integer;
 begin
   Assert(Assigned(LP));
-  d := Trunc((IntToDouble(X^ - LP.x2) * IntToDouble(LP.y2 - LP.y1) -
-    IntToDouble(Y^ - LP.y2) * IntToDouble(LP.x2 - LP.x1)) / LP.Len);
+  d := Trunc((IntToDouble(x^ - LP.x2) * IntToDouble(LP.y2 - LP.y1) -
+    IntToDouble(y^ - LP.y2) * IntToDouble(LP.x2 - LP.x1)) / LP.Len);
 
   if d < CAggLineSubpixelSize then
     begin
-      X^ := LP.x1 + (LP.y2 - LP.y1);
-      Y^ := LP.y1 - (LP.x2 - LP.x1);
+      x^ := LP.x1 + (LP.y2 - LP.y1);
+      y^ := LP.y1 - (LP.x2 - LP.x1);
     end;
 end;
 
-procedure FixDegenerateBisectrixEnd(LP: PAggLineParameters; X, Y: PInteger);
+procedure FixDegenerateBisectrixEnd(LP: PAggLineParameters; x, y: PInteger);
 var
   d: Integer;
 begin
   Assert(Assigned(LP));
-  d := Trunc((IntToDouble(X^ - LP.x2) * IntToDouble(LP.y2 - LP.y1) -
-    IntToDouble(Y^ - LP.y2) * IntToDouble(LP.x2 - LP.x1)) / LP.Len);
+  d := Trunc((IntToDouble(x^ - LP.x2) * IntToDouble(LP.y2 - LP.y1) -
+    IntToDouble(y^ - LP.y2) * IntToDouble(LP.x2 - LP.x1)) / LP.Len);
 
   if d < CAggLineSubpixelSize then
     begin
-      X^ := LP.x2 + (LP.y2 - LP.y1);
-      Y^ := LP.y2 - (LP.x2 - LP.x1);
+      x^ := LP.x2 + (LP.y2 - LP.y1);
+      y^ := LP.y2 - (LP.x2 - LP.x1);
     end;
 end;
 
 end. 
+ 
+ 

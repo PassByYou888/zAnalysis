@@ -17,14 +17,12 @@ unit h264Image;
 interface
 
 uses
-  h264Stdint, h264Util, CoreClasses, MemoryRaster;
+  h264Types, h264Util, CoreClasses, MemoryRaster;
 
 const
   QPARAM_AUTO = 52;
 
 type
-  { TPlanarImage }
-
   TPlanarImage = class
   private
     w, h: int32_t;
@@ -110,3 +108,4 @@ begin
 end;
 
 end.  
+ 

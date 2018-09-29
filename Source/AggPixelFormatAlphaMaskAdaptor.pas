@@ -37,11 +37,8 @@
 *)
 unit AggPixelFormatAlphaMaskAdaptor;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -73,93 +70,93 @@ type
 implementation
 
 procedure CopyHorizontalLineAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; length: Cardinal; C: PAggColor);
+  x, y: Integer; length: Cardinal; c: PAggColor);
 begin
   This.ReallocSpan(length);
-  This.FMask.FillHSpan(X, Y, This.FSpan, length);
-  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, X, Y, length, C,
+  This.FMask.FillHSpan(x, y, This.FSpan, length);
+  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, x, y, length, c,
     This.FSpan);
 end;
 
 procedure BlendHorizontalLineAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; length: Cardinal; C: PAggColor; Cover: Int8u);
+  x, y: Integer; length: Cardinal; c: PAggColor; Cover: Int8u);
 begin
   This.IniTAggSpan(length);
-  This.FMask.CombineHSpan(X, Y, This.FSpan, length);
-  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, X, Y, length, C,
+  This.FMask.CombineHSpan(x, y, This.FSpan, length);
+  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, x, y, length, c,
     This.FSpan);
 end;
 
 procedure BlendVerticalLineAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; length: Cardinal; C: PAggColor; Cover: Int8u);
+  x, y: Integer; length: Cardinal; c: PAggColor; Cover: Int8u);
 begin
   This.IniTAggSpan(length);
-  This.FMask.CombineVSpan(X, Y, This.FSpan, length);
-  This.FPixelFormats.BlendSolidVSpan(This.FPixelFormats, X, Y, length, C,
+  This.FMask.CombineVSpan(x, y, This.FSpan, length);
+  This.FPixelFormats.BlendSolidVSpan(This.FPixelFormats, x, y, length, c,
     This.FSpan);
 end;
 
 procedure BlendSolidHSpanAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; length: Cardinal; C: PAggColor; Covers: PInt8u);
+  x, y: Integer; length: Cardinal; c: PAggColor; Covers: PInt8u);
 begin
   This.IniTAggSpan(length, Covers);
-  This.FMask.CombineHSpan(X, Y, This.FSpan, length);
-  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, X, Y, length, C,
+  This.FMask.CombineHSpan(x, y, This.FSpan, length);
+  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, x, y, length, c,
     This.FSpan);
 end;
 
 procedure BlendSolidVSpanAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; length: Cardinal; C: PAggColor; Covers: PInt8u);
+  x, y: Integer; length: Cardinal; c: PAggColor; Covers: PInt8u);
 begin
   This.IniTAggSpan(length, Covers);
-  This.FMask.CombineVSpan(X, Y, This.FSpan, length);
-  This.FPixelFormats.BlendSolidVSpan(This.FPixelFormats, X, Y, length, C,
+  This.FMask.CombineVSpan(x, y, This.FSpan, length);
+  This.FPixelFormats.BlendSolidVSpan(This.FPixelFormats, x, y, length, c,
     This.FSpan);
 end;
 
 procedure BlendColorHSpanAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; length: Cardinal; COLORS: PAggColor; Covers: PInt8u;
+  x, y: Integer; length: Cardinal; Colors: PAggColor; Covers: PInt8u;
   Cover: Int8u);
 begin
   if Covers <> nil then
     begin
       This.IniTAggSpan(length, Covers);
-      This.FMask.CombineHSpan(X, Y, This.FSpan, length);
+      This.FMask.CombineHSpan(x, y, This.FSpan, length);
     end
   else
     begin
       This.ReallocSpan(length);
-      This.FMask.FillHSpan(X, Y, This.FSpan, length);
+      This.FMask.FillHSpan(x, y, This.FSpan, length);
     end;
 
-  This.FPixelFormats.BlendColorHSpan(This.FPixelFormats, X, Y, length, COLORS,
+  This.FPixelFormats.BlendColorHSpan(This.FPixelFormats, x, y, length, Colors,
     This.FSpan, Cover);
 end;
 
 procedure BlendColorVSpanAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; length: Cardinal; COLORS: PAggColor; Covers: PInt8u;
+  x, y: Integer; length: Cardinal; Colors: PAggColor; Covers: PInt8u;
   Cover: Int8u);
 begin
   if Covers <> nil then
     begin
       This.IniTAggSpan(length, Covers);
-      This.FMask.CombineVSpan(X, Y, This.FSpan, length);
+      This.FMask.CombineVSpan(x, y, This.FSpan, length);
     end
   else
     begin
       This.ReallocSpan(length);
-      This.FMask.FillVSpan(X, Y, This.FSpan, length);
+      This.FMask.FillVSpan(x, y, This.FSpan, length);
     end;
 
-  This.FPixelFormats.BlendColorVSpan(This.FPixelFormats, X, Y, length, COLORS,
+  This.FPixelFormats.BlendColorVSpan(This.FPixelFormats, x, y, length, Colors,
     This.FSpan, Cover);
 end;
 
 procedure BlendPixelAdaptor(This: TAggPixelFormatProcessorAlphaMaskAdaptor;
-  X, Y: Integer; C: Pointer; Cover: Int8u);
+  x, y: Integer; c: Pointer; Cover: Int8u);
 begin
-  This.FPixelFormats.BlendPixel(This.FPixelFormats, X, Y, C,
-    This.FMask.CombinePixel(X, Y, Cover));
+  This.FPixelFormats.BlendPixel(This.FPixelFormats, x, y, c,
+    This.FMask.CombinePixel(x, y, Cover));
 end;
 
 { TAggPixelFormatProcessorAlphaMaskAdaptor }
@@ -222,4 +219,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

@@ -37,11 +37,8 @@
 *)
 unit AggVpGenClipPolygon;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVertexSource,
@@ -64,18 +61,18 @@ type
     function GetAutoClose: Boolean;
     function GetAutoUnclose: Boolean;
   protected
-    function ClippingFlags(X, Y: Double): Cardinal;
+    function ClippingFlags(x, y: Double): Cardinal;
   public
     constructor Create; override;
 
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     procedure SetClipBox(x1, y1, x2, y2: Double); overload;
     procedure SetClipBox(Bounds: TRectDouble); overload;
 
     procedure Reset; override;
-    procedure MoveTo(X, Y: Double); override;
-    procedure LineTo(X, Y: Double); override;
+    procedure MoveTo(x, y: Double); override;
+    procedure LineTo(x, y: Double); override;
 
     property x1: Double read GetX1;
     property y1: Double read GetY1;
@@ -157,64 +154,64 @@ begin
   FClipBox.Normalize;
 end;
 
-procedure TAggVpgenClipPolygon.MoveTo(X, Y: Double);
+procedure TAggVpgenClipPolygon.MoveTo(x, y: Double);
 begin
   FVertex := 0;
   FNumVertices := 0;
-  FClipFlags := ClippingFlags(X, Y);
+  FClipFlags := ClippingFlags(x, y);
 
   if FClipFlags = 0 then
     begin
-      fx[0] := X;
-      fy[0] := Y;
+      fx[0] := x;
+      fy[0] := y;
 
       FNumVertices := 1;
     end;
 
-  FX1 := X;
-  FY1 := Y;
+  FX1 := x;
+  FY1 := y;
   FCmd := CAggPathCmdMoveTo;
 end;
 
-procedure TAggVpgenClipPolygon.LineTo(X, Y: Double);
+procedure TAggVpgenClipPolygon.LineTo(x, y: Double);
 var
   Flags: Cardinal;
 begin
   FVertex := 0;
   FNumVertices := 0;
 
-  Flags := ClippingFlags(X, Y);
+  Flags := ClippingFlags(x, y);
 
   if FClipFlags = Flags then
     if Flags = 0 then
       begin
-        fx[0] := X;
-        fy[0] := Y;
+        fx[0] := x;
+        fy[0] := y;
 
         FNumVertices := 1;
       end
     else
   else
-      FNumVertices := ClipLiangBarskyDouble(FX1, FY1, X, Y, @FClipBox,
+      FNumVertices := ClipLiangBarskyDouble(FX1, FY1, x, y, @FClipBox,
       @fx, @fy);
 
   FClipFlags := Flags;
 
-  FX1 := X;
-  FY1 := Y;
+  FX1 := x;
+  FY1 := y;
 end;
 
-function TAggVpgenClipPolygon.Vertex(X, Y: PDouble): Cardinal;
+function TAggVpgenClipPolygon.Vertex(x, y: PDouble): Cardinal;
 var
   Cmd: Cardinal;
 
 begin
   if FVertex < FNumVertices then
     begin
-      X^ := fx[FVertex];
-      Y^ := fy[FVertex];
+      x^ := fx[FVertex];
+      y^ := fy[FVertex];
 
-      Inc(FVertex);
+      inc(FVertex);
 
       Cmd := FCmd;
       FCmd := CAggPathCmdLineTo;
@@ -243,16 +240,16 @@ end;
 // ClipBox.x1  ClipBox.x2
 function TAggVpgenClipPolygon.ClippingFlags;
 begin
-  if X < FClipBox.x1 then
+  if x < FClipBox.x1 then
     begin
-      if Y > FClipBox.y2 then
+      if y > FClipBox.y2 then
         begin
           Result := 6;
 
           Exit;
         end;
 
-      if Y < FClipBox.y1 then
+      if y < FClipBox.y1 then
         begin
           Result := 12;
 
@@ -264,16 +261,16 @@ begin
       Exit;
     end;
 
-  if X > FClipBox.x2 then
+  if x > FClipBox.x2 then
     begin
-      if Y > FClipBox.y2 then
+      if y > FClipBox.y2 then
         begin
           Result := 3;
 
           Exit;
         end;
 
-      if Y < FClipBox.y1 then
+      if y < FClipBox.y1 then
         begin
           Result := 9;
 
@@ -285,14 +282,14 @@ begin
       Exit;
     end;
 
-  if Y > FClipBox.y2 then
+  if y > FClipBox.y2 then
     begin
       Result := 2;
 
       Exit;
     end;
 
-  if Y < FClipBox.y1 then
+  if y < FClipBox.y1 then
     begin
       Result := 8;
 
@@ -303,3 +300,5 @@ begin
 end;
 
 end. 
+ 
+ 

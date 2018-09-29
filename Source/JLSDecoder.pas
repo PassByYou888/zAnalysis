@@ -71,7 +71,7 @@ begin
           for i := 0 to pred(Cols) do
             begin
               line8[i] := ENDIAN8(Line^);
-              Inc(Line);
+              inc(Line);
             end;
           outfile.write(line8[0], Cols);
         end
@@ -163,11 +163,11 @@ begin
     (this will probably have to be changed in the future)
   }
   PTR := ppixel(pscanl0);
-  Inc(PTR, comp * (LEFTMARGIN - 1));
+  inc(PTR, comp * (LEFTMARGIN - 1));
   pscanline := PTR;
 
   PTR := ppixel(cscanl0);
-  Inc(PTR, comp * (LEFTMARGIN - 1));
+  inc(PTR, comp * (LEFTMARGIN - 1));
   cscanline := PTR;
 
   FBitIO.createzeroLUT();
@@ -181,11 +181,11 @@ begin
   pscanl0 := cscanl0;
   cscanl0 := Temp;
   PTR := pscanl0;
-  Inc(PTR, FImageInfo.Components * (LEFTMARGIN - 1));
+  inc(PTR, FImageInfo.Components * (LEFTMARGIN - 1));
   pscanline := PTR;
 
   PTR := cscanl0;
-  Inc(PTR, FImageInfo.Components * (LEFTMARGIN - 1));
+  inc(PTR, FImageInfo.Components * (LEFTMARGIN - 1));
   cscanline := PTR;
 end;
 
@@ -204,7 +204,7 @@ var
     seek_return,
     gotinf,
     gotoutf,
-    pos: Int; { position in the file, after the header }
+    Pos: Int; { position in the file, after the header }
   alpha_temp: Int;
 begin
   end_of_seek := 0;
@@ -234,7 +234,7 @@ begin
       Exit;
     end
   else begin
-      pos := seek_return;
+      Pos := seek_return;
       if (mk <> JPEGLS_MARKER_SOI) and (mk <> JPEGLS_MARKER_SOI2) then
         begin
           DoStatus('Marker %04x found: first marker must be SOI (%04x) in this implementation', [mk, JPEGLS_MARKER_SOI]);
@@ -252,7 +252,7 @@ begin
       Exit;
     end
   else begin
-      pos := pos + seek_return; { Read SOF_LS }
+      Pos := Pos + seek_return; { Read SOF_LS }
       if (mk <> SOF_LS) then
         begin
           DoStatus('Marker %04x found: second marker must be SOF_LS (%04x) in this implementation', [mk, SOF_LS]);
@@ -270,7 +270,7 @@ begin
       Exit;
     end
   else
-      pos := pos + seek_return;
+      Pos := Pos + seek_return;
 
   head_scan[0]^.alp := head_frame^.alp; { default alpha }
 
@@ -289,7 +289,7 @@ begin
           Result := 10;
           Exit;
         end;
-      pos := pos + seek_return;
+      Pos := Pos + seek_return;
 
       case mk of
 
@@ -302,14 +302,14 @@ begin
                 Result := 10;
                 Exit;
               end;
-            pos := pos + seek_return;
+            Pos := Pos + seek_return;
             got_lse := 1;
           end;
 
         JPEGLS_MARKER_DRI:
           begin
             seek_return := FJpeg.read_jpegls_restartmarker(FInputStream, head_scan[0]);
-            pos := pos + seek_return;
+            Pos := Pos + seek_return;
             got_restart := 1;
             restart_interval := head_scan[0]^.restart_interval;
           end;
@@ -329,7 +329,7 @@ begin
       Exit;
     end;
 
-  pos := pos + seek_return;
+  Pos := Pos + seek_return;
 
   Shift := head_scan[0]^.Shift;
   if (Shift <> 0) then
@@ -465,7 +465,7 @@ begin
   while IsTrue(alpha0) do
     begin
       alpha0 := shr_c(alpha0, 1);
-      Inc(i);
+      inc(i);
     end;
 
   if (FImageInfo.alpha <> (1 shl i)) then
@@ -491,14 +491,14 @@ begin
 
   bpp := 1;
   while (1 shl bpp) < FImageInfo.alpha do
-      Inc(bpp);
+      inc(bpp);
 
   { compute bits per sample for unencoded prediction errors }
   if (lossy = True) then
     begin
       FImageInfo.qbpp := 1;
       while (1 shl FImageInfo.qbpp) < FImageInfo.qbeta do
-          Inc(FImageInfo.qbpp);
+          inc(FImageInfo.qbpp);
     end
   else
       FImageInfo.qbpp := bpp;
@@ -523,7 +523,7 @@ begin
   initbuffers(FImageInfo.Components);
 
   { return size of the header, in bytes }
-  Result := pos;
+  Result := Pos;
 end;
 
 { Main loop for decoding files }
@@ -533,7 +533,7 @@ var
   n, n_c, n_r, my_i, n_s, mk, seek_return,
     found_EOF: Int;
 
-  pos0, pos1, tot_in, tot_out: LONG;
+  pos0, pos1, tot_in, tot_out: long;
   local_scanl0, local_scanl1, local_pscanline, local_cscanline: ppixel;
   MCUs_counted: Int;
   PTR: ppixel;
@@ -565,11 +565,11 @@ begin
       local_scanl1 := safecalloc(width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE, SizeOf(Pixel));
 
       PTR := local_scanl0;
-      Inc(PTR, LEFTMARGIN - 1);
+      inc(PTR, LEFTMARGIN - 1);
       local_pscanline := PTR;
 
       PTR := local_scanl1;
-      Inc(PTR, LEFTMARGIN - 1);
+      inc(PTR, LEFTMARGIN - 1);
       local_cscanline := PTR;
     end;
 
@@ -673,7 +673,7 @@ begin
           if (lossy = False) then
             begin
               { LOSSLESS MODE }
-              Inc(n);
+              inc(n);
               while (n <= height) do
                 begin
                   { 'extend' the edges }
@@ -735,17 +735,17 @@ begin
                           FJpeg.read_n_bytes(FInputStream, 2); { read the RST marker }
                           FBitIO.bitiinit();
                         end;
-                      Inc(MCUs_counted);
+                      inc(MCUs_counted);
 
                     end;
-                  Inc(n);
+                  inc(n);
                 end; { End of while loop for each file line }
             end
           else
             begin
 
               { LOSSY MODE }
-              Inc(n);
+              inc(n);
               while (n <= height) do
                 begin
                   { 'extend' the edges }
@@ -807,7 +807,7 @@ begin
                           FJpeg.read_n_bytes(FInputStream, 2); { read the RST marker }
                           FBitIO.bitiinit();
                         end;
-                      Inc(MCUs_counted);
+                      inc(MCUs_counted);
 
                     end;
 
@@ -829,7 +829,7 @@ begin
                 begin
 
                   { LOSSLESS MODE }
-                  Inc(n);
+                  inc(n);
                   while (n <= height) do
                     begin
                       { 'extend' the edges }
@@ -868,10 +868,10 @@ begin
                               FJpeg.read_n_bytes(FInputStream, 2); { read the RST marker }
                               FBitIO.bitiinit();
                             end;
-                          Inc(MCUs_counted);
+                          inc(MCUs_counted);
 
                         end;
-                      Inc(n);
+                      inc(n);
 
                     end; { End of line loop for PIXEL_INT }
 
@@ -880,7 +880,7 @@ begin
               else
                 begin
                   { LOSSY MODE }
-                  Inc(n);
+                  inc(n);
                   while (n <= height) do
                     begin
                       { 'extend' the edges }
@@ -919,10 +919,10 @@ begin
                               FJpeg.read_n_bytes(FInputStream, 2); { read the RST marker }
                               FBitIO.bitiinit();
                             end;
-                          Inc(MCUs_counted);
+                          inc(MCUs_counted);
 
                         end;
-                      Inc(n);
+                      inc(n);
 
                     end; { End of line loop for PIXEL_INT }
 
@@ -939,7 +939,7 @@ begin
               if (lossy = False) then
                 begin
                   { LOSSLESS MODE }
-                  Inc(n);
+                  inc(n);
                   while (n <= height) do
                     begin
                       { 'extend' the edges }
@@ -973,17 +973,17 @@ begin
                               FJpeg.read_n_bytes(FInputStream, 2); { read the RST marker }
                               FBitIO.bitiinit();
                             end;
-                          Inc(MCUs_counted);
+                          inc(MCUs_counted);
 
                         end;
-                      Inc(n);
+                      inc(n);
                     end; { End of line loop in PLANE_INT }
                 end
               else
                 begin
 
                   { LOSSY MODE }
-                  Inc(n);
+                  inc(n);
                   while (n <= height) do
 
                     begin
@@ -1018,11 +1018,11 @@ begin
                               FJpeg.read_n_bytes(FInputStream, 2); { read the RST marker }
                               FBitIO.bitiinit();
                             end;
-                          Inc(MCUs_counted);
+                          inc(MCUs_counted);
 
                         end;
 
-                      Inc(n);
+                      inc(n);
                     end; { End of line loop in PLANE_INT }
                 end;     { End of each component for PLANE_INT }
 
@@ -1093,4 +1093,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

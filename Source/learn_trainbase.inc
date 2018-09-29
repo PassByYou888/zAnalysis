@@ -10,7 +10,7 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 type
-  TMultiLayerPerceptron = packed record
+  TMultiLayerPerceptron = record
     StructInfo: TLIVec;
     Weights: TLVec;
     ColumnMeans: TLVec;
@@ -18,123 +18,120 @@ type
     Neurons: TLVec;
     DFDNET: TLVec;
     DError: TLVec;
-    X: TLVec;
-    Y: TLVec;
+    x: TLVec;
+    y: TLVec;
     Chunks: TLMatrix;
     NWBuf: TLVec;
   end;
 
   PMultiLayerPerceptron = ^TMultiLayerPerceptron;
 
-procedure MLPCreate0(NIn, NOut: TLInt; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreate1(NIn, NHid, NOut: TLInt; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreate2(NIn, NHid1, NHid2, NOut: TLInt; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreate0(NIn, NOut: TLInt; var Network: TMultiLayerPerceptron); forward;
+procedure MLPCreate1(NIn, NHid, NOut: TLInt; var Network: TMultiLayerPerceptron); forward;
+procedure MLPCreate2(NIn, NHid1, NHid2, NOut: TLInt; var Network: TMultiLayerPerceptron); forward;
 
-procedure MLPCreateB0(NIn, NOut: TLInt; b, d: TLFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateB1(NIn, NHid, NOut: TLInt; b, d: TLFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateB2(NIn, NHid1, NHid2, NOut: TLInt; b, d: TLFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateB0(NIn, NOut: TLInt; b, d: TLFloat; var Network: TMultiLayerPerceptron); forward;
+procedure MLPCreateB1(NIn, NHid, NOut: TLInt; b, d: TLFloat; var Network: TMultiLayerPerceptron); forward;
+procedure MLPCreateB2(NIn, NHid1, NHid2, NOut: TLInt; b, d: TLFloat; var Network: TMultiLayerPerceptron); forward;
 
-procedure MLPCreateR0(NIn, NOut: TLInt; A, b: TLFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateR1(NIn, NHid, NOut: TLInt; A, b: TLFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateR2(NIn, NHid1, NHid2, NOut: TLInt; A, b: TLFloat; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateR0(NIn, NOut: TLInt; a, b: TLFloat; var Network: TMultiLayerPerceptron); forward;
+procedure MLPCreateR1(NIn, NHid, NOut: TLInt; a, b: TLFloat; var Network: TMultiLayerPerceptron); forward;
+procedure MLPCreateR2(NIn, NHid1, NHid2, NOut: TLInt; a, b: TLFloat; var Network: TMultiLayerPerceptron); forward;
 
-procedure MLPCreateC0(NIn, NOut: TLInt; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateC1(NIn, NHid, NOut: TLInt; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCreateC2(NIn, NHid1, NHid2, NOut: TLInt; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPCreateC0(NIn, NOut: TLInt; var Network: TMultiLayerPerceptron); forward;
+procedure MLPCreateC1(NIn, NHid, NOut: TLInt; var Network: TMultiLayerPerceptron); forward;
+procedure MLPCreateC2(NIn, NHid1, NHid2, NOut: TLInt; var Network: TMultiLayerPerceptron); forward;
 
-procedure MLPFree(var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPCopy(const Network1: TMultiLayerPerceptron; var Network2: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPFree(var Network: TMultiLayerPerceptron); forward;
+procedure MLPCopy(const Network1: TMultiLayerPerceptron; var Network2: TMultiLayerPerceptron); forward;
 
-procedure MLPSerialize(const Network: TMultiLayerPerceptron; var RA: TLVec; var RLen: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPUNSerialize(const RA: TLVec; var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPSerialize(const Network: TMultiLayerPerceptron; var RA: TLVec; var RLen: TLInt); forward;
+procedure MLPUNSerialize(const RA: TLVec; var Network: TMultiLayerPerceptron); forward;
 
-procedure MLPRandomize(var Network: TMultiLayerPerceptron); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPRandomize(var Network: TMultiLayerPerceptron; const Diameter: TLFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPRandomize(var Network: TMultiLayerPerceptron; const WBest: TLVec; const Diameter: TLFloat); overload; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPRandomizeFull(var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPRandomize(var Network: TMultiLayerPerceptron); overload; forward;
+procedure MLPRandomize(var Network: TMultiLayerPerceptron; const Diameter: TLFloat); overload; forward;
+procedure MLPRandomize(var Network: TMultiLayerPerceptron; const WBest: TLVec; const Diameter: TLFloat); overload; forward;
+procedure MLPRandomizeFull(var Network: TMultiLayerPerceptron); forward;
 
-procedure MLPInitPreprocessor(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPProperties(const Network: TMultiLayerPerceptron; var NIn: TLInt; var NOut: TLInt; var WCount: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPIsSoftmax(const Network: TMultiLayerPerceptron): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPInitPreprocessor(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt); forward;
+procedure MLPProperties(const Network: TMultiLayerPerceptron; var NIn: TLInt; var NOut: TLInt; var WCount: TLInt); forward;
+function MLPIsSoftmax(const Network: TMultiLayerPerceptron): Boolean; forward;
 
-procedure MLPProcess(var Network: TMultiLayerPerceptron; const X: TLVec; var Y: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPProcess(var Network: TMultiLayerPerceptron; const x: TLVec; var y: TLVec); forward;
 
-function MLPError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPErrorN(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPClsError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPRelClsError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPAvgCE(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPRMSError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPAvgError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MLPAvgRelError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MLPError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt): TLFloat; forward;
+function MLPErrorN(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt): TLFloat; forward;
+function MLPClsError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt): TLInt; forward;
+function MLPRelClsError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
+function MLPAvgCE(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
+function MLPRMSError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
+function MLPAvgError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
+function MLPAvgRelError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
 
-procedure MLPGrad(var Network: TMultiLayerPerceptron; const X: TLVec; const DesiredY: TLVec; var E: TLFloat; var Grad: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPGradN(var Network: TMultiLayerPerceptron; const X: TLVec; const DesiredY: TLVec; var E: TLFloat; var Grad: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPGradBatch(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPGradNBatch(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPGrad(var Network: TMultiLayerPerceptron; const x: TLVec; const DesiredY: TLVec; var E: TLFloat; var Grad: TLVec); forward;
+procedure MLPGradN(var Network: TMultiLayerPerceptron; const x: TLVec; const DesiredY: TLVec; var E: TLFloat; var Grad: TLVec); forward;
+procedure MLPGradBatch(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec); forward;
+procedure MLPGradNBatch(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec); forward;
 
-procedure MLPHessianNBatch(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec; var h: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MLPHessianBatch(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec; var h: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MLPHessianNBatch(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec; var h: TLMatrix); forward;
+procedure MLPHessianBatch(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec; var h: TLMatrix); forward;
 
 procedure MLPInternalProcessVector(const StructInfo: TLIVec;
   const Weights: TLVec; const ColumnMeans: TLVec;
   const ColumnSigmas: TLVec; var Neurons: TLVec;
-  var DFDNET: TLVec; const X: TLVec; var Y: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
+  var DFDNET: TLVec; const x: TLVec; var y: TLVec); forward;
 
 const
-  MLPVNum     = 7;
+  MLPVNum = 7;
   NFieldWidth = 4;
-  ChunkSize   = 32;
+  ChunkSize = 32;
 
 procedure AddInputLayer(NCount: TLInt; var LSizes: TLIVec;
   var LTypes: TLIVec; var LConnFirst: TLIVec;
-  var LConnLast: TLIVec; var LastProc: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var LConnLast: TLIVec; var LastProc: TLInt); forward;
 procedure AddBiasedSummatorLayer(NCount: TLInt;
   var LSizes: TLIVec; var LTypes: TLIVec;
   var LConnFirst: TLIVec; var LConnLast: TLIVec;
-  var LastProc: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var LastProc: TLInt); forward;
 procedure AddActivationLayer(FuncType: TLInt;
   var LSizes: TLIVec; var LTypes: TLIVec;
   var LConnFirst: TLIVec; var LConnLast: TLIVec;
-  var LastProc: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var LastProc: TLInt); forward;
 procedure AddZeroLayer(var LSizes: TLIVec; var LTypes: TLIVec;
   var LConnFirst: TLIVec; var LConnLast: TLIVec;
-  var LastProc: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var LastProc: TLInt); forward;
 procedure MLPCreate(NIn, NOut: TLInt;
   const LSizes: TLIVec; const LTypes: TLIVec;
   const LConnFirst: TLIVec; const LConnLast: TLIVec;
   LayersCount: TLInt; IsClsNet: Boolean;
-  var Network: TMultiLayerPerceptron); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Network: TMultiLayerPerceptron); forward;
 procedure MLPActivationFunction(NET: TLFloat; k: TLInt;
-  var F: TLFloat; var df: TLFloat; var D2F: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var f: TLFloat; var df: TLFloat; var D2F: TLFloat); forward;
 procedure MLPHessianBatchInternal(var Network: TMultiLayerPerceptron;
   const xy: TLMatrix; SSize: TLInt; NaturalErr: Boolean;
-  var E: TLFloat; var Grad: TLVec; var h: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var E: TLFloat; var Grad: TLVec; var h: TLMatrix); forward;
 procedure MLPInternalCalculateGradient(var Network: TMultiLayerPerceptron;
   const Neurons: TLVec; const Weights: TLVec;
   var DError: TLVec; var Grad: TLVec;
-  NaturalErrorFunc: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  NaturalErrorFunc: Boolean); forward;
 procedure MLPChunkedGradient(var Network: TMultiLayerPerceptron;
   const xy: TLMatrix; CStart: TLInt; CSize: TLInt;
   var E: TLFloat; var Grad: TLVec;
-  NaturalErrorFunc: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SafeCrossEntropy(T: TLFloat; Z: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
+  NaturalErrorFunc: Boolean); forward;
+function SafeCrossEntropy(t: TLFloat; z: TLFloat): TLFloat; forward;
 
 (* ************************************************************************
-  Creates  neural  network  with  NIn  inputs,  NOut outputs, without hidden
-  layers, with linear output layer. Network weights are  filled  with  small
-  random values.
+  Creates neural network with NIn inputs, NOut outputs, without hidden layers, with linear output layer.
+  Network weights are filled with small random values.
   ************************************************************************ *)
 procedure MLPCreate0(NIn, NOut: TLInt; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLIVec;
-  LTypes     : TLIVec;
-  LConnFirst : TLIVec;
-  LConnLast  : TLIVec;
+  LSizes: TLIVec;
+  LTypes: TLIVec;
+  LConnFirst: TLIVec;
+  LConnLast: TLIVec;
   LayersCount: TLInt;
-  LastProc   : TLInt;
+  LastProc: TLInt;
 begin
   LayersCount := 1 + 2;
 
@@ -155,22 +152,20 @@ begin
   //
   // Create
   //
-  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount,
-    False, Network);
+  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount, False, Network);
 end;
 
 (* ************************************************************************
-  Same  as  MLPCreate0,  but  with  one  hidden  layer  (NHid  neurons) with
-  non-linear activation function. Output layer is linear.
+  Same as MLPCreate0, but with one hidden layer (NHid neurons) with non-linear activation function. Output layer is linear.
   ************************************************************************ *)
 procedure MLPCreate1(NIn, NHid, NOut: TLInt; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLIVec;
-  LTypes     : TLIVec;
-  LConnFirst : TLIVec;
-  LConnLast  : TLIVec;
+  LSizes: TLIVec;
+  LTypes: TLIVec;
+  LConnFirst: TLIVec;
+  LConnLast: TLIVec;
   LayersCount: TLInt;
-  LastProc   : TLInt;
+  LastProc: TLInt;
 begin
   LayersCount := 1 + 3 + 2;
 
@@ -193,8 +188,7 @@ begin
   //
   // Create
   //
-  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount,
-    False, Network);
+  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount, False, Network);
 end;
 
 (* ************************************************************************
@@ -203,12 +197,12 @@ end;
   ************************************************************************ *)
 procedure MLPCreate2(NIn, NHid1, NHid2, NOut: TLInt; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLIVec;
-  LTypes     : TLIVec;
-  LConnFirst : TLIVec;
-  LConnLast  : TLIVec;
+  LSizes: TLIVec;
+  LTypes: TLIVec;
+  LConnFirst: TLIVec;
+  LConnLast: TLIVec;
   LayersCount: TLInt;
-  LastProc   : TLInt;
+  LastProc: TLInt;
 begin
   LayersCount := 1 + 3 + 3 + 2;
 
@@ -224,25 +218,21 @@ begin
   // Layers
   //
   AddInputLayer(NIn, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
-  AddBiasedSummatorLayer(NHid1, LSizes, LTypes, LConnFirst, LConnLast,
-    LastProc);
+  AddBiasedSummatorLayer(NHid1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddActivationLayer(1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
-  AddBiasedSummatorLayer(NHid2, LSizes, LTypes, LConnFirst, LConnLast,
-    LastProc);
+  AddBiasedSummatorLayer(NHid2, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddActivationLayer(1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddBiasedSummatorLayer(NOut, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
 
   //
   // Create
   //
-  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount,
-    False, Network);
+  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount, False, Network);
 end;
 
 (* ************************************************************************
-  Creates  neural  network  with  NIn  inputs,  NOut outputs, without hidden
-  layers with non-linear output layer. Network weights are filled with small
-  random values.
+  Creates neural network with NIn inputs, NOut outputs, without hidden layers with non-linear output layer.
+  Network weights are filled with small random values.
 
   Activation function of the output layer takes values:
 
@@ -254,13 +244,13 @@ end;
   ************************************************************************ *)
 procedure MLPCreateB0(NIn, NOut: TLInt; b, d: TLFloat; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLIVec;
-  LTypes     : TLIVec;
-  LConnFirst : TLIVec;
-  LConnLast  : TLIVec;
+  LSizes: TLIVec;
+  LTypes: TLIVec;
+  LConnFirst: TLIVec;
+  LConnLast: TLIVec;
   LayersCount: TLInt;
-  LastProc   : TLInt;
-  i          : TLInt;
+  LastProc: TLInt;
+  i: TLInt;
 begin
   LayersCount := 1 + 3;
   if AP_FP_Greater_Eq(d, 0) then
@@ -290,8 +280,7 @@ begin
   //
   // Create
   //
-  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount,
-    False, Network);
+  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount, False, Network);
 
   //
   // Turn on ouputs shift/scaling.
@@ -301,7 +290,7 @@ begin
     begin
       Network.ColumnMeans[i] := b;
       Network.ColumnSigmas[i] := d;
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -310,13 +299,13 @@ end;
   ************************************************************************ *)
 procedure MLPCreateB1(NIn, NHid, NOut: TLInt; b, d: TLFloat; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLIVec;
-  LTypes     : TLIVec;
-  LConnFirst : TLIVec;
-  LConnLast  : TLIVec;
+  LSizes: TLIVec;
+  LTypes: TLIVec;
+  LConnFirst: TLIVec;
+  LConnLast: TLIVec;
   LayersCount: TLInt;
-  LastProc   : TLInt;
-  i          : TLInt;
+  LastProc: TLInt;
+  i: TLInt;
 begin
   LayersCount := 1 + 3 + 3;
   if AP_FP_Greater_Eq(d, 0) then
@@ -348,8 +337,7 @@ begin
   //
   // Create
   //
-  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount,
-    False, Network);
+  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount, False, Network);
 
   //
   // Turn on ouputs shift/scaling.
@@ -359,7 +347,7 @@ begin
     begin
       Network.ColumnMeans[i] := b;
       Network.ColumnSigmas[i] := d;
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -368,13 +356,13 @@ end;
   ************************************************************************ *)
 procedure MLPCreateB2(NIn, NHid1, NHid2, NOut: TLInt; b, d: TLFloat; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLIVec;
-  LTypes     : TLIVec;
-  LConnFirst : TLIVec;
-  LConnLast  : TLIVec;
+  LSizes: TLIVec;
+  LTypes: TLIVec;
+  LConnFirst: TLIVec;
+  LConnLast: TLIVec;
   LayersCount: TLInt;
-  LastProc   : TLInt;
-  i          : TLInt;
+  LastProc: TLInt;
+  i: TLInt;
 begin
   LayersCount := 1 + 3 + 3 + 3;
   if AP_FP_Greater_Eq(d, 0) then
@@ -398,11 +386,9 @@ begin
   // Layers
   //
   AddInputLayer(NIn, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
-  AddBiasedSummatorLayer(NHid1, LSizes, LTypes, LConnFirst, LConnLast,
-    LastProc);
+  AddBiasedSummatorLayer(NHid1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddActivationLayer(1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
-  AddBiasedSummatorLayer(NHid2, LSizes, LTypes, LConnFirst, LConnLast,
-    LastProc);
+  AddBiasedSummatorLayer(NHid2, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddActivationLayer(1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddBiasedSummatorLayer(NOut, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddActivationLayer(3, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
@@ -410,8 +396,7 @@ begin
   //
   // Create
   //
-  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount,
-    False, Network);
+  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount, False, Network);
 
   //
   // Turn on ouputs shift/scaling.
@@ -421,7 +406,7 @@ begin
     begin
       Network.ColumnMeans[i] := b;
       Network.ColumnSigmas[i] := d;
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -430,15 +415,15 @@ end;
   layers with non-linear output layer. Network weights are filled with small
   random values. Activation function of the output layer takes values [A,B].
   ************************************************************************ *)
-procedure MLPCreateR0(NIn, NOut: TLInt; A, b: TLFloat; var Network: TMultiLayerPerceptron);
+procedure MLPCreateR0(NIn, NOut: TLInt; a, b: TLFloat; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLIVec;
-  LTypes     : TLIVec;
-  LConnFirst : TLIVec;
-  LConnLast  : TLIVec;
+  LSizes: TLIVec;
+  LTypes: TLIVec;
+  LConnFirst: TLIVec;
+  LConnLast: TLIVec;
   LayersCount: TLInt;
-  LastProc   : TLInt;
-  i          : TLInt;
+  LastProc: TLInt;
+  i: TLInt;
 begin
   LayersCount := 1 + 3;
 
@@ -460,8 +445,7 @@ begin
   //
   // Create
   //
-  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount,
-    False, Network);
+  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount, False, Network);
 
   //
   // Turn on outputs shift/scaling.
@@ -469,24 +453,24 @@ begin
   i := NIn;
   while i <= NIn + NOut - 1 do
     begin
-      Network.ColumnMeans[i] := 0.5 * (A + b);
-      Network.ColumnSigmas[i] := 0.5 * (A - b);
-      Inc(i);
+      Network.ColumnMeans[i] := 0.5 * (a + b);
+      Network.ColumnSigmas[i] := 0.5 * (a - b);
+      inc(i);
     end;
 end;
 
 (* ************************************************************************
   Same as MLPCreateR0, but with non-linear hidden layer.
   ************************************************************************ *)
-procedure MLPCreateR1(NIn, NHid, NOut: TLInt; A, b: TLFloat; var Network: TMultiLayerPerceptron);
+procedure MLPCreateR1(NIn, NHid, NOut: TLInt; a, b: TLFloat; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLIVec;
-  LTypes     : TLIVec;
-  LConnFirst : TLIVec;
-  LConnLast  : TLIVec;
+  LSizes: TLIVec;
+  LTypes: TLIVec;
+  LConnFirst: TLIVec;
+  LConnLast: TLIVec;
   LayersCount: TLInt;
-  LastProc   : TLInt;
-  i          : TLInt;
+  LastProc: TLInt;
+  i: TLInt;
 begin
   LayersCount := 1 + 3 + 3;
 
@@ -510,8 +494,7 @@ begin
   //
   // Create
   //
-  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount,
-    False, Network);
+  MLPCreate(NIn, NOut, LSizes, LTypes, LConnFirst, LConnLast, LayersCount, False, Network);
 
   //
   // Turn on outputs shift/scaling.
@@ -519,24 +502,24 @@ begin
   i := NIn;
   while i <= NIn + NOut - 1 do
     begin
-      Network.ColumnMeans[i] := 0.5 * (A + b);
-      Network.ColumnSigmas[i] := 0.5 * (A - b);
-      Inc(i);
+      Network.ColumnMeans[i] := 0.5 * (a + b);
+      Network.ColumnSigmas[i] := 0.5 * (a - b);
+      inc(i);
     end;
 end;
 
 (* ************************************************************************
   Same as MLPCreateR0, but with two non-linear hidden layers.
   ************************************************************************ *)
-procedure MLPCreateR2(NIn, NHid1, NHid2, NOut: TLInt; A, b: TLFloat; var Network: TMultiLayerPerceptron);
+procedure MLPCreateR2(NIn, NHid1, NHid2, NOut: TLInt; a, b: TLFloat; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLIVec;
-  LTypes     : TLIVec;
-  LConnFirst : TLIVec;
-  LConnLast  : TLIVec;
+  LSizes: TLIVec;
+  LTypes: TLIVec;
+  LConnFirst: TLIVec;
+  LConnLast: TLIVec;
   LayersCount: TLInt;
-  LastProc   : TLInt;
-  i          : TLInt;
+  LastProc: TLInt;
+  i: TLInt;
 begin
   LayersCount := 1 + 3 + 3 + 3;
 
@@ -552,11 +535,9 @@ begin
   // Layers
   //
   AddInputLayer(NIn, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
-  AddBiasedSummatorLayer(NHid1, LSizes, LTypes, LConnFirst, LConnLast,
-    LastProc);
+  AddBiasedSummatorLayer(NHid1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddActivationLayer(1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
-  AddBiasedSummatorLayer(NHid2, LSizes, LTypes, LConnFirst, LConnLast,
-    LastProc);
+  AddBiasedSummatorLayer(NHid2, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddActivationLayer(1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddBiasedSummatorLayer(NOut, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
   AddActivationLayer(1, LSizes, LTypes, LConnFirst, LConnLast, LastProc);
@@ -573,9 +554,9 @@ begin
   i := NIn;
   while i <= NIn + NOut - 1 do
     begin
-      Network.ColumnMeans[i] := 0.5 * (A + b);
-      Network.ColumnSigmas[i] := 0.5 * (A - b);
-      Inc(i);
+      Network.ColumnMeans[i] := 0.5 * (a + b);
+      Network.ColumnSigmas[i] := 0.5 * (a - b);
+      inc(i);
     end;
 end;
 
@@ -586,12 +567,12 @@ end;
   ************************************************************************ *)
 procedure MLPCreateC0(NIn, NOut: TLInt; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLIVec;
-  LTypes     : TLIVec;
-  LConnFirst : TLIVec;
-  LConnLast  : TLIVec;
+  LSizes: TLIVec;
+  LTypes: TLIVec;
+  LConnFirst: TLIVec;
+  LConnLast: TLIVec;
   LayersCount: TLInt;
-  LastProc   : TLInt;
+  LastProc: TLInt;
 begin
   Assert(NOut >= 2, 'MLPCreateC0: NOut<2!');
   LayersCount := 1 + 2 + 1;
@@ -622,12 +603,12 @@ end;
   ************************************************************************ *)
 procedure MLPCreateC1(NIn, NHid, NOut: TLInt; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLIVec;
-  LTypes     : TLIVec;
-  LConnFirst : TLIVec;
-  LConnLast  : TLIVec;
+  LSizes: TLIVec;
+  LTypes: TLIVec;
+  LConnFirst: TLIVec;
+  LConnLast: TLIVec;
   LayersCount: TLInt;
-  LastProc   : TLInt;
+  LastProc: TLInt;
 begin
   Assert(NOut >= 2, 'MLPCreateC1: NOut<2!');
   LayersCount := 1 + 3 + 2 + 1;
@@ -660,12 +641,12 @@ end;
   ************************************************************************ *)
 procedure MLPCreateC2(NIn, NHid1, NHid2, NOut: TLInt; var Network: TMultiLayerPerceptron);
 var
-  LSizes     : TLIVec;
-  LTypes     : TLIVec;
-  LConnFirst : TLIVec;
-  LConnLast  : TLIVec;
+  LSizes: TLIVec;
+  LTypes: TLIVec;
+  LConnFirst: TLIVec;
+  LConnLast: TLIVec;
   LayersCount: TLInt;
-  LastProc   : TLInt;
+  LastProc: TLInt;
 begin
   Assert(NOut >= 2, 'MLPCreateC2: NOut<2!');
   LayersCount := 1 + 3 + 3 + 2 + 1;
@@ -704,8 +685,8 @@ begin
   SetLength(Network.Neurons, 0);
   SetLength(Network.DFDNET, 0);
   SetLength(Network.DError, 0);
-  SetLength(Network.X, 0);
-  SetLength(Network.Y, 0);
+  SetLength(Network.x, 0);
+  SetLength(Network.y, 0);
   SetLength(Network.Chunks, 0);
   SetLength(Network.NWBuf, 0);
 end;
@@ -722,11 +703,11 @@ end;
 procedure MLPCopy(const Network1: TMultiLayerPerceptron;
   var Network2: TMultiLayerPerceptron);
 var
-  i     : TLInt;
-  SSize : TLInt;
+  i: TLInt;
+  SSize: TLInt;
   NTotal: TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
 begin
 
@@ -758,8 +739,8 @@ begin
   SetLength(Network2.Chunks, 3 * NTotal + 1, ChunkSize (* - 1 + 1 // optimized compiler *) );
   SetLength(Network2.NWBuf, Max(WCount, 2 * NOut) (* - 1 + 1 // optimized compiler *) );
   SetLength(Network2.DFDNET, NTotal (* - 1 + 1 // optimized compiler *) );
-  SetLength(Network2.X, NIn (* - 1 + 1 // optimized compiler *) );
-  SetLength(Network2.Y, NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network2.x, NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network2.y, NOut (* - 1 + 1 // optimized compiler *) );
   SetLength(Network2.DError, NTotal (* - 1 + 1 // optimized compiler *) );
 
   //
@@ -769,32 +750,25 @@ begin
   while i <= SSize - 1 do
     begin
       Network2.StructInfo[i] := Network1.StructInfo[i];
-      Inc(i);
+      inc(i);
     end;
   APVMove(@Network2.Weights[0], 0, WCount - 1, @Network1.Weights[0], 0,
     WCount - 1);
   if MLPIsSoftmax(Network1) then
     begin
-      APVMove(@Network2.ColumnMeans[0], 0, NIn - 1, @Network1.ColumnMeans[0],
-        0, NIn - 1);
-      APVMove(@Network2.ColumnSigmas[0], 0, NIn - 1, @Network1.ColumnSigmas[0],
-        0, NIn - 1);
+      APVMove(@Network2.ColumnMeans[0], 0, NIn - 1, @Network1.ColumnMeans[0], 0, NIn - 1);
+      APVMove(@Network2.ColumnSigmas[0], 0, NIn - 1, @Network1.ColumnSigmas[0], 0, NIn - 1);
     end
   else
     begin
-      APVMove(@Network2.ColumnMeans[0], 0, NIn + NOut - 1,
-        @Network1.ColumnMeans[0], 0, NIn + NOut - 1);
-      APVMove(@Network2.ColumnSigmas[0], 0, NIn + NOut - 1,
-        @Network1.ColumnSigmas[0], 0, NIn + NOut - 1);
+      APVMove(@Network2.ColumnMeans[0], 0, NIn + NOut - 1, @Network1.ColumnMeans[0], 0, NIn + NOut - 1);
+      APVMove(@Network2.ColumnSigmas[0], 0, NIn + NOut - 1, @Network1.ColumnSigmas[0], 0, NIn + NOut - 1);
     end;
-  APVMove(@Network2.Neurons[0], 0, NTotal - 1, @Network1.Neurons[0], 0,
-    NTotal - 1);
-  APVMove(@Network2.DFDNET[0], 0, NTotal - 1, @Network1.DFDNET[0], 0,
-    NTotal - 1);
-  APVMove(@Network2.X[0], 0, NIn - 1, @Network1.X[0], 0, NIn - 1);
-  APVMove(@Network2.Y[0], 0, NOut - 1, @Network1.Y[0], 0, NOut - 1);
-  APVMove(@Network2.DError[0], 0, NTotal - 1, @Network1.DError[0], 0,
-    NTotal - 1);
+  APVMove(@Network2.Neurons[0], 0, NTotal - 1, @Network1.Neurons[0], 0, NTotal - 1);
+  APVMove(@Network2.DFDNET[0], 0, NTotal - 1, @Network1.DFDNET[0], 0, NTotal - 1);
+  APVMove(@Network2.x[0], 0, NIn - 1, @Network1.x[0], 0, NIn - 1);
+  APVMove(@Network2.y[0], 0, NOut - 1, @Network1.y[0], 0, NOut - 1);
+  APVMove(@Network2.DError[0], 0, NTotal - 1, @Network1.DError[0], 0, NTotal - 1);
 end;
 
 (* ************************************************************************
@@ -804,21 +778,21 @@ end;
   Network -   original
 
   OUTPUT PARAMETERS:
-  RA      -   packed array of real numbers which stores network,
+  RA      -   array of real numbers which stores network,
   array[0..RLen-1]
   RLen    -   RA lenght
   ************************************************************************ *)
 procedure MLPSerialize(const Network: TMultiLayerPerceptron;
   var RA: TLVec; var RLen: TLInt);
 var
-  i       : TLInt;
-  SSize   : TLInt;
-  NTotal  : TLInt;
-  NIn     : TLInt;
-  NOut    : TLInt;
-  WCount  : TLInt;
+  i: TLInt;
+  SSize: TLInt;
+  NTotal: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
+  WCount: TLInt;
   SigmaLen: TLInt;
-  Offs    : TLInt;
+  Offs: TLInt;
 begin
 
   //
@@ -859,16 +833,14 @@ begin
   while i <= SSize - 1 do
     begin
       RA[Offs + i] := Network.StructInfo[i];
-      Inc(i);
+      inc(i);
     end;
   Offs := Offs + SSize;
   APVMove(@RA[0], Offs, Offs + WCount - 1, @Network.Weights[0], 0, WCount - 1);
   Offs := Offs + WCount;
-  APVMove(@RA[0], Offs, Offs + SigmaLen - 1, @Network.ColumnMeans[0], 0,
-    SigmaLen - 1);
+  APVMove(@RA[0], Offs, Offs + SigmaLen - 1, @Network.ColumnMeans[0], 0, SigmaLen - 1);
   Offs := Offs + SigmaLen;
-  APVMove(@RA[0], Offs, Offs + SigmaLen - 1, @Network.ColumnSigmas[0], 0,
-    SigmaLen - 1);
+  APVMove(@RA[0], Offs, Offs + SigmaLen - 1, @Network.ColumnSigmas[0], 0, SigmaLen - 1);
   Offs := Offs + SigmaLen;
 end;
 
@@ -884,14 +856,14 @@ end;
 procedure MLPUNSerialize(const RA: TLVec;
   var Network: TMultiLayerPerceptron);
 var
-  i       : TLInt;
-  SSize   : TLInt;
-  NTotal  : TLInt;
-  NIn     : TLInt;
-  NOut    : TLInt;
-  WCount  : TLInt;
+  i: TLInt;
+  SSize: TLInt;
+  NTotal: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
+  WCount: TLInt;
   SigmaLen: TLInt;
-  Offs    : TLInt;
+  Offs: TLInt;
 begin
   Assert(Round(RA[1]) = MLPVNum, 'MLPUnserialize: incorrect array!');
 
@@ -905,7 +877,7 @@ begin
   while i <= SSize - 1 do
     begin
       Network.StructInfo[i] := Round(RA[Offs + i]);
-      Inc(i);
+      inc(i);
     end;
   Offs := Offs + SSize;
 
@@ -936,8 +908,8 @@ begin
   SetLength(Network.Chunks, 3 * NTotal + 1, ChunkSize (* - 1 + 1 // optimized compiler *) );
   SetLength(Network.NWBuf, Max(WCount, 2 * NOut) (* - 1 + 1 // optimized compiler *) );
   SetLength(Network.DFDNET, NTotal (* - 1 + 1 // optimized compiler *) );
-  SetLength(Network.X, NIn (* - 1 + 1 // optimized compiler *) );
-  SetLength(Network.Y, NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.x, NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.y, NOut (* - 1 + 1 // optimized compiler *) );
   SetLength(Network.DError, NTotal (* - 1 + 1 // optimized compiler *) );
 
   //
@@ -945,11 +917,9 @@ begin
   //
   APVMove(@Network.Weights[0], 0, WCount - 1, @RA[0], Offs, Offs + WCount - 1);
   Offs := Offs + WCount;
-  APVMove(@Network.ColumnMeans[0], 0, SigmaLen - 1, @RA[0], Offs,
-    Offs + SigmaLen - 1);
+  APVMove(@Network.ColumnMeans[0], 0, SigmaLen - 1, @RA[0], Offs, Offs + SigmaLen - 1);
   Offs := Offs + SigmaLen;
-  APVMove(@Network.ColumnSigmas[0], 0, SigmaLen - 1, @RA[0], Offs,
-    Offs + SigmaLen - 1);
+  APVMove(@Network.ColumnSigmas[0], 0, SigmaLen - 1, @RA[0], Offs, Offs + SigmaLen - 1);
   Offs := Offs + SigmaLen;
 end;
 
@@ -958,9 +928,9 @@ end;
   ************************************************************************ *)
 procedure MLPRandomize(var Network: TMultiLayerPerceptron); overload;
 var
-  i     : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
@@ -976,9 +946,9 @@ end;
 procedure MLPRandomize(var Network: TMultiLayerPerceptron;
   const Diameter: TLFloat); overload;
 var
-  i     : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
@@ -994,9 +964,9 @@ end;
 procedure MLPRandomize(var Network: TMultiLayerPerceptron;
   const WBest: TLVec; const Diameter: TLFloat); overload;
 var
-  i     : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
@@ -1011,14 +981,14 @@ end;
   ************************************************************************ *)
 procedure MLPRandomizeFull(var Network: TMultiLayerPerceptron);
 var
-  i     : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
   NTotal: TLInt;
   IStart: TLInt;
-  Offs  : TLInt;
-  NType : TLInt;
+  Offs: TLInt;
+  NType: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   NTotal := Network.StructInfo[3];
@@ -1031,14 +1001,14 @@ begin
   while i <= WCount - 1 do
     begin
       Network.Weights[i] := RandomReal - 0.5;
-      Inc(i);
+      inc(i);
     end;
   i := 0;
   while i <= NIn - 1 do
     begin
       Network.ColumnMeans[i] := 2 * RandomReal - 1;
       Network.ColumnSigmas[i] := 1.5 * RandomReal + 0.5;
-      Inc(i);
+      inc(i);
     end;
   if not MLPIsSoftmax(Network) then
     begin
@@ -1062,10 +1032,9 @@ begin
               // Scales are changed only for linear or bounded outputs neurons.
               // Note that scale randomization preserves sign.
               //
-              Network.ColumnSigmas[NIn + i] := Sign(Network.ColumnSigmas[NIn + i]) *
-                (1.5 * RandomReal + 0.5);
+              Network.ColumnSigmas[NIn + i] := Sign(Network.ColumnSigmas[NIn + i]) * (1.5 * RandomReal + 0.5);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -1076,19 +1045,19 @@ end;
 procedure MLPInitPreprocessor(var Network: TMultiLayerPerceptron;
   const xy: TLMatrix; SSize: TLInt);
 var
-  i     : TLInt;
-  J     : TLInt;
-  JMAX  : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  j: TLInt;
+  JMAX: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
   NTotal: TLInt;
   IStart: TLInt;
-  Offs  : TLInt;
-  NType : TLInt;
-  Means : TLVec;
+  Offs: TLInt;
+  NType: TLInt;
+  Means: TLVec;
   Sigmas: TLVec;
-  s     : TLFloat;
+  s: TLFloat;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   NTotal := Network.StructInfo[3];
@@ -1107,26 +1076,26 @@ begin
     end;
   SetLength(Means, JMAX + 1);
   SetLength(Sigmas, JMAX + 1);
-  J := 0;
-  while J <= JMAX do
+  j := 0;
+  while j <= JMAX do
     begin
-      Means[J] := 0;
+      Means[j] := 0;
       i := 0;
       while i <= SSize - 1 do
         begin
-          Means[J] := Means[J] + xy[i, J];
-          Inc(i);
+          Means[j] := Means[j] + xy[i, j];
+          inc(i);
         end;
-      Means[J] := Means[J] / SSize;
-      Sigmas[J] := 0;
+      Means[j] := Means[j] / SSize;
+      Sigmas[j] := 0;
       i := 0;
       while i <= SSize - 1 do
         begin
-          Sigmas[J] := Sigmas[J] + AP_Sqr(xy[i, J] - Means[J]);
-          Inc(i);
+          Sigmas[j] := Sigmas[j] + AP_Sqr(xy[i, j] - Means[j]);
+          inc(i);
         end;
-      Sigmas[J] := Sqrt(Sigmas[J] / SSize);
-      Inc(J);
+      Sigmas[j] := Sqrt(Sigmas[j] / SSize);
+      inc(j);
     end;
 
   //
@@ -1141,7 +1110,7 @@ begin
         begin
           Network.ColumnSigmas[i] := 1;
         end;
-      Inc(i);
+      inc(i);
     end;
 
   //
@@ -1182,14 +1151,13 @@ begin
                 begin
                   s := 1.0;
                 end;
-              Network.ColumnSigmas[NIn + i] := Sign(Network.ColumnSigmas[NIn + i]) *
-                AbsReal(s);
+              Network.ColumnSigmas[NIn + i] := Sign(Network.ColumnSigmas[NIn + i]) * AbsReal(s);
               if AP_FP_Eq(Network.ColumnSigmas[NIn + i], 0) then
                 begin
                   Network.ColumnSigmas[NIn + i] := 1;
                 end;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -1226,11 +1194,11 @@ end;
   Subroutine does not allocate memory for this vector, it is
   responsibility of a caller to allocate it. Array must be at least [0..NOut-1].
   ************************************************************************ *)
-procedure MLPProcess(var Network: TMultiLayerPerceptron; const X: TLVec; var Y: TLVec);
+procedure MLPProcess(var Network: TMultiLayerPerceptron; const x: TLVec; var y: TLVec);
 begin
   MLPInternalProcessVector(Network.StructInfo, Network.Weights,
     Network.ColumnMeans, Network.ColumnSigmas, Network.Neurons,
-    Network.DFDNET, X, Y);
+    Network.DFDNET, x, y);
 end;
 
 (* ************************************************************************
@@ -1239,20 +1207,20 @@ end;
 function MLPError(var Network: TMultiLayerPerceptron; const xy: TLMatrix;
   SSize: TLInt): TLFloat;
 var
-  i     : TLInt;
-  k     : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  k: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
-  E     : TLFloat;
+  E: TLFloat;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   Result := 0;
   i := 0;
   while i <= SSize - 1 do
     begin
-      APVMove(@Network.X[0], 0, NIn - 1, @xy[i][0], 0, NIn - 1);
-      MLPProcess(Network, Network.X, Network.Y);
+      APVMove(@Network.x[0], 0, NIn - 1, @xy[i][0], 0, NIn - 1);
+      MLPProcess(Network, Network.x, Network.y);
       if MLPIsSoftmax(Network) then
         begin
 
@@ -1262,7 +1230,7 @@ begin
           k := Round(xy[i, NIn]);
           if (k >= 0) and (k < NOut) then
             begin
-              Network.Y[k] := Network.Y[k] - 1;
+              Network.y[k] := Network.y[k] - 1;
             end;
         end
       else
@@ -1271,11 +1239,11 @@ begin
           //
           // real outputs
           //
-          APVSub(@Network.Y[0], 0, NOut - 1, @xy[i][0], NIn, NIn + NOut - 1);
+          APVSub(@Network.y[0], 0, NOut - 1, @xy[i][0], NIn, NIn + NOut - 1);
         end;
-      E := APVDotProduct(@Network.Y[0], 0, NOut - 1, @Network.Y[0], 0, NOut - 1);
+      E := APVDotProduct(@Network.y[0], 0, NOut - 1, @Network.y[0], 0, NOut - 1);
       Result := Result + E / 2;
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -1285,12 +1253,12 @@ end;
 function MLPErrorN(var Network: TMultiLayerPerceptron; const xy: TLMatrix;
   SSize: TLInt): TLFloat;
 var
-  i     : TLInt;
-  k     : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  k: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
-  E     : TLFloat;
+  E: TLFloat;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   Result := 0;
@@ -1300,8 +1268,8 @@ begin
       //
       // Process vector
       //
-      APVMove(@Network.X[0], 0, NIn - 1, @xy[i][0], 0, NIn - 1);
-      MLPProcess(Network, Network.X, Network.Y);
+      APVMove(@Network.x[0], 0, NIn - 1, @xy[i][0], 0, NIn - 1);
+      MLPProcess(Network, Network.x, Network.y);
 
       //
       // Update error function
@@ -1312,9 +1280,8 @@ begin
           //
           // Least squares error function
           //
-          APVSub(@Network.Y[0], 0, NOut - 1, @xy[i][0], NIn, NIn + NOut - 1);
-          E := APVDotProduct(@Network.Y[0], 0, NOut - 1, @Network.Y[0], 0,
-            NOut - 1);
+          APVSub(@Network.y[0], 0, NOut - 1, @xy[i][0], NIn, NIn + NOut - 1);
+          E := APVDotProduct(@Network.y[0], 0, NOut - 1, @Network.y[0], 0, NOut - 1);
           Result := Result + E * 0.5;
         end
       else
@@ -1326,7 +1293,7 @@ begin
           k := Round(xy[i, NIn]);
           if (k >= 0) and (k < NOut) then
             begin
-              Result := Result + SafeCrossEntropy(1, Network.Y[k]);
+              Result := Result + SafeCrossEntropy(1, Network.y[k]);
             end;
         end;
     end;
@@ -1338,16 +1305,16 @@ end;
 function MLPClsError(var Network: TMultiLayerPerceptron; const xy: TLMatrix;
   SSize: TLInt): TLInt;
 var
-  i     : TLInt;
-  J     : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  j: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
-  WorkX : TLVec;
-  WorkY : TLVec;
-  NN    : TLInt;
-  ns    : TLInt;
-  NMAX  : TLInt;
+  WorkX: TLVec;
+  WorkY: TLVec;
+  NN: TLInt;
+  ns: TLInt;
+  NMAX: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   SetLength(WorkX, NIn (* - 1 + 1 // optimized compiler *) );
@@ -1367,14 +1334,14 @@ begin
       // Network version of the answer
       //
       NMAX := 0;
-      J := 0;
-      while J <= NOut - 1 do
+      j := 0;
+      while j <= NOut - 1 do
         begin
-          if AP_FP_Greater(WorkY[J], WorkY[NMAX]) then
+          if AP_FP_Greater(WorkY[j], WorkY[NMAX]) then
             begin
-              NMAX := J;
+              NMAX := j;
             end;
-          Inc(J);
+          inc(j);
         end;
       NN := NMAX;
 
@@ -1388,14 +1355,14 @@ begin
       else
         begin
           NMAX := 0;
-          J := 0;
-          while J <= NOut - 1 do
+          j := 0;
+          while j <= NOut - 1 do
             begin
-              if AP_FP_Greater(xy[i, NIn + J], xy[i, NIn + NMAX]) then
+              if AP_FP_Greater(xy[i, NIn + j], xy[i, NIn + NMAX]) then
                 begin
-                  NMAX := J;
+                  NMAX := j;
                 end;
-              Inc(J);
+              inc(j);
             end;
           ns := NMAX;
         end;
@@ -1407,7 +1374,7 @@ begin
         begin
           Result := Result + 1;
         end;
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -1445,8 +1412,8 @@ end;
 function MLPAvgCE(var Network: TMultiLayerPerceptron; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
-  NIn   : TLInt;
-  NOut  : TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
 begin
   if MLPIsSoftmax(Network) then
@@ -1477,8 +1444,8 @@ end;
 function MLPRMSError(var Network: TMultiLayerPerceptron; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
-  NIn   : TLInt;
-  NOut  : TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
@@ -1501,11 +1468,11 @@ end;
 function MLPAvgError(var Network: TMultiLayerPerceptron; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
-  i     : TLInt;
-  J     : TLInt;
-  k     : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
@@ -1513,8 +1480,8 @@ begin
   i := 0;
   while i <= NPoints - 1 do
     begin
-      APVMove(@Network.X[0], 0, NIn - 1, @xy[i][0], 0, NIn - 1);
-      MLPProcess(Network, Network.X, Network.Y);
+      APVMove(@Network.x[0], 0, NIn - 1, @xy[i][0], 0, NIn - 1);
+      MLPProcess(Network, Network.x, Network.y);
       if MLPIsSoftmax(Network) then
         begin
 
@@ -1522,18 +1489,18 @@ begin
           // class labels
           //
           k := Round(xy[i, NIn]);
-          J := 0;
-          while J <= NOut - 1 do
+          j := 0;
+          while j <= NOut - 1 do
             begin
-              if J = k then
+              if j = k then
                 begin
-                  Result := Result + AbsReal(1 - Network.Y[J]);
+                  Result := Result + AbsReal(1 - Network.y[j]);
                 end
               else
                 begin
-                  Result := Result + AbsReal(Network.Y[J]);
+                  Result := Result + AbsReal(Network.y[j]);
                 end;
-              Inc(J);
+              inc(j);
             end;
         end
       else
@@ -1542,14 +1509,14 @@ begin
           //
           // real outputs
           //
-          J := 0;
-          while J <= NOut - 1 do
+          j := 0;
+          while j <= NOut - 1 do
             begin
-              Result := Result + AbsReal(xy[i, NIn + J] - Network.Y[J]);
-              Inc(J);
+              Result := Result + AbsReal(xy[i, NIn + j] - Network.y[j]);
+              inc(j);
             end;
         end;
-      Inc(i);
+      inc(i);
     end;
   Result := Result / (NPoints * NOut);
 end;
@@ -1571,12 +1538,12 @@ end;
 function MLPAvgRelError(var Network: TMultiLayerPerceptron;
   const xy: TLMatrix; NPoints: TLInt): TLFloat;
 var
-  i     : TLInt;
-  J     : TLInt;
-  k     : TLInt;
-  LK    : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
+  LK: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
@@ -1585,8 +1552,8 @@ begin
   i := 0;
   while i <= NPoints - 1 do
     begin
-      APVMove(@Network.X[0], 0, NIn - 1, @xy[i][0], 0, NIn - 1);
-      MLPProcess(Network, Network.X, Network.Y);
+      APVMove(@Network.x[0], 0, NIn - 1, @xy[i][0], 0, NIn - 1);
+      MLPProcess(Network, Network.x, Network.y);
       if MLPIsSoftmax(Network) then
         begin
 
@@ -1594,15 +1561,15 @@ begin
           // class labels
           //
           LK := Round(xy[i, NIn]);
-          J := 0;
-          while J <= NOut - 1 do
+          j := 0;
+          while j <= NOut - 1 do
             begin
-              if J = LK then
+              if j = LK then
                 begin
-                  Result := Result + AbsReal(1 - Network.Y[J]);
+                  Result := Result + AbsReal(1 - Network.y[j]);
                   k := k + 1;
                 end;
-              Inc(J);
+              inc(j);
             end;
         end
       else
@@ -1611,19 +1578,18 @@ begin
           //
           // real outputs
           //
-          J := 0;
-          while J <= NOut - 1 do
+          j := 0;
+          while j <= NOut - 1 do
             begin
-              if AP_FP_NEq(xy[i, NIn + J], 0) then
+              if AP_FP_NEq(xy[i, NIn + j], 0) then
                 begin
-                  Result := Result + AbsReal(xy[i, NIn + J] - Network.Y[J]) /
-                    AbsReal(xy[i, NIn + J]);
+                  Result := Result + AbsReal(xy[i, NIn + j] - Network.y[j]) / AbsReal(xy[i, NIn + j]);
                   k := k + 1;
                 end;
-              Inc(J);
+              inc(j);
             end;
         end;
-      Inc(i);
+      inc(i);
     end;
   if k <> 0 then
     begin
@@ -1634,18 +1600,18 @@ end;
 (* ************************************************************************
   Gradient calculation. Internal subroutine.
   ************************************************************************ *)
-procedure MLPGrad(var Network: TMultiLayerPerceptron; const X: TLVec;
+procedure MLPGrad(var Network: TMultiLayerPerceptron; const x: TLVec;
   const DesiredY: TLVec; var E: TLFloat; var Grad: TLVec);
 var
-  i     : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  NOut: TLInt;
   NTotal: TLInt;
 begin
 
   //
   // Prepare dError/dOut, internal structures
   //
-  MLPProcess(Network, X, Network.Y);
+  MLPProcess(Network, x, Network.y);
   NOut := Network.StructInfo[2];
   NTotal := Network.StructInfo[3];
   E := 0;
@@ -1653,46 +1619,45 @@ begin
   while i <= NTotal - 1 do
     begin
       Network.DError[i] := 0;
-      Inc(i);
+      inc(i);
     end;
   i := 0;
   while i <= NOut - 1 do
     begin
-      Network.DError[NTotal - NOut + i] := Network.Y[i] - DesiredY[i];
-      E := E + AP_Sqr(Network.Y[i] - DesiredY[i]) / 2;
-      Inc(i);
+      Network.DError[NTotal - NOut + i] := Network.y[i] - DesiredY[i];
+      E := E + AP_Sqr(Network.y[i] - DesiredY[i]) / 2;
+      inc(i);
     end;
 
   //
   // gradient
   //
-  MLPInternalCalculateGradient(Network, Network.Neurons, Network.Weights,
-    Network.DError, Grad, False);
+  MLPInternalCalculateGradient(Network, Network.Neurons, Network.Weights, Network.DError, Grad, False);
 end;
 
 (* ************************************************************************
   Gradient calculation (natural error function). Internal subroutine.
   ************************************************************************ *)
-procedure MLPGradN(var Network: TMultiLayerPerceptron; const X: TLVec;
+procedure MLPGradN(var Network: TMultiLayerPerceptron; const x: TLVec;
   const DesiredY: TLVec; var E: TLFloat; var Grad: TLVec);
 var
-  s     : TLFloat;
-  i     : TLInt;
-  NOut  : TLInt;
+  s: TLFloat;
+  i: TLInt;
+  NOut: TLInt;
   NTotal: TLInt;
 begin
 
   //
   // Prepare dError/dOut, internal structures
   //
-  MLPProcess(Network, X, Network.Y);
+  MLPProcess(Network, x, Network.y);
   NOut := Network.StructInfo[2];
   NTotal := Network.StructInfo[3];
   i := 0;
   while i <= NTotal - 1 do
     begin
       Network.DError[i] := 0;
-      Inc(i);
+      inc(i);
     end;
   E := 0;
   if Network.StructInfo[6] = 0 then
@@ -1704,9 +1669,9 @@ begin
       i := 0;
       while i <= NOut - 1 do
         begin
-          Network.DError[NTotal - NOut + i] := Network.Y[i] - DesiredY[i];
-          E := E + AP_Sqr(Network.Y[i] - DesiredY[i]) / 2;
-          Inc(i);
+          Network.DError[NTotal - NOut + i] := Network.y[i] - DesiredY[i];
+          E := E + AP_Sqr(Network.y[i] - DesiredY[i]) / 2;
+          inc(i);
         end;
     end
   else
@@ -1720,22 +1685,21 @@ begin
       while i <= NOut - 1 do
         begin
           s := s + DesiredY[i];
-          Inc(i);
+          inc(i);
         end;
       i := 0;
       while i <= NOut - 1 do
         begin
-          Network.DError[NTotal - NOut + i] := s * Network.Y[i] - DesiredY[i];
-          E := E + SafeCrossEntropy(DesiredY[i], Network.Y[i]);
-          Inc(i);
+          Network.DError[NTotal - NOut + i] := s * Network.y[i] - DesiredY[i];
+          E := E + SafeCrossEntropy(DesiredY[i], Network.y[i]);
+          inc(i);
         end;
     end;
 
   //
   // gradient
   //
-  MLPInternalCalculateGradient(Network, Network.Neurons, Network.Weights,
-    Network.DError, Grad, True);
+  MLPInternalCalculateGradient(Network, Network.Neurons, Network.Weights, Network.DError, Grad, True);
 end;
 
 (* ************************************************************************
@@ -1745,9 +1709,9 @@ procedure MLPGradBatch(var Network: TMultiLayerPerceptron;
   const xy: TLMatrix; SSize: TLInt; var E: TLFloat;
   var Grad: TLVec);
 var
-  i     : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
@@ -1755,14 +1719,13 @@ begin
   while i <= WCount - 1 do
     begin
       Grad[i] := 0;
-      Inc(i);
+      inc(i);
     end;
   E := 0;
   i := 0;
   while i <= SSize - 1 do
     begin
-      MLPChunkedGradient(Network, xy, i, Min(SSize, i + ChunkSize) - i, E,
-        Grad, False);
+      MLPChunkedGradient(Network, xy, i, Min(SSize, i + ChunkSize) - i, E, Grad, False);
       i := i + ChunkSize;
     end;
 end;
@@ -1774,9 +1737,9 @@ procedure MLPGradNBatch(var Network: TMultiLayerPerceptron;
   const xy: TLMatrix; SSize: TLInt; var E: TLFloat;
   var Grad: TLVec);
 var
-  i     : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
@@ -1784,14 +1747,13 @@ begin
   while i <= WCount - 1 do
     begin
       Grad[i] := 0;
-      Inc(i);
+      inc(i);
     end;
   E := 0;
   i := 0;
   while i <= SSize - 1 do
     begin
-      MLPChunkedGradient(Network, xy, i, Min(SSize, i + ChunkSize) - i, E,
-        Grad, True);
+      MLPChunkedGradient(Network, xy, i, Min(SSize, i + ChunkSize) - i, E, Grad, True);
       i := i + ChunkSize;
     end;
 end;
@@ -1834,24 +1796,24 @@ end;
 procedure MLPInternalProcessVector(const StructInfo: TLIVec;
   const Weights: TLVec; const ColumnMeans: TLVec;
   const ColumnSigmas: TLVec; var Neurons: TLVec;
-  var DFDNET: TLVec; const X: TLVec; var Y: TLVec);
+  var DFDNET: TLVec; const x: TLVec; var y: TLVec);
 var
-  i     : TLInt;
-  N1    : TLInt;
-  N2    : TLInt;
-  W1    : TLInt;
-  W2    : TLInt;
+  i: TLInt;
+  n1: TLInt;
+  n2: TLInt;
+  W1: TLInt;
+  W2: TLInt;
   NTotal: TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   IStart: TLInt;
-  Offs  : TLInt;
-  NET   : TLFloat;
-  F     : TLFloat;
-  df    : TLFloat;
-  D2F   : TLFloat;
-  mx    : TLFloat;
-  PErr  : Boolean;
+  Offs: TLInt;
+  NET: TLFloat;
+  f: TLFloat;
+  df: TLFloat;
+  D2F: TLFloat;
+  mx: TLFloat;
+  PErr: Boolean;
 begin
 
   //
@@ -1869,11 +1831,11 @@ begin
     begin
       if AP_FP_NEq(ColumnSigmas[i], 0) then
         begin
-          Neurons[i] := (X[i] - ColumnMeans[i]) / ColumnSigmas[i];
+          Neurons[i] := (x[i] - ColumnMeans[i]) / ColumnSigmas[i];
         end
       else
         begin
-          Neurons[i] := X[i] - ColumnMeans[i];
+          Neurons[i] := x[i] - ColumnMeans[i];
         end;
     end;
 
@@ -1890,8 +1852,8 @@ begin
           //
           // Activation function
           //
-          MLPActivationFunction(Neurons[StructInfo[Offs + 2]], StructInfo[Offs + 0], F, df, D2F);
-          Neurons[i] := F;
+          MLPActivationFunction(Neurons[StructInfo[Offs + 2]], StructInfo[Offs + 0], f, df, D2F);
+          Neurons[i] := f;
           DFDNET[i] := df;
         end;
       if StructInfo[Offs + 0] = 0 then
@@ -1900,11 +1862,11 @@ begin
           //
           // Adaptive summator
           //
-          N1 := StructInfo[Offs + 2];
-          N2 := N1 + StructInfo[Offs + 1] - 1;
+          n1 := StructInfo[Offs + 2];
+          n2 := n1 + StructInfo[Offs + 1] - 1;
           W1 := StructInfo[Offs + 3];
           W2 := W1 + StructInfo[Offs + 1] - 1;
-          NET := APVDotProduct(@Weights[0], W1, W2, @Neurons[0], N1, N2);
+          NET := APVDotProduct(@Weights[0], W1, W2, @Neurons[0], n1, n2);
           Neurons[i] := NET;
           DFDNET[i] := 1.0;
         end;
@@ -1944,7 +1906,7 @@ begin
   //
   // Extract result
   //
-  APVMove(@Y[0], 0, NOut - 1, @Neurons[0], NTotal - NOut, NTotal - 1);
+  APVMove(@y[0], 0, NOut - 1, @Neurons[0], NTotal - NOut, NTotal - 1);
 
   //
   // Softmax post-processing or standardisation if needed
@@ -1956,20 +1918,20 @@ begin
       //
       // Softmax
       //
-      mx := Y[0];
+      mx := y[0];
       for i := 1 to NOut - 1 do
         begin
-          mx := Max(mx, Y[i]);
+          mx := Max(mx, y[i]);
         end;
       NET := 0;
       for i := 0 to NOut - 1 do
         begin
-          Y[i] := Exp(Y[i] - mx);
-          NET := NET + Y[i];
+          y[i] := Exp(y[i] - mx);
+          NET := NET + y[i];
         end;
       for i := 0 to NOut - 1 do
         begin
-          Y[i] := Y[i] / NET;
+          y[i] := y[i] / NET;
         end;
     end
   else
@@ -1980,7 +1942,7 @@ begin
       //
       for i := 0 to NOut - 1 do
         begin
-          Y[i] := Y[i] * ColumnSigmas[NIn + i] + ColumnMeans[NIn + i];
+          y[i] := y[i] * ColumnSigmas[NIn + i] + ColumnMeans[NIn + i];
         end;
     end;
 end;
@@ -2057,17 +2019,17 @@ procedure MLPCreate(NIn, NOut: TLInt;
   LayersCount: TLInt; IsClsNet: Boolean;
   var Network: TMultiLayerPerceptron);
 var
-  i         : TLInt;
-  J         : TLInt;
-  SSize     : TLInt;
-  NTotal    : TLInt;
-  WCount    : TLInt;
-  Offs      : TLInt;
+  i: TLInt;
+  j: TLInt;
+  SSize: TLInt;
+  NTotal: TLInt;
+  WCount: TLInt;
+  Offs: TLInt;
   NProcessed: TLInt;
   WAllocated: TLInt;
-  LocalTemp : TLIVec;
-  LNFirst   : TLIVec;
-  LNSyn     : TLIVec;
+  LocalTemp: TLIVec;
+  LNFirst: TLIVec;
+  LNSyn: TLIVec;
 begin
 
   //
@@ -2079,11 +2041,9 @@ begin
   while i <= LayersCount - 1 do
     begin
       Assert(LSizes[i] > 0, 'MLPCreate: wrong LSizes!');
-      Assert((LConnFirst[i] >= 0) and ((LConnFirst[i] < i) or (i = 0)),
-        'MLPCreate: wrong LConnFirst!');
-      Assert((LConnLast[i] >= LConnFirst[i]) and ((LConnLast[i] < i) or (i = 0)),
-        'MLPCreate: wrong LConnLast!');
-      Inc(i);
+      Assert((LConnFirst[i] >= 0) and ((LConnFirst[i] < i) or (i = 0)), 'MLPCreate: wrong LConnFirst!');
+      Assert((LConnLast[i] >= LConnFirst[i]) and ((LConnLast[i] < i) or (i = 0)), 'MLPCreate: wrong LConnLast!');
+      inc(i);
     end;
 
   //
@@ -2105,11 +2065,11 @@ begin
       if LTypes[i] >= 0 then
         begin
           LNSyn[i] := 0;
-          J := LConnFirst[i];
-          while J <= LConnLast[i] do
+          j := LConnFirst[i];
+          while j <= LConnLast[i] do
             begin
-              LNSyn[i] := LNSyn[i] + LSizes[J];
-              Inc(J);
+              LNSyn[i] := LNSyn[i] + LSizes[j];
+              inc(j);
             end;
         end
       else
@@ -2130,7 +2090,7 @@ begin
         begin
           WCount := WCount + LNSyn[i] * LSizes[i];
         end;
-      Inc(i);
+      inc(i);
     end;
   SSize := 7 + NTotal * NFieldWidth;
 
@@ -2153,8 +2113,8 @@ begin
   SetLength(Network.Chunks, 3 * NTotal + 1, ChunkSize (* - 1 + 1 // optimized compiler *) );
   SetLength(Network.NWBuf, Max(WCount, 2 * NOut) (* - 1 + 1 // optimized compiler *) );
   SetLength(Network.DFDNET, NTotal (* - 1 + 1 // optimized compiler *) );
-  SetLength(Network.X, NIn (* - 1 + 1 // optimized compiler *) );
-  SetLength(Network.Y, NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.x, NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(Network.y, NOut (* - 1 + 1 // optimized compiler *) );
   SetLength(Network.DError, NTotal (* - 1 + 1 // optimized compiler *) );
 
   //
@@ -2183,8 +2143,8 @@ begin
   i := 0;
   while i <= LayersCount - 1 do
     begin
-      J := 0;
-      while J <= LSizes[i] - 1 do
+      j := 0;
+      while j <= LSizes[i] - 1 do
         begin
           Offs := Network.StructInfo[5] + NProcessed * NFieldWidth;
           Network.StructInfo[Offs + 0] := LTypes[i];
@@ -2210,7 +2170,7 @@ begin
               // * no weights
               //
               Network.StructInfo[Offs + 1] := 1;
-              Network.StructInfo[Offs + 2] := LNFirst[LConnFirst[i]] + J;
+              Network.StructInfo[Offs + 2] := LNFirst[LConnFirst[i]] + j;
               Network.StructInfo[Offs + 3] := -1;
               NProcessed := NProcessed + 1;
             end;
@@ -2218,9 +2178,9 @@ begin
             begin
               NProcessed := NProcessed + 1;
             end;
-          Inc(J);
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
   Assert(WAllocated = WCount, 'MLPCreate: internal error #1!');
   Assert(NProcessed = NTotal, 'MLPCreate: internal error #2!');
@@ -2233,14 +2193,14 @@ begin
   while i <= WCount - 1 do
     begin
       Network.Weights[i] := RandomReal - 0.5;
-      Inc(i);
+      inc(i);
     end;
   i := 0;
   while i <= NIn - 1 do
     begin
       Network.ColumnMeans[i] := 0;
       Network.ColumnSigmas[i] := 1;
-      Inc(i);
+      inc(i);
     end;
   if not IsClsNet then
     begin
@@ -2249,7 +2209,7 @@ begin
         begin
           Network.ColumnMeans[NIn + i] := 0;
           Network.ColumnSigmas[NIn + i] := 1;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -2257,14 +2217,14 @@ end;
 (* ************************************************************************
   Internal subroutine
   ************************************************************************ *)
-procedure MLPActivationFunction(NET: TLFloat; k: TLInt; var F: TLFloat; var df: TLFloat; var D2F: TLFloat);
+procedure MLPActivationFunction(NET: TLFloat; k: TLInt; var f: TLFloat; var df: TLFloat; var D2F: TLFloat);
 var
   NET2: TLFloat;
-  ARG : TLFloat;
+  ARG: TLFloat;
   ROOT: TLFloat;
-  R   : TLFloat;
+  r: TLFloat;
 begin
-  F := 0;
+  f := 0;
   df := 0;
   if k = 1 then
     begin
@@ -2274,14 +2234,14 @@ begin
       //
       if AP_FP_Less(AbsReal(NET), 100) then
         begin
-          F := TanH(NET);
+          f := TanH(NET);
         end
       else
         begin
-          F := Sign(NET);
+          f := Sign(NET);
         end;
-      df := 1 - AP_Sqr(F);
-      D2F := -2 * F * df;
+      df := 1 - AP_Sqr(f);
+      D2F := -2 * f * df;
       Exit;
     end;
   if k = 3 then
@@ -2295,24 +2255,24 @@ begin
           NET2 := NET * NET;
           ARG := NET2 + 1;
           ROOT := Sqrt(ARG);
-          F := NET + ROOT;
-          R := NET / ROOT;
-          df := 1 + R;
-          D2F := (ROOT - NET * R) / ARG;
+          f := NET + ROOT;
+          r := NET / ROOT;
+          df := 1 + r;
+          D2F := (ROOT - NET * r) / ARG;
         end
       else
         begin
-          F := Exp(NET);
-          df := F;
-          D2F := F;
+          f := Exp(NET);
+          df := f;
+          D2F := f;
         end;
       Exit;
     end;
   if k = 2 then
     begin
-      F := Exp(-AP_Sqr(NET));
-      df := -2 * NET * F;
-      D2F := -2 * (F + df * NET);
+      f := Exp(-AP_Sqr(NET));
+      df := -2 * NET * f;
+      D2F := -2 * (f + df * NET);
       Exit;
     end;
 end;
@@ -2326,43 +2286,43 @@ procedure MLPHessianBatchInternal(var Network: TMultiLayerPerceptron;
   const xy: TLMatrix; SSize: TLInt; NaturalErr: Boolean;
   var E: TLFloat; var Grad: TLVec; var h: TLMatrix);
 var
-  NIn     : TLInt;
-  NOut    : TLInt;
-  WCount  : TLInt;
-  NTotal  : TLInt;
-  IStart  : TLInt;
-  i       : TLInt;
-  J       : TLInt;
-  k       : TLInt;
-  KL      : TLInt;
-  Offs    : TLInt;
-  N1      : TLInt;
-  N2      : TLInt;
-  W1      : TLInt;
-  W2      : TLInt;
-  s       : TLFloat;
-  T       : TLFloat;
-  v       : TLFloat;
-  ET      : TLFloat;
-  BFlag   : Boolean;
-  F       : TLFloat;
-  df      : TLFloat;
-  D2F     : TLFloat;
-  dEIdYJ  : TLFloat;
-  mx      : TLFloat;
-  q       : TLFloat;
-  Z       : TLFloat;
-  s2      : TLFloat;
-  ExpI    : TLFloat;
-  ExpJ    : TLFloat;
-  X       : TLVec;
+  NIn: TLInt;
+  NOut: TLInt;
+  WCount: TLInt;
+  NTotal: TLInt;
+  IStart: TLInt;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
+  KL: TLInt;
+  Offs: TLInt;
+  n1: TLInt;
+  n2: TLInt;
+  W1: TLInt;
+  W2: TLInt;
+  s: TLFloat;
+  t: TLFloat;
+  v: TLFloat;
+  ET: TLFloat;
+  BFlag: Boolean;
+  f: TLFloat;
+  df: TLFloat;
+  D2F: TLFloat;
+  dEIdYJ: TLFloat;
+  mx: TLFloat;
+  q: TLFloat;
+  z: TLFloat;
+  s2: TLFloat;
+  ExpI: TLFloat;
+  ExpJ: TLFloat;
+  x: TLVec;
   DesiredY: TLVec;
-  GT      : TLVec;
-  Zeros   : TLVec;
-  RX      : TLMatrix;
-  RY      : TLMatrix;
-  rdx     : TLMatrix;
-  RDY     : TLMatrix;
+  GT: TLVec;
+  Zeros: TLVec;
+  RX: TLMatrix;
+  RY: TLMatrix;
+  rdx: TLMatrix;
+  RDY: TLMatrix;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   NTotal := Network.StructInfo[3];
@@ -2371,7 +2331,7 @@ begin
   //
   // Prepare
   //
-  SetLength(X, NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, NIn (* - 1 + 1 // optimized compiler *) );
   SetLength(DesiredY, NOut (* - 1 + 1 // optimized compiler *) );
   SetLength(Zeros, WCount (* - 1 + 1 // optimized compiler *) );
   SetLength(GT, WCount (* - 1 + 1 // optimized compiler *) );
@@ -2384,14 +2344,14 @@ begin
   while i <= WCount - 1 do
     begin
       Zeros[i] := 0;
-      Inc(i);
+      inc(i);
     end;
   APVMove(@Grad[0], 0, WCount - 1, @Zeros[0], 0, WCount - 1);
   i := 0;
   while i <= WCount - 1 do
     begin
       APVMove(@h[i][0], 0, WCount - 1, @Zeros[0], 0, WCount - 1);
-      Inc(i);
+      inc(i);
     end;
 
   //
@@ -2405,7 +2365,7 @@ begin
       // Process vector with MLPGradN.
       // Now Neurons, DFDNET and DError contains results of the last run.
       //
-      APVMove(@X[0], 0, NIn - 1, @xy[k][0], 0, NIn - 1);
+      APVMove(@x[0], 0, NIn - 1, @xy[k][0], 0, NIn - 1);
       if MLPIsSoftmax(Network) then
         begin
 
@@ -2424,7 +2384,7 @@ begin
                 begin
                   DesiredY[i] := 0;
                 end;
-              Inc(i);
+              inc(i);
             end;
         end
       else
@@ -2437,11 +2397,11 @@ begin
         end;
       if NaturalErr then
         begin
-          MLPGradN(Network, X, DesiredY, ET, GT);
+          MLPGradN(Network, x, DesiredY, ET, GT);
         end
       else
         begin
-          MLPGrad(Network, X, DesiredY, ET, GT);
+          MLPGrad(Network, x, DesiredY, ET, GT);
         end;
 
       //
@@ -2466,8 +2426,8 @@ begin
               //
               // Activation function
               //
-              N1 := Network.StructInfo[Offs + 2];
-              APVMove(@RX[i][0], 0, WCount - 1, @RY[N1][0], 0, WCount - 1);
+              n1 := Network.StructInfo[Offs + 2];
+              APVMove(@RX[i][0], 0, WCount - 1, @RY[n1][0], 0, WCount - 1);
               v := Network.DFDNET[i];
               APVMove(@RY[i][0], 0, WCount - 1, @RX[i][0], 0, WCount - 1, v);
             end;
@@ -2477,17 +2437,17 @@ begin
               //
               // Adaptive summator
               //
-              N1 := Network.StructInfo[Offs + 2];
-              N2 := N1 + Network.StructInfo[Offs + 1] - 1;
+              n1 := Network.StructInfo[Offs + 2];
+              n2 := n1 + Network.StructInfo[Offs + 1] - 1;
               W1 := Network.StructInfo[Offs + 3];
               W2 := W1 + Network.StructInfo[Offs + 1] - 1;
-              J := N1;
-              while J <= N2 do
+              j := n1;
+              while j <= n2 do
                 begin
-                  v := Network.Weights[W1 + J - N1];
-                  APVAdd(@RX[i][0], 0, WCount - 1, @RY[J][0], 0, WCount - 1, v);
-                  RX[i, W1 + J - N1] := RX[i, W1 + J - N1] + Network.Neurons[J];
-                  Inc(J);
+                  v := Network.Weights[W1 + j - n1];
+                  APVAdd(@RX[i][0], 0, WCount - 1, @RY[j][0], 0, WCount - 1, v);
+                  RX[i, W1 + j - n1] := RX[i, W1 + j - n1] + Network.Neurons[j];
+                  inc(j);
                 end;
               APVMove(@RY[i][0], 0, WCount - 1, @RX[i][0], 0, WCount - 1);
             end;
@@ -2518,10 +2478,9 @@ begin
                   //
                   BFlag := False;
                 end;
-              Assert(not BFlag,
-                'MLPHessianNBatch: internal error - unknown neuron type!');
+              Assert(not BFlag, 'MLPHessianNBatch: internal error - unknown neuron type!');
             end;
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -2533,7 +2492,7 @@ begin
       while i <= NTotal + NOut - 1 do
         begin
           APVMove(@RDY[i][0], 0, WCount - 1, @Zeros[0], 0, WCount - 1);
-          Inc(i);
+          inc(i);
         end;
       if Network.StructInfo[6] = 0 then
         begin
@@ -2553,20 +2512,20 @@ begin
           i := 0;
           while i <= NOut - 1 do
             begin
-              N1 := NTotal - NOut + i;
-              N2 := NTotal + i;
+              n1 := NTotal - NOut + i;
+              n2 := NTotal + i;
 
               //
               // Forward pass from N1 to N2
               //
-              APVMove(@RX[N2][0], 0, WCount - 1, @RY[N1][0], 0, WCount - 1);
+              APVMove(@RX[n2][0], 0, WCount - 1, @RY[n1][0], 0, WCount - 1);
               v := Network.ColumnSigmas[NIn + i];
-              APVMove(@RY[N2][0], 0, WCount - 1, @RX[N2][0], 0, WCount - 1, v);
+              APVMove(@RY[n2][0], 0, WCount - 1, @RX[n2][0], 0, WCount - 1, v);
 
               //
               // Initialization of RDY
               //
-              APVMove(@RDY[N2][0], 0, WCount - 1, @RY[N2][0], 0, WCount - 1);
+              APVMove(@RDY[n2][0], 0, WCount - 1, @RY[n2][0], 0, WCount - 1);
 
               //
               // Backward pass from N2 to N1:
@@ -2576,9 +2535,9 @@ begin
               // the connected neuron (note that Vij=0, Wij=1)
               //
               df := Network.ColumnSigmas[NIn + i];
-              APVMove(@rdx[N2][0], 0, WCount - 1, @RDY[N2][0], 0, WCount - 1, df);
-              APVAdd(@RDY[N1][0], 0, WCount - 1, @rdx[N2][0], 0, WCount - 1);
-              Inc(i);
+              APVMove(@rdx[n2][0], 0, WCount - 1, @RDY[n2][0], 0, WCount - 1, df);
+              APVAdd(@RDY[n1][0], 0, WCount - 1, @rdx[n2][0], 0, WCount - 1);
+              inc(i);
             end;
         end
       else
@@ -2607,19 +2566,19 @@ begin
               // j=i:   d(ei)/d(yj) = T*exp(yi)*(S-exp(yi))/S^2
               // j<>i:  d(ei)/d(yj) = -T*exp(yi)*exp(yj)/S^2
               //
-              T := 0;
+              t := 0;
               i := 0;
               while i <= NOut - 1 do
                 begin
-                  T := T + DesiredY[i];
-                  Inc(i);
+                  t := t + DesiredY[i];
+                  inc(i);
                 end;
               mx := Network.Neurons[NTotal - NOut];
               i := 0;
               while i <= NOut - 1 do
                 begin
                   mx := Max(mx, Network.Neurons[NTotal - NOut + i]);
-                  Inc(i);
+                  inc(i);
                 end;
               s := 0;
               i := 0;
@@ -2627,30 +2586,27 @@ begin
                 begin
                   Network.NWBuf[i] := Exp(Network.Neurons[NTotal - NOut + i] - mx);
                   s := s + Network.NWBuf[i];
-                  Inc(i);
+                  inc(i);
                 end;
               i := 0;
               while i <= NOut - 1 do
                 begin
-                  J := 0;
-                  while J <= NOut - 1 do
+                  j := 0;
+                  while j <= NOut - 1 do
                     begin
-                      if J = i then
+                      if j = i then
                         begin
-                          dEIdYJ := T * Network.NWBuf[i] * (s - Network.NWBuf[i]) /
-                            AP_Sqr(s);
-                          APVAdd(@RDY[NTotal - NOut + i][0], 0, WCount - 1,
-                            @RY[NTotal - NOut + i][0], 0, WCount - 1, dEIdYJ);
+                          dEIdYJ := t * Network.NWBuf[i] * (s - Network.NWBuf[i]) / AP_Sqr(s);
+                          APVAdd(@RDY[NTotal - NOut + i][0], 0, WCount - 1, @RY[NTotal - NOut + i][0], 0, WCount - 1, dEIdYJ);
                         end
                       else
                         begin
-                          dEIdYJ := -T * Network.NWBuf[i] * Network.NWBuf[J] / AP_Sqr(s);
-                          APVAdd(@RDY[NTotal - NOut + i][0], 0, WCount - 1,
-                            @RY[NTotal - NOut + J][0], 0, WCount - 1, dEIdYJ);
+                          dEIdYJ := -t * Network.NWBuf[i] * Network.NWBuf[j] / AP_Sqr(s);
+                          APVAdd(@RDY[NTotal - NOut + i][0], 0, WCount - 1, @RY[NTotal - NOut + j][0], 0, WCount - 1, dEIdYJ);
                         end;
-                      Inc(J);
+                      inc(j);
                     end;
-                  Inc(i);
+                  inc(i);
                 end;
             end
           else
@@ -2669,7 +2625,7 @@ begin
               while i <= NOut - 1 do
                 begin
                   mx := Max(mx, Network.Neurons[NTotal - NOut + i]);
-                  Inc(i);
+                  inc(i);
                 end;
               s := 0;
               s2 := 0;
@@ -2679,40 +2635,38 @@ begin
                   Network.NWBuf[i] := Exp(Network.Neurons[NTotal - NOut + i] - mx);
                   s := s + Network.NWBuf[i];
                   s2 := s2 + AP_Sqr(Network.NWBuf[i]);
-                  Inc(i);
+                  inc(i);
                 end;
               q := 0;
               i := 0;
               while i <= NOut - 1 do
                 begin
-                  q := q + (Network.Y[i] - DesiredY[i]) * Network.NWBuf[i];
-                  Inc(i);
+                  q := q + (Network.y[i] - DesiredY[i]) * Network.NWBuf[i];
+                  inc(i);
                 end;
               i := 0;
               while i <= NOut - 1 do
                 begin
-                  Z := -q + (Network.Y[i] - DesiredY[i]) * s;
+                  z := -q + (Network.y[i] - DesiredY[i]) * s;
                   ExpI := Network.NWBuf[i];
-                  J := 0;
-                  while J <= NOut - 1 do
+                  j := 0;
+                  while j <= NOut - 1 do
                     begin
-                      ExpJ := Network.NWBuf[J];
-                      if J = i then
+                      ExpJ := Network.NWBuf[j];
+                      if j = i then
                         begin
-                          dEIdYJ := ExpI / AP_Sqr(s) *
-                            ((Z + ExpI) * (s - 2 * ExpI) / s + ExpI * s2 / AP_Sqr(s));
+                          dEIdYJ := ExpI / AP_Sqr(s) * ((z + ExpI) * (s - 2 * ExpI) / s + ExpI * s2 / AP_Sqr(s));
                         end
                       else
                         begin
                           dEIdYJ := ExpI * ExpJ / AP_Sqr(s) *
-                            (s2 / AP_Sqr(s) - 2 * Z / s - (ExpI + ExpJ) / s +
-                            (Network.Y[i] - DesiredY[i]) - (Network.Y[J] - DesiredY[J]));
+                            (s2 / AP_Sqr(s) - 2 * z / s - (ExpI + ExpJ) / s +
+                            (Network.y[i] - DesiredY[i]) - (Network.y[j] - DesiredY[j]));
                         end;
-                      APVAdd(@RDY[NTotal - NOut + i][0], 0, WCount - 1,
-                        @RY[NTotal - NOut + J][0], 0, WCount - 1, dEIdYJ);
-                      Inc(J);
+                      APVAdd(@RDY[NTotal - NOut + i][0], 0, WCount - 1, @RY[NTotal - NOut + j][0], 0, WCount - 1, dEIdYJ);
+                      inc(j);
                     end;
-                  Inc(i);
+                  inc(i);
                 end;
             end;
         end;
@@ -2735,13 +2689,12 @@ begin
           Offs := IStart + i * NFieldWidth;
           if Network.StructInfo[Offs + 0] > 0 then
             begin
-              N1 := Network.StructInfo[Offs + 2];
+              n1 := Network.StructInfo[Offs + 2];
 
               //
               // First, calculate R(dE/dX).
               //
-              MLPActivationFunction(Network.Neurons[N1], Network.StructInfo[Offs + 0],
-                F, df, D2F);
+              MLPActivationFunction(Network.Neurons[n1], Network.StructInfo[Offs + 0], f, df, D2F);
               v := D2F * Network.DError[i];
               APVMove(@rdx[i][0], 0, WCount - 1, @RDY[i][0], 0, WCount - 1, df);
               APVAdd(@rdx[i][0], 0, WCount - 1, @RX[i][0], 0, WCount - 1, v);
@@ -2753,7 +2706,7 @@ begin
               // So we can update R(dE/dY) for the connected neuron.
               // (note that Vij=0, Wij=1)
               //
-              APVAdd(@RDY[N1][0], 0, WCount - 1, @rdx[i][0], 0, WCount - 1);
+              APVAdd(@RDY[n1][0], 0, WCount - 1, @rdx[i][0], 0, WCount - 1);
             end;
           if Network.StructInfo[Offs + 0] = 0 then
             begin
@@ -2761,8 +2714,8 @@ begin
               //
               // Adaptive summator
               //
-              N1 := Network.StructInfo[Offs + 2];
-              N2 := N1 + Network.StructInfo[Offs + 1] - 1;
+              n1 := Network.StructInfo[Offs + 2];
+              n2 := n1 + Network.StructInfo[Offs + 1] - 1;
               W1 := Network.StructInfo[Offs + 3];
               W2 := W1 + Network.StructInfo[Offs + 1] - 1;
 
@@ -2774,28 +2727,26 @@ begin
               //
               // Then, calculate R(dE/dWij)
               //
-              J := W1;
-              while J <= W2 do
+              j := W1;
+              while j <= W2 do
                 begin
-                  v := Network.Neurons[N1 + J - W1];
-                  APVAdd(@h[J][0], 0, WCount - 1, @rdx[i][0], 0, WCount - 1, v);
+                  v := Network.Neurons[n1 + j - W1];
+                  APVAdd(@h[j][0], 0, WCount - 1, @rdx[i][0], 0, WCount - 1, v);
                   v := Network.DError[i];
-                  APVAdd(@h[J][0], 0, WCount - 1, @RY[N1 + J - W1][0], 0,
-                    WCount - 1, v);
-                  Inc(J);
+                  APVAdd(@h[j][0], 0, WCount - 1, @RY[n1 + j - W1][0], 0, WCount - 1, v);
+                  inc(j);
                 end;
 
               //
               // And finally, update R(dE/dY) for connected neurons.
               //
-              J := W1;
-              while J <= W2 do
+              j := W1;
+              while j <= W2 do
                 begin
-                  v := Network.Weights[J];
-                  APVAdd(@RDY[N1 + J - W1][0], 0, WCount - 1, @rdx[i][0], 0,
-                    WCount - 1, v);
-                  RDY[N1 + J - W1, J] := RDY[N1 + J - W1, J] + Network.DError[i];
-                  Inc(J);
+                  v := Network.Weights[j];
+                  APVAdd(@RDY[n1 + j - W1][0], 0, WCount - 1, @rdx[i][0], 0, WCount - 1, v);
+                  RDY[n1 + j - W1, j] := RDY[n1 + j - W1, j] + Network.DError[i];
+                  inc(j);
                 end;
             end;
           if Network.StructInfo[Offs + 0] < 0 then
@@ -2813,9 +2764,9 @@ begin
                 end;
               Assert(BFlag, 'MLPHessianNBatch: unknown neuron type!');
             end;
-          Dec(i);
+          dec(i);
         end;
-      Inc(k);
+      inc(k);
     end;
 end;
 
@@ -2828,24 +2779,24 @@ procedure MLPInternalCalculateGradient(var Network: TMultiLayerPerceptron;
   const Neurons: TLVec; const Weights: TLVec;
   var DError: TLVec; var Grad: TLVec; NaturalErrorFunc: Boolean);
 var
-  i     : TLInt;
-  N1    : TLInt;
-  N2    : TLInt;
-  W1    : TLInt;
-  W2    : TLInt;
+  i: TLInt;
+  n1: TLInt;
+  n2: TLInt;
+  W1: TLInt;
+  W2: TLInt;
   NTotal: TLInt;
   IStart: TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
-  Offs  : TLInt;
-  dEdF  : TLFloat;
+  NIn: TLInt;
+  NOut: TLInt;
+  Offs: TLInt;
+  dEdF: TLFloat;
   DFDNET: TLFloat;
-  v     : TLFloat;
-  FOwn  : TLFloat;
-  DEOwn : TLFloat;
-  NET   : TLFloat;
-  mx    : TLFloat;
-  BFlag : Boolean;
+  v: TLFloat;
+  FOwn: TLFloat;
+  DEOwn: TLFloat;
+  NET: TLFloat;
+  mx: TLFloat;
+  BFlag: Boolean;
 begin
 
   //
@@ -2860,8 +2811,8 @@ begin
   // Pre-processing of dError/dOut:
   // from dError/dOut(normalized) to dError/dOut(non-normalized)
   //
-  Assert((Network.StructInfo[6] = 0) or (Network.StructInfo[6] = 1),
-    'MLPInternalCalculateGradient: unknown normalization type!');
+  Assert((Network.StructInfo[6] = 0) or (Network.StructInfo[6] = 1), 'MLPInternalCalculateGradient: unknown normalization type!');
+
   if Network.StructInfo[6] = 1 then
     begin
 
@@ -2875,7 +2826,7 @@ begin
           while i <= NOut - 1 do
             begin
               mx := Max(mx, Network.Neurons[NTotal - NOut + i]);
-              Inc(i);
+              inc(i);
             end;
           NET := 0;
           i := 0;
@@ -2883,7 +2834,7 @@ begin
             begin
               Network.NWBuf[i] := Exp(Network.Neurons[NTotal - NOut + i] - mx);
               NET := NET + Network.NWBuf[i];
-              Inc(i);
+              inc(i);
             end;
           v := APVDotProduct(@Network.DError[0], NTotal - NOut, NTotal - 1,
             @Network.NWBuf[0], 0, NOut - 1);
@@ -2892,15 +2843,14 @@ begin
             begin
               FOwn := Network.NWBuf[i];
               DEOwn := Network.DError[NTotal - NOut + i];
-              Network.NWBuf[NOut + i] := (-v + DEOwn * FOwn + DEOwn * (NET - FOwn)) *
-                FOwn / AP_Sqr(NET);
-              Inc(i);
+              Network.NWBuf[NOut + i] := (-v + DEOwn * FOwn + DEOwn * (NET - FOwn)) * FOwn / AP_Sqr(NET);
+              inc(i);
             end;
           i := 0;
           while i <= NOut - 1 do
             begin
               Network.DError[NTotal - NOut + i] := Network.NWBuf[NOut + i];
-              Inc(i);
+              inc(i);
             end;
         end;
     end
@@ -2913,9 +2863,8 @@ begin
       i := 0;
       while i <= NOut - 1 do
         begin
-          Network.DError[NTotal - NOut + i] := Network.DError[NTotal - NOut + i] *
-            Network.ColumnSigmas[NIn + i];
-          Inc(i);
+          Network.DError[NTotal - NOut + i] := Network.DError[NTotal - NOut + i] * Network.ColumnSigmas[NIn + i];
+          inc(i);
         end;
     end;
 
@@ -2938,8 +2887,7 @@ begin
           //
           dEdF := Network.DError[i];
           DFDNET := Network.DFDNET[i];
-          DError[Network.StructInfo[Offs + 2]] :=
-            DError[Network.StructInfo[Offs + 2]] + dEdF * DFDNET;
+          DError[Network.StructInfo[Offs + 2]] := DError[Network.StructInfo[Offs + 2]] + dEdF * DFDNET;
         end;
       if Network.StructInfo[Offs + 0] = 0 then
         begin
@@ -2947,15 +2895,15 @@ begin
           //
           // Adaptive summator
           //
-          N1 := Network.StructInfo[Offs + 2];
-          N2 := N1 + Network.StructInfo[Offs + 1] - 1;
+          n1 := Network.StructInfo[Offs + 2];
+          n2 := n1 + Network.StructInfo[Offs + 1] - 1;
           W1 := Network.StructInfo[Offs + 3];
           W2 := W1 + Network.StructInfo[Offs + 1] - 1;
           dEdF := Network.DError[i];
           DFDNET := 1.0;
           v := dEdF * DFDNET;
-          APVMove(@Grad[0], W1, W2, @Neurons[0], N1, N2, v);
-          APVAdd(@DError[0], N1, N2, @Weights[0], W1, W2, v);
+          APVMove(@Grad[0], W1, W2, @Neurons[0], n1, n2, v);
+          APVAdd(@DError[0], n1, n2, @Weights[0], W1, W2, v);
         end;
       if Network.StructInfo[Offs + 0] < 0 then
         begin
@@ -2972,7 +2920,7 @@ begin
             end;
           Assert(BFlag, 'MLPInternalCalculateGradient: unknown neuron type!');
         end;
-      Dec(i);
+      dec(i);
     end;
 end;
 
@@ -2983,36 +2931,36 @@ procedure MLPChunkedGradient(var Network: TMultiLayerPerceptron;
   const xy: TLMatrix; CStart: TLInt; CSize: TLInt;
   var E: TLFloat; var Grad: TLVec; NaturalErrorFunc: Boolean);
 var
-  i       : TLInt;
-  J       : TLInt;
-  k       : TLInt;
-  KL      : TLInt;
-  N1      : TLInt;
-  N2      : TLInt;
-  W1      : TLInt;
-  W2      : TLInt;
-  c1      : TLInt;
-  c2      : TLInt;
-  NTotal  : TLInt;
-  NIn     : TLInt;
-  NOut    : TLInt;
-  Offs    : TLInt;
-  F       : TLFloat;
-  df      : TLFloat;
-  D2F     : TLFloat;
-  v       : TLFloat;
-  s       : TLFloat;
-  FOwn    : TLFloat;
-  DEOwn   : TLFloat;
-  NET     : TLFloat;
-  LnNET   : TLFloat;
-  mx      : TLFloat;
-  BFlag   : Boolean;
-  IStart  : TLInt;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
+  KL: TLInt;
+  n1: TLInt;
+  n2: TLInt;
+  W1: TLInt;
+  W2: TLInt;
+  c1: TLInt;
+  c2: TLInt;
+  NTotal: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
+  Offs: TLInt;
+  f: TLFloat;
+  df: TLFloat;
+  D2F: TLFloat;
+  v: TLFloat;
+  s: TLFloat;
+  FOwn: TLFloat;
+  DEOwn: TLFloat;
+  NET: TLFloat;
+  LnNET: TLFloat;
+  mx: TLFloat;
+  BFlag: Boolean;
+  IStart: TLInt;
   INeurons: TLInt;
-  IDFDNET : TLInt;
-  IDError : TLInt;
-  IZeros  : TLInt;
+  IDFDNET: TLInt;
+  IDError: TLInt;
+  IZeros: TLInt;
 begin
 
   //
@@ -3028,11 +2976,11 @@ begin
   IDFDNET := NTotal;
   IDError := 2 * NTotal;
   IZeros := 3 * NTotal;
-  J := 0;
-  while J <= CSize - 1 do
+  j := 0;
+  while j <= CSize - 1 do
     begin
-      Network.Chunks[IZeros, J] := 0;
-      Inc(J);
+      Network.Chunks[IZeros, j] := 0;
+      inc(j);
     end;
 
   //
@@ -3043,21 +2991,20 @@ begin
   i := 0;
   while i <= NIn - 1 do
     begin
-      J := 0;
-      while J <= CSize - 1 do
+      j := 0;
+      while j <= CSize - 1 do
         begin
           if AP_FP_NEq(Network.ColumnSigmas[i], 0) then
             begin
-              Network.Chunks[i, J] := (xy[c1 + J, i] - Network.ColumnMeans[i]) /
-                Network.ColumnSigmas[i];
+              Network.Chunks[i, j] := (xy[c1 + j, i] - Network.ColumnMeans[i]) / Network.ColumnSigmas[i];
             end
           else
             begin
-              Network.Chunks[i, J] := xy[c1 + J, i] - Network.ColumnMeans[i];
+              Network.Chunks[i, j] := xy[c1 + j, i] - Network.ColumnMeans[i];
             end;
-          Inc(J);
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
   i := 0;
   while i <= NTotal - 1 do
@@ -3070,17 +3017,15 @@ begin
           // Activation function:
           // * calculate F vector, F(i) = F(NET(i))
           //
-          N1 := Network.StructInfo[Offs + 2];
-          APVMove(@Network.Chunks[i][0], 0, CSize - 1, @Network.Chunks[N1][0], 0,
-            CSize - 1);
-          J := 0;
-          while J <= CSize - 1 do
+          n1 := Network.StructInfo[Offs + 2];
+          APVMove(@Network.Chunks[i][0], 0, CSize - 1, @Network.Chunks[n1][0], 0, CSize - 1);
+          j := 0;
+          while j <= CSize - 1 do
             begin
-              MLPActivationFunction(Network.Chunks[i, J],
-                Network.StructInfo[Offs + 0], F, df, D2F);
-              Network.Chunks[i, J] := F;
-              Network.Chunks[IDFDNET + i, J] := df;
-              Inc(J);
+              MLPActivationFunction(Network.Chunks[i, j], Network.StructInfo[Offs + 0], f, df, D2F);
+              Network.Chunks[i, j] := f;
+              Network.Chunks[IDFDNET + i, j] := df;
+              inc(j);
             end;
         end;
       if Network.StructInfo[Offs + 0] = 0 then
@@ -3090,19 +3035,17 @@ begin
           // Adaptive summator:
           // * calculate NET vector, NET(i) = SUM(W(j,i)*Neurons(j),j=N1..N2)
           //
-          N1 := Network.StructInfo[Offs + 2];
-          N2 := N1 + Network.StructInfo[Offs + 1] - 1;
+          n1 := Network.StructInfo[Offs + 2];
+          n2 := n1 + Network.StructInfo[Offs + 1] - 1;
           W1 := Network.StructInfo[Offs + 3];
           W2 := W1 + Network.StructInfo[Offs + 1] - 1;
-          APVMove(@Network.Chunks[i][0], 0, CSize - 1, @Network.Chunks[IZeros][0],
-            0, CSize - 1);
-          J := N1;
-          while J <= N2 do
+          APVMove(@Network.Chunks[i][0], 0, CSize - 1, @Network.Chunks[IZeros][0], 0, CSize - 1);
+          j := n1;
+          while j <= n2 do
             begin
-              v := Network.Weights[W1 + J - N1];
-              APVAdd(@Network.Chunks[i][0], 0, CSize - 1, @Network.Chunks[J][0], 0,
-                CSize - 1, v);
-              Inc(J);
+              v := Network.Weights[W1 + j - n1];
+              APVAdd(@Network.Chunks[i][0], 0, CSize - 1, @Network.Chunks[j][0], 0, CSize - 1, v);
+              inc(j);
             end;
         end;
       if Network.StructInfo[Offs + 0] < 0 then
@@ -3126,7 +3069,7 @@ begin
               while k <= CSize - 1 do
                 begin
                   Network.Chunks[i, k] := -1;
-                  Inc(k);
+                  inc(k);
                 end;
               BFlag := True;
             end;
@@ -3140,14 +3083,13 @@ begin
               while k <= CSize - 1 do
                 begin
                   Network.Chunks[i, k] := 0;
-                  Inc(k);
+                  inc(k);
                 end;
               BFlag := True;
             end;
-          Assert(BFlag,
-            'MLPChunkedGradient: internal error - unknown neuron type!');
+          Assert(BFlag, 'MLPChunkedGradient: internal error - unknown neuron type!');
         end;
-      Inc(i);
+      inc(i);
     end;
 
   //
@@ -3156,12 +3098,11 @@ begin
   i := 0;
   while i <= NTotal - 1 do
     begin
-      APVMove(@Network.Chunks[IDError + i][0], 0, CSize - 1,
-        @Network.Chunks[IZeros][0], 0, CSize - 1);
-      Inc(i);
+      APVMove(@Network.Chunks[IDError + i][0], 0, CSize - 1, @Network.Chunks[IZeros][0], 0, CSize - 1);
+      inc(i);
     end;
-  Assert((Network.StructInfo[6] = 0) or (Network.StructInfo[6] = 1),
-    'MLPChunkedGradient: unknown normalization type!');
+  Assert((Network.StructInfo[6] = 0) or (Network.StructInfo[6] = 1), 'MLPChunkedGradient: unknown normalization type!');
+
   if Network.StructInfo[6] = 1 then
     begin
 
@@ -3185,7 +3126,7 @@ begin
           while i <= NOut - 1 do
             begin
               mx := Max(mx, Network.Chunks[NTotal - NOut + i, k]);
-              Inc(i);
+              inc(i);
             end;
           NET := 0;
           i := 0;
@@ -3193,7 +3134,7 @@ begin
             begin
               Network.NWBuf[i] := Exp(Network.Chunks[NTotal - NOut + i, k] - mx);
               NET := NET + Network.NWBuf[i];
-              Inc(i);
+              inc(i);
             end;
 
           //
@@ -3220,10 +3161,9 @@ begin
                     begin
                       v := 0;
                     end;
-                  Network.Chunks[IDError + NTotal - NOut + i, k] := s * Network.NWBuf[i]
-                    / NET - v;
+                  Network.Chunks[IDError + NTotal - NOut + i, k] := s * Network.NWBuf[i] / NET - v;
                   E := E + SafeCrossEntropy(v, Network.NWBuf[i] / NET);
-                  Inc(i);
+                  inc(i);
                 end;
             end
           else
@@ -3247,25 +3187,23 @@ begin
                     end;
                   Network.NWBuf[NOut + i] := v;
                   E := E + AP_Sqr(v) / 2;
-                  Inc(i);
+                  inc(i);
                 end;
 
               //
               // From dError/dOut(normalized) to dError/dOut(non-normalized)
               //
-              v := APVDotProduct(@Network.NWBuf[0], NOut, 2 * NOut - 1,
-                @Network.NWBuf[0], 0, NOut - 1);
+              v := APVDotProduct(@Network.NWBuf[0], NOut, 2 * NOut - 1, @Network.NWBuf[0], 0, NOut - 1);
               i := 0;
               while i <= NOut - 1 do
                 begin
                   FOwn := Network.NWBuf[i];
                   DEOwn := Network.NWBuf[NOut + i];
-                  Network.Chunks[IDError + NTotal - NOut + i, k] :=
-                    (-v + DEOwn * FOwn + DEOwn * (NET - FOwn)) * FOwn / AP_Sqr(NET);
-                  Inc(i);
+                  Network.Chunks[IDError + NTotal - NOut + i, k] := (-v + DEOwn * FOwn + DEOwn * (NET - FOwn)) * FOwn / AP_Sqr(NET);
+                  inc(i);
                 end;
             end;
-          Inc(k);
+          inc(k);
         end;
     end
   else
@@ -3280,17 +3218,15 @@ begin
       i := 0;
       while i <= NOut - 1 do
         begin
-          J := 0;
-          while J <= CSize - 1 do
+          j := 0;
+          while j <= CSize - 1 do
             begin
-              v := Network.Chunks[NTotal - NOut + i, J] * Network.ColumnSigmas
-                [NIn + i] + Network.ColumnMeans[NIn + i] - xy[CStart + J, NIn + i];
-              Network.Chunks[IDError + NTotal - NOut + i, J] :=
-                v * Network.ColumnSigmas[NIn + i];
+              v := Network.Chunks[NTotal - NOut + i, j] * Network.ColumnSigmas[NIn + i] + Network.ColumnMeans[NIn + i] - xy[CStart + j, NIn + i];
+              Network.Chunks[IDError + NTotal - NOut + i, j] := v * Network.ColumnSigmas[NIn + i];
               E := E + AP_Sqr(v) / 2;
-              Inc(J);
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 
@@ -3311,16 +3247,14 @@ begin
           //
           // Activation function
           //
-          N1 := Network.StructInfo[Offs + 2];
+          n1 := Network.StructInfo[Offs + 2];
           k := 0;
           while k <= CSize - 1 do
             begin
-              Network.Chunks[IDError + i, k] := Network.Chunks[IDError + i, k] *
-                Network.Chunks[IDFDNET + i, k];
-              Inc(k);
+              Network.Chunks[IDError + i, k] := Network.Chunks[IDError + i, k] * Network.Chunks[IDFDNET + i, k];
+              inc(k);
             end;
-          APVAdd(@Network.Chunks[IDError + N1][0], 0, CSize - 1,
-            @Network.Chunks[IDError + i][0], 0, CSize - 1);
+          APVAdd(@Network.Chunks[IDError + n1][0], 0, CSize - 1, @Network.Chunks[IDError + i][0], 0, CSize - 1);
         end;
       if Network.StructInfo[Offs + 0] = 0 then
         begin
@@ -3328,25 +3262,23 @@ begin
           //
           // "Normal" activation function
           //
-          N1 := Network.StructInfo[Offs + 2];
-          N2 := N1 + Network.StructInfo[Offs + 1] - 1;
+          n1 := Network.StructInfo[Offs + 2];
+          n2 := n1 + Network.StructInfo[Offs + 1] - 1;
           W1 := Network.StructInfo[Offs + 3];
           W2 := W1 + Network.StructInfo[Offs + 1] - 1;
-          J := W1;
-          while J <= W2 do
+          j := W1;
+          while j <= W2 do
             begin
-              v := APVDotProduct(@Network.Chunks[N1 + J - W1][0], 0, CSize - 1,
-                @Network.Chunks[IDError + i][0], 0, CSize - 1);
-              Grad[J] := Grad[J] + v;
-              Inc(J);
+              v := APVDotProduct(@Network.Chunks[n1 + j - W1][0], 0, CSize - 1, @Network.Chunks[IDError + i][0], 0, CSize - 1);
+              Grad[j] := Grad[j] + v;
+              inc(j);
             end;
-          J := N1;
-          while J <= N2 do
+          j := n1;
+          while j <= n2 do
             begin
-              v := Network.Weights[W1 + J - N1];
-              APVAdd(@Network.Chunks[IDError + J][0], 0, CSize - 1,
-                @Network.Chunks[IDError + i][0], 0, CSize - 1, v);
-              Inc(J);
+              v := Network.Weights[W1 + j - n1];
+              APVAdd(@Network.Chunks[IDError + j][0], 0, CSize - 1, @Network.Chunks[IDError + i][0], 0, CSize - 1, v);
+              inc(j);
             end;
         end;
       if Network.StructInfo[Offs + 0] < 0 then
@@ -3364,7 +3296,7 @@ begin
             end;
           Assert(BFlag, 'MLPInternalCalculateGradient: unknown neuron type!');
         end;
-      Dec(i);
+      dec(i);
     end;
 end;
 
@@ -3372,30 +3304,30 @@ end;
   Returns T*Ln(T/Z), guarded against overflow/underflow.
   Internal subroutine.
   ************************************************************************ *)
-function SafeCrossEntropy(T: TLFloat; Z: TLFloat): TLFloat;
+function SafeCrossEntropy(t: TLFloat; z: TLFloat): TLFloat;
 var
-  R: TLFloat;
+  r: TLFloat;
 begin
-  if AP_FP_Eq(T, 0) then
+  if AP_FP_Eq(t, 0) then
     begin
       Result := 0;
     end
   else
     begin
-      if AP_FP_Greater(AbsReal(Z), 1) then
+      if AP_FP_Greater(AbsReal(z), 1) then
         begin
 
           //
           // Shouldn't be the case with softmax,
           // but we just want to be sure.
           //
-          if AP_FP_Eq(T / Z, 0) then
+          if AP_FP_Eq(t / z, 0) then
             begin
-              R := MinRealNumber;
+              r := MinRealNumber;
             end
           else
             begin
-              R := T / Z;
+              r := t / z;
             end;
         end
       else
@@ -3404,16 +3336,15 @@ begin
           //
           // Normal case
           //
-          if AP_FP_Eq(Z, 0) or AP_FP_Greater_Eq(AbsReal(T),
-            MaxRealNumber * AbsReal(Z)) then
+          if AP_FP_Eq(z, 0) or AP_FP_Greater_Eq(AbsReal(t), MaxRealNumber * AbsReal(z)) then
             begin
-              R := MaxRealNumber;
+              r := MaxRealNumber;
             end
           else
             begin
-              R := T / Z;
+              r := t / z;
             end;
         end;
-      Result := T * ln(R);
+      Result := t * ln(r);
     end;
-end; 
+end;

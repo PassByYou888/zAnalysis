@@ -22,14 +22,14 @@ procedure DrawChildrenControl(WorkCtrl: TControl; DrawEng: TDrawEngine; ctrl: TC
 implementation
 
 procedure DrawChildrenControl(WorkCtrl: TControl; DrawEng: TDrawEngine; ctrl: TControl; COLOR: TDEColor; LineWidth:TDEFloat);
-  procedure DrawControlRect(C: TControl);
+  procedure DrawControlRect(c: TControl);
   var
     r4: TRectf;
-    R: TDERect;
+    r: TDERect;
   begin
-    r4 := C.AbsoluteRect;
-    R := MakeRectV2(Make2DPoint(WorkCtrl.AbsoluteToLocal(r4.TopLeft)), Make2DPoint(WorkCtrl.AbsoluteToLocal(r4.BottomRight)));
-    DrawEng.DrawBoxInScene(R, COLOR, LineWidth);
+    r4 := c.AbsoluteRect;
+    r := MakeRectV2(Make2DPoint(WorkCtrl.AbsoluteToLocal(r4.TopLeft)), Make2DPoint(WorkCtrl.AbsoluteToLocal(r4.BottomRight)));
+    DrawEng.DrawBoxInScene(r, COLOR, LineWidth);
   end;
 
 var
@@ -46,3 +46,5 @@ begin
 end;
 
 end. 
+ 
+ 

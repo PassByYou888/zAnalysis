@@ -37,11 +37,8 @@
 *)
 unit AggVcgenStroke;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggArray,
@@ -83,11 +80,11 @@ type
 
     // Vertex Generator Interface
     procedure RemoveAll; override;
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); override;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); override;
 
     // Vertex Source Interface
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property LineCap: TAggLineCap read FLineCap write SetLineCap;
     property LineJoin: TAggLineJoin read FLineJoin write SetLineJoin;
@@ -138,11 +135,11 @@ type
 
     // Vertex Generator Interface
     procedure RemoveAll; override;
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); override;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); override;
 
     // Vertex Source Interface
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property LineCap: TAggLineCap read GetLineCap write SetLineCap;
     property LineJoin: TAggLineJoin read GetLineJoin write SetLineJoin;
@@ -244,14 +241,14 @@ begin
   FStatus := seInitial;
 end;
 
-procedure TAggVcgenStroke.AddVertex(X, Y: Double; Cmd: Cardinal);
+procedure TAggVcgenStroke.AddVertex(x, y: Double; Cmd: Cardinal);
 var
   VD: TAggVertexDistance;
 begin
   FStatus := seInitial;
 
-  VD.pos.X := X;
-  VD.pos.Y := Y;
+  VD.Pos.x := x;
+  VD.Pos.y := y;
 
   VD.Dist := 0;
 
@@ -269,13 +266,13 @@ var
   dx, dy, Temp: Double;
 begin
   Temp := width / Len;
-  dx := (v1.pos.Y - v0.pos.Y) * Temp;
-  dy := (v1.pos.X - v0.pos.X) * Temp;
+  dx := (v1.Pos.y - v0.Pos.y) * Temp;
+  dy := (v1.Pos.x - v0.Pos.x) * Temp;
 
-  Cap^[0] := v0.pos.X - dx;
-  Cap^[1] := v0.pos.Y + dy;
-  Cap^[2] := v0.pos.X + dx;
-  Cap^[3] := v0.pos.Y - dy;
+  Cap^[0] := v0.Pos.x - dx;
+  Cap^[1] := v0.Pos.y + dy;
+  Cap^[2] := v0.Pos.x + dx;
+  Cap^[3] := v0.Pos.y - dy;
 end;
 
 procedure TAggVcgenStroke.Rewind(PathID: Cardinal);
@@ -296,9 +293,9 @@ begin
   FOutVertex := 0;
 end;
 
-function TAggVcgenStroke.Vertex(X, Y: PDouble): Cardinal;
+function TAggVcgenStroke.Vertex(x, y: PDouble): Cardinal;
 var
-  C: PPointDouble;
+  c: PPointDouble;
   Cmd: Cardinal;
 label
   RDY, Out2;
@@ -384,7 +381,7 @@ begin
               FWidth, FLineJoin, FInnerJoin, FMiterLimit, FInnerMiterLimit,
               FApproxScale);
 
-            Inc(FSourceVertex);
+            inc(FSourceVertex);
 
             FPrevStatus := FStatus;
             FStatus := seOutVertices;
@@ -410,7 +407,7 @@ begin
                 Continue;
               end;
 
-            Dec(FSourceVertex);
+            dec(FSourceVertex);
 
             StrokeCalcJoin(FOutVertices, FSourceVertices.Next(FSourceVertex),
               FSourceVertices.Curr(FSourceVertex),
@@ -431,12 +428,12 @@ begin
 
           else
             begin
-              C := FOutVertices[FOutVertex];
+              c := FOutVertices[FOutVertex];
 
-              Inc(FOutVertex);
+              inc(FOutVertex);
 
-              X^ := C.X;
-              Y^ := C.Y;
+              x^ := c.x;
+              y^ := c.y;
 
               Result := Cmd;
 
@@ -581,13 +578,13 @@ begin
   FStatus := seInitial;
 end;
 
-procedure TAggVcgenStrokeMath.AddVertex(X, Y: Double; Cmd: Cardinal);
+procedure TAggVcgenStrokeMath.AddVertex(x, y: Double; Cmd: Cardinal);
 var
   VD: TAggVertexDistance;
 begin
   FStatus := seInitial;
 
-  VD.pos := PointDouble(X, Y);
+  VD.Pos := PointDouble(x, y);
   VD.Dist := 0;
 
   if IsMoveTo(Cmd) then
@@ -616,11 +613,11 @@ begin
   FOutVertex := 0;
 end;
 
-function TAggVcgenStrokeMath.Vertex(X, Y: PDouble): Cardinal;
+function TAggVcgenStrokeMath.Vertex(x, y: PDouble): Cardinal;
 var
   Cmd: Cardinal;
 
-  C: PPointDouble;
+  c: PPointDouble;
 
 label
   _rdy, Out2, _end;
@@ -705,7 +702,7 @@ begin
               PAggVertexDistance(FSourceVertices.Prev(FSourceVertex))^.Dist,
               PAggVertexDistance(FSourceVertices.Curr(FSourceVertex))^.Dist);
 
-            Inc(FSourceVertex);
+            inc(FSourceVertex);
 
             FPrevStatus := FStatus;
             FStatus := seOutVertices;
@@ -731,7 +728,7 @@ begin
                 goto _end;
               end;
 
-            Dec(FSourceVertex);
+            dec(FSourceVertex);
 
             FStroker.CalculateJoin(FOutVertices,
               FSourceVertices.Next(FSourceVertex),
@@ -751,12 +748,12 @@ begin
 
           else
             begin
-              C := FOutVertices[FOutVertex];
+              c := FOutVertices[FOutVertex];
 
-              Inc(FOutVertex);
+              inc(FOutVertex);
 
-              X^ := C.X;
-              Y^ := C.Y;
+              x^ := c.x;
+              y^ := c.y;
 
               Result := Cmd;
 
@@ -792,4 +789,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

@@ -42,20 +42,20 @@ unit AggBasics;
 interface
 
 type
-  Int8    = ShortInt;
-  Int8u   = Byte;
-  Int16   = SmallInt;
-  Int16u  = Word;
-  Int32   = Integer;
-  Int32u  = Cardinal;
-  Int64u  = UInt64;
-  PInt8   = ^Int8;
-  PInt8u  = ^Int8u;
-  PInt16  = ^Int16;
+  Int8 = ShortInt;
+  Int8u = Byte;
+  Int16 = SmallInt;
+  Int16u = Word;
+  Int32 = Integer;
+  Int32u = Cardinal;
+  Int64u = UInt64;
+  PInt8 = ^Int8;
+  PInt8u = ^Int8u;
+  PInt16 = ^Int16;
   PInt16u = ^Int16u;
-  PInt32  = ^Int32;
+  PInt32 = ^Int32;
   PInt32u = ^Int32u;
-  PInt64  = ^Int64;
+  PInt64 = ^Int64;
   PInt64u = ^Int64u;
   PPInt8u = ^PInt8u;
 
@@ -68,23 +68,23 @@ type
   PAggBytes = ^TAggBytes;
   TAggBytes = array of Byte;
 
-  TInt16uAccess = packed record
+  TInt16uAccess = record
     low, high: Int8u;
   end;
 
-  TInt32Access = packed record
+  TInt32Access = record
     low, high: Int16;
   end;
 
-  TInt32Int8uAccess = packed record
+  TInt32Int8uAccess = record
     values: array [0 .. 3] of Int8u;
   end;
 
-  TInt32uAccess = packed record
+  TInt32uAccess = record
     low, high: Int16u;
   end;
 
-  TInt64uAccess = packed record
+  TInt64uAccess = record
     low, high: TInt32uAccess;
   end;
 
@@ -96,16 +96,16 @@ type
     FPC system unit introduces the types PtrInt and PtrUInt which are signed
     and Cardinal integer data types with the same size as a pointer.
 
-    Keep in mind that the size change of the "pointer" type also affects packed record
+    Keep in mind that the size change of the "pointer" type also affects record
     sizes. If you allocate records with fixed sizes, and not with new or with
     getmem (<x>,SizeOf(<x>)), this will have to be fixed. }
   // Pascal Pointer Computation Type
   PtrComp = nativeUInt;
 
   // Pascal's pointer-in-an-array-access helper structures
-  PPointer32 = ^TPointer32;
+  PNativePointer = ^TNativePointer;
 
-  TPointer32 = packed record
+  TNativePointer = record
     case Integer of
       1: (PTR: Pointer);
       2: (Int: nativeUInt);
@@ -147,16 +147,16 @@ type
   end;
 
   TAggFillingRule = (frNonZero, frEvenOdd);
-  TAggLineCap     = (lcButt, lcSquare, lcRound);
-  TAggLineJoin    = (ljMiter, ljMiterRevert, ljMiterRound, ljRound, ljBevel);
-  TAggInnerJoin   = (ijBevel, ijMiter, ijJag, ijRound);
+  TAggLineCap = (lcButt, lcSquare, lcRound);
+  TAggLineJoin = (ljMiter, ljMiterRevert, ljMiterRound, ljRound, ljBevel);
+  TAggInnerJoin = (ijBevel, ijMiter, ijJag, ijRound);
 
 const
   CAggCoverShift = 8;
-  CAggCoverSize  = 1 shl CAggCoverShift;
-  CAggCoverMask  = CAggCoverSize - 1;
-  CAggCoverNone  = 0;
-  CAggCoverFull  = CAggCoverMask;
+  CAggCoverSize = 1 shl CAggCoverShift;
+  CAggCoverMask = CAggCoverSize - 1;
+  CAggCoverNone = 0;
+  CAggCoverFull = CAggCoverMask;
 
   // These constants determine the subpixel accuracy, to be more precise,
   // the number of bits of the fractional part of the coordinates.
@@ -165,26 +165,26 @@ const
   // 8-bits fractional part the capacity is 24 bits.
   CAggPolySubpixelShift = 8;
   CAggPolySubpixelScale = 1 shl CAggPolySubpixelShift;
-  CAggPolySubpixelMask  = CAggPolySubpixelScale - 1;
+  CAggPolySubpixelMask = CAggPolySubpixelScale - 1;
 
   // CAggPathCmd enumeration (see flags below)
-  CAggPathCmdStop     = 0;
-  CAggPathCmdMoveTo   = 1;
-  CAggPathCmdLineTo   = 2;
-  CAggPathCmdCurve3   = 3;
-  CAggPathCmdCurve4   = 4;
-  CAggPathCmdCurveN   = 5;
-  CAggPathCmdCatrom   = 6;
+  CAggPathCmdStop = 0;
+  CAggPathCmdMoveTo = 1;
+  CAggPathCmdLineTo = 2;
+  CAggPathCmdCurve3 = 3;
+  CAggPathCmdCurve4 = 4;
+  CAggPathCmdCurveN = 5;
+  CAggPathCmdCatrom = 6;
   CAggPathCmdUbSpline = 7;
-  CAggPathCmdEndPoly  = $0F;
-  CAggPathCmdMask     = $0F;
+  CAggPathCmdEndPoly = $0F;
+  CAggPathCmdMask = $0F;
 
   // CAggPathFlags
-  CAggPathFlagsNone  = 0;
-  CAggPathFlagsCcw   = $10;
-  CAggPathFlagsCw    = $20;
+  CAggPathFlagsNone = 0;
+  CAggPathFlagsCcw = $10;
+  CAggPathFlagsCw = $20;
   CAggPathFlagsClose = $40;
-  CAggPathFlagsMask  = $F0;
+  CAggPathFlagsMask = $F0;
 
   CDeg2Rad: Double = pi / 180;
   CRad2Deg: Double = 180 / pi;
@@ -192,8 +192,8 @@ const
 type
   PPointDouble = ^TPointDouble;
 
-  TPointDouble = packed record
-    X, Y: Double;
+  TPointDouble = record
+    x, y: Double;
   public
     class operator Equal(const Lhs, Rhs: TPointDouble): Boolean;
     class operator NotEqual(const Lhs, Rhs: TPointDouble): Boolean;
@@ -201,8 +201,8 @@ type
 
   PPointInteger = ^TPointInteger;
 
-  TPointInteger = packed record
-    X, Y: Integer;
+  TPointInteger = record
+    x, y: Integer;
   public
     class operator Equal(const Lhs, Rhs: TPointInteger): Boolean;
     class operator NotEqual(const Lhs, Rhs: TPointInteger): Boolean;
@@ -210,7 +210,7 @@ type
 
   PRectInteger = ^TRectInteger;
 
-  TRectInteger = packed record
+  TRectInteger = record
   private
     function GetWidth: Integer;
     function GetHeight: Integer;
@@ -223,7 +223,7 @@ type
     class operator NotEqual(const Lhs, Rhs: TRectInteger): Boolean;
     class operator Add(const Lhs, Rhs: TRectInteger): TRectInteger;
     class operator Subtract(const Lhs, Rhs: TRectInteger): TRectInteger;
-    class function Zero: TRectInteger; {$IFDEF INLINE_ASM} inline; {$ENDIF} static;
+    class function Zero: TRectInteger; static;
 
     procedure Normalize;
     function Clip(var Rect: TRectInteger): Boolean;
@@ -241,7 +241,7 @@ type
 
   PRectDouble = ^TRectDouble;
 
-  TRectDouble = packed record
+  TRectDouble = record
   private
     function GetCenterX: Double;
     function GetCenterY: Double;
@@ -256,13 +256,13 @@ type
     class operator Add(const Lhs, Rhs: TRectDouble): TRectDouble;
     class operator Subtract(const Lhs, Rhs: TRectDouble): TRectDouble;
 
-    class function Zero: TRectDouble; {$IFDEF INLINE_ASM} inline; {$ENDIF} static;
+    class function Zero: TRectDouble; static;
 
     class operator Implicit(const Value: TRectInteger): TRectDouble;
 
     procedure Normalize;
-    function Clip(R: PRectDouble): Boolean; overload;
-    function Clip(var R: TRectDouble): Boolean; overload;
+    function Clip(r: PRectDouble): Boolean; overload;
+    function Clip(var r: TRectDouble): Boolean; overload;
     function IsValid: Boolean;
 
     property CenterX: Double read GetCenterX;
@@ -276,14 +276,14 @@ type
 
   PQuadDouble = ^TQuadDouble;
 
-  TQuadDouble = packed record
+  TQuadDouble = record
     case Integer of
       0: (values: array [0 .. 7] of Double);
       1: (Points: array [0 .. 3] of TPointDouble);
   end;
 
-  TVertex = packed record
-    X, Y: Double;
+  TVertex = record
+    x, y: Double;
     Cmd: Byte;
   end;
 
@@ -294,8 +294,8 @@ type
     property Item[index: Cardinal]: Cardinal read GetItem; default;
   end;
 
-function AggGetMem(out Buf: Pointer; SZ: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function AggFreeMem(var Buf: Pointer; SZ: Cardinal): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function AggGetMem(out Buf: Pointer; SZ: Cardinal): Boolean;
+function AggFreeMem(var Buf: Pointer; SZ: Cardinal): Boolean;
 
 function Deg2Rad(Deg: Double): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function Rad2Deg(Rad: Double): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
@@ -328,27 +328,27 @@ function ClearOrientation(Cx: Cardinal): Cardinal; {$IFDEF INLINE_ASM} inline; {
 function GetOrientation(Cx: Cardinal): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function SetOrientation(Cx, O: Cardinal): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure SwapPointers(A, b: Pointer); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SwapPointers(a, b: Pointer); {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function IntToDouble(i: Integer): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 function RandomMinMax(Min, Max: Double): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function RectInteger(x1, y1, x2, y2: Integer): TRectInteger; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RectInteger(Point1, Point2: TPointInteger): TRectInteger; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RectDouble(x1, y1, x2, y2: Double): TRectDouble; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function RectDouble(Point1, Point2: TPointDouble): TRectDouble; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RectInteger(x1, y1, x2, y2: Integer): TRectInteger; overload;
+function RectInteger(Point1, Point2: TPointInteger): TRectInteger; overload;
+function RectDouble(x1, y1, x2, y2: Double): TRectDouble; overload;
+function RectDouble(Point1, Point2: TPointDouble): TRectDouble; overload;
 
-function PointInteger(X, Y: Integer): TPointInteger; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function PointInteger(Value: Integer): TPointInteger; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function PointDouble(X, Y: Double): TPointDouble; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function PointDouble(Value: Double): TPointDouble; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function PointInteger(x, y: Integer): TPointInteger; overload;
+function PointInteger(Value: Integer): TPointInteger; overload;
+function PointDouble(x, y: Double): TPointDouble; overload;
+function PointDouble(Value: Double): TPointDouble; overload;
 
-function PointIntegerOffset(Point: TPointInteger; Value: Integer): TPointInteger; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function PointDoubleOffset(Point: TPointDouble; Value: Double): TPointDouble; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function PointIntegerScale(Point: TPointInteger; Value: Integer): TPointInteger; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function PointDoubleScale(Point: TPointDouble; Value: Double): TPointDouble; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function PointIntegerOffset(Point: TPointInteger; Value: Integer): TPointInteger;
+function PointDoubleOffset(Point: TPointDouble; Value: Double): TPointDouble;
+function PointIntegerScale(Point: TPointInteger; Value: Integer): TPointInteger;
+function PointDoubleScale(Point: TPointDouble; Value: Double): TPointDouble;
 
-function QuadDouble(RectDouble: TRectDouble): TQuadDouble; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function QuadDouble(RectDouble: TRectDouble): TQuadDouble;
 
 (*
   procedure Srand_(Seed: Integer);
@@ -374,7 +374,7 @@ function ShrInt8(i, Shift: Int8): Int8; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function ShrInt16(i, Shift: Int16): Int16; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function ShrInt32(i, Shift: Integer): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-procedure Fill32Bit(var X; Count: Cardinal; var Value);
+procedure Fill32Bit(var x; Count: Cardinal; var Value);
 
 implementation
 
@@ -417,7 +417,7 @@ end;
 
 class operator TPointDouble.Equal(const Lhs, Rhs: TPointDouble): Boolean;
 begin
-  Result := (Lhs.X = Rhs.X) and (Lhs.Y = Rhs.Y);
+  Result := (Lhs.x = Rhs.x) and (Lhs.y = Rhs.y);
 end;
 
 class operator TPointDouble.NotEqual(const Lhs, Rhs: TPointDouble): Boolean;
@@ -429,7 +429,7 @@ end;
 
 class operator TPointInteger.Equal(const Lhs, Rhs: TPointInteger): Boolean;
 begin
-  Result := (Lhs.X = Rhs.X) and (Lhs.Y = Rhs.Y);
+  Result := (Lhs.x = Rhs.x) and (Lhs.y = Rhs.y);
 end;
 
 class operator TPointInteger.NotEqual(const Lhs, Rhs: TPointInteger): Boolean;
@@ -515,20 +515,20 @@ end;
 
 procedure TRectInteger.Normalize;
 var
-  T: Integer;
+  t: Integer;
 begin
   if x1 > x2 then
     begin
-      T := x1;
+      t := x1;
       x1 := x2;
-      x2 := T;
+      x2 := t;
     end;
 
   if y1 > y2 then
     begin
-      T := y1;
+      t := y1;
       y1 := y2;
-      y2 := T;
+      y2 := t;
     end;
 end;
 
@@ -577,20 +577,20 @@ end;
 
 procedure TRectDouble.Normalize;
 var
-  T: Double;
+  t: Double;
 begin
   if x1 > x2 then
     begin
-      T := x1;
+      t := x1;
       x1 := x2;
-      x2 := T;
+      x2 := t;
     end;
 
   if y1 > y2 then
     begin
-      T := y1;
+      t := y1;
       y1 := y2;
-      y2 := T;
+      y2 := t;
     end;
 end;
 
@@ -617,19 +617,19 @@ begin
   FillChar(Result, 32, 4);
 end;
 
-function TRectDouble.Clip(R: PRectDouble): Boolean;
+function TRectDouble.Clip(r: PRectDouble): Boolean;
 begin
-  if x2 > R.x2 then
-      x2 := R.x2;
+  if x2 > r.x2 then
+      x2 := r.x2;
 
-  if y2 > R.y2 then
-      y2 := R.y2;
+  if y2 > r.y2 then
+      y2 := r.y2;
 
-  if x1 < R.x1 then
-      x1 := R.x1;
+  if x1 < r.x1 then
+      x1 := r.x1;
 
-  if y1 < R.y1 then
-      y1 := R.y1;
+  if y1 < r.y1 then
+      y1 := r.y1;
 
   Result := (x1 <= x2) and (y1 <= y2);
 end;
@@ -642,9 +642,9 @@ begin
   Result.y2 := Lhs.y2 + Rhs.y2;
 end;
 
-function TRectDouble.Clip(var R: TRectDouble): Boolean;
+function TRectDouble.Clip(var r: TRectDouble): Boolean;
 begin
-  Result := Clip(@R)
+  Result := Clip(@r)
 end;
 
 class operator TRectDouble.Implicit(const Value: TRectInteger): TRectDouble;
@@ -664,72 +664,72 @@ end;
 
 procedure NormalizeRect(var This: TRectInteger);
 var
-  T: Integer;
+  t: Integer;
 begin
   if This.x1 > This.x2 then
     begin
-      T := This.x1;
+      t := This.x1;
       This.x1 := This.x2;
-      This.x2 := T;
+      This.x2 := t;
     end;
 
   if This.y1 > This.y2 then
     begin
-      T := This.y1;
+      t := This.y1;
       This.y1 := This.y2;
-      This.y2 := T;
+      This.y2 := t;
     end;
 end;
 
 procedure NormalizeRectDouble(var This: TRectDouble);
 var
-  T: Double;
+  t: Double;
 begin
   if This.x1 > This.x2 then
     begin
-      T := This.x1;
+      t := This.x1;
       This.x1 := This.x2;
-      This.x2 := T;
+      This.x2 := t;
     end;
 
   if This.y1 > This.y2 then
     begin
-      T := This.y1;
+      t := This.y1;
       This.y1 := This.y2;
-      This.y2 := T;
+      This.y2 := t;
     end;
 end;
 
-function ClipRect(var This: TRectInteger; R: PRectInteger): Boolean;
+function ClipRect(var This: TRectInteger; r: PRectInteger): Boolean;
 begin
-  if This.x2 > R.x2 then
-      This.x2 := R.x2;
+  if This.x2 > r.x2 then
+      This.x2 := r.x2;
 
-  if This.y2 > R.y2 then
-      This.y2 := R.y2;
+  if This.y2 > r.y2 then
+      This.y2 := r.y2;
 
-  if This.x1 < R.x1 then
-      This.x1 := R.x1;
+  if This.x1 < r.x1 then
+      This.x1 := r.x1;
 
-  if This.y1 < R.y1 then
-      This.y1 := R.y1;
+  if This.y1 < r.y1 then
+      This.y1 := r.y1;
 
   Result := (This.x1 <= This.x2) and (This.y1 <= This.y2);
 end;
 
-function ClipRectDouble(var This: TRectDouble; R: PRectDouble): Boolean;
+function ClipRectDouble(var This: TRectDouble; r: PRectDouble): Boolean;
 begin
-  if This.x2 > R.x2 then
-      This.x2 := R.x2;
+  if This.x2 > r.x2 then
+      This.x2 := r.x2;
 
-  if This.y2 > R.y2 then
-      This.y2 := R.y2;
+  if This.y2 > r.y2 then
+      This.y2 := r.y2;
 
-  if This.x1 < R.x1 then
-      This.x1 := R.x1;
+  if This.x1 < r.x1 then
+      This.x1 := r.x1;
 
-  if This.y1 < R.y1 then
-      This.y1 := R.y1;
+  if This.y1 < r.y1 then
+      This.y1 := r.y1;
 
   Result := (This.x1 <= This.x2) and (This.y1 <= This.y2);
 end;
@@ -913,12 +913,12 @@ begin
   Result := ClearOrientation(Cx) or O;
 end;
 
-procedure SwapPointers(A, b: Pointer);
+procedure SwapPointers(a, b: Pointer);
 var
   Temp: Pointer;
 begin
-  Temp := PPointer(A)^;
-  PPointer(A)^ := PPointer(b)^;
+  Temp := PPointer(a)^;
+  PPointer(a)^ := PPointer(b)^;
   PPointer(b)^ := Temp;
 end;
 
@@ -960,53 +960,53 @@ begin
   Result.Point2 := Point2;
 end;
 
-function PointInteger(X, Y: Integer): TPointInteger;
+function PointInteger(x, y: Integer): TPointInteger;
 begin
-  Result.X := X;
-  Result.Y := Y;
+  Result.x := x;
+  Result.y := y;
 end;
 
 function PointInteger(Value: Integer): TPointInteger;
 begin
-  Result.X := Value;
-  Result.Y := Value;
+  Result.x := Value;
+  Result.y := Value;
 end;
 
-function PointDouble(X, Y: Double): TPointDouble;
+function PointDouble(x, y: Double): TPointDouble;
 begin
-  Result.X := X;
-  Result.Y := Y;
+  Result.x := x;
+  Result.y := y;
 end;
 
 function PointDouble(Value: Double): TPointDouble;
 begin
-  Result.X := Value;
-  Result.Y := Value;
+  Result.x := Value;
+  Result.y := Value;
 end;
 
 function PointIntegerOffset(Point: TPointInteger; Value: Integer)
   : TPointInteger;
 begin
-  Result.X := Point.X + Value;
-  Result.Y := Point.Y + Value;
+  Result.x := Point.x + Value;
+  Result.y := Point.y + Value;
 end;
 
 function PointDoubleOffset(Point: TPointDouble; Value: Double): TPointDouble;
 begin
-  Result.X := Point.X + Value;
-  Result.Y := Point.Y + Value;
+  Result.x := Point.x + Value;
+  Result.y := Point.y + Value;
 end;
 
 function PointIntegerScale(Point: TPointInteger; Value: Integer): TPointInteger;
 begin
-  Result.X := Point.X * Value;
-  Result.Y := Point.Y * Value;
+  Result.x := Point.x * Value;
+  Result.y := Point.y * Value;
 end;
 
 function PointDoubleScale(Point: TPointDouble; Value: Double): TPointDouble;
 begin
-  Result.X := Point.X * Value;
-  Result.Y := Point.Y * Value;
+  Result.x := Point.x * Value;
+  Result.y := Point.y * Value;
 end;
 
 function QuadDouble(RectDouble: TRectDouble): TQuadDouble;
@@ -1076,15 +1076,14 @@ begin
   Result := i div (1 shl Shift);
 end;
 
-procedure Fill32Bit(var X; Count: Cardinal; var Value);
+procedure Fill32Bit(var x; Count: Cardinal; var Value);
 var
   i: Integer;
   p: PIntegerArray;
 begin
-  p := PIntegerArray(@X);
+  p := PIntegerArray(@x);
   for i := Count - 1 downto 0 do
       p[i] := Integer(Value);
 end;
 
-end. 
- 
+end.

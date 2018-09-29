@@ -37,11 +37,8 @@
 *)
 unit AggVcgenDash;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVertexSource,
@@ -88,11 +85,11 @@ type
 
     // Vertex Generator Interface
     procedure RemoveAll; override;
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); override;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); override;
 
     // Vertex Source Interface
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property Shorten: Double read GetShorten write SetShorten;
     property DashStart: Double read FDashStart write SetDashStart;
@@ -141,11 +138,11 @@ begin
 
       FDashes[FNumDashes] := DashLength;
 
-      Inc(FNumDashes);
+      inc(FNumDashes);
 
       FDashes[FNumDashes] := GapLength;
 
-      Inc(FNumDashes);
+      inc(FNumDashes);
     end;
 end;
 
@@ -175,13 +172,13 @@ begin
   FClosed := 0;
 end;
 
-procedure TAggVcgenDash.AddVertex(X, Y: Double; Cmd: Cardinal);
+procedure TAggVcgenDash.AddVertex(x, y: Double; Cmd: Cardinal);
 var
   VD: TAggVertexDistance;
 begin
   FStatus := siInitial;
 
-  VD.pos := PointDouble(X, Y);
+  VD.Pos := PointDouble(x, y);
   VD.Dist := 0;
 
   if IsMoveTo(Cmd) then
@@ -205,7 +202,7 @@ begin
   FSourceVertex := 0;
 end;
 
-function TAggVcgenDash.Vertex(X, Y: PDouble): Cardinal;
+function TAggVcgenDash.Vertex(x, y: PDouble): Cardinal;
 var
   DashRest, Temp: Double;
 label
@@ -240,8 +237,8 @@ begin
 
           FCurrentRest := FVertex1.Dist;
 
-          X^ := FVertex1.pos.X;
-          Y^ := FVertex1.pos.Y;
+          x^ := FVertex1.Pos.x;
+          y^ := FVertex1.Pos.y;
 
           if FDashStart >= 0.0 then
               CalculateDashStart(FDashStart);
@@ -264,7 +261,7 @@ begin
             begin
               FCurrentRest := FCurrentRest - DashRest;
 
-              Inc(FCurrentDash);
+              inc(FCurrentDash);
 
               if FCurrentDash >= FNumDashes then
                   FCurrentDash := 0;
@@ -272,17 +269,17 @@ begin
               FCurrDashStart := 0.0;
 
               Temp := FCurrentRest / FVertex1.Dist;
-              X^ := FVertex2.pos.X - (FVertex2.pos.X - FVertex1.pos.X) * Temp;
-              Y^ := FVertex2.pos.Y - (FVertex2.pos.Y - FVertex1.pos.Y) * Temp;
+              x^ := FVertex2.Pos.x - (FVertex2.Pos.x - FVertex1.Pos.x) * Temp;
+              y^ := FVertex2.Pos.y - (FVertex2.Pos.y - FVertex1.Pos.y) * Temp;
             end
           else
             begin
               FCurrDashStart := FCurrDashStart + FCurrentRest;
 
-              X^ := FVertex2.pos.X;
-              Y^ := FVertex2.pos.Y;
+              x^ := FVertex2.Pos.x;
+              y^ := FVertex2.Pos.y;
 
-              Inc(FSourceVertex);
+              inc(FSourceVertex);
 
               FVertex1 := FVertex2;
 
@@ -319,7 +316,7 @@ begin
       begin
         DS := DS - FDashes[FCurrentDash];
 
-        Inc(FCurrentDash);
+        inc(FCurrentDash);
 
         FCurrDashStart := 0.0;
 
@@ -336,4 +333,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

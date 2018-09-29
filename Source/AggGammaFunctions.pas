@@ -37,11 +37,8 @@
 *)
 unit AggGammaFunctions;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   Math,
   AggBasics,
@@ -57,7 +54,7 @@ type
     constructor Create; overload;
     constructor Create(Gamma: Double); overload;
 
-    function FuncOperatorGamma(X: Double): Double; override;
+    function FuncOperatorGamma(x: Double): Double; override;
 
     property Gamma: Double read FGamma write FGamma;
   end;
@@ -69,7 +66,7 @@ type
     constructor Create; overload;
     constructor Create(Threshold: Double); overload;
 
-    function FuncOperatorGamma(X: Double): Double; override;
+    function FuncOperatorGamma(x: Double): Double; override;
 
     property Threshold: Double read FThreshold write FThreshold;
   end;
@@ -83,7 +80,7 @@ type
 
     procedure SetStartEnd(StartGamma, EndGamma: Double);
 
-    function FuncOperatorGamma(X: Double): Double; override;
+    function FuncOperatorGamma(x: Double): Double; override;
 
     property StartGamma: Double read FStartGamma write FStartGamma;
     property EndGamma: Double read FEndGamma write FEndGamma;
@@ -96,7 +93,7 @@ type
     constructor Create; overload;
     constructor Create(v: Double); overload;
 
-    function FuncOperatorGamma(X: Double): Double; override;
+    function FuncOperatorGamma(x: Double): Double; override;
 
     property Value: Double read FMul write FMul;
   end;
@@ -116,10 +113,10 @@ begin
   FGamma := Gamma;
 end;
 
-function TAggGammaPower.FuncOperatorGamma(X: Double): Double;
+function TAggGammaPower.FuncOperatorGamma(x: Double): Double;
 begin
   try
-      Result := Power(X, FGamma);
+      Result := Power(x, FGamma);
   except
       Result := 1;
   end;
@@ -139,7 +136,7 @@ end;
 
 function TAggGammaThreshold.FuncOperatorGamma;
 begin
-  if X < FThreshold then
+  if x < FThreshold then
       Result := 0.0
   else
       Result := 1.0;
@@ -167,12 +164,12 @@ end;
 
 function TAggGammaLinear.FuncOperatorGamma;
 begin
-  if X < FStartGamma then
+  if x < FStartGamma then
       Result := 0
-  else if X > FEndGamma then
+  else if x > FEndGamma then
       Result := 1
   else if FEndGamma - FStartGamma <> 0 then
-      Result := (X - FStartGamma) / (FEndGamma - FStartGamma)
+      Result := (x - FStartGamma) / (FEndGamma - FStartGamma)
   else
       Result := 0;
 end;
@@ -191,14 +188,16 @@ end;
 
 function TAggGammaMultiply.FuncOperatorGamma;
 var
-  Y: Double;
+  y: Double;
 begin
-  Y := X * FMul;
+  y := x * FMul;
 
-  if Y > 1.0 then
-      Y := 1.0;
+  if y > 1.0 then
+      y := 1.0;
 
-  Result := Y;
+  Result := y;
 end;
 
 end. 
+ 
+ 

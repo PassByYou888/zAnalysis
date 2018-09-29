@@ -55,11 +55,8 @@ unit AggRasterizerScanLineAA;
   ////////////////////////////////////////////////////////////////////////////////
 *)
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggArray,
@@ -99,8 +96,8 @@ type
   PPAggCellAA = ^PAggCellAA;
   PAggCellAA  = ^TAggCellAA;
 
-  TAggCellAA = packed record
-    X, Y, Cover, Area: Integer;
+  TAggCellAA = record
+    x, y, Cover, Area: Integer;
   end;
 
   // An internal class that implements the main rasterization algorithm.
@@ -108,7 +105,7 @@ type
 
   PAggSortedY = ^TAggSortedY;
 
-  TAggSortedY = packed record
+  TAggSortedY = record
     Start, Num: Cardinal;
   end;
 
@@ -130,17 +127,17 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    procedure MoveTo(X, Y: Integer);
-    procedure LineTo(X, Y: Integer);
+    procedure MoveTo(x, y: Integer);
+    procedure LineTo(x, y: Integer);
 
     procedure Reset;
 
     procedure AddCurrentCell;
-    procedure SetCurrentCell(X, Y: Integer);
+    procedure SetCurrentCell(x, y: Integer);
 
     procedure SortCells;
-    function ScanLineNumCells(Y: Cardinal): Cardinal;
-    function ScanLineCells(Y: Cardinal): PPAggCellAA;
+    function ScanLineNumCells(y: Cardinal): Cardinal;
+    function ScanLineCells(y: Cardinal): PPAggCellAA;
 
     procedure RenderLine(x1, y1, x2, y2: Integer);
     procedure RenderHorizontalLine(EY, x1, y1, x2, y2: Integer);
@@ -149,10 +146,10 @@ type
 
     property TotalCells: Cardinal read FNumCells;
     property Sorted: Boolean read FSorted;
-    property MinX: Integer read FMin.X;
-    property MinY: Integer read FMin.Y;
-    property MaxX: Integer read FMax.X;
-    property MaxY: Integer read FMax.Y;
+    property MinX: Integer read FMin.x;
+    property MinY: Integer read FMin.y;
+    property MaxX: Integer read FMax.x;
+    property MaxY: Integer read FMax.y;
   end;
 
   TAggScanLineHitTest = class(TAggCustomScanLine)
@@ -162,13 +159,13 @@ type
   protected
     function GetNumSpans: Cardinal; override;
   public
-    constructor Create(X: Integer);
+    constructor Create(x: Integer);
 
     procedure ResetSpans; override;
 
-    procedure Finalize(Y: Integer); override;
-    procedure AddCell(X: Integer; Cover: Cardinal); override;
-    procedure AddSpan(X: Integer; Len, Cover: Cardinal); override;
+    procedure Finalize(y: Integer); override;
+    procedure AddCell(x: Integer; Cover: Cardinal); override;
+    procedure AddSpan(x: Integer; Len, Cover: Cardinal); override;
 
     property Hit: Boolean read FHit;
   end;
@@ -248,36 +245,36 @@ type
     procedure Gamma(AGammaFunction: TAggCustomVertexSource); override;
     function ApplyGamma(Cover: Cardinal): Cardinal;
 
-    procedure MoveToNoClip(X, Y: Integer); overload;
+    procedure MoveToNoClip(x, y: Integer); overload;
     procedure MoveToNoClip(Point: TPointInteger); overload;
-    procedure LineToNoClip(X, Y: Integer); overload;
+    procedure LineToNoClip(x, y: Integer); overload;
     procedure LineToNoClip(Point: TPointInteger); overload;
 
-    procedure ClipSegment(X, Y: Integer); overload;
+    procedure ClipSegment(x, y: Integer); overload;
     procedure ClipSegment(Point: TPointInteger); overload;
 
-    procedure MoveToDouble(X, Y: Double); overload;
+    procedure MoveToDouble(x, y: Double); overload;
     procedure MoveToDouble(Point: TPointDouble); overload;
-    procedure LineToDouble(X, Y: Double); overload;
+    procedure LineToDouble(x, y: Double); overload;
     procedure LineToDouble(Point: TPointDouble); overload;
 
-    procedure MoveTo(X, Y: Integer); overload;
+    procedure MoveTo(x, y: Integer); overload;
     procedure MoveTo(Point: TPointInteger); overload;
-    procedure LineTo(X, Y: Integer); overload;
+    procedure LineTo(x, y: Integer); overload;
     procedure LineTo(Point: TPointInteger); overload;
 
     procedure Sort; override;
     function RewindScanLines: Boolean; override;
     function SweepScanLine(SL: TAggCustomScanLine): Boolean; override;
 
-    function NavigateScanLine(Y: Integer): Boolean;
+    function NavigateScanLine(y: Integer): Boolean;
 
     function HitTest(TX, TY: Integer): Boolean; override;
 
     function CalculateAlpha(Area: Integer): Cardinal;
 
     procedure AddPath(Vs: TAggCustomVertexSource; PathID: Cardinal = 0); override;
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); override;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); override;
   end;
 
 function PolyCoord(Value: Double): Integer; overload;
@@ -294,8 +291,8 @@ end;
 
 function PolyCoord(Value: TPointDouble): TPointInteger;
 begin
-  Result.X := Trunc(Value.X * CAggPolyBaseSize);
-  Result.Y := Trunc(Value.Y * CAggPolyBaseSize);
+  Result.x := Trunc(Value.x * CAggPolyBaseSize);
+  Result.y := Trunc(Value.y * CAggPolyBaseSize);
 end;
 
 function PolyCoord(Value: TRectDouble): TRectInteger; overload;
@@ -318,12 +315,12 @@ begin
   FCurBlock := 0;
   FNumCells := 0;
 
-  FCur.X := 0;
-  FCur.Y := 0;
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FCur.x := 0;
+  FCur.y := 0;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 
   FSorted := False;
 
@@ -332,8 +329,8 @@ begin
 
   with FCurCell do
     begin
-      X := $7FFF;
-      Y := $7FFF;
+      x := $7FFF;
+      y := $7FFF;
 
       Cover := 0;
       Area := 0;
@@ -348,7 +345,7 @@ begin
   if FNumBlocks > 0 then
     begin
       repeat
-        Dec(FNumBlocks);
+        dec(FNumBlocks);
 
         AggFreeMem(Pointer(Pointer(PtrComp(FCells) + FNumBlocks *
           SizeOf(PAggCellAA))^), CAggCellBlockSize * SizeOf(TAggCellAA));
@@ -360,24 +357,24 @@ begin
   inherited;
 end;
 
-procedure TAggOutlineAA.MoveTo(X, Y: Integer);
+procedure TAggOutlineAA.MoveTo(x, y: Integer);
 begin
   if FSorted then
       Reset;
 
   // SetCurrentCell(x shr CAggPolyBaseShift ,y shr CAggPolyBaseShift );
-  SetCurrentCell(ShrInt32(X, CAggPolyBaseShift), ShrInt32(Y, CAggPolyBaseShift));
+  SetCurrentCell(ShrInt32(x, CAggPolyBaseShift), ShrInt32(y, CAggPolyBaseShift));
 
-  FCur.X := X;
-  FCur.Y := Y;
+  FCur.x := x;
+  FCur.y := y;
 end;
 
-procedure TAggOutlineAA.LineTo(X, Y: Integer);
+procedure TAggOutlineAA.LineTo(x, y: Integer);
 begin
-  RenderLine(FCur.X, FCur.Y, X, Y);
+  RenderLine(FCur.x, FCur.y, x, y);
 
-  FCur.X := X;
-  FCur.Y := Y;
+  FCur.x := x;
+  FCur.y := y;
 
   FSorted := False;
 end;
@@ -387,17 +384,17 @@ begin
   FNumCells := 0;
   FCurBlock := 0;
 
-  FCurCell.X := $7FFF;
-  FCurCell.Y := $7FFF;
+  FCurCell.x := $7FFF;
+  FCurCell.y := $7FFF;
   FCurCell.Cover := 0;
   FCurCell.Area := 0;
 
   FSorted := False;
 
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 end;
 
 procedure TAggOutlineAA.AddCurrentCell;
@@ -414,31 +411,31 @@ begin
 
       FCurCellPointer^ := FCurCell;
 
-      Inc(PtrComp(FCurCellPointer), SizeOf(TAggCellAA));
-      Inc(FNumCells);
+      inc(PtrComp(FCurCellPointer), SizeOf(TAggCellAA));
+      inc(FNumCells);
 
-      if FCurCell.X < FMin.X then
-          FMin.X := FCurCell.X;
+      if FCurCell.x < FMin.x then
+          FMin.x := FCurCell.x;
 
-      if FCurCell.X > FMax.X then
-          FMax.X := FCurCell.X;
+      if FCurCell.x > FMax.x then
+          FMax.x := FCurCell.x;
 
-      if FCurCell.Y < FMin.Y then
-          FMin.Y := FCurCell.Y;
+      if FCurCell.y < FMin.y then
+          FMin.y := FCurCell.y;
 
-      if FCurCell.Y > FMax.Y then
-          FMax.Y := FCurCell.Y;
+      if FCurCell.y > FMax.y then
+          FMax.y := FCurCell.y;
     end;
 end;
 
-procedure TAggOutlineAA.SetCurrentCell(X, Y: Integer);
+procedure TAggOutlineAA.SetCurrentCell(x, y: Integer);
 begin
-  if (FCurCell.X <> X) or (FCurCell.Y <> Y) then
+  if (FCurCell.x <> x) or (FCurCell.y <> y) then
     begin
       AddCurrentCell;
 
-      FCurCell.X := X;
-      FCurCell.Y := Y;
+      FCurCell.x := x;
+      FCurCell.y := y;
 
       FCurCell.Cover := 0;
       FCurCell.Area := 0;
@@ -447,11 +444,11 @@ end;
 
 procedure QuickSortCells(Start: PPAggCellAA; Num: Cardinal);
 var
-  Len, X: Integer;
+  Len, x: Integer;
 
   Stack: array [0 .. 79] of PPAggCellAA;
   Limit, Base: PPAggCellAA;
-  i, J, Pivot: PPAggCellAA;
+  i, j, Pivot: PPAggCellAA;
   Top: ^PPAggCellAA;
 const
   CQSortThreshold = 9;
@@ -471,92 +468,92 @@ begin
         SwapPointers(Base, Pivot);
 
         i := PPAggCellAA(PtrComp(Base) + SizeOf(Pointer));
-        J := PPAggCellAA(PtrComp(Limit) - SizeOf(Pointer));
+        j := PPAggCellAA(PtrComp(Limit) - SizeOf(Pointer));
 
         // now ensure that *i <= *base <= *j
-        if J^.X < i^.X then
-            SwapPointers(J, i);
+        if j^.x < i^.x then
+            SwapPointers(j, i);
 
-        if Base^.X < i^.X then
+        if Base^.x < i^.x then
             SwapPointers(Base, i);
 
-        if J^.X < Base^.X then
-            SwapPointers(Base, J);
+        if j^.x < Base^.x then
+            SwapPointers(Base, j);
 
         repeat
-          X := Base^.X;
+          x := Base^.x;
 
-          Inc(PtrComp(i), SizeOf(PAggCellAA));
+          inc(PtrComp(i), SizeOf(PAggCellAA));
 
-          while i^.X < X do
-              Inc(PtrComp(i), SizeOf(PAggCellAA));
+          while i^.x < x do
+              inc(PtrComp(i), SizeOf(PAggCellAA));
 
-          Dec(PtrComp(J), SizeOf(PAggCellAA));
+          dec(PtrComp(j), SizeOf(PAggCellAA));
 
-          while X < J^.X do
-              Dec(PtrComp(J), SizeOf(PAggCellAA));
+          while x < j^.x do
+              dec(PtrComp(j), SizeOf(PAggCellAA));
 
-          if PtrComp(i) > PtrComp(J) then
+          if PtrComp(i) > PtrComp(j) then
               Break;
 
-          SwapPointers(i, J);
+          SwapPointers(i, j);
         until False;
 
-        SwapPointers(Base, J);
+        SwapPointers(Base, j);
 
         // now, push the largest sub-array
-        if (PtrComp(J) - PtrComp(Base)) div SizeOf(Pointer) >
+        if (PtrComp(j) - PtrComp(Base)) div SizeOf(Pointer) >
           (PtrComp(Limit) - PtrComp(i)) div SizeOf(Pointer)
         then
           begin
             Top^ := Base;
 
-            Inc(PtrComp(Top), SizeOf(PPAggCellAA));
+            inc(PtrComp(Top), SizeOf(PPAggCellAA));
 
-            Top^ := J;
+            Top^ := j;
             Base := i;
           end
         else
           begin
             Top^ := i;
 
-            Inc(PtrComp(Top), SizeOf(PPAggCellAA));
+            inc(PtrComp(Top), SizeOf(PPAggCellAA));
 
             Top^ := Limit;
-            Limit := J;
+            Limit := j;
           end;
 
-        Inc(PtrComp(Top), SizeOf(PPAggCellAA));
+        inc(PtrComp(Top), SizeOf(PPAggCellAA));
       end
     else
       begin
         // the sub-array is small, perform insertion sort
-        J := Base;
-        i := PPAggCellAA(PtrComp(J) + SizeOf(Pointer));
+        j := Base;
+        i := PPAggCellAA(PtrComp(j) + SizeOf(Pointer));
 
         while PtrComp(i) < PtrComp(Limit) do
           begin
-            while PPAggCellAA(PtrComp(J) + SizeOf(Pointer))^^.X < J^.X do
+            while PPAggCellAA(PtrComp(j) + SizeOf(Pointer))^^.x < j^.x do
               begin
-                SwapPointers(PPAggCellAA(PtrComp(J) + SizeOf(Pointer)), J);
-                if J = Base then
+                SwapPointers(PPAggCellAA(PtrComp(j) + SizeOf(Pointer)), j);
+                if j = Base then
                     Break;
 
-                Dec(J);
+                dec(j);
               end;
 
-            J := i;
+            j := i;
 
-            Inc(PtrComp(i), SizeOf(PAggCellAA));
+            inc(PtrComp(i), SizeOf(PAggCellAA));
           end;
 
         if PtrComp(Top) > PtrComp(@Stack[0]) then
           begin
-            Dec(PtrComp(Top), SizeOf(PPAggCellAA));
+            dec(PtrComp(Top), SizeOf(PPAggCellAA));
 
             Limit := Top^;
 
-            Dec(PtrComp(Top), SizeOf(PPAggCellAA));
+            dec(PtrComp(Top), SizeOf(PPAggCellAA));
 
             Base := Top^;
           end
@@ -588,7 +585,7 @@ begin
   FSortedCells.Allocate(FNumCells, 16);
 
   // Allocate and zero the Y array
-  FSortedY.Allocate(FMax.Y - FMin.Y + 1, 16);
+  FSortedY.Allocate(FMax.y - FMin.y + 1, 16);
   FSortedY.Zero;
 
   // Create the Y-histogram (count the numbers of cells for each Y)
@@ -597,39 +594,39 @@ begin
   nb := FNumCells shr CAggCellBlockShift;
 
   CurMinY := PAggSortedY(FSortedY.ArrayPointer);
-  Dec(CurMinY, FMin.Y);
+  dec(CurMinY, FMin.y);
 
   while nb > 0 do
     begin
-      Dec(nb);
+      dec(nb);
 
       CellPtr := BlockPtr^;
-      Inc(BlockPtr);
+      inc(BlockPtr);
       i := CAggCellBlockSize;
 
       while i > 0 do
         begin
-          Dec(i);
+          dec(i);
           CurY := CurMinY;
-          Inc(CurY, CellPtr^.Y);
-          Inc(CurY^.Start);
-          Inc(CellPtr);
+          inc(CurY, CellPtr^.y);
+          inc(CurY^.Start);
+          inc(CellPtr);
         end;
     end;
 
   CellPtr := BlockPtr^;
 
-  Inc(BlockPtr);
+  inc(BlockPtr);
 
   i := FNumCells and CAggCellBlockMask;
 
   while i > 0 do
     begin
-      Dec(i);
+      dec(i);
       CurY := CurMinY;
-      Inc(CurY, CellPtr^.Y);
-      Inc(CurY^.Start);
-      Inc(CellPtr);
+      inc(CurY, CellPtr^.y);
+      inc(CurY^.Start);
+      inc(CellPtr);
     end;
 
   // Convert the Y-histogram into the array of starting indexes
@@ -641,9 +638,9 @@ begin
       v := CurY^.Start;
 
       CurY^.Start := Start;
-      Inc(CurY);
+      inc(CurY);
 
-      Inc(Start, v);
+      inc(Start, v);
     end;
 
   // Fill the cell pointer array sorted by Y
@@ -653,45 +650,45 @@ begin
 
   while nb > 0 do
     begin
-      Dec(nb);
+      dec(nb);
 
       CellPtr := BlockPtr^;
 
-      Inc(BlockPtr);
+      inc(BlockPtr);
 
       i := CAggCellBlockSize;
 
       while i > 0 do
         begin
-          Dec(i);
+          dec(i);
 
           CurY := CurMinY;
-          Inc(CurY, CellPtr.Y);
+          inc(CurY, CellPtr.y);
 
           PPointer(PtrComp(FSortedCells.ArrayPointer) +
             Cardinal(CurY.Start + CurY.Num) * FSortedCells.EntrySize)^ := CellPtr;
 
-          Inc(CurY.Num);
-          Inc(CellPtr);
+          inc(CurY.Num);
+          inc(CellPtr);
         end;
     end;
 
   CellPtr := BlockPtr^;
-  Inc(BlockPtr);
+  inc(BlockPtr);
   i := FNumCells and CAggCellBlockMask;
 
   while i > 0 do
     begin
-      Dec(i);
+      dec(i);
 
       CurY := CurMinY;
-      Inc(CurY, CellPtr.Y);
+      inc(CurY, CellPtr.y);
 
       PPointer(PtrComp(FSortedCells.ArrayPointer) +
         Cardinal(CurY.Start + CurY.Num) * FSortedCells.EntrySize)^ := CellPtr;
 
-      Inc(CurY.Num);
-      Inc(CellPtr);
+      inc(CurY.Num);
+      inc(CellPtr);
     end;
 
   // Finally arrange the X-arrays
@@ -701,22 +698,22 @@ begin
       if CurY.Num > 0 then
           QuickSortCells(PPAggCellAA(PtrComp(FSortedCells.ArrayPointer) + CurY.Start
           * FSortedCells.EntrySize), CurY.Num);
-      Inc(CurY);
+      inc(CurY);
     end;
 
   FSorted := True;
 end;
 
-function TAggOutlineAA.ScanLineNumCells(Y: Cardinal): Cardinal;
+function TAggOutlineAA.ScanLineNumCells(y: Cardinal): Cardinal;
 begin
-  Result := PAggSortedY(PtrComp(FSortedY.ArrayPointer) + Cardinal(Y - FMin.Y) *
+  Result := PAggSortedY(PtrComp(FSortedY.ArrayPointer) + Cardinal(y - FMin.y) *
     FSortedY.EntrySize).Num;
 end;
 
-function TAggOutlineAA.ScanLineCells(Y: Cardinal): PPAggCellAA;
+function TAggOutlineAA.ScanLineCells(y: Cardinal): PPAggCellAA;
 begin
   Result := PPAggCellAA(PtrComp(FSortedCells.ArrayPointer) +
-    PAggSortedY(PtrComp(FSortedY.ArrayPointer) + Cardinal(Y - FMin.Y) *
+    PAggSortedY(PtrComp(FSortedY.ArrayPointer) + Cardinal(y - FMin.y) *
     FSortedY.EntrySize).Start * FSortedCells.EntrySize);
 end;
 
@@ -728,18 +725,18 @@ var
 const
   CDxLimit = 16384 shl CAggPolyBaseShift;
 begin
-  Delta.X := x2 - x1;
+  Delta.x := x2 - x1;
 
-  if (Delta.X >= CDxLimit) or (Delta.X <= -CDxLimit) then
+  if (Delta.x >= CDxLimit) or (Delta.x <= -CDxLimit) then
     begin
-      center.X := (x1 + x2) shr 1;
-      center.Y := (y1 + y2) shr 1;
+      center.x := (x1 + x2) shr 1;
+      center.y := (y1 + y2) shr 1;
 
-      RenderLine(x1, y1, center.X, center.Y);
-      RenderLine(center.X, center.Y, x2, y2);
+      RenderLine(x1, y1, center.x, center.y);
+      RenderLine(center.x, center.y, x2, y2);
     end;
 
-  Delta.Y := y2 - y1;
+  Delta.y := y2 - y1;
 
   // ey1:=y1 shr CAggPolyBaseShift;
   // ey2:=y2 shr CAggPolyBaseShift;
@@ -762,7 +759,7 @@ begin
   // cell, so, we don't have to call render_HorizontalLine().
   Incr := 1;
 
-  if Delta.X = 0 then
+  if Delta.x = 0 then
     begin
       // Ex := x1 shr CAggPolyBaseShift;
       EX := ShrInt32(x1, CAggPolyBaseShift);
@@ -770,7 +767,7 @@ begin
       TwoFX := (x1 - (EX shl CAggPolyBaseShift)) shl 1;
       First := CAggPolyBaseSize;
 
-      if Delta.Y < 0 then
+      if Delta.y < 0 then
         begin
           First := 0;
           Incr := -1;
@@ -781,9 +778,9 @@ begin
       // RenderHorizontalLine(ey1 ,FromX ,fy1 ,FromX ,first );
       DeltaVal := First - FY1;
 
-      Inc(FCurCell.Cover, DeltaVal);
-      Inc(FCurCell.Area, TwoFX * DeltaVal);
-      Inc(Ey1, Incr);
+      inc(FCurCell.Cover, DeltaVal);
+      inc(FCurCell.Area, TwoFX * DeltaVal);
+      inc(Ey1, Incr);
 
       SetCurrentCell(EX, Ey1);
 
@@ -796,7 +793,7 @@ begin
           FCurCell.Cover := DeltaVal;
           FCurCell.Area := Area;
 
-          Inc(Ey1, Incr);
+          inc(Ey1, Incr);
 
           SetCurrentCell(EX, Ey1);
         end;
@@ -804,66 +801,66 @@ begin
       // RenderHorizontalLine(ey1, FromX, CAggPolyBaseSize - first, FromX, fy2);
       DeltaVal := FY2 - CAggPolyBaseSize + First;
 
-      Inc(FCurCell.Cover, DeltaVal);
-      Inc(FCurCell.Area, TwoFX * DeltaVal);
+      inc(FCurCell.Cover, DeltaVal);
+      inc(FCurCell.Area, TwoFX * DeltaVal);
 
       Exit;
     end;
 
   // ok, we have to render several HorizontalLines
-  p := (CAggPolyBaseSize - FY1) * Delta.X;
+  p := (CAggPolyBaseSize - FY1) * Delta.x;
   First := CAggPolyBaseSize;
 
-  if Delta.Y < 0 then
+  if Delta.y < 0 then
     begin
-      p := FY1 * Delta.X;
+      p := FY1 * Delta.x;
       First := 0;
       Incr := -1;
-      Delta.Y := -Delta.Y;
+      Delta.y := -Delta.y;
     end;
 
-  DeltaVal := p div Delta.Y;
-  DeltaMod := p mod Delta.Y;
+  DeltaVal := p div Delta.y;
+  DeltaMod := p mod Delta.y;
 
   if DeltaMod < 0 then
     begin
-      Dec(DeltaVal);
-      Inc(DeltaMod, Delta.Y);
+      dec(DeltaVal);
+      inc(DeltaMod, Delta.y);
     end;
 
   FromX := x1 + DeltaVal;
 
   RenderHorizontalLine(Ey1, x1, FY1, FromX, First);
 
-  Inc(Ey1, Incr);
+  inc(Ey1, Incr);
 
   // SetCurrentCell(FromX shr CAggPolyBaseShift ,ey1 );
   SetCurrentCell(ShrInt32(FromX, CAggPolyBaseShift), Ey1);
 
   if Ey1 <> Ey2 then
     begin
-      p := CAggPolyBaseSize * Delta.X;
-      Lift := p div Delta.Y;
-      Rem := p mod Delta.Y;
+      p := CAggPolyBaseSize * Delta.x;
+      Lift := p div Delta.y;
+      Rem := p mod Delta.y;
 
       if Rem < 0 then
         begin
-          Dec(Lift);
-          Inc(Rem, Delta.Y);
+          dec(Lift);
+          inc(Rem, Delta.y);
         end;
 
-      Dec(DeltaMod, Delta.Y);
+      dec(DeltaMod, Delta.y);
 
       while Ey1 <> Ey2 do
         begin
           DeltaVal := Lift;
 
-          Inc(DeltaMod, Rem);
+          inc(DeltaMod, Rem);
 
           if DeltaMod >= 0 then
             begin
-              Dec(DeltaMod, Delta.Y);
-              Inc(DeltaVal);
+              dec(DeltaMod, Delta.y);
+              inc(DeltaVal);
             end;
 
           tox := FromX + DeltaVal;
@@ -872,7 +869,7 @@ begin
 
           FromX := tox;
 
-          Inc(Ey1, Incr);
+          inc(Ey1, Incr);
 
           // SetCurrentCell(FromX shr CAggPolyBaseShift ,ey1 );
           SetCurrentCell(ShrInt32(FromX, CAggPolyBaseShift), Ey1);
@@ -906,8 +903,8 @@ begin
     begin
       Delta := y2 - y1;
 
-      Inc(FCurCell.Cover, Delta);
-      Inc(FCurCell.Area, (FX1 + FX2) * Delta);
+      inc(FCurCell.Cover, Delta);
+      inc(FCurCell.Area, (FX1 + FX2) * Delta);
 
       Exit;
     end;
@@ -932,18 +929,18 @@ begin
 
   if DeltaMod < 0 then
     begin
-      Dec(Delta);
-      Inc(DeltaMod, deltax);
+      dec(Delta);
+      inc(DeltaMod, deltax);
     end;
 
-  Inc(FCurCell.Cover, Delta);
-  Inc(FCurCell.Area, (FX1 + First) * Delta);
+  inc(FCurCell.Cover, Delta);
+  inc(FCurCell.Area, (FX1 + First) * Delta);
 
-  Inc(Ex1, Incr);
+  inc(Ex1, Incr);
 
   SetCurrentCell(Ex1, EY);
 
-  Inc(y1, Delta);
+  inc(y1, Delta);
 
   if Ex1 <> Ex2 then
     begin
@@ -953,28 +950,28 @@ begin
 
       if Rem < 0 then
         begin
-          Dec(Lift);
-          Inc(Rem, deltax);
+          dec(Lift);
+          inc(Rem, deltax);
         end;
 
-      Dec(DeltaMod, deltax);
+      dec(DeltaMod, deltax);
 
       while Ex1 <> Ex2 do
         begin
           Delta := Lift;
 
-          Inc(DeltaMod, Rem);
+          inc(DeltaMod, Rem);
 
           if DeltaMod >= 0 then
             begin
-              Dec(DeltaMod, deltax);
-              Inc(Delta);
+              dec(DeltaMod, deltax);
+              inc(Delta);
             end;
 
-          Inc(FCurCell.Cover, Delta);
-          Inc(FCurCell.Area, (CAggPolyBaseSize) * Delta);
-          Inc(y1, Delta);
-          Inc(Ex1, Incr);
+          inc(FCurCell.Cover, Delta);
+          inc(FCurCell.Area, (CAggPolyBaseSize) * Delta);
+          inc(y1, Delta);
+          inc(Ex1, Incr);
 
           SetCurrentCell(Ex1, EY);
         end;
@@ -982,8 +979,8 @@ begin
 
   Delta := y2 - y1;
 
-  Inc(FCurCell.Cover, Delta);
-  Inc(FCurCell.Area, (FX2 + CAggPolyBaseSize - First) * Delta);
+  inc(FCurCell.Cover, Delta);
+  inc(FCurCell.Area, (FX2 + CAggPolyBaseSize - First) * Delta);
 end;
 
 procedure TAggOutlineAA.AllocateBlock;
@@ -1006,26 +1003,26 @@ begin
 
           FCells := NewCells;
 
-          Inc(FMaxBlocks, CAggCellBlockPool);
+          inc(FMaxBlocks, CAggCellBlockPool);
         end;
 
       AggGetMem(Pointer(Pointer(PtrComp(FCells) + FNumBlocks *
         SizeOf(PAggCellAA))^), CAggCellBlockSize * SizeOf(TAggCellAA));
 
-      Inc(FNumBlocks);
+      inc(FNumBlocks);
     end;
 
   FCurCellPointer := PPAggCellAA(PtrComp(FCells) + FCurBlock *
     SizeOf(PAggCellAA))^;
 
-  Inc(FCurBlock);
+  inc(FCurBlock);
 end;
 
 { TAggScanLineHitTest }
 
 constructor TAggScanLineHitTest.Create;
 begin
-  fx := X;
+  fx := x;
   FHit := False;
 end;
 
@@ -1033,19 +1030,19 @@ procedure TAggScanLineHitTest.ResetSpans;
 begin
 end;
 
-procedure TAggScanLineHitTest.Finalize(Y: Integer);
+procedure TAggScanLineHitTest.Finalize(y: Integer);
 begin
 end;
 
-procedure TAggScanLineHitTest.AddCell(X: Integer; Cover: Cardinal);
+procedure TAggScanLineHitTest.AddCell(x: Integer; Cover: Cardinal);
 begin
-  if fx = X then
+  if fx = x then
       FHit := True;
 end;
 
-procedure TAggScanLineHitTest.AddSpan(X: Integer; Len, Cover: Cardinal);
+procedure TAggScanLineHitTest.AddSpan(x: Integer; Len, Cover: Cardinal);
 begin
-  if (fx >= X) and (fx < X + Len) then
+  if (fx >= x) and (fx < x + Len) then
       FHit := True;
 end;
 
@@ -1136,14 +1133,14 @@ begin
   Result := FGamma[Cover];
 end;
 
-procedure TAggRasterizerScanLineAA.MoveToNoClip(X, Y: Integer);
+procedure TAggRasterizerScanLineAA.MoveToNoClip(x, y: Integer);
 begin
   if (FStatus = siStatusLineTo) and FAutoClose then
       ClosePolygonNoClip;
 
-  FOutline.MoveTo(X * FXScale, Y);
+  FOutline.MoveTo(x * FXScale, y);
 
-  FClippedStart := PointInteger(X, Y);
+  FClippedStart := PointInteger(x, y);
 
   FStatus := siStatusLineTo;
 end;
@@ -1153,18 +1150,18 @@ begin
   if (FStatus = siStatusLineTo) and FAutoClose then
       ClosePolygonNoClip;
 
-  FOutline.MoveTo(Point.X * FXScale, Point.Y);
+  FOutline.MoveTo(Point.x * FXScale, Point.y);
 
   FClippedStart := Point;
 
   FStatus := siStatusLineTo;
 end;
 
-procedure TAggRasterizerScanLineAA.LineToNoClip(X, Y: Integer);
+procedure TAggRasterizerScanLineAA.LineToNoClip(x, y: Integer);
 begin
   if FStatus <> siStatusInitial then
     begin
-      FOutline.LineTo(X * FXScale, Y);
+      FOutline.LineTo(x * FXScale, y);
 
       FStatus := siStatusLineTo;
     end;
@@ -1174,7 +1171,7 @@ procedure TAggRasterizerScanLineAA.LineToNoClip(Point: TPointInteger);
 begin
   if FStatus <> siStatusInitial then
     begin
-      FOutline.LineTo(Point.X * FXScale, Point.Y);
+      FOutline.LineTo(Point.x * FXScale, Point.y);
 
       FStatus := siStatusLineTo;
     end;
@@ -1193,31 +1190,31 @@ procedure TAggRasterizerScanLineAA.ClosePolygonNoClip;
 begin
   if FStatus = siStatusLineTo then
     begin
-      FOutline.LineTo(FClippedStart.X * FXScale, FClippedStart.Y);
+      FOutline.LineTo(FClippedStart.x * FXScale, FClippedStart.y);
 
       FStatus := siStatusClosed;
     end;
 end;
 
-procedure TAggRasterizerScanLineAA.ClipSegment(X, Y: Integer);
+procedure TAggRasterizerScanLineAA.ClipSegment(x, y: Integer);
 var
   Flags, n: Cardinal;
 
   center: array [0 .. 3] of TPointInteger;
   Pnt: PPointInteger;
 begin
-  Flags := ClippingFlagsInteger(X, Y, FClipBox);
+  Flags := ClippingFlagsInteger(x, y, FClipBox);
 
   if FPrevFlags = Flags then
     if Flags = 0 then
       if FStatus = siStatusInitial then
-          MoveToNoClip(X, Y)
+          MoveToNoClip(x, y)
       else
-          LineToNoClip(X, Y)
+          LineToNoClip(x, y)
     else
   else
     begin
-      n := ClipLiangBarskyInteger(FPrev.X, FPrev.Y, X, Y, FClipBox, @center[0]);
+      n := ClipLiangBarskyInteger(FPrev.x, FPrev.y, x, y, FClipBox, @center[0]);
 
       Pnt := @center[0];
 
@@ -1228,13 +1225,13 @@ begin
           else
               LineToNoClip(Pnt^);
 
-          Inc(Pnt);
-          Dec(n);
+          inc(Pnt);
+          dec(n);
         end;
     end;
 
   FPrevFlags := Flags;
-  FPrev := PointInteger(X, Y);
+  FPrev := PointInteger(x, y);
 end;
 
 procedure TAggRasterizerScanLineAA.ClipSegment(Point: TPointInteger);
@@ -1244,7 +1241,7 @@ var
   center: array [0 .. 3] of TPointInteger;
   Pnt: PPointInteger;
 begin
-  Flags := ClippingFlagsInteger(Point.X, Point.Y, FClipBox);
+  Flags := ClippingFlagsInteger(Point.x, Point.y, FClipBox);
 
   if FPrevFlags = Flags then
     if Flags = 0 then
@@ -1255,10 +1252,10 @@ begin
     else
   else
     begin
-      n := ClipLiangBarskyInteger(FPrev.X, FPrev.Y, Point.X, Point.Y, FClipBox,
+      n := ClipLiangBarskyInteger(FPrev.x, FPrev.y, Point.x, Point.y, FClipBox,
         @center[0]);
 
-      Pnt := @center[0].X;
+      Pnt := @center[0].x;
 
       while n > 0 do
         begin
@@ -1267,8 +1264,8 @@ begin
           else
               LineToNoClip(Pnt^);
 
-          Inc(Pnt);
-          Dec(n);
+          inc(Pnt);
+          dec(n);
         end;
     end;
 
@@ -1276,14 +1273,14 @@ begin
   FPrev := Point;
 end;
 
-procedure TAggRasterizerScanLineAA.MoveToDouble(X, Y: Double);
+procedure TAggRasterizerScanLineAA.MoveToDouble(x, y: Double);
 begin
-  MoveTo(PolyCoord(X), PolyCoord(Y));
+  MoveTo(PolyCoord(x), PolyCoord(y));
 end;
 
-procedure TAggRasterizerScanLineAA.LineToDouble(X, Y: Double);
+procedure TAggRasterizerScanLineAA.LineToDouble(x, y: Double);
 begin
-  LineTo(PolyCoord(X), PolyCoord(Y));
+  LineTo(PolyCoord(x), PolyCoord(y));
 end;
 
 procedure TAggRasterizerScanLineAA.MoveToDouble(Point: TPointDouble);
@@ -1310,7 +1307,7 @@ begin
       FStart := Point;
       FStatus := siStatusInitial;
 
-      FPrevFlags := ClippingFlagsInteger(Point.X, Point.Y, FClipBox);
+      FPrevFlags := ClippingFlagsInteger(Point.x, Point.y, FClipBox);
 
       if FPrevFlags = 0 then
           MoveToNoClip(Point);
@@ -1319,7 +1316,7 @@ begin
       MoveToNoClip(Point);
 end;
 
-procedure TAggRasterizerScanLineAA.MoveTo(X, Y: Integer);
+procedure TAggRasterizerScanLineAA.MoveTo(x, y: Integer);
 begin
   if FClipping then
     begin
@@ -1329,17 +1326,17 @@ begin
       if (FStatus = siStatusLineTo) and FAutoClose then
           ClosePolygon;
 
-      FPrev := PointInteger(X, Y);
-      FStart := PointInteger(X, Y);
+      FPrev := PointInteger(x, y);
+      FStart := PointInteger(x, y);
       FStatus := siStatusInitial;
 
-      FPrevFlags := ClippingFlagsInteger(X, Y, FClipBox);
+      FPrevFlags := ClippingFlagsInteger(x, y, FClipBox);
 
       if FPrevFlags = 0 then
-          MoveToNoClip(X, Y);
+          MoveToNoClip(x, y);
     end
   else
-      MoveToNoClip(X, Y);
+      MoveToNoClip(x, y);
 end;
 
 procedure TAggRasterizerScanLineAA.LineTo(Point: TPointInteger);
@@ -1350,12 +1347,12 @@ begin
       LineToNoClip(Point);
 end;
 
-procedure TAggRasterizerScanLineAA.LineTo(X, Y: Integer);
+procedure TAggRasterizerScanLineAA.LineTo(x, y: Integer);
 begin
   if FClipping then
-      ClipSegment(X, Y)
+      ClipSegment(x, y)
   else
-      LineToNoClip(X, Y);
+      LineToNoClip(x, y);
 end;
 
 procedure TAggRasterizerScanLineAA.Sort;
@@ -1383,7 +1380,7 @@ end;
 
 function TAggRasterizerScanLineAA.SweepScanLine(SL: TAggCustomScanLine): Boolean;
 var
-  X, Area: Integer;
+  x, Area: Integer;
   Cover: Integer;
   alpha: Cardinal;
   Cells: PPAggCellAA;
@@ -1410,27 +1407,27 @@ begin
       begin
         CurCell := Cells^;
 
-        X := CurCell.X;
+        x := CurCell.x;
         Area := CurCell.Area;
 
-        Inc(Cover, CurCell.Cover);
+        inc(Cover, CurCell.Cover);
 
         // accumulate all cells with the same X
-        Dec(NumCells);
+        dec(NumCells);
 
         while NumCells > 0 do
           begin
-            Inc(Cells);
+            inc(Cells);
 
             CurCell := Cells^;
 
-            if CurCell.X <> X then
+            if CurCell.x <> x then
                 Break;
 
-            Inc(Area, CurCell.Area);
-            Inc(Cover, CurCell.Cover);
+            inc(Area, CurCell.Area);
+            inc(Cover, CurCell.Cover);
 
-            Dec(NumCells);
+            dec(NumCells);
           end;
 
         if Area <> 0 then
@@ -1438,49 +1435,49 @@ begin
             alpha := CalculateAlpha((Cover shl (CAggPolyBaseShift + 1)) - Area);
 
             if alpha <> 0 then
-                SL.AddCell(X, alpha);
+                SL.AddCell(x, alpha);
 
-            Inc(X);
+            inc(x);
           end;
 
-        if (NumCells <> 0) and (CurCell.X > X) then
+        if (NumCells <> 0) and (CurCell.x > x) then
           begin
             alpha := CalculateAlpha(Cover shl (CAggPolyBaseShift + 1));
 
             if alpha <> 0 then
-                SL.AddSpan(X, CurCell.X - X, alpha);
+                SL.AddSpan(x, CurCell.x - x, alpha);
           end;
       end;
 
     if Boolean(SL.NumSpans) then
         Break;
 
-    Inc(FCurY);
+    inc(FCurY);
   until False;
 
   SL.Finalize(FCurY);
 
-  Inc(FCurY);
+  inc(FCurY);
 
   Result := True;
 end;
 
-function TAggRasterizerScanLineAA.NavigateScanLine(Y: Integer): Boolean;
+function TAggRasterizerScanLineAA.NavigateScanLine(y: Integer): Boolean;
 begin
   if FAutoClose then
       ClosePolygon;
 
   FOutline.SortCells;
 
-  if (FOutline.TotalCells = 0) or (Y < FOutline.MinY) or
-    (Y > FOutline.MaxY) then
+  if (FOutline.TotalCells = 0) or (y < FOutline.MinY) or
+    (y > FOutline.MaxY) then
     begin
       Result := False;
 
       Exit;
     end;
 
-  FCurY := Y;
+  FCurY := y;
   Result := True;
 end;
 
@@ -1558,17 +1555,17 @@ end;
 procedure TAggRasterizerScanLineAA.AddPath;
 var
   Cmd: Cardinal;
-  X, Y: Double;
+  x, y: Double;
 begin
   Vs.Rewind(PathID);
 
-  Cmd := Vs.Vertex(@X, @Y);
+  Cmd := Vs.Vertex(@x, @y);
 
   while not IsStop(Cmd) do
     begin
-      AddVertex(X, Y, Cmd);
+      AddVertex(x, y, Cmd);
 
-      Cmd := Vs.Vertex(@X, @Y);
+      Cmd := Vs.Vertex(@x, @y);
     end;
 end;
 
@@ -1577,9 +1574,11 @@ begin
   if IsClose(Cmd) then
       ClosePolygon
   else if IsMoveTo(Cmd) then
-      MoveTo(PolyCoord(X), PolyCoord(Y))
+      MoveTo(PolyCoord(x), PolyCoord(y))
   else if IsVertex(Cmd) then
-      LineTo(PolyCoord(X), PolyCoord(Y));
+      LineTo(PolyCoord(x), PolyCoord(y));
 end;
 
 end. 
+ 
+ 

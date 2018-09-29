@@ -37,11 +37,8 @@
 *)
 unit AggSpanGradientImage;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -85,7 +82,7 @@ type
     function ImageCreate(width, height: Integer): Pointer;
     function GetImageBuffer: Pointer;
 
-    function Calculate(X, Y, d: Integer): Integer; override;
+    function Calculate(x, y, d: Integer): Integer; override;
 
     function GetColorFunction: TAggCustomArray;
 
@@ -197,8 +194,8 @@ begin
         begin
           FillChar(Row^, FWidth * 4, 0);
 
-          Inc(PtrComp(Row), FAlocDeltaX * 4);
-          Dec(Rows);
+          inc(PtrComp(Row), FAlocDeltaX * 4);
+          dec(Rows);
         end;
 
       Result := FBuffer;
@@ -220,7 +217,7 @@ begin
   Result := FAlocDeltaX * 4;
 end;
 
-function TAggGradientImage.Calculate(X, Y, d: Integer): Integer;
+function TAggGradientImage.Calculate(x, y, d: Integer): Integer;
 var
   Px, Py: Integer;
   Pixel: PAggRgba8;
@@ -229,8 +226,8 @@ begin
 
   if FBuffer <> nil then
     begin
-      Px := ShrInt32(X, CAggGradientSubpixelShift);
-      Py := ShrInt32(Y, CAggGradientSubpixelShift);
+      Px := ShrInt32(x, CAggGradientSubpixelShift);
+      Py := ShrInt32(y, CAggGradientSubpixelShift);
 
       Px := Px mod FWidth;
 
@@ -244,17 +241,17 @@ begin
 
       Pixel := PAggRgba8(PtrComp(FBuffer) + Py * (FAlocDeltaX * 4) + Px * 4);
 
-      FColor.Rgba8.R := Pixel.R;
+      FColor.Rgba8.r := Pixel.r;
       FColor.Rgba8.g := Pixel.g;
       FColor.Rgba8.b := Pixel.b;
-      FColor.Rgba8.A := Pixel.A;
+      FColor.Rgba8.a := Pixel.a;
     end
   else
     begin
-      FColor.Rgba8.R := 0;
+      FColor.Rgba8.r := 0;
       FColor.Rgba8.g := 0;
       FColor.Rgba8.b := 0;
-      FColor.Rgba8.A := 0;
+      FColor.Rgba8.a := 0;
     end;
 end;
 
@@ -280,3 +277,5 @@ begin
 end;
 
 end. 
+ 
+ 

@@ -37,11 +37,8 @@
 *)
 unit AggConvClipPolyline;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggConvAdaptorVpgen,
@@ -119,3 +116,4 @@ begin
 end;
 
 end. 
+ 

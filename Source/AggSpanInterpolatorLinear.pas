@@ -37,11 +37,8 @@
 *)
 unit AggSpanInterpolatorLinear;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggDdaLine,
@@ -56,15 +53,15 @@ type
   public
     constructor Create(SS: Cardinal = 8); virtual;
 
-    procedure SetBegin(X, Y: Double; Len: Cardinal); virtual; abstract;
+    procedure SetBegin(x, y: Double; Len: Cardinal); virtual; abstract;
 
     procedure Resynchronize(XE, Ye: Double; Len: Cardinal); virtual; abstract;
 
     procedure IncOperator; virtual; abstract;
-    procedure Coordinates(X, Y: PInteger); overload; virtual; abstract;
-    procedure Coordinates(var X, Y: Integer); overload; virtual;
+    procedure Coordinates(x, y: PInteger); overload; virtual; abstract;
+    procedure Coordinates(var x, y: Integer); overload; virtual;
 
-    procedure LocalScale(X, Y: PInteger); virtual;
+    procedure LocalScale(x, y: PInteger); virtual;
 
     property SubpixelShift: Cardinal read FSubpixelShift;
     property Transformer: TAggTransAffine read GetTransformer write SetTransformer;
@@ -80,15 +77,15 @@ type
   public
     constructor Create(SS: Cardinal = 8); overload; override;
     constructor Create(Trans: TAggTransAffine; SS: Cardinal = 8); overload;
-    constructor Create(Trans: TAggTransAffine; X, Y: Double; Len: Cardinal; SS: Cardinal = 8); overload;
+    constructor Create(Trans: TAggTransAffine; x, y: Double; Len: Cardinal; SS: Cardinal = 8); overload;
 
-    procedure SetBegin(X, Y: Double; Len: Cardinal); override;
+    procedure SetBegin(x, y: Double; Len: Cardinal); override;
 
     procedure Resynchronize(XE, Ye: Double; Len: Cardinal); override;
 
     procedure IncOperator; override;
-    procedure Coordinates(X, Y: PInteger); override;
-    procedure Coordinates(var X, Y: Integer); override;
+    procedure Coordinates(x, y: PInteger); override;
+    procedure Coordinates(var x, y: Integer); override;
   end;
 
   TAggSpanInterpolatorLinearSubdiv = class(TAggSpanInterpolator)
@@ -109,13 +106,13 @@ type
   public
     constructor Create(SS: Cardinal = 8); overload; override;
     constructor Create(Trans: TAggTransAffine; ASubdivShift: Cardinal = 4; SS: Cardinal = 8); overload;
-    constructor Create(Trans: TAggTransAffine; X, Y: Double; Len: Cardinal; ASubdivShift: Cardinal = 4; SS: Cardinal = 8); overload;
+    constructor Create(Trans: TAggTransAffine; x, y: Double; Len: Cardinal; ASubdivShift: Cardinal = 4; SS: Cardinal = 8); overload;
 
-    procedure SetBegin(X, Y: Double; Len: Cardinal); override;
+    procedure SetBegin(x, y: Double; Len: Cardinal); override;
 
     procedure IncOperator; override;
-    procedure Coordinates(X, Y: PInteger); override;
-    procedure Coordinates(var X, Y: Integer); override;
+    procedure Coordinates(x, y: PInteger); override;
+    procedure Coordinates(var x, y: Integer); override;
 
     property SubdivShift: Cardinal read FSubdivShift write SetSubdivShift;
   end;
@@ -131,9 +128,9 @@ begin
   FSubpixelSize := 1 shl FSubpixelShift;
 end;
 
-procedure TAggSpanInterpolator.Coordinates(var X, Y: Integer);
+procedure TAggSpanInterpolator.Coordinates(var x, y: Integer);
 begin
-  Coordinates(@X, @Y);
+  Coordinates(@x, @y);
 end;
 
 procedure TAggSpanInterpolator.LocalScale;
@@ -156,11 +153,11 @@ begin
 end;
 
 constructor TAggSpanInterpolatorLinear.Create(Trans: TAggTransAffine;
-  X, Y: Double; Len: Cardinal; SS: Cardinal = 8);
+  x, y: Double; Len: Cardinal; SS: Cardinal = 8);
 begin
   Create(Trans, SS);
 
-  SetBegin(X, Y, Len);
+  SetBegin(x, y, Len);
 end;
 
 function TAggSpanInterpolatorLinear.GetTransformer;
@@ -173,21 +170,21 @@ begin
   FTrans := Trans;
 end;
 
-procedure TAggSpanInterpolatorLinear.SetBegin(X, Y: Double; Len: Cardinal);
+procedure TAggSpanInterpolatorLinear.SetBegin(x, y: Double; Len: Cardinal);
 var
   TX, TY: Double;
   x1, y1, x2, y2: Integer;
 begin
-  TX := X;
-  TY := Y;
+  TX := x;
+  TY := y;
 
   FTrans.Transform(FTrans, @TX, @TY);
 
   x1 := Trunc(TX * FSubpixelSize);
   y1 := Trunc(TY * FSubpixelSize);
 
-  TX := X + Len;
-  TY := Y;
+  TX := x + Len;
+  TY := y;
 
   FTrans.Transform(FTrans, @TX, @TY);
 
@@ -202,8 +199,8 @@ procedure TAggSpanInterpolatorLinear.Resynchronize;
 begin
   FTrans.Transform(FTrans, @XE, @Ye);
 
-  FLineInterpolatorX.Initialize(FLineInterpolatorX.Y, Trunc(XE * FSubpixelSize), Len);
-  FLineInterpolatorY.Initialize(FLineInterpolatorY.Y, Trunc(Ye * FSubpixelSize), Len);
+  FLineInterpolatorX.Initialize(FLineInterpolatorX.y, Trunc(XE * FSubpixelSize), Len);
+  FLineInterpolatorY.Initialize(FLineInterpolatorY.y, Trunc(Ye * FSubpixelSize), Len);
 end;
 
 procedure TAggSpanInterpolatorLinear.IncOperator;
@@ -212,16 +209,16 @@ begin
   FLineInterpolatorY.PlusOperator;
 end;
 
-procedure TAggSpanInterpolatorLinear.Coordinates(X, Y: PInteger);
+procedure TAggSpanInterpolatorLinear.Coordinates(x, y: PInteger);
 begin
-  X^ := FLineInterpolatorX.Y;
-  Y^ := FLineInterpolatorY.Y;
+  x^ := FLineInterpolatorX.y;
+  y^ := FLineInterpolatorY.y;
 end;
 
-procedure TAggSpanInterpolatorLinear.Coordinates(var X, Y: Integer);
+procedure TAggSpanInterpolatorLinear.Coordinates(var x, y: Integer);
 begin
-  X := FLineInterpolatorX.Y;
-  Y := FLineInterpolatorY.Y;
+  x := FLineInterpolatorX.y;
+  y := FLineInterpolatorY.y;
 end;
 
 { TAggSpanInterpolatorLinearSubdiv }
@@ -248,11 +245,11 @@ begin
 end;
 
 constructor TAggSpanInterpolatorLinearSubdiv.Create(Trans: TAggTransAffine;
-  X, Y: Double; Len: Cardinal; ASubdivShift: Cardinal = 4; SS: Cardinal = 8);
+  x, y: Double; Len: Cardinal; ASubdivShift: Cardinal = 4; SS: Cardinal = 8);
 begin
   Create(Trans, ASubdivShift, SS);
 
-  SetBegin(X, Y, Len);
+  SetBegin(x, y, Len);
 end;
 
 function TAggSpanInterpolatorLinearSubdiv.GetTransformer;
@@ -278,23 +275,23 @@ var
   x1, y1: Integer;
 begin
   fPos := 1;
-  FSourceX := Trunc(X * FSubpixelSize) + FSubpixelSize;
-  FSourceY := Y;
+  FSourceX := Trunc(x * FSubpixelSize) + FSubpixelSize;
+  FSourceY := y;
   FLength := Len;
 
   if Len > FSubdivSize then
       Len := FSubdivSize;
 
-  TX := X;
-  TY := Y;
+  TX := x;
+  TY := y;
 
   FTrans.Transform(FTrans, @TX, @TY);
 
   x1 := Trunc(TX * FSubpixelSize);
   y1 := Trunc(TY * FSubpixelSize);
 
-  TX := X + Len;
-  TY := Y;
+  TX := x + Len;
+  TY := y;
 
   FTrans.Transform(FTrans, @TX, @TY);
 
@@ -322,27 +319,29 @@ begin
 
       FTrans.Transform(FTrans, @TX, @TY);
 
-      FLineInterpolatorX.Initialize(FLineInterpolatorX.Y, Trunc(TX * FSubpixelSize), Len);
-      FLineInterpolatorY.Initialize(FLineInterpolatorY.Y, Trunc(TY * FSubpixelSize), Len);
+      FLineInterpolatorX.Initialize(FLineInterpolatorX.y, Trunc(TX * FSubpixelSize), Len);
+      FLineInterpolatorY.Initialize(FLineInterpolatorY.y, Trunc(TY * FSubpixelSize), Len);
 
       fPos := 0;
     end;
 
-  Inc(FSourceX, FSubpixelSize);
-  Inc(fPos);
-  Dec(FLength);
+  inc(FSourceX, FSubpixelSize);
+  inc(fPos);
+  dec(FLength);
 end;
 
-procedure TAggSpanInterpolatorLinearSubdiv.Coordinates(X, Y: PInteger);
+procedure TAggSpanInterpolatorLinearSubdiv.Coordinates(x, y: PInteger);
 begin
-  X^ := FLineInterpolatorX.Y;
-  Y^ := FLineInterpolatorY.Y;
+  x^ := FLineInterpolatorX.y;
+  y^ := FLineInterpolatorY.y;
 end;
 
-procedure TAggSpanInterpolatorLinearSubdiv.Coordinates(var X, Y: Integer);
+procedure TAggSpanInterpolatorLinearSubdiv.Coordinates(var x, y: Integer);
 begin
-  X := FLineInterpolatorX.Y;
-  Y := FLineInterpolatorY.Y;
+  x := FLineInterpolatorX.y;
+  y := FLineInterpolatorY.y;
 end;
 
 end. 
+ 
+ 

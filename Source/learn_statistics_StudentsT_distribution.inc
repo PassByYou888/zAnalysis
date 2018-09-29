@@ -51,73 +51,73 @@
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function StudentTDistribution(const k: TLInt; const T: TLFloat): TLFloat;
+function StudentTDistribution(const k: TLInt; const t: TLFloat): TLFloat;
 var
-  X   : TLFloat;
+  x   : TLFloat;
   rk  : TLFloat;
-  Z   : TLFloat;
-  F   : TLFloat;
+  z   : TLFloat;
+  f   : TLFloat;
   tz  : TLFloat;
   p   : TLFloat;
   xsqk: TLFloat;
-  J   : TLInt;
+  j   : TLInt;
 begin
   Assert(k > 0, 'Domain error in StudentTDistribution');
-  if AP_FP_Eq(T, 0) then
+  if AP_FP_Eq(t, 0) then
     begin
       Result := 0.5;
       Exit;
     end;
-  if AP_FP_Less(T, -2.0) then
+  if AP_FP_Less(t, -2.0) then
     begin
       rk := k;
-      Z := rk / (rk + T * T);
-      Result := 0.5 * IncompleteBeta(0.5 * rk, 0.5, Z);
+      z := rk / (rk + t * t);
+      Result := 0.5 * IncompleteBeta(0.5 * rk, 0.5, z);
       Exit;
     end;
-  if AP_FP_Less(T, 0) then
+  if AP_FP_Less(t, 0) then
     begin
-      X := -T;
+      x := -t;
     end
   else
     begin
-      X := T;
+      x := t;
     end;
   rk := k;
-  Z := 1.0 + X * X / rk;
+  z := 1.0 + x * x / rk;
   if k mod 2 <> 0 then
     begin
-      xsqk := X / Sqrt(rk);
+      xsqk := x / Sqrt(rk);
       p := ArcTan(xsqk);
       if k > 1 then
         begin
-          F := 1.0;
+          f := 1.0;
           tz := 1.0;
-          J := 3;
-          while (J <= k - 2) and AP_FP_Greater(tz / F, MachineEpsilon) do
+          j := 3;
+          while (j <= k - 2) and AP_FP_Greater(tz / f, MachineEpsilon) do
             begin
-              tz := tz * ((J - 1) / (Z * J));
-              F := F + tz;
-              J := J + 2;
+              tz := tz * ((j - 1) / (z * j));
+              f := f + tz;
+              j := j + 2;
             end;
-          p := p + F * xsqk / Z;
+          p := p + f * xsqk / z;
         end;
       p := p * 2.0 / pi;
     end
   else
     begin
-      F := 1.0;
+      f := 1.0;
       tz := 1.0;
-      J := 2;
-      while (J <= k - 2) and AP_FP_Greater(tz / F, MachineEpsilon) do
+      j := 2;
+      while (j <= k - 2) and AP_FP_Greater(tz / f, MachineEpsilon) do
         begin
-          tz := tz * ((J - 1) / (Z * J));
-          F := F + tz;
-          J := J + 2;
+          tz := tz * ((j - 1) / (z * j));
+          f := f + tz;
+          j := j + 2;
         end;
-      p := F * X / Sqrt(Z * rk);
+      p := f * x / Sqrt(z * rk);
     end;
-  if AP_FP_Less(T, 0) then
+  if AP_FP_Less(t, 0) then
     begin
       p := -p;
     end;
@@ -143,9 +143,9 @@ end;
   ************************************************************************ *)
 function InvStudentTDistribution(const k: TLInt; p: TLFloat): TLFloat;
 var
-  T   : TLFloat;
+  t   : TLFloat;
   rk  : TLFloat;
-  Z   : TLFloat;
+  z   : TLFloat;
   rflg: TLInt;
 begin
   Assert((k > 0) and AP_FP_Greater(p, 0) and AP_FP_Less(p, 1),
@@ -158,14 +158,14 @@ begin
           Result := 0;
           Exit;
         end;
-      Z := 1.0 - 2.0 * p;
-      Z := InvIncompleteBeta(0.5, 0.5 * rk, AbsReal(Z));
-      T := Sqrt(rk * Z / (1.0 - Z));
+      z := 1.0 - 2.0 * p;
+      z := InvIncompleteBeta(0.5, 0.5 * rk, AbsReal(z));
+      t := Sqrt(rk * z / (1.0 - z));
       if AP_FP_Less(p, 0.5) then
         begin
-          T := -T;
+          t := -t;
         end;
-      Result := T;
+      Result := t;
       Exit;
     end;
   rflg := -1;
@@ -174,14 +174,14 @@ begin
       p := 1.0 - p;
       rflg := 1;
     end;
-  Z := InvIncompleteBeta(0.5 * rk, 0.5, 2.0 * p);
-  if AP_FP_Less(MaxRealNumber * Z, rk) then
+  z := InvIncompleteBeta(0.5 * rk, 0.5, 2.0 * p);
+  if AP_FP_Less(MaxRealNumber * z, rk) then
     begin
       Result := rflg * MaxRealNumber;
       Exit;
     end;
-  T := Sqrt(rk / Z - rk);
-  Result := rflg * T;
+  t := Sqrt(rk / z - rk);
+  Result := rflg * t;
 end;
 
 (* ************************************************************************
@@ -207,7 +207,7 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure StudentTTest1(const X: TLVec; n: TLInt; Mean: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
+procedure StudentTTest1(const x: TLVec; n: TLInt; Mean: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 var
   i        : TLInt;
   XMean    : TLFloat;
@@ -233,8 +233,8 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      XMean := XMean + X[i];
-      Inc(i);
+      XMean := XMean + x[i];
+      inc(i);
     end;
   XMean := XMean / n;
 
@@ -249,15 +249,15 @@ begin
       i := 0;
       while i <= n - 1 do
         begin
-          v1 := v1 + AP_Sqr(X[i] - XMean);
-          Inc(i);
+          v1 := v1 + AP_Sqr(x[i] - XMean);
+          inc(i);
         end;
       v2 := 0;
       i := 0;
       while i <= n - 1 do
         begin
-          v2 := v2 + (X[i] - XMean);
-          Inc(i);
+          v2 := v2 + (x[i] - XMean);
+          inc(i);
         end;
       v2 := AP_Sqr(v2) / n;
       XVariance := (v1 - v2) / (n - 1);
@@ -310,7 +310,7 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure StudentTTest2(const X: TLVec; n: TLInt; const Y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
+procedure StudentTTest2(const x: TLVec; n: TLInt; const y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 var
   i    : TLInt;
   XMean: TLFloat;
@@ -334,16 +334,16 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      XMean := XMean + X[i];
-      Inc(i);
+      XMean := XMean + x[i];
+      inc(i);
     end;
   XMean := XMean / n;
   YMean := 0;
   i := 0;
   while i <= M - 1 do
     begin
-      YMean := YMean + Y[i];
-      Inc(i);
+      YMean := YMean + y[i];
+      inc(i);
     end;
   YMean := YMean / M;
 
@@ -354,14 +354,14 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      s := s + AP_Sqr(X[i] - XMean);
-      Inc(i);
+      s := s + AP_Sqr(x[i] - XMean);
+      inc(i);
     end;
   i := 0;
   while i <= M - 1 do
     begin
-      s := s + AP_Sqr(Y[i] - YMean);
-      Inc(i);
+      s := s + AP_Sqr(y[i] - YMean);
+      inc(i);
     end;
   s := Sqrt(s * (AP_Float(1) / n + AP_Float(1) / M) / (n + M - 2));
   if AP_FP_Eq(s, 0) then
@@ -407,7 +407,7 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure UnequalVarianceTTest(const X: TLVec; n: TLInt; const Y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
+procedure UnequalVarianceTTest(const x: TLVec; n: TLInt; const y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 var
   i    : TLInt;
   XMean: TLFloat;
@@ -417,7 +417,7 @@ var
   df   : TLFloat;
   p    : TLFloat;
   Stat : TLFloat;
-  C    : TLFloat;
+  c    : TLFloat;
 begin
   if (n <= 1) or (M <= 1) then
     begin
@@ -434,16 +434,16 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      XMean := XMean + X[i];
-      Inc(i);
+      XMean := XMean + x[i];
+      inc(i);
     end;
   XMean := XMean / n;
   YMean := 0;
   i := 0;
   while i <= M - 1 do
     begin
-      YMean := YMean + Y[i];
-      Inc(i);
+      YMean := YMean + y[i];
+      inc(i);
     end;
   YMean := YMean / M;
 
@@ -454,16 +454,16 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      XVar := XVar + AP_Sqr(X[i] - XMean);
-      Inc(i);
+      XVar := XVar + AP_Sqr(x[i] - XMean);
+      inc(i);
     end;
   XVar := XVar / (n - 1);
   YVar := 0;
   i := 0;
   while i <= M - 1 do
     begin
-      YVar := YVar + AP_Sqr(Y[i] - YMean);
-      Inc(i);
+      YVar := YVar + AP_Sqr(y[i] - YMean);
+      inc(i);
     end;
   YVar := YVar / (M - 1);
   if AP_FP_Eq(XVar, 0) or AP_FP_Eq(YVar, 0) then
@@ -478,8 +478,8 @@ begin
   // Statistic
   //
   Stat := (XMean - YMean) / Sqrt(XVar / n + YVar / M);
-  C := XVar / n / (XVar / n + YVar / M);
-  df := (n - 1) * (M - 1) / ((M - 1) * AP_Sqr(C) + (n - 1) * (1 - AP_Sqr(C)));
+  c := XVar / n / (XVar / n + YVar / M);
+  df := (n - 1) * (M - 1) / ((M - 1) * AP_Sqr(c) + (n - 1) * (1 - AP_Sqr(c)));
   if AP_FP_Greater(Stat, 0) then
     begin
       p := 1 - 0.5 * IncompleteBeta(df / 2, 0.5, df / (df + AP_Sqr(Stat)));
@@ -492,3 +492,5 @@ begin
   LeftTail := p;
   RightTail := 1 - p;
 end; 
+ 
+ 

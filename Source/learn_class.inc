@@ -1,7 +1,7 @@
 {$REGION 'ClassImp'}
 
 
-procedure TLearn.KDInput(const IndexFor: nativeInt; var Source: TKDTree_Source; const Data: Pointer);
+procedure TLearn.KDInput(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer);
 var
   i: TLInt;
 begin
@@ -565,7 +565,7 @@ var
 
   procedure BuildInternalData;
   var
-    i, J: TLInt;
+    i, j: TLInt;
     v: TLFloat;
   begin
     FLastTrainMaxInValue := PLearnMemory(FMemorySource[0])^.m_in[0];
@@ -576,12 +576,12 @@ var
         SetLength(buff, FMemorySource.Count, FInLen + 1);
         for i := 0 to FMemorySource.Count - 1 do
           begin
-            for J := 0 to FInLen - 1 do
+            for j := 0 to FInLen - 1 do
               begin
-                v := PLearnMemory(FMemorySource[i])^.m_in[J];
+                v := PLearnMemory(FMemorySource[i])^.m_in[j];
                 if v > FLastTrainMaxInValue then
                     FLastTrainMaxInValue := v;
-                buff[i][J] := v;
+                buff[i][j] := v;
               end;
 
             v := PLearnMemory(FMemorySource[i])^.m_out[0];;
@@ -596,20 +596,20 @@ var
         SetLength(buff, FMemorySource.Count, FInLen + FOutLen);
         for i := 0 to FMemorySource.Count - 1 do
           begin
-            for J := 0 to FInLen - 1 do
+            for j := 0 to FInLen - 1 do
               begin
-                v := PLearnMemory(FMemorySource[i])^.m_in[J];
+                v := PLearnMemory(FMemorySource[i])^.m_in[j];
                 if v > FLastTrainMaxInValue then
                     FLastTrainMaxInValue := v;
-                buff[i][J] := v;
+                buff[i][j] := v;
               end;
 
-            for J := 0 to FOutLen - 1 do
+            for j := 0 to FOutLen - 1 do
               begin
-                v := PLearnMemory(FMemorySource[i])^.m_out[J];
+                v := PLearnMemory(FMemorySource[i])^.m_out[j];
                 if v > FLastTrainMaxOutValue then
                     FLastTrainMaxOutValue := v;
-                buff[i][FInLen + J] := v;
+                buff[i][FInLen + j] := v;
               end;
           end;
       end;
@@ -926,7 +926,7 @@ function TLearn.process(const p_in, p_out: PLVec): Boolean;
 var
   p_kd_node: PKDTree_Node;
   i: TLInt;
-  R, rmax: TLFloat;
+  r, rmax: TLFloat;
   List: TLIVec;
 begin
   Result := False;
@@ -1223,7 +1223,7 @@ end;
 
 function TLearn.SearchMemoryWithPearson(const ProcessIn: TLVec): TLInt;
 var
-  k, R: TLFloat;
+  k, r: TLFloat;
   i: TLInt;
 begin
   if Count <= 0 then
@@ -1237,10 +1237,10 @@ begin
 
   for i := 1 to Count - 1 do
     begin
-      R := PearsonCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
-      if (R <> 0) and (R > k) then
+      r := PearsonCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
+      if (r <> 0) and (r > k) then
         begin
-          k := R;
+          k := r;
           Result := i;
         end;
     end;
@@ -1269,36 +1269,36 @@ type
     else
         Result := 0;
   end;
-  procedure InternalSort(var SortBuffer: TStatePtrArray; L, R: TLInt);
+  procedure InternalSort(var SortBuffer: TStatePtrArray; L, r: TLInt);
   var
-    i, J: TLInt;
-    p, T: PState;
+    i, j: TLInt;
+    p, t: PState;
   begin
     repeat
       i := L;
-      J := R;
-      p := SortBuffer[(L + R) shr 1];
+      j := r;
+      p := SortBuffer[(L + r) shr 1];
       repeat
         while SortCompare(SortBuffer[i], p) < 0 do
-            Inc(i);
-        while SortCompare(SortBuffer[J], p) > 0 do
-            Dec(J);
-        if i <= J then
+            inc(i);
+        while SortCompare(SortBuffer[j], p) > 0 do
+            dec(j);
+        if i <= j then
           begin
-            if i <> J then
+            if i <> j then
               begin
-                T := SortBuffer[i];
-                SortBuffer[i] := SortBuffer[J];
-                SortBuffer[J] := T;
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
               end;
-            Inc(i);
-            Dec(J);
+            inc(i);
+            dec(j);
           end;
-      until i > J;
-      if L < J then
-          InternalSort(SortBuffer, L, J);
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j);
       L := i;
-    until i >= R;
+    until i >= r;
   end;
 
 var
@@ -1363,7 +1363,7 @@ end;
 
 function TLearn.SearchMemoryWithSpearman(const ProcessIn: TLVec): TLInt;
 var
-  k, R: TLFloat;
+  k, r: TLFloat;
   i: TLInt;
 begin
   if Count <= 0 then
@@ -1377,10 +1377,10 @@ begin
 
   for i := 1 to Count - 1 do
     begin
-      R := SpearmanRankCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
-      if (R <> 0) and (R > k) then
+      r := SpearmanRankCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
+      if (r <> 0) and (r > k) then
         begin
-          k := R;
+          k := r;
           Result := i;
         end;
     end;
@@ -1409,36 +1409,36 @@ type
     else
         Result := 0;
   end;
-  procedure InternalSort(var SortBuffer: TStatePtrArray; L, R: TLInt);
+  procedure InternalSort(var SortBuffer: TStatePtrArray; L, r: TLInt);
   var
-    i, J: TLInt;
-    p, T: PState;
+    i, j: TLInt;
+    p, t: PState;
   begin
     repeat
       i := L;
-      J := R;
-      p := SortBuffer[(L + R) shr 1];
+      j := r;
+      p := SortBuffer[(L + r) shr 1];
       repeat
         while SortCompare(SortBuffer[i], p) < 0 do
-            Inc(i);
-        while SortCompare(SortBuffer[J], p) > 0 do
-            Dec(J);
-        if i <= J then
+            inc(i);
+        while SortCompare(SortBuffer[j], p) > 0 do
+            dec(j);
+        if i <= j then
           begin
-            if i <> J then
+            if i <> j then
               begin
-                T := SortBuffer[i];
-                SortBuffer[i] := SortBuffer[J];
-                SortBuffer[J] := T;
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
               end;
-            Inc(i);
-            Dec(J);
+            inc(i);
+            dec(j);
           end;
-      until i > J;
-      if L < J then
-          InternalSort(SortBuffer, L, J);
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j);
       L := i;
-    until i >= R;
+    until i >= r;
   end;
 
 var
@@ -1503,7 +1503,7 @@ end;
 
 function TLearn.SearchMemoryWithDistance(const ProcessIn: TLVec): TLInt;
 var
-  k, R: Double;
+  k, r: Double;
   i: TLInt;
 begin
   if Count <= 0 then
@@ -1519,10 +1519,10 @@ begin
 
   for i := 1 to Count - 1 do
     begin
-      R := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(i)^.m_in);
-      if (R < k) then
+      r := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(i)^.m_in);
+      if (r < k) then
         begin
-          k := R;
+          k := r;
           Result := i;
         end;
     end;
@@ -1549,36 +1549,36 @@ type
     else
         Result := 0;
   end;
-  procedure InternalSort(var SortBuffer: TStatePtrArray; L, R: TLInt);
+  procedure InternalSort(var SortBuffer: TStatePtrArray; L, r: TLInt);
   var
-    i, J: TLInt;
-    p, T: PState;
+    i, j: TLInt;
+    p, t: PState;
   begin
     repeat
       i := L;
-      J := R;
-      p := SortBuffer[(L + R) shr 1];
+      j := r;
+      p := SortBuffer[(L + r) shr 1];
       repeat
         while SortCompare(SortBuffer[i], p) < 0 do
-            Inc(i);
-        while SortCompare(SortBuffer[J], p) > 0 do
-            Dec(J);
-        if i <= J then
+            inc(i);
+        while SortCompare(SortBuffer[j], p) > 0 do
+            dec(j);
+        if i <= j then
           begin
-            if i <> J then
+            if i <> j then
               begin
-                T := SortBuffer[i];
-                SortBuffer[i] := SortBuffer[J];
-                SortBuffer[J] := T;
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
               end;
-            Inc(i);
-            Dec(J);
+            inc(i);
+            dec(j);
           end;
-      until i > J;
-      if L < J then
-          InternalSort(SortBuffer, L, J);
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j);
       L := i;
-    until i >= R;
+    until i >= r;
   end;
 
 var
@@ -1646,7 +1646,7 @@ end;
 procedure TLearn.SaveToDF(df: TDataFrameEngine);
 var
   ar: TDataFrameArrayDouble;
-  i, J: TLInt;
+  i, j: TLInt;
   buff: TLVec;
   buffLen: TLInt;
   m64: TMemoryStream64;
@@ -1663,10 +1663,10 @@ begin
   ar := df.WriteArrayDouble;
   for i := 0 to FMemorySource.Count - 1 do
     begin
-      for J := 0 to FInLen - 1 do
-          ar.Add(PLearnMemory(FMemorySource[i])^.m_in[J]);
-      for J := 0 to FOutLen - 1 do
-          ar.Add(PLearnMemory(FMemorySource[i])^.m_out[J]);
+      for j := 0 to FInLen - 1 do
+          ar.Add(PLearnMemory(FMemorySource[i])^.m_in[j]);
+      for j := 0 to FOutLen - 1 do
+          ar.Add(PLearnMemory(FMemorySource[i])^.m_out[j]);
     end;
 
   case FLearnType of
@@ -1726,7 +1726,7 @@ end;
 procedure TLearn.LoadFromDF(df: TDataFrameEngine);
 var
   ar: TDataFrameArrayDouble;
-  i, J: TLInt;
+  i, j: TLInt;
   plm: PLearnMemory;
   buff: TLVec;
   m64: TMemoryStream64;
@@ -1752,20 +1752,20 @@ begin
       SetLength(plm^.m_out, FOutLen);
       FMemorySource.Add(plm);
 
-      J := 0;
-      while J < FInLen do
+      j := 0;
+      while j < FInLen do
         begin
-          plm^.m_in[J] := ar[i];
-          Inc(J);
-          Inc(i);
+          plm^.m_in[j] := ar[i];
+          inc(j);
+          inc(i);
         end;
 
-      J := 0;
-      while J < FOutLen do
+      j := 0;
+      while j < FOutLen do
         begin
-          plm^.m_out[J] := ar[i];
-          Inc(J);
-          Inc(i);
+          plm^.m_out[j] := ar[i];
+          inc(j);
+          inc(i);
         end;
     end;
 
@@ -1871,11 +1871,11 @@ begin
   DisposeObject(de);
 end;
 
-procedure TLearn.SaveToFile(fileName: SystemString);
+procedure TLearn.SaveToFile(FileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
-  fs := TCoreClassFileStream.Create(fileName, fmCreate);
+  fs := TCoreClassFileStream.Create(FileName, fmCreate);
   try
       SaveToStream(fs);
   finally
@@ -1883,12 +1883,12 @@ begin
   end;
 end;
 
-procedure TLearn.LoadFromFile(fileName: SystemString);
+procedure TLearn.LoadFromFile(FileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -1929,11 +1929,11 @@ begin
   DisposeObject(de);
 end;
 
-procedure TLearn.SaveToJsonFile(fileName: SystemString);
+procedure TLearn.SaveToJsonFile(FileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
-  fs := TCoreClassFileStream.Create(fileName, fmCreate);
+  fs := TCoreClassFileStream.Create(FileName, fmCreate);
   try
       SaveToJsonStream(fs);
   finally
@@ -1941,12 +1941,12 @@ begin
   end;
 end;
 
-procedure TLearn.LoadFromJsonFile(fileName: SystemString);
+procedure TLearn.LoadFromJsonFile(FileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -1960,4 +1960,6 @@ end;
 
 {$ENDIF FPC}
 {$ENDREGION 'ClassImp'} 
+ 
+ 
  

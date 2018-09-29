@@ -37,11 +37,8 @@
 *)
 unit AggVertexSequence;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggArray;
@@ -71,15 +68,15 @@ type
   // and 0.0 if it's a polyline.
   PAggVertexDistance = ^TAggVertexDistance;
 
-  TAggVertexDistance = packed record
-    pos: TPointDouble;
+  TAggVertexDistance = record
+    Pos: TPointDouble;
     Dist: Double;
   end;
 
   PAggVertexDistCmd = ^TAggVertexDistCmd;
 
-  TAggVertexDistCmd = packed record
-    pos: TPointDouble;
+  TAggVertexDistCmd = record
+    Pos: TPointDouble;
     Dist: Double;
     Cmd: Cardinal;
   end;
@@ -95,7 +92,7 @@ function VertexDisTAggFuncOperator(This, val: PAggVertexDistance): Boolean;
 var
   ret: Boolean;
 begin
-  This.Dist := CalculateDistance(This.pos, val.pos);
+  This.Dist := CalculateDistance(This.Pos, val.Pos);
 
   ret := This.Dist > CAggVertexDistEpsilon;
 
@@ -137,7 +134,7 @@ end;
 
 procedure TAggVertexSequence.Close(RemoveFlag: Boolean);
 var
-  T: Pointer;
+  t: Pointer;
 begin
   while Size > 1 do
     begin
@@ -145,10 +142,10 @@ begin
         ArrayOperator(Size - 1)) then
           Break;
 
-      T := ArrayOperator(Size - 1);
+      t := ArrayOperator(Size - 1);
 
       RemoveLast;
-      ModifyLast(T);
+      ModifyLast(t);
     end;
 
   if RemoveFlag then
@@ -163,4 +160,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

@@ -37,19 +37,16 @@
 *)
 unit AggVpGen;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggVertexSource;
 
 type
   IAggVpgenInterface = interface
     procedure Reset;
-    procedure MoveTo(X, Y: Double);
-    procedure LineTo(X, Y: Double);
+    procedure MoveTo(x, y: Double);
+    procedure LineTo(x, y: Double);
   end;
 
   TAggCustomVpgen = class(TAggVertexSource)
@@ -57,11 +54,13 @@ type
     constructor Create; virtual; abstract;
 
     procedure Reset; virtual; abstract;
-    procedure MoveTo(X, Y: Double); virtual; abstract;
-    procedure LineTo(X, Y: Double); virtual; abstract;
+    procedure MoveTo(x, y: Double); virtual; abstract;
+    procedure LineTo(x, y: Double); virtual; abstract;
   end;
 
 implementation
 
 end.
+ 
+ 
  

@@ -37,11 +37,8 @@
 *)
 unit AggConvShortenPath;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggConvAdaptorVcgen,
@@ -92,4 +89,5 @@ begin
 end;
 
 end.
+ 
  

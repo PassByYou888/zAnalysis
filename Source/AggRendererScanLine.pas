@@ -37,11 +37,8 @@
 *)
 unit AggRendererScanLine;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggRendererBase,
@@ -77,8 +74,8 @@ type
 
   TAggCustomRendererScanLineSolid = class(TAggCustomRendererScanLine)
   public
-    procedure SetColor(C: PAggColor); overload; virtual; abstract;
-    procedure SetColor(C: TAggRgba8); overload; virtual; abstract;
+    procedure SetColor(c: PAggColor); overload; virtual; abstract;
+    procedure SetColor(c: TAggRgba8); overload; virtual; abstract;
   end;
 
   TAggRendererScanLineAASolid = class(TAggCustomRendererScanLineSolid)
@@ -88,8 +85,8 @@ type
   public
     constructor Create(Ren: TAggRendererBase);
 
-    procedure SetColor(C: PAggColor); override;
-    procedure SetColor(C: TAggRgba8); override;
+    procedure SetColor(c: PAggColor); override;
+    procedure SetColor(c: TAggRgba8); override;
     procedure Prepare(u: Cardinal); override;
     procedure Render(SL: TAggCustomScanLine); override;
   end;
@@ -101,8 +98,8 @@ type
   public
     constructor Create(Ren: TAggRendererBase);
 
-    procedure SetColor(C: PAggColor); override;
-    procedure SetColor(C: TAggRgba8); override;
+    procedure SetColor(c: PAggColor); override;
+    procedure SetColor(c: TAggRgba8); override;
     procedure Prepare(u: Cardinal); override;
     procedure Render(SL: TAggCustomScanLine); override;
   end;
@@ -112,7 +109,7 @@ type
     function IsSolid(Style: Cardinal): Boolean; virtual; abstract;
     function GetColor(Style: Cardinal): PAggColor; virtual; abstract;
 
-    procedure GenerateSpan(Span: PAggColor; X, Y: Integer; Len, Style: Cardinal); virtual; abstract;
+    procedure GenerateSpan(Span: PAggColor; x, y: Integer; Len, Style: Cardinal); virtual; abstract;
   end;
 
 procedure RenderScanLineAASolid(SL: TAggCustomScanLine; Ren: TAggRendererBase; COLOR: PAggColor);
@@ -157,7 +154,7 @@ end;
 
 procedure TAggRendererScanLineAA.Render(SL: TAggCustomScanLine);
 var
-  Y, XMin, XMax, X, Len: Integer;
+  y, XMin, XMax, x, Len: Integer;
 
   NumSpans: Cardinal;
   // SS: Cardinal;
@@ -167,7 +164,7 @@ var
   Solid: Boolean;
   Covers: PInt8u;
 begin
-  Y := SL.Y;
+  y := SL.y;
 
   FRen.FirstClipBox;
 
@@ -175,7 +172,7 @@ begin
     XMin := FRen.XMin;
     XMax := FRen.XMax;
 
-    if (Y >= FRen.YMin) and (Y <= FRen.YMax) then
+    if (y >= FRen.YMin) and (y <= FRen.YMax) then
       begin
         NumSpans := SL.NumSpans;
 
@@ -183,7 +180,7 @@ begin
         // Ss := Sl.SizeOfSpan;
 
         repeat
-          X := Span.X;
+          x := Span.x;
           Len := Span.Len;
 
           Solid := False;
@@ -195,31 +192,31 @@ begin
               Len := -Len;
             end;
 
-          if X < XMin then
+          if x < XMin then
             begin
-              Dec(Len, XMin - X);
+              dec(Len, XMin - x);
 
               if not Solid then
-                  Inc(PtrComp(Covers), XMin - X);
+                  inc(PtrComp(Covers), XMin - x);
 
-              X := XMin;
+              x := XMin;
             end;
 
           if Len > 0 then
             begin
-              if X + Len > XMax then
-                  Len := XMax - X + 1;
+              if x + Len > XMax then
+                  Len := XMax - x + 1;
 
               if Len > 0 then
                 if Solid then
-                    FRen.BlendColorHSpanNoClip(X, Y, Len,
-                    FSpanGen.Generate(X, Y, Len), nil, Covers^)
+                    FRen.BlendColorHSpanNoClip(x, y, Len,
+                    FSpanGen.Generate(x, y, Len), nil, Covers^)
                 else
-                    FRen.BlendColorHSpanNoClip(X, Y, Len,
-                    FSpanGen.Generate(X, Y, Len), Covers, Covers^);
+                    FRen.BlendColorHSpanNoClip(x, y, Len,
+                    FSpanGen.Generate(x, y, Len), Covers, Covers^);
             end;
 
-          Dec(NumSpans);
+          dec(NumSpans);
 
           if NumSpans = 0 then
               Break;
@@ -242,15 +239,15 @@ begin
   FRen := Ren;
 end;
 
-procedure TAggRendererScanLineAASolid.SetColor(C: PAggColor);
+procedure TAggRendererScanLineAASolid.SetColor(c: PAggColor);
 begin
-  Assert(Assigned(C));
-  FColor := C^;
+  Assert(Assigned(c));
+  FColor := c^;
 end;
 
-procedure TAggRendererScanLineAASolid.SetColor(C: TAggRgba8);
+procedure TAggRendererScanLineAASolid.SetColor(c: TAggRgba8);
 begin
-  FColor.FromRgba8(C);
+  FColor.FromRgba8(c);
 end;
 
 procedure TAggRendererScanLineAASolid.Prepare(u: Cardinal);
@@ -259,13 +256,13 @@ end;
 
 procedure TAggRendererScanLineAASolid.Render(SL: TAggCustomScanLine);
 var
-  X, Y: Integer;
+  x, y: Integer;
   // Ss: Cardinal;
   // SpanRecord : PAggSpanRecord;
   NumSpans: Cardinal;
   Span: TAggCustomSpan;
 begin
-  Y := SL.Y;
+  y := SL.y;
 
   NumSpans := SL.NumSpans;
 
@@ -302,16 +299,16 @@ begin
     else
     begin }
   repeat
-    X := Span.X;
+    x := Span.x;
 
     if Span.Len > 0 then
-        FRen.BlendSolidHSpan(X, Y, Cardinal(Span.Len), @FColor,
+        FRen.BlendSolidHSpan(x, y, Cardinal(Span.Len), @FColor,
         Span.Covers)
     else
-        FRen.BlendHorizontalLine(X, Y, Cardinal(X - Span.Len - 1), @FColor,
+        FRen.BlendHorizontalLine(x, y, Cardinal(x - Span.Len - 1), @FColor,
         Span.Covers^);
 
-    Dec(NumSpans);
+    dec(NumSpans);
 
     if NumSpans = 0 then
         Break;
@@ -331,14 +328,14 @@ begin
   FRen := Ren;
 end;
 
-procedure TAggRendererScanLineBinSolid.SetColor(C: PAggColor);
+procedure TAggRendererScanLineBinSolid.SetColor(c: PAggColor);
 begin
-  FColor := C^;
+  FColor := c^;
 end;
 
-procedure TAggRendererScanLineBinSolid.SetColor(C: TAggRgba8);
+procedure TAggRendererScanLineBinSolid.SetColor(c: TAggRgba8);
 begin
-  FColor.FromRgba8(C);
+  FColor.FromRgba8(c);
 end;
 
 procedure TAggRendererScanLineBinSolid.Prepare(u: Cardinal);
@@ -385,13 +382,13 @@ begin
     else }
   repeat
     if Span.Len < 0 then
-        FRen.BlendHorizontalLine(Span.X, SL.Y, Span.X - 1 - Span.Len,
+        FRen.BlendHorizontalLine(Span.x, SL.y, Span.x - 1 - Span.Len,
         @FColor, CAggCoverFull)
     else
-        FRen.BlendHorizontalLine(Span.X, SL.Y, Span.X - 1 + Span.Len,
+        FRen.BlendHorizontalLine(Span.x, SL.y, Span.x - 1 + Span.Len,
         @FColor, CAggCoverFull);
 
-    Dec(NumSpans);
+    dec(NumSpans);
 
     if NumSpans = 0 then
         Break;
@@ -405,7 +402,7 @@ end;
 procedure RenderScanLineAASolid(SL: TAggCustomScanLine; Ren: TAggRendererBase;
   COLOR: PAggColor);
 var
-  Y, X: Integer;
+  y, x: Integer;
   NumSpans: Cardinal;
   // Ss: Cardinal;
   // Span: PAggSpanRecord;
@@ -413,20 +410,20 @@ var
 begin
   Assert(Ren is TAggRendererBase);
 
-  Y := SL.Y;
+  y := SL.y;
   NumSpans := SL.NumSpans;
   Span := SL.GetBegin;
   // Ss := Sl.SizeOfSpan;
 
   repeat
-    X := Span.X;
+    x := Span.x;
 
     if Span.Len > 0 then
-        Ren.BlendSolidHSpan(X, Y, Cardinal(Span.Len), COLOR, Span.Covers)
+        Ren.BlendSolidHSpan(x, y, Cardinal(Span.Len), COLOR, Span.Covers)
     else
-        Ren.BlendHorizontalLine(X, Y, Cardinal(X - Span.Len - 1), COLOR, Span.Covers^);
+        Ren.BlendHorizontalLine(x, y, Cardinal(x - Span.Len - 1), COLOR, Span.Covers^);
 
-    Dec(NumSpans);
+    dec(NumSpans);
 
     if NumSpans = 0 then
         Break;
@@ -441,7 +438,7 @@ end;
 procedure RenderScanLinesAASolid(Ras: TAggRasterizerScanLine;
   SL: TAggCustomScanLine; Ren: TAggRendererBase; COLOR: PAggColor);
 var
-  Y, X: Integer;
+  y, x: Integer;
   NumSpans: Cardinal;
   // Ss: Cardinal;
   // Span: PAggSpanRecord;
@@ -455,21 +452,21 @@ begin
 
       while Ras.SweepScanLine(SL) do
         begin
-          Y := SL.Y;
+          y := SL.y;
           NumSpans := SL.NumSpans;
           // Ss := Sl.SizeOfSpan;
           Span := SL.GetBegin;
 
           repeat
-            X := Span.X;
+            x := Span.x;
 
             if Span.Len > 0 then
-                Ren.BlendSolidHSpan(X, Y, Cardinal(Span.Len), COLOR, Span.Covers)
+                Ren.BlendSolidHSpan(x, y, Cardinal(Span.Len), COLOR, Span.Covers)
             else
-                Ren.BlendHorizontalLine(X, Y, Cardinal(X - Span.Len - 1), COLOR,
+                Ren.BlendHorizontalLine(x, y, Cardinal(x - Span.Len - 1), COLOR,
                 Span.Covers^);
 
-            Dec(NumSpans);
+            dec(NumSpans);
 
             if NumSpans = 0 then
                 Break;
@@ -490,8 +487,8 @@ var
   MinX, Len: Integer;
   NumSpans, NumStyles, Style, i: Cardinal;
   // SsAntiAlias, SsBin: Cardinal;
-  ColorSpan, MixBuffer, COLORS, ClrSpan: PAggColor;
-  C: TAggColor;
+  ColorSpan, MixBuffer, Colors, ClrSpan: PAggColor;
+  c: TAggColor;
   Solid: Boolean;
   // SpanAA: PAggSpanRecord;
   // SpanBin: PAggSpanBin;
@@ -535,11 +532,11 @@ begin
                     repeat
                       Len := SpanAA.Len;
 
-                      StyleHandler.GenerateSpan(ColorSpan, SpanAA.X, ScanLineAA.Y, Len, Style);
-                      Ren.BlendColorHSpan(SpanAA.X, ScanLineAA.Y, SpanAA.Len, ColorSpan,
+                      StyleHandler.GenerateSpan(ColorSpan, SpanAA.x, ScanLineAA.y, Len, Style);
+                      Ren.BlendColorHSpan(SpanAA.x, ScanLineAA.y, SpanAA.Len, ColorSpan,
                         SpanAA.Covers);
 
-                      Dec(NumSpans);
+                      dec(NumSpans);
 
                       if NumSpans = 0 then
                           Break;
@@ -561,10 +558,10 @@ begin
                 NumSpans := SlBin.NumSpans;
 
                 repeat
-                  FillChar(PAggColor(PtrComp(MixBuffer) + (SpanBin.X - MinX) *
+                  FillChar(PAggColor(PtrComp(MixBuffer) + (SpanBin.x - MinX) *
                     SizeOf(TAggColor))^, SpanBin.Len * SizeOf(TAggColor), 0);
 
-                  Dec(NumSpans);
+                  dec(NumSpans);
 
                   if NumSpans = 0 then
                       Break;
@@ -591,26 +588,26 @@ begin
                         if Solid then
                           // Just solid fill
                           repeat
-                            C := StyleHandler.GetColor(Style)^;
+                            c := StyleHandler.GetColor(Style)^;
                             Len := SpanAA.Len;
 
-                            COLORS := PAggColor(PtrComp(MixBuffer) + (SpanAA.X - MinX)
+                            Colors := PAggColor(PtrComp(MixBuffer) + (SpanAA.x - MinX)
                               * SizeOf(TAggColor));
                             Covers := SpanAA.Covers;
 
                             repeat
                               if Covers^ = CAggCoverFull then
-                                  COLORS^ := C
+                                  Colors^ := c
                               else
-                                  COLORS.Add(@C, Covers^);
+                                  Colors.Add(@c, Covers^);
 
-                              Inc(PtrComp(COLORS), SizeOf(TAggColor));
-                              Inc(PtrComp(Covers), SizeOf(Int8u));
-                              Dec(Len);
+                              inc(PtrComp(Colors), SizeOf(TAggColor));
+                              inc(PtrComp(Covers), SizeOf(Int8u));
+                              dec(Len);
 
                             until Len = 0;
 
-                            Dec(NumSpans);
+                            dec(NumSpans);
 
                             if NumSpans = 0 then
                                 Break;
@@ -624,29 +621,29 @@ begin
                           // Arbitrary Span generator
                           repeat
                             Len := SpanAA.Len;
-                            COLORS := PAggColor(PtrComp(MixBuffer) + (SpanAA.X - MinX)
+                            Colors := PAggColor(PtrComp(MixBuffer) + (SpanAA.x - MinX)
                               * SizeOf(TAggColor));
                             ClrSpan := ColorSpan;
 
-                            StyleHandler.GenerateSpan(ClrSpan, SpanAA.X, ScanLineAA.Y,
+                            StyleHandler.GenerateSpan(ClrSpan, SpanAA.x, ScanLineAA.y,
                               Len, Style);
 
                             Covers := SpanAA.Covers;
 
                             repeat
                               if Covers^ = CAggCoverFull then
-                                  COLORS^ := ClrSpan^
+                                  Colors^ := ClrSpan^
                               else
-                                  COLORS.Add(ClrSpan, Covers^);
+                                  Colors.Add(ClrSpan, Covers^);
 
-                              Inc(PtrComp(ClrSpan), SizeOf(TAggColor));
-                              Inc(PtrComp(COLORS), SizeOf(TAggColor));
-                              Inc(PtrComp(Covers), SizeOf(Int8u));
-                              Dec(Len);
+                              inc(PtrComp(ClrSpan), SizeOf(TAggColor));
+                              inc(PtrComp(Colors), SizeOf(TAggColor));
+                              inc(PtrComp(Covers), SizeOf(Int8u));
+                              dec(Len);
 
                             until Len = 0;
 
-                            Dec(NumSpans);
+                            dec(NumSpans);
 
                             if NumSpans = 0 then
                                 Break;
@@ -659,7 +656,7 @@ begin
                         SpanAA.Free;
                       end;
 
-                    Inc(i);
+                    inc(i);
                   end;
 
                 // Emit the blended result as a color hSpan
@@ -668,11 +665,11 @@ begin
                 NumSpans := SlBin.NumSpans;
 
                 repeat
-                  Ren.BlendColorHSpan(SpanBin.X, SlBin.Y, SpanBin.Len,
-                    PAggColor(PtrComp(MixBuffer) + (SpanBin.X - MinX) *
+                  Ren.BlendColorHSpan(SpanBin.x, SlBin.y, SpanBin.Len,
+                    PAggColor(PtrComp(MixBuffer) + (SpanBin.x - MinX) *
                     SizeOf(TAggColor)), 0, CAggCoverFull);
 
-                  Dec(NumSpans);
+                  dec(NumSpans);
 
                   if NumSpans = 0 then
                       Break;
@@ -696,9 +693,9 @@ var
   MinX, Len, ScanLineStart, Sl_y: Integer;
   NumSpans, NumStyles, Style, ScanLineLen, i, Cover: Cardinal;
   // SsAntiAlias: Cardinal;
-  ColorSpan, MixBuffer, COLORS, ClrSpan: PAggColor;
+  ColorSpan, MixBuffer, Colors, ClrSpan: PAggColor;
   Solid: Boolean;
-  C: TAggColor;
+  c: TAggColor;
   CoverBuffer, SourceCovers, DestCovers: PCover;
   // SpanAA: PAggSpanRecord;
   SpanAA: TAggCustomSpan;
@@ -740,11 +737,11 @@ begin
                     repeat
                       Len := SpanAA.Len;
 
-                      StyleHandler.GenerateSpan(ColorSpan, SpanAA.X, ScanLineAA.Y, Len, Style);
-                      Ren.BlendColorHSpan(SpanAA.X, ScanLineAA.Y, SpanAA.Len, ColorSpan,
+                      StyleHandler.GenerateSpan(ColorSpan, SpanAA.x, ScanLineAA.y, Len, Style);
+                      Ren.BlendColorHSpan(SpanAA.x, ScanLineAA.y, SpanAA.Len, ColorSpan,
                         SpanAA.Covers);
 
-                      Dec(NumSpans);
+                      dec(NumSpans);
 
                       if NumSpans = 0 then
                           Break;
@@ -785,21 +782,21 @@ begin
                         begin
                           SpanAA := ScanLineAA.GetBegin;
                           NumSpans := ScanLineAA.NumSpans;
-                          Sl_y := ScanLineAA.Y;
+                          Sl_y := ScanLineAA.y;
                           // SsAntiAlias := ScanLineAA.SizeOfSpan;
 
                           if Solid then
                             // Just solid fill
                             repeat
-                              C := StyleHandler.GetColor(Style)^;
+                              c := StyleHandler.GetColor(Style)^;
 
                               Len := SpanAA.Len;
-                              COLORS := PAggColor(PtrComp(MixBuffer) + (SpanAA.X - MinX)
+                              Colors := PAggColor(PtrComp(MixBuffer) + (SpanAA.x - MinX)
                                 * SizeOf(TAggColor));
 
                               SourceCovers := PCover(SpanAA.Covers);
                               DestCovers :=
-                                PCover(PtrComp(CoverBuffer) + (SpanAA.X - MinX) *
+                                PCover(PtrComp(CoverBuffer) + (SpanAA.x - MinX) *
                                 SizeOf(TCover));
 
                               repeat
@@ -810,19 +807,19 @@ begin
 
                                 if Cover <> 0 then
                                   begin
-                                    COLORS.Add(@C, Cover);
+                                    Colors.Add(@c, Cover);
 
                                     DestCovers^ := DestCovers^ + Cover;
                                   end;
 
-                                Inc(PtrComp(COLORS), SizeOf(TAggColor));
-                                Inc(PtrComp(SourceCovers), SizeOf(TCover));
-                                Inc(PtrComp(DestCovers), SizeOf(TCover));
-                                Dec(Len);
+                                inc(PtrComp(Colors), SizeOf(TAggColor));
+                                inc(PtrComp(SourceCovers), SizeOf(TCover));
+                                inc(PtrComp(DestCovers), SizeOf(TCover));
+                                dec(Len);
 
                               until Len = 0;
 
-                              Dec(NumSpans);
+                              dec(NumSpans);
 
                               if NumSpans = 0 then
                                   Break;
@@ -835,15 +832,15 @@ begin
                             // Arbitrary Span generator
                             repeat
                               Len := SpanAA.Len;
-                              COLORS := PAggColor(PtrComp(MixBuffer) + (SpanAA.X - MinX)
+                              Colors := PAggColor(PtrComp(MixBuffer) + (SpanAA.x - MinX)
                                 * SizeOf(TAggColor));
                               ClrSpan := ColorSpan;
 
-                              StyleHandler.GenerateSpan(ClrSpan, SpanAA.X, ScanLineAA.Y, Len, Style);
+                              StyleHandler.GenerateSpan(ClrSpan, SpanAA.x, ScanLineAA.y, Len, Style);
 
                               SourceCovers := PCover(SpanAA.Covers);
                               DestCovers :=
-                                PCover(PtrComp(CoverBuffer) + (SpanAA.X - MinX) *
+                                PCover(PtrComp(CoverBuffer) + (SpanAA.x - MinX) *
                                 SizeOf(TCover));
 
                               repeat
@@ -854,20 +851,20 @@ begin
 
                                 if Cover <> 0 then
                                   begin
-                                    COLORS.Add(ClrSpan, Cover);
+                                    Colors.Add(ClrSpan, Cover);
 
                                     DestCovers^ := DestCovers^ + Cover;
                                   end;
 
-                                Inc(PtrComp(ClrSpan), SizeOf(TAggColor));
-                                Inc(PtrComp(COLORS), SizeOf(TAggColor));
-                                Inc(PtrComp(SourceCovers), SizeOf(TCover));
-                                Inc(PtrComp(DestCovers), SizeOf(TCover));
-                                Dec(Len);
+                                inc(PtrComp(ClrSpan), SizeOf(TAggColor));
+                                inc(PtrComp(Colors), SizeOf(TAggColor));
+                                inc(PtrComp(SourceCovers), SizeOf(TCover));
+                                inc(PtrComp(DestCovers), SizeOf(TCover));
+                                dec(Len);
 
                               until Len = 0;
 
-                              Dec(NumSpans);
+                              dec(NumSpans);
 
                               if NumSpans = 0 then
                                   Break;
@@ -880,7 +877,7 @@ begin
                           SpanAA.Free;
                         end;
 
-                      Inc(i);
+                      inc(i);
                     end;
 
                   Ren.BlendColorHSpan(ScanLineStart, Sl_y, ScanLineLen,
@@ -899,4 +896,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

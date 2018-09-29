@@ -37,11 +37,8 @@
 *)
 unit AggRenderScanlines;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -51,7 +48,7 @@ uses
   AggVertexSource;
 
 procedure RenderScanLines(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine; Ren: TAggCustomRendererScanLine);
-procedure RenderAllPaths(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine; R: TAggCustomRendererScanLineSolid; Vs: TAggVertexSource; cs: PAggColor; PathID: PCardinal; PathCount: Cardinal);
+procedure RenderAllPaths(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine; r: TAggCustomRendererScanLineSolid; Vs: TAggVertexSource; cs: PAggColor; PathID: PCardinal; PathCount: Cardinal);
 
 implementation
 
@@ -82,7 +79,7 @@ begin
 end;
 
 procedure RenderAllPaths(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine;
-  R: TAggCustomRendererScanLineSolid; Vs: TAggVertexSource; cs: PAggColor;
+  r: TAggCustomRendererScanLineSolid; Vs: TAggVertexSource; cs: PAggColor;
   PathID: PCardinal; PathCount: Cardinal);
 var
   i: Cardinal;
@@ -93,14 +90,16 @@ begin
     begin
       Ras.Reset;
       Ras.AddPath(Vs, PathID^);
-      R.SetColor(cs);
+      r.SetColor(cs);
 
-      RenderScanLines(Ras, SL, R);
+      RenderScanLines(Ras, SL, r);
 
-      Inc(PtrComp(cs), SizeOf(TAggColor));
-      Inc(PtrComp(PathID), SizeOf(Cardinal));
-      Inc(i);
+      inc(PtrComp(cs), SizeOf(TAggColor));
+      inc(PtrComp(PathID), SizeOf(Cardinal));
+      inc(i);
     end;
 end;
 
 end. 
+ 
+ 

@@ -385,7 +385,7 @@ begin
   if not EnabledLibViewCheckBox.IsChecked then
       exit;
 
-  ze.WaitQuery(True,
+  ze.WaitQueryP(True,
     procedure(var qState: TQueryState)
     var
       litm: TListBoxItem;

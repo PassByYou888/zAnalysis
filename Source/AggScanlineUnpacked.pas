@@ -37,11 +37,8 @@
 *)
 unit AggScanlineUnpacked;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggScanline,
@@ -127,8 +124,8 @@ type
 
   PAggSpanUnpacked8 = ^TAggSpanUnpacked8;
 
-  TAggSpanUnpacked8 = packed record
-    X, Len: Int16;
+  TAggSpanUnpacked8 = record
+    x, Len: Int16;
     Covers: PInt8u;
   end;
 
@@ -163,10 +160,10 @@ type
     procedure ResetSpans; override;
     function GetBegin: TAggCustomSpan; override;
 
-    procedure Finalize(Y: Integer); override;
-    procedure AddCell(X: Integer; Cover: Cardinal); override;
-    procedure AddCells(X: Integer; Len: Cardinal; Covers: PInt8u); override;
-    procedure AddSpan(X: Integer; Len, Cover: Cardinal); override;
+    procedure Finalize(y: Integer); override;
+    procedure AddCell(x: Integer; Cover: Cardinal); override;
+    procedure AddCells(x: Integer; Len: Cardinal; Covers: PInt8u); override;
+    procedure AddSpan(x: Integer; Len, Cover: Cardinal); override;
   end;
 
   TAggScanLineUnpacked8AlphaMask = class(TAggScanLineUnpacked8)
@@ -176,7 +173,7 @@ type
     constructor Create; overload; override;
     constructor Create(AlphaMask: TAggCustomAlphaMask); overload;
 
-    procedure Finalize(Y: Integer); override;
+    procedure Finalize(y: Integer); override;
   end;
 
 implementation
@@ -202,12 +199,12 @@ end;
 
 function TAggScanLineUnpacked8.TConstIterator.GetX: Integer;
 begin
-  Result := FSpan.X;
+  Result := FSpan.x;
 end;
 
 procedure TAggScanLineUnpacked8.TConstIterator.IncOperator;
 begin
-  Inc(PtrComp(FSpan), SizeOf(TAggSpanUnpacked8));
+  inc(PtrComp(FSpan), SizeOf(TAggSpanUnpacked8));
 end;
 
 { TAggScanLineUnpacked8 }
@@ -259,70 +256,70 @@ begin
   FCurrentSpan := FSpans;
 end;
 
-procedure TAggScanLineUnpacked8.Finalize(Y: Integer);
+procedure TAggScanLineUnpacked8.Finalize(y: Integer);
 begin
-  fy := Y;
+  fy := y;
 end;
 
-procedure TAggScanLineUnpacked8.AddCell(X: Integer; Cover: Cardinal);
+procedure TAggScanLineUnpacked8.AddCell(x: Integer; Cover: Cardinal);
 begin
-  Dec(X, FMinX);
+  dec(x, FMinX);
 
-  PInt8u(PtrComp(FCovers) + X * SizeOf(Int8u))^ := Int8u(Cover);
+  PInt8u(PtrComp(FCovers) + x * SizeOf(Int8u))^ := Int8u(Cover);
 
-  if X = FLastX + 1 then
-      Inc(FCurrentSpan.Len)
+  if x = FLastX + 1 then
+      inc(FCurrentSpan.Len)
   else
     begin
-      Inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanUnpacked8));
+      inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanUnpacked8));
 
-      FCurrentSpan.X := Int16(X + FMinX);
+      FCurrentSpan.x := Int16(x + FMinX);
       FCurrentSpan.Len := 1;
 
-      FCurrentSpan.Covers := PInt8u(PtrComp(FCovers) + X * SizeOf(Int8u));
+      FCurrentSpan.Covers := PInt8u(PtrComp(FCovers) + x * SizeOf(Int8u));
     end;
 
-  FLastX := X;
+  FLastX := x;
 end;
 
-procedure TAggScanLineUnpacked8.AddCells(X: Integer; Len: Cardinal;
+procedure TAggScanLineUnpacked8.AddCells(x: Integer; Len: Cardinal;
   Covers: PInt8u);
 begin
-  Dec(X, FMinX);
-  Move(Covers^, PInt8u(PtrComp(FCovers) + X)^, Len * SizeOf(Int8u));
+  dec(x, FMinX);
+  Move(Covers^, PInt8u(PtrComp(FCovers) + x)^, Len * SizeOf(Int8u));
 
-  if X = FLastX + 1 then
-      Inc(FCurrentSpan.Len, Int16(Len))
+  if x = FLastX + 1 then
+      inc(FCurrentSpan.Len, Int16(Len))
   else
     begin
-      Inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanUnpacked8));
+      inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanUnpacked8));
 
-      FCurrentSpan.X := Int16(X + FMinX);
+      FCurrentSpan.x := Int16(x + FMinX);
       FCurrentSpan.Len := Int16(Len);
-      FCurrentSpan.Covers := PInt8u(PtrComp(FCovers) + X * SizeOf(Int8u));
+      FCurrentSpan.Covers := PInt8u(PtrComp(FCovers) + x * SizeOf(Int8u));
     end;
 
-  FLastX := X + Len - 1;
+  FLastX := x + Len - 1;
 end;
 
-procedure TAggScanLineUnpacked8.AddSpan(X: Integer; Len, Cover: Cardinal);
+procedure TAggScanLineUnpacked8.AddSpan(x: Integer; Len, Cover: Cardinal);
 begin
-  Dec(X, FMinX);
+  dec(x, FMinX);
 
-  FillChar(PInt8u(PtrComp(FCovers) + X * SizeOf(Int8u))^, Len, Cover);
+  FillChar(PInt8u(PtrComp(FCovers) + x * SizeOf(Int8u))^, Len, Cover);
 
-  if X = FLastX + 1 then
-      Inc(FCurrentSpan.Len, Int16(Len))
+  if x = FLastX + 1 then
+      inc(FCurrentSpan.Len, Int16(Len))
   else
     begin
-      Inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanUnpacked8));
+      inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanUnpacked8));
 
-      FCurrentSpan.X := Int16(X + FMinX);
+      FCurrentSpan.x := Int16(x + FMinX);
       FCurrentSpan.Len := Int16(Len);
-      FCurrentSpan.Covers := PInt8u(PtrComp(FCovers) + X * SizeOf(Int8u));
+      FCurrentSpan.Covers := PInt8u(PtrComp(FCovers) + x * SizeOf(Int8u));
     end;
 
-  FLastX := X + Len - 1;
+  FLastX := x + Len - 1;
 end;
 
 function TAggScanLineUnpacked8.GetY: Integer;
@@ -354,12 +351,12 @@ begin
   FAlphaMask := AlphaMask;
 end;
 
-procedure TAggScanLineUnpacked8AlphaMask.Finalize(Y: Integer);
+procedure TAggScanLineUnpacked8AlphaMask.Finalize(y: Integer);
 var
   Span: TAggCustomSpan;
   Count: Cardinal;
 begin
-  inherited Finalize(Y);
+  inherited Finalize(y);
 
   if FAlphaMask <> nil then
     begin
@@ -367,10 +364,10 @@ begin
       Count := NumSpans;
 
       repeat
-        FAlphaMask.CombineHSpan(Span.X, Y, Span.Covers, Span.Len);
+        FAlphaMask.CombineHSpan(Span.x, y, Span.Covers, Span.Len);
 
         Span.IncOperator;
-        Dec(Count);
+        dec(Count);
 
       until Count = 0;
 
@@ -379,3 +376,5 @@ begin
 end;
 
 end. 
+ 
+ 

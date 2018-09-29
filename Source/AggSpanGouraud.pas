@@ -37,11 +37,8 @@
 *)
 unit AggSpanGouraud;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggMath,
@@ -53,8 +50,8 @@ uses
 type
   PAggCoordType = ^TAggCoordType;
 
-  TAggCoordType = packed record
-    X, Y: Double;
+  TAggCoordType = record
+    x, y: Double;
     COLOR: TAggColor;
   end;
 
@@ -76,7 +73,7 @@ type
 
     // Vertex Source Interface to feed the coordinates to the Rasterizer
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
   end;
 
 implementation
@@ -108,17 +105,17 @@ end;
 // as miter joins (CalculateIntersection).
 procedure TAggSpanGouraud.Triangle(x1, y1, x2, y2, x3, y3, d: Double);
 begin
-  FCoord[0].X := x1;
+  FCoord[0].x := x1;
   fx[0] := x1;
-  FCoord[0].Y := y1;
+  FCoord[0].y := y1;
   fy[0] := y1;
-  FCoord[1].X := x2;
+  FCoord[1].x := x2;
   fx[1] := x2;
-  FCoord[1].Y := y2;
+  FCoord[1].y := y2;
   fy[1] := y2;
-  FCoord[2].X := x3;
+  FCoord[2].x := x3;
   fx[2] := x3;
-  FCoord[2].Y := y3;
+  FCoord[2].y := y3;
   fy[2] := y3;
 
   FCmd[0] := CAggPathCmdMoveTo;
@@ -128,17 +125,17 @@ begin
 
   if d <> 0.0 then
     begin
-      DilateTriangle(FCoord[0].X, FCoord[0].Y, FCoord[1].X, FCoord[1].Y,
-        FCoord[2].X, FCoord[2].Y, @fx, @fy, d);
+      DilateTriangle(FCoord[0].x, FCoord[0].y, FCoord[1].x, FCoord[1].y,
+        FCoord[2].x, FCoord[2].y, @fx, @fy, d);
 
       CalculateIntersection(fx[4], fy[4], fx[5], fy[5], fx[0], fy[0], fx[1],
-        fy[1], @FCoord[0].X, @FCoord[0].Y);
+        fy[1], @FCoord[0].x, @FCoord[0].y);
 
       CalculateIntersection(fx[0], fy[0], fx[1], fy[1], fx[2], fy[2], fx[3],
-        fy[3], @FCoord[1].X, @FCoord[1].Y);
+        fy[3], @FCoord[1].x, @FCoord[1].y);
 
       CalculateIntersection(fx[2], fy[2], fx[3], fy[3], fx[4], fy[4], fx[5],
-        fy[5], @FCoord[2].X, @FCoord[2].Y);
+        fy[5], @FCoord[2].x, @FCoord[2].y);
 
       FCmd[3] := CAggPathCmdLineTo;
       FCmd[4] := CAggPathCmdLineTo;
@@ -171,14 +168,14 @@ begin
   FCoord[2].COLOR := COLOR;
 end;
 
-function TAggSpanGouraud.Vertex(X, Y: PDouble): Cardinal;
+function TAggSpanGouraud.Vertex(x, y: PDouble): Cardinal;
 begin
-  X^ := fx[FVertex];
-  Y^ := fy[FVertex];
+  x^ := fx[FVertex];
+  y^ := fy[FVertex];
 
   Result := FCmd[FVertex];
 
-  Inc(FVertex);
+  inc(FVertex);
 end;
 
 procedure TAggSpanGouraud.ArrangeVertices(Coord: PAggCoordType);
@@ -189,14 +186,14 @@ begin
   PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType))^ := FCoord[1];
   PAggCoordType(PtrComp(Coord) + 2 * SizeOf(TAggCoordType))^ := FCoord[2];
 
-  if FCoord[0].Y > FCoord[2].Y then
+  if FCoord[0].y > FCoord[2].y then
     begin
       PAggCoordType(Coord)^ := FCoord[2];
       PAggCoordType(PtrComp(Coord) + 2 * SizeOf(TAggCoordType))^ := FCoord[0];
     end;
 
-  if PAggCoordType(Coord).Y >
-    PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType)).Y then
+  if PAggCoordType(Coord).y >
+    PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType)).y then
     begin
       tmp := PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType))^;
 
@@ -206,8 +203,8 @@ begin
       PAggCoordType(Coord)^ := tmp;
     end;
 
-  if PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType)).Y >
-    PAggCoordType(PtrComp(Coord) + 2 * SizeOf(TAggCoordType)).Y then
+  if PAggCoordType(PtrComp(Coord) + SizeOf(TAggCoordType)).y >
+    PAggCoordType(PtrComp(Coord) + 2 * SizeOf(TAggCoordType)).y then
     begin
       tmp := PAggCoordType(PtrComp(Coord) + 2 * SizeOf(TAggCoordType))^;
 
@@ -219,3 +216,5 @@ begin
 end;
 
 end. 
+ 
+ 

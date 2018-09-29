@@ -37,11 +37,8 @@
 *)
 unit AggPixelFormatRgbPacked;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggPixelFormat,
@@ -59,10 +56,10 @@ procedure PixelFormatRgb565Gamma(out PixelFormatProcessor: TAggPixelFormatProces
 
 implementation
 
-function Fmt5x5Row(This: TAggPixelFormatProcessor; X, Y: Integer): TAggRowDataType;
+function Fmt5x5Row(This: TAggPixelFormatProcessor; x, y: Integer): TAggRowDataType;
 begin
-  Result.Initialize(X, This.width - 1,
-    PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * SizeOf(Int16u)));
+  Result.Initialize(x, This.width - 1,
+    PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + x * SizeOf(Int16u)));
 end;
 
 {$INCLUDE AggPixelFormatRgb555.inc}
@@ -316,3 +313,5 @@ begin
 end;
 
 end. 
+ 
+ 

@@ -37,11 +37,8 @@
 *)
 unit AggConvAdaptorVpgen;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVertexSource,
@@ -68,7 +65,7 @@ type
   private
     function GetVpgenSegmentator: TAggVpgenSegmentator;
   public
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
     property VpGenSegmentator: TAggVpgenSegmentator read GetVpgenSegmentator;
   end;
 
@@ -82,8 +79,8 @@ constructor TAggConvAdaptorVpgen.Create(Source: TAggCustomVertexSource;
 begin
   FSource := Source;
   FVpGen := Gen;
-  FStart.X := 0;
-  FStart.Y := 0;
+  FStart.x := 0;
+  FStart.y := 0;
 
   FPolyFlags := 0;
   FVertices := 0;
@@ -100,8 +97,8 @@ begin
 
   TAggCustomVpgen(FVpGen).Reset;
 
-  FStart.X := 0;
-  FStart.Y := 0;
+  FStart.x := 0;
+  FStart.y := 0;
   FPolyFlags := 0;
   FVertices := 0;
 end;
@@ -113,7 +110,7 @@ begin
   Result := TAggVpgenSegmentator(FVpGen);
 end;
 
-function TAggConvAdaptorVpgenSegmentator.Vertex(X, Y: PDouble): Cardinal;
+function TAggConvAdaptorVpgenSegmentator.Vertex(x, y: PDouble): Cardinal;
 var
   Cmd: Cardinal;
   TX, TY: Double;
@@ -121,7 +118,7 @@ begin
   Cmd := CAggPathCmdStop;
 
   repeat
-    Cmd := FVpGen.Vertex(X, Y);
+    Cmd := FVpGen.Vertex(x, y);
 
     if not IsStop(Cmd) then
         Break;
@@ -129,8 +126,8 @@ begin
     if (FPolyFlags <> 0) and not VpGenSegmentator.AutoUnclose
     then
       begin
-        X^ := 0.0;
-        Y^ := 0.0;
+        x^ := 0.0;
+        y^ := 0.0;
         Cmd := FPolyFlags;
 
         FPolyFlags := 0;
@@ -149,7 +146,7 @@ begin
             Exit;
           end;
 
-        Vpgen.MoveTo(FStart.X, FStart.Y);
+        Vpgen.MoveTo(FStart.x, FStart.y);
 
         FVertices := 1;
 
@@ -163,11 +160,11 @@ begin
         begin
           if VpGenSegmentator.AutoClose and (FVertices > 2) then
             begin
-              Vpgen.LineTo(FStart.X, FStart.Y);
+              Vpgen.LineTo(FStart.x, FStart.y);
 
               FPolyFlags := CAggPathCmdEndPoly or CAggPathFlagsClose;
-              FStart.X := TX;
-              FStart.Y := TY;
+              FStart.x := TX;
+              FStart.y := TY;
               FVertices := -1;
 
               Continue;
@@ -175,15 +172,15 @@ begin
 
           Vpgen.MoveTo(TX, TY);
 
-          FStart.X := TX;
-          FStart.Y := TY;
+          FStart.x := TX;
+          FStart.y := TY;
           FVertices := 1;
         end
       else
         begin
           Vpgen.LineTo(TX, TY);
 
-          Inc(FVertices);
+          inc(FVertices);
         end
     else if IsEndPoly(Cmd) then
       begin
@@ -195,7 +192,7 @@ begin
                 FPolyFlags := FPolyFlags or CAggPathFlagsClose;
 
             if FVertices > 2 then
-                Vpgen.LineTo(FStart.X, FStart.Y);
+                Vpgen.LineTo(FStart.x, FStart.y);
 
             FVertices := 0;
           end;
@@ -205,7 +202,7 @@ begin
         // CAggPathCmdStop
         if VpGenSegmentator.AutoClose and (FVertices > 2) then
           begin
-            Vpgen.LineTo(FStart.X, FStart.Y);
+            Vpgen.LineTo(FStart.x, FStart.y);
 
             FPolyFlags := CAggPathCmdEndPoly or CAggPathFlagsClose;
             FVertices := -2;
@@ -221,3 +218,5 @@ begin
 end;
 
 end. 
+ 
+ 

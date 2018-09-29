@@ -24,7 +24,7 @@ const
 var
   lt          : TLearnType;
   lR          : TLearn;
-  i, J, LV    : TLInt;
+  i, j, LV    : TLInt;
   f_In, f_Out : TLVec;
   f_out_list  : TLMatrix;
   Search_Out  : TLIVec;
@@ -48,7 +48,7 @@ begin
         SetLength(f_In, lR.InLen);
         SetLength(f_Out, lR.OutLen);
 
-        for J := 0 to test_Depth - 1 do
+        for j := 0 to test_Depth - 1 do
           begin
             for i := 0 to lR.InLen - 1 do
                 f_In[i] := umlRandomRangeD(0, 100);
@@ -127,7 +127,7 @@ begin
         SetLength(f_In, lR.InLen);
         SetLength(f_Out, lR.OutLen);
 
-        for J := 0 to test_Depth - 1 do
+        for j := 0 to test_Depth - 1 do
           begin
             for i := 0 to lR.InLen - 1 do
                 f_In[i] := umlRandomRangeD(0, 100);
@@ -180,17 +180,17 @@ begin
 
   // build random pixel
   SetLength(RasterArray, test_Depth);
-  for J := 0 to test_Depth - 1 do
+  for j := 0 to test_Depth - 1 do
     begin
-      RasterArray[J] := TMemoryRaster.Create;
-      RasterArray[J].SetSize(test_Depth, test_Depth);
+      RasterArray[j] := TMemoryRaster.Create;
+      RasterArray[j].SetSize(test_Depth, test_Depth);
     end;
 
   for mr in RasterArray do
     begin
-      for J := 0 to mr.height - 1 do
+      for j := 0 to mr.height - 1 do
         for i := 0 to mr.width - 1 do
-            mr.Pixel[i, J] := RasterColor(umlRandomRange(0, 255), umlRandomRange(0, 255), umlRandomRange(0, 255), 255);
+            mr.Pixel[i, j] := RasterColor(umlRandomRange(0, 255), umlRandomRange(0, 255), umlRandomRange(0, 255), 255);
     end;
 
   // raster Classifier
@@ -199,11 +199,11 @@ begin
       DoStatusNoLn('raster Classifier test %s ..', [CLearnString[lt]]);
       lR := TLearn.CreatePictureClassifier(lt, Trunc(Sqrt(test_Depth)));
 
-      for J := 0 to test_Depth - 1 do
+      for j := 0 to test_Depth - 1 do
         begin
-          M := LMatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[J]);
+          M := LMatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[j]);
           SetLength(f_Out, 1);
-          f_Out[0] := J;
+          f_Out[0] := j;
           lR.AddMatrix(M, f_Out);
         end;
       if lR.Train then
@@ -212,24 +212,24 @@ begin
 
           SetLength(Search_Out, test_Depth);
           SetLength(f_out_list, test_Depth);
-          for J := 0 to test_Depth - 1 do
+          for j := 0 to test_Depth - 1 do
             begin
-              M := LMatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[J]);
+              M := LMatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[j]);
 
-              Search_Out[J] := lR.processMaxIndex(M);
-              if Search_Out[J] <> J then
+              Search_Out[j] := lR.processMaxIndex(M);
+              if Search_Out[j] <> j then
                   DoStatus('raster Classifier %s search matrix problem..', [CLearnString[lt]]);
 
-              Search_Out[J] := lR.SearchMemoryWithDistance(lvec(M, lR.InLen));
-              if Search_Out[J] <> J then
+              Search_Out[j] := lR.SearchMemoryWithDistance(lvec(M, lR.InLen));
+              if Search_Out[j] <> j then
                   DoStatus('raster Classifier %s SearchMemoryWithDistance problem..', [CLearnString[lt]]);
 
-              Search_Out[J] := lR.SearchMemoryWithPearson(lvec(M, lR.InLen));
-              if Search_Out[J] <> J then
+              Search_Out[j] := lR.SearchMemoryWithPearson(lvec(M, lR.InLen));
+              if Search_Out[j] <> j then
                   DoStatus('raster Classifier %s SearchMemoryWithPearson problem..', [CLearnString[lt]]);
 
-              Search_Out[J] := lR.SearchMemoryWithSpearman(lvec(M, lR.InLen));
-              if Search_Out[J] <> J then
+              Search_Out[j] := lR.SearchMemoryWithSpearman(lvec(M, lR.InLen));
+              if Search_Out[j] <> j then
                   DoStatus('raster Classifier %s SearchMemoryWithSpearman problem..', [CLearnString[lt]]);
             end;
         end
@@ -240,9 +240,11 @@ begin
       DisposeObject(lR);
     end;
 
-  for J := 0 to test_Depth - 1 do
-      DisposeObject(RasterArray[J]);
+  for j := 0 to test_Depth - 1 do
+      DisposeObject(RasterArray[j]);
   SetLength(RasterArray, 0);
 
   DoStatus('all learn test finish!');
 end; 
+ 
+ 

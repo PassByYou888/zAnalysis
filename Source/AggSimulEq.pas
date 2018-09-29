@@ -37,11 +37,8 @@
 *)
 unit AggSimulEq;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics;
 
@@ -64,9 +61,9 @@ begin
       a1^ := a2^;
       a2^ := tmp;
 
-      Inc(PtrComp(a1), SizeOf(Double));
-      Inc(PtrComp(a2), SizeOf(Double));
-      Inc(i);
+      inc(PtrComp(a1), SizeOf(Double));
+      inc(PtrComp(a2), SizeOf(Double));
+      inc(i);
     end;
 end;
 
@@ -93,7 +90,7 @@ begin
           k := i;
         end;
 
-      Inc(i);
+      inc(i);
     end;
 
   if PDouble(PtrComp(M) + (k * Cols + Row) * SizeOf(Double))^ = 0.0 then
@@ -121,7 +118,7 @@ function SimulEqSolve(Left, Right, EqResult: PDouble; Size,
 var
   M: Integer;
 
-  i, J, k, Adx: Cardinal;
+  i, j, k, Adx: Cardinal;
 
   a1: Double;
   tmp: PDouble;
@@ -135,13 +132,13 @@ begin
   try
     for i := 0 to Size - 1 do
       begin
-        for J := 0 to Size - 1 do
-            PDouble(PtrComp(tmp) + (i * Adx + J) * SizeOf(Double))^ :=
-            PDouble(PtrComp(Left) + (i * Size + J) * SizeOf(Double))^;
+        for j := 0 to Size - 1 do
+            PDouble(PtrComp(tmp) + (i * Adx + j) * SizeOf(Double))^ :=
+            PDouble(PtrComp(Left) + (i * Size + j) * SizeOf(Double))^;
 
-        for J := 0 to RightCols - 1 do
-            PDouble(PtrComp(tmp) + (i * Adx + Size + J) * SizeOf(Double))^ :=
-            PDouble(PtrComp(Right) + (i * RightCols + J) * SizeOf(Double))^;
+        for j := 0 to RightCols - 1 do
+            PDouble(PtrComp(tmp) + (i * Adx + Size + j) * SizeOf(Double))^ :=
+            PDouble(PtrComp(Right) + (i * RightCols + j) * SizeOf(Double))^;
       end;
 
     for k := 0 to Size - 1 do
@@ -150,14 +147,14 @@ begin
             Exit;
 
         a1 := PDouble(PtrComp(tmp) + (k * Adx + k) * SizeOf(Double))^;
-        J := k;
+        j := k;
 
-        while J < Size + RightCols do
+        while j < Size + RightCols do
           begin
-            PDouble(PtrComp(tmp) + (k * Adx + J) * SizeOf(Double))^ :=
-              PDouble(PtrComp(tmp) + (k * Adx + J) * SizeOf(Double))^ / a1;
+            PDouble(PtrComp(tmp) + (k * Adx + j) * SizeOf(Double))^ :=
+              PDouble(PtrComp(tmp) + (k * Adx + j) * SizeOf(Double))^ / a1;
 
-            Inc(J);
+            inc(j);
           end;
 
         i := k + 1;
@@ -165,18 +162,18 @@ begin
         while i < Size do
           begin
             a1 := PDouble(PtrComp(tmp) + (i * Adx + k) * SizeOf(Double))^;
-            J := k;
+            j := k;
 
-            while J < Size + RightCols do
+            while j < Size + RightCols do
               begin
-                PDouble(PtrComp(tmp) + (i * Adx + J) * SizeOf(Double))^ :=
-                  PDouble(PtrComp(tmp) + (i * Adx + J) * SizeOf(Double))^ - a1 *
-                  PDouble(PtrComp(tmp) + (k * Adx + J) * SizeOf(Double))^;
+                PDouble(PtrComp(tmp) + (i * Adx + j) * SizeOf(Double))^ :=
+                  PDouble(PtrComp(tmp) + (i * Adx + j) * SizeOf(Double))^ - a1 *
+                  PDouble(PtrComp(tmp) + (k * Adx + j) * SizeOf(Double))^;
 
-                Inc(J);
+                inc(j);
               end;
 
-            Inc(i);
+            inc(i);
           end;
       end;
 
@@ -189,19 +186,19 @@ begin
             PDouble(PtrComp(EqResult) + (M * RightCols + k) * SizeOf(Double))^ :=
               PDouble(PtrComp(tmp) + (M * Adx + Size + k) * SizeOf(Double))^;
 
-            J := M + 1;
+            j := M + 1;
 
-            while J < Size do
+            while j < Size do
               begin
                 PDouble(PtrComp(EqResult) + (M * RightCols + k) * SizeOf(Double))^ :=
                   PDouble(PtrComp(EqResult) + (M * RightCols + k) * SizeOf(Double))^ -
-                  (PDouble(PtrComp(tmp) + (M * Adx + J) * SizeOf(Double))^ *
-                  PDouble(PtrComp(EqResult) + (J * RightCols + k) * SizeOf(Double))^);
+                  (PDouble(PtrComp(tmp) + (M * Adx + j) * SizeOf(Double))^ *
+                  PDouble(PtrComp(EqResult) + (j * RightCols + k) * SizeOf(Double))^);
 
-                Inc(J);
+                inc(j);
               end;
 
-            Dec(M);
+            dec(M);
           end;
       end;
 
@@ -212,3 +209,5 @@ begin
 end;
 
 end. 
+ 
+ 

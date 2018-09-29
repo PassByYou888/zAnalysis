@@ -37,11 +37,8 @@
 *)
 unit AggSpanPatternFilterRgb;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -67,7 +64,7 @@ type
     constructor Create(Alloc: TAggSpanAllocator; Wx, Wy: TAggWrapMode; Order: TAggOrder); overload;
     constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator; Wx, Wy: TAggWrapMode; Order: TAggOrder); overload;
 
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
   TAggSpanPatternFilterRgbBilinear = class(TAggSpanImageFilter)
@@ -80,7 +77,7 @@ type
     constructor Create(Alloc: TAggSpanAllocator; Wx, Wy: TAggWrapMode; Order: TAggOrder); overload;
     constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator; Wx, Wy: TAggWrapMode; Order: TAggOrder); overload;
 
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
   TAggSpanPatternFilterRgb2x2 = class(TAggSpanImageFilter)
@@ -93,7 +90,7 @@ type
     constructor Create(Alloc: TAggSpanAllocator; Wx, Wy: TAggWrapMode; Order: TAggOrder); overload;
     constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator; Filter: TAggImageFilterLUT; Wx, Wy: TAggWrapMode; Order: TAggOrder); overload;
 
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
   TAggSpanPatternFilterRgb = class(TAggSpanImageFilter)
@@ -106,7 +103,7 @@ type
     constructor Create(Alloc: TAggSpanAllocator; Wx, Wy: TAggWrapMode; Order: TAggOrder); overload;
     constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; Interpolator: TAggSpanInterpolator; Filter: TAggImageFilterLUT; Wx, Wy: TAggWrapMode; Order: TAggOrder); overload;
 
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
 implementation
@@ -156,7 +153,7 @@ begin
   FWrapModeY.Init(Src.height);
 end;
 
-function TAggSpanPatternFilterRgbNN.Generate(X, Y: Integer;
+function TAggSpanPatternFilterRgbNN.Generate(x, y: Integer;
   Len: Cardinal): PAggColor;
 var
   Span: PAggColor;
@@ -164,26 +161,26 @@ var
 begin
   Span := Allocator.Span;
 
-  Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
+  Interpolator.SetBegin(x + FilterDeltaXDouble, y + FilterDeltaYDouble, Len);
 
   repeat
-    Interpolator.Coordinates(@X, @Y);
+    Interpolator.Coordinates(@x, @y);
 
-    X := FWrapModeX.FuncOperator(ShrInt32(X, CAggImageSubpixelShift));
-    Y := FWrapModeY.FuncOperator(ShrInt32(Y, CAggImageSubpixelShift));
+    x := FWrapModeX.FuncOperator(ShrInt32(x, CAggImageSubpixelShift));
+    y := FWrapModeY.FuncOperator(ShrInt32(y, CAggImageSubpixelShift));
 
-    ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(Y)) + X * 3 * SizeOf(Int8u));
+    ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(y)) + x * 3 * SizeOf(Int8u));
 
-    Span.Rgba8.R := PInt8u(PtrComp(ForeGroundPointer) + FOrder.R * SizeOf(Int8u))^;
+    Span.Rgba8.r := PInt8u(PtrComp(ForeGroundPointer) + FOrder.r * SizeOf(Int8u))^;
     Span.Rgba8.g := PInt8u(PtrComp(ForeGroundPointer) + FOrder.g * SizeOf(Int8u))^;
     Span.Rgba8.b := PInt8u(PtrComp(ForeGroundPointer) + FOrder.b * SizeOf(Int8u))^;
-    Span.Rgba8.A := CAggBaseMask;
+    Span.Rgba8.a := CAggBaseMask;
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
+    inc(PtrComp(Span), SizeOf(TAggColor));
 
     Interpolator.IncOperator;
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 
   Result := Allocator.Span;
@@ -235,7 +232,7 @@ begin
   FWrapModeY.Init(Src.height);
 end;
 
-function TAggSpanPatternFilterRgbBilinear.Generate(X, Y: Integer;
+function TAggSpanPatternFilterRgbBilinear.Generate(x, y: Integer;
   Len: Cardinal): PAggColor;
 var
   Span: PAggColor;
@@ -251,24 +248,24 @@ var
 begin
   Span := Allocator.Span;
 
-  Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
+  Interpolator.SetBegin(x + FilterDeltaXDouble, y + FilterDeltaYDouble, Len);
 
   repeat
-    Interpolator.Coordinates(@HiRes.X, @HiRes.Y);
+    Interpolator.Coordinates(@HiRes.x, @HiRes.y);
 
-    Dec(HiRes.X, FilterDeltaXInteger);
-    Dec(HiRes.Y, FilterDeltaYInteger);
+    dec(HiRes.x, FilterDeltaXInteger);
+    dec(HiRes.y, FilterDeltaYInteger);
 
-    LoRes.X := ShrInt32(HiRes.X, CAggImageSubpixelShift);
-    LoRes.Y := ShrInt32(HiRes.Y, CAggImageSubpixelShift);
+    LoRes.x := ShrInt32(HiRes.x, CAggImageSubpixelShift);
+    LoRes.y := ShrInt32(HiRes.y, CAggImageSubpixelShift);
 
-    x1 := FWrapModeX.FuncOperator(LoRes.X);
+    x1 := FWrapModeX.FuncOperator(LoRes.x);
     x2 := FWrapModeX.IncOperator;
 
     x1 := x1 * 3;
     x2 := x2 * 3;
 
-    y1 := FWrapModeY.FuncOperator(LoRes.Y);
+    y1 := FWrapModeY.FuncOperator(LoRes.y);
     y2 := FWrapModeY.IncOperator;
 
     Ptr1 := SourceImage.Row(y1);
@@ -278,55 +275,55 @@ begin
     Fg[1] := Fg[0];
     Fg[2] := Fg[0];
 
-    HiRes.X := HiRes.X and CAggImageSubpixelMask;
-    HiRes.Y := HiRes.Y and CAggImageSubpixelMask;
+    HiRes.x := HiRes.x and CAggImageSubpixelMask;
+    HiRes.y := HiRes.y and CAggImageSubpixelMask;
 
     ForeGroundPointer := PInt8u(PtrComp(Ptr1) + x1 * SizeOf(Int8u));
-    Weight := (CAggImageSubpixelSize - HiRes.X) * (CAggImageSubpixelSize - HiRes.Y);
+    Weight := (CAggImageSubpixelSize - HiRes.x) * (CAggImageSubpixelSize - HiRes.y);
 
-    Inc(Fg[0], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[1], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[2], Weight * ForeGroundPointer^);
+    inc(Fg[0], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[1], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[2], Weight * ForeGroundPointer^);
 
     ForeGroundPointer := PInt8u(PtrComp(Ptr1) + x2 * SizeOf(Int8u));
-    Weight := HiRes.X * (CAggImageSubpixelSize - HiRes.Y);
+    Weight := HiRes.x * (CAggImageSubpixelSize - HiRes.y);
 
-    Inc(Fg[0], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[1], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[2], Weight * ForeGroundPointer^);
+    inc(Fg[0], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[1], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[2], Weight * ForeGroundPointer^);
 
     ForeGroundPointer := PInt8u(PtrComp(Ptr2) + x1 * SizeOf(Int8u));
-    Weight := (CAggImageSubpixelSize - HiRes.X) * HiRes.Y;
+    Weight := (CAggImageSubpixelSize - HiRes.x) * HiRes.y;
 
-    Inc(Fg[0], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[1], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[2], Weight * ForeGroundPointer^);
+    inc(Fg[0], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[1], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[2], Weight * ForeGroundPointer^);
 
     ForeGroundPointer := PInt8u(PtrComp(Ptr2) + x2 * SizeOf(Int8u));
-    Weight := HiRes.X * HiRes.Y;
+    Weight := HiRes.x * HiRes.y;
 
-    Inc(Fg[0], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[1], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[2], Weight * ForeGroundPointer^);
+    inc(Fg[0], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[1], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[2], Weight * ForeGroundPointer^);
 
-    Span.Rgba8.R := Int8u(Fg[FOrder.R] shr (CAggImageSubpixelShift * 2));
+    Span.Rgba8.r := Int8u(Fg[FOrder.r] shr (CAggImageSubpixelShift * 2));
     Span.Rgba8.g := Int8u(Fg[FOrder.g] shr (CAggImageSubpixelShift * 2));
     Span.Rgba8.b := Int8u(Fg[FOrder.b] shr (CAggImageSubpixelShift * 2));
-    Span.Rgba8.A := CAggBaseMask;
+    Span.Rgba8.a := CAggBaseMask;
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
+    inc(PtrComp(Span), SizeOf(TAggColor));
 
     Interpolator.IncOperator;
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 
   Result := Allocator.Span;
@@ -376,7 +373,7 @@ begin
   FWrapModeY.Init(Src.height);
 end;
 
-function TAggSpanPatternFilterRgb2x2.Generate(X, Y: Integer;
+function TAggSpanPatternFilterRgb2x2.Generate(x, y: Integer;
   Len: Cardinal): PAggColor;
 var
   Span: PAggColor;
@@ -393,27 +390,27 @@ var
 begin
   Span := Allocator.Span;
 
-  Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
+  Interpolator.SetBegin(x + FilterDeltaXDouble, y + FilterDeltaYDouble, Len);
 
   WeightArray := PInt16(PtrComp(Filter.WeightArray) +
     ShrInt32(Filter.Diameter div 2 - 1, CAggImageSubpixelShift));
 
   repeat
-    Interpolator.Coordinates(@HiRes.X, @HiRes.Y);
+    Interpolator.Coordinates(@HiRes.x, @HiRes.y);
 
-    Dec(HiRes.X, FilterDeltaXInteger);
-    Dec(HiRes.Y, FilterDeltaYInteger);
+    dec(HiRes.x, FilterDeltaXInteger);
+    dec(HiRes.y, FilterDeltaYInteger);
 
-    LoRes.X := ShrInt32(HiRes.X, CAggImageSubpixelShift);
-    LoRes.Y := ShrInt32(HiRes.Y, CAggImageSubpixelShift);
+    LoRes.x := ShrInt32(HiRes.x, CAggImageSubpixelShift);
+    LoRes.y := ShrInt32(HiRes.y, CAggImageSubpixelShift);
 
-    x1 := FWrapModeX.FuncOperator(LoRes.X);
+    x1 := FWrapModeX.FuncOperator(LoRes.x);
     x2 := FWrapModeX.IncOperator;
 
     x1 := x1 * 3;
     x2 := x2 * 3;
 
-    y1 := FWrapModeY.FuncOperator(LoRes.Y);
+    y1 := FWrapModeY.FuncOperator(LoRes.y);
     y2 := FWrapModeY.IncOperator;
 
     Ptr1 := SourceImage.Row(y1);
@@ -423,54 +420,54 @@ begin
     Fg[1] := Fg[0];
     Fg[2] := Fg[0];
 
-    HiRes.X := HiRes.X and CAggImageSubpixelMask;
-    HiRes.Y := HiRes.Y and CAggImageSubpixelMask;
+    HiRes.x := HiRes.x and CAggImageSubpixelMask;
+    HiRes.y := HiRes.y and CAggImageSubpixelMask;
 
     ForeGroundPointer := PInt8u(PtrComp(Ptr1) + x1 * SizeOf(Int8u));
     Weight := ShrInt32(PInt16(PtrComp(WeightArray) +
-      (HiRes.X + CAggImageSubpixelSize) * SizeOf(Int16))^ *
-      PInt16(PtrComp(WeightArray) + (HiRes.Y + CAggImageSubpixelSize) *
+      (HiRes.x + CAggImageSubpixelSize) * SizeOf(Int16))^ *
+      PInt16(PtrComp(WeightArray) + (HiRes.y + CAggImageSubpixelSize) *
       SizeOf(Int16))^ + CAggImageFilterSize div 2, CAggImageFilterShift);
 
-    Inc(Fg[0], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[1], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[2], Weight * ForeGroundPointer^);
+    inc(Fg[0], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[1], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[2], Weight * ForeGroundPointer^);
 
     ForeGroundPointer := PInt8u(PtrComp(Ptr1) + x2 * SizeOf(Int8u));
-    Weight := ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.X * SizeOf(Int16))^
-      * PInt16(PtrComp(WeightArray) + (HiRes.Y + CAggImageSubpixelSize) *
+    Weight := ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.x * SizeOf(Int16))^
+      * PInt16(PtrComp(WeightArray) + (HiRes.y + CAggImageSubpixelSize) *
       SizeOf(Int16))^ + CAggImageFilterSize div 2, CAggImageFilterShift);
 
-    Inc(Fg[0], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[1], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[2], Weight * ForeGroundPointer^);
+    inc(Fg[0], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[1], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[2], Weight * ForeGroundPointer^);
 
     ForeGroundPointer := PInt8u(PtrComp(Ptr2) + x1 * SizeOf(Int8u));
     Weight := ShrInt32(PInt16(PtrComp(WeightArray) +
-      (HiRes.X + CAggImageSubpixelSize) * SizeOf(Int16))^ *
-      PInt16(PtrComp(WeightArray) + HiRes.Y * SizeOf(Int16))^ +
+      (HiRes.x + CAggImageSubpixelSize) * SizeOf(Int16))^ *
+      PInt16(PtrComp(WeightArray) + HiRes.y * SizeOf(Int16))^ +
       CAggImageFilterSize div 2, CAggImageFilterShift);
 
-    Inc(Fg[0], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[1], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[2], Weight * ForeGroundPointer^);
+    inc(Fg[0], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[1], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[2], Weight * ForeGroundPointer^);
 
     ForeGroundPointer := PInt8u(PtrComp(Ptr2) + x2 * SizeOf(Int8u));
-    Weight := ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.X * SizeOf(Int16))^
-      * PInt16(PtrComp(WeightArray) + HiRes.Y * SizeOf(Int16))^ +
+    Weight := ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.x * SizeOf(Int16))^
+      * PInt16(PtrComp(WeightArray) + HiRes.y * SizeOf(Int16))^ +
       CAggImageFilterSize div 2, CAggImageFilterShift);
 
-    Inc(Fg[0], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[1], Weight * ForeGroundPointer^);
-    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-    Inc(Fg[2], Weight * ForeGroundPointer^);
+    inc(Fg[0], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[1], Weight * ForeGroundPointer^);
+    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+    inc(Fg[2], Weight * ForeGroundPointer^);
 
     Fg[0] := Fg[0] shr CAggImageFilterShift;
     Fg[1] := Fg[1] shr CAggImageFilterShift;
@@ -485,16 +482,16 @@ begin
     if Fg[2] > CAggBaseMask then
         Fg[2] := CAggBaseMask;
 
-    Span.Rgba8.R := Int8u(Fg[FOrder.R]);
+    Span.Rgba8.r := Int8u(Fg[FOrder.r]);
     Span.Rgba8.g := Int8u(Fg[FOrder.g]);
     Span.Rgba8.b := Int8u(Fg[FOrder.b]);
-    Span.Rgba8.A := CAggBaseMask;
+    Span.Rgba8.a := CAggBaseMask;
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
+    inc(PtrComp(Span), SizeOf(TAggColor));
 
     Interpolator.IncOperator;
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 
   Result := Allocator.Span;
@@ -544,7 +541,7 @@ begin
   FWrapModeY.Init(Src.height);
 end;
 
-function TAggSpanPatternFilterRgb.Generate(X, Y: Integer;
+function TAggSpanPatternFilterRgb.Generate(x, y: Integer;
   Len: Cardinal): PAggColor;
 var
   Span: PAggColor;
@@ -556,27 +553,27 @@ var
   WeightArray: PInt16;
 begin
   Span := Allocator.Span;
-  Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
+  Interpolator.SetBegin(x + FilterDeltaXDouble, y + FilterDeltaYDouble, Len);
 
   Diameter := Filter.Diameter;
   Start := Filter.Start;
   WeightArray := Filter.WeightArray;
 
   repeat
-    Interpolator.Coordinates(@X, @Y);
+    Interpolator.Coordinates(@x, @y);
 
-    Dec(X, FilterDeltaXInteger);
-    Dec(Y, FilterDeltaYInteger);
+    dec(x, FilterDeltaXInteger);
+    dec(y, FilterDeltaYInteger);
 
-    HiRes := PointInteger(X, Y);
+    HiRes := PointInteger(x, y);
 
-    FractX := HiRes.X and CAggImageSubpixelMask;
+    FractX := HiRes.x and CAggImageSubpixelMask;
     CountY := Diameter;
 
-    LoRes.Y := FWrapModeY.FuncOperator
-      (ShrInt32(Y, CAggImageSubpixelShift) + Start);
-    XInt := ShrInt32(X, CAggImageSubpixelShift) + Start;
-    HiRes.Y := CAggImageSubpixelMask - (HiRes.Y and CAggImageSubpixelMask);
+    LoRes.y := FWrapModeY.FuncOperator
+      (ShrInt32(y, CAggImageSubpixelShift) + Start);
+    XInt := ShrInt32(x, CAggImageSubpixelShift) + Start;
+    HiRes.y := CAggImageSubpixelMask - (HiRes.y and CAggImageSubpixelMask);
 
     Fg[0] := CAggImageFilterSize div 2;
     Fg[1] := Fg[0];
@@ -584,36 +581,36 @@ begin
 
     repeat
       CountX := Diameter;
-      WeightY := PInt16(PtrComp(WeightArray) + HiRes.Y * SizeOf(Int16))^;
+      WeightY := PInt16(PtrComp(WeightArray) + HiRes.y * SizeOf(Int16))^;
 
-      HiRes.X := CAggImageSubpixelMask - FractX;
-      LoRes.X := FWrapModeX.FuncOperator(XInt);
+      HiRes.x := CAggImageSubpixelMask - FractX;
+      LoRes.x := FWrapModeX.FuncOperator(XInt);
 
-      RowPointer := SourceImage.Row(LoRes.Y);
+      RowPointer := SourceImage.Row(LoRes.y);
 
       repeat
-        ForeGroundPointer := PInt8u(PtrComp(RowPointer) + LoRes.X * 3 * SizeOf(Int8u));
-        Weight := ShrInt32(WeightY * PInt16(PtrComp(WeightArray) + HiRes.X *
+        ForeGroundPointer := PInt8u(PtrComp(RowPointer) + LoRes.x * 3 * SizeOf(Int8u));
+        Weight := ShrInt32(WeightY * PInt16(PtrComp(WeightArray) + HiRes.x *
           SizeOf(Int16))^ + CAggImageFilterSize div 2, CAggImageFilterShift);
 
-        Inc(Fg[0], ForeGroundPointer^ * Weight);
-        Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-        Inc(Fg[1], ForeGroundPointer^ * Weight);
-        Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-        Inc(Fg[2], ForeGroundPointer^ * Weight);
-        Inc(HiRes.X, CAggImageSubpixelSize);
+        inc(Fg[0], ForeGroundPointer^ * Weight);
+        inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+        inc(Fg[1], ForeGroundPointer^ * Weight);
+        inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+        inc(Fg[2], ForeGroundPointer^ * Weight);
+        inc(HiRes.x, CAggImageSubpixelSize);
 
-        LoRes.X := FWrapModeX.IncOperator;
+        LoRes.x := FWrapModeX.IncOperator;
 
-        Dec(CountX);
+        dec(CountX);
 
       until CountX = 0;
 
-      Inc(HiRes.Y, CAggImageSubpixelSize);
+      inc(HiRes.y, CAggImageSubpixelSize);
 
-      LoRes.Y := FWrapModeY.IncOperator;
+      LoRes.y := FWrapModeY.IncOperator;
 
-      Dec(CountY);
+      dec(CountY);
 
     until CountY = 0;
 
@@ -639,19 +636,21 @@ begin
     if Fg[2] > CAggBaseMask then
         Fg[2] := CAggBaseMask;
 
-    Span.Rgba8.R := Int8u(Fg[FOrder.R]);
+    Span.Rgba8.r := Int8u(Fg[FOrder.r]);
     Span.Rgba8.g := Int8u(Fg[FOrder.g]);
     Span.Rgba8.b := Int8u(Fg[FOrder.b]);
-    Span.Rgba8.A := CAggBaseMask;
+    Span.Rgba8.a := CAggBaseMask;
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
+    inc(PtrComp(Span), SizeOf(TAggColor));
 
     Interpolator.IncOperator;
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 
   Result := Allocator.Span;
 end;
 
 end. 
+ 
+ 

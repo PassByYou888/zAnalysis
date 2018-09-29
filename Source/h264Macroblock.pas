@@ -18,11 +18,11 @@ unit h264Macroblock;
 interface
 
 uses
-  h264Stdint, h264Common, h264Util, h264Pixel, h264Intra_pred, h264Transquant, h264VLC, h264tables, CoreClasses;
+  h264Types, h264Common, h264Util, h264Pixel, h264Intra_pred, h264Transquant, h264VLC, h264tables, CoreClasses;
 
 procedure mb_alloc(var mb: TMacroblock);
 procedure mb_free(var mb: TMacroblock);
-procedure mb_init_row_ptrs(var mb: TMacroblock; const frame: TFrame; const Y: int32_t);
+procedure mb_init_row_ptrs(var mb: TMacroblock; const frame: TFrame; const y: int32_t);
 procedure mb_init(var mb: TMacroblock; var frame: TFrame; const adaptive_quant: Boolean);
 
 procedure encode_mb_intra_i4(var mb: TMacroblock; var frame: TFrame; const intrapred: TIntraPredictor);
@@ -71,15 +71,15 @@ begin
   fev_free(mb.dct[0]);
 end;
 
-procedure mb_init_row_ptrs(var mb: TMacroblock; const frame: TFrame; const Y: int32_t);
+procedure mb_init_row_ptrs(var mb: TMacroblock; const frame: TFrame; const y: int32_t);
 begin
-  mb.pfenc := frame.plane[0] + Y * 16 * frame.stride;
-  mb.pfenc_c[0] := frame.plane[1] + Y * 8 * frame.stride_c;
-  mb.pfenc_c[1] := frame.plane[2] + Y * 8 * frame.stride_c;
+  mb.pfenc := frame.plane[0] + y * 16 * frame.stride;
+  mb.pfenc_c[0] := frame.plane[1] + y * 8 * frame.stride_c;
+  mb.pfenc_c[1] := frame.plane[2] + y * 8 * frame.stride_c;
 
-  mb.pfdec := frame.plane_dec[0] + Y * 16 * frame.stride;
-  mb.pfdec_c[0] := frame.plane_dec[1] + Y * 8 * frame.stride_c;
-  mb.pfdec_c[1] := frame.plane_dec[2] + Y * 8 * frame.stride_c;
+  mb.pfdec := frame.plane_dec[0] + y * 16 * frame.stride;
+  mb.pfdec_c[0] := frame.plane_dec[1] + y * 8 * frame.stride_c;
+  mb.pfdec_c[1] := frame.plane_dec[2] + y * 8 * frame.stride_c;
 end;
 
 { fill I16x16 prediction pixel cache
@@ -129,9 +129,9 @@ begin
   mb.mbb := nil;
 
   // top mb
-  if mb.Y > 0 then
+  if mb.y > 0 then
     begin
-      mbb := @frame.mbs[(mb.Y - 1) * frame.mbw + mb.X];
+      mbb := @frame.mbs[(mb.y - 1) * frame.mbw + mb.x];
       mb.mbb := mbb;
 
       if mbb^.mbtype = MB_I_4x4 then
@@ -162,9 +162,9 @@ begin
     end;
 
   // left mb
-  if mb.X > 0 then
+  if mb.x > 0 then
     begin
-      mba := @frame.mbs[mb.Y * frame.mbw + mb.X - 1];
+      mba := @frame.mbs[mb.y * frame.mbw + mb.x - 1];
       mb.mba := mba;
 
       if mba^.mbtype = MB_I_4x4 then
@@ -197,12 +197,12 @@ begin
   // qp
   mb.qp := frame.qp;
   if adaptive_quant then
-      mb.qp := frame.aq_table[mb.Y * frame.mbw + mb.X];
+      mb.qp := frame.aq_table[mb.y * frame.mbw + mb.x];
   if mb.qp < 30 then
       mb.qpc := mb.qp
   else
       mb.qpc := tab_qp_chroma[mb.qp];
-  Inc(mb.qpc, mb.chroma_qp_offset);
+  inc(mb.qpc, mb.chroma_qp_offset);
 
   // intra cache
   fill_intra_pred_cache(mb, frame);
@@ -245,7 +245,7 @@ begin
     begin
       Block := mb.dct[i];
 
-      mb.i4_pred_mode[i] := intrapred.Analyse_4x4(mb.pfdec + frame.blk_offset[i], mb.X, mb.Y, i);
+      mb.i4_pred_mode[i] := intrapred.Analyse_4x4(mb.pfdec + frame.blk_offset[i], mb.x, mb.y, i);
       sad := DSP.sad_4x4(mb.pixels + block_offset4[i], mb.pred + block_offset4[i], 16);
       if sad >= sad_tresh then
         begin
@@ -257,7 +257,7 @@ begin
           block_use_zero(mb.Block[i]);
 
       mb.nz_coef_cnt[i] := mb.Block[i].nlevel;
-      Inc(cbp[i div 4], mb.nz_coef_cnt[i]);
+      inc(cbp[i div 4], mb.nz_coef_cnt[i]);
 
       // decode block
       if mb.nz_coef_cnt[i] > 0 then
@@ -298,7 +298,7 @@ begin
 
       cavlc_analyse_block(mb.Block[i], Block, 15);
       mb.nz_coef_cnt[i] := mb.Block[i].nlevel;
-      Inc(cbp, mb.nz_coef_cnt[i]);
+      inc(cbp, mb.nz_coef_cnt[i]);
     end;
 
   // dc transform
@@ -319,7 +319,7 @@ var
   Block: int16_p;
 
 begin
-  intrapred.Predict_16x16(mb.i16_pred_mode, mb.X, mb.Y);
+  intrapred.Predict_16x16(mb.i16_pred_mode, mb.x, mb.y);
 
   itransqt_dc_4x4(mb.dct[24], mb.qp);
 
@@ -367,7 +367,7 @@ begin
           block_use_zero(mb.Block[i]);
 
       mb.nz_coef_cnt[i] := mb.Block[i].nlevel;
-      Inc(cbp[i div 4], mb.nz_coef_cnt[i]);
+      inc(cbp[i div 4], mb.nz_coef_cnt[i]);
     end;
 
   mb.cbp := 0;
@@ -407,7 +407,7 @@ end;
 *)
 procedure encode_mb_chroma(var mb: TMacroblock; const intrapred: TIntraPredictor; const intra: Boolean);
 var
-  i, J, n: int32_t;
+  i, j, n: int32_t;
   Block: int16_p;
   pred: uint8_p;
   cbp_ac: uint8_t;
@@ -423,45 +423,45 @@ begin
   sad_tresh := SAD_DECIMATE_TRESH[mb.qpc];
 
   if intra then
-      intrapred.Analyse_8x8_cr(mb.pfdec_c[0], mb.pfdec_c[1], mb.X, mb.Y, mb.chroma_pred_mode);
+      intrapred.Analyse_8x8_cr(mb.pfdec_c[0], mb.pfdec_c[1], mb.x, mb.y, mb.chroma_pred_mode);
 
-  for J := 0 to 1 do
+  for j := 0 to 1 do
     begin
       if intra then
-          pred := mb.pred_c[J]
+          pred := mb.pred_c[j]
       else
-          pred := mb.mcomp_c[J];
+          pred := mb.mcomp_c[j];
 
       for i := 0 to 3 do
         begin
-          n := 16 + i + J * 4;
+          n := 16 + i + j * 4;
           Block := mb.dct[n];
 
-          sad := DSP.sad_4x4(mb.pixels_c[J] + block_offset_chroma[i], pred + block_offset_chroma[i], 16);
+          sad := DSP.sad_4x4(mb.pixels_c[j] + block_offset_chroma[i], pred + block_offset_chroma[i], 16);
           if sad >= sad_tresh then
             begin
-              DSP.pixel_sub_4x4(mb.pixels_c[J] + block_offset_chroma[i], pred + block_offset_chroma[i], Block);
+              DSP.pixel_sub_4x4(mb.pixels_c[j] + block_offset_chroma[i], pred + block_offset_chroma[i], Block);
               transqt(Block, mb.qpc, False, 1);
-              mb.chroma_dc[J, i] := Block[0];
+              mb.chroma_dc[j, i] := Block[0];
               cavlc_analyse_block(mb.Block[n], Block, 15);
             end
           else
             begin
               block_use_zero(mb.Block[n]);
-              mb.chroma_dc[J, i] := 0;
+              mb.chroma_dc[j, i] := 0;
             end;
 
-          mb.nz_coef_cnt_chroma_ac[J, i] := mb.Block[n].nlevel;
-          if mb.nz_coef_cnt_chroma_ac[J, i] > 0 then
-              Inc(cbp_ac);
+          mb.nz_coef_cnt_chroma_ac[j, i] := mb.Block[n].nlevel;
+          if mb.nz_coef_cnt_chroma_ac[j, i] > 0 then
+              inc(cbp_ac);
         end;
     end;
 
   // dc transform
-  for J := 0 to 1 do
+  for j := 0 to 1 do
     begin
-      transqt_dc_2x2(@mb.chroma_dc[J], mb.qpc);
-      cavlc_analyse_block(mb.Block[25 + J], @mb.chroma_dc[J], 4);
+      transqt_dc_2x2(@mb.chroma_dc[j], mb.qpc);
+      cavlc_analyse_block(mb.Block[25 + j], @mb.chroma_dc[j], 4);
     end;
 
   // cbp
@@ -474,7 +474,7 @@ end;
 
 procedure decode_mb_chroma(var mb: TMacroblock; const intra: Boolean);
 var
-  i, J: int32_t;
+  i, j: int32_t;
   Block: int16_p;
   pred: uint8_p;
 begin
@@ -495,27 +495,27 @@ begin
   else
     begin
 
-      for J := 0 to 1 do
-          itransqt_dc_2x2(@mb.chroma_dc[J], mb.qpc);
+      for j := 0 to 1 do
+          itransqt_dc_2x2(@mb.chroma_dc[j], mb.qpc);
 
-      for J := 0 to 1 do
+      for j := 0 to 1 do
         begin
           if intra then
-              pred := mb.pred_c[J]
+              pred := mb.pred_c[j]
           else
-              pred := mb.mcomp_c[J];
+              pred := mb.mcomp_c[j];
 
           for i := 0 to 3 do
             begin
-              Block := mb.dct[16 + i + J * 4];
-              Block[0] := mb.chroma_dc[J, i];
+              Block := mb.dct[16 + i + j * 4];
+              Block[0] := mb.chroma_dc[j, i];
 
-              if mb.nz_coef_cnt_chroma_ac[J, i] > 0 then
+              if mb.nz_coef_cnt_chroma_ac[j, i] > 0 then
                   itransqt(Block, mb.qpc, 1)
               else
                   itrans_dc(Block);
 
-              DSP.pixel_add_4x4(mb.pixels_dec_c[J] + block_offset_chroma[i],
+              DSP.pixel_add_4x4(mb.pixels_dec_c[j] + block_offset_chroma[i],
                 pred + block_offset_chroma[i], Block);
             end;
         end;
@@ -533,3 +533,5 @@ begin
 end;
 
 end.  
+ 
+ 

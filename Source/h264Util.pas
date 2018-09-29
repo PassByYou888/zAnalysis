@@ -18,18 +18,18 @@ unit h264Util;
 interface
 
 uses
-  h264Stdint, Math, CoreClasses;
+  h264Types, Math, CoreClasses;
 
 function fev_malloc(Size: uint32_t): Pointer; inline;
 procedure fev_free(PTR: Pointer); inline;
 
-function Min(const A, b: int32_t): int32_t; inline;
-function Max(const A, b: int32_t): int32_t; inline;
-function clip3(const A, b, C: int32_t): int32_t; inline; // lower bound, value, upper bound
-function Median(const X, Y, Z: int32_t): int16_t; inline;
+function Min(const a, b: int32_t): int32_t; inline;
+function Max(const a, b: int32_t): int32_t; inline;
+function clip3(const a, b, c: int32_t): int32_t; inline; // lower bound, value, upper bound
+function Median(const x, y, z: int32_t): int16_t; inline;
 function num2log2(n: int32_t): uint8_t; inline;
-procedure swap_ptr(var A, b: Pointer); overload; inline;
-procedure swap_ptr(var A, b: uint8_p); overload; inline;
+procedure swap_ptr(var a, b: Pointer); overload; inline;
+procedure swap_ptr(var a, b: uint8_p); overload; inline;
 
 type
   mbcmp_func_t     = function(pix1, pix2: uint8_p; stride: int32_t): int32_t;
@@ -73,7 +73,7 @@ begin
   PTR := GetMemory(Size + alignment);
   Result := MemoryAlign(PTR, alignment);
   if Result = PTR then
-      Inc(uint8_p(Result), alignment);
+      inc(uint8_p(Result), alignment);
   (uint8_p(Result) - 1)^ := nativeUInt(Result) - nativeUInt(PTR);
 end;
 
@@ -81,40 +81,40 @@ procedure fev_free(PTR: Pointer);
 begin
   if PTR = nil then
       Exit;
-  Dec(uint8_p(PTR), uint8_p(nativeUInt(PTR) - 1)^);
+  dec(uint8_p(PTR), uint8_p(nativeUInt(PTR) - 1)^);
   FreeMem(PTR);
   PTR := nil;
 end;
 
-function Min(const A, b: int32_t): int32_t;
+function Min(const a, b: int32_t): int32_t;
 begin
-  if A < b then
-      Result := A
+  if a < b then
+      Result := a
   else
       Result := b;
 end;
 
-function Max(const A, b: int32_t): int32_t;
+function Max(const a, b: int32_t): int32_t;
 begin
-  if A >= b then
-      Result := A
+  if a >= b then
+      Result := a
   else
       Result := b;
 end;
 
-function clip3(const A, b, C: int32_t): int32_t;
+function clip3(const a, b, c: int32_t): int32_t;
 begin
-  if b < A then
-      Result := A
-  else if b > C then
-      Result := C
+  if b < a then
+      Result := a
+  else if b > c then
+      Result := c
   else
       Result := b;
 end;
 
-function Median(const X, Y, Z: int32_t): int16_t;
+function Median(const x, y, z: int32_t): int16_t;
 begin
-  Result := X + Y + Z - Min(X, Min(Y, Z)) - Max(X, Max(Y, Z));
+  Result := x + y + z - Min(x, Min(y, z)) - Max(x, Max(y, z));
 end;
 
 function num2log2(n: int32_t): uint8_t;
@@ -122,22 +122,22 @@ begin
   Result := Ceil(Log2(n));
 end;
 
-procedure swap_ptr(var A, b: Pointer);
+procedure swap_ptr(var a, b: Pointer);
 var
-  T: Pointer;
+  t: Pointer;
 begin
-  T := A;
-  A := b;
-  b := T;
+  t := a;
+  a := b;
+  b := t;
 end;
 
-procedure swap_ptr(var A, b: uint8_p);
+procedure swap_ptr(var a, b: uint8_p);
 var
-  T: uint8_p;
+  t: uint8_p;
 begin
-  T := A;
-  A := b;
-  b := T;
+  t := a;
+  a := b;
+  b := t;
 end;
 
 { TDsp }
@@ -170,3 +170,5 @@ begin
 end;
 
 end.   
+ 
+ 

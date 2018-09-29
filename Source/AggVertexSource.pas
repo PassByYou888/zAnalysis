@@ -44,11 +44,8 @@ unit AggVertexSource;
   ////////////////////////////////////////////////////////////////////////////////
 *)
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics;
 
@@ -58,9 +55,9 @@ type
     function GetPathCount: Cardinal; virtual;
   public
     procedure Rewind(PathID: Cardinal); virtual;
-    function Vertex(X, Y: PDouble): Cardinal; virtual;
+    function Vertex(x, y: PDouble): Cardinal; virtual;
 
-    function FuncOperatorGamma(X: Double): Double; virtual;
+    function FuncOperatorGamma(x: Double): Double; virtual;
 
     property PathCount: Cardinal read GetPathCount;
   end;
@@ -70,7 +67,7 @@ type
     function GetPathID(index: Cardinal): Cardinal; virtual;
   public
     procedure RemoveAll; virtual;
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); virtual;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); virtual;
 
     property PathID[index: Cardinal]: Cardinal read GetPathID;
   end;
@@ -89,13 +86,13 @@ procedure TAggCustomVertexSource.Rewind(PathID: Cardinal);
 begin
 end;
 
-function TAggCustomVertexSource.Vertex(X, Y: PDouble): Cardinal;
+function TAggCustomVertexSource.Vertex(x, y: PDouble): Cardinal;
 begin
 end;
 
 function TAggCustomVertexSource.FuncOperatorGamma;
 begin
-  Result := X;
+  Result := x;
 end;
 
 { TAggVertexSource }
@@ -114,4 +111,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

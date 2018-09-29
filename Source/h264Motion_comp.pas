@@ -17,7 +17,7 @@ unit h264Motion_comp;
 interface
 
 uses
-  h264Common, h264Util, h264Frame, h264Stdint, CoreClasses;
+  h264Common, h264Util, h264Frame, h264Types, CoreClasses;
 
 type
   TMotionCompensation = class
@@ -37,23 +37,23 @@ implementation
 
 procedure TMotionCompensation.Compensate(const fref: PFrame; mv: TMotionvec; mbx, mby: int32_t; Dst: uint8_p);
 var
-  X, Y,
+  x, y,
     fx, fy: int32_t; // fullpel position
   stride: int32_t;
-  J: uint32_t;
+  j: uint32_t;
 begin
-  X := mbx * 64 + mv.X;
-  Y := mby * 64 + mv.Y;
+  x := mbx * 64 + mv.x;
+  y := mby * 64 + mv.y;
   // qpel or hpel / fullpel
-  if (X and 1 + Y and 1) > 0 then
-      CompensateQPelXY(fref, X, Y, Dst)
+  if (x and 1 + y and 1) > 0 then
+      CompensateQPelXY(fref, x, y, Dst)
   else
     begin
       stride := fref^.stride;
-      fx := (X + FRAME_PADDING_W * 4) shr 2;
-      fy := (Y + FRAME_PADDING_W * 4) shr 2;
-      J := (Y and 2) or (X and 2 shr 1);
-      DSP.pixel_loadu_16x16(Dst, fref^.luma_mc[J] - fref^.frame_mem_offset + fy * stride + fx, stride);
+      fx := (x + FRAME_PADDING_W * 4) shr 2;
+      fy := (y + FRAME_PADDING_W * 4) shr 2;
+      j := (y and 2) or (x and 2 shr 1);
+      DSP.pixel_loadu_16x16(Dst, fref^.luma_mc[j] - fref^.frame_mem_offset + fy * stride + fx, stride);
     end;
 end;
 
@@ -81,8 +81,8 @@ var
 
 begin
   stride := fref^.stride;
-  Inc(QX, FRAME_PADDING_W * 4);
-  Inc(qy, FRAME_PADDING_W * 4);
+  inc(QX, FRAME_PADDING_W * 4);
+  inc(qy, FRAME_PADDING_W * 4);
   fx := QX shr 2;
   fy := qy shr 2;
   dx := QX and 3;
@@ -98,15 +98,15 @@ end;
 
 procedure TMotionCompensation.CompensateChroma(const fref: PFrame; mv: TMotionvec; mbx, mby: int32_t; dstU, dstV: uint8_p);
 var
-  X, Y,
+  x, y,
     fx, fy: int32_t; // chroma fullpel
   dx, dy: int32_t;
   coef: array [0 .. 3] of uint8_t;
   i, stride: int32_t;
 begin
-  X := mbx * 64 + mv.X; // qpel position
-  Y := mby * 64 + mv.Y;
-  CompensateChromaQpelXY(fref, X, Y, dstU, dstV);
+  x := mbx * 64 + mv.x; // qpel position
+  y := mby * 64 + mv.y;
+  CompensateChromaQpelXY(fref, x, y, dstU, dstV);
 end;
 
 procedure TMotionCompensation.CompensateChromaQpelXY(const fref: PFrame; QX, qy: int32_t; dstU, dstV: uint8_p);
@@ -117,8 +117,8 @@ var
   i, stride: int32_t;
 begin
   stride := fref^.stride_c;
-  Inc(QX, FRAME_PADDING_W * 4); // qpel position
-  Inc(qy, FRAME_PADDING_W * 4);
+  inc(QX, FRAME_PADDING_W * 4); // qpel position
+  inc(qy, FRAME_PADDING_W * 4);
   fx := SAR32(QX, 3);
   fy := SAR32(qy, 3);
   dx := QX and 7;
@@ -134,28 +134,24 @@ begin
   DSP.mc_chroma_8x8(fref^.plane_dec[2] + i, dstV, stride, @coef);
 end;
 
-(* ******************************************************************************
-  motion_compensate_chroma
-*)
 procedure mc_chroma_8x8_pas(Src, Dst: uint8_p; const stride: int32_t; coef: uint8_p);
 var
-  i, J: int32_t;
+  i, j: int32_t;
 begin
-  for J := 0 to 7 do
+  for j := 0 to 7 do
     begin
       for i := 0 to 7 do
           Dst[i] := (coef[0] * Src[i] + coef[1] * Src[i + 1] + coef[2] * Src[i + stride] + coef[3] * Src[i + stride + 1] + 32) shr 6;
-      Inc(Dst, 16);
-      Inc(Src, stride);
+      inc(Dst, 16);
+      inc(Src, stride);
     end;
 end;
 
-(* ******************************************************************************
-  motion_compensate_init
-*)
 procedure motion_compensate_init;
 begin
   mc_chroma_8x8 := @mc_chroma_8x8_pas;
 end;
 
 end.  
+ 
+ 

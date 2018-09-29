@@ -37,11 +37,8 @@
 *)
 unit AggVcgenMarkersTerm;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggArray,
@@ -59,11 +56,11 @@ type
 
     // Vertex Generator Interface
     procedure RemoveAll; override;
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); override;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); override;
 
     // Vertex Source Interface
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
   end;
 
 implementation
@@ -91,7 +88,7 @@ begin
   FMarkers.RemoveAll;
 end;
 
-procedure TAggVcgenMarkersTerm.AddVertex(X, Y: Double; Cmd: Cardinal);
+procedure TAggVcgenMarkersTerm.AddVertex(x, y: Double; Cmd: Cardinal);
 var
   ct: TPointDouble;
 begin
@@ -101,12 +98,12 @@ begin
         // Initial state, the first coordinate was added.
         // If two of more calls of StartVertex() occures
         // we just modify the last one.
-        ct := PointDouble(X, Y);
+        ct := PointDouble(x, y);
         FMarkers.ModifyLast(@ct);
       end
     else
       begin
-        ct := PointDouble(X, Y);
+        ct := PointDouble(x, y);
         FMarkers.Add(@ct);
       end
   else if IsVertex(Cmd) then
@@ -114,7 +111,7 @@ begin
       begin
         // Initial state, the first coordinate was added.
         // Add three more points, 0,1,1,0
-        ct := PointDouble(X, Y);
+        ct := PointDouble(x, y);
         FMarkers.Add(@ct);
         FMarkers.Add(FMarkers[FMarkers.Size - 1]);
         FMarkers.Add(FMarkers[FMarkers.Size - 3]);
@@ -122,7 +119,7 @@ begin
     else if FMarkers.Size <> 0 then
       begin
         // Replace two last points: 0,1,1,0 -> 0,1,2,1
-        ct := PointDouble(X, Y);
+        ct := PointDouble(x, y);
 
         Move(FMarkers[FMarkers.Size - 2]^,
           FMarkers[FMarkers.Size - 1]^, SizeOf(TPointDouble));
@@ -138,9 +135,9 @@ begin
   FCurrentIndex := FCurrentID;
 end;
 
-function TAggVcgenMarkersTerm.Vertex(X, Y: PDouble): Cardinal;
+function TAggVcgenMarkersTerm.Vertex(x, y: PDouble): Cardinal;
 var
-  C: PPointDouble;
+  c: PPointDouble;
 begin
   if (FCurrentID > 2) or (FCurrentIndex >= FMarkers.Size) then
     begin
@@ -149,23 +146,25 @@ begin
       Exit;
     end;
 
-  C := FMarkers[FCurrentIndex];
+  c := FMarkers[FCurrentIndex];
 
-  X^ := C.X;
-  Y^ := C.Y;
+  x^ := c.x;
+  y^ := c.y;
 
   if FCurrentIndex and 1 <> 0 then
     begin
-      Inc(FCurrentIndex, 3);
+      inc(FCurrentIndex, 3);
 
       Result := CAggPathCmdLineTo;
 
       Exit;
     end;
 
-  Inc(FCurrentIndex);
+  inc(FCurrentIndex);
 
   Result := CAggPathCmdMoveTo;
 end;
 
 end. 
+ 
+ 

@@ -37,11 +37,8 @@
 *)
 unit AggRasterizerOutlineAA;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -56,14 +53,14 @@ type
   // the distance between the last and the first points
   PAggLineAAVertex = ^TAggLineAAVertex;
 
-  TAggLineAAVertex = packed record
-    X, Y, Len: Integer;
-    procedure Initialize(X, Y: Integer);
+  TAggLineAAVertex = record
+    x, y, Len: Integer;
+    procedure Initialize(x, y: Integer);
   end;
 
   PAggDrawVars = ^TAggDrawVars;
 
-  TAggDrawVars = packed record
+  TAggDrawVars = record
     idx: Cardinal;
     x1, y1, x2, y2: Integer;
     Curr, Next: TAggLineParameters;
@@ -90,20 +87,20 @@ type
 
     procedure Draw(DV: PAggDrawVars; Start, stop: Cardinal);
 
-    procedure MoveTo(X, Y: Integer);
-    procedure LineTo(X, Y: Integer);
+    procedure MoveTo(x, y: Integer);
+    procedure LineTo(x, y: Integer);
 
-    procedure MoveToDouble(X, Y: Double);
-    procedure LineToDouble(X, Y: Double);
+    procedure MoveToDouble(x, y: Double);
+    procedure LineToDouble(x, y: Double);
 
     procedure Render(ClosePolygon: Boolean);
 
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal);
+    procedure AddVertex(x, y: Double; Cmd: Cardinal);
     procedure AddPath(VertexSource: TAggCustomVertexSource; PathID: Cardinal = 0);
 
-    procedure RenderAllPaths(VertexSource: TAggVertexSource; COLORS: PAggColor; PathID: PCardinal; PathCount: Cardinal);
+    procedure RenderAllPaths(VertexSource: TAggVertexSource; Colors: PAggColor; PathID: PCardinal; PathCount: Cardinal);
 
-    procedure RenderControl(C: TAggCustomAggControl);
+    procedure RenderControl(c: TAggCustomAggControl);
 
     property RoundCap: Boolean read GetRoundCap write SetRoundCap;
     property AccurateJoin: Boolean read GetAccurateJoin write SetAccurateJoin;
@@ -129,10 +126,10 @@ end;
 
 { TAggLineAAVertex }
 
-procedure TAggLineAAVertex.Initialize(X, Y: Integer);
+procedure TAggLineAAVertex.Initialize(x, y: Integer);
 begin
-  Self.X := X;
-  Self.Y := Y;
+  Self.x := x;
+  Self.y := y;
   Len := 0;
 end;
 
@@ -141,8 +138,8 @@ var
   dx, dy: Double;
 
 begin
-  dx := val.X - This.X;
-  dy := val.Y - This.Y;
+  dx := val.x - This.x;
+  dy := val.y - This.y;
 
   This.Len := Trunc(Sqrt(dx * dx + dy * dy));
 
@@ -201,15 +198,15 @@ begin
       DV.Lcurr := DV.Lnext;
       DV.Lnext := PAggLineAAVertex(FSourceVertices[DV.idx]).Len;
 
-      Inc(DV.idx);
+      inc(DV.idx);
 
       if DV.idx >= FSourceVertices.Size then
           DV.idx := 0;
 
       v := FSourceVertices[DV.idx];
 
-      DV.x2 := v.X;
-      DV.y2 := v.Y;
+      DV.x2 := v.x;
+      DV.y2 := v.y;
 
       DV.Curr := DV.Next;
 
@@ -231,7 +228,7 @@ begin
       if DV.Flags and 2 = 0 then
           Bisectrix(@DV.Curr, @DV.Next, @DV.Xb2, @DV.Yb2);
 
-      Inc(i)
+      inc(i)
     end;
 end;
 
@@ -258,34 +255,34 @@ begin
   Result := FRoundCap;
 end;
 
-procedure TAggRasterizerOutlineAA.MoveTo(X, Y: Integer);
+procedure TAggRasterizerOutlineAA.MoveTo(x, y: Integer);
 var
   VT: TAggLineAAVertex;
 begin
-  FStart := PointInteger(X, Y);
+  FStart := PointInteger(x, y);
 
-  VT.Initialize(X, Y);
+  VT.Initialize(x, y);
 
   FSourceVertices.ModifyLast(@VT);
 end;
 
-procedure TAggRasterizerOutlineAA.LineTo(X, Y: Integer);
+procedure TAggRasterizerOutlineAA.LineTo(x, y: Integer);
 var
   VT: TAggLineAAVertex;
 begin
-  VT.Initialize(X, Y);
+  VT.Initialize(x, y);
 
   FSourceVertices.Add(@VT);
 end;
 
-procedure TAggRasterizerOutlineAA.MoveToDouble(X, Y: Double);
+procedure TAggRasterizerOutlineAA.MoveToDouble(x, y: Double);
 begin
-  MoveTo(LineCoord(X), LineCoord(Y));
+  MoveTo(LineCoord(x), LineCoord(y));
 end;
 
-procedure TAggRasterizerOutlineAA.LineToDouble(X, Y: Double);
+procedure TAggRasterizerOutlineAA.LineToDouble(x, y: Double);
 begin
-  LineTo(LineCoord(X), LineCoord(Y));
+  LineTo(LineCoord(x), LineCoord(y));
 end;
 
 procedure TAggRasterizerOutlineAA.Render(ClosePolygon: Boolean);
@@ -303,29 +300,29 @@ begin
         DV.idx := 2;
 
         v := FSourceVertices[FSourceVertices.Size - 1];
-        x1 := v.X;
-        y1 := v.Y;
+        x1 := v.x;
+        y1 := v.y;
         Lprev := v.Len;
 
         v := FSourceVertices[0];
-        x2 := v.X;
-        y2 := v.Y;
+        x2 := v.x;
+        y2 := v.y;
 
         DV.Lcurr := v.Len;
 
         Prev.Initialize(x1, y1, x2, y2, Lprev);
 
         v := FSourceVertices[1];
-        DV.x1 := v.X;
-        DV.y1 := v.Y;
+        DV.x1 := v.x;
+        DV.y1 := v.y;
 
         DV.Lnext := v.Len;
 
         DV.Curr.Initialize(x2, y2, DV.x1, DV.y1, DV.Lcurr);
 
         v := FSourceVertices[DV.idx];
-        DV.x2 := v.X;
-        DV.y2 := v.Y;
+        DV.x2 := v.x;
+        DV.y2 := v.y;
 
         DV.Next.Initialize(DV.x1, DV.y1, DV.x2, DV.y2, DV.Lnext);
 
@@ -354,12 +351,12 @@ begin
       2:
         begin
           v := FSourceVertices[0];
-          x1 := v.X;
-          y1 := v.Y;
+          x1 := v.x;
+          y1 := v.y;
           Lprev := v.Len;
           v := FSourceVertices[1];
-          x2 := v.X;
-          y2 := v.Y;
+          x2 := v.x;
+          y2 := v.y;
 
           LP.Initialize(x1, y1, x2, y2, Lprev);
 
@@ -378,16 +375,16 @@ begin
       3:
         begin
           v := FSourceVertices[0];
-          x1 := v.X;
-          y1 := v.Y;
+          x1 := v.x;
+          y1 := v.y;
           Lprev := v.Len;
           v := FSourceVertices[1];
-          x2 := v.X;
-          y2 := v.Y;
+          x2 := v.x;
+          y2 := v.y;
           Lnext := v.Len;
           v := FSourceVertices[2];
-          x3 := v.X;
-          y3 := v.Y;
+          x3 := v.x;
+          y3 := v.y;
 
           Lp1.Initialize(x1, y1, x2, y2, Lprev);
           Lp2.Initialize(x2, y2, x3, y3, Lnext);
@@ -413,29 +410,29 @@ begin
           DV.idx := 3;
 
           v := FSourceVertices[0];
-          x1 := v.X;
-          y1 := v.Y;
+          x1 := v.x;
+          y1 := v.y;
           Lprev := v.Len;
 
           v := FSourceVertices[1];
-          x2 := v.X;
-          y2 := v.Y;
+          x2 := v.x;
+          y2 := v.y;
 
           DV.Lcurr := v.Len;
 
           Prev.Initialize(x1, y1, x2, y2, Lprev);
 
           v := FSourceVertices[2];
-          DV.x1 := v.X;
-          DV.y1 := v.Y;
+          DV.x1 := v.x;
+          DV.y1 := v.y;
 
           DV.Lnext := v.Len;
 
           DV.Curr.Initialize(x2, y2, DV.x1, DV.y1, DV.Lcurr);
 
           v := FSourceVertices[DV.idx];
-          DV.x2 := v.X;
-          DV.y2 := v.Y;
+          DV.x2 := v.x;
+          DV.y2 := v.y;
 
           DV.Next.Initialize(DV.x1, DV.y1, DV.x2, DV.y2, DV.Lnext);
 
@@ -493,33 +490,33 @@ begin
   if IsMoveTo(Cmd) then
     begin
       Render(False);
-      MoveToDouble(X, Y);
+      MoveToDouble(x, y);
     end
   else if IsEndPoly(Cmd) then
     begin
       Render(IsClosed(Cmd));
 
       if IsClosed(Cmd) then
-          MoveTo(FStart.X, FStart.Y);
+          MoveTo(FStart.x, FStart.y);
     end
   else
-      LineToDouble(X, Y);
+      LineToDouble(x, y);
 end;
 
 procedure TAggRasterizerOutlineAA.AddPath(VertexSource: TAggCustomVertexSource; PathID: Cardinal = 0);
 var
-  X, Y: Double;
+  x, y: Double;
   Cmd: Cardinal;
 begin
   VertexSource.Rewind(PathID);
 
-  Cmd := VertexSource.Vertex(@X, @Y);
+  Cmd := VertexSource.Vertex(@x, @y);
 
   while not IsStop(Cmd) do
     begin
-      AddVertex(X, Y, Cmd);
+      AddVertex(x, y, Cmd);
 
-      Cmd := VertexSource.Vertex(@X, @Y);
+      Cmd := VertexSource.Vertex(@x, @y);
     end;
 
   Render(False);
@@ -531,7 +528,7 @@ var
 begin
   for i := 0 to PathCount - 1 do
     begin
-      FRen.SetColor(PAggColor(PtrComp(COLORS) + i * SizeOf(TAggColor)));
+      FRen.SetColor(PAggColor(PtrComp(Colors) + i * SizeOf(TAggColor)));
       AddPath(VertexSource, PCardinal(PtrComp(PathID) + i * SizeOf(Cardinal))^);
     end;
 end;
@@ -540,12 +537,14 @@ procedure TAggRasterizerOutlineAA.RenderControl;
 var
   i: Cardinal;
 begin
-  for i := 0 to C.PathCount - 1 do
+  for i := 0 to c.PathCount - 1 do
     begin
-      FRen.SetColor(C.ColorPointer[i]);
-      AddPath(C, i);
+      FRen.SetColor(c.ColorPointer[i]);
+      AddPath(c, i);
     end;
 end;
 
 end. 
+ 
+ 
  

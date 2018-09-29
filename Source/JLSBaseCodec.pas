@@ -72,13 +72,13 @@ type
     pscanl0, cscanl0: ppixel;
 
     head_frame: pjpeg_ls_header;
-    head_scan: packed array [0 .. MAX_SCANS - 1] of pjpeg_ls_header;
+    head_scan: array [0 .. MAX_SCANS - 1] of pjpeg_ls_header;
 
-    samplingx: packed array [0 .. MAX_COMPONENTS - 1] of Int;
-    samplingy: packed array [0 .. MAX_COMPONENTS - 1] of Int;
+    samplingx: array [0 .. MAX_COMPONENTS - 1] of Int;
+    samplingy: array [0 .. MAX_COMPONENTS - 1] of Int;
 
-    c_columns: packed array [0 .. MAX_COMPONENTS - 1] of Int;
-    c_rows: packed array [0 .. MAX_COMPONENTS - 1] of Int;
+    c_columns: array [0 .. MAX_COMPONENTS - 1] of Int;
+    c_rows: array [0 .. MAX_COMPONENTS - 1] of Int;
 
     whose_max_size_rows, whose_max_size_columns: Int;
     number_of_scans: Int;
@@ -101,7 +101,7 @@ type
     { Set thresholds to default unless specified by header: }
     procedure set_thresholds(alfa, AnNEAR: Int; T1p, T2p, T3p: pint);
   public
-    sampling: packed array [0 .. MAX_COMPONENTS - 1] of Integer;
+    sampling: array [0 .. MAX_COMPONENTS - 1] of Integer;
     disclaimer: PChar;
     ceil_half_qbeta: Integer;
 
@@ -219,10 +219,10 @@ begin
   { do the statistics initialization }
   for i := 0 to pred(TOT_CONTEXTS) do
     begin
-      FImageInfo.C[i] := 0;
+      FImageInfo.c[i] := 0;
       FImageInfo.b[i] := 0;
       FImageInfo.n[i] := INITNSTAT;
-      FImageInfo.A[i] := initabstat;
+      FImageInfo.a[i] := initabstat;
     end;
 end;
 
@@ -344,9 +344,9 @@ end;
 { Setup Look Up Tables for quantized gradient merging }
 function TJLSBaseCodec.prepareLUTs: Int;
 var
-  i, J, idx, lmax: Int;
+  i, j, idx, lmax: Int;
   k: Byte;
-  q1, q2, Q3, N1, N2, n3, ineg, sgn: Int;
+  q1, q2, Q3, n1, n2, n3, ineg, sgn: Int;
 
 begin
   Result := 0;
@@ -434,12 +434,12 @@ begin
 
   { prepare context mapping table (symmetric context merging) }
   FImageInfo.classmap[0] := 0;
-  J := 0;
+  j := 0;
 
   for i := 1 to pred(CONTEXTS1) do
     begin
-      N1 := 0;
-      N2 := 0;
+      n1 := 0;
+      n2 := 0;
       n3 := 0;
 
       if (IsTrue(FImageInfo.classmap[i])) then
@@ -458,17 +458,17 @@ begin
       if IsTrue(q1) then
         begin
           if IsTrue(q1 mod 2) then
-              N1 := q1 + 1
+              n1 := q1 + 1
           else
-              N1 := q1 - 1;
+              n1 := q1 - 1;
         end;
 
       if IsTrue(q2) then
         begin
           if IsTrue(q2 mod 2) then
-              N2 := q2 + 1
+              n2 := q2 + 1
           else
-              N2 := q2 - 1;
+              n2 := q2 - 1;
         end;
 
       if IsTrue(Q3) then
@@ -479,10 +479,10 @@ begin
               n3 := Q3 - 1;
         end;
 
-      ineg := (N1 * CREGIONS + N2) * CREGIONS + n3;
-      Inc(J); { next class number }
-      FImageInfo.classmap[i] := sgn * J;
-      FImageInfo.classmap[ineg] := -sgn * J;
+      ineg := (n1 * CREGIONS + n2) * CREGIONS + n3;
+      inc(j); { next class number }
+      FImageInfo.classmap[i] := sgn * j;
+      FImageInfo.classmap[ineg] := -sgn * j;
     end;
 
 end;
@@ -508,7 +508,7 @@ begin
     end;
 
   FImageInfo.qdiv := Pointer(FImageInfo.qdiv0);
-  Inc(FImageInfo.qdiv, absize - 1);
+  inc(FImageInfo.qdiv, absize - 1);
 
   GetMem(FImageInfo.qmul0, (2 * beta_ - 1) * SizeOf(Int));
 
@@ -520,7 +520,7 @@ begin
     end;
 
   FImageInfo.qmul := Pointer(FImageInfo.qmul0);
-  Inc(FImageInfo.qmul, beta_ - 1);
+  inc(FImageInfo.qmul, beta_ - 1);
 
   arrpos := beta_ - 1;
 
@@ -621,3 +621,5 @@ begin
 end;
 
 end. 
+ 
+ 

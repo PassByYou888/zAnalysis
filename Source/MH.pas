@@ -21,22 +21,22 @@ unit MH;
 
 interface
 
-uses ListEngine;
+uses CoreClasses, SyncObjs, ListEngine;
 
 procedure BeginMemoryHook_1;
 procedure EndMemoryHook_1;
 function GetHookMemorySize_1: nativeUInt;
-function GetHookPtrList_1: TPointerHashNativeUIntList; inline;
+function GetHookPtrList_1: TPointerHashNativeUIntList;
 
 procedure BeginMemoryHook_2;
 procedure EndMemoryHook_2;
 function GetHookMemorySize_2: nativeUInt;
-function GetHookPtrList_2: TPointerHashNativeUIntList; inline;
+function GetHookPtrList_2: TPointerHashNativeUIntList;
 
 procedure BeginMemoryHook_3;
 procedure EndMemoryHook_3;
 function GetHookMemorySize_3: nativeUInt;
-function GetHookPtrList_3: TPointerHashNativeUIntList; inline;
+function GetHookPtrList_3: TPointerHashNativeUIntList;
 
 type
   TMemoryHookedState = array [0 .. 3] of Boolean;
@@ -129,23 +129,27 @@ begin
 end;
 
 var
+  MHStatusCritical: TCriticalSection;
   OriginDoStatusHook: TDoStatusCall;
 
 procedure InternalDoStatus(Text: SystemString; const ID: Integer);
 var
   hs: TMemoryHookedState;
 begin
+  MHStatusCritical.Acquire;
   hs := GetMHState;
   SetMHState(cDisable_MemoryHookedState);
   try
       OriginDoStatusHook(Text, ID);
   finally
-      SetMHState(hs);
+    SetMHState(hs);
+    MHStatusCritical.Release;
   end;
 end;
 
 initialization
 
+MHStatusCritical := TCriticalSection.Create;
 OriginDoStatusHook := OnDoStatusHook;
 {$IFDEF FPC}
 OnDoStatusHook := @InternalDoStatus;
@@ -155,6 +159,7 @@ OnDoStatusHook := InternalDoStatus;
 
 finalization
 
+DisposeObject(MHStatusCritical);
 OnDoStatusHook := OriginDoStatusHook;
 
-end. 
+end.

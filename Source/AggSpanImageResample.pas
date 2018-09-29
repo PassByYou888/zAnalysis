@@ -37,11 +37,8 @@
 *)
 unit AggSpanImageResample;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -140,8 +137,8 @@ begin
 
   FScaleLimit := 20;
 
-  FBlur.X := CAggImageSubpixelSize;
-  FBlur.Y := CAggImageSubpixelSize;
+  FBlur.x := CAggImageSubpixelSize;
+  FBlur.y := CAggImageSubpixelSize;
 end;
 
 constructor TAggSpanImageResample.Create(Alloc: TAggSpanAllocator;
@@ -152,8 +149,8 @@ begin
 
   FScaleLimit := 20;
 
-  FBlur.X := CAggImageSubpixelSize;
-  FBlur.Y := CAggImageSubpixelSize;
+  FBlur.x := CAggImageSubpixelSize;
+  FBlur.y := CAggImageSubpixelSize;
 end;
 
 procedure TAggSpanImageResample.SetScaleLimit(Value: Integer);
@@ -163,12 +160,12 @@ end;
 
 function TAggSpanImageResample.GetBlurX: Double;
 begin
-  Result := FBlur.X / CAggImageSubpixelSize;
+  Result := FBlur.x / CAggImageSubpixelSize;
 end;
 
 function TAggSpanImageResample.GetBlurY: Double;
 begin
-  Result := FBlur.Y / CAggImageSubpixelSize;
+  Result := FBlur.y / CAggImageSubpixelSize;
 end;
 
 function TAggSpanImageResample.GetScaleLimit: Integer;
@@ -178,18 +175,18 @@ end;
 
 procedure TAggSpanImageResample.SetBlurX(Value: Double);
 begin
-  FBlur.X := Trunc(Value * CAggImageSubpixelSize + 0.5);
+  FBlur.x := Trunc(Value * CAggImageSubpixelSize + 0.5);
 end;
 
 procedure TAggSpanImageResample.SetBlurY(Value: Double);
 begin
-  FBlur.Y := Trunc(Value * CAggImageSubpixelSize + 0.5);
+  FBlur.y := Trunc(Value * CAggImageSubpixelSize + 0.5);
 end;
 
 procedure TAggSpanImageResample.SetBlur(Value: Double);
 begin
-  FBlur.X := Trunc(Value * CAggImageSubpixelSize + 0.5);
-  FBlur.Y := FBlur.X;
+  FBlur.x := Trunc(Value * CAggImageSubpixelSize + 0.5);
+  FBlur.y := FBlur.x;
 end;
 
 { TAggSpanImageResampleAffine }
@@ -200,8 +197,8 @@ begin
 
   FScaleLimit := 200.0;
 
-  FBlur.X := 1.0;
-  FBlur.Y := 1.0;
+  FBlur.x := 1.0;
+  FBlur.y := 1.0;
 end;
 
 constructor TAggSpanImageResampleAffine.Create(Alloc: TAggSpanAllocator;
@@ -212,18 +209,18 @@ begin
 
   FScaleLimit := 200.0;
 
-  FBlur.X := 1.0;
-  FBlur.Y := 1.0;
+  FBlur.x := 1.0;
+  FBlur.y := 1.0;
 end;
 
 function TAggSpanImageResampleAffine.GetBlurX: Double;
 begin
-  Result := FBlur.X;
+  Result := FBlur.x;
 end;
 
 function TAggSpanImageResampleAffine.GetBlurY: Double;
 begin
-  Result := FBlur.Y;
+  Result := FBlur.y;
 end;
 
 function TAggSpanImageResampleAffine.GetScaleLimit: Integer;
@@ -243,18 +240,18 @@ end;
 
 procedure TAggSpanImageResampleAffine.SetBlurX(Value: Double);
 begin
-  FBlur.X := Value;
+  FBlur.x := Value;
 end;
 
 procedure TAggSpanImageResampleAffine.SetBlurY(Value: Double);
 begin
-  FBlur.Y := Value;
+  FBlur.y := Value;
 end;
 
 procedure TAggSpanImageResampleAffine.SetBlur(Value: Double);
 begin
-  FBlur.X := Value;
-  FBlur.Y := Value;
+  FBlur.x := Value;
+  FBlur.y := Value;
 end;
 
 procedure TAggSpanImageResampleAffine.Prepare(MaxSpanLength: Cardinal);
@@ -263,40 +260,42 @@ var
 begin
   inherited Prepare(MaxSpanLength);
 
-  Interpolator.Transformer.GetScalingAbs(Scale.X, Scale.Y);
+  Interpolator.Transformer.GetScalingAbs(Scale.x, Scale.y);
 
   FRadiusX := CAggImageSubpixelSize;
   FRadiusY := CAggImageSubpixelSize;
   FRadiusXInv := CAggImageSubpixelSize;
   FRadiusYInv := CAggImageSubpixelSize;
 
-  Scale.X := Scale.X * FBlur.X;
-  Scale.Y := Scale.Y * FBlur.Y;
+  Scale.x := Scale.x * FBlur.x;
+  Scale.y := Scale.y * FBlur.y;
 
-  if Scale.X * Scale.Y > FScaleLimit then
+  if Scale.x * Scale.y > FScaleLimit then
     begin
-      Scale.X := Scale.X * FScaleLimit / (Scale.X * Scale.Y);
-      Scale.Y := Scale.Y * FScaleLimit / (Scale.X * Scale.Y);
+      Scale.x := Scale.x * FScaleLimit / (Scale.x * Scale.y);
+      Scale.y := Scale.y * FScaleLimit / (Scale.x * Scale.y);
     end;
 
-  if Scale.X > 1.0001 then
+  if Scale.x > 1.0001 then
     begin
-      if Scale.X > FScaleLimit then
-          Scale.X := FScaleLimit;
+      if Scale.x > FScaleLimit then
+          Scale.x := FScaleLimit;
 
-      FRadiusX := Trunc(Scale.X * CAggImageSubpixelSize + 0.5);
-      FRadiusXInv := Trunc(1.0 / Scale.X * CAggImageSubpixelSize + 0.5);
+      FRadiusX := Trunc(Scale.x * CAggImageSubpixelSize + 0.5);
+      FRadiusXInv := Trunc(1.0 / Scale.x * CAggImageSubpixelSize + 0.5);
     end;
 
-  if Scale.Y > 1.0001 then
+  if Scale.y > 1.0001 then
     begin
-      if Scale.Y > FScaleLimit then
-          Scale.Y := FScaleLimit;
+      if Scale.y > FScaleLimit then
+          Scale.y := FScaleLimit;
 
-      FRadiusY := Trunc(Scale.Y * CAggImageSubpixelSize + 0.5);
-      FRadiusYInv := Trunc(1.0 / Scale.Y * CAggImageSubpixelSize + 0.5);
+      FRadiusY := Trunc(Scale.y * CAggImageSubpixelSize + 0.5);
+      FRadiusYInv := Trunc(1.0 / Scale.y * CAggImageSubpixelSize + 0.5);
     end;
 end;
 
 end.
+ 
+ 
  

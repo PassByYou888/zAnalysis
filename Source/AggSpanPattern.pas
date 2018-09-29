@@ -37,11 +37,8 @@
 *)
 unit AggSpanPattern;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -238,7 +235,7 @@ end;
 
 function TAggWrapModeRepeat.IncOperator: Cardinal;
 begin
-  Inc(FValue);
+  inc(FValue);
 
   if FValue >= FSize then
       FValue := 0;
@@ -267,7 +264,7 @@ end;
 
 function TAggWrapModeRepeatPow2.IncOperator: Cardinal;
 begin
-  Inc(FValue);
+  inc(FValue);
 
   if FValue > FMask then
       FValue := 0;
@@ -306,7 +303,7 @@ end;
 
 function TAggWrapModeRepeatAutoPow2.IncOperator: Cardinal;
 begin
-  Inc(FValue);
+  inc(FValue);
 
   if FValue >= FSize then
       FValue := 0;
@@ -337,7 +334,7 @@ end;
 
 function TAggWrapModeReflect.IncOperator: Cardinal;
 begin
-  Inc(FValue);
+  inc(FValue);
 
   if FValue >= FSize2 then
       FValue := 0;
@@ -376,7 +373,7 @@ end;
 
 function TAggWrapModeReflectPow2.IncOperator: Cardinal;
 begin
-  Inc(FValue);
+  inc(FValue);
 
   FValue := FValue and FMask;
 
@@ -417,7 +414,7 @@ end;
 
 function TAggWrapModeReflectAutoPow2.IncOperator: Cardinal;
 begin
-  Inc(FValue);
+  inc(FValue);
 
   if FValue >= FSize2 then
       FValue := 0;
@@ -429,3 +426,5 @@ begin
 end;
 
 end. 
+ 
+ 

@@ -37,11 +37,8 @@
 *)
 unit AggSpanSubdivAdaptor;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggSpanInterpolatorLinear,
@@ -66,15 +63,15 @@ type
   public
     constructor Create(SS: Cardinal = 8); overload;
     constructor Create(Interpolator: TAggSpanInterpolator; ASubdivShift: Cardinal = 4; SS: Cardinal = 8); overload;
-    constructor Create(Interpolator: TAggSpanInterpolator; X, Y: Double; Len: Cardinal; ASubdivShift: Cardinal = 4; SS: Cardinal = 8); overload;
+    constructor Create(Interpolator: TAggSpanInterpolator; x, y: Double; Len: Cardinal; ASubdivShift: Cardinal = 4; SS: Cardinal = 8); overload;
 
-    procedure SetBegin(X, Y: Double; Len: Cardinal); override;
+    procedure SetBegin(x, y: Double; Len: Cardinal); override;
 
     procedure IncOperator; override;
-    procedure Coordinates(X, Y: PInteger); override;
-    procedure Coordinates(var X, Y: Integer); override;
+    procedure Coordinates(x, y: PInteger); override;
+    procedure Coordinates(var x, y: Integer); override;
 
-    procedure LocalScale(X, Y: PInteger); override;
+    procedure LocalScale(x, y: PInteger); override;
 
     property Interpolator: TAggSpanInterpolator read FInterpolator write SetInterpolator;
     property SubdivShift: Cardinal read FSubdivShift write SetSubdivShift;
@@ -112,7 +109,7 @@ begin
 end;
 
 constructor TAggSpanSubdivAdaptor.Create(Interpolator: TAggSpanInterpolator;
-  X, Y: Double; Len: Cardinal; ASubdivShift: Cardinal = 4; SS: Cardinal = 8);
+  x, y: Double; Len: Cardinal; ASubdivShift: Cardinal = 4; SS: Cardinal = 8);
 begin
   FSubpixelShift := SS;
   FSubpixelSize := 1 shl FSubpixelShift;
@@ -123,7 +120,7 @@ begin
 
   FInterpolator := Interpolator;
 
-  SetBegin(X, Y, Len);
+  SetBegin(x, y, Len);
 end;
 
 procedure TAggSpanSubdivAdaptor.SetInterpolator(Value: TAggSpanInterpolator);
@@ -148,17 +145,17 @@ begin
   FSubdivMask := FSubdivSize - 1;
 end;
 
-procedure TAggSpanSubdivAdaptor.SetBegin(X, Y: Double; Len: Cardinal);
+procedure TAggSpanSubdivAdaptor.SetBegin(x, y: Double; Len: Cardinal);
 begin
   fPos := 1;
-  FSourceX := Trunc(X * FSubpixelSize) + FSubpixelSize;
-  FSourceY := Y;
+  FSourceX := Trunc(x * FSubpixelSize) + FSubpixelSize;
+  FSourceY := y;
   FLength := Len;
 
   if Len > FSubdivSize then
       Len := FSubdivSize;
 
-  FInterpolator.SetBegin(X, Y, Len);
+  FInterpolator.SetBegin(x, y, Len);
 end;
 
 procedure TAggSpanSubdivAdaptor.IncOperator;
@@ -179,24 +176,26 @@ begin
       fPos := 0;
     end;
 
-  Inc(FSourceX, FSubpixelSize);
-  Inc(fPos);
-  Dec(FLength);
+  inc(FSourceX, FSubpixelSize);
+  inc(fPos);
+  dec(FLength);
 end;
 
-procedure TAggSpanSubdivAdaptor.Coordinates(X, Y: PInteger);
+procedure TAggSpanSubdivAdaptor.Coordinates(x, y: PInteger);
 begin
-  FInterpolator.Coordinates(X, Y);
+  FInterpolator.Coordinates(x, y);
 end;
 
-procedure TAggSpanSubdivAdaptor.Coordinates(var X, Y: Integer);
+procedure TAggSpanSubdivAdaptor.Coordinates(var x, y: Integer);
 begin
-  FInterpolator.Coordinates(X, Y);
+  FInterpolator.Coordinates(x, y);
 end;
 
 procedure TAggSpanSubdivAdaptor.LocalScale;
 begin
-  FInterpolator.LocalScale(X, Y);
+  FInterpolator.LocalScale(x, y);
 end;
 
 end. 
+ 
+ 

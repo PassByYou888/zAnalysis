@@ -46,11 +46,8 @@ unit AggTransViewport;
   ////////////////////////////////////////////////////////////////////////////////
 *)
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggTransAffine;
@@ -87,7 +84,7 @@ type
 
     procedure WorldViewportActual(var x1, y1, x2, y2: Double);
 
-    procedure InverseTransformScaleOnly(var X, Y: Double);
+    procedure InverseTransformScaleOnly(var x, y: Double);
 
     procedure ToAffine(Mtx: TAggTransAffine);
     procedure ToAffineScaleOnly(Mtx: TAggTransAffine);
@@ -96,29 +93,29 @@ type
 
     property AspectRatio: TAggAspectRatio read FAspect;
     property IsValid: Boolean read FIsValid;
-    property AlignX: Double read FAlign.X;
-    property AlignY: Double read FAlign.Y;
+    property AlignX: Double read FAlign.x;
+    property AlignY: Double read FAlign.y;
 
     property ByteSize: Cardinal read GetByteSize;
     property DeviceDeltaX: Double read GetDeviceDeltaX;
     property DeviceDeltaY: Double read GetDeviceDeltaY;
-    property ScaleX: Double read FK.X;
-    property ScaleY: Double read FK.Y;
+    property ScaleX: Double read FK.x;
+    property ScaleY: Double read FK.y;
     property Scale: Double read GetScale;
   end;
 
 implementation
 
-procedure Transform(This: TAggTransViewport; X, Y: PDouble);
+procedure Transform(This: TAggTransViewport; x, y: PDouble);
 begin
-  X^ := X^ * This.FK.X;
-  Y^ := Y^ * This.FK.Y;
+  x^ := x^ * This.FK.x;
+  y^ := y^ * This.FK.y;
 end;
 
-procedure InverseTransform(This: TAggTransViewport; X, Y: PDouble);
+procedure InverseTransform(This: TAggTransViewport; x, y: PDouble);
 begin
-  X^ := (X^ - This.FDelta.X) / This.FK.X + This.FActualWorld.x1;
-  Y^ := (Y^ - This.FDelta.Y) / This.FK.Y + This.FActualWorld.y1;
+  x^ := (x^ - This.FDelta.x) / This.FK.x + This.FActualWorld.x1;
+  y^ := (y^ - This.FDelta.y) / This.FK.y + This.FActualWorld.y1;
 end;
 
 { TAggTransViewport }
@@ -142,25 +139,25 @@ begin
 
   FAspect := arStretch;
 
-  FAlign.X := 0.5;
-  FAlign.Y := 0.5;
+  FAlign.x := 0.5;
+  FAlign.y := 0.5;
 
   FActualWorld.x1 := 0;
   FActualWorld.y1 := 0;
   FActualWorld.x2 := 1;
   FActualWorld.y2 := 1;
-  FDelta.X := 0;
-  FDelta.Y := 0;
+  FDelta.x := 0;
+  FDelta.y := 0;
 
-  FK.X := 1;
-  FK.Y := 1;
+  FK.x := 1;
+  FK.y := 1;
 end;
 
 procedure TAggTransViewport.PreserveAspectRatio(AlignX, AlignY: Double;
   Aspect: TAggAspectRatio);
 begin
-  FAlign.X := AlignX;
-  FAlign.Y := AlignY;
+  FAlign.x := AlignX;
+  FAlign.y := AlignY;
   FAspect := Aspect;
 
   Update;
@@ -247,25 +244,25 @@ begin
   y2 := FActualWorld.y2;
 end;
 
-procedure TAggTransViewport.InverseTransformScaleOnly(var X, Y: Double);
+procedure TAggTransViewport.InverseTransformScaleOnly(var x, y: Double);
 begin
-  X := X / FK.X;
-  Y := Y / FK.Y;
+  x := x / FK.x;
+  y := y / FK.y;
 end;
 
 function TAggTransViewport.GetDeviceDeltaX: Double;
 begin
-  Result := FDelta.X - FActualWorld.x1 * FK.X;
+  Result := FDelta.x - FActualWorld.x1 * FK.x;
 end;
 
 function TAggTransViewport.GetDeviceDeltaY: Double;
 begin
-  Result := FDelta.Y - FActualWorld.y1 * FK.Y;
+  Result := FDelta.y - FActualWorld.y1 * FK.y;
 end;
 
 function TAggTransViewport.GetScale: Double;
 begin
-  Result := (FK.X + FK.Y) * 0.5;
+  Result := (FK.x + FK.y) * 0.5;
 end;
 
 procedure TAggTransViewport.ToAffine(Mtx: TAggTransAffine);
@@ -309,10 +306,10 @@ begin
       FActualWorld.y1 := FWorld.y1;
       FActualWorld.x2 := FWorld.x1 + 1; // possibly wrong???
       FActualWorld.y2 := FWorld.y2 + 1;
-      FDelta.X := FDevice.x1;
-      FDelta.Y := FDevice.y1;
-      FK.X := 1;
-      FK.Y := 1;
+      FDelta.x := FDevice.x1;
+      FDelta.y := FDevice.y1;
+      FK.x := 1;
+      FK.y := 1;
 
       FIsValid := False;
     end
@@ -329,21 +326,21 @@ begin
 
       if not(FAspect = arStretch) then
         begin
-          FK.X := (Device.x2 - Device.x1) / (World.x2 - World.x1);
-          FK.Y := (Device.y2 - Device.y1) / (World.y2 - World.y1);
+          FK.x := (Device.x2 - Device.x1) / (World.x2 - World.x1);
+          FK.y := (Device.y2 - Device.y1) / (World.y2 - World.y1);
 
-          if (FAspect = arMeet) = (FK.X < FK.Y) then
+          if (FAspect = arMeet) = (FK.x < FK.y) then
             begin
-              d := (World.y2 - World.y1) * FK.Y / FK.X;
+              d := (World.y2 - World.y1) * FK.y / FK.x;
 
-              World.y1 := World.y1 + ((World.y2 - World.y1 - d) * FAlign.Y);
+              World.y1 := World.y1 + ((World.y2 - World.y1 - d) * FAlign.y);
               World.y2 := World.y1 + d;
             end
           else
             begin
-              d := (World.x2 - World.x1) * FK.X / FK.Y;
+              d := (World.x2 - World.x1) * FK.x / FK.y;
 
-              World.x1 := World.x1 + ((World.x2 - World.x1 - d) * FAlign.X);
+              World.x1 := World.x1 + ((World.x2 - World.x1 - d) * FAlign.x);
               World.x2 := World.x1 + d;
             end;
         end;
@@ -352,13 +349,15 @@ begin
       FActualWorld.y1 := World.y1;
       FActualWorld.x2 := World.x2;
       FActualWorld.y2 := World.y2;
-      FDelta.X := Device.x1;
-      FDelta.Y := Device.y1;
-      FK.X := (Device.x2 - Device.x1) / (World.x2 - World.x1);
-      FK.Y := (Device.y2 - Device.y1) / (World.y2 - World.y1);
+      FDelta.x := Device.x1;
+      FDelta.y := Device.y1;
+      FK.x := (Device.x2 - Device.x1) / (World.x2 - World.x1);
+      FK.y := (Device.y2 - Device.y1) / (World.y2 - World.y1);
 
       FIsValid := True;
     end;
 end;
 
 end. 
+ 
+ 

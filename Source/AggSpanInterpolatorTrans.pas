@@ -46,11 +46,8 @@ unit AggSpanInterpolatorTrans;
   ////////////////////////////////////////////////////////////////////////////////
 *)
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggTransAffine,
@@ -66,16 +63,16 @@ type
   public
     constructor Create(SS: Cardinal = 8); overload;
     constructor Create(Trans: TAggTransAffine; SS: Cardinal = 8); overload;
-    constructor Create(Trans: TAggTransAffine; X, Y, Z: Cardinal; SS: Cardinal = 8); overload;
+    constructor Create(Trans: TAggTransAffine; x, y, z: Cardinal; SS: Cardinal = 8); overload;
 
     function GetTransformer: TAggTransAffine; override;
     procedure SetTransformer(Trans: TAggTransAffine); override;
 
-    procedure SetBegin(X, Y: Double; Len: Cardinal); override;
+    procedure SetBegin(x, y: Double; Len: Cardinal); override;
 
     procedure IncOperator; override;
-    procedure Coordinates(X, Y: PInteger); override;
-    procedure Coordinates(var X, Y: Integer); override;
+    procedure Coordinates(x, y: PInteger); override;
+    procedure Coordinates(var x, y: Integer); override;
   end;
 
 implementation
@@ -99,13 +96,13 @@ begin
 end;
 
 constructor TAggSpanInterpolatorTrans.Create(Trans: TAggTransAffine;
-  X, Y, Z: Cardinal; SS: Cardinal = 8);
+  x, y, z: Cardinal; SS: Cardinal = 8);
 begin
   inherited Create(SS);
 
   FTrans := Trans;
 
-  SetBegin(X, Y, 0);
+  SetBegin(x, y, 0);
 end;
 
 function TAggSpanInterpolatorTrans.GetTransformer;
@@ -118,43 +115,45 @@ begin
   FTrans := Trans;
 end;
 
-procedure TAggSpanInterpolatorTrans.SetBegin(X, Y: Double; Len: Cardinal);
+procedure TAggSpanInterpolatorTrans.SetBegin(x, y: Double; Len: Cardinal);
 begin
-  fx := X;
-  fy := Y;
+  fx := x;
+  fy := y;
 
-  FTrans.Transform(FTrans, @X, @Y);
+  FTrans.Transform(FTrans, @x, @y);
 
-  FIntX := IntegerRound(X * FSubpixelSize);
-  FIntY := IntegerRound(Y * FSubpixelSize);
+  FIntX := IntegerRound(x * FSubpixelSize);
+  FIntY := IntegerRound(y * FSubpixelSize);
 end;
 
 procedure TAggSpanInterpolatorTrans.IncOperator;
 var
-  X, Y: Double;
+  x, y: Double;
 
 begin
   fx := fx + 1.0;
 
-  X := fx;
-  Y := fy;
+  x := fx;
+  y := fy;
 
-  FTrans.Transform(FTrans, @X, @Y);
+  FTrans.Transform(FTrans, @x, @y);
 
-  FIntX := IntegerRound(X * FSubpixelSize);
-  FIntY := IntegerRound(Y * FSubpixelSize);
+  FIntX := IntegerRound(x * FSubpixelSize);
+  FIntY := IntegerRound(y * FSubpixelSize);
 end;
 
-procedure TAggSpanInterpolatorTrans.Coordinates(X, Y: PInteger);
+procedure TAggSpanInterpolatorTrans.Coordinates(x, y: PInteger);
 begin
-  X^ := FIntX;
-  Y^ := FIntY;
+  x^ := FIntX;
+  y^ := FIntY;
 end;
 
-procedure TAggSpanInterpolatorTrans.Coordinates(var X, Y: Integer);
+procedure TAggSpanInterpolatorTrans.Coordinates(var x, y: Integer);
 begin
-  X := FIntX;
-  Y := FIntY;
+  x := FIntX;
+  y := FIntY;
 end;
 
 end. 
+ 
+ 

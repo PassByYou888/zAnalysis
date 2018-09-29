@@ -37,11 +37,8 @@
 *)
 unit AggPixelFormatGray;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggPixelFormat,
@@ -62,10 +59,10 @@ procedure PixelFormatGray8PreBgr24b(var PixelFormatProcessor: TAggPixelFormatPro
 
 implementation
 
-function Fmt8Row(This: TAggPixelFormatProcessor; X, Y: Integer): TAggRowDataType;
+function Fmt8Row(This: TAggPixelFormatProcessor; x, y: Integer): TAggRowDataType;
 begin
-  Result.Initialize(X, This.width - 1,
-    PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X * This.Step + This.Offset));
+  Result.Initialize(x, This.width - 1,
+    PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + x * This.Step + This.Offset));
 end;
 
 procedure GrayGammaDirApply(This: TAggPixelFormatProcessor; p: PInt8u);
@@ -78,27 +75,27 @@ begin
   p^ := This.Apply.Inv[p^];
 end;
 
-procedure GrayForEachPixel(This: TAggPixelFormatProcessor; F: TAggFuncApplyGamma);
+procedure GrayForEachPixel(This: TAggPixelFormatProcessor; f: TAggFuncApplyGamma);
 var
-  Y, Len: Cardinal;
+  y, Len: Cardinal;
   p: PInt8u;
 begin
-  Y := 0;
+  y := 0;
 
-  while Y < This.height do
+  while y < This.height do
     begin
       Len := This.width;
-      p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + This.Offset);
+      p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + This.Offset);
 
       repeat
-        F(This, p);
+        f(This, p);
 
-        Inc(PtrComp(p), This.Step);
-        Dec(Len);
+        inc(PtrComp(p), This.Step);
+        dec(Len);
 
       until Len = 0;
 
-      Inc(Y);
+      inc(y);
     end;
 end;
 
@@ -413,3 +410,5 @@ begin
 end;
 
 end. 
+ 
+ 

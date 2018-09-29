@@ -18,7 +18,7 @@ interface
 uses SysUtils, Geometry2DUnit, CoreClasses, Math;
 
 type
-  TMovementStep = packed record
+  TMovementStep = record
     Position: TVec2;
     angle: TGeoFloat;
     index: Integer;
@@ -52,7 +52,7 @@ type
   private
     FIntf: IMovementEngineIntf;
 
-    FSteps: packed array of TMovementStep;
+    FSteps: array of TMovementStep;
 
     FActive: Boolean;
     FPause: Boolean;
@@ -364,7 +364,7 @@ begin
                           begin
                             CurrentDeltaTime := CurrentDeltaTime - dt;
                             FromV := ToV;
-                            Inc(FCurrentPathStepTo);
+                            inc(FCurrentPathStepTo);
 
                             // trigger execute event
                             if (FCurrentPathStepTo < length(FSteps)) then
@@ -397,7 +397,7 @@ begin
                                 RollAngle := SmoothAngle(RollAngle, toStep.angle, dt * FRollSpeed);
                                 CurrentDeltaTime := CurrentDeltaTime - dt;
                                 FromV := ToV;
-                                Inc(FCurrentPathStepTo);
+                                inc(FCurrentPathStepTo);
 
                                 // trigger execute event
                                 if (FCurrentPathStepTo < length(FSteps)) then
@@ -416,7 +416,7 @@ begin
                                 RollAngle := SmoothAngle(RollAngle, toStep.angle, dt * FRollSpeed);
                                 CurrentDeltaTime := CurrentDeltaTime - dt;
                                 FromV := ToV;
-                                Inc(FCurrentPathStepTo);
+                                inc(FCurrentPathStepTo);
 
                                 // trigger execute event
                                 if (FCurrentPathStepTo < length(FSteps)) then
@@ -463,4 +463,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

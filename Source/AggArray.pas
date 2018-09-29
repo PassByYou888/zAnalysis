@@ -37,15 +37,15 @@
 *)
 unit AggArray;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
+
+interface
 
 uses
   AggBasics;
 
 type
-  TAggFuncLess = function(e1, e2: Pointer) : Boolean;
+  TAggFuncLess = function(e1, e2: Pointer): Boolean;
   TAggFuncEqual = function(e1, e2: Pointer): Boolean;
 
   TAggCustomArray = class
@@ -201,7 +201,8 @@ type
   // use is when the average reqired size is much less than the block size.
   // ------------------------------------------------------------------------
   PAggPodAlloc = ^TAggPodAlloc;
-  TAggPodAlloc = packed record
+
+  TAggPodAlloc = record
     PTR: PInt8u;
     Size: Cardinal;
   end;
@@ -228,11 +229,12 @@ type
 procedure QuickSort(Arr: TAggCustomArray; Less: TAggFuncLess);
 function RemoveDuplicates(Arr: TAggCustomArray; Equal: TAggFuncEqual): Cardinal;
 
-function IntLess(A, b: Pointer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function IntGreater(A, b: Pointer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IntLess(a, b: Pointer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IntGreater(a, b: Pointer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function CardinalLess(A, b: Pointer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function CardinalGreater(A, b: Pointer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CardinalLess(a, b: Pointer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CardinalGreater(a, b: Pointer): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+
 
 implementation
 
@@ -242,17 +244,17 @@ const
   QuickSortThreshold = 9;
 type
   Int80_ptr = ^Int80;
-  Int80 = array [0..79] of Integer;
+  Int80 = array [0 .. 79] of Integer;
 
 var
   Temp, e1, e2: Pointer;
   Swap: Cardinal;
   Stack: Int80;
   Top: Int80_ptr;
-  Limit, Base, Len, i, J, Pivot: Integer;
+  Limit, Base, Len, i, j, Pivot: Integer;
 begin
   if Arr.Size < 2 then
-    Exit;
+      Exit;
 
   AggGetMem(Temp, Arr.Entry);
 
@@ -265,133 +267,133 @@ begin
     Len := Limit - Base;
 
     if Len > QuickSortThreshold then
-    begin
-      // we use base + len/2 as the pivot
-      Pivot := Base + Len div 2;
-
-      // SwapElements(arr[base], arr[pivot]);
-      Move(Arr[Base]^, Temp^, Swap);
-      Move(Arr[Pivot]^, Arr[Base]^, Swap);
-      Move(Temp^, Arr[Pivot]^, Swap);
-
-      i := Base + 1;
-      J := Limit - 1;
-
-      // now ensure that *i <= *base <= *j
-      e1 := Arr[J];
-      e2 := Arr[i];
-
-      if Less(e1, e2) then
       begin
-        // SwapElements(*e1, *e2);
-        Move(e1^, Temp^, Swap);
-        Move(e2^, e1^, Swap);
-        Move(Temp^, e2^, Swap);
-      end;
+        // we use base + len/2 as the pivot
+        Pivot := Base + Len div 2;
 
-      e1 := Arr[Base];
-      e2 := Arr[i];
+        // SwapElements(arr[base], arr[pivot]);
+        Move(Arr[Base]^, Temp^, Swap);
+        Move(Arr[Pivot]^, Arr[Base]^, Swap);
+        Move(Temp^, Arr[Pivot]^, Swap);
 
-      if Less(e1, e2) then
-      begin
-        // SwapElements(*e1, *e2);
-        Move(e1^, Temp^, Swap);
-        Move(e2^, e1^, Swap);
-        Move(Temp^, e2^, Swap);
-      end;
+        i := Base + 1;
+        j := Limit - 1;
 
-      e1 := Arr[J];
-      e2 := Arr[Base];
+        // now ensure that *i <= *base <= *j
+        e1 := Arr[j];
+        e2 := Arr[i];
 
-      if Less(e1, e2) then
-      begin
-        // SwapElements(*e1, *e2);
-        Move(e1^, Temp^, Swap);
-        Move(e2^, e1^, Swap);
-        Move(Temp^, e2^, Swap);
-      end;
+        if Less(e1, e2) then
+          begin
+            // SwapElements(*e1, *e2);
+            Move(e1^, Temp^, Swap);
+            Move(e2^, e1^, Swap);
+            Move(Temp^, e2^, Swap);
+          end;
 
-      repeat
-        repeat
-          Inc(i)
-        until not Less(Arr[i], Arr[Base]);
+        e1 := Arr[Base];
+        e2 := Arr[i];
+
+        if Less(e1, e2) then
+          begin
+            // SwapElements(*e1, *e2);
+            Move(e1^, Temp^, Swap);
+            Move(e2^, e1^, Swap);
+            Move(Temp^, e2^, Swap);
+          end;
+
+        e1 := Arr[j];
+        e2 := Arr[Base];
+
+        if Less(e1, e2) then
+          begin
+            // SwapElements(*e1, *e2);
+            Move(e1^, Temp^, Swap);
+            Move(e2^, e1^, Swap);
+            Move(Temp^, e2^, Swap);
+          end;
 
         repeat
-          Dec(J);
-        until not Less(Arr[Base], Arr[J]);
+          repeat
+              inc(i)
+          until not Less(Arr[i], Arr[Base]);
 
-        if i > J then
-          Break;
+          repeat
+              dec(j);
+          until not Less(Arr[Base], Arr[j]);
 
-        // SwapElements(arr[i], arr[j]);
-        Move(Arr[i]^, Temp^, Swap);
-        Move(Arr[J]^, Arr[i]^, Swap);
-        Move(Temp^, Arr[J]^, Swap);
-      until False;
+          if i > j then
+              Break;
 
-      // SwapElements(arr[base], arr[j]);
-      Move(Arr[Base]^, Temp^, Swap);
-      Move(Arr[J]^, Arr[Base]^, Swap);
-      Move(Temp^, Arr[J]^, Swap);
+          // SwapElements(arr[i], arr[j]);
+          Move(Arr[i]^, Temp^, Swap);
+          Move(Arr[j]^, Arr[i]^, Swap);
+          Move(Temp^, Arr[j]^, Swap);
+        until False;
 
-      // now, push the largest sub-array
-      if J - Base > Limit - i then
-      begin
-        Top^[0] := Base;
-        Top^[1] := J;
-        Base := i;
+        // SwapElements(arr[base], arr[j]);
+        Move(Arr[Base]^, Temp^, Swap);
+        Move(Arr[j]^, Arr[Base]^, Swap);
+        Move(Temp^, Arr[j]^, Swap);
+
+        // now, push the largest sub-array
+        if j - Base > Limit - i then
+          begin
+            Top^[0] := Base;
+            Top^[1] := j;
+            Base := i;
+          end
+        else
+          begin
+            Top^[0] := i;
+            Top^[1] := Limit;
+            Limit := j;
+          end;
+
+        inc(PtrComp(Top), 2 * SizeOf(Integer));
       end
-      else
-      begin
-        Top^[0] := i;
-        Top^[1] := Limit;
-        Limit := J;
-      end;
-
-      Inc(PtrComp(Top), 2 * SizeOf(Integer));
-    end
     else
-    begin
-      // the sub-array is small, perform insertion sort
-      J := Base;
-      i := J + 1;
-
-      while i < Limit do
       begin
-        e1 := Arr[J + 1];
-        e2 := Arr[J];
+        // the sub-array is small, perform insertion sort
+        j := Base;
+        i := j + 1;
 
-        while Less(e1, e2) do
-        begin
-          // SwapElements(*e1, *e2);
-          Move(e1^, Temp^, Swap);
-          Move(e2^, e1^, Swap);
-          Move(Temp^, e2^, Swap);
+        while i < Limit do
+          begin
+            e1 := Arr[j + 1];
+            e2 := Arr[j];
 
-          if J = Base then
+            while Less(e1, e2) do
+              begin
+                // SwapElements(*e1, *e2);
+                Move(e1^, Temp^, Swap);
+                Move(e2^, e1^, Swap);
+                Move(Temp^, e2^, Swap);
+
+                if j = Base then
+                    Break;
+
+                dec(j);
+
+                e1 := Arr[j + 1];
+                e2 := Arr[j];
+              end;
+
+            j := i;
+
+            inc(i);
+          end;
+
+        if PtrComp(Top) > PtrComp(@Stack) then
+          begin
+            dec(PtrComp(Top), 2 * SizeOf(Integer));
+
+            Base := Top^[0];
+            Limit := Top^[1];
+          end
+        else
             Break;
-
-          Dec(J);
-
-          e1 := Arr[J + 1];
-          e2 := Arr[J];
-        end;
-
-        J := i;
-
-        Inc(i);
       end;
-
-      if PtrComp(Top) > PtrComp(@Stack) then
-      begin
-        Dec(PtrComp(Top), 2 * SizeOf(Integer));
-
-        Base := Top^[0];
-        Limit := Top^[1];
-      end
-      else
-        Break;
-    end;
   until False;
 
   AggFreeMem(Temp, Arr.Entry);
@@ -401,55 +403,54 @@ end;
 // tail of the array, it just returns the number of remaining elements.
 function RemoveDuplicates(Arr: TAggCustomArray; Equal: TAggFuncEqual): Cardinal;
 var
-  i, J: Cardinal;
+  i, j: Cardinal;
   E: Pointer;
 begin
   if Arr.Size < 2 then
-  begin
-    Result := Arr.Size;
-
-    Exit;
-  end;
-
-  i := 1;
-  J := 1;
-
-  while i < Arr.Size do
-  begin
-    E := Arr[i];
-
-    if not Equal(E, Arr.ArrayOperator(i - 1)) then
     begin
-      Move(E^, Arr.ArrayOperator(J)^, Arr.Entry);
-      Inc(J);
+      Result := Arr.Size;
+
+      Exit;
     end;
 
-    Inc(i);
-  end;
+  i := 1;
+  j := 1;
 
-  Result := J;
+  while i < Arr.Size do
+    begin
+      E := Arr[i];
+
+      if not Equal(E, Arr.ArrayOperator(i - 1)) then
+        begin
+          Move(E^, Arr.ArrayOperator(j)^, Arr.Entry);
+          inc(j);
+        end;
+
+      inc(i);
+    end;
+
+  Result := j;
 end;
 
-function IntLess(A, b: Pointer): Boolean;
+function IntLess(a, b: Pointer): Boolean;
 begin
-  Result := PInteger(A)^ < PInteger(b)^;
+  Result := PInteger(a)^ < PInteger(b)^;
 end;
 
-function IntGreater(A, b: Pointer): Boolean;
+function IntGreater(a, b: Pointer): Boolean;
 begin
-  Result := PInteger(A)^ > PInteger(b)^;
+  Result := PInteger(a)^ > PInteger(b)^;
 end;
 
-function CardinalLess(A, b: Pointer): Boolean;
+function CardinalLess(a, b: Pointer): Boolean;
 begin
-  Result := PCardinal(A)^ < PCardinal(b)^;
+  Result := PCardinal(a)^ < PCardinal(b)^;
 end;
 
-function CardinalGreater(A, b: Pointer): Boolean;
+function CardinalGreater(a, b: Pointer): Boolean;
 begin
-  Result := PCardinal(A)^ > PCardinal(b)^;
+  Result := PCardinal(a)^ > PCardinal(b)^;
 end;
-
 
 { TAggCustomArray }
 
@@ -457,7 +458,6 @@ function TAggCustomArray.at(index: Cardinal): Pointer;
 begin
   at := ArrayOperator(index);
 end;
-
 
 { TAggRangeAdaptor }
 
@@ -483,7 +483,6 @@ function TAggRangeAdaptor.ArrayOperator(index: Cardinal): Pointer;
 begin
   Result := FArray.ArrayOperator(FStart + index);
 end;
-
 
 { TAggPodArrayAdaptor }
 
@@ -513,7 +512,6 @@ function TAggPodArrayAdaptor.at(index: Cardinal): Pointer;
 begin
   Result := Pointer(PtrComp(FArray) + index * FEntry);
 end;
-
 
 { TAggPodAutoArray }
 
@@ -546,7 +544,6 @@ begin
   Result := Pointer(PtrComp(FArray) + index * FEntrySize);
 end;
 
-
 { TAggPodArray }
 
 constructor TAggPodArray.Create(EntrySize: Cardinal);
@@ -568,7 +565,7 @@ end;
 destructor TAggPodArray.Destroy;
 begin
   if FArray <> nil then
-    AggFreeMem(FArray, FCapacity * FEntrySize);
+      AggFreeMem(FArray, FCapacity * FEntrySize);
 
   inherited;
 end;
@@ -589,23 +586,23 @@ var
 begin
   if NewSize > FSize then
     if NewSize > FCapacity then
-    begin
-      AggGetMem(buff, NewSize * FEntrySize);
-
-      if FArray <> nil then
       begin
-        Move(FArray^, buff^, FSize * FEntrySize);
+        AggGetMem(buff, NewSize * FEntrySize);
 
-        AggFreeMem(FArray, FCapacity * FEntrySize);
-      end;
+        if FArray <> nil then
+          begin
+            Move(FArray^, buff^, FSize * FEntrySize);
 
-      FArray := buff;
-      FCapacity := NewSize;
+            AggFreeMem(FArray, FCapacity * FEntrySize);
+          end;
 
-    end
+        FArray := buff;
+        FCapacity := NewSize;
+
+      end
     else
   else
-    FSize := NewSize;
+      FSize := NewSize;
 end;
 
 procedure TAggPodArray.Capacity(Cap, ExtraTail: Cardinal);
@@ -613,16 +610,16 @@ begin
   FSize := 0;
 
   if Cap > FCapacity then
-  begin
-    AggFreeMem(FArray, FCapacity * FEntrySize);
+    begin
+      AggFreeMem(FArray, FCapacity * FEntrySize);
 
-    FCapacity := Cap + ExtraTail;
+      FCapacity := Cap + ExtraTail;
 
-    if FCapacity > 0 then
-      AggGetMem(FArray, FCapacity * FEntrySize)
-    else
-      FArray := 0;
-  end;
+      if FCapacity > 0 then
+          AggGetMem(FArray, FCapacity * FEntrySize)
+      else
+          FArray := 0;
+    end;
 end;
 
 procedure TAggPodArray.Zero;
@@ -633,7 +630,7 @@ end;
 procedure TAggPodArray.Add(Value: Pointer);
 begin
   Move(Value^, Pointer(PtrComp(FArray) + FSize * FEntrySize)^, FEntrySize);
-  Inc(FSize);
+  inc(FSize);
 end;
 
 function TAggPodArray.Data;
@@ -655,7 +652,6 @@ function TAggPodArray.ArrayOperator(index: Cardinal): Pointer;
 begin
   Result := Pointer(PtrComp(FArray) + index * FEntrySize);
 end;
-
 
 { TAggPodDeque }
 
@@ -694,19 +690,19 @@ var
   blk: Pointer;
 begin
   if FNumBlocks <> 0 then
-  begin
-    blk := Pointer(PtrComp(FBlocks) + (FNumBlocks - 1) * SizeOf(Pointer));
-
-    while FNumBlocks <> 0 do
     begin
-      AggFreeMem(PPointer(blk)^, FBlockSize * FEntrySize);
+      blk := Pointer(PtrComp(FBlocks) + (FNumBlocks - 1) * SizeOf(Pointer));
 
-      Dec(PtrComp(blk), SizeOf(Pointer));
-      Dec(FNumBlocks);
+      while FNumBlocks <> 0 do
+        begin
+          AggFreeMem(PPointer(blk)^, FBlockSize * FEntrySize);
+
+          dec(PtrComp(blk), SizeOf(Pointer));
+          dec(FNumBlocks);
+        end;
+
+      AggFreeMem(Pointer(FBlocks), FMaxBlocks * SizeOf(Pointer));
     end;
-
-    AggFreeMem(Pointer(FBlocks), FMaxBlocks * SizeOf(Pointer));
-  end;
 end;
 
 procedure TAggPodDeque.Clear;
@@ -722,7 +718,7 @@ end;
 procedure TAggPodDeque.RemoveLast;
 begin
   if FSize <> 0 then
-    Dec(FSize);
+      dec(FSize);
 end;
 
 procedure TAggPodDeque.Add(val: Pointer);
@@ -732,7 +728,7 @@ begin
   p := GetDataPointer;
 
   Move(val^, p^, FEntrySize);
-  Inc(FSize);
+  inc(FSize);
 end;
 
 procedure TAggPodDeque.ModifyLast(val: Pointer);
@@ -744,7 +740,7 @@ end;
 procedure TAggPodDeque.CutAt(ASize: Cardinal);
 begin
   if ASize < FSize then
-    FSize := ASize;
+      FSize := ASize;
 end;
 
 function TAggPodDeque.GetSize;
@@ -762,14 +758,14 @@ var
   p: PPointer;
 begin
   p := FBlocks;
-  Inc(p, (index shr FBlockShift));
+  inc(p, (index shr FBlockShift));
   Result := p^;
-  Inc(PByte(Result), (index and FBlockMask) * FEntrySize);
+  inc(PByte(Result), (index and FBlockMask) * FEntrySize);
 end;
 
 procedure TAggPodDeque.AssignOperator;
 var
-  i       : Cardinal;
+  i: Cardinal;
   Src, Dst: Pointer;
 begin
   FreeBlocks;
@@ -787,24 +783,24 @@ begin
   FBlockPtrInc := v.FBlockPtrInc;
 
   if FMaxBlocks <> 0 then
-    AggGetMem(Pointer(FBlocks), FMaxBlocks * SizeOf(Pointer))
+      AggGetMem(Pointer(FBlocks), FMaxBlocks * SizeOf(Pointer))
   else
-    FBlocks := nil;
+      FBlocks := nil;
 
   Src := v.FBlocks;
   Dst := FBlocks;
   i := 0;
 
   while i < FNumBlocks do
-  begin
-    AggGetMem(PPointer(Dst)^, FBlockSize * FEntrySize);
+    begin
+      AggGetMem(PPointer(Dst)^, FBlockSize * FEntrySize);
 
-    Move(PPointer(Src)^^, PPointer(Dst)^^, FBlockSize * FEntrySize);
+      Move(PPointer(Src)^^, PPointer(Dst)^^, FBlockSize * FEntrySize);
 
-    Inc(PtrComp(Src), SizeOf(Pointer));
-    Inc(PtrComp(Dst), SizeOf(Pointer));
-    Inc(i);
-  end;
+      inc(PtrComp(Src), SizeOf(Pointer));
+      inc(PtrComp(Dst), SizeOf(Pointer));
+      inc(i);
+    end;
 end;
 
 function TAggPodDeque.Curr;
@@ -833,36 +829,36 @@ var
 
 begin
   if NumElements < FBlockSize then
-  begin
-    GetDataPointer; // Allocate initial block if necessary
-
-    Rest := FBlockSize - (FSize and FBlockMask);
-
-    if NumElements <= Rest then
     begin
-      // The rest of the block is good, we can use it
+      GetDataPointer; // Allocate initial block if necessary
+
+      Rest := FBlockSize - (FSize and FBlockMask);
+
+      if NumElements <= Rest then
+        begin
+          // The rest of the block is good, we can use it
+          index := FSize;
+
+          inc(FSize, NumElements);
+
+          Result := index;
+
+          Exit;
+        end;
+
+      // New block
+      inc(FSize, Rest);
+
+      GetDataPointer;
+
       index := FSize;
 
-      Inc(FSize, NumElements);
+      inc(FSize, NumElements);
 
       Result := index;
 
       Exit;
     end;
-
-    // New block
-    Inc(FSize, Rest);
-
-    GetDataPointer;
-
-    index := FSize;
-
-    Inc(FSize, NumElements);
-
-    Result := index;
-
-    Exit;
-  end;
 
   Result := -1; // Impossible to allocate
 end;
@@ -873,26 +869,26 @@ var
   Blocks: PPointer;
 begin
   if nb >= FMaxBlocks then
-  begin
-    AggGetMem(NewBlocks, (FMaxBlocks + FBlockPtrInc) * SizeOf(Pointer));
-
-    if FBlocks <> nil then
     begin
-      Move(FBlocks^, NewBlocks^, FNumBlocks * SizeOf(Pointer));
+      AggGetMem(NewBlocks, (FMaxBlocks + FBlockPtrInc) * SizeOf(Pointer));
 
-      AggFreeMem(Pointer(FBlocks), FMaxBlocks * SizeOf(Pointer));
+      if FBlocks <> nil then
+        begin
+          Move(FBlocks^, NewBlocks^, FNumBlocks * SizeOf(Pointer));
+
+          AggFreeMem(Pointer(FBlocks), FMaxBlocks * SizeOf(Pointer));
+        end;
+
+      FBlocks := NewBlocks;
+
+      inc(FMaxBlocks, FBlockPtrInc);
     end;
 
-    FBlocks := NewBlocks;
-
-    Inc(FMaxBlocks, FBlockPtrInc);
-  end;
-
   Blocks := FBlocks;
-  Inc(Blocks, nb);
+  inc(Blocks, nb);
   AggGetMem(Blocks^, FBlockSize * FEntrySize);
 
-  Inc(FNumBlocks);
+  inc(FNumBlocks);
 end;
 
 function TAggPodDeque.GetDataPointer: Pointer;
@@ -903,15 +899,14 @@ begin
   nb := FSize shr FBlockShift;
 
   if nb >= FNumBlocks then
-    AllocateBlock(nb);
+      AllocateBlock(nb);
 
   Block := FBlocks;
-  Inc(Block, nb);
+  inc(Block, nb);
 
   Result := Block^;
-  Inc(PInt8u(Result), (FSize and FBlockMask) * FEntrySize);
+  inc(PInt8u(Result), (FSize and FBlockMask) * FEntrySize);
 end;
-
 
 { TAggPodAllocator }
 
@@ -939,20 +934,20 @@ var
   blk: PAggPodAlloc;
 begin
   if FNumBlocks <> 0 then
-  begin
-    blk := PAggPodAlloc(PtrComp(FBlocks) + (FNumBlocks - 1) *
-      SizeOf(TAggPodAlloc));
-
-    while FNumBlocks <> 0 do
     begin
-      AggFreeMem(Pointer(blk.PTR), blk.Size);
+      blk := PAggPodAlloc(PtrComp(FBlocks) + (FNumBlocks - 1) *
+        SizeOf(TAggPodAlloc));
 
-      Dec(PtrComp(blk), SizeOf(TAggPodAlloc));
-      Dec(FNumBlocks);
+      while FNumBlocks <> 0 do
+        begin
+          AggFreeMem(Pointer(blk.PTR), blk.Size);
+
+          dec(PtrComp(blk), SizeOf(TAggPodAlloc));
+          dec(FNumBlocks);
+        end;
+
+      AggFreeMem(Pointer(FBlocks), FMaxBlocks * SizeOf(TAggPodAlloc));
     end;
-
-    AggFreeMem(Pointer(FBlocks), FMaxBlocks * SizeOf(TAggPodAlloc));
-  end;
 
   FNumBlocks := 0;
   FMaxBlocks := 0;
@@ -964,51 +959,51 @@ end;
 
 function TAggPodAllocator.Allocate;
 var
-  PTR  : PInt8u;
+  PTR: PInt8u;
   Align: Cardinal;
 begin
   if Size = 0 then
-  begin
-    Result := 0;
-
-    Exit;
-  end;
-
-  if Size <= FRest then
-  begin
-    PTR := FBufPtr;
-
-    if alignment > 1 then
     begin
-      Align := (alignment - Cardinal(Int32u(PTR)) mod alignment) mod alignment;
-
-      Inc(Size, Align);
-      Inc(PtrComp(PTR), Align);
-
-      if Size <= FRest then
-      begin
-        Dec(FRest, Size);
-        Inc(PtrComp(FBufPtr), Size);
-
-        Result := PTR;
-
-        Exit;
-      end;
-
-      AllocateBlock(Size);
-
-      Result := Allocate(Size - Align, alignment);
+      Result := 0;
 
       Exit;
     end;
 
-    Dec(FRest, Size);
-    Inc(PtrComp(FBufPtr), Size);
+  if Size <= FRest then
+    begin
+      PTR := FBufPtr;
 
-    Result := PTR;
+      if alignment > 1 then
+        begin
+          Align := (alignment - Cardinal(Int32u(PTR)) mod alignment) mod alignment;
 
-    Exit;
-  end;
+          inc(Size, Align);
+          inc(PtrComp(PTR), Align);
+
+          if Size <= FRest then
+            begin
+              dec(FRest, Size);
+              inc(PtrComp(FBufPtr), Size);
+
+              Result := PTR;
+
+              Exit;
+            end;
+
+          AllocateBlock(Size);
+
+          Result := Allocate(Size - Align, alignment);
+
+          Exit;
+        end;
+
+      dec(FRest, Size);
+      inc(PtrComp(FBufPtr), Size);
+
+      Result := PTR;
+
+      Exit;
+    end;
 
   AllocateBlock(Size + alignment - 1);
 
@@ -1020,34 +1015,33 @@ var
   NewBlocks: PAggPodAlloc;
 begin
   if Size < FBlockSize then
-    Size := FBlockSize;
+      Size := FBlockSize;
 
   if FNumBlocks >= FMaxBlocks then
-  begin
-    AggGetMem(Pointer(NewBlocks), (FMaxBlocks + FBlockPtrInc) *
-      SizeOf(TAggPodAlloc));
-
-    if FBlocks <> nil then
     begin
-      Move(FBlocks^, NewBlocks^, FNumBlocks * SizeOf(TAggPodAlloc));
+      AggGetMem(Pointer(NewBlocks), (FMaxBlocks + FBlockPtrInc) *
+        SizeOf(TAggPodAlloc));
 
-      AggFreeMem(Pointer(FBlocks), FMaxBlocks * SizeOf(TAggPodAlloc));
+      if FBlocks <> nil then
+        begin
+          Move(FBlocks^, NewBlocks^, FNumBlocks * SizeOf(TAggPodAlloc));
+
+          AggFreeMem(Pointer(FBlocks), FMaxBlocks * SizeOf(TAggPodAlloc));
+        end;
+
+      FBlocks := NewBlocks;
+
+      inc(FMaxBlocks, FBlockPtrInc);
     end;
-
-    FBlocks := NewBlocks;
-
-    Inc(FMaxBlocks, FBlockPtrInc);
-  end;
 
   AggGetMem(Pointer(FBufPtr), Size * SizeOf(Int8u));
 
   PAggPodAlloc(PtrComp(FBlocks) + FNumBlocks * SizeOf(TAggPodAlloc)).PTR := FBufPtr;
   PAggPodAlloc(PtrComp(FBlocks) + FNumBlocks * SizeOf(TAggPodAlloc)).Size := Size;
 
-  Inc(FNumBlocks);
+  inc(FNumBlocks);
 
   FRest := Size;
 end;
 
-end. 
- 
+end.

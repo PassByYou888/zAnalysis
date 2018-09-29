@@ -37,11 +37,8 @@
 *)
 unit AggSpiral;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   SysUtils,
   AggMath,
@@ -55,20 +52,20 @@ type
     FCurrentRadius, FDa, FDr: Double;
     FStart: Boolean;
   public
-    constructor Create(X, Y, r1, r2, Step: Double; startAngle: Double = 0);
+    constructor Create(x, y, r1, r2, Step: Double; startAngle: Double = 0);
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
   end;
 
 implementation
 
 { TSpiral }
 
-constructor TSpiral.Create(X, Y, r1, r2, Step: Double; startAngle: Double = 0);
+constructor TSpiral.Create(x, y, r1, r2, Step: Double; startAngle: Double = 0);
 begin
-  fx := X;
-  fy := Y;
+  fx := x;
+  fy := y;
   FR1 := r1;
   FR2 := r2;
 
@@ -87,7 +84,7 @@ begin
   FStart := True;
 end;
 
-function TSpiral.Vertex(X, Y: PDouble): Cardinal;
+function TSpiral.Vertex(x, y: PDouble): Cardinal;
 var
   Pnt: TPointDouble;
 begin
@@ -98,10 +95,10 @@ begin
       Exit;
     end;
 
-  SinCosScale(FAngle, Pnt.Y, Pnt.X, FCurrentRadius);
+  SinCosScale(FAngle, Pnt.y, Pnt.x, FCurrentRadius);
 
-  X^ := fx + Pnt.X;
-  Y^ := fy + Pnt.Y;
+  x^ := fx + Pnt.x;
+  y^ := fy + Pnt.y;
 
   FCurrentRadius := FCurrentRadius + FDr;
   FAngle := FAngle + FDa;
@@ -117,3 +114,5 @@ begin
 end;
 
 end. 
+ 
+ 

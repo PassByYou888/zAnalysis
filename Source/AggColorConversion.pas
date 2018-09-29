@@ -37,9 +37,8 @@
 *)
 unit AggColorConversion;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
+interface
 
 uses
   AggBasics,
@@ -78,7 +77,7 @@ implementation
 procedure ColorConversion(Dst, Src: TAggRenderingBuffer;
   CopyRowFunctor: CopyRow);
 var
-  Y, width, height: Cardinal;
+  y, width, height: Cardinal;
 begin
   width := Src.width;
   height := Src.height;
@@ -90,49 +89,49 @@ begin
     height := Dst.height;
 
   if width > 0 then
-    for Y := 0 to height - 1 do
-      CopyRowFunctor(Dst.Row(Y), Src.Row(Y), width);
+    for y := 0 to height - 1 do
+      CopyRowFunctor(Dst.Row(y), Src.Row(y), width);
 end;
 
 procedure ColorConversionGray8ToBgr24(Dst, Src: PInt8u; width: Cardinal);
 begin
   repeat
-    PInt8u(PtrComp(Dst) + CAggOrderBgr.R)^ := Src^;
+    PInt8u(PtrComp(Dst) + CAggOrderBgr.r)^ := Src^;
     PInt8u(PtrComp(Dst) + CAggOrderBgr.g)^ := Src^;
     PInt8u(PtrComp(Dst) + CAggOrderBgr.b)^ := Src^;
 
-    Inc(PtrComp(Dst), 3);
-    Inc(PtrComp(Src));
-    Dec(width);
+    inc(PtrComp(Dst), 3);
+    inc(PtrComp(Src));
+    dec(width);
   until width = 0;
 end;
 
 procedure ColorConversionGray8ToRgb24(Dst, Src: PInt8u; width: Cardinal);
 begin
   repeat
-    PInt8u(PtrComp(Dst) + CAggOrderRgb.R)^ := Src^;
+    PInt8u(PtrComp(Dst) + CAggOrderRgb.r)^ := Src^;
     PInt8u(PtrComp(Dst) + CAggOrderRgb.g)^ := Src^;
     PInt8u(PtrComp(Dst) + CAggOrderRgb.b)^ := Src^;
 
-    Inc(PtrComp(Dst), 3);
-    Inc(PtrComp(Src));
-    Dec(width);
+    inc(PtrComp(Dst), 3);
+    inc(PtrComp(Src));
+    dec(width);
   until width = 0;
 end;
 
 procedure ColorConversionBgr24ToRgb24(Dst, Src: PInt8u; width: Cardinal);
 begin
   repeat
-    PInt8u(PtrComp(Dst) + CAggOrderBgr.R)^ :=
-      PInt8u(PtrComp(Src) + CAggOrderRgb.R)^;
+    PInt8u(PtrComp(Dst) + CAggOrderBgr.r)^ :=
+      PInt8u(PtrComp(Src) + CAggOrderRgb.r)^;
     PInt8u(PtrComp(Dst) + CAggOrderBgr.g)^ :=
       PInt8u(PtrComp(Src) + CAggOrderRgb.g)^;
     PInt8u(PtrComp(Dst) + CAggOrderBgr.b)^ :=
       PInt8u(PtrComp(Src) + CAggOrderRgb.b)^;
 
-    Inc(PtrComp(Dst), 3);
-    Inc(PtrComp(Src), 3);
-    Dec(width);
+    inc(PtrComp(Dst), 3);
+    inc(PtrComp(Src), 3);
+    dec(width);
   until width = 0;
 end;
 
@@ -144,54 +143,54 @@ end;
 procedure ColorConversionBgra32ToArgb32(Dst, Src: PInt8u; width: Cardinal);
 begin
   repeat
-    PInt8u(PtrComp(Dst) + CAggOrderArgb.R)^ :=
-      PInt8u(PtrComp(Src) + CAggOrderBgra.R)^;
+    PInt8u(PtrComp(Dst) + CAggOrderArgb.r)^ :=
+      PInt8u(PtrComp(Src) + CAggOrderBgra.r)^;
     PInt8u(PtrComp(Dst) + CAggOrderArgb.g)^ :=
       PInt8u(PtrComp(Src) + CAggOrderBgra.g)^;
     PInt8u(PtrComp(Dst) + CAggOrderArgb.b)^ :=
       PInt8u(PtrComp(Src) + CAggOrderBgra.b)^;
-    PInt8u(PtrComp(Dst) + CAggOrderArgb.A)^ :=
-      PInt8u(PtrComp(Src) + CAggOrderBgra.A)^;
+    PInt8u(PtrComp(Dst) + CAggOrderArgb.a)^ :=
+      PInt8u(PtrComp(Src) + CAggOrderBgra.a)^;
 
-    Inc(PtrComp(Dst), 4);
-    Inc(PtrComp(Src), 4);
-    Dec(width);
+    inc(PtrComp(Dst), 4);
+    inc(PtrComp(Src), 4);
+    dec(width);
   until width = 0;
 end;
 
 procedure ColorConversionAbgr32ToArgb32(Dst, Src: PInt8u; width: Cardinal);
 begin
   repeat
-    PInt8u(PtrComp(Dst) + CAggOrderArgb.R)^ :=
-      PInt8u(PtrComp(Src) + CAggOrderAbgr.R)^;
+    PInt8u(PtrComp(Dst) + CAggOrderArgb.r)^ :=
+      PInt8u(PtrComp(Src) + CAggOrderAbgr.r)^;
     PInt8u(PtrComp(Dst) + CAggOrderArgb.g)^ :=
       PInt8u(PtrComp(Src) + CAggOrderAbgr.g)^;
     PInt8u(PtrComp(Dst) + CAggOrderArgb.b)^ :=
       PInt8u(PtrComp(Src) + CAggOrderAbgr.b)^;
-    PInt8u(PtrComp(Dst) + CAggOrderArgb.A)^ :=
-      PInt8u(PtrComp(Src) + CAggOrderAbgr.A)^;
+    PInt8u(PtrComp(Dst) + CAggOrderArgb.a)^ :=
+      PInt8u(PtrComp(Src) + CAggOrderAbgr.a)^;
 
-    Inc(PtrComp(Dst), 4);
-    Inc(PtrComp(Src), 4);
-    Dec(width);
+    inc(PtrComp(Dst), 4);
+    inc(PtrComp(Src), 4);
+    dec(width);
   until width = 0;
 end;
 
 procedure ColorConversionRgba32ToArgb32(Dst, Src: PInt8u; width: Cardinal);
 begin
   repeat
-    PInt8u(PtrComp(Dst) + CAggOrderArgb.R)^ :=
-      PInt8u(PtrComp(Src) + CAggOrderRgba.R)^;
+    PInt8u(PtrComp(Dst) + CAggOrderArgb.r)^ :=
+      PInt8u(PtrComp(Src) + CAggOrderRgba.r)^;
     PInt8u(PtrComp(Dst) + CAggOrderArgb.g)^ :=
       PInt8u(PtrComp(Src) + CAggOrderRgba.g)^;
     PInt8u(PtrComp(Dst) + CAggOrderArgb.b)^ :=
       PInt8u(PtrComp(Src) + CAggOrderRgba.b)^;
-    PInt8u(PtrComp(Dst) + CAggOrderArgb.A)^ :=
-      PInt8u(PtrComp(Src) + CAggOrderRgba.A)^;
+    PInt8u(PtrComp(Dst) + CAggOrderArgb.a)^ :=
+      PInt8u(PtrComp(Src) + CAggOrderRgba.a)^;
 
-    Inc(PtrComp(Dst), 4);
-    Inc(PtrComp(Src), 4);
-    Dec(width);
+    inc(PtrComp(Dst), 4);
+    inc(PtrComp(Src), 4);
+    dec(width);
   until width = 0;
 end;
 
@@ -200,12 +199,12 @@ begin
   repeat
     PAggOrderBgra(Dst)^.b := PAggOrderBgr(Src)^.b;
     PAggOrderBgra(Dst)^.g := PAggOrderBgr(Src)^.g;
-    PAggOrderBgra(Dst)^.R := PAggOrderBgr(Src)^.R;
-    PAggOrderBgra(Dst)^.A := $FF;
+    PAggOrderBgra(Dst)^.r := PAggOrderBgr(Src)^.r;
+    PAggOrderBgra(Dst)^.a := $FF;
 
-    Inc(Dst, 4);
-    Inc(Src, 3);
-    Dec(width);
+    inc(Dst, 4);
+    inc(Src, 3);
+    dec(width);
   until width = 0;
 end;
 
@@ -218,22 +217,22 @@ begin
 
     PInt16u(Dst)^ := ((RGB shr 1) and $7FE0) or (RGB and $1F);
 
-    Inc(PtrComp(Src), 2);
-    Inc(PtrComp(Dst), 2);
-    Dec(width);
+    inc(PtrComp(Src), 2);
+    inc(PtrComp(Dst), 2);
+    dec(width);
   until width = 0;
 end;
 
 procedure ColorConversionRgb24ToBgr24(Dst, Src: PInt8u; width: Cardinal);
 begin
   repeat
-    PAggOrderBgr(Dst)^.R := PAggOrderRgb(Src)^.R;
+    PAggOrderBgr(Dst)^.r := PAggOrderRgb(Src)^.r;
     PAggOrderBgr(Dst)^.g := PAggOrderRgb(Src)^.g;
     PAggOrderBgr(Dst)^.b := PAggOrderRgb(Src)^.b;
 
-    Inc(Src, 3);
-    Inc(Dst, 3);
-    Dec(width);
+    inc(Src, 3);
+    inc(Dst, 3);
+    dec(width);
   until width = 0;
 end;
 
@@ -242,12 +241,12 @@ begin
   repeat
     PAggOrderBgra(Dst)^.b := PAggOrderAbgr(Src)^.b;
     PAggOrderBgra(Dst)^.g := PAggOrderAbgr(Src)^.g;
-    PAggOrderBgra(Dst)^.R := PAggOrderAbgr(Src)^.R;
-    PAggOrderBgra(Dst)^.A := PAggOrderAbgr(Src)^.A;
+    PAggOrderBgra(Dst)^.r := PAggOrderAbgr(Src)^.r;
+    PAggOrderBgra(Dst)^.a := PAggOrderAbgr(Src)^.a;
 
-    Inc(Src, 4);
-    Inc(Dst, 4);
-    Dec(width);
+    inc(Src, 4);
+    inc(Dst, 4);
+    dec(width);
   until width = 0;
 end;
 
@@ -256,12 +255,12 @@ begin
   repeat
     PAggOrderBgra(Dst)^.b := PAggOrderArgb(Src)^.b;
     PAggOrderBgra(Dst)^.g := PAggOrderArgb(Src)^.g;
-    PAggOrderBgra(Dst)^.R := PAggOrderArgb(Src)^.R;
-    PAggOrderBgra(Dst)^.A := PAggOrderArgb(Src)^.A;
+    PAggOrderBgra(Dst)^.r := PAggOrderArgb(Src)^.r;
+    PAggOrderBgra(Dst)^.a := PAggOrderArgb(Src)^.a;
 
-    Inc(Src, 4);
-    Inc(Dst, 4);
-    Dec(width);
+    inc(Src, 4);
+    inc(Dst, 4);
+    dec(width);
   until width = 0;
 end;
 
@@ -270,12 +269,12 @@ begin
   repeat
     PAggOrderBgra(Dst)^.b := PAggOrderRgba(Src)^.b;
     PAggOrderBgra(Dst)^.g := PAggOrderRgba(Src)^.g;
-    PAggOrderBgra(Dst)^.R := PAggOrderRgba(Src)^.R;
-    PAggOrderBgra(Dst)^.A := PAggOrderRgba(Src)^.A;
+    PAggOrderBgra(Dst)^.r := PAggOrderRgba(Src)^.r;
+    PAggOrderBgra(Dst)^.a := PAggOrderRgba(Src)^.a;
 
-    Inc(Src, 4);
-    Inc(Dst, 4);
-    Dec(width);
+    inc(Src, 4);
+    inc(Dst, 4);
+    dec(width);
   until width = 0;
 end;
 
@@ -284,13 +283,15 @@ begin
   repeat
     PAggOrderBgra(Dst)^.b := PAggOrderRgb(Src)^.b;
     PAggOrderBgra(Dst)^.g := PAggOrderRgb(Src)^.g;
-    PAggOrderBgra(Dst)^.R := PAggOrderRgb(Src)^.R;
-    PAggOrderBgra(Dst)^.A := $FF;
+    PAggOrderBgra(Dst)^.r := PAggOrderRgb(Src)^.r;
+    PAggOrderBgra(Dst)^.a := $FF;
 
-    Inc(Src, 4);
-    Inc(Dst, 4);
-    Dec(width);
+    inc(Src, 4);
+    inc(Dst, 4);
+    dec(width);
   until width = 0;
 end;
 
 end. 
+ 
+ 

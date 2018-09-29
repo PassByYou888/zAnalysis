@@ -37,11 +37,8 @@
 *)
 unit AggRasterizerCompoundAA;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggArray,
@@ -63,15 +60,15 @@ type
 
   PAggStyleInfo = ^TAggStyleInfo;
 
-  TAggStyleInfo = packed record
+  TAggStyleInfo = record
     StartCell, NumCells: Cardinal;
     LastX: Integer;
   end;
 
   PAggCellInfo = ^TAggCellInfo;
 
-  TAggCellInfo = packed record
-    X, Area, Cover: Integer;
+  TAggCellInfo = record
+    x, Area, Cover: Integer;
   end;
 
   TAggRasterizerCompoundAA = class(TAggCustomBoundsRasterizerScanLine)
@@ -114,11 +111,11 @@ type
     procedure MasterAlpha(AStyle: Integer; alpha: Double);
 
     procedure Styles(Left, Right: Integer);
-    procedure MoveTo(X, Y: Integer); virtual; abstract;
-    procedure LineTo(X, Y: Integer);
+    procedure MoveTo(x, y: Integer); virtual; abstract;
+    procedure LineTo(x, y: Integer);
 
-    procedure MoveToDouble(X, Y: Double); virtual; abstract;
-    procedure LineToDouble(X, Y: Double);
+    procedure MoveToDouble(x, y: Double); virtual; abstract;
+    procedure LineToDouble(x, y: Double);
 
     procedure EdgeInteger(x1, y1, x2, y2: Integer);
     procedure EdgeDouble(x1, y1, x2, y2: Double);
@@ -137,7 +134,7 @@ type
 
     function AllocateCoverBuffer(Len: Cardinal): PCover;
 
-    function NavigateScanLine(Y: Integer): Boolean;
+    function NavigateScanLine(y: Integer): Boolean;
 
     function HitTest(TX, TY: Integer): Boolean; override;
 
@@ -153,10 +150,10 @@ type
     constructor Create(Clip: TAggRasterizerScanLineClip = nil);
     destructor Destroy; override;
 
-    procedure MoveTo(X, Y: Integer); override;
-    procedure MoveToDouble(X, Y: Double); override;
+    procedure MoveTo(x, y: Integer); override;
+    procedure MoveToDouble(x, y: Double); override;
 
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); override;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); override;
   end;
 
   TAggRasterizerCompoundAADouble = class(TAggRasterizerCompoundAA)
@@ -168,10 +165,10 @@ type
     constructor Create(Clip: TAggRasterizerScanLineClip = nil);
     destructor Destroy; override;
 
-    procedure MoveTo(X, Y: Integer); override;
-    procedure MoveToDouble(X, Y: Double); override;
+    procedure MoveTo(x, y: Integer); override;
+    procedure MoveToDouble(x, y: Double); override;
 
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); override;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); override;
   end;
 
 implementation
@@ -305,16 +302,16 @@ begin
       FMaxStyle := Right;
 end;
 
-procedure TAggRasterizerCompoundAA.LineTo(X, Y: Integer);
+procedure TAggRasterizerCompoundAA.LineTo(x, y: Integer);
 begin
-  FClipper.LineTo(FOutline, FRasterizerConverter.Downscale(X),
-    FRasterizerConverter.Downscale(Y));
+  FClipper.LineTo(FOutline, FRasterizerConverter.Downscale(x),
+    FRasterizerConverter.Downscale(y));
 end;
 
-procedure TAggRasterizerCompoundAA.LineToDouble(X, Y: Double);
+procedure TAggRasterizerCompoundAA.LineToDouble(x, y: Double);
 begin
-  FClipper.LineTo(FOutline, FRasterizerConverter.Upscale(X),
-    FRasterizerConverter.Upscale(Y));
+  FClipper.LineTo(FOutline, FRasterizerConverter.Upscale(x),
+    FRasterizerConverter.Upscale(y));
 end;
 
 procedure TAggRasterizerCompoundAA.EdgeInteger(x1, y1, x2, y2: Integer);
@@ -342,7 +339,7 @@ end;
 procedure TAggRasterizerCompoundAA.AddPath(Vs: TAggCustomVertexSource;
   PathID: Cardinal = 0);
 var
-  X, Y: Double;
+  x, y: Double;
   Cmd: Cardinal;
 begin
   Vs.Rewind(PathID);
@@ -350,13 +347,13 @@ begin
   if FOutline.Sorted then
       Reset;
 
-  Cmd := Vs.Vertex(@X, @Y);
+  Cmd := Vs.Vertex(@x, @y);
 
   while not IsStop(Cmd) do
     begin
-      AddVertex(X, Y, Cmd);
+      AddVertex(x, y, Cmd);
 
-      Cmd := Vs.Vertex(@X, @Y);
+      Cmd := Vs.Vertex(@x, @y);
     end;
 end;
 
@@ -469,17 +466,17 @@ begin
         TempStyle.NumCells := 0;
         TempStyle.LastX := -$7FFFFFFF;
 
-        FScanLineStart := Cells^^.X;
+        FScanLineStart := Cells^^.x;
         FScanLineLength := PPAggCellStyleAA(PtrComp(Cells) + (NumCells - 1) *
-          SizeOf(PAggCellStyleAA))^^.X - FScanLineStart + 1;
+          SizeOf(PAggCellStyleAA))^^.x - FScanLineStart + 1;
 
         while NumCells <> 0 do
           begin
-            Dec(NumCells);
+            dec(NumCells);
 
             CurrCell := Cells^;
 
-            Inc(PtrComp(Cells), SizeOf(PAggCellStyleAA));
+            inc(PtrComp(Cells), SizeOf(PAggCellStyleAA));
 
             AddStyle(CurrCell.Left);
             AddStyle(CurrCell.Right);
@@ -499,8 +496,8 @@ begin
 
             st.StartCell := StartCell;
 
-            Inc(StartCell, v);
-            Inc(i);
+            inc(StartCell, v);
+            inc(i);
           end;
 
         Cells := FOutline.ScanLineCells(FScanY);
@@ -508,11 +505,11 @@ begin
 
         while NumCells <> 0 do
           begin
-            Dec(NumCells);
+            dec(NumCells);
 
             CurrCell := Cells^;
 
-            Inc(PtrComp(Cells), SizeOf(PAggCellStyleAA));
+            inc(PtrComp(Cells), SizeOf(PAggCellStyleAA));
 
             if CurrCell.Left < 0 then
                 StyleID := 0
@@ -521,25 +518,25 @@ begin
 
             TempStyle := FStyles[StyleID];
 
-            if CurrCell.X = TempStyle.LastX then
+            if CurrCell.x = TempStyle.LastX then
               begin
                 Cell := FCells[TempStyle.StartCell +
                   TempStyle.NumCells - 1];
 
-                Inc(Cell.Area, CurrCell.Area);
-                Inc(Cell.Cover, CurrCell.Cover);
+                inc(Cell.Area, CurrCell.Area);
+                inc(Cell.Cover, CurrCell.Cover);
 
               end
             else
               begin
                 Cell := FCells[TempStyle.StartCell + TempStyle.NumCells];
 
-                Cell.X := CurrCell.X;
+                Cell.x := CurrCell.x;
                 Cell.Area := CurrCell.Area;
                 Cell.Cover := CurrCell.Cover;
-                TempStyle.LastX := CurrCell.X;
+                TempStyle.LastX := CurrCell.x;
 
-                Inc(TempStyle.NumCells);
+                inc(TempStyle.NumCells);
               end;
 
             if CurrCell.Right < 0 then
@@ -549,24 +546,24 @@ begin
 
             TempStyle := FStyles[StyleID];
 
-            if CurrCell.X = TempStyle.LastX then
+            if CurrCell.x = TempStyle.LastX then
               begin
                 Cell := FCells[TempStyle.StartCell +
                   TempStyle.NumCells - 1];
 
-                Dec(Cell.Area, CurrCell.Area);
-                Dec(Cell.Cover, CurrCell.Cover);
+                dec(Cell.Area, CurrCell.Area);
+                dec(Cell.Cover, CurrCell.Cover);
               end
             else
               begin
                 Cell := FCells[TempStyle.StartCell + TempStyle.NumCells];
 
-                Cell.X := CurrCell.X;
+                Cell.x := CurrCell.x;
                 Cell.Area := -CurrCell.Area;
                 Cell.Cover := -CurrCell.Cover;
-                TempStyle.LastX := CurrCell.X;
+                TempStyle.LastX := CurrCell.x;
 
-                Inc(TempStyle.NumCells);
+                inc(TempStyle.NumCells);
               end;
           end;
       end;
@@ -574,10 +571,10 @@ begin
     if FActiveStyleTable.Size > 1 then
         Break;
 
-    Inc(FScanY);
+    inc(FScanY);
   until False;
 
-  Inc(FScanY);
+  inc(FScanY);
 
   if FLayerOrder <> loUnsorted then
     begin
@@ -619,7 +616,7 @@ begin
   Result := FCoverBuffer[0];
 end;
 
-function TAggRasterizerCompoundAA.NavigateScanLine(Y: Integer): Boolean;
+function TAggRasterizerCompoundAA.NavigateScanLine(y: Integer): Boolean;
 begin
   FOutline.SortCells;
 
@@ -637,14 +634,14 @@ begin
       Exit;
     end;
 
-  if (Y < FOutline.MinY) or (Y > FOutline.MaxY) then
+  if (y < FOutline.MinY) or (y > FOutline.MaxY) then
     begin
       Result := False;
 
       Exit;
     end;
 
-  FScanY := Y;
+  FScanY := y;
 
   FStyles.Allocate(FMaxStyle - FMinStyle + 2, 128);
   AllocateMasterAlpha;
@@ -711,7 +708,7 @@ end;
 function TAggRasterizerCompoundAA.SweepScanLine(SL: TAggCustomScanLine;
   StyleIndex: Integer): Boolean;
 var
-  Scan_y, Cover, X, Area: Integer;
+  Scan_y, Cover, x, Area: Integer;
 
   MasterAlpha, NumCells, alpha: Cardinal;
 
@@ -737,7 +734,7 @@ begin
       StyleIndex := 0
   else
     begin
-      Inc(StyleIndex);
+      inc(StyleIndex);
 
       MasterAlpha := PCardinal
         (FMasterAlpha[PCardinal(FActiveStyleTable[StyleIndex])^ + FMinStyle - 1])^;
@@ -750,31 +747,31 @@ begin
 
   while NumCells <> 0 do
     begin
-      Dec(NumCells);
+      dec(NumCells);
 
-      X := Cell.X;
+      x := Cell.x;
       Area := Cell.Area;
 
-      Inc(Cover, Cell.Cover);
-      Inc(PtrComp(Cell), SizeOf(TAggCellInfo));
+      inc(Cover, Cell.Cover);
+      inc(PtrComp(Cell), SizeOf(TAggCellInfo));
 
       if Area <> 0 then
         begin
           alpha := CalculateAlpha((Cover shl (CAggPolySubpixelShift + 1)) - Area,
             MasterAlpha);
 
-          SL.AddCell(X, alpha);
+          SL.AddCell(x, alpha);
 
-          Inc(X);
+          inc(x);
         end;
 
-      if (NumCells <> 0) and (Cell.X > X) then
+      if (NumCells <> 0) and (Cell.x > x) then
         begin
           alpha := CalculateAlpha(Cover shl (CAggPolySubpixelShift + 1),
             MasterAlpha);
 
           if alpha <> 0 then
-              SL.AddSpan(X, Cell.X - X, alpha);
+              SL.AddSpan(x, Cell.x - x, alpha);
         end;
     end;
 
@@ -802,7 +799,7 @@ begin
   if StyleID < 0 then
       StyleID := 0
   else
-      Dec(StyleID, FMinStyle - 1);
+      dec(StyleID, FMinStyle - 1);
 
   Nbyte := ShrInt32(StyleID, 3);
   Mask := 1 shl (StyleID and 7);
@@ -823,7 +820,7 @@ begin
       TempStyle.LastX := -$7FFFFFFF;
     end;
 
-  Inc(TempStyle.StartCell);
+  inc(TempStyle.StartCell);
 end;
 
 procedure TAggRasterizerCompoundAA.AllocateMasterAlpha;
@@ -852,8 +849,8 @@ begin
       inherited Create(FRasterizerScanLineClip);
     end;
 
-  FStart.X := 0;
-  FStart.Y := 0;
+  FStart.x := 0;
+  FStart.y := 0;
 end;
 
 destructor TAggRasterizerCompoundAAInteger.Destroy;
@@ -864,36 +861,36 @@ begin
   inherited;
 end;
 
-procedure TAggRasterizerCompoundAAInteger.MoveTo(X, Y: Integer);
+procedure TAggRasterizerCompoundAAInteger.MoveTo(x, y: Integer);
 begin
   if FOutline.Sorted then
       Reset;
 
-  FStart.X := PInteger(FRasterizerConverter.Downscale(X))^;
-  FStart.Y := PInteger(FRasterizerConverter.Downscale(Y))^;
+  FStart.x := PInteger(FRasterizerConverter.Downscale(x))^;
+  FStart.y := PInteger(FRasterizerConverter.Downscale(y))^;
 
-  FClipper.MoveTo(@FStart.X, @FStart.Y);
+  FClipper.MoveTo(@FStart.x, @FStart.y);
 end;
 
-procedure TAggRasterizerCompoundAAInteger.MoveToDouble(X, Y: Double);
+procedure TAggRasterizerCompoundAAInteger.MoveToDouble(x, y: Double);
 begin
   if FOutline.Sorted then
       Reset;
 
-  FStart.X := PInteger(FRasterizerConverter.Upscale(X))^;
-  FStart.Y := PInteger(FRasterizerConverter.Upscale(Y))^;
+  FStart.x := PInteger(FRasterizerConverter.Upscale(x))^;
+  FStart.y := PInteger(FRasterizerConverter.Upscale(y))^;
 
-  FClipper.MoveTo(@FStart.X, @FStart.Y);
+  FClipper.MoveTo(@FStart.x, @FStart.y);
 end;
 
-procedure TAggRasterizerCompoundAAInteger.AddVertex(X, Y: Double; Cmd: Cardinal);
+procedure TAggRasterizerCompoundAAInteger.AddVertex(x, y: Double; Cmd: Cardinal);
 begin
   if IsMoveTo(Cmd) then
-      MoveToDouble(X, Y)
+      MoveToDouble(x, y)
   else if IsVertex(Cmd) then
-      LineToDouble(X, Y)
+      LineToDouble(x, y)
   else if IsClose(Cmd) then
-      FClipper.LineTo(FOutline, @FStart.X, @FStart.Y);
+      FClipper.LineTo(FOutline, @FStart.x, @FStart.y);
 end;
 
 { TAggRasterizerCompoundAADouble }
@@ -912,8 +909,8 @@ begin
       inherited Create(FRasterizerScanLineClip);
     end;
 
-  FStart.X := 0;
-  FStart.Y := 0;
+  FStart.x := 0;
+  FStart.y := 0;
 end;
 
 destructor TAggRasterizerCompoundAADouble.Destroy;
@@ -923,36 +920,38 @@ begin
   inherited;
 end;
 
-procedure TAggRasterizerCompoundAADouble.MoveTo(X, Y: Integer);
+procedure TAggRasterizerCompoundAADouble.MoveTo(x, y: Integer);
 begin
   if FOutline.Sorted then
       Reset;
 
-  FStart.X := PDouble(FRasterizerConverter.Downscale(X))^;
-  FStart.Y := PDouble(FRasterizerConverter.Downscale(Y))^;
+  FStart.x := PDouble(FRasterizerConverter.Downscale(x))^;
+  FStart.y := PDouble(FRasterizerConverter.Downscale(y))^;
 
-  FClipper.MoveTo(@FStart.X, @FStart.Y);
+  FClipper.MoveTo(@FStart.x, @FStart.y);
 end;
 
-procedure TAggRasterizerCompoundAADouble.MoveToDouble(X, Y: Double);
+procedure TAggRasterizerCompoundAADouble.MoveToDouble(x, y: Double);
 begin
   if FOutline.Sorted then
       Reset;
 
-  FStart.X := PDouble(FRasterizerConverter.Upscale(X))^;
-  FStart.Y := PDouble(FRasterizerConverter.Upscale(Y))^;
+  FStart.x := PDouble(FRasterizerConverter.Upscale(x))^;
+  FStart.y := PDouble(FRasterizerConverter.Upscale(y))^;
 
-  FClipper.MoveTo(@FStart.X, @FStart.Y);
+  FClipper.MoveTo(@FStart.x, @FStart.y);
 end;
 
-procedure TAggRasterizerCompoundAADouble.AddVertex(X, Y: Double; Cmd: Cardinal);
+procedure TAggRasterizerCompoundAADouble.AddVertex(x, y: Double; Cmd: Cardinal);
 begin
   if IsMoveTo(Cmd) then
-      MoveToDouble(X, Y)
+      MoveToDouble(x, y)
   else if IsVertex(Cmd) then
-      LineToDouble(X, Y)
+      LineToDouble(x, y)
   else if IsClose(Cmd) then
-      FClipper.LineTo(FOutline, @FStart.X, @FStart.Y);
+      FClipper.LineTo(FOutline, @FStart.x, @FStart.y);
 end;
 
 end. 
+ 
+ 

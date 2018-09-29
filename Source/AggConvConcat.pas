@@ -37,11 +37,8 @@
 *)
 unit AggConvConcat;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVertexSource;
@@ -55,7 +52,7 @@ type
     constructor Create(Source1, Source2: TAggVertexSource);
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property Source1: TAggVertexSource read FSource1 write FSource1;
     property Source2: TAggVertexSource read FSource2 write FSource2;
@@ -81,13 +78,13 @@ begin
   FStatus := 0;
 end;
 
-function TAggConvConcat.Vertex(X, Y: PDouble): Cardinal;
+function TAggConvConcat.Vertex(x, y: PDouble): Cardinal;
 var
   Cmd: Cardinal;
 begin
   if FStatus = 0 then
     begin
-      Cmd := FSource1.Vertex(X, Y);
+      Cmd := FSource1.Vertex(x, y);
 
       if not IsStop(Cmd) then
         begin
@@ -101,7 +98,7 @@ begin
 
   if FStatus = 1 then
     begin
-      Cmd := FSource2.Vertex(X, Y);
+      Cmd := FSource2.Vertex(x, y);
 
       if not IsStop(Cmd) then
         begin
@@ -117,4 +114,6 @@ begin
 end;
 
 end.
+ 
+ 
  

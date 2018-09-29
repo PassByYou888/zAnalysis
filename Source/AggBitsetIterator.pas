@@ -37,9 +37,8 @@
 *)
 unit AggBitsetIterator;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
+interface
 
 uses
   AggBasics;
@@ -74,7 +73,7 @@ begin
 
   if FMask = 0 then
   begin
-    Inc(PtrComp(FBits), SizeOf(Int8u));
+    inc(PtrComp(FBits), SizeOf(Int8u));
 
     FMask := $80;
   end;
@@ -86,4 +85,6 @@ begin
 end;
 
 end.
+ 
+ 
  

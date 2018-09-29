@@ -31,22 +31,22 @@ type
   TSigmaBuffer = array [0 .. MaxInt div SizeOf(TGFloat) - 1] of TGFloat;
   PSigmaBuffer = ^TSigmaBuffer;
 
-  TSigmaKernel = packed record
+  TSigmaKernel = record
     SigmaWidth, SigmaCenter: TLInt;
     Weights: PSigmaBuffer;
   end;
 
-  TGaussVec   = packed array of TGFloat;
+  TGaussVec   = array of TGFloat;
   PGaussVec   = ^TGaussVec;
-  TGaussSpace = packed array of TGaussVec;
+  TGaussSpace = array of TGaussVec;
   PGaussSpace = ^TGaussSpace;
 
-  TGaussSpaceIntegral = packed array of TGaussSpace;
+  TGaussSpaceIntegral = array of TGaussSpace;
   PGaussSpaceIntegral = ^TGaussSpaceIntegral;
 
   TPyramids = class;
 
-  TExtremaCoor = packed record
+  TExtremaCoor = record
     PyramidCoor: TVec2; // absolute coordinate in the pyramid(scale space)
     RealCoor: TVec2;    // absolute coordinate in the pyramid(scale space)
     pyr_id: TLInt;      // pyramid id
@@ -56,7 +56,7 @@ type
 
   PExtremaCoor = ^TExtremaCoor;
 
-  TPyramidCoor = packed record
+  TPyramidCoor = record
     PyramidCoor: TVec2;   // absolute coordinate in the pyramid(scale space)
     RealCoor: TVec2;      // real scaled [0,1] coordinate in the original image
     pyr_id: TLInt;        // pyramid id
@@ -65,7 +65,7 @@ type
     Orientation: TGFloat; // Orientation information
     OriFinish: Boolean;   // finish Orientation
     Owner: TPyramids;     // owner
-    class function Init: TPyramidCoor; static; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    class function Init: TPyramidCoor; static;
   end;
 
   PPyramidCoor = ^TPyramidCoor;
@@ -78,12 +78,12 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    function Add(Value: TPyramidCoor): TLInt; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-    function Add(Value: PPyramidCoor): TLInt; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    function Add(Value: TPyramidCoor): TLInt; overload;
+    function Add(Value: PPyramidCoor): TLInt; overload;
     procedure Add(pl: TPyramidCoorList; const NewCopy: Boolean); overload;
-    procedure Delete(idx: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-    procedure Clear; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-    function Count: TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    procedure Delete(idx: TLInt);
+    procedure Clear;
+    function Count: TLInt;
     procedure Assign(Source: TPyramidCoorList);
 
     procedure SaveToDataFrame(df: TDataFrameEngine);
@@ -94,7 +94,7 @@ type
 
   PPyramidLayer = ^TPyramidLayer;
 
-  TPyramidLayer = packed record
+  TPyramidLayer = record
   public
     numScale, width, height: TLInt;
     // scale space(SS)
@@ -114,17 +114,17 @@ type
     GaussTransformSpace: TGaussSpace;
     FWidth, FHeight: TLInt;
 
-    Pyramids: packed array of TPyramidLayer;
-    SamplerXY: packed array of Byte;
+    Pyramids: array of TPyramidLayer;
+    SamplerXY: array of Byte;
     FViewer: TMemoryRaster;
 
-    function isExtrema(const X, Y: TLInt; const pyr_id, scale_id: TLInt): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    function isExtrema(const x, y: TLInt; const pyr_id, scale_id: TLInt): Boolean;
     procedure BuildLocalExtrema(const pyr_id, scale_id: TLInt; const Transform: Boolean; v2List: TVec2List); overload;
     procedure BuildLocalExtrema(const pyr_id, scale_id: TLInt; ExtremaCoorList: TCoreClassList); overload;
 
-    function KPIntegral(const dogIntegral: PGaussSpaceIntegral; const X, Y, s: TLInt; var Offset, Delta: TLVec): Boolean;
-    function ComputeKeyPoint(const ExtremaCoor: TVec2; const pyr_id, scale_id: TLInt; var output: TPyramidCoor): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-    function ComputeEndgeReponse(const ExtremaCoor: TVec2; const p: PGaussSpace): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    function KPIntegral(const dogIntegral: PGaussSpaceIntegral; const x, y, s: TLInt; var Offset, Delta: TLVec): Boolean;
+    function ComputeKeyPoint(const ExtremaCoor: TVec2; const pyr_id, scale_id: TLInt; var output: TPyramidCoor): Boolean;
+    function ComputeEndgeReponse(const ExtremaCoor: TVec2; const p: PGaussSpace): Boolean;
     function ComputePyramidCoor(const FilterEndge, FilterOri: Boolean; const ExtremaV2: TVec2; const pyr_id, scale_id: TLInt): TPyramidCoorList;
   public
     constructor CreateWithRaster(const raster: TMemoryRaster); overload;
@@ -154,7 +154,7 @@ type
 
   PDescriptor = ^TDescriptor;
 
-  TDescriptor = packed record
+  TDescriptor = record
     descriptor: TLVec;    // feature vector
     coor: TVec2;          // real scaled [0,1] coordinate in the original image
     AbsCoor: TVec2;       // absolute sampler coordinal in the original image
@@ -165,7 +165,7 @@ type
 
   PMatchInfo = ^TMatchInfo;
 
-  TMatchInfo = packed record
+  TMatchInfo = record
     d1, d2: PDescriptor;
     Dist: TGFloat; // Descriptor distance
   end;
@@ -183,17 +183,17 @@ type
     CDESC_HIST_WIDTH   = 4;
     DESCRIPTOR_LENGTH  = CDESC_HIST_WIDTH * CDESC_HIST_WIDTH * CDESC_HIST_BIN_NUM;
   protected
-    FDescriptorBuff: packed array of TDescriptor;
+    FDescriptorBuff: array of TDescriptor;
     FPyramidCoordList: TPyramidCoorList;
     FWidth, FHeight: TLInt;
     // gray format
-    FViewer: packed array of Byte;
+    FViewer: array of Byte;
     // internal used
     FInternalVec: TVec2;
     // user custom
     FUserData: Pointer;
 
-    procedure ComputeDescriptor(const p: PPyramidCoor; var Desc: TLVec); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    procedure ComputeDescriptor(const p: PPyramidCoor; var Desc: TLVec);
     procedure BuildFeature(Pyramids: TPyramids);
   public
     constructor CreateWithPyramids(Pyramids: TPyramids);
@@ -206,7 +206,7 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    function Count: TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    function Count: TLInt;
     function GetFD(const index: TLInt): PDescriptor;
     property FD[const index: TLInt]: PDescriptor read GetFD; default;
 
@@ -226,28 +226,28 @@ type
 {$REGION 'PyramidFunctions'}
 
 
-function Diff(const f1, f2: TGFloat): TGFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function between(const idx, Start, OVER: TLInt): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function between(const idx, Start, OVER: TGFloat): Boolean; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CopySampler(var Source, dest: TGaussSpace); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure SamplerAlpha(const Source: TMemoryRaster; var dest: TGaussSpace); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure SamplerAlpha(var Source: TGaussSpace; const dest: TMemoryRaster); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Sampler(const Source: TMemoryRaster; const WR, WG, wb: TGFloat; const ColorSap: TLInt; var dest: TGaussSpace); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Sampler(const Source: TMemoryRaster; var dest: TGaussSpace); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Sampler(var Source: TGaussSpace; const dest: TMemoryRaster); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Sampler(var Source: TGaussSpace; var dest: TByteRaster); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure ZoomLine(const Source, dest: PGaussSpace; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function Diff(const f1, f2: TGFloat): TGFloat;
+function between(const idx, Start, OVER: TLInt): Boolean; overload;
+function between(const idx, Start, OVER: TGFloat): Boolean; overload;
+procedure CopySampler(var Source, dest: TGaussSpace);
+procedure SamplerAlpha(const Source: TMemoryRaster; var dest: TGaussSpace); overload;
+procedure SamplerAlpha(var Source: TGaussSpace; const dest: TMemoryRaster); overload;
+procedure Sampler(const Source: TMemoryRaster; const WR, WG, wb: TGFloat; const ColorSap: TLInt; var dest: TGaussSpace); overload;
+procedure Sampler(const Source: TMemoryRaster; var dest: TGaussSpace); overload;
+procedure Sampler(var Source: TGaussSpace; const dest: TMemoryRaster); overload;
+procedure Sampler(var Source: TGaussSpace; var dest: TByteRaster); overload;
+procedure ZoomLine(const Source, dest: PGaussSpace; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
 procedure ZoomSampler(var Source, dest: TGaussSpace; const DestWidth, DestHeight: TLInt);
-procedure BuildSigmaKernel(const SIGMA: TGFloat; var kernel: TSigmaKernel); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure SigmaRow(var theRow, destRow: TGaussVec; var k: TSigmaKernel); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure BuildSigmaKernel(const SIGMA: TGFloat; var kernel: TSigmaKernel);
+procedure SigmaRow(var theRow, destRow: TGaussVec; var k: TSigmaKernel);
 procedure SigmaSampler(var Source, dest: TGaussSpace; const SIGMA: TGFloat);
-procedure SaveSampler(var Source: TGaussSpace; fileName: string); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure SaveSamplerToJpegLS(var Source: TGaussSpace; fileName: string); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SaveSampler(var Source: TGaussSpace; FileName: string);
+procedure SaveSamplerToJpegLS(var Source: TGaussSpace; FileName: string);
 procedure ComputeSamplerSize(var width, height: TLInt);
 
 // square of euclidean
 // need avx + sse or GPU
-function e_sqr(const sour, dest: PDescriptor): TGFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function e_sqr(const sour, dest: PDescriptor): TGFloat;
 
 // feature match
 function MatchFeature(const Source, dest: TFeature; var MatchInfo: TArrayMatchInfo): TLFloat;
@@ -338,115 +338,115 @@ end;
 
 procedure CopySampler(var Source, dest: TGaussSpace);
 var
-  i, J: TLInt;
+  i, j: TLInt;
 begin
   if length(dest) <> length(Source) then
       SetLength(dest, length(Source));
 
-  for J := 0 to length(Source) - 1 do
+  for j := 0 to length(Source) - 1 do
     begin
-      if length(dest[J]) <> length(Source[J]) then
-          SetLength(dest[J], length(Source[J]));
-      for i := 0 to length(Source[J]) - 1 do
-          dest[J, i] := Source[J, i];
+      if length(dest[j]) <> length(Source[j]) then
+          SetLength(dest[j], length(Source[j]));
+      for i := 0 to length(Source[j]) - 1 do
+          dest[j, i] := Source[j, i];
     end;
 end;
 
 procedure SamplerAlpha(const Source: TMemoryRaster; var dest: TGaussSpace);
 var
-  i, J: TLInt;
+  i, j: TLInt;
 begin
   SetLength(dest, Source.height, Source.width);
-  for J := 0 to Source.height - 1 do
+  for j := 0 to Source.height - 1 do
     for i := 0 to Source.width - 1 do
-        dest[J, i] := Source.PixelAlpha[i, J] / 255;
+        dest[j, i] := Source.PixelAlpha[i, j] / 255;
 end;
 
 procedure SamplerAlpha(var Source: TGaussSpace; const dest: TMemoryRaster);
 var
-  i, J: TLInt;
+  i, j: TLInt;
 begin
   dest.SetSize(length(Source[0]), length(Source));
-  for J := 0 to dest.height - 1 do
+  for j := 0 to dest.height - 1 do
     for i := 0 to dest.width - 1 do
-        dest.PixelAlpha[i, J] := Round(Clamp(Source[J, i], 0.0, 1.0) * 255);
+        dest.PixelAlpha[i, j] := Round(Clamp(Source[j, i], 0.0, 1.0) * 255);
 end;
 
 procedure Sampler(const Source: TMemoryRaster; const WR, WG, wb: TGFloat; const ColorSap: TLInt; var dest: TGaussSpace);
 var
-  i, J, C, F, w, wf: TLInt;
-  R, g, b: TGFloat;
+  i, j, c, f, w, wf: TLInt;
+  r, g, b: TGFloat;
 begin
   SetLength(dest, Source.height, Source.width);
   if ColorSap > 255 then
-      C := 256
+      c := 256
   else if ColorSap < 1 then
-      C := 2
+      c := 2
   else
-      C := ColorSap;
+      c := ColorSap;
 
-  F := 256 div C;
+  f := 256 div c;
 
-  for J := 0 to Source.height - 1 do
+  for j := 0 to Source.height - 1 do
     for i := 0 to Source.width - 1 do
       begin
-        RasterColor2F(Source.Pixel[i, J], R, g, b);
-        w := Trunc((R * WR + g * WG + b * wb) / (WR + WG + wb) * 256);
-        wf := (w div F) * F;
-        dest[J, i] := Clamp(Round(wf) / 256, 0.0, 1.0);
+        RasterColor2F(Source.Pixel[i, j], r, g, b);
+        w := Trunc((r * WR + g * WG + b * wb) / (WR + WG + wb) * 256);
+        wf := (w div f) * f;
+        dest[j, i] := Clamp(Round(wf) / 256, 0.0, 1.0);
       end;
 end;
 
 procedure Sampler(const Source: TMemoryRaster; var dest: TGaussSpace);
 var
-  i, J: TLInt;
-  R, g, b: TGFloat;
+  i, j: TLInt;
+  r, g, b: TGFloat;
 begin
   SetLength(dest, Source.height, Source.width);
-  for J := 0 to Source.height - 1 do
+  for j := 0 to Source.height - 1 do
     for i := 0 to Source.width - 1 do
       begin
         if CSAMPLER_MODE = TGSamplerMode.gsmColor then
           begin
-            RasterColor2F(Source.Pixel[i, J], R, g, b);
-            dest[J, i] := Max(R, Max(g, b));
+            RasterColor2F(Source.Pixel[i, j], r, g, b);
+            dest[j, i] := Max(r, Max(g, b));
           end
         else
-            dest[J, i] := Source.PixelGrayS[i, J];
+            dest[j, i] := Source.PixelGrayS[i, j];
       end;
 end;
 
 procedure Sampler(var Source: TGaussSpace; const dest: TMemoryRaster);
 var
-  i, J: TLInt;
+  i, j: TLInt;
 begin
   dest.SetSize(length(Source[0]), length(Source));
-  for J := 0 to dest.height - 1 do
+  for j := 0 to dest.height - 1 do
     for i := 0 to dest.width - 1 do
-        dest.PixelGrayS[i, J] := Source[J, i];
+        dest.PixelGrayS[i, j] := Source[j, i];
 end;
 
 procedure Sampler(var Source: TGaussSpace; var dest: TByteRaster);
 var
-  i, J: TLInt;
+  i, j: TLInt;
 begin
   SetLength(dest, length(Source), length(Source[0]));
-  for J := 0 to length(Source) - 1 do
-    for i := 0 to length(Source[J]) - 1 do
-        dest[J, i] := Round(Clamp(Source[J, i], 0, 1) * 255);
+  for j := 0 to length(Source) - 1 do
+    for i := 0 to length(Source[j]) - 1 do
+        dest[j, i] := Round(Clamp(Source[j, i], 0, 1) * 255);
 end;
 
 procedure ZoomLine(const Source, dest: PGaussSpace; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
 var
-  J: TLInt;
+  j: TLInt;
   SourceIInt, SourceJInt: TLInt;
 begin
-  for J := 0 to DestHeight - 1 do
+  for j := 0 to DestHeight - 1 do
     begin
       SourceIInt := Round(pass / (DestWidth - 1) * (SourceWidth - 1));
-      SourceJInt := Round(J / (DestHeight - 1) * (SourceHeight - 1));
+      SourceJInt := Round(j / (DestHeight - 1) * (SourceHeight - 1));
 
-      dest^[J, pass] := Source^[SourceJInt, SourceIInt];
+      dest^[j, pass] := Source^[SourceJInt, SourceIInt];
     end;
 end;
 
@@ -455,22 +455,23 @@ var
   SourceWidth, SourceHeight: TLInt;
   SourceP, DestP: PGaussSpace;
 
-  {$IFDEF parallel}
-  {$IFDEF FPC}
-    procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-    begin
-      ZoomLine(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
-    end;
-  {$ENDIF FPC}
-  {$ELSE parallel}
-    procedure DoFor;
-    var
-      pass: TLInt;
-    begin
-      for pass := 0 to DestWidth - 1 do
-          ZoomLine(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
-    end;
-  {$ENDIF parallel}
+{$IFDEF parallel}
+{$IFDEF FPC}
+  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  begin
+    ZoomLine(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
+  end;
+{$ENDIF FPC}
+{$ELSE parallel}
+  procedure DoFor;
+  var
+    pass: TLInt;
+  begin
+    for pass := 0 to DestWidth - 1 do
+        ZoomLine(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
+  end;
+{$ENDIF parallel}
+
 
 begin
   SourceWidth := length(Source[0]);
@@ -505,7 +506,7 @@ var
 begin
   kernel.SigmaWidth := Ceil(0.3 * (SIGMA * 0.5 - 1) + 0.8) * CGAUSS_KERNEL_FACTOR;
   if (kernel.SigmaWidth mod 2 = 0) then
-      Inc(kernel.SigmaWidth);
+      inc(kernel.SigmaWidth);
 
   kernel.Weights := System.GetMemory(SizeOf(TGFloat) * kernel.SigmaWidth);
 
@@ -533,7 +534,7 @@ begin
 end;
 
 procedure SigmaRow(var theRow, destRow: TGaussVec; var k: TSigmaKernel);
-  function kOffset(const v, L, h: TLInt): TLInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  function kOffset(const v, L, h: TLInt): TLInt;
   begin
     Result := v;
     if Result > h then
@@ -543,15 +544,15 @@ procedure SigmaRow(var theRow, destRow: TGaussVec; var k: TSigmaKernel);
   end;
 
 var
-  J, n: TLInt;
+  j, n: TLInt;
   TB: TGFloat;
 begin
-  for J := low(theRow) to high(theRow) do
+  for j := low(theRow) to high(theRow) do
     begin
       TB := 0;
       for n := -k.SigmaCenter to k.SigmaCenter do
-          TB := TB + theRow[kOffset(J + n, 0, high(theRow))] * k.Weights^[n + k.SigmaCenter];
-      destRow[J] := TB;
+          TB := TB + theRow[kOffset(j + n, 0, high(theRow))] * k.Weights^[n + k.SigmaCenter];
+      destRow[j] := TB;
     end;
 end;
 
@@ -561,54 +562,54 @@ var
   k: TSigmaKernel;
   SourceP, DestP: PGaussSpace;
 
-  {$IFDEF parallel}
-  {$IFDEF FPC}
-    procedure Nested_ParallelForH(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-    begin
-      SigmaRow(SourceP^[pass], DestP^[pass], k);
-    end;
-    procedure Nested_ParallelForW(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-    var
-      J: TLInt;
-      LPixels: TGaussVec;
-    begin
-      SetLength(LPixels, h);
-      for J := 0 to h - 1 do
-          LPixels[J] := DestP^[J, pass];
+{$IFDEF parallel}
+{$IFDEF FPC}
+  procedure Nested_ParallelForH(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  begin
+    SigmaRow(SourceP^[pass], DestP^[pass], k);
+  end;
+  procedure Nested_ParallelForW(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    j: TLInt;
+    LPixels: TGaussVec;
+  begin
+    SetLength(LPixels, h);
+    for j := 0 to h - 1 do
+        LPixels[j] := DestP^[j, pass];
 
-      SigmaRow(LPixels, LPixels, k);
+    SigmaRow(LPixels, LPixels, k);
 
-      for J := 0 to h - 1 do
-          DestP^[J, pass] := LPixels[J];
+    for j := 0 to h - 1 do
+        DestP^[j, pass] := LPixels[j];
 
-      SetLength(LPixels, 0);
-    end;
-  {$ENDIF FPC}
-  {$ELSE parallel}
-    procedure DoFor;
-    var
-      pass: TLInt;
-      J: TLInt;
-      LPixels: TGaussVec;
-    begin
-      for pass := 0 to h - 1 do
-          SigmaRow(SourceP^[pass], DestP^[pass], k);
+    SetLength(LPixels, 0);
+  end;
+{$ENDIF FPC}
+{$ELSE parallel}
+  procedure DoFor;
+  var
+    pass: TLInt;
+    j: TLInt;
+    LPixels: TGaussVec;
+  begin
+    for pass := 0 to h - 1 do
+        SigmaRow(SourceP^[pass], DestP^[pass], k);
 
-      SetLength(LPixels, h);
-      for pass := 0 to w - 1 do
-        begin
-          for J := 0 to h - 1 do
-              LPixels[J] := DestP^[J, pass];
+    SetLength(LPixels, h);
+    for pass := 0 to w - 1 do
+      begin
+        for j := 0 to h - 1 do
+            LPixels[j] := DestP^[j, pass];
 
-          SigmaRow(LPixels, LPixels, k);
+        SigmaRow(LPixels, LPixels, k);
 
-          for J := 0 to h - 1 do
-              DestP^[J, pass] := LPixels[J];
-        end;
+        for j := 0 to h - 1 do
+            DestP^[j, pass] := LPixels[j];
+      end;
 
-      SetLength(LPixels, 0);
-    end;
-  {$ENDIF parallel}
+    SetLength(LPixels, 0);
+  end;
+{$ENDIF parallel}
 
 
 begin
@@ -634,17 +635,17 @@ begin
     end);
   TParallel.for(0, w - 1, procedure(pass: Integer)
     var
-      J: TLInt;
+      j: TLInt;
       LPixels: TGaussVec;
     begin
       SetLength(LPixels, h);
-      for J := 0 to h - 1 do
-          LPixels[J] := DestP^[J, pass];
+      for j := 0 to h - 1 do
+          LPixels[j] := DestP^[j, pass];
 
       SigmaRow(LPixels, LPixels, k);
 
-      for J := 0 to h - 1 do
-          DestP^[J, pass] := LPixels[J];
+      for j := 0 to h - 1 do
+          DestP^[j, pass] := LPixels[j];
 
       SetLength(LPixels, 0);
     end);
@@ -655,24 +656,24 @@ begin
   System.FreeMemory(k.Weights);
 end;
 
-procedure SaveSampler(var Source: TGaussSpace; fileName: string);
+procedure SaveSampler(var Source: TGaussSpace; FileName: string);
 var
   mr: TMemoryRaster;
 begin
   mr := NewRaster();
   Sampler(Source, mr);
-  SaveRaster(mr, fileName);
+  SaveRaster(mr, FileName);
   DisposeObject(mr);
 end;
 
-procedure SaveSamplerToJpegLS(var Source: TGaussSpace; fileName: string);
+procedure SaveSamplerToJpegLS(var Source: TGaussSpace; FileName: string);
 var
   gray: TByteRaster;
   fs: TCoreClassFileStream;
 begin
   Sampler(Source, gray);
   try
-    fs := TCoreClassFileStream.Create(fileName, fmCreate);
+    fs := TCoreClassFileStream.Create(FileName, fmCreate);
     EncodeJpegLSGrayRasterToStream(@gray, fs);
   except
   end;
@@ -681,19 +682,19 @@ end;
 
 procedure ComputeSamplerSize(var width, height: TLInt);
 var
-  F: TGFloat;
+  f: TGFloat;
 begin
   if (width > CMAX_SAMPLER_WIDTH) then
     begin
-      F := CMAX_SAMPLER_WIDTH / width;
-      width := Round(width * F);
-      height := Round(height * F);
+      f := CMAX_SAMPLER_WIDTH / width;
+      width := Round(width * f);
+      height := Round(height * f);
     end;
   if (height > CMAX_SAMPLER_HEIGHT) then
     begin
-      F := CMAX_SAMPLER_HEIGHT / height;
-      width := Round(width * F);
-      height := Round(height * F);
+      f := CMAX_SAMPLER_HEIGHT / height;
+      width := Round(width * f);
+      height := Round(height * f);
     end;
 end;
 
@@ -712,20 +713,18 @@ end;
 function e_sqr(const sour, dest: PDescriptor): TGFloat;
 var
   i: TLInt;
-  D0, d1, d2, d3, d4, d5, d6, d7: TGFloat;
+  d0, d1, d2, d3, d4, d5, d6, d7: TGFloat;
 begin
   // pure pascal
   Result := 0;
-  if length(sour^.descriptor) <> length(dest^.descriptor) then
-      Exit;
 
   // sqr x8 extract
   // need avx + sse or GPU
   i := 0;
   while i < length(sour^.descriptor) do
     begin
-      D0 := dest^.descriptor[i + 0] - sour^.descriptor[i + 0];
-      D0 := D0 * D0;
+      d0 := dest^.descriptor[i + 0] - sour^.descriptor[i + 0];
+      d0 := d0 * d0;
 
       d1 := dest^.descriptor[i + 1] - sour^.descriptor[i + 1];
       d1 := d1 * d1;
@@ -748,8 +747,8 @@ begin
       d7 := dest^.descriptor[i + 7] - sour^.descriptor[i + 7];
       d7 := d7 * d7;
 
-      Result := Result + D0 + d1 + d2 + d3 + d4 + d5 + d6 + d7;
-      Inc(i, 8);
+      Result := Result + d0 + d1 + d2 + d3 + d4 + d5 + d6 + d7;
+      inc(i, 8);
     end;
 end;
 
@@ -761,122 +760,121 @@ var
   sqr_memory: array of array of TGFloat;
   reject_ratio_sqr: TGFloat;
 
-  {$IFDEF parallel}
-  {$IFDEF FPC}
-    procedure Nested_ParallelFor_sqr(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-    var
-      J: TLInt;
-    begin
-      for J := 0 to pf2_len - 1 do
-          sqr_memory[pass, J] := e_sqr(pf1[pass], pf2[J]);
-    end;
+{$IFDEF parallel}
+{$IFDEF FPC}
+  procedure Nested_ParallelFor_sqr(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    j: TLInt;
+  begin
+    for j := 0 to pf2_len - 1 do
+        sqr_memory[pass, j] := e_sqr(pf1[pass], pf2[j]);
+  end;
 
-    procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-    var
-      m_idx, J: TLInt;
-      dsc1, dsc2: PDescriptor;
-      minf, next_minf: TLFloat;
-      d: Double;
-      PD: PMatchInfo;
-    begin
-      dsc1 := pf1[pass];
-      m_idx := -1;
-      minf := MaxRealNumber;
-      next_minf := minf;
-      // find dsc1 from feat2
-      for J := 0 to pf2_len - 1 do
-        begin
-          d := Min(sqr_memory[pass, J], next_minf);
-          if (d < minf) then
-            begin
-              next_minf := minf;
-              minf := d;
-              m_idx := J;
-            end
-          else
-              next_minf := Min(next_minf, d);
-        end;
-
-      /// bidirectional rejection
-      if (minf > reject_ratio_sqr * next_minf) then
-          Exit;
-
-      // fix m_idx
-      dsc2 := pf2[m_idx];
-      for J := 0 to pf1_len - 1 do
-        if J <> pass then
+  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    m_idx, j: TLInt;
+    dsc1, dsc2: PDescriptor;
+    minf, next_minf: TLFloat;
+    d: Double;
+    PD: PMatchInfo;
+  begin
+    dsc1 := pf1[pass];
+    m_idx := -1;
+    minf := MaxRealNumber;
+    next_minf := minf;
+    // find dsc1 from feat2
+    for j := 0 to pf2_len - 1 do
+      begin
+        d := Min(sqr_memory[pass, j], next_minf);
+        if (d < minf) then
           begin
-            d := Min(sqr_memory[J, m_idx], next_minf);
+            next_minf := minf;
+            minf := d;
+            m_idx := j;
+          end
+        else
             next_minf := Min(next_minf, d);
-          end;
-      if (minf > reject_ratio_sqr * next_minf) then
-          Exit;
+      end;
 
-      new(PD);
-      PD^.d1 := pf1[pass];
-      PD^.d2 := pf2[m_idx];
-      LockObject(L);
-      L.Add(PD);
-      UnLockObject(L);
-    end;
-  {$ENDIF FPC}
-  {$ELSE parallel}
-    procedure DoFor;
-    var
-      pass: TLInt;
-      m_idx, J: TLInt;
-      dsc1, dsc2: PDescriptor;
-      minf, next_minf: TLFloat;
-      d: Double;
-      PD: PMatchInfo;
-    begin
-      for pass := 0 to pf1_len - 1 do
-        for J := 0 to pf2_len - 1 do
-            sqr_memory[pass, J] := e_sqr(pf1[pass], pf2[J]);
+    /// bidirectional rejection
+    if (minf > reject_ratio_sqr * next_minf) then
+        Exit;
 
-      for pass := 0 to pf1_len - 1 do
+    // fix m_idx
+    dsc2 := pf2[m_idx];
+    for j := 0 to pf1_len - 1 do
+      if j <> pass then
         begin
-          dsc1 := pf1[pass];
-          m_idx := -1;
-          minf := MaxRealNumber;
-          next_minf := minf;
-          // find dsc1 from feat2
-          for J := 0 to pf2_len - 1 do
-            begin
-              d := Min(sqr_memory[pass, J], next_minf);
-              if (d < minf) then
-                begin
-                  next_minf := minf;
-                  minf := d;
-                  m_idx := J;
-                end
-              else
-                  next_minf := Min(next_minf, d);
-            end;
-
-          /// bidirectional rejection
-          if (minf > reject_ratio_sqr * next_minf) then
-              Continue;
-
-          // fix m_idx
-          dsc2 := pf2[m_idx];
-          for J := 0 to pf1_len - 1 do
-            if J <> pass then
-              begin
-                d := Min(sqr_memory[J, m_idx], next_minf);
-                next_minf := Min(next_minf, d);
-              end;
-          if (minf > reject_ratio_sqr * next_minf) then
-              Continue;
-
-          new(PD);
-          PD^.d1 := pf1[pass];
-          PD^.d2 := pf2[m_idx];
-          L.Add(PD);
+          d := Min(sqr_memory[j, m_idx], next_minf);
+          next_minf := Min(next_minf, d);
         end;
-    end;
-  {$ENDIF parallel}
+    if (minf > reject_ratio_sqr * next_minf) then
+        Exit;
 
+    new(PD);
+    PD^.d1 := pf1[pass];
+    PD^.d2 := pf2[m_idx];
+    LockObject(L);
+    L.Add(PD);
+    UnLockObject(L);
+  end;
+{$ENDIF FPC}
+{$ELSE parallel}
+  procedure DoFor;
+  var
+    pass: TLInt;
+    m_idx, j: TLInt;
+    dsc1, dsc2: PDescriptor;
+    minf, next_minf: TLFloat;
+    d: Double;
+    PD: PMatchInfo;
+  begin
+    for pass := 0 to pf1_len - 1 do
+      for j := 0 to pf2_len - 1 do
+          sqr_memory[pass, j] := e_sqr(pf1[pass], pf2[j]);
+
+    for pass := 0 to pf1_len - 1 do
+      begin
+        dsc1 := pf1[pass];
+        m_idx := -1;
+        minf := MaxRealNumber;
+        next_minf := minf;
+        // find dsc1 from feat2
+        for j := 0 to pf2_len - 1 do
+          begin
+            d := Min(sqr_memory[pass, j], next_minf);
+            if (d < minf) then
+              begin
+                next_minf := minf;
+                minf := d;
+                m_idx := j;
+              end
+            else
+                next_minf := Min(next_minf, d);
+          end;
+
+        /// bidirectional rejection
+        if (minf > reject_ratio_sqr * next_minf) then
+            Continue;
+
+        // fix m_idx
+        dsc2 := pf2[m_idx];
+        for j := 0 to pf1_len - 1 do
+          if j <> pass then
+            begin
+              d := Min(sqr_memory[j, m_idx], next_minf);
+              next_minf := Min(next_minf, d);
+            end;
+        if (minf > reject_ratio_sqr * next_minf) then
+            Continue;
+
+        new(PD);
+        PD^.d1 := pf1[pass];
+        PD^.d2 := pf2[m_idx];
+        L.Add(PD);
+      end;
+  end;
+{$ENDIF parallel}
   procedure FillMatchInfoAndFreeTemp;
   var
     i: TLInt;
@@ -922,15 +920,15 @@ begin
 {$ELSE FPC}
   TParallel.for(0, pf1_len - 1, procedure(pass: Integer)
     var
-      J: TLInt;
+      j: TLInt;
     begin
-      for J := 0 to pf2_len - 1 do
-          sqr_memory[pass, J] := e_sqr(pf1[pass], pf2[J]);
+      for j := 0 to pf2_len - 1 do
+          sqr_memory[pass, j] := e_sqr(pf1[pass], pf2[j]);
     end);
 
   TParallel.for(0, pf1_len - 1, procedure(pass: Integer)
     var
-      m_idx, J: TLInt;
+      m_idx, j: TLInt;
       dsc1, dsc2: PDescriptor;
       minf, next_minf: TLFloat;
       d: Double;
@@ -941,14 +939,14 @@ begin
       minf := MaxRealNumber;
       next_minf := minf;
       // find dsc1 from feat2
-      for J := 0 to pf2_len - 1 do
+      for j := 0 to pf2_len - 1 do
         begin
-          d := Min(sqr_memory[pass, J], next_minf);
+          d := Min(sqr_memory[pass, j], next_minf);
           if (d < minf) then
             begin
               next_minf := minf;
               minf := d;
-              m_idx := J;
+              m_idx := j;
             end
           else
               next_minf := Min(next_minf, d);
@@ -960,10 +958,10 @@ begin
 
       // fix m_idx
       dsc2 := pf2[m_idx];
-      for J := 0 to pf1_len - 1 do
-        if J <> pass then
+      for j := 0 to pf1_len - 1 do
+        if j <> pass then
           begin
-            d := Min(sqr_memory[J, m_idx], next_minf);
+            d := Min(sqr_memory[j, m_idx], next_minf);
             next_minf := Min(next_minf, d);
           end;
       if (minf > reject_ratio_sqr * next_minf) then
@@ -994,8 +992,8 @@ function BuildMatchInfoView(var MatchInfo: TArrayMatchInfo; const RectWidth: TLI
 var
   mr1, mr2: TMemoryRaster;
   FT1, FT2: TFeature;
-  C: Byte;
-  i, J: TLInt;
+  c: Byte;
+  i, j: TLInt;
 
   bV1, bV2: TVec2;
 
@@ -1195,7 +1193,7 @@ class procedure TPyramidLayer.ComputeMagAndOrt(const w, h: TLInt; const OriSampl
 {$IFDEF FPC}
   procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
   var
-    X: TLInt;
+    x: TLInt;
     mag_row, ort_row, orig_row, orig_plus, orig_minus: PGaussVec;
     dy, dx: TGFloat;
   begin
@@ -1211,19 +1209,19 @@ class procedure TPyramidLayer.ComputeMagAndOrt(const w, h: TLInt; const OriSampl
         orig_plus := @OriSamplerP^[pass + 1];
         orig_minus := @OriSamplerP^[pass - 1];
 
-        for X := 1 to w - 2 do
+        for x := 1 to w - 2 do
           begin
-            dy := orig_plus^[X] - orig_minus^[X];
-            dx := orig_row^[X + 1] - orig_row^[X - 1];
-            mag_row^[X] := Hypot(dx, dy);
-            ort_row^[X] := ArcTan2(dy, dx) + cPI;
+            dy := orig_plus^[x] - orig_minus^[x];
+            dx := orig_row^[x + 1] - orig_row^[x - 1];
+            mag_row^[x] := Hypot(dx, dy);
+            ort_row^[x] := ArcTan2(dy, dx) + cPI;
           end;
       end
     else
-      for X := 1 to w - 2 do
+      for x := 1 to w - 2 do
         begin
-          mag_row^[X] := 0;
-          ort_row^[X] := cPI;
+          mag_row^[x] := 0;
+          ort_row^[x] := cPI;
         end;
 
     mag_row^[w - 1] := 0;
@@ -1233,7 +1231,7 @@ class procedure TPyramidLayer.ComputeMagAndOrt(const w, h: TLInt; const OriSampl
 {$ELSE parallel}
   procedure DoFor;
   var
-    pass, X: TLInt;
+    pass, x: TLInt;
     mag_row, ort_row, orig_row, orig_plus, orig_minus: PGaussVec;
     dy, dx: TGFloat;
   begin
@@ -1251,19 +1249,19 @@ class procedure TPyramidLayer.ComputeMagAndOrt(const w, h: TLInt; const OriSampl
             orig_plus := @OriSamplerP^[pass + 1];
             orig_minus := @OriSamplerP^[pass - 1];
 
-            for X := 1 to w - 2 do
+            for x := 1 to w - 2 do
               begin
-                dy := orig_plus^[X] - orig_minus^[X];
-                dx := orig_row^[X + 1] - orig_row^[X - 1];
-                mag_row^[X] := Hypot(dx, dy);
-                ort_row^[X] := ArcTan2(dy, dx) + cPI;
+                dy := orig_plus^[x] - orig_minus^[x];
+                dx := orig_row^[x + 1] - orig_row^[x - 1];
+                mag_row^[x] := Hypot(dx, dy);
+                ort_row^[x] := ArcTan2(dy, dx) + cPI;
               end;
           end
         else
-          for X := 1 to w - 2 do
+          for x := 1 to w - 2 do
             begin
-              mag_row^[X] := 0;
-              ort_row^[X] := cPI;
+              mag_row^[x] := 0;
+              ort_row^[x] := cPI;
             end;
 
         mag_row^[w - 1] := 0;
@@ -1272,6 +1270,7 @@ class procedure TPyramidLayer.ComputeMagAndOrt(const w, h: TLInt; const OriSampl
   end;
 {$ENDIF parallel}
 
+
 begin
 {$IFDEF parallel}
 {$IFDEF FPC}
@@ -1279,7 +1278,7 @@ begin
 {$ELSE FPC}
   TParallel.for(0, h - 1, procedure(pass: Integer)
     var
-      X: TLInt;
+      x: TLInt;
       mag_row, ort_row, orig_row, orig_plus, orig_minus: PGaussVec;
       dy, dx: TGFloat;
     begin
@@ -1295,19 +1294,19 @@ begin
           orig_plus := @OriSamplerP^[pass + 1];
           orig_minus := @OriSamplerP^[pass - 1];
 
-          for X := 1 to w - 2 do
+          for x := 1 to w - 2 do
             begin
-              dy := orig_plus^[X] - orig_minus^[X];
-              dx := orig_row^[X + 1] - orig_row^[X - 1];
-              mag_row^[X] := Hypot(dx, dy);
-              ort_row^[X] := ArcTan2(dy, dx) + cPI;
+              dy := orig_plus^[x] - orig_minus^[x];
+              dx := orig_row^[x + 1] - orig_row^[x - 1];
+              mag_row^[x] := Hypot(dx, dy);
+              ort_row^[x] := ArcTan2(dy, dx) + cPI;
             end;
         end
       else
-        for X := 1 to w - 2 do
+        for x := 1 to w - 2 do
           begin
-            mag_row^[X] := 0;
-            ort_row^[X] := cPI;
+            mag_row^[x] := 0;
+            ort_row^[x] := cPI;
           end;
 
       mag_row^[w - 1] := 0;
@@ -1322,36 +1321,37 @@ end;
 class procedure TPyramidLayer.ComputeDiff(const w, h: TLInt; const s1, s2, DiffOut: PGaussSpace);
 {$IFDEF parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(J: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(j: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
   var
     i: TLInt;
   begin
     for i := 0 to w - 1 do
-        DiffOut^[J, i] := Diff(s1^[J, i], s2^[J, i]);
+        DiffOut^[j, i] := Diff(s1^[j, i], s2^[j, i]);
   end;
 {$ENDIF FPC}
 {$ELSE parallel}
   procedure DoFor;
   var
-    J, i: TLInt;
+    j, i: TLInt;
   begin
-    for J := 0 to h - 1 do
+    for j := 0 to h - 1 do
       for i := 0 to w - 1 do
-          DiffOut^[J, i] := Diff(s1^[J, i], s2^[J, i]);
+          DiffOut^[j, i] := Diff(s1^[j, i], s2^[j, i]);
   end;
 {$ENDIF parallel}
+
 
 begin
 {$IFDEF parallel}
 {$IFDEF FPC}
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, h - 1);
 {$ELSE FPC}
-  TParallel.for(0, h - 1, procedure(J: Integer)
+  TParallel.for(0, h - 1, procedure(j: Integer)
     var
       i: TLInt;
     begin
       for i := 0 to w - 1 do
-          DiffOut^[J, i] := Diff(s1^[J, i], s2^[J, i]);
+          DiffOut^[j, i] := Diff(s1^[j, i], s2^[j, i]);
     end);
 {$ENDIF FPC}
 {$ELSE parallel}
@@ -1363,7 +1363,7 @@ procedure TPyramidLayer.Build(var OriSampler: TGaussSpace; const factorWidth, fa
 var
   Sap: TGaussSpace;
   oriW, oriH: TLInt;
-  i, J: TLInt;
+  i, j: TLInt;
   k: TGFloat;
 begin
   oriW := length(OriSampler[0]);
@@ -1407,7 +1407,7 @@ begin
   SetLength(Diffs, 0, 0, 0);
 end;
 
-function TPyramids.isExtrema(const X, Y: TLInt; const pyr_id, scale_id: TLInt): Boolean;
+function TPyramids.isExtrema(const x, y: TLInt; const pyr_id, scale_id: TLInt): Boolean;
 var
   dog: PGaussSpace;
   center, cmp1, cmp2, newval: TGFloat;
@@ -1417,7 +1417,7 @@ begin
   Result := False;
 
   dog := @Pyramids[pyr_id].Diffs[scale_id];
-  center := dog^[Y, X];
+  center := dog^[y, x];
   if (center < CGRAY_THRESHOLD) then
       Exit;
   bMax := True;
@@ -1430,7 +1430,7 @@ begin
       begin
         if (di = 0) and (dj = 0) then
             Continue;
-        newval := dog^[Y + di, X + dj];
+        newval := dog^[y + di, x + dj];
         if (newval >= cmp1) then
             bMax := False;
         if (newval <= cmp2) then
@@ -1447,7 +1447,7 @@ begin
   for di := -1 to 1 do
     for i := 0 to 2 do
       begin
-        newval := dog^[Y + di][X - 1 + i];
+        newval := dog^[y + di][x - 1 + i];
         if (newval >= cmp1) then
             bMax := False;
         if (newval <= cmp2) then
@@ -1461,7 +1461,7 @@ begin
   for di := -1 to 1 do
     for i := 0 to 2 do
       begin
-        newval := dog^[Y + di][X - 1 + i];
+        newval := dog^[y + di][x - 1 + i];
         if (newval >= cmp1) then
             bMax := False;
         if (newval <= cmp2) then
@@ -1477,42 +1477,43 @@ procedure TPyramids.BuildLocalExtrema(const pyr_id, scale_id: TLInt; const Trans
 var
   w, h: TLInt;
 
-  {$IFDEF parallel}
-  {$IFDEF FPC}
-    procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-    var
-      X: TLInt;
-    begin
-      for X := 1 to w - 2 do
-        if isExtrema(X, pass, pyr_id, scale_id) then
+{$IFDEF parallel}
+{$IFDEF FPC}
+  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    x: TLInt;
+  begin
+    for x := 1 to w - 2 do
+      if isExtrema(x, pass, pyr_id, scale_id) then
+        begin
+          LockObject(v2List);
+
+          if Transform then
+              v2List.Add(fabs(x / w * FWidth), fabs(pass / h * FHeight))
+          else
+              v2List.Add(x, pass);
+
+          UnLockObject(v2List);
+        end;
+  end;
+{$ENDIF FPC}
+{$ELSE parallel}
+  procedure DoFor;
+  var
+    pass, x: TLInt;
+  begin
+    for pass := 1 to h - 2 do
+      for x := 1 to w - 2 do
+        if isExtrema(x, pass, pyr_id, scale_id) then
           begin
-            LockObject(v2List);
-
             if Transform then
-                v2List.Add(fabs(X / w * FWidth), fabs(pass / h * FHeight))
+                v2List.Add(fabs(x / w * FWidth), fabs(pass / h * FHeight))
             else
-                v2List.Add(X, pass);
-
-            UnLockObject(v2List);
+                v2List.Add(x, pass);
           end;
-    end;
-  {$ENDIF FPC}
-  {$ELSE parallel}
-    procedure DoFor;
-    var
-      pass, X: TLInt;
-    begin
-      for pass := 1 to h - 2 do
-        for X := 1 to w - 2 do
-          if isExtrema(X, pass, pyr_id, scale_id) then
-            begin
-              if Transform then
-                  v2List.Add(fabs(X / w * FWidth), fabs(pass / h * FHeight))
-              else
-                  v2List.Add(X, pass);
-            end;
-    end;
-  {$ENDIF parallel}
+  end;
+{$ENDIF parallel}
+
 
 begin
   w := Pyramids[pyr_id].width;
@@ -1524,17 +1525,17 @@ begin
 {$ELSE FPC}
   TParallel.for(1, h - 2, procedure(pass: Integer)
     var
-      X: TLInt;
+      x: TLInt;
     begin
-      for X := 1 to w - 2 do
-        if isExtrema(X, pass, pyr_id, scale_id) then
+      for x := 1 to w - 2 do
+        if isExtrema(x, pass, pyr_id, scale_id) then
           begin
             LockObject(v2List);
 
             if Transform then
-                v2List.Add(fabs(X / w * FWidth), fabs(pass / h * FHeight))
+                v2List.Add(fabs(x / w * FWidth), fabs(pass / h * FHeight))
             else
-                v2List.Add(X, pass);
+                v2List.Add(x, pass);
 
             UnLockObject(v2List);
           end;
@@ -1549,48 +1550,49 @@ procedure TPyramids.BuildLocalExtrema(const pyr_id, scale_id: TLInt; ExtremaCoor
 var
   w, h: TLInt;
 
-  {$IFDEF parallel}
-  {$IFDEF FPC}
-    procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-    var
-      X: TLInt;
-      p: PExtremaCoor;
-    begin
-      for X := 1 to w - 2 do
-        if isExtrema(X, pass, pyr_id, scale_id) then
-          begin
-            LockObject(ExtremaCoorList);
+{$IFDEF parallel}
+{$IFDEF FPC}
+  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    x: TLInt;
+    p: PExtremaCoor;
+  begin
+    for x := 1 to w - 2 do
+      if isExtrema(x, pass, pyr_id, scale_id) then
+        begin
+          LockObject(ExtremaCoorList);
 
+          new(p);
+          p^.PyramidCoor := vec2(x / w, pass / h);
+          p^.RealCoor := vec2(x, pass);
+          p^.pyr_id := pyr_id;
+          p^.scale_id := scale_id;
+          ExtremaCoorList.Add(p);
+
+          UnLockObject(ExtremaCoorList);
+        end;
+  end;
+{$ENDIF FPC}
+{$ELSE parallel}
+  procedure DoFor;
+  var
+    pass, x: TLInt;
+    p: PExtremaCoor;
+  begin
+    for pass := 1 to h - 2 do
+      for x := 1 to w - 2 do
+        if isExtrema(x, pass, pyr_id, scale_id) then
+          begin
             new(p);
-            p^.PyramidCoor := vec2(X / w, pass / h);
-            p^.RealCoor := vec2(X, pass);
+            p^.PyramidCoor := vec2(x / w, pass / h);
+            p^.RealCoor := vec2(x, pass);
             p^.pyr_id := pyr_id;
             p^.scale_id := scale_id;
             ExtremaCoorList.Add(p);
-
-            UnLockObject(ExtremaCoorList);
           end;
-    end;
-  {$ENDIF FPC}
-  {$ELSE parallel}
-    procedure DoFor;
-    var
-      pass, X: TLInt;
-      p: PExtremaCoor;
-    begin
-      for pass := 1 to h - 2 do
-        for X := 1 to w - 2 do
-          if isExtrema(X, pass, pyr_id, scale_id) then
-            begin
-              new(p);
-              p^.PyramidCoor := vec2(X / w, pass / h);
-              p^.RealCoor := vec2(X, pass);
-              p^.pyr_id := pyr_id;
-              p^.scale_id := scale_id;
-              ExtremaCoorList.Add(p);
-            end;
-    end;
-  {$ENDIF parallel}
+  end;
+{$ENDIF parallel}
+
 
 begin
   w := Pyramids[pyr_id].width;
@@ -1602,17 +1604,17 @@ begin
 {$ELSE FPC}
   TParallel.for(1, h - 2, procedure(pass: Integer)
     var
-      X: TLInt;
+      x: TLInt;
       p: PExtremaCoor;
     begin
-      for X := 1 to w - 2 do
-        if isExtrema(X, pass, pyr_id, scale_id) then
+      for x := 1 to w - 2 do
+        if isExtrema(x, pass, pyr_id, scale_id) then
           begin
             LockObject(ExtremaCoorList);
 
             new(p);
-            p^.PyramidCoor := vec2(X / w, pass / h);
-            p^.RealCoor := vec2(X, pass);
+            p^.PyramidCoor := vec2(x / w, pass / h);
+            p^.RealCoor := vec2(x, pass);
             p^.pyr_id := pyr_id;
             p^.scale_id := scale_id;
             ExtremaCoorList.Add(p);
@@ -1627,37 +1629,37 @@ begin
 end;
 
 // key-pointer integral
-function TPyramids.KPIntegral(const dogIntegral: PGaussSpaceIntegral; const X, Y, s: TLInt; var Offset, Delta: TLVec): Boolean;
+function TPyramids.KPIntegral(const dogIntegral: PGaussSpaceIntegral; const x, y, s: TLInt; var Offset, Delta: TLVec): Boolean;
 var
-  v, dxx, dyy, dss, DXY, dys, DSX: TLFloat;
+  v, dxx, dyy, dss, dxy, dys, dsx: TLFloat;
   M: TLMatrix;
   Info: TLInt;
   mRep: TMatInvReport;
 begin
   // hessian matrix 3x3
-  v := dogIntegral^[s, Y, X];
-  Delta[0] := (dogIntegral^[s, Y, X + 1] - dogIntegral^[s, Y, X - 1]) * 0.5;
-  Delta[1] := (dogIntegral^[s, Y + 1, X] - dogIntegral^[s, Y - 1, X]) * 0.5;
-  Delta[2] := (dogIntegral^[s + 1, Y, X] - dogIntegral^[s - 1, Y, X]) * 0.5;
+  v := dogIntegral^[s, y, x];
+  Delta[0] := (dogIntegral^[s, y, x + 1] - dogIntegral^[s, y, x - 1]) * 0.5;
+  Delta[1] := (dogIntegral^[s, y + 1, x] - dogIntegral^[s, y - 1, x]) * 0.5;
+  Delta[2] := (dogIntegral^[s + 1, y, x] - dogIntegral^[s - 1, y, x]) * 0.5;
 
-  dxx := dogIntegral^[s, Y, X + 1] + dogIntegral^[s, Y, X - 1] - v - v;
-  dyy := dogIntegral^[s, Y + 1, X] + dogIntegral^[s, Y - 1, X] - v - v;
-  dss := dogIntegral^[s + 1, Y, X] + dogIntegral^[s - 1, Y, X] - v - v;
+  dxx := dogIntegral^[s, y, x + 1] + dogIntegral^[s, y, x - 1] - v - v;
+  dyy := dogIntegral^[s, y + 1, x] + dogIntegral^[s, y - 1, x] - v - v;
+  dss := dogIntegral^[s + 1, y, x] + dogIntegral^[s - 1, y, x] - v - v;
 
-  DXY := (dogIntegral^[s, Y + 1, X + 1] - dogIntegral^[s, Y - 1, X + 1] - dogIntegral^[s, Y + 1, X - 1] + dogIntegral^[s, Y - 1, X - 1]) * 0.25;
-  dys := (dogIntegral^[s + 1, Y + 1, X] - dogIntegral^[s + 1, Y - 1, X] - dogIntegral^[s - 1, Y + 1, X] + dogIntegral^[s - 1, Y - 1, X]) * 0.25;
-  DSX := (dogIntegral^[s + 1, Y, X + 1] - dogIntegral^[s + 1, Y, X - 1] - dogIntegral^[s - 1, Y, X + 1] + dogIntegral^[s - 1, Y, X - 1]) * 0.25;
+  dxy := (dogIntegral^[s, y + 1, x + 1] - dogIntegral^[s, y - 1, x + 1] - dogIntegral^[s, y + 1, x - 1] + dogIntegral^[s, y - 1, x - 1]) * 0.25;
+  dys := (dogIntegral^[s + 1, y + 1, x] - dogIntegral^[s + 1, y - 1, x] - dogIntegral^[s - 1, y + 1, x] + dogIntegral^[s - 1, y - 1, x]) * 0.25;
+  dsx := (dogIntegral^[s + 1, y, x + 1] - dogIntegral^[s + 1, y, x - 1] - dogIntegral^[s - 1, y, x + 1] + dogIntegral^[s - 1, y, x - 1]) * 0.25;
 
   SetLength(M, 3, 3);
   M[0, 0] := dxx;
   M[1, 1] := dyy;
   M[2, 2] := dss;
 
-  M[0, 1] := DXY;
-  M[1, 0] := DXY;
+  M[0, 1] := dxy;
+  M[1, 0] := dxy;
 
-  M[0, 2] := DSX;
-  M[2, 0] := DSX;
+  M[0, 2] := dsx;
+  M[2, 0] := dsx;
 
   M[1, 2] := dys;
   M[2, 1] := dys;
@@ -1707,9 +1709,9 @@ begin
       if dpDone then
           Break;
 
-      Inc(nowx, Round(Offset[0]));
-      Inc(nowy, Round(Offset[1]));
-      Inc(nows, Round(Offset[2]));
+      inc(nowx, Round(Offset[0]));
+      inc(nowy, Round(Offset[1]));
+      inc(nows, Round(Offset[2]));
     end;
   if not dpDone then
       Exit;
@@ -1732,20 +1734,20 @@ end;
 
 function TPyramids.ComputeEndgeReponse(const ExtremaCoor: TVec2; const p: PGaussSpace): Boolean;
 var
-  dxx, DXY, dyy, v, det: TLFloat;
-  X, Y: TLInt;
+  dxx, dxy, dyy, v, det: TLFloat;
+  x, y: TLInt;
 begin
-  X := Round(ExtremaCoor[0]);
-  Y := Round(ExtremaCoor[1]);
+  x := Round(ExtremaCoor[0]);
+  y := Round(ExtremaCoor[1]);
 
   // hessian matrix
-  v := p^[Y, X];
+  v := p^[y, x];
 
-  dxx := p^[Y, X + 1] + p^[Y, X - 1] - v - v;
-  dyy := p^[Y + 1, X] + p^[Y - 1, X] - v - v;
-  DXY := (p^[Y + 1, X + 1] + p^[Y - 1, X - 1] - p^[Y + 1, X - 1] - p^[Y - 1, X + 1]) / 4;
+  dxx := p^[y, x + 1] + p^[y, x - 1] - v - v;
+  dyy := p^[y + 1, x] + p^[y - 1, x] - v - v;
+  dxy := (p^[y + 1, x + 1] + p^[y - 1, x - 1] - p^[y + 1, x - 1] - p^[y - 1, x + 1]) / 4;
 
-  det := (dxx * dyy) - (DXY * DXY);
+  det := (dxx * dyy) - (dxy * dxy);
 
   if det <= 0 then
       Exit(True);
@@ -1768,7 +1770,7 @@ var
     Pyramid: PPyramidLayer;
     mag: PGaussSpace;
     ort: PGaussSpace;
-    X, Y: TLInt;
+    x, y: TLInt;
     gauss_weight_sigma, exp_denom, orient, Weight, Prev, Next, fBinomial, thres: TLFloat;
     Rad, xx, yy, newx, newy, iBinomial, k, i: TLInt;
     hist: TLVec;
@@ -1778,8 +1780,8 @@ var
     mag := @Pyramid^.MagIntegral[PC.scale_id - 1];
     ort := @Pyramid^.OrtIntegral[PC.scale_id - 1];
 
-    X := Round(PC.PyramidCoor[0]);
-    Y := Round(PC.PyramidCoor[1]);
+    x := Round(PC.PyramidCoor[0]);
+    y := Round(PC.PyramidCoor[1]);
 
     gauss_weight_sigma := PC.Scale * ORI_WINDOW_FACTOR;
     exp_denom := 2 * Learn.AP_Sqr(gauss_weight_sigma);
@@ -1790,13 +1792,13 @@ var
     // compute gaussian weighted histogram with inside a circle
     for xx := -Rad to Rad do
       begin
-        newx := X + xx;
+        newx := x + xx;
         if not between(newx, 1, Pyramid^.width - 1) then
             Continue;
 
         for yy := -Rad to Rad do
           begin
-            newy := Y + yy;
+            newy := y + yy;
             if not between(newy, 1, Pyramid^.height - 1) then
                 Continue;
             // use a circular gaussian window
@@ -1857,24 +1859,24 @@ var
   end;
 
 var
-  T: TPyramidCoor;
+  t: TPyramidCoor;
 begin
   Result := nil;
   RetCoords := nil;
 
-  if not ComputeKeyPoint(ExtremaV2, pyr_id, scale_id, T) then
+  if not ComputeKeyPoint(ExtremaV2, pyr_id, scale_id, t) then
       Exit;
 
   if FilterEndge then
-    if not ComputeEndgeReponse(T.PyramidCoor, @Pyramids[T.pyr_id].Diffs[T.scale_id]) then
+    if not ComputeEndgeReponse(t.PyramidCoor, @Pyramids[t.pyr_id].Diffs[t.scale_id]) then
         Exit;
 
-  ComputeOrientation(T);
+  ComputeOrientation(t);
 
   if (RetCoords = nil) and (not FilterOri) then
     begin
       RetCoords := TPyramidCoorList.Create;
-      RetCoords.Add(T);
+      RetCoords.Add(t);
     end;
 
   Result := RetCoords;
@@ -1882,7 +1884,7 @@ end;
 
 constructor TPyramids.CreateWithRaster(const raster: TMemoryRaster);
 var
-  F: TGFloat;
+  f: TGFloat;
   w, h: TLInt;
 begin
   inherited Create;
@@ -1895,15 +1897,15 @@ begin
 
   if (w > CMAX_SAMPLER_WIDTH) then
     begin
-      F := CMAX_SAMPLER_WIDTH / w;
-      w := Round(w * F);
-      h := Round(h * F);
+      f := CMAX_SAMPLER_WIDTH / w;
+      w := Round(w * f);
+      h := Round(h * f);
     end;
   if (h > CMAX_SAMPLER_HEIGHT) then
     begin
-      F := CMAX_SAMPLER_HEIGHT / h;
-      w := Round(w * F);
-      h := Round(h * F);
+      f := CMAX_SAMPLER_HEIGHT / h;
+      w := Round(w * f);
+      h := Round(h * f);
     end;
 
   if (w <> FViewer.width) and (h <> FViewer.height) then
@@ -1945,7 +1947,7 @@ end;
 
 constructor TPyramids.CreateWithGauss(const spr: PGaussSpace);
 var
-  F: TGFloat;
+  f: TGFloat;
   w, h: TLInt;
 begin
   inherited Create;
@@ -1957,15 +1959,15 @@ begin
 
   if (w > CMAX_SAMPLER_WIDTH) then
     begin
-      F := CMAX_SAMPLER_WIDTH / w;
-      w := Round(w * F);
-      h := Round(h * F);
+      f := CMAX_SAMPLER_WIDTH / w;
+      w := Round(w * f);
+      h := Round(h * f);
     end;
   if (h > CMAX_SAMPLER_HEIGHT) then
     begin
-      F := CMAX_SAMPLER_HEIGHT / h;
-      w := Round(w * F);
-      h := Round(h * F);
+      f := CMAX_SAMPLER_HEIGHT / h;
+      w := Round(w * f);
+      h := Round(h * f);
     end;
 
   if (w <> length(spr^[0])) and (h <> length(spr^)) then
@@ -2021,6 +2023,7 @@ procedure TPyramids.SetRegion(const Clip: TVec2List);
   end;
 {$ENDIF parallel}
 
+
 begin
   if Clip.Count > 0 then
     begin
@@ -2045,19 +2048,19 @@ end;
 procedure TPyramids.SetRegion(var mat: TLBMatrix);
 var
   nmat: TLBMatrix;
-  J, i: TLInt;
+  j, i: TLInt;
 begin
   if (length(nmat) = length(mat)) and (length(nmat[0]) = length(mat[0])) then
       nmat := LMatrixCopy(mat)
   else
       LZoomMatrix(mat, nmat, FWidth, FHeight);
 
-  for J := 0 to FHeight - 1 do
+  for j := 0 to FHeight - 1 do
     for i := 0 to FWidth - 1 do
-      if nmat[J, i] then
-          SamplerXY[i + J * FWidth] := 1
+      if nmat[j, i] then
+          SamplerXY[i + j * FWidth] := 1
       else
-          SamplerXY[i + J * FWidth] := 0;
+          SamplerXY[i + j * FWidth] := 0;
 
   SetLength(nmat, 0, 0);
 end;
@@ -2091,28 +2094,28 @@ end;
 
 function TPyramids.BuildAbsoluteExtrema: TVec2List;
 var
-  i, J: TLInt;
+  i, j: TLInt;
   v: TVec2;
-  X, Y: TLInt;
+  x, y: TLInt;
 begin
   if length(Pyramids) = 0 then
       BuildPyramid;
   Result := TVec2List.Create;
   for i := 0 to CNUMBER_OCTAVE - 1 do
-    for J := 0 to CNUMBER_SCALE - 2 do
-        BuildLocalExtrema(i, J, True, Result);
+    for j := 0 to CNUMBER_SCALE - 2 do
+        BuildLocalExtrema(i, j, True, Result);
 
   i := 0;
   while i < Result.Count do
     begin
       v := Result[i]^;
-      X := Round(v[0]);
-      Y := Round(v[1]);
-      J := X + Y * FWidth;
-      if between(J, 0, length(SamplerXY)) and (SamplerXY[J] = 0) then
+      x := Round(v[0]);
+      y := Round(v[1]);
+      j := x + y * FWidth;
+      if between(j, 0, length(SamplerXY)) and (SamplerXY[j] = 0) then
           Result.Delete(i)
       else
-          Inc(i);
+          inc(i);
     end;
 end;
 
@@ -2121,47 +2124,48 @@ var
   ExtremaList: TCoreClassList;
   PyramidCoordOutput: TPyramidCoorList;
 
-  {$IFDEF parallel}
-  {$IFDEF FPC}
-    procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-    var
-      EP: PExtremaCoor;
-      p: TPyramidCoorList;
-    begin
-      EP := PExtremaCoor(ExtremaList[pass]);
-      p := ComputePyramidCoor(ExtremaList.Count > CFILTER_MAX_KEYPOINT_ENDGE, FilterOri, EP^.RealCoor, EP^.pyr_id, EP^.scale_id);
-      if p <> nil then
-        begin
-          LockObject(PyramidCoordOutput);
-          PyramidCoordOutput.Add(p, False);
-          UnLockObject(PyramidCoordOutput);
-          DisposeObject(p);
-        end;
-    end;
-  {$ENDIF FPC}
-  {$ELSE parallel}
-    procedure DoFor;
-    var
-      pass: TLInt;
-      EP: PExtremaCoor;
-      p: TPyramidCoorList;
-    begin
-      for pass := 0 to ExtremaList.Count - 1 do
-        begin
-          EP := PExtremaCoor(ExtremaList[pass]);
-          p := ComputePyramidCoor(ExtremaList.Count > CFILTER_MAX_KEYPOINT_ENDGE, FilterOri, EP^.RealCoor, EP^.pyr_id, EP^.scale_id);
-          if p <> nil then
-            begin
-              PyramidCoordOutput.Add(p, False);
-              DisposeObject(p);
-            end;
-        end;
-    end;
-  {$ENDIF parallel}
+{$IFDEF parallel}
+{$IFDEF FPC}
+  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    EP: PExtremaCoor;
+    p: TPyramidCoorList;
+  begin
+    EP := PExtremaCoor(ExtremaList[pass]);
+    p := ComputePyramidCoor(ExtremaList.Count > CFILTER_MAX_KEYPOINT_ENDGE, FilterOri, EP^.RealCoor, EP^.pyr_id, EP^.scale_id);
+    if p <> nil then
+      begin
+        LockObject(PyramidCoordOutput);
+        PyramidCoordOutput.Add(p, False);
+        UnLockObject(PyramidCoordOutput);
+        DisposeObject(p);
+      end;
+  end;
+{$ENDIF FPC}
+{$ELSE parallel}
+  procedure DoFor;
+  var
+    pass: TLInt;
+    EP: PExtremaCoor;
+    p: TPyramidCoorList;
+  begin
+    for pass := 0 to ExtremaList.Count - 1 do
+      begin
+        EP := PExtremaCoor(ExtremaList[pass]);
+        p := ComputePyramidCoor(ExtremaList.Count > CFILTER_MAX_KEYPOINT_ENDGE, FilterOri, EP^.RealCoor, EP^.pyr_id, EP^.scale_id);
+        if p <> nil then
+          begin
+            PyramidCoordOutput.Add(p, False);
+            DisposeObject(p);
+          end;
+      end;
+  end;
+{$ENDIF parallel}
+
 
 var
-  J, i: TLInt;
-  X, Y: TLInt;
+  j, i: TLInt;
+  x, y: TLInt;
 begin
   if length(Pyramids) = 0 then
       BuildPyramid;
@@ -2169,23 +2173,23 @@ begin
   PyramidCoordOutput := TPyramidCoorList.Create;
 
   ExtremaList := TCoreClassList.Create;
-  for J := 0 to CNUMBER_OCTAVE - 1 do
+  for j := 0 to CNUMBER_OCTAVE - 1 do
     for i := 0 to CNUMBER_SCALE - 2 do
-        BuildLocalExtrema(J, i, ExtremaList);
+        BuildLocalExtrema(j, i, ExtremaList);
 
   i := 0;
   while i < ExtremaList.Count do
     begin
       with PExtremaCoor(ExtremaList[i])^ do
         begin
-          X := Round(RealCoor[0] * FWidth);
-          Y := Round(RealCoor[1] * FHeight);
+          x := Round(RealCoor[0] * FWidth);
+          y := Round(RealCoor[1] * FHeight);
         end;
-      J := X + Y * FWidth;
-      if between(J, 0, length(SamplerXY)) and (SamplerXY[J] = 0) then
+      j := x + y * FWidth;
+      if between(j, 0, length(SamplerXY)) and (SamplerXY[j] = 0) then
           ExtremaList.Delete(i)
       else
-          Inc(i);
+          inc(i);
     end;
 
 {$IFDEF parallel}
@@ -2221,14 +2225,14 @@ begin
     begin
       with PyramidCoordOutput[i]^ do
         begin
-          X := Round(RealCoor[0] * FWidth);
-          Y := Round(RealCoor[1] * FHeight);
+          x := Round(RealCoor[0] * FWidth);
+          y := Round(RealCoor[1] * FHeight);
         end;
-      J := X + Y * FWidth;
-      if between(J, 0, length(SamplerXY)) and (SamplerXY[J] = 0) then
+      j := x + y * FWidth;
+      if between(j, 0, length(SamplerXY)) and (SamplerXY[j] = 0) then
           PyramidCoordOutput.Delete(i)
       else
-          Inc(i);
+          inc(i);
     end;
 
   Result := PyramidCoordOutput;
@@ -2340,7 +2344,7 @@ end;
 
 procedure TFeature.ComputeDescriptor(const p: PPyramidCoor; var Desc: TLVec);
 
-  procedure Compute_Interpolate(const ybin, xbin, hbin, Weight: TLFloat; var hist: TLMatrix); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  procedure Compute_Interpolate(const ybin, xbin, hbin, Weight: TLFloat; var hist: TLMatrix);
   var
     ybinf, xbinf, hbinf: TLInt;
     ybind, xbind, hbind, w_y, w_x: TLFloat;
@@ -2373,7 +2377,7 @@ var
   ort: PGaussSpace;
   w, h, coorX, coorY: TLInt;
   Orientation, hist_w, exp_denom, y_rot, x_rot, cosort, sinort, ybin, xbin, now_mag, now_ort, Weight, hist_bin: TLFloat;
-  radius, i, J, xx, yy, nowx, nowy: TLInt;
+  radius, i, j, xx, yy, nowx, nowy: TLInt;
   hist: TLMatrix;
   Sum: TLFloat;
 begin
@@ -2475,7 +2479,7 @@ procedure TFeature.BuildFeature(Pyramids: TPyramids);
 
 
 var
-  i, J: TLInt;
+  i, j: TLInt;
   p: PDescriptor;
 begin
   if FPyramidCoordList <> nil then
@@ -2515,10 +2519,10 @@ begin
   FWidth := Pyramids.FWidth;
   FHeight := Pyramids.FHeight;
   SetLength(FViewer, FHeight * FWidth);
-  for J := 0 to FHeight - 1 do
+  for j := 0 to FHeight - 1 do
     for i := 0 to FWidth - 1 do
       begin
-        FViewer[i + J * FWidth] := Pyramids.FViewer.PixelGray[i, J];
+        FViewer[i + j * FWidth] := Pyramids.FViewer.PixelGray[i, j];
         // FViewer[i + j * FWidth] := Round(Clamp(Pyramids.GaussTransformSpace[j, i], 0, 1) * 255);
       end;
 end;
@@ -2671,14 +2675,14 @@ end;
 function TFeature.CreateViewer: TMemoryRaster;
 var
   i: TLInt;
-  C: Byte;
+  c: Byte;
 begin
   Result := NewRaster();
   Result.SetSize(FWidth, FHeight);
   for i := FWidth * FHeight - 1 downto 0 do
     begin
-      C := FViewer[i];
-      Result.Bits^[i] := RasterColor(C, C, C);
+      c := FViewer[i];
+      Result.Bits^[i] := RasterColor(c, c, c);
     end;
 end;
 
@@ -2716,11 +2720,11 @@ var
   f1, f2: TFeature;
   M: TArrayMatchInfo;
   raster: TMemoryRaster;
-  F: TLFloat;
+  f: TLFloat;
 begin
   f1 := TFeature.CreateWithRaster('c:\1.bmp');
   f2 := TFeature.CreateWithRaster('c:\2.bmp');
-  F := MatchFeature(f1, f2, M);
+  f := MatchFeature(f1, f2, M);
 
   raster := BuildMatchInfoView(M, 10, True);
   if raster <> nil then
@@ -2777,5 +2781,4 @@ CDESC_PROCESS_LIGHT := True;
 
 finalization
 
-end. 
- 
+end.

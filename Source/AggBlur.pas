@@ -37,11 +37,8 @@
 *)
 unit AggBlur;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 
 uses
   AggBasics,
@@ -118,31 +115,31 @@ const
 
 type
   PStackCalculator = ^TStackCalculator;
-  TStackCalculator = packed record
-    v, R, g, b, A: Cardinal;
+  TStackCalculator = record
+    v, r, g, b, a: Cardinal;
   public
     procedure Clear;
 
-    procedure Add(C: TAggColor); overload;
-    procedure Add(C: TAggColor; k: Cardinal); overload;
-    procedure Add(const C: TStackCalculator); overload;
-    procedure Sub(C: TAggColor); overload;
-    procedure Sub(const C: TStackCalculator); overload;
+    procedure Add(c: TAggColor); overload;
+    procedure Add(c: TAggColor; k: Cardinal); overload;
+    procedure Add(const c: TStackCalculator); overload;
+    procedure Sub(c: TAggColor); overload;
+    procedure Sub(const c: TStackCalculator); overload;
 
-    procedure CalculatePixel(C: PAggColor; ADiv: Cardinal); overload;
-    procedure CalculatePixel(C: PAggColor; AMul, AShr: Cardinal); overload;
+    procedure CalculatePixel(c: PAggColor; ADiv: Cardinal); overload;
+    procedure CalculatePixel(c: PAggColor; AMul, AShr: Cardinal); overload;
   end;
 
   PGaussCalculator = ^TGaussCalculator;
-  TGaussCalculator = packed record
-    v, R, g, b, A: Double;
+  TGaussCalculator = record
+    v, r, g, b, a: Double;
   public
-    procedure FromPixel(C: TAggColor);
+    procedure FromPixel(c: TAggColor);
 
     procedure Calculate(b1, b2, b3, b4: Double;
       const c1, c2, c3, c4: TGaussCalculator);
 
-    procedure ToPixel(C: PAggColor);
+    procedure ToPixel(c: PAggColor);
   end;
 
 
@@ -151,104 +148,104 @@ type
 procedure TStackCalculator.Clear;
 begin
   v := 0;
-  R := 0;
+  r := 0;
   g := 0;
   b := 0;
-  A := 0;
+  a := 0;
 end;
 
-procedure TStackCalculator.Add(C: TAggColor);
+procedure TStackCalculator.Add(c: TAggColor);
 begin
-  Inc(v, C.v);
-  Inc(R, C.Rgba8.R);
-  Inc(g, C.Rgba8.g);
-  Inc(b, C.Rgba8.b);
-  Inc(A, C.Rgba8.A);
+  inc(v, c.v);
+  inc(r, c.Rgba8.r);
+  inc(g, c.Rgba8.g);
+  inc(b, c.Rgba8.b);
+  inc(a, c.Rgba8.a);
 end;
 
-procedure TStackCalculator.Add(const C: TStackCalculator);
+procedure TStackCalculator.Add(const c: TStackCalculator);
 begin
-  Inc(v, C.v);
-  Inc(R, C.R);
-  Inc(g, C.g);
-  Inc(b, C.b);
-  Inc(A, C.A);
+  inc(v, c.v);
+  inc(r, c.r);
+  inc(g, c.g);
+  inc(b, c.b);
+  inc(a, c.a);
 end;
 
-procedure TStackCalculator.Add(C: TAggColor; k: Cardinal);
+procedure TStackCalculator.Add(c: TAggColor; k: Cardinal);
 begin
-  Inc(v, C.v * k);
-  Inc(R, C.Rgba8.R * k);
-  Inc(g, C.Rgba8.g * k);
-  Inc(b, C.Rgba8.b * k);
-  Inc(A, C.Rgba8.A * k);
+  inc(v, c.v * k);
+  inc(r, c.Rgba8.r * k);
+  inc(g, c.Rgba8.g * k);
+  inc(b, c.Rgba8.b * k);
+  inc(a, c.Rgba8.a * k);
 end;
 
-procedure TStackCalculator.Sub(C: TAggColor);
+procedure TStackCalculator.Sub(c: TAggColor);
 begin
-  Dec(v, C.v);
-  Dec(R, C.Rgba8.R);
-  Dec(g, C.Rgba8.g);
-  Dec(b, C.Rgba8.b);
-  Dec(A, C.Rgba8.A);
+  dec(v, c.v);
+  dec(r, c.Rgba8.r);
+  dec(g, c.Rgba8.g);
+  dec(b, c.Rgba8.b);
+  dec(a, c.Rgba8.a);
 end;
 
-procedure TStackCalculator.Sub(const C: TStackCalculator);
+procedure TStackCalculator.Sub(const c: TStackCalculator);
 begin
-  Dec(v, C.v);
-  Dec(R, C.R);
-  Dec(g, C.g);
-  Dec(b, C.b);
-  Dec(A, C.A);
+  dec(v, c.v);
+  dec(r, c.r);
+  dec(g, c.g);
+  dec(b, c.b);
+  dec(a, c.a);
 end;
 
-procedure TStackCalculator.CalculatePixel(C: PAggColor; ADiv: Cardinal);
+procedure TStackCalculator.CalculatePixel(c: PAggColor; ADiv: Cardinal);
 begin
-  C.v := Int8u(v div ADiv);
-  C.Rgba8.R := Int8u(R div ADiv);
-  C.Rgba8.g := Int8u(g div ADiv);
-  C.Rgba8.b := Int8u(b div ADiv);
-  C.Rgba8.A := Int8u(A div ADiv);
+  c.v := Int8u(v div ADiv);
+  c.Rgba8.r := Int8u(r div ADiv);
+  c.Rgba8.g := Int8u(g div ADiv);
+  c.Rgba8.b := Int8u(b div ADiv);
+  c.Rgba8.a := Int8u(a div ADiv);
 end;
 
-procedure TStackCalculator.CalculatePixel(C: PAggColor; AMul, AShr: Cardinal);
+procedure TStackCalculator.CalculatePixel(c: PAggColor; AMul, AShr: Cardinal);
 begin
-  C.v := Int8u((v * AMul) shr AShr);
-  C.Rgba8.R := Int8u((R * AMul) shr AShr);
-  C.Rgba8.g := Int8u((g * AMul) shr AShr);
-  C.Rgba8.b := Int8u((b * AMul) shr AShr);
-  C.Rgba8.A := Int8u((A * AMul) shr AShr);
+  c.v := Int8u((v * AMul) shr AShr);
+  c.Rgba8.r := Int8u((r * AMul) shr AShr);
+  c.Rgba8.g := Int8u((g * AMul) shr AShr);
+  c.Rgba8.b := Int8u((b * AMul) shr AShr);
+  c.Rgba8.a := Int8u((a * AMul) shr AShr);
 end;
 
 
 { TGaussCalculator }
 
-procedure TGaussCalculator.FromPixel(C: TAggColor);
+procedure TGaussCalculator.FromPixel(c: TAggColor);
 begin
-  v := C.v;
-  R := C.Rgba8.R;
-  g := C.Rgba8.g;
-  b := C.Rgba8.b;
-  A := C.Rgba8.A;
+  v := c.v;
+  r := c.Rgba8.r;
+  g := c.Rgba8.g;
+  b := c.Rgba8.b;
+  a := c.Rgba8.a;
 end;
 
 procedure TGaussCalculator.Calculate(b1, b2, b3, b4: Double;
   const c1, c2, c3, c4: TGaussCalculator);
 begin
   v := b1 * c1.v + b2 * c2.v + b3 * c3.v + b4 * c4.v;
-  R := b1 * c1.R + b2 * c2.R + b3 * c3.R + b4 * c4.R;
+  r := b1 * c1.r + b2 * c2.r + b3 * c3.r + b4 * c4.r;
   g := b1 * c1.g + b2 * c2.g + b3 * c3.g + b4 * c4.g;
   b := b1 * c1.b + b2 * c2.b + b3 * c3.b + b4 * c4.b;
-  A := b1 * c1.A + b2 * c2.A + b3 * c3.A + b4 * c4.A;
+  a := b1 * c1.a + b2 * c2.a + b3 * c3.a + b4 * c4.a;
 end;
 
-procedure TGaussCalculator.ToPixel(C: PAggColor);
+procedure TGaussCalculator.ToPixel(c: PAggColor);
 begin
-  C.v := Int8u(UnsignedRound(v));
-  C.Rgba8.R := Int8u(UnsignedRound(R));
-  C.Rgba8.g := Int8u(UnsignedRound(g));
-  C.Rgba8.b := Int8u(UnsignedRound(b));
-  C.Rgba8.A := Int8u(UnsignedRound(A));
+  c.v := Int8u(UnsignedRound(v));
+  c.Rgba8.r := Int8u(UnsignedRound(r));
+  c.Rgba8.g := Int8u(UnsignedRound(g));
+  c.Rgba8.b := Int8u(UnsignedRound(b));
+  c.Rgba8.a := Int8u(UnsignedRound(a));
 end;
 
 
@@ -269,7 +266,7 @@ end;
 
 procedure TAggStackBlur.BlurX(img: TAggPixelFormatProcessor; radius: Cardinal);
 var
-  X, Y, xp, i, StackPointer, StackStart, w, h, Wm: Cardinal;
+  x, y, xp, i, StackPointer, StackStart, w, h, Wm: Cardinal;
   ADiv, DivSum, MulSum, ShrSum, MaxVal: Cardinal;
   pix: TAggColor;
   StackPix, TempColor: PAggColor;
@@ -297,15 +294,15 @@ begin
   FBuffer.Allocate(w, 128);
   FStack.Allocate(ADiv, 32);
 
-  Y := 0;
+  y := 0;
 
-  while Y < h do
+  while y < h do
   begin
     Sum.Clear;
     SumIn.Clear;
     SumOut.Clear;
 
-    pix := img.Pixel(img, 0, Y);
+    pix := img.Pixel(img, 0, y);
 
     i := 0;
 
@@ -316,7 +313,7 @@ begin
       Sum.Add(pix, i + 1);
       SumOut.Add(pix);
 
-      Inc(i);
+      inc(i);
     end;
 
     i := 1;
@@ -324,53 +321,53 @@ begin
     while i <= radius do
     begin
       if i > Wm then
-        pix := img.Pixel(img, Wm, Y)
+        pix := img.Pixel(img, Wm, y)
       else
-        pix := img.Pixel(img, i, Y);
+        pix := img.Pixel(img, i, y);
 
       Move(pix, FStack[i + radius]^, SizeOf(TAggColor));
 
       Sum.Add(pix, radius + 1 - i);
       SumIn.Add(pix);
 
-      Inc(i);
+      inc(i);
     end;
 
     StackPointer := radius;
 
-    X := 0;
+    x := 0;
 
-    while X < w do
+    while x < w do
     begin
       if MulSum <> 0 then
-        Sum.CalculatePixel(PAggColor(FBuffer[X]), MulSum, ShrSum)
+        Sum.CalculatePixel(PAggColor(FBuffer[x]), MulSum, ShrSum)
       else
-        Sum.CalculatePixel(PAggColor(FBuffer[X]), DivSum);
+        Sum.CalculatePixel(PAggColor(FBuffer[x]), DivSum);
 
       Sum.Sub(SumOut);
 
       StackStart := StackPointer + ADiv - radius;
 
       if StackStart >= ADiv then
-        Dec(StackStart, ADiv);
+        dec(StackStart, ADiv);
 
       StackPix := FStack[StackStart];
 
       SumOut.Sub(StackPix^);
 
-      xp := X + radius + 1;
+      xp := x + radius + 1;
 
       if xp > Wm then
         xp := Wm;
 
-      pix := img.Pixel(img, xp, Y);
+      pix := img.Pixel(img, xp, y);
 
       StackPix^ := pix;
 
       SumIn.Add(pix);
       Sum.Add(SumIn);
 
-      Inc(StackPointer);
+      inc(StackPointer);
 
       if StackPointer >= ADiv then
         StackPointer := 0;
@@ -380,14 +377,14 @@ begin
       SumOut.Add(StackPix^);
       SumIn.Sub(StackPix^);
 
-      Inc(X);
+      inc(x);
     end;
 
     TempColor := FBuffer[0];
 
-    img.CopyColorHSpan(img, 0, Y, w, TempColor);
+    img.CopyColorHSpan(img, 0, y, w, TempColor);
 
-    Inc(Y);
+    inc(y);
   end;
 end;
 
@@ -437,8 +434,8 @@ end;
 procedure TAggRecursiveBlur.BlurX(img: TAggPixelFormatProcessor; radius: Double);
 var
   s, q, q2, Q3, b0, b1, b2, b3, b: Double;
-  w, h, Wm, X, Y: Integer;
-  C: TGaussCalculator;
+  w, h, Wm, x, y: Integer;
+  c: TGaussCalculator;
   G0, G1: PGaussCalculator;
 begin
   if radius < 0.62 then
@@ -472,36 +469,36 @@ begin
   FSum2.Allocate(w);
   FBuffer.Allocate(w);
 
-  Y := 0;
+  y := 0;
 
-  while Y < h do
+  while y < h do
   begin
     G0 := PGaussCalculator(FSum1[0]);
 
-    C.FromPixel(img.Pixel(img, 0, Y));
-    G0.Calculate(b, b1, b2, b3, C, C, C, C);
+    c.FromPixel(img.Pixel(img, 0, y));
+    G0.Calculate(b, b1, b2, b3, c, c, c, c);
 
     G1 := PGaussCalculator(FSum1[1]);
 
-    C.FromPixel(img.Pixel(img, 1, Y));
-    G1.Calculate(b, b1, b2, b3, C, G0^, G0^, G0^);
+    c.FromPixel(img.Pixel(img, 1, y));
+    G1.Calculate(b, b1, b2, b3, c, G0^, G0^, G0^);
 
-    C.FromPixel(img.Pixel(img, 2, Y));
-    PGaussCalculator(FSum1[2]).Calculate(b, b1, b2, b3, C,
+    c.FromPixel(img.Pixel(img, 2, y));
+    PGaussCalculator(FSum1[2]).Calculate(b, b1, b2, b3, c,
       G1^, G0^, G0^);
 
-    X := 3;
+    x := 3;
 
-    while X < w do
+    while x < w do
     begin
-      C.FromPixel(img.Pixel(img, X, Y));
+      c.FromPixel(img.Pixel(img, x, y));
 
-      PGaussCalculator(FSum1[X]).Calculate(b, b1, b2, b3, C,
-        PGaussCalculator(FSum1[X - 1])^,
-        PGaussCalculator(FSum1[X - 2])^,
-        PGaussCalculator(FSum1[X - 3])^);
+      PGaussCalculator(FSum1[x]).Calculate(b, b1, b2, b3, c,
+        PGaussCalculator(FSum1[x - 1])^,
+        PGaussCalculator(FSum1[x - 2])^,
+        PGaussCalculator(FSum1[x - 3])^);
 
-      Inc(X);
+      inc(x);
     end;
 
     G0 := PGaussCalculator(FSum1[Wm]);
@@ -524,24 +521,24 @@ begin
     PGaussCalculator(FSum2[Wm - 2])
       .ToPixel(PAggColor(FBuffer[Wm - 2]));
 
-    X := Wm - 3;
+    x := Wm - 3;
 
-    while X >= 0 do
+    while x >= 0 do
     begin
-      PGaussCalculator(FSum2[X])
-        .Calculate(b, b1, b2, b3, PGaussCalculator(FSum1[X])^,
-        PGaussCalculator(FSum2[X + 1])^,
-        PGaussCalculator(FSum2[X + 2])^,
-        PGaussCalculator(FSum2[X + 3])^);
+      PGaussCalculator(FSum2[x])
+        .Calculate(b, b1, b2, b3, PGaussCalculator(FSum1[x])^,
+        PGaussCalculator(FSum2[x + 1])^,
+        PGaussCalculator(FSum2[x + 2])^,
+        PGaussCalculator(FSum2[x + 3])^);
 
-      PGaussCalculator(FSum2[X]).ToPixel(PAggColor(FBuffer[X]));
+      PGaussCalculator(FSum2[x]).ToPixel(PAggColor(FBuffer[x]));
 
-      Dec(X);
+      dec(x);
     end;
 
-    img.CopyColorHSpan(img, 0, Y, w, FBuffer[0]);
+    img.CopyColorHSpan(img, 0, y, w, FBuffer[0]);
 
-    Inc(Y);
+    inc(y);
   end;
 end;
 
@@ -573,7 +570,7 @@ end;
 procedure StackBlurGray8(img: TAggPixelFormatProcessor; RX, RY: Cardinal);
 var
   stride: Integer;
-  X, Y, xp, yp, i, pix, StackPixel, Sum, SumIn, SumOut: Cardinal;
+  x, y, xp, yp, i, pix, StackPixel, Sum, SumIn, SumOut: Cardinal;
   StackPointer, StackStart, w, h, Wm, Hm, ADiv, MulSum, ShrSum: Cardinal;
   SourcePixelPointer, DestinationPixelPointer: PInt8u;
   Stack: TAggPodVector;
@@ -597,15 +594,15 @@ begin
 
     Stack.Allocate(ADiv);
 
-    Y := 0;
+    y := 0;
 
-    while Y < h do
+    while y < h do
     begin
       Sum := 0;
       SumIn := 0;
       SumOut := 0;
 
-      SourcePixelPointer := img.GetPixelPointer(0, Y);
+      SourcePixelPointer := img.GetPixelPointer(0, y);
       pix := SourcePixelPointer^;
 
       i := 0;
@@ -614,10 +611,10 @@ begin
       begin
         PInt8u(Stack[i])^ := pix;
 
-        Inc(Sum, pix * (i + 1));
-        Inc(SumOut, pix);
+        inc(Sum, pix * (i + 1));
+        inc(SumOut, pix);
 
-        Inc(i);
+        inc(i);
       end;
 
       i := 1;
@@ -625,16 +622,16 @@ begin
       while i <= RX do
       begin
         if i <= Wm then
-          Inc(PtrComp(SourcePixelPointer), img.Step);
+          inc(PtrComp(SourcePixelPointer), img.Step);
 
         pix := SourcePixelPointer^;
 
         PInt8u(Stack[i + RX])^ := pix;
 
-        Inc(Sum, pix * (RX + 1 - i));
-        Inc(SumIn, pix);
+        inc(Sum, pix * (RX + 1 - i));
+        inc(SumIn, pix);
 
-        Inc(i);
+        inc(i);
       end;
 
       StackPointer := RX;
@@ -643,53 +640,53 @@ begin
       if xp > Wm then
         xp := Wm;
 
-      SourcePixelPointer := img.GetPixelPointer(xp, Y);
-      DestinationPixelPointer := img.GetPixelPointer(0, Y);
+      SourcePixelPointer := img.GetPixelPointer(xp, y);
+      DestinationPixelPointer := img.GetPixelPointer(0, y);
 
-      X := 0;
+      x := 0;
 
-      while X < w do
+      while x < w do
       begin
         DestinationPixelPointer^ := Int8u((Sum * MulSum) shr ShrSum);
 
-        Inc(PtrComp(DestinationPixelPointer), img.Step);
-        Dec(Sum, SumOut);
+        inc(PtrComp(DestinationPixelPointer), img.Step);
+        dec(Sum, SumOut);
 
         StackStart := StackPointer + ADiv - RX;
 
         if StackStart >= ADiv then
-          Dec(StackStart, ADiv);
+          dec(StackStart, ADiv);
 
-        Dec(SumOut, PInt8u(Stack[StackStart])^);
+        dec(SumOut, PInt8u(Stack[StackStart])^);
 
         if xp < Wm then
         begin
-          Inc(PtrComp(SourcePixelPointer), img.Step);
+          inc(PtrComp(SourcePixelPointer), img.Step);
 
           pix := SourcePixelPointer^;
 
-          Inc(xp);
+          inc(xp);
         end;
 
         PInt8u(Stack[StackStart])^ := pix;
 
-        Inc(SumIn, pix);
-        Inc(Sum, SumIn);
+        inc(SumIn, pix);
+        inc(Sum, SumIn);
 
-        Inc(StackPointer);
+        inc(StackPointer);
 
         if StackPointer >= ADiv then
           StackPointer := 0;
 
         StackPixel := PInt8u(Stack[StackPointer])^;
 
-        Inc(SumOut, StackPixel);
-        Dec(SumIn, StackPixel);
+        inc(SumOut, StackPixel);
+        dec(SumIn, StackPixel);
 
-        Inc(X);
+        inc(x);
       end;
 
-      Inc(Y);
+      inc(y);
     end;
   end;
 
@@ -707,15 +704,15 @@ begin
 
     stride := img.stride;
 
-    X := 0;
+    x := 0;
 
-    while X < w do
+    while x < w do
     begin
       Sum := 0;
       SumIn := 0;
       SumOut := 0;
 
-      SourcePixelPointer := img.GetPixelPointer(X, 0);
+      SourcePixelPointer := img.GetPixelPointer(x, 0);
       pix := SourcePixelPointer^;
 
       i := 0;
@@ -724,10 +721,10 @@ begin
       begin
         PInt8u(Stack[i])^ := pix;
 
-        Inc(Sum, pix * (i + 1));
-        Inc(SumOut, pix);
+        inc(Sum, pix * (i + 1));
+        inc(SumOut, pix);
 
-        Inc(i);
+        inc(i);
       end;
 
       i := 1;
@@ -735,16 +732,16 @@ begin
       while i <= RY do
       begin
         if i <= Hm then
-          Inc(PtrComp(SourcePixelPointer), stride);
+          inc(PtrComp(SourcePixelPointer), stride);
 
         pix := SourcePixelPointer^;
 
         PInt8u(Stack[i + RY])^ := pix;
 
-        Inc(Sum, pix * (RY + 1 - i));
-        Inc(SumIn, pix);
+        inc(Sum, pix * (RY + 1 - i));
+        inc(SumIn, pix);
 
-        Inc(i);
+        inc(i);
       end;
 
       StackPointer := RY;
@@ -753,53 +750,53 @@ begin
       if yp > Hm then
         yp := Hm;
 
-      SourcePixelPointer := img.GetPixelPointer(X, yp);
-      DestinationPixelPointer := img.GetPixelPointer(X, 0);
+      SourcePixelPointer := img.GetPixelPointer(x, yp);
+      DestinationPixelPointer := img.GetPixelPointer(x, 0);
 
-      Y := 0;
+      y := 0;
 
-      while Y < h do
+      while y < h do
       begin
         DestinationPixelPointer^ := Int8u((Sum * MulSum) shr ShrSum);
 
-        Inc(PtrComp(DestinationPixelPointer), stride);
-        Dec(Sum, SumOut);
+        inc(PtrComp(DestinationPixelPointer), stride);
+        dec(Sum, SumOut);
 
         StackStart := StackPointer + ADiv - RY;
 
         if StackStart >= ADiv then
-          Dec(StackStart, ADiv);
+          dec(StackStart, ADiv);
 
-        Dec(SumOut, PInt8u(Stack[StackStart])^);
+        dec(SumOut, PInt8u(Stack[StackStart])^);
 
         if yp < Hm then
         begin
-          Inc(PtrComp(SourcePixelPointer), stride);
+          inc(PtrComp(SourcePixelPointer), stride);
 
           pix := SourcePixelPointer^;
 
-          Inc(yp);
+          inc(yp);
         end;
 
         PInt8u(Stack[StackStart])^ := pix;
 
-        Inc(SumIn, pix);
-        Inc(Sum, SumIn);
+        inc(SumIn, pix);
+        inc(Sum, SumIn);
 
-        Inc(StackPointer);
+        inc(StackPointer);
 
         if StackPointer >= ADiv then
           StackPointer := 0;
 
         StackPixel := PInt8u(Stack[StackPointer])^;
 
-        Inc(SumOut, StackPixel);
-        Dec(SumIn, StackPixel);
+        inc(SumOut, StackPixel);
+        dec(SumIn, StackPixel);
 
-        Inc(Y);
+        inc(y);
       end;
 
-      Inc(X);
+      inc(x);
     end;
   end;
 
@@ -808,8 +805,8 @@ end;
 
 procedure StackBlurRgb24(img: TAggPixelFormatProcessor; RX, RY: Cardinal);
 var
-  R, g, b, stride: Integer;
-  X, Y, xp, yp, i, StackPointer, StackStart: Cardinal;
+  r, g, b, stride: Integer;
+  x, y, xp, yp, i, StackPointer, StackStart: Cardinal;
   SumRed, SumGreen, SumBlue: Cardinal;
   SumInRed, SumInGreen, SumInBlue: Cardinal;
   SumOutRed, SumOutGreen, SumOutBlue: Cardinal;
@@ -818,7 +815,7 @@ var
   StackPixelPointer: PAggColor;
   Stack: TAggPodArray;
 begin
-  R := img.Order.R;
+  r := img.Order.r;
   g := img.Order.g;
   b := img.Order.b;
 
@@ -840,9 +837,9 @@ begin
 
     Stack.Allocate(ADiv);
 
-    Y := 0;
+    y := 0;
 
-    while Y < h do
+    while y < h do
     begin
       SumRed := 0;
       SumGreen := 0;
@@ -854,7 +851,7 @@ begin
       SumOutGreen := 0;
       SumOutBlue := 0;
 
-      SourcePixelPointer := img.GetPixelPointer(0, Y);
+      SourcePixelPointer := img.GetPixelPointer(0, y);
 
       i := 0;
 
@@ -862,19 +859,19 @@ begin
       begin
         StackPixelPointer := Stack[i];
 
-        StackPixelPointer.Rgba8.R := PInt8u(PtrComp(SourcePixelPointer) + R)^;
+        StackPixelPointer.Rgba8.r := PInt8u(PtrComp(SourcePixelPointer) + r)^;
         StackPixelPointer.Rgba8.g := PInt8u(PtrComp(SourcePixelPointer) + g)^;
         StackPixelPointer.Rgba8.b := PInt8u(PtrComp(SourcePixelPointer) + b)^;
 
-        Inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + R)^ * (i + 1));
-        Inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (i + 1));
-        Inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (i + 1));
+        inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + r)^ * (i + 1));
+        inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (i + 1));
+        inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (i + 1));
 
-        Inc(SumOutRed, PInt8u(PtrComp(SourcePixelPointer) + R)^);
-        Inc(SumOutGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
-        Inc(SumOutBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
+        inc(SumOutRed, PInt8u(PtrComp(SourcePixelPointer) + r)^);
+        inc(SumOutGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
+        inc(SumOutBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
 
-        Inc(i);
+        inc(i);
       end;
 
       i := 1;
@@ -882,23 +879,23 @@ begin
       while i <= RX do
       begin
         if i <= Wm then
-          Inc(PtrComp(SourcePixelPointer), img.PixWidth);
+          inc(PtrComp(SourcePixelPointer), img.PixWidth);
 
         StackPixelPointer := Stack[i + RX];
 
-        StackPixelPointer.Rgba8.R := PInt8u(PtrComp(SourcePixelPointer) + R)^;
+        StackPixelPointer.Rgba8.r := PInt8u(PtrComp(SourcePixelPointer) + r)^;
         StackPixelPointer.Rgba8.g := PInt8u(PtrComp(SourcePixelPointer) + g)^;
         StackPixelPointer.Rgba8.b := PInt8u(PtrComp(SourcePixelPointer) + b)^;
 
-        Inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + R)^ * (RX + 1 - i));
-        Inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (RX + 1 - i));
-        Inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (RX + 1 - i));
+        inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + r)^ * (RX + 1 - i));
+        inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (RX + 1 - i));
+        inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (RX + 1 - i));
 
-        Inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + R)^);
-        Inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
-        Inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
+        inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + r)^);
+        inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
+        inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
 
-        Inc(i);
+        inc(i);
       end;
 
       StackPointer := RX;
@@ -907,73 +904,73 @@ begin
       if xp > Wm then
         xp := Wm;
 
-      SourcePixelPointer := img.GetPixelPointer(xp, Y);
-      DestinationPixelPointer := img.GetPixelPointer(0, Y);
+      SourcePixelPointer := img.GetPixelPointer(xp, y);
+      DestinationPixelPointer := img.GetPixelPointer(0, y);
 
-      X := 0;
+      x := 0;
 
-      while X < w do
+      while x < w do
       begin
-        PInt8u(PtrComp(DestinationPixelPointer) + R)^ :=
+        PInt8u(PtrComp(DestinationPixelPointer) + r)^ :=
           Int8u((SumRed * MulSum) shr ShrSum);
         PInt8u(PtrComp(DestinationPixelPointer) + g)^ :=
           Int8u((SumGreen * MulSum) shr ShrSum);
         PInt8u(PtrComp(DestinationPixelPointer) + b)^ :=
           Int8u((SumBlue * MulSum) shr ShrSum);
 
-        Inc(PtrComp(DestinationPixelPointer), img.PixWidth);
+        inc(PtrComp(DestinationPixelPointer), img.PixWidth);
 
-        Dec(SumRed, SumOutRed);
-        Dec(SumGreen, SumOutGreen);
-        Dec(SumBlue, SumOutBlue);
+        dec(SumRed, SumOutRed);
+        dec(SumGreen, SumOutGreen);
+        dec(SumBlue, SumOutBlue);
 
         StackStart := StackPointer + ADiv - RX;
 
         if StackStart >= ADiv then
-          Dec(StackStart, ADiv);
+          dec(StackStart, ADiv);
 
         StackPixelPointer := Stack[StackStart];
 
-        Dec(SumOutRed, StackPixelPointer.Rgba8.R);
-        Dec(SumOutGreen, StackPixelPointer.Rgba8.g);
-        Dec(SumOutBlue, StackPixelPointer.Rgba8.b);
+        dec(SumOutRed, StackPixelPointer.Rgba8.r);
+        dec(SumOutGreen, StackPixelPointer.Rgba8.g);
+        dec(SumOutBlue, StackPixelPointer.Rgba8.b);
 
         if xp < Wm then
         begin
-          Inc(PtrComp(SourcePixelPointer), img.PixWidth);
-          Inc(xp);
+          inc(PtrComp(SourcePixelPointer), img.PixWidth);
+          inc(xp);
         end;
 
-        StackPixelPointer.Rgba8.R := PInt8u(PtrComp(SourcePixelPointer) + R)^;
+        StackPixelPointer.Rgba8.r := PInt8u(PtrComp(SourcePixelPointer) + r)^;
         StackPixelPointer.Rgba8.g := PInt8u(PtrComp(SourcePixelPointer) + g)^;
         StackPixelPointer.Rgba8.b := PInt8u(PtrComp(SourcePixelPointer) + b)^;
 
-        Inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + R)^);
-        Inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
-        Inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
+        inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + r)^);
+        inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
+        inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
 
-        Inc(SumRed, SumInRed);
-        Inc(SumGreen, SumInGreen);
-        Inc(SumBlue, SumInBlue);
+        inc(SumRed, SumInRed);
+        inc(SumGreen, SumInGreen);
+        inc(SumBlue, SumInBlue);
 
-        Inc(StackPointer);
+        inc(StackPointer);
 
         if StackPointer >= ADiv then
           StackPointer := 0;
 
         StackPixelPointer := Stack[StackPointer];
 
-        Inc(SumOutRed, StackPixelPointer.Rgba8.R);
-        Inc(SumOutGreen, StackPixelPointer.Rgba8.g);
-        Inc(SumOutBlue, StackPixelPointer.Rgba8.b);
-        Dec(SumInRed, StackPixelPointer.Rgba8.R);
-        Dec(SumInGreen, StackPixelPointer.Rgba8.g);
-        Dec(SumInBlue, StackPixelPointer.Rgba8.b);
+        inc(SumOutRed, StackPixelPointer.Rgba8.r);
+        inc(SumOutGreen, StackPixelPointer.Rgba8.g);
+        inc(SumOutBlue, StackPixelPointer.Rgba8.b);
+        dec(SumInRed, StackPixelPointer.Rgba8.r);
+        dec(SumInGreen, StackPixelPointer.Rgba8.g);
+        dec(SumInBlue, StackPixelPointer.Rgba8.b);
 
-        Inc(X);
+        inc(x);
       end;
 
-      Inc(Y);
+      inc(y);
     end;
   end;
 
@@ -991,9 +988,9 @@ begin
 
     stride := img.stride;
 
-    X := 0;
+    x := 0;
 
-    while X < w do
+    while x < w do
     begin
       SumRed := 0;
       SumGreen := 0;
@@ -1005,7 +1002,7 @@ begin
       SumOutGreen := 0;
       SumOutBlue := 0;
 
-      SourcePixelPointer := img.GetPixelPointer(X, 0);
+      SourcePixelPointer := img.GetPixelPointer(x, 0);
 
       i := 0;
 
@@ -1013,18 +1010,18 @@ begin
       begin
         StackPixelPointer := Stack[i];
 
-        StackPixelPointer.Rgba8.R := PInt8u(PtrComp(SourcePixelPointer) + R)^;
+        StackPixelPointer.Rgba8.r := PInt8u(PtrComp(SourcePixelPointer) + r)^;
         StackPixelPointer.Rgba8.g := PInt8u(PtrComp(SourcePixelPointer) + g)^;
         StackPixelPointer.Rgba8.b := PInt8u(PtrComp(SourcePixelPointer) + b)^;
 
-        Inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + R)^ * (i + 1));
-        Inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (i + 1));
-        Inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (i + 1));
-        Inc(SumOutRed, PInt8u(PtrComp(SourcePixelPointer) + R)^);
-        Inc(SumOutGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
-        Inc(SumOutBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
+        inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + r)^ * (i + 1));
+        inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (i + 1));
+        inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (i + 1));
+        inc(SumOutRed, PInt8u(PtrComp(SourcePixelPointer) + r)^);
+        inc(SumOutGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
+        inc(SumOutBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
 
-        Inc(i);
+        inc(i);
       end;
 
       i := 1;
@@ -1032,22 +1029,22 @@ begin
       while i <= RY do
       begin
         if i <= Hm then
-          Inc(PtrComp(SourcePixelPointer), stride);
+          inc(PtrComp(SourcePixelPointer), stride);
 
         StackPixelPointer := Stack[i + RY];
 
-        StackPixelPointer.Rgba8.R := PInt8u(PtrComp(SourcePixelPointer) + R)^;
+        StackPixelPointer.Rgba8.r := PInt8u(PtrComp(SourcePixelPointer) + r)^;
         StackPixelPointer.Rgba8.g := PInt8u(PtrComp(SourcePixelPointer) + g)^;
         StackPixelPointer.Rgba8.b := PInt8u(PtrComp(SourcePixelPointer) + b)^;
 
-        Inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + R)^ * (RY + 1 - i));
-        Inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (RY + 1 - i));
-        Inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (RY + 1 - i));
-        Inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + R)^);
-        Inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
-        Inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
+        inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + r)^ * (RY + 1 - i));
+        inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (RY + 1 - i));
+        inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (RY + 1 - i));
+        inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + r)^);
+        inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
+        inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
 
-        Inc(i);
+        inc(i);
       end;
 
       StackPointer := RY;
@@ -1056,73 +1053,73 @@ begin
       if yp > Hm then
         yp := Hm;
 
-      SourcePixelPointer := img.GetPixelPointer(X, yp);
-      DestinationPixelPointer := img.GetPixelPointer(X, 0);
+      SourcePixelPointer := img.GetPixelPointer(x, yp);
+      DestinationPixelPointer := img.GetPixelPointer(x, 0);
 
-      Y := 0;
+      y := 0;
 
-      while Y < h do
+      while y < h do
       begin
-        PInt8u(PtrComp(DestinationPixelPointer) + R)^ :=
+        PInt8u(PtrComp(DestinationPixelPointer) + r)^ :=
           Int8u((SumRed * MulSum) shr ShrSum);
         PInt8u(PtrComp(DestinationPixelPointer) + g)^ :=
           Int8u((SumGreen * MulSum) shr ShrSum);
         PInt8u(PtrComp(DestinationPixelPointer) + b)^ :=
           Int8u((SumBlue * MulSum) shr ShrSum);
 
-        Inc(PtrComp(DestinationPixelPointer), stride);
+        inc(PtrComp(DestinationPixelPointer), stride);
 
-        Dec(SumRed, SumOutRed);
-        Dec(SumGreen, SumOutGreen);
-        Dec(SumBlue, SumOutBlue);
+        dec(SumRed, SumOutRed);
+        dec(SumGreen, SumOutGreen);
+        dec(SumBlue, SumOutBlue);
 
         StackStart := StackPointer + ADiv - RY;
 
         if StackStart >= ADiv then
-          Dec(StackStart, ADiv);
+          dec(StackStart, ADiv);
 
         StackPixelPointer := Stack[StackStart];
 
-        Dec(SumOutRed, StackPixelPointer.Rgba8.R);
-        Dec(SumOutGreen, StackPixelPointer.Rgba8.g);
-        Dec(SumOutBlue, StackPixelPointer.Rgba8.b);
+        dec(SumOutRed, StackPixelPointer.Rgba8.r);
+        dec(SumOutGreen, StackPixelPointer.Rgba8.g);
+        dec(SumOutBlue, StackPixelPointer.Rgba8.b);
 
         if yp < Hm then
         begin
-          Inc(PtrComp(SourcePixelPointer), stride);
+          inc(PtrComp(SourcePixelPointer), stride);
 
-          Inc(yp);
+          inc(yp);
         end;
 
-        StackPixelPointer.Rgba8.R := PInt8u(PtrComp(SourcePixelPointer) + R)^;
+        StackPixelPointer.Rgba8.r := PInt8u(PtrComp(SourcePixelPointer) + r)^;
         StackPixelPointer.Rgba8.g := PInt8u(PtrComp(SourcePixelPointer) + g)^;
         StackPixelPointer.Rgba8.b := PInt8u(PtrComp(SourcePixelPointer) + b)^;
 
-        Inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + R)^);
-        Inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
-        Inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
-        Inc(SumRed, SumInRed);
-        Inc(SumGreen, SumInGreen);
-        Inc(SumBlue, SumInBlue);
+        inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + r)^);
+        inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
+        inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
+        inc(SumRed, SumInRed);
+        inc(SumGreen, SumInGreen);
+        inc(SumBlue, SumInBlue);
 
-        Inc(StackPointer);
+        inc(StackPointer);
 
         if StackPointer >= ADiv then
           StackPointer := 0;
 
         StackPixelPointer := Stack[StackPointer];
 
-        Inc(SumOutRed, StackPixelPointer.Rgba8.R);
-        Inc(SumOutGreen, StackPixelPointer.Rgba8.g);
-        Inc(SumOutBlue, StackPixelPointer.Rgba8.b);
-        Dec(SumInRed, StackPixelPointer.Rgba8.R);
-        Dec(SumInGreen, StackPixelPointer.Rgba8.g);
-        Dec(SumInBlue, StackPixelPointer.Rgba8.b);
+        inc(SumOutRed, StackPixelPointer.Rgba8.r);
+        inc(SumOutGreen, StackPixelPointer.Rgba8.g);
+        inc(SumOutBlue, StackPixelPointer.Rgba8.b);
+        dec(SumInRed, StackPixelPointer.Rgba8.r);
+        dec(SumInGreen, StackPixelPointer.Rgba8.g);
+        dec(SumInBlue, StackPixelPointer.Rgba8.b);
 
-        Inc(Y);
+        inc(y);
       end;
 
-      Inc(X);
+      inc(x);
     end;
   end;
 
@@ -1131,8 +1128,8 @@ end;
 
 procedure StackBlurRgba32(img: TAggPixelFormatProcessor; RX, RY: Cardinal);
 var
-  R, g, b, A, stride: Integer;
-  X, Y, xp, yp, i, StackPointer, StackStart: Cardinal;
+  r, g, b, a, stride: Integer;
+  x, y, xp, yp, i, StackPointer, StackStart: Cardinal;
   SumRed, SumGreen, SumBlue, SumAlpha: Cardinal;
   SumInRed, SumInGreen, SumInBlue, SumInAlpha: Cardinal;
   SumOutRed, SumOutGreen, SumOutBlue, SumOutAlpha: Cardinal;
@@ -1142,10 +1139,10 @@ var
   StackPixelPointer: PAggColor;
   Stack: TAggPodArray;
 begin
-  R := img.Order.R;
+  r := img.Order.r;
   g := img.Order.g;
   b := img.Order.b;
-  A := img.Order.A;
+  a := img.Order.a;
 
   w := img.width;
   h := img.height;
@@ -1165,9 +1162,9 @@ begin
 
     Stack.Allocate(ADiv);
 
-    Y := 0;
+    y := 0;
 
-    while Y < h do
+    while y < h do
     begin
       SumRed := 0;
       SumGreen := 0;
@@ -1182,7 +1179,7 @@ begin
       SumOutBlue := 0;
       SumOutAlpha := 0;
 
-      SourcePixelPointer := img.GetPixelPointer(0, Y);
+      SourcePixelPointer := img.GetPixelPointer(0, y);
 
       i := 0;
 
@@ -1190,22 +1187,22 @@ begin
       begin
         StackPixelPointer := Stack[i];
 
-        StackPixelPointer.Rgba8.R := PInt8u(PtrComp(SourcePixelPointer) + R)^;
+        StackPixelPointer.Rgba8.r := PInt8u(PtrComp(SourcePixelPointer) + r)^;
         StackPixelPointer.Rgba8.g := PInt8u(PtrComp(SourcePixelPointer) + g)^;
         StackPixelPointer.Rgba8.b := PInt8u(PtrComp(SourcePixelPointer) + b)^;
-        StackPixelPointer.Rgba8.A := PInt8u(PtrComp(SourcePixelPointer) + A)^;
+        StackPixelPointer.Rgba8.a := PInt8u(PtrComp(SourcePixelPointer) + a)^;
 
-        Inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + R)^ * (i + 1));
-        Inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (i + 1));
-        Inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (i + 1));
-        Inc(SumAlpha, PInt8u(PtrComp(SourcePixelPointer) + A)^ * (i + 1));
+        inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + r)^ * (i + 1));
+        inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (i + 1));
+        inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (i + 1));
+        inc(SumAlpha, PInt8u(PtrComp(SourcePixelPointer) + a)^ * (i + 1));
 
-        Inc(SumOutRed, PInt8u(PtrComp(SourcePixelPointer) + R)^);
-        Inc(SumOutGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
-        Inc(SumOutBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
-        Inc(SumOutAlpha, PInt8u(PtrComp(SourcePixelPointer) + A)^);
+        inc(SumOutRed, PInt8u(PtrComp(SourcePixelPointer) + r)^);
+        inc(SumOutGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
+        inc(SumOutBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
+        inc(SumOutAlpha, PInt8u(PtrComp(SourcePixelPointer) + a)^);
 
-        Inc(i);
+        inc(i);
       end;
 
       i := 1;
@@ -1213,26 +1210,26 @@ begin
       while i <= RX do
       begin
         if i <= Wm then
-          Inc(PtrComp(SourcePixelPointer), img.PixWidth);
+          inc(PtrComp(SourcePixelPointer), img.PixWidth);
 
         StackPixelPointer := Stack[i + RX];
 
-        StackPixelPointer.Rgba8.R := PInt8u(PtrComp(SourcePixelPointer) + R)^;
+        StackPixelPointer.Rgba8.r := PInt8u(PtrComp(SourcePixelPointer) + r)^;
         StackPixelPointer.Rgba8.g := PInt8u(PtrComp(SourcePixelPointer) + g)^;
         StackPixelPointer.Rgba8.b := PInt8u(PtrComp(SourcePixelPointer) + b)^;
-        StackPixelPointer.Rgba8.A := PInt8u(PtrComp(SourcePixelPointer) + A)^;
+        StackPixelPointer.Rgba8.a := PInt8u(PtrComp(SourcePixelPointer) + a)^;
 
-        Inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + R)^ * (RX + 1 - i));
-        Inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (RX + 1 - i));
-        Inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (RX + 1 - i));
-        Inc(SumAlpha, PInt8u(PtrComp(SourcePixelPointer) + A)^ * (RX + 1 - i));
+        inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + r)^ * (RX + 1 - i));
+        inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (RX + 1 - i));
+        inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (RX + 1 - i));
+        inc(SumAlpha, PInt8u(PtrComp(SourcePixelPointer) + a)^ * (RX + 1 - i));
 
-        Inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + R)^);
-        Inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
-        Inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
-        Inc(SumInAlpha, PInt8u(PtrComp(SourcePixelPointer) + A)^);
+        inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + r)^);
+        inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
+        inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
+        inc(SumInAlpha, PInt8u(PtrComp(SourcePixelPointer) + a)^);
 
-        Inc(i);
+        inc(i);
       end;
 
       StackPointer := RX;
@@ -1241,82 +1238,82 @@ begin
       if xp > Wm then
         xp := Wm;
 
-      SourcePixelPointer := img.GetPixelPointer(xp, Y);
-      DestinationPixelPointer := img.GetPixelPointer(0, Y);
+      SourcePixelPointer := img.GetPixelPointer(xp, y);
+      DestinationPixelPointer := img.GetPixelPointer(0, y);
 
-      X := 0;
+      x := 0;
 
-      while X < w do
+      while x < w do
       begin
-        PInt8u(PtrComp(DestinationPixelPointer) + R)^ :=
+        PInt8u(PtrComp(DestinationPixelPointer) + r)^ :=
           Int8u((SumRed * MulSum) shr ShrSum);
         PInt8u(PtrComp(DestinationPixelPointer) + g)^ :=
           Int8u((SumGreen * MulSum) shr ShrSum);
         PInt8u(PtrComp(DestinationPixelPointer) + b)^ :=
           Int8u((SumBlue * MulSum) shr ShrSum);
-        PInt8u(PtrComp(DestinationPixelPointer) + A)^ :=
+        PInt8u(PtrComp(DestinationPixelPointer) + a)^ :=
           Int8u((SumAlpha * MulSum) shr ShrSum);
 
-        Inc(PtrComp(DestinationPixelPointer), img.PixWidth);
+        inc(PtrComp(DestinationPixelPointer), img.PixWidth);
 
-        Dec(SumRed, SumOutRed);
-        Dec(SumGreen, SumOutGreen);
-        Dec(SumBlue, SumOutBlue);
-        Dec(SumAlpha, SumOutAlpha);
+        dec(SumRed, SumOutRed);
+        dec(SumGreen, SumOutGreen);
+        dec(SumBlue, SumOutBlue);
+        dec(SumAlpha, SumOutAlpha);
 
         StackStart := StackPointer + ADiv - RX;
 
         if StackStart >= ADiv then
-          Dec(StackStart, ADiv);
+          dec(StackStart, ADiv);
 
         StackPixelPointer := Stack[StackStart];
 
-        Dec(SumOutRed, StackPixelPointer.Rgba8.R);
-        Dec(SumOutGreen, StackPixelPointer.Rgba8.g);
-        Dec(SumOutBlue, StackPixelPointer.Rgba8.b);
-        Dec(SumOutAlpha, StackPixelPointer.Rgba8.A);
+        dec(SumOutRed, StackPixelPointer.Rgba8.r);
+        dec(SumOutGreen, StackPixelPointer.Rgba8.g);
+        dec(SumOutBlue, StackPixelPointer.Rgba8.b);
+        dec(SumOutAlpha, StackPixelPointer.Rgba8.a);
 
         if xp < Wm then
         begin
-          Inc(PtrComp(SourcePixelPointer), img.PixWidth);
-          Inc(xp);
+          inc(PtrComp(SourcePixelPointer), img.PixWidth);
+          inc(xp);
         end;
 
-        StackPixelPointer.Rgba8.R := PInt8u(PtrComp(SourcePixelPointer) + R)^;
+        StackPixelPointer.Rgba8.r := PInt8u(PtrComp(SourcePixelPointer) + r)^;
         StackPixelPointer.Rgba8.g := PInt8u(PtrComp(SourcePixelPointer) + g)^;
         StackPixelPointer.Rgba8.b := PInt8u(PtrComp(SourcePixelPointer) + b)^;
-        StackPixelPointer.Rgba8.A := PInt8u(PtrComp(SourcePixelPointer) + A)^;
+        StackPixelPointer.Rgba8.a := PInt8u(PtrComp(SourcePixelPointer) + a)^;
 
-        Inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + R)^);
-        Inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
-        Inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
-        Inc(SumInAlpha, PInt8u(PtrComp(SourcePixelPointer) + A)^);
+        inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + r)^);
+        inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
+        inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
+        inc(SumInAlpha, PInt8u(PtrComp(SourcePixelPointer) + a)^);
 
-        Inc(SumRed, SumInRed);
-        Inc(SumGreen, SumInGreen);
-        Inc(SumBlue, SumInBlue);
-        Inc(SumAlpha, SumInAlpha);
+        inc(SumRed, SumInRed);
+        inc(SumGreen, SumInGreen);
+        inc(SumBlue, SumInBlue);
+        inc(SumAlpha, SumInAlpha);
 
-        Inc(StackPointer);
+        inc(StackPointer);
 
         if StackPointer >= ADiv then
           StackPointer := 0;
 
         StackPixelPointer := Stack[StackPointer];
 
-        Inc(SumOutRed, StackPixelPointer.Rgba8.R);
-        Inc(SumOutGreen, StackPixelPointer.Rgba8.g);
-        Inc(SumOutBlue, StackPixelPointer.Rgba8.b);
-        Inc(SumOutAlpha, StackPixelPointer.Rgba8.A);
-        Dec(SumInRed, StackPixelPointer.Rgba8.R);
-        Dec(SumInGreen, StackPixelPointer.Rgba8.g);
-        Dec(SumInBlue, StackPixelPointer.Rgba8.b);
-        Dec(SumInAlpha, StackPixelPointer.Rgba8.A);
+        inc(SumOutRed, StackPixelPointer.Rgba8.r);
+        inc(SumOutGreen, StackPixelPointer.Rgba8.g);
+        inc(SumOutBlue, StackPixelPointer.Rgba8.b);
+        inc(SumOutAlpha, StackPixelPointer.Rgba8.a);
+        dec(SumInRed, StackPixelPointer.Rgba8.r);
+        dec(SumInGreen, StackPixelPointer.Rgba8.g);
+        dec(SumInBlue, StackPixelPointer.Rgba8.b);
+        dec(SumInAlpha, StackPixelPointer.Rgba8.a);
 
-        Inc(X);
+        inc(x);
       end;
 
-      Inc(Y);
+      inc(y);
     end;
   end;
 
@@ -1334,9 +1331,9 @@ begin
 
     stride := img.stride;
 
-    X := 0;
+    x := 0;
 
-    while X < w do
+    while x < w do
     begin
       SumRed := 0;
       SumGreen := 0;
@@ -1351,7 +1348,7 @@ begin
       SumOutBlue := 0;
       SumOutAlpha := 0;
 
-      SourcePixelPointer := img.GetPixelPointer(X, 0);
+      SourcePixelPointer := img.GetPixelPointer(x, 0);
 
       i := 0;
 
@@ -1359,21 +1356,21 @@ begin
       begin
         StackPixelPointer := Stack[i];
 
-        StackPixelPointer.Rgba8.R := PInt8u(PtrComp(SourcePixelPointer) + R)^;
+        StackPixelPointer.Rgba8.r := PInt8u(PtrComp(SourcePixelPointer) + r)^;
         StackPixelPointer.Rgba8.g := PInt8u(PtrComp(SourcePixelPointer) + g)^;
         StackPixelPointer.Rgba8.b := PInt8u(PtrComp(SourcePixelPointer) + b)^;
-        StackPixelPointer.Rgba8.A := PInt8u(PtrComp(SourcePixelPointer) + A)^;
+        StackPixelPointer.Rgba8.a := PInt8u(PtrComp(SourcePixelPointer) + a)^;
 
-        Inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + R)^ * (i + 1));
-        Inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (i + 1));
-        Inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (i + 1));
-        Inc(SumAlpha, PInt8u(PtrComp(SourcePixelPointer) + A)^ * (i + 1));
-        Inc(SumOutRed, PInt8u(PtrComp(SourcePixelPointer) + R)^);
-        Inc(SumOutGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
-        Inc(SumOutBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
-        Inc(SumOutAlpha, PInt8u(PtrComp(SourcePixelPointer) + A)^);
+        inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + r)^ * (i + 1));
+        inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (i + 1));
+        inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (i + 1));
+        inc(SumAlpha, PInt8u(PtrComp(SourcePixelPointer) + a)^ * (i + 1));
+        inc(SumOutRed, PInt8u(PtrComp(SourcePixelPointer) + r)^);
+        inc(SumOutGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
+        inc(SumOutBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
+        inc(SumOutAlpha, PInt8u(PtrComp(SourcePixelPointer) + a)^);
 
-        Inc(i);
+        inc(i);
       end;
 
       i := 1;
@@ -1381,25 +1378,25 @@ begin
       while i <= RY do
       begin
         if i <= Hm then
-          Inc(PtrComp(SourcePixelPointer), stride);
+          inc(PtrComp(SourcePixelPointer), stride);
 
         StackPixelPointer := Stack[i + RY];
 
-        StackPixelPointer.Rgba8.R := PInt8u(PtrComp(SourcePixelPointer) + R)^;
+        StackPixelPointer.Rgba8.r := PInt8u(PtrComp(SourcePixelPointer) + r)^;
         StackPixelPointer.Rgba8.g := PInt8u(PtrComp(SourcePixelPointer) + g)^;
         StackPixelPointer.Rgba8.b := PInt8u(PtrComp(SourcePixelPointer) + b)^;
-        StackPixelPointer.Rgba8.A := PInt8u(PtrComp(SourcePixelPointer) + A)^;
+        StackPixelPointer.Rgba8.a := PInt8u(PtrComp(SourcePixelPointer) + a)^;
 
-        Inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + R)^ * (RY + 1 - i));
-        Inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (RY + 1 - i));
-        Inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (RY + 1 - i));
-        Inc(SumAlpha, PInt8u(PtrComp(SourcePixelPointer) + A)^ * (RY + 1 - i));
-        Inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + R)^);
-        Inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
-        Inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
-        Inc(SumInAlpha, PInt8u(PtrComp(SourcePixelPointer) + A)^);
+        inc(SumRed, PInt8u(PtrComp(SourcePixelPointer) + r)^ * (RY + 1 - i));
+        inc(SumGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^ * (RY + 1 - i));
+        inc(SumBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^ * (RY + 1 - i));
+        inc(SumAlpha, PInt8u(PtrComp(SourcePixelPointer) + a)^ * (RY + 1 - i));
+        inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + r)^);
+        inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
+        inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
+        inc(SumInAlpha, PInt8u(PtrComp(SourcePixelPointer) + a)^);
 
-        Inc(i);
+        inc(i);
       end;
 
       StackPointer := RY;
@@ -1408,82 +1405,82 @@ begin
       if yp > Hm then
         yp := Hm;
 
-      SourcePixelPointer := img.GetPixelPointer(X, yp);
-      DestinationPixelPointer := img.GetPixelPointer(X, 0);
+      SourcePixelPointer := img.GetPixelPointer(x, yp);
+      DestinationPixelPointer := img.GetPixelPointer(x, 0);
 
-      Y := 0;
+      y := 0;
 
-      while Y < h do
+      while y < h do
       begin
-        PInt8u(PtrComp(DestinationPixelPointer) + R)^ :=
+        PInt8u(PtrComp(DestinationPixelPointer) + r)^ :=
           Int8u((SumRed * MulSum) shr ShrSum);
         PInt8u(PtrComp(DestinationPixelPointer) + g)^ :=
           Int8u((SumGreen * MulSum) shr ShrSum);
         PInt8u(PtrComp(DestinationPixelPointer) + b)^ :=
           Int8u((SumBlue * MulSum) shr ShrSum);
-        PInt8u(PtrComp(DestinationPixelPointer) + A)^ :=
+        PInt8u(PtrComp(DestinationPixelPointer) + a)^ :=
           Int8u((SumAlpha * MulSum) shr ShrSum);
 
-        Inc(PtrComp(DestinationPixelPointer), stride);
+        inc(PtrComp(DestinationPixelPointer), stride);
 
-        Dec(SumRed, SumOutRed);
-        Dec(SumGreen, SumOutGreen);
-        Dec(SumBlue, SumOutBlue);
-        Dec(SumAlpha, SumOutAlpha);
+        dec(SumRed, SumOutRed);
+        dec(SumGreen, SumOutGreen);
+        dec(SumBlue, SumOutBlue);
+        dec(SumAlpha, SumOutAlpha);
 
         StackStart := StackPointer + ADiv - RY;
 
         if StackStart >= ADiv then
-          Dec(StackStart, ADiv);
+          dec(StackStart, ADiv);
 
         StackPixelPointer := Stack[StackStart];
 
-        Dec(SumOutRed, StackPixelPointer.Rgba8.R);
-        Dec(SumOutGreen, StackPixelPointer.Rgba8.g);
-        Dec(SumOutBlue, StackPixelPointer.Rgba8.b);
-        Dec(SumOutAlpha, StackPixelPointer.Rgba8.A);
+        dec(SumOutRed, StackPixelPointer.Rgba8.r);
+        dec(SumOutGreen, StackPixelPointer.Rgba8.g);
+        dec(SumOutBlue, StackPixelPointer.Rgba8.b);
+        dec(SumOutAlpha, StackPixelPointer.Rgba8.a);
 
         if yp < Hm then
         begin
-          Inc(PtrComp(SourcePixelPointer), stride);
+          inc(PtrComp(SourcePixelPointer), stride);
 
-          Inc(yp);
+          inc(yp);
         end;
 
-        StackPixelPointer.Rgba8.R := PInt8u(PtrComp(SourcePixelPointer) + R)^;
+        StackPixelPointer.Rgba8.r := PInt8u(PtrComp(SourcePixelPointer) + r)^;
         StackPixelPointer.Rgba8.g := PInt8u(PtrComp(SourcePixelPointer) + g)^;
         StackPixelPointer.Rgba8.b := PInt8u(PtrComp(SourcePixelPointer) + b)^;
-        StackPixelPointer.Rgba8.A := PInt8u(PtrComp(SourcePixelPointer) + A)^;
+        StackPixelPointer.Rgba8.a := PInt8u(PtrComp(SourcePixelPointer) + a)^;
 
-        Inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + R)^);
-        Inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
-        Inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
-        Inc(SumInAlpha, PInt8u(PtrComp(SourcePixelPointer) + A)^);
-        Inc(SumRed, SumInRed);
-        Inc(SumGreen, SumInGreen);
-        Inc(SumBlue, SumInBlue);
-        Inc(SumAlpha, SumInAlpha);
+        inc(SumInRed, PInt8u(PtrComp(SourcePixelPointer) + r)^);
+        inc(SumInGreen, PInt8u(PtrComp(SourcePixelPointer) + g)^);
+        inc(SumInBlue, PInt8u(PtrComp(SourcePixelPointer) + b)^);
+        inc(SumInAlpha, PInt8u(PtrComp(SourcePixelPointer) + a)^);
+        inc(SumRed, SumInRed);
+        inc(SumGreen, SumInGreen);
+        inc(SumBlue, SumInBlue);
+        inc(SumAlpha, SumInAlpha);
 
-        Inc(StackPointer);
+        inc(StackPointer);
 
         if StackPointer >= ADiv then
           StackPointer := 0;
 
         StackPixelPointer := Stack[StackPointer];
 
-        Inc(SumOutRed, StackPixelPointer.Rgba8.R);
-        Inc(SumOutGreen, StackPixelPointer.Rgba8.g);
-        Inc(SumOutBlue, StackPixelPointer.Rgba8.b);
-        Inc(SumOutAlpha, StackPixelPointer.Rgba8.A);
-        Dec(SumInRed, StackPixelPointer.Rgba8.R);
-        Dec(SumInGreen, StackPixelPointer.Rgba8.g);
-        Dec(SumInBlue, StackPixelPointer.Rgba8.b);
-        Dec(SumInAlpha, StackPixelPointer.Rgba8.A);
+        inc(SumOutRed, StackPixelPointer.Rgba8.r);
+        inc(SumOutGreen, StackPixelPointer.Rgba8.g);
+        inc(SumOutBlue, StackPixelPointer.Rgba8.b);
+        inc(SumOutAlpha, StackPixelPointer.Rgba8.a);
+        dec(SumInRed, StackPixelPointer.Rgba8.r);
+        dec(SumInGreen, StackPixelPointer.Rgba8.g);
+        dec(SumInBlue, StackPixelPointer.Rgba8.b);
+        dec(SumInAlpha, StackPixelPointer.Rgba8.a);
 
-        Inc(Y);
+        inc(y);
       end;
 
-      Inc(X);
+      inc(x);
     end;
   end;
 
@@ -1491,3 +1488,5 @@ begin
 end;
 
 end. 
+ 
+ 

@@ -37,11 +37,8 @@
 *)
 unit AggSpanGradientContour;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   Math,
   AggBasics,
@@ -79,9 +76,9 @@ type
 
     FD1, FD2: Double;
 
-    procedure SetFrame(F: Integer); overload;
+    procedure SetFrame(f: Integer); overload;
 
-    function Calculate(X, Y, d: Integer): Integer; override;
+    function Calculate(x, y, d: Integer): Integer; override;
 
     procedure SetD1(d: Double);
     procedure SetD2(d: Double);
@@ -125,9 +122,9 @@ begin
       AggFreeMem(FBuffer, FWidth * FHeight);
 end;
 
-function Square(X: Integer): Integer;
+function Square(x: Integer): Integer;
 begin
-  Result := X * X;
+  Result := x * x;
 end;
 
 // DT algorithm by: Pedro Felzenszwalb
@@ -152,20 +149,20 @@ begin
 
       while s <= Spang[k] do
         begin
-          Dec(k);
+          dec(k);
 
           s := ((Spanf[q] + Square(q)) - (Spanf[Spann[k]] + Square(Spann[k]))) /
             (2 * q - 2 * Spann[k]);
         end;
 
-      Inc(k);
+      inc(k);
 
       Spann[k] := q;
       Spang[k] := s;
 
       Spang[k + 1] := +CInfinity;
 
-      Inc(q);
+      inc(q);
     end;
 
   k := 0;
@@ -174,11 +171,11 @@ begin
   while q <= length - 1 do
     begin
       while Spang[k + 1] < q do
-          Inc(k);
+          inc(k);
 
       Spanr[q] := Square(q - Spann[k]) + Spanf[Spann[k]];
 
-      Inc(q);
+      inc(q);
     end;
 end;
 
@@ -272,8 +269,8 @@ begin
                           else
                               Dst^ := CInfinity;
 
-                          Inc(PtrComp(Src));
-                          Inc(PtrComp(Dst), SizeOf(Single));
+                          inc(PtrComp(Src));
+                          inc(PtrComp(Dst), SizeOf(Single));
                         end;
 
                     { DT of 2d }
@@ -303,8 +300,8 @@ begin
                               begin
                                 Dst^ := IM^;
 
-                                Inc(PtrComp(Dst), SizeOf(Single));
-                                Inc(PtrComp(IM), width * SizeOf(Single));
+                                inc(PtrComp(Dst), SizeOf(Single));
+                                inc(PtrComp(IM), width * SizeOf(Single));
                               end;
 
                             { DT of 1d }
@@ -318,8 +315,8 @@ begin
                               begin
                                 IM^ := Dst^;
 
-                                Inc(PtrComp(Dst), SizeOf(Single));
-                                Inc(PtrComp(IM), width * SizeOf(Single));
+                                inc(PtrComp(Dst), SizeOf(Single));
+                                inc(PtrComp(IM), width * SizeOf(Single));
                               end;
                           end;
 
@@ -333,8 +330,8 @@ begin
                               begin
                                 Dst^ := IM^;
 
-                                Inc(PtrComp(Dst), SizeOf(Single));
-                                Inc(PtrComp(IM), SizeOf(Single));
+                                inc(PtrComp(Dst), SizeOf(Single));
+                                inc(PtrComp(IM), SizeOf(Single));
                               end;
 
                             { DT of 1d }
@@ -348,8 +345,8 @@ begin
                               begin
                                 IM^ := Dst^;
 
-                                Inc(PtrComp(Dst), SizeOf(Single));
-                                Inc(PtrComp(IM), SizeOf(Single));
+                                inc(PtrComp(Dst), SizeOf(Single));
+                                inc(PtrComp(IM), SizeOf(Single));
                               end;
                           end;
 
@@ -369,7 +366,7 @@ begin
                               if Max < Dst^ then
                                   Max := Dst^;
 
-                              Inc(PtrComp(Dst), SizeOf(Single));
+                              inc(PtrComp(Dst), SizeOf(Single));
                             end;
 
                         { III. Convert To Grayscale }
@@ -387,8 +384,8 @@ begin
                                 begin
                                   Src^ := Int8u(Trunc((Dst^ - Min) * Scale));
 
-                                  Inc(PtrComp(Src));
-                                  Inc(PtrComp(Dst), SizeOf(Single));
+                                  inc(PtrComp(Src));
+                                  inc(PtrComp(Dst), SizeOf(Single));
                                 end;
                           end;
 
@@ -439,20 +436,20 @@ begin
   FD2 := d;
 end;
 
-procedure TAggGradientContour.SetFrame(F: Integer);
+procedure TAggGradientContour.SetFrame(f: Integer);
 begin
-  FFrame := F;
+  FFrame := f;
 end;
 
-function TAggGradientContour.Calculate(X, Y, d: Integer): Integer;
+function TAggGradientContour.Calculate(x, y, d: Integer): Integer;
 var
   Px, Py: Integer;
   Pixel: PInt8u;
 begin
   if FBuffer <> nil then
     begin
-      Px := ShrInt32(X, CAggGradientSubpixelShift);
-      Py := ShrInt32(Y, CAggGradientSubpixelShift);
+      Px := ShrInt32(x, CAggGradientSubpixelShift);
+      Py := ShrInt32(y, CAggGradientSubpixelShift);
 
       Px := Px mod FWidth;
 
@@ -472,3 +469,5 @@ begin
 end;
 
 end. 
+ 
+ 

@@ -37,11 +37,8 @@
 *)
 unit AggTransBilinear;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggTransAffine,
@@ -50,9 +47,9 @@ uses
 type
   PAggIteratorX = ^TAggIteratorX;
 
-  TAggIteratorX = packed record
+  TAggIteratorX = record
   private
-    IncX, IncY, X, Y: Double;
+    IncX, IncY, x, y: Double;
   public
     procedure Initialize(TX, TY, Step: Double; M: PDoubleArray42); overload;
 
@@ -88,7 +85,7 @@ type
     procedure QuadToRect(Quad: PQuadDouble; x1, y1, x2, y2: Double); overload;
     procedure QuadToRect(Quad: PQuadDouble; Rect: TRectDouble); overload;
 
-    function GetBegin(X, Y, Step: Double): TAggIteratorX;
+    function GetBegin(x, y, Step: Double): TAggIteratorX;
 
     // Check if the equations were solved successfully
     property IsValid: Boolean read FValid;
@@ -104,29 +101,29 @@ begin
   IncX := M^[1, 0] * Step * TY + M^[2, 0] * Step;
   IncY := M^[1, 1] * Step * TY + M^[2, 1] * Step;
 
-  X := M^[0, 0] + M^[1, 0] * TX * TY + M^[2, 0] * TX + M^[3, 0] * TY;
-  Y := M^[0, 1] + M^[1, 1] * TX * TY + M^[2, 1] * TX + M^[3, 1] * TY;
+  x := M^[0, 0] + M^[1, 0] * TX * TY + M^[2, 0] * TX + M^[3, 0] * TY;
+  y := M^[0, 1] + M^[1, 1] * TX * TY + M^[2, 1] * TX + M^[3, 1] * TY;
 end;
 
 procedure TAggIteratorX.IncOperator;
 begin
-  X := X + IncX;
-  Y := Y + IncY;
+  x := x + IncX;
+  y := y + IncY;
 end;
 
-procedure BilinearTransform(This: TAggTransBilinear; X, Y: PDouble);
+procedure BilinearTransform(This: TAggTransBilinear; x, y: PDouble);
 var
   Temp: TPointDouble;
   xy: Double;
 begin
-  Temp.X := X^;
-  Temp.Y := Y^;
-  xy := Temp.X * Temp.Y;
+  Temp.x := x^;
+  Temp.y := y^;
+  xy := Temp.x * Temp.y;
 
-  X^ := This.FMatrix[0, 0] + This.FMatrix[1, 0] * xy +
-    This.FMatrix[2, 0] * Temp.X + This.FMatrix[3, 0] * Temp.Y;
-  Y^ := This.FMatrix[0, 1] + This.FMatrix[1, 1] * xy +
-    This.FMatrix[2, 1] * Temp.X + This.FMatrix[3, 1] * Temp.Y;
+  x^ := This.FMatrix[0, 0] + This.FMatrix[1, 0] * xy +
+    This.FMatrix[2, 0] * Temp.x + This.FMatrix[3, 0] * Temp.y;
+  y^ := This.FMatrix[0, 1] + This.FMatrix[1, 1] * xy +
+    This.FMatrix[2, 1] * Temp.x + This.FMatrix[3, 1] * Temp.y;
 end;
 
 { TAggTransBilinear }
@@ -258,9 +255,11 @@ begin
   QuadToQuad(Quad, @Dst);
 end;
 
-function TAggTransBilinear.GetBegin(X, Y, Step: Double): TAggIteratorX;
+function TAggTransBilinear.GetBegin(x, y, Step: Double): TAggIteratorX;
 begin
-  Result.Initialize(X, Y, Step, @FMatrix);
+  Result.Initialize(x, y, Step, @FMatrix);
 end;
 
 end. 
+ 
+ 

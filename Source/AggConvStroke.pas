@@ -37,11 +37,8 @@
 *)
 unit AggConvStroke;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVertexSource,
@@ -337,3 +334,4 @@ begin
 end;
 
 end. 
+ 

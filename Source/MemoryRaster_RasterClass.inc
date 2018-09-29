@@ -1,4 +1,4 @@
-function ClampInt(const Value, Min, Max: Integer): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ClampInt(const Value, Min, Max: Integer): Integer;
 begin
   if Value > Max then
       Result := Max
@@ -8,7 +8,7 @@ begin
       Result := Value;
 end;
 
-function ClampByte(const Value, Min, Max: Byte): Byte; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function ClampByte(const Value, Min, Max: Byte): Byte;  overload;
 begin
   if Value > Max then
       Result := Max
@@ -18,7 +18,7 @@ begin
       Result := Value;
 end;
 
-function ClampByte(const Value: Integer): Byte; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function ClampByte(const Value: Integer): Byte;  overload;
 begin
   if Value > 255 then
       Result := 255
@@ -28,7 +28,7 @@ begin
       Result := Value;
 end;
 
-function IntersectRect(out Dst: TRect; const r1, r2: TRect): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IntersectRect(out Dst: TRect; const r1, r2: TRect): Boolean;
 begin
   if r1.Left >= r2.Left then
       Dst.Left := r1.Left
@@ -51,7 +51,7 @@ begin
       Dst := ZERO_RECT;
 end;
 
-procedure OffsetRect(var r: TRect; dx, dy: Integer); {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure OffsetRect(var r: TRect; dx, dy: Integer);
 begin
   inc(r.Left, dx);
   inc(r.Top, dy);
@@ -59,7 +59,7 @@ begin
   inc(r.Bottom, dy);
 end;
 
-function IsRectEmpty(const r: TRect): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsRectEmpty(const r: TRect): Boolean;
 begin
   Result := (r.Right <= r.Left) or (r.Bottom <= r.Top);
 end;
@@ -336,6 +336,11 @@ begin
   TRasterColorEntry(Result).a := Round(a * 255);
 end;
 
+function TMemoryRaster.GetPixelLinear(const x, y: Integer): TRasterColor;
+begin
+  Result := GetPixelWrapLinear(x / width - 1, y / height - 1);
+end;
+
 constructor TMemoryRaster.Create;
 begin
   inherited Create;
@@ -363,7 +368,11 @@ end;
 
 destructor TMemoryRaster.Destroy;
 begin
-  Reset;
+  CloseFont;
+  CloseVertex;
+  CloseAgg;
+  if Assigned(FBits) and FFreeBits then
+      FreeMem(FBits);
   inherited Destroy;
 end;
 
@@ -452,6 +461,11 @@ begin
   FAggNeed := False;
 end;
 
+function TMemoryRaster.AggActivted: Boolean;
+begin
+  Result := (FAggImage <> nil) and (FAgg <> nil);
+end;
+
 procedure TMemoryRaster.Clear;
 begin
   Clear($FF000000);
@@ -525,6 +539,11 @@ end;
 function TMemoryRaster.BoundsRectV2: TRectV2;
 begin
   Result := MakeRectV2(0, 0, width, height);
+end;
+
+function TMemoryRaster.Centroid: TVec2;
+begin
+  Result := Vec2(width * 0.5, height * 0.5);
 end;
 
 procedure TMemoryRaster.Reset;
@@ -709,6 +728,45 @@ begin
 
   CloseVertex;
   FreeAgg;
+end;
+
+procedure TMemoryRaster.Rotate(dest: TMemoryRaster; Angle: TGeoFloat; Endge: Integer);
+begin
+  ProjectionTo(dest,
+    TV2Rect4.Init(BoundsRectV2, 0),
+    TV2Rect4.Init(BoundsRectV2, Angle).ScaleToRect(dest.BoundsRectV2, Endge),
+    True, 1.0);
+end;
+
+procedure TMemoryRaster.Rotate(Angle: TGeoFloat; Endge: Integer; BackgroundColor: TRasterColor);
+var
+  n: TMemoryRaster;
+begin
+  n := TMemoryRaster.Create;
+  n.SetSize(width, height, BackgroundColor);
+  Rotate(n, Angle, Endge);
+  Reset;
+  FWidth := n.width;
+  FHeight := n.height;
+  FBits := n.FBits;
+
+  n.FBits := nil;
+  n.FWidth := 0;
+  n.FHeight := 0;
+  DisposeObject(n);
+
+  CloseVertex;
+  FreeAgg;
+end;
+
+procedure TMemoryRaster.CalibrateRotate(BackgroundColor: TRasterColor);
+begin
+  Rotate(-DocmentRotationDetected(10, 128, Self), 1, BackgroundColor);
+end;
+
+procedure TMemoryRaster.CalibrateRotate;
+begin
+  CalibrateRotate(RasterColor(0, 0, 0, 0));
 end;
 
 procedure TMemoryRaster.NoLineZoomLine(const Source, dest: TMemoryRaster; const pass: Integer);
@@ -1007,7 +1065,7 @@ begin
   dest.FWidth := width;
   dest.FHeight := height;
 
-  for pass := 0 to (width * height) - 1 do
+  for pass := (width * height) - 1 downto 0 do
       dest.FBits^[pass] := RGBA2BGRA(FBits^[pass]);
 
   Result := dest;
@@ -1017,7 +1075,7 @@ procedure TMemoryRaster.FormatBGRA;
 var
   pass: Integer;
 begin
-  for pass := 0 to (width * height) - 1 do
+  for pass := (width * height) - 1 downto 0 do
     with TRasterColorEntry(FBits^[pass]) do
         Swap(r, b);
 end;
@@ -1054,7 +1112,7 @@ begin
   RGBToGrayscale(Self);
 end;
 
-procedure TMemoryRaster.TransformToGrayRaster(var output: TByteRaster);
+procedure TMemoryRaster.ExtractGray(var output: TByteRaster);
 var
   i, j: Integer;
 begin
@@ -1064,7 +1122,7 @@ begin
         output[j, i] := PixelGray[i, j];
 end;
 
-procedure TMemoryRaster.TransformToRedRaster(var output: TByteRaster);
+procedure TMemoryRaster.ExtractRed(var output: TByteRaster);
 var
   i, j: Integer;
 begin
@@ -1074,7 +1132,7 @@ begin
         output[j, i] := PixelRed[i, j];
 end;
 
-procedure TMemoryRaster.TransformToGreenRaster(var output: TByteRaster);
+procedure TMemoryRaster.ExtractGreen(var output: TByteRaster);
 var
   i, j: Integer;
 begin
@@ -1084,7 +1142,7 @@ begin
         output[j, i] := PixelGreen[i, j];
 end;
 
-procedure TMemoryRaster.TransformToBlueRaster(var output: TByteRaster);
+procedure TMemoryRaster.ExtractBlue(var output: TByteRaster);
 var
   i, j: Integer;
 begin
@@ -1094,7 +1152,7 @@ begin
         output[j, i] := PixelBlue[i, j];
 end;
 
-procedure TMemoryRaster.TransformToAlphaRaster(var output: TByteRaster);
+procedure TMemoryRaster.ExtractAlpha(var output: TByteRaster);
 var
   i, j: Integer;
 begin
@@ -1340,13 +1398,13 @@ begin
   FillRect(Round(r[0, 0]), Round(r[0, 1]), Round(r[1, 0]), Round(r[1, 1]), Value);
 end;
 
-procedure TMemoryRaster.FillRect(r: TRectV2; angle: TGeoFloat; Value: TRasterColor);
+procedure TMemoryRaster.FillRect(r: TRectV2; Angle: TGeoFloat; Value: TRasterColor);
 var
   a: TGeoFloat;
   r4: TV2Rect4;
   buff: array [0 .. 4] of TPointDouble;
 begin
-  a := NormalizeDegAngle(angle);
+  a := NormalizeDegAngle(Angle);
   if a = 0 then
       FillRect(r, Value)
   else
@@ -1370,7 +1428,7 @@ begin
           FAgg.Polygon(@buff[0], 5);
         end
       else
-          ProjectionColor(r4, Value);
+          Projection(r4, Value);
     end;
 end;
 
@@ -1389,10 +1447,10 @@ begin
     end
   else
     begin
-      LineF(vec2(r[0][0], r[0][1]), vec2(r[1][0], r[0][1]), Value, True);
-      LineF(vec2(r[1][0], r[0][1]), vec2(r[1][0], r[1][1]), Value, True);
-      LineF(vec2(r[1][0], r[1][1]), vec2(r[0][0], r[1][1]), Value, True);
-      LineF(vec2(r[0][0], r[1][1]), vec2(r[0][0], r[0][1]), Value, True);
+      LineF(Vec2(r[0][0], r[0][1]), Vec2(r[1][0], r[0][1]), Value, True);
+      LineF(Vec2(r[1][0], r[0][1]), Vec2(r[1][0], r[1][1]), Value, True);
+      LineF(Vec2(r[1][0], r[1][1]), Vec2(r[0][0], r[1][1]), Value, True);
+      LineF(Vec2(r[0][0], r[1][1]), Vec2(r[0][0], r[0][1]), Value, True);
     end;
 end;
 
@@ -1426,12 +1484,12 @@ begin
     end;
 end;
 
-procedure TMemoryRaster.DrawRect(r: TRectV2; angle: TGeoFloat; Value: TRasterColor);
+procedure TMemoryRaster.DrawRect(r: TRectV2; Angle: TGeoFloat; Value: TRasterColor);
 var
   r4: TV2Rect4;
   buff: array [0 .. 4] of TPointDouble;
 begin
-  r4 := TV2Rect4.Init(r, angle);
+  r4 := TV2Rect4.Init(r, Angle);
   if FAgg <> nil then
     begin
       buff[0].x := r4.LeftTop[0];
@@ -1706,7 +1764,7 @@ begin
   Result := Vec2Mul(Font.TextSize(Text), siz / Font.FontSize)
 end;
 
-procedure TMemoryRaster.DrawText(Text: SystemString; x, y: Integer; RotateVec: TVec2; angle, alpha, siz: TGeoFloat; TextColor: TRasterColor);
+procedure TMemoryRaster.DrawText(Text: SystemString; x, y: Integer; RotateVec: TVec2; Angle, alpha, siz: TGeoFloat; TextColor: TRasterColor);
 var
   fSiz: TVec2;
   sc: TGeoFloat;
@@ -1715,22 +1773,27 @@ begin
   fSiz := Font.TextSize(Text);
   sc := siz / Font.FontSize;
   fPt := Vec2Mul(Vec2Sub(fSiz, Vec2Mul(fSiz, sc)), RotateVec);
-  Font.Draw(Text, Self, vec2(x - fPt[0], y - fPt[1]), TextColor, True, alpha, RotateVec, angle, sc);
+  Font.Draw(Text, Self, Vec2(x - fPt[0], y - fPt[1]), TextColor, True, alpha, RotateVec, Angle, sc);
 end;
 
 procedure TMemoryRaster.DrawText(Text: SystemString; x, y: Integer; siz: TGeoFloat; TextColor: TRasterColor);
 begin
-  DrawText(Text, x, y, vec2(0.5, 0.5), 0, 1, siz, TextColor);
+  DrawText(Text, x, y, Vec2(0.5, 0.5), 0, 1, siz, TextColor);
 end;
 
-procedure TMemoryRaster.ProjectionTo2DMap(Dst: TMemoryRaster; const sourRect, DestRect: TV2Rect4; const bilinear_sampling: Boolean; const alpha: Single);
+procedure TMemoryRaster.ProjectionTo(Dst: TMemoryRaster; const sourRect, DestRect: TV2Rect4; const bilinear_sampling: Boolean; const alpha: Single);
 begin
-  Vertex.DrawRect(sourRect, DestRect, Self, bilinear_sampling, alpha);
+  Dst.Vertex.DrawRect(sourRect, DestRect, Self, bilinear_sampling, alpha);
 end;
 
-procedure TMemoryRaster.ProjectionColor(const DestRect: TV2Rect4; const COLOR: TRasterColor);
+procedure TMemoryRaster.Projection(const DestRect: TV2Rect4; const COLOR: TRasterColor);
 begin
   Vertex.DrawRect(DestRect, COLOR);
+end;
+
+procedure TMemoryRaster.Projection(sour: TMemoryRaster; const sourRect, DestRect: TV2Rect4; const bilinear_sampling: Boolean; const alpha: TGeoFloat);
+begin
+  Vertex.DrawRect(sourRect, DestRect, sour, bilinear_sampling, alpha);
 end;
 
 procedure TMemoryRaster.Draw(Src: TMemoryRaster);
@@ -1910,15 +1973,6 @@ begin
       stream.Position := bakPos;
 end;
 
-procedure TMemoryRaster.LoadFromStreamAndResize(stream: TCoreClassStream; const NewWidth, NewHeight: Integer);
-var
-  bmp: TMemoryRaster;
-begin
-  bmp := TMemoryRaster.Create;
-  ZoomFrom(bmp, NewWidth, NewHeight);
-  DisposeObject(bmp);
-end;
-
 procedure TMemoryRaster.SaveToBmpStream(stream: TCoreClassStream);
 var
   Header: TBmpHeader;
@@ -2037,18 +2091,6 @@ begin
   m64 := TCoreClassFileStream.Create(fn, fmOpenRead or fmShareDenyWrite);
   try
       LoadFromStream(m64);
-  except
-  end;
-  DisposeObject(m64);
-end;
-
-procedure TMemoryRaster.LoadFromFileAndResize(fn: SystemString; const NewWidth, NewHeight: Integer);
-var
-  m64: TCoreClassFileStream;
-begin
-  m64 := TCoreClassFileStream.Create(fn, fmOpenRead or fmShareDenyWrite);
-  try
-      LoadFromStreamAndResize(m64, NewWidth, NewHeight);
   except
   end;
   DisposeObject(m64);

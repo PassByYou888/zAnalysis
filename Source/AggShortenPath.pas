@@ -37,11 +37,8 @@
 *)
 unit AggShortenPath;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVertexSequence;
@@ -54,7 +51,7 @@ procedure ShortenPath(VertexSequence: TAggVertexSequence; s: Double;
   closed: Cardinal = 0);
 var
   n: Integer;
-  d, X, Y: Double;
+  d, x, y: Double;
   Prev, Last: PAggVertexDistance;
 begin
   if (s > 0.0) and (VertexSequence.Size > 1) then
@@ -72,7 +69,7 @@ begin
 
           s := s - d;
 
-          Dec(n);
+          dec(n);
         end;
 
       if VertexSequence.Size < 2 then
@@ -87,9 +84,9 @@ begin
 
           d := (Prev.Dist - s) / Prev.Dist;
 
-          X := Prev.pos.X + (Last.pos.X - Prev.pos.X) * d;
-          Y := Prev.pos.Y + (Last.pos.Y - Prev.pos.Y) * d;
-          Last.pos := PointDouble(X, Y);
+          x := Prev.Pos.x + (Last.Pos.x - Prev.Pos.x) * d;
+          y := Prev.Pos.y + (Last.Pos.y - Prev.Pos.y) * d;
+          Last.Pos := PointDouble(x, y);
 
           if not VertexSequence.FuncOperatorVertexSequence(Prev, Last) then
               VertexSequence.RemoveLast;
@@ -100,4 +97,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

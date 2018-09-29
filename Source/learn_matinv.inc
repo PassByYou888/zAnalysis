@@ -10,23 +10,23 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
-procedure RMatrixTRInverseRec(var A: TLMatrix; Offs: TLInt;
+procedure RMatrixTRInverseRec(var a: TLMatrix; Offs: TLInt;
   n: TLInt; IsUpper: Boolean; IsUnit: Boolean; var tmp: TLVec;
-  var Info: TLInt; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixTRInverseRec(var A: TLComplexMatrix; Offs: TLInt;
+  var Info: TLInt; var Rep: TMatInvReport); forward;
+procedure CMatrixTRInverseRec(var a: TLComplexMatrix; Offs: TLInt;
   n: TLInt; IsUpper: Boolean; IsUnit: Boolean; var tmp: TLComplexVec;
-  var Info: TLInt; var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure RMatrixLUInverseRec(var A: TLMatrix; Offs: TLInt;
+  var Info: TLInt; var Rep: TMatInvReport); forward;
+procedure RMatrixLUInverseRec(var a: TLMatrix; Offs: TLInt;
   n: TLInt; var Work: TLVec; var Info: TLInt;
-  var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure CMatrixLUInverseRec(var A: TLComplexMatrix; Offs: TLInt;
+  var Rep: TMatInvReport); forward;
+procedure CMatrixLUInverseRec(var a: TLComplexMatrix; Offs: TLInt;
   n: TLInt; var Work: TLComplexVec; var Info: TLInt;
-  var Rep: TMatInvReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure SPDMatrixCholeskyInverseRec(var A: TLMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure HPDMatrixCholeskyInverseRec(var A: TLComplexMatrix;
+  var Rep: TMatInvReport); forward;
+procedure SPDMatrixCholeskyInverseRec(var a: TLMatrix; Offs: TLInt;
+  n: TLInt; IsUpper: Boolean; var tmp: TLVec); forward;
+procedure HPDMatrixCholeskyInverseRec(var a: TLComplexMatrix;
   Offs: TLInt; n: TLInt; IsUpper: Boolean;
-  var tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var tmp: TLComplexVec); forward;
 
 
 (* ************************************************************************
@@ -55,12 +55,12 @@ procedure HPDMatrixCholeskyInverseRec(var A: TLComplexMatrix;
   * R1        reciprocal of condition number: 1/cond(A), 1-norm.
   * RInf      reciprocal of condition number: 1/cond(A), inf-norm.
   ************************************************************************ *)
-procedure RMatrixLUInverse(var A: TLMatrix; const Pivots: TLIVec;
+procedure RMatrixLUInverse(var a: TLMatrix; const Pivots: TLIVec;
   n: TLInt; var Info: TLInt; var Rep: TMatInvReport);
 var
   Work: TLVec;
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   k: TLInt;
   v: TLFloat;
 begin
@@ -82,27 +82,27 @@ begin
           Info := -1;
           Exit;
         end;
-      Inc(i);
+      inc(i);
     end;
 
   //
   // calculate condition numbers
   //
-  Rep.r1 := RMatrixLURCond1(A, n);
-  Rep.RInf := RMatrixLURCondInf(A, n);
+  Rep.r1 := RMatrixLURCond1(a, n);
+  Rep.RInf := RMatrixLURCondInf(a, n);
   if AP_FP_Less(Rep.r1, RCondThreshold) or AP_FP_Less(Rep.RInf, RCondThreshold)
   then
     begin
       i := 0;
       while i <= n - 1 do
         begin
-          J := 0;
-          while J <= n - 1 do
+          j := 0;
+          while j <= n - 1 do
             begin
-              A[i, J] := 0;
-              Inc(J);
+              a[i, j] := 0;
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
       Rep.r1 := 0;
       Rep.RInf := 0;
@@ -114,7 +114,7 @@ begin
   // Call cache-oblivious code
   //
   SetLength(Work, n);
-  RMatrixLUInverseRec(A, 0, n, Work, Info, Rep);
+  RMatrixLUInverseRec(a, 0, n, Work, Info, Rep);
 
   //
   // apply permutations
@@ -122,16 +122,16 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      J := n - 2;
-      while J >= 0 do
+      j := n - 2;
+      while j >= 0 do
         begin
-          k := Pivots[J];
-          v := A[i, J];
-          A[i, J] := A[i, k];
-          A[i, k] := v;
-          Dec(J);
+          k := Pivots[j];
+          v := a[i, j];
+          a[i, j] := a[i, k];
+          a[i, k] := v;
+          dec(j);
         end;
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -151,13 +151,13 @@ end;
   True, if the matrix is not singular.
   False, if the matrix is singular.
   ************************************************************************ *)
-procedure RMatrixInverse(var A: TLMatrix; n: TLInt;
+procedure RMatrixInverse(var a: TLMatrix; n: TLInt;
   var Info: TLInt; var Rep: TMatInvReport);
 var
   Pivots: TLIVec;
 begin
-  RMatrixLU(A, n, n, Pivots);
-  RMatrixLUInverse(A, Pivots, n, Info, Rep);
+  RMatrixLU(a, n, n, Pivots);
+  RMatrixLUInverse(a, Pivots, n, Info, Rep);
 end;
 
 (* ************************************************************************
@@ -174,13 +174,13 @@ end;
   Rep     -   solver report, same as in RMatrixLUInverse
   A       -   inverse of matrix A, same as in RMatrixLUInverse
   ************************************************************************ *)
-procedure CMatrixLUInverse(var A: TLComplexMatrix;
+procedure CMatrixLUInverse(var a: TLComplexMatrix;
   const Pivots: TLIVec; n: TLInt; var Info: TLInt;
   var Rep: TMatInvReport);
 var
   Work: TLComplexVec;
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   k: TLInt;
   v: TLComplex;
 begin
@@ -202,27 +202,27 @@ begin
           Info := -1;
           Exit;
         end;
-      Inc(i);
+      inc(i);
     end;
 
   //
   // calculate condition numbers
   //
-  Rep.r1 := CMatrixLURCond1(A, n);
-  Rep.RInf := CMatrixLURCondInf(A, n);
+  Rep.r1 := CMatrixLURCond1(a, n);
+  Rep.RInf := CMatrixLURCondInf(a, n);
   if AP_FP_Less(Rep.r1, RCondThreshold) or AP_FP_Less(Rep.RInf, RCondThreshold)
   then
     begin
       i := 0;
       while i <= n - 1 do
         begin
-          J := 0;
-          while J <= n - 1 do
+          j := 0;
+          while j <= n - 1 do
             begin
-              A[i, J] := C_Complex(0);
-              Inc(J);
+              a[i, j] := C_Complex(0);
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
       Rep.r1 := 0;
       Rep.RInf := 0;
@@ -234,7 +234,7 @@ begin
   // Call cache-oblivious code
   //
   SetLength(Work, n);
-  CMatrixLUInverseRec(A, 0, n, Work, Info, Rep);
+  CMatrixLUInverseRec(a, 0, n, Work, Info, Rep);
 
   //
   // apply permutations
@@ -242,16 +242,16 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      J := n - 2;
-      while J >= 0 do
+      j := n - 2;
+      while j >= 0 do
         begin
-          k := Pivots[J];
-          v := A[i, J];
-          A[i, J] := A[i, k];
-          A[i, k] := v;
-          Dec(J);
+          k := Pivots[j];
+          v := a[i, j];
+          a[i, j] := a[i, k];
+          a[i, k] := v;
+          dec(j);
         end;
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -267,13 +267,13 @@ end;
   Rep     -   solver report, same as in RMatrixLUInverse
   A       -   inverse of matrix A, same as in RMatrixLUInverse
   ************************************************************************ *)
-procedure CMatrixInverse(var A: TLComplexMatrix; n: TLInt;
+procedure CMatrixInverse(var a: TLComplexMatrix; n: TLInt;
   var Info: TLInt; var Rep: TMatInvReport);
 var
   Pivots: TLIVec;
 begin
-  CMatrixLU(A, n, n, Pivots);
-  CMatrixLUInverse(A, Pivots, n, Info, Rep);
+  CMatrixLU(a, n, n, Pivots);
+  CMatrixLUInverse(a, Pivots, n, Info, Rep);
 end;
 
 (* ************************************************************************
@@ -295,11 +295,11 @@ end;
   Rep     -   solver report, same as in RMatrixLUInverse
   A       -   inverse of matrix A, same as in RMatrixLUInverse
   ************************************************************************ *)
-procedure SPDMatrixCholeskyInverse(var A: TLMatrix; n: TLInt;
+procedure SPDMatrixCholeskyInverse(var a: TLMatrix; n: TLInt;
   IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   k: TLInt;
   v: TLFloat;
   AJJ: TLFloat;
@@ -318,7 +318,7 @@ begin
   //
   // calculate condition numbers
   //
-  Rep.r1 := SPDMatrixCholeskyRCond(A, n, IsUpper);
+  Rep.r1 := SPDMatrixCholeskyRCond(a, n, IsUpper);
   Rep.RInf := Rep.r1;
   if AP_FP_Less(Rep.r1, RCondThreshold) or AP_FP_Less(Rep.RInf, RCondThreshold)
   then
@@ -328,13 +328,13 @@ begin
           i := 0;
           while i <= n - 1 do
             begin
-              J := i;
-              while J <= n - 1 do
+              j := i;
+              while j <= n - 1 do
                 begin
-                  A[i, J] := 0;
-                  Inc(J);
+                  a[i, j] := 0;
+                  inc(j);
                 end;
-              Inc(i);
+              inc(i);
             end;
         end
       else
@@ -342,13 +342,13 @@ begin
           i := 0;
           while i <= n - 1 do
             begin
-              J := 0;
-              while J <= i do
+              j := 0;
+              while j <= i do
                 begin
-                  A[i, J] := 0;
-                  Inc(J);
+                  a[i, j] := 0;
+                  inc(j);
                 end;
-              Inc(i);
+              inc(i);
             end;
         end;
       Rep.r1 := 0;
@@ -361,7 +361,7 @@ begin
   // Inverse
   //
   SetLength(tmp, n);
-  SPDMatrixCholeskyInverseRec(A, 0, n, IsUpper, tmp);
+  SPDMatrixCholeskyInverseRec(a, 0, n, IsUpper, tmp);
 end;
 
 (* ************************************************************************
@@ -383,7 +383,7 @@ end;
   Rep     -   solver report, same as in RMatrixLUInverse
   A       -   inverse of matrix A, same as in RMatrixLUInverse
   ************************************************************************ *)
-procedure SPDMatrixInverse(var A: TLMatrix; n: TLInt;
+procedure SPDMatrixInverse(var a: TLMatrix; n: TLInt;
   IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport);
 begin
   if n < 1 then
@@ -392,9 +392,9 @@ begin
       Exit;
     end;
   Info := 1;
-  if SPDMatrixCholesky(A, n, IsUpper) then
+  if SPDMatrixCholesky(a, n, IsUpper) then
     begin
-      SPDMatrixCholeskyInverse(A, n, IsUpper, Info, Rep);
+      SPDMatrixCholeskyInverse(a, n, IsUpper, Info, Rep);
     end
   else
     begin
@@ -406,11 +406,11 @@ end;
   Inversion of a Hermitian positive definite matrix which is given
   by Cholesky decomposition.
   ************************************************************************ *)
-procedure HPDMatrixCholeskyInverse(var A: TLComplexMatrix; n: TLInt;
+procedure HPDMatrixCholeskyInverse(var a: TLComplexMatrix; n: TLInt;
   IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   Info2: TLInt;
   Rep2: TMatInvReport;
   tmp: TLComplexVec;
@@ -426,7 +426,7 @@ begin
   //
   // calculate condition numbers
   //
-  Rep.r1 := HPDMatrixCholeskyRCond(A, n, IsUpper);
+  Rep.r1 := HPDMatrixCholeskyRCond(a, n, IsUpper);
   Rep.RInf := Rep.r1;
   if AP_FP_Less(Rep.r1, RCondThreshold) or AP_FP_Less(Rep.RInf, RCondThreshold)
   then
@@ -436,13 +436,13 @@ begin
           i := 0;
           while i <= n - 1 do
             begin
-              J := i;
-              while J <= n - 1 do
+              j := i;
+              while j <= n - 1 do
                 begin
-                  A[i, J] := C_Complex(0);
-                  Inc(J);
+                  a[i, j] := C_Complex(0);
+                  inc(j);
                 end;
-              Inc(i);
+              inc(i);
             end;
         end
       else
@@ -450,13 +450,13 @@ begin
           i := 0;
           while i <= n - 1 do
             begin
-              J := 0;
-              while J <= i do
+              j := 0;
+              while j <= i do
                 begin
-                  A[i, J] := C_Complex(0);
-                  Inc(J);
+                  a[i, j] := C_Complex(0);
+                  inc(j);
                 end;
-              Inc(i);
+              inc(i);
             end;
         end;
       Rep.r1 := 0;
@@ -469,7 +469,7 @@ begin
   // Inverse
   //
   SetLength(tmp, n);
-  HPDMatrixCholeskyInverseRec(A, 0, n, IsUpper, tmp);
+  HPDMatrixCholeskyInverseRec(a, 0, n, IsUpper, tmp);
 end;
 
 (* ************************************************************************
@@ -491,7 +491,7 @@ end;
   Rep     -   solver report, same as in RMatrixLUInverse
   A       -   inverse of matrix A, same as in RMatrixLUInverse
   ************************************************************************ *)
-procedure HPDMatrixInverse(var A: TLComplexMatrix; n: TLInt;
+procedure HPDMatrixInverse(var a: TLComplexMatrix; n: TLInt;
   IsUpper: Boolean; var Info: TLInt; var Rep: TMatInvReport);
 begin
   if n < 1 then
@@ -500,9 +500,9 @@ begin
       Exit;
     end;
   Info := 1;
-  if HPDMatrixCholesky(A, n, IsUpper) then
+  if HPDMatrixCholesky(a, n, IsUpper) then
     begin
-      HPDMatrixCholeskyInverse(A, n, IsUpper, Info, Rep);
+      HPDMatrixCholeskyInverse(a, n, IsUpper, Info, Rep);
     end
   else
     begin
@@ -538,12 +538,12 @@ end;
   Rep     -   same as for RMatrixLUInverse
   A       -   same as for RMatrixLUInverse.
   ************************************************************************ *)
-procedure RMatrixTRInverse(var A: TLMatrix; n: TLInt;
+procedure RMatrixTRInverse(var a: TLMatrix; n: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; var Info: TLInt;
   var Rep: TMatInvReport);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   tmp: TLVec;
 begin
   if n < 1 then
@@ -556,21 +556,21 @@ begin
   //
   // calculate condition numbers
   //
-  Rep.r1 := RMatrixTRRCond1(A, n, IsUpper, IsUnit);
-  Rep.RInf := RMatrixTRRCondInf(A, n, IsUpper, IsUnit);
+  Rep.r1 := RMatrixTRRCond1(a, n, IsUpper, IsUnit);
+  Rep.RInf := RMatrixTRRCondInf(a, n, IsUpper, IsUnit);
   if AP_FP_Less(Rep.r1, RCondThreshold) or AP_FP_Less(Rep.RInf, RCondThreshold)
   then
     begin
       i := 0;
       while i <= n - 1 do
         begin
-          J := 0;
-          while J <= n - 1 do
+          j := 0;
+          while j <= n - 1 do
             begin
-              A[i, J] := 0;
-              Inc(J);
+              a[i, j] := 0;
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
       Rep.r1 := 0;
       Rep.RInf := 0;
@@ -582,7 +582,7 @@ begin
   // Invert
   //
   SetLength(tmp, n);
-  RMatrixTRInverseRec(A, 0, n, IsUpper, IsUnit, tmp, Info, Rep);
+  RMatrixTRInverseRec(a, 0, n, IsUpper, IsUnit, tmp, Info, Rep);
 end;
 
 (* ************************************************************************
@@ -613,12 +613,12 @@ end;
   Rep     -   same as for RMatrixLUInverse
   A       -   same as for RMatrixLUInverse.
   ************************************************************************ *)
-procedure CMatrixTRInverse(var A: TLComplexMatrix; n: TLInt;
+procedure CMatrixTRInverse(var a: TLComplexMatrix; n: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; var Info: TLInt;
   var Rep: TMatInvReport);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   tmp: TLComplexVec;
 begin
   if n < 1 then
@@ -631,21 +631,21 @@ begin
   //
   // calculate condition numbers
   //
-  Rep.r1 := CMatrixTRRCond1(A, n, IsUpper, IsUnit);
-  Rep.RInf := CMatrixTRRCondInf(A, n, IsUpper, IsUnit);
+  Rep.r1 := CMatrixTRRCond1(a, n, IsUpper, IsUnit);
+  Rep.RInf := CMatrixTRRCondInf(a, n, IsUpper, IsUnit);
   if AP_FP_Less(Rep.r1, RCondThreshold) or AP_FP_Less(Rep.RInf, RCondThreshold)
   then
     begin
       i := 0;
       while i <= n - 1 do
         begin
-          J := 0;
-          while J <= n - 1 do
+          j := 0;
+          while j <= n - 1 do
             begin
-              A[i, J] := C_Complex(0);
-              Inc(J);
+              a[i, j] := C_Complex(0);
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
       Rep.r1 := 0;
       Rep.RInf := 0;
@@ -657,20 +657,20 @@ begin
   // Invert
   //
   SetLength(tmp, n);
-  CMatrixTRInverseRec(A, 0, n, IsUpper, IsUnit, tmp, Info, Rep);
+  CMatrixTRInverseRec(a, 0, n, IsUpper, IsUnit, tmp, Info, Rep);
 end;
 
 (* ************************************************************************
   Triangular matrix inversion, recursive subroutine
   ************************************************************************ *)
-procedure RMatrixTRInverseRec(var A: TLMatrix; Offs: TLInt;
+procedure RMatrixTRInverseRec(var a: TLMatrix; Offs: TLInt;
   n: TLInt; IsUpper: Boolean; IsUnit: Boolean; var tmp: TLVec;
   var Info: TLInt; var Rep: TMatInvReport);
 var
-  N1: TLInt;
-  N2: TLInt;
+  n1: TLInt;
+  n2: TLInt;
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   v: TLFloat;
   AJJ: TLFloat;
   i_: TLInt;
@@ -685,7 +685,7 @@ begin
   //
   // Base case
   //
-  if n <= ABLASBlockSize(A) then
+  if n <= ABLASBlockSize(a) then
     begin
       if IsUpper then
         begin
@@ -693,18 +693,18 @@ begin
           //
           // Compute inverse of upper triangular matrix.
           //
-          J := 0;
-          while J <= n - 1 do
+          j := 0;
+          while j <= n - 1 do
             begin
               if not IsUnit then
                 begin
-                  if AP_FP_Eq(A[Offs + J, Offs + J], 0) then
+                  if AP_FP_Eq(a[Offs + j, Offs + j], 0) then
                     begin
                       Info := -3;
                       Exit;
                     end;
-                  A[Offs + J, Offs + J] := 1 / A[Offs + J, Offs + J];
-                  AJJ := -A[Offs + J, Offs + J];
+                  a[Offs + j, Offs + j] := 1 / a[Offs + j, Offs + j];
+                  AJJ := -a[Offs + j, Offs + j];
                 end
               else
                 begin
@@ -714,20 +714,20 @@ begin
               //
               // Compute elements 1:j-1 of j-th column.
               //
-              if J > 0 then
+              if j > 0 then
                 begin
                   i1_ := (Offs + 0) - (0);
-                  for i_ := 0 to J - 1 do
+                  for i_ := 0 to j - 1 do
                     begin
-                      tmp[i_] := A[i_ + i1_, Offs + J];
+                      tmp[i_] := a[i_ + i1_, Offs + j];
                     end;
                   i := 0;
-                  while i <= J - 1 do
+                  while i <= j - 1 do
                     begin
-                      if i < J - 1 then
+                      if i < j - 1 then
                         begin
-                          v := APVDotProduct(@A[Offs + i][0], Offs + i + 1, Offs + J - 1,
-                            @tmp[0], i + 1, J - 1);
+                          v := APVDotProduct(@a[Offs + i][0], Offs + i + 1, Offs + j - 1,
+                            @tmp[0], i + 1, j - 1);
                         end
                       else
                         begin
@@ -735,20 +735,20 @@ begin
                         end;
                       if not IsUnit then
                         begin
-                          A[Offs + i, Offs + J] := v + A[Offs + i, Offs + i] * tmp[i];
+                          a[Offs + i, Offs + j] := v + a[Offs + i, Offs + i] * tmp[i];
                         end
                       else
                         begin
-                          A[Offs + i, Offs + J] := v + tmp[i];
+                          a[Offs + i, Offs + j] := v + tmp[i];
                         end;
-                      Inc(i);
+                      inc(i);
                     end;
-                  for i_ := Offs + 0 to Offs + J - 1 do
+                  for i_ := Offs + 0 to Offs + j - 1 do
                     begin
-                      A[i_, Offs + J] := AJJ * A[i_, Offs + J];
+                      a[i_, Offs + j] := AJJ * a[i_, Offs + j];
                     end;
                 end;
-              Inc(J);
+              inc(j);
             end;
         end
       else
@@ -757,41 +757,41 @@ begin
           //
           // Compute inverse of lower triangular matrix.
           //
-          J := n - 1;
-          while J >= 0 do
+          j := n - 1;
+          while j >= 0 do
             begin
               if not IsUnit then
                 begin
-                  if AP_FP_Eq(A[Offs + J, Offs + J], 0) then
+                  if AP_FP_Eq(a[Offs + j, Offs + j], 0) then
                     begin
                       Info := -3;
                       Exit;
                     end;
-                  A[Offs + J, Offs + J] := 1 / A[Offs + J, Offs + J];
-                  AJJ := -A[Offs + J, Offs + J];
+                  a[Offs + j, Offs + j] := 1 / a[Offs + j, Offs + j];
+                  AJJ := -a[Offs + j, Offs + j];
                 end
               else
                 begin
                   AJJ := -1;
                 end;
-              if J < n - 1 then
+              if j < n - 1 then
                 begin
 
                   //
                   // Compute elements j+1:n of j-th column.
                   //
-                  i1_ := (Offs + J + 1) - (J + 1);
-                  for i_ := J + 1 to n - 1 do
+                  i1_ := (Offs + j + 1) - (j + 1);
+                  for i_ := j + 1 to n - 1 do
                     begin
-                      tmp[i_] := A[i_ + i1_, Offs + J];
+                      tmp[i_] := a[i_ + i1_, Offs + j];
                     end;
-                  i := J + 1;
+                  i := j + 1;
                   while i <= n - 1 do
                     begin
-                      if i > J + 1 then
+                      if i > j + 1 then
                         begin
-                          v := APVDotProduct(@A[Offs + i][0], Offs + J + 1, Offs + i - 1,
-                            @tmp[0], J + 1, i - 1);
+                          v := APVDotProduct(@a[Offs + i][0], Offs + j + 1, Offs + i - 1,
+                            @tmp[0], j + 1, i - 1);
                         end
                       else
                         begin
@@ -799,20 +799,20 @@ begin
                         end;
                       if not IsUnit then
                         begin
-                          A[Offs + i, Offs + J] := v + A[Offs + i, Offs + i] * tmp[i];
+                          a[Offs + i, Offs + j] := v + a[Offs + i, Offs + i] * tmp[i];
                         end
                       else
                         begin
-                          A[Offs + i, Offs + J] := v + tmp[i];
+                          a[Offs + i, Offs + j] := v + tmp[i];
                         end;
-                      Inc(i);
+                      inc(i);
                     end;
-                  for i_ := Offs + J + 1 to Offs + n - 1 do
+                  for i_ := Offs + j + 1 to Offs + n - 1 do
                     begin
-                      A[i_, Offs + J] := AJJ * A[i_, Offs + J];
+                      a[i_, Offs + j] := AJJ * a[i_, Offs + j];
                     end;
                 end;
-              Dec(J);
+              dec(j);
             end;
         end;
       Exit;
@@ -821,51 +821,51 @@ begin
   //
   // Recursive case
   //
-  ABLASSplitLength(A, n, N1, N2);
-  if N2 > 0 then
+  ABLASSplitLength(a, n, n1, n2);
+  if n2 > 0 then
     begin
       if IsUpper then
         begin
           i := 0;
-          while i <= N1 - 1 do
+          while i <= n1 - 1 do
             begin
-              APVMul(@A[Offs + i][0], Offs + N1, Offs + n - 1, -1);
-              Inc(i);
+              APVMul(@a[Offs + i][0], Offs + n1, Offs + n - 1, -1);
+              inc(i);
             end;
-          RMatrixLeftTRSM(N1, N2, A, Offs, Offs, IsUpper, IsUnit, 0, A, Offs,
-            Offs + N1);
-          RMatrixRightTRSM(N1, N2, A, Offs + N1, Offs + N1, IsUpper, IsUnit, 0, A,
-            Offs, Offs + N1);
+          RMatrixLeftTRSM(n1, n2, a, Offs, Offs, IsUpper, IsUnit, 0, a, Offs,
+            Offs + n1);
+          RMatrixRightTRSM(n1, n2, a, Offs + n1, Offs + n1, IsUpper, IsUnit, 0, a,
+            Offs, Offs + n1);
         end
       else
         begin
           i := 0;
-          while i <= N2 - 1 do
+          while i <= n2 - 1 do
             begin
-              APVMul(@A[Offs + N1 + i][0], Offs, Offs + N1 - 1, -1);
-              Inc(i);
+              APVMul(@a[Offs + n1 + i][0], Offs, Offs + n1 - 1, -1);
+              inc(i);
             end;
-          RMatrixRightTRSM(N2, N1, A, Offs, Offs, IsUpper, IsUnit, 0, A,
-            Offs + N1, Offs);
-          RMatrixLeftTRSM(N2, N1, A, Offs + N1, Offs + N1, IsUpper, IsUnit, 0, A,
-            Offs + N1, Offs);
+          RMatrixRightTRSM(n2, n1, a, Offs, Offs, IsUpper, IsUnit, 0, a,
+            Offs + n1, Offs);
+          RMatrixLeftTRSM(n2, n1, a, Offs + n1, Offs + n1, IsUpper, IsUnit, 0, a,
+            Offs + n1, Offs);
         end;
-      RMatrixTRInverseRec(A, Offs + N1, N2, IsUpper, IsUnit, tmp, Info, Rep);
+      RMatrixTRInverseRec(a, Offs + n1, n2, IsUpper, IsUnit, tmp, Info, Rep);
     end;
-  RMatrixTRInverseRec(A, Offs, N1, IsUpper, IsUnit, tmp, Info, Rep);
+  RMatrixTRInverseRec(a, Offs, n1, IsUpper, IsUnit, tmp, Info, Rep);
 end;
 
 (* ************************************************************************
   Triangular matrix inversion, recursive subroutine
   ************************************************************************ *)
-procedure CMatrixTRInverseRec(var A: TLComplexMatrix; Offs: TLInt;
+procedure CMatrixTRInverseRec(var a: TLComplexMatrix; Offs: TLInt;
   n: TLInt; IsUpper: Boolean; IsUnit: Boolean; var tmp: TLComplexVec;
   var Info: TLInt; var Rep: TMatInvReport);
 var
-  N1: TLInt;
-  N2: TLInt;
+  n1: TLInt;
+  n2: TLInt;
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   v: TLComplex;
   AJJ: TLComplex;
   i_: TLInt;
@@ -880,7 +880,7 @@ begin
   //
   // Base case
   //
-  if n <= ABLASComplexBlockSize(A) then
+  if n <= ABLASComplexBlockSize(a) then
     begin
       if IsUpper then
         begin
@@ -888,18 +888,18 @@ begin
           //
           // Compute inverse of upper triangular matrix.
           //
-          J := 0;
-          while J <= n - 1 do
+          j := 0;
+          while j <= n - 1 do
             begin
               if not IsUnit then
                 begin
-                  if C_EqualR(A[Offs + J, Offs + J], 0) then
+                  if C_EqualR(a[Offs + j, Offs + j], 0) then
                     begin
                       Info := -3;
                       Exit;
                     end;
-                  A[Offs + J, Offs + J] := C_RDiv(1, A[Offs + J, Offs + J]);
-                  AJJ := C_Opposite(A[Offs + J, Offs + J]);
+                  a[Offs + j, Offs + j] := C_RDiv(1, a[Offs + j, Offs + j]);
+                  AJJ := C_Opposite(a[Offs + j, Offs + j]);
                 end
               else
                 begin
@@ -909,23 +909,23 @@ begin
               //
               // Compute elements 1:j-1 of j-th column.
               //
-              if J > 0 then
+              if j > 0 then
                 begin
                   i1_ := (Offs + 0) - (0);
-                  for i_ := 0 to J - 1 do
+                  for i_ := 0 to j - 1 do
                     begin
-                      tmp[i_] := A[i_ + i1_, Offs + J];
+                      tmp[i_] := a[i_ + i1_, Offs + j];
                     end;
                   i := 0;
-                  while i <= J - 1 do
+                  while i <= j - 1 do
                     begin
-                      if i < J - 1 then
+                      if i < j - 1 then
                         begin
                           i1_ := (i + 1) - (Offs + i + 1);
                           v := C_Complex(0.0);
-                          for i_ := Offs + i + 1 to Offs + J - 1 do
+                          for i_ := Offs + i + 1 to Offs + j - 1 do
                             begin
-                              v := C_Add(v, C_Mul(A[Offs + i, i_], tmp[i_ + i1_]));
+                              v := C_Add(v, C_Mul(a[Offs + i, i_], tmp[i_ + i1_]));
                             end;
                         end
                       else
@@ -934,21 +934,21 @@ begin
                         end;
                       if not IsUnit then
                         begin
-                          A[Offs + i, Offs + J] :=
-                            C_Add(v, C_Mul(A[Offs + i, Offs + i], tmp[i]));
+                          a[Offs + i, Offs + j] :=
+                            C_Add(v, C_Mul(a[Offs + i, Offs + i], tmp[i]));
                         end
                       else
                         begin
-                          A[Offs + i, Offs + J] := C_Add(v, tmp[i]);
+                          a[Offs + i, Offs + j] := C_Add(v, tmp[i]);
                         end;
-                      Inc(i);
+                      inc(i);
                     end;
-                  for i_ := Offs + 0 to Offs + J - 1 do
+                  for i_ := Offs + 0 to Offs + j - 1 do
                     begin
-                      A[i_, Offs + J] := C_Mul(AJJ, A[i_, Offs + J]);
+                      a[i_, Offs + j] := C_Mul(AJJ, a[i_, Offs + j]);
                     end;
                 end;
-              Inc(J);
+              inc(j);
             end;
         end
       else
@@ -957,44 +957,44 @@ begin
           //
           // Compute inverse of lower triangular matrix.
           //
-          J := n - 1;
-          while J >= 0 do
+          j := n - 1;
+          while j >= 0 do
             begin
               if not IsUnit then
                 begin
-                  if C_EqualR(A[Offs + J, Offs + J], 0) then
+                  if C_EqualR(a[Offs + j, Offs + j], 0) then
                     begin
                       Info := -3;
                       Exit;
                     end;
-                  A[Offs + J, Offs + J] := C_RDiv(1, A[Offs + J, Offs + J]);
-                  AJJ := C_Opposite(A[Offs + J, Offs + J]);
+                  a[Offs + j, Offs + j] := C_RDiv(1, a[Offs + j, Offs + j]);
+                  AJJ := C_Opposite(a[Offs + j, Offs + j]);
                 end
               else
                 begin
                   AJJ := C_Complex(-1);
                 end;
-              if J < n - 1 then
+              if j < n - 1 then
                 begin
 
                   //
                   // Compute elements j+1:n of j-th column.
                   //
-                  i1_ := (Offs + J + 1) - (J + 1);
-                  for i_ := J + 1 to n - 1 do
+                  i1_ := (Offs + j + 1) - (j + 1);
+                  for i_ := j + 1 to n - 1 do
                     begin
-                      tmp[i_] := A[i_ + i1_, Offs + J];
+                      tmp[i_] := a[i_ + i1_, Offs + j];
                     end;
-                  i := J + 1;
+                  i := j + 1;
                   while i <= n - 1 do
                     begin
-                      if i > J + 1 then
+                      if i > j + 1 then
                         begin
-                          i1_ := (J + 1) - (Offs + J + 1);
+                          i1_ := (j + 1) - (Offs + j + 1);
                           v := C_Complex(0.0);
-                          for i_ := Offs + J + 1 to Offs + i - 1 do
+                          for i_ := Offs + j + 1 to Offs + i - 1 do
                             begin
-                              v := C_Add(v, C_Mul(A[Offs + i, i_], tmp[i_ + i1_]));
+                              v := C_Add(v, C_Mul(a[Offs + i, i_], tmp[i_ + i1_]));
                             end;
                         end
                       else
@@ -1003,21 +1003,21 @@ begin
                         end;
                       if not IsUnit then
                         begin
-                          A[Offs + i, Offs + J] :=
-                            C_Add(v, C_Mul(A[Offs + i, Offs + i], tmp[i]));
+                          a[Offs + i, Offs + j] :=
+                            C_Add(v, C_Mul(a[Offs + i, Offs + i], tmp[i]));
                         end
                       else
                         begin
-                          A[Offs + i, Offs + J] := C_Add(v, tmp[i]);
+                          a[Offs + i, Offs + j] := C_Add(v, tmp[i]);
                         end;
-                      Inc(i);
+                      inc(i);
                     end;
-                  for i_ := Offs + J + 1 to Offs + n - 1 do
+                  for i_ := Offs + j + 1 to Offs + n - 1 do
                     begin
-                      A[i_, Offs + J] := C_Mul(AJJ, A[i_, Offs + J]);
+                      a[i_, Offs + j] := C_Mul(AJJ, a[i_, Offs + j]);
                     end;
                 end;
-              Dec(J);
+              dec(j);
             end;
         end;
       Exit;
@@ -1026,60 +1026,60 @@ begin
   //
   // Recursive case
   //
-  ABLASComplexSplitLength(A, n, N1, N2);
-  if N2 > 0 then
+  ABLASComplexSplitLength(a, n, n1, n2);
+  if n2 > 0 then
     begin
       if IsUpper then
         begin
           i := 0;
-          while i <= N1 - 1 do
+          while i <= n1 - 1 do
             begin
-              for i_ := Offs + N1 to Offs + n - 1 do
+              for i_ := Offs + n1 to Offs + n - 1 do
                 begin
-                  A[Offs + i, i_] := C_MulR(A[Offs + i, i_], -1);
+                  a[Offs + i, i_] := C_MulR(a[Offs + i, i_], -1);
                 end;
-              Inc(i);
+              inc(i);
             end;
-          CMatrixLeftTRSM(N1, N2, A, Offs, Offs, IsUpper, IsUnit, 0, A, Offs,
-            Offs + N1);
-          CMatrixRightTRSM(N1, N2, A, Offs + N1, Offs + N1, IsUpper, IsUnit, 0, A,
-            Offs, Offs + N1);
+          CMatrixLeftTRSM(n1, n2, a, Offs, Offs, IsUpper, IsUnit, 0, a, Offs,
+            Offs + n1);
+          CMatrixRightTRSM(n1, n2, a, Offs + n1, Offs + n1, IsUpper, IsUnit, 0, a,
+            Offs, Offs + n1);
         end
       else
         begin
           i := 0;
-          while i <= N2 - 1 do
+          while i <= n2 - 1 do
             begin
-              for i_ := Offs to Offs + N1 - 1 do
+              for i_ := Offs to Offs + n1 - 1 do
                 begin
-                  A[Offs + N1 + i, i_] := C_MulR(A[Offs + N1 + i, i_], -1);
+                  a[Offs + n1 + i, i_] := C_MulR(a[Offs + n1 + i, i_], -1);
                 end;
-              Inc(i);
+              inc(i);
             end;
-          CMatrixRightTRSM(N2, N1, A, Offs, Offs, IsUpper, IsUnit, 0, A,
-            Offs + N1, Offs);
-          CMatrixLeftTRSM(N2, N1, A, Offs + N1, Offs + N1, IsUpper, IsUnit, 0, A,
-            Offs + N1, Offs);
+          CMatrixRightTRSM(n2, n1, a, Offs, Offs, IsUpper, IsUnit, 0, a,
+            Offs + n1, Offs);
+          CMatrixLeftTRSM(n2, n1, a, Offs + n1, Offs + n1, IsUpper, IsUnit, 0, a,
+            Offs + n1, Offs);
         end;
-      CMatrixTRInverseRec(A, Offs + N1, N2, IsUpper, IsUnit, tmp, Info, Rep);
+      CMatrixTRInverseRec(a, Offs + n1, n2, IsUpper, IsUnit, tmp, Info, Rep);
     end;
-  CMatrixTRInverseRec(A, Offs, N1, IsUpper, IsUnit, tmp, Info, Rep);
+  CMatrixTRInverseRec(a, Offs, n1, IsUpper, IsUnit, tmp, Info, Rep);
 end;
 
-procedure RMatrixLUInverseRec(var A: TLMatrix; Offs: TLInt;
+procedure RMatrixLUInverseRec(var a: TLMatrix; Offs: TLInt;
   n: TLInt; var Work: TLVec; var Info: TLInt;
   var Rep: TMatInvReport);
 var
   i: TLInt;
   IWS: TLInt;
-  J: TLInt;
+  j: TLInt;
   JB: TLInt;
   JJ: TLInt;
   JP: TLInt;
   k: TLInt;
   v: TLFloat;
-  N1: TLInt;
-  N2: TLInt;
+  n1: TLInt;
+  n2: TLInt;
 begin
   if n < 1 then
     begin
@@ -1090,13 +1090,13 @@ begin
   //
   // Base case
   //
-  if n <= ABLASBlockSize(A) then
+  if n <= ABLASBlockSize(a) then
     begin
 
       //
       // Form inv(U)
       //
-      RMatrixTRInverseRec(A, Offs, n, True, False, Work, Info, Rep);
+      RMatrixTRInverseRec(a, Offs, n, True, False, Work, Info, Rep);
       if Info <= 0 then
         begin
           Exit;
@@ -1105,36 +1105,36 @@ begin
       //
       // Solve the equation inv(A)*L = inv(U) for inv(A).
       //
-      J := n - 1;
-      while J >= 0 do
+      j := n - 1;
+      while j >= 0 do
         begin
 
           //
           // Copy current column of L to WORK and replace with zeros.
           //
-          i := J + 1;
+          i := j + 1;
           while i <= n - 1 do
             begin
-              Work[i] := A[Offs + i, Offs + J];
-              A[Offs + i, Offs + J] := 0;
-              Inc(i);
+              Work[i] := a[Offs + i, Offs + j];
+              a[Offs + i, Offs + j] := 0;
+              inc(i);
             end;
 
           //
           // Compute current column of inv(A).
           //
-          if J < n - 1 then
+          if j < n - 1 then
             begin
               i := 0;
               while i <= n - 1 do
                 begin
-                  v := APVDotProduct(@A[Offs + i][0], Offs + J + 1, Offs + n - 1,
-                    @Work[0], J + 1, n - 1);
-                  A[Offs + i, Offs + J] := A[Offs + i, Offs + J] - v;
-                  Inc(i);
+                  v := APVDotProduct(@a[Offs + i][0], Offs + j + 1, Offs + n - 1,
+                    @Work[0], j + 1, n - 1);
+                  a[Offs + i, Offs + j] := a[Offs + i, Offs + j] - v;
+                  inc(i);
                 end;
             end;
-          Dec(J);
+          dec(j);
         end;
       Exit;
     end;
@@ -1150,75 +1150,75 @@ begin
   // A^-1 =  (       )
   // ( Y   Z )
   //
-  ABLASSplitLength(A, n, N1, N2);
-  Assert(N2 > 0, 'LUInverseRec: internal error!');
+  ABLASSplitLength(a, n, n1, n2);
+  Assert(n2 > 0, 'LUInverseRec: internal error!');
 
   //
   // X := inv(U1)*U12*inv(U2)
   //
-  RMatrixLeftTRSM(N1, N2, A, Offs, Offs, True, False, 0, A, Offs, Offs + N1);
-  RMatrixRightTRSM(N1, N2, A, Offs + N1, Offs + N1, True, False, 0, A, Offs,
-    Offs + N1);
+  RMatrixLeftTRSM(n1, n2, a, Offs, Offs, True, False, 0, a, Offs, Offs + n1);
+  RMatrixRightTRSM(n1, n2, a, Offs + n1, Offs + n1, True, False, 0, a, Offs,
+    Offs + n1);
 
   //
   // Y := inv(L2)*L12*inv(L1)
   //
-  RMatrixLeftTRSM(N2, N1, A, Offs + N1, Offs + N1, False, True, 0, A,
-    Offs + N1, Offs);
-  RMatrixRightTRSM(N2, N1, A, Offs, Offs, False, True, 0, A, Offs + N1, Offs);
+  RMatrixLeftTRSM(n2, n1, a, Offs + n1, Offs + n1, False, True, 0, a,
+    Offs + n1, Offs);
+  RMatrixRightTRSM(n2, n1, a, Offs, Offs, False, True, 0, a, Offs + n1, Offs);
 
   //
   // W := inv(L1*U1)+X*Y
   //
-  RMatrixLUInverseRec(A, Offs, N1, Work, Info, Rep);
+  RMatrixLUInverseRec(a, Offs, n1, Work, Info, Rep);
   if Info <= 0 then
     begin
       Exit;
     end;
-  RMatrixGEMM(N1, N1, N2, 1.0, A, Offs, Offs + N1, 0, A, Offs + N1, Offs, 0,
-    1.0, A, Offs, Offs);
+  RMatrixGEMM(n1, n1, n2, 1.0, a, Offs, Offs + n1, 0, a, Offs + n1, Offs, 0,
+    1.0, a, Offs, Offs);
 
   //
   // X := -X*inv(L2)
   // Y := -inv(U2)*Y
   //
-  RMatrixRightTRSM(N1, N2, A, Offs + N1, Offs + N1, False, True, 0, A, Offs,
-    Offs + N1);
+  RMatrixRightTRSM(n1, n2, a, Offs + n1, Offs + n1, False, True, 0, a, Offs,
+    Offs + n1);
   i := 0;
-  while i <= N1 - 1 do
+  while i <= n1 - 1 do
     begin
-      APVMul(@A[Offs + i][0], Offs + N1, Offs + n - 1, -1);
-      Inc(i);
+      APVMul(@a[Offs + i][0], Offs + n1, Offs + n - 1, -1);
+      inc(i);
     end;
-  RMatrixLeftTRSM(N2, N1, A, Offs + N1, Offs + N1, True, False, 0, A,
-    Offs + N1, Offs);
+  RMatrixLeftTRSM(n2, n1, a, Offs + n1, Offs + n1, True, False, 0, a,
+    Offs + n1, Offs);
   i := 0;
-  while i <= N2 - 1 do
+  while i <= n2 - 1 do
     begin
-      APVMul(@A[Offs + N1 + i][0], Offs, Offs + N1 - 1, -1);
-      Inc(i);
+      APVMul(@a[Offs + n1 + i][0], Offs, Offs + n1 - 1, -1);
+      inc(i);
     end;
 
   //
   // Z := inv(L2*U2)
   //
-  RMatrixLUInverseRec(A, Offs + N1, N2, Work, Info, Rep);
+  RMatrixLUInverseRec(a, Offs + n1, n2, Work, Info, Rep);
 end;
 
-procedure CMatrixLUInverseRec(var A: TLComplexMatrix; Offs: TLInt;
+procedure CMatrixLUInverseRec(var a: TLComplexMatrix; Offs: TLInt;
   n: TLInt; var Work: TLComplexVec; var Info: TLInt;
   var Rep: TMatInvReport);
 var
   i: TLInt;
   IWS: TLInt;
-  J: TLInt;
+  j: TLInt;
   JB: TLInt;
   JJ: TLInt;
   JP: TLInt;
   k: TLInt;
   v: TLComplex;
-  N1: TLInt;
-  N2: TLInt;
+  n1: TLInt;
+  n2: TLInt;
   i_: TLInt;
   i1_: TLInt;
 begin
@@ -1231,13 +1231,13 @@ begin
   //
   // Base case
   //
-  if n <= ABLASComplexBlockSize(A) then
+  if n <= ABLASComplexBlockSize(a) then
     begin
 
       //
       // Form inv(U)
       //
-      CMatrixTRInverseRec(A, Offs, n, True, False, Work, Info, Rep);
+      CMatrixTRInverseRec(a, Offs, n, True, False, Work, Info, Rep);
       if Info <= 0 then
         begin
           Exit;
@@ -1246,40 +1246,40 @@ begin
       //
       // Solve the equation inv(A)*L = inv(U) for inv(A).
       //
-      J := n - 1;
-      while J >= 0 do
+      j := n - 1;
+      while j >= 0 do
         begin
 
           //
           // Copy current column of L to WORK and replace with zeros.
           //
-          i := J + 1;
+          i := j + 1;
           while i <= n - 1 do
             begin
-              Work[i] := A[Offs + i, Offs + J];
-              A[Offs + i, Offs + J] := C_Complex(0);
-              Inc(i);
+              Work[i] := a[Offs + i, Offs + j];
+              a[Offs + i, Offs + j] := C_Complex(0);
+              inc(i);
             end;
 
           //
           // Compute current column of inv(A).
           //
-          if J < n - 1 then
+          if j < n - 1 then
             begin
               i := 0;
               while i <= n - 1 do
                 begin
-                  i1_ := (J + 1) - (Offs + J + 1);
+                  i1_ := (j + 1) - (Offs + j + 1);
                   v := C_Complex(0.0);
-                  for i_ := Offs + J + 1 to Offs + n - 1 do
+                  for i_ := Offs + j + 1 to Offs + n - 1 do
                     begin
-                      v := C_Add(v, C_Mul(A[Offs + i, i_], Work[i_ + i1_]));
+                      v := C_Add(v, C_Mul(a[Offs + i, i_], Work[i_ + i1_]));
                     end;
-                  A[Offs + i, Offs + J] := C_Sub(A[Offs + i, Offs + J], v);
-                  Inc(i);
+                  a[Offs + i, Offs + j] := C_Sub(a[Offs + i, Offs + j], v);
+                  inc(i);
                 end;
             end;
-          Dec(J);
+          dec(j);
         end;
       Exit;
     end;
@@ -1295,78 +1295,78 @@ begin
   // A^-1 =  (       )
   // ( Y   Z )
   //
-  ABLASComplexSplitLength(A, n, N1, N2);
-  Assert(N2 > 0, 'LUInverseRec: internal error!');
+  ABLASComplexSplitLength(a, n, n1, n2);
+  Assert(n2 > 0, 'LUInverseRec: internal error!');
 
   //
   // X := inv(U1)*U12*inv(U2)
   //
-  CMatrixLeftTRSM(N1, N2, A, Offs, Offs, True, False, 0, A, Offs, Offs + N1);
-  CMatrixRightTRSM(N1, N2, A, Offs + N1, Offs + N1, True, False, 0, A, Offs,
-    Offs + N1);
+  CMatrixLeftTRSM(n1, n2, a, Offs, Offs, True, False, 0, a, Offs, Offs + n1);
+  CMatrixRightTRSM(n1, n2, a, Offs + n1, Offs + n1, True, False, 0, a, Offs,
+    Offs + n1);
 
   //
   // Y := inv(L2)*L12*inv(L1)
   //
-  CMatrixLeftTRSM(N2, N1, A, Offs + N1, Offs + N1, False, True, 0, A,
-    Offs + N1, Offs);
-  CMatrixRightTRSM(N2, N1, A, Offs, Offs, False, True, 0, A, Offs + N1, Offs);
+  CMatrixLeftTRSM(n2, n1, a, Offs + n1, Offs + n1, False, True, 0, a,
+    Offs + n1, Offs);
+  CMatrixRightTRSM(n2, n1, a, Offs, Offs, False, True, 0, a, Offs + n1, Offs);
 
   //
   // W := inv(L1*U1)+X*Y
   //
-  CMatrixLUInverseRec(A, Offs, N1, Work, Info, Rep);
+  CMatrixLUInverseRec(a, Offs, n1, Work, Info, Rep);
   if Info <= 0 then
     begin
       Exit;
     end;
-  CMatrixGEMM(N1, N1, N2, C_Complex(1.0), A, Offs, Offs + N1, 0, A, Offs + N1,
-    Offs, 0, C_Complex(1.0), A, Offs, Offs);
+  CMatrixGEMM(n1, n1, n2, C_Complex(1.0), a, Offs, Offs + n1, 0, a, Offs + n1,
+    Offs, 0, C_Complex(1.0), a, Offs, Offs);
 
   //
   // X := -X*inv(L2)
   // Y := -inv(U2)*Y
   //
-  CMatrixRightTRSM(N1, N2, A, Offs + N1, Offs + N1, False, True, 0, A, Offs,
-    Offs + N1);
+  CMatrixRightTRSM(n1, n2, a, Offs + n1, Offs + n1, False, True, 0, a, Offs,
+    Offs + n1);
   i := 0;
-  while i <= N1 - 1 do
+  while i <= n1 - 1 do
     begin
-      for i_ := Offs + N1 to Offs + n - 1 do
+      for i_ := Offs + n1 to Offs + n - 1 do
         begin
-          A[Offs + i, i_] := C_MulR(A[Offs + i, i_], -1);
+          a[Offs + i, i_] := C_MulR(a[Offs + i, i_], -1);
         end;
-      Inc(i);
+      inc(i);
     end;
-  CMatrixLeftTRSM(N2, N1, A, Offs + N1, Offs + N1, True, False, 0, A,
-    Offs + N1, Offs);
+  CMatrixLeftTRSM(n2, n1, a, Offs + n1, Offs + n1, True, False, 0, a,
+    Offs + n1, Offs);
   i := 0;
-  while i <= N2 - 1 do
+  while i <= n2 - 1 do
     begin
-      for i_ := Offs to Offs + N1 - 1 do
+      for i_ := Offs to Offs + n1 - 1 do
         begin
-          A[Offs + N1 + i, i_] := C_MulR(A[Offs + N1 + i, i_], -1);
+          a[Offs + n1 + i, i_] := C_MulR(a[Offs + n1 + i, i_], -1);
         end;
-      Inc(i);
+      inc(i);
     end;
 
   //
   // Z := inv(L2*U2)
   //
-  CMatrixLUInverseRec(A, Offs + N1, N2, Work, Info, Rep);
+  CMatrixLUInverseRec(a, Offs + n1, n2, Work, Info, Rep);
 end;
 
 (* ************************************************************************
   Recursive subroutine for SPD inversion.
   ************************************************************************ *)
-procedure SPDMatrixCholeskyInverseRec(var A: TLMatrix; Offs: TLInt;
+procedure SPDMatrixCholeskyInverseRec(var a: TLMatrix; Offs: TLInt;
   n: TLInt; IsUpper: Boolean; var tmp: TLVec);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   v: TLFloat;
-  N1: TLInt;
-  N2: TLInt;
+  n1: TLInt;
+  n2: TLInt;
   Info2: TLInt;
   Rep2: TMatInvReport;
   i_: TLInt;
@@ -1380,9 +1380,9 @@ begin
   //
   // Base case
   //
-  if n <= ABLASBlockSize(A) then
+  if n <= ABLASBlockSize(a) then
     begin
-      RMatrixTRInverseRec(A, Offs, n, IsUpper, False, tmp, Info2, Rep2);
+      RMatrixTRInverseRec(a, Offs, n, IsUpper, False, tmp, Info2, Rep2);
       if IsUpper then
         begin
 
@@ -1399,7 +1399,7 @@ begin
                   //
                   // 1x1 matrix
                   //
-                  A[Offs + i, Offs + i] := AP_Sqr(A[Offs + i, Offs + i]);
+                  a[Offs + i, Offs + i] := AP_Sqr(a[Offs + i, Offs + i]);
                 end
               else
                 begin
@@ -1416,24 +1416,24 @@ begin
                   i1_ := (Offs) - (0);
                   for i_ := 0 to i - 1 do
                     begin
-                      tmp[i_] := A[i_ + i1_, Offs + i];
+                      tmp[i_] := a[i_ + i1_, Offs + i];
                     end;
-                  J := 0;
-                  while J <= i - 1 do
+                  j := 0;
+                  while j <= i - 1 do
                     begin
-                      v := A[Offs + J, Offs + i];
-                      APVAdd(@A[Offs + J][0], Offs + J, Offs + i - 1, @tmp[0], J,
+                      v := a[Offs + j, Offs + i];
+                      APVAdd(@a[Offs + j][0], Offs + j, Offs + i - 1, @tmp[0], j,
                         i - 1, v);
-                      Inc(J);
+                      inc(j);
                     end;
-                  v := A[Offs + i, Offs + i];
+                  v := a[Offs + i, Offs + i];
                   for i_ := Offs to Offs + i - 1 do
                     begin
-                      A[i_, Offs + i] := v * A[i_, Offs + i];
+                      a[i_, Offs + i] := v * a[i_, Offs + i];
                     end;
-                  A[Offs + i, Offs + i] := AP_Sqr(A[Offs + i, Offs + i]);
+                  a[Offs + i, Offs + i] := AP_Sqr(a[Offs + i, Offs + i]);
                 end;
-              Inc(i);
+              inc(i);
             end;
         end
       else
@@ -1452,7 +1452,7 @@ begin
                   //
                   // 1x1 matrix
                   //
-                  A[Offs + i, Offs + i] := AP_Sqr(A[Offs + i, Offs + i]);
+                  a[Offs + i, Offs + i] := AP_Sqr(a[Offs + i, Offs + i]);
                 end
               else
                 begin
@@ -1466,19 +1466,19 @@ begin
                   //
                   // A11 is IxI, A22 is 1x1.
                   //
-                  APVMove(@tmp[0], 0, i - 1, @A[Offs + i][0], Offs, Offs + i - 1);
-                  J := 0;
-                  while J <= i - 1 do
+                  APVMove(@tmp[0], 0, i - 1, @a[Offs + i][0], Offs, Offs + i - 1);
+                  j := 0;
+                  while j <= i - 1 do
                     begin
-                      v := A[Offs + i, Offs + J];
-                      APVAdd(@A[Offs + J][0], Offs, Offs + J, @tmp[0], 0, J, v);
-                      Inc(J);
+                      v := a[Offs + i, Offs + j];
+                      APVAdd(@a[Offs + j][0], Offs, Offs + j, @tmp[0], 0, j, v);
+                      inc(j);
                     end;
-                  v := A[Offs + i, Offs + i];
-                  APVMul(@A[Offs + i][0], Offs, Offs + i - 1, v);
-                  A[Offs + i, Offs + i] := AP_Sqr(A[Offs + i, Offs + i]);
+                  v := a[Offs + i, Offs + i];
+                  APVMul(@a[Offs + i][0], Offs, Offs + i - 1, v);
+                  a[Offs + i, Offs + i] := AP_Sqr(a[Offs + i, Offs + i]);
                 end;
-              Inc(i);
+              inc(i);
             end;
         end;
       Exit;
@@ -1488,7 +1488,7 @@ begin
   // Recursive code: triangular factor inversion merged with
   // UU' or L'L multiplication
   //
-  ABLASSplitLength(A, n, N1, N2);
+  ABLASSplitLength(a, n, n1, n2);
 
   //
   // form off-diagonal block of trangular inverse
@@ -1496,34 +1496,34 @@ begin
   if IsUpper then
     begin
       i := 0;
-      while i <= N1 - 1 do
+      while i <= n1 - 1 do
         begin
-          APVMul(@A[Offs + i][0], Offs + N1, Offs + n - 1, -1);
-          Inc(i);
+          APVMul(@a[Offs + i][0], Offs + n1, Offs + n - 1, -1);
+          inc(i);
         end;
-      RMatrixLeftTRSM(N1, N2, A, Offs, Offs, IsUpper, False, 0, A, Offs,
-        Offs + N1);
-      RMatrixRightTRSM(N1, N2, A, Offs + N1, Offs + N1, IsUpper, False, 0, A,
-        Offs, Offs + N1);
+      RMatrixLeftTRSM(n1, n2, a, Offs, Offs, IsUpper, False, 0, a, Offs,
+        Offs + n1);
+      RMatrixRightTRSM(n1, n2, a, Offs + n1, Offs + n1, IsUpper, False, 0, a,
+        Offs, Offs + n1);
     end
   else
     begin
       i := 0;
-      while i <= N2 - 1 do
+      while i <= n2 - 1 do
         begin
-          APVMul(@A[Offs + N1 + i][0], Offs, Offs + N1 - 1, -1);
-          Inc(i);
+          APVMul(@a[Offs + n1 + i][0], Offs, Offs + n1 - 1, -1);
+          inc(i);
         end;
-      RMatrixRightTRSM(N2, N1, A, Offs, Offs, IsUpper, False, 0, A,
-        Offs + N1, Offs);
-      RMatrixLeftTRSM(N2, N1, A, Offs + N1, Offs + N1, IsUpper, False, 0, A,
-        Offs + N1, Offs);
+      RMatrixRightTRSM(n2, n1, a, Offs, Offs, IsUpper, False, 0, a,
+        Offs + n1, Offs);
+      RMatrixLeftTRSM(n2, n1, a, Offs + n1, Offs + n1, IsUpper, False, 0, a,
+        Offs + n1, Offs);
     end;
 
   //
   // invert first diagonal block
   //
-  SPDMatrixCholeskyInverseRec(A, Offs, N1, IsUpper, tmp);
+  SPDMatrixCholeskyInverseRec(a, Offs, n1, IsUpper, tmp);
 
   //
   // update first diagonal block with off-diagonal block,
@@ -1531,37 +1531,37 @@ begin
   //
   if IsUpper then
     begin
-      RMatrixSYRK(N1, N2, 1.0, A, Offs, Offs + N1, 0, 1.0, A, Offs, Offs,
+      RMatrixSYRK(n1, n2, 1.0, a, Offs, Offs + n1, 0, 1.0, a, Offs, Offs,
         IsUpper);
-      RMatrixRightTRSM(N1, N2, A, Offs + N1, Offs + N1, IsUpper, False, 1, A,
-        Offs, Offs + N1);
+      RMatrixRightTRSM(n1, n2, a, Offs + n1, Offs + n1, IsUpper, False, 1, a,
+        Offs, Offs + n1);
     end
   else
     begin
-      RMatrixSYRK(N1, N2, 1.0, A, Offs + N1, Offs, 1, 1.0, A, Offs, Offs,
+      RMatrixSYRK(n1, n2, 1.0, a, Offs + n1, Offs, 1, 1.0, a, Offs, Offs,
         IsUpper);
-      RMatrixLeftTRSM(N2, N1, A, Offs + N1, Offs + N1, IsUpper, False, 1, A,
-        Offs + N1, Offs);
+      RMatrixLeftTRSM(n2, n1, a, Offs + n1, Offs + n1, IsUpper, False, 1, a,
+        Offs + n1, Offs);
     end;
 
   //
   // invert second diagonal block
   //
-  SPDMatrixCholeskyInverseRec(A, Offs + N1, N2, IsUpper, tmp);
+  SPDMatrixCholeskyInverseRec(a, Offs + n1, n2, IsUpper, tmp);
 end;
 
 (* ************************************************************************
   Recursive subroutine for HPD inversion.
   ************************************************************************ *)
-procedure HPDMatrixCholeskyInverseRec(var A: TLComplexMatrix;
+procedure HPDMatrixCholeskyInverseRec(var a: TLComplexMatrix;
   Offs: TLInt; n: TLInt; IsUpper: Boolean;
   var tmp: TLComplexVec);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   v: TLComplex;
-  N1: TLInt;
-  N2: TLInt;
+  n1: TLInt;
+  n2: TLInt;
   Info2: TLInt;
   Rep2: TMatInvReport;
   i_: TLInt;
@@ -1575,9 +1575,9 @@ begin
   //
   // Base case
   //
-  if n <= ABLASComplexBlockSize(A) then
+  if n <= ABLASComplexBlockSize(a) then
     begin
-      CMatrixTRInverseRec(A, Offs, n, IsUpper, False, tmp, Info2, Rep2);
+      CMatrixTRInverseRec(a, Offs, n, IsUpper, False, tmp, Info2, Rep2);
       if IsUpper then
         begin
 
@@ -1594,8 +1594,8 @@ begin
                   //
                   // 1x1 matrix
                   //
-                  A[Offs + i, Offs + i] := C_Complex(AP_Sqr(A[Offs + i, Offs + i].X) +
-                    AP_Sqr(A[Offs + i, Offs + i].Y));
+                  a[Offs + i, Offs + i] := C_Complex(AP_Sqr(a[Offs + i, Offs + i].x) +
+                    AP_Sqr(a[Offs + i, Offs + i].y));
                 end
               else
                 begin
@@ -1612,29 +1612,29 @@ begin
                   i1_ := (Offs) - (0);
                   for i_ := 0 to i - 1 do
                     begin
-                      tmp[i_] := Conj(A[i_ + i1_, Offs + i]);
+                      tmp[i_] := Conj(a[i_ + i1_, Offs + i]);
                     end;
-                  J := 0;
-                  while J <= i - 1 do
+                  j := 0;
+                  while j <= i - 1 do
                     begin
-                      v := A[Offs + J, Offs + i];
-                      i1_ := (J) - (Offs + J);
-                      for i_ := Offs + J to Offs + i - 1 do
+                      v := a[Offs + j, Offs + i];
+                      i1_ := (j) - (Offs + j);
+                      for i_ := Offs + j to Offs + i - 1 do
                         begin
-                          A[Offs + J, i_] := C_Add(A[Offs + J, i_],
+                          a[Offs + j, i_] := C_Add(a[Offs + j, i_],
                             C_Mul(v, tmp[i_ + i1_]));
                         end;
-                      Inc(J);
+                      inc(j);
                     end;
-                  v := Conj(A[Offs + i, Offs + i]);
+                  v := Conj(a[Offs + i, Offs + i]);
                   for i_ := Offs to Offs + i - 1 do
                     begin
-                      A[i_, Offs + i] := C_Mul(v, A[i_, Offs + i]);
+                      a[i_, Offs + i] := C_Mul(v, a[i_, Offs + i]);
                     end;
-                  A[Offs + i, Offs + i] := C_Complex(AP_Sqr(A[Offs + i, Offs + i].X) +
-                    AP_Sqr(A[Offs + i, Offs + i].Y));
+                  a[Offs + i, Offs + i] := C_Complex(AP_Sqr(a[Offs + i, Offs + i].x) +
+                    AP_Sqr(a[Offs + i, Offs + i].y));
                 end;
-              Inc(i);
+              inc(i);
             end;
         end
       else
@@ -1653,8 +1653,8 @@ begin
                   //
                   // 1x1 matrix
                   //
-                  A[Offs + i, Offs + i] := C_Complex(AP_Sqr(A[Offs + i, Offs + i].X) +
-                    AP_Sqr(A[Offs + i, Offs + i].Y));
+                  a[Offs + i, Offs + i] := C_Complex(AP_Sqr(a[Offs + i, Offs + i].x) +
+                    AP_Sqr(a[Offs + i, Offs + i].y));
                 end
               else
                 begin
@@ -1671,29 +1671,29 @@ begin
                   i1_ := (Offs) - (0);
                   for i_ := 0 to i - 1 do
                     begin
-                      tmp[i_] := A[Offs + i, i_ + i1_];
+                      tmp[i_] := a[Offs + i, i_ + i1_];
                     end;
-                  J := 0;
-                  while J <= i - 1 do
+                  j := 0;
+                  while j <= i - 1 do
                     begin
-                      v := Conj(A[Offs + i, Offs + J]);
+                      v := Conj(a[Offs + i, Offs + j]);
                       i1_ := (0) - (Offs);
-                      for i_ := Offs to Offs + J do
+                      for i_ := Offs to Offs + j do
                         begin
-                          A[Offs + J, i_] := C_Add(A[Offs + J, i_],
+                          a[Offs + j, i_] := C_Add(a[Offs + j, i_],
                             C_Mul(v, tmp[i_ + i1_]));
                         end;
-                      Inc(J);
+                      inc(j);
                     end;
-                  v := Conj(A[Offs + i, Offs + i]);
+                  v := Conj(a[Offs + i, Offs + i]);
                   for i_ := Offs to Offs + i - 1 do
                     begin
-                      A[Offs + i, i_] := C_Mul(v, A[Offs + i, i_]);
+                      a[Offs + i, i_] := C_Mul(v, a[Offs + i, i_]);
                     end;
-                  A[Offs + i, Offs + i] := C_Complex(AP_Sqr(A[Offs + i, Offs + i].X) +
-                    AP_Sqr(A[Offs + i, Offs + i].Y));
+                  a[Offs + i, Offs + i] := C_Complex(AP_Sqr(a[Offs + i, Offs + i].x) +
+                    AP_Sqr(a[Offs + i, Offs + i].y));
                 end;
-              Inc(i);
+              inc(i);
             end;
         end;
       Exit;
@@ -1703,7 +1703,7 @@ begin
   // Recursive code: triangular factor inversion merged with
   // UU' or L'L multiplication
   //
-  ABLASComplexSplitLength(A, n, N1, N2);
+  ABLASComplexSplitLength(a, n, n1, n2);
 
   //
   // form off-diagonal block of trangular inverse
@@ -1711,40 +1711,40 @@ begin
   if IsUpper then
     begin
       i := 0;
-      while i <= N1 - 1 do
+      while i <= n1 - 1 do
         begin
-          for i_ := Offs + N1 to Offs + n - 1 do
+          for i_ := Offs + n1 to Offs + n - 1 do
             begin
-              A[Offs + i, i_] := C_MulR(A[Offs + i, i_], -1);
+              a[Offs + i, i_] := C_MulR(a[Offs + i, i_], -1);
             end;
-          Inc(i);
+          inc(i);
         end;
-      CMatrixLeftTRSM(N1, N2, A, Offs, Offs, IsUpper, False, 0, A, Offs,
-        Offs + N1);
-      CMatrixRightTRSM(N1, N2, A, Offs + N1, Offs + N1, IsUpper, False, 0, A,
-        Offs, Offs + N1);
+      CMatrixLeftTRSM(n1, n2, a, Offs, Offs, IsUpper, False, 0, a, Offs,
+        Offs + n1);
+      CMatrixRightTRSM(n1, n2, a, Offs + n1, Offs + n1, IsUpper, False, 0, a,
+        Offs, Offs + n1);
     end
   else
     begin
       i := 0;
-      while i <= N2 - 1 do
+      while i <= n2 - 1 do
         begin
-          for i_ := Offs to Offs + N1 - 1 do
+          for i_ := Offs to Offs + n1 - 1 do
             begin
-              A[Offs + N1 + i, i_] := C_MulR(A[Offs + N1 + i, i_], -1);
+              a[Offs + n1 + i, i_] := C_MulR(a[Offs + n1 + i, i_], -1);
             end;
-          Inc(i);
+          inc(i);
         end;
-      CMatrixRightTRSM(N2, N1, A, Offs, Offs, IsUpper, False, 0, A,
-        Offs + N1, Offs);
-      CMatrixLeftTRSM(N2, N1, A, Offs + N1, Offs + N1, IsUpper, False, 0, A,
-        Offs + N1, Offs);
+      CMatrixRightTRSM(n2, n1, a, Offs, Offs, IsUpper, False, 0, a,
+        Offs + n1, Offs);
+      CMatrixLeftTRSM(n2, n1, a, Offs + n1, Offs + n1, IsUpper, False, 0, a,
+        Offs + n1, Offs);
     end;
 
   //
   // invert first diagonal block
   //
-  HPDMatrixCholeskyInverseRec(A, Offs, N1, IsUpper, tmp);
+  HPDMatrixCholeskyInverseRec(a, Offs, n1, IsUpper, tmp);
 
   //
   // update first diagonal block with off-diagonal block,
@@ -1752,21 +1752,23 @@ begin
   //
   if IsUpper then
     begin
-      CMatrixSYRK(N1, N2, 1.0, A, Offs, Offs + N1, 0, 1.0, A, Offs, Offs,
+      CMatrixSYRK(n1, n2, 1.0, a, Offs, Offs + n1, 0, 1.0, a, Offs, Offs,
         IsUpper);
-      CMatrixRightTRSM(N1, N2, A, Offs + N1, Offs + N1, IsUpper, False, 2, A,
-        Offs, Offs + N1);
+      CMatrixRightTRSM(n1, n2, a, Offs + n1, Offs + n1, IsUpper, False, 2, a,
+        Offs, Offs + n1);
     end
   else
     begin
-      CMatrixSYRK(N1, N2, 1.0, A, Offs + N1, Offs, 2, 1.0, A, Offs, Offs,
+      CMatrixSYRK(n1, n2, 1.0, a, Offs + n1, Offs, 2, 1.0, a, Offs, Offs,
         IsUpper);
-      CMatrixLeftTRSM(N2, N1, A, Offs + N1, Offs + N1, IsUpper, False, 2, A,
-        Offs + N1, Offs);
+      CMatrixLeftTRSM(n2, n1, a, Offs + n1, Offs + n1, IsUpper, False, 2, a,
+        Offs + n1, Offs);
     end;
 
   //
   // invert second diagonal block
   //
-  HPDMatrixCholeskyInverseRec(A, Offs + N1, N2, IsUpper, tmp);
+  HPDMatrixCholeskyInverseRec(a, Offs + n1, n2, IsUpper, tmp);
 end; 
+ 
+ 

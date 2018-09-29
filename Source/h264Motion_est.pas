@@ -18,16 +18,14 @@ unit h264Motion_est;
 interface
 
 uses
-  h264Stdint, h264Common, h264Util, h264Motion_comp, h264inter_pred, h264motion_est_search, CoreClasses;
+  h264Types, h264Common, h264Util, h264Motion_comp, h264inter_pred, h264motion_est_search, CoreClasses;
 
 type
-  TScoreListItem = packed record
+  TScoreListItem = record
     score: int32_t;
     mv: TMotionvec;
     refidx: int32_t;
   end;
-
-  { TMotionEstimator }
 
   TMotionEstimator = class
   private
@@ -59,20 +57,16 @@ type
     procedure Estimate(var mb: TMacroblock; var fenc: TFrame);
   end;
 
-  (* ******************************************************************************
-    ****************************************************************************** *)
 implementation
 
-procedure swapItem(var A, b: TScoreListItem); inline;
+procedure swapItem(var a, b: TScoreListItem); inline;
 var
-  T: TScoreListItem;
+  t: TScoreListItem;
 begin
-  T := A;
-  A := b;
-  b := T;
+  t := a;
+  a := b;
+  b := t;
 end;
-
-{ TMotionEstimator }
 
 procedure TMotionEstimator.LoadMVPredictors(const mbx, mby: int32_t);
 var
@@ -110,7 +104,7 @@ end;
 
 class function TMotionEstimator.ClipMVRange(const mv: TMotionvec; Range: int32_t): TMotionvec;
 begin
-  Result := XYToMVec(clip3(-Range, mv.X, Range), clip3(-Range, mv.Y, Range));
+  Result := XYToMVec(clip3(-Range, mv.x, Range), clip3(-Range, mv.y, Range));
 end;
 
 procedure TMotionEstimator.SetNumReferences(AValue: int32_t);
@@ -160,13 +154,13 @@ end;
 procedure TMotionEstimator.Estimate(var mb: TMacroblock; var fenc: TFrame);
 begin
   SearchRegion.Cur := mb.pixels;
-  SearchRegion._mbx := mb.X * 16;
-  SearchRegion._mby := mb.Y * 16;
+  SearchRegion._mbx := mb.x * 16;
+  SearchRegion._mby := mb.y * 16;
   InterCost.SetQP(mb.qp);
 
   predicted_mv_list.Clear;
   predicted_mv_list.Add(mb.mvp);
-  LoadMVPredictors(mb.X, mb.Y);
+  LoadMVPredictors(mb.x, mb.y);
 
   if NumReferences = 1 then
       EstimateSingleRef(mb, fenc)
@@ -191,8 +185,8 @@ begin
       mb.mv := SearchRegion.SearchQPel(mb, fref, _subme > 2, _subme > 3);
 
   mb.mv := ClipMVRange(mb.mv, 512);
-  MotionCompensator.Compensate(fref, mb.mv, mb.X, mb.Y, mb.mcomp);
-  mv_field[mb.Y * mb_width + mb.X] := mb.mv;
+  MotionCompensator.Compensate(fref, mb.mv, mb.x, mb.y, mb.mcomp);
+  mv_field[mb.y * mb_width + mb.x] := mb.mv;
 end;
 
 procedure TMotionEstimator.EstimateMultiRef(var mb: TMacroblock; var fenc: TFrame);
@@ -200,12 +194,12 @@ procedure TMotionEstimator.EstimateMultiRef(var mb: TMacroblock; var fenc: TFram
 // lowest score to lowest index
   procedure SortList;
   var
-    i, J: int32_t;
+    i, j: int32_t;
   begin
     for i := 0 to length(scoreList) - 1 do
-      for J := 0 to length(scoreList) - 2 do
-        if scoreList[J].score > scoreList[J + 1].score then
-            swapItem(scoreList[J], scoreList[J + 1]);
+      for j := 0 to length(scoreList) - 2 do
+        if scoreList[j].score > scoreList[j + 1].score then
+            swapItem(scoreList[j], scoreList[j + 1]);
   end;
 
   function CountLower(const cutoff_score: int32_t): int32_t;
@@ -213,7 +207,7 @@ procedure TMotionEstimator.EstimateMultiRef(var mb: TMacroblock; var fenc: TFram
     Result := 0;
     while scoreList[Result].score < cutoff_score do
       begin
-        Inc(Result);
+        inc(Result);
         if Result = length(scoreList) then
             Break;
       end;
@@ -275,8 +269,10 @@ begin
   mb_load_mvs(mb, fenc, ref_count);
 
   mb.mv := ClipMVRange(mv, 512);
-  MotionCompensator.Compensate(fref, mb.mv, mb.X, mb.Y, mb.mcomp);
-  mv_field[mb.Y * mb_width + mb.X] := mb.mv;
+  MotionCompensator.Compensate(fref, mb.mv, mb.x, mb.y, mb.mcomp);
+  mv_field[mb.y * mb_width + mb.x] := mb.mv;
 end;
 
 end.  
+ 
+ 

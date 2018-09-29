@@ -37,11 +37,8 @@
 *)
 unit AggScanlineStorageAA;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggArray,
@@ -53,7 +50,7 @@ uses
 type
   PAggExtraSpan = ^TAggExtraSpan;
 
-  TAggExtraSpan = packed record
+  TAggExtraSpan = record
     Len: Cardinal;
     PTR: Pointer;
   end;
@@ -79,22 +76,22 @@ type
 
   PAggSpanDataSS = ^TAggSpanDataSS;
 
-  TAggSpanDataSS = packed record
-    X, Len: Int32;     // If negative, it's a solid Span, covers is valid
+  TAggSpanDataSS = record
+    x, Len: Int32;     // If negative, it's a solid Span, covers is valid
     CoversID: Integer; // The index of the cells in the TAggScanLineCellStorage
   end;
 
   PAggScanLineDataSS = ^TAggScanLineDataSS;
 
-  TAggScanLineDataSS = packed record
-    Y: Integer;
+  TAggScanLineDataSS = record
+    y: Integer;
     NumSpans, StartSpan: Cardinal;
   end;
 
   PAggSpanSS = ^TAggSpanSS;
 
-  TAggSpanSS = packed record
-    X, Len: Int32; // If negative, it's a solid Span, covers is valid
+  TAggSpanSS = record
+    x, Len: Int32; // If negative, it's a solid Span, covers is valid
 
     Covers: Pointer;
   end;
@@ -343,7 +340,7 @@ var
   s: PAggExtraSpan;
 begin
   i := FExtraStorage.Size;
-  Dec(i);
+  dec(i);
 
   while i >= 0 do
     begin
@@ -351,7 +348,7 @@ begin
 
       AggFreeMem(s.PTR, s.Len * FCells.EntrySize);
 
-      Dec(i);
+      dec(i);
     end;
 
   FExtraStorage.RemoveAll;
@@ -452,7 +449,7 @@ begin
 
       FExtraStorage.Add(@Dst);
 
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -479,12 +476,12 @@ end;
 
 function TAggEmbeddedScanLineSS.TConstIterator.GetX: Integer;
 begin
-  Result := FSpan.X;
+  Result := FSpan.x;
 end;
 
 procedure TAggEmbeddedScanLineSS.TConstIterator.IncOperator;
 begin
-  Inc(FSpanIdx);
+  inc(FSpanIdx);
   Init;
 end;
 
@@ -494,7 +491,7 @@ var
 begin
   s := FStorage.SpanByIndex(FSpanIdx);
 
-  FSpan.X := s.X;
+  FSpan.x := s.x;
   FSpan.Len := s.Len;
   FSpan.Covers := FStorage.CoversByIndex(s.CoversID);
 end;
@@ -514,7 +511,7 @@ end;
 
 function TAggEmbeddedScanLineSS.GetY;
 begin
-  Result := FScanLine.Y;
+  Result := FScanLine.y;
 end;
 
 function TAggEmbeddedScanLineSS.GetNumSpans;
@@ -545,18 +542,18 @@ begin
   FSpans := TAggPodDeque.Create(256 - 2, SizeOf(TAggSpanDataSS), 10); // Block increment size
   FScanLines := TAggPodDeque.Create(SizeOf(TAggScanLineDataSS), 8);
 
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 
   FCurrentScanLine := 0;
 
-  FFakeScanLine.Y := 0;
+  FFakeScanLine.y := 0;
   FFakeScanLine.NumSpans := 0;
   FFakeScanLine.StartSpan := 0;
 
-  FFakeSpan.X := 0;
+  FFakeSpan.x := 0;
   FFakeSpan.Len := 0;
   FFakeSpan.CoversID := 0;
 end;
@@ -575,10 +572,10 @@ begin
   FScanLines.RemoveAll;
   FSpans.RemoveAll;
 
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 
   FCurrentScanLine := 0;
 end;
@@ -587,22 +584,22 @@ procedure TAggCustomScanLineStorageAA.Render;
 var
   ScanLineData: TAggScanLineDataSS;
 
-  Y, x1, x2, Len: Integer;
+  y, x1, x2, Len: Integer;
 
   NumSpans: Cardinal;
   Span: TAggCustomSpan;
 
   sp: TAggSpanDataSS;
 begin
-  Y := SL.Y;
+  y := SL.y;
 
-  if Y < FMin.Y then
-      FMin.Y := Y;
+  if y < FMin.y then
+      FMin.y := y;
 
-  if Y > FMax.Y then
-      FMax.Y := Y;
+  if y > FMax.y then
+      FMax.y := y;
 
-  ScanLineData.Y := Y;
+  ScanLineData.y := y;
   ScanLineData.NumSpans := SL.NumSpans;
   ScanLineData.StartSpan := FSpans.Size;
 
@@ -611,7 +608,7 @@ begin
   Span := SL.GetBegin;
 
   repeat
-    sp.X := Span.X;
+    sp.x := Span.x;
     sp.Len := Span.Len;
 
     Len := Abs(sp.Len);
@@ -620,16 +617,16 @@ begin
 
     FSpans.Add(@sp);
 
-    x1 := sp.X;
-    x2 := sp.X + Len - 1;
+    x1 := sp.x;
+    x2 := sp.x + Len - 1;
 
-    if x1 < FMin.X then
-        FMin.X := x1;
+    if x1 < FMin.x then
+        FMin.x := x1;
 
-    if x2 > FMax.X then
-        FMax.X := x2;
+    if x2 > FMax.x then
+        FMax.x := x2;
 
-    Dec(NumSpans);
+    dec(NumSpans);
 
     if NumSpans = 0 then
         Break;
@@ -644,22 +641,22 @@ end;
 
 function TAggCustomScanLineStorageAA.GetMinX;
 begin
-  Result := FMin.X;
+  Result := FMin.x;
 end;
 
 function TAggCustomScanLineStorageAA.GetMinY;
 begin
-  Result := FMin.Y;
+  Result := FMin.y;
 end;
 
 function TAggCustomScanLineStorageAA.GetMaxX;
 begin
-  Result := FMax.X;
+  Result := FMax.x;
 end;
 
 function TAggCustomScanLineStorageAA.GetMaxY;
 begin
-  Result := FMax.Y;
+  Result := FMax.y;
 end;
 
 function TAggCustomScanLineStorageAA.RewindScanLines;
@@ -695,23 +692,23 @@ begin
     repeat
       sp := FSpans[SpanIndex];
 
-      Inc(SpanIndex);
+      inc(SpanIndex);
 
       Covers := CoversByIndex(sp.CoversID);
 
       if sp.Len < 0 then
-          SL.AddSpan(sp.X, Cardinal(-sp.Len), Covers^)
+          SL.AddSpan(sp.x, Cardinal(-sp.Len), Covers^)
       else
-          SL.AddCells(sp.X, sp.Len, Covers);
+          SL.AddCells(sp.x, sp.Len, Covers);
 
-      Dec(NumSpans);
+      dec(NumSpans);
     until NumSpans = 0;
 
-    Inc(FCurrentScanLine);
+    inc(FCurrentScanLine);
 
     if SL.NumSpans <> 0 then
       begin
-        SL.Finalize(ScanLineData.Y);
+        SL.Finalize(ScanLineData.y);
 
         Break;
       end;
@@ -735,7 +732,7 @@ begin
 
     SL.Setup(FCurrentScanLine);
 
-    Inc(FCurrentScanLine);
+    inc(FCurrentScanLine);
 
   until SL.NumSpans <> 0;
 
@@ -757,7 +754,7 @@ begin
 
   while i < FScanLines.Size do
     begin
-      Inc(Size, SizeOf(Int32) * 3); // ScanLine size in bytes, Y, NumSpans
+      inc(Size, SizeOf(Int32) * 3); // ScanLine size in bytes, Y, NumSpans
 
       ScanLineData := FScanLines[i];
 
@@ -767,18 +764,18 @@ begin
       repeat
         sp := FSpans[SpanIndex];
 
-        Inc(SpanIndex);
-        Inc(Size, SizeOf(Int32) * 2); // X, Span Length
+        inc(SpanIndex);
+        inc(Size, SizeOf(Int32) * 2); // X, Span Length
 
         if sp.Len < 0 then
-            Inc(Size, SizeOf(Int8u)) // cover
+            inc(Size, SizeOf(Int8u)) // cover
         else
-            Inc(Size, SizeOf(Int8u) * Cardinal(sp.Len)); // covers
+            inc(Size, SizeOf(Int8u) * Cardinal(sp.Len)); // covers
 
-        Dec(NumSpans);
+        dec(NumSpans);
       until NumSpans = 0;
 
-      Inc(i);
+      inc(i);
     end;
 
   Result := Size;
@@ -806,16 +803,16 @@ var
 
 begin
   WriteInt32(Data, GetMinX); // MinX
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   WriteInt32(Data, GetMinY); // MinY
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   WriteInt32(Data, GetMaxX); // MaxX
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   WriteInt32(Data, GetMaxY); // MaxY
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   i := 0;
 
@@ -824,14 +821,14 @@ begin
       ScanLineThis := FScanLines[i];
       SizePointer := Data;
 
-      Inc(PtrComp(Data), SizeOf(Int32));
+      inc(PtrComp(Data), SizeOf(Int32));
       // Reserve space for ScanLine size in bytes
 
-      WriteInt32(Data, ScanLineThis.Y); // Y
-      Inc(PtrComp(Data), SizeOf(Int32));
+      WriteInt32(Data, ScanLineThis.y); // Y
+      inc(PtrComp(Data), SizeOf(Int32));
 
       WriteInt32(Data, ScanLineThis.NumSpans); // NumSpans
-      Inc(PtrComp(Data), SizeOf(Int32));
+      inc(PtrComp(Data), SizeOf(Int32));
 
       NumSpans := ScanLineThis.NumSpans;
       SpanIndex := ScanLineThis.StartSpan;
@@ -839,33 +836,33 @@ begin
       repeat
         sp := FSpans[SpanIndex];
 
-        Inc(SpanIndex);
+        inc(SpanIndex);
 
         Covers := CoversByIndex(sp.CoversID);
 
-        WriteInt32(Data, sp.X); // X
-        Inc(PtrComp(Data), SizeOf(Int32));
+        WriteInt32(Data, sp.x); // X
+        inc(PtrComp(Data), SizeOf(Int32));
 
         WriteInt32(Data, sp.Len); // Span Length
-        Inc(PtrComp(Data), SizeOf(Int32));
+        inc(PtrComp(Data), SizeOf(Int32));
 
         if sp.Len < 0 then
           begin
             Move(Covers^, Data^, SizeOf(Int8u));
-            Inc(PtrComp(Data), SizeOf(Int8u));
+            inc(PtrComp(Data), SizeOf(Int8u));
           end
         else
           begin
             Move(Covers^, Data^, Cardinal(sp.Len) * SizeOf(Int8u));
-            Inc(PtrComp(Data), SizeOf(Int8u) * Cardinal(sp.Len));
+            inc(PtrComp(Data), SizeOf(Int8u) * Cardinal(sp.Len));
           end;
 
-        Dec(NumSpans);
+        dec(NumSpans);
       until NumSpans = 0;
 
       WriteInt32(SizePointer, PtrComp(Data) - PtrComp(SizePointer));
 
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -931,23 +928,23 @@ begin
     repeat
       sp := FSpans[SpanIndex];
 
-      Inc(SpanIndex);
+      inc(SpanIndex);
 
       Covers := CoversByIndex(sp.CoversID);
 
       if sp.Len < 0 then
-          SL.AddSpan(sp.X, Cardinal(-sp.Len), Covers^)
+          SL.AddSpan(sp.x, Cardinal(-sp.Len), Covers^)
       else
-          SL.AddCells(sp.X, sp.Len, PInt8u(Covers));
+          SL.AddCells(sp.x, sp.Len, PInt8u(Covers));
 
-      Dec(NumSpans);
+      dec(NumSpans);
     until NumSpans = 0;
 
-    Inc(FCurrentScanLine);
+    inc(FCurrentScanLine);
 
     if SL.NumSpans <> 0 then
       begin
-        SL.Finalize(ScanLineData.Y);
+        SL.Finalize(ScanLineData.y);
 
         Break;
       end;
@@ -972,7 +969,7 @@ begin
 
   while i < FScanLines.Size do
     begin
-      Inc(Size, SizeOf(Int32) * 3); // ScanLine size in bytes, Y, NumSpans
+      inc(Size, SizeOf(Int32) * 3); // ScanLine size in bytes, Y, NumSpans
 
       ScanLineData := FScanLines[i];
 
@@ -982,18 +979,18 @@ begin
       repeat
         sp := FSpans[SpanIndex];
 
-        Inc(SpanIndex);
-        Inc(Size, SizeOf(Int32) * 2); // X, Span Length
+        inc(SpanIndex);
+        inc(Size, SizeOf(Int32) * 2); // X, Span Length
 
         if sp.Len < 0 then
-            Inc(Size, SizeOf(Int16u)) // cover
+            inc(Size, SizeOf(Int16u)) // cover
         else
-            Inc(Size, SizeOf(Int16u) * Cardinal(sp.Len)); // covers
+            inc(Size, SizeOf(Int16u) * Cardinal(sp.Len)); // covers
 
-        Dec(NumSpans);
+        dec(NumSpans);
       until NumSpans = 0;
 
-      Inc(i);
+      inc(i);
     end;
 
   Result := Size;
@@ -1008,16 +1005,16 @@ var
   SizePointer: PInt8u;
 begin
   WriteInt32(Data, GetMinX); // MinX
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   WriteInt32(Data, GetMinY); // min_y
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   WriteInt32(Data, GetMaxX); // MaxX
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   WriteInt32(Data, GetMaxY); // max_y
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   i := 0;
 
@@ -1026,14 +1023,14 @@ begin
       ScanLineThis := FScanLines[i];
       SizePointer := Data;
 
-      Inc(PtrComp(Data), SizeOf(Int32));
+      inc(PtrComp(Data), SizeOf(Int32));
       // Reserve space for ScanLine size in bytes
 
-      WriteInt32(Data, ScanLineThis.Y); // Y
-      Inc(PtrComp(Data), SizeOf(Int32));
+      WriteInt32(Data, ScanLineThis.y); // Y
+      inc(PtrComp(Data), SizeOf(Int32));
 
       WriteInt32(Data, ScanLineThis.NumSpans); // NumSpans
-      Inc(PtrComp(Data), SizeOf(Int32));
+      inc(PtrComp(Data), SizeOf(Int32));
 
       NumSpans := ScanLineThis.NumSpans;
       SpanIndex := ScanLineThis.StartSpan;
@@ -1041,33 +1038,33 @@ begin
       repeat
         sp := FSpans[SpanIndex];
 
-        Inc(SpanIndex);
+        inc(SpanIndex);
 
         Covers := CoversByIndex(sp.CoversID);
 
-        WriteInt32(Data, sp.X); // X
-        Inc(PtrComp(Data), SizeOf(Int32));
+        WriteInt32(Data, sp.x); // X
+        inc(PtrComp(Data), SizeOf(Int32));
 
         WriteInt32(Data, sp.Len); // Span Length
-        Inc(PtrComp(Data), SizeOf(Int32));
+        inc(PtrComp(Data), SizeOf(Int32));
 
         if sp.Len < 0 then
           begin
             Move(Covers^, Data^, SizeOf(Int16u));
-            Inc(PtrComp(Data), SizeOf(Int16u));
+            inc(PtrComp(Data), SizeOf(Int16u));
           end
         else
           begin
             Move(Covers^, Data^, Cardinal(sp.Len) * SizeOf(Int16u));
-            Inc(PtrComp(Data), SizeOf(Int16u) * Cardinal(sp.Len));
+            inc(PtrComp(Data), SizeOf(Int16u) * Cardinal(sp.Len));
           end;
 
-        Dec(NumSpans);
+        dec(NumSpans);
       until NumSpans = 0;
 
       WriteInt32(SizePointer, PtrComp(Data) - PtrComp(SizePointer));
 
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -1108,23 +1105,23 @@ begin
     repeat
       sp := FSpans[SpanIndex];
 
-      Inc(SpanIndex);
+      inc(SpanIndex);
 
       Covers := CoversByIndex(sp.CoversID);
 
       if sp.Len < 0 then
-          SL.AddSpan(sp.X, Cardinal(-sp.Len), Covers^)
+          SL.AddSpan(sp.x, Cardinal(-sp.Len), Covers^)
       else
-          SL.AddCells(sp.X, sp.Len, PInt8u(Covers));
+          SL.AddCells(sp.x, sp.Len, PInt8u(Covers));
 
-      Dec(NumSpans);
+      dec(NumSpans);
     until NumSpans = 0;
 
-    Inc(FCurrentScanLine);
+    inc(FCurrentScanLine);
 
     if SL.NumSpans <> 0 then
       begin
-        SL.Finalize(ScanLineThis.Y);
+        SL.Finalize(ScanLineThis.y);
 
         Break;
       end;
@@ -1146,7 +1143,7 @@ begin
 
   while i < FScanLines.Size do
     begin
-      Inc(Size, SizeOf(Int32) * 3); // ScanLine size in bytes, Y, NumSpans
+      inc(Size, SizeOf(Int32) * 3); // ScanLine size in bytes, Y, NumSpans
 
       ScanLineThis := FScanLines[i];
 
@@ -1156,18 +1153,18 @@ begin
       repeat
         sp := FSpans[SpanIndex];
 
-        Inc(SpanIndex);
-        Inc(Size, SizeOf(Int32) * 2); // X, Span Length
+        inc(SpanIndex);
+        inc(Size, SizeOf(Int32) * 2); // X, Span Length
 
         if sp.Len < 0 then
-            Inc(Size, SizeOf(Int32u)) // cover
+            inc(Size, SizeOf(Int32u)) // cover
         else
-            Inc(Size, SizeOf(Int32u) * Cardinal(sp.Len)); // covers
+            inc(Size, SizeOf(Int32u) * Cardinal(sp.Len)); // covers
 
-        Dec(NumSpans);
+        dec(NumSpans);
       until NumSpans = 0;
 
-      Inc(i);
+      inc(i);
     end;
 
   Result := Size;
@@ -1187,16 +1184,16 @@ var
 
 begin
   WriteInt32(Data, GetMinX); // MinX
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   WriteInt32(Data, GetMinY); // min_y
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   WriteInt32(Data, GetMaxX); // MaxX
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   WriteInt32(Data, GetMaxY); // max_y
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   i := 0;
 
@@ -1205,14 +1202,14 @@ begin
       ScanLineThis := FScanLines[i];
       SizePointer := Data;
 
-      Inc(PtrComp(Data), SizeOf(Int32));
+      inc(PtrComp(Data), SizeOf(Int32));
       // Reserve space for ScanLine size in bytes
 
-      WriteInt32(Data, ScanLineThis.Y); // Y
-      Inc(PtrComp(Data), SizeOf(Int32));
+      WriteInt32(Data, ScanLineThis.y); // Y
+      inc(PtrComp(Data), SizeOf(Int32));
 
       WriteInt32(Data, ScanLineThis.NumSpans); // NumSpans
-      Inc(PtrComp(Data), SizeOf(Int32));
+      inc(PtrComp(Data), SizeOf(Int32));
 
       NumSpans := ScanLineThis.NumSpans;
       SpanIndex := ScanLineThis.StartSpan;
@@ -1220,35 +1217,35 @@ begin
       repeat
         sp := FSpans[SpanIndex];
 
-        Inc(SpanIndex);
+        inc(SpanIndex);
 
         Covers := CoversByIndex(sp.CoversID);
 
-        WriteInt32(Data, sp.X); // X
-        Inc(PtrComp(Data), SizeOf(Int32));
+        WriteInt32(Data, sp.x); // X
+        inc(PtrComp(Data), SizeOf(Int32));
 
         WriteInt32(Data, sp.Len); // Span Length
-        Inc(PtrComp(Data), SizeOf(Int32));
+        inc(PtrComp(Data), SizeOf(Int32));
 
         if sp.Len < 0 then
           begin
             Move(Covers^, Data^, SizeOf(Int32u));
-            Inc(PtrComp(Data), SizeOf(Int32u));
+            inc(PtrComp(Data), SizeOf(Int32u));
 
           end
         else
           begin
             Move(Covers^, Data^, Cardinal(sp.Len) * SizeOf(Int32u));
-            Inc(PtrComp(Data), SizeOf(Int32u) * Cardinal(sp.Len));
+            inc(PtrComp(Data), SizeOf(Int32u) * Cardinal(sp.Len));
           end;
 
-        Dec(NumSpans);
+        dec(NumSpans);
 
       until NumSpans = 0;
 
       WriteInt32(SizePointer, PtrComp(Data) - PtrComp(SizePointer));
 
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -1282,22 +1279,22 @@ end;
 
 function TAggEmbeddedScanLineSA.TConstIterator.GetX: Integer;
 begin
-  Result := FSpan.X;
+  Result := FSpan.x;
 end;
 
 procedure TAggEmbeddedScanLineSA.TConstIterator.IncOperator;
 begin
   if FSpan.Len < 0 then
-      Inc(PtrComp(FPtr), FSize)
+      inc(PtrComp(FPtr), FSize)
   else
-      Inc(PtrComp(FPtr), FSpan.Len * FSize);
+      inc(PtrComp(FPtr), FSpan.Len * FSize);
 
   Init;
 end;
 
 procedure TAggEmbeddedScanLineSA.TConstIterator.Init;
 begin
-  FSpan.X := ReadInt32 + FDeltaX;
+  FSpan.x := ReadInt32 + FDeltaX;
   FSpan.Len := ReadInt32;
   FSpan.Covers := FPtr;
 end;
@@ -1305,13 +1302,13 @@ end;
 function TAggEmbeddedScanLineSA.TConstIterator.ReadInt32: Integer;
 begin
   TInt32Int8uAccess(Result).values[0] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[1] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[2] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[3] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
 end;
 
 { TAggEmbeddedScanLineSA }
@@ -1365,13 +1362,13 @@ end;
 function TAggEmbeddedScanLineSA.ReadInt32: Integer;
 begin
   TInt32Int8uAccess(Result).values[0] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[1] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[2] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[3] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
 end;
 
 { TAggSerializedScanLinesAdaptorAA }
@@ -1382,13 +1379,13 @@ begin
   FEnd := nil;
   FPtr := nil;
 
-  FDelta.X := 0;
-  FDelta.Y := 0;
+  FDelta.x := 0;
+  FDelta.y := 0;
 
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 
   FSize := SZ;
 end;
@@ -1400,13 +1397,13 @@ begin
   FEnd := PInt8u(PtrComp(Data) + ASize);
   FPtr := Data;
 
-  FDelta.X := Trunc(dx + 0.5);
-  FDelta.Y := Trunc(dy + 0.5);
+  FDelta.x := Trunc(dx + 0.5);
+  FDelta.y := Trunc(dy + 0.5);
 
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 
   FSize := SZ;
 end;
@@ -1417,37 +1414,37 @@ begin
   FEnd := PInt8u(PtrComp(Data) + ASize);
   FPtr := Data;
 
-  FDelta.X := Trunc(dx + 0.5);
-  FDelta.Y := Trunc(dy + 0.5);
+  FDelta.x := Trunc(dx + 0.5);
+  FDelta.y := Trunc(dy + 0.5);
 
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 end;
 
 function TAggSerializedScanLinesAdaptorAA.ReadInt32: Integer;
 begin
   TInt32Int8uAccess(Result).values[0] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[1] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[2] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[3] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
 end;
 
 function TAggSerializedScanLinesAdaptorAA.ReadInt32u: Cardinal;
 begin
   TInt32Int8uAccess(Result).values[0] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[1] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[2] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[3] := FPtr^;
-  Inc(PtrComp(FPtr), SizeOf(Int8u));
+  inc(PtrComp(FPtr), SizeOf(Int8u));
 end;
 
 function TAggSerializedScanLinesAdaptorAA.RewindScanLines;
@@ -1457,10 +1454,10 @@ begin
 
   if PtrComp(FPtr) < PtrComp(FEnd) then
     begin
-      FMin.X := ReadInt32 + FDelta.X;
-      FMin.Y := ReadInt32 + FDelta.Y;
-      FMax.X := ReadInt32 + FDelta.X;
-      FMax.Y := ReadInt32 + FDelta.Y;
+      FMin.x := ReadInt32 + FDelta.x;
+      FMin.y := ReadInt32 + FDelta.y;
+      FMax.x := ReadInt32 + FDelta.x;
+      FMax.y := ReadInt32 + FDelta.y;
 
       Result := True;
     end;
@@ -1468,12 +1465,12 @@ end;
 
 function TAggSerializedScanLinesAdaptorAA.GetMinX;
 begin
-  Result := FMin.X;
+  Result := FMin.x;
 end;
 
 function TAggSerializedScanLinesAdaptorAA.GetMinY;
 begin
-  Result := FMin.Y;
+  Result := FMin.y;
 end;
 
 function TAggSerializedScanLinesAdaptorAA.GetSize: Cardinal;
@@ -1483,18 +1480,18 @@ end;
 
 function TAggSerializedScanLinesAdaptorAA.GetMaxX;
 begin
-  Result := FMax.X;
+  Result := FMax.x;
 end;
 
 function TAggSerializedScanLinesAdaptorAA.GetMaxY;
 begin
-  Result := FMax.Y;
+  Result := FMax.y;
 end;
 
 function TAggSerializedScanLinesAdaptorAA.SweepScanLine(
   SL: TAggCustomScanLine): Boolean;
 var
-  Y, X, Len: Integer;
+  y, x, Len: Integer;
   NumSpans: Cardinal;
 begin
   SL.ResetSpans;
@@ -1507,29 +1504,29 @@ begin
       end;
 
     ReadInt32; // Skip ScanLine size in bytes
-    Y := ReadInt32 + FDelta.Y;
+    y := ReadInt32 + FDelta.y;
     NumSpans := ReadInt32;
 
     repeat
-      X := ReadInt32 + FDelta.X;
+      x := ReadInt32 + FDelta.x;
       Len := ReadInt32;
 
       if Len < 0 then
         begin
-          SL.AddSpan(X, Cardinal(-Len), FPtr^);
-          Inc(PtrComp(FPtr), FSize);
+          SL.AddSpan(x, Cardinal(-Len), FPtr^);
+          inc(PtrComp(FPtr), FSize);
         end
       else
         begin
-          SL.AddCells(X, Len, FPtr);
-          Inc(PtrComp(FPtr), Len * FSize);
+          SL.AddCells(x, Len, FPtr);
+          inc(PtrComp(FPtr), Len * FSize);
         end;
-      Dec(NumSpans);
+      dec(NumSpans);
     until NumSpans = 0;
 
     if SL.NumSpans <> 0 then
       begin
-        SL.Finalize(Y);
+        SL.Finalize(y);
         Break;
       end;
   until False;
@@ -1549,8 +1546,8 @@ begin
         Exit;
       end;
     ByteSize := ReadInt32u;
-    SL.Init(FPtr, FDelta.X, FDelta.Y);
-    Inc(PtrComp(FPtr), ByteSize - SizeOf(Int32));
+    SL.Init(FPtr, FDelta.x, FDelta.y);
+    inc(PtrComp(FPtr), ByteSize - SizeOf(Int32));
   until SL.NumSpans <> 0;
   Result := True;
 end;
@@ -1595,4 +1592,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

@@ -37,11 +37,8 @@
 *)
 unit AggRenderingBufferDynaRow;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggRenderingBuffer;
@@ -64,8 +61,8 @@ type
 
     function GetByteWidth: Cardinal;
 
-    function RowXY(X, Y: Integer; Len: Cardinal): PInt8u; override;
-    function Row(Y: Cardinal): PInt8u; override;
+    function RowXY(x, y: Integer; Len: Cardinal): PInt8u; override;
+    function Row(y: Cardinal): PInt8u; override;
   end;
 
 implementation
@@ -107,7 +104,7 @@ begin
       AggFreeMem(Pointer(PAggRowDataType(PtrComp(FBuffer) + i *
         SizeOf(TAggRowDataType)).PTR), FByteWidth);
 
-      Inc(i);
+      inc(i);
     end;
 
   AggFreeMem(Pointer(FBuffer), FAlloc);
@@ -135,43 +132,45 @@ end;
 
 // The main function used for rendering. Returns pointer to the
 // pre-allocated Span. Memory for the row is allocated as needed.
-function TAggRenderingBufferDynaRow.RowXY(X, Y: Integer; Len: Cardinal): PInt8u;
+function TAggRenderingBufferDynaRow.RowXY(x, y: Integer; Len: Cardinal): PInt8u;
 var
-  R: PAggRowDataType;
+  r: PAggRowDataType;
   p: PInt8u;
 
   x2: Integer;
 
 begin
-  R := PAggRowDataType(PtrComp(FBuffer) + Y * SizeOf(TAggRowDataType));
-  x2 := X + Len - 1;
+  r := PAggRowDataType(PtrComp(FBuffer) + y * SizeOf(TAggRowDataType));
+  x2 := x + Len - 1;
 
-  if R.PTR <> nil then
+  if r.PTR <> nil then
     begin
-      if X < R.x1 then
-          R.x1 := X;
+      if x < r.x1 then
+          r.x1 := x;
 
-      if x2 > R.x2 then
-          R.x2 := x2;
+      if x2 > r.x2 then
+          r.x2 := x2;
 
     end
   else
     begin
       AggGetMem(Pointer(p), FByteWidth);
 
-      R.PTR := p;
-      R.x1 := X;
-      R.x2 := x2;
+      r.PTR := p;
+      r.x1 := x;
+      r.x2 := x2;
 
       FillChar(p^, FByteWidth, 0);
     end;
 
-  Result := R.PTR;
+  Result := r.PTR;
 end;
 
-function TAggRenderingBufferDynaRow.Row(Y: Cardinal): PInt8u;
+function TAggRenderingBufferDynaRow.Row(y: Cardinal): PInt8u;
 begin
-  Result := RowXY(0, Y, FWidth);
+  Result := RowXY(0, y, FWidth);
 end;
 
 end. 
+ 
+ 

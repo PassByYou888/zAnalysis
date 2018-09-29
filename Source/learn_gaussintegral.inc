@@ -25,15 +25,15 @@
   * -2    Beta[i]<=0
   * -1    incorrect N was passed
   *  1    OK
-  X       -   array[0..N-1] - packed array of quadrature nodes, in ascending order.
-  W       -   array[0..N-1] - packed array of quadrature weights.
+  X       -   array[0..N-1] - array of quadrature nodes, in ascending order.
+  W       -   array[0..N-1] - array of quadrature weights.
   ************************************************************************ *)
-procedure GaussQuadratureGenerateRec(const alpha, beta: TLVec; const Mu0: TLFloat; n: TLInt; var Info: TLInt; var X: TLVec; var w: TLVec);
+procedure GaussQuadratureGenerateRec(const alpha, beta: TLVec; const Mu0: TLFloat; n: TLInt; var Info: TLInt; var x: TLVec; var w: TLVec);
 var
   i: TLInt;
   d: TLVec;
   E: TLVec;
-  Z: TLMatrix;
+  z: TLMatrix;
 begin
   if n < 1 then
     begin
@@ -57,14 +57,14 @@ begin
           Exit;
         end;
       E[i - 1] := Sqrt(beta[i]);
-      Inc(i);
+      inc(i);
     end;
   d[n - 1] := alpha[n - 1];
 
   //
   // EVD
   //
-  if not SMatrixTDEVD(d, E, n, 3, Z) then
+  if not SMatrixTDEVD(d, E, n, 3, z) then
     begin
       Info := -3;
       Exit;
@@ -73,14 +73,14 @@ begin
   //
   // Generate
   //
-  SetLength(X, n);
+  SetLength(x, n);
   SetLength(w, n);
   i := 1;
   while i <= n do
     begin
-      X[i - 1] := d[i - 1];
-      w[i - 1] := Mu0 * AP_Sqr(Z[0, i - 1]);
-      Inc(i);
+      x[i - 1] := d[i - 1];
+      w[i - 1] := Mu0 * AP_Sqr(z[0, i - 1]);
+      inc(i);
     end;
 end;
 
@@ -113,21 +113,21 @@ end;
   * -2    Beta[i]<=0
   * -1    incorrect N was passed
   *  1    OK
-  X       -   array[0..N-1] - packed array of quadrature nodes, in ascending order.
-  W       -   array[0..N-1] - packed array of quadrature weights.
+  X       -   array[0..N-1] - array of quadrature nodes, in ascending order.
+  W       -   array[0..N-1] - array of quadrature weights.
   ************************************************************************ *)
-procedure GaussQuadratureGenerateGaussLobattoRec(const alpha, beta: TLVec; const Mu0, A, b: TLFloat; n: TLInt; var Info: TLInt; var X: TLVec; var w: TLVec);
+procedure GaussQuadratureGenerateGaussLobattoRec(const alpha, beta: TLVec; const Mu0, a, b: TLFloat; n: TLInt; var Info: TLInt; var x: TLVec; var w: TLVec);
 var
   NewAlpha, NewBeta: TLVec;
   i: TLInt;
   d: TLVec;
   E: TLVec;
-  Z: TLMatrix;
+  z: TLMatrix;
   PIM1A: TLFloat;
   PIA: TLFloat;
   PIM1B: TLFloat;
   PIB: TLFloat;
-  T: TLFloat;
+  t: TLFloat;
   A11: TLFloat;
   A12: TLFloat;
   A21: TLFloat;
@@ -157,7 +157,7 @@ begin
   while i <= n + 1 do
     begin
       d[i - 1] := NewAlpha[i - 1];
-      Inc(i);
+      inc(i);
     end;
   i := 1;
   while i <= n do
@@ -168,7 +168,7 @@ begin
           Exit;
         end;
       E[i - 1] := Sqrt(NewBeta[i]);
-      Inc(i);
+      inc(i);
     end;
 
   //
@@ -186,17 +186,17 @@ begin
       //
       // Pi(a)
       //
-      T := (A - NewAlpha[i - 1]) * PIA - NewBeta[i - 1] * PIM1A;
+      t := (a - NewAlpha[i - 1]) * PIA - NewBeta[i - 1] * PIM1A;
       PIM1A := PIA;
-      PIA := T;
+      PIA := t;
 
       //
       // Pi(b)
       //
-      T := (b - NewAlpha[i - 1]) * PIB - NewBeta[i - 1] * PIM1B;
+      t := (b - NewAlpha[i - 1]) * PIB - NewBeta[i - 1] * PIM1B;
       PIM1B := PIB;
-      PIB := T;
-      Inc(i);
+      PIB := t;
+      inc(i);
     end;
 
   //
@@ -206,7 +206,7 @@ begin
   A12 := PIM1A;
   A21 := PIB;
   A22 := PIM1B;
-  b1 := A * PIA;
+  b1 := a * PIA;
   b2 := b * PIB;
   if AP_FP_Greater(AbsReal(A11), AbsReal(A21)) then
     begin
@@ -233,7 +233,7 @@ begin
   //
   // EVD
   //
-  if not SMatrixTDEVD(d, E, n + 2, 3, Z) then
+  if not SMatrixTDEVD(d, E, n + 2, 3, z) then
     begin
       Info := -3;
       Exit;
@@ -242,14 +242,14 @@ begin
   //
   // Generate
   //
-  SetLength(X, n + 2);
+  SetLength(x, n + 2);
   SetLength(w, n + 2);
   i := 1;
   while i <= n + 2 do
     begin
-      X[i - 1] := d[i - 1];
-      w[i - 1] := Mu0 * AP_Sqr(Z[0, i - 1]);
-      Inc(i);
+      x[i - 1] := d[i - 1];
+      w[i - 1] := Mu0 * AP_Sqr(z[0, i - 1]);
+      inc(i);
     end;
 end;
 
@@ -281,19 +281,19 @@ end;
   * -2    Beta[i]<=0
   * -1    incorrect N was passed
   *  1    OK
-  X       -   array[0..N-1] - packed array of quadrature nodes, in ascending order.
-  W       -   array[0..N-1] - packed array of quadrature weights.
+  X       -   array[0..N-1] - array of quadrature nodes, in ascending order.
+  W       -   array[0..N-1] - array of quadrature weights.
   ************************************************************************ *)
-procedure GaussQuadratureGenerateGaussRadauRec(const alpha, beta: TLVec; const Mu0, A: TLFloat; n: TLInt; var Info: TLInt; var X: TLVec; var w: TLVec);
+procedure GaussQuadratureGenerateGaussRadauRec(const alpha, beta: TLVec; const Mu0, a: TLFloat; n: TLInt; var Info: TLInt; var x: TLVec; var w: TLVec);
 var
   NewAlpha, NewBeta: TLVec;
   i: TLInt;
   d: TLVec;
   E: TLVec;
-  Z: TLMatrix;
+  z: TLMatrix;
   PolIM1: TLFloat;
   PolI: TLFloat;
-  T: TLFloat;
+  t: TLFloat;
 begin
   if n < 2 then
     begin
@@ -320,7 +320,7 @@ begin
           Exit;
         end;
       E[i - 1] := Sqrt(NewBeta[i]);
-      Inc(i);
+      inc(i);
     end;
 
   //
@@ -332,17 +332,17 @@ begin
   i := 1;
   while i <= n do
     begin
-      T := (A - NewAlpha[i - 1]) * PolI - NewBeta[i - 1] * PolIM1;
+      t := (a - NewAlpha[i - 1]) * PolI - NewBeta[i - 1] * PolIM1;
       PolIM1 := PolI;
-      PolI := T;
-      Inc(i);
+      PolI := t;
+      inc(i);
     end;
-  d[n] := A - NewBeta[n] * PolIM1 / PolI;
+  d[n] := a - NewBeta[n] * PolIM1 / PolI;
 
   //
   // EVD
   //
-  if not SMatrixTDEVD(d, E, n + 1, 3, Z) then
+  if not SMatrixTDEVD(d, E, n + 1, 3, z) then
     begin
       Info := -3;
       Exit;
@@ -351,14 +351,14 @@ begin
   //
   // Generate
   //
-  SetLength(X, n + 1);
+  SetLength(x, n + 1);
   SetLength(w, n + 1);
   i := 1;
   while i <= n + 1 do
     begin
-      X[i - 1] := d[i - 1];
-      w[i - 1] := Mu0 * AP_Sqr(Z[0, i - 1]);
-      Inc(i);
+      x[i - 1] := d[i - 1];
+      w[i - 1] := Mu0 * AP_Sqr(z[0, i - 1]);
+      inc(i);
     end;
 end;
 
@@ -375,10 +375,10 @@ end;
   * -3    internal eigenproblem solver hasn't  converged
   * -1    incorrect N was passed
   * +1    OK
-  X           -   array[0..N-1] - packed array of quadrature nodes, in ascending order.
-  W           -   array[0..N-1] - packed array of quadrature weights.
+  X           -   array[0..N-1] - array of quadrature nodes, in ascending order.
+  W           -   array[0..N-1] - array of quadrature weights.
   ************************************************************************ *)
-procedure GaussQuadratureGenerateGaussLegendre(const n: TLInt; var Info: TLInt; var X: TLVec; var w: TLVec);
+procedure GaussQuadratureGenerateGaussLegendre(const n: TLInt; var Info: TLInt; var x: TLVec; var w: TLVec);
 var
   alpha: TLVec;
   beta: TLVec;
@@ -395,34 +395,34 @@ begin
   while i <= n - 1 do
     begin
       alpha[i] := 0;
-      Inc(i);
+      inc(i);
     end;
   beta[0] := 2;
   i := 1;
   while i <= n - 1 do
     begin
       beta[i] := 1 / (4 - 1 / AP_Sqr(i));
-      Inc(i);
+      inc(i);
     end;
-  GaussQuadratureGenerateRec(alpha, beta, beta[0], n, Info, X, w);
+  GaussQuadratureGenerateRec(alpha, beta, beta[0], n, Info, x, w);
 
   //
   // test basic properties to detect errors
   //
   if Info > 0 then
     begin
-      if AP_FP_Less(X[0], -1) or AP_FP_Greater(X[n - 1], +1) then
+      if AP_FP_Less(x[0], -1) or AP_FP_Greater(x[n - 1], +1) then
         begin
           Info := -4;
         end;
       i := 0;
       while i <= n - 2 do
         begin
-          if AP_FP_Greater_Eq(X[i], X[i + 1]) then
+          if AP_FP_Greater_Eq(x[i], x[i + 1]) then
             begin
               Info := -4;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -442,17 +442,17 @@ end;
   * -3    internal eigenproblem solver hasn't converged
   * -1    incorrect N/Alpha/Beta was passed
   * +1    OK
-  X           -   array[0..N-1] - packed array of quadrature nodes, in ascending order.
-  W           -   array[0..N-1] - packed array of quadrature weights.
+  X           -   array[0..N-1] - array of quadrature nodes, in ascending order.
+  W           -   array[0..N-1] - array of quadrature weights.
   ************************************************************************ *)
-procedure GaussQuadratureGenerateGaussJacobi(const n: TLInt; const alpha, beta: TLFloat; var Info: TLInt; var X: TLVec; var w: TLVec);
+procedure GaussQuadratureGenerateGaussJacobi(const n: TLInt; const alpha, beta: TLFloat; var Info: TLInt; var x: TLVec; var w: TLVec);
 var
-  A: TLVec;
+  a: TLVec;
   b: TLVec;
   Alpha2: TLFloat;
   Beta2: TLFloat;
   APB: TLFloat;
-  T: TLFloat;
+  t: TLFloat;
   i: TLInt;
   s: TLFloat;
 begin
@@ -461,54 +461,54 @@ begin
       Info := -1;
       Exit;
     end;
-  SetLength(A, n);
+  SetLength(a, n);
   SetLength(b, n);
   APB := alpha + beta;
-  A[0] := (beta - alpha) / (APB + 2);
-  T := (APB + 1) * ln(2) + LnGamma(alpha + 1, s) + LnGamma(beta + 1, s) -
+  a[0] := (beta - alpha) / (APB + 2);
+  t := (APB + 1) * ln(2) + LnGamma(alpha + 1, s) + LnGamma(beta + 1, s) -
     LnGamma(APB + 2, s);
-  if AP_FP_Greater(T, ln(MaxRealNumber)) then
+  if AP_FP_Greater(t, ln(MaxRealNumber)) then
     begin
       Info := -4;
       Exit;
     end;
-  b[0] := Exp(T);
+  b[0] := Exp(t);
   if n > 1 then
     begin
       Alpha2 := AP_Sqr(alpha);
       Beta2 := AP_Sqr(beta);
-      A[1] := (Beta2 - Alpha2) / ((APB + 2) * (APB + 4));
+      a[1] := (Beta2 - Alpha2) / ((APB + 2) * (APB + 4));
       b[1] := 4 * (alpha + 1) * (beta + 1) / ((APB + 3) * AP_Sqr(APB + 2));
       i := 2;
       while i <= n - 1 do
         begin
-          A[i] := 0.25 * (Beta2 - Alpha2) /
+          a[i] := 0.25 * (Beta2 - Alpha2) /
             (i * i * (1 + 0.5 * APB / i) * (1 + 0.5 * (APB + 2) / i));
           b[i] := 0.25 * (1 + alpha / i) * (1 + beta / i) * (1 + APB / i) /
             ((1 + 0.5 * (APB + 1) / i) * (1 + 0.5 * (APB - 1) / i) *
             AP_Sqr(1 + 0.5 * APB / i));
-          Inc(i);
+          inc(i);
         end;
     end;
-  GaussQuadratureGenerateRec(A, b, b[0], n, Info, X, w);
+  GaussQuadratureGenerateRec(a, b, b[0], n, Info, x, w);
 
   //
   // test basic properties to detect errors
   //
   if Info > 0 then
     begin
-      if AP_FP_Less(X[0], -1) or AP_FP_Greater(X[n - 1], +1) then
+      if AP_FP_Less(x[0], -1) or AP_FP_Greater(x[n - 1], +1) then
         begin
           Info := -4;
         end;
       i := 0;
       while i <= n - 2 do
         begin
-          if AP_FP_Greater_Eq(X[i], X[i + 1]) then
+          if AP_FP_Greater_Eq(x[i], x[i + 1]) then
             begin
               Info := -4;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -527,14 +527,14 @@ end;
   * -3    internal eigenproblem solver hasn't converged
   * -1    incorrect N/Alpha was passed
   * +1    OK
-  X           -   array[0..N-1] - packed array of quadrature nodes, in ascending order.
-  W           -   array[0..N-1] - packed array of quadrature weights.
+  X           -   array[0..N-1] - array of quadrature nodes, in ascending order.
+  W           -   array[0..N-1] - array of quadrature weights.
   ************************************************************************ *)
-procedure GaussQuadratureGenerateGaussLaguerre(const n: TLInt; const alpha: TLFloat; var Info: TLInt; var X: TLVec; var w: TLVec);
+procedure GaussQuadratureGenerateGaussLaguerre(const n: TLInt; const alpha: TLFloat; var Info: TLInt; var x: TLVec; var w: TLVec);
 var
-  A: TLVec;
+  a: TLVec;
   b: TLVec;
-  T: TLFloat;
+  t: TLFloat;
   i: TLInt;
   s: TLFloat;
 begin
@@ -543,45 +543,45 @@ begin
       Info := -1;
       Exit;
     end;
-  SetLength(A, n);
+  SetLength(a, n);
   SetLength(b, n);
-  A[0] := alpha + 1;
-  T := LnGamma(alpha + 1, s);
-  if AP_FP_Greater_Eq(T, ln(MaxRealNumber)) then
+  a[0] := alpha + 1;
+  t := LnGamma(alpha + 1, s);
+  if AP_FP_Greater_Eq(t, ln(MaxRealNumber)) then
     begin
       Info := -4;
       Exit;
     end;
-  b[0] := Exp(T);
+  b[0] := Exp(t);
   if n > 1 then
     begin
       i := 1;
       while i <= n - 1 do
         begin
-          A[i] := 2 * i + alpha + 1;
+          a[i] := 2 * i + alpha + 1;
           b[i] := i * (i + alpha);
-          Inc(i);
+          inc(i);
         end;
     end;
-  GaussQuadratureGenerateRec(A, b, b[0], n, Info, X, w);
+  GaussQuadratureGenerateRec(a, b, b[0], n, Info, x, w);
 
   //
   // test basic properties to detect errors
   //
   if Info > 0 then
     begin
-      if AP_FP_Less(X[0], 0) then
+      if AP_FP_Less(x[0], 0) then
         begin
           Info := -4;
         end;
       i := 0;
       while i <= n - 2 do
         begin
-          if AP_FP_Greater_Eq(X[i], X[i + 1]) then
+          if AP_FP_Greater_Eq(x[i], x[i + 1]) then
             begin
               Info := -4;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -598,12 +598,12 @@ end;
   * -3    internal eigenproblem solver hasn't converged
   * -1    incorrect N/Alpha was passed
   * +1    OK
-  X           -   array[0..N-1] - packed array of quadrature nodes, in ascending order.
-  W           -   array[0..N-1] - packed array of quadrature weights.
+  X           -   array[0..N-1] - array of quadrature nodes, in ascending order.
+  W           -   array[0..N-1] - array of quadrature weights.
   ************************************************************************ *)
-procedure GaussQuadratureGenerateGaussHermite(const n: TLInt; var Info: TLInt; var X: TLVec; var w: TLVec);
+procedure GaussQuadratureGenerateGaussHermite(const n: TLInt; var Info: TLInt; var x: TLVec; var w: TLVec);
 var
-  A: TLVec;
+  a: TLVec;
   b: TLVec;
   i: TLInt;
 begin
@@ -612,13 +612,13 @@ begin
       Info := -1;
       Exit;
     end;
-  SetLength(A, n);
+  SetLength(a, n);
   SetLength(b, n);
   i := 0;
   while i <= n - 1 do
     begin
-      A[i] := 0;
-      Inc(i);
+      a[i] := 0;
+      inc(i);
     end;
   b[0] := Sqrt(4 * ArcTan(1));
   if n > 1 then
@@ -627,10 +627,10 @@ begin
       while i <= n - 1 do
         begin
           b[i] := 0.5 * i;
-          Inc(i);
+          inc(i);
         end;
     end;
-  GaussQuadratureGenerateRec(A, b, b[0], n, Info, X, w);
+  GaussQuadratureGenerateRec(a, b, b[0], n, Info, x, w);
 
   //
   // test basic properties to detect errors
@@ -640,11 +640,11 @@ begin
       i := 0;
       while i <= n - 2 do
         begin
-          if AP_FP_Greater_Eq(X[i], X[i + 1]) then
+          if AP_FP_Greater_Eq(x[i], x[i + 1]) then
             begin
               Info := -4;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -678,17 +678,17 @@ end;
   * -2    Beta[i]<=0
   * -1    incorrect N was passed
   * +1    OK
-  X           -   array[0..N-1] - packed array of quadrature nodes, in ascending order.
+  X           -   array[0..N-1] - array of quadrature nodes, in ascending order.
   WKronrod    -   array[0..N-1] - Kronrod weights
   WGauss      -   array[0..N-1] - Gauss weights (interleaved with zeros corresponding to extended Kronrod nodes).
   ************************************************************************ *)
-procedure GaussKronrodQuadratureGenerateRec(const alpha, beta: TLVec; const Mu0: TLFloat; n: TLInt; var Info: TLInt; var X, WKronrod, WGauss: TLVec);
+procedure GaussKronrodQuadratureGenerateRec(const alpha, beta: TLVec; const Mu0: TLFloat; n: TLInt; var Info: TLInt; var x, WKronrod, WGauss: TLVec);
 var
   NewAlpha, NewBeta: TLVec;
   TA: TLVec;
   i: TLInt;
-  J: TLInt;
-  T: TLVec;
+  j: TLInt;
+  t: TLVec;
   s: TLVec;
   WLen: TLInt;
   WOffs: TLInt;
@@ -712,7 +712,7 @@ begin
           Info := -2;
           Exit;
         end;
-      Inc(i);
+      inc(i);
     end;
 
   NewAlpha := DynamicArrayCopy(alpha);
@@ -747,7 +747,7 @@ begin
   while i <= 2 * n do
     begin
       NewAlpha[i] := 0;
-      Inc(i);
+      inc(i);
     end;
   SetLength(TA, Ceil(AP_Float(3 * n) / 2) + 1);
   APVMove(@TA[0], 0, Ceil(AP_Float(3 * n) / 2), @NewBeta[0], 0, Ceil(AP_Float(3 * n) / 2));
@@ -757,29 +757,29 @@ begin
   while i <= 2 * n do
     begin
       NewBeta[i] := 0;
-      Inc(i);
+      inc(i);
     end;
 
   //
   // Initialize T, S
   //
   WLen := 2 + n div 2;
-  SetLength(T, WLen);
+  SetLength(t, WLen);
   SetLength(s, WLen);
   SetLength(TA, WLen);
   WOffs := 1;
   i := 0;
   while i <= WLen - 1 do
     begin
-      T[i] := 0;
+      t[i] := 0;
       s[i] := 0;
-      Inc(i);
+      inc(i);
     end;
 
   //
   // Algorithm from Dirk P. Laurie, "Calculation of Gauss-Kronrod quadrature rules", 1997.
   //
-  T[WOffs + 0] := NewBeta[n + 1];
+  t[WOffs + 0] := NewBeta[n + 1];
   M := 0;
   while M <= n - 2 do
     begin
@@ -788,20 +788,20 @@ begin
       while k >= 0 do
         begin
           L := M - k;
-          u := u + (NewAlpha[k + n + 1] - NewAlpha[L]) * T[WOffs + k] + NewBeta[k + n + 1] * s[WOffs + k - 1] - NewBeta[L] * s[WOffs + k];
+          u := u + (NewAlpha[k + n + 1] - NewAlpha[L]) * t[WOffs + k] + NewBeta[k + n + 1] * s[WOffs + k - 1] - NewBeta[L] * s[WOffs + k];
           s[WOffs + k] := u;
-          Dec(k);
+          dec(k);
         end;
-      APVMove(@TA[0], 0, WLen - 1, @T[0], 0, WLen - 1);
-      APVMove(@T[0], 0, WLen - 1, @s[0], 0, WLen - 1);
+      APVMove(@TA[0], 0, WLen - 1, @t[0], 0, WLen - 1);
+      APVMove(@t[0], 0, WLen - 1, @s[0], 0, WLen - 1);
       APVMove(@s[0], 0, WLen - 1, @TA[0], 0, WLen - 1);
-      Inc(M);
+      inc(M);
     end;
-  J := n div 2;
-  while J >= 0 do
+  j := n div 2;
+  while j >= 0 do
     begin
-      s[WOffs + J] := s[WOffs + J - 1];
-      Dec(J);
+      s[WOffs + j] := s[WOffs + j - 1];
+      dec(j);
     end;
   M := n - 1;
   while M <= 2 * n - 3 do
@@ -811,32 +811,32 @@ begin
       while k <= (M - 1) div 2 do
         begin
           L := M - k;
-          J := n - 1 - L;
-          u := u - (NewAlpha[k + n + 1] - NewAlpha[L]) * T[WOffs + J] - NewBeta[k + n + 1] * s[WOffs + J] + NewBeta[L] * s[WOffs + J + 1];
-          s[WOffs + J] := u;
-          Inc(k);
+          j := n - 1 - L;
+          u := u - (NewAlpha[k + n + 1] - NewAlpha[L]) * t[WOffs + j] - NewBeta[k + n + 1] * s[WOffs + j] + NewBeta[L] * s[WOffs + j + 1];
+          s[WOffs + j] := u;
+          inc(k);
         end;
       if M mod 2 = 0 then
         begin
           k := M div 2;
-          NewAlpha[k + n + 1] := NewAlpha[k] + (s[WOffs + J] - NewBeta[k + n + 1] * s[WOffs + J + 1]) / T[WOffs + J + 1];
+          NewAlpha[k + n + 1] := NewAlpha[k] + (s[WOffs + j] - NewBeta[k + n + 1] * s[WOffs + j + 1]) / t[WOffs + j + 1];
         end
       else
         begin
           k := (M + 1) div 2;
-          NewBeta[k + n + 1] := s[WOffs + J] / s[WOffs + J + 1];
+          NewBeta[k + n + 1] := s[WOffs + j] / s[WOffs + j + 1];
         end;
-      APVMove(@TA[0], 0, WLen - 1, @T[0], 0, WLen - 1);
-      APVMove(@T[0], 0, WLen - 1, @s[0], 0, WLen - 1);
+      APVMove(@TA[0], 0, WLen - 1, @t[0], 0, WLen - 1);
+      APVMove(@t[0], 0, WLen - 1, @s[0], 0, WLen - 1);
       APVMove(@s[0], 0, WLen - 1, @TA[0], 0, WLen - 1);
-      Inc(M);
+      inc(M);
     end;
-  NewAlpha[2 * n] := NewAlpha[n - 1] - NewBeta[2 * n] * s[WOffs + 0] / T[WOffs + 0];
+  NewAlpha[2 * n] := NewAlpha[n - 1] - NewBeta[2 * n] * s[WOffs + 0] / t[WOffs + 0];
 
   //
   // calculation of Kronrod nodes and weights, unpacking of Gauss weights
   //
-  GaussQuadratureGenerateRec(NewAlpha, NewBeta, Mu0, 2 * n + 1, Info, X, WKronrod);
+  GaussQuadratureGenerateRec(NewAlpha, NewBeta, Mu0, 2 * n + 1, Info, x, WKronrod);
   if Info = -2 then
     begin
       Info := -5;
@@ -848,11 +848,11 @@ begin
   i := 0;
   while i <= 2 * n - 1 do
     begin
-      if AP_FP_Greater_Eq(X[i], X[i + 1]) then
+      if AP_FP_Greater_Eq(x[i], x[i + 1]) then
         begin
           Info := -4;
         end;
-      Inc(i);
+      inc(i);
     end;
   if Info < 0 then
     begin
@@ -863,13 +863,13 @@ begin
   while i <= 2 * n do
     begin
       WGauss[i] := 0;
-      Inc(i);
+      inc(i);
     end;
   i := 0;
   while i <= n - 1 do
     begin
       WGauss[2 * i + 1] := WGTmp[i];
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -887,11 +887,11 @@ end;
   * -3    internal eigenproblem solver hasn't converged
   * -1    incorrect N was passed
   * +1    OK
-  X           -   array[0..N-1] - packed array of quadrature nodes, ordered in ascending order.
+  X           -   array[0..N-1] - array of quadrature nodes, ordered in ascending order.
   WKronrod    -   array[0..N-1] - Kronrod weights
   WGauss      -   array[0..N-1] - Gauss weights (interleaved with zeros corresponding to extended Kronrod nodes).
   ************************************************************************ *)
-procedure GaussKronrodQuadratureGenerateGaussLegendre(const n: TLInt; var Info: TLInt; var X, WKronrod, WGauss: TLVec);
+procedure GaussKronrodQuadratureGenerateGaussLegendre(const n: TLInt; var Info: TLInt; var x, WKronrod, WGauss: TLVec);
 var
   Eps: TLFloat;
 begin
@@ -899,11 +899,11 @@ begin
     ((n = 15) or (n = 21) or (n = 31) or (n = 41) or (n = 51) or (n = 61)) then
     begin
       Info := 1;
-      GaussKronrodQuadratureLegendreTbl(n, X, WKronrod, WGauss, Eps);
+      GaussKronrodQuadratureLegendreTbl(n, x, WKronrod, WGauss, Eps);
     end
   else
     begin
-      GaussKronrodQuadratureLegendreCalc(n, Info, X, WKronrod, WGauss);
+      GaussKronrodQuadratureLegendreCalc(n, Info, x, WKronrod, WGauss);
     end;
 end;
 
@@ -924,19 +924,19 @@ end;
   * -1    incorrect N was passed
   * +1    OK
   * +2    OK, but quadrature rule have exterior  nodes, x[0]<-1 or x[n-1]>+1
-  X           -   array[0..N-1] - packed array of quadrature nodes, ordered in ascending order.
+  X           -   array[0..N-1] - array of quadrature nodes, ordered in ascending order.
   WKronrod    -   array[0..N-1] - Kronrod weights
   WGauss      -   array[0..N-1] - Gauss weights (interleaved with zeros corresponding to extended Kronrod nodes).
   ************************************************************************ *)
-procedure GaussKronrodQuadratureGenerateGaussJacobi(const n: TLInt; const alpha, beta: TLFloat; var Info: TLInt; var X, WKronrod, WGauss: TLVec);
+procedure GaussKronrodQuadratureGenerateGaussJacobi(const n: TLInt; const alpha, beta: TLFloat; var Info: TLInt; var x, WKronrod, WGauss: TLVec);
 var
   clen: TLInt;
-  A: TLVec;
+  a: TLVec;
   b: TLVec;
   Alpha2: TLFloat;
   Beta2: TLFloat;
   APB: TLFloat;
-  T: TLFloat;
+  t: TLFloat;
   i: TLInt;
   s: TLFloat;
 begin
@@ -951,60 +951,60 @@ begin
       Exit;
     end;
   clen := Ceil(AP_Float(3 * (n div 2)) / 2) + 1;
-  SetLength(A, clen);
+  SetLength(a, clen);
   SetLength(b, clen);
   i := 0;
   while i <= clen - 1 do
     begin
-      A[i] := 0;
-      Inc(i);
+      a[i] := 0;
+      inc(i);
     end;
   APB := alpha + beta;
-  A[0] := (beta - alpha) / (APB + 2);
-  T := (APB + 1) * ln(2) + LnGamma(alpha + 1, s) + LnGamma(beta + 1, s) -
+  a[0] := (beta - alpha) / (APB + 2);
+  t := (APB + 1) * ln(2) + LnGamma(alpha + 1, s) + LnGamma(beta + 1, s) -
     LnGamma(APB + 2, s);
-  if AP_FP_Greater(T, ln(MaxRealNumber)) then
+  if AP_FP_Greater(t, ln(MaxRealNumber)) then
     begin
       Info := -4;
       Exit;
     end;
-  b[0] := Exp(T);
+  b[0] := Exp(t);
   if clen > 1 then
     begin
       Alpha2 := AP_Sqr(alpha);
       Beta2 := AP_Sqr(beta);
-      A[1] := (Beta2 - Alpha2) / ((APB + 2) * (APB + 4));
+      a[1] := (Beta2 - Alpha2) / ((APB + 2) * (APB + 4));
       b[1] := 4 * (alpha + 1) * (beta + 1) / ((APB + 3) * AP_Sqr(APB + 2));
       i := 2;
       while i <= clen - 1 do
         begin
-          A[i] := 0.25 * (Beta2 - Alpha2) /
+          a[i] := 0.25 * (Beta2 - Alpha2) /
             (i * i * (1 + 0.5 * APB / i) * (1 + 0.5 * (APB + 2) / i));
           b[i] := 0.25 * (1 + alpha / i) * (1 + beta / i) * (1 + APB / i) /
             ((1 + 0.5 * (APB + 1) / i) * (1 + 0.5 * (APB - 1) / i) *
             AP_Sqr(1 + 0.5 * APB / i));
-          Inc(i);
+          inc(i);
         end;
     end;
-  GaussKronrodQuadratureGenerateRec(A, b, b[0], n, Info, X, WKronrod, WGauss);
+  GaussKronrodQuadratureGenerateRec(a, b, b[0], n, Info, x, WKronrod, WGauss);
 
   //
   // test basic properties to detect errors
   //
   if Info > 0 then
     begin
-      if AP_FP_Less(X[0], -1) or AP_FP_Greater(X[n - 1], +1) then
+      if AP_FP_Less(x[0], -1) or AP_FP_Greater(x[n - 1], +1) then
         begin
           Info := 2;
         end;
       i := 0;
       while i <= n - 2 do
         begin
-          if AP_FP_Greater_Eq(X[i], X[i + 1]) then
+          if AP_FP_Greater_Eq(x[i], x[i + 1]) then
             begin
               Info := -4;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -1022,11 +1022,11 @@ end;
   * -3    internal eigenproblem solver hasn't converged
   * -1    incorrect N was passed
   * +1    OK
-  X           -   array[0..N-1] - packed array of quadrature nodes, ordered in ascending order.
+  X           -   array[0..N-1] - array of quadrature nodes, ordered in ascending order.
   WKronrod    -   array[0..N-1] - Kronrod weights
   WGauss      -   array[0..N-1] - Gauss weights (interleaved with zeros corresponding to extended Kronrod nodes).
   ************************************************************************ *)
-procedure GaussKronrodQuadratureLegendreCalc(const n: TLInt; var Info: TLInt; var X, WKronrod, WGauss: TLVec);
+procedure GaussKronrodQuadratureLegendreCalc(const n: TLInt; var Info: TLInt; var x, WKronrod, WGauss: TLVec);
 var
   alpha: TLVec;
   beta: TLVec;
@@ -1050,34 +1050,34 @@ begin
   while k <= ALen - 1 do
     begin
       alpha[k] := 0;
-      Inc(k);
+      inc(k);
     end;
   beta[0] := 2;
   k := 1;
   while k <= BLen - 1 do
     begin
       beta[k] := 1 / (4 - 1 / AP_Sqr(k));
-      Inc(k);
+      inc(k);
     end;
-  GaussKronrodQuadratureGenerateRec(alpha, beta, Mu0, n, Info, X, WKronrod, WGauss);
+  GaussKronrodQuadratureGenerateRec(alpha, beta, Mu0, n, Info, x, WKronrod, WGauss);
 
   //
   // test basic properties to detect errors
   //
   if Info > 0 then
     begin
-      if AP_FP_Less(X[0], -1) or AP_FP_Greater(X[n - 1], +1) then
+      if AP_FP_Less(x[0], -1) or AP_FP_Greater(x[n - 1], +1) then
         begin
           Info := -4;
         end;
       i := 0;
       while i <= n - 2 do
         begin
-          if AP_FP_Greater_Eq(X[i], X[i + 1]) then
+          if AP_FP_Greater_Eq(x[i], x[i + 1]) then
             begin
               Info := -4;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -1091,11 +1091,11 @@ end;
   N can be 15, 21, 31, 41, 51, 61.
 
   OUTPUT PARAMETERS:
-  X           -   array[0..N-1] - packed array of quadrature nodes, ordered in ascending order.
+  X           -   array[0..N-1] - array of quadrature nodes, ordered in ascending order.
   WKronrod    -   array[0..N-1] - Kronrod weights
   WGauss      -   array[0..N-1] - Gauss weights (interleaved with zeros corresponding to extended Kronrod nodes).
   ************************************************************************ *)
-procedure GaussKronrodQuadratureLegendreTbl(const n: TLInt; var X, WKronrod, WGauss: TLVec; var Eps: TLFloat);
+procedure GaussKronrodQuadratureLegendreTbl(const n: TLInt; var x, WKronrod, WGauss: TLVec; var Eps: TLFloat);
 var
   i: TLInt;
   NG: TLInt;
@@ -1104,16 +1104,16 @@ var
   tmp: TLFloat;
 begin
   Assert((n = 15) or (n = 21) or (n = 31) or (n = 41) or (n = 51) or (n = 61), 'GKQNodesTbl: incorrect N!');
-  SetLength(X, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, n (* - 1 + 1 // optimized compiler *) );
   SetLength(WKronrod, n (* - 1 + 1 // optimized compiler *) );
   SetLength(WGauss, n (* - 1 + 1 // optimized compiler *) );
   i := 0;
   while i <= n - 1 do
     begin
-      X[i] := 0;
+      x[i] := 0;
       WKronrod[i] := 0;
       WGauss[i] := 0;
-      Inc(i);
+      inc(i);
     end;
   Eps := Max(MachineEpsilon, 1.0E-32);
   if n = 15 then
@@ -1123,14 +1123,14 @@ begin
       WGauss[1] := 0.279705391489276667901467771423780;
       WGauss[2] := 0.381830050505118944950369775488975;
       WGauss[3] := 0.417959183673469387755102040816327;
-      X[0] := 0.991455371120812639206854697526329;
-      X[1] := 0.949107912342758524526189684047851;
-      X[2] := 0.864864423359769072789712788640926;
-      X[3] := 0.741531185599394439863864773280788;
-      X[4] := 0.586087235467691130294144838258730;
-      X[5] := 0.405845151377397166906606412076961;
-      X[6] := 0.207784955007898467600689403773245;
-      X[7] := 0.000000000000000000000000000000000;
+      x[0] := 0.991455371120812639206854697526329;
+      x[1] := 0.949107912342758524526189684047851;
+      x[2] := 0.864864423359769072789712788640926;
+      x[3] := 0.741531185599394439863864773280788;
+      x[4] := 0.586087235467691130294144838258730;
+      x[5] := 0.405845151377397166906606412076961;
+      x[6] := 0.207784955007898467600689403773245;
+      x[7] := 0.000000000000000000000000000000000;
       WKronrod[0] := 0.022935322010529224963732008058970;
       WKronrod[1] := 0.063092092629978553290700663189204;
       WKronrod[2] := 0.104790010322250183839876322541518;
@@ -1148,17 +1148,17 @@ begin
       WGauss[2] := 0.219086362515982043995534934228163;
       WGauss[3] := 0.269266719309996355091226921569469;
       WGauss[4] := 0.295524224714752870173892994651338;
-      X[0] := 0.995657163025808080735527280689003;
-      X[1] := 0.973906528517171720077964012084452;
-      X[2] := 0.930157491355708226001207180059508;
-      X[3] := 0.865063366688984510732096688423493;
-      X[4] := 0.780817726586416897063717578345042;
-      X[5] := 0.679409568299024406234327365114874;
-      X[6] := 0.562757134668604683339000099272694;
-      X[7] := 0.433395394129247190799265943165784;
-      X[8] := 0.294392862701460198131126603103866;
-      X[9] := 0.148874338981631210884826001129720;
-      X[10] := 0.000000000000000000000000000000000;
+      x[0] := 0.995657163025808080735527280689003;
+      x[1] := 0.973906528517171720077964012084452;
+      x[2] := 0.930157491355708226001207180059508;
+      x[3] := 0.865063366688984510732096688423493;
+      x[4] := 0.780817726586416897063717578345042;
+      x[5] := 0.679409568299024406234327365114874;
+      x[6] := 0.562757134668604683339000099272694;
+      x[7] := 0.433395394129247190799265943165784;
+      x[8] := 0.294392862701460198131126603103866;
+      x[9] := 0.148874338981631210884826001129720;
+      x[10] := 0.000000000000000000000000000000000;
       WKronrod[0] := 0.011694638867371874278064396062192;
       WKronrod[1] := 0.032558162307964727478818972459390;
       WKronrod[2] := 0.054755896574351996031381300244580;
@@ -1182,22 +1182,22 @@ begin
       WGauss[5] := 0.186161000015562211026800561866423;
       WGauss[6] := 0.198431485327111576456118326443839;
       WGauss[7] := 0.202578241925561272880620199967519;
-      X[0] := 0.998002298693397060285172840152271;
-      X[1] := 0.987992518020485428489565718586613;
-      X[2] := 0.967739075679139134257347978784337;
-      X[3] := 0.937273392400705904307758947710209;
-      X[4] := 0.897264532344081900882509656454496;
-      X[5] := 0.848206583410427216200648320774217;
-      X[6] := 0.790418501442465932967649294817947;
-      X[7] := 0.724417731360170047416186054613938;
-      X[8] := 0.650996741297416970533735895313275;
-      X[9] := 0.570972172608538847537226737253911;
-      X[10] := 0.485081863640239680693655740232351;
-      X[11] := 0.394151347077563369897207370981045;
-      X[12] := 0.299180007153168812166780024266389;
-      X[13] := 0.201194093997434522300628303394596;
-      X[14] := 0.101142066918717499027074231447392;
-      X[15] := 0.000000000000000000000000000000000;
+      x[0] := 0.998002298693397060285172840152271;
+      x[1] := 0.987992518020485428489565718586613;
+      x[2] := 0.967739075679139134257347978784337;
+      x[3] := 0.937273392400705904307758947710209;
+      x[4] := 0.897264532344081900882509656454496;
+      x[5] := 0.848206583410427216200648320774217;
+      x[6] := 0.790418501442465932967649294817947;
+      x[7] := 0.724417731360170047416186054613938;
+      x[8] := 0.650996741297416970533735895313275;
+      x[9] := 0.570972172608538847537226737253911;
+      x[10] := 0.485081863640239680693655740232351;
+      x[11] := 0.394151347077563369897207370981045;
+      x[12] := 0.299180007153168812166780024266389;
+      x[13] := 0.201194093997434522300628303394596;
+      x[14] := 0.101142066918717499027074231447392;
+      x[15] := 0.000000000000000000000000000000000;
       WKronrod[0] := 0.005377479872923348987792051430128;
       WKronrod[1] := 0.015007947329316122538374763075807;
       WKronrod[2] := 0.025460847326715320186874001019653;
@@ -1228,27 +1228,27 @@ begin
       WGauss[7] := 0.142096109318382051329298325067165;
       WGauss[8] := 0.149172986472603746787828737001969;
       WGauss[9] := 0.152753387130725850698084331955098;
-      X[0] := 0.998859031588277663838315576545863;
-      X[1] := 0.993128599185094924786122388471320;
-      X[2] := 0.981507877450250259193342994720217;
-      X[3] := 0.963971927277913791267666131197277;
-      X[4] := 0.940822633831754753519982722212443;
-      X[5] := 0.912234428251325905867752441203298;
-      X[6] := 0.878276811252281976077442995113078;
-      X[7] := 0.839116971822218823394529061701521;
-      X[8] := 0.795041428837551198350638833272788;
-      X[9] := 0.746331906460150792614305070355642;
-      X[10] := 0.693237656334751384805490711845932;
-      X[11] := 0.636053680726515025452836696226286;
-      X[12] := 0.575140446819710315342946036586425;
-      X[13] := 0.510867001950827098004364050955251;
-      X[14] := 0.443593175238725103199992213492640;
-      X[15] := 0.373706088715419560672548177024927;
-      X[16] := 0.301627868114913004320555356858592;
-      X[17] := 0.227785851141645078080496195368575;
-      X[18] := 0.152605465240922675505220241022678;
-      X[19] := 0.076526521133497333754640409398838;
-      X[20] := 0.000000000000000000000000000000000;
+      x[0] := 0.998859031588277663838315576545863;
+      x[1] := 0.993128599185094924786122388471320;
+      x[2] := 0.981507877450250259193342994720217;
+      x[3] := 0.963971927277913791267666131197277;
+      x[4] := 0.940822633831754753519982722212443;
+      x[5] := 0.912234428251325905867752441203298;
+      x[6] := 0.878276811252281976077442995113078;
+      x[7] := 0.839116971822218823394529061701521;
+      x[8] := 0.795041428837551198350638833272788;
+      x[9] := 0.746331906460150792614305070355642;
+      x[10] := 0.693237656334751384805490711845932;
+      x[11] := 0.636053680726515025452836696226286;
+      x[12] := 0.575140446819710315342946036586425;
+      x[13] := 0.510867001950827098004364050955251;
+      x[14] := 0.443593175238725103199992213492640;
+      x[15] := 0.373706088715419560672548177024927;
+      x[16] := 0.301627868114913004320555356858592;
+      x[17] := 0.227785851141645078080496195368575;
+      x[18] := 0.152605465240922675505220241022678;
+      x[19] := 0.076526521133497333754640409398838;
+      x[20] := 0.000000000000000000000000000000000;
       WKronrod[0] := 0.003073583718520531501218293246031;
       WKronrod[1] := 0.008600269855642942198661787950102;
       WKronrod[2] := 0.014626169256971252983787960308868;
@@ -1287,32 +1287,32 @@ begin
       WGauss[10] := 0.119455763535784772228178126512901;
       WGauss[11] := 0.122242442990310041688959518945852;
       WGauss[12] := 0.123176053726715451203902873079050;
-      X[0] := 0.999262104992609834193457486540341;
-      X[1] := 0.995556969790498097908784946893902;
-      X[2] := 0.988035794534077247637331014577406;
-      X[3] := 0.976663921459517511498315386479594;
-      X[4] := 0.961614986425842512418130033660167;
-      X[5] := 0.942974571228974339414011169658471;
-      X[6] := 0.920747115281701561746346084546331;
-      X[7] := 0.894991997878275368851042006782805;
-      X[8] := 0.865847065293275595448996969588340;
-      X[9] := 0.833442628760834001421021108693570;
-      X[10] := 0.797873797998500059410410904994307;
-      X[11] := 0.759259263037357630577282865204361;
-      X[12] := 0.717766406813084388186654079773298;
-      X[13] := 0.673566368473468364485120633247622;
-      X[14] := 0.626810099010317412788122681624518;
-      X[15] := 0.577662930241222967723689841612654;
-      X[16] := 0.526325284334719182599623778158010;
-      X[17] := 0.473002731445714960522182115009192;
-      X[18] := 0.417885382193037748851814394594572;
-      X[19] := 0.361172305809387837735821730127641;
-      X[20] := 0.303089538931107830167478909980339;
-      X[21] := 0.243866883720988432045190362797452;
-      X[22] := 0.183718939421048892015969888759528;
-      X[23] := 0.122864692610710396387359818808037;
-      X[24] := 0.061544483005685078886546392366797;
-      X[25] := 0.000000000000000000000000000000000;
+      x[0] := 0.999262104992609834193457486540341;
+      x[1] := 0.995556969790498097908784946893902;
+      x[2] := 0.988035794534077247637331014577406;
+      x[3] := 0.976663921459517511498315386479594;
+      x[4] := 0.961614986425842512418130033660167;
+      x[5] := 0.942974571228974339414011169658471;
+      x[6] := 0.920747115281701561746346084546331;
+      x[7] := 0.894991997878275368851042006782805;
+      x[8] := 0.865847065293275595448996969588340;
+      x[9] := 0.833442628760834001421021108693570;
+      x[10] := 0.797873797998500059410410904994307;
+      x[11] := 0.759259263037357630577282865204361;
+      x[12] := 0.717766406813084388186654079773298;
+      x[13] := 0.673566368473468364485120633247622;
+      x[14] := 0.626810099010317412788122681624518;
+      x[15] := 0.577662930241222967723689841612654;
+      x[16] := 0.526325284334719182599623778158010;
+      x[17] := 0.473002731445714960522182115009192;
+      x[18] := 0.417885382193037748851814394594572;
+      x[19] := 0.361172305809387837735821730127641;
+      x[20] := 0.303089538931107830167478909980339;
+      x[21] := 0.243866883720988432045190362797452;
+      x[22] := 0.183718939421048892015969888759528;
+      x[23] := 0.122864692610710396387359818808037;
+      x[24] := 0.061544483005685078886546392366797;
+      x[25] := 0.000000000000000000000000000000000;
       WKronrod[0] := 0.001987383892330315926507851882843;
       WKronrod[1] := 0.005561932135356713758040236901066;
       WKronrod[2] := 0.009473973386174151607207710523655;
@@ -1358,37 +1358,37 @@ begin
       WGauss[12] := 0.099593420586795267062780282103569;
       WGauss[13] := 0.101762389748405504596428952168554;
       WGauss[14] := 0.102852652893558840341285636705415;
-      X[0] := 0.999484410050490637571325895705811;
-      X[1] := 0.996893484074649540271630050918695;
-      X[2] := 0.991630996870404594858628366109486;
-      X[3] := 0.983668123279747209970032581605663;
-      X[4] := 0.973116322501126268374693868423707;
-      X[5] := 0.960021864968307512216871025581798;
-      X[6] := 0.944374444748559979415831324037439;
-      X[7] := 0.926200047429274325879324277080474;
-      X[8] := 0.905573307699907798546522558925958;
-      X[9] := 0.882560535792052681543116462530226;
-      X[10] := 0.857205233546061098958658510658944;
-      X[11] := 0.829565762382768397442898119732502;
-      X[12] := 0.799727835821839083013668942322683;
-      X[13] := 0.767777432104826194917977340974503;
-      X[14] := 0.733790062453226804726171131369528;
-      X[15] := 0.697850494793315796932292388026640;
-      X[16] := 0.660061064126626961370053668149271;
-      X[17] := 0.620526182989242861140477556431189;
-      X[18] := 0.579345235826361691756024932172540;
-      X[19] := 0.536624148142019899264169793311073;
-      X[20] := 0.492480467861778574993693061207709;
-      X[21] := 0.447033769538089176780609900322854;
-      X[22] := 0.400401254830394392535476211542661;
-      X[23] := 0.352704725530878113471037207089374;
-      X[24] := 0.304073202273625077372677107199257;
-      X[25] := 0.254636926167889846439805129817805;
-      X[26] := 0.204525116682309891438957671002025;
-      X[27] := 0.153869913608583546963794672743256;
-      X[28] := 0.102806937966737030147096751318001;
-      X[29] := 0.051471842555317695833025213166723;
-      X[30] := 0.000000000000000000000000000000000;
+      x[0] := 0.999484410050490637571325895705811;
+      x[1] := 0.996893484074649540271630050918695;
+      x[2] := 0.991630996870404594858628366109486;
+      x[3] := 0.983668123279747209970032581605663;
+      x[4] := 0.973116322501126268374693868423707;
+      x[5] := 0.960021864968307512216871025581798;
+      x[6] := 0.944374444748559979415831324037439;
+      x[7] := 0.926200047429274325879324277080474;
+      x[8] := 0.905573307699907798546522558925958;
+      x[9] := 0.882560535792052681543116462530226;
+      x[10] := 0.857205233546061098958658510658944;
+      x[11] := 0.829565762382768397442898119732502;
+      x[12] := 0.799727835821839083013668942322683;
+      x[13] := 0.767777432104826194917977340974503;
+      x[14] := 0.733790062453226804726171131369528;
+      x[15] := 0.697850494793315796932292388026640;
+      x[16] := 0.660061064126626961370053668149271;
+      x[17] := 0.620526182989242861140477556431189;
+      x[18] := 0.579345235826361691756024932172540;
+      x[19] := 0.536624148142019899264169793311073;
+      x[20] := 0.492480467861778574993693061207709;
+      x[21] := 0.447033769538089176780609900322854;
+      x[22] := 0.400401254830394392535476211542661;
+      x[23] := 0.352704725530878113471037207089374;
+      x[24] := 0.304073202273625077372677107199257;
+      x[25] := 0.254636926167889846439805129817805;
+      x[26] := 0.204525116682309891438957671002025;
+      x[27] := 0.153869913608583546963794672743256;
+      x[28] := 0.102806937966737030147096751318001;
+      x[29] := 0.051471842555317695833025213166723;
+      x[30] := 0.000000000000000000000000000000000;
       WKronrod[0] := 0.001389013698677007624551591226760;
       WKronrod[1] := 0.003890461127099884051267201844516;
       WKronrod[2] := 0.006630703915931292173319826369750;
@@ -1428,8 +1428,8 @@ begin
   i := n - 1;
   while i >= n div 2 do
     begin
-      X[i] := -X[n - 1 - i];
-      Dec(i);
+      x[i] := -x[n - 1 - i];
+      dec(i);
     end;
 
   //
@@ -1439,7 +1439,7 @@ begin
   while i >= n div 2 do
     begin
       WKronrod[i] := WKronrod[n - 1 - i];
-      Dec(i);
+      dec(i);
     end;
 
   //
@@ -1450,19 +1450,19 @@ begin
     begin
       WGauss[n - 2 - 2 * i] := WGauss[i];
       WGauss[1 + 2 * i] := WGauss[i];
-      Dec(i);
+      dec(i);
     end;
   i := 0;
   while i <= n div 2 do
     begin
       WGauss[2 * i] := 0;
-      Inc(i);
+      inc(i);
     end;
 
   //
   // reorder
   //
-  TagSort(X, n, p1, p2);
+  TagSort(x, n, p1, p2);
   i := 0;
   while i <= n - 1 do
     begin
@@ -1472,6 +1472,8 @@ begin
       tmp := WGauss[i];
       WGauss[i] := WGauss[p2[i]];
       WGauss[p2[i]] := tmp;
-      Inc(i);
+      inc(i);
     end;
 end; 
+ 
+ 

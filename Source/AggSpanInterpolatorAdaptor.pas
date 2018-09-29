@@ -37,11 +37,8 @@
 *)
 unit AggSpanInterpolatorAdaptor;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggSpanInterpolatorLinear,
@@ -50,7 +47,7 @@ uses
 type
   TAggDistortion = class
   public
-    procedure Calculate(var X, Y: Integer); virtual; abstract;
+    procedure Calculate(var x, y: Integer); virtual; abstract;
   end;
 
   TAggSpanInterpolatorAdaptor = class(TAggSpanInterpolatorLinear)
@@ -60,10 +57,10 @@ type
   public
     constructor Create; overload;
     constructor Create(Trans: TAggTransAffine; Dist: TAggDistortion); overload;
-    constructor Create(Trans: TAggTransAffine; Dist: TAggDistortion; X, Y: Double; Len: Cardinal); overload;
+    constructor Create(Trans: TAggTransAffine; Dist: TAggDistortion; x, y: Double; Len: Cardinal); overload;
 
-    procedure Coordinates(X, Y: PInteger); override;
-    procedure Coordinates(var X, Y: Integer); override;
+    procedure Coordinates(x, y: PInteger); override;
+    procedure Coordinates(var x, y: Integer); override;
 
     property Distortion: TAggDistortion read FDistortion write SetDistortion;
   end;
@@ -89,9 +86,9 @@ begin
 end;
 
 constructor TAggSpanInterpolatorAdaptor.Create(Trans: TAggTransAffine;
-  Dist: TAggDistortion; X, Y: Double; Len: Cardinal);
+  Dist: TAggDistortion; x, y: Double; Len: Cardinal);
 begin
-  inherited Create(Trans, X, Y, Len);
+  inherited Create(Trans, x, y, Len);
 
   FDistortion := Dist;
 end;
@@ -101,19 +98,21 @@ begin
   FDistortion := Dist;
 end;
 
-procedure TAggSpanInterpolatorAdaptor.Coordinates(X, Y: PInteger);
+procedure TAggSpanInterpolatorAdaptor.Coordinates(x, y: PInteger);
 begin
-  inherited Coordinates(X, Y);
+  inherited Coordinates(x, y);
 
-  FDistortion.Calculate(X^, Y^);
+  FDistortion.Calculate(x^, y^);
 end;
 
-procedure TAggSpanInterpolatorAdaptor.Coordinates(var X, Y: Integer);
+procedure TAggSpanInterpolatorAdaptor.Coordinates(var x, y: Integer);
 begin
-  inherited Coordinates(X, Y);
+  inherited Coordinates(x, y);
 
-  FDistortion.Calculate(X, Y);
+  FDistortion.Calculate(x, y);
 end;
 
 end.
+ 
+ 
  

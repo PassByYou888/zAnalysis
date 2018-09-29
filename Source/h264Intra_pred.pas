@@ -17,7 +17,7 @@ unit h264Intra_pred;
 interface
 
 uses
-  h264Stdint, h264Common, h264Util, h264Pixel, CoreClasses;
+  h264Types, h264Common, h264Util, h264Pixel, CoreClasses;
 
 type
   TPredict4x4Func   = procedure(Src, Dst: uint8_p; stride: int32_t);
@@ -69,12 +69,12 @@ var
   p: int32_t;
   i: int32_t;
 begin
-  Dec(Src, sstride);
+  dec(Src, sstride);
   p := int32_p(Src)^;
   for i := 0 to 3 do
     begin
       int32_p(Dst)^ := p;
-      Inc(Dst, I4x4CACHE_STRIDE);
+      inc(Dst, I4x4CACHE_STRIDE);
     end;
 end;
 
@@ -83,13 +83,13 @@ procedure predict_left4(Src, Dst: uint8_p; sstride: int32_t);
 var
   i, p: int32_t;
 begin
-  Dec(Src);
+  dec(Src);
   for i := 0 to 3 do
     begin
       p := (Src^ shl 8) or Src^;
       int32_p(Dst)^ := (p shl 16) or p;
-      Inc(Src, sstride);
-      Inc(Dst, I4x4CACHE_STRIDE);
+      inc(Src, sstride);
+      inc(Dst, I4x4CACHE_STRIDE);
     end;
 end;
 
@@ -106,14 +106,14 @@ begin
   if has_top then
     begin
       for i := 0 to 3 do
-          Inc(DC, Src[i - sstride]);
+          inc(DC, Src[i - sstride]);
       Shift := 2;
     end;
   if has_left then
     begin
       for i := 0 to 3 do
-          Inc(DC, Src[-1 + i * sstride]);
-      Inc(Shift, 2);
+          inc(DC, Src[-1 + i * sstride]);
+      inc(Shift, 2);
     end;
 
   if Shift = 4 then
@@ -127,7 +127,7 @@ begin
   for i := 0 to 3 do
     begin
       int32_p(Dst)^ := DC;
-      Inc(Dst, I4x4CACHE_STRIDE);
+      inc(Dst, I4x4CACHE_STRIDE);
     end;
 end;
 
@@ -139,14 +139,14 @@ end;
 }
 procedure predict_ddl4(Src, Dst: uint8_p; sstride: int32_t);
 var
-  X, Y: int32_t;
+  x, y: int32_t;
 begin
   Src := Src - sstride;
-  for Y := 0 to 3 do
-    for X := 0 to 3 do
-        Dst[Y * I4x4CACHE_STRIDE + X] := (Src[X + Y]
-        + Src[X + Y + 1] * 2
-        + Src[X + Y + 2] + 2) shr 2;
+  for y := 0 to 3 do
+    for x := 0 to 3 do
+        Dst[y * I4x4CACHE_STRIDE + x] := (Src[x + y]
+        + Src[x + y + 1] * 2
+        + Src[x + y + 2] + 2) shr 2;
   Dst[3 * I4x4CACHE_STRIDE + 3] := (Src[6] + 3 * Src[7] + 2) shr 2
 end;
 
@@ -160,20 +160,20 @@ end;
 }
 procedure predict_ddr4(Src, Dst: uint8_p; sstride: int32_t);
 var
-  X, Y: int32_t;
+  x, y: int32_t;
 begin
-  for Y := 0 to 3 do
-    for X := 0 to 3 do
-      if X > Y then
-          Dst[Y * I4x4CACHE_STRIDE + X] := (Src[X - Y - 2 - sstride]
-          + Src[X - Y - 1 - sstride] * 2
-          + Src[X - Y - sstride] + 2) shr 2
-      else if X < Y then
-          Dst[Y * I4x4CACHE_STRIDE + X] := (Src[-1 + (Y - X - 2) * sstride]
-          + Src[-1 + (Y - X - 1) * sstride] * 2
-          + Src[-1 + (Y - X) * sstride] + 2) shr 2
+  for y := 0 to 3 do
+    for x := 0 to 3 do
+      if x > y then
+          Dst[y * I4x4CACHE_STRIDE + x] := (Src[x - y - 2 - sstride]
+          + Src[x - y - 1 - sstride] * 2
+          + Src[x - y - sstride] + 2) shr 2
+      else if x < y then
+          Dst[y * I4x4CACHE_STRIDE + x] := (Src[-1 + (y - x - 2) * sstride]
+          + Src[-1 + (y - x - 1) * sstride] * 2
+          + Src[-1 + (y - x) * sstride] + 2) shr 2
       else { x = y }
-          Dst[Y * I4x4CACHE_STRIDE + X] := (Src[-sstride]
+          Dst[y * I4x4CACHE_STRIDE + x] := (Src[-sstride]
           + Src[-1 - sstride] * 2
           + Src[-1] + 2) shr 2
 end;
@@ -181,79 +181,79 @@ end;
 (* vertical right *)
 procedure predict_vr4(Src, Dst: uint8_p; stride: int32_t);
 var
-  Z, X, Y, i: int32_t;
+  z, x, y, i: int32_t;
 begin
-  for X := 0 to 3 do
-    for Y := 0 to 3 do
+  for x := 0 to 3 do
+    for y := 0 to 3 do
       begin
-        Z := 2 * X - Y;
-        if Z >= 0 then
+        z := 2 * x - y;
+        if z >= 0 then
           begin
-            i := X - (Y div 2) - stride;
-            if (Z and 1) = 0 then
-                Dst[X + Y * I4x4CACHE_STRIDE] := (Src[i - 1]
+            i := x - (y div 2) - stride;
+            if (z and 1) = 0 then
+                Dst[x + y * I4x4CACHE_STRIDE] := (Src[i - 1]
                 + Src[i] + 1) div 2
             else
-                Dst[X + Y * I4x4CACHE_STRIDE] := (Src[i - 2]
+                Dst[x + y * I4x4CACHE_STRIDE] := (Src[i - 2]
                 + Src[i - 1] * 2
                 + Src[i] + 2) div 4
           end
-        else if Z = -1 then
-            Dst[X + Y * I4x4CACHE_STRIDE] := (Src[-1] + Src[-1 - stride] * 2 + Src[-stride] + 2) div 4
+        else if z = -1 then
+            Dst[x + y * I4x4CACHE_STRIDE] := (Src[-1] + Src[-1 - stride] * 2 + Src[-stride] + 2) div 4
         else
-            Dst[X + Y * I4x4CACHE_STRIDE] := (Src[-1 + (Y - X - 1) * stride]
-            + Src[-1 + (Y - X - 2) * stride] * 2
-            + Src[-1 + (Y - X - 3) * stride] + 2) div 4;
+            Dst[x + y * I4x4CACHE_STRIDE] := (Src[-1 + (y - x - 1) * stride]
+            + Src[-1 + (y - x - 2) * stride] * 2
+            + Src[-1 + (y - x - 3) * stride] + 2) div 4;
       end;
 end;
 
 (* vertical left *)
 procedure predict_vl4(Src, Dst: uint8_p; stride: int32_t);
 var
-  X, Y: int32_t;
+  x, y: int32_t;
 begin
-  for X := 0 to 3 do
-    for Y := 0 to 3 do
-      if (Y and 1) = 1 then
-          Dst[X + Y * I4x4CACHE_STRIDE] := (Src[X + (Y div 2) - stride]
-          + Src[X + (Y div 2) + 1 - stride] * 2
-          + Src[X + (Y div 2) + 2 - stride] + 2) div 4
+  for x := 0 to 3 do
+    for y := 0 to 3 do
+      if (y and 1) = 1 then
+          Dst[x + y * I4x4CACHE_STRIDE] := (Src[x + (y div 2) - stride]
+          + Src[x + (y div 2) + 1 - stride] * 2
+          + Src[x + (y div 2) + 2 - stride] + 2) div 4
         // P[x,y] = (S[x+(y/2),-1] + 2 * S[x+(y/2)+1,-1] + S[x+(y/2)+2,-1] + 2) / 4
       else
-          Dst[X + Y * I4x4CACHE_STRIDE] := (Src[X + (Y div 2) - stride]
-          + Src[X + (Y div 2) + 1 - stride] + 1) div 2;
+          Dst[x + y * I4x4CACHE_STRIDE] := (Src[x + (y div 2) - stride]
+          + Src[x + (y div 2) + 1 - stride] + 1) div 2;
   // P[x,y] = (S[x+(y/2),-1] + S[x+(y/2)+1,-1] + 1) / 2
 end;
 
 (* horiz down *)
 procedure predict_hd4(Src, Dst: uint8_p; stride: int32_t);
 var
-  Z, X, Y, i: int32_t;
+  z, x, y, i: int32_t;
 begin
-  for X := 0 to 3 do
-    for Y := 0 to 3 do
+  for x := 0 to 3 do
+    for y := 0 to 3 do
       begin
-        Z := 2 * Y - X;
-        if Z >= 0 then
+        z := 2 * y - x;
+        if z >= 0 then
           begin
-            i := Y - (X div 2);
-            if (Z and 1) = 0 then
-                Dst[X + Y * I4x4CACHE_STRIDE] := (Src[-1 + (i - 1) * stride]
+            i := y - (x div 2);
+            if (z and 1) = 0 then
+                Dst[x + y * I4x4CACHE_STRIDE] := (Src[-1 + (i - 1) * stride]
                 + Src[-1 + i * stride] + 1) div 2
               // P[x,y] = (S[-1,y-(x/2)-1] + S[-1,y-(x/2)] + 1) / 2
             else
-                Dst[X + Y * I4x4CACHE_STRIDE] := (Src[-1 + (i - 2) * stride]
+                Dst[x + y * I4x4CACHE_STRIDE] := (Src[-1 + (i - 2) * stride]
                 + Src[-1 + (i - 1) * stride] * 2
                 + Src[-1 + i * stride] + 2) div 4
               // P[x,y] = (S[-1,y-(x/2)-2] + 2 * S[-1,y-(x/2)-1] + S[-1,y-(x/2)] + 2) / 4
           end
-        else if Z = -1 then
-            Dst[X + Y * I4x4CACHE_STRIDE] := (Src[-1] + Src[-1 - stride] * 2 + Src[-stride] + 2) div 4
+        else if z = -1 then
+            Dst[x + y * I4x4CACHE_STRIDE] := (Src[-1] + Src[-1 - stride] * 2 + Src[-stride] + 2) div 4
           // P[x,y] = (S[-1,0] + 2 * S[-1,-1] + S[0,-1] + 2) / 4
         else
           begin
-            i := X - Y - 1 - stride;
-            Dst[X + Y * I4x4CACHE_STRIDE] := (Src[i]
+            i := x - y - 1 - stride;
+            Dst[x + y * I4x4CACHE_STRIDE] := (Src[i]
               + Src[i - 1] * 2
               + Src[i - 2] + 2) div 4;
           end;
@@ -274,28 +274,28 @@ end;
 }
 procedure predict_hu4(Src, Dst: uint8_p; stride: int32_t);
 var
-  Z, X, Y, i: int32_t;
+  z, x, y, i: int32_t;
 begin
-  for X := 0 to 3 do
-    for Y := 0 to 3 do
+  for x := 0 to 3 do
+    for y := 0 to 3 do
       begin
-        Z := X + 2 * Y;
-        if (Z >= 0) and (Z < 5) then
+        z := x + 2 * y;
+        if (z >= 0) and (z < 5) then
           begin
-            i := Y + (X div 2);
-            if (Z and 1) = 0 then
-                Dst[X + Y * I4x4CACHE_STRIDE] := (Src[-1 + i * stride]
+            i := y + (x div 2);
+            if (z and 1) = 0 then
+                Dst[x + y * I4x4CACHE_STRIDE] := (Src[-1 + i * stride]
                 + Src[-1 + (i + 1) * stride] + 1) shr 1
             else
-                Dst[X + Y * I4x4CACHE_STRIDE] := (Src[-1 + i * stride]
+                Dst[x + y * I4x4CACHE_STRIDE] := (Src[-1 + i * stride]
                 + Src[-1 + (i + 1) * stride] * 2
                 + Src[-1 + (i + 2) * stride] + 2) shr 2
           end
-        else if Z = 5 then
-            Dst[X + Y * I4x4CACHE_STRIDE] := (Src[-1 + 2 * stride]
+        else if z = 5 then
+            Dst[x + y * I4x4CACHE_STRIDE] := (Src[-1 + 2 * stride]
             + Src[-1 + 3 * stride] * 3 + 2) shr 2
         else
-            Dst[X + Y * I4x4CACHE_STRIDE] := Src[-1 + 3 * stride];
+            Dst[x + y * I4x4CACHE_STRIDE] := Src[-1 + 3 * stride];
       end;
 end;
 
@@ -315,7 +315,7 @@ begin
       int64_p(Dst + 8)^ := p2;
       int64_p(Dst + 16)^ := p1;
       int64_p(Dst + 24)^ := p2;
-      Inc(Dst, 32);
+      inc(Dst, 32);
     end;
 end;
 
@@ -324,15 +324,15 @@ var
   i: int32_t;
   v: Int64_t;
 begin
-  Inc(Src, 18);
+  inc(Src, 18);
   for i := 0 to 15 do
     begin
       v := (Src^ shl 24) or (Src^ shl 16) or (Src^ shl 8) or Src^;
       v := v or (v shl 32);
       int64_p(Dst)^ := v;
       int64_p(Dst + 8)^ := v;
-      Inc(Src);
-      Inc(Dst, 16);
+      inc(Src);
+      inc(Dst, 16);
     end;
 end;
 
@@ -345,14 +345,14 @@ begin
   if mby > 0 then
     begin
       for i := 1 to 16 do
-          Inc(DC, Src[i]);
-      Inc(avail);
+          inc(DC, Src[i]);
+      inc(avail);
     end;
   if mbx > 0 then
     begin
       for i := 18 to 33 do
-          Inc(DC, Src[i]);
-      Inc(avail);
+          inc(DC, Src[i]);
+      inc(avail);
     end;
 
   if avail = 2 then
@@ -367,41 +367,41 @@ end;
 
 procedure predict_plane16_pas(Src, Dst: uint8_p);
 var
-  X, Y: int32_t;
-  A, b, C, d, h, v, i: int32_t;
+  x, y: int32_t;
+  a, b, c, d, h, v, i: int32_t;
 
 begin
   h := 0;
   v := 0;
-  Inc(Src);
+  inc(Src);
 
   for i := 0 to 7 do
     begin
-      Inc(h, (i + 1) * (Src[8 + i] - Src[6 - i]));
-      Inc(v, (i + 1) * (Src[17 + 8 + i] - Src[17 + 6 - i]));
+      inc(h, (i + 1) * (Src[8 + i] - Src[6 - i]));
+      inc(v, (i + 1) * (Src[17 + 8 + i] - Src[17 + 6 - i]));
     end;
 
-  A := 16 * (Src[15 + 17] + Src[15]) + 16;
+  a := 16 * (Src[15 + 17] + Src[15]) + 16;
   b := SAR16(SmallInt(5 * h + 32), 6);
-  C := SAR16(SmallInt(5 * v + 32), 6);
+  c := SAR16(SmallInt(5 * v + 32), 6);
 
-  for Y := 0 to 15 do
+  for y := 0 to 15 do
     begin
-      d := A + C * (Y - 7);
-      for X := 0 to 15 do
+      d := a + c * (y - 7);
+      for x := 0 to 15 do
         begin
-          i := b * (X - 7) + d;
+          i := b * (x - 7) + d;
           if i < 0 then
-              Dst[X] := 0
+              Dst[x] := 0
           else
             begin
               i := i shr 5;
               if i > 255 then
                   i := 255;
-              Dst[X] := uint8_t(i);
+              Dst[x] := uint8_t(i);
             end;
         end;
-      Inc(Dst);
+      inc(Dst);
     end;
 end;
 
@@ -425,14 +425,14 @@ begin
   if has_top then
     begin
       for i := 0 to 3 do
-          Inc(DC, Src[i - sstride]);
+          inc(DC, Src[i - sstride]);
       Shift := 2;
     end;
   if has_left then
     begin
       for i := 0 to 3 do
-          Inc(DC, Src[-1 + i * sstride]);
-      Inc(Shift, 2);
+          inc(DC, Src[-1 + i * sstride]);
+      inc(Shift, 2);
     end;
   if Shift = 4 then
       DC := (DC + 4) shr 3
@@ -447,13 +447,13 @@ begin
   if has_top then
     begin
       for i := 0 to 3 do
-          Inc(DC, Src[4 + i - sstride]);
+          inc(DC, Src[4 + i - sstride]);
       DC := (DC + 2) shr 2;
     end
   else if has_left then
     begin
       for i := 0 to 3 do
-          Inc(DC, Src[-1 + i * sstride]);
+          inc(DC, Src[-1 + i * sstride]);
       DC := (DC + 2) shr 2;
     end
   else
@@ -465,13 +465,13 @@ begin
   if has_left then
     begin
       for i := 0 to 3 do
-          Inc(DC, Src[-1 + (i + 4) * sstride]);
+          inc(DC, Src[-1 + (i + 4) * sstride]);
       DC := (DC + 2) shr 2;
     end
   else if has_top then
     begin
       for i := 0 to 3 do
-          Inc(DC, Src[i - sstride]);
+          inc(DC, Src[i - sstride]);
       DC := (DC + 2) shr 2;
     end
   else
@@ -484,14 +484,14 @@ begin
   if has_top then
     begin
       for i := 0 to 3 do
-          Inc(DC, Src[4 + i - sstride]);
+          inc(DC, Src[4 + i - sstride]);
       Shift := 2;
     end;
   if has_left then
     begin
       for i := 0 to 3 do
-          Inc(DC, Src[-1 + (4 + i) * sstride]);
-      Inc(Shift, 2);
+          inc(DC, Src[-1 + (4 + i) * sstride]);
+      inc(Shift, 2);
     end;
   if Shift = 4 then
       DC := (DC + 4) shr 3
@@ -508,7 +508,7 @@ begin
           Dst[k] := dcf[0];
       for k := 4 to 7 do
           Dst[k] := dcf[1];
-      Inc(Dst, 16);
+      inc(Dst, 16);
     end;
 
   for i := 0 to 3 do
@@ -517,7 +517,7 @@ begin
           Dst[k] := dcf[2];
       for k := 4 to 7 do
           Dst[k] := dcf[3];
-      Inc(Dst, 16);
+      inc(Dst, 16);
     end;
 end;
 
@@ -526,64 +526,64 @@ var
   p: Int64_t;
   i: int32_t;
 begin
-  Dec(Src, sstride);
+  dec(Src, sstride);
   p := int64_p(Src)^;
   for i := 0 to 7 do
     begin
       int64_p(Dst)^ := p;
-      Inc(Dst, 16);
+      inc(Dst, 16);
     end;
 end;
 
 procedure predict_left8(Src, Dst: uint8_p; sstride: int32_t);
 var
-  i, J: int32_t;
+  i, j: int32_t;
 begin
-  Dec(Src);
+  dec(Src);
   for i := 0 to 7 do
     begin
-      for J := 0 to 7 do
-          Dst[J] := Src^;
-      Inc(Src, sstride);
-      Inc(Dst, 16);
+      for j := 0 to 7 do
+          Dst[j] := Src^;
+      inc(Src, sstride);
+      inc(Dst, 16);
     end;
 end;
 
 procedure predict_plane8(Src, Dst: uint8_p; stride: int32_t);
 var
-  X, Y: int32_t;
-  A, b, C, d, h, v, i: int32_t;
+  x, y: int32_t;
+  a, b, c, d, h, v, i: int32_t;
 
 begin
   h := 0;
   v := 0;
 
-  for X := 0 to 3 do
-      Inc(h, (X + 1) * (Src[-stride + 4 + X] - Src[-stride + 2 - X]));
-  for Y := 0 to 3 do
-      Inc(v, (Y + 1) * (Src[(4 + Y) * stride - 1] - Src[(2 - Y) * stride - 1]));
+  for x := 0 to 3 do
+      inc(h, (x + 1) * (Src[-stride + 4 + x] - Src[-stride + 2 - x]));
+  for y := 0 to 3 do
+      inc(v, (y + 1) * (Src[(4 + y) * stride - 1] - Src[(2 - y) * stride - 1]));
 
-  A := 16 * (Src[7 * stride - 1] + Src[-stride + 7]) + 16;
+  a := 16 * (Src[7 * stride - 1] + Src[-stride + 7]) + 16;
   b := SAR16(17 * h + 16, 5);
-  C := SAR16(17 * v + 16, 5);
+  c := SAR16(17 * v + 16, 5);
 
-  for Y := 0 to 7 do
+  for y := 0 to 7 do
     begin
-      d := A + C * (Y - 3);
-      for X := 0 to 7 do
+      d := a + c * (y - 3);
+      for x := 0 to 7 do
         begin
-          i := b * (X - 3) + d;
+          i := b * (x - 3) + d;
           if i < 0 then
-              Dst[X] := 0
+              Dst[x] := 0
           else
             begin
               i := i shr 5;
               if i > 255 then
                   i := 255;
-              Dst[X] := uint8_t(i);
+              Dst[x] := uint8_t(i);
             end;
         end;
-      Inc(Dst, 16);
+      inc(Dst, 16);
     end;
 end;
 
@@ -752,7 +752,7 @@ var
   procedure ipmode(M: uint8_t);
   begin
     cscore := cmp(pixels_c[0], prediction_c[0], 16);
-    Inc(cscore, cmp(pixels_c[1], prediction_c[1], 16));
+    inc(cscore, cmp(pixels_c[1], prediction_c[1], 16));
     if cscore < mscore then
       begin
         Mode := M;
@@ -855,3 +855,5 @@ begin
 end;
 
 end.  
+ 
+ 

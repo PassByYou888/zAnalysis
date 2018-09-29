@@ -37,11 +37,8 @@
 *)
 unit AggScanlinePacked;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggScanline;
@@ -49,8 +46,8 @@ uses
 type
   PAggSpanPacked8 = ^TAggSpanPacked8;
 
-  TAggSpanPacked8 = packed record
-    X, Len: Int16; // If negative, it's a solid Span, covers is valid
+  TAggSpanPacked8 = record
+    x, Len: Int16; // If negative, it's a solid Span, covers is valid
 
     Covers: PInt8u;
   end;
@@ -83,10 +80,10 @@ type
     procedure Reset(MinX, MaxX: Integer); override;
     procedure ResetSpans; override;
 
-    procedure Finalize(Y: Integer); override;
-    procedure AddCell(X: Integer; Cover: Cardinal); override;
-    procedure AddCells(X: Integer; Len: Cardinal; Covers: PInt8u); override;
-    procedure AddSpan(X: Integer; Len, Cover: Cardinal); override;
+    procedure Finalize(y: Integer); override;
+    procedure AddCell(x: Integer; Cover: Cardinal); override;
+    procedure AddCells(x: Integer; Len: Cardinal; Covers: PInt8u); override;
+    procedure AddSpan(x: Integer; Len, Cover: Cardinal); override;
 
     function GetBegin: TAggCustomSpan; override;
   end;
@@ -116,12 +113,12 @@ end;
 
 function TAggScanLinePacked8.TConstIterator.GetX: Integer;
 begin
-  Result := FSpan.X;
+  Result := FSpan.x;
 end;
 
 procedure TAggScanLinePacked8.TConstIterator.IncOperator;
 begin
-  Inc(PtrComp(FSpan), SizeOf(TAggSpanPacked8));
+  inc(PtrComp(FSpan), SizeOf(TAggSpanPacked8));
 end;
 
 { TAggScanLinePacked8 }
@@ -182,72 +179,72 @@ begin
   FCurrentSpan.Len := 0;
 end;
 
-procedure TAggScanLinePacked8.Finalize(Y: Integer);
+procedure TAggScanLinePacked8.Finalize(y: Integer);
 begin
-  fy := Y;
+  fy := y;
 end;
 
-procedure TAggScanLinePacked8.AddCell(X: Integer; Cover: Cardinal);
+procedure TAggScanLinePacked8.AddCell(x: Integer; Cover: Cardinal);
 begin
   FCoverPtr^ := Int8u(Cover);
 
-  if (X = FLastX + 1) and (FCurrentSpan.Len > 0) then
-      Inc(FCurrentSpan.Len)
+  if (x = FLastX + 1) and (FCurrentSpan.Len > 0) then
+      inc(FCurrentSpan.Len)
   else
     begin
-      Inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanPacked8));
+      inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanPacked8));
 
       FCurrentSpan.Covers := FCoverPtr;
 
-      FCurrentSpan.X := Int16(X);
+      FCurrentSpan.x := Int16(x);
       FCurrentSpan.Len := 1;
     end;
 
-  FLastX := X;
+  FLastX := x;
 
-  Inc(PtrComp(FCoverPtr), SizeOf(Int8u));
+  inc(PtrComp(FCoverPtr), SizeOf(Int8u));
 end;
 
-procedure TAggScanLinePacked8.AddCells(X: Integer; Len: Cardinal; Covers: PInt8u);
+procedure TAggScanLinePacked8.AddCells(x: Integer; Len: Cardinal; Covers: PInt8u);
 begin
   Move(Covers^, FCoverPtr^, Len * SizeOf(Int8u));
 
-  if (X = FLastX + 1) and (FCurrentSpan.Len > 0) then
-      Inc(FCurrentSpan.Len, Int16(Len))
+  if (x = FLastX + 1) and (FCurrentSpan.Len > 0) then
+      inc(FCurrentSpan.Len, Int16(Len))
   else
     begin
-      Inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanPacked8));
+      inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanPacked8));
 
       FCurrentSpan.Covers := FCoverPtr;
-      FCurrentSpan.X := Int16(X);
+      FCurrentSpan.x := Int16(x);
       FCurrentSpan.Len := Int16(Len);
     end;
 
-  Inc(PtrComp(FCoverPtr), Len * SizeOf(Int8u));
+  inc(PtrComp(FCoverPtr), Len * SizeOf(Int8u));
 
-  FLastX := X + Len - 1;
+  FLastX := x + Len - 1;
 end;
 
-procedure TAggScanLinePacked8.AddSpan(X: Integer; Len, Cover: Cardinal);
+procedure TAggScanLinePacked8.AddSpan(x: Integer; Len, Cover: Cardinal);
 begin
-  if (X = FLastX + 1) and (FCurrentSpan.Len < 0) and (Cover = FCurrentSpan.Covers^)
+  if (x = FLastX + 1) and (FCurrentSpan.Len < 0) and (Cover = FCurrentSpan.Covers^)
   then
-      Dec(FCurrentSpan.Len, Int16(Len))
+      dec(FCurrentSpan.Len, Int16(Len))
   else
     begin
       FCoverPtr^ := Int8u(Cover);
 
-      Inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanPacked8));
+      inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanPacked8));
 
       FCurrentSpan.Covers := FCoverPtr;
-      FCurrentSpan.X := Int16(X);
+      FCurrentSpan.x := Int16(x);
       FCurrentSpan.Len := Int16(Len);
       FCurrentSpan.Len := -FCurrentSpan.Len;
 
-      Inc(PtrComp(FCoverPtr), SizeOf(Int8u));
+      inc(PtrComp(FCoverPtr), SizeOf(Int8u));
     end;
 
-  FLastX := X + Len - 1;
+  FLastX := x + Len - 1;
 end;
 
 function TAggScanLinePacked8.GetY;
@@ -266,3 +263,5 @@ begin
 end;
 
 end. 
+ 
+ 

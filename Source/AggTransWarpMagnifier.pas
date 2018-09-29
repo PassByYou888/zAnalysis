@@ -37,11 +37,8 @@
 *)
 unit AggTransWarpMagnifier;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggTransAffine;
@@ -52,11 +49,11 @@ type
     FCenter: TPointDouble;
     FMagnification, FRadius: Double;
     procedure SetMagnification(M: Double);
-    procedure SetRadius(R: Double);
+    procedure SetRadius(r: Double);
   public
     constructor Create;
 
-    procedure SetCenter(X, Y: Double);
+    procedure SetCenter(x, y: Double);
 
     property Magnification: Double read FMagnification write SetMagnification;
     property radius: Double read FRadius write SetRadius;
@@ -64,43 +61,43 @@ type
 
 implementation
 
-procedure WarpMagnifierTransform(This: TAggTransWarpMagnifier; X, Y: PDouble);
+procedure WarpMagnifierTransform(This: TAggTransWarpMagnifier; x, y: PDouble);
 var
-  dx, dy, R, M: Double;
+  dx, dy, r, M: Double;
 
 begin
-  dx := X^ - This.FCenter.X;
-  dy := Y^ - This.FCenter.Y;
-  R := Sqrt(dx * dx + dy * dy);
+  dx := x^ - This.FCenter.x;
+  dy := y^ - This.FCenter.y;
+  r := Sqrt(dx * dx + dy * dy);
 
-  if R < This.FRadius then
+  if r < This.FRadius then
     begin
-      X^ := This.FCenter.X + dx * This.FMagnification;
-      Y^ := This.FCenter.Y + dy * This.FMagnification;
+      x^ := This.FCenter.x + dx * This.FMagnification;
+      y^ := This.FCenter.y + dy * This.FMagnification;
 
       Exit;
     end;
 
-  M := (R + This.FRadius * (This.FMagnification - 1.0)) / R;
+  M := (r + This.FRadius * (This.FMagnification - 1.0)) / r;
 
-  X^ := This.FCenter.X + dx * M;
-  Y^ := This.FCenter.Y + dy * M;
+  x^ := This.FCenter.x + dx * M;
+  y^ := This.FCenter.y + dy * M;
 end;
 
 procedure WarpMagnifierTransformInverseTransform(This: TAggTransWarpMagnifier;
-  X, Y: PDouble);
+  x, y: PDouble);
 var
-  T: TAggTransWarpMagnifier;
+  t: TAggTransWarpMagnifier;
 begin
-  T := TAggTransWarpMagnifier.Create;
+  t := TAggTransWarpMagnifier.Create;
   try
-    T := This;
+    t := This;
 
-    T.SetMagnification(1.0 / This.FMagnification);
-    T.SetRadius(This.FRadius * This.FMagnification);
-    T.Transform(@T, X, Y);
+    t.SetMagnification(1.0 / This.FMagnification);
+    t.SetRadius(This.FRadius * This.FMagnification);
+    t.Transform(@t, x, y);
   finally
-      T.Free;
+      t.Free;
   end;
 end;
 
@@ -110,8 +107,8 @@ constructor TAggTransWarpMagnifier.Create;
 begin
   inherited Create;
 
-  FCenter.X := 0.0;
-  FCenter.Y := 0.0;
+  FCenter.x := 0.0;
+  FCenter.y := 0.0;
 
   FMagnification := 1.0;
   FRadius := 1.0;
@@ -120,10 +117,10 @@ begin
   InverseTransform := @WarpMagnifierTransformInverseTransform;
 end;
 
-procedure TAggTransWarpMagnifier.SetCenter(X, Y: Double);
+procedure TAggTransWarpMagnifier.SetCenter(x, y: Double);
 begin
-  FCenter.X := X;
-  FCenter.Y := Y;
+  FCenter.x := x;
+  FCenter.y := y;
 end;
 
 procedure TAggTransWarpMagnifier.SetMagnification(M: Double);
@@ -131,9 +128,11 @@ begin
   FMagnification := M;
 end;
 
-procedure TAggTransWarpMagnifier.SetRadius(R: Double);
+procedure TAggTransWarpMagnifier.SetRadius(r: Double);
 begin
-  FRadius := R;
+  FRadius := r;
 end;
 
 end. 
+ 
+ 

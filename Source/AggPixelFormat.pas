@@ -47,8 +47,9 @@ unit AggPixelFormat;
   ////////////////////////////////////////////////////////////////////////////////
 *)
 
-{$INCLUDE AggCompiler.inc}
 
+
+{$INCLUDE AggCompiler.inc}
 interface
 
 uses
@@ -69,26 +70,26 @@ type
   TAggFuncBlender  = procedure(This: TAggPixelFormatProcessor; Op: TAggBlendMode; p: PInt8u; CR, Cg, CB, ca, Cover: Cardinal);
   TAggFuncBlendPix = procedure(This: TAggPixelFormatProcessor; p: PInt8u; CR, Cg, CB, alpha, Cover: Cardinal);
 
-  TAggFuncCopyPixel  = procedure(This: TAggPixelFormatProcessor; X, Y: Integer; C: PAggColor);
-  TAggFuncBlendPixel = procedure(This: TAggPixelFormatProcessor; X, Y: Integer; C: PAggColor; Cover: Int8u);
+  TAggFuncCopyPixel  = procedure(This: TAggPixelFormatProcessor; x, y: Integer; c: PAggColor);
+  TAggFuncBlendPixel = procedure(This: TAggPixelFormatProcessor; x, y: Integer; c: PAggColor; Cover: Int8u);
 
-  TAggFuncPixel = function(This: TAggPixelFormatProcessor; X, Y: Integer): TAggColor;
-  TAggFuncRow   = function(This: TAggPixelFormatProcessor; X, Y: Integer): TAggRowDataType;
+  TAggFuncPixel = function(This: TAggPixelFormatProcessor; x, y: Integer): TAggColor;
+  TAggFuncRow   = function(This: TAggPixelFormatProcessor; x, y: Integer): TAggRowDataType;
 
-  TAggFuncCopyHorizontalLine = procedure(This: TAggPixelFormatProcessor; X, Y: Integer; Len: Cardinal; C: PAggColor);
-  TAggFuncCopyVerticalLine   = procedure(This: TAggPixelFormatProcessor; X, Y: Integer; Len: Cardinal; C: PAggColor);
+  TAggFuncCopyHorizontalLine = procedure(This: TAggPixelFormatProcessor; x, y: Integer; Len: Cardinal; c: PAggColor);
+  TAggFuncCopyVerticalLine   = procedure(This: TAggPixelFormatProcessor; x, y: Integer; Len: Cardinal; c: PAggColor);
 
-  TAggFuncBlendHorizontalLine = procedure(This: TAggPixelFormatProcessor; X, Y: Integer; Len: Cardinal; C: PAggColor; Cover: Int8u);
-  TAggFuncBlendVerticalLine   = procedure(This: TAggPixelFormatProcessor; X, Y: Integer; Len: Cardinal; C: PAggColor; Cover: Int8u);
+  TAggFuncBlendHorizontalLine = procedure(This: TAggPixelFormatProcessor; x, y: Integer; Len: Cardinal; c: PAggColor; Cover: Int8u);
+  TAggFuncBlendVerticalLine   = procedure(This: TAggPixelFormatProcessor; x, y: Integer; Len: Cardinal; c: PAggColor; Cover: Int8u);
 
-  TAggFuncBlendSolidHorizontalSpan = procedure(This: TAggPixelFormatProcessor; X, Y: Integer; Len: Cardinal; C: PAggColor; Covers: PInt8u);
-  TAggFuncBlendsolidVerticalSpan   = procedure(This: TAggPixelFormatProcessor; X, Y: Integer; Len: Cardinal; C: PAggColor; Covers: PInt8u);
+  TAggFuncBlendSolidHorizontalSpan = procedure(This: TAggPixelFormatProcessor; x, y: Integer; Len: Cardinal; c: PAggColor; Covers: PInt8u);
+  TAggFuncBlendsolidVerticalSpan   = procedure(This: TAggPixelFormatProcessor; x, y: Integer; Len: Cardinal; c: PAggColor; Covers: PInt8u);
 
-  TAggFuncCopyColorHorizontalSpan = procedure(This: TAggPixelFormatProcessor; X, Y: Integer; Len: Cardinal; COLORS: PAggColor);
-  TAggFuncCopyColorVerticalSpan   = procedure(This: TAggPixelFormatProcessor; X, Y: Integer; Len: Cardinal; COLORS: PAggColor);
+  TAggFuncCopyColorHorizontalSpan = procedure(This: TAggPixelFormatProcessor; x, y: Integer; Len: Cardinal; Colors: PAggColor);
+  TAggFuncCopyColorVerticalSpan   = procedure(This: TAggPixelFormatProcessor; x, y: Integer; Len: Cardinal; Colors: PAggColor);
 
-  TAggFuncBlendColorHorizontalSpan = procedure(This: TAggPixelFormatProcessor; X, Y: Integer; Len: Cardinal; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u);
-  TAggFuncBlendColorVerticalSpan   = procedure(This: TAggPixelFormatProcessor; X, Y: Integer; Len: Cardinal; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u);
+  TAggFuncBlendColorHorizontalSpan = procedure(This: TAggPixelFormatProcessor; x, y: Integer; Len: Cardinal; Colors: PAggColor; Covers: PInt8u; Cover: Int8u);
+  TAggFuncBlendColorVerticalSpan   = procedure(This: TAggPixelFormatProcessor; x, y: Integer; Len: Cardinal; Colors: PAggColor; Covers: PInt8u; Cover: Int8u);
 
   TAggFuncCopyFrom  = procedure(This: TAggPixelFormatProcessor; From: TAggRenderingBuffer; Xdst, Ydst, Xsrc, Ysrc: Integer; Len: Cardinal);
   TAggFuncBlendFrom = procedure(This: TAggPixelFormatProcessor; From: TAggPixelFormatProcessor; SourcePtr: PInt8u; Xdst, Ydst, Xsrc, Ysrc: Integer; Len: Cardinal; Cover: Int8u);
@@ -101,7 +102,7 @@ type
     Ysrc: Integer; Len: Cardinal; Cover: Int8u);
 
   TAggFuncApplyGamma   = procedure(This: TAggPixelFormatProcessor; p: PInt8u);
-  TAggFuncForEachPixel = procedure(This: TAggPixelFormatProcessor; F: TAggFuncApplyGamma);
+  TAggFuncForEachPixel = procedure(This: TAggPixelFormatProcessor; f: TAggFuncApplyGamma);
 
   TAggPixelFormatProcessor = class
   protected
@@ -152,8 +153,8 @@ type
     constructor Create(rb: TAggRenderingBuffer; st: Cardinal = 1; Off: Cardinal = 0);
 
     function Attach(PixF: TAggPixelFormatProcessor; x1, y1, x2, y2: Integer): Boolean;
-    function GetPixelPointer(X, Y: Integer): PInt8u;
-    function GetRowPointer(Y: Integer): PInt8u;
+    function GetPixelPointer(x, y: Integer): PInt8u;
+    function GetRowPointer(y: Integer): PInt8u;
 
     procedure ApplyGammaDir(Gamma: TAggGamma; Order: TAggOrder);
     procedure ApplyGammaInv(Gamma: TAggGamma; Order: TAggOrder);
@@ -244,23 +245,23 @@ end;
 function TAggPixelFormatProcessor.Attach(PixF: TAggPixelFormatProcessor;
   x1, y1, x2, y2: Integer): Boolean;
 var
-  R, C: TRectInteger;
-  stride, Y: Integer;
+  r, c: TRectInteger;
+  stride, y: Integer;
 begin
-  R := RectInteger(x1, y1, x2, y2);
-  C := RectInteger(0, 0, PixF.width - 1, PixF.height - 1);
+  r := RectInteger(x1, y1, x2, y2);
+  c := RectInteger(0, 0, PixF.width - 1, PixF.height - 1);
 
-  if R.Clip(C) then
+  if r.Clip(c) then
     begin
       stride := PixF.FRenderingBuffer.stride;
 
       if stride < 0 then
-          Y := R.y2
+          y := r.y2
       else
-          Y := R.y1;
+          y := r.y1;
 
-      FRenderingBuffer.Attach(PixF.GetPixelPointer(R.x1, Y), (R.x2 - R.x1) + 1,
-        (R.y2 - R.y1) + 1, stride);
+      FRenderingBuffer.Attach(PixF.GetPixelPointer(r.x1, y), (r.x2 - r.x1) + 1,
+        (r.y2 - r.y1) + 1, stride);
 
       Result := True;
 
@@ -269,14 +270,14 @@ begin
       Result := False;
 end;
 
-function TAggPixelFormatProcessor.GetPixelPointer(X, Y: Integer): PInt8u;
+function TAggPixelFormatProcessor.GetPixelPointer(x, y: Integer): PInt8u;
 begin
-  Result := PInt8u(PtrComp(FRenderingBuffer.Row(Y)) + X * FPixWidth + FOffset);
+  Result := PInt8u(PtrComp(FRenderingBuffer.Row(y)) + x * FPixWidth + FOffset);
 end;
 
-function TAggPixelFormatProcessor.GetRowPointer(Y: Integer): PInt8u;
+function TAggPixelFormatProcessor.GetRowPointer(y: Integer): PInt8u;
 begin
-  Result := FRenderingBuffer.Row(Y);
+  Result := FRenderingBuffer.Row(y);
 end;
 
 function TAggPixelFormatProcessor.GetWidth;
@@ -362,4 +363,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

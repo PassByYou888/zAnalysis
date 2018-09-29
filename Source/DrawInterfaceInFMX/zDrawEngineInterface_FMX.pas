@@ -35,15 +35,15 @@ type
 
     procedure SetCanvas(const Value: TCanvas);
   public
-    procedure SetSize(R: TDERect);
+    procedure SetSize(r: TDERect);
     procedure SetLineWidth(w: TDEFloat);
     procedure DrawLine(pt1, pt2: TDEVec; COLOR: TDEColor);
-    procedure DrawRect(R: TDERect; angle: TDEFloat; COLOR: TDEColor);
-    procedure FillRect(R: TDERect; angle: TDEFloat; COLOR: TDEColor);
-    procedure DrawEllipse(R: TDERect; COLOR: TDEColor);
-    procedure FillEllipse(R: TDERect; COLOR: TDEColor);
-    procedure DrawText(Text: SystemString; Size: TDEFloat; R: TDERect; COLOR: TDEColor; center: Boolean; RotateVec: TDEVec; angle: TDEFloat);
-    procedure DrawTexture(T: TCoreClassObject; sour, dest: TDE4V; alpha: TDEFloat);
+    procedure DrawRect(r: TDERect; angle: TDEFloat; COLOR: TDEColor);
+    procedure FillRect(r: TDERect; angle: TDEFloat; COLOR: TDEColor);
+    procedure DrawEllipse(r: TDERect; COLOR: TDEColor);
+    procedure FillEllipse(r: TDERect; COLOR: TDEColor);
+    procedure DrawText(Text: SystemString; Size: TDEFloat; r: TDERect; COLOR: TDEColor; center: Boolean; RotateVec: TDEVec; angle: TDEFloat);
+    procedure DrawTexture(t: TCoreClassObject; sour, dest: TDE4V; alpha: TDEFloat);
     procedure Flush;
     procedure ResetState;
     procedure BeginDraw;
@@ -56,7 +56,7 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    procedure SetSurface(C: TCanvas; OwnerCtrl: TObject);
+    procedure SetSurface(c: TCanvas; OwnerCtrl: TObject);
     property Canvas: TCanvas read FCanvas write SetCanvas;
 
     property Debug: Boolean read FDebug write FDebug;
@@ -94,9 +94,9 @@ type
     FLastLoadFile: SystemString;
   public
     constructor Create; overload; override;
-    constructor Create(fileName: SystemString); overload; virtual;
+    constructor Create(FileName: SystemString); overload; virtual;
 
-    procedure LoadFromFileIO(fileName: SystemString);
+    procedure LoadFromFileIO(FileName: SystemString);
     property LastLoadFile: SystemString read FLastLoadFile;
   end;
 
@@ -120,19 +120,19 @@ type
 
     constructor Create; virtual;
     destructor Destroy; override;
-    function CreateResourceTexture(fileName: SystemString): TResourceTextureIntf;
+    function CreateResourceTexture(FileName: SystemString): TResourceTextureIntf;
     procedure ReleaseAllFMXRsource;
   end;
 
-function c2c(C: TDEColor): TAlphaColor; inline; overload;
-function c2c(C: TAlphaColor): TDEColor; inline; overload;
+function c2c(c: TDEColor): TAlphaColor; inline; overload;
+function c2c(c: TAlphaColor): TDEColor; inline; overload;
 function p2p(pt: TDEVec): TPointf; inline; overload;
-function r2r(R: TDERect): TRectf; inline; overload;
-function AlphaColor2RasterColor(C: TAlphaColor): TRasterColor; inline;
+function r2r(r: TDERect): TRectf; inline; overload;
+function AlphaColor2RasterColor(c: TAlphaColor): TRasterColor; inline;
 function DE4V2Corners(sour: TDE4V): TCornersF; inline;
-function DEColor(C: TAlphaColor): TDEColor; inline; overload;
+function DEColor(c: TAlphaColor): TDEColor; inline; overload;
 function PrepareColor(const SrcColor: TAlphaColor; const Opacity: TDEFloat): TAlphaColor; inline;
-procedure MakeMatrixRotation(angle, width, height, X, Y, RotationCenter_X, RotationCenter_Y: TDEFloat; var OutputMatrix: TMatrix; var OutputRect: TRectf); inline;
+procedure MakeMatrixRotation(angle, width, height, x, y, RotationCenter_X, RotationCenter_Y: TDEFloat; var OutputMatrix: TMatrix; var OutputRect: TRectf); inline;
 
 procedure MemoryBitmapToSurface(bmp: TMemoryRaster; Surface: TBitmapSurface); overload; inline;
 procedure MemoryBitmapToSurface(bmp: TMemoryRaster; sourRect: TRect; Surface: TBitmapSurface); overload; inline;
@@ -140,12 +140,12 @@ procedure SurfaceToMemoryBitmap(Surface: TBitmapSurface; bmp: TMemoryRaster); in
 procedure MemoryBitmapToBitmap(b: TMemoryRaster; bmp: TBitmap); overload;
 procedure MemoryBitmapToBitmap(b: TMemoryRaster; sourRect: TRect; bmp: TBitmap); overload;
 procedure BitmapToMemoryBitmap(bmp: TBitmap; b: TMemoryRaster);
-procedure LoadMemoryBitmap(F: SystemString; b: TMemoryRaster); overload;
-procedure LoadMemoryBitmap(F: SystemString; b: TSequenceMemoryRaster); overload;
-procedure LoadMemoryBitmap(F: SystemString; b: TDETexture); overload;
+procedure LoadMemoryBitmap(f: SystemString; b: TMemoryRaster); overload;
+procedure LoadMemoryBitmap(f: SystemString; b: TSequenceMemoryRaster); overload;
+procedure LoadMemoryBitmap(f: SystemString; b: TDETexture); overload;
 procedure LoadMemoryBitmap(stream: TCoreClassStream; b: TMemoryRaster); overload;
 
-procedure SaveMemoryBitmap(F: SystemString; b: TMemoryRaster); overload;
+procedure SaveMemoryBitmap(f: SystemString; b: TMemoryRaster); overload;
 procedure SaveMemoryBitmap(b: TMemoryRaster; fileExt: SystemString; DestStream: TCoreClassStream); overload;
 procedure SaveMemoryBitmap(b: TSequenceMemoryRaster; fileExt: SystemString; DestStream: TCoreClassStream); overload;
 
@@ -161,15 +161,15 @@ uses
 {$ENDIF}
   MemoryStream64, MediaCenter;
 
-function c2c(C: TDEColor): TAlphaColor;
+function c2c(c: TDEColor): TAlphaColor;
 begin
-  Result := TAlphaColorF.Create(C[0], C[1], C[2], C[3]).ToAlphaColor;
+  Result := TAlphaColorF.Create(c[0], c[1], c[2], 1.0).ToAlphaColor;
 end;
 
-function c2c(C: TAlphaColor): TDEColor;
+function c2c(c: TAlphaColor): TDEColor;
 begin
-  with TAlphaColorF.Create(C) do
-      Result := DEColor(R, g, b, A);
+  with TAlphaColorF.Create(c) do
+      Result := DEColor(r, g, b, 1.0);
 end;
 
 function p2p(pt: TDEVec): TPointf;
@@ -177,19 +177,19 @@ begin
   Result := Point2Pointf(pt);
 end;
 
-function r2r(R: TDERect): TRectf;
+function r2r(r: TDERect): TRectf;
 begin
-  Result := MakeRectf(R);
+  Result := MakeRectf(r);
 end;
 
-function AlphaColor2RasterColor(C: TAlphaColor): TRasterColor;
+function AlphaColor2RasterColor(c: TAlphaColor): TRasterColor;
 var
   ce: TRasterColorEntry;
 begin
-  ce.R := TAlphaColorRec(C).R;
-  ce.g := TAlphaColorRec(C).g;
-  ce.b := TAlphaColorRec(C).b;
-  ce.A := TAlphaColorRec(C).A;
+  ce.r := TAlphaColorRec(c).r;
+  ce.g := TAlphaColorRec(c).g;
+  ce.b := TAlphaColorRec(c).b;
+  ce.a := TAlphaColorRec(c).a;
   Result := ce.RGBA;
 end;
 
@@ -204,28 +204,28 @@ begin
     end;
 end;
 
-function DEColor(C: TAlphaColor): TDEColor;
+function DEColor(c: TAlphaColor): TDEColor;
 begin
-  with TAlphaColorF.Create(C) do
-      Result := DEColor(R, g, b, A);
+  with TAlphaColorF.Create(c) do
+      Result := DEColor(r, g, b, a);
 end;
 
 function PrepareColor(const SrcColor: TAlphaColor; const Opacity: TDEFloat): TAlphaColor;
 begin
   if Opacity <= 1.0 then
     begin
-      TAlphaColorRec(Result).R := Round(TAlphaColorRec(SrcColor).R * Opacity);
+      TAlphaColorRec(Result).r := Round(TAlphaColorRec(SrcColor).r * Opacity);
       TAlphaColorRec(Result).g := Round(TAlphaColorRec(SrcColor).g * Opacity);
       TAlphaColorRec(Result).b := Round(TAlphaColorRec(SrcColor).b * Opacity);
-      TAlphaColorRec(Result).A := Round(TAlphaColorRec(SrcColor).A * Opacity);
+      TAlphaColorRec(Result).a := Round(TAlphaColorRec(SrcColor).a * Opacity);
     end
-  else if (TAlphaColorRec(SrcColor).A < $FF) then
+  else if (TAlphaColorRec(SrcColor).a < $FF) then
       Result := PremultiplyAlpha(SrcColor)
   else
       Result := SrcColor;
 end;
 
-procedure MakeMatrixRotation(angle, width, height, X, Y, RotationCenter_X, RotationCenter_Y: TDEFloat; var OutputMatrix: TMatrix; var OutputRect: TRectf); inline;
+procedure MakeMatrixRotation(angle, width, height, x, y, RotationCenter_X, RotationCenter_Y: TDEFloat; var OutputMatrix: TMatrix; var OutputRect: TRectf); inline;
 const
   Scale_X = 1.0;
   Scale_Y = 1.0;
@@ -238,23 +238,23 @@ begin
   OutputMatrix := ScaleMatrix;
 
   m1 := TMatrix.identity;
-  m1.m31 := -(RotationCenter_X * width * Scale_X + X);
-  m1.m32 := -(RotationCenter_Y * height * Scale_Y + Y);
+  m1.m31 := -(RotationCenter_X * width * Scale_X + x);
+  m1.m32 := -(RotationCenter_Y * height * Scale_Y + y);
   m2 := TMatrix.identity;
-  m2.m31 := RotationCenter_X * width * Scale_X + X;
-  m2.m32 := RotationCenter_Y * height * Scale_Y + Y;
+  m2.m31 := RotationCenter_X * width * Scale_X + x;
+  m2.m32 := RotationCenter_Y * height * Scale_Y + y;
   rotMatrix := m1 * (TMatrix.CreateRotation(DegToRad(angle)) * m2);
   OutputMatrix := OutputMatrix * rotMatrix;
 
-  OutputRect.TopLeft := Pointf(X, Y);
-  OutputRect.BottomRight := Pointf(X + width, Y + height);
+  OutputRect.TopLeft := Pointf(x, y);
+  OutputRect.BottomRight := Pointf(x + width, y + height);
 end;
 
 procedure MemoryBitmapToSurface(bmp: TMemoryRaster; Surface: TBitmapSurface);
 var
   i: Integer;
   p1, p2: PCardinal;
-  C: TRasterColorEntry;
+  c: TRasterColorEntry;
   DC: TAlphaColor;
 begin
 {$IF Defined(ANDROID) or Defined(IOS)}
@@ -267,17 +267,17 @@ begin
   for i := bmp.width * bmp.height - 1 downto 0 do
     begin
 {$IF Defined(ANDROID) or Defined(IOS) or Defined(OSX)}
-      C.RGBA := RGBA2BGRA(TRasterColor(p1^));
+      c.RGBA := RGBA2BGRA(TRasterColor(p1^));
 {$ELSE}
-      C.RGBA := TRasterColor(p1^);
+      c.RGBA := TRasterColor(p1^);
 {$IFEND}
-      TAlphaColorRec(DC).R := C.R;
-      TAlphaColorRec(DC).g := C.g;
-      TAlphaColorRec(DC).b := C.b;
-      TAlphaColorRec(DC).A := C.A;
+      TAlphaColorRec(DC).r := c.r;
+      TAlphaColorRec(DC).g := c.g;
+      TAlphaColorRec(DC).b := c.b;
+      TAlphaColorRec(DC).a := c.a;
       p2^ := DC;
-      Inc(p1);
-      Inc(p2);
+      inc(p1);
+      inc(p2);
     end;
 end;
 
@@ -295,13 +295,13 @@ end;
 
 procedure SurfaceToMemoryBitmap(Surface: TBitmapSurface; bmp: TMemoryRaster);
 var
-  X, Y: Integer;
+  x, y: Integer;
 begin
   bmp.SetSize(Surface.width, Surface.height);
-  for Y := 0 to Surface.height - 1 do
-    for X := 0 to Surface.width - 1 do
-      with TAlphaColorRec(Surface.pixels[X, Y]) do
-          bmp.Pixel[X, Y] := RasterColor(R, g, b, A)
+  for y := 0 to Surface.height - 1 do
+    for x := 0 to Surface.width - 1 do
+      with TAlphaColorRec(Surface.pixels[x, y]) do
+          bmp.Pixel[x, y] := RasterColor(r, g, b, a)
 end;
 
 procedure MemoryBitmapToBitmap(b: TMemoryRaster; bmp: TBitmap);
@@ -334,19 +334,19 @@ begin
   DisposeObject(Surface);
 end;
 
-procedure LoadMemoryBitmap(F: SystemString; b: TMemoryRaster);
+procedure LoadMemoryBitmap(f: SystemString; b: TMemoryRaster);
 var
   Surf: TBitmapSurface;
 begin
-  if b.CanLoadFile(F) then
+  if b.CanLoadFile(f) then
     begin
-      b.LoadFromFile(F);
+      b.LoadFromFile(f);
     end
   else
     begin
       Surf := TBitmapSurface.Create;
       try
-        if TBitmapCodecManager.LoadFromFile(F, Surf, TCanvasManager.DefaultCanvas.GetAttribute(TCanvasAttribute.MaxBitmapSize)) then
+        if TBitmapCodecManager.LoadFromFile(f, Surf, TCanvasManager.DefaultCanvas.GetAttribute(TCanvasAttribute.MaxBitmapSize)) then
             SurfaceToMemoryBitmap(Surf, b);
       finally
           DisposeObject(Surf);
@@ -374,34 +374,34 @@ begin
     end;
 end;
 
-procedure LoadMemoryBitmap(F: SystemString; b: TSequenceMemoryRaster);
+procedure LoadMemoryBitmap(f: SystemString; b: TSequenceMemoryRaster);
 begin
-  if b.CanLoadFile(F) then
-      b.LoadFromFile(F)
+  if b.CanLoadFile(f) then
+      b.LoadFromFile(f)
   else
-      LoadMemoryBitmap(F, TMemoryRaster(b));
+      LoadMemoryBitmap(f, TMemoryRaster(b));
 end;
 
-procedure LoadMemoryBitmap(F: SystemString; b: TDETexture);
+procedure LoadMemoryBitmap(f: SystemString; b: TDETexture);
 begin
-  LoadMemoryBitmap(F, TSequenceMemoryRaster(b));
+  LoadMemoryBitmap(f, TSequenceMemoryRaster(b));
   b.ReleaseFMXResource;
 end;
 
-procedure SaveMemoryBitmap(F: SystemString; b: TMemoryRaster);
+procedure SaveMemoryBitmap(f: SystemString; b: TMemoryRaster);
 var
   Surf: TBitmapSurface;
 begin
-  if umlMultipleMatch(['*.bmp'], F) then
-      b.SaveToFile(F)
-  else if umlMultipleMatch(['*.seq'], F) then
-      b.SaveToZLibCompressFile(F)
+  if umlMultipleMatch(['*.bmp'], f) then
+      b.SaveToFile(f)
+  else if umlMultipleMatch(['*.seq'], f) then
+      b.SaveToZLibCompressFile(f)
   else
     begin
       Surf := TBitmapSurface.Create;
       try
         MemoryBitmapToSurface(b, Surf);
-        TBitmapCodecManager.SaveToFile(F, Surf, nil);
+        TBitmapCodecManager.SaveToFile(f, Surf, nil);
       finally
           DisposeObject(Surf);
       end;
@@ -458,9 +458,9 @@ begin
   FCurrSiz := DEVec(FCanvas.width, FCanvas.height);
 end;
 
-procedure TDrawEngineInterface_FMX.SetSize(R: TDERect);
+procedure TDrawEngineInterface_FMX.SetSize(r: TDERect);
 begin
-  FCanvas.IntersectClipRect(MakeRectf(R));
+  FCanvas.IntersectClipRect(MakeRectf(r));
 end;
 
 procedure TDrawEngineInterface_FMX.SetLineWidth(w: TDEFloat);
@@ -479,7 +479,7 @@ begin
   FCanvas.DrawLine(p2p(pt1), p2p(pt2), COLOR[3]);
 end;
 
-procedure TDrawEngineInterface_FMX.DrawRect(R: TDERect; angle: TDEFloat; COLOR: TDEColor);
+procedure TDrawEngineInterface_FMX.DrawRect(r: TDERect; angle: TDEFloat; COLOR: TDEColor);
 var
   M, bak: TMatrix;
   rf: TRectf;
@@ -487,20 +487,20 @@ begin
   if angle <> 0 then
     begin
       bak := FCanvas.Matrix;
-      MakeMatrixRotation(angle, RectWidth(R), RectHeight(R),
-        MinValue(R[0, 0], R[1, 0]), MinValue(R[0, 1], R[1, 1]), 0.5, 0.5, M, rf);
+      MakeMatrixRotation(angle, RectWidth(r), RectHeight(r),
+        MinF(r[0, 0], r[1, 0]), MinF(r[0, 1], r[1, 1]), 0.5, 0.5, M, rf);
       FCanvas.MultiplyMatrix(M);
     end;
 
   FCanvas.Stroke.COLOR := c2c(COLOR);
   FCanvas.fill.COLOR := FCanvas.Stroke.COLOR;
-  FCanvas.DrawRect(r2r(R), 0, 0, [], COLOR[3]);
+  FCanvas.DrawRect(r2r(r), 0, 0, [], COLOR[3]);
 
   if angle <> 0 then
       FCanvas.SetMatrix(bak);
 end;
 
-procedure TDrawEngineInterface_FMX.FillRect(R: TDERect; angle: TDEFloat; COLOR: TDEColor);
+procedure TDrawEngineInterface_FMX.FillRect(r: TDERect; angle: TDEFloat; COLOR: TDEColor);
 var
   M, bak: TMatrix;
   rf: TRectf;
@@ -508,34 +508,34 @@ begin
   if angle <> 0 then
     begin
       bak := FCanvas.Matrix;
-      MakeMatrixRotation(angle, RectWidth(R), RectHeight(R),
-        MinValue(R[0, 0], R[1, 0]), MinValue(R[0, 1], R[1, 1]), 0.5, 0.5, M, rf);
+      MakeMatrixRotation(angle, RectWidth(r), RectHeight(r),
+        MinF(r[0, 0], r[1, 0]), MinF(r[0, 1], r[1, 1]), 0.5, 0.5, M, rf);
       FCanvas.MultiplyMatrix(M);
     end;
 
   FCanvas.Stroke.COLOR := c2c(COLOR);
   FCanvas.fill.COLOR := FCanvas.Stroke.COLOR;
-  FCanvas.FillRect(r2r(R), 0, 0, [], COLOR[3]);
+  FCanvas.FillRect(r2r(r), 0, 0, [], COLOR[3]);
 
   if angle <> 0 then
       FCanvas.SetMatrix(bak);
 end;
 
-procedure TDrawEngineInterface_FMX.DrawEllipse(R: TDERect; COLOR: TDEColor);
+procedure TDrawEngineInterface_FMX.DrawEllipse(r: TDERect; COLOR: TDEColor);
 begin
   FCanvas.Stroke.COLOR := c2c(COLOR);
   FCanvas.fill.COLOR := FCanvas.Stroke.COLOR;
-  FCanvas.DrawEllipse(r2r(R), COLOR[3]);
+  FCanvas.DrawEllipse(r2r(r), COLOR[3]);
 end;
 
-procedure TDrawEngineInterface_FMX.FillEllipse(R: TDERect; COLOR: TDEColor);
+procedure TDrawEngineInterface_FMX.FillEllipse(r: TDERect; COLOR: TDEColor);
 begin
   FCanvas.Stroke.COLOR := c2c(COLOR);
   FCanvas.fill.COLOR := FCanvas.Stroke.COLOR;
-  FCanvas.FillEllipse(r2r(R), COLOR[3]);
+  FCanvas.FillEllipse(r2r(r), COLOR[3]);
 end;
 
-procedure TDrawEngineInterface_FMX.DrawText(Text: SystemString; Size: TDEFloat; R: TDERect; COLOR: TDEColor; center: Boolean; RotateVec: TDEVec; angle: TDEFloat);
+procedure TDrawEngineInterface_FMX.DrawText(Text: SystemString; Size: TDEFloat; r: TDERect; COLOR: TDEColor; center: Boolean; RotateVec: TDEVec; angle: TDEFloat);
 var
   M, bak: TMatrix;
   rf: TRectf;
@@ -544,8 +544,8 @@ begin
   if angle <> 0 then
     begin
       bak := FCanvas.Matrix;
-      MakeMatrixRotation(angle, RectWidth(R), RectHeight(R),
-        MinValue(R[0, 0], R[1, 0]), MinValue(R[0, 1], R[1, 1]), RotateVec[0], RotateVec[1], M, rf);
+      MakeMatrixRotation(angle, RectWidth(r), RectHeight(r),
+        MinF(r[0, 0], r[1, 0]), MinF(r[0, 1], r[1, 1]), RotateVec[0], RotateVec[1], M, rf);
       FCanvas.MultiplyMatrix(M);
     end;
 
@@ -558,19 +558,19 @@ begin
   else
       TA := TTextAlign.Leading;
 
-  FCanvas.FillText(r2r(R), Text, False, COLOR[3], [], TA, TTextAlign.center);
+  FCanvas.FillText(r2r(r), Text, False, COLOR[3], [], TA, TTextAlign.center);
 
   if angle <> 0 then
       FCanvas.SetMatrix(bak);
 end;
 
-procedure TDrawEngineInterface_FMX.DrawTexture(T: TCoreClassObject; sour, dest: TDE4V; alpha: TDEFloat);
+procedure TDrawEngineInterface_FMX.DrawTexture(t: TCoreClassObject; sour, dest: TDE4V; alpha: TDEFloat);
 var
   newSour, newDest: TDE4V;
 {$IF Defined(ANDROID) or Defined(IOS)}
 {$ELSE}
   M, bak: TMatrix;
-  R: TRectf;
+  r: TRectf;
 {$ENDIF}
 begin
 {$IF Defined(ANDROID) or Defined(IOS)}
@@ -589,90 +589,90 @@ begin
   with FCanvas.Matrix do
       newDest := dest.Scale(FOwnerCanvasScale).Add(DEVec(m31, m32));
 
-  if (T is TBitmap) then
+  if (t is TBitmap) then
     begin
-      if (TBitmap(T).width = 0) or (TBitmap(T).height = 0) then
+      if (TBitmap(t).width = 0) or (TBitmap(t).height = 0) then
           Exit;
-      if not TBitmap(T).HandleAllocated then
+      if not TBitmap(t).HandleAllocated then
           Exit;
 
       if newSour.IsZero then
-          newSour := TDE4V.Init(Rectf(0, 0, TBitmap(T).width, TBitmap(T).height), 0);
+          newSour := TDE4V.Init(Rectf(0, 0, TBitmap(t).width, TBitmap(t).height), 0);
       if newDest.IsZero then
           newDest := newSour;
 
-      lastCanvasHelper.TexRect(DE4V2Corners(dest), DE4V2Corners(newSour), TBitmapCtx(TBitmap(T).Handle).PaintingTexture, PrepareColor($FFFFFFFF, alpha));
+      lastCanvasHelper.TexRect(DE4V2Corners(dest), DE4V2Corners(newSour), TBitmapCtx(TBitmap(t).Handle).PaintingTexture, PrepareColor($FFFFFFFF, alpha));
     end
-  else if T is TTexture then
+  else if t is TTexture then
     begin
-      if (TTexture(T).width = 0) or (TTexture(T).height = 0) then
+      if (TTexture(t).width = 0) or (TTexture(t).height = 0) then
           Exit;
       if newSour.IsZero then
-          newSour := TDE4V.Init(Rect(0, 0, TTexture(T).width, TTexture(T).height), 0);
+          newSour := TDE4V.Init(Rect(0, 0, TTexture(t).width, TTexture(t).height), 0);
       if newDest.IsZero then
           newDest := newSour;
 
-      lastCanvasHelper.TexRect(DE4V2Corners(dest), DE4V2Corners(newSour), TTexture(T), PrepareColor($FFFFFFFF, alpha));
+      lastCanvasHelper.TexRect(DE4V2Corners(dest), DE4V2Corners(newSour), TTexture(t), PrepareColor($FFFFFFFF, alpha));
     end
-  else if T is TDETexture_FMX then
+  else if t is TDETexture_FMX then
     begin
-      if (TDETexture_FMX(T).width = 0) or (TDETexture_FMX(T).height = 0) then
+      if (TDETexture_FMX(t).width = 0) or (TDETexture_FMX(t).height = 0) then
           Exit;
 
       if newSour.IsZero then
-          newSour := TDE4V.Init(DERect(0, 0, TDETexture_FMX(T).width, TDETexture_FMX(T).height), 0);
+          newSour := TDE4V.Init(DERect(0, 0, TDETexture_FMX(t).width, TDETexture_FMX(t).height), 0);
       if newDest.IsZero then
           newDest := newSour;
 
-      lastCanvasHelper.TexRect(DE4V2Corners(newDest), DE4V2Corners(newSour), TDETexture_FMX(T).Texture, PrepareColor($FFFFFFFF, alpha));
+      lastCanvasHelper.TexRect(DE4V2Corners(newDest), DE4V2Corners(newSour), TDETexture_FMX(t).Texture, PrepareColor($FFFFFFFF, alpha));
     end
   else
-      RaiseInfo('texture error! ' + T.ClassName);
+      RaiseInfo('texture error! ' + t.ClassName);
 
 {$ELSE}
   newSour := sour;
   newDest := dest;
 
-  if (T is TDETexture_FMX) then
+  if (t is TDETexture_FMX) then
     begin
-      if (TDETexture_FMX(T).width = 0) or (TDETexture_FMX(T).height = 0) then
+      if (TDETexture_FMX(t).width = 0) or (TDETexture_FMX(t).height = 0) then
           Exit;
       if newSour.IsZero then
-          newSour := TDE4V.Init(TDETexture_FMX(T).BoundsRectV2, 0);
+          newSour := TDE4V.Init(TDETexture_FMX(t).BoundsRectV2, 0);
       if newDest.IsZero then
           newDest := newSour;
       if not IsEqual(newDest.angle, 0, 0.1) then
         begin
           bak := FCanvas.Matrix;
-          MakeMatrixRotation(newDest.angle, newDest.width, newDest.height, MinValue(newDest.Left, newDest.Right), MinValue(newDest.Top, newDest.Bottom), 0.5, 0.5, M, R);
+          MakeMatrixRotation(newDest.angle, newDest.width, newDest.height, MinF(newDest.Left, newDest.Right), MinF(newDest.Top, newDest.Bottom), 0.5, 0.5, M, r);
           FCanvas.MultiplyMatrix(M);
-          FCanvas.DrawBitmap(TDETexture_FMX(T).Texture, newSour.MakeRectf, newDest.MakeRectf, alpha, False);
+          FCanvas.DrawBitmap(TDETexture_FMX(t).Texture, newSour.MakeRectf, newDest.MakeRectf, alpha, False);
           FCanvas.SetMatrix(bak);
         end
       else
-          FCanvas.DrawBitmap(TDETexture_FMX(T).Texture, newSour.MakeRectf, newDest.MakeRectf, alpha, False);
+          FCanvas.DrawBitmap(TDETexture_FMX(t).Texture, newSour.MakeRectf, newDest.MakeRectf, alpha, False);
     end
-  else if (T is TBitmap) then
+  else if (t is TBitmap) then
     begin
-      if (TBitmap(T).width = 0) or (TBitmap(T).height = 0) then
+      if (TBitmap(t).width = 0) or (TBitmap(t).height = 0) then
           Exit;
       if newSour.IsZero then
-          newSour := TDE4V.Init(TBitmap(T).BoundsF, 0);
+          newSour := TDE4V.Init(TBitmap(t).BoundsF, 0);
       if newDest.IsZero then
           newDest := newSour;
       if not IsEqual(newDest.angle, 0, 0.1) then
         begin
           bak := FCanvas.Matrix;
-          MakeMatrixRotation(newDest.angle, newDest.width, newDest.height, MinValue(newDest.Left, newDest.Right), MinValue(newDest.Top, newDest.Bottom), 0.5, 0.5, M, R);
+          MakeMatrixRotation(newDest.angle, newDest.width, newDest.height, MinF(newDest.Left, newDest.Right), MinF(newDest.Top, newDest.Bottom), 0.5, 0.5, M, r);
           FCanvas.MultiplyMatrix(M);
-          FCanvas.DrawBitmap(TBitmap(T), newSour.MakeRectf, newDest.MakeRectf, alpha, False);
+          FCanvas.DrawBitmap(TBitmap(t), newSour.MakeRectf, newDest.MakeRectf, alpha, False);
           FCanvas.SetMatrix(bak);
         end
       else
-          FCanvas.DrawBitmap(TBitmap(T), newSour.MakeRectf, newDest.MakeRectf, alpha, False);
+          FCanvas.DrawBitmap(TBitmap(t), newSour.MakeRectf, newDest.MakeRectf, alpha, False);
     end
   else
-      RaiseInfo('no interface texture! ' + T.ClassName);
+      RaiseInfo('no interface texture! ' + t.ClassName);
 {$ENDIF}
   if FDebug then
     begin
@@ -721,13 +721,13 @@ end;
 
 function TDrawEngineInterface_FMX.GetTextSize(Text: SystemString; Size: TDEFloat): TDEVec;
 var
-  R: TRectf;
+  r: TRectf;
 begin
-  R := Rectf(0, 0, 10000, 10000);
+  r := Rectf(0, 0, 10000, 10000);
   FCanvas.Font.Size := Size;
-  FCanvas.MeasureText(R, Text, False, [], TTextAlign.Leading, TTextAlign.Leading);
-  Result[0] := R.Right;
-  Result[1] := R.Bottom;
+  FCanvas.MeasureText(r, Text, False, [], TTextAlign.Leading, TTextAlign.Leading);
+  Result[0] := r.Right;
+  Result[1] := r.Bottom;
 end;
 
 function TDrawEngineInterface_FMX.ReadyOK: Boolean;
@@ -755,15 +755,15 @@ begin
   inherited Destroy;
 end;
 
-procedure TDrawEngineInterface_FMX.SetSurface(C: TCanvas; OwnerCtrl: TObject);
+procedure TDrawEngineInterface_FMX.SetSurface(c: TCanvas; OwnerCtrl: TObject);
 var
   pf: TPointf;
 begin
-  FCanvas := C;
+  FCanvas := c;
   if OwnerCtrl is TControl then
     begin
       pf := TControl(OwnerCtrl).AbsoluteScale;
-      FOwnerCanvasScale := (pf.X + pf.Y) * 0.5;
+      FOwnerCanvasScale := (pf.x + pf.y) * 0.5;
       FCurrSiz := DEVec(TControl(OwnerCtrl).width, TControl(OwnerCtrl).height);
     end
   else if OwnerCtrl is TCustomForm then
@@ -774,7 +774,7 @@ begin
   else
     begin
       FOwnerCanvasScale := 1.0;
-      FCurrSiz := DEVec(C.width, C.height);
+      FCurrSiz := DEVec(c.width, c.height);
     end;
 end;
 
@@ -853,34 +853,34 @@ begin
   FLastLoadFile := '';
 end;
 
-constructor TResourceTexture.Create(fileName: SystemString);
+constructor TResourceTexture.Create(FileName: SystemString);
 begin
   inherited Create;
   FLastLoadFile := '';
 
-  if fileName <> '' then
-      LoadFromFileIO(fileName);
+  if FileName <> '' then
+      LoadFromFileIO(FileName);
 end;
 
-procedure TResourceTexture.LoadFromFileIO(fileName: SystemString);
+procedure TResourceTexture.LoadFromFileIO(FileName: SystemString);
 var
   stream: TCoreClassStream;
 begin
   FLastLoadFile := '';
-  if FileIOExists(fileName) then
+  if FileIOExists(FileName) then
     begin
       try
-        stream := FileIOOpen(fileName);
+        stream := FileIOOpen(FileName);
         stream.Position := 0;
         LoadFromStream(stream);
         DisposeObject(stream);
-        FLastLoadFile := fileName;
+        FLastLoadFile := FileName;
       except
-          RaiseInfo('texture "%s" format error! ', [fileName]);
+          RaiseInfo('texture "%s" format error! ', [FileName]);
       end;
     end
   else
-      RaiseInfo('file "%s" no exists', [fileName]);
+      RaiseInfo('file "%s" no exists', [FileName]);
 end;
 
 constructor TResourceTextureIntf.Create(tex: TResourceTexture);
@@ -923,28 +923,28 @@ begin
   inherited Destroy;
 end;
 
-function TResourceTextureCache.CreateResourceTexture(fileName: SystemString): TResourceTextureIntf;
+function TResourceTextureCache.CreateResourceTexture(FileName: SystemString): TResourceTextureIntf;
 var
   tex: TResourceTexture;
 begin
-  if fileName = '' then
+  if FileName = '' then
       Exit(nil);
 
-  fileName := umlTrimSpace(fileName);
+  FileName := umlTrimSpace(FileName);
 
-  if fileName = '' then
+  if FileName = '' then
     begin
       tex := DefaultTexture;
     end
   else
     begin
-      if not TextureList.Exists(fileName) then
+      if not TextureList.Exists(FileName) then
         begin
-          if FileIOExists(fileName) then
+          if FileIOExists(FileName) then
             begin
               try
-                tex := TResourceTexture.Create(fileName);
-                TextureList.Add(fileName, tex);
+                tex := TResourceTexture.Create(FileName);
+                TextureList.Add(FileName, tex);
               except
                   tex := DefaultTexture;
               end;
@@ -953,7 +953,7 @@ begin
               tex := DefaultTexture;
         end
       else
-          tex := TextureList[fileName] as TResourceTexture;
+          tex := TextureList[FileName] as TResourceTexture;
     end;
 
   Result := TResourceTextureIntf.Create(tex);
@@ -963,7 +963,7 @@ end;
 
 procedure TResourceTextureCache.ReleaseAllFMXRsource;
 begin
-  TextureList.Progress(
+  TextureList.ProgressP(
     procedure(const Name: PSystemString; Obj: TCoreClassObject)
     begin
       if Obj is TDETexture_FMX then
@@ -1010,4 +1010,6 @@ finalization
 DisposeObject(TextureCache);
 
 end. 
+ 
+ 
  

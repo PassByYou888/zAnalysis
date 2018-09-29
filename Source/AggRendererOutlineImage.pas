@@ -37,11 +37,8 @@
 *)
 unit AggRendererOutlineImage;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   Math,
   AggBasics,
@@ -62,7 +59,7 @@ type
     function GetWidthDouble: Double; virtual;
     function GetHeightDouble: Double; virtual;
   public
-    function Pixel(X, Y: Integer): TAggRgba8; virtual; abstract;
+    function Pixel(x, y: Integer): TAggRgba8; virtual; abstract;
 
     property width: Cardinal read GetWidth;
     property height: Cardinal read GetHeight;
@@ -80,7 +77,7 @@ type
   public
     constructor Create(Src: TAggPixelSource; AHeight: Double);
 
-    function Pixel(X, Y: Integer): TAggRgba8; override;
+    function Pixel(x, y: Integer): TAggRgba8; override;
   end;
 
   TAggLineImagePattern = class
@@ -103,7 +100,7 @@ type
 
     procedure Build(Src: TAggPixelSource); virtual;
 
-    procedure Pixel(p: PAggColor; X, Y: Integer); virtual;
+    procedure Pixel(p: PAggColor; x, y: Integer); virtual;
 
     property Filter: TAggPatternFilter read FFilter write SetFilter;
     property PatternWidth: Integer read FWidthHR;
@@ -118,7 +115,7 @@ type
     constructor Create(aFilter: TAggPatternFilter; Src: TAggPixelSource); overload; override;
 
     procedure Build(Src: TAggPixelSource); override;
-    procedure Pixel(p: PAggColor; X, Y: Integer); override;
+    procedure Pixel(p: PAggColor; x, y: Integer); override;
   end;
 
   TAggDistanceInterpolator4 = class(TAggCustomDistance2Interpolator)
@@ -137,7 +134,7 @@ type
     function GetDistPict: Integer;
     function GetDistanceEnd: Integer; override;
   public
-    constructor Create(x1, y1, x2, y2, SX, SY, EX, EY, length: Integer; Scale: Double; X, Y: Integer); overload;
+    constructor Create(x1, y1, x2, y2, SX, SY, EX, EY, length: Integer; Scale: Double; x, y: Integer); overload;
 
     procedure IncX; override;
     procedure DecX; override;
@@ -150,8 +147,8 @@ type
     procedure SetDecY(Value: Integer); override;
 
     property length: Integer read FLength;
-    property DxPict: Integer read FDeltaPict.X;
-    property DyPict: Integer read FDeltaPict.Y;
+    property DxPict: Integer read FDeltaPict.x;
+    property DyPict: Integer read FDeltaPict.y;
   end;
 
   TAggRendererOutlineImage = class;
@@ -204,10 +201,10 @@ type
   public
     constructor Create(Ren: TAggRendererBase; Patt: TAggLineImagePattern);
 
-    procedure Pixel(p: PAggColor; X, Y: Integer);
+    procedure Pixel(p: PAggColor; x, y: Integer);
 
-    procedure BlendColorHSpan(X, Y: Integer; Len: Cardinal; COLORS: PAggColor);
-    procedure BlendColorVSpan(X, Y: Integer; Len: Cardinal; COLORS: PAggColor);
+    procedure BlendColorHSpan(x, y: Integer; Len: Cardinal; Colors: PAggColor);
+    procedure BlendColorVSpan(x, y: Integer; Len: Cardinal; Colors: PAggColor);
 
     procedure Semidot(cmp: TCompareFunction; Xc1, Yc1, Xc2, Yc2: Integer); override;
 
@@ -260,23 +257,23 @@ begin
   Result := FHeight;
 end;
 
-function TAggLineImageScale.Pixel(X, Y: Integer): TAggRgba8;
+function TAggLineImageScale.Pixel(x, y: Integer): TAggRgba8;
 var
   SourceY: Double;
   h, y1, y2: Integer;
   pix1, pix2: TAggColor;
 begin
-  SourceY := (Y + 0.5) * FScale - 0.5;
+  SourceY := (y + 0.5) * FScale - 0.5;
 
   h := Trunc(FSource.GetHeight) - 1;
   y1 := Trunc(SourceY);
   y2 := y1 + 1;
 
   if y1 >= 0 then
-      pix1.FromRgba8(FSource.Pixel(X, y1));
+      pix1.FromRgba8(FSource.Pixel(x, y1));
 
   if y2 <= h then
-      pix2.FromRgba8(FSource.Pixel(X, y2));
+      pix2.FromRgba8(FSource.Pixel(x, y2));
 
   Result := pix1.Gradient8(pix2, SourceY - y1);
 end;
@@ -335,7 +332,7 @@ end;
 
 procedure TAggLineImagePattern.Build(Src: TAggPixelSource);
 var
-  X, Y, h: Cardinal;
+  x, y, h: Cardinal;
   d1, d2, s1, s2: PAggRgba8;
 begin
   FHeight := Ceil(Src.GetHeightDouble);
@@ -345,7 +342,7 @@ begin
   FHalfHeightHR := Trunc(Src.GetHeightDouble * CAggLineSubpixelSize * 0.5);
   FOffsetYhr := FDilationHR + FHalfHeightHR - CAggLineSubpixelSize div 2;
 
-  Inc(FHalfHeightHR, CAggLineSubpixelSize div 2);
+  inc(FHalfHeightHR, CAggLineSubpixelSize div 2);
 
   AggFreeMem(Pointer(FData), FDataSize);
 
@@ -358,67 +355,67 @@ begin
     FHeight + FDilation * 2, (FWidth + FDilation * 2) * SizeOf(TAggRgba8));
 
   if FHeight > 0 then
-    for Y := 0 to FHeight - 1 do
+    for y := 0 to FHeight - 1 do
       begin
-        d1 := PAggRgba8(PtrComp(FRenderingBuffer.Row(Y + FDilation)) + FDilation *
+        d1 := PAggRgba8(PtrComp(FRenderingBuffer.Row(y + FDilation)) + FDilation *
           SizeOf(TAggRgba8));
 
-        for X := 0 to FWidth - 1 do
+        for x := 0 to FWidth - 1 do
           begin
-            d1^ := Src.Pixel(X, Y);
+            d1^ := Src.Pixel(x, y);
 
-            Inc(PtrComp(d1), SizeOf(TAggRgba8));
+            inc(PtrComp(d1), SizeOf(TAggRgba8));
           end;
       end;
 
-  for Y := 0 to FDilation - 1 do
+  for y := 0 to FDilation - 1 do
     begin
-      d1 := PAggRgba8(PtrComp(FRenderingBuffer.Row(FDilation + FHeight + Y)) +
+      d1 := PAggRgba8(PtrComp(FRenderingBuffer.Row(FDilation + FHeight + y)) +
         FDilation * SizeOf(TAggRgba8));
-      d2 := PAggRgba8(PtrComp(FRenderingBuffer.Row(FDilation - Y - 1)) +
+      d2 := PAggRgba8(PtrComp(FRenderingBuffer.Row(FDilation - y - 1)) +
         FDilation * SizeOf(TAggRgba8));
 
-      for X := 0 to FWidth - 1 do
+      for x := 0 to FWidth - 1 do
         begin
           d1^.NoColor;
           d2^.NoColor;
 
-          Inc(PtrComp(d1), SizeOf(TAggRgba8));
-          Inc(PtrComp(d2), SizeOf(TAggRgba8));
+          inc(PtrComp(d1), SizeOf(TAggRgba8));
+          inc(PtrComp(d2), SizeOf(TAggRgba8));
         end;
     end;
 
   h := FHeight + FDilation * 2;
 
-  for Y := 0 to h - 1 do
+  for y := 0 to h - 1 do
     begin
-      s1 := PAggRgba8(PtrComp(FRenderingBuffer.Row(Y)) +
+      s1 := PAggRgba8(PtrComp(FRenderingBuffer.Row(y)) +
         FDilation * SizeOf(TAggRgba8));
-      s2 := PAggRgba8(PtrComp(FRenderingBuffer.Row(Y)) + (FDilation + FWidth) *
+      s2 := PAggRgba8(PtrComp(FRenderingBuffer.Row(y)) + (FDilation + FWidth) *
         SizeOf(TAggRgba8));
-      d1 := PAggRgba8(PtrComp(FRenderingBuffer.Row(Y)) + (FDilation + FWidth) *
+      d1 := PAggRgba8(PtrComp(FRenderingBuffer.Row(y)) + (FDilation + FWidth) *
         SizeOf(TAggRgba8));
-      d2 := PAggRgba8(PtrComp(FRenderingBuffer.Row(Y)) +
+      d2 := PAggRgba8(PtrComp(FRenderingBuffer.Row(y)) +
         FDilation * SizeOf(TAggRgba8));
 
-      for X := 0 to FDilation - 1 do
+      for x := 0 to FDilation - 1 do
         begin
           d1^ := s1^;
 
-          Inc(PtrComp(d1), SizeOf(TAggRgba8));
-          Inc(PtrComp(s1), SizeOf(TAggRgba8));
-          Dec(PtrComp(d2), SizeOf(TAggRgba8));
-          Dec(PtrComp(s2), SizeOf(TAggRgba8));
+          inc(PtrComp(d1), SizeOf(TAggRgba8));
+          inc(PtrComp(s1), SizeOf(TAggRgba8));
+          dec(PtrComp(d2), SizeOf(TAggRgba8));
+          dec(PtrComp(s2), SizeOf(TAggRgba8));
 
           d2^ := s2^;
         end;
     end;
 end;
 
-procedure TAggLineImagePattern.Pixel(p: PAggColor; X, Y: Integer);
+procedure TAggLineImagePattern.Pixel(p: PAggColor; x, y: Integer);
 begin
-  FFilter.PixelHighResolution(FRenderingBuffer.Rows, p, X mod FWidthHR + FDilationHR,
-    Y + FOffsetYhr);
+  FFilter.PixelHighResolution(FRenderingBuffer.Rows, p, x mod FWidthHR + FDilationHR,
+    y + FOffsetYhr);
 end;
 
 procedure TAggLineImagePattern.SetFilter(aFilter: TAggPatternFilter);
@@ -461,39 +458,39 @@ begin
   FWidthHR := FMask + 1;
 end;
 
-procedure TAggLineImagePatternPow2.Pixel(p: PAggColor; X, Y: Integer);
+procedure TAggLineImagePatternPow2.Pixel(p: PAggColor; x, y: Integer);
 begin
-  FFilter.PixelHighResolution(FRenderingBuffer.Rows, p, (X and FMask) +
-    FDilationHR, Y + FOffsetYhr);
+  FFilter.PixelHighResolution(FRenderingBuffer.Rows, p, (x and FMask) +
+    FDilationHR, y + FOffsetYhr);
 end;
 
 { TAggDistanceInterpolator4 }
 
 constructor TAggDistanceInterpolator4.Create(x1, y1, x2, y2, SX, SY, EX, EY,
-  length: Integer; Scale: Double; X, Y: Integer);
+  length: Integer; Scale: Double; x, y: Integer);
 var
   d: Double;
   Delta: TPointInteger;
 begin
   FDelta := PointInteger(x2 - x1, y2 - y1);
 
-  FDeltaStart.X := LineMedResolution(SX) - LineMedResolution(x1);
-  FDeltaStart.Y := LineMedResolution(SY) - LineMedResolution(y1);
-  FDeltaEnd.X := LineMedResolution(EX) - LineMedResolution(x2);
-  FDeltaEnd.Y := LineMedResolution(EY) - LineMedResolution(y2);
+  FDeltaStart.x := LineMedResolution(SX) - LineMedResolution(x1);
+  FDeltaStart.y := LineMedResolution(SY) - LineMedResolution(y1);
+  FDeltaEnd.x := LineMedResolution(EX) - LineMedResolution(x2);
+  FDeltaEnd.y := LineMedResolution(EY) - LineMedResolution(y2);
 
-  FDist := Trunc((X + CAggLineSubpixelSize * 0.5 - x2) * FDelta.Y -
-    (Y + CAggLineSubpixelSize * 0.5 - y2) * FDelta.X);
+  FDist := Trunc((x + CAggLineSubpixelSize * 0.5 - x2) * FDelta.y -
+    (y + CAggLineSubpixelSize * 0.5 - y2) * FDelta.x);
 
-  FDistStart := (LineMedResolution(X + CAggLineSubpixelSize div 2) -
-    LineMedResolution(SX)) * FDeltaStart.Y -
-    (LineMedResolution(Y + CAggLineSubpixelSize div 2) -
-    LineMedResolution(SY)) * FDeltaStart.X;
+  FDistStart := (LineMedResolution(x + CAggLineSubpixelSize div 2) -
+    LineMedResolution(SX)) * FDeltaStart.y -
+    (LineMedResolution(y + CAggLineSubpixelSize div 2) -
+    LineMedResolution(SY)) * FDeltaStart.x;
 
-  FDistEnd := (LineMedResolution(X + CAggLineSubpixelSize div 2) -
-    LineMedResolution(EX)) * FDeltaEnd.Y -
-    (LineMedResolution(Y + CAggLineSubpixelSize div 2) -
-    LineMedResolution(EY)) * FDeltaEnd.X;
+  FDistEnd := (LineMedResolution(x + CAggLineSubpixelSize div 2) -
+    LineMedResolution(EX)) * FDeltaEnd.y -
+    (LineMedResolution(y + CAggLineSubpixelSize div 2) -
+    LineMedResolution(EY)) * FDeltaEnd.x;
 
   if Scale <> 0 then
       FLength := Trunc(length / Scale)
@@ -505,151 +502,151 @@ begin
   if d <> 0 then
     begin
       d := 1 / d;
-      Delta.X := Trunc(((x2 - x1) shl CAggLineSubpixelShift) * d);
-      Delta.Y := Trunc(((y2 - y1) shl CAggLineSubpixelShift) * d);
+      Delta.x := Trunc(((x2 - x1) shl CAggLineSubpixelShift) * d);
+      Delta.y := Trunc(((y2 - y1) shl CAggLineSubpixelShift) * d);
     end
   else
       Delta := PointInteger(0, 0);
 
-  FDeltaPict := PointInteger(-Delta.Y, Delta.X);
+  FDeltaPict := PointInteger(-Delta.y, Delta.x);
 
-  FDistPict := ShrInt32((X + CAggLineSubpixelSize div 2 - (x1 - Delta.Y)) *
-    FDeltaPict.Y - (Y + CAggLineSubpixelSize div 2 - (y1 + Delta.X)) *
-    FDeltaPict.X, CAggLineSubpixelShift);
+  FDistPict := ShrInt32((x + CAggLineSubpixelSize div 2 - (x1 - Delta.y)) *
+    FDeltaPict.y - (y + CAggLineSubpixelSize div 2 - (y1 + Delta.x)) *
+    FDeltaPict.x, CAggLineSubpixelShift);
 
-  FDelta.X := FDelta.X shl CAggLineSubpixelShift;
-  FDelta.Y := FDelta.Y shl CAggLineSubpixelShift;
-  FDeltaStart.X := FDeltaStart.X shl CAggLineMrSubpixelShift;
-  FDeltaStart.Y := FDeltaStart.Y shl CAggLineMrSubpixelShift;
-  FDeltaEnd.X := FDeltaEnd.X shl CAggLineMrSubpixelShift;
-  FDeltaEnd.Y := FDeltaEnd.Y shl CAggLineMrSubpixelShift;
+  FDelta.x := FDelta.x shl CAggLineSubpixelShift;
+  FDelta.y := FDelta.y shl CAggLineSubpixelShift;
+  FDeltaStart.x := FDeltaStart.x shl CAggLineMrSubpixelShift;
+  FDeltaStart.y := FDeltaStart.y shl CAggLineMrSubpixelShift;
+  FDeltaEnd.x := FDeltaEnd.x shl CAggLineMrSubpixelShift;
+  FDeltaEnd.y := FDeltaEnd.y shl CAggLineMrSubpixelShift;
 end;
 
 procedure TAggDistanceInterpolator4.IncX;
 begin
-  Inc(FDist, FDelta.Y);
-  Inc(FDistStart, FDeltaStart.Y);
-  Inc(FDistPict, FDeltaPict.Y);
-  Inc(FDistEnd, FDeltaEnd.Y);
+  inc(FDist, FDelta.y);
+  inc(FDistStart, FDeltaStart.y);
+  inc(FDistPict, FDeltaPict.y);
+  inc(FDistEnd, FDeltaEnd.y);
 end;
 
 procedure TAggDistanceInterpolator4.DecX;
 begin
-  Dec(FDist, FDelta.Y);
-  Dec(FDistStart, FDeltaStart.Y);
-  Dec(FDistPict, FDeltaPict.Y);
-  Dec(FDistEnd, FDeltaEnd.Y);
+  dec(FDist, FDelta.y);
+  dec(FDistStart, FDeltaStart.y);
+  dec(FDistPict, FDeltaPict.y);
+  dec(FDistEnd, FDeltaEnd.y);
 end;
 
 procedure TAggDistanceInterpolator4.IncY;
 begin
-  Dec(FDist, FDelta.X);
-  Dec(FDistStart, FDeltaStart.X);
-  Dec(FDistPict, FDeltaPict.X);
-  Dec(FDistEnd, FDeltaEnd.X);
+  dec(FDist, FDelta.x);
+  dec(FDistStart, FDeltaStart.x);
+  dec(FDistPict, FDeltaPict.x);
+  dec(FDistEnd, FDeltaEnd.x);
 end;
 
 procedure TAggDistanceInterpolator4.DecY;
 begin
-  Inc(FDist, FDelta.X);
-  Inc(FDistStart, FDeltaStart.X);
-  Inc(FDistPict, FDeltaPict.X);
-  Inc(FDistEnd, FDeltaEnd.X);
+  inc(FDist, FDelta.x);
+  inc(FDistStart, FDeltaStart.x);
+  inc(FDistPict, FDeltaPict.x);
+  inc(FDistEnd, FDeltaEnd.x);
 end;
 
 procedure TAggDistanceInterpolator4.SetIncX(Value: Integer);
 begin
-  Inc(FDist, FDelta.Y);
-  Inc(FDistStart, FDeltaStart.Y);
-  Inc(FDistPict, FDeltaPict.Y);
-  Inc(FDistEnd, FDeltaEnd.Y);
+  inc(FDist, FDelta.y);
+  inc(FDistStart, FDeltaStart.y);
+  inc(FDistPict, FDeltaPict.y);
+  inc(FDistEnd, FDeltaEnd.y);
 
   if Value > 0 then
     begin
-      Dec(FDist, FDelta.X);
-      Dec(FDistStart, FDeltaStart.X);
-      Dec(FDistPict, FDeltaPict.X);
-      Dec(FDistEnd, FDeltaEnd.X);
+      dec(FDist, FDelta.x);
+      dec(FDistStart, FDeltaStart.x);
+      dec(FDistPict, FDeltaPict.x);
+      dec(FDistEnd, FDeltaEnd.x);
     end;
 
   if Value < 0 then
     begin
-      Inc(FDist, FDelta.X);
-      Inc(FDistStart, FDeltaStart.X);
-      Inc(FDistPict, FDeltaPict.X);
-      Inc(FDistEnd, FDeltaEnd.X);
+      inc(FDist, FDelta.x);
+      inc(FDistStart, FDeltaStart.x);
+      inc(FDistPict, FDeltaPict.x);
+      inc(FDistEnd, FDeltaEnd.x);
     end;
 end;
 
 procedure TAggDistanceInterpolator4.SetDecX(Value: Integer);
 begin
-  Dec(FDist, FDelta.Y);
-  Dec(FDistStart, FDeltaStart.Y);
-  Dec(FDistPict, FDeltaPict.Y);
-  Dec(FDistEnd, FDeltaEnd.Y);
+  dec(FDist, FDelta.y);
+  dec(FDistStart, FDeltaStart.y);
+  dec(FDistPict, FDeltaPict.y);
+  dec(FDistEnd, FDeltaEnd.y);
 
   if Value > 0 then
     begin
-      Dec(FDist, FDelta.X);
-      Dec(FDistStart, FDeltaStart.X);
-      Dec(FDistPict, FDeltaPict.X);
-      Dec(FDistEnd, FDeltaEnd.X);
+      dec(FDist, FDelta.x);
+      dec(FDistStart, FDeltaStart.x);
+      dec(FDistPict, FDeltaPict.x);
+      dec(FDistEnd, FDeltaEnd.x);
     end;
 
   if Value < 0 then
     begin
-      Inc(FDist, FDelta.X);
-      Inc(FDistStart, FDeltaStart.X);
-      Inc(FDistPict, FDeltaPict.X);
-      Inc(FDistEnd, FDeltaEnd.X);
+      inc(FDist, FDelta.x);
+      inc(FDistStart, FDeltaStart.x);
+      inc(FDistPict, FDeltaPict.x);
+      inc(FDistEnd, FDeltaEnd.x);
     end;
 end;
 
 procedure TAggDistanceInterpolator4.SetIncY(Value: Integer);
 begin
-  Dec(FDist, FDelta.X);
-  Dec(FDistStart, FDeltaStart.X);
-  Dec(FDistPict, FDeltaPict.X);
-  Dec(FDistEnd, FDeltaEnd.X);
+  dec(FDist, FDelta.x);
+  dec(FDistStart, FDeltaStart.x);
+  dec(FDistPict, FDeltaPict.x);
+  dec(FDistEnd, FDeltaEnd.x);
 
   if Value > 0 then
     begin
-      Inc(FDist, FDelta.Y);
-      Inc(FDistStart, FDeltaStart.Y);
-      Inc(FDistPict, FDeltaPict.Y);
-      Inc(FDistEnd, FDeltaEnd.Y);
+      inc(FDist, FDelta.y);
+      inc(FDistStart, FDeltaStart.y);
+      inc(FDistPict, FDeltaPict.y);
+      inc(FDistEnd, FDeltaEnd.y);
     end;
 
   if Value < 0 then
     begin
-      Dec(FDist, FDelta.Y);
-      Dec(FDistStart, FDeltaStart.Y);
-      Dec(FDistPict, FDeltaPict.Y);
-      Dec(FDistEnd, FDeltaEnd.Y);
+      dec(FDist, FDelta.y);
+      dec(FDistStart, FDeltaStart.y);
+      dec(FDistPict, FDeltaPict.y);
+      dec(FDistEnd, FDeltaEnd.y);
     end;
 end;
 
 procedure TAggDistanceInterpolator4.SetDecY(Value: Integer);
 begin
-  Inc(FDist, FDelta.X);
-  Inc(FDistStart, FDeltaStart.X);
-  Inc(FDistPict, FDeltaPict.X);
-  Inc(FDistEnd, FDeltaEnd.X);
+  inc(FDist, FDelta.x);
+  inc(FDistStart, FDeltaStart.x);
+  inc(FDistPict, FDeltaPict.x);
+  inc(FDistEnd, FDeltaEnd.x);
 
   if Value > 0 then
     begin
-      Inc(FDist, FDelta.Y);
-      Inc(FDistStart, FDeltaStart.Y);
-      Inc(FDistPict, FDeltaPict.Y);
-      Inc(FDistEnd, FDeltaEnd.Y);
+      inc(FDist, FDelta.y);
+      inc(FDistStart, FDeltaStart.y);
+      inc(FDistPict, FDeltaPict.y);
+      inc(FDistEnd, FDeltaEnd.y);
     end;
 
   if Value < 0 then
     begin
-      Dec(FDist, FDelta.Y);
-      Dec(FDistStart, FDeltaStart.Y);
-      Dec(FDistPict, FDeltaPict.Y);
-      Dec(FDistEnd, FDeltaEnd.Y);
+      dec(FDist, FDelta.y);
+      dec(FDistStart, FDeltaStart.y);
+      dec(FDistPict, FDeltaPict.y);
+      dec(FDistEnd, FDeltaEnd.y);
     end;
 end;
 
@@ -675,32 +672,32 @@ end;
 
 function TAggDistanceInterpolator4.GetDeltaX: Integer;
 begin
-  Result := FDelta.X;
+  Result := FDelta.x;
 end;
 
 function TAggDistanceInterpolator4.GetDeltaY: Integer;
 begin
-  Result := FDelta.Y;
+  Result := FDelta.y;
 end;
 
 function TAggDistanceInterpolator4.GetDeltaXStart: Integer;
 begin
-  Result := FDeltaStart.X;
+  Result := FDeltaStart.x;
 end;
 
 function TAggDistanceInterpolator4.GetDeltaYStart: Integer;
 begin
-  Result := FDeltaStart.Y;
+  Result := FDeltaStart.y;
 end;
 
 function TAggDistanceInterpolator4.GetDeltaXEnd: Integer;
 begin
-  Result := FDeltaEnd.X;
+  Result := FDeltaEnd.x;
 end;
 
 function TAggDistanceInterpolator4.GetDeltaYEnd: Integer;
 begin
-  Result := FDeltaEnd.Y;
+  Result := FDeltaEnd.y;
 end;
 
 { TAggLineInterpolatorImage }
@@ -753,23 +750,23 @@ begin
   FStep := 0;
 
   if LP.Vertical then
-      Li.Initialize(0, LP.Delta.Y shl CAggLineSubpixelShift, LP.Len)
+      Li.Initialize(0, LP.Delta.y shl CAggLineSubpixelShift, LP.Len)
   else
-      Li.Initialize(0, LP.Delta.X shl CAggLineSubpixelShift, LP.Len);
+      Li.Initialize(0, LP.Delta.x shl CAggLineSubpixelShift, LP.Len);
 
   stop := FWidth + CAggLineSubpixelSize * 2;
   i := 0;
 
   while i < CMaxHalfWidth do
     begin
-      FDistPos[i] := Li.Y;
+      FDistPos[i] := Li.y;
 
       if FDistPos[i] >= stop then
           Break;
 
       Li.PlusOperator;
 
-      Inc(i);
+      inc(i);
     end;
 
   FDistPos[i] := $7FFF0000;
@@ -780,9 +777,9 @@ begin
     repeat
       FLineInterpolator.MinusOperator;
 
-      Dec(fy, LP.IncValue);
+      dec(fy, LP.IncValue);
 
-      fx := ShrInt32(FLineParameters.x1 + FLineInterpolator.Y,
+      fx := ShrInt32(FLineParameters.x1 + FLineInterpolator.y,
         CAggLineSubpixelShift);
 
       if LP.IncValue > 0 then
@@ -795,40 +792,40 @@ begin
       DistStart[0] := FDistanceInterpolator.GetDistanceStart;
       DistStart[1] := DistStart[0];
 
-      Delta.X := 0;
+      Delta.x := 0;
 
       if DistStart[0] < 0 then
-          Inc(Npix);
+          inc(Npix);
 
       repeat
-        Inc(DistStart[0], FDistanceInterpolator.DyStart);
-        Dec(DistStart[1], FDistanceInterpolator.DyStart);
+        inc(DistStart[0], FDistanceInterpolator.DyStart);
+        dec(DistStart[1], FDistanceInterpolator.DyStart);
 
         if DistStart[0] < 0 then
-            Inc(Npix);
+            inc(Npix);
 
         if DistStart[1] < 0 then
-            Inc(Npix);
+            inc(Npix);
 
-        Inc(Delta.X);
+        inc(Delta.x);
 
-      until FDistPos[Delta.X] > FWidth;
+      until FDistPos[Delta.x] > FWidth;
 
       if Npix = 0 then
           Break;
 
       Npix := 0;
 
-      Dec(FStep);
+      dec(FStep);
 
     until FStep < -FMaxExtent
   else
     repeat
       FLineInterpolator.MinusOperator;
 
-      Dec(fx, LP.IncValue);
+      dec(fx, LP.IncValue);
 
-      fy := ShrInt32(FLineParameters.y1 + FLineInterpolator.Y,
+      fy := ShrInt32(FLineParameters.y1 + FLineInterpolator.y,
         CAggLineSubpixelShift);
 
       if LP.IncValue > 0 then
@@ -841,37 +838,37 @@ begin
       DistStart[0] := FDistanceInterpolator.GetDistanceStart;
       DistStart[1] := DistStart[0];
 
-      Delta.Y := 0;
+      Delta.y := 0;
 
       if DistStart[0] < 0 then
-          Inc(Npix);
+          inc(Npix);
 
       repeat
-        Dec(DistStart[0], FDistanceInterpolator.DxStart);
-        Inc(DistStart[1], FDistanceInterpolator.DxStart);
+        dec(DistStart[0], FDistanceInterpolator.DxStart);
+        inc(DistStart[1], FDistanceInterpolator.DxStart);
 
         if DistStart[0] < 0 then
-            Inc(Npix);
+            inc(Npix);
 
         if DistStart[1] < 0 then
-            Inc(Npix);
+            inc(Npix);
 
-        Inc(Delta.Y);
+        inc(Delta.y);
 
-      until FDistPos[Delta.Y] > FWidth;
+      until FDistPos[Delta.y] > FWidth;
 
       if Npix = 0 then
           Break;
 
       Npix := 0;
 
-      Dec(FStep);
+      dec(FStep);
 
     until FStep < -FMaxExtent;
 
   FLineInterpolator.AdjustForward;
 
-  Dec(FStep, FMaxExtent);
+  dec(FStep, FMaxExtent);
 end;
 
 destructor TAggLineInterpolatorImage.Destroy;
@@ -888,9 +885,9 @@ var
 begin
   FLineInterpolator.PlusOperator;
 
-  Inc(fx, FLineParameters.IncValue);
+  inc(fx, FLineParameters.IncValue);
 
-  fy := ShrInt32(FLineParameters.y1 + FLineInterpolator.Y,
+  fy := ShrInt32(FLineParameters.y1 + FLineInterpolator.y,
     CAggLineSubpixelShift);
 
   if FLineParameters.IncValue > 0 then
@@ -923,19 +920,19 @@ begin
       if DistanceStart <= 0 then
           FRendererOutlineImage.Pixel(p1, DistPict, s2);
 
-      Inc(Npix);
+      inc(Npix);
     end;
 
-  Inc(PtrComp(p1), SizeOf(TAggColor));
+  inc(PtrComp(p1), SizeOf(TAggColor));
 
   deltay := 1;
   Distance := FDistPos[deltay];
 
   while Distance - s1 <= FWidth do
     begin
-      Dec(DistanceStart, FDistanceInterpolator.DxStart);
-      Dec(DistPict, FDistanceInterpolator.DxPict);
-      Dec(DistanceEnd, FDistanceInterpolator.DxEnd);
+      dec(DistanceStart, FDistanceInterpolator.DxStart);
+      dec(DistPict, FDistanceInterpolator.DxPict);
+      dec(DistanceEnd, FDistanceInterpolator.DxEnd);
 
       p1.Clear;
 
@@ -946,11 +943,11 @@ begin
 
           FRendererOutlineImage.Pixel(p1, DistPict, s2 - Distance);
 
-          Inc(Npix);
+          inc(Npix);
         end;
 
-      Inc(PtrComp(p1), SizeOf(TAggColor));
-      Inc(deltay);
+      inc(PtrComp(p1), SizeOf(TAggColor));
+      inc(deltay);
 
       Distance := FDistPos[deltay];
     end;
@@ -965,11 +962,11 @@ begin
 
   while Distance + s1 <= FWidth do
     begin
-      Inc(DistanceStart, FDistanceInterpolator.DxStart);
-      Inc(DistPict, FDistanceInterpolator.DxPict);
-      Inc(DistanceEnd, FDistanceInterpolator.DxEnd);
+      inc(DistanceStart, FDistanceInterpolator.DxStart);
+      inc(DistPict, FDistanceInterpolator.DxPict);
+      inc(DistanceEnd, FDistanceInterpolator.DxEnd);
 
-      Dec(PtrComp(P0), SizeOf(TAggColor));
+      dec(PtrComp(P0), SizeOf(TAggColor));
 
       P0.Clear;
 
@@ -980,10 +977,10 @@ begin
 
           FRendererOutlineImage.Pixel(P0, DistPict, s2 + Distance);
 
-          Inc(Npix);
+          inc(Npix);
         end;
 
-      Inc(deltay);
+      inc(deltay);
 
       Distance := FDistPos[deltay];
     end;
@@ -991,7 +988,7 @@ begin
   FRendererOutlineImage.BlendColorVSpan(fx, fy - deltay + 1,
     Cardinal((PtrComp(p1) - PtrComp(P0)) div SizeOf(TAggColor)), P0);
 
-  Inc(FStep);
+  inc(FStep);
 
   Result := (Npix <> 0) and (FStep < FCount);
 end;
@@ -1003,9 +1000,9 @@ var
 begin
   FLineInterpolator.PlusOperator;
 
-  Inc(fy, FLineParameters.IncValue);
+  inc(fy, FLineParameters.IncValue);
 
-  fx := ShrInt32(FLineParameters.x1 + FLineInterpolator.Y,
+  fx := ShrInt32(FLineParameters.x1 + FLineInterpolator.y,
     CAggLineSubpixelShift);
 
   if FLineParameters.IncValue > 0 then
@@ -1038,19 +1035,19 @@ begin
       if DistanceStart <= 0 then
           FRendererOutlineImage.Pixel(p1, DistPict, s2);
 
-      Inc(Npix);
+      inc(Npix);
     end;
 
-  Inc(PtrComp(p1), SizeOf(TAggColor));
+  inc(PtrComp(p1), SizeOf(TAggColor));
 
   deltax := 1;
   Distance := FDistPos[deltax];
 
   while Distance - s1 <= FWidth do
     begin
-      Inc(DistanceStart, FDistanceInterpolator.DyStart);
-      Inc(DistPict, FDistanceInterpolator.DyPict);
-      Inc(DistanceEnd, FDistanceInterpolator.DyEnd);
+      inc(DistanceStart, FDistanceInterpolator.DyStart);
+      inc(DistPict, FDistanceInterpolator.DyPict);
+      inc(DistanceEnd, FDistanceInterpolator.DyEnd);
 
       p1.Clear;
 
@@ -1061,11 +1058,11 @@ begin
 
           FRendererOutlineImage.Pixel(p1, DistPict, s2 + Distance);
 
-          Inc(Npix);
+          inc(Npix);
         end;
 
-      Inc(PtrComp(p1), SizeOf(TAggColor));
-      Inc(deltax);
+      inc(PtrComp(p1), SizeOf(TAggColor));
+      inc(deltax);
 
       Distance := FDistPos[deltax];
     end;
@@ -1080,11 +1077,11 @@ begin
 
   while Distance + s1 <= FWidth do
     begin
-      Dec(DistanceStart, FDistanceInterpolator.DyStart);
-      Dec(DistPict, FDistanceInterpolator.DyPict);
-      Dec(DistanceEnd, FDistanceInterpolator.DyEnd);
+      dec(DistanceStart, FDistanceInterpolator.DyStart);
+      dec(DistPict, FDistanceInterpolator.DyPict);
+      dec(DistanceEnd, FDistanceInterpolator.DyEnd);
 
-      Dec(PtrComp(P0), SizeOf(TAggColor));
+      dec(PtrComp(P0), SizeOf(TAggColor));
 
       P0.Clear;
 
@@ -1095,10 +1092,10 @@ begin
 
           FRendererOutlineImage.Pixel(P0, DistPict, s2 - Distance);
 
-          Inc(Npix);
+          inc(Npix);
         end;
 
-      Inc(deltax);
+      inc(deltax);
 
       Distance := FDistPos[deltax];
     end;
@@ -1106,7 +1103,7 @@ begin
   FRendererOutlineImage.BlendColorHSpan(fx - deltax + 1, fy,
     Cardinal((PtrComp(p1) - PtrComp(P0)) div SizeOf(TAggColor)), P0);
 
-  Inc(FStep);
+  inc(FStep);
 
   Result := (Npix <> 0) and (FStep < FCount);
 end;
@@ -1170,17 +1167,17 @@ end;
 
 procedure TAggRendererOutlineImage.Pixel;
 begin
-  FPattern.Pixel(p, X, Y);
+  FPattern.Pixel(p, x, y);
 end;
 
 procedure TAggRendererOutlineImage.BlendColorHSpan;
 begin
-  FRendererOutlineImage.BlendColorHSpan(X, Y, Len, COLORS, nil);
+  FRendererOutlineImage.BlendColorHSpan(x, y, Len, Colors, nil);
 end;
 
 procedure TAggRendererOutlineImage.BlendColorVSpan;
 begin
-  FRendererOutlineImage.BlendColorVSpan(X, Y, Len, COLORS, nil);
+  FRendererOutlineImage.BlendColorVSpan(x, y, Len, Colors, nil);
 end;
 
 function TAggRendererOutlineImage.GetAccurateJoinOnly;
@@ -1227,4 +1224,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

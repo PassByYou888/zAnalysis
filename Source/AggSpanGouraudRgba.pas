@@ -37,11 +37,8 @@
 *)
 unit AggSpanGouraudRgba;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -57,7 +54,7 @@ const
 type
   PAggRgbaCalc = ^TAggRgbaCalc;
 
-  TAggRgbaCalc = packed record
+  TAggRgbaCalc = record
   private
     f1, FDelta: TPointDouble;
 
@@ -66,7 +63,7 @@ type
     FRed, FGreen, FBlue, FAlpha, fx: Integer;
   public
     procedure Init(c1, c2: PAggCoordType);
-    procedure Calc(Y: Double);
+    procedure Calc(y: Double);
   end;
 
   TAggSpanGouraudRgba = class(TAggSpanGouraud)
@@ -82,8 +79,8 @@ type
 
     procedure Prepare; overload;
     procedure Prepare(MaxSpanLength: Cardinal); overload; override;
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; overload; override;
-    procedure Generate(Span: PAggColor; X, Y: Integer; Len: Cardinal); overload;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; overload; override;
+    procedure Generate(Span: PAggColor; x, y: Integer; Len: Cardinal); overload;
   end;
 
 implementation
@@ -95,32 +92,32 @@ procedure TAggRgbaCalc.Init(c1, c2: PAggCoordType);
 var
   deltay: Double;
 begin
-  f1.X := c1.X - 0.5;
-  f1.Y := c1.Y - 0.5;
-  FDelta.X := c2.X - c1.X;
+  f1.x := c1.x - 0.5;
+  f1.y := c1.y - 0.5;
+  FDelta.x := c2.x - c1.x;
 
-  deltay := c2.Y - c1.Y;
+  deltay := c2.y - c1.y;
 
   if deltay < 1E-5 then
-      FDelta.Y := 1E5
+      FDelta.y := 1E5
   else
-      FDelta.Y := 1.0 / deltay;
+      FDelta.y := 1.0 / deltay;
 
-  FRed1 := c1.COLOR.Rgba8.R;
+  FRed1 := c1.COLOR.Rgba8.r;
   FGreen1 := c1.COLOR.Rgba8.g;
   FBlue1 := c1.COLOR.Rgba8.b;
-  FAlpha1 := c1.COLOR.Rgba8.A;
-  FDeltaRed := c2.COLOR.Rgba8.R - FRed1;
+  FAlpha1 := c1.COLOR.Rgba8.a;
+  FDeltaRed := c2.COLOR.Rgba8.r - FRed1;
   FDeltaGreen := c2.COLOR.Rgba8.g - FGreen1;
   FDeltaBlue := c2.COLOR.Rgba8.b - FBlue1;
-  FDeltaAlpha := c2.COLOR.Rgba8.A - FAlpha1;
+  FDeltaAlpha := c2.COLOR.Rgba8.a - FAlpha1;
 end;
 
-procedure TAggRgbaCalc.Calc(Y: Double);
+procedure TAggRgbaCalc.Calc(y: Double);
 var
   k: Double;
 begin
-  k := (Y - f1.Y) * FDelta.Y;
+  k := (y - f1.y) * FDelta.y;
 
   if k < 0.0 then
     begin
@@ -128,7 +125,7 @@ begin
       FGreen := FGreen1;
       FBlue := FBlue1;
       FAlpha := FAlpha1;
-      fx := IntegerRound(f1.X * CAggSubpixelSize);
+      fx := IntegerRound(f1.x * CAggSubpixelSize);
       Exit;
     end;
 
@@ -139,7 +136,7 @@ begin
   FGreen := FGreen1 + IntegerRound(FDeltaGreen * k);
   FBlue := FBlue1 + IntegerRound(FDeltaBlue * k);
   FAlpha := FAlpha1 + IntegerRound(FDeltaAlpha * k);
-  fx := IntegerRound((f1.X + FDelta.X * k) * CAggSubpixelSize);
+  fx := IntegerRound((f1.x + FDelta.x * k) * CAggSubpixelSize);
 end;
 
 { TAggSpanGouraudRgba }
@@ -169,10 +166,10 @@ begin
 
   ArrangeVertices(@Coord);
 
-  FY2 := Trunc(Coord[1].Y);
+  FY2 := Trunc(Coord[1].y);
 
-  FSwap := CalculatePointLocation(Coord[0].X, Coord[0].Y,
-    Coord[2].X, Coord[2].Y, Coord[1].X, Coord[1].Y) < 0.0;
+  FSwap := CalculatePointLocation(Coord[0].x, Coord[0].y,
+    Coord[2].x, Coord[2].y, Coord[1].x, Coord[1].y) < 0.0;
 
   FRgba1.Init(@Coord[0], @Coord[2]);
   FRgba2.Init(@Coord[0], @Coord[1]);
@@ -185,37 +182,37 @@ var
 begin
   ArrangeVertices(@Coord);
 
-  FY2 := Integer(Trunc(Coord[1].Y));
+  FY2 := Integer(Trunc(Coord[1].y));
 
-  FSwap := CrossProduct(Coord[0].X, Coord[0].Y, Coord[2].X, Coord[2].Y,
-    Coord[1].X, Coord[1].Y) < 0.0;
+  FSwap := CrossProduct(Coord[0].x, Coord[0].y, Coord[2].x, Coord[2].y,
+    Coord[1].x, Coord[1].y) < 0.0;
 
   FRgba1.Init(@Coord[0], @Coord[2]);
   FRgba2.Init(@Coord[0], @Coord[1]);
   FRgba3.Init(@Coord[1], @Coord[2]);
 end;
 
-function TAggSpanGouraudRgba.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
+function TAggSpanGouraudRgba.Generate(x, y: Integer; Len: Cardinal): PAggColor;
 const
   Lim = AggColor32.CAggBaseMask;
 var
-  PC1, PC2, T: PAggRgbaCalc;
+  PC1, PC2, t: PAggRgbaCalc;
   Nlen, Start, vr, Vg, VB, VA: Integer;
-  R, g, b, A: TAggDdaLineInterpolator;
+  r, g, b, a: TAggDdaLineInterpolator;
   Span: PAggColor;
 begin
-  FRgba1.Calc(Y); // (FRgba1.FDelta.Y > 2) ? FRgba1.F1.Y : y);
+  FRgba1.Calc(y); // (FRgba1.FDelta.Y > 2) ? FRgba1.F1.Y : y);
 
   PC1 := @FRgba1;
   PC2 := @FRgba2;
 
-  if Y <= FY2 then
+  if y <= FY2 then
     // Bottom part of the triangle (first subtriangle)
-      FRgba2.Calc(Y + FRgba2.FDelta.Y)
+      FRgba2.Calc(y + FRgba2.FDelta.y)
   else
     begin
       // Upper part (second subtriangle)
-      FRgba3.Calc(Y - FRgba3.FDelta.Y);
+      FRgba3.Calc(y - FRgba3.FDelta.y);
 
       PC2 := @FRgba3;
     end;
@@ -224,9 +221,9 @@ begin
     begin
       // It means that the triangle is oriented clockwise,
       // so that we need to swap the controlling structures
-      T := PC2;
+      t := PC2;
       PC2 := PC1;
-      PC1 := T;
+      PC1 := t;
     end;
 
   // Get the horizontal length with subpixel accuracy
@@ -236,23 +233,23 @@ begin
   if Nlen <= 0 then
       Nlen := 1;
 
-  R.Initialize(PC1.FRed, PC2.FRed, Nlen, 14);
+  r.Initialize(PC1.FRed, PC2.FRed, Nlen, 14);
   g.Initialize(PC1.FGreen, PC2.FGreen, Nlen, 14);
   b.Initialize(PC1.FBlue, PC2.FBlue, Nlen, 14);
-  A.Initialize(PC1.FAlpha, PC2.FAlpha, Nlen, 14);
+  a.Initialize(PC1.FAlpha, PC2.FAlpha, Nlen, 14);
 
   // Calculate the starting point of the Gradient with subpixel
   // accuracy and correct (roll back) the interpolators.
   // This operation will also clip the beginning of the Span
   // if necessary.
-  Start := PC1.fx - (X shl CAggSubpixelShift);
+  Start := PC1.fx - (x shl CAggSubpixelShift);
 
-  R.DecOperator(Start);
+  r.DecOperator(Start);
   g.DecOperator(Start);
   b.DecOperator(Start);
-  A.DecOperator(Start);
+  a.DecOperator(Start);
 
-  Inc(Nlen, Start);
+  inc(Nlen, Start);
 
   Span := Allocator.Span;
 
@@ -263,20 +260,20 @@ begin
   // typically it's 1-2 pixels, but may be more in some cases.
   while (Len <> 0) and (Start > 0) do
     begin
-      Span.Rgba8.R := Int8u(EnsureRange(R.Y, 0, Lim));
-      Span.Rgba8.g := Int8u(EnsureRange(g.Y, 0, Lim));
-      Span.Rgba8.b := Int8u(EnsureRange(b.Y, 0, Lim));
-      Span.Rgba8.A := Int8u(EnsureRange(A.Y, 0, Lim));
+      Span.Rgba8.r := Int8u(EnsureRange(r.y, 0, Lim));
+      Span.Rgba8.g := Int8u(EnsureRange(g.y, 0, Lim));
+      Span.Rgba8.b := Int8u(EnsureRange(b.y, 0, Lim));
+      Span.Rgba8.a := Int8u(EnsureRange(a.y, 0, Lim));
 
-      R.IncOperator(CAggSubpixelSize);
+      r.IncOperator(CAggSubpixelSize);
       g.IncOperator(CAggSubpixelSize);
       b.IncOperator(CAggSubpixelSize);
-      A.IncOperator(CAggSubpixelSize);
+      a.IncOperator(CAggSubpixelSize);
 
-      Dec(Nlen, CAggSubpixelSize);
-      Dec(Start, CAggSubpixelSize);
-      Inc(PtrComp(Span), SizeOf(TAggColor));
-      Dec(Len);
+      dec(Nlen, CAggSubpixelSize);
+      dec(Start, CAggSubpixelSize);
+      inc(PtrComp(Span), SizeOf(TAggColor));
+      dec(Len);
     end;
 
   // Middle part, no checking for overflow.
@@ -285,63 +282,63 @@ begin
   // overflow. But while "nlen" is positive we are safe.
   while (Len <> 0) and (Nlen > 0) do
     begin
-      Span.Rgba8.R := Int8u(R.Y);
-      Span.Rgba8.g := Int8u(g.Y);
-      Span.Rgba8.b := Int8u(b.Y);
-      Span.Rgba8.A := Int8u(A.Y);
+      Span.Rgba8.r := Int8u(r.y);
+      Span.Rgba8.g := Int8u(g.y);
+      Span.Rgba8.b := Int8u(b.y);
+      Span.Rgba8.a := Int8u(a.y);
 
-      R.IncOperator(CAggSubpixelSize);
+      r.IncOperator(CAggSubpixelSize);
       g.IncOperator(CAggSubpixelSize);
       b.IncOperator(CAggSubpixelSize);
-      A.IncOperator(CAggSubpixelSize);
+      a.IncOperator(CAggSubpixelSize);
 
-      Dec(Nlen, CAggSubpixelSize);
-      Inc(PtrComp(Span), SizeOf(TAggColor));
-      Dec(Len);
+      dec(Nlen, CAggSubpixelSize);
+      inc(PtrComp(Span), SizeOf(TAggColor));
+      dec(Len);
     end;
 
   // Ending part; checking for overflow.
   // Typically it's 1-2 pixels, but may be more in some cases.
   while Len <> 0 do
     begin
-      Span.Rgba8.R := Int8u(EnsureRange(R.Y, 0, Lim));
-      Span.Rgba8.g := Int8u(EnsureRange(g.Y, 0, Lim));
-      Span.Rgba8.b := Int8u(EnsureRange(b.Y, 0, Lim));
-      Span.Rgba8.A := Int8u(EnsureRange(A.Y, 0, Lim));
+      Span.Rgba8.r := Int8u(EnsureRange(r.y, 0, Lim));
+      Span.Rgba8.g := Int8u(EnsureRange(g.y, 0, Lim));
+      Span.Rgba8.b := Int8u(EnsureRange(b.y, 0, Lim));
+      Span.Rgba8.a := Int8u(EnsureRange(a.y, 0, Lim));
 
-      R.IncOperator(CAggSubpixelSize);
+      r.IncOperator(CAggSubpixelSize);
       g.IncOperator(CAggSubpixelSize);
       b.IncOperator(CAggSubpixelSize);
-      A.IncOperator(CAggSubpixelSize);
+      a.IncOperator(CAggSubpixelSize);
 
-      Inc(PtrComp(Span), SizeOf(TAggColor));
-      Dec(Len);
+      inc(PtrComp(Span), SizeOf(TAggColor));
+      dec(Len);
     end;
 
   Result := Allocator.Span;
 end;
 
-procedure TAggSpanGouraudRgba.Generate(Span: PAggColor; X, Y: Integer;
+procedure TAggSpanGouraudRgba.Generate(Span: PAggColor; x, y: Integer;
   Len: Cardinal);
 const
   Lim = AggColor32.CAggBaseMask;
 var
-  PC1, PC2, T: PAggRgbaCalc;
+  PC1, PC2, t: PAggRgbaCalc;
   Nlen, Start, vr, Vg, VB, VA: Integer;
-  R, g, b, A: TAggDdaLineInterpolator;
+  r, g, b, a: TAggDdaLineInterpolator;
 begin
-  FRgba1.Calc(Y); // (FRgba1.FDelta.Y > 2) ? FRgba1.F1.Y : y);
+  FRgba1.Calc(y); // (FRgba1.FDelta.Y > 2) ? FRgba1.F1.Y : y);
 
   PC1 := @FRgba1;
   PC2 := @FRgba2;
 
-  if Y <= FY2 then
+  if y <= FY2 then
     // Bottom part of the triangle (first subtriangle)
-      FRgba2.Calc(Y + FRgba2.FDelta.Y)
+      FRgba2.Calc(y + FRgba2.FDelta.y)
   else
     begin
       // Upper part (second subtriangle)
-      FRgba3.Calc(Y - FRgba3.FDelta.Y);
+      FRgba3.Calc(y - FRgba3.FDelta.y);
 
       PC2 := @FRgba3;
     end;
@@ -350,9 +347,9 @@ begin
     begin
       // It means that the triangle is oriented clockwise,
       // so that we need to swap the controlling structures
-      T := PC2;
+      t := PC2;
       PC2 := PC1;
-      PC1 := T;
+      PC1 := t;
     end;
 
   // Get the horizontal length with subpixel accuracy
@@ -362,23 +359,23 @@ begin
   if Nlen <= 0 then
       Nlen := 1;
 
-  R.Initialize(PC1.FRed, PC2.FRed, Nlen, 14);
+  r.Initialize(PC1.FRed, PC2.FRed, Nlen, 14);
   g.Initialize(PC1.FGreen, PC2.FGreen, Nlen, 14);
   b.Initialize(PC1.FBlue, PC2.FBlue, Nlen, 14);
-  A.Initialize(PC1.FAlpha, PC2.FAlpha, Nlen, 14);
+  a.Initialize(PC1.FAlpha, PC2.FAlpha, Nlen, 14);
 
   // Calculate the starting point of the Gradient with subpixel
   // accuracy and correct (roll back) the interpolators.
   // This operation will also clip the beginning of the span
   // if necessary.
-  Start := PC1.fx - (X shl CAggSubpixelShift);
+  Start := PC1.fx - (x shl CAggSubpixelShift);
 
-  R.DecOperator(Start);
+  r.DecOperator(Start);
   g.DecOperator(Start);
   b.DecOperator(Start);
-  A.DecOperator(Start);
+  a.DecOperator(Start);
 
-  Inc(Nlen, Start);
+  inc(Nlen, Start);
 
   // Beginning part of the span. Since we rolled back the
   // interpolators, the color values may have overflow.
@@ -387,20 +384,20 @@ begin
   // typically it's 1-2 pixels, but may be more in some cases.
   while (Len <> 0) and (Start > 0) do
     begin
-      Span.Rgba8.R := Int8u(EnsureRange(R.Y, 0, Lim));
-      Span.Rgba8.g := Int8u(EnsureRange(g.Y, 0, Lim));
-      Span.Rgba8.b := Int8u(EnsureRange(b.Y, 0, Lim));
-      Span.Rgba8.A := Int8u(EnsureRange(A.Y, 0, Lim));
+      Span.Rgba8.r := Int8u(EnsureRange(r.y, 0, Lim));
+      Span.Rgba8.g := Int8u(EnsureRange(g.y, 0, Lim));
+      Span.Rgba8.b := Int8u(EnsureRange(b.y, 0, Lim));
+      Span.Rgba8.a := Int8u(EnsureRange(a.y, 0, Lim));
 
-      R.IncOperator(CAggSubpixelSize);
+      r.IncOperator(CAggSubpixelSize);
       g.IncOperator(CAggSubpixelSize);
       b.IncOperator(CAggSubpixelSize);
-      A.IncOperator(CAggSubpixelSize);
+      a.IncOperator(CAggSubpixelSize);
 
-      Dec(Nlen, CAggSubpixelSize);
-      Dec(Start, CAggSubpixelSize);
-      Inc(PtrComp(Span), SizeOf(TAggColor));
-      Dec(Len);
+      dec(Nlen, CAggSubpixelSize);
+      dec(Start, CAggSubpixelSize);
+      inc(PtrComp(Span), SizeOf(TAggColor));
+      dec(Len);
     end;
 
   // Middle part, no checking for overflow.
@@ -409,38 +406,40 @@ begin
   // overflow. But while "nlen" is positive we are safe.
   while (Len <> 0) and (Nlen > 0) do
     begin
-      Span.Rgba8.R := Int8u(R.Y);
-      Span.Rgba8.g := Int8u(g.Y);
-      Span.Rgba8.b := Int8u(b.Y);
-      Span.Rgba8.A := Int8u(A.Y);
+      Span.Rgba8.r := Int8u(r.y);
+      Span.Rgba8.g := Int8u(g.y);
+      Span.Rgba8.b := Int8u(b.y);
+      Span.Rgba8.a := Int8u(a.y);
 
-      R.IncOperator(CAggSubpixelSize);
+      r.IncOperator(CAggSubpixelSize);
       g.IncOperator(CAggSubpixelSize);
       b.IncOperator(CAggSubpixelSize);
-      A.IncOperator(CAggSubpixelSize);
+      a.IncOperator(CAggSubpixelSize);
 
-      Dec(Nlen, CAggSubpixelSize);
-      Inc(PtrComp(Span), SizeOf(TAggColor));
-      Dec(Len);
+      dec(Nlen, CAggSubpixelSize);
+      inc(PtrComp(Span), SizeOf(TAggColor));
+      dec(Len);
     end;
 
   // Ending part; checking for overflow.
   // Typically it's 1-2 pixels, but may be more in some cases.
   while Len <> 0 do
     begin
-      Span.Rgba8.R := Int8u(EnsureRange(R.Y, 0, Lim));
-      Span.Rgba8.g := Int8u(EnsureRange(g.Y, 0, Lim));
-      Span.Rgba8.b := Int8u(EnsureRange(b.Y, 0, Lim));
-      Span.Rgba8.A := Int8u(EnsureRange(A.Y, 0, Lim));
+      Span.Rgba8.r := Int8u(EnsureRange(r.y, 0, Lim));
+      Span.Rgba8.g := Int8u(EnsureRange(g.y, 0, Lim));
+      Span.Rgba8.b := Int8u(EnsureRange(b.y, 0, Lim));
+      Span.Rgba8.a := Int8u(EnsureRange(a.y, 0, Lim));
 
-      R.IncOperator(CAggSubpixelSize);
+      r.IncOperator(CAggSubpixelSize);
       g.IncOperator(CAggSubpixelSize);
       b.IncOperator(CAggSubpixelSize);
-      A.IncOperator(CAggSubpixelSize);
+      a.IncOperator(CAggSubpixelSize);
 
-      Inc(PtrComp(Span), SizeOf(TAggColor));
-      Dec(Len);
+      inc(PtrComp(Span), SizeOf(TAggColor));
+      dec(Len);
     end;
 end;
 
 end. 
+ 
+ 

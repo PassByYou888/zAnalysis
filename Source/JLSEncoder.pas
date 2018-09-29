@@ -80,7 +80,7 @@ begin
       for i := 0 to pred(Cols) do
         begin
           Line^ := PByteArrayAccess(line8)^[i];
-          Inc(Line);
+          inc(Line);
         end;
       FreeMem(line8);
     end
@@ -114,9 +114,9 @@ begin
   { Adjust scan line pointers taking into account the margins,
     and also the fact that indexing for scan lines starts from 1
   }
-  PTR := pscanl0; Inc(PTR, comp * (LEFTMARGIN - 1));
+  PTR := pscanl0; inc(PTR, comp * (LEFTMARGIN - 1));
   pscanline := PTR;
-  PTR := cscanl0; Inc(PTR, comp * (LEFTMARGIN - 1));
+  PTR := cscanl0; inc(PTR, comp * (LEFTMARGIN - 1));
   cscanline := PTR;
 
   FBitIO.bitoinit();
@@ -154,20 +154,20 @@ end;
 
 function TJLSEncoder.closebuffers: Int;
 var
-  pos: Int;
+  Pos: Int;
 begin
   FBitIO.bitoflush();
 
   FBitIO.fclose(FInputStream);
 
-  pos := FBitIO.ftell(FOutputStream);
+  Pos := FBitIO.ftell(FOutputStream);
 
   FBitIO.fclose(FOutputStream);
 
   FreeMem(pscanl0);
   FreeMem(cscanl0);
 
-  Result := pos;
+  Result := Pos;
 end;
 
 procedure TJLSEncoder.Initialize;
@@ -209,7 +209,7 @@ begin
   while IsTrue(alpha0) do
     begin
       alpha0 := shr_c(alpha0, 1);
-      Inc(i)
+      inc(i)
     end;
 
   if (FImageInfo.alpha <> (1 shl i)) then
@@ -255,7 +255,7 @@ begin
   bpp := 1;
   while longint(1 shl bpp) < FImageInfo.alpha
     do
-      Inc(bpp);
+      inc(bpp);
 
   { check if alpha is a power of 2: }
   if (FImageInfo.alpha <> (1 shl bpp)) then
@@ -265,7 +265,7 @@ begin
   FImageInfo.qbpp := 1;
   if (lossy = True) then
     while longint(1 shl FImageInfo.qbpp) < FImageInfo.qbeta do
-        Inc(FImageInfo.qbpp)
+        inc(FImageInfo.qbpp)
   else
       FImageInfo.qbpp := bpp;
 
@@ -291,7 +291,7 @@ end;
 function TJLSEncoder.Execute: Boolean;
 var
   n, n_c, n_r, my_i, n_s, i: Int;
-  tot_in, tot_out, pos0, pos1: LONG;
+  tot_in, tot_out, pos0, pos1: long;
   temp_columns: Int;
   MCUs_counted: Int;
   local_scanl0, local_scanl1, local_pscanline, local_cscanline: ppixel;
@@ -385,10 +385,10 @@ begin
       local_scanl0 := safecalloc(width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE, SizeOf(Pixel));
       local_scanl1 := safecalloc(width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE, SizeOf(Pixel));
 
-      PTR := local_scanl0; Inc(PTR, LEFTMARGIN - 1);
+      PTR := local_scanl0; inc(PTR, LEFTMARGIN - 1);
       local_pscanline := PTR;
 
-      PTR := local_scanl1; Inc(PTR, LEFTMARGIN - 1);
+      PTR := local_scanl1; inc(PTR, LEFTMARGIN - 1);
       local_cscanline := PTR;
 
     end;
@@ -466,7 +466,7 @@ begin
 
           if (lossy = False) then
             begin
-              Inc(n);
+              inc(n);
               { LOSSLESS mode }
               while (n <= height) do
                 begin
@@ -520,15 +520,15 @@ begin
                           FBitIO.bitoflush();
                           FJpeg.write_marker(FOutputStream, (JPEGLS_MARKER_RSTm + ((MCUs_counted div restart_interval) mod 8)));
                         end;
-                      Inc(MCUs_counted);
+                      inc(MCUs_counted);
                     end;
-                  Inc(n);
+                  inc(n);
                 end;
 
             end
           else
             begin
-              Inc(n);
+              inc(n);
               { LOSSY mode }
               while (n <= height) do
                 begin
@@ -590,9 +590,9 @@ begin
                           FBitIO.bitoflush();
                           FJpeg.write_marker(FOutputStream, (JPEGLS_MARKER_RSTm + ((MCUs_counted div restart_interval) mod 8)));
                         end;
-                      Inc(MCUs_counted);
+                      inc(MCUs_counted);
                     end;
-                  Inc(n);
+                  inc(n);
                 end;
 
             end;
@@ -608,7 +608,7 @@ begin
 
               if (lossy = False) then
                 begin
-                  Inc(n);
+                  inc(n);
 
                   { LOSSLESS mode }
                   while (n <= height) do
@@ -646,14 +646,14 @@ begin
                               FBitIO.bitoflush();
                               FJpeg.write_marker(FOutputStream, (JPEGLS_MARKER_RSTm + ((MCUs_counted div restart_interval) mod 8)));
                             end;
-                          Inc(MCUs_counted);
+                          inc(MCUs_counted);
                         end;
-                      Inc(n);
+                      inc(n);
                     end;
                 end
               else
                 begin
-                  Inc(n);
+                  inc(n);
 
                   { LOSSY mode }
                   while (n <= height) do
@@ -691,9 +691,9 @@ begin
                               FBitIO.bitoflush();
                               FJpeg.write_marker(FOutputStream, (JPEGLS_MARKER_RSTm + ((MCUs_counted div restart_interval) mod 8)));
                             end;
-                          Inc(MCUs_counted);
+                          inc(MCUs_counted);
                         end;
-                      Inc(n);
+                      inc(n);
                     end;
 
                 end;
@@ -709,7 +709,7 @@ begin
               if (lossy = False) then
                 begin
                   { LOSSLESS mode }
-                  Inc(n);
+                  inc(n);
 
                   while (n <= height) do
                     begin
@@ -747,9 +747,9 @@ begin
                               FBitIO.bitoflush();
                               FJpeg.write_marker(FOutputStream, (JPEGLS_MARKER_RSTm + ((MCUs_counted div restart_interval) mod 8)));
                             end;
-                          Inc(MCUs_counted);
+                          inc(MCUs_counted);
                         end;
-                      Inc(n);
+                      inc(n);
                     end; // while
 
                 end // if
@@ -757,7 +757,7 @@ begin
                 begin
 
                   { LOSSY mode }
-                  Inc(n);
+                  inc(n);
                   while (n <= height) do
                     begin
 
@@ -794,9 +794,9 @@ begin
                               FBitIO.bitoflush();
                               FJpeg.write_marker(FOutputStream, (JPEGLS_MARKER_RSTm + ((MCUs_counted div restart_interval) mod 8)));
                             end;
-                          Inc(MCUs_counted);
+                          inc(MCUs_counted);
                         end;
-                      Inc(n);
+                      inc(n);
                     end; // while
 
                 end; { End for each component in PLANE_INT }
@@ -857,4 +857,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

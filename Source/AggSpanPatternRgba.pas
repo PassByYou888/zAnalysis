@@ -37,11 +37,8 @@
 *)
 unit AggSpanPatternRgba;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -66,7 +63,7 @@ type
     constructor Create(Alloc: TAggSpanAllocator; Wx, Wy: TAggWrapMode; Order: TAggOrder); overload;
     constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; OffsetX, OffsetY: Cardinal; Wx, Wy: TAggWrapMode; Order: TAggOrder); overload;
 
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
 implementation
@@ -111,32 +108,34 @@ begin
   FWrapModeY.Init(Src.height);
 end;
 
-function TAggSpanPatternRgba.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
+function TAggSpanPatternRgba.Generate(x, y: Integer; Len: Cardinal): PAggColor;
 var
   Span: PAggColor;
   RowPointer, p: PInt8u;
   SX: Cardinal;
 begin
   Span := Allocator.Span;
-  SX := FWrapModeX.FuncOperator(OffsetX + X);
+  SX := FWrapModeX.FuncOperator(OffsetX + x);
 
-  RowPointer := SourceImage.Row(FWrapModeY.FuncOperator(OffsetY + Y));
+  RowPointer := SourceImage.Row(FWrapModeY.FuncOperator(OffsetY + y));
 
   repeat
     p := PInt8u(PtrComp(RowPointer) + (SX shl 2) * SizeOf(Int8u));
 
-    Span.Rgba8.R := PInt8u(PtrComp(p) + FOrder.R * SizeOf(Int8u))^;
+    Span.Rgba8.r := PInt8u(PtrComp(p) + FOrder.r * SizeOf(Int8u))^;
     Span.Rgba8.g := PInt8u(PtrComp(p) + FOrder.g * SizeOf(Int8u))^;
     Span.Rgba8.b := PInt8u(PtrComp(p) + FOrder.b * SizeOf(Int8u))^;
-    Span.Rgba8.A := PInt8u(PtrComp(p) + FOrder.A * SizeOf(Int8u))^;
+    Span.Rgba8.a := PInt8u(PtrComp(p) + FOrder.a * SizeOf(Int8u))^;
 
     SX := FWrapModeX.IncOperator;
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
-    Dec(Len);
+    inc(PtrComp(Span), SizeOf(TAggColor));
+    dec(Len);
   until Len = 0;
 
   Result := Allocator.Span;
 end;
 
 end. 
+ 
+ 

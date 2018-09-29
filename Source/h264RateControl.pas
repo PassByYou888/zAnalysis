@@ -22,14 +22,14 @@ uses
   {$IFDEF FPC}
   fgl,
   {$ENDIF FPC}
-  h264Stdint, h264Common, h264Util,
+  h264Types, h264Common, h264Util,
   CoreClasses;
 
 type
   TBufferState = (bsUnderflow, bsOverflow, bsStable);
 
 type
-  TRcFrame = packed record
+  TRcFrame = record
     BitSize: int32_t;
     tex_bits: int32_t;
     itex, ptex: int32_t;
@@ -41,8 +41,6 @@ type
   end;
 
   PRcFrame = ^TRcFrame;
-
-  { TRcGop }
 
   TRcGop = class
   private
@@ -61,12 +59,10 @@ type
   end;
 
   {$IFDEF FPC}
-
   TRcGopList = specialize TFPGList<TRcGop>;
   {$ELSE FPC}
   TRcGopList = TGenericsList<TRcGop>;
   {$ENDIF FPC}
-  { TRatecontrol }
 
   TRatecontrol = class
   private
@@ -102,7 +98,7 @@ type
     procedure Set2pass(const TargetBitrate, FrameCount: int32_t; const FramesPS: Single);
     function GetQP(const FrameNum: int32_t; const FrameType: uint8_t): uint8_t;
     function GetFrameType(const FrameNum: int32_t): uint8_t;
-    procedure Update(const FrameNum: int32_t; const FrameBits: int32_t; var F: TFrame);
+    procedure Update(const FrameNum: int32_t; const FrameBits: int32_t; var f: TFrame);
   end;
 
 implementation
@@ -149,9 +145,9 @@ begin
       if frame.mb_p > 0 then
         begin
           if frame.ptex / frame.mb_p > 100 then
-              Inc(mult_ptex);
+              inc(mult_ptex);
           if frame.ptex / frame.mb_p < 25 then
-              Dec(mult_ptex);
+              dec(mult_ptex);
         end;
       if (frame.mb_i > 0) and (frame.itex / frame.mb_i < 10) then
           mult_itex := 3;
@@ -174,8 +170,6 @@ begin
   frame.BitSize := Result;
 end;
 
-{ TRcGop }
-
 procedure TRcGop.AdjustRelativeQPs(const avg_bitsize: int32_t; const default_qp: int32_t);
 var
   i: int32_t;
@@ -197,11 +191,10 @@ begin
       AdjustByGopRelativeSize(avg_bitsize);
       AdjustByFrameRelativeSize(avg_bitsize);
       AdjustByFrameReferences;
-      /// /GopQPBlur;
     end;
 
   // nonreferenced last frame penalty
-  Inc(frames[length - 1]^.qp);
+  inc(frames[length - 1]^.qp);
 end;
 
 procedure TRcGop.AdjustByGopRelativeSize(const avg_bitsize: int32_t);
@@ -212,7 +205,7 @@ var
 begin
   BitSize := 0;
   for i := 1 to length - 1 do
-      Inc(BitSize, frames[i]^.BitSize);
+      inc(BitSize, frames[i]^.BitSize);
   avg_gop_frame_size := BitSize div (length - 1);
 
   qp_bonus := 0;
@@ -222,7 +215,7 @@ begin
       qp_bonus := 1;
 
   for i := 1 to length - 1 do
-      Inc(frames[i]^.qp, qp_bonus);
+      inc(frames[i]^.qp, qp_bonus);
 end;
 
 // improve/reduce frames far below/above avg. frame size
@@ -281,7 +274,7 @@ begin
       while (k <= length - 1) and (frames[k]^.mb_skip > mb_count div 8 * 7) do
         begin
           qp_bonusf := qp_bonusf + 0.5;
-          Inc(k);
+          inc(k);
         end;
       qp_bonus := Min(Trunc(qp_bonusf), 6);
       frames[i]^.qp := clip3(10, int32_t(frames[i]^.qp) - qp_bonus, 51);
@@ -290,7 +283,7 @@ end;
 
 procedure TRcGop.GopQPBlur;
 var
-  i, J: int32_t;
+  i, j: int32_t;
   tmp: array of uint8_t;
   qp: int32_t;
 begin
@@ -304,8 +297,8 @@ begin
   for i := 2 to length - 1 do
     begin
       qp := 0;
-      for J := i - 2 to i + 2 do
-          Inc(qp, tmp[J]);
+      for j := i - 2 to i + 2 do
+          inc(qp, tmp[j]);
       qp := qp div 5;
       frames[i]^.qp := qp;
     end;
@@ -339,17 +332,17 @@ begin
 
       gop_len := 0;
       repeat
-          Inc(gop_len);
+          inc(gop_len);
       until (i + gop_len >= nframes) or (frames[i + gop_len].frame_type = SLICE_I);
       // in successive I frames case, insert all I frames in one GOP
       if gop_len = 1 then
         begin
           repeat
-              Inc(gop_len);
+              inc(gop_len);
           until (i + gop_len >= nframes) or (frames[i + gop_len].frame_type <> SLICE_I);
           // last I belongs to next GOP
           if i + gop_len < nframes then
-              Dec(gop_len);
+              dec(gop_len);
           gop.I_only := True;
         end;
 
@@ -359,7 +352,7 @@ begin
           gop.frames[k] := @frames[i + k];
       gop_list.Add(gop);
 
-      Inc(i, gop_len);
+      inc(i, gop_len);
     end;
 end;
 
@@ -380,7 +373,7 @@ begin
   stream_size_total := 0;
   for i := 0 to nframes - 1 do
     begin
-      Inc(stream_size_total, frames[i].BitSize);
+      inc(stream_size_total, frames[i].BitSize);
       qp_avg := qp_avg + frames[i].qp;
     end;
   qp_avg := qp_avg / nframes;
@@ -397,7 +390,7 @@ begin
   stream_size_total := 0;
   for i := 0 to nframes - 1 do
     begin
-      Inc(stream_size_total, RecalculateFrameSize(frames[i]));
+      inc(stream_size_total, RecalculateFrameSize(frames[i]));
       qp_avg := qp_avg + frames[i].qp;
     end;
   qp_avg := qp_avg / nframes;
@@ -423,7 +416,7 @@ begin
       gop.ShiftQPs(Diff);
   stream_size_total := 0;
   for i := 0 to nframes - 1 do
-      Inc(stream_size_total, RecalculateFrameSize(frames[i]));
+      inc(stream_size_total, RecalculateFrameSize(frames[i]));
   kbps := stream_size_total / 1000 / (nframes / fps);
   rate_mult := desired_bitrate / kbps;
 
@@ -454,8 +447,8 @@ begin
   i := nframes - 1;
   while (sum_bits < remaining_size) and (i > 0) do
     begin
-      Inc(sum_bits, Trunc(frames[i].BitSize * rate_mult));
-      Dec(i);
+      inc(sum_bits, Trunc(frames[i].BitSize * rate_mult));
+      dec(i);
     end;
   bit_reserve_reduce_from := i;
 end;
@@ -532,7 +525,7 @@ begin
       Result := frames[FrameNum].frame_type;
 end;
 
-procedure TRatecontrol.Update(const FrameNum: int32_t; const FrameBits: int32_t; var F: TFrame);
+procedure TRatecontrol.Update(const FrameNum: int32_t; const FrameBits: int32_t; var f: TFrame);
 const
   STATECHECK_INTERVAL = 10;
   REACTION_DELAY      = 30;
@@ -545,24 +538,24 @@ begin
       Exit;
 
   estimated_framebits := frames[FrameNum].BitSize;
-  Inc(stream_bits_estimated, Trunc(estimated_framebits * rate_mult));
-  Inc(stream_bits_real, FrameBits);
+  inc(stream_bits_estimated, Trunc(estimated_framebits * rate_mult));
+  inc(stream_bits_real, FrameBits);
   new_diff := stream_bits_real - stream_bits_estimated;
 
   bits_delta := estimated_framebits - FrameBits;
-  Inc(ssd, bits_delta * bits_delta);
-  F.estimated_framebits := estimated_framebits;
-  F.qp_adj := qp_comp;
+  inc(ssd, bits_delta * bits_delta);
+  f.estimated_framebits := estimated_framebits;
+  f.qp_adj := qp_comp;
 
   // reduce bitreserve towards stream end
   if (FrameNum = bit_reserve_reduce_from) and (bit_reserve >= avg_target_framesize) then
     begin
-      Dec(bit_reserve, avg_target_framesize);
+      dec(bit_reserve, avg_target_framesize);
       case buffer_state of
         bsUnderflow:
-          Dec(qp_comp);
+          dec(qp_comp);
         bsOverflow:
-          Inc(qp_comp);
+          inc(qp_comp);
       end;
       SetBitReserveReductionPoint();
     end;
@@ -582,13 +575,13 @@ begin
         if stream_bits_real < stream_bits_estimated - bit_reserve then
           begin
             buffer_state := bsUnderflow;
-            Dec(qp_comp);
+            dec(qp_comp);
             last_buffer_change := FrameNum;
           end;
         if stream_bits_real > stream_bits_estimated + bit_reserve then
           begin
             buffer_state := bsOverflow;
-            Inc(qp_comp);
+            inc(qp_comp);
             last_buffer_change := FrameNum;
           end;
       end;
@@ -605,7 +598,7 @@ begin
             // needs stronger treatment
             if FrameNum - last_buffer_change >= REACTION_DELAY then
               begin
-                Dec(qp_comp);
+                dec(qp_comp);
                 last_buffer_change := FrameNum;
               end;
           end;
@@ -613,7 +606,7 @@ begin
         if stream_bits_real + bit_reserve > stream_bits_estimated then
           begin
             buffer_state := bsStable;
-            Inc(qp_comp);
+            inc(qp_comp);
           end;
       end;
 
@@ -629,7 +622,7 @@ begin
             // needs stronger treatment
             if FrameNum - last_buffer_change >= REACTION_DELAY then
               begin
-                Inc(qp_comp);
+                inc(qp_comp);
                 last_buffer_change := FrameNum;
               end;
           end;
@@ -637,7 +630,7 @@ begin
         if stream_bits_real < stream_bits_estimated + bit_reserve then
           begin
             buffer_state := bsStable;
-            Dec(qp_comp);
+            dec(qp_comp);
           end;
       end;
   end;
@@ -646,3 +639,5 @@ begin
 end;
 
 end.  
+ 
+ 

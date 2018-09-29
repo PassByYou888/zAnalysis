@@ -16,14 +16,14 @@ unit h264tables;
 
 interface
 
-uses h264Stdint;
+uses h264Types;
 
 type
   vlc_bits_len = array [0 .. 1] of uint8_t; // bit pattern, pattern length
 
   (* ******************************************************************************
     CBP mapping:
-    Table 9-4 ¨C Assignment of codeNum to values of coded_block_pattern for macroblock prediction modes
+    Table 9-4 â€“ Assignment of codeNum to values of coded_block_pattern for macroblock prediction modes
   *)
   { coded_block_pattern Intra_4x4 -> codeNum
   }
@@ -41,7 +41,7 @@ const
     );
 
   (* ******************************************************************************
-    Table 8-13 ¨C Specification of QPC as a function of qPI
+    Table 8-13 â€“ Specification of QPC as a function of qPI
     0..29: qpc = qp
   *)
   tab_qp_chroma: array [30 .. 51] of uint8_t =
@@ -49,7 +49,7 @@ const
 
   { ******************************************************************************
     coef_token mapping:
-    Table 9-5 ¨C coeff_token mapping to TotalCoeff( coeff_token ) and TrailingOnes( coeff_token )
+    Table 9-5 â€“ coeff_token mapping to TotalCoeff( coeff_token ) and TrailingOnes( coeff_token )
 
     index: [tablenum, TotalCoeff 0..16, TrailingOnes 0..3]
 
@@ -58,7 +58,7 @@ const
 
     last table is FLC, so we could generate the values in code (jvt-c028):
     N >= 8 : 6 bit FLC xxxxyy, as follows:
-    NumCoeff¨C1 is transmitted in the first 4 bits (xxxx).  The last 2 bits (yy) are used for T1.  Since NumCoeff=0 also has to be represented, the codeword 000011 is used for this.
+    NumCoeffâ€“1 is transmitted in the first 4 bits (xxxx).  The last 2 bits (yy) are used for T1.  Since NumCoeff=0 also has to be represented, the codeword 000011 is used for this.
     For chroma DC, Num-VLC_Chroma_DC is used.
 
   }
@@ -159,7 +159,7 @@ const
   { ******************************************************************************
     total_zeros
   }
-  { Table 9-7 ¨C total_zeros tables for 4x4 blocks with TotalCoeff( coeff_token ) 1 to 7
+  { Table 9-7 â€“ total_zeros tables for 4x4 blocks with TotalCoeff( coeff_token ) 1 to 7
     index: TotalCoeff( coeff_token ) 1..7, total_zeros 0..15
   }
 const
@@ -174,7 +174,7 @@ const
     ((1, 6), (1, 5), (5, 3), (4, 3), (3, 3), (3, 2), (2, 3), (1, 4), (1, 3), (0, 6), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0))
     );
 
-  { Table 9-8 ¨C total_zeros tables for 4x4 blocks with TotalCoeff( coeff_token ) 8 to 15
+  { Table 9-8 â€“ total_zeros tables for 4x4 blocks with TotalCoeff( coeff_token ) 8 to 15
     index: TotalCoeff( coeff_token ) 8..15, total_zeros 0..8
   }
   tab_total_zeros1: array [8 .. 15, 0 .. 8] of vlc_bits_len =
@@ -189,7 +189,7 @@ const
     ((0, 1), (1, 1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0))
     );
 
-  { Table 9-9 ¨C total_zeros tables for chroma DC 2x2 blocks
+  { Table 9-9 â€“ total_zeros tables for chroma DC 2x2 blocks
     index: TotalCoeff( coeff_token ) 1..3, total_zeros 0..3
   }
   tab_total_zeros_chroma_dc: array [1 .. 3, 0 .. 3] of vlc_bits_len =
@@ -200,7 +200,7 @@ const
     );
 
   { ******************************************************************************
-    Table 9-10 ¨C Tables for run_before
+    Table 9-10 â€“ Tables for run_before
 
     vlc for run_before >= 7 a zeros_left > 6 is generated:
     0001
@@ -225,3 +225,4 @@ const
 implementation
 
 end.  
+ 

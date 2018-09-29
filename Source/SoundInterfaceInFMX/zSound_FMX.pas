@@ -36,7 +36,7 @@ uses CoreClasses, zSound, UnicodeMixedLib, MediaCenter,
     ;
 
 type
-  TSoundRec = packed record
+  TSoundRec = record
     SFilename: SystemString;
     SName: SystemString;
     SNameExt: SystemString;
@@ -87,7 +87,7 @@ type
     function Playing: Boolean; virtual; abstract;
 
     property CurrentTime: TMediaTime read GetCurrentTime write SetCurrentTime;
-    property fileName: SystemString read GetFileName write SetFileName;
+    property FileName: SystemString read GetFileName write SetFileName;
   end;
 
   TSEMediaPlayer = class(TSEBase)
@@ -115,22 +115,22 @@ type
     FMusicPlaying  : Boolean;
     FAmbientPlaying: Boolean;
 
-    procedure DoPrepareMusic(fileName: SystemString); override;
-    procedure DoPlayMusic(fileName: SystemString); override;
+    procedure DoPrepareMusic(FileName: SystemString); override;
+    procedure DoPlayMusic(FileName: SystemString); override;
     procedure DoStopMusic; override;
 
-    procedure DoPrepareAmbient(fileName: SystemString); override;
-    procedure DoPlayAmbient(fileName: SystemString); override;
+    procedure DoPrepareAmbient(FileName: SystemString); override;
+    procedure DoPlayAmbient(FileName: SystemString); override;
     procedure DoStopAmbient; override;
 
-    procedure DoPrepareSound(fileName: SystemString); override;
-    procedure DoPlaySound(fileName: SystemString); override;
-    procedure DoStopSound(fileName: SystemString); override;
+    procedure DoPrepareSound(FileName: SystemString); override;
+    procedure DoPlaySound(FileName: SystemString); override;
+    procedure DoStopSound(FileName: SystemString); override;
 
     procedure DoStopAll; override;
 
-    function SaveSoundAsLocalFile(fileName: SystemString): SystemString; override;
-    function SoundReadyOk(fileName: SystemString): Boolean; override;
+    function SaveSoundAsLocalFile(FileName: SystemString): SystemString; override;
+    function SoundReadyOk(FileName: SystemString): Boolean; override;
 
     function MediaIsPlaying(M: TSEBase): Boolean;
   public
@@ -219,7 +219,7 @@ var
   wSndRec: PSoundRec;
   {$IFDEF ANDROID}
   wOnAndroidSndComplete: JSoundPool_OnLoadCompleteListener;
-  soundID              : nativeInt;
+  soundID              : NativeInt;
   {$ENDIF}
   {$IFDEF IOS}
   wSndID        : nsinteger;
@@ -372,12 +372,12 @@ end;
 
 function TSEMediaPlayer.GetFileName: SystemString;
 begin
-  Result := Media.fileName;
+  Result := Media.FileName;
 end;
 
 procedure TSEMediaPlayer.SetFileName(const Value: SystemString);
 begin
-  Media.fileName := Value;
+  Media.FileName := Value;
 end;
 
 constructor TSEMediaPlayer.Create;
@@ -407,16 +407,16 @@ begin
   Result := (Media.State = TMediaState.Playing) and (Media.Duration <> Media.CurrentTime);
 end;
 
-procedure TSoundEngine_FMX.DoPrepareMusic(fileName: SystemString);
+procedure TSoundEngine_FMX.DoPrepareMusic(FileName: SystemString);
 begin
 end;
 
-procedure TSoundEngine_FMX.DoPlayMusic(fileName: SystemString);
+procedure TSoundEngine_FMX.DoPlayMusic(FileName: SystemString);
 begin
-  if not umlFileExists(fileName) then
-      RaiseInfo('no media file:%s', [fileName]);
-  if not SameText(FMediaMusic.fileName, fileName) then
-      FMediaMusic.fileName := fileName
+  if not umlFileExists(FileName) then
+      RaiseInfo('no media file:%s', [FileName]);
+  if not SameText(FMediaMusic.FileName, FileName) then
+      FMediaMusic.FileName := FileName
   else
       FMediaMusic.CurrentTime := 0;
   FMediaMusic.Play;
@@ -429,16 +429,16 @@ begin
   FMusicPlaying := False;
 end;
 
-procedure TSoundEngine_FMX.DoPrepareAmbient(fileName: SystemString);
+procedure TSoundEngine_FMX.DoPrepareAmbient(FileName: SystemString);
 begin
 end;
 
-procedure TSoundEngine_FMX.DoPlayAmbient(fileName: SystemString);
+procedure TSoundEngine_FMX.DoPlayAmbient(FileName: SystemString);
 begin
-  if not umlFileExists(fileName) then
-      RaiseInfo('no media file:%s', [fileName]);
-  if not SameText(FMediaAmbient.fileName, fileName) then
-      FMediaAmbient.fileName := fileName
+  if not umlFileExists(FileName) then
+      RaiseInfo('no media file:%s', [FileName]);
+  if not SameText(FMediaAmbient.FileName, FileName) then
+      FMediaAmbient.FileName := FileName
   else
       FMediaAmbient.CurrentTime := 0;
   FMediaAmbient.Play;
@@ -451,19 +451,19 @@ begin
   FAmbientPlaying := False;
 end;
 
-procedure TSoundEngine_FMX.DoPrepareSound(fileName: SystemString);
+procedure TSoundEngine_FMX.DoPrepareSound(FileName: SystemString);
 begin
-  if not AudioManager.Exists(fileName) then
-      AudioManager.AddSound(fileName);
+  if not AudioManager.Exists(FileName) then
+      AudioManager.AddSound(FileName);
 end;
 
-procedure TSoundEngine_FMX.DoPlaySound(fileName: SystemString);
+procedure TSoundEngine_FMX.DoPlaySound(FileName: SystemString);
 begin
-  DoPrepareSound(fileName);
-  AudioManager.PlaySound(fileName);
+  DoPrepareSound(FileName);
+  AudioManager.PlaySound(FileName);
 end;
 
-procedure TSoundEngine_FMX.DoStopSound(fileName: SystemString);
+procedure TSoundEngine_FMX.DoStopSound(FileName: SystemString);
 begin
 end;
 
@@ -475,24 +475,24 @@ begin
   FAmbientPlaying := False;
 end;
 
-function TSoundEngine_FMX.SaveSoundAsLocalFile(fileName: SystemString): SystemString;
+function TSoundEngine_FMX.SaveSoundAsLocalFile(FileName: SystemString): SystemString;
 var
   SourStream: TCoreClassStream;
   m64       : TMemoryStream64;
   md5name   : SystemString;
 begin
   Result := '';
-  if FCacheFileList.Exists(fileName) then
+  if FCacheFileList.Exists(FileName) then
     begin
-      Result := FCacheFileList[fileName];
+      Result := FCacheFileList[FileName];
       if umlFileExists(Result) then
           Exit;
     end;
 
   FileIO.ChangePrioritySearchOption(SearchDB, True, '');
-  SourStream := FileIOOpen(fileName);
+  SourStream := FileIOOpen(FileName);
   if SourStream = nil then
-      RaiseInfo('no sound file: "%s"', [fileName]);
+      RaiseInfo('no sound file: "%s"', [FileName]);
   SourStream.Position := 0;
   m64 := TMemoryStream64.Create;
   m64.CopyFrom(SourStream, SourStream.Size);
@@ -500,19 +500,19 @@ begin
   m64.Position := 0;
   md5name := umlStreamMD5Char(m64).Text;
 
-  Result := umlCombineFileName(FTempPath, md5name + umlGetFileExt(fileName));
+  Result := umlCombineFileName(FTempPath, md5name + umlGetFileExt(FileName));
   try
       m64.SaveToFile(Result);
   except
   end;
   DisposeObject(m64);
 
-  FCacheFileList[fileName] := Result;
+  FCacheFileList[FileName] := Result;
 end;
 
-function TSoundEngine_FMX.SoundReadyOk(fileName: SystemString): Boolean;
+function TSoundEngine_FMX.SoundReadyOk(FileName: SystemString): Boolean;
 begin
-  Result := umlFileExists(fileName);
+  Result := umlFileExists(FileName);
 end;
 
 function TSoundEngine_FMX.MediaIsPlaying(M: TSEBase): Boolean;
@@ -586,4 +586,6 @@ finalization
 DisposeObject(AudioManager);
 
 end. 
+ 
+ 
  

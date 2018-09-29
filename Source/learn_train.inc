@@ -16,7 +16,7 @@ type
     * NHess     - number of Hessian calculations
     * NCholesky - number of Cholesky decompositions
     ************************************************************************ *)
-  TMLPReport = packed record
+  TMLPReport = record
     NGrad: TLInt;
     NHess: TLInt;
     NCholesky: TLInt;
@@ -25,7 +25,7 @@ type
   (* ************************************************************************
     Cross-validation estimates of generalization error
     ************************************************************************ *)
-  TMLPCVReport = packed record
+  TMLPCVReport = record
     RelClsError: TLFloat;
     AvgCE: TLFloat;
     RMSError: TLFloat;
@@ -35,46 +35,46 @@ type
 
 procedure MLPTrainLM(var Network: TMultiLayerPerceptron; const xy: TLMatrix;
   NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
-  var Info: TLInt; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Info: TLInt; var Rep: TMLPReport); forward;
 
 procedure MLPTrainLM_MT(var Network: TMultiLayerPerceptron; const xy: TLMatrix;
   NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
-  var Info: TLInt; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Info: TLInt; var Rep: TMLPReport); forward;
 
 procedure MLPTrainLBFGS(var Network: TMultiLayerPerceptron;
   const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
   Restarts: TLInt; WStep: TLFloat; MAXITS: TLInt;
   var Info: TLInt; var Rep: TMLPReport; IsTerminated: PBoolean;
-  out EBest: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  out EBest: TLFloat); forward;
 
 procedure MLPTrainLBFGS_MT(var Network: TMultiLayerPerceptron;
   const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
   Restarts: TLInt; WStep: TLFloat; MAXITS: TLInt;
-  var Info: TLInt; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Info: TLInt; var Rep: TMLPReport); forward;
 
 procedure MLPTrainLBFGS_MT_Mod(var Network: TMultiLayerPerceptron;
   const xy: TLMatrix; NPoints: TLInt; Restarts: TLInt;
   WStep, Diameter: TLFloat; MAXITS: TLInt;
-  var Info: TLInt; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Info: TLInt; var Rep: TMLPReport); forward;
 
 procedure MLPTrainMonteCarlo(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt;
   const MainRestarts, SubRestarts: TLInt; const MinError: TLFloat;
-  Diameter: TLFloat; var Info: TLInt; var Rep: TMLPReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  Diameter: TLFloat; var Info: TLInt; var Rep: TMLPReport); forward;
 
 procedure MLPKFoldCVLBFGS(const Network: TMultiLayerPerceptron;
   const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
   Restarts: TLInt; WStep: TLFloat; MAXITS: TLInt;
   FoldsCount: TLInt; var Info: TLInt; var Rep: TMLPReport;
-  var CVRep: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var CVRep: TMLPCVReport); forward;
 
 procedure MLPKFoldCVLM(const Network: TMultiLayerPerceptron;
   const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
   Restarts: TLInt; FoldsCount: TLInt; var Info: TLInt;
-  var Rep: TMLPReport; var CVRep: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Rep: TMLPReport; var CVRep: TMLPCVReport); forward;
 
 
 type
-  TMLPProcessData = packed record
+  TMLPProcessData = record
     TotalRestarts: TLInt;
     RestartsFinished: TLInt;
     IsTerminated: Boolean;
@@ -90,10 +90,10 @@ procedure MLPKFoldCVGeneral(const n: TMultiLayerPerceptron;
   const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
   Restarts: TLInt; FoldsCount: TLInt; LMAlgorithm: Boolean;
   WStep: TLFloat; MAXITS: TLInt; var Info: TLInt;
-  var Rep: TMLPReport; var CVRep: TMLPCVReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Rep: TMLPReport; var CVRep: TMLPCVReport); forward;
 procedure MLPKFoldSplit(const xy: TLMatrix; NPoints: TLInt;
   NClasses: TLInt; FoldsCount: TLInt; StratifiedSplits: Boolean;
-  var Folds: TLIVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Folds: TLIVec); forward;
 
 
 (* ************************************************************************
@@ -140,7 +140,7 @@ var
   d          : TLVec;
   h          : TLMatrix;
   HMod       : TLMatrix;
-  Z          : TLMatrix;
+  z          : TLMatrix;
   SPD        : Boolean;
   Nu         : TLFloat;
   LAMBDA     : TLFloat;
@@ -148,8 +148,8 @@ var
   LambdaDown : TLFloat;
   InternalRep: TMinLBFGSReport;
   State      : TMinLBFGSState;
-  X          : TLVec;
-  Y          : TLVec;
+  x          : TLVec;
+  y          : TLVec;
   WBase      : TLVec;
   WDir       : TLVec;
   WT         : TLVec;
@@ -186,7 +186,7 @@ begin
               Info := -2;
               Exit;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
   Decay := Max(Decay, MinDecay);
@@ -238,14 +238,14 @@ begin
           //
           // gradient
           //
-          APVMove(@Network.Weights[0], 0, WCount - 1, @State.X[0], 0, WCount - 1);
-          MLPGradBatch(Network, xy, NPoints, State.F, State.g);
+          APVMove(@Network.Weights[0], 0, WCount - 1, @State.x[0], 0, WCount - 1);
+          MLPGradBatch(Network, xy, NPoints, State.f, State.g);
 
           //
           // weight decay
           //
           v := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
-          State.F := State.F + 0.5 * Decay * v;
+          State.f := State.f + 0.5 * Decay * v;
           APVAdd(@State.g[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1, Decay);
 
           //
@@ -271,7 +271,7 @@ begin
       while k <= WCount - 1 do
         begin
           h[k, k] := h[k, k] + Decay;
-          Inc(k);
+          inc(k);
         end;
       Rep.NHess := Rep.NHess + 1;
       LAMBDA := 0.001;
@@ -289,7 +289,7 @@ begin
             begin
               APVMove(@HMod[i][0], 0, WCount - 1, @h[i][0], 0, WCount - 1);
               HMod[i, i] := HMod[i, i] + LAMBDA;
-              Inc(i);
+              inc(i);
             end;
           SPD := SPDMatrixCholesky(HMod, WCount, True);
           Rep.NCholesky := Rep.NCholesky + 1;
@@ -349,7 +349,7 @@ begin
           while i <= WCount - 1 do
             begin
               WT[i] := 0;
-              Inc(i);
+              inc(i);
             end;
           MinLBFGSCreateX(WCount, WCount, WT, 1, State);
           MinLBFGSSetCond(State, 0, 0, 0, 5);
@@ -362,23 +362,23 @@ begin
               i := 0;
               while i <= WCount - 1 do
                 begin
-                  v := APVDotProduct(@State.X[0], i, WCount - 1, @HMod[i][0], i, WCount - 1);
+                  v := APVDotProduct(@State.x[0], i, WCount - 1, @HMod[i][0], i, WCount - 1);
                   Network.Weights[i] := WBase[i] + v;
-                  Inc(i);
+                  inc(i);
                 end;
-              MLPGradBatch(Network, xy, NPoints, State.F, g);
+              MLPGradBatch(Network, xy, NPoints, State.f, g);
               i := 0;
               while i <= WCount - 1 do
                 begin
                   State.g[i] := 0;
-                  Inc(i);
+                  inc(i);
                 end;
               i := 0;
               while i <= WCount - 1 do
                 begin
                   v := g[i];
                   APVAdd(@State.g[0], i, WCount - 1, @HMod[i][0], i, WCount - 1, v);
-                  Inc(i);
+                  inc(i);
                 end;
 
               //
@@ -386,13 +386,13 @@ begin
               // grad(x'*x) = A'*(x0+A*t)
               //
               v := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
-              State.F := State.F + 0.5 * Decay * v;
+              State.f := State.f + 0.5 * Decay * v;
               i := 0;
               while i <= WCount - 1 do
                 begin
                   v := Decay * Network.Weights[i];
                   APVAdd(@State.g[0], i, WCount - 1, @HMod[i][0], i, WCount - 1, v);
-                  Inc(i);
+                  inc(i);
                 end;
 
               //
@@ -411,7 +411,7 @@ begin
             begin
               v := APVDotProduct(@WT[0], i, WCount - 1, @HMod[i][0], i, WCount - 1);
               Network.Weights[i] := WBase[i] + v;
-              Inc(i);
+              inc(i);
             end;
           MLPHessianBatch(Network, xy, NPoints, E, g, h);
           v := APVDotProduct(@Network.Weights[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
@@ -421,7 +421,7 @@ begin
           while k <= WCount - 1 do
             begin
               h[k, k] := h[k, k] + Decay;
-              Inc(k);
+              inc(k);
             end;
           Rep.NHess := Rep.NHess + 1;
 
@@ -442,7 +442,7 @@ begin
           EBest := E;
           APVMove(@WBest[0], 0, WCount - 1, @Network.Weights[0], 0, WCount - 1);
         end;
-      Inc(pass);
+      inc(pass);
     end;
 
   //
@@ -557,16 +557,16 @@ var
         //
         // gradient
         //
-        APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0,
+        APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.x[0], 0,
           WCount - 1);
-        MLPGradBatch(NetworkCopy, xy, NPoints, State.F, State.g);
+        MLPGradBatch(NetworkCopy, xy, NPoints, State.f, State.g);
 
         //
         // weight decay
         //
         v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
           @NetworkCopy.Weights[0], 0, WCount - 1);
-        State.F := State.F + 0.5 * Decay * v;
+        State.f := State.f + 0.5 * Decay * v;
         APVAdd(@State.g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
           WCount - 1, Decay);
 
@@ -594,7 +594,7 @@ var
     while k <= WCount - 1 do
       begin
         h[k, k] := h[k, k] + Decay;
-        Inc(k);
+        inc(k);
       end;
     RepPtr^.NHess := RepPtr^.NHess + 1;
     LAMBDA := 0.001;
@@ -614,7 +614,7 @@ var
               WCount - 1);
             HMod[_Parallel_I, _Parallel_I] :=
               HMod[_Parallel_I, _Parallel_I] + LAMBDA;
-            Inc(_Parallel_I);
+            inc(_Parallel_I);
           end;
         SPD := SPDMatrixCholesky(HMod, WCount, True);
         RepPtr^.NCholesky := RepPtr^.NCholesky + 1;
@@ -677,7 +677,7 @@ var
         while _Parallel_I <= WCount - 1 do
           begin
             WT[_Parallel_I] := 0;
-            Inc(_Parallel_I);
+            inc(_Parallel_I);
           end;
         MinLBFGSCreateX(WCount, WCount, WT, 1, State);
         MinLBFGSSetCond(State, 0, 0, 0, 5);
@@ -690,17 +690,17 @@ var
             _Parallel_I := 0;
             while _Parallel_I <= WCount - 1 do
               begin
-                v := APVDotProduct(@State.X[0], _Parallel_I, WCount - 1,
+                v := APVDotProduct(@State.x[0], _Parallel_I, WCount - 1,
                   @HMod[_Parallel_I][0], _Parallel_I, WCount - 1);
                 NetworkCopy.Weights[_Parallel_I] := WBase[_Parallel_I] + v;
-                Inc(_Parallel_I);
+                inc(_Parallel_I);
               end;
-            MLPGradBatch(NetworkCopy, xy, NPoints, State.F, g);
+            MLPGradBatch(NetworkCopy, xy, NPoints, State.f, g);
             _Parallel_I := 0;
             while _Parallel_I <= WCount - 1 do
               begin
                 State.g[_Parallel_I] := 0;
-                Inc(_Parallel_I);
+                inc(_Parallel_I);
               end;
             _Parallel_I := 0;
             while _Parallel_I <= WCount - 1 do
@@ -708,7 +708,7 @@ var
                 v := g[_Parallel_I];
                 APVAdd(@State.g[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0],
                   _Parallel_I, WCount - 1, v);
-                Inc(_Parallel_I);
+                inc(_Parallel_I);
               end;
 
             //
@@ -717,14 +717,14 @@ var
             //
             v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
               @NetworkCopy.Weights[0], 0, WCount - 1);
-            State.F := State.F + 0.5 * Decay * v;
+            State.f := State.f + 0.5 * Decay * v;
             _Parallel_I := 0;
             while _Parallel_I <= WCount - 1 do
               begin
                 v := Decay * NetworkCopy.Weights[_Parallel_I];
                 APVAdd(@State.g[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0],
                   _Parallel_I, WCount - 1, v);
-                Inc(_Parallel_I);
+                inc(_Parallel_I);
               end;
 
             //
@@ -744,7 +744,7 @@ var
             v := APVDotProduct(@WT[0], _Parallel_I, WCount - 1,
               @HMod[_Parallel_I][0], _Parallel_I, WCount - 1);
             NetworkCopy.Weights[_Parallel_I] := WBase[_Parallel_I] + v;
-            Inc(_Parallel_I);
+            inc(_Parallel_I);
           end;
         MLPHessianBatch(NetworkCopy, xy, NPoints, E, g, h);
         v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
@@ -756,7 +756,7 @@ var
         while k <= WCount - 1 do
           begin
             h[k, k] := h[k, k] + Decay;
-            Inc(k);
+            inc(k);
           end;
         RepPtr^.NHess := RepPtr^.NHess + 1;
 
@@ -818,7 +818,7 @@ begin
               Info := -2;
               Exit;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
   Decay := Max(Decay, MinDecay);
@@ -905,16 +905,16 @@ begin
           //
           // gradient
           //
-          APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0,
+          APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.x[0], 0,
             WCount - 1);
-          MLPGradBatch(NetworkCopy, xy, NPoints, State.F, State.g);
+          MLPGradBatch(NetworkCopy, xy, NPoints, State.f, State.g);
 
           //
           // weight decay
           //
           v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
             @NetworkCopy.Weights[0], 0, WCount - 1);
-          State.F := State.F + 0.5 * Decay * v;
+          State.f := State.f + 0.5 * Decay * v;
           APVAdd(@State.g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
             WCount - 1, Decay);
 
@@ -943,7 +943,7 @@ begin
       while k <= WCount - 1 do
         begin
           h[k, k] := h[k, k] + Decay;
-          Inc(k);
+          inc(k);
         end;
       RepPtr^.NHess := RepPtr^.NHess + 1;
       LAMBDA := 0.001;
@@ -963,7 +963,7 @@ begin
                 WCount - 1);
               HMod[_Parallel_I, _Parallel_I] := HMod[_Parallel_I,
                 _Parallel_I] + LAMBDA;
-              Inc(_Parallel_I);
+              inc(_Parallel_I);
             end;
           SPD := SPDMatrixCholesky(HMod, WCount, True);
           RepPtr^.NCholesky := RepPtr^.NCholesky + 1;
@@ -1027,7 +1027,7 @@ begin
           while _Parallel_I <= WCount - 1 do
             begin
               WT[_Parallel_I] := 0;
-              Inc(_Parallel_I);
+              inc(_Parallel_I);
             end;
           MinLBFGSCreateX(WCount, WCount, WT, 1, State);
           MinLBFGSSetCond(State, 0, 0, 0, 5);
@@ -1040,17 +1040,17 @@ begin
               _Parallel_I := 0;
               while _Parallel_I <= WCount - 1 do
                 begin
-                  v := APVDotProduct(@State.X[0], _Parallel_I, WCount - 1,
+                  v := APVDotProduct(@State.x[0], _Parallel_I, WCount - 1,
                     @HMod[_Parallel_I][0], _Parallel_I, WCount - 1);
                   NetworkCopy.Weights[_Parallel_I] := WBase[_Parallel_I] + v;
-                  Inc(_Parallel_I);
+                  inc(_Parallel_I);
                 end;
-              MLPGradBatch(NetworkCopy, xy, NPoints, State.F, g);
+              MLPGradBatch(NetworkCopy, xy, NPoints, State.f, g);
               _Parallel_I := 0;
               while _Parallel_I <= WCount - 1 do
                 begin
                   State.g[_Parallel_I] := 0;
-                  Inc(_Parallel_I);
+                  inc(_Parallel_I);
                 end;
               _Parallel_I := 0;
               while _Parallel_I <= WCount - 1 do
@@ -1058,7 +1058,7 @@ begin
                   v := g[_Parallel_I];
                   APVAdd(@State.g[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0],
                     _Parallel_I, WCount - 1, v);
-                  Inc(_Parallel_I);
+                  inc(_Parallel_I);
                 end;
 
               //
@@ -1067,14 +1067,14 @@ begin
               //
               v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
                 @NetworkCopy.Weights[0], 0, WCount - 1);
-              State.F := State.F + 0.5 * Decay * v;
+              State.f := State.f + 0.5 * Decay * v;
               _Parallel_I := 0;
               while _Parallel_I <= WCount - 1 do
                 begin
                   v := Decay * NetworkCopy.Weights[_Parallel_I];
                   APVAdd(@State.g[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0],
                     _Parallel_I, WCount - 1, v);
-                  Inc(_Parallel_I);
+                  inc(_Parallel_I);
                 end;
 
               //
@@ -1094,7 +1094,7 @@ begin
               v := APVDotProduct(@WT[0], _Parallel_I, WCount - 1,
                 @HMod[_Parallel_I][0], _Parallel_I, WCount - 1);
               NetworkCopy.Weights[_Parallel_I] := WBase[_Parallel_I] + v;
-              Inc(_Parallel_I);
+              inc(_Parallel_I);
             end;
           MLPHessianBatch(NetworkCopy, xy, NPoints, E, g, h);
           v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
@@ -1106,7 +1106,7 @@ begin
           while k <= WCount - 1 do
             begin
               h[k, k] := h[k, k] + Decay;
-              Inc(k);
+              inc(k);
             end;
           RepPtr^.NHess := RepPtr^.NHess + 1;
 
@@ -1224,7 +1224,7 @@ begin
               Info := -2;
               Exit;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
   Decay := Max(Decay, MinDecay);
@@ -1256,11 +1256,11 @@ begin
       MinLBFGSSetCond(State, 0.0, 0.0, WStep, MAXITS);
       while not IsTerminated^ and MinLBFGSIteration(State) do
         begin
-          APVMove(@Network.Weights[0], 0, WCount - 1, @State.X[0], 0, WCount - 1);
-          MLPGradNBatch(Network, xy, NPoints, State.F, State.g);
+          APVMove(@Network.Weights[0], 0, WCount - 1, @State.x[0], 0, WCount - 1);
+          MLPGradNBatch(Network, xy, NPoints, State.f, State.g);
           v := APVDotProduct(@Network.Weights[0], 0, WCount - 1,
             @Network.Weights[0], 0, WCount - 1);
-          State.F := State.F + 0.5 * Decay * v;
+          State.f := State.f + 0.5 * Decay * v;
           APVAdd(@State.g[0], 0, WCount - 1, @Network.Weights[0], 0,
             WCount - 1, Decay);
           Rep.NGrad := Rep.NGrad + 1;
@@ -1331,10 +1331,10 @@ var
     MinLBFGSSetCond(State, 0.0, 0.0, WStep, MAXITS);
     while MinLBFGSIteration(State) do
       begin
-        APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0, WCount - 1);
-        MLPGradNBatch(NetworkCopy, xy, NPoints, State.F, State.g);
+        APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.x[0], 0, WCount - 1);
+        MLPGradNBatch(NetworkCopy, xy, NPoints, State.f, State.g);
         v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
-        State.F := State.F + 0.5 * Decay * v;
+        State.f := State.f + 0.5 * Decay * v;
         APVAdd(@State.g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
         RepCopy.NGrad := RepCopy.NGrad + 1;
         if zProcessData^.IsTerminated then
@@ -1357,7 +1357,7 @@ var
       end;
     MLPFree(NetworkCopy);
     MinLBFGSFree(w, State);
-    Inc(zProcessData^.RestartsFinished);
+    inc(zProcessData^.RestartsFinished);
 
     if zProcessData^.IsTerminated then
         Exit;
@@ -1391,7 +1391,7 @@ begin
               Info := -2;
               Exit;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
   Decay := Max(Decay, MinDecay);
@@ -1444,10 +1444,10 @@ begin
         MinLBFGSSetCond(State, 0.0, 0.0, WStep, MAXITS);
         while MinLBFGSIteration(State) do
           begin
-            APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0, WCount - 1);
-            MLPGradNBatch(NetworkCopy, xy, NPoints, State.F, State.g);
+            APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.x[0], 0, WCount - 1);
+            MLPGradNBatch(NetworkCopy, xy, NPoints, State.f, State.g);
             v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
-            State.F := State.F + 0.5 * Decay * v;
+            State.f := State.f + 0.5 * Decay * v;
             APVAdd(@State.g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
             RepCopy.NGrad := RepCopy.NGrad + 1;
             if zProcessData.IsTerminated then
@@ -1471,7 +1471,7 @@ begin
           end;
         MLPFree(NetworkCopy);
         MinLBFGSFree(w, State);
-        Inc(zProcessData.RestartsFinished);
+        inc(zProcessData.RestartsFinished);
 
         if zProcessData.IsTerminated then
             Exit;
@@ -1551,11 +1551,11 @@ var
 
       while (EBest > 1E-50) and MinLBFGSIteration(State) do
         begin
-          APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0, WCount - 1);
-          MLPGradNBatch(NetworkCopy, xy, NPoints, State.F, State.g);
+          APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.x[0], 0, WCount - 1);
+          MLPGradNBatch(NetworkCopy, xy, NPoints, State.f, State.g);
           v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
 
-          State.F := State.F + 0.5 * Decay * v;
+          State.f := State.f + 0.5 * Decay * v;
           APVAdd(@State.g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
           RepCopy.NGrad := RepCopy.NGrad + 1;
 
@@ -1572,7 +1572,7 @@ var
             end;
 
           { dynamic change of decay }
-          Inc(Iteration);
+          inc(Iteration);
           // Decay := 1 / ((10 + Iteration) div 10);
           Decay := 1 / Iteration;
         end;
@@ -1623,7 +1623,7 @@ begin
               Info := -2;
               Exit;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
   Info := 2;
@@ -1688,11 +1688,11 @@ begin
 
         while (EBest > 1E-50) and MinLBFGSIteration(State) do
           begin
-            APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.X[0], 0, WCount - 1);
-            MLPGradNBatch(NetworkCopy, xy, NPoints, State.F, State.g);
+            APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.x[0], 0, WCount - 1);
+            MLPGradNBatch(NetworkCopy, xy, NPoints, State.f, State.g);
             v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
 
-            State.F := State.F + 0.5 * Decay * v;
+            State.f := State.f + 0.5 * Decay * v;
             APVAdd(@State.g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
             RepCopy.NGrad := RepCopy.NGrad + 1;
 
@@ -1709,7 +1709,7 @@ begin
               end;
 
             { dynamic change of decay }
-            Inc(Iteration);
+            inc(Iteration);
             // Decay := 1 / ((10 + Iteration) div 10);
             Decay := 1 / Iteration;
           end;
@@ -1777,7 +1777,7 @@ begin
               Info := -2;
               Exit;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
   Info := 2;
@@ -1911,7 +1911,7 @@ var Rep: TMLPReport; var CVRep: TMLPCVReport);
 var
   i           : TLInt;
   FOld        : TLInt;
-  J           : TLInt;
+  j           : TLInt;
   k           : TLInt;
   Network     : TMultiLayerPerceptron;
   NIn         : TLInt;
@@ -1926,8 +1926,8 @@ var
   Folds       : TLIVec;
   RelCnt      : TLInt;
   InternalRep : TMLPReport;
-  X           : TLVec;
-  Y           : TLVec;
+  x           : TLVec;
+  y           : TLVec;
   IsTerminated: Boolean;
   EBest       : TLFloat;
 begin
@@ -1959,8 +1959,8 @@ begin
   //
   SetLength(TestSet, NPoints (* - 1 + 1 // optimized compiler *) , RowLen (* - 1 + 1 // optimized compiler *) );
   SetLength(CVSet, NPoints (* - 1 + 1 // optimized compiler *) , RowLen (* - 1 + 1 // optimized compiler *) );
-  SetLength(X, NIn (* - 1 + 1 // optimized compiler *) );
-  SetLength(Y, NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, NIn (* - 1 + 1 // optimized compiler *) );
+  SetLength(y, NOut (* - 1 + 1 // optimized compiler *) );
   MLPKFoldSplit(xy, NPoints, NClasses, FoldsCount, False, Folds);
   CVRep.RelClsError := 0;
   CVRep.AvgCE := 0;
@@ -1993,7 +1993,7 @@ begin
               APVMove(@CVSet[CVSSize][0], 0, RowLen - 1, @xy[i][0], 0, RowLen - 1);
               CVSSize := CVSSize + 1;
             end;
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -2036,8 +2036,8 @@ begin
       i := 0;
       while i <= TSSize - 1 do
         begin
-          APVMove(@X[0], 0, NIn - 1, @TestSet[i][0], 0, NIn - 1);
-          MLPProcess(Network, X, Y);
+          APVMove(@x[0], 0, NIn - 1, @TestSet[i][0], 0, NIn - 1);
+          MLPProcess(Network, x, y);
           if MLPIsSoftmax(Network) then
             begin
 
@@ -2045,22 +2045,22 @@ begin
               // Classification-specific code
               //
               k := Round(TestSet[i, NIn]);
-              J := 0;
-              while J <= NOut - 1 do
+              j := 0;
+              while j <= NOut - 1 do
                 begin
-                  if J = k then
+                  if j = k then
                     begin
-                      CVRep.RMSError := CVRep.RMSError + AP_Sqr(Y[J] - 1);
-                      CVRep.AvgError := CVRep.AvgError + AbsReal(Y[J] - 1);
-                      CVRep.AvgRelError := CVRep.AvgRelError + AbsReal(Y[J] - 1);
+                      CVRep.RMSError := CVRep.RMSError + AP_Sqr(y[j] - 1);
+                      CVRep.AvgError := CVRep.AvgError + AbsReal(y[j] - 1);
+                      CVRep.AvgRelError := CVRep.AvgRelError + AbsReal(y[j] - 1);
                       RelCnt := RelCnt + 1;
                     end
                   else
                     begin
-                      CVRep.RMSError := CVRep.RMSError + AP_Sqr(Y[J]);
-                      CVRep.AvgError := CVRep.AvgError + AbsReal(Y[J]);
+                      CVRep.RMSError := CVRep.RMSError + AP_Sqr(y[j]);
+                      CVRep.AvgError := CVRep.AvgError + AbsReal(y[j]);
                     end;
-                  Inc(J);
+                  inc(j);
                 end;
             end
           else
@@ -2069,22 +2069,22 @@ begin
               //
               // Regression-specific code
               //
-              J := 0;
-              while J <= NOut - 1 do
+              j := 0;
+              while j <= NOut - 1 do
                 begin
-                  CVRep.RMSError := CVRep.RMSError + AP_Sqr(Y[J] - TestSet[i, NIn + J]);
-                  CVRep.AvgError := CVRep.AvgError + AbsReal(Y[J] - TestSet[i, NIn + J]);
-                  if AP_FP_NEq(TestSet[i, NIn + J], 0) then
+                  CVRep.RMSError := CVRep.RMSError + AP_Sqr(y[j] - TestSet[i, NIn + j]);
+                  CVRep.AvgError := CVRep.AvgError + AbsReal(y[j] - TestSet[i, NIn + j]);
+                  if AP_FP_NEq(TestSet[i, NIn + j], 0) then
                     begin
-                      CVRep.AvgRelError := CVRep.AvgRelError + AbsReal((Y[J] - TestSet[i, NIn + J]) / TestSet[i, NIn + J]);
+                      CVRep.AvgRelError := CVRep.AvgRelError + AbsReal((y[j] - TestSet[i, NIn + j]) / TestSet[i, NIn + j]);
                       RelCnt := RelCnt + 1;
                     end;
-                  Inc(J);
+                  inc(j);
                 end;
             end;
-          Inc(i);
+          inc(i);
         end;
-      Inc(FOld);
+      inc(FOld);
     end;
   if MLPIsSoftmax(Network) then
     begin
@@ -2109,7 +2109,7 @@ NClasses: TLInt; FoldsCount: TLInt; StratifiedSplits: Boolean;
 var Folds: TLIVec);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   k: TLInt;
 begin
 
@@ -2131,18 +2131,20 @@ begin
   while i <= NPoints - 1 do
     begin
       Folds[i] := i * FoldsCount div NPoints;
-      Inc(i);
+      inc(i);
     end;
   i := 0;
   while i <= NPoints - 2 do
     begin
-      J := i + RandomInteger(NPoints - i);
-      if J <> i then
+      j := i + RandomInteger(NPoints - i);
+      if j <> i then
         begin
           k := Folds[i];
-          Folds[i] := Folds[J];
-          Folds[J] := k;
+          Folds[i] := Folds[j];
+          Folds[j] := k;
         end;
-      Inc(i);
+      inc(i);
     end;
 end; 
+ 
+ 

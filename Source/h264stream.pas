@@ -17,11 +17,11 @@ unit h264stream;
 interface
 
 uses
-  h264Util, h264Stdint, h264Common, h264VLC, h264BitStream, h264tables, PascalStrings;
+  h264Util, h264Types, h264Common, h264VLC, h264BitStream, h264tables, PascalStrings;
 
 type
   // SPS
-  sps_t = packed record
+  sps_t = record
     width, height: int32_t;
     mb_width, mb_height: int32_t;
     pic_order_cnt_type: uint8_t;
@@ -31,14 +31,14 @@ type
   end;
 
   // PPS
-  pps_t = packed record
+  pps_t = record
     deblocking_filter_control_present_flag: uint8_t;
     qp: uint8_t;
     chroma_qp_offset: int8_t;
   end;
 
   // slice
-  slice_header_t = packed record
+  slice_header_t = record
     type_: uint8_t;
     is_idr: Boolean;
     idr_pic_id: uint16_t;
@@ -132,14 +132,14 @@ implementation
 uses DoStatusIO;
 
 const
-  // Table 7-1 每 NAL unit type codes
+  // type codes
   NAL_NOIDR = 1; // Coded slice of a non-IDR picture
   NAL_IDR   = 5; // non-partitioned
   NAL_SEI   = 6;
   NAL_SPS   = 7;
   NAL_PPS   = 8;
 
-  // Table A-1 每 Level limits
+  // Level limits
   LEVEL_DPB: array [0 .. 14, 0 .. 1] of int32_t = (
     (10, 148),
     (11, 337),
@@ -181,7 +181,7 @@ begin
     begin
       i := 0;
       while LEVEL_DPB[i, 1] < dpb do
-          Inc(i);
+          inc(i);
       Result := uint8_t(LEVEL_DPB[i, 0]);
     end;
 end;
@@ -209,29 +209,29 @@ end;
   NAL unit, it shall be discarded by the decoding process.
   The last uint8_t of the NAL unit shall not be equal to 0x00.
   Within the NAL unit, the following three-uint8_t sequences shall not occur at any uint8_t-aligned position:
-  每 0x000000
-  每 0x000001
-  每 0x000002
+  0x000000
+  0x000001
+  0x000002
   Within the NAL unit, any four-uint8_t sequence that starts with 0x000003 other than the following sequences shall not
   occur at any uint8_t-aligned position:
-  每 0x00000300
-  每 0x00000301
-  每 0x00000302
-  每 0x00000303
+  0x00000300
+  0x00000301
+  0x00000302
+  0x00000303
 }
 // NAL encapsulate RBSP (raw uint8_t seq.payload)
 procedure NAL_encapsulate(var rbsp: TBitStreamWriter; var nalstream: TBitStreamWriter; const naltype: int32_t);
 var
   nal_ref_idc: int32_t;
   i, Len: int32_t;
-  A: uint8_p;
+  a: uint8_p;
 begin
   nal_ref_idc := 3;
   // rbsp_trailing_bits
   rbsp.write(1);
   rbsp.ByteAlign;
   rbsp.Close;
-  A := rbsp.DataStart;
+  a := rbsp.DataStart;
   Len := rbsp.ByteSize;
   nal_ref_idc := 3;
   if naltype = NAL_SEI then
@@ -246,15 +246,15 @@ begin
   while i < Len do
     begin
       // cycle to catch repeated occurences
-      while (i + 2 < Len) and (A[0] = 0) and (A[1] = 0) and (A[2] in [0, 1, 2, 3]) do
+      while (i + 2 < Len) and (a[0] = 0) and (a[1] = 0) and (a[2] in [0, 1, 2, 3]) do
         begin
           nalstream.write(3, 24); // 0x000003
-          Inc(A, 2);
-          Inc(i, 2);
+          inc(a, 2);
+          inc(i, 2);
         end;
-      nalstream.write(A^, 8);
-      Inc(A);
-      Inc(i);
+      nalstream.write(a^, 8);
+      inc(a);
+      inc(i);
     end;
 end;
 
@@ -398,7 +398,7 @@ begin
       while i > 255 do
         begin
           b.write(255, 8); // ff_byte
-          Dec(i, 255);
+          dec(i, 255);
         end;
       b.write(i, 8); // last_payload_size_byte
       for i := 1 to sei_uuid.Len do
@@ -509,8 +509,6 @@ begin
   NAL_encapsulate(slice_bs, nal_bs, nal_unit_type);
 end;
 
-{ TH264Stream }
-
 procedure TH264Stream.SetChromaQPOffset(const AValue: uint8_t);
 begin
   pps.chroma_qp_offset := AValue;
@@ -600,14 +598,14 @@ const
     (6, 9), (7, 12), (12, 11), (13, 14)
     );
 var
-  A, b: uint8_t;
+  a, b: uint8_t;
 begin
-  A := modes[idx[i, 0]];
+  a := modes[idx[i, 0]];
   b := modes[idx[i, 1]];
-  if A + b >= INTRA_PRED_NA then
+  if a + b >= INTRA_PRED_NA then
       Result := INTRA_PRED_DC
   else
-      Result := Min(A, b);
+      Result := Min(a, b);
 end;
 
 procedure TH264Stream.write_mb_pred_intra(const mb: TMacroblock);
@@ -641,7 +639,7 @@ end;
 
 procedure TH264Stream.write_mb_pred_inter(const mb: TMacroblock);
 var
-  X, Y: int16_t;
+  x, y: int16_t;
 begin
   // ref_idx_l0
   case slice.num_ref_frames of
@@ -654,10 +652,10 @@ begin
   end;
 
   // mvd L0
-  X := mb.mv.X - mb.mvp.X;
-  Y := mb.mv.Y - mb.mvp.Y;
-  write_se_code(bs, X);
-  write_se_code(bs, Y);
+  x := mb.mv.x - mb.mvp.x;
+  y := mb.mv.y - mb.mvp.y;
+  write_se_code(bs, x);
+  write_se_code(bs, y);
 end;
 
 procedure TH264Stream.write_mb_residual(var mb: TMacroblock);
@@ -758,7 +756,7 @@ begin
   else
     begin
       slice.is_idr := False;
-      Inc(slice.frame_num);
+      inc(slice.frame_num);
     end;
 
   WriteSliceHeader;
@@ -784,7 +782,7 @@ begin
       if slice.idr_pic_id = 65535 then
           slice.idr_pic_id := 0
       else
-          Inc(slice.idr_pic_id);
+          inc(slice.idr_pic_id);
     end;
   h264s_write_slice_to_nal(slice, bs, nalstream);
   nalstream.Close;
@@ -797,7 +795,7 @@ end;
 // PCM mb - no compression
 procedure TH264Stream.write_mb_i_pcm(var mb: TMacroblock);
 var
-  i, J, chroma_idx: int32_t;
+  i, j, chroma_idx: int32_t;
 begin
   // skip run, mbtype
   if slice.type_ = SLICE_P then
@@ -814,8 +812,8 @@ begin
       bs.write(mb.pixels[i], 8);
   for chroma_idx := 0 to 1 do
     for i := 0 to 7 do
-      for J := 0 to 7 do
-          bs.write(mb.pixels_c[chroma_idx][i * 16 + J], 8);
+      for j := 0 to 7 do
+          bs.write(mb.pixels_c[chroma_idx][i * 16 + j], 8);
 end;
 
 procedure TH264Stream.write_mb_i_4x4(var mb: TMacroblock);
@@ -844,7 +842,7 @@ function mb_I_16x16_mbtype_num(const cbp, pred: int32_t): int32_t; inline;
 begin
   Result := 1 + pred + (cbp shr 4) * 4;
   if cbp and $F > 0 then
-      Inc(Result, 12);
+      inc(Result, 12);
 end;
 
 procedure TH264Stream.write_mb_i_16x16(var mb: TMacroblock);
@@ -880,36 +878,27 @@ end;
 
 procedure TH264Stream.write_mb_p_skip;
 begin
-  Inc(mb_skip_count);
+  inc(mb_skip_count);
 end;
 
 procedure TH264Stream.WriteMB(var mb: TMacroblock);
 begin
   case mb.mbtype of
-    MB_I_PCM:
-      write_mb_i_pcm(mb);
-    MB_I_4x4:
-      write_mb_i_4x4(mb);
-    MB_I_16x16:
-      write_mb_i_16x16(mb);
-    MB_P_16x16:
-      write_mb_p_16x16(mb);
-    MB_P_SKIP:
-      write_mb_p_skip;
+    MB_I_PCM: write_mb_i_pcm(mb);
+    MB_I_4x4: write_mb_i_4x4(mb);
+    MB_I_16x16: write_mb_i_16x16(mb);
+    MB_P_16x16: write_mb_p_16x16(mb);
+    MB_P_SKIP: write_mb_p_skip;
   end;
 end;
 
 function TH264Stream.GetBitCost(const mb: TMacroblock): int32_t;
 begin
   case mb.mbtype of
-    MB_I_4x4:
-      Result := mb_i_4x4_bits(mb);
-    MB_I_16x16:
-      Result := mb_i_16x16_bits(mb);
-    MB_P_16x16:
-      Result := mb_p_16x16_bits(mb);
-    MB_P_SKIP:
-      Result := mb_p_skip_bits;
+    MB_I_4x4: Result := mb_i_4x4_bits(mb);
+    MB_I_16x16: Result := mb_i_16x16_bits(mb);
+    MB_P_16x16: Result := mb_p_16x16_bits(mb);
+    MB_P_SKIP: Result := mb_p_skip_bits;
     else
       Result := 256 + 2 * 64;
   end;
@@ -918,20 +907,20 @@ end;
 // bitcost functions
 function TH264Stream.mb_interpred_bits(const mb: TMacroblock): int32_t;
 var
-  X, Y: int16_t;
+  x, y: int16_t;
 begin
   Result := 0;
   case slice.num_ref_frames of
     1:
       ;
     2:
-      Inc(Result);
+      inc(Result);
     else
-      Inc(Result, ue_code_len(mb.ref));
+      inc(Result, ue_code_len(mb.ref));
   end;
-  X := mb.mv.X - mb.mvp.X;
-  Y := mb.mv.Y - mb.mvp.Y;
-  Inc(Result, se_code_len(X) + se_code_len(Y));
+  x := mb.mv.x - mb.mvp.x;
+  y := mb.mv.y - mb.mvp.y;
+  inc(Result, se_code_len(x) + se_code_len(y));
 end;
 
 // Get InterPredCostEvaluator for current slice
@@ -957,11 +946,11 @@ begin
           Mode := mb.i4_pred_mode[i];
 
           if pred <> Mode then
-              Inc(Result, 3);
+              inc(Result, 3);
         end;
     end;
   // Chroma
-  Inc(Result, ue_code_len(mb.chroma_pred_mode));
+  inc(Result, ue_code_len(mb.chroma_pred_mode));
 end;
 
 function TH264Stream.mb_residual_bits(const mb: TMacroblock): int32_t;
@@ -972,26 +961,26 @@ begin
 
   if mb.mbtype = MB_I_16x16 then
     begin
-      Inc(Result, cavlc_block_bits(mb, mb.Block[24], 0, RES_LUMA_DC));
+      inc(Result, cavlc_block_bits(mb, mb.Block[24], 0, RES_LUMA_DC));
       if (mb.cbp and $F) > 0 then
         for i := 0 to 15 do
-            Inc(Result, cavlc_block_bits(mb, mb.Block[i], i, RES_LUMA_AC));
+            inc(Result, cavlc_block_bits(mb, mb.Block[i], i, RES_LUMA_AC));
     end
   else
     for i := 0 to 15 do
       if (mb.cbp and (1 shl (i div 4))) > 0 then
-          Inc(Result, cavlc_block_bits(mb, mb.Block[i], i, RES_LUMA));
+          inc(Result, cavlc_block_bits(mb, mb.Block[i], i, RES_LUMA));
 
   if mb.cbp shr 4 > 0 then
     begin
       for i := 0 to 1 do
-          Inc(Result, cavlc_block_bits(mb, mb.Block[25 + i], i, RES_DC));
+          inc(Result, cavlc_block_bits(mb, mb.Block[25 + i], i, RES_DC));
       if mb.cbp shr 5 > 0 then
         begin
           for i := 0 to 3 do
-              Inc(Result, cavlc_block_bits(mb, mb.Block[16 + i], i, RES_AC_U));
+              inc(Result, cavlc_block_bits(mb, mb.Block[16 + i], i, RES_AC_U));
           for i := 0 to 3 do
-              Inc(Result, cavlc_block_bits(mb, mb.Block[16 + 4 + i], i, RES_AC_V));
+              inc(Result, cavlc_block_bits(mb, mb.Block[16 + 4 + i], i, RES_AC_V));
         end;
     end;
 end;
@@ -1002,10 +991,10 @@ begin
       Result := ue_code_len(5)
   else
       Result := ue_code_len(0);
-  Inc(Result, mb_intrapred_bits(mb));
-  Inc(Result, ue_code_len(tab_cbp_intra_4x4_to_codenum[mb.cbp]));
+  inc(Result, mb_intrapred_bits(mb));
+  inc(Result, ue_code_len(tab_cbp_intra_4x4_to_codenum[mb.cbp]));
   if mb.cbp > 0 then
-      Inc(Result, mb_residual_bits(mb));
+      inc(Result, mb_residual_bits(mb));
 end;
 
 function TH264Stream.mb_i_16x16_bits(const mb: TMacroblock): int32_t;
@@ -1017,16 +1006,16 @@ begin
       Result := ue_code_len(5 + mbt)
   else
       Result := ue_code_len(mbt);
-  Inc(Result, mb_intrapred_bits(mb));
-  Inc(Result, mb_residual_bits(mb));
+  inc(Result, mb_intrapred_bits(mb));
+  inc(Result, mb_residual_bits(mb));
 end;
 
 function TH264Stream.mb_p_16x16_bits(const mb: TMacroblock): int32_t;
 begin
   Result := 1 + mb_interpred_bits(mb);
-  Inc(Result, ue_code_len(tab_cbp_inter_4x4_to_codenum[mb.cbp]));
+  inc(Result, ue_code_len(tab_cbp_inter_4x4_to_codenum[mb.cbp]));
   if mb.cbp > 0 then
-      Inc(Result, mb_residual_bits(mb));
+      inc(Result, mb_residual_bits(mb));
 end;
 
 function TH264Stream.mb_p_skip_bits: int32_t;
@@ -1051,12 +1040,9 @@ begin
   _mvp := mvp;
   _ref_idx := idx;
   case _h264stream.NumRefFrames of
-    1:
-      _ref_frame_bits := 0;
-    2:
-      _ref_frame_bits := 1;
-    else
-      _ref_frame_bits := ue_code_len(_ref_idx);
+    1: _ref_frame_bits := 0;
+    2: _ref_frame_bits := 1;
+    else _ref_frame_bits := ue_code_len(_ref_idx);
   end;
 end;
 
@@ -1075,8 +1061,8 @@ end;
 
 function TH264InterPredCostEvaluator.bitcost(const mv: TMotionvec): int32_t;
 begin
-  Result := _ref_frame_bits + se_code_len(mv.X - _mvp.X) + se_code_len(mv.Y - _mvp.Y);
+  Result := _ref_frame_bits + se_code_len(mv.x - _mvp.x) + se_code_len(mv.y - _mvp.y);
   Result := Result * _lambda;
 end;
 
-end.  
+end.

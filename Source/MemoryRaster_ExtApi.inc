@@ -1,9 +1,9 @@
-procedure FillRasterColor(var X; Count: Cardinal; Value: TRasterColor);
+procedure FillRasterColor(var x; Count: Cardinal; Value: TRasterColor);
 var
   i: Integer;
   p: PRasterColorArray;
 begin
-  p := PRasterColorArray(@X);
+  p := PRasterColorArray(@x);
   for i := Count - 1 downto 0 do
       p^[i] := Value;
 end;
@@ -33,8 +33,8 @@ begin
         for Dsty := dstRect.Top to dstRect.Bottom - 1 do
           begin
             CopyRasterColor(SrcP^, DstP^, w);
-            Inc(SrcP, Src.width);
-            Inc(DstP, Dst.width);
+            inc(SrcP, Src.width);
+            inc(DstP, Dst.width);
           end;
       end;
     dmBlend:
@@ -47,8 +47,8 @@ begin
           for Dsty := dstRect.Top to dstRect.Bottom - 1 do
             begin
               BL(SrcP, DstP, w);
-              Inc(SrcP, Src.width);
-              Inc(DstP, Dst.width);
+              inc(SrcP, Src.width);
+              inc(DstP, Dst.width);
             end
         end
       else
@@ -60,8 +60,8 @@ begin
           for Dsty := dstRect.Top to dstRect.Bottom - 1 do
             begin
               ble(SrcP, DstP, w, Src.MasterAlpha);
-              Inc(SrcP, Src.width);
-              Inc(DstP, Dst.width);
+              inc(SrcP, Src.width);
+              inc(DstP, Dst.width);
             end
         end;
     dmTransparent:
@@ -76,11 +76,11 @@ begin
               begin
                 if mc <> sp^ then
                     DP^ := sp^;
-                Inc(sp);
-                Inc(DP);
+                inc(sp);
+                inc(DP);
               end;
-            Inc(SrcP, Src.width);
-            Inc(DstP, Dst.width);
+            inc(SrcP, Src.width);
+            inc(DstP, Dst.width);
           end;
       end;
   end;
@@ -110,152 +110,152 @@ begin
   BlendBlock(Dst, DstClip, Src, SrcRect.Left, SrcRect.Top, CombineOp);
 end;
 
-function RandomRasterColor(const A: Byte = $FF): TRasterColor;
+function RandomRasterColor(const a: Byte = $FF): TRasterColor;
 begin
-  Result := RasterColor(Random(255), Random(255), Random(255), A);
+  Result := RasterColor(Random(255), Random(255), Random(255), a);
 end;
 
-function RasterColor(const R, g, b: Byte; const A: Byte = $FF): TRasterColor;
+function RasterColor(const r, g, b: Byte; const a: Byte = $FF): TRasterColor;
 begin
-  TRasterColorEntry(Result).R := R;
+  TRasterColorEntry(Result).r := r;
   TRasterColorEntry(Result).g := g;
   TRasterColorEntry(Result).b := b;
-  TRasterColorEntry(Result).A := A;
+  TRasterColorEntry(Result).a := a;
 end;
 
-function RasterColorInv(const C: TRasterColor): TRasterColor;
+function RasterColorInv(const c: TRasterColor): TRasterColor;
 begin
   Result := RasterColor(
-    $FF - ClampByte(TRasterColorEntry(C).R),
-    $FF - ClampByte(TRasterColorEntry(C).g),
-    $FF - ClampByte(TRasterColorEntry(C).b),
-    TRasterColorEntry(C).A);
+    $FF - ClampByte(TRasterColorEntry(c).r),
+    $FF - ClampByte(TRasterColorEntry(c).g),
+    $FF - ClampByte(TRasterColorEntry(c).b),
+    TRasterColorEntry(c).a);
 end;
 
-function RasterAlphaColor(const C: TRasterColor; const A: Byte): TRasterColor;
+function RasterAlphaColor(const c: TRasterColor; const a: Byte): TRasterColor;
 begin
-  if TRasterColorEntry(C).A = 0 then
+  if TRasterColorEntry(c).a = 0 then
       Result := 0
-  else if TRasterColorEntry(C).A = $FF then
-      Result := C
+  else if TRasterColorEntry(c).a = $FF then
+      Result := c
   else
     begin
-      TRasterColorEntry(Result).R := Trunc(TRasterColorEntry(C).R * (TRasterColorEntry(C).A / $FF));
-      TRasterColorEntry(Result).g := Trunc(TRasterColorEntry(C).g * (TRasterColorEntry(C).A / $FF));
-      TRasterColorEntry(Result).b := Trunc(TRasterColorEntry(C).b * (TRasterColorEntry(C).A / $FF));
-      TRasterColorEntry(Result).A := TRasterColorEntry(C).A;
+      TRasterColorEntry(Result).r := Trunc(TRasterColorEntry(c).r * (TRasterColorEntry(c).a / $FF));
+      TRasterColorEntry(Result).g := Trunc(TRasterColorEntry(c).g * (TRasterColorEntry(c).a / $FF));
+      TRasterColorEntry(Result).b := Trunc(TRasterColorEntry(c).b * (TRasterColorEntry(c).a / $FF));
+      TRasterColorEntry(Result).a := TRasterColorEntry(c).a;
     end;
 end;
 
-function RasterAlphaColorF(const C: TRasterColor; const A: Single): TRasterColor;
+function RasterAlphaColorF(const c: TRasterColor; const a: Single): TRasterColor;
 begin
-  Result := RasterAlphaColor(C, ClampByte(Trunc(A * $FF)));
+  Result := RasterAlphaColor(c, ClampByte(Trunc(a * $FF)));
 end;
 
-function RasterColorF(const R, g, b: Single; const A: Single = 1.0): TRasterColor;
+function RasterColorF(const r, g, b: Single; const a: Single = 1.0): TRasterColor;
 begin
   Result := RasterColor(
-    ClampByte(Round(R * $FF)),
+    ClampByte(Round(r * $FF)),
     ClampByte(Round(g * $FF)),
     ClampByte(Round(b * $FF)),
-    ClampByte(Round(A * $FF)));
+    ClampByte(Round(a * $FF)));
 end;
 
-procedure RasterColor2F(const C: TRasterColor; var R, g, b, A: Single);
+procedure RasterColor2F(const c: TRasterColor; var r, g, b, a: Single);
 begin
-  R := TRasterColorEntry(C).R / $FF;
-  g := TRasterColorEntry(C).g / $FF;
-  b := TRasterColorEntry(C).b / $FF;
-  A := TRasterColorEntry(C).A / $FF;
+  r := TRasterColorEntry(c).r / $FF;
+  g := TRasterColorEntry(c).g / $FF;
+  b := TRasterColorEntry(c).b / $FF;
+  a := TRasterColorEntry(c).a / $FF;
 end;
 
-procedure RasterColor2F(const C: TRasterColor; var R, g, b: Single);
+procedure RasterColor2F(const c: TRasterColor; var r, g, b: Single);
 begin
-  R := TRasterColorEntry(C).R / $FF;
-  g := TRasterColorEntry(C).g / $FF;
-  b := TRasterColorEntry(C).b / $FF;
+  r := TRasterColorEntry(c).r / $FF;
+  g := TRasterColorEntry(c).g / $FF;
+  b := TRasterColorEntry(c).b / $FF;
 end;
 
-function RasterColor2Gray(const C: TRasterColor): Byte;
+function RasterColor2Gray(const c: TRasterColor): Byte;
 begin
-  with TRasterColorEntry(C) do
-      Result := Round((R + g + b) / 3);
+  with TRasterColorEntry(c) do
+      Result := Round((r + g + b) / 3);
 end;
 
-function RasterColor2GrayS(const C: TRasterColor): Single;
+function RasterColor2GrayS(const c: TRasterColor): Single;
 begin
-  with TRasterColorEntry(C) do
-      Result := (R + g + b) / 3 / $FF;
+  with TRasterColorEntry(c) do
+      Result := (r + g + b) / 3 / $FF;
 end;
 
-function RasterColor2GrayD(const C: TRasterColor): Double;
+function RasterColor2GrayD(const c: TRasterColor): Double;
 begin
-  with TRasterColorEntry(C) do
-      Result := (R + g + b) / 3 / $FF;
+  with TRasterColorEntry(c) do
+      Result := (r + g + b) / 3 / $FF;
 end;
 
 function RGBA2BGRA(const sour: TRasterColor): TRasterColor;
 begin
-  TRasterColorEntry(Result).R := TRasterColorEntry(sour).b;
+  TRasterColorEntry(Result).r := TRasterColorEntry(sour).b;
   TRasterColorEntry(Result).g := TRasterColorEntry(sour).g;
-  TRasterColorEntry(Result).b := TRasterColorEntry(sour).R;
-  TRasterColorEntry(Result).A := TRasterColorEntry(sour).A;
+  TRasterColorEntry(Result).b := TRasterColorEntry(sour).r;
+  TRasterColorEntry(Result).a := TRasterColorEntry(sour).a;
 end;
 
 function BGRA2RGBA(const sour: TRasterColor): TRasterColor;
 begin
-  TRasterColorEntry(Result).R := TRasterColorEntry(sour).b;
+  TRasterColorEntry(Result).r := TRasterColorEntry(sour).b;
   TRasterColorEntry(Result).g := TRasterColorEntry(sour).g;
-  TRasterColorEntry(Result).b := TRasterColorEntry(sour).R;
-  TRasterColorEntry(Result).A := TRasterColorEntry(sour).A;
+  TRasterColorEntry(Result).b := TRasterColorEntry(sour).r;
+  TRasterColorEntry(Result).a := TRasterColorEntry(sour).a;
 end;
 
 function AggColor(const Value: TRasterColor): TAggColorRgba8;
 begin
-  Result.R := TRasterColorEntry(Value).R;
+  Result.r := TRasterColorEntry(Value).r;
   Result.g := TRasterColorEntry(Value).g;
   Result.b := TRasterColorEntry(Value).b;
-  Result.A := TRasterColorEntry(Value).A;
+  Result.a := TRasterColorEntry(Value).a;
 end;
 
-function AggColor(const R, g, b: Single; const A: Single = 1.0): TAggColorRgba8;
+function AggColor(const r, g, b: Single; const a: Single = 1.0): TAggColorRgba8;
 begin
-  Result := AggColor(RasterColorF(R, g, b, A));
+  Result := AggColor(RasterColorF(r, g, b, a));
 end;
 
 function AggColor(const Value: TAggColorRgba8): TRasterColor;
 begin
-  TRasterColorEntry(Result).R := Value.R;
+  TRasterColorEntry(Result).r := Value.r;
   TRasterColorEntry(Result).g := Value.g;
   TRasterColorEntry(Result).b := Value.b;
-  TRasterColorEntry(Result).A := Value.A;
+  TRasterColorEntry(Result).a := Value.a;
 end;
 
 procedure ComputeSize(const MAX_Width, MAX_Height: Integer; var width, height: Integer);
 var
-  F: Single;
+  f: Single;
 begin
   if (width > MAX_Width) then
     begin
-      F := MAX_Width / width;
-      width := Round(width * F);
-      height := Round(height * F);
+      f := MAX_Width / width;
+      width := Round(width * f);
+      height := Round(height * f);
     end;
   if (height > MAX_Height) then
     begin
-      F := MAX_Height / height;
-      width := Round(width * F);
-      height := Round(height * F);
+      f := MAX_Height / height;
+      width := Round(width * f);
+      height := Round(height * f);
     end;
 end;
 
 procedure FastBlur(Source, dest: TMemoryRaster; radius: Double; const Bounds: TRect);
 type
-  TSumRecord = packed record
-    b, g, R, A, Sum: Integer;
+  TSumRecord = record
+    b, g, r, a, Sum: Integer;
   end;
 var
-  LL, RR, TT, BB, xx, yy, i, J, X, Y, RadiusI, Passes: Integer;
+  LL, RR, TT, BB, xx, yy, i, j, x, y, RadiusI, Passes: Integer;
   RecLeft, RecTop, RecRight, RecBottom: Integer;
   ImagePixel: PRasterColorEntry;
   SumRec: TSumRecord;
@@ -287,31 +287,31 @@ begin
   SetLength(pixels, Max(dest.width, dest.height) + 1);
 
   // pre-multiply alphas ...
-  for Y := RecTop to RecBottom do
+  for y := RecTop to RecBottom do
     begin
-      ImgPixel := PRasterColorEntry(dest.ScanLine[Y]);
-      Inc(ImgPixel, RecLeft);
-      for X := RecLeft to RecRight do
+      ImgPixel := PRasterColorEntry(dest.ScanLine[y]);
+      inc(ImgPixel, RecLeft);
+      for x := RecLeft to RecRight do
         with ImgPixel^ do
           begin
-            R := DivTable[R, A];
-            g := DivTable[g, A];
-            b := DivTable[b, A];
-            Inc(ImgPixel);
+            r := DivTable[r, a];
+            g := DivTable[g, a];
+            b := DivTable[b, a];
+            inc(ImgPixel);
           end;
     end;
 
   for i := 1 to Passes do
     begin
       // horizontal pass...
-      for Y := RecTop to RecBottom do
+      for y := RecTop to RecBottom do
         begin
-          ImagePixel := PRasterColorEntry(@dest.ScanLine[Y]^[RecLeft]);
+          ImagePixel := PRasterColorEntry(@dest.ScanLine[y]^[RecLeft]);
           // fill the Pixels buffer with a copy of the row's pixels ...
           CopyRasterColor(ImagePixel^, pixels[RecLeft], RecRight - RecLeft + 1);
 
-          SumRec.A := 0;
-          SumRec.R := 0;
+          SumRec.a := 0;
+          SumRec.r := 0;
           SumRec.g := 0;
           SumRec.b := 0;
           SumRec.Sum := 0;
@@ -324,47 +324,47 @@ begin
           for xx := LL to RR do
             with pixels[xx] do
               begin
-                Inc(SumRec.A, A);
-                Inc(SumRec.R, R);
-                Inc(SumRec.g, g);
-                Inc(SumRec.b, b);
-                Inc(SumRec.Sum);
+                inc(SumRec.a, a);
+                inc(SumRec.r, r);
+                inc(SumRec.g, g);
+                inc(SumRec.b, b);
+                inc(SumRec.Sum);
               end;
           with ImagePixel^ do
             begin
-              A := SumRec.A div SumRec.Sum;
-              R := SumRec.R div SumRec.Sum;
+              a := SumRec.a div SumRec.Sum;
+              r := SumRec.r div SumRec.Sum;
               g := SumRec.g div SumRec.Sum;
               b := SumRec.b div SumRec.Sum;
             end;
           // update the remaining pixels in the row ...
-          for X := RecLeft + 1 to RecRight do
+          for x := RecLeft + 1 to RecRight do
             begin
-              Inc(ImagePixel);
-              LL := X - RadiusI - 1;
-              RR := X + RadiusI;
+              inc(ImagePixel);
+              LL := x - RadiusI - 1;
+              RR := x + RadiusI;
               if LL >= RecLeft then
                 with pixels[LL] do
                   begin
-                    Dec(SumRec.A, A);
-                    Dec(SumRec.R, R);
-                    Dec(SumRec.g, g);
-                    Dec(SumRec.b, b);
-                    Dec(SumRec.Sum);
+                    dec(SumRec.a, a);
+                    dec(SumRec.r, r);
+                    dec(SumRec.g, g);
+                    dec(SumRec.b, b);
+                    dec(SumRec.Sum);
                   end;
               if RR <= RecRight then
                 with pixels[RR] do
                   begin
-                    Inc(SumRec.A, A);
-                    Inc(SumRec.R, R);
-                    Inc(SumRec.g, g);
-                    Inc(SumRec.b, b);
-                    Inc(SumRec.Sum);
+                    inc(SumRec.a, a);
+                    inc(SumRec.r, r);
+                    inc(SumRec.g, g);
+                    inc(SumRec.b, b);
+                    inc(SumRec.Sum);
                   end;
               with ImagePixel^ do
                 begin
-                  A := SumRec.A div SumRec.Sum;
-                  R := SumRec.R div SumRec.Sum;
+                  a := SumRec.a div SumRec.Sum;
+                  r := SumRec.r div SumRec.Sum;
                   g := SumRec.g div SumRec.Sum;
                   b := SumRec.b div SumRec.Sum;
                 end;
@@ -372,22 +372,22 @@ begin
         end;
 
       // vertical pass...
-      for X := RecLeft to RecRight do
+      for x := RecLeft to RecRight do
         begin
-          ImagePixel := PRasterColorEntry(@dest.ScanLine[RecTop]^[X]);
-          for J := RecTop to RecBottom do
+          ImagePixel := PRasterColorEntry(@dest.ScanLine[RecTop]^[x]);
+          for j := RecTop to RecBottom do
             begin
-              pixels[J] := ImagePixel^;
-              Inc(ImagePixel, dest.width);
+              pixels[j] := ImagePixel^;
+              inc(ImagePixel, dest.width);
             end;
-          ImagePixel := PRasterColorEntry(@dest.ScanLine[RecTop]^[X]);
+          ImagePixel := PRasterColorEntry(@dest.ScanLine[RecTop]^[x]);
 
           TT := RecTop;
           BB := RecTop + RadiusI;
           if BB > RecBottom then
               BB := RecBottom;
-          SumRec.A := 0;
-          SumRec.R := 0;
+          SumRec.a := 0;
+          SumRec.r := 0;
           SumRec.g := 0;
           SumRec.b := 0;
           SumRec.Sum := 0;
@@ -395,48 +395,48 @@ begin
           for yy := TT to BB do
             with pixels[yy] do
               begin
-                Inc(SumRec.A, A);
-                Inc(SumRec.R, R);
-                Inc(SumRec.g, g);
-                Inc(SumRec.b, b);
-                Inc(SumRec.Sum);
+                inc(SumRec.a, a);
+                inc(SumRec.r, r);
+                inc(SumRec.g, g);
+                inc(SumRec.b, b);
+                inc(SumRec.Sum);
               end;
           with ImagePixel^ do
             begin
-              A := SumRec.A div SumRec.Sum;
-              R := SumRec.R div SumRec.Sum;
+              a := SumRec.a div SumRec.Sum;
+              r := SumRec.r div SumRec.Sum;
               g := SumRec.g div SumRec.Sum;
               b := SumRec.b div SumRec.Sum;
             end;
           // update remainder in col ...
-          for Y := RecTop + 1 to RecBottom do
+          for y := RecTop + 1 to RecBottom do
             begin
-              Inc(ImagePixel, dest.width);
-              TT := Y - RadiusI - 1;
-              BB := Y + RadiusI;
+              inc(ImagePixel, dest.width);
+              TT := y - RadiusI - 1;
+              BB := y + RadiusI;
 
               if TT >= RecTop then
                 with pixels[TT] do
                   begin
-                    Dec(SumRec.A, A);
-                    Dec(SumRec.R, R);
-                    Dec(SumRec.g, g);
-                    Dec(SumRec.b, b);
-                    Dec(SumRec.Sum);
+                    dec(SumRec.a, a);
+                    dec(SumRec.r, r);
+                    dec(SumRec.g, g);
+                    dec(SumRec.b, b);
+                    dec(SumRec.Sum);
                   end;
               if BB <= RecBottom then
                 with pixels[BB] do
                   begin
-                    Inc(SumRec.A, A);
-                    Inc(SumRec.R, R);
-                    Inc(SumRec.g, g);
-                    Inc(SumRec.b, b);
-                    Inc(SumRec.Sum);
+                    inc(SumRec.a, a);
+                    inc(SumRec.r, r);
+                    inc(SumRec.g, g);
+                    inc(SumRec.b, b);
+                    inc(SumRec.Sum);
                   end;
               with ImagePixel^ do
                 begin
-                  A := SumRec.A div SumRec.Sum;
-                  R := SumRec.R div SumRec.Sum;
+                  a := SumRec.a div SumRec.Sum;
+                  r := SumRec.r div SumRec.Sum;
                   g := SumRec.g div SumRec.Sum;
                   b := SumRec.b div SumRec.Sum;
                 end;
@@ -445,15 +445,15 @@ begin
     end;
 
   // extract alphas ...
-  for Y := RecTop to RecBottom do
+  for y := RecTop to RecBottom do
     begin
-      ImgPixel := PRasterColorEntry(@dest.ScanLine[Y]^[RecLeft]);
-      for X := RecLeft to RecRight do
+      ImgPixel := PRasterColorEntry(@dest.ScanLine[y]^[RecLeft]);
+      for x := RecLeft to RecRight do
         begin
-          ImgPixel^.R := RcTable[ImgPixel^.A, ImgPixel^.R];
-          ImgPixel^.g := RcTable[ImgPixel^.A, ImgPixel^.g];
-          ImgPixel^.b := RcTable[ImgPixel^.A, ImgPixel^.b];
-          Inc(ImgPixel);
+          ImgPixel^.r := RcTable[ImgPixel^.a, ImgPixel^.r];
+          ImgPixel^.g := RcTable[ImgPixel^.a, ImgPixel^.g];
+          ImgPixel^.b := RcTable[ImgPixel^.a, ImgPixel^.b];
+          inc(ImgPixel);
         end;
     end;
 end;
@@ -468,12 +468,12 @@ const
   ChannelSize     = 256;
   ChannelSizeMin1 = ChannelSize - 1;
 type
-  TSumRecInt64 = packed record
-    b, g, R, A: Int64;
+  TSumRecInt64 = record
+    b, g, r, a: Int64;
     Sum: Integer;
   end;
 var
-  q, i, J, X, Y, ImageWidth, RowOffset, RadiusI: Integer;
+  q, i, j, x, y, ImageWidth, RowOffset, RadiusI: Integer;
   RecLeft, RecTop, RecRight, RecBottom: Integer;
   ImagePixels: PRasterColorEntryArray;
   RadiusSq, RadiusRevSq, KernelSize: Integer;
@@ -501,15 +501,15 @@ begin
   for i := 1 to RadiusI do
     begin
       RadiusRevSq := Round((radius + 1 - i) * (radius + 1 - i));
-      for J := 0 to ChannelSizeMin1 do
+      for j := 0 to ChannelSizeMin1 do
         begin
-          GaussLUT[RadiusI - i][J] := RadiusRevSq * J;
-          GaussLUT[RadiusI + i][J] := GaussLUT[RadiusI - i][J];
+          GaussLUT[RadiusI - i][j] := RadiusRevSq * j;
+          GaussLUT[RadiusI + i][j] := GaussLUT[RadiusI - i][j];
         end;
     end;
   RadiusSq := Round((radius + 1) * (radius + 1));
-  for J := 0 to ChannelSizeMin1 do
-      GaussLUT[RadiusI][J] := RadiusSq * J;
+  for j := 0 to ChannelSizeMin1 do
+      GaussLUT[RadiusI][j] := RadiusSq * j;
 
   ImageWidth := Source.width;
   SetLength(SumArray, ImageWidth * Source.height);
@@ -522,89 +522,89 @@ begin
 
   RowOffset := RecTop * ImageWidth;
   SetLength(PreMulArray, Source.width);
-  for Y := RecTop to RecBottom do
+  for y := RecTop to RecBottom do
     begin
       // initialize PreMulArray for the row ...
-      q := (Y * ImageWidth) + RecLeft;
-      for X := RecLeft to RecRight do
+      q := (y * ImageWidth) + RecLeft;
+      for x := RecLeft to RecRight do
         with ImagePixels^[q] do
           begin
-            PreMulArray[X].A := A;
-            PreMulArray[X].R := DivTable[R, A];
-            PreMulArray[X].g := DivTable[g, A];
-            PreMulArray[X].b := DivTable[b, A];
-            Inc(q);
+            PreMulArray[x].a := a;
+            PreMulArray[x].r := DivTable[r, a];
+            PreMulArray[x].g := DivTable[g, a];
+            PreMulArray[x].b := DivTable[b, a];
+            inc(q);
           end;
 
-      for X := RecLeft to RecRight do
+      for x := RecLeft to RecRight do
         begin
-          SumRec.A := 0;
-          SumRec.R := 0;
+          SumRec.a := 0;
+          SumRec.r := 0;
           SumRec.g := 0;
           SumRec.b := 0;
           SumRec.Sum := 0;
 
-          i := Max(X - RadiusI, RecLeft);
-          q := i - (X - RadiusI);
-          for i := i to Min(X + RadiusI, RecRight) do
+          i := Max(x - RadiusI, RecLeft);
+          q := i - (x - RadiusI);
+          for i := i to Min(x + RadiusI, RecRight) do
             with PreMulArray[i] do
               begin
-                Inc(SumRec.A, GaussLUT[q][A]);
-                Inc(SumRec.R, GaussLUT[q][R]);
-                Inc(SumRec.g, GaussLUT[q][g]);
-                Inc(SumRec.b, GaussLUT[q][b]);
-                Inc(SumRec.Sum, GaussLUT[q][1]);
-                Inc(q);
+                inc(SumRec.a, GaussLUT[q][a]);
+                inc(SumRec.r, GaussLUT[q][r]);
+                inc(SumRec.g, GaussLUT[q][g]);
+                inc(SumRec.b, GaussLUT[q][b]);
+                inc(SumRec.Sum, GaussLUT[q][1]);
+                inc(q);
               end;
-          q := RowOffset + X;
-          SumArray[q].A := SumRec.A div SumRec.Sum;
-          SumArray[q].R := SumRec.R div SumRec.Sum;
+          q := RowOffset + x;
+          SumArray[q].a := SumRec.a div SumRec.Sum;
+          SumArray[q].r := SumRec.r div SumRec.Sum;
           SumArray[q].g := SumRec.g div SumRec.Sum;
           SumArray[q].b := SumRec.b div SumRec.Sum;
         end;
-      Inc(RowOffset, ImageWidth);
+      inc(RowOffset, ImageWidth);
     end;
 
   if Source <> dest then
       dest.SetSize(Source.width, Source.height);
 
   RowOffset := RecTop * ImageWidth;
-  for Y := RecTop to RecBottom do
+  for y := RecTop to RecBottom do
     begin
-      for X := RecLeft to RecRight do
+      for x := RecLeft to RecRight do
         begin
-          SumRec.A := 0;
-          SumRec.R := 0;
+          SumRec.a := 0;
+          SumRec.r := 0;
           SumRec.g := 0;
           SumRec.b := 0;
           SumRec.Sum := 0;
 
-          i := Max(Y - RadiusI, RecTop);
-          q := i - (Y - RadiusI);
-          for i := i to Min(Y + RadiusI, RecBottom) do
-            with SumArray[X + i * ImageWidth] do
+          i := Max(y - RadiusI, RecTop);
+          q := i - (y - RadiusI);
+          for i := i to Min(y + RadiusI, RecBottom) do
+            with SumArray[x + i * ImageWidth] do
               begin
-                Inc(SumRec.A, GaussLUT[q][A]);
-                Inc(SumRec.R, GaussLUT[q][R]);
-                Inc(SumRec.g, GaussLUT[q][g]);
-                Inc(SumRec.b, GaussLUT[q][b]);
-                Inc(SumRec.Sum, GaussLUT[q][1]);
-                Inc(q);
+                inc(SumRec.a, GaussLUT[q][a]);
+                inc(SumRec.r, GaussLUT[q][r]);
+                inc(SumRec.g, GaussLUT[q][g]);
+                inc(SumRec.b, GaussLUT[q][b]);
+                inc(SumRec.Sum, GaussLUT[q][1]);
+                inc(q);
               end;
 
-          SourPixel := @ImagePixels^[RowOffset + X];
+          SourPixel := @ImagePixels^[RowOffset + x];
 
           if Source <> dest then
-              DestPixel := @PRasterColorEntryArray(dest.Bits)^[RowOffset + X]
+              DestPixel := @PRasterColorEntryArray(dest.Bits)^[RowOffset + x]
           else
               DestPixel := SourPixel;
 
-          DestPixel^.A := (SumRec.A div SumRec.Sum);
-          DestPixel^.R := RcTable[DestPixel^.A, (SumRec.R div SumRec.Sum)];
-          DestPixel^.g := RcTable[DestPixel^.A, (SumRec.g div SumRec.Sum)];
-          DestPixel^.b := RcTable[DestPixel^.A, (SumRec.b div SumRec.Sum)];
+          DestPixel^.a := (SumRec.a div SumRec.Sum);
+          DestPixel^.r := RcTable[DestPixel^.a, (SumRec.r div SumRec.Sum)];
+          DestPixel^.g := RcTable[DestPixel^.a, (SumRec.g div SumRec.Sum)];
+          DestPixel^.b := RcTable[DestPixel^.a, (SumRec.b div SumRec.Sum)];
         end;
-      Inc(RowOffset, ImageWidth);
+      inc(RowOffset, ImageWidth);
     end;
 end;
 
@@ -618,12 +618,12 @@ const
   ChannelSize     = 256; // ie 1 byte for each of A,R,G & B in TRasterColor
   ChannelSizeMin1 = ChannelSize - 1;
 type
-  TSumRecInt64 = packed record
-    R, A: Int64;
+  TSumRecInt64 = record
+    r, a: Int64;
     Sum: Integer;
   end;
 var
-  q, i, J, X, Y, ImageWidth, RowOffset, RadiusI: Integer;
+  q, i, j, x, y, ImageWidth, RowOffset, RadiusI: Integer;
   RecLeft, RecTop, RecRight, RecBottom: Integer;
   ImagePixels: PRasterColorEntryArray;
   RadiusSq, RadiusRevSq, KernelSize: Integer;
@@ -653,15 +653,15 @@ begin
   for i := 1 to RadiusI do
     begin
       RadiusRevSq := Round((radius + 1 - i) * (radius + 1 - i));
-      for J := 0 to ChannelSizeMin1 do
+      for j := 0 to ChannelSizeMin1 do
         begin
-          GaussLUT[RadiusI - i][J] := RadiusRevSq * J;
-          GaussLUT[RadiusI + i][J] := GaussLUT[RadiusI - i][J];
+          GaussLUT[RadiusI - i][j] := RadiusRevSq * j;
+          GaussLUT[RadiusI + i][j] := GaussLUT[RadiusI - i][j];
         end;
     end;
   RadiusSq := Round((radius + 1) * (radius + 1));
-  for J := 0 to ChannelSizeMin1 do
-      GaussLUT[RadiusI][J] := RadiusSq * J;
+  for j := 0 to ChannelSizeMin1 do
+      GaussLUT[RadiusI][j] := RadiusSq * j;
 
   ImageWidth := Source.width;
   SetLength(SumArray, ImageWidth * Source.height);
@@ -674,77 +674,77 @@ begin
 
   RowOffset := RecTop * ImageWidth;
   SetLength(PreMulArray, Source.width);
-  for Y := RecTop to RecBottom do
+  for y := RecTop to RecBottom do
     begin
       // initialize PreMulArray for the row ...
-      q := (Y * ImageWidth) + RecLeft;
-      for X := RecLeft to RecRight do
+      q := (y * ImageWidth) + RecLeft;
+      for x := RecLeft to RecRight do
         with ImagePixels^[q] do
           begin
-            PreMulArray[X].A := A;
-            PreMulArray[X].R := DivTable[RasterColor2Gray(RGBA), A];
-            Inc(q);
+            PreMulArray[x].a := a;
+            PreMulArray[x].r := DivTable[RasterColor2Gray(RGBA), a];
+            inc(q);
           end;
 
-      for X := RecLeft to RecRight do
+      for x := RecLeft to RecRight do
         begin
-          SumRec.A := 0;
-          SumRec.R := 0;
+          SumRec.a := 0;
+          SumRec.r := 0;
           SumRec.Sum := 0;
 
-          i := Max(X - RadiusI, RecLeft);
-          q := i - (X - RadiusI);
-          for i := i to Min(X + RadiusI, RecRight) do
+          i := Max(x - RadiusI, RecLeft);
+          q := i - (x - RadiusI);
+          for i := i to Min(x + RadiusI, RecRight) do
             with PreMulArray[i] do
               begin
-                Inc(SumRec.A, GaussLUT[q][A]);
-                Inc(SumRec.R, GaussLUT[q][R]);
-                Inc(SumRec.Sum, GaussLUT[q][1]);
-                Inc(q);
+                inc(SumRec.a, GaussLUT[q][a]);
+                inc(SumRec.r, GaussLUT[q][r]);
+                inc(SumRec.Sum, GaussLUT[q][1]);
+                inc(q);
               end;
-          q := RowOffset + X;
-          SumArray[q].A := SumRec.A div SumRec.Sum;
-          SumArray[q].R := SumRec.R div SumRec.Sum;
+          q := RowOffset + x;
+          SumArray[q].a := SumRec.a div SumRec.Sum;
+          SumArray[q].r := SumRec.r div SumRec.Sum;
         end;
-      Inc(RowOffset, ImageWidth);
+      inc(RowOffset, ImageWidth);
     end;
 
   if Source <> dest then
       dest.SetSize(Source.width, Source.height);
 
   RowOffset := RecTop * ImageWidth;
-  for Y := RecTop to RecBottom do
+  for y := RecTop to RecBottom do
     begin
-      for X := RecLeft to RecRight do
+      for x := RecLeft to RecRight do
         begin
-          SumRec.A := 0;
-          SumRec.R := 0;
+          SumRec.a := 0;
+          SumRec.r := 0;
           SumRec.Sum := 0;
 
-          i := Max(Y - RadiusI, RecTop);
-          q := i - (Y - RadiusI);
-          for i := i to Min(Y + RadiusI, RecBottom) do
-            with SumArray[X + i * ImageWidth] do
+          i := Max(y - RadiusI, RecTop);
+          q := i - (y - RadiusI);
+          for i := i to Min(y + RadiusI, RecBottom) do
+            with SumArray[x + i * ImageWidth] do
               begin
-                Inc(SumRec.A, GaussLUT[q][A]);
-                Inc(SumRec.R, GaussLUT[q][R]);
-                Inc(SumRec.Sum, GaussLUT[q][1]);
-                Inc(q);
+                inc(SumRec.a, GaussLUT[q][a]);
+                inc(SumRec.r, GaussLUT[q][r]);
+                inc(SumRec.Sum, GaussLUT[q][1]);
+                inc(q);
               end;
 
-          SourPixel := @ImagePixels^[RowOffset + X];
+          SourPixel := @ImagePixels^[RowOffset + x];
 
           if Source <> dest then
-              DestPixel := @PRasterColorEntryArray(dest.Bits)^[RowOffset + X]
+              DestPixel := @PRasterColorEntryArray(dest.Bits)^[RowOffset + x]
           else
               DestPixel := SourPixel;
 
-          DestPixel^.A := (SumRec.A div SumRec.Sum);
-          DestPixel^.R := RcTable[DestPixel^.A, (SumRec.R div SumRec.Sum)];
-          DestPixel^.g := DestPixel^.R;
+          DestPixel^.a := (SumRec.a div SumRec.Sum);
+          DestPixel^.r := RcTable[DestPixel^.a, (SumRec.r div SumRec.Sum)];
+          DestPixel^.g := DestPixel^.r;
           DestPixel^.b := DestPixel^.g;
         end;
-      Inc(RowOffset, ImageWidth);
+      inc(RowOffset, ImageWidth);
     end;
 end;
 
@@ -755,8 +755,8 @@ end;
 
 procedure Antialias32(const DestMR: TMemoryRaster; AXOrigin, AYOrigin, AXFinal, AYFinal: Integer);
 var
-  LMemo, X, Y: Integer;
-  A, R, g, b: Cardinal;
+  LMemo, x, y: Integer;
+  a, r, g, b: Cardinal;
   A0, A1Prev, A1Next, a2: Cardinal;
   r0, R1Prev, R1Next, r2: Cardinal;
   G0, G1Prev, G1Next, g2: Cardinal;
@@ -782,45 +782,45 @@ begin
   AXFinal := Min(DestMR.width - 2, AXFinal);
   AYFinal := Min(DestMR.height - 2, AYFinal);
 
-  for Y := AYOrigin to AYFinal do
+  for y := AYOrigin to AYFinal do
     begin
-      P0 := DestMR.ScanLine[Y - 1];
-      p1 := DestMR.ScanLine[Y];
-      p2 := DestMR.ScanLine[Y + 1];
+      P0 := DestMR.ScanLine[y - 1];
+      p1 := DestMR.ScanLine[y];
+      p2 := DestMR.ScanLine[y + 1];
 
-      for X := AXOrigin to AXFinal do
+      for x := AXOrigin to AXFinal do
         begin
           // alpha component
-          A0 := P0^[X] shr 24 and $FF;
-          A1Prev := p1^[X - 1] shr 24 and $FF;
-          A1Next := p1^[X + 1] shr 24 and $FF;
-          a2 := p2^[X] shr 24 and $FF;
+          A0 := P0^[x] shr 24 and $FF;
+          A1Prev := p1^[x - 1] shr 24 and $FF;
+          A1Next := p1^[x + 1] shr 24 and $FF;
+          a2 := p2^[x] shr 24 and $FF;
 
           // red component
-          r0 := P0^[X] shr 16 and $FF;
-          R1Prev := p1^[X - 1] shr 16 and $FF;
-          R1Next := p1^[X + 1] shr 16 and $FF;
-          r2 := p2^[X] shr 16 and $FF;
+          r0 := P0^[x] shr 16 and $FF;
+          R1Prev := p1^[x - 1] shr 16 and $FF;
+          R1Next := p1^[x + 1] shr 16 and $FF;
+          r2 := p2^[x] shr 16 and $FF;
 
           // green component
-          G0 := P0^[X] shr 8 and $FF;
-          G1Prev := p1^[X - 1] shr 8 and $FF;
-          G1Next := p1^[X + 1] shr 8 and $FF;
-          g2 := p2^[X] shr 8 and $FF;
+          G0 := P0^[x] shr 8 and $FF;
+          G1Prev := p1^[x - 1] shr 8 and $FF;
+          G1Next := p1^[x + 1] shr 8 and $FF;
+          g2 := p2^[x] shr 8 and $FF;
 
           // blue component
-          b0 := P0^[X] and $FF;
-          B1Prev := p1^[X - 1] and $FF;
-          B1Next := p1^[X + 1] and $FF;
-          b2 := p2^[X] and $FF;
+          b0 := P0^[x] and $FF;
+          B1Prev := p1^[x - 1] and $FF;
+          B1Next := p1^[x + 1] and $FF;
+          b2 := p2^[x] and $FF;
 
           // composition
-          A := (A0 + a2 + A1Prev + A1Next) div 4;
-          R := (r0 + r2 + R1Prev + R1Next) div 4;
+          a := (A0 + a2 + A1Prev + A1Next) div 4;
+          r := (r0 + r2 + R1Prev + R1Next) div 4;
           g := (G0 + g2 + G1Prev + G1Next) div 4;
           b := (b0 + b2 + B1Prev + B1Next) div 4;
 
-          p1^[X] := (A shl 24) or (R shl 16) or (g shl 8) or b;
+          p1^[x] := (a shl 24) or (r shl 16) or (g shl 8) or b;
         end;
     end;
 end;
@@ -840,7 +840,7 @@ var
   LMap: array [0 .. 255] of Byte;
   i: Integer;
   LPixelCount: Integer;
-  R, g, b: Byte;
+  r, g, b: Byte;
   LSum: Cardinal;
   p: PRasterColor;
 begin
@@ -865,15 +865,15 @@ begin
 
   for i := 1 to LPixelCount do
     begin
-      R := p^ shr 16 and $FF;
+      r := p^ shr 16 and $FF;
       g := p^ shr 8 and $FF;
       b := p^ and $FF;
 
-      LHistogram[R] := LHistogram[R] + 1;
+      LHistogram[r] := LHistogram[r] + 1;
       LHistogram[g] := LHistogram[g] + 1;
       LHistogram[b] := LHistogram[b] + 1;
 
-      Inc(p);
+      inc(p);
     end;
 
   // calculating the map
@@ -890,23 +890,23 @@ begin
 
   for i := 1 to LPixelCount do
     begin
-      R := p^ shr 16 and $FF;
+      r := p^ shr 16 and $FF;
       g := p^ shr 8 and $FF;
       b := p^ and $FF;
 
-      R := LMap[R];
+      r := LMap[r];
       g := LMap[g];
       b := LMap[b];
 
-      p^ := (p^ and $FF000000) or (R shl 16) or (g shl 8) or b;
+      p^ := (p^ and $FF000000) or (r shl 16) or (g shl 8) or b;
 
-      Inc(p);
+      inc(p);
     end;
 end;
 
 procedure RemoveRedEyes(const mr: TMemoryRaster);
 var
-  X, Y: Integer;
+  x, y: Integer;
   w, h: Integer;
   pixptr: PRasterColorEntry;
   nrv, bluf, redq: Single;
@@ -915,11 +915,11 @@ begin
   w := mr.width;
   h := mr.height;
 
-  for Y := 0 to (h - 1) do
+  for y := 0 to (h - 1) do
     begin
-      for X := 0 to (w - 1) do
+      for x := 0 to (w - 1) do
         begin
-          pixptr := PRasterColorEntry(mr.PixelPtr[X, Y]);
+          pixptr := PRasterColorEntry(mr.PixelPtr[x, y]);
           nrv := pixptr^.g + pixptr^.b;
 
           if nrv < 1 then
@@ -931,7 +931,7 @@ begin
               bluf := pixptr^.b;
 
           bluf := Max(0.5, Min(1.5, Sqrt(bluf)));
-          redq := (pixptr^.R / nrv) * bluf;
+          redq := (pixptr^.r / nrv) * bluf;
 
           if redq > 0.7 then
             begin
@@ -944,7 +944,7 @@ begin
               powb := 1 - (1 - powr) / 2;
               powg := 1 - (1 - powr) / 4;
 
-              pixptr^.R := Round(powr * pixptr^.R);
+              pixptr^.r := Round(powr * pixptr^.r);
               pixptr^.b := Round(powb * pixptr^.b);
               pixptr^.g := Round(powg * pixptr^.g);
             end;
@@ -963,13 +963,13 @@ begin
   for i := 0 to (mr.width * mr.height - 1) do
     begin
       // blue component = gray scaled color
-      LPixel^.b := (LPixel^.R + LPixel^.g + LPixel^.b) div 3;
+      LPixel^.b := (LPixel^.r + LPixel^.g + LPixel^.b) div 3;
 
       // set red component of sepia color
-      LPixel^.R := Byte(LPixel^.b + LDepth2);
+      LPixel^.r := Byte(LPixel^.b + LDepth2);
 
-      if LPixel^.R < LDepth2 then
-          LPixel^.R := 255;
+      if LPixel^.r < LDepth2 then
+          LPixel^.r := 255;
 
       // set green component of sepia color
       LPixel^.g := Byte(LPixel^.b + Depth);
@@ -977,7 +977,7 @@ begin
       if LPixel^.g < Depth then
           LPixel^.g := 255;
 
-      Inc(LPixel);
+      inc(LPixel);
     end;
 end;
 
@@ -998,43 +998,43 @@ var
   LMRCopy: TMemoryRaster;
   LSharpenTime: Integer;
   LLastMatrixNumber: Integer;
-  i, X, Y, ix, iy, dx: Integer;
+  i, x, y, ix, iy, dx: Integer;
   LDiagonal: Integer;
   LDiagonalX: Integer;
   LDiagonalY: Integer;
   AA, RR, GG, BB: Integer;
-  A, R, g, b: Byte;
+  a, r, g, b: Byte;
   LMatrix: array [0 .. 24] of Integer;
   LOriginalRow: array of PRasterColorArray;
   LDestRow: array of PRasterColorArray;
 
   procedure LoadSharpenMatrix(AMatrix: array of Integer);
   var
-    i, J: Integer;
+    i, j: Integer;
   begin
-    for J := 0 to 24 do
+    for j := 0 to 24 do
       begin
-        LMatrix[J] := 0;
+        LMatrix[j] := 0;
       end;
 
     i := 0;
 
-    for J := 6 to 8 do
+    for j := 6 to 8 do
       begin
-        LMatrix[J] := AMatrix[i];
-        Inc(i);
+        LMatrix[j] := AMatrix[i];
+        inc(i);
       end;
 
-    for J := 11 to 13 do
+    for j := 11 to 13 do
       begin
-        LMatrix[J] := AMatrix[i];
-        Inc(i);
+        LMatrix[j] := AMatrix[i];
+        inc(i);
       end;
 
-    for J := 16 to 18 do
+    for j := 16 to 18 do
       begin
-        LMatrix[J] := AMatrix[i];
-        Inc(i);
+        LMatrix[j] := AMatrix[i];
+        inc(i);
       end;
 
     LLastMatrixNumber := AMatrix[9];
@@ -1047,7 +1047,7 @@ begin
       LoadSharpenMatrix(SHARPEN_MORE_MATRIX)
   else
     begin
-      Inc(LSharpenTime);
+      inc(LSharpenTime);
 
       if (LSharpenTime mod 2) = 0 then
         begin
@@ -1084,7 +1084,7 @@ begin
       begin
         if (LMatrix[i] and MASK_MATRIX[i]) <> 0 then
           begin
-            Inc(dx);
+            inc(dx);
           end;
       end;
 
@@ -1097,9 +1097,9 @@ begin
         LDiagonal := 2;
       end;
 
-    for Y := 0 to (DestMR.height - 1) do
+    for y := 0 to (DestMR.height - 1) do
       begin
-        for X := 0 to (DestMR.width - 1) do
+        for x := 0 to (DestMR.width - 1) do
           begin
             AA := 0;
             RR := 0;
@@ -1110,8 +1110,8 @@ begin
               begin
                 for LDiagonalX := -LDiagonal to LDiagonal do
                   begin
-                    iy := Y + LDiagonalY;
-                    ix := X + LDiagonalX;
+                    iy := y + LDiagonalY;
+                    ix := x + LDiagonalX;
 
                     { The original routines in the following checking code was
                       if  (iy >= 1) ...
@@ -1121,22 +1121,22 @@ begin
                       (iy <= (DestMR.height - 1)) and
                       (ix <= (DestMR.width - 1)) then
                       begin
-                        A := LOriginalRow[iy]^[ix] shr 24 and $FF;
-                        R := LOriginalRow[iy]^[ix] shr 16 and $FF;
+                        a := LOriginalRow[iy]^[ix] shr 24 and $FF;
+                        r := LOriginalRow[iy]^[ix] shr 16 and $FF;
                         g := LOriginalRow[iy]^[ix] shr 8 and $FF;
                         b := LOriginalRow[iy]^[ix] and $FF;
                       end
                     else
                       begin
-                        A := LOriginalRow[Y]^[X] shr 24 and $FF;
-                        R := LOriginalRow[Y]^[X] shr 16 and $FF;
-                        g := LOriginalRow[Y]^[X] shr 8 and $FF;
-                        b := LOriginalRow[Y]^[X] and $FF;
+                        a := LOriginalRow[y]^[x] shr 24 and $FF;
+                        r := LOriginalRow[y]^[x] shr 16 and $FF;
+                        g := LOriginalRow[y]^[x] shr 8 and $FF;
+                        b := LOriginalRow[y]^[x] and $FF;
                       end;
 
                     i := 12 + LDiagonalY * 5 + LDiagonalX;
-                    AA := AA + A * LMatrix[i];
-                    RR := RR + R * LMatrix[i];
+                    AA := AA + a * LMatrix[i];
+                    RR := RR + r * LMatrix[i];
                     GG := GG + g * LMatrix[i];
                     BB := BB + b * LMatrix[i];
                   end;
@@ -1147,12 +1147,12 @@ begin
             GG := GG div LLastMatrixNumber;
             BB := BB div LLastMatrixNumber;
 
-            A := ClampInt(AA, 0, 255);
-            R := ClampInt(RR, 0, 255);
+            a := ClampInt(AA, 0, 255);
+            r := ClampInt(RR, 0, 255);
             g := ClampInt(GG, 0, 255);
             b := ClampInt(BB, 0, 255);
 
-            LDestRow[Y]^[X] := (A shl 24) or (R shl 16) or (g shl 8) or b;
+            LDestRow[y]^[x] := (a shl 24) or (r shl 16) or (g shl 8) or b;
           end;
       end;
   finally
@@ -1180,80 +1180,80 @@ end;
 procedure AlphaToGrayscale(Src: TMemoryRaster);
 var
   i: Integer;
-  C: PRasterColorEntry;
+  c: PRasterColorEntry;
 begin
   for i := (Src.width * Src.height) - 1 downto 0 do
     begin
-      C := @Src.FBits^[i];
-      C^.R := C^.A;
-      C^.g := C^.A;
-      C^.b := C^.A;
+      c := @Src.FBits^[i];
+      c^.r := c^.a;
+      c^.g := c^.a;
+      c^.b := c^.a;
     end;
 end;
 
 procedure IntensityToAlpha(Src: TMemoryRaster);
 var
   i: Integer;
-  C: PRasterColorEntry;
-  F: Single;
+  c: PRasterColorEntry;
+  f: Single;
 begin
   for i := (Src.width * Src.height) - 1 downto 0 do
     begin
-      C := @Src.FBits^[i];
-      C^.A := ((C^.R * 61 + C^.g * 174 + C^.b * 21) shr 8);
+      c := @Src.FBits^[i];
+      c^.a := ((c^.r * 61 + c^.g * 174 + c^.b * 21) shr 8);
     end;
 end;
 
 procedure ReversalAlpha(Src: TMemoryRaster);
 var
   i: Integer;
-  C: PRasterColorEntry;
+  c: PRasterColorEntry;
 begin
   for i := (Src.width * Src.height) - 1 downto 0 do
     begin
-      C := @Src.FBits^[i];
-      C^.A := $FF - C^.A;
+      c := @Src.FBits^[i];
+      c^.a := $FF - c^.a;
     end;
 end;
 
 procedure RGBToGrayscale(Src: TMemoryRaster);
 var
   i: Integer;
-  C: PRasterColorEntry;
+  c: PRasterColorEntry;
 begin
   for i := (Src.width * Src.height) - 1 downto 0 do
     begin
-      C := @Src.FBits^[i];
-      C^.R := RasterColor2Gray(C^.RGBA);
-      C^.g := C^.R;
-      C^.b := C^.R;
+      c := @Src.FBits^[i];
+      c^.r := RasterColor2Gray(c^.RGBA);
+      c^.g := c^.r;
+      c^.b := c^.r;
     end;
 end;
 
 procedure ColorToTransparent(SrcColor: TRasterColor; Src, Dst: TMemoryRaster);
 var
-  i, J: Integer;
-  C: TRasterColorEntry;
+  i, j: Integer;
+  c: TRasterColorEntry;
 begin
   CheckParams(Src, Dst);
   for i := 0 to Src.width - 1 do
-    for J := 0 to Src.height - 1 do
+    for j := 0 to Src.height - 1 do
       begin
-        C.RGBA := Src[i, J];
-        if C.RGBA = SrcColor then
-            Dst[i, J] := RasterColor(0, 0, 0, 0)
+        c.RGBA := Src[i, j];
+        if c.RGBA = SrcColor then
+            Dst[i, j] := RasterColor(0, 0, 0, 0)
         else
-            Dst[i, J] := C.RGBA;
+            Dst[i, j] := c.RGBA;
       end;
 end;
 
 function BuildSequenceFrame(bmp32List: TCoreClassListForObj; Column: Integer; Transparent: Boolean): TSequenceMemoryRaster;
 var
-  C: TRasterColor;
+  c: TRasterColor;
   bmp: TMemoryRaster;
   AMaxWidth, AMaxHeight: Integer;
   i: Integer;
-  idx, X, Y: Integer;
+  idx, x, y: Integer;
   newbmp: TMemoryRaster;
   rowcnt: Integer;
 begin
@@ -1278,18 +1278,18 @@ begin
 
   rowcnt := bmp32List.Count div Column;
   if bmp32List.Count mod Column > 0 then
-      Inc(rowcnt);
+      inc(rowcnt);
 
   if Transparent then
-      C := RasterColor(0, 0, 0, 0)
+      c := RasterColor(0, 0, 0, 0)
   else
-      C := RasterColor(0, 0, 0, 1);
+      c := RasterColor(0, 0, 0, 1);
 
-  Result.SetSize(AMaxWidth * Column, AMaxHeight * rowcnt, C);
+  Result.SetSize(AMaxWidth * Column, AMaxHeight * rowcnt, c);
 
   idx := 0;
-  X := 0;
-  Y := 0;
+  x := 0;
+  y := 0;
 
   for i := 0 to bmp32List.Count - 1 do
     begin
@@ -1298,24 +1298,24 @@ begin
         begin
           newbmp := TMemoryRaster.Create;
           newbmp.ZoomFrom(bmp, AMaxWidth, AMaxHeight);
-          BlockTransfer(Result, X, Y, Result.BoundsRect, newbmp, newbmp.BoundsRect, dmOpaque);
+          BlockTransfer(Result, x, y, Result.BoundsRect, newbmp, newbmp.BoundsRect, dmOpaque);
           DisposeObject(newbmp);
         end
       else
         begin
-          BlockTransfer(Result, X, Y, Result.BoundsRect, bmp, bmp.BoundsRect, dmOpaque);
+          BlockTransfer(Result, x, y, Result.BoundsRect, bmp, bmp.BoundsRect, dmOpaque);
         end;
 
       if idx + 1 >= Column then
         begin
           idx := 0;
-          X := 0;
-          Y := Y + AMaxHeight;
+          x := 0;
+          y := y + AMaxHeight;
         end
       else
         begin
-          Inc(idx);
-          X := X + AMaxWidth;
+          inc(idx);
+          x := x + AMaxWidth;
         end;
     end;
 
@@ -1343,7 +1343,7 @@ begin
   rowIdx := index div Column;
   Row := Total div Column;
   if Total mod Column > 0 then
-      Inc(Row);
+      inc(Row);
 
   AWidth := bmp.width div Column;
   AHeight := bmp.height div Row;
@@ -1353,24 +1353,24 @@ end;
 
 procedure GetSequenceFrameOutput(bmp: TMemoryRaster; Total, Column, index: Integer; output: TMemoryRaster);
 var
-  R: TRect;
+  r: TRect;
   w, h: Integer;
 begin
-  R := GetSequenceFrameRect(bmp, Total, Column, index);
-  w := R.Right - R.Left;
-  h := R.Bottom - R.Top;
+  r := GetSequenceFrameRect(bmp, Total, Column, index);
+  w := r.Right - r.Left;
+  h := r.Bottom - r.Top;
   output.SetSize(w, h);
-  BlockTransfer(output, 0, 0, output.BoundsRect, bmp, R, dmOpaque);
+  BlockTransfer(output, 0, 0, output.BoundsRect, bmp, r, dmOpaque);
 end;
 
-function BlendReg(F, b: TRasterColor): TRasterColor;
+function BlendReg(f, b: TRasterColor): TRasterColor;
 var
-  fx: TRasterColorEntry absolute F;
-  Bx: TRasterColorEntry absolute b;
-  Af, AB: PByteArray;
+  FX: TRasterColorEntry absolute f;
+  BX: TRasterColorEntry absolute b;
+  AF, AB: PByteArray;
   FA: Byte;
 begin
-  FA := fx.A;
+  FA := FX.a;
 
   if FA = 0 then
     begin
@@ -1380,58 +1380,58 @@ begin
 
   if FA = $FF then
     begin
-      Result := F;
+      Result := f;
       Exit;
     end;
 
-  with Bx do
+  with BX do
     begin
-      Af := @DivTable[FA];
+      AF := @DivTable[FA];
       AB := @DivTable[not FA];
-      R := Af^[fx.R] + AB^[R];
-      g := Af^[fx.g] + AB^[g];
-      b := Af^[fx.b] + AB^[b];
+      r := AF^[FX.r] + AB^[r];
+      g := AF^[FX.g] + AB^[g];
+      b := AF^[FX.b] + AB^[b];
     end;
   Result := b;
 end;
 
-procedure BlendMem(F: TRasterColor; var b: TRasterColor);
+procedure BlendMem(f: TRasterColor; var b: TRasterColor);
 var
-  fx: TRasterColorEntry absolute F;
-  Bx: TRasterColorEntry absolute b;
-  Af, AB: PByteArray;
+  FX: TRasterColorEntry absolute f;
+  BX: TRasterColorEntry absolute b;
+  AF, AB: PByteArray;
   FA: Byte;
 begin
-  FA := fx.A;
+  FA := FX.a;
 
   if FA = 0 then
       Exit;
 
   if FA = $FF then
     begin
-      b := F;
+      b := f;
       Exit;
     end;
 
-  with Bx do
+  with BX do
     begin
-      Af := @DivTable[FA];
+      AF := @DivTable[FA];
       AB := @DivTable[not FA];
-      R := Af^[fx.R] + AB^[R];
-      g := Af^[fx.g] + AB^[g];
-      b := Af^[fx.b] + AB^[b];
+      r := AF^[FX.r] + AB^[r];
+      g := AF^[FX.g] + AB^[g];
+      b := AF^[FX.b] + AB^[b];
     end;
 end;
 
-function BlendRegEx(F, b, M: TRasterColor): TRasterColor;
+function BlendRegEx(f, b, M: TRasterColor): TRasterColor;
 var
-  fx: TRasterColorEntry absolute F;
-  Bx: TRasterColorEntry absolute b;
-  Af, AB: PByteArray;
+  FX: TRasterColorEntry absolute f;
+  BX: TRasterColorEntry absolute b;
+  AF, AB: PByteArray;
 begin
-  Af := @DivTable[M];
+  AF := @DivTable[M];
 
-  M := Af^[fx.A];
+  M := AF^[FX.a];
 
   if M = 0 then
     begin
@@ -1441,30 +1441,30 @@ begin
 
   if M = $FF then
     begin
-      Result := F;
+      Result := f;
       Exit;
     end;
 
-  with Bx do
+  with BX do
     begin
-      Af := @DivTable[M];
+      AF := @DivTable[M];
       AB := @DivTable[255 - M];
-      R := Af^[fx.R] + AB^[R];
-      g := Af^[fx.g] + AB^[g];
-      b := Af^[fx.b] + AB^[b];
+      r := AF^[FX.r] + AB^[r];
+      g := AF^[FX.g] + AB^[g];
+      b := AF^[FX.b] + AB^[b];
     end;
   Result := b;
 end;
 
-procedure BlendMemEx(F: TRasterColor; var b: TRasterColor; M: TRasterColor);
+procedure BlendMemEx(f: TRasterColor; var b: TRasterColor; M: TRasterColor);
 var
-  fx: TRasterColorEntry absolute F;
-  Bx: TRasterColorEntry absolute b;
-  Af, AB: PByteArray;
+  FX: TRasterColorEntry absolute f;
+  BX: TRasterColorEntry absolute b;
+  AF, AB: PByteArray;
 begin
-  Af := @DivTable[M];
+  AF := @DivTable[M];
 
-  M := Af^[fx.A];
+  M := AF^[FX.a];
 
   if M = 0 then
     begin
@@ -1473,17 +1473,17 @@ begin
 
   if M >= 255 then
     begin
-      b := F;
+      b := f;
       Exit;
     end;
 
-  with Bx do
+  with BX do
     begin
-      Af := @DivTable[M];
+      AF := @DivTable[M];
       AB := @DivTable[255 - M];
-      R := Af^[fx.R] + AB^[R];
-      g := Af^[fx.g] + AB^[g];
-      b := Af^[fx.b] + AB^[b];
+      r := AF^[FX.r] + AB^[r];
+      g := AF^[FX.g] + AB^[g];
+      b := AF^[FX.b] + AB^[b];
     end;
 end;
 
@@ -1492,9 +1492,9 @@ begin
   while Count > 0 do
     begin
       BlendMem(Src^, Dst^);
-      Inc(Src);
-      Inc(Dst);
-      Dec(Count);
+      inc(Src);
+      inc(Dst);
+      dec(Count);
     end;
 end;
 
@@ -1503,46 +1503,46 @@ begin
   while Count > 0 do
     begin
       BlendMemEx(Src^, Dst^, M);
-      Inc(Src);
-      Inc(Dst);
-      Dec(Count);
+      inc(Src);
+      inc(Dst);
+      dec(Count);
     end;
 end;
 
-function CombineReg(X, Y, w: TRasterColor): TRasterColor;
+function CombineReg(x, y, w: TRasterColor): TRasterColor;
 var
-  XE: TRasterColorEntry absolute X;
-  Ye: TRasterColorEntry absolute Y;
-  Af, AB: PByteArray;
+  XE: TRasterColorEntry absolute x;
+  YE: TRasterColorEntry absolute y;
+  AF, AB: PByteArray;
 begin
   if w = 0 then
     begin
-      Result := Y;
+      Result := y;
       Exit;
     end;
 
   if w >= $FF then
     begin
-      Result := X;
+      Result := x;
       Exit;
     end;
 
   with XE do
     begin
-      Af := @DivTable[w];
+      AF := @DivTable[w];
       AB := @DivTable[255 - w];
-      R := AB^[Ye.R] + Af^[R];
-      g := AB^[Ye.g] + Af^[g];
-      b := AB^[Ye.b] + Af^[b];
+      r := AB^[YE.r] + AF^[r];
+      g := AB^[YE.g] + AF^[g];
+      b := AB^[YE.b] + AF^[b];
     end;
-  Result := X;
+  Result := x;
 end;
 
-procedure CombineMem(X: TRasterColor; var Y: TRasterColor; w: TRasterColor);
+procedure CombineMem(x: TRasterColor; var y: TRasterColor; w: TRasterColor);
 var
-  XE: TRasterColorEntry absolute X;
-  Ye: TRasterColorEntry absolute Y;
-  Af, AB: PByteArray;
+  XE: TRasterColorEntry absolute x;
+  YE: TRasterColorEntry absolute y;
+  AF, AB: PByteArray;
 begin
   if w = 0 then
     begin
@@ -1551,19 +1551,19 @@ begin
 
   if w >= $FF then
     begin
-      Y := X;
+      y := x;
       Exit;
     end;
 
   with XE do
     begin
-      Af := @DivTable[w];
+      AF := @DivTable[w];
       AB := @DivTable[255 - w];
-      R := AB^[Ye.R] + Af^[R];
-      g := AB^[Ye.g] + Af^[g];
-      b := AB^[Ye.b] + Af^[b];
+      r := AB^[YE.r] + AF^[r];
+      g := AB^[YE.g] + AF^[g];
+      b := AB^[YE.b] + AF^[b];
     end;
-  Y := X;
+  y := x;
 end;
 
 procedure CombineLine(Src, Dst: PRasterColor; Count: Integer; w: TRasterColor);
@@ -1571,53 +1571,53 @@ begin
   while Count > 0 do
     begin
       CombineMem(Src^, Dst^, w);
-      Inc(Src);
-      Inc(Dst);
-      Dec(Count);
+      inc(Src);
+      inc(Dst);
+      dec(Count);
     end;
 end;
 
-function MergeReg(F, b: TRasterColor): TRasterColor;
+function MergeReg(f, b: TRasterColor): TRasterColor;
 var
   FA, BA, WA: TRasterColor;
-  fw, BW: PByteArray;
-  fx: TRasterColorEntry absolute F;
-  Bx: TRasterColorEntry absolute b;
+  FW, BW: PByteArray;
+  FX: TRasterColorEntry absolute f;
+  BX: TRasterColorEntry absolute b;
   RX: TRasterColorEntry absolute Result;
 begin
-  FA := F shr 24;
+  FA := f shr 24;
   BA := b shr 24;
   if FA = $FF then
-      Result := F
+      Result := f
   else if FA = $0 then
       Result := b
   else if BA = $0 then
-      Result := F
+      Result := f
   else
     begin
-      RX.A := DivTable[FA xor 255, BA xor 255] xor 255;
-      WA := RcTable[RX.A, FA];
-      fw := @DivTable[WA];
+      RX.a := DivTable[FA xor 255, BA xor 255] xor 255;
+      WA := RcTable[RX.a, FA];
+      FW := @DivTable[WA];
       BW := @DivTable[WA xor $FF];
-      RX.R := fw^[fx.R] + BW^[Bx.R];
-      RX.g := fw^[fx.g] + BW^[Bx.g];
-      RX.b := fw^[fx.b] + BW^[Bx.b];
+      RX.r := FW^[FX.r] + BW^[BX.r];
+      RX.g := FW^[FX.g] + BW^[BX.g];
+      RX.b := FW^[FX.b] + BW^[BX.b];
     end;
 end;
 
-function MergeRegEx(F, b, M: TRasterColor): TRasterColor;
+function MergeRegEx(f, b, M: TRasterColor): TRasterColor;
 begin
-  Result := MergeReg(DivTable[M, F shr 24] shl 24 or F and $00FFFFFF, b);
+  Result := MergeReg(DivTable[M, f shr 24] shl 24 or f and $00FFFFFF, b);
 end;
 
-procedure MergeMem(F: TRasterColor; var b: TRasterColor);
+procedure MergeMem(f: TRasterColor; var b: TRasterColor);
 begin
-  b := MergeReg(F, b);
+  b := MergeReg(f, b);
 end;
 
-procedure MergeMemEx(F: TRasterColor; var b: TRasterColor; M: TRasterColor);
+procedure MergeMemEx(f: TRasterColor; var b: TRasterColor; M: TRasterColor);
 begin
-  b := MergeReg(DivTable[M, F shr 24] shl 24 or F and $00FFFFFF, b);
+  b := MergeReg(DivTable[M, f shr 24] shl 24 or f and $00FFFFFF, b);
 end;
 
 procedure MergeLine(Src, Dst: PRasterColor; Count: Integer);
@@ -1625,9 +1625,9 @@ begin
   while Count > 0 do
     begin
       Dst^ := MergeReg(Src^, Dst^);
-      Inc(Src);
-      Inc(Dst);
-      Dec(Count);
+      inc(Src);
+      inc(Dst);
+      dec(Count);
     end;
 end;
 
@@ -1639,15 +1639,15 @@ begin
   while Count > 0 do
     begin
       Dst^ := MergeReg((PM^[Src^ shr 24] shl 24) or (Src^ and $00FFFFFF), Dst^);
-      Inc(Src);
-      Inc(Dst);
-      Dec(Count);
+      inc(Src);
+      inc(Dst);
+      dec(Count);
     end;
 end;
 
 procedure jls_RasterToRaw3(ARaster: TMemoryRaster; RawStream: TCoreClassStream);
 var
-  i, J, n: Integer;
+  i, j, n: Integer;
   Buf: array of Byte;
   pce: TRasterColorEntry;
 begin
@@ -1656,13 +1656,13 @@ begin
   for i := 0 to ARaster.height - 1 do
     begin
       n := 0;
-      for J := 0 to ARaster.width - 1 do
+      for j := 0 to ARaster.width - 1 do
         begin
-          pce := TRasterColorEntry(ARaster.Pixel[J, i]);
-          Buf[n] := pce.b;
+          pce := TRasterColorEntry(ARaster.Pixel[j, i]);
+          Buf[n] := pce.r;
           Buf[n + 1] := pce.g;
-          Buf[n + 2] := pce.R;
-          Inc(n, 3);
+          Buf[n + 2] := pce.b;
+          inc(n, 3);
         end;
       RawStream.write(Buf[0], ARaster.width * 3)
     end;
@@ -1672,15 +1672,15 @@ end;
 
 procedure jls_RasterToRaw1(ARaster: TMemoryRaster; RawStream: TCoreClassStream);
 var
-  i, J: Integer;
+  i, j: Integer;
   Buf: array of Byte;
 begin
   SetLength(Buf, ARaster.width);
 
   for i := 0 to ARaster.height - 1 do
     begin
-      for J := 0 to ARaster.width - 1 do
-          Buf[J] := ARaster.PixelGray[J, i];
+      for j := 0 to ARaster.width - 1 do
+          Buf[j] := ARaster.PixelGray[j, i];
       RawStream.write(Buf[0], ARaster.width)
     end;
   RawStream.Position := 0;
@@ -1689,7 +1689,7 @@ end;
 
 procedure jls_GrayRasterToRaw1(const ARaster: PByteRaster; RawStream: TCoreClassStream);
 var
-  i, J: Integer;
+  i, j: Integer;
 begin
   for i := 0 to length(ARaster^) - 1 do
       RawStream.write(ARaster^[i][0], length(ARaster^[i]));
@@ -1698,15 +1698,15 @@ end;
 
 procedure jls_RasterAlphaToRaw1(ARaster: TMemoryRaster; RawStream: TCoreClassStream);
 var
-  i, J: Integer;
+  i, j: Integer;
   Buf: array of Byte;
 begin
   SetLength(Buf, ARaster.width);
 
   for i := 0 to ARaster.height - 1 do
     begin
-      for J := 0 to ARaster.width - 1 do
-          Buf[J] := ARaster.PixelAlpha[J, i];
+      for j := 0 to ARaster.width - 1 do
+          Buf[j] := ARaster.PixelAlpha[j, i];
       RawStream.write(Buf[0], ARaster.width)
     end;
   RawStream.Position := 0;
@@ -1820,10 +1820,10 @@ end;
 
 procedure jls_RawToRaster(const AStream: TMemoryStream64; var Info: TJlsParameters; const output: TMemoryRaster);
 var
-  J, i: Integer;
+  j, i: Integer;
   Src: PByte;
   srcword: PWORD;
-  R, g, b, A: Byte;
+  r, g, b, a: Byte;
 begin
   case Info.Components of
     1: case Info.BitsPerSample of
@@ -1832,11 +1832,11 @@ begin
             output.SetSize(Info.width, Info.height);
 
             Src := AStream.Memory;
-            for J := 0 to output.height - 1 do
+            for j := 0 to output.height - 1 do
               for i := 0 to Info.width - 1 do
                 begin
-                  output.PixelGray[i, J] := Src^;
-                  Inc(Src);
+                  output.PixelGray[i, j] := Src^;
+                  inc(Src);
                 end;
           end;
         10, 12, 15:
@@ -1844,11 +1844,11 @@ begin
             output.SetSize(Info.width, Info.height);
             srcword := AStream.Memory;
 
-            for J := 0 to output.height - 1 do
+            for j := 0 to output.height - 1 do
               for i := 0 to Info.width - 1 do
                 begin
-                  output.PixelGray[i, J] := srcword^;
-                  Inc(srcword);
+                  output.PixelGray[i, j] := srcword^;
+                  inc(srcword);
                 end;
           end;
         16:
@@ -1856,14 +1856,14 @@ begin
             output.SetSize(Info.width, Info.height);
             srcword := AStream.Memory;
 
-            for J := 0 to output.height - 1 do
+            for j := 0 to output.height - 1 do
               for i := 0 to Info.width - 1 do
                 begin
-                  R := Word(((srcword^ and $F800) shr 8)); // to rgb888
+                  r := Word(((srcword^ and $F800) shr 8)); // to rgb888
                   g := Word(((srcword^ and $07E0) shr 3));
                   b := Word(((srcword^ and $001F) shl 3));
-                  output.PixelGray[i, J] := ((R shl 1) + (g shl 2) + g + b) shr 3;
-                  Inc(srcword);
+                  output.PixelGray[i, j] := ((r shl 1) + (g shl 2) + g + b) shr 3;
+                  inc(srcword);
                 end;
           end;
         else
@@ -1875,16 +1875,16 @@ begin
           output.SetSize(Info.width, Info.height);
 
           Src := AStream.Memory;
-          for J := 0 to output.height - 1 do
+          for j := 0 to output.height - 1 do
             for i := 0 to Info.width - 1 do
               begin
-                R := Src^;
-                Inc(Src);
+                r := Src^;
+                inc(Src);
                 g := Src^;
-                Inc(Src);
+                inc(Src);
                 b := Src^;
-                Inc(Src);
-                output.Pixel[i, J] := RasterColor(R, g, b, 255);
+                inc(Src);
+                output.Pixel[i, j] := RasterColor(r, g, b, 255);
               end;
         end
       else
@@ -1916,7 +1916,7 @@ var
   rgbStream, alphaStream: TMemoryStream64;
   LOutput: TMemoryStream64;
   Info: TJlsParameters;
-  i, J: Integer;
+  i, j: Integer;
   Src: PByte;
 begin
   Result := False;
@@ -1947,12 +1947,12 @@ begin
           if jpegls_decompress(alphaStream, LOutput, @Info) and (Info.Components = 1) and (Info.BitsPerSample = 8) then
             begin
               Src := LOutput.Memory;
-              for J := 0 to ARaster.height - 1 do
+              for j := 0 to ARaster.height - 1 do
                 begin
                   for i := 0 to ARaster.width - 1 do
                     begin
-                      ARaster.PixelAlpha[i, J] := Src^;
-                      Inc(Src);
+                      ARaster.PixelAlpha[i, j] := Src^;
+                      inc(Src);
                     end;
                 end;
             end;
@@ -1996,7 +1996,7 @@ function DecodeJpegLSGrayRasterFromStream(const stream: TCoreClassStream; var AR
 var
   LOutput: TMemoryStream64;
   Info: TJlsParameters;
-  J, i: Integer;
+  j, i: Integer;
   Src: PByte;
 begin
   Result := False;
@@ -2007,16 +2007,174 @@ begin
       begin
         SetLength(ARaster, Info.height, Info.width);
         Src := LOutput.Memory;
-        for J := 0 to Info.height - 1 do
+        for j := 0 to Info.height - 1 do
           for i := 0 to Info.width - 1 do
             begin
-              ARaster[J, i] := Src^;
-              Inc(Src);
+              ARaster[j, i] := Src^;
+              inc(Src);
             end;
         Result := True;
       end;
   finally
       LOutput.Free;
   end;
-end; 
- 
+end;
+
+{
+  compute rotation angle for 8bit Style gray image.
+  Useful for finding skew of scanned documents etc.
+  Uses Hough transform internally.
+  MaxAngle is maximal (abs. value) expected skew angle in degrees (to speed things up) and
+  Threshold (0..255) is used to classify pixel as black (text) or white (background).
+  Area of interest rectangle can be defined to restrict the detection to work only in defined part of image
+  (useful when the document has text only in smaller area of page and non-text features outside the area confuse the rotation detector).
+  Various calculations stats can be retrieved by passing Stats parameter.
+}
+function DocmentRotationDetected(const MaxAngle: TGeoFloat; const Treshold: Integer; raster: TMemoryRaster): TGeoFloat;
+const
+  // Number of "best" lines we take into account when determining
+  // resulting rotation angle (lines with most votes).
+  BestLinesCount = 40;
+  // Angle step used in alpha parameter quantization
+  AlphaStep = 0.1;
+
+type
+  TLine = record
+    Count: Integer;
+    index: Integer;
+    alpha: TGeoFloat;
+    Distance: TGeoFloat;
+  end;
+
+  TLineArray = array of TLine;
+var
+  AlphaStart, MinDist, SumAngles: TGeoFloat;
+  AlphaSteps, DistCount, AccumulatorSize, i, AccumulatedCounts: Integer;
+  BestLines: TLineArray;
+  HoughAccumulator: array of Integer;
+  PageWidth, PageHeight: Integer;
+  ContentRect: TRect;
+
+  // compute final angle for given angle step.
+  function GetFinalAngle(StepIndex: Integer): TGeoFloat;
+  begin
+    Result := AlphaStart + StepIndex * AlphaStep;
+  end;
+
+// compute angle and distance parameters for all lines
+// going through point [X, Y].
+  procedure computeLines(x, y: Integer);
+  var
+    D, Rads: TGeoFloat;
+    i, DIndex, index: Integer;
+    Sin, Cos: Extended;
+  begin
+    for i := 0 to AlphaSteps - 1 do
+      begin
+        // Angle for current step in radians
+        Rads := GetFinalAngle(i) * PI / 180;
+        SinCos(Rads, Sin, Cos);
+        // Parameter D(distance from origin) of the line y=tg(alpha)x + d
+        D := y * Cos - x * Sin;
+        // compute index into accumulator for current line
+        DIndex := Trunc(D - MinDist);
+        Index := DIndex * AlphaSteps + i;
+        // Add one vote for current line
+        HoughAccumulator[Index] := HoughAccumulator[Index] + 1;
+      end;
+  end;
+
+// Uses Hough transform to calculate all lines that intersect
+// interesting points (those classified as beign on base line of the text).
+  procedure computeHoughTransform;
+  var
+    y, x: Integer;
+  begin
+    for y := 0 to PageHeight - 1 do
+      for x := 0 to PageWidth - 1 do
+        if (raster.PixelGray[ContentRect.Left + x, ContentRect.Top + y] < Treshold) and
+          (raster.PixelGray[ContentRect.Left + x, ContentRect.Top + y + 1] >= Treshold) then
+            computeLines(x, y);
+  end;
+
+// Chooses "best" lines (with the most votes) from the accumulator
+  function GetBestLines(Count: Integer): TLineArray;
+  var
+    i, j, DistIndex, AlphaIndex: Integer;
+    Temp: TLine;
+  begin
+    AccumulatedCounts := 0;
+    SetLength(Result, Count);
+
+    for i := 0 to AccumulatorSize - 1 do
+      begin
+        if HoughAccumulator[i] > Result[Count - 1].Count then
+          begin
+            // Current line has more votes than the last selected one,
+            // let's put it the pot
+            Result[Count - 1].Count := HoughAccumulator[i];
+            Result[Count - 1].index := i;
+            j := Count - 1;
+
+            // Sort the lines based on number of votes
+            while (j > 0) and (Result[j].Count > Result[j - 1].Count) do
+              begin
+                Temp := Result[j];
+                Result[j] := Result[j - 1];
+                Result[j - 1] := Temp;
+                j := j - 1;
+              end;
+          end;
+
+        AccumulatedCounts := AccumulatedCounts + HoughAccumulator[i];
+      end;
+
+    for i := 0 to Count - 1 do
+      begin
+        // Caculate line angle and distance according to index in the accumulator
+        DistIndex := Result[i].index div AlphaSteps;
+        AlphaIndex := Result[i].index - DistIndex * AlphaSteps;
+        Result[i].alpha := GetFinalAngle(AlphaIndex);
+        Result[i].Distance := DistIndex + MinDist;
+      end;
+  end;
+
+begin
+  // Use supplied page content rect or just the whole image
+  ContentRect := Rect(0, 0, raster.width, raster.height);
+
+  PageWidth := ContentRect.Right - ContentRect.Left;
+  PageHeight := ContentRect.Bottom - ContentRect.Top;
+  if (ContentRect.Bottom = raster.height) then
+      dec(PageHeight); // Don't check for black pixels outsize of image in computeHoughTransform()
+
+  AlphaStart := -MaxAngle;
+  AlphaSteps := Ceil(2 * MaxAngle / AlphaStep); // Number of angle steps = samples from interval <-MaxAngle, MaxAngle>
+  MinDist := -Max(PageWidth, PageHeight);
+  DistCount := 2 * (PageWidth + PageHeight);
+
+  // Determine the size of line accumulator
+  AccumulatorSize := DistCount * AlphaSteps;
+  SetLength(HoughAccumulator, AccumulatorSize);
+
+  // computeulate Hough transform
+  computeHoughTransform;
+
+  // Get the best lines with most votes
+  BestLines := GetBestLines(BestLinesCount);
+
+  // Average angles of the selected lines to get the rotation angle of the image
+  SumAngles := 0;
+  for i := 0 to BestLinesCount - 1 do
+      SumAngles := SumAngles + BestLines[i].alpha;
+
+  Result := NormalizeDegAngle(SumAngles / BestLinesCount);
+  (*
+    Stats.BestCount := BestLines[0].Count;
+    Stats.PixelCount := PageWidth * PageHeight;
+    Stats.AccumulatorSize := AccumulatorSize;
+    Stats.AccumulatedCounts := AccumulatedCounts;
+    Stats.TestedPixels := AccumulatedCounts div AlphaSteps;
+  *)
+
+end;

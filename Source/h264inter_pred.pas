@@ -18,7 +18,7 @@ unit h264inter_pred;
 interface
 
 uses
-  h264Stdint, h264Common, h264Util;
+  h264Types, h264Common, h264Util;
 
 procedure mb_load_mvs(var mb: TMacroblock; const frame: TFrame; const num_ref_frames: int32_t);
 
@@ -46,7 +46,7 @@ type
 
 var
   mbs: array [0 .. 2] of mb_info; // A, B, C (D)
-  T: PMacroblock;
+  t: PMacroblock;
   i: int32_t;
   num_avail: int32_t;
   same_ref_n: int32_t;
@@ -54,11 +54,11 @@ var
 
   procedure assign_mb(var M: mb_info);
   begin
-    M.avail := is_avail(T);
-    M.mv := T^.mv;
-    M.refidx := T^.ref;
+    M.avail := is_avail(t);
+    M.mv := t^.mv;
+    M.refidx := t^.ref;
     if M.avail then
-        Inc(num_avail);
+        inc(num_avail);
   end;
 
 begin
@@ -75,22 +75,22 @@ begin
     end;
 
   // left mb - A
-  if mb.X > 0 then
+  if mb.x > 0 then
     begin
-      T := @frame.mbs[mb.Y * frame.mbw + mb.X - 1];
+      t := @frame.mbs[mb.y * frame.mbw + mb.x - 1];
       assign_mb(mbs[0]);
     end;
 
   // top mbs - B, C/D
-  if mb.Y > 0 then
+  if mb.y > 0 then
     begin
-      T := @frame.mbs[(mb.Y - 1) * frame.mbw + mb.X];
+      t := @frame.mbs[(mb.y - 1) * frame.mbw + mb.x];
       assign_mb(mbs[1]);
 
-      if mb.X < frame.mbw - 1 then
-          T := @frame.mbs[(mb.Y - 1) * frame.mbw + mb.X + 1] // C
+      if mb.x < frame.mbw - 1 then
+          t := @frame.mbs[(mb.y - 1) * frame.mbw + mb.x + 1] // C
       else
-          T := @frame.mbs[(mb.Y - 1) * frame.mbw + mb.X - 1]; // D
+          t := @frame.mbs[(mb.y - 1) * frame.mbw + mb.x - 1]; // D
       assign_mb(mbs[2]);
     end;
 
@@ -105,7 +105,7 @@ begin
           if mbs[i].avail then
             begin
               mb.mvp := mbs[i].mv;
-              if (num_ref_frames > 1) and (mb.Y > 0) and (mbs[i].refidx <> mb.ref) then
+              if (num_ref_frames > 1) and (mb.y > 0) and (mbs[i].refidx <> mb.ref) then
                   mb.mvp := ZERO_MV;
             end;
       end;
@@ -113,8 +113,8 @@ begin
     2, 3:
       begin
         // mvp = median (a, b ,c)
-        mb.mvp.X := Median(mbs[0].mv.X, mbs[1].mv.X, mbs[2].mv.X);
-        mb.mvp.Y := Median(mbs[0].mv.Y, mbs[1].mv.Y, mbs[2].mv.Y);
+        mb.mvp.x := Median(mbs[0].mv.x, mbs[1].mv.x, mbs[2].mv.x);
+        mb.mvp.y := Median(mbs[0].mv.y, mbs[1].mv.y, mbs[2].mv.y);
 
         // only one mb has same refidx - 8.4.1.3.1
         if (num_ref_frames > 1) then
@@ -124,7 +124,7 @@ begin
             for i := 0 to 2 do
               if mbs[i].avail and (mbs[i].refidx = mb.ref) then
                 begin
-                  Inc(same_ref_n);
+                  inc(same_ref_n);
                   same_ref_i := i;
                 end;
             if same_ref_n = 1 then
@@ -137,16 +137,18 @@ begin
   // get skip mv from predicted mv (for P_SKIP) - 8.4.1.1
   mb.mv_skip := mb.mvp;
   // frame edge
-  if (mb.X = 0) or (mb.Y = 0) then
+  if (mb.x = 0) or (mb.y = 0) then
       mb.mv_skip := ZERO_MV;
   // A
-  if mb.X > 0 then
+  if mb.x > 0 then
     if mbs[0].avail and (mbs[0].mv = ZERO_MV) and (mbs[0].refidx = 0) then
         mb.mv_skip := ZERO_MV;
   // B
-  if mb.Y > 0 then
+  if mb.y > 0 then
     if mbs[1].avail and (mbs[1].mv = ZERO_MV) and (mbs[1].refidx = 0) then
         mb.mv_skip := ZERO_MV;
 end;
 
 end.  
+ 
+ 

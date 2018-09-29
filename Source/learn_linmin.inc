@@ -10,7 +10,7 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 type
-  TLinMinState = packed record
+  TLinMinState = record
     BRACKT: Boolean;
     STAGE1: Boolean;
     INFOC: TLInt;
@@ -38,12 +38,12 @@ type
     XTRAPF: TLFloat;
   end;
 
-procedure LinMinNormalizeD(var d: TLVec; var Stp: TLFloat; n: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure LinMinNormalizeD(var d: TLVec; var Stp: TLFloat; n: TLInt); forward;
 
-procedure MCSRCH(const n: TLInt; var X: TLVec;
-  var F: TLFloat; var g: TLVec; const s: TLVec;
+procedure MCSRCH(const n: TLInt; var x: TLVec;
+  var f: TLFloat; var g: TLVec; const s: TLVec;
   var Stp: TLFloat; StpMax: TLFloat; var Info: TLInt;
-  var NFEV: TLInt; var WA: TLVec; var State: TLinMinState; var Stage: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var NFEV: TLInt; var WA: TLVec; var State: TLinMinState; var Stage: TLInt); forward;
 
 
 const
@@ -58,7 +58,7 @@ procedure MCSTEP(var STX: TLFloat; var fx: TLFloat; var dx: TLFloat;
   var STY: TLFloat; var fy: TLFloat; var dy: TLFloat;
   var Stp: TLFloat; const FP: TLFloat; const DP: TLFloat;
   var BRACKT: Boolean; const STMIN: TLFloat; const STMAX: TLFloat;
-  var Info: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Info: TLInt); forward;
 
 
 (* ************************************************************************
@@ -81,7 +81,7 @@ begin
   while i <= n - 1 do
     begin
       mx := Max(mx, AbsReal(d[i]));
-      Inc(i);
+      inc(i);
     end;
   if AP_FP_Eq(mx, 0) then
     begin
@@ -100,8 +100,8 @@ begin
   Stp := Stp / s;
 end;
 
-procedure MCSRCH(const n: TLInt; var X: TLVec;
-  var F: TLFloat; var g: TLVec; const s: TLVec;
+procedure MCSRCH(const n: TLInt; var x: TLVec;
+  var f: TLFloat; var g: TLVec; const s: TLVec;
   var Stp: TLFloat; StpMax: TLFloat; var Info: TLInt;
   var NFEV: TLInt; var WA: TLVec; var State: TLinMinState;
   var Stage: TLInt);
@@ -181,11 +181,11 @@ begin
           State.BRACKT := False;
           State.STAGE1 := True;
           NFEV := 0;
-          State.FINIT := F;
+          State.FINIT := f;
           State.DGTEST := LM_FTOL * State.DGINIT;
           State.width := StpMax - LM_STPMIN;
           State.WIDTH1 := State.width / P5;
-          APVMove(@WA[0], 0, n - 1, @X[0], 0, n - 1);
+          APVMove(@WA[0], 0, n - 1, @x[0], 0, n - 1);
 
           //
           // THE VARIABLES STX, FX, DGX CONTAIN THE VALUES OF THE STEP,
@@ -265,8 +265,8 @@ begin
           // EVALUATE THE FUNCTION AND GRADIENT AT STP
           // AND COMPUTE THE DIRECTIONAL DERIVATIVE.
           //
-          APVMove(@X[0], 0, n - 1, @WA[0], 0, n - 1);
-          APVAdd(@X[0], 0, n - 1, @s[0], 0, n - 1, Stp);
+          APVMove(@x[0], 0, n - 1, @WA[0], 0, n - 1);
+          APVAdd(@x[0], 0, n - 1, @s[0], 0, n - 1, Stp);
 
           //
           // NEXT
@@ -290,12 +290,12 @@ begin
             begin
               Info := 6;
             end;
-          if AP_FP_Eq(Stp, StpMax) and AP_FP_Less_Eq(F, State.FTEST1) and
+          if AP_FP_Eq(Stp, StpMax) and AP_FP_Less_Eq(f, State.FTEST1) and
             AP_FP_Less_Eq(State.DG, State.DGTEST) then
             begin
               Info := 5;
             end;
-          if AP_FP_Eq(Stp, LM_STPMIN) and (AP_FP_Greater(F, State.FTEST1) or
+          if AP_FP_Eq(Stp, LM_STPMIN) and (AP_FP_Greater(f, State.FTEST1) or
             AP_FP_Greater_Eq(State.DG, State.DGTEST)) then
             begin
               Info := 4;
@@ -309,7 +309,7 @@ begin
             begin
               Info := 2;
             end;
-          if AP_FP_Less_Eq(F, State.FTEST1) and AP_FP_Less_Eq(AbsReal(State.DG),
+          if AP_FP_Less_Eq(f, State.FTEST1) and AP_FP_Less_Eq(AbsReal(State.DG),
             -LM_GTOL * State.DGINIT) then
             begin
               Info := 1;
@@ -328,7 +328,7 @@ begin
           // IN THE FIRST STAGE WE SEEK A STEP FOR WHICH THE MODIFIED
           // FUNCTION HAS A NONPOSITIVE VALUE AND NONNEGATIVE DERIVATIVE.
           //
-          if State.STAGE1 and AP_FP_Less_Eq(F, State.FTEST1) and
+          if State.STAGE1 and AP_FP_Less_Eq(f, State.FTEST1) and
             AP_FP_Greater_Eq(State.DG, Min(LM_FTOL, LM_GTOL) * State.DGINIT) then
             begin
               State.STAGE1 := False;
@@ -341,14 +341,14 @@ begin
           // DERIVATIVE, AND IF A LOWER FUNCTION VALUE HAS BEEN
           // OBTAINED BUT THE DECREASE IS NOT SUFFICIENT.
           //
-          if State.STAGE1 and AP_FP_Less_Eq(F, State.fx) and
-            AP_FP_Greater(F, State.FTEST1) then
+          if State.STAGE1 and AP_FP_Less_Eq(f, State.fx) and
+            AP_FP_Greater(f, State.FTEST1) then
             begin
 
               //
               // DEFINE THE MODIFIED FUNCTION AND DERIVATIVE VALUES.
               //
-              State.FM := F - Stp * State.DGTEST;
+              State.FM := f - Stp * State.DGTEST;
               State.FXM := State.fx - State.STX * State.DGTEST;
               State.FYM := State.fy - State.STY * State.DGTEST;
               State.DGM := State.DG - State.DGTEST;
@@ -379,7 +379,7 @@ begin
               // AND TO COMPUTE THE NEW STEP.
               //
               MCSTEP(State.STX, State.fx, State.DGX, State.STY, State.fy, State.DGY,
-                Stp, F, State.DG, State.BRACKT, State.STMIN, State.STMAX,
+                Stp, f, State.DG, State.BRACKT, State.STMIN, State.STMAX,
                 State.INFOC);
             end;
 
@@ -417,7 +417,7 @@ var
   Gamma: TLFloat;
   p    : TLFloat;
   q    : TLFloat;
-  R    : TLFloat;
+  r    : TLFloat;
   s    : TLFloat;
   SGND : TLFloat;
   STPC : TLFloat;
@@ -461,8 +461,8 @@ begin
         end;
       p := Gamma - dx + Theta;
       q := Gamma - dx + Gamma + DP;
-      R := p / q;
-      STPC := STX + R * (Stp - STX);
+      r := p / q;
+      STPC := STX + r * (Stp - STX);
       STPQ := STX + dx / ((fx - FP) / (Stp - STX) + dx) / 2 * (Stp - STX);
       if AP_FP_Less(AbsReal(STPC - STX), AbsReal(STPQ - STX)) then
         begin
@@ -496,8 +496,8 @@ begin
             end;
           p := Gamma - DP + Theta;
           q := Gamma - DP + Gamma + dx;
-          R := p / q;
-          STPC := Stp + R * (STX - Stp);
+          r := p / q;
+          STPC := Stp + r * (STX - Stp);
           STPQ := Stp + DP / (DP - dx) * (STX - Stp);
           if AP_FP_Greater(AbsReal(STPC - Stp), AbsReal(STPQ - Stp)) then
             begin
@@ -540,10 +540,10 @@ begin
                 end;
               p := Gamma - DP + Theta;
               q := Gamma + (dx - DP) + Gamma;
-              R := p / q;
-              if AP_FP_Less(R, 0) and AP_FP_NEq(Gamma, 0) then
+              r := p / q;
+              if AP_FP_Less(r, 0) and AP_FP_NEq(Gamma, 0) then
                 begin
-                  STPC := Stp + R * (STX - Stp);
+                  STPC := Stp + r * (STX - Stp);
                 end
               else
                 begin
@@ -602,8 +602,8 @@ begin
                     end;
                   p := Gamma - DP + Theta;
                   q := Gamma - DP + Gamma + dy;
-                  R := p / q;
-                  STPC := Stp + R * (STY - Stp);
+                  r := p / q;
+                  STPC := Stp + r * (STY - Stp);
                   STPF := STPC;
                 end
               else
@@ -662,3 +662,5 @@ begin
         end;
     end;
 end; 
+ 
+ 

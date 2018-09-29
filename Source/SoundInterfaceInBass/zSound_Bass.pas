@@ -42,24 +42,24 @@ type
   protected
     SoundList: THashObjectList;
 
-    procedure DoPrepareMusic(fileName: SystemString); override;
-    procedure DoPlayMusic(fileName: SystemString); override;
+    procedure DoPrepareMusic(FileName: SystemString); override;
+    procedure DoPlayMusic(FileName: SystemString); override;
     procedure DoStopMusic; override;
 
-    procedure DoPrepareAmbient(fileName: SystemString); override;
-    procedure DoPlayAmbient(fileName: SystemString); override;
+    procedure DoPrepareAmbient(FileName: SystemString); override;
+    procedure DoPlayAmbient(FileName: SystemString); override;
     procedure DoStopAmbient; override;
 
-    procedure DoPrepareSound(fileName: SystemString); override;
-    procedure DoPlaySound(fileName: SystemString); override;
-    procedure DoStopSound(fileName: SystemString); override;
+    procedure DoPrepareSound(FileName: SystemString); override;
+    procedure DoPlaySound(FileName: SystemString); override;
+    procedure DoStopSound(FileName: SystemString); override;
 
     procedure DoStopAll; override;
 
-    function DoIsPlaying(fileName: SystemString): Boolean; override;
+    function DoIsPlaying(FileName: SystemString): Boolean; override;
 
-    function SaveSoundAsLocalFile(fileName: SystemString): SystemString; override;
-    function SoundReadyOk(fileName: SystemString): Boolean; override;
+    function SaveSoundAsLocalFile(FileName: SystemString): SystemString; override;
+    function SoundReadyOk(FileName: SystemString): Boolean; override;
   public
     constructor Create(ATempPath: SystemString); override;
     destructor Destroy; override;
@@ -92,16 +92,16 @@ begin
   inherited Destroy;
 end;
 
-procedure TSoundEngine_Bass.DoPrepareMusic(fileName: SystemString);
+procedure TSoundEngine_Bass.DoPrepareMusic(FileName: SystemString);
 var
   s     : TSound;
   stream: TCoreClassStream;
   ms    : TMemoryStream64;
 begin
-  if SoundList.Exists(fileName) then
+  if SoundList.Exists(FileName) then
       Exit;
 
-  stream := FileIOOpen(fileName);
+  stream := FileIOOpen(FileName);
   if stream = nil then
       Exit;
 
@@ -111,7 +111,7 @@ begin
 
   s := TSound.Create;
   s.Owner := Self;
-  s.Name := fileName;
+  s.Name := FileName;
   s.Handle := BASS_SampleLoad(True, ms.Memory, 0, ms.Size, 3, BASS_SAMPLE_LOOP or BASS_SAMPLE_OVER_POS {$IFDEF UNICODE} or BASS_UNICODE{$ENDIF});
   s.Style := ssMusic;
   s.channel := 0;
@@ -120,23 +120,23 @@ begin
 
   if s.Handle <> 0 then
     begin
-      SoundList[fileName] := s;
+      SoundList[FileName] := s;
       Exit;
     end;
   DisposeObject(s);
 end;
 
-procedure TSoundEngine_Bass.DoPlayMusic(fileName: SystemString);
+procedure TSoundEngine_Bass.DoPlayMusic(FileName: SystemString);
 var
   s: TSound;
 begin
   DoStopMusic;
 
-  s := SoundList[fileName] as TSound;
+  s := SoundList[FileName] as TSound;
   if s = nil then
     begin
-      DoPrepareMusic(fileName);
-      s := SoundList[fileName] as TSound;
+      DoPrepareMusic(FileName);
+      s := SoundList[FileName] as TSound;
     end;
 
   if s = nil then
@@ -166,16 +166,16 @@ begin
   DisposeObject(lst);
 end;
 
-procedure TSoundEngine_Bass.DoPrepareAmbient(fileName: SystemString);
+procedure TSoundEngine_Bass.DoPrepareAmbient(FileName: SystemString);
 var
   s     : TSound;
   stream: TCoreClassStream;
   ms    : TMemoryStream64;
 begin
-  if SoundList.Exists(fileName) then
+  if SoundList.Exists(FileName) then
       Exit;
 
-  stream := FileIOOpen(fileName);
+  stream := FileIOOpen(FileName);
   if stream = nil then
       Exit;
 
@@ -185,7 +185,7 @@ begin
 
   s := TSound.Create;
   s.Owner := Self;
-  s.Name := fileName;
+  s.Name := FileName;
   s.Handle := BASS_SampleLoad(True, ms.Memory, 0, ms.Size, 5, BASS_SAMPLE_LOOP or BASS_SAMPLE_OVER_POS {$IFDEF UNICODE} or BASS_UNICODE{$ENDIF});
   s.Style := ssAmbient;
   s.channel := 0;
@@ -194,24 +194,24 @@ begin
 
   if s.Handle <> 0 then
     begin
-      SoundList[fileName] := s;
+      SoundList[FileName] := s;
       Exit;
     end;
   DisposeObject(s);
 end;
 
-procedure TSoundEngine_Bass.DoPlayAmbient(fileName: SystemString);
+procedure TSoundEngine_Bass.DoPlayAmbient(FileName: SystemString);
 var
   s: TSound;
 begin
-  if DoIsPlaying(fileName) then
+  if DoIsPlaying(FileName) then
       Exit;
 
-  s := SoundList[fileName] as TSound;
+  s := SoundList[FileName] as TSound;
   if s = nil then
     begin
-      DoPrepareAmbient(fileName);
-      s := SoundList[fileName] as TSound;
+      DoPrepareAmbient(FileName);
+      s := SoundList[FileName] as TSound;
     end;
 
   if s = nil then
@@ -241,16 +241,16 @@ begin
   DisposeObject(lst);
 end;
 
-procedure TSoundEngine_Bass.DoPrepareSound(fileName: SystemString);
+procedure TSoundEngine_Bass.DoPrepareSound(FileName: SystemString);
 var
   s     : TSound;
   stream: TCoreClassStream;
   ms    : TMemoryStream64;
 begin
-  if SoundList.Exists(fileName) then
+  if SoundList.Exists(FileName) then
       Exit;
 
-  stream := FileIOOpen(fileName);
+  stream := FileIOOpen(FileName);
   if stream = nil then
       Exit;
 
@@ -260,7 +260,7 @@ begin
 
   s := TSound.Create;
   s.Owner := Self;
-  s.Name := fileName;
+  s.Name := FileName;
   s.Handle := BASS_SampleLoad(True, ms.Memory, 0, ms.Size, 3, BASS_SAMPLE_OVER_POS {$IFDEF UNICODE} or BASS_UNICODE{$ENDIF});
   s.Style := ssSound;
   s.channel := 0;
@@ -269,7 +269,7 @@ begin
 
   if s.Handle <> 0 then
     begin
-      SoundList[fileName] := s;
+      SoundList[FileName] := s;
       Exit;
     end
   else
@@ -277,15 +277,15 @@ begin
   DisposeObject(s);
 end;
 
-procedure TSoundEngine_Bass.DoPlaySound(fileName: SystemString);
+procedure TSoundEngine_Bass.DoPlaySound(FileName: SystemString);
 var
   s: TSound;
 begin
-  s := SoundList[fileName] as TSound;
+  s := SoundList[FileName] as TSound;
   if s = nil then
     begin
-      DoPrepareSound(fileName);
-      s := SoundList[fileName] as TSound;
+      DoPrepareSound(FileName);
+      s := SoundList[FileName] as TSound;
     end;
 
   if s = nil then
@@ -303,15 +303,15 @@ begin
     end;
 end;
 
-procedure TSoundEngine_Bass.DoStopSound(fileName: SystemString);
+procedure TSoundEngine_Bass.DoStopSound(FileName: SystemString);
 var
   s: TSound;
 begin
-  s := SoundList[fileName] as TSound;
+  s := SoundList[FileName] as TSound;
   if s = nil then
     begin
-      DoPrepareSound(fileName);
-      s := SoundList[fileName] as TSound;
+      DoPrepareSound(FileName);
+      s := SoundList[FileName] as TSound;
     end;
 
   if s = nil then
@@ -338,17 +338,17 @@ begin
   DisposeObject(lst);
 end;
 
-function TSoundEngine_Bass.DoIsPlaying(fileName: SystemString): Boolean;
+function TSoundEngine_Bass.DoIsPlaying(FileName: SystemString): Boolean;
 var
   s: TSound;
 begin
   Result := False;
 
-  s := SoundList[fileName] as TSound;
+  s := SoundList[FileName] as TSound;
   if s = nil then
     begin
-      DoPrepareAmbient(fileName);
-      s := SoundList[fileName] as TSound;
+      DoPrepareAmbient(FileName);
+      s := SoundList[FileName] as TSound;
     end;
 
   if s = nil then
@@ -357,12 +357,12 @@ begin
   Result := (s.channel <> 0) and (BASS_ChannelIsActive(s.channel) = BASS_ACTIVE_PLAYING);
 end;
 
-function TSoundEngine_Bass.SaveSoundAsLocalFile(fileName: SystemString): SystemString;
+function TSoundEngine_Bass.SaveSoundAsLocalFile(FileName: SystemString): SystemString;
 begin
-  Result := fileName;
+  Result := FileName;
 end;
 
-function TSoundEngine_Bass.SoundReadyOk(fileName: SystemString): Boolean;
+function TSoundEngine_Bass.SoundReadyOk(FileName: SystemString): Boolean;
 begin
   Result := True;
 end;
@@ -410,5 +410,10 @@ end;
 
 finalization
 
+if Bass_Available then
+  Bass_Free;
+
 end. 
+ 
+ 
  

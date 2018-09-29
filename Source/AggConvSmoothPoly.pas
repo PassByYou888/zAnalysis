@@ -37,11 +37,8 @@
 *)
 unit AggConvSmoothPoly;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVcgenSmoothPoly1,
@@ -132,4 +129,5 @@ begin
 end;
 
 end.
+ 
  

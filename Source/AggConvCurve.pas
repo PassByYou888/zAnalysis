@@ -37,11 +37,8 @@
 *)
 unit AggConvCurve;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggCurves,
@@ -98,7 +95,7 @@ type
     procedure Reset; override;
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property Source: TAggVertexSource read FSource write SetSource;
   end;
@@ -200,55 +197,55 @@ begin
   FCurve4.Reset;
 end;
 
-function TAggConvCurve.Vertex(X, Y: PDouble): Cardinal;
+function TAggConvCurve.Vertex(x, y: PDouble): Cardinal;
 var
   Ct2Pt, EndPt: TPointDouble;
   Cmd: Cardinal;
 begin
-  if not IsStop(FCurve3.Vertex(X, Y)) then
+  if not IsStop(FCurve3.Vertex(x, y)) then
     begin
-      FLast := PointDouble(X^, Y^);
+      FLast := PointDouble(x^, y^);
 
       Result := CAggPathCmdLineTo;
 
       Exit;
     end;
 
-  if not IsStop(FCurve4.Vertex(X, Y)) then
+  if not IsStop(FCurve4.Vertex(x, y)) then
     begin
-      FLast := PointDouble(X^, Y^);
+      FLast := PointDouble(x^, y^);
 
       Result := CAggPathCmdLineTo;
 
       Exit;
     end;
 
-  Cmd := FSource.Vertex(X, Y);
+  Cmd := FSource.Vertex(x, y);
 
   case Cmd of
     CAggPathCmdMoveTo, CAggPathCmdLineTo:
-      FLast := PointDouble(X^, Y^);
+      FLast := PointDouble(x^, y^);
 
     CAggPathCmdCurve3:
       begin
-        FSource.Vertex(@EndPt.X, @EndPt.Y);
-        FCurve3.Init3(FLast, PointDouble(X^, Y^), EndPt);
+        FSource.Vertex(@EndPt.x, @EndPt.y);
+        FCurve3.Init3(FLast, PointDouble(x^, y^), EndPt);
 
-        FCurve3.Vertex(X, Y); // First call returns CAggPathCmdMoveTo
-        FCurve3.Vertex(X, Y); // This is the first vertex of the curve
+        FCurve3.Vertex(x, y); // First call returns CAggPathCmdMoveTo
+        FCurve3.Vertex(x, y); // This is the first vertex of the curve
 
         Cmd := CAggPathCmdLineTo;
       end;
 
     CAggPathCmdCurve4:
       begin
-        FSource.Vertex(@Ct2Pt.X, @Ct2Pt.Y);
-        FSource.Vertex(@EndPt.X, @EndPt.Y);
+        FSource.Vertex(@Ct2Pt.x, @Ct2Pt.y);
+        FSource.Vertex(@EndPt.x, @EndPt.y);
 
-        FCurve4.Init4(FLast, PointDouble(X^, Y^), Ct2Pt, EndPt);
+        FCurve4.Init4(FLast, PointDouble(x^, y^), Ct2Pt, EndPt);
 
-        FCurve4.Vertex(X, Y); // First call returns CAggPathCmdMoveTo
-        FCurve4.Vertex(X, Y); // This is the first vertex of the curve
+        FCurve4.Vertex(x, y); // First call returns CAggPathCmdMoveTo
+        FCurve4.Vertex(x, y); // This is the first vertex of the curve
 
         Cmd := CAggPathCmdLineTo;
       end;
@@ -258,3 +255,5 @@ begin
 end;
 
 end. 
+ 
+ 

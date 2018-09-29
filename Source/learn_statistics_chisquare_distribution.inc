@@ -43,10 +43,10 @@
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1984, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function ChiSquareDistribution(const v, X: TLFloat): TLFloat;
+function ChiSquareDistribution(const v, x: TLFloat): TLFloat;
 begin
-  Assert(AP_FP_Greater_Eq(X, 0) and AP_FP_Greater_Eq(v, 1), 'Domain error in ChiSquareDistribution');
-  Result := IncompleteGamma(v / 2.0, X / 2.0);
+  Assert(AP_FP_Greater_Eq(x, 0) and AP_FP_Greater_Eq(v, 1), 'Domain error in ChiSquareDistribution');
+  Result := IncompleteGamma(v / 2.0, x / 2.0);
 end;
 
 (* ************************************************************************
@@ -80,10 +80,10 @@ end;
   *Cephes Math Library Release 2.8:  June, 2000
   *Copyright 1984, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function ChiSquareCDistribution(const v, X: TLFloat): TLFloat;
+function ChiSquareCDistribution(const v, x: TLFloat): TLFloat;
 begin
-  Assert(AP_FP_Greater_Eq(X, 0) and AP_FP_Greater_Eq(v, 1), 'Domain error in ChiSquareDistributionC');
-  Result := IncompleteGammaC(v / 2.0, X / 2.0);
+  Assert(AP_FP_Greater_Eq(x, 0) and AP_FP_Greater_Eq(v, 1), 'Domain error in ChiSquareDistributionC');
+  Result := IncompleteGammaC(v / 2.0, x / 2.0);
 end;
 
 (* ************************************************************************
@@ -106,10 +106,10 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvChiSquareDistribution(const v, Y: TLFloat): TLFloat;
+function InvChiSquareDistribution(const v, y: TLFloat): TLFloat;
 begin
-  Assert(AP_FP_Greater_Eq(Y, 0) and AP_FP_Less_Eq(Y, 1) and AP_FP_Greater_Eq(v, 1), 'Domain error in InvChiSquareDistribution');
-  Result := 2 * InvIncompleteGammaC(0.5 * v, Y);
+  Assert(AP_FP_Greater_Eq(y, 0) and AP_FP_Less_Eq(y, 1) and AP_FP_Greater_Eq(v, 1), 'Domain error in InvChiSquareDistribution');
+  Result := 2 * InvIncompleteGammaC(0.5 * v, y);
 end;
 
 (* ************************************************************************
@@ -134,7 +134,7 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure OneSampleVarianceTest(const X: TLVec; n: TLInt; Variance: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
+procedure OneSampleVarianceTest(const x: TLVec; n: TLInt; Variance: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 var
   i    : TLInt;
   XMean: TLFloat;
@@ -157,8 +157,8 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      XMean := XMean + X[i];
-      Inc(i);
+      XMean := XMean + x[i];
+      inc(i);
     end;
   XMean := XMean / n;
 
@@ -169,8 +169,8 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      XVar := XVar + AP_Sqr(X[i] - XMean);
-      Inc(i);
+      XVar := XVar + AP_Sqr(x[i] - XMean);
+      inc(i);
     end;
   XVar := XVar / (n - 1);
   if AP_FP_Eq(XVar, 0) then
@@ -190,3 +190,5 @@ begin
   LeftTail := s;
   RightTail := 1 - LeftTail;
 end; 
+ 
+ 

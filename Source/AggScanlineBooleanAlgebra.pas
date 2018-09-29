@@ -37,11 +37,8 @@
 *)
 unit AggScanlineBooleanAlgebra;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggRasterizerScanLine,
@@ -53,9 +50,9 @@ type
 
   TAggBoolScanLineFunctor = class;
 
-  TAggBoolScanLineFunctor1 = procedure(This: TAggBoolScanLineFunctor; Span: TAggCustomSpan; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
-  TAggBoolScanLineFunctor2 = procedure(This: TAggBoolScanLineFunctor; Span1, Span2: TAggCustomSpan; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
-  TAggBoolScanLineFormula  = function(This: TAggBoolScanLineFunctor; A, b: Cardinal): Cardinal;
+  TAggBoolScanLineFunctor1 = procedure(This: TAggBoolScanLineFunctor; Span: TAggCustomSpan; x: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  TAggBoolScanLineFunctor2 = procedure(This: TAggBoolScanLineFunctor; Span1, Span2: TAggCustomSpan; x: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  TAggBoolScanLineFormula  = function(This: TAggBoolScanLineFunctor; a, b: Cardinal): Cardinal;
 
   TAggBoolScanLineFunctor = class
   private
@@ -127,7 +124,7 @@ end;
 // Functor.
 // Add nothing. Used in conbine_shapes_sub
 procedure BoolScanLineAddSpanEmpty(This: TAggBoolScanLineFunctor; Span: PAggSpanRecord;
-  X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  x: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 begin
 end;
 
@@ -135,7 +132,7 @@ end;
 // Combine two Spans as empty ones. The functor does nothing
 // and is used to XOR binary Spans.
 procedure BoolScanLineCombineSpansEmpty(This: TAggBoolScanLineFunctor;
-  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  Span1, Span2: PAggSpanRecord; x: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 begin
 end;
 
@@ -144,20 +141,20 @@ end;
 // anti-aliasing information, but only X and Length. The function
 // is compatible with any type of ScanLines.
 procedure BoolScanLineAddSpanAA(This: TAggBoolScanLineFunctor; Span: PAggSpanRecord;
-  X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  x: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 var
   Covers: PInt8u;
 begin
   if Span.Len < 0 then
-      SL.AddSpan(X, Len, Span.Covers^)
+      SL.AddSpan(x, Len, Span.Covers^)
   else if Span.Len > 0 then
     begin
       Covers := Span.Covers;
 
-      if Span.X < X then
-          Inc(PtrComp(Covers), X - Span.X);
+      if Span.x < x then
+          inc(PtrComp(Covers), x - Span.x);
 
-      SL.AddCells(X, Len, Covers);
+      SL.AddCells(x, Len, Covers);
     end;
 end;
 
@@ -165,7 +162,7 @@ end;
 // Unite two Spans preserving the anti-aliasing information.
 // The result is added to the "sl" ScanLine.
 procedure BoolScanLineUniteSpansAA(This: TAggBoolScanLineFunctor;
-  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  Span1, Span2: PAggSpanRecord; x: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 var
   Cover: Cardinal;
   Covers1, Covers2: PInt8u;
@@ -182,26 +179,26 @@ begin
         Covers1 := Span1.Covers;
         Covers2 := Span2.Covers;
 
-        if Span1.X < X then
-            Inc(PtrComp(Covers1), (X - Span1.X) * SizeOf(Int8u));
+        if Span1.x < x then
+            inc(PtrComp(Covers1), (x - Span1.x) * SizeOf(Int8u));
 
-        if Span2.X < X then
-            Inc(PtrComp(Covers2), (X - Span2.X) * SizeOf(Int8u));
+        if Span2.x < x then
+            inc(PtrComp(Covers2), (x - Span2.x) * SizeOf(Int8u));
 
         repeat
           Cover := This.FCoverMask * This.FCoverMask -
             (This.FCoverMask - Covers1^) * (This.FCoverMask - Covers2^);
 
-          Inc(PtrComp(Covers1), SizeOf(Int8u));
-          Inc(PtrComp(Covers2), SizeOf(Int8u));
+          inc(PtrComp(Covers1), SizeOf(Int8u));
+          inc(PtrComp(Covers2), SizeOf(Int8u));
 
           if Cover = This.FCoverFull * This.FCoverFull then
-              SL.AddCell(X, This.FCoverFull)
+              SL.AddCell(x, This.FCoverFull)
           else
-              SL.AddCell(X, Cover shr This.FCoverShift);
+              SL.AddCell(x, Cover shr This.FCoverShift);
 
-          Inc(X);
-          Dec(Len);
+          inc(x);
+          dec(Len);
 
         until Len = 0;
       end;
@@ -210,25 +207,25 @@ begin
       begin
         Covers2 := Span2.Covers;
 
-        if Span2.X < X then
-            Inc(PtrComp(Covers2), (X - Span2.X) * SizeOf(Int8u));
+        if Span2.x < x then
+            inc(PtrComp(Covers2), (x - Span2.x) * SizeOf(Int8u));
 
         if Span1.Covers^ = This.FCoverFull then
-            SL.AddSpan(X, Len, This.FCoverFull)
+            SL.AddSpan(x, Len, This.FCoverFull)
         else
           repeat
             Cover := This.FCoverMask * This.FCoverMask -
               (This.FCoverMask - Span1.Covers^) * (This.FCoverMask - Covers2^);
 
-            Inc(PtrComp(Covers2), SizeOf(Int8u));
+            inc(PtrComp(Covers2), SizeOf(Int8u));
 
             if Cover = This.FCoverFull * This.FCoverFull then
-                SL.AddCell(X, This.FCoverFull)
+                SL.AddCell(x, This.FCoverFull)
             else
-                SL.AddCell(X, Cover shr This.FCoverShift);
+                SL.AddCell(x, Cover shr This.FCoverShift);
 
-            Inc(X);
-            Dec(Len);
+            inc(x);
+            dec(Len);
 
           until Len = 0;
       end;
@@ -237,25 +234,25 @@ begin
       begin
         Covers1 := Span1.Covers;
 
-        if Span1.X < X then
-            Inc(PtrComp(Covers1), (X - Span1.X) * SizeOf(Int8u));
+        if Span1.x < x then
+            inc(PtrComp(Covers1), (x - Span1.x) * SizeOf(Int8u));
 
         if Span2.Covers^ = This.FCoverFull then
-            SL.AddSpan(X, Len, This.FCoverFull)
+            SL.AddSpan(x, Len, This.FCoverFull)
         else
           repeat
             Cover := This.FCoverMask * This.FCoverMask -
               (This.FCoverMask - Covers1^) * (This.FCoverMask - Span2.Covers^);
 
-            Inc(PtrComp(Covers1), SizeOf(Int8u));
+            inc(PtrComp(Covers1), SizeOf(Int8u));
 
             if Cover = This.FCoverFull * This.FCoverFull then
-                SL.AddCell(X, This.FCoverFull)
+                SL.AddCell(x, This.FCoverFull)
             else
-                SL.AddCell(X, Cover shr This.FCoverShift);
+                SL.AddCell(x, Cover shr This.FCoverShift);
 
-            Inc(X);
-            Dec(Len);
+            inc(x);
+            dec(Len);
 
           until Len = 0;
       end;
@@ -266,9 +263,9 @@ begin
           (This.FCoverMask - Span1.Covers^) * (This.FCoverMask - Span2.Covers^);
 
         if Cover = This.FCoverFull * This.FCoverFull then
-            SL.AddSpan(X, Len, This.FCoverFull)
+            SL.AddSpan(x, Len, This.FCoverFull)
         else
-            SL.AddSpan(X, Len, Cover shr This.FCoverShift);
+            SL.AddSpan(x, Len, Cover shr This.FCoverShift);
       end;
   end;
 end;
@@ -278,24 +275,24 @@ end;
 // anti-aliasing information, but only X and Length. The function
 // is compatible with any type of ScanLines.
 procedure BoolScanLineCombineSpansBin(This: TAggBoolScanLineFunctor;
-  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  Span1, Span2: PAggSpanRecord; x: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 begin
-  SL.AddSpan(X, Len, This.FCoverFull);
+  SL.AddSpan(x, Len, This.FCoverFull);
 end;
 
 // Functor.
 // Add a binary Span
 procedure BoolScanLineAddSpanBin(This: TAggBoolScanLineFunctor; Span: PAggSpanRecord;
-  X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  x: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 begin
-  SL.AddSpan(X, Len, This.FCoverFull);
+  SL.AddSpan(x, Len, This.FCoverFull);
 end;
 
 // Functor.
 // Intersect two Spans preserving the anti-aliasing information.
 // The result is added to the "sl" ScanLine.
 procedure SboolIntersecTAggSpansAA(This: TAggBoolScanLineFunctor;
-  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  Span1, Span2: PAggSpanRecord; x: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 var
   Cover: Cardinal;
   Covers1, Covers2: PInt8u;
@@ -312,25 +309,25 @@ begin
         Covers1 := Span1.Covers;
         Covers2 := Span2.Covers;
 
-        if Span1.X < X then
-            Inc(PtrComp(Covers1), (X - Span1.X) * SizeOf(Int8u));
+        if Span1.x < x then
+            inc(PtrComp(Covers1), (x - Span1.x) * SizeOf(Int8u));
 
-        if Span2.X < X then
-            Inc(PtrComp(Covers2), (X - Span2.X) * SizeOf(Int8u));
+        if Span2.x < x then
+            inc(PtrComp(Covers2), (x - Span2.x) * SizeOf(Int8u));
 
         repeat
           Cover := Covers1^ * Covers2^;
 
-          Inc(PtrComp(Covers1), SizeOf(Int8u));
-          Inc(PtrComp(Covers2), SizeOf(Int8u));
+          inc(PtrComp(Covers1), SizeOf(Int8u));
+          inc(PtrComp(Covers2), SizeOf(Int8u));
 
           if Cover = This.FCoverFull * This.FCoverFull then
-              SL.AddCell(X, This.FCoverFull)
+              SL.AddCell(x, This.FCoverFull)
           else
-              SL.AddCell(X, Cover shr This.FCoverShift);
+              SL.AddCell(x, Cover shr This.FCoverShift);
 
-          Inc(X);
-          Dec(Len);
+          inc(x);
+          dec(Len);
 
         until Len = 0;
       end;
@@ -339,24 +336,24 @@ begin
       begin
         Covers2 := Span2.Covers;
 
-        if Span2.X < X then
-            Inc(PtrComp(Covers2), (X - Span2.X));
+        if Span2.x < x then
+            inc(PtrComp(Covers2), (x - Span2.x));
 
         if Span1.Covers^ = This.FCoverFull then
-            SL.AddCells(X, Len, Covers2)
+            SL.AddCells(x, Len, Covers2)
         else
           repeat
             Cover := Span1.Covers^ * Covers2^;
 
-            Inc(PtrComp(Covers2), SizeOf(Int8u));
+            inc(PtrComp(Covers2), SizeOf(Int8u));
 
             if Cover = This.FCoverFull * This.FCoverFull then
-                SL.AddCell(X, This.FCoverFull)
+                SL.AddCell(x, This.FCoverFull)
             else
-                SL.AddCell(X, Cover shr This.FCoverShift);
+                SL.AddCell(x, Cover shr This.FCoverShift);
 
-            Inc(X);
-            Dec(Len);
+            inc(x);
+            dec(Len);
 
           until Len = 0;
       end;
@@ -365,24 +362,24 @@ begin
       begin
         Covers1 := Span1.Covers;
 
-        if Span1.X < X then
-            Inc(PtrComp(Covers1), (X - Span1.X) * SizeOf(Int8u));
+        if Span1.x < x then
+            inc(PtrComp(Covers1), (x - Span1.x) * SizeOf(Int8u));
 
         if Span2.Covers^ = This.FCoverFull then
-            SL.AddCells(X, Len, Covers1)
+            SL.AddCells(x, Len, Covers1)
         else
           repeat
             Cover := Covers1^ * Span2.Covers^;
 
-            Inc(PtrComp(Covers1), SizeOf(Int8u));
+            inc(PtrComp(Covers1), SizeOf(Int8u));
 
             if Cover = This.FCoverFull * This.FCoverFull then
-                SL.AddCell(X, This.FCoverFull)
+                SL.AddCell(x, This.FCoverFull)
             else
-                SL.AddCell(X, Cover shr This.FCoverShift);
+                SL.AddCell(x, Cover shr This.FCoverShift);
 
-            Inc(X);
-            Dec(Len);
+            inc(x);
+            dec(Len);
 
           until Len = 0;
       end;
@@ -392,9 +389,9 @@ begin
         Cover := Span1.Covers^ * Span2.Covers^;
 
         if Cover = This.FCoverFull * This.FCoverFull then
-            SL.AddSpan(X, Len, This.FCoverFull)
+            SL.AddSpan(x, Len, This.FCoverFull)
         else
-            SL.AddSpan(X, Len, Cover shr This.FCoverShift);
+            SL.AddSpan(x, Len, Cover shr This.FCoverShift);
       end;
   end;
 end;
@@ -403,7 +400,7 @@ end;
 // XOR two Spans preserving the anti-aliasing information.
 // The result is added to the "sl" ScanLine.
 procedure BoolScanLineXORSpansAA(This: TAggBoolScanLineFunctor; Span1,
-  Span2: PAggSpanRecord; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  Span2: PAggSpanRecord; x: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 var
   Cover: Cardinal;
   Covers1, Covers2: PInt8u;
@@ -420,23 +417,23 @@ begin
         Covers1 := Span1.Covers;
         Covers2 := Span2.Covers;
 
-        if Span1.X < X then
-            Inc(PtrComp(Covers1), (X - Span1.X) * SizeOf(Int8u));
+        if Span1.x < x then
+            inc(PtrComp(Covers1), (x - Span1.x) * SizeOf(Int8u));
 
-        if Span2.X < X then
-            Inc(PtrComp(Covers2), (X - Span2.X) * SizeOf(Int8u));
+        if Span2.x < x then
+            inc(PtrComp(Covers2), (x - Span2.x) * SizeOf(Int8u));
 
         repeat
           Cover := This.Formula(This, Covers1^, Covers2^);
 
-          Inc(PtrComp(Covers1), SizeOf(Int8u));
-          Inc(PtrComp(Covers2), SizeOf(Int8u));
+          inc(PtrComp(Covers1), SizeOf(Int8u));
+          inc(PtrComp(Covers2), SizeOf(Int8u));
 
           if Cover <> 0 then
-              SL.AddCell(X, Cover);
+              SL.AddCell(x, Cover);
 
-          Inc(X);
-          Dec(Len);
+          inc(x);
+          dec(Len);
 
         until Len = 0;
       end;
@@ -445,19 +442,19 @@ begin
       begin
         Covers2 := Span2.Covers;
 
-        if Span2.X < X then
-            Inc(PtrComp(Covers2), (X - Span2.X) * SizeOf(Int8u));
+        if Span2.x < x then
+            inc(PtrComp(Covers2), (x - Span2.x) * SizeOf(Int8u));
 
         repeat
           Cover := This.Formula(This, Span1.Covers^, Covers2^);
 
-          Inc(PtrComp(Covers2), SizeOf(Int8u));
+          inc(PtrComp(Covers2), SizeOf(Int8u));
 
           if Cover <> 0 then
-              SL.AddCell(X, Cover);
+              SL.AddCell(x, Cover);
 
-          Inc(X);
-          Dec(Len);
+          inc(x);
+          dec(Len);
 
         until Len = 0;
       end;
@@ -466,19 +463,19 @@ begin
       begin
         Covers1 := Span1.Covers;
 
-        if Span1.X < X then
-            Inc(PtrComp(Covers1), (X - Span1.X) * SizeOf(Int8u));
+        if Span1.x < x then
+            inc(PtrComp(Covers1), (x - Span1.x) * SizeOf(Int8u));
 
         repeat
           Cover := This.Formula(This, Covers1^, Span2.Covers^);
 
-          Inc(PtrComp(Covers1), SizeOf(Int8u));
+          inc(PtrComp(Covers1), SizeOf(Int8u));
 
           if Cover <> 0 then
-              SL.AddCell(X, Cover);
+              SL.AddCell(x, Cover);
 
-          Inc(X);
-          Dec(Len);
+          inc(x);
+          dec(Len);
 
         until Len = 0;
       end;
@@ -488,7 +485,7 @@ begin
         Cover := This.Formula(This, Span1.Covers^, Span2.Covers^);
 
         if Cover <> 0 then
-            SL.AddSpan(X, Len, Cover);
+            SL.AddSpan(x, Len, Cover);
       end;
   end;
 end;
@@ -497,7 +494,7 @@ end;
 // Unite two Spans preserving the anti-aliasing information.
 // The result is added to the "sl" ScanLine.
 procedure BoolScanLineSubtracTAggSpansAA(This: TAggBoolScanLineFunctor;
-  Span1, Span2: PAggSpanRecord; X: Integer; Len: Cardinal; SL: TAggCustomScanLine);
+  Span1, Span2: PAggSpanRecord; x: Integer; Len: Cardinal; SL: TAggCustomScanLine);
 var
   Cover: Cardinal;
   Covers1, Covers2: PInt8u;
@@ -514,26 +511,26 @@ begin
         Covers1 := Span1.Covers;
         Covers2 := Span2.Covers;
 
-        if Span1.X < X then
-            Inc(PtrComp(Covers1), (X - Span1.X) * SizeOf(Int8u));
+        if Span1.x < x then
+            inc(PtrComp(Covers1), (x - Span1.x) * SizeOf(Int8u));
 
-        if Span2.X < X then
-            Inc(PtrComp(Covers2), (X - Span2.X) * SizeOf(Int8u));
+        if Span2.x < x then
+            inc(PtrComp(Covers2), (x - Span2.x) * SizeOf(Int8u));
 
         repeat
           Cover := Covers1^ * (This.FCoverMask - Covers2^);
 
-          Inc(PtrComp(Covers1), SizeOf(Int8u));
-          Inc(PtrComp(Covers2), SizeOf(Int8u));
+          inc(PtrComp(Covers1), SizeOf(Int8u));
+          inc(PtrComp(Covers2), SizeOf(Int8u));
 
           if Cover <> 0 then
             if Cover = This.FCoverFull * This.FCoverFull then
-                SL.AddCell(X, This.FCoverFull)
+                SL.AddCell(x, This.FCoverFull)
             else
-                SL.AddCell(X, Cover shr This.FCoverShift);
+                SL.AddCell(x, Cover shr This.FCoverShift);
 
-          Inc(X);
-          Dec(Len);
+          inc(x);
+          dec(Len);
 
         until Len = 0;
       end;
@@ -542,22 +539,22 @@ begin
       begin
         Covers2 := Span2.Covers;
 
-        if Span2.X < X then
-            Inc(PtrComp(Covers2), (X - Span2.X) * SizeOf(Int8u));
+        if Span2.x < x then
+            inc(PtrComp(Covers2), (x - Span2.x) * SizeOf(Int8u));
 
         repeat
           Cover := Span1.Covers^ * (This.FCoverMask - Covers2^);
 
-          Inc(PtrComp(Covers2), SizeOf(Int8u));
+          inc(PtrComp(Covers2), SizeOf(Int8u));
 
           if Cover <> 0 then
             if Cover = This.FCoverFull * This.FCoverFull then
-                SL.AddCell(X, This.FCoverFull)
+                SL.AddCell(x, This.FCoverFull)
             else
-                SL.AddCell(X, Cover shr This.FCoverShift);
+                SL.AddCell(x, Cover shr This.FCoverShift);
 
-          Inc(X);
-          Dec(Len);
+          inc(x);
+          dec(Len);
 
         until Len = 0;
       end;
@@ -566,23 +563,23 @@ begin
       begin
         Covers1 := Span1.Covers;
 
-        if Span1.X < X then
-            Inc(PtrComp(Covers1), (X - Span1.X) * SizeOf(Int8u));
+        if Span1.x < x then
+            inc(PtrComp(Covers1), (x - Span1.x) * SizeOf(Int8u));
 
         if Span2.Covers^ <> This.FCoverFull then
           repeat
             Cover := Covers1^ * (This.FCoverMask - Span2.Covers^);
 
-            Inc(PtrComp(Covers1), SizeOf(Int8u));
+            inc(PtrComp(Covers1), SizeOf(Int8u));
 
             if Cover <> 0 then
               if Cover = This.FCoverFull * This.FCoverFull then
-                  SL.AddCell(X, This.FCoverFull)
+                  SL.AddCell(x, This.FCoverFull)
               else
-                  SL.AddCell(X, Cover shr This.FCoverShift);
+                  SL.AddCell(x, Cover shr This.FCoverShift);
 
-            Inc(X);
-            Dec(Len);
+            inc(x);
+            dec(Len);
 
           until Len = 0;
       end;
@@ -593,19 +590,19 @@ begin
 
         if Cover <> 0 then
           if Cover = This.FCoverFull * This.FCoverFull then
-              SL.AddSpan(X, Len, This.FCoverFull)
+              SL.AddSpan(x, Len, This.FCoverFull)
           else
-              SL.AddSpan(X, Len, Cover shr This.FCoverShift);
+              SL.AddSpan(x, Len, Cover shr This.FCoverShift);
       end;
   end;
 end;
 
-function BoolScanLineXORFormulaLinear(This: TAggBoolScanLineFunctor; A, b: Cardinal)
+function BoolScanLineXORFormulaLinear(This: TAggBoolScanLineFunctor; a, b: Cardinal)
   : Cardinal;
 var
   Cover: Cardinal;
 begin
-  Cover := A + b;
+  Cover := a + b;
 
   if Cover > This.FCoverMask then
       Cover := This.FCoverMask + This.FCoverMask - Cover;
@@ -613,29 +610,29 @@ begin
   Result := Cover;
 end;
 
-function BoolScanLineXORFormulaSaddle(This: TAggBoolScanLineFunctor; A, b: Integer): Cardinal;
+function BoolScanLineXORFormulaSaddle(This: TAggBoolScanLineFunctor; a, b: Integer): Cardinal;
 var
   k: Cardinal;
 begin
-  k := A * b;
+  k := a * b;
 
   if k = This.FCoverMask * This.FCoverMask then
       Result := 0
   else
     begin
-      A := (This.FCoverMask * This.FCoverMask - (A shl This.FCoverShift) + k)
+      a := (This.FCoverMask * This.FCoverMask - (a shl This.FCoverShift) + k)
         shr This.FCoverShift;
       b := (This.FCoverMask * This.FCoverMask - (b shl This.FCoverShift) + k)
         shr This.FCoverShift;
 
-      Result := This.FCoverMask - ((A * b) shr This.FCoverShift);
+      Result := This.FCoverMask - ((a * b) shr This.FCoverShift);
     end;
 end;
 
-function BoolScanLineXORFormulaAbsDiff(This: TAggBoolScanLineFunctor; A, b: Integer)
+function BoolScanLineXORFormulaAbsDiff(This: TAggBoolScanLineFunctor; a, b: Integer)
   : Cardinal;
 begin
-  Result := Abs(A - b);
+  Result := Abs(a - b);
 end;
 
 procedure BoolScanLineAddSpansAndRender(Sl1, SL: TAggCustomScanLine;
@@ -653,9 +650,9 @@ begin
   NumSpans := Sl1.NumSpans;
 
   repeat
-    AddSpan.Functor1(AddSpan, Span, Span.X, Abs(Span.Len), SL);
+    AddSpan.Functor1(AddSpan, Span, Span.x, Abs(Span.Len), SL);
 
-    Dec(NumSpans);
+    dec(NumSpans);
 
     if NumSpans = 0 then
         Break;
@@ -666,7 +663,7 @@ begin
 
   Span.Free;
 
-  SL.Finalize(Sl1.Y);
+  SL.Finalize(Sl1.y);
   Ren.Render(SL);
 end;
 
@@ -706,10 +703,10 @@ begin
     begin
       Span1 := Sl1.GetBegin;
       // Ss1 := Sl1.SizeOfSpan;
-      Xb1 := Span1.X;
+      Xb1 := Span1.x;
       Xe1 := Xb1 + Abs(Span1.Len) - 1;
 
-      Dec(Num1);
+      dec(Num1);
     end;
 
   // Initialize Span2 if there are Spans
@@ -717,32 +714,32 @@ begin
     begin
       Span2 := Sl2.GetBegin;
       // Ss2 := Sl2.SizeOfSpan;
-      Xb2 := Span2.X;
+      Xb2 := Span2.x;
       Xe2 := Xb2 + Abs(Span2.Len) - 1;
 
-      Dec(Num2);
+      dec(Num2);
     end;
 
   repeat
     // Retrieve a new Span1 if it's invalid
     if (Num1 <> 0) and (Xb1 > Xe1) then
       begin
-        Dec(Num1);
+        dec(Num1);
         // Inc(PtrComp(Span1), Ss1);
         Span1.IncOperator;
 
-        Xb1 := Span1.X;
+        Xb1 := Span1.x;
         Xe1 := Xb1 + Abs(Span1.Len) - 1;
       end;
 
     // Retrieve a new Span2 if it's invalid
     if (Num2 <> 0) and (Xb2 > Xe2) then
       begin
-        Dec(Num2);
+        dec(Num2);
         // Inc(PtrComp(Span2), Ss2);
         Span2.IncOperator;
 
-        Xb2 := Span2.X;
+        Xb2 := Span2.x;
         Xe2 := Xb2 + Abs(Span2.Len) - 1;
       end;
 
@@ -789,7 +786,7 @@ begin
             Xb1 := CInvalidB;
             Xe1 := CInvalidE;
 
-            Inc(Xb2, Len);
+            inc(Xb2, Len);
           end
         else if Xe2 < Xe1 then
           begin
@@ -798,7 +795,7 @@ begin
             Xb2 := CInvalidB;
             Xe2 := CInvalidE;
 
-            Inc(Xb1, Len);
+            inc(Xb1, Len);
           end
         else
           begin
@@ -899,7 +896,7 @@ begin
   // the same Y coordinate.
   while Flag1 or Flag2 do
     if Flag1 and Flag2 then
-      if Sl1.Y = Sl2.Y then
+      if Sl1.y = Sl2.y then
         begin
           // The Y coordinates are the same.
           // Combine the ScanLines, render if they contain any Spans,
@@ -909,14 +906,14 @@ begin
 
           if SL.NumSpans <> 0 then
             begin
-              SL.Finalize(Sl1.Y);
+              SL.Finalize(Sl1.y);
               Ren.Render(SL);
             end;
 
           Flag1 := Sg1.SweepScanLine(Sl1);
           Flag2 := Sg2.SweepScanLine(Sl2);
         end
-      else if Sl1.Y < Sl2.Y then
+      else if Sl1.y < Sl2.y then
         begin
           BoolScanLineAddSpansAndRender(Sl1, SL, Ren, AddSpan1);
 
@@ -983,8 +980,8 @@ begin
 
   while (Num1 <> 0) and (Num2 <> 0) do
     begin
-      Xb1 := Span1.X;
-      Xb2 := Span2.X;
+      Xb1 := Span1.x;
+      Xb2 := Span2.x;
       Xe1 := Xb1 + Abs(Span1.Len) - 1;
       Xe2 := Xb2 + Abs(Span2.Len) - 1;
 
@@ -1010,8 +1007,8 @@ begin
       // Advance the Spans
       if Advance_both then
         begin
-          Dec(Num1);
-          Dec(Num2);
+          dec(Num1);
+          dec(Num2);
 
           if Num1 <> 0 then
             // Inc(PtrComp(Span1), Ss1);
@@ -1023,7 +1020,7 @@ begin
         end
       else if Advance_Span1 then
         begin
-          Dec(Num1);
+          dec(Num1);
 
           if Num1 <> 0 then
             // Inc(PtrComp(Span1), Ss1);
@@ -1031,7 +1028,7 @@ begin
         end
       else
         begin
-          Dec(Num2);
+          dec(Num2);
 
           if Num2 <> 0 then
             // Inc(PtrComp(Span2), Ss2);
@@ -1099,15 +1096,15 @@ begin
   // Only ScanLines having the same Y-coordinate
   // are to be combined.
   repeat
-    while Sl1.Y < Sl2.Y do
+    while Sl1.y < Sl2.y do
       if not Sg1.SweepScanLine(Sl1) then
           Exit;
 
-    while Sl2.Y < Sl1.Y do
+    while Sl2.y < Sl1.y do
       if not Sg2.SweepScanLine(Sl2) then
           Exit;
 
-    if Sl1.Y = Sl2.Y then
+    if Sl1.y = Sl2.y then
       begin
         // The Y coordinates are the same.
         // Combine the ScanLines, render if they contain any Spans,
@@ -1116,7 +1113,7 @@ begin
 
         if SL.NumSpans <> 0 then
           begin
-            SL.Finalize(Sl1.Y);
+            SL.Finalize(Sl1.y);
             Ren.Render(SL);
           end;
 
@@ -1183,10 +1180,10 @@ begin
 
     repeat
       // Synchronize "slave" with "master"
-      while Flag2 and (Sl2.Y < Sl1.Y) do
+      while Flag2 and (Sl2.y < Sl1.y) do
           Flag2 := Sg2.SweepScanLine(Sl2);
 
-      if Flag2 and (Sl2.Y = Sl1.Y) then
+      if Flag2 and (Sl2.y = Sl1.y) then
         begin
           // The Y coordinates are the same.
           // Combine the ScanLines and render if they contain any Spans.
@@ -1194,7 +1191,7 @@ begin
 
           if SL.NumSpans <> 0 then
             begin
-              SL.Finalize(Sl1.Y);
+              SL.Finalize(Sl1.y);
               Ren.Render(SL);
             end;
         end
@@ -1445,3 +1442,5 @@ begin
 end;
 
 end. 
+ 
+ 

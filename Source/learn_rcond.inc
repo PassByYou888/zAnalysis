@@ -10,52 +10,52 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
-procedure RMatrixRCondTRInternal(const A: TLMatrix; n: TLInt;
+procedure RMatrixRCondTRInternal(const a: TLMatrix; n: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean; ANORM: TLFloat;
-  var RC: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var RC: TLFloat); forward;
 
-procedure CMatrixRCondTRInternal(const A: TLComplexMatrix;
+procedure CMatrixRCondTRInternal(const a: TLComplexMatrix;
   const n: TLInt; IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean;
-  ANORM: TLFloat; var RC: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  ANORM: TLFloat; var RC: TLFloat); forward;
 
 procedure SPDMatrixRCondCholeskyInternal(const CHA: TLMatrix;
   n: TLInt; IsUpper: Boolean; IsNormProvided: Boolean;
-  ANORM: TLFloat; var RC: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  ANORM: TLFloat; var RC: TLFloat); forward;
 
 procedure HPDMatrixRCondCholeskyInternal(const CHA: TLComplexMatrix;
   n: TLInt; IsUpper: Boolean; IsNormProvided: Boolean;
-  ANORM: TLFloat; var RC: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  ANORM: TLFloat; var RC: TLFloat); forward;
 
 procedure RMatrixRCondLUInternal(const LUA: TLMatrix; n: TLInt;
   OneNorm: Boolean; IsANormProvided: Boolean; ANORM: TLFloat;
-  var RC: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var RC: TLFloat); forward;
 
 procedure CMatrixRCondLUInternal(const LUA: TLComplexMatrix;
   const n: TLInt; OneNorm: Boolean; IsANormProvided: Boolean;
-  ANORM: TLFloat; var RC: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  ANORM: TLFloat; var RC: TLFloat); forward;
 
 procedure RMatrixEstimateNorm(n: TLInt; var v: TLVec;
-  var X: TLVec; var ISGN: TLIVec; var EST: TLFloat;
-  var KASE: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var x: TLVec; var ISGN: TLIVec; var EST: TLFloat;
+  var KASE: TLInt); forward;
 
 procedure CMatrixEstimateNorm(const n: TLInt; var v: TLComplexVec;
-  var X: TLComplexVec; var EST: TLFloat; var KASE: TLInt;
-  var ISAVE: TLIVec; var RSAVE: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var x: TLComplexVec; var EST: TLFloat; var KASE: TLInt;
+  var ISAVE: TLIVec; var RSAVE: TLVec); forward;
 
-function InternalComplexRCondSCSUM1(const X: TLComplexVec; n: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function InternalComplexRCondICMAX1(const X: TLComplexVec; n: TLInt): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function InternalComplexRCondSCSUM1(const x: TLComplexVec; n: TLInt): TLFloat; forward;
+function InternalComplexRCondICMAX1(const x: TLComplexVec; n: TLInt): TLInt; forward;
 
 procedure InternalComplexRCondSaveAll(var ISAVE: TLIVec;
   var RSAVE: TLVec; var i: TLInt; var ITER: TLInt;
-  var J: TLInt; var JLAST: TLInt; var JUMP: TLInt;
+  var j: TLInt; var JLAST: TLInt; var JUMP: TLInt;
   var ABSXI: TLFloat; var ALTSGN: TLFloat; var ESTOLD: TLFloat;
-  var Temp: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Temp: TLFloat); forward;
 
 procedure InternalComplexRCondLoadAll(var ISAVE: TLIVec;
   var RSAVE: TLVec; var i: TLInt; var ITER: TLInt;
-  var J: TLInt; var JLAST: TLInt; var JUMP: TLInt;
+  var j: TLInt; var JLAST: TLInt; var JUMP: TLInt;
   var ABSXI: TLFloat; var ALTSGN: TLFloat; var ESTOLD: TLFloat;
-  var Temp: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Temp: TLFloat); forward;
 
 
 (* ************************************************************************
@@ -75,44 +75,44 @@ procedure InternalComplexRCondLoadAll(var ISAVE: TLIVec;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function RMatrixRCond1(A: TLMatrix; n: TLInt): TLFloat;
+function RMatrixRCond1(a: TLMatrix; n: TLInt): TLFloat;
 var
   i     : TLInt;
-  J     : TLInt;
+  j     : TLInt;
   v     : TLFloat;
   NRM   : TLFloat;
   Pivots: TLIVec;
-  T     : TLVec;
+  t     : TLVec;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Assert(n >= 1, 'RMatrixRCond1: N<1!');
-  SetLength(T, n);
+  SetLength(t, n);
   i := 0;
   while i <= n - 1 do
     begin
-      T[i] := 0;
-      Inc(i);
+      t[i] := 0;
+      inc(i);
     end;
   i := 0;
   while i <= n - 1 do
     begin
-      J := 0;
-      while J <= n - 1 do
+      j := 0;
+      while j <= n - 1 do
         begin
-          T[J] := T[J] + AbsReal(A[i, J]);
-          Inc(J);
+          t[j] := t[j] + AbsReal(a[i, j]);
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
   NRM := 0;
   i := 0;
   while i <= n - 1 do
     begin
-      NRM := Max(NRM, T[i]);
-      Inc(i);
+      NRM := Max(NRM, t[i]);
+      inc(i);
     end;
-  RMatrixLU(A, n, n, Pivots);
-  RMatrixRCondLUInternal(A, n, True, True, NRM, v);
+  RMatrixLU(a, n, n, Pivots);
+  RMatrixRCondLUInternal(a, n, True, True, NRM, v);
   Result := v;
 end;
 
@@ -133,32 +133,32 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function RMatrixRCondInf(A: TLMatrix; n: TLInt): TLFloat;
+function RMatrixRCondInf(a: TLMatrix; n: TLInt): TLFloat;
 var
   i     : TLInt;
-  J     : TLInt;
+  j     : TLInt;
   v     : TLFloat;
   NRM   : TLFloat;
   Pivots: TLIVec;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Assert(n >= 1, 'RMatrixRCondInf: N<1!');
   NRM := 0;
   i := 0;
   while i <= n - 1 do
     begin
       v := 0;
-      J := 0;
-      while J <= n - 1 do
+      j := 0;
+      while j <= n - 1 do
         begin
-          v := v + AbsReal(A[i, J]);
-          Inc(J);
+          v := v + AbsReal(a[i, j]);
+          inc(j);
         end;
       NRM := Max(NRM, v);
-      Inc(i);
+      inc(i);
     end;
-  RMatrixLU(A, n, n, Pivots);
-  RMatrixRCondLUInternal(A, n, False, True, NRM, v);
+  RMatrixLU(a, n, n, Pivots);
+  RMatrixRCondLUInternal(a, n, False, True, NRM, v);
   Result := v;
 end;
 
@@ -189,63 +189,63 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function SPDMatrixRCond(A: TLMatrix; n: TLInt; IsUpper: Boolean): TLFloat;
+function SPDMatrixRCond(a: TLMatrix; n: TLInt; IsUpper: Boolean): TLFloat;
 var
   i  : TLInt;
-  J  : TLInt;
-  J1 : TLInt;
-  J2 : TLInt;
+  j  : TLInt;
+  j1 : TLInt;
+  j2 : TLInt;
   v  : TLFloat;
   NRM: TLFloat;
-  T  : TLVec;
+  t  : TLVec;
 begin
-  A := DynamicArrayCopy(A);
-  SetLength(T, n);
+  a := DynamicArrayCopy(a);
+  SetLength(t, n);
   i := 0;
   while i <= n - 1 do
     begin
-      T[i] := 0;
-      Inc(i);
+      t[i] := 0;
+      inc(i);
     end;
   i := 0;
   while i <= n - 1 do
     begin
       if IsUpper then
         begin
-          J1 := i;
-          J2 := n - 1;
+          j1 := i;
+          j2 := n - 1;
         end
       else
         begin
-          J1 := 0;
-          J2 := i;
+          j1 := 0;
+          j2 := i;
         end;
-      J := J1;
-      while J <= J2 do
+      j := j1;
+      while j <= j2 do
         begin
-          if i = J then
+          if i = j then
             begin
-              T[i] := T[i] + AbsReal(A[i, i]);
+              t[i] := t[i] + AbsReal(a[i, i]);
             end
           else
             begin
-              T[i] := T[i] + AbsReal(A[i, J]);
-              T[J] := T[J] + AbsReal(A[i, J]);
+              t[i] := t[i] + AbsReal(a[i, j]);
+              t[j] := t[j] + AbsReal(a[i, j]);
             end;
-          Inc(J);
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
   NRM := 0;
   i := 0;
   while i <= n - 1 do
     begin
-      NRM := Max(NRM, T[i]);
-      Inc(i);
+      NRM := Max(NRM, t[i]);
+      inc(i);
     end;
-  if SPDMatrixCholesky(A, n, IsUpper) then
+  if SPDMatrixCholesky(a, n, IsUpper) then
     begin
-      SPDMatrixRCondCholeskyInternal(A, n, IsUpper, True, NRM, v);
+      SPDMatrixRCondCholeskyInternal(a, n, IsUpper, True, NRM, v);
       Result := v;
     end
   else
@@ -273,63 +273,63 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function RMatrixTRRCond1(const A: TLMatrix; n: TLInt;
+function RMatrixTRRCond1(const a: TLMatrix; n: TLInt;
   IsUpper: Boolean; IsUnit: Boolean): TLFloat;
 var
   i     : TLInt;
-  J     : TLInt;
+  j     : TLInt;
   v     : TLFloat;
   NRM   : TLFloat;
   Pivots: TLIVec;
-  T     : TLVec;
-  J1    : TLInt;
-  J2    : TLInt;
+  t     : TLVec;
+  j1    : TLInt;
+  j2    : TLInt;
 begin
   Assert(n >= 1, 'RMatrixTRRCond1: N<1!');
-  SetLength(T, n);
+  SetLength(t, n);
   i := 0;
   while i <= n - 1 do
     begin
-      T[i] := 0;
-      Inc(i);
+      t[i] := 0;
+      inc(i);
     end;
   i := 0;
   while i <= n - 1 do
     begin
       if IsUpper then
         begin
-          J1 := i + 1;
-          J2 := n - 1;
+          j1 := i + 1;
+          j2 := n - 1;
         end
       else
         begin
-          J1 := 0;
-          J2 := i - 1;
+          j1 := 0;
+          j2 := i - 1;
         end;
-      J := J1;
-      while J <= J2 do
+      j := j1;
+      while j <= j2 do
         begin
-          T[J] := T[J] + AbsReal(A[i, J]);
-          Inc(J);
+          t[j] := t[j] + AbsReal(a[i, j]);
+          inc(j);
         end;
       if IsUnit then
         begin
-          T[i] := T[i] + 1;
+          t[i] := t[i] + 1;
         end
       else
         begin
-          T[i] := T[i] + AbsReal(A[i, i]);
+          t[i] := t[i] + AbsReal(a[i, i]);
         end;
-      Inc(i);
+      inc(i);
     end;
   NRM := 0;
   i := 0;
   while i <= n - 1 do
     begin
-      NRM := Max(NRM, T[i]);
-      Inc(i);
+      NRM := Max(NRM, t[i]);
+      inc(i);
     end;
-  RMatrixRCondTRInternal(A, n, IsUpper, IsUnit, True, NRM, v);
+  RMatrixRCondTRInternal(a, n, IsUpper, IsUnit, True, NRM, v);
   Result := v;
 end;
 
@@ -352,16 +352,16 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function RMatrixTRRCondInf(const A: TLMatrix; n: TLInt;
+function RMatrixTRRCondInf(const a: TLMatrix; n: TLInt;
   IsUpper: Boolean; IsUnit: Boolean): TLFloat;
 var
   i     : TLInt;
-  J     : TLInt;
+  j     : TLInt;
   v     : TLFloat;
   NRM   : TLFloat;
   Pivots: TLIVec;
-  J1    : TLInt;
-  J2    : TLInt;
+  j1    : TLInt;
+  j2    : TLInt;
 begin
   Assert(n >= 1, 'RMatrixTRRCondInf: N<1!');
   NRM := 0;
@@ -370,20 +370,20 @@ begin
     begin
       if IsUpper then
         begin
-          J1 := i + 1;
-          J2 := n - 1;
+          j1 := i + 1;
+          j2 := n - 1;
         end
       else
         begin
-          J1 := 0;
-          J2 := i - 1;
+          j1 := 0;
+          j2 := i - 1;
         end;
       v := 0;
-      J := J1;
-      while J <= J2 do
+      j := j1;
+      while j <= j2 do
         begin
-          v := v + AbsReal(A[i, J]);
-          Inc(J);
+          v := v + AbsReal(a[i, j]);
+          inc(j);
         end;
       if IsUnit then
         begin
@@ -391,12 +391,12 @@ begin
         end
       else
         begin
-          v := v + AbsReal(A[i, i]);
+          v := v + AbsReal(a[i, i]);
         end;
       NRM := Max(NRM, v);
-      Inc(i);
+      inc(i);
     end;
-  RMatrixRCondTRInternal(A, n, IsUpper, IsUnit, False, NRM, v);
+  RMatrixRCondTRInternal(a, n, IsUpper, IsUnit, False, NRM, v);
   Result := v;
 end;
 
@@ -427,64 +427,64 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function HPDMatrixRCond(A: TLComplexMatrix; n: TLInt; IsUpper: Boolean)
+function HPDMatrixRCond(a: TLComplexMatrix; n: TLInt; IsUpper: Boolean)
   : TLFloat;
 var
   i  : TLInt;
-  J  : TLInt;
-  J1 : TLInt;
-  J2 : TLInt;
+  j  : TLInt;
+  j1 : TLInt;
+  j2 : TLInt;
   v  : TLFloat;
   NRM: TLFloat;
-  T  : TLVec;
+  t  : TLVec;
 begin
-  A := DynamicArrayCopy(A);
-  SetLength(T, n);
+  a := DynamicArrayCopy(a);
+  SetLength(t, n);
   i := 0;
   while i <= n - 1 do
     begin
-      T[i] := 0;
-      Inc(i);
+      t[i] := 0;
+      inc(i);
     end;
   i := 0;
   while i <= n - 1 do
     begin
       if IsUpper then
         begin
-          J1 := i;
-          J2 := n - 1;
+          j1 := i;
+          j2 := n - 1;
         end
       else
         begin
-          J1 := 0;
-          J2 := i;
+          j1 := 0;
+          j2 := i;
         end;
-      J := J1;
-      while J <= J2 do
+      j := j1;
+      while j <= j2 do
         begin
-          if i = J then
+          if i = j then
             begin
-              T[i] := T[i] + AbsComplex(A[i, i]);
+              t[i] := t[i] + AbsComplex(a[i, i]);
             end
           else
             begin
-              T[i] := T[i] + AbsComplex(A[i, J]);
-              T[J] := T[J] + AbsComplex(A[i, J]);
+              t[i] := t[i] + AbsComplex(a[i, j]);
+              t[j] := t[j] + AbsComplex(a[i, j]);
             end;
-          Inc(J);
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
   NRM := 0;
   i := 0;
   while i <= n - 1 do
     begin
-      NRM := Max(NRM, T[i]);
-      Inc(i);
+      NRM := Max(NRM, t[i]);
+      inc(i);
     end;
-  if HPDMatrixCholesky(A, n, IsUpper) then
+  if HPDMatrixCholesky(a, n, IsUpper) then
     begin
-      HPDMatrixRCondCholeskyInternal(A, n, IsUpper, True, NRM, v);
+      HPDMatrixRCondCholeskyInternal(a, n, IsUpper, True, NRM, v);
       Result := v;
     end
   else
@@ -509,44 +509,44 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function CMatrixRCond1(A: TLComplexMatrix; n: TLInt): TLFloat;
+function CMatrixRCond1(a: TLComplexMatrix; n: TLInt): TLFloat;
 var
   i     : TLInt;
-  J     : TLInt;
+  j     : TLInt;
   v     : TLFloat;
   NRM   : TLFloat;
   Pivots: TLIVec;
-  T     : TLVec;
+  t     : TLVec;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Assert(n >= 1, 'CMatrixRCond1: N<1!');
-  SetLength(T, n);
+  SetLength(t, n);
   i := 0;
   while i <= n - 1 do
     begin
-      T[i] := 0;
-      Inc(i);
+      t[i] := 0;
+      inc(i);
     end;
   i := 0;
   while i <= n - 1 do
     begin
-      J := 0;
-      while J <= n - 1 do
+      j := 0;
+      while j <= n - 1 do
         begin
-          T[J] := T[J] + AbsComplex(A[i, J]);
-          Inc(J);
+          t[j] := t[j] + AbsComplex(a[i, j]);
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
   NRM := 0;
   i := 0;
   while i <= n - 1 do
     begin
-      NRM := Max(NRM, T[i]);
-      Inc(i);
+      NRM := Max(NRM, t[i]);
+      inc(i);
     end;
-  CMatrixLU(A, n, n, Pivots);
-  CMatrixRCondLUInternal(A, n, True, True, NRM, v);
+  CMatrixLU(a, n, n, Pivots);
+  CMatrixRCondLUInternal(a, n, True, True, NRM, v);
   Result := v;
 end;
 
@@ -566,32 +566,32 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function CMatrixRCondInf(A: TLComplexMatrix; n: TLInt): TLFloat;
+function CMatrixRCondInf(a: TLComplexMatrix; n: TLInt): TLFloat;
 var
   i     : TLInt;
-  J     : TLInt;
+  j     : TLInt;
   v     : TLFloat;
   NRM   : TLFloat;
   Pivots: TLIVec;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Assert(n >= 1, 'CMatrixRCondInf: N<1!');
   NRM := 0;
   i := 0;
   while i <= n - 1 do
     begin
       v := 0;
-      J := 0;
-      while J <= n - 1 do
+      j := 0;
+      while j <= n - 1 do
         begin
-          v := v + AbsComplex(A[i, J]);
-          Inc(J);
+          v := v + AbsComplex(a[i, j]);
+          inc(j);
         end;
       NRM := Max(NRM, v);
-      Inc(i);
+      inc(i);
     end;
-  CMatrixLU(A, n, n, Pivots);
-  CMatrixRCondLUInternal(A, n, False, True, NRM, v);
+  CMatrixLU(a, n, n, Pivots);
+  CMatrixRCondLUInternal(a, n, False, True, NRM, v);
   Result := v;
 end;
 
@@ -670,12 +670,12 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function SPDMatrixCholeskyRCond(const A: TLMatrix; n: TLInt;
+function SPDMatrixCholeskyRCond(const a: TLMatrix; n: TLInt;
   IsUpper: Boolean): TLFloat;
 var
   v: TLFloat;
 begin
-  SPDMatrixRCondCholeskyInternal(A, n, IsUpper, False, 0, v);
+  SPDMatrixRCondCholeskyInternal(a, n, IsUpper, False, 0, v);
   Result := v;
 end;
 
@@ -702,12 +702,12 @@ end;
   if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
   0.0 is returned in such cases.
   ************************************************************************ *)
-function HPDMatrixCholeskyRCond(const A: TLComplexMatrix; n: TLInt;
+function HPDMatrixCholeskyRCond(const a: TLComplexMatrix; n: TLInt;
   IsUpper: Boolean): TLFloat;
 var
   v: TLFloat;
 begin
-  HPDMatrixRCondCholeskyInternal(A, n, IsUpper, False, 0, v);
+  HPDMatrixRCondCholeskyInternal(a, n, IsUpper, False, 0, v);
   Result := v;
 end;
 
@@ -784,63 +784,63 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function CMatrixTRRCond1(const A: TLComplexMatrix; n: TLInt;
+function CMatrixTRRCond1(const a: TLComplexMatrix; n: TLInt;
   IsUpper: Boolean; IsUnit: Boolean): TLFloat;
 var
   i     : TLInt;
-  J     : TLInt;
+  j     : TLInt;
   v     : TLFloat;
   NRM   : TLFloat;
   Pivots: TLIVec;
-  T     : TLVec;
-  J1    : TLInt;
-  J2    : TLInt;
+  t     : TLVec;
+  j1    : TLInt;
+  j2    : TLInt;
 begin
   Assert(n >= 1, 'RMatrixTRRCond1: N<1!');
-  SetLength(T, n);
+  SetLength(t, n);
   i := 0;
   while i <= n - 1 do
     begin
-      T[i] := 0;
-      Inc(i);
+      t[i] := 0;
+      inc(i);
     end;
   i := 0;
   while i <= n - 1 do
     begin
       if IsUpper then
         begin
-          J1 := i + 1;
-          J2 := n - 1;
+          j1 := i + 1;
+          j2 := n - 1;
         end
       else
         begin
-          J1 := 0;
-          J2 := i - 1;
+          j1 := 0;
+          j2 := i - 1;
         end;
-      J := J1;
-      while J <= J2 do
+      j := j1;
+      while j <= j2 do
         begin
-          T[J] := T[J] + AbsComplex(A[i, J]);
-          Inc(J);
+          t[j] := t[j] + AbsComplex(a[i, j]);
+          inc(j);
         end;
       if IsUnit then
         begin
-          T[i] := T[i] + 1;
+          t[i] := t[i] + 1;
         end
       else
         begin
-          T[i] := T[i] + AbsComplex(A[i, i]);
+          t[i] := t[i] + AbsComplex(a[i, i]);
         end;
-      Inc(i);
+      inc(i);
     end;
   NRM := 0;
   i := 0;
   while i <= n - 1 do
     begin
-      NRM := Max(NRM, T[i]);
-      Inc(i);
+      NRM := Max(NRM, t[i]);
+      inc(i);
     end;
-  CMatrixRCondTRInternal(A, n, IsUpper, IsUnit, True, NRM, v);
+  CMatrixRCondTRInternal(a, n, IsUpper, IsUnit, True, NRM, v);
   Result := v;
 end;
 
@@ -862,16 +862,16 @@ end;
   NOTE:
   if k(A) is very large, then matrix is  assumed  degenerate, k(A)=INF, 0.0 is returned in such cases.
   ************************************************************************ *)
-function CMatrixTRRCondInf(const A: TLComplexMatrix; n: TLInt;
+function CMatrixTRRCondInf(const a: TLComplexMatrix; n: TLInt;
   IsUpper: Boolean; IsUnit: Boolean): TLFloat;
 var
   i     : TLInt;
-  J     : TLInt;
+  j     : TLInt;
   v     : TLFloat;
   NRM   : TLFloat;
   Pivots: TLIVec;
-  J1    : TLInt;
-  J2    : TLInt;
+  j1    : TLInt;
+  j2    : TLInt;
 begin
   Assert(n >= 1, 'RMatrixTRRCondInf: N<1!');
   NRM := 0;
@@ -880,20 +880,20 @@ begin
     begin
       if IsUpper then
         begin
-          J1 := i + 1;
-          J2 := n - 1;
+          j1 := i + 1;
+          j2 := n - 1;
         end
       else
         begin
-          J1 := 0;
-          J2 := i - 1;
+          j1 := 0;
+          j2 := i - 1;
         end;
       v := 0;
-      J := J1;
-      while J <= J2 do
+      j := j1;
+      while j <= j2 do
         begin
-          v := v + AbsComplex(A[i, J]);
-          Inc(J);
+          v := v + AbsComplex(a[i, j]);
+          inc(j);
         end;
       if IsUnit then
         begin
@@ -901,12 +901,12 @@ begin
         end
       else
         begin
-          v := v + AbsComplex(A[i, i]);
+          v := v + AbsComplex(a[i, i]);
         end;
       NRM := Max(NRM, v);
-      Inc(i);
+      inc(i);
     end;
-  CMatrixRCondTRInternal(A, n, IsUpper, IsUnit, False, NRM, v);
+  CMatrixRCondTRInternal(a, n, IsUpper, IsUnit, False, NRM, v);
   Result := v;
 end;
 
@@ -924,7 +924,7 @@ end;
 (* ************************************************************************
   Internal subroutine for condition number estimation
   ************************************************************************ *)
-procedure RMatrixRCondTRInternal(const A: TLMatrix; n: TLInt;
+procedure RMatrixRCondTRInternal(const a: TLMatrix; n: TLInt;
   IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean; ANORM: TLFloat;
   var RC: TLFloat);
 var
@@ -934,11 +934,11 @@ var
   tmp      : TLVec;
   v        : TLFloat;
   i        : TLInt;
-  J        : TLInt;
+  j        : TLInt;
   KASE     : TLInt;
   KASE1    : TLInt;
-  J1       : TLInt;
-  J2       : TLInt;
+  j1       : TLInt;
+  j2       : TLInt;
   AINVNM   : TLFloat;
   MaxGrowth: TLFloat;
   s        : TLFloat;
@@ -979,19 +979,19 @@ begin
     begin
       if IsUpper then
         begin
-          J1 := i + 1;
-          J2 := n - 1;
+          j1 := i + 1;
+          j2 := n - 1;
         end
       else
         begin
-          J1 := 0;
-          J2 := i - 1;
+          j1 := 0;
+          j2 := i - 1;
         end;
-      J := J1;
-      while J <= J2 do
+      j := j1;
+      while j <= j2 do
         begin
-          s := Max(s, AbsReal(A[i, J]));
-          Inc(J);
+          s := Max(s, AbsReal(a[i, j]));
+          inc(j);
         end;
       if IsUnit then
         begin
@@ -999,9 +999,9 @@ begin
         end
       else
         begin
-          s := Max(s, AbsReal(A[i, i]));
+          s := Max(s, AbsReal(a[i, i]));
         end;
-      Inc(i);
+      inc(i);
     end;
   if AP_FP_Eq(s, 0) then
     begin
@@ -1048,7 +1048,7 @@ begin
       while i <= n - 1 do
         begin
           EX[i] := EX[i + 1];
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -1060,7 +1060,7 @@ begin
           //
           // multiply by inv(A)
           //
-          if not RMatrixScaledTRSafeSolve(A, s, n, EX, IsUpper, 0, IsUnit, MaxGrowth)
+          if not RMatrixScaledTRSafeSolve(a, s, n, EX, IsUpper, 0, IsUnit, MaxGrowth)
           then
             begin
               Exit;
@@ -1072,7 +1072,7 @@ begin
           //
           // multiply by inv(A')
           //
-          if not RMatrixScaledTRSafeSolve(A, s, n, EX, IsUpper, 1, IsUnit, MaxGrowth)
+          if not RMatrixScaledTRSafeSolve(a, s, n, EX, IsUpper, 1, IsUnit, MaxGrowth)
           then
             begin
               Exit;
@@ -1086,7 +1086,7 @@ begin
       while i >= 0 do
         begin
           EX[i + 1] := EX[i];
-          Dec(i);
+          dec(i);
         end;
     end;
 
@@ -1107,7 +1107,7 @@ end;
 (* ************************************************************************
   Condition number estimation
   ************************************************************************ *)
-procedure CMatrixRCondTRInternal(const A: TLComplexMatrix;
+procedure CMatrixRCondTRInternal(const a: TLComplexMatrix;
   const n: TLInt; IsUpper: Boolean; IsUnit: Boolean; OneNorm: Boolean;
   ANORM: TLFloat; var RC: TLFloat);
 var
@@ -1122,9 +1122,9 @@ var
   AINVNM   : TLFloat;
   v        : TLComplex;
   i        : TLInt;
-  J        : TLInt;
-  J1       : TLInt;
-  J2       : TLInt;
+  j        : TLInt;
+  j1       : TLInt;
+  j2       : TLInt;
   s        : TLFloat;
   MaxGrowth: TLFloat;
 begin
@@ -1158,19 +1158,19 @@ begin
     begin
       if IsUpper then
         begin
-          J1 := i + 1;
-          J2 := n - 1;
+          j1 := i + 1;
+          j2 := n - 1;
         end
       else
         begin
-          J1 := 0;
-          J2 := i - 1;
+          j1 := 0;
+          j2 := i - 1;
         end;
-      J := J1;
-      while J <= J2 do
+      j := j1;
+      while j <= j2 do
         begin
-          s := Max(s, AbsComplex(A[i, J]));
-          Inc(J);
+          s := Max(s, AbsComplex(a[i, j]));
+          inc(j);
         end;
       if IsUnit then
         begin
@@ -1178,9 +1178,9 @@ begin
         end
       else
         begin
-          s := Max(s, AbsComplex(A[i, i]));
+          s := Max(s, AbsComplex(a[i, i]));
         end;
-      Inc(i);
+      inc(i);
     end;
   if AP_FP_Eq(s, 0) then
     begin
@@ -1229,7 +1229,7 @@ begin
       while i <= n - 1 do
         begin
           EX[i] := EX[i + 1];
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -1241,7 +1241,7 @@ begin
           //
           // multiply by inv(A)
           //
-          if not CMatrixScaledTRSafeSolve(A, s, n, EX, IsUpper, 0, IsUnit, MaxGrowth)
+          if not CMatrixScaledTRSafeSolve(a, s, n, EX, IsUpper, 0, IsUnit, MaxGrowth)
           then
             begin
               Exit;
@@ -1253,7 +1253,7 @@ begin
           //
           // multiply by inv(A')
           //
-          if not CMatrixScaledTRSafeSolve(A, s, n, EX, IsUpper, 2, IsUnit, MaxGrowth)
+          if not CMatrixScaledTRSafeSolve(a, s, n, EX, IsUpper, 2, IsUnit, MaxGrowth)
           then
             begin
               Exit;
@@ -1267,7 +1267,7 @@ begin
       while i >= 0 do
         begin
           EX[i + 1] := EX[i];
-          Dec(i);
+          dec(i);
         end;
     end;
 
@@ -1293,7 +1293,7 @@ procedure SPDMatrixRCondCholeskyInternal(const CHA: TLMatrix;
   ANORM: TLFloat; var RC: TLFloat);
 var
   i        : TLInt;
-  J        : TLInt;
+  j        : TLInt;
   KASE     : TLInt;
   AINVNM   : TLFloat;
   EX       : TLVec;
@@ -1322,13 +1322,13 @@ begin
       i := 0;
       while i <= n - 1 do
         begin
-          J := i;
-          while J <= n - 1 do
+          j := i;
+          while j <= n - 1 do
             begin
-              SA := Max(SA, AbsComplex(C_Complex(CHA[i, J])));
-              Inc(J);
+              SA := Max(SA, AbsComplex(C_Complex(CHA[i, j])));
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
     end
   else
@@ -1336,13 +1336,13 @@ begin
       i := 0;
       while i <= n - 1 do
         begin
-          J := 0;
-          while J <= i do
+          j := 0;
+          while j <= i do
             begin
-              SA := Max(SA, AbsComplex(C_Complex(CHA[i, J])));
-              Inc(J);
+              SA := Max(SA, AbsComplex(C_Complex(CHA[i, j])));
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
   if AP_FP_Eq(SA, 0) then
@@ -1376,7 +1376,7 @@ begin
                 begin
                   v := APVDotProduct(@CHA[i - 1][0], i - 1, n - 1, @EX[0], i, n);
                   EX[i] := v;
-                  Inc(i);
+                  inc(i);
                 end;
               APVMul(@EX[0], 1, n, SA);
 
@@ -1387,14 +1387,14 @@ begin
               while i <= n - 1 do
                 begin
                   tmp[i] := 0;
-                  Inc(i);
+                  inc(i);
                 end;
               i := 0;
               while i <= n - 1 do
                 begin
                   v := EX[i + 1];
                   APVAdd(@tmp[0], i, n - 1, @CHA[i][0], i, n - 1, v);
-                  Inc(i);
+                  inc(i);
                 end;
               APVMove(@EX[0], 1, n, @tmp[0], 0, n - 1);
               APVMul(@EX[0], 1, n, SA);
@@ -1409,14 +1409,14 @@ begin
               while i <= n - 1 do
                 begin
                   tmp[i] := 0;
-                  Inc(i);
+                  inc(i);
                 end;
               i := 0;
               while i <= n - 1 do
                 begin
                   v := EX[i + 1];
                   APVAdd(@tmp[0], 0, i, @CHA[i][0], 0, i, v);
-                  Inc(i);
+                  inc(i);
                 end;
               APVMove(@EX[0], 1, n, @tmp[0], 0, n - 1);
               APVMul(@EX[0], 1, n, SA);
@@ -1429,7 +1429,7 @@ begin
                 begin
                   v := APVDotProduct(@CHA[i - 1][0], 0, i - 1, @EX[0], 1, i);
                   EX[i] := v;
-                  Dec(i);
+                  dec(i);
                 end;
               APVMul(@EX[0], 1, n, SA);
             end;
@@ -1464,7 +1464,7 @@ begin
       while i <= n - 1 do
         begin
           EX[i] := EX[i + 1];
-          Inc(i);
+          inc(i);
         end;
       if IsUpper then
         begin
@@ -1512,7 +1512,7 @@ begin
       while i >= 0 do
         begin
           EX[i + 1] := EX[i];
-          Dec(i);
+          dec(i);
         end;
     end;
 
@@ -1546,7 +1546,7 @@ var
   AINVNM   : TLFloat;
   v        : TLComplex;
   i        : TLInt;
-  J        : TLInt;
+  j        : TLInt;
   SA       : TLFloat;
   MaxGrowth: TLFloat;
   i_       : TLInt;
@@ -1570,13 +1570,13 @@ begin
       i := 0;
       while i <= n - 1 do
         begin
-          J := i;
-          while J <= n - 1 do
+          j := i;
+          while j <= n - 1 do
             begin
-              SA := Max(SA, AbsComplex(CHA[i, J]));
-              Inc(J);
+              SA := Max(SA, AbsComplex(CHA[i, j]));
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
     end
   else
@@ -1584,13 +1584,13 @@ begin
       i := 0;
       while i <= n - 1 do
         begin
-          J := 0;
-          while J <= i do
+          j := 0;
+          while j <= i do
             begin
-              SA := Max(SA, AbsComplex(CHA[i, J]));
-              Inc(J);
+              SA := Max(SA, AbsComplex(CHA[i, j]));
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
   if AP_FP_Eq(SA, 0) then
@@ -1629,7 +1629,7 @@ begin
                       v := C_Add(v, C_Mul(CHA[i - 1, i_], EX[i_ + i1_]));
                     end;
                   EX[i] := v;
-                  Inc(i);
+                  inc(i);
                 end;
               for i_ := 1 to n do
                 begin
@@ -1643,7 +1643,7 @@ begin
               while i <= n - 1 do
                 begin
                   tmp[i] := C_Complex(0);
-                  Inc(i);
+                  inc(i);
                 end;
               i := 0;
               while i <= n - 1 do
@@ -1653,7 +1653,7 @@ begin
                     begin
                       tmp[i_] := C_Add(tmp[i_], C_Mul(v, Conj(CHA[i, i_])));
                     end;
-                  Inc(i);
+                  inc(i);
                 end;
               i1_ := (0) - (1);
               for i_ := 1 to n do
@@ -1675,7 +1675,7 @@ begin
               while i <= n - 1 do
                 begin
                   tmp[i] := C_Complex(0);
-                  Inc(i);
+                  inc(i);
                 end;
               i := 0;
               while i <= n - 1 do
@@ -1685,7 +1685,7 @@ begin
                     begin
                       tmp[i_] := C_Add(tmp[i_], C_Mul(v, Conj(CHA[i, i_])));
                     end;
-                  Inc(i);
+                  inc(i);
                 end;
               i1_ := (0) - (1);
               for i_ := 1 to n do
@@ -1710,7 +1710,7 @@ begin
                       v := C_Add(v, C_Mul(CHA[i - 1, i_], EX[i_ + i1_]));
                     end;
                   EX[i] := v;
-                  Dec(i);
+                  dec(i);
                 end;
               for i_ := 1 to n do
                 begin
@@ -1750,7 +1750,7 @@ begin
       while i <= n - 1 do
         begin
           EX[i] := EX[i + 1];
-          Inc(i);
+          inc(i);
         end;
       if IsUpper then
         begin
@@ -1798,7 +1798,7 @@ begin
       while i >= 0 do
         begin
           EX[i + 1] := EX[i];
-          Dec(i);
+          dec(i);
         end;
     end;
 
@@ -1829,7 +1829,7 @@ var
   tmp      : TLVec;
   v        : TLFloat;
   i        : TLInt;
-  J        : TLInt;
+  j        : TLInt;
   KASE     : TLInt;
   KASE1    : TLInt;
   AINVNM   : TLFloat;
@@ -1872,19 +1872,19 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      J := 0;
-      while J <= i - 1 do
+      j := 0;
+      while j <= i - 1 do
         begin
-          SL := Max(SL, AbsReal(LUA[i, J]));
-          Inc(J);
+          SL := Max(SL, AbsReal(LUA[i, j]));
+          inc(j);
         end;
-      J := i;
-      while J <= n - 1 do
+      j := i;
+      while j <= n - 1 do
         begin
-          SU := Max(SU, AbsReal(LUA[i, J]));
-          Inc(J);
+          SU := Max(SU, AbsReal(LUA[i, j]));
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
   if AP_FP_Eq(SU, 0) then
     begin
@@ -1918,7 +1918,7 @@ begin
                 begin
                   v := APVDotProduct(@LUA[i - 1][0], i - 1, n - 1, @EX[0], i, n);
                   EX[i] := v;
-                  Inc(i);
+                  inc(i);
                 end;
 
               //
@@ -1936,7 +1936,7 @@ begin
                       v := 0;
                     end;
                   EX[i] := EX[i] + v;
-                  Dec(i);
+                  dec(i);
                 end;
             end
           else
@@ -1949,7 +1949,7 @@ begin
               while i <= n - 1 do
                 begin
                   tmp[i] := 0;
-                  Inc(i);
+                  inc(i);
                 end;
               i := 0;
               while i <= n - 1 do
@@ -1960,7 +1960,7 @@ begin
                       APVAdd(@tmp[0], 0, i - 1, @LUA[i][0], 0, i - 1, v);
                     end;
                   tmp[i] := tmp[i] + v;
-                  Inc(i);
+                  inc(i);
                 end;
               APVMove(@EX[0], 1, n, @tmp[0], 0, n - 1);
 
@@ -1971,14 +1971,14 @@ begin
               while i <= n - 1 do
                 begin
                   tmp[i] := 0;
-                  Inc(i);
+                  inc(i);
                 end;
               i := 0;
               while i <= n - 1 do
                 begin
                   v := EX[i + 1];
                   APVAdd(@tmp[0], i, n - 1, @LUA[i][0], i, n - 1, v);
-                  Inc(i);
+                  inc(i);
                 end;
               APVMove(@EX[0], 1, n, @tmp[0], 0, n - 1);
             end;
@@ -2024,7 +2024,7 @@ begin
       while i <= n - 1 do
         begin
           EX[i] := EX[i + 1];
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -2080,7 +2080,7 @@ begin
       while i >= 0 do
         begin
           EX[i + 1] := EX[i];
-          Dec(i);
+          dec(i);
         end;
     end;
 
@@ -2116,7 +2116,7 @@ var
   AINVNM   : TLFloat;
   v        : TLComplex;
   i        : TLInt;
-  J        : TLInt;
+  j        : TLInt;
   SU       : TLFloat;
   SL       : TLFloat;
   MaxGrowth: TLFloat;
@@ -2144,19 +2144,19 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      J := 0;
-      while J <= i - 1 do
+      j := 0;
+      while j <= i - 1 do
         begin
-          SL := Max(SL, AbsComplex(LUA[i, J]));
-          Inc(J);
+          SL := Max(SL, AbsComplex(LUA[i, j]));
+          inc(j);
         end;
-      J := i;
-      while J <= n - 1 do
+      j := i;
+      while j <= n - 1 do
         begin
-          SU := Max(SU, AbsComplex(LUA[i, J]));
-          Inc(J);
+          SU := Max(SU, AbsComplex(LUA[i, j]));
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
   if AP_FP_Eq(SU, 0) then
     begin
@@ -2200,7 +2200,7 @@ begin
                         v := C_Add(v, C_Mul(LUA[i - 1, i_], EX[i_ + i1_]));
                       end;
                     EX[i] := v;
-                    Inc(i);
+                    inc(i);
                   end;
 
                 //
@@ -2220,7 +2220,7 @@ begin
                           end;
                       end;
                     EX[i] := C_Add(v, EX[i]);
-                    Dec(i);
+                    dec(i);
                   end;
               end
             else
@@ -2233,7 +2233,7 @@ begin
                 while i <= n do
                   begin
                     CWORK2[i] := C_Complex(0);
-                    Inc(i);
+                    inc(i);
                   end;
                 i := 1;
                 while i <= n do
@@ -2249,7 +2249,7 @@ begin
                           end;
                       end;
                     CWORK2[i] := C_Add(CWORK2[i], v);
-                    Inc(i);
+                    inc(i);
                   end;
 
                 //
@@ -2259,7 +2259,7 @@ begin
                 while i <= n do
                   begin
                     EX[i] := C_Complex(0);
-                    Inc(i);
+                    inc(i);
                   end;
                 i := 1;
                 while i <= n do
@@ -2270,7 +2270,7 @@ begin
                       begin
                         EX[i_] := C_Add(EX[i_], C_Mul(v, Conj(LUA[i - 1, i_ + i1_])));
                       end;
-                    Inc(i);
+                    inc(i);
                   end;
               end;
           end;
@@ -2318,7 +2318,7 @@ begin
       while i <= n - 1 do
         begin
           EX[i] := EX[i + 1];
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -2378,7 +2378,7 @@ begin
       while i >= 0 do
         begin
           EX[i + 1] := EX[i];
-          Dec(i);
+          dec(i);
         end;
     end;
 
@@ -2400,12 +2400,12 @@ end;
   Internal subroutine for matrix norm estimation
   ************************************************************************ *)
 procedure RMatrixEstimateNorm(n: TLInt; var v: TLVec;
-  var X: TLVec; var ISGN: TLIVec; var EST: TLFloat;
+  var x: TLVec; var ISGN: TLIVec; var EST: TLFloat;
   var KASE: TLInt);
 var
   ITMAX    : TLInt;
   i        : TLInt;
-  T        : TLFloat;
+  t        : TLFloat;
   flg      : Boolean;
   PosITER  : TLInt;
   PosJ     : TLInt;
@@ -2426,14 +2426,14 @@ begin
   if KASE = 0 then
     begin
       SetLength(v, n + 4);
-      SetLength(X, n + 1);
+      SetLength(x, n + 1);
       SetLength(ISGN, n + 5);
-      T := AP_Float(1) / n;
+      t := AP_Float(1) / n;
       i := 1;
       while i <= n do
         begin
-          X[i] := T;
-          Inc(i);
+          x[i] := t;
+          inc(i);
         end;
       KASE := 1;
       ISGN[PosJUMP] := 1;
@@ -2448,7 +2448,7 @@ begin
     begin
       if n = 1 then
         begin
-          v[1] := X[1];
+          v[1] := x[1];
           EST := AbsReal(v[1]);
           KASE := 0;
           Exit;
@@ -2457,22 +2457,22 @@ begin
       i := 1;
       while i <= n do
         begin
-          EST := EST + AbsReal(X[i]);
-          Inc(i);
+          EST := EST + AbsReal(x[i]);
+          inc(i);
         end;
       i := 1;
       while i <= n do
         begin
-          if AP_FP_Greater_Eq(X[i], 0) then
+          if AP_FP_Greater_Eq(x[i], 0) then
             begin
-              X[i] := 1;
+              x[i] := 1;
             end
           else
             begin
-              X[i] := -1;
+              x[i] := -1;
             end;
-          ISGN[i] := Sign(X[i]);
-          Inc(i);
+          ISGN[i] := Sign(x[i]);
+          inc(i);
         end;
       KASE := 2;
       ISGN[PosJUMP] := 2;
@@ -2489,11 +2489,11 @@ begin
       i := 2;
       while i <= n do
         begin
-          if AP_FP_Greater(AbsReal(X[i]), AbsReal(X[ISGN[PosJ]])) then
+          if AP_FP_Greater(AbsReal(x[i]), AbsReal(x[ISGN[PosJ]])) then
             begin
               ISGN[PosJ] := i;
             end;
-          Inc(i);
+          inc(i);
         end;
       ISGN[PosITER] := 2;
 
@@ -2503,10 +2503,10 @@ begin
       i := 1;
       while i <= n do
         begin
-          X[i] := 0;
-          Inc(i);
+          x[i] := 0;
+          inc(i);
         end;
-      X[ISGN[PosJ]] := 1;
+      x[ISGN[PosJ]] := 1;
       KASE := 1;
       ISGN[PosJUMP] := 3;
       Exit;
@@ -2518,25 +2518,25 @@ begin
   //
   if ISGN[PosJUMP] = 3 then
     begin
-      APVMove(@v[0], 1, n, @X[0], 1, n);
+      APVMove(@v[0], 1, n, @x[0], 1, n);
       v[PosESTOLD] := EST;
       EST := 0;
       i := 1;
       while i <= n do
         begin
           EST := EST + AbsReal(v[i]);
-          Inc(i);
+          inc(i);
         end;
       flg := False;
       i := 1;
       while i <= n do
         begin
-          if AP_FP_Greater_Eq(X[i], 0) and (ISGN[i] < 0) or AP_FP_Less(X[i], 0) and
+          if AP_FP_Greater_Eq(x[i], 0) and (ISGN[i] < 0) or AP_FP_Less(x[i], 0) and
             (ISGN[i] >= 0) then
             begin
               flg := True;
             end;
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -2549,9 +2549,9 @@ begin
           i := 1;
           while i <= n do
             begin
-              X[i] := v[PosALTSGN] * (1 + AP_Float((i - 1)) / (n - 1));
+              x[i] := v[PosALTSGN] * (1 + AP_Float((i - 1)) / (n - 1));
               v[PosALTSGN] := -v[PosALTSGN];
-              Inc(i);
+              inc(i);
             end;
           KASE := 1;
           ISGN[PosJUMP] := 5;
@@ -2560,17 +2560,17 @@ begin
       i := 1;
       while i <= n do
         begin
-          if AP_FP_Greater_Eq(X[i], 0) then
+          if AP_FP_Greater_Eq(x[i], 0) then
             begin
-              X[i] := 1;
+              x[i] := 1;
               ISGN[i] := 1;
             end
           else
             begin
-              X[i] := -1;
+              x[i] := -1;
               ISGN[i] := -1;
             end;
-          Inc(i);
+          inc(i);
         end;
       KASE := 2;
       ISGN[PosJUMP] := 4;
@@ -2588,23 +2588,23 @@ begin
       i := 2;
       while i <= n do
         begin
-          if AP_FP_Greater(AbsReal(X[i]), AbsReal(X[ISGN[PosJ]])) then
+          if AP_FP_Greater(AbsReal(x[i]), AbsReal(x[ISGN[PosJ]])) then
             begin
               ISGN[PosJ] := i;
             end;
-          Inc(i);
+          inc(i);
         end;
-      if AP_FP_NEq(X[ISGN[PosJLAST]], AbsReal(X[ISGN[PosJ]])) and
+      if AP_FP_NEq(x[ISGN[PosJLAST]], AbsReal(x[ISGN[PosJ]])) and
         (ISGN[PosITER] < ITMAX) then
         begin
           ISGN[PosITER] := ISGN[PosITER] + 1;
           i := 1;
           while i <= n do
             begin
-              X[i] := 0;
-              Inc(i);
+              x[i] := 0;
+              inc(i);
             end;
-          X[ISGN[PosJ]] := 1;
+          x[ISGN[PosJ]] := 1;
           KASE := 1;
           ISGN[PosJUMP] := 3;
           Exit;
@@ -2617,9 +2617,9 @@ begin
       i := 1;
       while i <= n do
         begin
-          X[i] := v[PosALTSGN] * (1 + AP_Float((i - 1)) / (n - 1));
+          x[i] := v[PosALTSGN] * (1 + AP_Float((i - 1)) / (n - 1));
           v[PosALTSGN] := -v[PosALTSGN];
-          Inc(i);
+          inc(i);
         end;
       KASE := 1;
       ISGN[PosJUMP] := 5;
@@ -2636,13 +2636,13 @@ begin
       i := 1;
       while i <= n do
         begin
-          v[PosTEMP] := v[PosTEMP] + AbsReal(X[i]);
-          Inc(i);
+          v[PosTEMP] := v[PosTEMP] + AbsReal(x[i]);
+          inc(i);
         end;
       v[PosTEMP] := 2 * v[PosTEMP] / (3 * n);
       if AP_FP_Greater(v[PosTEMP], EST) then
         begin
-          APVMove(@v[0], 1, n, @X[0], 1, n);
+          APVMove(@v[0], 1, n, @x[0], 1, n);
           EST := v[PosTEMP];
         end;
       KASE := 0;
@@ -2651,13 +2651,13 @@ begin
 end;
 
 procedure CMatrixEstimateNorm(const n: TLInt; var v: TLComplexVec;
-  var X: TLComplexVec; var EST: TLFloat; var KASE: TLInt;
+  var x: TLComplexVec; var EST: TLFloat; var KASE: TLInt;
   var ISAVE: TLIVec; var RSAVE: TLVec);
 var
   ITMAX : TLInt;
   i     : TLInt;
   ITER  : TLInt;
-  J     : TLInt;
+  j     : TLInt;
   JLAST : TLInt;
   JUMP  : TLInt;
   ABSXI : TLFloat;
@@ -2676,22 +2676,22 @@ begin
   if KASE = 0 then
     begin
       SetLength(v, n + 1);
-      SetLength(X, n + 1);
+      SetLength(x, n + 1);
       SetLength(ISAVE, 5);
       SetLength(RSAVE, 4);
       i := 1;
       while i <= n do
         begin
-          X[i] := C_Complex(AP_Float(1) / n);
-          Inc(i);
+          x[i] := C_Complex(AP_Float(1) / n);
+          inc(i);
         end;
       KASE := 1;
       JUMP := 1;
-      InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, J, JLAST, JUMP, ABSXI,
+      InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, j, JLAST, JUMP, ABSXI,
         ALTSGN, ESTOLD, Temp);
       Exit;
     end;
-  InternalComplexRCondLoadAll(ISAVE, RSAVE, i, ITER, J, JLAST, JUMP, ABSXI,
+  InternalComplexRCondLoadAll(ISAVE, RSAVE, i, ITER, j, JLAST, JUMP, ABSXI,
     ALTSGN, ESTOLD, Temp);
 
   //
@@ -2702,31 +2702,31 @@ begin
     begin
       if n = 1 then
         begin
-          v[1] := X[1];
+          v[1] := x[1];
           EST := AbsComplex(v[1]);
           KASE := 0;
-          InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, J, JLAST, JUMP, ABSXI,
+          InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, j, JLAST, JUMP, ABSXI,
             ALTSGN, ESTOLD, Temp);
           Exit;
         end;
-      EST := InternalComplexRCondSCSUM1(X, n);
+      EST := InternalComplexRCondSCSUM1(x, n);
       i := 1;
       while i <= n do
         begin
-          ABSXI := AbsComplex(X[i]);
+          ABSXI := AbsComplex(x[i]);
           if AP_FP_Greater(ABSXI, SAFMIN) then
             begin
-              X[i] := C_DivR(X[i], ABSXI);
+              x[i] := C_DivR(x[i], ABSXI);
             end
           else
             begin
-              X[i] := C_Complex(1);
+              x[i] := C_Complex(1);
             end;
-          Inc(i);
+          inc(i);
         end;
       KASE := 2;
       JUMP := 2;
-      InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, J, JLAST, JUMP, ABSXI,
+      InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, j, JLAST, JUMP, ABSXI,
         ALTSGN, ESTOLD, Temp);
       Exit;
     end;
@@ -2737,7 +2737,7 @@ begin
   //
   if JUMP = 2 then
     begin
-      J := InternalComplexRCondICMAX1(X, n);
+      j := InternalComplexRCondICMAX1(x, n);
       ITER := 2;
 
       //
@@ -2746,13 +2746,13 @@ begin
       i := 1;
       while i <= n do
         begin
-          X[i] := C_Complex(0);
-          Inc(i);
+          x[i] := C_Complex(0);
+          inc(i);
         end;
-      X[J] := C_Complex(1);
+      x[j] := C_Complex(1);
       KASE := 1;
       JUMP := 3;
-      InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, J, JLAST, JUMP, ABSXI,
+      InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, j, JLAST, JUMP, ABSXI,
         ALTSGN, ESTOLD, Temp);
       Exit;
     end;
@@ -2765,7 +2765,7 @@ begin
     begin
       for i_ := 1 to n do
         begin
-          v[i_] := X[i_];
+          v[i_] := x[i_];
         end;
       ESTOLD := EST;
       EST := InternalComplexRCondSCSUM1(v, n);
@@ -2783,33 +2783,33 @@ begin
           i := 1;
           while i <= n do
             begin
-              X[i] := C_Complex(ALTSGN * (1 + AP_Float((i - 1)) / (n - 1)));
+              x[i] := C_Complex(ALTSGN * (1 + AP_Float((i - 1)) / (n - 1)));
               ALTSGN := -ALTSGN;
-              Inc(i);
+              inc(i);
             end;
           KASE := 1;
           JUMP := 5;
-          InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, J, JLAST, JUMP, ABSXI,
+          InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, j, JLAST, JUMP, ABSXI,
             ALTSGN, ESTOLD, Temp);
           Exit;
         end;
       i := 1;
       while i <= n do
         begin
-          ABSXI := AbsComplex(X[i]);
+          ABSXI := AbsComplex(x[i]);
           if AP_FP_Greater(ABSXI, SAFMIN) then
             begin
-              X[i] := C_DivR(X[i], ABSXI);
+              x[i] := C_DivR(x[i], ABSXI);
             end
           else
             begin
-              X[i] := C_Complex(1);
+              x[i] := C_Complex(1);
             end;
-          Inc(i);
+          inc(i);
         end;
       KASE := 2;
       JUMP := 4;
-      InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, J, JLAST, JUMP, ABSXI,
+      InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, j, JLAST, JUMP, ABSXI,
         ALTSGN, ESTOLD, Temp);
       Exit;
     end;
@@ -2820,9 +2820,9 @@ begin
   //
   if JUMP = 4 then
     begin
-      JLAST := J;
-      J := InternalComplexRCondICMAX1(X, n);
-      if AP_FP_NEq(AbsComplex(X[JLAST]), AbsComplex(X[J])) and (ITER < ITMAX) then
+      JLAST := j;
+      j := InternalComplexRCondICMAX1(x, n);
+      if AP_FP_NEq(AbsComplex(x[JLAST]), AbsComplex(x[j])) and (ITER < ITMAX) then
         begin
           ITER := ITER + 1;
 
@@ -2832,13 +2832,13 @@ begin
           i := 1;
           while i <= n do
             begin
-              X[i] := C_Complex(0);
-              Inc(i);
+              x[i] := C_Complex(0);
+              inc(i);
             end;
-          X[J] := C_Complex(1);
+          x[j] := C_Complex(1);
           KASE := 1;
           JUMP := 3;
-          InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, J, JLAST, JUMP, ABSXI,
+          InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, j, JLAST, JUMP, ABSXI,
             ALTSGN, ESTOLD, Temp);
           Exit;
         end;
@@ -2850,13 +2850,13 @@ begin
       i := 1;
       while i <= n do
         begin
-          X[i] := C_Complex(ALTSGN * (1 + AP_Float((i - 1)) / (n - 1)));
+          x[i] := C_Complex(ALTSGN * (1 + AP_Float((i - 1)) / (n - 1)));
           ALTSGN := -ALTSGN;
-          Inc(i);
+          inc(i);
         end;
       KASE := 1;
       JUMP := 5;
-      InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, J, JLAST, JUMP, ABSXI,
+      InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, j, JLAST, JUMP, ABSXI,
         ALTSGN, ESTOLD, Temp);
       Exit;
     end;
@@ -2867,23 +2867,23 @@ begin
   //
   if JUMP = 5 then
     begin
-      Temp := 2 * (InternalComplexRCondSCSUM1(X, n) / (3 * n));
+      Temp := 2 * (InternalComplexRCondSCSUM1(x, n) / (3 * n));
       if AP_FP_Greater(Temp, EST) then
         begin
           for i_ := 1 to n do
             begin
-              v[i_] := X[i_];
+              v[i_] := x[i_];
             end;
           EST := Temp;
         end;
       KASE := 0;
-      InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, J, JLAST, JUMP, ABSXI,
+      InternalComplexRCondSaveAll(ISAVE, RSAVE, i, ITER, j, JLAST, JUMP, ABSXI,
         ALTSGN, ESTOLD, Temp);
       Exit;
     end;
 end;
 
-function InternalComplexRCondSCSUM1(const X: TLComplexVec; n: TLInt)
+function InternalComplexRCondSCSUM1(const x: TLComplexVec; n: TLInt)
   : TLFloat;
 var
   i: TLInt;
@@ -2892,40 +2892,40 @@ begin
   i := 1;
   while i <= n do
     begin
-      Result := Result + AbsComplex(X[i]);
-      Inc(i);
+      Result := Result + AbsComplex(x[i]);
+      inc(i);
     end;
 end;
 
-function InternalComplexRCondICMAX1(const X: TLComplexVec; n: TLInt)
+function InternalComplexRCondICMAX1(const x: TLComplexVec; n: TLInt)
   : TLInt;
 var
   i: TLInt;
   M: TLFloat;
 begin
   Result := 1;
-  M := AbsComplex(X[1]);
+  M := AbsComplex(x[1]);
   i := 2;
   while i <= n do
     begin
-      if AP_FP_Greater(AbsComplex(X[i]), M) then
+      if AP_FP_Greater(AbsComplex(x[i]), M) then
         begin
           Result := i;
-          M := AbsComplex(X[i]);
+          M := AbsComplex(x[i]);
         end;
-      Inc(i);
+      inc(i);
     end;
 end;
 
 procedure InternalComplexRCondSaveAll(var ISAVE: TLIVec;
   var RSAVE: TLVec; var i: TLInt; var ITER: TLInt;
-  var J: TLInt; var JLAST: TLInt; var JUMP: TLInt;
+  var j: TLInt; var JLAST: TLInt; var JUMP: TLInt;
   var ABSXI: TLFloat; var ALTSGN: TLFloat; var ESTOLD: TLFloat;
   var Temp: TLFloat);
 begin
   ISAVE[0] := i;
   ISAVE[1] := ITER;
-  ISAVE[2] := J;
+  ISAVE[2] := j;
   ISAVE[3] := JLAST;
   ISAVE[4] := JUMP;
   RSAVE[0] := ABSXI;
@@ -2936,13 +2936,13 @@ end;
 
 procedure InternalComplexRCondLoadAll(var ISAVE: TLIVec;
   var RSAVE: TLVec; var i: TLInt; var ITER: TLInt;
-  var J: TLInt; var JLAST: TLInt; var JUMP: TLInt;
+  var j: TLInt; var JLAST: TLInt; var JUMP: TLInt;
   var ABSXI: TLFloat; var ALTSGN: TLFloat; var ESTOLD: TLFloat;
   var Temp: TLFloat);
 begin
   i := ISAVE[0];
   ITER := ISAVE[1];
-  J := ISAVE[2];
+  j := ISAVE[2];
   JLAST := ISAVE[3];
   JUMP := ISAVE[4];
   ABSXI := RSAVE[0];
@@ -2950,3 +2950,5 @@ begin
   ESTOLD := RSAVE[2];
   Temp := RSAVE[3];
 end; 
+ 
+ 

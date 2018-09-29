@@ -37,11 +37,8 @@
 *)
 unit AggScanlineBin;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggScanline;
@@ -49,8 +46,8 @@ uses
 type
   PAggSpanBin = ^TAggSpanBin;
 
-  TAggSpanBin = packed record
-    X, Len: Int16;
+  TAggSpanBin = record
+    x, Len: Int16;
   end;
 
   // This is binary scaline container which supports the interface
@@ -86,9 +83,9 @@ type
     procedure Reset(MinX, MaxX: Integer); override;
     procedure ResetSpans; override;
 
-    procedure Finalize(Y: Integer); override;
-    procedure AddCell(X: Integer; Cover: Cardinal); override;
-    procedure AddSpan(X: Integer; Len, Cover: Cardinal); override;
+    procedure Finalize(y: Integer); override;
+    procedure AddCell(x: Integer; Cover: Cardinal); override;
+    procedure AddSpan(x: Integer; Len, Cover: Cardinal); override;
 
     function GetBegin: TAggCustomSpan; override;
   end;
@@ -111,12 +108,12 @@ end;
 
 function TAggScanLineBin.TConstIterator.GetX: Integer;
 begin
-  Result := FSpan.X;
+  Result := FSpan.x;
 end;
 
 procedure TAggScanLineBin.TConstIterator.IncOperator;
 begin
-  Inc(PtrComp(FSpan), SizeOf(TAggSpanBin));
+  inc(PtrComp(FSpan), SizeOf(TAggSpanBin));
 end;
 
 { TAggScanLineBin }
@@ -160,39 +157,39 @@ begin
   FCurrentSpan := FSpans;
 end;
 
-procedure TAggScanLineBin.Finalize(Y: Integer);
+procedure TAggScanLineBin.Finalize(y: Integer);
 begin
-  fy := Y;
+  fy := y;
 end;
 
-procedure TAggScanLineBin.AddCell(X: Integer; Cover: Cardinal);
+procedure TAggScanLineBin.AddCell(x: Integer; Cover: Cardinal);
 begin
-  if X = FLastX + 1 then
-      Inc(FCurrentSpan.Len)
+  if x = FLastX + 1 then
+      inc(FCurrentSpan.Len)
   else
     begin
-      Inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanBin));
+      inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanBin));
 
-      FCurrentSpan.X := Int16(X);
+      FCurrentSpan.x := Int16(x);
       FCurrentSpan.Len := 1;
     end;
 
-  FLastX := X;
+  FLastX := x;
 end;
 
-procedure TAggScanLineBin.AddSpan(X: Integer; Len, Cover: Cardinal);
+procedure TAggScanLineBin.AddSpan(x: Integer; Len, Cover: Cardinal);
 begin
-  if X = FLastX + 1 then
+  if x = FLastX + 1 then
       FCurrentSpan.Len := Int16(FCurrentSpan.Len + Len)
   else
     begin
-      Inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanBin));
+      inc(PtrComp(FCurrentSpan), SizeOf(TAggSpanBin));
 
-      FCurrentSpan.X := Int16(X);
+      FCurrentSpan.x := Int16(x);
       FCurrentSpan.Len := Int16(Len);
     end;
 
-  FLastX := X + Len - 1;
+  FLastX := x + Len - 1;
 end;
 
 function TAggScanLineBin.GetY: Integer;
@@ -221,3 +218,5 @@ end;
   end; }
 
 end. 
+ 
+ 

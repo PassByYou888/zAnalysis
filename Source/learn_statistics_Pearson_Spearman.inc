@@ -21,7 +21,7 @@
   Result:
   Pearson product-moment correlation coefficient
   ************************************************************************ *)
-function PearsonCorrelation(const X, Y: TLVec; const n: TLInt): TLFloat;
+function PearsonCorrelation(const x, y: TLVec; const n: TLInt): TLFloat;
 var
   i    : TLInt;
   XMean: TLFloat;
@@ -48,9 +48,9 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      XMean := XMean + X[i];
-      YMean := YMean + Y[i];
-      Inc(i);
+      XMean := XMean + x[i];
+      YMean := YMean + y[i];
+      inc(i);
     end;
   XMean := XMean / n;
   YMean := YMean / n;
@@ -64,12 +64,12 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      t1 := X[i] - XMean;
-      t2 := Y[i] - YMean;
+      t1 := x[i] - XMean;
+      t2 := y[i] - YMean;
       XV := XV + AP_Sqr(t1);
       YV := YV + AP_Sqr(t2);
       s := s + t1 * t2;
-      Inc(i);
+      inc(i);
     end;
   if AP_FP_Eq(XV, 0) or AP_FP_Eq(YV, 0) then
       Result := 0
@@ -88,7 +88,7 @@ end;
   Result:
   Spearman's rank correlation coefficient
   ************************************************************************ *)
-function SpearmanRankCorrelation(const X, Y: TLVec; const n: TLInt): TLFloat;
+function SpearmanRankCorrelation(const x, y: TLVec; const n: TLInt): TLFloat;
 var
   Nx, Ny: TLVec;
 begin
@@ -97,8 +97,8 @@ begin
       Result := 0;
       Exit;
     end;
-  Nx := DynamicArrayCopy(X);
-  Ny := DynamicArrayCopy(Y);
+  Nx := DynamicArrayCopy(x);
+  Ny := DynamicArrayCopy(y);
   SpearmanRank(Nx, n);
   SpearmanRank(Ny, n);
   Result := PearsonCorrelation(Nx, Ny, n);
@@ -109,16 +109,16 @@ end;
 (* ************************************************************************
   Spearman Rank Correlation Coefficient
   ************************************************************************ *)
-procedure SpearmanRank(var X: TLVec; n: TLInt);
+procedure SpearmanRank(var x: TLVec; n: TLInt);
 var
   i   : TLInt;
-  J   : TLInt;
+  j   : TLInt;
   k   : TLInt;
-  T   : TLInt;
+  t   : TLInt;
   tmp : TLFloat;
   TmpI: TLInt;
-  R   : TLVec;
-  C   : TLIVec;
+  r   : TLVec;
+  c   : TLIVec;
 begin
 
   //
@@ -127,14 +127,14 @@ begin
   if n < 1 then
       Exit;
 
-  SetLength(R, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(C, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(r, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(c, n (* - 1 + 1 // optimized compiler *) );
   i := 0;
   while i <= n - 1 do
     begin
-      R[i] := X[i];
-      C[i] := i;
-      Inc(i);
+      r[i] := x[i];
+      c[i] := i;
+      inc(i);
     end;
 
   //
@@ -144,65 +144,65 @@ begin
     begin
       i := 2;
       repeat
-        T := i;
-        while T <> 1 do
+        t := i;
+        while t <> 1 do
           begin
-            k := T div 2;
-            if AP_FP_Greater_Eq(R[k - 1], R[T - 1]) then
+            k := t div 2;
+            if AP_FP_Greater_Eq(r[k - 1], r[t - 1]) then
               begin
-                T := 1;
+                t := 1;
               end
             else
               begin
-                tmp := R[k - 1];
-                R[k - 1] := R[T - 1];
-                R[T - 1] := tmp;
-                TmpI := C[k - 1];
-                C[k - 1] := C[T - 1];
-                C[T - 1] := TmpI;
-                T := k;
+                tmp := r[k - 1];
+                r[k - 1] := r[t - 1];
+                r[t - 1] := tmp;
+                TmpI := c[k - 1];
+                c[k - 1] := c[t - 1];
+                c[t - 1] := TmpI;
+                t := k;
               end;
           end;
         i := i + 1;
       until not(i <= n);
       i := n - 1;
       repeat
-        tmp := R[i];
-        R[i] := R[0];
-        R[0] := tmp;
-        TmpI := C[i];
-        C[i] := C[0];
-        C[0] := TmpI;
-        T := 1;
-        while T <> 0 do
+        tmp := r[i];
+        r[i] := r[0];
+        r[0] := tmp;
+        TmpI := c[i];
+        c[i] := c[0];
+        c[0] := TmpI;
+        t := 1;
+        while t <> 0 do
           begin
-            k := 2 * T;
+            k := 2 * t;
             if k > i then
               begin
-                T := 0;
+                t := 0;
               end
             else
               begin
                 if k < i then
                   begin
-                    if AP_FP_Greater(R[k], R[k - 1]) then
+                    if AP_FP_Greater(r[k], r[k - 1]) then
                       begin
                         k := k + 1;
                       end;
                   end;
-                if AP_FP_Greater_Eq(R[T - 1], R[k - 1]) then
+                if AP_FP_Greater_Eq(r[t - 1], r[k - 1]) then
                   begin
-                    T := 0;
+                    t := 0;
                   end
                 else
                   begin
-                    tmp := R[k - 1];
-                    R[k - 1] := R[T - 1];
-                    R[T - 1] := tmp;
-                    TmpI := C[k - 1];
-                    C[k - 1] := C[T - 1];
-                    C[T - 1] := TmpI;
-                    T := k;
+                    tmp := r[k - 1];
+                    r[k - 1] := r[t - 1];
+                    r[t - 1] := tmp;
+                    TmpI := c[k - 1];
+                    c[k - 1] := c[t - 1];
+                    c[t - 1] := TmpI;
+                    t := k;
                   end;
               end;
           end;
@@ -216,22 +216,22 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      J := i + 1;
-      while J <= n - 1 do
+      j := i + 1;
+      while j <= n - 1 do
         begin
-          if AP_FP_NEq(R[J], R[i]) then
+          if AP_FP_NEq(r[j], r[i]) then
             begin
               Break;
             end;
-          J := J + 1;
+          j := j + 1;
         end;
       k := i;
-      while k <= J - 1 do
+      while k <= j - 1 do
         begin
-          R[k] := 1 + AP_Float((i + J - 1)) / 2;
-          Inc(k);
+          r[k] := 1 + AP_Float((i + j - 1)) / 2;
+          inc(k);
         end;
-      i := J;
+      i := j;
     end;
 
   //
@@ -240,17 +240,17 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      X[C[i]] := R[i];
-      Inc(i);
+      x[c[i]] := r[i];
+      inc(i);
     end;
 end;
 
-function SpearmanTail5(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SpearmanTail6(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SpearmanTail7(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SpearmanTail8(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SpearmanTail9(const s: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SpearmanTail(const T: TLFloat; const n: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SpearmanTail5(const s: TLFloat): TLFloat; forward;
+function SpearmanTail6(const s: TLFloat): TLFloat; forward;
+function SpearmanTail7(const s: TLFloat): TLFloat; forward;
+function SpearmanTail8(const s: TLFloat): TLFloat; forward;
+function SpearmanTail9(const s: TLFloat): TLFloat; forward;
+function SpearmanTail(const t: TLFloat; const n: TLInt): TLFloat; forward;
 
 
 (* ************************************************************************
@@ -278,23 +278,23 @@ function SpearmanTail(const T: TLFloat; const n: TLInt): TLFloat; forward; {$IFD
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure PearsonCorrelationSignificance(const R: TLFloat; const n: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
+procedure PearsonCorrelationSignificance(const r: TLFloat; const n: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  T: TLFloat;
+  t: TLFloat;
   p: TLFloat;
 begin
 
   //
   // Some special cases
   //
-  if AP_FP_Greater_Eq(R, 1) then
+  if AP_FP_Greater_Eq(r, 1) then
     begin
       BothTails := 0.0;
       LeftTail := 1.0;
       RightTail := 0.0;
       Exit;
     end;
-  if AP_FP_Less_Eq(R, -1) then
+  if AP_FP_Less_Eq(r, -1) then
     begin
       BothTails := 0.0;
       LeftTail := 0.0;
@@ -312,8 +312,8 @@ begin
   //
   // General case
   //
-  T := R * Sqrt((n - 2) / (1 - AP_Sqr(R)));
-  p := StudentTDistribution(n - 2, T);
+  t := r * Sqrt((n - 2) / (1 - AP_Sqr(r)));
+  p := StudentTDistribution(n - 2, t);
   BothTails := 2 * Min(p, 1 - p);
   LeftTail := p;
   RightTail := 1 - p;
@@ -346,9 +346,9 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure SpearmanRankCorrelationSignificance(const R: TLFloat; const n: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
+procedure SpearmanRankCorrelationSignificance(const r: TLFloat; const n: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  T: TLFloat;
+  t: TLFloat;
   p: TLFloat;
 begin
 
@@ -366,31 +366,31 @@ begin
   //
   // General case
   //
-  if AP_FP_Greater_Eq(R, 1) then
+  if AP_FP_Greater_Eq(r, 1) then
     begin
-      T := 1.0E10;
+      t := 1.0E10;
     end
   else
     begin
-      if AP_FP_Less_Eq(R, -1) then
+      if AP_FP_Less_Eq(r, -1) then
         begin
-          T := -1.0E10;
+          t := -1.0E10;
         end
       else
         begin
-          T := R * Sqrt((n - 2) / (1 - AP_Sqr(R)));
+          t := r * Sqrt((n - 2) / (1 - AP_Sqr(r)));
         end;
     end;
-  if AP_FP_Less(T, 0) then
+  if AP_FP_Less(t, 0) then
     begin
-      p := SpearmanTail(T, n);
+      p := SpearmanTail(t, n);
       BothTails := 2 * p;
       LeftTail := p;
       RightTail := 1 - p;
     end
   else
     begin
-      p := SpearmanTail(-T, n);
+      p := SpearmanTail(-t, n);
       BothTails := 2 * p;
       LeftTail := 1 - p;
       RightTail := p;
@@ -850,32 +850,34 @@ end;
 (* ************************************************************************
   Tail(T,N), accepts T<0
   ************************************************************************ *)
-function SpearmanTail(const T: TLFloat; const n: TLInt): TLFloat;
+function SpearmanTail(const t: TLFloat; const n: TLInt): TLFloat;
 begin
   if n = 5 then
     begin
-      Result := SpearmanTail5(-T);
+      Result := SpearmanTail5(-t);
       Exit;
     end;
   if n = 6 then
     begin
-      Result := SpearmanTail6(-T);
+      Result := SpearmanTail6(-t);
       Exit;
     end;
   if n = 7 then
     begin
-      Result := SpearmanTail7(-T);
+      Result := SpearmanTail7(-t);
       Exit;
     end;
   if n = 8 then
     begin
-      Result := SpearmanTail8(-T);
+      Result := SpearmanTail8(-t);
       Exit;
     end;
   if n = 9 then
     begin
-      Result := SpearmanTail9(-T);
+      Result := SpearmanTail9(-t);
       Exit;
     end;
-  Result := StudentTDistribution(n - 2, T);
+  Result := StudentTDistribution(n - 2, t);
 end; 
+ 
+ 

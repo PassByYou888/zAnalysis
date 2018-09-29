@@ -37,6 +37,7 @@
 *)
 unit AggQuadratureOscillator;
 
+{$INCLUDE AggCompiler.inc}
 interface
 
 uses
@@ -63,8 +64,8 @@ type
 
     property Amplitude: Double read FAmplitude write SetAmplitude;
     property Frequency: Double read FFrequency write SetFrequency;
-    property sine: Double read FPosition.Y;
-    property cosine: Double read FPosition.X;
+    property sine: Double read FPosition.y;
+    property cosine: Double read FPosition.x;
     property Phase: Double read GetPhase write SetPhase;
   end;
 
@@ -81,28 +82,28 @@ begin
   inherited Create;
   FFrequency := Frequency;
   FAmplitude := Amplitude;
-  SinCos(FFrequency, FAngle.X, FAngle.Y);
-  FPosition.Y := 0;
-  FPosition.X := FAmplitude;
+  SinCos(FFrequency, FAngle.x, FAngle.y);
+  FPosition.y := 0;
+  FPosition.x := FAmplitude;
 end;
 
 procedure TAggQuadratureOscillator.FrequencyChanged;
 begin
-  SinCos(FFrequency, FAngle.X, FAngle.Y);
+  SinCos(FFrequency, FAngle.x, FAngle.y);
 end;
 
 function TAggQuadratureOscillator.GetPhase: Double;
 begin
-  Result := -ArcTan2(FPosition.Y, -FPosition.X);
+  Result := -ArcTan2(FPosition.y, -FPosition.x);
 end;
 
 procedure TAggQuadratureOscillator.Next;
 var
   Temp: Double;
 begin
-  Temp := FPosition.Y * FAngle.Y - FPosition.X * FAngle.X;
-  FPosition.X := FPosition.X * FAngle.Y + FPosition.Y * FAngle.X;
-  FPosition.Y := Temp;
+  Temp := FPosition.y * FAngle.y - FPosition.x * FAngle.x;
+  FPosition.x := FPosition.x * FAngle.y + FPosition.y * FAngle.x;
+  FPosition.y := Temp;
 end;
 
 procedure TAggQuadratureOscillator.Reset;
@@ -116,13 +117,13 @@ begin
     begin
       if FAmplitude = 0 then
         begin
-          FPosition.Y := 0;
-          FPosition.X := Value;
+          FPosition.y := 0;
+          FPosition.x := Value;
         end
       else
         begin
-          FPosition.Y := FPosition.Y / FAmplitude * Value;
-          FPosition.X := FPosition.X / FAmplitude * Value;
+          FPosition.y := FPosition.y / FAmplitude * Value;
+          FPosition.x := FPosition.x / FAmplitude * Value;
         end;
       FAmplitude := Value;
     end;
@@ -139,9 +140,11 @@ end;
 
 procedure TAggQuadratureOscillator.SetPhase(const Value: Double);
 begin
-  SinCos(Value, FPosition.Y, FPosition.X);
-  FPosition.Y := FPosition.Y * -FAmplitude;
-  FPosition.X := FPosition.X * -FAmplitude;
+  SinCos(Value, FPosition.y, FPosition.x);
+  FPosition.y := FPosition.y * -FAmplitude;
+  FPosition.x := FPosition.x * -FAmplitude;
 end;
 
 end. 
+ 
+ 

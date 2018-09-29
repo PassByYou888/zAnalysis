@@ -37,11 +37,8 @@
 *)
 unit AggSpanInterpolatorPerspective;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   Math,
   AggBasics,
@@ -86,17 +83,17 @@ type
     function IsValid: Boolean;
 
     // Span interpolator interface
-    procedure SetBegin(X, Y: Double; Len: Cardinal); override;
+    procedure SetBegin(x, y: Double; Len: Cardinal); override;
 
     procedure Resynchronize(XE, Ye: Double; Len: Cardinal); override;
 
     procedure IncOperator; override;
-    procedure Coordinates(X, Y: PInteger); override;
-    procedure Coordinates(var X, Y: Integer); override;
+    procedure Coordinates(x, y: PInteger); override;
+    procedure Coordinates(var x, y: Integer); override;
 
-    procedure LocalScale(X, Y: PInteger); override;
+    procedure LocalScale(x, y: PInteger); override;
 
-    procedure Transform(X, Y: PDouble);
+    procedure Transform(x, y: PDouble);
   end;
 
   TAggSpanInterpolatorPerspectiveLerp = class(TAggSpanInterpolator)
@@ -132,17 +129,17 @@ type
     procedure QuadToRect(Quad: PQuadDouble; Rect: TRectDouble); overload;
 
     // Span interpolator interface
-    procedure SetBegin(X, Y: Double; Len: Cardinal); override;
+    procedure SetBegin(x, y: Double; Len: Cardinal); override;
 
     procedure Resynchronize(XE, Ye: Double; Len: Cardinal); override;
 
     procedure IncOperator; override;
-    procedure Coordinates(X, Y: PInteger); override;
-    procedure Coordinates(var X, Y: Integer); override;
+    procedure Coordinates(x, y: PInteger); override;
+    procedure Coordinates(var x, y: Integer); override;
 
-    procedure LocalScale(X, Y: PInteger); override;
+    procedure LocalScale(x, y: PInteger); override;
 
-    procedure Transform(X, Y: PDouble);
+    procedure Transform(x, y: PDouble);
 
     // Check if the equations were solved successfully
     property IsValid: Boolean read GetIsValid;
@@ -258,55 +255,55 @@ var
   TempDelta: Double;
   Sx1, Sy1, Sx2, Sy2: Integer;
 begin
-  FIterator := FTransDir.GetBegin(X, Y, 1.0);
+  FIterator := FTransDir.GetBegin(x, y, 1.0);
 
-  Temp.X := FIterator.X;
-  Temp.Y := FIterator.Y;
+  Temp.x := FIterator.x;
+  Temp.y := FIterator.y;
 
   TempDelta := 1 / CAggSubpixelSize;
 
-  Delta.X := Temp.X + TempDelta;
-  Delta.Y := Temp.Y;
+  Delta.x := Temp.x + TempDelta;
+  Delta.y := Temp.y;
 
-  FTransInv.Transform(FTransInv, @Delta.X, @Delta.Y);
+  FTransInv.Transform(FTransInv, @Delta.x, @Delta.y);
 
-  Delta.X := Delta.X - X;
-  Delta.Y := Delta.Y - Y;
-  Sx1 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.X, Delta.Y)),
+  Delta.x := Delta.x - x;
+  Delta.y := Delta.y - y;
+  Sx1 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.x, Delta.y)),
     CAggSubpixelShift);
-  Delta.X := Temp.X;
-  Delta.Y := Temp.Y + TempDelta;
+  Delta.x := Temp.x;
+  Delta.y := Temp.y + TempDelta;
 
-  FTransInv.Transform(FTransInv, @Delta.X, @Delta.Y);
+  FTransInv.Transform(FTransInv, @Delta.x, @Delta.y);
 
-  Delta.X := Delta.X - X;
-  Delta.Y := Delta.Y - Y;
-  Sy1 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.X, Delta.Y)),
+  Delta.x := Delta.x - x;
+  Delta.y := Delta.y - y;
+  Sy1 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.x, Delta.y)),
     CAggSubpixelShift);
 
-  X := X + Len;
-  Temp.X := X;
-  Temp.Y := Y;
+  x := x + Len;
+  Temp.x := x;
+  Temp.y := y;
 
-  FTransDir.Transform(FTransDir, @Temp.X, @Temp.Y);
+  FTransDir.Transform(FTransDir, @Temp.x, @Temp.y);
 
-  Delta.X := Temp.X + TempDelta;
-  Delta.Y := Temp.Y;
+  Delta.x := Temp.x + TempDelta;
+  Delta.y := Temp.y;
 
-  FTransInv.Transform(FTransInv, @Delta.X, @Delta.Y);
+  FTransInv.Transform(FTransInv, @Delta.x, @Delta.y);
 
-  Delta.X := Delta.X - X;
-  Delta.Y := Delta.Y - Y;
-  Sx2 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.X, Delta.Y)),
+  Delta.x := Delta.x - x;
+  Delta.y := Delta.y - y;
+  Sx2 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.x, Delta.y)),
     CAggSubpixelShift);
-  Delta.X := Temp.X;
-  Delta.Y := Temp.Y + TempDelta;
+  Delta.x := Temp.x;
+  Delta.y := Temp.y + TempDelta;
 
-  FTransInv.Transform(FTransInv, @Delta.X, @Delta.Y);
+  FTransInv.Transform(FTransInv, @Delta.x, @Delta.y);
 
-  Delta.X := Delta.X - X;
-  Delta.Y := Delta.Y - Y;
-  Sy2 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.X, Delta.Y)),
+  Delta.x := Delta.x - x;
+  Delta.y := Delta.y - y;
+  Sy2 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.x, Delta.y)),
     CAggSubpixelShift);
 
   FScaleX.Initialize(Sx1, Sx2, Len);
@@ -320,37 +317,37 @@ var
   Temp, Delta: TPointDouble;
 begin
   // Assume x1,y1 are equal to the ones at the previous end point
-  Sx1 := FScaleX.Y;
-  Sy1 := FScaleY.Y;
+  Sx1 := FScaleX.y;
+  Sy1 := FScaleY.y;
 
   // Calculate transformed coordinates at x2,y2
-  Temp.X := XE;
-  Temp.Y := Ye;
+  Temp.x := XE;
+  Temp.y := Ye;
 
-  FTransDir.Transform(FTransDir, @Temp.X, @Temp.Y);
+  FTransDir.Transform(FTransDir, @Temp.x, @Temp.y);
 
   TempDelta := 1 / CAggSubpixelSize;
 
   // Calculate scale by X at x2,y2
-  Delta.X := Temp.X + TempDelta;
-  Delta.Y := Temp.Y;
+  Delta.x := Temp.x + TempDelta;
+  Delta.y := Temp.y;
 
-  FTransInv.Transform(FTransInv, @Delta.X, @Delta.Y);
+  FTransInv.Transform(FTransInv, @Delta.x, @Delta.y);
 
-  Delta.X := Delta.X - XE;
-  Delta.Y := Delta.Y - Ye;
-  Sx2 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.X, Delta.Y)),
+  Delta.x := Delta.x - XE;
+  Delta.y := Delta.y - Ye;
+  Sx2 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.x, Delta.y)),
     CAggSubpixelShift);
 
   // Calculate scale by Y at x2,y2
-  Delta.X := Temp.X;
-  Delta.Y := Temp.Y + TempDelta;
+  Delta.x := Temp.x;
+  Delta.y := Temp.y + TempDelta;
 
-  FTransInv.Transform(FTransInv, @Delta.X, @Delta.Y);
+  FTransInv.Transform(FTransInv, @Delta.x, @Delta.y);
 
-  Delta.X := Delta.X - XE;
-  Delta.Y := Delta.Y - Ye;
-  Sy2 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.X, Delta.Y)),
+  Delta.x := Delta.x - XE;
+  Delta.y := Delta.y - Ye;
+  Sy2 := ShrInt32(Trunc(CAggSubpixelSize / Hypot(Delta.x, Delta.y)),
     CAggSubpixelShift);
 
   // Initialize the interpolators
@@ -365,27 +362,27 @@ begin
   FScaleY.PlusOperator;
 end;
 
-procedure TAggSpanInterpolatorPerspectiveExact.Coordinates(X, Y: PInteger);
+procedure TAggSpanInterpolatorPerspectiveExact.Coordinates(x, y: PInteger);
 begin
-  X^ := Trunc(FIterator.X * CAggSubpixelSize + 0.5);
-  Y^ := Trunc(FIterator.Y * CAggSubpixelSize + 0.5);
+  x^ := Trunc(FIterator.x * CAggSubpixelSize + 0.5);
+  y^ := Trunc(FIterator.y * CAggSubpixelSize + 0.5);
 end;
 
-procedure TAggSpanInterpolatorPerspectiveExact.Coordinates(var X, Y: Integer);
+procedure TAggSpanInterpolatorPerspectiveExact.Coordinates(var x, y: Integer);
 begin
-  X := Trunc(FIterator.X * CAggSubpixelSize + 0.5);
-  Y := Trunc(FIterator.Y * CAggSubpixelSize + 0.5);
+  x := Trunc(FIterator.x * CAggSubpixelSize + 0.5);
+  y := Trunc(FIterator.y * CAggSubpixelSize + 0.5);
 end;
 
-procedure TAggSpanInterpolatorPerspectiveExact.LocalScale(X, Y: PInteger);
+procedure TAggSpanInterpolatorPerspectiveExact.LocalScale(x, y: PInteger);
 begin
-  X^ := FScaleX.Y;
-  Y^ := FScaleY.Y;
+  x^ := FScaleX.y;
+  y^ := FScaleY.y;
 end;
 
-procedure TAggSpanInterpolatorPerspectiveExact.Transform(X, Y: PDouble);
+procedure TAggSpanInterpolatorPerspectiveExact.Transform(x, y: PDouble);
 begin
-  FTransDir.Transform(FTransDir, X, Y);
+  FTransDir.Transform(FTransDir, x, y);
 end;
 
 { TAggSpanInterpolatorPerspectiveLerp }
@@ -496,15 +493,15 @@ begin
   Result := FTransDir.IsValid;
 end;
 
-procedure TAggSpanInterpolatorPerspectiveLerp.SetBegin(X, Y: Double;
+procedure TAggSpanInterpolatorPerspectiveLerp.SetBegin(x, y: Double;
   Len: Cardinal);
 var
   xt, Yt, dx, dy, Delta: Double;
   x1, y1, Sx1, Sy1, x2, y2, Sx2, Sy2: Integer;
 begin
   // Calculate transformed coordinates at x1,y1
-  xt := X;
-  Yt := Y;
+  xt := x;
+  Yt := y;
 
   FTransDir.Transform(FTransDir, @xt, @Yt);
 
@@ -519,8 +516,8 @@ begin
 
   FTransInv.Transform(FTransInv, @dx, @dy);
 
-  dx := dx - X;
-  dy := dy - Y;
+  dx := dx - x;
+  dy := dy - y;
   Sx1 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(dx * dx + dy * dy)),
     CAggSubpixelShift);
 
@@ -530,15 +527,15 @@ begin
 
   FTransInv.Transform(FTransInv, @dx, @dy);
 
-  dx := dx - X;
-  dy := dy - Y;
+  dx := dx - x;
+  dy := dy - y;
   Sy1 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(dx * dx + dy * dy)),
     CAggSubpixelShift);
 
   // Calculate transformed coordinates at x2,y2
-  X := X + Len;
-  xt := X;
-  Yt := Y;
+  x := x + Len;
+  xt := x;
+  Yt := y;
 
   FTransDir.Transform(FTransDir, @xt, @Yt);
 
@@ -551,8 +548,8 @@ begin
 
   FTransInv.Transform(FTransInv, @dx, @dy);
 
-  dx := dx - X;
-  dy := dy - Y;
+  dx := dx - x;
+  dy := dy - y;
   Sx2 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(dx * dx + dy * dy)),
     CAggSubpixelShift);
 
@@ -562,8 +559,8 @@ begin
 
   FTransInv.Transform(FTransInv, @dx, @dy);
 
-  dx := dx - X;
-  dy := dy - Y;
+  dx := dx - x;
+  dy := dy - y;
   Sy2 := ShrInt32(Trunc(CAggSubpixelSize / Sqrt(dx * dx + dy * dy)),
     CAggSubpixelShift);
 
@@ -582,10 +579,10 @@ var
 
 begin
   // Assume x1,y1 are equal to the ones at the previous end point
-  x1 := FCoordX.Y;
-  y1 := FCoordY.Y;
-  Sx1 := FScaleX.Y;
-  Sy1 := FScaleY.Y;
+  x1 := FCoordX.y;
+  y1 := FCoordY.y;
+  Sx1 := FScaleX.y;
+  Sy1 := FScaleY.y;
 
   // Calculate transformed coordinates at x2,y2
   xt := XE;
@@ -635,27 +632,29 @@ begin
   FScaleY.PlusOperator;
 end;
 
-procedure TAggSpanInterpolatorPerspectiveLerp.Coordinates(X, Y: PInteger);
+procedure TAggSpanInterpolatorPerspectiveLerp.Coordinates(x, y: PInteger);
 begin
-  X^ := FCoordX.Y;
-  Y^ := FCoordY.Y;
+  x^ := FCoordX.y;
+  y^ := FCoordY.y;
 end;
 
-procedure TAggSpanInterpolatorPerspectiveLerp.Coordinates(var X, Y: Integer);
+procedure TAggSpanInterpolatorPerspectiveLerp.Coordinates(var x, y: Integer);
 begin
-  X := FCoordX.Y;
-  Y := FCoordY.Y;
+  x := FCoordX.y;
+  y := FCoordY.y;
 end;
 
 procedure TAggSpanInterpolatorPerspectiveLerp.LocalScale;
 begin
-  X^ := FScaleX.Y;
-  Y^ := FScaleY.Y;
+  x^ := FScaleX.y;
+  y^ := FScaleY.y;
 end;
 
 procedure TAggSpanInterpolatorPerspectiveLerp.Transform;
 begin
-  FTransDir.Transform(FTransDir, X, Y);
+  FTransDir.Transform(FTransDir, x, y);
 end;
 
 end. 
+ 
+ 

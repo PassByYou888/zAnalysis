@@ -37,11 +37,8 @@
 *)
 unit AggRasterizerScanlineClip;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggClipLiangBarsky,
@@ -54,7 +51,7 @@ const
 type
   TAggRasterizerConv = class
   public
-    function MulDiv(A, b, C: Double): Pointer; virtual; abstract;
+    function MulDiv(a, b, c: Double): Pointer; virtual; abstract;
 
     function XI(v: Pointer): Integer; virtual; abstract;
     function Yi(v: Pointer): Integer; virtual; abstract;
@@ -70,7 +67,7 @@ type
   public
     constructor Create;
 
-    function MulDiv(A, b, C: Double): Pointer; override;
+    function MulDiv(a, b, c: Double): Pointer; override;
 
     function XI(v: Pointer): Integer; override;
     function Yi(v: Pointer): Integer; override;
@@ -86,7 +83,7 @@ type
   public
     constructor Create;
 
-    function MulDiv(A, b, C: Double): Pointer; override;
+    function MulDiv(a, b, c: Double): Pointer; override;
 
     function XI(v: Pointer): Integer; override;
     function Yi(v: Pointer): Integer; override;
@@ -102,7 +99,7 @@ type
   public
     constructor Create;
 
-    function MulDiv(A, b, C: Double): Pointer; override;
+    function MulDiv(a, b, c: Double): Pointer; override;
 
     function XI(v: Pointer): Integer; override;
     function Yi(v: Pointer): Integer; override;
@@ -118,7 +115,7 @@ type
   public
     constructor Create;
 
-    function MulDiv(A, b, C: Double): Pointer; override;
+    function MulDiv(a, b, c: Double): Pointer; override;
 
     function XI(v: Pointer): Integer; override;
     function Yi(v: Pointer): Integer; override;
@@ -134,7 +131,7 @@ type
   public
     constructor Create;
 
-    function MulDiv(A, b, C: Double): Pointer; override;
+    function MulDiv(a, b, c: Double): Pointer; override;
 
     function XI(v: Pointer): Integer; override;
     function Yi(v: Pointer): Integer; override;
@@ -265,13 +262,13 @@ begin
   inherited;
 end;
 
-function TAggRasConvInt.MulDiv(A, b, C: Double): Pointer;
+function TAggRasConvInt.MulDiv(a, b, c: Double): Pointer;
 begin
-  FResult[FStack] := IntegerRound(A * b / C);
+  FResult[FStack] := IntegerRound(a * b / c);
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -293,7 +290,7 @@ begin
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -305,7 +302,7 @@ begin
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -318,13 +315,13 @@ begin
   FStack := 1;
 end;
 
-function TAggRasConvIntSat.MulDiv(A, b, C: Double): Pointer;
+function TAggRasConvIntSat.MulDiv(a, b, c: Double): Pointer;
 begin
-  FResult[FStack] := SaturationIntegerRound(CAggPolyMaxCoord, A * b / C);
+  FResult[FStack] := SaturationIntegerRound(CAggPolyMaxCoord, a * b / c);
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -347,7 +344,7 @@ begin
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -359,7 +356,7 @@ begin
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -372,13 +369,13 @@ begin
   FStack := 1;
 end;
 
-function TAggRasConvInt3x.MulDiv(A, b, C: Double): Pointer;
+function TAggRasConvInt3x.MulDiv(a, b, c: Double): Pointer;
 begin
-  FResult[FStack] := IntegerRound(A * b / C);
+  FResult[FStack] := IntegerRound(a * b / c);
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -400,7 +397,7 @@ begin
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -412,7 +409,7 @@ begin
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -425,13 +422,13 @@ begin
   FStack := 1;
 end;
 
-function TRasConvDouble.MulDiv(A, b, C: Double): Pointer;
+function TRasConvDouble.MulDiv(a, b, c: Double): Pointer;
 begin
-  FResult[FStack] := A * b / C;
+  FResult[FStack] := a * b / c;
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -453,7 +450,7 @@ begin
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -465,7 +462,7 @@ begin
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -478,13 +475,13 @@ begin
   FStack := 1;
 end;
 
-function TRasConvDouble3x.MulDiv(A, b, C: Double): Pointer;
+function TRasConvDouble3x.MulDiv(a, b, c: Double): Pointer;
 begin
-  FResult[FStack] := A * b / C;
+  FResult[FStack] := a * b / c;
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -506,7 +503,7 @@ begin
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -518,7 +515,7 @@ begin
 
   Result := @FResult[FStack];
 
-  Inc(FStack);
+  inc(FStack);
 
   if FStack > CMaxStack then
       FStack := 1;
@@ -1129,3 +1126,5 @@ begin
 end;
 
 end. 
+ 
+ 

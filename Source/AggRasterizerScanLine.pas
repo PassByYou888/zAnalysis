@@ -37,6 +37,7 @@
 *)
 unit AggRasterizerScanLine;
 
+{$INCLUDE AggCompiler.inc}
 interface
 
 uses
@@ -55,7 +56,7 @@ type
     procedure SetClipBox(Rect: TRectDouble); overload; virtual; abstract;
 
     procedure AddPath(Vs: TAggCustomVertexSource; PathID: Cardinal = 0); virtual; abstract;
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); virtual; abstract;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); virtual; abstract;
 
     procedure Sort; virtual; abstract;
     function RewindScanLines: Boolean; virtual; abstract;
@@ -95,3 +96,5 @@ type
 implementation
 
 end. 
+ 
+ 

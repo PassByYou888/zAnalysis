@@ -37,11 +37,8 @@
 *)
 unit AggBezierArc;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   Math,
   AggMath,
@@ -63,14 +60,14 @@ type
     function GetVertices: PDoubleMatrix2x6;
     function GetNumVertices: Cardinal;
 
-    procedure Init(X, Y, RX, RY, startAngle, SweepAngle: Double);
+    procedure Init(x, y, RX, RY, startAngle, SweepAngle: Double);
   public
     constructor Create; overload;
-    constructor Create(X, Y, RX, RY, startAngle, SweepAngle: Double); overload;
-    constructor Create(X, Y: Double; radius: TPointDouble; startAngle, SweepAngle: Double); overload;
+    constructor Create(x, y, RX, RY, startAngle, SweepAngle: Double); overload;
+    constructor Create(x, y: Double; radius: TPointDouble; startAngle, SweepAngle: Double); overload;
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property NumVertices: Cardinal read GetNumVertices;
   end;
@@ -144,22 +141,22 @@ begin
   FCmd := CAggPathCmdLineTo;
 end;
 
-constructor TAggBezierArc.Create(X, Y, RX, RY, startAngle,
+constructor TAggBezierArc.Create(x, y, RX, RY, startAngle,
   SweepAngle: Double);
 begin
-  Init(X, Y, RX, RY, startAngle, SweepAngle);
+  Init(x, y, RX, RY, startAngle, SweepAngle);
 end;
 
-constructor TAggBezierArc.Create(X, Y: Double; radius: TPointDouble; startAngle,
+constructor TAggBezierArc.Create(x, y: Double; radius: TPointDouble; startAngle,
   SweepAngle: Double);
 begin
-  Init(X, Y, radius.X, radius.Y, startAngle, SweepAngle);
+  Init(x, y, radius.x, radius.y, startAngle, SweepAngle);
 end;
 
-procedure TAggBezierArc.Init(X, Y, RX, RY, startAngle, SweepAngle: Double);
+procedure TAggBezierArc.Init(x, y, RX, RY, startAngle, SweepAngle: Double);
 var
   i: Integer;
-  F: Double;
+  f: Double;
 
   sn, CN: Double;
   TotalSweep, LocalSweep, PrevSweep: Double;
@@ -167,9 +164,9 @@ var
   Done: Boolean;
 begin
   i := Trunc(startAngle / (2.0 * pi));
-  F := startAngle - (i * 2.0 * pi);
+  f := startAngle - (i * 2.0 * pi);
 
-  startAngle := F;
+  startAngle := f;
 
   if SweepAngle >= 2.0 * pi then
       SweepAngle := 2.0 * pi;
@@ -184,11 +181,11 @@ begin
       FCmd := CAggPathCmdLineTo;
 
       SinCosScale(startAngle, sn, CN, RY, RX);
-      FVertices[0] := X + CN;
-      FVertices[1] := Y + sn;
+      FVertices[0] := x + CN;
+      FVertices[1] := y + sn;
       SinCosScale(startAngle + SweepAngle, sn, CN, RY, RX);
-      FVertices[2] := X + CN;
-      FVertices[3] := Y + sn;
+      FVertices[2] := x + CN;
+      FVertices[3] := y + sn;
 
       Exit;
     end;
@@ -230,7 +227,7 @@ begin
           end;
       end;
 
-    ArcToBezier(X, Y, RX, RY, startAngle, LocalSweep,
+    ArcToBezier(x, y, RX, RY, startAngle, LocalSweep,
       @FVertices[FNumVertices - 2]);
 
     FNumVertices := FNumVertices + 6;
@@ -244,7 +241,7 @@ begin
   FVertex := 0;
 end;
 
-function TAggBezierArc.Vertex(X, Y: PDouble): Cardinal;
+function TAggBezierArc.Vertex(x, y: PDouble): Cardinal;
 begin
   if FVertex >= FNumVertices then
     begin
@@ -253,10 +250,10 @@ begin
       Exit;
     end;
 
-  X^ := FVertices[FVertex];
-  Y^ := FVertices[FVertex + 1];
+  x^ := FVertices[FVertex];
+  y^ := FVertices[FVertex + 1];
 
-  Inc(FVertex, 2);
+  inc(FVertex, 2);
 
   if FVertex = 2 then
       Result := CAggPathCmdMoveTo
@@ -429,7 +426,7 @@ begin
         Mtx.Transform(Mtx, PDouble(PtrComp(GetVertices) + i * SizeOf(Double)),
           PDouble(PtrComp(GetVertices) + (i + 1) * SizeOf(Double)));
 
-        Inc(i, 2);
+        inc(i, 2);
       end;
   finally
       Mtx.Free;
@@ -448,3 +445,5 @@ begin
 end;
 
 end. 
+ 
+ 

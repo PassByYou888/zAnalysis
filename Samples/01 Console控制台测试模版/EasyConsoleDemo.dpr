@@ -86,7 +86,7 @@ begin
   FastKDTreeD.Test_All();
   Demo;
   MH_1.EndMemoryHook;
-  MH_1.HookPtrList.Progress(procedure(NPtr: Pointer; uData: NativeUInt)
+  MH_1.HookPtrList.ProgressP(procedure(NPtr: Pointer; uData: NativeUInt)
     begin
       DoStatus('leak memory:0x%s', [IntToHex(NativeUInt(NPtr), sizeof(Pointer) * 2)]);
       DoStatus(NPtr, uData, 80);

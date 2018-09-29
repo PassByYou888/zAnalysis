@@ -16,7 +16,7 @@ unit Y4M;
 
 interface
 
-uses SysUtils, CoreClasses, PascalStrings, UnicodeMixedLib, MemoryRaster, h264Image, h264Stdint;
+uses SysUtils, CoreClasses, PascalStrings, UnicodeMixedLib, MemoryRaster, h264Image, h264Types;
 
 type
   TY4MReader = class
@@ -32,7 +32,7 @@ type
     img: TPlanarImage;
     procedure ParseHeader;
   public
-    constructor Create(const fileName: TPascalString); overload;
+    constructor Create(const FileName: TPascalString); overload;
     constructor Create(const stream: TCoreClassStream; const autoFreeSteam: Boolean); overload;
     destructor Destroy; override;
 
@@ -60,7 +60,7 @@ type
       psf: per second frame
       filename: output filename
     *)
-    constructor Create(const w, h, psf: uint16_t; const fileName: TPascalString); overload;
+    constructor Create(const w, h, psf: uint16_t; const FileName: TPascalString); overload;
 
     (*
       w: frame FWidth
@@ -94,7 +94,7 @@ var
 procedure TY4MReader.ParseHeader;
 var
   i, Num, DENOM: Integer;
-  C, param_c: uint8_t;
+  c, param_c: uint8_t;
   token: TY4MToken;
   s: TPascalString;
 begin
@@ -103,16 +103,16 @@ begin
   if not CompareMemory(@token[0], @Y4M_Token[0], 9) then
       RaiseInfo('Not a Y4M format');
 
-  umlBlockRead(ioHandle, C, 1);
+  umlBlockRead(ioHandle, c, 1);
 
   repeat
     umlBlockRead(ioHandle, param_c, 1);
     s := '';
-    umlBlockRead(ioHandle, C, 1);
+    umlBlockRead(ioHandle, c, 1);
     repeat
-      s.Append(SystemChar(C));
-      umlBlockRead(ioHandle, C, 1);
-    until (C = 10) or (C = 32);
+      s.Append(SystemChar(c));
+      umlBlockRead(ioHandle, c, 1);
+    until (c = 10) or (c = 32);
     case param_c of
       Ord('W'):
         FWidth := umlStrToInt(s);
@@ -125,18 +125,18 @@ begin
           FFrameRate := Num / DENOM;
         end;
     end;
-  until C = 10;
+  until c = 10;
 
   FFileHeaderSize := umlFilePOS(ioHandle);
 end;
 
-constructor TY4MReader.Create(const fileName: TPascalString);
+constructor TY4MReader.Create(const FileName: TPascalString);
 begin
   inherited Create;
   FFrameCount := 0;
   FCurrentFrame := 0;
 
-  umlFileOpen(fileName, ioHandle, True);
+  umlFileOpen(FileName, ioHandle, True);
   ParseHeader;
 
   FFrameSize := FWidth * FHeight + (FWidth * FHeight div 2);
@@ -194,12 +194,12 @@ begin
   if not CompareMemory(@magic[0], @FRAME_MAGIC[0], FRAME_MAGIC_SIZE) then
       RaiseInfo('Not a Y4M Frame');
   umlBlockRead(ioHandle, img.plane[0]^, FFrameSize);
-  Inc(FCurrentFrame);
+  inc(FCurrentFrame);
   img.frame_num := FCurrentFrame;
   Result := img;
 end;
 
-constructor TY4MWriter.Create(const w, h, psf: uint16_t; const fileName: TPascalString);
+constructor TY4MWriter.Create(const w, h, psf: uint16_t; const FileName: TPascalString);
 var
   s: TPascalString;
   b: TBytes;
@@ -208,7 +208,7 @@ begin
   s := PFormat('YUV4MPEG2 W%d H%d F%d:1 Ip A0:0' + #10, [w, h, psf]);
   s.FastGetBytes(b);
 
-  umlFileCreate(fileName, ioHandle);
+  umlFileCreate(FileName, ioHandle);
   umlBlockWrite(ioHandle, b[0], length(b));
 
   SetLength(b, 0);
@@ -254,7 +254,7 @@ begin
   FrameSize := img.width * img.height + (img.width * img.height div 2);
   img.LoadFromRaster(raster);
   umlBlockWrite(ioHandle, img.plane[0]^, FrameSize);
-  Inc(FFrameCount);
+  inc(FFrameCount);
 end;
 
 procedure TY4MWriter.Flush;
@@ -268,4 +268,6 @@ begin
 end;
 
 end.  
+ 
+ 
  

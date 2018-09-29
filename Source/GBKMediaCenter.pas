@@ -1,4 +1,4 @@
-{ ****************************************************************************** }
+锘縶 ****************************************************************************** }
 { * GBK media Data support, writen by QQ 600585@qq.com                         * }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
@@ -11,10 +11,9 @@
 { ****************************************************************************** }
 unit GBKMediaCenter;
 
-interface
-
 {$INCLUDE zDefine.inc}
 
+interface
 
 uses DoStatusIO, CoreClasses, PascalStrings, UPascalStrings,
   MemoryStream64, ListEngine, TextDataEngine, UnicodeMixedLib;
@@ -42,9 +41,15 @@ var
   // big word
   bigWordDict: THashList;
 
+{$INCLUDE GBK_Dict.inc}
+{$INCLUDE GBKVec_Dict.inc}
+{$INCLUDE GBKWordPart_Dict.inc}
+{$INCLUDE GBKBig_MiniDict.inc}
+{$INCLUDE FastGBK_Dict.inc}
+
 {$ENDREGION 'GBKMediaCenterDecl'}
 
-function LoadAndMergeDict(const ROOT: TPascalString): nativeInt;
+function LoadAndMergeDict(const ROOT: TPascalString): NativeInt;
 
 implementation
 
@@ -60,21 +65,21 @@ type
 
 const
   cDictName: array [TDictStyle] of string = (
-    ('键值词库-字符'),
-    ('键值词库-拼音'),
-    ('键值词库-简体转繁体'),
-    ('键值词库-繁体转港繁体'),
-    ('键值词库-繁体转简体'),
-    ('键值词库-繁体转台湾体'),
-    ('分块文本词库-词性'),
-    ('分块文本词库-意志'),
-    ('分块文本词库-度量'),
-    ('文本词库-情感负向'),
-    ('文本词库-回馈负向'),
-    ('文本词库-情感正向'),
-    ('文本词库-回馈正向'),
-    ('大规模键值词库-分词库'),
-    ('大规模文本词库-分词库')
+    ('KEY-CHARACTER'),
+    ('KEY-PY'),
+    ('KEY-S2T'),
+    ('KEY-T2HONGKONG'),
+    ('KEY-T2S'),
+    ('KEY-T2TW'),
+    ('INI-WORDPART'),
+    ('INI-WILL'),
+    ('INI-VEC'),
+    ('TEXT-BADEMOTION'),
+    ('TEXT-DSBADREP'),
+    ('TEXT-DSGOODEMOTION'),
+    ('TEXT-DSGOODREP'),
+    ('BIG-KEY'),
+    ('BIG-TEXT')
     );
 
 function GBKStorePath(const ROOT: TPascalString; const DS: TDictStyle): TPascalString;
@@ -82,12 +87,12 @@ begin
   Result := umlCombinePath(ROOT, cDictName[DS]);
 end;
 
-function LoadPath(const Path, fileFilter: TPascalString; const mergeTo: THashStringList): nativeInt; overload;
+function LoadPath(const Path, fileFilter: TPascalString; const mergeTo: THashStringList): NativeInt; overload;
 var
   fArry: U_StringArray;
   pArry: U_StringArray;
   i: Integer;
-  ori: nativeInt;
+  ori: NativeInt;
 begin
   Result := 0;
   if not umlDirectoryExists(Path) then
@@ -99,23 +104,23 @@ begin
       begin
         ori := mergeTo.Count;
         mergeTo.LoadFromFile(fArry[i]);
-        Inc(Result, mergeTo.Count - ori);
+        inc(Result, mergeTo.Count - ori);
       end;
   SetLength(fArry, 0);
 
   pArry := umlGetDirListWithFullPath(Path);
   for i := low(pArry) to high(pArry) do
-      Inc(Result, LoadPath(pArry[i], fileFilter, mergeTo));
+      inc(Result, LoadPath(pArry[i], fileFilter, mergeTo));
   SetLength(pArry, 0);
 end;
 
-function LoadPath(const Path, fileFilter: TPascalString; const mergeTo: THashList): nativeInt; overload;
+function LoadPath(const Path, fileFilter: TPascalString; const mergeTo: THashList): NativeInt; overload;
 var
   fArry: U_StringArray;
   pArry: U_StringArray;
-  i, J: Integer;
+  i, j: Integer;
   lst: TListPascalString;
-  ori: nativeInt;
+  ori: NativeInt;
 begin
   Result := 0;
   if not umlDirectoryExists(Path) then
@@ -129,27 +134,27 @@ begin
 
         lst := TListPascalString.Create;
         lst.LoadFromFile(fArry[i]);
-        for J := 0 to lst.Count - 1 do
-            mergeTo.Add(lst[J], nil, True);
+        for j := 0 to lst.Count - 1 do
+            mergeTo.Add(lst[j], nil, True);
         DisposeObject(lst);
 
-        Inc(Result, mergeTo.Count - ori);
+        inc(Result, mergeTo.Count - ori);
       end;
   SetLength(fArry, 0);
 
   pArry := umlGetDirListWithFullPath(Path);
   for i := low(pArry) to high(pArry) do
-      Inc(Result, LoadPath(pArry[i], fileFilter, mergeTo));
+      inc(Result, LoadPath(pArry[i], fileFilter, mergeTo));
   SetLength(pArry, 0);
 end;
 
-function LoadPath(const Path, fileFilter: TPascalString; const mergeTo: THashTextEngine): nativeInt; overload;
+function LoadPath(const Path, fileFilter: TPascalString; const mergeTo: THashTextEngine): NativeInt; overload;
 var
   fArry: U_StringArray;
   pArry: U_StringArray;
   te: THashTextEngine;
   i: Integer;
-  ori: nativeInt;
+  ori: NativeInt;
 begin
   Result := 0;
   if not umlDirectoryExists(Path) then
@@ -166,17 +171,17 @@ begin
         mergeTo.Merge(te);
         DisposeObject(te);
 
-        Inc(Result, mergeTo.TotalCount - ori);
+        inc(Result, mergeTo.TotalCount - ori);
       end;
   SetLength(fArry, 0);
 
   pArry := umlGetDirListWithFullPath(Path);
   for i := low(pArry) to high(pArry) do
-      Inc(Result, LoadPath(pArry[i], fileFilter, mergeTo));
+      inc(Result, LoadPath(pArry[i], fileFilter, mergeTo));
   SetLength(pArry, 0);
 end;
 
-function LoadAndMergeDict(const ROOT: TPascalString): nativeInt;
+function LoadAndMergeDict(const ROOT: TPascalString): NativeInt;
 const
   cAllDict = [dsChar, dsPY, dsS2T, dsT2HK, dsT2S, dsT2TW,
     dsWordPart,
@@ -187,7 +192,7 @@ const
 
 var
   DS: TDictStyle;
-  R: nativeInt;
+  r: NativeInt;
   ph: TPascalString;
 begin
   Result := 0;
@@ -197,32 +202,32 @@ begin
       if not umlDirectoryExists(ph) then
           umlCreateDirectory(ph);
 
-      R := 0;
+      r := 0;
 
       case DS of
-        dsChar: R := LoadPath(ph, '*.txt', CharDict);
-        dsPY: R := LoadPath(ph, '*.txt', PYDict);
-        dsS2T: R := LoadPath(ph, '*.txt', s2tDict);
-        dsT2HK: R := LoadPath(ph, '*.txt', t2hkDict);
-        dsT2S: R := LoadPath(ph, '*.txt', t2sDict);
-        dsT2TW: R := LoadPath(ph, '*.txt', t2twDict);
-        dsWordPart: R := LoadPath(ph, '*.ini;*.txt', WordPartDict);
-        dsWillVec: R := LoadPath(ph, '*.ini;*.txt', WillVecDict);
-        dsWordVec: R := LoadPath(ph, '*.ini;*.txt', WordVecDict);
-        dsBadEmotion: R := LoadPath(ph, '*.txt', BadEmotionDict);
-        dsBadRep: R := LoadPath(ph, '*.txt', BadRepDict);
-        dsGoodEmotion: R := LoadPath(ph, '*.txt', GoodEmotionDict);
-        dsGoodRep: R := LoadPath(ph, '*.txt', GoodRepDict);
-        dsBigKey: R := LoadPath(ph, '*.txt', bigKeyDict);
-        dsBigWord: R := LoadPath(ph, '*.txt', bigWordDict);
+        dsChar: r := LoadPath(ph, '*.txt', CharDict);
+        dsPY: r := LoadPath(ph, '*.txt', PYDict);
+        dsS2T: r := LoadPath(ph, '*.txt', s2tDict);
+        dsT2HK: r := LoadPath(ph, '*.txt', t2hkDict);
+        dsT2S: r := LoadPath(ph, '*.txt', t2sDict);
+        dsT2TW: r := LoadPath(ph, '*.txt', t2twDict);
+        dsWordPart: r := LoadPath(ph, '*.ini;*.txt', WordPartDict);
+        dsWillVec: r := LoadPath(ph, '*.ini;*.txt', WillVecDict);
+        dsWordVec: r := LoadPath(ph, '*.ini;*.txt', WordVecDict);
+        dsBadEmotion: r := LoadPath(ph, '*.txt', BadEmotionDict);
+        dsBadRep: r := LoadPath(ph, '*.txt', BadRepDict);
+        dsGoodEmotion: r := LoadPath(ph, '*.txt', GoodEmotionDict);
+        dsGoodRep: r := LoadPath(ph, '*.txt', GoodRepDict);
+        dsBigKey: r := LoadPath(ph, '*.txt', bigKeyDict);
+        dsBigWord: r := LoadPath(ph, '*.txt', bigWordDict);
       end;
 
-      DoStatus('%s loaded %d ...', [cDictName[DS], R]);
-      Inc(Result, R);
+      DoStatus('%s loaded %d ...', [cDictName[DS], r]);
+      inc(Result, r);
     end;
 end;
 
-function GetGBKTextEngineDict(Data: Pointer; siz, hashSiz: nativeInt): THashTextEngine;
+function GetGBKTextEngineDict(Data: Pointer; siz, hashSiz: NativeInt): THashTextEngine;
 var
   output: TMemoryStream64;
 begin
@@ -234,7 +239,7 @@ begin
   DisposeObject(output);
 end;
 
-function GetGBKHashStringDict(Data: Pointer; siz, hashSiz: nativeInt): THashStringList;
+function GetGBKHashStringDict(Data: Pointer; siz, hashSiz: NativeInt): THashStringList;
 var
   output: TMemoryStream64;
 begin
@@ -246,7 +251,7 @@ begin
   DisposeObject(output);
 end;
 
-function GetGBKHashDict(Data: Pointer; siz, hashSiz: nativeInt): THashList;
+function GetGBKHashDict(Data: Pointer; siz, hashSiz: NativeInt): THashList;
 var
   output: TMemoryStream64;
   lst: TListPascalString;
@@ -264,11 +269,6 @@ begin
       Result.Add(lst[i], nil, True);
   DisposeObject(lst);
 end;
-
-{$INCLUDE GBK_Dict.inc}
-{$INCLUDE GBKVec_Dict.inc}
-{$INCLUDE GBKWordPart_Dict.inc}
-{$INCLUDE GBKBig_MiniDict.inc}
 
 procedure InitGBKMedia;
 begin
@@ -321,3 +321,5 @@ finalization
 FreeGBKMedia;
 
 end. 
+ 
+ 

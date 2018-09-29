@@ -37,11 +37,8 @@
 *)
 unit AggPatternFiltersRgba;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggLineAABasics,
@@ -51,27 +48,27 @@ type
   TAggPatternFilter = class
   public
     function Dilation: Cardinal; virtual; abstract;
-    procedure PixelLowResolution(Buf: Pointer; p: PAggColor; X, Y: Integer); virtual; abstract;
-    procedure PixelHighResolution(Buf: Pointer; p: PAggColor; X, Y: Integer); virtual; abstract;
+    procedure PixelLowResolution(Buf: Pointer; p: PAggColor; x, y: Integer); virtual; abstract;
+    procedure PixelHighResolution(Buf: Pointer; p: PAggColor; x, y: Integer); virtual; abstract;
   end;
 
   TAggPatternFilterNN = class(TAggPatternFilter)
   public
     function Dilation: Cardinal; override;
-    procedure PixelLowResolution(Buf: Pointer; p: PAggColor; X, Y: Integer); override;
-    procedure PixelHighResolution(Buf: Pointer; p: PAggColor; X, Y: Integer); override;
+    procedure PixelLowResolution(Buf: Pointer; p: PAggColor; x, y: Integer); override;
+    procedure PixelHighResolution(Buf: Pointer; p: PAggColor; x, y: Integer); override;
   end;
 
   TAggPatternFilterBilinearRgba = class(TAggPatternFilter)
   public
     function Dilation: Cardinal; override;
-    procedure PixelLowResolution(Buf: Pointer; p: PAggColor; X, Y: Integer); override;
-    procedure PixelHighResolution(Buf: Pointer; p: PAggColor; X, Y: Integer); override;
+    procedure PixelLowResolution(Buf: Pointer; p: PAggColor; x, y: Integer); override;
+    procedure PixelHighResolution(Buf: Pointer; p: PAggColor; x, y: Integer); override;
   end;
 
   TAggPatternFilterBilinearGray8 = class(TAggPatternFilterBilinearRgba)
   public
-    procedure PixelHighResolution(Buf: Pointer; p: PAggColor; X, Y: Integer); override;
+    procedure PixelHighResolution(Buf: Pointer; p: PAggColor; x, y: Integer); override;
   end;
 
 implementation
@@ -85,17 +82,17 @@ begin
 end;
 
 procedure TAggPatternFilterNN.PixelLowResolution(Buf: Pointer; p: PAggColor;
-  X, Y: Integer);
+  x, y: Integer);
 begin
-  p^.FromRgba8(PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) + Y *
-    SizeOf(Pointer))^) + X * SizeOf(TAggRgba8))^);
+  p^.FromRgba8(PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) + y *
+    SizeOf(Pointer))^) + x * SizeOf(TAggRgba8))^);
 end;
 
 procedure TAggPatternFilterNN.PixelHighResolution(Buf: Pointer; p: PAggColor;
-  X, Y: Integer);
+  x, y: Integer);
 begin
-  p^.FromRgba8(PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) + ShrInt32(Y,
-    CAggLineSubpixelShift) * SizeOf(Pointer))^) + ShrInt32(X,
+  p^.FromRgba8(PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) + ShrInt32(y,
+    CAggLineSubpixelShift) * SizeOf(Pointer))^) + ShrInt32(x,
     CAggLineSubpixelShift) * SizeOf(TAggRgba8))^);
 end;
 
@@ -108,133 +105,135 @@ end;
 
 procedure TAggPatternFilterBilinearRgba.PixelLowResolution;
 begin
-  p^.FromRgba8(PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) + Y *
-    SizeOf(Pointer))^) + X * SizeOf(TAggRgba8))^);
+  p^.FromRgba8(PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) + y *
+    SizeOf(Pointer))^) + x * SizeOf(TAggRgba8))^);
 end;
 
 procedure TAggPatternFilterBilinearRgba.PixelHighResolution;
 var
-  R, g, b, A, Weight: Int32u;
+  r, g, b, a, Weight: Int32u;
   LowRes: TPointInteger;
   PTR: PAggRgba8;
 begin
-  R := CAggLineSubpixelSize * CAggLineSubpixelSize div 2;
-  g := R;
+  r := CAggLineSubpixelSize * CAggLineSubpixelSize div 2;
+  g := r;
   b := g;
-  A := b;
+  a := b;
 
-  LowRes.X := ShrInt32(X, CAggLineSubpixelShift);
-  LowRes.Y := ShrInt32(Y, CAggLineSubpixelShift);
+  LowRes.x := ShrInt32(x, CAggLineSubpixelShift);
+  LowRes.y := ShrInt32(y, CAggLineSubpixelShift);
 
-  X := X and CAggLineSubpixelMask;
-  Y := Y and CAggLineSubpixelMask;
+  x := x and CAggLineSubpixelMask;
+  y := y and CAggLineSubpixelMask;
 
-  PTR := PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) + LowRes.Y * SizeOf(Pointer))^) +
-    LowRes.X * SizeOf(TAggRgba8));
+  PTR := PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) + LowRes.y * SizeOf(Pointer))^) +
+    LowRes.x * SizeOf(TAggRgba8));
 
-  Weight := (CAggLineSubpixelSize - X) * (CAggLineSubpixelSize - Y);
+  Weight := (CAggLineSubpixelSize - x) * (CAggLineSubpixelSize - y);
 
-  Inc(R, Weight * PTR.R);
-  Inc(g, Weight * PTR.g);
-  Inc(b, Weight * PTR.b);
-  Inc(A, Weight * PTR.A);
+  inc(r, Weight * PTR.r);
+  inc(g, Weight * PTR.g);
+  inc(b, Weight * PTR.b);
+  inc(a, Weight * PTR.a);
 
-  Inc(PtrComp(PTR), SizeOf(TAggRgba8));
+  inc(PtrComp(PTR), SizeOf(TAggRgba8));
 
-  Weight := X * (CAggLineSubpixelSize - Y);
+  Weight := x * (CAggLineSubpixelSize - y);
 
-  Inc(R, Weight * PTR.R);
-  Inc(g, Weight * PTR.g);
-  Inc(b, Weight * PTR.b);
-  Inc(A, Weight * PTR.A);
+  inc(r, Weight * PTR.r);
+  inc(g, Weight * PTR.g);
+  inc(b, Weight * PTR.b);
+  inc(a, Weight * PTR.a);
 
-  PTR := PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) + (LowRes.Y + 1) *
-    SizeOf(Pointer))^) + LowRes.X * SizeOf(TAggRgba8));
+  PTR := PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) + (LowRes.y + 1) *
+    SizeOf(Pointer))^) + LowRes.x * SizeOf(TAggRgba8));
 
-  Weight := (CAggLineSubpixelSize - X) * Y;
+  Weight := (CAggLineSubpixelSize - x) * y;
 
-  Inc(R, Weight * PTR.R);
-  Inc(g, Weight * PTR.g);
-  Inc(b, Weight * PTR.b);
-  Inc(A, Weight * PTR.A);
+  inc(r, Weight * PTR.r);
+  inc(g, Weight * PTR.g);
+  inc(b, Weight * PTR.b);
+  inc(a, Weight * PTR.a);
 
-  Inc(PtrComp(PTR), SizeOf(TAggRgba8));
+  inc(PtrComp(PTR), SizeOf(TAggRgba8));
 
-  Weight := X * Y;
+  Weight := x * y;
 
-  Inc(R, Weight * PTR.R);
-  Inc(g, Weight * PTR.g);
-  Inc(b, Weight * PTR.b);
-  Inc(A, Weight * PTR.A);
+  inc(r, Weight * PTR.r);
+  inc(g, Weight * PTR.g);
+  inc(b, Weight * PTR.b);
+  inc(a, Weight * PTR.a);
 
-  p.Rgba8.R := Int8u(R shr (CAggLineSubpixelShift * 2));
+  p.Rgba8.r := Int8u(r shr (CAggLineSubpixelShift * 2));
   p.Rgba8.g := Int8u(g shr (CAggLineSubpixelShift * 2));
   p.Rgba8.b := Int8u(b shr (CAggLineSubpixelShift * 2));
-  p.Rgba8.A := Int8u(A shr (CAggLineSubpixelShift * 2));
+  p.Rgba8.a := Int8u(a shr (CAggLineSubpixelShift * 2));
 end;
 
 { TAggPatternFilterBilinearGray8 }
 
 procedure TAggPatternFilterBilinearGray8.PixelHighResolution;
 var
-  R, g, b, A, Weight: Int32u;
+  r, g, b, a, Weight: Int32u;
   LowRes: TPointInteger;
   PTR: PAggRgba8;
 begin
-  R := CAggLineSubpixelSize * CAggLineSubpixelSize div 2;
-  g := R;
+  r := CAggLineSubpixelSize * CAggLineSubpixelSize div 2;
+  g := r;
   b := g;
-  A := b;
+  a := b;
 
-  LowRes.X := ShrInt32(X, CAggLineSubpixelShift);
-  LowRes.Y := ShrInt32(Y, CAggLineSubpixelShift);
+  LowRes.x := ShrInt32(x, CAggLineSubpixelShift);
+  LowRes.y := ShrInt32(y, CAggLineSubpixelShift);
 
-  X := X and CAggLineSubpixelMask;
-  Y := Y and CAggLineSubpixelMask;
+  x := x and CAggLineSubpixelMask;
+  y := y and CAggLineSubpixelMask;
 
   PTR := PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) +
-    LowRes.Y * SizeOf(Pointer))^) + LowRes.X * SizeOf(TAggRgba8));
+    LowRes.y * SizeOf(Pointer))^) + LowRes.x * SizeOf(TAggRgba8));
 
-  Weight := (CAggLineSubpixelSize - X) * (CAggLineSubpixelSize - Y);
+  Weight := (CAggLineSubpixelSize - x) * (CAggLineSubpixelSize - y);
 
-  Inc(R, Weight * PTR.R);
-  Inc(g, Weight * PTR.g);
-  Inc(b, Weight * PTR.b);
-  Inc(A, Weight * PTR.A);
+  inc(r, Weight * PTR.r);
+  inc(g, Weight * PTR.g);
+  inc(b, Weight * PTR.b);
+  inc(a, Weight * PTR.a);
 
-  Inc(PtrComp(PTR), SizeOf(TAggRgba8));
+  inc(PtrComp(PTR), SizeOf(TAggRgba8));
 
-  Weight := X * (CAggLineSubpixelSize - Y);
+  Weight := x * (CAggLineSubpixelSize - y);
 
-  Inc(R, Weight * PTR.R);
-  Inc(g, Weight * PTR.g);
-  Inc(b, Weight * PTR.b);
-  Inc(A, Weight * PTR.A);
+  inc(r, Weight * PTR.r);
+  inc(g, Weight * PTR.g);
+  inc(b, Weight * PTR.b);
+  inc(a, Weight * PTR.a);
 
-  PTR := PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) + (LowRes.Y + 1) *
-    SizeOf(Pointer))^) + LowRes.X * SizeOf(TAggRgba8));
+  PTR := PAggRgba8(PtrComp(PPAggRgba8(PtrComp(Buf) + (LowRes.y + 1) *
+    SizeOf(Pointer))^) + LowRes.x * SizeOf(TAggRgba8));
 
-  Weight := (CAggLineSubpixelSize - X) * Y;
+  Weight := (CAggLineSubpixelSize - x) * y;
 
-  Inc(R, Weight * PTR.R);
-  Inc(g, Weight * PTR.g);
-  Inc(b, Weight * PTR.b);
-  Inc(A, Weight * PTR.A);
+  inc(r, Weight * PTR.r);
+  inc(g, Weight * PTR.g);
+  inc(b, Weight * PTR.b);
+  inc(a, Weight * PTR.a);
 
-  Inc(PtrComp(PTR), SizeOf(TAggRgba8));
+  inc(PtrComp(PTR), SizeOf(TAggRgba8));
 
-  Weight := X * Y;
+  Weight := x * y;
 
-  Inc(R, Weight * PTR.R);
-  Inc(g, Weight * PTR.g);
-  Inc(b, Weight * PTR.b);
-  Inc(A, Weight * PTR.A);
+  inc(r, Weight * PTR.r);
+  inc(g, Weight * PTR.g);
+  inc(b, Weight * PTR.b);
+  inc(a, Weight * PTR.a);
 
-  p.Rgba8.R := Int8u(R shr (CAggLineSubpixelShift * 2));
+  p.Rgba8.r := Int8u(r shr (CAggLineSubpixelShift * 2));
   p.Rgba8.g := Int8u(g shr (CAggLineSubpixelShift * 2));
   p.Rgba8.b := Int8u(b shr (CAggLineSubpixelShift * 2));
-  p.Rgba8.A := Int8u(A shr (CAggLineSubpixelShift * 2));
-  p.v := (p.Rgba8.R * 77 + p.Rgba8.g * 150 + p.Rgba8.b * 29) shr 8;
+  p.Rgba8.a := Int8u(a shr (CAggLineSubpixelShift * 2));
+  p.v := (p.Rgba8.r * 77 + p.Rgba8.g * 150 + p.Rgba8.b * 29) shr 8;
 end;
 
 end. 
+ 
+ 

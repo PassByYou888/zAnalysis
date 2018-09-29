@@ -37,11 +37,8 @@
 *)
 unit AggPixelFormatRgb;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggPixelFormat,
@@ -59,10 +56,10 @@ procedure PixelFormatRgb24Gamma(out PixelFormatProcessor: TAggPixelFormatProcess
 
 implementation
 
-function Fmt24Row(This: TAggPixelFormatProcessor; X, Y: Integer): TAggRowDataType;
+function Fmt24Row(This: TAggPixelFormatProcessor; x, y: Integer): TAggRowDataType;
 begin
-  Result.Initialize(X, This.width - 1,
-    PInt8u(PtrComp(This.GetRenderingBuffer.Row(Y)) + X * 3 * SizeOf(Int8u)));
+  Result.Initialize(x, This.width - 1,
+    PInt8u(PtrComp(This.GetRenderingBuffer.Row(y)) + x * 3 * SizeOf(Int8u)));
 end;
 
 procedure Fmt24CopyFrom(This: TAggPixelFormatProcessor; From: TAggRenderingBuffer;
@@ -75,8 +72,8 @@ end;
 
 procedure Order24GammaDirApply(This: TAggPixelFormatProcessor; p: PInt8u);
 begin
-  PInt8u(PtrComp(p) + This.Order.R)^ :=
-    Int8u(This.Apply.dir[PInt8u(PtrComp(p) + This.Order.R)^]);
+  PInt8u(PtrComp(p) + This.Order.r)^ :=
+    Int8u(This.Apply.dir[PInt8u(PtrComp(p) + This.Order.r)^]);
   PInt8u(PtrComp(p) + This.Order.g)^ :=
     Int8u(This.Apply.dir[PInt8u(PtrComp(p) + This.Order.g)^]);
   PInt8u(PtrComp(p) + This.Order.b)^ :=
@@ -85,35 +82,35 @@ end;
 
 procedure Order24GammaInvApply(This: TAggPixelFormatProcessor; p: PInt8u);
 begin
-  PInt8u(PtrComp(p) + This.Order.R)^ :=
-    Int8u(This.Apply.Inv[PInt8u(PtrComp(p) + This.Order.R)^]);
+  PInt8u(PtrComp(p) + This.Order.r)^ :=
+    Int8u(This.Apply.Inv[PInt8u(PtrComp(p) + This.Order.r)^]);
   PInt8u(PtrComp(p) + This.Order.g)^ :=
     Int8u(This.Apply.Inv[PInt8u(PtrComp(p) + This.Order.g)^]);
   PInt8u(PtrComp(p) + This.Order.b)^ :=
     Int8u(This.Apply.Inv[PInt8u(PtrComp(p) + This.Order.b)^]);
 end;
 
-procedure Order24ForEachPixel(This: TAggPixelFormatProcessor; F: TAggFuncApplyGamma);
+procedure Order24ForEachPixel(This: TAggPixelFormatProcessor; f: TAggFuncApplyGamma);
 var
-  Y, Len: Cardinal;
+  y, Len: Cardinal;
   p: PInt8u;
 begin
-  Y := 0;
+  y := 0;
 
-  while Y < This.height do
+  while y < This.height do
     begin
       Len := This.width;
 
-      p := This.RenderingBuffer.Row(Y);
+      p := This.RenderingBuffer.Row(y);
 
       repeat
-        F(This, p);
+        f(This, p);
 
-        Inc(PtrComp(p), 3);
-        Dec(Len);
+        inc(PtrComp(p), 3);
+        dec(Len);
       until Len = 0;
 
-      Inc(Y);
+      inc(y);
     end;
 end;
 
@@ -385,3 +382,5 @@ begin
 end;
 
 end. 
+ 
+ 

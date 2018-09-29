@@ -37,11 +37,8 @@
 *)
 unit AggSpanSolid;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggSpanAllocator,
@@ -53,12 +50,12 @@ type
   private
     FColor: TAggColor;
 
-    procedure SetColor(C: PAggColor);
+    procedure SetColor(c: PAggColor);
     function GetColor: PAggColor;
   public
     constructor Create(Alloc: TAggSpanAllocator);
 
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
 implementation
@@ -71,9 +68,9 @@ begin
   inherited Create(Alloc);
 end;
 
-procedure TAggSpanSolid.SetColor(C: PAggColor);
+procedure TAggSpanSolid.SetColor(c: PAggColor);
 begin
-  FColor := C^;
+  FColor := c^;
 end;
 
 function TAggSpanSolid.GetColor: PAggColor;
@@ -81,7 +78,7 @@ begin
   Result := @FColor;
 end;
 
-function TAggSpanSolid.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
+function TAggSpanSolid.Generate(x, y: Integer; Len: Cardinal): PAggColor;
 var
   Span: PAggColor;
 begin
@@ -90,12 +87,14 @@ begin
   repeat
     Span^ := FColor;
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
-    Dec(Len);
+    inc(PtrComp(Span), SizeOf(TAggColor));
+    dec(Len);
   until Len = 0;
 
   Result := Allocator.Span;
 end;
 
 end.
+ 
+ 
  

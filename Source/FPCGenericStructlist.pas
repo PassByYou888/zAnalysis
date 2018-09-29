@@ -7,7 +7,7 @@
 }
 
 { Generic list of any type (TGenericStructList). }
-unit h264_FPCGenericStructlist;
+unit FPCGenericStructlist;
 
 {$IFDEF FPC}
 {$mode objfpc}{$H+}
@@ -33,7 +33,7 @@ interface
 
 {$IFDEF FPC}
 
-uses fgl, h264Stdint;
+uses fgl, h264Types;
 
 type
   { Generic list of types that are compared by CompareByte.
@@ -48,39 +48,40 @@ type
     see http://bugs.freepascal.org/view.php?id=9228).
 
     We also add some trivial helper methods like @link(Add) and @link(L). }
-  generic TGenericStructList<T> = class(TFPSList)
+  generic TGenericStructList<t> = class(TFPSList)
   private
     type
-      TCompareFunc = function(const Item1, Item2: T): int32_t;
-      TTypeList = array[0..MaxGListSize] of T;
+      TCompareFunc = function(const Item1, Item2: t): int32_t;
+      TTypeList = array[0..MaxGListSize] of t;
       PTypeList = ^TTypeList;
-      pt = ^T;
-  {$ifdef HAS_ENUMERATOR} TFPGListEnumeratorSpec = specialize TFPGListEnumerator<T>; {$endif}
+      pt = ^t;
+  {$ifdef HAS_ENUMERATOR} TFPGListEnumeratorSpec = specialize TFPGListEnumerator<t>; {$endif}
+
   {$ifndef OldSyntax}protected var{$else}
       {$ifdef PASDOC}protected var{$else} { PasDoc can't handle "var protected", and I don't know how/if they should be handled? }
-                     var protected{$endif}{$endif}
-      FOnCompare: TCompareFunc;
+                     var protected{$endif}{$endif} FOnCompare: TCompareFunc;
+
     procedure CopyItem(Src, dest: Pointer); override;
     procedure Deref(Item: Pointer); override;
-    function  Get(index: int32_t): T; {$ifdef CLASSESINLINE} inline; {$endif}
+    function  Get(index: int32_t): t; {$ifdef CLASSESINLINE} inline; {$endif}
     function  GetList: PTypeList; {$ifdef CLASSESINLINE} inline; {$endif}
     function  ItemPtrCompare(Item1, Item2: Pointer): int32_t;
-    procedure Put(index: int32_t; const Item: T); {$ifdef CLASSESINLINE} inline; {$endif}
+    procedure Put(index: int32_t; const Item: t); {$ifdef CLASSESINLINE} inline; {$endif}
   public
     constructor Create;
-    function Add(const Item: T): int32_t; {$ifdef CLASSESINLINE} inline; {$endif}
-    {$ifdef HAS_EXTRACT} function Extract(const Item: T): T; {$ifdef CLASSESINLINE} inline; {$endif} {$endif}
-    function First: T; {$ifdef CLASSESINLINE} inline; {$endif}
+    function Add(const Item: t): int32_t; {$ifdef CLASSESINLINE} inline; {$endif}
+    {$ifdef HAS_EXTRACT} function Extract(const Item: t): t; {$ifdef CLASSESINLINE} inline; {$endif} {$endif}
+    function First: t; {$ifdef CLASSESINLINE} inline; {$endif}
     {$ifdef HAS_ENUMERATOR} function GetEnumerator: TFPGListEnumeratorSpec; {$ifdef CLASSESINLINE} inline; {$endif} {$endif}
-    function IndexOf(const Item: T): int32_t;
-    procedure Insert(index: int32_t; const Item: T); {$ifdef CLASSESINLINE} inline; {$endif}
-    function Last: T; {$ifdef CLASSESINLINE} inline; {$endif}
+    function IndexOf(const Item: t): int32_t;
+    procedure Insert(index: int32_t; const Item: t); {$ifdef CLASSESINLINE} inline; {$endif}
+    function Last: t; {$ifdef CLASSESINLINE} inline; {$endif}
 {$ifndef OldSyntax}
     procedure Assign(Source: TGenericStructList);
 {$endif OldSyntax}
-    function Remove(const Item: T): int32_t; {$ifdef CLASSESINLINE} inline; {$endif}
+    function Remove(const Item: t): int32_t; {$ifdef CLASSESINLINE} inline; {$endif}
     procedure Sort(Compare: TCompareFunc);
-    property Items[index: int32_t]: T read Get write Put; default;
+    property Items[index: int32_t]: t read Get write Put; default;
     property List: PTypeList read GetList;
 
     { Pointer to items. Exactly like @link(List), but this points to a single item,
@@ -110,22 +111,22 @@ implementation
 {$IFDEF FPC}
 constructor TGenericStructList.Create;
 begin
-  inherited Create(SizeOf(T));
+  inherited Create(SizeOf(t));
 end;
 
 procedure TGenericStructList.CopyItem(Src, dest: Pointer);
 begin
-  T(dest^) := T(Src^);
+  t(dest^) := t(Src^);
 end;
 
 procedure TGenericStructList.Deref(Item: Pointer);
 begin
-  Finalize(T(Item^));
+  Finalize(t(Item^));
 end;
 
-function TGenericStructList.Get(index: int32_t): T;
+function TGenericStructList.Get(index: int32_t): t;
 begin
-  Result := T(inherited Get(index)^);
+  Result := t(inherited Get(index)^);
 end;
 
 function TGenericStructList.GetList: PTypeList;
@@ -135,29 +136,29 @@ end;
 
 function TGenericStructList.ItemPtrCompare(Item1, Item2: Pointer): int32_t;
 begin
-  Result := FOnCompare(T(Item1^), T(Item2^));
+  Result := FOnCompare(t(Item1^), t(Item2^));
 end;
 
-procedure TGenericStructList.Put(index: int32_t; const Item: T);
+procedure TGenericStructList.Put(index: int32_t; const Item: t);
 begin
   inherited Put(index, @Item);
 end;
 
-function TGenericStructList.Add(const Item: T): int32_t;
+function TGenericStructList.Add(const Item: t): int32_t;
 begin
   Result := inherited Add(@Item);
 end;
 
 {$ifdef HAS_EXTRACT}
-function TGenericStructList.Extract(const Item: T): T;
+function TGenericStructList.Extract(const Item: t): t;
 begin
   inherited Extract(@Item, @Result);
 end;
 {$endif}
 
-function TGenericStructList.First: T;
+function TGenericStructList.First: t;
 begin
-  Result := T(inherited First^);
+  Result := t(inherited First^);
 end;
 
 {$ifdef HAS_ENUMERATOR}
@@ -167,19 +168,19 @@ begin
 end;
 {$endif}
 
-function TGenericStructList.IndexOf(const Item: T): int32_t;
+function TGenericStructList.IndexOf(const Item: t): int32_t;
 begin
   Result := inherited IndexOf(@Item);
 end;
 
-procedure TGenericStructList.Insert(index: int32_t; const Item: T);
+procedure TGenericStructList.Insert(index: int32_t; const Item: t);
 begin
-  T(inherited Insert(index)^) := Item;
+  t(inherited Insert(index)^) := Item;
 end;
 
-function TGenericStructList.Last: T;
+function TGenericStructList.Last: t;
 begin
-  Result := T(inherited Last^);
+  Result := t(inherited Last^);
 end;
 
 {$ifndef OldSyntax}
@@ -193,7 +194,7 @@ begin
 end;
 {$endif OldSyntax}
 
-function TGenericStructList.Remove(const Item: T): int32_t;
+function TGenericStructList.Remove(const Item: t): int32_t;
 begin
   Result := IndexOf(Item);
   if Result >= 0 then
@@ -220,4 +221,6 @@ end;
 {$ENDIF FPC}
 
 end.  
+ 
+ 
  

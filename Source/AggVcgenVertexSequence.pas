@@ -37,11 +37,8 @@
 *)
 unit AggVcgenVertexSequence;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVertexSequence,
@@ -65,11 +62,11 @@ type
 
     // Vertex Generator Interface
     procedure RemoveAll; override;
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); override;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); override;
 
     // Vertex Source Interface
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property Shorten: Double read GetShorten write SetShorten;
   end;
@@ -122,7 +119,7 @@ var
 begin
   FReady := False;
 
-  VC.pos := PointDouble(X, Y);
+  VC.Pos := PointDouble(x, y);
   VC.Dist := 0;
   VC.Cmd := Cmd;
 
@@ -147,7 +144,7 @@ begin
   FCurrentVertex := 0;
 end;
 
-function TAggVcgenVertexSequence.Vertex(X, Y: PDouble): Cardinal;
+function TAggVcgenVertexSequence.Vertex(x, y: PDouble): Cardinal;
 var
   v: PAggVertexDistCmd;
 begin
@@ -156,7 +153,7 @@ begin
 
   if FCurrentVertex = FSourceVertices.Size then
     begin
-      Inc(FCurrentVertex);
+      inc(FCurrentVertex);
 
       Result := CAggPathCmdEndPoly or FFlags;
 
@@ -172,13 +169,15 @@ begin
 
   v := FSourceVertices[FCurrentVertex];
 
-  Inc(FCurrentVertex);
+  inc(FCurrentVertex);
 
-  X^ := v.pos.X;
-  Y^ := v.pos.Y;
+  x^ := v.Pos.x;
+  y^ := v.Pos.y;
 
   Result := v.Cmd;
 end;
 
 end. 
+ 
+ 
  

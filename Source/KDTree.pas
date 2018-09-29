@@ -11,11 +11,11 @@
 { ****************************************************************************** }
 unit KDTree;
 
+{$INCLUDE zDefine.inc}
+
 interface
 
 uses CoreClasses, PascalStrings, KM;
-
-{$INCLUDE zDefine.inc}
 
 type
   TKDTree_VecType = TKMFloat;
@@ -34,13 +34,13 @@ type
   TKDTree_DynamicVecBuffer = TKMFloat2DArray;
   PKDTree_DynamicVecBuffer = PKMFloat2DArray;
 
-  TKDTree_SourceBuffer = packed array [0 .. MaxInt div SizeOf(PKDTree_Source) - 1] of PKDTree_Source;
+  TKDTree_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDTree_Source) - 1] of PKDTree_Source;
   PKDTree_SourceBuffer = ^TKDTree_SourceBuffer;
 
-  TKDTreeDyanmicSourceBuffer = packed array of PKDTree_Source;
+  TKDTreeDyanmicSourceBuffer = array of PKDTree_Source;
   PKDTreeDyanmicSourceBuffer = ^TKDTreeDyanmicSourceBuffer;
 
-  TKDTreeDyanmicStoreBuffer = packed array of TKDTree_Source;
+  TKDTreeDyanmicStoreBuffer = array of TKDTree_Source;
   PKDTreeDyanmicStoreBuffer = ^TKDTreeDyanmicStoreBuffer;
 
   PKDTree_Node = ^TKDTree_Node;
@@ -52,42 +52,42 @@ type
 
   TKDTree = class(TCoreClassObject)
   public type
-    TKDTree_BuildCall               = procedure(const IndexFor: nativeInt; var Source: TKDTree_Source; const Data: Pointer);
-    TKDTree_BuildMethod             = procedure(const IndexFor: nativeInt; var Source: TKDTree_Source; const Data: Pointer) of object;
-    {$IFNDEF FPC} TKDTree_BuildProc = reference to procedure(const IndexFor: nativeInt; var Source: TKDTree_Source; const Data: Pointer); {$ENDIF}
+    TKDTree_BuildCall               = procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer);
+    TKDTree_BuildMethod             = procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer) of object;
+    {$IFNDEF FPC} TKDTree_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer); {$ENDIF}
   private
     FAxisCount: Integer;
     KDStoreBuff: TKDTreeDyanmicStoreBuffer;
     KDBuff: TKDTreeDyanmicSourceBuffer;
-    NodeCounter: nativeInt;
-    KDNodes: packed array of PKDTree_Node;
-    function InternalBuildKdTree(const KDSourceBufferPtr: PKDTree_SourceBuffer; const PlanCount, Depth: nativeInt): PKDTree_Node;
-    function GetData(const index: nativeInt): PKDTree_Source; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    NodeCounter: NativeInt;
+    KDNodes: array of PKDTree_Node;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDTree_SourceBuffer; const PlanCount, Depth: NativeInt): PKDTree_Node;
+    function GetData(const index: NativeInt): PKDTree_Source;
   public
     RootNode: PKDTree_Node;
 
-    constructor Create(const Axis: Integer); virtual;
+    constructor Create(const axis: Integer); virtual;
     destructor Destroy; override;
 
     procedure Clear;
 
-    property Count: nativeInt read NodeCounter;
+    property Count: NativeInt read NodeCounter;
     function StoreBuffPtr: PKDTreeDyanmicStoreBuffer;
-    property SourceP[const index: nativeInt]: PKDTree_Source read GetData; default;
+    property SourceP[const index: NativeInt]: PKDTree_Source read GetData; default;
     property AxisCount: Integer read FAxisCount;
 
-    procedure BuildKDTreeC(const PlanCount: nativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildCall); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-    procedure BuildKDTreeM(const PlanCount: nativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod); {$IFDEF INLINE_ASM} inline; {$ENDIF}
-    {$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: nativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildProc); {$IFDEF INLINE_ASM} inline; {$ENDIF} {$ENDIF}
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod);
+    {$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildProc);  {$ENDIF}
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: nativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildCall); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: nativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod); overload;
     {$IFNDEF FPC}
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: nativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildProc); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildProc); overload;
     {$ENDIF FPC}
     { search }
-    function Search(const buff: TKDTree_Vec; var SearchedDistanceMin: Double; var SearchedCounter: nativeInt; const NearestNodes: TCoreClassList): PKDTree_Node; overload;
-    function Search(const buff: TKDTree_Vec; var SearchedDistanceMin: Double; var SearchedCounter: nativeInt): PKDTree_Node; overload;
+    function Search(const buff: TKDTree_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDTree_Node; overload;
+    function Search(const buff: TKDTree_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDTree_Node; overload;
     function Search(const buff: TKDTree_Vec; var SearchedDistanceMin: Double): PKDTree_Node; overload;
     function Search(const buff: TKDTree_Vec): PKDTree_Node; overload;
     { parallel support }
@@ -95,19 +95,19 @@ type
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-    procedure SaveToFile(fileName: SystemString);
-    procedure LoadFromFile(fileName: SystemString);
+    procedure SaveToFile(FileName: SystemString);
+    procedure LoadFromFile(FileName: SystemString);
 
     procedure PrintNodeTree(const NodePtr: PKDTree_Node);
     procedure PrintBuffer;
 
     class function KDTreeVec(const s: SystemString): TKDTree_Vec; overload;
     class function KDTreeVec(const v: TKDTree_Vec): SystemString; overload;
-    class function KDTreeDistance(const v1, v2: TKDTree_Vec): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+    class function KDTreeDistance(const v1, v2: TKDTree_Vec): Double;
   end;
 
   // debug
-procedure Test_KDTree(const Axis: Integer);
+procedure Test_KDTree(const axis: Integer);
 
 implementation
 
@@ -122,10 +122,10 @@ uses
 const
   SaveToken = $9;
 
-function TKDTree.InternalBuildKdTree(const KDSourceBufferPtr: PKDTree_SourceBuffer; const PlanCount, Depth: nativeInt): PKDTree_Node;
-  function SortCompare(const p1, p2: PKDTree_Source; const Axis: nativeInt): ShortInt; inline;
+function TKDTree.InternalBuildKdTree(const KDSourceBufferPtr: PKDTree_SourceBuffer; const PlanCount, Depth: NativeInt): PKDTree_Node;
+  function SortCompare(const p1, p2: PKDTree_Source; const axis: NativeInt): ShortInt; inline;
   begin
-    if p1^.buff[Axis] = p2^.buff[Axis] then
+    if p1^.buff[axis] = p2^.buff[axis] then
       begin
         if p1^.index = p2^.index then
             Result := 0
@@ -134,46 +134,46 @@ function TKDTree.InternalBuildKdTree(const KDSourceBufferPtr: PKDTree_SourceBuff
         else
             Result := 1;
       end
-    else if p1^.buff[Axis] < p2^.buff[Axis] then
+    else if p1^.buff[axis] < p2^.buff[axis] then
         Result := -1
     else
         Result := 1;
   end;
-  procedure InternalSort(const SortBuffer: PKDTree_SourceBuffer; L, R: nativeInt; const Axis: nativeInt); inline;
+  procedure InternalSort(const SortBuffer: PKDTree_SourceBuffer; L, r: NativeInt; const axis: NativeInt); inline;
   var
-    i, J: nativeInt;
-    p, T: PKDTree_Source;
+    i, j: NativeInt;
+    p, t: PKDTree_Source;
   begin
     repeat
       i := L;
-      J := R;
-      p := SortBuffer^[(L + R) shr 1];
+      j := r;
+      p := SortBuffer^[(L + r) shr 1];
       repeat
-        while SortCompare(SortBuffer^[i], p, Axis) < 0 do
-            Inc(i);
-        while SortCompare(SortBuffer^[J], p, Axis) > 0 do
-            Dec(J);
-        if i <= J then
+        while SortCompare(SortBuffer^[i], p, axis) < 0 do
+            inc(i);
+        while SortCompare(SortBuffer^[j], p, axis) > 0 do
+            dec(j);
+        if i <= j then
           begin
-            if i <> J then
+            if i <> j then
               begin
-                T := SortBuffer^[i];
-                SortBuffer^[i] := SortBuffer^[J];
-                SortBuffer^[J] := T;
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
               end;
-            Inc(i);
-            Dec(J);
+            inc(i);
+            dec(j);
           end;
-      until i > J;
-      if L < J then
-          InternalSort(SortBuffer, L, J, Axis);
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, axis);
       L := i;
-    until i >= R;
+    until i >= r;
   end;
 
 var
-  M: nativeInt;
-  Axis: nativeInt;
+  M: NativeInt;
+  axis: NativeInt;
   kdBuffPtr: PKDTree_SourceBuffer;
   dynBuff: PKDTreeDyanmicSourceBuffer;
 begin
@@ -190,25 +190,25 @@ begin
       Result^.vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
-      Inc(NodeCounter);
+      inc(NodeCounter);
     end
   else
     begin
-      Axis := Depth mod FAxisCount;
+      axis := Depth mod FAxisCount;
       M := PlanCount div 2;
 
       kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, Axis);
+          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
       Result^.vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
-      Inc(NodeCounter);
+      inc(NodeCounter);
 
       Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], M, Depth + 1);
       if Result^.Left <> nil then
@@ -222,15 +222,15 @@ begin
     end;
 end;
 
-function TKDTree.GetData(const index: nativeInt): PKDTree_Source;
+function TKDTree.GetData(const index: NativeInt): PKDTree_Source;
 begin
   Result := @KDStoreBuff[index];
 end;
 
-constructor TKDTree.Create(const Axis: Integer);
+constructor TKDTree.Create(const axis: Integer);
 begin
   inherited Create;
-  FAxisCount := Axis;
+  FAxisCount := axis;
   NodeCounter := 0;
   RootNode := nil;
   SetLength(KDNodes, 0);
@@ -246,13 +246,13 @@ end;
 
 procedure TKDTree.Clear;
 var
-  i: nativeInt;
+  i: NativeInt;
 begin
   i := 0;
   while i < length(KDNodes) do
     begin
       Dispose(PKDTree_Node(KDNodes[i]));
-      Inc(i);
+      inc(i);
     end;
   for i := 0 to length(KDStoreBuff) - 1 do
       SetLength(KDStoreBuff[i].buff, 0);
@@ -270,9 +270,9 @@ begin
   Result := @KDStoreBuff;
 end;
 
-procedure TKDTree.BuildKDTreeC(const PlanCount: nativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildCall);
+procedure TKDTree.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildCall);
 var
-  i, J: nativeInt;
+  i, j: NativeInt;
   TempStoreBuff: TKDTreeDyanmicStoreBuffer;
 begin
   Clear;
@@ -290,20 +290,20 @@ begin
       KDBuff[i] := @KDStoreBuff[i];
       KDStoreBuff[i].index := i;
       SetLength(KDStoreBuff[i].buff, AxisCount);
-      for J := 0 to AxisCount - 1 do
-          KDStoreBuff[i].buff[J] := 0;
+      for j := 0 to AxisCount - 1 do
+          KDStoreBuff[i].buff[j] := 0;
       OnTrigger(i, KDStoreBuff[i], Data);
-      Inc(i);
+      inc(i);
     end;
 
-  J := PlanCount;
+  j := PlanCount;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], J, 0);
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-procedure TKDTree.BuildKDTreeM(const PlanCount: nativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod);
+procedure TKDTree.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod);
 var
-  i, J: nativeInt;
+  i, j: NativeInt;
   TempStoreBuff: TKDTreeDyanmicStoreBuffer;
 begin
   Clear;
@@ -321,23 +321,23 @@ begin
       KDBuff[i] := @KDStoreBuff[i];
       KDStoreBuff[i].index := i;
       SetLength(KDStoreBuff[i].buff, AxisCount);
-      for J := 0 to AxisCount - 1 do
-          KDStoreBuff[i].buff[J] := 0;
+      for j := 0 to AxisCount - 1 do
+          KDStoreBuff[i].buff[j] := 0;
       OnTrigger(i, KDStoreBuff[i], Data);
-      Inc(i);
+      inc(i);
     end;
 
-  J := PlanCount;
+  j := PlanCount;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], J, 0);
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
 {$IFNDEF FPC}
 
 
-procedure TKDTree.BuildKDTreeP(const PlanCount: nativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildProc);
+procedure TKDTree.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildProc);
 var
-  i, J: nativeInt;
+  i, j: NativeInt;
   TempStoreBuff: TKDTreeDyanmicStoreBuffer;
 begin
   Clear;
@@ -355,25 +355,25 @@ begin
       KDBuff[i] := @KDStoreBuff[i];
       KDStoreBuff[i].index := i;
       SetLength(KDStoreBuff[i].buff, AxisCount);
-      for J := 0 to AxisCount - 1 do
-          KDStoreBuff[i].buff[J] := 0;
+      for j := 0 to AxisCount - 1 do
+          KDStoreBuff[i].buff[j] := 0;
       OnTrigger(i, KDStoreBuff[i], Data);
-      Inc(i);
+      inc(i);
     end;
 
-  J := PlanCount;
+  j := PlanCount;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], J, 0);
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 {$ENDIF}
 
 
-procedure TKDTree.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: nativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildCall);
+procedure TKDTree.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildCall);
 var
   TempStoreBuff: TKDTreeDyanmicStoreBuffer;
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
-  i, J: nativeInt;
+  i, j: NativeInt;
 begin
   Clear;
   SetLength(TempStoreBuff, PlanCount);
@@ -383,16 +383,16 @@ begin
     begin
       TempStoreBuff[i].index := i;
       SetLength(TempStoreBuff[i].buff, AxisCount);
-      for J := 0 to AxisCount - 1 do
-          TempStoreBuff[i].buff[J] := 0;
+      for j := 0 to AxisCount - 1 do
+          TempStoreBuff[i].buff[j] := 0;
       OnTrigger(i, TempStoreBuff[i], Data);
-      Inc(i);
+      inc(i);
     end;
 
   SetLength(Source, length(TempStoreBuff), FAxisCount);
   for i := 0 to length(TempStoreBuff) - 1 do
-    for J := 0 to FAxisCount - 1 do
-        Source[i, J] := TempStoreBuff[i].buff[J];
+    for j := 0 to FAxisCount - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
 
   if KMeansCluster(Source, FAxisCount, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
     begin
@@ -406,8 +406,8 @@ begin
 
           KDStoreBuff[i].index := i;
           SetLength(KDStoreBuff[i].buff, AxisCount);
-          for J := 0 to FAxisCount - 1 do
-              KDStoreBuff[i].buff[J] := KArray[J, i];
+          for j := 0 to FAxisCount - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
         end;
 
       RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
@@ -424,12 +424,12 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDTree.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: nativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod);
+procedure TKDTree.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod);
 var
   TempStoreBuff: TKDTreeDyanmicStoreBuffer;
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
-  i, J: nativeInt;
+  i, j: NativeInt;
 begin
   Clear;
   SetLength(TempStoreBuff, PlanCount);
@@ -439,16 +439,16 @@ begin
     begin
       TempStoreBuff[i].index := i;
       SetLength(TempStoreBuff[i].buff, AxisCount);
-      for J := 0 to AxisCount - 1 do
-          TempStoreBuff[i].buff[J] := 0;
+      for j := 0 to AxisCount - 1 do
+          TempStoreBuff[i].buff[j] := 0;
       OnTrigger(i, TempStoreBuff[i], Data);
-      Inc(i);
+      inc(i);
     end;
 
   SetLength(Source, length(TempStoreBuff), FAxisCount);
   for i := 0 to length(TempStoreBuff) - 1 do
-    for J := 0 to FAxisCount - 1 do
-        Source[i, J] := TempStoreBuff[i].buff[J];
+    for j := 0 to FAxisCount - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
 
   if KMeansCluster(Source, FAxisCount, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
     begin
@@ -462,8 +462,8 @@ begin
 
           KDStoreBuff[i].index := i;
           SetLength(KDStoreBuff[i].buff, AxisCount);
-          for J := 0 to FAxisCount - 1 do
-              KDStoreBuff[i].buff[J] := KArray[J, i];
+          for j := 0 to FAxisCount - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
         end;
 
       RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
@@ -483,12 +483,12 @@ end;
 {$IFNDEF FPC}
 
 
-procedure TKDTree.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: nativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildProc);
+procedure TKDTree.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDTree_BuildProc);
 var
   TempStoreBuff: TKDTreeDyanmicStoreBuffer;
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
-  i, J: nativeInt;
+  i, j: NativeInt;
 begin
   Clear;
   SetLength(TempStoreBuff, PlanCount);
@@ -498,16 +498,16 @@ begin
     begin
       TempStoreBuff[i].index := i;
       SetLength(TempStoreBuff[i].buff, AxisCount);
-      for J := 0 to AxisCount - 1 do
-          TempStoreBuff[i].buff[J] := 0;
+      for j := 0 to AxisCount - 1 do
+          TempStoreBuff[i].buff[j] := 0;
       OnTrigger(i, TempStoreBuff[i], Data);
-      Inc(i);
+      inc(i);
     end;
 
   SetLength(Source, length(TempStoreBuff), FAxisCount);
   for i := 0 to length(TempStoreBuff) - 1 do
-    for J := 0 to FAxisCount - 1 do
-        Source[i, J] := TempStoreBuff[i].buff[J];
+    for j := 0 to FAxisCount - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
 
   if KMeansCluster(Source, FAxisCount, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
     begin
@@ -521,8 +521,8 @@ begin
 
           KDStoreBuff[i].index := i;
           SetLength(KDStoreBuff[i].buff, AxisCount);
-          for J := 0 to FAxisCount - 1 do
-              KDStoreBuff[i].buff[J] := KArray[J, i];
+          for j := 0 to FAxisCount - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
         end;
 
       RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
@@ -543,7 +543,7 @@ end;
 
 
 function TKDTree.Search(
-  const buff: TKDTree_Vec; var SearchedDistanceMin: Double; var SearchedCounter: nativeInt; const NearestNodes: TCoreClassList): PKDTree_Node;
+  const buff: TKDTree_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDTree_Node;
 
 var
   NearestNeighbour: PKDTree_Node;
@@ -551,7 +551,7 @@ var
   function FindParentNode(const buffPtr: PKDTree_Vec; const NodePtr: PKDTree_Node): PKDTree_Node;
   var
     Next: PKDTree_Node;
-    Depth, Axis: nativeInt;
+    Depth, axis: NativeInt;
   begin
     Result := nil;
     Depth := 0;
@@ -559,8 +559,8 @@ var
     while Next <> nil do
       begin
         Result := Next;
-        Axis := Depth mod FAxisCount;
-        if buffPtr^[Axis] > Next^.vec^.buff[Axis] then
+        axis := Depth mod FAxisCount;
+        if buffPtr^[axis] > Next^.vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -568,15 +568,15 @@ var
       end;
   end;
 
-  procedure ScanSubtree(const NodePtr: PKDTree_Node; const buffPtr: PKDTree_Vec; const Depth: nativeInt; const NearestNodes: TCoreClassList);
+  procedure ScanSubtree(const NodePtr: PKDTree_Node; const buffPtr: PKDTree_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
   var
     Dist: Double;
-    Axis: nativeInt;
+    axis: NativeInt;
   begin
     if NodePtr = nil then
         Exit;
 
-    Inc(SearchedCounter);
+    inc(SearchedCounter);
 
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
@@ -590,12 +590,12 @@ var
     else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.index < NearestNeighbour^.vec^.index) then
         NearestNeighbour := NodePtr;
 
-    Axis := Depth mod FAxisCount;
-    Dist := NodePtr^.vec^.buff[Axis] - buffPtr^[Axis];
+    axis := Depth mod FAxisCount;
+    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[Axis] > buffPtr^[Axis] then
+        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -628,36 +628,36 @@ var
         Result := 1;
   end;
 
-  procedure InternalSort(var SortBuffer: TCoreClassPointerList; L, R: nativeInt; const buffPtr: PKDTree_Vec);
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; L, r: NativeInt; const buffPtr: PKDTree_Vec);
   var
-    i, J: nativeInt;
-    p, T: PKDTree_Node;
+    i, j: NativeInt;
+    p, t: PKDTree_Node;
   begin
     repeat
       i := L;
-      J := R;
-      p := SortBuffer[(L + R) shr 1];
+      j := r;
+      p := SortBuffer[(L + r) shr 1];
       repeat
         while SortCompare(buffPtr, SortBuffer[i], p) < 0 do
-            Inc(i);
-        while SortCompare(buffPtr, SortBuffer[J], p) > 0 do
-            Dec(J);
-        if i <= J then
+            inc(i);
+        while SortCompare(buffPtr, SortBuffer[j], p) > 0 do
+            dec(j);
+        if i <= j then
           begin
-            if i <> J then
+            if i <> j then
               begin
-                T := SortBuffer[i];
-                SortBuffer[i] := SortBuffer[J];
-                SortBuffer[J] := T;
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
               end;
-            Inc(i);
-            Dec(J);
+            inc(i);
+            dec(j);
           end;
-      until i > J;
-      if L < J then
-          InternalSort(SortBuffer, L, J, buffPtr);
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, buffPtr);
       L := i;
-    until i >= R;
+    until i >= r;
   end;
 
 var
@@ -697,14 +697,14 @@ begin
     end;
 end;
 
-function TKDTree.Search(const buff: TKDTree_Vec; var SearchedDistanceMin: Double; var SearchedCounter: nativeInt): PKDTree_Node;
+function TKDTree.Search(const buff: TKDTree_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDTree_Node;
 begin
   Result := Search(buff, SearchedDistanceMin, SearchedCounter, nil);
 end;
 
 function TKDTree.Search(const buff: TKDTree_Vec; var SearchedDistanceMin: Double): PKDTree_Node;
 var
-  SearchedCounter: nativeInt;
+  SearchedCounter: NativeInt;
 begin
   Result := Search(buff, SearchedDistanceMin, SearchedCounter);
 end;
@@ -712,7 +712,7 @@ end;
 function TKDTree.Search(const buff: TKDTree_Vec): PKDTree_Node;
 var
   SearchedDistanceMin: Double;
-  SearchedCounter: nativeInt;
+  SearchedCounter: NativeInt;
 begin
   Result := Search(buff, SearchedDistanceMin, SearchedCounter);
 end;
@@ -765,7 +765,7 @@ end;
 
 
 var
-  i: nativeInt;
+  i: NativeInt;
   p: PKDTree_Node;
 begin
   if length(inBuff) <> length(OutIndex) then
@@ -784,7 +784,7 @@ procedure TKDTree.SaveToStream(stream: TCoreClassStream);
 var
   cnt: Int64;
   st, ID: Integer;
-  i: nativeInt;
+  i: NativeInt;
 begin
   cnt := length(KDStoreBuff);
   st := SaveToken;
@@ -805,7 +805,7 @@ procedure TKDTree.LoadFromStream(stream: TCoreClassStream);
 var
   cnt: Int64;
   st, ID: Integer;
-  i: nativeInt;
+  i: NativeInt;
 begin
   Clear;
 
@@ -840,17 +840,17 @@ begin
   while i < cnt do
     begin
       KDBuff[i] := @KDStoreBuff[i];
-      Inc(i);
+      inc(i);
     end;
 
   RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
-procedure TKDTree.SaveToFile(fileName: SystemString);
+procedure TKDTree.SaveToFile(FileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
-  fs := TCoreClassFileStream.Create(fileName, fmCreate);
+  fs := TCoreClassFileStream.Create(FileName, fmCreate);
   try
       SaveToStream(fs);
   finally
@@ -858,12 +858,12 @@ begin
   end;
 end;
 
-procedure TKDTree.LoadFromFile(fileName: SystemString);
+procedure TKDTree.LoadFromFile(FileName: SystemString);
 var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -891,7 +891,7 @@ end;
 
 procedure TKDTree.PrintBuffer;
 var
-  i: nativeInt;
+  i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
       DoStatus('%d: %s ', [KDStoreBuff[i].index, KDTreeVec(KDStoreBuff[i].buff)]);
@@ -899,30 +899,30 @@ end;
 
 class function TKDTree.KDTreeVec(const s: SystemString): TKDTree_Vec;
 var
-  T: TTextParsing;
+  t: TTextParsing;
   SplitOutput: TArrayPascalString;
-  C, i, J: nativeInt;
+  c, i, j: NativeInt;
 begin
-  T := TTextParsing.Create(s, tsText, nil);
-  C := T.SplitChar(1, ', ', '', SplitOutput);
-  if C > 0 then
+  t := TTextParsing.Create(s, tsText, nil);
+  c := t.SplitChar(1, ', ', '', SplitOutput);
+  if c > 0 then
     begin
-      SetLength(Result, C);
+      SetLength(Result, c);
 
-      J := 0;
+      j := 0;
       for i := 0 to length(SplitOutput) - 1 do
         if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
           begin
-            Result[J] := umlStrToFloat(SplitOutput[i], 0);
-            Inc(J);
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            inc(j);
           end;
     end;
-  DisposeObject(T);
+  DisposeObject(t);
 end;
 
 class function TKDTree.KDTreeVec(const v: TKDTree_Vec): SystemString;
 var
-  i: nativeInt;
+  i: NativeInt;
 begin
   Result := '';
   for i := 0 to length(v) - 1 do
@@ -940,14 +940,14 @@ class function TKDTree.KDTreeDistance(const v1, v2: TKDTree_Vec): Double;
   end;
 
 var
-  i: nativeInt;
+  i: NativeInt;
 begin
   Result := 0;
   for i := 0 to length(v1) - 1 do
       Result := Result + KPow(v2[i] - v1[i]);
 end;
 
-procedure Test_BuildC(const IndexFor: nativeInt; var Source: TKDTree_Source; const Data: Pointer);
+procedure Test_BuildC(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer);
 var
   i: Integer;
 begin
@@ -955,11 +955,11 @@ begin
       Source.buff[i] := PKDTree_DynamicVecBuffer(Data)^[IndexFor][i];
 end;
 
-procedure Test_KDTree(const Axis: Integer);
+procedure Test_KDTree(const axis: Integer);
 var
   TKDTree_Test: TKDTree;
-  T: TTimeTick;
-  i, J: nativeInt;
+  t: TTimeTick;
+  i, j: NativeInt;
   TestResultIndex: TDynamicIndexArray;
   KMeanBuildOutIndex: TDynamicIndexArray;
   errored: Boolean;
@@ -968,17 +968,17 @@ var
 begin
   errored := False;
   DoStatusNoLn('test KDTree...');
-  T := GetTimeTick;
+  t := GetTimeTick;
 
-  TKDTree_Test := TKDTree.Create(Axis);
+  TKDTree_Test := TKDTree.Create(axis);
 
   DoStatusNoLn('...');
   SetLength(TestBuff, 1000);
   for i := 0 to length(TestBuff) - 1 do
     begin
       SetLength(TestBuff[i], TKDTree_Test.AxisCount);
-      for J := 0 to TKDTree_Test.AxisCount - 1 do
-          TestBuff[i][J] := i + 1;
+      for j := 0 to TKDTree_Test.AxisCount - 1 do
+          TestBuff[i][j] := i + 1;
     end;
 
   DoStatusNoLn('...');
@@ -1019,11 +1019,13 @@ begin
   if errored then
       DoStatusNoLn('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - T]);
+      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
   DoStatusNoLn;
 
   DisposeObject(TKDTree_Test);
 end;
 
 end. 
+ 
+ 
  

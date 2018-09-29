@@ -11,67 +11,67 @@
 { ****************************************************************************** }
 
 function TridiagonalEVD(var d: TLVec; E: TLVec; n: TLInt;
-  ZNeeded: TLInt; var Z: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  ZNeeded: TLInt; var z: TLMatrix): Boolean; forward;
 
-procedure TdEVDE2(const A: TLFloat; const b: TLFloat;
-  const C: TLFloat; var RT1: TLFloat; var RT2: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TdEVDE2(const a: TLFloat; const b: TLFloat;
+  const c: TLFloat; var RT1: TLFloat; var RT2: TLFloat); forward;
 
-procedure TdEVDEV2(const A: TLFloat; const b: TLFloat;
-  const C: TLFloat; var RT1: TLFloat; var RT2: TLFloat;
-  var CS1: TLFloat; var SN1: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TdEVDEV2(const a: TLFloat; const b: TLFloat;
+  const c: TLFloat; var RT1: TLFloat; var RT2: TLFloat;
+  var CS1: TLFloat; var SN1: TLFloat); forward;
 
-function TdEVDPythag(A: TLFloat; b: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function TdEVDExtSign(A: TLFloat; b: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function TdEVDPythag(a: TLFloat; b: TLFloat): TLFloat; forward;
+function TdEVDExtSign(a: TLFloat; b: TLFloat): TLFloat; forward;
 
-procedure TDINInternalDLAGTF(const n: TLInt; var A: TLVec;
-  const LAMBDA: TLFloat; var b: TLVec; var C: TLVec;
+procedure TDINInternalDLAGTF(const n: TLInt; var a: TLVec;
+  const LAMBDA: TLFloat; var b: TLVec; var c: TLVec;
   const TOL: TLFloat; var d: TLVec; var IIN: TLIVec;
-  var Info: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Info: TLInt); forward;
 
-procedure TDINInternalDLAGTS(const n: TLInt; const A: TLVec;
-  const b: TLVec; const C: TLVec; const d: TLVec;
-  const IIN: TLIVec; var Y: TLVec; var TOL: TLFloat;
-  var Info: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure TDINInternalDLAGTS(const n: TLInt; const a: TLVec;
+  const b: TLVec; const c: TLVec; const d: TLVec;
+  const IIN: TLIVec; var y: TLVec; var TOL: TLFloat;
+  var Info: TLInt); forward;
 
 procedure InternalDLAEBZ(const IJOB: TLInt; const NITMAX: TLInt;
   const n: TLInt; const MMAX: TLInt; const MINP: TLInt;
   const ABSTOL: TLFloat; const RELTOL: TLFloat;
   const PIVMIN: TLFloat; const d: TLVec; const E: TLVec;
   const e2: TLVec; var NVAL: TLIVec; var AB: TLMatrix;
-  var C: TLVec; var MOUT: TLInt; var NAB: TLIMatrix;
+  var c: TLVec; var MOUT: TLInt; var NAB: TLIMatrix;
   var Work: TLVec; var IWORK: TLIVec;
-  var Info: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Info: TLInt); forward;
 
-procedure InternalTREVC(const T: TLMatrix; n: TLInt;
+procedure InternalTREVC(const t: TLMatrix; n: TLInt;
   SIDE: TLInt; HOWMNY: TLInt; VSELECT: TLBVec;
   var vl: TLMatrix; var vr: TLMatrix; var M: TLInt;
-  var Info: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Info: TLInt); forward;
 
 procedure InternalHSEVDLALN2(const LTRANS: Boolean; const NA: TLInt;
   const NW: TLInt; const SMIN: TLFloat; const ca: TLFloat;
-  const A: TLMatrix; const d1: TLFloat; const d2: TLFloat;
+  const a: TLMatrix; const d1: TLFloat; const d2: TLFloat;
   const b: TLMatrix; const WR: TLFloat; const WI: TLFloat;
   var RSWAP4: TLBVec; var ZSWAP4: TLBVec;
   var IPIVOT44: TLIMatrix; var CIV4: TLVec; var CRV4: TLVec;
-  var X: TLMatrix; var SCL: TLFloat; var XNORM: TLFloat;
-  var Info: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var x: TLMatrix; var SCL: TLFloat; var XNORM: TLFloat;
+  var Info: TLInt); forward;
 
-procedure InternalHSEVDLADIV(const A: TLFloat; const b: TLFloat;
-  const C: TLFloat; const d: TLFloat; var p: TLFloat;
-  var q: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure InternalHSEVDLADIV(const a: TLFloat; const b: TLFloat;
+  const c: TLFloat; const d: TLFloat; var p: TLFloat;
+  var q: TLFloat); forward;
 
-function NonSymmetricEVD(A: TLMatrix; n: TLInt;
+function NonSymmetricEVD(a: TLMatrix; n: TLInt;
   VNeeded: TLInt; var WR: TLVec; var WI: TLVec;
-  var vl: TLMatrix; var vr: TLMatrix): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var vl: TLMatrix; var vr: TLMatrix): Boolean; forward;
 
-procedure ToUpperHessenberg(var A: TLMatrix; n: TLInt;
-  var TAU: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure ToUpperHessenberg(var a: TLMatrix; n: TLInt;
+  var TAU: TLVec); forward;
 
-procedure UnpackQFromUpperHessenberg(const A: TLMatrix; n: TLInt;
-  const TAU: TLVec; var q: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure UnpackQFromUpperHessenberg(const a: TLMatrix; n: TLInt;
+  const TAU: TLVec; var q: TLMatrix); forward;
 
-procedure UnpackHFromUpperHessenberg(const A: TLMatrix; n: TLInt;
-  const TAU: TLVec; var h: TLMatrix); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure UnpackHFromUpperHessenberg(const a: TLMatrix; n: TLInt;
+  const TAU: TLVec; var h: TLMatrix); forward;
 
 
 (* ************************************************************************
@@ -104,20 +104,20 @@ procedure UnpackHFromUpperHessenberg(const A: TLMatrix; n: TLInt;
   True, if the algorithm has converged.
   False, if the algorithm hasn't converged (rare case).
   ************************************************************************ *)
-function SMatrixEVD(A: TLMatrix; n: TLInt; ZNeeded: TLInt;
-  IsUpper: Boolean; var d: TLVec; var Z: TLMatrix): Boolean;
+function SMatrixEVD(a: TLMatrix; n: TLInt; ZNeeded: TLInt;
+  IsUpper: Boolean; var d: TLVec; var z: TLMatrix): Boolean;
 var
   TAU: TLVec;
   E: TLVec;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Assert((ZNeeded = 0) or (ZNeeded = 1), 'SMatrixEVD: incorrect ZNeeded');
-  SMatrixTD(A, n, IsUpper, TAU, d, E);
+  SMatrixTD(a, n, IsUpper, TAU, d, E);
   if ZNeeded = 1 then
     begin
-      SMatrixTDUnpackQ(A, n, IsUpper, TAU, Z);
+      SMatrixTDUnpackQ(a, n, IsUpper, TAU, z);
     end;
-  Result := SMatrixTDEVD(d, E, n, ZNeeded, Z);
+  Result := SMatrixTDEVD(d, E, n, ZNeeded, z);
 end;
 
 (* ************************************************************************
@@ -138,10 +138,10 @@ end;
 
   Output parameters:
   M       -   number of eigenvalues found in a given half-interval (M>=0).
-  W       -   packed array of the eigenvalues found.
+  W       -   array of the eigenvalues found.
   Array whose index ranges within [0..M-1].
   Z       -   if ZNeeded is equal to:
-  * 0, Z hasn’t changed;
+  * 0, Z hasnæŠ?changed;
   * 1, Z contains eigenvectors.
   Array whose indexes range within [0..N-1, 0..M-1].
   The eigenvectors are stored in the matrix columns.
@@ -157,21 +157,21 @@ end;
   In that case, the eigenvalues and eigenvectors are not returned,
   M is equal to 0.
   ************************************************************************ *)
-function SMatrixEVDR(A: TLMatrix; n: TLInt; ZNeeded: TLInt;
+function SMatrixEVDR(a: TLMatrix; n: TLInt; ZNeeded: TLInt;
   IsUpper: Boolean; b1: TLFloat; b2: TLFloat; var M: TLInt;
-  var w: TLVec; var Z: TLMatrix): Boolean;
+  var w: TLVec; var z: TLMatrix): Boolean;
 var
   TAU: TLVec;
   E: TLVec;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Assert((ZNeeded = 0) or (ZNeeded = 1), 'SMatrixTDEVDR: incorrect ZNeeded');
-  SMatrixTD(A, n, IsUpper, TAU, w, E);
+  SMatrixTD(a, n, IsUpper, TAU, w, E);
   if ZNeeded = 1 then
     begin
-      SMatrixTDUnpackQ(A, n, IsUpper, TAU, Z);
+      SMatrixTDUnpackQ(a, n, IsUpper, TAU, z);
     end;
-  Result := SMatrixTDEVDR(w, E, n, ZNeeded, b1, b2, M, Z);
+  Result := SMatrixTDEVDR(w, E, n, ZNeeded, b1, b2, M, z);
 end;
 
 (* ************************************************************************
@@ -191,10 +191,10 @@ end;
   0 <= I1 <= I2 <= N-1.
 
   Output parameters:
-  W       -   packed array of the eigenvalues found.
+  W       -   array of the eigenvalues found.
   Array whose index ranges within [0..I2-I1].
   Z       -   if ZNeeded is equal to:
-  * 0, Z hasn’t changed;
+  * 0, Z hasnæŠ?changed;
   * 1, Z contains eigenvectors.
   Array whose indexes range within [0..N-1, 0..I2-I1].
   In that case, the eigenvectors are stored in the matrix columns.
@@ -208,21 +208,21 @@ end;
   wasn't able to find all the corresponding eigenvectors.
   In that case, the eigenvalues and eigenvectors are not returned.
   ************************************************************************ *)
-function SMatrixEVDI(A: TLMatrix; n: TLInt; ZNeeded: TLInt;
+function SMatrixEVDI(a: TLMatrix; n: TLInt; ZNeeded: TLInt;
   IsUpper: Boolean; i1: TLInt; i2: TLInt; var w: TLVec;
-  var Z: TLMatrix): Boolean;
+  var z: TLMatrix): Boolean;
 var
   TAU: TLVec;
   E: TLVec;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Assert((ZNeeded = 0) or (ZNeeded = 1), 'SMatrixEVDI: incorrect ZNeeded');
-  SMatrixTD(A, n, IsUpper, TAU, w, E);
+  SMatrixTD(a, n, IsUpper, TAU, w, E);
   if ZNeeded = 1 then
     begin
-      SMatrixTDUnpackQ(A, n, IsUpper, TAU, Z);
+      SMatrixTDUnpackQ(a, n, IsUpper, TAU, z);
     end;
-  Result := SMatrixTDEVDI(w, E, n, ZNeeded, i1, i2, Z);
+  Result := SMatrixTDEVDI(w, E, n, ZNeeded, i1, i2, z);
 end;
 
 (* ************************************************************************
@@ -246,7 +246,7 @@ end;
   D       -   eigenvalues in ascending order.
   Array whose index ranges within [0..N-1].
   Z       -   if ZNeeded is equal to:
-  * 0, Z hasn’t changed;
+  * 0, Z hasnæŠ?changed;
   * 1, Z contains the eigenvectors.
   Array whose indexes range within [0..N-1, 0..N-1].
   The eigenvectors are stored in the matrix columns.
@@ -259,36 +259,36 @@ end;
   eigenvectors of Hermitian matrix are defined up to  multiplication  by
   a complex number L, such that |L|=1.
   ************************************************************************ *)
-function HMatrixEVD(A: TLComplexMatrix; n: TLInt;
+function HMatrixEVD(a: TLComplexMatrix; n: TLInt;
   ZNeeded: TLInt; IsUpper: Boolean; var d: TLVec;
-  var Z: TLComplexMatrix): Boolean;
+  var z: TLComplexMatrix): Boolean;
 var
   TAU: TLComplexVec;
   E: TLVec;
   Work: TLVec;
-  T: TLMatrix;
+  t: TLMatrix;
   q: TLComplexMatrix;
   i: TLInt;
   k: TLInt;
   v: TLFloat;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Assert((ZNeeded = 0) or (ZNeeded = 1), 'HermitianEVD: incorrect ZNeeded');
 
   //
   // Reduce to tridiagonal form
   //
-  HMatrixTD(A, n, IsUpper, TAU, d, E);
+  HMatrixTD(a, n, IsUpper, TAU, d, E);
   if ZNeeded = 1 then
     begin
-      HMatrixTDUnpackQ(A, n, IsUpper, TAU, q);
+      HMatrixTDUnpackQ(a, n, IsUpper, TAU, q);
       ZNeeded := 2;
     end;
 
   //
   // TDEVD
   //
-  Result := SMatrixTDEVD(d, E, n, ZNeeded, T);
+  Result := SMatrixTDEVD(d, E, n, ZNeeded, t);
 
   //
   // Eigenvectors are needed
@@ -297,7 +297,7 @@ begin
   if Result and (ZNeeded <> 0) then
     begin
       SetLength(Work, n (* - 1 + 1 // optimized compiler *) );
-      SetLength(Z, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+      SetLength(z, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
       i := 0;
       while i <= n - 1 do
         begin
@@ -309,20 +309,20 @@ begin
           while k <= n - 1 do
             begin
               Work[k] := 0;
-              Inc(k);
+              inc(k);
             end;
           k := 0;
           while k <= n - 1 do
             begin
-              v := q[i, k].X;
-              APVAdd(@Work[0], 0, n - 1, @T[k][0], 0, n - 1, v);
-              Inc(k);
+              v := q[i, k].x;
+              APVAdd(@Work[0], 0, n - 1, @t[k][0], 0, n - 1, v);
+              inc(k);
             end;
           k := 0;
           while k <= n - 1 do
             begin
-              Z[i, k].X := Work[k];
-              Inc(k);
+              z[i, k].x := Work[k];
+              inc(k);
             end;
 
           //
@@ -332,22 +332,22 @@ begin
           while k <= n - 1 do
             begin
               Work[k] := 0;
-              Inc(k);
+              inc(k);
             end;
           k := 0;
           while k <= n - 1 do
             begin
-              v := q[i, k].Y;
-              APVAdd(@Work[0], 0, n - 1, @T[k][0], 0, n - 1, v);
-              Inc(k);
+              v := q[i, k].y;
+              APVAdd(@Work[0], 0, n - 1, @t[k][0], 0, n - 1, v);
+              inc(k);
             end;
           k := 0;
           while k <= n - 1 do
             begin
-              Z[i, k].Y := Work[k];
-              Inc(k);
+              z[i, k].y := Work[k];
+              inc(k);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -371,10 +371,10 @@ end;
 
   Output parameters:
   M       -   number of eigenvalues found in a given half-interval, M>=0
-  W       -   packed array of the eigenvalues found.
+  W       -   array of the eigenvalues found.
   Array whose index ranges within [0..M-1].
   Z       -   if ZNeeded is equal to:
-  * 0, Z hasn’t changed;
+  * 0, Z hasnæŠ?changed;
   * 1, Z contains eigenvectors.
   Array whose indexes range within [0..N-1, 0..M-1].
   The eigenvectors are stored in the matrix columns.
@@ -394,12 +394,12 @@ end;
   eigen vectors of Hermitian matrix are defined up to multiplication  by
   a complex number L, such as |L|=1.
   ************************************************************************ *)
-function HMatrixEVDR(A: TLComplexMatrix; n: TLInt;
+function HMatrixEVDR(a: TLComplexMatrix; n: TLInt;
   ZNeeded: TLInt; IsUpper: Boolean; b1: TLFloat; b2: TLFloat;
-  var M: TLInt; var w: TLVec; var Z: TLComplexMatrix): Boolean;
+  var M: TLInt; var w: TLVec; var z: TLComplexMatrix): Boolean;
 var
   q: TLComplexMatrix;
-  T: TLMatrix;
+  t: TLMatrix;
   TAU: TLComplexVec;
   E: TLVec;
   Work: TLVec;
@@ -407,24 +407,24 @@ var
   k: TLInt;
   v: TLFloat;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Assert((ZNeeded = 0) or (ZNeeded = 1),
     'HermitianEigenValuesAndVectorsInInterval: incorrect ZNeeded');
 
   //
   // Reduce to tridiagonal form
   //
-  HMatrixTD(A, n, IsUpper, TAU, w, E);
+  HMatrixTD(a, n, IsUpper, TAU, w, E);
   if ZNeeded = 1 then
     begin
-      HMatrixTDUnpackQ(A, n, IsUpper, TAU, q);
+      HMatrixTDUnpackQ(a, n, IsUpper, TAU, q);
       ZNeeded := 2;
     end;
 
   //
   // Bisection and inverse iteration
   //
-  Result := SMatrixTDEVDR(w, E, n, ZNeeded, b1, b2, M, T);
+  Result := SMatrixTDEVDR(w, E, n, ZNeeded, b1, b2, M, t);
 
   //
   // Eigenvectors are needed
@@ -433,7 +433,7 @@ begin
   if Result and (ZNeeded <> 0) and (M <> 0) then
     begin
       SetLength(Work, M (* - 1 + 1 // optimized compiler *) );
-      SetLength(Z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
       i := 0;
       while i <= n - 1 do
         begin
@@ -445,20 +445,20 @@ begin
           while k <= M - 1 do
             begin
               Work[k] := 0;
-              Inc(k);
+              inc(k);
             end;
           k := 0;
           while k <= n - 1 do
             begin
-              v := q[i, k].X;
-              APVAdd(@Work[0], 0, M - 1, @T[k][0], 0, M - 1, v);
-              Inc(k);
+              v := q[i, k].x;
+              APVAdd(@Work[0], 0, M - 1, @t[k][0], 0, M - 1, v);
+              inc(k);
             end;
           k := 0;
           while k <= M - 1 do
             begin
-              Z[i, k].X := Work[k];
-              Inc(k);
+              z[i, k].x := Work[k];
+              inc(k);
             end;
 
           //
@@ -468,22 +468,22 @@ begin
           while k <= M - 1 do
             begin
               Work[k] := 0;
-              Inc(k);
+              inc(k);
             end;
           k := 0;
           while k <= n - 1 do
             begin
-              v := q[i, k].Y;
-              APVAdd(@Work[0], 0, M - 1, @T[k][0], 0, M - 1, v);
-              Inc(k);
+              v := q[i, k].y;
+              APVAdd(@Work[0], 0, M - 1, @t[k][0], 0, M - 1, v);
+              inc(k);
             end;
           k := 0;
           while k <= M - 1 do
             begin
-              Z[i, k].Y := Work[k];
-              Inc(k);
+              z[i, k].y := Work[k];
+              inc(k);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -506,10 +506,10 @@ end;
   0 <= I1 <= I2 <= N-1.
 
   Output parameters:
-  W       -   packed array of the eigenvalues found.
+  W       -   array of the eigenvalues found.
   Array whose index ranges within [0..I2-I1].
   Z       -   if ZNeeded is equal to:
-  * 0, Z hasn’t changed;
+  * 0, Z hasnæŠ?changed;
   * 1, Z contains eigenvectors.
   Array whose indexes range within [0..N-1, 0..I2-I1].
   In  that  case,  the eigenvectors are stored in the matrix
@@ -528,12 +528,12 @@ end;
   eigen vectors of Hermitian matrix are defined up to multiplication  by
   a complex number L, such as |L|=1.
   ************************************************************************ *)
-function HMatrixEVDI(A: TLComplexMatrix; n: TLInt;
+function HMatrixEVDI(a: TLComplexMatrix; n: TLInt;
   ZNeeded: TLInt; IsUpper: Boolean; i1: TLInt;
-  i2: TLInt; var w: TLVec; var Z: TLComplexMatrix): Boolean;
+  i2: TLInt; var w: TLVec; var z: TLComplexMatrix): Boolean;
 var
   q: TLComplexMatrix;
-  T: TLMatrix;
+  t: TLMatrix;
   TAU: TLComplexVec;
   E: TLVec;
   Work: TLVec;
@@ -542,24 +542,24 @@ var
   v: TLFloat;
   M: TLInt;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Assert((ZNeeded = 0) or (ZNeeded = 1),
     'HermitianEigenValuesAndVectorsByIndexes: incorrect ZNeeded');
 
   //
   // Reduce to tridiagonal form
   //
-  HMatrixTD(A, n, IsUpper, TAU, w, E);
+  HMatrixTD(a, n, IsUpper, TAU, w, E);
   if ZNeeded = 1 then
     begin
-      HMatrixTDUnpackQ(A, n, IsUpper, TAU, q);
+      HMatrixTDUnpackQ(a, n, IsUpper, TAU, q);
       ZNeeded := 2;
     end;
 
   //
   // Bisection and inverse iteration
   //
-  Result := SMatrixTDEVDI(w, E, n, ZNeeded, i1, i2, T);
+  Result := SMatrixTDEVDI(w, E, n, ZNeeded, i1, i2, t);
 
   //
   // Eigenvectors are needed
@@ -569,7 +569,7 @@ begin
   if Result and (ZNeeded <> 0) then
     begin
       SetLength(Work, M (* - 1 + 1 // optimized compiler *) );
-      SetLength(Z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
       i := 0;
       while i <= n - 1 do
         begin
@@ -581,20 +581,20 @@ begin
           while k <= M - 1 do
             begin
               Work[k] := 0;
-              Inc(k);
+              inc(k);
             end;
           k := 0;
           while k <= n - 1 do
             begin
-              v := q[i, k].X;
-              APVAdd(@Work[0], 0, M - 1, @T[k][0], 0, M - 1, v);
-              Inc(k);
+              v := q[i, k].x;
+              APVAdd(@Work[0], 0, M - 1, @t[k][0], 0, M - 1, v);
+              inc(k);
             end;
           k := 0;
           while k <= M - 1 do
             begin
-              Z[i, k].X := Work[k];
-              Inc(k);
+              z[i, k].x := Work[k];
+              inc(k);
             end;
 
           //
@@ -604,22 +604,22 @@ begin
           while k <= M - 1 do
             begin
               Work[k] := 0;
-              Inc(k);
+              inc(k);
             end;
           k := 0;
           while k <= n - 1 do
             begin
-              v := q[i, k].Y;
-              APVAdd(@Work[0], 0, M - 1, @T[k][0], 0, M - 1, v);
-              Inc(k);
+              v := q[i, k].y;
+              APVAdd(@Work[0], 0, M - 1, @t[k][0], 0, M - 1, v);
+              inc(k);
             end;
           k := 0;
           while k <= M - 1 do
             begin
-              Z[i, k].Y := Work[k];
-              Inc(k);
+              z[i, k].y := Work[k];
+              inc(k);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -655,7 +655,7 @@ end;
   D       -   eigenvalues in ascending order.
   Array whose index ranges within [0..N-1].
   Z       -   if ZNeeded is equal to:
-  * 0, Z hasn’t changed;
+  * 0, Z hasnæŠ?changed;
   * 1, Z contains the product of a given matrix (from the left)
   and the eigenvectors matrix (from the right);
   * 2, Z contains the eigenvectors.
@@ -669,7 +669,7 @@ end;
   False, if the algorithm hasn't converged.
   ************************************************************************ *)
 function SMatrixTDEVD(var d: TLVec; E: TLVec; n: TLInt;
-  ZNeeded: TLInt; var Z: TLMatrix): Boolean;
+  ZNeeded: TLInt; var z: TLMatrix): Boolean;
 var
   d1: TLVec;
   e1: TLVec;
@@ -694,8 +694,8 @@ begin
       i := 1;
       while i <= n do
         begin
-          APVMove(@z1[i][0], 1, n, @Z[i - 1][0], 0, n - 1);
-          Inc(i);
+          APVMove(@z1[i][0], 1, n, @z[i - 1][0], 0, n - 1);
+          inc(i);
         end;
     end;
 
@@ -719,26 +719,26 @@ begin
           i := 1;
           while i <= n do
             begin
-              APVMove(@Z[i - 1][0], 0, n - 1, @z1[i][0], 1, n);
-              Inc(i);
+              APVMove(@z[i - 1][0], 0, n - 1, @z1[i][0], 1, n);
+              inc(i);
             end;
           Exit;
         end;
       if ZNeeded = 2 then
         begin
-          SetLength(Z, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+          SetLength(z, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
           i := 1;
           while i <= n do
             begin
-              APVMove(@Z[i - 1][0], 0, n - 1, @z1[i][0], 1, n);
-              Inc(i);
+              APVMove(@z[i - 1][0], 0, n - 1, @z1[i][0], 1, n);
+              inc(i);
             end;
           Exit;
         end;
       if ZNeeded = 3 then
         begin
-          SetLength(Z, 0 + 1, n (* - 1 + 1 // optimized compiler *) );
-          APVMove(@Z[0][0], 0, n - 1, @z1[1][0], 1, n);
+          SetLength(z, 0 + 1, n (* - 1 + 1 // optimized compiler *) );
+          APVMove(@z[0][0], 0, n - 1, @z1[1][0], 1, n);
           Exit;
         end;
       Assert(False, 'SMatrixTDEVD: Incorrect ZNeeded!');
@@ -772,7 +772,7 @@ end;
   * 2, Z isn't used (but changed on the exit).
 
   Output parameters:
-  D       -   packed array of the eigenvalues found.
+  D       -   array of the eigenvalues found.
   Array whose index ranges within [0..M-1].
   M       -   number of eigenvalues found in the given half-interval (M>=0).
   Z       -   if ZNeeded is equal to:
@@ -796,13 +796,13 @@ end;
   the eigenvalues and eigenvectors are not returned, M is equal to 0.
   ************************************************************************ *)
 function SMatrixTDEVDR(var d: TLVec; const E: TLVec;
-  n: TLInt; ZNeeded: TLInt; A: TLFloat; b: TLFloat;
-  var M: TLInt; var Z: TLMatrix): Boolean;
+  n: TLInt; ZNeeded: TLInt; a: TLFloat; b: TLFloat;
+  var M: TLInt; var z: TLMatrix): Boolean;
 var
   ErrorCode: TLInt;
   NSPLIT: TLInt;
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   k: TLInt;
   CR: TLInt;
   IBLOCK: TLIVec;
@@ -823,7 +823,7 @@ begin
   //
   // Special cases
   //
-  if AP_FP_Less_Eq(b, A) then
+  if AP_FP_Less_Eq(b, a) then
     begin
       M := 0;
       Result := True;
@@ -852,7 +852,7 @@ begin
   //
   if ZNeeded = 0 then
     begin
-      Result := InternalBisectionEigenValues(d1, e1, n, 2, 1, A, b, 0, 0, -1, w,
+      Result := InternalBisectionEigenValues(d1, e1, n, 2, 1, a, b, 0, 0, -1, w,
         M, NSPLIT, IBLOCK, ISPLIT, ErrorCode);
       if not Result or (M = 0) then
         begin
@@ -873,7 +873,7 @@ begin
       //
       // Find eigen pairs
       //
-      Result := InternalBisectionEigenValues(d1, e1, n, 2, 2, A, b, 0, 0, -1, w,
+      Result := InternalBisectionEigenValues(d1, e1, n, 2, 2, a, b, 0, 0, -1, w,
         M, NSPLIT, IBLOCK, ISPLIT, ErrorCode);
       if not Result or (M = 0) then
         begin
@@ -895,27 +895,27 @@ begin
       while i <= M do
         begin
           k := i;
-          J := i;
-          while J <= M do
+          j := i;
+          while j <= M do
             begin
-              if AP_FP_Less(w[J], w[k]) then
+              if AP_FP_Less(w[j], w[k]) then
                 begin
-                  k := J;
+                  k := j;
                 end;
-              Inc(J);
+              inc(j);
             end;
           v := w[i];
           w[i] := w[k];
           w[k] := v;
-          J := 1;
-          while J <= n do
+          j := 1;
+          while j <= n do
             begin
-              v := z2[J, i];
-              z2[J, i] := z2[J, k];
-              z2[J, k] := v;
-              Inc(J);
+              v := z2[j, i];
+              z2[j, i] := z2[j, k];
+              z2[j, k] := v;
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -929,30 +929,30 @@ begin
             begin
               z3[i, i_] := z2[i_, i];
             end;
-          Inc(i);
+          inc(i);
         end;
       i := 1;
       while i <= n do
         begin
-          J := 1;
-          while J <= M do
+          j := 1;
+          while j <= M do
             begin
-              v := APVDotProduct(@Z[i - 1][0], 0, n - 1, @z3[J][0], 1, n);
-              z2[i, J] := v;
-              Inc(J);
+              v := APVDotProduct(@z[i - 1][0], 0, n - 1, @z3[j][0], 1, n);
+              z2[i, j] := v;
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
-      SetLength(Z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
       i := 1;
       while i <= M do
         begin
           i1_ := (1) - (0);
           for i_ := 0 to n - 1 do
             begin
-              Z[i_, i - 1] := z2[i_ + i1_, i];
+              z[i_, i - 1] := z2[i_ + i1_, i];
             end;
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -963,7 +963,7 @@ begin
       while i <= M do
         begin
           d[i - 1] := w[i];
-          Inc(i);
+          inc(i);
         end;
       Exit;
     end;
@@ -977,7 +977,7 @@ begin
       //
       // Find eigen pairs
       //
-      Result := InternalBisectionEigenValues(d1, e1, n, 2, 2, A, b, 0, 0, -1, w,
+      Result := InternalBisectionEigenValues(d1, e1, n, 2, 2, a, b, 0, 0, -1, w,
         M, NSPLIT, IBLOCK, ISPLIT, ErrorCode);
       if not Result or (M = 0) then
         begin
@@ -999,27 +999,27 @@ begin
       while i <= M do
         begin
           k := i;
-          J := i;
-          while J <= M do
+          j := i;
+          while j <= M do
             begin
-              if AP_FP_Less(w[J], w[k]) then
+              if AP_FP_Less(w[j], w[k]) then
                 begin
-                  k := J;
+                  k := j;
                 end;
-              Inc(J);
+              inc(j);
             end;
           v := w[i];
           w[i] := w[k];
           w[k] := v;
-          J := 1;
-          while J <= n do
+          j := 1;
+          while j <= n do
             begin
-              v := z2[J, i];
-              z2[J, i] := z2[J, k];
-              z2[J, k] := v;
-              Inc(J);
+              v := z2[j, i];
+              z2[j, i] := z2[j, k];
+              z2[j, k] := v;
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -1030,18 +1030,18 @@ begin
       while i <= M do
         begin
           d[i - 1] := w[i];
-          Inc(i);
+          inc(i);
         end;
-      SetLength(Z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
       i := 1;
       while i <= M do
         begin
           i1_ := (1) - (0);
           for i_ := 0 to n - 1 do
             begin
-              Z[i_, i - 1] := z2[i_ + i1_, i];
+              z[i_, i - 1] := z2[i_ + i1_, i];
             end;
-          Inc(i);
+          inc(i);
         end;
       Exit;
     end;
@@ -1076,7 +1076,7 @@ end;
   * 2, Z isn't used (but changed on the exit).
 
   Output parameters:
-  D       -   packed array of the eigenvalues found.
+  D       -   array of the eigenvalues found.
   Array whose index ranges within [0..I2-I1].
   Z       -   if ZNeeded is equal to:
   * 0, doesn't contain any information;
@@ -1100,12 +1100,12 @@ end;
   ************************************************************************ *)
 function SMatrixTDEVDI(var d: TLVec; const E: TLVec;
   n: TLInt; ZNeeded: TLInt; i1: TLInt;
-  i2: TLInt; var Z: TLMatrix): Boolean;
+  i2: TLInt; var z: TLMatrix): Boolean;
 var
   ErrorCode: TLInt;
   NSPLIT: TLInt;
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   k: TLInt;
   M: TLInt;
   CR: TLInt;
@@ -1156,7 +1156,7 @@ begin
       while i <= M do
         begin
           d[i - 1] := w[i];
-          Inc(i);
+          inc(i);
         end;
       Exit;
     end;
@@ -1195,27 +1195,27 @@ begin
       while i <= M do
         begin
           k := i;
-          J := i;
-          while J <= M do
+          j := i;
+          while j <= M do
             begin
-              if AP_FP_Less(w[J], w[k]) then
+              if AP_FP_Less(w[j], w[k]) then
                 begin
-                  k := J;
+                  k := j;
                 end;
-              Inc(J);
+              inc(j);
             end;
           v := w[i];
           w[i] := w[k];
           w[k] := v;
-          J := 1;
-          while J <= n do
+          j := 1;
+          while j <= n do
             begin
-              v := z2[J, i];
-              z2[J, i] := z2[J, k];
-              z2[J, k] := v;
-              Inc(J);
+              v := z2[j, i];
+              z2[j, i] := z2[j, k];
+              z2[j, k] := v;
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -1229,30 +1229,30 @@ begin
             begin
               z3[i, i_] := z2[i_, i];
             end;
-          Inc(i);
+          inc(i);
         end;
       i := 1;
       while i <= n do
         begin
-          J := 1;
-          while J <= M do
+          j := 1;
+          while j <= M do
             begin
-              v := APVDotProduct(@Z[i - 1][0], 0, n - 1, @z3[J][0], 1, n);
-              z2[i, J] := v;
-              Inc(J);
+              v := APVDotProduct(@z[i - 1][0], 0, n - 1, @z3[j][0], 1, n);
+              z2[i, j] := v;
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
-      SetLength(Z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
       i := 1;
       while i <= M do
         begin
           i1_ := (1) - (0);
           for i_ := 0 to n - 1 do
             begin
-              Z[i_, i - 1] := z2[i_ + i1_, i];
+              z[i_, i - 1] := z2[i_ + i1_, i];
             end;
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -1263,7 +1263,7 @@ begin
       while i <= M do
         begin
           d[i - 1] := w[i];
-          Inc(i);
+          inc(i);
         end;
       Exit;
     end;
@@ -1302,42 +1302,42 @@ begin
       while i <= M do
         begin
           k := i;
-          J := i;
-          while J <= M do
+          j := i;
+          while j <= M do
             begin
-              if AP_FP_Less(w[J], w[k]) then
+              if AP_FP_Less(w[j], w[k]) then
                 begin
-                  k := J;
+                  k := j;
                 end;
-              Inc(J);
+              inc(j);
             end;
           v := w[i];
           w[i] := w[k];
           w[k] := v;
-          J := 1;
-          while J <= n do
+          j := 1;
+          while j <= n do
             begin
-              v := z2[J, i];
-              z2[J, i] := z2[J, k];
-              z2[J, k] := v;
-              Inc(J);
+              v := z2[j, i];
+              z2[j, i] := z2[j, k];
+              z2[j, k] := v;
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
 
       //
       // Store Z
       //
-      SetLength(Z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
       i := 1;
       while i <= M do
         begin
           i1_ := (1) - (0);
           for i_ := 0 to n - 1 do
             begin
-              Z[i_, i - 1] := z2[i_ + i1_, i];
+              z[i_, i - 1] := z2[i_ + i1_, i];
             end;
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -1348,7 +1348,7 @@ begin
       while i <= M do
         begin
           d[i - 1] := w[i];
-          Inc(i);
+          inc(i);
         end;
       Exit;
     end;
@@ -1419,7 +1419,7 @@ end;
 
   See also the InternalTREVC subroutine.
   ************************************************************************ *)
-function RMatrixEVD(A: TLMatrix; n: TLInt; VNeeded: TLInt;
+function RMatrixEVD(a: TLMatrix; n: TLInt; VNeeded: TLInt;
   var WR: TLVec; var WI: TLVec; var vl: TLMatrix;
   var vr: TLMatrix): Boolean;
 var
@@ -1430,14 +1430,14 @@ var
   WI1: TLVec;
   i: TLInt;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Assert((VNeeded >= 0) and (VNeeded <= 3), 'RMatrixEVD: incorrect VNeeded!');
   SetLength(a1, n + 1, n + 1);
   i := 1;
   while i <= n do
     begin
-      APVMove(@a1[i][0], 1, n, @A[i - 1][0], 0, n - 1);
-      Inc(i);
+      APVMove(@a1[i][0], 1, n, @a[i - 1][0], 0, n - 1);
+      inc(i);
     end;
   Result := NonSymmetricEVD(a1, n, VNeeded, WR1, WI1, VL1, VR1);
   if Result then
@@ -1453,7 +1453,7 @@ begin
           while i <= n - 1 do
             begin
               APVMove(@vl[i][0], 0, n - 1, @VL1[i + 1][0], 1, n);
-              Inc(i);
+              inc(i);
             end;
         end;
       if (VNeeded = 1) or (VNeeded = 3) then
@@ -1463,7 +1463,7 @@ begin
           while i <= n - 1 do
             begin
               APVMove(@vr[i][0], 0, n - 1, @VR1[i + 1][0], 1, n);
-              Inc(i);
+              inc(i);
             end;
         end;
     end;
@@ -1494,7 +1494,7 @@ var
   ITMAX: TLInt;
   IW: TLInt;
   IWOFF: TLInt;
-  J: TLInt;
+  j: TLInt;
   ITMP1: TLInt;
   JB: TLInt;
   JDISC: TLInt;
@@ -1518,7 +1518,7 @@ var
   WU: TLFloat;
   WUL: TLFloat;
   ScaleFactor: TLFloat;
-  T: TLFloat;
+  t: TLFloat;
   IDUMMA: TLIVec;
   Work: TLVec;
   IWORK: TLIVec;
@@ -1651,31 +1651,31 @@ begin
   //
   // Scaling
   //
-  T := AbsReal(d[n]);
-  J := 1;
-  while J <= n - 1 do
+  t := AbsReal(d[n]);
+  j := 1;
+  while j <= n - 1 do
     begin
-      T := Max(T, AbsReal(d[J]));
-      T := Max(T, AbsReal(E[J]));
-      Inc(J);
+      t := Max(t, AbsReal(d[j]));
+      t := Max(t, AbsReal(E[j]));
+      inc(j);
     end;
   ScaleFactor := 1;
-  if AP_FP_NEq(T, 0) then
+  if AP_FP_NEq(t, 0) then
     begin
-      if AP_FP_Greater(T, Sqrt(Sqrt(MinRealNumber)) * Sqrt(MaxRealNumber)) then
+      if AP_FP_Greater(t, Sqrt(Sqrt(MinRealNumber)) * Sqrt(MaxRealNumber)) then
         begin
-          ScaleFactor := T;
+          ScaleFactor := t;
         end;
-      if AP_FP_Less(T, Sqrt(Sqrt(MaxRealNumber)) * Sqrt(MinRealNumber)) then
+      if AP_FP_Less(t, Sqrt(Sqrt(MaxRealNumber)) * Sqrt(MinRealNumber)) then
         begin
-          ScaleFactor := T;
+          ScaleFactor := t;
         end;
-      J := 1;
-      while J <= n - 1 do
+      j := 1;
+      while j <= n - 1 do
         begin
-          d[J] := d[J] / ScaleFactor;
-          E[J] := E[J] / ScaleFactor;
-          Inc(J);
+          d[j] := d[j] / ScaleFactor;
+          E[j] := E[j] / ScaleFactor;
+          inc(j);
         end;
       d[n] := d[n] / ScaleFactor;
     end;
@@ -1686,22 +1686,22 @@ begin
   NSPLIT := 1;
   Work[n] := 0;
   PIVMIN := 1;
-  J := 2;
-  while J <= n do
+  j := 2;
+  while j <= n do
     begin
-      TMP1 := AP_Sqr(E[J - 1]);
-      if AP_FP_Greater(AbsReal(d[J] * d[J - 1]) * AP_Sqr(ULP) + SAFEMN, TMP1) then
+      TMP1 := AP_Sqr(E[j - 1]);
+      if AP_FP_Greater(AbsReal(d[j] * d[j - 1]) * AP_Sqr(ULP) + SAFEMN, TMP1) then
         begin
-          ISPLIT[NSPLIT] := J - 1;
+          ISPLIT[NSPLIT] := j - 1;
           NSPLIT := NSPLIT + 1;
-          Work[J - 1] := 0;
+          Work[j - 1] := 0;
         end
       else
         begin
-          Work[J - 1] := TMP1;
+          Work[j - 1] := TMP1;
           PIVMIN := Max(PIVMIN, TMP1);
         end;
-      Inc(J);
+      inc(j);
     end;
   ISPLIT[NSPLIT] := n;
   PIVMIN := PIVMIN * SAFEMN;
@@ -1722,14 +1722,14 @@ begin
       GU := d[1];
       GL := d[1];
       TMP1 := 0;
-      J := 1;
-      while J <= n - 1 do
+      j := 1;
+      while j <= n - 1 do
         begin
-          TMP2 := Sqrt(Work[J]);
-          GU := Max(GU, d[J] + TMP1 + TMP2);
-          GL := Min(GL, d[J] - TMP1 - TMP2);
+          TMP2 := Sqrt(Work[j]);
+          GU := Max(GU, d[j] + TMP1 + TMP2);
+          GL := Min(GL, d[j] - TMP1 - TMP2);
           TMP1 := TMP2;
-          Inc(J);
+          inc(j);
         end;
       GU := Max(GU, d[n] + TMP1);
       GL := Min(GL, d[n] - TMP1);
@@ -1828,11 +1828,11 @@ begin
       //
       TNORM := Max(AbsReal(d[1]) + AbsReal(E[1]),
         AbsReal(d[n]) + AbsReal(E[n - 1]));
-      J := 2;
-      while J <= n - 1 do
+      j := 2;
+      while j <= n - 1 do
         begin
-          TNORM := Max(TNORM, AbsReal(d[J]) + AbsReal(E[J - 1]) + AbsReal(E[J]));
-          Inc(J);
+          TNORM := Max(TNORM, AbsReal(d[j]) + AbsReal(E[j - 1]) + AbsReal(E[j]));
+          inc(j);
         end;
       if AP_FP_Less_Eq(ABSTOL, 0) then
         begin
@@ -1905,14 +1905,14 @@ begin
           GU := d[IBEGIN];
           GL := d[IBEGIN];
           TMP1 := 0;
-          J := IBEGIN;
-          while J <= IEND - 1 do
+          j := IBEGIN;
+          while j <= IEND - 1 do
             begin
-              TMP2 := AbsReal(E[J]);
-              GU := Max(GU, d[J] + TMP1 + TMP2);
-              GL := Min(GL, d[J] - TMP1 - TMP2);
+              TMP2 := AbsReal(E[j]);
+              GU := Max(GU, d[j] + TMP1 + TMP2);
+              GL := Min(GL, d[j] - TMP1 - TMP2);
               TMP1 := TMP2;
-              Inc(J);
+              inc(j);
             end;
           GU := Max(GU, d[IEND] + TMP1);
           GL := Min(GL, d[IEND] - TMP1);
@@ -1937,14 +1937,14 @@ begin
                 begin
                   NWL := NWL + IIN;
                   NWU := NWU + IIN;
-                  Inc(JB);
+                  inc(JB);
                   Continue;
                 end;
               GL := Max(GL, WL);
               GU := Min(GU, WU);
               if AP_FP_Greater_Eq(GL, GU) then
                 begin
-                  Inc(JB);
+                  inc(JB);
                   Continue;
                 end;
             end;
@@ -1979,7 +1979,7 @@ begin
               IWORKSPACE[TmpI] := IBLOCK[M + TmpI];
               IA1SIINX2[TmpI, 1] := IWORK[TmpI];
               IA1SIINX2[TmpI, 2] := IWORK[TmpI + IIN];
-              Inc(TmpI);
+              inc(TmpI);
             end;
           InternalDLAEBZ(1, 0, IIN, IIN, 1, ATOLI, RTOLI, PIVMIN, RA1SIIN, RA2SIIN,
             RA3SIIN, IDUMMA, RA1SIINX2, RA4SIIN, IM, IA1SIINX2, RWORKSPACE,
@@ -1994,7 +1994,7 @@ begin
               IBLOCK[M + TmpI] := IWORKSPACE[TmpI];
               IWORK[TmpI] := IA1SIINX2[TmpI, 1];
               IWORK[TmpI + IIN] := IA1SIINX2[TmpI, 2];
-              Inc(TmpI);
+              inc(TmpI);
             end;
           NWL := NWL + IWORK[1];
           NWU := NWU + IWORK[IIN + 1];
@@ -2029,7 +2029,7 @@ begin
               IWORKSPACE[TmpI] := IBLOCK[M + TmpI];
               IA1SIINX2[TmpI, 1] := IWORK[TmpI];
               IA1SIINX2[TmpI, 2] := IWORK[TmpI + IIN];
-              Inc(TmpI);
+              inc(TmpI);
             end;
           InternalDLAEBZ(2, ITMAX, IIN, IIN, 1, ATOLI, RTOLI, PIVMIN, RA1SIIN,
             RA2SIIN, RA3SIIN, IDUMMA, RA1SIINX2, RA4SIIN, IOUT, IA1SIINX2,
@@ -2044,22 +2044,22 @@ begin
               IBLOCK[M + TmpI] := IWORKSPACE[TmpI];
               IWORK[TmpI] := IA1SIINX2[TmpI, 1];
               IWORK[TmpI + IIN] := IA1SIINX2[TmpI, 2];
-              Inc(TmpI);
+              inc(TmpI);
             end;
 
           //
           // Copy Eigenvalues Into W and IBLOCK
           // Use -JB for block number for unconverged eigenvalues.
           //
-          J := 1;
-          while J <= IOUT do
+          j := 1;
+          while j <= IOUT do
             begin
-              TMP1 := 0.5 * (Work[J + n] + Work[J + IIN + n]);
+              TMP1 := 0.5 * (Work[j + n] + Work[j + IIN + n]);
 
               //
               // Flag non-convergence.
               //
-              if J > IOUT - IINFO then
+              if j > IOUT - IINFO then
                 begin
                   NCNVRG := True;
                   IB := -JB;
@@ -2068,18 +2068,18 @@ begin
                 begin
                   IB := JB;
                 end;
-              JE := IWORK[J] + 1 + IWOFF;
-              while JE <= IWORK[J + IIN] + IWOFF do
+              JE := IWORK[j] + 1 + IWOFF;
+              while JE <= IWORK[j + IIN] + IWOFF do
                 begin
                   w[JE] := TMP1;
                   IBLOCK[JE] := IB;
-                  Inc(JE);
+                  inc(JE);
                 end;
-              Inc(J);
+              inc(j);
             end;
           M := M + IM;
         end;
-      Inc(JB);
+      inc(JB);
     end;
 
   //
@@ -2113,7 +2113,7 @@ begin
                       IBLOCK[IM] := IBLOCK[JE];
                     end;
                 end;
-              Inc(JE);
+              inc(JE);
             end;
           M := IM;
         end;
@@ -2146,10 +2146,10 @@ begin
                           IW := JE;
                           WKILL := w[JE];
                         end;
-                      Inc(JE);
+                      inc(JE);
                     end;
                   IBLOCK[IW] := 0;
-                  Inc(JDISC);
+                  inc(JDISC);
                 end;
             end;
           if IDISCU > 0 then
@@ -2168,10 +2168,10 @@ begin
                           IW := JE;
                           WKILL := w[JE];
                         end;
-                      Inc(JE);
+                      inc(JE);
                     end;
                   IBLOCK[IW] := 0;
-                  Inc(JDISC);
+                  inc(JDISC);
                 end;
             end;
           IM := 0;
@@ -2184,7 +2184,7 @@ begin
                   w[IM] := w[JE];
                   IBLOCK[IM] := IBLOCK[JE];
                 end;
-              Inc(JE);
+              inc(JE);
             end;
           M := IM;
         end;
@@ -2206,15 +2206,15 @@ begin
         begin
           IE := 0;
           TMP1 := w[JE];
-          J := JE + 1;
-          while J <= M do
+          j := JE + 1;
+          while j <= M do
             begin
-              if AP_FP_Less(w[J], TMP1) then
+              if AP_FP_Less(w[j], TMP1) then
                 begin
-                  IE := J;
-                  TMP1 := w[J];
+                  IE := j;
+                  TMP1 := w[j];
                 end;
-              Inc(J);
+              inc(j);
             end;
           if IE <> 0 then
             begin
@@ -2224,14 +2224,14 @@ begin
               w[JE] := TMP1;
               IBLOCK[JE] := ITMP1;
             end;
-          Inc(JE);
+          inc(JE);
         end;
     end;
-  J := 1;
-  while J <= M do
+  j := 1;
+  while j <= M do
     begin
-      w[J] := w[J] * ScaleFactor;
-      Inc(J);
+      w[j] := w[j] * ScaleFactor;
+      inc(j);
     end;
   ErrorCode := 0;
   if NCNVRG then
@@ -2248,7 +2248,7 @@ end;
 procedure InternalDSTEIN(const n: TLInt; const d: TLVec;
   E: TLVec; const M: TLInt; w: TLVec;
   const IBLOCK: TLIVec; const ISPLIT: TLIVec;
-  var Z: TLMatrix; var IFAIL: TLIVec; var Info: TLInt);
+  var z: TLMatrix; var IFAIL: TLIVec; var Info: TLInt);
 var
   MAXITS: TLInt;
   EXTRA: TLInt;
@@ -2259,8 +2259,8 @@ var
   i: TLInt;
   IINFO: TLInt;
   ITS: TLInt;
-  J: TLInt;
-  J1: TLInt;
+  j: TLInt;
+  j1: TLInt;
   JBLK: TLInt;
   JMAX: TLInt;
   NBLK: TLInt;
@@ -2303,7 +2303,7 @@ begin
   SetLength(WORK5, Max(n, 1) + 1);
   SetLength(IWORK, Max(n, 1) + 1);
   SetLength(IFAIL, Max(M, 1) + 1);
-  SetLength(Z, Max(n, 1) + 1, Max(M, 1) + 1);
+  SetLength(z, Max(n, 1) + 1, Max(M, 1) + 1);
 
   //
   // Test the input parameters.
@@ -2313,7 +2313,7 @@ begin
   while i <= M do
     begin
       IFAIL[i] := 0;
-      Inc(i);
+      inc(i);
     end;
   if n < 0 then
     begin
@@ -2325,20 +2325,20 @@ begin
       Info := -4;
       Exit;
     end;
-  J := 2;
-  while J <= M do
+  j := 2;
+  while j <= M do
     begin
-      if IBLOCK[J] < IBLOCK[J - 1] then
+      if IBLOCK[j] < IBLOCK[j - 1] then
         begin
           Info := -6;
           Break;
         end;
-      if (IBLOCK[J] = IBLOCK[J - 1]) and AP_FP_Less(w[J], w[J - 1]) then
+      if (IBLOCK[j] = IBLOCK[j - 1]) and AP_FP_Less(w[j], w[j - 1]) then
         begin
           Info := -5;
           Break;
         end;
-      Inc(J);
+      inc(j);
     end;
   if Info <> 0 then
     begin
@@ -2354,7 +2354,7 @@ begin
     end;
   if n = 1 then
     begin
-      Z[1, 1] := 1;
+      z[1, 1] := 1;
       Exit;
     end;
 
@@ -2377,7 +2377,7 @@ begin
   //
   // Compute eigenvectors of matrix blocks.
   //
-  J1 := 1;
+  j1 := 1;
   NBLK := 1;
   while NBLK <= IBLOCK[M] do
     begin
@@ -2409,7 +2409,7 @@ begin
             begin
               ONENRM := Max(ONENRM, AbsReal(d[i]) + AbsReal(E[i - 1]) +
                 AbsReal(E[i]));
-              Inc(i);
+              inc(i);
             end;
           ORTOL := 0.001 * ONENRM;
           DTPCRT := Sqrt(0.1 / BLKSIZ);
@@ -2419,16 +2419,16 @@ begin
       // Loop through eigenvalues of block nblk.
       //
       JBLK := 0;
-      J := J1;
-      while J <= M do
+      j := j1;
+      while j <= M do
         begin
-          if IBLOCK[J] <> NBLK then
+          if IBLOCK[j] <> NBLK then
             begin
-              J1 := J;
+              j1 := j;
               Break;
             end;
           JBLK := JBLK + 1;
-          XJ := w[J];
+          XJ := w[j];
           if BLKSIZ = 1 then
             begin
 
@@ -2464,7 +2464,7 @@ begin
               while TI <= BLKSIZ do
                 begin
                   Work1[TI] := 2 * RandomReal - 1;
-                  Inc(TI);
+                  inc(TI);
                 end;
 
               //
@@ -2476,7 +2476,7 @@ begin
                   Work2[TI] := E[b1 + TI - 1];
                   WORK3[TI] := E[b1 + TI - 1];
                   WORK4[TI] := d[b1 + TI - 1];
-                  Inc(TI);
+                  inc(TI);
                 end;
               WORK4[BLKSIZ] := d[b1 + BLKSIZ - 1];
 
@@ -2500,7 +2500,7 @@ begin
                     // store eigenvector number in array ifail.
                     //
                     Info := Info + 1;
-                    IFAIL[Info] := J;
+                    IFAIL[Info] := j;
                     Break;
                   end;
 
@@ -2512,7 +2512,7 @@ begin
                 while TI <= BLKSIZ do
                   begin
                     v := v + AbsReal(Work1[TI]);
-                    Inc(TI);
+                    inc(TI);
                   end;
                 SCL := BLKSIZ * ONENRM * Max(Eps, AbsReal(WORK4[BLKSIZ])) / v;
                 APVMul(@Work1[0], 1, BLKSIZ, SCL);
@@ -2531,12 +2531,12 @@ begin
                   begin
                     if AP_FP_Greater(AbsReal(XJ - XJM), ORTOL) then
                       begin
-                        GPIND := J;
+                        GPIND := j;
                       end;
-                    if GPIND <> J then
+                    if GPIND <> j then
                       begin
                         i := GPIND;
-                        while i <= J - 1 do
+                        while i <= j - 1 do
                           begin
                             i1 := b1;
                             i2 := b1 + BLKSIZ - 1;
@@ -2544,14 +2544,14 @@ begin
                             ZTR := 0.0;
                             for i_ := 1 to BLKSIZ do
                               begin
-                                ZTR := ZTR + Work1[i_] * Z[i_ + i1_, i];
+                                ZTR := ZTR + Work1[i_] * z[i_ + i1_, i];
                               end;
                             i1_ := (i1) - (1);
                             for i_ := 1 to BLKSIZ do
                               begin
-                                Work1[i_] := Work1[i_] - ZTR * Z[i_ + i1_, i];
+                                Work1[i_] := Work1[i_] - ZTR * z[i_ + i1_, i];
                               end;
-                            Inc(i);
+                            inc(i);
                           end;
                       end;
                   end;
@@ -2595,14 +2595,14 @@ begin
           i := 1;
           while i <= n do
             begin
-              Z[i, J] := 0;
-              Inc(i);
+              z[i, j] := 0;
+              inc(i);
             end;
           i := 1;
           while i <= BLKSIZ do
             begin
-              Z[b1 + i - 1, J] := Work1[i];
-              Inc(i);
+              z[b1 + i - 1, j] := Work1[i];
+              inc(i);
             end;
 
           //
@@ -2610,23 +2610,23 @@ begin
           // iteration.
           //
           XJM := XJ;
-          Inc(J);
+          inc(j);
         end;
-      Inc(NBLK);
+      inc(NBLK);
     end;
 end;
 
 function TridiagonalEVD(var d: TLVec; E: TLVec; n: TLInt;
-  ZNeeded: TLInt; var Z: TLMatrix): Boolean;
+  ZNeeded: TLInt; var z: TLMatrix): Boolean;
 var
   MAXIT: TLInt;
   i: TLInt;
   II: TLInt;
   ISCALE: TLInt;
-  J: TLInt;
+  j: TLInt;
   JTOT: TLInt;
   k: TLInt;
-  T: TLInt;
+  t: TLInt;
   L: TLInt;
   L1: TLInt;
   LEND: TLInt;
@@ -2643,13 +2643,13 @@ var
   TmpInt: TLInt;
   ANORM: TLFloat;
   b: TLFloat;
-  C: TLFloat;
+  c: TLFloat;
   Eps: TLFloat;
   EPS2: TLFloat;
-  F: TLFloat;
+  f: TLFloat;
   g: TLFloat;
   p: TLFloat;
-  R: TLFloat;
+  r: TLFloat;
   RT1: TLFloat;
   RT2: TLFloat;
   s: TLFloat;
@@ -2690,8 +2690,8 @@ begin
     begin
       if (ZNeeded = 2) or (ZNeeded = 3) then
         begin
-          SetLength(Z, 1 + 1, 1 + 1);
-          Z[1, 1] := 1;
+          SetLength(z, 1 + 1, 1 + 1);
+          z[1, 1] := 1;
         end;
       Exit;
     end;
@@ -2742,47 +2742,47 @@ begin
   if ZNeeded = 1 then
     begin
       WasTranspose := True;
-      InplaceTranspose(Z, 1, n, 1, n, WTEMP);
+      InplaceTranspose(z, 1, n, 1, n, WTEMP);
     end;
   if ZNeeded = 2 then
     begin
       WasTranspose := True;
-      SetLength(Z, n + 1, n + 1);
+      SetLength(z, n + 1, n + 1);
       i := 1;
       while i <= n do
         begin
-          J := 1;
-          while J <= n do
+          j := 1;
+          while j <= n do
             begin
-              if i = J then
+              if i = j then
                 begin
-                  Z[i, J] := 1;
+                  z[i, j] := 1;
                 end
               else
                 begin
-                  Z[i, J] := 0;
+                  z[i, j] := 0;
                 end;
-              Inc(J);
+              inc(j);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
   if ZNeeded = 3 then
     begin
       WasTranspose := False;
-      SetLength(Z, 1 + 1, n + 1);
-      J := 1;
-      while J <= n do
+      SetLength(z, 1 + 1, n + 1);
+      j := 1;
+      while j <= n do
         begin
-          if J = 1 then
+          if j = 1 then
             begin
-              Z[1, J] := 1;
+              z[1, j] := 1;
             end
           else
             begin
-              Z[1, J] := 0;
+              z[1, j] := 0;
             end;
-          Inc(J);
+          inc(j);
         end;
     end;
   NMAXIT := n * MAXIT;
@@ -2824,7 +2824,7 @@ begin
                   GotoFlag := True;
                   Break;
                 end;
-              Inc(M);
+              inc(M);
             end;
         end;
       if not GotoFlag then
@@ -2860,7 +2860,7 @@ begin
           while i <= LEND - 1 do
             begin
               ANORM := Max(ANORM, AbsReal(d[i]) + AbsReal(E[i]) + AbsReal(E[i - 1]));
-              Inc(i);
+              inc(i);
             end;
         end;
       ISCALE := 0;
@@ -2917,7 +2917,7 @@ begin
                           GotoFlag := True;
                           Break;
                         end;
-                      Inc(M);
+                      inc(M);
                     end;
                 end;
               if not GotoFlag then
@@ -2940,20 +2940,20 @@ begin
                     begin
                       if ZNeeded > 0 then
                         begin
-                          TdEVDEV2(d[L], E[L], d[L + 1], RT1, RT2, C, s);
-                          Work1[L] := C;
+                          TdEVDEV2(d[L], E[L], d[L + 1], RT1, RT2, c, s);
+                          Work1[L] := c;
                           Work2[L] := s;
                           WORKC[1] := Work1[L];
                           WORKS[1] := Work2[L];
                           if not WasTranspose then
                             begin
                               ApplyRotationsFromTheRight(False, 1, ZRows, L, L + 1, WORKC,
-                                WORKS, Z, WTEMP);
+                                WORKS, z, WTEMP);
                             end
                           else
                             begin
                               ApplyRotationsFromTheLeft(False, L, L + 1, 1, ZRows, WORKC,
-                                WORKS, Z, WTEMP);
+                                WORKS, z, WTEMP);
                             end;
                         end
                       else
@@ -2988,10 +2988,10 @@ begin
                   // Form shift.
                   //
                   g := (d[L + 1] - p) / (2 * E[L]);
-                  R := TdEVDPythag(g, 1);
-                  g := d[M] - p + E[L] / (g + TdEVDExtSign(R, g));
+                  r := TdEVDPythag(g, 1);
+                  g := d[M] - p + E[L] / (g + TdEVDExtSign(r, g));
                   s := 1;
-                  C := 1;
+                  c := 1;
                   p := 0;
 
                   //
@@ -3001,28 +3001,28 @@ begin
                   i := MM1;
                   while i >= L do
                     begin
-                      F := s * E[i];
-                      b := C * E[i];
-                      GenerateRotation(g, F, C, s, R);
+                      f := s * E[i];
+                      b := c * E[i];
+                      GenerateRotation(g, f, c, s, r);
                       if i <> M - 1 then
                         begin
-                          E[i + 1] := R;
+                          E[i + 1] := r;
                         end;
                       g := d[i + 1] - p;
-                      R := (d[i] - g) * s + 2 * C * b;
-                      p := s * R;
+                      r := (d[i] - g) * s + 2 * c * b;
+                      p := s * r;
                       d[i + 1] := g + p;
-                      g := C * R - b;
+                      g := c * r - b;
 
                       //
                       // If eigenvectors are desired, then save rotations.
                       //
                       if ZNeeded > 0 then
                         begin
-                          Work1[i] := C;
+                          Work1[i] := c;
                           Work2[i] := -s;
                         end;
-                      Dec(i);
+                      dec(i);
                     end;
 
                   //
@@ -3035,17 +3035,17 @@ begin
                         begin
                           WORKC[i - L + 1] := Work1[i];
                           WORKS[i - L + 1] := Work2[i];
-                          Inc(i);
+                          inc(i);
                         end;
                       if not WasTranspose then
                         begin
                           ApplyRotationsFromTheRight(False, 1, ZRows, L, M, WORKC, WORKS,
-                            Z, WTEMP);
+                            z, WTEMP);
                         end
                       else
                         begin
                           ApplyRotationsFromTheLeft(False, L, M, 1, ZRows, WORKC, WORKS,
-                            Z, WTEMP);
+                            z, WTEMP);
                         end;
                     end;
                   d[L] := d[L] - p;
@@ -3089,7 +3089,7 @@ begin
                           GotoFlag := True;
                           Break;
                         end;
-                      Dec(M);
+                      dec(M);
                     end;
                 end;
               if not GotoFlag then
@@ -3112,20 +3112,20 @@ begin
                     begin
                       if ZNeeded > 0 then
                         begin
-                          TdEVDEV2(d[L - 1], E[L - 1], d[L], RT1, RT2, C, s);
-                          Work1[M] := C;
+                          TdEVDEV2(d[L - 1], E[L - 1], d[L], RT1, RT2, c, s);
+                          Work1[M] := c;
                           Work2[M] := s;
-                          WORKC[1] := C;
+                          WORKC[1] := c;
                           WORKS[1] := s;
                           if not WasTranspose then
                             begin
                               ApplyRotationsFromTheRight(True, 1, ZRows, L - 1, L, WORKC,
-                                WORKS, Z, WTEMP);
+                                WORKS, z, WTEMP);
                             end
                           else
                             begin
                               ApplyRotationsFromTheLeft(True, L - 1, L, 1, ZRows, WORKC,
-                                WORKS, Z, WTEMP);
+                                WORKS, z, WTEMP);
                             end;
                         end
                       else
@@ -3152,10 +3152,10 @@ begin
                   // Form shift.
                   //
                   g := (d[L - 1] - p) / (2 * E[L - 1]);
-                  R := TdEVDPythag(g, 1);
-                  g := d[M] - p + E[L - 1] / (g + TdEVDExtSign(R, g));
+                  r := TdEVDPythag(g, 1);
+                  g := d[M] - p + E[L - 1] / (g + TdEVDExtSign(r, g));
                   s := 1;
-                  C := 1;
+                  c := 1;
                   p := 0;
 
                   //
@@ -3165,28 +3165,28 @@ begin
                   i := M;
                   while i <= LM1 do
                     begin
-                      F := s * E[i];
-                      b := C * E[i];
-                      GenerateRotation(g, F, C, s, R);
+                      f := s * E[i];
+                      b := c * E[i];
+                      GenerateRotation(g, f, c, s, r);
                       if i <> M then
                         begin
-                          E[i - 1] := R;
+                          E[i - 1] := r;
                         end;
                       g := d[i] - p;
-                      R := (d[i + 1] - g) * s + 2 * C * b;
-                      p := s * R;
+                      r := (d[i + 1] - g) * s + 2 * c * b;
+                      p := s * r;
                       d[i] := g + p;
-                      g := C * R - b;
+                      g := c * r - b;
 
                       //
                       // If eigenvectors are desired, then save rotations.
                       //
                       if ZNeeded > 0 then
                         begin
-                          Work1[i] := C;
+                          Work1[i] := c;
                           Work2[i] := s;
                         end;
-                      Inc(i);
+                      inc(i);
                     end;
 
                   //
@@ -3200,17 +3200,17 @@ begin
                         begin
                           WORKC[i - M + 1] := Work1[i];
                           WORKS[i - M + 1] := Work2[i];
-                          Inc(i);
+                          inc(i);
                         end;
                       if not WasTranspose then
                         begin
                           ApplyRotationsFromTheRight(True, 1, ZRows, M, L, WORKC, WORKS,
-                            Z, WTEMP);
+                            z, WTEMP);
                         end
                       else
                         begin
                           ApplyRotationsFromTheLeft(True, M, L, 1, ZRows, WORKC, WORKS,
-                            Z, WTEMP);
+                            z, WTEMP);
                         end;
                     end;
                   d[L] := d[L] - p;
@@ -3258,7 +3258,7 @@ begin
           Result := False;
           if WasTranspose then
             begin
-              InplaceTranspose(Z, 1, n, 1, n, WTEMP);
+              InplaceTranspose(z, 1, n, 1, n, WTEMP);
             end;
           Exit;
         end;
@@ -3289,20 +3289,20 @@ begin
         end;
       i := 2;
       repeat
-        T := i;
-        while T <> 1 do
+        t := i;
+        while t <> 1 do
           begin
-            k := T div 2;
-            if AP_FP_Greater_Eq(d[k], d[T]) then
+            k := t div 2;
+            if AP_FP_Greater_Eq(d[k], d[t]) then
               begin
-                T := 1;
+                t := 1;
               end
             else
               begin
                 tmp := d[k];
-                d[k] := d[T];
-                d[T] := tmp;
-                T := k;
+                d[k] := d[t];
+                d[t] := tmp;
+                t := k;
               end;
           end;
         i := i + 1;
@@ -3312,13 +3312,13 @@ begin
         tmp := d[i + 1];
         d[i + 1] := d[1];
         d[+1] := tmp;
-        T := 1;
-        while T <> 0 do
+        t := 1;
+        while t <> 0 do
           begin
-            k := 2 * T;
+            k := 2 * t;
             if k > i then
               begin
-                T := 0;
+                t := 0;
               end
             else
               begin
@@ -3329,16 +3329,16 @@ begin
                         k := k + 1;
                       end;
                   end;
-                if AP_FP_Greater_Eq(d[T], d[k]) then
+                if AP_FP_Greater_Eq(d[t], d[k]) then
                   begin
-                    T := 0;
+                    t := 0;
                   end
                 else
                   begin
                     tmp := d[k];
-                    d[k] := d[T];
-                    d[T] := tmp;
-                    T := k;
+                    d[k] := d[t];
+                    d[t] := tmp;
+                    t := k;
                   end;
               end;
           end;
@@ -3357,15 +3357,15 @@ begin
           i := II - 1;
           k := i;
           p := d[i];
-          J := II;
-          while J <= n do
+          j := II;
+          while j <= n do
             begin
-              if AP_FP_Less(d[J], p) then
+              if AP_FP_Less(d[j], p) then
                 begin
-                  k := J;
-                  p := d[J];
+                  k := j;
+                  p := d[j];
                 end;
-              Inc(J);
+              inc(j);
             end;
           if k <> i then
             begin
@@ -3373,31 +3373,31 @@ begin
               d[i] := p;
               if WasTranspose then
                 begin
-                  APVMove(@WTEMP[0], 1, n, @Z[i][0], 1, n);
-                  APVMove(@Z[i][0], 1, n, @Z[k][0], 1, n);
-                  APVMove(@Z[k][0], 1, n, @WTEMP[0], 1, n);
+                  APVMove(@WTEMP[0], 1, n, @z[i][0], 1, n);
+                  APVMove(@z[i][0], 1, n, @z[k][0], 1, n);
+                  APVMove(@z[k][0], 1, n, @WTEMP[0], 1, n);
                 end
               else
                 begin
                   for i_ := 1 to ZRows do
                     begin
-                      WTEMP[i_] := Z[i_, i];
+                      WTEMP[i_] := z[i_, i];
                     end;
                   for i_ := 1 to ZRows do
                     begin
-                      Z[i_, i] := Z[i_, k];
+                      z[i_, i] := z[i_, k];
                     end;
                   for i_ := 1 to ZRows do
                     begin
-                      Z[i_, k] := WTEMP[i_];
+                      z[i_, k] := WTEMP[i_];
                     end;
                 end;
             end;
-          Inc(II);
+          inc(II);
         end;
       if WasTranspose then
         begin
-          InplaceTranspose(Z, 1, n, 1, n, WTEMP);
+          InplaceTranspose(z, 1, n, 1, n, WTEMP);
         end;
     end;
 end;
@@ -3409,8 +3409,8 @@ end;
   On return, RT1 is the eigenvalue of larger absolute value, and RT2
   is the eigenvalue of smaller absolute value.
   ************************************************************************ *)
-procedure TdEVDE2(const A: TLFloat; const b: TLFloat;
-  const C: TLFloat; var RT1: TLFloat; var RT2: TLFloat);
+procedure TdEVDE2(const a: TLFloat; const b: TLFloat;
+  const c: TLFloat; var RT1: TLFloat; var RT2: TLFloat);
 var
   AB: TLFloat;
   ACMN: TLFloat;
@@ -3421,20 +3421,20 @@ var
   SM: TLFloat;
   TB: TLFloat;
 begin
-  SM := A + C;
-  df := A - C;
+  SM := a + c;
+  df := a - c;
   ADF := AbsReal(df);
   TB := b + b;
   AB := AbsReal(TB);
-  if AP_FP_Greater(AbsReal(A), AbsReal(C)) then
+  if AP_FP_Greater(AbsReal(a), AbsReal(c)) then
     begin
-      ACMX := A;
-      ACMN := C;
+      ACMX := a;
+      ACMN := c;
     end
   else
     begin
-      ACMX := C;
-      ACMN := A;
+      ACMX := c;
+      ACMN := a;
     end;
   if AP_FP_Greater(ADF, AB) then
     begin
@@ -3504,8 +3504,8 @@ end;
   [ CS1  SN1 ] [  A   B  ] [ CS1 -SN1 ]  =  [ RT1  0  ]
   [-SN1  CS1 ] [  B   C  ] [ SN1  CS1 ]     [  0  RT2 ].
   ************************************************************************ *)
-procedure TdEVDEV2(const A: TLFloat; const b: TLFloat;
-  const C: TLFloat; var RT1: TLFloat; var RT2: TLFloat;
+procedure TdEVDEV2(const a: TLFloat; const b: TLFloat;
+  const c: TLFloat; var RT1: TLFloat; var RT2: TLFloat;
   var CS1: TLFloat; var SN1: TLFloat);
 var
   SGN1: TLInt;
@@ -3527,20 +3527,20 @@ begin
   //
   // Compute the eigenvalues
   //
-  SM := A + C;
-  df := A - C;
+  SM := a + c;
+  df := a - c;
   ADF := AbsReal(df);
   TB := b + b;
   AB := AbsReal(TB);
-  if AP_FP_Greater(AbsReal(A), AbsReal(C)) then
+  if AP_FP_Greater(AbsReal(a), AbsReal(c)) then
     begin
-      ACMX := A;
-      ACMN := C;
+      ACMX := a;
+      ACMN := c;
     end
   else
     begin
-      ACMX := C;
-      ACMN := A;
+      ACMX := c;
+      ACMN := a;
     end;
   if AP_FP_Greater(ADF, AB) then
     begin
@@ -3644,35 +3644,35 @@ end;
 (* ************************************************************************
   Internal routine
   ************************************************************************ *)
-function TdEVDPythag(A: TLFloat; b: TLFloat): TLFloat;
+function TdEVDPythag(a: TLFloat; b: TLFloat): TLFloat;
 begin
-  if AP_FP_Less(AbsReal(A), AbsReal(b)) then
+  if AP_FP_Less(AbsReal(a), AbsReal(b)) then
     begin
-      Result := AbsReal(b) * Sqrt(1 + AP_Sqr(A / b));
+      Result := AbsReal(b) * Sqrt(1 + AP_Sqr(a / b));
     end
   else
     begin
-      Result := AbsReal(A) * Sqrt(1 + AP_Sqr(b / A));
+      Result := AbsReal(a) * Sqrt(1 + AP_Sqr(b / a));
     end;
 end;
 
 (* ************************************************************************
   Internal routine
   ************************************************************************ *)
-function TdEVDExtSign(A: TLFloat; b: TLFloat): TLFloat;
+function TdEVDExtSign(a: TLFloat; b: TLFloat): TLFloat;
 begin
   if AP_FP_Greater_Eq(b, 0) then
     begin
-      Result := AbsReal(A);
+      Result := AbsReal(a);
     end
   else
     begin
-      Result := -AbsReal(A);
+      Result := -AbsReal(a);
     end;
 end;
 
-procedure TDINInternalDLAGTF(const n: TLInt; var A: TLVec;
-  const LAMBDA: TLFloat; var b: TLVec; var C: TLVec;
+procedure TDINInternalDLAGTF(const n: TLInt; var a: TLVec;
+  const LAMBDA: TLFloat; var b: TLVec; var c: TLVec;
   const TOL: TLFloat; var d: TLVec; var IIN: TLIVec;
   var Info: TLInt);
 var
@@ -3696,11 +3696,11 @@ begin
     begin
       Exit;
     end;
-  A[1] := A[1] - LAMBDA;
+  a[1] := a[1] - LAMBDA;
   IIN[n] := 0;
   if n = 1 then
     begin
-      if AP_FP_Eq(A[1], 0) then
+      if AP_FP_Eq(a[1], 0) then
         begin
           IIN[1] := 1;
         end;
@@ -3708,25 +3708,25 @@ begin
     end;
   Eps := MachineEpsilon;
   TL := Max(TOL, Eps);
-  scale1 := AbsReal(A[1]) + AbsReal(b[1]);
+  scale1 := AbsReal(a[1]) + AbsReal(b[1]);
   k := 1;
   while k <= n - 1 do
     begin
-      A[k + 1] := A[k + 1] - LAMBDA;
-      SCALE2 := AbsReal(C[k]) + AbsReal(A[k + 1]);
+      a[k + 1] := a[k + 1] - LAMBDA;
+      SCALE2 := AbsReal(c[k]) + AbsReal(a[k + 1]);
       if k < n - 1 then
         begin
           SCALE2 := SCALE2 + AbsReal(b[k + 1]);
         end;
-      if AP_FP_Eq(A[k], 0) then
+      if AP_FP_Eq(a[k], 0) then
         begin
           PIV1 := 0;
         end
       else
         begin
-          PIV1 := AbsReal(A[k]) / scale1;
+          PIV1 := AbsReal(a[k]) / scale1;
         end;
-      if AP_FP_Eq(C[k], 0) then
+      if AP_FP_Eq(c[k], 0) then
         begin
           IIN[k] := 0;
           PIV2 := 0;
@@ -3738,13 +3738,13 @@ begin
         end
       else
         begin
-          PIV2 := AbsReal(C[k]) / SCALE2;
+          PIV2 := AbsReal(c[k]) / SCALE2;
           if AP_FP_Less_Eq(PIV2, PIV1) then
             begin
               IIN[k] := 0;
               scale1 := SCALE2;
-              C[k] := C[k] / A[k];
-              A[k + 1] := A[k + 1] - C[k] * b[k];
+              c[k] := c[k] / a[k];
+              a[k + 1] := a[k + 1] - c[k] * b[k];
               if k < n - 1 then
                 begin
                   d[k] := 0;
@@ -3753,34 +3753,34 @@ begin
           else
             begin
               IIN[k] := 1;
-              MULT := A[k] / C[k];
-              A[k] := C[k];
-              Temp := A[k + 1];
-              A[k + 1] := b[k] - MULT * Temp;
+              MULT := a[k] / c[k];
+              a[k] := c[k];
+              Temp := a[k + 1];
+              a[k + 1] := b[k] - MULT * Temp;
               if k < n - 1 then
                 begin
                   d[k] := b[k + 1];
                   b[k + 1] := -MULT * d[k];
                 end;
               b[k] := Temp;
-              C[k] := MULT;
+              c[k] := MULT;
             end;
         end;
       if AP_FP_Less_Eq(Max(PIV1, PIV2), TL) and (IIN[n] = 0) then
         begin
           IIN[n] := k;
         end;
-      Inc(k);
+      inc(k);
     end;
-  if AP_FP_Less_Eq(AbsReal(A[n]), scale1 * TL) and (IIN[n] = 0) then
+  if AP_FP_Less_Eq(AbsReal(a[n]), scale1 * TL) and (IIN[n] = 0) then
     begin
       IIN[n] := n;
     end;
 end;
 
-procedure TDINInternalDLAGTS(const n: TLInt; const A: TLVec;
-  const b: TLVec; const C: TLVec; const d: TLVec;
-  const IIN: TLIVec; var Y: TLVec; var TOL: TLFloat;
+procedure TDINInternalDLAGTS(const n: TLInt; const a: TLVec;
+  const b: TLVec; const c: TLVec; const d: TLVec;
+  const IIN: TLIVec; var y: TLVec; var TOL: TLFloat;
   var Info: TLInt);
 var
   k: TLInt;
@@ -3807,17 +3807,17 @@ begin
   BIGNUM := 1 / SFMIN;
   if AP_FP_Less_Eq(TOL, 0) then
     begin
-      TOL := AbsReal(A[1]);
+      TOL := AbsReal(a[1]);
       if n > 1 then
         begin
-          TOL := Max(TOL, Max(AbsReal(A[2]), AbsReal(b[1])));
+          TOL := Max(TOL, Max(AbsReal(a[2]), AbsReal(b[1])));
         end;
       k := 3;
       while k <= n do
         begin
-          TOL := Max(TOL, Max(AbsReal(A[k]), Max(AbsReal(b[k - 1]),
+          TOL := Max(TOL, Max(AbsReal(a[k]), Max(AbsReal(b[k - 1]),
             AbsReal(d[k - 2]))));
-          Inc(k);
+          inc(k);
         end;
       TOL := TOL * Eps;
       if AP_FP_Eq(TOL, 0) then
@@ -3830,35 +3830,35 @@ begin
     begin
       if IIN[k - 1] = 0 then
         begin
-          Y[k] := Y[k] - C[k - 1] * Y[k - 1];
+          y[k] := y[k] - c[k - 1] * y[k - 1];
         end
       else
         begin
-          Temp := Y[k - 1];
-          Y[k - 1] := Y[k];
-          Y[k] := Temp - C[k - 1] * Y[k];
+          Temp := y[k - 1];
+          y[k - 1] := y[k];
+          y[k] := Temp - c[k - 1] * y[k];
         end;
-      Inc(k);
+      inc(k);
     end;
   k := n;
   while k >= 1 do
     begin
       if k <= n - 2 then
         begin
-          Temp := Y[k] - b[k] * Y[k + 1] - d[k] * Y[k + 2];
+          Temp := y[k] - b[k] * y[k + 1] - d[k] * y[k + 2];
         end
       else
         begin
           if k = n - 1 then
             begin
-              Temp := Y[k] - b[k] * Y[k + 1];
+              Temp := y[k] - b[k] * y[k + 1];
             end
           else
             begin
-              Temp := Y[k];
+              Temp := y[k];
             end;
         end;
-      AK := A[k];
+      AK := a[k];
       PERT := AbsReal(TOL);
       if AP_FP_Less(AK, 0) then
         begin
@@ -3896,8 +3896,8 @@ begin
             end;
           Break;
         end;
-      Y[k] := Temp / AK;
-      Dec(k);
+      y[k] := Temp / AK;
+      dec(k);
     end;
 end;
 
@@ -3906,12 +3906,12 @@ procedure InternalDLAEBZ(const IJOB: TLInt; const NITMAX: TLInt;
   const ABSTOL: TLFloat; const RELTOL: TLFloat;
   const PIVMIN: TLFloat; const d: TLVec; const E: TLVec;
   const e2: TLVec; var NVAL: TLIVec; var AB: TLMatrix;
-  var C: TLVec; var MOUT: TLInt; var NAB: TLIMatrix;
+  var c: TLVec; var MOUT: TLInt; var NAB: TLIMatrix;
   var Work: TLVec; var IWORK: TLIVec; var Info: TLInt);
 var
   ITMP1: TLInt;
   ITMP2: TLInt;
-  J: TLInt;
+  j: TLInt;
   JI: TLInt;
   JIT: TLInt;
   JP: TLInt;
@@ -3959,10 +3959,10 @@ begin
                 begin
                   NAB[JI, JP] := 1;
                 end;
-              J := 2;
-              while J <= n do
+              j := 2;
+              while j <= n do
                 begin
-                  TMP1 := d[J] - e2[J - 1] / TMP1 - AB[JI, JP];
+                  TMP1 := d[j] - e2[j - 1] / TMP1 - AB[JI, JP];
                   if AP_FP_Less(AbsReal(TMP1), PIVMIN) then
                     begin
                       TMP1 := -PIVMIN;
@@ -3971,12 +3971,12 @@ begin
                     begin
                       NAB[JI, JP] := NAB[JI, JP] + 1;
                     end;
-                  Inc(J);
+                  inc(j);
                 end;
-              Inc(JP);
+              inc(JP);
             end;
           MOUT := MOUT + NAB[JI, 2] - NAB[JI, 1];
-          Inc(JI);
+          inc(JI);
         end;
       Exit;
     end;
@@ -4000,8 +4000,8 @@ begin
       JI := 1;
       while JI <= MINP do
         begin
-          C[JI] := 0.5 * (AB[JI, 1] + AB[JI, 2]);
-          Inc(JI);
+          c[JI] := 0.5 * (AB[JI, 1] + AB[JI, 2]);
+          inc(JI);
         end;
     end;
 
@@ -4026,7 +4026,7 @@ begin
           //
           // Compute N(w), the number of eigenvalues less than w
           //
-          TMP1 := C[JI];
+          TMP1 := c[JI];
           TMP2 := d[1] - TMP1;
           ITMP1 := 0;
           if AP_FP_Less_Eq(TMP2, PIVMIN) then
@@ -4051,16 +4051,16 @@ begin
           // CIBM           PREFER SCALAR
           // *$PL$ CMCHAR='*'
           //
-          J := 2;
-          while J <= n do
+          j := 2;
+          while j <= n do
             begin
-              TMP2 := d[J] - e2[J - 1] / TMP2 - TMP1;
+              TMP2 := d[j] - e2[j - 1] / TMP2 - TMP1;
               if AP_FP_Less_Eq(TMP2, PIVMIN) then
                 begin
                   ITMP1 := ITMP1 + 1;
                   TMP2 := Min(TMP2, -PIVMIN);
                 end;
-              Inc(J);
+              inc(j);
             end;
           if IJOB <= 2 then
             begin
@@ -4138,7 +4138,7 @@ begin
                   NAB[JI, 2] := ITMP1;
                 end;
             end;
-          Inc(JI);
+          inc(JI);
         end;
       KL := KLNEW;
 
@@ -4182,7 +4182,7 @@ begin
                 end;
               KFNEW := KFNEW + 1;
             end;
-          Inc(JI);
+          inc(JI);
         end;
       KF := KFNEW;
 
@@ -4192,8 +4192,8 @@ begin
       JI := KF;
       while JI <= KL do
         begin
-          C[JI] := 0.5 * (AB[JI, 1] + AB[JI, 2]);
-          Inc(JI);
+          c[JI] := 0.5 * (AB[JI, 1] + AB[JI, 2]);
+          inc(JI);
         end;
 
       //
@@ -4203,7 +4203,7 @@ begin
         begin
           Break;
         end;
-      Inc(JIT);
+      inc(JIT);
     end;
 
   //
@@ -4216,7 +4216,7 @@ end;
 (* ************************************************************************
   Internal subroutine
   ************************************************************************ *)
-procedure InternalTREVC(const T: TLMatrix; n: TLInt;
+procedure InternalTREVC(const t: TLMatrix; n: TLInt;
   SIDE: TLInt; HOWMNY: TLInt; VSELECT: TLBVec;
   var vl: TLMatrix; var vr: TLMatrix; var M: TLInt;
   var Info: TLInt);
@@ -4233,13 +4233,13 @@ var
   II: TLInt;
   IP: TLInt;
   IIS: TLInt;
-  J: TLInt;
-  J1: TLInt;
-  J2: TLInt;
+  j: TLInt;
+  j1: TLInt;
+  j2: TLInt;
   JNXT: TLInt;
   k: TLInt;
   KI: TLInt;
-  N2: TLInt;
+  n2: TLInt;
   beta: TLFloat;
   BIGNUM: TLFloat;
   EMAX: TLFloat;
@@ -4256,7 +4256,7 @@ var
   WI: TLFloat;
   WR: TLFloat;
   XNORM: TLFloat;
-  X: TLMatrix;
+  x: TLMatrix;
   Work: TLVec;
   Temp: TLVec;
   TEMP11: TLMatrix;
@@ -4280,7 +4280,7 @@ var
   i1_: TLInt;
 begin
   VSELECT := DynamicArrayCopy(VSELECT);
-  SetLength(X, 2 + 1, 2 + 1);
+  SetLength(x, 2 + 1, 2 + 1);
   SetLength(TEMP11, 1 + 1, 1 + 1);
   SetLength(TEMP11B, 1 + 1, 1 + 1);
   SetLength(TEMP21B, 2 + 1, 1 + 1);
@@ -4341,21 +4341,21 @@ begin
     begin
       M := 0;
       PAIR := False;
-      J := 1;
-      while J <= n do
+      j := 1;
+      while j <= n do
         begin
           if PAIR then
             begin
               PAIR := False;
-              VSELECT[J] := False;
+              VSELECT[j] := False;
             end
           else
             begin
-              if J < n then
+              if j < n then
                 begin
-                  if AP_FP_Eq(T[J + 1, J], 0) then
+                  if AP_FP_Eq(t[j + 1, j], 0) then
                     begin
-                      if VSELECT[J] then
+                      if VSELECT[j] then
                         begin
                           M := M + 1;
                         end;
@@ -4363,9 +4363,9 @@ begin
                   else
                     begin
                       PAIR := True;
-                      if VSELECT[J] or VSELECT[J + 1] then
+                      if VSELECT[j] or VSELECT[j + 1] then
                         begin
-                          VSELECT[J] := True;
+                          VSELECT[j] := True;
                           M := M + 2;
                         end;
                     end;
@@ -4378,7 +4378,7 @@ begin
                     end;
                 end;
             end;
-          Inc(J);
+          inc(j);
         end;
     end
   else
@@ -4408,17 +4408,17 @@ begin
   // part of T to control overflow in triangular solver.
   //
   Work[1] := 0;
-  J := 2;
-  while J <= n do
+  j := 2;
+  while j <= n do
     begin
-      Work[J] := 0;
+      Work[j] := 0;
       i := 1;
-      while i <= J - 1 do
+      while i <= j - 1 do
         begin
-          Work[J] := Work[J] + AbsReal(T[i, J]);
-          Inc(i);
+          Work[j] := Work[j] + AbsReal(t[i, j]);
+          inc(i);
         end;
-      Inc(J);
+      inc(j);
     end;
 
   //
@@ -4427,7 +4427,7 @@ begin
   // 1, first of conjugate complex pair: (wr,wi)
   // -1, second of conjugate complex pair: (wr,wi)
   //
-  N2 := 2 * n;
+  n2 := 2 * n;
   if RIGHTV then
     begin
 
@@ -4448,7 +4448,7 @@ begin
             begin
               if KI <> 1 then
                 begin
-                  if AP_FP_NEq(T[KI, KI - 1], 0) then
+                  if AP_FP_NEq(t[KI, KI - 1], 0) then
                     begin
                       IP := -1;
                     end;
@@ -4477,11 +4477,11 @@ begin
               //
               // Compute the KI-th eigenvalue (WR,WI).
               //
-              WR := T[KI, KI];
+              WR := t[KI, KI];
               WI := 0;
               if IP <> 0 then
                 begin
-                  WI := Sqrt(AbsReal(T[KI, KI - 1])) * Sqrt(AbsReal(T[KI - 1, KI]));
+                  WI := Sqrt(AbsReal(t[KI, KI - 1])) * Sqrt(AbsReal(t[KI - 1, KI]));
                 end;
               SMIN := Max(ULP * (AbsReal(WR) + AbsReal(WI)), SMLNUM);
               if IP = 0 then
@@ -4498,8 +4498,8 @@ begin
                   k := 1;
                   while k <= KI - 1 do
                     begin
-                      Work[k + n] := -T[k, KI];
-                      Inc(k);
+                      Work[k + n] := -t[k, KI];
+                      inc(k);
                     end;
 
                   //
@@ -4507,35 +4507,35 @@ begin
                   // (T(1:KI-1,1:KI-1) - WR)*X = SCALE*WORK.
                   //
                   JNXT := KI - 1;
-                  J := KI - 1;
-                  while J >= 1 do
+                  j := KI - 1;
+                  while j >= 1 do
                     begin
-                      if J > JNXT then
+                      if j > JNXT then
                         begin
-                          Dec(J);
+                          dec(j);
                           Continue;
                         end;
-                      J1 := J;
-                      J2 := J;
-                      JNXT := J - 1;
-                      if J > 1 then
+                      j1 := j;
+                      j2 := j;
+                      JNXT := j - 1;
+                      if j > 1 then
                         begin
-                          if AP_FP_NEq(T[J, J - 1], 0) then
+                          if AP_FP_NEq(t[j, j - 1], 0) then
                             begin
-                              J1 := J - 1;
-                              JNXT := J - 2;
+                              j1 := j - 1;
+                              JNXT := j - 2;
                             end;
                         end;
-                      if J1 = J2 then
+                      if j1 = j2 then
                         begin
 
                           //
                           // 1-by-1 diagonal block
                           //
-                          TEMP11[1, 1] := T[J, J];
-                          TEMP11B[1, 1] := Work[J + n];
+                          TEMP11[1, 1] := t[j, j];
+                          TEMP11B[1, 1] := Work[j + n];
                           InternalHSEVDLALN2(False, 1, 1, SMIN, 1, TEMP11, 1.0, 1.0,
-                            TEMP11B, WR, 0.0, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, X, SCL,
+                            TEMP11B, WR, 0.0, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, x, SCL,
                             XNORM, IERR);
 
                           //
@@ -4544,9 +4544,9 @@ begin
                           //
                           if AP_FP_Greater(XNORM, 1) then
                             begin
-                              if AP_FP_Greater(Work[J], BIGNUM / XNORM) then
+                              if AP_FP_Greater(Work[j], BIGNUM / XNORM) then
                                 begin
-                                  X[1, 1] := X[1, 1] / XNORM;
+                                  x[1, 1] := x[1, 1] / XNORM;
                                   SCL := SCL / XNORM;
                                 end;
                             end;
@@ -4560,19 +4560,19 @@ begin
                               k2 := n + KI;
                               APVMul(@Work[0], k1, k2, SCL);
                             end;
-                          Work[J + n] := X[1, 1];
+                          Work[j + n] := x[1, 1];
 
                           //
                           // Update right-hand side
                           //
                           k1 := 1 + n;
-                          k2 := J - 1 + n;
-                          k3 := J - 1;
-                          VT := -X[1, 1];
+                          k2 := j - 1 + n;
+                          k3 := j - 1;
+                          VT := -x[1, 1];
                           i1_ := (1) - (k1);
                           for i_ := k1 to k2 do
                             begin
-                              Work[i_] := Work[i_] + VT * T[i_ + i1_, J];
+                              Work[i_] := Work[i_] + VT * t[i_ + i1_, j];
                             end;
                         end
                       else
@@ -4581,14 +4581,14 @@ begin
                           //
                           // 2-by-2 diagonal block
                           //
-                          TEMP22[1, 1] := T[J - 1, J - 1];
-                          TEMP22[1, 2] := T[J - 1, J];
-                          TEMP22[2, 1] := T[J, J - 1];
-                          TEMP22[2, 2] := T[J, J];
-                          TEMP21B[1, 1] := Work[J - 1 + n];
-                          TEMP21B[2, 1] := Work[J + n];
+                          TEMP22[1, 1] := t[j - 1, j - 1];
+                          TEMP22[1, 2] := t[j - 1, j];
+                          TEMP22[2, 1] := t[j, j - 1];
+                          TEMP22[2, 2] := t[j, j];
+                          TEMP21B[1, 1] := Work[j - 1 + n];
+                          TEMP21B[2, 1] := Work[j + n];
                           InternalHSEVDLALN2(False, 2, 1, SMIN, 1.0, TEMP22, 1.0, 1.0,
-                            TEMP21B, WR, 0, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, X, SCL,
+                            TEMP21B, WR, 0, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, x, SCL,
                             XNORM, IERR);
 
                           //
@@ -4597,11 +4597,11 @@ begin
                           //
                           if AP_FP_Greater(XNORM, 1) then
                             begin
-                              beta := Max(Work[J - 1], Work[J]);
+                              beta := Max(Work[j - 1], Work[j]);
                               if AP_FP_Greater(beta, BIGNUM / XNORM) then
                                 begin
-                                  X[1, 1] := X[1, 1] / XNORM;
-                                  X[2, 1] := X[2, 1] / XNORM;
+                                  x[1, 1] := x[1, 1] / XNORM;
+                                  x[2, 1] := x[2, 1] / XNORM;
                                   SCL := SCL / XNORM;
                                 end;
                             end;
@@ -4615,30 +4615,30 @@ begin
                               k2 := KI + n;
                               APVMul(@Work[0], k1, k2, SCL);
                             end;
-                          Work[J - 1 + n] := X[1, 1];
-                          Work[J + n] := X[2, 1];
+                          Work[j - 1 + n] := x[1, 1];
+                          Work[j + n] := x[2, 1];
 
                           //
                           // Update right-hand side
                           //
                           k1 := 1 + n;
-                          k2 := J - 2 + n;
-                          k3 := J - 2;
-                          K4 := J - 1;
-                          VT := -X[1, 1];
+                          k2 := j - 2 + n;
+                          k3 := j - 2;
+                          K4 := j - 1;
+                          VT := -x[1, 1];
                           i1_ := (1) - (k1);
                           for i_ := k1 to k2 do
                             begin
-                              Work[i_] := Work[i_] + VT * T[i_ + i1_, K4];
+                              Work[i_] := Work[i_] + VT * t[i_ + i1_, K4];
                             end;
-                          VT := -X[2, 1];
+                          VT := -x[2, 1];
                           i1_ := (1) - (k1);
                           for i_ := k1 to k2 do
                             begin
-                              Work[i_] := Work[i_] + VT * T[i_ + i1_, J];
+                              Work[i_] := Work[i_] + VT * t[i_ + i1_, j];
                             end;
                         end;
-                      Dec(J);
+                      dec(j);
                     end;
 
                   //
@@ -4663,7 +4663,7 @@ begin
                       while k <= n do
                         begin
                           vr[k, IIS] := 0;
-                          Inc(k);
+                          inc(k);
                         end;
                     end
                   else
@@ -4699,19 +4699,19 @@ begin
                   // [ (T(KI-1,KI-1) T(KI-1,KI) ) - (WR + I* WI)]*X = 0.
                   // [ (T(KI,KI-1)   T(KI,KI)   )               ]
                   //
-                  if AP_FP_Greater_Eq(AbsReal(T[KI - 1, KI]), AbsReal(T[KI, KI - 1]))
+                  if AP_FP_Greater_Eq(AbsReal(t[KI - 1, KI]), AbsReal(t[KI, KI - 1]))
                   then
                     begin
                       Work[KI - 1 + n] := 1;
-                      Work[KI + N2] := WI / T[KI - 1, KI];
+                      Work[KI + n2] := WI / t[KI - 1, KI];
                     end
                   else
                     begin
-                      Work[KI - 1 + n] := -WI / T[KI, KI - 1];
-                      Work[KI + N2] := 1;
+                      Work[KI - 1 + n] := -WI / t[KI, KI - 1];
+                      Work[KI + n2] := 1;
                     end;
                   Work[KI + n] := 0;
-                  Work[KI - 1 + N2] := 0;
+                  Work[KI - 1 + n2] := 0;
 
                   //
                   // Form right-hand side
@@ -4719,9 +4719,9 @@ begin
                   k := 1;
                   while k <= KI - 2 do
                     begin
-                      Work[k + n] := -Work[KI - 1 + n] * T[k, KI - 1];
-                      Work[k + N2] := -Work[KI + N2] * T[k, KI];
-                      Inc(k);
+                      Work[k + n] := -Work[KI - 1 + n] * t[k, KI - 1];
+                      Work[k + n2] := -Work[KI + n2] * t[k, KI];
+                      inc(k);
                     end;
 
                   //
@@ -4729,36 +4729,36 @@ begin
                   // (T(1:KI-2,1:KI-2) - (WR+i*WI))*X = SCALE*(WORK+i*WORK2)
                   //
                   JNXT := KI - 2;
-                  J := KI - 2;
-                  while J >= 1 do
+                  j := KI - 2;
+                  while j >= 1 do
                     begin
-                      if J > JNXT then
+                      if j > JNXT then
                         begin
-                          Dec(J);
+                          dec(j);
                           Continue;
                         end;
-                      J1 := J;
-                      J2 := J;
-                      JNXT := J - 1;
-                      if J > 1 then
+                      j1 := j;
+                      j2 := j;
+                      JNXT := j - 1;
+                      if j > 1 then
                         begin
-                          if AP_FP_NEq(T[J, J - 1], 0) then
+                          if AP_FP_NEq(t[j, j - 1], 0) then
                             begin
-                              J1 := J - 1;
-                              JNXT := J - 2;
+                              j1 := j - 1;
+                              JNXT := j - 2;
                             end;
                         end;
-                      if J1 = J2 then
+                      if j1 = j2 then
                         begin
 
                           //
                           // 1-by-1 diagonal block
                           //
-                          TEMP11[1, 1] := T[J, J];
-                          TEMP12B[1, 1] := Work[J + n];
-                          TEMP12B[1, 2] := Work[J + n + n];
+                          TEMP11[1, 1] := t[j, j];
+                          TEMP12B[1, 1] := Work[j + n];
+                          TEMP12B[1, 2] := Work[j + n + n];
                           InternalHSEVDLALN2(False, 1, 2, SMIN, 1.0, TEMP11, 1.0, 1.0,
-                            TEMP12B, WR, WI, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, X, SCL,
+                            TEMP12B, WR, WI, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, x, SCL,
                             XNORM, IERR);
 
                           //
@@ -4767,10 +4767,10 @@ begin
                           //
                           if AP_FP_Greater(XNORM, 1) then
                             begin
-                              if AP_FP_Greater(Work[J], BIGNUM / XNORM) then
+                              if AP_FP_Greater(Work[j], BIGNUM / XNORM) then
                                 begin
-                                  X[1, 1] := X[1, 1] / XNORM;
-                                  X[1, 2] := X[1, 2] / XNORM;
+                                  x[1, 1] := x[1, 1] / XNORM;
+                                  x[1, 2] := x[1, 2] / XNORM;
                                   SCL := SCL / XNORM;
                                 end;
                             end;
@@ -4783,35 +4783,35 @@ begin
                               k1 := 1 + n;
                               k2 := KI + n;
                               APVMul(@Work[0], k1, k2, SCL);
-                              k1 := 1 + N2;
-                              k2 := KI + N2;
+                              k1 := 1 + n2;
+                              k2 := KI + n2;
                               APVMul(@Work[0], k1, k2, SCL);
                             end;
-                          Work[J + n] := X[1, 1];
-                          Work[J + N2] := X[1, 2];
+                          Work[j + n] := x[1, 1];
+                          Work[j + n2] := x[1, 2];
 
                           //
                           // Update the right-hand side
                           //
                           k1 := 1 + n;
-                          k2 := J - 1 + n;
+                          k2 := j - 1 + n;
                           k3 := 1;
-                          K4 := J - 1;
-                          VT := -X[1, 1];
+                          K4 := j - 1;
+                          VT := -x[1, 1];
                           i1_ := (k3) - (k1);
                           for i_ := k1 to k2 do
                             begin
-                              Work[i_] := Work[i_] + VT * T[i_ + i1_, J];
+                              Work[i_] := Work[i_] + VT * t[i_ + i1_, j];
                             end;
-                          k1 := 1 + N2;
-                          k2 := J - 1 + N2;
+                          k1 := 1 + n2;
+                          k2 := j - 1 + n2;
                           k3 := 1;
-                          K4 := J - 1;
-                          VT := -X[1, 2];
+                          K4 := j - 1;
+                          VT := -x[1, 2];
                           i1_ := (k3) - (k1);
                           for i_ := k1 to k2 do
                             begin
-                              Work[i_] := Work[i_] + VT * T[i_ + i1_, J];
+                              Work[i_] := Work[i_] + VT * t[i_ + i1_, j];
                             end;
                         end
                       else
@@ -4820,16 +4820,16 @@ begin
                           //
                           // 2-by-2 diagonal block
                           //
-                          TEMP22[1, 1] := T[J - 1, J - 1];
-                          TEMP22[1, 2] := T[J - 1, J];
-                          TEMP22[2, 1] := T[J, J - 1];
-                          TEMP22[2, 2] := T[J, J];
-                          TEMP22B[1, 1] := Work[J - 1 + n];
-                          TEMP22B[1, 2] := Work[J - 1 + n + n];
-                          TEMP22B[2, 1] := Work[J + n];
-                          TEMP22B[2, 2] := Work[J + n + n];
+                          TEMP22[1, 1] := t[j - 1, j - 1];
+                          TEMP22[1, 2] := t[j - 1, j];
+                          TEMP22[2, 1] := t[j, j - 1];
+                          TEMP22[2, 2] := t[j, j];
+                          TEMP22B[1, 1] := Work[j - 1 + n];
+                          TEMP22B[1, 2] := Work[j - 1 + n + n];
+                          TEMP22B[2, 1] := Work[j + n];
+                          TEMP22B[2, 2] := Work[j + n + n];
                           InternalHSEVDLALN2(False, 2, 2, SMIN, 1.0, TEMP22, 1.0, 1.0,
-                            TEMP22B, WR, WI, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, X, SCL,
+                            TEMP22B, WR, WI, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, x, SCL,
                             XNORM, IERR);
 
                           //
@@ -4838,14 +4838,14 @@ begin
                           //
                           if AP_FP_Greater(XNORM, 1) then
                             begin
-                              beta := Max(Work[J - 1], Work[J]);
+                              beta := Max(Work[j - 1], Work[j]);
                               if AP_FP_Greater(beta, BIGNUM / XNORM) then
                                 begin
                                   REC := 1 / XNORM;
-                                  X[1, 1] := X[1, 1] * REC;
-                                  X[1, 2] := X[1, 2] * REC;
-                                  X[2, 1] := X[2, 1] * REC;
-                                  X[2, 2] := X[2, 2] * REC;
+                                  x[1, 1] := x[1, 1] * REC;
+                                  x[1, 2] := x[1, 2] * REC;
+                                  x[2, 1] := x[2, 1] * REC;
+                                  x[2, 2] := x[2, 2] * REC;
                                   SCL := SCL * REC;
                                 end;
                             end;
@@ -4856,42 +4856,42 @@ begin
                           if AP_FP_NEq(SCL, 1) then
                             begin
                               APVMul(@Work[0], 1 + n, KI + n, SCL);
-                              APVMul(@Work[0], 1 + N2, KI + N2, SCL);
+                              APVMul(@Work[0], 1 + n2, KI + n2, SCL);
                             end;
-                          Work[J - 1 + n] := X[1, 1];
-                          Work[J + n] := X[2, 1];
-                          Work[J - 1 + N2] := X[1, 2];
-                          Work[J + N2] := X[2, 2];
+                          Work[j - 1 + n] := x[1, 1];
+                          Work[j + n] := x[2, 1];
+                          Work[j - 1 + n2] := x[1, 2];
+                          Work[j + n2] := x[2, 2];
 
                           //
                           // Update the right-hand side
                           //
-                          VT := -X[1, 1];
+                          VT := -x[1, 1];
                           i1_ := (1) - (n + 1);
-                          for i_ := n + 1 to n + J - 2 do
+                          for i_ := n + 1 to n + j - 2 do
                             begin
-                              Work[i_] := Work[i_] + VT * T[i_ + i1_, J - 1];
+                              Work[i_] := Work[i_] + VT * t[i_ + i1_, j - 1];
                             end;
-                          VT := -X[2, 1];
+                          VT := -x[2, 1];
                           i1_ := (1) - (n + 1);
-                          for i_ := n + 1 to n + J - 2 do
+                          for i_ := n + 1 to n + j - 2 do
                             begin
-                              Work[i_] := Work[i_] + VT * T[i_ + i1_, J];
+                              Work[i_] := Work[i_] + VT * t[i_ + i1_, j];
                             end;
-                          VT := -X[1, 2];
-                          i1_ := (1) - (N2 + 1);
-                          for i_ := N2 + 1 to N2 + J - 2 do
+                          VT := -x[1, 2];
+                          i1_ := (1) - (n2 + 1);
+                          for i_ := n2 + 1 to n2 + j - 2 do
                             begin
-                              Work[i_] := Work[i_] + VT * T[i_ + i1_, J - 1];
+                              Work[i_] := Work[i_] + VT * t[i_ + i1_, j - 1];
                             end;
-                          VT := -X[2, 2];
-                          i1_ := (1) - (N2 + 1);
-                          for i_ := N2 + 1 to N2 + J - 2 do
+                          VT := -x[2, 2];
+                          i1_ := (1) - (n2 + 1);
+                          for i_ := n2 + 1 to n2 + j - 2 do
                             begin
-                              Work[i_] := Work[i_] + VT * T[i_ + i1_, J];
+                              Work[i_] := Work[i_] + VT * t[i_ + i1_, j];
                             end;
                         end;
-                      Dec(J);
+                      dec(j);
                     end;
 
                   //
@@ -4904,7 +4904,7 @@ begin
                         begin
                           vr[i_, IIS - 1] := Work[i_ + i1_];
                         end;
-                      i1_ := (N2 + 1) - (1);
+                      i1_ := (n2 + 1) - (1);
                       for i_ := 1 to KI do
                         begin
                           vr[i_, IIS] := Work[i_ + i1_];
@@ -4914,7 +4914,7 @@ begin
                       while k <= KI do
                         begin
                           EMAX := Max(EMAX, AbsReal(vr[k, IIS - 1]) + AbsReal(vr[k, IIS]));
-                          Inc(k);
+                          inc(k);
                         end;
                       REMAX := 1 / EMAX;
                       for i_ := 1 to KI do
@@ -4930,7 +4930,7 @@ begin
                         begin
                           vr[k, IIS - 1] := 0;
                           vr[k, IIS] := 0;
-                          Inc(k);
+                          inc(k);
                         end;
                     end
                   else
@@ -4951,8 +4951,8 @@ begin
                             begin
                               Temp[i_] := vr[i_, KI];
                             end;
-                          MatrixVectorMultiply(vr, 1, n, 1, KI - 2, False, Work, 1 + N2,
-                            KI - 2 + N2, 1.0, Temp, 1, n, Work[KI + N2]);
+                          MatrixVectorMultiply(vr, 1, n, 1, KI - 2, False, Work, 1 + n2,
+                            KI - 2 + n2, 1.0, Temp, 1, n, Work[KI + n2]);
                           for i_ := 1 to n do
                             begin
                               vr[i_, KI] := Temp[i_];
@@ -4965,7 +4965,7 @@ begin
                             begin
                               vr[i_, KI - 1] := VT * vr[i_, KI - 1];
                             end;
-                          VT := Work[KI + N2];
+                          VT := Work[KI + n2];
                           for i_ := 1 to n do
                             begin
                               vr[i_, KI] := VT * vr[i_, KI];
@@ -4976,7 +4976,7 @@ begin
                       while k <= n do
                         begin
                           EMAX := Max(EMAX, AbsReal(vr[k, KI - 1]) + AbsReal(vr[k, KI]));
-                          Inc(k);
+                          inc(k);
                         end;
                       REMAX := 1 / EMAX;
                       for i_ := 1 to n do
@@ -5003,7 +5003,7 @@ begin
             begin
               IP := 1;
             end;
-          Dec(KI);
+          dec(KI);
         end;
     end;
   if LEFTV then
@@ -5026,7 +5026,7 @@ begin
             begin
               if KI <> n then
                 begin
-                  if AP_FP_NEq(T[KI + 1, KI], 0) then
+                  if AP_FP_NEq(t[KI + 1, KI], 0) then
                     begin
                       IP := 1;
                     end;
@@ -5045,11 +5045,11 @@ begin
               //
               // Compute the KI-th eigenvalue (WR,WI).
               //
-              WR := T[KI, KI];
+              WR := t[KI, KI];
               WI := 0;
               if IP <> 0 then
                 begin
-                  WI := Sqrt(AbsReal(T[KI, KI + 1])) * Sqrt(AbsReal(T[KI + 1, KI]));
+                  WI := Sqrt(AbsReal(t[KI, KI + 1])) * Sqrt(AbsReal(t[KI + 1, KI]));
                 end;
               SMIN := Max(ULP * (AbsReal(WR) + AbsReal(WI)), SMLNUM);
               if IP = 0 then
@@ -5066,8 +5066,8 @@ begin
                   k := KI + 1;
                   while k <= n do
                     begin
-                      Work[k + n] := -T[KI, k];
-                      Inc(k);
+                      Work[k + n] := -t[KI, k];
+                      inc(k);
                     end;
 
                   //
@@ -5077,26 +5077,26 @@ begin
                   VMAX := 1;
                   VCRIT := BIGNUM;
                   JNXT := KI + 1;
-                  J := KI + 1;
-                  while J <= n do
+                  j := KI + 1;
+                  while j <= n do
                     begin
-                      if J < JNXT then
+                      if j < JNXT then
                         begin
-                          Inc(J);
+                          inc(j);
                           Continue;
                         end;
-                      J1 := J;
-                      J2 := J;
-                      JNXT := J + 1;
-                      if J < n then
+                      j1 := j;
+                      j2 := j;
+                      JNXT := j + 1;
+                      if j < n then
                         begin
-                          if AP_FP_NEq(T[J + 1, J], 0) then
+                          if AP_FP_NEq(t[j + 1, j], 0) then
                             begin
-                              J2 := J + 1;
-                              JNXT := J + 2;
+                              j2 := j + 1;
+                              JNXT := j + 2;
                             end;
                         end;
-                      if J1 = J2 then
+                      if j1 = j2 then
                         begin
 
                           //
@@ -5105,7 +5105,7 @@ begin
                           // Scale if necessary to avoid overflow when forming
                           // the right-hand side.
                           //
-                          if AP_FP_Greater(Work[J], VCRIT) then
+                          if AP_FP_Greater(Work[j], VCRIT) then
                             begin
                               REC := 1 / VMAX;
                               APVMul(@Work[0], KI + n, n + n, REC);
@@ -5114,19 +5114,19 @@ begin
                             end;
                           i1_ := (KI + 1 + n) - (KI + 1);
                           VT := 0.0;
-                          for i_ := KI + 1 to J - 1 do
+                          for i_ := KI + 1 to j - 1 do
                             begin
-                              VT := VT + T[i_, J] * Work[i_ + i1_];
+                              VT := VT + t[i_, j] * Work[i_ + i1_];
                             end;
-                          Work[J + n] := Work[J + n] - VT;
+                          Work[j + n] := Work[j + n] - VT;
 
                           //
                           // Solve (T(J,J)-WR)'*X = WORK
                           //
-                          TEMP11[1, 1] := T[J, J];
-                          TEMP11B[1, 1] := Work[J + n];
+                          TEMP11[1, 1] := t[j, j];
+                          TEMP11B[1, 1] := Work[j + n];
                           InternalHSEVDLALN2(False, 1, 1, SMIN, 1.0, TEMP11, 1.0, 1.0,
-                            TEMP11B, WR, 0, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, X, SCL,
+                            TEMP11B, WR, 0, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, x, SCL,
                             XNORM, IERR);
 
                           //
@@ -5136,8 +5136,8 @@ begin
                             begin
                               APVMul(@Work[0], KI + n, n + n, SCL);
                             end;
-                          Work[J + n] := X[1, 1];
-                          VMAX := Max(AbsReal(Work[J + n]), VMAX);
+                          Work[j + n] := x[1, 1];
+                          VMAX := Max(AbsReal(Work[j + n]), VMAX);
                           VCRIT := BIGNUM / VMAX;
                         end
                       else
@@ -5149,7 +5149,7 @@ begin
                           // Scale if necessary to avoid overflow when forming
                           // the right-hand side.
                           //
-                          beta := Max(Work[J], Work[J + 1]);
+                          beta := Max(Work[j], Work[j + 1]);
                           if AP_FP_Greater(beta, VCRIT) then
                             begin
                               REC := 1 / VMAX;
@@ -5159,32 +5159,32 @@ begin
                             end;
                           i1_ := (KI + 1 + n) - (KI + 1);
                           VT := 0.0;
-                          for i_ := KI + 1 to J - 1 do
+                          for i_ := KI + 1 to j - 1 do
                             begin
-                              VT := VT + T[i_, J] * Work[i_ + i1_];
+                              VT := VT + t[i_, j] * Work[i_ + i1_];
                             end;
-                          Work[J + n] := Work[J + n] - VT;
+                          Work[j + n] := Work[j + n] - VT;
                           i1_ := (KI + 1 + n) - (KI + 1);
                           VT := 0.0;
-                          for i_ := KI + 1 to J - 1 do
+                          for i_ := KI + 1 to j - 1 do
                             begin
-                              VT := VT + T[i_, J + 1] * Work[i_ + i1_];
+                              VT := VT + t[i_, j + 1] * Work[i_ + i1_];
                             end;
-                          Work[J + 1 + n] := Work[J + 1 + n] - VT;
+                          Work[j + 1 + n] := Work[j + 1 + n] - VT;
 
                           //
                           // Solve
                           // [T(J,J)-WR   T(J,J+1)     ]'* X = SCALE*( WORK1 )
                           // [T(J+1,J)    T(J+1,J+1)-WR]             ( WORK2 )
                           //
-                          TEMP22[1, 1] := T[J, J];
-                          TEMP22[1, 2] := T[J, J + 1];
-                          TEMP22[2, 1] := T[J + 1, J];
-                          TEMP22[2, 2] := T[J + 1, J + 1];
-                          TEMP21B[1, 1] := Work[J + n];
-                          TEMP21B[2, 1] := Work[J + 1 + n];
+                          TEMP22[1, 1] := t[j, j];
+                          TEMP22[1, 2] := t[j, j + 1];
+                          TEMP22[2, 1] := t[j + 1, j];
+                          TEMP22[2, 2] := t[j + 1, j + 1];
+                          TEMP21B[1, 1] := Work[j + n];
+                          TEMP21B[2, 1] := Work[j + 1 + n];
                           InternalHSEVDLALN2(True, 2, 1, SMIN, 1.0, TEMP22, 1.0, 1.0,
-                            TEMP21B, WR, 0, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, X, SCL,
+                            TEMP21B, WR, 0, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, x, SCL,
                             XNORM, IERR);
 
                           //
@@ -5194,13 +5194,13 @@ begin
                             begin
                               APVMul(@Work[0], KI + n, n + n, SCL);
                             end;
-                          Work[J + n] := X[1, 1];
-                          Work[J + 1 + n] := X[2, 1];
-                          VMAX := Max(AbsReal(Work[J + n]),
-                            Max(AbsReal(Work[J + 1 + n]), VMAX));
+                          Work[j + n] := x[1, 1];
+                          Work[j + 1 + n] := x[2, 1];
+                          VMAX := Max(AbsReal(Work[j + n]),
+                            Max(AbsReal(Work[j + 1 + n]), VMAX));
                           VCRIT := BIGNUM / VMAX;
                         end;
-                      Inc(J);
+                      inc(j);
                     end;
 
                   //
@@ -5223,7 +5223,7 @@ begin
                       while k <= KI - 1 do
                         begin
                           vl[k, IIS] := 0;
-                          Inc(k);
+                          inc(k);
                         end;
                     end
                   else
@@ -5259,19 +5259,19 @@ begin
                   // ((T(KI,KI)    T(KI,KI+1) )' - (WR - I* WI))*X = 0.
                   // ((T(KI+1,KI) T(KI+1,KI+1))                )
                   //
-                  if AP_FP_Greater_Eq(AbsReal(T[KI, KI + 1]), AbsReal(T[KI + 1, KI]))
+                  if AP_FP_Greater_Eq(AbsReal(t[KI, KI + 1]), AbsReal(t[KI + 1, KI]))
                   then
                     begin
-                      Work[KI + n] := WI / T[KI, KI + 1];
-                      Work[KI + 1 + N2] := 1;
+                      Work[KI + n] := WI / t[KI, KI + 1];
+                      Work[KI + 1 + n2] := 1;
                     end
                   else
                     begin
                       Work[KI + n] := 1;
-                      Work[KI + 1 + N2] := -WI / T[KI + 1, KI];
+                      Work[KI + 1 + n2] := -WI / t[KI + 1, KI];
                     end;
                   Work[KI + 1 + n] := 0;
-                  Work[KI + N2] := 0;
+                  Work[KI + n2] := 0;
 
                   //
                   // Form right-hand side
@@ -5279,9 +5279,9 @@ begin
                   k := KI + 2;
                   while k <= n do
                     begin
-                      Work[k + n] := -Work[KI + n] * T[KI, k];
-                      Work[k + N2] := -Work[KI + 1 + N2] * T[KI + 1, k];
-                      Inc(k);
+                      Work[k + n] := -Work[KI + n] * t[KI, k];
+                      Work[k + n2] := -Work[KI + 1 + n2] * t[KI + 1, k];
+                      inc(k);
                     end;
 
                   //
@@ -5291,26 +5291,26 @@ begin
                   VMAX := 1;
                   VCRIT := BIGNUM;
                   JNXT := KI + 2;
-                  J := KI + 2;
-                  while J <= n do
+                  j := KI + 2;
+                  while j <= n do
                     begin
-                      if J < JNXT then
+                      if j < JNXT then
                         begin
-                          Inc(J);
+                          inc(j);
                           Continue;
                         end;
-                      J1 := J;
-                      J2 := J;
-                      JNXT := J + 1;
-                      if J < n then
+                      j1 := j;
+                      j2 := j;
+                      JNXT := j + 1;
+                      if j < n then
                         begin
-                          if AP_FP_NEq(T[J + 1, J], 0) then
+                          if AP_FP_NEq(t[j + 1, j], 0) then
                             begin
-                              J2 := J + 1;
-                              JNXT := J + 2;
+                              j2 := j + 1;
+                              JNXT := j + 2;
                             end;
                         end;
-                      if J1 = J2 then
+                      if j1 = j2 then
                         begin
 
                           //
@@ -5319,37 +5319,37 @@ begin
                           // Scale if necessary to avoid overflow when
                           // forming the right-hand side elements.
                           //
-                          if AP_FP_Greater(Work[J], VCRIT) then
+                          if AP_FP_Greater(Work[j], VCRIT) then
                             begin
                               REC := 1 / VMAX;
                               APVMul(@Work[0], KI + n, n + n, REC);
-                              APVMul(@Work[0], KI + N2, n + N2, REC);
+                              APVMul(@Work[0], KI + n2, n + n2, REC);
                               VMAX := 1;
                               VCRIT := BIGNUM;
                             end;
                           i1_ := (KI + 2 + n) - (KI + 2);
                           VT := 0.0;
-                          for i_ := KI + 2 to J - 1 do
+                          for i_ := KI + 2 to j - 1 do
                             begin
-                              VT := VT + T[i_, J] * Work[i_ + i1_];
+                              VT := VT + t[i_, j] * Work[i_ + i1_];
                             end;
-                          Work[J + n] := Work[J + n] - VT;
-                          i1_ := (KI + 2 + N2) - (KI + 2);
+                          Work[j + n] := Work[j + n] - VT;
+                          i1_ := (KI + 2 + n2) - (KI + 2);
                           VT := 0.0;
-                          for i_ := KI + 2 to J - 1 do
+                          for i_ := KI + 2 to j - 1 do
                             begin
-                              VT := VT + T[i_, J] * Work[i_ + i1_];
+                              VT := VT + t[i_, j] * Work[i_ + i1_];
                             end;
-                          Work[J + N2] := Work[J + N2] - VT;
+                          Work[j + n2] := Work[j + n2] - VT;
 
                           //
                           // Solve (T(J,J)-(WR-i*WI))*(X11+i*X12)= WK+I*WK2
                           //
-                          TEMP11[1, 1] := T[J, J];
-                          TEMP12B[1, 1] := Work[J + n];
-                          TEMP12B[1, 2] := Work[J + n + n];
+                          TEMP11[1, 1] := t[j, j];
+                          TEMP12B[1, 1] := Work[j + n];
+                          TEMP12B[1, 2] := Work[j + n + n];
                           InternalHSEVDLALN2(False, 1, 2, SMIN, 1.0, TEMP11, 1.0, 1.0,
-                            TEMP12B, WR, -WI, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, X, SCL,
+                            TEMP12B, WR, -WI, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, x, SCL,
                             XNORM, IERR);
 
                           //
@@ -5358,12 +5358,12 @@ begin
                           if AP_FP_NEq(SCL, 1) then
                             begin
                               APVMul(@Work[0], KI + n, n + n, SCL);
-                              APVMul(@Work[0], KI + N2, n + N2, SCL);
+                              APVMul(@Work[0], KI + n2, n + n2, SCL);
                             end;
-                          Work[J + n] := X[1, 1];
-                          Work[J + N2] := X[1, 2];
-                          VMAX := Max(AbsReal(Work[J + n]),
-                            Max(AbsReal(Work[J + N2]), VMAX));
+                          Work[j + n] := x[1, 1];
+                          Work[j + n2] := x[1, 2];
+                          VMAX := Max(AbsReal(Work[j + n]),
+                            Max(AbsReal(Work[j + n2]), VMAX));
                           VCRIT := BIGNUM / VMAX;
                         end
                       else
@@ -5375,59 +5375,59 @@ begin
                           // Scale if necessary to avoid overflow when forming
                           // the right-hand side elements.
                           //
-                          beta := Max(Work[J], Work[J + 1]);
+                          beta := Max(Work[j], Work[j + 1]);
                           if AP_FP_Greater(beta, VCRIT) then
                             begin
                               REC := 1 / VMAX;
                               APVMul(@Work[0], KI + n, n + n, REC);
-                              APVMul(@Work[0], KI + N2, n + N2, REC);
+                              APVMul(@Work[0], KI + n2, n + n2, REC);
                               VMAX := 1;
                               VCRIT := BIGNUM;
                             end;
                           i1_ := (KI + 2 + n) - (KI + 2);
                           VT := 0.0;
-                          for i_ := KI + 2 to J - 1 do
+                          for i_ := KI + 2 to j - 1 do
                             begin
-                              VT := VT + T[i_, J] * Work[i_ + i1_];
+                              VT := VT + t[i_, j] * Work[i_ + i1_];
                             end;
-                          Work[J + n] := Work[J + n] - VT;
-                          i1_ := (KI + 2 + N2) - (KI + 2);
+                          Work[j + n] := Work[j + n] - VT;
+                          i1_ := (KI + 2 + n2) - (KI + 2);
                           VT := 0.0;
-                          for i_ := KI + 2 to J - 1 do
+                          for i_ := KI + 2 to j - 1 do
                             begin
-                              VT := VT + T[i_, J] * Work[i_ + i1_];
+                              VT := VT + t[i_, j] * Work[i_ + i1_];
                             end;
-                          Work[J + N2] := Work[J + N2] - VT;
+                          Work[j + n2] := Work[j + n2] - VT;
                           i1_ := (KI + 2 + n) - (KI + 2);
                           VT := 0.0;
-                          for i_ := KI + 2 to J - 1 do
+                          for i_ := KI + 2 to j - 1 do
                             begin
-                              VT := VT + T[i_, J + 1] * Work[i_ + i1_];
+                              VT := VT + t[i_, j + 1] * Work[i_ + i1_];
                             end;
-                          Work[J + 1 + n] := Work[J + 1 + n] - VT;
-                          i1_ := (KI + 2 + N2) - (KI + 2);
+                          Work[j + 1 + n] := Work[j + 1 + n] - VT;
+                          i1_ := (KI + 2 + n2) - (KI + 2);
                           VT := 0.0;
-                          for i_ := KI + 2 to J - 1 do
+                          for i_ := KI + 2 to j - 1 do
                             begin
-                              VT := VT + T[i_, J + 1] * Work[i_ + i1_];
+                              VT := VT + t[i_, j + 1] * Work[i_ + i1_];
                             end;
-                          Work[J + 1 + N2] := Work[J + 1 + N2] - VT;
+                          Work[j + 1 + n2] := Work[j + 1 + n2] - VT;
 
                           //
                           // Solve 2-by-2 complex linear equation
                           // ([T(j,j)   T(j,j+1)  ]'-(wr-i*wi)*I)*X = SCALE*B
                           // ([T(j+1,j) T(j+1,j+1)]             )
                           //
-                          TEMP22[1, 1] := T[J, J];
-                          TEMP22[1, 2] := T[J, J + 1];
-                          TEMP22[2, 1] := T[J + 1, J];
-                          TEMP22[2, 2] := T[J + 1, J + 1];
-                          TEMP22B[1, 1] := Work[J + n];
-                          TEMP22B[1, 2] := Work[J + n + n];
-                          TEMP22B[2, 1] := Work[J + 1 + n];
-                          TEMP22B[2, 2] := Work[J + 1 + n + n];
+                          TEMP22[1, 1] := t[j, j];
+                          TEMP22[1, 2] := t[j, j + 1];
+                          TEMP22[2, 1] := t[j + 1, j];
+                          TEMP22[2, 2] := t[j + 1, j + 1];
+                          TEMP22B[1, 1] := Work[j + n];
+                          TEMP22B[1, 2] := Work[j + n + n];
+                          TEMP22B[2, 1] := Work[j + 1 + n];
+                          TEMP22B[2, 2] := Work[j + 1 + n + n];
                           InternalHSEVDLALN2(True, 2, 2, SMIN, 1.0, TEMP22, 1.0, 1.0,
-                            TEMP22B, WR, -WI, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, X, SCL,
+                            TEMP22B, WR, -WI, RSWAP4, ZSWAP4, IPIVOT44, CIV4, CRV4, x, SCL,
                             XNORM, IERR);
 
                           //
@@ -5436,19 +5436,19 @@ begin
                           if AP_FP_NEq(SCL, 1) then
                             begin
                               APVMul(@Work[0], KI + n, n + n, SCL);
-                              APVMul(@Work[0], KI + N2, n + N2, SCL);
+                              APVMul(@Work[0], KI + n2, n + n2, SCL);
                             end;
-                          Work[J + n] := X[1, 1];
-                          Work[J + N2] := X[1, 2];
-                          Work[J + 1 + n] := X[2, 1];
-                          Work[J + 1 + N2] := X[2, 2];
-                          VMAX := Max(AbsReal(X[1, 1]), VMAX);
-                          VMAX := Max(AbsReal(X[1, 2]), VMAX);
-                          VMAX := Max(AbsReal(X[2, 1]), VMAX);
-                          VMAX := Max(AbsReal(X[2, 2]), VMAX);
+                          Work[j + n] := x[1, 1];
+                          Work[j + n2] := x[1, 2];
+                          Work[j + 1 + n] := x[2, 1];
+                          Work[j + 1 + n2] := x[2, 2];
+                          VMAX := Max(AbsReal(x[1, 1]), VMAX);
+                          VMAX := Max(AbsReal(x[1, 2]), VMAX);
+                          VMAX := Max(AbsReal(x[2, 1]), VMAX);
+                          VMAX := Max(AbsReal(x[2, 2]), VMAX);
                           VCRIT := BIGNUM / VMAX;
                         end;
-                      Inc(J);
+                      inc(j);
                     end;
 
                   //
@@ -5461,7 +5461,7 @@ begin
                         begin
                           vl[i_, IIS] := Work[i_ + i1_];
                         end;
-                      i1_ := (KI + N2) - (KI);
+                      i1_ := (KI + n2) - (KI);
                       for i_ := KI to n do
                         begin
                           vl[i_, IIS + 1] := Work[i_ + i1_];
@@ -5471,7 +5471,7 @@ begin
                       while k <= n do
                         begin
                           EMAX := Max(EMAX, AbsReal(vl[k, IIS]) + AbsReal(vl[k, IIS + 1]));
-                          Inc(k);
+                          inc(k);
                         end;
                       REMAX := 1 / EMAX;
                       for i_ := KI to n do
@@ -5487,7 +5487,7 @@ begin
                         begin
                           vl[k, IIS] := 0;
                           vl[k, IIS + 1] := 0;
-                          Inc(k);
+                          inc(k);
                         end;
                     end
                   else
@@ -5509,7 +5509,7 @@ begin
                               Temp[i_] := vl[i_, KI + 1];
                             end;
                           MatrixVectorMultiply(vl, 1, n, KI + 2, n, False, Work,
-                            KI + 2 + N2, n + N2, 1.0, Temp, 1, n, Work[KI + 1 + N2]);
+                            KI + 2 + n2, n + n2, 1.0, Temp, 1, n, Work[KI + 1 + n2]);
                           for i_ := 1 to n do
                             begin
                               vl[i_, KI + 1] := Temp[i_];
@@ -5522,7 +5522,7 @@ begin
                             begin
                               vl[i_, KI] := VT * vl[i_, KI];
                             end;
-                          VT := Work[KI + 1 + N2];
+                          VT := Work[KI + 1 + n2];
                           for i_ := 1 to n do
                             begin
                               vl[i_, KI + 1] := VT * vl[i_, KI + 1];
@@ -5533,7 +5533,7 @@ begin
                       while k <= n do
                         begin
                           EMAX := Max(EMAX, AbsReal(vl[k, KI]) + AbsReal(vl[k, KI + 1]));
-                          Inc(k);
+                          inc(k);
                         end;
                       REMAX := 1 / EMAX;
                       for i_ := 1 to n do
@@ -5560,7 +5560,7 @@ begin
             begin
               IP := -1;
             end;
-          Inc(KI);
+          inc(KI);
         end;
     end;
 end;
@@ -5599,15 +5599,15 @@ end;
   ************************************************************************ *)
 procedure InternalHSEVDLALN2(const LTRANS: Boolean; const NA: TLInt;
   const NW: TLInt; const SMIN: TLFloat; const ca: TLFloat;
-  const A: TLMatrix; const d1: TLFloat; const d2: TLFloat;
+  const a: TLMatrix; const d1: TLFloat; const d2: TLFloat;
   const b: TLMatrix; const WR: TLFloat; const WI: TLFloat;
   var RSWAP4: TLBVec; var ZSWAP4: TLBVec;
   var IPIVOT44: TLIMatrix; var CIV4: TLVec; var CRV4: TLVec;
-  var X: TLMatrix; var SCL: TLFloat; var XNORM: TLFloat;
+  var x: TLMatrix; var SCL: TLFloat; var XNORM: TLFloat;
   var Info: TLInt);
 var
   ICMAX: TLInt;
-  J: TLInt;
+  j: TLInt;
   BBND: TLFloat;
   BI1: TLFloat;
   BI2: TLFloat;
@@ -5697,7 +5697,7 @@ begin
           //
           // C = ca A - w D
           //
-          CSR := ca * A[1, 1] - WR * d1;
+          CSR := ca * a[1, 1] - WR * d1;
           CNORM := AbsReal(CSR);
 
           //
@@ -5725,8 +5725,8 @@ begin
           //
           // Compute X
           //
-          X[1, 1] := b[1, 1] * SCL / CSR;
-          XNORM := AbsReal(X[1, 1]);
+          x[1, 1] := b[1, 1] * SCL / CSR;
+          XNORM := AbsReal(x[1, 1]);
         end
       else
         begin
@@ -5736,7 +5736,7 @@ begin
           //
           // C = ca A - w D
           //
-          CSR := ca * A[1, 1] - WR * d1;
+          CSR := ca * a[1, 1] - WR * d1;
           CSI := -WI * d1;
           CNORM := AbsReal(CSR) + AbsReal(CSI);
 
@@ -5767,9 +5767,9 @@ begin
           // Compute X
           //
           InternalHSEVDLADIV(SCL * b[1, 1], SCL * b[1, 2], CSR, CSI, TMP1, TMP2);
-          X[1, 1] := TMP1;
-          X[1, 2] := TMP2;
-          XNORM := AbsReal(X[1, 1]) + AbsReal(X[1, 2]);
+          x[1, 1] := TMP1;
+          x[1, 2] := TMP2;
+          XNORM := AbsReal(x[1, 1]) + AbsReal(x[1, 2]);
         end;
     end
   else
@@ -5780,17 +5780,17 @@ begin
       //
       // Compute the real part of  C = ca A - w D  (or  ca A' - w D )
       //
-      CRV4[1 + 0] := ca * A[1, 1] - WR * d1;
-      CRV4[2 + 2] := ca * A[2, 2] - WR * d2;
+      CRV4[1 + 0] := ca * a[1, 1] - WR * d1;
+      CRV4[2 + 2] := ca * a[2, 2] - WR * d2;
       if LTRANS then
         begin
-          CRV4[1 + 2] := ca * A[2, 1];
-          CRV4[2 + 0] := ca * A[1, 2];
+          CRV4[1 + 2] := ca * a[2, 1];
+          CRV4[2 + 0] := ca * a[1, 2];
         end
       else
         begin
-          CRV4[2 + 0] := ca * A[2, 1];
-          CRV4[1 + 2] := ca * A[1, 2];
+          CRV4[2 + 0] := ca * a[2, 1];
+          CRV4[1 + 2] := ca * a[1, 2];
         end;
       if NW = 1 then
         begin
@@ -5802,15 +5802,15 @@ begin
           //
           CMAX := 0;
           ICMAX := 0;
-          J := 1;
-          while J <= 4 do
+          j := 1;
+          while j <= 4 do
             begin
-              if AP_FP_Greater(AbsReal(CRV4[J]), CMAX) then
+              if AP_FP_Greater(AbsReal(CRV4[j]), CMAX) then
                 begin
-                  CMAX := AbsReal(CRV4[J]);
-                  ICMAX := J;
+                  CMAX := AbsReal(CRV4[j]);
+                  ICMAX := j;
                 end;
-              Inc(J);
+              inc(j);
             end;
 
           //
@@ -5827,8 +5827,8 @@ begin
                     end;
                 end;
               Temp := SCL / SMINI;
-              X[1, 1] := Temp * b[1, 1];
-              X[2, 1] := Temp * b[2, 1];
+              x[1, 1] := Temp * b[1, 1];
+              x[2, 1] := Temp * b[2, 1];
               XNORM := Temp * BNORM;
               Info := 1;
               Exit;
@@ -5876,13 +5876,13 @@ begin
           XR1 := SCL * BR1 * UR11R - XR2 * (UR11R * UR12);
           if ZSWAP4[ICMAX] then
             begin
-              X[1, 1] := XR2;
-              X[2, 1] := XR1;
+              x[1, 1] := XR2;
+              x[2, 1] := XR1;
             end
           else
             begin
-              X[1, 1] := XR1;
-              X[2, 1] := XR2;
+              x[1, 1] := XR1;
+              x[2, 1] := XR2;
             end;
           XNORM := Max(AbsReal(XR1), AbsReal(XR2));
 
@@ -5894,8 +5894,8 @@ begin
               if AP_FP_Greater(XNORM, BIGNUM / CMAX) then
                 begin
                   Temp := CMAX / BIGNUM;
-                  X[1, 1] := Temp * X[1, 1];
-                  X[2, 1] := Temp * X[2, 1];
+                  x[1, 1] := Temp * x[1, 1];
+                  x[2, 1] := Temp * x[2, 1];
                   XNORM := Temp * XNORM;
                   SCL := Temp * SCL;
                 end;
@@ -5915,15 +5915,15 @@ begin
           CIV4[2 + 2] := -WI * d2;
           CMAX := 0;
           ICMAX := 0;
-          J := 1;
-          while J <= 4 do
+          j := 1;
+          while j <= 4 do
             begin
-              if AP_FP_Greater(AbsReal(CRV4[J]) + AbsReal(CIV4[J]), CMAX) then
+              if AP_FP_Greater(AbsReal(CRV4[j]) + AbsReal(CIV4[j]), CMAX) then
                 begin
-                  CMAX := AbsReal(CRV4[J]) + AbsReal(CIV4[J]);
-                  ICMAX := J;
+                  CMAX := AbsReal(CRV4[j]) + AbsReal(CIV4[j]);
+                  ICMAX := j;
                 end;
-              Inc(J);
+              inc(j);
             end;
 
           //
@@ -5941,10 +5941,10 @@ begin
                     end;
                 end;
               Temp := SCL / SMINI;
-              X[1, 1] := Temp * b[1, 1];
-              X[2, 1] := Temp * b[2, 1];
-              X[1, 2] := Temp * b[1, 2];
-              X[2, 2] := Temp * b[2, 2];
+              x[1, 1] := Temp * b[1, 1];
+              x[2, 1] := Temp * b[2, 1];
+              x[1, 2] := Temp * b[1, 2];
+              x[2, 2] := Temp * b[2, 2];
               XNORM := Temp * BNORM;
               Info := 1;
               Exit;
@@ -6047,17 +6047,17 @@ begin
           XI1 := UI11R * BR1 + UR11R * BI1 - UI12S * XR2 - UR12S * XI2;
           if ZSWAP4[ICMAX] then
             begin
-              X[1, 1] := XR2;
-              X[2, 1] := XR1;
-              X[1, 2] := XI2;
-              X[2, 2] := XI1;
+              x[1, 1] := XR2;
+              x[2, 1] := XR1;
+              x[1, 2] := XI2;
+              x[2, 2] := XI1;
             end
           else
             begin
-              X[1, 1] := XR1;
-              X[2, 1] := XR2;
-              X[1, 2] := XI1;
-              X[2, 2] := XI2;
+              x[1, 1] := XR1;
+              x[2, 1] := XR2;
+              x[1, 2] := XI1;
+              x[2, 2] := XI2;
             end;
           XNORM := Max(AbsReal(XR1) + AbsReal(XI1), AbsReal(XR2) + AbsReal(XI2));
 
@@ -6069,10 +6069,10 @@ begin
               if AP_FP_Greater(XNORM, BIGNUM / CMAX) then
                 begin
                   Temp := CMAX / BIGNUM;
-                  X[1, 1] := Temp * X[1, 1];
-                  X[2, 1] := Temp * X[2, 1];
-                  X[1, 2] := Temp * X[1, 2];
-                  X[2, 2] := Temp * X[2, 2];
+                  x[1, 1] := Temp * x[1, 1];
+                  x[2, 1] := Temp * x[2, 1];
+                  x[1, 2] := Temp * x[1, 2];
+                  x[2, 2] := Temp * x[2, 2];
                   XNORM := Temp * XNORM;
                   SCL := Temp * SCL;
                 end;
@@ -6091,30 +6091,30 @@ end;
   The algorithm is due to Robert L. Smith and can be found
   in D. Knuth, The art of Computer Programming, Vol.2, p.195
   ************************************************************************ *)
-procedure InternalHSEVDLADIV(const A: TLFloat; const b: TLFloat;
-  const C: TLFloat; const d: TLFloat; var p: TLFloat;
+procedure InternalHSEVDLADIV(const a: TLFloat; const b: TLFloat;
+  const c: TLFloat; const d: TLFloat; var p: TLFloat;
   var q: TLFloat);
 var
   E: TLFloat;
-  F: TLFloat;
+  f: TLFloat;
 begin
-  if AP_FP_Less(AbsReal(d), AbsReal(C)) then
+  if AP_FP_Less(AbsReal(d), AbsReal(c)) then
     begin
-      E := d / C;
-      F := C + d * E;
-      p := (A + b * E) / F;
-      q := (b - A * E) / F;
+      E := d / c;
+      f := c + d * E;
+      p := (a + b * E) / f;
+      q := (b - a * E) / f;
     end
   else
     begin
-      E := C / d;
-      F := d + C * E;
-      p := (b + A * E) / F;
-      q := (-A + b * E) / F;
+      E := c / d;
+      f := d + c * E;
+      p := (b + a * E) / f;
+      q := (-a + b * E) / f;
     end;
 end;
 
-function NonSymmetricEVD(A: TLMatrix; n: TLInt;
+function NonSymmetricEVD(a: TLMatrix; n: TLInt;
   VNeeded: TLInt; var WR: TLVec; var WI: TLVec;
   var vl: TLMatrix; var vr: TLMatrix): Boolean;
 var
@@ -6125,7 +6125,7 @@ var
   Info: TLInt;
   M: TLInt;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Assert((VNeeded >= 0) and (VNeeded <= 3),
     'NonSymmetricEVD: incorrect VNeeded!');
   if VNeeded = 0 then
@@ -6134,8 +6134,8 @@ begin
       //
       // Eigen values only
       //
-      ToUpperHessenberg(A, n, TAU);
-      InternalSchurDecomposition(A, n, 0, 0, WR, WI, s, Info);
+      ToUpperHessenberg(a, n, TAU);
+      InternalSchurDecomposition(a, n, 0, 0, WR, WI, s, Info);
       Result := Info = 0;
       Exit;
     end;
@@ -6143,9 +6143,9 @@ begin
   //
   // Eigen values and vectors
   //
-  ToUpperHessenberg(A, n, TAU);
-  UnpackQFromUpperHessenberg(A, n, TAU, s);
-  InternalSchurDecomposition(A, n, 1, 1, WR, WI, s, Info);
+  ToUpperHessenberg(a, n, TAU);
+  UnpackQFromUpperHessenberg(a, n, TAU, s);
+  InternalSchurDecomposition(a, n, 1, 1, WR, WI, s, Info);
   Result := Info = 0;
   if not Result then
     begin
@@ -6158,7 +6158,7 @@ begin
       while i <= n do
         begin
           APVMove(@vr[i][0], 1, n, @s[i][0], 1, n);
-          Inc(i);
+          inc(i);
         end;
     end;
   if (VNeeded = 2) or (VNeeded = 3) then
@@ -6168,21 +6168,21 @@ begin
       while i <= n do
         begin
           APVMove(@vl[i][0], 1, n, @s[i][0], 1, n);
-          Inc(i);
+          inc(i);
         end;
     end;
-  InternalTREVC(A, n, VNeeded, 1, SEL, vl, vr, M, Info);
+  InternalTREVC(a, n, VNeeded, 1, SEL, vl, vr, M, Info);
   Result := Info = 0;
 end;
 
-procedure ToUpperHessenberg(var A: TLMatrix; n: TLInt;
+procedure ToUpperHessenberg(var a: TLMatrix; n: TLInt;
   var TAU: TLVec);
 var
   i: TLInt;
   IP1: TLInt;
   NMI: TLInt;
   v: TLFloat;
-  T: TLVec;
+  t: TLVec;
   Work: TLVec;
   i_: TLInt;
   i1_: TLInt;
@@ -6197,7 +6197,7 @@ begin
       Exit;
     end;
   SetLength(TAU, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(T, n + 1);
+  SetLength(t, n + 1);
   SetLength(Work, n + 1);
   i := 1;
   while i <= n - 1 do
@@ -6211,35 +6211,35 @@ begin
       i1_ := (IP1) - (1);
       for i_ := 1 to NMI do
         begin
-          T[i_] := A[i_ + i1_, i];
+          t[i_] := a[i_ + i1_, i];
         end;
-      GenerateReflection(T, NMI, v);
+      GenerateReflection(t, NMI, v);
       i1_ := (1) - (IP1);
       for i_ := IP1 to n do
         begin
-          A[i_, i] := T[i_ + i1_];
+          a[i_, i] := t[i_ + i1_];
         end;
       TAU[i] := v;
-      T[1] := 1;
+      t[1] := 1;
 
       //
       // Apply H(i) to A(1:ihi,i+1:ihi) from the right
       //
-      ApplyReflectionFromTheRight(A, v, T, 1, n, i + 1, n, Work);
+      ApplyReflectionFromTheRight(a, v, t, 1, n, i + 1, n, Work);
 
       //
       // Apply H(i) to A(i+1:ihi,i+1:n) from the left
       //
-      ApplyReflectionFromTheLeft(A, v, T, i + 1, n, i + 1, n, Work);
-      Inc(i);
+      ApplyReflectionFromTheLeft(a, v, t, i + 1, n, i + 1, n, Work);
+      inc(i);
     end;
 end;
 
-procedure UnpackQFromUpperHessenberg(const A: TLMatrix; n: TLInt;
+procedure UnpackQFromUpperHessenberg(const a: TLMatrix; n: TLInt;
   const TAU: TLVec; var q: TLMatrix);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   v: TLVec;
   Work: TLVec;
   IP1: TLInt;
@@ -6261,20 +6261,20 @@ begin
   i := 1;
   while i <= n do
     begin
-      J := 1;
-      while J <= n do
+      j := 1;
+      while j <= n do
         begin
-          if i = J then
+          if i = j then
             begin
-              q[i, J] := 1;
+              q[i, j] := 1;
             end
           else
             begin
-              q[i, J] := 0;
+              q[i, j] := 0;
             end;
-          Inc(J);
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
 
   //
@@ -6292,19 +6292,19 @@ begin
       i1_ := (IP1) - (1);
       for i_ := 1 to NMI do
         begin
-          v[i_] := A[i_ + i1_, i];
+          v[i_] := a[i_ + i1_, i];
         end;
       v[1] := 1;
       ApplyReflectionFromTheRight(q, TAU[i], v, 1, n, i + 1, n, Work);
-      Inc(i);
+      inc(i);
     end;
 end;
 
-procedure UnpackHFromUpperHessenberg(const A: TLMatrix; n: TLInt;
+procedure UnpackHFromUpperHessenberg(const a: TLMatrix; n: TLInt;
   const TAU: TLVec; var h: TLMatrix);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   v: TLVec;
   Work: TLVec;
 begin
@@ -6316,14 +6316,16 @@ begin
   i := 1;
   while i <= n do
     begin
-      J := 1;
-      while J <= i - 2 do
+      j := 1;
+      while j <= i - 2 do
         begin
-          h[i, J] := 0;
-          Inc(J);
+          h[i, j] := 0;
+          inc(j);
         end;
-      J := Max(1, i - 1);
-      APVMove(@h[i][0], J, n, @A[i][0], J, n);
-      Inc(i);
+      j := Max(1, i - 1);
+      APVMove(@h[i][0], j, n, @a[i][0], j, n);
+      inc(i);
     end;
 end; 
+ 
+ 

@@ -1,4 +1,17 @@
+{ ****************************************************************************** }
+{ * machine Learn support, writen by QQ 600585@qq.com                          * }
+{ * https://github.com/PassByYou888/CoreCipher                                 * }
+{ * https://github.com/PassByYou888/ZServer4D                                  * }
+{ * https://github.com/PassByYou888/zExpression                                * }
+{ * https://github.com/PassByYou888/zTranslate                                 * }
+{ * https://github.com/PassByYou888/zSound                                     * }
+{ * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
+{ ****************************************************************************** }
 unit LearnTypes;
+
+{$INCLUDE zDefine.inc}
 
 interface
 
@@ -16,20 +29,20 @@ type
   PLInt     = PKMInt;
   TLIVec    = TKMIntegerArray;
   PLIVec    = PKMIntegerArray;
-  TLIMatrix = packed array of TLIVec;
+  TLIMatrix = array of TLIVec;
   PLIMatrix = ^TLIMatrix;
 
-  TLBVec    = packed array of Boolean;
+  TLBVec    = array of Boolean;
   PLBVec    = ^TLBVec;
-  TLBMatrix = packed array of TLBVec;
+  TLBMatrix = array of TLBVec;
   PLBMatrix = ^TLBMatrix;
 
-  TLComplex = packed record
-    X, Y: TLFloat;
+  TLComplex = record
+    x, y: TLFloat;
   end;
 
-  TLComplexVec    = packed array of TLComplex;
-  TLComplexMatrix = packed array of TLComplexVec;
+  TLComplexVec    = array of TLComplex;
+  TLComplexMatrix = array of TLComplexVec;
 
   TLearnType = (
     ltKDT,              // KDTree, fast space operation, this not Neurons network
@@ -69,3 +82,5 @@ const
 implementation
 
 end.
+ 
+ 

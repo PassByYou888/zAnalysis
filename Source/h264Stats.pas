@@ -17,7 +17,7 @@ unit h264Stats;
 
 interface
 
-uses h264Stdint, CoreClasses;
+uses h264Types, CoreClasses;
 
 type
   TFrameStats = class
@@ -32,10 +32,8 @@ type
 
     constructor Create;
     procedure Clear; virtual;
-    procedure Add(A: TFrameStats);
+    procedure Add(a: TFrameStats);
   end;
-
-  { TStreamStats }
 
   TStreamStats = class(TFrameStats)
   public
@@ -43,11 +41,7 @@ type
     procedure Clear; override;
   end;
 
-  (* ******************************************************************************
-    ****************************************************************************** *)
 implementation
-
-  { TStreamStats }
 
 procedure TStreamStats.Clear;
 begin
@@ -55,8 +49,6 @@ begin
   i_count := 0;
   p_count := 0;
 end;
-
-{ TFrameStats }
 
 constructor TFrameStats.Create;
 begin
@@ -79,27 +71,29 @@ begin
   size_bytes := 0;
 end;
 
-procedure TFrameStats.Add(A: TFrameStats);
+procedure TFrameStats.Add(a: TFrameStats);
 var
   i: int32_t;
 begin
-  Inc(itex_bits, A.itex_bits);
-  Inc(ptex_bits, A.ptex_bits);
-  Inc(mb_i4_count, A.mb_i4_count);
-  Inc(mb_i16_count, A.mb_i16_count);
-  Inc(mb_p_count, A.mb_p_count);
-  Inc(mb_skip_count, A.mb_skip_count);
-  Inc(size_bytes, A.size_bytes);
+  inc(itex_bits, a.itex_bits);
+  inc(ptex_bits, a.ptex_bits);
+  inc(mb_i4_count, a.mb_i4_count);
+  inc(mb_i16_count, a.mb_i16_count);
+  inc(mb_p_count, a.mb_p_count);
+  inc(mb_skip_count, a.mb_skip_count);
+  inc(size_bytes, a.size_bytes);
   for i := 0 to 8 do
-      Inc(pred[i], A.pred[i]);
+      inc(pred[i], a.pred[i]);
   for i := 0 to 3 do
-      Inc(pred16[i], A.pred16[i]);
+      inc(pred16[i], a.pred16[i]);
   for i := 0 to 3 do
-      Inc(pred_8x8_chroma[i], A.pred_8x8_chroma[i]);
+      inc(pred_8x8_chroma[i], a.pred_8x8_chroma[i]);
   for i := 0 to 15 do
-      Inc(ref[i], A.ref[i]);
+      inc(ref[i], a.ref[i]);
   for i := 0 to 2 do
-      Inc(ssd[i], A.ssd[i]);
+      inc(ssd[i], a.ssd[i]);
 end;
 
 end.  
+ 
+ 

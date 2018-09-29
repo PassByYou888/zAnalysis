@@ -8,8 +8,8 @@ begin
   alpha := CAggBaseMask - alpha;
   Cover := (Cover + 1) shl (CAggBaseShift - 8);
 
-  TAggOrderRGB(Pointer(p)^).R :=
-    Int8u((TAggOrderRGB(Pointer(p)^).R * alpha + CR * Cover) shr CAggBaseShift);
+  TAggOrderRGB(Pointer(p)^).r :=
+    Int8u((TAggOrderRGB(Pointer(p)^).r * alpha + CR * Cover) shr CAggBaseShift);
   TAggOrderRGB(Pointer(p)^).g :=
     Int8u((TAggOrderRGB(Pointer(p)^).g * alpha + Cg * Cover) shr CAggBaseShift);
   TAggOrderRGB(Pointer(p)^).b :=
@@ -20,248 +20,248 @@ procedure BlendPixRgbPre(p: PInt8u; CR, Cg, CB, alpha: Cardinal); overload;
 begin
   alpha := CAggBaseMask - alpha;
 
-  TAggOrderRGB(Pointer(p)^).R :=
-    Int8u(((TAggOrderRGB(Pointer(p)^).R * alpha) shr CAggBaseShift) + CR);
+  TAggOrderRGB(Pointer(p)^).r :=
+    Int8u(((TAggOrderRGB(Pointer(p)^).r * alpha) shr CAggBaseShift) + CR);
   TAggOrderRGB(Pointer(p)^).g :=
     Int8u(((TAggOrderRGB(Pointer(p)^).g * alpha) shr CAggBaseShift) + Cg);
   TAggOrderRGB(Pointer(p)^).b :=
     Int8u(((TAggOrderRGB(Pointer(p)^).b * alpha) shr CAggBaseShift) + CB);
 end;
 
-procedure CopyOrBlendPixRgbPre(p: PInt8u; C: PAggColor;
+procedure CopyOrBlendPixRgbPre(p: PInt8u; c: PAggColor;
   Cover: Cardinal); overload;
 var
   alpha: Cardinal;
 begin
-  if C.Rgba8.A <> 0 then
+  if c.Rgba8.a <> 0 then
   begin
-    alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
+    alpha := (c.Rgba8.a * (Cover + 1)) shr 8;
 
     if alpha = CAggBaseMask then
     begin
-      TAggOrderRGB(Pointer(p)^).R := C.Rgba8.R;
-      TAggOrderRGB(Pointer(p)^).g := C.Rgba8.g;
-      TAggOrderRGB(Pointer(p)^).b := C.Rgba8.b;
+      TAggOrderRGB(Pointer(p)^).r := c.Rgba8.r;
+      TAggOrderRGB(Pointer(p)^).g := c.Rgba8.g;
+      TAggOrderRGB(Pointer(p)^).b := c.Rgba8.b;
     end
     else
-      BlendPixRgbPre(p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b, alpha, Cover);
+      BlendPixRgbPre(p, c.Rgba8.r, c.Rgba8.g, c.Rgba8.b, alpha, Cover);
   end;
 end;
 
-procedure CopyOrBlendPixRgbPre(p: PInt8u; C: PAggColor); overload;
+procedure CopyOrBlendPixRgbPre(p: PInt8u; c: PAggColor); overload;
 begin
-  if C.Rgba8.A <> 0 then
-    if C.Rgba8.A = CAggBaseMask then
+  if c.Rgba8.a <> 0 then
+    if c.Rgba8.a = CAggBaseMask then
     begin
-      TAggOrderRGB(Pointer(p)^).R := C.Rgba8.R;
-      TAggOrderRGB(Pointer(p)^).g := C.Rgba8.g;
-      TAggOrderRGB(Pointer(p)^).b := C.Rgba8.b;
+      TAggOrderRGB(Pointer(p)^).r := c.Rgba8.r;
+      TAggOrderRGB(Pointer(p)^).g := c.Rgba8.g;
+      TAggOrderRGB(Pointer(p)^).b := c.Rgba8.b;
     end
     else
-      BlendPixRgbPre(p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b, C.Rgba8.A);
+      BlendPixRgbPre(p, c.Rgba8.r, c.Rgba8.g, c.Rgba8.b, c.Rgba8.a);
 end;
 
-procedure Rgb24PreBlendPixel(This: TAggPixelFormatProcessor; X, Y: Integer;
-  C: PAggColor; Cover: Int8u);
+procedure Rgb24PreBlendPixel(This: TAggPixelFormatProcessor; x, y: Integer;
+  c: PAggColor; Cover: Int8u);
 begin
-  CopyOrBlendPixRgbPre(PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X + X + X),
-    C, Cover);
+  CopyOrBlendPixRgbPre(PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + x + x + x),
+    c, Cover);
 end;
 
-procedure Rgb24PreBlendHorizontalLine(This: TAggPixelFormatProcessor; X,
-  Y: Integer; Len: Cardinal; C: PAggColor; Cover: Int8u);
+procedure Rgb24PreBlendHorizontalLine(This: TAggPixelFormatProcessor; x,
+  y: Integer; Len: Cardinal; c: PAggColor; Cover: Int8u);
 var
   p: PInt8u;
   alpha: Cardinal;
 begin
-  if C.Rgba8.A <> 0 then
+  if c.Rgba8.a <> 0 then
   begin
-    p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X + X + X);
+    p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + x + x + x);
 
-    alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
+    alpha := (c.Rgba8.a * (Cover + 1)) shr 8;
 
     if alpha = CAggBaseMask then
       repeat
-        TAggOrderRGB(Pointer(p)^).R := C.Rgba8.R;
-        TAggOrderRGB(Pointer(p)^).g := C.Rgba8.g;
-        TAggOrderRGB(Pointer(p)^).b := C.Rgba8.b;
+        TAggOrderRGB(Pointer(p)^).r := c.Rgba8.r;
+        TAggOrderRGB(Pointer(p)^).g := c.Rgba8.g;
+        TAggOrderRGB(Pointer(p)^).b := c.Rgba8.b;
 
-        Inc(PtrComp(p), 3);
-        Dec(Len);
+        inc(PtrComp(p), 3);
+        dec(Len);
       until Len = 0
     else
       repeat
-        BlendPixRgbPre(p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b, alpha);
+        BlendPixRgbPre(p, c.Rgba8.r, c.Rgba8.g, c.Rgba8.b, alpha);
 
-        Inc(PtrComp(p), 3);
-        Dec(Len);
+        inc(PtrComp(p), 3);
+        dec(Len);
       until Len = 0;
   end;
 end;
 
-procedure Rgb24PreBlendVerticalLine(This: TAggPixelFormatProcessor; X,
-  Y: Integer; Len: Cardinal; C: PAggColor; Cover: Int8u);
+procedure Rgb24PreBlendVerticalLine(This: TAggPixelFormatProcessor; x,
+  y: Integer; Len: Cardinal; c: PAggColor; Cover: Int8u);
 var
   p: PInt8u;
   alpha: Cardinal;
 begin
-  if C.Rgba8.A <> 0 then
+  if c.Rgba8.a <> 0 then
   begin
-    p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X + X + X);
+    p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + x + x + x);
 
-    alpha := (C.Rgba8.A * (Cover + 1)) shr 8;
+    alpha := (c.Rgba8.a * (Cover + 1)) shr 8;
 
     if alpha = CAggBaseMask then
       repeat
-        TAggOrderRGB(Pointer(p)^).R := C.Rgba8.R;
-        TAggOrderRGB(Pointer(p)^).g := C.Rgba8.g;
-        TAggOrderRGB(Pointer(p)^).b := C.Rgba8.b;
+        TAggOrderRGB(Pointer(p)^).r := c.Rgba8.r;
+        TAggOrderRGB(Pointer(p)^).g := c.Rgba8.g;
+        TAggOrderRGB(Pointer(p)^).b := c.Rgba8.b;
 
         p := PInt8u(This.RenderingBuffer.NextRow(p));
 
-        Dec(Len);
+        dec(Len);
       until Len = 0
     else
       repeat
-        BlendPixRgbPre(p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b, alpha, Cover);
+        BlendPixRgbPre(p, c.Rgba8.r, c.Rgba8.g, c.Rgba8.b, alpha, Cover);
 
         p := PInt8u(This.RenderingBuffer.NextRow(p));
 
-        Dec(Len);
+        dec(Len);
       until Len = 0;
   end;
 end;
 
-procedure Rgb24PreBlendSolidHorizontalSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; C: PAggColor; Covers: PInt8u);
+procedure Rgb24PreBlendSolidHorizontalSpan(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; c: PAggColor; Covers: PInt8u);
 var
   p: PInt8u;
   alpha: Cardinal;
 begin
-  if C.Rgba8.A <> 0 then
+  if c.Rgba8.a <> 0 then
   begin
-    p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X + X + X);
+    p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + x + x + x);
 
     repeat
-      alpha := (C.Rgba8.A * (Covers^ + 1)) shr 8;
+      alpha := (c.Rgba8.a * (Covers^ + 1)) shr 8;
 
       if alpha = CAggBaseMask then
       begin
-        TAggOrderRGB(Pointer(p)^).R := C.Rgba8.R;
-        TAggOrderRGB(Pointer(p)^).g := C.Rgba8.g;
-        TAggOrderRGB(Pointer(p)^).b := C.Rgba8.b;
+        TAggOrderRGB(Pointer(p)^).r := c.Rgba8.r;
+        TAggOrderRGB(Pointer(p)^).g := c.Rgba8.g;
+        TAggOrderRGB(Pointer(p)^).b := c.Rgba8.b;
       end
       else
-        BlendPixRgbPre(p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b, alpha, Covers^);
+        BlendPixRgbPre(p, c.Rgba8.r, c.Rgba8.g, c.Rgba8.b, alpha, Covers^);
 
-      Inc(PtrComp(p), 3);
-      Inc(PtrComp(Covers));
-      Dec(Len);
+      inc(PtrComp(p), 3);
+      inc(PtrComp(Covers));
+      dec(Len);
     until Len = 0;
   end;
 end;
 
-procedure Rgb24PreBlendSolidVSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; C: PAggColor; Covers: PInt8u);
+procedure Rgb24PreBlendSolidVSpan(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; c: PAggColor; Covers: PInt8u);
 var
   p: PInt8u;
   alpha: Cardinal;
 begin
-  if C.Rgba8.A <> 0 then
+  if c.Rgba8.a <> 0 then
   begin
-    p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X + X + X);
+    p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + x + x + x);
 
     repeat
-      alpha := (C.Rgba8.A * (Covers^ + 1)) shr 8;
+      alpha := (c.Rgba8.a * (Covers^ + 1)) shr 8;
 
       if alpha = CAggBaseMask then
       begin
-        TAggOrderRGB(Pointer(p)^).R := C.Rgba8.R;
-        TAggOrderRGB(Pointer(p)^).g := C.Rgba8.g;
-        TAggOrderRGB(Pointer(p)^).b := C.Rgba8.b;
+        TAggOrderRGB(Pointer(p)^).r := c.Rgba8.r;
+        TAggOrderRGB(Pointer(p)^).g := c.Rgba8.g;
+        TAggOrderRGB(Pointer(p)^).b := c.Rgba8.b;
       end
       else
-        BlendPixRgbPre(p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b, alpha, Covers^);
+        BlendPixRgbPre(p, c.Rgba8.r, c.Rgba8.g, c.Rgba8.b, alpha, Covers^);
 
       p := PInt8u(This.RenderingBuffer.NextRow(p));
 
-      Inc(PtrComp(Covers));
-      Dec(Len);
+      inc(PtrComp(Covers));
+      dec(Len);
     until Len = 0;
   end;
 end;
 
-procedure Rgb24PreBlendColorHorizontalSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u);
+procedure Rgb24PreBlendColorHorizontalSpan(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; Colors: PAggColor; Covers: PInt8u; Cover: Int8u);
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X + X + X);
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + x + x + x);
 
   if Covers <> nil then
     repeat
-      CopyOrBlendPixRgbPre(p, COLORS, Covers^);
+      CopyOrBlendPixRgbPre(p, Colors, Covers^);
 
-      Inc(PtrComp(COLORS), SizeOf(TAggColor));
-      Inc(PtrComp(Covers), SizeOf(Int8u));
-      Inc(PtrComp(p), 3);
-      Dec(Len);
+      inc(PtrComp(Colors), SizeOf(TAggColor));
+      inc(PtrComp(Covers), SizeOf(Int8u));
+      inc(PtrComp(p), 3);
+      dec(Len);
     until Len = 0
   else if Cover = 255 then
     repeat
-      CopyOrBlendPixRgbPre(p, COLORS);
+      CopyOrBlendPixRgbPre(p, Colors);
 
-      Inc(PtrComp(COLORS), SizeOf(TAggColor));
-      Inc(PtrComp(p), 3);
-      Dec(Len);
+      inc(PtrComp(Colors), SizeOf(TAggColor));
+      inc(PtrComp(p), 3);
+      dec(Len);
     until Len = 0
   else
     repeat
-      CopyOrBlendPixRgbPre(p, COLORS, Cover);
+      CopyOrBlendPixRgbPre(p, Colors, Cover);
 
-      Inc(PtrComp(COLORS), SizeOf(TAggColor));
-      Inc(PtrComp(p), 3);
-      Dec(Len);
+      inc(PtrComp(Colors), SizeOf(TAggColor));
+      inc(PtrComp(p), 3);
+      dec(Len);
     until Len = 0;
 end;
 
-procedure Rgb24PreBlendColorVSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u);
+procedure Rgb24PreBlendColorVSpan(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; Colors: PAggColor; Covers: PInt8u; Cover: Int8u);
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + X + X + X);
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + x + x + x);
 
   if Covers <> nil then
     repeat
-      CopyOrBlendPixRgbPre(p, COLORS, Covers^);
+      CopyOrBlendPixRgbPre(p, Colors, Covers^);
 
-      Inc(PtrComp(COLORS), SizeOf(TAggColor));
-      Inc(PtrComp(Covers), SizeOf(Int8u));
+      inc(PtrComp(Colors), SizeOf(TAggColor));
+      inc(PtrComp(Covers), SizeOf(Int8u));
 
       p := PInt8u(This.RenderingBuffer.NextRow(p));
 
-      Dec(Len);
+      dec(Len);
     until Len = 0
   else if Cover = 255 then
     repeat
-      CopyOrBlendPixRgbPre(p, COLORS);
+      CopyOrBlendPixRgbPre(p, Colors);
 
-      Inc(PtrComp(COLORS), SizeOf(TAggColor));
+      inc(PtrComp(Colors), SizeOf(TAggColor));
 
       p := PInt8u(This.RenderingBuffer.NextRow(p));
 
-      Dec(Len);
+      dec(Len);
     until Len = 0
   else
     repeat
-      CopyOrBlendPixRgbPre(p, COLORS, Cover);
+      CopyOrBlendPixRgbPre(p, Colors, Cover);
 
-      Inc(PtrComp(COLORS), SizeOf(TAggColor));
+      inc(PtrComp(Colors), SizeOf(TAggColor));
 
       p := PInt8u(This.RenderingBuffer.NextRow(p));
 
-      Dec(Len);
+      dec(Len);
     until Len = 0;
 end;
 
@@ -279,39 +279,39 @@ begin
 
   if Cover = 255 then
     repeat
-      alpha := PInt8u(PtrComp(SourcePtr) + From.Order.A)^;
+      alpha := PInt8u(PtrComp(SourcePtr) + From.Order.a)^;
 
       if alpha <> 0 then
         if alpha = CAggBaseMask then
         begin
-          TAggOrderRGB(Pointer(PDst)^).R :=
-            PInt8u(PtrComp(SourcePtr) + From.Order.R)^;
+          TAggOrderRGB(Pointer(PDst)^).r :=
+            PInt8u(PtrComp(SourcePtr) + From.Order.r)^;
           TAggOrderRGB(Pointer(PDst)^).g :=
             PInt8u(PtrComp(SourcePtr) + From.Order.g)^;
           TAggOrderRGB(Pointer(PDst)^).b :=
             PInt8u(PtrComp(SourcePtr) + From.Order.b)^;
         end
         else
-          BlendPixRgbPre(PDst, PInt8u(PtrComp(SourcePtr) + From.Order.R)^,
+          BlendPixRgbPre(PDst, PInt8u(PtrComp(SourcePtr) + From.Order.r)^,
             PInt8u(PtrComp(SourcePtr) + From.Order.g)^,
             PInt8u(PtrComp(SourcePtr) + From.Order.b)^, alpha);
 
-      Inc(PtrComp(SourcePtr), 4);
-      Inc(PtrComp(PDst), 3);
-      Dec(Len);
+      inc(PtrComp(SourcePtr), 4);
+      inc(PtrComp(PDst), 3);
+      dec(Len);
     until Len = 0
   else
     repeat
-      COLOR.FromRgbaInteger(PInt8u(PtrComp(SourcePtr) + From.Order.R)^,
+      COLOR.FromRgbaInteger(PInt8u(PtrComp(SourcePtr) + From.Order.r)^,
         PInt8u(PtrComp(SourcePtr) + From.Order.g)^,
         PInt8u(PtrComp(SourcePtr) + From.Order.b)^,
-        PInt8u(PtrComp(SourcePtr) + From.Order.A)^);
+        PInt8u(PtrComp(SourcePtr) + From.Order.a)^);
 
       CopyOrBlendPixRgbPre(PDst, @COLOR, Cover);
 
-      Inc(PtrComp(SourcePtr), 4);
-      Inc(PtrComp(PDst), 3);
-      Dec(Len);
+      inc(PtrComp(SourcePtr), 4);
+      inc(PtrComp(PDst), 3);
+      dec(Len);
     until Len = 0;
 end;
 
@@ -334,9 +334,9 @@ begin
       CopyOrBlendPixRgbPre(PDst, COLOR,
         ShrInt32(PSrc^ * Cover + CAggBaseMask, CAggBaseShift));
 
-      Inc(PtrComp(PSrc), Ppsz);
-      Inc(PtrComp(PDst), 3);
-      Dec(Len);
+      inc(PtrComp(PSrc), Ppsz);
+      inc(PtrComp(PDst), 3);
+      dec(Len);
     until Len = 0;
   end;
 end;
@@ -361,22 +361,24 @@ begin
       repeat
         COLOR := PAggColor(PtrComp(ColorLUT) + PSrc^ * SizeOf(TAggColor));
 
-        BlendPixRgbPre(PDst, COLOR.Rgba8.R, COLOR.Rgba8.g, COLOR.Rgba8.b,
-          COLOR.Rgba8.A);
+        BlendPixRgbPre(PDst, COLOR.Rgba8.r, COLOR.Rgba8.g, COLOR.Rgba8.b,
+          COLOR.Rgba8.a);
 
-        Inc(PtrComp(PSrc), Ppsz);
-        Inc(PtrComp(PDst), 3);
-        Dec(Len);
+        inc(PtrComp(PSrc), Ppsz);
+        inc(PtrComp(PDst), 3);
+        dec(Len);
       until Len = 0
     else
       repeat
         CopyOrBlendPixRgbPre(PDst,
           PAggColor(PtrComp(ColorLUT) + PSrc^ * SizeOf(TAggColor)), Cover);
 
-        Inc(PtrComp(PSrc), Ppsz);
-        Inc(PtrComp(PDst), 3);
-        Dec(Len);
+        inc(PtrComp(PSrc), Ppsz);
+        inc(PtrComp(PDst), 3);
+        dec(Len);
       until Len = 0;
   end;
 end; 
+ 
+ 
  

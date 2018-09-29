@@ -13,15 +13,15 @@
 
 function CBasicSolveAndUpdate(alpha: TLComplex; beta: TLComplex; LnMax: TLFloat;
   BNORM: TLFloat; MaxGrowth: TLFloat; var XNORM: TLFloat;
-  var X: TLComplex): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var x: TLComplex): Boolean; forward;
 
 
 (* ************************************************************************
   Real implementation
   of CMatrixScaledTRSafeSolve
   ************************************************************************ *)
-function RMatrixScaledTRSafeSolve(const A: TLMatrix; SA: TLFloat;
-  n: TLInt; var X: TLVec; IsUpper: Boolean; Trans: TLInt;
+function RMatrixScaledTRSafeSolve(const a: TLMatrix; SA: TLFloat;
+  n: TLInt; var x: TLVec; IsUpper: Boolean; Trans: TLInt;
   IsUnit: Boolean; MaxGrowth: TLFloat): Boolean;
 var
   LnMax: TLFloat;
@@ -54,8 +54,8 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      NrmB := Max(NrmB, AbsReal(X[i]));
-      Inc(i);
+      NrmB := Max(NrmB, AbsReal(x[i]));
+      inc(i);
     end;
   NrmX := 0;
 
@@ -83,17 +83,17 @@ begin
             end
           else
             begin
-              alpha := C_Complex(A[i, i] * SA);
+              alpha := C_Complex(a[i, i] * SA);
             end;
           if i < n - 1 then
             begin
-              APVMove(@tmp[0], i + 1, n - 1, @A[i][0], i + 1, n - 1, SA);
-              vr := APVDotProduct(@tmp[0], i + 1, n - 1, @X[0], i + 1, n - 1);
-              beta := C_Complex(X[i] - vr);
+              APVMove(@tmp[0], i + 1, n - 1, @a[i][0], i + 1, n - 1, SA);
+              vr := APVDotProduct(@tmp[0], i + 1, n - 1, @x[0], i + 1, n - 1);
+              beta := C_Complex(x[i] - vr);
             end
           else
             begin
-              beta := C_Complex(X[i]);
+              beta := C_Complex(x[i]);
             end;
 
           //
@@ -105,8 +105,8 @@ begin
             begin
               Exit;
             end;
-          X[i] := Cx.X;
-          Dec(i);
+          x[i] := Cx.x;
+          dec(i);
         end;
       Exit;
     end;
@@ -129,17 +129,17 @@ begin
             end
           else
             begin
-              alpha := C_Complex(A[i, i] * SA);
+              alpha := C_Complex(a[i, i] * SA);
             end;
           if i > 0 then
             begin
-              APVMove(@tmp[0], 0, i - 1, @A[i][0], 0, i - 1, SA);
-              vr := APVDotProduct(@tmp[0], 0, i - 1, @X[0], 0, i - 1);
-              beta := C_Complex(X[i] - vr);
+              APVMove(@tmp[0], 0, i - 1, @a[i][0], 0, i - 1, SA);
+              vr := APVDotProduct(@tmp[0], 0, i - 1, @x[0], 0, i - 1);
+              beta := C_Complex(x[i] - vr);
             end
           else
             begin
-              beta := C_Complex(X[i]);
+              beta := C_Complex(x[i]);
             end;
 
           //
@@ -151,8 +151,8 @@ begin
             begin
               Exit;
             end;
-          X[i] := Cx.X;
-          Inc(i);
+          x[i] := Cx.x;
+          inc(i);
         end;
       Exit;
     end;
@@ -175,9 +175,9 @@ begin
             end
           else
             begin
-              alpha := C_Complex(A[i, i] * SA);
+              alpha := C_Complex(a[i, i] * SA);
             end;
-          beta := C_Complex(X[i]);
+          beta := C_Complex(x[i]);
 
           //
           // solve alpha*x[i] = beta
@@ -188,18 +188,18 @@ begin
             begin
               Exit;
             end;
-          X[i] := Cx.X;
+          x[i] := Cx.x;
 
           //
           // update the rest of right part
           //
           if i < n - 1 then
             begin
-              vr := Cx.X;
-              APVMove(@tmp[0], i + 1, n - 1, @A[i][0], i + 1, n - 1, SA);
-              APVSub(@X[0], i + 1, n - 1, @tmp[0], i + 1, n - 1, vr);
+              vr := Cx.x;
+              APVMove(@tmp[0], i + 1, n - 1, @a[i][0], i + 1, n - 1, SA);
+              APVSub(@x[0], i + 1, n - 1, @tmp[0], i + 1, n - 1, vr);
             end;
-          Inc(i);
+          inc(i);
         end;
       Exit;
     end;
@@ -222,9 +222,9 @@ begin
             end
           else
             begin
-              alpha := C_Complex(A[i, i] * SA);
+              alpha := C_Complex(a[i, i] * SA);
             end;
-          beta := C_Complex(X[i]);
+          beta := C_Complex(x[i]);
 
           //
           // solve alpha*x[i] = beta
@@ -235,18 +235,18 @@ begin
             begin
               Exit;
             end;
-          X[i] := Cx.X;
+          x[i] := Cx.x;
 
           //
           // update the rest of right part
           //
           if i > 0 then
             begin
-              vr := Cx.X;
-              APVMove(@tmp[0], 0, i - 1, @A[i][0], 0, i - 1, SA);
-              APVSub(@X[0], 0, i - 1, @tmp[0], 0, i - 1, vr);
+              vr := Cx.x;
+              APVMove(@tmp[0], 0, i - 1, @a[i][0], 0, i - 1, SA);
+              APVSub(@x[0], 0, i - 1, @tmp[0], 0, i - 1, vr);
             end;
-          Dec(i);
+          dec(i);
         end;
       Exit;
     end;
@@ -267,8 +267,8 @@ end;
   near-degenerate matrices are handled correctly (False is returned) as long
   as MaxGrowth is significantly less than MaxRealNumber/norm(b).
   ************************************************************************ *)
-function CMatrixScaledTRSafeSolve(const A: TLComplexMatrix; SA: TLFloat;
-  n: TLInt; var X: TLComplexVec; IsUpper: Boolean;
+function CMatrixScaledTRSafeSolve(const a: TLComplexMatrix; SA: TLFloat;
+  n: TLInt; var x: TLComplexVec; IsUpper: Boolean;
   Trans: TLInt; IsUnit: Boolean; MaxGrowth: TLFloat): Boolean;
 var
   LnMax: TLFloat;
@@ -302,8 +302,8 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      NrmB := Max(NrmB, AbsComplex(X[i]));
-      Inc(i);
+      NrmB := Max(NrmB, AbsComplex(x[i]));
+      inc(i);
     end;
   NrmX := 0;
 
@@ -331,24 +331,24 @@ begin
             end
           else
             begin
-              alpha := C_MulR(A[i, i], SA);
+              alpha := C_MulR(a[i, i], SA);
             end;
           if i < n - 1 then
             begin
               for i_ := i + 1 to n - 1 do
                 begin
-                  tmp[i_] := C_MulR(A[i, i_], SA);
+                  tmp[i_] := C_MulR(a[i, i_], SA);
                 end;
               VC := C_Complex(0.0);
               for i_ := i + 1 to n - 1 do
                 begin
-                  VC := C_Add(VC, C_Mul(tmp[i_], X[i_]));
+                  VC := C_Add(VC, C_Mul(tmp[i_], x[i_]));
                 end;
-              beta := C_Sub(X[i], VC);
+              beta := C_Sub(x[i], VC);
             end
           else
             begin
-              beta := X[i];
+              beta := x[i];
             end;
 
           //
@@ -360,8 +360,8 @@ begin
             begin
               Exit;
             end;
-          X[i] := VC;
-          Dec(i);
+          x[i] := VC;
+          dec(i);
         end;
       Exit;
     end;
@@ -384,24 +384,24 @@ begin
             end
           else
             begin
-              alpha := C_MulR(A[i, i], SA);
+              alpha := C_MulR(a[i, i], SA);
             end;
           if i > 0 then
             begin
               for i_ := 0 to i - 1 do
                 begin
-                  tmp[i_] := C_MulR(A[i, i_], SA);
+                  tmp[i_] := C_MulR(a[i, i_], SA);
                 end;
               VC := C_Complex(0.0);
               for i_ := 0 to i - 1 do
                 begin
-                  VC := C_Add(VC, C_Mul(tmp[i_], X[i_]));
+                  VC := C_Add(VC, C_Mul(tmp[i_], x[i_]));
                 end;
-              beta := C_Sub(X[i], VC);
+              beta := C_Sub(x[i], VC);
             end
           else
             begin
-              beta := X[i];
+              beta := x[i];
             end;
 
           //
@@ -413,8 +413,8 @@ begin
             begin
               Exit;
             end;
-          X[i] := VC;
-          Inc(i);
+          x[i] := VC;
+          inc(i);
         end;
       Exit;
     end;
@@ -437,9 +437,9 @@ begin
             end
           else
             begin
-              alpha := C_MulR(A[i, i], SA);
+              alpha := C_MulR(a[i, i], SA);
             end;
-          beta := X[i];
+          beta := x[i];
 
           //
           // solve alpha*x[i] = beta
@@ -450,7 +450,7 @@ begin
             begin
               Exit;
             end;
-          X[i] := VC;
+          x[i] := VC;
 
           //
           // update the rest of right part
@@ -459,14 +459,14 @@ begin
             begin
               for i_ := i + 1 to n - 1 do
                 begin
-                  tmp[i_] := C_MulR(A[i, i_], SA);
+                  tmp[i_] := C_MulR(a[i, i_], SA);
                 end;
               for i_ := i + 1 to n - 1 do
                 begin
-                  X[i_] := C_Sub(X[i_], C_Mul(VC, tmp[i_]));
+                  x[i_] := C_Sub(x[i_], C_Mul(VC, tmp[i_]));
                 end;
             end;
-          Inc(i);
+          inc(i);
         end;
       Exit;
     end;
@@ -489,9 +489,9 @@ begin
             end
           else
             begin
-              alpha := C_MulR(A[i, i], SA);
+              alpha := C_MulR(a[i, i], SA);
             end;
-          beta := X[i];
+          beta := x[i];
 
           //
           // solve alpha*x[i] = beta
@@ -502,7 +502,7 @@ begin
             begin
               Exit;
             end;
-          X[i] := VC;
+          x[i] := VC;
 
           //
           // update the rest of right part
@@ -511,14 +511,14 @@ begin
             begin
               for i_ := 0 to i - 1 do
                 begin
-                  tmp[i_] := C_MulR(A[i, i_], SA);
+                  tmp[i_] := C_MulR(a[i, i_], SA);
                 end;
               for i_ := 0 to i - 1 do
                 begin
-                  X[i_] := C_Sub(X[i_], C_Mul(VC, tmp[i_]));
+                  x[i_] := C_Sub(x[i_], C_Mul(VC, tmp[i_]));
                 end;
             end;
-          Dec(i);
+          dec(i);
         end;
       Exit;
     end;
@@ -541,9 +541,9 @@ begin
             end
           else
             begin
-              alpha := C_MulR(Conj(A[i, i]), SA);
+              alpha := C_MulR(Conj(a[i, i]), SA);
             end;
-          beta := X[i];
+          beta := x[i];
 
           //
           // solve alpha*x[i] = beta
@@ -554,7 +554,7 @@ begin
             begin
               Exit;
             end;
-          X[i] := VC;
+          x[i] := VC;
 
           //
           // update the rest of right part
@@ -563,14 +563,14 @@ begin
             begin
               for i_ := i + 1 to n - 1 do
                 begin
-                  tmp[i_] := C_MulR(Conj(A[i, i_]), SA);
+                  tmp[i_] := C_MulR(Conj(a[i, i_]), SA);
                 end;
               for i_ := i + 1 to n - 1 do
                 begin
-                  X[i_] := C_Sub(X[i_], C_Mul(VC, tmp[i_]));
+                  x[i_] := C_Sub(x[i_], C_Mul(VC, tmp[i_]));
                 end;
             end;
-          Inc(i);
+          inc(i);
         end;
       Exit;
     end;
@@ -593,9 +593,9 @@ begin
             end
           else
             begin
-              alpha := C_MulR(Conj(A[i, i]), SA);
+              alpha := C_MulR(Conj(a[i, i]), SA);
             end;
-          beta := X[i];
+          beta := x[i];
 
           //
           // solve alpha*x[i] = beta
@@ -606,7 +606,7 @@ begin
             begin
               Exit;
             end;
-          X[i] := VC;
+          x[i] := VC;
 
           //
           // update the rest of right part
@@ -615,14 +615,14 @@ begin
             begin
               for i_ := 0 to i - 1 do
                 begin
-                  tmp[i_] := C_MulR(Conj(A[i, i_]), SA);
+                  tmp[i_] := C_MulR(Conj(a[i, i_]), SA);
                 end;
               for i_ := 0 to i - 1 do
                 begin
-                  X[i_] := C_Sub(X[i_], C_Mul(VC, tmp[i_]));
+                  x[i_] := C_Sub(x[i_], C_Mul(VC, tmp[i_]));
                 end;
             end;
-          Dec(i);
+          dec(i);
         end;
       Exit;
     end;
@@ -649,7 +649,7 @@ end;
   ************************************************************************ *)
 function CBasicSolveAndUpdate(alpha: TLComplex; beta: TLComplex; LnMax: TLFloat;
   BNORM: TLFloat; MaxGrowth: TLFloat; var XNORM: TLFloat;
-  var X: TLComplex): Boolean;
+  var x: TLComplex): Boolean;
 var
   v: TLFloat;
 begin
@@ -669,7 +669,7 @@ begin
         begin
           Exit;
         end;
-      X := C_Div(beta, alpha);
+      x := C_Div(beta, alpha);
     end
   else
     begin
@@ -677,16 +677,18 @@ begin
       //
       // alpha*x[i]=0
       //
-      X := C_Complex(0);
+      x := C_Complex(0);
     end;
 
   //
   // update NrmX, test growth limit
   //
-  XNORM := Max(XNORM, AbsComplex(X));
+  XNORM := Max(XNORM, AbsComplex(x));
   if AP_FP_Greater(XNORM, MaxGrowth * BNORM) then
     begin
       Exit;
     end;
   Result := True;
 end; 
+ 
+ 

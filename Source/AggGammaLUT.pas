@@ -37,11 +37,8 @@
 *)
 unit AggGammaLUT;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   Math,
   AggBasics,
@@ -316,3 +313,4 @@ begin
 end;
 
 end. 
+ 

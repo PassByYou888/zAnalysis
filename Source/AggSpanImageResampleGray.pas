@@ -37,11 +37,8 @@
 *)
 unit AggSpanImageResampleGray;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -64,7 +61,7 @@ type
       BackColor: PAggColor; Interpolator: TAggSpanInterpolator;
       Filter: TAggImageFilterLUT); overload;
 
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
   TAggSpanImageResampleGray = class(TAggSpanImageResample)
@@ -74,7 +71,7 @@ type
       BackColor: PAggColor; Interpolator: TAggSpanInterpolator;
       Filter: TAggImageFilterLUT); overload;
 
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
 implementation
@@ -108,89 +105,89 @@ var
   ForeGroundPointer: PInt8u;
   WeightArray: PInt16;
 begin
-  Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
+  Interpolator.SetBegin(x + FilterDeltaXDouble, y + FilterDeltaYDouble, Len);
 
   BackV := GetBackgroundColor.v;
-  BackA := GetBackgroundColor.Rgba8.A;
+  BackA := GetBackgroundColor.Rgba8.a;
 
   Span := Allocator.Span;
 
   Diameter := Filter.Diameter;
   FilterSize := Diameter shl CAggImageSubpixelShift;
 
-  radius.X := ShrInt32(Diameter * FRadiusX, 1);
-  radius.Y := ShrInt32(Diameter * FRadiusY, 1);
+  radius.x := ShrInt32(Diameter * FRadiusX, 1);
+  radius.y := ShrInt32(Diameter * FRadiusY, 1);
 
-  Max.X := SourceImage.width - 1;
-  Max.Y := SourceImage.height - 1;
+  Max.x := SourceImage.width - 1;
+  Max.y := SourceImage.height - 1;
 
   WeightArray := Filter.WeightArray;
 
   repeat
-    Interpolator.Coordinates(@X, @Y);
+    Interpolator.Coordinates(@x, @y);
 
-    Inc(X, FilterDeltaXInteger - radius.X);
-    Inc(Y, FilterDeltaYInteger - radius.Y);
+    inc(x, FilterDeltaXInteger - radius.x);
+    inc(y, FilterDeltaYInteger - radius.y);
 
     Fg := CAggImageFilterSize div 2;
     SourceAlpha := Fg;
 
-    LowRes.Y := ShrInt32(Y, CAggImageSubpixelShift);
-    HighRes.Y := ShrInt32((CAggImageSubpixelMask - (Y and CAggImageSubpixelMask)) *
+    LowRes.y := ShrInt32(y, CAggImageSubpixelShift);
+    HighRes.y := ShrInt32((CAggImageSubpixelMask - (y and CAggImageSubpixelMask)) *
       FRadiusYInv, CAggImageSubpixelShift);
 
     TotalWeight := 0;
 
-    IniLowResX := ShrInt32(X, CAggImageSubpixelShift);
-    IniHighResX := ShrInt32((CAggImageSubpixelMask - (X and CAggImageSubpixelMask)) *
+    IniLowResX := ShrInt32(x, CAggImageSubpixelShift);
+    IniHighResX := ShrInt32((CAggImageSubpixelMask - (x and CAggImageSubpixelMask)) *
       FRadiusXInv, CAggImageSubpixelShift);
 
     repeat
-      WeightY := PInt16(PtrComp(WeightArray) + HighRes.Y * SizeOf(Int16))^;
+      WeightY := PInt16(PtrComp(WeightArray) + HighRes.y * SizeOf(Int16))^;
 
-      LowRes.X := IniLowResX;
-      HighRes.X := IniHighResX;
+      LowRes.x := IniLowResX;
+      HighRes.x := IniHighResX;
 
-      if (LowRes.Y >= 0) and (LowRes.Y <= Max.Y) then
+      if (LowRes.y >= 0) and (LowRes.y <= Max.y) then
         begin
-          ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LowRes.Y)) +
-            LowRes.X * SizeOf(Int8u));
+          ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LowRes.y)) +
+            LowRes.x * SizeOf(Int8u));
 
           repeat
-            Weight := ShrInt32(WeightY * PInt16(PtrComp(WeightArray) + HighRes.X
+            Weight := ShrInt32(WeightY * PInt16(PtrComp(WeightArray) + HighRes.x
               * SizeOf(Int16))^ + CAggImageFilterSize div 2, CAggDownscaleShift);
 
-            if (LowRes.X >= 0) and (LowRes.X <= Max.X) then
+            if (LowRes.x >= 0) and (LowRes.x <= Max.x) then
               begin
-                Inc(Fg, ForeGroundPointer^ * Weight);
-                Inc(SourceAlpha, CAggBaseMask * Weight);
+                inc(Fg, ForeGroundPointer^ * Weight);
+                inc(SourceAlpha, CAggBaseMask * Weight);
               end
             else
               begin
-                Inc(Fg, BackV * Weight);
-                Inc(SourceAlpha, BackA * Weight);
+                inc(Fg, BackV * Weight);
+                inc(SourceAlpha, BackA * Weight);
               end;
 
-            Inc(TotalWeight, Weight);
-            Inc(HighRes.X, FRadiusXInv);
-            Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-            Inc(LowRes.X);
-          until HighRes.X >= FilterSize;
+            inc(TotalWeight, Weight);
+            inc(HighRes.x, FRadiusXInv);
+            inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+            inc(LowRes.x);
+          until HighRes.x >= FilterSize;
         end
       else
         repeat
-          Weight := ShrInt32(WeightY * PInt16(PtrComp(WeightArray) + HighRes.X
+          Weight := ShrInt32(WeightY * PInt16(PtrComp(WeightArray) + HighRes.x
             * SizeOf(Int16))^ + CAggImageFilterSize div 2, CAggDownscaleShift);
 
-          Inc(TotalWeight, Weight);
-          Inc(Fg, BackV * Weight);
-          Inc(SourceAlpha, BackA * Weight);
-          Inc(HighRes.X, FRadiusXInv);
-        until HighRes.X >= FilterSize;
+          inc(TotalWeight, Weight);
+          inc(Fg, BackV * Weight);
+          inc(SourceAlpha, BackA * Weight);
+          inc(HighRes.x, FRadiusXInv);
+        until HighRes.x >= FilterSize;
 
-      Inc(HighRes.Y, FRadiusYInv);
-      Inc(LowRes.Y);
-    until HighRes.Y >= FilterSize;
+      inc(HighRes.y, FRadiusYInv);
+      inc(LowRes.y);
+    until HighRes.y >= FilterSize;
 
     Fg := Fg div TotalWeight;
     SourceAlpha := SourceAlpha div TotalWeight;
@@ -208,13 +205,13 @@ begin
         Fg := SourceAlpha;
 
     Span.v := Int8u(Fg);
-    Span.Rgba8.A := Int8u(SourceAlpha);
+    Span.Rgba8.a := Int8u(SourceAlpha);
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
+    inc(PtrComp(Span), SizeOf(TAggColor));
 
     Interpolator.IncOperator;
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 
   Result := Allocator.Span;
@@ -249,10 +246,10 @@ var
 begin
   Span := Allocator.Span;
 
-  Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
+  Interpolator.SetBegin(x + FilterDeltaXDouble, y + FilterDeltaYDouble, Len);
 
   BackV := GetBackgroundColor.v;
-  BackA := GetBackgroundColor.Rgba8.A;
+  BackA := GetBackgroundColor.Rgba8.a;
 
   Diameter := Filter.Diameter;
   FilterSize := Diameter shl CAggImageSubpixelShift;
@@ -260,104 +257,104 @@ begin
   WeightArray := Filter.WeightArray;
 
   repeat
-    RadiusInv.X := CAggImageSubpixelSize;
-    RadiusInv.Y := CAggImageSubpixelSize;
+    RadiusInv.x := CAggImageSubpixelSize;
+    RadiusInv.y := CAggImageSubpixelSize;
 
-    Interpolator.Coordinates(@X, @Y);
-    Interpolator.LocalScale(@radius.X, @radius.Y);
+    Interpolator.Coordinates(@x, @y);
+    Interpolator.LocalScale(@radius.x, @radius.y);
 
-    radius.X := ShrInt32(radius.X * FBlur.X, CAggImageSubpixelShift);
-    radius.Y := ShrInt32(radius.Y * FBlur.Y, CAggImageSubpixelShift);
+    radius.x := ShrInt32(radius.x * FBlur.x, CAggImageSubpixelShift);
+    radius.y := ShrInt32(radius.y * FBlur.y, CAggImageSubpixelShift);
 
-    if radius.X < CAggImageSubpixelSize then
-        radius.X := CAggImageSubpixelSize
+    if radius.x < CAggImageSubpixelSize then
+        radius.x := CAggImageSubpixelSize
     else
       begin
-        if radius.X > CAggImageSubpixelSize * FScaleLimit then
-            radius.X := CAggImageSubpixelSize * FScaleLimit;
+        if radius.x > CAggImageSubpixelSize * FScaleLimit then
+            radius.x := CAggImageSubpixelSize * FScaleLimit;
 
-        RadiusInv.X := CAggImageSubpixelSize * CAggImageSubpixelSize div radius.X;
+        RadiusInv.x := CAggImageSubpixelSize * CAggImageSubpixelSize div radius.x;
       end;
 
-    if radius.Y < CAggImageSubpixelSize then
-        radius.Y := CAggImageSubpixelSize
+    if radius.y < CAggImageSubpixelSize then
+        radius.y := CAggImageSubpixelSize
     else
       begin
-        if radius.Y > CAggImageSubpixelSize * FScaleLimit then
-            radius.Y := CAggImageSubpixelSize * FScaleLimit;
+        if radius.y > CAggImageSubpixelSize * FScaleLimit then
+            radius.y := CAggImageSubpixelSize * FScaleLimit;
 
-        RadiusInv.Y := CAggImageSubpixelSize * CAggImageSubpixelSize div radius.Y;
+        RadiusInv.y := CAggImageSubpixelSize * CAggImageSubpixelSize div radius.y;
       end;
 
-    radius.X := ShrInt32(Diameter * radius.X, 1);
-    radius.Y := ShrInt32(Diameter * radius.Y, 1);
+    radius.x := ShrInt32(Diameter * radius.x, 1);
+    radius.y := ShrInt32(Diameter * radius.y, 1);
 
-    Max.X := SourceImage.width - 1;
-    Max.Y := SourceImage.height - 1;
+    Max.x := SourceImage.width - 1;
+    Max.y := SourceImage.height - 1;
 
-    Inc(X, FilterDeltaXInteger - radius.X);
-    Inc(Y, FilterDeltaYInteger - radius.Y);
+    inc(x, FilterDeltaXInteger - radius.x);
+    inc(y, FilterDeltaYInteger - radius.y);
 
     Fg := CAggImageFilterSize div 2;
     SourceAlpha := Fg;
 
-    LowRes.Y := ShrInt32(Y, CAggImageSubpixelShift);
-    HighRes.Y := ShrInt32((CAggImageSubpixelMask - (Y and CAggImageSubpixelMask)) *
-      RadiusInv.Y, CAggImageSubpixelShift);
+    LowRes.y := ShrInt32(y, CAggImageSubpixelShift);
+    HighRes.y := ShrInt32((CAggImageSubpixelMask - (y and CAggImageSubpixelMask)) *
+      RadiusInv.y, CAggImageSubpixelShift);
 
     TotalWeight := 0;
 
-    IniLowResX := ShrInt32(X, CAggImageSubpixelShift);
-    IniHighResX := ShrInt32((CAggImageSubpixelMask - (X and CAggImageSubpixelMask)) *
-      RadiusInv.X, CAggImageSubpixelShift);
+    IniLowResX := ShrInt32(x, CAggImageSubpixelShift);
+    IniHighResX := ShrInt32((CAggImageSubpixelMask - (x and CAggImageSubpixelMask)) *
+      RadiusInv.x, CAggImageSubpixelShift);
 
     repeat
-      WeightY := PInt16(PtrComp(WeightArray) + HighRes.Y * SizeOf(Int16))^;
+      WeightY := PInt16(PtrComp(WeightArray) + HighRes.y * SizeOf(Int16))^;
 
-      LowRes.X := IniLowResX;
-      HighRes.X := IniHighResX;
+      LowRes.x := IniLowResX;
+      HighRes.x := IniHighResX;
 
-      if (LowRes.Y >= 0) and (LowRes.Y <= Max.Y) then
+      if (LowRes.y >= 0) and (LowRes.y <= Max.y) then
         begin
-          ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LowRes.Y)) +
-            LowRes.X * SizeOf(Int8u));
+          ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LowRes.y)) +
+            LowRes.x * SizeOf(Int8u));
 
           repeat
-            Weight := ShrInt32(WeightY * PInt16(PtrComp(WeightArray) + HighRes.X
+            Weight := ShrInt32(WeightY * PInt16(PtrComp(WeightArray) + HighRes.x
               * SizeOf(Int16))^ + CAggImageFilterSize div 2, CAggDownscaleShift);
 
-            if (LowRes.X >= 0) and (LowRes.X <= Max.X) then
+            if (LowRes.x >= 0) and (LowRes.x <= Max.x) then
               begin
-                Inc(Fg, ForeGroundPointer^ * Weight);
-                Inc(SourceAlpha, CAggBaseMask * Weight);
+                inc(Fg, ForeGroundPointer^ * Weight);
+                inc(SourceAlpha, CAggBaseMask * Weight);
               end
             else
               begin
-                Inc(Fg, BackV * Weight);
-                Inc(SourceAlpha, BackA * Weight);
+                inc(Fg, BackV * Weight);
+                inc(SourceAlpha, BackA * Weight);
               end;
 
-            Inc(TotalWeight, Weight);
-            Inc(HighRes.X, RadiusInv.X);
-            Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-            Inc(LowRes.X);
-          until HighRes.X >= FilterSize;
+            inc(TotalWeight, Weight);
+            inc(HighRes.x, RadiusInv.x);
+            inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+            inc(LowRes.x);
+          until HighRes.x >= FilterSize;
         end
       else
         repeat
-          Weight := ShrInt32(WeightY * PInt16(PtrComp(WeightArray) + HighRes.X
+          Weight := ShrInt32(WeightY * PInt16(PtrComp(WeightArray) + HighRes.x
             * SizeOf(Int16))^ + CAggImageFilterSize div 2, CAggDownscaleShift);
 
-          Inc(TotalWeight, Weight);
-          Inc(Fg, BackV * Weight);
-          Inc(SourceAlpha, BackA * Weight);
-          Inc(HighRes.X, RadiusInv.X);
-        until HighRes.X >= FilterSize;
+          inc(TotalWeight, Weight);
+          inc(Fg, BackV * Weight);
+          inc(SourceAlpha, BackA * Weight);
+          inc(HighRes.x, RadiusInv.x);
+        until HighRes.x >= FilterSize;
 
-      Inc(HighRes.Y, RadiusInv.Y);
-      Inc(LowRes.Y);
+      inc(HighRes.y, RadiusInv.y);
+      inc(LowRes.y);
 
-    until HighRes.Y >= FilterSize;
+    until HighRes.y >= FilterSize;
 
     Fg := Fg div TotalWeight;
     SourceAlpha := SourceAlpha div TotalWeight;
@@ -375,16 +372,18 @@ begin
         Fg := SourceAlpha;
 
     Span.v := Int8u(Fg);
-    Span.Rgba8.A := Int8u(SourceAlpha);
+    Span.Rgba8.a := Int8u(SourceAlpha);
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
+    inc(PtrComp(Span), SizeOf(TAggColor));
 
     Interpolator.IncOperator;
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 
   Result := Allocator.Span;
 end;
 
 end. 
+ 
+ 

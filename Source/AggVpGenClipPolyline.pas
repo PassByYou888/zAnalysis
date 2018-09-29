@@ -37,11 +37,8 @@
 *)
 unit AggVpGenClipPolyline;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVpGen,
@@ -64,13 +61,13 @@ type
 
     FNumVertices, FVertex: Cardinal;
   protected
-    function MovePoint(X, Y: PDouble; var Flags: TAggClippingFlags): Boolean;
+    function MovePoint(x, y: PDouble; var Flags: TAggClippingFlags): Boolean;
 
     // Determine the clipping code of the vertex according to the
     // Cyrus-Beck line clipping algorithm
-    function ClippingFlagsX(X: Double): TAggClippingFlags;
-    function ClippingFlagsY(Y: Double): TAggClippingFlags;
-    function ClippingFlags(X, Y: Double): TAggClippingFlags;
+    function ClippingFlagsX(x: Double): TAggClippingFlags;
+    function ClippingFlagsY(y: Double): TAggClippingFlags;
+    function ClippingFlags(x, y: Double): TAggClippingFlags;
 
     procedure ClipLineSegment;
 
@@ -85,10 +82,10 @@ type
     constructor Create; override;
 
     procedure Reset; override;
-    procedure MoveTo(X, Y: Double); override;
-    procedure LineTo(X, Y: Double); override;
+    procedure MoveTo(x, y: Double); override;
+    procedure LineTo(x, y: Double); override;
 
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     procedure SetClipBox(x1, y1, x2, y2: Double); overload;
     procedure SetClipBox(Bounds: TRectDouble); overload;
@@ -172,39 +169,39 @@ begin
   FVertex := 0;
   FNumVertices := 0;
 
-  FF1 := ClippingFlags(X, Y);
+  FF1 := ClippingFlags(x, y);
 
   if FF1 = [] then
     begin
-      fx[0] := X;
-      fy[0] := Y;
+      fx[0] := x;
+      fy[0] := y;
 
       FCmd[0] := CAggPathCmdMoveTo;
 
       FNumVertices := 1;
     end;
 
-  FPoint[0] := PointDouble(X, Y);
+  FPoint[0] := PointDouble(x, y);
 end;
 
 procedure TAggVpgenClipPolyline.LineTo;
 var
-  F: TAggClippingFlags;
+  f: TAggClippingFlags;
 begin
   FVertex := 0;
   FNumVertices := 0;
 
-  FPoint[1].X := X;
-  FPoint[1].Y := Y;
+  FPoint[1].x := x;
+  FPoint[1].y := y;
 
-  F := ClippingFlags(FPoint[1].X, FPoint[1].Y);
-  FF2 := F;
+  f := ClippingFlags(FPoint[1].x, FPoint[1].y);
+  FF2 := f;
 
   if FF2 = FF1 then
     if FF2 = [] then
       begin
-        fx[0] := X;
-        fy[0] := Y;
+        fx[0] := x;
+        fy[0] := y;
 
         FCmd[0] := CAggPathCmdLineTo;
 
@@ -214,62 +211,62 @@ begin
   else
       ClipLineSegment;
 
-  FF1 := F;
-  FPoint[0].X := X;
-  FPoint[0].Y := Y;
+  FF1 := f;
+  FPoint[0].x := x;
+  FPoint[0].y := y;
 end;
 
-function TAggVpgenClipPolyline.Vertex(X, Y: PDouble): Cardinal;
+function TAggVpgenClipPolyline.Vertex(x, y: PDouble): Cardinal;
 begin
   if FVertex < FNumVertices then
     begin
-      X^ := fx[FVertex];
-      Y^ := fy[FVertex];
+      x^ := fx[FVertex];
+      y^ := fy[FVertex];
 
       Result := FCmd[FVertex];
 
-      Inc(FVertex);
+      inc(FVertex);
     end
   else
       Result := CAggPathCmdStop;
 end;
 
-function TAggVpgenClipPolyline.ClippingFlagsX(X: Double): TAggClippingFlags;
+function TAggVpgenClipPolyline.ClippingFlagsX(x: Double): TAggClippingFlags;
 var
-  F: TAggClippingFlags;
+  f: TAggClippingFlags;
 begin
-  F := [];
+  f := [];
 
-  if X < FClipBox.x1 then
-      F := F + [cfX1];
+  if x < FClipBox.x1 then
+      f := f + [cfX1];
 
-  if X > FClipBox.x2 then
-      F := F + [cfX2];
+  if x > FClipBox.x2 then
+      f := f + [cfX2];
 
-  Result := F;
+  Result := f;
 end;
 
-function TAggVpgenClipPolyline.ClippingFlagsY(Y: Double): TAggClippingFlags;
+function TAggVpgenClipPolyline.ClippingFlagsY(y: Double): TAggClippingFlags;
 var
-  F: TAggClippingFlags;
+  f: TAggClippingFlags;
 begin
-  F := [];
+  f := [];
 
-  if Y < FClipBox.y1 then
-      F := F + [cfY1];
+  if y < FClipBox.y1 then
+      f := f + [cfY1];
 
-  if Y > FClipBox.y2 then
-      F := F + [cfY2];
+  if y > FClipBox.y2 then
+      f := f + [cfY2];
 
-  Result := F;
+  Result := f;
 end;
 
 function TAggVpgenClipPolyline.ClippingFlags;
 begin
-  Result := ClippingFlagsX(X) + ClippingFlagsY(Y);
+  Result := ClippingFlagsX(x) + ClippingFlagsY(y);
 end;
 
-function TAggVpgenClipPolyline.MovePoint(X, Y: PDouble; var Flags: TAggClippingFlags): Boolean;
+function TAggVpgenClipPolyline.MovePoint(x, y: PDouble; var Flags: TAggClippingFlags): Boolean;
 var
   Bound: Double;
 begin
@@ -280,15 +277,15 @@ begin
       else
           Bound := FClipBox.x2;
 
-      Y^ := (Bound - FPoint[0].X) * (FPoint[1].Y - FPoint[0].Y) /
-        (FPoint[1].X - FPoint[0].X) + FPoint[0].Y;
-      X^ := Bound;
+      y^ := (Bound - FPoint[0].x) * (FPoint[1].y - FPoint[0].y) /
+        (FPoint[1].x - FPoint[0].x) + FPoint[0].y;
+      x^ := Bound;
 
-      Flags := ClippingFlagsY(Y^);
+      Flags := ClippingFlagsY(y^);
     end;
 
-  if (Abs(FPoint[1].Y - FPoint[0].Y) < CClipEpsilon) and
-    (Abs(FPoint[1].X - FPoint[0].X) < CClipEpsilon) then
+  if (Abs(FPoint[1].y - FPoint[0].y) < CClipEpsilon) and
+    (Abs(FPoint[1].x - FPoint[0].x) < CClipEpsilon) then
     begin
       Result := False;
 
@@ -302,9 +299,9 @@ begin
       else
           Bound := FClipBox.y2;
 
-      X^ := (Bound - FPoint[0].Y) * (FPoint[1].X - FPoint[0].X) /
-        (FPoint[1].Y - FPoint[0].Y) + FPoint[0].X;
-      Y^ := Bound;
+      x^ := (Bound - FPoint[0].y) * (FPoint[1].x - FPoint[0].x) /
+        (FPoint[1].y - FPoint[0].y) + FPoint[0].x;
+      y^ := Bound;
     end;
 
   Flags := [];
@@ -317,14 +314,14 @@ begin
     begin
       if FF1 <> [] then
         begin
-          if not MovePoint(@FPoint[0].X, @FPoint[0].Y, FF1) then
+          if not MovePoint(@FPoint[0].x, @FPoint[0].y, FF1) then
               Exit;
 
           if FF1 <> [] then
               Exit;
 
-          fx[0] := FPoint[0].X;
-          fy[0] := FPoint[0].Y;
+          fx[0] := FPoint[0].x;
+          fy[0] := FPoint[0].y;
 
           FCmd[0] := CAggPathCmdMoveTo;
 
@@ -332,16 +329,18 @@ begin
         end;
 
       if FF2 <> [] then // Move Point 2
-        if not MovePoint(@FPoint[1].X, @FPoint[1].Y, FF2) then
+        if not MovePoint(@FPoint[1].x, @FPoint[1].y, FF2) then
             Exit;
 
-      fx[FNumVertices] := FPoint[1].X;
-      fy[FNumVertices] := FPoint[1].Y;
+      fx[FNumVertices] := FPoint[1].x;
+      fy[FNumVertices] := FPoint[1].y;
 
       FCmd[FNumVertices] := CAggPathCmdLineTo;
 
-      Inc(FNumVertices);
+      inc(FNumVertices);
     end;
 end;
 
 end. 
+ 
+ 

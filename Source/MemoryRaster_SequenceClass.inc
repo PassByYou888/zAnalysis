@@ -132,13 +132,13 @@ end;
 procedure TSequenceMemoryRaster.ReverseSequence(output: TSequenceMemoryRaster);
 var
   i: Integer;
-  R: TRect;
+  r: TRect;
 begin
   output.SetSize(width, height);
   for i := 0 to Total - 1 do
     begin
-      R := SequenceFrameRect(i);
-      BlockTransfer(output, R.Left, R.Top, output.BoundsRect, Self, SequenceFrameRect(Total - 1 - i), dmOpaque);
+      r := SequenceFrameRect(i);
+      BlockTransfer(output, r.Left, r.Top, output.BoundsRect, Self, SequenceFrameRect(Total - 1 - i), dmOpaque);
     end;
   output.FTotal := FTotal;
   output.FColumn := FColumn;
@@ -146,29 +146,29 @@ end;
 
 procedure TSequenceMemoryRaster.GradientSequence(output: TSequenceMemoryRaster);
 var
-  i, J: Integer;
+  i, j: Integer;
   SR, dr: TRect;
 begin
   output.SetSize(FrameWidth * (Total * 2), FrameHeight);
   output.Column := Total * 2;
   output.Total := output.Column;
 
-  J := 0;
+  j := 0;
 
   for i := 0 to Total - 1 do
     begin
-      dr := output.SequenceFrameRect(J);
+      dr := output.SequenceFrameRect(j);
       SR := SequenceFrameRect(i);
       BlockTransfer(output, dr.Left, dr.Top, output.BoundsRect, Self, SR, dmOpaque);
-      Inc(J);
+      inc(j);
     end;
 
   for i := Total - 1 downto 0 do
     begin
-      dr := output.SequenceFrameRect(J);
+      dr := output.SequenceFrameRect(j);
       SR := SequenceFrameRect(i);
       BlockTransfer(output, dr.Left, dr.Top, output.BoundsRect, Self, SR, dmOpaque);
-      Inc(J);
+      inc(j);
     end;
 end;
 
@@ -193,4 +193,6 @@ function TSequenceMemoryRaster.FrameRect: TRect;
 begin
   Result := Rect(0, 0, FrameWidth, FrameHeight);
 end; 
+ 
+ 
  

@@ -35,29 +35,29 @@ const
 
   { Maximal number of components in the implementation }
   MAX_COMPONENTS = 6;
-  MAX_SCANS      = MAX_COMPONENTS;
+  MAX_SCANS = MAX_COMPONENTS;
 
   { For 1st component of plane interl. mode }
   First = 1;
 
   { Different colour modes }
   PLANE_INT = 0;
-  LINE_INT  = 1;
+  LINE_INT = 1;
   PIXEL_INT = 2;
 
   DEFAULT_COLOR_MODE = LINE_INT;
 
   { margins for scan lines }
-  LEFTMARGIN  = 2;
+  LEFTMARGIN = 2;
   RIGHTMARGIN = 1;
 
   { alphabet size }
-  MAXA8    = 256;
-  MAXA16   = 65536;
-  LUTMAX8  = 256;
+  MAXA8 = 256;
+  MAXA16 = 65536;
+  LUTMAX8 = 256;
   LUTMAX16 = 4501;
 
-  DEF_NEAR  = 0;
+  DEF_NEAR = 0;
   DEF_ALPHA = 255;
 
   { Quantization threshold basic defaults
@@ -71,8 +71,8 @@ const
 
   CREGIONS = 9; { quantization regions for d-b, b-c, c-a }
 
-  MAXRUN   = 64;
-  EOLINE   = 1;
+  MAXRUN = 64;
+  EOLINE = 1;
   NOEOLINE = 0;
 
   { number of different contexts }
@@ -104,30 +104,30 @@ const
   MAXCODELEN = 24;
 
   { The stat initialization values }
-  INITNSTAT      = 1; { init value for N[] }
+  INITNSTAT = 1;      { init value for N[] }
   MIN_INITABSTAT = 2; { min init value for A[] }
-  INITABSLACK    = 6; { init value for A is roughly
+  INITABSLACK = 6; { init value for A is roughly
     2^(bpp-INITABSLACK) but not less than above }
   INITBIASTAT = 0; { init value for B[] }
 
   { reset values }
   DEFAULT_RESET = 64;
-  MINRESET      = 3;
+  MINRESET = 3;
 
   BUF_EOF = -1;
 
   { define color mode strings }
   plane_int_string = 'plane by plane';
-  line_int_string  = 'line intlv';
+  line_int_string = 'line intlv';
   pixel_int_string = 'sample intlv';
 
   NEGBUFFSIZE = 4;
 
 type
-  Pixel  = Word;
+  Pixel = Word;
   ppixel = ^Pixel;
-  Int    = Integer;
-  pint   = ^Int;
+  Int = Integer;
+  pint = ^Int;
 
   TByteArray = array [0 .. MaxInt div SizeOf(Byte) - 1] of Byte;
   PByteArray = ^TByteArray;
@@ -135,29 +135,29 @@ type
   TWordArray = array [0 .. MaxInt div SizeOf(Word) - 1] of Word;
   pwordarray = ^TWordArray;
 
-  IntArrayAccess  = packed array [0 .. MaxInt div SizeOf(Int) - 1] of Int;
-  ByteArrayAccess = packed array [0 .. MaxInt - 1] of Byte;
-  PixelArray      = packed array [-NEGBUFFSIZE .. MaxInt div SizeOf(Word) - (NEGBUFFSIZE + 1)] of Pixel;
+  IntArrayAccess = array [0 .. MaxInt div SizeOf(Int) - 1] of Int;
+  ByteArrayAccess = array [0 .. MaxInt - 1] of Byte;
+  PixelArray = array [-NEGBUFFSIZE .. MaxInt div SizeOf(Word) - (NEGBUFFSIZE + 1)] of Pixel;
 
-  PIntArrayAccess  = ^IntArrayAccess;
+  PIntArrayAccess = ^IntArrayAccess;
   PByteArrayAccess = ^ByteArrayAccess;
-  ppixelarray      = ^PixelArray;
-  size_t           = Cardinal;
-  UINT             = Cardinal;
-  short            = SmallInt;
-  LONG             = longint;
-  ULONG            = nativeUInt;
-  TBytes           = packed array of Byte;
+  ppixelarray = ^PixelArray;
+  size_t = Cardinal;
+  uint = Cardinal;
+  short = SmallInt;
+  long = longint;
+  ulong = nativeUInt;
+  TBytes = array of Byte;
 
-  TABLE_ARRAY = packed array [0 .. MAX_COMPONENTS - 1] of pwordarray;
-  PTABLE      = ^TABLE_ARRAY;
+  TABLE_ARRAY = array [0 .. MAX_COMPONENTS - 1] of pwordarray;
+  PTABLE = ^TABLE_ARRAY;
 
   /// <summary>
   /// Defines the JPEG-LS preset coding parameters as defined in ISO/IEC 14495-1, C.2.4.1.1.
   /// JPEG-LS defines a default set of parameters, but custom parameters can be used.
   /// When used these parameters are written into the encoded bit stream as they are needed for the decoding process.
   /// </summary>
-  TJlsCustomParameters = packed record
+  TJlsCustomParameters = record
     /// <summary>
     /// Maximum possible value for any image sample in a scan.
     /// This must be greater than or equal to the actual maximum value for the components in a scan.
@@ -183,7 +183,7 @@ type
 
   PJlsParameters = ^TJlsParameters;
 
-  TJlsParameters = packed record
+  TJlsParameters = record
     /// <summary>
     /// Width of the image in pixels.
     /// </summary>
@@ -211,7 +211,7 @@ type
 
   pjpeg_ls_header = ^tjpeg_ls_header;
 
-  tjpeg_ls_header = packed record
+  tjpeg_ls_header = record
     columns: Integer;                                             { The number of columns }
     Rows: Integer;                                                { Number of rows }
     alp: Integer;                                                 { alphabet size (Max+1) , 2 bytes }
@@ -225,86 +225,85 @@ type
     Shift: Integer;                                               { for sparse images, 1 byte }
     t1, t2, t3: Integer;                                          { Thresholds, 2 bytes each }
     res: Integer;                                                 { reset value for counters, 2 bytes }
-    samplingx: packed array [0 .. MAX_COMPONENTS - 1] of Integer; { col. sampling rates 1 byte each }
-    samplingy: packed array [0 .. MAX_COMPONENTS - 1] of Integer; { row sampling rates }
-    comp_ids: packed array [0 .. MAX_COMPONENTS - 1] of Integer;  { component id's }
+    samplingx: array [0 .. MAX_COMPONENTS - 1] of Integer; { col. sampling rates 1 byte each }
+    samplingy: array [0 .. MAX_COMPONENTS - 1] of Integer; { row sampling rates }
+    comp_ids: array [0 .. MAX_COMPONENTS - 1] of Integer;  { component id's }
     acc_size: Integer;                                            { 1 byte }
-    AddS: packed array [0 .. MAX_COMPONENTS - 1] of Integer;      { size given by acc_size }
-    TID: UINT;                                                    { Table ID, 1 byte }
-    MAXTAB: UINT;                                                 { Maximum table index value }
-    WT: UINT;                                                     { Width of each table entry, 1 byte }
+    AddS: array [0 .. MAX_COMPONENTS - 1] of Integer;      { size given by acc_size }
+    TID: uint;                                                    { Table ID, 1 byte }
+    MAXTAB: uint;                                                 { Maximum table index value }
+    WT: uint;                                                     { Width of each table entry, 1 byte }
     Table: PTABLE                                                 { The table(s) for each component }
     end;
 
-  type
-    TImageInfo = packed record
+    TImageInfo = record
       bpp16: Boolean; { Indicates if 16 bits per pixel mode or not }
-      width: Int;
-      height: Int;
-      Components: Integer;
-      limit_reduce: Integer; { reduction on above for EOR states }
-      qbpp: Integer;         { bits per sample for quantized prediction errors }
-      alpha: Integer;        { alphabet size }
-      Limit: Integer;        { limit for unary part of Golomb code }
-      Reset: Integer;
-      highmask: Integer;        { for powers of 2, a mask for high bits }
-      ceil_half_alpha: Integer; { ceil(alpha/2) }
-      _near: Integer;           { loss tolerance }
-      { LOSSY Mode }
-      negNEAR: Integer;
+    width: Int;
+    height: Int;
+    Components: Integer;
+    limit_reduce: Integer; { reduction on above for EOR states }
+    qbpp: Integer;         { bits per sample for quantized prediction errors }
+    alpha: Integer;        { alphabet size }
+    Limit: Integer;        { limit for unary part of Golomb code }
+    Reset: Integer;
+    highmask: Integer;        { for powers of 2, a mask for high bits }
+    ceil_half_alpha: Integer; { ceil(alpha/2) }
+    _near: Integer;           { loss tolerance }
+    { LOSSY Mode }
+    negNEAR: Integer;
 
-      qdiv0: PIntegerArray; { quantization table (division via look-up) }
-      qdiv: PInteger;       { quantization table (division via look-up) }
-      qmul0: PIntegerArray; { dequantization table }
-      qmul: PInteger;       { dequantization table }
+    qdiv0: PIntegerArray; { quantization table (division via look-up) }
+    qdiv: PInteger;       { quantization table (division via look-up) }
+    qmul0: PIntegerArray; { dequantization table }
+    qmul: PInteger;       { dequantization table }
 
-      quant: Int;           { quantization = 2*_near+1 }
-      beta: Int;            { size of extended alphabet }
-      qbeta: Int;           { size of quantized alphabet }
-      ceil_half_qbeta: Int; { ceil(qbeta/2) }
-      alpha1eps: Int;       { alpha-1+_near }
+    quant: Int;           { quantization = 2*_near+1 }
+    beta: Int;            { size of extended alphabet }
+    qbeta: Int;           { size of quantized alphabet }
+    ceil_half_qbeta: Int; { ceil(qbeta/2) }
+    alpha1eps: Int;       { alpha-1+_near }
 
-      n: packed array [0 .. TOT_CONTEXTS - 1] of Int;
-      A: packed array [0 .. TOT_CONTEXTS - 1] of Int;
-      b: packed array [0 .. TOT_CONTEXTS - 1] of Int;
-      C: packed array [0 .. TOT_CONTEXTS - 1] of Int;
+    n: array [0 .. TOT_CONTEXTS - 1] of Int;
+    a: array [0 .. TOT_CONTEXTS - 1] of Int;
+    b: array [0 .. TOT_CONTEXTS - 1] of Int;
+    c: array [0 .. TOT_CONTEXTS - 1] of Int;
 
-      vLUT: packed array [0 .. 3 - 1, 0 .. 2 * LUTMAX16 - 1] of Int;
-      classmap: packed array [0 .. CONTEXTS1 - 1] of Int;
+    vLUT: array [0 .. 3 - 1, 0 .. 2 * LUTMAX16 - 1] of Int;
+    classmap: array [0 .. CONTEXTS1 - 1] of Int;
 
-    end;
+  end;
 
-    PImageInfo = ^TImageInfo;
+  PImageInfo = ^TImageInfo;
 
-  procedure error(Msg: string);
-  function safealloc(Size: size_t): Pointer;
-  function safecalloc(numels, Size: size_t): Pointer;
+procedure error(Msg: string);
+function safealloc(Size: size_t): Pointer;
+function safecalloc(numels, Size: size_t): Pointer;
 
-  function predict(rb, RA, RC: Word): Word;
+function predict(rb, RA, RC: Word): Word;
 
-  function IsTrue(AValue: Integer): Boolean;
-  function ENDIAN8(X: Word): Byte;
-  function ENDIAN16(X: Word): Word;
+function IsTrue(AValue: Integer): Boolean;
+function ENDIAN8(x: Word): Byte;
+function ENDIAN16(x: Word): Word;
 
-  function check_compatibility(head_frame: pjpeg_ls_header; head_scan: pjpeg_ls_header; n_s: Int): Int;
+function check_compatibility(head_frame: pjpeg_ls_header; head_scan: pjpeg_ls_header; n_s: Int): Int;
 
-  function shr_c(Value: Int64; ShiftBits: Integer): Int64; overload;
-  function shr_c(Value: Integer; ShiftBits: Integer): Integer; overload;
+function shr_c(Value: Int64; ShiftBits: Integer): Int64; overload;
+function shr_c(Value: Integer; ShiftBits: Integer): Integer; overload;
 
-  function Bool_c(AValue: Boolean): Integer;
+function Bool_c(AValue: Boolean): Integer;
 
 implementation
 
 uses DoStatusIO;
 
-function ENDIAN8(X: Word): Byte;
+function ENDIAN8(x: Word): Byte;
 begin
-  Result := (X and $000000FF)
+  Result := (x and $000000FF)
 end;
 
-function ENDIAN16(X: Word): Word;
+function ENDIAN16(x: Word): Word;
 begin
-  Result := X; // ( ((x shr 8) or(x shl 8)) and $0000ffff);
+  Result := x; // ( ((x shr 8) or(x shl 8)) and $0000ffff);
 end;
 
 function Bool_c(AValue: Boolean): Integer;
@@ -502,5 +501,4 @@ begin
     end;
 end;
 
-end. 
- 
+end.

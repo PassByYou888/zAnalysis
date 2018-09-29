@@ -32,7 +32,7 @@ uses
 const
   MELCSTATES                                    = 32; { number of melcode states }
 
-  J: packed array [0 .. MELCSTATES - 1] of Byte = (
+  j: array [0 .. MELCSTATES - 1] of Byte = (
     0, 0, 0, 0,
     1, 1, 1, 1,
     2, 2, 2, 2,
@@ -57,17 +57,17 @@ type
     FBitIO: TJLSBitIO;
     FImageInfo: PImageInfo;
 
-    melcstate: packed array [0 .. MAX_COMPONENTS - 1] of Int; { index to the state packed array }
+    melcstate: array [0 .. MAX_COMPONENTS - 1] of Int; { index to the state array }
 
-    melclen: packed array [0 .. MAX_COMPONENTS - 1] of Int;
-    { contents of the state packed array location
+    melclen: array [0 .. MAX_COMPONENTS - 1] of Int;
+    { contents of the state array location
       indexed by melcstate: the "expected"
       run length is 2^melclen, shorter runs are
       encoded by a 1 followed by the run length
       in binary representation, wit a fixed length
       of melclen bits }
 
-    melcorder: packed array [0 .. MAX_COMPONENTS - 1] of ULONG; { 2^ melclen }
+    melcorder: array [0 .. MAX_COMPONENTS - 1] of ulong; { 2^ melclen }
   public
     constructor Create(ABitIO: TJLSBitIO; AImageInfo: PImageInfo);
     procedure init_process_run;
@@ -92,7 +92,7 @@ begin
   for n_c := 0 to pred(FImageInfo^.Components) do
     begin
       melcstate[n_c] := 0;
-      melclen[n_c] := J[0];
+      melclen[n_c] := j[0];
       melcorder[n_c] := 1 shl melclen[n_c];
     end;
 end;
@@ -117,8 +117,8 @@ begin
             begin { reached end-of-line }
               if (runlen = lineleft) and (melcstate[COLOR] < MELCSTATES) then
                 begin
-                  Inc(melcstate[COLOR]);
-                  melclen[COLOR] := J[melcstate[COLOR]];
+                  inc(melcstate[COLOR]);
+                  melclen[COLOR] := j[melcstate[COLOR]];
                   melcorder[COLOR] := (1 shl melclen[COLOR]);
                 end;
               FBitIO.fillbuffer(hits); { actual # of 1's consumed }
@@ -127,8 +127,8 @@ begin
             end;
           if (melcstate[COLOR] < MELCSTATES) then
             begin
-              Inc(melcstate[COLOR]);
-              melclen[COLOR] := J[melcstate[COLOR]];
+              inc(melcstate[COLOR]);
+              melclen[COLOR] := j[melcstate[COLOR]];
               melcorder[COLOR] := (1 shl melclen[COLOR]);
             end;
         end;
@@ -153,8 +153,8 @@ begin
   { adjust melcoder parameters }
   if IsTrue(melcstate[COLOR]) then
     begin
-      Dec(melcstate[COLOR]);
-      melclen[COLOR] := J[melcstate[COLOR]];
+      dec(melcstate[COLOR]);
+      melclen[COLOR] := j[melcstate[COLOR]];
       melcorder[COLOR] := (1 shl melclen[COLOR]);
     end;
 
@@ -169,12 +169,12 @@ begin
 
   while (runlen >= melcorder[COLOR]) do
     begin
-      Inc(hits);
+      inc(hits);
       runlen := runlen - melcorder[COLOR];
       if (melcstate[COLOR] < MELCSTATES) then
         begin
-          Inc(melcstate[COLOR]);
-          melclen[COLOR] := J[melcstate[COLOR]];
+          inc(melcstate[COLOR]);
+          melclen[COLOR] := j[melcstate[COLOR]];
           melcorder[COLOR] := (1 shl melclen[COLOR]);
         end;
     end;
@@ -204,8 +204,8 @@ begin
   { adjust melcoder parameters }
   if IsTrue(melcstate[COLOR]) then
     begin
-      Dec(melcstate[COLOR]);
-      melclen[COLOR] := J[melcstate[COLOR]];
+      dec(melcstate[COLOR]);
+      melclen[COLOR] := j[melcstate[COLOR]];
       melcorder[COLOR] := (1 shl melclen[COLOR]);
     end;
 
@@ -217,4 +217,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

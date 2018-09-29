@@ -17,7 +17,7 @@ unit h264Parameters;
 interface
 
 uses
-  Classes, SysUtils, h264Stdint, h264Util, PascalStrings;
+  Classes, SysUtils, h264Types, h264Util, PascalStrings;
 
 const
   MIN_QP               = 0;
@@ -26,7 +26,6 @@ const
   MAX_REFERENCE_FRAMES = 16;
 
 type
-  { TEncodingParameters }
   // encoder configuration parameters
   TEncodingParameters = class
   private
@@ -112,8 +111,6 @@ type
   end;
 
 implementation
-
-{ TEncodingParameters }
 
 procedure TEncodingParameters.SetAnalysisLevel(const AValue: uint8_t);
 begin
@@ -231,3 +228,4 @@ begin
 end;
 
 end.  
+

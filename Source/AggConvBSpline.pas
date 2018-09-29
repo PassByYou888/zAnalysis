@@ -37,11 +37,8 @@
 *)
 unit AggConvBSpline;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVcgenBSpline,
@@ -92,4 +89,5 @@ begin
 end;
 
 end.
+ 
  

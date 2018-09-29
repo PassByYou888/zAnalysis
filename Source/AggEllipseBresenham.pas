@@ -37,16 +37,13 @@
 *)
 unit AggEllipseBresenham;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics;
 
 type
-  TAggEllipseBresenhamInterpolator = packed record
+  TAggEllipseBresenhamInterpolator = record
   private
     FRadiusSquared, FTwoRadiusSquared: TPointInteger;
     FDelta, FInc: TPointInteger;
@@ -57,8 +54,8 @@ type
 
     procedure IncOperator;
 
-    property deltax: Integer read FDelta.X;
-    property deltay: Integer read FDelta.Y;
+    property deltax: Integer read FDelta.x;
+    property deltay: Integer read FDelta.y;
   end;
 
 implementation
@@ -70,13 +67,13 @@ procedure TAggEllipseBresenhamInterpolator.Initialize(radius: Integer);
 begin
   FRadiusSquared := PointInteger(radius * radius, radius * radius);
 
-  FTwoRadiusSquared.X := FRadiusSquared.X shl 1;
-  FTwoRadiusSquared.Y := FRadiusSquared.Y shl 1;
+  FTwoRadiusSquared.x := FRadiusSquared.x shl 1;
+  FTwoRadiusSquared.y := FRadiusSquared.y shl 1;
 
   FDelta := PointInteger(0);
 
-  FInc.X := 0;
-  FInc.Y := -radius * FTwoRadiusSquared.X;
+  FInc.x := 0;
+  FInc.y := -radius * FTwoRadiusSquared.x;
   FCurF := 0;
 end;
 
@@ -84,13 +81,13 @@ procedure TAggEllipseBresenhamInterpolator.Initialize(RX, RY: Integer);
 begin
   FRadiusSquared := PointInteger(RX * RX, RY * RY);
 
-  FTwoRadiusSquared.X := FRadiusSquared.X shl 1;
-  FTwoRadiusSquared.Y := FRadiusSquared.Y shl 1;
+  FTwoRadiusSquared.x := FRadiusSquared.x shl 1;
+  FTwoRadiusSquared.y := FRadiusSquared.y shl 1;
 
   FDelta := PointInteger(0);
 
-  FInc.X := 0;
-  FInc.Y := -RY * FTwoRadiusSquared.X;
+  FInc.x := 0;
+  FInc.y := -RY * FTwoRadiusSquared.x;
   FCurF := 0;
 end;
 
@@ -99,19 +96,19 @@ var
   mx, my, Mxy, Minimum, fx, fy, FXY: Integer;
   flag: Boolean;
 begin
-  mx := FCurF + FInc.X + FRadiusSquared.Y;
+  mx := FCurF + FInc.x + FRadiusSquared.y;
   fx := mx;
 
   if mx < 0 then
       mx := -mx;
 
-  my := FCurF + FInc.Y + FRadiusSquared.X;
+  my := FCurF + FInc.y + FRadiusSquared.x;
   fy := my;
 
   if my < 0 then
       my := -my;
 
-  Mxy := FCurF + FInc.X + FRadiusSquared.Y + FInc.Y + FRadiusSquared.X;
+  Mxy := FCurF + FInc.x + FRadiusSquared.y + FInc.y + FRadiusSquared.x;
   FXY := Mxy;
 
   if Mxy < 0 then
@@ -130,31 +127,33 @@ begin
 
   if Minimum > Mxy then
     begin
-      Inc(FInc.X, FTwoRadiusSquared.Y);
-      Inc(FInc.Y, FTwoRadiusSquared.X);
+      inc(FInc.x, FTwoRadiusSquared.y);
+      inc(FInc.y, FTwoRadiusSquared.x);
 
       FCurF := FXY;
 
-      FDelta.X := 1;
-      FDelta.Y := 1;
+      FDelta.x := 1;
+      FDelta.y := 1;
 
       Exit;
     end;
 
   if flag then
     begin
-      Inc(FInc.X, FTwoRadiusSquared.Y);
+      inc(FInc.x, FTwoRadiusSquared.y);
 
       FCurF := fx;
-      FDelta.X := 1;
+      FDelta.x := 1;
 
       Exit;
     end;
 
-  Inc(FInc.Y, FTwoRadiusSquared.X);
+  inc(FInc.y, FTwoRadiusSquared.x);
 
   FCurF := fy;
-  FDelta.Y := 1;
+  FDelta.y := 1;
 end;
 
 end. 
+ 
+ 

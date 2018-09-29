@@ -37,11 +37,8 @@
 *)
 unit AggConvAdaptorVcgen;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVertexSource;
@@ -55,11 +52,11 @@ type
     constructor Create;
 
     procedure RemoveAll; override;
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); override;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); override;
     procedure PrepareSource;
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property Markers: TAggVertexSource read FMarkers write SetMarkers;
   end;
@@ -82,7 +79,7 @@ type
     destructor Destroy; override;
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property Markers: TAggVertexSource read GetMarkers write SetMarkers;
 
@@ -108,10 +105,10 @@ begin
       FMarkers.RemoveAll;
 end;
 
-procedure TAggNullMarkers.AddVertex(X, Y: Double; Cmd: Cardinal);
+procedure TAggNullMarkers.AddVertex(x, y: Double; Cmd: Cardinal);
 begin
   if FMarkers <> nil then
-      FMarkers.AddVertex(X, Y, Cmd);
+      FMarkers.AddVertex(x, y, Cmd);
 end;
 
 procedure TAggNullMarkers.PrepareSource;
@@ -124,10 +121,10 @@ begin
       FMarkers.Rewind(PathID);
 end;
 
-function TAggNullMarkers.Vertex(X, Y: PDouble): Cardinal;
+function TAggNullMarkers.Vertex(x, y: PDouble): Cardinal;
 begin
   if FMarkers <> nil then
-      Result := FMarkers.Vertex(X, Y)
+      Result := FMarkers.Vertex(x, y)
   else
       Result := CAggPathCmdStop;
 end;
@@ -152,8 +149,8 @@ begin
   FMarkers := TAggNullMarkers.Create;
 
   FLastCmd := 0;
-  FStart.X := 0;
-  FStart.Y := 0;
+  FStart.x := 0;
+  FStart.y := 0;
 end;
 
 destructor TAggConvAdaptorVcgen.Destroy;
@@ -187,7 +184,7 @@ begin
   FStatus := siInitial;
 end;
 
-function TAggConvAdaptorVcgen.Vertex(X, Y: PDouble): Cardinal;
+function TAggConvAdaptorVcgen.Vertex(x, y: PDouble): Cardinal;
 var
   Cmd: Cardinal;
 label
@@ -202,7 +199,7 @@ begin
         begin
           FMarkers.RemoveAll;
 
-          FLastCmd := FSource.Vertex(@FStart.X, @FStart.Y);
+          FLastCmd := FSource.Vertex(@FStart.x, @FStart.y);
           FStatus := siAccumulate;
 
           goto _acc;
@@ -218,11 +215,11 @@ begin
             end;
 
           FGenerator.RemoveAll;
-          FGenerator.AddVertex(FStart.X, FStart.Y, CAggPathCmdMoveTo);
-          FMarkers.AddVertex(FStart.X, FStart.Y, CAggPathCmdMoveTo);
+          FGenerator.AddVertex(FStart.x, FStart.y, CAggPathCmdMoveTo);
+          FMarkers.AddVertex(FStart.x, FStart.y, CAggPathCmdMoveTo);
 
           repeat
-            Cmd := FSource.Vertex(X, Y);
+            Cmd := FSource.Vertex(x, y);
 
             if IsVertex(Cmd) then
               begin
@@ -230,12 +227,12 @@ begin
 
                 if IsMoveTo(Cmd) then
                   begin
-                    FStart := PointDouble(X^, Y^);
+                    FStart := PointDouble(x^, y^);
                     Break;
                   end;
 
-                FGenerator.AddVertex(X^, Y^, Cmd);
-                FMarkers.AddVertex(X^, Y^, CAggPathCmdLineTo);
+                FGenerator.AddVertex(x^, y^, Cmd);
+                FMarkers.AddVertex(x^, y^, CAggPathCmdLineTo);
               end
             else
               begin
@@ -247,7 +244,7 @@ begin
 
                 if IsEndPoly(Cmd) then
                   begin
-                    FGenerator.AddVertex(X^, Y^, Cmd);
+                    FGenerator.AddVertex(x^, y^, Cmd);
                     Break;
                   end;
               end;
@@ -262,7 +259,7 @@ begin
       siGenerate:
         begin
         _gen:
-          Cmd := FGenerator.Vertex(X, Y);
+          Cmd := FGenerator.Vertex(x, y);
 
           if IsStop(Cmd) then
             begin
@@ -279,4 +276,6 @@ begin
 end;
 
 end.
+ 
+ 
  

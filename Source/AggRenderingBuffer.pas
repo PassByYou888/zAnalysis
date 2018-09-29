@@ -37,30 +37,27 @@
 *)
 unit AggRenderingBuffer;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics;
 
 type
   PAggRowDataType = ^TAggRowDataType;
 
-  TAggRowDataType = packed record
+  TAggRowDataType = record
     x1, x2: Integer;
     PTR: PInt8u;
   public
     procedure Initialize(x1, x2: Integer; PTR: PInt8u); overload;
   end;
 
-  TAggSpanData = packed record
-    X: Integer;
+  TAggSpanData = record
+    x: Integer;
     Len: Byte;
     PTR: PInt8u;
   public
-    procedure Initialize(X: Integer; Len: Byte; PTR: PInt8u); overload;
+    procedure Initialize(x: Integer; Len: Byte; PTR: PInt8u); overload;
   end;
 
   TAggRenderingBuffer = class
@@ -69,7 +66,7 @@ type
     FRows: PPInt8u;       // Pointers to each row of the buffer
     FStride: Integer;     // Number of bytes per row. Can be < 0
     FMaxHeight: Cardinal; // The maximal height (currently allocated)
-    function GetPixelPointer(X, Y: Cardinal): PInt8u;
+    function GetPixelPointer(x, y: Cardinal): PInt8u;
   protected
     FWidth: Cardinal;  // Width in pixels
     FHeight: Cardinal; // Height in pixels
@@ -81,8 +78,8 @@ type
 
     procedure Attach(ABuffer: PInt8u; AWidth, AHeight: Cardinal; AStride: Integer);
 
-    function RowXY(X, Y: Integer; Len: Cardinal): PInt8u; virtual;
-    function Row(Y: Cardinal): PInt8u; virtual;
+    function RowXY(x, y: Integer; Len: Cardinal): PInt8u; virtual;
+    function Row(y: Cardinal): PInt8u; virtual;
     function NextRow(p: PInt8u): PInt8u; virtual;
     function Rows: PInt8u;
 
@@ -96,7 +93,7 @@ type
     property StrideAbs: Cardinal read GetStrideAbs;
 
     property ScanLine[index: Cardinal]: PInt8u read Row;
-    property PixelPointer[X, Y: Cardinal]: PInt8u read GetPixelPointer;
+    property PixelPointer[x, y: Cardinal]: PInt8u read GetPixelPointer;
   end;
 
 implementation
@@ -113,9 +110,9 @@ end;
 
 { TAggSpanData }
 
-procedure TAggSpanData.Initialize(X: Integer; Len: Byte; PTR: PInt8u);
+procedure TAggSpanData.Initialize(x: Integer; Len: Byte; PTR: PInt8u);
 begin
-  Self.X := X;
+  Self.x := x;
   Self.Len := Len;
   Self.PTR := PTR;
 end;
@@ -170,7 +167,7 @@ begin
     if AHeight > 0 then
       begin
         RowPointer := FBuffer;
-        Dec(RowPointer, (AHeight - 1) * AStride);
+        dec(RowPointer, (AHeight - 1) * AStride);
       end
     else
         RowPointer := nil
@@ -183,16 +180,16 @@ begin
     begin
       RowsPointer^ := RowPointer;
 
-      Inc(PtrComp(RowPointer), AStride);
-      Inc(PtrComp(RowsPointer), SizeOf(PInt8u));
+      inc(PtrComp(RowPointer), AStride);
+      inc(PtrComp(RowsPointer), SizeOf(PInt8u));
 
-      Dec(AHeight);
+      dec(AHeight);
     end;
 end;
 
-function TAggRenderingBuffer.GetPixelPointer(X, Y: Cardinal): PInt8u;
+function TAggRenderingBuffer.GetPixelPointer(x, y: Cardinal): PInt8u;
 begin
-  Result := RowXY(X, Y, Abs(FStride) div FWidth);
+  Result := RowXY(x, y, Abs(FStride) div FWidth);
 end;
 
 function TAggRenderingBuffer.GetStrideAbs;
@@ -203,28 +200,28 @@ begin
       Result := FStride;
 end;
 
-function TAggRenderingBuffer.RowXY(X, Y: Integer; Len: Cardinal): PInt8u;
+function TAggRenderingBuffer.RowXY(x, y: Integer; Len: Cardinal): PInt8u;
 var
   RowPointer: PPInt8u;
 begin
   RowPointer := FRows;
-  Inc(RowPointer, Y);
+  inc(RowPointer, y);
   Result := RowPointer^;
 end;
 
-function TAggRenderingBuffer.Row(Y: Cardinal): PInt8u;
+function TAggRenderingBuffer.Row(y: Cardinal): PInt8u;
 var
   RowPointer: PPInt8u;
 begin
   RowPointer := FRows;
-  Inc(RowPointer, Y);
+  inc(RowPointer, y);
   Result := RowPointer^;
 end;
 
 function TAggRenderingBuffer.NextRow(p: PInt8u): PInt8u;
 begin
   Result := p;
-  Inc(Result, FStride);
+  inc(Result, FStride);
 end;
 
 function TAggRenderingBuffer.Rows;
@@ -234,7 +231,7 @@ end;
 
 procedure TAggRenderingBuffer.CopyFrom(RenderingBuffer: TAggRenderingBuffer);
 var
-  h, L, Y: Cardinal;
+  h, L, y: Cardinal;
 begin
   h := height;
 
@@ -249,29 +246,31 @@ begin
   L := L * SizeOf(Int8u);
 
   if h > 0 then
-    for Y := 0 to h - 1 do
-        Move(RenderingBuffer.Row(Y)^, Row(Y)^, L);
+    for y := 0 to h - 1 do
+        Move(RenderingBuffer.Row(y)^, Row(y)^, L);
 end;
 
 procedure TAggRenderingBuffer.Clear(Value: Int8u);
 var
-  Y, X: Cardinal;
+  y, x: Cardinal;
   p: PInt8u;
 begin
   if height > 0 then
-    for Y := 0 to height - 1 do
+    for y := 0 to height - 1 do
       begin
-        p := Row(Y);
+        p := Row(y);
 
         if StrideAbs > 0 then
-          for X := 0 to StrideAbs - 1 do
+          for x := 0 to StrideAbs - 1 do
             begin
               p^ := Value;
 
-              Inc(PtrComp(p), SizeOf(Int8u));
+              inc(PtrComp(p), SizeOf(Int8u));
             end;
       end;
 end;
 
 end. 
+ 
+ 
  

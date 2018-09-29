@@ -13,18 +13,18 @@
 function BidiagonalSVDDecompositionInternal(var d: TLVec;
   E: TLVec; n: TLInt; IsUpper: Boolean;
   IsFractionalAccuracyRequired: Boolean; var u: TLMatrix;
-  UStart: TLInt; NRU: TLInt; var C: TLMatrix;
+  UStart: TLInt; NRU: TLInt; var c: TLMatrix;
   CStart: TLInt; NCC: TLInt; var VT: TLMatrix;
-  VStart: TLInt; NCVT: TLInt): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  VStart: TLInt; NCVT: TLInt): Boolean; forward;
 
-function ExtSignBDSQR(A: TLFloat; b: TLFloat): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ExtSignBDSQR(a: TLFloat; b: TLFloat): TLFloat; forward;
 
-procedure Svd2X2(F: TLFloat; g: TLFloat; h: TLFloat;
-  var SSMIN: TLFloat; var SSMAX: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure Svd2X2(f: TLFloat; g: TLFloat; h: TLFloat;
+  var SSMIN: TLFloat; var SSMAX: TLFloat); forward;
 
-procedure SvdV2X2(F: TLFloat; g: TLFloat; h: TLFloat;
+procedure SvdV2X2(f: TLFloat; g: TLFloat; h: TLFloat;
   var SSMIN: TLFloat; var SSMAX: TLFloat; var SNR: TLFloat;
-  var CSR: TLFloat; var SNL: TLFloat; var CSL: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var CSR: TLFloat; var SNL: TLFloat; var CSL: TLFloat); forward;
 
 
 (* ************************************************************************
@@ -99,7 +99,7 @@ procedure SvdV2X2(F: TLFloat; g: TLFloat; h: TLFloat;
   ************************************************************************ *)
 function RMatrixBDSVD(var d: TLVec; E: TLVec; n: TLInt;
   IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean; var u: TLMatrix;
-  NRU: TLInt; var C: TLMatrix; NCC: TLInt;
+  NRU: TLInt; var c: TLMatrix; NCC: TLInt;
   var VT: TLMatrix; NCVT: TLInt): Boolean;
 var
   d1: TLVec;
@@ -114,18 +114,18 @@ begin
       APVMove(@e1[0], 1, n - 1, @E[0], 0, n - 2);
     end;
   Result := BidiagonalSVDDecompositionInternal(d1, e1, n, IsUpper,
-    IsFractionalAccuracyRequired, u, 0, NRU, C, 0, NCC, VT, 0, NCVT);
+    IsFractionalAccuracyRequired, u, 0, NRU, c, 0, NCC, VT, 0, NCVT);
   APVMove(@d[0], 0, n - 1, @d1[0], 1, n);
 end;
 
 function BidiagonalSVDDecomposition(var d: TLVec; E: TLVec;
   n: TLInt; IsUpper: Boolean; IsFractionalAccuracyRequired: Boolean;
-  var u: TLMatrix; NRU: TLInt; var C: TLMatrix;
+  var u: TLMatrix; NRU: TLInt; var c: TLMatrix;
   NCC: TLInt; var VT: TLMatrix; NCVT: TLInt): Boolean;
 begin
   E := DynamicArrayCopy(E);
   Result := BidiagonalSVDDecompositionInternal(d, E, n, IsUpper,
-    IsFractionalAccuracyRequired, u, 1, NRU, C, 1, NCC, VT, 1, NCVT);
+    IsFractionalAccuracyRequired, u, 1, NRU, c, 1, NCC, VT, 1, NCVT);
 end;
 
 (* ************************************************************************
@@ -134,7 +134,7 @@ end;
 function BidiagonalSVDDecompositionInternal(var d: TLVec;
   E: TLVec; n: TLInt; IsUpper: Boolean;
   IsFractionalAccuracyRequired: Boolean; var u: TLMatrix;
-  UStart: TLInt; NRU: TLInt; var C: TLMatrix;
+  UStart: TLInt; NRU: TLInt; var c: TLMatrix;
   CStart: TLInt; NCC: TLInt; var VT: TLMatrix;
   VStart: TLInt; NCVT: TLInt): Boolean;
 var
@@ -142,7 +142,7 @@ var
   IDIR           : TLInt;
   ISUB           : TLInt;
   ITER           : TLInt;
-  J              : TLInt;
+  j              : TLInt;
   LL             : TLInt;
   LLL            : TLInt;
   M              : TLInt;
@@ -155,13 +155,13 @@ var
   COSR           : TLFloat;
   cs             : TLFloat;
   Eps            : TLFloat;
-  F              : TLFloat;
+  f              : TLFloat;
   g              : TLFloat;
   h              : TLFloat;
   MU             : TLFloat;
   OLDCS          : TLFloat;
   OLDSN          : TLFloat;
-  R              : TLFloat;
+  r              : TLFloat;
   Shift          : TLFloat;
   SIGMN          : TLFloat;
   SIGMX          : TLFloat;
@@ -244,14 +244,14 @@ begin
   while i <= n - 1 do
     begin
       ETemp[i] := E[i];
-      Inc(i);
+      inc(i);
     end;
   SetLength(E, n + 1);
   i := 1;
   while i <= n - 1 do
     begin
       E[i] := ETemp[i];
-      Inc(i);
+      inc(i);
     end;
   E[n] := 0;
   IDIR := 0;
@@ -271,13 +271,13 @@ begin
       i := 1;
       while i <= n - 1 do
         begin
-          GenerateRotation(d[i], E[i], cs, sn, R);
-          d[i] := R;
+          GenerateRotation(d[i], E[i], cs, sn, r);
+          d[i] := r;
           E[i] := sn * d[i + 1];
           d[i + 1] := cs * d[i + 1];
           WORK0[i] := cs;
           Work1[i] := sn;
-          Inc(i);
+          inc(i);
         end;
 
       //
@@ -291,7 +291,7 @@ begin
       if NCC > 0 then
         begin
           ApplyRotationsFromTheLeft(FwdDir, 1 + CStart - 1, n + CStart - 1, CStart,
-            CEnd, WORK0, Work1, C, CTemp);
+            CEnd, WORK0, Work1, c, CTemp);
         end;
     end;
 
@@ -315,13 +315,13 @@ begin
   while i <= n do
     begin
       SMAX := Max(SMAX, AbsReal(d[i]));
-      Inc(i);
+      inc(i);
     end;
   i := 1;
   while i <= n - 1 do
     begin
       SMAX := Max(SMAX, AbsReal(E[i]));
-      Inc(i);
+      inc(i);
     end;
   SMINL := 0;
   if AP_FP_Greater_Eq(TOL, 0) then
@@ -343,7 +343,7 @@ begin
                 begin
                   Break;
                 end;
-              Inc(i);
+              inc(i);
             end;
         end;
       SMINOA := SMINOA / Sqrt(n);
@@ -419,7 +419,7 @@ begin
             end;
           SMIN := Min(SMIN, ABSS);
           SMAX := Max(SMAX, Max(ABSS, ABSE));
-          Inc(LLL);
+          inc(LLL);
         end;
       if not MatrixSplitFlag then
         begin
@@ -500,11 +500,11 @@ begin
             begin
               MM0 := M + CStart - 1;
               MM1 := M - 1 + CStart - 1;
-              APVMove(@CTemp[0], CStart, CEnd, @C[MM1][0], CStart, CEnd, COSL);
-              APVAdd(@CTemp[0], CStart, CEnd, @C[MM0][0], CStart, CEnd, SINL);
-              APVMul(@C[MM0][0], CStart, CEnd, COSL);
-              APVSub(@C[MM0][0], CStart, CEnd, @C[MM1][0], CStart, CEnd, SINL);
-              APVMove(@C[MM1][0], CStart, CEnd, @CTemp[0], CStart, CEnd);
+              APVMove(@CTemp[0], CStart, CEnd, @c[MM1][0], CStart, CEnd, COSL);
+              APVAdd(@CTemp[0], CStart, CEnd, @c[MM0][0], CStart, CEnd, SINL);
+              APVMul(@c[MM0][0], CStart, CEnd, COSL);
+              APVSub(@c[MM0][0], CStart, CEnd, @c[MM1][0], CStart, CEnd, SINL);
+              APVMove(@c[MM1][0], CStart, CEnd, @CTemp[0], CStart, CEnd);
             end;
           M := M - 2;
           Continue;
@@ -586,7 +586,7 @@ begin
                   SMINLO := SMINL;
                   MU := AbsReal(d[LLL + 1]) * (MU / (MU + AbsReal(E[LLL])));
                   SMINL := Min(SMINL, MU);
-                  Inc(LLL);
+                  inc(LLL);
                 end;
               if IterFlag then
                 begin
@@ -629,7 +629,7 @@ begin
                   SMINLO := SMINL;
                   MU := AbsReal(d[LLL]) * (MU / (MU + AbsReal(E[LLL])));
                   SMINL := Min(SMINL, MU);
-                  Dec(LLL);
+                  dec(LLL);
                 end;
               if IterFlag then
                 begin
@@ -662,12 +662,12 @@ begin
           if IDIR = 1 then
             begin
               SLL := AbsReal(d[LL]);
-              Svd2X2(d[M - 1], E[M - 1], d[M], Shift, R);
+              Svd2X2(d[M - 1], E[M - 1], d[M], Shift, r);
             end
           else
             begin
               SLL := AbsReal(d[M]);
-              Svd2X2(d[LL], E[LL], d[LL + 1], Shift, R);
+              Svd2X2(d[LL], E[LL], d[LL + 1], Shift, r);
             end;
 
           //
@@ -704,18 +704,18 @@ begin
               i := LL;
               while i <= M - 1 do
                 begin
-                  GenerateRotation(d[i] * cs, E[i], cs, sn, R);
+                  GenerateRotation(d[i] * cs, E[i], cs, sn, r);
                   if i > LL then
                     begin
-                      E[i - 1] := OLDSN * R;
+                      E[i - 1] := OLDSN * r;
                     end;
-                  GenerateRotation(OLDCS * R, d[i + 1] * sn, OLDCS, OLDSN, tmp);
+                  GenerateRotation(OLDCS * r, d[i + 1] * sn, OLDCS, OLDSN, tmp);
                   d[i] := tmp;
                   WORK0[i - LL + 1] := cs;
                   Work1[i - LL + 1] := sn;
                   Work2[i - LL + 1] := OLDCS;
                   WORK3[i - LL + 1] := OLDSN;
-                  Inc(i);
+                  inc(i);
                 end;
               h := d[M] * cs;
               d[M] := h * OLDCS;
@@ -737,7 +737,7 @@ begin
               if NCC > 0 then
                 begin
                   ApplyRotationsFromTheLeft(FwdDir, LL + CStart - 1, M + CStart - 1,
-                    CStart, CEnd, Work2, WORK3, C, CTemp);
+                    CStart, CEnd, Work2, WORK3, c, CTemp);
                 end;
 
               //
@@ -760,18 +760,18 @@ begin
               i := M;
               while i >= LL + 1 do
                 begin
-                  GenerateRotation(d[i] * cs, E[i - 1], cs, sn, R);
+                  GenerateRotation(d[i] * cs, E[i - 1], cs, sn, r);
                   if i < M then
                     begin
-                      E[i] := OLDSN * R;
+                      E[i] := OLDSN * r;
                     end;
-                  GenerateRotation(OLDCS * R, d[i - 1] * sn, OLDCS, OLDSN, tmp);
+                  GenerateRotation(OLDCS * r, d[i - 1] * sn, OLDCS, OLDSN, tmp);
                   d[i] := tmp;
                   WORK0[i - LL] := cs;
                   Work1[i - LL] := -sn;
                   Work2[i - LL] := OLDCS;
                   WORK3[i - LL] := -OLDSN;
-                  Dec(i);
+                  dec(i);
                 end;
               h := d[LL] * cs;
               d[LL] := h * OLDCS;
@@ -793,7 +793,7 @@ begin
               if NCC > 0 then
                 begin
                   ApplyRotationsFromTheLeft(not FwdDir, LL + CStart - 1, M + CStart - 1,
-                    CStart, CEnd, WORK0, Work1, C, CTemp);
+                    CStart, CEnd, WORK0, Work1, c, CTemp);
                 end;
 
               //
@@ -818,24 +818,24 @@ begin
               // Chase bulge from top to bottom
               // Save cosines and sines for later singular vector updates
               //
-              F := (AbsReal(d[LL]) - Shift) *
+              f := (AbsReal(d[LL]) - Shift) *
                 (ExtSignBDSQR(1, d[LL]) + Shift / d[LL]);
               g := E[LL];
               i := LL;
               while i <= M - 1 do
                 begin
-                  GenerateRotation(F, g, COSR, SINR, R);
+                  GenerateRotation(f, g, COSR, SINR, r);
                   if i > LL then
                     begin
-                      E[i - 1] := R;
+                      E[i - 1] := r;
                     end;
-                  F := COSR * d[i] + SINR * E[i];
+                  f := COSR * d[i] + SINR * E[i];
                   E[i] := COSR * E[i] - SINR * d[i];
                   g := SINR * d[i + 1];
                   d[i + 1] := COSR * d[i + 1];
-                  GenerateRotation(F, g, COSL, SINL, R);
-                  d[i] := R;
-                  F := COSL * E[i] + SINL * d[i + 1];
+                  GenerateRotation(f, g, COSL, SINL, r);
+                  d[i] := r;
+                  f := COSL * E[i] + SINL * d[i + 1];
                   d[i + 1] := COSL * d[i + 1] - SINL * E[i];
                   if i < M - 1 then
                     begin
@@ -846,9 +846,9 @@ begin
                   Work1[i - LL + 1] := SINR;
                   Work2[i - LL + 1] := COSL;
                   WORK3[i - LL + 1] := SINL;
-                  Inc(i);
+                  inc(i);
                 end;
-              E[M - 1] := F;
+              E[M - 1] := f;
 
               //
               // Update singular vectors
@@ -866,7 +866,7 @@ begin
               if NCC > 0 then
                 begin
                   ApplyRotationsFromTheLeft(FwdDir, LL + CStart - 1, M + CStart - 1,
-                    CStart, CEnd, Work2, WORK3, C, CTemp);
+                    CStart, CEnd, Work2, WORK3, c, CTemp);
                 end;
 
               //
@@ -884,23 +884,23 @@ begin
               // Chase bulge from bottom to top
               // Save cosines and sines for later singular vector updates
               //
-              F := (AbsReal(d[M]) - Shift) * (ExtSignBDSQR(1, d[M]) + Shift / d[M]);
+              f := (AbsReal(d[M]) - Shift) * (ExtSignBDSQR(1, d[M]) + Shift / d[M]);
               g := E[M - 1];
               i := M;
               while i >= LL + 1 do
                 begin
-                  GenerateRotation(F, g, COSR, SINR, R);
+                  GenerateRotation(f, g, COSR, SINR, r);
                   if i < M then
                     begin
-                      E[i] := R;
+                      E[i] := r;
                     end;
-                  F := COSR * d[i] + SINR * E[i - 1];
+                  f := COSR * d[i] + SINR * E[i - 1];
                   E[i - 1] := COSR * E[i - 1] - SINR * d[i];
                   g := SINR * d[i - 1];
                   d[i - 1] := COSR * d[i - 1];
-                  GenerateRotation(F, g, COSL, SINL, R);
-                  d[i] := R;
-                  F := COSL * E[i - 1] + SINL * d[i - 1];
+                  GenerateRotation(f, g, COSL, SINL, r);
+                  d[i] := r;
+                  f := COSL * E[i - 1] + SINL * d[i - 1];
                   d[i - 1] := COSL * d[i - 1] - SINL * E[i - 1];
                   if i > LL + 1 then
                     begin
@@ -911,9 +911,9 @@ begin
                   Work1[i - LL] := -SINR;
                   Work2[i - LL] := COSL;
                   WORK3[i - LL] := -SINL;
-                  Dec(i);
+                  dec(i);
                 end;
-              E[LL] := F;
+              E[LL] := f;
 
               //
               // Test convergence
@@ -939,7 +939,7 @@ begin
               if NCC > 0 then
                 begin
                   ApplyRotationsFromTheLeft(not FwdDir, LL + CStart - 1, M + CStart - 1,
-                    CStart, CEnd, WORK0, Work1, C, CTemp);
+                    CStart, CEnd, WORK0, Work1, c, CTemp);
                 end;
             end;
         end;
@@ -968,7 +968,7 @@ begin
               APVMul(@VT[i + VStart - 1][0], VStart, VEnd, -1);
             end;
         end;
-      Inc(i);
+      inc(i);
     end;
 
   //
@@ -984,15 +984,15 @@ begin
       //
       ISUB := 1;
       SMIN := d[1];
-      J := 2;
-      while J <= n + 1 - i do
+      j := 2;
+      while j <= n + 1 - i do
         begin
-          if AP_FP_Less_Eq(d[J], SMIN) then
+          if AP_FP_Less_Eq(d[j], SMIN) then
             begin
-              ISUB := J;
-              SMIN := d[J];
+              ISUB := j;
+              SMIN := d[j];
             end;
-          Inc(J);
+          inc(j);
         end;
       if ISUB <> n + 1 - i then
         begin
@@ -1004,69 +1004,69 @@ begin
           d[n + 1 - i] := SMIN;
           if NCVT > 0 then
             begin
-              J := n + 1 - i;
+              j := n + 1 - i;
               APVMove(@VTTemp[0], VStart, VEnd, @VT[ISUB + VStart - 1][0],
                 VStart, VEnd);
-              APVMove(@VT[ISUB + VStart - 1][0], VStart, VEnd, @VT[J + VStart - 1][0],
+              APVMove(@VT[ISUB + VStart - 1][0], VStart, VEnd, @VT[j + VStart - 1][0],
                 VStart, VEnd);
-              APVMove(@VT[J + VStart - 1][0], VStart, VEnd, @VTTemp[0], VStart, VEnd);
+              APVMove(@VT[j + VStart - 1][0], VStart, VEnd, @VTTemp[0], VStart, VEnd);
             end;
           if NRU > 0 then
             begin
-              J := n + 1 - i;
+              j := n + 1 - i;
               for i_ := UStart to UEnd do
                 begin
                   UTemp[i_] := u[i_, ISUB + UStart - 1];
                 end;
               for i_ := UStart to UEnd do
                 begin
-                  u[i_, ISUB + UStart - 1] := u[i_, J + UStart - 1];
+                  u[i_, ISUB + UStart - 1] := u[i_, j + UStart - 1];
                 end;
               for i_ := UStart to UEnd do
                 begin
-                  u[i_, J + UStart - 1] := UTemp[i_];
+                  u[i_, j + UStart - 1] := UTemp[i_];
                 end;
             end;
           if NCC > 0 then
             begin
-              J := n + 1 - i;
-              APVMove(@CTemp[0], CStart, CEnd, @C[ISUB + CStart - 1][0],
+              j := n + 1 - i;
+              APVMove(@CTemp[0], CStart, CEnd, @c[ISUB + CStart - 1][0],
                 CStart, CEnd);
-              APVMove(@C[ISUB + CStart - 1][0], CStart, CEnd, @C[J + CStart - 1][0],
+              APVMove(@c[ISUB + CStart - 1][0], CStart, CEnd, @c[j + CStart - 1][0],
                 CStart, CEnd);
-              APVMove(@C[J + CStart - 1][0], CStart, CEnd, @CTemp[0], CStart, CEnd);
+              APVMove(@c[j + CStart - 1][0], CStart, CEnd, @CTemp[0], CStart, CEnd);
             end;
         end;
-      Inc(i);
+      inc(i);
     end;
 end;
 
-function ExtSignBDSQR(A: TLFloat; b: TLFloat): TLFloat;
+function ExtSignBDSQR(a: TLFloat; b: TLFloat): TLFloat;
 begin
   if AP_FP_Greater_Eq(b, 0) then
     begin
-      Result := AbsReal(A);
+      Result := AbsReal(a);
     end
   else
     begin
-      Result := -AbsReal(A);
+      Result := -AbsReal(a);
     end;
 end;
 
-procedure Svd2X2(F: TLFloat; g: TLFloat; h: TLFloat;
+procedure Svd2X2(f: TLFloat; g: TLFloat; h: TLFloat;
   var SSMIN: TLFloat; var SSMAX: TLFloat);
 var
   AAS : TLFloat;
   at  : TLFloat;
   AU  : TLFloat;
-  C   : TLFloat;
+  c   : TLFloat;
   FA  : TLFloat;
   FHMN: TLFloat;
   FHMX: TLFloat;
   GA  : TLFloat;
   hA  : TLFloat;
 begin
-  FA := AbsReal(F);
+  FA := AbsReal(f);
   GA := AbsReal(g);
   hA := AbsReal(h);
   FHMN := Min(FA, hA);
@@ -1090,9 +1090,9 @@ begin
           AAS := 1 + FHMN / FHMX;
           at := (FHMX - FHMN) / FHMX;
           AU := AP_Sqr(GA / FHMX);
-          C := 2 / (Sqrt(AAS * AAS + AU) + Sqrt(at * at + AU));
-          SSMIN := FHMN * C;
-          SSMAX := FHMX / C;
+          c := 2 / (Sqrt(AAS * AAS + AU) + Sqrt(at * at + AU));
+          SSMIN := FHMN * c;
+          SSMAX := FHMX / c;
         end
       else
         begin
@@ -1112,23 +1112,23 @@ begin
             begin
               AAS := 1 + FHMN / FHMX;
               at := (FHMX - FHMN) / FHMX;
-              C := 1 / (Sqrt(1 + AP_Sqr(AAS * AU)) + Sqrt(1 + AP_Sqr(at * AU)));
-              SSMIN := FHMN * C * AU;
+              c := 1 / (Sqrt(1 + AP_Sqr(AAS * AU)) + Sqrt(1 + AP_Sqr(at * AU)));
+              SSMIN := FHMN * c * AU;
               SSMIN := SSMIN + SSMIN;
-              SSMAX := GA / (C + C);
+              SSMAX := GA / (c + c);
             end;
         end;
     end;
 end;
 
-procedure SvdV2X2(F: TLFloat; g: TLFloat; h: TLFloat;
+procedure SvdV2X2(f: TLFloat; g: TLFloat; h: TLFloat;
   var SSMIN: TLFloat; var SSMAX: TLFloat; var SNR: TLFloat;
   var CSR: TLFloat; var SNL: TLFloat; var CSL: TLFloat);
 var
   GASMAL: Boolean;
   SWP   : Boolean;
   PMAX  : TLInt;
-  A     : TLFloat;
+  a     : TLFloat;
   CLT   : TLFloat;
   CRT   : TLFloat;
   d     : TLFloat;
@@ -1141,17 +1141,17 @@ var
   L     : TLFloat;
   M     : TLFloat;
   MM    : TLFloat;
-  R     : TLFloat;
+  r     : TLFloat;
   s     : TLFloat;
   SLT   : TLFloat;
   SRT   : TLFloat;
-  T     : TLFloat;
+  t     : TLFloat;
   Temp  : TLFloat;
   TSIGN : TLFloat;
   TT    : TLFloat;
   v     : TLFloat;
 begin
-  FT := F;
+  FT := f;
   FA := AbsReal(FT);
   HT := h;
   hA := AbsReal(h);
@@ -1239,21 +1239,21 @@ begin
               L := d / FA;
             end;
           M := GT / FT;
-          T := 2 - L;
+          t := 2 - L;
           MM := M * M;
-          TT := T * T;
+          TT := t * t;
           s := Sqrt(TT + MM);
           if AP_FP_Eq(L, 0) then
             begin
-              R := AbsReal(M);
+              r := AbsReal(M);
             end
           else
             begin
-              R := Sqrt(L * L + MM);
+              r := Sqrt(L * L + MM);
             end;
-          A := 0.5 * (s + R);
-          SSMIN := hA / A;
-          SSMAX := FA * A;
+          a := 0.5 * (s + r);
+          SSMIN := hA / a;
+          SSMAX := FA * a;
           if AP_FP_Eq(MM, 0) then
             begin
 
@@ -1262,23 +1262,23 @@ begin
               //
               if AP_FP_Eq(L, 0) then
                 begin
-                  T := ExtSignBDSQR(2, FT) * ExtSignBDSQR(1, GT);
+                  t := ExtSignBDSQR(2, FT) * ExtSignBDSQR(1, GT);
                 end
               else
                 begin
-                  T := GT / ExtSignBDSQR(d, FT) + M / T;
+                  t := GT / ExtSignBDSQR(d, FT) + M / t;
                 end;
             end
           else
             begin
-              T := (M / (s + T) + M / (R + L)) * (1 + A);
+              t := (M / (s + t) + M / (r + L)) * (1 + a);
             end;
-          L := Sqrt(T * T + 4);
+          L := Sqrt(t * t + 4);
           CRT := 2 / L;
-          SRT := T / L;
-          CLT := (CRT + SRT * M) / A;
+          SRT := t / L;
+          CLT := (CRT + SRT * M) / a;
           v := HT / FT;
-          SLT := v * SRT / A;
+          SLT := v * SRT / a;
         end;
     end;
   if SWP then
@@ -1301,7 +1301,7 @@ begin
   //
   if PMAX = 1 then
     begin
-      TSIGN := ExtSignBDSQR(1, CSR) * ExtSignBDSQR(1, CSL) * ExtSignBDSQR(1, F);
+      TSIGN := ExtSignBDSQR(1, CSR) * ExtSignBDSQR(1, CSL) * ExtSignBDSQR(1, f);
     end;
   if PMAX = 2 then
     begin
@@ -1312,5 +1312,7 @@ begin
       TSIGN := ExtSignBDSQR(1, SNR) * ExtSignBDSQR(1, SNL) * ExtSignBDSQR(1, h);
     end;
   SSMAX := ExtSignBDSQR(SSMAX, TSIGN);
-  SSMIN := ExtSignBDSQR(SSMIN, TSIGN * ExtSignBDSQR(1, F) * ExtSignBDSQR(1, h));
+  SSMIN := ExtSignBDSQR(SSMIN, TSIGN * ExtSignBDSQR(1, f) * ExtSignBDSQR(1, h));
 end; 
+ 
+ 

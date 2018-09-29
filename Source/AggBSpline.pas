@@ -37,9 +37,8 @@
 *)
 unit AggBSpline;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
+interface
 
 uses
   AggBasics;
@@ -62,27 +61,27 @@ type
     fx, fy, FSplineBuffer: PDouble;
     FLastIdx: Integer;
   protected
-    procedure BSearch(n: Integer; X: PDouble; x0: Double; i: PInteger);
+    procedure BSearch(n: Integer; x: PDouble; x0: Double; i: PInteger);
 
-    function ExtrapolationLeft(X: Double): Double;
-    function ExtrapolationRight(X: Double): Double;
+    function ExtrapolationLeft(x: Double): Double;
+    function ExtrapolationRight(x: Double): Double;
 
-    function Interpolation(X: Double; i: Integer): Double;
+    function Interpolation(x: Double; i: Integer): Double;
   public
     constructor Create; overload;
     constructor Create(Num: Integer); overload;
-    constructor Create(Num: Integer; X, Y: PDouble); overload;
+    constructor Create(Num: Integer; x, y: PDouble); overload;
     destructor Destroy; override;
 
     procedure Init(Max: Integer); overload;
-    procedure Init(Num: Integer; X, Y: PDouble); overload;
+    procedure Init(Num: Integer; x, y: PDouble); overload;
     procedure Init(Num: Integer; Points: PPointDouble); overload;
 
-    procedure AddPoint(X, Y: Double);
+    procedure AddPoint(x, y: Double);
     procedure Prepare;
 
-    function Get(X: Double): Double;
-    function GetStateful(X: Double): Double;
+    function Get(x: Double): Double;
+    function GetStateful(x: Double): Double;
   end;
 
 implementation
@@ -109,11 +108,11 @@ begin
   Init(Num);
 end;
 
-constructor TAggBSpline.Create(Num: Integer; X, Y: PDouble);
+constructor TAggBSpline.Create(Num: Integer; x, y: PDouble);
 begin
   Create;
 
-  Init(Num, X, Y);
+  Init(Num, x, y);
 end;
 
 destructor TAggBSpline.Destroy;
@@ -140,7 +139,7 @@ begin
   FLastIdx := -1;
 end;
 
-procedure TAggBSpline.Init(Num: Integer; X, Y: PDouble);
+procedure TAggBSpline.Init(Num: Integer; x, y: PDouble);
 var
   i: Integer;
 begin
@@ -150,10 +149,10 @@ begin
 
     for i := 0 to Num - 1 do
     begin
-      AddPoint(X^, Y^);
+      AddPoint(x^, y^);
 
-      Inc(X);
-      Inc(Y);
+      inc(x);
+      inc(y);
     end;
 
     Prepare;
@@ -172,9 +171,9 @@ begin
 
     for i := 0 to Num - 1 do
     begin
-      AddPoint(Points^.X, Points^.Y);
+      AddPoint(Points^.x, Points^.y);
 
-      Inc(Points);
+      inc(Points);
     end;
 
     Prepare;
@@ -183,69 +182,69 @@ begin
   FLastIdx := -1;
 end;
 
-procedure TAggBSpline.AddPoint(X, Y: Double);
+procedure TAggBSpline.AddPoint(x, y: Double);
 begin
   if FNum < FMax then
   begin
-    PDouble(PtrComp(fx) + FNum * SizeOf(Double))^ := X;
-    PDouble(PtrComp(fy) + FNum * SizeOf(Double))^ := Y;
+    PDouble(PtrComp(fx) + FNum * SizeOf(Double))^ := x;
+    PDouble(PtrComp(fy) + FNum * SizeOf(Double))^ := y;
 
-    Inc(FNum);
+    inc(FNum);
   end;
 end;
 
 procedure TAggBSpline.Prepare;
 var
-  i, k, N1, SZ  : Integer;
-  Temp, R, s, al: PDouble;
-  h, p, d, F, E : Double;
+  i, k, n1, SZ  : Integer;
+  Temp, r, s, al: PDouble;
+  h, p, d, f, E : Double;
 begin
   if FNum > 2 then
   begin
     for k := 0 to FNum - 1 do
       PDouble(PtrComp(FSplineBuffer) + k * SizeOf(Double))^ := 0;
 
-    N1 := 3 * FNum;
-    SZ := N1;
+    n1 := 3 * FNum;
+    SZ := n1;
 
-    AggGetMem(Pointer(al), N1 * SizeOf(Double));
+    AggGetMem(Pointer(al), n1 * SizeOf(Double));
 
     Temp := al;
 
-    for k := 0 to N1 - 1 do
+    for k := 0 to n1 - 1 do
       PDouble(PtrComp(Temp) + k * SizeOf(Double))^ := 0;
 
-    R := PDouble(PtrComp(Temp) + FNum * SizeOf(Double));
+    r := PDouble(PtrComp(Temp) + FNum * SizeOf(Double));
     s := PDouble(PtrComp(Temp) + FNum * 2 * SizeOf(Double));
 
-    N1 := FNum - 1;
+    n1 := FNum - 1;
     d := PDouble(PtrComp(fx) + SizeOf(Double))^ - fx^;
     E := (PDouble(PtrComp(fy) + SizeOf(Double))^ - fy^) / d;
 
     k := 1;
 
-    while k < N1 do
+    while k < n1 do
     begin
       h := d;
       d := PDouble(PtrComp(fx) + (k + 1) * SizeOf(Double))^ -
         PDouble(PtrComp(fx) + k * SizeOf(Double))^;
-      F := E;
+      f := E;
       E := (PDouble(PtrComp(fy) + (k + 1) * SizeOf(Double))^ -
         PDouble(PtrComp(fy) + k * SizeOf(Double))^) / d;
 
       PDouble(PtrComp(al) + k * SizeOf(Double))^ := d / (d + h);
-      PDouble(PtrComp(R) + k * SizeOf(Double))^ :=
+      PDouble(PtrComp(r) + k * SizeOf(Double))^ :=
         1.0 - PDouble(PtrComp(al) + k * SizeOf(Double))^;
-      PDouble(PtrComp(s) + k * SizeOf(Double))^ := 6.0 * (E - F) / (h + d);
+      PDouble(PtrComp(s) + k * SizeOf(Double))^ := 6.0 * (E - f) / (h + d);
 
-      Inc(k);
+      inc(k);
     end;
 
     k := 1;
 
-    while k < N1 do
+    while k < n1 do
     begin
-      p := 1.0 / (PDouble(PtrComp(R) + k * SizeOf(Double))^ *
+      p := 1.0 / (PDouble(PtrComp(r) + k * SizeOf(Double))^ *
         PDouble(PtrComp(al) + (k - 1) * SizeOf(Double))^ + 2.0);
 
       PDouble(PtrComp(al) + k * SizeOf(Double))^ :=
@@ -253,21 +252,21 @@ begin
 
       PDouble(PtrComp(s) + k * SizeOf(Double))^ :=
         (PDouble(PtrComp(s) + k * SizeOf(Double))^ -
-        PDouble(PtrComp(R) + k * SizeOf(Double))^ *
+        PDouble(PtrComp(r) + k * SizeOf(Double))^ *
         PDouble(PtrComp(s) + (k - 1) * SizeOf(Double))^) * p;
 
-      Inc(k);
+      inc(k);
     end;
 
-    PDouble(PtrComp(FSplineBuffer) + N1 * SizeOf(Double))^ := 0.0;
+    PDouble(PtrComp(FSplineBuffer) + n1 * SizeOf(Double))^ := 0.0;
 
-    PDouble(PtrComp(al) + (N1 - 1) * SizeOf(Double))^ :=
-      PDouble(PtrComp(s) + (N1 - 1) * SizeOf(Double))^;
+    PDouble(PtrComp(al) + (n1 - 1) * SizeOf(Double))^ :=
+      PDouble(PtrComp(s) + (n1 - 1) * SizeOf(Double))^;
 
-    PDouble(PtrComp(FSplineBuffer) + (N1 - 1) * SizeOf(Double))^ :=
-      PDouble(PtrComp(al) + (N1 - 1) * SizeOf(Double))^;
+    PDouble(PtrComp(FSplineBuffer) + (n1 - 1) * SizeOf(Double))^ :=
+      PDouble(PtrComp(al) + (n1 - 1) * SizeOf(Double))^;
 
-    k := N1 - 2;
+    k := n1 - 2;
     i := 0;
 
     while i < FNum - 2 do
@@ -280,8 +279,8 @@ begin
       PDouble(PtrComp(FSplineBuffer) + k * SizeOf(Double))^ :=
         PDouble(PtrComp(al) + k * SizeOf(Double))^;
 
-      Inc(i);
-      Dec(k);
+      inc(i);
+      dec(k);
     end;
 
     AggFreeMem(Pointer(al), SZ * SizeOf(Double));
@@ -290,32 +289,32 @@ begin
   FLastIdx := -1;
 end;
 
-function TAggBSpline.Get(X: Double): Double;
+function TAggBSpline.Get(x: Double): Double;
 var
   i: Integer;
 begin
   if FNum > 2 then
   begin
     // Extrapolation on the left
-    if X < fx^ then
+    if x < fx^ then
     begin
-      Result := ExtrapolationLeft(X);
+      Result := ExtrapolationLeft(x);
 
       Exit;
     end;
 
     // Extrapolation on the right
-    if X >= PDouble(PtrComp(fx) + (FNum - 1) * SizeOf(Double))^ then
+    if x >= PDouble(PtrComp(fx) + (FNum - 1) * SizeOf(Double))^ then
     begin
-      Result := ExtrapolationRight(X);
+      Result := ExtrapolationRight(x);
 
       Exit;
     end;
 
     // Interpolation
-    BSearch(FNum, fx, X, @i);
+    BSearch(FNum, fx, x, @i);
 
-    Result := Interpolation(X, i);
+    Result := Interpolation(x, i);
 
     Exit;
   end;
@@ -323,22 +322,22 @@ begin
   Result := 0.0;
 end;
 
-function TAggBSpline.GetStateful(X: Double): Double;
+function TAggBSpline.GetStateful(x: Double): Double;
 begin
   if FNum > 2 then
   begin
     // Extrapolation on the left
-    if X < fx^ then
+    if x < fx^ then
     begin
-      Result := ExtrapolationLeft(X);
+      Result := ExtrapolationLeft(x);
 
       Exit;
     end;
 
     // Extrapolation on the right
-    if X >= PDouble(PtrComp(fx) + (FNum - 1) * SizeOf(Double))^ then
+    if x >= PDouble(PtrComp(fx) + (FNum - 1) * SizeOf(Double))^ then
     begin
-      Result := ExtrapolationRight(X);
+      Result := ExtrapolationRight(x);
 
       Exit;
     end;
@@ -346,34 +345,34 @@ begin
     if FLastIdx >= 0 then
     begin
       // Check if x is not in current range
-      if (X < PDouble(PtrComp(fx) + FLastIdx * SizeOf(Double))^) or
-        (X > PDouble(PtrComp(fx) + (FLastIdx + 1) * SizeOf(Double))^) then
+      if (x < PDouble(PtrComp(fx) + FLastIdx * SizeOf(Double))^) or
+        (x > PDouble(PtrComp(fx) + (FLastIdx + 1) * SizeOf(Double))^) then
         // Check if x between next points (most probably)
         if (FLastIdx < FNum - 2) and
-          (X >= PDouble(PtrComp(fx) + (FLastIdx + 1) * SizeOf(Double))^)
-          and (X <= PDouble(PtrComp(fx) + (FLastIdx + 2) *
+          (x >= PDouble(PtrComp(fx) + (FLastIdx + 1) * SizeOf(Double))^)
+          and (x <= PDouble(PtrComp(fx) + (FLastIdx + 2) *
           SizeOf(Double))^) then
-          Inc(FLastIdx)
+          inc(FLastIdx)
         else if (FLastIdx > 0) and
-          (X >= PDouble(PtrComp(fx) + (FLastIdx - 1) * SizeOf(Double))^)
-          and (X <= PDouble(PtrComp(fx) + FLastIdx * SizeOf(Double))^)
+          (x >= PDouble(PtrComp(fx) + (FLastIdx - 1) * SizeOf(Double))^)
+          and (x <= PDouble(PtrComp(fx) + FLastIdx * SizeOf(Double))^)
         then
           // x is between pevious points
-          Dec(FLastIdx)
+          dec(FLastIdx)
         else
           // Else perform full search
-          BSearch(FNum, fx, X, @FLastIdx);
+          BSearch(FNum, fx, x, @FLastIdx);
 
-      Result := Interpolation(X, FLastIdx);
+      Result := Interpolation(x, FLastIdx);
 
       Exit;
     end
     else
     begin
       // Interpolation
-      BSearch(FNum, fx, X, @FLastIdx);
+      BSearch(FNum, fx, x, @FLastIdx);
 
-      Result := Interpolation(X, FLastIdx);
+      Result := Interpolation(x, FLastIdx);
 
       Exit;
     end;
@@ -382,25 +381,25 @@ begin
   Result := 0.0;
 end;
 
-procedure TAggBSpline.BSearch(n: Integer; X: PDouble; x0: Double; i: PInteger);
+procedure TAggBSpline.BSearch(n: Integer; x: PDouble; x0: Double; i: PInteger);
 var
-  J, k: Integer;
+  j, k: Integer;
 begin
-  J := n - 1;
+  j := n - 1;
   i^ := 0;
 
-  while J - i^ > 1 do
+  while j - i^ > 1 do
   begin
-    k := ShrInt32(i^ + J, 1);
+    k := ShrInt32(i^ + j, 1);
 
-    if x0 < PDouble(PtrComp(X) + k * SizeOf(Double))^ then
-      J := k
+    if x0 < PDouble(PtrComp(x) + k * SizeOf(Double))^ then
+      j := k
     else
       i^ := k;
   end;
 end;
 
-function TAggBSpline.ExtrapolationLeft(X: Double): Double;
+function TAggBSpline.ExtrapolationLeft(x: Double): Double;
 var
   d: Double;
 begin
@@ -408,10 +407,10 @@ begin
 
   Result := (-d * PDouble(PtrComp(FSplineBuffer) + SizeOf(Double))^ / 6 +
     (PDouble(PtrComp(fy) + SizeOf(Double))^ - fy^) / d) *
-    (X - fx^) + fy^;
+    (x - fx^) + fy^;
 end;
 
-function TAggBSpline.ExtrapolationRight(X: Double): Double;
+function TAggBSpline.ExtrapolationRight(x: Double): Double;
 var
   d: Double;
 begin
@@ -421,28 +420,30 @@ begin
   Result := (d * PDouble(PtrComp(FSplineBuffer) + (FNum - 2) * SizeOf(Double))^ / 6 +
     (PDouble(PtrComp(fy) + (FNum - 1) * SizeOf(Double))^ -
     PDouble(PtrComp(fy) + (FNum - 2) * SizeOf(Double))^) / d) *
-    (X - PDouble(PtrComp(fx) + (FNum - 1) * SizeOf(Double))^) +
+    (x - PDouble(PtrComp(fx) + (FNum - 1) * SizeOf(Double))^) +
     PDouble(PtrComp(fy) + (FNum - 1) * SizeOf(Double))^;
 end;
 
-function TAggBSpline.Interpolation(X: Double; i: Integer): Double;
+function TAggBSpline.Interpolation(x: Double; i: Integer): Double;
 var
-  J: Integer;
-  d, h, R, p: Double;
+  j: Integer;
+  d, h, r, p: Double;
 begin
-  J := i + 1;
+  j := i + 1;
   d := PDouble(PtrComp(fx) + i * SizeOf(Double))^ -
-    PDouble(PtrComp(fx) + J * SizeOf(Double))^;
-  h := X - PDouble(PtrComp(fx) + J * SizeOf(Double))^;
-  R := PDouble(PtrComp(fx) + i * SizeOf(Double))^ - X;
+    PDouble(PtrComp(fx) + j * SizeOf(Double))^;
+  h := x - PDouble(PtrComp(fx) + j * SizeOf(Double))^;
+  r := PDouble(PtrComp(fx) + i * SizeOf(Double))^ - x;
   p := d * d / 6.0;
 
-  Result := (PDouble(PtrComp(FSplineBuffer) + J * SizeOf(Double))^ * R * R * R +
+  Result := (PDouble(PtrComp(FSplineBuffer) + j * SizeOf(Double))^ * r * r * r +
     PDouble(PtrComp(FSplineBuffer) + i * SizeOf(Double))^ * h * h * h) / 6.0 / d +
-    ((PDouble(PtrComp(fy) + J * SizeOf(Double))^ - PDouble(PtrComp(FSplineBuffer)
-    + J * SizeOf(Double))^ * p) * R +
+    ((PDouble(PtrComp(fy) + j * SizeOf(Double))^ - PDouble(PtrComp(FSplineBuffer)
+    + j * SizeOf(Double))^ * p) * r +
     (PDouble(PtrComp(fy) + i * SizeOf(Double))^ - PDouble(PtrComp(FSplineBuffer) +
     i * SizeOf(Double))^ * p) * h) / d;
 end;
 
 end. 
+ 
+ 

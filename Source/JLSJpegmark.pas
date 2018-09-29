@@ -73,7 +73,7 @@ type
     function write_jpegls_restartmarker(outstrm: TCoreClassStream; JP: pjpeg_ls_header): Int;
 
     { Functions to read markers }
-    function read_n_bytes(instrm: TCoreClassStream; n: Int): UINT;
+    function read_n_bytes(instrm: TCoreClassStream; n: Int): uint;
     function read_marker(instrm: TCoreClassStream; mkp: pint): Int;
     function seek_marker(instrm: TCoreClassStream; mkp: pint): Int;
     function read_jpegls_frame(instrm: TCoreClassStream; JP: pjpeg_ls_header): Int;
@@ -149,7 +149,7 @@ begin
   ct := ct + write_n_bytes(outstrm, marker_len, 2); { write marker length }
   bpp := 1;
   while ((1 shl bpp) < JP^.alp) do
-      Inc(bpp);
+      inc(bpp);
 
   ct := ct + write_n_bytes(outstrm, bpp, 1); { write bits/sample }
 
@@ -234,7 +234,7 @@ var
   TID,          { Table ID }
   WT,           { Width of table entries }
   MAXTAB,       { Maximum index of table }
-  length: UINT; { Marker length }
+  length: uint; { Marker length }
   i: Int;
 
 begin
@@ -300,14 +300,14 @@ end;
 function TJLSJpegMark.seek_marker(instrm: TCoreClassStream; mkp: pint): Int;
 { Seeks a marker in the input stream. Returns the marker head, or EOF }
 var
-  C, c2, ct: Int;
+  c, c2, ct: Int;
 begin
   ct := 0;
-  C := FBitIO.mygetc;
-  while (C <> BUF_EOF) do
+  c := FBitIO.mygetc;
+  while (c <> BUF_EOF) do
     begin
-      Inc(ct);
-      if (C = $FF) then
+      inc(ct);
+      if (c = $FF) then
         begin
           c2 := FBitIO.mygetc;
           if (c2 = BUF_EOF) then
@@ -316,25 +316,25 @@ begin
               Exit;
             end;
 
-          Inc(ct);
+          inc(ct);
 
           if IsTrue(c2 and $80) then
             begin
-              mkp^ := (C shl 8) or c2;
+              mkp^ := (c shl 8) or c2;
               Result := ct;
               Exit;
             end;
         end;
 
-      C := FBitIO.mygetc;
+      c := FBitIO.mygetc;
     end;
   Result := BUF_EOF;
 end;
 
-function TJLSJpegMark.read_n_bytes(instrm: TCoreClassStream; n: Int): UINT;
+function TJLSJpegMark.read_n_bytes(instrm: TCoreClassStream; n: Int): uint;
 { reads n bytes (0 <= n <= 4) from the input stream }
 var
-  M: UINT;
+  M: uint;
   i: Int;
 begin
   M := 0;
@@ -347,7 +347,7 @@ end;
 function TJLSJpegMark.read_marker(instrm: TCoreClassStream; mkp: pint): Int;
 { reads a marker from the next two bytes in the input stream }
 var
-  M, ct: UINT;
+  M, ct: uint;
 begin
   ct := 0;
 
@@ -378,24 +378,24 @@ begin
 
   { Read Marker Length }
   marker_len := read_n_bytes(instrm, 2);
-  Inc(ct, 2);
+  inc(ct, 2);
 
   { Read the bits per pixel }
   bpp := read_n_bytes(instrm, 1);
-  Inc(ct);
+  inc(ct);
 
   check_range(bpp, 'bpp', 2, 16);
   JP^.alp := 1 shl bpp;
 
   { Read the rows and columns }
   JP^.Rows := read_n_bytes(instrm, 2);
-  Inc(ct, 2);
+  inc(ct, 2);
   JP^.columns := read_n_bytes(instrm, 2);
-  Inc(ct, 2);
+  inc(ct, 2);
 
   { Read component information }
   comp := read_n_bytes(instrm, 1);
-  Inc(ct);
+  inc(ct);
   check_range(comp, 'COMP', 1, 255);
   JP^.comp := comp;
 
@@ -403,11 +403,11 @@ begin
     begin
 
       cid := read_n_bytes(instrm, 1);
-      Inc(ct);
+      inc(ct);
       SX := read_n_bytes(instrm, 1);
-      Inc(ct);
+      inc(ct);
       tq := read_n_bytes(instrm, 1);
-      Inc(ct);
+      inc(ct);
       check_range(tq, 'Tq', 0, 0);
       SY := SX and $0F;
       SX := shr_c(SX, 4);
@@ -439,10 +439,10 @@ begin
   ct := 0;
 
   marker_len := read_n_bytes(instrm, 2);
-  Inc(ct, 2);
+  inc(ct, 2);
 
   comp := read_n_bytes(instrm, 1);
-  Inc(ct, 1);
+  inc(ct, 1);
   check_range(comp, 'scan components', 1, 4);
 
   JP^.comp := comp;
@@ -452,9 +452,9 @@ begin
     begin
 
       cid := read_n_bytes(instrm, 1); { component identifier }
-      Inc(ct);
+      inc(ct);
       TM := read_n_bytes(instrm, 1); { table identifier }
-      Inc(ct);
+      inc(ct);
 
       if (IsTrue(TM)) then
         begin
@@ -467,11 +467,11 @@ begin
     end;
 
   JP^._near := read_n_bytes(instrm, 1);
-  Inc(ct);
+  inc(ct);
   check_range(JP^._near, '_near', 0, 255);
 
   JP^.color_mode := read_n_bytes(instrm, 1);
-  Inc(ct);
+  inc(ct);
   check_range(JP^.color_mode, 'INTERLEAVE', 0, 2);
 
   if (JP^.comp = 1) and (JP^.color_mode <> 0) then
@@ -493,7 +493,7 @@ begin
     end;
 
   JP^.Shift := read_n_bytes(instrm, 1);
-  Inc(ct);
+  inc(ct);
   check_range(JP^.Shift, 'SHIFT', 0, 15);
 
   if (marker_len <> 6 + 2 * comp) then
@@ -529,11 +529,11 @@ begin
 
   { Read marker length }
   marker_len := read_n_bytes(instrm, 2); { marker length }
-  Inc(ct, 2);
+  inc(ct, 2);
 
   { Read id type }
   IDtype := read_n_bytes(instrm, 1);
-  Inc(ct, 1);
+  inc(ct, 1);
 
   { For Type 1 - non default parameters }
   if (IDtype = LSE_PARAMS) then
@@ -547,16 +547,16 @@ begin
 
       { read maxval }
       MaxVal := read_n_bytes(instrm, 2);
-      Inc(ct, 2);
+      inc(ct, 2);
       JP^.alp := MaxVal + 1;
 
       { read thresholds and reset }
       JP^.t1 := read_n_bytes(instrm, 2);
-      Inc(ct, 2);
+      inc(ct, 2);
       JP^.t2 := read_n_bytes(instrm, 2);
       JP^.t3 := read_n_bytes(instrm, 2);
       JP^.res := read_n_bytes(instrm, 2);
-      Inc(ct, 6);
+      inc(ct, 6);
 
       Result := ct;
       Exit;
@@ -572,7 +572,7 @@ begin
       { Read table ID }
       TID := read_n_bytes(instrm, 1);
       JP^.TID := TID;
-      Inc(ct, 1);
+      inc(ct, 1);
 
       { Read width of table entry }
       WT := read_n_bytes(instrm, 1);
@@ -583,7 +583,7 @@ begin
           Result := 0;
           Exit;
         end;
-      Inc(ct, 1);
+      inc(ct, 1);
 
       { Calculate value of MAXTAB }
       MAXTAB := ((marker_len - 5) div WT) - 1;
@@ -595,7 +595,7 @@ begin
         begin
           pwordarray(JP^.Table^[TID])^[i] := read_n_bytes(instrm, WT);
         end;
-      Inc(ct, (MAXTAB + 1) * WT);
+      inc(ct, (MAXTAB + 1) * WT);
 
       Result := ct;
       Exit;
@@ -618,11 +618,11 @@ begin
 
   { Read marker length }
   marker_len := read_n_bytes(instrm, 2);
-  Inc(ct, 2);
+  inc(ct, 2);
 
   { Read the restart interval }
   Ri := read_n_bytes(instrm, marker_len - 2);
-  Inc(ct, (marker_len - 2));
+  inc(ct, (marker_len - 2));
 
   JP^.restart_interval := Ri;
 
@@ -630,4 +630,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

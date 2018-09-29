@@ -37,11 +37,8 @@
 *)
 unit AggSpanAllocator;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32;
@@ -104,4 +101,5 @@ begin
 end;
 
 end.
+ 
  

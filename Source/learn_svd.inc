@@ -32,7 +32,7 @@
   VTNeeded    -   0, 1 or 2. See the description of the parameter VT.
   AdditionalMemory -
   If the parameter:
-  * equals 0, the algorithm doesn’t use additional
+  * equals 0, the algorithm doesnæŠ?use additional
   memory (lower requirements, lower performance).
   * equals 1, the algorithm uses additional
   memory of size min(M,N)*min(M,N) of real numbers.
@@ -51,7 +51,7 @@
   within [0..M-1, 0..Min(M,N)-1].
   if UNeeded=2, U contains matrix U wholly. Array whose
   indexes range within [0..M-1, 0..M-1].
-  VT          -   if VTNeeded=0, VT isn’t changed, the right singular vectors
+  VT          -   if VTNeeded=0, VT isnæŠ?changed, the right singular vectors
   are not calculated.
   if VTNeeded=1, VT contains right singular vectors (first
   min(M,N) rows of matrix V^T). Array whose indexes range
@@ -59,8 +59,8 @@
   if VTNeeded=2, VT contains matrix V^T wholly. Array whose
   indexes range within [0..N-1, 0..N-1].
   ************************************************************************ *)
-function RMatrixSVD(A: TLMatrix; const M, n, UNeeded, VTNeeded, AdditionalMemory: TLInt;
-  var w: TLVec; var u: TLMatrix; var VT: TLMatrix): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RMatrixSVD(a: TLMatrix; const M, n, UNeeded, VTNeeded, AdditionalMemory: TLInt;
+  var w: TLVec; var u: TLMatrix; var VT: TLMatrix): Boolean;
 var
   TauQ   : TLVec;
   TauP   : TLVec;
@@ -75,9 +75,9 @@ var
   NRU    : TLInt;
   NCVT   : TLInt;
   i      : TLInt;
-  J      : TLInt;
+  j      : TLInt;
 begin
-  A := DynamicArrayCopy(A);
+  a := DynamicArrayCopy(a);
   Result := True;
   if (M = 0) or (n = 0) then
     begin
@@ -133,22 +133,22 @@ begin
           //
           // No left singular vectors to be computed
           //
-          RMatrixQR(A, M, n, TAU);
+          RMatrixQR(a, M, n, TAU);
           i := 0;
           while i <= n - 1 do
             begin
-              J := 0;
-              while J <= i - 1 do
+              j := 0;
+              while j <= i - 1 do
                 begin
-                  A[i, J] := 0;
-                  Inc(J);
+                  a[i, j] := 0;
+                  inc(j);
                 end;
-              Inc(i);
+              inc(i);
             end;
-          RMatrixBD(A, n, n, TauQ, TauP);
-          RMatrixBDUnpackPT(A, n, n, TauP, NRVT, VT);
-          RMatrixBDUnpackDiagonals(A, n, n, IsUpper, w, E);
-          Result := RMatrixBDSVD(w, E, n, IsUpper, False, u, 0, A, 0, VT, NCVT);
+          RMatrixBD(a, n, n, TauQ, TauP);
+          RMatrixBDUnpackPT(a, n, n, TauP, NRVT, VT);
+          RMatrixBDUnpackDiagonals(a, n, n, IsUpper, w, E);
+          Result := RMatrixBDSVD(w, E, n, IsUpper, False, u, 0, a, 0, VT, NCVT);
           Exit;
         end
       else
@@ -157,30 +157,30 @@ begin
           //
           // Left singular vectors (may be full matrix U) to be computed
           //
-          RMatrixQR(A, M, n, TAU);
-          RMatrixQRUnpackQ(A, M, n, TAU, NCU, u);
+          RMatrixQR(a, M, n, TAU);
+          RMatrixQRUnpackQ(a, M, n, TAU, NCU, u);
           i := 0;
           while i <= n - 1 do
             begin
-              J := 0;
-              while J <= i - 1 do
+              j := 0;
+              while j <= i - 1 do
                 begin
-                  A[i, J] := 0;
-                  Inc(J);
+                  a[i, j] := 0;
+                  inc(j);
                 end;
-              Inc(i);
+              inc(i);
             end;
-          RMatrixBD(A, n, n, TauQ, TauP);
-          RMatrixBDUnpackPT(A, n, n, TauP, NRVT, VT);
-          RMatrixBDUnpackDiagonals(A, n, n, IsUpper, w, E);
+          RMatrixBD(a, n, n, TauQ, TauP);
+          RMatrixBDUnpackPT(a, n, n, TauP, NRVT, VT);
+          RMatrixBDUnpackDiagonals(a, n, n, IsUpper, w, E);
           if AdditionalMemory < 1 then
             begin
 
               //
               // No additional memory can be used
               //
-              RMatrixBDMultiplyByQ(A, n, n, TauQ, u, M, n, True, False);
-              Result := RMatrixBDSVD(w, E, n, IsUpper, False, u, M, A, 0, VT, NCVT);
+              RMatrixBDMultiplyByQ(a, n, n, TauQ, u, M, n, True, False);
+              Result := RMatrixBDSVD(w, E, n, IsUpper, False, u, M, a, 0, VT, NCVT);
             end
           else
             begin
@@ -189,11 +189,11 @@ begin
               // Large U. Transforming intermediate matrix T2
               //
               SetLength(Work, Max(M, n) + 1);
-              RMatrixBDUnpackQ(A, n, n, TauQ, n, t2);
-              CopyMatrix(u, 0, M - 1, 0, n - 1, A, 0, M - 1, 0, n - 1);
+              RMatrixBDUnpackQ(a, n, n, TauQ, n, t2);
+              CopyMatrix(u, 0, M - 1, 0, n - 1, a, 0, M - 1, 0, n - 1);
               InplaceTranspose(t2, 0, n - 1, 0, n - 1, Work);
               Result := RMatrixBDSVD(w, E, n, IsUpper, False, u, 0, t2, n, VT, NCVT);
-              MatrixMatrixMultiply(A, 0, M - 1, 0, n - 1, False, t2, 0, n - 1, 0,
+              MatrixMatrixMultiply(a, 0, M - 1, 0, n - 1, False, t2, 0, n - 1, 0,
                 n - 1, True, 1.0, u, 0, M - 1, 0, n - 1, 0.0, Work);
             end;
           Exit;
@@ -212,24 +212,24 @@ begin
           //
           // No right singular vectors to be computed
           //
-          RMatrixLQ(A, M, n, TAU);
+          RMatrixLQ(a, M, n, TAU);
           i := 0;
           while i <= M - 1 do
             begin
-              J := i + 1;
-              while J <= M - 1 do
+              j := i + 1;
+              while j <= M - 1 do
                 begin
-                  A[i, J] := 0;
-                  Inc(J);
+                  a[i, j] := 0;
+                  inc(j);
                 end;
-              Inc(i);
+              inc(i);
             end;
-          RMatrixBD(A, M, M, TauQ, TauP);
-          RMatrixBDUnpackQ(A, M, M, TauQ, NCU, u);
-          RMatrixBDUnpackDiagonals(A, M, M, IsUpper, w, E);
+          RMatrixBD(a, M, M, TauQ, TauP);
+          RMatrixBDUnpackQ(a, M, M, TauQ, NCU, u);
+          RMatrixBDUnpackDiagonals(a, M, M, IsUpper, w, E);
           SetLength(Work, M + 1);
           InplaceTranspose(u, 0, NRU - 1, 0, NCU - 1, Work);
-          Result := RMatrixBDSVD(w, E, M, IsUpper, False, A, 0, u, NRU, VT, 0);
+          Result := RMatrixBDSVD(w, E, M, IsUpper, False, a, 0, u, NRU, VT, 0);
           InplaceTranspose(u, 0, NRU - 1, 0, NCU - 1, Work);
           Exit;
         end
@@ -239,22 +239,22 @@ begin
           //
           // Right singular vectors (may be full matrix VT) to be computed
           //
-          RMatrixLQ(A, M, n, TAU);
-          RMatrixLQUnpackQ(A, M, n, TAU, NRVT, VT);
+          RMatrixLQ(a, M, n, TAU);
+          RMatrixLQUnpackQ(a, M, n, TAU, NRVT, VT);
           i := 0;
           while i <= M - 1 do
             begin
-              J := i + 1;
-              while J <= M - 1 do
+              j := i + 1;
+              while j <= M - 1 do
                 begin
-                  A[i, J] := 0;
-                  Inc(J);
+                  a[i, j] := 0;
+                  inc(j);
                 end;
-              Inc(i);
+              inc(i);
             end;
-          RMatrixBD(A, M, M, TauQ, TauP);
-          RMatrixBDUnpackQ(A, M, M, TauQ, NCU, u);
-          RMatrixBDUnpackDiagonals(A, M, M, IsUpper, w, E);
+          RMatrixBD(a, M, M, TauQ, TauP);
+          RMatrixBDUnpackQ(a, M, M, TauQ, NCU, u);
+          RMatrixBDUnpackDiagonals(a, M, M, IsUpper, w, E);
           SetLength(Work, Max(M, n) + 1);
           InplaceTranspose(u, 0, NRU - 1, 0, NCU - 1, Work);
           if AdditionalMemory < 1 then
@@ -263,8 +263,8 @@ begin
               //
               // No additional memory available
               //
-              RMatrixBDMultiplyByP(A, M, M, TauP, VT, M, n, False, True);
-              Result := RMatrixBDSVD(w, E, M, IsUpper, False, A, 0, u, NRU, VT, n);
+              RMatrixBDMultiplyByP(a, M, M, TauP, VT, M, n, False, True);
+              Result := RMatrixBDSVD(w, E, M, IsUpper, False, a, 0, u, NRU, VT, n);
             end
           else
             begin
@@ -272,10 +272,10 @@ begin
               //
               // Large VT. Transforming intermediate matrix T2
               //
-              RMatrixBDUnpackPT(A, M, M, TauP, M, t2);
-              Result := RMatrixBDSVD(w, E, M, IsUpper, False, A, 0, u, NRU, t2, M);
-              CopyMatrix(VT, 0, M - 1, 0, n - 1, A, 0, M - 1, 0, n - 1);
-              MatrixMatrixMultiply(t2, 0, M - 1, 0, M - 1, False, A, 0, M - 1, 0,
+              RMatrixBDUnpackPT(a, M, M, TauP, M, t2);
+              Result := RMatrixBDSVD(w, E, M, IsUpper, False, a, 0, u, NRU, t2, M);
+              CopyMatrix(VT, 0, M - 1, 0, n - 1, a, 0, M - 1, 0, n - 1);
+              MatrixMatrixMultiply(t2, 0, M - 1, 0, M - 1, False, a, 0, M - 1, 0,
                 n - 1, False, 1.0, VT, 0, M - 1, 0, n - 1, 0.0, Work);
             end;
           InplaceTranspose(u, 0, NRU - 1, 0, NCU - 1, Work);
@@ -289,13 +289,13 @@ begin
   //
   if M <= n then
     begin
-      RMatrixBD(A, M, n, TauQ, TauP);
-      RMatrixBDUnpackQ(A, M, n, TauQ, NCU, u);
-      RMatrixBDUnpackPT(A, M, n, TauP, NRVT, VT);
-      RMatrixBDUnpackDiagonals(A, M, n, IsUpper, w, E);
+      RMatrixBD(a, M, n, TauQ, TauP);
+      RMatrixBDUnpackQ(a, M, n, TauQ, NCU, u);
+      RMatrixBDUnpackPT(a, M, n, TauP, NRVT, VT);
+      RMatrixBDUnpackDiagonals(a, M, n, IsUpper, w, E);
       SetLength(Work, M + 1);
       InplaceTranspose(u, 0, NRU - 1, 0, NCU - 1, Work);
-      Result := RMatrixBDSVD(w, E, MinMN, IsUpper, False, A, 0, u, NRU, VT, NCVT);
+      Result := RMatrixBDSVD(w, E, MinMN, IsUpper, False, a, 0, u, NRU, VT, NCVT);
       InplaceTranspose(u, 0, NRU - 1, 0, NCU - 1, Work);
       Exit;
     end;
@@ -303,17 +303,17 @@ begin
   //
   // Simple bidiagonal reduction
   //
-  RMatrixBD(A, M, n, TauQ, TauP);
-  RMatrixBDUnpackQ(A, M, n, TauQ, NCU, u);
-  RMatrixBDUnpackPT(A, M, n, TauP, NRVT, VT);
-  RMatrixBDUnpackDiagonals(A, M, n, IsUpper, w, E);
+  RMatrixBD(a, M, n, TauQ, TauP);
+  RMatrixBDUnpackQ(a, M, n, TauQ, NCU, u);
+  RMatrixBDUnpackPT(a, M, n, TauP, NRVT, VT);
+  RMatrixBDUnpackDiagonals(a, M, n, IsUpper, w, E);
   if (AdditionalMemory < 2) or (UNeeded = 0) then
     begin
 
       //
       // We cant use additional memory or there is no need in such operations
       //
-      Result := RMatrixBDSVD(w, E, MinMN, IsUpper, False, u, NRU, A, 0, VT, NCVT);
+      Result := RMatrixBDSVD(w, E, MinMN, IsUpper, False, u, NRU, a, 0, VT, NCVT);
     end
   else
     begin
@@ -327,3 +327,5 @@ begin
       CopyAndTranspose(t2, 0, MinMN - 1, 0, M - 1, u, 0, M - 1, 0, MinMN - 1);
     end;
 end; 
+ 
+ 

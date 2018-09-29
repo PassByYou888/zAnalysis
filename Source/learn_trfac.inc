@@ -10,41 +10,41 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 
-procedure CMatrixLUPRec(var A: TLComplexMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLUPRec(var a: TLComplexMatrix; Offs: TLInt;
+  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward;
 
-procedure RMatrixLUPRec(var A: TLMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLUPRec(var a: TLMatrix; Offs: TLInt;
+  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward;
 
-procedure CMatrixPLURec(var A: TLComplexMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixPLURec(var a: TLComplexMatrix; Offs: TLInt;
+  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward;
 
-procedure RMatrixPLURec(var A: TLMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixPLURec(var a: TLMatrix; Offs: TLInt;
+  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward;
 
-procedure CMatrixLUP2(var A: TLComplexMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixLUP2(var a: TLComplexMatrix; Offs: TLInt;
+  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward;
 
-procedure RMatrixLUP2(var A: TLMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixLUP2(var a: TLMatrix; Offs: TLInt;
+  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward;
 
-procedure CMatrixPLU2(var A: TLComplexMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure CMatrixPLU2(var a: TLComplexMatrix; Offs: TLInt;
+  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward;
 
-procedure RMatrixPLU2(var A: TLMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure RMatrixPLU2(var a: TLMatrix; Offs: TLInt;
+  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward;
 
-function HPDMatrixCholeskyRec(var A: TLComplexMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function HPDMatrixCholeskyRec(var a: TLComplexMatrix; Offs: TLInt;
+  n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean; forward;
 
-function SPDMatrixCholeskyRec(var A: TLMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SPDMatrixCholeskyRec(var a: TLMatrix; Offs: TLInt;
+  n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean; forward;
 
 function HPDMatrixCholesky2(var aaa: TLComplexMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean; forward;
 
 function SPDMatrixCholesky2(var aaa: TLMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean; forward;
 
 
 (* ************************************************************************
@@ -75,12 +75,12 @@ function SPDMatrixCholesky2(var aaa: TLMatrix; Offs: TLInt;
   * U is stored on and above main diagonal
   Pivots  -   permutation matrix in compact form. array[0..Min(M-1,N-1)].
   ************************************************************************ *)
-procedure RMatrixLU(var A: TLMatrix; M: TLInt; n: TLInt;
+procedure RMatrixLU(var a: TLMatrix; M: TLInt; n: TLInt;
   var Pivots: TLIVec);
 begin
   Assert(M > 0, 'RMatrixLU: incorrect M!');
   Assert(n > 0, 'RMatrixLU: incorrect N!');
-  RMatrixPLU(A, M, n, Pivots);
+  RMatrixPLU(a, M, n, Pivots);
 end;
 
 (* ************************************************************************
@@ -111,12 +111,12 @@ end;
   * U is stored on and above main diagonal
   Pivots  -   permutation matrix in compact form. array[0..Min(M-1,N-1)].
   ************************************************************************ *)
-procedure CMatrixLU(var A: TLComplexMatrix; M: TLInt; n: TLInt;
+procedure CMatrixLU(var a: TLComplexMatrix; M: TLInt; n: TLInt;
   var Pivots: TLIVec);
 begin
   Assert(M > 0, 'CMatrixLU: incorrect M!');
   Assert(n > 0, 'CMatrixLU: incorrect N!');
-  CMatrixPLU(A, M, n, Pivots);
+  CMatrixPLU(a, M, n, Pivots);
 end;
 
 (* ************************************************************************
@@ -144,7 +144,7 @@ end;
   Otherwise, the function returns False. Contents of A is not determined
   in such case.
   ************************************************************************ *)
-function HPDMatrixCholesky(var A: TLComplexMatrix; n: TLInt;
+function HPDMatrixCholesky(var a: TLComplexMatrix; n: TLInt;
   IsUpper: Boolean): Boolean;
 var
   tmp: TLComplexVec;
@@ -155,7 +155,7 @@ begin
       Exit;
     end;
   SetLength(tmp, 2 * n);
-  Result := HPDMatrixCholeskyRec(A, 0, n, IsUpper, tmp);
+  Result := HPDMatrixCholeskyRec(a, 0, n, IsUpper, tmp);
 end;
 
 (* ************************************************************************
@@ -183,7 +183,7 @@ end;
   Otherwise, the function returns False. Contents of A is not determined
   in such case.
   ************************************************************************ *)
-function SPDMatrixCholesky(var A: TLMatrix; n: TLInt;
+function SPDMatrixCholesky(var a: TLMatrix; n: TLInt;
   IsUpper: Boolean): Boolean;
 var
   tmp: TLVec;
@@ -194,15 +194,15 @@ begin
       Exit;
     end;
   SetLength(tmp, 2 * n);
-  Result := SPDMatrixCholeskyRec(A, 0, n, IsUpper, tmp);
+  Result := SPDMatrixCholeskyRec(a, 0, n, IsUpper, tmp);
 end;
 
-procedure RMatrixLUP(var A: TLMatrix; M: TLInt; n: TLInt;
+procedure RMatrixLUP(var a: TLMatrix; M: TLInt; n: TLInt;
   var Pivots: TLIVec);
 var
   tmp: TLVec;
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   mx: TLFloat;
   v: TLFloat;
 begin
@@ -222,13 +222,13 @@ begin
   i := 0;
   while i <= M - 1 do
     begin
-      J := 0;
-      while J <= n - 1 do
+      j := 0;
+      while j <= n - 1 do
         begin
-          mx := Max(mx, AbsReal(A[i, J]));
-          Inc(J);
+          mx := Max(mx, AbsReal(a[i, j]));
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
   if AP_FP_NEq(mx, 0) then
     begin
@@ -236,31 +236,31 @@ begin
       i := 0;
       while i <= M - 1 do
         begin
-          APVMul(@A[i][0], 0, n - 1, v);
-          Inc(i);
+          APVMul(@a[i][0], 0, n - 1, v);
+          inc(i);
         end;
     end;
   SetLength(Pivots, Min(M, n));
   SetLength(tmp, 2 * Max(M, n));
-  RMatrixLUPRec(A, 0, M, n, Pivots, tmp);
+  RMatrixLUPRec(a, 0, M, n, Pivots, tmp);
   if AP_FP_NEq(mx, 0) then
     begin
       v := mx;
       i := 0;
       while i <= M - 1 do
         begin
-          APVMul(@A[i][0], 0, Min(i, n - 1), v);
-          Inc(i);
+          APVMul(@a[i][0], 0, Min(i, n - 1), v);
+          inc(i);
         end;
     end;
 end;
 
-procedure CMatrixLUP(var A: TLComplexMatrix; M: TLInt; n: TLInt;
+procedure CMatrixLUP(var a: TLComplexMatrix; M: TLInt; n: TLInt;
   var Pivots: TLIVec);
 var
   tmp: TLComplexVec;
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   mx: TLFloat;
   v: TLFloat;
   i_: TLInt;
@@ -281,13 +281,13 @@ begin
   i := 0;
   while i <= M - 1 do
     begin
-      J := 0;
-      while J <= n - 1 do
+      j := 0;
+      while j <= n - 1 do
         begin
-          mx := Max(mx, AbsComplex(A[i, J]));
-          Inc(J);
+          mx := Max(mx, AbsComplex(a[i, j]));
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
   if AP_FP_NEq(mx, 0) then
     begin
@@ -297,14 +297,14 @@ begin
         begin
           for i_ := 0 to n - 1 do
             begin
-              A[i, i_] := C_MulR(A[i, i_], v);
+              a[i, i_] := C_MulR(a[i, i_], v);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
   SetLength(Pivots, Min(M, n));
   SetLength(tmp, 2 * Max(M, n));
-  CMatrixLUPRec(A, 0, M, n, Pivots, tmp);
+  CMatrixLUPRec(a, 0, M, n, Pivots, tmp);
   if AP_FP_NEq(mx, 0) then
     begin
       v := mx;
@@ -313,19 +313,19 @@ begin
         begin
           for i_ := 0 to Min(i, n - 1) do
             begin
-              A[i, i_] := C_MulR(A[i, i_], v);
+              a[i, i_] := C_MulR(a[i, i_], v);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
 
-procedure RMatrixPLU(var A: TLMatrix; M: TLInt; n: TLInt;
+procedure RMatrixPLU(var a: TLMatrix; M: TLInt; n: TLInt;
   var Pivots: TLIVec);
 var
   tmp: TLVec;
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   mx: TLFloat;
   v: TLFloat;
 begin
@@ -347,13 +347,13 @@ begin
   i := 0;
   while i <= M - 1 do
     begin
-      J := 0;
-      while J <= n - 1 do
+      j := 0;
+      while j <= n - 1 do
         begin
-          mx := Max(mx, AbsReal(A[i, J]));
-          Inc(J);
+          mx := Max(mx, AbsReal(a[i, j]));
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
   if AP_FP_NEq(mx, 0) then
     begin
@@ -361,29 +361,29 @@ begin
       i := 0;
       while i <= M - 1 do
         begin
-          APVMul(@A[i][0], 0, n - 1, v);
-          Inc(i);
+          APVMul(@a[i][0], 0, n - 1, v);
+          inc(i);
         end;
     end;
-  RMatrixPLURec(A, 0, M, n, Pivots, tmp);
+  RMatrixPLURec(a, 0, M, n, Pivots, tmp);
   if AP_FP_NEq(mx, 0) then
     begin
       v := mx;
       i := 0;
       while i <= Min(M, n) - 1 do
         begin
-          APVMul(@A[i][0], i, n - 1, v);
-          Inc(i);
+          APVMul(@a[i][0], i, n - 1, v);
+          inc(i);
         end;
     end;
 end;
 
-procedure CMatrixPLU(var A: TLComplexMatrix; M: TLInt; n: TLInt;
+procedure CMatrixPLU(var a: TLComplexMatrix; M: TLInt; n: TLInt;
   var Pivots: TLIVec);
 var
   tmp: TLComplexVec;
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   mx: TLFloat;
   v: TLComplex;
   i_: TLInt;
@@ -406,13 +406,13 @@ begin
   i := 0;
   while i <= M - 1 do
     begin
-      J := 0;
-      while J <= n - 1 do
+      j := 0;
+      while j <= n - 1 do
         begin
-          mx := Max(mx, AbsComplex(A[i, J]));
-          Inc(J);
+          mx := Max(mx, AbsComplex(a[i, j]));
+          inc(j);
         end;
-      Inc(i);
+      inc(i);
     end;
   if AP_FP_NEq(mx, 0) then
     begin
@@ -422,12 +422,12 @@ begin
         begin
           for i_ := 0 to n - 1 do
             begin
-              A[i, i_] := C_Mul(v, A[i, i_]);
+              a[i, i_] := C_Mul(v, a[i, i_]);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
-  CMatrixPLURec(A, 0, M, n, Pivots, tmp);
+  CMatrixPLURec(a, 0, M, n, Pivots, tmp);
   if AP_FP_NEq(mx, 0) then
     begin
       v := C_Complex(mx);
@@ -436,9 +436,9 @@ begin
         begin
           for i_ := i to n - 1 do
             begin
-              A[i, i_] := C_Mul(v, A[i, i_]);
+              a[i, i_] := C_Mul(v, a[i, i_]);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -447,7 +447,7 @@ end;
   Recurrent TLComplex LU subroutine.
   Never call it directly.
   ************************************************************************ *)
-procedure CMatrixLUPRec(var A: TLComplexMatrix; Offs: TLInt;
+procedure CMatrixLUPRec(var a: TLComplexMatrix; Offs: TLInt;
   M: TLInt; n: TLInt; var Pivots: TLIVec;
   var tmp: TLComplexVec);
 var
@@ -461,9 +461,9 @@ begin
   //
   // Kernel case
   //
-  if Min(M, n) <= ABLASComplexBlockSize(A) then
+  if Min(M, n) <= ABLASComplexBlockSize(a) then
     begin
-      CMatrixLUP2(A, Offs, M, n, Pivots, tmp);
+      CMatrixLUP2(a, Offs, M, n, Pivots, tmp);
       Exit;
     end;
 
@@ -478,35 +478,35 @@ begin
   //
   if M > n then
     begin
-      CMatrixLUPRec(A, Offs, n, n, Pivots, tmp);
+      CMatrixLUPRec(a, Offs, n, n, Pivots, tmp);
       i := 0;
       while i <= n - 1 do
         begin
           i1_ := (Offs + n) - (0);
           for i_ := 0 to M - n - 1 do
             begin
-              tmp[i_] := A[i_ + i1_, Offs + i];
+              tmp[i_] := a[i_ + i1_, Offs + i];
             end;
           for i_ := Offs + n to Offs + M - 1 do
             begin
-              A[i_, Offs + i] := A[i_, Pivots[Offs + i]];
+              a[i_, Offs + i] := a[i_, Pivots[Offs + i]];
             end;
           i1_ := (0) - (Offs + n);
           for i_ := Offs + n to Offs + M - 1 do
             begin
-              A[i_, Pivots[Offs + i]] := tmp[i_ + i1_];
+              a[i_, Pivots[Offs + i]] := tmp[i_ + i1_];
             end;
-          Inc(i);
+          inc(i);
         end;
-      CMatrixRightTRSM(M - n, n, A, Offs, Offs, True, True, 0, A, Offs + n, Offs);
+      CMatrixRightTRSM(M - n, n, a, Offs, Offs, True, True, 0, a, Offs + n, Offs);
       Exit;
     end;
 
   //
   // Non-kernel case
   //
-  ABLASComplexSplitLength(A, M, m1, m2);
-  CMatrixLUPRec(A, Offs, m1, n, Pivots, tmp);
+  ABLASComplexSplitLength(a, M, m1, m2);
+  CMatrixLUPRec(a, Offs, m1, n, Pivots, tmp);
   if m2 > 0 then
     begin
       i := 0;
@@ -517,24 +517,24 @@ begin
               i1_ := (Offs + m1) - (0);
               for i_ := 0 to m2 - 1 do
                 begin
-                  tmp[i_] := A[i_ + i1_, Offs + i];
+                  tmp[i_] := a[i_ + i1_, Offs + i];
                 end;
               for i_ := Offs + m1 to Offs + M - 1 do
                 begin
-                  A[i_, Offs + i] := A[i_, Pivots[Offs + i]];
+                  a[i_, Offs + i] := a[i_, Pivots[Offs + i]];
                 end;
               i1_ := (0) - (Offs + m1);
               for i_ := Offs + m1 to Offs + M - 1 do
                 begin
-                  A[i_, Pivots[Offs + i]] := tmp[i_ + i1_];
+                  a[i_, Pivots[Offs + i]] := tmp[i_ + i1_];
                 end;
             end;
-          Inc(i);
+          inc(i);
         end;
-      CMatrixRightTRSM(m2, m1, A, Offs, Offs, True, True, 0, A, Offs + m1, Offs);
-      CMatrixGEMM(M - m1, n - m1, m1, C_Complex(-1.0), A, Offs + m1, Offs, 0, A,
-        Offs, Offs + m1, 0, C_Complex(+1.0), A, Offs + m1, Offs + m1);
-      CMatrixLUPRec(A, Offs + m1, M - m1, n - m1, Pivots, tmp);
+      CMatrixRightTRSM(m2, m1, a, Offs, Offs, True, True, 0, a, Offs + m1, Offs);
+      CMatrixGEMM(M - m1, n - m1, m1, C_Complex(-1.0), a, Offs + m1, Offs, 0, a,
+        Offs, Offs + m1, 0, C_Complex(+1.0), a, Offs + m1, Offs + m1);
+      CMatrixLUPRec(a, Offs + m1, M - m1, n - m1, Pivots, tmp);
       i := 0;
       while i <= m2 - 1 do
         begin
@@ -543,19 +543,19 @@ begin
               i1_ := (Offs) - (0);
               for i_ := 0 to m1 - 1 do
                 begin
-                  tmp[i_] := A[i_ + i1_, Offs + m1 + i];
+                  tmp[i_] := a[i_ + i1_, Offs + m1 + i];
                 end;
               for i_ := Offs to Offs + m1 - 1 do
                 begin
-                  A[i_, Offs + m1 + i] := A[i_, Pivots[Offs + m1 + i]];
+                  a[i_, Offs + m1 + i] := a[i_, Pivots[Offs + m1 + i]];
                 end;
               i1_ := (0) - (Offs);
               for i_ := Offs to Offs + m1 - 1 do
                 begin
-                  A[i_, Pivots[Offs + m1 + i]] := tmp[i_ + i1_];
+                  a[i_, Pivots[Offs + m1 + i]] := tmp[i_ + i1_];
                 end;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -564,7 +564,7 @@ end;
   Recurrent real LU subroutine.
   Never call it directly.
   ************************************************************************ *)
-procedure RMatrixLUPRec(var A: TLMatrix; Offs: TLInt;
+procedure RMatrixLUPRec(var a: TLMatrix; Offs: TLInt;
   M: TLInt; n: TLInt; var Pivots: TLIVec;
   var tmp: TLVec);
 var
@@ -578,9 +578,9 @@ begin
   //
   // Kernel case
   //
-  if Min(M, n) <= ABLASBlockSize(A) then
+  if Min(M, n) <= ABLASBlockSize(a) then
     begin
-      RMatrixLUP2(A, Offs, M, n, Pivots, tmp);
+      RMatrixLUP2(a, Offs, M, n, Pivots, tmp);
       Exit;
     end;
 
@@ -595,7 +595,7 @@ begin
   //
   if M > n then
     begin
-      RMatrixLUPRec(A, Offs, n, n, Pivots, tmp);
+      RMatrixLUPRec(a, Offs, n, n, Pivots, tmp);
       i := 0;
       while i <= n - 1 do
         begin
@@ -604,29 +604,29 @@ begin
               i1_ := (Offs + n) - (0);
               for i_ := 0 to M - n - 1 do
                 begin
-                  tmp[i_] := A[i_ + i1_, Offs + i];
+                  tmp[i_] := a[i_ + i1_, Offs + i];
                 end;
               for i_ := Offs + n to Offs + M - 1 do
                 begin
-                  A[i_, Offs + i] := A[i_, Pivots[Offs + i]];
+                  a[i_, Offs + i] := a[i_, Pivots[Offs + i]];
                 end;
               i1_ := (0) - (Offs + n);
               for i_ := Offs + n to Offs + M - 1 do
                 begin
-                  A[i_, Pivots[Offs + i]] := tmp[i_ + i1_];
+                  a[i_, Pivots[Offs + i]] := tmp[i_ + i1_];
                 end;
             end;
-          Inc(i);
+          inc(i);
         end;
-      RMatrixRightTRSM(M - n, n, A, Offs, Offs, True, True, 0, A, Offs + n, Offs);
+      RMatrixRightTRSM(M - n, n, a, Offs, Offs, True, True, 0, a, Offs + n, Offs);
       Exit;
     end;
 
   //
   // Non-kernel case
   //
-  ABLASSplitLength(A, M, m1, m2);
-  RMatrixLUPRec(A, Offs, m1, n, Pivots, tmp);
+  ABLASSplitLength(a, M, m1, m2);
+  RMatrixLUPRec(a, Offs, m1, n, Pivots, tmp);
   if m2 > 0 then
     begin
       i := 0;
@@ -637,24 +637,24 @@ begin
               i1_ := (Offs + m1) - (0);
               for i_ := 0 to m2 - 1 do
                 begin
-                  tmp[i_] := A[i_ + i1_, Offs + i];
+                  tmp[i_] := a[i_ + i1_, Offs + i];
                 end;
               for i_ := Offs + m1 to Offs + M - 1 do
                 begin
-                  A[i_, Offs + i] := A[i_, Pivots[Offs + i]];
+                  a[i_, Offs + i] := a[i_, Pivots[Offs + i]];
                 end;
               i1_ := (0) - (Offs + m1);
               for i_ := Offs + m1 to Offs + M - 1 do
                 begin
-                  A[i_, Pivots[Offs + i]] := tmp[i_ + i1_];
+                  a[i_, Pivots[Offs + i]] := tmp[i_ + i1_];
                 end;
             end;
-          Inc(i);
+          inc(i);
         end;
-      RMatrixRightTRSM(m2, m1, A, Offs, Offs, True, True, 0, A, Offs + m1, Offs);
-      RMatrixGEMM(M - m1, n - m1, m1, -1.0, A, Offs + m1, Offs, 0, A, Offs,
-        Offs + m1, 0, +1.0, A, Offs + m1, Offs + m1);
-      RMatrixLUPRec(A, Offs + m1, M - m1, n - m1, Pivots, tmp);
+      RMatrixRightTRSM(m2, m1, a, Offs, Offs, True, True, 0, a, Offs + m1, Offs);
+      RMatrixGEMM(M - m1, n - m1, m1, -1.0, a, Offs + m1, Offs, 0, a, Offs,
+        Offs + m1, 0, +1.0, a, Offs + m1, Offs + m1);
+      RMatrixLUPRec(a, Offs + m1, M - m1, n - m1, Pivots, tmp);
       i := 0;
       while i <= m2 - 1 do
         begin
@@ -663,19 +663,19 @@ begin
               i1_ := (Offs) - (0);
               for i_ := 0 to m1 - 1 do
                 begin
-                  tmp[i_] := A[i_ + i1_, Offs + m1 + i];
+                  tmp[i_] := a[i_ + i1_, Offs + m1 + i];
                 end;
               for i_ := Offs to Offs + m1 - 1 do
                 begin
-                  A[i_, Offs + m1 + i] := A[i_, Pivots[Offs + m1 + i]];
+                  a[i_, Offs + m1 + i] := a[i_, Pivots[Offs + m1 + i]];
                 end;
               i1_ := (0) - (Offs);
               for i_ := Offs to Offs + m1 - 1 do
                 begin
-                  A[i_, Pivots[Offs + m1 + i]] := tmp[i_ + i1_];
+                  a[i_, Pivots[Offs + m1 + i]] := tmp[i_ + i1_];
                 end;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -684,13 +684,13 @@ end;
   Recurrent TLComplex LU subroutine.
   Never call it directly.
   ************************************************************************ *)
-procedure CMatrixPLURec(var A: TLComplexMatrix; Offs: TLInt;
+procedure CMatrixPLURec(var a: TLComplexMatrix; Offs: TLInt;
   M: TLInt; n: TLInt; var Pivots: TLIVec;
   var tmp: TLComplexVec);
 var
   i: TLInt;
-  N1: TLInt;
-  N2: TLInt;
+  n1: TLInt;
+  n2: TLInt;
   i_: TLInt;
   i1_: TLInt;
 begin
@@ -698,9 +698,9 @@ begin
   //
   // Kernel case
   //
-  if Min(M, n) <= ABLASComplexBlockSize(A) then
+  if Min(M, n) <= ABLASComplexBlockSize(a) then
     begin
-      CMatrixPLU2(A, Offs, M, n, Pivots, tmp);
+      CMatrixPLU2(a, Offs, M, n, Pivots, tmp);
       Exit;
     end;
 
@@ -712,84 +712,84 @@ begin
   //
   if n > M then
     begin
-      CMatrixPLURec(A, Offs, M, M, Pivots, tmp);
+      CMatrixPLURec(a, Offs, M, M, Pivots, tmp);
       i := 0;
       while i <= M - 1 do
         begin
           i1_ := (Offs + M) - (0);
           for i_ := 0 to n - M - 1 do
             begin
-              tmp[i_] := A[Offs + i, i_ + i1_];
+              tmp[i_] := a[Offs + i, i_ + i1_];
             end;
           for i_ := Offs + M to Offs + n - 1 do
             begin
-              A[Offs + i, i_] := A[Pivots[Offs + i], i_];
+              a[Offs + i, i_] := a[Pivots[Offs + i], i_];
             end;
           i1_ := (0) - (Offs + M);
           for i_ := Offs + M to Offs + n - 1 do
             begin
-              A[Pivots[Offs + i], i_] := tmp[i_ + i1_];
+              a[Pivots[Offs + i], i_] := tmp[i_ + i1_];
             end;
-          Inc(i);
+          inc(i);
         end;
-      CMatrixLeftTRSM(M, n - M, A, Offs, Offs, False, True, 0, A, Offs, Offs + M);
+      CMatrixLeftTRSM(M, n - M, a, Offs, Offs, False, True, 0, a, Offs, Offs + M);
       Exit;
     end;
 
   //
   // Non-kernel case
   //
-  ABLASComplexSplitLength(A, n, N1, N2);
-  CMatrixPLURec(A, Offs, M, N1, Pivots, tmp);
-  if N2 > 0 then
+  ABLASComplexSplitLength(a, n, n1, n2);
+  CMatrixPLURec(a, Offs, M, n1, Pivots, tmp);
+  if n2 > 0 then
     begin
       i := 0;
-      while i <= N1 - 1 do
+      while i <= n1 - 1 do
         begin
           if Offs + i <> Pivots[Offs + i] then
             begin
-              i1_ := (Offs + N1) - (0);
-              for i_ := 0 to N2 - 1 do
+              i1_ := (Offs + n1) - (0);
+              for i_ := 0 to n2 - 1 do
                 begin
-                  tmp[i_] := A[Offs + i, i_ + i1_];
+                  tmp[i_] := a[Offs + i, i_ + i1_];
                 end;
-              for i_ := Offs + N1 to Offs + n - 1 do
+              for i_ := Offs + n1 to Offs + n - 1 do
                 begin
-                  A[Offs + i, i_] := A[Pivots[Offs + i], i_];
+                  a[Offs + i, i_] := a[Pivots[Offs + i], i_];
                 end;
-              i1_ := (0) - (Offs + N1);
-              for i_ := Offs + N1 to Offs + n - 1 do
+              i1_ := (0) - (Offs + n1);
+              for i_ := Offs + n1 to Offs + n - 1 do
                 begin
-                  A[Pivots[Offs + i], i_] := tmp[i_ + i1_];
+                  a[Pivots[Offs + i], i_] := tmp[i_ + i1_];
                 end;
             end;
-          Inc(i);
+          inc(i);
         end;
-      CMatrixLeftTRSM(N1, N2, A, Offs, Offs, False, True, 0, A, Offs, Offs + N1);
-      CMatrixGEMM(M - N1, n - N1, N1, C_Complex(-1.0), A, Offs + N1, Offs, 0, A,
-        Offs, Offs + N1, 0, C_Complex(+1.0), A, Offs + N1, Offs + N1);
-      CMatrixPLURec(A, Offs + N1, M - N1, n - N1, Pivots, tmp);
+      CMatrixLeftTRSM(n1, n2, a, Offs, Offs, False, True, 0, a, Offs, Offs + n1);
+      CMatrixGEMM(M - n1, n - n1, n1, C_Complex(-1.0), a, Offs + n1, Offs, 0, a,
+        Offs, Offs + n1, 0, C_Complex(+1.0), a, Offs + n1, Offs + n1);
+      CMatrixPLURec(a, Offs + n1, M - n1, n - n1, Pivots, tmp);
       i := 0;
-      while i <= N2 - 1 do
+      while i <= n2 - 1 do
         begin
-          if Offs + N1 + i <> Pivots[Offs + N1 + i] then
+          if Offs + n1 + i <> Pivots[Offs + n1 + i] then
             begin
               i1_ := (Offs) - (0);
-              for i_ := 0 to N1 - 1 do
+              for i_ := 0 to n1 - 1 do
                 begin
-                  tmp[i_] := A[Offs + N1 + i, i_ + i1_];
+                  tmp[i_] := a[Offs + n1 + i, i_ + i1_];
                 end;
-              for i_ := Offs to Offs + N1 - 1 do
+              for i_ := Offs to Offs + n1 - 1 do
                 begin
-                  A[Offs + N1 + i, i_] := A[Pivots[Offs + N1 + i], i_];
+                  a[Offs + n1 + i, i_] := a[Pivots[Offs + n1 + i], i_];
                 end;
               i1_ := (0) - (Offs);
-              for i_ := Offs to Offs + N1 - 1 do
+              for i_ := Offs to Offs + n1 - 1 do
                 begin
-                  A[Pivots[Offs + N1 + i], i_] := tmp[i_ + i1_];
+                  a[Pivots[Offs + n1 + i], i_] := tmp[i_ + i1_];
                 end;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -798,21 +798,21 @@ end;
   Recurrent real LU subroutine.
   Never call it directly.
   ************************************************************************ *)
-procedure RMatrixPLURec(var A: TLMatrix; Offs: TLInt;
+procedure RMatrixPLURec(var a: TLMatrix; Offs: TLInt;
   M: TLInt; n: TLInt; var Pivots: TLIVec;
   var tmp: TLVec);
 var
   i: TLInt;
-  N1: TLInt;
-  N2: TLInt;
+  n1: TLInt;
+  n2: TLInt;
 begin
 
   //
   // Kernel case
   //
-  if Min(M, n) <= ABLASBlockSize(A) then
+  if Min(M, n) <= ABLASBlockSize(a) then
     begin
-      RMatrixPLU2(A, Offs, M, n, Pivots, tmp);
+      RMatrixPLU2(a, Offs, M, n, Pivots, tmp);
       Exit;
     end;
 
@@ -824,57 +824,57 @@ begin
   //
   if n > M then
     begin
-      RMatrixPLURec(A, Offs, M, M, Pivots, tmp);
+      RMatrixPLURec(a, Offs, M, M, Pivots, tmp);
       i := 0;
       while i <= M - 1 do
         begin
-          APVMove(@tmp[0], 0, n - M - 1, @A[Offs + i][0], Offs + M, Offs + n - 1);
-          APVMove(@A[Offs + i][0], Offs + M, Offs + n - 1, @A[Pivots[Offs + i]][0],
+          APVMove(@tmp[0], 0, n - M - 1, @a[Offs + i][0], Offs + M, Offs + n - 1);
+          APVMove(@a[Offs + i][0], Offs + M, Offs + n - 1, @a[Pivots[Offs + i]][0],
             Offs + M, Offs + n - 1);
-          APVMove(@A[Pivots[Offs + i]][0], Offs + M, Offs + n - 1, @tmp[0], 0,
+          APVMove(@a[Pivots[Offs + i]][0], Offs + M, Offs + n - 1, @tmp[0], 0,
             n - M - 1);
-          Inc(i);
+          inc(i);
         end;
-      RMatrixLeftTRSM(M, n - M, A, Offs, Offs, False, True, 0, A, Offs, Offs + M);
+      RMatrixLeftTRSM(M, n - M, a, Offs, Offs, False, True, 0, a, Offs, Offs + M);
       Exit;
     end;
 
   //
   // Non-kernel case
   //
-  ABLASSplitLength(A, n, N1, N2);
-  RMatrixPLURec(A, Offs, M, N1, Pivots, tmp);
-  if N2 > 0 then
+  ABLASSplitLength(a, n, n1, n2);
+  RMatrixPLURec(a, Offs, M, n1, Pivots, tmp);
+  if n2 > 0 then
     begin
       i := 0;
-      while i <= N1 - 1 do
+      while i <= n1 - 1 do
         begin
           if Offs + i <> Pivots[Offs + i] then
             begin
-              APVMove(@tmp[0], 0, N2 - 1, @A[Offs + i][0], Offs + N1, Offs + n - 1);
-              APVMove(@A[Offs + i][0], Offs + N1, Offs + n - 1,
-                @A[Pivots[Offs + i]][0], Offs + N1, Offs + n - 1);
-              APVMove(@A[Pivots[Offs + i]][0], Offs + N1, Offs + n - 1, @tmp[0],
-                0, N2 - 1);
+              APVMove(@tmp[0], 0, n2 - 1, @a[Offs + i][0], Offs + n1, Offs + n - 1);
+              APVMove(@a[Offs + i][0], Offs + n1, Offs + n - 1,
+                @a[Pivots[Offs + i]][0], Offs + n1, Offs + n - 1);
+              APVMove(@a[Pivots[Offs + i]][0], Offs + n1, Offs + n - 1, @tmp[0],
+                0, n2 - 1);
             end;
-          Inc(i);
+          inc(i);
         end;
-      RMatrixLeftTRSM(N1, N2, A, Offs, Offs, False, True, 0, A, Offs, Offs + N1);
-      RMatrixGEMM(M - N1, n - N1, N1, -1.0, A, Offs + N1, Offs, 0, A, Offs,
-        Offs + N1, 0, +1.0, A, Offs + N1, Offs + N1);
-      RMatrixPLURec(A, Offs + N1, M - N1, n - N1, Pivots, tmp);
+      RMatrixLeftTRSM(n1, n2, a, Offs, Offs, False, True, 0, a, Offs, Offs + n1);
+      RMatrixGEMM(M - n1, n - n1, n1, -1.0, a, Offs + n1, Offs, 0, a, Offs,
+        Offs + n1, 0, +1.0, a, Offs + n1, Offs + n1);
+      RMatrixPLURec(a, Offs + n1, M - n1, n - n1, Pivots, tmp);
       i := 0;
-      while i <= N2 - 1 do
+      while i <= n2 - 1 do
         begin
-          if Offs + N1 + i <> Pivots[Offs + N1 + i] then
+          if Offs + n1 + i <> Pivots[Offs + n1 + i] then
             begin
-              APVMove(@tmp[0], 0, N1 - 1, @A[Offs + N1 + i][0], Offs, Offs + N1 - 1);
-              APVMove(@A[Offs + N1 + i][0], Offs, Offs + N1 - 1,
-                @A[Pivots[Offs + N1 + i]][0], Offs, Offs + N1 - 1);
-              APVMove(@A[Pivots[Offs + N1 + i]][0], Offs, Offs + N1 - 1, @tmp[0],
-                0, N1 - 1);
+              APVMove(@tmp[0], 0, n1 - 1, @a[Offs + n1 + i][0], Offs, Offs + n1 - 1);
+              APVMove(@a[Offs + n1 + i][0], Offs, Offs + n1 - 1,
+                @a[Pivots[Offs + n1 + i]][0], Offs, Offs + n1 - 1);
+              APVMove(@a[Pivots[Offs + n1 + i]][0], Offs, Offs + n1 - 1, @tmp[0],
+                0, n1 - 1);
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
 end;
@@ -882,12 +882,12 @@ end;
 (* ************************************************************************
   TLComplex LUP kernel
   ************************************************************************ *)
-procedure CMatrixLUP2(var A: TLComplexMatrix; Offs: TLInt;
+procedure CMatrixLUP2(var a: TLComplexMatrix; Offs: TLInt;
   M: TLInt; n: TLInt; var Pivots: TLIVec;
   var tmp: TLComplexVec);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   JP: TLInt;
   s: TLComplex;
   i_: TLInt;
@@ -905,86 +905,86 @@ begin
   //
   // main cycle
   //
-  J := 0;
-  while J <= Min(M - 1, n - 1) do
+  j := 0;
+  while j <= Min(M - 1, n - 1) do
     begin
 
       //
       // Find pivot, swap columns
       //
-      JP := J;
-      i := J + 1;
+      JP := j;
+      i := j + 1;
       while i <= n - 1 do
         begin
-          if AP_FP_Greater(AbsComplex(A[Offs + J, Offs + i]),
-            AbsComplex(A[Offs + J, Offs + JP])) then
+          if AP_FP_Greater(AbsComplex(a[Offs + j, Offs + i]),
+            AbsComplex(a[Offs + j, Offs + JP])) then
             begin
               JP := i;
             end;
-          Inc(i);
+          inc(i);
         end;
-      Pivots[Offs + J] := Offs + JP;
-      if JP <> J then
+      Pivots[Offs + j] := Offs + JP;
+      if JP <> j then
         begin
           i1_ := (Offs) - (0);
           for i_ := 0 to M - 1 do
             begin
-              tmp[i_] := A[i_ + i1_, Offs + J];
+              tmp[i_] := a[i_ + i1_, Offs + j];
             end;
           for i_ := Offs to Offs + M - 1 do
             begin
-              A[i_, Offs + J] := A[i_, Offs + JP];
+              a[i_, Offs + j] := a[i_, Offs + JP];
             end;
           i1_ := (0) - (Offs);
           for i_ := Offs to Offs + M - 1 do
             begin
-              A[i_, Offs + JP] := tmp[i_ + i1_];
+              a[i_, Offs + JP] := tmp[i_ + i1_];
             end;
         end;
 
       //
       // LU decomposition of 1x(N-J) matrix
       //
-      if C_NotEqualR(A[Offs + J, Offs + J], 0) and (J + 1 <= n - 1) then
+      if C_NotEqualR(a[Offs + j, Offs + j], 0) and (j + 1 <= n - 1) then
         begin
-          s := C_RDiv(1, A[Offs + J, Offs + J]);
-          for i_ := Offs + J + 1 to Offs + n - 1 do
+          s := C_RDiv(1, a[Offs + j, Offs + j]);
+          for i_ := Offs + j + 1 to Offs + n - 1 do
             begin
-              A[Offs + J, i_] := C_Mul(s, A[Offs + J, i_]);
+              a[Offs + j, i_] := C_Mul(s, a[Offs + j, i_]);
             end;
         end;
 
       //
       // Update trailing (M-J-1)x(N-J-1) matrix
       //
-      if J < Min(M - 1, n - 1) then
+      if j < Min(M - 1, n - 1) then
         begin
-          i1_ := (Offs + J + 1) - (0);
-          for i_ := 0 to M - J - 2 do
+          i1_ := (Offs + j + 1) - (0);
+          for i_ := 0 to M - j - 2 do
             begin
-              tmp[i_] := A[i_ + i1_, Offs + J];
+              tmp[i_] := a[i_ + i1_, Offs + j];
             end;
-          i1_ := (Offs + J + 1) - (M);
-          for i_ := M to M + n - J - 2 do
+          i1_ := (Offs + j + 1) - (M);
+          for i_ := M to M + n - j - 2 do
             begin
-              tmp[i_] := C_Opposite(A[Offs + J, i_ + i1_]);
+              tmp[i_] := C_Opposite(a[Offs + j, i_ + i1_]);
             end;
-          CMatrixRank1(M - J - 1, n - J - 1, A, Offs + J + 1, Offs + J + 1, tmp,
+          CMatrixRank1(M - j - 1, n - j - 1, a, Offs + j + 1, Offs + j + 1, tmp,
             0, tmp, M);
         end;
-      Inc(J);
+      inc(j);
     end;
 end;
 
 (* ************************************************************************
   Real LUP kernel
   ************************************************************************ *)
-procedure RMatrixLUP2(var A: TLMatrix; Offs: TLInt;
+procedure RMatrixLUP2(var a: TLMatrix; Offs: TLInt;
   M: TLInt; n: TLInt; var Pivots: TLIVec;
   var tmp: TLVec);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   JP: TLInt;
   s: TLFloat;
   i_: TLInt;
@@ -1002,80 +1002,80 @@ begin
   //
   // main cycle
   //
-  J := 0;
-  while J <= Min(M - 1, n - 1) do
+  j := 0;
+  while j <= Min(M - 1, n - 1) do
     begin
 
       //
       // Find pivot, swap columns
       //
-      JP := J;
-      i := J + 1;
+      JP := j;
+      i := j + 1;
       while i <= n - 1 do
         begin
-          if AP_FP_Greater(AbsReal(A[Offs + J, Offs + i]),
-            AbsReal(A[Offs + J, Offs + JP])) then
+          if AP_FP_Greater(AbsReal(a[Offs + j, Offs + i]),
+            AbsReal(a[Offs + j, Offs + JP])) then
             begin
               JP := i;
             end;
-          Inc(i);
+          inc(i);
         end;
-      Pivots[Offs + J] := Offs + JP;
-      if JP <> J then
+      Pivots[Offs + j] := Offs + JP;
+      if JP <> j then
         begin
           i1_ := (Offs) - (0);
           for i_ := 0 to M - 1 do
             begin
-              tmp[i_] := A[i_ + i1_, Offs + J];
+              tmp[i_] := a[i_ + i1_, Offs + j];
             end;
           for i_ := Offs to Offs + M - 1 do
             begin
-              A[i_, Offs + J] := A[i_, Offs + JP];
+              a[i_, Offs + j] := a[i_, Offs + JP];
             end;
           i1_ := (0) - (Offs);
           for i_ := Offs to Offs + M - 1 do
             begin
-              A[i_, Offs + JP] := tmp[i_ + i1_];
+              a[i_, Offs + JP] := tmp[i_ + i1_];
             end;
         end;
 
       //
       // LU decomposition of 1x(N-J) matrix
       //
-      if AP_FP_NEq(A[Offs + J, Offs + J], 0) and (J + 1 <= n - 1) then
+      if AP_FP_NEq(a[Offs + j, Offs + j], 0) and (j + 1 <= n - 1) then
         begin
-          s := 1 / A[Offs + J, Offs + J];
-          APVMul(@A[Offs + J][0], Offs + J + 1, Offs + n - 1, s);
+          s := 1 / a[Offs + j, Offs + j];
+          APVMul(@a[Offs + j][0], Offs + j + 1, Offs + n - 1, s);
         end;
 
       //
       // Update trailing (M-J-1)x(N-J-1) matrix
       //
-      if J < Min(M - 1, n - 1) then
+      if j < Min(M - 1, n - 1) then
         begin
-          i1_ := (Offs + J + 1) - (0);
-          for i_ := 0 to M - J - 2 do
+          i1_ := (Offs + j + 1) - (0);
+          for i_ := 0 to M - j - 2 do
             begin
-              tmp[i_] := A[i_ + i1_, Offs + J];
+              tmp[i_] := a[i_ + i1_, Offs + j];
             end;
-          APVMoveNeg(@tmp[0], M, M + n - J - 2, @A[Offs + J][0], Offs + J + 1,
+          APVMoveNeg(@tmp[0], M, M + n - j - 2, @a[Offs + j][0], Offs + j + 1,
             Offs + n - 1);
-          RMatrixRank1(M - J - 1, n - J - 1, A, Offs + J + 1, Offs + J + 1, tmp,
+          RMatrixRank1(M - j - 1, n - j - 1, a, Offs + j + 1, Offs + j + 1, tmp,
             0, tmp, M);
         end;
-      Inc(J);
+      inc(j);
     end;
 end;
 
 (* ************************************************************************
   TLComplex PLU kernel
   ************************************************************************ *)
-procedure CMatrixPLU2(var A: TLComplexMatrix; Offs: TLInt;
+procedure CMatrixPLU2(var a: TLComplexMatrix; Offs: TLInt;
   M: TLInt; n: TLInt; var Pivots: TLIVec;
   var tmp: TLComplexVec);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   JP: TLInt;
   s: TLComplex;
   i_: TLInt;
@@ -1089,87 +1089,87 @@ begin
     begin
       Exit;
     end;
-  J := 0;
-  while J <= Min(M - 1, n - 1) do
+  j := 0;
+  while j <= Min(M - 1, n - 1) do
     begin
 
       //
       // Find pivot and test for singularity.
       //
-      JP := J;
-      i := J + 1;
+      JP := j;
+      i := j + 1;
       while i <= M - 1 do
         begin
-          if AP_FP_Greater(AbsComplex(A[Offs + i, Offs + J]),
-            AbsComplex(A[Offs + JP, Offs + J])) then
+          if AP_FP_Greater(AbsComplex(a[Offs + i, Offs + j]),
+            AbsComplex(a[Offs + JP, Offs + j])) then
             begin
               JP := i;
             end;
-          Inc(i);
+          inc(i);
         end;
-      Pivots[Offs + J] := Offs + JP;
-      if C_NotEqualR(A[Offs + JP, Offs + J], 0) then
+      Pivots[Offs + j] := Offs + JP;
+      if C_NotEqualR(a[Offs + JP, Offs + j], 0) then
         begin
 
           //
           // Apply the interchange to rows
           //
-          if JP <> J then
+          if JP <> j then
             begin
               i := 0;
               while i <= n - 1 do
                 begin
-                  s := A[Offs + J, Offs + i];
-                  A[Offs + J, Offs + i] := A[Offs + JP, Offs + i];
-                  A[Offs + JP, Offs + i] := s;
-                  Inc(i);
+                  s := a[Offs + j, Offs + i];
+                  a[Offs + j, Offs + i] := a[Offs + JP, Offs + i];
+                  a[Offs + JP, Offs + i] := s;
+                  inc(i);
                 end;
             end;
 
           //
           // Compute elements J+1:M of J-th column.
           //
-          if J + 1 <= M - 1 then
+          if j + 1 <= M - 1 then
             begin
-              s := C_RDiv(1, A[Offs + J, Offs + J]);
-              for i_ := Offs + J + 1 to Offs + M - 1 do
+              s := C_RDiv(1, a[Offs + j, Offs + j]);
+              for i_ := Offs + j + 1 to Offs + M - 1 do
                 begin
-                  A[i_, Offs + J] := C_Mul(s, A[i_, Offs + J]);
+                  a[i_, Offs + j] := C_Mul(s, a[i_, Offs + j]);
                 end;
             end;
         end;
-      if J < Min(M, n) - 1 then
+      if j < Min(M, n) - 1 then
         begin
 
           //
           // Update trailing submatrix.
           //
-          i1_ := (Offs + J + 1) - (0);
-          for i_ := 0 to M - J - 2 do
+          i1_ := (Offs + j + 1) - (0);
+          for i_ := 0 to M - j - 2 do
             begin
-              tmp[i_] := A[i_ + i1_, Offs + J];
+              tmp[i_] := a[i_ + i1_, Offs + j];
             end;
-          i1_ := (Offs + J + 1) - (M);
-          for i_ := M to M + n - J - 2 do
+          i1_ := (Offs + j + 1) - (M);
+          for i_ := M to M + n - j - 2 do
             begin
-              tmp[i_] := C_Opposite(A[Offs + J, i_ + i1_]);
+              tmp[i_] := C_Opposite(a[Offs + j, i_ + i1_]);
             end;
-          CMatrixRank1(M - J - 1, n - J - 1, A, Offs + J + 1, Offs + J + 1, tmp,
+          CMatrixRank1(M - j - 1, n - j - 1, a, Offs + j + 1, Offs + j + 1, tmp,
             0, tmp, M);
         end;
-      Inc(J);
+      inc(j);
     end;
 end;
 
 (* ************************************************************************
   Real PLU kernel
   ************************************************************************ *)
-procedure RMatrixPLU2(var A: TLMatrix; Offs: TLInt;
+procedure RMatrixPLU2(var a: TLMatrix; Offs: TLInt;
   M: TLInt; n: TLInt; var Pivots: TLIVec;
   var tmp: TLVec);
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   JP: TLInt;
   s: TLFloat;
   i_: TLInt;
@@ -1183,83 +1183,83 @@ begin
     begin
       Exit;
     end;
-  J := 0;
-  while J <= Min(M - 1, n - 1) do
+  j := 0;
+  while j <= Min(M - 1, n - 1) do
     begin
 
       //
       // Find pivot and test for singularity.
       //
-      JP := J;
-      i := J + 1;
+      JP := j;
+      i := j + 1;
       while i <= M - 1 do
         begin
-          if AP_FP_Greater(AbsReal(A[Offs + i, Offs + J]),
-            AbsReal(A[Offs + JP, Offs + J])) then
+          if AP_FP_Greater(AbsReal(a[Offs + i, Offs + j]),
+            AbsReal(a[Offs + JP, Offs + j])) then
             begin
               JP := i;
             end;
-          Inc(i);
+          inc(i);
         end;
-      Pivots[Offs + J] := Offs + JP;
-      if AP_FP_NEq(A[Offs + JP, Offs + J], 0) then
+      Pivots[Offs + j] := Offs + JP;
+      if AP_FP_NEq(a[Offs + JP, Offs + j], 0) then
         begin
 
           //
           // Apply the interchange to rows
           //
-          if JP <> J then
+          if JP <> j then
             begin
               i := 0;
               while i <= n - 1 do
                 begin
-                  s := A[Offs + J, Offs + i];
-                  A[Offs + J, Offs + i] := A[Offs + JP, Offs + i];
-                  A[Offs + JP, Offs + i] := s;
-                  Inc(i);
+                  s := a[Offs + j, Offs + i];
+                  a[Offs + j, Offs + i] := a[Offs + JP, Offs + i];
+                  a[Offs + JP, Offs + i] := s;
+                  inc(i);
                 end;
             end;
 
           //
           // Compute elements J+1:M of J-th column.
           //
-          if J + 1 <= M - 1 then
+          if j + 1 <= M - 1 then
             begin
-              s := 1 / A[Offs + J, Offs + J];
-              for i_ := Offs + J + 1 to Offs + M - 1 do
+              s := 1 / a[Offs + j, Offs + j];
+              for i_ := Offs + j + 1 to Offs + M - 1 do
                 begin
-                  A[i_, Offs + J] := s * A[i_, Offs + J];
+                  a[i_, Offs + j] := s * a[i_, Offs + j];
                 end;
             end;
         end;
-      if J < Min(M, n) - 1 then
+      if j < Min(M, n) - 1 then
         begin
 
           //
           // Update trailing submatrix.
           //
-          i1_ := (Offs + J + 1) - (0);
-          for i_ := 0 to M - J - 2 do
+          i1_ := (Offs + j + 1) - (0);
+          for i_ := 0 to M - j - 2 do
             begin
-              tmp[i_] := A[i_ + i1_, Offs + J];
+              tmp[i_] := a[i_ + i1_, Offs + j];
             end;
-          APVMoveNeg(@tmp[0], M, M + n - J - 2, @A[Offs + J][0], Offs + J + 1,
+          APVMoveNeg(@tmp[0], M, M + n - j - 2, @a[Offs + j][0], Offs + j + 1,
             Offs + n - 1);
-          RMatrixRank1(M - J - 1, n - J - 1, A, Offs + J + 1, Offs + J + 1, tmp,
+          RMatrixRank1(M - j - 1, n - j - 1, a, Offs + j + 1, Offs + j + 1, tmp,
             0, tmp, M);
         end;
-      Inc(J);
+      inc(j);
     end;
 end;
 
 (* ************************************************************************
   Recursive computational subroutine for HPDMatrixCholesky
   ************************************************************************ *)
-function HPDMatrixCholeskyRec(var A: TLComplexMatrix; Offs: TLInt;
+function HPDMatrixCholeskyRec(var a: TLComplexMatrix; Offs: TLInt;
   n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean;
 var
-  N1: TLInt;
-  N2: TLInt;
+  n1: TLInt;
+  n2: TLInt;
 begin
 
   //
@@ -1276,9 +1276,9 @@ begin
   //
   if n = 1 then
     begin
-      if AP_FP_Greater(A[Offs, Offs].X, 0) then
+      if AP_FP_Greater(a[Offs, Offs].x, 0) then
         begin
-          A[Offs, Offs] := C_Complex(Sqrt(A[Offs, Offs].X));
+          a[Offs, Offs] := C_Complex(Sqrt(a[Offs, Offs].x));
           Result := True;
         end
       else
@@ -1287,9 +1287,9 @@ begin
         end;
       Exit;
     end;
-  if n <= ABLASComplexBlockSize(A) then
+  if n <= ABLASComplexBlockSize(a) then
     begin
-      Result := HPDMatrixCholesky2(A, Offs, n, IsUpper, tmp);
+      Result := HPDMatrixCholesky2(a, Offs, n, IsUpper, tmp);
       Exit;
     end;
 
@@ -1297,29 +1297,29 @@ begin
   // general case: split task in cache-oblivious manner
   //
   Result := True;
-  ABLASComplexSplitLength(A, n, N1, N2);
-  Result := HPDMatrixCholeskyRec(A, Offs, N1, IsUpper, tmp);
+  ABLASComplexSplitLength(a, n, n1, n2);
+  Result := HPDMatrixCholeskyRec(a, Offs, n1, IsUpper, tmp);
   if not Result then
     begin
       Exit;
     end;
-  if N2 > 0 then
+  if n2 > 0 then
     begin
       if IsUpper then
         begin
-          CMatrixLeftTRSM(N1, N2, A, Offs, Offs, IsUpper, False, 2, A, Offs,
-            Offs + N1);
-          CMatrixSYRK(N2, N1, -1.0, A, Offs, Offs + N1, 2, +1.0, A, Offs + N1,
-            Offs + N1, IsUpper);
+          CMatrixLeftTRSM(n1, n2, a, Offs, Offs, IsUpper, False, 2, a, Offs,
+            Offs + n1);
+          CMatrixSYRK(n2, n1, -1.0, a, Offs, Offs + n1, 2, +1.0, a, Offs + n1,
+            Offs + n1, IsUpper);
         end
       else
         begin
-          CMatrixRightTRSM(N2, N1, A, Offs, Offs, IsUpper, False, 2, A,
-            Offs + N1, Offs);
-          CMatrixSYRK(N2, N1, -1.0, A, Offs + N1, Offs, 0, +1.0, A, Offs + N1,
-            Offs + N1, IsUpper);
+          CMatrixRightTRSM(n2, n1, a, Offs, Offs, IsUpper, False, 2, a,
+            Offs + n1, Offs);
+          CMatrixSYRK(n2, n1, -1.0, a, Offs + n1, Offs, 0, +1.0, a, Offs + n1,
+            Offs + n1, IsUpper);
         end;
-      Result := HPDMatrixCholeskyRec(A, Offs + N1, N2, IsUpper, tmp);
+      Result := HPDMatrixCholeskyRec(a, Offs + n1, n2, IsUpper, tmp);
       if not Result then
         begin
           Exit;
@@ -1330,11 +1330,11 @@ end;
 (* ************************************************************************
   Recursive computational subroutine for SPDMatrixCholesky
   ************************************************************************ *)
-function SPDMatrixCholeskyRec(var A: TLMatrix; Offs: TLInt;
+function SPDMatrixCholeskyRec(var a: TLMatrix; Offs: TLInt;
   n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean;
 var
-  N1: TLInt;
-  N2: TLInt;
+  n1: TLInt;
+  n2: TLInt;
 begin
 
   //
@@ -1351,9 +1351,9 @@ begin
   //
   if n = 1 then
     begin
-      if AP_FP_Greater(A[Offs, Offs], 0) then
+      if AP_FP_Greater(a[Offs, Offs], 0) then
         begin
-          A[Offs, Offs] := Sqrt(A[Offs, Offs]);
+          a[Offs, Offs] := Sqrt(a[Offs, Offs]);
           Result := True;
         end
       else
@@ -1362,9 +1362,9 @@ begin
         end;
       Exit;
     end;
-  if n <= ABLASBlockSize(A) then
+  if n <= ABLASBlockSize(a) then
     begin
-      Result := SPDMatrixCholesky2(A, Offs, n, IsUpper, tmp);
+      Result := SPDMatrixCholesky2(a, Offs, n, IsUpper, tmp);
       Exit;
     end;
 
@@ -1372,29 +1372,29 @@ begin
   // general case: split task in cache-oblivious manner
   //
   Result := True;
-  ABLASSplitLength(A, n, N1, N2);
-  Result := SPDMatrixCholeskyRec(A, Offs, N1, IsUpper, tmp);
+  ABLASSplitLength(a, n, n1, n2);
+  Result := SPDMatrixCholeskyRec(a, Offs, n1, IsUpper, tmp);
   if not Result then
     begin
       Exit;
     end;
-  if N2 > 0 then
+  if n2 > 0 then
     begin
       if IsUpper then
         begin
-          RMatrixLeftTRSM(N1, N2, A, Offs, Offs, IsUpper, False, 1, A, Offs,
-            Offs + N1);
-          RMatrixSYRK(N2, N1, -1.0, A, Offs, Offs + N1, 1, +1.0, A, Offs + N1,
-            Offs + N1, IsUpper);
+          RMatrixLeftTRSM(n1, n2, a, Offs, Offs, IsUpper, False, 1, a, Offs,
+            Offs + n1);
+          RMatrixSYRK(n2, n1, -1.0, a, Offs, Offs + n1, 1, +1.0, a, Offs + n1,
+            Offs + n1, IsUpper);
         end
       else
         begin
-          RMatrixRightTRSM(N2, N1, A, Offs, Offs, IsUpper, False, 1, A,
-            Offs + N1, Offs);
-          RMatrixSYRK(N2, N1, -1.0, A, Offs + N1, Offs, 0, +1.0, A, Offs + N1,
-            Offs + N1, IsUpper);
+          RMatrixRightTRSM(n2, n1, a, Offs, Offs, IsUpper, False, 1, a,
+            Offs + n1, Offs);
+          RMatrixSYRK(n2, n1, -1.0, a, Offs + n1, Offs, 0, +1.0, a, Offs + n1,
+            Offs + n1, IsUpper);
         end;
-      Result := SPDMatrixCholeskyRec(A, Offs + N1, N2, IsUpper, tmp);
+      Result := SPDMatrixCholeskyRec(a, Offs + n1, n2, IsUpper, tmp);
       if not Result then
         begin
           Exit;
@@ -1409,13 +1409,13 @@ function HPDMatrixCholesky2(var aaa: TLComplexMatrix; Offs: TLInt;
   n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean;
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   k: TLInt;
-  J1: TLInt;
-  J2: TLInt;
+  j1: TLInt;
+  j2: TLInt;
   AJJ: TLFloat;
   v: TLComplex;
-  R: TLFloat;
+  r: TLFloat;
   i_: TLInt;
   i1_: TLInt;
 begin
@@ -1439,54 +1439,54 @@ begin
       //
       // Compute the Cholesky factorization A = U'*U.
       //
-      J := 0;
-      while J <= n - 1 do
+      j := 0;
+      while j <= n - 1 do
         begin
 
           //
           // Compute U(J,J) and test for non-positive-definiteness.
           //
           v := C_Complex(0.0);
-          for i_ := Offs to Offs + J - 1 do
+          for i_ := Offs to Offs + j - 1 do
             begin
-              v := C_Add(v, C_Mul(Conj(aaa[i_, Offs + J]), aaa[i_, Offs + J]));
+              v := C_Add(v, C_Mul(Conj(aaa[i_, Offs + j]), aaa[i_, Offs + j]));
             end;
-          AJJ := C_Sub(aaa[Offs + J, Offs + J], v).X;
+          AJJ := C_Sub(aaa[Offs + j, Offs + j], v).x;
           if AP_FP_Less_Eq(AJJ, 0) then
             begin
-              aaa[Offs + J, Offs + J] := C_Complex(AJJ);
+              aaa[Offs + j, Offs + j] := C_Complex(AJJ);
               Result := False;
               Exit;
             end;
           AJJ := Sqrt(AJJ);
-          aaa[Offs + J, Offs + J] := C_Complex(AJJ);
+          aaa[Offs + j, Offs + j] := C_Complex(AJJ);
 
           //
           // Compute elements J+1:N-1 of row J.
           //
-          if J < n - 1 then
+          if j < n - 1 then
             begin
-              if J > 0 then
+              if j > 0 then
                 begin
                   i1_ := (Offs) - (0);
-                  for i_ := 0 to J - 1 do
+                  for i_ := 0 to j - 1 do
                     begin
-                      tmp[i_] := C_Opposite(Conj(aaa[i_ + i1_, Offs + J]));
+                      tmp[i_] := C_Opposite(Conj(aaa[i_ + i1_, Offs + j]));
                     end;
-                  CMatrixMV(n - J - 1, J, aaa, Offs, Offs + J + 1, 1, tmp, 0, tmp, n);
-                  i1_ := (n) - (Offs + J + 1);
-                  for i_ := Offs + J + 1 to Offs + n - 1 do
+                  CMatrixMV(n - j - 1, j, aaa, Offs, Offs + j + 1, 1, tmp, 0, tmp, n);
+                  i1_ := (n) - (Offs + j + 1);
+                  for i_ := Offs + j + 1 to Offs + n - 1 do
                     begin
-                      aaa[Offs + J, i_] := C_Add(aaa[Offs + J, i_], tmp[i_ + i1_]);
+                      aaa[Offs + j, i_] := C_Add(aaa[Offs + j, i_], tmp[i_ + i1_]);
                     end;
                 end;
-              R := 1 / AJJ;
-              for i_ := Offs + J + 1 to Offs + n - 1 do
+              r := 1 / AJJ;
+              for i_ := Offs + j + 1 to Offs + n - 1 do
                 begin
-                  aaa[Offs + J, i_] := C_MulR(aaa[Offs + J, i_], R);
+                  aaa[Offs + j, i_] := C_MulR(aaa[Offs + j, i_], r);
                 end;
             end;
-          Inc(J);
+          inc(j);
         end;
     end
   else
@@ -1495,61 +1495,61 @@ begin
       //
       // Compute the Cholesky factorization A = L*L'.
       //
-      J := 0;
-      while J <= n - 1 do
+      j := 0;
+      while j <= n - 1 do
         begin
 
           //
           // Compute L(J+1,J+1) and test for non-positive-definiteness.
           //
           v := C_Complex(0.0);
-          for i_ := Offs to Offs + J - 1 do
+          for i_ := Offs to Offs + j - 1 do
             begin
-              v := C_Add(v, C_Mul(Conj(aaa[Offs + J, i_]), aaa[Offs + J, i_]));
+              v := C_Add(v, C_Mul(Conj(aaa[Offs + j, i_]), aaa[Offs + j, i_]));
             end;
-          AJJ := C_Sub(aaa[Offs + J, Offs + J], v).X;
+          AJJ := C_Sub(aaa[Offs + j, Offs + j], v).x;
           if AP_FP_Less_Eq(AJJ, 0) then
             begin
-              aaa[Offs + J, Offs + J] := C_Complex(AJJ);
+              aaa[Offs + j, Offs + j] := C_Complex(AJJ);
               Result := False;
               Exit;
             end;
           AJJ := Sqrt(AJJ);
-          aaa[Offs + J, Offs + J] := C_Complex(AJJ);
+          aaa[Offs + j, Offs + j] := C_Complex(AJJ);
 
           //
           // Compute elements J+1:N of column J.
           //
-          if J < n - 1 then
+          if j < n - 1 then
             begin
-              if J > 0 then
+              if j > 0 then
                 begin
                   i1_ := (Offs) - (0);
-                  for i_ := 0 to J - 1 do
+                  for i_ := 0 to j - 1 do
                     begin
-                      tmp[i_] := Conj(aaa[Offs + J, i_ + i1_]);
+                      tmp[i_] := Conj(aaa[Offs + j, i_ + i1_]);
                     end;
-                  CMatrixMV(n - J - 1, J, aaa, Offs + J + 1, Offs, 0, tmp, 0, tmp, n);
+                  CMatrixMV(n - j - 1, j, aaa, Offs + j + 1, Offs, 0, tmp, 0, tmp, n);
                   i := 0;
-                  while i <= n - J - 2 do
+                  while i <= n - j - 2 do
                     begin
-                      aaa[Offs + J + 1 + i, Offs + J] :=
-                        C_DivR(C_Sub(aaa[Offs + J + 1 + i, Offs + J], tmp[n + i]), AJJ);
-                      Inc(i);
+                      aaa[Offs + j + 1 + i, Offs + j] :=
+                        C_DivR(C_Sub(aaa[Offs + j + 1 + i, Offs + j], tmp[n + i]), AJJ);
+                      inc(i);
                     end;
                 end
               else
                 begin
                   i := 0;
-                  while i <= n - J - 2 do
+                  while i <= n - j - 2 do
                     begin
-                      aaa[Offs + J + 1 + i, Offs + J] :=
-                        C_DivR(aaa[Offs + J + 1 + i, Offs + J], AJJ);
-                      Inc(i);
+                      aaa[Offs + j + 1 + i, Offs + j] :=
+                        C_DivR(aaa[Offs + j + 1 + i, Offs + j], AJJ);
+                      inc(i);
                     end;
                 end;
             end;
-          Inc(J);
+          inc(j);
         end;
     end;
 end;
@@ -1561,13 +1561,13 @@ function SPDMatrixCholesky2(var aaa: TLMatrix; Offs: TLInt;
   n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean;
 var
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   k: TLInt;
-  J1: TLInt;
-  J2: TLInt;
+  j1: TLInt;
+  j2: TLInt;
   AJJ: TLFloat;
   v: TLFloat;
-  R: TLFloat;
+  r: TLFloat;
   i_: TLInt;
   i1_: TLInt;
 begin
@@ -1591,48 +1591,48 @@ begin
       //
       // Compute the Cholesky factorization A = U'*U.
       //
-      J := 0;
-      while J <= n - 1 do
+      j := 0;
+      while j <= n - 1 do
         begin
 
           //
           // Compute U(J,J) and test for non-positive-definiteness.
           //
           v := 0.0;
-          for i_ := Offs to Offs + J - 1 do
+          for i_ := Offs to Offs + j - 1 do
             begin
-              v := v + aaa[i_, Offs + J] * aaa[i_, Offs + J];
+              v := v + aaa[i_, Offs + j] * aaa[i_, Offs + j];
             end;
-          AJJ := aaa[Offs + J, Offs + J] - v;
+          AJJ := aaa[Offs + j, Offs + j] - v;
           if AP_FP_Less_Eq(AJJ, 0) then
             begin
-              aaa[Offs + J, Offs + J] := AJJ;
+              aaa[Offs + j, Offs + j] := AJJ;
               Result := False;
               Exit;
             end;
           AJJ := Sqrt(AJJ);
-          aaa[Offs + J, Offs + J] := AJJ;
+          aaa[Offs + j, Offs + j] := AJJ;
 
           //
           // Compute elements J+1:N-1 of row J.
           //
-          if J < n - 1 then
+          if j < n - 1 then
             begin
-              if J > 0 then
+              if j > 0 then
                 begin
                   i1_ := (Offs) - (0);
-                  for i_ := 0 to J - 1 do
+                  for i_ := 0 to j - 1 do
                     begin
-                      tmp[i_] := -aaa[i_ + i1_, Offs + J];
+                      tmp[i_] := -aaa[i_ + i1_, Offs + j];
                     end;
-                  RMatrixMV(n - J - 1, J, aaa, Offs, Offs + J + 1, 1, tmp, 0, tmp, n);
-                  APVAdd(@aaa[Offs + J][0], Offs + J + 1, Offs + n - 1, @tmp[0], n,
-                    2 * n - J - 2);
+                  RMatrixMV(n - j - 1, j, aaa, Offs, Offs + j + 1, 1, tmp, 0, tmp, n);
+                  APVAdd(@aaa[Offs + j][0], Offs + j + 1, Offs + n - 1, @tmp[0], n,
+                    2 * n - j - 2);
                 end;
-              R := 1 / AJJ;
-              APVMul(@aaa[Offs + J][0], Offs + J + 1, Offs + n - 1, R);
+              r := 1 / AJJ;
+              APVMul(@aaa[Offs + j][0], Offs + j + 1, Offs + n - 1, r);
             end;
-          Inc(J);
+          inc(j);
         end;
     end
   else
@@ -1641,54 +1641,56 @@ begin
       //
       // Compute the Cholesky factorization A = L*L'.
       //
-      J := 0;
-      while J <= n - 1 do
+      j := 0;
+      while j <= n - 1 do
         begin
 
           //
           // Compute L(J+1,J+1) and test for non-positive-definiteness.
           //
-          v := APVDotProduct(@aaa[Offs + J][0], Offs, Offs + J - 1,
-            @aaa[Offs + J][0], Offs, Offs + J - 1);
-          AJJ := aaa[Offs + J, Offs + J] - v;
+          v := APVDotProduct(@aaa[Offs + j][0], Offs, Offs + j - 1,
+            @aaa[Offs + j][0], Offs, Offs + j - 1);
+          AJJ := aaa[Offs + j, Offs + j] - v;
           if AP_FP_Less_Eq(AJJ, 0) then
             begin
-              aaa[Offs + J, Offs + J] := AJJ;
+              aaa[Offs + j, Offs + j] := AJJ;
               Result := False;
               Exit;
             end;
           AJJ := Sqrt(AJJ);
-          aaa[Offs + J, Offs + J] := AJJ;
+          aaa[Offs + j, Offs + j] := AJJ;
 
           //
           // Compute elements J+1:N of column J.
           //
-          if J < n - 1 then
+          if j < n - 1 then
             begin
-              if J > 0 then
+              if j > 0 then
                 begin
-                  APVMove(@tmp[0], 0, J - 1, @aaa[Offs + J][0], Offs, Offs + J - 1);
-                  RMatrixMV(n - J - 1, J, aaa, Offs + J + 1, Offs, 0, tmp, 0, tmp, n);
+                  APVMove(@tmp[0], 0, j - 1, @aaa[Offs + j][0], Offs, Offs + j - 1);
+                  RMatrixMV(n - j - 1, j, aaa, Offs + j + 1, Offs, 0, tmp, 0, tmp, n);
                   i := 0;
-                  while i <= n - J - 2 do
+                  while i <= n - j - 2 do
                     begin
-                      aaa[Offs + J + 1 + i, Offs + J] :=
-                        (aaa[Offs + J + 1 + i, Offs + J] - tmp[n + i]) / AJJ;
-                      Inc(i);
+                      aaa[Offs + j + 1 + i, Offs + j] :=
+                        (aaa[Offs + j + 1 + i, Offs + j] - tmp[n + i]) / AJJ;
+                      inc(i);
                     end;
                 end
               else
                 begin
                   i := 0;
-                  while i <= n - J - 2 do
+                  while i <= n - j - 2 do
                     begin
-                      aaa[Offs + J + 1 + i, Offs + J] :=
-                        aaa[Offs + J + 1 + i, Offs + J] / AJJ;
-                      Inc(i);
+                      aaa[Offs + j + 1 + i, Offs + j] :=
+                        aaa[Offs + j + 1 + i, Offs + j] / AJJ;
+                      inc(i);
                     end;
                 end;
             end;
-          Inc(J);
+          inc(j);
         end;
     end;
 end; 
+ 
+ 

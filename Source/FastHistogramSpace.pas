@@ -23,7 +23,7 @@ uses CoreClasses, MemoryRaster, Geometry2DUnit, LearnTypes;
 type
   THOGTable = class(TCoreClassObject)
   private type
-    TItpRec = packed record
+    TItpRec = record
       d: array [0 .. 3] of array [0 .. 1] of TLInt;
       w: array [0 .. 3] of TLInt;
     end;
@@ -46,7 +46,7 @@ type
 
   THOG = class(TCoreClassObject)
   public type
-    THRec = packed record
+    THRec = record
       binH, binF, feat: TLVec;
       nOriH, nOriF, dim: TLInt;
       normH: TLFloat;
@@ -95,14 +95,14 @@ const
   NUM_DIFF_DIV2 = 255;
 
 constructor THOGTable.Create(const numOriHalf, numOriFull, cellSize: TLInt);
-  function arcTanXY(const X, Y: TLFloat): TLInt; inline;
+  function arcTanXY(const x, y: TLFloat): TLInt; inline;
   begin
-    Result := Trunc(ArcTan2(Y, X) / pi * 180 + 360);
+    Result := Trunc(ArcTan2(y, x) / pi * 180 + 360);
   end;
 
 var
   intervalFull, intervalHalf: TLFloat;
-  Y, X: TLInt;
+  y, x: TLInt;
   d2, nearWeightX, farWeightX, nearWeightY, farWeightY: TLInt;
   cellSize2, w: TLInt;
   p: PItpRec;
@@ -122,25 +122,25 @@ begin
 
   intervalFull := oriF / nOriF;
   intervalHalf := oriH / nOriH;
-  for Y := -NUM_DIFF_DIV2 to NUM_DIFF_DIV2 do
-    for X := -NUM_DIFF_DIV2 to NUM_DIFF_DIV2 do
+  for y := -NUM_DIFF_DIV2 to NUM_DIFF_DIV2 do
+    for x := -NUM_DIFF_DIV2 to NUM_DIFF_DIV2 do
       begin
-        oriFMatrix[Y + NUM_DIFF_DIV2, X + NUM_DIFF_DIV2] := Trunc(arcTanXY(X, Y) mod oriF / intervalFull);
-        oriHMatrix[Y + NUM_DIFF_DIV2, X + NUM_DIFF_DIV2] := Trunc(arcTanXY(X, Y) mod oriH / intervalHalf);
-        magMatrix[Y + NUM_DIFF_DIV2, X + NUM_DIFF_DIV2] := Sqrt(X * X + Y * Y);
+        oriFMatrix[y + NUM_DIFF_DIV2, x + NUM_DIFF_DIV2] := Trunc(arcTanXY(x, y) mod oriF / intervalFull);
+        oriHMatrix[y + NUM_DIFF_DIV2, x + NUM_DIFF_DIV2] := Trunc(arcTanXY(x, y) mod oriH / intervalHalf);
+        magMatrix[y + NUM_DIFF_DIV2, x + NUM_DIFF_DIV2] := Sqrt(x * x + y * y);
       end;
 
   d2 := cSiz div 2;
-  for Y := -d2 to d2 - 1 do
+  for y := -d2 to d2 - 1 do
     begin
-      for X := -d2 to d2 - 1 do
+      for x := -d2 to d2 - 1 do
         begin
-          p := @itpMatrix[Y + d2, X + d2];
-          if (Y < 0) and (X < 0) then
+          p := @itpMatrix[y + d2, x + d2];
+          if (y < 0) and (x < 0) then
             begin
-              nearWeightX := cSiz + X + 1;
+              nearWeightX := cSiz + x + 1;
               farWeightX := cSiz - nearWeightX;
-              nearWeightY := cSiz + Y + 1;
+              nearWeightY := cSiz + y + 1;
               farWeightY := cSiz - nearWeightY;
               p^.d[0, 0] := 0;
               p^.d[0, 1] := 0;
@@ -155,11 +155,11 @@ begin
               p^.d[3, 1] := -1;
               p^.w[3] := farWeightX * farWeightY;
             end
-          else if (Y < 0) and (X >= 0) then
+          else if (y < 0) and (x >= 0) then
             begin
-              nearWeightX := cSiz - X;
+              nearWeightX := cSiz - x;
               farWeightX := cSiz - nearWeightX;
-              nearWeightY := cSiz + Y + 1;
+              nearWeightY := cSiz + y + 1;
               farWeightY := cSiz - nearWeightY;
               p^.d[0, 0] := 0;
               p^.d[0, 1] := 0;
@@ -174,11 +174,11 @@ begin
               p^.d[3, 1] := -1;
               p^.w[3] := farWeightX * farWeightY;
             end
-          else if (Y >= 0) and (X >= 0) then
+          else if (y >= 0) and (x >= 0) then
             begin
-              nearWeightX := cSiz - X;
+              nearWeightX := cSiz - x;
               farWeightX := cSiz - nearWeightX;
-              nearWeightY := cSiz - Y;
+              nearWeightY := cSiz - y;
               farWeightY := cSiz - nearWeightY;
               p^.d[0, 0] := 0;
               p^.d[0, 1] := 0;
@@ -193,11 +193,11 @@ begin
               p^.d[3, 1] := 1;
               p^.w[3] := farWeightX * farWeightY;
             end
-          else if (Y >= 0) and (X < 0) then
+          else if (y >= 0) and (x < 0) then
             begin
-              nearWeightX := cSiz + X + 1;
+              nearWeightX := cSiz + x + 1;
               farWeightX := cSiz - nearWeightX;
-              nearWeightY := cSiz - Y;
+              nearWeightY := cSiz - y;
               farWeightY := cSiz - nearWeightY;
               p^.d[0, 0] := 0;
               p^.d[0, 1] := 0;
@@ -218,9 +218,9 @@ begin
   cellSize2 := cSiz * cSiz;
 
   for w := 0 to cellSize2 do
-    for Y := -NUM_DIFF_DIV2 to NUM_DIFF_DIV2 do
-      for X := -NUM_DIFF_DIV2 to NUM_DIFF_DIV2 do
-          bwMatrix[w, (Y + NUM_DIFF_DIV2) * NUM_DIFF + (X + NUM_DIFF_DIV2)] := magMatrix[Y + NUM_DIFF_DIV2, X + NUM_DIFF_DIV2] * w / cellSize2;
+    for y := -NUM_DIFF_DIV2 to NUM_DIFF_DIV2 do
+      for x := -NUM_DIFF_DIV2 to NUM_DIFF_DIV2 do
+          bwMatrix[w, (y + NUM_DIFF_DIV2) * NUM_DIFF + (x + NUM_DIFF_DIV2)] := magMatrix[y + NUM_DIFF_DIV2, x + NUM_DIFF_DIV2] * w / cellSize2;
 end;
 
 destructor THOGTable.Destroy;
@@ -235,7 +235,7 @@ end;
 
 procedure THOG.initialHist(const imgWidth, imgHeight, numOriHalf, numOriFull, cellSize: TLInt);
 var
-  Y, X: TLInt;
+  y, x: TLInt;
 begin
   if (imgWidth mod cellSize <> 0) or (imgHeight mod cellSize <> 0) then
     begin
@@ -253,17 +253,17 @@ begin
 
   SetLength(ori, hSizY, hSizX);
 
-  for Y := 0 to hSizY - 1 do
-    for X := 0 to hSizX - 1 do
+  for y := 0 to hSizY - 1 do
+    for x := 0 to hSizX - 1 do
       begin
-        SetLength(ori[Y, X].binF, numOriFull);
-        SetLength(ori[Y, X].binH, numOriHalf);
-        ori[Y, X].dim := OriDim;
-        SetLength(ori[Y, X].feat, ori[Y, X].dim);
+        SetLength(ori[y, x].binF, numOriFull);
+        SetLength(ori[y, x].binH, numOriHalf);
+        ori[y, x].dim := OriDim;
+        SetLength(ori[y, x].feat, ori[y, x].dim);
 
-        ori[Y, X].nOriF := numOriFull;
-        ori[Y, X].nOriH := numOriHalf;
-        ori[Y, X].normH := 0;
+        ori[y, x].nOriF := numOriFull;
+        ori[y, x].nOriH := numOriHalf;
+        ori[y, x].normH := 0;
       end;
 
   SetLength(dx, height, width);
@@ -275,34 +275,34 @@ procedure THOG.ComputeRGB_Diff(img: TMemoryRaster; const M: PLMatrix);
 {$IFDEF FPC}
   procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
   var
-    X, xDiffs, yDiffs, magni: TLInt;
+    x, xDiffs, yDiffs, magni: TLInt;
     pcl, pcr, pct, pcb: TRasterColorEntry;
   begin
-    for X := 0 to width - 1 do
+    for x := 0 to width - 1 do
       begin
-        pcl.RGBA := img[X - 1, pass];
-        pcr.RGBA := img[X + 1, pass];
-        pct.RGBA := img[X, pass - 1];
-        pcb.RGBA := img[X, pass + 1];
+        pcl.RGBA := img[x - 1, pass];
+        pcr.RGBA := img[x + 1, pass];
+        pct.RGBA := img[x, pass - 1];
+        pcb.RGBA := img[x, pass + 1];
 
-        dx[pass, X] := pcl.R - pcr.R;
-        dy[pass, X] := pct.R - pcb.R;
-        magni := Trunc(M^[dy[pass, X] + NUM_DIFF_DIV2, dx[pass, X] + NUM_DIFF_DIV2]);
+        dx[pass, x] := pcl.r - pcr.r;
+        dy[pass, x] := pct.r - pcb.r;
+        magni := Trunc(M^[dy[pass, x] + NUM_DIFF_DIV2, dx[pass, x] + NUM_DIFF_DIV2]);
 
         xDiffs := pcl.g - pcr.g;
         yDiffs := pct.g - pcb.g;
         if magni < M^[yDiffs + NUM_DIFF_DIV2, xDiffs + NUM_DIFF_DIV2] then
           begin
-            dx[pass, X] := xDiffs;
-            dy[pass, X] := yDiffs;
+            dx[pass, x] := xDiffs;
+            dy[pass, x] := yDiffs;
           end;
 
         xDiffs := pcl.b - pcr.b;
         yDiffs := pct.b - pcb.b;
         if magni < M^[yDiffs + NUM_DIFF_DIV2, xDiffs + NUM_DIFF_DIV2] then
           begin
-            dx[pass, X] := xDiffs;
-            dy[pass, X] := yDiffs;
+            dx[pass, x] := xDiffs;
+            dy[pass, x] := yDiffs;
           end;
       end;
   end;
@@ -310,39 +310,40 @@ procedure THOG.ComputeRGB_Diff(img: TMemoryRaster; const M: PLMatrix);
 {$ELSE parallel}
   procedure DoFor;
   var
-    pass, X, xDiffs, yDiffs, magni: TLInt;
+    pass, x, xDiffs, yDiffs, magni: TLInt;
     pcl, pcr, pct, pcb: TRasterColorEntry;
   begin
     for pass := 0 to height - 1 do
-      for X := 0 to width - 1 do
+      for x := 0 to width - 1 do
         begin
-          pcl.RGBA := img[X - 1, pass];
-          pcr.RGBA := img[X + 1, pass];
-          pct.RGBA := img[X, pass - 1];
-          pcb.RGBA := img[X, pass + 1];
+          pcl.RGBA := img[x - 1, pass];
+          pcr.RGBA := img[x + 1, pass];
+          pct.RGBA := img[x, pass - 1];
+          pcb.RGBA := img[x, pass + 1];
 
-          dx[pass, X] := pcl.R - pcr.R;
-          dy[pass, X] := pct.R - pcb.R;
-          magni := Trunc(M^[dy[pass, X] + NUM_DIFF_DIV2, dx[pass, X] + NUM_DIFF_DIV2]);
+          dx[pass, x] := pcl.r - pcr.r;
+          dy[pass, x] := pct.r - pcb.r;
+          magni := Trunc(M^[dy[pass, x] + NUM_DIFF_DIV2, dx[pass, x] + NUM_DIFF_DIV2]);
 
           xDiffs := pcl.g - pcr.g;
           yDiffs := pct.g - pcb.g;
           if magni < M^[yDiffs + NUM_DIFF_DIV2, xDiffs + NUM_DIFF_DIV2] then
             begin
-              dx[pass, X] := xDiffs;
-              dy[pass, X] := yDiffs;
+              dx[pass, x] := xDiffs;
+              dy[pass, x] := yDiffs;
             end;
 
           xDiffs := pcl.b - pcr.b;
           yDiffs := pct.b - pcb.b;
           if magni < M^[yDiffs + NUM_DIFF_DIV2, xDiffs + NUM_DIFF_DIV2] then
             begin
-              dx[pass, X] := xDiffs;
-              dy[pass, X] := yDiffs;
+              dx[pass, x] := xDiffs;
+              dy[pass, x] := yDiffs;
             end;
         end;
   end;
 {$ENDIF parallel}
+
 
 begin
 {$IFDEF parallel}
@@ -351,34 +352,34 @@ begin
 {$ELSE FPC}
   TParallel.for(0, height - 1, procedure(pass: Integer)
     var
-      X, xDiffs, yDiffs, magni: TLInt;
+      x, xDiffs, yDiffs, magni: TLInt;
       pcl, pcr, pct, pcb: TRasterColorEntry;
     begin
-      for X := 0 to width - 1 do
+      for x := 0 to width - 1 do
         begin
-          pcl.RGBA := img[X - 1, pass];
-          pcr.RGBA := img[X + 1, pass];
-          pct.RGBA := img[X, pass - 1];
-          pcb.RGBA := img[X, pass + 1];
+          pcl.RGBA := img[x - 1, pass];
+          pcr.RGBA := img[x + 1, pass];
+          pct.RGBA := img[x, pass - 1];
+          pcb.RGBA := img[x, pass + 1];
 
-          dx[pass, X] := pcl.R - pcr.R;
-          dy[pass, X] := pct.R - pcb.R;
-          magni := Trunc(M^[dy[pass, X] + NUM_DIFF_DIV2, dx[pass, X] + NUM_DIFF_DIV2]);
+          dx[pass, x] := pcl.r - pcr.r;
+          dy[pass, x] := pct.r - pcb.r;
+          magni := Trunc(M^[dy[pass, x] + NUM_DIFF_DIV2, dx[pass, x] + NUM_DIFF_DIV2]);
 
           xDiffs := pcl.g - pcr.g;
           yDiffs := pct.g - pcb.g;
           if magni < M^[yDiffs + NUM_DIFF_DIV2, xDiffs + NUM_DIFF_DIV2] then
             begin
-              dx[pass, X] := xDiffs;
-              dy[pass, X] := yDiffs;
+              dx[pass, x] := xDiffs;
+              dy[pass, x] := yDiffs;
             end;
 
           xDiffs := pcl.b - pcr.b;
           yDiffs := pct.b - pcb.b;
           if magni < M^[yDiffs + NUM_DIFF_DIV2, xDiffs + NUM_DIFF_DIV2] then
             begin
-              dx[pass, X] := xDiffs;
-              dy[pass, X] := yDiffs;
+              dx[pass, x] := xDiffs;
+              dy[pass, x] := yDiffs;
             end;
         end;
     end);
@@ -392,25 +393,121 @@ procedure THOG.ComputeHistogram(const AntiLight: Boolean; const oriH, oriF: PLIM
 var
   setoff: TLInt;
 
-  {$IFDEF parallel}
-  {$IFDEF FPC}
-    procedure Nested_ParallelFor_Weight(Y: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-    var
-      X, n: TLInt;
-      xDiff, yDiff, oriIdxFull, oriIdxHalf: TLInt;
-      cellCoorX, cellCoorY, cellY, cellX, dstCellCoorX, dstCellCoorY, Weight: TLInt;
-      weightedBinValue: TLFloat;
-    begin
-      for X := 0 to width - 1 do
+{$IFDEF parallel}
+{$IFDEF FPC}
+  procedure Nested_ParallelFor_Weight(y: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    x, n: TLInt;
+    xDiff, yDiff, oriIdxFull, oriIdxHalf: TLInt;
+    cellCoorX, cellCoorY, cellY, cellX, dstCellCoorX, dstCellCoorY, Weight: TLInt;
+    weightedBinValue: TLFloat;
+  begin
+    for x := 0 to width - 1 do
+      begin
+        xDiff := dx[y, x];
+        yDiff := dy[y, x];
+        oriIdxFull := oriF^[yDiff + NUM_DIFF_DIV2, xDiff + NUM_DIFF_DIV2];
+        oriIdxHalf := oriH^[yDiff + NUM_DIFF_DIV2, xDiff + NUM_DIFF_DIV2];
+        cellCoorY := y div cSiz + 1;
+        cellCoorX := x div cSiz + 1;
+        cellY := y - (cellCoorY - 1) * cSiz;
+        cellX := x - (cellCoorX - 1) * cSiz;
+
+        for n := 0 to 3 do
+          begin
+            dstCellCoorY := cellCoorY + itp^[cellY, cellX].d[n, 1];
+            dstCellCoorX := cellCoorX + itp^[cellY, cellX].d[n, 0];
+            Weight := itp^[cellY, cellX].w[n];
+            weightedBinValue := BW^[Weight, (yDiff + NUM_DIFF_DIV2) * NUM_DIFF + (xDiff + NUM_DIFF_DIV2)];
+            LAdd(ori[dstCellCoorY, dstCellCoorX].binF[oriIdxFull], weightedBinValue);
+            LAdd(ori[dstCellCoorY, dstCellCoorX].binH[oriIdxHalf], weightedBinValue);
+          end;
+      end;
+  end;
+  procedure Nested_ParallelFor_normH(cellY: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    cellX, n: TLInt;
+    HP: PHRec;
+  begin
+    for cellX := 0 to hSizX - 1 do
+      begin
+        HP := @ori[cellY, cellX];
+        for n := 0 to HP^.nOriH - 1 do
+            LAdd(HP^.normH, HP^.binH[n mod HP^.nOriF] * HP^.binH[n mod HP^.nOriF]);
+      end;
+  end;
+  procedure Nested_ParallelFor_Ori(cellY: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  var
+    cellX, n: TLInt;
+    HP: PHRec;
+    NW, ns: array [0 .. 3] of TLFloat;
+    Sum: TLFloat;
+  begin
+    for cellX := 1 to nCX do
+      begin
+        HP := @ori[cellY, cellX];
+
+        NW[0] := Learn.AP_Sqr(HP^.normH + ori[cellY - 1, cellX].normH + ori[cellY, cellX - 1].normH + ori[cellY - 1, cellX - 1].normH);
+        NW[1] := Learn.AP_Sqr(HP^.normH + ori[cellY + 1, cellX].normH + ori[cellY, cellX - 1].normH + ori[cellY + 1, cellX - 1].normH);
+        NW[2] := Learn.AP_Sqr(HP^.normH + ori[cellY + 1, cellX].normH + ori[cellY, cellX + 1].normH + ori[cellY + 1, cellX + 1].normH);
+        NW[3] := Learn.AP_Sqr(HP^.normH + ori[cellY - 1, cellX].normH + ori[cellY, cellX + 1].normH + ori[cellY - 1, cellX + 1].normH);
+
+        for n := 0 to HP^.nOriH - 1 do
+          begin
+            ns[0] := LSafeDivF(HP^.binH[n], NW[0]);
+            ns[1] := LSafeDivF(HP^.binH[n], NW[1]);
+            ns[2] := LSafeDivF(HP^.binH[n], NW[2]);
+            ns[3] := LSafeDivF(HP^.binH[n], NW[3]);
+            HP^.feat[n] := ns[0] + ns[1] + ns[2] + ns[3];
+            LAdd(HP^.feat[setoff + 0], ns[0]);
+            LAdd(HP^.feat[setoff + 1], ns[1]);
+            LAdd(HP^.feat[setoff + 2], ns[2]);
+            LAdd(HP^.feat[setoff + 3], ns[3]);
+          end;
+
+        for n := 0 to HP^.nOriF - 1 do
+          begin
+            ns[0] := LSafeDivF(HP^.binF[n], NW[0]);
+            ns[1] := LSafeDivF(HP^.binF[n], NW[1]);
+            ns[2] := LSafeDivF(HP^.binF[n], NW[2]);
+            ns[3] := LSafeDivF(HP^.binF[n], NW[3]);
+            HP^.feat[HP^.nOriH + n] := ns[0] + ns[1] + ns[2] + ns[3];
+            LAdd(HP^.feat[setoff + 0], ns[0]);
+            LAdd(HP^.feat[setoff + 1], ns[1]);
+            LAdd(HP^.feat[setoff + 2], ns[2]);
+            LAdd(HP^.feat[setoff + 3], ns[3]);
+          end;
+
+        if AntiLight then
+          begin
+            Sum := 0;
+            for n := 0 to length(HP^.feat) - 1 do
+                LAdd(Sum, HP^.feat[n]);
+            for n := 0 to length(HP^.feat) - 1 do
+                HP^.feat[n] := Learn.AP_Sqr(LSafeDivF(HP^.feat[n], Sum));
+          end;
+      end;
+  end;
+{$ENDIF FPC}
+{$ELSE parallel}
+  procedure DoFor_Weight;
+  var
+    y, x, n: TLInt;
+    xDiff, yDiff, oriIdxFull, oriIdxHalf: TLInt;
+    cellCoorX, cellCoorY, cellY, cellX, dstCellCoorX, dstCellCoorY, Weight: TLInt;
+    weightedBinValue: TLFloat;
+  begin
+    for y := 0 to height - 1 do
+      for x := 0 to width - 1 do
         begin
-          xDiff := dx[Y, X];
-          yDiff := dy[Y, X];
+          xDiff := dx[y, x];
+          yDiff := dy[y, x];
           oriIdxFull := oriF^[yDiff + NUM_DIFF_DIV2, xDiff + NUM_DIFF_DIV2];
           oriIdxHalf := oriH^[yDiff + NUM_DIFF_DIV2, xDiff + NUM_DIFF_DIV2];
-          cellCoorY := Y div cSiz + 1;
-          cellCoorX := X div cSiz + 1;
-          cellY := Y - (cellCoorY - 1) * cSiz;
-          cellX := X - (cellCoorX - 1) * cSiz;
+          cellCoorY := y div cSiz + 1;
+          cellCoorX := x div cSiz + 1;
+          cellY := y - (cellCoorY - 1) * cSiz;
+          cellX := x - (cellCoorX - 1) * cSiz;
 
           for n := 0 to 3 do
             begin
@@ -422,26 +519,28 @@ var
               LAdd(ori[dstCellCoorY, dstCellCoorX].binH[oriIdxHalf], weightedBinValue);
             end;
         end;
-    end;
-    procedure Nested_ParallelFor_normH(cellY: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-    var
-      cellX, n: TLInt;
-      HP: PHRec;
-    begin
+  end;
+  procedure DoFor_normH;
+  var
+    cellY, cellX, n: TLInt;
+    HP: PHRec;
+  begin
+    for cellY := 0 to hSizY - 1 do
       for cellX := 0 to hSizX - 1 do
         begin
           HP := @ori[cellY, cellX];
           for n := 0 to HP^.nOriH - 1 do
               LAdd(HP^.normH, HP^.binH[n mod HP^.nOriF] * HP^.binH[n mod HP^.nOriF]);
         end;
-    end;
-    procedure Nested_ParallelFor_Ori(cellY: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-    var
-      cellX, n: TLInt;
-      HP: PHRec;
-      NW, ns: array [0 .. 3] of TLFloat;
-      Sum: TLFloat;
-    begin
+  end;
+  procedure DoFor_Ori;
+  var
+    cellY, cellX, n: TLInt;
+    HP: PHRec;
+    NW, ns: array [0 .. 3] of TLFloat;
+    Sum: TLFloat;
+  begin
+    for cellY := 1 to nCY do
       for cellX := 1 to nCX do
         begin
           HP := @ori[cellY, cellX];
@@ -486,106 +585,9 @@ var
                   HP^.feat[n] := Learn.AP_Sqr(LSafeDivF(HP^.feat[n], Sum));
             end;
         end;
-    end;
-  {$ENDIF FPC}
-  {$ELSE parallel}
-    procedure DoFor_Weight;
-    var
-      Y, X, n: TLInt;
-      xDiff, yDiff, oriIdxFull, oriIdxHalf: TLInt;
-      cellCoorX, cellCoorY, cellY, cellX, dstCellCoorX, dstCellCoorY, Weight: TLInt;
-      weightedBinValue: TLFloat;
-    begin
-      for Y := 0 to height - 1 do
-        for X := 0 to width - 1 do
-          begin
-            xDiff := dx[Y, X];
-            yDiff := dy[Y, X];
-            oriIdxFull := oriF^[yDiff + NUM_DIFF_DIV2, xDiff + NUM_DIFF_DIV2];
-            oriIdxHalf := oriH^[yDiff + NUM_DIFF_DIV2, xDiff + NUM_DIFF_DIV2];
-            cellCoorY := Y div cSiz + 1;
-            cellCoorX := X div cSiz + 1;
-            cellY := Y - (cellCoorY - 1) * cSiz;
-            cellX := X - (cellCoorX - 1) * cSiz;
+  end;
+{$ENDIF parallel}
 
-            for n := 0 to 3 do
-              begin
-                dstCellCoorY := cellCoorY + itp^[cellY, cellX].d[n, 1];
-                dstCellCoorX := cellCoorX + itp^[cellY, cellX].d[n, 0];
-                Weight := itp^[cellY, cellX].w[n];
-                weightedBinValue := BW^[Weight, (yDiff + NUM_DIFF_DIV2) * NUM_DIFF + (xDiff + NUM_DIFF_DIV2)];
-                LAdd(ori[dstCellCoorY, dstCellCoorX].binF[oriIdxFull], weightedBinValue);
-                LAdd(ori[dstCellCoorY, dstCellCoorX].binH[oriIdxHalf], weightedBinValue);
-              end;
-          end;
-    end;
-    procedure DoFor_normH;
-    var
-      cellY, cellX, n: TLInt;
-      HP: PHRec;
-    begin
-      for cellY := 0 to hSizY - 1 do
-        for cellX := 0 to hSizX - 1 do
-          begin
-            HP := @ori[cellY, cellX];
-            for n := 0 to HP^.nOriH - 1 do
-                LAdd(HP^.normH, HP^.binH[n mod HP^.nOriF] * HP^.binH[n mod HP^.nOriF]);
-          end;
-    end;
-    procedure DoFor_Ori;
-    var
-      cellY, cellX, n: TLInt;
-      HP: PHRec;
-      NW, ns: array [0 .. 3] of TLFloat;
-      Sum: TLFloat;
-    begin
-      for cellY := 1 to nCY do
-        for cellX := 1 to nCX do
-          begin
-            HP := @ori[cellY, cellX];
-
-            NW[0] := Learn.AP_Sqr(HP^.normH + ori[cellY - 1, cellX].normH + ori[cellY, cellX - 1].normH + ori[cellY - 1, cellX - 1].normH);
-            NW[1] := Learn.AP_Sqr(HP^.normH + ori[cellY + 1, cellX].normH + ori[cellY, cellX - 1].normH + ori[cellY + 1, cellX - 1].normH);
-            NW[2] := Learn.AP_Sqr(HP^.normH + ori[cellY + 1, cellX].normH + ori[cellY, cellX + 1].normH + ori[cellY + 1, cellX + 1].normH);
-            NW[3] := Learn.AP_Sqr(HP^.normH + ori[cellY - 1, cellX].normH + ori[cellY, cellX + 1].normH + ori[cellY - 1, cellX + 1].normH);
-
-            for n := 0 to HP^.nOriH - 1 do
-              begin
-                ns[0] := LSafeDivF(HP^.binH[n], NW[0]);
-                ns[1] := LSafeDivF(HP^.binH[n], NW[1]);
-                ns[2] := LSafeDivF(HP^.binH[n], NW[2]);
-                ns[3] := LSafeDivF(HP^.binH[n], NW[3]);
-                HP^.feat[n] := ns[0] + ns[1] + ns[2] + ns[3];
-                LAdd(HP^.feat[setoff + 0], ns[0]);
-                LAdd(HP^.feat[setoff + 1], ns[1]);
-                LAdd(HP^.feat[setoff + 2], ns[2]);
-                LAdd(HP^.feat[setoff + 3], ns[3]);
-              end;
-
-            for n := 0 to HP^.nOriF - 1 do
-              begin
-                ns[0] := LSafeDivF(HP^.binF[n], NW[0]);
-                ns[1] := LSafeDivF(HP^.binF[n], NW[1]);
-                ns[2] := LSafeDivF(HP^.binF[n], NW[2]);
-                ns[3] := LSafeDivF(HP^.binF[n], NW[3]);
-                HP^.feat[HP^.nOriH + n] := ns[0] + ns[1] + ns[2] + ns[3];
-                LAdd(HP^.feat[setoff + 0], ns[0]);
-                LAdd(HP^.feat[setoff + 1], ns[1]);
-                LAdd(HP^.feat[setoff + 2], ns[2]);
-                LAdd(HP^.feat[setoff + 3], ns[3]);
-              end;
-
-            if AntiLight then
-              begin
-                Sum := 0;
-                for n := 0 to length(HP^.feat) - 1 do
-                    LAdd(Sum, HP^.feat[n]);
-                for n := 0 to length(HP^.feat) - 1 do
-                    HP^.feat[n] := Learn.AP_Sqr(LSafeDivF(HP^.feat[n], Sum));
-              end;
-          end;
-    end;
-  {$ENDIF parallel}
 
 begin
   setoff := ori[0, 0].nOriH + ori[0, 0].nOriF;
@@ -596,23 +598,23 @@ begin
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor_normH, 0, hSizY - 1);
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor_Ori, 1, nCY - 1);
 {$ELSE FPC}
-  TParallel.for(0, height - 1, procedure(Y: Integer)
+  TParallel.for(0, height - 1, procedure(y: Integer)
     var
-      X, n: TLInt;
+      x, n: TLInt;
       xDiff, yDiff, oriIdxFull, oriIdxHalf: TLInt;
       cellCoorX, cellCoorY, cellY, cellX, dstCellCoorX, dstCellCoorY, Weight: TLInt;
       weightedBinValue: TLFloat;
     begin
-      for X := 0 to width - 1 do
+      for x := 0 to width - 1 do
         begin
-          xDiff := dx[Y, X];
-          yDiff := dy[Y, X];
+          xDiff := dx[y, x];
+          yDiff := dy[y, x];
           oriIdxFull := oriF^[yDiff + NUM_DIFF_DIV2, xDiff + NUM_DIFF_DIV2];
           oriIdxHalf := oriH^[yDiff + NUM_DIFF_DIV2, xDiff + NUM_DIFF_DIV2];
-          cellCoorY := Y div cSiz + 1;
-          cellCoorX := X div cSiz + 1;
-          cellY := Y - (cellCoorY - 1) * cSiz;
-          cellX := X - (cellCoorX - 1) * cSiz;
+          cellCoorY := y div cSiz + 1;
+          cellCoorX := x div cSiz + 1;
+          cellY := y - (cellCoorY - 1) * cSiz;
+          cellX := x - (cellCoorX - 1) * cSiz;
 
           for n := 0 to 3 do
             begin
@@ -721,13 +723,13 @@ end;
 
 destructor THOG.Destroy;
 var
-  Y, X: TLInt;
+  y, x: TLInt;
   HP: PHRec;
 begin
-  for Y := 0 to length(ori) - 1 do
-    for X := 0 to length(ori[Y]) - 1 do
+  for y := 0 to length(ori) - 1 do
+    for x := 0 to length(ori[y]) - 1 do
       begin
-        HP := @ori[Y, X];
+        HP := @ori[y, x];
         SetLength(HP^.binH, 0);
         SetLength(HP^.binF, 0);
         SetLength(HP^.feat, 0);
@@ -740,16 +742,16 @@ end;
 
 procedure THOG.BuildFeatureMatrix(var M: TLMatrix);
 var
-  i, J, n: TLInt;
+  i, j, n: TLInt;
   p: PHRec;
 begin
   SetLength(M, hSizY, hSizX * OriDim);
-  for J := 0 to length(ori) - 1 do
-    for i := 0 to length(ori[J]) - 1 do
+  for j := 0 to length(ori) - 1 do
+    for i := 0 to length(ori[j]) - 1 do
       begin
-        p := @ori[J, i];
+        p := @ori[j, i];
         for n := 0 to OriDim - 1 do
-            M[J, i + n] := p^.feat[n];
+            M[j, i + n] := p^.feat[n];
       end;
 end;
 
@@ -809,20 +811,20 @@ var
   img: TMemoryRaster;
   view: TMemoryRaster;
   i: TLInt;
-  T: TTimeTick;
+  t: TTimeTick;
   M: TLMatrix;
 begin
   img := NewRasterFromFile('c:\1.bmp');
 
   tab := THOGTable.Create(18, 36, 16);
 
-  // t := GetTimeTick;
-  // for i := 1 to 100 do
-  // begin
-  // hog := THOG.CreateAntiLight(tab, img);
-  // disposeObject(hog);
-  // end;
-  // DoStatus('%dms', [GetTimeTick - t]);
+  t := GetTimeTick;
+  for i := 1 to 100 do
+    begin
+      HOG := THOG.CreateAntiLight(tab, img);
+      DisposeObject(HOG);
+    end;
+  DoStatus('%dms', [GetTimeTick - t]);
 
   HOG := THOG.CreateAntiLight(tab, img);
 
@@ -838,4 +840,4 @@ begin
   DisposeObject(img);
 end;
 
-end. 
+end.

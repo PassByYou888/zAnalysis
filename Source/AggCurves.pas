@@ -37,11 +37,8 @@
 *)
 unit AggCurves;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   Math,
   AggBasics,
@@ -55,7 +52,7 @@ type
 
   PAggCurve3Points = ^TAggCurve3Points;
 
-  TAggCurve3Points = packed record
+  TAggCurve3Points = record
     Point: TAggCurve3PointArray;
   public
     procedure Init(x1, y1, x2, y2, x3, y3: Double); overload;
@@ -64,7 +61,7 @@ type
 
   PAggCurve4Points = ^TAggCurve4Points;
 
-  TAggCurve4Points = packed record
+  TAggCurve4Points = record
     Point: TAggCurve4PointArray;
   public
     procedure Init(x1, y1, x2, y2, x3, y3, x4, y4: Double); overload;
@@ -123,7 +120,7 @@ type
     procedure Init3(Point1, Point2, Point3: TPointDouble); override;
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
   end;
 
   TAggCurve3Div = class(TAggCustomCurve)
@@ -156,7 +153,7 @@ type
     procedure Init3(Point1, Point2, Point3: TPointDouble); override;
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     procedure Bezier(x1, y1, x2, y2, x3, y3: Double); overload;
     procedure Bezier(Point1, Point2, Point3: TPointDouble); overload;
@@ -194,7 +191,7 @@ type
     procedure Init(CurvePoints: PAggCurve4Points);
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
   end;
 
   TAggCurve4Div = class(TAggCustomCurve)
@@ -229,7 +226,7 @@ type
     procedure Init(CurvePoints: PAggCurve4Points);
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     procedure Bezier(x1, y1, x2, y2, x3, y3, x4, y4: Double); overload;
     procedure Bezier(Point1, Point2, Point3, Point4: TPointDouble); overload;
@@ -265,7 +262,7 @@ type
     procedure Init3(Point1, Point2, Point3: TPointDouble); override;
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
   end;
 
   TAggCurve4 = class(TAggCustomCurve)
@@ -298,7 +295,7 @@ type
     procedure Init(CurvePoints: PAggCurve4Points);
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
   end;
 
 function CatromToBezier(x1, y1, x2, y2, x3, y3, x4, y4: Double): TAggCurve4Points; overload;
@@ -335,8 +332,8 @@ end;
 function CatromToBezier(CurvePoints: PAggCurve4Points): TAggCurve4Points;
 begin
   with CurvePoints^ do
-      Result := CatromToBezier(Point[0].X, Point[0].Y, Point[1].X, Point[1].Y,
-      Point[2].X, Point[2].Y, Point[3].X, Point[3].Y)
+      Result := CatromToBezier(Point[0].x, Point[0].y, Point[1].x, Point[1].y,
+      Point[2].x, Point[2].y, Point[3].x, Point[3].y)
 end;
 
 function UbSplineToBezier(x1, y1, x2, y2, x3, y3, x4, y4: Double)
@@ -357,8 +354,8 @@ end;
 function UbSplineToBezier(CurvePoints: PAggCurve4Points): TAggCurve4Points;
 begin
   with CurvePoints^ do
-      Result := UbSplineToBezier(Point[0].X, Point[0].Y, Point[1].X, Point[1].Y,
-      Point[2].X, Point[2].Y, Point[3].X, Point[3].Y)
+      Result := UbSplineToBezier(Point[0].x, Point[0].y, Point[1].x, Point[1].y,
+      Point[2].x, Point[2].y, Point[3].x, Point[3].y)
 end;
 
 function HermiteToBezier(x1, y1, x2, y2, x3, y3, x4, y4: Double): TAggCurve4Points;
@@ -377,8 +374,8 @@ end;
 function HermiteToBezier(CurvePoints: PAggCurve4Points): TAggCurve4Points;
 begin
   with CurvePoints^ do
-      Result := HermiteToBezier(Point[0].X, Point[0].Y, Point[1].X, Point[1].Y,
-      Point[2].X, Point[2].Y, Point[3].X, Point[3].Y)
+      Result := HermiteToBezier(Point[0].x, Point[0].y, Point[1].x, Point[1].y,
+      Point[2].x, Point[2].y, Point[3].x, Point[3].y)
 end;
 
 { TAggCustomCurve }
@@ -395,12 +392,12 @@ end;
 
 procedure TAggCurve3Points.Init(x1, y1, x2, y2, x3, y3: Double);
 begin
-  Point[0].X := x1;
-  Point[0].Y := y1;
-  Point[1].X := x2;
-  Point[1].Y := y2;
-  Point[2].X := x3;
-  Point[2].Y := y3;
+  Point[0].x := x1;
+  Point[0].y := y1;
+  Point[1].x := x2;
+  Point[1].y := y2;
+  Point[2].x := x3;
+  Point[2].y := y3;
 end;
 
 procedure TAggCurve3Points.Init(Point1, Point2, Point3: TPointDouble);
@@ -456,10 +453,10 @@ begin
   FStart := Point1;
   FEnd := Point3;
 
-  Delta[0] := PointDouble(Point2.X - Point1.X, Point2.Y - Point1.Y);
-  Delta[1] := PointDouble(Point3.X - Point2.X, Point3.Y - Point2.Y);
+  Delta[0] := PointDouble(Point2.x - Point1.x, Point2.y - Point1.y);
+  Delta[1] := PointDouble(Point3.x - Point2.x, Point3.y - Point2.y);
 
-  Len := Hypot(Delta[0].X, Delta[0].Y) + Hypot(Delta[1].X, Delta[1].Y);
+  Len := Hypot(Delta[0].x, Delta[0].y) + Hypot(Delta[1].x, Delta[1].y);
 
   FNumSteps := Trunc(Len * 0.25 * FScale);
 
@@ -469,17 +466,17 @@ begin
   SubDivideStep[0] := 1 / FNumSteps;
   SubDivideStep[1] := Sqr(SubDivideStep[0]);
 
-  tmp.X := (Point1.X - Point2.X - Point2.X + Point3.X) * SubDivideStep[1];
-  tmp.Y := (Point1.Y - Point2.Y - Point2.X + Point3.Y) * SubDivideStep[1];
+  tmp.x := (Point1.x - Point2.x - Point2.x + Point3.x) * SubDivideStep[1];
+  tmp.y := (Point1.y - Point2.y - Point2.x + Point3.y) * SubDivideStep[1];
 
   FSavedF := Point1;
   FPoint := Point1;
 
-  FSavedDelta.X := tmp.X + (Point2.X - Point1.X) * (2 * SubDivideStep[0]);
-  FSavedDelta.Y := tmp.Y + (Point2.Y - Point1.Y) * (2 * SubDivideStep[0]);
+  FSavedDelta.x := tmp.x + (Point2.x - Point1.x) * (2 * SubDivideStep[0]);
+  FSavedDelta.y := tmp.y + (Point2.y - Point1.y) * (2 * SubDivideStep[0]);
   FDeltaF := FSavedDelta;
 
-  FDeltaDelta := PointDouble(2 * tmp.X, 2 * tmp.Y);
+  FDeltaDelta := PointDouble(2 * tmp.x, 2 * tmp.y);
 
   FStep := FNumSteps;
 end;
@@ -532,13 +529,13 @@ begin
     end;
 
   FStep := FNumSteps;
-  FPoint.X := FSavedF.X;
-  FPoint.Y := FSavedF.Y;
-  FDeltaF.X := FSavedDelta.X;
-  FDeltaF.Y := FSavedDelta.Y;
+  FPoint.x := FSavedF.x;
+  FPoint.y := FSavedF.y;
+  FDeltaF.x := FSavedDelta.x;
+  FDeltaF.y := FSavedDelta.y;
 end;
 
-function TAggCurve3Inc.Vertex(X, Y: PDouble): Cardinal;
+function TAggCurve3Inc.Vertex(x, y: PDouble): Cardinal;
 begin
   if FStep < 0 then
     begin
@@ -549,10 +546,10 @@ begin
 
   if FStep = FNumSteps then
     begin
-      X^ := FStart.X;
-      Y^ := FStart.Y;
+      x^ := FStart.x;
+      y^ := FStart.y;
 
-      Dec(FStep);
+      dec(FStep);
 
       Result := CAggPathCmdMoveTo;
 
@@ -561,25 +558,25 @@ begin
 
   if FStep = 0 then
     begin
-      X^ := FEnd.X;
-      Y^ := FEnd.Y;
+      x^ := FEnd.x;
+      y^ := FEnd.y;
 
-      Dec(FStep);
+      dec(FStep);
 
       Result := CAggPathCmdLineTo;
 
       Exit;
     end;
 
-  FPoint.X := FPoint.X + FDeltaF.X;
-  FPoint.Y := FPoint.Y + FDeltaF.Y;
-  FDeltaF.X := FDeltaF.X + FDeltaDelta.X;
-  FDeltaF.Y := FDeltaF.Y + FDeltaDelta.Y;
+  FPoint.x := FPoint.x + FDeltaF.x;
+  FPoint.y := FPoint.y + FDeltaF.y;
+  FDeltaF.x := FDeltaF.x + FDeltaDelta.x;
+  FDeltaF.y := FDeltaF.y + FDeltaDelta.y;
 
-  X^ := FPoint.X;
-  Y^ := FPoint.Y;
+  x^ := FPoint.x;
+  y^ := FPoint.y;
 
-  Dec(FStep);
+  dec(FStep);
 
   Result := CAggPathCmdLineTo;
 end;
@@ -688,7 +685,7 @@ begin
   FCount := 0;
 end;
 
-function TAggCurve3Div.Vertex(X, Y: PDouble): Cardinal;
+function TAggCurve3Div.Vertex(x, y: PDouble): Cardinal;
 var
   p: PPointDouble;
 begin
@@ -701,10 +698,10 @@ begin
 
   p := FPoints[FCount];
 
-  Inc(FCount);
+  inc(FCount);
 
-  X^ := p.X;
-  Y^ := p.Y;
+  x^ := p.x;
+  y^ := p.y;
 
   if FCount = 1 then
       Result := CAggPathCmdMoveTo
@@ -716,15 +713,15 @@ procedure TAggCurve3Div.Bezier(x1, y1, x2, y2, x3, y3: Double);
 var
   pt: TPointDouble;
 begin
-  pt.X := x1;
-  pt.Y := y1;
+  pt.x := x1;
+  pt.y := y1;
 
   FPoints.Add(@pt);
 
   RecursiveBezier(x1, y1, x2, y2, x3, y3, 0);
 
-  pt.X := x3;
-  pt.Y := y3;
+  pt.x := x3;
+  pt.y := y3;
 
   FPoints.Add(@pt);
 end;
@@ -733,7 +730,7 @@ procedure TAggCurve3Div.Bezier(Point1, Point2, Point3: TPointDouble);
 begin
   FPoints.Add(@Point1);
 
-  RecursiveBezier(Point1.X, Point1.Y, Point2.X, Point2.Y, Point3.X, Point3.Y,
+  RecursiveBezier(Point1.x, Point1.y, Point2.x, Point2.y, Point3.x, Point3.y,
     0);
 
   FPoints.Add(@Point3);
@@ -757,20 +754,20 @@ begin
   X123 := (X12 + X23) * 0.5;
   Y123 := (Y12 + Y23) * 0.5;
 
-  Delta.X := x3 - x1;
-  Delta.Y := y3 - y1;
-  d := Abs((x2 - x3) * Delta.Y - (y2 - y3) * Delta.X);
+  Delta.x := x3 - x1;
+  Delta.y := y3 - y1;
+  d := Abs((x2 - x3) * Delta.y - (y2 - y3) * Delta.x);
 
   if d > CCurveCollinearityEpsilon then
     // Regular care
-    if d * d <= FDistanceToleranceSquare * (Sqr(Delta.X) + Sqr(Delta.Y)) then
+    if d * d <= FDistanceToleranceSquare * (Sqr(Delta.x) + Sqr(Delta.y)) then
       begin
         // If the curvature doesn't exceed the DistanceTolerance value
         // we tend to finish subdivisions.
         if FAngleTolerance < CCurveAngleToleranceEpsilon then
           begin
-            pt.X := X123;
-            pt.Y := Y123;
+            pt.x := X123;
+            pt.y := Y123;
 
             FPoints.Add(@pt);
 
@@ -786,8 +783,8 @@ begin
         if DA < FAngleTolerance then
           begin
             // Finally we can stop the recursion
-            pt.X := X123;
-            pt.Y := Y123;
+            pt.x := X123;
+            pt.y := Y123;
 
             FPoints.Add(@pt);
 
@@ -799,8 +796,8 @@ begin
   else if Abs(x1 + x3 - x2 - x2) + Abs(y1 + y3 - y2 - y2) <= FDistanceToleranceManhattan
   then
     begin
-      pt.X := X123;
-      pt.Y := Y123;
+      pt.x := X123;
+      pt.y := Y123;
 
       FPoints.Add(@pt);
 
@@ -816,14 +813,14 @@ end;
 
 procedure TAggCurve4Points.Init(x1, y1, x2, y2, x3, y3, x4, y4: Double);
 begin
-  Point[0].X := x1;
-  Point[0].Y := y1;
-  Point[1].X := x2;
-  Point[1].Y := y2;
-  Point[2].X := x3;
-  Point[2].Y := y3;
-  Point[3].X := x4;
-  Point[3].Y := y4;
+  Point[0].x := x1;
+  Point[0].y := y1;
+  Point[1].x := x2;
+  Point[1].y := y2;
+  Point[2].x := x3;
+  Point[2].y := y3;
+  Point[3].x := x4;
+  Point[3].y := y4;
 end;
 
 procedure TAggCurve4Points.Init(Point1, Point2, Point3, Point4: TPointDouble);
@@ -881,15 +878,15 @@ begin
   FStart := Point1;
   FEnd := Point4;
 
-  Delta[0].X := Point2.X - Point1.X;
-  Delta[0].Y := Point2.Y - Point1.Y;
-  Delta[1].X := Point3.X - Point2.X;
-  Delta[1].Y := Point3.Y - Point2.Y;
-  Delta[2].X := Point4.X - Point3.X;
-  Delta[2].Y := Point4.Y - Point3.Y;
+  Delta[0].x := Point2.x - Point1.x;
+  Delta[0].y := Point2.y - Point1.y;
+  Delta[1].x := Point3.x - Point2.x;
+  Delta[1].y := Point3.y - Point2.y;
+  Delta[2].x := Point4.x - Point3.x;
+  Delta[2].y := Point4.y - Point3.y;
 
-  Len := Hypot(Delta[0].X, Delta[0].Y) + Hypot(Delta[1].X, Delta[1].Y) +
-    Hypot(Delta[2].X, Delta[2].Y);
+  Len := Hypot(Delta[0].x, Delta[0].y) + Hypot(Delta[1].x, Delta[1].y) +
+    Hypot(Delta[2].x, Delta[2].y);
 
   FNumSteps := Trunc(0.25 * Len * FScale);
 
@@ -905,27 +902,27 @@ begin
   Pre[2] := 6 * SubDivideStep[1];
   Pre[3] := 6 * SubDivideStep[2];
 
-  Temp[0].X := Point1.X - Point2.X - Point2.X + Point3.X;
-  Temp[0].Y := Point1.Y - Point2.Y - Point2.Y + Point3.Y;
+  Temp[0].x := Point1.x - Point2.x - Point2.x + Point3.x;
+  Temp[0].y := Point1.y - Point2.y - Point2.y + Point3.y;
 
-  Temp[1].X := (Point2.X - Point3.X) * 3.0 - Point1.X + Point4.X;
-  Temp[1].Y := (Point2.Y - Point3.Y) * 3.0 - Point1.Y + Point4.Y;
+  Temp[1].x := (Point2.x - Point3.x) * 3.0 - Point1.x + Point4.x;
+  Temp[1].y := (Point2.y - Point3.y) * 3.0 - Point1.y + Point4.y;
 
   FSavedF := Point1;
   FPoint := Point1;
 
-  FSavedDelta.X := (Point2.X - Point1.X) * Pre[0] + Temp[0].X * Pre[1] +
-    Temp[1].X * SubDivideStep[2];
-  FSavedDelta.Y := (Point2.Y - Point1.Y) * Pre[0] + Temp[0].Y * Pre[1] +
-    Temp[1].Y * SubDivideStep[2];
+  FSavedDelta.x := (Point2.x - Point1.x) * Pre[0] + Temp[0].x * Pre[1] +
+    Temp[1].x * SubDivideStep[2];
+  FSavedDelta.y := (Point2.y - Point1.y) * Pre[0] + Temp[0].y * Pre[1] +
+    Temp[1].y * SubDivideStep[2];
   FDeltaF := FSavedDelta;
 
-  FSavedDeltaDelta.X := Temp[0].X * Pre[2] + Temp[1].X * Pre[3];
-  FSavedDeltaDelta.Y := Temp[0].Y * Pre[2] + Temp[1].Y * Pre[3];
+  FSavedDeltaDelta.x := Temp[0].x * Pre[2] + Temp[1].x * Pre[3];
+  FSavedDeltaDelta.y := Temp[0].y * Pre[2] + Temp[1].y * Pre[3];
   FDeltaDelta := FSavedDeltaDelta;
 
-  FDeltaDeltaDelta.X := Temp[1].X * Pre[3];
-  FDeltaDeltaDelta.Y := Temp[1].Y * Pre[3];
+  FDeltaDeltaDelta.x := Temp[1].x * Pre[3];
+  FDeltaDeltaDelta.y := Temp[1].y * Pre[3];
 
   FStep := FNumSteps;
 end;
@@ -989,7 +986,7 @@ begin
   FDeltaDelta := FSavedDeltaDelta;
 end;
 
-function TAggCurve4Inc.Vertex(X, Y: PDouble): Cardinal;
+function TAggCurve4Inc.Vertex(x, y: PDouble): Cardinal;
 begin
   if FStep < 0 then
     begin
@@ -1000,10 +997,10 @@ begin
 
   if FStep = FNumSteps then
     begin
-      X^ := FStart.X;
-      Y^ := FStart.Y;
+      x^ := FStart.x;
+      y^ := FStart.y;
 
-      Dec(FStep);
+      dec(FStep);
 
       Result := CAggPathCmdMoveTo;
 
@@ -1012,27 +1009,27 @@ begin
 
   if FStep = 0 then
     begin
-      X^ := FEnd.X;
-      Y^ := FEnd.Y;
+      x^ := FEnd.x;
+      y^ := FEnd.y;
 
-      Dec(FStep);
+      dec(FStep);
 
       Result := CAggPathCmdLineTo;
 
       Exit;
     end;
 
-  FPoint.X := FPoint.X + FDeltaF.X;
-  FPoint.Y := FPoint.Y + FDeltaF.Y;
-  FDeltaF.X := FDeltaF.X + FDeltaDelta.X;
-  FDeltaF.Y := FDeltaF.Y + FDeltaDelta.Y;
-  FDeltaDelta.X := FDeltaDelta.X + FDeltaDeltaDelta.X;
-  FDeltaDelta.Y := FDeltaDelta.Y + FDeltaDeltaDelta.Y;
+  FPoint.x := FPoint.x + FDeltaF.x;
+  FPoint.y := FPoint.y + FDeltaF.y;
+  FDeltaF.x := FDeltaF.x + FDeltaDelta.x;
+  FDeltaF.y := FDeltaF.y + FDeltaDelta.y;
+  FDeltaDelta.x := FDeltaDelta.x + FDeltaDeltaDelta.x;
+  FDeltaDelta.y := FDeltaDelta.y + FDeltaDeltaDelta.y;
 
-  X^ := FPoint.X;
-  Y^ := FPoint.Y;
+  x^ := FPoint.x;
+  y^ := FPoint.y;
 
-  Dec(FStep);
+  dec(FStep);
 
   Result := CAggPathCmdLineTo;
 end;
@@ -1155,7 +1152,7 @@ begin
   FCount := 0;
 end;
 
-function TAggCurve4Div.Vertex(X, Y: PDouble): Cardinal;
+function TAggCurve4Div.Vertex(x, y: PDouble): Cardinal;
 var
   p: PPointDouble;
 begin
@@ -1168,10 +1165,10 @@ begin
 
   p := FPoints[FCount];
 
-  Inc(FCount);
+  inc(FCount);
 
-  X^ := p.X;
-  Y^ := p.Y;
+  x^ := p.x;
+  y^ := p.y;
 
   if FCount = 1 then
       Result := CAggPathCmdMoveTo
@@ -1196,8 +1193,8 @@ procedure TAggCurve4Div.Bezier(Point1, Point2, Point3, Point4: TPointDouble);
 begin
   FPoints.Add(@Point1);
 
-  RecursiveBezier(Point1.X, Point1.Y, Point2.X, Point2.Y, Point3.X, Point3.Y,
-    Point4.X, Point4.Y, 0);
+  RecursiveBezier(Point1.x, Point1.y, Point2.x, Point2.y, Point3.x, Point3.y,
+    Point4.x, Point4.y, 0);
 
   FPoints.Add(@Point4);
 end;
@@ -1235,11 +1232,11 @@ begin
   Y1234 := (Y123 + Y234) * 0.5;
 
   // Try to approximate the full cubic TCurve by Value single straight line
-  Delta.X := x4 - x1;
-  Delta.Y := y4 - y1;
+  Delta.x := x4 - x1;
+  Delta.y := y4 - y1;
 
-  d2 := Abs((x2 - x4) * Delta.Y - (y2 - y4) * Delta.X);
-  d3 := Abs((x3 - x4) * Delta.Y - (y3 - y4) * Delta.X);
+  d2 := Abs((x2 - x4) * Delta.y - (y2 - y4) * Delta.x);
+  d3 := Abs((x3 - x4) * Delta.y - (y3 - y4) * Delta.x);
 
   case ((Integer(d2 > CCurveCollinearityEpsilon) shl 1) +
     Integer(d3 > CCurveCollinearityEpsilon)) of
@@ -1249,8 +1246,8 @@ begin
         Abs(x2 + x4 - x3 - x3) + Abs(y2 + y4 - y3 - y3) <= FDistanceToleranceManhattan
       then
         begin
-          pt.X := X1234;
-          pt.Y := Y1234;
+          pt.x := X1234;
+          pt.y := Y1234;
 
           FPoints.Add(@pt);
 
@@ -1259,12 +1256,12 @@ begin
 
     // p1,p2,p4 are collinear, p3 is considerable
     1:
-      if Sqr(d3) <= FDistanceToleranceSquare * (Sqr(Delta.X) + Sqr(Delta.Y)) then
+      if Sqr(d3) <= FDistanceToleranceSquare * (Sqr(Delta.x) + Sqr(Delta.y)) then
         begin
           if FAngleTolerance < CCurveAngleToleranceEpsilon then
             begin
-              pt.X := X23;
-              pt.Y := Y23;
+              pt.x := X23;
+              pt.y := Y23;
 
               FPoints.Add(@pt);
 
@@ -1279,13 +1276,13 @@ begin
 
           if Da1 < FAngleTolerance then
             begin
-              pt.X := x2;
-              pt.Y := y2;
+              pt.x := x2;
+              pt.y := y2;
 
               FPoints.Add(@pt);
 
-              pt.X := x3;
-              pt.Y := y3;
+              pt.x := x3;
+              pt.y := y3;
 
               FPoints.Add(@pt);
 
@@ -1295,8 +1292,8 @@ begin
           if FCuspLimit <> 0.0 then
             if Da1 > FCuspLimit then
               begin
-                pt.X := x3;
-                pt.Y := y3;
+                pt.x := x3;
+                pt.y := y3;
 
                 FPoints.Add(@pt);
 
@@ -1306,12 +1303,12 @@ begin
 
     // p1,p3,p4 are collinear, p2 is considerable
     2:
-      if Sqr(d2) <= FDistanceToleranceSquare * (Sqr(Delta.X) + Sqr(Delta.Y)) then
+      if Sqr(d2) <= FDistanceToleranceSquare * (Sqr(Delta.x) + Sqr(Delta.y)) then
         begin
           if FAngleTolerance < CCurveAngleToleranceEpsilon then
             begin
-              pt.X := X23;
-              pt.Y := Y23;
+              pt.x := X23;
+              pt.y := Y23;
 
               FPoints.Add(@pt);
 
@@ -1326,13 +1323,13 @@ begin
 
           if Da1 < FAngleTolerance then
             begin
-              pt.X := x2;
-              pt.Y := y2;
+              pt.x := x2;
+              pt.y := y2;
 
               FPoints.Add(@pt);
 
-              pt.X := x3;
-              pt.Y := y3;
+              pt.x := x3;
+              pt.y := y3;
 
               FPoints.Add(@pt);
 
@@ -1342,8 +1339,8 @@ begin
           if FCuspLimit <> 0.0 then
             if Da1 > FCuspLimit then
               begin
-                pt.X := x2;
-                pt.Y := y2;
+                pt.x := x2;
+                pt.y := y2;
 
                 FPoints.Add(@pt);
 
@@ -1354,14 +1351,14 @@ begin
     // Regular care
     3:
       if (d2 + d3) * (d2 + d3) <= FDistanceToleranceSquare *
-        (Delta.X * Delta.X + Delta.Y * Delta.Y) then
+        (Delta.x * Delta.x + Delta.y * Delta.y) then
         begin
           // If the curvature doesn't exceed the DistanceTolerance value
           // we tend to finish subdivisions.
           if FAngleTolerance < CCurveAngleToleranceEpsilon then
             begin
-              pt.X := X23;
-              pt.Y := Y23;
+              pt.x := X23;
+              pt.y := Y23;
 
               FPoints.Add(@pt);
 
@@ -1382,8 +1379,8 @@ begin
           if Da1 + Da2 < FAngleTolerance then
             begin
               // Finally we can stop the recursion
-              pt.X := X23;
-              pt.Y := Y23;
+              pt.x := X23;
+              pt.y := Y23;
 
               FPoints.Add(@pt);
 
@@ -1394,8 +1391,8 @@ begin
             begin
               if Da1 > FCuspLimit then
                 begin
-                  pt.X := x2;
-                  pt.Y := y2;
+                  pt.x := x2;
+                  pt.y := y2;
 
                   FPoints.Add(@pt);
 
@@ -1404,8 +1401,8 @@ begin
 
               if Da2 > FCuspLimit then
                 begin
-                  pt.X := x3;
-                  pt.Y := y3;
+                  pt.x := x3;
+                  pt.y := y3;
 
                   FPoints.Add(@pt);
 
@@ -1521,12 +1518,12 @@ begin
       FCurveDiv.Rewind(PathID)
 end;
 
-function TAggCurve3.Vertex(X, Y: PDouble): Cardinal;
+function TAggCurve3.Vertex(x, y: PDouble): Cardinal;
 begin
   if FApproximationMethod = camInc then
-      Result := FCurveInc.Vertex(X, Y)
+      Result := FCurveInc.Vertex(x, y)
   else
-      Result := FCurveDiv.Vertex(X, Y);
+      Result := FCurveDiv.Vertex(x, y);
 end;
 
 { TAggCurve4 }
@@ -1637,12 +1634,14 @@ begin
       FCurveDiv.Rewind(PathID);
 end;
 
-function TAggCurve4.Vertex(X, Y: PDouble): Cardinal;
+function TAggCurve4.Vertex(x, y: PDouble): Cardinal;
 begin
   if FApproximationMethod = camInc then
-      Result := FCurveInc.Vertex(X, Y)
+      Result := FCurveInc.Vertex(x, y)
   else
-      Result := FCurveDiv.Vertex(X, Y);
+      Result := FCurveDiv.Vertex(x, y);
 end;
 
 end. 
+ 
+ 

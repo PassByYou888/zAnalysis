@@ -103,11 +103,8 @@ unit AggTransAffine;
   ////////////////////////////////////////////////////////////////////////////////
 *)
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   Math,
   AggMath,
@@ -119,7 +116,7 @@ const
 type
   TAggTransAffine = class;
 
-  TAggProcTransform = procedure(This: TAggTransAffine; X, Y: PDouble);
+  TAggProcTransform = procedure(This: TAggTransAffine; x, y: PDouble);
 
   PAggParallelogram = ^TAggParallelogram;
   TAggParallelogram = array [0 .. 5] of Double;
@@ -238,13 +235,13 @@ type
     procedure AssignAll(From: TAggTransAffine);
 
     // Direct transformations operations
-    function Translate(X, Y: Double): TAggTransAffine; overload;
+    function Translate(x, y: Double): TAggTransAffine; overload;
     function Translate(Value: TPointDouble): TAggTransAffine; overload;
-    function Rotate(A: Double): TAggTransAffine;
+    function Rotate(a: Double): TAggTransAffine;
     function Scale(s: Double): TAggTransAffine; overload;
-    function Scale(X, Y: Double): TAggTransAffine; overload;
+    function Scale(x, y: Double): TAggTransAffine; overload;
     function Scale(Value: TPointDouble): TAggTransAffine; overload;
-    function Skew(X, Y: Double): TAggTransAffine; overload;
+    function Skew(x, y: Double): TAggTransAffine; overload;
     function Skew(Value: TPointDouble): TAggTransAffine; overload;
 
     property M0: Double read FData[0];
@@ -300,8 +297,8 @@ type
   // Contributed by John Horigan
   TAggTransAffineReflection = class(TAggTransAffineReflectionUnit)
   public
-    constructor Create(A: Double); overload;
-    constructor Create(X, Y: Double); overload;
+    constructor Create(a: Double); overload;
+    constructor Create(x, y: Double); overload;
   end;
 
 function IsEqualEpsilon(v1, v2, Epsilon: Double): Boolean;
@@ -383,35 +380,35 @@ begin
   end;
 end;
 
-procedure TransAffineTransform(This: TAggTransAffine; X, Y: PDouble);
+procedure TransAffineTransform(This: TAggTransAffine; x, y: PDouble);
 var
   TX: Double;
 begin
-  TX := X^;
-  X^ := TX * This.FData[0] + Y^ * This.FData[2] + This.FData[4];
-  Y^ := TX * This.FData[1] + Y^ * This.FData[3] + This.FData[5];
+  TX := x^;
+  x^ := TX * This.FData[0] + y^ * This.FData[2] + This.FData[4];
+  y^ := TX * This.FData[1] + y^ * This.FData[3] + This.FData[5];
 end;
 
-procedure TransAffineTransform2x2(This: TAggTransAffine; X, Y: PDouble);
+procedure TransAffineTransform2x2(This: TAggTransAffine; x, y: PDouble);
 var
   TX: Double;
 begin
-  TX := X^;
-  X^ := TX * This.FData[0] + Y^ * This.FData[2];
-  Y^ := TX * This.FData[1] + Y^ * This.FData[3];
+  TX := x^;
+  x^ := TX * This.FData[0] + y^ * This.FData[2];
+  y^ := TX * This.FData[1] + y^ * This.FData[3];
 end;
 
 procedure TransAffineInverseTransform(This: TAggTransAffine;
-  X, Y: PDouble);
+  x, y: PDouble);
 var
-  d, A, b: Double;
+  d, a, b: Double;
 begin
   d := This.Determinant;
-  A := (X^ - This.FData[4]) * d;
-  b := (Y^ - This.FData[5]) * d;
+  a := (x^ - This.FData[4]) * d;
+  b := (y^ - This.FData[5]) * d;
 
-  X^ := A * This.FData[3] - b * This.FData[2];
-  Y^ := b * This.FData[0] - A * This.FData[1];
+  x^ := a * This.FData[3] - b * This.FData[2];
+  y^ := b * This.FData[0] - a * This.FData[1];
 end;
 
 { TAggTransAffine }
@@ -608,24 +605,24 @@ end;
 
 procedure TAggTransAffine.MultiplyInv(M: TAggTransAffine);
 var
-  T: TAggTransAffine;
+  t: TAggTransAffine;
 begin
-  T.AssignAll(M);
-  T.Invert;
+  t.AssignAll(M);
+  t.Invert;
 
-  Multiply(@T);
+  Multiply(@t);
 end;
 
 procedure TAggTransAffine.PreMultiplyInv(M: TAggTransAffine);
 var
-  T: TAggTransAffine;
+  t: TAggTransAffine;
 begin
-  T.AssignAll(M);
+  t.AssignAll(M);
 
-  T.Invert;
-  T.Multiply(Self);
+  t.Invert;
+  t.Multiply(Self);
 
-  Assign(@T);
+  Assign(@t);
 end;
 
 procedure TAggTransAffine.Invert;
@@ -691,14 +688,14 @@ end;
 
 function TAggTransAffine.GetScale: Double;
 var
-  X, Y: Double;
+  x, y: Double;
 const
   CSqrt2Half: Double = 0.70710678118654752440084436210485;
 begin
-  X := CSqrt2Half * FData[0] + CSqrt2Half * FData[2];
-  Y := CSqrt2Half * FData[1] + CSqrt2Half * FData[3];
+  x := CSqrt2Half * FData[0] + CSqrt2Half * FData[2];
+  y := CSqrt2Half * FData[1] + CSqrt2Half * FData[3];
 
-  Result := Sqrt(X * X + Y * Y);
+  Result := Sqrt(x * x + y * y);
 end;
 
 function TAggTransAffine.IsIdentity(Epsilon: Double = CAggAffineEpsilon): Boolean;
@@ -747,7 +744,7 @@ end;
 
 procedure TAggTransAffine.GetScaling(out SX, SY: Double);
 var
-  T: TAggTransAffineRotation;
+  t: TAggTransAffineRotation;
   x1, y1, x2, y2: Double;
 begin
   x1 := 0;
@@ -755,14 +752,14 @@ begin
   x2 := 1;
   y2 := 1;
 
-  TAggTransAffine(T) := Self;
+  TAggTransAffine(t) := Self;
 
-  T := TAggTransAffineRotation.Create(-GetRotation);
+  t := TAggTransAffineRotation.Create(-GetRotation);
   try
-    T.Transform(Self, @x1, @y1);
-    T.Transform(Self, @x2, @y2);
+    t.Transform(Self, @x1, @y1);
+    t.Transform(Self, @x2, @y2);
   finally
-      T.Free;
+      t.Free;
   end;
 
   SX := x2 - x1;
@@ -789,27 +786,27 @@ begin
   InverseTransform := @From.InverseTransform;
 end;
 
-function TAggTransAffine.Translate(X, Y: Double): TAggTransAffine;
+function TAggTransAffine.Translate(x, y: Double): TAggTransAffine;
 begin
-  FData[4] := FData[4] + X;
-  FData[5] := FData[5] + Y;
+  FData[4] := FData[4] + x;
+  FData[5] := FData[5] + y;
 
   Result := Self;
 end;
 
 function TAggTransAffine.Translate(Value: TPointDouble): TAggTransAffine;
 begin
-  FData[4] := FData[4] + Value.X;
-  FData[5] := FData[5] + Value.Y;
+  FData[4] := FData[4] + Value.x;
+  FData[5] := FData[5] + Value.y;
 
   Result := Self;
 end;
 
-function TAggTransAffine.Rotate(A: Double): TAggTransAffine;
+function TAggTransAffine.Rotate(a: Double): TAggTransAffine;
 var
   ca, SA, Temp: Double;
 begin
-  SinCos(A, SA, ca);
+  SinCos(a, SA, ca);
 
   Temp := FData[0] * ca - FData[1] * SA;
   FData[1] := FData[0] * SA + FData[1] * ca;
@@ -838,36 +835,36 @@ begin
   Result := Self;
 end;
 
-function TAggTransAffine.Scale(X, Y: Double): TAggTransAffine;
+function TAggTransAffine.Scale(x, y: Double): TAggTransAffine;
 begin
-  FData[0] := FData[0] * X;
-  FData[2] := FData[2] * X;
-  FData[4] := FData[4] * X;
-  FData[1] := FData[1] * Y;
-  FData[3] := FData[3] * Y;
-  FData[5] := FData[5] * Y;
+  FData[0] := FData[0] * x;
+  FData[2] := FData[2] * x;
+  FData[4] := FData[4] * x;
+  FData[1] := FData[1] * y;
+  FData[3] := FData[3] * y;
+  FData[5] := FData[5] * y;
 
   Result := Self;
 end;
 
 function TAggTransAffine.Scale(Value: TPointDouble): TAggTransAffine;
 begin
-  FData[0] := FData[0] * Value.X;
-  FData[2] := FData[2] * Value.X;
-  FData[4] := FData[4] * Value.X;
-  FData[1] := FData[1] * Value.Y;
-  FData[3] := FData[3] * Value.Y;
-  FData[5] := FData[5] * Value.Y;
+  FData[0] := FData[0] * Value.x;
+  FData[2] := FData[2] * Value.x;
+  FData[4] := FData[4] * Value.x;
+  FData[1] := FData[1] * Value.y;
+  FData[3] := FData[3] * Value.y;
+  FData[5] := FData[5] * Value.y;
 
   Result := Self;
 end;
 
-function TAggTransAffine.Skew(X, Y: Double): TAggTransAffine;
+function TAggTransAffine.Skew(x, y: Double): TAggTransAffine;
 var
   TY, TX, Temp: Double;
 begin
-  TY := Tan(Y);
-  TX := Tan(X);
+  TY := Tan(y);
+  TX := Tan(x);
 
   Temp := FData[0] + FData[1] * TX;
   FData[1] := FData[0] * TY + FData[1];
@@ -886,7 +883,7 @@ end;
 
 function TAggTransAffine.Skew(Value: TPointDouble): TAggTransAffine;
 begin
-  Result := Skew(Value.X, Value.Y);
+  Result := Skew(Value.x, Value.y);
 end;
 
 { TAggTransAffineRotation }
@@ -934,9 +931,9 @@ begin
   Delta := PointDouble(x2 - x1, y2 - y1);
 
   if Dist > 0 then
-      Scale(Hypot(Delta.X, Delta.Y) / Dist);
+      Scale(Hypot(Delta.x, Delta.y) / Dist);
 
-  Rotate(ArcTan2(Delta.Y, Delta.X));
+  Rotate(ArcTan2(Delta.y, Delta.x));
   Translate(x1, y1);
 end;
 
@@ -950,32 +947,34 @@ end;
 
 { TAggTransAffineReflection }
 
-constructor TAggTransAffineReflection.Create(A: Double);
+constructor TAggTransAffineReflection.Create(a: Double);
 var
   sn, CN: Double;
 begin
-  SinCos(A, sn, CN);
+  SinCos(a, sn, CN);
   inherited Create(CN, sn);
 end;
 
-constructor TAggTransAffineReflection.Create(X, Y: Double);
+constructor TAggTransAffineReflection.Create(x, y: Double);
 var
   Nx, Ny: Double;
   tmp: Double;
 begin
-  if (X = 0) and (Y = 0) then
+  if (x = 0) and (y = 0) then
     begin
-      X := 0;
-      Y := 0;
+      x := 0;
+      y := 0;
     end
   else
     begin
-      tmp := 1 / Hypot(X, Y);
-      Nx := X * tmp;
-      Ny := Y * tmp;
+      tmp := 1 / Hypot(x, y);
+      Nx := x * tmp;
+      Ny := y * tmp;
     end;
 
   inherited Create(Nx, Ny);
 end;
 
 end. 
+ 
+ 

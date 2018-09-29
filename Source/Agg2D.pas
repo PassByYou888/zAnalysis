@@ -37,11 +37,8 @@
 *)
 unit Agg2D;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   Math,
   AggBasics, AggMath, AggArray, AggTransAffine, AggTransViewport, AggPathStorage, AggConvStroke, AggConvDash, AggConvTransform, AggConvCurve,
@@ -49,7 +46,7 @@ uses
   AggSpanInterpolatorLinear, AggSpanAllocator, AggRasterizerScanLineAA, AggGammaFunctions, AggScanlineUnpacked, AggArc, AggBezierArc, AggRoundedRect,
   AggPixelFormat, AggPixelFormatRgba, AggColor32, AggMathStroke, AggImageFilters, AggVertexSource, AggRenderScanlines,
   AggAlphaMaskUnpacked8, AggArrowHead, AggBitsetIterator, AggBlur, AggBoundingRect, AggBSpline, AggClipLiangBarsky, AggColorConversion, AggControl,
-  AggConvAdaptorVcgen, AggConvAdaptorVpgen, AggConvBSpline, AggConvClipPolygon, AggConvClipPolyline, AggConvConcat, AggConvContour, AggConvGpc, AggConvMarker,
+  AggConvAdaptorVcgen, AggConvAdaptorVpgen, AggConvBSpline, AggConvClipPolygon, AggConvClipPolyline, AggConvConcat, AggConvContour, AggConvMarker,
   AggConvMarkerAdaptor, AggConvSegmentator, AggConvShortenPath, AggConvSmoothPoly, AggCurves, AggDdaLine, AggEllipse, AggEllipseBresenham, AggGammaLUT,
   AggGradientLut, AggLineAABasics, AggPathStorageInteger, AggPatternFiltersRgba, AggPixelFormatAlphaMaskAdaptor, AggPixelFormatGray, AggPixelFormatRgb,
   AggPixelFormatRgbPacked, AggPixelFormatTransposer, AggQuadratureOscillator, AggRasterizerCellsAA, AggRasterizerCompoundAA, AggRasterizerOutline,
@@ -75,7 +72,7 @@ type
   TAggImageResample   = (irNever, irAlways, irOnZoomOut);
   PAggTransformations = ^TAggTransformations;
 
-  TAggTransformations = packed record
+  TAggTransformations = record
     AffineMatrix: TAggParallelogram;
   end;
 
@@ -107,7 +104,7 @@ type
     constructor Create(alpha, Gamma: Double);
     destructor Destroy; override;
 
-    function FuncOperatorGamma(X: Double): Double; override;
+    function FuncOperatorGamma(x: Double): Double; override;
   end;
 
   TAgg2D = class
@@ -196,21 +193,21 @@ type
 
     procedure RenderImage(img: TAgg2DImage; x1, y1, x2, y2: Integer; Parl: PDouble); overload;
     procedure RenderImage(img: TAgg2DImage; Rect: TRectInteger; Parl: PDouble); overload;
-    procedure SetImageFilter(F: TAggImageFilterType);
+    procedure SetImageFilter(f: TAggImageFilterType);
 
-    procedure SetImageResample(F: TAggImageResample); overload;
+    procedure SetImageResample(f: TAggImageResample); overload;
     procedure SetLineCap(Cap: TAggLineCap); overload;
     procedure SetLineJoin(Join: TAggLineJoin); overload;
     procedure SetFillEvenOdd(EvenOddFlag: Boolean); overload;
     procedure SetBlendMode(Value: TAggBlendMode);
     procedure SetImageBlendMode(Value: TAggBlendMode);
-    procedure SetFillColor(C: TAggColorRgba8); overload;
-    procedure SetLineColor(C: TAggColorRgba8); overload;
-    procedure SetImageBlendColor(C: TAggColorRgba8); overload;
-    procedure SetMasterAlpha(A: Double); overload;
+    procedure SetFillColor(c: TAggColorRgba8); overload;
+    procedure SetLineColor(c: TAggColorRgba8); overload;
+    procedure SetImageBlendColor(c: TAggColorRgba8); overload;
+    procedure SetMasterAlpha(a: Double); overload;
     procedure SetAntiAliasGamma(g: Double);
     procedure SetLineWidth(w: Double);
-    function GetRow(Y: Cardinal): PInt8u;
+    function GetRow(y: Cardinal): PInt8u;
   protected
     FImageBlendColor: TAggColorRgba8;
     FFillColor: TAggColorRgba8;
@@ -244,44 +241,44 @@ type
     procedure ClipBox(x1, y1, x2, y2: Double); overload;
     function ClipBox: TRectDouble; overload;
 
-    procedure ClearAll(C: TAggColorRgba8); overload;
-    procedure ClearAll(R, g, b: Cardinal; A: Cardinal = 255); overload;
+    procedure ClearAll(c: TAggColorRgba8); overload;
+    procedure ClearAll(r, g, b: Cardinal; a: Cardinal = 255); overload;
 
-    procedure ClearClipBox(C: TAggColorRgba8); overload;
-    procedure ClearClipBox(R, g, b: Cardinal; A: Cardinal = 255); overload;
+    procedure ClearClipBox(c: TAggColorRgba8); overload;
+    procedure ClearClipBox(r, g, b: Cardinal; a: Cardinal = 255); overload;
 
     // Conversions
-    procedure WorldToScreen(X, Y: PDouble); overload;
-    procedure WorldToScreen(var X, Y: Double); overload;
-    procedure ScreenToWorld(X, Y: PDouble); overload;
-    procedure ScreenToWorld(var X, Y: Double); overload;
+    procedure WorldToScreen(x, y: PDouble); overload;
+    procedure WorldToScreen(var x, y: Double); overload;
+    procedure ScreenToWorld(x, y: PDouble); overload;
+    procedure ScreenToWorld(var x, y: Double); overload;
     function WorldToScreen(Scalar: Double): Double; overload;
     function ScreenToWorld(Scalar: Double): Double; overload;
 
-    procedure AlignPoint(X, Y: PDouble); overload;
-    procedure AlignPoint(var X, Y: Double); overload;
+    procedure AlignPoint(x, y: PDouble); overload;
+    procedure AlignPoint(var x, y: Double); overload;
 
     function InBox(WorldX, WorldY: Double): Boolean; overload;
     function InBox(World: TPointDouble): Boolean; overload;
 
     // General Attributes
-    procedure SetFillColor(R, g, b: Cardinal; A: Cardinal = 255); overload;
-    procedure SetLineColor(R, g, b: Cardinal; A: Cardinal = 255); overload;
-    procedure SetImageBlendColor(R, g, b: Cardinal; A: Cardinal = 255); overload;
+    procedure SetFillColor(r, g, b: Cardinal; a: Cardinal = 255); overload;
+    procedure SetLineColor(r, g, b: Cardinal; a: Cardinal = 255); overload;
+    procedure SetImageBlendColor(r, g, b: Cardinal; a: Cardinal = 255); overload;
     procedure NoFill;
     procedure NoLine;
 
     procedure FillLinearGradient(x1, y1, x2, y2: Double; c1, c2: TAggColorRgba8; Profile: Double = 1);
     procedure LineLinearGradient(x1, y1, x2, y2: Double; c1, c2: TAggColorRgba8; Profile: Double = 1);
 
-    procedure FillRadialGradient(X, Y, R: Double; c1, c2: TAggColorRgba8; Profile: Double = 1); overload;
-    procedure LineRadialGradient(X, Y, R: Double; c1, c2: TAggColorRgba8; Profile: Double = 1); overload;
+    procedure FillRadialGradient(x, y, r: Double; c1, c2: TAggColorRgba8; Profile: Double = 1); overload;
+    procedure LineRadialGradient(x, y, r: Double; c1, c2: TAggColorRgba8; Profile: Double = 1); overload;
 
-    procedure FillRadialGradient(X, Y, R: Double; c1, c2, c3: TAggColorRgba8); overload;
-    procedure LineRadialGradient(X, Y, R: Double; c1, c2, c3: TAggColorRgba8); overload;
+    procedure FillRadialGradient(x, y, r: Double; c1, c2, c3: TAggColorRgba8); overload;
+    procedure LineRadialGradient(x, y, r: Double; c1, c2, c3: TAggColorRgba8); overload;
 
-    procedure FillRadialGradient(X, Y, R: Double); overload;
-    procedure LineRadialGradient(X, Y, R: Double); overload;
+    procedure FillRadialGradient(x, y, r: Double); overload;
+    procedure LineRadialGradient(x, y, r: Double); overload;
 
     procedure RemoveAllDashes;
     procedure AddDash(DashLength, GapLength: Double);
@@ -298,7 +295,7 @@ type
     procedure Rotate(angle: Double);
     procedure Scale(SX, SY: Double);
     procedure Skew(SX, SY: Double);
-    procedure Translate(X, Y: Double);
+    procedure Translate(x, y: Double);
 
     procedure Parallelogram(x1, y1, x2, y2: Double; Para: PDouble);
 
@@ -310,8 +307,8 @@ type
     procedure Triangle(x1, y1, x2, y2, x3, y3: Double);
     procedure Rectangle(x1, y1, x2, y2: Double);
 
-    procedure RoundedRect(x1, y1, x2, y2, R: Double); overload;
-    procedure RoundedRect(Rect: TRectDouble; R: Double); overload;
+    procedure RoundedRect(x1, y1, x2, y2, r: Double); overload;
+    procedure RoundedRect(Rect: TRectDouble; r: Double); overload;
     procedure RoundedRect(x1, y1, x2, y2, RX, RY: Double); overload;
     procedure RoundedRect(Rect: TRectDouble; RX, RY: Double); overload;
     procedure RoundedRect(x1, y1, x2, y2, RxBottom, RyBottom, RxTop, RyTop: Double); overload;
@@ -331,19 +328,19 @@ type
     // Path commands
     procedure ResetPath;
 
-    procedure MoveTo(X, Y: Double);
+    procedure MoveTo(x, y: Double);
     procedure MoveRel(dx, dy: Double);
 
-    procedure LineTo(X, Y: Double);
+    procedure LineTo(x, y: Double);
     procedure LineRel(dx, dy: Double);
 
-    procedure HorizontalLineTo(X: Double);
+    procedure HorizontalLineTo(x: Double);
     procedure HorizontalLineRel(dx: Double);
 
-    procedure VerticalLineTo(Y: Double);
+    procedure VerticalLineTo(y: Double);
     procedure VerticalLineRel(dy: Double);
 
-    procedure ArcTo(RX, RY, angle: Double; LargeArcFlag, SweepFlag: Boolean; X, Y: Double); overload;
+    procedure ArcTo(RX, RY, angle: Double; LargeArcFlag, SweepFlag: Boolean; x, y: Double); overload;
     procedure ArcRel(RX, RY, angle: Double; LargeArcFlag, SweepFlag: Boolean; dx, dy: Double); overload;
 
     procedure QuadricCurveTo(XCtrl, YCtrl, XTo, YTo: Double); overload;
@@ -400,7 +397,7 @@ type
     property LineCap: TAggLineCap read FLineCap write SetLineCap;
     property FillEvenOdd: Boolean read FEvenOddFlag write SetFillEvenOdd;
     property ImageResample: TAggImageResample read FImageResample write SetImageResample;
-    property Row[Y: Cardinal]: PInt8u read GetRow;
+    property Row[y: Cardinal]: PInt8u read GetRow;
     property ImageBlendMode: TAggBlendMode read FImageBlendMode write SetImageBlendMode;
     property MasterAlpha: Double read FMasterAlpha write SetMasterAlpha;
   end;
@@ -411,8 +408,8 @@ type
     FColor: TAggColorRgba8;
     FPixel: TAggPixelFormatProcessor; // FPixelFormatCompPre
   public
-    constructor Create(BlendMode: TAggBlendMode; C: TAggColorRgba8; p: TAggPixelFormatProcessor);
-    procedure Convert(Span: PAggColor; X, Y: Integer; Len: Cardinal); override;
+    constructor Create(BlendMode: TAggBlendMode; c: TAggColorRgba8; p: TAggPixelFormatProcessor);
+    procedure Convert(Span: PAggColor; x, y: Integer; Len: Cardinal); override;
   end;
 
 function OperatorIsEqual(c1, c2: PAggColorRgba8): Boolean;
@@ -491,9 +488,9 @@ begin
   inherited;
 end;
 
-function TAgg2DRasterizerGamma.FuncOperatorGamma(X: Double): Double;
+function TAgg2DRasterizerGamma.FuncOperatorGamma(x: Double): Double;
 begin
-  Result := FAlpha.FuncOperatorGamma(FGamma.FuncOperatorGamma(X));
+  Result := FAlpha.FuncOperatorGamma(FGamma.FuncOperatorGamma(x));
 end;
 
 { TAgg2D }
@@ -725,54 +722,54 @@ begin
   Result := FClipBox;
 end;
 
-procedure TAgg2D.ClearAll(C: TAggColorRgba8);
+procedure TAgg2D.ClearAll(c: TAggColorRgba8);
 begin
-  FRendererBase.Clear(C);
+  FRendererBase.Clear(c);
 end;
 
-procedure TAgg2D.ClearAll(R, g, b: Cardinal; A: Cardinal = 255);
+procedure TAgg2D.ClearAll(r, g, b: Cardinal; a: Cardinal = 255);
 var
   Clr: TAggColorRgba8;
 begin
-  Clr.Initialize(R, g, b, A);
+  Clr.Initialize(r, g, b, a);
   ClearAll(Clr);
 end;
 
-procedure TAgg2D.ClearClipBox(C: TAggColorRgba8);
+procedure TAgg2D.ClearClipBox(c: TAggColorRgba8);
 var
   Clr: TAggColor;
 begin
-  Clr.FromRgba8(C);
+  Clr.FromRgba8(c);
 
   FRendererBase.CopyBar(0, 0, FRendererBase.width, FRendererBase.height, @Clr);
 end;
 
-procedure TAgg2D.ClearClipBox(R, g, b: Cardinal; A: Cardinal = 255);
+procedure TAgg2D.ClearClipBox(r, g, b: Cardinal; a: Cardinal = 255);
 var
   Clr: TAggColorRgba8;
 begin
-  Clr.Initialize(R, g, b, A);
+  Clr.Initialize(r, g, b, a);
   ClearClipBox(Clr);
 end;
 
-procedure TAgg2D.WorldToScreen(X, Y: PDouble);
+procedure TAgg2D.WorldToScreen(x, y: PDouble);
 begin
-  FTransform.Transform(FTransform, X, Y);
+  FTransform.Transform(FTransform, x, y);
 end;
 
-procedure TAgg2D.WorldToScreen(var X, Y: Double);
+procedure TAgg2D.WorldToScreen(var x, y: Double);
 begin
-  FTransform.Transform(FTransform, @X, @Y);
+  FTransform.Transform(FTransform, @x, @y);
 end;
 
-procedure TAgg2D.ScreenToWorld(X, Y: PDouble);
+procedure TAgg2D.ScreenToWorld(x, y: PDouble);
 begin
-  FTransform.InverseTransform(FTransform, X, Y);
+  FTransform.InverseTransform(FTransform, x, y);
 end;
 
-procedure TAgg2D.ScreenToWorld(var X, Y: Double);
+procedure TAgg2D.ScreenToWorld(var x, y: Double);
 begin
-  FTransform.InverseTransform(FTransform, @X, @Y);
+  FTransform.InverseTransform(FTransform, @x, @y);
 end;
 
 function TAgg2D.WorldToScreen(Scalar: Double): Double;
@@ -805,24 +802,24 @@ begin
   Result := Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) * 0.7071068;
 end;
 
-procedure TAgg2D.AlignPoint(X, Y: PDouble);
+procedure TAgg2D.AlignPoint(x, y: PDouble);
 begin
-  WorldToScreen(X, Y);
+  WorldToScreen(x, y);
 
-  X^ := Floor(X^) + 0.5;
-  Y^ := Floor(Y^) + 0.5;
+  x^ := Floor(x^) + 0.5;
+  y^ := Floor(y^) + 0.5;
 
-  ScreenToWorld(X, Y);
+  ScreenToWorld(x, y);
 end;
 
-procedure TAgg2D.AlignPoint(var X, Y: Double);
+procedure TAgg2D.AlignPoint(var x, y: Double);
 begin
-  WorldToScreen(X, Y);
+  WorldToScreen(x, y);
 
-  X := Floor(X) + 0.5;
-  Y := Floor(Y) + 0.5;
+  x := Floor(x) + 0.5;
+  y := Floor(y) + 0.5;
 
-  ScreenToWorld(X, Y);
+  ScreenToWorld(x, y);
 end;
 
 function TAgg2D.InBox(WorldX, WorldY: Double): Boolean;
@@ -834,9 +831,9 @@ end;
 
 function TAgg2D.InBox(World: TPointDouble): Boolean;
 begin
-  WorldToScreen(World.X, World.Y);
+  WorldToScreen(World.x, World.y);
 
-  Result := FRendererBase.InBox(Trunc(World.X), Trunc(World.Y));
+  Result := FRendererBase.InBox(Trunc(World.x), Trunc(World.y));
 end;
 
 procedure TAgg2D.SetBlendMode(Value: TAggBlendMode);
@@ -852,22 +849,22 @@ begin
   FImageBlendMode := Value;
 end;
 
-procedure TAgg2D.SetImageBlendColor(C: TAggColorRgba8);
+procedure TAgg2D.SetImageBlendColor(c: TAggColorRgba8);
 begin
-  FImageBlendColor := C;
+  FImageBlendColor := c;
 end;
 
-procedure TAgg2D.SetImageBlendColor(R, g, b: Cardinal; A: Cardinal = 255);
+procedure TAgg2D.SetImageBlendColor(r, g, b: Cardinal; a: Cardinal = 255);
 var
   Clr: TAggColorRgba8;
 begin
-  Clr.Initialize(R, g, b, A);
+  Clr.Initialize(r, g, b, a);
   SetImageBlendColor(Clr);
 end;
 
-procedure TAgg2D.SetMasterAlpha(A: Double);
+procedure TAgg2D.SetMasterAlpha(a: Double);
 begin
-  FMasterAlpha := A;
+  FMasterAlpha := a;
 
   UpdateRasterizerGamma;
 end;
@@ -879,17 +876,17 @@ begin
   UpdateRasterizerGamma;
 end;
 
-procedure TAgg2D.SetFillColor(C: TAggColorRgba8);
+procedure TAgg2D.SetFillColor(c: TAggColorRgba8);
 begin
-  FFillColor := C;
+  FFillColor := c;
   FFillGradientFlag := grdSolid;
 end;
 
-procedure TAgg2D.SetFillColor(R, g, b: Cardinal; A: Cardinal = 255);
+procedure TAgg2D.SetFillColor(r, g, b: Cardinal; a: Cardinal = 255);
 var
   Clr: TAggColorRgba8;
 begin
-  Clr.Initialize(R, g, b, A);
+  Clr.Initialize(r, g, b, a);
   SetFillColor(Clr);
 end;
 
@@ -901,17 +898,17 @@ begin
   SetFillColor(Clr);
 end;
 
-procedure TAgg2D.SetLineColor(C: TAggColorRgba8);
+procedure TAgg2D.SetLineColor(c: TAggColorRgba8);
 begin
-  FLineColor := C;
+  FLineColor := c;
   FLineGradientFlag := grdSolid;
 end;
 
-procedure TAgg2D.SetLineColor(R, g, b: Cardinal; A: Cardinal = 255);
+procedure TAgg2D.SetLineColor(r, g, b: Cardinal; a: Cardinal = 255);
 var
   Clr: TAggColorRgba8;
 begin
-  Clr.Initialize(R, g, b, A);
+  Clr.Initialize(r, g, b, a);
   SetLineColor(Clr);
 end;
 
@@ -928,7 +925,7 @@ procedure TAgg2D.FillLinearGradient(x1, y1, x2, y2: Double;
 var
   i, StartGradient, StopGradient: Integer;
   k, angle: Double;
-  C: TAggColorRgba8;
+  c: TAggColorRgba8;
   Clr: TAggColor;
 begin
   StartGradient := 128 - Trunc(Profile * 127);
@@ -945,17 +942,17 @@ begin
       Clr.FromRgba8(c1);
 
       Move(Clr, FFillGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
   while i < StopGradient do
     begin
-      C := c1.Gradient(c2, (i - StartGradient) * k);
+      c := c1.Gradient(c2, (i - StartGradient) * k);
 
-      Clr.FromRgba8(C);
+      Clr.FromRgba8(c);
 
       Move(Clr, FFillGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
   while i < 256 do
@@ -963,7 +960,7 @@ begin
       Clr.FromRgba8(c2);
 
       Move(Clr, FFillGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
   angle := ArcTan2(y2 - y1, x2 - x1);
@@ -986,7 +983,7 @@ procedure TAgg2D.LineLinearGradient(x1, y1, x2, y2: Double; c1, c2: TAggColorRgb
 var
   i, StartGradient, StopGradient: Integer;
   k, angle: Double;
-  C: TAggColorRgba8;
+  c: TAggColorRgba8;
   Clr: TAggColor;
 begin
   StartGradient := 128 - Trunc(Profile * 128);
@@ -1003,17 +1000,17 @@ begin
       Clr.FromRgba8(c1);
 
       Move(Clr, FLineGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
   while i < StopGradient do
     begin
-      C := c1.Gradient(c2, (i - StartGradient) * k);
+      c := c1.Gradient(c2, (i - StartGradient) * k);
 
-      Clr.FromRgba8(C);
+      Clr.FromRgba8(c);
 
       Move(Clr, FLineGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
   while i < 256 do
@@ -1021,7 +1018,7 @@ begin
       Clr.FromRgba8(c2);
 
       Move(Clr, FLineGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
   angle := ArcTan2(y2 - y1, x2 - x1);
@@ -1037,13 +1034,13 @@ begin
   FLineGradientFlag := grdLinear;
 end;
 
-procedure TAgg2D.FillRadialGradient(X, Y, R: Double; c1, c2: TAggColorRgba8;
+procedure TAgg2D.FillRadialGradient(x, y, r: Double; c1, c2: TAggColorRgba8;
   Profile: Double = 1);
 var
   i, StartGradient, StopGradient: Integer;
 
   k: Double;
-  C: TAggColorRgba8;
+  c: TAggColorRgba8;
 
   Clr: TAggColor;
 begin
@@ -1061,17 +1058,17 @@ begin
       Clr.FromRgba8(c1);
 
       Move(Clr, FFillGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
   while i < StopGradient do
     begin
-      C := c1.Gradient(c2, (i - StartGradient) * k);
+      c := c1.Gradient(c2, (i - StartGradient) * k);
 
-      Clr.FromRgba8(C);
+      Clr.FromRgba8(c);
 
       Move(Clr, FFillGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
   while i < 256 do
@@ -1079,15 +1076,15 @@ begin
       Clr.FromRgba8(c2);
 
       Move(Clr, FFillGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
-  FFillGradientD2 := WorldToScreen(R);
+  FFillGradientD2 := WorldToScreen(r);
 
-  WorldToScreen(@X, @Y);
+  WorldToScreen(@x, @y);
 
   FFillGradientMatrix.Reset;
-  FFillGradientMatrix.Translate(X, Y);
+  FFillGradientMatrix.Translate(x, y);
   FFillGradientMatrix.Invert;
 
   FFillGradientD1 := 0;
@@ -1096,12 +1093,12 @@ begin
   FFillColor.Initialize(0, 0, 0); // Set some real TAggColorRgba8
 end;
 
-procedure TAgg2D.LineRadialGradient(X, Y, R: Double; c1, c2: TAggColorRgba8;
+procedure TAgg2D.LineRadialGradient(x, y, r: Double; c1, c2: TAggColorRgba8;
   Profile: Double = 1);
 var
   i, StartGradient, StopGradient: Integer;
   k: Double;
-  C: TAggColorRgba8;
+  c: TAggColorRgba8;
   Clr: TAggColor;
 begin
   StartGradient := 128 - Trunc(Profile * 128);
@@ -1118,17 +1115,17 @@ begin
       Clr.FromRgba8(c1);
 
       Move(Clr, FLineGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
   while i < StopGradient do
     begin
-      C := c1.Gradient(c2, (i - StartGradient) * k);
+      c := c1.Gradient(c2, (i - StartGradient) * k);
 
-      Clr.FromRgba8(C);
+      Clr.FromRgba8(c);
 
       Move(Clr, FLineGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
   while i < 256 do
@@ -1136,55 +1133,55 @@ begin
       Clr.FromRgba8(c2);
 
       Move(Clr, FLineGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
-  FLineGradientD2 := WorldToScreen(R);
+  FLineGradientD2 := WorldToScreen(r);
 
-  WorldToScreen(X, Y);
+  WorldToScreen(x, y);
 
   FLineGradientMatrix.Reset;
-  FLineGradientMatrix.Translate(X, Y);
+  FLineGradientMatrix.Translate(x, y);
   FLineGradientMatrix.Invert;
 
   FLineGradientD1 := 0;
   FLineGradientFlag := grdRadial;
 end;
 
-procedure TAgg2D.FillRadialGradient(X, Y, R: Double; c1, c2, c3: TAggColorRgba8);
+procedure TAgg2D.FillRadialGradient(x, y, r: Double; c1, c2, c3: TAggColorRgba8);
 var
   i: Integer;
-  C: TAggColorRgba8;
+  c: TAggColorRgba8;
   Clr: TAggColor;
 begin
   i := 0;
 
   while i < 128 do
     begin
-      C := c1.Gradient(c2, i / 127);
+      c := c1.Gradient(c2, i / 127);
 
-      Clr.FromRgba8(C);
+      Clr.FromRgba8(c);
 
       Move(Clr, FFillGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
   while i < 256 do
     begin
-      C := c2.Gradient(c3, (i - 128) / 127);
+      c := c2.Gradient(c3, (i - 128) / 127);
 
-      Clr.FromRgba8(C);
+      Clr.FromRgba8(c);
 
       Move(Clr, FFillGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
-  FFillGradientD2 := WorldToScreen(R);
+  FFillGradientD2 := WorldToScreen(r);
 
-  WorldToScreen(@X, @Y);
+  WorldToScreen(@x, @y);
 
   FFillGradientMatrix.Reset;
-  FFillGradientMatrix.Translate(X, Y);
+  FFillGradientMatrix.Translate(x, y);
   FFillGradientMatrix.Invert;
 
   FFillGradientD1 := 0;
@@ -1193,67 +1190,67 @@ begin
   FFillColor.Initialize(0, 0, 0); // Set some real TAggColorRgba8
 end;
 
-procedure TAgg2D.LineRadialGradient(X, Y, R: Double; c1, c2, c3: TAggColorRgba8);
+procedure TAgg2D.LineRadialGradient(x, y, r: Double; c1, c2, c3: TAggColorRgba8);
 var
   i: Integer;
-  C: TAggColorRgba8;
+  c: TAggColorRgba8;
   Clr: TAggColor;
 begin
   i := 0;
 
   while i < 128 do
     begin
-      C := c1.Gradient(c2, i / 127);
+      c := c1.Gradient(c2, i / 127);
 
-      Clr.FromRgba8(C);
+      Clr.FromRgba8(c);
 
       Move(Clr, FLineGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
   while i < 256 do
     begin
-      C := c2.Gradient(c3, (i - 128) / 127);
+      c := c2.Gradient(c3, (i - 128) / 127);
 
-      Clr.FromRgba8(C);
+      Clr.FromRgba8(c);
 
       Move(Clr, FLineGradient[i]^, SizeOf(TAggColor));
-      Inc(i);
+      inc(i);
     end;
 
-  FLineGradientD2 := WorldToScreen(R);
+  FLineGradientD2 := WorldToScreen(r);
 
-  WorldToScreen(@X, @Y);
+  WorldToScreen(@x, @y);
 
   FLineGradientMatrix.Reset;
-  FLineGradientMatrix.Translate(X, Y);
+  FLineGradientMatrix.Translate(x, y);
   FLineGradientMatrix.Invert;
 
   FLineGradientD1 := 0;
   FLineGradientFlag := grdRadial;
 end;
 
-procedure TAgg2D.FillRadialGradient(X, Y, R: Double);
+procedure TAgg2D.FillRadialGradient(x, y, r: Double);
 begin
-  FFillGradientD2 := WorldToScreen(R);
+  FFillGradientD2 := WorldToScreen(r);
 
-  WorldToScreen(@X, @Y);
+  WorldToScreen(@x, @y);
 
   FFillGradientMatrix.Reset;
-  FFillGradientMatrix.Translate(X, Y);
+  FFillGradientMatrix.Translate(x, y);
   FFillGradientMatrix.Invert;
 
   FFillGradientD1 := 0;
 end;
 
-procedure TAgg2D.LineRadialGradient(X, Y, R: Double);
+procedure TAgg2D.LineRadialGradient(x, y, r: Double);
 begin
-  FLineGradientD2 := WorldToScreen(R);
+  FLineGradientD2 := WorldToScreen(r);
 
-  WorldToScreen(@X, @Y);
+  WorldToScreen(@x, @y);
 
   FLineGradientMatrix.Reset;
-  FLineGradientMatrix.Translate(X, Y);
+  FLineGradientMatrix.Translate(x, y);
   FLineGradientMatrix.Invert;
 
   FLineGradientD1 := 0;
@@ -1362,9 +1359,9 @@ begin
   end;
 end;
 
-procedure TAgg2D.Translate(X, Y: Double);
+procedure TAgg2D.Translate(x, y: Double);
 begin
-  FTransform.Translate(X, Y);
+  FTransform.Translate(x, y);
 end;
 
 procedure TAgg2D.Parallelogram(x1, y1, x2, y2: Double; Para: PDouble);
@@ -1531,12 +1528,12 @@ begin
   FConvStroke.Source := FConvCurve;
 end;
 
-procedure TAgg2D.RoundedRect(x1, y1, x2, y2, R: Double);
+procedure TAgg2D.RoundedRect(x1, y1, x2, y2, r: Double);
 var
   RC: TAggRoundedRect;
 begin
   FPath.RemoveAll;
-  RC := TAggRoundedRect.Create(x1, y1, x2, y2, R);
+  RC := TAggRoundedRect.Create(x1, y1, x2, y2, r);
   try
     RC.NormalizeRadius;
     RC.ApproximationScale := WorldToScreen(1) * GApproxScale;
@@ -1549,12 +1546,12 @@ begin
   DrawPath(dpfFillAndStroke);
 end;
 
-procedure TAgg2D.RoundedRect(Rect: TRectDouble; R: Double);
+procedure TAgg2D.RoundedRect(Rect: TRectDouble; r: Double);
 var
   RC: TAggRoundedRect;
 begin
   FPath.RemoveAll;
-  RC := TAggRoundedRect.Create(Rect.x1, Rect.y1, Rect.x2, Rect.y2, R);
+  RC := TAggRoundedRect.Create(Rect.x1, Rect.y1, Rect.x2, Rect.y2, r);
   try
     RC.NormalizeRadius;
     RC.ApproximationScale := WorldToScreen(1) * GApproxScale;
@@ -1681,35 +1678,35 @@ end;
 
 procedure TAgg2D.Star(Cx, Cy, r1, r2, startAngle: Double; NumRays: Integer);
 var
-  DA, A, X, Y: Double;
+  DA, a, x, y: Double;
   i: Integer;
 begin
   FPath.RemoveAll;
 
   DA := pi / NumRays;
-  A := startAngle;
+  a := startAngle;
 
   i := 0;
 
   while i < NumRays do
     begin
-      SinCosScale(A, Y, X, r2);
-      X := X + Cx;
-      Y := Y + Cy;
+      SinCosScale(a, y, x, r2);
+      x := x + Cx;
+      y := y + Cy;
 
       if i <> 0 then
-          FPath.LineTo(X, Y)
+          FPath.LineTo(x, y)
       else
-          FPath.MoveTo(X, Y);
+          FPath.MoveTo(x, y);
 
-      A := A + DA;
+      a := a + DA;
 
-      SinCosScale(A, Y, X, r1);
-      FPath.LineTo(X + Cx, Y + Cy);
+      SinCosScale(a, y, x, r1);
+      FPath.LineTo(x + Cx, y + Cy);
 
-      A := A + DA;
+      a := a + DA;
 
-      Inc(i);
+      inc(i);
     end;
 
   ClosePolygon;
@@ -1752,9 +1749,9 @@ begin
   DrawPath(dpfStrokeOnly);
 end;
 
-function TAgg2D.GetRow(Y: Cardinal): PInt8u;
+function TAgg2D.GetRow(y: Cardinal): PInt8u;
 begin
-  Result := FRenderingBuffer.Row(Y);
+  Result := FRenderingBuffer.Row(y);
 end;
 
 procedure TAgg2D.ResetPath;
@@ -1762,9 +1759,9 @@ begin
   FPath.RemoveAll;
 end;
 
-procedure TAgg2D.MoveTo(X, Y: Double);
+procedure TAgg2D.MoveTo(x, y: Double);
 begin
-  FPath.MoveTo(X, Y);
+  FPath.MoveTo(x, y);
 end;
 
 procedure TAgg2D.MoveRel(dx, dy: Double);
@@ -1772,9 +1769,9 @@ begin
   FPath.MoveRelative(dx, dy);
 end;
 
-procedure TAgg2D.LineTo(X, Y: Double);
+procedure TAgg2D.LineTo(x, y: Double);
 begin
-  FPath.LineTo(X, Y);
+  FPath.LineTo(x, y);
 end;
 
 procedure TAgg2D.LineRel(dx, dy: Double);
@@ -1782,9 +1779,9 @@ begin
   FPath.LineRelative(dx, dy);
 end;
 
-procedure TAgg2D.HorizontalLineTo(X: Double);
+procedure TAgg2D.HorizontalLineTo(x: Double);
 begin
-  FPath.HorizontalLineTo(X);
+  FPath.HorizontalLineTo(x);
 end;
 
 procedure TAgg2D.HorizontalLineRel(dx: Double);
@@ -1792,9 +1789,9 @@ begin
   FPath.HorizontalLineRelative(dx);
 end;
 
-procedure TAgg2D.VerticalLineTo(Y: Double);
+procedure TAgg2D.VerticalLineTo(y: Double);
 begin
-  FPath.VerticalLineTo(Y);
+  FPath.VerticalLineTo(y);
 end;
 
 procedure TAgg2D.VerticalLineRel(dy: Double);
@@ -1803,9 +1800,9 @@ begin
 end;
 
 procedure TAgg2D.ArcTo(RX, RY, angle: Double; LargeArcFlag, SweepFlag: Boolean;
-  X, Y: Double);
+  x, y: Double);
 begin
-  FPath.ArcTo(RX, RY, angle, LargeArcFlag, SweepFlag, X, Y);
+  FPath.ArcTo(RX, RY, angle, LargeArcFlag, SweepFlag, x, y);
 end;
 
 procedure TAgg2D.ArcRel(RX, RY, angle: Double; LargeArcFlag, SweepFlag: Boolean;
@@ -1883,9 +1880,9 @@ var
   ar: TAggBezierArc;
 begin
   if dir = dirCCW then
-      ar := TAggBezierArc.Create(center.X, center.Y, radius, 0, 2 * pi)
+      ar := TAggBezierArc.Create(center.x, center.y, radius, 0, 2 * pi)
   else
-      ar := TAggBezierArc.Create(center.X, center.Y, radius, 0, -2 * pi);
+      ar := TAggBezierArc.Create(center.x, center.y, radius, 0, -2 * pi);
   try
       FPath.AddPath(ar, 0, False);
   finally
@@ -1906,7 +1903,7 @@ begin
 
   case flag of
     dpfFillOnly:
-      if FFillColor.A <> 0 then
+      if FFillColor.a <> 0 then
         begin
           FRasterizer.AddPath(FPathTransform);
 
@@ -1914,7 +1911,7 @@ begin
         end;
 
     dpfStrokeOnly:
-      if (FLineColor.A <> 0) and (FLineWidth > 0) then
+      if (FLineColor.a <> 0) and (FLineWidth > 0) then
         begin
           FRasterizer.AddPath(FStrokeTransform);
 
@@ -1923,14 +1920,14 @@ begin
 
     dpfFillAndStroke:
       begin
-        if FFillColor.A <> 0 then
+        if FFillColor.a <> 0 then
           begin
             FRasterizer.AddPath(FPathTransform);
 
             Render(True);
           end;
 
-        if (FLineColor.A <> 0) and (FLineWidth > 0) then
+        if (FLineColor.a <> 0) and (FLineWidth > 0) then
           begin
             FRasterizer.AddPath(FStrokeTransform);
 
@@ -1939,7 +1936,7 @@ begin
       end;
 
     dpfFillWithHorizontalLineColor:
-      if FLineColor.A <> 0 then
+      if FLineColor.a <> 0 then
         begin
           FRasterizer.AddPath(FPathTransform);
 
@@ -1952,11 +1949,11 @@ procedure TAgg2D.DrawPathNoTransform(flag: TAggDrawPathFlag = dpfFillAndStroke);
 begin
 end;
 
-procedure TAgg2D.SetImageFilter(F: TAggImageFilterType);
+procedure TAgg2D.SetImageFilter(f: TAggImageFilterType);
 begin
-  FImageFilter := F;
+  FImageFilter := f;
 
-  case F of
+  case f of
     ifBilinear:
       FImageFilterLUT.Calculate(FImageFilterBilinear, True);
 
@@ -1986,9 +1983,9 @@ begin
   end;
 end;
 
-procedure TAgg2D.SetImageResample(F: TAggImageResample);
+procedure TAgg2D.SetImageResample(f: TAggImageResample);
 begin
-  FImageResample := F;
+  FImageResample := f;
 end;
 
 procedure TAgg2D.TransformImage(img: TAgg2DImage; ImgX1, ImgY1, ImgX2,
@@ -2212,17 +2209,17 @@ procedure TAgg2D.BlendImage(img: TAgg2DImage; ImgX1, ImgY1, ImgX2, ImgY2: Intege
   Dstx, Dsty: Double; alpha: Cardinal = 255);
 var
   PixF: TAggPixelFormatProcessor;
-  R: TRectInteger;
+  r: TRectInteger;
 begin
   WorldToScreen(@Dstx, @Dsty);
   PixelFormatRgba32(PixF, img.FRenderingBuffer);
-  R := RectInteger(ImgX1, ImgY1, ImgX2, ImgY2);
+  r := RectInteger(ImgX1, ImgY1, ImgX2, ImgY2);
 
   if FBlendMode = bmAlpha then
-      FRendererBasePre.BlendFrom(PixF, @R, Trunc(Dstx) - ImgX1,
+      FRendererBasePre.BlendFrom(PixF, @r, Trunc(Dstx) - ImgX1,
       Trunc(Dsty) - ImgY1, alpha)
   else
-      FRendererBaseCompPre.BlendFrom(PixF, @R, Trunc(Dstx) - ImgX1,
+      FRendererBaseCompPre.BlendFrom(PixF, @r, Trunc(Dstx) - ImgX1,
       Trunc(Dsty) - ImgY1, alpha);
 end;
 
@@ -2245,22 +2242,22 @@ end;
 procedure TAgg2D.CopyImage(img: TAgg2DImage; ImgX1, ImgY1, ImgX2, ImgY2: Integer;
   Dstx, Dsty: Double);
 var
-  R: TRectInteger;
+  r: TRectInteger;
 begin
   WorldToScreen(@Dstx, @Dsty);
-  R := RectInteger(ImgX1, ImgY1, ImgX2, ImgY2);
+  r := RectInteger(ImgX1, ImgY1, ImgX2, ImgY2);
 
-  FRendererBase.CopyFrom(img.FRenderingBuffer, @R, Trunc(Dstx) - ImgX1,
+  FRendererBase.CopyFrom(img.FRenderingBuffer, @r, Trunc(Dstx) - ImgX1,
     Trunc(Dsty) - ImgY1);
 end;
 
 procedure TAgg2D.CopyImage(img: TAgg2DImage; ImgRect: TRectInteger;
   Destination: TPointDouble);
 begin
-  WorldToScreen(@Destination.X, @Destination.Y);
+  WorldToScreen(@Destination.x, @Destination.y);
 
   FRendererBase.CopyFrom(img.FRenderingBuffer, @ImgRect,
-    Trunc(Destination.X) - ImgRect.x1, Trunc(Destination.Y) - ImgRect.y1);
+    Trunc(Destination.x) - ImgRect.x1, Trunc(Destination.y) - ImgRect.y1);
 end;
 
 procedure TAgg2D.CopyImage(img: TAgg2DImage; Dstx, Dsty: Double);
@@ -2272,10 +2269,10 @@ end;
 
 procedure TAgg2D.CopyImage(img: TAgg2DImage; Destination: TPointDouble);
 begin
-  WorldToScreen(@Destination.X, @Destination.Y);
+  WorldToScreen(@Destination.x, @Destination.y);
 
-  FRendererBase.CopyFrom(img.FRenderingBuffer, nil, Trunc(Destination.X),
-    Trunc(Destination.Y));
+  FRendererBase.CopyFrom(img.FRenderingBuffer, nil, Trunc(Destination.x),
+    Trunc(Destination.y));
 end;
 
 procedure TAgg2D.Render(AFillColor: Boolean);
@@ -2366,18 +2363,18 @@ end;
 
 { TAggSpanConvImageBlend }
 
-constructor TAggSpanConvImageBlend.Create(BlendMode: TAggBlendMode; C: TAggColorRgba8;
+constructor TAggSpanConvImageBlend.Create(BlendMode: TAggBlendMode; c: TAggColorRgba8;
   p: TAggPixelFormatProcessor);
 begin
   FMode := BlendMode;
-  FColor := C;
+  FColor := c;
   FPixel := p;
 end;
 
-procedure TAggSpanConvImageBlend.Convert(Span: PAggColor; X, Y: Integer;
+procedure TAggSpanConvImageBlend.Convert(Span: PAggColor; x, y: Integer;
   Len: Cardinal);
 var
-  l2, A: Cardinal;
+  l2, a: Cardinal;
   s2: PAggColorRgba8;
 begin
   if FMode <> bmDestination then
@@ -2387,34 +2384,34 @@ begin
 
       repeat
         BlendModeAdaptorClipToDestinationRgbaPre(FPixel, FMode,
-          PInt8u(s2), FColor.R, FColor.g, FColor.b, CAggBaseMask, CAggCoverFull);
+          PInt8u(s2), FColor.r, FColor.g, FColor.b, CAggBaseMask, CAggCoverFull);
 
-        Inc(PtrComp(s2), SizeOf(TAggColorRgba8));
-        Dec(l2);
+        inc(PtrComp(s2), SizeOf(TAggColorRgba8));
+        dec(l2);
       until l2 = 0;
     end;
 
-  if FColor.A < CAggBaseMask then
+  if FColor.a < CAggBaseMask then
     begin
       l2 := Len;
       s2 := PAggColorRgba8(Span);
-      A := FColor.A;
+      a := FColor.a;
 
       repeat
-        s2.R := (s2.R * A) shr CAggBaseShift;
-        s2.g := (s2.g * A) shr CAggBaseShift;
-        s2.b := (s2.b * A) shr CAggBaseShift;
-        s2.A := (s2.A * A) shr CAggBaseShift;
+        s2.r := (s2.r * a) shr CAggBaseShift;
+        s2.g := (s2.g * a) shr CAggBaseShift;
+        s2.b := (s2.b * a) shr CAggBaseShift;
+        s2.a := (s2.a * a) shr CAggBaseShift;
 
-        Inc(PtrComp(s2), SizeOf(TAggColorRgba8));
-        Dec(l2);
+        inc(PtrComp(s2), SizeOf(TAggColorRgba8));
+        dec(l2);
       until l2 = 0;
     end;
 end;
 
 function OperatorIsEqual(c1, c2: PAggColorRgba8): Boolean;
 begin
-  Result := (c1.R = c2.R) and (c1.g = c2.g) and (c1.b = c2.b) and (c1.A = c2.A);
+  Result := (c1.r = c2.r) and (c1.g = c2.g) and (c1.b = c2.b) and (c1.a = c2.a);
 end;
 
 function OperatorIsNotEqual(c1, c2: PAggColorRgba8): Boolean;
@@ -2678,4 +2675,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

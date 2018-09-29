@@ -37,11 +37,8 @@
 *)
 unit AggSpanConverter;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -50,7 +47,7 @@ uses
 type
   TAggSpanConvertor = class
   public
-    procedure Convert(Span: PAggColor; X, Y: Integer; Len: Cardinal); virtual; abstract;
+    procedure Convert(Span: PAggColor; x, y: Integer; Len: Cardinal); virtual; abstract;
   end;
 
   TAggSpanConverter = class(TAggSpanGenerator)
@@ -61,7 +58,7 @@ type
     constructor Create(SpanGen: TAggSpanGenerator; conv: TAggSpanConvertor);
 
     procedure Prepare(MaxSpanLength: Cardinal); override;
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
 implementation
@@ -81,13 +78,15 @@ begin
   FSpanGen.Prepare(MaxSpanLength);
 end;
 
-function TAggSpanConverter.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
+function TAggSpanConverter.Generate(x, y: Integer; Len: Cardinal): PAggColor;
 var
   Span: PAggColor;
 begin
-  Span := FSpanGen.Generate(X, Y, Len);
-  FConv.Convert(Span, X, Y, Len);
+  Span := FSpanGen.Generate(x, y, Len);
+  FConv.Convert(Span, x, y, Len);
   Result := Span;
 end;
 
 end. 
+ 
+ 

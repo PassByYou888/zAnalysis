@@ -28,7 +28,7 @@ uses Classes, Types,
 type
   PSearchConfigInfo = ^TSearchConfigInfo;
 
-  TSearchConfigInfo = packed record
+  TSearchConfigInfo = record
     Recursion: Boolean;
     Intf: TCoreClassObject;
     Info: SystemString;
@@ -53,8 +53,8 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    function FileIOStream(fileName: SystemString; Mode: Word): TCoreClassStream;
-    function FileIOStreamExists(fileName: SystemString): Boolean;
+    function FileIOStream(FileName: SystemString; Mode: Word): TCoreClassStream;
+    function FileIOStreamExists(FileName: SystemString): Boolean;
 
     property SearchItems[index: Integer]: PSearchConfigInfo read GetSearchItems write SetSearchItems; default;
 
@@ -89,11 +89,11 @@ var
   // default sound engine
   Media: TzSound = nil;
 
-function FileIOCreate(const fileName: SystemString): TCoreClassStream;
-function FileIOOpen(const fileName: SystemString): TCoreClassStream;
-function FileIOExists(const fileName: SystemString): Boolean;
+function FileIOCreate(const FileName: SystemString): TCoreClassStream;
+function FileIOOpen(const FileName: SystemString): TCoreClassStream;
+function FileIOExists(const FileName: SystemString): Boolean;
 
-function GetResourceStream(const fileName: SystemString): TStream;
+function GetResourceStream(const FileName: SystemString): TStream;
 
 type
   TGlobalMediaType  = (gmtSound, gmtArt, gmtTile, gmtBrush, gmtUser);
@@ -102,7 +102,7 @@ type
 const
   AllGlobalMediaTypes: TGlobalMediaTypes = ([gmtSound, gmtArt, gmtTile, gmtBrush, gmtUser]);
 
-procedure InitGlobalMedia(T: TGlobalMediaTypes);
+procedure InitGlobalMedia(t: TGlobalMediaTypes);
 procedure FreeGlobalMedia;
 
 implementation
@@ -118,24 +118,24 @@ uses IOUtils, SysUtils, Variants;
 {$ENDIF}
 
 
-function FileIOCreate(const fileName: SystemString): TCoreClassStream;
+function FileIOCreate(const FileName: SystemString): TCoreClassStream;
 begin
   LockObject(FileIO);
-  Result := FileIO.FileIOStream(fileName, fmCreate);
+  Result := FileIO.FileIOStream(FileName, fmCreate);
   UnLockObject(FileIO);
 end;
 
-function FileIOOpen(const fileName: SystemString): TCoreClassStream;
+function FileIOOpen(const FileName: SystemString): TCoreClassStream;
 begin
   LockObject(FileIO);
-  Result := FileIO.FileIOStream(fileName, fmOpenRead);
+  Result := FileIO.FileIOStream(FileName, fmOpenRead);
   UnLockObject(FileIO);
 end;
 
-function FileIOExists(const fileName: SystemString): Boolean;
+function FileIOExists(const FileName: SystemString): Boolean;
 begin
   LockObject(FileIO);
-  Result := FileIO.FileIOStreamExists(fileName);
+  Result := FileIO.FileIOStreamExists(FileName);
   UnLockObject(FileIO);
 end;
 
@@ -276,14 +276,14 @@ begin
   inherited Destroy;
 end;
 
-function TFileIOHook.FileIOStream(fileName: SystemString; Mode: Word): TCoreClassStream;
+function TFileIOHook.FileIOStream(FileName: SystemString; Mode: Word): TCoreClassStream;
 var
   i: Integer;
   p: PSearchConfigInfo;
   n: SystemString;
 begin
-  fileName := umlTrimSpace(fileName);
-  if fileName = '' then
+  FileName := umlTrimSpace(FileName);
+  if FileName = '' then
     begin
       Result := nil;
       Exit;
@@ -291,11 +291,11 @@ begin
 
   if (Mode = fmCreate) then
     begin
-      Result := TCoreClassFileStream.Create(fileName, fmCreate);
+      Result := TCoreClassFileStream.Create(FileName, fmCreate);
       Exit;
     end;
 
-  n := umlGetFileName(fileName);
+  n := umlGetFileName(FileName);
   Result := nil;
 
   if (FList.Count > 0) then
@@ -357,15 +357,15 @@ begin
         end;
     end;
 
-  if umlFileExists(fileName) then
+  if umlFileExists(FileName) then
     begin
-      Result := TCoreClassFileStream.Create(fileName, fmOpenRead or fmShareDenyWrite);
+      Result := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
       Exit;
     end;
 
 {$IFDEF FPC}
 {$ELSE}
-  n := umlGetFileName(fileName);
+  n := umlGetFileName(FileName);
   n := umlCombineFileName(TPath.GetLibraryPath, n);
   if umlFileExists(n) then
     begin
@@ -373,7 +373,7 @@ begin
       Exit;
     end;
 
-  n := umlGetFileName(fileName);
+  n := umlGetFileName(FileName);
   n := umlCombineFileName(TPath.GetDocumentsPath, n);
   if umlFileExists(n) then
     begin
@@ -381,7 +381,7 @@ begin
       Exit;
     end;
 
-  n := umlGetFileName(fileName);
+  n := umlGetFileName(FileName);
   n := umlCombineFileName(TPath.GetDownloadsPath, n);
   if umlFileExists(n) then
     begin
@@ -389,7 +389,7 @@ begin
       Exit;
     end;
 
-  n := umlGetFileName(fileName);
+  n := umlGetFileName(FileName);
   n := umlCombineFileName(TPath.GetSharedDownloadsPath, n);
   if umlFileExists(n) then
     begin
@@ -400,20 +400,20 @@ begin
   Result := nil;
 end;
 
-function TFileIOHook.FileIOStreamExists(fileName: SystemString): Boolean;
+function TFileIOHook.FileIOStreamExists(FileName: SystemString): Boolean;
 var
   i: Integer;
   p: PSearchConfigInfo;
   n: SystemString;
 begin
-  fileName := umlTrimSpace(fileName);
-  if fileName = '' then
+  FileName := umlTrimSpace(FileName);
+  if FileName = '' then
     begin
       Result := False;
       Exit;
     end;
 
-  n := umlGetFileName(fileName);
+  n := umlGetFileName(FileName);
   Result := False;
   try
     if FList.Count > 0 then
@@ -447,7 +447,7 @@ begin
           end;
       end;
 
-    if umlFileExists(fileName) then
+    if umlFileExists(FileName) then
       begin
         Result := True;
         Exit;
@@ -455,7 +455,7 @@ begin
 
 {$IFDEF FPC}
 {$ELSE}
-    n := umlGetFileName(fileName);
+    n := umlGetFileName(FileName);
     n := umlCombineFileName(TPath.GetLibraryPath, n);
     if umlFileExists(n) then
       begin
@@ -463,7 +463,7 @@ begin
         Exit;
       end;
 
-    n := umlGetFileName(fileName);
+    n := umlGetFileName(FileName);
     n := umlCombineFileName(TPath.GetDocumentsPath, n);
     if umlFileExists(n) then
       begin
@@ -471,7 +471,7 @@ begin
         Exit;
       end;
 
-    n := umlGetFileName(fileName);
+    n := umlGetFileName(FileName);
     n := umlCombineFileName(TPath.GetDownloadsPath, n);
     if umlFileExists(n) then
       begin
@@ -479,7 +479,7 @@ begin
         Exit;
       end;
 
-    n := umlGetFileName(fileName);
+    n := umlGetFileName(FileName);
     n := umlCombineFileName(TPath.GetSharedDownloadsPath, n);
     if umlFileExists(n) then
       begin
@@ -556,7 +556,7 @@ begin
           Break;
         end
       else
-          Inc(i);
+          inc(i);
     end;
 end;
 
@@ -594,7 +594,7 @@ begin
               FList.Move(i, 0);
           Result := True;
         end;
-      Inc(i);
+      inc(i);
     end;
   if not Result then
       AddPrioritySearchObj(Recursion, Intf, Info);
@@ -619,7 +619,7 @@ begin
           p^.Alias[SourFileName] := DestFileName;
           Result := True;
         end;
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -642,7 +642,7 @@ begin
           p^.Alias.CopyFrom(Alias);
           Result := True;
         end;
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -668,18 +668,18 @@ begin
           DisposeObject(ts);
           Result := True;
         end;
-      Inc(i);
+      inc(i);
     end;
 end;
 
-function GetResourceStream(const fileName: SystemString): TStream;
+function GetResourceStream(const FileName: SystemString): TStream;
 var
   n: SystemString;
 begin
   Result := nil;
 
-  if TPascalString(fileName).Exists('.') then
-      n := umlDeleteLastStr(fileName, '.');
+  if TPascalString(FileName).Exists('.') then
+      n := umlDeleteLastStr(FileName, '.');
 
 {$IFDEF FPC}
   if FindResource(HInstance, n, RT_RCDATA) = 0 then
@@ -689,7 +689,7 @@ begin
     begin
 {$IFDEF FPC}
 {$ELSE}
-      n := umlGetFileName(fileName);
+      n := umlGetFileName(FileName);
       n := umlCombineFileName(TPath.GetLibraryPath, n);
       if umlFileExists(n) then
         begin
@@ -697,7 +697,7 @@ begin
           Exit;
         end;
 
-      n := umlGetFileName(fileName);
+      n := umlGetFileName(FileName);
       n := umlCombineFileName(TPath.GetDocumentsPath, n);
       if umlFileExists(n) then
         begin
@@ -705,7 +705,7 @@ begin
           Exit;
         end;
 
-      n := umlGetFileName(fileName);
+      n := umlGetFileName(FileName);
       n := umlCombineFileName(TPath.GetDownloadsPath, n);
       if umlFileExists(n) then
         begin
@@ -713,7 +713,7 @@ begin
           Exit;
         end;
 
-      n := umlGetFileName(fileName);
+      n := umlGetFileName(FileName);
       n := umlCombineFileName(TPath.GetSharedDownloadsPath, n);
       if umlFileExists(n) then
         begin
@@ -721,7 +721,7 @@ begin
           Exit;
         end;
 {$ENDIF}
-      n := umlGetFileName(fileName);
+      n := umlGetFileName(FileName);
       if FileIOExists(n) then
         begin
           Result := FileIOOpen(n);
@@ -736,41 +736,41 @@ begin
     end;
 end;
 
-procedure InitGlobalMedia(T: TGlobalMediaTypes);
+procedure InitGlobalMedia(t: TGlobalMediaTypes);
 var
   db: TObjectDataManager;
 begin
   FreeGlobalMedia;
 
-  if gmtSound in T then
+  if gmtSound in t then
     begin
       db := TObjectDataManager.CreateAsStream(GetResourceStream('sound.ox'), 'sound.ox', ObjectDataMarshal.ID, True, False, True);
       SoundLibrary := TLibraryManager.Create(db, '/');
       FileIO.AddSearchObj(True, SoundLibrary, '/');
     end;
 
-  if gmtArt in T then
+  if gmtArt in t then
     begin
       db := TObjectDataManager.CreateAsStream(GetResourceStream('art.ox'), 'art.ox', ObjectDataMarshal.ID, True, False, True);
       ArtLibrary := TLibraryManager.Create(db, '/');
       FileIO.AddSearchObj(True, ArtLibrary, '/');
     end;
 
-  if gmtTile in T then
+  if gmtTile in t then
     begin
       db := TObjectDataManager.CreateAsStream(GetResourceStream('tile.ox'), 'tile.ox', ObjectDataMarshal.ID, True, False, True);
       TileLibrary := TLibraryManager.Create(db, '/');
       FileIO.AddSearchObj(True, TileLibrary, '/');
     end;
 
-  if gmtBrush in T then
+  if gmtBrush in t then
     begin
       db := TObjectDataManager.CreateAsStream(GetResourceStream('brush.ox'), 'brush.ox', ObjectDataMarshal.ID, True, False, True);
       BrushLibrary := TLibraryManager.Create(db, '/');
       FileIO.AddSearchObj(True, BrushLibrary, '/');
     end;
 
-  if gmtUser in T then
+  if gmtUser in t then
     begin
       db := TObjectDataManager.CreateAsStream(GetResourceStream('user.ox'), 'user.ox', ObjectDataMarshal.ID, True, False, True);
       UserLibrary := TLibraryManager.Create(db, '/');
@@ -856,5 +856,4 @@ if FileIO <> nil then
     FileIO := nil;
   end;
 
-end. 
- 
+end.

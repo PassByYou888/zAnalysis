@@ -37,11 +37,8 @@
 *)
 unit AggControl;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggTransAffine,
@@ -68,25 +65,25 @@ type
     procedure SetClipBox(x1, y1, x2, y2: Double); overload; virtual;
     procedure SetClipBox(ClipBox: TRectDouble); overload; virtual;
 
-    function InRect(X, Y: Double): Boolean; virtual;
+    function InRect(x, y: Double): Boolean; virtual;
 
-    function OnMouseButtonDown(X, Y: Double): Boolean; virtual;
-    function OnMouseButtonUp(X, Y: Double): Boolean; virtual;
+    function OnMouseButtonDown(x, y: Double): Boolean; virtual;
+    function OnMouseButtonUp(x, y: Double): Boolean; virtual;
 
-    function OnMouseMove(X, Y: Double; ButtonFlag: Boolean): Boolean; virtual;
+    function OnMouseMove(x, y: Double; ButtonFlag: Boolean): Boolean; virtual;
     function OnArrowKeys(Left, Right, Down, up: Boolean): Boolean; virtual;
 
     procedure Transform(Matrix: TAggTransAffine);
-    procedure TransformXY(X, Y: PDouble);
-    procedure InverseTransformXY(X, Y: PDouble); overload;
-    procedure InverseTransformXY(var X, Y: Double); overload;
+    procedure TransformXY(x, y: PDouble);
+    procedure InverseTransformXY(x, y: PDouble); overload;
+    procedure InverseTransformXY(var x, y: Double); overload;
     procedure NoTransform;
 
     property ColorPointer[index: Cardinal]: PAggColor read GetColorPointer;
     property Scale: Double read GetScale;
   end;
 
-procedure RenderControl(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine; R: TAggCustomRendererScanLineSolid; C: TAggCustomAggControl);
+procedure RenderControl(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine; r: TAggCustomRendererScanLineSolid; c: TAggCustomAggControl);
 
 implementation
 
@@ -112,22 +109,22 @@ begin
   inherited;
 end;
 
-function TAggCustomAggControl.InRect(X, Y: Double): Boolean;
+function TAggCustomAggControl.InRect(x, y: Double): Boolean;
 begin
   Result := False;
 end;
 
-function TAggCustomAggControl.OnMouseButtonDown(X, Y: Double): Boolean;
+function TAggCustomAggControl.OnMouseButtonDown(x, y: Double): Boolean;
 begin
   Result := False;
 end;
 
-function TAggCustomAggControl.OnMouseButtonUp(X, Y: Double): Boolean;
+function TAggCustomAggControl.OnMouseButtonUp(x, y: Double): Boolean;
 begin
   Result := False;
 end;
 
-function TAggCustomAggControl.OnMouseMove(X, Y: Double; ButtonFlag: Boolean): Boolean;
+function TAggCustomAggControl.OnMouseMove(x, y: Double; ButtonFlag: Boolean): Boolean;
 begin
   Result := False;
 end;
@@ -157,27 +154,27 @@ begin
   FMatrix := nil;
 end;
 
-procedure TAggCustomAggControl.TransformXY(X, Y: PDouble);
+procedure TAggCustomAggControl.TransformXY(x, y: PDouble);
 begin
   if FFlipY then
-      Y^ := FRect.y1 + FRect.y2 - Y^;
+      y^ := FRect.y1 + FRect.y2 - y^;
 
   if FMatrix <> nil then
-      FMatrix.Transform(FMatrix, X, Y);
+      FMatrix.Transform(FMatrix, x, y);
 end;
 
-procedure TAggCustomAggControl.InverseTransformXY(X, Y: PDouble);
+procedure TAggCustomAggControl.InverseTransformXY(x, y: PDouble);
 begin
   if FMatrix <> nil then
-      FMatrix.InverseTransform(FMatrix, X, Y);
+      FMatrix.InverseTransform(FMatrix, x, y);
 
   if FFlipY then
-      Y^ := FRect.y1 + FRect.y2 - Y^;
+      y^ := FRect.y1 + FRect.y2 - y^;
 end;
 
-procedure TAggCustomAggControl.InverseTransformXY(var X, Y: Double);
+procedure TAggCustomAggControl.InverseTransformXY(var x, y: Double);
 begin
-  InverseTransformXY(@X, @Y);
+  InverseTransformXY(@x, @y);
 end;
 
 function TAggCustomAggControl.GetScale: Double;
@@ -189,21 +186,23 @@ begin
 end;
 
 procedure RenderControl(Ras: TAggRasterizerScanLine; SL: TAggCustomScanLine;
-  R: TAggCustomRendererScanLineSolid; C: TAggCustomAggControl);
+  r: TAggCustomRendererScanLineSolid; c: TAggCustomAggControl);
 var
   i: Cardinal;
 begin
-  if C.PathCount > 0 then
-    for i := 0 to C.PathCount - 1 do
+  if c.PathCount > 0 then
+    for i := 0 to c.PathCount - 1 do
       begin
         Ras.Reset;
-        Ras.AddPath(C, i);
+        Ras.AddPath(c, i);
 
-        R.SetColor(C.ColorPointer[i]);
+        r.SetColor(c.ColorPointer[i]);
 
-        RenderScanLines(Ras, SL, R);
+        RenderScanLines(Ras, SL, r);
       end;
 end;
 
 end. 
+ 
+ 
  

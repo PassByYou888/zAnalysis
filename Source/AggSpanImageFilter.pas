@@ -37,11 +37,8 @@
 *)
 unit AggSpanImageFilter;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -82,8 +79,8 @@ type
     property Filter: TAggImageFilterLUT read FFilter write SetFilter;
     property FilterDeltaXInteger: Cardinal read FDeltaXInt;
     property FilterDeltaYInteger: Cardinal read FDeltaYInt;
-    property FilterDeltaXDouble: Double read FDeltaDouble.X;
-    property FilterDeltaYDouble: Double read FDeltaDouble.Y;
+    property FilterDeltaXDouble: Double read FDeltaDouble.x;
+    property FilterDeltaYDouble: Double read FDeltaDouble.y;
   end;
 
 implementation
@@ -158,3 +155,5 @@ begin
 end;
 
 end. 
+ 
+ 

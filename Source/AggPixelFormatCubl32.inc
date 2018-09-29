@@ -2,186 +2,186 @@
 // AggPas 2.4 RM3 pixel format definition file
 //
 
-procedure CublCopyPixel(This: TAggPixelFormatProcessor; X, Y: Integer;
-  C: PAggColor);
+procedure CublCopyPixel(This: TAggPixelFormatProcessor; x, y: Integer;
+  c: PAggColor);
 begin
   This.Blender(This, This.BlendMode,
-    PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u)),
-    C.Rgba8.R, C.Rgba8.g, C.Rgba8.b, C.Rgba8.A, 255);
+    PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u)),
+    c.Rgba8.r, c.Rgba8.g, c.Rgba8.b, c.Rgba8.a, 255);
 end;
 
-procedure CublBlendPixel(This: TAggPixelFormatProcessor; X, Y: Integer;
-  C: PAggColor;
+procedure CublBlendPixel(This: TAggPixelFormatProcessor; x, y: Integer;
+  c: PAggColor;
   Cover: Int8u);
 begin
   This.Blender(This, This.BlendMode,
-    PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u)),
-    C.Rgba8.R, C.Rgba8.g, C.Rgba8.b, C.Rgba8.A, Cover);
+    PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u)),
+    c.Rgba8.r, c.Rgba8.g, c.Rgba8.b, c.Rgba8.a, Cover);
 end;
 
-function CublPixel(This: TAggPixelFormatProcessor; X, Y: Integer): TAggColor;
+function CublPixel(This: TAggPixelFormatProcessor; x, y: Integer): TAggColor;
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u));
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u));
 
-  Result.FromRgbaInteger(PInt8u(PtrComp(p) + This.Order.R)^,
+  Result.FromRgbaInteger(PInt8u(PtrComp(p) + This.Order.r)^,
     PInt8u(PtrComp(p) + This.Order.g)^, PInt8u(PtrComp(p) + This.Order.b)^,
-    PInt8u(PtrComp(p) + This.Order.A)^);
+    PInt8u(PtrComp(p) + This.Order.a)^);
 end;
 
-procedure CublCopyHorizontalLine(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; C: PAggColor);
+procedure CublCopyHorizontalLine(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; c: PAggColor);
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u));
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u));
 
   repeat
-    This.Blender(This, This.BlendMode, p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b,
-      C.Rgba8.A, 255);
+    This.Blender(This, This.BlendMode, p, c.Rgba8.r, c.Rgba8.g, c.Rgba8.b,
+      c.Rgba8.a, 255);
 
-    Inc(PtrComp(p), 4);
-    Dec(Len);
+    inc(PtrComp(p), 4);
+    dec(Len);
   until Len = 0;
 end;
 
-procedure CublCopyVerticalLine(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; C: PAggColor);
+procedure CublCopyVerticalLine(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; c: PAggColor);
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u));
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u));
 
   repeat
-    This.Blender(This, This.BlendMode, p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b,
-      C.Rgba8.A, 255);
+    This.Blender(This, This.BlendMode, p, c.Rgba8.r, c.Rgba8.g, c.Rgba8.b,
+      c.Rgba8.a, 255);
 
     p := This.RenderingBuffer.NextRow(p);
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 end;
 
-procedure CublBlendHorizontalLine(This: TAggPixelFormatProcessor; X,
-  Y: Integer; Len: Cardinal; C: PAggColor; Cover: Int8u);
+procedure CublBlendHorizontalLine(This: TAggPixelFormatProcessor; x,
+  y: Integer; Len: Cardinal; c: PAggColor; Cover: Int8u);
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u));
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u));
 
   repeat
-    This.Blender(This, This.BlendMode, p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b,
-      C.Rgba8.A, Cover);
+    This.Blender(This, This.BlendMode, p, c.Rgba8.r, c.Rgba8.g, c.Rgba8.b,
+      c.Rgba8.a, Cover);
 
-    Inc(PtrComp(p), 4);
-    Dec(Len);
+    inc(PtrComp(p), 4);
+    dec(Len);
   until Len = 0;
 end;
 
-procedure CublBlendVerticalLine(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; C: PAggColor; Cover: Int8u);
+procedure CublBlendVerticalLine(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; c: PAggColor; Cover: Int8u);
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u));
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u));
 
   repeat
-    This.Blender(This, This.BlendMode, p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b,
-      C.Rgba8.A, Cover);
+    This.Blender(This, This.BlendMode, p, c.Rgba8.r, c.Rgba8.g, c.Rgba8.b,
+      c.Rgba8.a, Cover);
 
     p := This.RenderingBuffer.NextRow(p);
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 end;
 
-procedure CublBlendSolidHSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; C: PAggColor; Covers: PInt8u);
+procedure CublBlendSolidHSpan(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; c: PAggColor; Covers: PInt8u);
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u));
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u));
 
   repeat
-    This.Blender(This, This.BlendMode, p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b,
-      C.Rgba8.A, Covers^);
+    This.Blender(This, This.BlendMode, p, c.Rgba8.r, c.Rgba8.g, c.Rgba8.b,
+      c.Rgba8.a, Covers^);
 
-    Inc(PtrComp(Covers), SizeOf(Int8u));
-    Inc(PtrComp(p), 4);
-    Dec(Len);
+    inc(PtrComp(Covers), SizeOf(Int8u));
+    inc(PtrComp(p), 4);
+    dec(Len);
   until Len = 0;
 end;
 
-procedure CublBlendSolidVSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; C: PAggColor; Covers: PInt8u);
+procedure CublBlendSolidVSpan(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; c: PAggColor; Covers: PInt8u);
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u));
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u));
 
   repeat
-    This.Blender(This, This.BlendMode, p, C.Rgba8.R, C.Rgba8.g, C.Rgba8.b,
-      C.Rgba8.A, Covers^);
+    This.Blender(This, This.BlendMode, p, c.Rgba8.r, c.Rgba8.g, c.Rgba8.b,
+      c.Rgba8.a, Covers^);
 
-    Inc(PtrComp(Covers), SizeOf(Int8u));
+    inc(PtrComp(Covers), SizeOf(Int8u));
 
     p := This.RenderingBuffer.NextRow(p);
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 end;
 
-procedure CublBlendColorHSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u);
+procedure CublBlendColorHSpan(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; Colors: PAggColor; Covers: PInt8u; Cover: Int8u);
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u));
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u));
 
   repeat
     if Covers <> nil then
     begin
-      This.Blender(This, This.BlendMode, p, COLORS.Rgba8.R, COLORS.Rgba8.g,
-        COLORS.Rgba8.b, COLORS.Rgba8.A, Covers^);
+      This.Blender(This, This.BlendMode, p, Colors.Rgba8.r, Colors.Rgba8.g,
+        Colors.Rgba8.b, Colors.Rgba8.a, Covers^);
 
-      Inc(PtrComp(Covers), SizeOf(Int8u));
+      inc(PtrComp(Covers), SizeOf(Int8u));
 
     end
     else
-      This.Blender(This, This.BlendMode, p, COLORS.Rgba8.R, COLORS.Rgba8.g,
-        COLORS.Rgba8.b, COLORS.Rgba8.A, Cover);
+      This.Blender(This, This.BlendMode, p, Colors.Rgba8.r, Colors.Rgba8.g,
+        Colors.Rgba8.b, Colors.Rgba8.a, Cover);
 
-    Inc(PtrComp(p), 4);
-    Inc(PtrComp(COLORS), SizeOf(TAggColor));
-    Dec(Len);
+    inc(PtrComp(p), 4);
+    inc(PtrComp(Colors), SizeOf(TAggColor));
+    dec(Len);
   until Len = 0;
 end;
 
-procedure CublBlendColorVSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; COLORS: PAggColor; Covers: PInt8u; Cover: Int8u);
+procedure CublBlendColorVSpan(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; Colors: PAggColor; Covers: PInt8u; Cover: Int8u);
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u));
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u));
 
   repeat
     if Covers <> nil then
     begin
-      This.Blender(This, This.BlendMode, p, COLORS.Rgba8.R, COLORS.Rgba8.g,
-        COLORS.Rgba8.b, COLORS.Rgba8.A, Covers^);
+      This.Blender(This, This.BlendMode, p, Colors.Rgba8.r, Colors.Rgba8.g,
+        Colors.Rgba8.b, Colors.Rgba8.a, Covers^);
 
-      Inc(PtrComp(Covers), SizeOf(Int8u));
+      inc(PtrComp(Covers), SizeOf(Int8u));
 
     end
     else
-      This.Blender(This, This.BlendMode, p, COLORS.Rgba8.R, COLORS.Rgba8.g,
-        COLORS.Rgba8.b, COLORS.Rgba8.A, Cover);
+      This.Blender(This, This.BlendMode, p, Colors.Rgba8.r, Colors.Rgba8.g,
+        Colors.Rgba8.b, Colors.Rgba8.a, Cover);
 
     p := This.RenderingBuffer.NextRow(p);
 
-    Inc(PtrComp(COLORS), SizeOf(TAggColor));
-    Dec(Len);
+    inc(PtrComp(Colors), SizeOf(TAggColor));
+    dec(Len);
   until Len = 0;
 end;
 
@@ -199,61 +199,61 @@ begin
 
   if Xdst > Xsrc then
   begin
-    Inc(PtrComp(PSrc), (Len - 1) shl 2);
-    Inc(PtrComp(PDst), (Len - 1) shl 2);
+    inc(PtrComp(PSrc), (Len - 1) shl 2);
+    inc(PtrComp(PDst), (Len - 1) shl 2);
 
     Incp := -4;
   end;
 
   repeat
     This.Blender(This, This.BlendMode, PDst,
-      PInt8u(PtrComp(PSrc) + From.Order.R)^,
+      PInt8u(PtrComp(PSrc) + From.Order.r)^,
       PInt8u(PtrComp(PSrc) + From.Order.g)^,
       PInt8u(PtrComp(PSrc) + From.Order.b)^,
-      PInt8u(PtrComp(PSrc) + From.Order.A)^, Cover);
+      PInt8u(PtrComp(PSrc) + From.Order.a)^, Cover);
 
-    Inc(PtrComp(PSrc), Incp);
-    Inc(PtrComp(PDst), Incp);
-    Dec(Len);
+    inc(PtrComp(PSrc), Incp);
+    inc(PtrComp(PDst), Incp);
+    dec(Len);
   until Len = 0;
 end;
 
-procedure CublCopyColorHSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; COLORS: PAggColor);
+procedure CublCopyColorHSpan(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; Colors: PAggColor);
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u));
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u));
 
   repeat
-    PInt8u(PtrComp(p) + This.Order.R)^ := COLORS.Rgba8.R;
-    PInt8u(PtrComp(p) + This.Order.g)^ := COLORS.Rgba8.g;
-    PInt8u(PtrComp(p) + This.Order.b)^ := COLORS.Rgba8.b;
-    PInt8u(PtrComp(p) + This.Order.A)^ := COLORS.Rgba8.A;
+    PInt8u(PtrComp(p) + This.Order.r)^ := Colors.Rgba8.r;
+    PInt8u(PtrComp(p) + This.Order.g)^ := Colors.Rgba8.g;
+    PInt8u(PtrComp(p) + This.Order.b)^ := Colors.Rgba8.b;
+    PInt8u(PtrComp(p) + This.Order.a)^ := Colors.Rgba8.a;
 
-    Inc(PtrComp(COLORS), SizeOf(TAggColor));
-    Inc(PtrComp(p), 4);
-    Dec(Len);
+    inc(PtrComp(Colors), SizeOf(TAggColor));
+    inc(PtrComp(p), 4);
+    dec(Len);
   until Len = 0;
 end;
 
-procedure CublCopyColorVSpan(This: TAggPixelFormatProcessor; X, Y: Integer;
-  Len: Cardinal; COLORS: PAggColor);
+procedure CublCopyColorVSpan(This: TAggPixelFormatProcessor; x, y: Integer;
+  Len: Cardinal; Colors: PAggColor);
 var
   p: PInt8u;
 begin
-  p := PInt8u(PtrComp(This.RenderingBuffer.Row(Y)) + (X shl 2) * SizeOf(Int8u));
+  p := PInt8u(PtrComp(This.RenderingBuffer.Row(y)) + (x shl 2) * SizeOf(Int8u));
 
   repeat
-    PInt8u(PtrComp(p) + This.Order.R)^ := COLORS.Rgba8.R;
-    PInt8u(PtrComp(p) + This.Order.g)^ := COLORS.Rgba8.g;
-    PInt8u(PtrComp(p) + This.Order.b)^ := COLORS.Rgba8.b;
-    PInt8u(PtrComp(p) + This.Order.A)^ := COLORS.Rgba8.A;
+    PInt8u(PtrComp(p) + This.Order.r)^ := Colors.Rgba8.r;
+    PInt8u(PtrComp(p) + This.Order.g)^ := Colors.Rgba8.g;
+    PInt8u(PtrComp(p) + This.Order.b)^ := Colors.Rgba8.b;
+    PInt8u(PtrComp(p) + This.Order.a)^ := Colors.Rgba8.a;
 
     p := This.RenderingBuffer.NextRow(p);
 
-    Inc(PtrComp(COLORS), SizeOf(TAggColor));
-    Dec(Len);
+    inc(PtrComp(Colors), SizeOf(TAggColor));
+    dec(Len);
   until Len = 0;
 end;
 
@@ -273,13 +273,13 @@ begin
       (Xdst shl 2));
 
     repeat
-      This.Blender(This, This.BlendMode, PDst, COLOR.Rgba8.R, COLOR.Rgba8.g,
-        COLOR.Rgba8.b, COLOR.Rgba8.A, ShrInt32(PSrc^ * Cover + CAggBaseMask,
+      This.Blender(This, This.BlendMode, PDst, COLOR.Rgba8.r, COLOR.Rgba8.g,
+        COLOR.Rgba8.b, COLOR.Rgba8.a, ShrInt32(PSrc^ * Cover + CAggBaseMask,
         CAggBaseShift));
 
-      Inc(PtrComp(PSrc), Ppsz);
-      Inc(PtrComp(PDst), 4);
-      Dec(Len);
+      inc(PtrComp(PSrc), Ppsz);
+      inc(PtrComp(PDst), 4);
+      dec(Len);
     until Len = 0;
   end;
 end;
@@ -303,14 +303,16 @@ begin
     repeat
       COLOR := PAggColor(PtrComp(ColorLUT) + PSrc^ * SizeOf(TAggColor));
 
-      This.Blender(This, This.BlendMode, PDst, COLOR.Rgba8.R, COLOR.Rgba8.g,
-        COLOR.Rgba8.b, COLOR.Rgba8.A, ShrInt32(PSrc^ * Cover + CAggBaseMask,
+      This.Blender(This, This.BlendMode, PDst, COLOR.Rgba8.r, COLOR.Rgba8.g,
+        COLOR.Rgba8.b, COLOR.Rgba8.a, ShrInt32(PSrc^ * Cover + CAggBaseMask,
         CAggBaseShift));
 
-      Inc(PtrComp(PSrc), Ppsz);
-      Inc(PtrComp(PDst), 4);
-      Dec(Len);
+      inc(PtrComp(PSrc), Ppsz);
+      inc(PtrComp(PDst), 4);
+      dec(Len);
     until Len = 0;
   end;
 end; 
+ 
+ 
  

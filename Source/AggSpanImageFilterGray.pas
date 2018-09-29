@@ -37,11 +37,8 @@
 *)
 unit AggSpanImageFilterGray;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggColor32,
@@ -61,7 +58,7 @@ type
     constructor Create(Alloc: TAggSpanAllocator); overload;
     constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; BackColor: PAggColor; inter: TAggSpanInterpolator); overload;
 
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
   TAggSpanImageFilterGrayBilinear = class(TAggSpanImageFilter)
@@ -69,7 +66,7 @@ type
     constructor Create(Alloc: TAggSpanAllocator); overload;
     constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; BackColor: PAggColor; inter: TAggSpanInterpolator); overload;
 
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
   TAggSpanImageFilterGray2x2 = class(TAggSpanImageFilter)
@@ -77,7 +74,7 @@ type
     constructor Create(Alloc: TAggSpanAllocator); overload;
     constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; BackColor: PAggColor; inter: TAggSpanInterpolator; Filter: TAggImageFilterLUT); overload;
 
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
   TAggSpanImageFilterGray = class(TAggSpanImageFilter)
@@ -85,7 +82,7 @@ type
     constructor Create(Alloc: TAggSpanAllocator); overload;
     constructor Create(Alloc: TAggSpanAllocator; Src: TAggRenderingBuffer; BackColor: PAggColor; inter: TAggSpanInterpolator; Filter: TAggImageFilterLUT); overload;
 
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; override;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; override;
   end;
 
 implementation
@@ -105,27 +102,27 @@ begin
   inherited Create(Alloc, Src, BackColor, inter, nil);
 end;
 
-function TAggSpanImageFilterGrayNN.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
+function TAggSpanImageFilterGrayNN.Generate(x, y: Integer; Len: Cardinal): PAggColor;
 var
   Max: TPointInteger;
   Fg, SourceAlpha: Cardinal;
   Span: PAggColor;
 begin
-  Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
+  Interpolator.SetBegin(x + FilterDeltaXDouble, y + FilterDeltaYDouble, Len);
 
   Span := Allocator.Span;
 
   Max := PointInteger(SourceImage.width - 1, SourceImage.height - 1);
 
   repeat
-    Interpolator.Coordinates(@X, @Y);
+    Interpolator.Coordinates(@x, @y);
 
-    X := ShrInt32(X, CAggImageSubpixelShift);
-    Y := ShrInt32(Y, CAggImageSubpixelShift);
+    x := ShrInt32(x, CAggImageSubpixelShift);
+    y := ShrInt32(y, CAggImageSubpixelShift);
 
-    if (X >= 0) and (Y >= 0) and (X <= Max.X) and (Y <= Max.Y) then
+    if (x >= 0) and (y >= 0) and (x <= Max.x) and (y <= Max.y) then
       begin
-        Fg := PInt8u(PtrComp(SourceImage.Row(Y)) + X * SizeOf(Int8u))^;
+        Fg := PInt8u(PtrComp(SourceImage.Row(y)) + x * SizeOf(Int8u))^;
 
         SourceAlpha := CAggBaseMask;
       end
@@ -133,17 +130,17 @@ begin
       begin
         Fg := GetBackgroundColor.v;
 
-        SourceAlpha := GetBackgroundColor.Rgba8.A;
+        SourceAlpha := GetBackgroundColor.Rgba8.a;
       end;
 
     Span.v := Int8u(Fg);
-    Span.Rgba8.A := Int8u(SourceAlpha);
+    Span.Rgba8.a := Int8u(SourceAlpha);
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
+    inc(PtrComp(Span), SizeOf(TAggColor));
 
     Interpolator.IncOperator;
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 
   Result := Allocator.Span;
@@ -163,7 +160,7 @@ begin
   inherited Create(Alloc, Src, BackColor, inter, nil);
 end;
 
-function TAggSpanImageFilterGrayBilinear.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
+function TAggSpanImageFilterGrayBilinear.Generate(x, y: Integer; Len: Cardinal): PAggColor;
 var
   Fg, SourceAlpha, Weight: Cardinal;
   BackV, BackAlpha: Int8u;
@@ -171,49 +168,49 @@ var
   Span: PAggColor;
   Max, HiRes, LoRes: TPointInteger;
 begin
-  Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
+  Interpolator.SetBegin(x + FilterDeltaXDouble, y + FilterDeltaYDouble, Len);
 
   BackV := GetBackgroundColor.v;
-  BackAlpha := GetBackgroundColor.Rgba8.A;
+  BackAlpha := GetBackgroundColor.Rgba8.a;
 
   Span := Allocator.Span;
 
-  Max.X := SourceImage.width - 1;
-  Max.Y := SourceImage.height - 1;
+  Max.x := SourceImage.width - 1;
+  Max.y := SourceImage.height - 1;
 
   repeat
-    Interpolator.Coordinates(@HiRes.X, @HiRes.Y);
+    Interpolator.Coordinates(@HiRes.x, @HiRes.y);
 
-    Dec(HiRes.X, FilterDeltaXInteger);
-    Dec(HiRes.Y, FilterDeltaYInteger);
+    dec(HiRes.x, FilterDeltaXInteger);
+    dec(HiRes.y, FilterDeltaYInteger);
 
-    LoRes.X := ShrInt32(HiRes.X, CAggImageSubpixelShift);
-    LoRes.Y := ShrInt32(HiRes.Y, CAggImageSubpixelShift);
+    LoRes.x := ShrInt32(HiRes.x, CAggImageSubpixelShift);
+    LoRes.y := ShrInt32(HiRes.y, CAggImageSubpixelShift);
 
-    if (LoRes.X >= 0) and (LoRes.Y >= 0) and (LoRes.X < Max.X) and (LoRes.Y < Max.Y) then
+    if (LoRes.x >= 0) and (LoRes.y >= 0) and (LoRes.x < Max.x) and (LoRes.y < Max.y) then
       begin
         Fg := CAggImageSubpixelSize * CAggImageSubpixelSize div 2;
 
-        HiRes.X := HiRes.X and CAggImageSubpixelMask;
-        HiRes.Y := HiRes.Y and CAggImageSubpixelMask;
+        HiRes.x := HiRes.x and CAggImageSubpixelMask;
+        HiRes.y := HiRes.y and CAggImageSubpixelMask;
 
-        ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) + LoRes.X *
+        ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LoRes.y)) + LoRes.x *
           SizeOf(Int8u));
 
-        Inc(Fg, ForeGroundPointer^ * (CAggImageSubpixelSize - HiRes.X) *
-          (CAggImageSubpixelSize - HiRes.Y));
-        Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+        inc(Fg, ForeGroundPointer^ * (CAggImageSubpixelSize - HiRes.x) *
+          (CAggImageSubpixelSize - HiRes.y));
+        inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
 
-        Inc(Fg, ForeGroundPointer^ * (CAggImageSubpixelSize - HiRes.Y) * HiRes.X);
-        Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+        inc(Fg, ForeGroundPointer^ * (CAggImageSubpixelSize - HiRes.y) * HiRes.x);
+        inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
 
         ForeGroundPointer := SourceImage.NextRow(PInt8u(PtrComp(ForeGroundPointer) - 2));
 
-        Inc(Fg, ForeGroundPointer^ * (CAggImageSubpixelSize - HiRes.X) * HiRes.Y);
-        Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+        inc(Fg, ForeGroundPointer^ * (CAggImageSubpixelSize - HiRes.x) * HiRes.y);
+        inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
 
-        Inc(Fg, ForeGroundPointer^ * HiRes.X * HiRes.Y);
-        Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+        inc(Fg, ForeGroundPointer^ * HiRes.x * HiRes.y);
+        inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
 
         Fg := Fg shr (CAggImageSubpixelShift * 2);
 
@@ -221,7 +218,7 @@ begin
       end
     else
       begin
-        if (LoRes.X < -1) or (LoRes.Y < -1) or (LoRes.X > Max.X) or (LoRes.Y > Max.Y) then
+        if (LoRes.x < -1) or (LoRes.y < -1) or (LoRes.x > Max.x) or (LoRes.y > Max.y) then
           begin
             Fg := BackV;
             SourceAlpha := BackAlpha;
@@ -231,74 +228,74 @@ begin
             Fg := CAggImageSubpixelSize * CAggImageSubpixelSize div 2;
             SourceAlpha := Fg;
 
-            HiRes.X := HiRes.X and CAggImageSubpixelMask;
-            HiRes.Y := HiRes.Y and CAggImageSubpixelMask;
+            HiRes.x := HiRes.x and CAggImageSubpixelMask;
+            HiRes.y := HiRes.y and CAggImageSubpixelMask;
 
-            Weight := (CAggImageSubpixelSize - HiRes.X) * (CAggImageSubpixelSize - HiRes.Y);
+            Weight := (CAggImageSubpixelSize - HiRes.x) * (CAggImageSubpixelSize - HiRes.y);
 
-            if (LoRes.X >= 0) and (LoRes.Y >= 0) and (LoRes.X <= Max.X) and (LoRes.Y <= Max.Y)
+            if (LoRes.x >= 0) and (LoRes.y >= 0) and (LoRes.x <= Max.x) and (LoRes.y <= Max.y)
             then
               begin
-                Inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) + LoRes.X *
+                inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.y)) + LoRes.x *
                   SizeOf(Int8u))^);
-                Inc(SourceAlpha, Weight * CAggBaseMask);
+                inc(SourceAlpha, Weight * CAggBaseMask);
               end
             else
               begin
-                Inc(Fg, BackV * Weight);
-                Inc(SourceAlpha, BackAlpha * Weight);
+                inc(Fg, BackV * Weight);
+                inc(SourceAlpha, BackAlpha * Weight);
               end;
 
-            Inc(LoRes.X);
+            inc(LoRes.x);
 
-            Weight := HiRes.X * (CAggImageSubpixelSize - HiRes.Y);
+            Weight := HiRes.x * (CAggImageSubpixelSize - HiRes.y);
 
-            if (LoRes.X >= 0) and (LoRes.Y >= 0) and (LoRes.X <= Max.X) and (LoRes.Y <= Max.Y)
+            if (LoRes.x >= 0) and (LoRes.y >= 0) and (LoRes.x <= Max.x) and (LoRes.y <= Max.y)
             then
               begin
-                Inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) + LoRes.X *
+                inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.y)) + LoRes.x *
                   SizeOf(Int8u))^);
-                Inc(SourceAlpha, Weight * CAggBaseMask);
+                inc(SourceAlpha, Weight * CAggBaseMask);
               end
             else
               begin
-                Inc(Fg, BackV * Weight);
-                Inc(SourceAlpha, BackAlpha * Weight);
+                inc(Fg, BackV * Weight);
+                inc(SourceAlpha, BackAlpha * Weight);
               end;
 
-            Dec(LoRes.X);
-            Inc(LoRes.Y);
+            dec(LoRes.x);
+            inc(LoRes.y);
 
-            Weight := (CAggImageSubpixelSize - HiRes.X) * HiRes.Y;
+            Weight := (CAggImageSubpixelSize - HiRes.x) * HiRes.y;
 
-            if (LoRes.X >= 0) and (LoRes.Y >= 0) and (LoRes.X <= Max.X) and (LoRes.Y <= Max.Y)
+            if (LoRes.x >= 0) and (LoRes.y >= 0) and (LoRes.x <= Max.x) and (LoRes.y <= Max.y)
             then
               begin
-                Inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) + LoRes.X *
+                inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.y)) + LoRes.x *
                   SizeOf(Int8u))^);
-                Inc(SourceAlpha, Weight * CAggBaseMask);
+                inc(SourceAlpha, Weight * CAggBaseMask);
               end
             else
               begin
-                Inc(Fg, BackV * Weight);
-                Inc(SourceAlpha, BackAlpha * Weight);
+                inc(Fg, BackV * Weight);
+                inc(SourceAlpha, BackAlpha * Weight);
               end;
 
-            Inc(LoRes.X);
+            inc(LoRes.x);
 
-            Weight := HiRes.X * HiRes.Y;
+            Weight := HiRes.x * HiRes.y;
 
-            if (LoRes.X >= 0) and (LoRes.Y >= 0) and (LoRes.X <= Max.X) and (LoRes.Y <= Max.Y)
+            if (LoRes.x >= 0) and (LoRes.y >= 0) and (LoRes.x <= Max.x) and (LoRes.y <= Max.y)
             then
               begin
-                Inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) + LoRes.X *
+                inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.y)) + LoRes.x *
                   SizeOf(Int8u))^);
-                Inc(SourceAlpha, Weight * CAggBaseMask);
+                inc(SourceAlpha, Weight * CAggBaseMask);
               end
             else
               begin
-                Inc(Fg, BackV * Weight);
-                Inc(SourceAlpha, BackAlpha * Weight);
+                inc(Fg, BackV * Weight);
+                inc(SourceAlpha, BackAlpha * Weight);
               end;
 
             Fg := Fg shr (CAggImageSubpixelShift * 2);
@@ -307,13 +304,13 @@ begin
       end;
 
     Span.v := Int8u(Fg);
-    Span.Rgba8.A := Int8u(SourceAlpha);
+    Span.Rgba8.a := Int8u(SourceAlpha);
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
+    inc(PtrComp(Span), SizeOf(TAggColor));
 
     Interpolator.IncOperator;
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 
   Result := Allocator.Span;
@@ -333,7 +330,7 @@ begin
   inherited Create(Alloc, Src, BackColor, inter, Filter);
 end;
 
-function TAggSpanImageFilterGray2x2.Generate(X, Y: Integer; Len: Cardinal): PAggColor;
+function TAggSpanImageFilterGray2x2.Generate(x, y: Integer; Len: Cardinal): PAggColor;
 var
   Fg, SourceAlpha, Weight: Cardinal;
   BackV, BackAlpha: Int8u;
@@ -342,67 +339,67 @@ var
   WeightArray: PInt16;
   Max, HiRes, LoRes: TPointInteger;
 begin
-  Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
+  Interpolator.SetBegin(x + FilterDeltaXDouble, y + FilterDeltaYDouble, Len);
 
   BackV := GetBackgroundColor.v;
-  BackAlpha := GetBackgroundColor.Rgba8.A;
+  BackAlpha := GetBackgroundColor.Rgba8.a;
 
   Span := Allocator.Span;
 
   WeightArray := PInt16(PtrComp(Filter.WeightArray) +
     ((Filter.Diameter div 2 - 1) shl CAggImageSubpixelShift) * SizeOf(Int16));
 
-  Max.X := SourceImage.width - 1;
-  Max.Y := SourceImage.height - 1;
+  Max.x := SourceImage.width - 1;
+  Max.y := SourceImage.height - 1;
 
   repeat
-    Interpolator.Coordinates(@HiRes.X, @HiRes.Y);
+    Interpolator.Coordinates(@HiRes.x, @HiRes.y);
 
-    Dec(HiRes.X, FilterDeltaXInteger);
-    Dec(HiRes.Y, FilterDeltaYInteger);
+    dec(HiRes.x, FilterDeltaXInteger);
+    dec(HiRes.y, FilterDeltaYInteger);
 
-    LoRes.X := ShrInt32(HiRes.X, CAggImageSubpixelShift);
-    LoRes.Y := ShrInt32(HiRes.Y, CAggImageSubpixelShift);
+    LoRes.x := ShrInt32(HiRes.x, CAggImageSubpixelShift);
+    LoRes.y := ShrInt32(HiRes.y, CAggImageSubpixelShift);
 
-    if (LoRes.X >= 0) and (LoRes.Y >= 0) and (LoRes.X < Max.X) and (LoRes.Y < Max.Y) then
+    if (LoRes.x >= 0) and (LoRes.y >= 0) and (LoRes.x < Max.x) and (LoRes.y < Max.y) then
       begin
         Fg := CAggImageFilterSize div 2;
 
-        HiRes.X := HiRes.X and CAggImageSubpixelMask;
-        HiRes.Y := HiRes.Y and CAggImageSubpixelMask;
+        HiRes.x := HiRes.x and CAggImageSubpixelMask;
+        HiRes.y := HiRes.y and CAggImageSubpixelMask;
 
-        ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) + LoRes.X *
+        ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LoRes.y)) + LoRes.x *
           SizeOf(Int8u));
 
-        Inc(Fg, ForeGroundPointer^ * ShrInt32(PInt16(PtrComp(WeightArray) +
-          (HiRes.X + CAggImageSubpixelSize) * SizeOf(Int16))^ *
-          PInt16(PtrComp(WeightArray) + (HiRes.Y + CAggImageSubpixelSize) *
+        inc(Fg, ForeGroundPointer^ * ShrInt32(PInt16(PtrComp(WeightArray) +
+          (HiRes.x + CAggImageSubpixelSize) * SizeOf(Int16))^ *
+          PInt16(PtrComp(WeightArray) + (HiRes.y + CAggImageSubpixelSize) *
           SizeOf(Int16))^ + CAggImageFilterSize div 2, CAggImageFilterShift));
 
-        Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+        inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
 
-        Inc(Fg, ForeGroundPointer^ * ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.X *
+        inc(Fg, ForeGroundPointer^ * ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.x *
           SizeOf(Int16))^ * PInt16(PtrComp(WeightArray) +
-          (HiRes.Y + CAggImageSubpixelSize) * SizeOf(Int16))^ +
+          (HiRes.y + CAggImageSubpixelSize) * SizeOf(Int16))^ +
           CAggImageFilterSize div 2, CAggImageFilterShift));
 
-        Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+        inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
 
         ForeGroundPointer := SourceImage.NextRow
           (PInt8u(PtrComp(ForeGroundPointer) - 2 * SizeOf(Int8u)));
 
-        Inc(Fg, ForeGroundPointer^ * ShrInt32(PInt16(PtrComp(WeightArray) +
-          (HiRes.X + CAggImageSubpixelSize) * SizeOf(Int16))^ *
-          PInt16(PtrComp(WeightArray) + HiRes.Y * SizeOf(Int16))^ +
+        inc(Fg, ForeGroundPointer^ * ShrInt32(PInt16(PtrComp(WeightArray) +
+          (HiRes.x + CAggImageSubpixelSize) * SizeOf(Int16))^ *
+          PInt16(PtrComp(WeightArray) + HiRes.y * SizeOf(Int16))^ +
           CAggImageFilterSize div 2, CAggImageFilterShift));
 
-        Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+        inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
 
-        Inc(Fg, ForeGroundPointer^ * ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.X *
-          SizeOf(Int16))^ * PInt16(PtrComp(WeightArray) + HiRes.Y * SizeOf(Int16)
+        inc(Fg, ForeGroundPointer^ * ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.x *
+          SizeOf(Int16))^ * PInt16(PtrComp(WeightArray) + HiRes.y * SizeOf(Int16)
           )^ + CAggImageFilterSize div 2, CAggImageFilterShift));
 
-        Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+        inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
 
         Fg := Fg shr CAggImageFilterShift;
 
@@ -414,7 +411,7 @@ begin
       end
     else
       begin
-        if (LoRes.X < -1) or (LoRes.Y < -1) or (LoRes.X > Max.X) or (LoRes.Y > Max.Y) then
+        if (LoRes.x < -1) or (LoRes.y < -1) or (LoRes.x > Max.x) or (LoRes.y > Max.y) then
           begin
             Fg := BackV;
             SourceAlpha := BackAlpha;
@@ -424,85 +421,85 @@ begin
             Fg := CAggImageFilterSize div 2;
             SourceAlpha := Fg;
 
-            HiRes.X := HiRes.X and CAggImageSubpixelMask;
-            HiRes.Y := HiRes.Y and CAggImageSubpixelMask;
+            HiRes.x := HiRes.x and CAggImageSubpixelMask;
+            HiRes.y := HiRes.y and CAggImageSubpixelMask;
 
             Weight := ShrInt32(PInt16(PtrComp(WeightArray) +
-              (HiRes.X + CAggImageSubpixelSize) * SizeOf(Int16))^ *
-              PInt16(PtrComp(WeightArray) + (HiRes.Y + CAggImageSubpixelSize) *
+              (HiRes.x + CAggImageSubpixelSize) * SizeOf(Int16))^ *
+              PInt16(PtrComp(WeightArray) + (HiRes.y + CAggImageSubpixelSize) *
               SizeOf(Int16))^ + CAggImageFilterSize div 2, CAggImageFilterShift);
 
-            if (LoRes.X >= 0) and (LoRes.Y >= 0) and (LoRes.X <= Max.X) and (LoRes.Y <= Max.Y)
+            if (LoRes.x >= 0) and (LoRes.y >= 0) and (LoRes.x <= Max.x) and (LoRes.y <= Max.y)
             then
               begin
-                Inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) + LoRes.X *
+                inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.y)) + LoRes.x *
                   SizeOf(Int8u))^);
-                Inc(SourceAlpha, Weight * CAggBaseMask);
+                inc(SourceAlpha, Weight * CAggBaseMask);
               end
             else
               begin
-                Inc(Fg, BackV * Weight);
-                Inc(SourceAlpha, BackAlpha * Weight);
+                inc(Fg, BackV * Weight);
+                inc(SourceAlpha, BackAlpha * Weight);
               end;
 
-            Inc(LoRes.X);
+            inc(LoRes.x);
 
-            Weight := ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.X *
+            Weight := ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.x *
               SizeOf(Int16))^ * PInt16(PtrComp(WeightArray) +
-              (HiRes.Y + CAggImageSubpixelSize) * SizeOf(Int16))^ +
+              (HiRes.y + CAggImageSubpixelSize) * SizeOf(Int16))^ +
               CAggImageFilterSize div 2, CAggImageFilterShift);
 
-            if (LoRes.X >= 0) and (LoRes.Y >= 0) and (LoRes.X <= Max.X) and (LoRes.Y <= Max.Y)
+            if (LoRes.x >= 0) and (LoRes.y >= 0) and (LoRes.x <= Max.x) and (LoRes.y <= Max.y)
             then
               begin
-                Inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) + LoRes.X *
+                inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.y)) + LoRes.x *
                   SizeOf(Int8u))^);
-                Inc(SourceAlpha, Weight * CAggBaseMask);
+                inc(SourceAlpha, Weight * CAggBaseMask);
               end
             else
               begin
-                Inc(Fg, BackV * Weight);
-                Inc(SourceAlpha, BackAlpha * Weight);
+                inc(Fg, BackV * Weight);
+                inc(SourceAlpha, BackAlpha * Weight);
               end;
 
-            Dec(LoRes.X);
-            Inc(LoRes.Y);
+            dec(LoRes.x);
+            inc(LoRes.y);
 
             Weight := ShrInt32(PInt16(PtrComp(WeightArray) +
-              (HiRes.X + CAggImageSubpixelSize) * SizeOf(Int16))^ *
-              PInt16(PtrComp(WeightArray) + HiRes.Y * SizeOf(Int16))^ +
+              (HiRes.x + CAggImageSubpixelSize) * SizeOf(Int16))^ *
+              PInt16(PtrComp(WeightArray) + HiRes.y * SizeOf(Int16))^ +
               CAggImageFilterSize div 2, CAggImageFilterShift);
 
-            if (LoRes.X >= 0) and (LoRes.Y >= 0) and (LoRes.X <= Max.X) and (LoRes.Y <= Max.Y)
+            if (LoRes.x >= 0) and (LoRes.y >= 0) and (LoRes.x <= Max.x) and (LoRes.y <= Max.y)
             then
               begin
-                Inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) + LoRes.X *
+                inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.y)) + LoRes.x *
                   SizeOf(Int8u))^);
-                Inc(SourceAlpha, Weight * CAggBaseMask);
+                inc(SourceAlpha, Weight * CAggBaseMask);
               end
             else
               begin
-                Inc(Fg, BackV * Weight);
-                Inc(SourceAlpha, BackAlpha * Weight);
+                inc(Fg, BackV * Weight);
+                inc(SourceAlpha, BackAlpha * Weight);
               end;
 
-            Inc(LoRes.X);
+            inc(LoRes.x);
 
-            Weight := ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.X *
-              SizeOf(Int16))^ * PInt16(PtrComp(WeightArray) + HiRes.Y *
+            Weight := ShrInt32(PInt16(PtrComp(WeightArray) + HiRes.x *
+              SizeOf(Int16))^ * PInt16(PtrComp(WeightArray) + HiRes.y *
               SizeOf(Int16))^ + CAggImageFilterSize div 2, CAggImageFilterShift);
 
-            if (LoRes.X >= 0) and (LoRes.Y >= 0) and (LoRes.X <= Max.X) and (LoRes.Y <= Max.Y)
+            if (LoRes.x >= 0) and (LoRes.y >= 0) and (LoRes.x <= Max.x) and (LoRes.y <= Max.y)
             then
               begin
-                Inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) + LoRes.X *
+                inc(Fg, Weight * PInt8u(PtrComp(SourceImage.Row(LoRes.y)) + LoRes.x *
                   SizeOf(Int8u))^);
-                Inc(SourceAlpha, Weight * CAggBaseMask);
+                inc(SourceAlpha, Weight * CAggBaseMask);
               end
             else
               begin
-                Inc(Fg, BackV * Weight);
-                Inc(SourceAlpha, BackAlpha * Weight);
+                inc(Fg, BackV * Weight);
+                inc(SourceAlpha, BackAlpha * Weight);
               end;
 
             Fg := Fg shr CAggImageFilterShift;
@@ -517,13 +514,13 @@ begin
       end;
 
     Span.v := Int8u(Fg);
-    Span.Rgba8.A := Int8u(SourceAlpha);
+    Span.Rgba8.a := Int8u(SourceAlpha);
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
+    inc(PtrComp(Span), SizeOf(TAggColor));
 
     Interpolator.IncOperator;
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 
   Result := Allocator.Span;
@@ -543,7 +540,7 @@ begin
   inherited Create(Alloc, Src, BackColor, inter, Filter);
 end;
 
-function TAggSpanImageFilterGray.Generate(X, Y: Integer;
+function TAggSpanImageFilterGray.Generate(x, y: Integer;
   Len: Cardinal): PAggColor;
 var
   Fg, SourceAlpha, Start, Start1, FractX, Weight, CountX, WeightY: Integer;
@@ -554,10 +551,10 @@ var
   WeightArray: PInt16;
   Span: PAggColor;
 begin
-  Interpolator.SetBegin(X + FilterDeltaXDouble, Y + FilterDeltaYDouble, Len);
+  Interpolator.SetBegin(x + FilterDeltaXDouble, y + FilterDeltaYDouble, Len);
 
   BackV := GetBackgroundColor.v;
-  BackAlpha := GetBackgroundColor.Rgba8.A;
+  BackAlpha := GetBackgroundColor.Rgba8.a;
 
   Diameter := Filter.Diameter;
   Start := Filter.Start;
@@ -566,55 +563,55 @@ begin
 
   Span := Allocator.Span;
 
-  Max.X := SourceImage.width + Start - 2;
-  Max.Y := SourceImage.height + Start - 2;
+  Max.x := SourceImage.width + Start - 2;
+  Max.y := SourceImage.height + Start - 2;
 
-  Max2.X := SourceImage.width - Start - 1;
-  Max2.Y := SourceImage.height - Start - 1;
+  Max2.x := SourceImage.width - Start - 1;
+  Max2.y := SourceImage.height - Start - 1;
 
   repeat
-    Interpolator.Coordinates(@X, @Y);
+    Interpolator.Coordinates(@x, @y);
 
-    Dec(X, FilterDeltaXInteger);
-    Dec(Y, FilterDeltaYInteger);
+    dec(x, FilterDeltaXInteger);
+    dec(y, FilterDeltaYInteger);
 
-    HiRes.X := X;
-    HiRes.Y := Y;
+    HiRes.x := x;
+    HiRes.y := y;
 
-    LoRes.X := ShrInt32(HiRes.X, CAggImageSubpixelShift);
-    LoRes.Y := ShrInt32(HiRes.Y, CAggImageSubpixelShift);
+    LoRes.x := ShrInt32(HiRes.x, CAggImageSubpixelShift);
+    LoRes.y := ShrInt32(HiRes.y, CAggImageSubpixelShift);
 
     Fg := CAggImageFilterSize div 2;
 
-    FractX := HiRes.X and CAggImageSubpixelMask;
+    FractX := HiRes.x and CAggImageSubpixelMask;
     CountY := Diameter;
 
-    if (LoRes.X >= -Start) and (LoRes.Y >= -Start) and (LoRes.X <= Max.X) and
-      (LoRes.Y <= Max.Y) then
+    if (LoRes.x >= -Start) and (LoRes.y >= -Start) and (LoRes.x <= Max.x) and
+      (LoRes.y <= Max.y) then
       begin
-        HiRes.Y := CAggImageSubpixelMask - (HiRes.Y and CAggImageSubpixelMask);
-        ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LoRes.Y + Start)) +
-          (LoRes.X + Start) * SizeOf(Int8u));
+        HiRes.y := CAggImageSubpixelMask - (HiRes.y and CAggImageSubpixelMask);
+        ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LoRes.y + Start)) +
+          (LoRes.x + Start) * SizeOf(Int8u));
 
         repeat
           CountX := Diameter;
-          WeightY := PInt16(PtrComp(WeightArray) + HiRes.Y * SizeOf(Int16))^;
-          HiRes.X := CAggImageSubpixelMask - FractX;
+          WeightY := PInt16(PtrComp(WeightArray) + HiRes.y * SizeOf(Int16))^;
+          HiRes.x := CAggImageSubpixelMask - FractX;
 
           repeat
-            Inc(Fg, ForeGroundPointer^ * ShrInt32(WeightY * PInt16(PtrComp(WeightArray)
-              + HiRes.X * SizeOf(Int16))^ + CAggImageFilterSize div 2,
+            inc(Fg, ForeGroundPointer^ * ShrInt32(WeightY * PInt16(PtrComp(WeightArray)
+              + HiRes.x * SizeOf(Int16))^ + CAggImageFilterSize div 2,
               CAggImageFilterShift));
 
-            Inc(HiRes.X, CAggImageSubpixelSize);
-            Dec(CountX);
+            inc(HiRes.x, CAggImageSubpixelSize);
+            dec(CountX);
           until CountX = 0;
 
-          Inc(HiRes.Y, CAggImageSubpixelSize);
+          inc(HiRes.y, CAggImageSubpixelSize);
 
           ForeGroundPointer := SourceImage.NextRow(PInt8u(PtrComp(ForeGroundPointer) - Diameter));
 
-          Dec(CountY);
+          dec(CountY);
         until CountY = 0;
 
         Fg := ShrInt32(Fg, CAggImageFilterShift);
@@ -629,7 +626,7 @@ begin
       end
     else
       begin
-        if (LoRes.X < Start1) or (LoRes.Y < Start1) or (LoRes.X > Max2.X) or (LoRes.Y > Max2.Y)
+        if (LoRes.x < Start1) or (LoRes.y < Start1) or (LoRes.x > Max2.x) or (LoRes.y > Max2.y)
         then
           begin
             Fg := BackV;
@@ -639,46 +636,46 @@ begin
           begin
             SourceAlpha := CAggImageFilterSize div 2;
 
-            LoRes.Y := ShrInt32(Y, CAggImageSubpixelShift) + Start;
-            HiRes.Y := CAggImageSubpixelMask - (HiRes.Y and CAggImageSubpixelMask);
+            LoRes.y := ShrInt32(y, CAggImageSubpixelShift) + Start;
+            HiRes.y := CAggImageSubpixelMask - (HiRes.y and CAggImageSubpixelMask);
 
             repeat
               CountX := Diameter;
-              WeightY := PInt16(PtrComp(WeightArray) + HiRes.Y * SizeOf(Int16))^;
+              WeightY := PInt16(PtrComp(WeightArray) + HiRes.y * SizeOf(Int16))^;
 
-              LoRes.X := ShrInt32(X, CAggImageSubpixelShift) + Start;
-              HiRes.X := CAggImageSubpixelMask - FractX;
+              LoRes.x := ShrInt32(x, CAggImageSubpixelShift) + Start;
+              HiRes.x := CAggImageSubpixelMask - FractX;
 
               repeat
                 Weight := ShrInt32(WeightY * PInt16(PtrComp(WeightArray) +
-                  HiRes.X * SizeOf(Int16))^ + CAggImageFilterSize div 2,
+                  HiRes.x * SizeOf(Int16))^ + CAggImageFilterSize div 2,
                   CAggImageFilterShift);
 
-                if (LoRes.X >= 0) and (LoRes.Y >= 0) and
-                  (LoRes.X < Trunc(SourceImage.width)) and
-                  (LoRes.Y < Trunc(SourceImage.height)) then
+                if (LoRes.x >= 0) and (LoRes.y >= 0) and
+                  (LoRes.x < Trunc(SourceImage.width)) and
+                  (LoRes.y < Trunc(SourceImage.height)) then
                   begin
-                    ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LoRes.Y)) + LoRes.X *
+                    ForeGroundPointer := PInt8u(PtrComp(SourceImage.Row(LoRes.y)) + LoRes.x *
                       SizeOf(Int8u));
 
-                    Inc(Fg, ForeGroundPointer^ * Weight);
-                    Inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
-                    Inc(SourceAlpha, CAggBaseMask * Weight);
+                    inc(Fg, ForeGroundPointer^ * Weight);
+                    inc(PtrComp(ForeGroundPointer), SizeOf(Int8u));
+                    inc(SourceAlpha, CAggBaseMask * Weight);
                   end
                 else
                   begin
-                    Inc(Fg, BackV * Weight);
-                    Inc(SourceAlpha, BackAlpha * Weight);
+                    inc(Fg, BackV * Weight);
+                    inc(SourceAlpha, BackAlpha * Weight);
                   end;
 
-                Inc(HiRes.X, CAggImageSubpixelSize);
-                Inc(LoRes.X);
-                Dec(CountX);
+                inc(HiRes.x, CAggImageSubpixelSize);
+                inc(LoRes.x);
+                dec(CountX);
               until CountX = 0;
 
-              Inc(HiRes.Y, CAggImageSubpixelSize);
-              Inc(LoRes.Y);
-              Dec(CountY);
+              inc(HiRes.y, CAggImageSubpixelSize);
+              inc(LoRes.y);
+              dec(CountY);
             until CountY = 0;
 
             Fg := ShrInt32(Fg, CAggImageFilterShift);
@@ -699,16 +696,18 @@ begin
       end;
 
     Span.v := Int8u(Fg);
-    Span.Rgba8.A := Int8u(SourceAlpha);
+    Span.Rgba8.a := Int8u(SourceAlpha);
 
-    Inc(PtrComp(Span), SizeOf(TAggColor));
+    inc(PtrComp(Span), SizeOf(TAggColor));
 
     Interpolator.IncOperator;
 
-    Dec(Len);
+    dec(Len);
   until Len = 0;
 
   Result := Allocator.Span;
 end;
 
 end. 
+ 
+ 

@@ -18,14 +18,14 @@ unit zDrawEngineSoftY4M;
 interface
 
 uses Math, Geometry3DUnit, ListEngine, PascalStrings, CoreClasses, zDrawEngine, UnicodeMixedLib, Geometry2DUnit,
-  MemoryRaster, Y4M, h264Image, h264Stdint;
+  MemoryRaster, Y4M, h264Image, h264Types;
 
 type
   TDrawEngine_YUV4MPEG = class(TDrawEngine_Raster)
   private
     FYW: TY4MWriter;
   public
-    constructor Create(const w, h, psf: uint16_t; const fileName: SystemString); overload;
+    constructor Create(const w, h, psf: uint16_t; const FileName: SystemString); overload;
     constructor Create(const w, h, psf: uint16_t; const stream: TCoreClassStream); overload;
 
     destructor Destroy; override;
@@ -40,14 +40,14 @@ type
 
 implementation
 
-constructor TDrawEngine_YUV4MPEG.Create(const w, h, psf: uint16_t; const fileName: SystemString);
+constructor TDrawEngine_YUV4MPEG.Create(const w, h, psf: uint16_t; const FileName: SystemString);
 var
   NW, NH: uint16_t;
 begin
   inherited Create;
   NW := w - (w mod 2);
   NH := h - (h mod 2);
-  FYW := TY4MWriter.Create(NW, NH, psf, fileName);
+  FYW := TY4MWriter.Create(NW, NH, psf, FileName);
   Memory.SetSize(NW, NH);
 end;
 
@@ -96,4 +96,6 @@ begin
 end;
 
 end.  
+ 
+ 
  

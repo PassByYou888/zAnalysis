@@ -19,15 +19,15 @@ interface
 uses SysUtils, Geometry2DUnit, CoreClasses, Math;
 
 type
-  TBulletMovementStep = packed record
-    Position: T2DPoint;
+  TBulletMovementStep = record
+    Position: TVec2;
     angle: TGeoFloat;
     index: Integer;
   end;
 
   IBulletMovementEngineIntf = interface
-    function GetPosition: T2DPoint;
-    procedure SetPosition(const Value: T2DPoint);
+    function GetPosition: TVec2;
+    procedure SetPosition(const Value: TVec2);
 
     function GetRollAngle: TGeoFloat;
     procedure SetRollAngle(const Value: TGeoFloat);
@@ -52,7 +52,7 @@ type
   private
     FIntf: IBulletMovementEngineIntf;
 
-    FSteps: packed array of TBulletMovementStep;
+    FSteps: array of TBulletMovementStep;
 
     FActive: Boolean;
     FPause: Boolean;
@@ -67,14 +67,14 @@ type
 
     FCurrentPathStepTo: Integer;
 
-    FFromPosition: T2DPoint;
-    FToPosition: T2DPoint;
+    FFromPosition: TVec2;
+    FToPosition: TVec2;
     FBulletMovementDone, FRollDone: Boolean;
 
     FUserObject: TCoreClassObject;
   protected
-    function GetPosition: T2DPoint;
-    procedure SetPosition(const Value: T2DPoint);
+    function GetPosition: TVec2;
+    procedure SetPosition(const Value: TVec2);
 
     function GetRollAngle: TGeoFloat;
     procedure SetRollAngle(const Value: TGeoFloat);
@@ -85,7 +85,7 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    procedure Start(ATo: T2DPoint); overload;
+    procedure Start(ATo: TVec2); overload;
     procedure Start(APaths: TVec2List); overload;
     procedure Start; overload;
     procedure stop;
@@ -95,7 +95,7 @@ type
 
     property Intf: IBulletMovementEngineIntf read FIntf write FIntf;
 
-    property Position: T2DPoint read GetPosition write SetPosition;
+    property Position: TVec2 read GetPosition write SetPosition;
     property RollAngle: TGeoFloat read GetRollAngle write SetRollAngle;
 
     // pause
@@ -113,8 +113,8 @@ type
     // BulletMovement operation mode
     property OperationMode: TBulletMovementOperationMode read FOperationMode write FOperationMode;
 
-    property FromPosition: T2DPoint read FFromPosition;
-    property ToPosition: T2DPoint read FToPosition;
+    property FromPosition: TVec2 read FFromPosition;
+    property ToPosition: TVec2 read FToPosition;
     property UserObject: TCoreClassObject read FUserObject write FUserObject;
   end;
 
@@ -141,12 +141,12 @@ implementation
 
 uses MovementEngine, Geometry3DUnit;
 
-function TBulletMovementEngine.GetPosition: T2DPoint;
+function TBulletMovementEngine.GetPosition: TVec2;
 begin
   Result := FIntf.GetPosition;
 end;
 
-procedure TBulletMovementEngine.SetPosition(const Value: T2DPoint);
+procedure TBulletMovementEngine.SetPosition(const Value: TVec2);
 begin
   FIntf.SetPosition(Value);
 end;
@@ -204,7 +204,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TBulletMovementEngine.Start(ATo: T2DPoint);
+procedure TBulletMovementEngine.Start(ATo: TVec2);
 begin
   if not FActive then
     begin
@@ -297,7 +297,7 @@ procedure TBulletMovementEngine.Progress(const deltaTime: Double);
 var
   CurrentDeltaTime: Double;
   toStep: TBulletMovementStep;
-  FromV, ToV, v: T2DPoint;
+  FromV, ToV, v: TVec2;
   dt, RT: Double;
   d: TGeoFloat;
 begin
@@ -378,7 +378,7 @@ begin
                           begin
                             CurrentDeltaTime := CurrentDeltaTime - dt;
                             FromV := ToV;
-                            Inc(FCurrentPathStepTo);
+                            inc(FCurrentPathStepTo);
 
                             // trigger execute event
                             if (FCurrentPathStepTo < length(FSteps)) then
@@ -410,7 +410,7 @@ begin
                                 RollAngle := SmoothAngle(RollAngle, toStep.angle, dt * FRollSpeed);
                                 CurrentDeltaTime := CurrentDeltaTime - dt;
                                 FromV := ToV;
-                                Inc(FCurrentPathStepTo);
+                                inc(FCurrentPathStepTo);
 
                                 // trigger execute event
                                 if (FCurrentPathStepTo < length(FSteps)) then
@@ -429,7 +429,7 @@ begin
                                 RollAngle := SmoothAngle(RollAngle, toStep.angle, dt * FRollSpeed);
                                 CurrentDeltaTime := CurrentDeltaTime - dt;
                                 FromV := ToV;
-                                Inc(FCurrentPathStepTo);
+                                inc(FCurrentPathStepTo);
 
                                 // trigger execute event
                                 if (FCurrentPathStepTo < length(FSteps)) then
@@ -490,7 +490,7 @@ begin
     if FList[i] = BE then
         FList.Delete(i)
     else
-        Inc(i);
+        inc(i);
 end;
 
 function TBulletMovementManager.Count: Integer;
@@ -531,9 +531,11 @@ begin
       BE := TBulletMovementEngine(FList[i]);
       BE.Progress(deltaTime);
       if BE = FList[i] then
-          Inc(i);
+          inc(i);
     end;
 end;
 
 end. 
+ 
+ 
  

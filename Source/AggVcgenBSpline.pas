@@ -37,11 +37,8 @@
 *)
 unit AggVcgenBSpline;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggBSpline,
@@ -67,11 +64,11 @@ type
 
     // Vertex Generator Interface
     procedure RemoveAll; override;
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); override;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); override;
 
     // Vertex Source Interface
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property InterpolationStep: Double read FInterpolationStep write SetInterpolationStep;
   end;
@@ -121,7 +118,7 @@ begin
   FSourceVertex := 0;
 end;
 
-procedure TAggVcgenBSpline.AddVertex(X, Y: Double; Cmd: Cardinal);
+procedure TAggVcgenBSpline.AddVertex(x, y: Double; Cmd: Cardinal);
 var
   pt: TPointDouble;
 begin
@@ -129,15 +126,15 @@ begin
 
   if IsMoveTo(Cmd) then
     begin
-      pt.X := X;
-      pt.Y := Y;
+      pt.x := x;
+      pt.y := y;
 
       FSourceVertices.ModifyLast(@pt);
     end
   else if IsVertex(Cmd) then
     begin
-      pt.X := X;
-      pt.Y := Y;
+      pt.x := x;
+      pt.y := y;
 
       FSourceVertices.Add(@pt);
     end
@@ -148,7 +145,7 @@ end;
 procedure TAggVcgenBSpline.Rewind(PathID: Cardinal);
 var
   i: Cardinal;
-  X: Double;
+  x: Double;
 begin
   FCurrentAbscissa := 0.0;
   FMaxAbscissa := 0.0;
@@ -163,21 +160,21 @@ begin
           FSplineY.Init(FSourceVertices.Size + 8);
 
           FSplineX.AddPoint(0.0,
-            PPointDouble(FSourceVertices.Prev(FSourceVertices.Size - 3))^.X);
+            PPointDouble(FSourceVertices.Prev(FSourceVertices.Size - 3))^.x);
           FSplineY.AddPoint(0.0,
-            PPointDouble(FSourceVertices.Prev(FSourceVertices.Size - 3))^.Y);
+            PPointDouble(FSourceVertices.Prev(FSourceVertices.Size - 3))^.y);
           FSplineX.AddPoint(1.0,
-            PPointDouble(FSourceVertices[FSourceVertices.Size - 3])^.X);
+            PPointDouble(FSourceVertices[FSourceVertices.Size - 3])^.x);
           FSplineY.AddPoint(1.0,
-            PPointDouble(FSourceVertices[FSourceVertices.Size - 3])^.Y);
+            PPointDouble(FSourceVertices[FSourceVertices.Size - 3])^.y);
           FSplineX.AddPoint(2.0,
-            PPointDouble(FSourceVertices[FSourceVertices.Size - 2])^.X);
+            PPointDouble(FSourceVertices[FSourceVertices.Size - 2])^.x);
           FSplineY.AddPoint(2.0,
-            PPointDouble(FSourceVertices[FSourceVertices.Size - 2])^.Y);
+            PPointDouble(FSourceVertices[FSourceVertices.Size - 2])^.y);
           FSplineX.AddPoint(3.0,
-            PPointDouble(FSourceVertices[FSourceVertices.Size - 1])^.X);
+            PPointDouble(FSourceVertices[FSourceVertices.Size - 1])^.x);
           FSplineY.AddPoint(3.0,
-            PPointDouble(FSourceVertices[FSourceVertices.Size - 1])^.Y);
+            PPointDouble(FSourceVertices[FSourceVertices.Size - 1])^.y);
         end
       else
         begin
@@ -188,14 +185,14 @@ begin
       for i := 0 to FSourceVertices.Size - 1 do
         begin
           if FClosed <> 0 then
-              X := i + 4
+              x := i + 4
           else
-              X := i;
+              x := i;
 
-          FSplineX.AddPoint(X,
-            PPointDouble(FSourceVertices[i])^.X);
-          FSplineY.AddPoint(X,
-            PPointDouble(FSourceVertices[i])^.Y);
+          FSplineX.AddPoint(x,
+            PPointDouble(FSourceVertices[i])^.x);
+          FSplineY.AddPoint(x,
+            PPointDouble(FSourceVertices[i])^.y);
         end;
 
       FCurrentAbscissa := 0.0;
@@ -207,28 +204,28 @@ begin
           FMaxAbscissa := FMaxAbscissa + 5.0;
 
           FSplineX.AddPoint(FSourceVertices.Size + 4,
-            PPointDouble(FSourceVertices[0])^.X);
+            PPointDouble(FSourceVertices[0])^.x);
 
           FSplineY.AddPoint(FSourceVertices.Size + 4,
-            PPointDouble(FSourceVertices[0])^.Y);
+            PPointDouble(FSourceVertices[0])^.y);
 
           FSplineX.AddPoint(FSourceVertices.Size + 5,
-            PPointDouble(FSourceVertices[1])^.X);
+            PPointDouble(FSourceVertices[1])^.x);
 
           FSplineY.AddPoint(FSourceVertices.Size + 5,
-            PPointDouble(FSourceVertices[1])^.Y);
+            PPointDouble(FSourceVertices[1])^.y);
 
           FSplineX.AddPoint(FSourceVertices.Size + 6,
-            PPointDouble(FSourceVertices[2])^.X);
+            PPointDouble(FSourceVertices[2])^.x);
 
           FSplineY.AddPoint(FSourceVertices.Size + 6,
-            PPointDouble(FSourceVertices[2])^.Y);
+            PPointDouble(FSourceVertices[2])^.y);
 
           FSplineX.AddPoint(FSourceVertices.Size + 7,
-            PPointDouble(FSourceVertices.Next(2))^.X);
+            PPointDouble(FSourceVertices.Next(2))^.x);
 
           FSplineY.AddPoint(FSourceVertices.Size + 7,
-            PPointDouble(FSourceVertices.Next(2))^.Y);
+            PPointDouble(FSourceVertices.Next(2))^.y);
         end;
 
       FSplineX.Prepare;
@@ -238,7 +235,7 @@ begin
   FStatus := siReady;
 end;
 
-function TAggVcgenBSpline.Vertex(X, Y: PDouble): Cardinal;
+function TAggVcgenBSpline.Vertex(x, y: PDouble): Cardinal;
 var
   Cmd: Cardinal;
 
@@ -270,12 +267,12 @@ _next:
 
           if FSourceVertices.Size = 2 then
             begin
-              X^ := PPointDouble
-                (FSourceVertices[FSourceVertex])^.X;
-              Y^ := PPointDouble
-                (FSourceVertices[FSourceVertex])^.Y;
+              x^ := PPointDouble
+                (FSourceVertices[FSourceVertex])^.x;
+              y^ := PPointDouble
+                (FSourceVertices[FSourceVertex])^.y;
 
-              Inc(FSourceVertex);
+              inc(FSourceVertex);
 
               if FSourceVertex = 1 then
                 begin
@@ -317,10 +314,10 @@ _next:
               end
             else
               begin
-                X^ := PPointDouble
-                  (FSourceVertices[FSourceVertices.Size - 1])^.X;
-                Y^ := PPointDouble
-                  (FSourceVertices[FSourceVertices.Size - 1])^.Y;
+                x^ := PPointDouble
+                  (FSourceVertices[FSourceVertices.Size - 1])^.x;
+                y^ := PPointDouble
+                  (FSourceVertices[FSourceVertices.Size - 1])^.y;
 
                 FStatus := siEndPoly;
                 Result := CAggPathCmdLineTo;
@@ -328,10 +325,10 @@ _next:
                 Exit;
               end;
 
-          X^ := FSplineX.GetStateful(FCurrentAbscissa);
-          Y^ := FSplineY.GetStateful(FCurrentAbscissa);
+          x^ := FSplineX.GetStateful(FCurrentAbscissa);
+          y^ := FSplineY.GetStateful(FCurrentAbscissa);
 
-          Inc(FSourceVertex);
+          inc(FSourceVertex);
 
           FCurrentAbscissa := FCurrentAbscissa + FInterpolationStep;
 
@@ -360,3 +357,5 @@ _next:
 end;
 
 end. 
+ 
+ 

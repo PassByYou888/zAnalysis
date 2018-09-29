@@ -41,34 +41,34 @@ implementation
 
 function jpegls_decompress(SourceStream, OutputStream: TCoreClassStream; Info: PJlsParameters): Boolean;
 var
-  Dec: TJLSDecoder;
+  dec: TJLSDecoder;
 begin
   Result := False;
-  Dec := TJLSDecoder.Create;
+  dec := TJLSDecoder.Create;
   try
-    Dec.InputStream := SourceStream;
-    Dec.OutputStream := OutputStream;
+    dec.InputStream := SourceStream;
+    dec.OutputStream := OutputStream;
 
-    if Dec.Execute then
+    if dec.Execute then
       begin
         if Info <> nil then
           begin
-            Info^.width := Dec.width;
-            Info^.height := Dec.height;
-            Info^.BitsPerSample := Dec.bpp;
-            Info^.Components := Dec.Components;
-            Info^.AllowedLossyError := Dec._near;
-            Info^.Custom.t1 := Dec.t1;
-            Info^.Custom.t2 := Dec.t2;
-            Info^.Custom.t3 := Dec.t3;
-            Info^.Custom.Reset := Dec.Reset;
-            Info^.Custom.MaxVal := Dec.MaxVal;
+            Info^.width := dec.width;
+            Info^.height := dec.height;
+            Info^.BitsPerSample := dec.bpp;
+            Info^.Components := dec.Components;
+            Info^.AllowedLossyError := dec._near;
+            Info^.Custom.t1 := dec.t1;
+            Info^.Custom.t2 := dec.t2;
+            Info^.Custom.t3 := dec.t3;
+            Info^.Custom.Reset := dec.Reset;
+            Info^.Custom.MaxVal := dec.MaxVal;
           end;
         Result := True;
       end;
 
   finally
-      Dec.Free;
+      dec.Free;
   end;
 end;
 
@@ -104,3 +104,5 @@ begin
 end;
 
 end. 
+ 
+ 

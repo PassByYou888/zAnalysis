@@ -17,7 +17,7 @@ unit h264Encoder;
 interface
 
 uses
-  SysUtils, h264Stdint, h264Common, h264Util, h264Parameters, h264Frame, h264stream, h264Stats, h264Loopfilter,
+  SysUtils, h264Types, h264Common, h264Util, h264Parameters, h264Frame, h264stream, h264Stats, h264Loopfilter,
   h264Intra_pred, h264Motion_comp, h264Motion_est, h264RateControl, h264Image, h264MB_encoder, CoreClasses;
 
 type
@@ -83,9 +83,9 @@ begin
   mb_width := width div 16;
   mb_height := height div 16;
   if (width and $F) > 0 then
-      Inc(mb_width);
+      inc(mb_width);
   if (height and $F) > 0 then
-      Inc(mb_height);
+      inc(mb_height);
   mb_count := mb_width * mb_height;
 
   // stream settings
@@ -179,7 +179,7 @@ begin
 
   // advance
   frames.InsertRef(fenc);
-  Inc(frame_num);
+  inc(frame_num);
 end;
 
 procedure TFevh264Encoder.SetISlice;
@@ -198,7 +198,7 @@ end;
 
 function TFevh264Encoder.TryEncodeFrame(const img: TPlanarImage): Boolean;
 var
-  X, Y: int32_t;
+  x, y: int32_t;
   deblocker: IDeblocker;
   loopfilter: Boolean;
 begin
@@ -219,12 +219,12 @@ begin
       deblocker := GetNewDeblocker(fenc, not(_param.AdaptiveQuant), _param.FilterThreadEnabled);
 
   // encode rows
-  for Y := 0 to (mb_height - 1) do
+  for y := 0 to (mb_height - 1) do
     begin
-      for X := 0 to (mb_width - 1) do
-          mb_enc.Encode(X, Y);
+      for x := 0 to (mb_width - 1) do
+          mb_enc.Encode(x, y);
 
-      if SceneCut(Y) then
+      if SceneCut(y) then
         begin
           Result := False;
           h264s.AbortSlice;
@@ -283,29 +283,29 @@ end;
 procedure TFevh264Encoder.UpdateStats;
 begin
   if fenc.ftype = SLICE_I then
-      Inc(stats.i_count)
+      inc(stats.i_count)
   else
-      Inc(stats.p_count);
+      inc(stats.p_count);
   stats.Add(fenc.stats);
 end;
 
 procedure TFevh264Encoder.GetFrameSSD;
 var
-  X, Y: int32_t;
+  x, y: int32_t;
   mb: PMacroblock;
 begin
-  for Y := 0 to (mb_height - 1) do
+  for y := 0 to (mb_height - 1) do
     begin
-      for X := 0 to (mb_width - 1) do
+      for x := 0 to (mb_width - 1) do
         begin
-          mb := @fenc.mbs[Y * mb_width + X];
+          mb := @fenc.mbs[y * mb_width + x];
           DSP.pixel_load_16x16(mb^.pixels, mb^.pfdec, fenc.stride);
           DSP.pixel_load_8x8(mb^.pixels_c[0], mb^.pfdec_c[0], fenc.stride_c);
           DSP.pixel_load_8x8(mb^.pixels_c[1], mb^.pfdec_c[1], fenc.stride_c);
 
-          Inc(fenc.stats.ssd[0], DSP.ssd_16x16(mb^.pixels, mb^.pfenc, fenc.stride));
-          Inc(fenc.stats.ssd[1], DSP.ssd_8x8(mb^.pixels_c[0], mb^.pfenc_c[0], fenc.stride_c));
-          Inc(fenc.stats.ssd[2], DSP.ssd_8x8(mb^.pixels_c[1], mb^.pfenc_c[1], fenc.stride_c));
+          inc(fenc.stats.ssd[0], DSP.ssd_16x16(mb^.pixels, mb^.pfenc, fenc.stride));
+          inc(fenc.stats.ssd[1], DSP.ssd_8x8(mb^.pixels_c[0], mb^.pfenc_c[0], fenc.stride_c));
+          inc(fenc.stats.ssd[2], DSP.ssd_8x8(mb^.pixels_c[1], mb^.pfenc_c[1], fenc.stride_c));
         end;
     end;
 end;
@@ -323,3 +323,5 @@ finalization
 DisposeObject(DSP);
 
 end.  
+ 
+ 

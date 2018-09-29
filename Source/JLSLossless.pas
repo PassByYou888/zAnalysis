@@ -35,7 +35,7 @@ type
     FMelcode: TJLSMelcode;
     FImageInfo: PImageInfo;
     eor_limit: Int;
-    procedure Clip(var X: Int; alpha: Int);
+    procedure Clip(var x: Int; alpha: Int);
   public
     constructor Create(ABitIO: TJLSBitIO; AMelcode: TJLSMelcode; AImageInfo: PImageInfo);
     function lossless_regular_mode_d(q, Sign, Px: Int): Int;
@@ -66,14 +66,14 @@ implementation
 
 
 { clipping macro }
-procedure TJLSLossless.Clip(var X: Int; alpha: Int);
+procedure TJLSLossless.Clip(var x: Int; alpha: Int);
 begin
-  if IsTrue(X and FImageInfo^.highmask) then
+  if IsTrue(x and FImageInfo^.highmask) then
     begin
-      if (X < 0) then
-          X := 0
+      if (x < 0) then
+          x := 0
       else
-          X := alpha - 1;
+          x := alpha - 1;
     end;
 end;
 
@@ -83,13 +83,13 @@ var
   at, Bt, Nt, nst, Errval, absErrval: Int;
   Current, k: Int;
   Temp: Int;
-  UTemp: ULONG;
+  UTemp: ulong;
 begin
   { This function is called only for regular contexts.
     End_of_run context is treated separately }
 
   Nt := FImageInfo^.n[q];
-  at := FImageInfo^.A[q];
+  at := FImageInfo^.a[q];
 
   { Estimate k }
   k := 0;
@@ -97,7 +97,7 @@ begin
   while (nst < at) do
     begin
       nst := nst * 2;
-      Inc(k);
+      inc(k);
     end;
 
   { Get the number of leading zeros }
@@ -131,7 +131,7 @@ begin
       absErrval := shr_c(FBitIO.reg, 32 - (FImageInfo^.qbpp));
       FBitIO.fillbuffer(FImageInfo^.qbpp);
 
-      Inc(absErrval);
+      inc(absErrval);
     end;
 
   { Do the Rice mapping }
@@ -163,13 +163,13 @@ begin
   { center, clip if necessary, and mask final error }
   if (Sign = -1) then
     begin
-      Px := Px - FImageInfo^.C[q];
+      Px := Px - FImageInfo^.c[q];
       Clip(Px, FImageInfo^.alpha);
       { this is valid if alpha is a power of 2 }
       Current := (Px - Errval) and (FImageInfo^.alpha - 1);
     end
   else begin
-      Px := Px + FImageInfo^.C[q];
+      Px := Px + FImageInfo^.c[q];
       Clip(Px, FImageInfo^.alpha);
       { valid if alpha is a power of 2 }
       Current := (Px + Errval) and (FImageInfo^.alpha - 1);
@@ -180,26 +180,26 @@ begin
   FImageInfo^.b[q] := Bt;
 
   { update Golomb-Rice stats }
-  FImageInfo^.A[q] := FImageInfo^.A[q] + absErrval;
+  FImageInfo^.a[q] := FImageInfo^.a[q] + absErrval;
 
   { check reset (joint for Rice-Golomb and bias cancelation) }
   if (Nt = FImageInfo^.Reset) then
     begin
       Nt := shr_c(Nt, 1);
       FImageInfo^.n[q] := Nt;
-      FImageInfo^.A[q] := shr_c(FImageInfo^.A[q], 1);
+      FImageInfo^.a[q] := shr_c(FImageInfo^.a[q], 1);
       Bt := shr_c(Bt, 1);
       FImageInfo^.b[q] := Bt;
     end;
 
   { Do bias estimation for NEXT pixel }
-  Inc(Nt);
+  inc(Nt);
   FImageInfo^.n[q] := Nt;
   if (Bt <= -Nt) then
     begin
 
-      if (FImageInfo^.C[q] > MIN_C) then
-          Dec(FImageInfo^.C[q]);
+      if (FImageInfo^.c[q] > MIN_C) then
+          dec(FImageInfo^.c[q]);
       FImageInfo^.b[q] := FImageInfo^.b[q] + Nt;
       Bt := FImageInfo^.b[q];
 
@@ -211,8 +211,8 @@ begin
     if (Bt > 0) then
     begin
 
-      if (FImageInfo^.C[q] < MAX_C) then
-          Inc(FImageInfo^.C[q]);
+      if (FImageInfo^.c[q] < MAX_C) then
+          inc(FImageInfo^.c[q]);
       FImageInfo^.b[q] := FImageInfo^.b[q] - Nt;
       Bt := FImageInfo^.b[q];
 
@@ -236,11 +236,11 @@ var
     Nt,
     at: Int;
   Temp: Int;
-  UTemp: ULONG;
+  UTemp: ulong;
 begin
   q := EOR_0 + RItype;
   Nt := FImageInfo^.n[q];
-  at := FImageInfo^.A[q];
+  at := FImageInfo^.a[q];
 
   if IsTrue(RItype) then
       at := at + Nt div 2;
@@ -250,7 +250,7 @@ begin
   while (Nt < at) do
     begin
       Nt := Nt * 2;
-      Inc(k)
+      inc(k)
     end;
 
   { read and decode the Golomb code }
@@ -289,7 +289,7 @@ begin
       MErrval := shr_c(FBitIO.reg, 32 - (FImageInfo^.qbpp));
       FBitIO.fillbuffer(FImageInfo^.qbpp);
 
-      Inc(MErrval);
+      inc(MErrval);
     end;
 
   if ((k = 0) and IsTrue(RItype or MErrval) and (2 * FImageInfo^.b[q] < Nt)) then
@@ -309,7 +309,7 @@ begin
     begin { negative }
       Errval := oldmap - (MErrval + 1) div 2;
       absErrval := -Errval - RItype;
-      Inc(FImageInfo^.b[q]);
+      inc(FImageInfo^.b[q]);
     end
   else begin { nonnegative }
       Errval := MErrval div 2;
@@ -322,15 +322,15 @@ begin
       ix := (rb + Errval) and (FImageInfo^.alpha - 1);
 
   { update stats }
-  FImageInfo^.A[q] := FImageInfo^.A[q] + absErrval;
+  FImageInfo^.a[q] := FImageInfo^.a[q] + absErrval;
   if (FImageInfo^.n[q] = FImageInfo^.Reset) then
     begin
       FImageInfo^.n[q] := shr_c(FImageInfo^.n[q], 1);
-      FImageInfo^.A[q] := shr_c(FImageInfo^.A[q], 1);
+      FImageInfo^.a[q] := shr_c(FImageInfo^.a[q], 1);
       FImageInfo^.b[q] := shr_c(FImageInfo^.b[q], 1);
     end;
 
-  Inc(FImageInfo^.n[q]); { for next pixel }
+  inc(FImageInfo^.n[q]); { for next pixel }
 
   Result := ix;
 end;
@@ -386,8 +386,8 @@ begin
                   state }
                 repeat
                   SL^[i] := RA;
-                  Inc(i);
-                  Dec(n);
+                  inc(i);
+                  dec(n);
                 until not(n > 0);
 
                 if (i > no) then { end of line }
@@ -431,7 +431,7 @@ begin
         SL^[i] := RA;
         RC := rb;
         rb := Rd;
-        Inc(i);
+        inc(i);
 
       until not(i <= no);
 
@@ -530,8 +530,8 @@ begin
                 repeat
 
                   SL^[i] := ENDIAN16(RA);
-                  Inc(i);
-                  Dec(n);
+                  inc(i);
+                  dec(n);
                 until not(n > 0);
 
                 if (i > no) then
@@ -581,7 +581,7 @@ begin
 
         RC := rb;
         rb := Rd;
-        Inc(i);
+        inc(i);
 
       until not(i <= no);
     end; { End "if 8/16 bit" }
@@ -596,14 +596,14 @@ var
   i, psfix, n_c, COLOR, enter_run, break_run, was_in_run, test_run: Int;
   Sign: Int;
   cont: Int;
-  c_cont: packed array [0 .. MAX_COMPONENTS - 1] of Int;
+  c_cont: array [0 .. MAX_COMPONENTS - 1] of Int;
   n, M: Int;
   RA, rb, RC, Rd, Px: Pixel;
-  c_aa: packed array [0 .. MAX_COMPONENTS - 1] of Pixel;
-  c_bb: packed array [0 .. MAX_COMPONENTS - 1] of Pixel;
-  c_cc: packed array [0 .. MAX_COMPONENTS - 1] of Pixel;
-  c_dd: packed array [0 .. MAX_COMPONENTS - 1] of Pixel;
-  c_xx: packed array [0 .. MAX_COMPONENTS - 1] of Pixel;
+  c_aa: array [0 .. MAX_COMPONENTS - 1] of Pixel;
+  c_bb: array [0 .. MAX_COMPONENTS - 1] of Pixel;
+  c_cc: array [0 .. MAX_COMPONENTS - 1] of Pixel;
+  c_dd: array [0 .. MAX_COMPONENTS - 1] of Pixel;
+  c_xx: array [0 .. MAX_COMPONENTS - 1] of Pixel;
   Diff: Int;
 begin
   enter_run := 0;
@@ -687,9 +687,9 @@ begin
                   for n_c := 0 to pred(FImageInfo^.Components) do
                     begin
                       SL^[i] := c_aa[n_c];
-                      Inc(i);
+                      inc(i);
                     end;
-                  Dec(n);
+                  dec(n);
                 until not(n > 0);
 
                 if (i > no + FImageInfo^.Components - 1) then { end of line }
@@ -744,7 +744,7 @@ begin
             SL^[i] := RA;
             c_cc[COLOR] := rb;
             c_bb[COLOR] := Rd;
-            Inc(i);
+            inc(i);
           end
         else
           begin
@@ -754,7 +754,7 @@ begin
                 c_cc[n_c] := c_bb[n_c];
                 c_bb[n_c] := c_dd[n_c];
               end;
-            Inc(i, FImageInfo^.Components);
+            inc(i, FImageInfo^.Components);
           end;
 
       until not(i <= (no + FImageInfo^.Components - 1));
@@ -887,8 +887,8 @@ begin
                 repeat
 
                   SL^[i] := ENDIAN16(c_aa[n_c]);
-                  Inc(i);
-                  Dec(n);
+                  inc(i);
+                  dec(n);
                 until not(n > 0);
 
                 if (i > no) then
@@ -942,7 +942,7 @@ begin
             SL^[i] := ENDIAN16(RA);
             c_cc[COLOR] := rb;
             c_bb[COLOR] := Rd;
-            Inc(i);
+            inc(i);
           end
         else begin
             for n_c := 0 to pred(FImageInfo^.Components) do
@@ -976,7 +976,7 @@ var
 begin
   q := EOR_0 + RItype;
   Nt := FImageInfo^.n[q];
-  at := FImageInfo^.A[q];
+  at := FImageInfo^.a[q];
 
   Errval := ix - rb;
   if IsTrue(RItype) then
@@ -991,7 +991,7 @@ begin
   while (Nt < at) do
     begin
       Nt := Nt shl 1;
-      Inc(k);
+      inc(k);
     end;
 
   if (Errval < 0) then
@@ -1014,7 +1014,7 @@ begin
   if (Errval < 0) then
     begin
       MErrval := -(Errval shl 1) - 1 - RItype + oldmap;
-      Inc(FImageInfo^.b[q]);
+      inc(FImageInfo^.b[q]);
     end
   else
       MErrval := (Errval shl 1) - RItype - oldmap;
@@ -1022,16 +1022,16 @@ begin
   absErrval := shr_c((MErrval + 1 - RItype), 1);
 
   { Update variables for run-interruped sample (Figure A.23) }
-  FImageInfo^.A[q] := FImageInfo^.A[q] + absErrval;
+  FImageInfo^.a[q] := FImageInfo^.a[q] + absErrval;
 
   if (FImageInfo^.n[q] = FImageInfo^.Reset) then
     begin
       FImageInfo^.n[q] := shr_c(FImageInfo^.n[q], 1);
-      FImageInfo^.A[q] := shr_c(FImageInfo^.A[q], 1);
+      FImageInfo^.a[q] := shr_c(FImageInfo^.a[q], 1);
       FImageInfo^.b[q] := shr_c(FImageInfo^.b[q], 1);
     end;
 
-  Inc(FImageInfo^.n[q]); { for next pixel }
+  inc(FImageInfo^.n[q]); { for next pixel }
 
   { Do the actual Golomb encoding: }
   eor_limit := FImageInfo^.Limit - FImageInfo^.limit_reduce;
@@ -1059,11 +1059,11 @@ begin
   ix := xp^; { current pixel }
 
   Nt := FImageInfo^.n[q];
-  at := FImageInfo^.A[q];
+  at := FImageInfo^.a[q];
 
   { Prediction correction (A.4.2), compute prediction error (A.4.3)
     , and error quantization (A.4.4) }
-  Px := Px + (Sign) * FImageInfo^.C[q];
+  Px := Px + (Sign) * FImageInfo^.c[q];
   Clip(Px, FImageInfo^.alpha);
   Errval := Sign * (ix - Px);
 
@@ -1075,7 +1075,7 @@ begin
 
   nst := Nt;
   k := 0;
-  while (nst < at) do begin nst := nst shl 1; Inc(k);
+  while (nst < at) do begin nst := nst shl 1; inc(k);
     end;
 
   { Do Rice mapping and compute magnitude of Errval }
@@ -1104,7 +1104,7 @@ begin
   FImageInfo^.b[q] := Bt;
 
   { update Golomb stats }
-  FImageInfo^.A[q] := FImageInfo^.A[q] + absErrval;
+  FImageInfo^.a[q] := FImageInfo^.a[q] + absErrval;
 
   { check for reset }
   if (Nt = FImageInfo^.Reset) then
@@ -1112,20 +1112,20 @@ begin
       { reset for Golomb and bias cancelation at the same time }
       Nt := shr_c(Nt, 1);
       FImageInfo^.n[q] := Nt;
-      FImageInfo^.A[q] := shr_c(FImageInfo^.A[q], 1);
+      FImageInfo^.a[q] := shr_c(FImageInfo^.a[q], 1);
       Bt := shr_c(Bt, 1);
       FImageInfo^.b[q] := Bt;
     end;
 
-  Inc(Nt);
+  inc(Nt);
   FImageInfo^.n[q] := Nt;
 
   { Do bias estimation for NEXT pixel }
   { Bias cancelation tries to put error in (-1,0] (A.6.2) }
   if (Bt <= -Nt) then
     begin
-      if (FImageInfo^.C[q] > MIN_C) then
-          Dec(FImageInfo^.C[q]);
+      if (FImageInfo^.c[q] > MIN_C) then
+          dec(FImageInfo^.c[q]);
       FImageInfo^.b[q] := FImageInfo^.b[q] + Nt;
       if (FImageInfo^.b[q] <= -Nt) then
           FImageInfo^.b[q] := -Nt + 1;
@@ -1134,8 +1134,8 @@ begin
   else if (Bt > 0) then
     begin
 
-      if (FImageInfo^.C[q] < MAX_C) then
-          Inc(FImageInfo^.C[q]);
+      if (FImageInfo^.c[q] < MAX_C) then
+          inc(FImageInfo^.c[q]);
       FImageInfo^.b[q] := FImageInfo^.b[q] - Nt;
       if (FImageInfo^.b[q] > 0) then
           FImageInfo^.b[q] := 0;
@@ -1222,8 +1222,8 @@ begin
                 while (True) do
                   begin
 
-                    Inc(RUNcnt);
-                    Inc(i);
+                    inc(RUNcnt);
+                    inc(i);
                     if (i > no) then
                       begin
                         { Run-lenght coding when reach end of line (A.7.1.2) }
@@ -1285,7 +1285,7 @@ begin
         RA := ix;
         RC := rb;
         rb := Rd;
-        Inc(i);
+        inc(i);
       until not(i <= no);
 
     end
@@ -1386,8 +1386,8 @@ begin
                 while True do
                   begin
 
-                    Inc(RUNcnt);
-                    Inc(i);
+                    inc(RUNcnt);
+                    inc(i);
                     if (i > no) then
                       begin
                         { Run-lenght coding when reach end of line (A.7.1.2) }
@@ -1448,7 +1448,7 @@ begin
         RA := ix;
         RC := rb;
         rb := Rd;
-        Inc(i);
+        inc(i);
       until not(i <= no);
     end;
 
@@ -1459,17 +1459,17 @@ procedure TJLSLossless.lossless_doscanline_pixel(psl, SL: ppixelarray;
 var
   i, n_c, enter_run, break_run, was_in_run, test_run: Int;
   COLOR: Int; { Index to the component, 0..COMPONENTS-1 }
-  c_aa: packed array [0 .. MAX_COMPONENTS - 1] of Pixel;
-  c_bb: packed array [0 .. MAX_COMPONENTS - 1] of Pixel;
-  c_cc: packed array [0 .. MAX_COMPONENTS - 1] of Pixel;
-  c_dd: packed array [0 .. MAX_COMPONENTS - 1] of Pixel;
-  c_xx: packed array [0 .. MAX_COMPONENTS - 1] of Pixel;
+  c_aa: array [0 .. MAX_COMPONENTS - 1] of Pixel;
+  c_bb: array [0 .. MAX_COMPONENTS - 1] of Pixel;
+  c_cc: array [0 .. MAX_COMPONENTS - 1] of Pixel;
+  c_dd: array [0 .. MAX_COMPONENTS - 1] of Pixel;
+  c_xx: array [0 .. MAX_COMPONENTS - 1] of Pixel;
   RA, rb, RC, Rd, { context pixels }
   ix,             { current pixel }
   Px: Pixel;      { predicted current pixel }
   Sign: Int;      { sign of current context }
   cont: Int;
-  c_cont: packed array [0 .. MAX_COMPONENTS - 1] of Int; { context }
+  c_cont: array [0 .. MAX_COMPONENTS - 1] of Int; { context }
   RUNcnt: Int;
   Diff: Int;
 begin
@@ -1560,7 +1560,7 @@ begin
               begin
                 while True do
                   begin
-                    Inc(RUNcnt);
+                    inc(RUNcnt);
                     i := i + FImageInfo^.Components;
                     if ((i) > (no + FImageInfo^.Components - 1)) then
                       begin
@@ -1636,7 +1636,7 @@ begin
             c_aa[COLOR] := ix;
             c_cc[COLOR] := rb;
             c_bb[COLOR] := Rd;
-            Inc(i);
+            inc(i);
           end
         else
           begin
@@ -1783,7 +1783,7 @@ begin
               begin
                 while True do
                   begin
-                    Inc(RUNcnt);
+                    inc(RUNcnt);
                     i := i + FImageInfo^.Components;
                     if ((i) > (no + FImageInfo^.Components - 1)) then
                       begin
@@ -1854,7 +1854,7 @@ begin
             c_aa[COLOR] := ix;
             c_cc[COLOR] := rb;
             c_bb[COLOR] := Rd;
-            Inc(i);
+            inc(i);
           end
         else
           begin
@@ -1874,4 +1874,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

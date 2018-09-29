@@ -37,11 +37,8 @@
 *)
 unit AggGradientLut;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggArray,
@@ -86,15 +83,15 @@ implementation
 type
   PAggColorPoint = ^TAggColorPoint;
 
-  TAggColorPoint = packed record
+  TAggColorPoint = record
     Offset: Double;
     COLOR: TAggColor;
   end;
 
-  TAggColorInterpolator = packed record
+  TAggColorInterpolator = record
     FC1, FC2: TAggColor;
     FLength, FCount: Cardinal;
-    v, R, g, b, A: TAggDdaLineInterpolator;
+    v, r, g, b, a: TAggDdaLineInterpolator;
     FIsGray: Boolean;
   public
     procedure Initialize(c1, c2: PAggColor; Len: Cardinal;
@@ -123,36 +120,36 @@ begin
 
   else
     begin
-      R.Initialize(c1.Rgba8.R, c2.Rgba8.R, Len, 14);
+      r.Initialize(c1.Rgba8.r, c2.Rgba8.r, Len, 14);
       g.Initialize(c1.Rgba8.g, c2.Rgba8.g, Len, 14);
       b.Initialize(c1.Rgba8.b, c2.Rgba8.b, Len, 14);
     end;
 
-  A.Initialize(c1.Rgba8.A, c2.Rgba8.A, Len, 14);
+  a.Initialize(c1.Rgba8.a, c2.Rgba8.a, Len, 14);
 end;
 
 procedure TAggColorInterpolator.OperatorInc;
 begin
-  Inc(FCount);
+  inc(FCount);
 
   if FIsGray then
       v.PlusOperator
   else
     begin
-      R.PlusOperator;
+      r.PlusOperator;
       g.PlusOperator;
       b.PlusOperator;
     end;
 
-  A.PlusOperator;
+  a.PlusOperator;
 end;
 
 function TAggColorInterpolator.COLOR: TAggColor;
 begin
   if FIsGray then
-      Result.FromValueInteger(R.Y, A.Y)
+      Result.FromValueInteger(r.y, a.y)
   else
-      Result.FromRgbaInteger(R.Y, g.Y, b.Y, A.Y)
+      Result.FromRgbaInteger(r.y, g.y, b.y, a.y)
 end;
 
 { TAggGradientLut }
@@ -193,20 +190,20 @@ begin
   FColorProfile.Add(@cp);
 end;
 
-function OffsetLess(A, b: PAggColorPoint): Boolean;
+function OffsetLess(a, b: PAggColorPoint): Boolean;
 begin
-  Result := A.Offset < b.Offset;
+  Result := a.Offset < b.Offset;
 end;
 
-function OffsetEqual(A, b: PAggColorPoint): Boolean;
+function OffsetEqual(a, b: PAggColorPoint): Boolean;
 begin
-  Result := A.Offset = b.Offset;
+  Result := a.Offset = b.Offset;
 end;
 
 procedure TAggGradientLut.BuildLut;
 var
   i, Start, stop: Cardinal;
-  C: TAggColor;
+  c: TAggColor;
   CI: TAggColorInterpolator;
 begin
   QuickSort(FColorProfile, @OffsetLess);
@@ -217,14 +214,14 @@ begin
       Start := UnsignedRound(PAggColorPoint(FColorProfile[0]).Offset *
         FColorLutSize);
 
-      C := PAggColorPoint(FColorProfile[0]).COLOR;
+      c := PAggColorPoint(FColorProfile[0]).COLOR;
       i := 0;
 
       while i < Start do
         begin
-          PAggColor(FColorLut[i])^ := C;
+          PAggColor(FColorLut[i])^ := c;
 
-          Inc(i);
+          inc(i);
         end;
 
       i := 1;
@@ -243,19 +240,19 @@ begin
 
               CI.OperatorInc;
 
-              Inc(Start);
+              inc(Start);
             end;
 
-          Inc(i);
+          inc(i);
         end;
 
-      C := PAggColorPoint(FColorProfile.Last).COLOR;
+      c := PAggColorPoint(FColorProfile.Last).COLOR;
 
       while stop < FColorLut.Size do
         begin
-          PAggColor(FColorLut[stop])^ := C;
+          PAggColor(FColorLut[stop])^ := c;
 
-          Inc(stop);
+          inc(stop);
         end;
     end;
 end;
@@ -276,4 +273,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

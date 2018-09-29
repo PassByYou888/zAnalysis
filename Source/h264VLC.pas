@@ -18,7 +18,7 @@ unit h264VLC;
 interface
 
 uses
-  h264Stdint, h264Common, h264BitStream, h264tables;
+  h264Types, h264Common, h264BitStream, h264tables;
 
 type
   residual_type_t = (RES_LUMA, RES_LUMA_DC, RES_LUMA_AC, RES_DC, RES_AC_U, RES_AC_V);
@@ -70,7 +70,7 @@ var
 begin
   ue_code_length_table := GetMemory(VLC_TAB_SIZE);
   se_code_length_table := GetMemory(VLC_TAB_SIZE);
-  Inc(se_code_length_table, VLC_MAX_INT);
+  inc(se_code_length_table, VLC_MAX_INT);
 
   Min := 1;
   Max := 2;
@@ -94,7 +94,7 @@ end;
 procedure vlc_done();
 begin
   FreeMem(ue_code_length_table);
-  Dec(se_code_length_table, VLC_MAX_INT);
+  dec(se_code_length_table, VLC_MAX_INT);
   FreeMem(se_code_length_table);
 end;
 
@@ -125,43 +125,43 @@ begin
   Result := ue_code_length_table[n];
 end;
 
-procedure zigzag16(A, b: int16_p);
+procedure zigzag16(a, b: int16_p);
 begin
-  A[0] := b[0];
-  A[1] := b[1];
-  A[2] := b[4];
-  A[3] := b[8];
-  A[4] := b[5];
-  A[5] := b[2];
-  A[6] := b[3];
-  A[7] := b[6];
-  A[8] := b[9];
-  A[9] := b[12];
-  A[10] := b[13];
-  A[11] := b[10];
-  A[12] := b[7];
-  A[13] := b[11];
-  A[14] := b[14];
-  A[15] := b[15];
+  a[0] := b[0];
+  a[1] := b[1];
+  a[2] := b[4];
+  a[3] := b[8];
+  a[4] := b[5];
+  a[5] := b[2];
+  a[6] := b[3];
+  a[7] := b[6];
+  a[8] := b[9];
+  a[9] := b[12];
+  a[10] := b[13];
+  a[11] := b[10];
+  a[12] := b[7];
+  a[13] := b[11];
+  a[14] := b[14];
+  a[15] := b[15];
 end;
 
-procedure zigzag15(A, b: int16_p);
+procedure zigzag15(a, b: int16_p);
 begin
-  A[0] := b[0];
-  A[1] := b[3];
-  A[2] := b[7];
-  A[3] := b[4];
-  A[4] := b[1];
-  A[5] := b[2];
-  A[6] := b[5];
-  A[7] := b[8];
-  A[8] := b[11];
-  A[9] := b[12];
-  A[10] := b[9];
-  A[11] := b[6];
-  A[12] := b[10];
-  A[13] := b[13];
-  A[14] := b[14];
+  a[0] := b[0];
+  a[1] := b[3];
+  a[2] := b[7];
+  a[3] := b[4];
+  a[4] := b[1];
+  a[5] := b[2];
+  a[6] := b[5];
+  a[7] := b[8];
+  a[8] := b[11];
+  a[9] := b[12];
+  a[10] := b[9];
+  a[11] := b[6];
+  a[12] := b[10];
+  a[13] := b[13];
+  a[14] := b[14];
 end;
 
 // get table index according to nz counts of surrounding blocks
@@ -184,26 +184,26 @@ const
 
   nz2tab: array [0 .. 16] of uint8_t = (0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3);
 var
-  A, b, NC: uint8_t;
+  a, b, NC: uint8_t;
 begin
   if not chroma then
     begin
-      A := nzc[idx[i, 0]];
+      a := nzc[idx[i, 0]];
       b := nzc[idx[i, 1]];
     end
   else
     begin
-      A := nzc[idxc[i, 0]];
+      a := nzc[idxc[i, 0]];
       b := nzc[idxc[i, 1]];
     end;
-  if (A = NZ_COEF_CNT_NA) and (b = NZ_COEF_CNT_NA) then
+  if (a = NZ_COEF_CNT_NA) and (b = NZ_COEF_CNT_NA) then
       NC := 0
-  else if A = NZ_COEF_CNT_NA then
+  else if a = NZ_COEF_CNT_NA then
       NC := b
   else if b = NZ_COEF_CNT_NA then
-      NC := A
+      NC := a
   else
-      NC := (A + b + 1) shr 1;
+      NC := (a + b + 1) shr 1;
 
   Result := nz2tab[NC];
 end;
@@ -222,7 +222,7 @@ begin
     begin
       Code := (Abs(level) - 1) * 2;
       if level < 0 then
-          Inc(Code);
+          inc(Code);
       if Code < 14 then
         begin
           bs.write(1, Code + 1); // abs(1..7)
@@ -322,16 +322,16 @@ begin
       // first coeff can't be |1| if t1 < 3, so we can code it as coeff lower by one
       if (i = t1) and (t1 < 3) then
         if coef > 0 then
-            Dec(coef)
+            dec(coef)
         else
-            Inc(coef);
+            inc(coef);
 
       encode_level(bs, coef, suffix_length);
 
       if suffix_length = 0 then
           suffix_length := 1;
       if (Abs(blok.level[i]) > (3 shl (suffix_length - 1))) and (suffix_length < 6) then
-          Inc(suffix_length);
+          inc(suffix_length);
     end;
 
   // total number of zeros in runs
@@ -368,7 +368,7 @@ begin
           else
               bs.write(1, run_before - 3);
 
-          Dec(zeros_left, run_before);
+          dec(zeros_left, run_before);
           if zeros_left <= 0 then
               Break;
         end;
@@ -389,7 +389,7 @@ begin
     begin
       Code := (Abs(level) - 1) * 2;
       if level < 0 then
-          Inc(Code);
+          inc(Code);
       if Code < 14 then
         begin
           Result := Code + 1; // abs(1..7)
@@ -444,15 +444,15 @@ begin
         RES_AC_U: tab := predict_nz_count_to_tab(mb.nz_coef_cnt_chroma_ac[0], blk_idx, True);
         RES_AC_V: tab := predict_nz_count_to_tab(mb.nz_coef_cnt_chroma_ac[1], blk_idx, True);
       end;
-      Inc(Result, tab_coef_num[tab, Nz, t1][1]);
+      inc(Result, tab_coef_num[tab, Nz, t1][1]);
     end
   else
-      Inc(Result, tab_coef_num_chroma_dc[Nz, t1][1]);
+      inc(Result, tab_coef_num_chroma_dc[Nz, t1][1]);
   if Nz = 0 then
       Exit; // no coefs
 
   // trailing 1s signs
-  Inc(Result, t1);
+  inc(Result, t1);
 
   { 9.2.2 Parsing process for level information }
   // levels (nonzero coefs)
@@ -468,16 +468,16 @@ begin
       // first coeff can't be |1| if t1 < 3, so we can code it as coeff lower by one
       if (i = t1) and (t1 < 3) then
         if coef > 0 then
-            Dec(coef)
+            dec(coef)
         else
-            Inc(coef);
+            inc(coef);
 
-      Inc(Result, level_cost(coef, suffix_length));
+      inc(Result, level_cost(coef, suffix_length));
 
       if suffix_length = 0 then
           suffix_length := 1;
       if (Abs(blok.level[i]) > (3 shl (suffix_length - 1))) and (suffix_length < 6) then
-          Inc(suffix_length);
+          inc(suffix_length);
     end;
 
   // total number of zeros in runs
@@ -493,7 +493,7 @@ begin
         end
       else
           vlc := tab_total_zeros_chroma_dc[Nz, total_zeros];
-      Inc(Result, vlc[1]);
+      inc(Result, vlc[1]);
     end;
 
   // run_before
@@ -509,12 +509,12 @@ begin
               tab := zeros_left;
               if tab > 7 then
                   tab := 7;
-              Inc(Result, tab_run_before[tab, run_before][1]);
+              inc(Result, tab_run_before[tab, run_before][1]);
             end
           else
-              Inc(Result, run_before - 3);
+              inc(Result, run_before - 3);
 
-          Dec(zeros_left, run_before);
+          dec(zeros_left, run_before);
           if zeros_left <= 0 then
               Break;
         end;
@@ -553,7 +553,7 @@ begin
   t0 := 0;
   for i := ncoef - 1 downto 0 do
     if p[i] = 0 then
-        Inc(t0)
+        inc(t0)
     else
         Break;
   if t0 = ncoef then
@@ -571,7 +571,7 @@ begin
       coef := p[i];
       if coef = 0 then
         begin
-          Inc(Zeros); // increase run_before
+          inc(Zeros); // increase run_before
         end
       else
         begin
@@ -582,7 +582,7 @@ begin
             begin
               if coef < 0 then
                   Block.t1_signs := Block.t1_signs or (1 shl Block.t1);
-              Inc(Block.t1);
+              inc(Block.t1);
             end
           else
               count_t1 := False;
@@ -590,7 +590,7 @@ begin
           if n > 0 then
               Block.run_before[n - 1] := Zeros; // save run_before
           Zeros := 0;
-          Inc(n);
+          inc(n);
         end;
     end;
   Block.run_before[n - 1] := Zeros;
@@ -608,3 +608,5 @@ finalization
 vlc_done();
 
 end.
+ 
+ 

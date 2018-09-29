@@ -37,11 +37,8 @@
 *)
 unit AggConvTransform;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggTransAffine,
@@ -59,7 +56,7 @@ type
     constructor Create(Source: TAggVertexSource; tr: TAggTransAffine);
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property Source: TAggVertexSource read FSource write FSource;
     property Transformer: TAggTransAffine read FTrans write FTrans;
@@ -93,17 +90,19 @@ begin
   FSource.Rewind(PathID);
 end;
 
-function TAggConvTransform.Vertex(X, Y: PDouble): Cardinal;
+function TAggConvTransform.Vertex(x, y: PDouble): Cardinal;
 var
   Cmd: Cardinal;
 begin
-  Cmd := FSource.Vertex(X, Y);
+  Cmd := FSource.Vertex(x, y);
 
   if IsVertex(Cmd) then
-      FTrans.Transform(FTrans, X, Y);
+      FTrans.Transform(FTrans, x, y);
 
   Result := Cmd;
 end;
 
 end. 
+ 
+ 
  

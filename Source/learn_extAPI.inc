@@ -1,24 +1,24 @@
 {$REGION 'extAPI'}
 
 
-procedure LAdd(var F: TLFloat; const Value: TLFloat);
+procedure LAdd(var f: TLFloat; const Value: TLFloat);
 begin
-  F := F + Value;
+  f := f + Value;
 end;
 
-procedure LSub(var F: TLFloat; const Value: TLFloat);
+procedure LSub(var f: TLFloat; const Value: TLFloat);
 begin
-  F := F - Value;
+  f := f - Value;
 end;
 
-procedure LMul(var F: TLFloat; const Value: TLFloat);
+procedure LMul(var f: TLFloat; const Value: TLFloat);
 begin
-  F := F * Value;
+  f := f * Value;
 end;
 
-procedure LDiv(var F: TLFloat; const Value: TLFloat);
+procedure LDiv(var f: TLFloat; const Value: TLFloat);
 begin
-  F := LSafeDivF(F, Value);
+  f := LSafeDivF(f, Value);
 end;
 
 function LSafeDivF(const s, d: TLFloat): TLFloat;
@@ -148,16 +148,16 @@ end;
 
 function lvec(const M: TLMatrix; const veclen: TLInt): TLVec;
 var
-  i, J, ID: TLInt;
+  i, j, ID: TLInt;
 begin
   ID := 0;
   Result := lvec(veclen);
   for i := 0 to length(M) - 1 do
-    for J := 0 to length(M[i]) - 1 do
+    for j := 0 to length(M[i]) - 1 do
       if ID < veclen then
         begin
-          Result[ID] := M[i, J];
-          Inc(ID);
+          Result[ID] := M[i, j];
+          inc(ID);
         end
       else
           Exit;
@@ -169,7 +169,7 @@ var
 begin
   L := 0;
   for i := 0 to length(M) - 1 do
-      Inc(L, length(M[i]));
+      inc(L, length(M[i]));
   Result := lvec(M, L);
 end;
 
@@ -206,16 +206,16 @@ end;
 
 function lvec(const M: TLBMatrix; const veclen: TLInt): TLBVec;
 var
-  i, J, ID: TLInt;
+  i, j, ID: TLInt;
 begin
   ID := 0;
   SetLength(Result, veclen);
   for i := 0 to length(M) - 1 do
-    for J := 0 to length(M[i]) - 1 do
+    for j := 0 to length(M[i]) - 1 do
       if ID < veclen then
         begin
-          Result[ID] := M[i, J];
-          Inc(ID);
+          Result[ID] := M[i, j];
+          inc(ID);
         end
       else
           Exit;
@@ -227,22 +227,22 @@ var
 begin
   L := 0;
   for i := 0 to length(M) - 1 do
-      Inc(L, length(M[i]));
+      inc(L, length(M[i]));
   Result := lvec(M, L);
 end;
 
 function lvec(const M: TLIMatrix; const veclen: TLInt): TLIVec;
 var
-  i, J, ID: TLInt;
+  i, j, ID: TLInt;
 begin
   ID := 0;
   SetLength(Result, veclen);
   for i := 0 to length(M) - 1 do
-    for J := 0 to length(M[i]) - 1 do
+    for j := 0 to length(M[i]) - 1 do
       if ID < veclen then
         begin
-          Result[ID] := M[i, J];
-          Inc(ID);
+          Result[ID] := M[i, j];
+          inc(ID);
         end
       else
           Exit;
@@ -254,7 +254,7 @@ var
 begin
   L := 0;
   for i := 0 to length(M) - 1 do
-      Inc(L, length(M[i]));
+      inc(L, length(M[i]));
   Result := lvec(M, L);
 end;
 
@@ -412,7 +412,7 @@ begin
     begin
       i1 := Trunc(v1[i]);
       i2 := Trunc(v2[i]);
-      Inc(Result, i1 xor i2);
+      inc(Result, i1 xor i2);
     end;
 end;
 
@@ -422,7 +422,7 @@ var
 begin
   Result := 0;
   for i := 0 to length(v1) - 1 do
-      Inc(Result, v1[i] xor v2[i]);
+      inc(Result, v1[i] xor v2[i]);
 end;
 
 procedure LClampF(var AValue: TLFloat; const aMin, aMax: TLFloat);
@@ -471,13 +471,13 @@ end;
 
 procedure LFeatureSamplerWithSift(const mr: TMemoryRaster; ln: TLearn; lOut: TLVec);
 var
-  F: TFeature;
+  f: TFeature;
   i: TLInt;
 begin
-  F := TFeature.CreateWithRaster(mr);
-  for i := 0 to F.Count - 1 do
-      ln.AddMemory(F[i]^.descriptor, lOut);
-  DisposeObject(F);
+  f := TFeature.CreateWithRaster(mr);
+  for i := 0 to f.Count - 1 do
+      ln.AddMemory(f[i]^.descriptor, lOut);
+  DisposeObject(f);
 end;
 
 function LMatrixSamplerWithHOG(const mr: TMemoryRaster): TLMatrix;
@@ -496,25 +496,25 @@ end;
 
 function LMatrixSampler(const mr: TMemoryRaster): TLMatrix;
 var
-  i, J: Integer;
+  i, j: Integer;
 begin
   SetLength(Result, mr.height, mr.width);
-  for J := 0 to mr.height - 1 do
+  for j := 0 to mr.height - 1 do
     for i := 0 to mr.width - 1 do
-        Result[J, i] := mr.PixelGrayD[i, J];
+        Result[j, i] := mr.PixelGrayD[i, j];
 end;
 
 function LMatrixSampler(const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix;
 var
   n: TMemoryRaster;
-  i, J: TLInt;
+  i, j: TLInt;
 begin
   if (mr.width = SamplerSize) and (mr.height = SamplerSize) then
     begin
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
-        for J := 0 to SamplerSize - 1 do
-            Result[J, i] := n.PixelGrayD[i, J];
+        for j := 0 to SamplerSize - 1 do
+            Result[j, i] := n.PixelGrayD[i, j];
     end
   else
     begin
@@ -523,8 +523,8 @@ begin
 
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
-        for J := 0 to SamplerSize - 1 do
-            Result[J, i] := n.PixelGrayD[i, J];
+        for j := 0 to SamplerSize - 1 do
+            Result[j, i] := n.PixelGrayD[i, j];
 
       DisposeObject(n);
     end;
@@ -533,14 +533,14 @@ end;
 function LMatrixSampler(const Antialiasing: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix;
 var
   n: TMemoryRaster;
-  i, J: TLInt;
+  i, j: TLInt;
 begin
   if (mr.width = SamplerSize) and (mr.height = SamplerSize) then
     begin
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
-        for J := 0 to SamplerSize - 1 do
-            Result[J, i] := mr.PixelGrayD[i, J];
+        for j := 0 to SamplerSize - 1 do
+            Result[j, i] := mr.PixelGrayD[i, j];
     end
   else
     begin
@@ -552,8 +552,8 @@ begin
 
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
-        for J := 0 to SamplerSize - 1 do
-            Result[J, i] := n.PixelGrayD[i, J];
+        for j := 0 to SamplerSize - 1 do
+            Result[j, i] := n.PixelGrayD[i, j];
 
       DisposeObject(n);
     end;
@@ -561,14 +561,14 @@ end;
 
 procedure ZoomLineF(const Source, dest: PLMatrix; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
 var
-  J: TLInt;
+  j: TLInt;
   SourceIInt, SourceJInt: TLInt;
 begin
-  for J := 0 to DestHeight - 1 do
+  for j := 0 to DestHeight - 1 do
     begin
       SourceIInt := Round(pass / (DestWidth - 1) * (SourceWidth - 1));
-      SourceJInt := Round(J / (DestHeight - 1) * (SourceHeight - 1));
-      dest^[J, pass] := Source^[SourceJInt, SourceIInt];
+      SourceJInt := Round(j / (DestHeight - 1) * (SourceHeight - 1));
+      dest^[j, pass] := Source^[SourceJInt, SourceIInt];
     end;
 end;
 
@@ -620,14 +620,14 @@ end;
 
 procedure ZoomLineI(const Source, dest: PLIMatrix; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
 var
-  J: TLInt;
+  j: TLInt;
   SourceIInt, SourceJInt: TLInt;
 begin
-  for J := 0 to DestHeight - 1 do
+  for j := 0 to DestHeight - 1 do
     begin
       SourceIInt := Round(pass / (DestWidth - 1) * (SourceWidth - 1));
-      SourceJInt := Round(J / (DestHeight - 1) * (SourceHeight - 1));
-      dest^[J, pass] := Source^[SourceJInt, SourceIInt];
+      SourceJInt := Round(j / (DestHeight - 1) * (SourceHeight - 1));
+      dest^[j, pass] := Source^[SourceJInt, SourceIInt];
     end;
 end;
 
@@ -679,14 +679,14 @@ end;
 
 procedure ZoomLineB(const Source, dest: PLBMatrix; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
 var
-  J: TLInt;
+  j: TLInt;
   SourceIInt, SourceJInt: TLInt;
 begin
-  for J := 0 to DestHeight - 1 do
+  for j := 0 to DestHeight - 1 do
     begin
       SourceIInt := Round(pass / (DestWidth - 1) * (SourceWidth - 1));
-      SourceJInt := Round(J / (DestHeight - 1) * (SourceHeight - 1));
-      dest^[J, pass] := Source^[SourceJInt, SourceIInt];
+      SourceJInt := Round(j / (DestHeight - 1) * (SourceHeight - 1));
+      dest^[j, pass] := Source^[SourceJInt, SourceIInt];
     end;
 end;
 
@@ -738,22 +738,22 @@ end;
 
 procedure LSampler(var Source: TLBMatrix; const dest: TMemoryRaster);
 var
-  i, J: TLInt;
+  i, j: TLInt;
 begin
   dest.SetSize(length(Source[0]), length(Source));
-  for J := 0 to dest.height - 1 do
+  for j := 0 to dest.height - 1 do
     for i := 0 to dest.width - 1 do
-        dest.PixelGray[i, J] := IfThen(Source[J, i], 255, 0);
+        dest.PixelGray[i, j] := IfThen(Source[j, i], 255, 0);
 end;
 
-procedure LSampler(var Source: TLMatrix; const MaxF: TLFloat; const dest: TMemoryRaster);
+procedure LSampler(var Source: TLMatrix; const f_Max: TLFloat; const dest: TMemoryRaster);
 var
-  i, J: TLInt;
+  i, j: TLInt;
 begin
   dest.SetSize(length(Source[0]), length(Source));
-  for J := 0 to dest.height - 1 do
+  for j := 0 to dest.height - 1 do
     for i := 0 to dest.width - 1 do
-        dest.PixelGrayD[i, J] := Round(Source[J, i] / MaxF * 255);
+        dest.PixelGrayD[i, j] := Round(Source[j, i] / f_Max * 255);
 end;
 
 procedure LSampler(var Source: TLMatrix; const dest: TMemoryRaster);
@@ -761,14 +761,14 @@ begin
   LSampler(Source, LMaxVec(Source), dest);
 end;
 
-procedure LSampler(var Source: TLIMatrix; const MaxI: TLInt; const dest: TMemoryRaster);
+procedure LSampler(var Source: TLIMatrix; const i_Max: TLInt; const dest: TMemoryRaster);
 var
-  i, J: TLInt;
+  i, j: TLInt;
 begin
   dest.SetSize(length(Source[0]), length(Source));
-  for J := 0 to dest.height - 1 do
+  for j := 0 to dest.height - 1 do
     for i := 0 to dest.width - 1 do
-        dest.PixelGrayD[i, J] := Round(Source[J, i] / MaxI * 255);
+        dest.PixelGrayD[i, j] := Round(Source[j, i] / i_Max * 255);
 end;
 
 procedure LSampler(var Source: TLIMatrix; const dest: TMemoryRaster);
@@ -778,7 +778,7 @@ end;
 
 procedure LSaveMatrix(var Source: TLMatrix; dest: TCoreClassStream);
 var
-  J: TLInt;
+  j: TLInt;
   w, h: TLInt;
 begin
   h := length(Source);
@@ -786,26 +786,26 @@ begin
   dest.write(h, SizeOf(TLInt));
   dest.write(w, SizeOf(TLInt));
 
-  for J := 0 to h - 1 do
-      dest.write(Source[J][0], w * SizeOf(TLFloat));
+  for j := 0 to h - 1 do
+      dest.write(Source[j][0], w * SizeOf(TLFloat));
 end;
 
 procedure LLoadMatrix(Source: TCoreClassStream; var dest: TLMatrix);
 var
-  J: TLInt;
+  j: TLInt;
   w, h: TLInt;
 begin
   Source.read(h, SizeOf(TLInt));
   Source.read(w, SizeOf(TLInt));
   SetLength(dest, h, w);
 
-  for J := 0 to h - 1 do
-      Source.read(dest[J][0], w * SizeOf(TLFloat));
+  for j := 0 to h - 1 do
+      Source.read(dest[j][0], w * SizeOf(TLFloat));
 end;
 
 procedure LSaveMatrix(var Source: TLIMatrix; dest: TCoreClassStream);
 var
-  J: TLInt;
+  j: TLInt;
   w, h: TLInt;
 begin
   h := length(Source);
@@ -813,26 +813,26 @@ begin
   dest.write(h, SizeOf(TLInt));
   dest.write(w, SizeOf(TLInt));
 
-  for J := 0 to h - 1 do
-      dest.write(Source[J][0], w * SizeOf(TLInt));
+  for j := 0 to h - 1 do
+      dest.write(Source[j][0], w * SizeOf(TLInt));
 end;
 
 procedure LLoadMatrix(Source: TCoreClassStream; var dest: TLIMatrix);
 var
-  J: TLInt;
+  j: TLInt;
   w, h: TLInt;
 begin
   Source.read(h, SizeOf(TLInt));
   Source.read(w, SizeOf(TLInt));
   SetLength(dest, h, w);
 
-  for J := 0 to h - 1 do
-      Source.read(dest[J][0], w * SizeOf(TLInt));
+  for j := 0 to h - 1 do
+      Source.read(dest[j][0], w * SizeOf(TLInt));
 end;
 
 procedure LSaveMatrix(var Source: TLBMatrix; dest: TCoreClassStream);
 var
-  J: TLInt;
+  j: TLInt;
   w, h: TLInt;
 begin
   h := length(Source);
@@ -840,21 +840,21 @@ begin
   dest.write(h, SizeOf(TLInt));
   dest.write(w, SizeOf(TLInt));
 
-  for J := 0 to h - 1 do
-      dest.write(Source[J][0], w);
+  for j := 0 to h - 1 do
+      dest.write(Source[j][0], w);
 end;
 
 procedure LLoadMatrix(Source: TCoreClassStream; var dest: TLBMatrix);
 var
-  J: TLInt;
+  j: TLInt;
   w, h: TLInt;
 begin
   Source.read(h, SizeOf(TLInt));
   Source.read(w, SizeOf(TLInt));
   SetLength(dest, h, w);
 
-  for J := 0 to h - 1 do
-      Source.read(dest[J][0], w);
+  for j := 0 to h - 1 do
+      Source.read(dest[j][0], w);
 end;
 
 procedure LSaveSampler(var Source: TLBMatrix; const fn: SystemString);
@@ -877,12 +877,12 @@ begin
   DisposeObject(M);
 end;
 
-procedure LSaveSampler(var Source: TLIMatrix; const MaxI: TLInt; const fn: SystemString);
+procedure LSaveSampler(var Source: TLIMatrix; const i_Max: TLInt; const fn: SystemString);
 var
   M: TMemoryRaster;
 begin
   M := NewRaster();
-  LSampler(Source, MaxI, M);
+  LSampler(Source, i_Max, M);
   SaveRaster(M, fn);
   DisposeObject(M);
 end;
@@ -897,12 +897,12 @@ begin
   DisposeObject(M);
 end;
 
-procedure LSaveSampler(var Source: TLMatrix; const MaxF: TLFloat; const fn: SystemString);
+procedure LSaveSampler(var Source: TLMatrix; const f_Max: TLFloat; const fn: SystemString);
 var
   M: TMemoryRaster;
 begin
   M := NewRaster();
-  LSampler(Source, MaxF, M);
+  LSampler(Source, f_Max, M);
   SaveRaster(M, fn);
   DisposeObject(M);
 end;
@@ -911,16 +911,16 @@ function LDA(const M: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo:
 var
   rInfo: TLInt;
   buff: TLMatrix;
-  w, h, cl, J: TLInt;
+  w, h, cl, j: TLInt;
 begin
   h := length(M);
   w := length(M[0]);
   cl := length(cv);
   SetLength(buff, h, w + 1);
-  for J := 0 to length(M) - 1 do
+  for j := 0 to length(M) - 1 do
     begin
-      CopyPtr(@M[J][0], @buff[J][0], w * SizeOf(TLFloat));
-      buff[J][w] := cv[J];
+      CopyPtr(@M[j][0], @buff[j][0], w * SizeOf(TLFloat));
+      buff[j][w] := cv[j];
     end;
 
   FisherLDAN(buff, h, w, Nclass, rInfo, output);
@@ -943,16 +943,16 @@ function LDA(const M: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo:
 var
   rInfo: TLInt;
   buff: TLMatrix;
-  w, h, cl, J: TLInt;
+  w, h, cl, j: TLInt;
 begin
   h := length(M);
   w := length(M[0]);
   cl := length(cv);
   SetLength(buff, h, w + 1);
-  for J := 0 to length(M) - 1 do
+  for j := 0 to length(M) - 1 do
     begin
-      CopyPtr(@M[J][0], @buff[J][0], w * SizeOf(TLFloat));
-      buff[J][w] := cv[J];
+      CopyPtr(@M[j][0], @buff[j][0], w * SizeOf(TLFloat));
+      buff[j][w] := cv[j];
     end;
 
   FisherLDA(buff, h, w, Nclass + 1, rInfo, output);
@@ -975,7 +975,7 @@ function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRas
 var
   k: TLFloat;
   mrblur, n: TMemoryRaster;
-  i, J: TLInt;
+  i, j: TLInt;
   buff: TLMatrix;
   rInfo: TLInt;
 begin
@@ -1003,8 +1003,8 @@ begin
 
   for i := 0 to n.height - 1 do
     begin
-      for J := 0 to SamplerSize - 1 do
-          buff[i, J] := n.PixelGrayD[J, i];
+      for j := 0 to SamplerSize - 1 do
+          buff[i, j] := n.PixelGrayD[j, i];
       buff[i, SamplerSize] := i;
     end;
 
@@ -1037,7 +1037,7 @@ function PCA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRas
 var
   k: TLFloat;
   mrblur, n: TMemoryRaster;
-  i, J: TLInt;
+  i, j: TLInt;
   buff: TLMatrix;
   rInfo: TLInt;
 begin
@@ -1066,8 +1066,8 @@ begin
   SetLength(buff, n.height, SamplerSize);
 
   for i := 0 to n.height - 1 do
-    for J := 0 to n.width - 1 do
-        buff[i, J] := n.PixelGrayD[J, i];
+    for j := 0 to n.width - 1 do
+        buff[i, j] := n.PixelGrayD[j, i];
 
   rInfo := PCA(buff, n.height, n.width, output);
 
@@ -1113,4 +1113,4 @@ begin
   SetLength(Result, L1, l2);
 end;
 
-{$ENDREGION 'extAPI'} 
+{$ENDREGION 'extAPI'}

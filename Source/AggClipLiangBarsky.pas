@@ -37,27 +37,24 @@
 *)
 unit AggClipLiangBarsky;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics;
 
-function ClippingFlagsInteger(X, Y: Integer; const ClipBox: TRectInteger): Cardinal;
-function ClippingFlagsDouble(X, Y: Double; ClipBox: PRectDouble): Cardinal;
+function ClippingFlagsInteger(x, y: Integer; const ClipBox: TRectInteger): Cardinal;
+function ClippingFlagsDouble(x, y: Double; ClipBox: PRectDouble): Cardinal;
 
-function ClippingFlagsXInteger(X: Integer; const ClipBox: TRectInteger): Cardinal;
-function ClippingFlagsXDouble(X: Double; ClipBox: PRectDouble): Cardinal;
+function ClippingFlagsXInteger(x: Integer; const ClipBox: TRectInteger): Cardinal;
+function ClippingFlagsXDouble(x: Double; ClipBox: PRectDouble): Cardinal;
 
-function ClippingFlagsYInteger(Y: Integer; const ClipBox: TRectInteger): Cardinal;
-function ClippingFlagsYDouble(Y: Double; ClipBox: PRectDouble): Cardinal;
+function ClippingFlagsYInteger(y: Integer; const ClipBox: TRectInteger): Cardinal;
+function ClippingFlagsYDouble(y: Double; ClipBox: PRectDouble): Cardinal;
 
-function ClipLiangBarskyInteger(x1, y1, x2, y2: Integer; const ClipBox: TRectInteger; X, Y: PInteger): Cardinal; overload;
+function ClipLiangBarskyInteger(x1, y1, x2, y2: Integer; const ClipBox: TRectInteger; x, y: PInteger): Cardinal; overload;
 function ClipLiangBarskyInteger(x1, y1, x2, y2: Integer; const ClipBox: TRectInteger; Point: PPointInteger): Cardinal; overload;
 
-function ClipLiangBarskyDouble(x1, y1, x2, y2: Double; ClipBox: PRectDouble; X, Y: PDouble): Cardinal;
+function ClipLiangBarskyDouble(x1, y1, x2, y2: Double; ClipBox: PRectDouble; x, y: PDouble): Cardinal;
 
 implementation
 
@@ -78,42 +75,42 @@ implementation
 // ClipBox.x1  ClipBox.x2
 //
 
-function ClippingFlagsInteger(X, Y: Integer; const ClipBox: TRectInteger): Cardinal;
+function ClippingFlagsInteger(x, y: Integer; const ClipBox: TRectInteger): Cardinal;
 begin
-  Result := Cardinal(X > ClipBox.x2) or (Cardinal(Y > ClipBox.y2) shl 1) or
-    (Cardinal(X < ClipBox.x1) shl 2) or (Cardinal(Y < ClipBox.y1) shl 3);
+  Result := Cardinal(x > ClipBox.x2) or (Cardinal(y > ClipBox.y2) shl 1) or
+    (Cardinal(x < ClipBox.x1) shl 2) or (Cardinal(y < ClipBox.y1) shl 3);
 end;
 
-function ClippingFlagsDouble(X, Y: Double; ClipBox: PRectDouble): Cardinal;
+function ClippingFlagsDouble(x, y: Double; ClipBox: PRectDouble): Cardinal;
 begin
-  Result := Cardinal(X > ClipBox.x2) or (Cardinal(Y > ClipBox.y2) shl 1) or
-    (Cardinal(X < ClipBox.x1) shl 2) or (Cardinal(Y < ClipBox.y1) shl 3);
+  Result := Cardinal(x > ClipBox.x2) or (Cardinal(y > ClipBox.y2) shl 1) or
+    (Cardinal(x < ClipBox.x1) shl 2) or (Cardinal(y < ClipBox.y1) shl 3);
 end;
 
-function ClippingFlagsXInteger(X: Integer; const ClipBox: TRectInteger): Cardinal;
+function ClippingFlagsXInteger(x: Integer; const ClipBox: TRectInteger): Cardinal;
 begin
-  Result := Cardinal(X > ClipBox.x2) or (Cardinal(X < ClipBox.x1) shl 2);
+  Result := Cardinal(x > ClipBox.x2) or (Cardinal(x < ClipBox.x1) shl 2);
 end;
 
-function ClippingFlagsXDouble(X: Double; ClipBox: PRectDouble): Cardinal;
+function ClippingFlagsXDouble(x: Double; ClipBox: PRectDouble): Cardinal;
 begin
-  Result := Cardinal(X > ClipBox.x2) or (Cardinal(X < ClipBox.x1) shl 2);
+  Result := Cardinal(x > ClipBox.x2) or (Cardinal(x < ClipBox.x1) shl 2);
 end;
 
-function ClippingFlagsYInteger(Y: Integer; const ClipBox: TRectInteger): Cardinal;
+function ClippingFlagsYInteger(y: Integer; const ClipBox: TRectInteger): Cardinal;
 begin
-  Result := (Cardinal(Y > ClipBox.y2) shl 1) or
-    (Cardinal(Y < ClipBox.y1) shl 3);
+  Result := (Cardinal(y > ClipBox.y2) shl 1) or
+    (Cardinal(y < ClipBox.y1) shl 3);
 end;
 
-function ClippingFlagsYDouble(Y: Double; ClipBox: PRectDouble): Cardinal;
+function ClippingFlagsYDouble(y: Double; ClipBox: PRectDouble): Cardinal;
 begin
-  Result := (Cardinal(Y > ClipBox.y2) shl 1) or
-    (Cardinal(Y < ClipBox.y1) shl 3);
+  Result := (Cardinal(y > ClipBox.y2) shl 1) or
+    (Cardinal(y < ClipBox.y1) shl 3);
 end;
 
 function ClipLiangBarskyInteger(x1, y1, x2, y2: Integer;
-  const ClipBox: TRectInteger; X, Y: PInteger): Cardinal;
+  const ClipBox: TRectInteger; x, y: PInteger): Cardinal;
 const
   CNearZero = 1E-30;
 var
@@ -121,145 +118,145 @@ var
   TIn1, TIn2, TOut1: Double;
   np: Cardinal;
 begin
-  Delta.X := x2 - x1;
-  Delta.Y := y2 - y1;
+  Delta.x := x2 - x1;
+  Delta.y := y2 - y1;
 
   np := 0;
 
   // bump off of the vertical
-  if Delta.X = 0.0 then
+  if Delta.x = 0.0 then
     if x1 > ClipBox.x1 then
-        Delta.X := -CNearZero
+        Delta.x := -CNearZero
     else
-        Delta.X := CNearZero;
+        Delta.x := CNearZero;
 
   // bump off of the horizontal
-  if Delta.Y = 0.0 then
+  if Delta.y = 0.0 then
     if y1 > ClipBox.y1 then
-        Delta.Y := -CNearZero
+        Delta.y := -CNearZero
     else
-        Delta.Y := CNearZero;
+        Delta.y := CNearZero;
 
-  if Delta.X > 0.0 then
+  if Delta.x > 0.0 then
     begin
       // points to right
-      Inside.X := ClipBox.x1;
-      Outside.X := ClipBox.x2;
+      Inside.x := ClipBox.x1;
+      Outside.x := ClipBox.x2;
     end
   else
     begin
-      Inside.X := ClipBox.x2;
-      Outside.X := ClipBox.x1;
+      Inside.x := ClipBox.x2;
+      Outside.x := ClipBox.x1;
     end;
 
-  if Delta.Y > 0.0 then
+  if Delta.y > 0.0 then
     begin
       // points up
-      Inside.Y := ClipBox.y1;
-      Outside.Y := ClipBox.y2;
+      Inside.y := ClipBox.y1;
+      Outside.y := ClipBox.y2;
     end
   else
     begin
-      Inside.Y := ClipBox.y2;
-      Outside.Y := ClipBox.y1;
+      Inside.y := ClipBox.y2;
+      Outside.y := ClipBox.y1;
     end;
 
-  TempIn.X := (Inside.X - x1) / Delta.X;
-  TempIn.Y := (Inside.Y - y1) / Delta.Y;
+  TempIn.x := (Inside.x - x1) / Delta.x;
+  TempIn.y := (Inside.y - y1) / Delta.y;
 
-  if TempIn.X < TempIn.Y then
+  if TempIn.x < TempIn.y then
     begin
       // hits x first
-      TIn1 := TempIn.X;
-      TIn2 := TempIn.Y;
+      TIn1 := TempIn.x;
+      TIn2 := TempIn.y;
     end
   else
     begin
       // hits y first
-      TIn1 := TempIn.Y;
-      TIn2 := TempIn.X;
+      TIn1 := TempIn.y;
+      TIn2 := TempIn.x;
     end;
 
   if TIn1 <= 1.0 then
     begin
       if 0.0 < TIn1 then
         begin
-          X^ := Trunc(Inside.X);
-          Y^ := Trunc(Inside.Y);
+          x^ := Trunc(Inside.x);
+          y^ := Trunc(Inside.y);
 
-          Inc(PtrComp(X), SizeOf(Integer));
-          Inc(PtrComp(Y), SizeOf(Integer));
-          Inc(np);
+          inc(PtrComp(x), SizeOf(Integer));
+          inc(PtrComp(y), SizeOf(Integer));
+          inc(np);
         end;
 
       if TIn2 <= 1.0 then
         begin
-          TempOut.X := (Outside.X - x1) / Delta.X;
-          TempOut.Y := (Outside.Y - y1) / Delta.Y;
+          TempOut.x := (Outside.x - x1) / Delta.x;
+          TempOut.y := (Outside.y - y1) / Delta.y;
 
-          if TempOut.X < TempOut.Y then
-              TOut1 := TempOut.X
+          if TempOut.x < TempOut.y then
+              TOut1 := TempOut.x
           else
-              TOut1 := TempOut.Y;
+              TOut1 := TempOut.y;
 
           if (TIn2 > 0.0) or (TOut1 > 0.0) then
             if TIn2 <= TOut1 then
               begin
                 if TIn2 > 0.0 then
                   begin
-                    if TempIn.X > TempIn.Y then
+                    if TempIn.x > TempIn.y then
                       begin
-                        X^ := Trunc(Inside.X);
-                        Y^ := Trunc(y1 + TempIn.X * Delta.Y);
+                        x^ := Trunc(Inside.x);
+                        y^ := Trunc(y1 + TempIn.x * Delta.y);
                       end
                     else
                       begin
-                        X^ := Trunc(x1 + TempIn.Y * Delta.X);
-                        Y^ := Trunc(Inside.Y);
+                        x^ := Trunc(x1 + TempIn.y * Delta.x);
+                        y^ := Trunc(Inside.y);
                       end;
 
-                    Inc(PtrComp(X), SizeOf(Integer));
-                    Inc(PtrComp(Y), SizeOf(Integer));
-                    Inc(np);
+                    inc(PtrComp(x), SizeOf(Integer));
+                    inc(PtrComp(y), SizeOf(Integer));
+                    inc(np);
                   end;
 
                 if TOut1 < 1.0 then
-                  if TempOut.X < TempOut.Y then
+                  if TempOut.x < TempOut.y then
                     begin
-                      X^ := Trunc(Outside.X);
-                      Y^ := Trunc(y1 + TempOut.X * Delta.Y);
+                      x^ := Trunc(Outside.x);
+                      y^ := Trunc(y1 + TempOut.x * Delta.y);
                     end
                   else
                     begin
-                      X^ := Trunc(x1 + TempOut.Y * Delta.X);
-                      Y^ := Trunc(Outside.Y);
+                      x^ := Trunc(x1 + TempOut.y * Delta.x);
+                      y^ := Trunc(Outside.y);
                     end
                 else
                   begin
-                    X^ := x2;
-                    Y^ := y2;
+                    x^ := x2;
+                    y^ := y2;
                   end;
 
-                Inc(PtrComp(X), SizeOf(Integer));
-                Inc(PtrComp(Y), SizeOf(Integer));
-                Inc(np);
+                inc(PtrComp(x), SizeOf(Integer));
+                inc(PtrComp(y), SizeOf(Integer));
+                inc(np);
               end
             else
               begin
-                if TempIn.X > TempIn.Y then
+                if TempIn.x > TempIn.y then
                   begin
-                    X^ := Trunc(Inside.X);
-                    Y^ := Trunc(Outside.Y);
+                    x^ := Trunc(Inside.x);
+                    y^ := Trunc(Outside.y);
                   end
                 else
                   begin
-                    X^ := Trunc(Outside.X);
-                    Y^ := Trunc(Inside.Y);
+                    x^ := Trunc(Outside.x);
+                    y^ := Trunc(Inside.y);
                   end;
 
-                Inc(PtrComp(X), SizeOf(Integer));
-                Inc(PtrComp(Y), SizeOf(Integer));
-                Inc(np);
+                inc(PtrComp(x), SizeOf(Integer));
+                inc(PtrComp(y), SizeOf(Integer));
+                inc(np);
               end;
         end;
     end;
@@ -276,141 +273,141 @@ var
   TempIn1, TempIn2, TempOut1: Double;
   np: Cardinal;
 begin
-  Delta.X := x2 - x1;
-  Delta.Y := y2 - y1;
+  Delta.x := x2 - x1;
+  Delta.y := y2 - y1;
 
   np := 0;
 
   // bump off of the vertical
-  if Delta.X = 0.0 then
+  if Delta.x = 0.0 then
     if x1 > ClipBox.x1 then
-        Delta.X := -CNearZero
+        Delta.x := -CNearZero
     else
-        Delta.X := CNearZero;
+        Delta.x := CNearZero;
 
   // bump off of the horizontal
-  if Delta.Y = 0.0 then
+  if Delta.y = 0.0 then
     if y1 > ClipBox.y1 then
-        Delta.Y := -CNearZero
+        Delta.y := -CNearZero
     else
-        Delta.Y := CNearZero;
+        Delta.y := CNearZero;
 
-  if Delta.X > 0.0 then
+  if Delta.x > 0.0 then
     begin
       // points to right
-      Inside.X := ClipBox.x1;
-      Outside.X := ClipBox.x2;
+      Inside.x := ClipBox.x1;
+      Outside.x := ClipBox.x2;
     end
   else
     begin
-      Inside.X := ClipBox.x2;
-      Outside.X := ClipBox.x1;
+      Inside.x := ClipBox.x2;
+      Outside.x := ClipBox.x1;
     end;
 
-  if Delta.Y > 0.0 then
+  if Delta.y > 0.0 then
     begin
       // points up
-      Inside.Y := ClipBox.y1;
-      Outside.Y := ClipBox.y2;
+      Inside.y := ClipBox.y1;
+      Outside.y := ClipBox.y2;
     end
   else
     begin
-      Inside.Y := ClipBox.y2;
-      Outside.Y := ClipBox.y1;
+      Inside.y := ClipBox.y2;
+      Outside.y := ClipBox.y1;
     end;
 
-  TempIn.X := (Inside.X - x1) / Delta.X;
-  TempIn.Y := (Inside.Y - y1) / Delta.Y;
+  TempIn.x := (Inside.x - x1) / Delta.x;
+  TempIn.y := (Inside.y - y1) / Delta.y;
 
-  if TempIn.X < TempIn.Y then
+  if TempIn.x < TempIn.y then
     begin
       // hits x first
-      TempIn1 := TempIn.X;
-      TempIn2 := TempIn.Y;
+      TempIn1 := TempIn.x;
+      TempIn2 := TempIn.y;
     end
   else
     begin
       // hits y first
-      TempIn1 := TempIn.Y;
-      TempIn2 := TempIn.X;
+      TempIn1 := TempIn.y;
+      TempIn2 := TempIn.x;
     end;
 
   if TempIn1 <= 1.0 then
     begin
       if 0.0 < TempIn1 then
         begin
-          Point^.X := Trunc(Inside.X);
-          Point^.Y := Trunc(Inside.Y);
+          Point^.x := Trunc(Inside.x);
+          Point^.y := Trunc(Inside.y);
 
-          Inc(Point);
-          Inc(np);
+          inc(Point);
+          inc(np);
         end;
 
       if TempIn2 <= 1.0 then
         begin
-          TempOut.X := (Outside.X - x1) / Delta.X;
-          TempOut.Y := (Outside.Y - y1) / Delta.Y;
+          TempOut.x := (Outside.x - x1) / Delta.x;
+          TempOut.y := (Outside.y - y1) / Delta.y;
 
-          if TempOut.X < TempOut.Y then
-              TempOut1 := TempOut.X
+          if TempOut.x < TempOut.y then
+              TempOut1 := TempOut.x
           else
-              TempOut1 := TempOut.Y;
+              TempOut1 := TempOut.y;
 
           if (TempIn2 > 0.0) or (TempOut1 > 0.0) then
             if TempIn2 <= TempOut1 then
               begin
                 if TempIn2 > 0.0 then
                   begin
-                    if TempIn.X > TempIn.Y then
+                    if TempIn.x > TempIn.y then
                       begin
-                        Point^.X := Trunc(Inside.X);
-                        Point^.Y := Trunc(y1 + TempIn.X * Delta.Y);
+                        Point^.x := Trunc(Inside.x);
+                        Point^.y := Trunc(y1 + TempIn.x * Delta.y);
                       end
                     else
                       begin
-                        Point^.X := Trunc(x1 + TempIn.Y * Delta.X);
-                        Point^.Y := Trunc(Inside.Y);
+                        Point^.x := Trunc(x1 + TempIn.y * Delta.x);
+                        Point^.y := Trunc(Inside.y);
                       end;
 
-                    Inc(Point);
-                    Inc(np);
+                    inc(Point);
+                    inc(np);
                   end;
 
                 if TempOut1 < 1.0 then
-                  if TempOut.X < TempOut.Y then
+                  if TempOut.x < TempOut.y then
                     begin
-                      Point^.X := Trunc(Outside.X);
-                      Point^.Y := Trunc(y1 + TempOut.X * Delta.Y);
+                      Point^.x := Trunc(Outside.x);
+                      Point^.y := Trunc(y1 + TempOut.x * Delta.y);
                     end
                   else
                     begin
-                      Point^.X := Trunc(x1 + TempOut.Y * Delta.X);
-                      Point^.Y := Trunc(Outside.Y);
+                      Point^.x := Trunc(x1 + TempOut.y * Delta.x);
+                      Point^.y := Trunc(Outside.y);
                     end
                 else
                   begin
-                    Point^.X := x2;
-                    Point^.Y := y2;
+                    Point^.x := x2;
+                    Point^.y := y2;
                   end;
 
-                Inc(Point);
-                Inc(np);
+                inc(Point);
+                inc(np);
               end
             else
               begin
-                if TempIn.X > TempIn.Y then
+                if TempIn.x > TempIn.y then
                   begin
-                    Point^.X := Trunc(Inside.X);
-                    Point^.Y := Trunc(Outside.Y);
+                    Point^.x := Trunc(Inside.x);
+                    Point^.y := Trunc(Outside.y);
                   end
                 else
                   begin
-                    Point^.X := Trunc(Outside.X);
-                    Point^.Y := Trunc(Inside.Y);
+                    Point^.x := Trunc(Outside.x);
+                    Point^.y := Trunc(Inside.y);
                   end;
 
-                Inc(Point);
-                Inc(np);
+                inc(Point);
+                inc(np);
               end;
         end;
     end;
@@ -419,7 +416,7 @@ begin
 end;
 
 function ClipLiangBarskyDouble(x1, y1, x2, y2: Double; ClipBox: PRectDouble;
-  X, Y: PDouble): Cardinal;
+  x, y: PDouble): Cardinal;
 const
   CNearZero = 1E-30;
 var
@@ -427,147 +424,147 @@ var
   TIn1, TIn2, TOut1: Double;
   np: Cardinal;
 begin
-  Delta.X := x2 - x1;
-  Delta.Y := y2 - y1;
+  Delta.x := x2 - x1;
+  Delta.y := y2 - y1;
 
   np := 0;
 
   // bump off of the vertical
-  if Delta.X = 0.0 then
+  if Delta.x = 0.0 then
     if x1 > ClipBox.x1 then
-        Delta.X := -CNearZero
+        Delta.x := -CNearZero
     else
-        Delta.X := CNearZero;
+        Delta.x := CNearZero;
 
   // bump off of the horizontal
-  if Delta.Y = 0.0 then
+  if Delta.y = 0.0 then
     if y1 > ClipBox.y1 then
-        Delta.Y := -CNearZero
+        Delta.y := -CNearZero
     else
-        Delta.Y := CNearZero;
+        Delta.y := CNearZero;
 
-  if Delta.X > 0.0 then
+  if Delta.x > 0.0 then
     begin
       // points to right
-      Inside.X := ClipBox.x1;
-      Outside.X := ClipBox.x2;
+      Inside.x := ClipBox.x1;
+      Outside.x := ClipBox.x2;
     end
   else
     begin
-      Inside.X := ClipBox.x2;
-      Outside.X := ClipBox.x1;
+      Inside.x := ClipBox.x2;
+      Outside.x := ClipBox.x1;
     end;
 
-  if Delta.Y > 0.0 then
+  if Delta.y > 0.0 then
     begin
       // points up
-      Inside.Y := ClipBox.y1;
-      Outside.Y := ClipBox.y2;
+      Inside.y := ClipBox.y1;
+      Outside.y := ClipBox.y2;
     end
   else
     begin
-      Inside.Y := ClipBox.y2;
-      Outside.Y := ClipBox.y1;
+      Inside.y := ClipBox.y2;
+      Outside.y := ClipBox.y1;
     end;
 
-  TempIn.X := (Inside.X - x1) / Delta.X;
-  TempIn.Y := (Inside.Y - y1) / Delta.Y;
+  TempIn.x := (Inside.x - x1) / Delta.x;
+  TempIn.y := (Inside.y - y1) / Delta.y;
 
-  if TempIn.X < TempIn.Y then
+  if TempIn.x < TempIn.y then
     begin
       // hits x first
-      TIn1 := TempIn.X;
-      TIn2 := TempIn.Y;
+      TIn1 := TempIn.x;
+      TIn2 := TempIn.y;
     end
   else
     begin
       // hits y first
-      TIn1 := TempIn.Y;
-      TIn2 := TempIn.X;
+      TIn1 := TempIn.y;
+      TIn2 := TempIn.x;
     end;
 
   if TIn1 <= 1.0 then
     begin
       if 0.0 < TIn1 then
         begin
-          X^ := Inside.X;
-          Y^ := Inside.Y;
+          x^ := Inside.x;
+          y^ := Inside.y;
 
-          Inc(PtrComp(X), SizeOf(Integer));
-          Inc(PtrComp(Y), SizeOf(Integer));
-          Inc(np);
+          inc(PtrComp(x), SizeOf(Integer));
+          inc(PtrComp(y), SizeOf(Integer));
+          inc(np);
         end;
 
       if TIn2 <= 1.0 then
         begin
-          TempOut.X := (Outside.X - x1) / Delta.X;
-          TempOut.Y := (Outside.Y - y1) / Delta.Y;
+          TempOut.x := (Outside.x - x1) / Delta.x;
+          TempOut.y := (Outside.y - y1) / Delta.y;
 
-          if TempOut.X < TempOut.Y then
-              TOut1 := TempOut.X
+          if TempOut.x < TempOut.y then
+              TOut1 := TempOut.x
           else
-              TOut1 := TempOut.Y;
+              TOut1 := TempOut.y;
 
           if (TIn2 > 0.0) or (TOut1 > 0.0) then
             if TIn2 <= TOut1 then
               begin
                 if TIn2 > 0.0 then
                   begin
-                    if TempIn.X > TempIn.Y then
+                    if TempIn.x > TempIn.y then
                       begin
-                        X^ := Inside.X;
-                        Y^ := y1 + TempIn.X * Delta.Y;
+                        x^ := Inside.x;
+                        y^ := y1 + TempIn.x * Delta.y;
 
                       end
                     else
                       begin
-                        X^ := x1 + TempIn.Y * Delta.X;
-                        Y^ := Inside.Y;
+                        x^ := x1 + TempIn.y * Delta.x;
+                        y^ := Inside.y;
                       end;
 
-                    Inc(PtrComp(X), SizeOf(Integer));
-                    Inc(PtrComp(Y), SizeOf(Integer));
-                    Inc(np);
+                    inc(PtrComp(x), SizeOf(Integer));
+                    inc(PtrComp(y), SizeOf(Integer));
+                    inc(np);
                   end;
 
                 if TOut1 < 1.0 then
-                  if TempOut.X < TempOut.Y then
+                  if TempOut.x < TempOut.y then
                     begin
-                      X^ := Outside.X;
-                      Y^ := y1 + TempOut.X * Delta.Y;
+                      x^ := Outside.x;
+                      y^ := y1 + TempOut.x * Delta.y;
                     end
                   else
                     begin
-                      X^ := x1 + TempOut.Y * Delta.X;
-                      Y^ := Outside.Y;
+                      x^ := x1 + TempOut.y * Delta.x;
+                      y^ := Outside.y;
                     end
                 else
                   begin
-                    X^ := x2;
-                    Y^ := y2;
+                    x^ := x2;
+                    y^ := y2;
                   end;
 
-                Inc(PtrComp(X), SizeOf(Integer));
-                Inc(PtrComp(Y), SizeOf(Integer));
-                Inc(np);
+                inc(PtrComp(x), SizeOf(Integer));
+                inc(PtrComp(y), SizeOf(Integer));
+                inc(np);
 
               end
             else
               begin
-                if TempIn.X > TempIn.Y then
+                if TempIn.x > TempIn.y then
                   begin
-                    X^ := Inside.X;
-                    Y^ := Outside.Y;
+                    x^ := Inside.x;
+                    y^ := Outside.y;
                   end
                 else
                   begin
-                    X^ := Outside.X;
-                    Y^ := Inside.Y;
+                    x^ := Outside.x;
+                    y^ := Inside.y;
                   end;
 
-                Inc(PtrComp(X), SizeOf(Integer));
-                Inc(PtrComp(Y), SizeOf(Integer));
-                Inc(np);
+                inc(PtrComp(x), SizeOf(Integer));
+                inc(PtrComp(y), SizeOf(Integer));
+                inc(np);
               end;
         end;
     end;
@@ -576,3 +573,5 @@ begin
 end;
 
 end. 
+ 
+ 

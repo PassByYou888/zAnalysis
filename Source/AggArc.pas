@@ -37,9 +37,8 @@
 *)
 unit AggArc;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
+interface
 
 uses
   Math,
@@ -60,13 +59,13 @@ type
     procedure Normalize(a1, a2: Double; Ccw: Boolean);
   public
     constructor Create; overload;
-    constructor Create(X, Y, RX, RY, a1, a2: Double;
+    constructor Create(x, y, RX, RY, a1, a2: Double;
       Ccw: Boolean = True); overload;
 
-    procedure Init(X, Y, RX, RY, a1, a2: Double; Ccw: Boolean = True);
+    procedure Init(x, y, RX, RY, a1, a2: Double; Ccw: Boolean = True);
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property ApproximationScale: Double read FScale write SetApproximationScale;
   end;
@@ -80,8 +79,8 @@ constructor TAggArc.Create;
 begin
   fx := 0;
   fy := 0;
-  FRadius.X := 0;
-  FRadius.Y := 0;
+  FRadius.x := 0;
+  FRadius.y := 0;
   FAngle := 0;
   FStart := 0;
   FEnd := 0;
@@ -95,26 +94,26 @@ begin
   FInitialized := False;
 end;
 
-constructor TAggArc.Create(X, Y, RX, RY, a1, a2: Double; Ccw: Boolean = True);
+constructor TAggArc.Create(x, y, RX, RY, a1, a2: Double; Ccw: Boolean = True);
 begin
   Create;
 
-  fx := X;
-  fy := Y;
-  FRadius.X := RX;
-  FRadius.Y := RY;
+  fx := x;
+  fy := y;
+  FRadius.x := RX;
+  FRadius.y := RY;
 
   FScale := 1;
 
   Normalize(a1, a2, Ccw);
 end;
 
-procedure TAggArc.Init(X, Y, RX, RY, a1, a2: Double; Ccw: Boolean = True);
+procedure TAggArc.Init(x, y, RX, RY, a1, a2: Double; Ccw: Boolean = True);
 begin
-  fx := X;
-  fy := Y;
-  FRadius.X := RX;
-  FRadius.Y := RY;
+  fx := x;
+  fy := y;
+  FRadius.x := RX;
+  FRadius.y := RY;
 
   Normalize(a1, a2, Ccw);
 end;
@@ -133,7 +132,7 @@ begin
   FAngle := FStart;
 end;
 
-function TAggArc.Vertex(X, Y: PDouble): Cardinal;
+function TAggArc.Vertex(x, y: PDouble): Cardinal;
 var
   pf: Cardinal;
   Pnt : TPointDouble;
@@ -143,9 +142,9 @@ begin
 
   else if (FAngle < FEnd - FDeltaAngle / 4) <> FCounterClockWise then
   begin
-    SinCos(FEnd, Pnt.Y, Pnt.X);
-    X^ := fx + Pnt.X * FRadius.X;
-    Y^ := fy + Pnt.Y * FRadius.Y;
+    SinCos(FEnd, Pnt.y, Pnt.x);
+    x^ := fx + Pnt.x * FRadius.x;
+    y^ := fy + Pnt.y * FRadius.y;
 
     FPathCmd := CAggPathCmdStop;
 
@@ -153,9 +152,9 @@ begin
   end
   else
   begin
-    SinCos(FAngle, Pnt.Y, Pnt.X);
-    X^ := fx + Pnt.X * FRadius.X;
-    Y^ := fy + Pnt.Y * FRadius.Y;
+    SinCos(FAngle, Pnt.y, Pnt.x);
+    x^ := fx + Pnt.x * FRadius.x;
+    y^ := fy + Pnt.y * FRadius.y;
 
     FAngle := FAngle + FDeltaAngle;
 
@@ -170,7 +169,7 @@ procedure TAggArc.Normalize(a1, a2: Double; Ccw: Boolean);
 var
   RA: Double;
 begin
-  RA := (Abs(FRadius.X) + Abs(FRadius.Y)) * 0.5;
+  RA := (Abs(FRadius.x) + Abs(FRadius.y)) * 0.5;
   FDeltaAngle := ArcCos(RA / (RA + 0.125 / FScale)) * 2;
 
   if Ccw then
@@ -192,3 +191,5 @@ begin
 end;
 
 end. 
+ 
+ 

@@ -142,7 +142,7 @@ begin
 
   SetLength(OriginBuff, ze.Count, 4);
 
-  ze.WaitQuery(procedure(var qState: TQueryState)
+  ze.WaitQueryP(procedure(var qState: TQueryState)
     begin
       OriginBuff[qState.index][0] := ze.vl[qState.StorePos]['age'];
       OriginBuff[qState.index][1] := ze.vl[qState.StorePos]['deposit'];
@@ -219,7 +219,7 @@ begin
   for i := 0 to length(buff) - 1 do
       buff[i] := TStringList.Create;
 
-  ze.WaitQuery(procedure(var qState: TQueryState)
+  ze.WaitQueryP(procedure(var qState: TQueryState)
     var
       v, r: TLVec;
     begin
@@ -254,7 +254,7 @@ begin
   for i := 0 to length(buff) - 1 do
       buff[i] := TStringList.Create;
 
-  ze.WaitQuery(procedure(var qState: TQueryState)
+  ze.WaitQueryP(procedure(var qState: TQueryState)
     var
       v, r: TLVec;
     begin
@@ -291,7 +291,7 @@ begin
   for i := 0 to length(buff) - 1 do
       buff[i] := TStringList.Create;
 
-  ze.WaitQuery(procedure(var qState: TQueryState)
+  ze.WaitQueryP(procedure(var qState: TQueryState)
     var
       v, r: TLVec;
     begin
@@ -327,7 +327,7 @@ begin
   for i := 0 to length(buff) - 1 do
       buff[i] := TStringList.Create;
 
-  ze.WaitQuery(procedure(var qState: TQueryState)
+  ze.WaitQueryP(procedure(var qState: TQueryState)
     var
       v, r: TLVec;
     begin

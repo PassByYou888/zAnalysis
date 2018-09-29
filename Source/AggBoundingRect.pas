@@ -38,11 +38,8 @@
 
 unit AggBoundingRect;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVertexSource;
@@ -66,7 +63,7 @@ function BoundingRect(Vs: TAggVertexSource; Gi: PCardinal;
   Start, Num: Cardinal; x1, y1, x2, y2: PDouble): Boolean;
 var
   i, Cmd: Cardinal;
-  X, Y: Double;
+  x, y: Double;
   First: Boolean;
 begin
   First := True;
@@ -82,39 +79,39 @@ begin
     begin
       Vs.Rewind(PCardinal(PtrComp(Gi) + (Start + i) * SizeOf(Cardinal))^);
 
-      Cmd := Vs.Vertex(@X, @Y);
+      Cmd := Vs.Vertex(@x, @y);
 
       while not IsStop(Cmd) do
         begin
           if IsVertex(Cmd) then
             if First then
               begin
-                x1^ := X;
-                y1^ := Y;
-                x2^ := X;
-                y2^ := Y;
+                x1^ := x;
+                y1^ := y;
+                x2^ := x;
+                y2^ := y;
 
                 First := False;
               end
             else
               begin
-                if X < x1^ then
-                    x1^ := X;
+                if x < x1^ then
+                    x1^ := x;
 
-                if Y < y1^ then
-                    y1^ := Y;
+                if y < y1^ then
+                    y1^ := y;
 
-                if X > x2^ then
-                    x2^ := X;
+                if x > x2^ then
+                    x2^ := x;
 
-                if Y > y2^ then
-                    y2^ := Y;
+                if y > y2^ then
+                    y2^ := y;
               end;
 
-          Cmd := Vs.Vertex(@X, @Y);
+          Cmd := Vs.Vertex(@x, @y);
         end;
 
-      Inc(i);
+      inc(i);
     end;
 
   Result := (x1^ <= x2^) and (y1^ <= y2^);
@@ -130,7 +127,7 @@ function BoundingRectVertexSource(Vs, Gi: TAggVertexSource; Start, Num: Cardinal
   x1, y1, x2, y2: PDouble): Boolean;
 var
   i, Cmd: Cardinal;
-  X, Y: Double;
+  x, y: Double;
   First: Boolean;
 begin
   First := True;
@@ -146,40 +143,40 @@ begin
     begin
       Vs.Rewind(Gi.PathID[Start + i]);
 
-      Cmd := Vs.Vertex(@X, @Y);
+      Cmd := Vs.Vertex(@x, @y);
 
       while not IsStop(Cmd) do
         begin
           if IsVertex(Cmd) then
             if First then
               begin
-                x1^ := X;
-                y1^ := Y;
-                x2^ := X;
-                y2^ := Y;
+                x1^ := x;
+                y1^ := y;
+                x2^ := x;
+                y2^ := y;
 
                 First := False;
 
               end
             else
               begin
-                if X < x1^ then
-                    x1^ := X;
+                if x < x1^ then
+                    x1^ := x;
 
-                if Y < y1^ then
-                    y1^ := Y;
+                if y < y1^ then
+                    y1^ := y;
 
-                if X > x2^ then
-                    x2^ := X;
+                if x > x2^ then
+                    x2^ := x;
 
-                if Y > y2^ then
-                    y2^ := Y;
+                if y > y2^ then
+                    y2^ := y;
               end;
 
-          Cmd := Vs.Vertex(@X, @Y);
+          Cmd := Vs.Vertex(@x, @y);
         end;
 
-      Inc(i);
+      inc(i);
     end;
 
   Result := (x1^ <= x2^) and (y1^ <= y2^);
@@ -196,7 +193,7 @@ function BoundingRectInteger(Vs: TAggVertexSource; Ul: TCardinalList;
   Start, Num: Cardinal; x1, y1, x2, y2: PDouble): Boolean;
 var
   i, Cmd: Cardinal;
-  X, Y: Double;
+  x, y: Double;
   First: Boolean;
 begin
   First := True;
@@ -212,39 +209,39 @@ begin
     begin
       Vs.Rewind(Ul[Start + i]);
 
-      Cmd := Vs.Vertex(@X, @Y);
+      Cmd := Vs.Vertex(@x, @y);
 
       while not IsStop(Cmd) do
         begin
           if IsVertex(Cmd) then
             if First then
               begin
-                x1^ := X;
-                y1^ := Y;
-                x2^ := X;
-                y2^ := Y;
+                x1^ := x;
+                y1^ := y;
+                x2^ := x;
+                y2^ := y;
 
                 First := False;
               end
             else
               begin
-                if X < x1^ then
-                    x1^ := X;
+                if x < x1^ then
+                    x1^ := x;
 
-                if Y < y1^ then
-                    y1^ := Y;
+                if y < y1^ then
+                    y1^ := y;
 
-                if X > x2^ then
-                    x2^ := X;
+                if x > x2^ then
+                    x2^ := x;
 
-                if Y > y2^ then
-                    y2^ := Y;
+                if y > y2^ then
+                    y2^ := y;
               end;
 
-          Cmd := Vs.Vertex(@X, @Y);
+          Cmd := Vs.Vertex(@x, @y);
         end;
 
-      Inc(i);
+      inc(i);
     end;
 
   Result := (x1^ <= x2^) and (y1^ <= y2^);
@@ -254,7 +251,7 @@ function BoundingRectSingle(Vs: TAggVertexSource; PathID: Cardinal;
   x1, y1, x2, y2: PDouble): Boolean;
 var
   Cmd: Cardinal;
-  X, Y: Double;
+  x, y: Double;
   First: Boolean;
 begin
   First := True;
@@ -266,36 +263,36 @@ begin
 
   Vs.Rewind(PathID);
 
-  Cmd := Vs.Vertex(@X, @Y);
+  Cmd := Vs.Vertex(@x, @y);
 
   while not IsStop(Cmd) do
     begin
       if IsVertex(Cmd) then
         if First then
           begin
-            x1^ := X;
-            y1^ := Y;
-            x2^ := X;
-            y2^ := Y;
+            x1^ := x;
+            y1^ := y;
+            x2^ := x;
+            y2^ := y;
 
             First := False;
           end
         else
           begin
-            if X < x1^ then
-                x1^ := X;
+            if x < x1^ then
+                x1^ := x;
 
-            if Y < y1^ then
-                y1^ := Y;
+            if y < y1^ then
+                y1^ := y;
 
-            if X > x2^ then
-                x2^ := X;
+            if x > x2^ then
+                x2^ := x;
 
-            if Y > y2^ then
-                y2^ := Y;
+            if y > y2^ then
+                y2^ := y;
           end;
 
-      Cmd := Vs.Vertex(@X, @Y);
+      Cmd := Vs.Vertex(@x, @y);
     end;
 
   Result := (x1^ <= x2^) and (y1^ <= y2^);
@@ -347,7 +344,7 @@ begin
           First := False;
         end;
 
-      Inc(i);
+      inc(i);
     end;
 
   Result := (x1^ <= x2^) and (y1^ <= y2^);
@@ -360,3 +357,5 @@ begin
 end;
 
 end. 
+ 
+ 

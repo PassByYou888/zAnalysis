@@ -18,12 +18,10 @@ unit h264MB_encoder;
 interface
 
 uses
-  h264Stdint, h264Common, h264Util, h264Macroblock, h264Frame, h264Stats,
+  h264Types, h264Common, h264Util, h264Macroblock, h264Frame, h264Stats,
   h264Intra_pred, h264inter_pred, h264Motion_comp, h264Motion_est, h264Loopfilter, h264stream, CoreClasses;
 
 type
-  { TMacroblockEncoder }
-
   TMacroblockEncoder = class
   private
     mb: TMacroblock;
@@ -53,36 +51,28 @@ type
 
     constructor Create; virtual;
     destructor Destroy; override;
-    procedure SetFrame(const F: TFrame); virtual;
+    procedure SetFrame(const f: TFrame); virtual;
     procedure Encode(mbx, mby: int32_t); virtual; abstract;
   end;
-
-  { TMBEncoderNoAnalyse }
 
   TMBEncoderNoAnalyse = class(TMacroblockEncoder)
     constructor Create; override;
     procedure Encode(mbx, mby: int32_t); override;
   end;
 
-  { TMBEncoderQuickAnalyse }
-
   TMBEncoderQuickAnalyse = class(TMacroblockEncoder)
   public
     procedure Encode(mbx, mby: int32_t); override;
   end;
-
-  { TMBEncoderQuickAnalyseSATD }
 
   TMBEncoderQuickAnalyseSATD = class(TMBEncoderQuickAnalyse)
   private
     InterCost: IInterPredCostEvaluator;
   public
     constructor Create; override;
-    procedure SetFrame(const F: TFrame); override;
+    procedure SetFrame(const f: TFrame); override;
     procedure Encode(mbx, mby: int32_t); override;
   end;
-
-  { TMBEncoderRateAnalyse }
 
   TMBEncoderRateAnalyse = class(TMacroblockEncoder)
   private
@@ -104,12 +94,10 @@ implementation
 const
   MIN_I_4x4_BITCOST = 27;
 
-  { TMacroblockEncoder }
-
 procedure TMacroblockEncoder.InitMB(mbx, mby: int32_t);
 begin
-  mb.X := mbx;
-  mb.Y := mby;
+  mb.x := mbx;
+  mb.y := mby;
   if mbx = 0 then
       mb_init_row_ptrs(mb, frame, mby);
 
@@ -136,17 +124,17 @@ begin
   Store;
   if not loopfilter then
     begin
-      Inc(stats.ssd[0], DSP.ssd_16x16(mb.pixels_dec, mb.pfenc, frame.stride));
-      Inc(stats.ssd[1], DSP.ssd_8x8(mb.pixels_dec_c[0], mb.pfenc_c[0], frame.stride_c));
-      Inc(stats.ssd[2], DSP.ssd_8x8(mb.pixels_dec_c[1], mb.pfenc_c[1], frame.stride_c));
+      inc(stats.ssd[0], DSP.ssd_16x16(mb.pixels_dec, mb.pfenc, frame.stride));
+      inc(stats.ssd[1], DSP.ssd_8x8(mb.pixels_dec_c[0], mb.pfenc_c[0], frame.stride_c));
+      inc(stats.ssd[2], DSP.ssd_8x8(mb.pixels_dec_c[1], mb.pfenc_c[1], frame.stride_c));
     end;
 
-  Inc(mb.pfenc, 16);
-  Inc(mb.pfdec, 16);
-  Inc(mb.pfenc_c[0], 8);
-  Inc(mb.pfenc_c[1], 8);
-  Inc(mb.pfdec_c[0], 8);
-  Inc(mb.pfdec_c[1], 8);
+  inc(mb.pfenc, 16);
+  inc(mb.pfdec, 16);
+  inc(mb.pfenc_c[0], 8);
+  inc(mb.pfenc_c[1], 8);
+  inc(mb.pfdec_c[0], 8);
+  inc(mb.pfdec_c[1], 8);
 end;
 
 procedure TMacroblockEncoder.EncodeCurrentType;
@@ -165,7 +153,7 @@ begin
     MB_I_16x16:
       begin
         mb.mv := ZERO_MV;
-        intrapred.Predict_16x16(mb.i16_pred_mode, mb.X, mb.Y);
+        intrapred.Predict_16x16(mb.i16_pred_mode, mb.x, mb.y);
         encode_mb_intra_i16(mb);
         if chroma_coding then
             encode_mb_chroma(mb, intrapred, True);
@@ -176,7 +164,7 @@ begin
         encode_mb_inter(mb);
         if chroma_coding then
           begin
-            mc.CompensateChroma(mb.fref, mb.mv, mb.X, mb.Y, mb.mcomp_c[0], mb.mcomp_c[1]);
+            mc.CompensateChroma(mb.fref, mb.mv, mb.x, mb.y, mb.mcomp_c[0], mb.mcomp_c[1]);
             encode_mb_chroma(mb, intrapred, False);
           end;
       end;
@@ -210,7 +198,7 @@ procedure TMacroblockEncoder.Store;
 var
   i: int32_t;
 begin
-  i := mb.Y * frame.mbw + mb.X;
+  i := mb.y * frame.mbw + mb.x;
   CopyPtr(@mb, @frame.mbs[i], SizeOf(TMacroblock));
 
   if mb.mbtype <> MB_I_4x4 then
@@ -223,29 +211,29 @@ begin
   case mb.mbtype of
     MB_I_4x4:
       begin
-        Inc(stats.mb_i4_count);
+        inc(stats.mb_i4_count);
         for i := 0 to 15 do
-            Inc(stats.pred[mb.i4_pred_mode[i]]);
-        Inc(stats.pred_8x8_chroma[mb.chroma_pred_mode]);
-        Inc(stats.itex_bits, mb.residual_bits);
+            inc(stats.pred[mb.i4_pred_mode[i]]);
+        inc(stats.pred_8x8_chroma[mb.chroma_pred_mode]);
+        inc(stats.itex_bits, mb.residual_bits);
       end;
     MB_I_16x16:
       begin
-        Inc(stats.mb_i16_count);
-        Inc(stats.pred16[mb.i16_pred_mode]);
-        Inc(stats.pred_8x8_chroma[mb.chroma_pred_mode]);
-        Inc(stats.itex_bits, mb.residual_bits);
+        inc(stats.mb_i16_count);
+        inc(stats.pred16[mb.i16_pred_mode]);
+        inc(stats.pred_8x8_chroma[mb.chroma_pred_mode]);
+        inc(stats.itex_bits, mb.residual_bits);
       end;
     MB_P_16x16:
       begin
-        Inc(stats.mb_p_count);
-        Inc(stats.ref[mb.ref]);
-        Inc(stats.ptex_bits, mb.residual_bits);
+        inc(stats.mb_p_count);
+        inc(stats.ref[mb.ref]);
+        inc(stats.ptex_bits, mb.residual_bits);
       end;
     MB_P_SKIP:
       begin
-        Inc(stats.mb_skip_count);
-        Inc(stats.ref[mb.ref]);
+        inc(stats.mb_skip_count);
+        inc(stats.ref[mb.ref]);
       end;
   end;
 end;
@@ -253,7 +241,8 @@ end;
 const
   MIN_XY = -FRAME_EDGE_W * 4;
 
-  { PSkip test, based on SSD treshold. Also stores SATD luma & SSD chroma score
+  {
+    PSkip test, based on SSD treshold. Also stores SATD luma & SSD chroma score
     true = PSkip is acceptable
   }
 function TMacroblockEncoder.TrySkip(const use_satd: Boolean): Boolean;
@@ -269,22 +258,22 @@ begin
   if h264s.NoPSkipAllowed then
       Exit;
 
-  if (mb.Y < frame.mbh - 1) or (mb.X < frame.mbw - 1) then
+  if (mb.y < frame.mbh - 1) or (mb.x < frame.mbw - 1) then
     begin
       mv := mb.mv_skip;
 
       // can't handle out-of-frame mvp, don't skip
-      if mv.X + mb.X * 64 >= frame.w * 4 - 34 then
+      if mv.x + mb.x * 64 >= frame.w * 4 - 34 then
           Exit;
-      if mv.Y + mb.Y * 64 >= frame.h * 4 - 34 then
+      if mv.y + mb.y * 64 >= frame.h * 4 - 34 then
           Exit;
-      if mv.X + mb.X * 64 < MIN_XY then
+      if mv.x + mb.x * 64 < MIN_XY then
           Exit;
-      if mv.Y + mb.Y * 64 < MIN_XY then
+      if mv.y + mb.y * 64 < MIN_XY then
           Exit;
 
       mb.mv := mv;
-      mc.Compensate(mb.fref, mb.mv, mb.X, mb.Y, mb.mcomp);
+      mc.Compensate(mb.fref, mb.mv, mb.x, mb.y, mb.mcomp);
       score := DSP.ssd_16x16(mb.pixels, mb.mcomp, 16);
       if use_satd then
           mb.score_skip := DSP.satd_16x16(mb.pixels, mb.mcomp, 16)
@@ -293,8 +282,8 @@ begin
       score_c := 0;
       if chroma_coding then
         begin
-          mc.CompensateChroma(mb.fref, mb.mv, mb.X, mb.Y, mb.mcomp_c[0], mb.mcomp_c[1]);
-          Inc(score_c, GetChromaMcSSD);
+          mc.CompensateChroma(mb.fref, mb.mv, mb.x, mb.y, mb.mcomp_c[0], mb.mcomp_c[1]);
+          inc(score_c, GetChromaMcSSD);
         end;
       mb.score_skip_uv := score_c;
 
@@ -334,16 +323,16 @@ begin
   mv := mb.mv_skip;
 
   // can't handle out-of-frame mvp, don't skip
-  if mv.X + mb.X * 64 >= frame.w * 4 - 34 then
+  if mv.x + mb.x * 64 >= frame.w * 4 - 34 then
       Exit;
-  if mv.Y + mb.Y * 64 >= frame.h * 4 - 34 then
+  if mv.y + mb.y * 64 >= frame.h * 4 - 34 then
       Exit;
-  if mv.X + mb.X * 64 < MIN_XY then
+  if mv.x + mb.x * 64 < MIN_XY then
       Exit;
-  if mv.Y + mb.Y * 64 < MIN_XY then
+  if mv.y + mb.y * 64 < MIN_XY then
       Exit;
 
-  if (mb.cbp = 0) and ((mb.Y < frame.mbh - 1) or (mb.X < frame.mbw - 1)) then
+  if (mb.cbp = 0) and ((mb.y < frame.mbh - 1) or (mb.x < frame.mbw - 1)) then
     begin
       // restore skip ref/mv
       if (mb.ref <> 0) or (mb.mbtype <> MB_P_16x16) then
@@ -354,9 +343,9 @@ begin
         end;
       mb.mbtype := MB_P_SKIP;
       mb.mv := mb.mv_skip;
-      mc.Compensate(mb.fref, mb.mv, mb.X, mb.Y, mb.mcomp);
+      mc.Compensate(mb.fref, mb.mv, mb.x, mb.y, mb.mcomp);
       if chroma_coding then
-          mc.CompensateChroma(mb.fref, mb.mv, mb.X, mb.Y, mb.mcomp_c[0], mb.mcomp_c[1]);
+          mc.CompensateChroma(mb.fref, mb.mv, mb.x, mb.y, mb.mcomp_c[0], mb.mcomp_c[1]);
     end;
 end;
 
@@ -391,16 +380,14 @@ begin
   inherited Destroy;
 end;
 
-procedure TMacroblockEncoder.SetFrame(const F: TFrame);
+procedure TMacroblockEncoder.SetFrame(const f: TFrame);
 begin
-  frame := F;
+  frame := f;
   intrapred.frame_stride := frame.stride;
   intrapred.stride_c := frame.stride_c;
   intrapred.mb_width := frame.mbw;
-  stats := F.stats;
+  stats := f.stats;
 end;
-
-{ TMBEncoderRateAnalyse }
 
 procedure TMBEncoderRateAnalyse.CacheStore;
 begin
@@ -499,7 +486,7 @@ begin
       Exit;
 
   // encode as intra if prediction score isn't much worse
-  intrapred.Analyse_16x16(mb.X, mb.Y, mb.i16_pred_mode, score_i);
+  intrapred.Analyse_16x16(mb.x, mb.y, mb.i16_pred_mode, score_i);
   if score_i < score_p * 2 then
     begin
       CacheStore;
@@ -539,7 +526,7 @@ var
   bits_i16, bits_i4: int32_t;
   score_i: int32_t;
 begin
-  intrapred.Analyse_16x16(mb.X, mb.Y, mb.i16_pred_mode, score_i);
+  intrapred.Analyse_16x16(mb.x, mb.y, mb.i16_pred_mode, score_i);
   mb.mbtype := MB_I_16x16;
   EncodeCurrentType;
   CacheStore;
@@ -570,8 +557,6 @@ begin
   FinalizeMB;
 end;
 
-{ TMBEncoderQuickAnalyse }
-
 procedure TMBEncoderQuickAnalyse.Encode(mbx, mby: int32_t);
 const
   I16_SAD_QPBONUS = 10;
@@ -599,7 +584,7 @@ begin
       score_p := DSP.sad_16x16(mb.pixels, mb.mcomp, 16);
 
       // intra score
-      intrapred.Analyse_16x16(mb.X, mb.Y, mb.i16_pred_mode, score_i);
+      intrapred.Analyse_16x16(mb.x, mb.y, mb.i16_pred_mode, score_i);
       if score_i < score_p then
         begin
           if score_i < mb.qp * I16_SAD_QPBONUS then
@@ -628,17 +613,15 @@ begin
   FinalizeMB;
 end;
 
-{ TMBEncoderQuickAnalyseSATD }
-
 constructor TMBEncoderQuickAnalyseSATD.Create;
 begin
   inherited Create;
   intrapred.UseSATDCompare;
 end;
 
-procedure TMBEncoderQuickAnalyseSATD.SetFrame(const F: TFrame);
+procedure TMBEncoderQuickAnalyseSATD.SetFrame(const f: TFrame);
 begin
-  inherited SetFrame(F);
+  inherited SetFrame(f);
   InterCost := h264s.GetInterPredCostEvaluator;
 end;
 
@@ -670,10 +653,10 @@ begin
       // inter score
       me.Estimate(mb, frame);
       score_p := DSP.satd_16x16(mb.pixels, mb.mcomp, 16);
-      Inc(score_p, InterCost.bitcost(mb.mv - mb.mvp));
+      inc(score_p, InterCost.bitcost(mb.mv - mb.mvp));
 
       // intra score
-      intrapred.Analyse_16x16(mb.X, mb.Y, mb.i16_pred_mode, score_i);
+      intrapred.Analyse_16x16(mb.x, mb.y, mb.i16_pred_mode, score_i);
       if score_i + INTRA_MODE_PENALTY < score_p then
         begin
           if score_i < mb.qp * I16_SATD_QPBONUS then
@@ -695,7 +678,7 @@ begin
     end
   else
     begin
-      intrapred.Analyse_16x16(mb.X, mb.Y, mb.i16_pred_mode, score_i);
+      intrapred.Analyse_16x16(mb.x, mb.y, mb.i16_pred_mode, score_i);
       if score_i < mb.qp * I16_SATD_QPBONUS then
           mb.mbtype := MB_I_16x16
       else
@@ -705,8 +688,6 @@ begin
 
   FinalizeMB;
 end;
-
-{ TMBEncoderNoAnalyse }
 
 constructor TMBEncoderNoAnalyse.Create;
 begin
@@ -742,3 +723,5 @@ begin
 end;
 
 end.  
+ 
+ 

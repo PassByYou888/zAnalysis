@@ -10,7 +10,7 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 type
-  TMinLBFGSState = packed record
+  TMinLBFGSState = record
     n: TLInt;
     M: TLInt;
     EpsG: TLFloat;
@@ -26,7 +26,7 @@ type
     q: TLInt;
     p: TLInt;
     Rho: TLVec;
-    Y: TLMatrix;
+    y: TLMatrix;
     s: TLMatrix;
     Theta: TLVec;
     d: TLVec;
@@ -34,8 +34,8 @@ type
     Work: TLVec;
     FOld: TLFloat;
     GammaK: TLFloat;
-    X: TLVec;
-    F: TLFloat;
+    x: TLVec;
+    f: TLFloat;
     g: TLVec;
     NeedFG: Boolean;
     XUpdated: Boolean;
@@ -46,22 +46,22 @@ type
     LState: TLinMinState;
   end;
 
-  TMinLBFGSReport = packed record
+  TMinLBFGSReport = record
     IterationsCount: TLInt;
     NFEV: TLInt;
     TerminationType: TLInt;
   end;
 
-procedure MinLBFGSCreate(n: TLInt; M: TLInt; const X: TLVec; var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MinLBFGSSetCond(var State: TMinLBFGSState; EpsG: TLFloat; EpsF: TLFloat; EpsX: TLFloat; MAXITS: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MinLBFGSSetXRep(var State: TMinLBFGSState; NeedXRep: Boolean); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MinLBFGSSetStpMax(var State: TMinLBFGSState; StpMax: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MinLBFGSCreateX(n: TLInt; M: TLInt; const X: TLVec; Flags: TLInt; var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function MinLBFGSIteration(var State: TMinLBFGSState): Boolean; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MinLBFGSResults(const State: TMinLBFGSState; var X: TLVec; var Rep: TMinLBFGSReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure MinLBFGSFree(var X: TLVec; var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure MinLBFGSCreate(n: TLInt; M: TLInt; const x: TLVec; var State: TMinLBFGSState); forward;
+procedure MinLBFGSSetCond(var State: TMinLBFGSState; EpsG: TLFloat; EpsF: TLFloat; EpsX: TLFloat; MAXITS: TLInt); forward;
+procedure MinLBFGSSetXRep(var State: TMinLBFGSState; NeedXRep: Boolean); forward;
+procedure MinLBFGSSetStpMax(var State: TMinLBFGSState; StpMax: TLFloat); forward;
+procedure MinLBFGSCreateX(n: TLInt; M: TLInt; const x: TLVec; Flags: TLInt; var State: TMinLBFGSState); forward;
+function MinLBFGSIteration(var State: TMinLBFGSState): Boolean; forward;
+procedure MinLBFGSResults(const State: TMinLBFGSState; var x: TLVec; var Rep: TMinLBFGSReport); forward;
+procedure MinLBFGSFree(var x: TLVec; var State: TMinLBFGSState); forward;
 
-procedure ClearRequestFields(var State: TMinLBFGSState); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure ClearRequestFields(var State: TMinLBFGSState); forward;
 
 
 (* ************************************************************************
@@ -104,9 +104,9 @@ procedure ClearRequestFields(var State: TMinLBFGSState); forward; {$IFDEF INLINE
   L-BFGS rarely needs such a tuning.
   ************************************************************************ *)
 procedure MinLBFGSCreate(n: TLInt; M: TLInt;
-  const X: TLVec; var State: TMinLBFGSState);
+  const x: TLVec; var State: TMinLBFGSState);
 begin
-  MinLBFGSCreateX(n, M, X, 0, State);
+  MinLBFGSCreateX(n, M, x, 0, State);
 end;
 
 (* ************************************************************************
@@ -140,11 +140,8 @@ begin
   Assert(AP_FP_Greater_Eq(EpsF, 0), 'MinLBFGSSetCond: negative EpsF!');
   Assert(AP_FP_Greater_Eq(EpsX, 0), 'MinLBFGSSetCond: negative EpsX!');
   Assert(MAXITS >= 0, 'MinLBFGSSetCond: negative MaxIts!');
-  if AP_FP_Eq(EpsG, 0) and AP_FP_Eq(EpsF, 0) and AP_FP_Eq(EpsX, 0) and
-    (MAXITS = 0) then
-    begin
+  if AP_FP_Eq(EpsG, 0) and AP_FP_Eq(EpsF, 0) and AP_FP_Eq(EpsX, 0) and (MAXITS = 0) then
       EpsX := 1.0E-6;
-    end;
   State.EpsG := EpsG;
   State.EpsF := EpsF;
   State.EpsX := EpsX;
@@ -207,7 +204,7 @@ end;
   TMinLBFGSState structure can set Flags to 1.
   ************************************************************************ *)
 procedure MinLBFGSCreateX(n: TLInt; M: TLInt;
-  const X: TLVec; Flags: TLInt; var State: TMinLBFGSState);
+  const x: TLVec; Flags: TLInt; var State: TMinLBFGSState);
 var
   AllocateMem: Boolean;
 begin
@@ -227,10 +224,10 @@ begin
     begin
       SetLength(State.Rho, M (* - 1 + 1 // optimized compiler *) );
       SetLength(State.Theta, M (* - 1 + 1 // optimized compiler *) );
-      SetLength(State.Y, M (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+      SetLength(State.y, M (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
       SetLength(State.s, M (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
       SetLength(State.d, n (* - 1 + 1 // optimized compiler *) );
-      SetLength(State.X, n (* - 1 + 1 // optimized compiler *) );
+      SetLength(State.x, n (* - 1 + 1 // optimized compiler *) );
       SetLength(State.g, n (* - 1 + 1 // optimized compiler *) );
       SetLength(State.Work, n (* - 1 + 1 // optimized compiler *) );
     end;
@@ -242,7 +239,7 @@ begin
   // Prepare first run
   //
   State.k := 0;
-  APVMove(@State.X[0], 0, n - 1, @X[0], 0, n - 1);
+  APVMove(@State.x[0], 0, n - 1, @x[0], 0, n - 1);
   SetLength(State.RState.IA, 6 + 1);
   SetLength(State.RState.RA, 4 + 1);
   State.RState.Stage := -1;
@@ -291,7 +288,7 @@ var
   EpsG  : TLFloat;
   EpsX  : TLFloat;
   i     : TLInt;
-  J     : TLInt;
+  j     : TLInt;
   IC    : TLInt;
   MCINFO: TLInt;
   v     : TLFloat;
@@ -317,7 +314,7 @@ begin
       M := State.RState.IA[1];
       MAXITS := State.RState.IA[2];
       i := State.RState.IA[3];
-      J := State.RState.IA[4];
+      j := State.RState.IA[4];
       IC := State.RState.IA[5];
       MCINFO := State.RState.IA[6];
       EpsF := State.RState.RA[0];
@@ -332,7 +329,7 @@ begin
       M := -989;
       MAXITS := -834;
       i := 900;
-      J := -287;
+      j := -287;
       IC := 364;
       MCINFO := 214;
       EpsF := -338;
@@ -395,7 +392,7 @@ lbl_0:
 lbl_1:
 lbl_4:
   State.RepNFEV := 1;
-  State.FOld := State.F;
+  State.FOld := State.f;
   v := APVDotProduct(@State.g[0], 0, n - 1, @State.g[0], 0, n - 1);
   v := Sqrt(v);
   if AP_FP_Less_Eq(v, EpsG) then
@@ -436,8 +433,8 @@ lbl_6:
   //
   // Store X[k], G[k]
   //
-  APVMoveNeg(@State.s[State.p][0], 0, n - 1, @State.X[0], 0, n - 1);
-  APVMoveNeg(@State.Y[State.p][0], 0, n - 1, @State.g[0], 0, n - 1);
+  APVMoveNeg(@State.s[State.p][0], 0, n - 1, @State.x[0], 0, n - 1);
+  APVMoveNeg(@State.y[State.p][0], 0, n - 1, @State.g[0], 0, n - 1);
 
   //
   // Minimize F(x+alpha*d)
@@ -449,7 +446,7 @@ lbl_6:
       State.Stp := 1.0;
     end;
   LinMinNormalizeD(State.d, State.Stp, n);
-  MCSRCH(n, State.X, State.F, State.g, State.d, State.Stp, State.StpMax, MCINFO,
+  MCSRCH(n, State.x, State.f, State.g, State.d, State.Stp, State.StpMax, MCINFO,
     State.NFEV, State.Work, State.LState, State.MCStage);
 lbl_8:
   if State.MCStage = 0 then
@@ -461,7 +458,7 @@ lbl_8:
   State.RState.Stage := 2;
   goto lbl_rcomm;
 lbl_2:
-  MCSRCH(n, State.X, State.F, State.g, State.d, State.Stp, State.StpMax, MCINFO,
+  MCSRCH(n, State.x, State.f, State.g, State.d, State.Stp, State.StpMax, MCINFO,
     State.NFEV, State.Work, State.LState, State.MCStage);
   goto lbl_8;
 lbl_9:
@@ -481,8 +478,8 @@ lbl_3:
 lbl_10:
   State.RepNFEV := State.RepNFEV + State.NFEV;
   State.RepIterationsCount := State.RepIterationsCount + 1;
-  APVAdd(@State.s[State.p][0], 0, n - 1, @State.X[0], 0, n - 1);
-  APVAdd(@State.Y[State.p][0], 0, n - 1, @State.g[0], 0, n - 1);
+  APVAdd(@State.s[State.p][0], 0, n - 1, @State.x[0], 0, n - 1);
+  APVAdd(@State.y[State.p][0], 0, n - 1, @State.g[0], 0, n - 1);
 
   //
   // Stopping conditions
@@ -508,8 +505,8 @@ lbl_10:
       Result := False;
       Exit;
     end;
-  if AP_FP_Less_Eq(State.FOld - State.F, EpsF * Max(AbsReal(State.FOld),
-    Max(AbsReal(State.F), 1.0))) then
+  if AP_FP_Less_Eq(State.FOld - State.f, EpsF * Max(AbsReal(State.FOld),
+    Max(AbsReal(State.f), 1.0))) then
     begin
 
       //
@@ -549,7 +546,7 @@ lbl_10:
       // antigradient vector, because it  leads to more
       // transparent code with less number of special cases
       //
-      State.FOld := State.F;
+      State.FOld := State.f;
       APVMoveNeg(@State.d[0], 0, n - 1, @State.g[0], 0, n - 1);
     end
   else
@@ -558,9 +555,9 @@ lbl_10:
       //
       // Calculate Rho[k], GammaK
       //
-      v := APVDotProduct(@State.Y[State.p][0], 0, n - 1, @State.s[State.p][0],
+      v := APVDotProduct(@State.y[State.p][0], 0, n - 1, @State.s[State.p][0],
         0, n - 1);
-      VV := APVDotProduct(@State.Y[State.p][0], 0, n - 1, @State.Y[State.p][0],
+      VV := APVDotProduct(@State.y[State.p][0], 0, n - 1, @State.y[State.p][0],
         0, n - 1);
       if AP_FP_Eq(v, 0) or AP_FP_Eq(VV, 0) then
         begin
@@ -597,8 +594,8 @@ lbl_10:
           v := APVDotProduct(@State.s[IC][0], 0, n - 1, @State.Work[0], 0, n - 1);
           State.Theta[IC] := v;
           VV := v * State.Rho[IC];
-          APVSub(@State.Work[0], 0, n - 1, @State.Y[IC][0], 0, n - 1, VV);
-          Dec(i);
+          APVSub(@State.Work[0], 0, n - 1, @State.y[IC][0], 0, n - 1, VV);
+          dec(i);
         end;
       v := State.GammaK;
       APVMul(@State.Work[0], 0, n - 1, v);
@@ -606,17 +603,17 @@ lbl_10:
       while i <= State.k do
         begin
           IC := i mod M;
-          v := APVDotProduct(@State.Y[IC][0], 0, n - 1, @State.Work[0], 0, n - 1);
+          v := APVDotProduct(@State.y[IC][0], 0, n - 1, @State.Work[0], 0, n - 1);
           VV := State.Rho[IC] * (-v + State.Theta[IC]);
           APVAdd(@State.Work[0], 0, n - 1, @State.s[IC][0], 0, n - 1, VV);
-          Inc(i);
+          inc(i);
         end;
       APVMoveNeg(@State.d[0], 0, n - 1, @State.Work[0], 0, n - 1);
 
       //
       // Next step
       //
-      State.FOld := State.F;
+      State.FOld := State.f;
       State.k := State.k + 1;
     end;
   goto lbl_6;
@@ -633,7 +630,7 @@ lbl_rcomm:
   State.RState.IA[1] := M;
   State.RState.IA[2] := MAXITS;
   State.RState.IA[3] := i;
-  State.RState.IA[4] := J;
+  State.RState.IA[4] := j;
   State.RState.IA[5] := IC;
   State.RState.IA[6] := MCINFO;
   State.RState.RA[0] := EpsF;
@@ -668,26 +665,26 @@ end;
   * Rep.IterationsCount contains iterations count
   * NFEV countains number of function calculations
   ************************************************************************ *)
-procedure MinLBFGSResults(const State: TMinLBFGSState; var X: TLVec;
+procedure MinLBFGSResults(const State: TMinLBFGSState; var x: TLVec;
   var Rep: TMinLBFGSReport);
 begin
-  SetLength(X, State.n (* - 1 + 1 // optimized compiler *) );
-  APVMove(@X[0], 0, State.n - 1, @State.X[0], 0, State.n - 1);
+  SetLength(x, State.n (* - 1 + 1 // optimized compiler *) );
+  APVMove(@x[0], 0, State.n - 1, @State.x[0], 0, State.n - 1);
   Rep.IterationsCount := State.RepIterationsCount;
   Rep.NFEV := State.RepNFEV;
   Rep.TerminationType := State.RepTerminationType;
 end;
 
-procedure MinLBFGSFree(var X: TLVec; var State: TMinLBFGSState);
+procedure MinLBFGSFree(var x: TLVec; var State: TMinLBFGSState);
 begin
-  SetLength(X, 0);
+  SetLength(x, 0);
 
   SetLength(State.Rho, 0);
   SetLength(State.Theta, 0);
-  SetLength(State.Y, 0);
+  SetLength(State.y, 0);
   SetLength(State.s, 0);
   SetLength(State.d, 0);
-  SetLength(State.X, 0);
+  SetLength(State.x, 0);
   SetLength(State.g, 0);
   SetLength(State.Work, 0);
   SetLength(State.RState.IA, 0);
@@ -702,3 +699,5 @@ begin
   State.NeedFG := False;
   State.XUpdated := False;
 end; 
+ 
+ 

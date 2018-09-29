@@ -45,11 +45,8 @@ unit AggTransPerspective;
   ////////////////////////////////////////////////////////////////////////////////
 *)
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   Math,
   AggBasics,
@@ -60,12 +57,12 @@ uses
 type
   PAggIteratorX23 = ^TAggIteratorX23;
 
-  TAggIteratorX23 = packed record
+  TAggIteratorX23 = record
   public
     Den, DenStep: Double;
     NomStep, Nom: TPointDouble;
 
-    X, Y: Double;
+    x, y: Double;
   public
     procedure Initialize(TX, TY, Step: Double; M: PDoubleArray8); overload;
 
@@ -101,7 +98,7 @@ type
     procedure QuadToRect(Quad: PQuadDouble; x1, y1, x2, y2: Double); overload;
     procedure QuadToRect(Quad: PQuadDouble; Rect: TRectDouble); overload;
 
-    function GetBegin(X, Y, Step: Double): TAggIteratorX23;
+    function GetBegin(x, y, Step: Double): TAggIteratorX23;
 
     // Check if the equations were solved successfully
     property IsValid: Boolean read FValid;
@@ -112,14 +109,14 @@ type
 
   TAggTransPerspective = class;
 
-  TAggIteratorXRecord = packed record
+  TAggIteratorXRecord = record
   public
     Den, DenStep: Double;
     Nom, NomStep: TPointDouble;
 
-    X, Y: Double;
+    x, y: Double;
   public
-    procedure Initialize(X, Y, Step: Double; M: TAggTransPerspective); overload;
+    procedure Initialize(x, y, Step: Double; M: TAggTransPerspective); overload;
 
     procedure OperatorInc;
   end;
@@ -131,7 +128,7 @@ type
     TransformAffine: TAggProcTransform;
 
     // private
-    function GetBegin(X, Y, Step: Double): TAggIteratorXRecord;
+    function GetBegin(x, y, Step: Double): TAggIteratorXRecord;
     procedure InitializeTransforms;
   public
     // ------------------------------------------------------- Construction
@@ -145,7 +142,7 @@ type
     constructor Create(M: PAggQuadrilateral); overload;
 
     // From affine
-    constructor CreateAffine(A: TAggTransAffine);
+    constructor CreateAffine(a: TAggTransAffine);
 
     // From affine
     constructor Create(p: TAggTransPerspective); overload;
@@ -164,7 +161,7 @@ type
     // -------------------------------------- Quadrilateral transformations
     // The arguments are double[8] that are mapped to quadrilaterals:
     // x1,y1, x2,y2, x3,y3, x4,y4
-    function QuadToQuad(qs, Qd: PAggQuadrilateral): Boolean;
+    function QuadToQuad(Qs, Qd: PAggQuadrilateral): Boolean;
 
     function RectToQuad(x1, y1, x2, y2: Double; q: PAggQuadrilateral): Boolean; overload;
     function RectToQuad(Rect: TRectDouble; q: PAggQuadrilateral): Boolean; overload;
@@ -185,13 +182,13 @@ type
     function Invert: Boolean;
 
     // Direct transformations operations
-    function Translate(X, Y: Double): TAggTransPerspective;
-    function Rotate(A: Double): TAggTransPerspective;
+    function Translate(x, y: Double): TAggTransPerspective;
+    function Rotate(a: Double): TAggTransPerspective;
     function Scale(s: Double): TAggTransPerspective; overload;
-    function Scale(X, Y: Double): TAggTransPerspective; overload;
+    function Scale(x, y: Double): TAggTransPerspective; overload;
 
     // Multiply the matrix by another one
-    function Multiply(A: TAggTransPerspective): TAggTransPerspective;
+    function Multiply(a: TAggTransPerspective): TAggTransPerspective;
 
     // Multiply "m" by "this" and assign the result to "this"
     function PreMultiply(b: TAggTransPerspective): TAggTransPerspective;
@@ -203,7 +200,7 @@ type
     function PreMultiplyInv(M: TAggTransPerspective): TAggTransPerspective;
 
     // Multiply the matrix by another one
-    function MultiplyAffine(A: TAggTransAffine): TAggTransPerspective;
+    function MultiplyAffine(a: TAggTransAffine): TAggTransPerspective;
 
     // Multiply "m" by "this" and assign the result to "this"
     function PreMultiplyAffine(b: TAggTransAffine): TAggTransPerspective;
@@ -219,7 +216,7 @@ type
     function LoadFrom(M: PAggQuadrilateral): TAggTransPerspective;
 
     // ---------------------------------------------------------- Auxiliary
-    function FromAffine(A: TAggTransAffine): TAggTransPerspective;
+    function FromAffine(a: TAggTransAffine): TAggTransPerspective;
 
     function Determinant: Double;
     function DeterminantReciprocal: Double;
@@ -235,8 +232,8 @@ type
     function Rotation: Double;
 
     procedure Translation(dx, dy: PDouble);
-    procedure Scaling(X, Y: PDouble);
-    procedure ScalingAbs(X, Y: PDouble);
+    procedure Scaling(x, y: PDouble);
+    procedure ScalingAbs(x, y: PDouble);
   end;
 
 implementation
@@ -251,13 +248,13 @@ begin
   Den := M[6] * TX + M[7] * TY + 1;
   DenStep := M[6] * Step;
 
-  Nom.X := M[0] + M[1] * TX + M[2] * TY;
-  Nom.Y := M[3] + M[4] * TX + M[5] * TY;
+  Nom.x := M[0] + M[1] * TX + M[2] * TY;
+  Nom.y := M[3] + M[4] * TX + M[5] * TY;
   NomStep := PointDouble(M[1] * Step, M[4] * Step);
 
   d := 1 / Den;
-  X := Nom.X * d;
-  Y := Nom.Y * d;
+  x := Nom.x * d;
+  y := Nom.y * d;
 end;
 
 procedure TAggIteratorX23.IncOperator;
@@ -265,24 +262,24 @@ var
   d: Double;
 begin
   Den := Den + DenStep;
-  Nom.X := Nom.X + NomStep.X;
-  Nom.Y := Nom.Y + NomStep.Y;
+  Nom.x := Nom.x + NomStep.x;
+  Nom.y := Nom.y + NomStep.y;
 
   d := 1 / Den;
-  X := Nom.X * d;
-  Y := Nom.Y * d;
+  x := Nom.x * d;
+  y := Nom.y * d;
 end;
 
-procedure PerspectiveTransform23(This: TAggTransPerspective23; X, Y: PDouble);
+procedure PerspectiveTransform23(This: TAggTransPerspective23; x, y: PDouble);
 var
   TX, TY, d: Double;
 begin
-  TX := X^;
-  TY := Y^;
+  TX := x^;
+  TY := y^;
   d := 1 / (This.FMatrix[6] * TX + This.FMatrix[7] * TY + 1);
 
-  X^ := (This.FMatrix[0] + This.FMatrix[1] * TX + This.FMatrix[2] * TY) * d;
-  Y^ := (This.FMatrix[3] + This.FMatrix[4] * TX + This.FMatrix[5] * TY) * d;
+  x^ := (This.FMatrix[0] + This.FMatrix[1] * TX + This.FMatrix[2] * TY) * d;
+  y^ := (This.FMatrix[3] + This.FMatrix[4] * TX + This.FMatrix[5] * TY) * d;
 end;
 
 { TAggTransPerspective23 }
@@ -418,28 +415,28 @@ begin
   QuadToQuad(Quad, @Dst);
 end;
 
-function TAggTransPerspective23.GetBegin(X, Y, Step: Double): TAggIteratorX23;
+function TAggTransPerspective23.GetBegin(x, y, Step: Double): TAggIteratorX23;
 begin
-  Result.Initialize(X, Y, Step, @FMatrix);
+  Result.Initialize(x, y, Step, @FMatrix);
 end;
 
 { TAggIteratorXRecord }
 
-procedure TAggIteratorXRecord.Initialize(X, Y, Step: Double;
+procedure TAggIteratorXRecord.Initialize(x, y, Step: Double;
   M: TAggTransPerspective);
 var
   d: Double;
 begin
-  Den := X * M.W0 + Y * M.W1 + M.W2;
+  Den := x * M.W0 + y * M.W1 + M.W2;
   DenStep := M.W0 * Step;
 
-  Nom.X := X * M.SX + Y * M.Shx + M.TX;
-  Nom.Y := X * M.Shy + Y * M.SY + M.TY;
+  Nom.x := x * M.SX + y * M.Shx + M.TX;
+  Nom.y := x * M.Shy + y * M.SY + M.TY;
   NomStep := PointDouble(Step * M.SX, Step * M.Shy);
 
   d := 1 / Den;
-  Self.X := Nom.X * d;
-  Self.Y := Nom.Y * d;
+  Self.x := Nom.x * d;
+  Self.y := Nom.y * d;
 end;
 
 procedure TAggIteratorXRecord.OperatorInc;
@@ -447,71 +444,71 @@ var
   d: Double;
 begin
   Den := Den + DenStep;
-  Nom := PointDouble(Nom.X + NomStep.X, Nom.Y + NomStep.Y);
+  Nom := PointDouble(Nom.x + NomStep.x, Nom.y + NomStep.y);
 
   d := 1 / Den;
-  X := Nom.X * d;
-  Y := Nom.Y * d;
+  x := Nom.x * d;
+  y := Nom.y * d;
 end;
 
 // Direct transformation of x and y
 procedure TransPerspectiveTransform(This: TAggTransPerspective; Px,
   Py: PDouble);
 var
-  X, Y, M: Double;
+  x, y, M: Double;
 begin
-  X := Px^;
-  Y := Py^;
+  x := Px^;
+  y := Py^;
 
   try
-      M := 1 / (X * This.W0 + Y * This.W1 + This.W2);
+      M := 1 / (x * This.W0 + y * This.W1 + This.W2);
   except
       M := 0;
   end;
 
-  Px^ := M * (X * This.SX + Y * This.Shx + This.TX);
-  Py^ := M * (X * This.Shy + Y * This.SY + This.TY);
+  Px^ := M * (x * This.SX + y * This.Shx + This.TX);
+  Py^ := M * (x * This.Shy + y * This.SY + This.TY);
 end;
 
 // Direct transformation of x and y, affine part only
-procedure TransPerspectiveTransformAffine(This: TAggTransPerspective; X,
-  Y: PDouble);
+procedure TransPerspectiveTransformAffine(This: TAggTransPerspective; x,
+  y: PDouble);
 var
   tmp: Double;
 begin
-  tmp := X^;
+  tmp := x^;
 
-  X^ := tmp * This.SX + Y^ * This.Shx + This.TX;
-  Y^ := tmp * This.Shy + Y^ * This.SY + This.TY;
+  x^ := tmp * This.SX + y^ * This.Shx + This.TX;
+  y^ := tmp * This.Shy + y^ * This.SY + This.TY;
 end;
 
 // Direct transformation of x and y, 2x2 matrix only, no translation
-procedure TransPerspectiveTransform2x2(This: TAggTransPerspective; X,
-  Y: PDouble);
+procedure TransPerspectiveTransform2x2(This: TAggTransPerspective; x,
+  y: PDouble);
 var
   tmp: Double;
 begin
-  tmp := X^;
+  tmp := x^;
 
-  X^ := tmp * This.SX + Y^ * This.Shx;
-  Y^ := tmp * This.Shy + Y^ * This.SY;
+  x^ := tmp * This.SX + y^ * This.Shx;
+  y^ := tmp * This.Shy + y^ * This.SY;
 end;
 
 // Inverse transformation of x and y. It works sLow because
 // it explicitly inverts the matrix on every call. For massive
 // operations it's better to invert() the matrix and then use
 // direct transformations.
-procedure TransPerspectiveInverseTransform(This: TAggTransPerspective; X,
-  Y: PDouble);
+procedure TransPerspectiveInverseTransform(This: TAggTransPerspective; x,
+  y: PDouble);
 var
-  T: TAggTransPerspective;
+  t: TAggTransPerspective;
 begin
-  T := TAggTransPerspective.Create(This);
+  t := TAggTransPerspective.Create(This);
   try
-    if T.Invert then
-        T.Transform(T, X, Y);
+    if t.Invert then
+        t.Transform(t, x, y);
   finally
-      T.Free;
+      t.Free;
   end;
 end;
 
@@ -566,19 +563,19 @@ begin
   W2 := M[8];
 end;
 
-constructor TAggTransPerspective.CreateAffine(A: TAggTransAffine);
+constructor TAggTransPerspective.CreateAffine(a: TAggTransAffine);
 begin
   inherited Create;
   InitializeTransforms;
 
-  SX := A.M0;
-  Shy := A.m1;
+  SX := a.M0;
+  Shy := a.m1;
   W0 := 0;
-  Shx := A.m2;
-  SY := A.M3;
+  Shx := a.m2;
+  SY := a.M3;
   W1 := 0;
-  TX := A.M4;
-  TY := A.M5;
+  TX := a.M4;
+  TY := a.M5;
   W2 := 1;
 end;
 
@@ -650,13 +647,13 @@ begin
   TransformAffine := @TransPerspectiveTransformAffine;
 end;
 
-function TAggTransPerspective.QuadToQuad(qs, Qd: PAggQuadrilateral): Boolean;
+function TAggTransPerspective.QuadToQuad(Qs, Qd: PAggQuadrilateral): Boolean;
 var
   p: TAggTransPerspective;
 begin
   Result := False;
 
-  if not QuadToSquare(qs) then
+  if not QuadToSquare(Qs) then
       Exit;
 
   p := TAggTransPerspective.Create;
@@ -722,10 +719,10 @@ var
   Delta: TPointDouble;
   Dx1, Dy1, Dx2, Dy2, Den, u, v: Double;
 begin
-  Delta.X := q[0] - q[2] + q[4] - q[6];
-  Delta.Y := q[1] - q[3] + q[5] - q[7];
+  Delta.x := q[0] - q[2] + q[4] - q[6];
+  Delta.y := q[1] - q[3] + q[5] - q[7];
 
-  if (Delta.X = 0.0) and (Delta.Y = 0.0) then
+  if (Delta.x = 0.0) and (Delta.y = 0.0) then
     begin
       // Affine case (parallelogram)
       SX := q[2] - q[0];
@@ -766,8 +763,8 @@ begin
 
       // General case
       Den := 1 / Den;
-      u := (Delta.X * Dy2 - Delta.Y * Dx2) * Den;
-      v := (Delta.Y * Dx1 - Delta.X * Dy1) * Den;
+      u := (Delta.x * Dy2 - Delta.y * Dx2) * Den;
+      v := (Delta.y * Dx1 - Delta.x * Dy1) * Den;
 
       SX := q[2] - q[0] + u * q[2];
       Shy := q[3] - q[1] + u * q[3];
@@ -810,7 +807,7 @@ function TAggTransPerspective.Invert: Boolean;
 var
   D0, d1, d2, d: Double;
 
-  A: TAggTransPerspective;
+  a: TAggTransPerspective;
 begin
   D0 := SY * W2 - W1 * TY;
   d1 := W0 * TY - Shy * W2;
@@ -836,37 +833,37 @@ begin
 
   d := 1.0 / d;
 
-  A := TAggTransPerspective.Create(TAggTransPerspective(Self));
+  a := TAggTransPerspective.Create(TAggTransPerspective(Self));
   try
     SX := d * D0;
     Shy := d * d1;
     W0 := d * d2;
-    Shx := d * (A.W1 * A.TX - A.Shx * A.W2);
-    SY := d * (A.SX * A.W2 - A.W0 * A.TX);
-    W1 := d * (A.W0 * A.Shx - A.SX * A.W1);
-    TX := d * (A.Shx * A.TY - A.SY * A.TX);
-    TY := d * (A.Shy * A.TX - A.SX * A.TY);
-    W2 := d * (A.SX * A.SY - A.Shy * A.Shx);
+    Shx := d * (a.W1 * a.TX - a.Shx * a.W2);
+    SY := d * (a.SX * a.W2 - a.W0 * a.TX);
+    W1 := d * (a.W0 * a.Shx - a.SX * a.W1);
+    TX := d * (a.Shx * a.TY - a.SY * a.TX);
+    TY := d * (a.Shy * a.TX - a.SX * a.TY);
+    W2 := d * (a.SX * a.SY - a.Shy * a.Shx);
   finally
-      A.Free;
+      a.Free;
   end;
 
   Result := True;
 end;
 
-function TAggTransPerspective.Translate(X, Y: Double): TAggTransPerspective;
+function TAggTransPerspective.Translate(x, y: Double): TAggTransPerspective;
 begin
-  TX := TX + X;
-  TY := TY + Y;
+  TX := TX + x;
+  TY := TY + y;
 
   Result := Self;
 end;
 
-function TAggTransPerspective.Rotate(A: Double): TAggTransPerspective;
+function TAggTransPerspective.Rotate(a: Double): TAggTransPerspective;
 var
   Tar: TAggTransAffineRotation;
 begin
-  Tar := TAggTransAffineRotation.Create(A);
+  Tar := TAggTransAffineRotation.Create(a);
   try
       MultiplyAffine(Tar);
   finally
@@ -890,11 +887,11 @@ begin
   Result := Self;
 end;
 
-function TAggTransPerspective.Scale(X, Y: Double): TAggTransPerspective;
+function TAggTransPerspective.Scale(x, y: Double): TAggTransPerspective;
 var
   Tas: TAggTransAffineScaling;
 begin
-  Tas := TAggTransAffineScaling.Create(X, Y);
+  Tas := TAggTransAffineScaling.Create(x, y);
   try
       MultiplyAffine(Tas);
   finally
@@ -904,22 +901,22 @@ begin
   Result := Self;
 end;
 
-function TAggTransPerspective.Multiply(A: TAggTransPerspective)
+function TAggTransPerspective.Multiply(a: TAggTransPerspective)
   : TAggTransPerspective;
 var
   b: TAggTransPerspective;
 begin
   b := TAggTransPerspective.Create(TAggTransPerspective(Self));
   try
-    SX := A.SX * b.SX + A.Shx * b.Shy + A.TX * b.W0;
-    Shx := A.SX * b.Shx + A.Shx * b.SY + A.TX * b.W1;
-    TX := A.SX * b.TX + A.Shx * b.TY + A.TX * b.W2;
-    Shy := A.Shy * b.SX + A.SY * b.Shy + A.TY * b.W0;
-    SY := A.Shy * b.Shx + A.SY * b.SY + A.TY * b.W1;
-    TY := A.Shy * b.TX + A.SY * b.TY + A.TY * b.W2;
-    W0 := A.W0 * b.SX + A.W1 * b.Shy + A.W2 * b.W0;
-    W1 := A.W0 * b.Shx + A.W1 * b.SY + A.W2 * b.W1;
-    W2 := A.W0 * b.TX + A.W1 * b.TY + A.W2 * b.W2;
+    SX := a.SX * b.SX + a.Shx * b.Shy + a.TX * b.W0;
+    Shx := a.SX * b.Shx + a.Shx * b.SY + a.TX * b.W1;
+    TX := a.SX * b.TX + a.Shx * b.TY + a.TX * b.W2;
+    Shy := a.Shy * b.SX + a.SY * b.Shy + a.TY * b.W0;
+    SY := a.Shy * b.Shx + a.SY * b.SY + a.TY * b.W1;
+    TY := a.Shy * b.TX + a.SY * b.TY + a.TY * b.W2;
+    W0 := a.W0 * b.SX + a.W1 * b.Shy + a.W2 * b.W0;
+    W1 := a.W0 * b.Shx + a.W1 * b.SY + a.W2 * b.W1;
+    W2 := a.W0 * b.TX + a.W1 * b.TY + a.W2 * b.W2;
   finally
       b.Free;
   end;
@@ -930,21 +927,21 @@ end;
 function TAggTransPerspective.PreMultiply(b: TAggTransPerspective)
   : TAggTransPerspective;
 var
-  A: TAggTransPerspective;
+  a: TAggTransPerspective;
 begin
-  A := TAggTransPerspective.Create(TAggTransPerspective(Self));
+  a := TAggTransPerspective.Create(TAggTransPerspective(Self));
   try
-    SX := A.SX * b.SX + A.Shx * b.Shy + A.TX * b.W0;
-    Shx := A.SX * b.Shx + A.Shx * b.SY + A.TX * b.W1;
-    TX := A.SX * b.TX + A.Shx * b.TY + A.TX * b.W2;
-    Shy := A.Shy * b.SX + A.SY * b.Shy + A.TY * b.W0;
-    SY := A.Shy * b.Shx + A.SY * b.SY + A.TY * b.W1;
-    TY := A.Shy * b.TX + A.SY * b.TY + A.TY * b.W2;
-    W0 := A.W0 * b.SX + A.W1 * b.Shy + A.W2 * b.W0;
-    W1 := A.W0 * b.Shx + A.W1 * b.SY + A.W2 * b.W1;
-    W2 := A.W0 * b.TX + A.W1 * b.TY + A.W2 * b.W2;
+    SX := a.SX * b.SX + a.Shx * b.Shy + a.TX * b.W0;
+    Shx := a.SX * b.Shx + a.Shx * b.SY + a.TX * b.W1;
+    TX := a.SX * b.TX + a.Shx * b.TY + a.TX * b.W2;
+    Shy := a.Shy * b.SX + a.SY * b.Shy + a.TY * b.W0;
+    SY := a.Shy * b.Shx + a.SY * b.SY + a.TY * b.W1;
+    TY := a.Shy * b.TX + a.SY * b.TY + a.TY * b.W2;
+    W0 := a.W0 * b.SX + a.W1 * b.Shy + a.W2 * b.W0;
+    W1 := a.W0 * b.Shx + a.W1 * b.SY + a.W2 * b.W1;
+    W2 := a.W0 * b.TX + a.W1 * b.TY + a.W2 * b.W2;
   finally
-      A.Free;
+      a.Free;
   end;
 
   Result := Self;
@@ -953,14 +950,14 @@ end;
 function TAggTransPerspective.MultiplyInv(M: TAggTransPerspective)
   : TAggTransPerspective;
 var
-  T: TAggTransPerspective;
+  t: TAggTransPerspective;
 begin
-  T := TAggTransPerspective.Create(M);
+  t := TAggTransPerspective.Create(M);
   try
-    T.Invert;
-    Result := Multiply(T);
+    t.Invert;
+    Result := Multiply(t);
   finally
-      T.Free;
+      t.Free;
   end;
 
   Result := Self;
@@ -969,14 +966,14 @@ end;
 function TAggTransPerspective.PreMultiplyInv(M: TAggTransPerspective)
   : TAggTransPerspective;
 var
-  T: TAggTransPerspective;
+  t: TAggTransPerspective;
 begin
-  T := TAggTransPerspective.Create(M);
+  t := TAggTransPerspective.Create(M);
   try
-    T.Invert;
-    T.Multiply(Self);
+    t.Invert;
+    t.Multiply(Self);
   finally
-      T.Free;
+      t.Free;
   end;
 
   // Create(TAggTransPerspective(Self)); //???????
@@ -984,19 +981,19 @@ begin
   Result := Self;
 end;
 
-function TAggTransPerspective.MultiplyAffine(A: TAggTransAffine)
+function TAggTransPerspective.MultiplyAffine(a: TAggTransAffine)
   : TAggTransPerspective;
 var
   b: TAggTransPerspective;
 begin
   b := TAggTransPerspective.Create(TAggTransPerspective(Self));
   try
-    SX := A.M0 * b.SX + A.m2 * b.Shy + A.M4 * b.W0;
-    Shx := A.M0 * b.Shx + A.m2 * b.SY + A.M4 * b.W1;
-    TX := A.M0 * b.TX + A.m2 * b.TY + A.M4 * b.W2;
-    Shy := A.m1 * b.SX + A.M3 * b.Shy + A.M5 * b.W0;
-    SY := A.m1 * b.Shx + A.M3 * b.SY + A.M5 * b.W1;
-    TY := A.m1 * b.TX + A.M3 * b.TY + A.M5 * b.W2;
+    SX := a.M0 * b.SX + a.m2 * b.Shy + a.M4 * b.W0;
+    Shx := a.M0 * b.Shx + a.m2 * b.SY + a.M4 * b.W1;
+    TX := a.M0 * b.TX + a.m2 * b.TY + a.M4 * b.W2;
+    Shy := a.m1 * b.SX + a.M3 * b.Shy + a.M5 * b.W0;
+    SY := a.m1 * b.Shx + a.M3 * b.SY + a.M5 * b.W1;
+    TY := a.m1 * b.TX + a.M3 * b.TY + a.M5 * b.W2;
   finally
       b.Free;
   end;
@@ -1007,21 +1004,21 @@ end;
 function TAggTransPerspective.PreMultiplyAffine(b: TAggTransAffine)
   : TAggTransPerspective;
 var
-  A: TAggTransPerspective;
+  a: TAggTransPerspective;
 begin
-  A := TAggTransPerspective.Create(TAggTransPerspective(Self));
+  a := TAggTransPerspective.Create(TAggTransPerspective(Self));
   try
-    SX := A.SX * b.M0 + A.Shx * b.m1;
-    Shx := A.SX * b.m2 + A.Shx * b.M3;
-    TX := A.SX * b.M4 + A.Shx * b.M5 + A.TX;
-    Shy := A.Shy * b.M0 + A.SY * b.m1;
-    SY := A.Shy * b.m2 + A.SY * b.M3;
-    TY := A.Shy * b.M4 + A.SY * b.M5 + A.TY;
-    W0 := A.W0 * b.M0 + A.W1 * b.m1;
-    W1 := A.W0 * b.m2 + A.W1 * b.M3;
-    W2 := A.W0 * b.M4 + A.W1 * b.M5 + A.W2;
+    SX := a.SX * b.M0 + a.Shx * b.m1;
+    Shx := a.SX * b.m2 + a.Shx * b.M3;
+    TX := a.SX * b.M4 + a.Shx * b.M5 + a.TX;
+    Shy := a.Shy * b.M0 + a.SY * b.m1;
+    SY := a.Shy * b.m2 + a.SY * b.M3;
+    TY := a.Shy * b.M4 + a.SY * b.M5 + a.TY;
+    W0 := a.W0 * b.M0 + a.W1 * b.m1;
+    W1 := a.W0 * b.m2 + a.W1 * b.M3;
+    W2 := a.W0 * b.M4 + a.W1 * b.M5 + a.W2;
   finally
-      A.Free;
+      a.Free;
   end;
 
   Result := Self;
@@ -1030,14 +1027,14 @@ end;
 function TAggTransPerspective.MultiplyInvAffine(M: TAggTransAffine)
   : TAggTransPerspective;
 var
-  T: TAggTransAffine;
+  t: TAggTransAffine;
 begin
-  T := TAggTransAffine.Create(M.M0, M.m1, M.m2, M.M3, M.M4, M.M5);
+  t := TAggTransAffine.Create(M.M0, M.m1, M.m2, M.M3, M.M4, M.M5);
   try
-    T.Invert;
-    Result := MultiplyAffine(T);
+    t.Invert;
+    Result := MultiplyAffine(t);
   finally
-      T.Free;
+      t.Free;
   end;
 
   Result := Self;
@@ -1046,17 +1043,17 @@ end;
 function TAggTransPerspective.PreMultiplyInvAffine(M: TAggTransAffine)
   : TAggTransPerspective;
 var
-  T: TAggTransPerspective;
+  t: TAggTransPerspective;
 begin
-  T := TAggTransPerspective.CreateAffine(M);
+  t := TAggTransPerspective.CreateAffine(M);
   try
-    T.Invert;
+    t.Invert;
 
-    T.Multiply(Self);
+    t.Multiply(Self);
 
     // Create(TAggTransPerspective(T)); // ??????
   finally
-      T.Free;
+      t.Free;
   end;
 
   Result := Self;
@@ -1089,17 +1086,17 @@ begin
   W2 := M[8];
 end;
 
-function TAggTransPerspective.FromAffine(A: TAggTransAffine)
+function TAggTransPerspective.FromAffine(a: TAggTransAffine)
   : TAggTransPerspective;
 begin
-  SX := A.M0;
-  Shy := A.m1;
+  SX := a.M0;
+  Shy := a.m1;
   W0 := 0;
-  Shx := A.m2;
-  SY := A.M3;
+  Shx := a.m2;
+  SY := a.M3;
   W1 := 0;
-  TX := A.M4;
-  TY := A.M5;
+  TX := a.M4;
+  TY := a.M5;
   W2 := 1;
 
   Result := Self;
@@ -1151,14 +1148,14 @@ end;
 
 function TAggTransPerspective.Scale: Double;
 var
-  X, Y: Double;
+  x, y: Double;
 const
   CSqrt2Half: Double = 0.70710678118654752440084436210485;
 begin
-  X := CSqrt2Half * SX + CSqrt2Half * Shx;
-  Y := CSqrt2Half * Shy + CSqrt2Half * SY;
+  x := CSqrt2Half * SX + CSqrt2Half * Shx;
+  y := CSqrt2Half * Shy + CSqrt2Half * SY;
 
-  Result := Hypot(X, Y);
+  Result := Hypot(x, y);
 end;
 
 function TAggTransPerspective.Rotation: Double;
@@ -1182,10 +1179,10 @@ begin
   dy^ := TY;
 end;
 
-procedure TAggTransPerspective.Scaling(X, Y: PDouble);
+procedure TAggTransPerspective.Scaling(x, y: PDouble);
 var
   x1, y1, x2, y2: Double;
-  T: TAggTransPerspective;
+  t: TAggTransPerspective;
   Tar: TAggTransAffineRotation;
 begin
   x1 := 0.0;
@@ -1193,35 +1190,37 @@ begin
   x2 := 1.0;
   y2 := 1.0;
 
-  T := TAggTransPerspective.Create(TAggTransPerspective(Self));
+  t := TAggTransPerspective.Create(TAggTransPerspective(Self));
   try
     Tar := TAggTransAffineRotation.Create(-Rotation);
     try
-        T.MultiplyAffine(Tar);
+        t.MultiplyAffine(Tar);
     finally
         Tar.Free;
     end;
 
-    T.Transform(T, @x1, @y1);
-    T.Transform(T, @x2, @y2);
+    t.Transform(t, @x1, @y1);
+    t.Transform(t, @x2, @y2);
   finally
-      T.Free;
+      t.Free;
   end;
 
-  X^ := x2 - x1;
-  Y^ := y2 - y1;
+  x^ := x2 - x1;
+  y^ := y2 - y1;
 end;
 
-procedure TAggTransPerspective.ScalingAbs(X, Y: PDouble);
+procedure TAggTransPerspective.ScalingAbs(x, y: PDouble);
 begin
-  X^ := Hypot(SX, Shx);
-  Y^ := Hypot(Shy, SY);
+  x^ := Hypot(SX, Shx);
+  y^ := Hypot(Shy, SY);
 end;
 
-function TAggTransPerspective.GetBegin(X, Y, Step: Double): TAggIteratorXRecord;
+function TAggTransPerspective.GetBegin(x, y, Step: Double): TAggIteratorXRecord;
 begin
-  Result.Initialize(X, Y, Step, Self);
+  Result.Initialize(x, y, Step, Self);
 end;
 
 end. 
+ 
+ 
  

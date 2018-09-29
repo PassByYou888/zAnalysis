@@ -37,11 +37,8 @@
 *)
 unit AggRasterizerOutline;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggRendererPrimitives,
@@ -56,14 +53,14 @@ type
   public
     constructor Create(Ren: TAggRendererPrimitives);
 
-    procedure MoveTo(X, Y: Integer);
-    procedure LineTo(X, Y: Integer);
+    procedure MoveTo(x, y: Integer);
+    procedure LineTo(x, y: Integer);
 
-    procedure MoveToDouble(X, Y: Double);
-    procedure LineToDouble(X, Y: Double);
+    procedure MoveToDouble(x, y: Double);
+    procedure LineToDouble(x, y: Double);
     procedure Close;
 
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal);
+    procedure AddVertex(x, y: Double; Cmd: Cardinal);
     procedure AddPath(Vs: TAggVertexSource; PathID: Cardinal = 0);
   end;
 
@@ -82,31 +79,31 @@ begin
   FVertices := 0;
 end;
 
-procedure TAggRasterizerOutline.MoveTo(X, Y: Integer);
+procedure TAggRasterizerOutline.MoveTo(x, y: Integer);
 begin
   FVertices := 1;
 
-  FStartX := X;
-  FStartY := Y;
+  FStartX := x;
+  FStartY := y;
 
-  FRendererPrimitives.MoveTo(X, Y);
+  FRendererPrimitives.MoveTo(x, y);
 end;
 
-procedure TAggRasterizerOutline.LineTo(X, Y: Integer);
+procedure TAggRasterizerOutline.LineTo(x, y: Integer);
 begin
-  Inc(FVertices);
+  inc(FVertices);
 
-  FRendererPrimitives.LineTo(X, Y);
+  FRendererPrimitives.LineTo(x, y);
 end;
 
-procedure TAggRasterizerOutline.MoveToDouble(X, Y: Double);
+procedure TAggRasterizerOutline.MoveToDouble(x, y: Double);
 begin
-  MoveTo(FRendererPrimitives.Coord(X), FRendererPrimitives.Coord(Y));
+  MoveTo(FRendererPrimitives.Coord(x), FRendererPrimitives.Coord(y));
 end;
 
-procedure TAggRasterizerOutline.LineToDouble(X, Y: Double);
+procedure TAggRasterizerOutline.LineToDouble(x, y: Double);
 begin
-  LineTo(FRendererPrimitives.Coord(X), FRendererPrimitives.Coord(Y));
+  LineTo(FRendererPrimitives.Coord(x), FRendererPrimitives.Coord(y));
 end;
 
 procedure TAggRasterizerOutline.Close;
@@ -117,35 +114,37 @@ begin
   FVertices := 0;
 end;
 
-procedure TAggRasterizerOutline.AddVertex(X, Y: Double; Cmd: Cardinal);
+procedure TAggRasterizerOutline.AddVertex(x, y: Double; Cmd: Cardinal);
 begin
   if IsMoveTo(Cmd) then
-      MoveToDouble(X, Y)
+      MoveToDouble(x, y)
   else if IsEndPoly(Cmd) then
     if IsClosed(Cmd) then
         Close
     else
   else
-      LineToDouble(X, Y);
+      LineToDouble(x, y);
 end;
 
 procedure TAggRasterizerOutline.AddPath(Vs: TAggVertexSource;
   PathID: Cardinal = 0);
 var
   Cmd: Cardinal;
-  X, Y: Double;
+  x, y: Double;
 begin
   Vs.Rewind(PathID);
 
-  Cmd := Vs.Vertex(@X, @Y);
+  Cmd := Vs.Vertex(@x, @y);
 
   while not IsStop(Cmd) do
     begin
-      AddVertex(X, Y, Cmd);
+      AddVertex(x, y, Cmd);
 
-      Cmd := Vs.Vertex(@X, @Y);
+      Cmd := Vs.Vertex(@x, @y);
     end;
 end;
 
 end.
+ 
+ 
  

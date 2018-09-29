@@ -1,9 +1,8 @@
 {$IFDEF FPC}
   {$MODE DELPHI}
   {$MODESWITCH AdvancedRecords}
-  {$STACKFRAMES ON}
+  {$STACKFRAMES OFF}
   {$NOTES OFF}
-  {$ASMMODE intel}
   {$IFDEF FPC_BIG_ENDIAN}
     {$DEFINE BIG_ENDIAN}
   {$ENDIF}
@@ -11,28 +10,36 @@
   {$UNDEF FirstCharInZero}
 
   {$UNDEF Delphi}
+  {$UNDEF FastMD5}
   {$DEFINE release}
+  {$UNDEF debug}
   {$DEFINE INLINE_ASM}
-  {$UNDEF Delphi}
+  {$R-} { range check }
 {$ELSE}
-  {$DEFINE Delphi}
-
   {$IFDEF release}
-    {$DEFINE INLINE_ASM}
+    {$R-} { range check }
   {$ELSE}
-    {$UNDEF INLINE_ASM}
+    {$R-} { range check }
   {$ENDIF}
+
+  {$DEFINE Delphi}
 {$ENDIF}
 
 {$WARNINGS OFF}
 {$HINTS OFF}
 {$H+} { long string }
 {$A+} { Word Align Data }
-{$O-} { optimization }
+{$O+} { optimization }
 {$Q-} { Overflow checking }
 {$B-} { Complete boolean evaluation }
-{$I+} { Input output checking }
-{$R-} { range check }
+{$I-} { Input output checking }
+{$J+} { Writeable typed constants }
+
+{$IFDEF release}
+  {$DEFINE INLINE_ASM}
+{$ELSE}
+  {$UNDEF INLINE_ASM}
+{$ENDIF}
 
 {$UNDEF CPU64}
 
@@ -48,3 +55,4 @@
   {$DEFINE CPU32}
 {$ENDIF}
 
+ 

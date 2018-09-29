@@ -37,11 +37,8 @@
 *)
 unit AggRasterizerCellsAA;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggMath,
@@ -63,18 +60,18 @@ type
   PPAggCellStyleAA  = ^PAggCellStyleAA;
   PAggCellStyleAA   = ^TAggCellStyleAA;
 
-  TAggCellStyleAA = packed record
-    X, Y, Cover, Area: Integer;
+  TAggCellStyleAA = record
+    x, y, Cover, Area: Integer;
     Left, Right: Int16;
   public
     procedure Initial;
-    procedure Style(C: PAggCellStyleAA);
-    function NotEqual(EX, EY: Integer; C: PAggCellStyleAA): Integer;
+    procedure Style(c: PAggCellStyleAA);
+    function NotEqual(EX, EY: Integer; c: PAggCellStyleAA): Integer;
   end;
 
   PAggSortedY = ^TAggSortedY;
 
-  TAggSortedY = packed record
+  TAggSortedY = record
     Start, Num: Cardinal;
   end;
 
@@ -94,7 +91,7 @@ type
 
     FSorted: Boolean;
 
-    procedure SetCurrentCell(X, Y: Integer);
+    procedure SetCurrentCell(x, y: Integer);
     procedure AddCurrentCell;
     procedure RenderHorizontalLine(EY, x1, y1, x2, y2: Integer);
     procedure AllocateBlock;
@@ -113,8 +110,8 @@ type
 
     procedure SortCells;
 
-    function ScanLineNumCells(Y: Cardinal): Cardinal;
-    function ScanLineCells(Y: Cardinal): PPAggCellStyleAA;
+    function ScanLineNumCells(y: Cardinal): Cardinal;
+    function ScanLineCells(y: Cardinal): PPAggCellStyleAA;
 
     property TotalCells: Cardinal read FNumCells;
     property Sorted: Boolean read FSorted;
@@ -132,13 +129,13 @@ type
   protected
     function GetNumSpans: Cardinal; override;
   public
-    constructor Create(X: Integer);
+    constructor Create(x: Integer);
 
     procedure ResetSpans; override;
 
-    procedure Finalize(Y: Integer); override;
-    procedure AddCell(X: Integer; Cover: Cardinal); override;
-    procedure AddSpan(X: Integer; Len, Cover: Cardinal); override;
+    procedure Finalize(y: Integer); override;
+    procedure AddCell(x: Integer; Cover: Cardinal); override;
+    procedure AddSpan(x: Integer; Len, Cover: Cardinal); override;
 
     property Hit: Boolean read FHit;
   end;
@@ -150,23 +147,23 @@ implementation
 
 procedure TAggCellStyleAA.Initial;
 begin
-  X := $7FFFFFFF;
-  Y := $7FFFFFFF;
+  x := $7FFFFFFF;
+  y := $7FFFFFFF;
   Cover := 0;
   Area := 0;
   Left := -1;
   Right := -1;
 end;
 
-procedure TAggCellStyleAA.Style(C: PAggCellStyleAA);
+procedure TAggCellStyleAA.Style(c: PAggCellStyleAA);
 begin
-  Left := C.Left;
-  Right := C.Right;
+  Left := c.Left;
+  Right := c.Right;
 end;
 
-function TAggCellStyleAA.NotEqual(EX, EY: Integer; C: PAggCellStyleAA): Integer;
+function TAggCellStyleAA.NotEqual(EX, EY: Integer; c: PAggCellStyleAA): Integer;
 begin
-  Result := (EX - X) or (EY - Y) or (Left - C.Left) or (Right - C.Right);
+  Result := (EX - x) or (EY - y) or (Left - c.Left) or (Right - c.Right);
 end;
 
 { TAggRasterizerCellsAA }
@@ -184,10 +181,10 @@ begin
   FSortedCells := TAggPodVector.Create(SizeOf(PAggCellStyleAA));
   FSortedY := TAggPodVector.Create(SizeOf(TAggSortedY));
 
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
   FSorted := False;
 
   FStyleCell.Initial;
@@ -208,11 +205,11 @@ begin
 
       while FNumBlocks <> 0 do
         begin
-          Dec(FNumBlocks);
+          dec(FNumBlocks);
 
           AggFreeMem(Pointer(PTR^), CAggCellBlockSize * SizeOf(TAggCellStyleAA));
 
-          Dec(PtrComp(PTR), SizeOf(PAggCellStyleAA));
+          dec(PtrComp(PTR), SizeOf(PAggCellStyleAA));
         end;
 
       AggFreeMem(Pointer(FCells), FMaxBlocks * SizeOf(PAggCellStyleAA));
@@ -230,10 +227,10 @@ begin
   FStyleCell.Initial;
 
   FSorted := False;
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 end;
 
 procedure TAggRasterizerCellsAA.Style(StyleCell: PAggCellStyleAA);
@@ -256,8 +253,8 @@ begin
     begin
       center := PointInteger(ShrInt32(x1 + x2, 1), ShrInt32(y1 + y2, 1));
 
-      Line(x1, y1, center.X, center.Y);
-      Line(center.X, center.Y, x2, y2);
+      Line(x1, y1, center.x, center.y);
+      Line(center.x, center.y, x2, y2);
     end;
 
   dy := y2 - y1;
@@ -268,29 +265,29 @@ begin
   FY1 := y1 and CAggPolySubpixelMask;
   FY2 := y2 and CAggPolySubpixelMask;
 
-  if Ex1 < FMin.X then
-      FMin.X := Ex1;
+  if Ex1 < FMin.x then
+      FMin.x := Ex1;
 
-  if Ex1 > FMax.X then
-      FMax.X := Ex1;
+  if Ex1 > FMax.x then
+      FMax.x := Ex1;
 
-  if Ey1 < FMin.Y then
-      FMin.Y := Ey1;
+  if Ey1 < FMin.y then
+      FMin.y := Ey1;
 
-  if Ey1 > FMax.Y then
-      FMax.Y := Ey1;
+  if Ey1 > FMax.y then
+      FMax.y := Ey1;
 
-  if Ex2 < FMin.X then
-      FMin.X := Ex2;
+  if Ex2 < FMin.x then
+      FMin.x := Ex2;
 
-  if Ex2 > FMax.X then
-      FMax.X := Ex2;
+  if Ex2 > FMax.x then
+      FMax.x := Ex2;
 
-  if Ey2 < FMin.Y then
-      FMin.Y := Ey2;
+  if Ey2 < FMin.y then
+      FMin.y := Ey2;
 
-  if Ey2 > FMax.Y then
-      FMax.Y := Ey2;
+  if Ey2 > FMax.y then
+      FMax.y := Ey2;
 
   SetCurrentCell(Ex1, Ey1);
 
@@ -324,9 +321,9 @@ begin
       // RenderHorizontalLine(ey1 ,FromX ,fy1 ,FromX ,first );
       Delta := First - FY1;
 
-      Inc(FCurrentCell.Cover, Delta);
-      Inc(FCurrentCell.Area, TwoFX * Delta);
-      Inc(Ey1, Incr);
+      inc(FCurrentCell.Cover, Delta);
+      inc(FCurrentCell.Area, TwoFX * Delta);
+      inc(Ey1, Incr);
 
       SetCurrentCell(EX, Ey1);
 
@@ -339,7 +336,7 @@ begin
           FCurrentCell.Cover := Delta;
           FCurrentCell.Area := Area;
 
-          Inc(Ey1, Incr);
+          inc(Ey1, Incr);
 
           SetCurrentCell(EX, Ey1);
         end;
@@ -347,8 +344,8 @@ begin
       // RenderHorizontalLine(ey1 ,FromX ,CAggPolySubpixelScale - first ,FromX ,fy2 );
       Delta := FY2 - CAggPolySubpixelScale + First;
 
-      Inc(FCurrentCell.Cover, Delta);
-      Inc(FCurrentCell.Area, TwoFX * Delta);
+      inc(FCurrentCell.Cover, Delta);
+      inc(FCurrentCell.Area, TwoFX * Delta);
 
       Exit;
     end;
@@ -370,15 +367,15 @@ begin
 
   if ModValue < 0 then
     begin
-      Dec(Delta);
-      Inc(ModValue, dy);
+      dec(Delta);
+      inc(ModValue, dy);
     end;
 
   FromX := x1 + Delta;
 
   RenderHorizontalLine(Ey1, x1, FY1, FromX, First);
 
-  Inc(Ey1, Incr);
+  inc(Ey1, Incr);
 
   SetCurrentCell(ShrInt32(FromX, CAggPolySubpixelShift), Ey1);
 
@@ -390,22 +387,22 @@ begin
 
       if Rem < 0 then
         begin
-          Dec(Lift);
-          Inc(Rem, dy);
+          dec(Lift);
+          inc(Rem, dy);
         end;
 
-      Dec(ModValue, dy);
+      dec(ModValue, dy);
 
       while Ey1 <> Ey2 do
         begin
           Delta := Lift;
 
-          Inc(ModValue, Rem);
+          inc(ModValue, Rem);
 
           if ModValue >= 0 then
             begin
-              Dec(ModValue, dy);
-              Inc(Delta);
+              dec(ModValue, dy);
+              inc(Delta);
             end;
 
           tox := FromX + Delta;
@@ -414,7 +411,7 @@ begin
 
           FromX := tox;
 
-          Inc(Ey1, Incr);
+          inc(Ey1, Incr);
 
           SetCurrentCell(ShrInt32(FromX, CAggPolySubpixelShift), Ey1);
         end;
@@ -425,31 +422,31 @@ end;
 
 function TAggRasterizerCellsAA.GetMinX: Integer;
 begin
-  Result := FMin.X;
+  Result := FMin.x;
 end;
 
 function TAggRasterizerCellsAA.GetMinY: Integer;
 begin
-  Result := FMin.Y;
+  Result := FMin.y;
 end;
 
 function TAggRasterizerCellsAA.GetMaxX: Integer;
 begin
-  Result := FMax.X;
+  Result := FMax.x;
 end;
 
 function TAggRasterizerCellsAA.GetMaxY: Integer;
 begin
-  Result := FMax.Y;
+  Result := FMax.y;
 end;
 
-procedure SwapCells(A, b: Pointer);
+procedure SwapCells(a, b: Pointer);
 var
   Temp: Pointer;
 
 begin
-  Temp := Pointer(A^);
-  Pointer(A^) := Pointer(b^);
+  Temp := Pointer(a^);
+  Pointer(a^) := Pointer(b^);
   Pointer(b^) := Temp;
 end;
 
@@ -461,8 +458,8 @@ var
   Stack: array [0 .. 79] of PPAggCellStyleAA;
   Top: PPPAggCellStyleAA;
   Limit, Base: PPAggCellStyleAA;
-  Len, X: Integer;
-  i, J, Pivot: PPAggCellStyleAA;
+  Len, x: Integer;
+  i, j, Pivot: PPAggCellStyleAA;
 begin
   Limit := PPAggCellStyleAA(PtrComp(Start) + Num *
     SizeOf(PAggCellStyleAA));
@@ -481,44 +478,44 @@ begin
         SwapCells(Base, Pivot);
 
         i := PPAggCellStyleAA(PtrComp(Base) + SizeOf(PAggCellStyleAA));
-        J := PPAggCellStyleAA(PtrComp(Limit) - SizeOf(PAggCellStyleAA));
+        j := PPAggCellStyleAA(PtrComp(Limit) - SizeOf(PAggCellStyleAA));
 
         // now ensure that *i <= *base <= *j
-        if J^^.X < i^^.X then
-            SwapCells(i, J);
+        if j^^.x < i^^.x then
+            SwapCells(i, j);
 
-        if Base^^.X < i^^.X then
+        if Base^^.x < i^^.x then
             SwapCells(Base, i);
 
-        if J^^.X < Base^^.X then
-            SwapCells(Base, J);
+        if j^^.x < Base^^.x then
+            SwapCells(Base, j);
 
         repeat
-          X := Base^^.X;
+          x := Base^^.x;
 
           repeat
-              Inc(PtrComp(i), SizeOf(PAggCellStyleAA));
-          until i^^.X >= X;
+              inc(PtrComp(i), SizeOf(PAggCellStyleAA));
+          until i^^.x >= x;
 
           repeat
-              Dec(PtrComp(J), SizeOf(PAggCellStyleAA));
-          until X >= J^^.X;
+              dec(PtrComp(j), SizeOf(PAggCellStyleAA));
+          until x >= j^^.x;
 
-          if PtrComp(i) > PtrComp(J) then
+          if PtrComp(i) > PtrComp(j) then
               Break;
 
-          SwapCells(i, J);
+          SwapCells(i, j);
         until False;
 
-        SwapCells(Base, J);
+        SwapCells(Base, j);
 
         // now, push the largest sub-array
-        if PtrComp(J) - PtrComp(Base) > PtrComp(Limit) - PtrComp(i) then
+        if PtrComp(j) - PtrComp(Base) > PtrComp(Limit) - PtrComp(i) then
           begin
             Top^ := Base;
 
             PPPAggCellStyleAA(PtrComp(Top) +
-              SizeOf(PPAggCellStyleAA))^ := J;
+              SizeOf(PPAggCellStyleAA))^ := j;
 
             Base := i;
           end
@@ -529,39 +526,39 @@ begin
             PPPAggCellStyleAA(PtrComp(Top) + SizeOf(PPAggCellStyleAA))
               ^ := Limit;
 
-            Limit := J;
+            Limit := j;
           end;
 
-        Inc(PtrComp(Top), 2 * SizeOf(PPAggCellStyleAA));
+        inc(PtrComp(Top), 2 * SizeOf(PPAggCellStyleAA));
       end
     else
       begin
         // the sub-array is small, perform insertion sort
-        J := Base;
-        i := PPAggCellStyleAA(PtrComp(J) + SizeOf(PAggCellStyleAA));
+        j := Base;
+        i := PPAggCellStyleAA(PtrComp(j) + SizeOf(PAggCellStyleAA));
 
         while PtrComp(i) < PtrComp(Limit) do
           begin
-            while PPAggCellStyleAA(PtrComp(J) + SizeOf(PAggCellStyleAA))^^.X
-              < J^^.X do
+            while PPAggCellStyleAA(PtrComp(j) + SizeOf(PAggCellStyleAA))^^.x
+              < j^^.x do
               begin
-                SwapCells(PPAggCellStyleAA(PtrComp(J) +
-                  SizeOf(PAggCellStyleAA)), J);
+                SwapCells(PPAggCellStyleAA(PtrComp(j) +
+                  SizeOf(PAggCellStyleAA)), j);
 
-                if PtrComp(J) = PtrComp(Base) then
+                if PtrComp(j) = PtrComp(Base) then
                     Break;
 
-                Dec(PtrComp(J), SizeOf(PAggCellStyleAA));
+                dec(PtrComp(j), SizeOf(PAggCellStyleAA));
               end;
 
-            J := i;
+            j := i;
 
-            Inc(PtrComp(i), SizeOf(PAggCellStyleAA));
+            inc(PtrComp(i), SizeOf(PAggCellStyleAA));
           end;
 
         if PtrComp(Top) > PtrComp(@Stack[0]) then
           begin
-            Dec(PtrComp(Top), 2 * SizeOf(PPAggCellStyleAA));
+            dec(PtrComp(Top), 2 * SizeOf(PPAggCellStyleAA));
 
             Base := Top^;
             Limit := PPPAggCellStyleAA
@@ -588,8 +585,8 @@ begin
 
   AddCurrentCell;
 
-  FCurrentCell.X := $7FFFFFFF;
-  FCurrentCell.Y := $7FFFFFFF;
+  FCurrentCell.x := $7FFFFFFF;
+  FCurrentCell.y := $7FFFFFFF;
   FCurrentCell.Cover := 0;
   FCurrentCell.Area := 0;
 
@@ -600,7 +597,7 @@ begin
   FSortedCells.Allocate(FNumCells, 16);
 
   // Allocate and zero the Y array
-  FSortedY.Allocate(FMax.Y - FMin.Y + 1, 16);
+  FSortedY.Allocate(FMax.y - FMin.y + 1, 16);
   FSortedY.Zero;
 
   // Create the Y-histogram (count the numbers of cells for each Y)
@@ -610,33 +607,33 @@ begin
 
   while nb <> 0 do
     begin
-      Dec(nb);
+      dec(nb);
 
       CellPointer := BlockPointer^;
 
-      Inc(PtrComp(BlockPointer), SizeOf(PAggCellStyleAA));
+      inc(PtrComp(BlockPointer), SizeOf(PAggCellStyleAA));
 
       i := CAggCellBlockSize;
 
       while i <> 0 do
         begin
-          Dec(i);
-          Inc(PAggSortedY(FSortedY[CellPointer.Y - FMin.Y]).Start);
-          Inc(PtrComp(CellPointer), SizeOf(TAggCellStyleAA));
+          dec(i);
+          inc(PAggSortedY(FSortedY[CellPointer.y - FMin.y]).Start);
+          inc(PtrComp(CellPointer), SizeOf(TAggCellStyleAA));
         end;
     end;
 
   CellPointer := BlockPointer^;
 
-  Inc(PtrComp(BlockPointer), SizeOf(PAggCellStyleAA));
+  inc(PtrComp(BlockPointer), SizeOf(PAggCellStyleAA));
 
   i := FNumCells and CAggCellBlockMask;
 
   while i <> 0 do
     begin
-      Dec(i);
-      Inc(PAggSortedY(FSortedY[CellPointer.Y - FMin.Y]).Start);
-      Inc(PtrComp(CellPointer), SizeOf(TAggCellStyleAA));
+      dec(i);
+      inc(PAggSortedY(FSortedY[CellPointer.y - FMin.y]).Start);
+      inc(PtrComp(CellPointer), SizeOf(TAggCellStyleAA));
     end;
 
   // Convert the Y-histogram into the array of starting indexes
@@ -649,8 +646,8 @@ begin
 
       PAggSortedY(FSortedY[i]).Start := Start;
 
-      Inc(Start, v);
-      Inc(i);
+      inc(Start, v);
+      inc(i);
     end;
 
   // Fill the cell pointer array sorted by Y
@@ -660,45 +657,45 @@ begin
 
   while nb <> 0 do
     begin
-      Dec(nb);
+      dec(nb);
 
       CellPointer := BlockPointer^;
 
-      Inc(PtrComp(BlockPointer), SizeOf(PAggCellStyleAA));
+      inc(PtrComp(BlockPointer), SizeOf(PAggCellStyleAA));
 
       i := CAggCellBlockSize;
 
       while i <> 0 do
         begin
-          Dec(i);
+          dec(i);
 
-          CurrentY := PAggSortedY(FSortedY[CellPointer.Y - FMin.Y]);
+          CurrentY := PAggSortedY(FSortedY[CellPointer.y - FMin.y]);
 
           PPAggCellStyleAA(FSortedCells[CurrentY.Start +
             CurrentY.Num])^ := CellPointer;
 
-          Inc(CurrentY.Num);
-          Inc(PtrComp(CellPointer), SizeOf(TAggCellStyleAA));
+          inc(CurrentY.Num);
+          inc(PtrComp(CellPointer), SizeOf(TAggCellStyleAA));
         end;
     end;
 
   CellPointer := BlockPointer^;
 
-  Inc(PtrComp(BlockPointer), SizeOf(PAggCellStyleAA));
+  inc(PtrComp(BlockPointer), SizeOf(PAggCellStyleAA));
 
   i := FNumCells and CAggCellBlockMask;
 
   while i <> 0 do
     begin
-      Dec(i);
+      dec(i);
 
-      CurrentY := PAggSortedY(FSortedY[CellPointer.Y - FMin.Y]);
+      CurrentY := PAggSortedY(FSortedY[CellPointer.y - FMin.y]);
 
       PPAggCellStyleAA(FSortedCells[CurrentY.Start +
         CurrentY.Num])^ := CellPointer;
 
-      Inc(CurrentY.Num);
-      Inc(PtrComp(CellPointer), SizeOf(TAggCellStyleAA));
+      inc(CurrentY.Num);
+      inc(PtrComp(CellPointer), SizeOf(TAggCellStyleAA));
     end;
 
   // Finally arrange the X-arrays
@@ -712,33 +709,33 @@ begin
           QuickSortCells(PPAggCellStyleAA(PtrComp(FSortedCells.Data) +
           CurrentY.Start * SizeOf(PAggCellStyleAA)), CurrentY.Num);
 
-      Inc(i);
+      inc(i);
     end;
 
   FSorted := True;
 end;
 
-function TAggRasterizerCellsAA.ScanLineNumCells(Y: Cardinal): Cardinal;
+function TAggRasterizerCellsAA.ScanLineNumCells(y: Cardinal): Cardinal;
 begin
-  Result := PAggSortedY(FSortedY[Y - FMin.Y]).Num;
+  Result := PAggSortedY(FSortedY[y - FMin.y]).Num;
 end;
 
-function TAggRasterizerCellsAA.ScanLineCells(Y: Cardinal): PPAggCellStyleAA;
+function TAggRasterizerCellsAA.ScanLineCells(y: Cardinal): PPAggCellStyleAA;
 begin
   Result := PPAggCellStyleAA(PtrComp(FSortedCells.Data) +
-    PAggSortedY(FSortedY[Y - FMin.Y]).Start * SizeOf(PAggCellStyleAA));
+    PAggSortedY(FSortedY[y - FMin.y]).Start * SizeOf(PAggCellStyleAA));
 end;
 
-procedure TAggRasterizerCellsAA.SetCurrentCell(X, Y: Integer);
+procedure TAggRasterizerCellsAA.SetCurrentCell(x, y: Integer);
 begin
-  if FCurrentCell.NotEqual(X, Y, @FStyleCell) <> 0 then
+  if FCurrentCell.NotEqual(x, y, @FStyleCell) <> 0 then
     begin
       AddCurrentCell;
 
       FCurrentCell.Style(@FStyleCell);
 
-      FCurrentCell.X := X;
-      FCurrentCell.Y := Y;
+      FCurrentCell.x := x;
+      FCurrentCell.y := y;
       FCurrentCell.Cover := 0;
       FCurrentCell.Area := 0;
     end;
@@ -758,8 +755,8 @@ begin
 
       FCurrentCellPtr^ := FCurrentCell;
 
-      Inc(PtrComp(FCurrentCellPtr), SizeOf(TAggCellStyleAA));
-      Inc(FNumCells);
+      inc(PtrComp(FCurrentCellPtr), SizeOf(TAggCellStyleAA));
+      inc(FNumCells);
     end;
 end;
 
@@ -784,8 +781,8 @@ begin
     begin
       Delta := y2 - y1;
 
-      Inc(FCurrentCell.Cover, Delta);
-      Inc(FCurrentCell.Area, (FX1 + FX2) * Delta);
+      inc(FCurrentCell.Cover, Delta);
+      inc(FCurrentCell.Area, (FX1 + FX2) * Delta);
 
       Exit;
     end;
@@ -811,17 +808,17 @@ begin
 
   if ModValue < 0 then
     begin
-      Dec(Delta);
-      Inc(ModValue, dx);
+      dec(Delta);
+      inc(ModValue, dx);
     end;
 
-  Inc(FCurrentCell.Cover, Delta);
-  Inc(FCurrentCell.Area, (FX1 + First) * Delta);
-  Inc(Ex1, Incr);
+  inc(FCurrentCell.Cover, Delta);
+  inc(FCurrentCell.Area, (FX1 + First) * Delta);
+  inc(Ex1, Incr);
 
   SetCurrentCell(Ex1, EY);
 
-  Inc(y1, Delta);
+  inc(y1, Delta);
 
   if Ex1 <> Ex2 then
     begin
@@ -831,29 +828,29 @@ begin
 
       if Rem < 0 then
         begin
-          Dec(Lift);
-          Inc(Rem, dx);
+          dec(Lift);
+          inc(Rem, dx);
         end;
 
-      Dec(ModValue, dx);
+      dec(ModValue, dx);
 
       while Ex1 <> Ex2 do
         begin
           Delta := Lift;
 
-          Inc(ModValue, Rem);
+          inc(ModValue, Rem);
 
           if ModValue >= 0 then
             begin
-              Dec(ModValue, dx);
-              Inc(Delta);
+              dec(ModValue, dx);
+              inc(Delta);
             end;
 
-          Inc(FCurrentCell.Cover, Delta);
-          Inc(FCurrentCell.Area, CAggPolySubpixelScale * Delta);
+          inc(FCurrentCell.Cover, Delta);
+          inc(FCurrentCell.Area, CAggPolySubpixelScale * Delta);
 
-          Inc(y1, Delta);
-          Inc(Ex1, Incr);
+          inc(y1, Delta);
+          inc(Ex1, Incr);
 
           SetCurrentCell(Ex1, EY);
         end;
@@ -861,8 +858,8 @@ begin
 
   Delta := y2 - y1;
 
-  Inc(FCurrentCell.Cover, Delta);
-  Inc(FCurrentCell.Area, (FX2 + CAggPolySubpixelScale - First) * Delta);
+  inc(FCurrentCell.Cover, Delta);
+  inc(FCurrentCell.Area, (FX2 + CAggPolySubpixelScale - First) * Delta);
 end;
 
 procedure TAggRasterizerCellsAA.AllocateBlock;
@@ -885,26 +882,26 @@ begin
 
           FCells := NewCells;
 
-          Inc(FMaxBlocks, CAggCellBlockPool);
+          inc(FMaxBlocks, CAggCellBlockPool);
         end;
 
       AggGetMem(Pointer(PPAggCellStyleAA(PtrComp(FCells) + FNumBlocks *
         SizeOf(PAggCellStyleAA))^), CAggCellBlockSize * SizeOf(TAggCellStyleAA));
 
-      Inc(FNumBlocks);
+      inc(FNumBlocks);
     end;
 
   FCurrentCellPtr := PPAggCellStyleAA(PtrComp(FCells) + FCurrVlock *
     SizeOf(PAggCellStyleAA))^;
 
-  Inc(FCurrVlock);
+  inc(FCurrVlock);
 end;
 
 { TAggScanLineHitTest }
 
-constructor TAggScanLineHitTest.Create(X: Integer);
+constructor TAggScanLineHitTest.Create(x: Integer);
 begin
-  fx := X;
+  fx := x;
   FHit := False;
 end;
 
@@ -912,19 +909,19 @@ procedure TAggScanLineHitTest.ResetSpans;
 begin
 end;
 
-procedure TAggScanLineHitTest.Finalize(Y: Integer);
+procedure TAggScanLineHitTest.Finalize(y: Integer);
 begin
 end;
 
-procedure TAggScanLineHitTest.AddCell(X: Integer; Cover: Cardinal);
+procedure TAggScanLineHitTest.AddCell(x: Integer; Cover: Cardinal);
 begin
-  if fx = X then
+  if fx = x then
       FHit := True;
 end;
 
-procedure TAggScanLineHitTest.AddSpan(X: Integer; Len, Cover: Cardinal);
+procedure TAggScanLineHitTest.AddSpan(x: Integer; Len, Cover: Cardinal);
 begin
-  if (fx >= X) and (fx < X + Len) then
+  if (fx >= x) and (fx < x + Len) then
       FHit := True;
 end;
 
@@ -934,3 +931,5 @@ begin
 end;
 
 end. 
+ 
+ 

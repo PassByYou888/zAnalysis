@@ -43,14 +43,14 @@
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function FDistribution(const A: TLInt; const b: TLInt; const X: TLFloat): TLFloat;
+function FDistribution(const a: TLInt; const b: TLInt; const x: TLFloat): TLFloat;
 var
   w: TLFloat;
 begin
-  Assert((A >= 1) and (b >= 1) and AP_FP_Greater_Eq(X, 0), 'Domain error in FDistribution');
-  w := A * X;
+  Assert((a >= 1) and (b >= 1) and AP_FP_Greater_Eq(x, 0), 'Domain error in FDistribution');
+  w := a * x;
   w := w / (b + w);
-  Result := IncompleteBeta(0.5 * A, 0.5 * b, w);
+  Result := IncompleteBeta(0.5 * a, 0.5 * b, w);
 end;
 
 (* ************************************************************************
@@ -89,13 +89,13 @@ end;
   * Cephes Math Library Release 2.8:  June, 2000
   * Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function FCDistribution(const A: TLInt; const b: TLInt; const X: TLFloat): TLFloat;
+function FCDistribution(const a: TLInt; const b: TLInt; const x: TLFloat): TLFloat;
 var
   w: TLFloat;
 begin
-  Assert((A >= 1) and (b >= 1) and AP_FP_Greater_Eq(X, 0), 'Domain error in FCDistribution');
-  w := b / (b + A * X);
-  Result := IncompleteBeta(0.5 * b, 0.5 * A, w);
+  Assert((a >= 1) and (b >= 1) and AP_FP_Greater_Eq(x, 0), 'Domain error in FCDistribution');
+  w := b / (b + a * x);
+  Result := IncompleteBeta(0.5 * b, 0.5 * a, w);
 end;
 
 (* ************************************************************************
@@ -133,30 +133,30 @@ end;
   Cephes Math Library Release 2.8:  June, 2000
   Copyright 1984, 1987, 1995, 2000 by Stephen L. Moshier
   ************************************************************************ *)
-function InvFDistribution(const A: TLInt; const b: TLInt; const Y: TLFloat): TLFloat;
+function InvFDistribution(const a: TLInt; const b: TLInt; const y: TLFloat): TLFloat;
 var
   w: TLFloat;
 begin
-  Assert((A >= 1) and (b >= 1) and AP_FP_Greater(Y, 0) and AP_FP_Less_Eq(Y, 1), 'Domain error in InvFDistribution');
+  Assert((a >= 1) and (b >= 1) and AP_FP_Greater(y, 0) and AP_FP_Less_Eq(y, 1), 'Domain error in InvFDistribution');
 
   //
   // Compute probability for x = 0.5
   //
-  w := IncompleteBeta(0.5 * b, 0.5 * A, 0.5);
+  w := IncompleteBeta(0.5 * b, 0.5 * a, 0.5);
 
   //
   // If that is greater than y, then the solution w < .5
   // Otherwise, solve at 1-y to remove cancellation in (b - b*w)
   //
-  if AP_FP_Greater(w, Y) or AP_FP_Less(Y, 0.001) then
+  if AP_FP_Greater(w, y) or AP_FP_Less(y, 0.001) then
     begin
-      w := InvIncompleteBeta(0.5 * b, 0.5 * A, Y);
-      Result := (b - b * w) / (A * w);
+      w := InvIncompleteBeta(0.5 * b, 0.5 * a, y);
+      Result := (b - b * w) / (a * w);
     end
   else
     begin
-      w := InvIncompleteBeta(0.5 * A, 0.5 * b, 1.0 - Y);
-      Result := b * w / (A * (1.0 - w));
+      w := InvIncompleteBeta(0.5 * a, 0.5 * b, 1.0 - y);
+      Result := b * w / (a * (1.0 - w));
     end;
 end;
 
@@ -184,7 +184,7 @@ end;
   LeftTail    -   p-value for left-tailed test. If LeftTail is less than the given significance level, the null hypothesis is rejected.
   RightTail   -   p-value for right-tailed test. If RightTail is less than the given significance level the null hypothesis is rejected.
   ************************************************************************ *)
-procedure FTest(const X: TLVec; n: TLInt; const Y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
+procedure FTest(const x: TLVec; n: TLInt; const y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 var
   i    : TLInt;
   XMean: TLFloat;
@@ -210,16 +210,16 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      XMean := XMean + X[i];
-      Inc(i);
+      XMean := XMean + x[i];
+      inc(i);
     end;
   XMean := XMean / n;
   YMean := 0;
   i := 0;
   while i <= M - 1 do
     begin
-      YMean := YMean + Y[i];
-      Inc(i);
+      YMean := YMean + y[i];
+      inc(i);
     end;
   YMean := YMean / M;
 
@@ -230,16 +230,16 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      XVar := XVar + AP_Sqr(X[i] - XMean);
-      Inc(i);
+      XVar := XVar + AP_Sqr(x[i] - XMean);
+      inc(i);
     end;
   XVar := XVar / (n - 1);
   YVar := 0;
   i := 0;
   while i <= M - 1 do
     begin
-      YVar := YVar + AP_Sqr(Y[i] - YMean);
-      Inc(i);
+      YVar := YVar + AP_Sqr(y[i] - YMean);
+      inc(i);
     end;
   YVar := YVar / (M - 1);
   if AP_FP_Eq(XVar, 0) or AP_FP_Eq(YVar, 0) then
@@ -261,3 +261,5 @@ begin
   LeftTail := FDistribution(DF1, DF2, XVar / YVar);
   RightTail := 1 - LeftTail;
 end; 
+ 
+ 

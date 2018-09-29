@@ -37,11 +37,8 @@
 *)
 unit AggVcgenContour;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggArray,
@@ -86,11 +83,11 @@ type
 
     // Generator interface
     procedure RemoveAll; override;
-    procedure AddVertex(X, Y: Double; Cmd: Cardinal); override;
+    procedure AddVertex(x, y: Double; Cmd: Cardinal); override;
 
     // Vertex Source Interface
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property LineJoin: TAggLineJoin read FLineJoin write SetLineJoin;
     property InnerJoin: TAggInnerJoin read FInnerJoin write SetInnerJoin;
@@ -194,13 +191,13 @@ begin
   FStatus := siInitial;
 end;
 
-procedure TAggVcgenContour.AddVertex(X, Y: Double; Cmd: Cardinal);
+procedure TAggVcgenContour.AddVertex(x, y: Double; Cmd: Cardinal);
 var
   VD: TAggVertexDistance;
 begin
   FStatus := siInitial;
 
-  VD.pos := PointDouble(X, Y);
+  VD.Pos := PointDouble(x, y);
   VD.Dist := 0;
 
   if IsMoveTo(Cmd) then
@@ -242,9 +239,9 @@ begin
   FSourceVertex := 0;
 end;
 
-function TAggVcgenContour.Vertex(X, Y: PDouble): Cardinal;
+function TAggVcgenContour.Vertex(x, y: PDouble): Cardinal;
 var
-  C: PPointDouble;
+  c: PPointDouble;
 
 label
   _ready, _Outline, _Out_vertices;
@@ -297,7 +294,7 @@ begin
             FSignedWidth, FLineJoin, FInnerJoin, FMiterLimit,
             FInnerMiterLimit, FApproxScale);
 
-          Inc(FSourceVertex);
+          inc(FSourceVertex);
 
           FStatus := siOutVertices;
           FOutVertex := 0;
@@ -311,12 +308,12 @@ begin
             FStatus := siOutline
         else
           begin
-            C := FOutVertices[FOutVertex];
+            c := FOutVertices[FOutVertex];
 
-            Inc(FOutVertex);
+            inc(FOutVertex);
 
-            X^ := C.X;
-            Y^ := C.Y;
+            x^ := c.x;
+            y^ := c.y;
 
             Exit;
           end;
@@ -346,4 +343,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

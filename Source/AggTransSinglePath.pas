@@ -37,11 +37,8 @@
 *)
 unit AggTransSinglePath;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVertexSource,
@@ -61,7 +58,7 @@ type
     FPreserveXScale: Boolean;
 
     procedure SetBaseLength(v: Double);
-    procedure SetPreserveXScale(F: Boolean);
+    procedure SetPreserveXScale(f: Boolean);
     function GetTotalLength: Double;
   public
     constructor Create;
@@ -69,8 +66,8 @@ type
 
     procedure Reset; virtual;
 
-    procedure MoveTo(X, Y: Double);
-    procedure LineTo(X, Y: Double);
+    procedure MoveTo(x, y: Double);
+    procedure LineTo(x, y: Double);
     procedure FinalizePath;
 
     procedure AddPath(Vs: TAggVertexSource; PathID: Cardinal = 0);
@@ -83,103 +80,103 @@ type
 implementation
 
 
-procedure SinglePathTransform(This: TAggTransSinglePath; X, Y: PDouble);
+procedure SinglePathTransform(This: TAggTransSinglePath; x, y: PDouble);
 var
   Rect: TRectDouble;
   Delta: TPointDouble;
   d, DD: Double;
-  i, J, k: Cardinal;
+  i, j, k: Cardinal;
 begin
   if This.FStatus = siReady then
     begin
       if This.FBaseLength > 1E-10 then
-          X^ := X^ * (PAggVertexDistance(This.FSourceVertices[
+          x^ := x^ * (PAggVertexDistance(This.FSourceVertices[
           This.FSourceVertices.Size - 1]).Dist / This.FBaseLength);
 
       Rect.x1 := 0;
       Rect.y1 := 0;
-      Delta.X := 1;
-      Delta.Y := 1;
+      Delta.x := 1;
+      Delta.y := 1;
       d := 0;
       DD := 1;
 
-      if X^ < 0 then
+      if x^ < 0 then
         begin
           // Extrapolation on the left
-          Rect.x1 := PAggVertexDistance(This.FSourceVertices[0]).pos.X;
-          Rect.y1 := PAggVertexDistance(This.FSourceVertices[0]).pos.Y;
-          Delta.X := PAggVertexDistance(This.FSourceVertices[1]).pos.X - Rect.x1;
-          Delta.Y := PAggVertexDistance(This.FSourceVertices[1]).pos.Y - Rect.y1;
+          Rect.x1 := PAggVertexDistance(This.FSourceVertices[0]).Pos.x;
+          Rect.y1 := PAggVertexDistance(This.FSourceVertices[0]).Pos.y;
+          Delta.x := PAggVertexDistance(This.FSourceVertices[1]).Pos.x - Rect.x1;
+          Delta.y := PAggVertexDistance(This.FSourceVertices[1]).Pos.y - Rect.y1;
 
           DD := PAggVertexDistance(This.FSourceVertices[1]).Dist -
             PAggVertexDistance(This.FSourceVertices[0]).Dist;
 
-          d := X^;
+          d := x^;
         end
-      else if X^ > PAggVertexDistance(This.FSourceVertices[
+      else if x^ > PAggVertexDistance(This.FSourceVertices[
         This.FSourceVertices.Size - 1]).Dist then
         begin
           // Extrapolation on the right
           i := This.FSourceVertices.Size - 2;
-          J := This.FSourceVertices.Size - 1;
+          j := This.FSourceVertices.Size - 1;
 
-          Rect.x1 := PAggVertexDistance(This.FSourceVertices[J]).pos.X;
-          Rect.y1 := PAggVertexDistance(This.FSourceVertices[J]).pos.Y;
-          Delta.X := Rect.x1 - PAggVertexDistance(This.FSourceVertices[i]).pos.X;
-          Delta.Y := Rect.y1 - PAggVertexDistance(This.FSourceVertices[i]).pos.Y;
+          Rect.x1 := PAggVertexDistance(This.FSourceVertices[j]).Pos.x;
+          Rect.y1 := PAggVertexDistance(This.FSourceVertices[j]).Pos.y;
+          Delta.x := Rect.x1 - PAggVertexDistance(This.FSourceVertices[i]).Pos.x;
+          Delta.y := Rect.y1 - PAggVertexDistance(This.FSourceVertices[i]).Pos.y;
 
-          DD := PAggVertexDistance(This.FSourceVertices[J]).Dist -
+          DD := PAggVertexDistance(This.FSourceVertices[j]).Dist -
             PAggVertexDistance(This.FSourceVertices[i]).Dist;
 
-          d := X^ - PAggVertexDistance(This.FSourceVertices[J]).Dist;
+          d := x^ - PAggVertexDistance(This.FSourceVertices[j]).Dist;
         end
       else
         begin
           // Interpolation
           i := 0;
-          J := This.FSourceVertices.Size - 1;
+          j := This.FSourceVertices.Size - 1;
 
           if This.FPreserveXScale then
             begin
               i := 0;
 
-              while J - i > 1 do
+              while j - i > 1 do
                 begin
-                  k := (i + J) shr 1;
+                  k := (i + j) shr 1;
 
-                  if X^ < PAggVertexDistance(This.FSourceVertices[k]).Dist
+                  if x^ < PAggVertexDistance(This.FSourceVertices[k]).Dist
                   then
-                      J := k
+                      j := k
                   else
                       i := k;
                 end;
 
               d := PAggVertexDistance(This.FSourceVertices[i]).Dist;
-              DD := PAggVertexDistance(This.FSourceVertices[J]).Dist - d;
-              d := X^ - d;
+              DD := PAggVertexDistance(This.FSourceVertices[j]).Dist - d;
+              d := x^ - d;
             end
           else
             begin
-              i := Trunc(X^ * This.FKIndex);
-              J := i + 1;
+              i := Trunc(x^ * This.FKIndex);
+              j := i + 1;
 
-              DD := PAggVertexDistance(This.FSourceVertices[J]).Dist -
+              DD := PAggVertexDistance(This.FSourceVertices[j]).Dist -
                 PAggVertexDistance(This.FSourceVertices[i]).Dist;
 
-              d := ((X^ * This.FKIndex) - i) * DD;
+              d := ((x^ * This.FKIndex) - i) * DD;
             end;
 
-          Rect.x1 := PAggVertexDistance(This.FSourceVertices[i]).pos.X;
-          Rect.y1 := PAggVertexDistance(This.FSourceVertices[i]).pos.Y;
-          Delta.X := PAggVertexDistance(This.FSourceVertices[J]).pos.X - Rect.x1;
-          Delta.Y := PAggVertexDistance(This.FSourceVertices[J]).pos.Y - Rect.y1;
+          Rect.x1 := PAggVertexDistance(This.FSourceVertices[i]).Pos.x;
+          Rect.y1 := PAggVertexDistance(This.FSourceVertices[i]).Pos.y;
+          Delta.x := PAggVertexDistance(This.FSourceVertices[j]).Pos.x - Rect.x1;
+          Delta.y := PAggVertexDistance(This.FSourceVertices[j]).Pos.y - Rect.y1;
         end;
 
       DD := 1 / DD;
-      Rect.x2 := Rect.x1 + Delta.X * d * DD;
-      Rect.y2 := Rect.y1 + Delta.Y * d * DD;
-      X^ := Rect.x2 - Y^ * Delta.Y * DD;
-      Y^ := Rect.y2 + Y^ * Delta.X * DD;
+      Rect.x2 := Rect.x1 + Delta.x * d * DD;
+      Rect.y2 := Rect.y1 + Delta.y * d * DD;
+      x^ := Rect.x2 - y^ * Delta.y * DD;
+      y^ := Rect.y2 + y^ * Delta.x * DD;
     end;
 end;
 
@@ -212,9 +209,9 @@ begin
   FBaseLength := v;
 end;
 
-procedure TAggTransSinglePath.SetPreserveXScale(F: Boolean);
+procedure TAggTransSinglePath.SetPreserveXScale(f: Boolean);
 begin
-  FPreserveXScale := F;
+  FPreserveXScale := f;
 end;
 
 procedure TAggTransSinglePath.Reset;
@@ -225,13 +222,13 @@ begin
   FStatus := siInitial;
 end;
 
-procedure TAggTransSinglePath.MoveTo(X, Y: Double);
+procedure TAggTransSinglePath.MoveTo(x, y: Double);
 var
   VD: TAggVertexDistance;
 begin
   if FStatus = siInitial then
     begin
-      VD.pos := PointDouble(X, Y);
+      VD.Pos := PointDouble(x, y);
       VD.Dist := 0;
 
       FSourceVertices.ModifyLast(@VD);
@@ -239,16 +236,16 @@ begin
       FStatus := siMakingPath;
     end
   else
-      LineTo(X, Y);
+      LineTo(x, y);
 end;
 
-procedure TAggTransSinglePath.LineTo(X, Y: Double);
+procedure TAggTransSinglePath.LineTo(x, y: Double);
 var
   VD: TAggVertexDistance;
 begin
   if FStatus = siMakingPath then
     begin
-      VD.pos := PointDouble(X, Y);
+      VD.Pos := PointDouble(x, y);
       VD.Dist := 0;
 
       FSourceVertices.Add(@VD);
@@ -300,21 +297,21 @@ end;
 
 procedure TAggTransSinglePath.AddPath;
 var
-  X, Y: Double;
+  x, y: Double;
   Cmd: Cardinal;
 begin
   Vs.Rewind(PathID);
 
-  Cmd := Vs.Vertex(@X, @Y);
+  Cmd := Vs.Vertex(@x, @y);
 
   while not IsStop(Cmd) do
     begin
       if IsMoveTo(Cmd) then
-          MoveTo(X, Y)
+          MoveTo(x, y)
       else if IsVertex(Cmd) then
-          LineTo(X, Y);
+          LineTo(x, y);
 
-      Cmd := Vs.Vertex(@X, @Y);
+      Cmd := Vs.Vertex(@x, @y);
     end;
 
   FinalizePath;
@@ -335,4 +332,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

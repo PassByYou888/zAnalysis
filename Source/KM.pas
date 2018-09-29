@@ -12,21 +12,20 @@
 
 unit KM;
 
+{$INCLUDE zDefine.inc}
+
 interface
 
 uses CoreClasses;
-
-{$INCLUDE zDefine.inc}
-
 
 type
   TKMInt = Integer;
   PKMInt = ^TKMInt;
 
-  TDynamicIndexArray = packed array of TKMInt;
+  TDynamicIndexArray = array of TKMInt;
   PDynamicIndexArray = ^TDynamicIndexArray;
 
-  TKMBoolArray = packed array of Boolean;
+  TKMBoolArray = array of Boolean;
   PKMBoolArray = ^TKMBoolArray;
 
   TKMFloat = Double;
@@ -35,10 +34,10 @@ type
   TKMIntegerArray = TDynamicIndexArray;
   PKMIntegerArray = PDynamicIndexArray;
 
-  TKMFloatArray = packed array of TKMFloat;
+  TKMFloatArray = array of TKMFloat;
   PKMFloatArray = ^TKMFloatArray;
 
-  TKMFloat2DArray = packed array of TKMFloatArray;
+  TKMFloat2DArray = array of TKMFloatArray;
   PKMFloat2DArray = ^TKMFloat2DArray;
 
   (*
@@ -48,104 +47,103 @@ type
     * -1, if incorrect NPoints/NFeatures/K/Restarts was passed
     *  1, if subroutine finished successfully
   *)
-function KMeansCluster(const Source: TKMFloat2DArray; const NVars, k, Restarts: nativeInt; var KArray: TKMFloat2DArray; var kIndex: TKMIntegerArray): ShortInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-
+function KMeansCluster(const Source: TKMFloat2DArray; const NVars, k, Restarts: NativeInt; var KArray: TKMFloat2DArray; var kIndex: TKMIntegerArray): ShortInt;
 
 implementation
 
 uses Math, Learn;
 
-procedure ArrayMove(VDst: PKMFloat; const i11, i12: nativeInt; vSrc: PKMFloat; const i21, i22: nativeInt); inline; overload;
+procedure ArrayMove(VDst: PKMFloat; const i11, i12: NativeInt; vSrc: PKMFloat; const i21, i22: NativeInt); inline; overload;
 var
-  i: nativeInt;
+  i: NativeInt;
 begin
-  Inc(VDst, i11);
-  Inc(vSrc, i21);
+  inc(VDst, i11);
+  inc(vSrc, i21);
 
   for i := i12 - i11 downto 0 do
     begin
       VDst^ := vSrc^;
-      Inc(VDst);
-      Inc(vSrc);
+      inc(VDst);
+      inc(vSrc);
     end;
 end;
 
-procedure ArrayMove(VDst: PKMFloat; const i11, i12: nativeInt; vSrc: PKMFloat; const i21, i22: nativeInt; const F: TKMFloat); inline; overload;
+procedure ArrayMove(VDst: PKMFloat; const i11, i12: NativeInt; vSrc: PKMFloat; const i21, i22: NativeInt; const f: TKMFloat); inline; overload;
 var
-  i: nativeInt;
+  i: NativeInt;
 begin
-  Inc(VDst, i11);
-  Inc(vSrc, i21);
+  inc(VDst, i11);
+  inc(vSrc, i21);
 
   for i := i12 - i11 downto 0 do
     begin
-      VDst^ := F * vSrc^;
-      Inc(VDst);
-      Inc(vSrc);
+      VDst^ := f * vSrc^;
+      inc(VDst);
+      inc(vSrc);
     end;
 end;
 
-procedure ArraySub(VDst: PKMFloat; const i11, i12: nativeInt; vSrc: PKMFloat; const i21, i22: nativeInt); inline;
+procedure ArraySub(VDst: PKMFloat; const i11, i12: NativeInt; vSrc: PKMFloat; const i21, i22: NativeInt); inline;
 var
-  i: nativeInt;
+  i: NativeInt;
 begin
-  Inc(VDst, i11);
-  Inc(vSrc, i21);
+  inc(VDst, i11);
+  inc(vSrc, i21);
 
   for i := i12 - i11 downto 0 do
     begin
       VDst^ := VDst^ - vSrc^;
-      Inc(VDst);
-      Inc(vSrc);
+      inc(VDst);
+      inc(vSrc);
     end;
 end;
 
-function ArrayDotProduct(v1: PKMFloat; const i11, i12: nativeInt; v2: PKMFloat; const i21, i22: nativeInt): TKMFloat; inline;
+function ArrayDotProduct(v1: PKMFloat; const i11, i12: NativeInt; v2: PKMFloat; const i21, i22: NativeInt): TKMFloat; inline;
 var
-  i: nativeInt;
+  i: NativeInt;
 begin
-  Inc(v1, i11);
-  Inc(v2, i21);
+  inc(v1, i11);
+  inc(v2, i21);
 
   Result := 0;
   for i := i12 - i11 downto 0 do
     begin
       Result := Result + (v1^ * v2^);
-      Inc(v1);
-      Inc(v2);
+      inc(v1);
+      inc(v2);
     end;
 end;
 
-procedure ArrayAdd(VDst: PKMFloat; const i11, i12: nativeInt; vSrc: PKMFloat; const i21, i22: nativeInt); inline;
+procedure ArrayAdd(VDst: PKMFloat; const i11, i12: NativeInt; vSrc: PKMFloat; const i21, i22: NativeInt); inline;
 var
-  i: nativeInt;
+  i: NativeInt;
 begin
-  Inc(VDst, i11);
-  Inc(vSrc, i21);
+  inc(VDst, i11);
+  inc(vSrc, i21);
 
   for i := i12 - i11 downto 0 do
     begin
       VDst^ := VDst^ + vSrc^;
-      Inc(VDst);
-      Inc(vSrc);
+      inc(VDst);
+      inc(vSrc);
     end;
 end;
 
-procedure ArrayMul(VOp: PKMFloat; const i1, i2: nativeInt; const F: TKMFloat); inline;
+procedure ArrayMul(VOp: PKMFloat; const i1, i2: NativeInt; const f: TKMFloat); inline;
 var
-  i: nativeInt;
+  i: NativeInt;
 begin
-  Inc(VOp, i1);
+  inc(VOp, i1);
   for i := i2 - i1 downto 0 do
     begin
-      VOp^ := F * VOp^;
-      Inc(VOp);
+      VOp^ := f * VOp^;
+      inc(VOp);
     end;
 end;
 
-procedure CopyMatrix(const A: TKMFloat2DArray; const IS1, IS2, JS1, JS2: nativeInt; var b: TKMFloat2DArray; const ID1, id2, JD1, JD2: nativeInt); inline;
+procedure CopyMatrix(const a: TKMFloat2DArray; const IS1, IS2, JS1, JS2: NativeInt; var b: TKMFloat2DArray; const ID1, id2, JD1, JD2: NativeInt); inline;
 var
-  isrc, idst: nativeInt;
+  isrc, idst: NativeInt;
 begin
   if (IS1 > IS2) or (JS1 > JS2) then
       Exit;
@@ -153,14 +151,14 @@ begin
   while isrc <= IS2 do
     begin
       idst := isrc - IS1 + ID1;
-      ArrayMove(@b[idst][0], JD1, JD2, @A[isrc][0], JS1, JS2);
-      Inc(isrc);
+      ArrayMove(@b[idst][0], JD1, JD2, @a[isrc][0], JS1, JS2);
+      inc(isrc);
     end;
 end;
 
-procedure CopyAndTranspose(const A: TKMFloat2DArray; const IS1, IS2, JS1, JS2: nativeInt; var b: TKMFloat2DArray; const ID1, id2, JD1, JD2: nativeInt); inline;
+procedure CopyAndTranspose(const a: TKMFloat2DArray; const IS1, IS2, JS1, JS2: NativeInt; var b: TKMFloat2DArray; const ID1, id2, JD1, JD2: NativeInt); inline;
 var
-  isrc, jdst, i, k: nativeInt;
+  isrc, jdst, i, k: NativeInt;
 begin
   if (IS1 > IS2) or (JS1 > JS2) then
       Exit;
@@ -170,15 +168,15 @@ begin
       jdst := isrc - IS1 + JD1;
       k := JS1 - ID1;
       for i := ID1 to id2 do
-          b[i, jdst] := A[isrc, i + k];
-      Inc(isrc);
+          b[i, jdst] := a[isrc, i + k];
+      inc(isrc);
     end;
 end;
 
 procedure DynamicArrayCopy(const Source: TKMBoolArray; var output: TKMBoolArray); inline;
 var
-  i: nativeInt;
-  R: TKMBoolArray;
+  i: NativeInt;
+  r: TKMBoolArray;
 begin
   SetLength(output, length(Source));
   for i := low(Source) to high(Source) do
@@ -189,13 +187,13 @@ end;
   Select center for a new cluster using k-means++ rule
   ************************************************************************ *)
 function SelectCenter(const Source: TKMFloat2DArray;
-  const NPoints, NVars: nativeInt; var Centers: TKMFloat2DArray; const BusyCenters: TKMBoolArray; const CCnt: nativeInt;
+  const NPoints, NVars: NativeInt; var Centers: TKMFloat2DArray; const BusyCenters: TKMBoolArray; const CCnt: NativeInt;
   var d2: TKMFloatArray; var p: TKMFloatArray; var tmp: TKMFloatArray): Boolean; inline;
 var
   NewBusyCenters: TKMBoolArray;
-  i: nativeInt;
-  J: nativeInt;
-  CC: nativeInt;
+  i: NativeInt;
+  j: NativeInt;
+  CC: NativeInt;
   v: TKMFloat;
   s: TKMFloat;
 begin
@@ -211,20 +209,20 @@ begin
           while i <= NPoints - 1 do
             begin
               d2[i] := MaxRealNumber;
-              J := 0;
-              while J <= CCnt - 1 do
+              j := 0;
+              while j <= CCnt - 1 do
                 begin
-                  if NewBusyCenters[J] then
+                  if NewBusyCenters[j] then
                     begin
                       ArrayMove(@tmp[0], 0, NVars - 1, @Source[i][0], 0, NVars - 1);
-                      ArraySub(@tmp[0], 0, NVars - 1, @Centers[J][0], 0, NVars - 1);
+                      ArraySub(@tmp[0], 0, NVars - 1, @Centers[j][0], 0, NVars - 1);
                       v := ArrayDotProduct(@tmp[0], 0, NVars - 1, @tmp[0], 0, NVars - 1);
                       if v < d2[i] then
                           d2[i] := v;
                     end;
-                  Inc(J);
+                  inc(j);
                 end;
-              Inc(i);
+              inc(i);
             end;
 
           // calculate P (non-cumulative)
@@ -233,7 +231,7 @@ begin
           while i <= NPoints - 1 do
             begin
               s := s + d2[i];
-              Inc(i);
+              inc(i);
             end;
           if s = 0 then
             begin
@@ -258,37 +256,37 @@ begin
                   NewBusyCenters[CC] := True;
                   Break;
                 end;
-              Inc(i);
+              inc(i);
             end;
         end;
-      Inc(CC);
+      inc(CC);
     end;
 end;
 
 function KMeansCluster(const Source: TKMFloat2DArray;
-  const NVars, k, Restarts: nativeInt; var KArray: TKMFloat2DArray; var kIndex: TKMIntegerArray): ShortInt;
+  const NVars, k, Restarts: NativeInt; var KArray: TKMFloat2DArray; var kIndex: TKMIntegerArray): ShortInt;
 var
-  NPoints: nativeInt;
-  i: nativeInt;
-  J: nativeInt;
+  NPoints: NativeInt;
+  i: NativeInt;
+  j: NativeInt;
   ct: TKMFloat2DArray;
   CTBest: TKMFloat2DArray;
   XYCBest: TKMIntegerArray;
   E: TKMFloat;
   EBest: TKMFloat;
-  X: TKMFloatArray;
+  x: TKMFloatArray;
   tmp: TKMFloatArray;
   d2: TKMFloatArray;
   p: TKMFloatArray;
   CSizes: TKMIntegerArray;
   CBusy: TKMBoolArray;
   v: TKMFloat;
-  CClosest: nativeInt;
+  CClosest: NativeInt;
   DClosest: TKMFloat;
   Work: TKMFloatArray;
   WasChanges: Boolean;
   ZeroSizeClusters: Boolean;
-  pass: nativeInt;
+  pass: NativeInt;
 begin
   NPoints := length(Source);
 
@@ -326,7 +324,7 @@ begin
       while i <= k - 1 do
         begin
           CBusy[i] := False;
-          Inc(i);
+          inc(i);
         end;
       if not SelectCenter(Source, NPoints, NVars, ct, CBusy, k, d2, p, tmp) then
         begin
@@ -345,49 +343,49 @@ begin
             begin
               CClosest := -1;
               DClosest := MaxRealNumber;
-              J := 0;
-              while J <= k - 1 do
+              j := 0;
+              while j <= k - 1 do
                 begin
                   ArrayMove(@tmp[0], 0, NVars - 1, @Source[i][0], 0, NVars - 1);
-                  ArraySub(@tmp[0], 0, NVars - 1, @ct[J][0], 0, NVars - 1);
+                  ArraySub(@tmp[0], 0, NVars - 1, @ct[j][0], 0, NVars - 1);
                   v := ArrayDotProduct(@tmp[0], 0, NVars - 1, @tmp[0], 0, NVars - 1);
                   if v < DClosest then
                     begin
-                      CClosest := J;
+                      CClosest := j;
                       DClosest := v;
                     end;
-                  Inc(J);
+                  inc(j);
                 end;
               if kIndex[i] <> CClosest then
                   WasChanges := True;
               kIndex[i] := CClosest;
-              Inc(i);
+              inc(i);
             end;
 
           // Update centers
-          J := 0;
-          while J <= k - 1 do
+          j := 0;
+          while j <= k - 1 do
             begin
-              CSizes[J] := 0;
-              Inc(J);
+              CSizes[j] := 0;
+              inc(j);
             end;
           i := 0;
           while i <= k - 1 do
             begin
-              J := 0;
-              while J <= NVars - 1 do
+              j := 0;
+              while j <= NVars - 1 do
                 begin
-                  ct[i, J] := 0;
-                  Inc(J);
+                  ct[i, j] := 0;
+                  inc(j);
                 end;
-              Inc(i);
+              inc(i);
             end;
           i := 0;
           while i <= NPoints - 1 do
             begin
               CSizes[kIndex[i]] := CSizes[kIndex[i]] + 1;
               ArrayAdd(@ct[kIndex[i]][0], 0, NVars - 1, @Source[i][0], 0, NVars - 1);
-              Inc(i);
+              inc(i);
             end;
           ZeroSizeClusters := False;
           i := 0;
@@ -395,7 +393,7 @@ begin
             begin
               CBusy[i] := CSizes[i] <> 0;
               ZeroSizeClusters := ZeroSizeClusters or (CSizes[i] = 0);
-              Inc(i);
+              inc(i);
             end;
           if ZeroSizeClusters then
             begin
@@ -409,12 +407,12 @@ begin
                 end;
               Continue;
             end;
-          J := 0;
-          while J <= k - 1 do
+          j := 0;
+          while j <= k - 1 do
             begin
-              v := 1.0 / CSizes[J];
-              ArrayMul(@ct[J][0], 0, NVars - 1, v);
-              Inc(J);
+              v := 1.0 / CSizes[j];
+              ArrayMul(@ct[j][0], 0, NVars - 1, v);
+              inc(j);
             end;
 
           // if nothing has changed during iteration
@@ -431,7 +429,7 @@ begin
           ArraySub(@tmp[0], 0, NVars - 1, @ct[kIndex[i]][0], 0, NVars - 1);
           v := ArrayDotProduct(@tmp[0], 0, NVars - 1, @tmp[0], 0, NVars - 1);
           E := E + v;
-          Inc(i);
+          inc(i);
         end;
       if E < EBest then
         begin
@@ -442,10 +440,10 @@ begin
           while i <= NPoints - 1 do
             begin
               XYCBest[i] := kIndex[i];
-              Inc(i);
+              inc(i);
             end;
         end;
-      Inc(pass);
+      inc(pass);
     end;
 
   // Copy and transpose
@@ -455,7 +453,7 @@ begin
   while i <= NPoints - 1 do
     begin
       kIndex[i] := XYCBest[i];
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -463,4 +461,4 @@ initialization
 
 finalization
 
-end. 
+end.

@@ -37,11 +37,8 @@
 *)
 unit AggVpGenSegmentator;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVpGen,
@@ -61,10 +58,10 @@ type
     constructor Create; override;
 
     procedure Reset; override;
-    procedure MoveTo(X, Y: Double); override;
-    procedure LineTo(X, Y: Double); override;
+    procedure MoveTo(x, y: Double); override;
+    procedure LineTo(x, y: Double); override;
 
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property ApproximationScale: Double read FApproximationScale write SetApproximationScale;
     property AutoClose: Boolean read GetAutoClose;
@@ -82,8 +79,8 @@ begin
 
   FX1 := 0;
   FY1 := 0;
-  FDelta.X := 0;
-  FDelta.Y := 0;
+  FDelta.x := 0;
+  FDelta.y := 0;
   FDeltaL := 0;
   FDeltaDeltaL := 0;
   FCmd := 0;
@@ -111,10 +108,10 @@ end;
 
 procedure TAggVpgenSegmentator.MoveTo;
 begin
-  FX1 := X;
-  FY1 := Y;
-  FDelta.X := 0.0;
-  FDelta.Y := 0.0;
+  FX1 := x;
+  FY1 := y;
+  FDelta.x := 0.0;
+  FDelta.y := 0.0;
   FDeltaL := 2.0;
   FDeltaDeltaL := 2.0;
   FCmd := CAggPathCmdMoveTo;
@@ -124,12 +121,12 @@ procedure TAggVpgenSegmentator.LineTo;
 var
   Len: Double;
 begin
-  FX1 := FX1 + FDelta.X;
-  FY1 := FY1 + FDelta.Y;
-  FDelta.X := X - FX1;
-  FDelta.Y := Y - FY1;
+  FX1 := FX1 + FDelta.x;
+  FY1 := FY1 + FDelta.y;
+  FDelta.x := x - FX1;
+  FDelta.y := y - FY1;
 
-  Len := Sqrt(FDelta.X * FDelta.X + FDelta.Y * FDelta.Y) * FApproximationScale;
+  Len := Sqrt(FDelta.x * FDelta.x + FDelta.y * FDelta.y) * FApproximationScale;
 
   if Len < 1E-30 then
       Len := 1E-30;
@@ -145,7 +142,7 @@ begin
       FCmd := CAggPathCmdLineTo;
 end;
 
-function TAggVpgenSegmentator.Vertex(X, Y: PDouble): Cardinal;
+function TAggVpgenSegmentator.Vertex(x, y: PDouble): Cardinal;
 var
   Cmd: Cardinal;
 begin
@@ -162,16 +159,16 @@ begin
           FDeltaL := 1.0;
           FCmd := CAggPathCmdStop;
 
-          X^ := FX1 + FDelta.X;
-          Y^ := FY1 + FDelta.Y;
+          x^ := FX1 + FDelta.x;
+          y^ := FY1 + FDelta.y;
 
           Result := Cmd;
 
         end
       else
         begin
-          X^ := FX1 + FDelta.X * FDeltaL;
-          Y^ := FY1 + FDelta.Y * FDeltaL;
+          x^ := FX1 + FDelta.x * FDeltaL;
+          y^ := FY1 + FDelta.y * FDeltaL;
 
           FDeltaL := FDeltaL + FDeltaDeltaL;
 
@@ -181,3 +178,5 @@ begin
 end;
 
 end. 
+ 
+ 

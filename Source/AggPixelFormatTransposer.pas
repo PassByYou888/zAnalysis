@@ -37,11 +37,8 @@
 *)
 unit AggPixelFormatTransposer;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggPixelFormat,
@@ -113,84 +110,84 @@ begin
 end;
 
 procedure TransposerCopyPixel(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; C: PAggColor);
+  x, y: Integer; c: PAggColor);
 begin
-  This.FPixelFormats.CopyPixel(This.FPixelFormats, Y, X, C);
+  This.FPixelFormats.CopyPixel(This.FPixelFormats, y, x, c);
 end;
 
 procedure TransposerBlendPixel(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; C: PAggColor; Cover: Int8u);
+  x, y: Integer; c: PAggColor; Cover: Int8u);
 begin
-  This.FPixelFormats.BlendPixel(This.FPixelFormats, Y, X, C, Cover);
+  This.FPixelFormats.BlendPixel(This.FPixelFormats, y, x, c, Cover);
 end;
 
 function TransposerPixel(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer): TAggColor;
+  x, y: Integer): TAggColor;
 begin
-  Result := This.FPixelFormats.Pixel(This.FPixelFormats, Y, X);
+  Result := This.FPixelFormats.Pixel(This.FPixelFormats, y, x);
 end;
 
 procedure TransposerCopyHorizontalLine(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; C: PAggColor);
+  x, y: Integer; Len: Cardinal; c: PAggColor);
 begin
-  This.FPixelFormats.CopyVerticalLine(This.FPixelFormats, Y, X, Len, C);
+  This.FPixelFormats.CopyVerticalLine(This.FPixelFormats, y, x, Len, c);
 end;
 
 procedure TransposerCopyVerticalLine(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; C: PAggColor);
+  x, y: Integer; Len: Cardinal; c: PAggColor);
 begin
-  This.FPixelFormats.CopyHorizontalLine(This.FPixelFormats, Y, X, Len, C);
+  This.FPixelFormats.CopyHorizontalLine(This.FPixelFormats, y, x, Len, c);
 end;
 
 procedure TransposerBlendHorizontalLine(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; C: PAggColor; Cover: Int8u);
+  x, y: Integer; Len: Cardinal; c: PAggColor; Cover: Int8u);
 begin
-  This.FPixelFormats.BlendVerticalLine(This.FPixelFormats, Y, X, Len, C, Cover);
+  This.FPixelFormats.BlendVerticalLine(This.FPixelFormats, y, x, Len, c, Cover);
 end;
 
 procedure TransposerBlendVerticalLine(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; C: PAggColor; Cover: Int8u);
+  x, y: Integer; Len: Cardinal; c: PAggColor; Cover: Int8u);
 begin
-  This.FPixelFormats.BlendHorizontalLine(This.FPixelFormats, Y, X, Len, C, Cover);
+  This.FPixelFormats.BlendHorizontalLine(This.FPixelFormats, y, x, Len, c, Cover);
 end;
 
 procedure TransposerBlendSolidHSpan(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; C: PAggColor; Covers: PInt8u);
+  x, y: Integer; Len: Cardinal; c: PAggColor; Covers: PInt8u);
 begin
-  This.FPixelFormats.BlendSolidVSpan(This.FPixelFormats, Y, X, Len, C, Covers);
+  This.FPixelFormats.BlendSolidVSpan(This.FPixelFormats, y, x, Len, c, Covers);
 end;
 
 procedure TransposerBlendSolidVSpan(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; C: PAggColor; Covers: PInt8u);
+  x, y: Integer; Len: Cardinal; c: PAggColor; Covers: PInt8u);
 begin
-  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, Y, X, Len, C, Covers);
+  This.FPixelFormats.BlendSolidHSpan(This.FPixelFormats, y, x, Len, c, Covers);
 end;
 
 procedure TransposerCopyColorHSpan(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; COLORS: PAggColor);
+  x, y: Integer; Len: Cardinal; Colors: PAggColor);
 begin
-  This.FPixelFormats.CopyColorVSpan(This.FPixelFormats, Y, X, Len, COLORS);
+  This.FPixelFormats.CopyColorVSpan(This.FPixelFormats, y, x, Len, Colors);
 end;
 
 procedure TransposerCopyColorVSpan(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; COLORS: PAggColor);
+  x, y: Integer; Len: Cardinal; Colors: PAggColor);
 begin
-  This.FPixelFormats.CopyColorHSpan(This.FPixelFormats, Y, X, Len, COLORS);
+  This.FPixelFormats.CopyColorHSpan(This.FPixelFormats, y, x, Len, Colors);
 end;
 
 procedure TransposerBlendColorHSpan(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; COLORS: PAggColor; Covers: PInt8u;
+  x, y: Integer; Len: Cardinal; Colors: PAggColor; Covers: PInt8u;
   Cover: Int8u);
 begin
-  This.FPixelFormats.BlendColorVSpan(This.FPixelFormats, Y, X, Len, COLORS,
+  This.FPixelFormats.BlendColorVSpan(This.FPixelFormats, y, x, Len, Colors,
     Covers, Cover);
 end;
 
 procedure TransposerBlendColorVSpan(This: TAggPixelFormatProcessorTransposer;
-  X, Y: Integer; Len: Cardinal; COLORS: PAggColor; Covers: PInt8u;
+  x, y: Integer; Len: Cardinal; Colors: PAggColor; Covers: PInt8u;
   Cover: Int8u);
 begin
-  This.FPixelFormats.BlendColorHSpan(This.FPixelFormats, Y, X, Len, COLORS,
+  This.FPixelFormats.BlendColorHSpan(This.FPixelFormats, y, x, Len, Colors,
     Covers, Cover);
 end;
 
@@ -222,4 +219,6 @@ begin
 end;
 
 end. 
+ 
+ 
  

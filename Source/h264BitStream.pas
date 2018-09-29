@@ -17,7 +17,7 @@ unit h264BitStream;
 
 interface
 
-uses h264Stdint;
+uses h264Types;
 
 type
   TBitStreamWriter = class
@@ -59,7 +59,7 @@ end;
 function TBitStreamWriter.GetByteSize: uint32_t;
 begin
   Result := (Cur - buffer) * 4;
-  Inc(Result, (32 - Mask + 7) div 8); // + buffer
+  inc(Result, (32 - Mask + 7) div 8); // + buffer
 end;
 
 function TBitStreamWriter.GetDataStart: uint8_p;
@@ -106,13 +106,13 @@ end;
 
 procedure TBitStreamWriter.write(const Bit: int32_t);
 begin
-  Dec(Mask);
+  dec(Mask);
   Cur^ := Cur^ or uint32_t((Bit and 1) shl Mask);
 
   if Mask = 0 then
     begin
       Cur^ := bswap(Cur^);
-      Inc(Cur);
+      inc(Cur);
       Cur^ := 0;
       Mask := 32;
     end;
@@ -125,7 +125,7 @@ begin
   Bits := Bits and ($FFFFFFFF shr (32 - bit_count)); // safety check
   if Mask > bit_count then
     begin
-      Dec(Mask, bit_count);
+      dec(Mask, bit_count);
       Cur^ := Cur^ or (Bits shl Mask);
     end
   else
@@ -134,7 +134,7 @@ begin
       Mask := 32 - bits_left;
       Cur^ := Cur^ or (Bits shr bits_left);
       Cur^ := bswap(Cur^);
-      Inc(Cur);
+      inc(Cur);
       Cur^ := 0;
       if bits_left > 0 then
           Cur^ := Bits shl Mask;
@@ -142,3 +142,5 @@ begin
 end;
 
 end.  
+ 
+ 

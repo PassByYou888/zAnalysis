@@ -37,11 +37,8 @@
 *)
 unit AggConvMarker;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   Math,
   AggBasics,
@@ -62,7 +59,7 @@ type
     destructor Destroy; override;
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property Transform: TAggTransAffine read FTransform;
   end;
@@ -102,7 +99,7 @@ begin
   FNumMarkers := 1;
 end;
 
-function TAggConvMarker.Vertex(X, Y: PDouble): Cardinal;
+function TAggConvMarker.Vertex(x, y: PDouble): Cardinal;
 var
   Cmd: Cardinal;
   x1, y1, x2, y2: Double;
@@ -125,7 +122,7 @@ begin
 
           FMarkerLocator.Rewind(FMarker);
 
-          Inc(FMarker);
+          inc(FMarker);
 
           FNumMarkers := 0;
           FStatus := siMarkers;
@@ -143,7 +140,7 @@ begin
               Continue;
             end;
 
-          Inc(FNumMarkers);
+          inc(FNumMarkers);
 
           FMatrix.Assign(FTransform);
           FMatrix.Rotate(ArcTan2(y2 - y1, x2 - x1));
@@ -159,7 +156,7 @@ begin
       siPolygon:
       _polygon:
         begin
-          Cmd := FMarkerShapes.Vertex(X, Y);
+          Cmd := FMarkerShapes.Vertex(x, y);
 
           if IsStop(Cmd) then
             begin
@@ -168,7 +165,7 @@ begin
               Continue;
             end;
 
-          FMatrix.Transform(FMatrix, X, Y);
+          FMatrix.Transform(FMatrix, x, y);
 
           Break;
         end;
@@ -184,3 +181,5 @@ begin
 end;
 
 end. 
+ 
+ 

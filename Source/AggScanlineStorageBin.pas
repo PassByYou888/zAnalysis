@@ -37,11 +37,8 @@
 *)
 unit AggScanlineStorageBin;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggArray,
@@ -53,14 +50,14 @@ uses
 type
   PAggSpanData = ^TAggSpanData;
 
-  TAggSpanData = packed record
-    X, Len: Int32;
+  TAggSpanData = record
+    x, Len: Int32;
   end;
 
   PAggScanLineData = ^TAggScanLineData;
 
-  TAggScanLineData = packed record
-    Y: Integer;
+  TAggScanLineData = record
+    y: Integer;
     NumSpans, Start_Span: Cardinal;
   end;
 
@@ -231,12 +228,12 @@ end;
 
 function TAggEmbeddedScanLineBin.TConstIterator.GetX: Integer;
 begin
-  Result := FSpan.X;
+  Result := FSpan.x;
 end;
 
 procedure TAggEmbeddedScanLineBin.TConstIterator.IncOperator;
 begin
-  Inc(FSpanIndex);
+  inc(FSpanIndex);
 
   FSpan := FStorage.SpanByIndex(FSpanIndex)^;
 end;
@@ -256,7 +253,7 @@ end;
 
 function TAggEmbeddedScanLineBin.GetY;
 begin
-  Result := FScanLine.Y;
+  Result := FScanLine.y;
 end;
 
 function TAggEmbeddedScanLineBin.GetNumSpans;
@@ -289,18 +286,18 @@ begin
   FSpans := TAggPodDeque.Create(256 - 2, SizeOf(TAggSpanData), 10); // Block increment size
   FScanLines := TAggPodDeque.Create(SizeOf(TAggScanLineData), 8);
 
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 
   FCurrentScanLine := 0;
-  FFakeScanLine.Y := 0;
+  FFakeScanLine.y := 0;
 
   FFakeScanLine.NumSpans := 0;
   FFakeScanLine.Start_Span := 0;
 
-  FFakeSpan.X := 0;
+  FFakeSpan.x := 0;
   FFakeSpan.Len := 0;
 end;
 
@@ -316,17 +313,17 @@ begin
   FScanLines.RemoveAll;
   FSpans.RemoveAll;
 
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 
   FCurrentScanLine := 0;
 end;
 
 procedure TAggScanLineStorageBin.Render(ScanLine: TAggCustomScanLine);
 var
-  Y, x1, x2: Integer;
+  y, x1, x2: Integer;
 
   ScanLineData: TAggScanLineData;
   NumSpans: Cardinal;
@@ -334,15 +331,15 @@ var
   Span: TAggCustomSpan;
   sp: TAggSpanData;
 begin
-  Y := ScanLine.Y;
+  y := ScanLine.y;
 
-  if Y < FMin.Y then
-      FMin.Y := Y;
+  if y < FMin.y then
+      FMin.y := y;
 
-  if Y > FMax.Y then
-      FMax.Y := Y;
+  if y > FMax.y then
+      FMax.y := y;
 
-  ScanLineData.Y := Y;
+  ScanLineData.y := y;
   ScanLineData.NumSpans := ScanLine.NumSpans;
   ScanLineData.Start_Span := FSpans.Size;
 
@@ -351,21 +348,21 @@ begin
   Span := ScanLine.GetBegin;
 
   repeat
-    sp.X := Span.X;
+    sp.x := Span.x;
     sp.Len := Span.Len;
 
     FSpans.Add(@sp);
 
-    x1 := sp.X;
-    x2 := sp.X + sp.Len - 1;
+    x1 := sp.x;
+    x2 := sp.x + sp.Len - 1;
 
-    if x1 < FMin.X then
-        FMin.X := x1;
+    if x1 < FMin.x then
+        FMin.x := x1;
 
-    if x2 > FMax.X then
-        FMax.X := x2;
+    if x2 > FMax.x then
+        FMax.x := x2;
 
-    Dec(NumSpans);
+    dec(NumSpans);
 
     if NumSpans = 0 then
         Break;
@@ -380,22 +377,22 @@ end;
 
 function TAggScanLineStorageBin.GetMinX: Integer;
 begin
-  Result := FMin.X;
+  Result := FMin.x;
 end;
 
 function TAggScanLineStorageBin.GetMinY: Integer;
 begin
-  Result := FMin.Y;
+  Result := FMin.y;
 end;
 
 function TAggScanLineStorageBin.GetMaxX: Integer;
 begin
-  Result := FMax.X;
+  Result := FMax.x;
 end;
 
 function TAggScanLineStorageBin.GetMaxY: Integer;
 begin
-  Result := FMax.Y;
+  Result := FMax.y;
 end;
 
 function TAggScanLineStorageBin.RewindScanLines: Boolean;
@@ -429,19 +426,19 @@ begin
     repeat
       sp := FSpans[SpanIndex];
 
-      Inc(SpanIndex);
+      inc(SpanIndex);
 
-      ScanLine.AddSpan(sp.X, sp.Len, CAggCoverFull);
+      ScanLine.AddSpan(sp.x, sp.Len, CAggCoverFull);
 
-      Dec(NumSpans);
+      dec(NumSpans);
 
     until NumSpans = 0;
 
-    Inc(FCurrentScanLine);
+    inc(FCurrentScanLine);
 
     if ScanLine.NumSpans <> 0 then
       begin
-        ScanLine.Finalize(ScanLineData.Y);
+        ScanLine.Finalize(ScanLineData.y);
 
         Break;
       end;
@@ -463,7 +460,7 @@ begin
 
     ScanLine.Setup(FCurrentScanLine);
 
-    Inc(FCurrentScanLine);
+    inc(FCurrentScanLine);
 
   until ScanLine.NumSpans <> 0;
 
@@ -484,7 +481,7 @@ begin
         Cardinal(PAggScanLineData(FScanLines[i]).NumSpans) *
         SizeOf(Int32) * 2; // X, Span_len
 
-      Inc(i);
+      inc(i);
     end;
 
   Result := Size;
@@ -505,16 +502,16 @@ var
   sp: PAggSpanData;
 begin
   WriteInt32(Data, GetMinX); // MinX
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   WriteInt32(Data, GetMinY); // min_y
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   WriteInt32(Data, GetMaxX); // MaxX
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   WriteInt32(Data, GetMaxY); // max_y
-  Inc(PtrComp(Data), SizeOf(Int32));
+  inc(PtrComp(Data), SizeOf(Int32));
 
   i := 0;
 
@@ -522,11 +519,11 @@ begin
     begin
       ScanLineData := FScanLines[i];
 
-      WriteInt32(Data, ScanLineData.Y); // Y
-      Inc(PtrComp(Data), SizeOf(Int32));
+      WriteInt32(Data, ScanLineData.y); // Y
+      inc(PtrComp(Data), SizeOf(Int32));
 
       WriteInt32(Data, ScanLineData.NumSpans); // NumSpans
-      Inc(PtrComp(Data), SizeOf(Int32));
+      inc(PtrComp(Data), SizeOf(Int32));
 
       NumSpans := ScanLineData.NumSpans;
       SpanIndex := ScanLineData.Start_Span;
@@ -534,19 +531,19 @@ begin
       repeat
         sp := FSpans[SpanIndex];
 
-        Inc(SpanIndex);
+        inc(SpanIndex);
 
-        WriteInt32(Data, sp.X); // X
-        Inc(PtrComp(Data), SizeOf(Int32));
+        WriteInt32(Data, sp.x); // X
+        inc(PtrComp(Data), SizeOf(Int32));
 
         WriteInt32(Data, sp.Len); // len
-        Inc(PtrComp(Data), SizeOf(Int32));
+        inc(PtrComp(Data), SizeOf(Int32));
 
-        Dec(NumSpans);
+        dec(NumSpans);
 
       until NumSpans = 0;
 
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -575,7 +572,7 @@ begin
   FInternalData := ScanLine.FInternalData;
   FDeltaX := ScanLine.FDeltaX;
 
-  FSpan.X := ReadInt32 + FDeltaX;
+  FSpan.x := ReadInt32 + FDeltaX;
   FSpan.Len := ReadInt32;
 end;
 
@@ -586,25 +583,25 @@ end;
 
 function TAggEmbeddedScanLineA.TConstIterator.GetX: Integer;
 begin
-  Result := FSpan.X;
+  Result := FSpan.x;
 end;
 
 procedure TAggEmbeddedScanLineA.TConstIterator.IncOperator;
 begin
-  FSpan.X := ReadInt32 + FDeltaX;
+  FSpan.x := ReadInt32 + FDeltaX;
   FSpan.Len := ReadInt32;
 end;
 
 function TAggEmbeddedScanLineA.TConstIterator.ReadInt32: Integer;
 begin
   TInt32Int8uAccess(Result).values[0] := FInternalData^;
-  Inc(PtrComp(FInternalData), SizeOf(Int8u));
+  inc(PtrComp(FInternalData), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[1] := FInternalData^;
-  Inc(PtrComp(FInternalData), SizeOf(Int8u));
+  inc(PtrComp(FInternalData), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[2] := FInternalData^;
-  Inc(PtrComp(FInternalData), SizeOf(Int8u));
+  inc(PtrComp(FInternalData), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[3] := FInternalData^;
-  Inc(PtrComp(FInternalData), SizeOf(Int8u));
+  inc(PtrComp(FInternalData), SizeOf(Int8u));
 end;
 
 { TAggEmbeddedScanLineA }
@@ -644,13 +641,13 @@ end;
 function TAggEmbeddedScanLineA.ReadInt32: Integer;
 begin
   TInt32Int8uAccess(Result).values[0] := FInternalData^;
-  Inc(PtrComp(FInternalData), SizeOf(Int8u));
+  inc(PtrComp(FInternalData), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[1] := FInternalData^;
-  Inc(PtrComp(FInternalData), SizeOf(Int8u));
+  inc(PtrComp(FInternalData), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[2] := FInternalData^;
-  Inc(PtrComp(FInternalData), SizeOf(Int8u));
+  inc(PtrComp(FInternalData), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[3] := FInternalData^;
-  Inc(PtrComp(FInternalData), SizeOf(Int8u));
+  inc(PtrComp(FInternalData), SizeOf(Int8u));
 end;
 
 procedure TAggEmbeddedScanLineA.Init(PTR: PInt8u; dx, dy: Integer);
@@ -669,13 +666,13 @@ begin
   FEnd := nil;
   FInternalData := nil;
 
-  FDelta.X := 0;
-  FDelta.Y := 0;
+  FDelta.x := 0;
+  FDelta.y := 0;
 
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 end;
 
 constructor TAggSerializedScanLinesAdaptorBin.Create(Data: PInt8u; Size: Cardinal;
@@ -685,13 +682,13 @@ begin
   FEnd := PInt8u(PtrComp(Data) + Size);
   FInternalData := Data;
 
-  FDelta.X := Trunc(dx + 0.5);
-  FDelta.Y := Trunc(dy + 0.5);
+  FDelta.x := Trunc(dx + 0.5);
+  FDelta.y := Trunc(dy + 0.5);
 
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 end;
 
 procedure TAggSerializedScanLinesAdaptorBin.Init(Data: PInt8u; Size: Cardinal;
@@ -701,13 +698,13 @@ begin
   FEnd := PInt8u(PtrComp(Data) + Size);
   FInternalData := Data;
 
-  FDelta.X := Trunc(dx + 0.5);
-  FDelta.Y := Trunc(dy + 0.5);
+  FDelta.x := Trunc(dx + 0.5);
+  FDelta.y := Trunc(dy + 0.5);
 
-  FMin.X := $7FFFFFFF;
-  FMin.Y := $7FFFFFFF;
-  FMax.X := -$7FFFFFFF;
-  FMax.Y := -$7FFFFFFF;
+  FMin.x := $7FFFFFFF;
+  FMin.y := $7FFFFFFF;
+  FMax.x := -$7FFFFFFF;
+  FMax.y := -$7FFFFFFF;
 end;
 
 function TAggSerializedScanLinesAdaptorBin.ReadInt32: Integer;
@@ -715,13 +712,13 @@ begin
   Result := 0;
 
   TInt32Int8uAccess(Result).values[0] := FInternalData^;
-  Inc(PtrComp(FInternalData), SizeOf(Int8u));
+  inc(PtrComp(FInternalData), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[1] := FInternalData^;
-  Inc(PtrComp(FInternalData), SizeOf(Int8u));
+  inc(PtrComp(FInternalData), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[2] := FInternalData^;
-  Inc(PtrComp(FInternalData), SizeOf(Int8u));
+  inc(PtrComp(FInternalData), SizeOf(Int8u));
   TInt32Int8uAccess(Result).values[3] := FInternalData^;
-  Inc(PtrComp(FInternalData), SizeOf(Int8u));
+  inc(PtrComp(FInternalData), SizeOf(Int8u));
 end;
 
 function TAggSerializedScanLinesAdaptorBin.RewindScanLines: Boolean;
@@ -730,10 +727,10 @@ begin
 
   if PtrComp(FInternalData) < PtrComp(FEnd) then
     begin
-      FMin.X := ReadInt32 + FDelta.X;
-      FMin.Y := ReadInt32 + FDelta.Y;
-      FMax.X := ReadInt32 + FDelta.X;
-      FMax.Y := ReadInt32 + FDelta.Y;
+      FMin.x := ReadInt32 + FDelta.x;
+      FMin.y := ReadInt32 + FDelta.y;
+      FMax.x := ReadInt32 + FDelta.x;
+      FMax.y := ReadInt32 + FDelta.y;
 
       Result := True;
     end
@@ -743,28 +740,28 @@ end;
 
 function TAggSerializedScanLinesAdaptorBin.GetMinX: Integer;
 begin
-  Result := FMin.X;
+  Result := FMin.x;
 end;
 
 function TAggSerializedScanLinesAdaptorBin.GetMinY: Integer;
 begin
-  Result := FMin.Y;
+  Result := FMin.y;
 end;
 
 function TAggSerializedScanLinesAdaptorBin.GetMaxX: Integer;
 begin
-  Result := FMax.X;
+  Result := FMax.x;
 end;
 
 function TAggSerializedScanLinesAdaptorBin.GetMaxY: Integer;
 begin
-  Result := FMax.Y;
+  Result := FMax.y;
 end;
 
 function TAggSerializedScanLinesAdaptorBin.SweepScanLine(
   ScanLine: TAggCustomScanLine): Boolean;
 var
-  Y, X, Len: Integer;
+  y, x, Len: Integer;
   NumSpans: Cardinal;
 begin
   ScanLine.ResetSpans;
@@ -777,25 +774,25 @@ begin
         Exit;
       end;
 
-    Y := ReadInt32 + FDelta.Y;
+    y := ReadInt32 + FDelta.y;
     NumSpans := ReadInt32;
 
     repeat
-      X := ReadInt32 + FDelta.X;
+      x := ReadInt32 + FDelta.x;
       Len := ReadInt32;
 
       if Len < 0 then
           Len := -Len;
 
-      ScanLine.AddSpan(X, Cardinal(Len), CAggCoverFull);
+      ScanLine.AddSpan(x, Cardinal(Len), CAggCoverFull);
 
-      Inc(NumSpans);
+      inc(NumSpans);
 
     until NumSpans = 0;
 
     if ScanLine.NumSpans <> 0 then
       begin
-        ScanLine.Finalize(Y);
+        ScanLine.Finalize(y);
 
         Break;
       end;
@@ -817,17 +814,19 @@ begin
         Exit;
       end;
 
-    ScanLine.Init(FInternalData, FDelta.X, FDelta.Y);
+    ScanLine.Init(FInternalData, FDelta.x, FDelta.y);
 
     // Jump to the next ScanLine
     ReadInt32; // Y
 
     NumSpans := ReadInt32; // NumSpans
 
-    Inc(PtrComp(FInternalData), NumSpans * SizeOf(Int32) * 2);
+    inc(PtrComp(FInternalData), NumSpans * SizeOf(Int32) * 2);
   until ScanLine.NumSpans <> 0;
 
   Result := True;
 end;
 
 end. 
+ 
+ 

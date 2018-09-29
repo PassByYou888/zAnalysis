@@ -37,11 +37,8 @@
 *)
 unit AggConvContour;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggVcgenContour,
@@ -181,3 +178,4 @@ begin
 end;
 
 end. 
+ 

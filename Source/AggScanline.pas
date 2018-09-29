@@ -37,19 +37,16 @@
 *)
 unit AggScanline;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics;
 
 type
   PAggSpanRecord = ^TAggSpanRecord;
 
-  TAggSpanRecord = packed record
-    X, Len: Int16;
+  TAggSpanRecord = record
+    x, Len: Int16;
     Covers: PInt8u;
   end;
 
@@ -62,7 +59,7 @@ type
 
     procedure IncOperator; virtual;
 
-    property X: Integer read GetX;
+    property x: Integer read GetX;
     property Len: Integer read GetLength;
   end;
 
@@ -77,10 +74,10 @@ type
     procedure Reset(MinX, MaxX: Integer); virtual; abstract;
     procedure ResetSpans; virtual; abstract;
 
-    procedure Finalize(Y: Integer); virtual; abstract;
-    procedure AddCell(X: Integer; Cover: Cardinal); virtual; abstract;
-    procedure AddCells(X: Integer; Len: Cardinal; Covers: PInt8u); virtual; abstract;
-    procedure AddSpan(X: Integer; Len, Cover: Cardinal); virtual; abstract;
+    procedure Finalize(y: Integer); virtual; abstract;
+    procedure AddCell(x: Integer; Cover: Cardinal); virtual; abstract;
+    procedure AddCells(x: Integer; Len: Cardinal; Covers: PInt8u); virtual; abstract;
+    procedure AddSpan(x: Integer; Len, Cover: Cardinal); virtual; abstract;
 
     function GetBegin: TAggCustomSpan; virtual; abstract;
 
@@ -91,7 +88,7 @@ type
     // property IsEmbedded: Boolean read GetIsEmbedded;
     property NumSpans: Cardinal read GetNumSpans;
     // property SizeOfSpan: Cardinal read GetSizeOfSpan;
-    property Y: Integer read GetY;
+    property y: Integer read GetY;
   end;
 
   TAggEmbeddedScanLine = class(TAggCustomScanLine)
@@ -136,3 +133,5 @@ end;
   end; }
 
 end. 
+ 
+ 

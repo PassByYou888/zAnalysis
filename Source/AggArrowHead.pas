@@ -37,9 +37,8 @@
 *)
 unit AggArrowHead;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
+interface
 
 uses
   AggBasics,
@@ -70,7 +69,7 @@ type
     procedure SetTail(d1, d2, d3, d4: Double);
 
     procedure Rewind(PathID: Cardinal); override;
-    function Vertex(X, Y: PDouble): Cardinal; override;
+    function Vertex(x, y: PDouble): Cardinal; override;
 
     property HasHead: Boolean read FHeadFlag write FHeadFlag;
     property HasTail: Boolean read FTailFlag write FTailFlag;
@@ -203,7 +202,7 @@ begin
   end;
 end;
 
-function TAggArrowHead.Vertex(X, Y: PDouble): Cardinal;
+function TAggArrowHead.Vertex(x, y: PDouble): Cardinal;
 var
   CurrentIndex: Cardinal;
 begin
@@ -211,15 +210,17 @@ begin
   begin
     CurrentIndex := FCurrentCoord * 2;
 
-    X^ := FCoord[CurrentIndex];
-    Y^ := FCoord[CurrentIndex + 1];
+    x^ := FCoord[CurrentIndex];
+    y^ := FCoord[CurrentIndex + 1];
 
     Result := FCmd[FCurrentCoord];
 
-    Inc(FCurrentCoord);
+    inc(FCurrentCoord);
   end
   else
     Result := CAggPathCmdStop;
 end;
 
 end. 
+ 
+ 

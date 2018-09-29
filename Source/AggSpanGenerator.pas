@@ -37,11 +37,8 @@
 *)
 unit AggSpanGenerator;
 
-interface
-
 {$INCLUDE AggCompiler.inc}
-
-
+interface
 uses
   AggBasics,
   AggSpanAllocator,
@@ -57,7 +54,7 @@ type
     constructor Create(Alloc: TAggSpanAllocator);
 
     procedure Prepare(MaxSpanLength: Cardinal); virtual;
-    function Generate(X, Y: Integer; Len: Cardinal): PAggColor; virtual; abstract;
+    function Generate(x, y: Integer; Len: Cardinal): PAggColor; virtual; abstract;
 
     property Allocator: TAggSpanAllocator read FAlloc write SetAllocator;
   end;
@@ -83,4 +80,6 @@ begin
 end;
 
 end.
+ 
+ 
  

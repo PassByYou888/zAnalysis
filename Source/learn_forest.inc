@@ -1,5 +1,5 @@
 type
-  TDecisionForest = packed record
+  TDecisionForest = record
     NVars: TLInt;
     NClasses: TLInt;
     NTrees: TLInt;
@@ -9,7 +9,7 @@ type
 
   PDecisionForest = ^TDecisionForest;
 
-  TDFReport = packed record
+  TDFReport = record
     RelClsError: TLFloat;
     AvgCE: TLFloat;
     RMSError: TLFloat;
@@ -22,23 +22,23 @@ type
     OOBAvgRelError: TLFloat;
   end;
 
-procedure DFBuildRandomDecisionForest(const xy: TLMatrix; NPoints, NVars, NClasses, NTrees: TLInt; R: TLFloat;
-  var Info: TLInt; var df: TDecisionForest; var Rep: TDFReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure DFBuildRandomDecisionForest(const xy: TLMatrix; NPoints, NVars, NClasses, NTrees: TLInt; r: TLFloat;
+  var Info: TLInt; var df: TDecisionForest; var Rep: TDFReport); forward;
 
 procedure DFBuildInternal(const xy: TLMatrix; NPoints: TLInt;
   NVars: TLInt; NClasses: TLInt; NTrees: TLInt;
   SampleSize: TLInt; NFeatures: TLInt; Flags: TLInt;
-  var Info: TLInt; var df: TDecisionForest; var Rep: TDFReport); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Info: TLInt; var df: TDecisionForest; var Rep: TDFReport); forward;
 
-procedure DFProcess(const df: TDecisionForest; const X: TLVec; var Y: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DFRelClsError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DFAvgCE(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DFRMSError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DFAvgError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function DFAvgRelError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure DFCopy(const DF1: TDecisionForest; var DF2: TDecisionForest); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure DFSerialize(const df: TDecisionForest; var RA: TLVec; var RLen: TLInt); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure DFUnserialize(const RA: TLVec; var df: TDecisionForest); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure DFProcess(const df: TDecisionForest; const x: TLVec; var y: TLVec); forward;
+function DFRelClsError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
+function DFAvgCE(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
+function DFRMSError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
+function DFAvgError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
+function DFAvgRelError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
+procedure DFCopy(const DF1: TDecisionForest; var DF2: TDecisionForest); forward;
+procedure DFSerialize(const df: TDecisionForest; var RA: TLVec; var RLen: TLInt); forward;
+procedure DFUnserialize(const RA: TLVec; var df: TDecisionForest); forward;
 
 
 const
@@ -49,7 +49,7 @@ const
   DFUseEVS          = 2;
 
 type
-  TDFInternalBuffers = packed record
+  TDFInternalBuffers = record
     TreeBuf: TLVec;
     IdxBuf: TLIVec;
     TmpBufR: TLVec;
@@ -61,28 +61,28 @@ type
     EVSSplits: TLVec;
   end;
 
-function DFClsError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLInt; forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure DFProcessInternal(const df: TDecisionForest; Offs: TLInt; const X: TLVec; var Y: TLVec); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function DFClsError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLInt; forward;
+procedure DFProcessInternal(const df: TDecisionForest; Offs: TLInt; const x: TLVec; var y: TLVec); forward;
 
 procedure DFBuildTree(const xy: TLMatrix; NPoints: TLInt;
   NVars: TLInt; NClasses: TLInt; NFeatures: TLInt;
   NVarsInPool: TLInt; Flags: TLInt;
-  var Bufs: TDFInternalBuffers); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Bufs: TDFInternalBuffers); forward;
 
 procedure DFBuildTreeRec(const xy: TLMatrix; NPoints: TLInt;
   NVars: TLInt; NClasses: TLInt; NFeatures: TLInt;
   NVarsInPool: TLInt; Flags: TLInt;
   var NumProcessed: TLInt; idx1: TLInt; idx2: TLInt;
-  var Bufs: TDFInternalBuffers); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Bufs: TDFInternalBuffers); forward;
 
-procedure DFWeakSplitI(var X: TLVec; var Y: TLIVec;
+procedure DFWeakSplitI(var x: TLVec; var y: TLIVec;
   n: TLInt; NClasses: TLInt; var Info: TLInt;
-  var Threshold: TLFloat; var E: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+  var Threshold: TLFloat; var E: TLFloat); forward;
 
-procedure DFSplitC(var X: TLVec; var C: TLIVec;
-  var CntBuf: TLIVec; n: TLInt; NC: TLInt; Flags: TLInt; var Info: TLInt; var Threshold: TLFloat; var E: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure DFSplitC(var x: TLVec; var c: TLIVec;
+  var CntBuf: TLIVec; n: TLInt; NC: TLInt; Flags: TLInt; var Info: TLInt; var Threshold: TLFloat; var E: TLFloat); forward;
 
-procedure DFSplitR(var X: TLVec; var Y: TLVec; n: TLInt; Flags: TLInt; var Info: TLInt; var Threshold: TLFloat; var E: TLFloat); forward; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure DFSplitR(var x: TLVec; var y: TLVec; n: TLInt; Flags: TLInt; var Info: TLInt; var Threshold: TLFloat; var E: TLFloat); forward;
 
 
 (* ************************************************************************
@@ -108,18 +108,18 @@ procedure DFSplitR(var X: TLVec; var Y: TLVec; n: TLInt; Flags: TLInt; var Info:
   //  DF          -   model built
   //  Rep         -   training report, contains error on a training set and out-of-bag estimates of generalization error.
   ************************************************************************ *)
-procedure DFBuildRandomDecisionForest(const xy: TLMatrix; NPoints, NVars, NClasses, NTrees: TLInt; R: TLFloat;
+procedure DFBuildRandomDecisionForest(const xy: TLMatrix; NPoints, NVars, NClasses, NTrees: TLInt; r: TLFloat;
   var Info: TLInt; var df: TDecisionForest; var Rep: TDFReport);
 var
   SampleSize: TLInt;
 
 begin
-  if AP_FP_Less_Eq(R, 0) or AP_FP_Greater(R, 1) then
+  if AP_FP_Less_Eq(r, 0) or AP_FP_Greater(r, 1) then
     begin
       Info := -1;
       Exit;
     end;
-  SampleSize := Max(Round(R * NPoints), 1);
+  SampleSize := Max(Round(r * NPoints), 1);
   DFBuildInternal(xy, NPoints, NVars, NClasses, NTrees, SampleSize,
     Max(NVars div 2, 1), DFUseStrongSplits + DFUseEVS, Info, df, Rep);
 end;
@@ -130,7 +130,7 @@ procedure DFBuildInternal(const xy: TLMatrix; NPoints: TLInt;
   var Info: TLInt; var df: TDecisionForest; var Rep: TDFReport);
 var
   i           : TLInt;
-  J           : TLInt;
+  j           : TLInt;
   k           : TLInt;
   TmpI        : TLInt;
   LastTreeOffs: TLInt;
@@ -144,8 +144,8 @@ var
   OOBBuf      : TLVec;
   OOBCntBuf   : TLIVec;
   XYS         : TLMatrix;
-  X           : TLVec;
-  Y           : TLVec;
+  x           : TLVec;
+  y           : TLVec;
   OOBCnt      : TLInt;
   OOBRelCnt   : TLInt;
   v           : TLFloat;
@@ -173,7 +173,7 @@ begin
               Info := -2;
               Exit;
             end;
-          Inc(i);
+          inc(i);
         end;
     end;
   Info := 1;
@@ -202,25 +202,25 @@ begin
   SetLength(OOBCntBuf, NPoints (* - 1 + 1 // optimized compiler *) );
   SetLength(df.Trees, NTrees * TreeSize (* - 1 + 1 // optimized compiler *) );
   SetLength(XYS, SampleSize (* - 1 + 1 // optimized compiler *) , NVars + 1);
-  SetLength(X, NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(Y, NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(y, NClasses (* - 1 + 1 // optimized compiler *) );
   i := 0;
   while i <= NPoints - 1 do
     begin
       PermBuf[i] := i;
-      Inc(i);
+      inc(i);
     end;
   i := 0;
   while i <= NPoints * NClasses - 1 do
     begin
       OOBBuf[i] := 0;
-      Inc(i);
+      inc(i);
     end;
   i := 0;
   while i <= NPoints - 1 do
     begin
       OOBCntBuf[i] := 0;
-      Inc(i);
+      inc(i);
     end;
 
   //
@@ -233,23 +233,23 @@ begin
   while i <= NVars - 1 do
     begin
       Bufs.VarPool[i] := i;
-      Inc(i);
+      inc(i);
     end;
   NVarsInPool := NVars;
   if UseEVS then
     begin
-      J := 0;
-      while J <= NVars - 1 do
+      j := 0;
+      while j <= NVars - 1 do
         begin
-          VMin := xy[0, J];
+          VMin := xy[0, j];
           VMAX := VMin;
           i := 0;
           while i <= NPoints - 1 do
             begin
-              v := xy[i, J];
+              v := xy[i, j];
               VMin := Min(VMin, v);
               VMAX := Max(VMAX, v);
-              Inc(i);
+              inc(i);
             end;
           if AP_FP_Eq(VMin, VMAX) then
             begin
@@ -257,23 +257,23 @@ begin
               //
               // exclude variable from pool
               //
-              Bufs.VarPool[J] := Bufs.VarPool[NVarsInPool - 1];
+              Bufs.VarPool[j] := Bufs.VarPool[NVarsInPool - 1];
               Bufs.VarPool[NVarsInPool - 1] := -1;
               NVarsInPool := NVarsInPool - 1;
-              Inc(J);
+              inc(j);
               Continue;
             end;
           BFlag := False;
           i := 0;
           while i <= NPoints - 1 do
             begin
-              v := xy[i, J];
+              v := xy[i, j];
               if AP_FP_NEq(v, VMin) and AP_FP_NEq(v, VMAX) then
                 begin
                   BFlag := True;
                   Break;
                 end;
-              Inc(i);
+              inc(i);
             end;
           if BFlag then
             begin
@@ -281,7 +281,7 @@ begin
               //
               // non-binary variable
               //
-              Bufs.EVSBin[J] := False;
+              Bufs.EVSBin[j] := False;
             end
           else
             begin
@@ -289,14 +289,14 @@ begin
               //
               // Prepare
               //
-              Bufs.EVSBin[J] := True;
-              Bufs.EVSSplits[J] := 0.5 * (VMin + VMAX);
-              if AP_FP_Less_Eq(Bufs.EVSSplits[J], VMin) then
+              Bufs.EVSBin[j] := True;
+              Bufs.EVSSplits[j] := 0.5 * (VMin + VMAX);
+              if AP_FP_Less_Eq(Bufs.EVSSplits[j], VMin) then
                 begin
-                  Bufs.EVSSplits[J] := VMAX;
+                  Bufs.EVSSplits[j] := VMAX;
                 end;
             end;
-          Inc(J);
+          inc(j);
         end;
     end;
 
@@ -336,13 +336,13 @@ begin
       k := 0;
       while k <= SampleSize - 1 do
         begin
-          J := k + RandomInteger(NPoints - k);
+          j := k + RandomInteger(NPoints - k);
           TmpI := PermBuf[k];
-          PermBuf[k] := PermBuf[J];
-          PermBuf[J] := TmpI;
-          J := PermBuf[k];
-          APVMove(@XYS[k][0], 0, NVars, @xy[J][0], 0, NVars);
-          Inc(k);
+          PermBuf[k] := PermBuf[j];
+          PermBuf[j] := TmpI;
+          j := PermBuf[k];
+          APVMove(@XYS[k][0], 0, NVars, @xy[j][0], 0, NVars);
+          inc(k);
         end;
 
       //
@@ -350,10 +350,10 @@ begin
       //
       DFBuildTree(XYS, SampleSize, NVars, NClasses, NFeatures, NVarsInPool,
         Flags, Bufs);
-      J := Round(Bufs.TreeBuf[0]);
-      APVMove(@df.Trees[0], Offs, Offs + J - 1, @Bufs.TreeBuf[0], 0, J - 1);
+      j := Round(Bufs.TreeBuf[0]);
+      APVMove(@df.Trees[0], Offs, Offs + j - 1, @Bufs.TreeBuf[0], 0, j - 1);
       LastTreeOffs := Offs;
-      Offs := Offs + J;
+      Offs := Offs + j;
 
       //
       // OOB estimates
@@ -361,21 +361,21 @@ begin
       k := SampleSize;
       while k <= NPoints - 1 do
         begin
-          J := 0;
-          while J <= NClasses - 1 do
+          j := 0;
+          while j <= NClasses - 1 do
             begin
-              Y[J] := 0;
-              Inc(J);
+              y[j] := 0;
+              inc(j);
             end;
-          J := PermBuf[k];
-          APVMove(@X[0], 0, NVars - 1, @xy[J][0], 0, NVars - 1);
-          DFProcessInternal(df, LastTreeOffs, X, Y);
-          APVAdd(@OOBBuf[0], J * NClasses, (J + 1) * NClasses - 1, @Y[0], 0,
+          j := PermBuf[k];
+          APVMove(@x[0], 0, NVars - 1, @xy[j][0], 0, NVars - 1);
+          DFProcessInternal(df, LastTreeOffs, x, y);
+          APVAdd(@OOBBuf[0], j * NClasses, (j + 1) * NClasses - 1, @y[0], 0,
             NClasses - 1);
-          OOBCntBuf[J] := OOBCntBuf[J] + 1;
-          Inc(k);
+          OOBCntBuf[j] := OOBCntBuf[j] + 1;
+          inc(k);
         end;
-      Inc(i);
+      inc(i);
     end;
   df.BufSize := Offs;
 
@@ -390,7 +390,7 @@ begin
           v := AP_Float(1) / OOBCntBuf[i];
           APVMul(@OOBBuf[0], i * NClasses, i * NClasses + NClasses - 1, v);
         end;
-      Inc(i);
+      inc(i);
     end;
 
   //
@@ -426,14 +426,14 @@ begin
               //
               k := Round(xy[i, NVars]);
               TmpI := 0;
-              J := 1;
-              while J <= NClasses - 1 do
+              j := 1;
+              while j <= NClasses - 1 do
                 begin
-                  if AP_FP_Greater(OOBBuf[OOBOffs + J], OOBBuf[OOBOffs + TmpI]) then
+                  if AP_FP_Greater(OOBBuf[OOBOffs + j], OOBBuf[OOBOffs + TmpI]) then
                     begin
-                      TmpI := J;
+                      TmpI := j;
                     end;
-                  Inc(J);
+                  inc(j);
                 end;
               if TmpI <> k then
                 begin
@@ -447,25 +447,25 @@ begin
                 begin
                   Rep.OOBAvgCE := Rep.OOBAvgCE - ln(MinRealNumber);
                 end;
-              J := 0;
-              while J <= NClasses - 1 do
+              j := 0;
+              while j <= NClasses - 1 do
                 begin
-                  if J = k then
+                  if j = k then
                     begin
                       Rep.OOBRMSError := Rep.OOBRMSError +
-                        AP_Sqr(OOBBuf[OOBOffs + J] - 1);
+                        AP_Sqr(OOBBuf[OOBOffs + j] - 1);
                       Rep.OOBAvgError := Rep.OOBAvgError +
-                        AbsReal(OOBBuf[OOBOffs + J] - 1);
+                        AbsReal(OOBBuf[OOBOffs + j] - 1);
                       Rep.OOBAvgRelError := Rep.OOBAvgRelError +
-                        AbsReal(OOBBuf[OOBOffs + J] - 1);
+                        AbsReal(OOBBuf[OOBOffs + j] - 1);
                       OOBRelCnt := OOBRelCnt + 1;
                     end
                   else
                     begin
-                      Rep.OOBRMSError := Rep.OOBRMSError + AP_Sqr(OOBBuf[OOBOffs + J]);
-                      Rep.OOBAvgError := Rep.OOBAvgError + AbsReal(OOBBuf[OOBOffs + J]);
+                      Rep.OOBRMSError := Rep.OOBRMSError + AP_Sqr(OOBBuf[OOBOffs + j]);
+                      Rep.OOBAvgError := Rep.OOBAvgError + AbsReal(OOBBuf[OOBOffs + j]);
                     end;
-                  Inc(J);
+                  inc(j);
                 end;
             end
           else
@@ -491,7 +491,7 @@ begin
           //
           OOBCnt := OOBCnt + 1;
         end;
-      Inc(i);
+      inc(i);
     end;
   if OOBCnt > 0 then
     begin
@@ -520,7 +520,7 @@ end;
   responsibility of a caller to allocate it. Array  must  be
   at least [0..NClasses-1].
   ************************************************************************ *)
-procedure DFProcess(const df: TDecisionForest; const X: TLVec; var Y: TLVec);
+procedure DFProcess(const df: TDecisionForest; const x: TLVec; var y: TLVec);
 var
   Offs: TLInt;
   i   : TLInt;
@@ -534,8 +534,8 @@ begin
   i := 0;
   while i <= df.NClasses - 1 do
     begin
-      Y[i] := 0;
-      Inc(i);
+      y[i] := 0;
+      inc(i);
     end;
   i := 0;
   while i <= df.NTrees - 1 do
@@ -544,16 +544,16 @@ begin
       //
       // Process basic tree
       //
-      DFProcessInternal(df, Offs, X, Y);
+      DFProcessInternal(df, Offs, x, y);
 
       //
       // Next tree
       //
       Offs := Offs + Round(df.Trees[Offs]);
-      Inc(i);
+      inc(i);
     end;
   v := AP_Float(1) / df.NTrees;
-  APVMul(@Y[0], 0, df.NClasses - 1, v);
+  APVMul(@y[0], 0, df.NClasses - 1, v);
 end;
 
 (* ************************************************************************
@@ -589,21 +589,21 @@ end;
 function DFAvgCE(const df: TDecisionForest; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
-  X   : TLVec;
-  Y   : TLVec;
+  x   : TLVec;
+  y   : TLVec;
   i   : TLInt;
-  J   : TLInt;
+  j   : TLInt;
   k   : TLInt;
   TmpI: TLInt;
 begin
-  SetLength(X, df.NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(Y, df.NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, df.NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(y, df.NClasses (* - 1 + 1 // optimized compiler *) );
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
     begin
-      APVMove(@X[0], 0, df.NVars - 1, @xy[i][0], 0, df.NVars - 1);
-      DFProcess(df, X, Y);
+      APVMove(@x[0], 0, df.NVars - 1, @xy[i][0], 0, df.NVars - 1);
+      DFProcess(df, x, y);
       if df.NClasses > 1 then
         begin
 
@@ -612,25 +612,25 @@ begin
           //
           k := Round(xy[i, df.NVars]);
           TmpI := 0;
-          J := 1;
-          while J <= df.NClasses - 1 do
+          j := 1;
+          while j <= df.NClasses - 1 do
             begin
-              if AP_FP_Greater(Y[J], Y[TmpI]) then
+              if AP_FP_Greater(y[j], y[TmpI]) then
                 begin
-                  TmpI := J;
+                  TmpI := j;
                 end;
-              Inc(J);
+              inc(j);
             end;
-          if AP_FP_NEq(Y[k], 0) then
+          if AP_FP_NEq(y[k], 0) then
             begin
-              Result := Result - ln(Y[k]);
+              Result := Result - ln(y[k]);
             end
           else
             begin
               Result := Result - ln(MinRealNumber);
             end;
         end;
-      Inc(i);
+      inc(i);
     end;
   Result := Result / NPoints;
 end;
@@ -652,21 +652,21 @@ end;
 function DFRMSError(const df: TDecisionForest; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
-  X   : TLVec;
-  Y   : TLVec;
+  x   : TLVec;
+  y   : TLVec;
   i   : TLInt;
-  J   : TLInt;
+  j   : TLInt;
   k   : TLInt;
   TmpI: TLInt;
 begin
-  SetLength(X, df.NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(Y, df.NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, df.NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(y, df.NClasses (* - 1 + 1 // optimized compiler *) );
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
     begin
-      APVMove(@X[0], 0, df.NVars - 1, @xy[i][0], 0, df.NVars - 1);
-      DFProcess(df, X, Y);
+      APVMove(@x[0], 0, df.NVars - 1, @xy[i][0], 0, df.NVars - 1);
+      DFProcess(df, x, y);
       if df.NClasses > 1 then
         begin
 
@@ -675,27 +675,27 @@ begin
           //
           k := Round(xy[i, df.NVars]);
           TmpI := 0;
-          J := 1;
-          while J <= df.NClasses - 1 do
+          j := 1;
+          while j <= df.NClasses - 1 do
             begin
-              if AP_FP_Greater(Y[J], Y[TmpI]) then
+              if AP_FP_Greater(y[j], y[TmpI]) then
                 begin
-                  TmpI := J;
+                  TmpI := j;
                 end;
-              Inc(J);
+              inc(j);
             end;
-          J := 0;
-          while J <= df.NClasses - 1 do
+          j := 0;
+          while j <= df.NClasses - 1 do
             begin
-              if J = k then
+              if j = k then
                 begin
-                  Result := Result + AP_Sqr(Y[J] - 1);
+                  Result := Result + AP_Sqr(y[j] - 1);
                 end
               else
                 begin
-                  Result := Result + AP_Sqr(Y[J]);
+                  Result := Result + AP_Sqr(y[j]);
                 end;
-              Inc(J);
+              inc(j);
             end;
         end
       else
@@ -704,9 +704,9 @@ begin
           //
           // regression-specific code
           //
-          Result := Result + AP_Sqr(Y[0] - xy[i, df.NVars]);
+          Result := Result + AP_Sqr(y[0] - xy[i, df.NVars]);
         end;
-      Inc(i);
+      inc(i);
     end;
   Result := Sqrt(Result / (NPoints * df.NClasses));
 end;
@@ -727,20 +727,20 @@ end;
 function DFAvgError(const df: TDecisionForest; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
-  X: TLVec;
-  Y: TLVec;
+  x: TLVec;
+  y: TLVec;
   i: TLInt;
-  J: TLInt;
+  j: TLInt;
   k: TLInt;
 begin
-  SetLength(X, df.NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(Y, df.NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, df.NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(y, df.NClasses (* - 1 + 1 // optimized compiler *) );
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
     begin
-      APVMove(@X[0], 0, df.NVars - 1, @xy[i][0], 0, df.NVars - 1);
-      DFProcess(df, X, Y);
+      APVMove(@x[0], 0, df.NVars - 1, @xy[i][0], 0, df.NVars - 1);
+      DFProcess(df, x, y);
       if df.NClasses > 1 then
         begin
 
@@ -748,18 +748,18 @@ begin
           // classification-specific code
           //
           k := Round(xy[i, df.NVars]);
-          J := 0;
-          while J <= df.NClasses - 1 do
+          j := 0;
+          while j <= df.NClasses - 1 do
             begin
-              if J = k then
+              if j = k then
                 begin
-                  Result := Result + AbsReal(Y[J] - 1);
+                  Result := Result + AbsReal(y[j] - 1);
                 end
               else
                 begin
-                  Result := Result + AbsReal(Y[J]);
+                  Result := Result + AbsReal(y[j]);
                 end;
-              Inc(J);
+              inc(j);
             end;
         end
       else
@@ -768,9 +768,9 @@ begin
           //
           // regression-specific code
           //
-          Result := Result + AbsReal(Y[0] - xy[i, df.NVars]);
+          Result := Result + AbsReal(y[0] - xy[i, df.NVars]);
         end;
-      Inc(i);
+      inc(i);
     end;
   Result := Result / (NPoints * df.NClasses);
 end;
@@ -791,22 +791,22 @@ end;
 function DFAvgRelError(const df: TDecisionForest; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
-  X     : TLVec;
-  Y     : TLVec;
+  x     : TLVec;
+  y     : TLVec;
   RelCnt: TLInt;
   i     : TLInt;
-  J     : TLInt;
+  j     : TLInt;
   k     : TLInt;
 begin
-  SetLength(X, df.NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(Y, df.NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, df.NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(y, df.NClasses (* - 1 + 1 // optimized compiler *) );
   Result := 0;
   RelCnt := 0;
   i := 0;
   while i <= NPoints - 1 do
     begin
-      APVMove(@X[0], 0, df.NVars - 1, @xy[i][0], 0, df.NVars - 1);
-      DFProcess(df, X, Y);
+      APVMove(@x[0], 0, df.NVars - 1, @xy[i][0], 0, df.NVars - 1);
+      DFProcess(df, x, y);
       if df.NClasses > 1 then
         begin
 
@@ -814,15 +814,15 @@ begin
           // classification-specific code
           //
           k := Round(xy[i, df.NVars]);
-          J := 0;
-          while J <= df.NClasses - 1 do
+          j := 0;
+          while j <= df.NClasses - 1 do
             begin
-              if J = k then
+              if j = k then
                 begin
-                  Result := Result + AbsReal(Y[J] - 1);
+                  Result := Result + AbsReal(y[j] - 1);
                   RelCnt := RelCnt + 1;
                 end;
-              Inc(J);
+              inc(j);
             end;
         end
       else
@@ -833,11 +833,11 @@ begin
           //
           if AP_FP_NEq(xy[i, df.NVars], 0) then
             begin
-              Result := Result + AbsReal((Y[0] - xy[i, df.NVars]) / xy[i, df.NVars]);
+              Result := Result + AbsReal((y[0] - xy[i, df.NVars]) / xy[i, df.NVars]);
               RelCnt := RelCnt + 1;
             end;
         end;
-      Inc(i);
+      inc(i);
     end;
   if RelCnt > 0 then
     begin
@@ -871,7 +871,7 @@ end;
   DF      -   original
 
   OUTPUT PARAMETERS:
-  RA      -   packed array of real numbers which stores decision forest,
+  RA      -   array of real numbers which stores decision forest,
   array[0..RLen-1]
   RLen    -   RA lenght
   ************************************************************************ *)
@@ -913,10 +913,10 @@ end;
 function DFClsError(const df: TDecisionForest; const xy: TLMatrix;
   NPoints: TLInt): TLInt;
 var
-  X   : TLVec;
-  Y   : TLVec;
+  x   : TLVec;
+  y   : TLVec;
   i   : TLInt;
-  J   : TLInt;
+  j   : TLInt;
   k   : TLInt;
   TmpI: TLInt;
 begin
@@ -925,30 +925,30 @@ begin
       Result := 0;
       Exit;
     end;
-  SetLength(X, df.NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(Y, df.NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, df.NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(y, df.NClasses (* - 1 + 1 // optimized compiler *) );
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
     begin
-      APVMove(@X[0], 0, df.NVars - 1, @xy[i][0], 0, df.NVars - 1);
-      DFProcess(df, X, Y);
+      APVMove(@x[0], 0, df.NVars - 1, @xy[i][0], 0, df.NVars - 1);
+      DFProcess(df, x, y);
       k := Round(xy[i, df.NVars]);
       TmpI := 0;
-      J := 1;
-      while J <= df.NClasses - 1 do
+      j := 1;
+      while j <= df.NClasses - 1 do
         begin
-          if AP_FP_Greater(Y[J], Y[TmpI]) then
+          if AP_FP_Greater(y[j], y[TmpI]) then
             begin
-              TmpI := J;
+              TmpI := j;
             end;
-          Inc(J);
+          inc(j);
         end;
       if TmpI <> k then
         begin
           Result := Result + 1;
         end;
-      Inc(i);
+      inc(i);
     end;
 end;
 
@@ -956,7 +956,7 @@ end;
   Internal subroutine for processing one decision tree starting at Offs
   ************************************************************************ *)
 procedure DFProcessInternal(const df: TDecisionForest; Offs: TLInt;
-  const X: TLVec; var Y: TLVec);
+  const x: TLVec; var y: TLVec);
 var
   k  : TLInt;
   idx: TLInt;
@@ -976,16 +976,16 @@ begin
         begin
           if df.NClasses = 1 then
             begin
-              Y[0] := Y[0] + df.Trees[k + 1];
+              y[0] := y[0] + df.Trees[k + 1];
             end
           else
             begin
               idx := Round(df.Trees[k + 1]);
-              Y[idx] := Y[idx] + 1;
+              y[idx] := y[idx] + 1;
             end;
           Break;
         end;
-      if AP_FP_Less(X[Round(df.Trees[k])], df.Trees[k + 1]) then
+      if AP_FP_Less(x[Round(df.Trees[k])], df.Trees[k + 1]) then
         begin
           k := k + InnerNodeWidth;
         end
@@ -1019,7 +1019,7 @@ begin
   while i <= NPoints - 1 do
     begin
       Bufs.IdxBuf[i] := i;
-      Inc(i);
+      inc(i);
     end;
 
   //
@@ -1049,7 +1049,7 @@ procedure DFBuildTreeRec(const xy: TLMatrix; NPoints: TLInt;
   var Bufs: TDFInternalBuffers);
 var
   i        : TLInt;
-  J        : TLInt;
+  j        : TLInt;
   k        : TLInt;
   BFlag    : Boolean;
   i1       : TLInt;
@@ -1103,15 +1103,15 @@ begin
       while i <= NClasses - 1 do
         begin
           Bufs.ClassIBuf[i] := 0;
-          Inc(i);
+          inc(i);
         end;
       s := idx2 - idx1 + 1;
       i := idx1;
       while i <= idx2 do
         begin
-          J := Round(xy[Bufs.IdxBuf[i], NVars]);
-          Bufs.ClassIBuf[J] := Bufs.ClassIBuf[J] + 1;
-          Inc(i);
+          j := Round(xy[Bufs.IdxBuf[i], NVars]);
+          Bufs.ClassIBuf[j] := Bufs.ClassIBuf[j] + 1;
+          inc(i);
         end;
       EBest := 0;
       i := 0;
@@ -1119,7 +1119,7 @@ begin
         begin
           EBest := EBest + Bufs.ClassIBuf[i] * AP_Sqr(1 - Bufs.ClassIBuf[i] / s) +
             (s - Bufs.ClassIBuf[i]) * AP_Sqr(Bufs.ClassIBuf[i] / s);
-          Inc(i);
+          inc(i);
         end;
       EBest := Sqrt(EBest / (NClasses * (idx2 - idx1 + 1)));
     end
@@ -1134,7 +1134,7 @@ begin
       while i <= idx2 do
         begin
           v := v + xy[Bufs.IdxBuf[i], NVars];
-          Inc(i);
+          inc(i);
         end;
       v := v / (idx2 - idx1 + 1);
       EBest := 0;
@@ -1142,7 +1142,7 @@ begin
       while i <= idx2 do
         begin
           EBest := EBest + AP_Sqr(xy[Bufs.IdxBuf[i], NVars] - v);
-          Inc(i);
+          inc(i);
         end;
       EBest := Sqrt(EBest / (idx2 - idx1 + 1));
     end;
@@ -1153,10 +1153,10 @@ begin
       //
       // select variables from pool
       //
-      J := i + RandomInteger(NVarsInPool - i);
+      j := i + RandomInteger(NVarsInPool - i);
       k := Bufs.VarPool[i];
-      Bufs.VarPool[i] := Bufs.VarPool[J];
-      Bufs.VarPool[J] := k;
+      Bufs.VarPool[i] := Bufs.VarPool[j];
+      Bufs.VarPool[j] := k;
       VarCur := Bufs.VarPool[i];
 
       //
@@ -1167,25 +1167,25 @@ begin
       //
       // This is necessary for binary pre-splits (see later) to work.
       //
-      J := idx1;
-      while J <= idx2 do
+      j := idx1;
+      while j <= idx2 do
         begin
-          Bufs.TmpBufR[J - idx1] := xy[Bufs.IdxBuf[J], VarCur];
-          Inc(J);
+          Bufs.TmpBufR[j - idx1] := xy[Bufs.IdxBuf[j], VarCur];
+          inc(j);
         end;
       if UseEVS then
         begin
           BFlag := False;
           v := Bufs.TmpBufR[0];
-          J := 0;
-          while J <= idx2 - idx1 do
+          j := 0;
+          while j <= idx2 - idx1 do
             begin
-              if AP_FP_NEq(Bufs.TmpBufR[J], v) then
+              if AP_FP_NEq(Bufs.TmpBufR[j], v) then
                 begin
                   BFlag := True;
                   Break;
                 end;
-              Inc(J);
+              inc(j);
             end;
           if not BFlag then
             begin
@@ -1208,20 +1208,20 @@ begin
       //
       if NClasses > 1 then
         begin
-          J := idx1;
-          while J <= idx2 do
+          j := idx1;
+          while j <= idx2 do
             begin
-              Bufs.TmpBufI[J - idx1] := Round(xy[Bufs.IdxBuf[J], NVars]);
-              Inc(J);
+              Bufs.TmpBufI[j - idx1] := Round(xy[Bufs.IdxBuf[j], NVars]);
+              inc(j);
             end;
         end
       else
         begin
-          J := idx1;
-          while J <= idx2 do
+          j := idx1;
+          while j <= idx2 do
             begin
-              Bufs.TmpBufR2[J - idx1] := xy[Bufs.IdxBuf[J], NVars];
-              Inc(J);
+              Bufs.TmpBufR2[j - idx1] := xy[Bufs.IdxBuf[j], NVars];
+              inc(j);
             end;
         end;
 
@@ -1242,19 +1242,19 @@ begin
               //
               // classification-specific code
               //
-              J := 0;
-              while J <= 2 * NClasses - 1 do
+              j := 0;
+              while j <= 2 * NClasses - 1 do
                 begin
-                  Bufs.ClassIBuf[J] := 0;
-                  Inc(J);
+                  Bufs.ClassIBuf[j] := 0;
+                  inc(j);
                 end;
               SL := 0;
               SR := 0;
-              J := 0;
-              while J <= idx2 - idx1 do
+              j := 0;
+              while j <= idx2 - idx1 do
                 begin
-                  k := Bufs.TmpBufI[J];
-                  if AP_FP_Less(Bufs.TmpBufR[J], Threshold) then
+                  k := Bufs.TmpBufI[j];
+                  if AP_FP_Less(Bufs.TmpBufR[j], Threshold) then
                     begin
                       Bufs.ClassIBuf[k] := Bufs.ClassIBuf[k] + 1;
                       SL := SL + 1;
@@ -1264,21 +1264,21 @@ begin
                       Bufs.ClassIBuf[k + NClasses] := Bufs.ClassIBuf[k + NClasses] + 1;
                       SR := SR + 1;
                     end;
-                  Inc(J);
+                  inc(j);
                 end;
               Assert(AP_FP_NEq(SL, 0) and AP_FP_NEq(SR, 0),
                 'DFBuildTreeRec: something strange!');
               CurRMS := 0;
-              J := 0;
-              while J <= NClasses - 1 do
+              j := 0;
+              while j <= NClasses - 1 do
                 begin
-                  w := Bufs.ClassIBuf[J];
+                  w := Bufs.ClassIBuf[j];
                   CurRMS := CurRMS + w * AP_Sqr(w / SL - 1);
                   CurRMS := CurRMS + (SL - w) * AP_Sqr(w / SL);
-                  w := Bufs.ClassIBuf[NClasses + J];
+                  w := Bufs.ClassIBuf[NClasses + j];
                   CurRMS := CurRMS + w * AP_Sqr(w / SR - 1);
                   CurRMS := CurRMS + (SR - w) * AP_Sqr(w / SR);
-                  Inc(J);
+                  inc(j);
                 end;
               CurRMS := Sqrt(CurRMS / (NClasses * (idx2 - idx1 + 1)));
             end
@@ -1292,38 +1292,38 @@ begin
               SR := 0;
               v1 := 0;
               v2 := 0;
-              J := 0;
-              while J <= idx2 - idx1 do
+              j := 0;
+              while j <= idx2 - idx1 do
                 begin
-                  if AP_FP_Less(Bufs.TmpBufR[J], Threshold) then
+                  if AP_FP_Less(Bufs.TmpBufR[j], Threshold) then
                     begin
-                      v1 := v1 + Bufs.TmpBufR2[J];
+                      v1 := v1 + Bufs.TmpBufR2[j];
                       SL := SL + 1;
                     end
                   else
                     begin
-                      v2 := v2 + Bufs.TmpBufR2[J];
+                      v2 := v2 + Bufs.TmpBufR2[j];
                       SR := SR + 1;
                     end;
-                  Inc(J);
+                  inc(j);
                 end;
               Assert(AP_FP_NEq(SL, 0) and AP_FP_NEq(SR, 0),
                 'DFBuildTreeRec: something strange!');
               v1 := v1 / SL;
               v2 := v2 / SR;
               CurRMS := 0;
-              J := 0;
-              while J <= idx2 - idx1 do
+              j := 0;
+              while j <= idx2 - idx1 do
                 begin
-                  if AP_FP_Less(Bufs.TmpBufR[J], Threshold) then
+                  if AP_FP_Less(Bufs.TmpBufR[j], Threshold) then
                     begin
-                      CurRMS := CurRMS + AP_Sqr(v1 - Bufs.TmpBufR2[J]);
+                      CurRMS := CurRMS + AP_Sqr(v1 - Bufs.TmpBufR2[j]);
                     end
                   else
                     begin
-                      CurRMS := CurRMS + AP_Sqr(v2 - Bufs.TmpBufR2[J]);
+                      CurRMS := CurRMS + AP_Sqr(v2 - Bufs.TmpBufR2[j]);
                     end;
-                  Inc(J);
+                  inc(j);
                 end;
               CurRMS := Sqrt(CurRMS / (idx2 - idx1 + 1));
             end;
@@ -1393,7 +1393,7 @@ begin
           while i <= idx2 do
             begin
               v := v + xy[Bufs.IdxBuf[i], NVars] / (idx2 - idx1 + 1);
-              Inc(i);
+              inc(i);
             end;
           Bufs.TreeBuf[NumProcessed + 1] := v;
         end;
@@ -1426,9 +1426,9 @@ begin
               i2 := i2 - 1;
               Continue;
             end;
-          J := Bufs.IdxBuf[i1];
+          j := Bufs.IdxBuf[i1];
           Bufs.IdxBuf[i1] := Bufs.IdxBuf[i2];
-          Bufs.IdxBuf[i2] := J;
+          Bufs.IdxBuf[i2] := j;
           i1 := i1 + 1;
           i2 := i2 - 1;
         end;
@@ -1445,7 +1445,7 @@ end;
 (* ************************************************************************
   Makes weak split on attribute
   ************************************************************************ *)
-procedure DFWeakSplitI(var X: TLVec; var Y: TLIVec;
+procedure DFWeakSplitI(var x: TLVec; var y: TLIVec;
   n: TLInt; NClasses: TLInt; var Info: TLInt;
   var Threshold: TLFloat; var E: TLFloat);
 var
@@ -1454,14 +1454,14 @@ var
   NLess   : TLInt;
   NGreater: TLInt;
 begin
-  TagSortFastI(X, Y, n);
+  TagSortFastI(x, y, n);
   if n mod 2 = 1 then
     begin
 
       //
       // odd number of elements
       //
-      Threshold := X[n div 2];
+      Threshold := x[n div 2];
     end
   else
     begin
@@ -1474,13 +1474,13 @@ begin
       // floating point errors).
       // we will select halfsum otherwise.
       //
-      if AP_FP_Eq(X[n div 2 - 1], X[n div 2]) then
+      if AP_FP_Eq(x[n div 2 - 1], x[n div 2]) then
         begin
-          Threshold := X[n div 2 - 1];
+          Threshold := x[n div 2 - 1];
         end
       else
         begin
-          Threshold := 0.5 * (X[n div 2 - 1] + X[n div 2]);
+          Threshold := 0.5 * (x[n div 2 - 1] + x[n div 2]);
         end;
     end;
   NEq := 0;
@@ -1489,19 +1489,19 @@ begin
   i := 0;
   while i <= n - 1 do
     begin
-      if AP_FP_Less(X[i], Threshold) then
+      if AP_FP_Less(x[i], Threshold) then
         begin
           NLess := NLess + 1;
         end;
-      if AP_FP_Eq(X[i], Threshold) then
+      if AP_FP_Eq(x[i], Threshold) then
         begin
           NEq := NEq + 1;
         end;
-      if AP_FP_Greater(X[i], Threshold) then
+      if AP_FP_Greater(x[i], Threshold) then
         begin
           NGreater := NGreater + 1;
         end;
-      Inc(i);
+      inc(i);
     end;
   if (NLess = 0) and (NGreater = 0) then
     begin
@@ -1513,11 +1513,11 @@ begin
         begin
           if NLess < NGreater then
             begin
-              Threshold := 0.5 * (X[NLess + NEq - 1] + X[NLess + NEq]);
+              Threshold := 0.5 * (x[NLess + NEq - 1] + x[NLess + NEq]);
             end
           else
             begin
-              Threshold := 0.5 * (X[NLess - 1] + X[NLess]);
+              Threshold := 0.5 * (x[NLess - 1] + x[NLess]);
             end;
         end;
       Info := 1;
@@ -1528,7 +1528,7 @@ end;
 (* ************************************************************************
   Makes split on attribute
   ************************************************************************ *)
-procedure DFSplitC(var X: TLVec; var C: TLIVec;
+procedure DFSplitC(var x: TLVec; var c: TLIVec;
   var CntBuf: TLIVec; n: TLInt; NC: TLInt;
   Flags: TLInt; var Info: TLInt; var Threshold: TLFloat;
   var E: TLFloat);
@@ -1549,9 +1549,9 @@ var
   SL      : TLFloat;
   SR      : TLFloat;
 begin
-  TagSortFastI(X, C, n);
+  TagSortFastI(x, c, n);
   E := MaxRealNumber;
-  Threshold := 0.5 * (X[0] + X[n - 1]);
+  Threshold := 0.5 * (x[0] + x[n - 1]);
   Info := -3;
   if Flags div DFUseStrongSplits mod 2 = 0 then
     begin
@@ -1576,26 +1576,26 @@ begin
   q := QMin;
   while q <= QMax do
     begin
-      CurSplit := X[n * q div QCnt];
+      CurSplit := x[n * q div QCnt];
       NEq := 0;
       NLess := 0;
       NGreater := 0;
       i := 0;
       while i <= n - 1 do
         begin
-          if AP_FP_Less(X[i], CurSplit) then
+          if AP_FP_Less(x[i], CurSplit) then
             begin
               NLess := NLess + 1;
             end;
-          if AP_FP_Eq(X[i], CurSplit) then
+          if AP_FP_Eq(x[i], CurSplit) then
             begin
               NEq := NEq + 1;
             end;
-          if AP_FP_Greater(X[i], CurSplit) then
+          if AP_FP_Greater(x[i], CurSplit) then
             begin
               NGreater := NGreater + 1;
             end;
-          Inc(i);
+          inc(i);
         end;
       Assert(NEq <> 0, 'DFSplitR: NEq=0, something strange!!!');
       if (NLess <> 0) or (NGreater <> 0) then
@@ -1615,20 +1615,20 @@ begin
           //
           if NLess < NGreater then
             begin
-              CurSplit := 0.5 * (X[NLess + NEq - 1] + X[NLess + NEq]);
+              CurSplit := 0.5 * (x[NLess + NEq - 1] + x[NLess + NEq]);
               NLeft := NLess + NEq;
-              if AP_FP_Less_Eq(CurSplit, X[NLess + NEq - 1]) then
+              if AP_FP_Less_Eq(CurSplit, x[NLess + NEq - 1]) then
                 begin
-                  CurSplit := X[NLess + NEq];
+                  CurSplit := x[NLess + NEq];
                 end;
             end
           else
             begin
-              CurSplit := 0.5 * (X[NLess - 1] + X[NLess]);
+              CurSplit := 0.5 * (x[NLess - 1] + x[NLess]);
               NLeft := NLess;
-              if AP_FP_Less_Eq(CurSplit, X[NLess - 1]) then
+              if AP_FP_Less_Eq(CurSplit, x[NLess - 1]) then
                 begin
-                  CurSplit := X[NLess];
+                  CurSplit := x[NLess];
                 end;
             end;
           Info := 1;
@@ -1637,19 +1637,19 @@ begin
           while i <= 2 * NC - 1 do
             begin
               CntBuf[i] := 0;
-              Inc(i);
+              inc(i);
             end;
           i := 0;
           while i <= NLeft - 1 do
             begin
-              CntBuf[C[i]] := CntBuf[C[i]] + 1;
-              Inc(i);
+              CntBuf[c[i]] := CntBuf[c[i]] + 1;
+              inc(i);
             end;
           i := NLeft;
           while i <= n - 1 do
             begin
-              CntBuf[NC + C[i]] := CntBuf[NC + C[i]] + 1;
-              Inc(i);
+              CntBuf[NC + c[i]] := CntBuf[NC + c[i]] + 1;
+              inc(i);
             end;
           SL := NLeft;
           SR := n - NLeft;
@@ -1663,7 +1663,7 @@ begin
               w := CntBuf[NC + i];
               v := v + w * AP_Sqr(w / SR - 1);
               v := v + (SR - w) * AP_Sqr(w / SR);
-              Inc(i);
+              inc(i);
             end;
           CurE := Sqrt(v / (NC * n));
           if AP_FP_Less(CurE, E) then
@@ -1672,14 +1672,14 @@ begin
               E := CurE;
             end;
         end;
-      Inc(q);
+      inc(q);
     end;
 end;
 
 (* ************************************************************************
   Makes split on attribute
   ************************************************************************ *)
-procedure DFSplitR(var X: TLVec; var Y: TLVec; n: TLInt;
+procedure DFSplitR(var x: TLVec; var y: TLVec; n: TLInt;
   Flags: TLInt; var Info: TLInt; var Threshold: TLFloat;
   var E: TLFloat);
 var
@@ -1696,9 +1696,9 @@ var
   v       : TLFloat;
   CurE    : TLFloat;
 begin
-  TagSortFastR(X, Y, n);
+  TagSortFastR(x, y, n);
   E := MaxRealNumber;
-  Threshold := 0.5 * (X[0] + X[n - 1]);
+  Threshold := 0.5 * (x[0] + x[n - 1]);
   Info := -3;
   if Flags div DFUseStrongSplits mod 2 = 0 then
     begin
@@ -1723,26 +1723,26 @@ begin
   q := QMin;
   while q <= QMax do
     begin
-      CurSplit := X[n * q div QCnt];
+      CurSplit := x[n * q div QCnt];
       NEq := 0;
       NLess := 0;
       NGreater := 0;
       i := 0;
       while i <= n - 1 do
         begin
-          if AP_FP_Less(X[i], CurSplit) then
+          if AP_FP_Less(x[i], CurSplit) then
             begin
               NLess := NLess + 1;
             end;
-          if AP_FP_Eq(X[i], CurSplit) then
+          if AP_FP_Eq(x[i], CurSplit) then
             begin
               NEq := NEq + 1;
             end;
-          if AP_FP_Greater(X[i], CurSplit) then
+          if AP_FP_Greater(x[i], CurSplit) then
             begin
               NGreater := NGreater + 1;
             end;
-          Inc(i);
+          inc(i);
         end;
       Assert(NEq <> 0, 'DFSplitR: NEq=0, something strange!!!');
       if (NLess <> 0) or (NGreater <> 0) then
@@ -1762,20 +1762,20 @@ begin
           //
           if NLess < NGreater then
             begin
-              CurSplit := 0.5 * (X[NLess + NEq - 1] + X[NLess + NEq]);
+              CurSplit := 0.5 * (x[NLess + NEq - 1] + x[NLess + NEq]);
               NLeft := NLess + NEq;
-              if AP_FP_Less_Eq(CurSplit, X[NLess + NEq - 1]) then
+              if AP_FP_Less_Eq(CurSplit, x[NLess + NEq - 1]) then
                 begin
-                  CurSplit := X[NLess + NEq];
+                  CurSplit := x[NLess + NEq];
                 end;
             end
           else
             begin
-              CurSplit := 0.5 * (X[NLess - 1] + X[NLess]);
+              CurSplit := 0.5 * (x[NLess - 1] + x[NLess]);
               NLeft := NLess;
-              if AP_FP_Less_Eq(CurSplit, X[NLess - 1]) then
+              if AP_FP_Less_Eq(CurSplit, x[NLess - 1]) then
                 begin
-                  CurSplit := X[NLess];
+                  CurSplit := x[NLess];
                 end;
             end;
           Info := 1;
@@ -1784,29 +1784,29 @@ begin
           i := 0;
           while i <= NLeft - 1 do
             begin
-              v := v + Y[i];
-              Inc(i);
+              v := v + y[i];
+              inc(i);
             end;
           v := v / NLeft;
           i := 0;
           while i <= NLeft - 1 do
             begin
-              CurE := CurE + AP_Sqr(Y[i] - v);
-              Inc(i);
+              CurE := CurE + AP_Sqr(y[i] - v);
+              inc(i);
             end;
           v := 0;
           i := NLeft;
           while i <= n - 1 do
             begin
-              v := v + Y[i];
-              Inc(i);
+              v := v + y[i];
+              inc(i);
             end;
           v := v / (n - NLeft);
           i := NLeft;
           while i <= n - 1 do
             begin
-              CurE := CurE + AP_Sqr(Y[i] - v);
-              Inc(i);
+              CurE := CurE + AP_Sqr(y[i] - v);
+              inc(i);
             end;
           CurE := Sqrt(CurE / n);
           if AP_FP_Less(CurE, E) then
@@ -1815,6 +1815,8 @@ begin
               E := CurE;
             end;
         end;
-      Inc(q);
+      inc(q);
     end;
 end; 
+ 
+ 
