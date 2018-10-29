@@ -8,7 +8,7 @@ begin
       Result := Value;
 end;
 
-function ClampByte(const Value, Min, Max: Byte): Byte;  overload;
+function ClampByte(const Value, Min, Max: Byte): Byte; overload;
 begin
   if Value > Max then
       Result := Max
@@ -18,7 +18,7 @@ begin
       Result := Value;
 end;
 
-function ClampByte(const Value: Integer): Byte;  overload;
+function ClampByte(const Value: Integer): Byte; overload;
 begin
   if Value > 255 then
       Result := 255
@@ -305,25 +305,10 @@ begin
   c3.RGBA := Pixel[i_x2, i_y2];
   c4.RGBA := Pixel[i_x, i_y2];
 
-  r := ((c1.r / $FF) * k1);
-  r := r + ((c2.r / $FF) * k2);
-  r := r + ((c3.r / $FF) * k3);
-  r := r + ((c4.r / $FF) * K4);
-
-  g := ((c1.g / $FF) * k1);
-  g := g + ((c2.g / $FF) * k2);
-  g := g + ((c3.g / $FF) * k3);
-  g := g + ((c4.g / $FF) * K4);
-
-  b := ((c1.b / $FF) * k1);
-  b := b + ((c2.b / $FF) * k2);
-  b := b + ((c3.b / $FF) * k3);
-  b := b + ((c4.b / $FF) * K4);
-
-  a := ((c1.a / $FF) * k1);
-  a := a + ((c2.a / $FF) * k2);
-  a := a + ((c3.a / $FF) * k3);
-  a := a + ((c4.a / $FF) * K4);
+  r := ((c1.r / $FF) * k1) + ((c2.r / $FF) * k2) + ((c3.r / $FF) * k3) + ((c4.r / $FF) * K4);
+  g := ((c1.g / $FF) * k1) + ((c2.g / $FF) * k2) + ((c3.g / $FF) * k3) + ((c4.g / $FF) * K4);
+  b := ((c1.b / $FF) * k1) + ((c2.b / $FF) * k2) + ((c3.b / $FF) * k3) + ((c4.b / $FF) * K4);
+  a := ((c1.a / $FF) * k1) + ((c2.a / $FF) * k2) + ((c3.a / $FF) * k3) + ((c4.a / $FF) * K4);
 
   ClampF(r);
   ClampF(g);

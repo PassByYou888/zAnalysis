@@ -45,7 +45,7 @@ begin
   Draw.FillBox(Draw.ScreenRect, DEColor(0, 0, 0, 1));
   Draw.DrawText('Hello world', 18, Draw.ScreenRect, DEColor(1, 0, 0, 0.8), True, DEVec(0.5, 0.5), -15);
   Draw.FillBox(RectV2(100, 100, 150, 150), 15, DEColor(1, 1, 1, 0.8));
-  Draw.DrawBox(RectV2(100, 100, 150, 150), -15, DEColor(1, 0.5, 0.5, 0.8), 2);
+  Draw.DrawBox(RectV2(100, 100, 150, 150), -15, DEColor(1, 0.5, 0.5, 0.8), 5);
   Draw.DrawEllipse(DEVec(200, 100), 70, DEColor(1, 0, 0, 0.8));
   Draw.Flush;
 end;
@@ -80,6 +80,7 @@ var
 begin
   d := TDrawEngine.Create;
   d.Rasterization.SetSize(RectV2(0, 0, Image.Width, Image.Height));
+  d.Rasterization.UsedAgg := True;
   Render(d);
   MemoryBitmapToBitmap(d.Rasterization.Memory, Image.Bitmap);
   DisposeObject(d);

@@ -561,7 +561,6 @@ var
   CVRep: TMLPCVReport;
   DFRep: TDFReport;
   logitRep: TMNLReport;
-  bakseed: TLInt;
 
   procedure BuildInternalData;
   var
@@ -637,7 +636,6 @@ begin
 
   FIsTraining := True;
 
-  bakseed := RandSeed;
   if not FEnabledRandomNumber then
       RandSeed := 0;
 
@@ -648,11 +646,7 @@ begin
           CreateLearnData(True);
           p_k := PLearnKDT(FLearnData);
           p_k^.kdt.Clear;
-{$IFDEF FPC}
-          p_k^.kdt.BuildKDTreeM(FMemorySource.Count, nil, @KDInput);
-{$ELSE FPC}
-          p_k^.kdt.BuildKDTreeM(FMemorySource.Count, nil, KDInput);
-{$ENDIF FPC}
+          p_k^.kdt.BuildKDTreeM(FMemorySource.Count, nil, {$IFDEF FPC}@{$ENDIF FPC}KDInput);
           FInfo := 'task has been solved';
           Result := True;
         end;
@@ -663,19 +657,11 @@ begin
           p_k^.kdt.Clear;
           if (TrainDepth > 1) and (not FClassifier) then
             begin
-{$IFDEF FPC}
-              p_k^.kdt.BuildKDTreeWithClusterM(FMemorySource.Count, TrainDepth, 1, kmIndexOut, nil, @KDInput);
-{$ELSE FPC}
-              p_k^.kdt.BuildKDTreeWithClusterM(FMemorySource.Count, TrainDepth, 1, kmIndexOut, nil, KDInput);
-{$ENDIF FPC}
+              p_k^.kdt.BuildKDTreeWithClusterM(FMemorySource.Count, TrainDepth, 1, kmIndexOut, nil, {$IFDEF FPC}@{$ENDIF FPC}KDInput);
             end
           else
             begin
-{$IFDEF FPC}
-              p_k^.kdt.BuildKDTreeM(FMemorySource.Count, nil, @KDInput);
-{$ELSE FPC}
-              p_k^.kdt.BuildKDTreeM(FMemorySource.Count, nil, KDInput);
-{$ENDIF FPC}
+              p_k^.kdt.BuildKDTreeM(FMemorySource.Count, nil, {$IFDEF FPC}@{$ENDIF FPC}KDInput);
             end;
           FInfo := 'task has been solved';
           Result := True;
@@ -838,8 +824,6 @@ begin
     end;
   finally
     FIsTraining := False;
-    if not FEnabledRandomNumber then
-        RandSeed := bakseed;
   end;
 end;
 
@@ -1258,7 +1242,7 @@ type
   PState = ^TState;
 
   TStatePtrArray = array of PState;
-  TStateArray    = array of TState;
+  TStateArray = array of TState;
 
   function SortCompare(const p1, p2: PState): ShortInt; inline;
   begin
@@ -1398,7 +1382,7 @@ type
   PState = ^TState;
 
   TStatePtrArray = array of PState;
-  TStateArray    = array of TState;
+  TStateArray = array of TState;
 
   function SortCompare(const p1, p2: PState): ShortInt; inline;
   begin
@@ -1538,7 +1522,7 @@ type
   PState = ^TState;
 
   TStatePtrArray = array of PState;
-  TStateArray    = array of TState;
+  TStateArray = array of TState;
 
   function SortCompare(const p1, p2: PState): ShortInt; inline;
   begin
@@ -1959,7 +1943,4 @@ begin
 end;
 
 {$ENDIF FPC}
-{$ENDREGION 'ClassImp'} 
- 
- 
- 
+{$ENDREGION 'ClassImp'}

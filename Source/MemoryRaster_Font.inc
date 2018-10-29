@@ -70,10 +70,7 @@ begin
   c3 := FR.FBitRaster^[i_x2 + i_y2 * Sampler.width];
   c4 := FR.FBitRaster^[i_x + i_y2 * Sampler.width];
 
-  g := ((c1 / $FF) * k1);
-  g := g + ((c2 / $FF) * k2);
-  g := g + ((c3 / $FF) * k3);
-  g := g + ((c4 / $FF) * K4);
+  g := ((c1 / $FF) * k1) + ((c2 / $FF) * k2) + ((c3 / $FF) * k3) + ((c4 / $FF) * K4);
 
   if g < 0 then
       g := 0
@@ -521,7 +518,4 @@ end;
 procedure TFontRaster.Draw(Text: TFontRasterString; Dst: TMemoryRaster; dstVec: TVec2; dstColor: TRasterColor);
 begin
   Draw(Text, Dst, dstVec, dstColor, True, 1.0, vec2(0.5, 0.5), 0, 1);
-end; 
- 
- 
- 
+end;

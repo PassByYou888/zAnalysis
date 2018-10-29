@@ -55,4 +55,15 @@
   {$DEFINE CPU32}
 {$ENDIF}
 
- 
+{$IFDEF BIG_ENDIAN}
+  {$MESSAGE FATAL 'Big-endian system not supported'}
+{$ENDIF}
+
+{$IFOPT R+}
+  {$DEFINE RangeCheck}
+{$ENDIF}
+
+{$IFOPT Q+}
+  {$DEFINE OverflowCheck}
+{$ENDIF}
+

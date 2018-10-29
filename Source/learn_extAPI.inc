@@ -514,7 +514,7 @@ begin
       SetLength(Result, SamplerSize, SamplerSize);
       for i := 0 to SamplerSize - 1 do
         for j := 0 to SamplerSize - 1 do
-            Result[j, i] := n.PixelGrayD[i, j];
+            Result[j, i] := mr.PixelGrayD[i, j];
     end
   else
     begin
@@ -1041,8 +1041,6 @@ var
   buff: TLMatrix;
   rInfo: TLInt;
 begin
-  Result := False;
-
   k := SamplerSize / mr.width;
 
   n := TMemoryRaster.Create;

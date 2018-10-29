@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
 
   CoreClasses, ZDBEngine, Learn, LearnTypes,
-  KDTree, KM, ListEngine, DoStatusIO, PascalStrings, UnicodeMixedLib, JsonDataObjects,
+  KDTree, KM, ListEngine, DoStatusIO, PascalStrings, UnicodeMixedLib, ZS_JsonDataObjects,
   Vcl.ExtCtrls;
 
 type

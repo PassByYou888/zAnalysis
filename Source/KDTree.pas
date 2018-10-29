@@ -24,7 +24,7 @@ type
   TKDTree_Vec = TKMFloatArray;
   PKDTree_Vec = PKMFloatArray;
 
-  TKDTree_Source = packed record
+  TKDTree_Source = record
     buff: TKDTree_Vec;
     index: Int64;
   end;
@@ -45,7 +45,7 @@ type
 
   PKDTree_Node = ^TKDTree_Node;
 
-  TKDTree_Node = packed record
+  TKDTree_Node = record
     Parent, Right, Left: PKDTree_Node;
     vec: PKDTree_Source;
   end;
@@ -175,7 +175,6 @@ var
   M: NativeInt;
   axis: NativeInt;
   kdBuffPtr: PKDTree_SourceBuffer;
-  dynBuff: PKDTreeDyanmicSourceBuffer;
 begin
   Result := nil;
   if PlanCount = 0 then
@@ -273,7 +272,6 @@ end;
 procedure TKDTree.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildCall);
 var
   i, j: NativeInt;
-  TempStoreBuff: TKDTreeDyanmicStoreBuffer;
 begin
   Clear;
 
@@ -304,7 +302,6 @@ end;
 procedure TKDTree.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildMethod);
 var
   i, j: NativeInt;
-  TempStoreBuff: TKDTreeDyanmicStoreBuffer;
 begin
   Clear;
 
@@ -338,7 +335,6 @@ end;
 procedure TKDTree.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDTree_BuildProc);
 var
   i, j: NativeInt;
-  TempStoreBuff: TKDTreeDyanmicStoreBuffer;
 begin
   Clear;
 

@@ -31,7 +31,7 @@
   {$UNDEF debug}
   {$DEFINE INLINE_ASM}
   {$R-} { range check }
-  {$O-} { optimization }
+  {$O+} { optimization }
 {$ELSE FPC}
   {$DEFINE LITTLE_ENDIAN}
   {$UNDEF BIG_ENDIAN}
@@ -53,24 +53,18 @@
   // if CriticalSimulateAtomic defined so performance to be reduced
   // {$DEFINE CriticalSimulateAtomic}
 
-  {$IFDEF Linux}
-    {$DEFINE CriticalSimulateAtomic}
-  {$ENDIF}
+  // {$DEFINE ANTI_DEAD_ATOMIC_LOCK}
 
   {$IFDEF release}
     {$DEFINE INLINE_ASM}
     {$R-} { range check }
     {$I-} { Input output checking }
-    {$IFDEF MSWINDOWS}
-      {$O+} { optimization }
-    {$ELSE MSWINDOWS}
-      {$O-} { optimization }
-    {$ENDIF MSWINDOWS}
+    {$O+} { optimization }
   {$ELSE}
     {$UNDEF INLINE_ASM}
     {$R-} { range check }
     {$I-} { Input output checking }
-    {$O-} { optimization }
+    {$O+} { optimization }
   {$ENDIF}
 
   {$IF Defined(Android) or Defined(IOS)}
@@ -112,4 +106,16 @@
 
 {$IFNDEF CPU64}
   {$DEFINE CPU32}
+{$ENDIF}
+
+{$IFDEF BIG_ENDIAN}
+  {$MESSAGE FATAL 'Big-endian system not supported'}
+{$ENDIF}
+
+{$IFOPT R+}
+  {$DEFINE RangeCheck}
+{$ENDIF}
+
+{$IFOPT Q+}
+  {$DEFINE OverflowCheck}
 {$ENDIF}

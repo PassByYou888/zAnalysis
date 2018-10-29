@@ -2067,7 +2067,7 @@ var
   var
     D, Rads: TGeoFloat;
     i, DIndex, index: Integer;
-    Sin, Cos: Extended;
+    Sin, Cos: TGeoFloat;
   begin
     for i := 0 to AlphaSteps - 1 do
       begin

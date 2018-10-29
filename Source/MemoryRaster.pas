@@ -644,6 +644,8 @@ function DecodeJpegLSGrayRasterFromStream(const stream: TCoreClassStream; var AR
 {
   document rotation detected
   by 600585@qq.com
+
+  2018-8
 }
 { Calculates rotation angle for given 8bit grayscale image.
   Useful for finding skew of scanned documents etc.

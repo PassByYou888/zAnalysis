@@ -36,8 +36,8 @@ type
     Weights: PSigmaBuffer;
   end;
 
-  TGaussVec   = array of TGFloat;
-  PGaussVec   = ^TGaussVec;
+  TGaussVec = array of TGFloat;
+  PGaussVec = ^TGaussVec;
   TGaussSpace = array of TGaussVec;
   PGaussSpace = ^TGaussSpace;
 
@@ -176,12 +176,12 @@ type
   // feature on sift
   TFeature = class(TCoreClassObject)
   private const
-    CPI2               = 2 * pi;
-    CSQRT1_2           = 0.707106781186547524401;
+    CPI2 = 2 * pi;
+    CSQRT1_2 = 0.707106781186547524401;
     CDESC_HIST_BIN_NUM = 8;
-    CNUM_BIN_PER_RAD   = CDESC_HIST_BIN_NUM / CPI2;
-    CDESC_HIST_WIDTH   = 4;
-    DESCRIPTOR_LENGTH  = CDESC_HIST_WIDTH * CDESC_HIST_WIDTH * CDESC_HIST_BIN_NUM;
+    CNUM_BIN_PER_RAD = CDESC_HIST_BIN_NUM / CPI2;
+    CDESC_HIST_WIDTH = 4;
+    DESCRIPTOR_LENGTH = CDESC_HIST_WIDTH * CDESC_HIST_WIDTH * CDESC_HIST_BIN_NUM;
   protected
     FDescriptorBuff: array of TDescriptor;
     FPyramidCoordList: TPyramidCoorList;
@@ -675,9 +675,9 @@ begin
   try
     fs := TCoreClassFileStream.Create(FileName, fmCreate);
     EncodeJpegLSGrayRasterToStream(@gray, fs);
+    DisposeObject(fs);
   except
   end;
-  DisposeObject(fs);
 end;
 
 procedure ComputeSamplerSize(var width, height: TLInt);
@@ -978,7 +978,7 @@ begin
 {$ENDIF FPC}
 {$ELSE parallel}
   DoFor;
-{$ENDIF}
+{$ENDIF parallel}
   // free cache
   SetLength(sqr_memory, 0, 0);
   // fill result
@@ -1762,10 +1762,10 @@ var
 
   procedure ComputeOrientation(const PC: TPyramidCoor);
   const
-    ORI_WINDOW_FACTOR                  = 1.5;
+    ORI_WINDOW_FACTOR = 1.5;
     Orientation_Histogram_Binomial_Num = 36;
-    Orientation_Histogram_Peak_Ratio   = 0.8;
-    CHalfPI                            = 0.5 / pi;
+    Orientation_Histogram_Peak_Ratio = 0.8;
+    CHalfPI = 0.5 / pi;
   var
     Pyramid: PPyramidLayer;
     mag: PGaussSpace;

@@ -83,11 +83,11 @@ type
 implementation
 
 type
-  TY4MToken    = array [0 .. 8] of uint8_t;
+  TY4MToken = array [0 .. 8] of uint8_t;
   TFRAME_MAGIC = array [0 .. 5] of uint8_t;
 
 var
-  Y4M_Token: TY4MToken      = ($59, $55, $56, $34, $4D, $50, $45, $47, $32);
+  Y4M_Token: TY4MToken = ($59, $55, $56, $34, $4D, $50, $45, $47, $32);
   FRAME_MAGIC: TFRAME_MAGIC = ($46, $52, $41, $4D, $45, $0A);
   FRAME_MAGIC_SIZE: int32_t = 6;
 
@@ -267,7 +267,4 @@ begin
   Result := umlFileSize(ioHandle);
 end;
 
-end.  
- 
- 
- 
+end.

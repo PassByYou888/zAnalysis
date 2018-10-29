@@ -165,7 +165,7 @@ type
   end;
 
 
-  TExecutePlatform = (epWin32, epWin64, epOSX32, epOSX64, epIOS, epIOSSIM, epANDROID, epLinux64, epLinux32, epUnknow);
+  TExecutePlatform = (epWin32, epWin64, epOSX32, epOSX64, epIOS, epIOSSIM, epANDROID32, epANDROID64, epLinux64, epLinux32, epUnknow);
 
 const
   {$IF Defined(WIN32)}
@@ -174,9 +174,9 @@ const
   CurrentPlatform = TExecutePlatform.epWin64;
   {$ELSEIF Defined(OSX)}
     {$IFDEF CPU64}
-      CurrentPlatform = TExecutePlatform.epOSX32;
-    {$ELSE CPU64}
       CurrentPlatform = TExecutePlatform.epOSX64;
+    {$ELSE CPU64}
+      CurrentPlatform = TExecutePlatform.epOSX32;
     {$IFEND CPU64}
   {$ELSEIF Defined(IOS)}
     {$IFDEF CPUARM}
@@ -185,7 +185,11 @@ const
     CurrentPlatform = TExecutePlatform.epIOSSIM;
     {$ENDIF CPUARM}
   {$ELSEIF Defined(ANDROID)}
-  CurrentPlatform = TExecutePlatform.epANDROID;
+    {$IFDEF CPU64}
+    CurrentPlatform = TExecutePlatform.epANDROID64;
+    {$ELSE CPU64}
+    CurrentPlatform = TExecutePlatform.epANDROID32;
+    {$IFEND CPU64}
   {$ELSEIF Defined(Linux)}
     {$IFDEF CPU64}
       CurrentPlatform = TExecutePlatform.epLinux64;
@@ -214,81 +218,100 @@ procedure UnLockID(const ID:Byte);
 procedure LockObject(Obj:TObject);
 procedure UnLockObject(Obj:TObject);
 
-procedure FillPtrByte(const dest:Pointer; Count: nativeUInt; const Value: Byte);
-function CompareMemory(const p1, p2: Pointer; const MLen: nativeUInt): Boolean;
-procedure CopyPtr(const sour, dest:Pointer; Count: nativeUInt);
+procedure AtomInc(var x: Int64); overload;
+procedure AtomInc(var x: Int64; const v: Int64); overload;
+procedure AtomDec(var x: Int64); overload;
+procedure AtomDec(var x: Int64; const v: Int64); overload;
+procedure AtomInc(var x: UInt64); overload;
+procedure AtomInc(var x: UInt64; const v: UInt64); overload;
+procedure AtomDec(var x: UInt64); overload;
+procedure AtomDec(var x: UInt64; const v: UInt64); overload;
+procedure AtomInc(var x: Integer); overload;
+procedure AtomInc(var x: Integer; const v:Integer); overload;
+procedure AtomDec(var x: Integer); overload;
+procedure AtomDec(var x: Integer; const v:Integer); overload;
+procedure AtomInc(var x: Cardinal); overload;
+procedure AtomInc(var x: Cardinal; const v:Cardinal); overload;
+procedure AtomDec(var x: Cardinal); overload;
+procedure AtomDec(var x: Cardinal; const v:Cardinal); overload;
+
+procedure FillPtrByte(const dest:Pointer; Count: NativeInt; const Value: Byte); inline;
+function CompareMemory(const p1, p2: Pointer; const Count: NativeInt): Boolean; inline;
+procedure CopyPtr(const sour, dest:Pointer; Count: NativeInt); inline;
 
 procedure RaiseInfo(const n: SystemString); overload;
 procedure RaiseInfo(const n: SystemString; const Args: array of const); overload;
 
 function IsMobile: Boolean;
 
-function GetTimeTickCount: TTimeTickValue; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function GetTimeTick: TTimeTickValue; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function GetCrashTimeTick: TTimeTickValue;
+function GetTimeTickCount: TTimeTickValue; inline;
+function GetTimeTick: TTimeTickValue; inline;
+function GetCrashTimeTick: TTimeTickValue; inline;
 
-function ROL8(const Value:Byte; Shift: Byte): Byte; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ROL16(const Value: Word; Shift: Byte): Word; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ROL32(const Value: Cardinal; Shift: Byte): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ROL64(const Value: UInt64; Shift: Byte): UInt64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ROR8(const Value:Byte; Shift: Byte): Byte; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ROR16(const Value: Word; Shift: Byte): Word; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ROR32(const Value: Cardinal; Shift: Byte): Cardinal; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function ROR64(const Value: UInt64; Shift: Byte): UInt64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ROL8(const Value: Byte; Shift: Byte): Byte; inline;
+function ROL16(const Value: Word; Shift: Byte): Word; inline;
+function ROL32(const Value: Cardinal; Shift: Byte): Cardinal; inline;
+function ROL64(const Value: UInt64; Shift: Byte): UInt64; inline;
+function ROR8(const Value: Byte; Shift: Byte): Byte; inline;
+function ROR16(const Value: Word; Shift: Byte): Word; inline;
+function ROR32(const Value: Cardinal; Shift: Byte): Cardinal; inline;
+function ROR64(const Value: UInt64; Shift: Byte): UInt64; inline;
 
-procedure Swap(var v1,v2:Byte); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Swap(var v1,v2:Word); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Swap(var v1,v2:Integer); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Swap(var v1,v2:Int64); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Swap(var v1,v2:UInt64); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Swap(var v1,v2:SystemString); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Swap(var v1,v2:Single); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Swap(var v1,v2:Double); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-procedure Swap(var v1,v2:Pointer); overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure Swap(var v1,v2:Byte); overload;
+procedure Swap(var v1,v2:Word); overload;
+procedure Swap(var v1,v2:Integer); overload;
+procedure Swap(var v1,v2:Int64); overload;
+procedure Swap(var v1,v2:UInt64); overload;
+procedure Swap(var v1,v2:SystemString); overload;
+procedure Swap(var v1,v2:Single); overload;
+procedure Swap(var v1,v2:Double); overload;
+procedure Swap(var v1,v2:Pointer); overload;
 
-function SAR16(const AValue: SmallInt; const Shift: Byte): SmallInt; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SAR32(const AValue: Integer; Shift: Byte): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function SAR64(const AValue: Int64; Shift: Byte): Int64; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function SAR16(const AValue: SmallInt; const Shift: Byte): SmallInt;
+function SAR32(const AValue: Integer; Shift: Byte): Integer;
+function SAR64(const AValue: Int64; Shift: Byte): Int64;
 
-function MemoryAlign(addr: Pointer; alignment: nativeUInt): Pointer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MemoryAlign(addr: Pointer; alignment: nativeUInt): Pointer;
 
-function Endian(const AValue: SmallInt): SmallInt; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function Endian(const AValue: Word): Word; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function Endian(const AValue: Integer): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function Endian(const AValue: Cardinal): Cardinal; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function Endian(const AValue: Int64): Int64; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function Endian(const AValue: UInt64): UInt64; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function Endian(const AValue: SmallInt): SmallInt; overload;
+function Endian(const AValue: Word): Word; overload;
+function Endian(const AValue: Integer): Integer; overload;
+function Endian(const AValue: Cardinal): Cardinal; overload;
+function Endian(const AValue: Int64): Int64; overload;
+function Endian(const AValue: UInt64): UInt64; overload;
 
-function BE2N(const AValue: SmallInt): SmallInt; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function BE2N(const AValue: Word): Word; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function BE2N(const AValue: Integer): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function BE2N(const AValue: Cardinal): Cardinal; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function BE2N(const AValue: Int64): Int64; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function BE2N(const AValue: UInt64): UInt64; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function BE2N(const AValue: SmallInt): SmallInt; overload;
+function BE2N(const AValue: Word): Word; overload;
+function BE2N(const AValue: Integer): Integer; overload;
+function BE2N(const AValue: Cardinal): Cardinal; overload;
+function BE2N(const AValue: Int64): Int64; overload;
+function BE2N(const AValue: UInt64): UInt64; overload;
 
-function LE2N(const AValue: SmallInt): SmallInt; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function LE2N(const AValue: Word): Word; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function LE2N(const AValue: Integer): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function LE2N(const AValue: Cardinal): Cardinal; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function LE2N(const AValue: Int64): Int64; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function LE2N(const AValue: UInt64): UInt64; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function LE2N(const AValue: SmallInt): SmallInt; overload;
+function LE2N(const AValue: Word): Word; overload;
+function LE2N(const AValue: Integer): Integer; overload;
+function LE2N(const AValue: Cardinal): Cardinal; overload;
+function LE2N(const AValue: Int64): Int64; overload;
+function LE2N(const AValue: UInt64): UInt64; overload;
 
-function N2BE(const AValue: SmallInt): SmallInt; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function N2BE(const AValue: Word): Word; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function N2BE(const AValue: Integer): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function N2BE(const AValue: Cardinal): Cardinal; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function N2BE(const AValue: Int64): Int64; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function N2BE(const AValue: UInt64): UInt64; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function N2BE(const AValue: SmallInt): SmallInt; overload;
+function N2BE(const AValue: Word): Word; overload;
+function N2BE(const AValue: Integer): Integer; overload;
+function N2BE(const AValue: Cardinal): Cardinal; overload;
+function N2BE(const AValue: Int64): Int64; overload;
+function N2BE(const AValue: UInt64): UInt64; overload;
 
-function N2LE(const AValue: SmallInt): SmallInt; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function N2LE(const AValue: Word): Word; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function N2LE(const AValue: Integer): Integer; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function N2LE(const AValue: Cardinal): Cardinal; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function N2LE(const AValue: Int64): Int64; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
-function N2LE(const AValue: UInt64): UInt64; overload; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function N2LE(const AValue: SmallInt): SmallInt; overload;
+function N2LE(const AValue: Word): Word; overload;
+function N2LE(const AValue: Integer): Integer; overload;
+function N2LE(const AValue: Cardinal): Cardinal; overload;
+function N2LE(const AValue: Int64): Int64; overload;
+function N2LE(const AValue: UInt64): UInt64; overload;
 
 threadvar
   MHGlobalHookEnabled: Boolean;
+var
+  Core_Run_TimeTick: TTimeTick;
 
 implementation
 
@@ -388,32 +411,43 @@ begin
 end;
 
 procedure LockObject(Obj:TObject);
+{$IFDEF ANTI_DEAD_ATOMIC_LOCK}
+var
+  d: TTimeTick;
+{$ENDIF ANTI_DEAD_ATOMIC_LOCK}
 begin
 {$IFDEF FPC}
   _LockCriticalObj(Obj);
-{$ELSE}
-  {$IFDEF CriticalSimulateAtomic}
+{$ELSE FPC}
+{$IFDEF CriticalSimulateAtomic}
   _LockCriticalObj(Obj);
-  {$ELSE}
+{$ELSE CriticalSimulateAtomic}
+  {$IFDEF ANTI_DEAD_ATOMIC_LOCK}
+  d := GetTimeTick;
+  TMonitor.Enter(Obj, 5000);
+  if GetTimeTick - d > 5000 then
+      RaiseInfo('dead lock');
+  {$ELSE ANTI_DEAD_ATOMIC_LOCK}
   TMonitor.Enter(Obj);
-  {$ENDIF}
-{$ENDIF}
+  {$ENDIF ANTI_DEAD_ATOMIC_LOCK}
+{$ENDIF CriticalSimulateAtomic}
+{$ENDIF FPC}
 end;
 
 procedure UnLockObject(Obj:TObject);
 begin
 {$IFDEF FPC}
   _UnLockCriticalObj(Obj);
-{$ELSE}
+{$ELSE FPC}
   {$IFDEF CriticalSimulateAtomic}
   _UnLockCriticalObj(Obj);
-  {$ELSE}
+  {$ELSE CriticalSimulateAtomic}
   TMonitor.Exit(Obj);
-  {$ENDIF}
-{$ENDIF}
+  {$ENDIF CriticalSimulateAtomic}
+{$ENDIF FPC}
 end;
 
-procedure FillPtrByte(const dest: Pointer; Count: nativeUInt; const Value: Byte);
+procedure FillPtrByte(const dest: Pointer; Count: NativeInt; const Value: Byte);
 var
   index: NativeInt;
   v    : UInt64;
@@ -446,21 +480,88 @@ begin
       end;
 end;
 
-function CompareMemory(const p1, p2: Pointer; const MLen: nativeUInt): Boolean;
+function CompareMemory(const p1, p2: Pointer; const Count: NativeInt): Boolean;
+var
+  i: NativeInt;
+  b1, b2: PByte;
 begin;
-  if MLen = 0 then
-    Result := True
-  else
-    Result := CompareMem(p1, p2, MLen);
+  if Count <= 0 then
+    begin
+      Result := True;
+      Exit;
+    end;
+  Result := False;
+  b1 := p1;
+  b2 := p2;
+  i := Count;
+  while (i >= 8) do
+    begin
+      if PUInt64(b2)^ <> PUInt64(b1)^ then
+        Exit;
+      dec(i, 8);
+      inc(b2, 8);
+      inc(b1, 8);
+    end;
+  if i >= 4 then
+    begin
+      if PCardinal(b2)^ <> PCardinal(b1)^ then
+        Exit;
+      dec(i, 4);
+      inc(b2, 4);
+      inc(b1, 4);
+    end;
+  if i >= 2 then
+    begin
+      if PWORD(b2)^ <> PWORD(b1)^ then
+        Exit;
+      dec(i, 2);
+      inc(b2, 2);
+      inc(b1, 2);
+    end;
+  if i > 0 then
+    if b2^ <> b1^ then
+      Exit;
+  Result := True;
 end;
 
-procedure CopyPtr(const sour, dest: Pointer; Count: nativeUInt);
+procedure CopyPtr(const sour, dest: Pointer; Count: NativeInt);
+var
+  i: NativeInt;
+  s, d: PByte;
 begin
-  Move(sour^, dest^, Count);
+  if Count <= 0 then
+    Exit;
+  s := sour;
+  d := Dest;
+  i := Count;
+  while i >= 8 do
+    begin
+      PUInt64(d)^ := PUInt64(s)^;
+      dec(i, 8);
+      inc(d, 8);
+      inc(s, 8);
+    end;
+  if i >= 4 then
+    begin
+      PCardinal(d)^ := PCardinal(s)^;
+      dec(i, 4);
+      inc(d, 4);
+      inc(s, 4);
+    end;
+  if i >= 2 then
+    begin
+      PWORD(d)^ := PWORD(s)^;
+      dec(i, 2);
+      inc(d, 2);
+      inc(s, 2);
+    end;
+  if i > 0 then
+    d^ := s^;
 end;
 
 procedure RaiseInfo(const n: SystemString);
 begin
+  DoStatus('raise exception: ' + n);
   raise Exception.Create(n);
 end;
 
@@ -472,19 +573,19 @@ end;
 function IsMobile: Boolean;
 begin
   case CurrentPlatform of
-    epIOS, epIOSSIM, epANDROID: Result := True;
+    epIOS, epIOSSIM, epANDROID32, epANDROID64: Result := True;
     else Result := False;
   end;
 end;
 
 function GetTimeTickCount: TTimeTickValue;
 begin
-  Result := TCoreClassThread.GetTickCount;
+  Result := TCoreClassThread.GetTickCount();
 end;
 
 function GetTimeTick: TTimeTickValue;
 begin
-  Result := TCoreClassThread.GetTickCount;
+  Result := GetTimeTickCount();
 end;
 
 function GetCrashTimeTick: TTimeTickValue;
@@ -492,6 +593,7 @@ begin
   Result := $FFFFFFFF - GetTimeTick;
 end;
 
+{$IFDEF RangeCheck}{$R-}{$ENDIF}
 function ROL8(const Value: Byte; Shift: Byte): Byte;
 begin
   Shift := Shift and $07;
@@ -539,6 +641,7 @@ begin
   Shift := Shift and $3F;
   Result := UInt64((Value shr Shift) or (Value shl (64 - Shift)));
 end;
+{$IFDEF RangeCheck}{$R+}{$ENDIF}
 
 procedure Swap(var v1,v2: Byte);
 var
@@ -621,6 +724,7 @@ begin
   v2 := v;
 end;
 
+{$IFDEF RangeCheck}{$R-}{$ENDIF}
 function SAR16(const AValue: SmallInt; const Shift: Byte): SmallInt;
 begin
   Result := SmallInt(Word(Word(Word(AValue) shr (Shift and 15)) or (Word(SmallInt(Word(0 - Word(Word(AValue) shr 15)) and Word(SmallInt(0 - (Ord((Shift and 15) <> 0) { and 1 } ))))) shl (16 - (Shift and 15)))));
@@ -628,13 +732,14 @@ end;
 
 function SAR32(const AValue: Integer; Shift: Byte): Integer;
 begin
-  Result := longint(Cardinal(Cardinal(Cardinal(AValue) shr (Shift and 31)) or (Cardinal(longint(Cardinal(0 - Cardinal(Cardinal(AValue) shr 31)) and Cardinal(longint(0 - (Ord((Shift and 31) <> 0) { and 1 } ))))) shl (32 - (Shift and 31)))));
+  Result := Integer(Cardinal(Cardinal(Cardinal(AValue) shr (Shift and 31)) or (Cardinal(Integer(Cardinal(0 - Cardinal(Cardinal(AValue) shr 31)) and Cardinal(Integer(0 - (Ord((Shift and 31) <> 0) { and 1 } ))))) shl (32 - (Shift and 31)))));
 end;
 
 function SAR64(const AValue: Int64; Shift: Byte): Int64;
 begin
   Result := Int64(UInt64(UInt64(UInt64(AValue) shr (Shift and 63)) or (UInt64(Int64(UInt64(0 - UInt64(UInt64(AValue) shr 63)) and UInt64(Int64(0 - (Ord((Shift and 63) <> 0) { and 1 } ))))) shl (64 - (Shift and 63)))));
 end;
+{$IFDEF RangeCheck}{$R+}{$ENDIF}
 
 function MemoryAlign(addr: Pointer; alignment: nativeUInt): Pointer;
 var
@@ -810,6 +915,7 @@ end;
 
 
 initialization
+  Core_Run_TimeTick := TCoreClassThread.GetTickCount();
   InitCriticalLock;
   InitLockIDBuff;
   MHGlobalHookEnabled := True;

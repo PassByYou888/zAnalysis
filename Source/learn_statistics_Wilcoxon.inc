@@ -43,7 +43,6 @@ function W120(const s: TLFloat): TLFloat; forward;
 function W200(const s: TLFloat): TLFloat; forward;
 function WSigma(const s: TLFloat; const n: TLInt): TLFloat; forward;
 
-
 (* ************************************************************************
   Wilcoxon signed-rank test
 
@@ -76,21 +75,21 @@ function WSigma(const s: TLFloat; const n: TLInt): TLFloat; forward;
   ************************************************************************ *)
 procedure WilcoxonSignedRankTest(const x: TLVec; n: TLInt; E: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  i    : TLInt;
-  j    : TLInt;
-  k    : TLInt;
-  t    : TLInt;
-  tmp  : TLFloat;
-  TmpI : TLInt;
-  ns   : TLInt;
-  r    : TLVec;
-  c    : TLIVec;
-  w    : TLFloat;
-  p    : TLFloat;
-  MP   : TLFloat;
-  s    : TLFloat;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
+  t: TLInt;
+  tmp: TLFloat;
+  TmpI: TLInt;
+  ns: TLInt;
+  r: TLVec;
+  c: TLIVec;
+  w: TLFloat;
+  p: TLFloat;
+  MP: TLFloat;
+  s: TLFloat;
   SIGMA: TLFloat;
-  MU   : TLFloat;
+  MU: TLFloat;
 begin
   //
   // Prepare
@@ -5742,8 +5741,8 @@ end;
   ************************************************************************ *)
 function W25(const s: TLFloat): TLFloat;
 var
-  x  : TLFloat;
-  TJ : TLFloat;
+  x: TLFloat;
+  TJ: TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
@@ -5768,8 +5767,8 @@ end;
   ************************************************************************ *)
 function W26(const s: TLFloat): TLFloat;
 var
-  x  : TLFloat;
-  TJ : TLFloat;
+  x: TLFloat;
+  TJ: TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
@@ -5794,8 +5793,8 @@ end;
   ************************************************************************ *)
 function W27(const s: TLFloat): TLFloat;
 var
-  x  : TLFloat;
-  TJ : TLFloat;
+  x: TLFloat;
+  TJ: TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
@@ -5820,8 +5819,8 @@ end;
   ************************************************************************ *)
 function W28(const s: TLFloat): TLFloat;
 var
-  x  : TLFloat;
-  TJ : TLFloat;
+  x: TLFloat;
+  TJ: TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
@@ -5846,8 +5845,8 @@ end;
   ************************************************************************ *)
 function W29(const s: TLFloat): TLFloat;
 var
-  x  : TLFloat;
-  TJ : TLFloat;
+  x: TLFloat;
+  TJ: TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
@@ -5872,8 +5871,8 @@ end;
   ************************************************************************ *)
 function W30(const s: TLFloat): TLFloat;
 var
-  x  : TLFloat;
-  TJ : TLFloat;
+  x: TLFloat;
+  TJ: TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
@@ -5898,8 +5897,8 @@ end;
   ************************************************************************ *)
 function W40(const s: TLFloat): TLFloat;
 var
-  x  : TLFloat;
-  TJ : TLFloat;
+  x: TLFloat;
+  TJ: TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
@@ -5924,8 +5923,8 @@ end;
   ************************************************************************ *)
 function W60(const s: TLFloat): TLFloat;
 var
-  x  : TLFloat;
-  TJ : TLFloat;
+  x: TLFloat;
+  TJ: TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
@@ -5950,8 +5949,8 @@ end;
   ************************************************************************ *)
 function W120(const s: TLFloat): TLFloat;
 var
-  x  : TLFloat;
-  TJ : TLFloat;
+  x: TLFloat;
+  TJ: TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
@@ -5976,8 +5975,8 @@ end;
   ************************************************************************ *)
 function W200(const s: TLFloat): TLFloat;
 var
-  x  : TLFloat;
-  TJ : TLFloat;
+  x: TLFloat;
+  TJ: TLFloat;
   TJ1: TLFloat;
 begin
   Result := 0;
@@ -6012,8 +6011,9 @@ var
   x2: TLFloat;
   x3: TLFloat;
   x4: TLFloat;
-  x : TLFloat;
+  x: TLFloat;
 begin
+  Result := 0;
   if n = 5 then
     begin
       Result := W5(s);
@@ -6143,6 +6143,4 @@ begin
       F4 := ((x - x3) * F4 - (x - x4) * F3) / (x4 - x3);
       Result := F4;
     end;
-end; 
- 
- 
+end;

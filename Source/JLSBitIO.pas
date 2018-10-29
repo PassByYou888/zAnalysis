@@ -30,7 +30,7 @@ uses
   CoreClasses, JLSGlobal;
 
 const
-  BufSize    = ((16 * 1024) - NEGBUFFSIZE); { Size of input BYTE buffer }
+  BufSize = ((16 * 1024) - NEGBUFFSIZE); { Size of input BYTE buffer }
   BITBUFSIZE = (8 * SizeOf(Cardinal));
 
 type
@@ -256,6 +256,7 @@ var
   filled, discard, dbytes, i, k, treg: Int;
   bp: PByte;
 begin
+{$IFDEF RangeCheck}{$R-}{$ENDIF}
   k := 0;
   treg := 0;
   filled := 24 - Bits; { how many bits at the MS part of reg
@@ -320,6 +321,7 @@ begin
 
   Bits := 0;
   reg := 0;
+{$IFDEF RangeCheck}{$R+}{$ENDIF}
 end;
 
 { Flushes the bit output buffer and the byte output buffer }
@@ -444,7 +446,4 @@ begin
     end;
 end;
 
-end. 
- 
- 
- 
+end.
