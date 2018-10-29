@@ -4,23 +4,34 @@ zAnalysis是基于Pascal语言编写的大型统计学开源库，它不依赖�
 
 zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 
-# 运行平台支持 #
-- **IOS armv7 - delphi/fpc 100%兼容**
-- **IOS arm64 - delphi/fpc 100%兼容**
-- **Anroid - delphi/fpc 100%兼容**
-- **Windows - delphi/fpc x86/100%兼容**
-- **Windows - delphi/fpc x64/100%兼容**
-- **Linux - delphi/fpc x64/100%兼容**
-- **OSX - delphi/fpc x86/100%兼容**
-- **Linux - delphi x86/不兼容 - fpc x86/x64/100%兼容**
-- **OSX - 下一次更新版本会全面支持x64/x86**
-- **树莓派Linux - 下一次更新版本会全面支持树莓派**
+## 平台支持，test with Delphi 10.2 upate 1 Tokyo and FPC 3.0.4
 
+- Windows: delphi-CrossSocket(C/S OK), delphi-DIOCP(C/S OK), delphi-ICS(C/S OK), delphi-Indy(C/S OK),delphi+fpc Synapse(C/S OK)
+- Android:Indy(C/S OK), CrossSocket(Only Client)
+- IOS Device: Indy(C/S OK), CrossSocket(Only Client)
+- IOS Simulaor: n/a
+- OSX: Indy(C/S OK)，ICS(未测试), CrossSocket(C/S OK)
+- Ubuntu16.04 x64 server: Indy(C/S OK), CrossSocket(C/S OK)
+- Ubuntu18.04 x86+x64 Desktop:only fpc3.0.4 Synapse(C/S OK)
+- Ubuntu18.04 x86+x64 Server:only fpc3.0.4 Synapse(C/S OK) 
+- Ubuntu18.04 arm32+arm neon Server:only fpc3.0.4 Synapse(C/S OK)
+- Ubuntu18.04 arm32+arm neon desktop:only fpc3.0.4 compile ok,no test on run.  
+- Ubuntu16.04 Mate arm32 desktop:only fpc3.0.4 compile ok, test passed  
+- Raspberry Pi 3 Debian linux armv7 desktop,only fpc 3.0.4,test passed.
+- wince(arm eabi hard flaot),windows 10 IOT,only fpc 3.3.1,test passed.
 
-# 开发平台支持 #
-- Freepascal with Lazarus，http://lazarus.freepascal.org/
-- CodeTyphone，http://www.pilotlogic.com/
-- Delphi XE10 或以上版本，http://embarcadero.com/
+## CPU架构支持，test with Delphi 10.2 upate 1 Tokyo and FPC 3.0.4
+
+- MIPS(fpc-little endian), soft float, test pass on QEMU 
+- intel X86(fpc-x86), soft float
+- intel X86(delphi+fpc), hard float,80386,PENTIUM,PENTIUM2,PENTIUM3,PENTIUM4,PENTIUMM,COREI,COREAVX,COREAVX2
+- intel X64(fpc-x86_64), soft float
+- intel X64(delphi+fpc), hard float,ATHLON64,COREI,COREAVX,COREAVX2
+- ARM(fpc-arm32-eabi,soft float):ARMV3,ARMV4,ARMV4T,ARMV5,ARMV5T,ARMV5TE,ARMV5TEJ
+- ARM(fpc-arm32-eabi,hard float):ARMV6,ARMV6K,ARMV6T2,ARMV6Z,ARMV6M,ARMV7,ARMV7A,ARMV7R,ARMV7M,ARMV7EM
+- ARM(fpc-arm64-eabi,hard float):ARMV8，aarch64
+
+**关于IoT平台的开发测试机：本文提及到的IOT开发板都可以通过网购获取，自己动手diy Linux需要一定的耐心，懒人建议使用CodeTyphon，或则直接apt安装内置的fpc+Lazarus**
 
 
 # 指标
@@ -145,6 +156,13 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 
 
 ## 近期更新日志
+
+**2018-10-29**
+- bass音效库全面支持arm linux，包裹ARMv7，aarch64两种架构
+- 新增ffmpeg支持，全平台支持
+- 底层算法优化
+- 全面支持所有linux平台，支持所有IOT开发版，包括MIPS小序列架构
+
 
 **2018-7-6**
 - 大幅修正底层库的命名规则
