@@ -37,6 +37,10 @@
 
   // {$DEFINE ANTI_DEAD_ATOMIC_LOCK}
 
+  // Using Sequential Packet Model will consume more memory and reduce IO performance,
+  // it can memory communication status and facilitate us to return to the original scene.
+  // {$DEFINE SEQUENCE_PACKET}
+
   {$DEFINE release}
   {$UNDEF debug}
   {$DEFINE INLINE_ASM}
@@ -69,13 +73,17 @@
 
   // {$DEFINE ANTI_DEAD_ATOMIC_LOCK}
 
+  // Using Sequential Packet Model will consume more memory and reduce IO performance,
+  // it can memory communication status and facilitate us to return to the original scene.
+  // {$DEFINE SEQUENCE_PACKET}
+
   {$IFDEF release}
     {$DEFINE INLINE_ASM}
     {$R-} { range check }
     {$I-} { Input output checking }
     {$O+} { optimization }
   {$ELSE}
-    {$UNDEF INLINE_ASM}
+    {$DEFINE INLINE_ASM}
     {$R-} { range check }
     {$I-} { Input output checking }
     {$O+} { optimization }
@@ -92,7 +100,6 @@
     // {$DEFINE NatTunnel_On_Indy}
     // {$DEFINE NatTunnel_On_Synapse}
 
-
     // HostQuery Physics interface
     // {$DEFINE HostQuery_On_ICS}
     {$DEFINE HostQuery_On_CrossSocket}
@@ -101,8 +108,8 @@
   {$IFEND}
 {$ENDIF FPC}
 
-{$WARNINGS ON}
-{$HINTS ON}
+{$WARNINGS OFF}
+{$HINTS OFF}
 {$H+} { long string }
 {$A+} { Word Align Data }
 {$Q-} { Overflow checking }

@@ -246,7 +246,7 @@ begin
   output := TMemoryStream64.Create;
   DecompressStream(Data, siz, output);
   output.Position := 0;
-  Result := THashStringList.Create(hashSiz);
+  Result := THashStringList.CustomCreate(hashSiz);
   Result.LoadFromStream(output);
   DisposeObject(output);
 end;
@@ -260,7 +260,7 @@ begin
   output := TMemoryStream64.Create;
   DecompressStream(Data, siz, output);
   output.Position := 0;
-  Result := THashList.Create(hashSiz);
+  Result := THashList.CustomCreate(hashSiz);
 
   lst := TListPascalString.Create;
   lst.LoadFromStream(output);

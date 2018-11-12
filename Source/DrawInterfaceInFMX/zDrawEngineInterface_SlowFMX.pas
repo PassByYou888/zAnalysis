@@ -807,7 +807,7 @@ end;
 constructor TResourceTextureCache.Create;
 begin
   inherited Create;
-  TextureList := THashObjectList.Create(True, 1024);
+  TextureList := THashObjectList.CustomCreate(True, 1024);
   DefaultTexture := TResourceTexture.Create('');
   DefaultTexture.SetSize(2, 2, RasterColorF(0, 0, 0, 1.0));
 end;

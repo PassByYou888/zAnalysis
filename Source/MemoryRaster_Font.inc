@@ -198,7 +198,7 @@ begin
       Exit;
 
   DoStatus('build font Hash...');
-  rHash := THashList.Create(8192);
+  rHash := THashList.CustomCreate(8192);
   rHash.AutoFreeData := False;
 
   RP := TRectPacking.Create;

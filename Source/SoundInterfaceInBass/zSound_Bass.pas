@@ -370,7 +370,7 @@ end;
 constructor TSoundEngine_Bass.Create(ATempPath: SystemString);
 begin
   inherited Create(ATempPath);
-  SoundList := THashObjectList.Create(True, 2048);
+  SoundList := THashObjectList.CustomCreate(True, 2048);
   SoundEngine_Bass := Self;
 end;
 

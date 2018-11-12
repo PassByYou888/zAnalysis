@@ -68,7 +68,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
   AddDoStatusHook(Self, DoStatusM);
   Dict := TListPascalString.Create;
-  dHash := THashVariantList.Create(128);
+  dHash := THashVariantList.CustomCreate(128);
   lr := nil;
 
   Button1Click(nil);

@@ -439,7 +439,7 @@ type
     FResourceIntf: IDrawEngineResourceInterface;
     FCommandCounter: Integer;
     FPerformaceCounter: Cardinal;
-    FLastPerformaceTime: TTimeTickValue;
+    FLastPerformaceTime: TTimeTick;
     FFrameCounterOfPerSec: Double;
     FCommandCounterOfPerSec: Double;
     FWidth, FHeight: TDEFloat;
