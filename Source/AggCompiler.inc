@@ -29,7 +29,7 @@
 {$HINTS OFF}
 {$H+} { long string }
 {$A+} { Word Align Data }
-{$O+} { optimization }
+{$O-} { optimization }
 {$Q-} { Overflow checking }
 {$B-} { Complete boolean evaluation }
 {$I-} { Input output checking }
