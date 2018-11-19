@@ -45,7 +45,7 @@
   {$UNDEF debug}
   {$DEFINE INLINE_ASM}
   {$R-} { range check }
-  {$O+} { optimization }
+  {$O-} { optimization }
 {$ELSE FPC}
   {$DEFINE LITTLE_ENDIAN}
   {$UNDEF BIG_ENDIAN}
