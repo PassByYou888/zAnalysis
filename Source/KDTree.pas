@@ -738,7 +738,7 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  MHGlobalHookEnabled := False;
+  GlobalMemoryHook := False;
   try
     {$IFDEF FPC}
     ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
@@ -753,7 +753,7 @@ begin
       end);
     {$ENDIF FPC}
   finally
-      MHGlobalHookEnabled := True;
+      GlobalMemoryHook := True;
   end;
 end;
 

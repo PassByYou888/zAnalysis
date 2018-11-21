@@ -19,7 +19,7 @@
   {$IFDEF release}
     {$R-} { range check }
   {$ELSE}
-    {$R-} { range check }
+    {$R+} { range check }
   {$ENDIF}
 
   {$DEFINE Delphi}
