@@ -655,7 +655,7 @@ begin
           CreateLearnData(True);
           p_k := PLearnKDT(FLearnData);
           p_k^.kdt.Clear;
-          if (TrainDepth > 1) and (not FClassifier) then
+          if (TrainDepth > 1) and (not FClassifier) and (TrainDepth < FMemorySource.Count) then
             begin
               p_k^.kdt.BuildKDTreeWithClusterM(FMemorySource.Count, TrainDepth, 1, kmIndexOut, nil, {$IFDEF FPC}@{$ENDIF FPC}KDInput);
             end
@@ -823,7 +823,7 @@ begin
         end;
     end;
   finally
-    FIsTraining := False;
+      FIsTraining := False;
   end;
 end;
 
