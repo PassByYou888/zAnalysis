@@ -128,8 +128,8 @@ type
     function ComputePyramidCoor(const FilterEndge, FilterOri: Boolean; const ExtremaV2: TVec2; const pyr_id, scale_id: TLInt): TPyramidCoorList;
   public
     constructor CreateWithRaster(const raster: TMemoryRaster); overload;
-    constructor CreateWithRaster(const fn: string); overload;
-    constructor CreateWithRaster(const stream: TCoreClassStream); overload;
+    constructor CreateWithRasterFile(const fn: string); overload;
+    constructor CreateWithRasterStream(const stream: TCoreClassStream); overload;
     constructor CreateWithGauss(const spr: PGaussSpace);
     destructor Destroy; override;
 
@@ -157,7 +157,6 @@ type
   TDescriptor = record
     descriptor: TLVec;    // feature vector
     coor: TVec2;          // real scaled [0,1] coordinate in the original image
-    AbsCoor: TVec2;       // absolute sampler coordinal in the original image
     Orientation: TGFloat; // Orientation information
     index: TLInt;         // index in Fetature
     Owner: TFeature;      // owner
@@ -186,22 +185,21 @@ type
     FDescriptorBuff: array of TDescriptor;
     FPyramidCoordList: TPyramidCoorList;
     FWidth, FHeight: TLInt;
-    // gray format
-    FViewer: array of Byte;
     // internal used
-    FInternalVec: TVec2;
+    FeatureMatchedVec1, FeatureMatchedVec2: TVec2;
     // user custom
     FUserData: Pointer;
 
     procedure ComputeDescriptor(const p: PPyramidCoor; var Desc: TLVec);
     procedure BuildFeature(Pyramids: TPyramids);
   public
+    LinkRaster: TMemoryRaster;
     constructor CreateWithPyramids(Pyramids: TPyramids);
-    constructor CreateWithRaster(const raster: TMemoryRaster; const Clip: TVec2List); overload;
-    constructor CreateWithRaster(const raster: TMemoryRaster; var mat: TLBMatrix); overload;
+    constructor CreateWithRasterClip(const raster: TMemoryRaster; const Clip: TVec2List); overload;
+    constructor CreateWithRasterClipMatrix(const raster: TMemoryRaster; var mat: TLBMatrix); overload;
     constructor CreateWithRaster(const raster: TMemoryRaster); overload;
-    constructor CreateWithRaster(const fn: string); overload;
-    constructor CreateWithRaster(const stream: TCoreClassStream); overload;
+    constructor CreateWithRasterFile(const fn: string); overload;
+    constructor CreateWithRasterStream(const stream: TCoreClassStream); overload;
     constructor CreateWithSampler(const spr: PGaussSpace);
     constructor Create;
     destructor Destroy; override;
@@ -232,7 +230,7 @@ function between(const idx, Start, OVER: TGFloat): Boolean; overload;
 procedure CopySampler(var Source, dest: TGaussSpace);
 procedure SamplerAlpha(const Source: TMemoryRaster; var dest: TGaussSpace); overload;
 procedure SamplerAlpha(var Source: TGaussSpace; const dest: TMemoryRaster); overload;
-procedure Sampler(const Source: TMemoryRaster; const WR, WG, wb: TGFloat; const ColorSap: TLInt; var dest: TGaussSpace); overload;
+procedure Sampler(const Source: TMemoryRaster; const wr, wg, wb: TGFloat; const ColorSap: TLInt; var dest: TGaussSpace); overload;
 procedure Sampler(const Source: TMemoryRaster; var dest: TGaussSpace); overload;
 procedure Sampler(var Source: TGaussSpace; const dest: TMemoryRaster); overload;
 procedure Sampler(var Source: TGaussSpace; var dest: TByteRaster); overload;
@@ -250,10 +248,8 @@ procedure ComputeSamplerSize(var width, height: TLInt);
 function e_sqr(const sour, dest: PDescriptor): TGFloat;
 
 // feature match
-function MatchFeature(const Source, dest: TFeature; var MatchInfo: TArrayMatchInfo): TLFloat;
-function BuildMatchInfoView(var MatchInfo: TArrayMatchInfo; const RectWidth: TLInt; const ViewFeature: Boolean): TMemoryRaster;
-
-procedure TestPyramidSpace;
+function MatchFeature(const Source, dest: TFeature; var MatchInfo: TArrayMatchInfo): TLInt;
+function BuildMatchInfoView(var MatchInfo: TArrayMatchInfo; const FeatureDiameter: TGFloat; const ViewFeature: Boolean): TMemoryRaster;
 
 {$ENDREGION 'PyramidFunctions'}
 
@@ -313,7 +309,7 @@ uses
   Threading,
 {$ENDIF FPC}
 {$ENDIF parallel}
-  SyncObjs, Learn;
+  SyncObjs, Learn, MemoryStream64;
 
 const
   cPI: TGFloat = pi;
@@ -372,7 +368,7 @@ begin
         dest.PixelAlpha[i, j] := Round(Clamp(Source[j, i], 0.0, 1.0) * 255);
 end;
 
-procedure Sampler(const Source: TMemoryRaster; const WR, WG, wb: TGFloat; const ColorSap: TLInt; var dest: TGaussSpace);
+procedure Sampler(const Source: TMemoryRaster; const wr, wg, wb: TGFloat; const ColorSap: TLInt; var dest: TGaussSpace);
 var
   i, j, c, f, w, wf: TLInt;
   r, g, b: TGFloat;
@@ -391,7 +387,7 @@ begin
     for i := 0 to Source.width - 1 do
       begin
         RasterColor2F(Source.Pixel[i, j], r, g, b);
-        w := Trunc((r * WR + g * WG + b * wb) / (WR + WG + wb) * 256);
+        w := Trunc((r * wr + g * wg + b * wb) / (wr + wg + wb) * 256);
         wf := (w div f) * f;
         dest[j, i] := Clamp(Round(wf) / 256, 0.0, 1.0);
       end;
@@ -752,7 +748,7 @@ begin
     end;
 end;
 
-function MatchFeature(const Source, dest: TFeature; var MatchInfo: TArrayMatchInfo): TLFloat;
+function MatchFeature(const Source, dest: TFeature; var MatchInfo: TArrayMatchInfo): TLInt;
 var
   L: TCoreClassList;
   pf1_len, pf2_len: TLInt;
@@ -988,14 +984,14 @@ begin
   DisposeObject(L);
 end;
 
-function BuildMatchInfoView(var MatchInfo: TArrayMatchInfo; const RectWidth: TLInt; const ViewFeature: Boolean): TMemoryRaster;
+function BuildMatchInfoView(var MatchInfo: TArrayMatchInfo; const FeatureDiameter: TGFloat; const ViewFeature: Boolean): TMemoryRaster;
 var
   mr1, mr2: TMemoryRaster;
   FT1, FT2: TFeature;
   c: Byte;
   i, j: TLInt;
 
-  bV1, bV2: TVec2;
+  bFT1V1, bFT2V1, bFT1V2, bFT2V2: TVec2;
 
   p: PMatchInfo;
   RC: TRasterColor;
@@ -1013,8 +1009,8 @@ begin
 
   if ViewFeature then
     begin
-      mr1 := FT1.CreateFeatureViewer(8, RasterColorF(0.4, 0.1, 0.1, 0.5));
-      mr2 := FT2.CreateFeatureViewer(8, RasterColorF(0.4, 0.1, 0.1, 0.5));
+      mr1 := FT1.CreateFeatureViewer(FeatureDiameter * 0.5, RasterColorF(0.4, 0.1, 0.1, 0.5));
+      mr2 := FT2.CreateFeatureViewer(FeatureDiameter * 0.5, RasterColorF(0.4, 0.1, 0.1, 0.5));
     end
   else
     begin
@@ -1026,29 +1022,35 @@ begin
   Result.Draw(0, 0, mr1);
   Result.Draw(mr1.width, 0, mr2);
   Result.OpenAgg;
+  Result.Agg.LineWidth := FeatureDiameter * 0.25;
 
-  bV1 := FT1.FInternalVec;
-  bV2 := FT2.FInternalVec;
+  bFT1V1 := FT1.FeatureMatchedVec1;
+  bFT2V1 := FT2.FeatureMatchedVec1;
+  bFT1V2 := FT1.FeatureMatchedVec2;
+  bFT2V2 := FT2.FeatureMatchedVec2;
 
-  FT1.FInternalVec := vec2(0, 0);
-  FT2.FInternalVec := vec2(mr1.width, 0);
+  FT1.FeatureMatchedVec1 := vec2(0, 0);
+  FT2.FeatureMatchedVec1 := vec2(mr1.width, 0);
+
+  FT1.FeatureMatchedVec2 := mr1.Size2D;
+  FT2.FeatureMatchedVec2 := mr2.Size2D;
 
   for i := 0 to length(MatchInfo) - 1 do
     begin
       p := @MatchInfo[i];
-      RC := RasterColor(RandomRange(0, 255), RandomRange(0, 255), RandomRange(0, 255), 255);
-
-      v1 := Vec2Add(p^.d1^.AbsCoor, p^.d1^.Owner.FInternalVec);
-      v2 := Vec2Add(p^.d2^.AbsCoor, p^.d2^.Owner.FInternalVec);
-
-      Result.FillCircle(v1, RectWidth * 0.5, RC);
-      Result.FillCircle(v2, RectWidth * 0.5, RC);
-
+      RC := RasterColor(RandomRange(0, 255), RandomRange(0, 255), RandomRange(0, 255), $7F);
+      v1 := Vec2Add(Vec2Mul(p^.d1^.coor, p^.d1^.Owner.FeatureMatchedVec2), p^.d1^.Owner.FeatureMatchedVec1);
+      v2 := Vec2Add(Vec2Mul(p^.d2^.coor, p^.d2^.Owner.FeatureMatchedVec2), p^.d2^.Owner.FeatureMatchedVec1);
+      Result.FillCircle(v1, FeatureDiameter * 0.5, RC);
+      Result.FillCircle(v2, FeatureDiameter * 0.5, RC);
       Result.LineF(v1, v2, RC, True);
     end;
 
-  FT1.FInternalVec := bV1;
-  FT2.FInternalVec := bV2;
+  FT1.FeatureMatchedVec1 := bFT1V1;
+  FT2.FeatureMatchedVec1 := bFT2V1;
+  FT1.FeatureMatchedVec2 := bFT1V2;
+  FT2.FeatureMatchedVec2 := bFT2V2;
+
   DisposeObject([mr1, mr2]);
 end;
 
@@ -1927,7 +1929,7 @@ begin
   SetLength(Pyramids, 0);
 end;
 
-constructor TPyramids.CreateWithRaster(const fn: string);
+constructor TPyramids.CreateWithRasterFile(const fn: string);
 var
   raster: TMemoryRaster;
 begin
@@ -1936,7 +1938,7 @@ begin
   DisposeObject(raster);
 end;
 
-constructor TPyramids.CreateWithRaster(const stream: TCoreClassStream);
+constructor TPyramids.CreateWithRasterStream(const stream: TCoreClassStream);
 var
   raster: TMemoryRaster;
 begin
@@ -2509,8 +2511,6 @@ begin
   for i := 0 to length(FDescriptorBuff) - 1 do
     begin
       FDescriptorBuff[i].coor := FPyramidCoordList[i]^.RealCoor;
-      FDescriptorBuff[i].AbsCoor[0] := FPyramidCoordList[i]^.RealCoor[0] * Pyramids.FWidth;
-      FDescriptorBuff[i].AbsCoor[1] := FPyramidCoordList[i]^.RealCoor[1] * Pyramids.FHeight;
       FDescriptorBuff[i].Orientation := FPyramidCoordList[i]^.Orientation;
       FDescriptorBuff[i].index := i;
       FDescriptorBuff[i].Owner := Self;
@@ -2518,13 +2518,11 @@ begin
 
   FWidth := Pyramids.FWidth;
   FHeight := Pyramids.FHeight;
-  SetLength(FViewer, FHeight * FWidth);
-  for j := 0 to FHeight - 1 do
-    for i := 0 to FWidth - 1 do
-      begin
-        FViewer[i + j * FWidth] := Pyramids.FViewer.PixelGray[i, j];
-        // FViewer[i + j * FWidth] := Round(Clamp(Pyramids.GaussTransformSpace[j, i], 0, 1) * 255);
-      end;
+  // SetLength(FViewer, FHeight * FWidth);
+  // for j := 0 to FHeight - 1 do
+  // for i := 0 to FWidth - 1 do
+  // // FViewer[i + j * FWidth] := Pyramids.FViewer.PixelGray[i, j];
+  // FViewer[i + j * FWidth] := Round(Clamp(Pyramids.GaussTransformSpace[j, i], 0, 1) * 255);
 end;
 
 constructor TFeature.CreateWithPyramids(Pyramids: TPyramids);
@@ -2532,14 +2530,15 @@ begin
   inherited Create;
   FWidth := 0;
   FHeight := 0;
-  SetLength(FViewer, 0);
-  FInternalVec := ZeroVec2;
+  FeatureMatchedVec1 := ZeroVec2;
+  FeatureMatchedVec2 := ZeroVec2;
   FUserData := nil;
   FPyramidCoordList := nil;
   BuildFeature(Pyramids);
+  LinkRaster := nil;
 end;
 
-constructor TFeature.CreateWithRaster(const raster: TMemoryRaster; const Clip: TVec2List);
+constructor TFeature.CreateWithRasterClip(const raster: TMemoryRaster; const Clip: TVec2List);
 var
   Pyramids: TPyramids;
 begin
@@ -2549,7 +2548,7 @@ begin
   DisposeObject(Pyramids);
 end;
 
-constructor TFeature.CreateWithRaster(const raster: TMemoryRaster; var mat: TLBMatrix);
+constructor TFeature.CreateWithRasterClipMatrix(const raster: TMemoryRaster; var mat: TLBMatrix);
 var
   Pyramids: TPyramids;
 begin
@@ -2568,20 +2567,20 @@ begin
   DisposeObject(Pyramids);
 end;
 
-constructor TFeature.CreateWithRaster(const fn: string);
+constructor TFeature.CreateWithRasterFile(const fn: string);
 var
   Pyramids: TPyramids;
 begin
-  Pyramids := TPyramids.CreateWithRaster(fn);
+  Pyramids := TPyramids.CreateWithRasterFile(fn);
   CreateWithPyramids(Pyramids);
   DisposeObject(Pyramids);
 end;
 
-constructor TFeature.CreateWithRaster(const stream: TCoreClassStream);
+constructor TFeature.CreateWithRasterStream(const stream: TCoreClassStream);
 var
   Pyramids: TPyramids;
 begin
-  Pyramids := TPyramids.CreateWithRaster(stream);
+  Pyramids := TPyramids.CreateWithRasterStream(stream);
   CreateWithPyramids(Pyramids);
   DisposeObject(Pyramids);
 end;
@@ -2600,11 +2599,12 @@ begin
   inherited Create;
   FWidth := 0;
   FHeight := 0;
-  SetLength(FViewer, 0);
-  FInternalVec := ZeroVec2;
+  FeatureMatchedVec1 := ZeroVec2;
+  FeatureMatchedVec2 := ZeroVec2;
   FUserData := nil;
   FPyramidCoordList := nil;
   SetLength(FDescriptorBuff, 0);
+  LinkRaster := nil;
 end;
 
 destructor TFeature.Destroy;
@@ -2612,7 +2612,6 @@ begin
   SetLength(FDescriptorBuff, 0);
   if FPyramidCoordList <> nil then
       DisposeObject(FPyramidCoordList);
-  SetLength(FViewer, 0);
   inherited Destroy;
 end;
 
@@ -2639,13 +2638,11 @@ begin
       p := @FDescriptorBuff[i];
       stream.write(p^.descriptor[0], DESCRIPTOR_LENGTH * SizeOf(TLFloat));
       stream.write(p^.coor[0], SizeOf(TVec2));
-      stream.write(p^.AbsCoor[0], SizeOf(TVec2));
       stream.write(p^.Orientation, SizeOf(TGFloat));
     end;
 
   stream.write(FWidth, 4);
   stream.write(FHeight, 4);
-  stream.write(FViewer[0], FHeight * FWidth);
 end;
 
 procedure TFeature.LoadFromStream(stream: TCoreClassStream);
@@ -2660,7 +2657,6 @@ begin
       SetLength(FDescriptorBuff[i].descriptor, DESCRIPTOR_LENGTH);
       stream.read(FDescriptorBuff[i].descriptor[0], DESCRIPTOR_LENGTH * SizeOf(TLFloat));
       stream.read(FDescriptorBuff[i].coor[0], SizeOf(TVec2));
-      stream.read(FDescriptorBuff[i].AbsCoor[0], SizeOf(TVec2));
       stream.read(FDescriptorBuff[i].Orientation, SizeOf(TGFloat));
       FDescriptorBuff[i].index := i;
       FDescriptorBuff[i].Owner := Self;
@@ -2668,22 +2664,16 @@ begin
 
   stream.read(FWidth, 4);
   stream.read(FHeight, 4);
-  SetLength(FViewer, FHeight * FWidth);
-  stream.read(FViewer[0], FHeight * FWidth);
 end;
 
 function TFeature.CreateViewer: TMemoryRaster;
-var
-  i: TLInt;
-  c: Byte;
 begin
   Result := NewRaster();
-  Result.SetSize(FWidth, FHeight);
-  for i := FWidth * FHeight - 1 downto 0 do
-    begin
-      c := FViewer[i];
-      Result.Bits^[i] := RasterColor(c, c, c);
-    end;
+
+  if LinkRaster <> nil then
+      Result.Assign(LinkRaster)
+  else
+      Result.SetSize(FWidth, FHeight, RasterColor(0, 0, 0, $FF));
 end;
 
 function TFeature.CreateFeatureViewer(const FeatureRadius: TGFloat; const COLOR: TRasterColor): TMemoryRaster;
@@ -2692,7 +2682,8 @@ var
   L: TLInt;
   invColor: TRasterColor;
   p: PDescriptor;
-  v1, v2: TVec2;
+  v1, v2, v3: TVec2;
+
 begin
   Result := CreateViewer;
   if Count = 0 then
@@ -2700,41 +2691,22 @@ begin
 
   Result.OpenAgg;
   L := Round(FeatureRadius * 2);
+  Result.Agg.LineWidth := FeatureRadius * 0.5;
 
   invColor := RasterColorInv(COLOR);
+
+  v3 := Result.Size2D;
 
   for i := 0 to Count - 1 do
     begin
       p := GetFD(i);
-      v2 := p^.AbsCoor;
+      v2 := Vec2Mul(p^.coor, v3);
       Result.DrawCircle(v2, Max(L div 2, 3) - 1, COLOR);
 
-      v1[0] := v2[0] + (FeatureRadius) * Cos(p^.Orientation);
-      v1[1] := v2[1] + (FeatureRadius) * Sin(p^.Orientation);
-      Result.LineF(p^.AbsCoor, v1, invColor, False);
+      v1[0] := v2[0] + (L) * Cos(p^.Orientation);
+      v1[1] := v2[1] + (L) * Sin(p^.Orientation);
+      Result.LineF(Vec2Mul(p^.coor, v3), v1, invColor, False);
     end;
-end;
-
-procedure TestPyramidSpace;
-var
-  f1, f2: TFeature;
-  M: TArrayMatchInfo;
-  raster: TMemoryRaster;
-  f: TLFloat;
-begin
-  f1 := TFeature.CreateWithRaster('c:\1.bmp');
-  f2 := TFeature.CreateWithRaster('c:\2.bmp');
-  f := MatchFeature(f1, f2, M);
-
-  raster := BuildMatchInfoView(M, 10, True);
-  if raster <> nil then
-    begin
-      SaveRaster(raster, 'c:\4.bmp');
-      DisposeObject(raster);
-    end;
-
-  DisposeObject(f1);
-  DisposeObject(f2);
 end;
 
 initialization
@@ -2745,30 +2717,30 @@ CGREEN_WEIGHT_SAMPLER := 1.0;
 CBLUE_WEIGHT_SAMPLER := 1.0;
 CSAMPLER_MODE := TGSamplerMode.gsmGray;
 CMAX_GRAY_COLOR_SAMPLER := 255;
-CMAX_SAMPLER_WIDTH := 1024;
-CMAX_SAMPLER_HEIGHT := 1024;
+CMAX_SAMPLER_WIDTH := 512;
+CMAX_SAMPLER_HEIGHT := 512;
 
 // gauss kernal
-CGAUSS_KERNEL_FACTOR := 3;
+CGAUSS_KERNEL_FACTOR := 5;
 
-// pyramidoctave
-CNUMBER_OCTAVE := 5;
+// pyramid octave
+CNUMBER_OCTAVE := 7;
 
 // scalespace(SS) and difference of Gaussian Space(DOG)
-CNUMBER_SCALE := 7;
+CNUMBER_SCALE := 9;
 
 // pyramid scale space factor
 CSCALE_FACTOR := 1.4142135623730950488;
 CSIGMA_FACTOR := 1.4142135623730950488;
 
 // Extrema
-CGRAY_THRESHOLD := 5.0E-2;
-CEXTREMA_DIFF_THRESHOLD := 2.0E-5;
-CFILTER_MAX_KEYPOINT_ENDGE := 3000;
+CGRAY_THRESHOLD := 1.0E-2;
+CEXTREMA_DIFF_THRESHOLD := 9.0E-5;
+CFILTER_MAX_KEYPOINT_ENDGE := 1000;
 
 // orientation
-COFFSET_DEPTH := 15;
-COFFSET_THRESHOLD := 0.6;
+COFFSET_DEPTH := 32;
+COFFSET_THRESHOLD := 0.9;
 CCONTRAST_THRESHOLD := 3.0E-2;
 CEDGE_RATIO := 2.0;
 CORIENTATION_RADIUS := 15;
@@ -2776,8 +2748,8 @@ CORIENTATION_SMOOTH_COUNT := 256;
 
 // feature
 CMATCH_REJECT_NEXT_RATIO := 0.8;
-CDESC_SCALE_FACTOR := 16;
-CDESC_PROCESS_LIGHT := True;
+CDESC_SCALE_FACTOR := 8;
+CDESC_PROCESS_LIGHT := False;
 
 finalization
 
