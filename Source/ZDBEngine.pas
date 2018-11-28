@@ -291,6 +291,8 @@ type
     property HashListBuff: TCoreClassListForObj read FHashListBuff;
   end;
 
+  TMemoryStream64InCache = class;
+
   PQueryState = ^TQueryState;
 
   TQueryState = record
@@ -302,14 +304,19 @@ type
     deltaTime, newTime: TTimeTick;
     Aborted: Boolean;
 
-    function ID: Cardinal; inline;
-    function IsDF: Boolean; inline;
-    function IsVL: Boolean; inline;
-    function IsVT: Boolean; inline;
-    function IsTE: Boolean; inline;
-    function IsJson: Boolean; inline;
-    function IsString: Boolean; inline;
-    function IsOther: Boolean; inline;
+    function ID: Cardinal;
+    function IsDF: Boolean;
+    function IsVL: Boolean;
+    function IsVT: Boolean;
+    function IsTE: Boolean;
+    function IsJson: Boolean;
+    function IsString: Boolean;
+    function IsOther: Boolean;
+    function IsFirst: Boolean;
+    function IsLast: Boolean;
+    function Cache: TMemoryStream64InCache;
+    function NextCache: TMemoryStream64InCache;
+    function PrevCache: TMemoryStream64InCache;
   end;
 
   TQueryCall = procedure(var qState: TQueryState);
@@ -1739,6 +1746,37 @@ end;
 function TQueryState.IsOther: Boolean;
 begin
   Result := not(ID in [c_DF, c_VL, c_TE, c_Json, c_PascalString]);
+end;
+
+function TQueryState.IsFirst: Boolean;
+begin
+  Result := (QueryHnd <> nil) and (QueryHnd^.PositionID in [db_Header_FirstPositionFlags, db_Header_OnlyPositionFlags]);
+end;
+
+function TQueryState.IsLast: Boolean;
+begin
+  Result := (QueryHnd <> nil) and (QueryHnd^.PositionID in [db_Header_LastPositionFlags, db_Header_OnlyPositionFlags]);
+end;
+
+function TQueryState.Cache: TMemoryStream64InCache;
+begin
+  Result := dbEng.GetCacheStream(StorePos);
+end;
+
+function TQueryState.NextCache: TMemoryStream64InCache;
+begin
+  if (QueryHnd <> nil) and (QueryHnd^.PositionID in [db_Header_FirstPositionFlags, db_Header_MediumPositionFlags]) then
+      Result := dbEng.GetCacheStream(QueryHnd^.NextHeader)
+  else
+      Result := nil;
+end;
+
+function TQueryState.PrevCache: TMemoryStream64InCache;
+begin
+  if (QueryHnd <> nil) and (QueryHnd^.PositionID in [db_Header_LastPositionFlags, db_Header_MediumPositionFlags]) then
+      Result := dbEng.GetCacheStream(QueryHnd^.PrevHeader)
+  else
+      Result := nil;
 end;
 
 procedure TQueryTask.DoTriggerQuery;
@@ -4019,7 +4057,7 @@ DefaultMaximumStreamCacheSize := Int64(1048576 * 128);    // 128M
 DefaultCacheBufferLength := 10000;
 DefaultIndexCacheBufferLength := 10000;
 DefaultMinimizeInstanceCacheSize := 16 * 1024 * 1024; // 16M
-DefaultMaximumInstanceCacheSize := 512 * 1024 * 1024; // 512M
+DefaultMaximumInstanceCacheSize := 128 * 1024 * 1024; // 128M
 DefaultMinimizeStreamCacheSize := 8 * 1048576;        // 8M
 DefaultMaximumStreamCacheSize := 128 * 1024 * 1024;   // 128M
 {$ENDIF}

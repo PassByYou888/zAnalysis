@@ -7,13 +7,12 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.TabControl, FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo,
   FMX.Layouts, FMX.ListBox, FMX.Objects, FMX.StdCtrls,
-
-  FMX.Surfaces,
+  FMX.Surfaces, System.Math,
 
   CoreClasses, DoStatusIO, MemoryRaster, PascalStrings, ObjectDataManager, ItemStream,
   UnicodeMixedLib, Learn, LearnTypes, PyramidSpace, Geometry2DUnit,
 
-  zDrawEngine, zDrawEngineInterface_SlowFMX;
+  zDrawEngine, zDrawEngineInterface_SlowFMX, FMX.ExtCtrls;
 
 type
   TGaussPyramidsForm = class(TForm)
@@ -23,7 +22,6 @@ type
     TabItem2: TTabItem;
     TabItem3: TTabItem;
     OpenDialog1: TOpenDialog;
-    Image3: TImage;
     Layout1: TLayout;
     Button1: TButton;
     Button2: TButton;
@@ -36,6 +34,7 @@ type
     Button5: TButton;
     Button6: TButton;
     Button7: TButton;
+    ImageViewer1: TImageViewer;
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -71,6 +70,7 @@ var
 implementation
 
 {$R *.fmx}
+
 
 procedure TGaussPyramidsForm.Button1Click(Sender: TObject);
 begin
@@ -126,12 +126,12 @@ begin
     end;
 
   dt := GetTimeTick;
-  mr := BuildMatchInfoView(mi, 5, False);
+  mr := BuildMatchInfoView(mi, Min((ft1.width + ft2.width) * 0.05, 5), False);
   DoStatus('生成特征分析视图所花费的时间:%dms ', [GetTimeTick - dt]);
 
   if mr <> nil then
     begin
-      MemoryBitmapToBitmap(mr, Image3.Bitmap);
+      MemoryBitmapToBitmap(mr, ImageViewer1.Bitmap);
       DisposeObject(mr);
     end
   else
@@ -149,14 +149,15 @@ begin
   nvl := TVec2List.Create;
   nvl.Assign(vl1);
   nvl.Transform(-b1[0, 0], -b1[0, 1]);
-  w := ort1.Width;
+  w := ort1.width;
   h := ort1.Height;
   ComputeSamplerSize(w, h);
   nvl.Mul(w / Rectwidth(b1), h / RectHeight(b1));
 
-  ft1 := TFeature.CreateWithRaster(ort1, nvl);
+  ft1 := TFeature.CreateWithRasterClip(ort1, nvl);
+  ft1.LinkRaster := ort1;
   DisposeObject(t1);
-  t1 := ft1.CreateFeatureViewer(5, RasterColorF(1, 0, 0, 1)) as TDETexture;
+  t1 := ft1.CreateFeatureViewer((ort1.width + ort1.Height) * 0.5 * 0.005, RasterColorF(1, 0, 0, 0.5)) as TDETexture;
 end;
 
 procedure TGaussPyramidsForm.Button5Click(Sender: TObject);
@@ -186,14 +187,15 @@ begin
   nvl := TVec2List.Create;
   nvl.Assign(vl2);
   nvl.Transform(-b2[0, 0], -b2[0, 1]);
-  w := ort2.Width;
+  w := ort2.width;
   h := ort2.Height;
   ComputeSamplerSize(w, h);
   nvl.Mul(w / Rectwidth(b2), h / RectHeight(b2));
 
-  ft2 := TFeature.CreateWithRaster(ort2, nvl);
+  ft2 := TFeature.CreateWithRasterClip(ort2, nvl);
+  ft2.LinkRaster := ort2;
   DisposeObject(t2);
-  t2 := ft2.CreateFeatureViewer(5, RasterColorF(1, 0, 0, 1)) as TDETexture;
+  t2 := ft2.CreateFeatureViewer((ort2.width + ort2.Height) * 0.5 * 0.005, RasterColorF(1, 1, 0, 0.5)) as TDETexture;
 end;
 
 constructor TGaussPyramidsForm.Create(AOwner: TComponent);

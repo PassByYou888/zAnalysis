@@ -84,9 +84,9 @@
     {$O+} { optimization }
   {$ELSE}
     {$UNDEF INLINE_ASM}
-    {$R+} { range check }
-    {$I+} { Input output checking }
-    {$O-} { optimization }
+    {$R-} { range check }
+    {$I-} { Input output checking }
+    {$O+} { optimization }
   {$ENDIF}
 
   {$IF Defined(Android) or Defined(IOS)}
@@ -101,8 +101,8 @@
   {$IFEND}
 {$ENDIF FPC}
 
-{$WARNINGS ON}
-{$HINTS ON}
+{$WARNINGS OFF}
+{$HINTS OFF}
 {$H+} { long string }
 {$A+} { Word Align Data }
 {$Q-} { Overflow checking }

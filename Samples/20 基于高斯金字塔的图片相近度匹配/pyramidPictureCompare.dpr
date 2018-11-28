@@ -1,0 +1,14 @@
+program pyramidPictureCompare;
+
+uses
+  System.StartUpCopy,
+  FMX.Forms,
+  pyramidPictureCopmpareFrm in 'pyramidPictureCopmpareFrm.pas' {Form1};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+end.

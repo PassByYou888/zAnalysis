@@ -11,7 +11,7 @@
 { ****************************************************************************** }
 unit LinerAction;
 
-{$INCLUDE zDefine.inc}
+{$INCLUDE ..\zDefine.inc}
 
 interface
 

@@ -120,14 +120,16 @@ object GaussPyramidsForm: TGaussPyramidsForm
         Left = 248
         Top = 64
       end
-      object Image3: TImage
-        MultiResBitmap = <
-          item
-          end>
+      object ImageViewer1: TImageViewer
         Align = Client
         Size.Width = 1018.000000000000000000
         Size.Height = 615.000000000000000000
         Size.PlatformDefault = False
+        TabOrder = 0
+        ShowBackground = True
+        ShowSizeGrip = True
+        Viewport.Width = 1014.000000000000000000
+        Viewport.Height = 611.000000000000000000
       end
     end
   end
@@ -152,8 +154,8 @@ object GaussPyramidsForm: TGaussPyramidsForm
     Size.Height = 198.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    Viewport.Width = 1014.000000000000000000
-    Viewport.Height = 194.000000000000000000
+    Viewport.Width = 1018.000000000000000000
+    Viewport.Height = 198.000000000000000000
   end
   object Layout1: TLayout
     Align = Top
