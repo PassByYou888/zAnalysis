@@ -110,7 +110,7 @@ begin
   APVMove(@d1[0], 1, n, @d[0], 0, n - 1);
   if n > 1 then
     begin
-      SetLength(e1, n (* - 1 + 1 // optimized compiler *) );
+      SetLength(e1, n  );
       APVMove(@e1[0], 1, n - 1, @E[0], 0, n - 2);
     end;
   Result := BidiagonalSVDDecompositionInternal(d1, e1, n, IsUpper,
@@ -222,10 +222,10 @@ begin
   //
   // init
   //
-  SetLength(WORK0, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(Work1, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(Work2, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(WORK3, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(WORK0, n  );
+  SetLength(Work1, n  );
+  SetLength(Work2, n  );
+  SetLength(WORK3, n  );
   UEnd := UStart + Max(NRU - 1, 0);
   VEnd := VStart + Max(NCVT - 1, 0);
   CEnd := CStart + Max(NCC - 1, 0);

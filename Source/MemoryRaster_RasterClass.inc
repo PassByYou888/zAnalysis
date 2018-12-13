@@ -73,7 +73,7 @@ begin
   for j := 0 to 255 do
     for i := 0 to 255 do
       begin
-        DivTable[i, j] := Round(i * j * OneByteth);
+        DivTable[i, j] := Byte(Round(i * j * OneByteth));
         if i > 0 then
             RcTable[i, j] := Byte(Round(j * 255 / i))
         else
@@ -1061,8 +1061,45 @@ var
   pass: Integer;
 begin
   for pass := (width * height) - 1 downto 0 do
-    with TRasterColorEntry(FBits^[pass]) do
-        Swap(r, b);
+      SwapBR(FBits^[pass]);
+end;
+
+function TMemoryRaster.BuildRGB(cSwapBR: Boolean): PByte;
+begin
+  Result := System.GetMemory(width * height * 3);
+  OutputRGB(Result^, cSwapBR);
+end;
+
+procedure TMemoryRaster.InputRGB(var buff; w, h: Integer; cSwapBR: Boolean);
+var
+  pass: Integer;
+  p: PByte;
+begin
+  if (width <> w) or (height <> h) then
+      SetSize(w, h);
+  p := @buff;
+  for pass := (width * height) - 1 downto 0 do
+    begin
+      FBits^[pass] := RGB2RGBA(PRGB(p)^);
+      if cSwapBR then
+          SwapBR(FBits^[pass]);
+      inc(p, 3);
+    end;
+end;
+
+procedure TMemoryRaster.OutputRGB(var buff; cSwapBR: Boolean);
+var
+  p: PByte;
+  pass: Integer;
+begin
+  p := @buff;
+  for pass := (width * height) - 1 downto 0 do
+    begin
+      PRGB(p)^ := PRGB(@FBits^[pass])^;
+      if cSwapBR then
+          SwapBR(PRGB(p)^);
+      inc(p, 3);
+    end;
 end;
 
 procedure TMemoryRaster.ColorTransparent(c: TRasterColor);
@@ -1159,7 +1196,7 @@ procedure TMemoryRaster.Line(x1, y1, x2, y2: Integer; Value: TRasterColor; L: Bo
     y2 := ClampInt(y2, 0, height);
 
     if y2 < y1 then
-        Swap(y1, y2);
+        CoreClasses.Swap(y1, y2);
 
     p := PixelPtr[x, y1];
     i := y2 - y1 + 1;
@@ -1193,7 +1230,7 @@ procedure TMemoryRaster.Line(x1, y1, x2, y2: Integer; Value: TRasterColor; L: Bo
     x2 := ClampInt(x2, 0, width - 1);
 
     if x1 > x2 then
-        Swap(x1, x2);
+        CoreClasses.Swap(x1, x2);
 
     for i := x1 to x2 do
         BlendMem(Value, PixelPtr[i, y]^);
@@ -1836,7 +1873,7 @@ begin
     bakPos := stream.Position;
 
     stream.read(hflag, 2);
-    if (hflag = $8D42) or (hflag = $8D43) or (hflag = $8D44) or (hflag = $8D45) then
+    if (hflag = $8D42) or (hflag = $8D43) or (hflag = $8D44) or (hflag = $8D45) or (hflag = $8D46) then
         Result := True
     else if (hflag = $D8FF) or (hflag = $8DFF) then
       begin
@@ -1849,9 +1886,7 @@ begin
 
         stream.ReadBuffer(Header, SizeOf(TBmpHeader));
 
-        Result := (Header.bfType = $4D42) and
-          (Header.biBitCount = 32) and (Header.biPlanes = 1) and
-          (Header.biCompression = 0);
+        Result := (Header.bfType = $4D42) and (Header.biBitCount in [24, 32]) and (Header.biPlanes = 1) and (Header.biCompression = 0);
       end;
 
     stream.Position := bakPos;
@@ -1863,6 +1898,7 @@ procedure TMemoryRaster.LoadFromBmpStream(stream: TCoreClassStream);
 var
   i, w, j: Integer;
   Header: TBmpHeader;
+  rgb24_ptr: PRGBArray;
 begin
   Reset;
 
@@ -1870,24 +1906,48 @@ begin
 
   // Check for Windows bitmap magic bytes and general compatibility of the
   // bitmap data that ought to be loaded...
-  if (Header.bfType = $4D42) and
-    (Header.biBitCount = 32) and (Header.biPlanes = 1) and
-    (Header.biCompression = 0) then
+  if (Header.bfType = $4D42) and (Header.biBitCount in [24, 32]) and (Header.biPlanes = 1) and (Header.biCompression = 0) then
     begin
       SetSize(Header.biWidth, Abs(Header.biHeight));
 
-      // Check whether the bitmap is saved top-down
-      if Header.biHeight > 0 then
+      if Header.biBitCount = 32 then
         begin
-          w := width shl 2;
-          for i := height - 1 downto 0 do
+          // 32bit bitmap
+          // Check whether the bitmap is saved top-down
+          if Header.biHeight > 0 then
             begin
-              stream.ReadBuffer(ScanLine[i]^, w);
+              w := width * 4;
+              for i := height - 1 downto 0 do
+                begin
+                  stream.ReadBuffer(ScanLine[i]^, w);
+                end;
+            end
+          else
+            begin
+              stream.ReadBuffer(FBits^, width * height * 4);
             end;
         end
-      else
+      else // 24bit bitmap
         begin
-          stream.ReadBuffer(FBits^, (width * height) shl 2);
+          rgb24_ptr := GetMemory(width * height * 3);
+
+          // Check whether the bitmap is saved top-down
+          if Header.biHeight > 0 then
+            begin
+              w := width * 3;
+              for i := height - 1 downto 0 do
+                begin
+                  stream.ReadBuffer(rgb24_ptr^[i * width], w);
+                end;
+            end
+          else
+            begin
+              stream.ReadBuffer(rgb24_ptr^, width * height * 3);
+            end;
+          for i := width * height - 1 downto 0 do
+              FBits^[i] := RGB2RGBA(rgb24_ptr^[i]);
+
+          FreeMemory(rgb24_ptr);
         end;
     end
   else
@@ -1954,15 +2014,20 @@ begin
       stream.Position := bakPos;
       DecodeJpegLSRasterAlphaFromStream(stream, Self);
     end
+    // yv12 format
+  else if hflag = $8D46 then
+    begin
+      YV12ToRasterization(stream, Self);
+      Exit;
+    end
   else
       stream.Position := bakPos;
 end;
 
-procedure TMemoryRaster.SaveToBmpStream(stream: TCoreClassStream);
+procedure TMemoryRaster.SaveToBmp32Stream(stream: TCoreClassStream);
 var
   Header: TBmpHeader;
   BitmapSize: Integer;
-  i, w: Integer;
 begin
   BitmapSize := (FWidth * FHeight) shl 2;
 
@@ -1991,9 +2056,49 @@ begin
   stream.WriteBuffer(Bits^, BitmapSize);
 end;
 
+procedure TMemoryRaster.SaveToBmp24Stream(stream: TCoreClassStream);
+var
+  Header: TBmpHeader;
+  BitmapSize: Integer;
+  rgb24_ptr: PRGBArray;
+  i: Integer;
+
+begin
+  BitmapSize := (FWidth * FHeight) shl 2;
+
+  Header.bfType := $4D42; // Magic bytes for Windows Bitmap
+  Header.bfSize := BitmapSize + SizeOf(TBmpHeader);
+  Header.bfReserved := 0;
+  // Save offset relative. However, the spec says it has to be file absolute,
+  // which we can not do properly within a stream...
+  Header.bfOffBits := SizeOf(TBmpHeader);
+  Header.biSize := $28;
+  Header.biWidth := width;
+
+  Header.biHeight := -height;
+
+  Header.biPlanes := 1;
+  Header.biBitCount := 24;
+  Header.biCompression := 0; // bi_rgb
+  Header.biSizeImage := BitmapSize;
+  Header.biXPelsPerMeter := 0;
+  Header.biYPelsPerMeter := 0;
+  Header.biClrUsed := 0;
+  Header.biClrImportant := 0;
+
+  stream.WriteBuffer(Header, SizeOf(TBmpHeader));
+
+  rgb24_ptr := GetMemory(width * height * 3);
+  for i := width * height - 1 downto 0 do
+      rgb24_ptr^[i] := RGBA2RGB(FBits^[i]);
+
+  stream.WriteBuffer(rgb24_ptr^, width * height * 3);
+  FreeMemory(rgb24_ptr);
+end;
+
 procedure TMemoryRaster.SaveToStream(stream: TCoreClassStream);
 begin
-  SaveToBmpStream(stream);
+  SaveToBmp32Stream(stream);
 end;
 
 procedure TMemoryRaster.SaveToZLibCompressStream(stream: TCoreClassStream);
@@ -2005,7 +2110,7 @@ begin
   stream.write(hflag, 2);
 
   m64 := TMemoryStream64.Create;
-  SaveToBmpStream(m64);
+  SaveToBmp32Stream(m64);
   m64.Position := 0;
   MaxCompressStream(m64, stream);
   DisposeObject(m64);
@@ -2020,7 +2125,7 @@ begin
   stream.write(hflag, 2);
 
   m64 := TMemoryStream64.Create;
-  SaveToBmpStream(m64);
+  SaveToBmp32Stream(m64);
   m64.Position := 0;
   DeflateCompressStream(m64, stream);
   DisposeObject(m64);
@@ -2035,7 +2140,7 @@ begin
   stream.write(hflag, 2);
 
   m64 := TMemoryStream64.Create;
-  SaveToBmpStream(m64);
+  SaveToBmp32Stream(m64);
   m64.Position := 0;
   BRRCCompressStream(m64, stream);
   DisposeObject(m64);
@@ -2054,6 +2159,24 @@ end;
 procedure TMemoryRaster.SaveToJpegAlphaStream(stream: TCoreClassStream);
 begin
   EncodeJpegLSRasterAlphaToStream(Self, stream);
+end;
+
+procedure TMemoryRaster.SaveToYV12Stream(stream: TCoreClassStream);
+var
+  hflag: Word;
+begin
+  hflag := $8D46; // yu12 format
+  stream.write(hflag, 2);
+  RasterizationToYV12(True, Self, stream);
+end;
+
+procedure TMemoryRaster.SaveToFastYV12Stream(stream: TCoreClassStream);
+var
+  hflag: Word;
+begin
+  hflag := $8D46; // yu12 format
+  stream.write(hflag, 2);
+  RasterizationToYV12(False, Self, stream);
 end;
 
 class function TMemoryRaster.CanLoadFile(fn: SystemString): Boolean;
@@ -2078,6 +2201,32 @@ begin
       LoadFromStream(m64);
   except
   end;
+  DisposeObject(m64);
+end;
+
+procedure TMemoryRaster.SaveToBmp32File(fn: SystemString);
+var
+  m64: TMemoryStream64;
+begin
+  m64 := TMemoryStream64.Create;
+  try
+      SaveToBmp32Stream(m64);
+  except
+  end;
+  m64.SaveToFile(fn);
+  DisposeObject(m64);
+end;
+
+procedure TMemoryRaster.SaveToBmp24File(fn: SystemString);
+var
+  m64: TMemoryStream64;
+begin
+  m64 := TMemoryStream64.Create;
+  try
+      SaveToBmp24Stream(m64);
+  except
+  end;
+  m64.SaveToFile(fn);
   DisposeObject(m64);
 end;
 
@@ -2166,6 +2315,32 @@ begin
   m64 := TMemoryStream64.Create;
   try
       SaveToJpegAlphaStream(m64);
+  except
+  end;
+  m64.SaveToFile(fn);
+  DisposeObject(m64);
+end;
+
+procedure TMemoryRaster.SaveToYV12File(fn: SystemString);
+var
+  m64: TMemoryStream64;
+begin
+  m64 := TMemoryStream64.Create;
+  try
+      SaveToYV12Stream(m64);
+  except
+  end;
+  m64.SaveToFile(fn);
+  DisposeObject(m64);
+end;
+
+procedure TMemoryRaster.SaveToFastYV12File(fn: SystemString);
+var
+  m64: TMemoryStream64;
+begin
+  m64 := TMemoryStream64.Create;
+  try
+      SaveToFastYV12Stream(m64);
   except
   end;
   m64.SaveToFile(fn);

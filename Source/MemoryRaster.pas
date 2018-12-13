@@ -25,7 +25,7 @@ uses Types, Math, Variants, CoreClasses, MemoryStream64, Geometry2DUnit, PascalS
   AggBasics, Agg2D, AggColor32,
   JLSCodec;
 
-{$REGION 'Type'}
+{$REGION 'Classes'}
 
 
 type
@@ -39,8 +39,14 @@ type
     case Byte of
       0: (b, g, r, a: Byte);
       1: (RGBA: TRasterColor);
-      2: (Bytes: array [0 .. 3] of Byte);
+      2: (buffer: array [0 .. 3] of Byte);
   end;
+
+  TRGB = array [0 .. 2] of Byte;
+  PRGB = ^TRGB;
+
+  TRGBArray = array [0 .. MaxInt div SizeOf(TRGB) - 1] of TRGB;
+  PRGBArray = ^TRGBArray;
 
   PRasterColorEntry = ^TRasterColorEntry;
 
@@ -49,16 +55,16 @@ type
 
   TArrayOfRasterColorEntry = array of TRasterColorEntry;
 
-  TDrawMode    = (dmOpaque, dmBlend, dmTransparent);
+  TDrawMode = (dmOpaque, dmBlend, dmTransparent);
   TCombineMode = (cmBlend, cmMerge);
 
   TByteRaster = array of array of Byte;
   PByteRaster = ^TByteRaster;
 
   TMemoryRaster_AggImage = class;
-  TMemoryRaster_Agg2D    = class;
-  TVertexMap             = class;
-  TFontRaster            = class;
+  TMemoryRaster_Agg2D = class;
+  TVertexMap = class;
+  TFontRaster = class;
 
   TMemoryRaster = class(TCoreClassObject)
   private
@@ -194,6 +200,9 @@ type
     procedure GrayscaleBlurZoom(const NewWidth, NewHeight: Integer);
     function FormatAsBGRA: TMemoryRaster;
     procedure FormatBGRA;
+    function BuildRGB(cSwapBR: Boolean): PByte;
+    procedure InputRGB(var buff; w, h: Integer; cSwapBR: Boolean);
+    procedure OutputRGB(var buff; cSwapBR: Boolean);
     procedure ColorTransparent(c: TRasterColor);
     procedure ColorBlend(c: TRasterColor);
     procedure Grayscale;
@@ -252,26 +261,33 @@ type
     procedure LoadFromBmpStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream); virtual;
 
-    procedure SaveToBmpStream(stream: TCoreClassStream);             // published format
-    procedure SaveToStream(stream: TCoreClassStream); virtual;       // published format
-    procedure SaveToZLibCompressStream(stream: TCoreClassStream);    // no published format
-    procedure SaveToDeflateCompressStream(stream: TCoreClassStream); // no published format
-    procedure SaveToBRRCCompressStream(stream: TCoreClassStream);    // no published format
-    procedure SaveToJpegLS1Stream(stream: TCoreClassStream);         // published format
-    procedure SaveToJpegLS3Stream(stream: TCoreClassStream);         // published format
-    procedure SaveToJpegAlphaStream(stream: TCoreClassStream);       // no published format
+    procedure SaveToBmp32Stream(stream: TCoreClassStream);           // published,32bit bitmap,include alpha
+    procedure SaveToBmp24Stream(stream: TCoreClassStream);           // published,24bit bitmap,no alpha
+    procedure SaveToStream(stream: TCoreClassStream); virtual;       // published,32bit bitmap
+    procedure SaveToZLibCompressStream(stream: TCoreClassStream);    // custom
+    procedure SaveToDeflateCompressStream(stream: TCoreClassStream); // custom
+    procedure SaveToBRRCCompressStream(stream: TCoreClassStream);    // custom
+    procedure SaveToJpegLS1Stream(stream: TCoreClassStream);         // published,jls8bit
+    procedure SaveToJpegLS3Stream(stream: TCoreClassStream);         // published,jls24bit
+    procedure SaveToJpegAlphaStream(stream: TCoreClassStream);       // custom
+    procedure SaveToYV12Stream(stream: TCoreClassStream);            // custom
+    procedure SaveToFastYV12Stream(stream: TCoreClassStream);        // custom
 
     class function CanLoadFile(fn: SystemString): Boolean;
     procedure LoadFromFile(fn: SystemString); virtual;
 
     { save bitmap format file }
-    procedure SaveToFile(fn: SystemString);                // published format
-    procedure SaveToZLibCompressFile(fn: SystemString);    // no published format
-    procedure SaveToDeflateCompressFile(fn: SystemString); // no published format
-    procedure SaveToBRRCCompressFile(fn: SystemString);    // no published format
-    procedure SaveToJpegLS1File(fn: SystemString);         // published format
-    procedure SaveToJpegLS3File(fn: SystemString);         // published format
-    procedure SaveToJpegAlphaFile(fn: SystemString);       // no published format
+    procedure SaveToBmp32File(fn: SystemString);           // published,32bit bitmap,include alpha
+    procedure SaveToBmp24File(fn: SystemString);           // published,24bit bitmap,no alpha
+    procedure SaveToFile(fn: SystemString);                // published,32bit bitmap,include alpha
+    procedure SaveToZLibCompressFile(fn: SystemString);    // custom
+    procedure SaveToDeflateCompressFile(fn: SystemString); // custom
+    procedure SaveToBRRCCompressFile(fn: SystemString);    // custom
+    procedure SaveToJpegLS1File(fn: SystemString);         // published,jls8bit
+    procedure SaveToJpegLS3File(fn: SystemString);         // published,jls24bit
+    procedure SaveToJpegAlphaFile(fn: SystemString);       // custom
+    procedure SaveToYV12File(fn: SystemString);            // custom
+    procedure SaveToFastYV12File(fn: SystemString);        // custom
 
     { Rasterization pixel }
     property Pixel[const x, y: Integer]: TRasterColor read GetPixel write SetPixel; default;
@@ -386,7 +402,7 @@ type
     TNearestWriteBuffer = array of Byte;
     PNearestWriteBuffer = ^TNearestWriteBuffer;
 
-    TSamplerBlend        = procedure(const Sender: PVertexMap; const f, M: TRasterColor; var b: TRasterColor);
+    TSamplerBlend = procedure(const Sender: PVertexMap; const f, M: TRasterColor; var b: TRasterColor);
     TComputeSamplerColor = function(const Sender: PVertexMap; const Sampler: TMemoryRaster; const x, y: TGeoFloat): TRasterColor;
   private
     // rasterization nearest templet
@@ -487,10 +503,10 @@ type
 
 {$IFDEF FPC}
     TFontRasterString = TUPascalString;
-    TFontRasterChar   = USystemChar;
+    TFontRasterChar = USystemChar;
 {$ELSE FPC}
     TFontRasterString = TPascalString;
-    TFontRasterChar   = SystemChar;
+    TFontRasterChar = SystemChar;
 {$ENDIF FPC}
 
     TDrawWorkData = record
@@ -501,7 +517,7 @@ type
     PDrawWorkData = ^TDrawWorkData;
   private const
     C_WordDefine: TFontCharDefine = (Activted: False; x: 0; y: 0; w: 0; h: 0);
-    C_MAXWORD                     = $FFFF;
+    C_MAXWORD = $FFFF;
   protected
     FOnlyInstance: Boolean;
     FFontTable: PFontTable;
@@ -545,7 +561,7 @@ type
     procedure Draw(Text: TFontRasterString; Dst: TMemoryRaster; dstVec: TVec2; dstColor: TRasterColor); overload;
   end;
 
-{$ENDREGION 'Type'}
+{$ENDREGION 'Classes'}
 
 {$REGION 'RasterAPI'}
 
@@ -555,6 +571,7 @@ procedure CopyRasterColor(const Source; var dest; Count: Cardinal);
 
 procedure BlendBlock(Dst: TMemoryRaster; dstRect: TRect; Src: TMemoryRaster; Srcx, Srcy: Integer; CombineOp: TDrawMode);
 procedure BlockTransfer(Dst: TMemoryRaster; Dstx: Integer; Dsty: Integer; DstClip: TRect; Src: TMemoryRaster; SrcRect: TRect; CombineOp: TDrawMode);
+
 function RandomRasterColor(const a: Byte = $FF): TRasterColor;
 function RasterColor(const r, g, b: Byte; const a: Byte = $FF): TRasterColor;
 function RasterColorInv(const c: TRasterColor): TRasterColor;
@@ -570,10 +587,17 @@ function RasterColor2GrayS(const c: TRasterColor): TGeoFloat;
 function RasterColor2GrayD(const c: TRasterColor): Double;
 function RGBA2BGRA(const sour: TRasterColor): TRasterColor;
 function BGRA2RGBA(const sour: TRasterColor): TRasterColor;
+function RGBA2RGB(const sour: TRasterColor): TRGB;
+function RGBA2BGR(const sour: TRasterColor): TRGB;
+function RGB2BGR(const sour: TRGB): TRGB;
+function BGR2RGB(const sour: TRGB): TRGB;
+function RGB2RGBA(const sour: TRGB): TRasterColor;
+procedure SwapBR(var sour: TRGB); overload;
+procedure SwapBR(var sour: TRasterColor); overload;
 
-function AggColor(const Value: TRasterColor): TAggColorRgba8;  overload;
-function AggColor(const r, g, b: TGeoFloat; const a: TGeoFloat = 1.0): TAggColorRgba8;  overload;
-function AggColor(const Value: TAggColorRgba8): TRasterColor;  overload;
+function AggColor(const Value: TRasterColor): TAggColorRgba8; overload;
+function AggColor(const r, g, b: TGeoFloat; const a: TGeoFloat = 1.0): TAggColorRgba8; overload;
+function AggColor(const Value: TAggColorRgba8): TRasterColor; overload;
 
 procedure ComputeSize(const MAX_Width, MAX_Height: Integer; var width, height: Integer); overload;
 
@@ -658,6 +682,9 @@ function DecodeJpegLSGrayRasterFromStream(const stream: TCoreClassStream; var AR
   Various calculations stats can be retrieved by passing Stats parameter. }
 function DocmentRotationDetected(const MaxAngle: TGeoFloat; const Treshold: Integer; raster: TMemoryRaster): TGeoFloat;
 
+procedure YV12ToRasterization(sour: TCoreClassStream; dest: TMemoryRaster);
+procedure RasterizationToYV12(Compressed: Boolean; sour: TMemoryRaster; dest: TCoreClassStream);
+
 {$ENDREGION 'RasterAPI'}
 
 
@@ -677,7 +704,7 @@ uses
   Threading,
 {$ENDIF FPC}
 {$ENDIF}
-  CoreCompress, DoStatusIO;
+  h264Common, CoreCompress, DoStatusIO;
 
 {$INCLUDE zDefine.inc}
 
@@ -690,10 +717,11 @@ var
   SystemFont: TFontRaster;
 
 type
-  TLUT8            = array [Byte] of Byte;
+  TLUT8 = array [Byte] of Byte;
   TLogicalOperator = (loXOR, loAND, loOR);
-  TByteArray       = array [0 .. MaxInt div SizeOf(Byte) - 1] of Byte;
-  PByteArray       = ^TByteArray;
+
+  TByteArray = array [0 .. MaxInt div SizeOf(Byte) - 1] of Byte;
+  PByteArray = ^TByteArray;
 
   TBmpHeader = packed record
     bfType: Word;
@@ -713,7 +741,14 @@ type
     biClrImportant: Integer;
   end;
 
-  TBlendLine   = procedure(Src, Dst: PRasterColor; Count: Integer);
+  TYV12Head = packed record
+    Version: Byte;
+    Compessed: Byte;
+    width: Integer;
+    height: Integer;
+  end;
+
+  TBlendLine = procedure(Src, Dst: PRasterColor; Count: Integer);
   TBlendLineEx = procedure(Src, Dst: PRasterColor; Count: Integer; M: TRasterColor);
 
 const
@@ -750,15 +785,46 @@ begin
   mr.SaveToFile(fn);
 end;
 
+procedure testProjection(fin, fout: SystemString);
+var
+  m1, m2: TMemoryRaster;
+begin
+  m1 := NewRasterFromFile(fin);
+  m2 := TMemoryRaster.Create;
+
+  m2.SetSize(m1.width, m1.height, RasterColorF(1, 1, 1));
+
+  m1.ProjectionTo(m2,
+    TV2Rect4.Init(m1.BoundsRect, 0),
+    TV2Rect4.Init(m2.BoundsRect, 0),
+    True, 1.0);
+
+  m2.SaveToFile(fout);
+
+  DisposeObject([m1, m2]);
+end;
+
+procedure TestCalibrateRotate(fin, fout: SystemString);
+var
+  M: TMemoryRaster;
+begin
+  M := NewRasterFromFile(fin);
+
+  M.CalibrateRotate(RasterColorF(0, 0, 0));
+
+  M.SaveToFile(fout);
+  DisposeObject(M);
+end;
+
 initialization
 
-MakeMergeTables;
 
 NewRaster := {$IFDEF FPC}@{$ENDIF FPC}_NewRaster;
 NewRasterFromFile := {$IFDEF FPC}@{$ENDIF FPC}_NewRasterFromFile;
 NewRasterFromStream := {$IFDEF FPC}@{$ENDIF FPC}_NewRasterFromStream;
 SaveRaster := {$IFDEF FPC}@{$ENDIF FPC}_SaveRaster;
 
+MakeMergeTables;
 Init_DefaultFont;
 
 finalization

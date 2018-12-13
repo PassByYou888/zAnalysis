@@ -3063,7 +3063,7 @@ begin
     end;
   SetLength(TAU, n - 2 + 1);
   SetLength(t, n + 1);
-  SetLength(Work, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(Work, n  );
   i := 0;
   while i <= n - 2 do
     begin
@@ -3129,9 +3129,9 @@ begin
   //
   // init
   //
-  SetLength(q, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
-  SetLength(v, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(Work, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(q, n  , n  );
+  SetLength(v, n  );
+  SetLength(Work, n  );
   i := 0;
   while i <= n - 1 do
     begin
@@ -3194,7 +3194,7 @@ begin
     begin
       Exit;
     end;
-  SetLength(h, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+  SetLength(h, n  , n  );
   i := 0;
   while i <= n - 1 do
     begin
@@ -3298,7 +3298,7 @@ begin
     begin
       SetLength(TAU, n - 2 + 1);
     end;
-  SetLength(d, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(d, n  );
   if n > 1 then
     begin
       SetLength(E, n - 2 + 1);
@@ -3502,9 +3502,9 @@ begin
   //
   // init
   //
-  SetLength(q, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+  SetLength(q, n  , n  );
   SetLength(v, n + 1);
-  SetLength(Work, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(Work, n  );
   i := 0;
   while i <= n - 1 do
     begin
@@ -3659,10 +3659,10 @@ begin
       SetLength(TAU, n - 2 + 1);
       SetLength(E, n - 2 + 1);
     end;
-  SetLength(d, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(t, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(t2, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(t3, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(d, n  );
+  SetLength(t, n  );
+  SetLength(t2, n  );
+  SetLength(t3, n  );
   if IsUpper then
     begin
 
@@ -3889,9 +3889,9 @@ begin
   //
   // init
   //
-  SetLength(q, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+  SetLength(q, n  , n  );
   SetLength(v, n + 1);
-  SetLength(Work, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(Work, n  );
   i := 0;
   while i <= n - 1 do
     begin

@@ -205,8 +205,8 @@ begin
       Exit;
     end;
   ns := n + M;
-  SetLength(r, ns (* - 1 + 1 // optimized compiler *) );
-  SetLength(c, ns (* - 1 + 1 // optimized compiler *) );
+  SetLength(r, ns  );
+  SetLength(c, ns  );
   i := 0;
   while i <= n - 1 do
     begin
@@ -300,7 +300,7 @@ begin
   //
   i := 0;
   TieCount := 0;
-  SetLength(TieSize, ns (* - 1 + 1 // optimized compiler *) );
+  SetLength(TieSize, ns  );
   while i <= ns - 1 do
     begin
       j := i + 1;

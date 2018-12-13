@@ -82,7 +82,7 @@ begin
   if PTR = nil then
       Exit;
   dec(uint8_p(PTR), uint8_p(nativeUInt(PTR) - 1)^);
-  FreeMem(PTR);
+  FreeMemory(PTR);
   PTR := nil;
 end;
 

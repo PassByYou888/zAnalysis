@@ -1,5 +1,8 @@
+{$IFDEF LARGE_FONT}
+{$RESOURCE MemoryRaster_LargeFont.RES}
+{$ELSE LARGE_FONT}
 {$RESOURCE MemoryRaster_DefaultFont.RES}
-
+{$ENDIF LARGE_FONT}
 
 procedure Init_DefaultFont;
 var

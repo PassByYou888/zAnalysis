@@ -185,7 +185,7 @@ begin
 
   qp := 21;
   chroma_qp_offset := 0;
-  key_interval := 300;
+  key_interval := 100;
   subme := 3;
   analyse := 2;
   ref := 1;

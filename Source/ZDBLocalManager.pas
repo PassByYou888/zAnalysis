@@ -172,13 +172,13 @@ type
     FPipelineClass: TZDBPipelineClass;
     FNotifyIntf: IZDBLocalManagerNotify;
   protected
-    // zdbEngine trigger
+    // zdbEngine interface
     procedure DoInsertData(Sender: TDBStoreBase; InsertPos: Int64; buff: TCoreClassStream; ID: Cardinal; CompletePos: Int64); virtual;
     procedure DoAddData(Sender: TDBStoreBase; buff: TCoreClassStream; ID: Cardinal; CompletePos: Int64); virtual;
     procedure DoModifyData(Sender: TDBStoreBase; const StorePos: Int64; buff: TCoreClassStream); virtual;
     procedure DoDeleteData(Sender: TDBStoreBase; const StorePos: Int64); virtual;
   protected
-    // canencer trigger
+    // cadencer interface
     procedure ZDBEngProgress(const Name: PSystemString; Obj: TCoreClassObject);
     procedure CadencerProgress(const deltaTime, newTime: Double);
   protected
@@ -220,6 +220,7 @@ type
     function CompressDB(dbN: SystemString; const UserData: Pointer; const OnStorePosTransform: TZDBStorePosTransformNotify): TZDBPipeline; overload;
 
     procedure ReplaceDB(dbN, replaceN: SystemString);
+    procedure ResetDB(dbN: SystemString);
     procedure ResetData(dbN: SystemString);
 
     // cleaup all cache
@@ -240,7 +241,7 @@ type
     procedure GetPipeList(OutputList: TCoreClassListForObj);
     procedure GetDBList(OutputList: TCoreClassListForObj);
     function Busy(db: TZDBStoreEngine): Boolean;
-    function AllowDestroy(db: TZDBStoreEngine): Boolean;
+    function CanDestroy(db: TZDBStoreEngine): Boolean;
 
     // query
     function QueryDB(WriteResultToOutputDB, InMemory, ReverseQuery: Boolean; dbN, OutputDB: SystemString;
@@ -296,9 +297,7 @@ type
     function PostData(dn: SystemString; dSour: THashStringList): Int64; overload;
     function PostData(dn: SystemString; dSour: TSectionTextData): Int64; overload;
     function PostData(dn: SystemString; dSour: TPascalString): Int64; overload;
-{$IFNDEF FPC}
-    function PostData(dn: SystemString; dSour: TJsonObject): Int64; overload;
-{$ENDIF}
+{$IFNDEF FPC} function PostData(dn: SystemString; dSour: TJsonObject): Int64; overload; {$ENDIF}
     //
     // insert operation
     function InsertData(dn: SystemString; InsertPos: Int64; dSour: TCoreClassStream; ID: Cardinal): Int64; overload;
@@ -307,17 +306,15 @@ type
     function InsertData(dn: SystemString; InsertPos: Int64; dSour: THashStringList): Int64; overload;
     function InsertData(dn: SystemString; InsertPos: Int64; dSour: TSectionTextData): Int64; overload;
     function InsertData(dn: SystemString; InsertPos: Int64; dSour: TPascalString): Int64; overload;
-{$IFNDEF FPC}
-    function InsertData(dn: SystemString; InsertPos: Int64; dSour: TJsonObject): Int64; overload;
-{$ENDIF}
+{$IFNDEF FPC} function InsertData(dn: SystemString; InsertPos: Int64; dSour: TJsonObject): Int64; overload; {$ENDIF}
     //
     // delete operation
     procedure DeleteData(dn: SystemString; StorePos: Int64);
     //
     // getData
-    function GetData(dn: SystemString; StorePos: Int64; ID: Cardinal): TMemoryStream64InCache;
+    function GetData(dn: SystemString; StorePos: Int64; ID: Cardinal): TDBCacheStream64;
     //
-    // modify operation
+    // Modification operation
     function SetData(dn: SystemString; StorePos: Int64; dSour: TMemoryStream64): Boolean;
   end;
 
@@ -640,7 +637,7 @@ end;
 
 function EncodeOneFragment(db: TDBStoreBase; StorePos: Int64; DestStream: TMemoryStream64): Boolean;
 var
-  itmStream: TMemoryStream64InCache;
+  itmStream: TDBCacheStream64;
   siz: Int64;
   ID: Cardinal;
 begin
@@ -938,7 +935,7 @@ procedure TZDBPipeline.InitOptions;
 begin
   FQueryCounter := 0;
   FCurrentFragmentTime := 0;
-  FFragmentBuffer := TMemoryStream64.Create;
+  FFragmentBuffer := TMemoryStream64.CustomCreate($FFFF);
 
   FActivted := True;
   FQueryTask := nil;
@@ -1456,9 +1453,9 @@ begin
       Exit;
 
   db := TZDBStoreEngine(Obj);
-  if (db.DBEngine.Modify) and (GetTimeTick - db.FLastModifyTime > 1000) then
+  if (db.DBEngine.Modification) and (GetTimeTick - db.FLastModifyTime > 1000) then
     begin
-      db.DBEngine.Update;
+      db.Update;
       db.FLastModifyTime := GetTimeTick;
     end;
 end;
@@ -1619,7 +1616,7 @@ begin
     end;
 end;
 
-procedure TZDBLocalManager.ResetData(dbN: SystemString);
+procedure TZDBLocalManager.ResetDB(dbN: SystemString);
 var
   db: TZDBStoreEngine;
 begin
@@ -1631,6 +1628,11 @@ begin
       Exit;
 
   db.ResetDB;
+end;
+
+procedure TZDBLocalManager.ResetData(dbN: SystemString);
+begin
+  ResetDB(dbN);
 end;
 
 procedure TZDBLocalManager.Recache;
@@ -1731,7 +1733,7 @@ begin
     end;
 end;
 
-function TZDBLocalManager.AllowDestroy(db: TZDBStoreEngine): Boolean;
+function TZDBLocalManager.CanDestroy(db: TZDBStoreEngine): Boolean;
 var
   i: Integer;
   pl: TZDBPipeline;
@@ -1880,7 +1882,7 @@ end;
 function TZDBLocalManager.PostData(dn: SystemString; sourDBEng: TZDBStoreEngine; SourStorePos: Int64): Int64;
 var
   d: TZDBStoreEngine;
-  M: TMemoryStream64InCache;
+  M: TDBCacheStream64;
 begin
   Result := -1;
   d := GetDB(dn);
@@ -1897,7 +1899,7 @@ end;
 function TZDBLocalManager.PostData(dn: SystemString; var qState: TQueryState): Int64;
 var
   d: TZDBStoreEngine;
-  M: TMemoryStream64InCache;
+  M: TDBCacheStream64;
 begin
   Result := -1;
   d := GetDB(dn);
@@ -2163,10 +2165,10 @@ begin
   d := GetDB(dn);
   if d = nil then
       Exit;
-  d.PostDeleteData(StorePos);
+  d.DeleteData(StorePos);
 end;
 
-function TZDBLocalManager.GetData(dn: SystemString; StorePos: Int64; ID: Cardinal): TMemoryStream64InCache;
+function TZDBLocalManager.GetData(dn: SystemString; StorePos: Int64; ID: Cardinal): TDBCacheStream64;
 var
   d: TZDBStoreEngine;
 begin

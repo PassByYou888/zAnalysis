@@ -1,60 +1,42 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{1F6730FD-E33D-4D7D-B7C6-2480A9F92C4D}</ProjectGuid>
+        <ProjectGuid>{46C428F4-8732-454E-BB24-0F144C62D8F3}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="01 Console控制台测试模版\EasyConsoleDemo.dproj">
+        <Projects Include="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="06 图像光栅化引擎\MemoryRasterDemo.dproj">
+        <Projects Include="02 KDTree-KMean-PictureDemo\GUIAnalysis.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="05 随机森林之决策树\rForestDemo.dproj">
+        <Projects Include="06 MemoryRasterization-Demo\MemoryRasterDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="02 图形聚类分析测试演示\GUIAnalysis.dproj">
+        <Projects Include="09 Classifier-Decision-Demo\NNDecisionDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="03 基于ZDB的采样和聚类\zDBAnalysisDemo.dproj">
+        <Projects Include="10 Train-Demo\numberTrainDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="04 大规模图片特征码提取与识别\LargePictureAnalysis.dproj">
+        <Projects Include="17 Soft-Renderer-H264-Y4M-Demo\Render2Video.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="07 单词学习\WordAnalysis.dproj">
+        <Projects Include="05 Forest-Regression-Demo\rForestDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj">
+        <Projects Include="16 Soft-Renderer-Demo\SoftRenderer.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj">
+        <Projects Include="15 YUV-To-H264-Demo\yuv2Video.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="10 训练神经网络做加减法运算\numberTrainDemo.dproj">
+        <Projects Include="03 ZDB-KDTree-KMean-Classifier-Demo\zDBAnalysisDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="13 基于高斯金字塔的图片内容识别\GaussPyramidDemo.dproj">
+        <Projects Include="01 Console KDTree\EasyConsoleDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="14 基于高斯金字塔不规则图片区域内容识别\GaussPyramidRegionDemo.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="15 yuv视频转换h264\yuv2Video.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="16 软渲染器\SoftRenderer.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="17 渲染成视频\Render2Video.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="18 基于梯度方向的大规模图片特征码提取与识别\HOGLargePictureAnalysis.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="19 基于神经元的梯度方向识别\NNHOGCompare.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="20 基于高斯金字塔的图片相近度匹配\pyramidPictureCompare.dproj">
+        <Projects Include="13 SIFT-Pyramid-Demo\GaussPyramidDemo.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -65,176 +47,122 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="EasyConsoleDemo">
-        <MSBuild Projects="01 Console控制台测试模版\EasyConsoleDemo.dproj"/>
-    </Target>
-    <Target Name="EasyConsoleDemo:Clean">
-        <MSBuild Projects="01 Console控制台测试模版\EasyConsoleDemo.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="EasyConsoleDemo:Make">
-        <MSBuild Projects="01 Console控制台测试模版\EasyConsoleDemo.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="MemoryRasterDemo">
-        <MSBuild Projects="06 图像光栅化引擎\MemoryRasterDemo.dproj"/>
-    </Target>
-    <Target Name="MemoryRasterDemo:Clean">
-        <MSBuild Projects="06 图像光栅化引擎\MemoryRasterDemo.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="MemoryRasterDemo:Make">
-        <MSBuild Projects="06 图像光栅化引擎\MemoryRasterDemo.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="rForestDemo">
-        <MSBuild Projects="05 随机森林之决策树\rForestDemo.dproj"/>
-    </Target>
-    <Target Name="rForestDemo:Clean">
-        <MSBuild Projects="05 随机森林之决策树\rForestDemo.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="rForestDemo:Make">
-        <MSBuild Projects="05 随机森林之决策树\rForestDemo.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="GUIAnalysis">
-        <MSBuild Projects="02 图形聚类分析测试演示\GUIAnalysis.dproj"/>
-    </Target>
-    <Target Name="GUIAnalysis:Clean">
-        <MSBuild Projects="02 图形聚类分析测试演示\GUIAnalysis.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="GUIAnalysis:Make">
-        <MSBuild Projects="02 图形聚类分析测试演示\GUIAnalysis.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="zDBAnalysisDemo">
-        <MSBuild Projects="03 基于ZDB的采样和聚类\zDBAnalysisDemo.dproj"/>
-    </Target>
-    <Target Name="zDBAnalysisDemo:Clean">
-        <MSBuild Projects="03 基于ZDB的采样和聚类\zDBAnalysisDemo.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="zDBAnalysisDemo:Make">
-        <MSBuild Projects="03 基于ZDB的采样和聚类\zDBAnalysisDemo.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="LargePictureAnalysis">
-        <MSBuild Projects="04 大规模图片特征码提取与识别\LargePictureAnalysis.dproj"/>
-    </Target>
-    <Target Name="LargePictureAnalysis:Clean">
-        <MSBuild Projects="04 大规模图片特征码提取与识别\LargePictureAnalysis.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="LargePictureAnalysis:Make">
-        <MSBuild Projects="04 大规模图片特征码提取与识别\LargePictureAnalysis.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="WordAnalysis">
-        <MSBuild Projects="07 单词学习\WordAnalysis.dproj"/>
-    </Target>
-    <Target Name="WordAnalysis:Clean">
-        <MSBuild Projects="07 单词学习\WordAnalysis.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="WordAnalysis:Make">
-        <MSBuild Projects="07 单词学习\WordAnalysis.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="NNDecisionDemo">
-        <MSBuild Projects="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj"/>
-    </Target>
-    <Target Name="NNDecisionDemo:Clean">
-        <MSBuild Projects="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="NNDecisionDemo:Make">
-        <MSBuild Projects="09 基于神经网络聚类之决策树\NNDecisionDemo.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="NNPicutreCompare">
-        <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj"/>
-    </Target>
-    <Target Name="NNPicutreCompare:Clean">
-        <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="NNPicutreCompare:Make">
-        <MSBuild Projects="08 基于神经元的图片相似性识别\NNPicutreCompare.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="numberTrainDemo">
-        <MSBuild Projects="10 训练神经网络做加减法运算\numberTrainDemo.dproj"/>
-    </Target>
-    <Target Name="numberTrainDemo:Clean">
-        <MSBuild Projects="10 训练神经网络做加减法运算\numberTrainDemo.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="numberTrainDemo:Make">
-        <MSBuild Projects="10 训练神经网络做加减法运算\numberTrainDemo.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="GaussPyramidDemo">
-        <MSBuild Projects="13 基于高斯金字塔的图片内容识别\GaussPyramidDemo.dproj"/>
-    </Target>
-    <Target Name="GaussPyramidDemo:Clean">
-        <MSBuild Projects="13 基于高斯金字塔的图片内容识别\GaussPyramidDemo.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="GaussPyramidDemo:Make">
-        <MSBuild Projects="13 基于高斯金字塔的图片内容识别\GaussPyramidDemo.dproj" Targets="Make"/>
-    </Target>
     <Target Name="GaussPyramidRegionDemo">
-        <MSBuild Projects="14 基于高斯金字塔不规则图片区域内容识别\GaussPyramidRegionDemo.dproj"/>
+        <MSBuild Projects="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj"/>
     </Target>
     <Target Name="GaussPyramidRegionDemo:Clean">
-        <MSBuild Projects="14 基于高斯金字塔不规则图片区域内容识别\GaussPyramidRegionDemo.dproj" Targets="Clean"/>
+        <MSBuild Projects="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj" Targets="Clean"/>
     </Target>
     <Target Name="GaussPyramidRegionDemo:Make">
-        <MSBuild Projects="14 基于高斯金字塔不规则图片区域内容识别\GaussPyramidRegionDemo.dproj" Targets="Make"/>
+        <MSBuild Projects="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj" Targets="Make"/>
     </Target>
-    <Target Name="yuv2Video">
-        <MSBuild Projects="15 yuv视频转换h264\yuv2Video.dproj"/>
+    <Target Name="GUIAnalysis">
+        <MSBuild Projects="02 KDTree-KMean-PictureDemo\GUIAnalysis.dproj"/>
     </Target>
-    <Target Name="yuv2Video:Clean">
-        <MSBuild Projects="15 yuv视频转换h264\yuv2Video.dproj" Targets="Clean"/>
+    <Target Name="GUIAnalysis:Clean">
+        <MSBuild Projects="02 KDTree-KMean-PictureDemo\GUIAnalysis.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="yuv2Video:Make">
-        <MSBuild Projects="15 yuv视频转换h264\yuv2Video.dproj" Targets="Make"/>
+    <Target Name="GUIAnalysis:Make">
+        <MSBuild Projects="02 KDTree-KMean-PictureDemo\GUIAnalysis.dproj" Targets="Make"/>
     </Target>
-    <Target Name="SoftRenderer">
-        <MSBuild Projects="16 软渲染器\SoftRenderer.dproj"/>
+    <Target Name="MemoryRasterDemo">
+        <MSBuild Projects="06 MemoryRasterization-Demo\MemoryRasterDemo.dproj"/>
     </Target>
-    <Target Name="SoftRenderer:Clean">
-        <MSBuild Projects="16 软渲染器\SoftRenderer.dproj" Targets="Clean"/>
+    <Target Name="MemoryRasterDemo:Clean">
+        <MSBuild Projects="06 MemoryRasterization-Demo\MemoryRasterDemo.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="SoftRenderer:Make">
-        <MSBuild Projects="16 软渲染器\SoftRenderer.dproj" Targets="Make"/>
+    <Target Name="MemoryRasterDemo:Make">
+        <MSBuild Projects="06 MemoryRasterization-Demo\MemoryRasterDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="NNDecisionDemo">
+        <MSBuild Projects="09 Classifier-Decision-Demo\NNDecisionDemo.dproj"/>
+    </Target>
+    <Target Name="NNDecisionDemo:Clean">
+        <MSBuild Projects="09 Classifier-Decision-Demo\NNDecisionDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NNDecisionDemo:Make">
+        <MSBuild Projects="09 Classifier-Decision-Demo\NNDecisionDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="numberTrainDemo">
+        <MSBuild Projects="10 Train-Demo\numberTrainDemo.dproj"/>
+    </Target>
+    <Target Name="numberTrainDemo:Clean">
+        <MSBuild Projects="10 Train-Demo\numberTrainDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="numberTrainDemo:Make">
+        <MSBuild Projects="10 Train-Demo\numberTrainDemo.dproj" Targets="Make"/>
     </Target>
     <Target Name="Render2Video">
-        <MSBuild Projects="17 渲染成视频\Render2Video.dproj"/>
+        <MSBuild Projects="17 Soft-Renderer-H264-Y4M-Demo\Render2Video.dproj"/>
     </Target>
     <Target Name="Render2Video:Clean">
-        <MSBuild Projects="17 渲染成视频\Render2Video.dproj" Targets="Clean"/>
+        <MSBuild Projects="17 Soft-Renderer-H264-Y4M-Demo\Render2Video.dproj" Targets="Clean"/>
     </Target>
     <Target Name="Render2Video:Make">
-        <MSBuild Projects="17 渲染成视频\Render2Video.dproj" Targets="Make"/>
+        <MSBuild Projects="17 Soft-Renderer-H264-Y4M-Demo\Render2Video.dproj" Targets="Make"/>
     </Target>
-    <Target Name="HOGLargePictureAnalysis">
-        <MSBuild Projects="18 基于梯度方向的大规模图片特征码提取与识别\HOGLargePictureAnalysis.dproj"/>
+    <Target Name="rForestDemo">
+        <MSBuild Projects="05 Forest-Regression-Demo\rForestDemo.dproj"/>
     </Target>
-    <Target Name="HOGLargePictureAnalysis:Clean">
-        <MSBuild Projects="18 基于梯度方向的大规模图片特征码提取与识别\HOGLargePictureAnalysis.dproj" Targets="Clean"/>
+    <Target Name="rForestDemo:Clean">
+        <MSBuild Projects="05 Forest-Regression-Demo\rForestDemo.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="HOGLargePictureAnalysis:Make">
-        <MSBuild Projects="18 基于梯度方向的大规模图片特征码提取与识别\HOGLargePictureAnalysis.dproj" Targets="Make"/>
+    <Target Name="rForestDemo:Make">
+        <MSBuild Projects="05 Forest-Regression-Demo\rForestDemo.dproj" Targets="Make"/>
     </Target>
-    <Target Name="NNHOGCompare">
-        <MSBuild Projects="19 基于神经元的梯度方向识别\NNHOGCompare.dproj"/>
+    <Target Name="SoftRenderer">
+        <MSBuild Projects="16 Soft-Renderer-Demo\SoftRenderer.dproj"/>
     </Target>
-    <Target Name="NNHOGCompare:Clean">
-        <MSBuild Projects="19 基于神经元的梯度方向识别\NNHOGCompare.dproj" Targets="Clean"/>
+    <Target Name="SoftRenderer:Clean">
+        <MSBuild Projects="16 Soft-Renderer-Demo\SoftRenderer.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="NNHOGCompare:Make">
-        <MSBuild Projects="19 基于神经元的梯度方向识别\NNHOGCompare.dproj" Targets="Make"/>
+    <Target Name="SoftRenderer:Make">
+        <MSBuild Projects="16 Soft-Renderer-Demo\SoftRenderer.dproj" Targets="Make"/>
     </Target>
-    <Target Name="pyramidPictureCompare">
-        <MSBuild Projects="20 基于高斯金字塔的图片相近度匹配\pyramidPictureCompare.dproj"/>
+    <Target Name="yuv2Video">
+        <MSBuild Projects="15 YUV-To-H264-Demo\yuv2Video.dproj"/>
     </Target>
-    <Target Name="pyramidPictureCompare:Clean">
-        <MSBuild Projects="20 基于高斯金字塔的图片相近度匹配\pyramidPictureCompare.dproj" Targets="Clean"/>
+    <Target Name="yuv2Video:Clean">
+        <MSBuild Projects="15 YUV-To-H264-Demo\yuv2Video.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="pyramidPictureCompare:Make">
-        <MSBuild Projects="20 基于高斯金字塔的图片相近度匹配\pyramidPictureCompare.dproj" Targets="Make"/>
+    <Target Name="yuv2Video:Make">
+        <MSBuild Projects="15 YUV-To-H264-Demo\yuv2Video.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="zDBAnalysisDemo">
+        <MSBuild Projects="03 ZDB-KDTree-KMean-Classifier-Demo\zDBAnalysisDemo.dproj"/>
+    </Target>
+    <Target Name="zDBAnalysisDemo:Clean">
+        <MSBuild Projects="03 ZDB-KDTree-KMean-Classifier-Demo\zDBAnalysisDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="zDBAnalysisDemo:Make">
+        <MSBuild Projects="03 ZDB-KDTree-KMean-Classifier-Demo\zDBAnalysisDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EasyConsoleDemo">
+        <MSBuild Projects="01 Console KDTree\EasyConsoleDemo.dproj"/>
+    </Target>
+    <Target Name="EasyConsoleDemo:Clean">
+        <MSBuild Projects="01 Console KDTree\EasyConsoleDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EasyConsoleDemo:Make">
+        <MSBuild Projects="01 Console KDTree\EasyConsoleDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="GaussPyramidDemo">
+        <MSBuild Projects="13 SIFT-Pyramid-Demo\GaussPyramidDemo.dproj"/>
+    </Target>
+    <Target Name="GaussPyramidDemo:Clean">
+        <MSBuild Projects="13 SIFT-Pyramid-Demo\GaussPyramidDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GaussPyramidDemo:Make">
+        <MSBuild Projects="13 SIFT-Pyramid-Demo\GaussPyramidDemo.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="EasyConsoleDemo;MemoryRasterDemo;rForestDemo;GUIAnalysis;zDBAnalysisDemo;LargePictureAnalysis;WordAnalysis;NNDecisionDemo;NNPicutreCompare;numberTrainDemo;GaussPyramidDemo;GaussPyramidRegionDemo;yuv2Video;SoftRenderer;Render2Video;HOGLargePictureAnalysis;NNHOGCompare;pyramidPictureCompare"/>
+        <CallTarget Targets="GaussPyramidRegionDemo;GUIAnalysis;MemoryRasterDemo;NNDecisionDemo;numberTrainDemo;Render2Video;rForestDemo;SoftRenderer;yuv2Video;zDBAnalysisDemo;EasyConsoleDemo;GaussPyramidDemo"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="EasyConsoleDemo:Clean;MemoryRasterDemo:Clean;rForestDemo:Clean;GUIAnalysis:Clean;zDBAnalysisDemo:Clean;LargePictureAnalysis:Clean;WordAnalysis:Clean;NNDecisionDemo:Clean;NNPicutreCompare:Clean;numberTrainDemo:Clean;GaussPyramidDemo:Clean;GaussPyramidRegionDemo:Clean;yuv2Video:Clean;SoftRenderer:Clean;Render2Video:Clean;HOGLargePictureAnalysis:Clean;NNHOGCompare:Clean;pyramidPictureCompare:Clean"/>
+        <CallTarget Targets="GaussPyramidRegionDemo:Clean;GUIAnalysis:Clean;MemoryRasterDemo:Clean;NNDecisionDemo:Clean;numberTrainDemo:Clean;Render2Video:Clean;rForestDemo:Clean;SoftRenderer:Clean;yuv2Video:Clean;zDBAnalysisDemo:Clean;EasyConsoleDemo:Clean;GaussPyramidDemo:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="EasyConsoleDemo:Make;MemoryRasterDemo:Make;rForestDemo:Make;GUIAnalysis:Make;zDBAnalysisDemo:Make;LargePictureAnalysis:Make;WordAnalysis:Make;NNDecisionDemo:Make;NNPicutreCompare:Make;numberTrainDemo:Make;GaussPyramidDemo:Make;GaussPyramidRegionDemo:Make;yuv2Video:Make;SoftRenderer:Make;Render2Video:Make;HOGLargePictureAnalysis:Make;NNHOGCompare:Make;pyramidPictureCompare:Make"/>
+        <CallTarget Targets="GaussPyramidRegionDemo:Make;GUIAnalysis:Make;MemoryRasterDemo:Make;NNDecisionDemo:Make;numberTrainDemo:Make;Render2Video:Make;rForestDemo:Make;SoftRenderer:Make;yuv2Video:Make;zDBAnalysisDemo:Make;EasyConsoleDemo:Make;GaussPyramidDemo:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -144,7 +144,7 @@ end;
 
 destructor TMotionEstimator.Destroy;
 begin
-  FreeMem(mv_field);
+  FreeMemory(mv_field);
   scoreList := nil;
   predicted_mv_list.Free;
   SearchRegion.Free;
@@ -273,6 +273,4 @@ begin
   mv_field[mb.y * mb_width + mb.x] := mb.mv;
 end;
 
-end.  
- 
- 
+end.

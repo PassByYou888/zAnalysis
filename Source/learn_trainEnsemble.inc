@@ -405,7 +405,7 @@ begin
   //
   // structure information
   //
-  SetLength(Ensemble.StructInfo, Network.StructInfo[0] (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.StructInfo, Network.StructInfo[0]  );
   i := 0;
   while i <= Network.StructInfo[0] - 1 do
     begin
@@ -416,9 +416,9 @@ begin
   //
   // weights, means, sigmas
   //
-  SetLength(Ensemble.Weights, EnsembleSize * Ensemble.WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.ColumnMeans, EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.ColumnSigmas, EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.Weights, EnsembleSize * Ensemble.WCount  );
+  SetLength(Ensemble.ColumnMeans, EnsembleSize * CCount  );
+  SetLength(Ensemble.ColumnSigmas, EnsembleSize * CCount  );
   i := 0;
   while i <= EnsembleSize * Ensemble.WCount - 1 do
     begin
@@ -443,12 +443,12 @@ begin
   //
   // temporaries, internal buffers
   //
-  SetLength(Ensemble.TmpWeights, Ensemble.WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.TmpMeans, CCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.TmpSigmas, CCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.Neurons, Ensemble.StructInfo[MLPNTotalOffset] (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.DFDNET, Ensemble.StructInfo[MLPNTotalOffset] (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.y, Ensemble.NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.TmpWeights, Ensemble.WCount  );
+  SetLength(Ensemble.TmpMeans, CCount  );
+  SetLength(Ensemble.TmpSigmas, CCount  );
+  SetLength(Ensemble.Neurons, Ensemble.StructInfo[MLPNTotalOffset]  );
+  SetLength(Ensemble.DFDNET, Ensemble.StructInfo[MLPNTotalOffset]  );
+  SetLength(Ensemble.y, Ensemble.NOut  );
 end;
 
 (* ************************************************************************
@@ -485,18 +485,18 @@ begin
   //
   // Allocate space
   //
-  SetLength(Ensemble2.StructInfo, SSize (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble2.StructInfo, SSize  );
   SetLength(Ensemble2.Weights, Ensemble1.EnsembleSize *
-    Ensemble1.WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble2.ColumnMeans, Ensemble1.EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble2.ColumnSigmas, Ensemble1.EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble2.TmpWeights, Ensemble1.WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble2.TmpMeans, CCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble2.TmpSigmas, CCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble2.SerializedMLP, Ensemble1.SerializedLen (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble2.Neurons, NTotal (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble2.DFDNET, NTotal (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble2.y, Ensemble1.NOut (* - 1 + 1 // optimized compiler *) );
+    Ensemble1.WCount  );
+  SetLength(Ensemble2.ColumnMeans, Ensemble1.EnsembleSize * CCount  );
+  SetLength(Ensemble2.ColumnSigmas, Ensemble1.EnsembleSize * CCount  );
+  SetLength(Ensemble2.TmpWeights, Ensemble1.WCount  );
+  SetLength(Ensemble2.TmpMeans, CCount  );
+  SetLength(Ensemble2.TmpSigmas, CCount  );
+  SetLength(Ensemble2.SerializedMLP, Ensemble1.SerializedLen  );
+  SetLength(Ensemble2.Neurons, NTotal  );
+  SetLength(Ensemble2.DFDNET, NTotal  );
+  SetLength(Ensemble2.y, Ensemble1.NOut  );
 
   //
   // Copy
@@ -580,7 +580,7 @@ begin
   // [..]    ColumnMeans
   // [..]    ColumnSigmas
   //
-  SetLength(RA, RLen (* - 1 + 1 // optimized compiler *) );
+  SetLength(RA, RLen  );
   RA[0] := RLen;
   RA[1] := MLPEVNum;
   RA[2] := Ensemble.EnsembleSize;
@@ -669,17 +669,17 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(Ensemble.StructInfo, SSize (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.Weights, Ensemble.EnsembleSize * Ensemble.WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.ColumnMeans, Ensemble.EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.ColumnSigmas, Ensemble.EnsembleSize * CCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.TmpWeights, Ensemble.WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.TmpMeans, CCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.TmpSigmas, CCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.Neurons, NTotal (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.DFDNET, NTotal (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.SerializedMLP, Ensemble.SerializedLen (* - 1 + 1 // optimized compiler *) );
-  SetLength(Ensemble.y, Ensemble.NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(Ensemble.StructInfo, SSize  );
+  SetLength(Ensemble.Weights, Ensemble.EnsembleSize * Ensemble.WCount  );
+  SetLength(Ensemble.ColumnMeans, Ensemble.EnsembleSize * CCount  );
+  SetLength(Ensemble.ColumnSigmas, Ensemble.EnsembleSize * CCount  );
+  SetLength(Ensemble.TmpWeights, Ensemble.WCount  );
+  SetLength(Ensemble.TmpMeans, CCount  );
+  SetLength(Ensemble.TmpSigmas, CCount  );
+  SetLength(Ensemble.Neurons, NTotal  );
+  SetLength(Ensemble.DFDNET, NTotal  );
+  SetLength(Ensemble.SerializedMLP, Ensemble.SerializedLen  );
+  SetLength(Ensemble.y, Ensemble.NOut  );
 
   //
   // load data
@@ -998,8 +998,8 @@ var
   y    : TLVec;
   dy   : TLVec;
 begin
-  SetLength(WorkX, Ensemble.NIn (* - 1 + 1 // optimized compiler *) );
-  SetLength(y, Ensemble.NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(WorkX, Ensemble.NIn  );
+  SetLength(y, Ensemble.NOut  );
   if Ensemble.IsSoftmax then
     begin
       SetLength(dy, 0 + 1);
@@ -1007,7 +1007,7 @@ begin
     end
   else
     begin
-      SetLength(dy, Ensemble.NOut (* - 1 + 1 // optimized compiler *) );
+      SetLength(dy, Ensemble.NOut  );
       DSErrAllocate(-Ensemble.NOut, Buf);
     end;
   i := 0;
@@ -1119,19 +1119,19 @@ begin
       CCnt := NIn + NOut;
       PCnt := NIn + NOut;
     end;
-  SetLength(XYS, NPoints (* - 1 + 1 // optimized compiler *) , CCnt (* - 1 + 1 // optimized compiler *) );
-  SetLength(s, NPoints (* - 1 + 1 // optimized compiler *) );
-  SetLength(OOBBuf, NPoints (* - 1 + 1 // optimized compiler *) , NOut (* - 1 + 1 // optimized compiler *) );
-  SetLength(OOBCntBuf, NPoints (* - 1 + 1 // optimized compiler *) );
-  SetLength(x, NIn (* - 1 + 1 // optimized compiler *) );
-  SetLength(y, NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(XYS, NPoints  , CCnt  );
+  SetLength(s, NPoints  );
+  SetLength(OOBBuf, NPoints  , NOut  );
+  SetLength(OOBCntBuf, NPoints  );
+  SetLength(x, NIn  );
+  SetLength(y, NOut  );
   if Ensemble.IsSoftmax then
     begin
       SetLength(dy, 0 + 1);
     end
   else
     begin
-      SetLength(dy, NOut (* - 1 + 1 // optimized compiler *) );
+      SetLength(dy, NOut  );
     end;
   i := 0;
   while i <= NPoints - 1 do

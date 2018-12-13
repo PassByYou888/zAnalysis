@@ -222,14 +222,14 @@ begin
   Flags := Flags div 2;
   if AllocateMem then
     begin
-      SetLength(State.Rho, M (* - 1 + 1 // optimized compiler *) );
-      SetLength(State.Theta, M (* - 1 + 1 // optimized compiler *) );
-      SetLength(State.y, M (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
-      SetLength(State.s, M (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
-      SetLength(State.d, n (* - 1 + 1 // optimized compiler *) );
-      SetLength(State.x, n (* - 1 + 1 // optimized compiler *) );
-      SetLength(State.g, n (* - 1 + 1 // optimized compiler *) );
-      SetLength(State.Work, n (* - 1 + 1 // optimized compiler *) );
+      SetLength(State.Rho, M  );
+      SetLength(State.Theta, M  );
+      SetLength(State.y, M  , n  );
+      SetLength(State.s, M  , n  );
+      SetLength(State.d, n  );
+      SetLength(State.x, n  );
+      SetLength(State.g, n  );
+      SetLength(State.Work, n  );
     end;
   MinLBFGSSetCond(State, 0, 0, 0, 0);
   MinLBFGSSetXRep(State, False);
@@ -668,7 +668,7 @@ end;
 procedure MinLBFGSResults(const State: TMinLBFGSState; var x: TLVec;
   var Rep: TMinLBFGSReport);
 begin
-  SetLength(x, State.n (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, State.n  );
   APVMove(@x[0], 0, State.n - 1, @State.x[0], 0, State.n - 1);
   Rep.IterationsCount := State.RepIterationsCount;
   Rep.NFEV := State.RepNFEV;

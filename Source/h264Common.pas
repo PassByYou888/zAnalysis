@@ -108,16 +108,13 @@ type
 
 {$IFDEF FPC}
   TMotionVectorList = specialize TGenericStructList<TMotionvec>;
-{$ELSE FPC}
-  TMotionVectorList = TGenericsList<TMotionvec>;
-{$ENDIF FPC}
-
-{$IFDEF FPC}
-operator = (const a, b: TMotionvec): Boolean;
+  operator = (const a, b: TMotionvec): Boolean;
 operator / (const a: TMotionvec; const Divisor: int32_t): TMotionvec;
 operator * (const a: TMotionvec; const multiplier: int32_t): TMotionvec;
 operator + (const a, b: TMotionvec): TMotionvec;
 operator - (const a, b: TMotionvec): TMotionvec;
+{$ELSE FPC}
+  TMotionVectorList = TGenericsList<TMotionvec>;
 {$ENDIF FPC}
 
 function XYToMVec(const x: int32_t; const y: int32_t): TMotionvec; inline;
@@ -249,7 +246,6 @@ type
   end;
 
 procedure YV12ToRaster(const luma_ptr, u_ptr, v_ptr: uint8_p; const w, h, stride, stride_cr: int32_t; const dest: TMemoryRaster; const forceITU_BT_709, lumaFull: Boolean); overload;
-procedure YV12ToRaster(const sour: PFrame; const dest: TMemoryRaster); overload;
 procedure RasterToYV12(const sour: TMemoryRaster; const luma_ptr, u_ptr, v_ptr: uint8_p; const w, h: int32_t); overload;
 
 var
@@ -343,7 +339,7 @@ procedure YV12ToRaster(const luma_ptr, u_ptr, v_ptr: uint8_p; const w, h, stride
 // conversion works on 2x2 pixels at once, since they share chroma info
 var
   y, x: int32_t;
-  p, pu, PV, t: uint8_p;   // source plane ptrs
+  p, pu, pv, t: uint8_p;   // source plane ptrs
   d: int32_t;              // dest index for topleft pixel
   r0, r1, r2, r4: int32_t; // scaled yuv values for rgb calculation
   t0, t1, t2, t3: int32_p; // lookup table ptrs
@@ -378,11 +374,10 @@ begin
 
   p := luma_ptr;
   pu := u_ptr;
-  PV := v_ptr;
+  pv := v_ptr;
 
   for y := 0 to dest.height shr 1 - 1 do
     begin
-
       row1 := PRasterColorEntry(dest.ScanLine[y * 2]);
       row2 := PRasterColorEntry(dest.ScanLine[y * 2 + 1]);
 
@@ -390,8 +385,8 @@ begin
         begin
           // row start relative index
           d := x * 2;
-          r0 := t0[(PV + x)^]; // chroma
-          r1 := t1[(pu + x)^] + t2[(PV + x)^];
+          r0 := t0[(pv + x)^]; // chroma
+          r1 := t1[(pu + x)^] + t2[(pv + x)^];
           r2 := t3[(pu + x)^];
           t := p + d; // upper left luma
 
@@ -432,13 +427,8 @@ begin
 
       inc(p, stride * 2);
       inc(pu, stride_cr);
-      inc(PV, stride_cr);
+      inc(pv, stride_cr);
     end;
-end;
-
-procedure YV12ToRaster(const sour: PFrame; const dest: TMemoryRaster);
-begin
-  YV12ToRaster(sour^.plane[0], sour^.plane[1], sour^.plane[2], sour^.w, sour^.h, sour^.stride, sour^.stride_c, dest, False, False);
 end;
 
 procedure RasterToYV12(const sour: TMemoryRaster; const luma_ptr, u_ptr, v_ptr: uint8_p; const w, h: int32_t);
@@ -525,8 +515,8 @@ end;
 
 procedure BuildLut;
 const
-  UV_CSPC_CCIR_601_1: array [0 .. 3] of Real = (1.4020, -0.3441, -0.7141, 1.7720); // CCIR 601-1
-  UV_CSPC_ITU_BT_709: array [0 .. 3] of Real = (1.5701, -0.1870, -0.4664, 1.8556); // ITU.BT-709
+  UV_CSPC_CCIR_601_1: array [0 .. 3] of Single = (1.4020, -0.3441, -0.7141, 1.7720); // CCIR 601-1
+  UV_CSPC_ITU_BT_709: array [0 .. 3] of Single = (1.5701, -0.1870, -0.4664, 1.8556); // ITU.BT-709
 var
   c, j: int32_t;
   v: Single;

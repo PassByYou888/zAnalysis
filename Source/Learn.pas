@@ -32,6 +32,7 @@ type
   public type
     TLearnMemory = record
       m_in, m_out: TLVec;
+      token: SystemString;
     end;
 
     PLearnMemory = ^TLearnMemory;
@@ -47,6 +48,7 @@ type
     FEnabledRandomNumber: Boolean;
     FInLen, FOutLen: TLInt;
     FMemorySource: TCoreClassList;
+    FKDToken: TKDTree;
     FLearnType: TLearnType;
     FLearnData: Pointer;
     FClassifier: Boolean;
@@ -59,6 +61,7 @@ type
     FUserObject: TCoreClassObject;
 
     procedure KDInput(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer);
+    procedure TokenInput(const IndexFor: NativeInt; var Source: TKDTree_Source; const Data: Pointer);
 
     procedure FreeLearnData;
     procedure CreateLearnData(const isTrainTime: Boolean);
@@ -111,13 +114,16 @@ type
     property UserObject: TCoreClassObject read FUserObject write FUserObject;
 
     { * sampler * }
+    procedure AddMemory(const f_In, f_Out: TLVec; f_token: SystemString); overload;
     procedure AddMemory(const f_In, f_Out: TLVec); overload;
     procedure AddMemory(const s_In, s_Out: SystemString); overload;
+    procedure AddMemory(const s_In, s_Out, s_token: SystemString); overload;
     procedure AddMemory(const s: TPascalString); overload;
     procedure AddSampler(const f_In, f_Out: TLVec); overload;
     procedure AddSampler(const s_In, s_Out: SystemString); overload;
     procedure AddSampler(const s: TPascalString); overload;
-    procedure AddMatrix(const m_in: TLMatrix; const f_Out: TLVec);
+    procedure AddMatrix(const m_in: TLMatrix; const f_Out: TLVec); overload;
+    procedure AddMatrix(const m_in: TLMatrix; const f_Out: TLVec; const f_token: SystemString); overload;
 
     { * normal train * }
     function Train(const TrainDepth: TLInt): Boolean; overload;
@@ -131,33 +137,43 @@ type
     //
     // wait thread
     procedure WaitTrain;
-    //
+    // token
+    function SearchToken(const v: TLVec): SystemString; overload;
+    function SearchToken(const v: TLFloat): SystemString; overload;
     // data input/output
-    function process(const p_in, p_out: PLVec): Boolean; overload;
-    function process(const ProcessIn: PLVec): SystemString; overload;
-    function process(const ProcessIn: TLVec): SystemString; overload;
-    function process(const ProcessIn: TPascalString): SystemString; overload;
-    function processMatrix(const p_in: PLMatrix; const p_out: PLVec): Boolean; overload;
+    function Process(const p_in, p_out: PLVec): Boolean; overload;
+    function Process(const ProcessIn: PLVec): SystemString; overload;
+    function Process(const ProcessIn: TLVec): SystemString; overload;
+    function Process(const ProcessIn: TPascalString): SystemString; overload;
+    function ProcessMatrix(const p_in: PLMatrix; const p_out: PLVec): Boolean; overload;
     // result max value
-    function processMax(const ProcessIn: TLVec): TLFloat; overload;
-    function processMax(const ProcessIn: TLMatrix): TLFloat; overload;
+    function ProcessMax(const ProcessIn: TLVec): TLFloat; overload;
+    function ProcessMax(const ProcessIn: TLMatrix): TLFloat; overload;
+    function ProcessMaxToken(const ProcessIn: TLVec): SystemString; overload;
+    function ProcessMaxToken(const ProcessIn: TLMatrix): SystemString; overload;
     // result max index
-    function processMaxIndex(const ProcessIn: TLVec): TLInt; overload;
-    function processMaxIndex(const ProcessIn: TLMatrix): TLInt; overload;
+    function ProcessMaxIndex(const ProcessIn: TLVec): TLInt; overload;
+    function ProcessMaxIndex(const ProcessIn: TLMatrix): TLInt; overload;
+    function ProcessMaxIndexToken(const ProcessIn: TLVec): SystemString; overload;
+    function ProcessMaxIndexToken(const ProcessIn: TLMatrix): SystemString; overload;
     // result min value
-    function processMin(const ProcessIn: TLVec): TLFloat; overload;
-    function processMin(const ProcessIn: TLMatrix): TLFloat; overload;
+    function ProcessMin(const ProcessIn: TLVec): TLFloat; overload;
+    function ProcessMin(const ProcessIn: TLMatrix): TLFloat; overload;
+    function ProcessMinToken(const ProcessIn: TLVec): SystemString; overload;
+    function ProcessMinToken(const ProcessIn: TLMatrix): SystemString; overload;
     // result min index
-    function processMinIndex(const ProcessIn: TLVec): TLInt; overload;
-    function processMinIndex(const ProcessIn: TLMatrix): TLInt; overload;
+    function ProcessMinIndex(const ProcessIn: TLVec): TLInt; overload;
+    function ProcessMinIndex(const ProcessIn: TLMatrix): TLInt; overload;
+    function ProcessMinIndexToken(const ProcessIn: TLVec): SystemString; overload;
+    function ProcessMinIndexToken(const ProcessIn: TLMatrix): SystemString; overload;
     // result first value
-    function processFV(const ProcessIn: TLVec): TLFloat; overload;
-    function processFV(const ProcessIn: TLMatrix): TLFloat; overload;
-    function processFV(const ProcessIn: TPascalString): TLFloat; overload;
+    function ProcessFV(const ProcessIn: TLVec): TLFloat; overload;
+    function ProcessFV(const ProcessIn: TLMatrix): TLFloat; overload;
+    function ProcessFV(const ProcessIn: TPascalString): TLFloat; overload;
     // result last value
-    function processLV(const ProcessIn: TLVec): TLFloat; overload;
-    function processLV(const ProcessIn: TLMatrix): TLFloat; overload;
-    function processLV(const ProcessIn: TPascalString): TLFloat; overload;
+    function ProcessLV(const ProcessIn: TLVec): TLFloat; overload;
+    function ProcessLV(const ProcessIn: TLMatrix): TLFloat; overload;
+    function ProcessLV(const ProcessIn: TPascalString): TLFloat; overload;
 
     // search with Pearson
     function SearchMemoryWithPearson(const ProcessIn: TLVec): TLInt; overload;
@@ -217,17 +233,17 @@ function LVecCopy(const v: TLBVec): TLBVec; overload;
 function LMatrixCopy(const v: TLMatrix): TLMatrix; overload;
 function LMatrixCopy(const v: TLIMatrix): TLIMatrix; overload;
 function LMatrixCopy(const v: TLBMatrix): TLBMatrix; overload;
-function lvec(const veclen: TLInt; const VDef: TLFloat): TLVec; overload;
-function lvec(const veclen: TLInt): TLVec; overload;
-function lvec(const v: TLVec): TPascalString; overload;
-function lvec(const M: TLMatrix; const veclen: TLInt): TLVec; overload;
-function lvec(const M: TLMatrix): TLVec; overload;
-function lvec(const s: TPascalString; const veclen: TLInt): TLVec; overload;
-function lvec(const v: TLVec; const ShortFloat: Boolean): TPascalString; overload;
-function lvec(const M: TLBMatrix; const veclen: TLInt): TLBVec; overload;
-function lvec(const M: TLBMatrix): TLBVec; overload;
-function lvec(const M: TLIMatrix; const veclen: TLInt): TLIVec; overload;
-function lvec(const M: TLIMatrix): TLIVec; overload;
+function LVec(const veclen: TLInt; const VDef: TLFloat): TLVec; overload;
+function LVec(const veclen: TLInt): TLVec; overload;
+function LVec(const v: TLVec): TPascalString; overload;
+function LVec(const M: TLMatrix; const veclen: TLInt): TLVec; overload;
+function LVec(const M: TLMatrix): TLVec; overload;
+function LVec(const s: TPascalString; const veclen: TLInt): TLVec; overload;
+function LVec(const v: TLVec; const ShortFloat: Boolean): TPascalString; overload;
+function LVec(const M: TLBMatrix; const veclen: TLInt): TLBVec; overload;
+function LVec(const M: TLBMatrix): TLBVec; overload;
+function LVec(const M: TLIMatrix; const veclen: TLInt): TLIVec; overload;
+function LVec(const M: TLIMatrix): TLIVec; overload;
 function LSpearmanVec(const M: TLMatrix; const veclen: TLInt): TLVec;
 function LAbsMaxVec(const v: TLVec): TLFloat;
 function LMaxVec(const v: TLVec): TLFloat; overload;
@@ -347,7 +363,7 @@ procedure APVSub(VDst: PLFloat; i11, i12: TLInt; vSrc: PLFloat; i21, i22: TLInt;
 procedure APVMul(VOp: PLFloat; i1, i2: TLInt; s: TLFloat);
 procedure APVFillValue(VOp: PLFloat; i1, i2: TLInt; s: TLFloat);
 
-function AP_Float(x: TLFloat): TLFloat; overload;
+function AP_Float(x: TLFloat): TLFloat;
 function AP_FP_Eq(x: TLFloat; y: TLFloat): Boolean;
 function AP_FP_NEq(x: TLFloat; y: TLFloat): Boolean;
 function AP_FP_Less(x: TLFloat; y: TLFloat): Boolean;
@@ -826,6 +842,7 @@ var
 {$INCLUDE learn_class.inc}
 {$INCLUDE learn_test.inc}
 {$ENDREGION 'Include'}
+
 
 initialization
 

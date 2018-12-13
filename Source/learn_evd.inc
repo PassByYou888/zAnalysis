@@ -81,19 +81,18 @@ procedure UnpackHFromUpperHessenberg(const a: TLMatrix; n: TLInt;
   tridiagonal form and using the QL/QR algorithm.
 
   Input parameters:
-  A       -   symmetric matrix which is given by its upper or lower
-  triangular part.
-  Array whose indexes range within [0..N-1, 0..N-1].
+  A       -   symmetric matrix which is given by its upper or lower triangular part. Array whose indexes range within [0..N-1, 0..N-1].
   N       -   size of matrix A.
   IsUpper -   storage format.
+
   ZNeeded -   flag controlling whether the eigenvectors are needed or not.
   If ZNeeded is equal to:
   * 0, the eigenvectors are not returned;
   * 1, the eigenvectors are returned.
 
   Output parameters:
-  D       -   eigenvalues in ascending order.
-  Array whose index ranges within [0..N-1].
+  D       -   eigenvalues in ascending order. Array whose index ranges within [0..N-1].
+
   Z       -   if ZNeeded is equal to:
   * 0, Z has changed;
   * 1, Z contains the eigenvectors.
@@ -126,22 +125,23 @@ end;
   inverse iteration
 
   Input parameters:
-  A       -   symmetric matrix which is given by its upper or lower
-  triangular part. Array [0..N-1, 0..N-1].
+  A       -   symmetric matrix which is given by its upper or lower triangular part. Array [0..N-1, 0..N-1].
   N       -   size of matrix A.
+
   ZNeeded -   flag controlling whether the eigenvectors are needed or not.
   If ZNeeded is equal to:
   * 0, the eigenvectors are not returned;
   * 1, the eigenvectors are returned.
+
   IsUpperA -  storage format of matrix A.
-  B1, B2 -    half open interval (B1, B2] to search eigenvalues in.
+  B1, B2   -    half open interval (B1, B2] to search eigenvalues in.
 
   Output parameters:
   M       -   number of eigenvalues found in a given half-interval (M>=0).
   W       -   array of the eigenvalues found.
   Array whose index ranges within [0..M-1].
   Z       -   if ZNeeded is equal to:
-  * 0, Z hasnæŠ?changed;
+  * 0, Z hasn't changed;
   * 1, Z contains eigenvectors.
   Array whose indexes range within [0..N-1, 0..M-1].
   The eigenvectors are stored in the matrix columns.
@@ -179,29 +179,29 @@ end;
   matrix with given indexes by using bisection and inverse iteration methods.
 
   Input parameters:
-  A       -   symmetric matrix which is given by its upper or lower
-  triangular part. Array whose indexes range within [0..N-1, 0..N-1].
-  N       -   size of matrix A.
-  ZNeeded -   flag controlling whether the eigenvectors are needed or not.
+  A        -   symmetric matrix which is given by its upper or lower triangular part. Array whose indexes range within [0..N-1, 0..N-1].
+  N        -   size of matrix A.
+  ZNeeded  -   flag controlling whether the eigenvectors are needed or not.
+
   If ZNeeded is equal to:
   * 0, the eigenvectors are not returned;
   * 1, the eigenvectors are returned.
+
   IsUpperA -  storage format of matrix A.
-  I1, I2 -    index interval for searching (from I1 to I2).
+  I1, I2   -    index interval for searching (from I1 to I2).
   0 <= I1 <= I2 <= N-1.
 
   Output parameters:
   W       -   array of the eigenvalues found.
   Array whose index ranges within [0..I2-I1].
   Z       -   if ZNeeded is equal to:
-  * 0, Z hasnæŠ?changed;
+  * 0, Z hasn't changed;
   * 1, Z contains eigenvectors.
   Array whose indexes range within [0..N-1, 0..I2-I1].
   In that case, the eigenvectors are stored in the matrix columns.
 
   Result:
-  True, if successful. W contains the eigenvalues, Z contains the
-  eigenvectors (if needed).
+  True, if successful. W contains the eigenvalues, Z contains the eigenvectors (if needed).
 
   False, if the bisection method subroutine wasn't able to find the
   eigenvalues in the given interval or if the inverse iteration subroutine
@@ -246,7 +246,7 @@ end;
   D       -   eigenvalues in ascending order.
   Array whose index ranges within [0..N-1].
   Z       -   if ZNeeded is equal to:
-  * 0, Z hasnæŠ?changed;
+  * 0, Z hasn't changed;
   * 1, Z contains the eigenvectors.
   Array whose indexes range within [0..N-1, 0..N-1].
   The eigenvectors are stored in the matrix columns.
@@ -296,8 +296,8 @@ begin
   //
   if Result and (ZNeeded <> 0) then
     begin
-      SetLength(Work, n (* - 1 + 1 // optimized compiler *) );
-      SetLength(z, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+      SetLength(Work, n  );
+      SetLength(z, n  , n  );
       i := 0;
       while i <= n - 1 do
         begin
@@ -358,23 +358,22 @@ end;
   iteration
 
   Input parameters:
-  A       -   Hermitian matrix which is given  by  its  upper  or  lower
-  triangular  part.  Array  whose   indexes   range   within
-  [0..N-1, 0..N-1].
+  A       -   Hermitian matrix which is given by its upper or lower triangular part. Array whose indexes range within [0..N-1, 0..N-1].
   N       -   size of matrix A.
-  ZNeeded -   flag controlling whether the eigenvectors  are  needed  or
-  not. If ZNeeded is equal to:
+
+ ZNeeded  -  flag controlling whether the eigenvectors are needed or not. If ZNeeded is equal to:
   * 0, the eigenvectors are not returned;
   * 1, the eigenvectors are returned.
+
   IsUpperA -  storage format of matrix A.
-  B1, B2 -    half-interval (B1, B2] to search eigenvalues in.
+  B1, B2   -    half-interval (B1, B2] to search eigenvalues in.
 
   Output parameters:
   M       -   number of eigenvalues found in a given half-interval, M>=0
   W       -   array of the eigenvalues found.
   Array whose index ranges within [0..M-1].
   Z       -   if ZNeeded is equal to:
-  * 0, Z hasnæŠ?changed;
+  * 0, Z hasn't changed;
   * 1, Z contains eigenvectors.
   Array whose indexes range within [0..N-1, 0..M-1].
   The eigenvectors are stored in the matrix columns.
@@ -391,8 +390,7 @@ end;
   equal to 0.
 
   Note:
-  eigen vectors of Hermitian matrix are defined up to multiplication  by
-  a complex number L, such as |L|=1.
+  eigen vectors of Hermitian matrix are defined up to multiplication by a complex number L, such as |L|=1.
   ************************************************************************ *)
 function HMatrixEVDR(a: TLComplexMatrix; n: TLInt;
   ZNeeded: TLInt; IsUpper: Boolean; b1: TLFloat; b2: TLFloat;
@@ -432,8 +430,8 @@ begin
   //
   if Result and (ZNeeded <> 0) and (M <> 0) then
     begin
-      SetLength(Work, M (* - 1 + 1 // optimized compiler *) );
-      SetLength(z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(Work, M  );
+      SetLength(z, n  , M  );
       i := 0;
       while i <= n - 1 do
         begin
@@ -493,27 +491,25 @@ end;
   matrix with given indexes by using bisection and inverse iteration methods
 
   Input parameters:
-  A       -   Hermitian matrix which is given  by  its  upper  or  lower
-  triangular part.
-  Array whose indexes range within [0..N-1, 0..N-1].
+  A       -   Hermitian matrix which is given by its upper or lower triangular part. Array whose indexes range within [0..N-1, 0..N-1].
   N       -   size of matrix A.
+
   ZNeeded -   flag controlling whether the eigenvectors  are  needed  or
   not. If ZNeeded is equal to:
   * 0, the eigenvectors are not returned;
   * 1, the eigenvectors are returned.
+
   IsUpperA -  storage format of matrix A.
-  I1, I2 -    index interval for searching (from I1 to I2).
-  0 <= I1 <= I2 <= N-1.
+  I1, I2   -    index interval for searching (from I1 to I2). 0 <= I1 <= I2 <= N-1.
 
   Output parameters:
   W       -   array of the eigenvalues found.
   Array whose index ranges within [0..I2-I1].
   Z       -   if ZNeeded is equal to:
-  * 0, Z hasnæŠ?changed;
+  * 0, Z hasn't changed;
   * 1, Z contains eigenvectors.
   Array whose indexes range within [0..N-1, 0..I2-I1].
-  In  that  case,  the eigenvectors are stored in the matrix
-  columns.
+  In that case, the eigenvectors are stored in the matrix columns.
 
   Result:
   True, if successful. W contains the eigenvalues, Z contains the
@@ -525,8 +521,7 @@ end;
   In that case, the eigenvalues and eigenvectors are not returned.
 
   Note:
-  eigen vectors of Hermitian matrix are defined up to multiplication  by
-  a complex number L, such as |L|=1.
+  eigen vectors of Hermitian matrix are defined up to multiplication by a complex number L, such as |L|=1.
   ************************************************************************ *)
 function HMatrixEVDI(a: TLComplexMatrix; n: TLInt;
   ZNeeded: TLInt; IsUpper: Boolean; i1: TLInt;
@@ -568,8 +563,8 @@ begin
   M := i2 - i1 + 1;
   if Result and (ZNeeded <> 0) then
     begin
-      SetLength(Work, M (* - 1 + 1 // optimized compiler *) );
-      SetLength(z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(Work, M  );
+      SetLength(z, n  , M  );
       i := 0;
       while i <= n - 1 do
         begin
@@ -631,31 +626,25 @@ end;
   using an QL/QR algorithm with implicit shifts.
 
   Input parameters:
-  D       -   the main diagonal of a tridiagonal matrix.
-  Array whose index ranges within [0..N-1].
-  E       -   the secondary diagonal of a tridiagonal matrix.
-  Array whose index ranges within [0..N-2].
+  D       -   the main diagonal of a tridiagonal matrix. Array whose index ranges within [0..N-1].
+  E       -   the secondary diagonal of a tridiagonal matrix. Array whose index ranges within [0..N-2].
   N       -   size of matrix A.
+
   ZNeeded -   flag controlling whether the eigenvectors are needed or not.
   If ZNeeded is equal to:
   * 0, the eigenvectors are not needed;
-  * 1, the eigenvectors of a tridiagonal matrix
-  are multiplied by the square matrix Z. It is used if the
-  tridiagonal matrix is obtained by the similarity
-  transformation of a symmetric matrix;
-  * 2, the eigenvectors of a tridiagonal matrix replace the
-  square matrix Z;
-  * 3, matrix Z contains the first row of the eigenvectors
-  matrix.
-  Z       -   if ZNeeded=1, Z contains the square matrix by which the
-  eigenvectors are multiplied.
-  Array whose indexes range within [0..N-1, 0..N-1].
+  * 1, the eigenvectors of a tridiagonal matrix are multiplied by the square matrix Z.
+  *    It is used if the tridiagonal matrix is obtained by the similarity transformation of a symmetric matrix;
+  * 2, the eigenvectors of a tridiagonal matrix replace the square matrix Z;
+  * 3, matrix Z contains the first row of the eigenvectors matrix.
+
+  Z       -   if ZNeeded=1, Z contains the square matrix by which the eigenvectors are multiplied. Array whose indexes range within [0..N-1, 0..N-1].
 
   Output parameters:
-  D       -   eigenvalues in ascending order.
-  Array whose index ranges within [0..N-1].
+  D       -   eigenvalues in ascending order. Array whose index ranges within [0..N-1].
+
   Z       -   if ZNeeded is equal to:
-  * 0, Z hasnæŠ?changed;
+  * 0, Z hasn't changed;
   * 1, Z contains the product of a given matrix (from the left)
   and the eigenvectors matrix (from the right);
   * 2, Z contains the eigenvectors.
@@ -726,7 +715,7 @@ begin
         end;
       if ZNeeded = 2 then
         begin
-          SetLength(z, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+          SetLength(z, n  , n  );
           i := 1;
           while i <= n do
             begin
@@ -737,7 +726,7 @@ begin
         end;
       if ZNeeded = 3 then
         begin
-          SetLength(z, 0 + 1, n (* - 1 + 1 // optimized compiler *) );
+          SetLength(z, 0 + 1, n  );
           APVMove(@z[0][0], 0, n - 1, @z1[1][0], 1, n);
           Exit;
         end;
@@ -750,41 +739,36 @@ end;
   given half-interval (A, B] by using bisection and inverse iteration.
 
   Input parameters:
-  D       -   the main diagonal of a tridiagonal matrix.
-  Array whose index ranges within [0..N-1].
-  E       -   the secondary diagonal of a tridiagonal matrix.
-  Array whose index ranges within [0..N-2].
+  D       -   the main diagonal of a tridiagonal matrix. Array whose index ranges within [0..N-1].
+  E       -   the secondary diagonal of a tridiagonal matrix. Array whose index ranges within [0..N-2].
   N       -   size of matrix, N>=0.
+
   ZNeeded -   flag controlling whether the eigenvectors are needed or not.
   If ZNeeded is equal to:
   * 0, the eigenvectors are not needed;
-  * 1, the eigenvectors of a tridiagonal matrix are multiplied
-  by the square matrix Z. It is used if the tridiagonal
-  matrix is obtained by the similarity transformation
-  of a symmetric matrix.
+  * 1, the eigenvectors of a tridiagonal matrix are multiplied by the square matrix Z.
+  *    It is used if the tridiagonal matrix is obtained by the similarity transformation of a symmetric matrix.
   * 2, the eigenvectors of a tridiagonal matrix replace matrix Z.
+
   A, B    -   half-interval (A, B] to search eigenvalues in.
+
   Z       -   if ZNeeded is equal to:
   * 0, Z isn't used and remains unchanged;
-  * 1, Z contains the square matrix (array whose indexes range
-  within [0..N-1, 0..N-1]) which reduces the given symmetric
-  matrix to tridiagonal form;
+  * 1, Z contains the square matrix (array whose indexes range within [0..N-1, 0..N-1]) which reduces the given symmetric matrix to tridiagonal form;
   * 2, Z isn't used (but changed on the exit).
 
   Output parameters:
   D       -   array of the eigenvalues found.
   Array whose index ranges within [0..M-1].
   M       -   number of eigenvalues found in the given half-interval (M>=0).
+
   Z       -   if ZNeeded is equal to:
   * 0, doesn't contain any information;
-  * 1, contains the product of a given NxN matrix Z (from the
-  left) and NxM matrix of the eigenvectors found (from the
-  right). Array whose indexes range within [0..N-1, 0..M-1].
-  * 2, contains the matrix of the eigenvectors found.
-  Array whose indexes range within [0..N-1, 0..M-1].
+  * 1, contains the product of a given NxN matrix Z (from the left) and NxM matrix of the eigenvectors found (from the right).
+  *    Array whose indexes range within [0..N-1, 0..M-1].
+  * 2, contains the matrix of the eigenvectors found. Array whose indexes range within [0..N-1, 0..M-1].
 
   Result:
-
   True, if successful. In that case, M contains the number of eigenvalues
   in the given half-interval (could be equal to 0), D contains the eigenvalues,
   Z contains the eigenvectors (if needed).
@@ -843,7 +827,7 @@ begin
   APVMove(@d1[0], 1, n, @d[0], 0, n - 1);
   if n > 1 then
     begin
-      SetLength(e1, n (* - 1 + 1 // optimized compiler *) );
+      SetLength(e1, n  );
       APVMove(@e1[0], 1, n - 1, @E[0], 0, n - 2);
     end;
 
@@ -859,7 +843,7 @@ begin
           M := 0;
           Exit;
         end;
-      SetLength(d, M (* - 1 + 1 // optimized compiler *) );
+      SetLength(d, M  );
       APVMove(@d[0], 0, M - 1, @w[0], 1, M);
       Exit;
     end;
@@ -943,7 +927,7 @@ begin
             end;
           inc(i);
         end;
-      SetLength(z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(z, n  , M  );
       i := 1;
       while i <= M do
         begin
@@ -958,7 +942,7 @@ begin
       //
       // Store W
       //
-      SetLength(d, M (* - 1 + 1 // optimized compiler *) );
+      SetLength(d, M  );
       i := 1;
       while i <= M do
         begin
@@ -1025,14 +1009,14 @@ begin
       //
       // Store W
       //
-      SetLength(d, M (* - 1 + 1 // optimized compiler *) );
+      SetLength(d, M  );
       i := 1;
       while i <= M do
         begin
           d[i - 1] := w[i];
           inc(i);
         end;
-      SetLength(z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(z, n  , M  );
       i := 1;
       while i <= M do
         begin
@@ -1053,42 +1037,34 @@ end;
   indexes (in ascending order) by using the bisection and inverse iteraion.
 
   Input parameters:
-  D       -   the main diagonal of a tridiagonal matrix.
-  Array whose index ranges within [0..N-1].
-  E       -   the secondary diagonal of a tridiagonal matrix.
-  Array whose index ranges within [0..N-2].
+  D       -   the main diagonal of a tridiagonal matrix. Array whose index ranges within [0..N-1].
+  E       -   the secondary diagonal of a tridiagonal matrix. Array whose index ranges within [0..N-2].
   N       -   size of matrix. N>=0.
+
   ZNeeded -   flag controlling whether the eigenvectors are needed or not.
   If ZNeeded is equal to:
   * 0, the eigenvectors are not needed;
-  * 1, the eigenvectors of a tridiagonal matrix are multiplied
-  by the square matrix Z. It is used if the
-  tridiagonal matrix is obtained by the similarity transformation
-  of a symmetric matrix.
-  * 2, the eigenvectors of a tridiagonal matrix replace
-  matrix Z.
-  I1, I2  -   index interval for searching (from I1 to I2).
-  0 <= I1 <= I2 <= N-1.
+  * 1, the eigenvectors of a tridiagonal matrix are multiplied by the square matrix Z.
+  *    It is used if the tridiagonal matrix is obtained by the similarity transformation of a symmetric matrix.
+  * 2, the eigenvectors of a tridiagonal matrix replace matrix Z.
+
+  I1, I2  -   index interval for searching (from I1 to I2). 0 <= I1 <= I2 <= N-1.
+
   Z       -   if ZNeeded is equal to:
   * 0, Z isn't used and remains unchanged;
-  * 1, Z contains the square matrix (array whose indexes range within [0..N-1, 0..N-1])
-  which reduces the given symmetric matrix to  tridiagonal form;
+  * 1, Z contains the square matrix (array whose indexes range within [0..N-1, 0..N-1]) which reduces the given symmetric matrix to  tridiagonal form;
   * 2, Z isn't used (but changed on the exit).
 
   Output parameters:
-  D       -   array of the eigenvalues found.
-  Array whose index ranges within [0..I2-I1].
+  D       -   array of the eigenvalues found. Array whose index ranges within [0..I2-I1].
   Z       -   if ZNeeded is equal to:
   * 0, doesn't contain any information;
-  * 1, contains the product of a given NxN matrix Z (from the left) and
-  Nx(I2-I1) matrix of the eigenvectors found (from the right).
-  Array whose indexes range within [0..N-1, 0..I2-I1].
-  * 2, contains the matrix of the eigenvalues found.
-  Array whose indexes range within [0..N-1, 0..I2-I1].
+  * 1, contains the product of a given NxN matrix Z (from the left) and Nx(I2-I1) matrix of the eigenvectors found (from the right).
+  *    Array whose indexes range within [0..N-1, 0..I2-I1].
+  * 2, contains the matrix of the eigenvalues found. Array whose indexes range within [0..N-1, 0..I2-I1].
 
 
   Result:
-
   True, if successful. In that case, D contains the eigenvalues,
   Z contains the eigenvectors (if needed).
   It should be noted that the subroutine changes the size of arrays D and Z.
@@ -1131,7 +1107,7 @@ begin
   APVMove(@d1[0], 1, n, @d[0], 0, n - 1);
   if n > 1 then
     begin
-      SetLength(e1, n (* - 1 + 1 // optimized compiler *) );
+      SetLength(e1, n  );
       APVMove(@e1[0], 1, n - 1, @E[0], 0, n - 2);
     end;
 
@@ -1151,7 +1127,7 @@ begin
           Result := False;
           Exit;
         end;
-      SetLength(d, M (* - 1 + 1 // optimized compiler *) );
+      SetLength(d, M  );
       i := 1;
       while i <= M do
         begin
@@ -1243,7 +1219,7 @@ begin
             end;
           inc(i);
         end;
-      SetLength(z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(z, n  , M  );
       i := 1;
       while i <= M do
         begin
@@ -1258,7 +1234,7 @@ begin
       //
       // Store W
       //
-      SetLength(d, M (* - 1 + 1 // optimized compiler *) );
+      SetLength(d, M  );
       i := 1;
       while i <= M do
         begin
@@ -1328,7 +1304,7 @@ begin
       //
       // Store Z
       //
-      SetLength(z, n (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(z, n  , M  );
       i := 1;
       while i <= M do
         begin
@@ -1343,7 +1319,7 @@ begin
       //
       // Store W
       //
-      SetLength(d, M (* - 1 + 1 // optimized compiler *) );
+      SetLength(d, M  );
       i := 1;
       while i <= M do
         begin
@@ -1377,10 +1353,9 @@ end;
   * 3, both left and right eigenvectors are returned.
 
   Output parameters:
-  WR      -   real parts of eigenvalues.
-  Array whose index ranges within [0..N-1].
-  WR      -   imaginary parts of eigenvalues.
-  Array whose index ranges within [0..N-1].
+  WR      -   real parts of eigenvalues. Array whose index ranges within [0..N-1].
+  WR      -   imaginary parts of eigenvalues. Array whose index ranges within [0..N-1].
+
   VL, VR  -   arrays of left and right eigenvectors (if they are needed).
   If WI[i]=0, the respective eigenvalue is a real number,
   and it corresponds to the column number I of matrices VL/VR.
@@ -1442,13 +1417,13 @@ begin
   Result := NonSymmetricEVD(a1, n, VNeeded, WR1, WI1, VL1, VR1);
   if Result then
     begin
-      SetLength(WR, n (* - 1 + 1 // optimized compiler *) );
-      SetLength(WI, n (* - 1 + 1 // optimized compiler *) );
+      SetLength(WR, n  );
+      SetLength(WI, n  );
       APVMove(@WR[0], 0, n - 1, @WR1[0], 1, n);
       APVMove(@WI[0], 0, n - 1, @WI1[0], 1, n);
       if (VNeeded = 2) or (VNeeded = 3) then
         begin
-          SetLength(vl, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+          SetLength(vl, n  , n  );
           i := 0;
           while i <= n - 1 do
             begin
@@ -1458,7 +1433,7 @@ begin
         end;
       if (VNeeded = 1) or (VNeeded = 3) then
         begin
-          SetLength(vr, n (* - 1 + 1 // optimized compiler *) , n (* - 1 + 1 // optimized compiler *) );
+          SetLength(vr, n  , n  );
           i := 0;
           while i <= n - 1 do
             begin
@@ -2701,8 +2676,8 @@ begin
   // Initialize arrays
   //
   SetLength(WTEMP, n + 1);
-  SetLength(Work1, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(Work2, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(Work1, n  );
+  SetLength(Work2, n  );
   SetLength(WORKC, n + 1);
   SetLength(WORKS, n + 1);
 
@@ -5595,7 +5570,7 @@ end;
   correct to a factor of 2 or so.
 
   Note: all input quantities are assumed to be smaller than overflow
-  by a reasonable factor.  (See BIGNUM.)
+  by a reasonable factor. (See BIGNUM.)
   ************************************************************************ *)
 procedure InternalHSEVDLALN2(const LTRANS: Boolean; const NA: TLInt;
   const NW: TLInt; const SMIN: TLFloat; const ca: TLFloat;
@@ -6196,7 +6171,7 @@ begin
     begin
       Exit;
     end;
-  SetLength(TAU, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(TAU, n  );
   SetLength(t, n + 1);
   SetLength(Work, n + 1);
   i := 1;

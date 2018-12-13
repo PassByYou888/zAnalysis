@@ -40,13 +40,12 @@ procedure DFCopy(const DF1: TDecisionForest; var DF2: TDecisionForest); forward;
 procedure DFSerialize(const df: TDecisionForest; var RA: TLVec; var RLen: TLInt); forward;
 procedure DFUnserialize(const RA: TLVec; var df: TDecisionForest); forward;
 
-
 const
-  DFVNum            = 8;
-  InnerNodeWidth    = 3;
-  LeafNodeWidth     = 2;
+  DFVNum = 8;
+  InnerNodeWidth = 3;
+  LeafNodeWidth = 2;
   DFUseStrongSplits = 1;
-  DFUseEVS          = 2;
+  DFUseEVS = 2;
 
 type
   TDFInternalBuffers = record
@@ -83,7 +82,6 @@ procedure DFSplitC(var x: TLVec; var c: TLIVec;
   var CntBuf: TLIVec; n: TLInt; NC: TLInt; Flags: TLInt; var Info: TLInt; var Threshold: TLFloat; var E: TLFloat); forward;
 
 procedure DFSplitR(var x: TLVec; var y: TLVec; n: TLInt; Flags: TLInt; var Info: TLInt; var Threshold: TLFloat; var E: TLFloat); forward;
-
 
 (* ************************************************************************
   //  This subroutine builds random decision forest.
@@ -129,29 +127,29 @@ procedure DFBuildInternal(const xy: TLMatrix; NPoints: TLInt;
   SampleSize: TLInt; NFeatures: TLInt; Flags: TLInt;
   var Info: TLInt; var df: TDecisionForest; var Rep: TDFReport);
 var
-  i           : TLInt;
-  j           : TLInt;
-  k           : TLInt;
-  TmpI        : TLInt;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
+  TmpI: TLInt;
   LastTreeOffs: TLInt;
-  Offs        : TLInt;
-  OOBOffs     : TLInt;
-  TreeSize    : TLInt;
-  NVarsInPool : TLInt;
-  UseEVS      : Boolean;
-  Bufs        : TDFInternalBuffers;
-  PermBuf     : TLIVec;
-  OOBBuf      : TLVec;
-  OOBCntBuf   : TLIVec;
-  XYS         : TLMatrix;
-  x           : TLVec;
-  y           : TLVec;
-  OOBCnt      : TLInt;
-  OOBRelCnt   : TLInt;
-  v           : TLFloat;
-  VMin        : TLFloat;
-  VMAX        : TLFloat;
-  BFlag       : Boolean;
+  Offs: TLInt;
+  OOBOffs: TLInt;
+  TreeSize: TLInt;
+  NVarsInPool: TLInt;
+  UseEVS: Boolean;
+  Bufs: TDFInternalBuffers;
+  PermBuf: TLIVec;
+  OOBBuf: TLVec;
+  OOBCntBuf: TLIVec;
+  XYS: TLMatrix;
+  x: TLVec;
+  y: TLVec;
+  OOBCnt: TLInt;
+  OOBRelCnt: TLInt;
+  v: TLFloat;
+  VMin: TLFloat;
+  VMAX: TLFloat;
+  BFlag: Boolean;
 begin
 
   //
@@ -188,22 +186,22 @@ begin
   //
   TreeSize := 1 + InnerNodeWidth * (SampleSize - 1) + LeafNodeWidth *
     SampleSize;
-  SetLength(PermBuf, NPoints (* - 1 + 1 // optimized compiler *) );
-  SetLength(Bufs.TreeBuf, TreeSize (* - 1 + 1 // optimized compiler *) );
-  SetLength(Bufs.IdxBuf, NPoints (* - 1 + 1 // optimized compiler *) );
-  SetLength(Bufs.TmpBufR, NPoints (* - 1 + 1 // optimized compiler *) );
-  SetLength(Bufs.TmpBufR2, NPoints (* - 1 + 1 // optimized compiler *) );
-  SetLength(Bufs.TmpBufI, NPoints (* - 1 + 1 // optimized compiler *) );
-  SetLength(Bufs.VarPool, NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(Bufs.EVSBin, NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(Bufs.EVSSplits, NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(Bufs.ClassIBuf, 2 * NClasses (* - 1 + 1 // optimized compiler *) );
-  SetLength(OOBBuf, NClasses * NPoints (* - 1 + 1 // optimized compiler *) );
-  SetLength(OOBCntBuf, NPoints (* - 1 + 1 // optimized compiler *) );
-  SetLength(df.Trees, NTrees * TreeSize (* - 1 + 1 // optimized compiler *) );
-  SetLength(XYS, SampleSize (* - 1 + 1 // optimized compiler *) , NVars + 1);
-  SetLength(x, NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(y, NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(PermBuf, NPoints  );
+  SetLength(Bufs.TreeBuf, TreeSize  );
+  SetLength(Bufs.IdxBuf, NPoints  );
+  SetLength(Bufs.TmpBufR, NPoints  );
+  SetLength(Bufs.TmpBufR2, NPoints  );
+  SetLength(Bufs.TmpBufI, NPoints  );
+  SetLength(Bufs.VarPool, NVars  );
+  SetLength(Bufs.EVSBin, NVars  );
+  SetLength(Bufs.EVSSplits, NVars  );
+  SetLength(Bufs.ClassIBuf, 2 * NClasses  );
+  SetLength(OOBBuf, NClasses * NPoints  );
+  SetLength(OOBCntBuf, NPoints  );
+  SetLength(df.Trees, NTrees * TreeSize  );
+  SetLength(XYS, SampleSize  , NVars + 1);
+  SetLength(x, NVars  );
+  SetLength(y, NClasses  );
   i := 0;
   while i <= NPoints - 1 do
     begin
@@ -515,16 +513,14 @@ end;
 
   OUTPUT PARAMETERS:
   Y       -   result. Regression estimate when solving regression  task,
-  vector of posterior probabilities for classification task.
-  Subroutine does not allocate memory for this vector, it is
-  responsibility of a caller to allocate it. Array  must  be
-  at least [0..NClasses-1].
+  vector of posterior probabilities for classification task. Subroutine does not allocate memory for this vector,
+  it is responsibility of a caller to allocate it. Array must be at least [0..NClasses-1].
   ************************************************************************ *)
 procedure DFProcess(const df: TDecisionForest; const x: TLVec; var y: TLVec);
 var
   Offs: TLInt;
-  i   : TLInt;
-  v   : TLFloat;
+  i: TLInt;
+  v: TLFloat;
 begin
 
   //
@@ -589,15 +585,15 @@ end;
 function DFAvgCE(const df: TDecisionForest; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
-  x   : TLVec;
-  y   : TLVec;
-  i   : TLInt;
-  j   : TLInt;
-  k   : TLInt;
+  x: TLVec;
+  y: TLVec;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
   TmpI: TLInt;
 begin
-  SetLength(x, df.NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(y, df.NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, df.NVars  );
+  SetLength(y, df.NClasses  );
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
@@ -652,15 +648,15 @@ end;
 function DFRMSError(const df: TDecisionForest; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
-  x   : TLVec;
-  y   : TLVec;
-  i   : TLInt;
-  j   : TLInt;
-  k   : TLInt;
+  x: TLVec;
+  y: TLVec;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
   TmpI: TLInt;
 begin
-  SetLength(x, df.NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(y, df.NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, df.NVars  );
+  SetLength(y, df.NClasses  );
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
@@ -733,8 +729,8 @@ var
   j: TLInt;
   k: TLInt;
 begin
-  SetLength(x, df.NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(y, df.NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, df.NVars  );
+  SetLength(y, df.NClasses  );
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
@@ -791,15 +787,15 @@ end;
 function DFAvgRelError(const df: TDecisionForest; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
-  x     : TLVec;
-  y     : TLVec;
+  x: TLVec;
+  y: TLVec;
   RelCnt: TLInt;
-  i     : TLInt;
-  j     : TLInt;
-  k     : TLInt;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
 begin
-  SetLength(x, df.NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(y, df.NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, df.NVars  );
+  SetLength(y, df.NClasses  );
   Result := 0;
   RelCnt := 0;
   i := 0;
@@ -860,7 +856,7 @@ begin
   DF2.NClasses := DF1.NClasses;
   DF2.NTrees := DF1.NTrees;
   DF2.BufSize := DF1.BufSize;
-  SetLength(DF2.Trees, DF1.BufSize (* - 1 + 1 // optimized compiler *) );
+  SetLength(DF2.Trees, DF1.BufSize  );
   APVMove(@DF2.Trees[0], 0, DF1.BufSize - 1, @DF1.Trees[0], 0, DF1.BufSize - 1);
 end;
 
@@ -877,7 +873,7 @@ end;
   ************************************************************************ *)
 procedure DFSerialize(const df: TDecisionForest; var RA: TLVec; var RLen: TLInt);
 begin
-  SetLength(RA, df.BufSize + 5 (* - 1 + 1 // optimized compiler *) );
+  SetLength(RA, df.BufSize + 5  );
   RA[0] := DFVNum;
   RA[1] := df.NVars;
   RA[2] := df.NClasses;
@@ -903,7 +899,7 @@ begin
   df.NClasses := Round(RA[2]);
   df.NTrees := Round(RA[3]);
   df.BufSize := Round(RA[4]);
-  SetLength(df.Trees, df.BufSize (* - 1 + 1 // optimized compiler *) );
+  SetLength(df.Trees, df.BufSize  );
   APVMove(@df.Trees[0], 0, df.BufSize - 1, @RA[0], 5, 5 + df.BufSize - 1);
 end;
 
@@ -913,11 +909,11 @@ end;
 function DFClsError(const df: TDecisionForest; const xy: TLMatrix;
   NPoints: TLInt): TLInt;
 var
-  x   : TLVec;
-  y   : TLVec;
-  i   : TLInt;
-  j   : TLInt;
-  k   : TLInt;
+  x: TLVec;
+  y: TLVec;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
   TmpI: TLInt;
 begin
   if df.NClasses <= 1 then
@@ -925,8 +921,8 @@ begin
       Result := 0;
       Exit;
     end;
-  SetLength(x, df.NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(y, df.NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, df.NVars  );
+  SetLength(y, df.NClasses  );
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
@@ -958,7 +954,7 @@ end;
 procedure DFProcessInternal(const df: TDecisionForest; Offs: TLInt;
   const x: TLVec; var y: TLVec);
 var
-  k  : TLInt;
+  k: TLInt;
   idx: TLInt;
 begin
 
@@ -1005,7 +1001,7 @@ procedure DFBuildTree(const xy: TLMatrix; NPoints: TLInt;
   var Bufs: TDFInternalBuffers);
 var
   NumProcessed: TLInt;
-  i           : TLInt;
+  i: TLInt;
 begin
   Assert(NPoints > 0);
 
@@ -1048,28 +1044,28 @@ procedure DFBuildTreeRec(const xy: TLMatrix; NPoints: TLInt;
   var NumProcessed: TLInt; idx1: TLInt; idx2: TLInt;
   var Bufs: TDFInternalBuffers);
 var
-  i        : TLInt;
-  j        : TLInt;
-  k        : TLInt;
-  BFlag    : Boolean;
-  i1       : TLInt;
-  i2       : TLInt;
-  Info     : TLInt;
-  SL       : TLFloat;
-  SR       : TLFloat;
-  w        : TLFloat;
-  IdxBest  : TLInt;
-  EBest    : TLFloat;
-  TBest    : TLFloat;
-  VarCur   : TLInt;
-  s        : TLFloat;
-  v        : TLFloat;
-  v1       : TLFloat;
-  v2       : TLFloat;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
+  BFlag: Boolean;
+  i1: TLInt;
+  i2: TLInt;
+  Info: TLInt;
+  SL: TLFloat;
+  SR: TLFloat;
+  w: TLFloat;
+  IdxBest: TLInt;
+  EBest: TLFloat;
+  TBest: TLFloat;
+  VarCur: TLInt;
+  s: TLFloat;
+  v: TLFloat;
+  v1: TLFloat;
+  v2: TLFloat;
   Threshold: TLFloat;
-  OldNP    : TLInt;
-  CurRMS   : TLFloat;
-  UseEVS   : Boolean;
+  OldNP: TLInt;
+  CurRMS: TLFloat;
+  UseEVS: Boolean;
 begin
   Assert(NPoints > 0);
   Assert(idx2 >= idx1);
@@ -1449,9 +1445,9 @@ procedure DFWeakSplitI(var x: TLVec; var y: TLIVec;
   n: TLInt; NClasses: TLInt; var Info: TLInt;
   var Threshold: TLFloat; var E: TLFloat);
 var
-  i       : TLInt;
-  NEq     : TLInt;
-  NLess   : TLInt;
+  i: TLInt;
+  NEq: TLInt;
+  NLess: TLInt;
   NGreater: TLInt;
 begin
   TagSortFastI(x, y, n);
@@ -1533,21 +1529,21 @@ procedure DFSplitC(var x: TLVec; var c: TLIVec;
   Flags: TLInt; var Info: TLInt; var Threshold: TLFloat;
   var E: TLFloat);
 var
-  i       : TLInt;
-  NEq     : TLInt;
-  NLess   : TLInt;
+  i: TLInt;
+  NEq: TLInt;
+  NLess: TLInt;
   NGreater: TLInt;
-  q       : TLInt;
-  QMin    : TLInt;
-  QMax    : TLInt;
-  QCnt    : TLInt;
+  q: TLInt;
+  QMin: TLInt;
+  QMax: TLInt;
+  QCnt: TLInt;
   CurSplit: TLFloat;
-  NLeft   : TLInt;
-  v       : TLFloat;
-  CurE    : TLFloat;
-  w       : TLFloat;
-  SL      : TLFloat;
-  SR      : TLFloat;
+  NLeft: TLInt;
+  v: TLFloat;
+  CurE: TLFloat;
+  w: TLFloat;
+  SL: TLFloat;
+  SR: TLFloat;
 begin
   TagSortFastI(x, c, n);
   E := MaxRealNumber;
@@ -1683,18 +1679,18 @@ procedure DFSplitR(var x: TLVec; var y: TLVec; n: TLInt;
   Flags: TLInt; var Info: TLInt; var Threshold: TLFloat;
   var E: TLFloat);
 var
-  i       : TLInt;
-  NEq     : TLInt;
-  NLess   : TLInt;
+  i: TLInt;
+  NEq: TLInt;
+  NLess: TLInt;
   NGreater: TLInt;
-  q       : TLInt;
-  QMin    : TLInt;
-  QMax    : TLInt;
-  QCnt    : TLInt;
+  q: TLInt;
+  QMin: TLInt;
+  QMax: TLInt;
+  QCnt: TLInt;
   CurSplit: TLFloat;
-  NLeft   : TLInt;
-  v       : TLFloat;
-  CurE    : TLFloat;
+  NLeft: TLInt;
+  v: TLFloat;
+  CurE: TLFloat;
 begin
   TagSortFastR(x, y, n);
   E := MaxRealNumber;
@@ -1817,6 +1813,4 @@ begin
         end;
       inc(q);
     end;
-end; 
- 
- 
+end;

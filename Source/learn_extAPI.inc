@@ -130,56 +130,56 @@ begin
       Result[i] := LVecCopy(v[i]);
 end;
 
-function lvec(const veclen: TLInt; const VDef: TLFloat): TLVec;
+function LVec(const veclen: TLInt; const VDef: TLFloat): TLVec;
 begin
   SetLength(Result, veclen);
   LSetVec(Result, VDef);
 end;
 
-function lvec(const veclen: TLInt): TLVec;
+function LVec(const veclen: TLInt): TLVec;
 begin
   SetLength(Result, veclen);
 end;
 
-function lvec(const v: TLVec): TPascalString;
+function LVec(const v: TLVec): TPascalString;
 begin
   Result := TKDTree.KDTreeVec(v);
 end;
 
-function lvec(const M: TLMatrix; const veclen: TLInt): TLVec;
+function LVec(const M: TLMatrix; const veclen: TLInt): TLVec;
 var
-  i, j, ID: TLInt;
+  i, j, ii: TLInt;
 begin
-  ID := 0;
-  Result := lvec(veclen);
+  ii := 0;
+  Result := LVec(veclen);
   for i := 0 to length(M) - 1 do
     for j := 0 to length(M[i]) - 1 do
-      if ID < veclen then
+      if ii < veclen then
         begin
-          Result[ID] := M[i, j];
-          inc(ID);
+          Result[ii] := M[i, j];
+          inc(ii);
         end
       else
           Exit;
 end;
 
-function lvec(const M: TLMatrix): TLVec;
+function LVec(const M: TLMatrix): TLVec;
 var
   i, L: TLInt;
 begin
   L := 0;
   for i := 0 to length(M) - 1 do
       inc(L, length(M[i]));
-  Result := lvec(M, L);
+  Result := LVec(M, L);
 end;
 
-function lvec(const s: TPascalString; const veclen: TLInt): TLVec;
+function LVec(const s: TPascalString; const veclen: TLInt): TLVec;
 var
   i: TLInt;
   v: TLVec;
 begin
   v := TKDTree.KDTreeVec(s.Text);
-  Result := lvec(veclen);
+  Result := LVec(veclen);
   for i := 0 to length(v) - 1 do
     if i < veclen then
         Result[i] := v[i]
@@ -187,7 +187,7 @@ begin
         Break;
 end;
 
-function lvec(const v: TLVec; const ShortFloat: Boolean): TPascalString;
+function LVec(const v: TLVec; const ShortFloat: Boolean): TPascalString;
 var
   i: TLInt;
 begin
@@ -204,7 +204,7 @@ begin
     end;
 end;
 
-function lvec(const M: TLBMatrix; const veclen: TLInt): TLBVec;
+function LVec(const M: TLBMatrix; const veclen: TLInt): TLBVec;
 var
   i, j, ID: TLInt;
 begin
@@ -221,17 +221,17 @@ begin
           Exit;
 end;
 
-function lvec(const M: TLBMatrix): TLBVec;
+function LVec(const M: TLBMatrix): TLBVec;
 var
   i, L: TLInt;
 begin
   L := 0;
   for i := 0 to length(M) - 1 do
       inc(L, length(M[i]));
-  Result := lvec(M, L);
+  Result := LVec(M, L);
 end;
 
-function lvec(const M: TLIMatrix; const veclen: TLInt): TLIVec;
+function LVec(const M: TLIMatrix; const veclen: TLInt): TLIVec;
 var
   i, j, ID: TLInt;
 begin
@@ -248,19 +248,19 @@ begin
           Exit;
 end;
 
-function lvec(const M: TLIMatrix): TLIVec;
+function LVec(const M: TLIMatrix): TLIVec;
 var
   i, L: TLInt;
 begin
   L := 0;
   for i := 0 to length(M) - 1 do
       inc(L, length(M[i]));
-  Result := lvec(M, L);
+  Result := LVec(M, L);
 end;
 
 function LSpearmanVec(const M: TLMatrix; const veclen: TLInt): TLVec;
 begin
-  Result := lvec(M, veclen);
+  Result := LVec(M, veclen);
   SpearmanRank(Result, length(Result));
 end;
 
@@ -476,7 +476,7 @@ var
 begin
   f := TFeature.CreateWithRaster(mr);
   for i := 0 to f.Count - 1 do
-      ln.AddMemory(f[i]^.descriptor, lOut);
+      ln.AddMemory(Descriptor2LVec(f[i]^.descriptor), lOut);
   DisposeObject(f);
 end;
 

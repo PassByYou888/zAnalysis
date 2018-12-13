@@ -1,11 +1,10 @@
-
 function VectorNorm2(const x: TLVec; const i1, i2: TLInt): TLFloat;
 var
-  n    : TLInt;
-  ix   : TLInt;
+  n: TLInt;
+  ix: TLInt;
   ABSXI: TLFloat;
-  SCL  : TLFloat;
-  SSQ  : TLFloat;
+  SCL: TLFloat;
+  SSQ: TLFloat;
 begin
   n := i2 - i1 + 1;
   if n < 1 then
@@ -148,12 +147,12 @@ end;
 
 procedure InplaceTranspose(var a: TLMatrix; const i1, i2, j1, j2: TLInt; var Work: TLVec);
 var
-  i  : TLInt;
-  j  : TLInt;
+  i: TLInt;
+  j: TLInt;
   IPS: TLInt;
   JPS: TLInt;
-  L  : TLInt;
-  i_ : TLInt;
+  L: TLInt;
+  i_: TLInt;
   i1_: TLInt;
 begin
   if (i1 > i2) or (j1 > j2) then
@@ -186,8 +185,8 @@ procedure CopyAndTranspose(const a: TLMatrix; IS1, IS2, JS1, JS2: TLInt;
 var
   isrc: TLInt;
   jdst: TLInt;
-  i_  : TLInt;
-  i1_ : TLInt;
+  i_: TLInt;
+  i1_: TLInt;
 begin
   if (IS1 > IS2) or (JS1 > JS2) then
       Exit;
@@ -295,10 +294,10 @@ end;
 
 function Pythag2(x: TLFloat; y: TLFloat): TLFloat;
 var
-  w   : TLFloat;
+  w: TLFloat;
   XABS: TLFloat;
   YABS: TLFloat;
-  z   : TLFloat;
+  z: TLFloat;
 begin
   XABS := AbsReal(x);
   YABS := AbsReal(y);
@@ -316,10 +315,7 @@ end;
 
 procedure MatrixMatrixMultiply(const a: TLMatrix; const AI1, AI2, AJ1, AJ2: TLInt; const TransA: Boolean;
   const b: TLMatrix; const BI1, BI2, BJ1, BJ2: TLInt; const TransB: Boolean;
-  const alpha: TLFloat;
-  var c: TLMatrix; const CI1, CI2, CJ1, CJ2: TLInt;
-  const beta: TLFloat;
-  var Work: TLVec);
+  const alpha: TLFloat; var c: TLMatrix; const CI1, CI2, CJ1, CJ2: TLInt; const beta: TLFloat; var Work: TLVec);
 var
   ARows: TLInt;
   ACols: TLInt;
@@ -327,14 +323,14 @@ var
   BCols: TLInt;
   CRows: TLInt;
   CCols: TLInt;
-  i    : TLInt;
-  j    : TLInt;
-  k    : TLInt;
-  L    : TLInt;
-  r    : TLInt;
-  v    : TLFloat;
-  i_   : TLInt;
-  i1_  : TLInt;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
+  L: TLInt;
+  r: TLInt;
+  v: TLFloat;
+  i_: TLInt;
+  i1_: TLInt;
 begin
 
   //
@@ -437,8 +433,7 @@ begin
               while L <= AI2 do
                 begin
                   v := APVDotProduct(@a[L][0], AJ1, AJ2, @b[r][0], BJ1, BJ2);
-                  c[CI1 + L - AI1, CJ1 + r - BI1] := c[CI1 + L - AI1, CJ1 + r - BI1]
-                    + alpha * v;
+                  c[CI1 + L - AI1, CJ1 + r - BI1] := c[CI1 + L - AI1, CJ1 + r - BI1] + alpha * v;
                   inc(L);
                 end;
               inc(r);
@@ -454,8 +449,7 @@ begin
               while r <= BI2 do
                 begin
                   v := APVDotProduct(@a[L][0], AJ1, AJ2, @b[r][0], BJ1, BJ2);
-                  c[CI1 + L - AI1, CJ1 + r - BI1] := c[CI1 + L - AI1, CJ1 + r - BI1]
-                    + alpha * v;
+                  c[CI1 + L - AI1, CJ1 + r - BI1] := c[CI1 + L - AI1, CJ1 + r - BI1] + alpha * v;
                   inc(r);
                 end;
               inc(L);
@@ -533,8 +527,7 @@ begin
               while r <= BI2 do
                 begin
                   v := APVDotProduct(@Work[0], 1, k, @b[r][0], BJ1, BJ2);
-                  c[CI1 + L - AJ1, CJ1 + r - BI1] := c[CI1 + L - AJ1, CJ1 + r - BI1]
-                    + alpha * v;
+                  c[CI1 + L - AJ1, CJ1 + r - BI1] := c[CI1 + L - AJ1, CJ1 + r - BI1] + alpha * v;
                   inc(r);
                 end;
               inc(L);
@@ -542,6 +535,4 @@ begin
           Exit;
         end;
     end;
-end; 
- 
- 
+end;

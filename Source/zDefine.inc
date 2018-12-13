@@ -11,7 +11,7 @@
   {$MODE objfpc}
   {$MODESWITCH AdvancedRecords}
   {$NOTES OFF}
-  {$STACKFRAMES ON}
+  {$STACKFRAMES OFF}
 
   {$DEFINE LITTLE_ENDIAN}
   {$UNDEF BIG_ENDIAN}
@@ -26,6 +26,13 @@
   {$UNDEF FastMD5}
   {$DEFINE parallel}
   {$DEFINE OptimizationMemoryStreamMD5}
+
+  // With LARGE_FONT, boot-time memory usage increase by 100M-200M and start-up time to be delay 100ms
+  // {$DEFINE LARGE_FONT}
+
+  // ZDB_BACKUP is automatically made and replica caching is enabled.
+  // usage ZDB_BACKUP so slows the open of large size ZDB file, after time, but does is high performance.
+  // {$DEFINE ZDB_BACKUP}
 
   // used Critical Simulate Atomic with TMonitor.Enter(obj) and TMonitor.Exit(obj)
   // CriticalSimulateAtomic defined so performance to be reduced
@@ -63,6 +70,13 @@
   {$DEFINE parallel}
   {$DEFINE OptimizationMemoryStreamMD5}
 
+  // With LARGE_FONT, boot-time memory usage increase by 100M-200M and start-up time to be delay 100ms
+  // {$DEFINE LARGE_FONT}
+
+  // ZDB_BACKUP is automatically made and replica caching is enabled.
+  // usage ZDB_BACKUP so slows the open of large size ZDB file, after time, but does is high performance.
+  // {$DEFINE ZDB_BACKUP}
+
   // used Critical Simulate Atomic with TMonitor.Enter(obj) and TMonitor.Exit(obj)
   // CriticalSimulateAtomic defined so performance to be reduced
   // {$DEFINE CriticalSimulateAtomic}
@@ -82,11 +96,14 @@
     {$R-} { range check }
     {$I-} { Input output checking }
     {$O+} { optimization }
+    {$INLINE AUTO} { call inline automated }
+    {$C-} { Assertions }
   {$ELSE}
     {$UNDEF INLINE_ASM}
-    {$R-} { range check }
-    {$I-} { Input output checking }
-    {$O+} { optimization }
+    {$R+} { range check }
+    {$I+} { Input output checking }
+    {$O-} { optimization }
+    {$C+} { Assertions }
   {$ENDIF}
 
   {$IF Defined(Android) or Defined(IOS)}

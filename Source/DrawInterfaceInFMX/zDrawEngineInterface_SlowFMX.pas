@@ -404,7 +404,7 @@ var
   Surf: TBitmapSurface;
 begin
   if umlMultipleMatch(['.bmp'], fileExt) then
-      b.SaveToBmpStream(DestStream)
+      b.SaveToBmp32Stream(DestStream)
   else
     begin
       Surf := TBitmapSurface.Create;
@@ -422,7 +422,7 @@ var
   Surf: TBitmapSurface;
 begin
   if umlMultipleMatch(['.bmp'], fileExt) then
-      b.SaveToBmpStream(DestStream)
+      b.SaveToBmp32Stream(DestStream)
   else if umlMultipleMatch(['.seq'], fileExt) then
       b.SaveToStream(DestStream)
   else

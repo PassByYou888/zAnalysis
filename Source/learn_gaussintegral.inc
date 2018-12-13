@@ -1104,9 +1104,9 @@ var
   tmp: TLFloat;
 begin
   Assert((n = 15) or (n = 21) or (n = 31) or (n = 41) or (n = 51) or (n = 61), 'GKQNodesTbl: incorrect N!');
-  SetLength(x, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(WKronrod, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(WGauss, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(x, n  );
+  SetLength(WKronrod, n  );
+  SetLength(WGauss, n  );
   i := 0;
   while i <= n - 1 do
     begin

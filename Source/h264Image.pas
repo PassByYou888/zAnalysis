@@ -78,7 +78,7 @@ end;
 
 destructor TPlanarImage.Destroy;
 begin
-  FreeMem(plane[0]);
+  FreeMemory(plane[0]);
   inherited Destroy;
 end;
 

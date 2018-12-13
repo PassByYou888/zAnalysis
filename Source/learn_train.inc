@@ -72,7 +72,6 @@ procedure MLPKFoldCVLM(const Network: TMultiLayerPerceptron;
   Restarts: TLInt; FoldsCount: TLInt; var Info: TLInt;
   var Rep: TMLPReport; var CVRep: TMLPCVReport); forward;
 
-
 type
   TMLPProcessData = record
     TotalRestarts: TLInt;
@@ -94,7 +93,6 @@ procedure MLPKFoldCVGeneral(const n: TMultiLayerPerceptron;
 procedure MLPKFoldSplit(const xy: TLMatrix; NPoints: TLInt;
   NClasses: TLInt; FoldsCount: TLInt; StratifiedSplits: Boolean;
   var Folds: TLIVec); forward;
-
 
 (* ************************************************************************
   //  Neural network training using modified Levenberg-Marquardt with exact
@@ -124,43 +122,43 @@ procedure MLPTrainLM(var Network: TMultiLayerPerceptron; const xy: TLMatrix;
   NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
   var Info: TLInt; var Rep: TMLPReport);
 var
-  NIn        : TLInt;
-  NOut       : TLInt;
-  WCount     : TLInt;
-  LMFTol     : TLFloat;
-  LMStepTol  : TLFloat;
-  i          : TLInt;
-  k          : TLInt;
-  v          : TLFloat;
-  E          : TLFloat;
-  ENew       : TLFloat;
-  XNorm2     : TLFloat;
-  StepNorm   : TLFloat;
-  g          : TLVec;
-  d          : TLVec;
-  h          : TLMatrix;
-  HMod       : TLMatrix;
-  z          : TLMatrix;
-  SPD        : Boolean;
-  Nu         : TLFloat;
-  LAMBDA     : TLFloat;
-  LambdaUp   : TLFloat;
-  LambdaDown : TLFloat;
+  NIn: TLInt;
+  NOut: TLInt;
+  WCount: TLInt;
+  LMFTol: TLFloat;
+  LMStepTol: TLFloat;
+  i: TLInt;
+  k: TLInt;
+  v: TLFloat;
+  E: TLFloat;
+  ENew: TLFloat;
+  XNorm2: TLFloat;
+  StepNorm: TLFloat;
+  g: TLVec;
+  d: TLVec;
+  h: TLMatrix;
+  HMod: TLMatrix;
+  z: TLMatrix;
+  SPD: Boolean;
+  Nu: TLFloat;
+  LAMBDA: TLFloat;
+  LambdaUp: TLFloat;
+  LambdaDown: TLFloat;
   InternalRep: TMinLBFGSReport;
-  State      : TMinLBFGSState;
-  x          : TLVec;
-  y          : TLVec;
-  WBase      : TLVec;
-  WDir       : TLVec;
-  WT         : TLVec;
-  Wx         : TLVec;
-  pass       : TLInt;
-  WBest      : TLVec;
-  EBest      : TLFloat;
-  InvInfo    : TLInt;
-  InvRep     : TMatInvReport;
-  SolverInfo : TLInt;
-  SolverRep  : TDenseSolverReport;
+  State: TMinLBFGSState;
+  x: TLVec;
+  y: TLVec;
+  WBase: TLVec;
+  WDir: TLVec;
+  WT: TLVec;
+  Wx: TLVec;
+  pass: TLInt;
+  WBest: TLVec;
+  EBest: TLFloat;
+  InvInfo: TLInt;
+  InvRep: TMatInvReport;
+  SolverInfo: TLInt;
+  SolverRep: TDenseSolverReport;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
   LambdaUp := 10;
@@ -461,12 +459,8 @@ end;
   Network     -   neural network with initialized geometry
   XY          -   training set
   NPoints     -   training set size
-  Decay       -   weight decay constant, >=0.001
-  Decay term 'Decay*||Weights||^2' is added to error
-  function.
-  If you don't know what Decay to choose, use 0.001.
-  Restarts    -   number of restarts from random position, >0.
-  If you don't know what Restarts to choose, use 2.
+  Decay       -   weight decay constant, >=0.001 Decay term 'Decay*||Weights||^2' is added to error function. If you don't know what Decay to choose, use 0.001.
+  Restarts    -   number of restarts from random position, >0. If you don't know what Restarts to choose, use 2.
 
   OUTPUT PARAMETERS:
   Network     -   trained neural network.
@@ -481,26 +475,26 @@ procedure MLPTrainLM_MT(var Network: TMultiLayerPerceptron; const xy: TLMatrix;
   NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
   var Info: TLInt; var Rep: TMLPReport);
 var
-  i        : TLInt;
-  NIn      : TLInt;
-  NOut     : TLInt;
-  WCount   : TLInt;
+  i: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
+  WCount: TLInt;
   LMStepTol: TLFloat;
 
-  LAMBDA    : TLFloat;
-  LambdaUp  : TLFloat;
+  LAMBDA: TLFloat;
+  LambdaUp: TLFloat;
   LambdaDown: TLFloat;
 
   WBest: TLVec;
   EBest: TLFloat;
 
-  zLock  : TCriticalSection;
-  RepPtr : ^TMLPReport;
+  zLock: TCriticalSection;
+  RepPtr: ^TMLPReport;
   InfoPtr: ^TLInt;
 
   NetworkPtr: PMultiLayerPerceptron;
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
   procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer;
     Item: TMultiThreadProcItem);
   var
@@ -510,34 +504,34 @@ var
     // Y: TLVec;
     // D: TLVec;
     // Z: TLMatrix;
-    InvInfo    : TLInt;
+    InvInfo: TLInt;
     InternalRep: TMinLBFGSReport;
-    SolverRep  : TDenseSolverReport;
-    SolverInfo : TLInt;
-    InvRep     : TMatInvReport;
-    WT         : TLVec;
-    WDir       : TLVec;
-    State      : TMinLBFGSState;
-    WBase      : TLVec;
-    Nu         : TLFloat;
-    SPD        : Boolean;
-    HMod       : TLMatrix;
-    h          : TLMatrix;
-    g          : TLVec;
-    StepNorm   : TLFloat;
-    XNorm2     : TLFloat;
-    ENew       : TLFloat;
-    E          : TLFloat;
-    v          : TLFloat;
-    k          : TLInt;
+    SolverRep: TDenseSolverReport;
+    SolverInfo: TLInt;
+    InvRep: TMatInvReport;
+    WT: TLVec;
+    WDir: TLVec;
+    State: TMinLBFGSState;
+    WBase: TLVec;
+    Nu: TLFloat;
+    SPD: Boolean;
+    HMod: TLMatrix;
+    h: TLMatrix;
+    g: TLVec;
+    StepNorm: TLFloat;
+    XNorm2: TLFloat;
+    ENew: TLFloat;
+    E: TLFloat;
+    v: TLFloat;
+    k: TLInt;
   begin
 
-    SetLength(WT, WCount (* - 1 + 1 // optimized compiler *) );
-    SetLength(WDir, WCount (* - 1 + 1 // optimized compiler *) );
-    SetLength(WBase, WCount (* - 1 + 1 // optimized compiler *) );
-    SetLength(HMod, WCount (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
-    SetLength(h, WCount (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
-    SetLength(g, WCount (* - 1 + 1 // optimized compiler *) );
+    SetLength(WT, WCount);
+    SetLength(WDir, WCount);
+    SetLength(WBase, WCount);
+    SetLength(HMod, WCount, WCount);
+    SetLength(h, WCount, WCount);
+    SetLength(g, WCount);
 
     MLPCopy(NetworkPtr^, NetworkCopy);
     //
@@ -836,7 +830,7 @@ begin
   // Prepare task and network. Allocate space.
   //
   MLPInitPreprocessor(Network, xy, NPoints);
-  SetLength(WBest, WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(WBest, WCount);
   EBest := MaxRealNumber;
 
   //
@@ -847,9 +841,9 @@ begin
   InfoPtr := @Info;
   zLock := TCriticalSection.Create;
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 1, PtrInt(Restarts));
-  {$ELSE}
+{$ELSE}
   TParallel.for(1, Restarts, procedure(pass: TLInt)
     var
       _Parallel_I: TLInt;
@@ -880,12 +874,12 @@ begin
       k: TLInt;
     begin
 
-      SetLength(WT, WCount (* - 1 + 1 // optimized compiler *) );
-      SetLength(WDir, WCount (* - 1 + 1 // optimized compiler *) );
-      SetLength(WBase, WCount (* - 1 + 1 // optimized compiler *) );
-      SetLength(HMod, WCount (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
-      SetLength(h, WCount (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
-      SetLength(g, WCount (* - 1 + 1 // optimized compiler *) );
+      SetLength(WT, WCount);
+      SetLength(WDir, WCount);
+      SetLength(WBase, WCount);
+      SetLength(HMod, WCount, WCount);
+      SetLength(h, WCount, WCount);
+      SetLength(g, WCount);
 
       MLPCopy(NetworkPtr^, NetworkCopy);
       //
@@ -1141,7 +1135,7 @@ begin
       SetLength(g, 0);
       MLPFree(NetworkCopy);
     end);
-  {$ENDIF FPC}
+{$ENDIF FPC}
   zLock.Free;
 
   //
@@ -1164,11 +1158,8 @@ end;
   NPoints     -   training set size
   Decay       -   weight decay constant, >=0.001 Decay term 'Decay*||Weights||^2' is added to error function. If you don't know what Decay to choose, use 0.001.
   Restarts    -   number of restarts from random position, >0. If you don't know what Restarts to choose, use 2.
-  WStep       -   stopping criterion. Algorithm stops if  step  size  is less than WStep. Recommended value - 0.01.
-  Zero  step size means stopping after MaxIts iterations.
-  MaxIts      -   stopping   criterion.  Algorithm  stops  after  MaxIts
-  iterations (NOT gradient  calculations).  Zero  MaxIts
-  means stopping when step is sufficiently small.
+  WStep       -   stopping criterion. Algorithm stops if  step  size  is less than WStep. Recommended value - 0.01. Zero  step size means stopping after MaxIts iterations.
+  MaxIts      -   stopping   criterion. Algorithm stops after MaxIts iterations (NOT gradient calculations). Zero MaxIts means stopping when step is sufficiently small.
 
   OUTPUT PARAMETERS:
   Network     -   trained neural network.
@@ -1185,17 +1176,17 @@ Restarts: TLInt; WStep: TLFloat; MAXITS: TLInt;
 var Info: TLInt; var Rep: TMLPReport; IsTerminated: PBoolean;
 out EBest: TLFloat);
 var
-  i          : TLInt;
-  pass       : TLInt;
-  NIn        : TLInt;
-  NOut       : TLInt;
-  WCount     : TLInt;
-  w          : TLVec;
-  WBest      : TLVec;
-  E          : TLFloat;
-  v          : TLFloat;
+  i: TLInt;
+  pass: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
+  WCount: TLInt;
+  w: TLVec;
+  WBest: TLVec;
+  E: TLFloat;
+  v: TLFloat;
   InternalRep: TMinLBFGSReport;
-  State      : TMinLBFGSState;
+  State: TMinLBFGSState;
 begin
 
   EBest := MaxDouble;
@@ -1234,8 +1225,8 @@ begin
   // Prepare
   //
   MLPInitPreprocessor(Network, xy, NPoints);
-  SetLength(w, WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(WBest, WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(w, WCount);
+  SetLength(WBest, WCount);
   EBest := MaxRealNumber;
 
   //
@@ -1296,30 +1287,30 @@ const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
 Restarts: TLInt; WStep: TLFloat; MAXITS: TLInt;
 var Info: TLInt; var Rep: TMLPReport);
 var
-  i     : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
-  WBest : TLVec;
-  EBest : TLFloat;
+  WBest: TLVec;
+  EBest: TLFloat;
 
-  zLock       : TCriticalSection;
-  NetworkPtr  : PMultiLayerPerceptron;
-  RepCopy     : TMLPReport;
+  zLock: TCriticalSection;
+  NetworkPtr: PMultiLayerPerceptron;
+  RepCopy: TMLPReport;
   zProcessData: PMLPProcessData;
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
   procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer;
   Item: TMultiThreadProcItem);
   var
-    E          : TLFloat;
-    v          : TLFloat;
-    w          : TLVec;
-    State      : TMinLBFGSState;
+    E: TLFloat;
+    v: TLFloat;
+    w: TLVec;
+    State: TMinLBFGSState;
     InternalRep: TMinLBFGSReport;
     NetworkCopy: TMultiLayerPerceptron;
   begin
-    SetLength(w, WCount (* - 1 + 1 // optimized compiler *) );
+    SetLength(w, WCount);
     MLPCopy(NetworkPtr^, NetworkCopy);
 
     //
@@ -1351,7 +1342,8 @@ var
     if AP_FP_Less(E, EBest) then
       begin
         zLock.Enter;
-        APVMove(@WBest[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1); EBest := E;
+        APVMove(@WBest[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
+        EBest := E;
         zProcessData^.EBest := EBest;
         zLock.Leave;
       end;
@@ -1401,7 +1393,7 @@ begin
   // Prepare
   //
   MLPInitPreprocessor(Network, xy, NPoints);
-  SetLength(WBest, WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(WBest, WCount);
   EBest := MaxRealNumber;
   new(zProcessData);
   zProcessData^.TotalRestarts := Restarts;
@@ -1420,9 +1412,9 @@ begin
   zLock := TCriticalSection.Create;
 
   try
-    {$IFDEF FPC}
+{$IFDEF FPC}
     ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 1, PtrInt(Restarts));
-    {$ELSE}
+{$ELSE}
     TParallel.for(1, Restarts, procedure(pass: TLInt)
       var
         E: TLFloat;
@@ -1432,7 +1424,7 @@ begin
         InternalRep: TMinLBFGSReport;
         NetworkCopy: TMultiLayerPerceptron;
       begin
-        SetLength(w, WCount (* - 1 + 1 // optimized compiler *) );
+        SetLength(w, WCount);
         MLPCopy(NetworkPtr^, NetworkCopy);
 
         //
@@ -1476,7 +1468,7 @@ begin
         if zProcessData.IsTerminated then
             Exit;
       end);
-    {$ENDIF FPC}
+{$ENDIF FPC}
   finally
     zLock.Free;
     Dispose(zProcessData);
@@ -1499,34 +1491,34 @@ const xy: TLMatrix; NPoints: TLInt; Restarts: TLInt;
 WStep, Diameter: TLFloat; MAXITS: TLInt; var Info: TLInt;
 var Rep: TMLPReport);
 var
-  i     : TLInt;
-  NIn   : TLInt;
-  NOut  : TLInt;
+  i: TLInt;
+  NIn: TLInt;
+  NOut: TLInt;
   WCount: TLInt;
-  WBest : TLVec;
-  EBest : TLFloat;
+  WBest: TLVec;
+  EBest: TLFloat;
 
-  zLock     : TCriticalSection;
+  zLock: TCriticalSection;
   NetworkPtr: PMultiLayerPerceptron;
-  RepCopy   : TMLPReport;
-  {$IFDEF FPC}
+  RepCopy: TMLPReport;
+{$IFDEF FPC}
   procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer;
   Item: TMultiThreadProcItem);
   var
-    Ebegin     : TLFloat; { the initial error }
-    E          : TLFloat;
-    v          : TLFloat;
-    w          : TLVec;
-    State      : TMinLBFGSState;
+    Ebegin: TLFloat; { the initial error }
+    E: TLFloat;
+    v: TLFloat;
+    w: TLVec;
+    State: TMinLBFGSState;
     InternalRep: TMinLBFGSReport;
     NetworkCopy: TMultiLayerPerceptron;
-    Decay      : TLFloat;
-    Iteration  : TLInt;
+    Decay: TLFloat;
+    Iteration: TLInt;
   begin
     try
       Decay := 1;
       Iteration := 0;
-      SetLength(w, WCount (* - 1 + 1 // optimized compiler *) );
+      SetLength(w, WCount);
       MLPCopy(NetworkPtr^, NetworkCopy);
 
       //
@@ -1632,7 +1624,7 @@ begin
   // Prepare
   //
   MLPInitPreprocessor(Network, xy, NPoints);
-  SetLength(WBest, WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(WBest, WCount);
   EBest := MaxRealNumber;
 
   //
@@ -1646,9 +1638,9 @@ begin
   RepCopy := Rep;
   zLock := TCriticalSection.Create;
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
   ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 1, PtrInt(Restarts));
-  {$ELSE}
+{$ELSE}
   TParallel.for(1, Restarts, procedure(pass: TLInt)
     var
       Ebegin: TLFloat; { the initial error }
@@ -1664,7 +1656,7 @@ begin
       try
         Decay := 1;
         Iteration := 0;
-        SetLength(w, WCount (* - 1 + 1 // optimized compiler *) );
+        SetLength(w, WCount);
         MLPCopy(NetworkPtr^, NetworkCopy);
 
         //
@@ -1730,7 +1722,7 @@ begin
       end;
 
     end);
-  {$ENDIF FPC}
+{$ENDIF FPC}
   zLock.Free;
 
   //
@@ -1745,16 +1737,16 @@ procedure MLPTrainMonteCarlo(var Network: TMultiLayerPerceptron; const xy: TLMat
 const MainRestarts, SubRestarts: TLInt; const MinError: TLFloat;
 Diameter: TLFloat; var Info: TLInt; var Rep: TMLPReport);
 var
-  i                : TLInt;
+  i: TLInt;
   MainPass, SubPass: TLInt;
-  NIn              : TLInt;
-  NOut             : TLInt;
-  WCount           : TLInt;
-  w                : TLVec;
-  WBest            : TLVec;
-  E                : TLFloat;
-  EBest            : TLFloat;
-  EBestSub         : TLFloat;
+  NIn: TLInt;
+  NOut: TLInt;
+  WCount: TLInt;
+  w: TLVec;
+  WBest: TLVec;
+  E: TLFloat;
+  EBest: TLFloat;
+  EBestSub: TLFloat;
 begin
 
   //
@@ -1786,8 +1778,8 @@ begin
   // Prepare
   //
   MLPInitPreprocessor(Network, xy, NPoints);
-  SetLength(w, WCount (* - 1 + 1 // optimized compler *) );
-  SetLength(WBest, WCount (* - 1 + 1 // optimized compler *) );
+  SetLength(w, WCount);
+  SetLength(WBest, WCount);
   APVFillValue(@WBest[0], 0, WCount - 1, 0);
   EBest := MaxRealNumber;
 
@@ -1909,27 +1901,27 @@ Restarts: TLInt; FoldsCount: TLInt; LMAlgorithm: Boolean;
 WStep: TLFloat; MAXITS: TLInt; var Info: TLInt;
 var Rep: TMLPReport; var CVRep: TMLPCVReport);
 var
-  i           : TLInt;
-  FOld        : TLInt;
-  j           : TLInt;
-  k           : TLInt;
-  Network     : TMultiLayerPerceptron;
-  NIn         : TLInt;
-  NOut        : TLInt;
-  RowLen      : TLInt;
-  WCount      : TLInt;
-  NClasses    : TLInt;
-  TSSize      : TLInt;
-  CVSSize     : TLInt;
-  CVSet       : TLMatrix;
-  TestSet     : TLMatrix;
-  Folds       : TLIVec;
-  RelCnt      : TLInt;
-  InternalRep : TMLPReport;
-  x           : TLVec;
-  y           : TLVec;
+  i: TLInt;
+  FOld: TLInt;
+  j: TLInt;
+  k: TLInt;
+  Network: TMultiLayerPerceptron;
+  NIn: TLInt;
+  NOut: TLInt;
+  RowLen: TLInt;
+  WCount: TLInt;
+  NClasses: TLInt;
+  TSSize: TLInt;
+  CVSSize: TLInt;
+  CVSet: TLMatrix;
+  TestSet: TLMatrix;
+  Folds: TLIVec;
+  RelCnt: TLInt;
+  InternalRep: TMLPReport;
+  x: TLVec;
+  y: TLVec;
   IsTerminated: Boolean;
-  EBest       : TLFloat;
+  EBest: TLFloat;
 begin
 
   //
@@ -1957,10 +1949,10 @@ begin
   // K-fold out cross-validation.
   // First, estimate generalization error
   //
-  SetLength(TestSet, NPoints (* - 1 + 1 // optimized compiler *) , RowLen (* - 1 + 1 // optimized compiler *) );
-  SetLength(CVSet, NPoints (* - 1 + 1 // optimized compiler *) , RowLen (* - 1 + 1 // optimized compiler *) );
-  SetLength(x, NIn (* - 1 + 1 // optimized compiler *) );
-  SetLength(y, NOut (* - 1 + 1 // optimized compiler *) );
+  SetLength(TestSet, NPoints, RowLen);
+  SetLength(CVSet, NPoints, RowLen);
+  SetLength(x, NIn);
+  SetLength(y, NOut);
   MLPKFoldSplit(xy, NPoints, NClasses, FoldsCount, False, Folds);
   CVRep.RelClsError := 0;
   CVRep.AvgCE := 0;
@@ -2126,7 +2118,7 @@ begin
   //
   // Folds
   //
-  SetLength(Folds, NPoints (* - 1 + 1 // optimized compiler *) );
+  SetLength(Folds, NPoints);
   i := 0;
   while i <= NPoints - 1 do
     begin
@@ -2145,6 +2137,4 @@ begin
         end;
       inc(i);
     end;
-end; 
- 
- 
+end;

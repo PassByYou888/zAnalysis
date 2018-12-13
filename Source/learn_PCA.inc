@@ -450,8 +450,8 @@ begin
   //
   if NPoints = 0 then
     begin
-      SetLength(s2, NVars (* - 1 + 1 // optimized compiler *) );
-      SetLength(v, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+      SetLength(s2, NVars  );
+      SetLength(v, NVars  , NVars  );
       i := 0;
       while i <= NVars - 1 do
         begin
@@ -482,8 +482,8 @@ begin
   //
   // Calculate means
   //
-  SetLength(M, NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(t, NPoints (* - 1 + 1 // optimized compiler *) );
+  SetLength(M, NVars  );
+  SetLength(t, NPoints  );
   j := 0;
   while j <= NVars - 1 do
     begin
@@ -499,7 +499,7 @@ begin
   //
   // Center, apply SVD, prepare output
   //
-  SetLength(a, Max(NPoints, NVars) (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(a, Max(NPoints, NVars)  , NVars  );
   i := 0;
   while i <= NPoints - 1 do
     begin
@@ -532,7 +532,7 @@ begin
           inc(i);
         end;
     end;
-  SetLength(v, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(v, NVars  , NVars  );
   CopyAndTranspose(VT, 0, NVars - 1, 0, NVars - 1, v, 0, NVars - 1, 0, NVars - 1);
 end; 
  

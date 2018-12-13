@@ -98,13 +98,13 @@ begin
     begin
       NRU := M;
       NCU := MinMN;
-      SetLength(u, NRU (* - 1 + 1 // optimized compiler *) , NCU (* - 1 + 1 // optimized compiler *) );
+      SetLength(u, NRU  , NCU  );
     end;
   if UNeeded = 2 then
     begin
       NRU := M;
       NCU := M;
-      SetLength(u, NRU (* - 1 + 1 // optimized compiler *) , NCU (* - 1 + 1 // optimized compiler *) );
+      SetLength(u, NRU  , NCU  );
     end;
   NRVT := 0;
   NCVT := 0;
@@ -112,13 +112,13 @@ begin
     begin
       NRVT := MinMN;
       NCVT := n;
-      SetLength(VT, NRVT (* - 1 + 1 // optimized compiler *) , NCVT (* - 1 + 1 // optimized compiler *) );
+      SetLength(VT, NRVT  , NCVT  );
     end;
   if VTNeeded = 2 then
     begin
       NRVT := n;
       NCVT := n;
-      SetLength(VT, NRVT (* - 1 + 1 // optimized compiler *) , NCVT (* - 1 + 1 // optimized compiler *) );
+      SetLength(VT, NRVT  , NCVT  );
     end;
 
   //
@@ -321,7 +321,7 @@ begin
       //
       // We can use additional memory
       //
-      SetLength(t2, MinMN (* - 1 + 1 // optimized compiler *) , M (* - 1 + 1 // optimized compiler *) );
+      SetLength(t2, MinMN  , M  );
       CopyAndTranspose(u, 0, M - 1, 0, MinMN - 1, t2, 0, MinMN - 1, 0, M - 1);
       Result := RMatrixBDSVD(w, E, MinMN, IsUpper, False, u, 0, t2, M, VT, NCVT);
       CopyAndTranspose(t2, 0, MinMN - 1, 0, M - 1, u, 0, M - 1, 0, MinMN - 1);

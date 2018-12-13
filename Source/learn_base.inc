@@ -579,7 +579,7 @@ begin
   //
   // General case, N>1: prepare permutations table P1
   //
-  SetLength(p1, n (* - 1 + 1 // optimized compler *) );
+  SetLength(p1, n);
   i := 0;
   while i <= n - 1 do
     begin
@@ -604,9 +604,9 @@ begin
   // and Right, which is given by RP/RV
   // and updating PV[] and VP[] correspondingly.
   //
-  SetLength(PV, n (* - 1 + 1 // optimized compler *) );
-  SetLength(VP, n (* - 1 + 1 // optimized compler *) );
-  SetLength(p2, n (* - 1 + 1 // optimized compler *) );
+  SetLength(PV, n);
+  SetLength(VP, n);
+  SetLength(p2, n);
   i := 0;
   while i <= n - 1 do
     begin
@@ -1122,6 +1122,4 @@ begin
   b[n - 1] := b[0];
   n := n - 1;
   TagHeapReplaceTopI(a, b, n, VA, VB);
-end; 
- 
- 
+end;

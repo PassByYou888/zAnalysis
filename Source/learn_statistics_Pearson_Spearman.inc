@@ -127,8 +127,8 @@ begin
   if n < 1 then
       Exit;
 
-  SetLength(r, n (* - 1 + 1 // optimized compiler *) );
-  SetLength(c, n (* - 1 + 1 // optimized compiler *) );
+  SetLength(r, n  );
+  SetLength(c, n  );
   i := 0;
   while i <= n - 1 do
     begin

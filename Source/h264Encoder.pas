@@ -261,8 +261,7 @@ end;
 procedure TFevh264Encoder.GetLastFrameSSD(out ssd: array of Int64_t);
 begin
   case length(ssd) of
-    0:
-      ;
+    0:;
     1 .. 2:
       ssd[0] := fenc.stats.ssd[0];
     else
@@ -322,6 +321,4 @@ finalization
 
 DisposeObject(DSP);
 
-end.  
- 
- 
+end.

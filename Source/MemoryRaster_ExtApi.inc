@@ -210,6 +210,52 @@ begin
   TRasterColorEntry(Result).a := TRasterColorEntry(sour).a;
 end;
 
+function RGBA2RGB(const sour: TRasterColor): TRGB;
+begin
+  Result[0] := TRasterColorEntry(sour).Buffer[0];
+  Result[1] := TRasterColorEntry(sour).Buffer[1];
+  Result[2] := TRasterColorEntry(sour).Buffer[2];
+end;
+
+function RGBA2BGR(const sour: TRasterColor): TRGB;
+begin
+  Result[0] := TRasterColorEntry(sour).Buffer[2];
+  Result[1] := TRasterColorEntry(sour).Buffer[1];
+  Result[2] := TRasterColorEntry(sour).Buffer[0];
+end;
+
+function RGB2BGR(const sour: TRGB): TRGB;
+begin
+  Result[0] := sour[2];
+  Result[1] := sour[1];
+  Result[2] := sour[0];
+end;
+
+function BGR2RGB(const sour: TRGB): TRGB;
+begin
+  Result[0] := sour[2];
+  Result[1] := sour[1];
+  Result[2] := sour[0];
+end;
+
+function RGB2RGBA(const sour: TRGB): TRasterColor;
+begin
+  TRasterColorEntry(Result).Buffer[0] := sour[0];
+  TRasterColorEntry(Result).Buffer[1] := sour[1];
+  TRasterColorEntry(Result).Buffer[2] := sour[2];
+  TRasterColorEntry(Result).Buffer[3] := $FF;
+end;
+
+procedure SwapBR(var sour: TRGB);
+begin
+  CoreClasses.Swap(sour[0], sour[2]);
+end;
+
+procedure SwapBR(var sour: TRasterColor);
+begin
+  CoreClasses.Swap(TRasterColorEntry(sour).r, TRasterColorEntry(sour).b);
+end;
+
 function AggColor(const Value: TRasterColor): TAggColorRgba8;
 begin
   Result.r := TRasterColorEntry(Value).r;
@@ -465,7 +511,7 @@ end;
 
 procedure GaussianBlur(Source, dest: TMemoryRaster; radius: Double; const Bounds: TRect);
 const
-  ChannelSize     = 256;
+  ChannelSize = 256;
   ChannelSizeMin1 = ChannelSize - 1;
 type
   TSumRecInt64 = record
@@ -615,7 +661,7 @@ end;
 
 procedure GrayscaleBlur(Source, dest: TMemoryRaster; radius: Double; const Bounds: TRect);
 const
-  ChannelSize     = 256; // ie 1 byte for each of A,R,G & B in TRasterColor
+  ChannelSize = 256; // ie 1 byte for each of A,R,G & B in TRasterColor
   ChannelSizeMin1 = ChannelSize - 1;
 type
   TSumRecInt64 = record
@@ -990,8 +1036,8 @@ const
     1, 0, 0, 0, 1,
     1, 1, 1, 1, 1);
 
-  SHARPEN_MATRIX_1: array [0 .. 9] of Integer    = (-1, -2, -1, -2, 28, -2, -1, -2, -1, 16);
-  SHARPEN_MATRIX_2: array [0 .. 9] of Integer    = (-2, -1, -2, -1, 28, -1, -2, -1, -2, 16);
+  SHARPEN_MATRIX_1: array [0 .. 9] of Integer = (-1, -2, -1, -2, 28, -2, -1, -2, -1, 16);
+  SHARPEN_MATRIX_2: array [0 .. 9] of Integer = (-2, -1, -2, -1, 28, -1, -2, -1, -2, 16);
   SHARPEN_MORE_MATRIX: array [0 .. 9] of Integer = (0, -1, 0, -1, 6, -1, 0, -1, 0, 2);
 
 var
@@ -1164,7 +1210,7 @@ end;
 
 procedure CheckParams(Src, Dst: TMemoryRaster; ResizeDst: Boolean = True);
 const
-  SEmptySource      = 'The source is nil';
+  SEmptySource = 'The source is nil';
   SEmptyDestination = 'Destination is nil';
 begin
   if not Assigned(Src) then
@@ -1772,6 +1818,8 @@ var
   Info: TJlsParameters;
 begin
   LInput := TMemoryStream64.Create;
+  LInput.Size := ARaster.width * ARaster.height * 3;
+  LInput.Position := 0;
   FillPtrByte(@Info, SizeOf(Info), 0);
 
   try
@@ -2176,5 +2224,89 @@ begin
     Stats.AccumulatedCounts := AccumulatedCounts;
     Stats.TestedPixels := AccumulatedCounts div AlphaSteps;
   *)
+end;
 
+procedure YV12ToRasterization(sour: TCoreClassStream; dest: TMemoryRaster);
+var
+  head: TYV12Head;
+  nStream: TMemoryStream64;
+  needFree: Boolean;
+  memsiz: NativeUInt;
+  luma_ptr, u_ptr, v_ptr: PByte;
+  stride, stride_c: Integer;
+begin
+  if sour.read(head, SizeOf(head)) <> SizeOf(head) then
+      Exit;
+
+  if head.Version <> 10 then
+      Exit;
+
+  if Boolean(head.Compessed) then
+    begin
+      nStream := TMemoryStream64.Create;
+      DecompressStream(sour, nStream);
+      luma_ptr := nStream.Memory;
+      needFree := False;
+    end
+  else if sour is TMemoryStream64 then
+    begin
+      luma_ptr := TMemoryStream64(sour).PositionAsPtr;
+      needFree := False;
+    end
+  else
+    begin
+      memsiz := head.width * head.height + (head.width * head.height) div 2;
+      luma_ptr := GetMemory(memsiz);
+      sour.read(luma_ptr^, memsiz);
+      needFree := True;
+    end;
+
+  u_ptr := luma_ptr;
+  inc(u_ptr, head.width * head.height);
+  v_ptr := u_ptr;
+  inc(v_ptr, (head.width * head.height) div 4);
+  stride := head.width;
+  stride_c := head.width div 2;
+  YV12ToRaster(luma_ptr, u_ptr, v_ptr, head.width, head.height, stride, stride_c, dest, False, True);
+
+  if needFree then
+      FreeMemory(luma_ptr);
+
+  if Boolean(head.Compessed) then
+      DisposeObject(nStream);
+end;
+
+procedure RasterizationToYV12(Compressed: Boolean; sour: TMemoryRaster; dest: TCoreClassStream);
+var
+  head: TYV12Head;
+  memsiz: NativeUInt;
+  luma_ptr, u_ptr, v_ptr: PByte;
+  m64: TMemoryStream64;
+begin
+  head.Version := 10;
+  head.Compessed := Byte(Compressed);
+  head.width := sour.width;
+  head.height := sour.height;
+
+  memsiz := head.width * head.height + (head.width * head.height) div 2;
+  luma_ptr := GetMemory(memsiz);
+  u_ptr := luma_ptr;
+  inc(u_ptr, head.width * head.height);
+  v_ptr := u_ptr;
+  inc(v_ptr, (head.width * head.height) div 4);
+  RasterToYV12(sour, luma_ptr, u_ptr, v_ptr, head.width, head.height);
+
+  dest.write(head, SizeOf(head));
+  if Boolean(head.Compessed) then
+    begin
+      m64 := TMemoryStream64.Create;
+      m64.SetPointerWithProtectedMode(luma_ptr, memsiz);
+      FastCompressStream(m64, dest);
+      DisposeObject(m64);
+    end
+  else
+    begin
+      dest.write(luma_ptr^, memsiz);
+    end;
+  FreeMemory(luma_ptr);
 end;

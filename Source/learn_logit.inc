@@ -183,7 +183,7 @@ begin
   Offs := 5;
   ExpOffs := Offs + WDim;
   SSize := 5 + (NVars + 1) * (NClasses - 1) + NClasses;
-  SetLength(LM.w, SSize (* - 1 + 1 // optimized compiler *) );
+  SetLength(LM.w, SSize  );
   LM.w[0] := SSize;
   LM.w[1] := LogitVNum;
   LM.w[2] := NVars;
@@ -254,11 +254,11 @@ begin
       Network.Weights[i] := (2 * RandomReal - 1) / NVars;
       inc(i);
     end;
-  SetLength(g, WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(h, WCount (* - 1 + 1 // optimized compiler *) , WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(WBase, WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(WDir, WCount (* - 1 + 1 // optimized compiler *) );
-  SetLength(Work, WCount (* - 1 + 1 // optimized compiler *) );
+  SetLength(g, WCount  );
+  SetLength(h, WCount  , WCount  );
+  SetLength(WBase, WCount  );
+  SetLength(WDir, WCount  );
+  SetLength(Work, WCount  );
 
   //
   // First stage: optimize in gradient direction.
@@ -507,7 +507,7 @@ begin
   WDim := (NVars + 1) * (NClasses - 1);
   Offs := 5;
   SSize := 5 + (NVars + 1) * (NClasses - 1) + NClasses;
-  SetLength(LM.w, SSize (* - 1 + 1 // optimized compiler *) );
+  SetLength(LM.w, SSize  );
   LM.w[0] := SSize;
   LM.w[1] := LogitVNum;
   LM.w[2] := NVars;
@@ -536,7 +536,7 @@ var
   k: TLInt;
 begin
   k := Round(LM1.w[0]);
-  SetLength(LM2.w, k (* - 1 + 1 // optimized compiler *) );
+  SetLength(LM2.w, k  );
   APVMove(@LM2.w[0], 0, k - 1, @LM1.w[0], 0, k - 1);
 end;
 
@@ -555,7 +555,7 @@ procedure MNLSerialize(const LM: TLogitModel; var RA: TLVec;
   var RLen: TLInt);
 begin
   RLen := Round(LM.w[0]) + 1;
-  SetLength(RA, RLen (* - 1 + 1 // optimized compiler *) );
+  SetLength(RA, RLen  );
   RA[0] := LogitVNum;
   APVMove(@RA[0], 1, RLen - 1, @LM.w[0], 0, RLen - 2);
 end;
@@ -572,7 +572,7 @@ end;
 procedure MNLUnserialize(const RA: TLVec; var LM: TLogitModel);
 begin
   Assert(Round(RA[0]) = LogitVNum, 'MNLUnserialize: incorrect array!');
-  SetLength(LM.w, Round(RA[1]) (* - 1 + 1 // optimized compiler *) );
+  SetLength(LM.w, Round(RA[1])  );
   APVMove(@LM.w[0], 0, Round(RA[1]) - 1, @RA[0], 1, Round(RA[1]));
 end;
 
@@ -599,8 +599,8 @@ begin
   Assert(AP_FP_Eq(LM.w[1], LogitVNum), 'MNLClsError: unexpected model version');
   NVars := Round(LM.w[2]);
   NClasses := Round(LM.w[3]);
-  SetLength(WorkX, NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(WorkY, NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(WorkX, NVars  );
+  SetLength(WorkY, NClasses  );
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
@@ -735,8 +735,8 @@ begin
   Assert(AP_FP_Eq(LM.w[1], LogitVNum), 'MNLClsError: unexpected model version');
   NVars := Round(LM.w[2]);
   NClasses := Round(LM.w[3]);
-  SetLength(WorkX, NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(WorkY, NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(WorkX, NVars  );
+  SetLength(WorkY, NClasses  );
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
@@ -834,8 +834,8 @@ begin
   Assert(Round(LM.w[1]) = LogitVNum, 'MNL unit: Incorrect MNL version!');
   NVars := Round(LM.w[2]);
   NClasses := Round(LM.w[3]);
-  SetLength(WorkX, NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(y, NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(WorkX, NVars  );
+  SetLength(y, NClasses  );
   SetLength(dy, 0 + 1);
   DSErrAllocate(NClasses, Buf);
   i := 0;

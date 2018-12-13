@@ -10,25 +10,26 @@ object BMPConverForm: TBMPConverForm
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
   DesignerMasterStyle = 0
-  object converbmpButton: TButton
+  object converbmp32Button: TButton
     Anchors = [akLeft, akBottom]
+    StyledSettings = [Family, Style, FontColor]
     Position.X = 16.000000000000000000
     Position.Y = 453.000000000000000000
-    Size.Width = 145.000000000000000000
+    Size.Width = 153.000000000000000000
     Size.Height = 41.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 2
-    Text = 'conver to .bmp'
-    OnClick = converbmpButtonClick
+    TabOrder = 4
+    Text = 'conver to .bmp(32bit)'
+    OnClick = converbmp32ButtonClick
   end
   object Layout1: TLayout
     Anchors = [akLeft, akRight, akBottom]
     Position.X = 168.000000000000000000
-    Position.Y = 493.000000000000000000
+    Position.Y = 497.000000000000000000
     Size.Width = 560.000000000000000000
     Size.Height = 50.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 4
+    TabOrder = 6
     object DestDirEdit: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       Anchors = [akLeft, akTop, akRight]
@@ -66,12 +67,12 @@ object BMPConverForm: TBMPConverForm
   object SameDirCheckBox: TCheckBox
     Anchors = [akLeft, akBottom]
     IsChecked = True
-    Position.X = 168.000000000000000000
+    Position.X = 496.000000000000000000
     Position.Y = 461.000000000000000000
     Size.Width = 233.000000000000000000
     Size.Height = 27.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 6
+    TabOrder = 8
     Text = 'convert to same directory'
   end
   object StyleBook1: TStyleBook
@@ -12850,7 +12851,7 @@ object BMPConverForm: TBMPConverForm
     Size.Width = 153.000000000000000000
     Size.Height = 33.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 9
+    TabOrder = 11
     Text = 'Add File'
     OnClick = AddFileButtonClick
   end
@@ -12860,7 +12861,7 @@ object BMPConverForm: TBMPConverForm
     Size.Width = 153.000000000000000000
     Size.Height = 33.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 8
+    TabOrder = 10
     Text = 'Clear'
     OnClick = ClearButtonClick
   end
@@ -12871,7 +12872,7 @@ object BMPConverForm: TBMPConverForm
     Size.Width = 720.000000000000000000
     Size.Height = 392.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 11
+    TabOrder = 13
     DisableFocusEffect = True
     DefaultItemStyles.ItemStyle = ''
     DefaultItemStyles.GroupHeaderStyle = ''
@@ -12916,7 +12917,7 @@ object BMPConverForm: TBMPConverForm
     Size.Width = 73.000000000000000000
     Size.Height = 19.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 16
+    TabOrder = 18
     Text = 'JLS8'
   end
   object RadioButton_JLS24: TRadioButton
@@ -12928,7 +12929,7 @@ object BMPConverForm: TBMPConverForm
     Size.Width = 73.000000000000000000
     Size.Height = 19.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 15
+    TabOrder = 17
     Text = 'JLS24'
   end
   object RadioButton_JLS32: TRadioButton
@@ -12940,7 +12941,7 @@ object BMPConverForm: TBMPConverForm
     Size.Width = 193.000000000000000000
     Size.Height = 19.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 14
+    TabOrder = 16
     Text = 'JLS_Alpha(no publish format)'
   end
   object Image: TImageViewer
@@ -12950,8 +12951,31 @@ object BMPConverForm: TBMPConverForm
     Size.Width = 564.000000000000000000
     Size.Height = 561.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 19
+    TabOrder = 21
     Viewport.Width = 560.000000000000000000
     Viewport.Height = 557.000000000000000000
+  end
+  object converyv12Button: TButton
+    Anchors = [akLeft, akBottom]
+    Position.X = 344.000000000000000000
+    Position.Y = 453.000000000000000000
+    Size.Width = 145.000000000000000000
+    Size.Height = 41.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    Text = 'conver to .yv12'
+    OnClick = converyv12ButtonClick
+  end
+  object converbmp24Button: TButton
+    Anchors = [akLeft, akBottom]
+    StyledSettings = [Family, Style, FontColor]
+    Position.X = 176.000000000000000000
+    Position.Y = 453.000000000000000000
+    Size.Width = 153.000000000000000000
+    Size.Height = 41.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    Text = 'conver to .bmp(24bit)'
+    OnClick = converbmp24ButtonClick
   end
 end

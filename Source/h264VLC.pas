@@ -93,9 +93,9 @@ end;
 
 procedure vlc_done();
 begin
-  FreeMem(ue_code_length_table);
+  FreeMemory(ue_code_length_table);
   dec(se_code_length_table, VLC_MAX_INT);
-  FreeMem(se_code_length_table);
+  FreeMemory(se_code_length_table);
 end;
 
 (* ******************************************************************************

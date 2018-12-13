@@ -121,8 +121,8 @@ begin
       RightTail := 1.0;
       Exit;
     end;
-  SetLength(r, ns (* - 1 + 1 // optimized compiler *) );
-  SetLength(c, ns (* - 1 + 1 // optimized compiler *) );
+  SetLength(r, ns  );
+  SetLength(c, ns  );
   i := 0;
   while i <= ns - 1 do
     begin

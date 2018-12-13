@@ -92,7 +92,7 @@ begin
   if NPoints <= 1 then
     begin
       Info := 2;
-      SetLength(w, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+      SetLength(w, NVars  , NVars  );
       i := 0;
       while i <= NVars - 1 do
         begin
@@ -117,13 +117,13 @@ begin
   //
   // Prepare temporaries
   //
-  SetLength(TF, NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(TF, NVars  );
   SetLength(Work, Max(NVars, NPoints) + 1);
 
   //
   // Convert class labels from reals to integers (just for convenience)
   //
-  SetLength(c, NPoints (* - 1 + 1 // optimized compiler *) );
+  SetLength(c, NPoints  );
   i := 0;
   while i <= NPoints - 1 do
     begin
@@ -134,9 +134,9 @@ begin
   //
   // Calculate class sizes and means
   //
-  SetLength(MU, NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(MuC, NClasses (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
-  SetLength(NC, NClasses (* - 1 + 1 // optimized compiler *) );
+  SetLength(MU, NVars  );
+  SetLength(MuC, NClasses  , NVars  );
+  SetLength(NC, NClasses  );
   j := 0;
   while j <= NVars - 1 do
     begin
@@ -176,7 +176,7 @@ begin
   //
   // Create ST matrix
   //
-  SetLength(st, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(st, NVars  , NVars  );
   i := 0;
   while i <= NVars - 1 do
     begin
@@ -206,7 +206,7 @@ begin
   //
   // Create SW matrix
   //
-  SetLength(SW, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(SW, NVars  , NVars  );
   i := 0;
   while i <= NVars - 1 do
     begin
@@ -254,7 +254,7 @@ begin
       Info := -4;
       Exit;
     end;
-  SetLength(w, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+  SetLength(w, NVars  , NVars  );
   if AP_FP_Less_Eq(d[NVars - 1], 0) or
     AP_FP_Less_Eq(d[0], 1000 * MachineEpsilon * d[NVars - 1]) then
     begin
@@ -311,7 +311,7 @@ begin
           inc(k);
         end;
       Assert(M <> 0, 'FisherLDAN: internal error #1');
-      SetLength(XYProj, NPoints (* - 1 + 1 // optimized compiler *) , NVars - M + 1);
+      SetLength(XYProj, NPoints  , NVars - M + 1);
       MatrixMatrixMultiply(xy, 0, NPoints - 1, 0, NVars - 1, False, z, 0,
         NVars - 1, M, NVars - 1, False, 1.0, XYProj, 0, NPoints - 1, 0,
         NVars - M - 1, 0.0, Work);
@@ -346,8 +346,8 @@ begin
       //
       // General case: no multicollinearity
       //
-      SetLength(TM, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
-      SetLength(a, NVars (* - 1 + 1 // optimized compiler *) , NVars (* - 1 + 1 // optimized compiler *) );
+      SetLength(TM, NVars  , NVars  );
+      SetLength(a, NVars  , NVars  );
       MatrixMatrixMultiply(SW, 0, NVars - 1, 0, NVars - 1, False, z, 0, NVars - 1,
         0, NVars - 1, False, 1.0, TM, 0, NVars - 1, 0, NVars - 1, 0.0, Work);
       MatrixMatrixMultiply(z, 0, NVars - 1, 0, NVars - 1, True, TM, 0, NVars - 1,
@@ -456,7 +456,7 @@ begin
   FisherLDAN(xy, NPoints, NVars, NClasses, Info, W2);
   if Info > 0 then
     begin
-      SetLength(w, NVars (* - 1 + 1 // optimized compiler *) );
+      SetLength(w, NVars  );
       for i_ := 0 to NVars - 1 do
           w[i_] := W2[i_, 0];
     end;

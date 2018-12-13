@@ -209,35 +209,38 @@ type
     Custom: TJlsCustomParameters;
   end;
 
+type
   pjpeg_ls_header = ^tjpeg_ls_header;
 
   tjpeg_ls_header = record
-    columns: Integer;                                             { The number of columns }
-    Rows: Integer;                                                { Number of rows }
-    alp: Integer;                                                 { alphabet size (Max+1) , 2 bytes }
-    comp: Integer;                                                { number of components, 1 byte }
-    _near: Integer;                                               { _near-lossless error, 1 byte }
-    color_mode: Integer;                                          { indicates the color mode , 1 byte }
-    need_lse: Integer;                                            { Indicates non-default parameters }
-    need_table: Integer;                                          { Indicates use of mapping table }
-    need_restart: Integer;                                        { Indicates use of restart markers }
-    restart_interval: Integer;                                    { The number of MCU's between restart markers }
-    Shift: Integer;                                               { for sparse images, 1 byte }
-    t1, t2, t3: Integer;                                          { Thresholds, 2 bytes each }
-    res: Integer;                                                 { reset value for counters, 2 bytes }
+    columns: Integer;                                      { The number of columns }
+    Rows: Integer;                                         { Number of rows }
+    alp: Integer;                                          { alphabet size (Max+1) , 2 bytes }
+    comp: Integer;                                         { number of components, 1 byte }
+    _near: Integer;                                        { _near-lossless error, 1 byte }
+    color_mode: Integer;                                   { indicates the color mode , 1 byte }
+    need_lse: Integer;                                     { Indicates non-default parameters }
+    need_table: Integer;                                   { Indicates use of mapping table }
+    need_restart: Integer;                                 { Indicates use of restart markers }
+    restart_interval: Integer;                             { The number of MCU's between restart markers }
+    Shift: Integer;                                        { for sparse images, 1 byte }
+    t1, t2, t3: Integer;                                   { Thresholds, 2 bytes each }
+    res: Integer;                                          { reset value for counters, 2 bytes }
     samplingx: array [0 .. MAX_COMPONENTS - 1] of Integer; { col. sampling rates 1 byte each }
     samplingy: array [0 .. MAX_COMPONENTS - 1] of Integer; { row sampling rates }
     comp_ids: array [0 .. MAX_COMPONENTS - 1] of Integer;  { component id's }
-    acc_size: Integer;                                            { 1 byte }
+    acc_size: Integer;                                     { 1 byte }
     AddS: array [0 .. MAX_COMPONENTS - 1] of Integer;      { size given by acc_size }
-    TID: uint;                                                    { Table ID, 1 byte }
-    MAXTAB: uint;                                                 { Maximum table index value }
-    WT: uint;                                                     { Width of each table entry, 1 byte }
-    Table: PTABLE                                                 { The table(s) for each component }
-    end;
+    TID: uint;                                             { Table ID, 1 byte }
+    MAXTAB: uint;                                          { Maximum table index value }
+    WT: uint;                                              { Width of each table entry, 1 byte }
+    Table: PTABLE;                                         { The table(s) for each component }
+  end;
 
-    TImageInfo = record
-      bpp16: Boolean; { Indicates if 16 bits per pixel mode or not }
+  PImageInfo = ^TImageInfo;
+
+  TImageInfo = record
+    bpp16: Boolean; { Indicates if 16 bits per pixel mode or not }
     width: Int;
     height: Int;
     Components: Integer;
@@ -249,8 +252,7 @@ type
     highmask: Integer;        { for powers of 2, a mask for high bits }
     ceil_half_alpha: Integer; { ceil(alpha/2) }
     _near: Integer;           { loss tolerance }
-    { LOSSY Mode }
-    negNEAR: Integer;
+    negNEAR: Integer;         { LOSSY Mode }
 
     qdiv0: PIntegerArray; { quantization table (division via look-up) }
     qdiv: PInteger;       { quantization table (division via look-up) }
@@ -270,10 +272,7 @@ type
 
     vLUT: array [0 .. 3 - 1, 0 .. 2 * LUTMAX16 - 1] of Int;
     classmap: array [0 .. CONTEXTS1 - 1] of Int;
-
   end;
-
-  PImageInfo = ^TImageInfo;
 
 procedure error(Msg: string);
 function safealloc(Size: size_t): Pointer;

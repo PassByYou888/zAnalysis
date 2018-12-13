@@ -37,6 +37,7 @@ type
 
   TFileIOHook = class
   private
+    FCritical: TCritical;
     FList: TCoreClassList;
 
     function GetSearchItems(index: Integer): PSearchConfigInfo;
@@ -96,7 +97,7 @@ function FileIOExists(const FileName: SystemString): Boolean;
 function GetResourceStream(const FileName: SystemString): TStream;
 
 type
-  TGlobalMediaType  = (gmtSound, gmtArt, gmtTile, gmtBrush, gmtUser);
+  TGlobalMediaType = (gmtSound, gmtArt, gmtTile, gmtBrush, gmtUser);
   TGlobalMediaTypes = set of TGlobalMediaType;
 
 const
@@ -120,23 +121,32 @@ uses IOUtils, SysUtils, Variants;
 
 function FileIOCreate(const FileName: SystemString): TCoreClassStream;
 begin
-  LockObject(FileIO);
-  Result := FileIO.FileIOStream(FileName, fmCreate);
-  UnLockObject(FileIO);
+  FileIO.FCritical.Acquire;
+  try
+      Result := FileIO.FileIOStream(FileName, fmCreate);
+  finally
+      FileIO.FCritical.Release;
+  end;
 end;
 
 function FileIOOpen(const FileName: SystemString): TCoreClassStream;
 begin
-  LockObject(FileIO);
-  Result := FileIO.FileIOStream(FileName, fmOpenRead);
-  UnLockObject(FileIO);
+  FileIO.FCritical.Acquire;
+  try
+      Result := FileIO.FileIOStream(FileName, fmOpenRead);
+  finally
+      FileIO.FCritical.Release;
+  end;
 end;
 
 function FileIOExists(const FileName: SystemString): Boolean;
 begin
-  LockObject(FileIO);
-  Result := FileIO.FileIOStreamExists(FileName);
-  UnLockObject(FileIO);
+  FileIO.FCritical.Acquire;
+  try
+      Result := FileIO.FileIOStreamExists(FileName);
+  finally
+      FileIO.FCritical.Release;
+  end;
 end;
 
 function TFileIOHook.GetSearchItems(index: Integer): PSearchConfigInfo;
@@ -264,6 +274,7 @@ end;
 constructor TFileIOHook.Create;
 begin
   inherited Create;
+  FCritical := TCritical.Create;
   FList := TCoreClassList.Create;
 end;
 
@@ -273,6 +284,7 @@ begin
       DeleteSearchIndex(0);
 
   DisposeObject(FList);
+  DisposeObject(FCritical);
   inherited Destroy;
 end;
 
