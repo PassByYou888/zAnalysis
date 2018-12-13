@@ -2825,8 +2825,6 @@ end;
 
 initialization
 
-_test_e_sqr;
-
 // sampler
 CRED_WEIGHT_SAMPLER := 1.0;
 CGREEN_WEIGHT_SAMPLER := 1.0;
