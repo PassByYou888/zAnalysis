@@ -113,10 +113,10 @@ begin
               for i := 0 to pred(Cols) do
                 begin
                   index := pwordarray(Line)^[i];
-                  line16[i] := maptable[index];
+                  line16^[i] := maptable^[index];
                 end;
 
-              outfile.write(line16[0], Cols * SizeOf(short));
+              outfile.write(line16^[0], Cols * SizeOf(short));
 
               FreeMem(line16);
             end

@@ -8,10 +8,15 @@
 { * https://github.com/PassByYou888/zRasterization                             * }
 { ****************************************************************************** }
 {$IFDEF FPC}
-  {$MODE objfpc}
+  {$IFDEF FPC_DELPHI_MODE}
+    {$MODE delphi}
+  {$ELSE FPC_DELPHI_MODE}
+    {$MODE objfpc}
+  {$ENDIF FPC_DELPHI_MODE}
+
   {$MODESWITCH AdvancedRecords}
   {$NOTES OFF}
-  {$STACKFRAMES OFF}
+  {$STACKFRAMES ON}
 
   {$DEFINE LITTLE_ENDIAN}
   {$UNDEF BIG_ENDIAN}
@@ -23,12 +28,22 @@
   {$UNDEF FirstCharInZero}
 
   {$UNDEF Delphi}
+
+  // fast MD5 only delphi supported, https://github.com/PassByYou888/FastMD5
   {$UNDEF FastMD5}
-  {$DEFINE parallel}
+
+  // stream is MemoryStream64 or MemoryStream, usage fastMD5 or PurePascal MD5
+  // be associate api: UnicodeMixedLib.umlStreamMD5, Fast_MD5.FastMD5
   {$DEFINE OptimizationMemoryStreamMD5}
 
-  // With LARGE_FONT, boot-time memory usage increase by 100M-200M and start-up time to be delay 100ms
-  // {$DEFINE LARGE_FONT}
+  // multi thread parallel switch.
+  {$DEFINE parallel}
+
+  // automated loading common AI data sets on boot-time
+  // {$DEFINE Z_AI_Dataset_Build_In}
+
+  // With LARGE_RASTER_FONT, boot-time memory usage increase by 100M-200M and start-up time to be delay 100ms
+  // {$DEFINE LARGE_RASTER_FONT}
 
   // ZDB_BACKUP is automatically made and replica caching is enabled.
   // usage ZDB_BACKUP so slows the open of large size ZDB file, after time, but does is high performance.
@@ -41,12 +56,7 @@
   // used soft Simulate Critical(ring)
   // SoftCritical defined so performance to be reduced
   // {$DEFINE SoftCritical}
-
   // {$DEFINE ANTI_DEAD_ATOMIC_LOCK}
-
-  // Using Sequential Packet Model will consume more memory and reduce IO performance,
-  // it can memory communication status and facilitate us to return to the original scene.
-  // {$DEFINE SEQUENCE_PACKET}
 
   {$DEFINE release}
   {$UNDEF debug}
@@ -66,12 +76,22 @@
   {$ENDIF}
 
   {$DEFINE Delphi}
+
+  // fast MD5 only delphi supported, https://github.com/PassByYou888/FastMD5
   {$DEFINE FastMD5}
-  {$DEFINE parallel}
+
+  // stream is MemoryStream64 or MemoryStream, usage fastMD5 or PurePascal MD5
+  // be associate api: UnicodeMixedLib.umlStreamMD5, Fast_MD5.FastMD5
   {$DEFINE OptimizationMemoryStreamMD5}
 
-  // With LARGE_FONT, boot-time memory usage increase by 100M-200M and start-up time to be delay 100ms
-  // {$DEFINE LARGE_FONT}
+  // multi thread parallel switch.
+  {$DEFINE parallel}
+
+  // automated loading common AI data sets on boot-time
+  // {$DEFINE Z_AI_Dataset_Build_In}
+
+  // With LARGE_RASTER_FONT, boot-time memory usage increase by 100M-200M and start-up time to be delay 100ms
+  // {$DEFINE LARGE_RASTER_FONT}
 
   // ZDB_BACKUP is automatically made and replica caching is enabled.
   // usage ZDB_BACKUP so slows the open of large size ZDB file, after time, but does is high performance.
@@ -84,20 +104,14 @@
   // used soft Simulate Critical(ring)
   // SoftCritical defined so performance to be reduced
   // {$DEFINE SoftCritical}
-
   // {$DEFINE ANTI_DEAD_ATOMIC_LOCK}
-
-  // Using Sequential Packet Model will consume more memory and reduce IO performance,
-  // it can memory communication status and facilitate us to return to the original scene.
-  // {$DEFINE SEQUENCE_PACKET}
 
   {$IFDEF release}
     {$DEFINE INLINE_ASM}
     {$R-} { range check }
     {$I-} { Input output checking }
     {$O+} { optimization }
-    {$INLINE AUTO} { call inline automated }
-    {$C-} { Assertions }
+    {$C+} { Assertions }
   {$ELSE}
     {$UNDEF INLINE_ASM}
     {$R+} { range check }
@@ -125,6 +139,12 @@
 {$Q-} { Overflow checking }
 {$B-} { Complete boolean evaluation }
 {$J+} { Writeable typed constants }
+
+(*
+  Pointer math is simply treating any given typed pointer in some narrow,
+  instances as a scaled ordinal where you can perform simple arithmetic operations directly on the pointer variable.
+*)
+{$POINTERMATH OFF}
 
 {$UNDEF CPU64}
 

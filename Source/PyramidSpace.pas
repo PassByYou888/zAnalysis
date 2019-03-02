@@ -1,5 +1,5 @@
 { ****************************************************************************** }
-{ * Pyramid Space support                                                      * }
+{ * SIFT Pyramid Space support                                                 * }
 { * create by QQ 600585@qq.com                                                 * }
 { ****************************************************************************** }
 { * https://github.com/PassByYou888/CoreCipher                                 * }
@@ -168,7 +168,6 @@ type
 
   TMatchInfo = record
     d1, d2: PDescriptor;
-    Dist: TGFloat; // Descriptor distance
   end;
 
   TArrayMatchInfo = array of TMatchInfo;
@@ -249,6 +248,10 @@ function Descriptor2LVec(d: TDescriptorArray): TLVec;
 
 // square of euclidean
 // need avx + sse or GPU
+type
+  TGFloat_4x = array [0 .. 3] of TGFloat;
+
+var sqr_128: function(sour, dest: PGFloat): TGFloat_4x;
 function e_sqr(const sour, dest: PDescriptor): TGFloat;
 
 // feature match
@@ -724,9 +727,6 @@ begin
   Result.Owner := nil;
 end;
 
-type
-  TGFloat_4x = array [0 .. 3] of TGFloat;
-
 function pascal_sqr_128(sour, dest: PGFloat): TGFloat_4x;
 var
   i: Integer;
@@ -759,76 +759,57 @@ end;
 {$IF Defined(Delphi) and Defined(MSWINDOWS)}
 
 
-function sse_sqr_128(sour, dest: PGFloat): TGFloat_4x; assembler;
+function sse_sqr_128(sour, dest: PGFloat): TGFloat_4x;
 asm
   movups xmm0,[[dest]+0*4*4]
   movups xmm1,[[sour]+0*4*4]
-  subps  xmm0, xmm1
+  subps  xmm0,xmm1
   mulps xmm0,xmm0
   movups xmm2,xmm0
 
   movups xmm0,[[dest]+1*4*4]
   movups xmm1,[[sour]+1*4*4]
-  subps  xmm0, xmm1
+  subps  xmm0,xmm1
   mulps xmm0,xmm0
   addps xmm2,xmm0
 
   movups xmm0,[[dest]+2*4*4]
   movups xmm1,[[sour]+2*4*4]
-  subps  xmm0, xmm1
+  subps  xmm0,xmm1
   mulps xmm0,xmm0
   addps xmm2,xmm0
 
   movups xmm0,[[dest]+3*4*4]
   movups xmm1,[[sour]+3*4*4]
-  subps  xmm0, xmm1
+  subps  xmm0,xmm1
   mulps xmm0,xmm0
   addps xmm2,xmm0
 
   movups xmm0,[[dest]+4*4*4]
   movups xmm1,[[sour]+4*4*4]
-  subps  xmm0, xmm1
+  subps  xmm0,xmm1
   mulps xmm0,xmm0
   addps xmm2,xmm0
 
   movups xmm0,[[dest]+5*4*4]
   movups xmm1,[[sour]+5*4*4]
-  subps  xmm0, xmm1
+  subps  xmm0,xmm1
   mulps xmm0,xmm0
   addps xmm2,xmm0
 
   movups xmm0,[[dest]+6*4*4]
   movups xmm1,[[sour]+6*4*4]
-  subps  xmm0, xmm1
+  subps  xmm0,xmm1
   mulps xmm0,xmm0
   addps xmm2,xmm0
 
   movups xmm0,[[dest]+7*4*4]
   movups xmm1,[[sour]+7*4*4]
-  subps  xmm0, xmm1
+  subps  xmm0,xmm1
   mulps xmm0,xmm0
   addps xmm2,xmm0
 
-  movups [Result], xmm2
-end;
-
-function e_sqr(const sour, dest: PDescriptor): TGFloat;
-var
-  i: TLInt;
-  f128: TGFloat_4x;
-begin
-  Result := 0;
-
-  try
-    i := 0;
-    while i < length(sour^.descriptor) do
-      begin
-        f128 := sse_sqr_128(@sour^.descriptor[i], @dest^.descriptor[i]);
-        Result := Result + f128[0] + f128[1] + f128[2] + f128[3];
-        inc(i, 32);
-      end;
-  except
-  end;
+  movups [Result],xmm2
 end;
 
 procedure _test_e_sqr;
@@ -856,7 +837,7 @@ begin
   t2 := GetTimeTick - t2;
 end;
 
-{$ELSE}
+{$IFEND}
 
 
 function e_sqr(const sour, dest: PDescriptor): TGFloat;
@@ -869,16 +850,14 @@ begin
   i := 0;
   while i < length(sour^.descriptor) do
     begin
-      f128 := pascal_sqr_128(@sour^.descriptor[i], @dest^.descriptor[i]);
+      f128 := sqr_128(@sour^.descriptor[i], @dest^.descriptor[i]);
       Result := Result + f128[0] + f128[1] + f128[2] + f128[3];
       inc(i, 32);
     end;
 end;
 
-{$IFEND}
-
-
 function MatchFeature(const Source, dest: TFeature; var MatchInfo: TArrayMatchInfo): TLInt;
+const MaxFloatN = 3.4E+38;
 var
   L: TCoreClassList;
   pf1_len, pf2_len: TLInt;
@@ -891,13 +870,13 @@ var
   var
     m_idx, j: TLInt;
     dsc1, dsc2: PDescriptor;
-    minf, next_minf: TLFloat;
-    d: Double;
+    minf, next_minf: TGFloat;
+    d: TGFloat;
     PD: PMatchInfo;
   begin
     dsc1 := pf1[pass];
     m_idx := -1;
-    minf := MaxRealNumber;
+    minf := MaxFloatN;
     next_minf := minf;
     // find dsc1 from feat2
     for j := 0 to pf2_len - 1 do
@@ -931,7 +910,6 @@ var
     new(PD);
     PD^.d1 := pf1[pass];
     PD^.d2 := pf2[m_idx];
-    PD^.Dist := e_sqr(pf1[pass], pf2[m_idx]);
     LockObject(L);
     L.Add(PD);
     UnLockObject(L);
@@ -943,15 +921,15 @@ var
     pass: TLInt;
     m_idx, j: TLInt;
     dsc1, dsc2: PDescriptor;
-    minf, next_minf: TLFloat;
-    d: Double;
+    minf, next_minf: TGFloat;
+    d: TGFloat;
     PD: PMatchInfo;
   begin
     for pass := 0 to pf1_len - 1 do
       begin
         dsc1 := pf1[pass];
         m_idx := -1;
-        minf := MaxRealNumber;
+        minf := MaxFloatN;
         next_minf := minf;
         // find dsc1 from feat2
         for j := 0 to pf2_len - 1 do
@@ -985,7 +963,6 @@ var
         new(PD);
         PD^.d1 := pf1[pass];
         PD^.d2 := pf2[m_idx];
-        PD^.Dist := e_sqr(pf1[pass], pf2[m_idx]);
         L.Add(PD);
       end;
   end;
@@ -1035,13 +1012,13 @@ begin
     var
       m_idx, j: TLInt;
       dsc1, dsc2: PDescriptor;
-      minf, next_minf: TLFloat;
-      d: Double;
+      minf, next_minf: TGFloat;
+      d: TGFloat;
       PD: PMatchInfo;
     begin
       dsc1 := pf1[pass];
       m_idx := -1;
-      minf := MaxRealNumber;
+      minf := MaxFloatN;
       next_minf := minf;
       // find dsc1 from feat2
       for j := 0 to pf2_len - 1 do
@@ -1075,7 +1052,6 @@ begin
       new(PD);
       PD^.d1 := pf1[pass];
       PD^.d2 := pf2[m_idx];
-      PD^.Dist := e_sqr(pf1[pass], pf2[m_idx]);
       LockObject(L);
       L.Add(PD);
       UnLockObject(L);
@@ -2864,6 +2840,12 @@ CORIENTATION_SMOOTH_COUNT := 256;
 CMATCH_REJECT_NEXT_RATIO := 0.8;
 CDESC_SCALE_FACTOR := 8;
 CDESC_PROCESS_LIGHT := False;
+
+{$IF Defined(Delphi) and Defined(MSWINDOWS)}
+sqr_128 := {$IFDEF FPC}@{$ENDIF FPC}sse_sqr_128;
+{$ELSE}
+  sqr_128 := {$IFDEF FPC}@{$ENDIF FPC}pascal_sqr_128;
+{$IFEND}
 
 finalization
 

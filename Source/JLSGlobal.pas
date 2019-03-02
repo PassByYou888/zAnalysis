@@ -49,7 +49,7 @@ const
 
   { margins for scan lines }
   LEFTMARGIN = 2;
-  RIGHTMARGIN = 1;
+  RIGHTMARGIN = 2;
 
   { alphabet size }
   MAXA8 = 256;
@@ -106,8 +106,7 @@ const
   { The stat initialization values }
   INITNSTAT = 1;      { init value for N[] }
   MIN_INITABSTAT = 2; { min init value for A[] }
-  INITABSLACK = 6; { init value for A is roughly
-    2^(bpp-INITABSLACK) but not less than above }
+  INITABSLACK = 6; { init value for A is roughly 2^(bpp-INITABSLACK) but not less than above }
   INITBIASTAT = 0; { init value for B[] }
 
   { reset values }
@@ -278,18 +277,18 @@ procedure error(Msg: string);
 function safealloc(Size: size_t): Pointer;
 function safecalloc(numels, Size: size_t): Pointer;
 
-function predict(rb, RA, RC: Word): Word;
+function predict(rb, RA, RC: Word): Word; inline;
 
-function IsTrue(AValue: Integer): Boolean;
-function ENDIAN8(x: Word): Byte;
-function ENDIAN16(x: Word): Word;
+function IsTrue(AValue: Integer): Boolean; inline;
+function ENDIAN8(x: Word): Byte; inline;
+function ENDIAN16(x: Word): Word; inline;
 
 function check_compatibility(head_frame: pjpeg_ls_header; head_scan: pjpeg_ls_header; n_s: Int): Int;
 
-function shr_c(Value: Int64; ShiftBits: Integer): Int64; overload;
-function shr_c(Value: Integer; ShiftBits: Integer): Integer; overload;
+function shr_c(Value: Int64; ShiftBits: Integer): Int64; overload; inline;
+function shr_c(Value: Integer; ShiftBits: Integer): Integer; overload; inline;
 
-function Bool_c(AValue: Boolean): Integer;
+function Bool_c(AValue: Boolean): Integer; inline;
 
 implementation
 

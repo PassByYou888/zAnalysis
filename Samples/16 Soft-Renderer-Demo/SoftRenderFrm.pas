@@ -68,7 +68,8 @@ begin
   if fmxIntf = nil then
       exit;
   fmxIntf.SetSurface(Canvas, Sender);
-  d := TDrawEngine.Create(fmxIntf);
+  d := TDrawEngine.Create;
+  d.DrawInterface := fmxIntf;
   d.SetSize;
   Render(d);
   DisposeObject(d);

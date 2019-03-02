@@ -15,25 +15,25 @@ unit LearnTypes;
 
 interface
 
-uses PascalStrings, KDTree, KM;
+uses PascalStrings, UnicodeMixedLib, KDTree, KM, DoStatusIO;
 
 type
-  TLFloat  = TKDTree_VecType;
-  PLFloat  = PKDTree_VecType;
-  TLVec    = TKDTree_Vec;
-  PLVec    = PKDTree_Vec;
+  TLFloat = TKDTree_VecType;
+  PLFloat = PKDTree_VecType;
+  TLVec = TKDTree_Vec;
+  PLVec = PKDTree_Vec;
   TLMatrix = TKDTree_DynamicVecBuffer;
   PLMatrix = PKDTree_DynamicVecBuffer;
 
-  TLInt     = TKMInt;
-  PLInt     = PKMInt;
-  TLIVec    = TKMIntegerArray;
-  PLIVec    = PKMIntegerArray;
+  TLInt = TKMInt;
+  PLInt = PKMInt;
+  TLIVec = TKMIntegerArray;
+  PLIVec = PKMIntegerArray;
   TLIMatrix = array of TLIVec;
   PLIMatrix = ^TLIMatrix;
 
-  TLBVec    = array of Boolean;
-  PLBVec    = ^TLBVec;
+  TLBVec = array of Boolean;
+  PLBVec = ^TLBVec;
   TLBMatrix = array of TLBVec;
   PLBMatrix = ^TLBMatrix;
 
@@ -41,7 +41,7 @@ type
     x, y: TLFloat;
   end;
 
-  TLComplexVec    = array of TLComplex;
+  TLComplexVec = array of TLComplex;
   TLComplexMatrix = array of TLComplexVec;
 
   TLearnType = (
@@ -79,8 +79,13 @@ const
     'L-BFGS Ensemble with parallel'
     );
 
+procedure DoStatus(v: TLVec); overload;
+
 implementation
 
+procedure DoStatus(v: TLVec);
+begin
+  DoStatus(TKDTree.KDTreeVec(v));
+end;
+
 end.
- 
- 

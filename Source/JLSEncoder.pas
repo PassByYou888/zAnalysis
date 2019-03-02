@@ -114,9 +114,11 @@ begin
   { Adjust scan line pointers taking into account the margins,
     and also the fact that indexing for scan lines starts from 1
   }
-  PTR := pscanl0; inc(PTR, comp * (LEFTMARGIN - 1));
+  PTR := pscanl0;
+  inc(PTR, comp * (LEFTMARGIN - 1));
   pscanline := PTR;
-  PTR := cscanl0; inc(PTR, comp * (LEFTMARGIN - 1));
+  PTR := cscanl0;
+  inc(PTR, comp * (LEFTMARGIN - 1));
   cscanline := PTR;
 
   FBitIO.bitoinit();
@@ -253,8 +255,7 @@ begin
 
   { compute bits per sample for input symbols }
   bpp := 1;
-  while longint(1 shl bpp) < FImageInfo.alpha
-    do
+  while longint(1 shl bpp) < FImageInfo.alpha do
       inc(bpp);
 
   { check if alpha is a power of 2: }
@@ -381,16 +382,16 @@ begin
 
   if ((FImageInfo.Components > 1)) then
     begin
-
       local_scanl0 := safecalloc(width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE, SizeOf(Pixel));
       local_scanl1 := safecalloc(width + LEFTMARGIN + RIGHTMARGIN + NEGBUFFSIZE, SizeOf(Pixel));
 
-      PTR := local_scanl0; inc(PTR, LEFTMARGIN - 1);
+      PTR := local_scanl0;
+      inc(PTR, LEFTMARGIN - 1);
       local_pscanline := PTR;
 
-      PTR := local_scanl1; inc(PTR, LEFTMARGIN - 1);
+      PTR := local_scanl1;
+      inc(PTR, LEFTMARGIN - 1);
       local_cscanline := PTR;
-
     end;
 
   { Go through each scan and process line by line }
@@ -459,7 +460,6 @@ begin
 
       if (color_mode = LINE_INT) then { line interleaved }
         begin
-
           { ***********************************************************************/
             /*           Line interleaved mode with single file received           */
             /*********************************************************************** }
@@ -470,13 +470,11 @@ begin
               { LOSSLESS mode }
               while (n <= height) do
                 begin
-
                   PTR := @(pwordarray(cscanline)^[FImageInfo.Components + 1]);
                   read_one_line(PTR, FImageInfo.Components * width, FInputStream);
                   tot_in := tot_in + FImageInfo.Components * width;
 
                   { 'extend' the edges }
-
                   for n_c := 0 to pred(FImageInfo.Components) do
                     begin
                       ppixelarray(cscanline)^[-FImageInfo.Components + n_c] := ppixelarray(pscanline)^[FImageInfo.Components + n_c];
@@ -485,7 +483,6 @@ begin
 
                   for n_c := 0 to pred(FImageInfo.Components) do
                     begin
-
                       if (FImageInfo.Components > 1) then
                         begin
                           for my_i := 0 to pred(width + LEFTMARGIN + RIGHTMARGIN) do
@@ -501,7 +498,6 @@ begin
 
                       { process the lines }
                       FLossless.lossless_doscanline(ppixelarray(local_pscanline), ppixelarray(local_cscanline), width, n_c);
-
                     end;
 
                   { 'extend' the edges }
@@ -548,7 +544,6 @@ begin
 
                   for n_c := 0 to pred(FImageInfo.Components) do
                     begin
-
                       if (FImageInfo.Components > 1) then
                         begin
                           for my_i := 0 to pred(width + LEFTMARGIN + RIGHTMARGIN) do
@@ -856,7 +851,4 @@ begin
   alpha0 := DEF_ALPHA;
 end;
 
-end. 
- 
- 
- 
+end.

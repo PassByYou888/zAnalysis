@@ -29,7 +29,7 @@ begin
       case FLearnType of
         ltKDT, ltKM:
           begin
-            DisposeObject(PLearnKDT(FLearnData)^.kdt);
+            DisposeObject(PLearnKDT(FLearnData)^.K);
             Dispose(PLearnKDT(FLearnData));
             FLearnData := nil;
           end;
@@ -75,7 +75,7 @@ begin
         if not isTrainTime then
           begin
             new(p_k);
-            p_k^.kdt := TKDTree.Create(FInLen);
+            p_k^.K := TKDTree.Create(FInLen);
             FLearnData := p_k;
           end;
       end;
@@ -384,24 +384,6 @@ begin
     end;
 end;
 
-// picture classifier style
-class function TLearn.CreatePictureClassifier(const lt: TLearnType; const SamplerWidth: TLInt): TLearn;
-begin
-  Result := TLearn.CreateClassifier(lt, SamplerWidth * SamplerWidth);
-end;
-
-// regression style with fast Histogram of Oriented Gradient
-class function TLearn.CreateHOGRegression(const lt: TLearnType; const OutDataLen: TLInt): TLearn;
-begin
-  Result := TLearn.CreateRegression(lt, SYSTEM_HOG_FEATURESIZE, OutDataLen);
-end;
-
-// classifier style with fast Histogram of Oriented Gradient
-class function TLearn.CreateHOGClassifier(const lt: TLearnType): TLearn;
-begin
-  Result := TLearn.CreateClassifier(lt, SYSTEM_HOG_FEATURESIZE);
-end;
-
 constructor TLearn.Create;
 begin
   inherited Create;
@@ -528,6 +510,16 @@ begin
   p^.token := f_token;
 
   FMemorySource.Add(p);
+end;
+
+procedure TLearn.AddMemory(const f_In: TLVec; f_token: SystemString);
+var
+  f_Out: TLVec;
+begin
+  f_Out := LVec(FOutLen);
+  LSetVec(f_Out, Count);
+  AddMemory(f_In, f_Out, f_token);
+  SetLength(f_Out, 0);
 end;
 
 procedure TLearn.AddMemory(const f_In, f_Out: TLVec);
@@ -704,8 +696,8 @@ begin
         begin
           CreateLearnData(True);
           p_k := PLearnKDT(FLearnData);
-          p_k^.kdt.Clear;
-          p_k^.kdt.BuildKDTreeM(FMemorySource.Count, nil, {$IFDEF FPC}@{$ENDIF FPC}KDInput);
+          p_k^.K.Clear;
+          p_k^.K.BuildKDTreeM(FMemorySource.Count, nil, {$IFDEF FPC}@{$ENDIF FPC}KDInput);
           FInfo := 'task has been solved';
           Result := True;
         end;
@@ -713,14 +705,14 @@ begin
         begin
           CreateLearnData(True);
           p_k := PLearnKDT(FLearnData);
-          p_k^.kdt.Clear;
+          p_k^.K.Clear;
           if (TrainDepth > 1) and (not FClassifier) and (TrainDepth < FMemorySource.Count) then
             begin
-              p_k^.kdt.BuildKDTreeWithClusterM(FMemorySource.Count, TrainDepth, 1, kmIndexOut, nil, {$IFDEF FPC}@{$ENDIF FPC}KDInput);
+              p_k^.K.BuildKDTreeWithClusterM(FMemorySource.Count, TrainDepth, 1, kmIndexOut, nil, {$IFDEF FPC}@{$ENDIF FPC}KDInput);
             end
           else
             begin
-              p_k^.kdt.BuildKDTreeM(FMemorySource.Count, nil, {$IFDEF FPC}@{$ENDIF FPC}KDInput);
+              p_k^.K.BuildKDTreeM(FMemorySource.Count, nil, {$IFDEF FPC}@{$ENDIF FPC}KDInput);
             end;
           FInfo := 'task has been solved';
           Result := True;
@@ -976,16 +968,6 @@ begin
   Result := FKDToken.SearchToken(v);
 end;
 
-function TLearn.SearchToken(const v: TLFloat): SystemString;
-var
-  lv: TLVec;
-begin
-  SetLength(lv, FKDToken.AxisCount);
-  LSetVec(lv, v);
-  Result := SearchToken(lv);
-  SetLength(lv, 0);
-end;
-
 function TLearn.Process(const p_in, p_out: PLVec): Boolean;
 var
   p_kd_node: PKDTree_Node;
@@ -994,89 +976,94 @@ var
   List: TLIVec;
 begin
   Result := False;
-  if FIsTraining or FTrainThreadRuning then
-    begin
-      FInfo := 'wait training';
-      Exit;
+  try
+    if FIsTraining or FTrainThreadRuning then
+      begin
+        FInfo := 'wait training';
+        Exit;
+      end;
+    if length(p_in^) <> FInLen then
+      begin
+        FInfo := 'input length error';
+        Exit;
+      end;
+
+    case FLearnType of
+      ltKDT, ltKM:
+        begin
+          if PLearnKDT(FLearnData)^.K.Count > 0 then
+            begin
+              if FClassifier then
+                begin
+                  SearchMemoryDistance(p_in^, List);
+                  SetLength(p_out^, length(List));
+
+                  for i := 0 to length(List) - 1 do
+                      p_out^[List[i]] := (length(List) - 1) - i;
+                  SetLength(List, 0);
+                end
+              else
+                begin
+                  p_kd_node := PLearnKDT(FLearnData)^.K.Search(p_in^);
+                  SetLength(p_out^, FOutLen);
+                  if p_kd_node <> nil then
+                      CopyPtr(@(PLearnMemory(FMemorySource[p_kd_node^.vec^.index])^.m_out[0]), @p_out^[0], FOutLen * SizeOf(TLFloat));
+                end;
+              FInfo := 'successed';
+              Result := True;
+            end;
+        end;
+      ltForest:
+        begin
+          if length(PDecisionForest(FLearnData)^.Trees) > 0 then
+            begin
+              if FClassifier then
+                  SetLength(p_out^, Max(1, Round(FLastTrainMaxOutValue) + 1))
+              else
+                  SetLength(p_out^, 1);
+
+              DFProcess(PDecisionForest(FLearnData)^, p_in^, p_out^);
+              FInfo := 'successed';
+              Result := True;
+            end;
+        end;
+      ltLogit:
+        begin
+          if length(PLogitModel(FLearnData)^.w) > 0 then
+            begin
+              SetLength(p_out^, Max(2, Round(FLastTrainMaxOutValue) + 1));
+
+              MNLProcess(PLogitModel(FLearnData)^, p_in^, p_out^);
+              FInfo := 'successed';
+              Result := True;
+            end;
+        end;
+      ltLM, ltLM_MT, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod, ltMonteCarlo:
+        begin
+          if FClassifier then
+              SetLength(p_out^, Max(2, Round(FLastTrainMaxOutValue) + 1))
+          else
+              SetLength(p_out^, FOutLen);
+
+          MLPProcess(PMultiLayerPerceptron(FLearnData)^, p_in^, p_out^);
+          FInfo := 'successed';
+          Result := True;
+        end;
+      ltLM_Ensemble, ltLM_Ensemble_MT, ltLBFGS_Ensemble, ltLBFGS_Ensemble_MT:
+        begin
+          if FClassifier then
+              SetLength(p_out^, Max(2, Round(FLastTrainMaxOutValue) + 1))
+          else
+              SetLength(p_out^, FOutLen);
+
+          MLPEProcess(PMLPEnsemble(FLearnData)^, p_in^, p_out^);
+          FInfo := 'successed';
+          Result := True;
+        end;
     end;
-  if length(p_in^) <> FInLen then
-    begin
-      FInfo := 'input length error';
-      Exit;
-    end;
-
-  case FLearnType of
-    ltKDT, ltKM:
-      begin
-        if PLearnKDT(FLearnData)^.kdt.Count > 0 then
-          begin
-            if FClassifier then
-              begin
-                SearchMemoryWithDistance(p_in^, List);
-                SetLength(p_out^, length(List));
-
-                for i := 0 to length(List) - 1 do
-                    p_out^[List[i]] := (length(List) - 1) - i;
-                SetLength(List, 0);
-              end
-            else
-              begin
-                p_kd_node := PLearnKDT(FLearnData)^.kdt.Search(p_in^);
-                SetLength(p_out^, FOutLen);
-                if p_kd_node <> nil then
-                    CopyPtr(@(PLearnMemory(FMemorySource[p_kd_node^.vec^.index])^.m_out[0]), @p_out^[0], FOutLen * SizeOf(TLFloat));
-              end;
-            FInfo := 'successed';
-            Result := True;
-          end;
-      end;
-    ltForest:
-      begin
-        if length(PDecisionForest(FLearnData)^.Trees) > 0 then
-          begin
-            if FClassifier then
-                SetLength(p_out^, Max(1, Round(FLastTrainMaxOutValue) + 1))
-            else
-                SetLength(p_out^, 1);
-
-            DFProcess(PDecisionForest(FLearnData)^, p_in^, p_out^);
-            FInfo := 'successed';
-            Result := True;
-          end;
-      end;
-    ltLogit:
-      begin
-        if length(PLogitModel(FLearnData)^.w) > 0 then
-          begin
-            SetLength(p_out^, Max(2, Round(FLastTrainMaxOutValue) + 1));
-
-            MNLProcess(PLogitModel(FLearnData)^, p_in^, p_out^);
-            FInfo := 'successed';
-            Result := True;
-          end;
-      end;
-    ltLM, ltLM_MT, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod, ltMonteCarlo:
-      begin
-        if FClassifier then
-            SetLength(p_out^, Max(2, Round(FLastTrainMaxOutValue) + 1))
-        else
-            SetLength(p_out^, FOutLen);
-
-        MLPProcess(PMultiLayerPerceptron(FLearnData)^, p_in^, p_out^);
-        FInfo := 'successed';
-        Result := True;
-      end;
-    ltLM_Ensemble, ltLM_Ensemble_MT, ltLBFGS_Ensemble, ltLBFGS_Ensemble_MT:
-      begin
-        if FClassifier then
-            SetLength(p_out^, Max(2, Round(FLastTrainMaxOutValue) + 1))
-        else
-            SetLength(p_out^, FOutLen);
-
-        MLPEProcess(PMLPEnsemble(FLearnData)^, p_in^, p_out^);
-        FInfo := 'successed';
-        Result := True;
-      end;
+  finally
+    if not Result then
+        DoStatus(FInfo);
   end;
 end;
 
@@ -1107,6 +1094,18 @@ begin
   f_In := LVec(p_in^, FInLen);
   Result := Process(@f_In, p_out);
   SetLength(f_In, 0);
+end;
+
+function TLearn.ProcessToken(const ProcessIn: PLVec): SystemString;
+var
+  ProcessOut: TLVec;
+begin
+  Result := '';
+  if not Process(ProcessIn, @ProcessOut) then
+      Exit;
+  Result := SearchToken(ProcessOut);
+  if Result = '' then
+      Result := LVec(ProcessOut, True);
 end;
 
 function TLearn.ProcessMax(const ProcessIn: TLVec): TLFloat;
@@ -1156,22 +1155,22 @@ end;
 function TLearn.ProcessMaxIndex(const ProcessIn: TLVec): TLInt;
 var
   ProcessOut: TLVec;
-  k: TLFloat;
+  K: TLFloat;
   i: TLInt;
 begin
   Result := -1;
   if not Process(@ProcessIn, @ProcessOut) then
       Exit;
 
-  k := ProcessOut[0];
+  K := ProcessOut[0];
   Result := 0;
 
   if length(ProcessOut) > 1 then
     for i := 1 to length(ProcessOut) - 1 do
-      if ProcessOut[i] > k then
+      if ProcessOut[i] > K then
         begin
           Result := i;
-          k := ProcessOut[i];
+          K := ProcessOut[i];
         end;
 
   SetLength(ProcessOut, 0);
@@ -1258,22 +1257,22 @@ end;
 function TLearn.ProcessMinIndex(const ProcessIn: TLVec): TLInt;
 var
   ProcessOut: TLVec;
-  k: TLFloat;
+  K: TLFloat;
   i: TLInt;
 begin
   Result := -1;
   if not Process(@ProcessIn, @ProcessOut) then
       Exit;
 
-  k := ProcessOut[0];
+  K := ProcessOut[0];
   Result := 0;
 
   if length(ProcessOut) > 1 then
     for i := 1 to length(ProcessOut) - 1 do
-      if ProcessOut[i] < k then
+      if ProcessOut[i] < K then
         begin
           Result := i;
-          k := ProcessOut[i];
+          K := ProcessOut[i];
         end;
 
   SetLength(ProcessOut, 0);
@@ -1367,9 +1366,9 @@ begin
   Result := ProcessLV(TKDTree.KDTreeVec(ProcessIn.Text));
 end;
 
-function TLearn.SearchMemoryWithPearson(const ProcessIn: TLVec): TLInt;
+function TLearn.SearchMemoryPearson(const ProcessIn: TLVec): TLInt;
 var
-  k, r: TLFloat;
+  K, r: TLFloat;
   i: TLInt;
 begin
   if Count <= 0 then
@@ -1378,26 +1377,26 @@ begin
       Exit;
     end;
 
-  k := PearsonCorrelation(ProcessIn, GetMemorySource(0)^.m_in, FInLen);
+  K := PearsonCorrelation(ProcessIn, GetMemorySource(0)^.m_in, FInLen);
   Result := 0;
 
   for i := 1 to Count - 1 do
     begin
       r := PearsonCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
-      if (r <> 0) and (r > k) then
+      if (r <> 0) and (r > K) then
         begin
-          k := r;
+          K := r;
           Result := i;
         end;
     end;
 end;
 
-procedure TLearn.SearchMemoryWithPearson(const ProcessIn: TLVec; out List: TLIVec);
+procedure TLearn.SearchMemoryPearson(const ProcessIn: TLVec; out List: TLIVec);
 {$REGION 'Imp'}
 
 type
   TState = record
-    k: TLFloat;
+    K: TLFloat;
     index: TLInt;
   end;
 
@@ -1408,289 +1407,9 @@ type
 
   function SortCompare(const p1, p2: PState): ShortInt; inline;
   begin
-    if p1^.k > p2^.k then
+    if p1^.K < p2^.K then
         Result := -1
-    else if p1^.k < p2^.k then
-        Result := 1
-    else
-        Result := 0;
-  end;
-  procedure InternalSort(var SortBuffer: TStatePtrArray; L, r: TLInt);
-  var
-    i, j: TLInt;
-    p, t: PState;
-  begin
-    repeat
-      i := L;
-      j := r;
-      p := SortBuffer[(L + r) shr 1];
-      repeat
-        while SortCompare(SortBuffer[i], p) < 0 do
-            inc(i);
-        while SortCompare(SortBuffer[j], p) > 0 do
-            dec(j);
-        if i <= j then
-          begin
-            if i <> j then
-              begin
-                t := SortBuffer[i];
-                SortBuffer[i] := SortBuffer[j];
-                SortBuffer[j] := t;
-              end;
-            inc(i);
-            dec(j);
-          end;
-      until i > j;
-      if L < j then
-          InternalSort(SortBuffer, L, j);
-      L := i;
-    until i >= r;
-  end;
-
-var
-  buff: TStateArray;
-  buffPtr: TStatePtrArray;
-
-{$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-  begin
-    buff[pass].k := PearsonCorrelation(ProcessIn, GetMemorySource(pass)^.m_in, FInLen);
-    buff[pass].index := pass;
-    buffPtr[pass] := @buff[pass];
-  end;
-{$ENDIF FPC}
-
-
-var
-  i: TLInt;
-begin
-  if Count <= 0 then
-      Exit;
-  if Count = 1 then
-    begin
-      SetLength(List, 1);
-      List[0] := 0;
-      Exit;
-    end;
-  SetLength(buff, Count);
-  SetLength(buffPtr, Count);
-
-{$IFDEF parallel}
-{$IFDEF FPC}
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, Count - 1);
-{$ELSE}
-  TParallel.for(0, Count - 1, procedure(pass: TLInt)
-    begin
-      buff[pass].k := PearsonCorrelation(ProcessIn, GetMemorySource(pass)^.m_in, FInLen);
-      buff[pass].index := pass;
-      buffPtr[pass] := @buff[pass];
-    end);
-{$ENDIF FPC}
-{$ELSE}
-  for i := 0 to Count - 1 do
-    begin
-      buff[i].k := PearsonCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
-      buff[i].index := i;
-      buffPtr[i] := @buff[i];
-    end;
-{$ENDIF parallel}
-  // complete sort
-  InternalSort(buffPtr, 0, length(buffPtr) - 1);
-
-  SetLength(List, Count);
-  for i := 0 to Count - 1 do
-      List[i] := buffPtr[i]^.index;
-
-  SetLength(buff, 0);
-  SetLength(buffPtr, 0);
-end;
-{$ENDREGION 'Imp'}
-
-
-function TLearn.SearchMemoryWithSpearman(const ProcessIn: TLVec): TLInt;
-var
-  k, r: TLFloat;
-  i: TLInt;
-begin
-  if Count <= 0 then
-    begin
-      Result := -1;
-      Exit;
-    end;
-
-  k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(0)^.m_in, FInLen);
-  Result := 0;
-
-  for i := 1 to Count - 1 do
-    begin
-      r := SpearmanRankCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
-      if (r <> 0) and (r > k) then
-        begin
-          k := r;
-          Result := i;
-        end;
-    end;
-end;
-
-procedure TLearn.SearchMemoryWithSpearman(const ProcessIn: TLVec; out List: TLIVec);
-{$REGION 'Imp'}
-
-type
-  TState = record
-    k: TLFloat;
-    index: TLInt;
-  end;
-
-  PState = ^TState;
-
-  TStatePtrArray = array of PState;
-  TStateArray = array of TState;
-
-  function SortCompare(const p1, p2: PState): ShortInt; inline;
-  begin
-    if p1^.k > p2^.k then
-        Result := -1
-    else if p1^.k < p2^.k then
-        Result := 1
-    else
-        Result := 0;
-  end;
-  procedure InternalSort(var SortBuffer: TStatePtrArray; L, r: TLInt);
-  var
-    i, j: TLInt;
-    p, t: PState;
-  begin
-    repeat
-      i := L;
-      j := r;
-      p := SortBuffer[(L + r) shr 1];
-      repeat
-        while SortCompare(SortBuffer[i], p) < 0 do
-            inc(i);
-        while SortCompare(SortBuffer[j], p) > 0 do
-            dec(j);
-        if i <= j then
-          begin
-            if i <> j then
-              begin
-                t := SortBuffer[i];
-                SortBuffer[i] := SortBuffer[j];
-                SortBuffer[j] := t;
-              end;
-            inc(i);
-            dec(j);
-          end;
-      until i > j;
-      if L < j then
-          InternalSort(SortBuffer, L, j);
-      L := i;
-    until i >= r;
-  end;
-
-var
-  buff: TStateArray;
-  buffPtr: TStatePtrArray;
-
-{$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-  begin
-    buff[pass].k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(pass)^.m_in, FInLen);
-    buff[pass].index := pass;
-    buffPtr[pass] := @buff[pass];
-  end;
-{$ENDIF FPC}
-
-
-var
-  i: TLInt;
-begin
-  if Count <= 0 then
-      Exit;
-  if Count = 1 then
-    begin
-      SetLength(List, 1);
-      List[0] := 0;
-      Exit;
-    end;
-  SetLength(buff, Count);
-  SetLength(buffPtr, Count);
-
-{$IFDEF parallel}
-{$IFDEF FPC}
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, Count - 1);
-{$ELSE}
-  TParallel.for(0, Count - 1, procedure(pass: TLInt)
-    begin
-      buff[pass].k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(pass)^.m_in, FInLen);
-      buff[pass].index := pass;
-      buffPtr[pass] := @buff[pass];
-    end);
-{$ENDIF FPC}
-{$ELSE}
-  for i := 0 to Count - 1 do
-    begin
-      buff[i].k := SpearmanRankCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
-      buff[i].index := i;
-      buffPtr[i] := @buff[i];
-    end;
-{$ENDIF parallel}
-  // complete sort
-  InternalSort(buffPtr, 0, length(buffPtr) - 1);
-
-  SetLength(List, Count);
-  for i := 0 to Count - 1 do
-      List[i] := buffPtr[i]^.index;
-
-  SetLength(buff, 0);
-  SetLength(buffPtr, 0);
-end;
-{$ENDREGION 'Imp'}
-
-
-function TLearn.SearchMemoryWithDistance(const ProcessIn: TLVec): TLInt;
-var
-  k, r: Double;
-  i: TLInt;
-begin
-  if Count <= 0 then
-    begin
-      Result := -1;
-      Exit;
-    end;
-
-  if length(ProcessIn) <> FInLen then
-      RaiseInfo('processIn need Length=%d', [FInLen]);
-  k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(0)^.m_in);
-  Result := 0;
-
-  for i := 1 to Count - 1 do
-    begin
-      r := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(i)^.m_in);
-      if (r < k) then
-        begin
-          k := r;
-          Result := i;
-        end;
-    end;
-end;
-
-procedure TLearn.SearchMemoryWithDistance(const ProcessIn: TLVec; out List: TLIVec);
-type
-  TState = record
-    k: Double;
-    index: TLInt;
-  end;
-
-  PState = ^TState;
-
-  TStatePtrArray = array of PState;
-  TStateArray = array of TState;
-
-  function SortCompare(const p1, p2: PState): ShortInt; inline;
-  begin
-    if p1^.k < p2^.k then
-        Result := -1
-    else if p1^.k > p2^.k then
+    else if p1^.K > p2^.K then
         Result := 1
     else
       begin
@@ -1738,18 +1457,254 @@ type
 var
   buff: TStateArray;
   buffPtr: TStatePtrArray;
+  i: TLInt;
+begin
+  if Count <= 0 then
+      Exit;
+  if Count = 1 then
+    begin
+      SetLength(List, 1);
+      List[0] := 0;
+      Exit;
+    end;
+  SetLength(buff, Count);
+  SetLength(buffPtr, Count);
 
-{$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
-  begin
-    buff[pass].k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(pass)^.m_in);
-    buff[pass].index := pass;
-    buffPtr[pass] := @buff[pass];
+  for i := 0 to Count - 1 do
+    begin
+      buff[i].K := PearsonCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
+      buff[i].index := i;
+      buffPtr[i] := @buff[i];
+    end;
+
+  // complete sort
+  InternalSort(buffPtr, 0, length(buffPtr) - 1);
+
+  SetLength(List, Count);
+  for i := 0 to Count - 1 do
+      List[i] := buffPtr[i]^.index;
+
+  SetLength(buff, 0);
+  SetLength(buffPtr, 0);
+end;
+{$ENDREGION 'Imp'}
+
+
+function TLearn.SearchMemorySpearman(const ProcessIn: TLVec): TLInt;
+var
+  K, r: TLFloat;
+  i: TLInt;
+begin
+  if Count <= 0 then
+    begin
+      Result := -1;
+      Exit;
+    end;
+
+  K := SpearmanRankCorrelation(ProcessIn, GetMemorySource(0)^.m_in, FInLen);
+  Result := 0;
+
+  for i := 1 to Count - 1 do
+    begin
+      r := SpearmanRankCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
+      if (r <> 0) and (r > K) then
+        begin
+          K := r;
+          Result := i;
+        end;
+    end;
+end;
+
+procedure TLearn.SearchMemorySpearman(const ProcessIn: TLVec; out List: TLIVec);
+{$REGION 'Imp'}
+
+type
+  TState = record
+    K: TLFloat;
+    index: TLInt;
   end;
-{$ENDIF FPC}
 
+  PState = ^TState;
+
+  TStatePtrArray = array of PState;
+  TStateArray = array of TState;
+
+  function SortCompare(const p1, p2: PState): ShortInt; inline;
+  begin
+    if p1^.K < p2^.K then
+        Result := -1
+    else if p1^.K > p2^.K then
+        Result := 1
+    else
+      begin
+        Result := 0;
+        if p1^.index = p2^.index then
+            Result := 0
+        else if p1^.index < p2^.index then
+            Result := -1
+        else
+            Result := 1;
+      end;
+  end;
+  procedure InternalSort(var SortBuffer: TStatePtrArray; L, r: TLInt);
+  var
+    i, j: TLInt;
+    p, t: PState;
+  begin
+    repeat
+      i := L;
+      j := r;
+      p := SortBuffer[(L + r) shr 1];
+      repeat
+        while SortCompare(SortBuffer[i], p) < 0 do
+            inc(i);
+        while SortCompare(SortBuffer[j], p) > 0 do
+            dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            inc(i);
+            dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j);
+      L := i;
+    until i >= r;
+  end;
 
 var
+  buff: TStateArray;
+  buffPtr: TStatePtrArray;
+  i: TLInt;
+begin
+  if Count <= 0 then
+      Exit;
+  if Count = 1 then
+    begin
+      SetLength(List, 1);
+      List[0] := 0;
+      Exit;
+    end;
+  SetLength(buff, Count);
+  SetLength(buffPtr, Count);
+
+  for i := 0 to Count - 1 do
+    begin
+      buff[i].K := SpearmanRankCorrelation(ProcessIn, GetMemorySource(i)^.m_in, FInLen);
+      buff[i].index := i;
+      buffPtr[i] := @buff[i];
+    end;
+
+  // complete sort
+  InternalSort(buffPtr, 0, length(buffPtr) - 1);
+
+  SetLength(List, Count);
+  for i := 0 to Count - 1 do
+      List[i] := buffPtr[i]^.index;
+
+  SetLength(buff, 0);
+  SetLength(buffPtr, 0);
+end;
+{$ENDREGION 'Imp'}
+
+
+function TLearn.SearchMemoryDistance(const ProcessIn: TLVec): TLInt;
+var
+  K, r: Double;
+  i: TLInt;
+begin
+  if Count <= 0 then
+    begin
+      Result := -1;
+      Exit;
+    end;
+
+  if length(ProcessIn) <> FInLen then
+      RaiseInfo('processIn need Length=%d', [FInLen]);
+  K := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(0)^.m_in);
+  Result := 0;
+
+  for i := 1 to Count - 1 do
+    begin
+      r := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(i)^.m_in);
+      if (r < K) then
+        begin
+          K := r;
+          Result := i;
+        end;
+    end;
+end;
+
+procedure TLearn.SearchMemoryDistance(const ProcessIn: TLVec; out List: TLIVec);
+type
+  TState = record
+    K: Double;
+    index: TLInt;
+  end;
+
+  PState = ^TState;
+
+  TStatePtrArray = array of PState;
+  TStateArray = array of TState;
+
+  function SortCompare(const p1, p2: PState): ShortInt; inline;
+  begin
+    if p1^.K < p2^.K then
+        Result := -1
+    else if p1^.K > p2^.K then
+        Result := 1
+    else
+      begin
+        Result := 0;
+        if p1^.index = p2^.index then
+            Result := 0
+        else if p1^.index < p2^.index then
+            Result := -1
+        else
+            Result := 1;
+      end;
+  end;
+  procedure InternalSort(var SortBuffer: TStatePtrArray; L, r: TLInt);
+  var
+    i, j: TLInt;
+    p, t: PState;
+  begin
+    repeat
+      i := L;
+      j := r;
+      p := SortBuffer[(L + r) shr 1];
+      repeat
+        while SortCompare(SortBuffer[i], p) < 0 do
+            inc(i);
+        while SortCompare(SortBuffer[j], p) > 0 do
+            dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            inc(i);
+            dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j);
+      L := i;
+    until i >= r;
+  end;
+
+var
+  buff: TStateArray;
+  buffPtr: TStatePtrArray;
   i: TLInt;
 begin
   if Count <= 0 then
@@ -1767,25 +1722,13 @@ begin
   SetLength(buff, Count);
   SetLength(buffPtr, Count);
 
-{$IFDEF parallel}
-{$IFDEF FPC}
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, Count - 1);
-{$ELSE}
-  TParallel.for(0, Count - 1, procedure(pass: TLInt)
-    begin
-      buff[pass].k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(pass)^.m_in);
-      buff[pass].index := pass;
-      buffPtr[pass] := @buff[pass];
-    end);
-{$ENDIF FPC}
-{$ELSE}
   for i := 0 to Count - 1 do
     begin
-      buff[i].k := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(i)^.m_in);
+      buff[i].K := TKDTree.KDTreeDistance(ProcessIn, GetMemorySource(i)^.m_in);
       buff[i].index := i;
       buffPtr[i] := @buff[i];
     end;
-{$ENDIF parallel}
+
   // complete sort
   InternalSort(buffPtr, 0, length(buffPtr) - 1);
 
@@ -1839,10 +1782,10 @@ begin
   case FLearnType of
     ltKDT, ltKM:
       begin
-        if PLearnKDT(FLearnData)^.kdt.Count > 0 then
+        if PLearnKDT(FLearnData)^.K.Count > 0 then
           begin
             m64 := TMemoryStream64.Create;
-            PLearnKDT(FLearnData)^.kdt.SaveToStream(m64);
+            PLearnKDT(FLearnData)^.K.SaveToStream(m64);
             df.WriteStream(m64);
             DisposeObject(m64);
           end;
@@ -1941,6 +1884,12 @@ begin
     end;
   DisposeObject(nd);
 
+  if df.Reader.IsEnd then
+    begin
+      Train;
+      Exit;
+    end;
+
   m64 := TMemoryStream64.Create;
   df.Reader.ReadStream(m64);
   m64.Position := 0;
@@ -1960,7 +1909,7 @@ begin
         df.Reader.ReadStream(m64);
         m64.Position := 0;
         try
-            PLearnKDT(FLearnData)^.kdt.LoadFromStream(m64);
+            PLearnKDT(FLearnData)^.K.LoadFromStream(m64);
         except
             Train;
         end;
@@ -2136,4 +2085,3 @@ begin
   end;
 end;
 {$ENDIF FPC}
-

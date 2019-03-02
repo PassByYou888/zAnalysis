@@ -108,7 +108,6 @@ type
     class function KDTreeDistance(const v1, v2: TKDTree_Vec): Double;
   end;
 
-  // debug
 procedure Test_KDTree(const axis: Integer);
 
 implementation
@@ -202,7 +201,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -908,7 +907,8 @@ begin
       inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDTree.SaveToFile(FileName: SystemString);

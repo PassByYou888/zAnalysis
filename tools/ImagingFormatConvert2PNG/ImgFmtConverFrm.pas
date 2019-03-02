@@ -120,24 +120,24 @@ end;
 procedure TImgFmtConverForm.AddFileButtonClick(Sender: TObject);
 var
   i: Integer;
-  hashList: THashVariantList;
-  n, bk: string;
+  HashList: THashVariantList;
+  n, BK: string;
 begin
   if not OpenPictureDialog.Execute then
-      exit;
+      Exit;
 
   SourMemo.Lines.BeginUpdate;
-  hashList := THashVariantList.Create;
-  hashList.hashList.SetHashBlockCount(8192);
-  bk := Caption;
+  HashList := THashVariantList.Create;
+  HashList.HashList.SetHashBlockCount(8192);
+  BK := Caption;
   Enabled := False;
   for i := 0 to OpenPictureDialog.Files.Count - 1 do
     begin
       n := OpenPictureDialog.Files[i];
-      if not hashList.Exists(n) then
+      if not HashList.Exists(n) then
         begin
           SourMemo.Lines.Add(n);
-          hashList[n] := 1;
+          HashList[n] := 1;
         end
       else
           StateMemo.Lines.Add(Format('warning: same %s', [n]));
@@ -145,9 +145,9 @@ begin
       Caption := Format('processed %s', [umlPercentageToStr(OpenPictureDialog.Files.Count - 1, i).Text]);
       Application.ProcessMessages;
     end;
-  DisposeObject(hashList);
+  DisposeObject(HashList);
   SourMemo.Lines.EndUpdate;
-  Caption := bk;
+  Caption := BK;
   Enabled := True;
 end;
 
@@ -162,13 +162,13 @@ begin
     begin
       DestEdit.Enabled := False;
       BrowseButton.Enabled := False;
-      DestEdit.Color := clBtnface;
+      DestEdit.COLOR := clBtnFace;
     end
   else
     begin
       DestEdit.Enabled := True;
       BrowseButton.Enabled := True;
-      DestEdit.Color := clWindow;
+      DestEdit.COLOR := clWindow;
     end;
 end;
 
@@ -191,58 +191,58 @@ procedure TImgFmtConverForm.ExeccuteConvertButtonClick(Sender: TObject);
     if UsedSameDirCheckBox.Checked then
         Result := ChangeFileExt(n, ext)
     else
-        Result := TPath.Combine(DestEdit.Text, ChangeFileExt(ExtractFileName(n), ext));
+        Result := TPath.Combine(DestEdit.Text, ChangeFileExt(ExtractFilename(n), ext));
   end;
 
-  function GetDestFile(n: string; index: Integer): string; overload;
+  function GetDestFile(n: string; Index: Integer): string; overload;
   const
     ext = '.png';
   var
-    f, d, e: string;
+    F, d, E: string;
   begin
     d := ExtractFilePath(n);
-    f := umlGetFileName(n);
-    e := ExtractFileExt(f);
-    f := ChangeFileExt(f, '');
-    f := Format('%s%.3d%s', [f, index, ext]);
+    F := umlGetFileName(n);
+    E := ExtractFileExt(F);
+    F := ChangeFileExt(F, '');
+    F := Format('%s%.3d%s', [F, Index, ext]);
 
     if UsedSameDirCheckBox.Checked then
-        Result := d + ChangeFileExt(f, ext)
+        Result := d + ChangeFileExt(F, ext)
     else
-        Result := TPath.Combine(DestEdit.Text, f);
+        Result := TPath.Combine(DestEdit.Text, F);
   end;
 
 var
-  i, j: Integer;
+  i, J: Integer;
   sour, dest: string;
-  ImageEN: TImageEnView;
-  x, y: Integer;
+  ImageEn: TImageEnView;
+  X, Y: Integer;
   seqbmp32: TSequenceMemoryRaster;
   bmp32: TMemoryRaster;
   png: Vcl.Imaging.pngimage.TPngImage;
   ms: TMemoryStream64;
   bmp: TBitmap;
-  byteptr: Vcl.Imaging.pngimage.pByteArray;
-  Images: Imaging.TDynImageDataArray;
-  bk: string;
+  byteptr: Vcl.Imaging.pngimage.PByteArray;
+  images: Imaging.TDynImageDataArray;
+  BK: string;
 begin
   if not TDirectory.Exists(DestEdit.Text) then
     begin
       MessageDlg(Format('directory no exists: %s', [DestEdit.Text]), mtError, [mbYes], 0);
-      exit;
+      Exit;
     end;
 
   Enabled := False;
-  bk := Caption;
+  BK := Caption;
 
   for i := 0 to SourMemo.Lines.Count - 1 do
     begin
       sour := SourMemo.Lines[i];
       if not umlFileExists(sour) then
-          continue;
+          Continue;
       dest := GetDestFile(sour);
       if (umlMultipleMatch(['*.png'], sour)) and (UsedSameDirCheckBox.Checked) then
-          continue;
+          Continue;
 
       if (umlMultipleMatch(['*.seq'], sour)) and (TSequenceMemoryRaster.CanLoadFile(sour)) then
         begin
@@ -264,11 +264,11 @@ begin
             DisposeObject(bmp);
 
             png.CreateAlpha;
-            for y := 0 to bmp32.Height - 1 do
+            for Y := 0 to bmp32.height - 1 do
               begin
-                byteptr := png.AlphaScanline[y];
-                for x := 0 to bmp32.Width - 1 do
-                    byteptr^[x] := bmp32.PixelAlpha[x, y];
+                byteptr := png.AlphaScanline[Y];
+                for X := 0 to bmp32.width - 1 do
+                    byteptr^[X] := bmp32.PixelAlpha[X, Y];
               end;
             png.SaveToFile(dest);
           except
@@ -276,9 +276,9 @@ begin
           DisposeObject(seqbmp32);
           DisposeObject(bmp32);
           DisposeObject(png);
-          StateMemo.Lines.Add(Format('core sequence bitmap tech: %s -> %s ok!', [ExtractFileName(sour), ExtractFileName(dest)]));
+          StateMemo.Lines.Add(Format('core sequence bitmap tech: %s -> %s ok!', [ExtractFilename(sour), ExtractFilename(dest)]));
         end
-      else if (umlMultipleMatch('*.bmp', sour)) and (TMemoryRaster.CanLoadFile(sour)) then
+      else if TMemoryRaster.CanLoadFile(sour) then
         begin
           bmp32 := TMemoryRaster.Create;
           png := TPngImage.Create;
@@ -295,61 +295,62 @@ begin
             DisposeObject(bmp);
 
             png.CreateAlpha;
-            for y := 0 to bmp32.Height - 1 do
+            for Y := 0 to bmp32.height - 1 do
               begin
-                byteptr := png.AlphaScanline[y];
-                for x := 0 to bmp32.Width - 1 do
-                    byteptr^[x] := bmp32.PixelAlpha[x, y];
+                byteptr := png.AlphaScanline[Y];
+                for X := 0 to bmp32.width - 1 do
+                    byteptr^[X] := bmp32.PixelAlpha[X, Y];
               end;
             png.SaveToFile(dest);
           except
           end;
           DisposeObject(bmp32);
           DisposeObject(png);
-          StateMemo.Lines.Add(Format('core memory bitmap tech: %s -> %s ok!', [ExtractFileName(sour), ExtractFileName(dest)]));
+          StateMemo.Lines.Add(Format('core memory bitmap tech: %s -> %s ok!', [ExtractFilename(sour), ExtractFilename(dest)]));
         end
       else if (UsedImagingTechCheckBox.Checked) and (Imaging.IsFileFormatSupported(sour)) then
         begin
-          Imaging.LoadMultiImageFromFile(sour, Images);
+          Imaging.LoadMultiImageFromFile(sour, images);
           if FullExtractCheckBox.Checked then
             begin
-              for j := low(Images) to high(Images) do
+              for J := low(images) to high(images) do
                 begin
-                  if Length(Images) > 1 then
-                      SaveImageToFile(GetDestFile(sour, j), Images[j])
+                  if length(images) > 1 then
+                      SaveImageToFile(GetDestFile(sour, J), images[J])
                   else
-                      SaveImageToFile(GetDestFile(sour), Images[j]);
+                      SaveImageToFile(GetDestFile(sour), images[J]);
                 end;
             end
-          else if Length(Images) > 0 then
+          else if length(images) > 0 then
             begin
-              SaveImageToFile(GetDestFile(sour), Images[0]);
+              SaveImageToFile(GetDestFile(sour), images[0]);
             end;
-          StateMemo.Lines.Add(Format('imaging tech: %s -> %s ok!', [ExtractFileName(sour), ExtractFileName(dest)]));
+          StateMemo.Lines.Add(Format('imaging tech: %s -> %s ok!', [ExtractFilename(sour), ExtractFilename(dest)]));
         end
       else if (UsedImagenTechCheckBox.Checked) and (imageenio.IsKnownFormat(sour)) then
         begin
-          ImageEN := TImageEnView.Create(nil);
+          ImageEn := TImageEnView.Create(nil);
           try
-            ImageEN.IO.Params.PSD_LoadLayers := True;
-            ImageEN.IO.LoadFromFile(sour);
+            ImageEn.IO.Params.PSD_LoadLayers := True;
+            ImageEn.IO.LoadFromFile(sour);
 
-            ImageEN.IO.SaveToFilePNG(dest);
+            ImageEn.IO.SaveToFilePNG(dest);
           except
           end;
-          DisposeObject(ImageEN);
-          StateMemo.Lines.Add(Format('imageEN tech: %s -> %s ok!', [ExtractFileName(sour), ExtractFileName(dest)]));
+          DisposeObject(ImageEn);
+          StateMemo.Lines.Add(Format('imageEN tech: %s -> %s ok!', [ExtractFilename(sour), ExtractFilename(dest)]));
         end;
 
       Caption := Format('processed %s', [umlPercentageToStr(SourMemo.Lines.Count - 1, i).Text]);
       Application.ProcessMessages;
     end;
   Enabled := True;
-  Caption := bk;
+  Caption := BK;
 end;
 
 initialization
 
 TPicture.RegisterFileFormat('SEQ', 'Sequence frame bitmap', TBitmap);
+TPicture.RegisterFileFormat('JLS', 'Sequence frame bitmap', TBitmap);
 
 end.

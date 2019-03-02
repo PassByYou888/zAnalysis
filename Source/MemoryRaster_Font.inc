@@ -1,24 +1,42 @@
-{$IFDEF LARGE_FONT}
+{$IFDEF LARGE_RASTER_FONT}
 {$RESOURCE MemoryRaster_LargeFont.RES}
-{$ELSE LARGE_FONT}
+{$ELSE LARGE_RASTER_FONT}
 {$RESOURCE MemoryRaster_DefaultFont.RES}
-{$ENDIF LARGE_FONT}
+{$ENDIF LARGE_RASTER_FONT}
 
-procedure Init_DefaultFont;
+
+procedure InitSystemFont_Thread_Run(Sender: TComputeThread);
 var
   rs: TCoreClassResourceStream;
+  fn: TFontRaster;
 begin
   rs := TCoreClassResourceStream.Create(HInstance, 'MemoryRasterFont', RT_RCDATA);
   rs.Position := 0;
-  SystemFont := TFontRaster.Create;
-  SystemFont.LoadFromStream(rs);
+
+  fn := TFontRaster.Create;
+  fn.LoadFromStream(rs);
   DisposeObject(rs);
+
+  SystemFont := fn;
+end;
+
+procedure Init_DefaultFont;
+begin
+  SystemFont := nil;
+  TComputeThread.RunC(nil, nil, {$IFDEF FPC}@{$ENDIF FPC}InitSystemFont_Thread_Run);
 end;
 
 procedure Free_DefaultFont;
 begin
+  Wait_SystemFont_Init;
   DisposeObject(SystemFont);
   SystemFont := nil;
+end;
+
+procedure Wait_SystemFont_Init;
+begin
+  while SystemFont = nil do
+      CheckThreadSynchronize(10);
 end;
 
 function fr_ComputeNearest(const Sender: PVertexMap; const Sampler: TMemoryRaster; const x, y: TGeoFloat): TRasterColor;
@@ -27,8 +45,8 @@ var
   tu0, tv0: Integer;
 begin
   FR := TFontRaster.PDrawWorkData(Sender^.UserData)^.Owner;
-  tu0 := ClampInt(Trunc(TexCoordWrapRepeat(x) * (Sampler.width)), 0, Sampler.width - 1);
-  tv0 := ClampInt(Trunc(TexCoordWrapRepeat(y) * (Sampler.height)), 0, Sampler.height - 1);
+  tu0 := ClampInt_(Trunc(TexCoordWrapRepeat(x) * (Sampler.width)), 0, Sampler.width - 1);
+  tv0 := ClampInt_(Trunc(TexCoordWrapRepeat(y) * (Sampler.height)), 0, Sampler.height - 1);
 
   Result := RasterColor(0, 0, 0, FR.FBitRaster^[tu0 + tv0 * Sampler.width]);
 end;
@@ -50,8 +68,8 @@ begin
   fx := TexCoordWrapRepeat(x) * (Sampler.width);
   fy := TexCoordWrapRepeat(y) * (Sampler.height);
 
-  i_x := ClampInt(Trunc(fx), 0, Sampler.width - 1);
-  i_y := ClampInt(Trunc(fy), 0, Sampler.height - 1);
+  i_x := ClampInt_(Trunc(fx), 0, Sampler.width - 1);
+  i_y := ClampInt_(Trunc(fy), 0, Sampler.height - 1);
 
   i_x2 := i_x + 1;
   if i_x2 > Sampler.width - 1 then
@@ -87,9 +105,9 @@ procedure fr_ComputeBlend(const Sender: PVertexMap; const f, M: TRasterColor; va
 var
   c: TRasterColorEntry;
 begin
-  c.RGBA := TFontRaster.PDrawWorkData(Sender^.UserData)^.DestColor;
+  c.BGRA := TFontRaster.PDrawWorkData(Sender^.UserData)^.DestColor;
   c.a := TRasterColorEntry(f).a;
-  Vertex_ComputeBlend(Sender, c.RGBA, M, b);
+  Vertex_ComputeBlend(Sender, c.BGRA, M, b);
 end;
 
 constructor TFontRaster.Create;
@@ -473,31 +491,26 @@ begin
   WI := 0;
 
   VM.BeginUpdate;
-  // projection
   try
     for i := 1 to Text.Len do
       begin
         c := Text[i];
         FD := @(FFontTable^[Word(c)]);
 
-        if c = #10 then
-            Continue;
-
-        if c = #9 then
-            Continue;
-
-        if c = #13 then
-            Continue;
-
         if not FD^.Activted then
             Continue;
+        if CharIn(c, [#10, #9, #13]) then
+            Continue;
 
+        // projection
         s := RectV2(FD^.x, FD^.y, FD^.x + FD^.w + 1, FD^.y + FD^.h + 1);
-
         cv := wp.Points[WI];
-
-        VM.DrawRect(TV2Rect4.Init(s, 0),
-          TV2Rect4.Init(cv, (FD^.w + 1) * Scale, (FD^.h + 1) * Scale, angle), TempSampler, bilinear_sampling, 1);
+        VM.DrawRect(
+          TV2Rect4.Init(s, 0),
+          TV2Rect4.Init(cv, (FD^.w + 1) * Scale, (FD^.h + 1) * Scale, angle),
+          TempSampler,
+          bilinear_sampling,
+          alpha);
 
         inc(WI);
       end;
@@ -513,9 +526,7 @@ begin
     VM.ComputeLinear := {$IFDEF FPC}@{$ENDIF FPC}Vertex_ComputeLinear;
     VM.UserData := bak_userData;
   end;
-
   Result := vSiz;
-
 end;
 
 procedure TFontRaster.Draw(Text: TFontRasterString; Dst: TMemoryRaster; dstVec: TVec2; dstColor: TRasterColor);

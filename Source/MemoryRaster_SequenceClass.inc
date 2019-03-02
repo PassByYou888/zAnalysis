@@ -192,7 +192,4 @@ end;
 function TSequenceMemoryRaster.FrameRect: TRect;
 begin
   Result := Rect(0, 0, FrameWidth, FrameHeight);
-end; 
- 
- 
- 
+end;

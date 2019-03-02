@@ -177,7 +177,7 @@ begin
       negbuff[i] := negbuff[Integer(FP + i)];
     end;
 
-  truebufsize := fil.read(buff[0], BufSize);
+  truebufsize := fil.read(buff^[0], BufSize);
 
   if (truebufsize < BufSize) then
     begin
@@ -235,7 +235,7 @@ end;
 procedure TJLSBitIO.FlushBuff;
 begin
   { fwrite must work correctly, even if fp is equal to 0 }
-  FOutputStream.write(buff[0], FP);
+  FOutputStream.write(buff^[0], FP);
   FP := 0;
 end;
 
@@ -381,7 +381,7 @@ begin
     begin
       if (FP >= BufSize) then
         begin
-          FOutputStream.write(buff[0], FP);
+          FOutputStream.write(buff^[0], FP);
           FP := 0;
         end;
 
@@ -435,7 +435,7 @@ begin
     begin
       if (FP >= BufSize) then
         begin
-          FOutputStream.write(buff[0], FP);
+          FOutputStream.write(buff^[0], FP);
           FP := 0;
         end;
 

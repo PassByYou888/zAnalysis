@@ -85,6 +85,15 @@ begin
       Result[i] := v[i];
 end;
 
+function LVecCopy(const v: TLVec; const index, Count: TLInt): TLVec;
+var
+  i: Integer;
+begin
+  SetLength(Result, Count);
+  for i := 0 to Count - 1 do
+      Result[i] := v[i + index];
+end;
+
 function LVecCopy(const v: TLIVec): TLIVec;
 var
   i: Integer;
@@ -94,6 +103,15 @@ begin
       Result[i] := v[i];
 end;
 
+function LVecCopy(const v: TLIVec; const index, Count: TLInt): TLIVec;
+var
+  i: Integer;
+begin
+  SetLength(Result, Count);
+  for i := 0 to Count - 1 do
+      Result[i] := v[i + index];
+end;
+
 function LVecCopy(const v: TLBVec): TLBVec;
 var
   i: Integer;
@@ -101,6 +119,15 @@ begin
   SetLength(Result, length(v));
   for i := 0 to length(v) - 1 do
       Result[i] := v[i];
+end;
+
+function LVecCopy(const v: TLBVec; const index, Count: TLInt): TLBVec;
+var
+  i: Integer;
+begin
+  SetLength(Result, Count);
+  for i := 0 to Count - 1 do
+      Result[i] := v[i + index];
 end;
 
 function LMatrixCopy(const v: TLMatrix): TLMatrix;
@@ -469,96 +496,6 @@ begin
       Result := AValue;
 end;
 
-procedure LFeatureSamplerWithSift(const mr: TMemoryRaster; ln: TLearn; lOut: TLVec);
-var
-  f: TFeature;
-  i: TLInt;
-begin
-  f := TFeature.CreateWithRaster(mr);
-  for i := 0 to f.Count - 1 do
-      ln.AddMemory(Descriptor2LVec(f[i]^.descriptor), lOut);
-  DisposeObject(f);
-end;
-
-function LMatrixSamplerWithHOG(const mr: TMemoryRaster): TLMatrix;
-var
-  nmr: TMemoryRaster;
-  HOG: THOG;
-begin
-  nmr := TMemoryRaster.Create;
-  nmr.NoLineZoomFrom(mr, SYSTEM_HOGCELLSIZE * (SYSTEM_HOGSAMPLERSIZE - 2), SYSTEM_HOGCELLSIZE * (SYSTEM_HOGSAMPLERSIZE - 2));
-
-  HOG := THOG.CreateAntiLight(System_HOGTable, nmr);
-  DisposeObject(nmr);
-  HOG.BuildFeatureMatrix(Result);
-  DisposeObject(HOG);
-end;
-
-function LMatrixSampler(const mr: TMemoryRaster): TLMatrix;
-var
-  i, j: Integer;
-begin
-  SetLength(Result, mr.height, mr.width);
-  for j := 0 to mr.height - 1 do
-    for i := 0 to mr.width - 1 do
-        Result[j, i] := mr.PixelGrayD[i, j];
-end;
-
-function LMatrixSampler(const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix;
-var
-  n: TMemoryRaster;
-  i, j: TLInt;
-begin
-  if (mr.width = SamplerSize) and (mr.height = SamplerSize) then
-    begin
-      SetLength(Result, SamplerSize, SamplerSize);
-      for i := 0 to SamplerSize - 1 do
-        for j := 0 to SamplerSize - 1 do
-            Result[j, i] := mr.PixelGrayD[i, j];
-    end
-  else
-    begin
-      n := TMemoryRaster.Create;
-      n.ZoomFrom(mr, SamplerSize, SamplerSize);
-
-      SetLength(Result, SamplerSize, SamplerSize);
-      for i := 0 to SamplerSize - 1 do
-        for j := 0 to SamplerSize - 1 do
-            Result[j, i] := n.PixelGrayD[i, j];
-
-      DisposeObject(n);
-    end;
-end;
-
-function LMatrixSampler(const Antialiasing: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix;
-var
-  n: TMemoryRaster;
-  i, j: TLInt;
-begin
-  if (mr.width = SamplerSize) and (mr.height = SamplerSize) then
-    begin
-      SetLength(Result, SamplerSize, SamplerSize);
-      for i := 0 to SamplerSize - 1 do
-        for j := 0 to SamplerSize - 1 do
-            Result[j, i] := mr.PixelGrayD[i, j];
-    end
-  else
-    begin
-      n := TMemoryRaster.Create;
-      if Antialiasing then
-          n.GaussianBlurZoomFrom(mr, SamplerSize, SamplerSize)
-      else
-          n.ZoomFrom(mr, SamplerSize, SamplerSize);
-
-      SetLength(Result, SamplerSize, SamplerSize);
-      for i := 0 to SamplerSize - 1 do
-        for j := 0 to SamplerSize - 1 do
-            Result[j, i] := n.PixelGrayD[i, j];
-
-      DisposeObject(n);
-    end;
-end;
-
 procedure ZoomLineF(const Source, dest: PLMatrix; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
 var
   j: TLInt;
@@ -736,46 +673,6 @@ begin
     end;
 end;
 
-procedure LSampler(var Source: TLBMatrix; const dest: TMemoryRaster);
-var
-  i, j: TLInt;
-begin
-  dest.SetSize(length(Source[0]), length(Source));
-  for j := 0 to dest.height - 1 do
-    for i := 0 to dest.width - 1 do
-        dest.PixelGray[i, j] := IfThen(Source[j, i], 255, 0);
-end;
-
-procedure LSampler(var Source: TLMatrix; const f_Max: TLFloat; const dest: TMemoryRaster);
-var
-  i, j: TLInt;
-begin
-  dest.SetSize(length(Source[0]), length(Source));
-  for j := 0 to dest.height - 1 do
-    for i := 0 to dest.width - 1 do
-        dest.PixelGrayD[i, j] := Round(Source[j, i] / f_Max * 255);
-end;
-
-procedure LSampler(var Source: TLMatrix; const dest: TMemoryRaster);
-begin
-  LSampler(Source, LMaxVec(Source), dest);
-end;
-
-procedure LSampler(var Source: TLIMatrix; const i_Max: TLInt; const dest: TMemoryRaster);
-var
-  i, j: TLInt;
-begin
-  dest.SetSize(length(Source[0]), length(Source));
-  for j := 0 to dest.height - 1 do
-    for i := 0 to dest.width - 1 do
-        dest.PixelGrayD[i, j] := Round(Source[j, i] / i_Max * 255);
-end;
-
-procedure LSampler(var Source: TLIMatrix; const dest: TMemoryRaster);
-begin
-  LSampler(Source, LMaxVec(Source), dest);
-end;
-
 procedure LSaveMatrix(var Source: TLMatrix; dest: TCoreClassStream);
 var
   j: TLInt;
@@ -857,56 +754,6 @@ begin
       Source.read(dest[j][0], w);
 end;
 
-procedure LSaveSampler(var Source: TLBMatrix; const fn: SystemString);
-var
-  M: TMemoryRaster;
-begin
-  M := NewRaster();
-  LSampler(Source, M);
-  SaveRaster(M, fn);
-  DisposeObject(M);
-end;
-
-procedure LSaveSampler(var Source: TLIMatrix; const fn: SystemString);
-var
-  M: TMemoryRaster;
-begin
-  M := NewRaster();
-  LSampler(Source, M);
-  SaveRaster(M, fn);
-  DisposeObject(M);
-end;
-
-procedure LSaveSampler(var Source: TLIMatrix; const i_Max: TLInt; const fn: SystemString);
-var
-  M: TMemoryRaster;
-begin
-  M := NewRaster();
-  LSampler(Source, i_Max, M);
-  SaveRaster(M, fn);
-  DisposeObject(M);
-end;
-
-procedure LSaveSampler(var Source: TLMatrix; const fn: SystemString);
-var
-  M: TMemoryRaster;
-begin
-  M := NewRaster();
-  LSampler(Source, M);
-  SaveRaster(M, fn);
-  DisposeObject(M);
-end;
-
-procedure LSaveSampler(var Source: TLMatrix; const f_Max: TLFloat; const fn: SystemString);
-var
-  M: TMemoryRaster;
-begin
-  M := NewRaster();
-  LSampler(Source, f_Max, M);
-  SaveRaster(M, fn);
-  DisposeObject(M);
-end;
-
 function LDA(const M: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo: SystemString; var output: TLMatrix): Boolean;
 var
   rInfo: TLInt;
@@ -971,115 +818,12 @@ begin
   Result := rInfo in [1, 2];
 end;
 
-function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean;
-var
-  k: TLFloat;
-  mrblur, n: TMemoryRaster;
-  i, j: TLInt;
-  buff: TLMatrix;
-  rInfo: TLInt;
-begin
-  k := SamplerSize / mr.width;
-
-  n := TMemoryRaster.Create;
-  if (not Fast) and (k < 1.0) then
-    begin
-      mrblur := TMemoryRaster.Create;
-      // preprocess liner zoom
-      GrayscaleBlur(mr, mrblur, mr.width / SamplerSize, mr.BoundsRect);
-      // zoom
-      n.ZoomFrom(mrblur, SamplerSize, Round(mrblur.height * k));
-      DisposeObject(mrblur);
-    end
-  else
-    begin
-      // zoom
-      n.ZoomFrom(mr, SamplerSize, Round(mr.height * k));
-      if not Fast then
-          GrayscaleBlur(n, SamplerSize / mr.width, n.BoundsRect);
-    end;
-
-  SetLength(buff, n.height, SamplerSize + 1);
-
-  for i := 0 to n.height - 1 do
-    begin
-      for j := 0 to SamplerSize - 1 do
-          buff[i, j] := n.PixelGrayD[j, i];
-      buff[i, SamplerSize] := i;
-    end;
-
-  FisherLDAN(buff, n.height, SamplerSize, SamplerSize + 1, rInfo, output);
-
-  case rInfo of
-    1: sInfo := 'task is solved';
-    2: sInfo := 'there was a multicollinearity in training set, but task has been solved';
-    -1: sInfo := 'incorrect parameters was passed (NPoints<0, NVars<1, NClasses<2)';
-    -2: sInfo := 'there is a point with class number outside of [0..NClasses-1]';
-    -4: sInfo := 'internal EVD subroutine hasn''''t converged';
-    else sInfo := 'unknow';
-  end;
-
-  Result := rInfo in [1, 2];
-
-  SetLength(buff, 0, 0);
-  DisposeObject(n);
-end;
-
 function PCA(const buff: TLMatrix; const NPoints, NVars: TLInt; var v: TLMatrix): TLInt;
 var
   s: TLVec;
 begin
   PCABuildBasis(buff, NPoints, NVars, Result, s, v);
   SetLength(s, 0);
-end;
-
-function PCA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean;
-var
-  k: TLFloat;
-  mrblur, n: TMemoryRaster;
-  i, j: TLInt;
-  buff: TLMatrix;
-  rInfo: TLInt;
-begin
-  k := SamplerSize / mr.width;
-
-  n := TMemoryRaster.Create;
-  if (not Fast) and (k < 1.0) then
-    begin
-      mrblur := TMemoryRaster.Create;
-      // preprocess liner zoom
-      GrayscaleBlur(mr, mrblur, mr.width / SamplerSize, mr.BoundsRect);
-      // zoom
-      n.ZoomFrom(mrblur, SamplerSize, Round(mrblur.height * k));
-      DisposeObject(mrblur);
-    end
-  else
-    begin
-      // zoom
-      n.ZoomFrom(mr, SamplerSize, Round(mr.height * k));
-      if not Fast then
-          GrayscaleBlur(n, SamplerSize / mr.width, n.BoundsRect);
-    end;
-
-  SetLength(buff, n.height, SamplerSize);
-
-  for i := 0 to n.height - 1 do
-    for j := 0 to n.width - 1 do
-        buff[i, j] := n.PixelGrayD[j, i];
-
-  rInfo := PCA(buff, n.height, n.width, output);
-
-  case rInfo of
-    1: sInfo := 'task is solved';
-    -1: sInfo := 'wrong parameters has been passed (NPoints<0, NVars<1)';
-    -4: sInfo := 'SVD subroutine haven''''t converged';
-    else sInfo := 'unknow';
-  end;
-
-  Result := rInfo = 1;
-
-  SetLength(buff, 0, 0);
-  DisposeObject(n);
 end;
 
 function KMeans(const Source: TLMatrix; const NVars, k: TLInt; var KArray: TLMatrix; var kIndex: TLIVec): Boolean;

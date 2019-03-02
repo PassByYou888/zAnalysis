@@ -15,8 +15,7 @@ unit Learn;
 
 interface
 
-uses Math, CoreClasses, UnicodeMixedLib, PascalStrings, MemoryRaster, MemoryStream64, DataFrameEngine,
-  KDTree, LearnTypes;
+uses Math, CoreClasses, UnicodeMixedLib, PascalStrings, KDTree, LearnTypes, MemoryStream64, DataFrameEngine;
 
 {$REGION 'Class'}
 
@@ -37,13 +36,13 @@ type
 
     PLearnMemory = ^TLearnMemory;
   private type
-    THideLayerDepth = (hld0, hld1, hld2);
-
     TLearnKDT = record
-      kdt: TKDTree;
+      K: TKDTree;
     end;
 
     PLearnKDT = ^TLearnKDT;
+
+    THideLayerDepth = (hld0, hld1, hld2);
   private
     FEnabledRandomNumber: Boolean;
     FInLen, FOutLen: TLInt;
@@ -80,14 +79,6 @@ type
     // classifier style of level 2
     class function CreateClassifier2(const lt: TLearnType; const InDataLen: TLInt): TLearn;
 
-    // picture classifier style
-    class function CreatePictureClassifier(const lt: TLearnType; const SamplerWidth: TLInt): TLearn;
-
-    // regression style with fast Histogram of Oriented Gradient
-    class function CreateHOGRegression(const lt: TLearnType; const OutDataLen: TLInt): TLearn;
-    // classifier style with fast Histogram of Oriented Gradient
-    class function CreateHOGClassifier(const lt: TLearnType): TLearn;
-
     constructor Create; virtual;
     destructor Destroy; override;
 
@@ -115,6 +106,7 @@ type
 
     { * sampler * }
     procedure AddMemory(const f_In, f_Out: TLVec; f_token: SystemString); overload;
+    procedure AddMemory(const f_In: TLVec; f_token: SystemString); overload;
     procedure AddMemory(const f_In, f_Out: TLVec); overload;
     procedure AddMemory(const s_In, s_Out: SystemString); overload;
     procedure AddMemory(const s_In, s_Out, s_token: SystemString); overload;
@@ -139,56 +131,60 @@ type
     procedure WaitTrain;
     // token
     function SearchToken(const v: TLVec): SystemString; overload;
-    function SearchToken(const v: TLFloat): SystemString; overload;
+
     // data input/output
     function Process(const p_in, p_out: PLVec): Boolean; overload;
     function Process(const ProcessIn: PLVec): SystemString; overload;
     function Process(const ProcessIn: TLVec): SystemString; overload;
     function Process(const ProcessIn: TPascalString): SystemString; overload;
     function ProcessMatrix(const p_in: PLMatrix; const p_out: PLVec): Boolean; overload;
+    function ProcessToken(const ProcessIn: PLVec): SystemString; overload;
+
     // result max value
     function ProcessMax(const ProcessIn: TLVec): TLFloat; overload;
     function ProcessMax(const ProcessIn: TLMatrix): TLFloat; overload;
     function ProcessMaxToken(const ProcessIn: TLVec): SystemString; overload;
     function ProcessMaxToken(const ProcessIn: TLMatrix): SystemString; overload;
+
     // result max index
     function ProcessMaxIndex(const ProcessIn: TLVec): TLInt; overload;
     function ProcessMaxIndex(const ProcessIn: TLMatrix): TLInt; overload;
     function ProcessMaxIndexToken(const ProcessIn: TLVec): SystemString; overload;
     function ProcessMaxIndexToken(const ProcessIn: TLMatrix): SystemString; overload;
+
     // result min value
     function ProcessMin(const ProcessIn: TLVec): TLFloat; overload;
     function ProcessMin(const ProcessIn: TLMatrix): TLFloat; overload;
     function ProcessMinToken(const ProcessIn: TLVec): SystemString; overload;
     function ProcessMinToken(const ProcessIn: TLMatrix): SystemString; overload;
+
     // result min index
     function ProcessMinIndex(const ProcessIn: TLVec): TLInt; overload;
     function ProcessMinIndex(const ProcessIn: TLMatrix): TLInt; overload;
     function ProcessMinIndexToken(const ProcessIn: TLVec): SystemString; overload;
     function ProcessMinIndexToken(const ProcessIn: TLMatrix): SystemString; overload;
+
     // result first value
     function ProcessFV(const ProcessIn: TLVec): TLFloat; overload;
     function ProcessFV(const ProcessIn: TLMatrix): TLFloat; overload;
     function ProcessFV(const ProcessIn: TPascalString): TLFloat; overload;
+
     // result last value
     function ProcessLV(const ProcessIn: TLVec): TLFloat; overload;
     function ProcessLV(const ProcessIn: TLMatrix): TLFloat; overload;
     function ProcessLV(const ProcessIn: TPascalString): TLFloat; overload;
 
     // search with Pearson
-    function SearchMemoryWithPearson(const ProcessIn: TLVec): TLInt; overload;
-    // search with Pearson - parallel support
-    procedure SearchMemoryWithPearson(const ProcessIn: TLVec; out List: TLIVec); overload;
+    function SearchMemoryPearson(const ProcessIn: TLVec): TLInt; overload;
+    procedure SearchMemoryPearson(const ProcessIn: TLVec; out List: TLIVec); overload;
 
     // search with Spearman
-    function SearchMemoryWithSpearman(const ProcessIn: TLVec): TLInt; overload;
-    // search with Spearman - parallel support
-    procedure SearchMemoryWithSpearman(const ProcessIn: TLVec; out List: TLIVec); overload;
+    function SearchMemorySpearman(const ProcessIn: TLVec): TLInt; overload;
+    procedure SearchMemorySpearman(const ProcessIn: TLVec; out List: TLIVec); overload;
 
-    // search with euclidean metric
-    function SearchMemoryWithDistance(const ProcessIn: TLVec): TLInt; overload;
-    // search with euclidean metric - parallel support
-    procedure SearchMemoryWithDistance(const ProcessIn: TLVec; out List: TLIVec); overload;
+    // search with euclidean metric:K
+    function SearchMemoryDistance(const ProcessIn: TLVec): TLInt; overload;
+    procedure SearchMemoryDistance(const ProcessIn: TLVec; out List: TLIVec); overload;
 
     { * fast binary store * }
     procedure SaveToDF(df: TDataFrameEngine);
@@ -228,8 +224,11 @@ procedure LSetMatrix(var M: TLMatrix; const VDef: TLFloat); overload;
 procedure LSetMatrix(var M: TLIMatrix; const VDef: TLInt); overload;
 procedure LSetMatrix(var M: TLBMatrix; const VDef: Boolean); overload;
 function LVecCopy(const v: TLVec): TLVec; overload;
+function LVecCopy(const v: TLVec; const index, Count: TLInt): TLVec; overload;
 function LVecCopy(const v: TLIVec): TLIVec; overload;
+function LVecCopy(const v: TLIVec; const index, Count: TLInt): TLIVec; overload;
 function LVecCopy(const v: TLBVec): TLBVec; overload;
+function LVecCopy(const v: TLBVec; const index, Count: TLInt): TLBVec; overload;
 function LMatrixCopy(const v: TLMatrix): TLMatrix; overload;
 function LMatrixCopy(const v: TLIMatrix): TLIMatrix; overload;
 function LMatrixCopy(const v: TLBMatrix): TLBMatrix; overload;
@@ -265,19 +264,9 @@ function LClamp(const AValue: TLFloat; const aMin, aMax: TLFloat): TLFloat; over
 function LClamp(const AValue: TLInt; const aMin, aMax: TLInt): TLInt; overload;
 
 { * sampler support * }
-procedure LFeatureSamplerWithSift(const mr: TMemoryRaster; ln: TLearn; lOut: TLVec);
-function LMatrixSamplerWithHOG(const mr: TMemoryRaster): TLMatrix;
-function LMatrixSampler(const mr: TMemoryRaster): TLMatrix; overload;
-function LMatrixSampler(const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix; overload;
-function LMatrixSampler(const Antialiasing: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster): TLMatrix; overload;
 procedure LZoomMatrix(var Source, dest: TLMatrix; const DestWidth, DestHeight: TLInt); overload;
 procedure LZoomMatrix(var Source, dest: TLIMatrix; const DestWidth, DestHeight: TLInt); overload;
 procedure LZoomMatrix(var Source, dest: TLBMatrix; const DestWidth, DestHeight: TLInt); overload;
-procedure LSampler(var Source: TLBMatrix; const dest: TMemoryRaster); overload;
-procedure LSampler(var Source: TLMatrix; const f_Max: TLFloat; const dest: TMemoryRaster); overload;
-procedure LSampler(var Source: TLMatrix; const dest: TMemoryRaster); overload;
-procedure LSampler(var Source: TLIMatrix; const i_Max: TLInt; const dest: TMemoryRaster); overload;
-procedure LSampler(var Source: TLIMatrix; const dest: TMemoryRaster); overload;
 
 { matrix as stream }
 procedure LSaveMatrix(var Source: TLMatrix; dest: TCoreClassStream); overload;
@@ -287,24 +276,15 @@ procedure LLoadMatrix(Source: TCoreClassStream; var dest: TLIMatrix); overload;
 procedure LSaveMatrix(var Source: TLBMatrix; dest: TCoreClassStream); overload;
 procedure LLoadMatrix(Source: TCoreClassStream; var dest: TLBMatrix); overload;
 
-{ save sampler as viewer }
-procedure LSaveSampler(var Source: TLBMatrix; const fn: SystemString); overload;
-procedure LSaveSampler(var Source: TLIMatrix; const fn: SystemString); overload;
-procedure LSaveSampler(var Source: TLIMatrix; const i_Max: TLInt; const fn: SystemString); overload;
-procedure LSaveSampler(var Source: TLMatrix; const fn: SystemString); overload;
-procedure LSaveSampler(var Source: TLMatrix; const f_Max: TLFloat; const fn: SystemString); overload;
-
 { * linear discriminant analysis support * }
 function LDA(const M: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo: SystemString; var output: TLMatrix): Boolean; overload;
 function LDA(const M: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo: SystemString; var output: TLVec): Boolean; overload;
-function LDA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean; overload;
 
 { * principal component analysis support * }
-function PCA(const buff: TLMatrix; const NPoints, NVars: TLInt; var v: TLMatrix): TLInt; overload;
-function PCA(const Fast: Boolean; const SamplerSize: TLInt; const mr: TMemoryRaster; var sInfo: SystemString; var output: TLMatrix): Boolean; overload;
+function PCA(const buff: TLMatrix; const NPoints, NVars: TLInt; var v: TLMatrix): TLInt;
 
 { * k-means++ clusterization support * }
-function KMeans(const Source: TLMatrix; const NVars, k: TLInt; var KArray: TLMatrix; var kIndex: TLIVec): Boolean;
+function KMeans(const Source: TLMatrix; const NVars, K: TLInt; var KArray: TLMatrix; var kIndex: TLIVec): Boolean;
 
 { * init Matrix * }
 function LMatrix(const L1, l2: TLInt): TLMatrix; overload;
@@ -378,6 +358,46 @@ procedure TagSortFast(var a: TLVec; const n: TLInt);
 procedure TagHeapPushI(var a: TLVec; var b: TLIVec; var n: TLInt; const VA: TLFloat; const VB: TLInt);
 procedure TagHeapReplaceTopI(var a: TLVec; var b: TLIVec; const n: TLInt; const VA: TLFloat; const VB: TLInt);
 procedure TagHeapPopI(var a: TLVec; var b: TLIVec; var n: TLInt);
+
+(* ************************************************************************
+  More precise dot-product. Absolute error of  subroutine  result  is  about
+  1 ulp of max(MX,V), where:
+  MX = max( |a[i]*b[i]| )
+  V  = |(a,b)|
+
+  INPUT PARAMETERS
+  A       -   array[0..N-1], vector 1
+  B       -   array[0..N-1], vector 2
+  N       -   vectors length, N<2^29.
+  Temp    -   array[0..N-1], pre-allocated temporary storage
+
+  OUTPUT PARAMETERS
+  R       -   (A,B)
+  RErr    -   estimate of error. This estimate accounts for both  errors
+  during  calculation  of  (A,B)  and  errors  introduced by
+  rounding of A and B to fit in TLFloat (about 1 ulp).
+  ************************************************************************ *)
+procedure XDot(const a: TLVec; const b: TLVec; n: TLInt; var Temp: TLVec; var r: TLFloat; var RErr: TLFloat);
+
+(* ************************************************************************
+  Internal subroutine for extra-precise calculation of SUM(w[i]).
+
+  INPUT PARAMETERS:
+  W   -   array[0..N-1], values to be added W is modified during calculations.
+  MX  -   max(W[i])
+  N   -   array size
+
+  OUTPUT PARAMETERS:
+  R   -   SUM(w[i])
+  RErr-   error estimate for R
+  ************************************************************************ *)
+procedure XSum(var w: TLVec; mx: TLFloat; n: TLInt; var r: TLFloat; var RErr: TLFloat);
+
+(* ************************************************************************
+  Fast Pow
+  ************************************************************************ *)
+function XFastPow(r: TLFloat; n: TLInt): TLFloat;
+
 {$ENDREGION 'FloatAPI'}
 
 {$REGION 'LowLevelMatrix'}
@@ -442,21 +462,21 @@ procedure RMatrixLeftTRSM(M: TLInt; n: TLInt;
   const a: TLMatrix; i1: TLInt; j1: TLInt; IsUpper: Boolean;
   IsUnit: Boolean; OpType: TLInt; var x: TLMatrix; i2: TLInt; j2: TLInt);
 
-procedure CMatrixSYRK(n: TLInt; k: TLInt; alpha: TLFloat;
+procedure CMatrixSYRK(n: TLInt; K: TLInt; alpha: TLFloat;
   const a: TLComplexMatrix; IA: TLInt; ja: TLInt;
   OpTypeA: TLInt; beta: TLFloat; var c: TLComplexMatrix; IC: TLInt; JC: TLInt; IsUpper: Boolean);
 
-procedure RMatrixSYRK(n: TLInt; k: TLInt; alpha: TLFloat;
+procedure RMatrixSYRK(n: TLInt; K: TLInt; alpha: TLFloat;
   const a: TLMatrix; IA: TLInt; ja: TLInt;
   OpTypeA: TLInt; beta: TLFloat; var c: TLMatrix; IC: TLInt; JC: TLInt; IsUpper: Boolean);
 
-procedure CMatrixGEMM(M: TLInt; n: TLInt; k: TLInt;
+procedure CMatrixGEMM(M: TLInt; n: TLInt; K: TLInt;
   alpha: TLComplex; const a: TLComplexMatrix; IA: TLInt;
   ja: TLInt; OpTypeA: TLInt; const b: TLComplexMatrix;
   IB: TLInt; JB: TLInt; OpTypeB: TLInt; beta: TLComplex;
   var c: TLComplexMatrix; IC: TLInt; JC: TLInt);
 
-procedure RMatrixGEMM(M: TLInt; n: TLInt; k: TLInt;
+procedure RMatrixGEMM(M: TLInt; n: TLInt; K: TLInt;
   alpha: TLFloat; const a: TLMatrix; IA: TLInt;
   ja: TLInt; OpTypeA: TLInt; const b: TLMatrix;
   IB: TLInt; JB: TLInt; OpTypeB: TLInt; beta: TLFloat;
@@ -608,11 +628,11 @@ function IncompleteGammaC(const a, x: TLFloat): TLFloat;
 function InvIncompleteGammaC(const a, y0: TLFloat): TLFloat;
 
 { Poisson distribution }
-function PoissonDistribution(k: TLInt; M: TLFloat): TLFloat;
+function PoissonDistribution(K: TLInt; M: TLFloat): TLFloat;
 { Complemented Poisson distribution }
-function PoissonCDistribution(k: TLInt; M: TLFloat): TLFloat;
+function PoissonCDistribution(K: TLInt; M: TLFloat): TLFloat;
 { Inverse Poisson distribution }
-function InvPoissonDistribution(k: TLInt; y: TLFloat): TLFloat;
+function InvPoissonDistribution(K: TLInt; y: TLFloat): TLFloat;
 
 { Incomplete beta integral support }
 function IncompleteBeta(a, b, x: TLFloat): TLFloat;
@@ -629,11 +649,11 @@ function InvFDistribution(const a: TLInt; const b: TLInt; const y: TLFloat): TLF
 procedure FTest(const x: TLVec; n: TLInt; const y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 
 { Binomial distribution support }
-function BinomialDistribution(const k, n: TLInt; const p: TLFloat): TLFloat;
+function BinomialDistribution(const K, n: TLInt; const p: TLFloat): TLFloat;
 { Complemented binomial distribution }
-function BinomialCDistribution(const k, n: TLInt; const p: TLFloat): TLFloat;
+function BinomialCDistribution(const K, n: TLInt; const p: TLFloat): TLFloat;
 { Inverse binomial distribution }
-function InvBinomialDistribution(const k, n: TLInt; const y: TLFloat): TLFloat;
+function InvBinomialDistribution(const K, n: TLInt; const y: TLFloat): TLFloat;
 { Sign test }
 procedure OneSampleSignTest(const x: TLVec; n: TLInt; Median: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 
@@ -647,9 +667,9 @@ function InvChiSquareDistribution(const v, y: TLFloat): TLFloat;
 procedure OneSampleVarianceTest(const x: TLVec; n: TLInt; Variance: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 
 { Student's t distribution support }
-function StudentTDistribution(const k: TLInt; const t: TLFloat): TLFloat;
+function StudentTDistribution(const K: TLInt; const t: TLFloat): TLFloat;
 { Functional inverse of Student's t distribution }
-function InvStudentTDistribution(const k: TLInt; p: TLFloat): TLFloat;
+function InvStudentTDistribution(const K: TLInt; p: TLFloat): TLFloat;
 { One-sample t-test }
 procedure StudentTTest1(const x: TLVec; n: TLInt; Mean: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 { Two-sample pooled test }
@@ -791,15 +811,7 @@ uses KM,
 {$ELSE}
   Threading,
 {$ENDIF FPC}
-  SyncObjs, PyramidSpace, FastHistogramSpace, DoStatusIO;
-
-const
-  SYSTEM_HOGCELLSIZE = 10;
-  SYSTEM_HOGSAMPLERSIZE = 12;
-  SYSTEM_HOG_FEATURESIZE = 12 * 12 * (4 + 9 + 18);
-
-var
-  System_HOGTable: THOGTable;
+  SyncObjs, DoStatusIO;
 
 {$REGION 'Include'}
 {$INCLUDE learn_base.inc}
@@ -846,10 +858,6 @@ var
 
 initialization
 
-System_HOGTable := THOGTable.Create(9, 18, SYSTEM_HOGCELLSIZE);
-
 finalization
-
-DisposeObject(System_HOGTable);
 
 end.

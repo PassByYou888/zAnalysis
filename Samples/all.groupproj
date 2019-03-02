@@ -3,7 +3,7 @@
         <ProjectGuid>{46C428F4-8732-454E-BB24-0F144C62D8F3}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj">
+        <Projects Include="01 Console KDTree\EasyConsoleDemo.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="02 KDTree-KMean-PictureDemo\GUIAnalysis.dproj">
@@ -33,10 +33,10 @@
         <Projects Include="03 ZDB-KDTree-KMean-Classifier-Demo\zDBAnalysisDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="01 Console KDTree\EasyConsoleDemo.dproj">
+        <Projects Include="13 SIFT-Pyramid-Demo\GaussPyramidDemo.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="13 SIFT-Pyramid-Demo\GaussPyramidDemo.dproj">
+        <Projects Include="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -47,14 +47,14 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="GaussPyramidRegionDemo">
-        <MSBuild Projects="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj"/>
+    <Target Name="EasyConsoleDemo">
+        <MSBuild Projects="01 Console KDTree\EasyConsoleDemo.dproj"/>
     </Target>
-    <Target Name="GaussPyramidRegionDemo:Clean">
-        <MSBuild Projects="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj" Targets="Clean"/>
+    <Target Name="EasyConsoleDemo:Clean">
+        <MSBuild Projects="01 Console KDTree\EasyConsoleDemo.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="GaussPyramidRegionDemo:Make">
-        <MSBuild Projects="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj" Targets="Make"/>
+    <Target Name="EasyConsoleDemo:Make">
+        <MSBuild Projects="01 Console KDTree\EasyConsoleDemo.dproj" Targets="Make"/>
     </Target>
     <Target Name="GUIAnalysis">
         <MSBuild Projects="02 KDTree-KMean-PictureDemo\GUIAnalysis.dproj"/>
@@ -137,15 +137,6 @@
     <Target Name="zDBAnalysisDemo:Make">
         <MSBuild Projects="03 ZDB-KDTree-KMean-Classifier-Demo\zDBAnalysisDemo.dproj" Targets="Make"/>
     </Target>
-    <Target Name="EasyConsoleDemo">
-        <MSBuild Projects="01 Console KDTree\EasyConsoleDemo.dproj"/>
-    </Target>
-    <Target Name="EasyConsoleDemo:Clean">
-        <MSBuild Projects="01 Console KDTree\EasyConsoleDemo.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="EasyConsoleDemo:Make">
-        <MSBuild Projects="01 Console KDTree\EasyConsoleDemo.dproj" Targets="Make"/>
-    </Target>
     <Target Name="GaussPyramidDemo">
         <MSBuild Projects="13 SIFT-Pyramid-Demo\GaussPyramidDemo.dproj"/>
     </Target>
@@ -155,14 +146,23 @@
     <Target Name="GaussPyramidDemo:Make">
         <MSBuild Projects="13 SIFT-Pyramid-Demo\GaussPyramidDemo.dproj" Targets="Make"/>
     </Target>
+    <Target Name="GaussPyramidRegionDemo">
+        <MSBuild Projects="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj"/>
+    </Target>
+    <Target Name="GaussPyramidRegionDemo:Clean">
+        <MSBuild Projects="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GaussPyramidRegionDemo:Make">
+        <MSBuild Projects="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="GaussPyramidRegionDemo;GUIAnalysis;MemoryRasterDemo;NNDecisionDemo;numberTrainDemo;Render2Video;rForestDemo;SoftRenderer;yuv2Video;zDBAnalysisDemo;EasyConsoleDemo;GaussPyramidDemo"/>
+        <CallTarget Targets="EasyConsoleDemo;GUIAnalysis;MemoryRasterDemo;NNDecisionDemo;numberTrainDemo;Render2Video;rForestDemo;SoftRenderer;yuv2Video;zDBAnalysisDemo;GaussPyramidDemo;GaussPyramidRegionDemo"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="GaussPyramidRegionDemo:Clean;GUIAnalysis:Clean;MemoryRasterDemo:Clean;NNDecisionDemo:Clean;numberTrainDemo:Clean;Render2Video:Clean;rForestDemo:Clean;SoftRenderer:Clean;yuv2Video:Clean;zDBAnalysisDemo:Clean;EasyConsoleDemo:Clean;GaussPyramidDemo:Clean"/>
+        <CallTarget Targets="EasyConsoleDemo:Clean;GUIAnalysis:Clean;MemoryRasterDemo:Clean;NNDecisionDemo:Clean;numberTrainDemo:Clean;Render2Video:Clean;rForestDemo:Clean;SoftRenderer:Clean;yuv2Video:Clean;zDBAnalysisDemo:Clean;GaussPyramidDemo:Clean;GaussPyramidRegionDemo:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="GaussPyramidRegionDemo:Make;GUIAnalysis:Make;MemoryRasterDemo:Make;NNDecisionDemo:Make;numberTrainDemo:Make;Render2Video:Make;rForestDemo:Make;SoftRenderer:Make;yuv2Video:Make;zDBAnalysisDemo:Make;EasyConsoleDemo:Make;GaussPyramidDemo:Make"/>
+        <CallTarget Targets="EasyConsoleDemo:Make;GUIAnalysis:Make;MemoryRasterDemo:Make;NNDecisionDemo:Make;numberTrainDemo:Make;Render2Video:Make;rForestDemo:Make;SoftRenderer:Make;yuv2Video:Make;zDBAnalysisDemo:Make;GaussPyramidDemo:Make;GaussPyramidRegionDemo:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

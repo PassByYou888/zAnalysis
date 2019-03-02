@@ -4,6 +4,12 @@ zAnalysis是基于Pascal语言编写的大型统计学开源库，它不依赖�
 
 zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 
+## 开发平台支持
+
+- Delphi及IDE要求：Delphi Rad studio XE10.2.1 or Last
+- FPC编译器支持:FPC3.0.4 or last,可参看本项目随附的[IOT入手指南](https://github.com/PassByYou888/ZServer4D/blob/master/Documents/%E5%85%A5%E6%89%8BIOT%E7%9A%84%E5%AE%8C%E5%85%A8%E6%94%BB%E7%95%A5.pdf)将FPC升级至github最新的版本
+- CodeTyphon 6.0 or last（尽量使用Online更新到最新的Cross工具链+相关库）
+
 ## 平台支持，test with Delphi 10.2 upate 1 Tokyo and FPC 3.0.4
 
 - Windows: delphi-CrossSocket(C/S OK), delphi-DIOCP(C/S OK), delphi-ICS(C/S OK), delphi-Indy(C/S OK),delphi+fpc Synapse(C/S OK)
@@ -156,6 +162,11 @@ zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 
 
 ## 近期更新日志
+
+**2019-3-3**
+
+- 见谅！本次更新内容多到无法描述
+
 
 **2018-12-13**
 - SIFT高斯金字塔在做特征匹配时不再会消耗内存资源，匹配速度提升4倍以上

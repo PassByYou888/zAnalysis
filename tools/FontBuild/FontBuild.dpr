@@ -13,5 +13,4 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFontBuildForm, FontBuildForm);
   Application.Run;
-
 end.

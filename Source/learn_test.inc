@@ -2772,7 +2772,7 @@ begin
   Result := not WasErrors;
 end;
 
-function TestXBlas(Silent: Boolean): Boolean;
+function TestXBLAS(Silent: Boolean): Boolean;
 var
   ApproxErrors: Boolean;
   ExactnessErrors: Boolean;
@@ -4347,11 +4347,6 @@ const
     ltLM, ltLM_MT, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod, ltMonteCarlo,
     ltLM_Ensemble, ltLM_Ensemble_MT, ltLBFGS_Ensemble, ltLBFGS_Ensemble_MT];
 
-  RasterClassifierLearnType: set of TLearnType = [
-    ltKDT, ltKM,
-    ltForest,
-    ltLM, ltLM_MT, ltLBFGS, ltLBFGS_MT, ltLBFGS_MT_Mod];
-
 var
   lt: TLearnType;
   lr: TLearn;
@@ -4360,13 +4355,11 @@ var
   f_out_list: TLMatrix;
   Search_Out: TLIVec;
   M: TLMatrix;
-  mr: TMemoryRaster;
-  RasterArray: array of TMemoryRaster;
   m64: TMemoryStream64;
   md5_1, md5_2: TMD5;
 begin
   TestABLAS(False);
-  TestXBlas(False);
+  TestXBLAS(False);
   TestGaussKronrodQuadrature(False);
   TestGaussQuadrature(False);
 
@@ -4403,16 +4396,16 @@ begin
 
             for i := 0 to lr.Count - 1 do
               begin
-                lr.SearchMemoryWithPearson(lr[i]^.m_in);
-                lr.SearchMemoryWithPearson(lr[i]^.m_in, Search_Out);
+                lr.SearchMemoryPearson(lr[i]^.m_in);
+                lr.SearchMemoryPearson(lr[i]^.m_in, Search_Out);
                 SetLength(Search_Out, 0);
 
-                lr.SearchMemoryWithSpearman(lr[i]^.m_in);
-                lr.SearchMemoryWithSpearman(lr[i]^.m_in, Search_Out);
+                lr.SearchMemorySpearman(lr[i]^.m_in);
+                lr.SearchMemorySpearman(lr[i]^.m_in, Search_Out);
                 SetLength(Search_Out, 0);
 
-                lr.SearchMemoryWithDistance(lr[i]^.m_in);
-                lr.SearchMemoryWithDistance(lr[i]^.m_in, Search_Out);
+                lr.SearchMemoryDistance(lr[i]^.m_in);
+                lr.SearchMemoryDistance(lr[i]^.m_in, Search_Out);
                 SetLength(Search_Out, 0);
               end;
 
@@ -4514,74 +4507,6 @@ begin
 
         DisposeObject(lr);
       end;
-
-  // raster sampler test
-
-  // build random pixel
-  SetLength(RasterArray, test_Depth);
-  for j := 0 to test_Depth - 1 do
-    begin
-      RasterArray[j] := TMemoryRaster.Create;
-      RasterArray[j].SetSize(test_Depth, test_Depth);
-    end;
-
-  for mr in RasterArray do
-    begin
-      for j := 0 to mr.height - 1 do
-        for i := 0 to mr.width - 1 do
-            mr.Pixel[i, j] := RasterColor(umlRandomRange(0, 255), umlRandomRange(0, 255), umlRandomRange(0, 255), 255);
-    end;
-
-  // raster Classifier
-  for lt in RasterClassifierLearnType do
-    begin
-      DoStatusNoLn('raster Classifier test %s ..', [CLearnString[lt]]);
-      lr := TLearn.CreatePictureClassifier(lt, Trunc(Sqrt(test_Depth)));
-
-      for j := 0 to test_Depth - 1 do
-        begin
-          M := LMatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[j]);
-          SetLength(f_Out, 1);
-          f_Out[0] := j;
-          lr.AddMatrix(M, f_Out);
-        end;
-      if lr.Train() then
-        begin
-          DoStatusNoLn;
-
-          SetLength(Search_Out, test_Depth);
-          SetLength(f_out_list, test_Depth);
-          for j := 0 to test_Depth - 1 do
-            begin
-              M := LMatrixSampler(Trunc(Sqrt(test_Depth)), RasterArray[j]);
-
-              Search_Out[j] := lr.processMaxIndex(M);
-              if Search_Out[j] <> j then
-                  DoStatus('raster Classifier %s search matrix problem..', [CLearnString[lt]]);
-
-              Search_Out[j] := lr.SearchMemoryWithDistance(LVec(M, lr.InLen));
-              if Search_Out[j] <> j then
-                  DoStatus('raster Classifier %s SearchMemoryWithDistance problem..', [CLearnString[lt]]);
-
-              Search_Out[j] := lr.SearchMemoryWithPearson(LVec(M, lr.InLen));
-              if Search_Out[j] <> j then
-                  DoStatus('raster Classifier %s SearchMemoryWithPearson problem..', [CLearnString[lt]]);
-
-              Search_Out[j] := lr.SearchMemoryWithSpearman(LVec(M, lr.InLen));
-              if Search_Out[j] <> j then
-                  DoStatus('raster Classifier %s SearchMemoryWithSpearman problem..', [CLearnString[lt]]);
-            end;
-        end
-      else
-          DoStatusNoLn('train error ');
-
-      DoStatusNoLn;
-      DisposeObject(lr);
-    end;
-
-  for j := 0 to test_Depth - 1 do
-      DisposeObject(RasterArray[j]);
-  SetLength(RasterArray, 0);
 
   DoStatus('all learn test finish!');
 end;

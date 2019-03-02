@@ -24,7 +24,7 @@ uses System.Math.Vectors, System.Math,
   CoreClasses, zDrawEngine, UnicodeMixedLib, Geometry2DUnit, MemoryRaster;
 
 type
-  TDrawEngineInterface_FMX = class(TCoreClassInterfacedObject, IDrawEngineInterface)
+  TDrawEngineInterface_FMX = class(TDrawEngineInterface)
   private
     FCanvas: TCanvas;
     FOwnerCanvasScale: TDEFloat;
@@ -35,23 +35,22 @@ type
 
     procedure SetCanvas(const Value: TCanvas);
   public
-    procedure SetSize(r: TDERect);
-    procedure SetLineWidth(w: TDEFloat);
-    procedure DrawLine(pt1, pt2: TDEVec; COLOR: TDEColor);
-    procedure DrawRect(r: TDERect; angle: TDEFloat; COLOR: TDEColor);
-    procedure FillRect(r: TDERect; angle: TDEFloat; COLOR: TDEColor);
-    procedure DrawEllipse(r: TDERect; COLOR: TDEColor);
-    procedure FillEllipse(r: TDERect; COLOR: TDEColor);
-    procedure DrawText(Text: SystemString; Size: TDEFloat; r: TDERect; COLOR: TDEColor; center: Boolean; RotateVec: TDEVec; angle: TDEFloat);
-    procedure DrawTexture(t: TCoreClassObject; sour, dest: TDE4V; alpha: TDEFloat);
-    procedure Flush;
-    procedure ResetState;
-    procedure BeginDraw;
-    procedure EndDraw;
-    function CurrentScreenSize: TDEVec;
-    function GetTextSize(Text: SystemString; Size: TDEFloat): TDEVec;
-    function ReadyOK: Boolean;
-    function EngineIntfObject: TCoreClassObject;
+    procedure SetSize(r: TDERect); override;
+    procedure SetLineWidth(w: TDEFloat);override;
+    procedure DrawLine(pt1, pt2: TDEVec; COLOR: TDEColor);override;
+    procedure DrawRect(r: TDERect; angle: TDEFloat; COLOR: TDEColor);override;
+    procedure FillRect(r: TDERect; angle: TDEFloat; COLOR: TDEColor);override;
+    procedure DrawEllipse(r: TDERect; COLOR: TDEColor);override;
+    procedure FillEllipse(r: TDERect; COLOR: TDEColor);override;
+    procedure DrawText(Text: SystemString; Size: TDEFloat; r: TDERect; COLOR: TDEColor; center: Boolean; RotateVec: TDEVec; angle: TDEFloat);override;
+    procedure DrawTexture(t: TCoreClassObject; sour, dest: TDE4V; alpha: TDEFloat);override;
+    procedure Flush;override;
+    procedure ResetState;override;
+    procedure BeginDraw;override;
+    procedure EndDraw;override;
+    function CurrentScreenSize: TDEVec;override;
+    function GetTextSize(Text: SystemString; Size: TDEFloat): TDEVec;override;
+    function ReadyOK: Boolean;override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -190,7 +189,7 @@ begin
   ce.g := TAlphaColorRec(c).g;
   ce.b := TAlphaColorRec(c).b;
   ce.a := TAlphaColorRec(c).a;
-  Result := ce.RGBA;
+  Result := ce.BGRA;
 end;
 
 function DE4V2Corners(sour: TDE4V): TCornersF;
@@ -267,9 +266,9 @@ begin
   for i := bmp.width * bmp.height - 1 downto 0 do
     begin
 {$IF Defined(ANDROID) or Defined(IOS) or Defined(OSX)}
-      c.RGBA := RGBA2BGRA(TRasterColor(p1^));
+      c.BGRA := RGBA2BGRA(TRasterColor(p1^));
 {$ELSE}
-      c.RGBA := TRasterColor(p1^);
+      c.BGRA := TRasterColor(p1^);
 {$IFEND}
       TAlphaColorRec(DC).r := c.r;
       TAlphaColorRec(DC).g := c.g;
@@ -733,11 +732,6 @@ end;
 function TDrawEngineInterface_FMX.ReadyOK: Boolean;
 begin
   Result := FCanvas <> nil;
-end;
-
-function TDrawEngineInterface_FMX.EngineIntfObject: TCoreClassObject;
-begin
-  Result := Self;
 end;
 
 constructor TDrawEngineInterface_FMX.Create;

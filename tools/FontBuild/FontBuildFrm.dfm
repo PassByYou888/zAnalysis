@@ -5,8 +5,8 @@ object FontBuildForm: TFontBuildForm
   BorderStyle = bsDialog
   BorderWidth = 10
   Caption = 'Font Build...by qq500585'
-  ClientHeight = 767
-  ClientWidth = 1121
+  ClientHeight = 761
+  ClientWidth = 1232
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -22,9 +22,9 @@ object FontBuildForm: TFontBuildForm
   TextHeight = 13
   object Image: TImage
     Left = 111
-    Top = 183
-    Width = 1010
-    Height = 434
+    Top = 240
+    Width = 1113
+    Height = 377
   end
   object Label1: TLabel
     Left = 8
@@ -53,8 +53,8 @@ object FontBuildForm: TFontBuildForm
   end
   object Memo: TMemo
     Left = 0
-    Top = 629
-    Width = 1121
+    Top = 623
+    Width = 1232
     Height = 138
     TabOrder = 2
     WordWrap = False
@@ -71,7 +71,7 @@ object FontBuildForm: TFontBuildForm
   object ProgressBar: TProgressBar
     Left = 111
     Top = 0
-    Width = 1010
+    Width = 1113
     Height = 17
     TabOrder = 4
   end
@@ -96,19 +96,19 @@ object FontBuildForm: TFontBuildForm
     TabOrder = 6
     TickMarks = tmBoth
   end
-  object gbkCheckBox: TCheckBox
+  object IncludeallCheckBox: TCheckBox
     Left = 8
     Top = 95
     Width = 97
     Height = 17
-    Caption = 'include GBK'
+    Caption = 'include ALL'
     TabOrder = 7
   end
   object SampleMemo: TMemo
     Left = 111
     Top = 23
-    Width = 1010
-    Height = 154
+    Width = 1113
+    Height = 200
     Lines.Strings = (
       '0123456789 abc ABC +-*/()')
     TabOrder = 8

@@ -46,8 +46,8 @@ function Vertex_ComputeNearest(const Sender: PVertexMap; const Sampler: TMemoryR
 var
   tu0, tv0: Integer;
 begin
-  tu0 := ClampInt(Trunc(TexCoordWrapRepeat(x) * (Sampler.width)), 0, Sampler.width - 1);
-  tv0 := ClampInt(Trunc(TexCoordWrapRepeat(y) * (Sampler.height)), 0, Sampler.height - 1);
+  tu0 := ClampInt_(Trunc(TexCoordWrapRepeat(x) * (Sampler.width)), 0, Sampler.width - 1);
+  tv0 := ClampInt_(Trunc(TexCoordWrapRepeat(y) * (Sampler.height)), 0, Sampler.height - 1);
   Result := Sampler.Pixel[tu0, tv0];
 end;
 
@@ -72,8 +72,8 @@ begin
   fx := TexCoordWrapRepeat(x) * Sampler.width;
   fy := TexCoordWrapRepeat(y) * Sampler.height;
 
-  i_x := ClampInt(Trunc(fx), 0, Sampler.width - 1);
-  i_y := ClampInt(Trunc(fy), 0, Sampler.height - 1);
+  i_x := ClampInt_(Trunc(fx), 0, Sampler.width - 1);
+  i_y := ClampInt_(Trunc(fy), 0, Sampler.height - 1);
 
   i_x2 := i_x + 1;
   if i_x2 > Sampler.width - 1 then
@@ -90,10 +90,10 @@ begin
   k3 := delta_x * delta_y;
   K4 := (1 - delta_x) * delta_y;
 
-  c1.RGBA := Sampler[i_x, i_y];
-  c2.RGBA := Sampler[i_x2, i_y];
-  c3.RGBA := Sampler[i_x2, i_y2];
-  c4.RGBA := Sampler[i_x, i_y2];
+  c1.BGRA := Sampler[i_x, i_y];
+  c2.BGRA := Sampler[i_x2, i_y];
+  c3.BGRA := Sampler[i_x2, i_y2];
+  c4.BGRA := Sampler[i_x, i_y2];
 
   r := ((c1.r / $FF) * k1) + ((c2.r / $FF) * k2) + ((c3.r / $FF) * k3) + ((c4.r / $FF) * K4);
   g := ((c1.g / $FF) * k1) + ((c2.g / $FF) * k2) + ((c3.g / $FF) * k3) + ((c4.g / $FF) * K4);
@@ -222,11 +222,11 @@ var
 
     // Correct for fill convention
     if (DY12 < 0) or ((DY12 = 0) and (DX12 > 0)) then
-      inc(c1);
+        inc(c1);
     if (DY23 < 0) or ((DY23 = 0) and (DX23 > 0)) then
-      inc(c2);
+        inc(c2);
     if (DY31 < 0) or ((DY31 = 0) and (DX31 > 0)) then
-      inc(c3);
+        inc(c3);
 
     CY1 := c1 + DX12 * minY - DY12 * minX;
     CY2 := c2 + DX23 * minY - DY23 * minX;
@@ -296,16 +296,15 @@ begin
   i := 0;
   while i < frag_count do
     begin
-      if (bitX >= 0) and (bitX < WindowSize) then
-        if FNearestWriteBuffer[bitX] <> FNearestWriterID then
-          begin
-            case FS of
-              fsSolid: BlendMem(sc, Window.Bits^[bitX]);
-              fsNearest: ComputeBlend(@Self, ComputeNearest(@Self, tex, x, y), tex.MasterAlpha, Window.Bits^[bitX]);
-              fsLinear: ComputeBlend(@Self, ComputeLinear(@Self, tex, x, y), tex.MasterAlpha, Window.Bits^[bitX]);
-            end;
-            FNearestWriteBuffer[bitX] := FNearestWriterID;
+      if (bitX >= 0) and (bitX < WindowSize) and (FNearestWriteBuffer[bitX] <> FNearestWriterID) then
+        begin
+          case FS of
+            fsSolid: BlendMem(sc, Window.Bits^[bitX]);
+            fsNearest: ComputeBlend(@Self, ComputeNearest(@Self, tex, x, y), tex.MasterAlpha, Window.Bits^[bitX]);
+            fsLinear: ComputeBlend(@Self, ComputeLinear(@Self, tex, x, y), tex.MasterAlpha, Window.Bits^[bitX]);
           end;
+          FNearestWriteBuffer[bitX] := FNearestWriterID;
+        end;
 
       x := x + attr_u.a;
       y := y + attr_v.a;
@@ -388,9 +387,9 @@ var
 begin
   MA := Sampler.MasterAlpha;
   if alpha > 1.0 then
-      Sampler.MasterAlpha := ClampByte(Trunc(alpha))
+      Sampler.MasterAlpha := ClampByte_(Trunc(alpha))
   else
-      Sampler.MasterAlpha := ClampByte(Trunc(alpha * 255));
+      Sampler.MasterAlpha := ClampByte_(Trunc(alpha * 255));
   internal_Draw(Triangle, Sampler, bilinear_sampling);
   Sampler.MasterAlpha := MA;
 end;
@@ -427,21 +426,63 @@ begin
   dec(FCurrentUpdate);
 end;
 
-procedure TVertexMap.DrawTriangle(const Triangle: TTriangle; const Sampler: TRasterColor);
+procedure TVertexMap.DrawTriangle(const t1, t2, t3: TVec2; const Sampler: TRasterColor);
+var
+  t: TTriangle;
 begin
   NewWriterBuffer;
-  internal_Draw(Triangle, Sampler);
+
+  t[0].Sampler := ZeroVec2;
+  t[1].Sampler := ZeroVec2;
+  t[2].Sampler := ZeroVec2;
+  t[0].Render := Vec2Div(t1, Window.Size2D);
+  t[1].Render := Vec2Div(t2, Window.Size2D);
+  t[2].Render := Vec2Div(t3, Window.Size2D);
+  internal_Draw(t, Sampler);
+end;
+
+procedure TVertexMap.DrawTriangle(const Triangle: TTriangle; const Sampler: TRasterColor);
+var
+  t: TTriangle;
+begin
+  NewWriterBuffer;
+
+  t[0].Sampler := ZeroVec2;
+  t[1].Sampler := ZeroVec2;
+  t[2].Sampler := ZeroVec2;
+  t[0].Render := Vec2Div(t[0].Render, Window.Size2D);
+  t[1].Render := Vec2Div(t[1].Render, Window.Size2D);
+  t[2].Render := Vec2Div(t[2].Render, Window.Size2D);
+  internal_Draw(t, Sampler);
 end;
 
 procedure TVertexMap.DrawTriangle(const Triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean);
+var
+  t: TTriangle;
 begin
   NewWriterBuffer;
-  internal_Draw(Triangle, Sampler, bilinear_sampling);
+
+  t[0].Sampler := Vec2Div(t[0].Sampler, Sampler.Size2D);
+  t[1].Sampler := Vec2Div(t[1].Sampler, Sampler.Size2D);
+  t[2].Sampler := Vec2Div(t[2].Sampler, Sampler.Size2D);
+  t[0].Render := Vec2Div(t[0].Render, Window.Size2D);
+  t[1].Render := Vec2Div(t[1].Render, Window.Size2D);
+  t[2].Render := Vec2Div(t[2].Render, Window.Size2D);
+  internal_Draw(t, Sampler, bilinear_sampling);
 end;
 
 procedure TVertexMap.DrawTriangle(const Triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean; const alpha: TGeoFloat);
+var
+  t: TTriangle;
 begin
   NewWriterBuffer;
+
+  t[0].Sampler := Vec2Div(t[0].Sampler, Sampler.Size2D);
+  t[1].Sampler := Vec2Div(t[1].Sampler, Sampler.Size2D);
+  t[2].Sampler := Vec2Div(t[2].Sampler, Sampler.Size2D);
+  t[0].Render := Vec2Div(t[0].Render, Window.Size2D);
+  t[1].Render := Vec2Div(t[1].Render, Window.Size2D);
+  t[2].Render := Vec2Div(t[2].Render, Window.Size2D);
   internal_Draw(Triangle, Sampler, bilinear_sampling, alpha);
 end;
 
@@ -602,14 +643,14 @@ begin
   FillPoly(SamVec, RenVec, SamVec.Centroid, RenVec.Centroid, Sampler, bilinear_sampling, alpha);
 end;
 
-procedure TestVetexMap;
+procedure TestVetexMap(testBmp, outputBmp: SystemString);
 var
   b, b2: TMemoryRaster;
   pr: TVertexMap;
   vl: TVec2List;
 begin
   b := TMemoryRaster.Create;
-  b.LoadFromFile('c:\1.bmp');
+  b.LoadFromFile(testBmp);
   b2 := TMemoryRaster.Create;
   b2.SetSize(512, 512, RasterColorF(0, 0, 0, 1));
   b2.Agg.LineWidth := 1;
@@ -627,8 +668,7 @@ begin
   vl.Transform(200, 200);
   pr.FillPoly(vl, RasterColorF(1, 0, 0, 0.5));
 
-  b2.SaveToFile('c:\test2.bmp');
-  b.SaveToFile('c:\test1.bmp');
+  b2.SaveToFile(outputBmp);
   DisposeObject(b2);
   DisposeObject(b);
   DisposeObject(vl);

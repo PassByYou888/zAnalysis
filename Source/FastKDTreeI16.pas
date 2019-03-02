@@ -48,30 +48,30 @@ const
 type
 
   // SmallInt: KDTree
-  TKDT1DI16 = class;  TKDT1DI16_VecType = Single; // 1D
-  TKDT2DI16 = class;  TKDT2DI16_VecType = Single; // 2D
-  TKDT3DI16 = class;  TKDT3DI16_VecType = Single; // 3D
-  TKDT4DI16 = class;  TKDT4DI16_VecType = Single; // 4D
-  TKDT5DI16 = class;  TKDT5DI16_VecType = Single; // 5D
-  TKDT6DI16 = class;  TKDT6DI16_VecType = Single; // 6D
-  TKDT7DI16 = class;  TKDT7DI16_VecType = Single; // 7D
-  TKDT8DI16 = class;  TKDT8DI16_VecType = Single; // 8D
-  TKDT9DI16 = class;  TKDT9DI16_VecType = Single; // 9D
-  TKDT10DI16 = class;  TKDT10DI16_VecType = Single; // 10D
-  TKDT11DI16 = class;  TKDT11DI16_VecType = Single; // 11D
-  TKDT12DI16 = class;  TKDT12DI16_VecType = Single; // 12D
-  TKDT13DI16 = class;  TKDT13DI16_VecType = Single; // 13D
-  TKDT14DI16 = class;  TKDT14DI16_VecType = Single; // 14D
-  TKDT15DI16 = class;  TKDT15DI16_VecType = Single; // 15D
-  TKDT16DI16 = class;  TKDT16DI16_VecType = Single; // 16D
-  TKDT17DI16 = class;  TKDT17DI16_VecType = Single; // 17D
-  TKDT18DI16 = class;  TKDT18DI16_VecType = Single; // 18D
-  TKDT19DI16 = class;  TKDT19DI16_VecType = Single; // 19D
-  TKDT20DI16 = class;  TKDT20DI16_VecType = Single; // 20D
-  TKDT21DI16 = class;  TKDT21DI16_VecType = Single; // 21D
-  TKDT22DI16 = class;  TKDT22DI16_VecType = Single; // 22D
-  TKDT23DI16 = class;  TKDT23DI16_VecType = Single; // 23D
-  TKDT24DI16 = class;  TKDT24DI16_VecType = Single; // 24D
+  TKDT1DI16 = class;  TKDT1DI16_VecType = KM.TKMFloat; // 1D
+  TKDT2DI16 = class;  TKDT2DI16_VecType = KM.TKMFloat; // 2D
+  TKDT3DI16 = class;  TKDT3DI16_VecType = KM.TKMFloat; // 3D
+  TKDT4DI16 = class;  TKDT4DI16_VecType = KM.TKMFloat; // 4D
+  TKDT5DI16 = class;  TKDT5DI16_VecType = KM.TKMFloat; // 5D
+  TKDT6DI16 = class;  TKDT6DI16_VecType = KM.TKMFloat; // 6D
+  TKDT7DI16 = class;  TKDT7DI16_VecType = KM.TKMFloat; // 7D
+  TKDT8DI16 = class;  TKDT8DI16_VecType = KM.TKMFloat; // 8D
+  TKDT9DI16 = class;  TKDT9DI16_VecType = KM.TKMFloat; // 9D
+  TKDT10DI16 = class;  TKDT10DI16_VecType = KM.TKMFloat; // 10D
+  TKDT11DI16 = class;  TKDT11DI16_VecType = KM.TKMFloat; // 11D
+  TKDT12DI16 = class;  TKDT12DI16_VecType = KM.TKMFloat; // 12D
+  TKDT13DI16 = class;  TKDT13DI16_VecType = KM.TKMFloat; // 13D
+  TKDT14DI16 = class;  TKDT14DI16_VecType = KM.TKMFloat; // 14D
+  TKDT15DI16 = class;  TKDT15DI16_VecType = KM.TKMFloat; // 15D
+  TKDT16DI16 = class;  TKDT16DI16_VecType = KM.TKMFloat; // 16D
+  TKDT17DI16 = class;  TKDT17DI16_VecType = KM.TKMFloat; // 17D
+  TKDT18DI16 = class;  TKDT18DI16_VecType = KM.TKMFloat; // 18D
+  TKDT19DI16 = class;  TKDT19DI16_VecType = KM.TKMFloat; // 19D
+  TKDT20DI16 = class;  TKDT20DI16_VecType = KM.TKMFloat; // 20D
+  TKDT21DI16 = class;  TKDT21DI16_VecType = KM.TKMFloat; // 21D
+  TKDT22DI16 = class;  TKDT22DI16_VecType = KM.TKMFloat; // 22D
+  TKDT23DI16 = class;  TKDT23DI16_VecType = KM.TKMFloat; // 23D
+  TKDT24DI16 = class;  TKDT24DI16_VecType = KM.TKMFloat; // 24D
 
 
 
@@ -2518,7 +2518,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -3314,7 +3314,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT1DI16.SaveToFile(FileName: SystemString);
@@ -3446,10 +3447,10 @@ begin
   TKDT1DI16_Test := TKDT1DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT1DI16_Test.TestBuff, 100);
+  SetLength(TKDT1DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT1DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT1DI16_Axis - 1 do
-        TKDT1DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT1DI16_Test.TestBuff), length(TKDT1DI16_Test.TestBuff));
+        TKDT1DI16_Test.TestBuff[i][j] := i * KDT1DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT1DI16_Test.BuildKDTreeM(length(TKDT1DI16_Test.TestBuff), nil, @TKDT1DI16_Test.Test_BuildM);
@@ -3597,7 +3598,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -4393,7 +4394,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT2DI16.SaveToFile(FileName: SystemString);
@@ -4525,10 +4527,10 @@ begin
   TKDT2DI16_Test := TKDT2DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT2DI16_Test.TestBuff, 100);
+  SetLength(TKDT2DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT2DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT2DI16_Axis - 1 do
-        TKDT2DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT2DI16_Test.TestBuff), length(TKDT2DI16_Test.TestBuff));
+        TKDT2DI16_Test.TestBuff[i][j] := i * KDT2DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT2DI16_Test.BuildKDTreeM(length(TKDT2DI16_Test.TestBuff), nil, @TKDT2DI16_Test.Test_BuildM);
@@ -4676,7 +4678,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -5472,7 +5474,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT3DI16.SaveToFile(FileName: SystemString);
@@ -5604,10 +5607,10 @@ begin
   TKDT3DI16_Test := TKDT3DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT3DI16_Test.TestBuff, 100);
+  SetLength(TKDT3DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT3DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT3DI16_Axis - 1 do
-        TKDT3DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT3DI16_Test.TestBuff), length(TKDT3DI16_Test.TestBuff));
+        TKDT3DI16_Test.TestBuff[i][j] := i * KDT3DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT3DI16_Test.BuildKDTreeM(length(TKDT3DI16_Test.TestBuff), nil, @TKDT3DI16_Test.Test_BuildM);
@@ -5755,7 +5758,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -6551,7 +6554,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT4DI16.SaveToFile(FileName: SystemString);
@@ -6683,10 +6687,10 @@ begin
   TKDT4DI16_Test := TKDT4DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT4DI16_Test.TestBuff, 100);
+  SetLength(TKDT4DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT4DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT4DI16_Axis - 1 do
-        TKDT4DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT4DI16_Test.TestBuff), length(TKDT4DI16_Test.TestBuff));
+        TKDT4DI16_Test.TestBuff[i][j] := i * KDT4DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT4DI16_Test.BuildKDTreeM(length(TKDT4DI16_Test.TestBuff), nil, @TKDT4DI16_Test.Test_BuildM);
@@ -6834,7 +6838,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -7630,7 +7634,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT5DI16.SaveToFile(FileName: SystemString);
@@ -7762,10 +7767,10 @@ begin
   TKDT5DI16_Test := TKDT5DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT5DI16_Test.TestBuff, 100);
+  SetLength(TKDT5DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT5DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT5DI16_Axis - 1 do
-        TKDT5DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT5DI16_Test.TestBuff), length(TKDT5DI16_Test.TestBuff));
+        TKDT5DI16_Test.TestBuff[i][j] := i * KDT5DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT5DI16_Test.BuildKDTreeM(length(TKDT5DI16_Test.TestBuff), nil, @TKDT5DI16_Test.Test_BuildM);
@@ -7913,7 +7918,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -8709,7 +8714,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT6DI16.SaveToFile(FileName: SystemString);
@@ -8841,10 +8847,10 @@ begin
   TKDT6DI16_Test := TKDT6DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT6DI16_Test.TestBuff, 100);
+  SetLength(TKDT6DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT6DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT6DI16_Axis - 1 do
-        TKDT6DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT6DI16_Test.TestBuff), length(TKDT6DI16_Test.TestBuff));
+        TKDT6DI16_Test.TestBuff[i][j] := i * KDT6DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT6DI16_Test.BuildKDTreeM(length(TKDT6DI16_Test.TestBuff), nil, @TKDT6DI16_Test.Test_BuildM);
@@ -8992,7 +8998,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -9788,7 +9794,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT7DI16.SaveToFile(FileName: SystemString);
@@ -9920,10 +9927,10 @@ begin
   TKDT7DI16_Test := TKDT7DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT7DI16_Test.TestBuff, 100);
+  SetLength(TKDT7DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT7DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT7DI16_Axis - 1 do
-        TKDT7DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT7DI16_Test.TestBuff), length(TKDT7DI16_Test.TestBuff));
+        TKDT7DI16_Test.TestBuff[i][j] := i * KDT7DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT7DI16_Test.BuildKDTreeM(length(TKDT7DI16_Test.TestBuff), nil, @TKDT7DI16_Test.Test_BuildM);
@@ -10071,7 +10078,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -10867,7 +10874,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT8DI16.SaveToFile(FileName: SystemString);
@@ -10999,10 +11007,10 @@ begin
   TKDT8DI16_Test := TKDT8DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT8DI16_Test.TestBuff, 100);
+  SetLength(TKDT8DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT8DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT8DI16_Axis - 1 do
-        TKDT8DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT8DI16_Test.TestBuff), length(TKDT8DI16_Test.TestBuff));
+        TKDT8DI16_Test.TestBuff[i][j] := i * KDT8DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT8DI16_Test.BuildKDTreeM(length(TKDT8DI16_Test.TestBuff), nil, @TKDT8DI16_Test.Test_BuildM);
@@ -11150,7 +11158,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -11946,7 +11954,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT9DI16.SaveToFile(FileName: SystemString);
@@ -12078,10 +12087,10 @@ begin
   TKDT9DI16_Test := TKDT9DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT9DI16_Test.TestBuff, 100);
+  SetLength(TKDT9DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT9DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT9DI16_Axis - 1 do
-        TKDT9DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT9DI16_Test.TestBuff), length(TKDT9DI16_Test.TestBuff));
+        TKDT9DI16_Test.TestBuff[i][j] := i * KDT9DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT9DI16_Test.BuildKDTreeM(length(TKDT9DI16_Test.TestBuff), nil, @TKDT9DI16_Test.Test_BuildM);
@@ -12229,7 +12238,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -13025,7 +13034,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT10DI16.SaveToFile(FileName: SystemString);
@@ -13157,10 +13167,10 @@ begin
   TKDT10DI16_Test := TKDT10DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT10DI16_Test.TestBuff, 100);
+  SetLength(TKDT10DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT10DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT10DI16_Axis - 1 do
-        TKDT10DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT10DI16_Test.TestBuff), length(TKDT10DI16_Test.TestBuff));
+        TKDT10DI16_Test.TestBuff[i][j] := i * KDT10DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT10DI16_Test.BuildKDTreeM(length(TKDT10DI16_Test.TestBuff), nil, @TKDT10DI16_Test.Test_BuildM);
@@ -13308,7 +13318,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -14104,7 +14114,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT11DI16.SaveToFile(FileName: SystemString);
@@ -14236,10 +14247,10 @@ begin
   TKDT11DI16_Test := TKDT11DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT11DI16_Test.TestBuff, 100);
+  SetLength(TKDT11DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT11DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT11DI16_Axis - 1 do
-        TKDT11DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT11DI16_Test.TestBuff), length(TKDT11DI16_Test.TestBuff));
+        TKDT11DI16_Test.TestBuff[i][j] := i * KDT11DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT11DI16_Test.BuildKDTreeM(length(TKDT11DI16_Test.TestBuff), nil, @TKDT11DI16_Test.Test_BuildM);
@@ -14387,7 +14398,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -15183,7 +15194,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT12DI16.SaveToFile(FileName: SystemString);
@@ -15315,10 +15327,10 @@ begin
   TKDT12DI16_Test := TKDT12DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT12DI16_Test.TestBuff, 100);
+  SetLength(TKDT12DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT12DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT12DI16_Axis - 1 do
-        TKDT12DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT12DI16_Test.TestBuff), length(TKDT12DI16_Test.TestBuff));
+        TKDT12DI16_Test.TestBuff[i][j] := i * KDT12DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT12DI16_Test.BuildKDTreeM(length(TKDT12DI16_Test.TestBuff), nil, @TKDT12DI16_Test.Test_BuildM);
@@ -15466,7 +15478,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -16262,7 +16274,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT13DI16.SaveToFile(FileName: SystemString);
@@ -16394,10 +16407,10 @@ begin
   TKDT13DI16_Test := TKDT13DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT13DI16_Test.TestBuff, 100);
+  SetLength(TKDT13DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT13DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT13DI16_Axis - 1 do
-        TKDT13DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT13DI16_Test.TestBuff), length(TKDT13DI16_Test.TestBuff));
+        TKDT13DI16_Test.TestBuff[i][j] := i * KDT13DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT13DI16_Test.BuildKDTreeM(length(TKDT13DI16_Test.TestBuff), nil, @TKDT13DI16_Test.Test_BuildM);
@@ -16545,7 +16558,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -17341,7 +17354,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT14DI16.SaveToFile(FileName: SystemString);
@@ -17473,10 +17487,10 @@ begin
   TKDT14DI16_Test := TKDT14DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT14DI16_Test.TestBuff, 100);
+  SetLength(TKDT14DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT14DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT14DI16_Axis - 1 do
-        TKDT14DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT14DI16_Test.TestBuff), length(TKDT14DI16_Test.TestBuff));
+        TKDT14DI16_Test.TestBuff[i][j] := i * KDT14DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT14DI16_Test.BuildKDTreeM(length(TKDT14DI16_Test.TestBuff), nil, @TKDT14DI16_Test.Test_BuildM);
@@ -17624,7 +17638,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -18420,7 +18434,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT15DI16.SaveToFile(FileName: SystemString);
@@ -18552,10 +18567,10 @@ begin
   TKDT15DI16_Test := TKDT15DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT15DI16_Test.TestBuff, 100);
+  SetLength(TKDT15DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT15DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT15DI16_Axis - 1 do
-        TKDT15DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT15DI16_Test.TestBuff), length(TKDT15DI16_Test.TestBuff));
+        TKDT15DI16_Test.TestBuff[i][j] := i * KDT15DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT15DI16_Test.BuildKDTreeM(length(TKDT15DI16_Test.TestBuff), nil, @TKDT15DI16_Test.Test_BuildM);
@@ -18703,7 +18718,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -19499,7 +19514,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT16DI16.SaveToFile(FileName: SystemString);
@@ -19631,10 +19647,10 @@ begin
   TKDT16DI16_Test := TKDT16DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT16DI16_Test.TestBuff, 100);
+  SetLength(TKDT16DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT16DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT16DI16_Axis - 1 do
-        TKDT16DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT16DI16_Test.TestBuff), length(TKDT16DI16_Test.TestBuff));
+        TKDT16DI16_Test.TestBuff[i][j] := i * KDT16DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT16DI16_Test.BuildKDTreeM(length(TKDT16DI16_Test.TestBuff), nil, @TKDT16DI16_Test.Test_BuildM);
@@ -19782,7 +19798,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -20578,7 +20594,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT17DI16.SaveToFile(FileName: SystemString);
@@ -20710,10 +20727,10 @@ begin
   TKDT17DI16_Test := TKDT17DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT17DI16_Test.TestBuff, 100);
+  SetLength(TKDT17DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT17DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT17DI16_Axis - 1 do
-        TKDT17DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT17DI16_Test.TestBuff), length(TKDT17DI16_Test.TestBuff));
+        TKDT17DI16_Test.TestBuff[i][j] := i * KDT17DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT17DI16_Test.BuildKDTreeM(length(TKDT17DI16_Test.TestBuff), nil, @TKDT17DI16_Test.Test_BuildM);
@@ -20861,7 +20878,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -21657,7 +21674,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT18DI16.SaveToFile(FileName: SystemString);
@@ -21789,10 +21807,10 @@ begin
   TKDT18DI16_Test := TKDT18DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT18DI16_Test.TestBuff, 100);
+  SetLength(TKDT18DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT18DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT18DI16_Axis - 1 do
-        TKDT18DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT18DI16_Test.TestBuff), length(TKDT18DI16_Test.TestBuff));
+        TKDT18DI16_Test.TestBuff[i][j] := i * KDT18DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT18DI16_Test.BuildKDTreeM(length(TKDT18DI16_Test.TestBuff), nil, @TKDT18DI16_Test.Test_BuildM);
@@ -21940,7 +21958,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -22736,7 +22754,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT19DI16.SaveToFile(FileName: SystemString);
@@ -22868,10 +22887,10 @@ begin
   TKDT19DI16_Test := TKDT19DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT19DI16_Test.TestBuff, 100);
+  SetLength(TKDT19DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT19DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT19DI16_Axis - 1 do
-        TKDT19DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT19DI16_Test.TestBuff), length(TKDT19DI16_Test.TestBuff));
+        TKDT19DI16_Test.TestBuff[i][j] := i * KDT19DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT19DI16_Test.BuildKDTreeM(length(TKDT19DI16_Test.TestBuff), nil, @TKDT19DI16_Test.Test_BuildM);
@@ -23019,7 +23038,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -23815,7 +23834,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT20DI16.SaveToFile(FileName: SystemString);
@@ -23947,10 +23967,10 @@ begin
   TKDT20DI16_Test := TKDT20DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT20DI16_Test.TestBuff, 100);
+  SetLength(TKDT20DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT20DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT20DI16_Axis - 1 do
-        TKDT20DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT20DI16_Test.TestBuff), length(TKDT20DI16_Test.TestBuff));
+        TKDT20DI16_Test.TestBuff[i][j] := i * KDT20DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT20DI16_Test.BuildKDTreeM(length(TKDT20DI16_Test.TestBuff), nil, @TKDT20DI16_Test.Test_BuildM);
@@ -24098,7 +24118,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -24894,7 +24914,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT21DI16.SaveToFile(FileName: SystemString);
@@ -25026,10 +25047,10 @@ begin
   TKDT21DI16_Test := TKDT21DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT21DI16_Test.TestBuff, 100);
+  SetLength(TKDT21DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT21DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT21DI16_Axis - 1 do
-        TKDT21DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT21DI16_Test.TestBuff), length(TKDT21DI16_Test.TestBuff));
+        TKDT21DI16_Test.TestBuff[i][j] := i * KDT21DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT21DI16_Test.BuildKDTreeM(length(TKDT21DI16_Test.TestBuff), nil, @TKDT21DI16_Test.Test_BuildM);
@@ -25177,7 +25198,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -25973,7 +25994,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT22DI16.SaveToFile(FileName: SystemString);
@@ -26105,10 +26127,10 @@ begin
   TKDT22DI16_Test := TKDT22DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT22DI16_Test.TestBuff, 100);
+  SetLength(TKDT22DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT22DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT22DI16_Axis - 1 do
-        TKDT22DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT22DI16_Test.TestBuff), length(TKDT22DI16_Test.TestBuff));
+        TKDT22DI16_Test.TestBuff[i][j] := i * KDT22DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT22DI16_Test.BuildKDTreeM(length(TKDT22DI16_Test.TestBuff), nil, @TKDT22DI16_Test.Test_BuildM);
@@ -26256,7 +26278,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -27052,7 +27074,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT23DI16.SaveToFile(FileName: SystemString);
@@ -27184,10 +27207,10 @@ begin
   TKDT23DI16_Test := TKDT23DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT23DI16_Test.TestBuff, 100);
+  SetLength(TKDT23DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT23DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT23DI16_Axis - 1 do
-        TKDT23DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT23DI16_Test.TestBuff), length(TKDT23DI16_Test.TestBuff));
+        TKDT23DI16_Test.TestBuff[i][j] := i * KDT23DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT23DI16_Test.BuildKDTreeM(length(TKDT23DI16_Test.TestBuff), nil, @TKDT23DI16_Test.Test_BuildM);
@@ -27335,7 +27358,7 @@ begin
       CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
 
       if PlanCount > 1 then
-          InternalSort(@kdBuffPtr[0], 0, PlanCount - 1, axis);
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
 
       new(Result);
       Result^.Parent := nil;
@@ -28131,7 +28154,8 @@ begin
       Inc(i);
     end;
 
-  RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+  if cnt > 0 then
+    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT24DI16.SaveToFile(FileName: SystemString);
@@ -28263,10 +28287,10 @@ begin
   TKDT24DI16_Test := TKDT24DI16.Create;
 
   DoStatusNoLn('...');
-  SetLength(TKDT24DI16_Test.TestBuff, 100);
+  SetLength(TKDT24DI16_Test.TestBuff, 1000);
   for i := 0 to length(TKDT24DI16_Test.TestBuff) - 1 do
     for j := 0 to KDT24DI16_Axis - 1 do
-        TKDT24DI16_Test.TestBuff[i][j] := umlRandomRange(-length(TKDT24DI16_Test.TestBuff), length(TKDT24DI16_Test.TestBuff));
+        TKDT24DI16_Test.TestBuff[i][j] := i * KDT24DI16_Axis + j;
 
 {$IFDEF FPC}
   TKDT24DI16_Test.BuildKDTreeM(length(TKDT24DI16_Test.TestBuff), nil, @TKDT24DI16_Test.Test_BuildM);
@@ -28361,7 +28385,6 @@ begin
   TKDT22DI16.Test();
   TKDT23DI16.Test();
   TKDT24DI16.Test();
-  DoStatus('All Test Finished');
 end;
 
 

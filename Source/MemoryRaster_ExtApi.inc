@@ -1,3 +1,69 @@
+function ClampInt_(const Value, Min, Max: Integer): Integer;
+begin
+  if Value > Max then
+      Result := Max
+  else if Value < Min then
+      Result := Min
+  else
+      Result := Value;
+end;
+
+function ClampByte3_(const Value, Min, Max: Byte): Byte;
+begin
+  if Value > Max then
+      Result := Max
+  else if Value < Min then
+      Result := Min
+  else
+      Result := Value;
+end;
+
+function ClampByte_(const Value: Integer): Byte;
+begin
+  if Value > 255 then
+      Result := 255
+  else if Value < 0 then
+      Result := 0
+  else
+      Result := Value;
+end;
+
+function IntersectRect_(out Dst: TRect; const r1, r2: TRect): Boolean;
+begin
+  if r1.Left >= r2.Left then
+      Dst.Left := r1.Left
+  else
+      Dst.Left := r2.Left;
+  if r1.Right <= r2.Right then
+      Dst.Right := r1.Right
+  else
+      Dst.Right := r2.Right;
+  if r1.Top >= r2.Top then
+      Dst.Top := r1.Top
+  else
+      Dst.Top := r2.Top;
+  if r1.Bottom <= r2.Bottom then
+      Dst.Bottom := r1.Bottom
+  else
+      Dst.Bottom := r2.Bottom;
+  Result := (Dst.Right >= Dst.Left) and (Dst.Bottom >= Dst.Top);
+  if not Result then
+      Dst := ZERO_RECT;
+end;
+
+procedure OffsetRect_(var r: TRect; dx, dy: Integer);
+begin
+  inc(r.Left, dx);
+  inc(r.Top, dy);
+  inc(r.Right, dx);
+  inc(r.Bottom, dy);
+end;
+
+function IsRectEmpty_(const r: TRect): Boolean;
+begin
+  Result := (r.Right <= r.Left) or (r.Bottom <= r.Top);
+end;
+
 procedure FillRasterColor(var x; Count: Cardinal; Value: TRasterColor);
 var
   i: Integer;
@@ -96,16 +162,16 @@ begin
   Srcx := SrcRect.Left;
   Srcy := SrcRect.Top;
 
-  IntersectRect(DstClip, DstClip, Dst.BoundsRect);
-  IntersectRect(SrcRect, SrcRect, Src.BoundsRect);
+  IntersectRect_(DstClip, DstClip, Dst.BoundsRect);
+  IntersectRect_(SrcRect, SrcRect, Src.BoundsRect);
 
-  OffsetRect(SrcRect, Dstx - Srcx, Dsty - Srcy);
-  IntersectRect(SrcRect, DstClip, SrcRect);
-  if IsRectEmpty(SrcRect) then
+  OffsetRect_(SrcRect, Dstx - Srcx, Dsty - Srcy);
+  IntersectRect_(SrcRect, DstClip, SrcRect);
+  if IsRectEmpty_(SrcRect) then
       Exit;
 
   DstClip := SrcRect;
-  OffsetRect(SrcRect, Srcx - Dstx, Srcy - Dsty);
+  OffsetRect_(SrcRect, Srcx - Dstx, Srcy - Dsty);
 
   BlendBlock(Dst, DstClip, Src, SrcRect.Left, SrcRect.Top, CombineOp);
 end;
@@ -115,7 +181,7 @@ begin
   Result := RasterColor(Random(255), Random(255), Random(255), a);
 end;
 
-function RasterColor(const r, g, b: Byte; const a: Byte = $FF): TRasterColor;
+function RasterColor(const r, g, b, a: Byte): TRasterColor;
 begin
   TRasterColorEntry(Result).r := r;
   TRasterColorEntry(Result).g := g;
@@ -123,13 +189,20 @@ begin
   TRasterColorEntry(Result).a := a;
 end;
 
+function RasterColor(const r, g, b: Byte): TRasterColor;
+begin
+  TRasterColorEntry(Result).r := r;
+  TRasterColorEntry(Result).g := g;
+  TRasterColorEntry(Result).b := b;
+  TRasterColorEntry(Result).a := $FF;
+end;
+
 function RasterColorInv(const c: TRasterColor): TRasterColor;
 begin
-  Result := RasterColor(
-    $FF - ClampByte(TRasterColorEntry(c).r),
-    $FF - ClampByte(TRasterColorEntry(c).g),
-    $FF - ClampByte(TRasterColorEntry(c).b),
-    TRasterColorEntry(c).a);
+  TRasterColorEntry(Result).r := $FF - TRasterColorEntry(c).r;
+  TRasterColorEntry(Result).g := $FF - TRasterColorEntry(c).g;
+  TRasterColorEntry(Result).b := $FF - TRasterColorEntry(c).b;
+  TRasterColorEntry(Result).a := TRasterColorEntry(c).a;
 end;
 
 function RasterAlphaColor(const c: TRasterColor; const a: Byte): TRasterColor;
@@ -149,16 +222,20 @@ end;
 
 function RasterAlphaColorF(const c: TRasterColor; const a: Single): TRasterColor;
 begin
-  Result := RasterAlphaColor(c, ClampByte(Trunc(a * $FF)));
+  Result := RasterAlphaColor(c, ClampByte_(Trunc(a * $FF)));
 end;
 
-function RasterColorF(const r, g, b: Single; const a: Single = 1.0): TRasterColor;
+function RasterColorF(const r, g, b, a: TGeoFloat): TRasterColor;
 begin
-  Result := RasterColor(
-    ClampByte(Round(r * $FF)),
-    ClampByte(Round(g * $FF)),
-    ClampByte(Round(b * $FF)),
-    ClampByte(Round(a * $FF)));
+  TRasterColorEntry(Result).r := ClampByte_(Round(r * $FF));
+  TRasterColorEntry(Result).g := ClampByte_(Round(g * $FF));
+  TRasterColorEntry(Result).b := ClampByte_(Round(b * $FF));
+  TRasterColorEntry(Result).a := ClampByte_(Round(a * $FF));
+end;
+
+function RasterColorF(const r, g, b: TGeoFloat): TRasterColor;
+begin
+  Result := RasterColorF(r, g, b, 1.0);
 end;
 
 procedure RasterColor2F(const c: TRasterColor; var r, g, b, a: Single);
@@ -212,16 +289,13 @@ end;
 
 function RGBA2RGB(const sour: TRasterColor): TRGB;
 begin
-  Result[0] := TRasterColorEntry(sour).Buffer[0];
-  Result[1] := TRasterColorEntry(sour).Buffer[1];
-  Result[2] := TRasterColorEntry(sour).Buffer[2];
+  Result := PRGB(@sour)^;
 end;
 
 function RGBA2BGR(const sour: TRasterColor): TRGB;
 begin
-  Result[0] := TRasterColorEntry(sour).Buffer[2];
-  Result[1] := TRasterColorEntry(sour).Buffer[1];
-  Result[2] := TRasterColorEntry(sour).Buffer[0];
+  Result := PRGB(@sour)^;
+  CoreClasses.Swap(Result[0], Result[2]);
 end;
 
 function RGB2BGR(const sour: TRGB): TRGB;
@@ -240,10 +314,8 @@ end;
 
 function RGB2RGBA(const sour: TRGB): TRasterColor;
 begin
-  TRasterColorEntry(Result).Buffer[0] := sour[0];
-  TRasterColorEntry(Result).Buffer[1] := sour[1];
-  TRasterColorEntry(Result).Buffer[2] := sour[2];
-  TRasterColorEntry(Result).Buffer[3] := $FF;
+  PRGB(@Result)^ := sour;
+  TRasterColorEntry(Result).a := $FF;
 end;
 
 procedure SwapBR(var sour: TRGB);
@@ -254,6 +326,64 @@ end;
 procedure SwapBR(var sour: TRasterColor);
 begin
   CoreClasses.Swap(TRasterColorEntry(sour).r, TRasterColorEntry(sour).b);
+end;
+
+function MaxRGBComponent(sour: TRasterColor): Byte;
+var
+  c: TRasterColorEntry;
+begin
+  c.BGRA := sour;
+  Result := Max(c.r, Max(c.g, c.b));
+end;
+
+function MaxRGBIndex(sour: TRasterColor): Byte;
+var
+  c: TRasterColorEntry;
+begin
+  c.BGRA := sour;
+  if c.buff[1] > c.buff[0] then
+    begin
+      if c.buff[2] > c.buff[1] then
+          Result := 2
+      else
+          Result := 1;
+    end
+  else
+    begin
+      if c.buff[2] > c.buff[0] then
+          Result := 2
+      else
+          Result := 0;
+    end;
+end;
+
+function MinRGBComponent(sour: TRasterColor): Byte;
+var
+  c: TRasterColorEntry;
+begin
+  c.BGRA := sour;
+  Result := Min(c.r, Min(c.g, c.b));
+end;
+
+function MinRGBIndex(sour: TRasterColor): Byte;
+var
+  c: TRasterColorEntry;
+begin
+  c.BGRA := sour;
+  if c.buff[1] < c.buff[0] then
+    begin
+      if c.buff[2] < c.buff[1] then
+          Result := 2
+      else
+          Result := 1;
+    end
+  else
+    begin
+      if c.buff[2] < c.buff[0] then
+          Result := 2
+      else
+          Result := 0;
+    end;
 end;
 
 function AggColor(const Value: TRasterColor): TAggColorRgba8;
@@ -277,22 +407,20 @@ begin
   TRasterColorEntry(Result).a := Value.a;
 end;
 
-procedure ComputeSize(const MAX_Width, MAX_Height: Integer; var width, height: Integer);
+function ComputeSize(const MAX_Width, MAX_Height: Integer; var width, height: Integer): Single;
 var
-  f: Single;
+  fw, fh: Single;
 begin
-  if (width > MAX_Width) then
-    begin
-      f := MAX_Width / width;
-      width := Round(width * f);
-      height := Round(height * f);
-    end;
-  if (height > MAX_Height) then
-    begin
-      f := MAX_Height / height;
-      width := Round(width * f);
-      height := Round(height * f);
-    end;
+  fw := MAX_Width / width;
+  fh := MAX_Height / height;
+
+  if fw < fh then
+      Result := fw
+  else
+      Result := fh;
+
+  width := Trunc(width * Result);
+  height := Trunc(height * Result);
 end;
 
 procedure FastBlur(Source, dest: TMemoryRaster; radius: Double; const Bounds: TRect);
@@ -728,7 +856,7 @@ begin
         with ImagePixels^[q] do
           begin
             PreMulArray[x].a := a;
-            PreMulArray[x].r := DivTable[RasterColor2Gray(RGBA), a];
+            PreMulArray[x].r := DivTable[RasterColor2Gray(BGRA), a];
             inc(q);
           end;
 
@@ -907,7 +1035,7 @@ begin
   LPixelCount := mr.width * mr.height;
 
   // calculating histogram
-  p := @mr.Bits[0];
+  p := @mr.Bits^[0];
 
   for i := 1 to LPixelCount do
     begin
@@ -932,7 +1060,7 @@ begin
     end;
 
   // doing map
-  p := @mr.Bits[0];
+  p := @mr.Bits^[0];
 
   for i := 1 to LPixelCount do
     begin
@@ -1004,7 +1132,7 @@ var
   LPixel: PRasterColorEntry;
 begin
   LDepth2 := Depth * 2;
-  LPixel := @mr.Bits[0];
+  LPixel := @mr.Bits^[0];
 
   for i := 0 to (mr.width * mr.height - 1) do
     begin
@@ -1121,27 +1249,17 @@ begin
       end;
 
     if LLastMatrixNumber = 0 then
-      begin
         LLastMatrixNumber := 1;
-      end;
 
     dx := 0;
     for i := 0 to 24 do
-      begin
-        if (LMatrix[i] and MASK_MATRIX[i]) <> 0 then
-          begin
-            inc(dx);
-          end;
-      end;
+      if (LMatrix[i] and MASK_MATRIX[i]) <> 0 then
+          inc(dx);
 
     if dx = 0 then
-      begin
-        LDiagonal := 1;
-      end
+        LDiagonal := 1
     else
-      begin
         LDiagonal := 2;
-      end;
 
     for y := 0 to (DestMR.height - 1) do
       begin
@@ -1193,10 +1311,10 @@ begin
             GG := GG div LLastMatrixNumber;
             BB := BB div LLastMatrixNumber;
 
-            a := ClampInt(AA, 0, 255);
-            r := ClampInt(RR, 0, 255);
-            g := ClampInt(GG, 0, 255);
-            b := ClampInt(BB, 0, 255);
+            a := ClampInt_(AA, 0, 255);
+            r := ClampInt_(RR, 0, 255);
+            g := ClampInt_(GG, 0, 255);
+            b := ClampInt_(BB, 0, 255);
 
             LDestRow[y]^[x] := (a shl 24) or (r shl 16) or (g shl 8) or b;
           end;
@@ -1270,9 +1388,38 @@ begin
   for i := (Src.width * Src.height) - 1 downto 0 do
     begin
       c := @Src.FBits^[i];
-      c^.r := RasterColor2Gray(c^.RGBA);
+      c^.r := RasterColor2Gray(c^.BGRA);
       c^.g := c^.r;
       c^.b := c^.r;
+    end;
+end;
+
+procedure FillBlackGrayBackgroundTexture(bk: TMemoryRaster; block_size: Integer);
+var
+  i, j: Integer;
+  fi, fj: Boolean;
+  c, c1, c2: TRasterColor;
+begin
+  fi := True;
+  i := 0;
+  c1 := RasterColorF(0.2, 0.2, 0.2, 1);
+  c2 := RasterColorF(0.5, 0.5, 0.5, 1);
+  while i < bk.width do
+    begin
+      fi := not fi;
+      fj := fi;
+      j := 0;
+      while j < bk.height do
+        begin
+          if fj then
+              c := c1
+          else
+              c := c2;
+          fj := not fj;
+          bk.FillRect(i, j, i + block_size, j + block_size, c);
+          inc(j, block_size);
+        end;
+      inc(i, block_size);
     end;
 end;
 
@@ -1285,11 +1432,11 @@ begin
   for i := 0 to Src.width - 1 do
     for j := 0 to Src.height - 1 do
       begin
-        c.RGBA := Src[i, j];
-        if c.RGBA = SrcColor then
+        c.BGRA := Src[i, j];
+        if c.BGRA = SrcColor then
             Dst[i, j] := RasterColor(0, 0, 0, 0)
         else
-            Dst[i, j] := c.RGBA;
+            Dst[i, j] := c.BGRA;
       end;
 end;
 
@@ -1626,7 +1773,7 @@ end;
 function MergeReg(f, b: TRasterColor): TRasterColor;
 var
   FA, BA, WA: TRasterColor;
-  FW, BW: PByteArray;
+  fw, BW: PByteArray;
   FX: TRasterColorEntry absolute f;
   BX: TRasterColorEntry absolute b;
   RX: TRasterColorEntry absolute Result;
@@ -1643,11 +1790,11 @@ begin
     begin
       RX.a := DivTable[FA xor 255, BA xor 255] xor 255;
       WA := RcTable[RX.a, FA];
-      FW := @DivTable[WA];
+      fw := @DivTable[WA];
       BW := @DivTable[WA xor $FF];
-      RX.r := FW^[FX.r] + BW^[BX.r];
-      RX.g := FW^[FX.g] + BW^[BX.g];
-      RX.b := FW^[FX.b] + BW^[BX.b];
+      RX.r := fw^[FX.r] + BW^[BX.r];
+      RX.g := fw^[FX.g] + BW^[BX.g];
+      RX.b := fw^[FX.b] + BW^[BX.b];
     end;
 end;
 
@@ -1740,76 +1887,6 @@ begin
   for i := 0 to length(ARaster^) - 1 do
       RawStream.write(ARaster^[i][0], length(ARaster^[i]));
   RawStream.Position := 0;
-end;
-
-procedure jls_RasterAlphaToRaw1(ARaster: TMemoryRaster; RawStream: TCoreClassStream);
-var
-  i, j: Integer;
-  Buf: array of Byte;
-begin
-  SetLength(Buf, ARaster.width);
-
-  for i := 0 to ARaster.height - 1 do
-    begin
-      for j := 0 to ARaster.width - 1 do
-          Buf[j] := ARaster.PixelAlpha[j, i];
-      RawStream.write(Buf[0], ARaster.width)
-    end;
-  RawStream.Position := 0;
-  SetLength(Buf, 0);
-end;
-
-function EncodeJpegLSRasterAlphaToStream(ARaster: TMemoryRaster; const stream: TCoreClassStream): Boolean;
-var
-  rgbStream, alphaStream: TMemoryStream64;
-  hflag: Word;
-  rgbSiz, alphaSiz: Integer;
-  LInput: TMemoryStream64;
-  Info: TJlsParameters;
-begin
-  Result := False;
-  rgbStream := TMemoryStream64.Create;
-  alphaStream := TMemoryStream64.Create;
-
-  if EncodeJpegLSRasterToStream3(ARaster, rgbStream) then
-    begin
-      LInput := TMemoryStream64.Create;
-      FillPtrByte(@Info, SizeOf(Info), 0);
-
-      try
-        jls_RasterAlphaToRaw1(ARaster, LInput);
-        Info.width := ARaster.width;
-        Info.height := ARaster.height;
-        Info.BitsPerSample := 8;
-        Info.Components := 1;
-        Info.Custom.t1 := 3;
-        Info.Custom.t2 := 7;
-        Info.Custom.t3 := 21;
-        Info.Custom.Reset := 64;
-        Info.AllowedLossyError := 0;
-
-        Result := jpegls_compress(LInput, alphaStream, @Info);
-      finally
-          LInput.Free;
-      end;
-    end;
-
-  if Result then
-    begin
-      rgbStream.Position := 0;
-      alphaStream.Position := 0;
-
-      hflag := $8D45;
-      rgbSiz := rgbStream.Size;
-      alphaSiz := alphaStream.Size;
-      stream.write(hflag, 2);
-      stream.write(rgbSiz, 4);
-      stream.write(alphaSiz, 4);
-      stream.write(rgbStream.Memory^, rgbStream.Size);
-      stream.write(alphaStream.Memory^, alphaStream.Size);
-    end;
-
-  DisposeObject([rgbStream, alphaStream]);
 end;
 
 function EncodeJpegLSRasterToStream3(ARaster: TMemoryRaster; const stream: TCoreClassStream): Boolean;
@@ -1955,63 +2032,6 @@ begin
   finally
       LOutput.Free;
   end;
-end;
-
-function DecodeJpegLSRasterAlphaFromStream(const stream: TCoreClassStream; ARaster: TMemoryRaster): Boolean;
-var
-  hflag: Word;
-  rgbSiz, alphaSiz: Integer;
-  rgbStream, alphaStream: TMemoryStream64;
-  LOutput: TMemoryStream64;
-  Info: TJlsParameters;
-  i, j: Integer;
-  Src: PByte;
-begin
-  Result := False;
-  hflag := 0;
-  stream.read(hflag, 2);
-  if hflag <> $8D45 then
-      Exit;
-
-  stream.read(rgbSiz, 4);
-  stream.read(alphaSiz, 4);
-
-  rgbStream := TMemoryStream64.Create;
-  alphaStream := TMemoryStream64.Create;
-
-  try
-    rgbStream.CopyFrom(stream, rgbSiz);
-    if alphaSiz > 0 then
-        alphaStream.CopyFrom(stream, alphaSiz);
-
-    rgbStream.Position := 0;
-    alphaStream.Position := 0;
-
-    if DecodeJpegLSRasterFromStream(rgbStream, ARaster) and (alphaSiz > 0) then
-      begin
-        LOutput := TMemoryStream64.Create;
-        FillPtrByte(@Info, SizeOf(Info), 0);
-        try
-          if jpegls_decompress(alphaStream, LOutput, @Info) and (Info.Components = 1) and (Info.BitsPerSample = 8) then
-            begin
-              Src := LOutput.Memory;
-              for j := 0 to ARaster.height - 1 do
-                begin
-                  for i := 0 to ARaster.width - 1 do
-                    begin
-                      ARaster.PixelAlpha[i, j] := Src^;
-                      inc(Src);
-                    end;
-                end;
-            end;
-        except
-        end;
-        LOutput.Free;
-      end;
-  except
-  end;
-
-  DisposeObject([rgbStream, alphaStream]);
 end;
 
 function EncodeJpegLSGrayRasterToStream(const ARaster: PByteRaster; const stream: TCoreClassStream): Boolean;
@@ -2241,6 +2261,7 @@ begin
   if head.Version <> 10 then
       Exit;
 
+  nStream := nil;
   if Boolean(head.Compessed) then
     begin
       nStream := TMemoryStream64.Create;
@@ -2267,7 +2288,7 @@ begin
   inc(v_ptr, (head.width * head.height) div 4);
   stride := head.width;
   stride_c := head.width div 2;
-  YV12ToRaster(luma_ptr, u_ptr, v_ptr, head.width, head.height, stride, stride_c, dest, False, True);
+  YV12ToRaster(luma_ptr, u_ptr, v_ptr, head.width, head.height, stride, stride_c, dest, False, False);
 
   if needFree then
       FreeMemory(luma_ptr);
@@ -2285,8 +2306,8 @@ var
 begin
   head.Version := 10;
   head.Compessed := Byte(Compressed);
-  head.width := sour.width;
-  head.height := sour.height;
+  head.width := (sour.width shr 1) * 2;
+  head.height := (sour.height shr 1) * 2;
 
   memsiz := head.width * head.height + (head.width * head.height) div 2;
   luma_ptr := GetMemory(memsiz);
@@ -2309,4 +2330,62 @@ begin
       dest.write(luma_ptr^, memsiz);
     end;
   FreeMemory(luma_ptr);
+end;
+
+type
+  TOriginSize = packed record
+    width, height: Integer;
+  end;
+
+procedure HalfYUVToRasterization(sour: TCoreClassStream; dest: TMemoryRaster);
+var
+  oriSiz: TOriginSize;
+begin
+  if sour.read(oriSiz, SizeOf(oriSiz)) <> SizeOf(oriSiz) then
+      Exit;
+  YV12ToRasterization(sour, dest);
+  dest.Zoom(oriSiz.width, oriSiz.height);
+end;
+
+procedure RasterizationToHalfYUV(Compressed: Boolean; sour: TMemoryRaster; dest: TCoreClassStream);
+var
+  oriSiz: TOriginSize;
+  n: TMemoryRaster;
+begin
+  oriSiz.width := sour.width;
+  oriSiz.height := sour.height;
+  dest.write(oriSiz, SizeOf(oriSiz));
+
+  n := TMemoryRaster.Create;
+  n.ZoomFrom(sour, sour.width shr 1, sour.height shr 1);
+  RasterizationToYV12(Compressed, n, dest);
+  DisposeObject(n);
+end;
+
+procedure QuartYUVToRasterization(sour: TCoreClassStream; dest: TMemoryRaster);
+var
+  oriSiz: TOriginSize;
+begin
+  if sour.read(oriSiz, SizeOf(oriSiz)) <> SizeOf(oriSiz) then
+      Exit;
+  YV12ToRasterization(sour, dest);
+  dest.Zoom(oriSiz.width, oriSiz.height);
+end;
+
+procedure RasterizationToQuartYUV(Compressed: Boolean; sour: TMemoryRaster; dest: TCoreClassStream);
+var
+  oriSiz: TOriginSize;
+  n: TMemoryRaster;
+begin
+  oriSiz.width := sour.width;
+  oriSiz.height := sour.height;
+  dest.write(oriSiz, SizeOf(oriSiz));
+
+  n := TMemoryRaster.Create;
+  // smooth level 1 on parallel process
+  n.ZoomFrom(sour, sour.width shr 1, sour.height shr 1);
+  // smooth level 2 on parallel process
+  n.Zoom(n.width shr 1, n.height shr 1);
+  RasterizationToYV12(Compressed, n, dest);
+  DisposeObject(n);
 end;

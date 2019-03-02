@@ -13,9 +13,9 @@ uses
   zDrawEngineInterface_SlowFMX;
 
 const
-  sceneWidth  = 300;
-  sceneHeight = 300;
-  RandomCount = 100;
+  sceneWidth  = 800;
+  sceneHeight = 800;
+  RandomCount = 1000;
 
 type
   TGUIAnalysisMainForm = class(TForm)
@@ -113,7 +113,7 @@ begin
   for i := 0 to pl.Count - 1 do
     begin
       pt := pl[i]^;
-      bmp.FillCircle(pt, 8, RasterColor($FF, $0, $0, $FF));
+      bmp.FillCircle(pt, 5, RasterColor($FF, $0, $0, $FF));
     end;
 end;
 

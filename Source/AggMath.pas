@@ -40,7 +40,8 @@ unit AggMath;
 // Bessel function (besj) was adapted for use in AGG library by Andy Wilk
 // Contact: castor.vulgaris@gmail.com
 
-{$INCLUDE AggCompiler.inc}
+{$DEFINE FPC_DELPHI_MODE}
+{$INCLUDE zDefine.inc}
 
 interface
 

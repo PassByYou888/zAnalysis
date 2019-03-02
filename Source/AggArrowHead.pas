@@ -37,7 +37,8 @@
 *)
 unit AggArrowHead;
 
-{$INCLUDE AggCompiler.inc}
+{$DEFINE FPC_DELPHI_MODE}
+{$INCLUDE zDefine.inc}
 interface
 
 uses

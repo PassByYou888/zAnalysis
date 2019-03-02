@@ -20,17 +20,22 @@ interface
 uses Types, Math, Variants, CoreClasses, MemoryStream64, Geometry2DUnit, PascalStrings, UnicodeMixedLib,
 {$IFDEF FPC}
   UPascalStrings,
+  FPCGenericStructlist,
 {$ENDIF FPC}
   ListEngine,
   AggBasics, Agg2D, AggColor32,
-  JLSCodec;
-
-{$REGION 'Classes'}
-
+  JLSCodec, Raster_JPEG_type, Raster_JPEG_Image;
 
 type
+{$REGION 'base define'}
   TRasterColor = TAggPackedRgba8;
   PRasterColor = ^TRasterColor;
+
+  TRGBA = TRasterColor;
+  PRGBA = PRasterColor;
+
+  TBGRA = TRasterColor;
+  PBGRA = PRasterColor;
 
   TRasterColorArray = array [0 .. MaxInt div SizeOf(TRasterColor) - 1] of TRasterColor;
   PRasterColorArray = ^TRasterColorArray;
@@ -38,8 +43,8 @@ type
   TRasterColorEntry = packed record
     case Byte of
       0: (b, g, r, a: Byte);
-      1: (RGBA: TRasterColor);
-      2: (buffer: array [0 .. 3] of Byte);
+      1: (BGRA: TRasterColor);
+      2: (buff: array [0 .. 3] of Byte)
   end;
 
   TRGB = array [0 .. 2] of Byte;
@@ -66,6 +71,19 @@ type
   TVertexMap = class;
   TFontRaster = class;
 
+  TRasterSave = (
+    rsRGBA, rsRGB,
+    rsYV12, rsHalfYUV, rsQuartYUV, rsFastYV12, rsFastHalfYUV, rsFastQuartYUV,
+    rsJpeg_RGBA_Qualily90, rsJPEG_RGB_Qualily90, rsJPEG_Gray_Qualily90, rsJPEG_GrayA_Qualily90,
+    rsJpeg_RGBA_Qualily80, rsJPEG_RGB_Qualily80, rsJPEG_Gray_Qualily80, rsJPEG_GrayA_Qualily80,
+    rsJpeg_RGBA_Qualily70, rsJPEG_RGB_Qualily70, rsJPEG_Gray_Qualily70, rsJPEG_GrayA_Qualily70,
+    rsJpeg_RGBA_Qualily60, rsJPEG_RGB_Qualily60, rsJPEG_Gray_Qualily60, rsJPEG_GrayA_Qualily60,
+    rsJpeg_RGBA_Qualily50, rsJPEG_RGB_Qualily50, rsJPEG_Gray_Qualily50, rsJPEG_GrayA_Qualily50
+    );
+{$ENDREGION 'base define'}
+
+{$REGION 'MemoryRaster'}
+
   TMemoryRaster = class(TCoreClassObject)
   private
     FFreeBits: Boolean;
@@ -87,6 +105,8 @@ type
     FUserObject: TCoreClassObject;
     FUserData: Pointer;
     FUserText: SystemString;
+    FUserToken: SystemString;
+    FUserVariant: Variant;
 
     function GetVertex: TVertexMap;
 
@@ -143,6 +163,7 @@ type
     { memory map }
     procedure SetWorkMemory(WorkMemory: Pointer; NewWidth, NewHeight: Integer); overload;
     procedure SetWorkMemory(raster: TMemoryRaster); overload;
+    function IsMemoryMap: Boolean;
 
     { triangle vertex map }
     procedure OpenVertex;
@@ -166,6 +187,8 @@ type
     procedure Clear(FillColor: TRasterColor); overload; virtual;
     procedure SetSize(NewWidth, NewHeight: Integer); overload; virtual;
     procedure SetSize(NewWidth, NewHeight: Integer; const ClearColor: TRasterColor); overload; virtual;
+    procedure SetSizeF(NewWidth, NewHeight: TGeoFloat; const ClearColor: TRasterColor); overload;
+    procedure SetSizeR(r: TRectV2; const ClearColor: TRasterColor); overload;
     function SizeOfPoint: TPoint;
     function SizeOf2DPoint: TVec2;
     function Size2D: TVec2;
@@ -190,7 +213,8 @@ type
     procedure NoLineZoomFrom(const Source: TMemoryRaster; const NewWidth, NewHeight: Integer);
     procedure NoLineZoom(const NewWidth, NewHeight: Integer);
     procedure ZoomLine(const Source, dest: TMemoryRaster; const pass: Integer);
-    procedure ZoomFrom(const Source: TMemoryRaster; const NewWidth, NewHeight: Integer);
+    procedure ZoomFrom(const Source: TMemoryRaster; const NewWidth, NewHeight: Integer); overload;
+    procedure ZoomFrom(const Source: TMemoryRaster; const f: TGeoFloat); overload;
     procedure Zoom(const NewWidth, NewHeight: Integer);
     procedure FastBlurZoomFrom(const Source: TMemoryRaster; const NewWidth, NewHeight: Integer);
     procedure FastBlurZoom(const NewWidth, NewHeight: Integer);
@@ -198,9 +222,10 @@ type
     procedure GaussianBlurZoom(const NewWidth, NewHeight: Integer);
     procedure GrayscaleBlurZoomFrom(const Source: TMemoryRaster; const NewWidth, NewHeight: Integer);
     procedure GrayscaleBlurZoom(const NewWidth, NewHeight: Integer);
+    procedure Scale(k: TGeoFloat);
     function FormatAsBGRA: TMemoryRaster;
     procedure FormatBGRA;
-    function BuildRGB(cSwapBR: Boolean): PByte;
+    function BuildRGB(cSwapBR: Boolean): PRGBArray;
     procedure InputRGB(var buff; w, h: Integer; cSwapBR: Boolean);
     procedure OutputRGB(var buff; cSwapBR: Boolean);
     procedure ColorTransparent(c: TRasterColor);
@@ -211,6 +236,12 @@ type
     procedure ExtractGreen(var output: TByteRaster);
     procedure ExtractBlue(var output: TByteRaster);
     procedure ExtractAlpha(var output: TByteRaster);
+    function ComputeAreaScaleSpace(clipArea: TRectV2; SS_width, SS_height: Integer): TRectV2; overload;
+    function ComputeAreaScaleSpace(clipArea: TRect; SS_width, SS_height: Integer): TRect; overload;
+    function BuildAreaOffsetScaleSpace(clipArea: TRectV2; SS_width, SS_height: Integer): TMemoryRaster; overload;
+    function BuildAreaOffsetScaleSpace(clipArea: TRect; SS_width, SS_height: Integer): TMemoryRaster; overload;
+    function BuildAreaCopy(clipArea: TRectV2): TMemoryRaster; overload;
+    function BuildAreaCopy(clipArea: TRect): TMemoryRaster; overload;
 
     { shape support }
     procedure Line(x1, y1, x2, y2: Integer; Value: TRasterColor; L: Boolean); virtual;
@@ -234,8 +265,13 @@ type
     procedure DrawPointListLine(pl: TVec2List; Value: TRasterColor; wasClose: Boolean);
     procedure DrawCircle(CC: TVec2; r: TGeoFloat; Value: TRasterColor);
     procedure FillCircle(CC: TVec2; r: TGeoFloat; Value: TRasterColor);
-    procedure DrawEllipse(CC: TVec2; xRadius, yRadius: TGeoFloat; Value: TRasterColor);
-    procedure FillEllipse(CC: TVec2; xRadius, yRadius: TGeoFloat; Value: TRasterColor);
+    procedure DrawEllipse(CC: TVec2; xRadius, yRadius: TGeoFloat; Value: TRasterColor); overload;
+    procedure DrawEllipse(r: TRectV2; Value: TRasterColor); overload;
+    procedure FillEllipse(CC: TVec2; xRadius, yRadius: TGeoFloat; Value: TRasterColor); overload;
+    procedure FillEllipse(r: TRectV2; Value: TRasterColor); overload;
+    procedure FillTriangle(t1, t2, t3: TVec2; Value: TRasterColor); overload;
+    procedure FillTriangle(t1, t2, t3: TPoint; Value: TRasterColor); overload;
+    procedure FillTriangle(t1, t2, t3: TPointf; Value: TRasterColor); overload;
 
     { rasterization text support }
     function TextSize(Text: SystemString; siz: TGeoFloat): TVec2;
@@ -261,33 +297,49 @@ type
     procedure LoadFromBmpStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream); virtual;
 
-    procedure SaveToBmp32Stream(stream: TCoreClassStream);           // published,32bit bitmap,include alpha
-    procedure SaveToBmp24Stream(stream: TCoreClassStream);           // published,24bit bitmap,no alpha
-    procedure SaveToStream(stream: TCoreClassStream); virtual;       // published,32bit bitmap
-    procedure SaveToZLibCompressStream(stream: TCoreClassStream);    // custom
-    procedure SaveToDeflateCompressStream(stream: TCoreClassStream); // custom
-    procedure SaveToBRRCCompressStream(stream: TCoreClassStream);    // custom
-    procedure SaveToJpegLS1Stream(stream: TCoreClassStream);         // published,jls8bit
-    procedure SaveToJpegLS3Stream(stream: TCoreClassStream);         // published,jls24bit
-    procedure SaveToJpegAlphaStream(stream: TCoreClassStream);       // custom
-    procedure SaveToYV12Stream(stream: TCoreClassStream);            // custom
-    procedure SaveToFastYV12Stream(stream: TCoreClassStream);        // custom
+    procedure SaveToStream(stream: TCoreClassStream; RasterSave_: TRasterSave); overload;
+    procedure SaveToStream(stream: TCoreClassStream); overload; virtual;                // published,32bit bitmap
+    procedure SaveToBmp32Stream(stream: TCoreClassStream);                              // published,32bit bitmap,include alpha
+    procedure SaveToBmp24Stream(stream: TCoreClassStream);                              // published,24bit bitmap,no alpha
+    procedure SaveToZLibCompressStream(stream: TCoreClassStream);                       // custom,no alpha
+    procedure SaveToDeflateCompressStream(stream: TCoreClassStream);                    // custom,no alpha
+    procedure SaveToBRRCCompressStream(stream: TCoreClassStream);                       // custom,no alpha
+    procedure SaveToJpegLS1Stream(stream: TCoreClassStream);                            // published,jls8bit
+    procedure SaveToJpegLS3Stream(stream: TCoreClassStream);                            // published,jls24bit
+    procedure SaveToYV12Stream(stream: TCoreClassStream);                               // custom,no alpha
+    procedure SaveToFastYV12Stream(stream: TCoreClassStream);                           // custom,no alpha
+    procedure SaveToHalfYUVStream(stream: TCoreClassStream);                            // custom,no alpha
+    procedure SaveToFastHalfYUVStream(stream: TCoreClassStream);                        // custom,no alpha
+    procedure SaveToQuartYUVStream(stream: TCoreClassStream);                           // custom,no alpha
+    procedure SaveToFastQuartYUVStream(stream: TCoreClassStream);                       // custom,no alpha
+    procedure SaveToJpegRGBAStream(stream: TCoreClassStream; Quality: TJpegQuality);    // custom,32bit YCbCrA
+    procedure SaveToJpegRGBStream(stream: TCoreClassStream; Quality: TJpegQuality);     // published,24bit YCbCr
+    procedure SaveToJpegCMYKRGBStream(stream: TCoreClassStream; Quality: TJpegQuality); // custom,24bit CMYK
+    procedure SaveToJpegGrayStream(stream: TCoreClassStream; Quality: TJpegQuality);    // published,8bit grayscale
+    procedure SaveToJpegGrayAStream(stream: TCoreClassStream; Quality: TJpegQuality);   // custom,16bit grayscale+alpha
 
     class function CanLoadFile(fn: SystemString): Boolean;
     procedure LoadFromFile(fn: SystemString); virtual;
 
-    { save bitmap format file }
-    procedure SaveToBmp32File(fn: SystemString);           // published,32bit bitmap,include alpha
-    procedure SaveToBmp24File(fn: SystemString);           // published,24bit bitmap,no alpha
-    procedure SaveToFile(fn: SystemString);                // published,32bit bitmap,include alpha
-    procedure SaveToZLibCompressFile(fn: SystemString);    // custom
-    procedure SaveToDeflateCompressFile(fn: SystemString); // custom
-    procedure SaveToBRRCCompressFile(fn: SystemString);    // custom
-    procedure SaveToJpegLS1File(fn: SystemString);         // published,jls8bit
-    procedure SaveToJpegLS3File(fn: SystemString);         // published,jls24bit
-    procedure SaveToJpegAlphaFile(fn: SystemString);       // custom
-    procedure SaveToYV12File(fn: SystemString);            // custom
-    procedure SaveToFastYV12File(fn: SystemString);        // custom
+    procedure SaveToBmp32File(fn: SystemString);                              // published,32bit bitmap,include alpha
+    procedure SaveToBmp24File(fn: SystemString);                              // published,24bit bitmap,no alpha
+    procedure SaveToFile(fn: SystemString);                                   // published,32bit bitmap,include alpha
+    procedure SaveToZLibCompressFile(fn: SystemString);                       // custom,no alpha
+    procedure SaveToDeflateCompressFile(fn: SystemString);                    // custom,no alpha
+    procedure SaveToBRRCCompressFile(fn: SystemString);                       // custom,no alpha
+    procedure SaveToJpegLS1File(fn: SystemString);                            // published,jls8bit
+    procedure SaveToJpegLS3File(fn: SystemString);                            // published,jls24bit
+    procedure SaveToYV12File(fn: SystemString);                               // custom,no alpha
+    procedure SaveToFastYV12File(fn: SystemString);                           // custom,no alpha
+    procedure SaveToHalfYUVFile(fn: SystemString);                            // custom,no alpha
+    procedure SaveToFastHalfYUVFile(fn: SystemString);                        // custom,no alpha
+    procedure SaveToQuartYUVFile(fn: SystemString);                           // custom,no alpha
+    procedure SaveToFastQuartYUVFile(fn: SystemString);                       // custom,no alpha
+    procedure SaveToJpegRGBAFile(fn: SystemString; Quality: TJpegQuality);    // custom,32bit YCbCrA
+    procedure SaveToJpegRGBFile(fn: SystemString; Quality: TJpegQuality);     // published,24bit YCbCr
+    procedure SaveToJpegCMYKRGBFile(fn: SystemString; Quality: TJpegQuality); // custom,24bit CMYK
+    procedure SaveToJpegGrayFile(fn: SystemString; Quality: TJpegQuality);    // published,8bit grayscale
+    procedure SaveToJpegGrayAFile(fn: SystemString; Quality: TJpegQuality);   // custom,8bit grayscale + 8bit alpha
 
     { Rasterization pixel }
     property Pixel[const x, y: Integer]: TRasterColor read GetPixel write SetPixel; default;
@@ -319,11 +371,34 @@ type
     property UserObject: TCoreClassObject read FUserObject write FUserObject;
     property UserData: Pointer read FUserData write FUserData;
     property UserText: SystemString read FUserText write FUserText;
+    property UserToken: SystemString read FUserToken write FUserToken;
+    property UserVariant: Variant read FUserVariant write FUserVariant;
   end;
 
   TMemoryRasterClass = class of TMemoryRaster;
 
-  TSequenceMemoryRaster = class(TMemoryRaster)
+  TMemoryRasterArray = array of TMemoryRaster;
+
+  TMemoryRaster2DArray = array of TMemoryRasterArray;
+
+{$IFDEF FPC}
+  TMemoryRasterList_Decl = specialize TGenericsList<TMemoryRaster>;
+{$ELSE FPC}
+  TMemoryRasterList_Decl = TGenericsList<TMemoryRaster>;
+{$ENDIF FPC}
+  TMemoryRasterList = TMemoryRasterList_Decl;
+
+  TRaster = class(TMemoryRaster)
+  end;
+
+  TRasterArray = array of TRaster;
+
+  TRasterMatrix = array of TRasterArray;
+{$ENDREGION 'MemoryRaster'}
+
+{$REGION 'TSequenceMemoryRaster'}
+
+  TSequenceMemoryRaster = class(TRaster)
   protected
     FTotal: Integer;
     FColumn: Integer;
@@ -356,6 +431,10 @@ type
 
   TSequenceMemoryRasterClass = class of TSequenceMemoryRaster;
 
+{$ENDREGION 'TSequenceMemoryRaster'}
+
+{$REGION 'AGG'}
+
   TMemoryRaster_AggImage = class(TAgg2DImage)
   public
     constructor Create(raster: TMemoryRaster); overload;
@@ -387,6 +466,10 @@ type
     property LineColor: TRasterColor read GetLineColor write SetLineColor;
   end;
 
+{$ENDREGION 'AGG'}
+
+{$REGION 'Vertex'}
+
   PVertexMap = ^TVertexMap;
 
   TVertexMap = class(TCoreClassObject)
@@ -398,10 +481,7 @@ type
 
     { fragment mode }
     TFragSampling = (fsSolid, fsNearest, fsLinear);
-
     TNearestWriteBuffer = array of Byte;
-    PNearestWriteBuffer = ^TNearestWriteBuffer;
-
     TSamplerBlend = procedure(const Sender: PVertexMap; const f, M: TRasterColor; var b: TRasterColor);
     TComputeSamplerColor = function(const Sender: PVertexMap; const Sampler: TMemoryRaster; const x, y: TGeoFloat): TRasterColor;
   private
@@ -438,6 +518,10 @@ type
     procedure BeginUpdate;
     procedure EndUpdate;
 
+    (*
+      all Absolute coordiantes
+    *)
+    procedure DrawTriangle(const t1, t2, t3: TVec2; const Sampler: TRasterColor); overload;
     procedure DrawTriangle(const Triangle: TTriangle; const Sampler: TRasterColor); overload;
     procedure DrawTriangle(const Triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean); overload;
     procedure DrawTriangle(const Triangle: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean; const alpha: TGeoFloat); overload;
@@ -484,6 +568,10 @@ type
     procedure FillPoly(const SamVec, RenVec: TVec2List; const SamCen, RenCen: TVec2; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean; const alpha: Single); overload;
     procedure FillPoly(const SamVec, RenVec: TVec2List; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean; const alpha: Single); overload;
   end;
+
+{$ENDREGION 'Vertex'}
+
+{$REGION 'TFontRaster'}
 
   TFontRaster = class(TCoreClassObject)
   private type
@@ -560,11 +648,12 @@ type
 
     procedure Draw(Text: TFontRasterString; Dst: TMemoryRaster; dstVec: TVec2; dstColor: TRasterColor); overload;
   end;
-
-{$ENDREGION 'Classes'}
+{$ENDREGION 'TFontRaster'}
 
 {$REGION 'RasterAPI'}
 
+
+procedure Wait_SystemFont_Init;
 
 procedure FillRasterColor(var x; Count: Cardinal; Value: TRasterColor);
 procedure CopyRasterColor(const Source; var dest; Count: Cardinal);
@@ -572,34 +661,38 @@ procedure CopyRasterColor(const Source; var dest; Count: Cardinal);
 procedure BlendBlock(Dst: TMemoryRaster; dstRect: TRect; Src: TMemoryRaster; Srcx, Srcy: Integer; CombineOp: TDrawMode);
 procedure BlockTransfer(Dst: TMemoryRaster; Dstx: Integer; Dsty: Integer; DstClip: TRect; Src: TMemoryRaster; SrcRect: TRect; CombineOp: TDrawMode);
 
-function RandomRasterColor(const a: Byte = $FF): TRasterColor;
-function RasterColor(const r, g, b: Byte; const a: Byte = $FF): TRasterColor;
-function RasterColorInv(const c: TRasterColor): TRasterColor;
+function RandomRasterColor(const a: Byte = $FF): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RasterColor(const r, g, b, a: Byte): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function RasterColor(const r, g, b: Byte): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF} overload;
+function RasterColorInv(const c: TRasterColor): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function RasterAlphaColor(const c: TRasterColor; const a: Byte): TRasterColor;
 function RasterAlphaColorF(const c: TRasterColor; const a: Single): TRasterColor;
-
-function RasterColorF(const r, g, b: TGeoFloat; const a: TGeoFloat = 1.0): TRasterColor;
+function RasterColorF(const r, g, b, a: TGeoFloat): TRasterColor; overload;
+function RasterColorF(const r, g, b: TGeoFloat): TRasterColor; overload;
 procedure RasterColor2F(const c: TRasterColor; var r, g, b, a: TGeoFloat); overload;
 procedure RasterColor2F(const c: TRasterColor; var r, g, b: TGeoFloat); overload;
+function RasterColor2Gray(const c: TRasterColor): Byte; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RasterColor2GrayS(const c: TRasterColor): TGeoFloat; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RasterColor2GrayD(const c: TRasterColor): Double; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RGBA2BGRA(const sour: TRasterColor): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function BGRA2RGBA(const sour: TRasterColor): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RGBA2RGB(const sour: TRasterColor): TRGB; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RGBA2BGR(const sour: TRasterColor): TRGB; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RGB2BGR(const sour: TRGB): TRGB; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function BGR2RGB(const sour: TRGB): TRGB; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function RGB2RGBA(const sour: TRGB): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+procedure SwapBR(var sour: TRGB); {$IFDEF INLINE_ASM} inline; {$ENDIF}overload;
+procedure SwapBR(var sour: TRasterColor); {$IFDEF INLINE_ASM} inline; {$ENDIF}overload;
+function MaxRGBComponent(sour: TRasterColor): Byte; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MaxRGBIndex(sour: TRasterColor): Byte; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MinRGBComponent(sour: TRasterColor): Byte; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function MinRGBIndex(sour: TRasterColor): Byte; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
-function RasterColor2Gray(const c: TRasterColor): Byte;
-function RasterColor2GrayS(const c: TRasterColor): TGeoFloat;
-function RasterColor2GrayD(const c: TRasterColor): Double;
-function RGBA2BGRA(const sour: TRasterColor): TRasterColor;
-function BGRA2RGBA(const sour: TRasterColor): TRasterColor;
-function RGBA2RGB(const sour: TRasterColor): TRGB;
-function RGBA2BGR(const sour: TRasterColor): TRGB;
-function RGB2BGR(const sour: TRGB): TRGB;
-function BGR2RGB(const sour: TRGB): TRGB;
-function RGB2RGBA(const sour: TRGB): TRasterColor;
-procedure SwapBR(var sour: TRGB); overload;
-procedure SwapBR(var sour: TRasterColor); overload;
+function AggColor(const Value: TRasterColor): TAggColorRgba8; {$IFDEF INLINE_ASM} inline; {$ENDIF}overload;
+function AggColor(const r, g, b: TGeoFloat; const a: TGeoFloat = 1.0): TAggColorRgba8; {$IFDEF INLINE_ASM} inline; {$ENDIF}overload;
+function AggColor(const Value: TAggColorRgba8): TRasterColor; {$IFDEF INLINE_ASM} inline; {$ENDIF}overload;
 
-function AggColor(const Value: TRasterColor): TAggColorRgba8; overload;
-function AggColor(const r, g, b: TGeoFloat; const a: TGeoFloat = 1.0): TAggColorRgba8; overload;
-function AggColor(const Value: TAggColorRgba8): TRasterColor; overload;
-
-procedure ComputeSize(const MAX_Width, MAX_Height: Integer; var width, height: Integer); overload;
+function ComputeSize(const MAX_Width, MAX_Height: Integer; var width, height: Integer): Single;
 
 procedure FastBlur(Source, dest: TMemoryRaster; radius: Double; const Bounds: TRect); overload;
 procedure FastBlur(Source: TMemoryRaster; radius: Double; const Bounds: TRect); overload;
@@ -619,6 +712,8 @@ procedure AlphaToGrayscale(Src: TMemoryRaster);
 procedure IntensityToAlpha(Src: TMemoryRaster);
 procedure ReversalAlpha(Src: TMemoryRaster);
 procedure RGBToGrayscale(Src: TMemoryRaster);
+
+procedure FillBlackGrayBackgroundTexture(bk: TMemoryRaster; block_size: Integer);
 
 procedure ColorToTransparent(SrcColor: TRasterColor; Src, Dst: TMemoryRaster);
 
@@ -653,15 +748,9 @@ procedure MergeLineEx(Src, Dst: PRasterColor; Count: Integer; M: TRasterColor); 
 procedure jls_RasterToRaw3(ARaster: TMemoryRaster; RawStream: TCoreClassStream);
 procedure jls_RasterToRaw1(ARaster: TMemoryRaster; RawStream: TCoreClassStream);
 procedure jls_GrayRasterToRaw1(const ARaster: PByteRaster; RawStream: TCoreClassStream);
-procedure jls_RasterAlphaToRaw1(ARaster: TMemoryRaster; RawStream: TCoreClassStream);
-
-function EncodeJpegLSRasterAlphaToStream(ARaster: TMemoryRaster; const stream: TCoreClassStream): Boolean;
 function EncodeJpegLSRasterToStream3(ARaster: TMemoryRaster; const stream: TCoreClassStream): Boolean;
 function EncodeJpegLSRasterToStream1(ARaster: TMemoryRaster; const stream: TCoreClassStream): Boolean; overload;
-
 function DecodeJpegLSRasterFromStream(const stream: TCoreClassStream; ARaster: TMemoryRaster): Boolean;
-function DecodeJpegLSRasterAlphaFromStream(const stream: TCoreClassStream; ARaster: TMemoryRaster): Boolean;
-
 function EncodeJpegLSGrayRasterToStream(const ARaster: PByteRaster; const stream: TCoreClassStream): Boolean; overload;
 function DecodeJpegLSGrayRasterFromStream(const stream: TCoreClassStream; var ARaster: TByteRaster): Boolean;
 
@@ -685,6 +774,12 @@ function DocmentRotationDetected(const MaxAngle: TGeoFloat; const Treshold: Inte
 procedure YV12ToRasterization(sour: TCoreClassStream; dest: TMemoryRaster);
 procedure RasterizationToYV12(Compressed: Boolean; sour: TMemoryRaster; dest: TCoreClassStream);
 
+procedure HalfYUVToRasterization(sour: TCoreClassStream; dest: TMemoryRaster);
+procedure RasterizationToHalfYUV(Compressed: Boolean; sour: TMemoryRaster; dest: TCoreClassStream);
+
+procedure QuartYUVToRasterization(sour: TCoreClassStream; dest: TMemoryRaster);
+procedure RasterizationToQuartYUV(Compressed: Boolean; sour: TMemoryRaster; dest: TCoreClassStream);
+
 {$ENDREGION 'RasterAPI'}
 
 
@@ -704,9 +799,7 @@ uses
   Threading,
 {$ENDIF FPC}
 {$ENDIF}
-  h264Common, CoreCompress, DoStatusIO;
-
-{$INCLUDE zDefine.inc}
+  h264Common, CoreCompress, DoStatusIO, Raster_JPEG;
 
 {$REGION 'InternalDefines'}
 
@@ -726,7 +819,8 @@ type
   TBmpHeader = packed record
     bfType: Word;
     bfSize: Integer;
-    bfReserved: Integer;
+    bfReserved1: Word;
+    bfReserved2: Word;
     bfOffBits: Integer;
     biSize: Integer;
     biWidth: Integer;
@@ -753,7 +847,15 @@ type
 
 const
   ZERO_RECT: TRect = (Left: 0; Top: 0; Right: 0; Bottom: 0);
+
 {$ENDREGION 'InternalDefines'}
+
+function ClampInt_(const Value, Min, Max: Integer): Integer; forward;
+function ClampByte3_(const Value, Min, Max: Byte): Byte; forward;
+function ClampByte_(const Value: Integer): Byte; forward;
+function IntersectRect_(out Dst: TRect; const r1, r2: TRect): Boolean; forward;
+procedure OffsetRect_(var r: TRect; dx, dy: Integer); forward;
+function IsRectEmpty_(const r: TRect): Boolean; forward;
 
 {$INCLUDE MemoryRaster_RasterClass.inc}
 {$INCLUDE MemoryRaster_SequenceClass.inc}
@@ -775,9 +877,22 @@ begin
 end;
 
 function _NewRasterFromStream(const stream: TCoreClassStream): TMemoryRaster;
+var
+  m64: TMemoryStream64;
 begin
   Result := NewRaster();
-  Result.LoadFromStream(stream);
+
+  stream.Position := 0;
+  m64 := TMemoryStream64.Create;
+  if stream is TMemoryStream64 then
+      m64.SetPointerWithProtectedMode(TMemoryStream64(stream).Memory, TMemoryStream64(stream).Size)
+  else
+      m64.CopyFrom(stream, stream.Size);
+  m64.Position := 0;
+
+  Result.LoadFromStream(m64);
+
+  disposeObject(m64);
 end;
 
 procedure _SaveRaster(mr: TMemoryRaster; const fn: string);
@@ -801,7 +916,7 @@ begin
 
   m2.SaveToFile(fout);
 
-  DisposeObject([m1, m2]);
+  disposeObject([m1, m2]);
 end;
 
 procedure TestCalibrateRotate(fin, fout: SystemString);
@@ -813,11 +928,10 @@ begin
   M.CalibrateRotate(RasterColorF(0, 0, 0));
 
   M.SaveToFile(fout);
-  DisposeObject(M);
+  disposeObject(M);
 end;
 
 initialization
-
 
 NewRaster := {$IFDEF FPC}@{$ENDIF FPC}_NewRaster;
 NewRasterFromFile := {$IFDEF FPC}@{$ENDIF FPC}_NewRasterFromFile;

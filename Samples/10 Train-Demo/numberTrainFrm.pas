@@ -81,7 +81,7 @@ begin
       d1 := umlRandomRange(1, 100);
       d2 := umlRandomRange(1, 100);
       v:=lr.processFV([d1, d2]);
-      DoStatus('%f - %f=%d (%s)', [d1, d2, Round(v), lr.SearchToken(v)]);
+      DoStatus('%f - %f=%d (%s)', [d1, d2, Round(v), lr.SearchToken([v])]);
     end;
 end;
 

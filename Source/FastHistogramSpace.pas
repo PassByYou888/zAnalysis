@@ -280,10 +280,10 @@ procedure THOG.ComputeRGB_Diff(img: TMemoryRaster; const M: PLMatrix);
   begin
     for x := 0 to width - 1 do
       begin
-        pcl.RGBA := img[x - 1, pass];
-        pcr.RGBA := img[x + 1, pass];
-        pct.RGBA := img[x, pass - 1];
-        pcb.RGBA := img[x, pass + 1];
+        pcl.BGRA := img[x - 1, pass];
+        pcr.BGRA := img[x + 1, pass];
+        pct.BGRA := img[x, pass - 1];
+        pcb.BGRA := img[x, pass + 1];
 
         dx[pass, x] := pcl.r - pcr.r;
         dy[pass, x] := pct.r - pcb.r;
@@ -316,10 +316,10 @@ procedure THOG.ComputeRGB_Diff(img: TMemoryRaster; const M: PLMatrix);
     for pass := 0 to height - 1 do
       for x := 0 to width - 1 do
         begin
-          pcl.RGBA := img[x - 1, pass];
-          pcr.RGBA := img[x + 1, pass];
-          pct.RGBA := img[x, pass - 1];
-          pcb.RGBA := img[x, pass + 1];
+          pcl.BGRA := img[x - 1, pass];
+          pcr.BGRA := img[x + 1, pass];
+          pct.BGRA := img[x, pass - 1];
+          pcb.BGRA := img[x, pass + 1];
 
           dx[pass, x] := pcl.r - pcr.r;
           dy[pass, x] := pct.r - pcb.r;
@@ -357,10 +357,10 @@ begin
     begin
       for x := 0 to width - 1 do
         begin
-          pcl.RGBA := img[x - 1, pass];
-          pcr.RGBA := img[x + 1, pass];
-          pct.RGBA := img[x, pass - 1];
-          pcb.RGBA := img[x, pass + 1];
+          pcl.BGRA := img[x - 1, pass];
+          pcr.BGRA := img[x + 1, pass];
+          pct.BGRA := img[x, pass - 1];
+          pcb.BGRA := img[x, pass + 1];
 
           dx[pass, x] := pcl.r - pcr.r;
           dy[pass, x] := pct.r - pcb.r;

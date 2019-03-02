@@ -44,7 +44,8 @@ unit AggVertexSource;
   ////////////////////////////////////////////////////////////////////////////////
 *)
 
-{$INCLUDE AggCompiler.inc}
+{$DEFINE FPC_DELPHI_MODE}
+{$INCLUDE zDefine.inc}
 interface
 uses
   AggBasics;
@@ -88,6 +89,7 @@ end;
 
 function TAggCustomVertexSource.Vertex(x, y: PDouble): Cardinal;
 begin
+  Result := 0;
 end;
 
 function TAggCustomVertexSource.FuncOperatorGamma;

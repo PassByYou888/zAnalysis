@@ -177,7 +177,7 @@ begin
                 begin
                   if aIntf.ItemFastOpen(ItmRecursionHnd.ReturnHeader.CurrentHeader, ItemHnd) then
                     begin
-                      Hnd := TItemStreamEngine.Create(aIntf, ItemHnd);
+                      Hnd := TItemStream.Create(aIntf, ItemHnd);
                       Result := True;
                       Exit;
                     end;
@@ -190,7 +190,7 @@ begin
     begin
       if aIntf.ItemFastOpen(ItmSearchHnd.HeaderPOS, ItemHnd) then
         begin
-          Hnd := TItemStreamEngine.Create(aIntf, ItemHnd);
+          Hnd := TItemStream.Create(aIntf, ItemHnd);
           Result := True;
           Exit;
         end;

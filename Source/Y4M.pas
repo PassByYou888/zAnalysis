@@ -29,7 +29,7 @@ type
     FStartPos: Int64_t;
     FFileHeaderSize: Word;
     FFrameSize: uint32_t;
-    img: TPlanarImage;
+    FImage: TPlanarImage;
     procedure ParseHeader;
   public
     constructor Create(const FileName: TPascalString); overload;
@@ -37,8 +37,9 @@ type
     destructor Destroy; override;
 
     procedure SeekFirstFrame;
-    procedure SeekFrame(frameIndex: uint32_t);
-    function ReadFrame: TPlanarImage;
+    function ReadFrame: TPlanarImage; overload;
+    function ReadFrame(frameIndex: uint32_t): TPlanarImage; overload;
+    property Image: TPlanarImage read FImage;
 
     property width: uint16_t read FWidth;
     property height: uint16_t read FHeight;
@@ -52,7 +53,7 @@ type
     ioHandle: TIOHnd;
     FPerSecondFrame: uint16_t;
     FFrameCount: uint32_t;
-    img: TPlanarImage;
+    FImage: TPlanarImage;
   public
     (*
       w: frame FWidth
@@ -74,7 +75,6 @@ type
 
     procedure WriteFrame(raster: TMemoryRaster);
     procedure Flush;
-
     property PerSecondFrame: uint16_t read FPerSecondFrame;
     property FrameCount: uint32_t read FFrameCount;
     function Y4MSize: Int64_t;
@@ -143,7 +143,7 @@ begin
   FFrameCount := (umlFileSize(ioHandle) - FFileHeaderSize) div (FRAME_MAGIC_SIZE + Int64(FFrameSize));
 
   FStartPos := umlFileGetPOS(ioHandle);
-  img := TPlanarImage.Create(FWidth, FHeight);
+  FImage := TPlanarImage.Create(FWidth, FHeight);
 end;
 
 constructor TY4MReader.Create(const stream: TCoreClassStream; const autoFreeSteam: Boolean);
@@ -160,12 +160,12 @@ begin
   FFrameCount := (umlFileSize(ioHandle) - FFileHeaderSize) div (FRAME_MAGIC_SIZE + Int64(FFrameSize));
 
   FStartPos := umlFileGetPOS(ioHandle);
-  img := TPlanarImage.Create(FWidth, FHeight);
+  FImage := TPlanarImage.Create(FWidth, FHeight);
 end;
 
 destructor TY4MReader.Destroy;
 begin
-  DisposeObject(img);
+  DisposeObject(FImage);
   umlFileClose(ioHandle);
   inherited Destroy;
 end;
@@ -176,16 +176,6 @@ begin
   FCurrentFrame := 0;
 end;
 
-procedure TY4MReader.SeekFrame(frameIndex: uint32_t);
-var
-  FP: Int64_t;
-begin
-  if frameIndex >= FFrameCount then
-      Exit;
-  FP := FStartPos + frameIndex * (FFrameSize + FRAME_MAGIC_SIZE);
-  FCurrentFrame := frameIndex;
-end;
-
 function TY4MReader.ReadFrame: TPlanarImage;
 var
   magic: TFRAME_MAGIC;
@@ -193,10 +183,33 @@ begin
   umlBlockRead(ioHandle, magic[0], FRAME_MAGIC_SIZE);
   if not CompareMemory(@magic[0], @FRAME_MAGIC[0], FRAME_MAGIC_SIZE) then
       RaiseInfo('Not a Y4M Frame');
-  umlBlockRead(ioHandle, img.plane[0]^, FFrameSize);
+  umlBlockRead(ioHandle, FImage.plane[0]^, FFrameSize);
   inc(FCurrentFrame);
-  img.frame_num := FCurrentFrame;
-  Result := img;
+  FImage.frame_num := FCurrentFrame;
+  Result := FImage;
+end;
+
+function TY4MReader.ReadFrame(frameIndex: uint32_t): TPlanarImage;
+var
+  FP: Int64_t;
+  magic: TFRAME_MAGIC;
+begin
+  Result := FImage;
+  if frameIndex >= FFrameCount then
+      Exit;
+  if FCurrentFrame = frameIndex then
+      Exit;
+
+  FCurrentFrame := frameIndex;
+  FP := FStartPos + frameIndex * (FFrameSize + FRAME_MAGIC_SIZE);
+  umlFileSeek(ioHandle, FP);
+
+  umlBlockRead(ioHandle, magic[0], FRAME_MAGIC_SIZE);
+  if not CompareMemory(@magic[0], @FRAME_MAGIC[0], FRAME_MAGIC_SIZE) then
+      RaiseInfo('Not a Y4M Frame');
+  umlBlockRead(ioHandle, FImage.plane[0]^, FFrameSize);
+  FImage.frame_num := FCurrentFrame;
+  Result := FImage;
 end;
 
 constructor TY4MWriter.Create(const w, h, psf: uint16_t; const FileName: TPascalString);
@@ -216,7 +229,7 @@ begin
 
   FPerSecondFrame := psf;
   FFrameCount := 0;
-  img := TPlanarImage.Create(w, h);
+  FImage := TPlanarImage.Create(w, h);
 end;
 
 constructor TY4MWriter.Create(const w, h, psf: uint16_t; const stream: TCoreClassStream);
@@ -236,12 +249,12 @@ begin
 
   FPerSecondFrame := psf;
   FFrameCount := 0;
-  img := TPlanarImage.Create(w, h);
+  FImage := TPlanarImage.Create(w, h);
 end;
 
 destructor TY4MWriter.Destroy;
 begin
-  DisposeObject(img);
+  DisposeObject(FImage);
   umlFileClose(ioHandle);
   inherited Destroy;
 end;
@@ -251,9 +264,9 @@ var
   FrameSize: int32_t;
 begin
   umlBlockWrite(ioHandle, FRAME_MAGIC[0], FRAME_MAGIC_SIZE);
-  FrameSize := img.width * img.height + (img.width * img.height div 2);
-  img.LoadFromRaster(raster);
-  umlBlockWrite(ioHandle, img.plane[0]^, FrameSize);
+  FrameSize := FImage.width * FImage.height + (FImage.width * FImage.height div 2);
+  FImage.LoadFromRaster(raster);
+  umlBlockWrite(ioHandle, FImage.plane[0]^, FrameSize);
   inc(FFrameCount);
 end;
 

@@ -81,7 +81,7 @@ begin
 
   lr.Train;
 
-  DoStatus(lr.SearchToken(lr.processFV([0, 0])));
+  DoStatus(lr.SearchToken([lr.processFV([0, 0])]));
 
   disposeObject(lr);
   readln;
