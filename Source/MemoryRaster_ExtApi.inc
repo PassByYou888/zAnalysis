@@ -79,6 +79,17 @@ begin
   CopyPtr(@Source, @dest, Count shl 2);
 end;
 
+procedure DisposeRasterArray(var arry: TMemoryRasterArray);
+var
+  i: Integer;
+begin
+  for i := 0 to length(arry) - 1 do
+    begin
+      DisposeObject(arry[i]);
+      arry[i] := nil;
+    end;
+end;
+
 procedure BlendBlock(Dst: TMemoryRaster; dstRect: TRect; Src: TMemoryRaster; Srcx, Srcy: Integer; CombineOp: TDrawMode);
 var
   SrcP, DstP: PRasterColor;
@@ -657,6 +668,9 @@ var
   GaussLUT: array of array of Cardinal;
   SourPixel, DestPixel: PRasterColorEntry;
 begin
+  Source.ReadyBits();
+  dest.ReadyBits();
+
   RadiusI := Round(radius);
   if RadiusI < 1 then
     begin
@@ -688,7 +702,7 @@ begin
   ImageWidth := Source.width;
   SetLength(SumArray, ImageWidth * Source.height);
 
-  ImagePixels := PRasterColorEntryArray(Source.Bits);
+  ImagePixels := PRasterColorEntryArray(Source.FBits);
   RecLeft := Max(Bounds.Left, 0);
   RecTop := Max(Bounds.Top, 0);
   RecRight := Min(Bounds.Right, ImageWidth - 1);
@@ -769,7 +783,7 @@ begin
           SourPixel := @ImagePixels^[RowOffset + x];
 
           if Source <> dest then
-              DestPixel := @PRasterColorEntryArray(dest.Bits)^[RowOffset + x]
+              DestPixel := @PRasterColorEntryArray(dest.FBits)^[RowOffset + x]
           else
               DestPixel := SourPixel;
 
@@ -807,6 +821,9 @@ var
   GaussLUT: array of array of Cardinal;
   SourPixel, DestPixel: PRasterColorEntry;
 begin
+  Source.ReadyBits();
+  dest.ReadyBits();
+
   RadiusI := Round(radius);
   if RadiusI < 1 then
     begin
@@ -840,7 +857,7 @@ begin
   ImageWidth := Source.width;
   SetLength(SumArray, ImageWidth * Source.height);
 
-  ImagePixels := PRasterColorEntryArray(Source.Bits);
+  ImagePixels := PRasterColorEntryArray(Source.FBits);
   RecLeft := Max(Bounds.Left, 0);
   RecTop := Max(Bounds.Top, 0);
   RecRight := Min(Bounds.Right, ImageWidth - 1);
@@ -909,7 +926,7 @@ begin
           SourPixel := @ImagePixels^[RowOffset + x];
 
           if Source <> dest then
-              DestPixel := @PRasterColorEntryArray(dest.Bits)^[RowOffset + x]
+              DestPixel := @PRasterColorEntryArray(dest.FBits)^[RowOffset + x]
           else
               DestPixel := SourPixel;
 
@@ -1035,7 +1052,8 @@ begin
   LPixelCount := mr.width * mr.height;
 
   // calculating histogram
-  p := @mr.Bits^[0];
+  mr.ReadyBits();
+  p := @mr.FBits^[0];
 
   for i := 1 to LPixelCount do
     begin
@@ -1060,7 +1078,8 @@ begin
     end;
 
   // doing map
-  p := @mr.Bits^[0];
+  mr.ReadyBits();
+  p := @mr.FBits^[0];
 
   for i := 1 to LPixelCount do
     begin
@@ -1131,8 +1150,9 @@ var
   LDepth2, i: Integer;
   LPixel: PRasterColorEntry;
 begin
+  mr.ReadyBits();
   LDepth2 := Depth * 2;
-  LPixel := @mr.Bits^[0];
+  LPixel := @mr.FBits^[0];
 
   for i := 0 to (mr.width * mr.height - 1) do
     begin
@@ -1233,7 +1253,7 @@ begin
         end;
     end;
 
-  { scanlines arrays 3 octets (24 bits) optimization bitmaps Maximum 2048
+  { scanlines arrays 3 octets (24 Bits) optimization bitmaps Maximum 2048
     lines get the access port of the dest and the original bitmap }
   SetLength(LOriginalRow, DestMR.height);
   SetLength(LDestRow, DestMR.height);
@@ -1346,6 +1366,7 @@ var
   i: Integer;
   c: PRasterColorEntry;
 begin
+  Src.ReadyBits();
   for i := (Src.width * Src.height) - 1 downto 0 do
     begin
       c := @Src.FBits^[i];
@@ -1361,6 +1382,7 @@ var
   c: PRasterColorEntry;
   f: Single;
 begin
+  Src.ReadyBits();
   for i := (Src.width * Src.height) - 1 downto 0 do
     begin
       c := @Src.FBits^[i];
@@ -1373,6 +1395,7 @@ var
   i: Integer;
   c: PRasterColorEntry;
 begin
+  Src.ReadyBits();
   for i := (Src.width * Src.height) - 1 downto 0 do
     begin
       c := @Src.FBits^[i];
@@ -1385,6 +1408,7 @@ var
   i: Integer;
   c: PRasterColorEntry;
 begin
+  Src.ReadyBits();
   for i := (Src.width * Src.height) - 1 downto 0 do
     begin
       c := @Src.FBits^[i];
