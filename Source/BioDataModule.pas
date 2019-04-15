@@ -1,11 +1,18 @@
-{ * https://github.com/PassByYou888/CoreCipher                                 * }
+﻿{ * https://zpascal.net                                                        * }
+{ * https://github.com/PassByYou888/zAI                                        * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
-{ * https://github.com/PassByYou888/zExpression                                * }
-{ * https://github.com/PassByYou888/zTranslate                                 * }
-{ * https://github.com/PassByYou888/zSound                                     * }
-{ * https://github.com/PassByYou888/zAnalysis                                  * }
-{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/PascalString                               * }
 { * https://github.com/PassByYou888/zRasterization                             * }
+{ * https://github.com/PassByYou888/CoreCipher                                 * }
+{ * https://github.com/PassByYou888/zSound                                     * }
+{ * https://github.com/PassByYou888/zChinese                                   * }
+{ * https://github.com/PassByYou888/zExpression                                * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/FFMPEG-Header                              * }
+{ * https://github.com/PassByYou888/zTranslate                                 * }
+{ * https://github.com/PassByYou888/InfiniteIoT                                * }
+{ * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
 unit BioDataModule;
 
@@ -21,25 +28,25 @@ type
   TDataItem = class(TCoreClassObject)
   private
     FOwner: TBioBaseData;
-    FName : SystemString;
+    FName: SystemString;
     FValue: TNumberModule;
 
-    FIncreaseFromSpell          : TNumberModule;
+    FIncreaseFromSpell: TNumberModule;
     FIncreasePercentageFromSpell: TNumberModule;
-    FReduceFromSpell            : TNumberModule;
-    FReducePercentageFromSpell  : TNumberModule;
+    FReduceFromSpell: TNumberModule;
+    FReducePercentageFromSpell: TNumberModule;
 
-    FIncreaseFromEquipment          : TNumberModule;
+    FIncreaseFromEquipment: TNumberModule;
     FIncreasePercentageFromEquipment: TNumberModule;
-    FReduceFromEquipment            : TNumberModule;
-    FReducePercentageFromEquipment  : TNumberModule;
+    FReduceFromEquipment: TNumberModule;
+    FReducePercentageFromEquipment: TNumberModule;
 
-    FIncreaseFromAssociate          : TNumberModule;
+    FIncreaseFromAssociate: TNumberModule;
     FIncreasePercentageFromAssociate: TNumberModule;
-    FReduceFromAssociate            : TNumberModule;
-    FReducePercentageFromAssociate  : TNumberModule;
+    FReduceFromAssociate: TNumberModule;
+    FReducePercentageFromAssociate: TNumberModule;
 
-    FLastFinalValue      : Variant;
+    FLastFinalValue: Variant;
     FNeedRecalcFinalValue: Boolean;
 
     procedure ChangeEvent(Sender: TNumberModuleEventInterface; NewValue: Variant);
@@ -116,53 +123,53 @@ type
 
   TBioBaseData = class(TCoreClassObject)
   private
-    FOwner             : TBioBase;
-    FDataItemList      : TCoreClassListForObj;
-    FNMList            : TNumberModuleList;
+    FOwner: TBioBase;
+    FDataItemList: TCoreClassListForObj;
+    FNMList: TNumberModuleList;
     FNMAutomatedManager: TNMAutomatedManager;
-    FPrimaryAttribute  : TPrimaryAttribute;
-    FUpdateCounter     : Integer;
+    FPrimaryAttribute: TPrimaryAttribute;
+    FUpdateCounter: Integer;
   protected
-    FStrength    : TDataItem;
-    FDexterous   : TDataItem;
+    FStrength: TDataItem;
+    FDexterous: TDataItem;
     FIntelligence: TDataItem;
 
     FMinDamage: TDataItem;
     FMaxDamage: TDataItem;
 
     FPhysicsDamage: TDataItem;
-    FFireDamage   : TDataItem;
-    FColdDamage   : TDataItem;
-    FPoisonDamage : TDataItem;
-    FArcaneDamage : TDataItem;
+    FFireDamage: TDataItem;
+    FColdDamage: TDataItem;
+    FPoisonDamage: TDataItem;
+    FArcaneDamage: TDataItem;
 
-    FAttackSpeed  : TDataItem;
+    FAttackSpeed: TDataItem;
     FChanceToDodge: TDataItem;
 
-    FChanceToBlock           : TDataItem;
+    FChanceToBlock: TDataItem;
     FBlockSuccessDamageReduce: TDataItem;
 
     FBulletAccurate: TDataItem;
 
     FReceiveExtraDamage: TDataItem;
 
-    FArmor            : TDataItem;
+    FArmor: TDataItem;
     FPhysicsResistance: TDataItem;
-    FFireResistance   : TDataItem;
-    FColdResistance   : TDataItem;
-    FPoisonResistance : TDataItem;
-    FArcaneResistance : TDataItem;
+    FFireResistance: TDataItem;
+    FColdResistance: TDataItem;
+    FPoisonResistance: TDataItem;
+    FArcaneResistance: TDataItem;
 
-    FVitality      : TDataItem;
-    FMaxHP         : TDataItem;
-    FHP            : Variant;
+    FVitality: TDataItem;
+    FMaxHP: TDataItem;
+    FHP: Variant;
     FHPRegeneration: TDataItem;
 
-    FMaxPower         : TDataItem;
-    FPower            : Variant;
+    FMaxPower: TDataItem;
+    FPower: Variant;
     FPowerRegeneration: TDataItem;
 
-    FMovementSpeed : TDataItem;
+    FMovementSpeed: TDataItem;
     FCooldownReduct: TDataItem;
 
     procedure NumberItemChange(Sender: TDataItem);
@@ -285,7 +292,7 @@ begin
   FReduceFromAssociate.OriginValue := 0;
   FReducePercentageFromAssociate.OriginValue := 0;
 
-  {$IFDEF FPC}
+{$IFDEF FPC}
   FValue.RegisterCurrentValueChangeAfterEvent.OnCurrentDMEvent := @ChangeEvent;
 
   FIncreaseFromSpell.RegisterCurrentValueChangeAfterEvent.OnCurrentDMEvent := @ChangeEvent;
@@ -302,7 +309,7 @@ begin
   FIncreasePercentageFromAssociate.RegisterCurrentValueChangeAfterEvent.OnCurrentDMEvent := @ChangeEvent;
   FReduceFromAssociate.RegisterCurrentValueChangeAfterEvent.OnCurrentDMEvent := @ChangeEvent;
   FReducePercentageFromAssociate.RegisterCurrentValueChangeAfterEvent.OnCurrentDMEvent := @ChangeEvent;
-  {$ELSE}
+{$ELSE}
   FValue.RegisterCurrentValueChangeAfterEvent.OnCurrentDMEvent := ChangeEvent;
 
   FIncreaseFromSpell.RegisterCurrentValueChangeAfterEvent.OnCurrentDMEvent := ChangeEvent;
@@ -319,7 +326,7 @@ begin
   FIncreasePercentageFromAssociate.RegisterCurrentValueChangeAfterEvent.OnCurrentDMEvent := ChangeEvent;
   FReduceFromAssociate.RegisterCurrentValueChangeAfterEvent.OnCurrentDMEvent := ChangeEvent;
   FReducePercentageFromAssociate.RegisterCurrentValueChangeAfterEvent.OnCurrentDMEvent := ChangeEvent;
-  {$ENDIF}
+{$ENDIF}
   FLastFinalValue := 0;
   FNeedRecalcFinalValue := True;
 end;
@@ -463,14 +470,14 @@ begin
 
   // 100体能+1hp回复
   HPRegeneration.IncreaseFromAssociate.DirectValue := Vitality.FinalValue * 0.01;
-  // 1体能+5hp最大�?
+  // 1体能+5hp最大生命
   MaxHP.IncreaseFromAssociate.DirectValue := Vitality.FinalValue * 5;
   if HP > MaxHP.FinalValue then
       HP := MaxHP.FinalValue;
 
   // 100智力+1mp回复
   PowerRegeneration.IncreaseFromAssociate.DirectValue := Intelligence.FinalValue * 0.01;
-  // 1智力+0.5mp最大�?
+  // 1智力+0.5mp最大魔法
   MaxPower.IncreaseFromAssociate.DirectValue := Intelligence.FinalValue * 0.5;
   if Power > MaxPower.FinalValue then
       Power := MaxPower.FinalValue;
@@ -478,54 +485,54 @@ begin
   // 1力量=1护甲
   Armor.IncreaseFromAssociate.DirectValue := Strength.FinalValue;
 
-  // 10力量=1物理抗�?
+  // 10力量=1物理抗性
   PhysicsResistance.IncreaseFromAssociate.DirectValue := Strength.FinalValue * 0.1;
-  // 10智力=1火焰伤害抗�?
+  // 10智力=1火焰伤害抗性
   FireResistance.IncreaseFromAssociate.DirectValue := Intelligence.FinalValue * 0.1;
-  // 10智力=1冰冷伤害抗�?
+  // 10智力=1冰冷伤害抗性
   ColdResistance.IncreaseFromAssociate.DirectValue := Intelligence.FinalValue * 0.1;
-  // 10智力=1毒素伤害抗�?
+  // 10智力=1毒素伤害抗性
   PoisonResistance.IncreaseFromAssociate.DirectValue := Intelligence.FinalValue * 0.1;
-  // 10智力=1秘法伤害抗�?
+  // 10智力=1秘法伤害抗性
   ArcaneResistance.IncreaseFromAssociate.DirectValue := Intelligence.FinalValue * 0.1;
 
-  // 5点灵�?1攻�?
+  // 5点灵巧+1攻速
   AttackSpeed.IncreasePercentageFromAssociate.DirectValue := Dexterous.FinalValue * 0.2;
-  // 10点灵�?1%闪避几率
+  // 10点灵巧+1%闪避几率
   if Dexterous.FinalValue * 0.1 > 50 then
       ChanceToDodge.IncreaseFromAssociate.DirectValue := 50
   else
       ChanceToDodge.IncreaseFromAssociate.DirectValue := Dexterous.FinalValue * 0.1;
 
-  // 10点灵巧属�?1格挡几率，总共增加30%格挡几率
+  // 10点灵巧属性+1格挡几率，总共增加30%格挡几率
   if Dexterous.FinalValue * 0.1 > 10 then
       v := 10
   else
       v := Dexterous.FinalValue * 0.1;
 
-  // 10点力量属�?1格挡几率，总共增加30%格挡几率
+  // 10点力量属性+1格挡几率，总共增加30%格挡几率
   if Strength.FinalValue * 0.1 > 10 then
       v := v + 10
   else
       v := v + Strength.FinalValue * 0.1;
 
-  // 10点智力属�?1格挡几率，总共增加30%格挡几率
+  // 10点智力属性+1格挡几率，总共增加30%格挡几率
   if Intelligence.FinalValue * 0.1 > 10 then
       v := v + 10
   else
       v := v + Intelligence.FinalValue * 0.1;
 
-  // 10点属�?1格挡几率，总共增加30%格挡几率
+  // 10点属性+1格挡几率，总共增加30%格挡几率
   ChanceToBlock.IncreaseFromAssociate.DirectValue := v;
 
-  // 格挡成功后伤害值降低受力量属性影�?
+  // 格挡成功后伤害值降低受力量属性影响
   FBlockSuccessDamageReduce.IncreaseFromAssociate.DirectValue := Strength.FinalValue;
 
   // 最大伤害受物理，火焰，冰冷，毒素，秘法伤害总和影响
   MaxDamage.IncreaseFromAssociate.DirectValue :=
     PhysicsDamage.FinalValue + FireDamage.FinalValue + ColdDamage.FinalValue + PoisonDamage.FinalValue + ArcaneDamage.FinalValue;
 
-  // 最小伤害为最大伤害一半的数�?
+  // 最小伤害为最大伤害一半
   MinDamage.IncreaseFromAssociate.DirectValue := MaxDamage.IncreaseFromAssociate.DirectValue * 0.5;
 
   case PrimaryAttribute of
@@ -644,8 +651,8 @@ end;
 procedure TBioBaseData.PostOverlapData(ID: TDataID; Style: TIncreaseDataPostStyle; flag: TCoreClassPersistent; SeedNumber: Variant);
 var
   dItem: TDataItem;
-  DM   : TNumberModule;
-  v    : Variant;
+  DM: TNumberModule;
+  v: Variant;
 begin
   dItem := GetDataOfID(ID);
   DM := GetDMOfStyle(dItem, Style, SeedNumber);
@@ -660,8 +667,8 @@ procedure TBioBaseData.PostData(ID: TDataID; Style: TIncreaseDataPostStyle;
   flag: TCoreClassPersistent; SeedNumber: Variant; TypeID: Integer; Priority: Cardinal);
 var
   dItem: TDataItem;
-  DM   : TNumberModule;
-  v    : Variant;
+  DM: TNumberModule;
+  v: Variant;
 begin
   dItem := GetDataOfID(ID);
   DM := GetDMOfStyle(dItem, Style, SeedNumber);
@@ -671,6 +678,4 @@ begin
       FNMAutomatedManager.PostAutomatedProcess(npsInc, DM, flag, v, False, TypeID, Priority);
 end;
 
-end. 
- 
- 
+end.
