@@ -4,6 +4,15 @@ zAnalysis是基于Pascal语言编写的大型统计学开源库，它不依赖�
 
 zAnalysis不限制你的任何商业用途和拷贝，包括二次开发
 
+## 注意区分
+
+zAI是机器视觉的人工智能方向项目 https://github.com/PassByYou888/zAI
+
+zVision偏向纯粹的机器视觉 https://github.com/PassByYou888/zVision
+
+zAnalysis偏向数据统计 https://github.com/PassByYou888/zAnalysis
+
+
 ## 开发平台支持
 
 - Delphi及IDE要求：Delphi Rad studio XE10.2.1 or Last
