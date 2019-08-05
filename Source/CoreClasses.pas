@@ -18,12 +18,6 @@
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
 
-(*
-  update history
-  2017-12-6
-  timetick
-*)
-
 unit CoreClasses;
 
 {$INCLUDE zDefine.inc}
@@ -41,7 +35,7 @@ uses SysUtils, Classes, Types,
   PascalStrings,
   SyncObjs
   {$IFDEF FPC}
-    , FPCGenericStructlist
+    , FPCGenericStructlist, fgl
   {$ELSE FPC}
   , System.Generics.Collections
   {$ENDIF FPC}
@@ -112,7 +106,8 @@ type
   end;
 
   TCoreClassListForObj = specialize TGenericsList<TCoreClassObject>;
-
+  TCoreClassForObjectList = array of TCoreClassObject;
+  PCoreClassForObjectList = ^TCoreClassForObjectList;
   {$ELSE FPC}
   TCoreClassInterfacedObject = class(TInterfacedObject)
   protected
@@ -276,9 +271,9 @@ procedure AtomInc(var x: Cardinal; const v:Cardinal); overload;
 procedure AtomDec(var x: Cardinal); overload;
 procedure AtomDec(var x: Cardinal; const v:Cardinal); overload;
 
-procedure FillPtrByte(const dest:Pointer; Count: NativeInt; const Value: Byte);
-function CompareMemory(const p1, p2: Pointer; Count: NativeInt): Boolean;
-procedure CopyPtr(const sour, dest:Pointer; Count: NativeInt);
+procedure FillPtrByte(const dest:Pointer; Count: NativeUInt; const Value: Byte);
+function CompareMemory(const p1, p2: Pointer; Count: NativeUInt): Boolean;
+procedure CopyPtr(const sour, dest:Pointer; Count: NativeUInt);
 
 procedure RaiseInfo(const n: SystemString); overload;
 procedure RaiseInfo(const n: SystemString; const Args: array of const); overload;
@@ -351,6 +346,7 @@ procedure Swap(var v1, v2: SystemString); overload;
 procedure Swap(var v1, v2: Single); overload;
 procedure Swap(var v1, v2: Double); overload;
 procedure Swap(var v1, v2: Pointer); overload;
+procedure SwapVariant(var v1, v2: Variant);
 
 function Swap(const v: Word): Word; overload;
 function Swap(const v: Cardinal): Cardinal; overload;
@@ -360,7 +356,7 @@ function SAR16(const AValue: SmallInt; const Shift: Byte): SmallInt;
 function SAR32(const AValue: Integer; Shift: Byte): Integer;
 function SAR64(const AValue: Int64; Shift: Byte): Int64;
 
-function MemoryAlign(addr: Pointer; alignment: nativeUInt): Pointer;
+function MemoryAlign(addr: Pointer; alignment_: nativeUInt): Pointer;
 
 // NoP = No Operation. It's the empty function, whose purpose is only for the
 // debugging, or for the piece of code where intentionaly nothing is planned to be.
@@ -456,7 +452,7 @@ begin
 {$ENDIF FPC}
 end;
 
-procedure FillPtrByte(const dest: Pointer; Count: NativeInt; const Value: Byte);
+procedure FillPtrByte(const dest: Pointer; Count: NativeUInt; const Value: Byte);
 var
   d: PByte;
   v: UInt64;
@@ -488,7 +484,7 @@ begin
       d^ := Value;
 end;
 
-function CompareMemory(const p1, p2: Pointer; Count: NativeInt): Boolean;
+function CompareMemory(const p1, p2: Pointer; Count: NativeUInt): Boolean;
 var
   b1, b2: PByte;
 begin;
@@ -530,7 +526,7 @@ begin;
   Result := True;
 end;
 
-procedure CopyPtr(const sour, dest: Pointer; Count: NativeInt);
+procedure CopyPtr(const sour, dest: Pointer; Count: NativeUInt);
 var
   s, d: PByte;
 begin
@@ -702,14 +698,14 @@ end;
 
 procedure TCoreClassObjectList.Remove(obj: TCoreClassObject);
 begin
-  inherited Remove(obj);
   if AutoFreeObj then
       DisposeObject(obj);
+  inherited Remove(obj);
 end;
 
 procedure TCoreClassObjectList.Delete(index: Integer);
 begin
-  if index >= 0 then
+  if (index >= 0) and (index < Count) then
     begin
       if AutoFreeObj then
           disposeObject(Items[index]);

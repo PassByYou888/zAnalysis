@@ -35,7 +35,7 @@ object FontBuildForm: TFontBuildForm
   end
   object BuildButton: TButton
     Left = 0
-    Top = 118
+    Top = 174
     Width = 91
     Height = 25
     Caption = 'Build Font'
@@ -44,7 +44,7 @@ object FontBuildForm: TFontBuildForm
   end
   object SaveButton: TButton
     Left = 0
-    Top = 198
+    Top = 254
     Width = 91
     Height = 25
     Caption = 'Save'
@@ -77,7 +77,7 @@ object FontBuildForm: TFontBuildForm
   end
   object LoadButton: TButton
     Left = 0
-    Top = 173
+    Top = 229
     Width = 91
     Height = 25
     Caption = 'Open'
@@ -116,12 +116,20 @@ object FontBuildForm: TFontBuildForm
   end
   object ExportBMPButton: TButton
     Left = 0
-    Top = 301
+    Top = 357
     Width = 91
     Height = 25
     Caption = 'Export as .BMP'
     TabOrder = 9
     OnClick = ExportBMPButtonClick
+  end
+  object IncludeGBKCheckBox: TCheckBox
+    Left = 8
+    Top = 118
+    Width = 97
+    Height = 17
+    Caption = 'GBK-chinese'
+    TabOrder = 10
   end
   object FontDialog: TFontDialog
     Font.Charset = DEFAULT_CHARSET

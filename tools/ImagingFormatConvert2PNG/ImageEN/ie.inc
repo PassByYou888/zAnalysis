@@ -1322,7 +1322,7 @@ File version 1026
   {$WARN UNIT_PLATFORM OFF}
 {$endif}
 
-// Delphi XE10.3 or C++ Builder XE10.3
+// Delphi XE10 or C++ Builder XE10
 {$ifdef VER330}
   {$define Delphi5orNewer}
   {$define Delphi6orNewer}

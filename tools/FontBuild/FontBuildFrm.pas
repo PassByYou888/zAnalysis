@@ -27,6 +27,7 @@ type
     SampleMemo: TMemo;
     ExportBMPButton: TButton;
     bmpSaveDialog: TSaveDialog;
+    IncludeGBKCheckBox: TCheckBox;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BuildButtonClick(Sender: TObject);
@@ -69,6 +70,7 @@ begin
   FR := TFontRaster.Create;
   SampleMemo.Font.Assign(FontDialog.Font);
   SampleMemo.ParentColor := True;
+  BuildButtonClick(BuildButton);
 end;
 
 function computeYHead(R: TMemoryRaster): Integer; inline;
@@ -78,10 +80,10 @@ begin
   for X := 1 to R.width - 1 do
     begin
       for Y := R.height - 1 downto 0 do
-        if R.PixelAlpha[X, Y] >= 200 then
+        if R.PixelAlpha[X, Y] > 0 then
             Break;
       if Y > 0 then
-          Exit(X - 1);
+          Exit(Max(X - 1, 0));
     end;
   Exit(0);
 end;
@@ -93,10 +95,10 @@ begin
   for X := R.width - 1 downto 0 do
     begin
       for Y := R.height - 1 downto 0 do
-        if R.PixelAlpha[X, Y] >= 200 then
+        if R.PixelAlpha[X, Y] > 0 then
             Break;
       if Y > 0 then
-          Exit(X + 1);
+          Exit(Min(X + 1, R.width));
     end;
   Exit(StartP);
 end;
@@ -257,54 +259,51 @@ end;
 procedure TFontBuildForm.BuildButtonClick(Sender: TObject);
   procedure DoFor(index: Integer);
   var
-    Gr: TBitmap32;
+    GR: TBitmap32;
     isiz: TSize;
     n, N2: TMemoryRaster;
-    Bx, EX: Integer;
+    BX, EX: Integer;
   begin
-    Gr := TBitmap32.Create;
-    Gr.Font.Assign(FontDialog.Font);
-    isiz := Gr.TextExtentW(WideChar(index));
+    GR := TBitmap32.Create;
+    GR.Font.Assign(FontDialog.Font);
+    isiz := GR.TextExtentW(WideChar(index));
     if (isiz.Cx > 0) and (isiz.Cy > 0) then
       begin
-        Gr.SetSize(Max(Gr.width, isiz.Cx * 2), Max(Gr.height, isiz.Cy + 1));
-        Gr.Clear(0);
+        GR.SetSize(Max(GR.width, isiz.Cx * 2) + 10, Max(GR.height, isiz.Cy + 1) + 10);
+        GR.Clear(0);
       end;
 
-    if (Gr.width > 0) and (Gr.height > 0) then
+    if (GR.width > 0) and (GR.height > 0) then
       begin
         LockObject(FR);
-        Gr.RenderTextW(1, 1, WideChar(index), AATrackBar.Position, Color32($FF, $FF, $FF, $FF));
+        GR.RenderTextW(10, 10, WideChar(index), AATrackBar.Position, Color32($FF, $FF, $FF, $FF));
         UnlockObject(FR);
 
         N2 := TMemoryRaster.Create;
         N2.DrawMode := MemoryRaster.TDrawMode.dmBlend;
-        N2.SetWorkMemory(Gr.Bits, Gr.width, Gr.height);
+        N2.SetWorkMemory(GR.Bits, GR.width, GR.height);
         if index = 32 then
           begin
-            Bx := 1;
-            EX := Gr.width;
+            BX := 1;
+            EX := isiz.Cx;
           end
         else
           begin
-            Bx := computeYHead(N2);
-            EX := computeYTail(N2, Gr.width);
+            BX := computeYHead(N2);
+            EX := computeYTail(N2, GR.width);
           end;
-        if EX - Bx > 0 then
+        if EX - BX > 0 then
           begin
             n := TMemoryRaster.Create;
-            n.SetSize(EX - Bx, Gr.height, RasterColor(0, 0, 0, 0));
-            N2.DrawTo(n, 0, 0, Rect(Bx, 0, EX, Gr.height));
+            n.SetSize(EX - BX, GR.height, RasterColor(0, 0, 0, 0));
+            N2.DrawTo(n, 0, 0, Rect(BX, 0, EX, GR.height));
             LockObject(FR);
             FR.Add(WideChar(index), n);
             UnlockObject(FR);
           end;
         DisposeObject(N2);
       end;
-    DisposeObject(Gr);
-
-    ProgressBar.Position := index;
-    Application.ProcessMessages;
+    DisposeObject(GR);
   end;
 
 var
@@ -331,12 +330,14 @@ begin
     begin
       if (pass <= $FF) then
           DoFor(pass)
-      else if FastGBKChar(SystemChar(pass)) then
+      else if FastGBKChar(SystemChar(pass)) and IncludeGBKCheckBox.Checked then
           DoFor(pass)
       else if CharIn(SystemChar(pass), '¡¤£±£²£³£´£µ£¶£·£¸£¹£°£­£½¡¾¡¿£Ü£»¡¯£¬¡£¡¢¡«£¡£À£££¤£¥¡­¡­£¦¡Á£¨£©¡ª¡ª£«£û£ý£ü£º¡°¡¶¡·£¿') then
           DoFor(pass)
       else if (IncludeallCheckBox.Checked) then
           DoFor(pass);
+      ProgressBar.Position := pass;
+      Application.ProcessMessages;
     end;
 
   ProgressBar.Position := 0;
@@ -360,7 +361,7 @@ begin
   raster := TMemoryRaster.Create;
   raster.DrawMode := MemoryRaster.TDrawMode.dmBlend;
   raster.SetWorkMemory(ngr.Bits, ngr.width, ngr.height);
-  FR.Draw(SampleMemo.Text, raster, vec2(0, 0), RasterColorF(1, 0, 0, 1));
+  FR.Draw(SampleMemo.Text, raster, vec2(0, 0), RasterColorF(1, 1, 1));
 
   m64 := TMemoryStream64.Create;
   ngr.SaveToStream(m64);
@@ -378,7 +379,7 @@ begin
   if not bmpSaveDialog.Execute then
       Exit;
   m64 := TMemoryStream64.Create;
-  FR.ExportRaster(m64, True);
+  FR.ExportRaster(m64, False);
   m64.SaveToFile(bmpSaveDialog.FileName);
   m64.Clear;
 
@@ -408,7 +409,7 @@ begin
   raster := TMemoryRaster.Create;
   raster.DrawMode := MemoryRaster.TDrawMode.dmBlend;
   raster.SetWorkMemory(ngr.Bits, ngr.width, ngr.height);
-  FR.Draw(SampleMemo.Text, raster, vec2(0, 0), RasterColorF(1, 0, 0, 1));
+  FR.Draw(SampleMemo.Text, raster, vec2(0, 0), RasterColorF(1, 1, 1));
 
   m64 := TMemoryStream64.Create;
   ngr.SaveToStream(m64);
@@ -431,7 +432,7 @@ begin
   raster := TMemoryRaster.Create;
   raster.DrawMode := MemoryRaster.TDrawMode.dmBlend;
   raster.SetWorkMemory(ngr.Bits, ngr.width, ngr.height);
-  FR.Draw(SampleMemo.Text, raster, vec2(0, 0), RasterColorF(1, 0, 0, 1));
+  FR.Draw(SampleMemo.Text, raster, vec2(0, 0), RasterColorF(1, 1, 1));
 
   m64 := TMemoryStream64.Create;
   ngr.SaveToStream(m64);

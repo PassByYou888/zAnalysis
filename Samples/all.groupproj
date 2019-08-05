@@ -39,6 +39,69 @@
         <Projects Include="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="34 PCA\PCA.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="35 Projection\memoryRasterProjection.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="33 Pascal Code Dependency Anslysis\PascalCodeDependencyAnslysis.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="18 zDrawEngine_HelloWorld\zDrawEngine_HelloWorld.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="30 MemoryRasterMoreFont\MemoryRasterMoreFont.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="22 ColorSegmentation\ColorSegmentation.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="23 FFMPEGVideoReader\FFMPEG_ReaderDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="24 FillColor\FillColor.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="24 GeometryIntersect\GeometryIntersect.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="26 HoughRotationDetectAndCalibrate\HoughRotationDetectAndCalibrate.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="27 LDA\LDA.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="28 MatrixAndVectorExpression\MatrixAndVectorExpression.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="29 MemoryMapping\MemoryMapping.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="31 NumberTransform\NumTrans.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="32 ParallelCompressor\ParallelCompressor.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="20 PolygonScaleAndExtract\PolygonScaleAndExtract.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="36 RasterizationFormat\RasterizationFormatDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="19 TextDraw\TextDraw.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="37 TriangleOptimization\TriangleOptimization.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="38 zExpressionSupport\zExpressionSupport.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="21 DrawEngine and FMXBitmap\DrawEngine4FMXBitmap.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -155,14 +218,203 @@
     <Target Name="GaussPyramidRegionDemo:Make">
         <MSBuild Projects="14 SIFT-Pyramid-CustomRegion-Demo\GaussPyramidRegionDemo.dproj" Targets="Make"/>
     </Target>
+    <Target Name="PCA">
+        <MSBuild Projects="34 PCA\PCA.dproj"/>
+    </Target>
+    <Target Name="PCA:Clean">
+        <MSBuild Projects="34 PCA\PCA.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PCA:Make">
+        <MSBuild Projects="34 PCA\PCA.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="memoryRasterProjection">
+        <MSBuild Projects="35 Projection\memoryRasterProjection.dproj"/>
+    </Target>
+    <Target Name="memoryRasterProjection:Clean">
+        <MSBuild Projects="35 Projection\memoryRasterProjection.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="memoryRasterProjection:Make">
+        <MSBuild Projects="35 Projection\memoryRasterProjection.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PascalCodeDependencyAnslysis">
+        <MSBuild Projects="33 Pascal Code Dependency Anslysis\PascalCodeDependencyAnslysis.dproj"/>
+    </Target>
+    <Target Name="PascalCodeDependencyAnslysis:Clean">
+        <MSBuild Projects="33 Pascal Code Dependency Anslysis\PascalCodeDependencyAnslysis.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PascalCodeDependencyAnslysis:Make">
+        <MSBuild Projects="33 Pascal Code Dependency Anslysis\PascalCodeDependencyAnslysis.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="zDrawEngine_HelloWorld">
+        <MSBuild Projects="18 zDrawEngine_HelloWorld\zDrawEngine_HelloWorld.dproj"/>
+    </Target>
+    <Target Name="zDrawEngine_HelloWorld:Clean">
+        <MSBuild Projects="18 zDrawEngine_HelloWorld\zDrawEngine_HelloWorld.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="zDrawEngine_HelloWorld:Make">
+        <MSBuild Projects="18 zDrawEngine_HelloWorld\zDrawEngine_HelloWorld.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="MemoryRasterMoreFont">
+        <MSBuild Projects="30 MemoryRasterMoreFont\MemoryRasterMoreFont.dproj"/>
+    </Target>
+    <Target Name="MemoryRasterMoreFont:Clean">
+        <MSBuild Projects="30 MemoryRasterMoreFont\MemoryRasterMoreFont.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MemoryRasterMoreFont:Make">
+        <MSBuild Projects="30 MemoryRasterMoreFont\MemoryRasterMoreFont.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ColorSegmentation">
+        <MSBuild Projects="22 ColorSegmentation\ColorSegmentation.dproj"/>
+    </Target>
+    <Target Name="ColorSegmentation:Clean">
+        <MSBuild Projects="22 ColorSegmentation\ColorSegmentation.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ColorSegmentation:Make">
+        <MSBuild Projects="22 ColorSegmentation\ColorSegmentation.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FFMPEG_ReaderDemo">
+        <MSBuild Projects="23 FFMPEGVideoReader\FFMPEG_ReaderDemo.dproj"/>
+    </Target>
+    <Target Name="FFMPEG_ReaderDemo:Clean">
+        <MSBuild Projects="23 FFMPEGVideoReader\FFMPEG_ReaderDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FFMPEG_ReaderDemo:Make">
+        <MSBuild Projects="23 FFMPEGVideoReader\FFMPEG_ReaderDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FillColor">
+        <MSBuild Projects="24 FillColor\FillColor.dproj"/>
+    </Target>
+    <Target Name="FillColor:Clean">
+        <MSBuild Projects="24 FillColor\FillColor.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FillColor:Make">
+        <MSBuild Projects="24 FillColor\FillColor.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="GeometryIntersect">
+        <MSBuild Projects="24 GeometryIntersect\GeometryIntersect.dproj"/>
+    </Target>
+    <Target Name="GeometryIntersect:Clean">
+        <MSBuild Projects="24 GeometryIntersect\GeometryIntersect.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GeometryIntersect:Make">
+        <MSBuild Projects="24 GeometryIntersect\GeometryIntersect.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="HoughRotationDetectAndCalibrate">
+        <MSBuild Projects="26 HoughRotationDetectAndCalibrate\HoughRotationDetectAndCalibrate.dproj"/>
+    </Target>
+    <Target Name="HoughRotationDetectAndCalibrate:Clean">
+        <MSBuild Projects="26 HoughRotationDetectAndCalibrate\HoughRotationDetectAndCalibrate.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="HoughRotationDetectAndCalibrate:Make">
+        <MSBuild Projects="26 HoughRotationDetectAndCalibrate\HoughRotationDetectAndCalibrate.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="LDA">
+        <MSBuild Projects="27 LDA\LDA.dproj"/>
+    </Target>
+    <Target Name="LDA:Clean">
+        <MSBuild Projects="27 LDA\LDA.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="LDA:Make">
+        <MSBuild Projects="27 LDA\LDA.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="MatrixAndVectorExpression">
+        <MSBuild Projects="28 MatrixAndVectorExpression\MatrixAndVectorExpression.dproj"/>
+    </Target>
+    <Target Name="MatrixAndVectorExpression:Clean">
+        <MSBuild Projects="28 MatrixAndVectorExpression\MatrixAndVectorExpression.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MatrixAndVectorExpression:Make">
+        <MSBuild Projects="28 MatrixAndVectorExpression\MatrixAndVectorExpression.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="MemoryMapping">
+        <MSBuild Projects="29 MemoryMapping\MemoryMapping.dproj"/>
+    </Target>
+    <Target Name="MemoryMapping:Clean">
+        <MSBuild Projects="29 MemoryMapping\MemoryMapping.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MemoryMapping:Make">
+        <MSBuild Projects="29 MemoryMapping\MemoryMapping.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="NumTrans">
+        <MSBuild Projects="31 NumberTransform\NumTrans.dproj"/>
+    </Target>
+    <Target Name="NumTrans:Clean">
+        <MSBuild Projects="31 NumberTransform\NumTrans.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NumTrans:Make">
+        <MSBuild Projects="31 NumberTransform\NumTrans.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ParallelCompressor">
+        <MSBuild Projects="32 ParallelCompressor\ParallelCompressor.dproj"/>
+    </Target>
+    <Target Name="ParallelCompressor:Clean">
+        <MSBuild Projects="32 ParallelCompressor\ParallelCompressor.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ParallelCompressor:Make">
+        <MSBuild Projects="32 ParallelCompressor\ParallelCompressor.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PolygonScaleAndExtract">
+        <MSBuild Projects="20 PolygonScaleAndExtract\PolygonScaleAndExtract.dproj"/>
+    </Target>
+    <Target Name="PolygonScaleAndExtract:Clean">
+        <MSBuild Projects="20 PolygonScaleAndExtract\PolygonScaleAndExtract.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PolygonScaleAndExtract:Make">
+        <MSBuild Projects="20 PolygonScaleAndExtract\PolygonScaleAndExtract.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="RasterizationFormatDemo">
+        <MSBuild Projects="36 RasterizationFormat\RasterizationFormatDemo.dproj"/>
+    </Target>
+    <Target Name="RasterizationFormatDemo:Clean">
+        <MSBuild Projects="36 RasterizationFormat\RasterizationFormatDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="RasterizationFormatDemo:Make">
+        <MSBuild Projects="36 RasterizationFormat\RasterizationFormatDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TextDraw">
+        <MSBuild Projects="19 TextDraw\TextDraw.dproj"/>
+    </Target>
+    <Target Name="TextDraw:Clean">
+        <MSBuild Projects="19 TextDraw\TextDraw.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TextDraw:Make">
+        <MSBuild Projects="19 TextDraw\TextDraw.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TriangleOptimization">
+        <MSBuild Projects="37 TriangleOptimization\TriangleOptimization.dproj"/>
+    </Target>
+    <Target Name="TriangleOptimization:Clean">
+        <MSBuild Projects="37 TriangleOptimization\TriangleOptimization.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TriangleOptimization:Make">
+        <MSBuild Projects="37 TriangleOptimization\TriangleOptimization.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="zExpressionSupport">
+        <MSBuild Projects="38 zExpressionSupport\zExpressionSupport.dproj"/>
+    </Target>
+    <Target Name="zExpressionSupport:Clean">
+        <MSBuild Projects="38 zExpressionSupport\zExpressionSupport.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="zExpressionSupport:Make">
+        <MSBuild Projects="38 zExpressionSupport\zExpressionSupport.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DrawEngine4FMXBitmap">
+        <MSBuild Projects="21 DrawEngine and FMXBitmap\DrawEngine4FMXBitmap.dproj"/>
+    </Target>
+    <Target Name="DrawEngine4FMXBitmap:Clean">
+        <MSBuild Projects="21 DrawEngine and FMXBitmap\DrawEngine4FMXBitmap.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DrawEngine4FMXBitmap:Make">
+        <MSBuild Projects="21 DrawEngine and FMXBitmap\DrawEngine4FMXBitmap.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="EasyConsoleDemo;GUIAnalysis;MemoryRasterDemo;NNDecisionDemo;numberTrainDemo;Render2Video;rForestDemo;SoftRenderer;yuv2Video;zDBAnalysisDemo;GaussPyramidDemo;GaussPyramidRegionDemo"/>
+        <CallTarget Targets="EasyConsoleDemo;GUIAnalysis;MemoryRasterDemo;NNDecisionDemo;numberTrainDemo;Render2Video;rForestDemo;SoftRenderer;yuv2Video;zDBAnalysisDemo;GaussPyramidDemo;GaussPyramidRegionDemo;PCA;memoryRasterProjection;PascalCodeDependencyAnslysis;zDrawEngine_HelloWorld;MemoryRasterMoreFont;ColorSegmentation;FFMPEG_ReaderDemo;FillColor;GeometryIntersect;HoughRotationDetectAndCalibrate;LDA;MatrixAndVectorExpression;MemoryMapping;NumTrans;ParallelCompressor;PolygonScaleAndExtract;RasterizationFormatDemo;TextDraw;TriangleOptimization;zExpressionSupport;DrawEngine4FMXBitmap"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="EasyConsoleDemo:Clean;GUIAnalysis:Clean;MemoryRasterDemo:Clean;NNDecisionDemo:Clean;numberTrainDemo:Clean;Render2Video:Clean;rForestDemo:Clean;SoftRenderer:Clean;yuv2Video:Clean;zDBAnalysisDemo:Clean;GaussPyramidDemo:Clean;GaussPyramidRegionDemo:Clean"/>
+        <CallTarget Targets="EasyConsoleDemo:Clean;GUIAnalysis:Clean;MemoryRasterDemo:Clean;NNDecisionDemo:Clean;numberTrainDemo:Clean;Render2Video:Clean;rForestDemo:Clean;SoftRenderer:Clean;yuv2Video:Clean;zDBAnalysisDemo:Clean;GaussPyramidDemo:Clean;GaussPyramidRegionDemo:Clean;PCA:Clean;memoryRasterProjection:Clean;PascalCodeDependencyAnslysis:Clean;zDrawEngine_HelloWorld:Clean;MemoryRasterMoreFont:Clean;ColorSegmentation:Clean;FFMPEG_ReaderDemo:Clean;FillColor:Clean;GeometryIntersect:Clean;HoughRotationDetectAndCalibrate:Clean;LDA:Clean;MatrixAndVectorExpression:Clean;MemoryMapping:Clean;NumTrans:Clean;ParallelCompressor:Clean;PolygonScaleAndExtract:Clean;RasterizationFormatDemo:Clean;TextDraw:Clean;TriangleOptimization:Clean;zExpressionSupport:Clean;DrawEngine4FMXBitmap:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="EasyConsoleDemo:Make;GUIAnalysis:Make;MemoryRasterDemo:Make;NNDecisionDemo:Make;numberTrainDemo:Make;Render2Video:Make;rForestDemo:Make;SoftRenderer:Make;yuv2Video:Make;zDBAnalysisDemo:Make;GaussPyramidDemo:Make;GaussPyramidRegionDemo:Make"/>
+        <CallTarget Targets="EasyConsoleDemo:Make;GUIAnalysis:Make;MemoryRasterDemo:Make;NNDecisionDemo:Make;numberTrainDemo:Make;Render2Video:Make;rForestDemo:Make;SoftRenderer:Make;yuv2Video:Make;zDBAnalysisDemo:Make;GaussPyramidDemo:Make;GaussPyramidRegionDemo:Make;PCA:Make;memoryRasterProjection:Make;PascalCodeDependencyAnslysis:Make;zDrawEngine_HelloWorld:Make;MemoryRasterMoreFont:Make;ColorSegmentation:Make;FFMPEG_ReaderDemo:Make;FillColor:Make;GeometryIntersect:Make;HoughRotationDetectAndCalibrate:Make;LDA:Make;MatrixAndVectorExpression:Make;MemoryMapping:Make;NumTrans:Make;ParallelCompressor:Make;PolygonScaleAndExtract:Make;RasterizationFormatDemo:Make;TextDraw:Make;TriangleOptimization:Make;zExpressionSupport:Make;DrawEngine4FMXBitmap:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
