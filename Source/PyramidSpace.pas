@@ -227,7 +227,6 @@ type
   end;
 
 {$ENDREGION 'PyramidTypes'}
-
 {$REGION 'PyramidFunctions'}
 
 
@@ -265,7 +264,6 @@ function MatchFeature(const Source, dest: TFeature; var MatchInfo: TArrayMatchIn
 function BuildMatchInfoView(var MatchInfo: TArrayMatchInfo; const FeatureDiameter: TGFloat; const ViewFeature: Boolean): TMemoryRaster;
 
 {$ENDREGION 'PyramidFunctions'}
-
 {$REGION 'Options'}
 
 

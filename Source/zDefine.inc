@@ -50,8 +50,9 @@
   // automated loading common AI data sets on boot-time
   // {$DEFINE Z_AI_Dataset_Build_In}
 
-  // With LARGE_RASTER_FONT, boot-time memory usage increase by 100M-200M and start-up time to be delay 100ms
-  // {$DEFINE LARGE_RASTER_FONT}
+  // With SMALL_RASTER_FONT_Build_In, boot-time memory usage increase by 100M-200M and start-up time to be delay 100ms
+  {$DEFINE SMALL_RASTER_FONT_Build_In}
+  // {$DEFINE LARGE_RASTER_FONT_Build_In}
 
   // ZDB_BACKUP is automatically made and replica caching is enabled.
   // usage ZDB_BACKUP so slows the open of large size ZDB file, after time, but does is high performance.
@@ -98,8 +99,9 @@
   // automated loading common AI data sets on boot-time
   // {$DEFINE Z_AI_Dataset_Build_In}
 
-  // With LARGE_RASTER_FONT, boot-time memory usage increase by 100M-200M and start-up time to be delay 100ms
-  // {$DEFINE LARGE_RASTER_FONT}
+  // With SMALL_RASTER_FONT_Build_In, boot-time memory usage increase by 100M-200M and start-up time to be delay 100ms
+  // {$DEFINE SMALL_RASTER_FONT_Build_In}
+  // {$DEFINE LARGE_RASTER_FONT_Build_In}
 
   // ZDB_BACKUP is automatically made and replica caching is enabled.
   // usage ZDB_BACKUP so slows the open of large size ZDB file, after time, but does is high performance.
@@ -118,14 +120,10 @@
     {$DEFINE INLINE_ASM}
     {$R-} { range check }
     {$I-} { Input output checking }
-    {$O-} { optimization }
-    {$C+} { Assertions }
   {$ELSE}
     {$UNDEF INLINE_ASM}
-    {$R+} { range check }
-    {$I+} { Input output checking }
-    {$O-} { optimization }
-    {$C+} { Assertions }
+    {$R-} { range check }
+    {$I-} { Input output checking }
   {$ENDIF}
 
   {$IF Defined(Android) or Defined(IOS)}
@@ -142,6 +140,8 @@
 
 {$WARNINGS OFF}
 {$HINTS OFF}
+{$O-} { optimization }
+{$C+} { Assertions }
 {$M-} { Run-Time Type Information }
 {$H+} { long string }
 {$A+} { Word Align Data }
@@ -159,19 +159,19 @@
 
 {$IFDEF CPU64BITS}
   {$DEFINE CPU64}
-{$ELSE}
+{$ELSE CPU64BITS}
   {$IFDEF CPUX64}
     {$DEFINE CPU64}
-  {$ENDIF}
-{$ENDIF}
+  {$ENDIF CPUX64}
+{$ENDIF CPU64BITS}
 
 {$IFNDEF CPU64}
   {$DEFINE CPU32}
-{$ENDIF}
+{$ENDIF CPU64}
 
 {$IFDEF BIG_ENDIAN}
   {$MESSAGE FATAL 'Big-endian system not supported'}
-{$ENDIF}
+{$ENDIF BIG_ENDIAN}
 
 {$IFOPT R+}
   {$DEFINE RangeCheck}

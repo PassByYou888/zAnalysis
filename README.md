@@ -136,10 +136,10 @@ zChinese是正在完善中的NLP项目 https://github.com/PassByYou888/zChinese
 - 中小型企业级数据统计和分析的傻瓜支持
 - 在游戏领域使用机器学习
 - 自然语言处理的傻瓜支持(完善中，请参见我的开源项目 https://github.com/PassByYou888/zChinese)
-- 加强视觉库的傻瓜支持(物体识别支持，人脸识别支持，**已经支持SIFT，HOG算法**)
-- 对第三方大数据源支持(例如google提供的大数据源)
-- 可二次开发的模型化机器学习平台
-- 分布式云服务器计算后台
+- 加强视觉库的傻瓜支持(物体识别支持，人脸识别支持，请参考我的AI项目 https://zpascal.net)
+- 对第三方大数据源支持(例如google提供的大数据源，请参考我的AI项目 https://zpascal.net)
+- 可二次开发的模型化机器学习平台(请参考我的AI项目 https://zpascal.net)
+- 分布式云服务器计算后台(https://github.com/PassByYou888/ZServer4D)
 - 提供plot二维可视化图形api(光栅库已经加强，下一版本将提供模型呈现系统)
 
 ## 编译注意事项
@@ -173,6 +173,10 @@ zChinese是正在完善中的NLP项目 https://github.com/PassByYou888/zChinese
 
 
 ## 近期更新日志
+
+**2019-10**
+
+- 更新巨大，请参考：https://zpascal.net/1.21%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97.pdf
 
 **2019-7**
 

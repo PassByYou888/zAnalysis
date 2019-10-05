@@ -3636,7 +3636,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -4716,7 +4716,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -5796,7 +5796,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -6876,7 +6876,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -7956,7 +7956,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -9036,7 +9036,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -10116,7 +10116,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -11196,7 +11196,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -12276,7 +12276,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -13356,7 +13356,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -14436,7 +14436,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -15516,7 +15516,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -16596,7 +16596,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -17676,7 +17676,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -18756,7 +18756,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -19836,7 +19836,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -20916,7 +20916,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -21996,7 +21996,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -23076,7 +23076,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -24156,7 +24156,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -25236,7 +25236,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -26316,7 +26316,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -27396,7 +27396,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -28476,7 +28476,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -29556,7 +29556,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -30636,7 +30636,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;
@@ -31716,7 +31716,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   except
       Exit;
   end;

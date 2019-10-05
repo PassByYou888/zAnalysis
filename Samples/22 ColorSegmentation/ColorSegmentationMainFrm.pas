@@ -151,7 +151,7 @@ begin
   tex_box := d.FitDrawPicture(tex, tex.BoundsRectV2, RectEdge(d.ScreenRect, -20), 1.0);
 
   for i := 0 to length(LastSegBox) - 1 do
-      d.DrawBox(RectTransformToDest(tex.BoundsRectV2, tex_box, LastSegBox[i]), DEColor(1, 0.5, 0.5, 1), 2);
+      d.DrawBox(RectProjection(tex.BoundsRectV2, tex_box, LastSegBox[i]), DEColor(1, 0.5, 0.5, 1), 2);
 
   d.DrawDotLineBox(tex_box, Vec2(0.5, 0.5), 0, DEColor(0.8, 0.1, 0.4), 3);
 

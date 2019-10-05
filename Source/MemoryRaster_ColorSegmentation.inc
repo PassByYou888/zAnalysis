@@ -1,3 +1,81 @@
+{ ****************************************************************************** }
+{ * memory Rasterization                                                       * }
+{ * by QQ 600585@qq.com                                                        * }
+{ ****************************************************************************** }
+{ * https://zpascal.net                                                        * }
+{ * https://github.com/PassByYou888/zAI                                        * }
+{ * https://github.com/PassByYou888/ZServer4D                                  * }
+{ * https://github.com/PassByYou888/PascalString                               * }
+{ * https://github.com/PassByYou888/zRasterization                             * }
+{ * https://github.com/PassByYou888/CoreCipher                                 * }
+{ * https://github.com/PassByYou888/zSound                                     * }
+{ * https://github.com/PassByYou888/zChinese                                   * }
+{ * https://github.com/PassByYou888/zExpression                                * }
+{ * https://github.com/PassByYou888/zGameWare                                  * }
+{ * https://github.com/PassByYou888/zAnalysis                                  * }
+{ * https://github.com/PassByYou888/FFMPEG-Header                              * }
+{ * https://github.com/PassByYou888/zTranslate                                 * }
+{ * https://github.com/PassByYou888/InfiniteIoT                                * }
+{ * https://github.com/PassByYou888/FastMD5                                    * }
+{ ****************************************************************************** }
+
+constructor TSegmentationGeometry.Create;
+begin
+  inherited Create;
+end;
+
+destructor TSegmentationGeometry.Destroy;
+begin
+  Clear;
+  inherited Destroy;
+end;
+
+procedure TSegmentationGeometry.InsertGeo(index: Integer; X, Y: Integer; segPtr: PSeg);
+var
+  p: PSeg2GeoData;
+begin
+  new(p);
+  p^.X := X;
+  p^.Y := Y;
+  p^.segPtr := segPtr;
+  inherited Insert(index, p);
+end;
+
+procedure TSegmentationGeometry.AddGeo(X, Y: Integer; segPtr: PSeg);
+var
+  p: PSeg2GeoData;
+begin
+  new(p);
+  p^.X := X;
+  p^.Y := Y;
+  p^.segPtr := segPtr;
+  inherited Add(p);
+end;
+
+procedure TSegmentationGeometry.Remove(p: PSeg2GeoData);
+begin
+  Dispose(p);
+  inherited Remove(p);
+end;
+
+procedure TSegmentationGeometry.Delete(index: TGeoInt);
+begin
+  if (index >= 0) and (index < Count) then
+    begin
+      Dispose(Items[index]);
+      inherited Delete(index);
+    end;
+end;
+
+procedure TSegmentationGeometry.Clear;
+var
+  i: Integer;
+begin
+  for i := 0 to Count - 1 do
+      Dispose(Items[i]);
+  inherited Clear;
+end;
+
 constructor TSegPool.Create;
 begin
   inherited Create;
@@ -35,6 +113,10 @@ procedure TSegPool.SortY;
     if Item1^.Y < Item2^.Y then
         Result := -1
     else if Item1^.Y > Item2^.Y then
+        Result := 1
+    else if Item1^.L < Item2^.L then
+        Result := -1
+    else if Item1^.L > Item2^.L then
         Result := 1
     else
         Result := 0;
@@ -235,6 +317,93 @@ begin
     end;
 end;
 
+function TSegPool.BuildConvexHull(): T2DPolygon;
+var
+  i, j: Integer;
+  segPtr: PSeg;
+  cID: TSegClassify;
+  FragObjs: TCoreClassObjectList;
+  geo: TSegmentationGeometry;
+begin
+  Result := nil;
+  if Count = 0 then
+      exit;
+
+  cID := Classify();
+
+  for i := 0 to Count - 1 do
+    begin
+      segPtr := Items[i];
+      segPtr^.LGeometry := nil;
+      segPtr^.RGeometry := nil;
+    end;
+
+  FragObjs := TCoreClassObjectList.Create(True);
+
+  // left fragment
+  for i := 0 to Count - 1 do
+    begin
+      segPtr := Items[i];
+      if segPtr^.LGeometry = nil then
+        begin
+          geo := TSegmentationGeometry.Create;
+          FragObjs.Add(geo);
+          segPtr^.LGeometry := geo;
+          segPtr^.LGeometry.AddGeo(segPtr^.L, segPtr^.Y, segPtr);
+          while (segPtr^.LBot <> nil) and (segPtr^.LBot^.Classify = cID) do
+            begin
+              segPtr^.LBot^.LGeometry := segPtr^.LGeometry;
+              segPtr := segPtr^.LBot;
+              segPtr^.LGeometry.AddGeo(segPtr^.L, segPtr^.Y, segPtr);
+            end;
+        end;
+    end;
+
+  // right fragment
+  for i := 0 to Count - 1 do
+    begin
+      segPtr := Items[i];
+      if segPtr^.RGeometry = nil then
+        begin
+          geo := TSegmentationGeometry.Create;
+          FragObjs.Add(geo);
+          segPtr^.RGeometry := geo;
+          segPtr^.RGeometry.AddGeo(segPtr^.R, segPtr^.Y, segPtr);
+          while (segPtr^.RBot <> nil) and (segPtr^.RBot^.Classify = cID) do
+            begin
+              segPtr^.RBot^.RGeometry := segPtr^.RGeometry;
+              segPtr := segPtr^.RBot;
+              segPtr^.RGeometry.AddGeo(segPtr^.R, segPtr^.Y, segPtr);
+            end;
+        end;
+    end;
+
+  // combine fragment
+  Result := T2DPolygon.Create;
+  if FragObjs.Count > 0 then
+    begin
+      for i := 0 to FragObjs.Count - 1 do
+        begin
+          geo := FragObjs[i] as TSegmentationGeometry;
+          for j := 0 to geo.Count - 1 do
+            with geo[j]^ do
+                Result.Add(X, Y);
+        end;
+      Result.RemoveSame;
+      Result.ConvexHull();
+    end;
+
+  // reset geometry link
+  for i := 0 to Count - 1 do
+    begin
+      segPtr := Items[i];
+      segPtr^.LGeometry := nil;
+      segPtr^.RGeometry := nil;
+    end;
+
+  DisposeObject(FragObjs);
+end;
+
 function TColorSegmentation.NewSeg(X, Y: Integer; Classify: TSegClassify): PSeg;
 begin
   new(Result);
@@ -247,6 +416,8 @@ begin
   Result^.RBot := nil;
   Result^.GroupID := -1;
   Result^.Classify := Classify;
+  Result^.LGeometry := nil;
+  Result^.RGeometry := nil;
   FSource.Add(Result);
   FSegMap[Y, X] := Result;
 end;
@@ -318,6 +489,15 @@ begin
   Result := FSegPoolGroup[index];
 end;
 
+procedure TColorSegmentation.ResetSource;
+var
+  i: Integer;
+begin
+  for i := 0 to FSource.Count - 1 do
+      Dispose(FSource[i]);
+  FSource.Clear;
+end;
+
 constructor TColorSegmentation.CustomCreate(Raster_: TMemoryRaster; BoundsRect_: TRect);
 var
   i, j: Integer;
@@ -349,8 +529,7 @@ var
   i: Integer;
 begin
   SetLength(FSegMap, 0, 0);
-  for i := 0 to FSource.Count - 1 do
-      dispose(FSource[i]);
+  ResetSource();
   DisposeObject(FSource);
   for i := 0 to FSegPoolGroup.Count - 1 do
       DisposeObject(FSegPoolGroup[i]);
@@ -382,9 +561,7 @@ begin
     for i := 0 to FWidth - 1 do
         FSegMap[j, i] := nil;
 
-  for i := 0 to FSource.Count - 1 do
-      dispose(FSource[i]);
-  FSource.Clear;
+  ResetSource();
 
   for i := 0 to FSegPoolGroup.Count - 1 do
       DisposeObject(FSegPoolGroup[i]);
@@ -447,7 +624,7 @@ var
   sp, found_sp: TSegPool;
   re_sp: Boolean;
 begin
-  // combine group for far distance
+  // combine group
   j := 0;
   while j < FSegPoolGroup.Count do
     begin
