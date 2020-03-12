@@ -11,7 +11,7 @@ uses
   CoreClasses, PascalStrings, UnicodeMixedLib, Geometry2DUnit, Geometry3DUnit,
   MemoryRaster, MemoryStream64, DoStatusIO, zDrawEngine,
   zExpression,
-  zDrawEngineInterface_FMX, zAI_Common;
+  zDrawEngineInterface_FMX;
 
 type
   TApproximatePolygonForm = class(TForm)
@@ -82,7 +82,7 @@ begin
   bk.SetSize(128, 128);
   FillBlackGrayBackgroundTexture(bk, 32, RColor(0, 0, 0), RColorF(0.5, 0.5, 0.5), RColorF(0.4, 0.4, 0.4));
 
-  sour := NewRasterFromFile(WhereFileFromConfigure('lena.bmp'));
+  sour := NewRasterFromFile('lena.bmp');
   dest := NewRaster();
   dest.SetSizeR(sour.BoundsRectV2);
 

@@ -10,7 +10,7 @@ uses
 
   CoreClasses, PascalStrings, UnicodeMixedLib, Geometry2DUnit, Geometry3DUnit,
   MemoryRaster, MemoryStream64, DoStatusIO, zDrawEngine,
-  zExpression, zDrawEngineInterface_FMX, zAI_Common, PictureViewerInterface;
+  zExpression, zDrawEngineInterface_FMX, PictureViewerInterface;
 
 type
   TMorphGalaxiesDetectionForm = class(TForm)
@@ -66,7 +66,7 @@ begin
   viewIntf.ShowPictureInfo := False;
   viewIntf.ShowBackground := True;
   viewIntf.PictureViewerStyle := pvsLeft2Right;
-  viewIntf.InputPicture(NewRasterFromFile(WhereFileFromConfigure('galaxies.jpg')), 'ԭʼͼƬ', True);
+  viewIntf.InputPicture(NewRasterFromFile('galaxies.jpg'), 'ԭʼͼƬ', True);
   DetectedList := TRectV2List.Create;
 end;
 
