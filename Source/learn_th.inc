@@ -16,14 +16,14 @@
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
 type
-  TLearn_th = class(TCoreClassThread)
+  TLearn_thread = class(TCoreClassThread)
   public
-    Source                : TLearn;
-    TrainDepth            : TLInt;
-    OnStateC              : TLearnState_Call;
-    OnStateM              : TLearnState_Method;
-    {$IFNDEF FPC} OnStateP: TLearnState_Proc; {$ENDIF}
-    Successed             : Boolean;
+    Source: TLearn;
+    TrainDepth: TLInt;
+    OnStateC: TLearnState_Call;
+    OnStateM: TLearnState_Method;
+    OnStateP: TLearnState_Proc;
+    Successed: Boolean;
 
     procedure SyncResultState;
     procedure Execute; override;
@@ -31,34 +31,28 @@ type
     destructor Destroy; override;
   end;
 
-procedure TLearn_th.SyncResultState;
+procedure TLearn_thread.SyncResultState;
 begin
-  Source.FTrainThreadRuning := False;
+  Source.FTrainingThreadRuning := False;
   if Assigned(OnStateC) then
       OnStateC(Source, Successed);
   if Assigned(OnStateM) then
       OnStateM(Source, Successed);
-  {$IFNDEF FPC}
   if Assigned(OnStateP) then
       OnStateP(Source, Successed);
-  {$ENDIF FPC}
 end;
 
-procedure TLearn_th.Execute;
+procedure TLearn_thread.Execute;
 begin
   if Source <> nil then
-      Successed := Source.Train(TrainDepth)
+      Successed := Source.Training(TrainDepth)
   else
       Successed := False;
 
-  {$IFDEF FPC}
-  Synchronize(@SyncResultState);
-  {$ELSE FPC}
-  Synchronize(SyncResultState);
-  {$ENDIF FPC}
+  Synchronize({$IFDEF FPC}@{$ENDIF FPC}SyncResultState);
 end;
 
-constructor TLearn_th.Create;
+constructor TLearn_thread.Create;
 begin
   inherited Create(True);
   FreeOnTerminate := True;
@@ -66,13 +60,11 @@ begin
   TrainDepth := 2;
   OnStateC := nil;
   OnStateM := nil;
-  {$IFNDEF FPC} OnStateP := nil; {$ENDIF}
+  OnStateP := nil;
   Successed := False;
 end;
 
-destructor TLearn_th.Destroy;
+destructor TLearn_thread.Destroy;
 begin
   inherited Destroy;
 end;
- 
- 

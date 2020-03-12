@@ -189,7 +189,7 @@ end;
 
 function LVec(const v: TLVec): TPascalString;
 begin
-  Result := TKDTree.KDTreeVec(v);
+  Result := TKDTree.Vec(v);
 end;
 
 function LVec(const M: TLMatrix; const veclen: TLInt): TLVec;
@@ -219,12 +219,17 @@ begin
   Result := LVec(M, L);
 end;
 
+function LVec(const s: TPascalString): TLVec;
+begin
+  Result := TKDTree.Vec(s.Text);
+end;
+
 function LVec(const s: TPascalString; const veclen: TLInt): TLVec;
 var
   i: TLInt;
   v: TLVec;
 begin
-  v := TKDTree.KDTreeVec(s.Text);
+  v := TKDTree.Vec(s.Text);
   Result := LVec(veclen);
   for i := 0 to length(v) - 1 do
     if i < veclen then
@@ -319,6 +324,16 @@ end;
 function ExpressionToLVec(const s: TPascalString): TLVec;
 begin
   Result := ExpressionToLVec(s, nil);
+end;
+
+function ExpLVec(const s: TPascalString; const_vl: THashVariantList): TLVec;
+begin
+  Result := ExpressionToLVec(s, const_vl);
+end;
+
+function ExpLVec(const s: TPascalString): TLVec;
+begin
+  Result := ExpLVec(s, nil);
 end;
 
 function LSpearmanVec(const M: TLMatrix; const veclen: TLInt): TLVec;
@@ -462,7 +477,7 @@ end;
 
 function LDistance(const v1, v2: TLVec): TLFloat;
 begin
-  Result := TKDTree.KDTreeDistance(v1, v2);
+  Result := TKDTree.Distance(v1, v2);
 end;
 
 function LHamming(const v1, v2: TLVec): TLInt;
@@ -550,12 +565,12 @@ var
   SourceWidth, SourceHeight: TLInt;
   SourceP, DestP: PLMatrix;
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(pass: Integer);
   begin
     ZoomLineF(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
   end;
 {$ENDIF FPC}
-{$IFNDEF parallel}
+{$IFNDEF Parallel}
   procedure DoFor;
   var
     pass: TLInt;
@@ -563,7 +578,7 @@ var
     for pass := 0 to DestWidth - 1 do
         ZoomLineF(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
   end;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 
 
 begin
@@ -576,18 +591,18 @@ begin
       SourceP := @Source;
       DestP := @dest;
 
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-      ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, DestWidth - 1);
+      FPCParallelFor(@Nested_ParallelFor, 0, DestWidth - 1);
 {$ELSE FPC}
-      TParallel.for(0, DestWidth - 1, procedure(pass: Integer)
+      DelphiParallelFor(0, DestWidth - 1, procedure(pass: Integer)
         begin
           ZoomLineF(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
         end);
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
       DoFor;
-{$ENDIF parallel}
+{$ENDIF Parallel}
     end;
 end;
 
@@ -609,12 +624,12 @@ var
   SourceWidth, SourceHeight: TLInt;
   SourceP, DestP: PLIMatrix;
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(pass: Integer);
   begin
     ZoomLineI(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
   end;
 {$ENDIF FPC}
-{$IFNDEF parallel}
+{$IFNDEF Parallel}
   procedure DoFor;
   var
     pass: TLInt;
@@ -622,7 +637,7 @@ var
     for pass := 0 to DestWidth - 1 do
         ZoomLineI(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
   end;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 
 
 begin
@@ -635,18 +650,18 @@ begin
       SourceP := @Source;
       DestP := @dest;
 
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-      ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, DestWidth - 1);
+      FPCParallelFor(@Nested_ParallelFor, 0, DestWidth - 1);
 {$ELSE FPC}
-      TParallel.for(0, DestWidth - 1, procedure(pass: Integer)
+      DelphiParallelFor(0, DestWidth - 1, procedure(pass: Integer)
         begin
           ZoomLineI(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
         end);
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
       DoFor;
-{$ENDIF parallel}
+{$ENDIF Parallel}
     end;
 end;
 
@@ -668,12 +683,12 @@ var
   SourceWidth, SourceHeight: TLInt;
   SourceP, DestP: PLBMatrix;
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(pass: Integer);
   begin
     ZoomLineB(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
   end;
 {$ENDIF FPC}
-{$IFNDEF parallel}
+{$IFNDEF Parallel}
   procedure DoFor;
   var
     pass: TLInt;
@@ -681,7 +696,7 @@ var
     for pass := 0 to DestWidth - 1 do
         ZoomLineB(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
   end;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 
 
 begin
@@ -694,18 +709,18 @@ begin
       SourceP := @Source;
       DestP := @dest;
 
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-      ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, DestWidth - 1);
+      FPCParallelFor(@Nested_ParallelFor, 0, DestWidth - 1);
 {$ELSE FPC}
-      TParallel.for(0, DestWidth - 1, procedure(pass: Integer)
+      DelphiParallelFor(0, DestWidth - 1, procedure(pass: Integer)
         begin
           ZoomLineB(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
         end);
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
       DoFor;
-{$ENDIF parallel}
+{$ENDIF Parallel}
     end;
 end;
 
@@ -790,7 +805,7 @@ begin
       Source.read(dest[j][0], w);
 end;
 
-function LDA(const M: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo: SystemString; var output: TLMatrix): Boolean;
+function LDA(const M: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo: TPascalString; var output: TLMatrix): Boolean;
 var
   rInfo: TLInt;
   buff: TLMatrix;
@@ -822,7 +837,7 @@ begin
   Result := rInfo in [1, 2];
 end;
 
-function LDA(const M: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo: SystemString; var output: TLVec): Boolean;
+function LDA(const M: TLMatrix; const cv: TLVec; const Nclass: TLInt; var sInfo: TPascalString; var output: TLVec): Boolean;
 var
   rInfo: TLInt;
   buff: TLMatrix;
@@ -854,29 +869,28 @@ begin
   Result := rInfo in [1, 2];
 end;
 
-function PCA(const buff: TLMatrix; const NPoints, NVars: TLInt; var v:TLVec; var m: TLMatrix): TLInt;
+function PCA(const buff: TLMatrix; const NPoints, NVars: TLInt; var v: TLVec; var M: TLMatrix): TLInt;
 begin
-  PCABuildBasis(buff, NPoints, NVars, Result, v, m);
+  PCABuildBasis(buff, NPoints, NVars, Result, v, M);
 end;
 
-function PCA(const buff: TLMatrix; const NPoints, NVars: TLInt; var m: TLMatrix): TLInt;
+function PCA(const buff: TLMatrix; const NPoints, NVars: TLInt; var M: TLMatrix): TLInt;
 var
-  s:TLVec;
+  s: TLVec;
 begin
-  PCABuildBasis(buff, NPoints, NVars, Result, s, m);
+  PCABuildBasis(buff, NPoints, NVars, Result, s, M);
 end;
 
 function KMeans(const Source: TLMatrix; const NVars, k: TLInt; var KArray: TLMatrix; var kIndex: TLIVec): Boolean;
 var
   bakseed: TLInt;
 begin
-  bakseed := RandSeed;
-  RandSeed := 0;
-
+  bakseed := GetMT19937Seed;
+  SetMT19937Seed(0);
   try
       Result := KMeansCluster(Source, NVars, k, 1, KArray, kIndex) = 1;
   finally
-      RandSeed := bakseed;
+      SetMT19937Seed(bakseed);
   end;
 end;
 

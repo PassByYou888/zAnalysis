@@ -48,8 +48,8 @@ uses
   Windows, Messages,
 {$ENDIF}
   Graphics, Controls, Forms,
-  Classes, SysUtils, GR32, GR32_Layers, GR32_RangeBars, GR32_LowLevel,
-  GR32_System, GR32_Containers, GR32_RepaintOpt;
+  Classes, SysUtils, GR32, GR32_Layers, GR32_RangeBars, GR32_Containers,
+  GR32_RepaintOpt;
 
 const
   { Paint Stage Constants }
@@ -117,7 +117,6 @@ type
     procedure WMPaint(var Message: TLMPaint); message LM_PAINT;
     procedure CMMouseEnter(var Message: TLMessage); message LM_MOUSEENTER;
     procedure CMMouseLeave(var Message: TLMessage); message LM_MOUSELEAVE;
-    procedure CMInvalidate(var Message: TLMessage); message CM_INVALIDATE;
 {$ELSE}
     procedure WMEraseBkgnd(var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
     procedure WMGetDlgCode(var Msg: TWmGetDlgCode); message WM_GETDLGCODE;
@@ -277,7 +276,6 @@ type
     procedure InitDefaultStages; virtual;
     procedure InvalidateCache;
     function  InvalidRectsAvailable: Boolean; override;
-    procedure DblClick; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); overload; override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); overload; override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); overload; override;
@@ -289,6 +287,8 @@ type
     procedure SetScaleMode(Value: TScaleMode); virtual;
     procedure SetXForm(ShiftX, ShiftY, ScaleX, ScaleY: TFloat);
     procedure UpdateCache; virtual;
+    function GetLayerCollectionClass: TLayerCollectionClass; virtual;
+    function CreateLayerCollection: TLayerCollection; virtual;
     property  UpdateCount: Integer read FUpdateCount;
   public
     constructor Create(AOwner: TComponent); override;
@@ -365,6 +365,7 @@ type
 {$ENDIF}
     property OnClick;
     property OnChange;
+    property OnContextPopup;
     property OnDblClick;
     property OnGDIOverlay;
     property OnDragDrop;
@@ -652,16 +653,7 @@ end;
 
 { TCustomPaintBox32 }
 
-{$IFDEF FPC}
-procedure TCustomPaintBox32.CMInvalidate(var Message: TLMessage);
-begin
-  if CustomRepaint and HandleAllocated then
-    PostMessage(Handle, LM_PAINT, 0, 0)
-  else
-    inherited;
-end;
-{$ELSE}
-
+{$IFNDEF FPC}
 procedure TCustomPaintBox32.CMInvalidate(var Message: TMessage);
 begin
   if CustomRepaint and HandleAllocated then
@@ -715,8 +707,7 @@ begin
 
   { Setting a initial size here will cause the control to crash under LCL }
 {$IFNDEF FPC}
-  Height := 192;
-  Width := 192;
+  SetBounds(0, 0, 192, 192);
 {$ENDIF}
 end;
 
@@ -843,11 +834,13 @@ end;
 
 procedure TCustomPaintBox32.Loaded;
 begin
+  ResizeBuffer;
   FBufferValid := False;
   inherited;
 end;
 
-procedure TCustomPaintBox32.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TCustomPaintBox32.MouseDown(Button: TMouseButton; Shift: TShiftState;
+  X, Y: Integer);
 begin
   if (pboAutoFocus in Options) and CanFocus then SetFocus;
   inherited;
@@ -873,9 +866,7 @@ begin
     Exit;
 
   if FRepaintOptimizer.Enabled then
-  begin
     FRepaintOptimizer.BeginPaint;
-  end;
 
   if not FBufferValid then
   begin
@@ -908,7 +899,8 @@ end;
 
 procedure TCustomPaintBox32.Resize;
 begin
-  ResizeBuffer;
+  if (not (csLoading in ComponentState)) then
+    ResizeBuffer;
   BufferValid := False;
   inherited;
 end;
@@ -961,7 +953,8 @@ end;
 procedure TCustomPaintBox32.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
 begin
   inherited;
-  if csDesigning in ComponentState then ResizeBuffer;
+  if (not (csLoading in ComponentState)) then
+    ResizeBuffer;
   FBufferValid := False;
 end;
 
@@ -983,10 +976,11 @@ end;
 
 procedure TCustomPaintBox32.WMGetDlgCode(var Msg: {$IFDEF FPC}TLMessage{$ELSE}TWmGetDlgCode{$ENDIF});
 begin
-  with Msg do if pboWantArrowKeys in Options then
-    Result:= Result or DLGC_WANTARROWS
-  else
-    Result:= Result and not DLGC_WANTARROWS;
+  with Msg do
+    if pboWantArrowKeys in Options then
+      Result:= Result or DLGC_WANTARROWS
+    else
+      Result:= Result and not DLGC_WANTARROWS;
 end;
 
 procedure TCustomPaintBox32.WMPaint(var Message: {$IFDEF FPC}TLMPaint{$ELSE}TMessage{$ENDIF});
@@ -1049,6 +1043,52 @@ end;
 
 { TCustomImage32 }
 
+constructor TCustomImage32.Create(AOwner: TComponent);
+begin
+  inherited;
+  ControlStyle := [csAcceptsControls, csCaptureMouse, csClickEvents,
+    csDoubleClicks, csReplicatable, csOpaque];
+  FBitmap := TBitmap32.Create;
+  FBitmap.OnResize := BitmapResizeHandler;
+
+  FLayers := CreateLayerCollection;
+
+  FRepaintOptimizer.RegisterLayerCollection(FLayers);
+  RepaintMode := rmFull;
+
+  FPaintStages := TPaintStages.Create;
+  FScaleX := 1;
+  FScaleY := 1;
+  SetXForm(0, 0, 1, 1);
+
+  InitDefaultStages;
+end;
+
+destructor TCustomImage32.Destroy;
+begin
+  BeginUpdate;
+  FPaintStages.Free;
+  FRepaintOptimizer.UnregisterLayerCollection(FLayers);
+  FLayers.Free;
+  FBitmap.Free;
+  inherited;
+end;
+
+function TCustomImage32.GetLayerCollectionClass: TLayerCollectionClass;
+begin
+  Result := TLayerCollection;
+end;
+
+function TCustomImage32.CreateLayerCollection: TLayerCollection;
+begin
+  Result := GetLayerCollectionClass.Create(Self);
+
+  TLayerCollectionAccess(Result).OnChange := LayerCollectionChangeHandler;
+  TLayerCollectionAccess(Result).OnGDIUpdate := LayerCollectionGDIUpdateHandler;
+  TLayerCollectionAccess(Result).OnGetViewportScale := LayerCollectionGetViewportScaleHandler;
+  TLayerCollectionAccess(Result).OnGetViewportShift := LayerCollectionGetViewportShiftHandler;
+end;
+
 procedure TCustomImage32.BeginUpdate;
 begin
   // disable OnChange & OnChanging generation
@@ -1103,41 +1143,6 @@ begin
   end;
 end;
 
-function TCustomImage32.CanAutoSize(var NewWidth, NewHeight: Integer): Boolean;
-var
-  W, H: Integer;
-begin
-  InvalidateCache;
-  Result := True;
-  W := Bitmap.Width;
-  H := Bitmap.Height;
-  if ScaleMode = smScale then
-  begin
-    W := Round(W * Scale);
-    H := Round(H * Scale);
-  end;
-  if not (csDesigning in ComponentState) or (W > 0) and (H > 0) then
-  begin
-    if Align in [alNone, alLeft, alRight] then NewWidth := W;
-    if Align in [alNone, alTop, alBottom] then NewHeight := H;
-  end;
-end;
-
-procedure TCustomImage32.Changed;
-begin
-  if FUpdateCount = 0 then
-  begin
-    Invalidate;
-    if Assigned(FOnChange) then FOnChange(Self);
-  end;
-end;
-
-procedure TCustomImage32.Update(const Rect: TRect);
-begin
-  if FRepaintOptimizer.Enabled then
-    FRepaintOptimizer.AreaUpdateHandler(Self, Rect, AREAINFO_RECT);
-end;
-
 procedure TCustomImage32.BitmapResizeHandler(Sender: TObject);
 begin
   BitmapResized;
@@ -1149,7 +1154,8 @@ begin
   BitmapChanged(Bitmap.Boundsrect);
 end;
 
-procedure TCustomImage32.BitmapAreaChangeHandler(Sender: TObject; const Area: TRect; const Info: Cardinal);
+procedure TCustomImage32.BitmapAreaChangeHandler(Sender: TObject;
+  const Area: TRect; const Info: Cardinal);
 var
   T, R: TRect;
   Width, Tx, Ty, I, J: Integer;
@@ -1184,7 +1190,8 @@ begin
   BitmapChanged(Area);
 end;
 
-procedure TCustomImage32.BitmapDirectAreaChangeHandler(Sender: TObject; const Area: TRect; const Info: Cardinal);
+procedure TCustomImage32.BitmapDirectAreaChangeHandler(Sender: TObject;
+  const Area: TRect; const Info: Cardinal);
 var
   T, R: TRect;
   Width, Tx, Ty, I, J: Integer;
@@ -1223,30 +1230,33 @@ begin
   end;
 end;
 
-procedure TCustomImage32.LayerCollectionChangeHandler(Sender: TObject);
+function TCustomImage32.CanAutoSize(var NewWidth, NewHeight: Integer): Boolean;
+var
+  W, H: Integer;
 begin
-  Changed;
+  InvalidateCache;
+  Result := True;
+  W := Bitmap.Width;
+  H := Bitmap.Height;
+  if ScaleMode = smScale then
+  begin
+    W := Round(W * Scale);
+    H := Round(H * Scale);
+  end;
+  if not (csDesigning in ComponentState) or (W > 0) and (H > 0) then
+  begin
+    if Align in [alNone, alLeft, alRight] then NewWidth := W;
+    if Align in [alNone, alTop, alBottom] then NewHeight := H;
+  end;
 end;
 
-procedure TCustomImage32.LayerCollectionGDIUpdateHandler(Sender: TObject);
+procedure TCustomImage32.Changed;
 begin
-  Paint;
-end;
-
-procedure TCustomImage32.LayerCollectionGetViewportScaleHandler(Sender: TObject;
-  out ScaleX, ScaleY: TFloat);
-begin
-  UpdateCache;
-  ScaleX := CachedScaleX;
-  ScaleY := CachedScaleY;
-end;
-
-procedure TCustomImage32.LayerCollectionGetViewportShiftHandler(Sender: TObject;
-  out ShiftX, ShiftY: TFloat);
-begin
-  UpdateCache;
-  ShiftX := CachedShiftX;
-  ShiftY := CachedShiftY;
+  if FUpdateCount = 0 then
+  begin
+    Invalidate;
+    if Assigned(FOnChange) then FOnChange(Self);
+  end;
 end;
 
 function TCustomImage32.ControlToBitmap(const APoint: TPoint): TPoint;
@@ -1284,52 +1294,6 @@ begin
     else
       Result.Y := (Y - CachedShiftY) * CachedRecScaleY;
   end;
-end;
-
-
-constructor TCustomImage32.Create(AOwner: TComponent);
-begin
-  inherited;
-  ControlStyle := [csAcceptsControls, csCaptureMouse, csClickEvents,
-    csDoubleClicks, csReplicatable, csOpaque];
-  FBitmap := TBitmap32.Create;
-  FBitmap.OnResize := BitmapResizeHandler;
-
-  FLayers := TLayerCollection.Create(Self);
-  with TLayerCollectionAccess(FLayers) do
-  begin
-    OnChange := LayerCollectionChangeHandler;
-    OnGDIUpdate := LayerCollectionGDIUpdateHandler;
-    OnGetViewportScale := LayerCollectionGetViewportScaleHandler;
-    OnGetViewportShift := LayerCollectionGetViewportShiftHandler;
-  end;
-
-  FRepaintOptimizer.RegisterLayerCollection(FLayers);
-  RepaintMode := rmFull;
-
-  FPaintStages := TPaintStages.Create;
-  FScaleX := 1;
-  FScaleY := 1;
-  SetXForm(0, 0, 1, 1);
-
-  InitDefaultStages;
-end;
-
-procedure TCustomImage32.DblClick;
-begin
-  Layers.MouseListener := nil;
-  MouseUp(mbLeft, [], 0, 0);
-  inherited;
-end;
-
-destructor TCustomImage32.Destroy;
-begin
-  BeginUpdate;
-  FPaintStages.Free;
-  FRepaintOptimizer.UnregisterLayerCollection(FLayers);
-  FLayers.Free;
-  FBitmap.Free;
-  inherited;
 end;
 
 procedure TCustomImage32.DoInitStages;
@@ -1673,8 +1637,42 @@ end;
 
 procedure TCustomImage32.InvalidateCache;
 begin
-  if FRepaintOptimizer.Enabled then FRepaintOptimizer.Reset;
+  if FRepaintOptimizer.Enabled and CacheValid then
+    FRepaintOptimizer.Reset;
   CacheValid := False;
+end;
+
+function TCustomImage32.InvalidRectsAvailable: Boolean;
+begin
+  // avoid calling inherited, we have a totally different behaviour here...
+  DoPrepareInvalidRects;
+  Result := FInvalidRects.Count > 0;
+end;
+
+procedure TCustomImage32.LayerCollectionChangeHandler(Sender: TObject);
+begin
+  Changed;
+end;
+
+procedure TCustomImage32.LayerCollectionGDIUpdateHandler(Sender: TObject);
+begin
+  Paint;
+end;
+
+procedure TCustomImage32.LayerCollectionGetViewportScaleHandler(Sender: TObject;
+  out ScaleX, ScaleY: TFloat);
+begin
+  UpdateCache;
+  ScaleX := CachedScaleX;
+  ScaleY := CachedScaleY;
+end;
+
+procedure TCustomImage32.LayerCollectionGetViewportShiftHandler(Sender: TObject;
+  out ShiftX, ShiftY: TFloat);
+begin
+  UpdateCache;
+  ShiftX := CachedShiftX;
+  ShiftY := CachedShiftY;
 end;
 
 procedure TCustomImage32.Loaded;
@@ -1690,7 +1688,7 @@ begin
   inherited;
 
   if TabStop and CanFocus then SetFocus;
-  
+
   if Layers.MouseEvents then
     Layer := TLayerCollectionAccess(Layers).MouseDown(Button, Shift, X, Y)
   else
@@ -1719,14 +1717,17 @@ end;
 procedure TCustomImage32.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
   Layer: TCustomLayer;
+  MouseListener: TCustomLayer;
 begin
+  MouseListener := TLayerCollectionAccess(Layers).MouseListener;
+
   if Layers.MouseEvents then
     Layer := TLayerCollectionAccess(Layers).MouseUp(Button, Shift, X, Y)
   else
     Layer := nil;
 
   // unlock the capture using same criteria as was used to acquire it
-  if (Button = mbLeft) or (TLayerCollectionAccess(Layers).MouseListener <> nil) then
+  if (Button = mbLeft) or ((MouseListener <> nil) and (TLayerCollectionAccess(Layers).MouseListener = nil)) then
     MouseCapture := False;
 
   MouseUp(Button, Shift, X, Y, Layer);
@@ -1735,19 +1736,22 @@ end;
 procedure TCustomImage32.MouseDown(Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer; Layer: TCustomLayer);
 begin
-  if Assigned(FOnMouseDown) then FOnMouseDown(Self, Button, Shift, X, Y, Layer);
+  if Assigned(FOnMouseDown) then
+    FOnMouseDown(Self, Button, Shift, X, Y, Layer);
 end;
 
 procedure TCustomImage32.MouseMove(Shift: TShiftState; X, Y: Integer;
   Layer: TCustomLayer);
 begin
-  if Assigned(FOnMouseMove) then FOnMouseMove(Self, Shift, X, Y, Layer);
+  if Assigned(FOnMouseMove) then
+    FOnMouseMove(Self, Shift, X, Y, Layer);
 end;
 
 procedure TCustomImage32.MouseUp(Button: TMouseButton; Shift: TShiftState;
   X, Y: Integer; Layer: TCustomLayer);
 begin
-  if Assigned(FOnMouseUp) then FOnMouseUp(Self, Button, Shift, X, Y, Layer);
+  if Assigned(FOnMouseUp) then
+    FOnMouseUp(Self, Button, Shift, X, Y, Layer);
 end;
 
 procedure TCustomImage32.MouseLeave;
@@ -1932,30 +1936,6 @@ begin
     CachedRecScaleY := 0;
 end;
 
-procedure TCustomImage32.UpdateCache;
-begin
-  if CacheValid then Exit;
-  CachedBitmapRect := GetBitmapRect;
-
-  if Bitmap.Empty then
-    SetXForm(0, 0, 1, 1)
-  else
-    SetXForm(
-      CachedBitmapRect.Left, CachedBitmapRect.Top,
-      (CachedBitmapRect.Right - CachedBitmapRect.Left) / Bitmap.Width,
-      (CachedBitmapRect.Bottom - CachedBitmapRect.Top) / Bitmap.Height
-    );
-
-  CacheValid := True;
-end;
-
-function TCustomImage32.InvalidRectsAvailable: Boolean;
-begin
-  // avoid calling inherited, we have a totally different behaviour here...
-  DoPrepareInvalidRects;
-  Result := FInvalidRects.Count > 0;
-end;
-
 procedure TCustomImage32.SetRepaintMode(const Value: TRepaintMode);
 begin
   inherited;
@@ -1976,6 +1956,30 @@ begin
     FBitmap.OnChange := BitmapChangeHandler;
   end;
 end;
+
+procedure TCustomImage32.Update(const Rect: TRect);
+begin
+  if FRepaintOptimizer.Enabled then
+    FRepaintOptimizer.AreaUpdateHandler(Self, Rect, AREAINFO_RECT);
+end;
+
+procedure TCustomImage32.UpdateCache;
+begin
+  if CacheValid then Exit;
+  CachedBitmapRect := GetBitmapRect;
+
+  if Bitmap.Empty then
+    SetXForm(0, 0, 1, 1)
+  else
+    SetXForm(
+      CachedBitmapRect.Left, CachedBitmapRect.Top,
+      (CachedBitmapRect.Right - CachedBitmapRect.Left) / Bitmap.Width,
+      (CachedBitmapRect.Bottom - CachedBitmapRect.Top) / Bitmap.Height
+    );
+
+  CacheValid := True;
+end;
+
 
 { TIVScrollProperties }
 
@@ -2146,6 +2150,12 @@ end;
 
 function TCustomImgView32.GetScrollBarsVisible: Boolean;
 begin
+  if AutoSize then
+  begin
+    Result := False;
+    Exit;
+  end;
+
   Result := True;
   if Assigned(FScrollBars) and Assigned(HScroll) and Assigned(VScroll) then
   case FScrollBars.Visibility of
@@ -2154,8 +2164,9 @@ begin
     svHidden:
       Result := False;
     svAuto:
-      Result := (HScroll.Range > (TRangeBarAccess(HScroll).EffectiveWindow + VScroll.Width)) or
-                (VScroll.Range > (TRangeBarAccess(VScroll).EffectiveWindow + HScroll.Height));
+      Result := (BitmapAlign = baCustom) and (ScaleMode in [smScale,smNormal]) and
+                ((HScroll.Range > (TRangeBarAccess(HScroll).EffectiveWindow + VScroll.Width)) or
+                 (VScroll.Range > (TRangeBarAccess(VScroll).EffectiveWindow + HScroll.Height)));
   end;
 end;
 
@@ -2403,12 +2414,12 @@ begin
   else
   begin
     if W > Sz.Cx + 2 * ScaledOversize then // Viewport is bigger than scaled Bitmap
-      OffsetHorz := (W - Sz.Cx) / 2
+      OffsetHorz := (W - Sz.Cx) * 0.5
     else
       OffsetHorz := -HScroll.Position + ScaledOversize;
 
     if H > Sz.Cy + 2 * ScaledOversize then // Viewport is bigger than scaled Bitmap
-      OffsetVert := (H - Sz.Cy) / 2
+      OffsetVert := (H - Sz.Cy) * 0.5
     else
       OffsetVert := -VScroll.Position + ScaledOversize;
   end;

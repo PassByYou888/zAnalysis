@@ -503,12 +503,14 @@ end;
   INPUT PARAMETERS:
   M   -   number of rows of op(A)
   N   -   number of columns of op(A)
+
   A   -   target matrix
   IA  -   submatrix offset (row index)
   JA  -   submatrix offset (column index)
   OpA -   operation type:
   * OpA=0     =>  op(A) = A
   * OpA=1     =>  op(A) = A^T
+
   X   -   input vector
   IX  -   subvector offset
   IY  -   subvector offset
@@ -593,10 +595,12 @@ end;
   J1      -   submatrix offset
   IsUpper -   whether matrix is upper triangular
   IsUnit  -   whether matrix is unitriangular
+
   OpType  -   transformation type:
   * 0 - no transformation
   * 1 - transposition
   * 2 - conjugate transposition
+
   C   -   matrix, actial matrix is stored in C[I2:I2+M-1,J2:J2+N-1]
   I2  -   submatrix offset
   J2  -   submatrix offset
@@ -665,7 +669,7 @@ begin
           CMatrixRightTRSM(M, s1, a, i1, j1, IsUpper, IsUnit, OpType, x, i2, j2);
           Exit;
         end;
-      if not IsUpper and (OpType = 0) then
+      if (not IsUpper) and (OpType = 0) then
         begin
 
           //
@@ -678,7 +682,7 @@ begin
           CMatrixRightTRSM(M, s1, a, i1, j1, IsUpper, IsUnit, OpType, x, i2, j2);
           Exit;
         end;
-      if not IsUpper and (OpType <> 0) then
+      if (not IsUpper) and (OpType <> 0) then
         begin
 
           //
@@ -765,14 +769,14 @@ begin
           CMatrixLeftTRSM(s2, n, a, i1 + s1, j1 + s1, IsUpper, IsUnit, OpType, x, i2 + s1, j2);
           Exit;
         end;
-      if not IsUpper and (OpType = 0) then
+      if (not IsUpper) and (OpType = 0) then
         begin
           CMatrixLeftTRSM(s1, n, a, i1, j1, IsUpper, IsUnit, OpType, x, i2, j2);
           CMatrixGEMM(s2, n, s1, C_Complex(-1.0), a, i1 + s1, j1, 0, x, i2, j2, 0, C_Complex(1.0), x, i2 + s1, j2);
           CMatrixLeftTRSM(s2, n, a, i1 + s1, j1 + s1, IsUpper, IsUnit, OpType, x, i2 + s1, j2);
           Exit;
         end;
-      if not IsUpper and (OpType <> 0) then
+      if (not IsUpper) and (OpType <> 0) then
         begin
           CMatrixLeftTRSM(s2, n, a, i1 + s1, j1 + s1, IsUpper, IsUnit, OpType, x, i2 + s1, j2);
           CMatrixGEMM(s1, n, s2, C_Complex(-1.0), a, i1 + s1, j1, OpType, x, i2 + s1, j2, 0, C_Complex(1.0), x, i2, j2);
@@ -832,14 +836,14 @@ begin
           RMatrixRightTRSM(M, s1, a, i1, j1, IsUpper, IsUnit, OpType, x, i2, j2);
           Exit;
         end;
-      if not IsUpper and (OpType = 0) then
+      if (not IsUpper) and (OpType = 0) then
         begin
           RMatrixRightTRSM(M, s2, a, i1 + s1, j1 + s1, IsUpper, IsUnit, OpType, x, i2, j2 + s1);
           RMatrixGEMM(M, s1, s2, -1.0, x, i2, j2 + s1, 0, a, i1 + s1, j1, 0, 1.0, x, i2, j2);
           RMatrixRightTRSM(M, s1, a, i1, j1, IsUpper, IsUnit, OpType, x, i2, j2);
           Exit;
         end;
-      if not IsUpper and (OpType <> 0) then
+      if (not IsUpper) and (OpType <> 0) then
         begin
           RMatrixRightTRSM(M, s1, a, i1, j1, IsUpper, IsUnit, OpType, x, i2, j2);
           RMatrixGEMM(M, s2, s1, -1.0, x, i2, j2, 0, a, i1 + s1, j1, OpType, 1.0, x, i2, j2 + s1);
@@ -900,14 +904,14 @@ begin
           RMatrixLeftTRSM(s2, n, a, i1 + s1, j1 + s1, IsUpper, IsUnit, OpType, x, i2 + s1, j2);
           Exit;
         end;
-      if not IsUpper and (OpType = 0) then
+      if (not IsUpper) and (OpType = 0) then
         begin
           RMatrixLeftTRSM(s1, n, a, i1, j1, IsUpper, IsUnit, OpType, x, i2, j2);
           RMatrixGEMM(s2, n, s1, -1.0, a, i1 + s1, j1, 0, x, i2, j2, 0, 1.0, x, i2 + s1, j2);
           RMatrixLeftTRSM(s2, n, a, i1 + s1, j1 + s1, IsUpper, IsUnit, OpType, x, i2 + s1, j2);
           Exit;
         end;
-      if not IsUpper and (OpType <> 0) then
+      if (not IsUpper) and (OpType <> 0) then
         begin
           RMatrixLeftTRSM(s2, n, a, i1 + s1, j1 + s1, IsUpper, IsUnit, OpType, x, i2 + s1, j2);
           RMatrixGEMM(s1, n, s2, -1.0, a, i1 + s1, j1, OpType, x, i2 + s1, j2, 0, 1.0, x, i2, j2);
@@ -933,12 +937,14 @@ end;
   N       -   matrix size, N>=0
   K       -   matrix size, K>=0
   Alpha   -   coefficient
+
   A       -   matrix
   IA      -   submatrix offset
   JA      -   submatrix offset
   OpTypeA -   multiplication type:
   * 0 - A*A^H is calculated
   * 2 - A^H*A is calculated
+
   Beta    -   coefficient
   C       -   matrix
   IC      -   submatrix offset
@@ -946,9 +952,8 @@ end;
   IsUpper -   whether C is upper triangular or lower triangular
   ************************************************************************ *)
 procedure CMatrixSYRK(n: TLInt; k: TLInt; alpha: TLFloat;
-  const a: TLComplexMatrix; IA: TLInt; ja: TLInt;
-  OpTypeA: TLInt; beta: TLFloat; var c: TLComplexMatrix;
-  IC: TLInt; JC: TLInt; IsUpper: Boolean);
+  const a: TLComplexMatrix; IA: TLInt; ja: TLInt; OpTypeA: TLInt;
+  beta: TLFloat; var c: TLComplexMatrix; IC: TLInt; JC: TLInt; IsUpper: Boolean);
 var
   s1: TLInt;
   s2: TLInt;
@@ -992,7 +997,7 @@ begin
           CMatrixSYRK(s2, k, alpha, a, IA + s1, ja, OpTypeA, beta, c, IC + s1, JC + s1, IsUpper);
           Exit;
         end;
-      if (OpTypeA = 0) and not IsUpper then
+      if (OpTypeA = 0) and (not IsUpper) then
         begin
           CMatrixSYRK(s1, k, alpha, a, IA, ja, OpTypeA, beta, c, IC, JC, IsUpper);
           CMatrixGEMM(s2, s1, k, C_Complex(alpha), a, IA + s1, ja, 0, a, IA, ja, 2, C_Complex(beta), c, IC + s1, JC);
@@ -1006,7 +1011,7 @@ begin
           CMatrixSYRK(s2, k, alpha, a, IA, ja + s1, OpTypeA, beta, c, IC + s1, JC + s1, IsUpper);
           Exit;
         end;
-      if (OpTypeA <> 0) and not IsUpper then
+      if (OpTypeA <> 0) and (not IsUpper) then
         begin
           CMatrixSYRK(s1, k, alpha, a, IA, ja, OpTypeA, beta, c, IC, JC, IsUpper);
           CMatrixGEMM(s2, s1, k, C_Complex(alpha), a, IA, ja + s1, 2, a, IA, ja, 0, C_Complex(beta), c, IC + s1, JC);
@@ -1068,7 +1073,7 @@ begin
           RMatrixSYRK(s2, k, alpha, a, IA + s1, ja, OpTypeA, beta, c, IC + s1, JC + s1, IsUpper);
           Exit;
         end;
-      if (OpTypeA = 0) and not IsUpper then
+      if (OpTypeA = 0) and (not IsUpper) then
         begin
           RMatrixSYRK(s1, k, alpha, a, IA, ja, OpTypeA, beta, c, IC, JC, IsUpper);
           RMatrixGEMM(s2, s1, k, alpha, a, IA + s1, ja, 0, a, IA, ja, 1, beta, c, IC + s1, JC);
@@ -1082,7 +1087,7 @@ begin
           RMatrixSYRK(s2, k, alpha, a, IA, ja + s1, OpTypeA, beta, c, IC + s1, JC + s1, IsUpper);
           Exit;
         end;
-      if (OpTypeA <> 0) and not IsUpper then
+      if (OpTypeA <> 0) and (not IsUpper) then
         begin
           RMatrixSYRK(s1, k, alpha, a, IA, ja, OpTypeA, beta, c, IC, JC, IsUpper);
           RMatrixGEMM(s2, s1, k, alpha, a, IA, ja + s1, 1, a, IA, ja, 0, beta, c, IC + s1, JC);
@@ -1101,8 +1106,7 @@ end;
 
   Additional info:
   * cache-oblivious algorithm is used.
-  * multiplication result replaces C. If Beta=0, C elements are not used in
-  calculations (not multiplied by zero - just not referenced)
+  * multiplication result replaces C. If Beta=0, C elements are not used in calculations (not multiplied by zero - just not referenced)
   * if Alpha=0, A is not used (not multiplied by zero - just not referenced)
   * if both Beta and Alpha are zero, C is filled by zeros.
 
@@ -1111,6 +1115,7 @@ end;
   M       -   matrix size, N>0
   K       -   matrix size, K>0
   Alpha   -   coefficient
+
   A       -   matrix
   IA      -   submatrix offset
   JA      -   submatrix offset
@@ -1118,6 +1123,7 @@ end;
   * 0 - no transformation
   * 1 - transposition
   * 2 - conjugate transposition
+
   B       -   matrix
   IB      -   submatrix offset
   JB      -   submatrix offset
@@ -1125,16 +1131,16 @@ end;
   * 0 - no transformation
   * 1 - transposition
   * 2 - conjugate transposition
+
   Beta    -   coefficient
   C       -   matrix
   IC      -   submatrix offset
   JC      -   submatrix offset
   ************************************************************************ *)
-procedure CMatrixGEMM(M: TLInt; n: TLInt; k: TLInt;
-  alpha: TLComplex; const a: TLComplexMatrix; IA: TLInt;
-  ja: TLInt; OpTypeA: TLInt; const b: TLComplexMatrix;
-  IB: TLInt; JB: TLInt; OpTypeB: TLInt; beta: TLComplex;
-  var c: TLComplexMatrix; IC: TLInt; JC: TLInt);
+procedure CMatrixGEMM(M: TLInt; n: TLInt; k: TLInt; alpha: TLComplex;
+  const a: TLComplexMatrix; IA: TLInt; ja: TLInt; OpTypeA: TLInt;
+  const b: TLComplexMatrix; IB: TLInt; JB: TLInt; OpTypeB: TLInt;
+  beta: TLComplex; var c: TLComplexMatrix; IC: TLInt; JC: TLInt);
 var
   s1: TLInt;
   s2: TLInt;
@@ -1218,10 +1224,9 @@ end;
   Same as CMatrixGEMM, but for real numbers.
   OpType may be only 0 or 1.
   ************************************************************************ *)
-procedure RMatrixGEMM(M: TLInt; n: TLInt; k: TLInt;
-  alpha: TLFloat; const a: TLMatrix; IA: TLInt;
-  ja: TLInt; OpTypeA: TLInt; const b: TLMatrix;
-  IB: TLInt; JB: TLInt; OpTypeB: TLInt;
+procedure RMatrixGEMM(M: TLInt; n: TLInt; k: TLInt; alpha: TLFloat;
+  const a: TLMatrix; IA: TLInt; ja: TLInt; OpTypeA: TLInt;
+  const b: TLMatrix; IB: TLInt; JB: TLInt; OpTypeB: TLInt;
   beta: TLFloat; var c: TLMatrix; IC: TLInt; JC: TLInt);
 var
   s1: TLInt;
@@ -1306,14 +1311,12 @@ end;
 (* ************************************************************************
   TLComplex ABLASSplitLength
   ************************************************************************ *)
-procedure ABLASInternalSplitLength(n: TLInt; nb: TLInt;
-  var n1: TLInt; var n2: TLInt);
+procedure ABLASInternalSplitLength(n: TLInt; nb: TLInt; var n1: TLInt; var n2: TLInt);
 var
   r: TLInt;
 begin
   if n <= nb then
     begin
-
       //
       // Block size, no further splitting
       //
@@ -1322,13 +1325,11 @@ begin
     end
   else
     begin
-
       //
       // Greater than block size
       //
       if n mod nb <> 0 then
         begin
-
           //
           // Split remainder
           //
@@ -1337,7 +1338,6 @@ begin
         end
       else
         begin
-
           //
           // Split on block boundaries
           //
@@ -2666,7 +2666,6 @@ begin
     end;
   if (OpTypeA <> 0) and (OpTypeB = 0) then
     begin
-
       //
       // A'*B
       //

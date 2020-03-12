@@ -54,7 +54,7 @@ begin
       d2 := umlRandomRange(-5000, 5000);
       lr.AddMemory([d1, d2], [d1 - d2], IntToStr(i));
     end;
-  lr.TrainP(1000, procedure(const LSender: TLearn; const state: Boolean)
+  lr.TrainingP(1000, procedure(const LSender: TLearn; const state: Boolean)
     begin
       if state then
         begin
@@ -81,7 +81,7 @@ begin
       d1 := umlRandomRange(1, 100);
       d2 := umlRandomRange(1, 100);
       v:=lr.processFV([d1, d2]);
-      DoStatus('%f - %f=%d (%s)', [d1, d2, Round(v), lr.SearchToken([v])]);
+      DoStatus('%f - %f=%d (%s)', [d1, d2, Round(v), lr.SearchToken([v]).Text]);
     end;
 end;
 

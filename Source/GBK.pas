@@ -22,14 +22,14 @@ unit GBK;
 
 interface
 
-uses DoStatusIO, CoreClasses, PascalStrings, MemoryStream64, ListEngine, UnicodeMixedLib,
-  UPascalStrings;
+uses DoStatusIO, CoreClasses, PascalStrings, MemoryStream64, ListEngine, UnicodeMixedLib, UPascalStrings;
 
 { any text fixed }
 function GBKString(const s: TUPascalString): TUPascalString;
 
 { Pinyin encoding conversion, support simplified port body }
 function Py(const s: TUPascalString; const multiPy: Boolean): TUPascalString;
+function PyNoSpace(const s: TUPascalString): TUPascalString;
 
 { Simplified to Traditional }
 function S2T(const s: TUPascalString): TUPascalString;
@@ -77,7 +77,7 @@ begin
       Result := s;
 end;
 
-function Py(const s: TUPascalString; const multiPy: Boolean): TUPascalString;
+function Py_(const s: TUPascalString; const multiPy: Boolean): TUPascalString;
 var
   ns, n2, n3: TUPascalString;
   i, j: Integer;
@@ -99,7 +99,7 @@ begin
           n3 := PY_Table(n2, Successed);
           if Successed then
             begin
-              Result.Append(n3 + #32);
+              Result.Append(n3 + #0);
               inc(i, j);
               Break;
             end;
@@ -114,25 +114,66 @@ begin
               if n2.Exists(#32) then
                 begin
                   if multiPy then
-                      Result.Append('(' + n2.ReplaceChar(#32, ',') + ')' + #32)
+                      Result.Append('(' + n2.ReplaceChar(#32, ',') + ')' + #0)
                   else
-                      Result.Append(umlGetFirstStr(n2.Text, #32).Text + #32);
+                      Result.Append(umlGetFirstStr(n2.Text, #32).Text + #0);
                 end
               else
-                  Result.Append(n2 + #32);
+                  Result.Append(n2 + #0);
             end
           else
             begin
-              if (Result.Len > 1) and (Result.Last = #32) and (CharIn(ns[i], ' {}[]\|:";'#39'<>?,./~!@#$%^&*()-=_+')) then
-                  Result.DeleteLast;
-
               Result.Append(FastPY(ns[i], multiPy));
             end;
           inc(i);
         end;
     end;
-  if (Result.Len > 1) and (Result.Last = #32) then
+end;
+
+function Py(const s: TUPascalString; const multiPy: Boolean): TUPascalString;
+begin
+  Result := Py_(s, multiPy);
+  if (Result.Len > 1) and (Result.Last = #0) then
       Result.DeleteLast;
+  Result := Result.ReplaceChar(#0, #32);
+end;
+
+function PyNoSpace(const s: TUPascalString): TUPascalString;
+var
+  n: TUPascalString;
+  c: USystemChar;
+  wordFirst, avail: Boolean;
+  i: Integer;
+begin
+  n := Py_(s, False);
+
+  wordFirst := True;
+  i := 1;
+  Result := '';
+  avail := True;
+  while i <= n.L do
+    begin
+      if wordFirst then
+        begin
+          c := n.UpperChar[i];
+          wordFirst := False;
+        end
+      else
+        begin
+          c := n[i];
+          if c = #0 then
+            begin
+              wordFirst := True;
+              avail := False;
+              if UCharIn(Result.Last, '1234') then
+                  Result.DeleteLast;
+            end;
+        end;
+      if avail then
+          Result.Append(c);
+      avail := True;
+      inc(i);
+    end;
 end;
 
 function S2T_Table(const s: TUPascalString; var Successed: Boolean): TUPascalString;

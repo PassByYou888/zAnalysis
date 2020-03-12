@@ -13,9 +13,20 @@ object FFMPEGReaderDemoForm: TFFMPEGReaderDemoForm
   OnPaint = FormPaint
   DesignerMasterStyle = 0
   object Timer1: TTimer
-    Interval = 1
+    Interval = 10
     OnTimer = Timer1Timer
     Left = 56
     Top = 48
+  end
+  object FitDrawCheckBox: TCheckBox
+    Anchors = [akTop, akRight]
+    StyledSettings = [Family, Size, Style]
+    Position.X = 744.000000000000000000
+    Size.Width = 81.000000000000000000
+    Size.Height = 19.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    Text = 'Fit Draw'
+    TextSettings.FontColor = claRed
   end
 end

@@ -34,12 +34,17 @@ type
     Sws_Ctx: PSwsContext;
     FOutput: TCoreClassStream;
     FAutoFreeOutput: Boolean;
+    function InternalOpenCodec(const codec: PAVCodec; const Width, Height, PSF, gop, bFrame: Integer; const Bitrate: Int64): Boolean;
   public
     constructor Create(output_: TCoreClassStream);
     destructor Destroy; override;
 
-    function OpenCodec(const codec_id: TAVCodecID; const Width, Height, PSF, gop, bFrame: Integer; const Bitrate: Int64): Boolean;
-    function OpenH264Codec(const Width, Height, PSF: Integer; const Bitrate: Int64): Boolean;
+    class procedure PrintEncodec();
+
+    function OpenCodec(const codec_name: U_String; const Width, Height, PSF, gop, bFrame: Integer; const Bitrate: Int64): Boolean; overload;
+    function OpenCodec(const codec_id: TAVCodecID; const Width, Height, PSF, gop, bFrame: Integer; const Bitrate: Int64): Boolean; overload;
+    function OpenH264Codec(const Width, Height, PSF: Integer; const Bitrate: Int64): Boolean; overload;
+    function OpenH264Codec(const codec_name: U_String; const Width, Height, PSF: Integer; const Bitrate: Int64): Boolean; overload;
     procedure CloseCodec;
 
     function EncodeRaster(raster: TMemoryRaster): Boolean;
@@ -53,33 +58,12 @@ type
 
 implementation
 
-constructor TFFMPEG_Writer.Create(output_: TCoreClassStream);
-begin
-  inherited Create;
-  videoCodecCtx := nil;
-  videoCodec := nil;
-  AVPacket_ptr := nil;
-  Frame := nil;
-  FrameRGB := nil;
-  Sws_Ctx := nil;
-  FOutput := output_;
-  FAutoFreeOutput := False;
-end;
-
-destructor TFFMPEG_Writer.Destroy;
-begin
-  CloseCodec;
-  if FAutoFreeOutput then
-      DisposeObject(FOutput);
-  inherited Destroy;
-end;
-
-function TFFMPEG_Writer.OpenCodec(const codec_id: TAVCodecID; const Width, Height, PSF, gop, bFrame: Integer; const Bitrate: Int64): Boolean;
+function TFFMPEG_Writer.InternalOpenCodec(const codec: PAVCodec; const Width, Height, PSF, gop, bFrame: Integer; const Bitrate: Int64): Boolean;
 var
   r: Integer;
 begin
   Result := False;
-  videoCodec := avcodec_find_encoder(codec_id);
+  videoCodec := codec;
   if not Assigned(videoCodec) then
     begin
       DoStatus('not found Codec.');
@@ -154,9 +138,62 @@ begin
   Result := True;
 end;
 
+constructor TFFMPEG_Writer.Create(output_: TCoreClassStream);
+begin
+  inherited Create;
+  videoCodecCtx := nil;
+  videoCodec := nil;
+  AVPacket_ptr := nil;
+  Frame := nil;
+  FrameRGB := nil;
+  Sws_Ctx := nil;
+  FOutput := output_;
+  FAutoFreeOutput := False;
+end;
+
+destructor TFFMPEG_Writer.Destroy;
+begin
+  CloseCodec;
+  if FAutoFreeOutput then
+      DisposeObject(FOutput);
+  inherited Destroy;
+end;
+
+class procedure TFFMPEG_Writer.PrintEncodec;
+var
+  codec: PAVCodec;
+begin
+  codec := av_codec_next(nil);
+  while codec <> nil do
+    begin
+      if av_codec_is_encoder(codec) = 1 then
+          DoStatus('ID[%d] Name[%s] %s', [Integer(codec^.id), string(codec^.name), string(codec^.long_name)]);
+      codec := av_codec_next(codec);
+    end;
+end;
+
+function TFFMPEG_Writer.OpenCodec(const codec_name: U_String; const Width, Height, PSF, gop, bFrame: Integer; const Bitrate: Int64): Boolean;
+var
+  tmp: Pointer;
+begin
+  tmp := codec_name.BuildPlatformPChar();
+  Result := InternalOpenCodec(avcodec_find_encoder_by_name(tmp), Width, Height, PSF, gop, bFrame, Bitrate);
+  U_String.FreePlatformPChar(tmp);
+end;
+
+function TFFMPEG_Writer.OpenCodec(const codec_id: TAVCodecID; const Width, Height, PSF, gop, bFrame: Integer; const Bitrate: Int64): Boolean;
+begin
+  Result := InternalOpenCodec(avcodec_find_encoder(codec_id), Width, Height, PSF, gop, bFrame, Bitrate);
+end;
+
 function TFFMPEG_Writer.OpenH264Codec(const Width, Height, PSF: Integer; const Bitrate: Int64): Boolean;
 begin
-  Result := OpenCodec(AV_CODEC_ID_H264, Width, Height, PSF, PSF, PSF, Bitrate);
+  Result := OpenCodec(AV_CODEC_ID_H264, Width, Height, PSF, PSF div 2, 1, Bitrate);
+end;
+
+function TFFMPEG_Writer.OpenH264Codec(const codec_name: U_String; const Width, Height, PSF: Integer; const Bitrate: Int64): Boolean;
+begin
+  Result := OpenCodec(codec_name, Width, Height, PSF, PSF div 2, 1, Bitrate);
 end;
 
 procedure TFFMPEG_Writer.CloseCodec;
@@ -281,8 +318,8 @@ end;
 
 function TFFMPEG_Writer.Size: Int64;
 begin
-  Result := LockOutput.Size;
-  UnLockOutoput;
+  Result := LockOutput().Size;
+  UnLockOutoput();
 end;
 
 function TFFMPEG_Writer.LockOutput: TCoreClassStream;

@@ -95,12 +95,9 @@ const
 
 procedure MLPKFoldCVGeneral(const n: TMultiLayerPerceptron;
   const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
-  Restarts: TLInt; FoldsCount: TLInt; LMAlgorithm: Boolean;
-  WStep: TLFloat; MAXITS: TLInt; var Info: TLInt;
-  var Rep: TMLPReport; var CVRep: TMLPCVReport); forward;
-procedure MLPKFoldSplit(const xy: TLMatrix; NPoints: TLInt;
-  NClasses: TLInt; FoldsCount: TLInt; StratifiedSplits: Boolean;
-  var Folds: TLIVec); forward;
+  Restarts: TLInt; FoldsCount: TLInt; LMAlgorithm: Boolean; WStep: TLFloat; MAXITS: TLInt;
+  var Info: TLInt; var Rep: TMLPReport; var CVRep: TMLPCVReport); forward;
+procedure MLPKFoldSplit(const xy: TLMatrix; NPoints: TLInt; NClasses: TLInt; FoldsCount: TLInt; StratifiedSplits: Boolean; var Folds: TLIVec); forward;
 
 (* ************************************************************************
   //  Neural network training using modified Levenberg-Marquardt with exact
@@ -496,22 +493,17 @@ var
   WBest: TLVec;
   EBest: TLFloat;
 
-  zLock: TCriticalSection;
+  zLock: TCritical;
   RepPtr: ^TMLPReport;
   InfoPtr: ^TLInt;
 
   NetworkPtr: PMultiLayerPerceptron;
 
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer;
-    Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(pass: Integer);
   var
     _Parallel_I: TLInt;
     NetworkCopy: TMultiLayerPerceptron;
-    // X: TLVec;
-    // Y: TLVec;
-    // D: TLVec;
-    // Z: TLMatrix;
     InvInfo: TLInt;
     InternalRep: TMinLBFGSReport;
     SolverRep: TDenseSolverReport;
@@ -533,6 +525,7 @@ var
     v: TLFloat;
     k: TLInt;
   begin
+    MT19937Randomize();
 
     SetLength(WT, WCount);
     SetLength(WDir, WCount);
@@ -559,18 +552,15 @@ var
         //
         // gradient
         //
-        APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.x[0], 0,
-          WCount - 1);
+        APVMove(@NetworkCopy.Weights[0], 0, WCount - 1, @State.x[0], 0, WCount - 1);
         MLPGradBatch(NetworkCopy, xy, NPoints, State.f, State.g);
 
         //
         // weight decay
         //
-        v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-          @NetworkCopy.Weights[0], 0, WCount - 1);
+        v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
         State.f := State.f + 0.5 * Decay * v;
-        APVAdd(@State.g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
-          WCount - 1, Decay);
+        APVAdd(@State.g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
 
         //
         // next iteration
@@ -588,8 +578,7 @@ var
     // E with regularized error.
     //
     MLPHessianBatch(NetworkCopy, xy, NPoints, E, g, h);
-    v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-      @NetworkCopy.Weights[0], 0, WCount - 1);
+    v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
     E := E + 0.5 * Decay * v;
     APVAdd(@g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
     k := 0;
@@ -612,10 +601,8 @@ var
         _Parallel_I := 0;
         while _Parallel_I <= WCount - 1 do
           begin
-            APVMove(@HMod[_Parallel_I][0], 0, WCount - 1, @h[_Parallel_I][0], 0,
-              WCount - 1);
-            HMod[_Parallel_I, _Parallel_I] :=
-              HMod[_Parallel_I, _Parallel_I] + LAMBDA;
+            APVMove(@HMod[_Parallel_I][0], 0, WCount - 1, @h[_Parallel_I][0], 0, WCount - 1);
+            HMod[_Parallel_I, _Parallel_I] := HMod[_Parallel_I, _Parallel_I] + LAMBDA;
             inc(_Parallel_I);
           end;
         SPD := SPDMatrixCholesky(HMod, WCount, True);
@@ -626,8 +613,7 @@ var
             Nu := Nu * 2;
             Continue;
           end;
-        SPDMatrixCholeskySolve(HMod, WCount, True, g, SolverInfo,
-          SolverRep, WDir);
+        SPDMatrixCholeskySolve(HMod, WCount, True, g, SolverInfo, SolverRep, WDir);
         if SolverInfo < 0 then
           begin
             LAMBDA := LAMBDA * LambdaUp * Nu;
@@ -643,10 +629,8 @@ var
         // 2. If error(w+wdir)>error(w), increase lambda
         //
         APVAdd(@NetworkCopy.Weights[0], 0, WCount - 1, @WDir[0], 0, WCount - 1);
-        XNorm2 := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-          @NetworkCopy.Weights[0], 0, WCount - 1);
-        StepNorm := APVDotProduct(@WDir[0], 0, WCount - 1, @WDir[0], 0,
-          WCount - 1);
+        XNorm2 := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
+        StepNorm := APVDotProduct(@WDir[0], 0, WCount - 1, @WDir[0], 0, WCount - 1);
         StepNorm := Sqrt(StepNorm);
         ENew := MLPError(NetworkCopy, xy, NPoints) + 0.5 * Decay * XNorm2;
         if AP_FP_Less(StepNorm, LMStepTol * (1 + Sqrt(XNorm2))) then
@@ -692,8 +676,7 @@ var
             _Parallel_I := 0;
             while _Parallel_I <= WCount - 1 do
               begin
-                v := APVDotProduct(@State.x[0], _Parallel_I, WCount - 1,
-                  @HMod[_Parallel_I][0], _Parallel_I, WCount - 1);
+                v := APVDotProduct(@State.x[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0], _Parallel_I, WCount - 1);
                 NetworkCopy.Weights[_Parallel_I] := WBase[_Parallel_I] + v;
                 inc(_Parallel_I);
               end;
@@ -708,8 +691,7 @@ var
             while _Parallel_I <= WCount - 1 do
               begin
                 v := g[_Parallel_I];
-                APVAdd(@State.g[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0],
-                  _Parallel_I, WCount - 1, v);
+                APVAdd(@State.g[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0], _Parallel_I, WCount - 1, v);
                 inc(_Parallel_I);
               end;
 
@@ -717,15 +699,13 @@ var
             // weight decay
             // grad(x'*x) = A'*(x0+A*t)
             //
-            v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-              @NetworkCopy.Weights[0], 0, WCount - 1);
+            v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
             State.f := State.f + 0.5 * Decay * v;
             _Parallel_I := 0;
             while _Parallel_I <= WCount - 1 do
               begin
                 v := Decay * NetworkCopy.Weights[_Parallel_I];
-                APVAdd(@State.g[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0],
-                  _Parallel_I, WCount - 1, v);
+                APVAdd(@State.g[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0], _Parallel_I, WCount - 1, v);
                 inc(_Parallel_I);
               end;
 
@@ -743,17 +723,14 @@ var
         _Parallel_I := 0;
         while _Parallel_I <= WCount - 1 do
           begin
-            v := APVDotProduct(@WT[0], _Parallel_I, WCount - 1,
-              @HMod[_Parallel_I][0], _Parallel_I, WCount - 1);
+            v := APVDotProduct(@WT[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0], _Parallel_I, WCount - 1);
             NetworkCopy.Weights[_Parallel_I] := WBase[_Parallel_I] + v;
             inc(_Parallel_I);
           end;
         MLPHessianBatch(NetworkCopy, xy, NPoints, E, g, h);
-        v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-          @NetworkCopy.Weights[0], 0, WCount - 1);
+        v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
         E := E + 0.5 * Decay * v;
-        APVAdd(@g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
-          WCount - 1, Decay);
+        APVAdd(@g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
         k := 0;
         while k <= WCount - 1 do
           begin
@@ -772,8 +749,7 @@ var
     //
     // update WBest
     //
-    v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-      @NetworkCopy.Weights[0], 0, WCount - 1);
+    v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
     E := 0.5 * Decay * v + MLPError(NetworkCopy, xy, NPoints);
     if AP_FP_Less(E, EBest) then
       begin
@@ -847,19 +823,15 @@ begin
   NetworkPtr := @Network;
   RepPtr := @Rep;
   InfoPtr := @Info;
-  zLock := TCriticalSection.Create;
+  zLock := TCritical.Create;
 
 {$IFDEF FPC}
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 1, PtrInt(Restarts));
+  FPCParallelFor(@Nested_ParallelFor, 1, Restarts);
 {$ELSE}
-  TParallel.for(1, Restarts, procedure(pass: TLInt)
+  DelphiParallelFor(1, Restarts, procedure(pass: TLInt)
     var
       _Parallel_I: TLInt;
       NetworkCopy: TMultiLayerPerceptron;
-      // X: TLVec;
-      // Y: TLVec;
-      // D: TLVec;
-      // Z: TLMatrix;
       InvInfo: TLInt;
       InternalRep: TMinLBFGSReport;
       SolverRep: TDenseSolverReport;
@@ -881,7 +853,7 @@ begin
       v: TLFloat;
       k: TLInt;
     begin
-
+      MT19937Randomize();
       SetLength(WT, WCount);
       SetLength(WDir, WCount);
       SetLength(WBase, WCount);
@@ -914,11 +886,9 @@ begin
           //
           // weight decay
           //
-          v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-            @NetworkCopy.Weights[0], 0, WCount - 1);
+          v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
           State.f := State.f + 0.5 * Decay * v;
-          APVAdd(@State.g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
-            WCount - 1, Decay);
+          APVAdd(@State.g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
 
           //
           // next iteration
@@ -936,11 +906,9 @@ begin
       // E with regularized error.
       //
       MLPHessianBatch(NetworkCopy, xy, NPoints, E, g, h);
-      v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-        @NetworkCopy.Weights[0], 0, WCount - 1);
+      v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
       E := E + 0.5 * Decay * v;
-      APVAdd(@g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
-        WCount - 1, Decay);
+      APVAdd(@g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
       k := 0;
       while k <= WCount - 1 do
         begin
@@ -961,10 +929,8 @@ begin
           _Parallel_I := 0;
           while _Parallel_I <= WCount - 1 do
             begin
-              APVMove(@HMod[_Parallel_I][0], 0, WCount - 1, @h[_Parallel_I][0], 0,
-                WCount - 1);
-              HMod[_Parallel_I, _Parallel_I] := HMod[_Parallel_I,
-                _Parallel_I] + LAMBDA;
+              APVMove(@HMod[_Parallel_I][0], 0, WCount - 1, @h[_Parallel_I][0], 0, WCount - 1);
+              HMod[_Parallel_I, _Parallel_I] := HMod[_Parallel_I, _Parallel_I] + LAMBDA;
               inc(_Parallel_I);
             end;
           SPD := SPDMatrixCholesky(HMod, WCount, True);
@@ -975,8 +941,7 @@ begin
               Nu := Nu * 2;
               Continue;
             end;
-          SPDMatrixCholeskySolve(HMod, WCount, True, g, SolverInfo,
-            SolverRep, WDir);
+          SPDMatrixCholeskySolve(HMod, WCount, True, g, SolverInfo, SolverRep, WDir);
           if SolverInfo < 0 then
             begin
               LAMBDA := LAMBDA * LambdaUp * Nu;
@@ -992,10 +957,8 @@ begin
           // 2. If error(w+wdir)>error(w), increase lambda
           //
           APVAdd(@NetworkCopy.Weights[0], 0, WCount - 1, @WDir[0], 0, WCount - 1);
-          XNorm2 := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-            @NetworkCopy.Weights[0], 0, WCount - 1);
-          StepNorm := APVDotProduct(@WDir[0], 0, WCount - 1, @WDir[0], 0,
-            WCount - 1);
+          XNorm2 := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
+          StepNorm := APVDotProduct(@WDir[0], 0, WCount - 1, @WDir[0], 0, WCount - 1);
           StepNorm := Sqrt(StepNorm);
           ENew := MLPError(NetworkCopy, xy, NPoints) + 0.5 * Decay * XNorm2;
           if AP_FP_Less(StepNorm, LMStepTol * (1 + Sqrt(XNorm2))) then
@@ -1023,8 +986,7 @@ begin
               InfoPtr^ := -9;
               Exit;
             end;
-          APVMove(@WBase[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
-            WCount - 1);
+          APVMove(@WBase[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
           _Parallel_I := 0;
           while _Parallel_I <= WCount - 1 do
             begin
@@ -1042,8 +1004,7 @@ begin
               _Parallel_I := 0;
               while _Parallel_I <= WCount - 1 do
                 begin
-                  v := APVDotProduct(@State.x[0], _Parallel_I, WCount - 1,
-                    @HMod[_Parallel_I][0], _Parallel_I, WCount - 1);
+                  v := APVDotProduct(@State.x[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0], _Parallel_I, WCount - 1);
                   NetworkCopy.Weights[_Parallel_I] := WBase[_Parallel_I] + v;
                   inc(_Parallel_I);
                 end;
@@ -1058,8 +1019,7 @@ begin
               while _Parallel_I <= WCount - 1 do
                 begin
                   v := g[_Parallel_I];
-                  APVAdd(@State.g[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0],
-                    _Parallel_I, WCount - 1, v);
+                  APVAdd(@State.g[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0], _Parallel_I, WCount - 1, v);
                   inc(_Parallel_I);
                 end;
 
@@ -1067,15 +1027,13 @@ begin
               // weight decay
               // grad(x'*x) = A'*(x0+A*t)
               //
-              v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-                @NetworkCopy.Weights[0], 0, WCount - 1);
+              v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
               State.f := State.f + 0.5 * Decay * v;
               _Parallel_I := 0;
               while _Parallel_I <= WCount - 1 do
                 begin
                   v := Decay * NetworkCopy.Weights[_Parallel_I];
-                  APVAdd(@State.g[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0],
-                    _Parallel_I, WCount - 1, v);
+                  APVAdd(@State.g[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0], _Parallel_I, WCount - 1, v);
                   inc(_Parallel_I);
                 end;
 
@@ -1093,17 +1051,14 @@ begin
           _Parallel_I := 0;
           while _Parallel_I <= WCount - 1 do
             begin
-              v := APVDotProduct(@WT[0], _Parallel_I, WCount - 1,
-                @HMod[_Parallel_I][0], _Parallel_I, WCount - 1);
+              v := APVDotProduct(@WT[0], _Parallel_I, WCount - 1, @HMod[_Parallel_I][0], _Parallel_I, WCount - 1);
               NetworkCopy.Weights[_Parallel_I] := WBase[_Parallel_I] + v;
               inc(_Parallel_I);
             end;
           MLPHessianBatch(NetworkCopy, xy, NPoints, E, g, h);
-          v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-            @NetworkCopy.Weights[0], 0, WCount - 1);
+          v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
           E := E + 0.5 * Decay * v;
-          APVAdd(@g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0,
-            WCount - 1, Decay);
+          APVAdd(@g[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1, Decay);
           k := 0;
           while k <= WCount - 1 do
             begin
@@ -1122,8 +1077,7 @@ begin
       //
       // update WBest
       //
-      v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1,
-        @NetworkCopy.Weights[0], 0, WCount - 1);
+      v := APVDotProduct(@NetworkCopy.Weights[0], 0, WCount - 1, @NetworkCopy.Weights[0], 0, WCount - 1);
       E := 0.5 * Decay * v + MLPError(NetworkCopy, xy, NPoints);
       if AP_FP_Less(E, EBest) then
         begin
@@ -1302,14 +1256,13 @@ var
   WBest: TLVec;
   EBest: TLFloat;
 
-  zLock: TCriticalSection;
+  zLock: TCritical;
   NetworkPtr: PMultiLayerPerceptron;
   RepCopy: TMLPReport;
   zProcessData: PMLPProcessData;
 
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer;
-  Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(pass: Integer);
   var
     E: TLFloat;
     v: TLFloat;
@@ -1318,6 +1271,7 @@ var
     InternalRep: TMinLBFGSReport;
     NetworkCopy: TMultiLayerPerceptron;
   begin
+    MT19937Randomize();
     SetLength(w, WCount);
     MLPCopy(NetworkPtr^, NetworkCopy);
 
@@ -1417,13 +1371,13 @@ begin
 
   NetworkPtr := @Network;
   RepCopy := Rep;
-  zLock := TCriticalSection.Create;
+  zLock := TCritical.Create;
 
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 1, PtrInt(Restarts));
+    FPCParallelFor(@Nested_ParallelFor, 1, Restarts);
 {$ELSE}
-    TParallel.for(1, Restarts, procedure(pass: TLInt)
+    DelphiParallelFor(1, Restarts, procedure(pass: TLInt)
       var
         E: TLFloat;
         v: TLFloat;
@@ -1432,6 +1386,7 @@ begin
         InternalRep: TMinLBFGSReport;
         NetworkCopy: TMultiLayerPerceptron;
       begin
+        MT19937Randomize();
         SetLength(w, WCount);
         MLPCopy(NetworkPtr^, NetworkCopy);
 
@@ -1506,12 +1461,11 @@ var
   WBest: TLVec;
   EBest: TLFloat;
 
-  zLock: TCriticalSection;
+  zLock: TCritical;
   NetworkPtr: PMultiLayerPerceptron;
   RepCopy: TMLPReport;
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer;
-  Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(pass: Integer);
   var
     Ebegin: TLFloat; { the initial error }
     E: TLFloat;
@@ -1523,6 +1477,7 @@ var
     Decay: TLFloat;
     Iteration: TLInt;
   begin
+    MT19937Randomize();
     try
       Decay := 1;
       Iteration := 0;
@@ -1644,12 +1599,12 @@ begin
 
   NetworkPtr := @Network;
   RepCopy := Rep;
-  zLock := TCriticalSection.Create;
+  zLock := TCritical.Create;
 
 {$IFDEF FPC}
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 1, PtrInt(Restarts));
+  FPCParallelFor(@Nested_ParallelFor, 1, Restarts);
 {$ELSE}
-  TParallel.for(1, Restarts, procedure(pass: TLInt)
+  DelphiParallelFor(1, Restarts, procedure(pass: TLInt)
     var
       Ebegin: TLFloat; { the initial error }
       E: TLFloat;
@@ -1661,6 +1616,7 @@ begin
       Decay: TLFloat;
       Iteration: TLInt;
     begin
+      MT19937Randomize();
       try
         Decay := 1;
         Iteration := 0;
@@ -1905,9 +1861,8 @@ end;
   ************************************************************************ *)
 procedure MLPKFoldCVGeneral(const n: TMultiLayerPerceptron;
 const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
-Restarts: TLInt; FoldsCount: TLInt; LMAlgorithm: Boolean;
-WStep: TLFloat; MAXITS: TLInt; var Info: TLInt;
-var Rep: TMLPReport; var CVRep: TMLPCVReport);
+Restarts: TLInt; FoldsCount: TLInt; LMAlgorithm: Boolean; WStep: TLFloat; MAXITS: TLInt;
+var Info: TLInt; var Rep: TMLPReport; var CVRep: TMLPCVReport);
 var
   i: TLInt;
   FOld: TLInt;
@@ -2104,9 +2059,7 @@ end;
   "NClasses>0" means that we have classification task.
   "NClasses<0" means regression task with -NClasses real outputs.
   ************************************************************************ *)
-procedure MLPKFoldSplit(const xy: TLMatrix; NPoints: TLInt;
-NClasses: TLInt; FoldsCount: TLInt; StratifiedSplits: Boolean;
-var Folds: TLIVec);
+procedure MLPKFoldSplit(const xy: TLMatrix; NPoints: TLInt; NClasses: TLInt; FoldsCount: TLInt; StratifiedSplits: Boolean; var Folds: TLIVec);
 var
   i: TLInt;
   j: TLInt;
@@ -2118,10 +2071,8 @@ begin
   //
   Assert(NPoints > 0, 'MLPKFoldSplit: wrong NPoints!');
   Assert((NClasses > 1) or (NClasses < 0), 'MLPKFoldSplit: wrong NClasses!');
-  Assert((FoldsCount >= 2) and (FoldsCount <= NPoints),
-    'MLPKFoldSplit: wrong FoldsCount!');
-  Assert(not StratifiedSplits,
-    'MLPKFoldSplit: stratified splits are not supported!');
+  Assert((FoldsCount >= 2) and (FoldsCount <= NPoints), 'MLPKFoldSplit: wrong FoldsCount!');
+  Assert(not StratifiedSplits, 'MLPKFoldSplit: stratified splits are not supported!');
 
   //
   // Folds

@@ -21,7 +21,7 @@ type
     procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
-    procedure DoStatusMethod(AText: SystemString; const ID: Integer);
+    procedure DoStatusMethod(Text_: SystemString; const ID: Integer);
   public
     { Public declarations }
   end;
@@ -45,15 +45,15 @@ var
 begin
   mr := NewRaster;
   BitmapToMemoryBitmap(Image1.Bitmap, mr);
-  mr.CalibrateRotate(RColor(0, 0, 0, 0));
+  mr.CalibrateRotate(RColor($FF, $FF, $FF));
   MemoryBitmapToBitmap(mr, Image2.Bitmap);
   disposeObject(mr);
 end;
 
 procedure THoughRotationDetectAndCalibrateMainForm.DoStatusMethod(
-  AText: SystemString; const ID: Integer);
+  Text_: SystemString; const ID: Integer);
 begin
-  Memo1.Lines.Add(AText);
+  Memo1.Lines.Add(Text_);
   Memo1.GoToTextEnd;
 end;
 

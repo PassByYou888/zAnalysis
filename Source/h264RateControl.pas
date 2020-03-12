@@ -513,7 +513,7 @@ begin
         if FrameType = SLICE_I then
             Result := Max(Result - intra_bonus, 0);
       end;
-    1:
+    else
       begin
         Result := clip3(0, frames[FrameNum].qp + qp_comp, 51);
       end;

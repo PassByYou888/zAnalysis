@@ -18,42 +18,18 @@
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
 
-procedure CMatrixLUPRec(var a: TLComplexMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward;
-
-procedure RMatrixLUPRec(var a: TLMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward;
-
-procedure CMatrixPLURec(var a: TLComplexMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward;
-
-procedure RMatrixPLURec(var a: TLMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward;
-
-procedure CMatrixLUP2(var a: TLComplexMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward;
-
-procedure RMatrixLUP2(var a: TLMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward;
-
-procedure CMatrixPLU2(var a: TLComplexMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward;
-
-procedure RMatrixPLU2(var a: TLMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward;
-
-function HPDMatrixCholeskyRec(var a: TLComplexMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean; forward;
-
-function SPDMatrixCholeskyRec(var a: TLMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean; forward;
-
-function HPDMatrixCholesky2(var aaa: TLComplexMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean; forward;
-
-function SPDMatrixCholesky2(var aaa: TLMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean; forward;
-
+procedure CMatrixLUPRec(var a: TLComplexMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward;
+procedure RMatrixLUPRec(var a: TLMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward;
+procedure CMatrixPLURec(var a: TLComplexMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward;
+procedure RMatrixPLURec(var a: TLMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward;
+procedure CMatrixLUP2(var a: TLComplexMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward;
+procedure RMatrixLUP2(var a: TLMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward;
+procedure CMatrixPLU2(var a: TLComplexMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec); forward;
+procedure RMatrixPLU2(var a: TLMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLVec); forward;
+function HPDMatrixCholeskyRec(var a: TLComplexMatrix; Offs, n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean; forward;
+function SPDMatrixCholeskyRec(var a: TLMatrix; Offs, n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean; forward;
+function HPDMatrixCholesky2(var aaa: TLComplexMatrix; Offs, n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean; forward;
+function SPDMatrixCholesky2(var aaa: TLMatrix; Offs, n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean; forward;
 
 (* ************************************************************************
   LU decomposition of a general real matrix with row pivoting
@@ -75,7 +51,6 @@ function SPDMatrixCholesky2(var aaa: TLMatrix; Offs: TLInt;
   A       -   array[0..M-1, 0..N-1].
   M       -   number of rows in matrix A.
   N       -   number of columns in matrix A.
-
 
   OUTPUT PARAMETERS:
   A       -   matrices L and U in compact form:
@@ -100,10 +75,8 @@ end;
   * P = P0*P1*...*PK, K=min(M,N)-1,
   Pi - permutation matrix for I and Pivots[I]
 
-  This is cache-oblivous implementation
-
-  of LU decomposition. It is optimized
-  for square matrices. As for rectangular matrices:
+  This is cache-oblivous implementation of LU decomposition.
+  It is optimized for square matrices. As for rectangular matrices:
   * best case - M>>N
   * worst case - N>>M, small M, large N, matrix does not fit in CPU cache
 
@@ -112,15 +85,13 @@ end;
   M       -   number of rows in matrix A.
   N       -   number of columns in matrix A.
 
-
   OUTPUT PARAMETERS:
   A       -   matrices L and U in compact form:
   * L is stored under main diagonal
   * U is stored on and above main diagonal
   Pivots  -   permutation matrix in compact form. array[0..Min(M-1,N-1)].
   ************************************************************************ *)
-procedure CMatrixLU(var a: TLComplexMatrix; M: TLInt; n: TLInt;
-  var Pivots: TLIVec);
+procedure CMatrixLU(var a: TLComplexMatrix; M: TLInt; n: TLInt; var Pivots: TLIVec);
 begin
   Assert(M > 0, 'CMatrixLU: incorrect M!');
   Assert(n > 0, 'CMatrixLU: incorrect N!');
@@ -130,30 +101,25 @@ end;
 (* ************************************************************************
   Cache-oblivious Cholesky decomposition
 
-  The algorithm computes Cholesky decomposition  of  a  Hermitian  positive-
-  definite matrix. The result of an algorithm is a representation  of  A  as
-  A=U'*U  or A=L*L' (here X' detones conj(X^T)).
+  The algorithm computes Cholesky decomposition of a Hermitian positive-definite matrix.
+  The result of an algorithm is a representation of A as A=U'*U or A=L*L' (here X' detones conj(X^T)).
 
   INPUT PARAMETERS:
-  A       -   upper or lower triangle of a factorized matrix.
-  array with elements [0..N-1, 0..N-1].
-  N       -   size of matrix A.
-  IsUpper -   if IsUpper=True, then A contains an upper triangle of
-  a symmetric matrix, otherwise A contains a lower one.
+  A       - upper or lower triangle of a factorized matrix. array with elements [0..N-1, 0..N-1].
+  N       - size of matrix A.
+  IsUpper - if IsUpper=True, then A contains an upper triangle of a symmetric matrix, otherwise A contains a lower one.
 
   OUTPUT PARAMETERS:
-  A       -   the result of factorization. If IsUpper=True, then
-  the upper triangle contains matrix U, so that A = U'*U,
-  and the elements below the main diagonal are not modified.
+  A       - the result of factorization.
+  If IsUpper=True, then the upper triangle contains matrix U, so that A = U'*U, and the elements below the main diagonal are not modified.
   Similarly, if IsUpper = False.
 
   RESULT:
-  If  the  matrix  is  positive-definite,  the  function  returns  True.
-  Otherwise, the function returns False. Contents of A is not determined
-  in such case.
+  If the matrix is positive-definite, the function returns True.
+  Otherwise, the function returns False.
+  Contents of A is not determined in such case.
   ************************************************************************ *)
-function HPDMatrixCholesky(var a: TLComplexMatrix; n: TLInt;
-  IsUpper: Boolean): Boolean;
+function HPDMatrixCholesky(var a: TLComplexMatrix; n: TLInt; IsUpper: Boolean): Boolean;
 var
   tmp: TLComplexVec;
 begin
@@ -169,30 +135,24 @@ end;
 (* ************************************************************************
   Cache-oblivious Cholesky decomposition
 
-  The algorithm computes Cholesky decomposition  of  a  symmetric  positive-
-  definite matrix. The result of an algorithm is a representation  of  A  as
-  A=U^T*U  or A=L*L^T
+  The algorithm computes Cholesky decomposition of a symmetric positive-definite matrix.
+  The result of an algorithm is a representation of A as A=U^T*U or A=L*L^T
 
   INPUT PARAMETERS:
-  A       -   upper or lower triangle of a factorized matrix.
-  array with elements [0..N-1, 0..N-1].
-  N       -   size of matrix A.
-  IsUpper -   if IsUpper=True, then A contains an upper triangle of
-  a symmetric matrix, otherwise A contains a lower one.
+  A        -  upper or lower triangle of a factorized matrix. array with elements [0..N-1, 0..N-1].
+  N        -  size of matrix A.
+  IsUpper  -  if IsUpper=True, then A contains an upper triangle of a symmetric matrix, otherwise A contains a lower one.
 
   OUTPUT PARAMETERS:
-  A       -   the result of factorization. If IsUpper=True, then
-  the upper triangle contains matrix U, so that A = U^T*U,
-  and the elements below the main diagonal are not modified.
+  A        -  the result of factorization. If IsUpper=True, then the upper triangle contains matrix U,
+  so that A = U^T*U, and the elements below the main diagonal are not modified.
   Similarly, if IsUpper = False.
 
   RESULT:
-  If  the  matrix  is  positive-definite,  the  function  returns  True.
-  Otherwise, the function returns False. Contents of A is not determined
-  in such case.
+  If the matrix is positive-definite, the function returns True. Otherwise, the function returns False.
+  Contents of A is not determined in such case.
   ************************************************************************ *)
-function SPDMatrixCholesky(var a: TLMatrix; n: TLInt;
-  IsUpper: Boolean): Boolean;
+function SPDMatrixCholesky(var a: TLMatrix; n: TLInt; IsUpper: Boolean): Boolean;
 var
   tmp: TLVec;
 begin
@@ -205,8 +165,7 @@ begin
   Result := SPDMatrixCholeskyRec(a, 0, n, IsUpper, tmp);
 end;
 
-procedure RMatrixLUP(var a: TLMatrix; M: TLInt; n: TLInt;
-  var Pivots: TLIVec);
+procedure RMatrixLUP(var a: TLMatrix; M: TLInt; n: TLInt; var Pivots: TLIVec);
 var
   tmp: TLVec;
   i: TLInt;
@@ -263,8 +222,7 @@ begin
     end;
 end;
 
-procedure CMatrixLUP(var a: TLComplexMatrix; M: TLInt; n: TLInt;
-  var Pivots: TLIVec);
+procedure CMatrixLUP(var a: TLComplexMatrix; M: TLInt; n: TLInt; var Pivots: TLIVec);
 var
   tmp: TLComplexVec;
   i: TLInt;
@@ -328,8 +286,7 @@ begin
     end;
 end;
 
-procedure RMatrixPLU(var a: TLMatrix; M: TLInt; n: TLInt;
-  var Pivots: TLIVec);
+procedure RMatrixPLU(var a: TLMatrix; M: TLInt; n: TLInt; var Pivots: TLIVec);
 var
   tmp: TLVec;
   i: TLInt;
@@ -386,8 +343,7 @@ begin
     end;
 end;
 
-procedure CMatrixPLU(var a: TLComplexMatrix; M: TLInt; n: TLInt;
-  var Pivots: TLIVec);
+procedure CMatrixPLU(var a: TLComplexMatrix; M: TLInt; n: TLInt; var Pivots: TLIVec);
 var
   tmp: TLComplexVec;
   i: TLInt;
@@ -455,9 +411,7 @@ end;
   Recurrent TLComplex LU subroutine.
   Never call it directly.
   ************************************************************************ *)
-procedure CMatrixLUPRec(var a: TLComplexMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec;
-  var tmp: TLComplexVec);
+procedure CMatrixLUPRec(var a: TLComplexMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec);
 var
   i: TLInt;
   m1: TLInt;
@@ -572,9 +526,7 @@ end;
   Recurrent real LU subroutine.
   Never call it directly.
   ************************************************************************ *)
-procedure RMatrixLUPRec(var a: TLMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec;
-  var tmp: TLVec);
+procedure RMatrixLUPRec(var a: TLMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLVec);
 var
   i: TLInt;
   m1: TLInt;
@@ -692,9 +644,7 @@ end;
   Recurrent TLComplex LU subroutine.
   Never call it directly.
   ************************************************************************ *)
-procedure CMatrixPLURec(var a: TLComplexMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec;
-  var tmp: TLComplexVec);
+procedure CMatrixPLURec(var a: TLComplexMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec);
 var
   i: TLInt;
   n1: TLInt;
@@ -806,9 +756,7 @@ end;
   Recurrent real LU subroutine.
   Never call it directly.
   ************************************************************************ *)
-procedure RMatrixPLURec(var a: TLMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec;
-  var tmp: TLVec);
+procedure RMatrixPLURec(var a: TLMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLVec);
 var
   i: TLInt;
   n1: TLInt;
@@ -890,9 +838,7 @@ end;
 (* ************************************************************************
   TLComplex LUP kernel
   ************************************************************************ *)
-procedure CMatrixLUP2(var a: TLComplexMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec;
-  var tmp: TLComplexVec);
+procedure CMatrixLUP2(var a: TLComplexMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec);
 var
   i: TLInt;
   j: TLInt;
@@ -987,9 +933,7 @@ end;
 (* ************************************************************************
   Real LUP kernel
   ************************************************************************ *)
-procedure RMatrixLUP2(var a: TLMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec;
-  var tmp: TLVec);
+procedure RMatrixLUP2(var a: TLMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLVec);
 var
   i: TLInt;
   j: TLInt;
@@ -1075,12 +1019,12 @@ begin
     end;
 end;
 
-(* ************************************************************************
+(*
+  ************************************************************************
   TLComplex PLU kernel
-  ************************************************************************ *)
-procedure CMatrixPLU2(var a: TLComplexMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec;
-  var tmp: TLComplexVec);
+  ************************************************************************
+*)
+procedure CMatrixPLU2(var a: TLComplexMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLComplexVec);
 var
   i: TLInt;
   j: TLInt;
@@ -1169,12 +1113,12 @@ begin
     end;
 end;
 
-(* ************************************************************************
+(*
+  ************************************************************************
   Real PLU kernel
-  ************************************************************************ *)
-procedure RMatrixPLU2(var a: TLMatrix; Offs: TLInt;
-  M: TLInt; n: TLInt; var Pivots: TLIVec;
-  var tmp: TLVec);
+  ************************************************************************
+*)
+procedure RMatrixPLU2(var a: TLMatrix; Offs, M, n: TLInt; var Pivots: TLIVec; var tmp: TLVec);
 var
   i: TLInt;
   j: TLInt;
@@ -1260,11 +1204,12 @@ begin
     end;
 end;
 
-(* ************************************************************************
+(*
+  ************************************************************************
   Recursive computational subroutine for HPDMatrixCholesky
-  ************************************************************************ *)
-function HPDMatrixCholeskyRec(var a: TLComplexMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean;
+  ************************************************************************
+*)
+function HPDMatrixCholeskyRec(var a: TLComplexMatrix; Offs, n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean;
 var
   n1: TLInt;
   n2: TLInt;
@@ -1335,11 +1280,12 @@ begin
     end;
 end;
 
-(* ************************************************************************
+(*
+  ************************************************************************
   Recursive computational subroutine for SPDMatrixCholesky
-  ************************************************************************ *)
-function SPDMatrixCholeskyRec(var a: TLMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean;
+  ************************************************************************
+*)
+function SPDMatrixCholeskyRec(var a: TLMatrix; Offs, n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean;
 var
   n1: TLInt;
   n2: TLInt;
@@ -1410,11 +1356,12 @@ begin
     end;
 end;
 
-(* ************************************************************************
+(*
+  ************************************************************************
   Level-2 Hermitian Cholesky subroutine.
-  ************************************************************************ *)
-function HPDMatrixCholesky2(var aaa: TLComplexMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean;
+  ************************************************************************
+*)
+function HPDMatrixCholesky2(var aaa: TLComplexMatrix; Offs, n: TLInt; IsUpper: Boolean; var tmp: TLComplexVec): Boolean;
 var
   i: TLInt;
   j: TLInt;
@@ -1562,11 +1509,12 @@ begin
     end;
 end;
 
-(* ************************************************************************
+(*
+  ************************************************************************
   Level-2 Cholesky subroutine
-  ************************************************************************ *)
-function SPDMatrixCholesky2(var aaa: TLMatrix; Offs: TLInt;
-  n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean;
+  ************************************************************************
+*)
+function SPDMatrixCholesky2(var aaa: TLMatrix; Offs, n: TLInt; IsUpper: Boolean; var tmp: TLVec): Boolean;
 var
   i: TLInt;
   j: TLInt;
@@ -1699,6 +1647,4 @@ begin
           inc(j);
         end;
     end;
-end; 
- 
- 
+end;

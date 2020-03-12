@@ -78,15 +78,14 @@ function MNLAvgError(var LM: TLogitModel; const xy: TLMatrix; NPoints: TLInt): T
 function MNLAvgRelError(var LM: TLogitModel; const xy: TLMatrix; SSize: TLInt): TLFloat; forward;
 function MNLClsError(var LM: TLogitModel; const xy: TLMatrix; NPoints: TLInt): TLInt; forward;
 
-
 const
-  LogitXTOL   = 100 * MachineEpsilon;
-  LogitFTOL   = 0.0001;
-  LogitGTOL   = 0.3;
+  LogitXTOL = 100 * MachineEpsilon;
+  LogitFTOL = 0.0001;
+  LogitGTOL = 0.3;
   LogitMAXFEV = 20;
   LogitSTPMIN = 1.0E-2;
   LogitSTPMAX = 1.0E5;
-  LogitVNum   = 6;
+  LogitVNum = 6;
 
 procedure MNLIExp(var w: TLVec; const x: TLVec); forward;
 
@@ -105,7 +104,6 @@ procedure MNLMCSTEP(var STX: TLFloat; var fx: TLFloat;
   var dy: TLFloat; var Stp: TLFloat; const FP: TLFloat;
   const DP: TLFloat; var BRACKT: Boolean; const STMIN: TLFloat;
   const STMAX: TLFloat; var Info: TLInt); forward;
-
 
 (* ************************************************************************
   //  This subroutine trains logit model.
@@ -131,39 +129,39 @@ procedure MNLTrainH(const xy: TLMatrix; NPoints: TLInt;
   NVars: TLInt; NClasses: TLInt; var Info: TLInt;
   var LM: TLogitModel; var Rep: TMNLReport);
 var
-  i         : TLInt;
-  j         : TLInt;
-  k         : TLInt;
-  SSize     : TLInt;
-  AllSame   : Boolean;
-  Offs      : TLInt;
-  Threshold : TLFloat;
-  WMinStep  : TLFloat;
-  Decay     : TLFloat;
-  WDim      : TLInt;
-  ExpOffs   : TLInt;
-  v         : TLFloat;
-  s         : TLFloat;
-  Network   : TMultiLayerPerceptron;
-  NIn       : TLInt;
-  NOut      : TLInt;
-  WCount    : TLInt;
-  E         : TLFloat;
-  g         : TLVec;
-  h         : TLMatrix;
-  SPD       : Boolean;
-  x         : TLVec;
-  y         : TLVec;
-  WBase     : TLVec;
-  WStep     : TLFloat;
-  WDir      : TLVec;
-  Work      : TLVec;
-  MCStage   : TLInt;
-  MCState   : TLogitMCState;
-  MCINFO    : TLInt;
-  MCNFEV    : TLInt;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
+  SSize: TLInt;
+  AllSame: Boolean;
+  Offs: TLInt;
+  Threshold: TLFloat;
+  WMinStep: TLFloat;
+  Decay: TLFloat;
+  WDim: TLInt;
+  ExpOffs: TLInt;
+  v: TLFloat;
+  s: TLFloat;
+  Network: TMultiLayerPerceptron;
+  NIn: TLInt;
+  NOut: TLInt;
+  WCount: TLInt;
+  E: TLFloat;
+  g: TLVec;
+  h: TLMatrix;
+  SPD: Boolean;
+  x: TLVec;
+  y: TLVec;
+  WBase: TLVec;
+  WStep: TLFloat;
+  WDir: TLVec;
+  Work: TLVec;
+  MCStage: TLInt;
+  MCState: TLogitMCState;
+  MCINFO: TLInt;
+  MCNFEV: TLInt;
   SolverInfo: TLInt;
-  SolverRep : TDenseSolverReport;
+  SolverRep: TDenseSolverReport;
 begin
   Threshold := 1000 * MachineEpsilon;
   WMinStep := 0.001;
@@ -202,7 +200,7 @@ begin
   Offs := 5;
   ExpOffs := Offs + WDim;
   SSize := 5 + (NVars + 1) * (NClasses - 1) + NClasses;
-  SetLength(LM.w, SSize  );
+  SetLength(LM.w, SSize);
   LM.w[0] := SSize;
   LM.w[1] := LogitVNum;
   LM.w[2] := NVars;
@@ -268,16 +266,20 @@ begin
   MLPInitPreprocessor(Network, xy, NPoints);
   MLPProperties(Network, NIn, NOut, WCount);
   i := 0;
-  while i <= WCount - 1 do
+  with TLearnRandom.Create do
     begin
-      Network.Weights[i] := (2 * RandomReal - 1) / NVars;
-      inc(i);
+      while i <= WCount - 1 do
+        begin
+          Network.Weights[i] := (2 * RandReal - 1) / NVars;
+          inc(i);
+        end;
+      Free;
     end;
-  SetLength(g, WCount  );
-  SetLength(h, WCount  , WCount  );
-  SetLength(WBase, WCount  );
-  SetLength(WDir, WCount  );
-  SetLength(Work, WCount  );
+  SetLength(g, WCount);
+  SetLength(h, WCount, WCount);
+  SetLength(WBase, WCount);
+  SetLength(WDir, WCount);
+  SetLength(Work, WCount);
 
   //
   // First stage: optimize in gradient direction.
@@ -441,12 +443,12 @@ end;
   ************************************************************************ *)
 procedure MNLProcess(var LM: TLogitModel; const x: TLVec; var y: TLVec);
 var
-  NVars   : TLInt;
+  NVars: TLInt;
   NClasses: TLInt;
-  Offs    : TLInt;
-  i       : TLInt;
-  i1      : TLInt;
-  s       : TLFloat;
+  Offs: TLInt;
+  i: TLInt;
+  i1: TLInt;
+  s: TLFloat;
 begin
   Assert(AP_FP_Eq(LM.w[1], LogitVNum), 'MNLProcess: unexpected model version');
   NVars := Round(LM.w[2]);
@@ -488,7 +490,7 @@ procedure MNLUnpack(const LM: TLogitModel; var a: TLMatrix;
   var NVars: TLInt; var NClasses: TLInt);
 var
   Offs: TLInt;
-  i   : TLInt;
+  i: TLInt;
 begin
   Assert(AP_FP_Eq(LM.w[1], LogitVNum), 'MNLUnpack: unexpected model version');
   NVars := Round(LM.w[2]);
@@ -518,15 +520,15 @@ end;
 procedure MNLPack(const a: TLMatrix; NVars: TLInt;
   NClasses: TLInt; var LM: TLogitModel);
 var
-  Offs : TLInt;
-  i    : TLInt;
-  WDim : TLInt;
+  Offs: TLInt;
+  i: TLInt;
+  WDim: TLInt;
   SSize: TLInt;
 begin
   WDim := (NVars + 1) * (NClasses - 1);
   Offs := 5;
   SSize := 5 + (NVars + 1) * (NClasses - 1) + NClasses;
-  SetLength(LM.w, SSize  );
+  SetLength(LM.w, SSize);
   LM.w[0] := SSize;
   LM.w[1] := LogitVNum;
   LM.w[2] := NVars;
@@ -555,7 +557,7 @@ var
   k: TLInt;
 begin
   k := Round(LM1.w[0]);
-  SetLength(LM2.w, k  );
+  SetLength(LM2.w, k);
   APVMove(@LM2.w[0], 0, k - 1, @LM1.w[0], 0, k - 1);
 end;
 
@@ -574,7 +576,7 @@ procedure MNLSerialize(const LM: TLogitModel; var RA: TLVec;
   var RLen: TLInt);
 begin
   RLen := Round(LM.w[0]) + 1;
-  SetLength(RA, RLen  );
+  SetLength(RA, RLen);
   RA[0] := LogitVNum;
   APVMove(@RA[0], 1, RLen - 1, @LM.w[0], 0, RLen - 2);
 end;
@@ -591,7 +593,7 @@ end;
 procedure MNLUnserialize(const RA: TLVec; var LM: TLogitModel);
 begin
   Assert(Round(RA[0]) = LogitVNum, 'MNLUnserialize: incorrect array!');
-  SetLength(LM.w, Round(RA[1])  );
+  SetLength(LM.w, Round(RA[1]));
   APVMove(@LM.w[0], 0, Round(RA[1]) - 1, @RA[0], 1, Round(RA[1]));
 end;
 
@@ -609,17 +611,17 @@ end;
 function MNLAvgCE(var LM: TLogitModel; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
-  NVars   : TLInt;
+  NVars: TLInt;
   NClasses: TLInt;
-  i       : TLInt;
-  WorkX   : TLVec;
-  WorkY   : TLVec;
+  i: TLInt;
+  WorkX: TLVec;
+  WorkY: TLVec;
 begin
   Assert(AP_FP_Eq(LM.w[1], LogitVNum), 'MNLClsError: unexpected model version');
   NVars := Round(LM.w[2]);
   NClasses := Round(LM.w[3]);
-  SetLength(WorkX, NVars  );
-  SetLength(WorkY, NClasses  );
+  SetLength(WorkX, NVars);
+  SetLength(WorkY, NClasses);
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
@@ -677,9 +679,9 @@ function MNLRMSError(var LM: TLogitModel; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
-  AvgCE : TLFloat;
-  RMS   : TLFloat;
-  Avg   : TLFloat;
+  AvgCE: TLFloat;
+  RMS: TLFloat;
+  Avg: TLFloat;
   AvgRel: TLFloat;
 begin
   Assert(Round(LM.w[1]) = LogitVNum, 'MNLRMSError: Incorrect MNL version!');
@@ -702,9 +704,9 @@ function MNLAvgError(var LM: TLogitModel; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
-  AvgCE : TLFloat;
-  RMS   : TLFloat;
-  Avg   : TLFloat;
+  AvgCE: TLFloat;
+  RMS: TLFloat;
+  Avg: TLFloat;
   AvgRel: TLFloat;
 begin
   Assert(Round(LM.w[1]) = LogitVNum, 'MNLRMSError: Incorrect MNL version!');
@@ -727,9 +729,9 @@ function MNLAvgRelError(var LM: TLogitModel; const xy: TLMatrix;
   SSize: TLInt): TLFloat;
 var
   RelCls: TLFloat;
-  AvgCE : TLFloat;
-  RMS   : TLFloat;
-  Avg   : TLFloat;
+  AvgCE: TLFloat;
+  RMS: TLFloat;
+  Avg: TLFloat;
   AvgRel: TLFloat;
 begin
   Assert(Round(LM.w[1]) = LogitVNum, 'MNLRMSError: Incorrect MNL version!');
@@ -743,19 +745,19 @@ end;
 function MNLClsError(var LM: TLogitModel; const xy: TLMatrix;
   NPoints: TLInt): TLInt;
 var
-  NVars   : TLInt;
+  NVars: TLInt;
   NClasses: TLInt;
-  i       : TLInt;
-  j       : TLInt;
-  WorkX   : TLVec;
-  WorkY   : TLVec;
-  NMAX    : TLInt;
+  i: TLInt;
+  j: TLInt;
+  WorkX: TLVec;
+  WorkY: TLVec;
+  NMAX: TLInt;
 begin
   Assert(AP_FP_Eq(LM.w[1], LogitVNum), 'MNLClsError: unexpected model version');
   NVars := Round(LM.w[2]);
   NClasses := Round(LM.w[3]);
-  SetLength(WorkX, NVars  );
-  SetLength(WorkY, NClasses  );
+  SetLength(WorkX, NVars);
+  SetLength(WorkY, NClasses);
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
@@ -798,13 +800,13 @@ end;
   ************************************************************************ *)
 procedure MNLIExp(var w: TLVec; const x: TLVec);
 var
-  NVars   : TLInt;
+  NVars: TLInt;
   NClasses: TLInt;
-  Offs    : TLInt;
-  i       : TLInt;
-  i1      : TLInt;
-  v       : TLFloat;
-  mx      : TLFloat;
+  Offs: TLInt;
+  i: TLInt;
+  i1: TLInt;
+  v: TLFloat;
+  mx: TLFloat;
 begin
   Assert(AP_FP_Eq(w[1], LogitVNum), 'LOGIT: unexpected model version');
   NVars := Round(w[2]);
@@ -842,19 +844,19 @@ procedure MNLAllErrors(var LM: TLogitModel; const xy: TLMatrix;
   NPoints: TLInt; var RelCls: TLFloat; var AvgCE: TLFloat;
   var RMS: TLFloat; var Avg: TLFloat; var AvgRel: TLFloat);
 var
-  NVars   : TLInt;
+  NVars: TLInt;
   NClasses: TLInt;
-  i       : TLInt;
-  Buf     : TLVec;
-  WorkX   : TLVec;
-  y       : TLVec;
-  dy      : TLVec;
+  i: TLInt;
+  Buf: TLVec;
+  WorkX: TLVec;
+  y: TLVec;
+  dy: TLVec;
 begin
   Assert(Round(LM.w[1]) = LogitVNum, 'MNL unit: Incorrect MNL version!');
   NVars := Round(LM.w[2]);
   NClasses := Round(LM.w[3]);
-  SetLength(WorkX, NVars  );
-  SetLength(y, NClasses  );
+  SetLength(WorkX, NVars);
+  SetLength(y, NClasses);
   SetLength(dy, 0 + 1);
   DSErrAllocate(NClasses, Buf);
   i := 0;
@@ -966,9 +968,9 @@ procedure MNLMCSRCH(const n: TLInt; var x: TLVec;
   var Stp: TLFloat; var Info: TLInt; var NFEV: TLInt;
   var WA: TLVec; var State: TLogitMCState; var Stage: TLInt);
 var
-  v   : TLFloat;
-  P5  : TLFloat;
-  P66 : TLFloat;
+  v: TLFloat;
+  P5: TLFloat;
+  P66: TLFloat;
   Zero: TLFloat;
 begin
 
@@ -1263,14 +1265,14 @@ procedure MNLMCSTEP(var STX: TLFloat; var fx: TLFloat;
 var
   Bound: Boolean;
   Gamma: TLFloat;
-  p    : TLFloat;
-  q    : TLFloat;
-  r    : TLFloat;
-  s    : TLFloat;
-  SGND : TLFloat;
-  STPC : TLFloat;
-  STPF : TLFloat;
-  STPQ : TLFloat;
+  p: TLFloat;
+  q: TLFloat;
+  r: TLFloat;
+  s: TLFloat;
+  SGND: TLFloat;
+  STPC: TLFloat;
+  STPF: TLFloat;
+  STPQ: TLFloat;
   Theta: TLFloat;
 begin
   Info := 0;
@@ -1509,6 +1511,4 @@ begin
           Stp := Max(STX + 0.66 * (STY - STX), Stp);
         end;
     end;
-end; 
- 
- 
+end;

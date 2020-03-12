@@ -36,7 +36,7 @@ type
   TWarnStyle = (wsInfo, wsHint, wsWarn, wsFail);
 
   // event with debug data
-  TDebugEvent = procedure(Sender: TObject; WarnStyle: TWarnStyle; const AMessage: RawByteString) of object;
+  TDebugEvent = procedure(Sender: TObject; WarnStyle: TWarnStyle; const Message_: TPascalString) of object;
 
   // simple update event
   TUpdateEvent = procedure(Sender: TObject) of object;
@@ -46,8 +46,8 @@ type
     FOwner: TJPEG_Base_Object;
     FOnDebugOut: TDebugEvent;
   public
-    constructor Create(AOwner: TJPEG_Base_Object); virtual;
-    procedure DoDebugOut(Sender: TObject; WarnStyle: TWarnStyle; const AMessage: RawByteString); virtual;
+    constructor Create(Owner_: TJPEG_Base_Object); virtual;
+    procedure DoDebugOut(Sender: TObject; WarnStyle: TWarnStyle; const Message_: TPascalString); virtual;
     property OnDebugOut: TDebugEvent read FOnDebugOut write FOnDebugOut;
     property Owner: TJPEG_Base_Object read FOwner;
   end;
@@ -55,15 +55,15 @@ type
   TJPEG_Persistent = class(TCoreClassObject)
   protected
     FOwner: TJPEG_Base_Object;
-    procedure DoDebugOut(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const AMessage: RawByteString); virtual;
+    procedure DoDebugOut(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const Message_: TPascalString); virtual;
   public
     constructor Create;
-    constructor CreateDebug(AOwner: TJPEG_Base_Object); virtual;
+    constructor CreateDebug(Owner_: TJPEG_Base_Object); virtual;
   end;
 
   // allow external CMS to manage colors in the bitmap (client code needs to determine whether the
-  // AMap is actually a TBitmap in Windows, in case of NativeJpg.pas)
-  TJpegExternalCMSEvent = procedure(Sender: TCoreClassObject; var AMap: TCoreClassObject) of object;
+  // Map_ is actually a TBitmap in Windows, in case of NativeJpg.pas)
+  TJpegExternalCMSEvent = procedure(Sender: TCoreClassObject; var Map_: TCoreClassObject) of object;
 
   TJpegScale = (
     jsFull, // Read the complete image (DC + AC 1..63)
@@ -234,15 +234,15 @@ type
   protected
     procedure CreateMap; virtual;
   public
-    procedure SetSize(AHorzMcuCount, AVertMcuCount: Integer;
-      AFrame: TFrameComponent; ABlockStride: Integer);
-    procedure Resize(AHorzBlockCount, AVertBlockCount: Integer);
-    procedure ReduceBlockSize(ANewSize: Integer);
+    procedure SetSize(HorzMcuCount_, VertMcuCount_: Integer;
+      Frame_: TFrameComponent; BlockStride_: Integer);
+    procedure Resize(HorzBlockCount_, VertBlockCount_: Integer);
+    procedure ReduceBlockSize(NewSize_: Integer);
     // Number of blocks in the MCU belonging to this image
-    function McuBlockCount(AScanCount: Integer): Integer;
+    function McuBlockCount(ScanCount_: Integer): Integer;
     // Total number of blocks in image (size / 8x8)
     function TotalBlockCount: Integer;
-    function GetCoefPointerMCU(AMcuX, AMcuY, AMcuIdx: Integer): pointer;
+    function GetCoefPointerMCU(McuX_, McuY_, McuIdx_: Integer): pointer;
     function GetCoefPointer(BlockX, BlockY: Integer): pointer;
     function GetSamplePointer(BlockX, BlockY: Integer): pointer;
     function FirstCoef: pointer;
@@ -250,7 +250,7 @@ type
     function HasCoefBackup: boolean;
     procedure MakeCoefBackup;
     procedure ClearCoefBackup;
-    procedure SaveRawValues(const AFileName: string);
+    procedure SaveRawValues(const FileName_: string);
     property HorzBlockCount: Integer read FHorzBlockCount;
     property VertBlockCount: Integer read FVertBlockCount;
     property BlockStride: Integer read FBlockStride;
@@ -278,7 +278,7 @@ type
   private
     function GetItems(Index: Integer): TJpegTile;
   public
-    function IndexByMcuIndex(AMcuIndex: Integer): Integer;
+    function IndexByMcuIndex(McuIndex_: Integer): Integer;
     property Items[Index: Integer]: TJpegTile read GetItems; default;
   end;
 
@@ -346,19 +346,19 @@ type
   protected
     FStream: TMemoryStream64;
     FCodingInfo: TJpegInfo;
-    function GetMarkerName: RawByteString; virtual;
+    function GetMarkerName: TPascalString; virtual;
     procedure StoreData(S: TCoreClassStream; Size: Integer);
     procedure DebugSample(S: TCoreClassStream; Size: Integer);
   public
-    constructor Create(ACodingInfo: TJpegInfo; ATag: Byte); virtual;
+    constructor Create(CodingInfo_: TJpegInfo; Tag_: Byte); virtual;
     destructor Destroy; override;
     class function GetByte(S: TCoreClassStream): Byte;
     class function GetWord(S: TCoreClassStream): word;
     class procedure PutByte(S: TCoreClassStream; B: Byte);
     class procedure PutWord(S: TCoreClassStream; W: word);
-    class function GetSignature: RawByteString; virtual;
+    class function GetSignature: TPascalString; virtual;
     class function GetMarker: Byte; virtual;
-    class function IsSegment(AMarker: Byte; AStream: TCoreClassStream): boolean; virtual;
+    class function IsSegment(Marker_: Byte; Stream_: TCoreClassStream): boolean; virtual;
     procedure LoadFromStream(S: TCoreClassStream; Size: Integer);
     procedure SaveToStream(S: TCoreClassStream);
     procedure ReadMarker; virtual;
@@ -366,7 +366,7 @@ type
     // Any of the mkXXXX constants defined in sdJpegConsts
     property MarkerTag: Byte read FMarkerTag;
     // 3letter description of the marker or the hex description
-    property MarkerName: RawByteString read GetMarkerName;
+    property MarkerName: TPascalString read GetMarkerName;
     // marker data stored in its stream
     property Stream: TMemoryStream64 read FStream;
     // Reference to owner TJpegFormat, set when adding to the list, and used
@@ -383,19 +383,19 @@ type
     FOwner: TJPEG_Base_Object; // Reference to owner TJpegFormat
     function GetItems(Index: Integer): TJpegMarker;
   public
-    constructor Create(AOwner: TJPEG_Base_Object);
-    function ByTag(AMarkerTag: Byte): TJpegMarker;
-    function ByClass(AClass: TJpegMarkerClass): TJpegMarker;
-    function HasMarker(ASet: TJpegMarkerSet): boolean;
-    procedure RemoveMarkers(ASet: TJpegMarkerSet);
-    procedure InsertAfter(ASet: TJpegMarkerSet; AMarker: TJpegMarker);
-    procedure Add(AItem: TCoreClassObject);
+    constructor Create(Owner_: TJPEG_Base_Object);
+    function ByTag(MarkerTag_: Byte): TJpegMarker;
+    function ByClass(Class_: TJpegMarkerClass): TJpegMarker;
+    function HasMarker(Set_: TJpegMarkerSet): boolean;
+    procedure RemoveMarkers(Set_: TJpegMarkerSet);
+    procedure InsertAfter(Set_: TJpegMarkerSet; Marker_: TJpegMarker);
+    procedure Add(Item_: TCoreClassObject);
     property Items[Index: Integer]: TJpegMarker read GetItems; default;
   end;
 
   TAPPnMarker = class(TJpegMarker)
   protected
-    function GetMarkerName: RawByteString; override;
+    function GetMarkerName: TPascalString; override;
   public
     procedure ReadMarker; override;
   end;
@@ -414,9 +414,9 @@ type
     procedure SetMarkerCount(const Value: Byte);
   protected
     function GetIsValid: boolean;
-    function GetMarkerName: RawByteString; override;
+    function GetMarkerName: TPascalString; override;
   public
-    class function GetSignature: RawByteString; override;
+    class function GetSignature: TPascalString; override;
     class function GetMarker: Byte; override;
     property IsValid: boolean read GetIsValid;
     property CurrentMarker: Byte read GetCurrentMarker write SetCurrentMarker;
@@ -433,17 +433,17 @@ type
     function GetDataLength: Integer;
   public
     procedure LoadFromStream(S: TCoreClassStream);
-    procedure LoadFromFile(const AFileName: string);
-    procedure SaveToFile(const AFileName: string);
+    procedure LoadFromFile(const FileName_: string);
+    procedure SaveToFile(const FileName_: string);
     procedure SaveToStream(S: TCoreClassStream);
-    procedure ReadFromMarkerList(AList: TJpegMarkerList);
-    procedure WriteToMarkerList(AList: TJpegMarkerList);
+    procedure ReadFromMarkerList(List_: TJpegMarkerList);
+    procedure WriteToMarkerList(List_: TJpegMarkerList);
     property Data: pointer read GetData;
     property DataLength: Integer read GetDataLength;
   end;
 
 const
-  cWarnStyleNames: array [TWarnStyle] of RawByteString = ('info', 'hint', 'warn', 'fail');
+  cWarnStyleNames: array [TWarnStyle] of string = ('info', 'hint', 'warn', 'fail');
 
   // Jpeg markers defined in Table B.1
   mkNone = 0;
@@ -514,7 +514,7 @@ const
 
   mkTEM = $01; // Reserved for temporary use
 
-  cColorSpaceNames: array [TJpegColorSpace] of RawByteString =
+  cColorSpaceNames: array [TJpegColorSpace] of string =
     ('AutoDetect',
     'Gray', 'GrayA', 'RGB', 'RGBA', 'YCbCr', 'YCbCrA', 'CMYK', 'CMYK as YCbCrK', 'YCCK', 'PhotoYCC', 'PhotoYCCA', 'ITU CieLAB');
 
@@ -749,15 +749,15 @@ const
   sCannotUseTileMode = 'Cannot use tilemode with progressive jpeg';
   sRangeErrorInTileLoading = 'Range error in tiled loading: make sure to select tilemode';
 
-function sdDebugMessageToString(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const AMessage: RawByteString): RawByteString;
+function sdDebugMessageToString(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const Message_: TPascalString): TPascalString;
 
-function sdClassName(AObject: TCoreClassObject): RawByteString;
+function sdClassName(Object_: TCoreClassObject): TPascalString;
 
 // general functions
 function IntMin(i1, i2: Integer): Integer; inline;
 
 // divisor based on scale
-function sdGetDivisor(AScale: TJpegScale): Integer;
+function sdGetDivisor(Scale_: TJpegScale): Integer;
 
 type
   TItemCompareEvent = function(Item1, Item2: TObject; Info: pointer): Integer of object;
@@ -766,34 +766,34 @@ type
 
   TCustomObjectList = class(TCoreClassObjectList)
   public
-    procedure Append(AItem: TObject);
+    procedure Append(Item_: TObject);
   end;
 
   // Keep a sorted list of objects, sort them by the object's locally unique ID (Luid),
   // which is just an integer (32bits, instead of a real 128bits Guid).
-  // Override method GetLuid, it should return the Luid of object AItem.
+  // Override method GetLuid, it should return the Luid of object Item_.
   // TLuidList is used for compatibility with legacy code (formerly TUniqueIDList)
   TLuidList = class(TCustomObjectList)
   protected
-    function GetLuid(AItem: TObject): Integer; virtual; abstract;
-    function IndexByLuid(const ALuid: Integer; out Index: Integer): boolean;
+    function GetLuid(Item_: TObject): Integer; virtual; abstract;
+    function IndexByLuid(const LUID_: Integer; out Index: Integer): boolean;
   public
     function NextLuid: Integer;
-    function HasLuid(const ALuid: Integer): boolean;
-    procedure RemoveByLuid(const ALuid: Integer);
-    function Add(AItem: TObject): Integer;
+    function HasLuid(const LUID_: Integer): boolean;
+    procedure RemoveByLuid(const LUID_: Integer);
+    function Add(Item_: TObject): Integer;
   end;
 
   // Keep a sorted list of objects, sort them by the object's globally unique ID (Guid).
-  // Override method GetGuid, it should return the guid of object AItem.
+  // Override method GetGuid, it should return the guid of object Item_.
   TGuidList = class(TCustomObjectList)
   protected
-    function GetGuid(AItem: TObject): TGuid; virtual; abstract;
-    function IndexByGuid(const AGuid: TGuid; out Index: Integer): boolean;
+    function GetGuid(Item_: TObject): TGuid; virtual; abstract;
+    function IndexByGuid(const GUID_: TGuid; out Index: Integer): boolean;
   public
-    function HasGuid(const AGuid: TGuid): boolean;
-    procedure RemoveByGuid(const AGuid: TGuid);
-    function Add(AItem: TObject): Integer;
+    function HasGuid(const GUID_: TGuid): boolean;
+    procedure RemoveByGuid(const GUID_: TGuid);
+    function Add(Item_: TObject): Integer;
   end;
 
   // TCustomSortedList is a TCoreClassObjectList descendant providing easy sorting
@@ -802,14 +802,14 @@ type
   TCustomSortedList = class(TCustomObjectList)
   private
     FSorted: boolean;
-    procedure SetSorted(AValue: boolean);
+    procedure SetSorted(Value_: boolean);
   protected
     // Override this method to implement the object comparison between two
     // items. The default just compares the item pointers
     function DoCompare(Item1, Item2: TObject): Integer; virtual;
   public
-    constructor Create(AOwnsObjects: boolean = true);
-    function Add(AItem: TObject): Integer;
+    constructor Create(OwnsObjects_: boolean = true);
+    function Add(Item_: TObject): Integer;
     // AddUnique behaves just like Add but checks if the item to add is unique
     // by checking the result of the Find function. If the item is found it is
     // replaced by the new item (old item removed), unless RaiseError = True, in
@@ -818,7 +818,7 @@ type
     function Find(Item: TObject; out Index: Integer): boolean; virtual;
     // Find (multiple) items equal to Item, and return Index of first equal
     // item and the number of multiples in Count
-    procedure FindMultiple(Item: TObject; out AIndex, ACount: Integer); virtual;
+    procedure FindMultiple(Item: TObject; out AIndex, Count_: Integer); virtual;
     procedure Sort; virtual;
     property Sorted: boolean read FSorted write SetSorted default true;
   end;
@@ -837,7 +837,7 @@ function CompareGuid(const Guid1, Guid2: TGuid): Integer;
 
 // GUID methods
 function IsEqualGuid(const Guid1, Guid2: TGuid): boolean;
-function IsEmptyGuid(const AGuid: TGuid): boolean;
+function IsEmptyGuid(const GUID_: TGuid): boolean;
 function NewGuid: TGuid;
 // streaming of TGuid can be found in sdStreamableData.pas
 
@@ -857,30 +857,30 @@ type
     procedure Sort;
   end;
 
-procedure sdSortArraySingle(AFirst: PSingle; ACount: Integer);
-procedure sdSortArrayDouble(AFirst: PDouble; ACount: Integer);
-procedure sdSortArrayInteger(AFirst: PInteger; ACount: Integer);
+procedure sdSortArraySingle(First_: PSingle; Count_: Integer);
+procedure sdSortArrayDouble(First_: PDouble; Count_: Integer);
+procedure sdSortArrayInteger(First_: PInteger; Count_: Integer);
 
-function sdAverageOfArrayInteger(AFirst: PInteger; ACount: Integer): double;
-function sdMinimumOfArrayInteger(AFirst: PInteger; ACount: Integer): Integer;
-function sdMaximumOfArrayInteger(AFirst: PInteger; ACount: Integer): Integer;
+function sdAverageOfArrayInteger(First_: PInteger; Count_: Integer): double;
+function sdMinimumOfArrayInteger(First_: PInteger; Count_: Integer): Integer;
+function sdMaximumOfArrayInteger(First_: PInteger; Count_: Integer): Integer;
 
-function sdMinimumOfArrayDouble(AFirst: PDouble; ACount: Integer): double;
-function sdMaximumOfArrayDouble(AFirst: PDouble; ACount: Integer): double;
+function sdMinimumOfArrayDouble(First_: PDouble; Count_: Integer): double;
+function sdMaximumOfArrayDouble(First_: PDouble; Count_: Integer): double;
 
 // Walking average of array in SFirst, put result in DFirst. Both must be of
-// length ACount. The average is done with a window of AWindowSize, and the
-// center pixel in ACenter (e.g. ACenter = 1, AWindowSize = 3 for 3 values w.a.).
-// After running, the values must still be divided by AWindowSize
-procedure sdWalkingAverageArrayInteger(SFirst, DFirst: PInteger; ACount, ACenter, AWindowSize: Integer);
+// length Count_. The average is done with a window of WindowSize_, and the
+// center pixel in Center_ (e.g. Center_ = 1, WindowSize_ = 3 for 3 values w.a.).
+// After running, the values must still be divided by WindowSize_
+procedure sdWalkingAverageArrayInteger(SFirst, DFirst: PInteger; Count_, Center_, WindowSize_: Integer);
 
 // Walking median of array in SFirst, put result in DFirst. Both must be of
-// length ACount. The median is done with a window of AWindowSize, and the
-// center pixel in ACenter (e.g. ACenter = 1, AWindowSize = 3 for 3 values w.m.).
-procedure sdWalkingMedianArrayInteger(SFirst, DFirst: PInteger; ACount, ACenter, AWindowSize: Integer);
+// length Count_. The median is done with a window of WindowSize_, and the
+// center pixel in Center_ (e.g. Center_ = 1, WindowSize_ = 3 for 3 values w.m.).
+procedure sdWalkingMedianArrayInteger(SFirst, DFirst: PInteger; Count_, Center_, WindowSize_: Integer);
 
-procedure sdWalkingAverageArrayDouble(SFirst, DFirst: PDouble; ACount, ACenter, AWindowSize: Integer);
-procedure sdWalkingMedianArrayDouble(SFirst, DFirst: PDouble; ACount, ACenter, AWindowSize: Integer);
+procedure sdWalkingAverageArrayDouble(SFirst, DFirst: PDouble; Count_, Center_, WindowSize_: Integer);
+procedure sdWalkingMedianArrayDouble(SFirst, DFirst: PDouble; Count_, Center_, WindowSize_: Integer);
 
 const
   sAddingNonUniqueObject = 'Adding non-unique object to list is not allowed';
@@ -891,25 +891,25 @@ implementation
 
 { TJPEG_Base_Object }
 
-constructor TJPEG_Base_Object.Create(AOwner: TJPEG_Base_Object);
+constructor TJPEG_Base_Object.Create(Owner_: TJPEG_Base_Object);
 begin
   inherited Create;
-  FOwner := AOwner;
+  FOwner := Owner_;
 end;
 
-procedure TJPEG_Base_Object.DoDebugOut(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const AMessage: RawByteString);
+procedure TJPEG_Base_Object.DoDebugOut(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const Message_: TPascalString);
 var
-  AOwner: TCoreClassObject;
+  Owner_: TCoreClassObject;
 begin
-  AOwner := Self;
-  while AOwner is TJPEG_Base_Object do
+  Owner_ := Self;
+  while Owner_ is TJPEG_Base_Object do
     begin
-      if assigned(TJPEG_Base_Object(AOwner).FOnDebugOut) then
+      if assigned(TJPEG_Base_Object(Owner_).FOnDebugOut) then
         begin
-          TJPEG_Base_Object(AOwner).FOnDebugOut(Sender, WarnStyle, AMessage);
+          TJPEG_Base_Object(Owner_).FOnDebugOut(Sender, WarnStyle, Message_);
           exit;
         end;
-      AOwner := TJPEG_Base_Object(AOwner).FOwner;
+      Owner_ := TJPEG_Base_Object(Owner_).FOwner;
     end;
 end;
 
@@ -921,36 +921,36 @@ begin
   FOwner := nil;
 end;
 
-constructor TJPEG_Persistent.CreateDebug(AOwner: TJPEG_Base_Object);
+constructor TJPEG_Persistent.CreateDebug(Owner_: TJPEG_Base_Object);
 begin
   Create;
-  FOwner := AOwner;
+  FOwner := Owner_;
 end;
 
-procedure TJPEG_Persistent.DoDebugOut(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const AMessage: RawByteString);
+procedure TJPEG_Persistent.DoDebugOut(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const Message_: TPascalString);
 begin
   if FOwner <> nil then
-      FOwner.DoDebugOut(Sender, WarnStyle, AMessage);
+      FOwner.DoDebugOut(Sender, WarnStyle, Message_);
 end;
 
 { Functions }
 
-function sdDebugMessageToString(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const AMessage: RawByteString): RawByteString;
+function sdDebugMessageToString(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const Message_: TPascalString): TPascalString;
 var
-  SenderString: RawByteString;
+  SenderString: TPascalString;
 begin
   if assigned(Sender) then
-      SenderString := RawByteString(Sender.ClassName)
+      SenderString := Sender.ClassName
   else
       SenderString := '';
-  Result := '[' + cWarnStyleNames[WarnStyle] + '] ' + SenderString + ': ' + AMessage;
+  Result := '[' + cWarnStyleNames[WarnStyle] + '] ' + SenderString + ': ' + Message_;
 end;
 
-function sdClassName(AObject: TCoreClassObject): RawByteString;
+function sdClassName(Object_: TCoreClassObject): TPascalString;
 begin
   Result := 'nil';
-  if assigned(AObject) then
-      Result := RawByteString(AObject.ClassName);
+  if assigned(Object_) then
+      Result := Object_.ClassName;
 end;
 
 { TQuantizationTable }
@@ -1051,18 +1051,18 @@ begin
   Result := @FCoef[BlockX * FBlockStride + BlockY * FScanStride];
 end;
 
-function TJpegBlockMap.GetCoefPointerMCU(AMcuX, AMcuY, AMcuIdx: Integer): pointer;
+function TJpegBlockMap.GetCoefPointerMCU(McuX_, McuY_, McuIdx_: Integer): pointer;
 var
   x, y: Integer;
 begin
-  x := FFrame.FHorzSampling * AMcuX;
-  y := FFrame.FVertSampling * AMcuY;
-  while AMcuIdx >= FFrame.FHorzSampling do
+  x := FFrame.FHorzSampling * McuX_;
+  y := FFrame.FVertSampling * McuY_;
+  while McuIdx_ >= FFrame.FHorzSampling do
     begin
       inc(y);
-      dec(AMcuIdx, FFrame.FHorzSampling);
+      dec(McuIdx_, FFrame.FHorzSampling);
     end;
-  inc(x, AMcuIdx);
+  inc(x, McuIdx_);
   Result := @FCoef[x * FBlockStride + y * FScanStride];
 end;
 
@@ -1087,15 +1087,15 @@ begin
   Move(FCoef[0], FCoefBackup[0], Count * SizeOf(SmallInt));
 end;
 
-function TJpegBlockMap.McuBlockCount(AScanCount: Integer): Integer;
+function TJpegBlockMap.McuBlockCount(ScanCount_: Integer): Integer;
 begin
-  if AScanCount = 1 then
+  if ScanCount_ = 1 then
       Result := 1
   else
       Result := FFrame.FHorzSampling * FFrame.FVertSampling;
 end;
 
-procedure TJpegBlockMap.ReduceBlockSize(ANewSize: Integer);
+procedure TJpegBlockMap.ReduceBlockSize(NewSize_: Integer);
 var
   i, j, Count, Stride: Integer;
   Sc, Dc: PSmallint;
@@ -1109,15 +1109,15 @@ begin
   // coefs
   Sc := @FCoef[0];
   Dc := Sc;
-  Stride := ANewSize * SizeOf(SmallInt);
+  Stride := NewSize_ * SizeOf(SmallInt);
   for i := 0 to Count - 1 do
     begin
       for j := 0 to 7 do
         begin
-          if j < ANewSize then
+          if j < NewSize_ then
             begin
               Move(Sc^, Dc^, Stride);
-              inc(Dc, ANewSize);
+              inc(Dc, NewSize_);
             end;
           inc(Sc, 8);
         end;
@@ -1126,29 +1126,29 @@ begin
   // samples
   Ss := @FSample[0];
   Ds := Ss;
-  Stride := ANewSize * SizeOf(Byte);
+  Stride := NewSize_ * SizeOf(Byte);
   for i := 0 to Count - 1 do
     begin
       for j := 0 to 7 do
         begin
-          if j < ANewSize then
+          if j < NewSize_ then
             begin
               Move(Ss^, Ds^, Stride);
-              inc(Ds, ANewSize);
+              inc(Ds, NewSize_);
             end;
           inc(Ss, 8);
         end;
     end;
-  FBlockStride := ANewSize * ANewSize;
+  FBlockStride := NewSize_ * NewSize_;
   Resize(FHorzBlockCount, FVertBlockCount);
 end;
 
-procedure TJpegBlockMap.Resize(AHorzBlockCount, AVertBlockCount: Integer);
+procedure TJpegBlockMap.Resize(HorzBlockCount_, VertBlockCount_: Integer);
 var
   Count: Integer;
 begin
-  FHorzBlockCount := AHorzBlockCount;
-  FVertBlockCount := AVertBlockCount;
+  FHorzBlockCount := HorzBlockCount_;
+  FVertBlockCount := VertBlockCount_;
   FScanStride := FHorzBlockCount * FBlockStride;
   Count := FScanStride * FVertBlockCount;
   SetLength(FCoef, Count);
@@ -1156,18 +1156,21 @@ begin
   SetLength(FCoefBackup, 0);
 end;
 
-procedure TJpegBlockMap.SaveRawValues(const AFileName: string);
+procedure TJpegBlockMap.SaveRawValues(const FileName_: string);
 var
   i, x, y: Integer;
   F: TCoreClassFileStream;
   Block: PsdCoefBlock;
-  procedure WriteS(const S: RawByteString);
+  procedure WriteS(const S: TPascalString);
+  var
+    buff: TBytes;
   begin
-    F.Write(S[1], length(S));
+    buff := S.ANSI;
+    F.Write(buff[0], length(buff));
   end;
 
 begin
-  F := TCoreClassFileStream.Create(AFileName, fmCreate);
+  F := TCoreClassFileStream.Create(FileName_, fmCreate);
   try
     for y := 0 to FVertBlockCount - 1 do
       begin
@@ -1187,15 +1190,15 @@ begin
   end;
 end;
 
-procedure TJpegBlockMap.SetSize(AHorzMcuCount, AVertMcuCount: Integer;
-  AFrame: TFrameComponent; ABlockStride: Integer);
+procedure TJpegBlockMap.SetSize(HorzMcuCount_, VertMcuCount_: Integer;
+  Frame_: TFrameComponent; BlockStride_: Integer);
 begin
-  FFrame := AFrame;
-  FBlockStride := ABlockStride;
+  FFrame := Frame_;
+  FBlockStride := BlockStride_;
 
   // Determine block dimensions
-  FHorzBlockCount := AHorzMcuCount * FFrame.FHorzSampling;
-  FVertBlockCount := AVertMcuCount * FFrame.FVertSampling;
+  FHorzBlockCount := HorzMcuCount_ * FFrame.FHorzSampling;
+  FVertBlockCount := VertMcuCount_ * FFrame.FVertSampling;
 
   // Assume the data is valid, we can create the map
   CreateMap;
@@ -1227,7 +1230,7 @@ begin
   Result := TJpegTile(inherited Items[Index]);
 end;
 
-function TJpegTileList.IndexByMcuIndex(AMcuIndex: Integer): Integer;
+function TJpegTileList.IndexByMcuIndex(McuIndex_: Integer): Integer;
 var
   Min, Max: Integer;
 begin
@@ -1236,7 +1239,7 @@ begin
   Max := Count;
   while Min < Max do begin
       Result := (Min + Max) div 2;
-      case CompareInteger(Items[Result].FMcuIndex, AMcuIndex) of
+      case CompareInteger(Items[Result].FMcuIndex, McuIndex_) of
         - 1: Min := Result + 1;
         0: exit;
         1: Max := Result;
@@ -1294,11 +1297,11 @@ end;
 
 { TJpegMarker }
 
-constructor TJpegMarker.Create(ACodingInfo: TJpegInfo; ATag: Byte);
+constructor TJpegMarker.Create(CodingInfo_: TJpegInfo; Tag_: Byte);
 begin
   inherited Create;
-  FCodingInfo := ACodingInfo;
-  FMarkerTag := ATag;
+  FCodingInfo := CodingInfo_;
+  FMarkerTag := Tag_;
   FStream := TMemoryStream64.Create;
 end;
 
@@ -1306,7 +1309,7 @@ procedure TJpegMarker.DebugSample(S: TCoreClassStream; Size: Integer);
 var
   i: Integer;
   B: Byte;
-  Msg: RawByteString;
+  Msg: TPascalString;
 begin
   Msg := '';
   S.Position := 0;
@@ -1332,7 +1335,7 @@ begin
   S.Read(Result, 1);
 end;
 
-function TJpegMarker.GetMarkerName: RawByteString;
+function TJpegMarker.GetMarkerName: TPascalString;
 begin
   Result := IntToHex(FMarkerTag, 2);
 end;
@@ -1347,7 +1350,7 @@ end;
 
 procedure TJpegMarker.LoadFromStream(S: TCoreClassStream; Size: Integer);
 begin
-  DoDebugOut(Self, wsInfo, PFormat('<loading marker %s, length:%d>', [MarkerName, Size]));
+  DoDebugOut(Self, wsInfo, PFormat('<loading marker %s, length:%d>', [MarkerName.Text, Size]));
   // by default, we copy the marker data to the marker stream,
   // overriding methods may use other means
   StoreData(S, Size);
@@ -1377,7 +1380,7 @@ begin
   // updated with .WriteMarker
   if FStream.Size > 0 then
     begin
-      DoDebugOut(Self, wsInfo, PFormat('saving marker %s, length:%d', [MarkerName, FStream.Size]));
+      DoDebugOut(Self, wsInfo, PFormat('saving marker %s, length:%d', [MarkerName.Text, FStream.Size]));
       FStream.Position := 0;
       S.CopyFrom(FStream, FStream.Size);
     end;
@@ -1397,7 +1400,7 @@ begin
 end;
 
 // Added by Dec begin
-class function TJpegMarker.GetSignature: RawByteString;
+class function TJpegMarker.GetSignature: TPascalString;
 begin
   Result := '';
 end;
@@ -1407,46 +1410,50 @@ begin
   Result := 0;
 end;
 
-class function TJpegMarker.IsSegment(AMarker: Byte; AStream: TCoreClassStream): boolean;
+class function TJpegMarker.IsSegment(Marker_: Byte; Stream_: TCoreClassStream): boolean;
 var
   S: word;
-  Sign: RawByteString;
+  buff: TBytes;
+  Sign: TPascalString;
 begin
-  Result := AMarker = GetMarker;
+  Result := Marker_ = GetMarker;
   if not Result then
       exit;
   Sign := GetSignature;
   if Sign = '' then
       exit;
-  S := GetWord(AStream);
-  Result := S >= length(Sign);
+  S := GetWord(Stream_);
+  buff := Sign.ANSI;
+  Result := S >= length(buff);
   if not Result then
       exit;
-  AStream.ReadBuffer(Sign[1], length(Sign));
-  Result := Sign = GetSignature;
+
+  Stream_.ReadBuffer(buff[0], length(buff));
+  Sign.ANSI := buff;
+  Result := Sign.Same(GetSignature());
 end;
 // Added by Dec end
 
 { TJpegMarkerList }
 
-procedure TJpegMarkerList.Add(AItem: TCoreClassObject);
+procedure TJpegMarkerList.Add(Item_: TCoreClassObject);
 begin
-  if not(AItem is TJpegMarker) then
+  if not(Item_ is TJpegMarker) then
     begin
       raise Exception.Create('not a TJpegMarker');
     end;
-  inherited Add(AItem);
-  TJpegMarker(AItem).Owner := FOwner;
+  inherited Add(Item_);
+  TJpegMarker(Item_).Owner := FOwner;
 end;
 
-function TJpegMarkerList.ByTag(AMarkerTag: Byte): TJpegMarker;
+function TJpegMarkerList.ByTag(MarkerTag_: Byte): TJpegMarker;
 var
   i: Integer;
 begin
   Result := nil;
   for i := 0 to Count - 1 do
     begin
-      if Items[i].MarkerTag = AMarkerTag then
+      if Items[i].MarkerTag = MarkerTag_ then
         begin
           Result := Items[i];
           exit;
@@ -1454,14 +1461,14 @@ begin
     end;
 end;
 
-function TJpegMarkerList.ByClass(AClass: TJpegMarkerClass): TJpegMarker;
+function TJpegMarkerList.ByClass(Class_: TJpegMarkerClass): TJpegMarker;
 var
   i: Integer;
 begin
   Result := nil;
   for i := 0 to Count - 1 do
     begin
-      if Items[i] is AClass then
+      if Items[i] is Class_ then
         begin
           Result := Items[i];
           exit;
@@ -1469,10 +1476,10 @@ begin
     end;
 end;
 
-constructor TJpegMarkerList.Create(AOwner: TJPEG_Base_Object);
+constructor TJpegMarkerList.Create(Owner_: TJPEG_Base_Object);
 begin
   inherited Create(true);
-  FOwner := AOwner;
+  FOwner := Owner_;
 end;
 
 function TJpegMarkerList.GetItems(Index: Integer): TJpegMarker;
@@ -1480,14 +1487,14 @@ begin
   Result := TJpegMarker(inherited Items[index]);
 end;
 
-function TJpegMarkerList.HasMarker(ASet: TJpegMarkerSet): boolean;
+function TJpegMarkerList.HasMarker(Set_: TJpegMarkerSet): boolean;
 var
   i: Integer;
 begin
   Result := false;
   for i := 0 to Count - 1 do
     begin
-      if Items[i].MarkerTag in ASet then
+      if Items[i].MarkerTag in Set_ then
         begin
           Result := true;
           exit;
@@ -1495,29 +1502,29 @@ begin
     end;
 end;
 
-procedure TJpegMarkerList.InsertAfter(ASet: TJpegMarkerSet; AMarker: TJpegMarker);
+procedure TJpegMarkerList.InsertAfter(Set_: TJpegMarkerSet; Marker_: TJpegMarker);
 var
   i: Integer;
 begin
   for i := Count - 1 downto 0 do
     begin
-      if Items[i].MarkerTag in ASet then
+      if Items[i].MarkerTag in Set_ then
         begin
-          Insert(i + 1, AMarker);
+          Insert(i + 1, Marker_);
           exit;
         end;
     end;
 
   // If none found, just add the marker
-  Add(AMarker);
+  Add(Marker_);
 end;
 
-procedure TJpegMarkerList.RemoveMarkers(ASet: TJpegMarkerSet);
+procedure TJpegMarkerList.RemoveMarkers(Set_: TJpegMarkerSet);
 var
   i: Integer;
 begin
   for i := Count - 1 downto 0 do
-    if Items[i].MarkerTag in ASet then
+    if Items[i].MarkerTag in Set_ then
         Delete(i);
 end;
 
@@ -1525,19 +1532,19 @@ end;
 
 procedure TAPPnMarker.ReadMarker;
 begin
-  DoDebugOut(Self, wsInfo, PFormat('<%s marker, length:%d>', [MarkerName, FStream.Size]));
+  DoDebugOut(Self, wsInfo, PFormat('<%s marker, length:%d>', [MarkerName.Text, FStream.Size]));
   // show first bytes as hex
   DebugSample(FStream, FStream.Size);
 end;
 
-function TAPPnMarker.GetMarkerName: RawByteString;
+function TAPPnMarker.GetMarkerName: TPascalString;
 begin
   Result := PFormat('APP%d', [FMarkerTag and $0F]);
 end;
 
 { TICCProfileMarker }
 
-class function TICCProfileMarker.GetSignature: RawByteString;
+class function TICCProfileMarker.GetSignature: TPascalString;
 begin
   Result := 'ICC_PROFILE'#0;
 end;
@@ -1589,7 +1596,7 @@ begin
     end;
   FStream.Position := 0;
   FStream.Read(Magic, 12);
-  FIsValid := umlCompareRawByteString(@Magic, 'ICC_PROFILE');
+  FIsValid := umlCompareByteString(@Magic, 'ICC_PROFILE');
   if not FIsValid then
       exit;
   Result := true;
@@ -1613,12 +1620,12 @@ end;
 
 procedure TICCProfileMarker.SetDataLength(const Value: Integer);
 var
-  Magic: RawByteString;
+  Magic: TPascalString;
 begin
   FStream.Size := Value + 14;
   FStream.Position := 0;
   Magic := 'ICC_PROFILE'#0;
-  FStream.Write(Magic[1], 12);
+  FStream.WriteANSI(Magic, 12);
 end;
 
 procedure TICCProfileMarker.SetMarkerCount(const Value: Byte);
@@ -1628,7 +1635,7 @@ begin
   FMarkerCount := Value;
 end;
 
-function TICCProfileMarker.GetMarkerName: RawByteString;
+function TICCProfileMarker.GetMarkerName: TPascalString;
 begin
   Result := 'ICCProfile';
 end;
@@ -1648,11 +1655,11 @@ begin
   Result := length(FData);
 end;
 
-procedure TJpegICCProfile.LoadFromFile(const AFileName: string);
+procedure TJpegICCProfile.LoadFromFile(const FileName_: string);
 var
   F: TCoreClassFileStream;
 begin
-  F := TCoreClassFileStream.Create(AFileName, fmOpenRead or fmShareDenyNone);
+  F := TCoreClassFileStream.Create(FileName_, fmOpenRead or fmShareDenyNone);
   try
       LoadFromStream(F);
   finally
@@ -1667,7 +1674,7 @@ begin
   S.Read(FData[0], S.Size);
 end;
 
-procedure TJpegICCProfile.ReadFromMarkerList(AList: TJpegMarkerList);
+procedure TJpegICCProfile.ReadFromMarkerList(List_: TJpegMarkerList);
 var
   i, j, DataLen, MarkerCount: Integer;
   Markers: array of TICCProfileMarker;
@@ -1677,11 +1684,11 @@ begin
   // Determine total length and get list of markers
   DataLen := 0;
   MarkerCount := 0;
-  SetLength(Markers, AList.Count);
-  for i := 0 to AList.Count - 1 do
-    if AList[i] is TICCProfileMarker then
+  SetLength(Markers, List_.Count);
+  for i := 0 to List_.Count - 1 do
+    if List_[i] is TICCProfileMarker then
       begin
-        M := TICCProfileMarker(AList[i]);
+        M := TICCProfileMarker(List_[i]);
         if not M.IsValid then
             continue;
         inc(DataLen, M.DataLength);
@@ -1711,11 +1718,11 @@ begin
     end;
 end;
 
-procedure TJpegICCProfile.SaveToFile(const AFileName: string);
+procedure TJpegICCProfile.SaveToFile(const FileName_: string);
 var
   F: TCoreClassFileStream;
 begin
-  F := TCoreClassFileStream.Create(AFileName, fmCreate);
+  F := TCoreClassFileStream.Create(FileName_, fmCreate);
   try
       SaveToStream(F);
   finally
@@ -1729,7 +1736,7 @@ begin
       S.Write(FData[0], length(FData))
 end;
 
-procedure TJpegICCProfile.WriteToMarkerList(AList: TJpegMarkerList);
+procedure TJpegICCProfile.WriteToMarkerList(List_: TJpegMarkerList);
 const
   cChunkSize = 60000;
 var
@@ -1754,9 +1761,9 @@ begin
       dec(Left, Chunk);
     end;
   // Insert them into the markerlist
-  Base := IntMin(AList.Count, 2);
+  Base := IntMin(List_.Count, 2);
   for i := Count - 1 downto 0 do
-      AList.Insert(Base, Markers[i]);
+      List_.Insert(Base, Markers[i]);
 end;
 
 function IntMin(i1, i2: Integer): Integer;
@@ -1767,9 +1774,9 @@ begin
       Result := i2;
 end;
 
-function sdGetDivisor(AScale: TJpegScale): Integer;
+function sdGetDivisor(Scale_: TJpegScale): Integer;
 begin
-  case AScale of
+  case Scale_ of
     jsFull: Result := 1;
     jsDiv2: Result := 2;
     jsDiv4: Result := 4;
@@ -1827,8 +1834,7 @@ function ComparePointer(Item1, Item2: pointer): Integer;
 begin
   if NativeUInt(Item1) < NativeUInt(Item2) then
       Result := -1
-  else
-    if NativeUInt(Item1) > NativeUInt(Item2) then
+  else if NativeUInt(Item1) > NativeUInt(Item2) then
       Result := 1
   else
       Result := 0;
@@ -1890,9 +1896,9 @@ begin
   Result := CompareGuid(Guid1, Guid2) = 0;
 end;
 
-function IsEmptyGuid(const AGuid: TGuid): boolean;
+function IsEmptyGuid(const GUID_: TGuid): boolean;
 begin
-  Result := CompareGuid(AGuid, cEmptyGuid) = 0;
+  Result := CompareGuid(GUID_, cEmptyGuid) = 0;
 end;
 
 function NewGuid: TGuid;
@@ -1922,33 +1928,33 @@ end;
 
 { TCustomObjectList }
 
-procedure TCustomObjectList.Append(AItem: TObject);
+procedure TCustomObjectList.Append(Item_: TObject);
 begin
-  Insert(Count, AItem);
+  Insert(Count, Item_);
 end;
 
 { TLuidList }
 
-function TLuidList.Add(AItem: TObject): Integer;
+function TLuidList.Add(Item_: TObject): Integer;
 begin
-  // do we have AItem?
-  if IndexByLuid(GetLuid(AItem), Result) then
-      inherited Items[Result] := AItem
+  // do we have Item_?
+  if IndexByLuid(GetLuid(Item_), Result) then
+      inherited Items[Result] := Item_
   else
     begin
       // Insert
-      Insert(Result, AItem);
+      Insert(Result, Item_);
     end;
 end;
 
-function TLuidList.HasLuid(const ALuid: Integer): boolean;
+function TLuidList.HasLuid(const LUID_: Integer): boolean;
 var
   Index: Integer;
 begin
-  Result := IndexByLuid(ALuid, Index);
+  Result := IndexByLuid(LUID_, Index);
 end;
 
-function TLuidList.IndexByLuid(const ALuid: Integer;
+function TLuidList.IndexByLuid(const LUID_: Integer;
   out Index: Integer): boolean;
 var
   Min, Max: Integer;
@@ -1962,7 +1968,7 @@ begin
   while Min < Max do
     begin
       Index := (Min + Max) div 2;
-      case CompareInteger(GetLuid(ListData^[Index]), ALuid) of
+      case CompareInteger(GetLuid(ListData^[Index]), LUID_) of
         - 1: Min := Index + 1;
         0: begin
             Result := true;
@@ -1982,37 +1988,37 @@ begin
       Result := GetLuid(ListData^[Count - 1]) + 1;
 end;
 
-procedure TLuidList.RemoveByLuid(const ALuid: Integer);
+procedure TLuidList.RemoveByLuid(const LUID_: Integer);
 var
   Index: Integer;
 begin
-  if IndexByLuid(ALuid, Index) then
+  if IndexByLuid(LUID_, Index) then
       Delete(Index);
 end;
 
 { TGuidList }
 
-function TGuidList.Add(AItem: TObject): Integer;
+function TGuidList.Add(Item_: TObject): Integer;
 begin
-  // do we have AItem?
-  if IndexByGuid(GetGuid(AItem), Result) then
+  // do we have Item_?
+  if IndexByGuid(GetGuid(Item_), Result) then
     // Replace existing
-      inherited Items[Result] := AItem
+      inherited Items[Result] := Item_
   else
     begin
       // Insert
-      Insert(Result, AItem);
+      Insert(Result, Item_);
     end;
 end;
 
-function TGuidList.HasGuid(const AGuid: TGuid): boolean;
+function TGuidList.HasGuid(const GUID_: TGuid): boolean;
 var
   Index: Integer;
 begin
-  Result := IndexByGuid(AGuid, Index);
+  Result := IndexByGuid(GUID_, Index);
 end;
 
-function TGuidList.IndexByGuid(const AGuid: TGuid;
+function TGuidList.IndexByGuid(const GUID_: TGuid;
   out Index: Integer): boolean;
 var
   Min, Max: Integer;
@@ -2026,7 +2032,7 @@ begin
   while Min < Max do
     begin
       Index := (Min + Max) div 2;
-      case CompareGuid(GetGuid(ListData^[Index]), AGuid) of
+      case CompareGuid(GetGuid(ListData^[Index]), GUID_) of
         - 1: Min := Index + 1;
         0: begin
             Result := true;
@@ -2038,28 +2044,28 @@ begin
   Index := Min;
 end;
 
-procedure TGuidList.RemoveByGuid(const AGuid: TGuid);
+procedure TGuidList.RemoveByGuid(const GUID_: TGuid);
 var
   Index: Integer;
 begin
-  if IndexByGuid(AGuid, Index) then
+  if IndexByGuid(GUID_, Index) then
       Delete(Index);
 end;
 
 { TCustomSortedList }
 
-function TCustomSortedList.Add(AItem: TObject): Integer;
+function TCustomSortedList.Add(Item_: TObject): Integer;
 begin
   if Sorted then
     begin
 
-      Find(AItem, Result);
-      Insert(Result, AItem);
+      Find(Item_, Result);
+      Insert(Result, Item_);
 
     end
   else
 
-      Result := inherited Add(AItem);
+      Result := inherited Add(Item_);
 end;
 
 function TCustomSortedList.AddUnique(Item: TObject; RaiseError: boolean): Integer;
@@ -2073,9 +2079,9 @@ begin
   Insert(Result, Item);
 end;
 
-constructor TCustomSortedList.Create(AOwnsObjects: boolean);
+constructor TCustomSortedList.Create(OwnsObjects_: boolean);
 begin
-  inherited Create(AOwnsObjects);
+  inherited Create(OwnsObjects_);
   FSorted := true;
 end;
 
@@ -2128,7 +2134,7 @@ begin
     end;
 end;
 
-procedure TCustomSortedList.FindMultiple(Item: TObject; out AIndex, ACount: Integer);
+procedure TCustomSortedList.FindMultiple(Item: TObject; out AIndex, Count_: Integer);
 var
   IdxStart: Integer;
   IdxClose: Integer;
@@ -2136,7 +2142,7 @@ begin
   if not Sorted then
       raise Exception.Create(sListMustBeSorted);
 
-  ACount := 0;
+  Count_ := 0;
 
   // Find one
   if not Find(Item, AIndex) then
@@ -2154,14 +2160,14 @@ begin
 
   // Result
   AIndex := IdxStart;
-  ACount := IdxClose - IdxStart + 1;
+  Count_ := IdxClose - IdxStart + 1;
 end;
 
-procedure TCustomSortedList.SetSorted(AValue: boolean);
+procedure TCustomSortedList.SetSorted(Value_: boolean);
 begin
-  if AValue <> FSorted then
+  if Value_ <> FSorted then
     begin
-      FSorted := AValue;
+      FSorted := Value_;
       if FSorted then
           Sort;
     end;
@@ -2285,170 +2291,170 @@ begin
     end;
 end;
 
-procedure sdSortArraySingle(AFirst: PSingle; ACount: Integer);
+procedure sdSortArraySingle(First_: PSingle; Count_: Integer);
 var
   Sorter: TCustomSorter;
 begin
   Sorter := TCustomSorter.Create;
   try
     Sorter.CompareMethod := {$IFDEF FPC}@{$ENDIF FPC}ComparePSingle;
-    Sorter.First := AFirst;
+    Sorter.First := First_;
     Sorter.Stride := SizeOf(single);
-    Sorter.Count := ACount;
+    Sorter.Count := Count_;
     Sorter.Sort;
   finally
       Sorter.Free;
   end;
 end;
 
-procedure sdSortArrayDouble(AFirst: PDouble; ACount: Integer);
+procedure sdSortArrayDouble(First_: PDouble; Count_: Integer);
 var
   Sorter: TCustomSorter;
 begin
   Sorter := TCustomSorter.Create;
   try
     Sorter.CompareMethod := {$IFDEF FPC}@{$ENDIF FPC}ComparePDouble;
-    Sorter.First := AFirst;
+    Sorter.First := First_;
     Sorter.Stride := SizeOf(double);
-    Sorter.Count := ACount;
+    Sorter.Count := Count_;
     Sorter.Sort;
   finally
       Sorter.Free;
   end;
 end;
 
-procedure sdSortArrayInteger(AFirst: PInteger; ACount: Integer);
+procedure sdSortArrayInteger(First_: PInteger; Count_: Integer);
 var
   Sorter: TCustomSorter;
 begin
   Sorter := TCustomSorter.Create;
   try
     Sorter.CompareMethod := {$IFDEF FPC}@{$ENDIF FPC}ComparePInteger;
-    Sorter.First := AFirst;
+    Sorter.First := First_;
     Sorter.Stride := SizeOf(Integer);
-    Sorter.Count := ACount;
+    Sorter.Count := Count_;
     Sorter.Sort;
   finally
       Sorter.Free;
   end;
 end;
 
-function sdAverageOfArrayInteger(AFirst: PInteger; ACount: Integer): double;
+function sdAverageOfArrayInteger(First_: PInteger; Count_: Integer): double;
 var
   i: Integer;
   Total: int64;
 begin
   Total := 0;
-  for i := 0 to ACount - 1 do
+  for i := 0 to Count_ - 1 do
     begin
-      inc(Total, AFirst^);
-      inc(AFirst);
+      inc(Total, First_^);
+      inc(First_);
     end;
 
-  Result := Total / ACount;
+  Result := Total / Count_;
 end;
 
-function sdMinimumOfArrayInteger(AFirst: PInteger; ACount: Integer): Integer;
+function sdMinimumOfArrayInteger(First_: PInteger; Count_: Integer): Integer;
 begin
-  if ACount = 0 then
+  if Count_ = 0 then
     begin
       Result := 0;
       exit;
     end;
 
-  Result := AFirst^;
+  Result := First_^;
 
-  while ACount > 0 do
+  while Count_ > 0 do
     begin
-      if AFirst^ < Result then
-          Result := AFirst^;
-      dec(ACount);
-      inc(AFirst);
+      if First_^ < Result then
+          Result := First_^;
+      dec(Count_);
+      inc(First_);
     end;
 end;
 
-function sdMaximumOfArrayInteger(AFirst: PInteger; ACount: Integer): Integer;
+function sdMaximumOfArrayInteger(First_: PInteger; Count_: Integer): Integer;
 begin
-  if ACount = 0 then
+  if Count_ = 0 then
     begin
       Result := 0;
       exit;
     end;
 
-  Result := AFirst^;
+  Result := First_^;
 
-  while ACount > 0 do
+  while Count_ > 0 do
     begin
-      if AFirst^ > Result then
-          Result := AFirst^;
-      dec(ACount);
-      inc(AFirst);
+      if First_^ > Result then
+          Result := First_^;
+      dec(Count_);
+      inc(First_);
     end;
 end;
 
-function sdMinimumOfArrayDouble(AFirst: PDouble; ACount: Integer): double;
+function sdMinimumOfArrayDouble(First_: PDouble; Count_: Integer): double;
 begin
-  if ACount = 0 then
+  if Count_ = 0 then
     begin
       Result := 0;
       exit;
     end;
 
-  Result := AFirst^;
+  Result := First_^;
 
-  while ACount > 0 do
+  while Count_ > 0 do
     begin
-      if AFirst^ > Result then
-          Result := AFirst^;
-      dec(ACount);
-      inc(AFirst);
+      if First_^ > Result then
+          Result := First_^;
+      dec(Count_);
+      inc(First_);
     end;
 end;
 
-function sdMaximumOfArrayDouble(AFirst: PDouble; ACount: Integer): double;
+function sdMaximumOfArrayDouble(First_: PDouble; Count_: Integer): double;
 begin
-  if ACount = 0 then
+  if Count_ = 0 then
     begin
       Result := 0;
       exit;
     end;
 
-  Result := AFirst^;
+  Result := First_^;
 
-  while ACount > 0 do
+  while Count_ > 0 do
     begin
-      if AFirst^ > Result then
-          Result := AFirst^;
-      dec(ACount);
-      inc(AFirst);
+      if First_^ > Result then
+          Result := First_^;
+      dec(Count_);
+      inc(First_);
     end;
 end;
 
-procedure sdWalkingAverageArrayInteger(SFirst, DFirst: PInteger; ACount, ACenter, AWindowSize: Integer);
+procedure sdWalkingAverageArrayInteger(SFirst, DFirst: PInteger; Count_, Center_, WindowSize_: Integer);
 var
   i: Integer;
   SLast: PInteger;
   Cum: Integer; // cumulative
 begin
   // Only process if we have enough values
-  if (ACount < AWindowSize) or (AWindowSize < ACenter) or (AWindowSize <= 0) then
+  if (Count_ < WindowSize_) or (WindowSize_ < Center_) or (WindowSize_ <= 0) then
       exit;
 
   // Start area
   SLast := SFirst;
 
   // Initialize cumulative
-  Cum := SLast^ * ACenter;
+  Cum := SLast^ * Center_;
 
   // Collect values into window
-  for i := 0 to (AWindowSize - ACenter) - 1 do
+  for i := 0 to (WindowSize_ - Center_) - 1 do
     begin
       Cum := Cum + SFirst^;
       inc(SFirst);
     end;
 
   // Do first part
-  for i := 0 to ACenter - 1 do
+  for i := 0 to Center_ - 1 do
     begin
       DFirst^ := Cum;
       inc(DFirst);
@@ -2458,7 +2464,7 @@ begin
     end;
 
   // Bulk
-  for i := 0 to ACount - AWindowSize - 1 do
+  for i := 0 to Count_ - WindowSize_ - 1 do
     begin
       DFirst^ := Cum;
       inc(DFirst);
@@ -2472,7 +2478,7 @@ begin
   dec(SFirst);
 
   // Close area
-  for i := ACenter to AWindowSize - 1 do
+  for i := Center_ to WindowSize_ - 1 do
     begin
       DFirst^ := Cum;
       inc(DFirst);
@@ -2482,32 +2488,32 @@ begin
     end;
 end;
 
-procedure sdWalkingAverageArrayDouble(SFirst, DFirst: PDouble; ACount, ACenter, AWindowSize: Integer);
+procedure sdWalkingAverageArrayDouble(SFirst, DFirst: PDouble; Count_, Center_, WindowSize_: Integer);
 var
   i: Integer;
   SLast: PDouble;
   Cum, Scale: double;
 begin
   // Only process if we have enough values
-  if (ACount < AWindowSize) or (AWindowSize < ACenter) or (AWindowSize <= 0) then
+  if (Count_ < WindowSize_) or (WindowSize_ < Center_) or (WindowSize_ <= 0) then
       exit;
 
   // Start area
-  Scale := 1 / AWindowSize;
+  Scale := 1 / WindowSize_;
   SLast := SFirst;
 
   // Initialize cumulative
-  Cum := SLast^ * ACenter;
+  Cum := SLast^ * Center_;
 
   // Collect values into window
-  for i := 0 to (AWindowSize - ACenter) - 1 do
+  for i := 0 to (WindowSize_ - Center_) - 1 do
     begin
       Cum := Cum + SFirst^;
       inc(SFirst);
     end;
 
   // Do first part
-  for i := 0 to ACenter - 1 do
+  for i := 0 to Center_ - 1 do
     begin
       DFirst^ := Cum * Scale;
       inc(DFirst);
@@ -2517,7 +2523,7 @@ begin
     end;
 
   // Bulk
-  for i := 0 to ACount - AWindowSize - 1 do
+  for i := 0 to Count_ - WindowSize_ - 1 do
     begin
       DFirst^ := Cum * Scale;
       inc(DFirst);
@@ -2531,7 +2537,7 @@ begin
   dec(SFirst);
 
   // Close area
-  for i := ACenter to AWindowSize - 1 do
+  for i := Center_ to WindowSize_ - 1 do
     begin
       DFirst^ := Cum * Scale;
       inc(DFirst);
@@ -2541,7 +2547,7 @@ begin
     end;
 end;
 
-procedure sdWalkingMedianArrayInteger(SFirst, DFirst: PInteger; ACount, ACenter, AWindowSize: Integer);
+procedure sdWalkingMedianArrayInteger(SFirst, DFirst: PInteger; Count_, Center_, WindowSize_: Integer);
 var
   W, Ws: array of Integer;
   WsCenter, WEnd: PInteger;
@@ -2564,37 +2570,37 @@ var
 // main
 begin
   // Only process if we have enough values
-  if (ACount < AWindowSize) or (AWindowSize < ACenter) or (AWindowSize <= 0) then
+  if (Count_ < WindowSize_) or (WindowSize_ < Center_) or (WindowSize_ <= 0) then
       exit;
 
   // Initialization
-  SetLength(W, AWindowSize);
-  SetLength(Ws, AWindowSize);
-  WsCenter := @Ws[ACenter];
-  WEnd := @W[AWindowSize - 1];
-  WSize := AWindowSize * SizeOf(Integer);
-  WM1Size := (AWindowSize - 1) * SizeOf(Integer);
+  SetLength(W, WindowSize_);
+  SetLength(Ws, WindowSize_);
+  WsCenter := @Ws[Center_];
+  WEnd := @W[WindowSize_ - 1];
+  WSize := WindowSize_ * SizeOf(Integer);
+  WM1Size := (WindowSize_ - 1) * SizeOf(Integer);
 
   Sorter := TCustomSorter.Create;
   try
     Sorter.CompareMethod := {$IFDEF FPC}@{$ENDIF FPC}ComparePInteger;
     Sorter.First := @Ws[0];
     Sorter.Stride := SizeOf(Integer);
-    Sorter.Count := AWindowSize;
+    Sorter.Count := WindowSize_;
 
     // Initialize cumulative
-    for i := 0 to ACenter - 1 do
+    for i := 0 to Center_ - 1 do
         AddToCumulative;
 
     // Collect values into window
-    for i := 0 to (AWindowSize - ACenter) - 1 do
+    for i := 0 to (WindowSize_ - Center_) - 1 do
       begin
         AddToCumulative;
         inc(SFirst);
       end;
 
     // Do first part
-    for i := 0 to ACenter - 1 do
+    for i := 0 to Center_ - 1 do
       begin
         DFirst^ := GetCumulative;
         inc(DFirst);
@@ -2603,7 +2609,7 @@ begin
       end;
 
     // Bulk
-    for i := 0 to ACount - AWindowSize - 1 do
+    for i := 0 to Count_ - WindowSize_ - 1 do
       begin
         DFirst^ := GetCumulative;
         inc(DFirst);
@@ -2615,7 +2621,7 @@ begin
     dec(SFirst);
 
     // Close area
-    for i := ACenter to AWindowSize - 1 do
+    for i := Center_ to WindowSize_ - 1 do
       begin
         DFirst^ := GetCumulative;
         inc(DFirst);
@@ -2627,7 +2633,7 @@ begin
   end;
 end;
 
-procedure sdWalkingMedianArrayDouble(SFirst, DFirst: PDouble; ACount, ACenter, AWindowSize: Integer);
+procedure sdWalkingMedianArrayDouble(SFirst, DFirst: PDouble; Count_, Center_, WindowSize_: Integer);
 var
   W, Ws: array of double;
   WsCenter, WEnd: PDouble;
@@ -2650,37 +2656,37 @@ var
 // main
 begin
   // Only process if we have enough values
-  if (ACount < AWindowSize) or (AWindowSize < ACenter) or (AWindowSize <= 0) then
+  if (Count_ < WindowSize_) or (WindowSize_ < Center_) or (WindowSize_ <= 0) then
       exit;
 
   // Initialization
-  SetLength(W, AWindowSize);
-  SetLength(Ws, AWindowSize);
-  WsCenter := @Ws[ACenter];
-  WEnd := @W[AWindowSize - 1];
-  WSize := AWindowSize * SizeOf(double);
-  WM1Size := (AWindowSize - 1) * SizeOf(double);
+  SetLength(W, WindowSize_);
+  SetLength(Ws, WindowSize_);
+  WsCenter := @Ws[Center_];
+  WEnd := @W[WindowSize_ - 1];
+  WSize := WindowSize_ * SizeOf(double);
+  WM1Size := (WindowSize_ - 1) * SizeOf(double);
 
   Sorter := TCustomSorter.Create;
   try
     Sorter.CompareMethod := {$IFDEF FPC}@{$ENDIF FPC}ComparePDouble;
     Sorter.First := @Ws[0];
     Sorter.Stride := SizeOf(double);
-    Sorter.Count := AWindowSize;
+    Sorter.Count := WindowSize_;
 
     // Initialize cumulative
-    for i := 0 to ACenter - 1 do
+    for i := 0 to Center_ - 1 do
         AddToCumulative;
 
     // Collect values into window
-    for i := 0 to (AWindowSize - ACenter) - 1 do
+    for i := 0 to (WindowSize_ - Center_) - 1 do
       begin
         AddToCumulative;
         inc(SFirst);
       end;
 
     // Do first part
-    for i := 0 to ACenter - 1 do
+    for i := 0 to Center_ - 1 do
       begin
         DFirst^ := GetCumulative;
         inc(DFirst);
@@ -2689,7 +2695,7 @@ begin
       end;
 
     // Bulk
-    for i := 0 to ACount - AWindowSize - 1 do
+    for i := 0 to Count_ - WindowSize_ - 1 do
       begin
         DFirst^ := GetCumulative;
         inc(DFirst);
@@ -2701,7 +2707,7 @@ begin
     dec(SFirst);
 
     // Close area
-    for i := ACenter to AWindowSize - 1 do
+    for i := Center_ to WindowSize_ - 1 do
       begin
         DFirst^ := GetCumulative;
         inc(DFirst);

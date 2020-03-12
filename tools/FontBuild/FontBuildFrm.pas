@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls,
 
-  System.Math, Threading, FastGBK,
+  System.Math, System.Threading, FastGBK, GBK,
   MemoryStream64, MemoryRaster, Geometry2DUnit, DoStatusIO, PascalStrings, CoreClasses, GR32;
 
 type
@@ -28,6 +28,7 @@ type
     ExportBMPButton: TButton;
     bmpSaveDialog: TSaveDialog;
     IncludeGBKCheckBox: TCheckBox;
+    Timer1: TTimer;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BuildButtonClick(Sender: TObject);
@@ -36,6 +37,7 @@ type
     procedure SampleMemoChange(Sender: TObject);
     procedure SaveButtonClick(Sender: TObject);
     procedure SetFontButtonClick(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
     { Private declarations }
   public
@@ -61,7 +63,6 @@ end;
 procedure TFontBuildForm.DoStatus_Backcall(AText: SystemString; const ID: Integer);
 begin
   Memo.Lines.Add(AText);
-  Application.ProcessMessages;
 end;
 
 procedure TFontBuildForm.FormCreate(Sender: TObject);
@@ -73,190 +74,37 @@ begin
   BuildButtonClick(BuildButton);
 end;
 
-function computeYHead(R: TMemoryRaster): Integer; inline;
-var
-  X, Y: Integer;
-begin
-  for X := 1 to R.width - 1 do
-    begin
-      for Y := R.height - 1 downto 0 do
-        if R.PixelAlpha[X, Y] > 0 then
-            Break;
-      if Y > 0 then
-          Exit(Max(X - 1, 0));
-    end;
-  Exit(0);
-end;
-
-function computeYTail(R: TMemoryRaster; StartP: Integer): Integer; inline;
-var
-  X, Y: Integer;
-begin
-  for X := R.width - 1 downto 0 do
-    begin
-      for Y := R.height - 1 downto 0 do
-        if R.PixelAlpha[X, Y] > 0 then
-            Break;
-      if Y > 0 then
-          Exit(Min(X + 1, R.width));
-    end;
-  Exit(StartP);
-end;
-
-function IsChineseText(const AStr: {$IFDEF UNICODE}string{$ELSE}WideString{$ENDIF};
-  const CheckAllChar: Boolean;
-  const IncludeCharacters: Boolean = True;
-  const IncludeRadicals: Boolean = False;
-  const IncludePUAParts: Boolean = False;
-  const IncludeStrokes: Boolean = False;
-  const IncludePhoneticNotation: Boolean = False;
-  const IncludeAllCharacters: Boolean = False): Boolean;
-var
-  I, F, C: Integer;
-  IsHasNext,
-    IsNoCheckNext,
-    IsFound,
-    IsAllTrue: Boolean;
-  UTF32: DWORD;
-begin
-  Result := False;
-  IsAllTrue := Length(AStr) <> 0;
-{$IFDEF UNICODE}
-  F := Low(AStr);
-  C := High(AStr);
-{$ELSE}
-  F := 1;
-  C := Length(AStr);
-{$ENDIF}
-  IsNoCheckNext := False;
-  for I := F to C do
-    begin
-      IsHasNext := I < C;
-      if IsNoCheckNext then
-          Continue;
-      IsNoCheckNext := False;
-      if ((AStr[I] >= #$D800) and (AStr[I] <= #$DFFF)) and IsHasNext then
-        begin
-          UTF32 := (Cardinal(AStr[I]) and $000003FF) shl 10 or (Cardinal(AStr[I + 1]) and $000003FF) + $00010000;
-          IsNoCheckNext := True;
-        end
-      else
-          UTF32 := Ord(AStr[I]);
-      // https://www.qqxiuzi.cn/zh/hanzi-unicode-bianma.php
-      // ×Ö·û¼¯	×ÖÊý	Unicode ±àÂë
-      // »ù±¾ºº×Ö	20902×Ö	4E00-9FA5
-      // »ù±¾ºº×Ö²¹³ä	38×Ö	9FA6-9FCB
-      // À©Õ¹A	6582×Ö	3400-4DB5
-      // À©Õ¹B	42711×Ö	20000-2A6D6
-      // À©Õ¹C	4149×Ö	2A700-2B734
-      // À©Õ¹D	222×Ö	2B740-2B81D
-      // ¿µÎõ²¿Ê×	214×Ö	2F00-2FD5
-      // ²¿Ê×À©Õ¹	115×Ö	2E80-2EF3
-      // ¼æÈÝºº×Ö	477×Ö	F900-FAD9
-      // ¼æÈÝÀ©Õ¹	542×Ö	2F800-2FA1D
-      // PUA(GBK)²¿¼þ	81×Ö	E815-E86F
-      // ²¿¼þÀ©Õ¹	452×Ö	E400-E5E8
-      // PUAÔö²¹	207×Ö	E600-E6CF
-      // ºº×Ö±Ê»­	36×Ö	31C0-31E3
-      // ºº×Ö½á¹¹	12×Ö	2FF0-2FFB
-      // ººÓï×¢Òô	22×Ö	3105-3120
-      // ×¢ÒôÀ©Õ¹	22×Ö	31A0-31BA
-      // ©–	1×Ö	3007
-      // http://www.unicode.org/cgi-bin/GetUnihanData.pl?codepoint=UnicodeHexCode
-      IsFound := False;
-      if (not IsFound) and IncludeCharacters then
-        begin
-          IsFound := (UTF32 >= $4E00) and (UTF32 <= $9FA5);
-        end;
-      if (not IsFound) and IncludeCharacters then
-        begin
-          IsFound := (UTF32 >= $9FA6) and (UTF32 <= $9FCB);
-        end;
-      if (not IsFound) and IncludeCharacters then
-        begin
-          IsFound := (UTF32 >= $3400) and (UTF32 <= $4DB5);
-        end;
-      if (not IsFound) and IncludeCharacters then
-        begin
-          IsFound := (UTF32 >= $20000) and (UTF32 <= $2A6D6);
-        end;
-      if (not IsFound) and IncludeCharacters then
-        begin
-          IsFound := (UTF32 >= $2A700) and (UTF32 <= $2B734);
-        end;
-      if (not IsFound) and IncludeCharacters then
-        begin
-          IsFound := (UTF32 >= $2B740) and (UTF32 <= $2B81D);
-        end;
-      if (not IsFound) and IncludeRadicals then
-        begin
-          IsFound := (UTF32 >= $2F00) and (UTF32 <= $2FD5);
-        end;
-      if (not IsFound) and IncludeRadicals then
-        begin
-          IsFound := (UTF32 >= $2E80) and (UTF32 <= $2EF3);
-        end;
-      if (not IsFound) and IncludeCharacters then
-        begin
-          IsFound := (UTF32 >= $F900) and (UTF32 <= $FAD9);
-        end;
-      if (not IsFound) and IncludeCharacters then
-        begin
-          IsFound := (UTF32 >= $2F800) and (UTF32 <= $2FA1D);
-        end;
-      if (not IsFound) and IncludePUAParts then
-        begin
-          IsFound := (UTF32 >= $E815) and (UTF32 <= $E86F);
-        end;
-      if (not IsFound) and IncludePUAParts then
-        begin
-          IsFound := (UTF32 >= $E400) and (UTF32 <= $E5E8);
-        end;
-      if (not IsFound) and IncludePUAParts then
-        begin
-          IsFound := (UTF32 >= $E600) and (UTF32 <= $E6CF);
-        end;
-      if (not IsFound) and IncludeStrokes then
-        begin
-          IsFound := (UTF32 >= $31C0) and (UTF32 <= $31E3);
-        end;
-      if (not IsFound) and IncludeStrokes then
-        begin
-          IsFound := (UTF32 >= $2FF0) and (UTF32 <= $2FFB);
-        end;
-      if (not IsFound) and IncludePhoneticNotation then
-        begin
-          IsFound := (UTF32 >= $3105) and (UTF32 <= $3120);
-        end;
-      if (not IsFound) and IncludePhoneticNotation then
-        begin
-          IsFound := (UTF32 >= $31A0) and (UTF32 <= $31BA);
-        end;
-      if (not IsFound) and IncludeCharacters then
-        begin
-          IsFound := (UTF32 = $3007)
-        end;
-      if (not IsFound) and IncludeAllCharacters then
-        begin
-          IsFound := (UTF32 >= $0391) and (UTF32 <= $FFE5);
-        end;
-
-      if IsFound then
-        begin
-          if not CheckAllChar then
-            begin
-              Result := True;
-              Break;
-            end;
-        end
-      else
-          IsAllTrue := False;
-    end;
-  if CheckAllChar then
-      Result := IsAllTrue;
-end;
-
 procedure TFontBuildForm.BuildButtonClick(Sender: TObject);
+  function computeYHead(R: TMemoryRaster): Integer;
+  var
+    X, Y: Integer;
+  begin
+    for X := 1 to R.width - 1 do
+      begin
+        for Y := R.height - 1 downto 0 do
+          if R.PixelAlpha[X, Y] > 0 then
+              Break;
+        if Y > 0 then
+            Exit(Max(X - 1, 0));
+      end;
+    Exit(0);
+  end;
+
+  function computeYTail(R: TMemoryRaster; sp: Integer): Integer;
+  var
+    X, Y: Integer;
+  begin
+    for X := R.width - 1 downto 0 do
+      begin
+        for Y := R.height - 1 downto 0 do
+          if R.PixelAlpha[X, Y] > 0 then
+              Break;
+        if Y > 0 then
+            Exit(Min(X + 1, R.width));
+      end;
+    Exit(sp);
+  end;
+
   procedure DoFor(index: Integer);
   var
     GR: TBitmap32;
@@ -322,6 +170,7 @@ begin
   ExportBMPButton.Enabled := False;
   AATrackBar.Enabled := False;
   IncludeallCheckBox.Enabled := False;
+  IncludeGBKCheckBox.Enabled := False;
 
   ProgressBar.Max := $FFFF;
   ProgressBar.Min := $0;
@@ -354,6 +203,7 @@ begin
   ExportBMPButton.Enabled := True;
   AATrackBar.Enabled := True;
   IncludeallCheckBox.Enabled := True;
+  IncludeGBKCheckBox.Enabled := True;
 
   ngr := TBitmap32.Create;
   ngr.SetSize(Image.width, Image.height);
@@ -461,6 +311,11 @@ begin
       Exit;
   SampleMemo.Font.Assign(FontDialog.Font);
   SampleMemo.ParentColor := True;
+end;
+
+procedure TFontBuildForm.Timer1Timer(Sender: TObject);
+begin
+  DoStatus();
 end;
 
 end.

@@ -49,7 +49,7 @@ uses
   Windows, Types,
 {$ENDIF}
   Classes, SysUtils, GR32, GR32_Transforms, GR32_Containers,
-  GR32_OrdinalMaps, GR32_Blend, GR32_System, GR32_Bindings;
+  GR32_OrdinalMaps, GR32_Blend;
 
 procedure BlockTransfer(
   Dst: TCustomBitmap32; DstX: Integer; DstY: Integer; DstClip: TRect;
@@ -342,7 +342,7 @@ type
     FOuterColor: TColor32;
     procedure SetKernel(const Value: TCustomKernel);
     function GetKernelClassName: string;
-    procedure SetKernelClassName(Value: string);
+    procedure SetKernelClassName(const Value: string);
     procedure SetKernelMode(const Value: TKernelMode);
     procedure SetTableSize(Value: Integer);
   protected
@@ -484,6 +484,7 @@ type
     FCenterX: Integer;
     FCenterY: Integer;
   protected
+    procedure SetKernel(const Value: TIntegerMap);
     procedure UpdateBuffer(var Buffer: TBufferEntry; Color: TColor32;
       Weight: Integer); virtual; abstract;
     function ConvertBuffer(var Buffer: TBufferEntry): TColor32; virtual;
@@ -493,7 +494,7 @@ type
     function GetSampleInt(X, Y: Integer): TColor32; override;
     function GetSampleFixed(X, Y: TFixed): TColor32; override;
   published
-    property Kernel: TIntegerMap read FKernel write FKernel;
+    property Kernel: TIntegerMap read FKernel write SetKernel;
     property CenterX: Integer read FCenterX write FCenterX;
     property CenterY: Integer read FCenterY write FCenterY;
   end;
@@ -577,8 +578,13 @@ procedure Contract(Src, Dst: TCustomBitmap32; Kernel: TIntegerMap; CenterX, Cent
 { Auxiliary routines for accumulating colors in a buffer }
 procedure IncBuffer(var Buffer: TBufferEntry; Color: TColor32); {$IFDEF USEINLINING} inline; {$ENDIF}
 procedure MultiplyBuffer(var Buffer: TBufferEntry; W: Integer); {$IFDEF USEINLINING} inline; {$ENDIF}
-function BufferToColor32(Buffer: TBufferEntry; Shift: Integer): TColor32; {$IFDEF USEINLINING} inline; {$ENDIF}
+function BufferToColor32(const Buffer: TBufferEntry; Shift: Integer): TColor32; {$IFDEF USEINLINING} inline; {$ENDIF}
 procedure ShrBuffer(var Buffer: TBufferEntry; Shift: Integer); {$IFDEF USEINLINING} inline; {$ENDIF}
+
+{ Downsample byte map }
+procedure DownsampleByteMap2x(Source, Dest: TByteMap);
+procedure DownsampleByteMap3x(Source, Dest: TByteMap);
+procedure DownsampleByteMap4x(Source, Dest: TByteMap);
 
 { Registration routines }
 procedure RegisterResampler(ResamplerClass: TCustomResamplerClass);
@@ -604,47 +610,46 @@ resourcestring
 implementation
 
 uses
-  GR32_LowLevel, GR32_Rasterizers, GR32_Math, Math;
+  GR32_System, GR32_Bindings, GR32_LowLevel, GR32_Rasterizers, GR32_Math,
+  GR32_Gamma, Math;
 
 resourcestring
   RCStrInvalidSrcRect = 'Invalid SrcRect';
 
 const
-  CAlbrecht2    : array [0..1] of Double = (5.383553946707251E-1, 4.616446053292749E-1);
-  CAlbrecht3    : array [0..2] of Double = (3.46100822018625E-1,  4.97340635096738E-1,
-                                            1.56558542884637E-1);
-  CAlbrecht4    : array [0..3] of Double = (2.26982412792069E-1,  4.57254070828427E-1,
-                                            2.73199027957384E-1,  4.25644884221201E-2);
-  CAlbrecht5    : array [0..4] of Double = (1.48942606015830E-1,  3.86001173639176E-1,
-                                            3.40977403214053E-1,  1.139879604246E-1,
-                                            1.00908567063414E-2);
-  CAlbrecht6    : array [0..5] of Double = (9.71676200107429E-2,  3.08845222524055E-1,
-                                            3.62623371437917E-1,  1.88953325525116E-1,
-                                            4.02095714148751E-2,  2.20088908729420E-3);
-  CAlbrecht7    : array [0..6] of Double = (6.39644241143904E-2,  2.39938645993528E-1,
-                                            3.50159563238205E-1,  2.47741118970808E-1,
-                                            8.54382560558580E-2,  1.23202033692932E-2,
-                                            4.37788257917735E-4);
-  CAlbrecht8    : array [0..7] of Double = (4.21072107042137E-2,  1.82076226633776E-1,
-                                            3.17713781059942E-1,  2.84438001373442E-1,
-                                            1.36762237777383E-1,  3.34038053504025E-2,
-                                            3.41677216705768E-3,  8.19649337831348E-5);
-  CAlbrecht9    : array [0..8] of Double = (2.76143731612611E-2,  1.35382228758844E-1,
-                                            2.75287234472237E-1,  2.98843335317801E-1,
-                                            1.85319330279284E-1,  6.48884482549063E-2,
-                                            1.17641910285655E-2,  8.85987580106899E-4,
-                                            1.48711469943406E-5);
-  CAlbrecht10   : array [0..9] of Double = (1.79908225352538E-2,  9.87959586065210E-2,
-                                            2.29883817001211E-1,  2.94113019095183E-1,
-                                            2.24338977814325E-1,  1.03248806248099E-1,
-                                            2.75674109448523E-2,  3.83958622947123E-3,
-                                            2.18971708430106E-4,  2.62981665347889E-6);
-  CAlbrecht11  : array [0..10] of Double = (1.18717127796602E-2,  7.19533651951142E-2,
-                                            1.87887160922585E-1,  2.75808174097291E-1,
-                                            2.48904243244464E-1,  1.41729867200712E-1,
-                                            5.02002976228256E-2,  1.04589649084984E-2,
-                                            1.13615112741660E-3,  4.96285981703436E-5,
-                                            4.34303262685720E-7);
+  CAlbrecht2 : array [0..1] of Double = (5.383553946707251E-1,
+    4.616446053292749E-1);
+  CAlbrecht3 : array [0..2] of Double = (3.46100822018625E-1,
+    4.97340635096738E-1, 1.56558542884637E-1);
+  CAlbrecht4 : array [0..3] of Double = (2.26982412792069E-1,
+    4.57254070828427E-1, 2.73199027957384E-1, 4.25644884221201E-2);
+  CAlbrecht5 : array [0..4] of Double = (1.48942606015830E-1,
+    3.86001173639176E-1, 3.40977403214053E-1, 1.139879604246E-1,
+    1.00908567063414E-2);
+  CAlbrecht6 : array [0..5] of Double = (9.71676200107429E-2,
+    3.08845222524055E-1, 3.62623371437917E-1, 1.88953325525116E-1,
+    4.02095714148751E-2, 2.20088908729420E-3);
+  CAlbrecht7 : array [0..6] of Double = (6.39644241143904E-2,
+    2.39938645993528E-1, 3.50159563238205E-1, 2.47741118970808E-1,
+    8.54382560558580E-2, 1.23202033692932E-2, 4.37788257917735E-4);
+  CAlbrecht8 : array [0..7] of Double = (4.21072107042137E-2,
+    1.82076226633776E-1, 3.17713781059942E-1, 2.84438001373442E-1,
+    1.36762237777383E-1, 3.34038053504025E-2, 3.41677216705768E-3,
+    8.19649337831348E-5);
+  CAlbrecht9 : array [0..8] of Double = (2.76143731612611E-2,
+    1.35382228758844E-1, 2.75287234472237E-1, 2.98843335317801E-1,
+    1.85319330279284E-1, 6.48884482549063E-2, 1.17641910285655E-2,
+    8.85987580106899E-4, 1.48711469943406E-5);
+  CAlbrecht10: array [0..9] of Double = (1.79908225352538E-2,
+    9.87959586065210E-2, 2.29883817001211E-1, 2.94113019095183E-1,
+    2.24338977814325E-1, 1.03248806248099E-1, 2.75674109448523E-2,
+    3.83958622947123E-3, 2.18971708430106E-4, 2.62981665347889E-6);
+  CAlbrecht11: array [0..10] of Double = (1.18717127796602E-2,
+    7.19533651951142E-2, 1.87887160922585E-1, 2.75808174097291E-1,
+    2.48904243244464E-1, 1.41729867200712E-1, 5.02002976228256E-2,
+    1.04589649084984E-2, 1.13615112741660E-3, 4.96285981703436E-5,
+    4.34303262685720E-7);
+
 type
   TTransformationAccess = class(TTransformation);
   TCustomBitmap32Access = class(TCustomBitmap32);
@@ -659,8 +664,6 @@ type
   TCluster = array of TPointRec;
   TMappingTable = array of TCluster;
 
-
-type
   TKernelSamplerClass = class of TKernelSampler;
 
 { Auxiliary rasterization routine for kernel-based samplers }
@@ -740,7 +743,7 @@ begin
   Buffer.A := Buffer.A shr Shift;
 end;
 
-function BufferToColor32(Buffer: TBufferEntry; Shift: Integer): TColor32;
+function BufferToColor32(const Buffer: TBufferEntry; Shift: Integer): TColor32;
 begin
   with TColor32Entry(Result) do
   begin
@@ -1718,10 +1721,10 @@ begin
         begin
           C := Src.Bits[X + ClusterY[Y].Pos * Src.Width];
           ClustYW := ClusterY[Y].Weight;
-          Inc(Ca, C shr 24 * ClustYW);
-          Inc(Cr, (C and $00FF0000) shr 16 * ClustYW);
-          Inc(Cg, (C and $0000FF00) shr 8 * ClustYW);
-          Inc(Cb, (C and $000000FF) * ClustYW);
+          Inc(Ca, Integer(C shr 24) * ClustYW);
+          Inc(Cr, Integer(C and $00FF0000) shr 16 * ClustYW);
+          Inc(Cg, Integer(C and $0000FF00) shr 8 * ClustYW);
+          Inc(Cb, Integer(C and $000000FF) * ClustYW);
         end;
         with HorzBuffer[X - MapXLoPos] do
         begin
@@ -1811,7 +1814,7 @@ begin
     {$IFDEF HAS_NATIVEINT}
     Inc(NativeUInt(RowSrc), OffSrc);
     {$ELSE}
-    Inc(Cardinal(RowSrc), OffSrc);
+    Inc(PByte(RowSrc), OffSrc);
     {$ENDIF}
   end;
 
@@ -2293,7 +2296,7 @@ begin
         {$IFDEF HAS_NATIVEINT}
         Inc(NativeUInt(RowSrc), OffSrc * dy);
         {$ELSE}
-        Inc(Cardinal(RowSrc), OffSrc * dy);
+        Inc(PByte(RowSrc), OffSrc * dy);
         {$ENDIF}
       end;
     end;
@@ -2489,6 +2492,73 @@ begin
 end;
 {$WARNINGS ON}
 
+
+{ TByteMap downsample functions }
+
+procedure DownsampleByteMap2x(Source, Dest: TByteMap);
+var
+  X, Y: Integer;
+  ScnLn: array [0 .. 2] of PByteArray;
+begin
+  for Y := 0 to (Source.Height div 2) - 1 do
+  begin
+    ScnLn[0] := Dest.ScanLine[Y];
+    ScnLn[1] := Source.ScanLine[Y * 2];
+    ScnLn[2] := Source.ScanLine[Y * 2 + 1];
+    for X := 0 to (Source.Width div 2) - 1 do
+      ScnLn[0, X] := (
+        ScnLn[1, 2 * X] + ScnLn[1, 2 * X + 1] +
+        ScnLn[2, 2 * X] + ScnLn[2, 2 * X + 1]) div 4;
+  end;
+end;
+
+procedure DownsampleByteMap3x(Source, Dest: TByteMap);
+var
+  X, Y: Integer;
+  x3: Integer;
+  ScnLn: array [0 .. 3] of PByteArray;
+begin
+  for Y := 0 to (Source.Height div 3) - 1 do
+  begin
+    ScnLn[0] := Dest.ScanLine[Y];
+    ScnLn[1] := Source.ScanLine[3 * Y];
+    ScnLn[2] := Source.ScanLine[3 * Y + 1];
+    ScnLn[3] := Source.ScanLine[3 * Y + 2];
+    for X := 0 to (Source.Width div 3) - 1 do
+    begin
+      x3 := 3 * X;
+      ScnLn[0, X] := (
+        ScnLn[1, x3] + ScnLn[1, x3 + 1] + ScnLn[1, x3 + 2] +
+        ScnLn[2, x3] + ScnLn[2, x3 + 1] + ScnLn[2, x3 + 2] +
+        ScnLn[3, x3] + ScnLn[3, x3 + 1] + ScnLn[3, x3 + 2]) div 9;
+    end;
+  end;
+end;
+
+procedure DownsampleByteMap4x(Source, Dest: TByteMap);
+var
+  X, Y: Integer;
+  x4: Integer;
+  ScnLn: array [0 .. 4] of PByteArray;
+begin
+  for Y := 0 to (Source.Height div 4) - 1 do
+  begin
+    ScnLn[0] := Dest.ScanLine[Y];
+    ScnLn[1] := Source.ScanLine[Y * 4];
+    ScnLn[2] := Source.ScanLine[Y * 4 + 1];
+    ScnLn[3] := Source.ScanLine[Y * 4 + 2];
+    ScnLn[4] := Source.ScanLine[Y * 4 + 3];
+    for X := 0 to (Source.Width div 4) - 1 do
+    begin
+      x4 := 4 * X;
+      ScnLn[0, X] := (
+        ScnLn[1, x4] + ScnLn[1, x4 + 1] + ScnLn[1, x4 + 2] + ScnLn[1, x4 + 3] +
+        ScnLn[2, x4] + ScnLn[2, x4 + 1] + ScnLn[2, x4 + 2] + ScnLn[2, x4 + 3] +
+        ScnLn[3, x4] + ScnLn[3, x4 + 1] + ScnLn[3, x4 + 2] + ScnLn[3, x4 + 3] +
+        ScnLn[4, x4] + ScnLn[4, x4 + 1] + ScnLn[4, x4 + 2] + ScnLn[4, x4 + 3]) div 16;
+    end;
+  end;
+end;
 
 
 { TCustomKernel }
@@ -2934,7 +3004,7 @@ begin
   Result := FKernel.ClassName;
 end;
 
-procedure TKernelResampler.SetKernelClassName(Value: string);
+procedure TKernelResampler.SetKernelClassName(const Value: string);
 var
   KernelClass: TCustomKernelClass;
 begin
@@ -3172,9 +3242,9 @@ begin
                   Inc(HorzEntry.B, SrcP.B * W);
                 end else
                 begin
-                  Inc(HorzEntry.R, Div255(Alpha * SrcP.R) * W);
-                  Inc(HorzEntry.G, Div255(Alpha * SrcP.G) * W);
-                  Inc(HorzEntry.B, Div255(Alpha * SrcP.B) * W);
+                  Inc(HorzEntry.R, Integer(Div255(Alpha * SrcP.R)) * W);
+                  Inc(HorzEntry.G, Integer(Div255(Alpha * SrcP.G)) * W);
+                  Inc(HorzEntry.B, Integer(Div255(Alpha * SrcP.B)) * W);
                 end;
               end;
               Inc(SrcP);
@@ -3195,9 +3265,9 @@ begin
           if (Alpha <> 0) then
           begin
             // Sample premultiplied values
-            OuterPremultColorR := Div255(Alpha * TColor32Entry(FOuterColor).R);
-            OuterPremultColorG := Div255(Alpha * TColor32Entry(FOuterColor).G);
-            OuterPremultColorB := Div255(Alpha * TColor32Entry(FOuterColor).B);
+            OuterPremultColorR := Integer(Div255(Alpha * TColor32Entry(FOuterColor).R));
+            OuterPremultColorG := Integer(Div255(Alpha * TColor32Entry(FOuterColor).G));
+            OuterPremultColorB := Integer(Div255(Alpha * TColor32Entry(FOuterColor).B));
 
             for I := -KWidth to KWidth do
             begin
@@ -3363,8 +3433,7 @@ begin
   W := Ceil(FKernel.GetWidth);
   if FKernelMode in [kmTableNearest, kmTableLinear] then
   begin
-    FWeightTable := TIntegerMap.Create;
-    FWeightTable.SetSize(W * 2 + 1, FTableSize + 1);
+    FWeightTable := TIntegerMap.Create(W * 2 + 1, FTableSize + 1);
     for I := 0 to FTableSize do
     begin
       Fraction := I / (FTableSize - 1);
@@ -3380,6 +3449,7 @@ begin
     end;
   end;
 end;
+
 
 { TCustomBitmap32NearestResampler }
 
@@ -3517,10 +3587,10 @@ begin
         C4 := C4 and $00FFFFFF;
       end;
 
-      WX := GAMMA_TABLE[((X shr 8) and $FF) xor $FF];
+      WX := GAMMA_ENCODING_TABLE[((X shr 8) and $FF) xor $FF];
       Result := CombineReg(CombineReg(C1, C2, WX),
                            CombineReg(C3, C4, WX),
-                           GAMMA_TABLE[((Y shr 8) and $FF) xor $FF]);
+                           GAMMA_ENCODING_TABLE[((Y shr 8) and $FF) xor $FF]);
       EMMS;  
     end  
     else  
@@ -3557,9 +3627,11 @@ begin
   DstW := DstRect.Right - DstRect.Left;
   DstH := DstRect.Bottom - DstRect.Top;
   if (DstW > SrcW) and (DstH > SrcH) and (SrcW > 1) and (SrcH > 1) then
-    StretchHorzStretchVertLinear(Dst, DstRect, DstClip, Src, SrcRect, CombineOp, CombineCallBack)
+    StretchHorzStretchVertLinear(Dst, DstRect, DstClip, Src, SrcRect, CombineOp,
+      CombineCallBack)
   else
-    GR32_Resamplers.Resample(Dst, DstRect, DstClip, Src, SrcRect, FLinearKernel, CombineOp, CombineCallBack);
+    GR32_Resamplers.Resample(Dst, DstRect, DstClip, Src, SrcRect, FLinearKernel,
+      CombineOp, CombineCallBack);
 end;
 
 procedure TDraftResampler.Resample(
@@ -3567,7 +3639,8 @@ procedure TDraftResampler.Resample(
   Src: TCustomBitmap32; SrcRect: TRect;
   CombineOp: TDrawMode; CombineCallBack: TPixelCombineEvent);
 begin
-  DraftResample(Dst, DstRect, DstClip, Src, SrcRect, FLinearKernel, CombineOp, CombineCallBack)
+  DraftResample(Dst, DstRect, DstClip, Src, SrcRect, FLinearKernel, CombineOp,
+    CombineCallBack)
 end;
 
 { TTransformer }
@@ -3576,7 +3649,8 @@ function TTransformer.GetSampleInt(X, Y: Integer): TColor32;
 var
   U, V: TFixed;
 begin
-  FTransformationReverseTransformFixed(X * FixedOne + FixedHalf, Y * FixedOne + FixedHalf, U, V);
+  FTransformationReverseTransformFixed(X * FixedOne + FixedHalf,
+    Y * FixedOne + FixedHalf, U, V);
   Result := FGetSampleFixed(U - FixedHalf, V - FixedHalf);
 end;
 
@@ -3964,6 +4038,11 @@ begin
   Result := ConvertBuffer(Buffer);
 end;
 
+procedure TKernelSampler.SetKernel(const Value: TIntegerMap);
+begin
+  FKernel.Assign(Value);
+end;
+
 { TConvolver }
 
 procedure TConvolver.UpdateBuffer(var Buffer: TBufferEntry; Color: TColor32;
@@ -4138,7 +4217,7 @@ begin
   end;
 end;
 
-{CPU target and feature Function templates}
+{CPU target and feature function templates}
 
 const
   FID_BLOCKAVERAGE = 0;

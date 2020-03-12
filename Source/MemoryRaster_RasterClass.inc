@@ -35,7 +35,183 @@ begin
       end;
 end;
 
-function TMemoryRaster.GetVertex: TVertexMap;
+function TYIQ.GetRGB: TRColor;
+var
+  nY, nI, nQ, R, G, B: TGeoFloat;
+begin
+  nY := Y;
+  nI := i * 1.191 - 0.595;
+  nQ := Q * 1.045 - 0.523;
+  R := nY + 0.956 * nI + 0.621 * nQ;
+  G := nY - 0.272 * nI - 0.647 * nQ;
+  B := nY - 1.107 * nI + 1.706 * nQ;
+  Result := RColorF(R, G, B);
+end;
+
+procedure TYIQ.SetRGB(const Value: TRColor);
+var
+  R, G, B: TGeoFloat;
+begin
+  RColor2F(Value, R, G, B);
+  Y := 0.299 * R + 0.587 * G + 0.114 * B;
+  i := 0.596 * R - 0.274 * G - 0.321 * B;
+  i := (i + 0.595) / 1.191;
+  Q := 0.211 * R - 0.523 * G + 0.311 * B;
+  Q := (Q + 0.523) / 1.045;
+end;
+
+function TYIQ.GetRGBA(A: Byte): TRColor;
+begin
+  Result := GetRGB();
+  TRColorEntry(Result).A := A;
+end;
+
+procedure TYIQ.SetRGBA(A: Byte; const Value: TRColor);
+begin
+  SetRGB(Value);
+end;
+
+function THSI.GetRGB: TRColor;
+var
+  nH, nS, nI, R, G, B: TGeoFloat;
+begin
+  nH := H * 363 - 1;
+  nS := S;
+  nI := i;
+  R := 0;
+  G := 0;
+  B := 0;
+  if nH = 0 then
+    begin
+      R := nI + 2 * nI * nS;
+      G := nI - nI * nS;
+      B := nI - nI * nS;
+    end
+  else if (0 < nH) and (nH < 120) then
+    begin
+      R := nI + nI * nS * Cos(DegToRad(nH)) / Cos(DegToRad(60 - nH));
+      G := nI + nI * nS * (1 - Cos(DegToRad(nH)) / Cos(DegToRad(60 - nH)));
+      B := nI - nI * nS;
+    end
+  else if (nH = 120) then
+    begin
+      R := nI - nI * nS;
+      G := nI + 2 * nI * nS;
+      B := nI - nI * nS;
+    end
+  else if (120 < nH) and (nH < 240) then
+    begin
+      R := nI - nI * nS;
+      G := nI + nI * nS * Cos(DegToRad(nH - 120)) / Cos(DegToRad(180 - nH));
+      B := nI + nI * nS * (1 - Cos(DegToRad(nH - 120)) / Cos(DegToRad(180 - nH)));
+    end
+  else if nH = 240 then
+    begin
+      R := nI - nI * nS;
+      G := nI - nI * nS;
+      B := nI + 2 * nI * nS;
+    end
+  else if (240 < nH) and (nH < 360) then
+    begin
+      R := nI + nI * nS * (1 - Cos(DegToRad(nH - 240)) / Cos(DegToRad(300 - nH)));
+      G := nI - nI * nS;
+      B := nI + nI * nS * Cos(DegToRad(nH - 240)) / Cos(DegToRad(300 - nH));
+    end
+  else if nH > 360 then
+    begin
+      R := nI;
+      G := nI;
+      B := nI;
+    end;
+  Result := RColorF(R, G, B);
+end;
+
+procedure THSI.SetRGB(const Value: TRColor);
+var
+  R, G, B: TGeoFloat;
+begin
+  RColor2F(Value, R, G, B);
+  i := (R + G + B) / 3.0;
+  if i > 0 then
+      S := 1 - umlMin(umlMin(R, G), B) / i
+  else
+      S := 0;
+  if S <> 0 then
+    begin
+      R := Round(R * 255);
+      G := Round(G * 255);
+      B := Round(B * 255);
+      if G >= B then
+          H := RadToDeg(ArcCos((R - G * 0.5 - B * 0.5) / Sqrt(Sqr(R) + Sqr(G) + Sqr(B) - R * G - R * B - G * B)))
+      else
+          H := 360.0 - RadToDeg(ArcCos((R - G * 0.5 - B * 0.5) / Sqrt(Sqr(R) + Sqr(G) + Sqr(B) - R * G - R * B - G * B)))
+    end
+  else
+      H := 361.0;
+
+  H := (H + 1) / 363.0;
+end;
+
+function THSI.GetRGBA(A: Byte): TRColor;
+begin
+  Result := GetRGB();
+  TRColorEntry(Result).A := A;
+end;
+
+procedure THSI.SetRGBA(A: Byte; const Value: TRColor);
+begin
+  SetRGB(Value);
+end;
+
+function TCMYK.GetRGB: TRColor;
+var
+  R, G, B: TGeoFloat;
+begin
+  R := (1.0 - C) * (1.0 - K);
+  G := (1.0 - M) * (1.0 - K);
+  B := (1.0 - Y) * (1.0 - K);
+  Result := RColorF(R, G, B);
+end;
+
+procedure TCMYK.SetRGB(const Value: TRColor);
+var
+  R, G, B: TGeoFloat;
+begin
+  RColor2F(Value, R, G, B);
+  K := 1.0 - umlMax(umlMax(R, G), B);
+  if K <> 1.0 then
+    begin
+      C := (1.0 - R - K) / (1.0 - K);
+      M := (1.0 - G - K) / (1.0 - K);
+      Y := (1.0 - B - K) / (1.0 - K);
+    end
+  else
+    begin
+      C := 1.0;
+      M := 1.0;
+      Y := 1.0;
+    end;
+end;
+
+function TCMYK.GetRGBA(A: Byte): TRColor;
+begin
+  Result := GetRGB();
+  TRColorEntry(Result).A := A;
+end;
+
+procedure TCMYK.SetRGBA(A: Byte; const Value: TRColor);
+begin
+  SetRGB(Value);
+end;
+
+function TMemoryRaster.GetExtra: THashStringList;
+begin
+  if FExtra = nil then
+      FExtra := THashStringList.CustomCreate(128);
+  Result := FExtra;
+end;
+
+function TMemoryRaster.GetVertex: TRasterVertex;
 begin
   if FVertex = nil then
       OpenVertex;
@@ -78,134 +254,146 @@ begin
   Result := FBits;
 end;
 
-function TMemoryRaster.GetPixel(const x, y: Integer): TRColor;
+function TMemoryRaster.GetPixel(const X, Y: Integer): TRColor;
 begin
-  Result := PixelPtr[x, y]^;
+  Result := PixelPtr[X, Y]^;
 end;
 
-procedure TMemoryRaster.SetPixel(const x, y: Integer; const Value: TRColor);
+procedure TMemoryRaster.SetPixel(const X, Y: Integer; const Value: TRColor);
 begin
-  PixelPtr[x, y]^ := Value;
+  PixelPtr[X, Y]^ := Value;
 end;
 
-function TMemoryRaster.GetPixelBGRA(const x, y: Integer): TRColor;
+function TMemoryRaster.GetPixelBGRA(const X, Y: Integer): TRColor;
 begin
-  Result := RGBA2BGRA(GetPixel(x, y));
+  Result := RGBA2BGRA(GetPixel(X, Y));
 end;
 
-procedure TMemoryRaster.SetPixelBGRA(const x, y: Integer; const Value: TRColor);
+procedure TMemoryRaster.SetPixelBGRA(const X, Y: Integer; const Value: TRColor);
 begin
-  SetPixel(x, y, BGRA2RGBA(Value));
+  SetPixel(X, Y, BGRA2RGBA(Value));
 end;
 
-function TMemoryRaster.GetPixelPtr(const x, y: Integer): PRColor;
+function TMemoryRaster.GetPixelPtr(const X, Y: Integer): PRColor;
 begin
-  Result := @(Bits^[ClampInt(x, 0, width - 1) + ClampInt(y, 0, height - 1) * width]);
+  Result := @(Bits^[ClampInt(X, 0, Width - 1) + ClampInt(Y, 0, Height - 1) * Width]);
 end;
 
-function TMemoryRaster.GetScanLine(y: Integer): PRColorArray;
+function TMemoryRaster.GetScanLine(Y: Integer): PRColorArray;
 begin
-  Result := @Bits^[y * FWidth];
+  Result := @Bits^[Y * FWidth];
 end;
 
 function TMemoryRaster.GetWidth0: TGeoFloat;
 begin
-  Result := FWidth - 1;
+  if FWidth > 0 then
+      Result := FWidth - 1
+  else
+      Result := 0;
 end;
 
 function TMemoryRaster.GetHeight0: TGeoFloat;
 begin
-  Result := FHeight - 1;
+  if FHeight > 0 then
+      Result := FHeight - 1
+  else
+      Result := 0;
 end;
 
 function TMemoryRaster.GetWidth0i: Integer;
 begin
-  Result := FWidth - 1;
+  if FWidth > 0 then
+      Result := FWidth - 1
+  else
+      Result := 0;
 end;
 
 function TMemoryRaster.GetHeight0i: Integer;
 begin
-  Result := FHeight - 1;
+  if FHeight > 0 then
+      Result := FHeight - 1
+  else
+      Result := 0;
 end;
 
-function TMemoryRaster.GetPixelRed(const x, y: Integer): Byte;
+function TMemoryRaster.GetPixelRed(const X, Y: Integer): Byte;
 begin
-  Result := PRColorEntry(GetPixelPtr(x, y))^.r;
+  Result := PRColorEntry(GetPixelPtr(X, Y))^.R;
 end;
 
-procedure TMemoryRaster.SetPixelRed(const x, y: Integer; const Value: Byte);
+procedure TMemoryRaster.SetPixelRed(const X, Y: Integer; const Value: Byte);
 begin
-  PRColorEntry(GetPixelPtr(x, y))^.r := Value;
+  PRColorEntry(GetPixelPtr(X, Y))^.R := Value;
 end;
 
-function TMemoryRaster.GetPixelGreen(const x, y: Integer): Byte;
+function TMemoryRaster.GetPixelGreen(const X, Y: Integer): Byte;
 begin
-  Result := PRColorEntry(GetPixelPtr(x, y))^.g;
+  Result := PRColorEntry(GetPixelPtr(X, Y))^.G;
 end;
 
-procedure TMemoryRaster.SetPixelGreen(const x, y: Integer; const Value: Byte);
+procedure TMemoryRaster.SetPixelGreen(const X, Y: Integer; const Value: Byte);
 begin
-  PRColorEntry(GetPixelPtr(x, y))^.g := Value;
+  PRColorEntry(GetPixelPtr(X, Y))^.G := Value;
 end;
 
-function TMemoryRaster.GetPixelBlue(const x, y: Integer): Byte;
+function TMemoryRaster.GetPixelBlue(const X, Y: Integer): Byte;
 begin
-  Result := PRColorEntry(GetPixelPtr(x, y))^.b;
+  Result := PRColorEntry(GetPixelPtr(X, Y))^.B;
 end;
 
-procedure TMemoryRaster.SetPixelBlue(const x, y: Integer; const Value: Byte);
+procedure TMemoryRaster.SetPixelBlue(const X, Y: Integer; const Value: Byte);
 begin
-  PRColorEntry(GetPixelPtr(x, y))^.b := Value;
+  PRColorEntry(GetPixelPtr(X, Y))^.B := Value;
 end;
 
-function TMemoryRaster.GetPixelAlpha(const x, y: Integer): Byte;
+function TMemoryRaster.GetPixelAlpha(const X, Y: Integer): Byte;
 begin
-  Result := PRColorEntry(GetPixelPtr(x, y))^.a;
+  Result := PRColorEntry(GetPixelPtr(X, Y))^.A;
 end;
 
-procedure TMemoryRaster.SetPixelAlpha(const x, y: Integer; const Value: Byte);
+procedure TMemoryRaster.SetPixelAlpha(const X, Y: Integer; const Value: Byte);
 begin
-  PRColorEntry(GetPixelPtr(x, y))^.a := Value;
+  PRColorEntry(GetPixelPtr(X, Y))^.A := Value;
 end;
 
-function TMemoryRaster.GetGray(const x, y: Integer): Byte;
+function TMemoryRaster.GetGray(const X, Y: Integer): Byte;
 begin
-  Result := RColor2Gray(GetPixel(x, y));
+  Result := RColor2Gray(GetPixel(X, Y));
 end;
 
-procedure TMemoryRaster.SetGray(const x, y: Integer; const Value: Byte);
+procedure TMemoryRaster.SetGray(const X, Y: Integer; const Value: Byte);
 begin
-  SetPixel(x, y, RColor(Value, Value, Value, $FF));
+  SetPixel(X, Y, RColor(Value, Value, Value, $FF));
 end;
 
-function TMemoryRaster.GetGrayS(const x, y: Integer): Single;
+function TMemoryRaster.GetGrayS(const X, Y: Integer): TGeoFloat;
 begin
-  Result := RColor2GrayS(GetPixel(x, y));
+  Result := RColor2GrayS(GetPixel(X, Y));
 end;
 
-procedure TMemoryRaster.SetGrayS(const x, y: Integer; const Value: Single);
+procedure TMemoryRaster.SetGrayS(const X, Y: Integer; const Value: TGeoFloat);
 begin
-  SetGray(x, y, ClampByte3(Round(Value * $FF), 0, $FF));
+  SetGray(X, Y, ClampByte3(Round(Value * $FF), 0, $FF));
 end;
 
-function TMemoryRaster.GetGrayD(const x, y: Integer): Double;
+function TMemoryRaster.GetGrayD(const X, Y: Integer): Double;
 begin
-  Result := RColor2GrayD(GetPixel(x, y));
+  Result := RColor2GrayD(GetPixel(X, Y));
 end;
 
-procedure TMemoryRaster.SetGrayD(const x, y: Integer; const Value: Double);
+procedure TMemoryRaster.SetGrayD(const X, Y: Integer; const Value: Double);
 begin
-  SetGrayS(x, y, Value);
+  SetGrayS(X, Y, Value);
 end;
 
-function TMemoryRaster.GetPixelF(const x, y: TGeoFloat): TRColor;
+function TMemoryRaster.GetPixelF(const X, Y: TGeoFloat): TRColor;
 begin
-  Result := GetPixel(Round(x), Round(y));
+  Result := GetPixel(Round(X), Round(Y));
 end;
 
-procedure TMemoryRaster.SetPixelF(const x, y: TGeoFloat; const Value: TRColor);
+procedure TMemoryRaster.SetPixelF(const X, Y: TGeoFloat; const Value: TRColor);
 begin
-  SetPixel(Round(x), Round(y), Value);
+  SetPixel(Round(X), Round(Y), Value);
 end;
 
 function TMemoryRaster.GetPixelVec(const v2: TVec2): TRColor;
@@ -218,7 +406,7 @@ begin
   SetPixelF(v2[0], v2[1], Value)
 end;
 
-function TMemoryRaster.GetPixelLinearF(const x, y: TGeoFloat): TRColor;
+function TMemoryRaster.GetPixelLinearF(const X, Y: TGeoFloat): TRColor;
   function CoordWrap(const f: TGeoFloat): TGeoFloat; inline;
   begin
     if f < 0 then
@@ -228,13 +416,6 @@ function TMemoryRaster.GetPixelLinearF(const x, y: TGeoFloat): TRColor;
     else
         Result := f;
   end;
-  procedure ClampF(var f: TGeoFloat); inline;
-  begin
-    if f < 0 then
-        f := 0
-    else if f > 1 then
-        f := 1;
-  end;
 
 var
   fx, fy: TGeoFloat;
@@ -243,10 +424,10 @@ var
   delta_x, delta_y: TGeoFloat;
   c1, c2, c3, c4: TRColorEntry;
   k1, k2, k3, K4: TGeoFloat;
-  r, g, b, a: TGeoFloat;
+  R, G, B, A: TGeoFloat;
 begin
-  fx := CoordWrap(x) * Width0;
-  fy := CoordWrap(y) * Height0;
+  fx := CoordWrap(X) * Width0;
+  fy := CoordWrap(Y) * Height0;
 
   i_x := ClampInt(Trunc(fx), 0, Width0i);
   i_y := ClampInt(Trunc(fy), 0, Height0i);
@@ -272,30 +453,54 @@ begin
   c3.BGRA := Pixel[i_x2, i_y2];
   c4.BGRA := Pixel[i_x, i_y2];
 
-  r := ((c1.r / $FF) * k1) + ((c2.r / $FF) * k2) + ((c3.r / $FF) * k3) + ((c4.r / $FF) * K4);
-  g := ((c1.g / $FF) * k1) + ((c2.g / $FF) * k2) + ((c3.g / $FF) * k3) + ((c4.g / $FF) * K4);
-  b := ((c1.b / $FF) * k1) + ((c2.b / $FF) * k2) + ((c3.b / $FF) * k3) + ((c4.b / $FF) * K4);
-  a := ((c1.a / $FF) * k1) + ((c2.a / $FF) * k2) + ((c3.a / $FF) * k3) + ((c4.a / $FF) * K4);
+  R := ((c1.R / $FF) * k1) + ((c2.R / $FF) * k2) + ((c3.R / $FF) * k3) + ((c4.R / $FF) * K4);
+  G := ((c1.G / $FF) * k1) + ((c2.G / $FF) * k2) + ((c3.G / $FF) * k3) + ((c4.G / $FF) * K4);
+  B := ((c1.B / $FF) * k1) + ((c2.B / $FF) * k2) + ((c3.B / $FF) * k3) + ((c4.B / $FF) * K4);
+  A := ((c1.A / $FF) * k1) + ((c2.A / $FF) * k2) + ((c3.A / $FF) * k3) + ((c4.A / $FF) * K4);
 
-  ClampF(r);
-  ClampF(g);
-  ClampF(b);
-  ClampF(a);
-
-  TRColorEntry(Result).r := Round(r * $FF);
-  TRColorEntry(Result).g := Round(g * $FF);
-  TRColorEntry(Result).b := Round(b * $FF);
-  TRColorEntry(Result).a := Round(a * $FF);
+  Result := RColorF(R, G, B, A);
 end;
 
-function TMemoryRaster.GetPixelLinear(const x, y: Integer): TRColor;
+function TMemoryRaster.GetPixelLinear(const X, Y: Integer): TRColor;
 begin
-  Result := GetPixelLinearF(x / Width0, y / Height0);
+  Result := GetPixelLinearF(X / Width0, Y / Height0);
+end;
+
+function TMemoryRaster.GetPixelYIQ(const X, Y: Integer): TYIQ;
+begin
+  Result.RGB := Pixel[X, Y];
+end;
+
+procedure TMemoryRaster.SetPixelYIQ(const X, Y: Integer; const Value: TYIQ);
+begin
+  Pixel[X, Y] := Value.RGB;
+end;
+
+function TMemoryRaster.GetPixelHSI(const X, Y: Integer): THSI;
+begin
+  Result.RGB := Pixel[X, Y];
+end;
+
+procedure TMemoryRaster.SetPixelHSI(const X, Y: Integer; const Value: THSI);
+begin
+  Pixel[X, Y] := Value.RGB;
+end;
+
+function TMemoryRaster.GetPixelCMYK(const X, Y: Integer): TCMYK;
+begin
+  Result.RGB := Pixel[X, Y];
+end;
+
+procedure TMemoryRaster.SetPixelCMYK(const X, Y: Integer; const Value: TCMYK);
+begin
+  Pixel[X, Y] := Value.RGB;
 end;
 
 constructor TMemoryRaster.Create;
 begin
   inherited Create;
+
+  LocalParallel := True;
 
   FSerializedEngine := nil;
   FMemorySerializedPosition := -1;
@@ -324,6 +529,7 @@ begin
   FUserText := '';
   FUserToken := '';
   FUserVariant := NULL;
+  FExtra := nil;
 end;
 
 destructor TMemoryRaster.Destroy;
@@ -334,6 +540,8 @@ begin
   CloseVertex;
   CloseAgg;
   RecycleMemory;
+  if FExtra <> nil then
+      DisposeObject(FExtra);
   inherited Destroy;
 end;
 
@@ -428,7 +636,7 @@ end;
 
 procedure TMemoryRaster.SetWorkMemory(Forever: Boolean; raster: TMemoryRaster);
 begin
-  SetWorkMemory(Forever, @raster.Bits^[0], raster.width, raster.height);
+  SetWorkMemory(Forever, @raster.Bits^[0], raster.Width, raster.Height);
   if Forever then
       raster.FBits := nil;
 end;
@@ -446,7 +654,10 @@ end;
 procedure TMemoryRaster.OpenVertex;
 begin
   if FVertex = nil then
-      FVertex := TVertexMap.Create(Self);
+    begin
+      FVertex := TRasterVertex.Create(Self);
+      FVertex.LocalParallel := LocalParallel;
+    end;
 end;
 
 procedure TMemoryRaster.CloseVertex;
@@ -463,7 +674,7 @@ begin
   Wait_SystemFont_Init;
 
   if FFont = nil then
-      FFont := TFontRaster.Create(SystemFont);
+      FFont := TFontRaster.Create(SystemFont.V);
 end;
 
 procedure TMemoryRaster.CloseFont;
@@ -518,6 +729,10 @@ begin
   Result := (FAggImage <> nil) and (FAgg <> nil);
 end;
 
+procedure TMemoryRaster.NoUsage;
+begin
+end;
+
 procedure TMemoryRaster.DiscardMemory;
 begin
   if FFont <> nil then
@@ -537,12 +752,47 @@ begin
   FSerializedEngine := nil;
 end;
 
-procedure TMemoryRaster.SetParam(sour: TMemoryRaster);
+procedure TMemoryRaster.SwapInstance(dest: TMemoryRaster);
+var
+  bak_Bits: PRColorArray;
+  bak_Width, bak_Height: Integer;
+  bak_FreeBits: Boolean;
+  bak_SerializedEngine: TRasterSerialized;
+  bak_MemorySerializedPosition: Int64;
 begin
-  Reset;
-  FBits := sour.FBits;
-  FWidth := sour.FWidth;
-  FHeight := sour.FHeight;
+  ReadyBits;
+  CloseVertex;
+  FreeAgg;
+
+  dest.ReadyBits;
+  dest.CloseVertex;
+  dest.FreeAgg;
+
+  bak_Bits := FBits;
+  bak_Width := FWidth;
+  bak_Height := FHeight;
+  bak_FreeBits := FFreeBits;
+  bak_SerializedEngine := FSerializedEngine;
+  bak_MemorySerializedPosition := FMemorySerializedPosition;
+
+  FBits := dest.FBits;
+  FWidth := dest.FWidth;
+  FHeight := dest.FHeight;
+  FFreeBits := dest.FFreeBits;
+  FSerializedEngine := dest.FSerializedEngine;
+  FMemorySerializedPosition := dest.FMemorySerializedPosition;
+
+  dest.FBits := bak_Bits;
+  dest.FWidth := bak_Width;
+  dest.FHeight := bak_Height;
+  dest.FFreeBits := bak_FreeBits;
+  dest.FSerializedEngine := bak_SerializedEngine;
+  dest.FMemorySerializedPosition := bak_MemorySerializedPosition;
+end;
+
+function TMemoryRaster.BitsSame(sour: TMemoryRaster): Boolean;
+begin
+  Result := (Bits = sour.Bits) and (FWidth = sour.FWidth) and (FHeight = sour.FHeight);
 end;
 
 procedure TMemoryRaster.Reset;
@@ -563,6 +813,12 @@ begin
 
   FMemorySerializedPosition := -1;
   FSerializedEngine := nil;
+end;
+
+function TMemoryRaster.Clone: TMemoryRaster;
+begin
+  Result := NewRaster();
+  Result.Assign(Self);
 end;
 
 procedure TMemoryRaster.Assign(sour: TMemoryRaster);
@@ -592,6 +848,63 @@ begin
   FSerializedEngine := nil;
 end;
 
+procedure TMemoryRaster.Assign(sour: TMorphologyBinaryzation);
+var
+  i: Integer;
+begin
+  Reset;
+  FWidth := sour.FWidth;
+  FHeight := sour.FHeight;
+
+  FOuterColor := $00000000; // by default as full transparency black
+  FMasterAlpha := $FF;
+  FDrawMode := dmBlend;
+  FCombineMode := cmBlend;
+
+  CloseVertex;
+  FreeAgg;
+
+  FFreeBits := True;
+  FAggNeed := False;
+
+  FBits := System.GetMemory(sour.FWidth * sour.FHeight * SizeOf(TRColor));
+  for i := Width * Height - 1 downto 0 do
+    if sour.FBits^[i] then
+        FBits^[i] := $FFFFFFFF
+    else
+        FBits^[i] := $00000000;
+
+  FMemorySerializedPosition := -1;
+  FSerializedEngine := nil;
+end;
+
+procedure TMemoryRaster.Assign(sour: TMorphomatics);
+var
+  i: Integer;
+begin
+  Reset;
+  FWidth := sour.FWidth;
+  FHeight := sour.FHeight;
+
+  FOuterColor := $00000000; // by default as full transparency black
+  FMasterAlpha := $FF;
+  FDrawMode := dmBlend;
+  FCombineMode := cmBlend;
+
+  CloseVertex;
+  FreeAgg;
+
+  FFreeBits := True;
+  FAggNeed := False;
+
+  FBits := System.GetMemory(sour.FWidth * sour.FHeight * SizeOf(TRColor));
+  for i := Width * Height - 1 downto 0 do
+      MorphToRColor(mpGrayscale, sour.FBits^[i], FBits^[i]);
+
+  FMemorySerializedPosition := -1;
+  FSerializedEngine := nil;
+end;
+
 procedure TMemoryRaster.Clear;
 begin
   Clear($FF000000);
@@ -601,12 +914,12 @@ procedure TMemoryRaster.Clear(FillColor: TRColor);
 begin
   if empty then
       exit;
-  FillRColor(Bits^[0], width * height, FillColor);
+  FillRColor(@Bits^[0], Width * Height, FillColor);
 end;
 
 function TMemoryRaster.MemorySize: Integer;
 begin
-  Result := width * height * SizeOf(TRColor);
+  Result := Width * Height * SizeOf(TRColor);
 end;
 
 procedure TMemoryRaster.SetSize(NewWidth, NewHeight: Integer);
@@ -618,6 +931,7 @@ begin
   FreeAgg;
   RecycleMemory;
   FFreeBits := True;
+
   FBits := System.GetMemory(NewWidth * NewHeight * SizeOf(TRColor));
   FWidth := NewWidth;
   FHeight := NewHeight;
@@ -632,7 +946,7 @@ end;
 procedure TMemoryRaster.SetSize(NewWidth, NewHeight: Integer; const ClearColor: TRColor);
 begin
   SetSize(NewWidth, NewHeight);
-  FillRColor(Bits^[0], NewWidth * NewHeight, ClearColor);
+  FillRColor(@Bits^[0], NewWidth * NewHeight, ClearColor);
 end;
 
 procedure TMemoryRaster.SetSizeF(NewWidth, NewHeight: TGeoFloat; const ClearColor: TRColor);
@@ -645,29 +959,29 @@ begin
   SetSize(Round(NewWidth), Round(NewHeight));
 end;
 
-procedure TMemoryRaster.SetSizeR(r: TRectV2; const ClearColor: TRColor);
+procedure TMemoryRaster.SetSizeR(R: TRectV2; const ClearColor: TRColor);
 begin
-  SetSizeF(RectWidth(r), RectHeight(r), ClearColor);
+  SetSizeF(RectWidth(R), RectHeight(R), ClearColor);
 end;
 
-procedure TMemoryRaster.SetSizeR(r: TRectV2);
+procedure TMemoryRaster.SetSizeR(R: TRectV2);
 begin
-  SetSizeF(RectWidth(r), RectHeight(r));
+  SetSizeF(RectWidth(R), RectHeight(R));
 end;
 
 function TMemoryRaster.SizeOfPoint: TPoint;
 begin
-  Result := Point(width, height);
+  Result := Point(Width, Height);
 end;
 
 function TMemoryRaster.SizeOf2DPoint: TVec2;
 begin
-  Result := Make2DPoint(width, height);
+  Result := Make2DPoint(Width, Height);
 end;
 
 function TMemoryRaster.Size2D: TVec2;
 begin
-  Result := Make2DPoint(width, height);
+  Result := Make2DPoint(Width, Height);
 end;
 
 function TMemoryRaster.Size0: TVec2;
@@ -684,13 +998,26 @@ function TMemoryRaster.BoundsRect: TRect;
 begin
   Result.Left := 0;
   Result.Top := 0;
-  Result.Right := width;
-  Result.Bottom := height;
+  Result.Right := Width;
+  Result.Bottom := Height;
+end;
+
+function TMemoryRaster.BoundsRect0: TRect;
+begin
+  Result.Left := 0;
+  Result.Top := 0;
+  Result.Right := Width0i;
+  Result.Bottom := Height0i;
 end;
 
 function TMemoryRaster.BoundsRectV2: TRectV2;
 begin
-  Result := MakeRectV2(0, 0, width, height);
+  Result := MakeRectV2(0, 0, Width, Height);
+end;
+
+function TMemoryRaster.BoundsRectV20: TRectV2;
+begin
+  Result := MakeRectV2(0, 0, Width0, Height0);
 end;
 
 function TMemoryRaster.BoundsV2Rect4: TV2Rect4;
@@ -698,19 +1025,24 @@ begin
   Result := TV2Rect4.Init(BoundsRectV2, 0);
 end;
 
+function TMemoryRaster.BoundsV2Rect40: TV2Rect4;
+begin
+  Result := TV2Rect4.Init(BoundsRectV20, 0);
+end;
+
 function TMemoryRaster.Centroid: TVec2;
 begin
-  Result := Vec2(width * 0.5, height * 0.5);
+  Result := Vec2(Width * 0.5, Height * 0.5);
 end;
 
 function TMemoryRaster.Centre: TVec2;
 begin
-  Result := Vec2(width * 0.5, height * 0.5);
+  Result := Vec2(Width * 0.5, Height * 0.5);
 end;
 
-function TMemoryRaster.InHere(const x, y: Integer): Boolean;
+function TMemoryRaster.InHere(const X, Y: Integer): Boolean;
 begin
-  Result := PointInRect(x, y, 0, 0, width - 1, height - 1);
+  Result := PointInRect(X, Y, 0, 0, Width - 1, Height - 1);
 end;
 
 procedure TMemoryRaster.FlipHorz;
@@ -723,13 +1055,13 @@ begin
   CloseVertex;
   FreeAgg;
 
-  w := width;
+  w := Width;
   { In-place flipping }
   p1 := PRColor(Bits);
   p2 := p1;
-  inc(p2, width - 1);
-  W2 := width shr 1;
-  for j := 0 to height - 1 do
+  inc(p2, Width - 1);
+  W2 := Width shr 1;
+  for j := 0 to Height - 1 do
     begin
       for i := 0 to W2 - 1 do
         begin
@@ -758,15 +1090,15 @@ begin
   CloseVertex;
   FreeAgg;
   { in-place }
-  j2 := height - 1;
-  buffer := System.GetMemory(width shl 2);
-  for j := 0 to height div 2 - 1 do
+  j2 := Height - 1;
+  buffer := System.GetMemory(Width shl 2);
+  for j := 0 to Height div 2 - 1 do
     begin
       p1 := PixelPtr[0, j];
       p2 := PixelPtr[0, j2];
-      CopyRColor(p1^, buffer^, width);
-      CopyRColor(p2^, p1^, width);
-      CopyRColor(buffer^, p2^, width);
+      CopyRColor(p1^, buffer^, Width);
+      CopyRColor(p2^, p1^, Width);
+      CopyRColor(buffer^, p2^, Width);
       dec(j2);
     end;
   System.FreeMemory(buffer);
@@ -780,7 +1112,7 @@ end;
 procedure TMemoryRaster.Rotate90;
 var
   tmp: TMemoryRaster;
-  x, y, i, j: Integer;
+  X, Y, i, j: Integer;
 begin
   CloseVertex;
   FreeAgg;
@@ -789,16 +1121,16 @@ begin
 
   tmp := TMemoryRaster.Create;
 
-  tmp.SetSize(height, width);
+  tmp.SetSize(Height, Width);
   i := 0;
-  for y := 0 to height - 1 do
+  for Y := 0 to Height - 1 do
     begin
-      j := height - 1 - y;
-      for x := 0 to width - 1 do
+      j := Height - 1 - Y;
+      for X := 0 to Width - 1 do
         begin
           tmp.FBits^[j] := FBits^[i];
           inc(i);
-          inc(j, height);
+          inc(j, Height);
         end;
     end;
 
@@ -824,8 +1156,8 @@ var
   tmp: TRColor;
 begin
   ReadyBits();
-  i2 := width * height - 1;
-  for i := 0 to width * height div 2 - 1 do
+  i2 := Width * Height - 1;
+  for i := 0 to Width * Height div 2 - 1 do
     begin
       tmp := FBits^[i2];
       FBits^[i2] := FBits^[i];
@@ -837,7 +1169,7 @@ end;
 procedure TMemoryRaster.Rotate270;
 var
   tmp: TMemoryRaster;
-  x, y, i, j: Integer;
+  X, Y, i, j: Integer;
 begin
   CloseVertex;
   FreeAgg;
@@ -846,16 +1178,16 @@ begin
 
   tmp := TMemoryRaster.Create;
 
-  tmp.SetSize(height, width);
+  tmp.SetSize(Height, Width);
   i := 0;
-  for y := 0 to height - 1 do
+  for Y := 0 to Height - 1 do
     begin
-      j := (width - 1) * height + y;
-      for x := 0 to width - 1 do
+      j := (Width - 1) * Height + Y;
+      for X := 0 to Width - 1 do
         begin
           tmp.FBits^[j] := FBits^[i];
           inc(i);
-          dec(j, height);
+          dec(j, Height);
         end;
     end;
 
@@ -875,32 +1207,32 @@ begin
   FSerializedEngine := nil;
 end;
 
-procedure TMemoryRaster.Rotate(dest: TMemoryRaster; Angle: TGeoFloat; Endge: Integer);
+procedure TMemoryRaster.Rotate(dest: TMemoryRaster; Angle: TGeoFloat; Edge: Integer);
 begin
   ProjectionTo(dest,
-    TV2Rect4.Init(BoundsRectV2, 0),
-    TV2Rect4.Init(BoundsRectV2, Angle).ScaleToRect(dest.BoundsRectV2, Endge),
+    BoundsV2Rect40,
+    TV2Rect4.Init(BoundsRectV20, Angle).ScaleToRect(dest.BoundsRectV20, Edge),
     True, 1.0);
 end;
 
-procedure TMemoryRaster.Rotate(Angle: TGeoFloat; Endge: Integer; BackgroundColor: TRColor);
+procedure TMemoryRaster.Rotate(Angle: TGeoFloat; Edge: Integer; BackgroundColor: TRColor);
 var
   n: TMemoryRaster;
-  v: TV2Rect4;
-  r: TRectV2;
+  V: TV2Rect4;
+  R: TRectV2;
 begin
   CloseVertex;
   FreeAgg;
 
-  v := TV2Rect4.Init(BoundsRectV2, Angle);
-  r := v.BoundRect;
+  V := TV2Rect4.Init(BoundsRectV20, Angle);
+  R := V.BoundRect;
 
   n := TMemoryRaster.Create;
-  n.SetSizeF(RectWidth(r), RectHeight(r), BackgroundColor);
-  Rotate(n, Angle, Endge);
+  n.SetSizeF(RectWidth(R) + Edge * 2, RectHeight(R) + Edge * 2, BackgroundColor);
+  Rotate(n, Angle, Edge);
   Reset;
-  FWidth := n.width;
-  FHeight := n.height;
+  FWidth := n.Width;
+  FHeight := n.Height;
   FBits := n.Bits;
 
   n.FBits := nil;
@@ -914,11 +1246,42 @@ begin
   FSerializedEngine := nil;
 end;
 
-procedure TMemoryRaster.CalibrateRotate(BackgroundColor: TRColor);
+procedure TMemoryRaster.CalibrateRotate_LineDistance(BackgroundColor: TRColor);
+var
+  BestLines_: THoughLineArry;
 begin
   if empty then
       exit;
-  Rotate(-DocumentRotationDetected(60, $FF, Self), 0, BackgroundColor);
+  BestLines_ := BuildRasterHoughLine(45, 0.1, 50, Self);
+  Rotate(-DocumentRotationDetected_MaxDistance(BestLines_), 0, BackgroundColor);
+  SetLength(BestLines_, 0);
+end;
+
+procedure TMemoryRaster.CalibrateRotate_LineMatched(BackgroundColor: TRColor);
+var
+  BestLines_: THoughLineArry;
+begin
+  if empty then
+      exit;
+  BestLines_ := BuildRasterHoughLine(45, 0.1, 50, Self);
+  Rotate(-DocumentRotationDetected_MaxMatched(BestLines_), 0, BackgroundColor);
+  SetLength(BestLines_, 0);
+end;
+
+procedure TMemoryRaster.CalibrateRotate_AVG(BackgroundColor: TRColor);
+var
+  BestLines_: THoughLineArry;
+begin
+  if empty then
+      exit;
+  BestLines_ := BuildRasterHoughLine(45, 0.1, 50, Self);
+  Rotate(-DocumentRotationDetected_AVG(BestLines_), 0, BackgroundColor);
+  SetLength(BestLines_, 0);
+end;
+
+procedure TMemoryRaster.CalibrateRotate(BackgroundColor: TRColor);
+begin
+  CalibrateRotate_AVG(BackgroundColor);
 end;
 
 procedure TMemoryRaster.CalibrateRotate;
@@ -926,14 +1289,14 @@ begin
   CalibrateRotate(RColor(0, 0, 0, 0));
 end;
 
-procedure TMemoryRaster.NoLineZoomLine(const Source, dest: TMemoryRaster; const pass: Integer);
+procedure TMemoryRaster.NonlinearZoomLine(const Source, dest: TMemoryRaster; const pass: Integer);
 var
   j: Integer;
   SourceI, SourceJ: Double;
   SourceIInt, SourceJInt: Integer;
   SourceINext, SourceJNext: Integer;
 begin
-  for j := 0 to dest.height - 1 do
+  for j := 0 to dest.Height - 1 do
     begin
       SourceI := pass / dest.Width0 * Source.Width0;
       SourceJ := j / dest.Height0 * Source.Height0;
@@ -945,47 +1308,54 @@ begin
     end;
 end;
 
-procedure TMemoryRaster.NoLineZoomFrom(const Source: TMemoryRaster; const NewWidth, NewHeight: Integer);
-{$IFDEF parallel}
+procedure TMemoryRaster.NonlinearZoomFrom(const Source: TMemoryRaster; const NewWidth, NewHeight: Integer);
+{$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(pass: Integer);
   begin
-    NoLineZoomLine(Source, Self, pass);
+    NonlinearZoomLine(Source, Self, pass);
   end;
 {$ENDIF FPC}
-{$ENDIF parallel}
-
-
-var
-  i: Integer;
+{$ENDIF Parallel}
+  procedure DoFor();
+  var
+    i: Integer;
+  begin
+    for i := Width - 1 downto 0 do
+        NonlinearZoomLine(Source, Self, i);
+  end;
 
 begin
-  if (Source.width = NewWidth) and (Source.height = NewHeight) then
+  if (Source.Width = NewWidth) and (Source.Height = NewHeight) then
     begin
       Assign(Source);
       exit;
     end;
   SetSize(NewWidth, NewHeight);
 
-  if (Source.width > 1) and (Source.width > 1) and (width > 1) and (height > 1) then
+  if (Source.Width > 1) and (Source.Width > 1) and (Width > 1) and (Height > 1) then
     begin
-{$IFDEF parallel}
-{$IFDEF FPC}
-      ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, width - 1);
-{$ELSE}
-      TParallel.for(0, width - 1, procedure(pass: Integer)
+      if NewHeight * NewWidth > 800 * 600 then
         begin
-          NoLineZoomLine(Source, Self, pass);
-        end);
+{$IFDEF Parallel}
+{$IFDEF FPC}
+          FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Width - 1);
+{$ELSE}
+          DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Width - 1, procedure(pass: Integer)
+            begin
+              NonlinearZoomLine(Source, Self, pass);
+            end);
 {$ENDIF FPC}
 {$ELSE}
-      for i := width - 1 downto 0 do
-          NoLineZoomLine(Source, Self, i);
-{$ENDIF parallel}
+          DoFor();
+{$ENDIF Parallel}
+        end
+      else
+          DoFor();
     end;
 end;
 
-procedure TMemoryRaster.NoLineZoom(const NewWidth, NewHeight: Integer);
+procedure TMemoryRaster.NonlinearZoom(const NewWidth, NewHeight: Integer);
 var
   n: TMemoryRaster;
 begin
@@ -993,10 +1363,10 @@ begin
   FreeAgg;
 
   n := TMemoryRaster.Create;
-  n.NoLineZoomFrom(Self, NewWidth, NewHeight);
+  n.NonlinearZoomFrom(Self, NewWidth, NewHeight);
   Reset;
-  FWidth := n.width;
-  FHeight := n.height;
+  FWidth := n.Width;
+  FHeight := n.Height;
   FBits := n.Bits;
 
   n.FBits := nil;
@@ -1015,7 +1385,7 @@ var
   j: Integer;
   SourceI, SourceJ: Double;
 begin
-  for j := 0 to dest.height - 1 do
+  for j := 0 to dest.Height - 1 do
     begin
       SourceI := pass / dest.Width0;
       SourceJ := j / dest.Height0;
@@ -1025,48 +1395,55 @@ begin
 end;
 
 procedure TMemoryRaster.ZoomFrom(const Source: TMemoryRaster; const NewWidth, NewHeight: Integer);
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(pass: Integer);
   begin
     ZoomLine(Source, Self, pass);
   end;
 {$ENDIF FPC}
-{$ENDIF parallel}
-
-
-var
-  i: Integer;
+{$ENDIF Parallel}
+  procedure DoFor();
+  var
+    i: Integer;
+  begin
+    for i := Width - 1 downto 0 do
+        ZoomLine(Source, Self, i);
+  end;
 
 begin
-  if (Source.width = NewWidth) and (Source.height = NewHeight) then
+  if (Source.Width = NewWidth) and (Source.Height = NewHeight) then
     begin
       Assign(Source);
       exit;
     end;
   SetSize(NewWidth, NewHeight);
 
-  if (Source.width > 1) and (Source.width > 1) and (width > 1) and (height > 1) then
+  if (Source.Width > 1) and (Source.Width > 1) and (Width > 1) and (Height > 1) then
     begin
-{$IFDEF parallel}
-{$IFDEF FPC}
-      ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, width - 1);
-{$ELSE}
-      TParallel.for(0, width - 1, procedure(pass: Integer)
+      if NewHeight * NewWidth > 800 * 600 then
         begin
-          ZoomLine(Source, Self, pass);
-        end);
+{$IFDEF Parallel}
+{$IFDEF FPC}
+          FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Width - 1);
+{$ELSE}
+          DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Width - 1, procedure(pass: Integer)
+            begin
+              ZoomLine(Source, Self, pass);
+            end);
 {$ENDIF FPC}
 {$ELSE}
-      for i := width - 1 downto 0 do
-          ZoomLine(Source, Self, i);
-{$ENDIF parallel}
+          DoFor();
+{$ENDIF Parallel}
+        end
+      else
+          DoFor();
     end;
 end;
 
 procedure TMemoryRaster.ZoomFrom(const Source: TMemoryRaster; const f: TGeoFloat);
 begin
-  ZoomFrom(Source, Round(Source.width * f), Round(Source.height * f));
+  ZoomFrom(Source, Round(Source.Width * f), Round(Source.Height * f));
 end;
 
 procedure TMemoryRaster.Zoom(const NewWidth, NewHeight: Integer);
@@ -1079,8 +1456,8 @@ begin
   n := TMemoryRaster.Create;
   n.ZoomFrom(Self, NewWidth, NewHeight);
   Reset;
-  FWidth := n.width;
-  FHeight := n.height;
+  FWidth := n.Width;
+  FHeight := n.Height;
   FBits := n.Bits;
 
   n.FBits := nil;
@@ -1099,13 +1476,13 @@ var
   k1, k2: Double;
   n: TMemoryRaster;
 begin
-  if (Source.width = NewWidth) and (Source.height = NewHeight) then
+  if (Source.Width = NewWidth) and (Source.Height = NewHeight) then
     begin
       Assign(Source);
       exit;
     end;
-  k1 := Max(NewWidth / Source.width, NewHeight / Source.height);
-  k2 := Max(Source.width / NewWidth, Source.height / NewHeight);
+  k1 := Max(NewWidth / Source.Width, NewHeight / Source.Height);
+  k2 := Max(Source.Width / NewWidth, Source.Height / NewHeight);
   if (k1 < 1.0) then
     begin
       n := TMemoryRaster.Create;
@@ -1137,8 +1514,8 @@ begin
   n := TMemoryRaster.Create;
   n.FastBlurZoomFrom(Self, NewWidth, NewHeight);
   Reset;
-  FWidth := n.width;
-  FHeight := n.height;
+  FWidth := n.Width;
+  FHeight := n.Height;
   FBits := n.Bits;
 
   n.FBits := nil;
@@ -1157,14 +1534,14 @@ var
   k1, k2: Double;
   n: TMemoryRaster;
 begin
-  if (Source.width = NewWidth) and (Source.height = NewHeight) then
+  if (Source.Width = NewWidth) and (Source.Height = NewHeight) then
     begin
       Assign(Source);
       exit;
     end;
 
-  k1 := Max(NewWidth / Source.width, NewHeight / Source.height);
-  k2 := Max(Source.width / NewWidth, Source.height / NewHeight);
+  k1 := Max(NewWidth / Source.Width, NewHeight / Source.Height);
+  k2 := Max(Source.Width / NewWidth, Source.Height / NewHeight);
   if (k1 < 1.0) then
     begin
       n := TMemoryRaster.Create;
@@ -1195,8 +1572,8 @@ begin
   n := TMemoryRaster.Create;
   n.GaussianBlurZoomFrom(Self, NewWidth, NewHeight);
   Reset;
-  FWidth := n.width;
-  FHeight := n.height;
+  FWidth := n.Width;
+  FHeight := n.Height;
   FBits := n.Bits;
 
   n.FBits := nil;
@@ -1215,14 +1592,14 @@ var
   k1, k2: Double;
   n: TMemoryRaster;
 begin
-  if (Source.width = NewWidth) and (Source.height = NewHeight) then
+  if (Source.Width = NewWidth) and (Source.Height = NewHeight) then
     begin
       Assign(Source);
       Grayscale;
       exit;
     end;
-  k1 := Max(NewWidth / Source.width, NewHeight / Source.height);
-  k2 := Max(Source.width / NewWidth, Source.height / NewHeight);
+  k1 := Max(NewWidth / Source.Width, NewHeight / Source.Height);
+  k2 := Max(Source.Width / NewWidth, Source.Height / NewHeight);
   if (k1 < 1.0) then
     begin
       n := TMemoryRaster.Create;
@@ -1253,8 +1630,8 @@ begin
   n := TMemoryRaster.Create;
   n.GrayscaleBlurZoomFrom(Self, NewWidth, NewHeight);
   Reset;
-  FWidth := n.width;
-  FHeight := n.height;
+  FWidth := n.Width;
+  FHeight := n.Height;
   FBits := n.Bits;
 
   n.FBits := nil;
@@ -1268,22 +1645,78 @@ begin
   FSerializedEngine := nil;
 end;
 
-procedure TMemoryRaster.Scale(k: TGeoFloat);
+procedure TMemoryRaster.Scale(K: TGeoFloat);
 begin
-  Zoom(Round(width * k), Round(height * k));
+  Zoom(Round(Width * K), Round(Height * K));
 end;
 
-procedure TMemoryRaster.NoLineScale(k: TGeoFloat);
+procedure TMemoryRaster.FastBlurScale(K: TGeoFloat);
 begin
-  NoLineZoom(Round(width * k), Round(height * k));
+  FastBlurZoom(Round(Width * K), Round(Height * K));
+end;
+
+procedure TMemoryRaster.GaussianBlurScale(K: TGeoFloat);
+begin
+  GaussianBlurZoom(Round(Width * K), Round(Height * K));
+end;
+
+procedure TMemoryRaster.NonlinearScale(K: TGeoFloat);
+begin
+  NonlinearZoom(Round(Width * K), Round(Height * K));
 end;
 
 procedure TMemoryRaster.FitScale(NewWidth, NewHeight: TGeoFloat);
 var
-  r: TRectV2;
+  R: TRectV2;
 begin
-  r := FitRect(BoundsRectV2, RectV2(0, 0, NewWidth, NewHeight));
-  Zoom(Round(RectWidth(r)), Round(RectHeight(r)));
+  R := FitRect(BoundsRectV2, RectV2(0, 0, NewWidth, NewHeight));
+  Zoom(Round(RectWidth(R)), Round(RectHeight(R)));
+end;
+
+procedure TMemoryRaster.FitScale(R: TRectV2);
+var
+  R_: TRectV2;
+begin
+  R_ := FitRect(BoundsRectV2, R);
+  Zoom(Round(RectWidth(R_)), Round(RectHeight(R_)));
+end;
+
+function TMemoryRaster.FitScaleAsNew(NewWidth, NewHeight: TGeoFloat): TMemoryRaster;
+var
+  R: TRectV2;
+begin
+  R := FitRect(BoundsRectV2, RectV2(0, 0, NewWidth, NewHeight));
+  Result := NewRaster();
+  Result.ZoomFrom(Self, Round(RectWidth(R)), Round(RectHeight(R)));
+end;
+
+function TMemoryRaster.FitScaleAsNew(R: TRectV2): TMemoryRaster;
+var
+  R_: TRectV2;
+begin
+  R_ := FitRect(BoundsRectV2, R);
+  Result := NewRaster();
+  Result.ZoomFrom(Self, Round(RectWidth(R_)), Round(RectHeight(R_)));
+end;
+
+procedure TMemoryRaster.SigmaGaussian(const SIGMA: TGeoFloat; const SigmaGaussianKernelFactor: Integer);
+begin
+  PixelSigmaGaussianSampler(True, Self, Self, SIGMA, SigmaGaussianKernelFactor);
+end;
+
+procedure TMemoryRaster.SigmaGaussian(const SIGMA: TGeoFloat);
+begin
+  SigmaGaussian(True, SIGMA, 3);
+end;
+
+procedure TMemoryRaster.SigmaGaussian(parallel_: Boolean; const SIGMA: TGeoFloat; const SigmaGaussianKernelFactor: Integer);
+begin
+  PixelSigmaGaussianSampler(parallel_, Self, Self, SIGMA, SigmaGaussianKernelFactor);
+end;
+
+procedure TMemoryRaster.SigmaGaussian(parallel_: Boolean; const SIGMA: TGeoFloat);
+begin
+  SigmaGaussian(parallel_, SIGMA, 3);
 end;
 
 function TMemoryRaster.FormatAsBGRA: TMemoryRaster;
@@ -1293,8 +1726,8 @@ var
 begin
   ReadyBits();
   dest := TMemoryRaster.Create;
-  dest.SetSize(width, height);
-  for pass := (width * height) - 1 downto 0 do
+  dest.SetSize(Width, Height);
+  for pass := (Width * Height) - 1 downto 0 do
       dest.FBits^[pass] := RGBA2BGRA(FBits^[pass]);
 
   Result := dest;
@@ -1305,27 +1738,27 @@ var
   pass: Integer;
 begin
   ReadyBits();
-  for pass := (width * height) - 1 downto 0 do
+  for pass := (Width * Height) - 1 downto 0 do
       SwapBR(FBits^[pass]);
 end;
 
 function TMemoryRaster.BuildRGB(cSwapBR: Boolean): PRGBArray;
 begin
-  Result := System.GetMemory(width * height * 3);
+  Result := System.GetMemory(Width * Height * 3);
   OutputRGB(Result^, cSwapBR);
 end;
 
-procedure TMemoryRaster.InputRGB(var buff; w, h: Integer; cSwapBR: Boolean);
+procedure TMemoryRaster.InputRGB(var buff; w, H: Integer; cSwapBR: Boolean);
 var
   pass: Integer;
   p: PByte;
 begin
-  if (width <> w) or (height <> h) then
-      SetSize(w, h);
+  if (Width <> w) or (Height <> H) then
+      SetSize(w, H);
 
   ReadyBits();
   p := @buff;
-  for pass := 0 to (width * height) - 1 do
+  for pass := 0 to (Width * Height) - 1 do
     begin
       FBits^[pass] := RGB2RGBA(PRGB(p)^);
       if cSwapBR then
@@ -1341,7 +1774,7 @@ var
 begin
   ReadyBits();
   p := @buff;
-  for pass := 0 to (width * height) - 1 do
+  for pass := 0 to (Width * Height) - 1 do
     begin
       PRGB(p)^ := PRGB(@FBits^[pass])^;
       if cSwapBR then
@@ -1355,7 +1788,7 @@ var
   pass: Integer;
   p: PRColor;
 begin
-  pass := width * height;
+  pass := Width * Height;
   if pass <= 0 then
       exit;
   ReadyBits();
@@ -1373,44 +1806,76 @@ procedure TMemoryRaster.ColorTransparent(c_: TRColor);
 var
   pass: Integer;
   p: PRColor;
-  c: TRColor;
+  C: TRColor;
 begin
-  pass := width * height;
+  pass := Width * Height;
   if pass <= 0 then
       exit;
-  c := RasterAlphaColor(c_, 0);
+  C := RasterAlphaColor(c_, 0);
   ReadyBits();
   p := @FBits^[0];
   while pass > 0 do
     begin
-      if RasterAlphaColor(p^, 0) = c then
+      if RasterAlphaColor(p^, 0) = C then
           p^ := 0;
       inc(p);
       dec(pass);
     end;
 end;
 
-procedure TMemoryRaster.ColorBlend(c: TRColor);
+procedure TMemoryRaster.ColorBlend(C: TRColor);
 var
   pass: Integer;
   p: PRColor;
 begin
-  pass := width * height;
+  pass := Width * Height;
   if pass <= 0 then
       exit;
   ReadyBits();
   p := @FBits^[0];
   while pass > 0 do
     begin
-      p^ := BlendReg(p^, c);
+      p^ := BlendReg(p^, C);
       inc(p);
       dec(pass);
     end;
 end;
 
 procedure TMemoryRaster.Grayscale;
+var
+  i: Integer;
+  p: PRColorEntry;
 begin
-  RGBToGrayscale(Self);
+  ReadyBits();
+  for i := (Width * Height) - 1 downto 0 do
+    begin
+      p := @FBits^[i];
+      p^.R := RColor2Gray(p^.BGRA);
+      p^.G := p^.R;
+      p^.B := p^.R;
+    end;
+end;
+
+procedure TMemoryRaster.Gradient(level: Byte);
+var
+  i: Integer;
+  p: PRColorEntry;
+  f: TGeoFloat;
+begin
+  if level = $FF then
+      Grayscale
+  else
+    begin
+      f := $FF / level;
+      ReadyBits();
+      for i := (Width * Height) - 1 downto 0 do
+        begin
+          p := @FBits^[i];
+          p^.R := Round(Trunc(RColor2Gray(p^.BGRA) / f) * f);
+          p^.G := p^.R;
+          p^.B := p^.R;
+        end;
+    end;
 end;
 
 procedure TMemoryRaster.ExtractGray(var output: TByteRaster);
@@ -1465,39 +1930,39 @@ end;
 
 function TMemoryRaster.ComputeAreaScaleSpace(clipArea: TRectV2; SS_width, SS_height: Integer): TRectV2;
 var
-  k: TGeoFloat;
-  r: TRectV2;
-  w, h, nw, nh: TGeoFloat;
+  K: TGeoFloat;
+  R: TRectV2;
+  w, H, nw, nH: TGeoFloat;
   d: TVec2;
 begin
-  k := SS_width / SS_height;
-  r := FixRect(clipArea);
-  w := RectWidth(r);
-  h := RectHeight(r);
+  K := SS_width / SS_height;
+  R := FixRect(clipArea);
+  w := RectWidth(R);
+  H := RectHeight(R);
 
-  if w < h then
+  if w < H then
     begin
-      nw := h * k;
-      nh := h;
+      nw := H * K;
+      nH := H;
     end
   else
     begin
       nw := w;
-      nh := w * k;
+      nH := w * K;
     end;
 
   d[0] := (nw - w) * 0.5;
-  d[1] := (nh - h) * 0.5;
-  r[0] := Vec2Sub(r[0], d);
-  r[1] := Vec2Add(r[1], d);
+  d[1] := (nH - H) * 0.5;
+  R[0] := Vec2Sub(R[0], d);
+  R[1] := Vec2Add(R[1], d);
 
-  r := FixRect(r);
-  r[0, 0] := Max(r[0, 0], 0);
-  r[0, 1] := Max(r[0, 1], 0);
-  r[1, 0] := Min(r[1, 0], width);
-  r[1, 1] := Min(r[1, 1], height);
+  R := FixRect(R);
+  R[0, 0] := Max(R[0, 0], 0);
+  R[0, 1] := Max(R[0, 1], 0);
+  R[1, 0] := Min(R[1, 0], Width);
+  R[1, 1] := Min(R[1, 1], Height);
 
-  Result := r;
+  Result := R;
 end;
 
 function TMemoryRaster.ComputeAreaScaleSpace(clipArea: TRect; SS_width, SS_height: Integer): TRect;
@@ -1519,16 +1984,16 @@ end;
 
 function TMemoryRaster.BuildAreaCopy(clipArea: TRectV2): TMemoryRaster;
 var
-  r: TRectV2;
-  w, h: TGeoFloat;
+  R: TRectV2;
+  w, H: TGeoFloat;
 begin
-  r := FixRect(clipArea);
-  w := RectWidth(r);
-  h := RectHeight(r);
+  R := FixRect(clipArea);
+  w := RectWidth(R);
+  H := RectHeight(R);
 
   Result := NewRaster();
-  Result.SetSize(Round(w), Round(h));
-  ProjectionTo(Result, TV2Rect4.Init(r, 0), TV2Rect4.Init(Result.BoundsRectV2, 0), True, 1.0);
+  Result.SetSize(Round(w), Round(H));
+  ProjectionTo(Result, TV2Rect4.Init(R, 0), TV2Rect4.Init(Result.BoundsRectV2, 0), True, 1.0);
 end;
 
 function TMemoryRaster.BuildAreaCopy(clipArea: TRect): TMemoryRaster;
@@ -1536,47 +2001,47 @@ begin
   Result := BuildAreaCopy(RectV2(clipArea));
 end;
 
-function TMemoryRaster.ExistsColor(c: TRColor): Boolean;
+function TMemoryRaster.ExistsColor(C: TRColor): Boolean;
 var
   i, j: Integer;
 begin
   Result := True;
-  for j := 0 to height - 1 do
-    for i := 0 to width - 1 do
-      if Pixel[i, j] = c then
+  for j := 0 to Height - 1 do
+    for i := 0 to Width - 1 do
+      if Pixel[i, j] = C then
           exit;
   Result := False;
 end;
 
-function TMemoryRaster.FindFirstColor(c: TRColor): TPoint;
+function TMemoryRaster.FindFirstColor(C: TRColor): TPoint;
 var
   i, j: Integer;
 begin
   Result := Point(-1, -1);
-  for j := 0 to height - 1 do
-    for i := 0 to width - 1 do
-      if Pixel[i, j] = c then
+  for j := 0 to Height - 1 do
+    for i := 0 to Width - 1 do
+      if Pixel[i, j] = C then
         begin
           Result := Point(i, j);
           exit;
         end;
 end;
 
-function TMemoryRaster.FindLastColor(c: TRColor): TPoint;
+function TMemoryRaster.FindLastColor(C: TRColor): TPoint;
 var
   i, j: Integer;
 begin
   Result := Point(-1, -1);
-  for j := height - 1 downto 0 do
-    for i := width - 1 downto 0 do
-      if Pixel[i, j] = c then
+  for j := Height - 1 downto 0 do
+    for i := Width - 1 downto 0 do
+      if Pixel[i, j] = C then
         begin
           Result := Point(i, j);
           exit;
         end;
 end;
 
-function TMemoryRaster.FindNearColor(c: TRColor; Pt: TVec2): TPoint;
+function TMemoryRaster.FindNearColor(C: TRColor; Pt: TVec2): TPoint;
 var
   i, j: Integer;
   npt: TVec2;
@@ -1587,9 +2052,9 @@ begin
   d2 := Vec2Distance(npt, Pt);
   d1 := d2;
 
-  for j := 0 to height - 1 do
-    for i := 0 to width - 1 do
-      if Pixel[i, j] = c then
+  for j := 0 to Height - 1 do
+    for i := 0 to Width - 1 do
+      if Pixel[i, j] = C then
         begin
           d2 := Vec2Distance(Vec2(i, j), Pt);
           if d2 < d1 then
@@ -1603,16 +2068,16 @@ begin
       Result := MakePoint(npt);
 end;
 
-function TMemoryRaster.ColorBoundsRectV2(c: TRColor): TRectV2;
+function TMemoryRaster.ColorBoundsRectV2(C: TRColor): TRectV2;
 var
   color_inited_: Boolean;
   i, j: Integer;
 begin
   color_inited_ := False;
   Result := NullRectV2;
-  for j := 0 to height - 1 do
-    for i := 0 to width - 1 do
-      if Pixel[i, j] = c then
+  for j := 0 to Height - 1 do
+    for i := 0 to Width - 1 do
+      if Pixel[i, j] = C then
         begin
           if not color_inited_ then
             begin
@@ -1625,16 +2090,16 @@ begin
         end;
 end;
 
-function TMemoryRaster.ColorBoundsRect(c: TRColor): TRect;
+function TMemoryRaster.ColorBoundsRect(C: TRColor): TRect;
 var
   color_inited_: Boolean;
   i, j: Integer;
 begin
   color_inited_ := False;
   Result := Rect(0, 0, 0, 0);
-  for j := 0 to height - 1 do
-    for i := 0 to width - 1 do
-      if Pixel[i, j] = c then
+  for j := 0 to Height - 1 do
+    for i := 0 to Width - 1 do
+      if Pixel[i, j] = C then
         begin
           if not color_inited_ then
             begin
@@ -1647,16 +2112,42 @@ begin
         end;
 end;
 
-function TMemoryRaster.NoneColorBoundsRectV2(c: TRColor): TRectV2;
+function TMemoryRaster.ConvexHull(C: TRColor): TVec2List;
+var
+  i, j: Integer;
+  found: Boolean;
+begin
+  Result := TVec2List.Create;
+  for j := 0 to Height - 1 do
+    begin
+      found := False;
+      for i := 0 to Width - 1 do
+        if found then
+          begin
+            if Pixel[i, j] <> C then
+              begin
+                Result.Add(i, j);
+                found := False;
+              end;
+          end
+        else if Pixel[i, j] = C then
+          begin
+            Result.Add(i, j);
+            found := True;
+          end;
+    end;
+end;
+
+function TMemoryRaster.NoneColorBoundsRectV2(C: TRColor): TRectV2;
 var
   color_inited_: Boolean;
   i, j: Integer;
 begin
   color_inited_ := False;
   Result := NullRectV2;
-  for j := 0 to height - 1 do
-    for i := 0 to width - 1 do
-      if Pixel[i, j] <> c then
+  for j := 0 to Height - 1 do
+    for i := 0 to Width - 1 do
+      if Pixel[i, j] <> C then
         begin
           if not color_inited_ then
             begin
@@ -1669,16 +2160,16 @@ begin
         end;
 end;
 
-function TMemoryRaster.NoneColorBoundsRect(c: TRColor): TRect;
+function TMemoryRaster.NoneColorBoundsRect(C: TRColor): TRect;
 var
   color_inited_: Boolean;
   i, j: Integer;
 begin
   color_inited_ := False;
   Result := Rect(0, 0, 0, 0);
-  for j := 0 to height - 1 do
-    for i := 0 to width - 1 do
-      if Pixel[i, j] <> c then
+  for j := 0 to Height - 1 do
+    for i := 0 to Width - 1 do
+      if Pixel[i, j] <> C then
         begin
           if not color_inited_ then
             begin
@@ -1689,58 +2180,86 @@ begin
           else
               Result := BoundRect(Result.TopLeft, Result.Bottomright, Point(i, j));
         end;
+end;
+
+procedure TMemoryRaster.BlendColor(bk: TRColor);
+var
+  S: TRColorEntry;
+  p: PRColorEntry;
+  i: Integer;
+begin
+  S.BGRA := bk;
+  ReadyBits();
+  p := @FBits^[0];
+  for i := 0 to Width * Height - 1 do
+    begin
+      S.A := $FF - p^.A;
+      BlendMem(S.BGRA, p^.BGRA);
+      p^.A := $FF - S.A;
+      inc(p);
+    end;
+end;
+
+procedure TMemoryRaster.BlendBlack();
+begin
+  BlendColor(RColor(0, 0, 0));
+end;
+
+procedure TMemoryRaster.Black();
+begin
+  BlendColor(RColor(0, 0, 0));
 end;
 
 procedure TMemoryRaster.Line(x1, y1, x2, y2: Integer; Color: TRColor; L: Boolean);
-  procedure VertLine(x, y1, y2: Integer);
+  procedure VertLine(X, y1, y2: Integer);
   var
-    i, nh, NL: Integer;
+    i, nH, NL: Integer;
     p: PRColor;
   begin
-    if (x < 0) or (x >= width) then
+    if (X < 0) or (X >= Width) then
         exit;
-    y1 := ClampInt(y1, 0, height);
-    y2 := ClampInt(y2, 0, height);
+    y1 := ClampInt(y1, 0, Height);
+    y2 := ClampInt(y2, 0, Height);
 
     if y2 < y1 then
         CoreClasses.Swap(y1, y2);
 
-    p := PixelPtr[x, y1];
+    p := PixelPtr[X, y1];
     i := y2 - y1 + 1;
-    nh := i shr 2;
+    nH := i shr 2;
     NL := i and $03;
-    for i := 0 to nh - 1 do
+    for i := 0 to nH - 1 do
       begin
         BlendMem(Color, p^);
-        inc(p, width);
+        inc(p, Width);
         BlendMem(Color, p^);
-        inc(p, width);
+        inc(p, Width);
         BlendMem(Color, p^);
-        inc(p, width);
+        inc(p, Width);
         BlendMem(Color, p^);
-        inc(p, width);
+        inc(p, Width);
       end;
     for i := 0 to NL - 1 do
       begin
         BlendMem(Color, p^);
-        inc(p, width);
+        inc(p, Width);
       end;
   end;
 
-  procedure HorzLine(x1, y, x2: Integer);
+  procedure HorzLine(x1, Y, x2: Integer);
   var
     i: Integer;
     p: PRColor;
   begin
-    if (y < 0) or (y >= height) then
+    if (Y < 0) or (Y >= Height) then
         exit;
-    x1 := ClampInt(x1, 0, width - 1);
-    x2 := ClampInt(x2, 0, width - 1);
+    x1 := ClampInt(x1, 0, Width - 1);
+    x2 := ClampInt(x2, 0, Width - 1);
 
     if x1 > x2 then
         CoreClasses.Swap(x1, x2);
 
-    p := PixelPtr[x1, y];
+    p := PixelPtr[x1, Y];
 
     for i := x1 to x2 do
       begin
@@ -1750,9 +2269,17 @@ procedure TMemoryRaster.Line(x1, y1, x2, y2: Integer; Color: TRColor; L: Boolean
   end;
 
 var
-  dy, dx, SY, SX, i, Delta: Integer;
+  DY, DX, SY, SX, i, delta: Integer;
   pi, pl: Integer;
 begin
+  ReadyBits();
+
+  if (x1 = x2) and (y1 = y2) then
+    begin
+      Pixel[x1, y1] := Color;
+      exit;
+    end;
+
   if FAgg <> nil then
     begin
       FAgg.LineColor := Color;
@@ -1760,90 +2287,85 @@ begin
       exit;
     end;
 
-  ReadyBits();
+  DX := x2 - x1;
+  DY := y2 - y1;
 
-  try
-    dx := x2 - x1;
-    dy := y2 - y1;
+  if DX > 0 then
+      SX := 1
+  else if DX < 0 then
+    begin
+      DX := -DX;
+      SX := -1;
+    end
+  else // Dx = 0
+    begin
+      if DY > 0 then
+          VertLine(x1, y1, y2 - 1)
+      else if DY < 0 then
+          VertLine(x1, y2 + 1, y1);
+      if L then
+          Pixel[x2, y2] := Color;
+      exit;
+    end;
 
-    if dx > 0 then
-        SX := 1
-    else if dx < 0 then
-      begin
-        dx := -dx;
-        SX := -1;
-      end
-    else // Dx = 0
-      begin
-        if dy > 0 then
-            VertLine(x1, y1, y2 - 1)
-        else if dy < 0 then
-            VertLine(x1, y2 + 1, y1);
-        if L then
-            Pixel[x2, y2] := Color;
-        exit;
-      end;
+  if DY > 0 then
+      SY := 1
+  else if DY < 0 then
+    begin
+      DY := -DY;
+      SY := -1;
+    end
+  else // Dy = 0
+    begin
+      if x2 > x1 then
+          HorzLine(x1, y1, x2 - 1)
+      else
+          HorzLine(x2 + 1, y1, x1);
+      if L then
+          Pixel[x2, y2] := Color;
+      exit;
+    end;
 
-    if dy > 0 then
-        SY := 1
-    else if dy < 0 then
-      begin
-        dy := -dy;
-        SY := -1;
-      end
-    else // Dy = 0
-      begin
-        if x2 > x1 then
-            HorzLine(x1, y1, x2 - 1)
-        else
-            HorzLine(x2 + 1, y1, x1);
-        if L then
-            Pixel[x2, y2] := Color;
-        exit;
-      end;
+  pi := x1 + y1 * Width;
+  SY := SY * Width;
+  pl := Width * Height;
 
-    pi := x1 + y1 * width;
-    SY := SY * width;
-    pl := width * height;
+  if DX > DY then
+    begin
+      delta := DX shr 1;
+      for i := 0 to DX - 1 do
+        begin
+          if (pi >= 0) and (pi < pl) then
+              BlendMem(Color, FBits^[pi]);
 
-    if dx > dy then
-      begin
-        Delta := dx shr 1;
-        for i := 0 to dx - 1 do
-          begin
-            if (pi >= 0) and (pi < pl) then
-                BlendMem(Color, FBits^[pi]);
+          inc(pi, SX);
+          inc(delta, DY);
+          if delta >= DX then
+            begin
+              inc(pi, SY);
+              dec(delta, DX);
+            end;
+        end;
+    end
+  else // Dx < Dy
+    begin
+      delta := DY shr 1;
+      for i := 0 to DY - 1 do
+        begin
+          if (pi >= 0) and (pi < pl) then
+              BlendMem(Color, FBits^[pi]);
 
-            inc(pi, SX);
-            inc(Delta, dy);
-            if Delta >= dx then
-              begin
-                inc(pi, SY);
-                dec(Delta, dx);
-              end;
-          end;
-      end
-    else // Dx < Dy
-      begin
-        Delta := dy shr 1;
-        for i := 0 to dy - 1 do
-          begin
-            if (pi >= 0) and (pi < pl) then
-                BlendMem(Color, FBits^[pi]);
-
-            inc(pi, SY);
-            inc(Delta, dx);
-            if Delta >= dy then
-              begin
-                inc(pi, SX);
-                dec(Delta, dy);
-              end;
-          end;
-      end;
-    if (L) and (pi >= 0) and (pi < pl) then
-        BlendMem(Color, FBits^[pi]);
-  except
-  end;
+          inc(pi, SY);
+          inc(delta, DX);
+          if delta >= DY then
+            begin
+              inc(pi, SX);
+              dec(delta, DY);
+            end;
+        end;
+    end;
+  if (L) and (pi >= 0) and (pi < pl) then
+      BlendMem(Color, FBits^[pi]);
 end;
 
 procedure TMemoryRaster.LineF(x1, y1, x2, y2: TGeoFloat; Color: TRColor; L: Boolean);
@@ -1882,22 +2404,22 @@ begin
 
       if x1 < 0 then
           x1 := 0
-      else if x1 >= width then
-          x1 := width - 1;
+      else if x1 >= Width then
+          x1 := Width - 1;
 
       if x2 < 0 then
           x2 := 0
-      else if x2 >= width then
-          x2 := width - 1;
+      else if x2 >= Width then
+          x2 := Width - 1;
 
       if y1 < 0 then
           y1 := 0
-      else if y1 >= height then
-          y1 := height - 1;
+      else if y1 >= Height then
+          y1 := Height - 1;
       if y2 < 0 then
           y2 := 0
-      else if y2 >= height then
-          y2 := height - 1;
+      else if y2 >= Height then
+          y2 := Height - 1;
 
       for j := y1 to y2 - 1 do
         begin
@@ -1930,35 +2452,40 @@ begin
   FillRect(Round(Dst[0]), Round(Dst[1]), LineDist, Color);
 end;
 
-procedure TMemoryRaster.FillRect(r: TRectV2; Color: TRColor);
+procedure TMemoryRaster.FillRect(R: TRect; Color: TRColor);
 begin
-  FillRect(Round(r[0, 0]), Round(r[0, 1]), Round(r[1, 0]), Round(r[1, 1]), Color);
+  FillRect(R.Left, R.Top, R.Right, R.Bottom, Color);
 end;
 
-procedure TMemoryRaster.FillRect(r: TRectV2; Angle: TGeoFloat; Color: TRColor);
+procedure TMemoryRaster.FillRect(R: TRectV2; Color: TRColor);
+begin
+  FillRect(Round(R[0, 0]), Round(R[0, 1]), Round(R[1, 0]), Round(R[1, 1]), Color);
+end;
+
+procedure TMemoryRaster.FillRect(R: TRectV2; Angle: TGeoFloat; Color: TRColor);
 var
-  a: TGeoFloat;
+  A: TGeoFloat;
   r4: TV2Rect4;
   buff: array [0 .. 4] of TPointDouble;
 begin
-  a := NormalizeDegAngle(Angle);
-  if a = 0 then
-      FillRect(r, Color)
+  A := NormalizeDegAngle(Angle);
+  if A = 0 then
+      FillRect(R, Color)
   else
     begin
-      r4 := TV2Rect4.Init(r, a);
+      r4 := TV2Rect4.Init(R, A);
       if FAgg <> nil then
         begin
-          buff[0].x := r4.LeftTop[0];
-          buff[0].y := r4.LeftTop[1];
-          buff[1].x := r4.RightTop[0];
-          buff[1].y := r4.RightTop[1];
-          buff[2].x := r4.RightBottom[0];
-          buff[2].y := r4.RightBottom[1];
-          buff[3].x := r4.LeftBottom[0];
-          buff[3].y := r4.LeftBottom[1];
-          buff[4].x := r4.LeftTop[0];
-          buff[4].y := r4.LeftTop[1];
+          buff[0].X := r4.LeftTop[0];
+          buff[0].Y := r4.LeftTop[1];
+          buff[1].X := r4.RightTop[0];
+          buff[1].Y := r4.RightTop[1];
+          buff[2].X := r4.RightBottom[0];
+          buff[2].Y := r4.RightBottom[1];
+          buff[3].X := r4.LeftBottom[0];
+          buff[3].Y := r4.LeftBottom[1];
+          buff[4].X := r4.LeftTop[0];
+          buff[4].Y := r4.LeftTop[1];
 
           FAgg.FillColor := Color;
           FAgg.NoLine;
@@ -1969,75 +2496,75 @@ begin
     end;
 end;
 
-procedure TMemoryRaster.DrawRect(r: TRect; Color: TRColor);
+procedure TMemoryRaster.DrawRect(R: TRect; Color: TRColor);
 begin
-  DrawRect(RectV2(r), Color);
+  DrawRect(RectV2(R), Color);
 end;
 
-procedure TMemoryRaster.DrawRect(r: TRectV2; Color: TRColor);
+procedure TMemoryRaster.DrawRect(R: TRectV2; Color: TRColor);
 begin
   if FAgg <> nil then
     begin
       FAgg.NoFill;
       FAgg.LineColor := Color;
-      FAgg.Rectangle(r[0][0], r[0][1], r[1][0], r[1][1]);
+      FAgg.Rectangle(R[0][0], R[0][1], R[1][0], R[1][1]);
     end
   else
     begin
-      LineF(Vec2(r[0][0], r[0][1]), Vec2(r[1][0], r[0][1]), Color, True);
-      LineF(Vec2(r[1][0], r[0][1]), Vec2(r[1][0], r[1][1]), Color, True);
-      LineF(Vec2(r[1][0], r[1][1]), Vec2(r[0][0], r[1][1]), Color, True);
-      LineF(Vec2(r[0][0], r[1][1]), Vec2(r[0][0], r[0][1]), Color, True);
+      LineF(Vec2(R[0][0], R[0][1]), Vec2(R[1][0], R[0][1]), Color, True);
+      LineF(Vec2(R[1][0], R[0][1]), Vec2(R[1][0], R[1][1]), Color, True);
+      LineF(Vec2(R[1][0], R[1][1]), Vec2(R[0][0], R[1][1]), Color, True);
+      LineF(Vec2(R[0][0], R[1][1]), Vec2(R[0][0], R[0][1]), Color, True);
     end;
 end;
 
-procedure TMemoryRaster.DrawRect(r: TV2Rect4; Color: TRColor);
+procedure TMemoryRaster.DrawRect(R: TV2Rect4; Color: TRColor);
 var
   buff: array [0 .. 4] of TPointDouble;
 begin
   if FAgg <> nil then
     begin
-      buff[0].x := r.LeftTop[0];
-      buff[0].y := r.LeftTop[1];
-      buff[1].x := r.RightTop[0];
-      buff[1].y := r.RightTop[1];
-      buff[2].x := r.RightBottom[0];
-      buff[2].y := r.RightBottom[1];
-      buff[3].x := r.LeftBottom[0];
-      buff[3].y := r.LeftBottom[1];
-      buff[4].x := r.LeftTop[0];
-      buff[4].y := r.LeftTop[1];
+      buff[0].X := R.LeftTop[0];
+      buff[0].Y := R.LeftTop[1];
+      buff[1].X := R.RightTop[0];
+      buff[1].Y := R.RightTop[1];
+      buff[2].X := R.RightBottom[0];
+      buff[2].Y := R.RightBottom[1];
+      buff[3].X := R.LeftBottom[0];
+      buff[3].Y := R.LeftBottom[1];
+      buff[4].X := R.LeftTop[0];
+      buff[4].Y := R.LeftTop[1];
       FAgg.NoFill;
       FAgg.LineColor := Color;
       FAgg.Polyline(@buff[0], 5);
     end
   else
     begin
-      LineF(r.LeftTop, r.RightTop, Color, True);
-      LineF(r.RightTop, r.RightBottom, Color, True);
-      LineF(r.RightBottom, r.LeftBottom, Color, True);
-      LineF(r.LeftBottom, r.LeftTop, Color, True);
+      LineF(R.LeftTop, R.RightTop, Color, True);
+      LineF(R.RightTop, R.RightBottom, Color, True);
+      LineF(R.RightBottom, R.LeftBottom, Color, True);
+      LineF(R.LeftBottom, R.LeftTop, Color, True);
     end;
 end;
 
-procedure TMemoryRaster.DrawRect(r: TRectV2; Angle: TGeoFloat; Color: TRColor);
+procedure TMemoryRaster.DrawRect(R: TRectV2; Angle: TGeoFloat; Color: TRColor);
 var
   r4: TV2Rect4;
   buff: array [0 .. 4] of TPointDouble;
 begin
-  r4 := TV2Rect4.Init(r, Angle);
+  r4 := TV2Rect4.Init(R, Angle);
   if FAgg <> nil then
     begin
-      buff[0].x := r4.LeftTop[0];
-      buff[0].y := r4.LeftTop[1];
-      buff[1].x := r4.RightTop[0];
-      buff[1].y := r4.RightTop[1];
-      buff[2].x := r4.RightBottom[0];
-      buff[2].y := r4.RightBottom[1];
-      buff[3].x := r4.LeftBottom[0];
-      buff[3].y := r4.LeftBottom[1];
-      buff[4].x := r4.LeftTop[0];
-      buff[4].y := r4.LeftTop[1];
+      buff[0].X := r4.LeftTop[0];
+      buff[0].Y := r4.LeftTop[1];
+      buff[1].X := r4.RightTop[0];
+      buff[1].Y := r4.RightTop[1];
+      buff[2].X := r4.RightBottom[0];
+      buff[2].Y := r4.RightBottom[1];
+      buff[3].X := r4.LeftBottom[0];
+      buff[3].Y := r4.LeftBottom[1];
+      buff[4].X := r4.LeftTop[0];
+      buff[4].Y := r4.LeftTop[1];
 
       FAgg.NoFill;
       FAgg.LineColor := Color;
@@ -2097,6 +2624,14 @@ begin
   DrawCrossF(Dst[0], Dst[1], LineDist, Color);
 end;
 
+procedure TMemoryRaster.DrawCrossF(Polygon: TVec2List; LineDist: TGeoFloat; Color: TRColor);
+var
+  i: Integer;
+begin
+  for i := 0 to Polygon.Count - 1 do
+      DrawCrossF(Polygon[i]^, LineDist, Color);
+end;
+
 procedure TMemoryRaster.DrawPointListLine(pl: TVec2List; Color: TRColor; wasClose: Boolean);
 var
   i: Integer;
@@ -2117,14 +2652,14 @@ begin
       for i := 0 to pl.Count - 1 do
         begin
           p1 := pl[i];
-          buff[i].x := p1^[0];
-          buff[i].y := p1^[1];
+          buff[i].X := p1^[0];
+          buff[i].Y := p1^[1];
         end;
       if wasClose then
         begin
           p1 := pl.First;
-          buff[pl.Count].x := p1^[0];
-          buff[pl.Count].y := p1^[1];
+          buff[pl.Count].X := p1^[0];
+          buff[pl.Count].Y := p1^[1];
         end;
 
       FAgg.NoFill;
@@ -2149,7 +2684,7 @@ begin
     end;
 end;
 
-procedure TMemoryRaster.DrawCircle(CC: TVec2; r: TGeoFloat; Color: TRColor);
+procedure TMemoryRaster.DrawCircle(CC: TVec2; R: TGeoFloat; Color: TRColor);
 var
   vl: TVec2List;
 begin
@@ -2157,18 +2692,18 @@ begin
     begin
       FAgg.NoFill;
       FAgg.LineColor := Color;
-      FAgg.Circle(CC[0], CC[1], r);
+      FAgg.Circle(CC[0], CC[1], R);
     end
   else
     begin
       vl := TVec2List.Create;
-      vl.AddCirclePoint(Round(r), CC, r);
+      vl.AddCirclePoint(Round(R), CC, R);
       DrawPointListLine(vl, Color, True);
       DisposeObject(vl);
     end;
 end;
 
-procedure TMemoryRaster.FillCircle(CC: TVec2; r: TGeoFloat; Color: TRColor);
+procedure TMemoryRaster.FillCircle(CC: TVec2; R: TGeoFloat; Color: TRColor);
 var
   vl: TVec2List;
 begin
@@ -2176,12 +2711,12 @@ begin
     begin
       FAgg.FillColor := Color;
       FAgg.NoLine;
-      FAgg.Circle(CC[0], CC[1], r);
+      FAgg.Circle(CC[0], CC[1], R);
     end
   else
     begin
       vl := TVec2List.Create;
-      vl.AddCirclePoint(Round(r), CC, r);
+      vl.AddCirclePoint(Round(R), CC, R);
       Vertex.FillPoly(vl, CC, Color);
       DisposeObject(vl);
     end;
@@ -2190,7 +2725,7 @@ end;
 procedure TMemoryRaster.DrawEllipse(CC: TVec2; xRadius, yRadius: TGeoFloat; Color: TRColor);
 var
   i, n: Integer;
-  s, c: TGeoFloatArray;
+  S, C: TGeoFloatArray;
   vl: TVec2List;
 begin
   if Round(xRadius) = Round(yRadius) then
@@ -2204,47 +2739,47 @@ begin
   else
     begin
       n := Round(Max(xRadius, yRadius) * 0.1) + 5;
-      SetLength(s, n);
-      SetLength(c, n);
+      SetLength(S, n);
+      SetLength(C, n);
       dec(n);
-      BuildSinCosCache(@s, @c, 0, 90);
+      BuildSinCosCache(@S, @C, 0, 90);
       for i := 0 to n do
         begin
-          s[i] := s[i] * yRadius;
-          c[i] := c[i] * xRadius;
+          S[i] := S[i] * yRadius;
+          C[i] := C[i] * xRadius;
         end;
       vl := TVec2List.Create;
       // first quadrant (top right)
       for i := 0 to n do
-          vl.Add(CC[0] + c[i], CC[1] - s[i]);
+          vl.Add(CC[0] + C[i], CC[1] - S[i]);
       // second quadrant (top left)
       for i := n - 1 downto 0 do
-          vl.Add(CC[0] - c[i], CC[1] - s[i]);
+          vl.Add(CC[0] - C[i], CC[1] - S[i]);
       // third quadrant (bottom left)
       for i := 1 to n do
-          vl.Add(CC[0] - c[i], CC[1] + s[i]);
+          vl.Add(CC[0] - C[i], CC[1] + S[i]);
       // fourth quadrant (bottom right)
       for i := n - 1 downto 0 do
-          vl.Add(CC[0] + c[i], CC[1] + s[i]);
-      SetLength(s, 0);
-      SetLength(c, 0);
+          vl.Add(CC[0] + C[i], CC[1] + S[i]);
+      SetLength(S, 0);
+      SetLength(C, 0);
       DrawPointListLine(vl, Color, False);
       DisposeObject(vl);
     end;
 end;
 
-procedure TMemoryRaster.DrawEllipse(r: TRectV2; Color: TRColor);
+procedure TMemoryRaster.DrawEllipse(R: TRectV2; Color: TRColor);
 var
   cen: TVec2;
 begin
-  cen := RectCentre(r);
-  DrawEllipse(cen, abs(r[0][0] - cen[0]), abs(r[1][1] - cen[1]), Color);
+  cen := RectCentre(R);
+  DrawEllipse(cen, abs(R[0][0] - cen[0]), abs(R[1][1] - cen[1]), Color);
 end;
 
 procedure TMemoryRaster.FillEllipse(CC: TVec2; xRadius, yRadius: TGeoFloat; Color: TRColor);
 var
   i, n: Integer;
-  s, c: TGeoFloatArray;
+  S, C: TGeoFloatArray;
   vl: TVec2List;
 begin
   if Round(xRadius) = Round(yRadius) then
@@ -2258,41 +2793,41 @@ begin
   else
     begin
       n := Round(Max(xRadius, yRadius) * 0.1) + 5;
-      SetLength(s, n);
-      SetLength(c, n);
+      SetLength(S, n);
+      SetLength(C, n);
       dec(n);
-      BuildSinCosCache(@s, @c, 0, 90);
+      BuildSinCosCache(@S, @C, 0, 90);
       for i := 0 to n do
         begin
-          s[i] := s[i] * yRadius;
-          c[i] := c[i] * xRadius;
+          S[i] := S[i] * yRadius;
+          C[i] := C[i] * xRadius;
         end;
       vl := TVec2List.Create;
       // first quadrant (top right)
       for i := 0 to n do
-          vl.Add(CC[0] + c[i], CC[1] - s[i]);
+          vl.Add(CC[0] + C[i], CC[1] - S[i]);
       // second quadrant (top left)
       for i := n - 1 downto 0 do
-          vl.Add(CC[0] - c[i], CC[1] - s[i]);
+          vl.Add(CC[0] - C[i], CC[1] - S[i]);
       // third quadrant (bottom left)
       for i := 1 to n do
-          vl.Add(CC[0] - c[i], CC[1] + s[i]);
+          vl.Add(CC[0] - C[i], CC[1] + S[i]);
       // fourth quadrant (bottom right)
       for i := n - 1 downto 0 do
-          vl.Add(CC[0] + c[i], CC[1] + s[i]);
-      SetLength(s, 0);
-      SetLength(c, 0);
+          vl.Add(CC[0] + C[i], CC[1] + S[i]);
+      SetLength(S, 0);
+      SetLength(C, 0);
       Vertex.FillPoly(vl, CC, Color);
       DisposeObject(vl);
     end;
 end;
 
-procedure TMemoryRaster.FillEllipse(r: TRectV2; Color: TRColor);
+procedure TMemoryRaster.FillEllipse(R: TRectV2; Color: TRColor);
 var
   cen: TVec2;
 begin
-  cen := RectCentre(r);
-  DrawEllipse(cen, abs(r[0][0] - cen[0]), abs(r[1][1] - cen[1]), Color);
+  cen := RectCentre(R);
+  DrawEllipse(cen, abs(R[0][0] - cen[0]), abs(R[1][1] - cen[1]), Color);
 end;
 
 procedure TMemoryRaster.FillTriangle(t1, t2, t3: TVec2; Color: TRColor);
@@ -2323,13 +2858,13 @@ procedure TMemoryRaster.FillPolygon(PolygonBuff: TArrayVec2; Color: TRColor);
     for i := 0 to L - 1 do
       begin
         p1 := @PolygonBuff[i];
-        buff[i].x := p1^[0];
-        buff[i].y := p1^[1];
+        buff[i].X := p1^[0];
+        buff[i].Y := p1^[1];
       end;
 
     p1 := @PolygonBuff[0];
-    buff[L].x := p1^[0];
-    buff[L].y := p1^[1];
+    buff[L].X := p1^[0];
+    buff[L].Y := p1^[1];
 
     FAgg.NoLine;
     FAgg.FillColor := Color;
@@ -2339,68 +2874,68 @@ procedure TMemoryRaster.FillPolygon(PolygonBuff: TArrayVec2; Color: TRColor);
 
   procedure Fill_Geo;
   var
-    r: TRectV2;
-{$IFDEF parallel}
+    R: TRectV2;
+{$IFDEF Parallel}
 {$IFDEF FPC}
-    procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+    procedure Nested_ParallelFor(pass: Integer);
     var
       p: PRColorArray;
       i: Integer;
       Pt: TVec2;
     begin
       p := ScanLine[pass];
-      for i := 0 to width - 1 do
+      for i := 0 to Width - 1 do
         begin
           Pt := Vec2(i, pass);
-          if PointInRect(Pt, r) and PointInPolygon(Pt, PolygonBuff) then
+          if PointInRect(Pt, R) and PointInPolygon(Pt, PolygonBuff) then
               p^[i] := Color;
         end;
     end;
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
     procedure DoFor;
     var
       p: PRColorArray;
       pass, i: Integer;
       Pt: TVec2;
     begin
-      for pass := 0 to height - 1 do
+      for pass := 0 to Height - 1 do
         begin
           p := ScanLine[pass];
-          for i := 0 to width - 1 do
+          for i := 0 to Width - 1 do
             begin
               Pt := Vec2(i, pass);
-              if PointInRect(Pt, r) and PointInPolygon(Pt, PolygonBuff) then
+              if PointInRect(Pt, R) and PointInPolygon(Pt, PolygonBuff) then
                   p^[i] := Color;
             end;
         end;
     end;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 
   begin
-    r := BoundRect(PolygonBuff);
-{$IFDEF parallel}
+    R := BoundRect(PolygonBuff);
+{$IFDEF Parallel}
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, height - 1);
+    FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Height - 1);
 {$ELSE}
-    TParallel.for(0, height - 1, procedure(pass: Integer)
+    DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Height - 1, procedure(pass: Integer)
       var
         p: PRColorArray;
         i: Integer;
         Pt: TVec2;
       begin
         p := ScanLine[pass];
-        for i := 0 to width - 1 do
+        for i := 0 to Width - 1 do
           begin
             Pt := Vec2(i, pass);
-            if PointInRect(Pt, r) and PointInPolygon(Pt, PolygonBuff) then
+            if PointInRect(Pt, R) and PointInPolygon(Pt, PolygonBuff) then
                 p^[i] := Color;
           end;
       end);
 {$ENDIF FPC}
 {$ELSE}
     DoFor();
-{$ENDIF parallel}
+{$ENDIF Parallel}
   end;
 
 begin
@@ -2430,13 +2965,13 @@ begin
       for i := 0 to L - 1 do
         begin
           p1 := @PolygonBuff[i];
-          buff[i].x := p1^[0];
-          buff[i].y := p1^[1];
+          buff[i].X := p1^[0];
+          buff[i].Y := p1^[1];
         end;
 
       p1 := @PolygonBuff[0];
-      buff[L].x := p1^[0];
-      buff[L].y := p1^[1];
+      buff[L].X := p1^[0];
+      buff[L].Y := p1^[1];
 
       FAgg.NoFill;
       FAgg.LineColor := Color;
@@ -2471,13 +3006,13 @@ procedure TMemoryRaster.FillPolygon(Polygon: T2DPolygon; Color: TRColor);
     for i := 0 to L - 1 do
       begin
         p1 := Polygon[i];
-        buff[i].x := p1^[0];
-        buff[i].y := p1^[1];
+        buff[i].X := p1^[0];
+        buff[i].Y := p1^[1];
       end;
 
     p1 := Polygon[0];
-    buff[L].x := p1^[0];
-    buff[L].y := p1^[1];
+    buff[L].X := p1^[0];
+    buff[L].Y := p1^[1];
 
     FAgg.NoLine;
     FAgg.FillColor := Color;
@@ -2487,68 +3022,68 @@ procedure TMemoryRaster.FillPolygon(Polygon: T2DPolygon; Color: TRColor);
 
   procedure Fill_Geo;
   var
-    r: TRectV2;
-{$IFDEF parallel}
+    R: TRectV2;
+{$IFDEF Parallel}
 {$IFDEF FPC}
-    procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+    procedure Nested_ParallelFor(pass: Integer);
     var
       p: PRColorArray;
       i: Integer;
       Pt: TVec2;
     begin
       p := ScanLine[pass];
-      for i := 0 to width - 1 do
+      for i := 0 to Width - 1 do
         begin
           Pt := Vec2(i, pass);
-          if PointInRect(Pt, r) and Polygon.InHere(Pt) then
+          if PointInRect(Pt, R) and Polygon.InHere(Pt) then
               p^[i] := Color;
         end;
     end;
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
     procedure DoFor;
     var
       p: PRColorArray;
       pass, i: Integer;
       Pt: TVec2;
     begin
-      for pass := 0 to height - 1 do
+      for pass := 0 to Height - 1 do
         begin
           p := ScanLine[pass];
-          for i := 0 to width - 1 do
+          for i := 0 to Width - 1 do
             begin
               Pt := Vec2(i, pass);
-              if PointInRect(Pt, r) and Polygon.InHere(Pt) then
+              if PointInRect(Pt, R) and Polygon.InHere(Pt) then
                   p^[i] := Color;
             end;
         end;
     end;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 
   begin
-    r := Polygon.BoundBox();
-{$IFDEF parallel}
+    R := Polygon.BoundBox();
+{$IFDEF Parallel}
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, height - 1);
+    FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Height - 1);
 {$ELSE}
-    TParallel.for(0, height - 1, procedure(pass: Integer)
+    DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Height - 1, procedure(pass: Integer)
       var
         p: PRColorArray;
         i: Integer;
         Pt: TVec2;
       begin
         p := ScanLine[pass];
-        for i := 0 to width - 1 do
+        for i := 0 to Width - 1 do
           begin
             Pt := Vec2(i, pass);
-            if PointInRect(Pt, r) and Polygon.InHere(Pt) then
+            if PointInRect(Pt, R) and Polygon.InHere(Pt) then
                 p^[i] := Color;
           end;
       end);
 {$ENDIF FPC}
 {$ELSE}
     DoFor();
-{$ENDIF parallel}
+{$ENDIF Parallel}
   end;
 
 begin
@@ -2578,13 +3113,13 @@ begin
       for i := 0 to L - 1 do
         begin
           p1 := Polygon[i];
-          buff[i].x := p1^[0];
-          buff[i].y := p1^[1];
+          buff[i].X := p1^[0];
+          buff[i].Y := p1^[1];
         end;
 
       p1 := Polygon[0];
-      buff[L].x := p1^[0];
-      buff[L].y := p1^[1];
+      buff[L].X := p1^[0];
+      buff[L].Y := p1^[1];
 
       FAgg.NoFill;
       FAgg.LineColor := Color;
@@ -2609,68 +3144,68 @@ end;
 procedure TMemoryRaster.FillPolygon(Polygon: T2DPolygonGraph; Color: TRColor);
   procedure Fill_Geo;
   var
-    r: TRectV2;
-{$IFDEF parallel}
+    R: TRectV2;
+{$IFDEF Parallel}
 {$IFDEF FPC}
-    procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+    procedure Nested_ParallelFor(pass: Integer);
     var
       p: PRColorArray;
       i: Integer;
       Pt: TVec2;
     begin
       p := ScanLine[pass];
-      for i := 0 to width - 1 do
+      for i := 0 to Width - 1 do
         begin
           Pt := Vec2(i, pass);
-          if PointInRect(Pt, r) and Polygon.InHere(Pt) then
+          if PointInRect(Pt, R) and Polygon.InHere(Pt) then
               p^[i] := Color;
         end;
     end;
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
     procedure DoFor;
     var
       p: PRColorArray;
       pass, i: Integer;
       Pt: TVec2;
     begin
-      for pass := 0 to height - 1 do
+      for pass := 0 to Height - 1 do
         begin
           p := ScanLine[pass];
-          for i := 0 to width - 1 do
+          for i := 0 to Width - 1 do
             begin
               Pt := Vec2(i, pass);
-              if PointInRect(Pt, r) and Polygon.InHere(Pt) then
+              if PointInRect(Pt, R) and Polygon.InHere(Pt) then
                   p^[i] := Color;
             end;
         end;
     end;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 
   begin
-    r := Polygon.BoundBox();
-{$IFDEF parallel}
+    R := Polygon.BoundBox();
+{$IFDEF Parallel}
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, height - 1);
+    FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Height - 1);
 {$ELSE}
-    TParallel.for(0, height - 1, procedure(pass: Integer)
+    DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Height - 1, procedure(pass: Integer)
       var
         p: PRColorArray;
         i: Integer;
         Pt: TVec2;
       begin
         p := ScanLine[pass];
-        for i := 0 to width - 1 do
+        for i := 0 to Width - 1 do
           begin
             Pt := Vec2(i, pass);
-            if PointInRect(Pt, r) and Polygon.InHere(Pt) then
+            if PointInRect(Pt, R) and Polygon.InHere(Pt) then
                 p^[i] := Color;
           end;
       end);
 {$ENDIF FPC}
 {$ELSE}
     DoFor();
-{$ENDIF parallel}
+{$ENDIF Parallel}
   end;
 
 begin
@@ -2686,58 +3221,164 @@ begin
       DrawPolygon(Polygon.Bands[i], Color);
 end;
 
-function TMemoryRaster.PixelAtBorder(const x, y: Integer; const BGColor, BorderColor: TRColor; const halfBorderSize: Integer; var detectColor: TRColor): Boolean;
+procedure TMemoryRaster.DrawPolygon(Polygon: T2DPolygonGraph; SurroundColor, CollapseColor: TRColor);
+var
+  i: Integer;
+begin
+  DrawPolygon(Polygon.Surround, SurroundColor);
+  for i := 0 to Polygon.CollapsesCount - 1 do
+      DrawPolygon(Polygon.Bands[i], CollapseColor);
+end;
+
+procedure TMemoryRaster.DrawPolygonCross(Polygon: T2DPolygonGraph; LineDist: TGeoFloat; SurroundColor, CollapseColor: TRColor);
+var
+  i: Integer;
+begin
+  DrawCrossF(Polygon.Surround, LineDist, SurroundColor);
+  for i := 0 to Polygon.CollapsesCount - 1 do
+      DrawCrossF(Polygon.Bands[i], LineDist, CollapseColor);
+end;
+
+procedure TMemoryRaster.DrawPolygonLine(Polygon: TLines; Color: TRColor; wasClose: Boolean);
+var
+  L, i: Integer;
+  p1, p2: PVec2;
+begin
+  L := Polygon.Count;
+  if L < 2 then
+      exit;
+
+  for i := 1 to L - 1 do
+    begin
+      p1 := Polygon[i - 1];
+      p2 := Polygon[i];
+      LineF(p1^, p2^, Color, True);
+    end;
+
+  if wasClose then
+    begin
+      p1 := Polygon[0];
+      p2 := Polygon[L - 1];
+      LineF(p1^, p2^, Color, True);
+    end;
+end;
+
+procedure TMemoryRaster.DrawPolygon(Polygon: TDeflectionPolygon; ExpandDist: TGeoFloat; Color: TRColor);
+var
+  L, i: Integer;
+  p1, p2: TVec2;
+  buff: array of TPointDouble;
+begin
+  L := Polygon.Count;
+  if L < 2 then
+      exit;
+
+  if FAgg <> nil then
+    begin
+      SetLength(buff, L + 1);
+
+      for i := 0 to L - 1 do
+        begin
+          p1 := Polygon.Expands[i, ExpandDist];
+          buff[i].X := p1[0];
+          buff[i].Y := p1[1];
+        end;
+
+      p1 := Polygon.Expands[0, ExpandDist];
+      buff[L].X := p1[0];
+      buff[L].Y := p1[1];
+
+      FAgg.NoFill;
+      FAgg.LineColor := Color;
+      FAgg.Polygon(@buff[0], L + 1, dpfStrokeOnly);
+      SetLength(buff, 0);
+    end
+  else
+    begin
+      for i := 1 to L - 1 do
+        begin
+          p1 := Polygon.Expands[i - 1, ExpandDist];
+          p2 := Polygon.Expands[i, ExpandDist];
+          LineF(p1, p2, Color, True);
+        end;
+
+      p1 := Polygon.Expands[0, ExpandDist];
+      p2 := Polygon.Expands[L - 1, ExpandDist];
+      LineF(p1, p2, Color, True);
+    end;
+end;
+
+function TMemoryRaster.PixelAtNoneBGBorder(const X, Y: Integer; const BGColor, BorderColor: TRColor; const halfBorderSize: Integer; var detectColor: TRColor): Boolean;
 var
   i, j: Integer;
-  c: TRColor;
+  C: TRColor;
 begin
-  if Pixel[x, y] = BGColor then
-    for j := y - halfBorderSize to y + halfBorderSize do
-      if (j >= 0) and (j < height) then
-        for i := x - halfBorderSize to x + halfBorderSize do
-          if (i >= 0) and (i < width) then
+  if Pixel[X, Y] = BGColor then
+    for j := Y - halfBorderSize to Y + halfBorderSize do
+      if (j >= 0) and (j < Height) then
+        for i := X - halfBorderSize to X + halfBorderSize do
+          if (i >= 0) and (i < Width) then
             begin
-              c := Pixel[i, j];
-              if (c <> BGColor) and (c <> BorderColor) then
+              C := Pixel[i, j];
+              if (C <> BGColor) and (C <> BorderColor) then
                 begin
                   Result := True;
-                  detectColor := c;
+                  detectColor := C;
                   exit;
                 end;
             end;
   Result := False;
 end;
 
-procedure TMemoryRaster.FillNoneBGColorBorder(BGColor, BorderColor: TRColor; BorderSize: Integer);
+function TMemoryRaster.PixelAtNoneBGBorder(const X, Y: Integer; const BGColor: TRColor; const halfBorderSize: Integer; var detectColor: TRColor): Boolean;
+var
+  i, j: Integer;
+  C: TRColor;
+begin
+  if Pixel[X, Y] = BGColor then
+    for j := Y - halfBorderSize to Y + halfBorderSize do
+      if (j >= 0) and (j < Height) then
+        for i := X - halfBorderSize to X + halfBorderSize do
+          if (i >= 0) and (i < Width) then
+            begin
+              C := Pixel[i, j];
+              if (C <> BGColor) then
+                begin
+                  Result := True;
+                  detectColor := C;
+                  exit;
+                end;
+            end;
+  Result := False;
+end;
+
+procedure TMemoryRaster.FillNoneBGColorBorder(parallel_: Boolean; BGColor, BorderColor: TRColor; BorderSize: Integer);
 var
   halfBorderSize: Integer;
 
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(pass: Integer);
   var
     i: Integer;
     detectColor: TRColor;
   begin
-    for i := 0 to width - 1 do
-      if PixelAtBorder(i, pass, BGColor, BorderColor, halfBorderSize, detectColor) then
+    for i := 0 to Width - 1 do
+      if PixelAtNoneBGBorder(i, pass, BGColor, BorderColor, halfBorderSize, detectColor) then
           Pixel[i, pass] := BorderColor;
   end;
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ENDIF Parallel}
   procedure DoFor;
   var
     i, pass: Integer;
     detectColor: TRColor;
   begin
-    for pass := 0 to height - 1 do
-      for i := 0 to width - 1 do
-        if PixelAtBorder(i, pass, BGColor, BorderColor, halfBorderSize, detectColor) then
+    for pass := 0 to Height - 1 do
+      for i := 0 to Width - 1 do
+        if PixelAtNoneBGBorder(i, pass, BGColor, BorderColor, halfBorderSize, detectColor) then
             Pixel[i, pass] := BorderColor;
   end;
-
-{$ENDIF parallel}
-
 
 begin
   if BGColor = BorderColor then
@@ -2746,23 +3387,95 @@ begin
   if halfBorderSize <= 0 then
       halfBorderSize := 1;
 
-{$IFDEF parallel}
-{$IFDEF FPC}
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, height - 1);
-{$ELSE FPC}
-  TParallel.for(0, height - 1, procedure(pass: Integer)
-    var
-      i: Integer;
-      detectColor: TRColor;
+  if parallel_ then
     begin
-      for i := 0 to width - 1 do
-        if PixelAtBorder(i, pass, BGColor, BorderColor, halfBorderSize, detectColor) then
-            Pixel[i, pass] := BorderColor;
-    end);
+{$IFDEF Parallel}
+{$IFDEF FPC}
+      FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Height - 1);
+{$ELSE FPC}
+      DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Height - 1, procedure(pass: Integer)
+        var
+          i: Integer;
+          detectColor: TRColor;
+        begin
+          for i := 0 to Width - 1 do
+            if PixelAtNoneBGBorder(i, pass, BGColor, BorderColor, halfBorderSize, detectColor) then
+                Pixel[i, pass] := BorderColor;
+        end);
 {$ENDIF FPC}
-{$ELSE parallel}
-  DoFor;
-{$ENDIF parallel}
+{$ELSE Parallel}
+      DoFor;
+{$ENDIF Parallel}
+    end
+  else
+      DoFor;
+end;
+
+procedure TMemoryRaster.FillNoneBGColorBorder(BGColor, BorderColor: TRColor; BorderSize: Integer);
+begin
+  FillNoneBGColorBorder(True, BGColor, BorderColor, BorderSize);
+end;
+
+procedure TMemoryRaster.FillNoneBGColorAlphaBorder(parallel_: Boolean; BGColor, BorderColor: TRColor; BorderSize: Integer; output: TMemoryRaster);
+var
+  halfBorderSize: Integer;
+
+{$IFDEF Parallel}
+{$IFDEF FPC}
+  procedure Nested_ParallelFor(pass: Integer);
+  var
+    i: Integer;
+    detectColor: TRColor;
+  begin
+    for i := 0 to Width - 1 do
+      if PixelAtNoneBGBorder(i, pass, BGColor, BorderColor, halfBorderSize, detectColor) then
+          output[i, pass] := RAlphaColor(BorderColor, PixelAlpha[i, pass]);
+  end;
+{$ENDIF FPC}
+{$ENDIF Parallel}
+  procedure DoFor;
+  var
+    i, pass: Integer;
+    detectColor: TRColor;
+  begin
+    for pass := 0 to Height - 1 do
+      for i := 0 to Width - 1 do
+        if PixelAtNoneBGBorder(i, pass, BGColor, BorderColor, halfBorderSize, detectColor) then
+            output[i, pass] := RAlphaColor(BorderColor, PixelAlpha[i, pass]);
+  end;
+
+begin
+  halfBorderSize := BorderSize shr 1;
+  if halfBorderSize <= 0 then
+      halfBorderSize := 1;
+
+  if parallel_ then
+    begin
+{$IFDEF Parallel}
+{$IFDEF FPC}
+      FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Height - 1);
+{$ELSE FPC}
+      DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Height - 1, procedure(pass: Integer)
+        var
+          i: Integer;
+          detectColor: TRColor;
+        begin
+          for i := 0 to Width - 1 do
+            if PixelAtNoneBGBorder(i, pass, BGColor, BorderColor, halfBorderSize, detectColor) then
+                output[i, pass] := RAlphaColor(BorderColor, PixelAlpha[i, pass]);
+        end);
+{$ENDIF FPC}
+{$ELSE Parallel}
+      DoFor;
+{$ENDIF Parallel}
+    end
+  else
+      DoFor;
+end;
+
+procedure TMemoryRaster.FillNoneBGColorAlphaBorder(BGColor, BorderColor: TRColor; BorderSize: Integer; output: TMemoryRaster);
+begin
+  FillNoneBGColorAlphaBorder(True, BGColor, BorderColor, BorderSize, output);
 end;
 
 function TMemoryRaster.TextSize(Text: SystemString; siz: TGeoFloat): TVec2;
@@ -2770,7 +3483,7 @@ begin
   Result := Vec2Mul(Font.TextSize(Text), siz / Font.FontSize)
 end;
 
-procedure TMemoryRaster.DrawText(Text: SystemString; x, y: Integer; RotateVec: TVec2; Angle, alpha, siz: TGeoFloat; TextColor: TRColor);
+procedure TMemoryRaster.DrawText(Text: SystemString; X, Y: Integer; RotateVec: TVec2; Angle, alpha, siz: TGeoFloat; TextColor: TRColor);
 var
   fSiz: TVec2;
   sc: TGeoFloat;
@@ -2779,15 +3492,15 @@ begin
   fSiz := Font.TextSize(Text);
   sc := siz / Font.FontSize;
   fPt := Vec2Mul(Vec2Sub(fSiz, Vec2Mul(fSiz, sc)), RotateVec);
-  Font.Draw(Text, Self, Vec2(x - fPt[0], y - fPt[1]), TextColor, True, alpha, RotateVec, Angle, sc);
+  Font.Draw(Text, Self, Vec2(X - fPt[0], Y - fPt[1]), TextColor, True, alpha, RotateVec, Angle, sc);
 end;
 
-procedure TMemoryRaster.DrawText(Text: SystemString; x, y: Integer; siz: TGeoFloat; TextColor: TRColor);
+procedure TMemoryRaster.DrawText(Text: SystemString; X, Y: Integer; siz: TGeoFloat; TextColor: TRColor);
 begin
-  DrawText(Text, x, y, Vec2(0.5, 0.5), 0, 1, siz, TextColor);
+  DrawText(Text, X, Y, Vec2(0.5, 0.5), 0, 1, siz, TextColor);
 end;
 
-procedure TMemoryRaster.ProjectionTo(Dst: TMemoryRaster; const sourRect, DestRect: TV2Rect4; const bilinear_sampling: Boolean; const alpha: Single);
+procedure TMemoryRaster.ProjectionTo(Dst: TMemoryRaster; const sourRect, DestRect: TV2Rect4; const bilinear_sampling: Boolean; const alpha: TGeoFloat);
 begin
   Dst.Vertex.DrawRect(sourRect, DestRect, Self, bilinear_sampling, alpha);
 end;
@@ -2814,110 +3527,110 @@ end;
 
 procedure TMemoryRaster.ProjectionPolygonTo(const sour_Polygon: TVec2List; Dst: TMemoryRaster; DestRect: TRectV2; const bilinear_sampling: Boolean; const alpha: TGeoFloat);
 var
-  r: TRectV2;
+  R: TRectV2;
   nr: TMemoryRaster;
 
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(pass: Integer);
   var
     i: Integer;
   begin
-    for i := 0 to width - 1 do
-      if (PointInRect(i, pass, r)) and (sour_Polygon.InHere(Vec2(i, pass))) then
+    for i := 0 to Width - 1 do
+      if (PointInRect(i, pass, R)) and (sour_Polygon.InHere(Vec2(i, pass))) then
           nr[i, pass] := PixelLinear[i, pass];
   end;
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
   procedure DoFor;
   var
     pass, i: Integer;
   begin
-    for pass := 0 to height - 1 do
-      for i := 0 to width - 1 do
-        if (PointInRect(i, pass, r)) and (sour_Polygon.InHere(Vec2(i, pass))) then
+    for pass := 0 to Height - 1 do
+      for i := 0 to Width - 1 do
+        if (PointInRect(i, pass, R)) and (sour_Polygon.InHere(Vec2(i, pass))) then
             nr[i, pass] := PixelLinear[i, pass];
   end;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 
 
 begin
   nr := NewRaster();
-  nr.SetSize(width, height, RColor(0, 0, 0, 0));
-  r := sour_Polygon.BoundBox();
+  nr.SetSize(Width, Height, RColor(0, 0, 0, 0));
+  R := sour_Polygon.BoundBox();
 
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, height - 1);
+  FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Height - 1);
 {$ELSE FPC}
-  TParallel.for(0, height - 1, procedure(pass: Integer)
+  DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Height - 1, procedure(pass: Integer)
     var
       i: Integer;
     begin
-      for i := 0 to width - 1 do
-        if (PointInRect(i, pass, r)) and (sour_Polygon.InHere(Vec2(i, pass))) then
+      for i := 0 to Width - 1 do
+        if (PointInRect(i, pass, R)) and (sour_Polygon.InHere(Vec2(i, pass))) then
             nr[i, pass] := PixelLinear[i, pass];
     end);
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
   DoFor;
-{$ENDIF parallel}
-  nr.ProjectionTo(Dst, r, DestRect, bilinear_sampling, alpha);
+{$ENDIF Parallel}
+  nr.ProjectionTo(Dst, R, DestRect, bilinear_sampling, alpha);
 
   DisposeObject(nr);
 end;
 
 procedure TMemoryRaster.ProjectionPolygonTo(const sour_Polygon: T2DPolygonGraph; Dst: TMemoryRaster; DestRect: TRectV2; const bilinear_sampling: Boolean; const alpha: TGeoFloat);
 var
-  r: TRectV2;
+  R: TRectV2;
   nr: TMemoryRaster;
 
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(pass: Integer);
   var
     i: Integer;
   begin
-    for i := 0 to width - 1 do
-      if (PointInRect(i, pass, r)) and (sour_Polygon.InHere(Vec2(i, pass))) then
+    for i := 0 to Width - 1 do
+      if (PointInRect(i, pass, R)) and (sour_Polygon.InHere(Vec2(i, pass))) then
           nr[i, pass] := PixelLinear[i, pass];
   end;
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
   procedure DoFor;
   var
     pass, i: Integer;
   begin
-    for pass := 0 to height - 1 do
-      for i := 0 to width - 1 do
-        if (PointInRect(i, pass, r)) and (sour_Polygon.InHere(Vec2(i, pass))) then
+    for pass := 0 to Height - 1 do
+      for i := 0 to Width - 1 do
+        if (PointInRect(i, pass, R)) and (sour_Polygon.InHere(Vec2(i, pass))) then
             nr[i, pass] := PixelLinear[i, pass];
   end;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 
 
 begin
   nr := NewRaster();
-  nr.SetSize(width, height, RColor(0, 0, 0, 0));
-  r := sour_Polygon.BoundBox();
+  nr.SetSize(Width, Height, RColor(0, 0, 0, 0));
+  R := sour_Polygon.BoundBox();
 
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, height - 1);
+  FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Height - 1);
 {$ELSE FPC}
-  TParallel.for(0, height - 1, procedure(pass: Integer)
+  DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Height - 1, procedure(pass: Integer)
     var
       i: Integer;
     begin
-      for i := 0 to width - 1 do
-        if (PointInRect(i, pass, r)) and (sour_Polygon.InHere(Vec2(i, pass))) then
+      for i := 0 to Width - 1 do
+        if (PointInRect(i, pass, R)) and (sour_Polygon.InHere(Vec2(i, pass))) then
             nr[i, pass] := PixelLinear[i, pass];
     end);
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
   DoFor;
-{$ENDIF parallel}
-  nr.ProjectionTo(Dst, r, DestRect, bilinear_sampling, alpha);
+{$ENDIF Parallel}
+  nr.ProjectionTo(Dst, R, DestRect, bilinear_sampling, alpha);
   DisposeObject(nr);
 end;
 
@@ -2965,6 +3678,220 @@ begin
   DrawTo(Dst, Round(DstPt[0]), Round(DstPt[1]));
 end;
 
+function TMemoryRaster.BuildMorphologySegmentation(OnGetPixelSegClassify: TOnGetPixelSegClassify): TMorphologySegmentation;
+begin
+  Result := TMorphologySegmentation.Create;
+  Result.OnGetPixelSegClassify := OnGetPixelSegClassify;
+  Result.BuildSegmentation(Self);
+end;
+
+function TMemoryRaster.BuildMorphologySegmentation(): TMorphologySegmentation;
+begin
+  Result := TMorphologySegmentation.Create;
+  Result.BuildSegmentation(Self);
+end;
+
+procedure TMemoryRaster.BuildMorphomaticsTo(MorphPix_: TMorphologyPixel; output_: TMorphomatics);
+{$IFDEF Parallel}
+{$IFDEF FPC}
+  procedure Nested_ParallelFor(pass: Integer);
+  begin
+    output_.Bits^[pass] := RColorToMorph(FBits^[pass], MorphPix_);
+  end;
+{$ENDIF FPC}
+{$ELSE Parallel}
+  procedure DoFor;
+  var
+    pass: Integer;
+  begin
+    for pass := 0 to Width * Height - 1 do
+      begin
+        output_.Bits^[pass] := RColorToMorph(FBits^[pass], MorphPix_);
+      end;
+  end;
+{$ENDIF Parallel}
+
+
+begin
+  ReadyBits();
+  output_.SetSize(Width, Height);
+
+{$IFDEF Parallel}
+{$IFDEF FPC}
+  FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Width * Height - 1);
+{$ELSE FPC}
+  DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Width * Height - 1, procedure(pass: Integer)
+    begin
+      output_.Bits^[pass] := RColorToMorph(FBits^[pass], MorphPix_);
+    end);
+{$ENDIF FPC}
+{$ELSE Parallel}
+  DoFor;
+{$ENDIF Parallel}
+end;
+
+function TMemoryRaster.BuildMorphomatics(MorphPix_: TMorphologyPixel): TMorphomatics;
+begin
+  Result := TMorphomatics.Create;
+  Result.LocalParallel := LocalParallel;
+  BuildMorphomaticsTo(MorphPix_, Result);
+end;
+
+procedure TMemoryRaster.BuildApproximateMorphomaticsTo(ApproximateColor_: TRColor; output_: TMorphomatics);
+{$IFDEF Parallel}
+{$IFDEF FPC}
+  procedure Nested_ParallelFor(pass: Integer);
+  begin
+    output_.Bits^[pass] := RColorToApproximateMorph(FBits^[pass], ApproximateColor_);
+  end;
+{$ENDIF FPC}
+{$ELSE Parallel}
+  procedure DoFor;
+  var
+    pass: Integer;
+  begin
+    for pass := 0 to Width * Height - 1 do
+      begin
+        output_.Bits^[pass] := RColorToApproximateMorph(FBits^[pass], ApproximateColor_);
+      end;
+  end;
+{$ENDIF Parallel}
+
+
+begin
+  ReadyBits();
+  output_.SetSize(Width, Height);
+
+{$IFDEF Parallel}
+{$IFDEF FPC}
+  FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Width * Height - 1);
+{$ELSE FPC}
+  DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Width * Height - 1, procedure(pass: Integer)
+    begin
+      output_.Bits^[pass] := RColorToApproximateMorph(FBits^[pass], ApproximateColor_);
+    end);
+{$ENDIF FPC}
+{$ELSE Parallel}
+  DoFor;
+{$ENDIF Parallel}
+end;
+
+function TMemoryRaster.BuildApproximateMorphomatics(ApproximateColor_: TRColor): TMorphomatics;
+begin
+  Result := TMorphomatics.Create;
+  Result.LocalParallel := LocalParallel;
+  BuildApproximateMorphomaticsTo(ApproximateColor_, Result);
+end;
+
+procedure TMemoryRaster.DrawMorphomatics(MorphPix_: TMorphologyPixel; Morph: TMorphomatics);
+{$IFDEF Parallel}
+{$IFDEF FPC}
+  procedure Nested_ParallelFor(pass: Integer);
+  begin
+    MorphToRColor(MorphPix_, Morph.Bits^[pass], FBits^[pass]);
+  end;
+{$ENDIF FPC}
+{$ELSE Parallel}
+  procedure DoFor;
+  var
+    pass: Integer;
+  begin
+    for pass := 0 to Width * Height - 1 do
+      begin
+        MorphToRColor(MorphPix_, Morph.Bits^[pass], FBits^[pass]);
+      end;
+  end;
+{$ENDIF Parallel}
+
+
+begin
+  if Morph.Width * Morph.Height <> Width * Height then
+      SetSize(Morph.Width, Morph.Height, RColor(0, 0, 0, 0));
+
+  ReadyBits();
+{$IFDEF Parallel}
+{$IFDEF FPC}
+  FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Width * Height - 1);
+{$ELSE FPC}
+  DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Width * Height - 1, procedure(pass: Integer)
+    begin
+      MorphToRColor(MorphPix_, Morph.Bits^[pass], FBits^[pass]);
+    end);
+{$ENDIF FPC}
+{$ELSE Parallel}
+  DoFor;
+{$ENDIF Parallel}
+end;
+
+procedure TMemoryRaster.DrawMorphomatics(Morph: TMorphomatics);
+begin
+  DrawMorphomatics(mpGrayscale, Morph);
+end;
+
+procedure TMemoryRaster.DrawBinaryzation(Morph: TMorphologyBinaryzation);
+var
+  i: Integer;
+begin
+  if Morph.Width * Morph.Height <> Width * Height then
+      SetSize(Width, Height);
+
+  ReadyBits();
+  for i := Width * Height - 1 downto 0 do
+    if Morph.Bits^[i] then
+        FBits^[i] := $FFFFFFFF
+    else
+        FBits^[i] := $FF000000;
+end;
+
+procedure TMemoryRaster.DrawBinaryzation(MorphPix_: TMorphologyPixel; Morph: TMorphologyBinaryzation);
+{$IFDEF Parallel}
+{$IFDEF FPC}
+  procedure Nested_ParallelFor(pass: Integer);
+  begin
+    MorphToRColor(MorphPix_, if_(Morph.Bits^[pass], 1.0, 0.0), FBits^[pass]);
+  end;
+{$ENDIF FPC}
+{$ELSE Parallel}
+  procedure DoFor;
+  var
+    pass: Integer;
+  begin
+    for pass := 0 to Width * Height - 1 do
+      begin
+        MorphToRColor(MorphPix_, if_(Morph.Bits^[pass], 1.0, 0.0), FBits^[pass]);
+      end;
+  end;
+{$ENDIF Parallel}
+
+
+begin
+  if Morph.Width * Morph.Height <> Width * Height then
+      SetSize(Morph.Width, Morph.Height, RColor(0, 0, 0, 0));
+
+  ReadyBits();
+{$IFDEF Parallel}
+{$IFDEF FPC}
+  FPCParallelFor(TMemoryRaster.Parallel and LocalParallel, @Nested_ParallelFor, 0, Width * Height - 1);
+{$ELSE FPC}
+  DelphiParallelFor(TMemoryRaster.Parallel and LocalParallel, 0, Width * Height - 1, procedure(pass: Integer)
+    begin
+      MorphToRColor(MorphPix_, if_(Morph.Bits^[pass], 1.0, 0.0), FBits^[pass]);
+    end);
+{$ENDIF FPC}
+{$ELSE Parallel}
+  DoFor;
+{$ENDIF Parallel}
+end;
+
+function TMemoryRaster.BuildHistogram(MorphPix_: TMorphologyPixel; Height_: Integer; hColor: TRColor): TMemoryRaster;
+var
+  morph_: TMorphomatics;
+begin
+  morph_ := BuildMorphomatics(MorphPix_);
+  Result := morph_.BuildHistogram(Height_, hColor);
+  DisposeObject(morph_);
+end;
+
 class function TMemoryRaster.CanLoadStream(stream: TCoreClassStream): Boolean;
 var
   bakPos: Int64;
@@ -2973,21 +3900,27 @@ var
   j: TMemoryJpegRaster;
 begin
   Result := False;
+  if stream.Size < 8 then
+      exit;
   try
     bakPos := stream.Position;
 
-    stream.Read(hflag, 2);
-    if (hflag = $8D42) or (hflag = $8D43) or (hflag = $8D44) or (hflag = $8D46) or (hflag = $8D47) or (hflag = $8D48) then
+    if IsPNG(stream) then
         Result := True
-    else if (hflag = $D8FF) or (hflag = $8DFF) then
-      begin
-        Result := True;
-      end
     else
       begin
         stream.Position := bakPos;
-        stream.ReadBuffer(Header, SizeOf(TBmpHeader));
-        Result := (Header.bfType = $4D42) and (Header.biBitCount in [24, 32]) and (Header.biPlanes = 1) and (Header.biCompression = 0);
+        stream.Read(hflag, 2);
+        if (hflag = $8D42) or (hflag = $8D43) or (hflag = $8D44) or (hflag = $8D46) or (hflag = $8D47) or (hflag = $8D48) then
+            Result := True
+        else if (hflag = $D8FF) or (hflag = $8DFF) then
+            Result := True
+        else
+          begin
+            stream.Position := bakPos;
+            stream.ReadBuffer(Header, SizeOf(TBmpHeader));
+            Result := (Header.bfType = $4D42) and (Header.biBitCount in [24, 32]) and (Header.biPlanes = 1) and (Header.biCompression = 0);
+          end;
       end;
 
     stream.Position := bakPos;
@@ -2997,7 +3930,7 @@ end;
 
 procedure TMemoryRaster.LoadFromBmpStream(stream: TCoreClassStream);
 var
-  i, j, k, w: Integer;
+  i, j, K, w: Integer;
   Header: TBmpHeader;
   tempBuff: TBytes;
 begin
@@ -3020,23 +3953,23 @@ begin
           // Check whether the bitmap is saved top-down
           if Header.biHeight > 0 then
             begin
-              w := width * 4;
-              for i := height - 1 downto 0 do
+              w := Width * 4;
+              for i := Height - 1 downto 0 do
                 begin
                   stream.ReadBuffer(ScanLine[i]^, w);
                 end;
             end
           else
             begin
-              stream.ReadBuffer(FBits^, width * height * 4);
+              stream.ReadBuffer(FBits^, Width * Height * 4);
             end;
         end
       else // 24bit bitmap
         begin
           w := FWidth * 3;
-          k := w mod 4;
-          if k <> 0 then
-              inc(w, 4 - k);
+          K := w mod 4;
+          if K <> 0 then
+              inc(w, 4 - K);
 
           SetLength(tempBuff, w * FHeight);
           stream.ReadBuffer(tempBuff[0], w * FHeight);
@@ -3044,22 +3977,22 @@ begin
           // Check whether the bitmap is saved top-down
           if Header.biHeight > 0 then
             begin
-              k := 0;
-              for j := height - 1 downto 0 do
+              K := 0;
+              for j := Height - 1 downto 0 do
                 begin
                   for i := 0 to FWidth - 1 do
-                      FBits^[i + j * FWidth] := RGB2RGBA(PRGB(@tempBuff[k + i * 3])^);
-                  inc(k, w);
+                      FBits^[i + j * FWidth] := RGB2RGBA(PRGB(@tempBuff[K + i * 3])^);
+                  inc(K, w);
                 end;
             end
           else
             begin
-              k := 0;
-              for j := 0 to height - 1 do
+              K := 0;
+              for j := 0 to Height - 1 do
                 begin
                   for i := 0 to FWidth - 1 do
-                      FBits^[i + j * FWidth] := RGB2RGBA(PRGB(@tempBuff[k + i * 3])^);
-                  inc(k, w);
+                      FBits^[i + j * FWidth] := RGB2RGBA(PRGB(@tempBuff[K + i * 3])^);
+                  inc(K, w);
                 end;
             end;
 
@@ -3084,6 +4017,13 @@ begin
 
   bakPos := stream.Position;
 
+  if IsPNG(stream) then
+    begin
+      LoadRasterFromPNG(Self, stream);
+      exit;
+    end;
+
+  stream.Position := bakPos;
   stream.Read(hflag, 2);
   if hflag = $8D42 then
     begin
@@ -3176,7 +4116,7 @@ begin
       stream.Position := bakPos;
 end;
 
-procedure TMemoryRaster.SaveToStream(stream: TCoreClassStream; RasterSave_: TRasterSave);
+procedure TMemoryRaster.SaveToStream(stream: TCoreClassStream; RasterSave_: TRasterSaveFormat);
 begin
   case RasterSave_ of
     rsRGBA: SaveToBmp32Stream(stream);
@@ -3187,26 +4127,37 @@ begin
     rsFastYV12: SaveToFastYV12Stream(stream);
     rsFastHalfYUV: SaveToFastHalfYUVStream(stream);
     rsFastQuartYUV: SaveToFastQuartYUVStream(stream);
-    rsJpeg_RGBA_Qualily90: SaveToJPEGRGBAStream(stream, 90);
-    rsJPEG_RGB_Qualily90: SaveToJPEGRGBStream(stream, 90);
+    rsJPEG_YCbCrA_Qualily90: SaveToJpegYCbCrAStream(stream, 90);
+    rsJPEG_YCbCr_Qualily90: SaveToJpegYCbCrStream(stream, 90);
     rsJPEG_Gray_Qualily90: SaveToJPEGGrayStream(stream, 90);
     rsJPEG_GrayA_Qualily90: SaveToJPEGGrayAStream(stream, 90);
-    rsJpeg_RGBA_Qualily80: SaveToJPEGRGBAStream(stream, 80);
-    rsJPEG_RGB_Qualily80: SaveToJPEGRGBStream(stream, 80);
+    rsJPEG_YCbCrA_Qualily80: SaveToJpegYCbCrAStream(stream, 80);
+    rsJPEG_YCbCr_Qualily80: SaveToJpegYCbCrStream(stream, 80);
     rsJPEG_Gray_Qualily80: SaveToJPEGGrayStream(stream, 80);
     rsJPEG_GrayA_Qualily80: SaveToJPEGGrayAStream(stream, 80);
-    rsJpeg_RGBA_Qualily70: SaveToJPEGRGBAStream(stream, 70);
-    rsJPEG_RGB_Qualily70: SaveToJPEGRGBStream(stream, 70);
+    rsJPEG_YCbCrA_Qualily70: SaveToJpegYCbCrAStream(stream, 70);
+    rsJPEG_YCbCr_Qualily70: SaveToJpegYCbCrStream(stream, 70);
     rsJPEG_Gray_Qualily70: SaveToJPEGGrayStream(stream, 70);
     rsJPEG_GrayA_Qualily70: SaveToJPEGGrayAStream(stream, 70);
-    rsJpeg_RGBA_Qualily60: SaveToJPEGRGBAStream(stream, 60);
-    rsJPEG_RGB_Qualily60: SaveToJPEGRGBStream(stream, 60);
+    rsJPEG_YCbCrA_Qualily60: SaveToJpegYCbCrAStream(stream, 60);
+    rsJPEG_YCbCr_Qualily60: SaveToJpegYCbCrStream(stream, 60);
     rsJPEG_Gray_Qualily60: SaveToJPEGGrayStream(stream, 60);
     rsJPEG_GrayA_Qualily60: SaveToJPEGGrayAStream(stream, 60);
-    rsJpeg_RGBA_Qualily50: SaveToJPEGRGBAStream(stream, 50);
-    rsJPEG_RGB_Qualily50: SaveToJPEGRGBStream(stream, 50);
+    rsJPEG_YCbCrA_Qualily50: SaveToJpegYCbCrAStream(stream, 50);
+    rsJPEG_YCbCr_Qualily50: SaveToJpegYCbCrStream(stream, 50);
     rsJPEG_Gray_Qualily50: SaveToJPEGGrayStream(stream, 50);
     rsJPEG_GrayA_Qualily50: SaveToJPEGGrayAStream(stream, 50);
+    rsJPEG_CMYK_Qualily90: SaveToJPEGCMYKStream(stream, 90);
+    rsJPEG_CMYK_Qualily80: SaveToJPEGCMYKStream(stream, 80);
+    rsJPEG_CMYK_Qualily70: SaveToJPEGCMYKStream(stream, 70);
+    rsJPEG_CMYK_Qualily60: SaveToJPEGCMYKStream(stream, 60);
+    rsJPEG_CMYK_Qualily50: SaveToJPEGCMYKStream(stream, 50);
+    rsJPEG_YCbCrA_Qualily100: SaveToJpegYCbCrAStream(stream, 100);
+    rsJPEG_YCbCr_Qualily100: SaveToJpegYCbCrStream(stream, 100);
+    rsJPEG_Gray_Qualily100: SaveToJPEGGrayStream(stream, 100);
+    rsJPEG_GrayA_Qualily100: SaveToJPEGGrayAStream(stream, 100);
+    rsJPEG_CMYK_Qualily100: SaveToJPEGCMYKStream(stream, 100);
+    rsPNG: SaveToPNGStream(stream);
   end;
 end;
 
@@ -3230,7 +4181,7 @@ begin
   // which we can not do properly within a stream...
   Header.bfOffBits := SizeOf(TBmpHeader);
   Header.biSize := $28;
-  Header.biWidth := width;
+  Header.biWidth := Width;
 
   Header.biHeight := -FHeight;
 
@@ -3290,7 +4241,7 @@ begin
   for i := FWidth * 3 to wSiz - 1 do
       tempBuff[i] := 0;
 
-  for j := height - 1 downto 0 do
+  for j := Height - 1 downto 0 do
     begin
       p := PRGB(@tempBuff[0]);
       for i := 0 to FWidth - 1 do
@@ -3413,7 +4364,7 @@ begin
   RasterizationToQuartYUV(False, Self, stream);
 end;
 
-procedure TMemoryRaster.SaveToJPEGRGBAStream(stream: TCoreClassStream; Quality: TJpegQuality);
+procedure TMemoryRaster.SaveToJpegYCbCrAStream(stream: TCoreClassStream; Quality: TJpegQuality);
 var
   j: TMemoryJpegRaster;
   m64: TMemoryStream64;
@@ -3433,7 +4384,7 @@ begin
   DisposeObject(j);
 end;
 
-procedure TMemoryRaster.SaveToJPEGRGBStream(stream: TCoreClassStream; Quality: TJpegQuality);
+procedure TMemoryRaster.SaveToJpegYCbCrStream(stream: TCoreClassStream; Quality: TJpegQuality);
 var
   j: TMemoryJpegRaster;
   m64: TMemoryStream64;
@@ -3453,7 +4404,7 @@ begin
   DisposeObject(j);
 end;
 
-procedure TMemoryRaster.SaveToJpegCMYKRGBStream(stream: TCoreClassStream; Quality: TJpegQuality);
+procedure TMemoryRaster.SaveToJPEGCMYKStream(stream: TCoreClassStream; Quality: TJpegQuality);
 var
   j: TMemoryJpegRaster;
   m64: TMemoryStream64;
@@ -3513,11 +4464,16 @@ begin
   DisposeObject(j);
 end;
 
+procedure TMemoryRaster.SaveToPNGStream(stream: TCoreClassStream);
+begin
+  SaveRasterToPNG(Self, stream);
+end;
+
 class function TMemoryRaster.CanLoadFile(fn: SystemString): Boolean;
 var
   m64: TCoreClassFileStream;
 begin
-  m64 := TCoreClassFileStream.Create(fn, fmOpenRead or fmShareDenyWrite);
+  m64 := TCoreClassFileStream.Create(fn, fmOpenRead);
   try
       Result := CanLoadStream(m64);
   except
@@ -3567,16 +4523,31 @@ begin
 end;
 
 procedure TMemoryRaster.SaveToFile(fn: SystemString);
-var
-  m64: TMemoryStream64;
 begin
-  m64 := TMemoryStream64.Create;
-  try
-      SaveToStream(m64);
-  except
-  end;
-  m64.SaveToFile(fn);
-  DisposeObject(m64);
+  if umlMultipleMatch('*.jpg', fn) then
+      SaveToJpegYCbCrFile(fn, 90)
+  else if umlMultipleMatch('*.jpeg', fn) then
+      SaveToJpegYCbCrFile(fn, 90)
+  else if umlMultipleMatch('*.bmp', fn) then
+      SaveToBmp32File(fn)
+  else if umlMultipleMatch('*.yv12', fn) then
+      SaveToYV12File(fn)
+  else if umlMultipleMatch('*.jls', fn) then
+      SaveToJpegLS3File(fn)
+  else if umlMultipleMatch('*.hyuv', fn) then
+      SaveToHalfYUVFile(fn)
+  else if umlMultipleMatch('*.qyuv', fn) then
+      SaveToQuartYUVFile(fn)
+  else if umlMultipleMatch('*.png', fn) then
+      SaveToPNGFile(fn)
+  else if umlMultipleMatch('*.zlib_bmp', fn) then
+      SaveToZLibCompressFile(fn)
+  else if umlMultipleMatch('*.deflate_bmp', fn) then
+      SaveToDeflateCompressFile(fn)
+  else if umlMultipleMatch('*.BRRC_bmp', fn) then
+      SaveToBRRCCompressFile(fn)
+  else
+      SaveToBmp32File(fn);
 end;
 
 procedure TMemoryRaster.SaveToZLibCompressFile(fn: SystemString);
@@ -3722,39 +4693,39 @@ begin
   DisposeObject(m64);
 end;
 
-procedure TMemoryRaster.SaveToJpegRGBAFile(fn: SystemString; Quality: TJpegQuality);
+procedure TMemoryRaster.SaveToJpegYCbCrAFile(fn: SystemString; Quality: TJpegQuality);
 var
   m64: TMemoryStream64;
 begin
   m64 := TMemoryStream64.Create;
   try
-      SaveToJPEGRGBAStream(m64, Quality);
+      SaveToJpegYCbCrAStream(m64, Quality);
   except
   end;
   m64.SaveToFile(fn);
   DisposeObject(m64);
 end;
 
-procedure TMemoryRaster.SaveToJpegRGBFile(fn: SystemString; Quality: TJpegQuality);
+procedure TMemoryRaster.SaveToJpegYCbCrFile(fn: SystemString; Quality: TJpegQuality);
 var
   m64: TMemoryStream64;
 begin
   m64 := TMemoryStream64.Create;
   try
-      SaveToJPEGRGBStream(m64, Quality);
+      SaveToJpegYCbCrStream(m64, Quality);
   except
   end;
   m64.SaveToFile(fn);
   DisposeObject(m64);
 end;
 
-procedure TMemoryRaster.SaveToJpegCMYKRGBFile(fn: SystemString; Quality: TJpegQuality);
+procedure TMemoryRaster.SaveToJpegCMYKFile(fn: SystemString; Quality: TJpegQuality);
 var
   m64: TMemoryStream64;
 begin
   m64 := TMemoryStream64.Create;
   try
-      SaveToJpegCMYKRGBStream(m64, Quality);
+      SaveToJPEGCMYKStream(m64, Quality);
   except
   end;
   m64.SaveToFile(fn);
@@ -3781,6 +4752,19 @@ begin
   m64 := TMemoryStream64.Create;
   try
       SaveToJPEGGrayAStream(m64, Quality);
+  except
+  end;
+  m64.SaveToFile(fn);
+  DisposeObject(m64);
+end;
+
+procedure TMemoryRaster.SaveToPNGFile(fn: SystemString);
+var
+  m64: TMemoryStream64;
+begin
+  m64 := TMemoryStream64.Create;
+  try
+      SaveToPNGStream(m64);
   except
   end;
   m64.SaveToFile(fn);
@@ -3814,7 +4798,7 @@ end;
 procedure TByteRasterList.LoadFromStream(stream: TCoreClassStream);
 var
   d: TDataFrameEngine;
-  c, i: Integer;
+  C, i: Integer;
   br: TByteRaster;
   m64: TMemoryStream64;
 begin
@@ -3822,9 +4806,9 @@ begin
   d := TDataFrameEngine.Create;
   d.DecodeFrom(stream, True);
 
-  c := d.Reader.ReadInteger;
+  C := d.Reader.ReadInteger;
 
-  for i := 0 to c - 1 do
+  for i := 0 to C - 1 do
     begin
       m64 := TMemoryStream64.Create;
       d.Reader.ReadStream(m64);
@@ -3858,97 +4842,97 @@ begin
   inherited Destroy;
 end;
 
-function TRasterSerialized.Write(r: TMemoryRaster): Int64;
+function TRasterSerialized.Write(R: TMemoryRaster): Int64;
 var
   h1, h2: TRasterSerializedHeader;
   p: Int64;
   i: Integer;
 begin
   Result := 0;
-  if (r = nil) or (r.empty) then
+  if (R = nil) or (R.empty) then
       exit;
 
   FCritical.Acquire;
   try
-    h1.width := r.width;
-    h1.height := r.height;
-    h1.siz := r.width * r.height * 4;
-    h1.UsedAGG := r.FAggNeed;
+    h1.Width := R.Width;
+    h1.Height := R.Height;
+    h1.siz := R.Width * R.Height * 4;
+    h1.UsedAGG := R.FAggNeed;
 
     p := FStream.Size;
-    if r.FMemorySerializedPosition >= 0 then
+    if R.FMemorySerializedPosition >= 0 then
       begin
-        FStream.Position := r.FMemorySerializedPosition;
+        FStream.Position := R.FMemorySerializedPosition;
         // overwrite
         if FStream.Read(h2, SizeOf(TRasterSerializedHeader)) = SizeOf(TRasterSerializedHeader) then
-          if (h1.width * h1.height) = (h2.width * h2.height) then
-              p := r.FMemorySerializedPosition;
+          if (h1.Width * h1.Height) = (h2.Width * h2.Height) then
+              p := R.FMemorySerializedPosition;
       end;
 
     FStream.Position := p;
 
     // serialized write
     if FStream.Write(h1, SizeOf(TRasterSerializedHeader)) = SizeOf(TRasterSerializedHeader) then
-      if FStream.Write(r.FBits^[0], h1.siz) = h1.siz then
+      if FStream.Write(R.FBits^[0], h1.siz) = h1.siz then
         begin
-          r.CloseVertex;
-          r.FreeAgg;
-          System.FreeMemory(r.FBits);
-          r.FBits := nil;
-          r.FMemorySerializedPosition := p;
+          R.CloseVertex;
+          R.FreeAgg;
+          System.FreeMemory(R.FBits);
+          R.FBits := nil;
+          R.FMemorySerializedPosition := p;
           Result := h1.siz;
         end;
 
     i := 0;
     while i < FWriteList.Count do
       begin
-        if FWriteList[i] = r then
+        if FWriteList[i] = R then
             FWriteList.Delete(i)
         else
             inc(i);
       end;
-    FWriteList.Add(r);
+    FWriteList.Add(R);
   finally
       FCritical.Release;
   end;
 end;
 
-function TRasterSerialized.Read(r: TMemoryRaster): Int64;
+function TRasterSerialized.Read(R: TMemoryRaster): Int64;
 var
-  h: TRasterSerializedHeader;
+  H: TRasterSerializedHeader;
   i: Integer;
 begin
   Result := 0;
-  if (r = nil) or (r.FMemorySerializedPosition < 0) then
+  if (R = nil) or (R.FMemorySerializedPosition < 0) then
       exit;
 
-  r.CloseVertex;
-  r.FreeAgg;
+  R.CloseVertex;
+  R.FreeAgg;
 
   FCritical.Acquire;
   try
-    if (r.FMemorySerializedPosition >= 0) then
+    if (R.FMemorySerializedPosition >= 0) then
       begin
-        FStream.Position := r.FMemorySerializedPosition;
-        if FStream.Read(h, SizeOf(TRasterSerializedHeader)) = SizeOf(TRasterSerializedHeader) then
-          if FStream.Position + h.siz <= FStream.Size then
+        FStream.Position := R.FMemorySerializedPosition;
+        if FStream.Read(H, SizeOf(TRasterSerializedHeader)) = SizeOf(TRasterSerializedHeader) then
+          if FStream.Position + H.siz <= FStream.Size then
             begin
               // recycle memory change
-              if Assigned(r.FBits) and r.FFreeBits then
-                  System.FreeMemory(r.FBits);
+              if Assigned(R.FBits) and R.FFreeBits then
+                  System.FreeMemory(R.FBits);
 
               // alloc serialized memory
-              r.FBits := System.GetMemory(h.siz);
-              r.FWidth := h.width;
-              r.FHeight := h.height;
+              R.FBits := System.GetMemory(H.siz);
+              R.FWidth := H.Width;
+              R.FHeight := H.Height;
 
               // restore
-              if FStream.Read(r.FBits^[0], h.siz) = h.siz then
+              if FStream.Read(R.FBits^[0], H.siz) = H.siz then
                 begin
-                  r.FFreeBits := True;
-                  if h.UsedAGG then
-                      r.OpenAgg;
-                  Result := h.siz;
+                  R.FFreeBits := True;
+                  if H.UsedAGG then
+                      R.OpenAgg;
+                  Result := H.siz;
                 end;
             end;
       end;
@@ -3956,18 +4940,18 @@ begin
     i := 0;
     while i < FReadList.Count do
       begin
-        if FReadList[i] = r then
+        if FReadList[i] = R then
             FReadList.Delete(i)
         else
             inc(i);
       end;
-    FReadList.Add(r);
+    FReadList.Add(R);
   finally
       FCritical.Release;
   end;
 end;
 
-procedure TRasterSerialized.Remove(r: TMemoryRaster);
+procedure TRasterSerialized.Remove(R: TMemoryRaster);
 var
   i: Integer;
 begin
@@ -3976,7 +4960,7 @@ begin
     i := 0;
     while i < FReadList.Count do
       begin
-        if FReadList[i] = r then
+        if FReadList[i] = R then
             FReadList.Delete(i)
         else
             inc(i);
@@ -3985,7 +4969,7 @@ begin
     i := 0;
     while i < FWriteList.Count do
       begin
-        if FWriteList[i] = r then
+        if FWriteList[i] = R then
             FWriteList.Delete(i)
         else
             inc(i);

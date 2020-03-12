@@ -41,7 +41,7 @@ interface
 uses
   {$IFDEF LCLWin32} Windows, {$ENDIF} LCLIntf, LCLType, Types, Controls,
   SysUtils, Classes, Graphics, GR32, GR32_Backends, GR32_Backends_Generic,
-  GR32_Containers, GR32_Image;
+  GR32_Containers, GR32_Image, GR32_Paths;
 
 type
   { TLCLBackend }
@@ -50,7 +50,7 @@ type
 
   TLCLBackend = class(TCustomBackend, IPaintSupport,
     IBitmapContextSupport, IDeviceContextSupport,
-    ITextSupport, IFontSupport, ICanvasSupport)
+    ITextSupport, IFontSupport, ITextToPathSupport, ICanvasSupport)
   private
     procedure FontChangedHandler(Sender: TObject);
     procedure CanvasChangedHandler(Sender: TObject);
@@ -103,10 +103,10 @@ type
     property Handle: HDC read GetHandle;
 
     { ITextSupport }
-    procedure Textout(X, Y: Integer; const Text: String); overload;
-    procedure Textout(X, Y: Integer; const ClipRect: TRect; const Text: String); overload;
-    procedure Textout(var DstRect: TRect; const Flags: Cardinal; const Text: String); overload;
-    function  TextExtent(const Text: String): TSize;
+    procedure Textout(X, Y: Integer; const Text: string); overload;
+    procedure Textout(X, Y: Integer; const ClipRect: TRect; const Text: string); overload;
+    procedure Textout(var DstRect: TRect; const Flags: Cardinal; const Text: string); overload;
+    function  TextExtent(const Text: string): TSize;
 
     procedure TextoutW(X, Y: Integer; const Text: Widestring); overload;
     procedure TextoutW(X, Y: Integer; const ClipRect: TRect; const Text: Widestring); overload;
@@ -122,6 +122,11 @@ type
     procedure UpdateFont;
     property Font: TFont read GetFont write SetFont;
     property OnFontChange: TNotifyEvent read FOnFontChange write FOnFontChange;
+
+    { ITextToPathSupport }
+    procedure TextToPath(Path: TCustomPath; const X, Y: TFloat; const Text: WideString); overload;
+    procedure TextToPath(Path: TCustomPath; const DstRect: TFloatRect; const Text: WideString; Flags: Cardinal); overload;
+    function MeasureText(const DstRect: TFloatRect; const Text: WideString; Flags: Cardinal): TFloatRect;
 
     { ICanvasSupport }
     function GetCanvasChange: TNotifyEvent;
@@ -180,6 +185,9 @@ type
   end;
 
 implementation
+
+uses
+  GR32_Text_LCL_Win;
 
 var
   StockFont: HFONT;
@@ -292,7 +300,7 @@ begin
     FOnFontChange(Self);
 end;
 
-function TLCLBackend.TextExtent(const Text: String): TSize;
+function TLCLBackend.TextExtent(const Text: string): TSize;
 var
   DC: HDC;
   OldFont: HGDIOBJ;
@@ -341,7 +349,7 @@ begin
   end;
 end;
 
-procedure TLCLBackend.Textout(X, Y: Integer; const Text: String);
+procedure TLCLBackend.Textout(X, Y: Integer; const Text: string);
 var
   Extent: TSize;
 begin
@@ -359,7 +367,7 @@ begin
   FOwner.Changed(MakeRect(X, Y, X + Extent.cx + 1, Y + Extent.cy + 1));
 end;
 
-procedure TLCLBackend.TextoutW(X, Y: Integer; const Text: WideString);
+procedure TLCLBackend.TextoutW(X, Y: Integer; const Text: Widestring);
 var
   Extent: TSize;
 begin
@@ -377,23 +385,20 @@ begin
   FOwner.Changed(MakeRect(X, Y, X + Extent.cx + 1, Y + Extent.cy + 1));
 end;
 
-procedure TLCLBackend.TextoutW(X, Y: Integer; const ClipRect: TRect;
-  const Text: Widestring);
+procedure TLCLBackend.TextoutW(X, Y: Integer; const ClipRect: TRect; const Text: Widestring);
 var
   Extent: TSize;
 begin
   UpdateFont;
 
   if not FOwner.MeasuringMode then
-    ExtTextoutW(Handle, X, Y, ETO_CLIPPED, @ClipRect, PWideChar(Text),
-      Length(Text), nil);
+    ExtTextoutW(Handle, X, Y, ETO_CLIPPED, @ClipRect, PWideChar(Text), Length(Text), nil);
 
   Extent := TextExtentW(Text);
   FOwner.Changed(MakeRect(X, Y, X + Extent.cx + 1, Y + Extent.cy + 1));
 end;
 
-procedure TLCLBackend.Textout(X, Y: Integer; const ClipRect: TRect;
-  const Text: String);
+procedure TLCLBackend.Textout(X, Y: Integer; const ClipRect: TRect; const Text: string);
 var
   Extent: TSize;
 begin
@@ -406,8 +411,7 @@ begin
   FOwner.Changed(MakeRect(X, Y, X + Extent.cx + 1, Y + Extent.cy + 1));
 end;
 
-procedure TLCLBackend.TextoutW(var DstRect: TRect; const Flags: Cardinal;
-  const Text: Widestring);
+procedure TLCLBackend.TextoutW(var DstRect: TRect; const Flags: Cardinal; const Text: Widestring);
 begin
   UpdateFont;
 
@@ -434,8 +438,28 @@ begin
   end;
 end;
 
-procedure TLCLBackend.Textout(var DstRect: TRect; const Flags: Cardinal;
-  const Text: String);
+procedure TLCLBackend.TextToPath(Path: TCustomPath; const X, Y: TFloat;
+  const Text: WideString);
+var
+  R: TFloatRect;
+begin
+  R := FloatRect(X, Y, X, Y);
+  GR32_Text_LCL_Win.TextToPath(Font.Handle, Path, R, Text, 0);
+end;
+
+procedure TLCLBackend.TextToPath(Path: TCustomPath; const DstRect: TFloatRect;
+  const Text: WideString; Flags: Cardinal);
+begin
+  GR32_Text_LCL_Win.TextToPath(Font.Handle, Path, DstRect, Text, Flags);
+end;
+
+function TLCLBackend.MeasureText(const DstRect: TFloatRect;
+  const Text: WideString; Flags: Cardinal): TFloatRect;
+begin
+  Result := GR32_Text_LCL_Win.MeasureText(Font.Handle, DstRect, Text, Flags);
+end;
+
+procedure TLCLBackend.Textout(var DstRect: TRect; const Flags: Cardinal; const Text: string);
 begin
   UpdateFont;
 
@@ -702,10 +726,10 @@ end;
 
 procedure TLCLMemoryBackend.DrawTo(hDst: HDC; DstX, DstY: Integer);
 var
-  Bitmap        : HBITMAP;
-  DeviceContext : HDC;
-  Buffer        : Pointer;
-  OldObject     : HGDIOBJ;
+  Bitmap: HBITMAP;
+  DeviceContext: HDC;
+  Buffer: Pointer;
+  OldObject: HGDIOBJ;
 begin
   {$IFDEF LCLWin32}
   if SetDIBitsToDevice(hDst, DstX, DstY,
@@ -745,10 +769,10 @@ end;
 
 procedure TLCLMemoryBackend.DrawTo(hDst: HDC; const DstRect, SrcRect: TRect);
 var
-  Bitmap        : HBITMAP;
-  DeviceContext : HDC;
-  Buffer        : Pointer;
-  OldObject     : HGDIOBJ;
+  Bitmap: HBITMAP;
+  DeviceContext: HDC;
+  Buffer: Pointer;
+  OldObject: HGDIOBJ;
 begin
   {$IFDEF LCLWin32}
   if SetDIBitsToDevice(hDst, DstRect.Left, DstRect.Top,
@@ -760,6 +784,7 @@ begin
     DeviceContext := CreateCompatibleDC(hDst);
     if DeviceContext <> 0 then
     try
+      Buffer := nil;
       Bitmap := CreateDIBSection(DeviceContext, FBitmapInfo, DIB_RGB_COLORS,
         Buffer, 0, 0);
 

@@ -1,0 +1,98 @@
+object MorphologySegmentationMainForm: TMorphologySegmentationMainForm
+  Left = 0
+  Top = 0
+  Caption = #24418#24577#23398#20998#21106' Demo, create by qq.600585'
+  ClientHeight = 467
+  ClientWidth = 1464
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object segListPB: TPaintBox
+    Align = Right
+    Position.X = 760.000000000000000000
+    Size.Width = 704.000000000000000000
+    Size.Height = 467.000000000000000000
+    Size.PlatformDefault = False
+    OnPaint = segListPBPaint
+    object ViewGeometryCheckBox: TCheckBox
+      StyledSettings = [Family, Size, Style]
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 144.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'checkboxstyle'
+      TabOrder = 3
+      Text = 'View Geometry'
+      TextSettings.FontColor = claWhite
+      OnClick = ViewGeometryCheckBoxClick
+    end
+    object ViewEdgeLinesCheckBox: TCheckBox
+      StyledSettings = [Family, Size, Style]
+      Position.X = 8.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 144.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'checkboxstyle'
+      TabOrder = 2
+      Text = 'Edge Lines'
+      TextSettings.FontColor = claWhite
+      OnClick = ViewGeometryCheckBoxClick
+    end
+    object EdgeLinesCrossCheckBox: TCheckBox
+      StyledSettings = [Family, Size, Style]
+      Position.X = 8.000000000000000000
+      Position.Y = 56.000000000000000000
+      Size.Width = 144.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'checkboxstyle'
+      TabOrder = 1
+      Text = 'Cross'
+      TextSettings.FontColor = claWhite
+      OnClick = ViewGeometryCheckBoxClick
+    end
+  end
+  object segPB: TPaintBox
+    Align = Client
+    Size.Width = 752.000000000000000000
+    Size.Height = 467.000000000000000000
+    Size.PlatformDefault = False
+    OnMouseUp = segPBMouseUp
+    OnPaint = segPBPaint
+    object openButton: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 688.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 56.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'open'
+      OnClick = openButtonClick
+    end
+  end
+  object Timer1: TTimer
+    Interval = 10
+    OnTimer = Timer1Timer
+    Left = 640
+    Top = 168
+  end
+  object Splitter1: TSplitter
+    Align = Right
+    Cursor = crHSplit
+    MinSize = 20.000000000000000000
+    Position.X = 752.000000000000000000
+    ShowGrip = False
+    Size.Width = 8.000000000000000000
+    Size.Height = 467.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 352
+    Top = 80
+  end
+end

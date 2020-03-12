@@ -11,7 +11,7 @@ uses
 
   CoreClasses, PascalStrings, UnicodeMixedLib,
   Geometry2DUnit,
-  zDrawEngine, MemoryRaster, zDrawEngineInterface_SlowFMX, FMX.Layouts;
+  zDrawEngine, MemoryRaster, zDrawEngineInterface_SlowFMX, FMX.Layouts, FMX.Controls.Presentation, FMX.StdCtrls, FMX.ListBox;
 
 type
   TProjectionForm = class(TForm)
@@ -27,11 +27,16 @@ type
     d_RightBottom: TCircle;
     s_Image: TImage;
     d_Image: TImage;
+    TriangleCheckBox: TCheckBox;
+    ModeComboBox: TComboBox;
+    Label1: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure cMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
     procedure cMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Single);
     procedure cMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
     procedure cPaint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
+    procedure ModeComboBoxChange(Sender: TObject);
+    procedure TriangleCheckBoxChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -54,7 +59,8 @@ implementation
 
 procedure TProjectionForm.FormCreate(Sender: TObject);
 begin
-  ori := NewRasterFromFile(umlCombineFileName(TPath.GetLibraryPath, 'lena.bmp'));
+  ori := NewRasterFromFile(umlCombineFileName(TPath.GetLibraryPath, 'canglaoshi.bmp'));
+  ori.Black();
 
   sour := NewRaster();
   sour.Assign(ori);
@@ -107,9 +113,17 @@ begin
   Canvas.FillText(ARect, n, False, 1.0, [], TTextAlign.Leading);
 end;
 
+procedure TProjectionForm.ModeComboBoxChange(Sender: TObject);
+begin
+  RunProj();
+
+end;
+
 procedure TProjectionForm.RunProj;
 var
   ps, pd: TV2Rect4;
+  tmpMorph: TMMath;
+  tmpBin: TMBin;
 begin
   ps.LeftTop := Vec2(s_LeftTop.BoundsRect.CenterPoint);
   ps.RightTop := Vec2(s_RightTop.BoundsRect.CenterPoint);
@@ -123,7 +137,8 @@ begin
 
   sour.Assign(ori);
 
-  dest.SetSize(round(d_Image.Width), round(d_Image.Height), RasterColor(0, 0, 0));
+  dest.SetSize(round(d_Image.Width), round(d_Image.Height));
+  FillBlackGrayBackgroundTexture(dest, 32);
 
   // ProjectionTo是基于框体投影的原子方法(更底层的是三角vertex)
   // 原理：将4顶点的原，投影到目标4顶点的目标
@@ -133,16 +148,67 @@ begin
   // 在zAI的图像处理中，投影被大量应用于对齐，快照，尺度空间，甚至在MemoryRaster画字都是投影
   // 投影的像素都是按alpha混合叠加的，不是覆盖
   // 请区分开投影和Draw的概念，投影是输入输出，draw是单一的输出
-  dest.OpenAgg;
-  dest.Agg.LineWidth:=2;
-  dest.Vertex.DrawTriangleEdge:=True;
-  sour.ProjectionTo(dest, ps, pd, True, 1.0);
+
+  if TriangleCheckBox.IsChecked then
+    begin
+      dest.OpenAgg;
+      dest.Agg.LineWidth := 4;
+      TRasterVertex.DebugTriangle := True;
+      TRasterVertex.DebugTriangleColor := RColorF(1.0, 0.5, 0.5, 1);
+    end
+  else
+    begin
+      dest.CloseAgg;
+      TRasterVertex.DebugTriangle := False;
+    end;
+
+  case ModeComboBox.ItemIndex of
+    0: sour.ProjectionTo(dest, ps, pd, True, 1.0);
+    1:
+      begin
+        // 这里的程序需要先了解新版本的形态学支持系统
+        tmpMorph := dest.BuildMorphomatics(TMPix.mpGrayscale);
+        with sour.BuildMorphomatics(TMPix.mpA) do
+          begin
+            ProjectionTo(TMPix.mpGrayscale, TMPix.mpGrayscale, tmpMorph, ps, pd, True, 1.0);
+            free;
+          end;
+        tmpMorph.DrawTo(TMPix.mpGrayscale, dest);
+        disposeObject(tmpMorph);
+      end;
+    2:
+      begin
+        // 这里的程序需要先了解新版本的形态学支持系统
+        with dest.BuildMorphomatics(TMPix.mpGrayscale) do
+          begin
+            tmpBin := Binarization_OTSU;
+            free;
+          end;
+        with sour.BuildMorphomatics(TMPix.mpA) do
+          begin
+            with Binarization_OTSU do
+              begin
+                ProjectionTo(TMPix.mpGrayscale, TMPix.mpGrayscale, tmpBin, ps, pd, True, 1.0);
+                free;
+              end;
+            free;
+          end;
+        tmpBin.DrawTo(TMPix.mpGrayscale, dest);
+        disposeObject(tmpBin);
+      end;
+  end;
 
   MemoryBitmapToBitmap(dest, d_Image.Bitmap);
 
   sour.Agg.LineWidth := 5;
   sour.DrawRect(ps, RasterColorF(1, 0.5, 0.5));
   MemoryBitmapToBitmap(sour, s_Image.Bitmap);
+end;
+
+procedure TProjectionForm.TriangleCheckBoxChange(Sender: TObject);
+begin
+  RunProj();
+
 end;
 
 end.

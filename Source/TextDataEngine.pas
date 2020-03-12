@@ -29,26 +29,19 @@ unit TextDataEngine;
 interface
 
 uses SysUtils, Variants,
-  // Hash
-  ListEngine,
-  // CoreClasses
   CoreClasses,
-  // fast stream
-  MemoryStream64,
-  // SystemString support
-  PascalStrings;
+  UnicodeMixedLib,
+  PascalStrings,
+  ListEngine,
+  MemoryStream64;
 
 type
-  THashTextEngine = class;
-
-  TSectionTextData = THashTextEngine;
-
   THashTextEngine = class(TCoreClassObject)
   private
     FComment: TCoreClassStrings;
     FSectionList, FSectionHashVariantList, FSectionHashStringList: THashObjectList;
     FAutoUpdateDefaultValue: Boolean;
-    FMaxSectionHash, FMaxListHash: Integer;
+    FSectionPoolSize, FListPoolSize: Integer;
 
     function GetNames(n: SystemString): TCoreClassStrings;
     procedure SetNames(n: SystemString; const Value: TCoreClassStrings);
@@ -63,8 +56,8 @@ type
     procedure AddDataSection(aSection: SystemString; TextList: TCoreClassStrings);
   public
     constructor Create; overload;
-    constructor Create(AMaxSectionHash: Integer); overload;
-    constructor Create(AMaxSectionHash, AMaxListHash: Integer); overload;
+    constructor Create(SectionPoolSize_: Integer); overload;
+    constructor Create(SectionPoolSize_, ListPoolSize_: Integer); overload;
     destructor Destroy; override;
 
     procedure Rebuild;
@@ -129,10 +122,9 @@ type
   end;
 
   TTextDataEngine = THashTextEngine;
+  TSectionTextData = THashTextEngine;
 
 implementation
-
-uses UnicodeMixedLib;
 
 function THashTextEngine.GetNames(n: SystemString): TCoreClassStrings;
 var
@@ -179,7 +171,7 @@ begin
           Exit;
       if nsl.Count = 0 then
           Exit;
-      vl := THashVariantList.CustomCreate(FMaxListHash);
+      vl := THashVariantList.CustomCreate(FListPoolSize);
       vl.AutoUpdateDefaultValue := AutoUpdateDefaultValue;
 
       vt := THashVariantTextStream.Create(vl);
@@ -200,7 +192,7 @@ begin
   vl := THashVariantList(FSectionHashVariantList[SName]);
   if vl = nil then
     begin
-      vl := THashVariantList.CustomCreate(FMaxListHash);
+      vl := THashVariantList.CustomCreate(FListPoolSize);
       vl.AutoUpdateDefaultValue := AutoUpdateDefaultValue;
 
       nsl := Names[SName];
@@ -230,7 +222,7 @@ begin
           Exit;
       if nsl.Count = 0 then
           Exit;
-      sl := THashStringList.CustomCreate(FMaxListHash);
+      sl := THashStringList.CustomCreate(FListPoolSize);
       sl.AutoUpdateDefaultValue := AutoUpdateDefaultValue;
 
       st := THashStringTextStream.Create(sl);
@@ -251,7 +243,7 @@ begin
   sl := THashStringList(FSectionHashStringList[SName]);
   if sl = nil then
     begin
-      sl := THashStringList.CustomCreate(FMaxListHash);
+      sl := THashStringList.CustomCreate(FListPoolSize);
       sl.AutoUpdateDefaultValue := AutoUpdateDefaultValue;
 
       nsl := Names[SName];
@@ -274,7 +266,7 @@ begin
   Result := THashVariantList(FSectionHashVariantList[n]);
   if Result = nil then
     begin
-      Result := THashVariantList.CustomCreate(FMaxListHash);
+      Result := THashVariantList.CustomCreate(FListPoolSize);
       Result.AutoUpdateDefaultValue := FAutoUpdateDefaultValue;
       nsl := Names[n];
       if nsl <> nil then
@@ -296,7 +288,7 @@ begin
   Result := THashStringList(FSectionHashStringList[n]);
   if Result = nil then
     begin
-      Result := THashStringList.CustomCreate(FMaxListHash);
+      Result := THashStringList.CustomCreate(FListPoolSize);
       Result.AutoUpdateDefaultValue := FAutoUpdateDefaultValue;
       nsl := Names[n];
       if nsl <> nil then
@@ -325,21 +317,21 @@ begin
   Create(10, 10);
 end;
 
-constructor THashTextEngine.Create(AMaxSectionHash: Integer);
+constructor THashTextEngine.Create(SectionPoolSize_: Integer);
 begin
-  Create(AMaxSectionHash, 16);
+  Create(SectionPoolSize_, 16);
 end;
 
-constructor THashTextEngine.Create(AMaxSectionHash, AMaxListHash: Integer);
+constructor THashTextEngine.Create(SectionPoolSize_, ListPoolSize_: Integer);
 begin
   inherited Create;
-  FMaxSectionHash := AMaxSectionHash;
-  FMaxListHash := AMaxListHash;
+  FSectionPoolSize := SectionPoolSize_;
+  FListPoolSize := ListPoolSize_;
 
   FComment := TCoreClassStringList.Create;
-  FSectionList := THashObjectList.CustomCreate(True, FMaxSectionHash);
-  FSectionHashVariantList := THashObjectList.CustomCreate(True, FMaxSectionHash);
-  FSectionHashStringList := THashObjectList.CustomCreate(True, FMaxSectionHash);
+  FSectionList := THashObjectList.CustomCreate(True, FSectionPoolSize);
+  FSectionHashVariantList := THashObjectList.CustomCreate(True, FSectionPoolSize);
+  FSectionHashStringList := THashObjectList.CustomCreate(True, FSectionPoolSize);
   FAutoUpdateDefaultValue := False;
 end;
 
@@ -698,9 +690,9 @@ procedure THashTextEngine.LoadFromFile(FileName: SystemString);
 var
   m64: TMemoryStream64;
 begin
+  m64 := TMemoryStream64.Create;
   try
-    m64 := TMemoryStream64.Create;
-    m64.LoadFromFile(FileName);
+      m64.LoadFromFile(FileName);
   except
     DisposeObject(m64);
     Exit;

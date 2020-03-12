@@ -4,7 +4,7 @@ object FontBuildForm: TFontBuildForm
   AutoSize = True
   BorderStyle = bsDialog
   BorderWidth = 10
-  Caption = 'Font Build...by qq500585'
+  Caption = 'Font Build. create by qq.600585'
   ClientHeight = 761
   ClientWidth = 1232
   Color = clBtnFace
@@ -138,8 +138,8 @@ object FontBuildForm: TFontBuildForm
     Font.Name = 'Tahoma'
     Font.Style = [fsBold]
     Options = []
-    Left = 416
-    Top = 24
+    Left = 376
+    Top = 184
   end
   object SaveDialog: TSaveDialog
     DefaultExt = '.zfont'
@@ -150,13 +150,19 @@ object FontBuildForm: TFontBuildForm
   object OpenDialog: TOpenDialog
     DefaultExt = '.zfont'
     Filter = 'zFont(*.zfont)|*.zfont|All files(*.*)|*.*'
-    Left = 448
-    Top = 224
+    Left = 376
+    Top = 136
   end
   object bmpSaveDialog: TSaveDialog
     DefaultExt = '.bmp'
     Filter = 'bitmap file(*.bmp)|*.bmp'
-    Left = 368
-    Top = 312
+    Left = 376
+    Top = 288
+  end
+  object Timer1: TTimer
+    Interval = 100
+    OnTimer = Timer1Timer
+    Left = 376
+    Top = 336
   end
 end

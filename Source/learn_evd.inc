@@ -80,7 +80,6 @@ procedure UnpackQFromUpperHessenberg(const a: TLMatrix; n: TLInt;
 procedure UnpackHFromUpperHessenberg(const a: TLMatrix; n: TLInt;
   const TAU: TLVec; var h: TLMatrix); forward;
 
-
 (* ************************************************************************
   Finding the eigenvalues and eigenvectors of a symmetric matrix
 
@@ -303,8 +302,8 @@ begin
   //
   if Result and (ZNeeded <> 0) then
     begin
-      SetLength(Work, n  );
-      SetLength(z, n  , n  );
+      SetLength(Work, n);
+      SetLength(z, n, n);
       i := 0;
       while i <= n - 1 do
         begin
@@ -368,7 +367,7 @@ end;
   A       -   Hermitian matrix which is given by its upper or lower triangular part. Array whose indexes range within [0..N-1, 0..N-1].
   N       -   size of matrix A.
 
- ZNeeded  -  flag controlling whether the eigenvectors are needed or not. If ZNeeded is equal to:
+  ZNeeded  -  flag controlling whether the eigenvectors are needed or not. If ZNeeded is equal to:
   * 0, the eigenvectors are not returned;
   * 1, the eigenvectors are returned.
 
@@ -437,8 +436,8 @@ begin
   //
   if Result and (ZNeeded <> 0) and (M <> 0) then
     begin
-      SetLength(Work, M  );
-      SetLength(z, n  , M  );
+      SetLength(Work, M);
+      SetLength(z, n, M);
       i := 0;
       while i <= n - 1 do
         begin
@@ -570,8 +569,8 @@ begin
   M := i2 - i1 + 1;
   if Result and (ZNeeded <> 0) then
     begin
-      SetLength(Work, M  );
-      SetLength(z, n  , M  );
+      SetLength(Work, M);
+      SetLength(z, n, M);
       i := 0;
       while i <= n - 1 do
         begin
@@ -722,7 +721,7 @@ begin
         end;
       if ZNeeded = 2 then
         begin
-          SetLength(z, n  , n  );
+          SetLength(z, n, n);
           i := 1;
           while i <= n do
             begin
@@ -733,7 +732,7 @@ begin
         end;
       if ZNeeded = 3 then
         begin
-          SetLength(z, 0 + 1, n  );
+          SetLength(z, 0 + 1, n);
           APVMove(@z[0][0], 0, n - 1, @z1[1][0], 1, n);
           Exit;
         end;
@@ -834,7 +833,7 @@ begin
   APVMove(@d1[0], 1, n, @d[0], 0, n - 1);
   if n > 1 then
     begin
-      SetLength(e1, n  );
+      SetLength(e1, n);
       APVMove(@e1[0], 1, n - 1, @E[0], 0, n - 2);
     end;
 
@@ -850,7 +849,7 @@ begin
           M := 0;
           Exit;
         end;
-      SetLength(d, M  );
+      SetLength(d, M);
       APVMove(@d[0], 0, M - 1, @w[0], 1, M);
       Exit;
     end;
@@ -934,7 +933,7 @@ begin
             end;
           inc(i);
         end;
-      SetLength(z, n  , M  );
+      SetLength(z, n, M);
       i := 1;
       while i <= M do
         begin
@@ -949,7 +948,7 @@ begin
       //
       // Store W
       //
-      SetLength(d, M  );
+      SetLength(d, M);
       i := 1;
       while i <= M do
         begin
@@ -1016,14 +1015,14 @@ begin
       //
       // Store W
       //
-      SetLength(d, M  );
+      SetLength(d, M);
       i := 1;
       while i <= M do
         begin
           d[i - 1] := w[i];
           inc(i);
         end;
-      SetLength(z, n  , M  );
+      SetLength(z, n, M);
       i := 1;
       while i <= M do
         begin
@@ -1114,7 +1113,7 @@ begin
   APVMove(@d1[0], 1, n, @d[0], 0, n - 1);
   if n > 1 then
     begin
-      SetLength(e1, n  );
+      SetLength(e1, n);
       APVMove(@e1[0], 1, n - 1, @E[0], 0, n - 2);
     end;
 
@@ -1134,7 +1133,7 @@ begin
           Result := False;
           Exit;
         end;
-      SetLength(d, M  );
+      SetLength(d, M);
       i := 1;
       while i <= M do
         begin
@@ -1226,7 +1225,7 @@ begin
             end;
           inc(i);
         end;
-      SetLength(z, n  , M  );
+      SetLength(z, n, M);
       i := 1;
       while i <= M do
         begin
@@ -1241,7 +1240,7 @@ begin
       //
       // Store W
       //
-      SetLength(d, M  );
+      SetLength(d, M);
       i := 1;
       while i <= M do
         begin
@@ -1311,7 +1310,7 @@ begin
       //
       // Store Z
       //
-      SetLength(z, n  , M  );
+      SetLength(z, n, M);
       i := 1;
       while i <= M do
         begin
@@ -1326,7 +1325,7 @@ begin
       //
       // Store W
       //
-      SetLength(d, M  );
+      SetLength(d, M);
       i := 1;
       while i <= M do
         begin
@@ -1424,13 +1423,13 @@ begin
   Result := NonSymmetricEVD(a1, n, VNeeded, WR1, WI1, VL1, VR1);
   if Result then
     begin
-      SetLength(WR, n  );
-      SetLength(WI, n  );
+      SetLength(WR, n);
+      SetLength(WI, n);
       APVMove(@WR[0], 0, n - 1, @WR1[0], 1, n);
       APVMove(@WI[0], 0, n - 1, @WI1[0], 1, n);
       if (VNeeded = 2) or (VNeeded = 3) then
         begin
-          SetLength(vl, n  , n  );
+          SetLength(vl, n, n);
           i := 0;
           while i <= n - 1 do
             begin
@@ -1440,7 +1439,7 @@ begin
         end;
       if (VNeeded = 1) or (VNeeded = 3) then
         begin
-          SetLength(vr, n  , n  );
+          SetLength(vr, n, n);
           i := 0;
           while i <= n - 1 do
             begin
@@ -2359,242 +2358,244 @@ begin
   //
   // Compute eigenvectors of matrix blocks.
   //
-  j1 := 1;
-  NBLK := 1;
-  while NBLK <= IBLOCK[M] do
+  with TLearnRandom.Create do
     begin
-
-      //
-      // Find starting and ending indices of block nblk.
-      //
-      if NBLK = 1 then
-        begin
-          b1 := 1;
-        end
-      else
-        begin
-          b1 := ISPLIT[NBLK - 1] + 1;
-        end;
-      BN := ISPLIT[NBLK];
-      BLKSIZ := BN - b1 + 1;
-      if BLKSIZ <> 1 then
+      j1 := 1;
+      NBLK := 1;
+      while NBLK <= IBLOCK[M] do
         begin
 
           //
-          // Compute reorthogonalization criterion and stopping criterion.
+          // Find starting and ending indices of block nblk.
           //
-          GPIND := b1;
-          ONENRM := AbsReal(d[b1]) + AbsReal(E[b1]);
-          ONENRM := Max(ONENRM, AbsReal(d[BN]) + AbsReal(E[BN - 1]));
-          i := b1 + 1;
-          while i <= BN - 1 do
+          if NBLK = 1 then
             begin
-              ONENRM := Max(ONENRM, AbsReal(d[i]) + AbsReal(E[i - 1]) +
-                AbsReal(E[i]));
-              inc(i);
-            end;
-          ORTOL := 0.001 * ONENRM;
-          DTPCRT := Sqrt(0.1 / BLKSIZ);
-        end;
-
-      //
-      // Loop through eigenvalues of block nblk.
-      //
-      JBLK := 0;
-      j := j1;
-      while j <= M do
-        begin
-          if IBLOCK[j] <> NBLK then
-            begin
-              j1 := j;
-              Break;
-            end;
-          JBLK := JBLK + 1;
-          XJ := w[j];
-          if BLKSIZ = 1 then
-            begin
-
-              //
-              // Skip all the work if the block size is one.
-              //
-              Work1[1] := 1;
+              b1 := 1;
             end
           else
             begin
+              b1 := ISPLIT[NBLK - 1] + 1;
+            end;
+          BN := ISPLIT[NBLK];
+          BLKSIZ := BN - b1 + 1;
+          if BLKSIZ <> 1 then
+            begin
 
               //
-              // If eigenvalues j and j-1 are too close, add a relatively
-              // small perturbation.
+              // Compute reorthogonalization criterion and stopping criterion.
               //
-              if JBLK > 1 then
+              GPIND := b1;
+              ONENRM := AbsReal(d[b1]) + AbsReal(E[b1]);
+              ONENRM := Max(ONENRM, AbsReal(d[BN]) + AbsReal(E[BN - 1]));
+              i := b1 + 1;
+              while i <= BN - 1 do
                 begin
-                  EPS1 := AbsReal(Eps * XJ);
-                  PERTOL := 10 * EPS1;
-                  SEP := XJ - XJM;
-                  if AP_FP_Less(SEP, PERTOL) then
+                  ONENRM := Max(ONENRM, AbsReal(d[i]) + AbsReal(E[i - 1]) +
+                    AbsReal(E[i]));
+                  inc(i);
+                end;
+              ORTOL := 0.001 * ONENRM;
+              DTPCRT := Sqrt(0.1 / BLKSIZ);
+            end;
+
+          //
+          // Loop through eigenvalues of block nblk.
+          //
+          JBLK := 0;
+          j := j1;
+          while j <= M do
+            begin
+              if IBLOCK[j] <> NBLK then
+                begin
+                  j1 := j;
+                  Break;
+                end;
+              JBLK := JBLK + 1;
+              XJ := w[j];
+              if BLKSIZ = 1 then
+                begin
+
+                  //
+                  // Skip all the work if the block size is one.
+                  //
+                  Work1[1] := 1;
+                end
+              else
+                begin
+
+                  //
+                  // If eigenvalues j and j-1 are too close, add a relatively
+                  // small perturbation.
+                  //
+                  if JBLK > 1 then
                     begin
-                      XJ := XJM + PERTOL;
+                      EPS1 := AbsReal(Eps * XJ);
+                      PERTOL := 10 * EPS1;
+                      SEP := XJ - XJM;
+                      if AP_FP_Less(SEP, PERTOL) then
+                        begin
+                          XJ := XJM + PERTOL;
+                        end;
                     end;
-                end;
-              ITS := 0;
-              NRMCHK := 0;
+                  ITS := 0;
+                  NRMCHK := 0;
 
-              //
-              // Get random starting vector.
-              //
-              TI := 1;
-              while TI <= BLKSIZ do
-                begin
-                  Work1[TI] := 2 * RandomReal - 1;
-                  inc(TI);
-                end;
+                  //
+                  // Get random starting vector.
+                  //
+                  TI := 1;
+                  while TI <= BLKSIZ do
+                    begin
+                      Work1[TI] := 2 * RandReal - 1;
+                      inc(TI);
+                    end;
 
-              //
-              // Copy the matrix T so it won't be destroyed in factorization.
-              //
-              TI := 1;
-              while TI <= BLKSIZ - 1 do
-                begin
-                  Work2[TI] := E[b1 + TI - 1];
-                  WORK3[TI] := E[b1 + TI - 1];
-                  WORK4[TI] := d[b1 + TI - 1];
-                  inc(TI);
-                end;
-              WORK4[BLKSIZ] := d[b1 + BLKSIZ - 1];
+                  //
+                  // Copy the matrix T so it won't be destroyed in factorization.
+                  //
+                  TI := 1;
+                  while TI <= BLKSIZ - 1 do
+                    begin
+                      Work2[TI] := E[b1 + TI - 1];
+                      WORK3[TI] := E[b1 + TI - 1];
+                      WORK4[TI] := d[b1 + TI - 1];
+                      inc(TI);
+                    end;
+                  WORK4[BLKSIZ] := d[b1 + BLKSIZ - 1];
 
-              //
-              // Compute LU factors with partial pivoting  ( PT = LU )
-              //
-              TOL := 0;
-              TDINInternalDLAGTF(BLKSIZ, WORK4, XJ, Work2, WORK3, TOL, WORK5,
-                IWORK, IINFO);
+                  //
+                  // Compute LU factors with partial pivoting  ( PT = LU )
+                  //
+                  TOL := 0;
+                  TDINInternalDLAGTF(BLKSIZ, WORK4, XJ, Work2, WORK3, TOL, WORK5, IWORK, IINFO);
 
-              //
-              // Update iteration count.
-              //
-              repeat
-                ITS := ITS + 1;
-                if ITS > MAXITS then
-                  begin
-
-                    //
-                    // If stopping criterion was not satisfied, update info and
-                    // store eigenvector number in array ifail.
-                    //
-                    Info := Info + 1;
-                    IFAIL[Info] := j;
-                    Break;
-                  end;
-
-                //
-                // Normalize and scale the righthand side vector Pb.
-                //
-                v := 0;
-                TI := 1;
-                while TI <= BLKSIZ do
-                  begin
-                    v := v + AbsReal(Work1[TI]);
-                    inc(TI);
-                  end;
-                SCL := BLKSIZ * ONENRM * Max(Eps, AbsReal(WORK4[BLKSIZ])) / v;
-                APVMul(@Work1[0], 1, BLKSIZ, SCL);
-
-                //
-                // Solve the system LU = Pb.
-                //
-                TDINInternalDLAGTS(BLKSIZ, WORK4, Work2, WORK3, WORK5, IWORK, Work1,
-                  TOL, IINFO);
-
-                //
-                // Reorthogonalize by modified Gram-Schmidt if eigenvalues are
-                // close enough.
-                //
-                if JBLK <> 1 then
-                  begin
-                    if AP_FP_Greater(AbsReal(XJ - XJM), ORTOL) then
+                  //
+                  // Update iteration count.
+                  //
+                  repeat
+                    ITS := ITS + 1;
+                    if ITS > MAXITS then
                       begin
-                        GPIND := j;
+
+                        //
+                        // If stopping criterion was not satisfied, update info and
+                        // store eigenvector number in array ifail.
+                        //
+                        Info := Info + 1;
+                        IFAIL[Info] := j;
+                        Break;
                       end;
-                    if GPIND <> j then
+
+                    //
+                    // Normalize and scale the righthand side vector Pb.
+                    //
+                    v := 0;
+                    TI := 1;
+                    while TI <= BLKSIZ do
                       begin
-                        i := GPIND;
-                        while i <= j - 1 do
+                        v := v + AbsReal(Work1[TI]);
+                        inc(TI);
+                      end;
+                    SCL := BLKSIZ * ONENRM * Max(Eps, AbsReal(WORK4[BLKSIZ])) / v;
+                    APVMul(@Work1[0], 1, BLKSIZ, SCL);
+
+                    //
+                    // Solve the system LU = Pb.
+                    //
+                    TDINInternalDLAGTS(BLKSIZ, WORK4, Work2, WORK3, WORK5, IWORK, Work1, TOL, IINFO);
+
+                    //
+                    // Reorthogonalize by modified Gram-Schmidt if eigenvalues are
+                    // close enough.
+                    //
+                    if JBLK <> 1 then
+                      begin
+                        if AP_FP_Greater(AbsReal(XJ - XJM), ORTOL) then
                           begin
-                            i1 := b1;
-                            i2 := b1 + BLKSIZ - 1;
-                            i1_ := (i1) - (1);
-                            ZTR := 0.0;
-                            for i_ := 1 to BLKSIZ do
+                            GPIND := j;
+                          end;
+                        if GPIND <> j then
+                          begin
+                            i := GPIND;
+                            while i <= j - 1 do
                               begin
-                                ZTR := ZTR + Work1[i_] * z[i_ + i1_, i];
+                                i1 := b1;
+                                i2 := b1 + BLKSIZ - 1;
+                                i1_ := (i1) - (1);
+                                ZTR := 0.0;
+                                for i_ := 1 to BLKSIZ do
+                                  begin
+                                    ZTR := ZTR + Work1[i_] * z[i_ + i1_, i];
+                                  end;
+                                i1_ := (i1) - (1);
+                                for i_ := 1 to BLKSIZ do
+                                  begin
+                                    Work1[i_] := Work1[i_] - ZTR * z[i_ + i1_, i];
+                                  end;
+                                inc(i);
                               end;
-                            i1_ := (i1) - (1);
-                            for i_ := 1 to BLKSIZ do
-                              begin
-                                Work1[i_] := Work1[i_] - ZTR * z[i_ + i1_, i];
-                              end;
-                            inc(i);
                           end;
                       end;
-                  end;
 
-                //
-                // Check the infinity norm of the iterate.
-                //
-                JMAX := VectorIdxAbsMax(Work1, 1, BLKSIZ);
-                NRM := AbsReal(Work1[JMAX]);
+                    //
+                    // Check the infinity norm of the iterate.
+                    //
+                    JMAX := VectorIdxAbsMax(Work1, 1, BLKSIZ);
+                    NRM := AbsReal(Work1[JMAX]);
 
-                //
-                // Continue for additional iterations after norm reaches
-                // stopping criterion.
-                //
-                TmpCriterion := False;
-                if AP_FP_Less(NRM, DTPCRT) then
-                  begin
-                    TmpCriterion := True;
-                  end
-                else
-                  begin
-                    NRMCHK := NRMCHK + 1;
-                    if NRMCHK < EXTRA + 1 then
+                    //
+                    // Continue for additional iterations after norm reaches
+                    // stopping criterion.
+                    //
+                    TmpCriterion := False;
+                    if AP_FP_Less(NRM, DTPCRT) then
                       begin
                         TmpCriterion := True;
+                      end
+                    else
+                      begin
+                        NRMCHK := NRMCHK + 1;
+                        if NRMCHK < EXTRA + 1 then
+                          begin
+                            TmpCriterion := True;
+                          end;
                       end;
-                  end;
-              until not TmpCriterion;
+                  until not TmpCriterion;
 
-              //
-              // Accept iterate as jth eigenvector.
-              //
-              SCL := 1 / VectorNorm2(Work1, 1, BLKSIZ);
-              JMAX := VectorIdxAbsMax(Work1, 1, BLKSIZ);
-              if AP_FP_Less(Work1[JMAX], 0) then
-                begin
-                  SCL := -SCL;
+                  //
+                  // Accept iterate as jth eigenvector.
+                  //
+                  SCL := 1 / VectorNorm2(Work1, 1, BLKSIZ);
+                  JMAX := VectorIdxAbsMax(Work1, 1, BLKSIZ);
+                  if AP_FP_Less(Work1[JMAX], 0) then
+                    begin
+                      SCL := -SCL;
+                    end;
+                  APVMul(@Work1[0], 1, BLKSIZ, SCL);
                 end;
-              APVMul(@Work1[0], 1, BLKSIZ, SCL);
-            end;
-          i := 1;
-          while i <= n do
-            begin
-              z[i, j] := 0;
-              inc(i);
-            end;
-          i := 1;
-          while i <= BLKSIZ do
-            begin
-              z[b1 + i - 1, j] := Work1[i];
-              inc(i);
-            end;
+              i := 1;
+              while i <= n do
+                begin
+                  z[i, j] := 0;
+                  inc(i);
+                end;
+              i := 1;
+              while i <= BLKSIZ do
+                begin
+                  z[b1 + i - 1, j] := Work1[i];
+                  inc(i);
+                end;
 
-          //
-          // Save the shift to check eigenvalue spacing at next
-          // iteration.
-          //
-          XJM := XJ;
-          inc(j);
+              //
+              // Save the shift to check eigenvalue spacing at next
+              // iteration.
+              //
+              XJM := XJ;
+              inc(j);
+            end;
+          inc(NBLK);
         end;
-      inc(NBLK);
+      Free;
     end;
 end;
 
@@ -2683,8 +2684,8 @@ begin
   // Initialize arrays
   //
   SetLength(WTEMP, n + 1);
-  SetLength(Work1, n  );
-  SetLength(Work2, n  );
+  SetLength(Work1, n);
+  SetLength(Work2, n);
   SetLength(WORKC, n + 1);
   SetLength(WORKS, n + 1);
 
@@ -6178,7 +6179,7 @@ begin
     begin
       Exit;
     end;
-  SetLength(TAU, n  );
+  SetLength(TAU, n);
   SetLength(t, n + 1);
   SetLength(Work, n + 1);
   i := 1;
@@ -6308,6 +6309,4 @@ begin
       APVMove(@h[i][0], j, n, @a[i][0], j, n);
       inc(i);
     end;
-end; 
- 
- 
+end;

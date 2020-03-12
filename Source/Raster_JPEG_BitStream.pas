@@ -90,9 +90,9 @@ type
     procedure FlushBuffer;
   public
     constructor Create(S: TMemoryStream64); virtual;
-    function CountBits(AValue: integer): integer;
-    procedure PutCode(ACode: PsdHuffmanCode); virtual;
-    procedure PutCodeExtend(ACode: PsdHuffmanCode; AValue: integer; ABitCount: integer); virtual;
+    function CountBits(Value_: integer): integer;
+    procedure PutCode(Code_: PsdHuffmanCode); virtual;
+    procedure PutCodeExtend(Code_: PsdHuffmanCode; Value_: integer; BitCount_: integer); virtual;
     procedure PutBits(Bits: cardinal; Count: integer); virtual;
     procedure Restart; virtual;
   end;
@@ -101,8 +101,8 @@ type
   private
     FHistogram: Psd8bitHuffmanHistogram;
   public
-    procedure PutCode(ACode: PsdHuffmanCode); override;
-    procedure PutCodeExtend(ACode: PsdHuffmanCode; AValue: integer; ABitCount: integer); override;
+    procedure PutCode(Code_: PsdHuffmanCode); override;
+    procedure PutCodeExtend(Code_: PsdHuffmanCode; Value_: integer; BitCount_: integer); override;
     procedure PutBits(Bits: cardinal; Count: integer); override;
     procedure Restart; override;
     property Histogram: Psd8bitHuffmanHistogram read FHistogram write FHistogram;
@@ -259,15 +259,15 @@ end;
 
 { TBitWriter }
 
-function TBitWriter.CountBits(AValue: integer): integer;
+function TBitWriter.CountBits(Value_: integer): integer;
 begin
-  if AValue < 0 then
-      AValue := -AValue;
+  if Value_ < 0 then
+      Value_ := -Value_;
   Result := 0;
-  while AValue > 0 do
+  while Value_ > 0 do
     begin
       inc(Result);
-      AValue := AValue shr 1;
+      Value_ := Value_ shr 1;
     end;
 end;
 
@@ -310,32 +310,32 @@ begin
     end;
 end;
 
-procedure TBitWriter.PutCode(ACode: PsdHuffmanCode);
+procedure TBitWriter.PutCode(Code_: PsdHuffmanCode);
 begin
-  if ACode^.L = 0 then
+  if Code_^.L = 0 then
     begin
       DoDebugOut(Self, wsWarn, 'invalid Huffman code');
     end;
-  PutBits(ACode^.Code, ACode^.L);
+  PutBits(Code_^.Code, Code_^.L);
 end;
 
-procedure TBitWriter.PutCodeExtend(ACode: PsdHuffmanCode; AValue, ABitCount: integer);
+procedure TBitWriter.PutCodeExtend(Code_: PsdHuffmanCode; Value_, BitCount_: integer);
 begin
-  PutCode(ACode);
-  if ABitCount = 0 then
+  PutCode(Code_);
+  if BitCount_ = 0 then
       exit;
-  if ABitCount = 1 then
+  if BitCount_ = 1 then
     begin
-      if AValue > 0 then
+      if Value_ > 0 then
           PutBits(1, 1)
       else
           PutBits(0, 1);
       exit;
     end;
-  if AValue > 0 then
-      PutBits(AValue, ABitCount)
+  if Value_ > 0 then
+      PutBits(Value_, BitCount_)
   else
-      PutBits(AValue - cExtendOffset[ABitCount], ABitCount);
+      PutBits(Value_ - cExtendOffset[BitCount_], BitCount_);
 end;
 
 procedure TBitWriter.Restart;
@@ -359,16 +359,16 @@ begin
   // this does nothing
 end;
 
-procedure TDryRunBitWriter.PutCode(ACode: PsdHuffmanCode);
+procedure TDryRunBitWriter.PutCode(Code_: PsdHuffmanCode);
 begin
   // increment the histogram
-  inc(FHistogram^[ACode^.V]);
+  inc(FHistogram^[Code_^.V]);
 end;
 
-procedure TDryRunBitWriter.PutCodeExtend(ACode: PsdHuffmanCode; AValue,
-  ABitCount: integer);
+procedure TDryRunBitWriter.PutCodeExtend(Code_: PsdHuffmanCode; Value_,
+  BitCount_: integer);
 begin
-  PutCode(ACode);
+  PutCode(Code_);
 end;
 
 procedure TDryRunBitWriter.Restart;

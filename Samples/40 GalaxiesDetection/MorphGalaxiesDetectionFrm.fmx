@@ -1,0 +1,79 @@
+object MorphGalaxiesDetectionForm: TMorphGalaxiesDetectionForm
+  Left = 0
+  Top = 0
+  Caption = 'Morphomatics Galaxies Detection demo. create by.qq600585'
+  ClientHeight = 809
+  ClientWidth = 1054
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Lines.Strings = (
+      'MorphGalaxiesDetection'#20351#29992#24418#24577#23398#20998#21106#23436#25104#30446#26631#26143#29699#26816#27979
+      #22240#20026#22825#25991#22270#38750#24120#22823#65292#25105#20204#20808#20570#31561#23610#24230#32553#23567#65292#28982#21518#36827#34892#24418#24577#23398#25552#21462#65292#24471#21040#20108#20540#21270#29305#24449#22270#65292#20998#21106#23427#65281
+      ''
+      'MorphGalaxiesDetection'#25152#20351#29992#30340#30340#24418#24577#23398#25903#25345#22320#22522#22343#26159#32431#27491'pascal'#23454#29616
+      'by.qq600585'
+      ''
+      '')
+    TextSettings.WordWrap = True
+    Align = MostBottom
+    Position.Y = 680.000000000000000000
+    Size.Width = 1054.000000000000000000
+    Size.Height = 129.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    Viewport.Width = 1054.000000000000000000
+    Viewport.Height = 129.000000000000000000
+  end
+  object pb: TPaintBox
+    Align = Client
+    ClipChildren = True
+    ClipParent = True
+    Size.Width = 1054.000000000000000000
+    Size.Height = 639.000000000000000000
+    Size.PlatformDefault = False
+    OnMouseDown = pbMouseDown
+    OnMouseMove = pbMouseMove
+    OnMouseUp = pbMouseUp
+    OnMouseWheel = pbMouseWheel
+    OnPaint = pbPaint
+  end
+  object Timer1: TTimer
+    Interval = 10
+    OnTimer = Timer1Timer
+    Left = 648
+    Top = 392
+  end
+  object Layout1: TLayout
+    Align = Top
+    Size.Width = 1054.000000000000000000
+    Size.Height = 41.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    object Button1: TButton
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 105.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'Detection'
+      OnClick = Button1Click
+    end
+    object Button2: TButton
+      Position.X = 120.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 97.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'clean box'
+      OnClick = Button2Click
+    end
+  end
+end

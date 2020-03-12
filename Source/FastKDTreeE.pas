@@ -53,6 +53,12 @@ const
   KDT22DE_Axis = 22;
   KDT23DE_Axis = 23;
   KDT24DE_Axis = 24;
+  KDT48DE_Axis = 48;
+  KDT52DE_Axis = 52;
+  KDT64DE_Axis = 64;
+  KDT128DE_Axis = 128;
+  KDT156DE_Axis = 156;
+  KDT192DE_Axis = 192;
   KDT256DE_Axis = 256;
   KDT512DE_Axis = 512;
   KDT1024DE_Axis = 1024;
@@ -84,6 +90,12 @@ type
   TKDT22DE = class; TKDT22DE_VecType = KM.TKMFloat; // 22D
   TKDT23DE = class; TKDT23DE_VecType = KM.TKMFloat; // 23D
   TKDT24DE = class; TKDT24DE_VecType = KM.TKMFloat; // 24D
+  TKDT48DE = class; TKDT48DE_VecType = KM.TKMFloat; // 48D
+  TKDT52DE = class; TKDT52DE_VecType = KM.TKMFloat; // 52D
+  TKDT64DE = class; TKDT64DE_VecType = KM.TKMFloat; // 64D
+  TKDT128DE = class; TKDT128DE_VecType = KM.TKMFloat; // 128D
+  TKDT156DE = class; TKDT156DE_VecType = KM.TKMFloat; // 156D
+  TKDT192DE = class; TKDT192DE_VecType = KM.TKMFloat; // 192D
   TKDT256DE = class; TKDT256DE_VecType = KM.TKMFloat; // 256D
   TKDT512DE = class; TKDT512DE_VecType = KM.TKMFloat; // 512D
   TKDT1024DE = class; TKDT1024DE_VecType = KM.TKMFloat; // 1024D
@@ -124,12 +136,16 @@ type
 
     TKDT1DE_Node = record
       Parent, Right, Left: PKDT1DE_Node;
-      vec: PKDT1DE_Source;
+      Vec: PKDT1DE_Source;
     end;
 
     TKDT1DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT1DE_Source; const Data: Pointer);
     TKDT1DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT1DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT1DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT1DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT1DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT1DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT1DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT1DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT1DE_DyanmicStoreBuffer;
     KDBuff: TKDT1DE_DyanmicSourceBuffer;
@@ -150,41 +166,36 @@ type
     function StoreBuffPtr: PKDT1DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT1DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT1DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT1DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT1DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT1DE_Node; overload;
     function Search(const buff: TKDT1DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT1DE_Node; overload;
     function Search(const buff: TKDT1DE_Vec; var SearchedDistanceMin: Double): PKDT1DE_Node; overload;
     function Search(const buff: TKDT1DE_Vec): PKDT1DE_Node; overload;
     function SearchToken(const buff: TKDT1DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT1DE_DynamicVecBuffer; var OutBuff: TKDT1DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT1DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT1DE_Node);
     procedure PrintBuffer;
-
-    class function KDT1DEVec(const s: SystemString): TKDT1DE_Vec; overload;
-    class function KDT1DEVec(const v: TKDT1DE_Vec): SystemString; overload;
-    class function KDT1DEPow(const v: TKDT1DE_VecType): Double;
-    class function KDT1DEDistance(const v1, v2: TKDT1DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT1DE_Vec; overload;
+    class function Vec(const v: TKDT1DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT1DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT1DE_Source; const Data: Pointer);
     class procedure Test;
@@ -221,12 +232,16 @@ type
 
     TKDT2DE_Node = record
       Parent, Right, Left: PKDT2DE_Node;
-      vec: PKDT2DE_Source;
+      Vec: PKDT2DE_Source;
     end;
 
     TKDT2DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT2DE_Source; const Data: Pointer);
     TKDT2DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT2DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT2DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT2DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT2DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT2DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT2DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT2DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT2DE_DyanmicStoreBuffer;
     KDBuff: TKDT2DE_DyanmicSourceBuffer;
@@ -247,41 +262,36 @@ type
     function StoreBuffPtr: PKDT2DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT2DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT2DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT2DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT2DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT2DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT2DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT2DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT2DE_Node; overload;
     function Search(const buff: TKDT2DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT2DE_Node; overload;
     function Search(const buff: TKDT2DE_Vec; var SearchedDistanceMin: Double): PKDT2DE_Node; overload;
     function Search(const buff: TKDT2DE_Vec): PKDT2DE_Node; overload;
     function SearchToken(const buff: TKDT2DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT2DE_DynamicVecBuffer; var OutBuff: TKDT2DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT2DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT2DE_Node);
     procedure PrintBuffer;
-
-    class function KDT2DEVec(const s: SystemString): TKDT2DE_Vec; overload;
-    class function KDT2DEVec(const v: TKDT2DE_Vec): SystemString; overload;
-    class function KDT2DEPow(const v: TKDT2DE_VecType): Double;
-    class function KDT2DEDistance(const v1, v2: TKDT2DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT2DE_Vec; overload;
+    class function Vec(const v: TKDT2DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT2DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT2DE_Source; const Data: Pointer);
     class procedure Test;
@@ -318,12 +328,16 @@ type
 
     TKDT3DE_Node = record
       Parent, Right, Left: PKDT3DE_Node;
-      vec: PKDT3DE_Source;
+      Vec: PKDT3DE_Source;
     end;
 
     TKDT3DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT3DE_Source; const Data: Pointer);
     TKDT3DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT3DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT3DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT3DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT3DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT3DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT3DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT3DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT3DE_DyanmicStoreBuffer;
     KDBuff: TKDT3DE_DyanmicSourceBuffer;
@@ -344,41 +358,36 @@ type
     function StoreBuffPtr: PKDT3DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT3DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT3DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT3DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT3DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT3DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT3DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT3DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT3DE_Node; overload;
     function Search(const buff: TKDT3DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT3DE_Node; overload;
     function Search(const buff: TKDT3DE_Vec; var SearchedDistanceMin: Double): PKDT3DE_Node; overload;
     function Search(const buff: TKDT3DE_Vec): PKDT3DE_Node; overload;
     function SearchToken(const buff: TKDT3DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT3DE_DynamicVecBuffer; var OutBuff: TKDT3DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT3DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT3DE_Node);
     procedure PrintBuffer;
-
-    class function KDT3DEVec(const s: SystemString): TKDT3DE_Vec; overload;
-    class function KDT3DEVec(const v: TKDT3DE_Vec): SystemString; overload;
-    class function KDT3DEPow(const v: TKDT3DE_VecType): Double;
-    class function KDT3DEDistance(const v1, v2: TKDT3DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT3DE_Vec; overload;
+    class function Vec(const v: TKDT3DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT3DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT3DE_Source; const Data: Pointer);
     class procedure Test;
@@ -415,12 +424,16 @@ type
 
     TKDT4DE_Node = record
       Parent, Right, Left: PKDT4DE_Node;
-      vec: PKDT4DE_Source;
+      Vec: PKDT4DE_Source;
     end;
 
     TKDT4DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT4DE_Source; const Data: Pointer);
     TKDT4DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT4DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT4DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT4DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT4DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT4DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT4DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT4DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT4DE_DyanmicStoreBuffer;
     KDBuff: TKDT4DE_DyanmicSourceBuffer;
@@ -441,41 +454,36 @@ type
     function StoreBuffPtr: PKDT4DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT4DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT4DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT4DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT4DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT4DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT4DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT4DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT4DE_Node; overload;
     function Search(const buff: TKDT4DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT4DE_Node; overload;
     function Search(const buff: TKDT4DE_Vec; var SearchedDistanceMin: Double): PKDT4DE_Node; overload;
     function Search(const buff: TKDT4DE_Vec): PKDT4DE_Node; overload;
     function SearchToken(const buff: TKDT4DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT4DE_DynamicVecBuffer; var OutBuff: TKDT4DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT4DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT4DE_Node);
     procedure PrintBuffer;
-
-    class function KDT4DEVec(const s: SystemString): TKDT4DE_Vec; overload;
-    class function KDT4DEVec(const v: TKDT4DE_Vec): SystemString; overload;
-    class function KDT4DEPow(const v: TKDT4DE_VecType): Double;
-    class function KDT4DEDistance(const v1, v2: TKDT4DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT4DE_Vec; overload;
+    class function Vec(const v: TKDT4DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT4DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT4DE_Source; const Data: Pointer);
     class procedure Test;
@@ -512,12 +520,16 @@ type
 
     TKDT5DE_Node = record
       Parent, Right, Left: PKDT5DE_Node;
-      vec: PKDT5DE_Source;
+      Vec: PKDT5DE_Source;
     end;
 
     TKDT5DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT5DE_Source; const Data: Pointer);
     TKDT5DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT5DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT5DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT5DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT5DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT5DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT5DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT5DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT5DE_DyanmicStoreBuffer;
     KDBuff: TKDT5DE_DyanmicSourceBuffer;
@@ -538,41 +550,36 @@ type
     function StoreBuffPtr: PKDT5DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT5DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT5DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT5DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT5DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT5DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT5DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT5DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT5DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT5DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT5DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT5DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT5DE_Node; overload;
     function Search(const buff: TKDT5DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT5DE_Node; overload;
     function Search(const buff: TKDT5DE_Vec; var SearchedDistanceMin: Double): PKDT5DE_Node; overload;
     function Search(const buff: TKDT5DE_Vec): PKDT5DE_Node; overload;
     function SearchToken(const buff: TKDT5DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT5DE_DynamicVecBuffer; var OutBuff: TKDT5DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT5DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT5DE_Node);
     procedure PrintBuffer;
-
-    class function KDT5DEVec(const s: SystemString): TKDT5DE_Vec; overload;
-    class function KDT5DEVec(const v: TKDT5DE_Vec): SystemString; overload;
-    class function KDT5DEPow(const v: TKDT5DE_VecType): Double;
-    class function KDT5DEDistance(const v1, v2: TKDT5DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT5DE_Vec; overload;
+    class function Vec(const v: TKDT5DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT5DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT5DE_Source; const Data: Pointer);
     class procedure Test;
@@ -609,12 +616,16 @@ type
 
     TKDT6DE_Node = record
       Parent, Right, Left: PKDT6DE_Node;
-      vec: PKDT6DE_Source;
+      Vec: PKDT6DE_Source;
     end;
 
     TKDT6DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT6DE_Source; const Data: Pointer);
     TKDT6DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT6DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT6DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT6DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT6DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT6DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT6DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT6DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT6DE_DyanmicStoreBuffer;
     KDBuff: TKDT6DE_DyanmicSourceBuffer;
@@ -635,41 +646,36 @@ type
     function StoreBuffPtr: PKDT6DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT6DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT6DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT6DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT6DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT6DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT6DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT6DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT6DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT6DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT6DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT6DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT6DE_Node; overload;
     function Search(const buff: TKDT6DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT6DE_Node; overload;
     function Search(const buff: TKDT6DE_Vec; var SearchedDistanceMin: Double): PKDT6DE_Node; overload;
     function Search(const buff: TKDT6DE_Vec): PKDT6DE_Node; overload;
     function SearchToken(const buff: TKDT6DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT6DE_DynamicVecBuffer; var OutBuff: TKDT6DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT6DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT6DE_Node);
     procedure PrintBuffer;
-
-    class function KDT6DEVec(const s: SystemString): TKDT6DE_Vec; overload;
-    class function KDT6DEVec(const v: TKDT6DE_Vec): SystemString; overload;
-    class function KDT6DEPow(const v: TKDT6DE_VecType): Double;
-    class function KDT6DEDistance(const v1, v2: TKDT6DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT6DE_Vec; overload;
+    class function Vec(const v: TKDT6DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT6DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT6DE_Source; const Data: Pointer);
     class procedure Test;
@@ -706,12 +712,16 @@ type
 
     TKDT7DE_Node = record
       Parent, Right, Left: PKDT7DE_Node;
-      vec: PKDT7DE_Source;
+      Vec: PKDT7DE_Source;
     end;
 
     TKDT7DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT7DE_Source; const Data: Pointer);
     TKDT7DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT7DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT7DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT7DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT7DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT7DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT7DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT7DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT7DE_DyanmicStoreBuffer;
     KDBuff: TKDT7DE_DyanmicSourceBuffer;
@@ -732,41 +742,36 @@ type
     function StoreBuffPtr: PKDT7DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT7DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT7DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT7DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT7DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT7DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT7DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT7DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT7DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT7DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT7DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT7DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT7DE_Node; overload;
     function Search(const buff: TKDT7DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT7DE_Node; overload;
     function Search(const buff: TKDT7DE_Vec; var SearchedDistanceMin: Double): PKDT7DE_Node; overload;
     function Search(const buff: TKDT7DE_Vec): PKDT7DE_Node; overload;
     function SearchToken(const buff: TKDT7DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT7DE_DynamicVecBuffer; var OutBuff: TKDT7DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT7DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT7DE_Node);
     procedure PrintBuffer;
-
-    class function KDT7DEVec(const s: SystemString): TKDT7DE_Vec; overload;
-    class function KDT7DEVec(const v: TKDT7DE_Vec): SystemString; overload;
-    class function KDT7DEPow(const v: TKDT7DE_VecType): Double;
-    class function KDT7DEDistance(const v1, v2: TKDT7DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT7DE_Vec; overload;
+    class function Vec(const v: TKDT7DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT7DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT7DE_Source; const Data: Pointer);
     class procedure Test;
@@ -803,12 +808,16 @@ type
 
     TKDT8DE_Node = record
       Parent, Right, Left: PKDT8DE_Node;
-      vec: PKDT8DE_Source;
+      Vec: PKDT8DE_Source;
     end;
 
     TKDT8DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT8DE_Source; const Data: Pointer);
     TKDT8DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT8DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT8DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT8DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT8DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT8DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT8DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT8DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT8DE_DyanmicStoreBuffer;
     KDBuff: TKDT8DE_DyanmicSourceBuffer;
@@ -829,41 +838,36 @@ type
     function StoreBuffPtr: PKDT8DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT8DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT8DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT8DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT8DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT8DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT8DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT8DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT8DE_Node; overload;
     function Search(const buff: TKDT8DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT8DE_Node; overload;
     function Search(const buff: TKDT8DE_Vec; var SearchedDistanceMin: Double): PKDT8DE_Node; overload;
     function Search(const buff: TKDT8DE_Vec): PKDT8DE_Node; overload;
     function SearchToken(const buff: TKDT8DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT8DE_DynamicVecBuffer; var OutBuff: TKDT8DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT8DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT8DE_Node);
     procedure PrintBuffer;
-
-    class function KDT8DEVec(const s: SystemString): TKDT8DE_Vec; overload;
-    class function KDT8DEVec(const v: TKDT8DE_Vec): SystemString; overload;
-    class function KDT8DEPow(const v: TKDT8DE_VecType): Double;
-    class function KDT8DEDistance(const v1, v2: TKDT8DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT8DE_Vec; overload;
+    class function Vec(const v: TKDT8DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT8DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT8DE_Source; const Data: Pointer);
     class procedure Test;
@@ -900,12 +904,16 @@ type
 
     TKDT9DE_Node = record
       Parent, Right, Left: PKDT9DE_Node;
-      vec: PKDT9DE_Source;
+      Vec: PKDT9DE_Source;
     end;
 
     TKDT9DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT9DE_Source; const Data: Pointer);
     TKDT9DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT9DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT9DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT9DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT9DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT9DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT9DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT9DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT9DE_DyanmicStoreBuffer;
     KDBuff: TKDT9DE_DyanmicSourceBuffer;
@@ -926,41 +934,36 @@ type
     function StoreBuffPtr: PKDT9DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT9DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT9DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT9DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT9DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT9DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT9DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT9DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT9DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT9DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT9DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT9DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT9DE_Node; overload;
     function Search(const buff: TKDT9DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT9DE_Node; overload;
     function Search(const buff: TKDT9DE_Vec; var SearchedDistanceMin: Double): PKDT9DE_Node; overload;
     function Search(const buff: TKDT9DE_Vec): PKDT9DE_Node; overload;
     function SearchToken(const buff: TKDT9DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT9DE_DynamicVecBuffer; var OutBuff: TKDT9DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT9DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT9DE_Node);
     procedure PrintBuffer;
-
-    class function KDT9DEVec(const s: SystemString): TKDT9DE_Vec; overload;
-    class function KDT9DEVec(const v: TKDT9DE_Vec): SystemString; overload;
-    class function KDT9DEPow(const v: TKDT9DE_VecType): Double;
-    class function KDT9DEDistance(const v1, v2: TKDT9DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT9DE_Vec; overload;
+    class function Vec(const v: TKDT9DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT9DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT9DE_Source; const Data: Pointer);
     class procedure Test;
@@ -997,12 +1000,16 @@ type
 
     TKDT10DE_Node = record
       Parent, Right, Left: PKDT10DE_Node;
-      vec: PKDT10DE_Source;
+      Vec: PKDT10DE_Source;
     end;
 
     TKDT10DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT10DE_Source; const Data: Pointer);
     TKDT10DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT10DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT10DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT10DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT10DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT10DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT10DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT10DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT10DE_DyanmicStoreBuffer;
     KDBuff: TKDT10DE_DyanmicSourceBuffer;
@@ -1023,41 +1030,36 @@ type
     function StoreBuffPtr: PKDT10DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT10DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT10DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT10DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT10DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT10DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT10DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT10DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT10DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT10DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT10DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT10DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT10DE_Node; overload;
     function Search(const buff: TKDT10DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT10DE_Node; overload;
     function Search(const buff: TKDT10DE_Vec; var SearchedDistanceMin: Double): PKDT10DE_Node; overload;
     function Search(const buff: TKDT10DE_Vec): PKDT10DE_Node; overload;
     function SearchToken(const buff: TKDT10DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT10DE_DynamicVecBuffer; var OutBuff: TKDT10DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT10DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT10DE_Node);
     procedure PrintBuffer;
-
-    class function KDT10DEVec(const s: SystemString): TKDT10DE_Vec; overload;
-    class function KDT10DEVec(const v: TKDT10DE_Vec): SystemString; overload;
-    class function KDT10DEPow(const v: TKDT10DE_VecType): Double;
-    class function KDT10DEDistance(const v1, v2: TKDT10DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT10DE_Vec; overload;
+    class function Vec(const v: TKDT10DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT10DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT10DE_Source; const Data: Pointer);
     class procedure Test;
@@ -1094,12 +1096,16 @@ type
 
     TKDT11DE_Node = record
       Parent, Right, Left: PKDT11DE_Node;
-      vec: PKDT11DE_Source;
+      Vec: PKDT11DE_Source;
     end;
 
     TKDT11DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT11DE_Source; const Data: Pointer);
     TKDT11DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT11DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT11DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT11DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT11DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT11DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT11DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT11DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT11DE_DyanmicStoreBuffer;
     KDBuff: TKDT11DE_DyanmicSourceBuffer;
@@ -1120,41 +1126,36 @@ type
     function StoreBuffPtr: PKDT11DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT11DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT11DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT11DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT11DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT11DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT11DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT11DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT11DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT11DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT11DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT11DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT11DE_Node; overload;
     function Search(const buff: TKDT11DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT11DE_Node; overload;
     function Search(const buff: TKDT11DE_Vec; var SearchedDistanceMin: Double): PKDT11DE_Node; overload;
     function Search(const buff: TKDT11DE_Vec): PKDT11DE_Node; overload;
     function SearchToken(const buff: TKDT11DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT11DE_DynamicVecBuffer; var OutBuff: TKDT11DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT11DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT11DE_Node);
     procedure PrintBuffer;
-
-    class function KDT11DEVec(const s: SystemString): TKDT11DE_Vec; overload;
-    class function KDT11DEVec(const v: TKDT11DE_Vec): SystemString; overload;
-    class function KDT11DEPow(const v: TKDT11DE_VecType): Double;
-    class function KDT11DEDistance(const v1, v2: TKDT11DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT11DE_Vec; overload;
+    class function Vec(const v: TKDT11DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT11DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT11DE_Source; const Data: Pointer);
     class procedure Test;
@@ -1191,12 +1192,16 @@ type
 
     TKDT12DE_Node = record
       Parent, Right, Left: PKDT12DE_Node;
-      vec: PKDT12DE_Source;
+      Vec: PKDT12DE_Source;
     end;
 
     TKDT12DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT12DE_Source; const Data: Pointer);
     TKDT12DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT12DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT12DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT12DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT12DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT12DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT12DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT12DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT12DE_DyanmicStoreBuffer;
     KDBuff: TKDT12DE_DyanmicSourceBuffer;
@@ -1217,41 +1222,36 @@ type
     function StoreBuffPtr: PKDT12DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT12DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT12DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT12DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT12DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT12DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT12DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT12DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT12DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT12DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT12DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT12DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT12DE_Node; overload;
     function Search(const buff: TKDT12DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT12DE_Node; overload;
     function Search(const buff: TKDT12DE_Vec; var SearchedDistanceMin: Double): PKDT12DE_Node; overload;
     function Search(const buff: TKDT12DE_Vec): PKDT12DE_Node; overload;
     function SearchToken(const buff: TKDT12DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT12DE_DynamicVecBuffer; var OutBuff: TKDT12DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT12DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT12DE_Node);
     procedure PrintBuffer;
-
-    class function KDT12DEVec(const s: SystemString): TKDT12DE_Vec; overload;
-    class function KDT12DEVec(const v: TKDT12DE_Vec): SystemString; overload;
-    class function KDT12DEPow(const v: TKDT12DE_VecType): Double;
-    class function KDT12DEDistance(const v1, v2: TKDT12DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT12DE_Vec; overload;
+    class function Vec(const v: TKDT12DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT12DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT12DE_Source; const Data: Pointer);
     class procedure Test;
@@ -1288,12 +1288,16 @@ type
 
     TKDT13DE_Node = record
       Parent, Right, Left: PKDT13DE_Node;
-      vec: PKDT13DE_Source;
+      Vec: PKDT13DE_Source;
     end;
 
     TKDT13DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT13DE_Source; const Data: Pointer);
     TKDT13DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT13DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT13DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT13DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT13DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT13DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT13DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT13DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT13DE_DyanmicStoreBuffer;
     KDBuff: TKDT13DE_DyanmicSourceBuffer;
@@ -1314,41 +1318,36 @@ type
     function StoreBuffPtr: PKDT13DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT13DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT13DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT13DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT13DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT13DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT13DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT13DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT13DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT13DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT13DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT13DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT13DE_Node; overload;
     function Search(const buff: TKDT13DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT13DE_Node; overload;
     function Search(const buff: TKDT13DE_Vec; var SearchedDistanceMin: Double): PKDT13DE_Node; overload;
     function Search(const buff: TKDT13DE_Vec): PKDT13DE_Node; overload;
     function SearchToken(const buff: TKDT13DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT13DE_DynamicVecBuffer; var OutBuff: TKDT13DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT13DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT13DE_Node);
     procedure PrintBuffer;
-
-    class function KDT13DEVec(const s: SystemString): TKDT13DE_Vec; overload;
-    class function KDT13DEVec(const v: TKDT13DE_Vec): SystemString; overload;
-    class function KDT13DEPow(const v: TKDT13DE_VecType): Double;
-    class function KDT13DEDistance(const v1, v2: TKDT13DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT13DE_Vec; overload;
+    class function Vec(const v: TKDT13DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT13DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT13DE_Source; const Data: Pointer);
     class procedure Test;
@@ -1385,12 +1384,16 @@ type
 
     TKDT14DE_Node = record
       Parent, Right, Left: PKDT14DE_Node;
-      vec: PKDT14DE_Source;
+      Vec: PKDT14DE_Source;
     end;
 
     TKDT14DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT14DE_Source; const Data: Pointer);
     TKDT14DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT14DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT14DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT14DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT14DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT14DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT14DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT14DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT14DE_DyanmicStoreBuffer;
     KDBuff: TKDT14DE_DyanmicSourceBuffer;
@@ -1411,41 +1414,36 @@ type
     function StoreBuffPtr: PKDT14DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT14DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT14DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT14DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT14DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT14DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT14DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT14DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT14DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT14DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT14DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT14DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT14DE_Node; overload;
     function Search(const buff: TKDT14DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT14DE_Node; overload;
     function Search(const buff: TKDT14DE_Vec; var SearchedDistanceMin: Double): PKDT14DE_Node; overload;
     function Search(const buff: TKDT14DE_Vec): PKDT14DE_Node; overload;
     function SearchToken(const buff: TKDT14DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT14DE_DynamicVecBuffer; var OutBuff: TKDT14DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT14DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT14DE_Node);
     procedure PrintBuffer;
-
-    class function KDT14DEVec(const s: SystemString): TKDT14DE_Vec; overload;
-    class function KDT14DEVec(const v: TKDT14DE_Vec): SystemString; overload;
-    class function KDT14DEPow(const v: TKDT14DE_VecType): Double;
-    class function KDT14DEDistance(const v1, v2: TKDT14DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT14DE_Vec; overload;
+    class function Vec(const v: TKDT14DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT14DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT14DE_Source; const Data: Pointer);
     class procedure Test;
@@ -1482,12 +1480,16 @@ type
 
     TKDT15DE_Node = record
       Parent, Right, Left: PKDT15DE_Node;
-      vec: PKDT15DE_Source;
+      Vec: PKDT15DE_Source;
     end;
 
     TKDT15DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT15DE_Source; const Data: Pointer);
     TKDT15DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT15DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT15DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT15DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT15DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT15DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT15DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT15DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT15DE_DyanmicStoreBuffer;
     KDBuff: TKDT15DE_DyanmicSourceBuffer;
@@ -1508,41 +1510,36 @@ type
     function StoreBuffPtr: PKDT15DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT15DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT15DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT15DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT15DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT15DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT15DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT15DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT15DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT15DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT15DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT15DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT15DE_Node; overload;
     function Search(const buff: TKDT15DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT15DE_Node; overload;
     function Search(const buff: TKDT15DE_Vec; var SearchedDistanceMin: Double): PKDT15DE_Node; overload;
     function Search(const buff: TKDT15DE_Vec): PKDT15DE_Node; overload;
     function SearchToken(const buff: TKDT15DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT15DE_DynamicVecBuffer; var OutBuff: TKDT15DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT15DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT15DE_Node);
     procedure PrintBuffer;
-
-    class function KDT15DEVec(const s: SystemString): TKDT15DE_Vec; overload;
-    class function KDT15DEVec(const v: TKDT15DE_Vec): SystemString; overload;
-    class function KDT15DEPow(const v: TKDT15DE_VecType): Double;
-    class function KDT15DEDistance(const v1, v2: TKDT15DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT15DE_Vec; overload;
+    class function Vec(const v: TKDT15DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT15DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT15DE_Source; const Data: Pointer);
     class procedure Test;
@@ -1579,12 +1576,16 @@ type
 
     TKDT16DE_Node = record
       Parent, Right, Left: PKDT16DE_Node;
-      vec: PKDT16DE_Source;
+      Vec: PKDT16DE_Source;
     end;
 
     TKDT16DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT16DE_Source; const Data: Pointer);
     TKDT16DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT16DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT16DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT16DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT16DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT16DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT16DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT16DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT16DE_DyanmicStoreBuffer;
     KDBuff: TKDT16DE_DyanmicSourceBuffer;
@@ -1605,41 +1606,36 @@ type
     function StoreBuffPtr: PKDT16DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT16DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT16DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT16DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT16DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT16DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT16DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT16DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT16DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT16DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT16DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT16DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT16DE_Node; overload;
     function Search(const buff: TKDT16DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT16DE_Node; overload;
     function Search(const buff: TKDT16DE_Vec; var SearchedDistanceMin: Double): PKDT16DE_Node; overload;
     function Search(const buff: TKDT16DE_Vec): PKDT16DE_Node; overload;
     function SearchToken(const buff: TKDT16DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT16DE_DynamicVecBuffer; var OutBuff: TKDT16DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT16DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT16DE_Node);
     procedure PrintBuffer;
-
-    class function KDT16DEVec(const s: SystemString): TKDT16DE_Vec; overload;
-    class function KDT16DEVec(const v: TKDT16DE_Vec): SystemString; overload;
-    class function KDT16DEPow(const v: TKDT16DE_VecType): Double;
-    class function KDT16DEDistance(const v1, v2: TKDT16DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT16DE_Vec; overload;
+    class function Vec(const v: TKDT16DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT16DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT16DE_Source; const Data: Pointer);
     class procedure Test;
@@ -1676,12 +1672,16 @@ type
 
     TKDT17DE_Node = record
       Parent, Right, Left: PKDT17DE_Node;
-      vec: PKDT17DE_Source;
+      Vec: PKDT17DE_Source;
     end;
 
     TKDT17DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT17DE_Source; const Data: Pointer);
     TKDT17DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT17DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT17DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT17DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT17DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT17DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT17DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT17DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT17DE_DyanmicStoreBuffer;
     KDBuff: TKDT17DE_DyanmicSourceBuffer;
@@ -1702,41 +1702,36 @@ type
     function StoreBuffPtr: PKDT17DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT17DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT17DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT17DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT17DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT17DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT17DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT17DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT17DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT17DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT17DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT17DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT17DE_Node; overload;
     function Search(const buff: TKDT17DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT17DE_Node; overload;
     function Search(const buff: TKDT17DE_Vec; var SearchedDistanceMin: Double): PKDT17DE_Node; overload;
     function Search(const buff: TKDT17DE_Vec): PKDT17DE_Node; overload;
     function SearchToken(const buff: TKDT17DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT17DE_DynamicVecBuffer; var OutBuff: TKDT17DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT17DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT17DE_Node);
     procedure PrintBuffer;
-
-    class function KDT17DEVec(const s: SystemString): TKDT17DE_Vec; overload;
-    class function KDT17DEVec(const v: TKDT17DE_Vec): SystemString; overload;
-    class function KDT17DEPow(const v: TKDT17DE_VecType): Double;
-    class function KDT17DEDistance(const v1, v2: TKDT17DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT17DE_Vec; overload;
+    class function Vec(const v: TKDT17DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT17DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT17DE_Source; const Data: Pointer);
     class procedure Test;
@@ -1773,12 +1768,16 @@ type
 
     TKDT18DE_Node = record
       Parent, Right, Left: PKDT18DE_Node;
-      vec: PKDT18DE_Source;
+      Vec: PKDT18DE_Source;
     end;
 
     TKDT18DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT18DE_Source; const Data: Pointer);
     TKDT18DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT18DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT18DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT18DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT18DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT18DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT18DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT18DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT18DE_DyanmicStoreBuffer;
     KDBuff: TKDT18DE_DyanmicSourceBuffer;
@@ -1799,41 +1798,36 @@ type
     function StoreBuffPtr: PKDT18DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT18DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT18DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT18DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT18DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT18DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT18DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT18DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT18DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT18DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT18DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT18DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT18DE_Node; overload;
     function Search(const buff: TKDT18DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT18DE_Node; overload;
     function Search(const buff: TKDT18DE_Vec; var SearchedDistanceMin: Double): PKDT18DE_Node; overload;
     function Search(const buff: TKDT18DE_Vec): PKDT18DE_Node; overload;
     function SearchToken(const buff: TKDT18DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT18DE_DynamicVecBuffer; var OutBuff: TKDT18DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT18DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT18DE_Node);
     procedure PrintBuffer;
-
-    class function KDT18DEVec(const s: SystemString): TKDT18DE_Vec; overload;
-    class function KDT18DEVec(const v: TKDT18DE_Vec): SystemString; overload;
-    class function KDT18DEPow(const v: TKDT18DE_VecType): Double;
-    class function KDT18DEDistance(const v1, v2: TKDT18DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT18DE_Vec; overload;
+    class function Vec(const v: TKDT18DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT18DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT18DE_Source; const Data: Pointer);
     class procedure Test;
@@ -1870,12 +1864,16 @@ type
 
     TKDT19DE_Node = record
       Parent, Right, Left: PKDT19DE_Node;
-      vec: PKDT19DE_Source;
+      Vec: PKDT19DE_Source;
     end;
 
     TKDT19DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT19DE_Source; const Data: Pointer);
     TKDT19DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT19DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT19DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT19DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT19DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT19DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT19DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT19DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT19DE_DyanmicStoreBuffer;
     KDBuff: TKDT19DE_DyanmicSourceBuffer;
@@ -1896,41 +1894,36 @@ type
     function StoreBuffPtr: PKDT19DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT19DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT19DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT19DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT19DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT19DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT19DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT19DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT19DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT19DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT19DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT19DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT19DE_Node; overload;
     function Search(const buff: TKDT19DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT19DE_Node; overload;
     function Search(const buff: TKDT19DE_Vec; var SearchedDistanceMin: Double): PKDT19DE_Node; overload;
     function Search(const buff: TKDT19DE_Vec): PKDT19DE_Node; overload;
     function SearchToken(const buff: TKDT19DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT19DE_DynamicVecBuffer; var OutBuff: TKDT19DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT19DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT19DE_Node);
     procedure PrintBuffer;
-
-    class function KDT19DEVec(const s: SystemString): TKDT19DE_Vec; overload;
-    class function KDT19DEVec(const v: TKDT19DE_Vec): SystemString; overload;
-    class function KDT19DEPow(const v: TKDT19DE_VecType): Double;
-    class function KDT19DEDistance(const v1, v2: TKDT19DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT19DE_Vec; overload;
+    class function Vec(const v: TKDT19DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT19DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT19DE_Source; const Data: Pointer);
     class procedure Test;
@@ -1967,12 +1960,16 @@ type
 
     TKDT20DE_Node = record
       Parent, Right, Left: PKDT20DE_Node;
-      vec: PKDT20DE_Source;
+      Vec: PKDT20DE_Source;
     end;
 
     TKDT20DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT20DE_Source; const Data: Pointer);
     TKDT20DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT20DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT20DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT20DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT20DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT20DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT20DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT20DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT20DE_DyanmicStoreBuffer;
     KDBuff: TKDT20DE_DyanmicSourceBuffer;
@@ -1993,41 +1990,36 @@ type
     function StoreBuffPtr: PKDT20DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT20DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT20DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT20DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT20DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT20DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT20DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT20DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT20DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT20DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT20DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT20DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT20DE_Node; overload;
     function Search(const buff: TKDT20DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT20DE_Node; overload;
     function Search(const buff: TKDT20DE_Vec; var SearchedDistanceMin: Double): PKDT20DE_Node; overload;
     function Search(const buff: TKDT20DE_Vec): PKDT20DE_Node; overload;
     function SearchToken(const buff: TKDT20DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT20DE_DynamicVecBuffer; var OutBuff: TKDT20DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT20DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT20DE_Node);
     procedure PrintBuffer;
-
-    class function KDT20DEVec(const s: SystemString): TKDT20DE_Vec; overload;
-    class function KDT20DEVec(const v: TKDT20DE_Vec): SystemString; overload;
-    class function KDT20DEPow(const v: TKDT20DE_VecType): Double;
-    class function KDT20DEDistance(const v1, v2: TKDT20DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT20DE_Vec; overload;
+    class function Vec(const v: TKDT20DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT20DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT20DE_Source; const Data: Pointer);
     class procedure Test;
@@ -2064,12 +2056,16 @@ type
 
     TKDT21DE_Node = record
       Parent, Right, Left: PKDT21DE_Node;
-      vec: PKDT21DE_Source;
+      Vec: PKDT21DE_Source;
     end;
 
     TKDT21DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT21DE_Source; const Data: Pointer);
     TKDT21DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT21DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT21DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT21DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT21DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT21DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT21DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT21DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT21DE_DyanmicStoreBuffer;
     KDBuff: TKDT21DE_DyanmicSourceBuffer;
@@ -2090,41 +2086,36 @@ type
     function StoreBuffPtr: PKDT21DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT21DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT21DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT21DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT21DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT21DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT21DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT21DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT21DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT21DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT21DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT21DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT21DE_Node; overload;
     function Search(const buff: TKDT21DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT21DE_Node; overload;
     function Search(const buff: TKDT21DE_Vec; var SearchedDistanceMin: Double): PKDT21DE_Node; overload;
     function Search(const buff: TKDT21DE_Vec): PKDT21DE_Node; overload;
     function SearchToken(const buff: TKDT21DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT21DE_DynamicVecBuffer; var OutBuff: TKDT21DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT21DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT21DE_Node);
     procedure PrintBuffer;
-
-    class function KDT21DEVec(const s: SystemString): TKDT21DE_Vec; overload;
-    class function KDT21DEVec(const v: TKDT21DE_Vec): SystemString; overload;
-    class function KDT21DEPow(const v: TKDT21DE_VecType): Double;
-    class function KDT21DEDistance(const v1, v2: TKDT21DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT21DE_Vec; overload;
+    class function Vec(const v: TKDT21DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT21DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT21DE_Source; const Data: Pointer);
     class procedure Test;
@@ -2161,12 +2152,16 @@ type
 
     TKDT22DE_Node = record
       Parent, Right, Left: PKDT22DE_Node;
-      vec: PKDT22DE_Source;
+      Vec: PKDT22DE_Source;
     end;
 
     TKDT22DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT22DE_Source; const Data: Pointer);
     TKDT22DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT22DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT22DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT22DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT22DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT22DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT22DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT22DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT22DE_DyanmicStoreBuffer;
     KDBuff: TKDT22DE_DyanmicSourceBuffer;
@@ -2187,41 +2182,36 @@ type
     function StoreBuffPtr: PKDT22DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT22DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT22DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT22DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT22DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT22DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT22DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT22DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT22DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT22DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT22DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT22DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT22DE_Node; overload;
     function Search(const buff: TKDT22DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT22DE_Node; overload;
     function Search(const buff: TKDT22DE_Vec; var SearchedDistanceMin: Double): PKDT22DE_Node; overload;
     function Search(const buff: TKDT22DE_Vec): PKDT22DE_Node; overload;
     function SearchToken(const buff: TKDT22DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT22DE_DynamicVecBuffer; var OutBuff: TKDT22DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT22DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT22DE_Node);
     procedure PrintBuffer;
-
-    class function KDT22DEVec(const s: SystemString): TKDT22DE_Vec; overload;
-    class function KDT22DEVec(const v: TKDT22DE_Vec): SystemString; overload;
-    class function KDT22DEPow(const v: TKDT22DE_VecType): Double;
-    class function KDT22DEDistance(const v1, v2: TKDT22DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT22DE_Vec; overload;
+    class function Vec(const v: TKDT22DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT22DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT22DE_Source; const Data: Pointer);
     class procedure Test;
@@ -2258,12 +2248,16 @@ type
 
     TKDT23DE_Node = record
       Parent, Right, Left: PKDT23DE_Node;
-      vec: PKDT23DE_Source;
+      Vec: PKDT23DE_Source;
     end;
 
     TKDT23DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT23DE_Source; const Data: Pointer);
     TKDT23DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT23DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT23DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT23DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT23DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT23DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT23DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT23DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT23DE_DyanmicStoreBuffer;
     KDBuff: TKDT23DE_DyanmicSourceBuffer;
@@ -2284,41 +2278,36 @@ type
     function StoreBuffPtr: PKDT23DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT23DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT23DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT23DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT23DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT23DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT23DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT23DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT23DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT23DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT23DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT23DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT23DE_Node; overload;
     function Search(const buff: TKDT23DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT23DE_Node; overload;
     function Search(const buff: TKDT23DE_Vec; var SearchedDistanceMin: Double): PKDT23DE_Node; overload;
     function Search(const buff: TKDT23DE_Vec): PKDT23DE_Node; overload;
     function SearchToken(const buff: TKDT23DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT23DE_DynamicVecBuffer; var OutBuff: TKDT23DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT23DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT23DE_Node);
     procedure PrintBuffer;
-
-    class function KDT23DEVec(const s: SystemString): TKDT23DE_Vec; overload;
-    class function KDT23DEVec(const v: TKDT23DE_Vec): SystemString; overload;
-    class function KDT23DEPow(const v: TKDT23DE_VecType): Double;
-    class function KDT23DEDistance(const v1, v2: TKDT23DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT23DE_Vec; overload;
+    class function Vec(const v: TKDT23DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT23DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT23DE_Source; const Data: Pointer);
     class procedure Test;
@@ -2355,12 +2344,16 @@ type
 
     TKDT24DE_Node = record
       Parent, Right, Left: PKDT24DE_Node;
-      vec: PKDT24DE_Source;
+      Vec: PKDT24DE_Source;
     end;
 
     TKDT24DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT24DE_Source; const Data: Pointer);
     TKDT24DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT24DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT24DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT24DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT24DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT24DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT24DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT24DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT24DE_DyanmicStoreBuffer;
     KDBuff: TKDT24DE_DyanmicSourceBuffer;
@@ -2381,43 +2374,614 @@ type
     function StoreBuffPtr: PKDT24DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT24DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT24DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT24DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT24DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT24DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT24DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT24DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT24DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT24DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT24DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT24DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT24DE_Node; overload;
     function Search(const buff: TKDT24DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT24DE_Node; overload;
     function Search(const buff: TKDT24DE_Vec; var SearchedDistanceMin: Double): PKDT24DE_Node; overload;
     function Search(const buff: TKDT24DE_Vec): PKDT24DE_Node; overload;
     function SearchToken(const buff: TKDT24DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT24DE_DynamicVecBuffer; var OutBuff: TKDT24DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT24DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT24DE_Node);
     procedure PrintBuffer;
-
-    class function KDT24DEVec(const s: SystemString): TKDT24DE_Vec; overload;
-    class function KDT24DEVec(const v: TKDT24DE_Vec): SystemString; overload;
-    class function KDT24DEPow(const v: TKDT24DE_VecType): Double;
-    class function KDT24DEDistance(const v1, v2: TKDT24DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT24DE_Vec; overload;
+    class function Vec(const v: TKDT24DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT24DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT24DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT48DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT48DE_Vec = array [0 .. KDT48DE_Axis - 1] of TKDT48DE_VecType;
+    PKDT48DE_Vec = ^TKDT48DE_Vec;
+
+    TKDT48DE_DynamicVecBuffer = array of TKDT48DE_Vec;
+    PKDT48DE_DynamicVecBuffer = ^TKDT48DE_DynamicVecBuffer;
+
+    TKDT48DE_Source = record
+      buff: TKDT48DE_Vec;
+      Index: Int64;
+      Token: TPascalString;
+    end;
+
+    PKDT48DE_Source = ^TKDT48DE_Source;
+    TKDT48DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT48DE_Source) - 1] of PKDT48DE_Source;
+    PKDT48DE_SourceBuffer = ^TKDT48DE_SourceBuffer;
+
+    TKDT48DE_DyanmicSourceBuffer = array of PKDT48DE_Source;
+    PKDT48DE_DyanmicSourceBuffer = ^TKDT48DE_DyanmicSourceBuffer;
+
+    TKDT48DE_DyanmicStoreBuffer = array of TKDT48DE_Source;
+    PKDT48DE_DyanmicStoreBuffer = ^TKDT48DE_DyanmicStoreBuffer;
+
+    PKDT48DE_Node = ^TKDT48DE_Node;
+
+    TKDT48DE_Node = record
+      Parent, Right, Left: PKDT48DE_Node;
+      Vec: PKDT48DE_Source;
+    end;
+
+    TKDT48DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT48DE_Source; const Data: Pointer);
+    TKDT48DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT48DE_Source; const Data: Pointer) of object;
+{$IFDEF FPC}
+    TKDT48DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT48DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT48DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT48DE_Source; const Data: Pointer);
+{$ENDIF FPC}
+  private
+    KDStoreBuff: TKDT48DE_DyanmicStoreBuffer;
+    KDBuff: TKDT48DE_DyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes: array of PKDT48DE_Node;
+    TestBuff: TKDT48DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT48DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT48DE_Node;
+    function GetData(const Index: NativeInt): PKDT48DE_Source;
+  public
+    RootNode: PKDT48DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT48DE_DyanmicStoreBuffer;
+    property SourceP[const Index: NativeInt]: PKDT48DE_Source read GetData; default;
+
+    { bakcall build }
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT48DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT48DE_BuildMethod);
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT48DE_BuildProc);
+    { fill k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT48DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT48DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT48DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT48DE_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT48DE_BuildProc); overload;
+    { search }
+    function Search(const buff: TKDT48DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT48DE_Node; overload;
+    function Search(const buff: TKDT48DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT48DE_Node; overload;
+    function Search(const buff: TKDT48DE_Vec; var SearchedDistanceMin: Double): PKDT48DE_Node; overload;
+    function Search(const buff: TKDT48DE_Vec): PKDT48DE_Node; overload;
+    function SearchToken(const buff: TKDT48DE_Vec): TPascalString;
+    { parallel search }
+    procedure Search(const inBuff: TKDT48DE_DynamicVecBuffer; var OutBuff: TKDT48DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT48DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+    procedure SaveToFile(FileName: SystemString);
+    procedure LoadFromFile(FileName: SystemString);
+    procedure PrintNodeTree(const NodePtr: PKDT48DE_Node);
+    procedure PrintBuffer;
+    class function Vec(const s: SystemString): TKDT48DE_Vec; overload;
+    class function Vec(const v: TKDT48DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT48DE_Vec): Double;
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT48DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT52DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT52DE_Vec = array [0 .. KDT52DE_Axis - 1] of TKDT52DE_VecType;
+    PKDT52DE_Vec = ^TKDT52DE_Vec;
+
+    TKDT52DE_DynamicVecBuffer = array of TKDT52DE_Vec;
+    PKDT52DE_DynamicVecBuffer = ^TKDT52DE_DynamicVecBuffer;
+
+    TKDT52DE_Source = record
+      buff: TKDT52DE_Vec;
+      Index: Int64;
+      Token: TPascalString;
+    end;
+
+    PKDT52DE_Source = ^TKDT52DE_Source;
+    TKDT52DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT52DE_Source) - 1] of PKDT52DE_Source;
+    PKDT52DE_SourceBuffer = ^TKDT52DE_SourceBuffer;
+
+    TKDT52DE_DyanmicSourceBuffer = array of PKDT52DE_Source;
+    PKDT52DE_DyanmicSourceBuffer = ^TKDT52DE_DyanmicSourceBuffer;
+
+    TKDT52DE_DyanmicStoreBuffer = array of TKDT52DE_Source;
+    PKDT52DE_DyanmicStoreBuffer = ^TKDT52DE_DyanmicStoreBuffer;
+
+    PKDT52DE_Node = ^TKDT52DE_Node;
+
+    TKDT52DE_Node = record
+      Parent, Right, Left: PKDT52DE_Node;
+      Vec: PKDT52DE_Source;
+    end;
+
+    TKDT52DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT52DE_Source; const Data: Pointer);
+    TKDT52DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT52DE_Source; const Data: Pointer) of object;
+{$IFDEF FPC}
+    TKDT52DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT52DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT52DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT52DE_Source; const Data: Pointer);
+{$ENDIF FPC}
+  private
+    KDStoreBuff: TKDT52DE_DyanmicStoreBuffer;
+    KDBuff: TKDT52DE_DyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes: array of PKDT52DE_Node;
+    TestBuff: TKDT52DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT52DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT52DE_Node;
+    function GetData(const Index: NativeInt): PKDT52DE_Source;
+  public
+    RootNode: PKDT52DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT52DE_DyanmicStoreBuffer;
+    property SourceP[const Index: NativeInt]: PKDT52DE_Source read GetData; default;
+
+    { bakcall build }
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT52DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT52DE_BuildMethod);
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT52DE_BuildProc);
+    { fill k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT52DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT52DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT52DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT52DE_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT52DE_BuildProc); overload;
+    { search }
+    function Search(const buff: TKDT52DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT52DE_Node; overload;
+    function Search(const buff: TKDT52DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT52DE_Node; overload;
+    function Search(const buff: TKDT52DE_Vec; var SearchedDistanceMin: Double): PKDT52DE_Node; overload;
+    function Search(const buff: TKDT52DE_Vec): PKDT52DE_Node; overload;
+    function SearchToken(const buff: TKDT52DE_Vec): TPascalString;
+    { parallel search }
+    procedure Search(const inBuff: TKDT52DE_DynamicVecBuffer; var OutBuff: TKDT52DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT52DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+    procedure SaveToFile(FileName: SystemString);
+    procedure LoadFromFile(FileName: SystemString);
+    procedure PrintNodeTree(const NodePtr: PKDT52DE_Node);
+    procedure PrintBuffer;
+    class function Vec(const s: SystemString): TKDT52DE_Vec; overload;
+    class function Vec(const v: TKDT52DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT52DE_Vec): Double;
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT52DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT64DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT64DE_Vec = array [0 .. KDT64DE_Axis - 1] of TKDT64DE_VecType;
+    PKDT64DE_Vec = ^TKDT64DE_Vec;
+
+    TKDT64DE_DynamicVecBuffer = array of TKDT64DE_Vec;
+    PKDT64DE_DynamicVecBuffer = ^TKDT64DE_DynamicVecBuffer;
+
+    TKDT64DE_Source = record
+      buff: TKDT64DE_Vec;
+      Index: Int64;
+      Token: TPascalString;
+    end;
+
+    PKDT64DE_Source = ^TKDT64DE_Source;
+    TKDT64DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT64DE_Source) - 1] of PKDT64DE_Source;
+    PKDT64DE_SourceBuffer = ^TKDT64DE_SourceBuffer;
+
+    TKDT64DE_DyanmicSourceBuffer = array of PKDT64DE_Source;
+    PKDT64DE_DyanmicSourceBuffer = ^TKDT64DE_DyanmicSourceBuffer;
+
+    TKDT64DE_DyanmicStoreBuffer = array of TKDT64DE_Source;
+    PKDT64DE_DyanmicStoreBuffer = ^TKDT64DE_DyanmicStoreBuffer;
+
+    PKDT64DE_Node = ^TKDT64DE_Node;
+
+    TKDT64DE_Node = record
+      Parent, Right, Left: PKDT64DE_Node;
+      Vec: PKDT64DE_Source;
+    end;
+
+    TKDT64DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT64DE_Source; const Data: Pointer);
+    TKDT64DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT64DE_Source; const Data: Pointer) of object;
+{$IFDEF FPC}
+    TKDT64DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT64DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT64DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT64DE_Source; const Data: Pointer);
+{$ENDIF FPC}
+  private
+    KDStoreBuff: TKDT64DE_DyanmicStoreBuffer;
+    KDBuff: TKDT64DE_DyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes: array of PKDT64DE_Node;
+    TestBuff: TKDT64DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT64DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT64DE_Node;
+    function GetData(const Index: NativeInt): PKDT64DE_Source;
+  public
+    RootNode: PKDT64DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT64DE_DyanmicStoreBuffer;
+    property SourceP[const Index: NativeInt]: PKDT64DE_Source read GetData; default;
+
+    { bakcall build }
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT64DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT64DE_BuildMethod);
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT64DE_BuildProc);
+    { fill k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT64DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT64DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT64DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT64DE_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT64DE_BuildProc); overload;
+    { search }
+    function Search(const buff: TKDT64DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT64DE_Node; overload;
+    function Search(const buff: TKDT64DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT64DE_Node; overload;
+    function Search(const buff: TKDT64DE_Vec; var SearchedDistanceMin: Double): PKDT64DE_Node; overload;
+    function Search(const buff: TKDT64DE_Vec): PKDT64DE_Node; overload;
+    function SearchToken(const buff: TKDT64DE_Vec): TPascalString;
+    { parallel search }
+    procedure Search(const inBuff: TKDT64DE_DynamicVecBuffer; var OutBuff: TKDT64DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT64DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+    procedure SaveToFile(FileName: SystemString);
+    procedure LoadFromFile(FileName: SystemString);
+    procedure PrintNodeTree(const NodePtr: PKDT64DE_Node);
+    procedure PrintBuffer;
+    class function Vec(const s: SystemString): TKDT64DE_Vec; overload;
+    class function Vec(const v: TKDT64DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT64DE_Vec): Double;
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT64DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT128DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT128DE_Vec = array [0 .. KDT128DE_Axis - 1] of TKDT128DE_VecType;
+    PKDT128DE_Vec = ^TKDT128DE_Vec;
+
+    TKDT128DE_DynamicVecBuffer = array of TKDT128DE_Vec;
+    PKDT128DE_DynamicVecBuffer = ^TKDT128DE_DynamicVecBuffer;
+
+    TKDT128DE_Source = record
+      buff: TKDT128DE_Vec;
+      Index: Int64;
+      Token: TPascalString;
+    end;
+
+    PKDT128DE_Source = ^TKDT128DE_Source;
+    TKDT128DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT128DE_Source) - 1] of PKDT128DE_Source;
+    PKDT128DE_SourceBuffer = ^TKDT128DE_SourceBuffer;
+
+    TKDT128DE_DyanmicSourceBuffer = array of PKDT128DE_Source;
+    PKDT128DE_DyanmicSourceBuffer = ^TKDT128DE_DyanmicSourceBuffer;
+
+    TKDT128DE_DyanmicStoreBuffer = array of TKDT128DE_Source;
+    PKDT128DE_DyanmicStoreBuffer = ^TKDT128DE_DyanmicStoreBuffer;
+
+    PKDT128DE_Node = ^TKDT128DE_Node;
+
+    TKDT128DE_Node = record
+      Parent, Right, Left: PKDT128DE_Node;
+      Vec: PKDT128DE_Source;
+    end;
+
+    TKDT128DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT128DE_Source; const Data: Pointer);
+    TKDT128DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT128DE_Source; const Data: Pointer) of object;
+{$IFDEF FPC}
+    TKDT128DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT128DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT128DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT128DE_Source; const Data: Pointer);
+{$ENDIF FPC}
+  private
+    KDStoreBuff: TKDT128DE_DyanmicStoreBuffer;
+    KDBuff: TKDT128DE_DyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes: array of PKDT128DE_Node;
+    TestBuff: TKDT128DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT128DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT128DE_Node;
+    function GetData(const Index: NativeInt): PKDT128DE_Source;
+  public
+    RootNode: PKDT128DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT128DE_DyanmicStoreBuffer;
+    property SourceP[const Index: NativeInt]: PKDT128DE_Source read GetData; default;
+
+    { bakcall build }
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT128DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT128DE_BuildMethod);
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT128DE_BuildProc);
+    { fill k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT128DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT128DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT128DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT128DE_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT128DE_BuildProc); overload;
+    { search }
+    function Search(const buff: TKDT128DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT128DE_Node; overload;
+    function Search(const buff: TKDT128DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT128DE_Node; overload;
+    function Search(const buff: TKDT128DE_Vec; var SearchedDistanceMin: Double): PKDT128DE_Node; overload;
+    function Search(const buff: TKDT128DE_Vec): PKDT128DE_Node; overload;
+    function SearchToken(const buff: TKDT128DE_Vec): TPascalString;
+    { parallel search }
+    procedure Search(const inBuff: TKDT128DE_DynamicVecBuffer; var OutBuff: TKDT128DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT128DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+    procedure SaveToFile(FileName: SystemString);
+    procedure LoadFromFile(FileName: SystemString);
+    procedure PrintNodeTree(const NodePtr: PKDT128DE_Node);
+    procedure PrintBuffer;
+    class function Vec(const s: SystemString): TKDT128DE_Vec; overload;
+    class function Vec(const v: TKDT128DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT128DE_Vec): Double;
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT128DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT156DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT156DE_Vec = array [0 .. KDT156DE_Axis - 1] of TKDT156DE_VecType;
+    PKDT156DE_Vec = ^TKDT156DE_Vec;
+
+    TKDT156DE_DynamicVecBuffer = array of TKDT156DE_Vec;
+    PKDT156DE_DynamicVecBuffer = ^TKDT156DE_DynamicVecBuffer;
+
+    TKDT156DE_Source = record
+      buff: TKDT156DE_Vec;
+      Index: Int64;
+      Token: TPascalString;
+    end;
+
+    PKDT156DE_Source = ^TKDT156DE_Source;
+    TKDT156DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT156DE_Source) - 1] of PKDT156DE_Source;
+    PKDT156DE_SourceBuffer = ^TKDT156DE_SourceBuffer;
+
+    TKDT156DE_DyanmicSourceBuffer = array of PKDT156DE_Source;
+    PKDT156DE_DyanmicSourceBuffer = ^TKDT156DE_DyanmicSourceBuffer;
+
+    TKDT156DE_DyanmicStoreBuffer = array of TKDT156DE_Source;
+    PKDT156DE_DyanmicStoreBuffer = ^TKDT156DE_DyanmicStoreBuffer;
+
+    PKDT156DE_Node = ^TKDT156DE_Node;
+
+    TKDT156DE_Node = record
+      Parent, Right, Left: PKDT156DE_Node;
+      Vec: PKDT156DE_Source;
+    end;
+
+    TKDT156DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT156DE_Source; const Data: Pointer);
+    TKDT156DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT156DE_Source; const Data: Pointer) of object;
+{$IFDEF FPC}
+    TKDT156DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT156DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT156DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT156DE_Source; const Data: Pointer);
+{$ENDIF FPC}
+  private
+    KDStoreBuff: TKDT156DE_DyanmicStoreBuffer;
+    KDBuff: TKDT156DE_DyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes: array of PKDT156DE_Node;
+    TestBuff: TKDT156DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT156DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT156DE_Node;
+    function GetData(const Index: NativeInt): PKDT156DE_Source;
+  public
+    RootNode: PKDT156DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT156DE_DyanmicStoreBuffer;
+    property SourceP[const Index: NativeInt]: PKDT156DE_Source read GetData; default;
+
+    { bakcall build }
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT156DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT156DE_BuildMethod);
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT156DE_BuildProc);
+    { fill k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT156DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT156DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT156DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT156DE_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT156DE_BuildProc); overload;
+    { search }
+    function Search(const buff: TKDT156DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT156DE_Node; overload;
+    function Search(const buff: TKDT156DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT156DE_Node; overload;
+    function Search(const buff: TKDT156DE_Vec; var SearchedDistanceMin: Double): PKDT156DE_Node; overload;
+    function Search(const buff: TKDT156DE_Vec): PKDT156DE_Node; overload;
+    function SearchToken(const buff: TKDT156DE_Vec): TPascalString;
+    { parallel search }
+    procedure Search(const inBuff: TKDT156DE_DynamicVecBuffer; var OutBuff: TKDT156DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT156DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+    procedure SaveToFile(FileName: SystemString);
+    procedure LoadFromFile(FileName: SystemString);
+    procedure PrintNodeTree(const NodePtr: PKDT156DE_Node);
+    procedure PrintBuffer;
+    class function Vec(const s: SystemString): TKDT156DE_Vec; overload;
+    class function Vec(const v: TKDT156DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT156DE_Vec): Double;
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT156DE_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT192DE = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT192DE_Vec = array [0 .. KDT192DE_Axis - 1] of TKDT192DE_VecType;
+    PKDT192DE_Vec = ^TKDT192DE_Vec;
+
+    TKDT192DE_DynamicVecBuffer = array of TKDT192DE_Vec;
+    PKDT192DE_DynamicVecBuffer = ^TKDT192DE_DynamicVecBuffer;
+
+    TKDT192DE_Source = record
+      buff: TKDT192DE_Vec;
+      Index: Int64;
+      Token: TPascalString;
+    end;
+
+    PKDT192DE_Source = ^TKDT192DE_Source;
+    TKDT192DE_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT192DE_Source) - 1] of PKDT192DE_Source;
+    PKDT192DE_SourceBuffer = ^TKDT192DE_SourceBuffer;
+
+    TKDT192DE_DyanmicSourceBuffer = array of PKDT192DE_Source;
+    PKDT192DE_DyanmicSourceBuffer = ^TKDT192DE_DyanmicSourceBuffer;
+
+    TKDT192DE_DyanmicStoreBuffer = array of TKDT192DE_Source;
+    PKDT192DE_DyanmicStoreBuffer = ^TKDT192DE_DyanmicStoreBuffer;
+
+    PKDT192DE_Node = ^TKDT192DE_Node;
+
+    TKDT192DE_Node = record
+      Parent, Right, Left: PKDT192DE_Node;
+      Vec: PKDT192DE_Source;
+    end;
+
+    TKDT192DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT192DE_Source; const Data: Pointer);
+    TKDT192DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT192DE_Source; const Data: Pointer) of object;
+{$IFDEF FPC}
+    TKDT192DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT192DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT192DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT192DE_Source; const Data: Pointer);
+{$ENDIF FPC}
+  private
+    KDStoreBuff: TKDT192DE_DyanmicStoreBuffer;
+    KDBuff: TKDT192DE_DyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes: array of PKDT192DE_Node;
+    TestBuff: TKDT192DE_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT192DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT192DE_Node;
+    function GetData(const Index: NativeInt): PKDT192DE_Source;
+  public
+    RootNode: PKDT192DE_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT192DE_DyanmicStoreBuffer;
+    property SourceP[const Index: NativeInt]: PKDT192DE_Source read GetData; default;
+
+    { bakcall build }
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT192DE_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT192DE_BuildMethod);
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT192DE_BuildProc);
+    { fill k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT192DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT192DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT192DE_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT192DE_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT192DE_BuildProc); overload;
+    { search }
+    function Search(const buff: TKDT192DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT192DE_Node; overload;
+    function Search(const buff: TKDT192DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT192DE_Node; overload;
+    function Search(const buff: TKDT192DE_Vec; var SearchedDistanceMin: Double): PKDT192DE_Node; overload;
+    function Search(const buff: TKDT192DE_Vec): PKDT192DE_Node; overload;
+    function SearchToken(const buff: TKDT192DE_Vec): TPascalString;
+    { parallel search }
+    procedure Search(const inBuff: TKDT192DE_DynamicVecBuffer; var OutBuff: TKDT192DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT192DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+    procedure SaveToFile(FileName: SystemString);
+    procedure LoadFromFile(FileName: SystemString);
+    procedure PrintNodeTree(const NodePtr: PKDT192DE_Node);
+    procedure PrintBuffer;
+    class function Vec(const s: SystemString): TKDT192DE_Vec; overload;
+    class function Vec(const v: TKDT192DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT192DE_Vec): Double;
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT192DE_Source; const Data: Pointer);
     class procedure Test;
   end;
 
@@ -2452,12 +3016,16 @@ type
 
     TKDT256DE_Node = record
       Parent, Right, Left: PKDT256DE_Node;
-      vec: PKDT256DE_Source;
+      Vec: PKDT256DE_Source;
     end;
 
     TKDT256DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT256DE_Source; const Data: Pointer);
     TKDT256DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT256DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT256DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT256DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT256DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT256DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT256DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT256DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT256DE_DyanmicStoreBuffer;
     KDBuff: TKDT256DE_DyanmicSourceBuffer;
@@ -2478,41 +3046,36 @@ type
     function StoreBuffPtr: PKDT256DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT256DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT256DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT256DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT256DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT256DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT256DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT256DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT256DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT256DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT256DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT256DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT256DE_Node; overload;
     function Search(const buff: TKDT256DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT256DE_Node; overload;
     function Search(const buff: TKDT256DE_Vec; var SearchedDistanceMin: Double): PKDT256DE_Node; overload;
     function Search(const buff: TKDT256DE_Vec): PKDT256DE_Node; overload;
     function SearchToken(const buff: TKDT256DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT256DE_DynamicVecBuffer; var OutBuff: TKDT256DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT256DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT256DE_Node);
     procedure PrintBuffer;
-
-    class function KDT256DEVec(const s: SystemString): TKDT256DE_Vec; overload;
-    class function KDT256DEVec(const v: TKDT256DE_Vec): SystemString; overload;
-    class function KDT256DEPow(const v: TKDT256DE_VecType): Double;
-    class function KDT256DEDistance(const v1, v2: TKDT256DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT256DE_Vec; overload;
+    class function Vec(const v: TKDT256DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT256DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT256DE_Source; const Data: Pointer);
     class procedure Test;
@@ -2549,12 +3112,16 @@ type
 
     TKDT512DE_Node = record
       Parent, Right, Left: PKDT512DE_Node;
-      vec: PKDT512DE_Source;
+      Vec: PKDT512DE_Source;
     end;
 
     TKDT512DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT512DE_Source; const Data: Pointer);
     TKDT512DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT512DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT512DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT512DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT512DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT512DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT512DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT512DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT512DE_DyanmicStoreBuffer;
     KDBuff: TKDT512DE_DyanmicSourceBuffer;
@@ -2575,41 +3142,36 @@ type
     function StoreBuffPtr: PKDT512DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT512DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT512DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT512DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT512DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT512DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT512DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT512DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT512DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT512DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT512DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT512DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT512DE_Node; overload;
     function Search(const buff: TKDT512DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT512DE_Node; overload;
     function Search(const buff: TKDT512DE_Vec; var SearchedDistanceMin: Double): PKDT512DE_Node; overload;
     function Search(const buff: TKDT512DE_Vec): PKDT512DE_Node; overload;
     function SearchToken(const buff: TKDT512DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT512DE_DynamicVecBuffer; var OutBuff: TKDT512DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT512DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT512DE_Node);
     procedure PrintBuffer;
-
-    class function KDT512DEVec(const s: SystemString): TKDT512DE_Vec; overload;
-    class function KDT512DEVec(const v: TKDT512DE_Vec): SystemString; overload;
-    class function KDT512DEPow(const v: TKDT512DE_VecType): Double;
-    class function KDT512DEDistance(const v1, v2: TKDT512DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT512DE_Vec; overload;
+    class function Vec(const v: TKDT512DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT512DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT512DE_Source; const Data: Pointer);
     class procedure Test;
@@ -2646,12 +3208,16 @@ type
 
     TKDT1024DE_Node = record
       Parent, Right, Left: PKDT1024DE_Node;
-      vec: PKDT1024DE_Source;
+      Vec: PKDT1024DE_Source;
     end;
 
     TKDT1024DE_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT1024DE_Source; const Data: Pointer);
     TKDT1024DE_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT1024DE_Source; const Data: Pointer) of object;
-{$IFNDEF FPC} TKDT1024DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT1024DE_Source; const Data: Pointer); {$ENDIF}
+{$IFDEF FPC}
+    TKDT1024DE_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT1024DE_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT1024DE_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT1024DE_Source; const Data: Pointer);
+{$ENDIF FPC}
   private
     KDStoreBuff: TKDT1024DE_DyanmicStoreBuffer;
     KDBuff: TKDT1024DE_DyanmicSourceBuffer;
@@ -2672,41 +3238,36 @@ type
     function StoreBuffPtr: PKDT1024DE_DyanmicStoreBuffer;
     property SourceP[const Index: NativeInt]: PKDT1024DE_Source read GetData; default;
 
+    { bakcall build }
     procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1024DE_BuildCall);
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1024DE_BuildMethod);
-{$IFNDEF FPC} procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1024DE_BuildProc); {$ENDIF}
-    { direct k-means++ clusterization }
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1024DE_BuildProc);
+    { fill k-means++ clusterization }
     procedure BuildKDTreeWithCluster(const inBuff: TKDT1024DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT1024DE_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
     procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1024DE_BuildCall); overload;
     procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1024DE_BuildMethod); overload;
-{$IFNDEF FPC}
     procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1024DE_BuildProc); overload;
-{$ENDIF FPC}
     { search }
     function Search(const buff: TKDT1024DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT1024DE_Node; overload;
     function Search(const buff: TKDT1024DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT1024DE_Node; overload;
     function Search(const buff: TKDT1024DE_Vec; var SearchedDistanceMin: Double): PKDT1024DE_Node; overload;
     function Search(const buff: TKDT1024DE_Vec): PKDT1024DE_Node; overload;
     function SearchToken(const buff: TKDT1024DE_Vec): TPascalString;
-    { parallel support }
+    { parallel search }
     procedure Search(const inBuff: TKDT1024DE_DynamicVecBuffer; var OutBuff: TKDT1024DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
     procedure Search(const inBuff: TKDT1024DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
-
     procedure SaveToFile(FileName: SystemString);
     procedure LoadFromFile(FileName: SystemString);
-
     procedure PrintNodeTree(const NodePtr: PKDT1024DE_Node);
     procedure PrintBuffer;
-
-    class function KDT1024DEVec(const s: SystemString): TKDT1024DE_Vec; overload;
-    class function KDT1024DEVec(const v: TKDT1024DE_Vec): SystemString; overload;
-    class function KDT1024DEPow(const v: TKDT1024DE_VecType): Double;
-    class function KDT1024DEDistance(const v1, v2: TKDT1024DE_Vec): Double;
+    class function Vec(const s: SystemString): TKDT1024DE_Vec; overload;
+    class function Vec(const v: TKDT1024DE_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT1024DE_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT1024DE_Source; const Data: Pointer);
     class procedure Test;
@@ -2724,11 +3285,6 @@ procedure Test_All;
 implementation
 
 uses
-  {$IFDEF FPC}
-  mtprocs,
-  {$ELSE FPC}
-  Threading,
-  {$ENDIF FPC}
   TextParsing, MemoryStream64, DoStatusIO;
 
 
@@ -2737,7 +3293,6 @@ uses
 
 const
   SaveToken = $22;
-
 
 
 function TKDT1DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT1DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1DE_Node;
@@ -2805,7 +3360,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -2823,7 +3378,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -2950,9 +3505,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT1DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1DE_BuildProc);
 var
   i, j: NativeInt;
@@ -2981,8 +3533,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT1DE.BuildKDTreeWithCluster(const inBuff: TKDT1DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -3133,9 +3683,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT1DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1DE_BuildProc);
 var
   TempStoreBuff: TKDT1DE_DyanmicStoreBuffer;
@@ -3189,9 +3736,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT1DE.Search(const buff: TKDT1DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT1DE_Node;
 
 var
@@ -3209,7 +3753,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT1DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -3230,21 +3774,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT1DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT1DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -3260,13 +3804,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT1DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT1DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -3326,7 +3870,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT1DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -3370,7 +3914,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -3384,13 +3928,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT1DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -3405,23 +3949,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT1DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -3440,8 +3984,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -3455,12 +3999,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT1DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -3472,22 +4016,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT1DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -3504,7 +4048,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -3616,7 +4160,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT1DE.SaveToFile(FileName: SystemString);
@@ -3636,7 +4180,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -3651,7 +4195,7 @@ end;
 procedure TKDT1DE.PrintNodeTree(const NodePtr: PKDT1DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT1DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT1DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -3667,10 +4211,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT1DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT1DE.KDT1DEVec(const s: SystemString): TKDT1DE_Vec;
+class function TKDT1DE.Vec(const s: SystemString): TKDT1DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -3695,7 +4239,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT1DE.KDT1DEVec(const v: TKDT1DE_Vec): SystemString;
+class function TKDT1DE.Vec(const v: TKDT1DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -3708,18 +4252,13 @@ begin
     end;
 end;
 
-class function TKDT1DE.KDT1DEPow(const v: TKDT1DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT1DE.KDT1DEDistance(const v1, v2: TKDT1DE_Vec): Double;
+class function TKDT1DE.Distance(const v1, v2: TKDT1DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT1DE_Axis - 1 do
-      Result := Result + KDT1DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT1DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT1DE_Source; const Data: Pointer);
@@ -3739,15 +4278,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT1DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT1DE_Test := TKDT1DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT1DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT1DE_Test.TestBuff) - 1 do
     for j := 0 to KDT1DE_Axis - 1 do
@@ -3759,7 +4299,7 @@ begin
   TKDT1DE_Test.BuildKDTreeM(length(TKDT1DE_Test.TestBuff), nil, TKDT1DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT1DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -3767,9 +4307,9 @@ begin
   for i := 0 to length(TKDT1DE_Test.TestBuff) - 1 do
     begin
       p := TKDT1DE_Test.Search(TKDT1DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -3779,19 +4319,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT1DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT1DE_Test.TestBuff));
       TKDT1DE_Test.Search(TKDT1DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT1DEDistance(TKDT1DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT1DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT1DE_Test.Clear;
       { kMean test }
       TKDT1DE_Test.BuildKDTreeWithCluster(TKDT1DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -3809,16 +4349,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT1DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT1DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT2DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT2DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT2DE_Node;
   function SortCompare(const p1, p2: PKDT2DE_Source; const axis: NativeInt): ShortInt;
@@ -3885,7 +4424,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -3903,7 +4442,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -4030,9 +4569,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT2DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2DE_BuildProc);
 var
   i, j: NativeInt;
@@ -4061,8 +4597,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT2DE.BuildKDTreeWithCluster(const inBuff: TKDT2DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -4213,9 +4747,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT2DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT2DE_BuildProc);
 var
   TempStoreBuff: TKDT2DE_DyanmicStoreBuffer;
@@ -4269,9 +4800,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT2DE.Search(const buff: TKDT2DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT2DE_Node;
 
 var
@@ -4289,7 +4817,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT2DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -4310,21 +4838,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT2DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT2DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -4340,13 +4868,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT2DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT2DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -4406,7 +4934,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT2DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -4450,7 +4978,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -4464,13 +4992,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT2DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -4485,23 +5013,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT2DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -4520,8 +5048,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -4535,12 +5063,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT2DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -4552,22 +5080,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT2DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -4584,7 +5112,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -4696,7 +5224,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT2DE.SaveToFile(FileName: SystemString);
@@ -4716,7 +5244,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -4731,7 +5259,7 @@ end;
 procedure TKDT2DE.PrintNodeTree(const NodePtr: PKDT2DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT2DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT2DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -4747,10 +5275,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT2DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT2DE.KDT2DEVec(const s: SystemString): TKDT2DE_Vec;
+class function TKDT2DE.Vec(const s: SystemString): TKDT2DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -4775,7 +5303,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT2DE.KDT2DEVec(const v: TKDT2DE_Vec): SystemString;
+class function TKDT2DE.Vec(const v: TKDT2DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -4788,18 +5316,13 @@ begin
     end;
 end;
 
-class function TKDT2DE.KDT2DEPow(const v: TKDT2DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT2DE.KDT2DEDistance(const v1, v2: TKDT2DE_Vec): Double;
+class function TKDT2DE.Distance(const v1, v2: TKDT2DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT2DE_Axis - 1 do
-      Result := Result + KDT2DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT2DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT2DE_Source; const Data: Pointer);
@@ -4819,15 +5342,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT2DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT2DE_Test := TKDT2DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT2DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT2DE_Test.TestBuff) - 1 do
     for j := 0 to KDT2DE_Axis - 1 do
@@ -4839,7 +5363,7 @@ begin
   TKDT2DE_Test.BuildKDTreeM(length(TKDT2DE_Test.TestBuff), nil, TKDT2DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT2DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -4847,9 +5371,9 @@ begin
   for i := 0 to length(TKDT2DE_Test.TestBuff) - 1 do
     begin
       p := TKDT2DE_Test.Search(TKDT2DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -4859,19 +5383,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT2DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT2DE_Test.TestBuff));
       TKDT2DE_Test.Search(TKDT2DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT2DEDistance(TKDT2DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT2DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT2DE_Test.Clear;
       { kMean test }
       TKDT2DE_Test.BuildKDTreeWithCluster(TKDT2DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -4889,16 +5413,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT2DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT2DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT3DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT3DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT3DE_Node;
   function SortCompare(const p1, p2: PKDT3DE_Source; const axis: NativeInt): ShortInt;
@@ -4965,7 +5488,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -4983,7 +5506,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -5110,9 +5633,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT3DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3DE_BuildProc);
 var
   i, j: NativeInt;
@@ -5141,8 +5661,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT3DE.BuildKDTreeWithCluster(const inBuff: TKDT3DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -5293,9 +5811,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT3DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT3DE_BuildProc);
 var
   TempStoreBuff: TKDT3DE_DyanmicStoreBuffer;
@@ -5349,9 +5864,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT3DE.Search(const buff: TKDT3DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT3DE_Node;
 
 var
@@ -5369,7 +5881,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT3DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -5390,21 +5902,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT3DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT3DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -5420,13 +5932,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT3DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT3DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -5486,7 +5998,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT3DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -5530,7 +6042,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -5544,13 +6056,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT3DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -5565,23 +6077,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT3DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -5600,8 +6112,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -5615,12 +6127,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT3DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -5632,22 +6144,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT3DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -5664,7 +6176,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -5776,7 +6288,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT3DE.SaveToFile(FileName: SystemString);
@@ -5796,7 +6308,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -5811,7 +6323,7 @@ end;
 procedure TKDT3DE.PrintNodeTree(const NodePtr: PKDT3DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT3DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT3DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -5827,10 +6339,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT3DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT3DE.KDT3DEVec(const s: SystemString): TKDT3DE_Vec;
+class function TKDT3DE.Vec(const s: SystemString): TKDT3DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -5855,7 +6367,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT3DE.KDT3DEVec(const v: TKDT3DE_Vec): SystemString;
+class function TKDT3DE.Vec(const v: TKDT3DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -5868,18 +6380,13 @@ begin
     end;
 end;
 
-class function TKDT3DE.KDT3DEPow(const v: TKDT3DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT3DE.KDT3DEDistance(const v1, v2: TKDT3DE_Vec): Double;
+class function TKDT3DE.Distance(const v1, v2: TKDT3DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT3DE_Axis - 1 do
-      Result := Result + KDT3DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT3DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT3DE_Source; const Data: Pointer);
@@ -5899,15 +6406,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT3DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT3DE_Test := TKDT3DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT3DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT3DE_Test.TestBuff) - 1 do
     for j := 0 to KDT3DE_Axis - 1 do
@@ -5919,7 +6427,7 @@ begin
   TKDT3DE_Test.BuildKDTreeM(length(TKDT3DE_Test.TestBuff), nil, TKDT3DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT3DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -5927,9 +6435,9 @@ begin
   for i := 0 to length(TKDT3DE_Test.TestBuff) - 1 do
     begin
       p := TKDT3DE_Test.Search(TKDT3DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -5939,19 +6447,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT3DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT3DE_Test.TestBuff));
       TKDT3DE_Test.Search(TKDT3DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT3DEDistance(TKDT3DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT3DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT3DE_Test.Clear;
       { kMean test }
       TKDT3DE_Test.BuildKDTreeWithCluster(TKDT3DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -5969,16 +6477,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT3DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT3DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT4DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT4DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT4DE_Node;
   function SortCompare(const p1, p2: PKDT4DE_Source; const axis: NativeInt): ShortInt;
@@ -6045,7 +6552,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -6063,7 +6570,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -6190,9 +6697,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT4DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4DE_BuildProc);
 var
   i, j: NativeInt;
@@ -6221,8 +6725,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT4DE.BuildKDTreeWithCluster(const inBuff: TKDT4DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -6373,9 +6875,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT4DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT4DE_BuildProc);
 var
   TempStoreBuff: TKDT4DE_DyanmicStoreBuffer;
@@ -6429,9 +6928,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT4DE.Search(const buff: TKDT4DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT4DE_Node;
 
 var
@@ -6449,7 +6945,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT4DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -6470,21 +6966,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT4DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT4DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -6500,13 +6996,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT4DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT4DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -6566,7 +7062,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT4DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -6610,7 +7106,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -6624,13 +7120,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT4DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -6645,23 +7141,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT4DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -6680,8 +7176,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -6695,12 +7191,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT4DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -6712,22 +7208,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT4DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -6744,7 +7240,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -6856,7 +7352,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT4DE.SaveToFile(FileName: SystemString);
@@ -6876,7 +7372,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -6891,7 +7387,7 @@ end;
 procedure TKDT4DE.PrintNodeTree(const NodePtr: PKDT4DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT4DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT4DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -6907,10 +7403,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT4DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT4DE.KDT4DEVec(const s: SystemString): TKDT4DE_Vec;
+class function TKDT4DE.Vec(const s: SystemString): TKDT4DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -6935,7 +7431,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT4DE.KDT4DEVec(const v: TKDT4DE_Vec): SystemString;
+class function TKDT4DE.Vec(const v: TKDT4DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -6948,18 +7444,13 @@ begin
     end;
 end;
 
-class function TKDT4DE.KDT4DEPow(const v: TKDT4DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT4DE.KDT4DEDistance(const v1, v2: TKDT4DE_Vec): Double;
+class function TKDT4DE.Distance(const v1, v2: TKDT4DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT4DE_Axis - 1 do
-      Result := Result + KDT4DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT4DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT4DE_Source; const Data: Pointer);
@@ -6979,15 +7470,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT4DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT4DE_Test := TKDT4DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT4DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT4DE_Test.TestBuff) - 1 do
     for j := 0 to KDT4DE_Axis - 1 do
@@ -6999,7 +7491,7 @@ begin
   TKDT4DE_Test.BuildKDTreeM(length(TKDT4DE_Test.TestBuff), nil, TKDT4DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT4DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -7007,9 +7499,9 @@ begin
   for i := 0 to length(TKDT4DE_Test.TestBuff) - 1 do
     begin
       p := TKDT4DE_Test.Search(TKDT4DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -7019,19 +7511,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT4DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT4DE_Test.TestBuff));
       TKDT4DE_Test.Search(TKDT4DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT4DEDistance(TKDT4DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT4DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT4DE_Test.Clear;
       { kMean test }
       TKDT4DE_Test.BuildKDTreeWithCluster(TKDT4DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -7049,16 +7541,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT4DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT4DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT5DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT5DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT5DE_Node;
   function SortCompare(const p1, p2: PKDT5DE_Source; const axis: NativeInt): ShortInt;
@@ -7125,7 +7616,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -7143,7 +7634,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -7270,9 +7761,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT5DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT5DE_BuildProc);
 var
   i, j: NativeInt;
@@ -7301,8 +7789,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT5DE.BuildKDTreeWithCluster(const inBuff: TKDT5DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -7453,9 +7939,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT5DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT5DE_BuildProc);
 var
   TempStoreBuff: TKDT5DE_DyanmicStoreBuffer;
@@ -7509,9 +7992,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT5DE.Search(const buff: TKDT5DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT5DE_Node;
 
 var
@@ -7529,7 +8009,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT5DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -7550,21 +8030,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT5DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT5DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -7580,13 +8060,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT5DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT5DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -7646,7 +8126,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT5DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -7690,7 +8170,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -7704,13 +8184,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT5DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -7725,23 +8205,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT5DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -7760,8 +8240,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -7775,12 +8255,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT5DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -7792,22 +8272,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT5DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -7824,7 +8304,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -7936,7 +8416,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT5DE.SaveToFile(FileName: SystemString);
@@ -7956,7 +8436,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -7971,7 +8451,7 @@ end;
 procedure TKDT5DE.PrintNodeTree(const NodePtr: PKDT5DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT5DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT5DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -7987,10 +8467,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT5DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT5DE.KDT5DEVec(const s: SystemString): TKDT5DE_Vec;
+class function TKDT5DE.Vec(const s: SystemString): TKDT5DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -8015,7 +8495,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT5DE.KDT5DEVec(const v: TKDT5DE_Vec): SystemString;
+class function TKDT5DE.Vec(const v: TKDT5DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -8028,18 +8508,13 @@ begin
     end;
 end;
 
-class function TKDT5DE.KDT5DEPow(const v: TKDT5DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT5DE.KDT5DEDistance(const v1, v2: TKDT5DE_Vec): Double;
+class function TKDT5DE.Distance(const v1, v2: TKDT5DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT5DE_Axis - 1 do
-      Result := Result + KDT5DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT5DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT5DE_Source; const Data: Pointer);
@@ -8059,15 +8534,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT5DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT5DE_Test := TKDT5DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT5DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT5DE_Test.TestBuff) - 1 do
     for j := 0 to KDT5DE_Axis - 1 do
@@ -8079,7 +8555,7 @@ begin
   TKDT5DE_Test.BuildKDTreeM(length(TKDT5DE_Test.TestBuff), nil, TKDT5DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT5DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -8087,9 +8563,9 @@ begin
   for i := 0 to length(TKDT5DE_Test.TestBuff) - 1 do
     begin
       p := TKDT5DE_Test.Search(TKDT5DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -8099,19 +8575,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT5DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT5DE_Test.TestBuff));
       TKDT5DE_Test.Search(TKDT5DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT5DEDistance(TKDT5DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT5DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT5DE_Test.Clear;
       { kMean test }
       TKDT5DE_Test.BuildKDTreeWithCluster(TKDT5DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -8129,16 +8605,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT5DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT5DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT6DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT6DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT6DE_Node;
   function SortCompare(const p1, p2: PKDT6DE_Source; const axis: NativeInt): ShortInt;
@@ -8205,7 +8680,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -8223,7 +8698,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -8350,9 +8825,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT6DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT6DE_BuildProc);
 var
   i, j: NativeInt;
@@ -8381,8 +8853,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT6DE.BuildKDTreeWithCluster(const inBuff: TKDT6DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -8533,9 +9003,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT6DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT6DE_BuildProc);
 var
   TempStoreBuff: TKDT6DE_DyanmicStoreBuffer;
@@ -8589,9 +9056,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT6DE.Search(const buff: TKDT6DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT6DE_Node;
 
 var
@@ -8609,7 +9073,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT6DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -8630,21 +9094,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT6DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT6DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -8660,13 +9124,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT6DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT6DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -8726,7 +9190,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT6DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -8770,7 +9234,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -8784,13 +9248,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT6DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -8805,23 +9269,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT6DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -8840,8 +9304,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -8855,12 +9319,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT6DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -8872,22 +9336,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT6DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -8904,7 +9368,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -9016,7 +9480,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT6DE.SaveToFile(FileName: SystemString);
@@ -9036,7 +9500,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -9051,7 +9515,7 @@ end;
 procedure TKDT6DE.PrintNodeTree(const NodePtr: PKDT6DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT6DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT6DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -9067,10 +9531,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT6DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT6DE.KDT6DEVec(const s: SystemString): TKDT6DE_Vec;
+class function TKDT6DE.Vec(const s: SystemString): TKDT6DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -9095,7 +9559,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT6DE.KDT6DEVec(const v: TKDT6DE_Vec): SystemString;
+class function TKDT6DE.Vec(const v: TKDT6DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -9108,18 +9572,13 @@ begin
     end;
 end;
 
-class function TKDT6DE.KDT6DEPow(const v: TKDT6DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT6DE.KDT6DEDistance(const v1, v2: TKDT6DE_Vec): Double;
+class function TKDT6DE.Distance(const v1, v2: TKDT6DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT6DE_Axis - 1 do
-      Result := Result + KDT6DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT6DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT6DE_Source; const Data: Pointer);
@@ -9139,15 +9598,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT6DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT6DE_Test := TKDT6DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT6DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT6DE_Test.TestBuff) - 1 do
     for j := 0 to KDT6DE_Axis - 1 do
@@ -9159,7 +9619,7 @@ begin
   TKDT6DE_Test.BuildKDTreeM(length(TKDT6DE_Test.TestBuff), nil, TKDT6DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT6DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -9167,9 +9627,9 @@ begin
   for i := 0 to length(TKDT6DE_Test.TestBuff) - 1 do
     begin
       p := TKDT6DE_Test.Search(TKDT6DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -9179,19 +9639,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT6DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT6DE_Test.TestBuff));
       TKDT6DE_Test.Search(TKDT6DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT6DEDistance(TKDT6DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT6DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT6DE_Test.Clear;
       { kMean test }
       TKDT6DE_Test.BuildKDTreeWithCluster(TKDT6DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -9209,16 +9669,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT6DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT6DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT7DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT7DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT7DE_Node;
   function SortCompare(const p1, p2: PKDT7DE_Source; const axis: NativeInt): ShortInt;
@@ -9285,7 +9744,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -9303,7 +9762,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -9430,9 +9889,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT7DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT7DE_BuildProc);
 var
   i, j: NativeInt;
@@ -9461,8 +9917,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT7DE.BuildKDTreeWithCluster(const inBuff: TKDT7DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -9613,9 +10067,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT7DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT7DE_BuildProc);
 var
   TempStoreBuff: TKDT7DE_DyanmicStoreBuffer;
@@ -9669,9 +10120,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT7DE.Search(const buff: TKDT7DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT7DE_Node;
 
 var
@@ -9689,7 +10137,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT7DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -9710,21 +10158,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT7DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT7DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -9740,13 +10188,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT7DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT7DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -9806,7 +10254,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT7DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -9850,7 +10298,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -9864,13 +10312,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT7DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -9885,23 +10333,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT7DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -9920,8 +10368,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -9935,12 +10383,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT7DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -9952,22 +10400,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT7DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -9984,7 +10432,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -10096,7 +10544,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT7DE.SaveToFile(FileName: SystemString);
@@ -10116,7 +10564,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -10131,7 +10579,7 @@ end;
 procedure TKDT7DE.PrintNodeTree(const NodePtr: PKDT7DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT7DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT7DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -10147,10 +10595,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT7DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT7DE.KDT7DEVec(const s: SystemString): TKDT7DE_Vec;
+class function TKDT7DE.Vec(const s: SystemString): TKDT7DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -10175,7 +10623,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT7DE.KDT7DEVec(const v: TKDT7DE_Vec): SystemString;
+class function TKDT7DE.Vec(const v: TKDT7DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -10188,18 +10636,13 @@ begin
     end;
 end;
 
-class function TKDT7DE.KDT7DEPow(const v: TKDT7DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT7DE.KDT7DEDistance(const v1, v2: TKDT7DE_Vec): Double;
+class function TKDT7DE.Distance(const v1, v2: TKDT7DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT7DE_Axis - 1 do
-      Result := Result + KDT7DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT7DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT7DE_Source; const Data: Pointer);
@@ -10219,15 +10662,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT7DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT7DE_Test := TKDT7DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT7DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT7DE_Test.TestBuff) - 1 do
     for j := 0 to KDT7DE_Axis - 1 do
@@ -10239,7 +10683,7 @@ begin
   TKDT7DE_Test.BuildKDTreeM(length(TKDT7DE_Test.TestBuff), nil, TKDT7DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT7DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -10247,9 +10691,9 @@ begin
   for i := 0 to length(TKDT7DE_Test.TestBuff) - 1 do
     begin
       p := TKDT7DE_Test.Search(TKDT7DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -10259,19 +10703,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT7DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT7DE_Test.TestBuff));
       TKDT7DE_Test.Search(TKDT7DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT7DEDistance(TKDT7DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT7DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT7DE_Test.Clear;
       { kMean test }
       TKDT7DE_Test.BuildKDTreeWithCluster(TKDT7DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -10289,16 +10733,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT7DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT7DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT8DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT8DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT8DE_Node;
   function SortCompare(const p1, p2: PKDT8DE_Source; const axis: NativeInt): ShortInt;
@@ -10365,7 +10808,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -10383,7 +10826,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -10510,9 +10953,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT8DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8DE_BuildProc);
 var
   i, j: NativeInt;
@@ -10541,8 +10981,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT8DE.BuildKDTreeWithCluster(const inBuff: TKDT8DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -10693,9 +11131,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT8DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT8DE_BuildProc);
 var
   TempStoreBuff: TKDT8DE_DyanmicStoreBuffer;
@@ -10749,9 +11184,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT8DE.Search(const buff: TKDT8DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT8DE_Node;
 
 var
@@ -10769,7 +11201,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT8DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -10790,21 +11222,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT8DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT8DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -10820,13 +11252,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT8DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT8DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -10886,7 +11318,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT8DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -10930,7 +11362,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -10944,13 +11376,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT8DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -10965,23 +11397,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT8DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -11000,8 +11432,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -11015,12 +11447,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT8DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -11032,22 +11464,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT8DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -11064,7 +11496,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -11176,7 +11608,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT8DE.SaveToFile(FileName: SystemString);
@@ -11196,7 +11628,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -11211,7 +11643,7 @@ end;
 procedure TKDT8DE.PrintNodeTree(const NodePtr: PKDT8DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT8DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT8DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -11227,10 +11659,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT8DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT8DE.KDT8DEVec(const s: SystemString): TKDT8DE_Vec;
+class function TKDT8DE.Vec(const s: SystemString): TKDT8DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -11255,7 +11687,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT8DE.KDT8DEVec(const v: TKDT8DE_Vec): SystemString;
+class function TKDT8DE.Vec(const v: TKDT8DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -11268,18 +11700,13 @@ begin
     end;
 end;
 
-class function TKDT8DE.KDT8DEPow(const v: TKDT8DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT8DE.KDT8DEDistance(const v1, v2: TKDT8DE_Vec): Double;
+class function TKDT8DE.Distance(const v1, v2: TKDT8DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT8DE_Axis - 1 do
-      Result := Result + KDT8DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT8DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT8DE_Source; const Data: Pointer);
@@ -11299,15 +11726,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT8DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT8DE_Test := TKDT8DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT8DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT8DE_Test.TestBuff) - 1 do
     for j := 0 to KDT8DE_Axis - 1 do
@@ -11319,7 +11747,7 @@ begin
   TKDT8DE_Test.BuildKDTreeM(length(TKDT8DE_Test.TestBuff), nil, TKDT8DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT8DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -11327,9 +11755,9 @@ begin
   for i := 0 to length(TKDT8DE_Test.TestBuff) - 1 do
     begin
       p := TKDT8DE_Test.Search(TKDT8DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -11339,19 +11767,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT8DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT8DE_Test.TestBuff));
       TKDT8DE_Test.Search(TKDT8DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT8DEDistance(TKDT8DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT8DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT8DE_Test.Clear;
       { kMean test }
       TKDT8DE_Test.BuildKDTreeWithCluster(TKDT8DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -11369,16 +11797,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT8DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT8DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT9DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT9DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT9DE_Node;
   function SortCompare(const p1, p2: PKDT9DE_Source; const axis: NativeInt): ShortInt;
@@ -11445,7 +11872,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -11463,7 +11890,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -11590,9 +12017,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT9DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT9DE_BuildProc);
 var
   i, j: NativeInt;
@@ -11621,8 +12045,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT9DE.BuildKDTreeWithCluster(const inBuff: TKDT9DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -11773,9 +12195,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT9DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT9DE_BuildProc);
 var
   TempStoreBuff: TKDT9DE_DyanmicStoreBuffer;
@@ -11829,9 +12248,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT9DE.Search(const buff: TKDT9DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT9DE_Node;
 
 var
@@ -11849,7 +12265,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT9DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -11870,21 +12286,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT9DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT9DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -11900,13 +12316,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT9DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT9DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -11966,7 +12382,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT9DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -12010,7 +12426,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -12024,13 +12440,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT9DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -12045,23 +12461,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT9DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -12080,8 +12496,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -12095,12 +12511,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT9DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -12112,22 +12528,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT9DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -12144,7 +12560,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -12256,7 +12672,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT9DE.SaveToFile(FileName: SystemString);
@@ -12276,7 +12692,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -12291,7 +12707,7 @@ end;
 procedure TKDT9DE.PrintNodeTree(const NodePtr: PKDT9DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT9DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT9DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -12307,10 +12723,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT9DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT9DE.KDT9DEVec(const s: SystemString): TKDT9DE_Vec;
+class function TKDT9DE.Vec(const s: SystemString): TKDT9DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -12335,7 +12751,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT9DE.KDT9DEVec(const v: TKDT9DE_Vec): SystemString;
+class function TKDT9DE.Vec(const v: TKDT9DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -12348,18 +12764,13 @@ begin
     end;
 end;
 
-class function TKDT9DE.KDT9DEPow(const v: TKDT9DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT9DE.KDT9DEDistance(const v1, v2: TKDT9DE_Vec): Double;
+class function TKDT9DE.Distance(const v1, v2: TKDT9DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT9DE_Axis - 1 do
-      Result := Result + KDT9DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT9DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT9DE_Source; const Data: Pointer);
@@ -12379,15 +12790,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT9DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT9DE_Test := TKDT9DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT9DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT9DE_Test.TestBuff) - 1 do
     for j := 0 to KDT9DE_Axis - 1 do
@@ -12399,7 +12811,7 @@ begin
   TKDT9DE_Test.BuildKDTreeM(length(TKDT9DE_Test.TestBuff), nil, TKDT9DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT9DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -12407,9 +12819,9 @@ begin
   for i := 0 to length(TKDT9DE_Test.TestBuff) - 1 do
     begin
       p := TKDT9DE_Test.Search(TKDT9DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -12419,19 +12831,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT9DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT9DE_Test.TestBuff));
       TKDT9DE_Test.Search(TKDT9DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT9DEDistance(TKDT9DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT9DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT9DE_Test.Clear;
       { kMean test }
       TKDT9DE_Test.BuildKDTreeWithCluster(TKDT9DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -12449,16 +12861,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT9DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT9DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT10DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT10DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT10DE_Node;
   function SortCompare(const p1, p2: PKDT10DE_Source; const axis: NativeInt): ShortInt;
@@ -12525,7 +12936,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -12543,7 +12954,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -12670,9 +13081,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT10DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT10DE_BuildProc);
 var
   i, j: NativeInt;
@@ -12701,8 +13109,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT10DE.BuildKDTreeWithCluster(const inBuff: TKDT10DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -12853,9 +13259,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT10DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT10DE_BuildProc);
 var
   TempStoreBuff: TKDT10DE_DyanmicStoreBuffer;
@@ -12909,9 +13312,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT10DE.Search(const buff: TKDT10DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT10DE_Node;
 
 var
@@ -12929,7 +13329,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT10DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -12950,21 +13350,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT10DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT10DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -12980,13 +13380,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT10DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT10DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -13046,7 +13446,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT10DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -13090,7 +13490,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -13104,13 +13504,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT10DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -13125,23 +13525,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT10DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -13160,8 +13560,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -13175,12 +13575,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT10DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -13192,22 +13592,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT10DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -13224,7 +13624,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -13336,7 +13736,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT10DE.SaveToFile(FileName: SystemString);
@@ -13356,7 +13756,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -13371,7 +13771,7 @@ end;
 procedure TKDT10DE.PrintNodeTree(const NodePtr: PKDT10DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT10DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT10DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -13387,10 +13787,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT10DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT10DE.KDT10DEVec(const s: SystemString): TKDT10DE_Vec;
+class function TKDT10DE.Vec(const s: SystemString): TKDT10DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -13415,7 +13815,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT10DE.KDT10DEVec(const v: TKDT10DE_Vec): SystemString;
+class function TKDT10DE.Vec(const v: TKDT10DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -13428,18 +13828,13 @@ begin
     end;
 end;
 
-class function TKDT10DE.KDT10DEPow(const v: TKDT10DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT10DE.KDT10DEDistance(const v1, v2: TKDT10DE_Vec): Double;
+class function TKDT10DE.Distance(const v1, v2: TKDT10DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT10DE_Axis - 1 do
-      Result := Result + KDT10DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT10DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT10DE_Source; const Data: Pointer);
@@ -13459,15 +13854,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT10DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT10DE_Test := TKDT10DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT10DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT10DE_Test.TestBuff) - 1 do
     for j := 0 to KDT10DE_Axis - 1 do
@@ -13479,7 +13875,7 @@ begin
   TKDT10DE_Test.BuildKDTreeM(length(TKDT10DE_Test.TestBuff), nil, TKDT10DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT10DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -13487,9 +13883,9 @@ begin
   for i := 0 to length(TKDT10DE_Test.TestBuff) - 1 do
     begin
       p := TKDT10DE_Test.Search(TKDT10DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -13499,19 +13895,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT10DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT10DE_Test.TestBuff));
       TKDT10DE_Test.Search(TKDT10DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT10DEDistance(TKDT10DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT10DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT10DE_Test.Clear;
       { kMean test }
       TKDT10DE_Test.BuildKDTreeWithCluster(TKDT10DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -13529,16 +13925,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT10DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT10DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT11DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT11DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT11DE_Node;
   function SortCompare(const p1, p2: PKDT11DE_Source; const axis: NativeInt): ShortInt;
@@ -13605,7 +14000,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -13623,7 +14018,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -13750,9 +14145,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT11DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT11DE_BuildProc);
 var
   i, j: NativeInt;
@@ -13781,8 +14173,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT11DE.BuildKDTreeWithCluster(const inBuff: TKDT11DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -13933,9 +14323,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT11DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT11DE_BuildProc);
 var
   TempStoreBuff: TKDT11DE_DyanmicStoreBuffer;
@@ -13989,9 +14376,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT11DE.Search(const buff: TKDT11DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT11DE_Node;
 
 var
@@ -14009,7 +14393,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT11DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -14030,21 +14414,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT11DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT11DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -14060,13 +14444,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT11DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT11DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -14126,7 +14510,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT11DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -14170,7 +14554,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -14184,13 +14568,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT11DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -14205,23 +14589,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT11DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -14240,8 +14624,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -14255,12 +14639,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT11DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -14272,22 +14656,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT11DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -14304,7 +14688,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -14416,7 +14800,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT11DE.SaveToFile(FileName: SystemString);
@@ -14436,7 +14820,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -14451,7 +14835,7 @@ end;
 procedure TKDT11DE.PrintNodeTree(const NodePtr: PKDT11DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT11DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT11DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -14467,10 +14851,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT11DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT11DE.KDT11DEVec(const s: SystemString): TKDT11DE_Vec;
+class function TKDT11DE.Vec(const s: SystemString): TKDT11DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -14495,7 +14879,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT11DE.KDT11DEVec(const v: TKDT11DE_Vec): SystemString;
+class function TKDT11DE.Vec(const v: TKDT11DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -14508,18 +14892,13 @@ begin
     end;
 end;
 
-class function TKDT11DE.KDT11DEPow(const v: TKDT11DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT11DE.KDT11DEDistance(const v1, v2: TKDT11DE_Vec): Double;
+class function TKDT11DE.Distance(const v1, v2: TKDT11DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT11DE_Axis - 1 do
-      Result := Result + KDT11DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT11DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT11DE_Source; const Data: Pointer);
@@ -14539,15 +14918,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT11DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT11DE_Test := TKDT11DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT11DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT11DE_Test.TestBuff) - 1 do
     for j := 0 to KDT11DE_Axis - 1 do
@@ -14559,7 +14939,7 @@ begin
   TKDT11DE_Test.BuildKDTreeM(length(TKDT11DE_Test.TestBuff), nil, TKDT11DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT11DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -14567,9 +14947,9 @@ begin
   for i := 0 to length(TKDT11DE_Test.TestBuff) - 1 do
     begin
       p := TKDT11DE_Test.Search(TKDT11DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -14579,19 +14959,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT11DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT11DE_Test.TestBuff));
       TKDT11DE_Test.Search(TKDT11DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT11DEDistance(TKDT11DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT11DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT11DE_Test.Clear;
       { kMean test }
       TKDT11DE_Test.BuildKDTreeWithCluster(TKDT11DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -14609,16 +14989,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT11DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT11DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT12DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT12DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT12DE_Node;
   function SortCompare(const p1, p2: PKDT12DE_Source; const axis: NativeInt): ShortInt;
@@ -14685,7 +15064,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -14703,7 +15082,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -14830,9 +15209,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT12DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT12DE_BuildProc);
 var
   i, j: NativeInt;
@@ -14861,8 +15237,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT12DE.BuildKDTreeWithCluster(const inBuff: TKDT12DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -15013,9 +15387,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT12DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT12DE_BuildProc);
 var
   TempStoreBuff: TKDT12DE_DyanmicStoreBuffer;
@@ -15069,9 +15440,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT12DE.Search(const buff: TKDT12DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT12DE_Node;
 
 var
@@ -15089,7 +15457,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT12DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -15110,21 +15478,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT12DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT12DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -15140,13 +15508,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT12DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT12DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -15206,7 +15574,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT12DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -15250,7 +15618,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -15264,13 +15632,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT12DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -15285,23 +15653,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT12DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -15320,8 +15688,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -15335,12 +15703,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT12DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -15352,22 +15720,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT12DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -15384,7 +15752,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -15496,7 +15864,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT12DE.SaveToFile(FileName: SystemString);
@@ -15516,7 +15884,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -15531,7 +15899,7 @@ end;
 procedure TKDT12DE.PrintNodeTree(const NodePtr: PKDT12DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT12DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT12DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -15547,10 +15915,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT12DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT12DE.KDT12DEVec(const s: SystemString): TKDT12DE_Vec;
+class function TKDT12DE.Vec(const s: SystemString): TKDT12DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -15575,7 +15943,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT12DE.KDT12DEVec(const v: TKDT12DE_Vec): SystemString;
+class function TKDT12DE.Vec(const v: TKDT12DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -15588,18 +15956,13 @@ begin
     end;
 end;
 
-class function TKDT12DE.KDT12DEPow(const v: TKDT12DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT12DE.KDT12DEDistance(const v1, v2: TKDT12DE_Vec): Double;
+class function TKDT12DE.Distance(const v1, v2: TKDT12DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT12DE_Axis - 1 do
-      Result := Result + KDT12DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT12DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT12DE_Source; const Data: Pointer);
@@ -15619,15 +15982,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT12DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT12DE_Test := TKDT12DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT12DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT12DE_Test.TestBuff) - 1 do
     for j := 0 to KDT12DE_Axis - 1 do
@@ -15639,7 +16003,7 @@ begin
   TKDT12DE_Test.BuildKDTreeM(length(TKDT12DE_Test.TestBuff), nil, TKDT12DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT12DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -15647,9 +16011,9 @@ begin
   for i := 0 to length(TKDT12DE_Test.TestBuff) - 1 do
     begin
       p := TKDT12DE_Test.Search(TKDT12DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -15659,19 +16023,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT12DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT12DE_Test.TestBuff));
       TKDT12DE_Test.Search(TKDT12DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT12DEDistance(TKDT12DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT12DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT12DE_Test.Clear;
       { kMean test }
       TKDT12DE_Test.BuildKDTreeWithCluster(TKDT12DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -15689,16 +16053,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT12DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT12DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT13DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT13DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT13DE_Node;
   function SortCompare(const p1, p2: PKDT13DE_Source; const axis: NativeInt): ShortInt;
@@ -15765,7 +16128,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -15783,7 +16146,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -15910,9 +16273,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT13DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT13DE_BuildProc);
 var
   i, j: NativeInt;
@@ -15941,8 +16301,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT13DE.BuildKDTreeWithCluster(const inBuff: TKDT13DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -16093,9 +16451,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT13DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT13DE_BuildProc);
 var
   TempStoreBuff: TKDT13DE_DyanmicStoreBuffer;
@@ -16149,9 +16504,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT13DE.Search(const buff: TKDT13DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT13DE_Node;
 
 var
@@ -16169,7 +16521,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT13DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -16190,21 +16542,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT13DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT13DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -16220,13 +16572,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT13DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT13DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -16286,7 +16638,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT13DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -16330,7 +16682,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -16344,13 +16696,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT13DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -16365,23 +16717,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT13DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -16400,8 +16752,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -16415,12 +16767,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT13DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -16432,22 +16784,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT13DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -16464,7 +16816,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -16576,7 +16928,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT13DE.SaveToFile(FileName: SystemString);
@@ -16596,7 +16948,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -16611,7 +16963,7 @@ end;
 procedure TKDT13DE.PrintNodeTree(const NodePtr: PKDT13DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT13DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT13DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -16627,10 +16979,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT13DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT13DE.KDT13DEVec(const s: SystemString): TKDT13DE_Vec;
+class function TKDT13DE.Vec(const s: SystemString): TKDT13DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -16655,7 +17007,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT13DE.KDT13DEVec(const v: TKDT13DE_Vec): SystemString;
+class function TKDT13DE.Vec(const v: TKDT13DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -16668,18 +17020,13 @@ begin
     end;
 end;
 
-class function TKDT13DE.KDT13DEPow(const v: TKDT13DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT13DE.KDT13DEDistance(const v1, v2: TKDT13DE_Vec): Double;
+class function TKDT13DE.Distance(const v1, v2: TKDT13DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT13DE_Axis - 1 do
-      Result := Result + KDT13DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT13DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT13DE_Source; const Data: Pointer);
@@ -16699,15 +17046,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT13DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT13DE_Test := TKDT13DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT13DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT13DE_Test.TestBuff) - 1 do
     for j := 0 to KDT13DE_Axis - 1 do
@@ -16719,7 +17067,7 @@ begin
   TKDT13DE_Test.BuildKDTreeM(length(TKDT13DE_Test.TestBuff), nil, TKDT13DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT13DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -16727,9 +17075,9 @@ begin
   for i := 0 to length(TKDT13DE_Test.TestBuff) - 1 do
     begin
       p := TKDT13DE_Test.Search(TKDT13DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -16739,19 +17087,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT13DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT13DE_Test.TestBuff));
       TKDT13DE_Test.Search(TKDT13DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT13DEDistance(TKDT13DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT13DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT13DE_Test.Clear;
       { kMean test }
       TKDT13DE_Test.BuildKDTreeWithCluster(TKDT13DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -16769,16 +17117,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT13DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT13DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT14DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT14DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT14DE_Node;
   function SortCompare(const p1, p2: PKDT14DE_Source; const axis: NativeInt): ShortInt;
@@ -16845,7 +17192,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -16863,7 +17210,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -16990,9 +17337,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT14DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT14DE_BuildProc);
 var
   i, j: NativeInt;
@@ -17021,8 +17365,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT14DE.BuildKDTreeWithCluster(const inBuff: TKDT14DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -17173,9 +17515,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT14DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT14DE_BuildProc);
 var
   TempStoreBuff: TKDT14DE_DyanmicStoreBuffer;
@@ -17229,9 +17568,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT14DE.Search(const buff: TKDT14DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT14DE_Node;
 
 var
@@ -17249,7 +17585,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT14DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -17270,21 +17606,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT14DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT14DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -17300,13 +17636,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT14DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT14DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -17366,7 +17702,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT14DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -17410,7 +17746,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -17424,13 +17760,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT14DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -17445,23 +17781,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT14DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -17480,8 +17816,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -17495,12 +17831,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT14DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -17512,22 +17848,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT14DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -17544,7 +17880,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -17656,7 +17992,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT14DE.SaveToFile(FileName: SystemString);
@@ -17676,7 +18012,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -17691,7 +18027,7 @@ end;
 procedure TKDT14DE.PrintNodeTree(const NodePtr: PKDT14DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT14DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT14DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -17707,10 +18043,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT14DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT14DE.KDT14DEVec(const s: SystemString): TKDT14DE_Vec;
+class function TKDT14DE.Vec(const s: SystemString): TKDT14DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -17735,7 +18071,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT14DE.KDT14DEVec(const v: TKDT14DE_Vec): SystemString;
+class function TKDT14DE.Vec(const v: TKDT14DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -17748,18 +18084,13 @@ begin
     end;
 end;
 
-class function TKDT14DE.KDT14DEPow(const v: TKDT14DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT14DE.KDT14DEDistance(const v1, v2: TKDT14DE_Vec): Double;
+class function TKDT14DE.Distance(const v1, v2: TKDT14DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT14DE_Axis - 1 do
-      Result := Result + KDT14DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT14DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT14DE_Source; const Data: Pointer);
@@ -17779,15 +18110,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT14DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT14DE_Test := TKDT14DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT14DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT14DE_Test.TestBuff) - 1 do
     for j := 0 to KDT14DE_Axis - 1 do
@@ -17799,7 +18131,7 @@ begin
   TKDT14DE_Test.BuildKDTreeM(length(TKDT14DE_Test.TestBuff), nil, TKDT14DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT14DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -17807,9 +18139,9 @@ begin
   for i := 0 to length(TKDT14DE_Test.TestBuff) - 1 do
     begin
       p := TKDT14DE_Test.Search(TKDT14DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -17819,19 +18151,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT14DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT14DE_Test.TestBuff));
       TKDT14DE_Test.Search(TKDT14DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT14DEDistance(TKDT14DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT14DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT14DE_Test.Clear;
       { kMean test }
       TKDT14DE_Test.BuildKDTreeWithCluster(TKDT14DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -17849,16 +18181,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT14DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT14DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT15DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT15DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT15DE_Node;
   function SortCompare(const p1, p2: PKDT15DE_Source; const axis: NativeInt): ShortInt;
@@ -17925,7 +18256,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -17943,7 +18274,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -18070,9 +18401,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT15DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT15DE_BuildProc);
 var
   i, j: NativeInt;
@@ -18101,8 +18429,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT15DE.BuildKDTreeWithCluster(const inBuff: TKDT15DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -18253,9 +18579,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT15DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT15DE_BuildProc);
 var
   TempStoreBuff: TKDT15DE_DyanmicStoreBuffer;
@@ -18309,9 +18632,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT15DE.Search(const buff: TKDT15DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT15DE_Node;
 
 var
@@ -18329,7 +18649,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT15DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -18350,21 +18670,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT15DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT15DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -18380,13 +18700,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT15DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT15DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -18446,7 +18766,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT15DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -18490,7 +18810,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -18504,13 +18824,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT15DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -18525,23 +18845,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT15DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -18560,8 +18880,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -18575,12 +18895,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT15DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -18592,22 +18912,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT15DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -18624,7 +18944,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -18736,7 +19056,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT15DE.SaveToFile(FileName: SystemString);
@@ -18756,7 +19076,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -18771,7 +19091,7 @@ end;
 procedure TKDT15DE.PrintNodeTree(const NodePtr: PKDT15DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT15DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT15DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -18787,10 +19107,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT15DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT15DE.KDT15DEVec(const s: SystemString): TKDT15DE_Vec;
+class function TKDT15DE.Vec(const s: SystemString): TKDT15DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -18815,7 +19135,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT15DE.KDT15DEVec(const v: TKDT15DE_Vec): SystemString;
+class function TKDT15DE.Vec(const v: TKDT15DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -18828,18 +19148,13 @@ begin
     end;
 end;
 
-class function TKDT15DE.KDT15DEPow(const v: TKDT15DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT15DE.KDT15DEDistance(const v1, v2: TKDT15DE_Vec): Double;
+class function TKDT15DE.Distance(const v1, v2: TKDT15DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT15DE_Axis - 1 do
-      Result := Result + KDT15DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT15DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT15DE_Source; const Data: Pointer);
@@ -18859,15 +19174,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT15DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT15DE_Test := TKDT15DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT15DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT15DE_Test.TestBuff) - 1 do
     for j := 0 to KDT15DE_Axis - 1 do
@@ -18879,7 +19195,7 @@ begin
   TKDT15DE_Test.BuildKDTreeM(length(TKDT15DE_Test.TestBuff), nil, TKDT15DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT15DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -18887,9 +19203,9 @@ begin
   for i := 0 to length(TKDT15DE_Test.TestBuff) - 1 do
     begin
       p := TKDT15DE_Test.Search(TKDT15DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -18899,19 +19215,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT15DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT15DE_Test.TestBuff));
       TKDT15DE_Test.Search(TKDT15DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT15DEDistance(TKDT15DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT15DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT15DE_Test.Clear;
       { kMean test }
       TKDT15DE_Test.BuildKDTreeWithCluster(TKDT15DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -18929,16 +19245,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT15DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT15DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT16DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT16DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT16DE_Node;
   function SortCompare(const p1, p2: PKDT16DE_Source; const axis: NativeInt): ShortInt;
@@ -19005,7 +19320,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -19023,7 +19338,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -19150,9 +19465,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT16DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT16DE_BuildProc);
 var
   i, j: NativeInt;
@@ -19181,8 +19493,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT16DE.BuildKDTreeWithCluster(const inBuff: TKDT16DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -19333,9 +19643,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT16DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT16DE_BuildProc);
 var
   TempStoreBuff: TKDT16DE_DyanmicStoreBuffer;
@@ -19389,9 +19696,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT16DE.Search(const buff: TKDT16DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT16DE_Node;
 
 var
@@ -19409,7 +19713,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT16DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -19430,21 +19734,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT16DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT16DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -19460,13 +19764,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT16DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT16DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -19526,7 +19830,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT16DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -19570,7 +19874,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -19584,13 +19888,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT16DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -19605,23 +19909,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT16DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -19640,8 +19944,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -19655,12 +19959,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT16DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -19672,22 +19976,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT16DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -19704,7 +20008,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -19816,7 +20120,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT16DE.SaveToFile(FileName: SystemString);
@@ -19836,7 +20140,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -19851,7 +20155,7 @@ end;
 procedure TKDT16DE.PrintNodeTree(const NodePtr: PKDT16DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT16DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT16DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -19867,10 +20171,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT16DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT16DE.KDT16DEVec(const s: SystemString): TKDT16DE_Vec;
+class function TKDT16DE.Vec(const s: SystemString): TKDT16DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -19895,7 +20199,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT16DE.KDT16DEVec(const v: TKDT16DE_Vec): SystemString;
+class function TKDT16DE.Vec(const v: TKDT16DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -19908,18 +20212,13 @@ begin
     end;
 end;
 
-class function TKDT16DE.KDT16DEPow(const v: TKDT16DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT16DE.KDT16DEDistance(const v1, v2: TKDT16DE_Vec): Double;
+class function TKDT16DE.Distance(const v1, v2: TKDT16DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT16DE_Axis - 1 do
-      Result := Result + KDT16DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT16DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT16DE_Source; const Data: Pointer);
@@ -19939,15 +20238,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT16DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT16DE_Test := TKDT16DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT16DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT16DE_Test.TestBuff) - 1 do
     for j := 0 to KDT16DE_Axis - 1 do
@@ -19959,7 +20259,7 @@ begin
   TKDT16DE_Test.BuildKDTreeM(length(TKDT16DE_Test.TestBuff), nil, TKDT16DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT16DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -19967,9 +20267,9 @@ begin
   for i := 0 to length(TKDT16DE_Test.TestBuff) - 1 do
     begin
       p := TKDT16DE_Test.Search(TKDT16DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -19979,19 +20279,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT16DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT16DE_Test.TestBuff));
       TKDT16DE_Test.Search(TKDT16DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT16DEDistance(TKDT16DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT16DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT16DE_Test.Clear;
       { kMean test }
       TKDT16DE_Test.BuildKDTreeWithCluster(TKDT16DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -20009,16 +20309,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT16DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT16DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT17DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT17DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT17DE_Node;
   function SortCompare(const p1, p2: PKDT17DE_Source; const axis: NativeInt): ShortInt;
@@ -20085,7 +20384,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -20103,7 +20402,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -20230,9 +20529,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT17DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT17DE_BuildProc);
 var
   i, j: NativeInt;
@@ -20261,8 +20557,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT17DE.BuildKDTreeWithCluster(const inBuff: TKDT17DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -20413,9 +20707,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT17DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT17DE_BuildProc);
 var
   TempStoreBuff: TKDT17DE_DyanmicStoreBuffer;
@@ -20469,9 +20760,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT17DE.Search(const buff: TKDT17DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT17DE_Node;
 
 var
@@ -20489,7 +20777,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT17DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -20510,21 +20798,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT17DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT17DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -20540,13 +20828,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT17DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT17DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -20606,7 +20894,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT17DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -20650,7 +20938,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -20664,13 +20952,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT17DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -20685,23 +20973,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT17DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -20720,8 +21008,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -20735,12 +21023,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT17DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -20752,22 +21040,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT17DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -20784,7 +21072,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -20896,7 +21184,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT17DE.SaveToFile(FileName: SystemString);
@@ -20916,7 +21204,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -20931,7 +21219,7 @@ end;
 procedure TKDT17DE.PrintNodeTree(const NodePtr: PKDT17DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT17DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT17DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -20947,10 +21235,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT17DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT17DE.KDT17DEVec(const s: SystemString): TKDT17DE_Vec;
+class function TKDT17DE.Vec(const s: SystemString): TKDT17DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -20975,7 +21263,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT17DE.KDT17DEVec(const v: TKDT17DE_Vec): SystemString;
+class function TKDT17DE.Vec(const v: TKDT17DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -20988,18 +21276,13 @@ begin
     end;
 end;
 
-class function TKDT17DE.KDT17DEPow(const v: TKDT17DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT17DE.KDT17DEDistance(const v1, v2: TKDT17DE_Vec): Double;
+class function TKDT17DE.Distance(const v1, v2: TKDT17DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT17DE_Axis - 1 do
-      Result := Result + KDT17DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT17DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT17DE_Source; const Data: Pointer);
@@ -21019,15 +21302,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT17DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT17DE_Test := TKDT17DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT17DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT17DE_Test.TestBuff) - 1 do
     for j := 0 to KDT17DE_Axis - 1 do
@@ -21039,7 +21323,7 @@ begin
   TKDT17DE_Test.BuildKDTreeM(length(TKDT17DE_Test.TestBuff), nil, TKDT17DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT17DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -21047,9 +21331,9 @@ begin
   for i := 0 to length(TKDT17DE_Test.TestBuff) - 1 do
     begin
       p := TKDT17DE_Test.Search(TKDT17DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -21059,19 +21343,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT17DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT17DE_Test.TestBuff));
       TKDT17DE_Test.Search(TKDT17DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT17DEDistance(TKDT17DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT17DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT17DE_Test.Clear;
       { kMean test }
       TKDT17DE_Test.BuildKDTreeWithCluster(TKDT17DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -21089,16 +21373,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT17DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT17DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT18DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT18DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT18DE_Node;
   function SortCompare(const p1, p2: PKDT18DE_Source; const axis: NativeInt): ShortInt;
@@ -21165,7 +21448,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -21183,7 +21466,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -21310,9 +21593,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT18DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT18DE_BuildProc);
 var
   i, j: NativeInt;
@@ -21341,8 +21621,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT18DE.BuildKDTreeWithCluster(const inBuff: TKDT18DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -21493,9 +21771,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT18DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT18DE_BuildProc);
 var
   TempStoreBuff: TKDT18DE_DyanmicStoreBuffer;
@@ -21549,9 +21824,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT18DE.Search(const buff: TKDT18DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT18DE_Node;
 
 var
@@ -21569,7 +21841,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT18DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -21590,21 +21862,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT18DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT18DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -21620,13 +21892,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT18DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT18DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -21686,7 +21958,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT18DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -21730,7 +22002,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -21744,13 +22016,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT18DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -21765,23 +22037,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT18DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -21800,8 +22072,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -21815,12 +22087,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT18DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -21832,22 +22104,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT18DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -21864,7 +22136,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -21976,7 +22248,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT18DE.SaveToFile(FileName: SystemString);
@@ -21996,7 +22268,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -22011,7 +22283,7 @@ end;
 procedure TKDT18DE.PrintNodeTree(const NodePtr: PKDT18DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT18DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT18DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -22027,10 +22299,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT18DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT18DE.KDT18DEVec(const s: SystemString): TKDT18DE_Vec;
+class function TKDT18DE.Vec(const s: SystemString): TKDT18DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -22055,7 +22327,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT18DE.KDT18DEVec(const v: TKDT18DE_Vec): SystemString;
+class function TKDT18DE.Vec(const v: TKDT18DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -22068,18 +22340,13 @@ begin
     end;
 end;
 
-class function TKDT18DE.KDT18DEPow(const v: TKDT18DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT18DE.KDT18DEDistance(const v1, v2: TKDT18DE_Vec): Double;
+class function TKDT18DE.Distance(const v1, v2: TKDT18DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT18DE_Axis - 1 do
-      Result := Result + KDT18DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT18DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT18DE_Source; const Data: Pointer);
@@ -22099,15 +22366,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT18DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT18DE_Test := TKDT18DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT18DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT18DE_Test.TestBuff) - 1 do
     for j := 0 to KDT18DE_Axis - 1 do
@@ -22119,7 +22387,7 @@ begin
   TKDT18DE_Test.BuildKDTreeM(length(TKDT18DE_Test.TestBuff), nil, TKDT18DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT18DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -22127,9 +22395,9 @@ begin
   for i := 0 to length(TKDT18DE_Test.TestBuff) - 1 do
     begin
       p := TKDT18DE_Test.Search(TKDT18DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -22139,19 +22407,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT18DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT18DE_Test.TestBuff));
       TKDT18DE_Test.Search(TKDT18DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT18DEDistance(TKDT18DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT18DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT18DE_Test.Clear;
       { kMean test }
       TKDT18DE_Test.BuildKDTreeWithCluster(TKDT18DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -22169,16 +22437,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT18DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT18DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT19DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT19DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT19DE_Node;
   function SortCompare(const p1, p2: PKDT19DE_Source; const axis: NativeInt): ShortInt;
@@ -22245,7 +22512,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -22263,7 +22530,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -22390,9 +22657,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT19DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT19DE_BuildProc);
 var
   i, j: NativeInt;
@@ -22421,8 +22685,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT19DE.BuildKDTreeWithCluster(const inBuff: TKDT19DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -22573,9 +22835,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT19DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT19DE_BuildProc);
 var
   TempStoreBuff: TKDT19DE_DyanmicStoreBuffer;
@@ -22629,9 +22888,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT19DE.Search(const buff: TKDT19DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT19DE_Node;
 
 var
@@ -22649,7 +22905,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT19DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -22670,21 +22926,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT19DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT19DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -22700,13 +22956,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT19DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT19DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -22766,7 +23022,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT19DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -22810,7 +23066,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -22824,13 +23080,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT19DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -22845,23 +23101,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT19DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -22880,8 +23136,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -22895,12 +23151,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT19DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -22912,22 +23168,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT19DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -22944,7 +23200,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -23056,7 +23312,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT19DE.SaveToFile(FileName: SystemString);
@@ -23076,7 +23332,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -23091,7 +23347,7 @@ end;
 procedure TKDT19DE.PrintNodeTree(const NodePtr: PKDT19DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT19DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT19DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -23107,10 +23363,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT19DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT19DE.KDT19DEVec(const s: SystemString): TKDT19DE_Vec;
+class function TKDT19DE.Vec(const s: SystemString): TKDT19DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -23135,7 +23391,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT19DE.KDT19DEVec(const v: TKDT19DE_Vec): SystemString;
+class function TKDT19DE.Vec(const v: TKDT19DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -23148,18 +23404,13 @@ begin
     end;
 end;
 
-class function TKDT19DE.KDT19DEPow(const v: TKDT19DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT19DE.KDT19DEDistance(const v1, v2: TKDT19DE_Vec): Double;
+class function TKDT19DE.Distance(const v1, v2: TKDT19DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT19DE_Axis - 1 do
-      Result := Result + KDT19DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT19DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT19DE_Source; const Data: Pointer);
@@ -23179,15 +23430,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT19DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT19DE_Test := TKDT19DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT19DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT19DE_Test.TestBuff) - 1 do
     for j := 0 to KDT19DE_Axis - 1 do
@@ -23199,7 +23451,7 @@ begin
   TKDT19DE_Test.BuildKDTreeM(length(TKDT19DE_Test.TestBuff), nil, TKDT19DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT19DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -23207,9 +23459,9 @@ begin
   for i := 0 to length(TKDT19DE_Test.TestBuff) - 1 do
     begin
       p := TKDT19DE_Test.Search(TKDT19DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -23219,19 +23471,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT19DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT19DE_Test.TestBuff));
       TKDT19DE_Test.Search(TKDT19DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT19DEDistance(TKDT19DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT19DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT19DE_Test.Clear;
       { kMean test }
       TKDT19DE_Test.BuildKDTreeWithCluster(TKDT19DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -23249,16 +23501,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT19DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT19DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT20DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT20DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT20DE_Node;
   function SortCompare(const p1, p2: PKDT20DE_Source; const axis: NativeInt): ShortInt;
@@ -23325,7 +23576,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -23343,7 +23594,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -23470,9 +23721,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT20DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT20DE_BuildProc);
 var
   i, j: NativeInt;
@@ -23501,8 +23749,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT20DE.BuildKDTreeWithCluster(const inBuff: TKDT20DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -23653,9 +23899,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT20DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT20DE_BuildProc);
 var
   TempStoreBuff: TKDT20DE_DyanmicStoreBuffer;
@@ -23709,9 +23952,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT20DE.Search(const buff: TKDT20DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT20DE_Node;
 
 var
@@ -23729,7 +23969,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT20DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -23750,21 +23990,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT20DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT20DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -23780,13 +24020,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT20DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT20DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -23846,7 +24086,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT20DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -23890,7 +24130,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -23904,13 +24144,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT20DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -23925,23 +24165,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT20DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -23960,8 +24200,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -23975,12 +24215,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT20DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -23992,22 +24232,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT20DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -24024,7 +24264,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -24136,7 +24376,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT20DE.SaveToFile(FileName: SystemString);
@@ -24156,7 +24396,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -24171,7 +24411,7 @@ end;
 procedure TKDT20DE.PrintNodeTree(const NodePtr: PKDT20DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT20DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT20DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -24187,10 +24427,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT20DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT20DE.KDT20DEVec(const s: SystemString): TKDT20DE_Vec;
+class function TKDT20DE.Vec(const s: SystemString): TKDT20DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -24215,7 +24455,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT20DE.KDT20DEVec(const v: TKDT20DE_Vec): SystemString;
+class function TKDT20DE.Vec(const v: TKDT20DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -24228,18 +24468,13 @@ begin
     end;
 end;
 
-class function TKDT20DE.KDT20DEPow(const v: TKDT20DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT20DE.KDT20DEDistance(const v1, v2: TKDT20DE_Vec): Double;
+class function TKDT20DE.Distance(const v1, v2: TKDT20DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT20DE_Axis - 1 do
-      Result := Result + KDT20DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT20DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT20DE_Source; const Data: Pointer);
@@ -24259,15 +24494,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT20DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT20DE_Test := TKDT20DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT20DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT20DE_Test.TestBuff) - 1 do
     for j := 0 to KDT20DE_Axis - 1 do
@@ -24279,7 +24515,7 @@ begin
   TKDT20DE_Test.BuildKDTreeM(length(TKDT20DE_Test.TestBuff), nil, TKDT20DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT20DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -24287,9 +24523,9 @@ begin
   for i := 0 to length(TKDT20DE_Test.TestBuff) - 1 do
     begin
       p := TKDT20DE_Test.Search(TKDT20DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -24299,19 +24535,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT20DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT20DE_Test.TestBuff));
       TKDT20DE_Test.Search(TKDT20DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT20DEDistance(TKDT20DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT20DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT20DE_Test.Clear;
       { kMean test }
       TKDT20DE_Test.BuildKDTreeWithCluster(TKDT20DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -24329,16 +24565,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT20DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT20DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT21DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT21DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT21DE_Node;
   function SortCompare(const p1, p2: PKDT21DE_Source; const axis: NativeInt): ShortInt;
@@ -24405,7 +24640,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -24423,7 +24658,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -24550,9 +24785,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT21DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT21DE_BuildProc);
 var
   i, j: NativeInt;
@@ -24581,8 +24813,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT21DE.BuildKDTreeWithCluster(const inBuff: TKDT21DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -24733,9 +24963,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT21DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT21DE_BuildProc);
 var
   TempStoreBuff: TKDT21DE_DyanmicStoreBuffer;
@@ -24789,9 +25016,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT21DE.Search(const buff: TKDT21DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT21DE_Node;
 
 var
@@ -24809,7 +25033,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT21DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -24830,21 +25054,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT21DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT21DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -24860,13 +25084,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT21DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT21DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -24926,7 +25150,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT21DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -24970,7 +25194,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -24984,13 +25208,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT21DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -25005,23 +25229,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT21DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -25040,8 +25264,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -25055,12 +25279,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT21DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -25072,22 +25296,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT21DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -25104,7 +25328,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -25216,7 +25440,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT21DE.SaveToFile(FileName: SystemString);
@@ -25236,7 +25460,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -25251,7 +25475,7 @@ end;
 procedure TKDT21DE.PrintNodeTree(const NodePtr: PKDT21DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT21DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT21DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -25267,10 +25491,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT21DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT21DE.KDT21DEVec(const s: SystemString): TKDT21DE_Vec;
+class function TKDT21DE.Vec(const s: SystemString): TKDT21DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -25295,7 +25519,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT21DE.KDT21DEVec(const v: TKDT21DE_Vec): SystemString;
+class function TKDT21DE.Vec(const v: TKDT21DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -25308,18 +25532,13 @@ begin
     end;
 end;
 
-class function TKDT21DE.KDT21DEPow(const v: TKDT21DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT21DE.KDT21DEDistance(const v1, v2: TKDT21DE_Vec): Double;
+class function TKDT21DE.Distance(const v1, v2: TKDT21DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT21DE_Axis - 1 do
-      Result := Result + KDT21DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT21DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT21DE_Source; const Data: Pointer);
@@ -25339,15 +25558,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT21DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT21DE_Test := TKDT21DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT21DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT21DE_Test.TestBuff) - 1 do
     for j := 0 to KDT21DE_Axis - 1 do
@@ -25359,7 +25579,7 @@ begin
   TKDT21DE_Test.BuildKDTreeM(length(TKDT21DE_Test.TestBuff), nil, TKDT21DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT21DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -25367,9 +25587,9 @@ begin
   for i := 0 to length(TKDT21DE_Test.TestBuff) - 1 do
     begin
       p := TKDT21DE_Test.Search(TKDT21DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -25379,19 +25599,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT21DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT21DE_Test.TestBuff));
       TKDT21DE_Test.Search(TKDT21DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT21DEDistance(TKDT21DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT21DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT21DE_Test.Clear;
       { kMean test }
       TKDT21DE_Test.BuildKDTreeWithCluster(TKDT21DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -25409,16 +25629,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT21DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT21DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT22DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT22DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT22DE_Node;
   function SortCompare(const p1, p2: PKDT22DE_Source; const axis: NativeInt): ShortInt;
@@ -25485,7 +25704,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -25503,7 +25722,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -25630,9 +25849,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT22DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT22DE_BuildProc);
 var
   i, j: NativeInt;
@@ -25661,8 +25877,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT22DE.BuildKDTreeWithCluster(const inBuff: TKDT22DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -25813,9 +26027,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT22DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT22DE_BuildProc);
 var
   TempStoreBuff: TKDT22DE_DyanmicStoreBuffer;
@@ -25869,9 +26080,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT22DE.Search(const buff: TKDT22DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT22DE_Node;
 
 var
@@ -25889,7 +26097,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT22DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -25910,21 +26118,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT22DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT22DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -25940,13 +26148,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT22DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT22DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -26006,7 +26214,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT22DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -26050,7 +26258,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -26064,13 +26272,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT22DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -26085,23 +26293,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT22DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -26120,8 +26328,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -26135,12 +26343,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT22DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -26152,22 +26360,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT22DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -26184,7 +26392,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -26296,7 +26504,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT22DE.SaveToFile(FileName: SystemString);
@@ -26316,7 +26524,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -26331,7 +26539,7 @@ end;
 procedure TKDT22DE.PrintNodeTree(const NodePtr: PKDT22DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT22DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT22DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -26347,10 +26555,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT22DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT22DE.KDT22DEVec(const s: SystemString): TKDT22DE_Vec;
+class function TKDT22DE.Vec(const s: SystemString): TKDT22DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -26375,7 +26583,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT22DE.KDT22DEVec(const v: TKDT22DE_Vec): SystemString;
+class function TKDT22DE.Vec(const v: TKDT22DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -26388,18 +26596,13 @@ begin
     end;
 end;
 
-class function TKDT22DE.KDT22DEPow(const v: TKDT22DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT22DE.KDT22DEDistance(const v1, v2: TKDT22DE_Vec): Double;
+class function TKDT22DE.Distance(const v1, v2: TKDT22DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT22DE_Axis - 1 do
-      Result := Result + KDT22DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT22DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT22DE_Source; const Data: Pointer);
@@ -26419,15 +26622,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT22DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT22DE_Test := TKDT22DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT22DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT22DE_Test.TestBuff) - 1 do
     for j := 0 to KDT22DE_Axis - 1 do
@@ -26439,7 +26643,7 @@ begin
   TKDT22DE_Test.BuildKDTreeM(length(TKDT22DE_Test.TestBuff), nil, TKDT22DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT22DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -26447,9 +26651,9 @@ begin
   for i := 0 to length(TKDT22DE_Test.TestBuff) - 1 do
     begin
       p := TKDT22DE_Test.Search(TKDT22DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -26459,19 +26663,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT22DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT22DE_Test.TestBuff));
       TKDT22DE_Test.Search(TKDT22DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT22DEDistance(TKDT22DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT22DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT22DE_Test.Clear;
       { kMean test }
       TKDT22DE_Test.BuildKDTreeWithCluster(TKDT22DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -26489,16 +26693,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT22DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT22DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT23DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT23DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT23DE_Node;
   function SortCompare(const p1, p2: PKDT23DE_Source; const axis: NativeInt): ShortInt;
@@ -26565,7 +26768,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -26583,7 +26786,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -26710,9 +26913,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT23DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT23DE_BuildProc);
 var
   i, j: NativeInt;
@@ -26741,8 +26941,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT23DE.BuildKDTreeWithCluster(const inBuff: TKDT23DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -26893,9 +27091,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT23DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT23DE_BuildProc);
 var
   TempStoreBuff: TKDT23DE_DyanmicStoreBuffer;
@@ -26949,9 +27144,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT23DE.Search(const buff: TKDT23DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT23DE_Node;
 
 var
@@ -26969,7 +27161,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT23DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -26990,21 +27182,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT23DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT23DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -27020,13 +27212,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT23DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT23DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -27086,7 +27278,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT23DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -27130,7 +27322,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -27144,13 +27336,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT23DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -27165,23 +27357,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT23DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -27200,8 +27392,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -27215,12 +27407,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT23DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -27232,22 +27424,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT23DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -27264,7 +27456,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -27376,7 +27568,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT23DE.SaveToFile(FileName: SystemString);
@@ -27396,7 +27588,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -27411,7 +27603,7 @@ end;
 procedure TKDT23DE.PrintNodeTree(const NodePtr: PKDT23DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT23DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT23DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -27427,10 +27619,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT23DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT23DE.KDT23DEVec(const s: SystemString): TKDT23DE_Vec;
+class function TKDT23DE.Vec(const s: SystemString): TKDT23DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -27455,7 +27647,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT23DE.KDT23DEVec(const v: TKDT23DE_Vec): SystemString;
+class function TKDT23DE.Vec(const v: TKDT23DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -27468,18 +27660,13 @@ begin
     end;
 end;
 
-class function TKDT23DE.KDT23DEPow(const v: TKDT23DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT23DE.KDT23DEDistance(const v1, v2: TKDT23DE_Vec): Double;
+class function TKDT23DE.Distance(const v1, v2: TKDT23DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT23DE_Axis - 1 do
-      Result := Result + KDT23DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT23DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT23DE_Source; const Data: Pointer);
@@ -27499,15 +27686,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT23DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT23DE_Test := TKDT23DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT23DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT23DE_Test.TestBuff) - 1 do
     for j := 0 to KDT23DE_Axis - 1 do
@@ -27519,7 +27707,7 @@ begin
   TKDT23DE_Test.BuildKDTreeM(length(TKDT23DE_Test.TestBuff), nil, TKDT23DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT23DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -27527,9 +27715,9 @@ begin
   for i := 0 to length(TKDT23DE_Test.TestBuff) - 1 do
     begin
       p := TKDT23DE_Test.Search(TKDT23DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -27539,19 +27727,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT23DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT23DE_Test.TestBuff));
       TKDT23DE_Test.Search(TKDT23DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT23DEDistance(TKDT23DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT23DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT23DE_Test.Clear;
       { kMean test }
       TKDT23DE_Test.BuildKDTreeWithCluster(TKDT23DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -27569,16 +27757,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT23DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT23DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT24DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT24DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT24DE_Node;
   function SortCompare(const p1, p2: PKDT24DE_Source; const axis: NativeInt): ShortInt;
@@ -27645,7 +27832,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -27663,7 +27850,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -27790,9 +27977,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT24DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT24DE_BuildProc);
 var
   i, j: NativeInt;
@@ -27821,8 +28005,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT24DE.BuildKDTreeWithCluster(const inBuff: TKDT24DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -27973,9 +28155,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT24DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT24DE_BuildProc);
 var
   TempStoreBuff: TKDT24DE_DyanmicStoreBuffer;
@@ -28029,9 +28208,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT24DE.Search(const buff: TKDT24DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT24DE_Node;
 
 var
@@ -28049,7 +28225,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT24DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -28070,21 +28246,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT24DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT24DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -28100,13 +28276,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT24DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT24DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -28166,7 +28342,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT24DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -28210,7 +28386,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -28224,13 +28400,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT24DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -28245,23 +28421,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT24DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -28280,8 +28456,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -28295,12 +28471,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT24DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -28312,22 +28488,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT24DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -28344,7 +28520,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -28456,7 +28632,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT24DE.SaveToFile(FileName: SystemString);
@@ -28476,7 +28652,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -28491,7 +28667,7 @@ end;
 procedure TKDT24DE.PrintNodeTree(const NodePtr: PKDT24DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT24DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT24DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -28507,10 +28683,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT24DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT24DE.KDT24DEVec(const s: SystemString): TKDT24DE_Vec;
+class function TKDT24DE.Vec(const s: SystemString): TKDT24DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -28535,7 +28711,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT24DE.KDT24DEVec(const v: TKDT24DE_Vec): SystemString;
+class function TKDT24DE.Vec(const v: TKDT24DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -28548,18 +28724,13 @@ begin
     end;
 end;
 
-class function TKDT24DE.KDT24DEPow(const v: TKDT24DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT24DE.KDT24DEDistance(const v1, v2: TKDT24DE_Vec): Double;
+class function TKDT24DE.Distance(const v1, v2: TKDT24DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT24DE_Axis - 1 do
-      Result := Result + KDT24DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT24DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT24DE_Source; const Data: Pointer);
@@ -28579,15 +28750,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT24DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT24DE_Test := TKDT24DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT24DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT24DE_Test.TestBuff) - 1 do
     for j := 0 to KDT24DE_Axis - 1 do
@@ -28599,7 +28771,7 @@ begin
   TKDT24DE_Test.BuildKDTreeM(length(TKDT24DE_Test.TestBuff), nil, TKDT24DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT24DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -28607,9 +28779,9 @@ begin
   for i := 0 to length(TKDT24DE_Test.TestBuff) - 1 do
     begin
       p := TKDT24DE_Test.Search(TKDT24DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -28619,19 +28791,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT24DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT24DE_Test.TestBuff));
       TKDT24DE_Test.Search(TKDT24DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT24DEDistance(TKDT24DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT24DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT24DE_Test.Clear;
       { kMean test }
       TKDT24DE_Test.BuildKDTreeWithCluster(TKDT24DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -28649,16 +28821,6399 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT24DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT24DE_Test);
+  DoStatus(n);
+  n := '';
 end;
 
+function TKDT48DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT48DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT48DE_Node;
+  function SortCompare(const p1, p2: PKDT48DE_Source; const axis: NativeInt): ShortInt;
+  begin
+    if p1^.buff[axis] = p2^.buff[axis] then
+      begin
+        if p1^.Index = p2^.Index then
+            Result := 0
+        else if p1^.Index < p2^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.buff[axis] < p2^.buff[axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT48DE_SourceBuffer; L, R: NativeInt; const axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT48DE_Source;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer^[(L + R) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, axis) < 0 do
+            Inc(i);
+        while SortCompare(SortBuffer^[j], p, axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, axis);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  M: NativeInt;
+  axis: NativeInt;
+  kdBuffPtr: PKDT48DE_SourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.Vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+    end
+  else
+    begin
+      axis := Depth mod KDT48DE_Axis;
+      M := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
+
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Vec := kdBuffPtr^[M];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], M, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[M + 1], PlanCount - (M + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT48DE.GetData(const Index: NativeInt): PKDT48DE_Source;
+begin
+  Result := @KDStoreBuff[Index];
+end;
+
+constructor TKDT48DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT48DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT48DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT48DE_Node(KDNodes[i]));
+      Inc(i);
+    end;
+
+  for i := 0 to length(KDStoreBuff) - 1 do
+      KDStoreBuff[i].Token := '';
+
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT48DE.StoreBuffPtr: PKDT48DE_DyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT48DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT48DE_BuildCall);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT48DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT48DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT48DE_BuildMethod);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT48DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT48DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT48DE_BuildProc);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT48DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{ k-means++ clusterization }
+procedure TKDT48DE.BuildKDTreeWithCluster(const inBuff: TKDT48DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT48DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT48DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT48DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT48DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT48DE.BuildKDTreeWithCluster(const inBuff: TKDT48DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT48DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT48DE_BuildCall);
+var
+  TempStoreBuff: TKDT48DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT48DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT48DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT48DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT48DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT48DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT48DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT48DE_BuildMethod);
+var
+  TempStoreBuff: TKDT48DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT48DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT48DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT48DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT48DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT48DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT48DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT48DE_BuildProc);
+var
+  TempStoreBuff: TKDT48DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT48DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT48DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT48DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT48DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT48DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+function TKDT48DE.Search(const buff: TKDT48DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT48DE_Node;
+
+var
+  NearestNeighbour: PKDT48DE_Node;
+
+  function FindParentNode(const buffPtr: PKDT48DE_Vec; NodePtr: PKDT48DE_Node): PKDT48DE_Node;
+  var
+    Next: PKDT48DE_Node;
+    Depth, axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        axis := Depth mod KDT48DE_Axis;
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT48DE_Node; const buffPtr: PKDT48DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    Inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
+        NearestNeighbour := NodePtr;
+
+    axis := Depth mod KDT48DE_Axis;
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
+            ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const buffPtr: PKDT48DE_Vec; const p1, p2: PKDT48DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
+    if d1 = d2 then
+      begin
+        if p1^.Vec^.Index = p2^.Vec^.Index then
+            Result := 0
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; L, R: NativeInt; const buffPtr: PKDT48DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT48DE_Node;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer[(L + R) shr 1];
+      repeat
+        while SortCompare(buffPtr, SortBuffer[i], p) < 0 do
+            Inc(i);
+        while SortCompare(buffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, buffPtr);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  Parent: PKDT48DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
+
+  ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT48DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT48DE.Search(const buff: TKDT48DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT48DE_Node;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT48DE.Search(const buff: TKDT48DE_Vec; var SearchedDistanceMin: Double): PKDT48DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT48DE.Search(const buff: TKDT48DE_Vec): PKDT48DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT48DE.SearchToken(const buff: TKDT48DE_Vec): TPascalString;
+var
+  p: PKDT48DE_Node;
+begin
+  p := Search(buff);
+  if p <> nil then
+      Result := p^.Vec^.Token
+  else
+      Result := '';
+end;
+
+procedure TKDT48DE.Search(const inBuff: TKDT48DE_DynamicVecBuffer; var OutBuff: TKDT48DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT48DE_DynamicVecBuffer;
+  outBuffPtr: PKDT48DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT48DE_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT48DE_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT48DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT48DE.Search(const inBuff: TKDT48DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT48DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT48DE_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT48DE_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT48DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT48DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  ID := KDT48DE_Axis;
+
+  stream.write(st, 4);
+  stream.write(ID, 4);
+
+  stream.write(cnt, 8);
+
+  i := 0;
+  while i < cnt do
+    begin
+      stream.write(KDStoreBuff[i].buff[0], SizeOf(TKDT48DE_Vec));
+      stream.write(KDStoreBuff[i].Index, 8);
+      token_B := KDStoreBuff[i].Token.Bytes;
+      token_L := length(token_B);
+      stream.write(token_L, 4);
+      if token_L > 0 then
+        begin
+          stream.write(token_B[0], token_L);
+          SetLength(token_B, 0);
+        end;
+      Inc(i);
+    end;
+end;
+
+procedure TKDT48DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  Clear;
+
+  stream.read(st, 4);
+  stream.read(ID, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if ID <> KDT48DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+
+  i := 0;
+  try
+    while i < cnt do
+      begin
+        if stream.read(KDStoreBuff[i].buff[0], SizeOf(TKDT48DE_Vec)) <> SizeOf(TKDT48DE_Vec) then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(KDStoreBuff[i].Index, 8) <> 8 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(token_L, 4) <> 4 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if token_L > 0 then
+          begin
+            SetLength(token_B, token_L);
+            if stream.read(token_B[0], token_L) <> token_L then
+              begin
+                Clear;
+                Exit;
+              end;
+            KDStoreBuff[i].Token.Bytes := token_B;
+            SetLength(token_B, 0);
+          end
+        else
+            KDStoreBuff[i].Token := '';
+        Inc(i);
+      end;
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      Inc(i);
+    end;
+
+  if cnt > 0 then
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT48DE.SaveToFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(FileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT48DE.LoadFromFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT48DE.PrintNodeTree(const NodePtr: PKDT48DE_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT48DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT48DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
+end;
+
+class function TKDT48DE.Vec(const s: SystemString): TKDT48DE_Vec;
+var
+  t: TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j: NativeInt;
+begin
+  for i := 0 to KDT48DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            Inc(j);
+            if j >= KDT48DE_Axis then
+                Break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT48DE.Vec(const v: TKDT48DE_Vec): SystemString;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT48DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT48DE.Distance(const v1, v2: TKDT48DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT48DE_Axis - 1 do
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
+end;
+
+procedure TKDT48DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT48DE_Source; const Data: Pointer);
+begin
+  Source.buff := TestBuff[IndexFor];
+  Source.Token := umlIntToStr(IndexFor);
+end;
+
+class procedure TKDT48DE.Test;
+var
+  TKDT48DE_Test: TKDT48DE;
+  t: TTimeTick;
+  i, j: NativeInt;
+  TestResultBuff: TKDT48DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex: TDynamicIndexArray;
+  errored: Boolean;
+  m64: TMemoryStream64;
+  p: PKDT48DE_Node;
+  n: TPascalString;
+begin
+  errored := False;
+  n := PFormat('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  n.Append('...build');
+  TKDT48DE_Test := TKDT48DE.Create;
+
+  n.Append('...');
+  SetLength(TKDT48DE_Test.TestBuff, 1000);
+  for i := 0 to length(TKDT48DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT48DE_Axis - 1 do
+        TKDT48DE_Test.TestBuff[i][j] := i * KDT48DE_Axis + j;
+
+{$IFDEF FPC}
+  TKDT48DE_Test.BuildKDTreeM(length(TKDT48DE_Test.TestBuff), nil, @TKDT48DE_Test.Test_BuildM);
+{$ELSE FPC}
+  TKDT48DE_Test.BuildKDTreeM(length(TKDT48DE_Test.TestBuff), nil, TKDT48DE_Test.Test_BuildM);
+{$ENDIF FPC}
+  { save/load test }
+  n.Append('...save/load');
+  m64 := TMemoryStream64.CustomCreate(1024 * 1024);
+  TKDT48DE_Test.SaveToStream(m64);
+  m64.Position := 0;
+  TKDT48DE_Test.LoadFromStream(m64);
+  for i := 0 to length(TKDT48DE_Test.TestBuff) - 1 do
+    begin
+      p := TKDT48DE_Test.Search(TKDT48DE_Test.TestBuff[i]);
+      if p^.Vec^.Index <> i then
+          errored := True;
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
+          errored := True;
+      if errored then
+          Break;
+    end;
+  DisposeObject(m64);
+
+  if not errored then
+    begin
+      { parallel search test }
+      n.Append('...parallel');
+      SetLength(TestResultBuff, length(TKDT48DE_Test.TestBuff));
+      SetLength(TestResultIndex, length(TKDT48DE_Test.TestBuff));
+      TKDT48DE_Test.Search(TKDT48DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if Distance(TKDT48DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+            errored := True;
+    end;
+
+  if not errored then
+    begin
+      n.Append('...kMean');
+      TKDT48DE_Test.Clear;
+      { kMean test }
+      TKDT48DE_Test.BuildKDTreeWithCluster(TKDT48DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+      { parallel search test }
+      TKDT48DE_Test.Search(TKDT48DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if TestResultIndex[i] <> KMeanOutIndex[i] then
+            errored := True;
+    end;
+
+  SetLength(TKDT48DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT48DE_Test.Clear;
+
+  n.Append('...');
+  if errored then
+      n.Append('error!')
+  else
+      n.Append('passed ok %dms', [GetTimeTick - t]);
+  DisposeObject(TKDT48DE_Test);
+  DoStatus(n);
+  n := '';
+end;
+
+function TKDT52DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT52DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT52DE_Node;
+  function SortCompare(const p1, p2: PKDT52DE_Source; const axis: NativeInt): ShortInt;
+  begin
+    if p1^.buff[axis] = p2^.buff[axis] then
+      begin
+        if p1^.Index = p2^.Index then
+            Result := 0
+        else if p1^.Index < p2^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.buff[axis] < p2^.buff[axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT52DE_SourceBuffer; L, R: NativeInt; const axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT52DE_Source;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer^[(L + R) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, axis) < 0 do
+            Inc(i);
+        while SortCompare(SortBuffer^[j], p, axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, axis);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  M: NativeInt;
+  axis: NativeInt;
+  kdBuffPtr: PKDT52DE_SourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.Vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+    end
+  else
+    begin
+      axis := Depth mod KDT52DE_Axis;
+      M := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
+
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Vec := kdBuffPtr^[M];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], M, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[M + 1], PlanCount - (M + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT52DE.GetData(const Index: NativeInt): PKDT52DE_Source;
+begin
+  Result := @KDStoreBuff[Index];
+end;
+
+constructor TKDT52DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT52DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT52DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT52DE_Node(KDNodes[i]));
+      Inc(i);
+    end;
+
+  for i := 0 to length(KDStoreBuff) - 1 do
+      KDStoreBuff[i].Token := '';
+
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT52DE.StoreBuffPtr: PKDT52DE_DyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT52DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT52DE_BuildCall);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT52DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT52DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT52DE_BuildMethod);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT52DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT52DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT52DE_BuildProc);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT52DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{ k-means++ clusterization }
+procedure TKDT52DE.BuildKDTreeWithCluster(const inBuff: TKDT52DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT52DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT52DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT52DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT52DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT52DE.BuildKDTreeWithCluster(const inBuff: TKDT52DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT52DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT52DE_BuildCall);
+var
+  TempStoreBuff: TKDT52DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT52DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT52DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT52DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT52DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT52DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT52DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT52DE_BuildMethod);
+var
+  TempStoreBuff: TKDT52DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT52DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT52DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT52DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT52DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT52DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT52DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT52DE_BuildProc);
+var
+  TempStoreBuff: TKDT52DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT52DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT52DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT52DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT52DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT52DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+function TKDT52DE.Search(const buff: TKDT52DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT52DE_Node;
+
+var
+  NearestNeighbour: PKDT52DE_Node;
+
+  function FindParentNode(const buffPtr: PKDT52DE_Vec; NodePtr: PKDT52DE_Node): PKDT52DE_Node;
+  var
+    Next: PKDT52DE_Node;
+    Depth, axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        axis := Depth mod KDT52DE_Axis;
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT52DE_Node; const buffPtr: PKDT52DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    Inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
+        NearestNeighbour := NodePtr;
+
+    axis := Depth mod KDT52DE_Axis;
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
+            ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const buffPtr: PKDT52DE_Vec; const p1, p2: PKDT52DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
+    if d1 = d2 then
+      begin
+        if p1^.Vec^.Index = p2^.Vec^.Index then
+            Result := 0
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; L, R: NativeInt; const buffPtr: PKDT52DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT52DE_Node;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer[(L + R) shr 1];
+      repeat
+        while SortCompare(buffPtr, SortBuffer[i], p) < 0 do
+            Inc(i);
+        while SortCompare(buffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, buffPtr);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  Parent: PKDT52DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
+
+  ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT52DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT52DE.Search(const buff: TKDT52DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT52DE_Node;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT52DE.Search(const buff: TKDT52DE_Vec; var SearchedDistanceMin: Double): PKDT52DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT52DE.Search(const buff: TKDT52DE_Vec): PKDT52DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT52DE.SearchToken(const buff: TKDT52DE_Vec): TPascalString;
+var
+  p: PKDT52DE_Node;
+begin
+  p := Search(buff);
+  if p <> nil then
+      Result := p^.Vec^.Token
+  else
+      Result := '';
+end;
+
+procedure TKDT52DE.Search(const inBuff: TKDT52DE_DynamicVecBuffer; var OutBuff: TKDT52DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT52DE_DynamicVecBuffer;
+  outBuffPtr: PKDT52DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT52DE_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT52DE_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT52DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT52DE.Search(const inBuff: TKDT52DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT52DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT52DE_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT52DE_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT52DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT52DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  ID := KDT52DE_Axis;
+
+  stream.write(st, 4);
+  stream.write(ID, 4);
+
+  stream.write(cnt, 8);
+
+  i := 0;
+  while i < cnt do
+    begin
+      stream.write(KDStoreBuff[i].buff[0], SizeOf(TKDT52DE_Vec));
+      stream.write(KDStoreBuff[i].Index, 8);
+      token_B := KDStoreBuff[i].Token.Bytes;
+      token_L := length(token_B);
+      stream.write(token_L, 4);
+      if token_L > 0 then
+        begin
+          stream.write(token_B[0], token_L);
+          SetLength(token_B, 0);
+        end;
+      Inc(i);
+    end;
+end;
+
+procedure TKDT52DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  Clear;
+
+  stream.read(st, 4);
+  stream.read(ID, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if ID <> KDT52DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+
+  i := 0;
+  try
+    while i < cnt do
+      begin
+        if stream.read(KDStoreBuff[i].buff[0], SizeOf(TKDT52DE_Vec)) <> SizeOf(TKDT52DE_Vec) then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(KDStoreBuff[i].Index, 8) <> 8 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(token_L, 4) <> 4 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if token_L > 0 then
+          begin
+            SetLength(token_B, token_L);
+            if stream.read(token_B[0], token_L) <> token_L then
+              begin
+                Clear;
+                Exit;
+              end;
+            KDStoreBuff[i].Token.Bytes := token_B;
+            SetLength(token_B, 0);
+          end
+        else
+            KDStoreBuff[i].Token := '';
+        Inc(i);
+      end;
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      Inc(i);
+    end;
+
+  if cnt > 0 then
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT52DE.SaveToFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(FileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT52DE.LoadFromFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT52DE.PrintNodeTree(const NodePtr: PKDT52DE_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT52DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT52DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
+end;
+
+class function TKDT52DE.Vec(const s: SystemString): TKDT52DE_Vec;
+var
+  t: TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j: NativeInt;
+begin
+  for i := 0 to KDT52DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            Inc(j);
+            if j >= KDT52DE_Axis then
+                Break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT52DE.Vec(const v: TKDT52DE_Vec): SystemString;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT52DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT52DE.Distance(const v1, v2: TKDT52DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT52DE_Axis - 1 do
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
+end;
+
+procedure TKDT52DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT52DE_Source; const Data: Pointer);
+begin
+  Source.buff := TestBuff[IndexFor];
+  Source.Token := umlIntToStr(IndexFor);
+end;
+
+class procedure TKDT52DE.Test;
+var
+  TKDT52DE_Test: TKDT52DE;
+  t: TTimeTick;
+  i, j: NativeInt;
+  TestResultBuff: TKDT52DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex: TDynamicIndexArray;
+  errored: Boolean;
+  m64: TMemoryStream64;
+  p: PKDT52DE_Node;
+  n: TPascalString;
+begin
+  errored := False;
+  n := PFormat('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  n.Append('...build');
+  TKDT52DE_Test := TKDT52DE.Create;
+
+  n.Append('...');
+  SetLength(TKDT52DE_Test.TestBuff, 1000);
+  for i := 0 to length(TKDT52DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT52DE_Axis - 1 do
+        TKDT52DE_Test.TestBuff[i][j] := i * KDT52DE_Axis + j;
+
+{$IFDEF FPC}
+  TKDT52DE_Test.BuildKDTreeM(length(TKDT52DE_Test.TestBuff), nil, @TKDT52DE_Test.Test_BuildM);
+{$ELSE FPC}
+  TKDT52DE_Test.BuildKDTreeM(length(TKDT52DE_Test.TestBuff), nil, TKDT52DE_Test.Test_BuildM);
+{$ENDIF FPC}
+  { save/load test }
+  n.Append('...save/load');
+  m64 := TMemoryStream64.CustomCreate(1024 * 1024);
+  TKDT52DE_Test.SaveToStream(m64);
+  m64.Position := 0;
+  TKDT52DE_Test.LoadFromStream(m64);
+  for i := 0 to length(TKDT52DE_Test.TestBuff) - 1 do
+    begin
+      p := TKDT52DE_Test.Search(TKDT52DE_Test.TestBuff[i]);
+      if p^.Vec^.Index <> i then
+          errored := True;
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
+          errored := True;
+      if errored then
+          Break;
+    end;
+  DisposeObject(m64);
+
+  if not errored then
+    begin
+      { parallel search test }
+      n.Append('...parallel');
+      SetLength(TestResultBuff, length(TKDT52DE_Test.TestBuff));
+      SetLength(TestResultIndex, length(TKDT52DE_Test.TestBuff));
+      TKDT52DE_Test.Search(TKDT52DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if Distance(TKDT52DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+            errored := True;
+    end;
+
+  if not errored then
+    begin
+      n.Append('...kMean');
+      TKDT52DE_Test.Clear;
+      { kMean test }
+      TKDT52DE_Test.BuildKDTreeWithCluster(TKDT52DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+      { parallel search test }
+      TKDT52DE_Test.Search(TKDT52DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if TestResultIndex[i] <> KMeanOutIndex[i] then
+            errored := True;
+    end;
+
+  SetLength(TKDT52DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT52DE_Test.Clear;
+
+  n.Append('...');
+  if errored then
+      n.Append('error!')
+  else
+      n.Append('passed ok %dms', [GetTimeTick - t]);
+  DisposeObject(TKDT52DE_Test);
+  DoStatus(n);
+  n := '';
+end;
+
+function TKDT64DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT64DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT64DE_Node;
+  function SortCompare(const p1, p2: PKDT64DE_Source; const axis: NativeInt): ShortInt;
+  begin
+    if p1^.buff[axis] = p2^.buff[axis] then
+      begin
+        if p1^.Index = p2^.Index then
+            Result := 0
+        else if p1^.Index < p2^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.buff[axis] < p2^.buff[axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT64DE_SourceBuffer; L, R: NativeInt; const axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT64DE_Source;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer^[(L + R) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, axis) < 0 do
+            Inc(i);
+        while SortCompare(SortBuffer^[j], p, axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, axis);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  M: NativeInt;
+  axis: NativeInt;
+  kdBuffPtr: PKDT64DE_SourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.Vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+    end
+  else
+    begin
+      axis := Depth mod KDT64DE_Axis;
+      M := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
+
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Vec := kdBuffPtr^[M];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], M, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[M + 1], PlanCount - (M + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT64DE.GetData(const Index: NativeInt): PKDT64DE_Source;
+begin
+  Result := @KDStoreBuff[Index];
+end;
+
+constructor TKDT64DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT64DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT64DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT64DE_Node(KDNodes[i]));
+      Inc(i);
+    end;
+
+  for i := 0 to length(KDStoreBuff) - 1 do
+      KDStoreBuff[i].Token := '';
+
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT64DE.StoreBuffPtr: PKDT64DE_DyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT64DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT64DE_BuildCall);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT64DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT64DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT64DE_BuildMethod);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT64DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT64DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT64DE_BuildProc);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT64DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{ k-means++ clusterization }
+procedure TKDT64DE.BuildKDTreeWithCluster(const inBuff: TKDT64DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT64DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT64DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT64DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT64DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT64DE.BuildKDTreeWithCluster(const inBuff: TKDT64DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT64DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT64DE_BuildCall);
+var
+  TempStoreBuff: TKDT64DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT64DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT64DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT64DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT64DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT64DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT64DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT64DE_BuildMethod);
+var
+  TempStoreBuff: TKDT64DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT64DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT64DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT64DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT64DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT64DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT64DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT64DE_BuildProc);
+var
+  TempStoreBuff: TKDT64DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT64DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT64DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT64DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT64DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT64DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+function TKDT64DE.Search(const buff: TKDT64DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT64DE_Node;
+
+var
+  NearestNeighbour: PKDT64DE_Node;
+
+  function FindParentNode(const buffPtr: PKDT64DE_Vec; NodePtr: PKDT64DE_Node): PKDT64DE_Node;
+  var
+    Next: PKDT64DE_Node;
+    Depth, axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        axis := Depth mod KDT64DE_Axis;
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT64DE_Node; const buffPtr: PKDT64DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    Inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
+        NearestNeighbour := NodePtr;
+
+    axis := Depth mod KDT64DE_Axis;
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
+            ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const buffPtr: PKDT64DE_Vec; const p1, p2: PKDT64DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
+    if d1 = d2 then
+      begin
+        if p1^.Vec^.Index = p2^.Vec^.Index then
+            Result := 0
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; L, R: NativeInt; const buffPtr: PKDT64DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT64DE_Node;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer[(L + R) shr 1];
+      repeat
+        while SortCompare(buffPtr, SortBuffer[i], p) < 0 do
+            Inc(i);
+        while SortCompare(buffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, buffPtr);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  Parent: PKDT64DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
+
+  ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT64DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT64DE.Search(const buff: TKDT64DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT64DE_Node;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT64DE.Search(const buff: TKDT64DE_Vec; var SearchedDistanceMin: Double): PKDT64DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT64DE.Search(const buff: TKDT64DE_Vec): PKDT64DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT64DE.SearchToken(const buff: TKDT64DE_Vec): TPascalString;
+var
+  p: PKDT64DE_Node;
+begin
+  p := Search(buff);
+  if p <> nil then
+      Result := p^.Vec^.Token
+  else
+      Result := '';
+end;
+
+procedure TKDT64DE.Search(const inBuff: TKDT64DE_DynamicVecBuffer; var OutBuff: TKDT64DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT64DE_DynamicVecBuffer;
+  outBuffPtr: PKDT64DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT64DE_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT64DE_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT64DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT64DE.Search(const inBuff: TKDT64DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT64DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT64DE_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT64DE_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT64DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT64DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  ID := KDT64DE_Axis;
+
+  stream.write(st, 4);
+  stream.write(ID, 4);
+
+  stream.write(cnt, 8);
+
+  i := 0;
+  while i < cnt do
+    begin
+      stream.write(KDStoreBuff[i].buff[0], SizeOf(TKDT64DE_Vec));
+      stream.write(KDStoreBuff[i].Index, 8);
+      token_B := KDStoreBuff[i].Token.Bytes;
+      token_L := length(token_B);
+      stream.write(token_L, 4);
+      if token_L > 0 then
+        begin
+          stream.write(token_B[0], token_L);
+          SetLength(token_B, 0);
+        end;
+      Inc(i);
+    end;
+end;
+
+procedure TKDT64DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  Clear;
+
+  stream.read(st, 4);
+  stream.read(ID, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if ID <> KDT64DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+
+  i := 0;
+  try
+    while i < cnt do
+      begin
+        if stream.read(KDStoreBuff[i].buff[0], SizeOf(TKDT64DE_Vec)) <> SizeOf(TKDT64DE_Vec) then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(KDStoreBuff[i].Index, 8) <> 8 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(token_L, 4) <> 4 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if token_L > 0 then
+          begin
+            SetLength(token_B, token_L);
+            if stream.read(token_B[0], token_L) <> token_L then
+              begin
+                Clear;
+                Exit;
+              end;
+            KDStoreBuff[i].Token.Bytes := token_B;
+            SetLength(token_B, 0);
+          end
+        else
+            KDStoreBuff[i].Token := '';
+        Inc(i);
+      end;
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      Inc(i);
+    end;
+
+  if cnt > 0 then
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT64DE.SaveToFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(FileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT64DE.LoadFromFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT64DE.PrintNodeTree(const NodePtr: PKDT64DE_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT64DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT64DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
+end;
+
+class function TKDT64DE.Vec(const s: SystemString): TKDT64DE_Vec;
+var
+  t: TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j: NativeInt;
+begin
+  for i := 0 to KDT64DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            Inc(j);
+            if j >= KDT64DE_Axis then
+                Break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT64DE.Vec(const v: TKDT64DE_Vec): SystemString;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT64DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT64DE.Distance(const v1, v2: TKDT64DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT64DE_Axis - 1 do
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
+end;
+
+procedure TKDT64DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT64DE_Source; const Data: Pointer);
+begin
+  Source.buff := TestBuff[IndexFor];
+  Source.Token := umlIntToStr(IndexFor);
+end;
+
+class procedure TKDT64DE.Test;
+var
+  TKDT64DE_Test: TKDT64DE;
+  t: TTimeTick;
+  i, j: NativeInt;
+  TestResultBuff: TKDT64DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex: TDynamicIndexArray;
+  errored: Boolean;
+  m64: TMemoryStream64;
+  p: PKDT64DE_Node;
+  n: TPascalString;
+begin
+  errored := False;
+  n := PFormat('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  n.Append('...build');
+  TKDT64DE_Test := TKDT64DE.Create;
+
+  n.Append('...');
+  SetLength(TKDT64DE_Test.TestBuff, 1000);
+  for i := 0 to length(TKDT64DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT64DE_Axis - 1 do
+        TKDT64DE_Test.TestBuff[i][j] := i * KDT64DE_Axis + j;
+
+{$IFDEF FPC}
+  TKDT64DE_Test.BuildKDTreeM(length(TKDT64DE_Test.TestBuff), nil, @TKDT64DE_Test.Test_BuildM);
+{$ELSE FPC}
+  TKDT64DE_Test.BuildKDTreeM(length(TKDT64DE_Test.TestBuff), nil, TKDT64DE_Test.Test_BuildM);
+{$ENDIF FPC}
+  { save/load test }
+  n.Append('...save/load');
+  m64 := TMemoryStream64.CustomCreate(1024 * 1024);
+  TKDT64DE_Test.SaveToStream(m64);
+  m64.Position := 0;
+  TKDT64DE_Test.LoadFromStream(m64);
+  for i := 0 to length(TKDT64DE_Test.TestBuff) - 1 do
+    begin
+      p := TKDT64DE_Test.Search(TKDT64DE_Test.TestBuff[i]);
+      if p^.Vec^.Index <> i then
+          errored := True;
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
+          errored := True;
+      if errored then
+          Break;
+    end;
+  DisposeObject(m64);
+
+  if not errored then
+    begin
+      { parallel search test }
+      n.Append('...parallel');
+      SetLength(TestResultBuff, length(TKDT64DE_Test.TestBuff));
+      SetLength(TestResultIndex, length(TKDT64DE_Test.TestBuff));
+      TKDT64DE_Test.Search(TKDT64DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if Distance(TKDT64DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+            errored := True;
+    end;
+
+  if not errored then
+    begin
+      n.Append('...kMean');
+      TKDT64DE_Test.Clear;
+      { kMean test }
+      TKDT64DE_Test.BuildKDTreeWithCluster(TKDT64DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+      { parallel search test }
+      TKDT64DE_Test.Search(TKDT64DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if TestResultIndex[i] <> KMeanOutIndex[i] then
+            errored := True;
+    end;
+
+  SetLength(TKDT64DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT64DE_Test.Clear;
+
+  n.Append('...');
+  if errored then
+      n.Append('error!')
+  else
+      n.Append('passed ok %dms', [GetTimeTick - t]);
+  DisposeObject(TKDT64DE_Test);
+  DoStatus(n);
+  n := '';
+end;
+
+function TKDT128DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT128DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT128DE_Node;
+  function SortCompare(const p1, p2: PKDT128DE_Source; const axis: NativeInt): ShortInt;
+  begin
+    if p1^.buff[axis] = p2^.buff[axis] then
+      begin
+        if p1^.Index = p2^.Index then
+            Result := 0
+        else if p1^.Index < p2^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.buff[axis] < p2^.buff[axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT128DE_SourceBuffer; L, R: NativeInt; const axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT128DE_Source;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer^[(L + R) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, axis) < 0 do
+            Inc(i);
+        while SortCompare(SortBuffer^[j], p, axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, axis);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  M: NativeInt;
+  axis: NativeInt;
+  kdBuffPtr: PKDT128DE_SourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.Vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+    end
+  else
+    begin
+      axis := Depth mod KDT128DE_Axis;
+      M := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
+
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Vec := kdBuffPtr^[M];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], M, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[M + 1], PlanCount - (M + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT128DE.GetData(const Index: NativeInt): PKDT128DE_Source;
+begin
+  Result := @KDStoreBuff[Index];
+end;
+
+constructor TKDT128DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT128DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT128DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT128DE_Node(KDNodes[i]));
+      Inc(i);
+    end;
+
+  for i := 0 to length(KDStoreBuff) - 1 do
+      KDStoreBuff[i].Token := '';
+
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT128DE.StoreBuffPtr: PKDT128DE_DyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT128DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT128DE_BuildCall);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT128DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT128DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT128DE_BuildMethod);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT128DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT128DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT128DE_BuildProc);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT128DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{ k-means++ clusterization }
+procedure TKDT128DE.BuildKDTreeWithCluster(const inBuff: TKDT128DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT128DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT128DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT128DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT128DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT128DE.BuildKDTreeWithCluster(const inBuff: TKDT128DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT128DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT128DE_BuildCall);
+var
+  TempStoreBuff: TKDT128DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT128DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT128DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT128DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT128DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT128DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT128DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT128DE_BuildMethod);
+var
+  TempStoreBuff: TKDT128DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT128DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT128DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT128DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT128DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT128DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT128DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT128DE_BuildProc);
+var
+  TempStoreBuff: TKDT128DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT128DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT128DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT128DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT128DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT128DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+function TKDT128DE.Search(const buff: TKDT128DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT128DE_Node;
+
+var
+  NearestNeighbour: PKDT128DE_Node;
+
+  function FindParentNode(const buffPtr: PKDT128DE_Vec; NodePtr: PKDT128DE_Node): PKDT128DE_Node;
+  var
+    Next: PKDT128DE_Node;
+    Depth, axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        axis := Depth mod KDT128DE_Axis;
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT128DE_Node; const buffPtr: PKDT128DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    Inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
+        NearestNeighbour := NodePtr;
+
+    axis := Depth mod KDT128DE_Axis;
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
+            ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const buffPtr: PKDT128DE_Vec; const p1, p2: PKDT128DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
+    if d1 = d2 then
+      begin
+        if p1^.Vec^.Index = p2^.Vec^.Index then
+            Result := 0
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; L, R: NativeInt; const buffPtr: PKDT128DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT128DE_Node;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer[(L + R) shr 1];
+      repeat
+        while SortCompare(buffPtr, SortBuffer[i], p) < 0 do
+            Inc(i);
+        while SortCompare(buffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, buffPtr);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  Parent: PKDT128DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
+
+  ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT128DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT128DE.Search(const buff: TKDT128DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT128DE_Node;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT128DE.Search(const buff: TKDT128DE_Vec; var SearchedDistanceMin: Double): PKDT128DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT128DE.Search(const buff: TKDT128DE_Vec): PKDT128DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT128DE.SearchToken(const buff: TKDT128DE_Vec): TPascalString;
+var
+  p: PKDT128DE_Node;
+begin
+  p := Search(buff);
+  if p <> nil then
+      Result := p^.Vec^.Token
+  else
+      Result := '';
+end;
+
+procedure TKDT128DE.Search(const inBuff: TKDT128DE_DynamicVecBuffer; var OutBuff: TKDT128DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT128DE_DynamicVecBuffer;
+  outBuffPtr: PKDT128DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT128DE_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT128DE_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT128DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT128DE.Search(const inBuff: TKDT128DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT128DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT128DE_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT128DE_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT128DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT128DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  ID := KDT128DE_Axis;
+
+  stream.write(st, 4);
+  stream.write(ID, 4);
+
+  stream.write(cnt, 8);
+
+  i := 0;
+  while i < cnt do
+    begin
+      stream.write(KDStoreBuff[i].buff[0], SizeOf(TKDT128DE_Vec));
+      stream.write(KDStoreBuff[i].Index, 8);
+      token_B := KDStoreBuff[i].Token.Bytes;
+      token_L := length(token_B);
+      stream.write(token_L, 4);
+      if token_L > 0 then
+        begin
+          stream.write(token_B[0], token_L);
+          SetLength(token_B, 0);
+        end;
+      Inc(i);
+    end;
+end;
+
+procedure TKDT128DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  Clear;
+
+  stream.read(st, 4);
+  stream.read(ID, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if ID <> KDT128DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+
+  i := 0;
+  try
+    while i < cnt do
+      begin
+        if stream.read(KDStoreBuff[i].buff[0], SizeOf(TKDT128DE_Vec)) <> SizeOf(TKDT128DE_Vec) then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(KDStoreBuff[i].Index, 8) <> 8 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(token_L, 4) <> 4 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if token_L > 0 then
+          begin
+            SetLength(token_B, token_L);
+            if stream.read(token_B[0], token_L) <> token_L then
+              begin
+                Clear;
+                Exit;
+              end;
+            KDStoreBuff[i].Token.Bytes := token_B;
+            SetLength(token_B, 0);
+          end
+        else
+            KDStoreBuff[i].Token := '';
+        Inc(i);
+      end;
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      Inc(i);
+    end;
+
+  if cnt > 0 then
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT128DE.SaveToFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(FileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT128DE.LoadFromFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT128DE.PrintNodeTree(const NodePtr: PKDT128DE_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT128DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT128DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
+end;
+
+class function TKDT128DE.Vec(const s: SystemString): TKDT128DE_Vec;
+var
+  t: TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j: NativeInt;
+begin
+  for i := 0 to KDT128DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            Inc(j);
+            if j >= KDT128DE_Axis then
+                Break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT128DE.Vec(const v: TKDT128DE_Vec): SystemString;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT128DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT128DE.Distance(const v1, v2: TKDT128DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT128DE_Axis - 1 do
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
+end;
+
+procedure TKDT128DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT128DE_Source; const Data: Pointer);
+begin
+  Source.buff := TestBuff[IndexFor];
+  Source.Token := umlIntToStr(IndexFor);
+end;
+
+class procedure TKDT128DE.Test;
+var
+  TKDT128DE_Test: TKDT128DE;
+  t: TTimeTick;
+  i, j: NativeInt;
+  TestResultBuff: TKDT128DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex: TDynamicIndexArray;
+  errored: Boolean;
+  m64: TMemoryStream64;
+  p: PKDT128DE_Node;
+  n: TPascalString;
+begin
+  errored := False;
+  n := PFormat('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  n.Append('...build');
+  TKDT128DE_Test := TKDT128DE.Create;
+
+  n.Append('...');
+  SetLength(TKDT128DE_Test.TestBuff, 1000);
+  for i := 0 to length(TKDT128DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT128DE_Axis - 1 do
+        TKDT128DE_Test.TestBuff[i][j] := i * KDT128DE_Axis + j;
+
+{$IFDEF FPC}
+  TKDT128DE_Test.BuildKDTreeM(length(TKDT128DE_Test.TestBuff), nil, @TKDT128DE_Test.Test_BuildM);
+{$ELSE FPC}
+  TKDT128DE_Test.BuildKDTreeM(length(TKDT128DE_Test.TestBuff), nil, TKDT128DE_Test.Test_BuildM);
+{$ENDIF FPC}
+  { save/load test }
+  n.Append('...save/load');
+  m64 := TMemoryStream64.CustomCreate(1024 * 1024);
+  TKDT128DE_Test.SaveToStream(m64);
+  m64.Position := 0;
+  TKDT128DE_Test.LoadFromStream(m64);
+  for i := 0 to length(TKDT128DE_Test.TestBuff) - 1 do
+    begin
+      p := TKDT128DE_Test.Search(TKDT128DE_Test.TestBuff[i]);
+      if p^.Vec^.Index <> i then
+          errored := True;
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
+          errored := True;
+      if errored then
+          Break;
+    end;
+  DisposeObject(m64);
+
+  if not errored then
+    begin
+      { parallel search test }
+      n.Append('...parallel');
+      SetLength(TestResultBuff, length(TKDT128DE_Test.TestBuff));
+      SetLength(TestResultIndex, length(TKDT128DE_Test.TestBuff));
+      TKDT128DE_Test.Search(TKDT128DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if Distance(TKDT128DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+            errored := True;
+    end;
+
+  if not errored then
+    begin
+      n.Append('...kMean');
+      TKDT128DE_Test.Clear;
+      { kMean test }
+      TKDT128DE_Test.BuildKDTreeWithCluster(TKDT128DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+      { parallel search test }
+      TKDT128DE_Test.Search(TKDT128DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if TestResultIndex[i] <> KMeanOutIndex[i] then
+            errored := True;
+    end;
+
+  SetLength(TKDT128DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT128DE_Test.Clear;
+
+  n.Append('...');
+  if errored then
+      n.Append('error!')
+  else
+      n.Append('passed ok %dms', [GetTimeTick - t]);
+  DisposeObject(TKDT128DE_Test);
+  DoStatus(n);
+  n := '';
+end;
+
+function TKDT156DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT156DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT156DE_Node;
+  function SortCompare(const p1, p2: PKDT156DE_Source; const axis: NativeInt): ShortInt;
+  begin
+    if p1^.buff[axis] = p2^.buff[axis] then
+      begin
+        if p1^.Index = p2^.Index then
+            Result := 0
+        else if p1^.Index < p2^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.buff[axis] < p2^.buff[axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT156DE_SourceBuffer; L, R: NativeInt; const axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT156DE_Source;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer^[(L + R) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, axis) < 0 do
+            Inc(i);
+        while SortCompare(SortBuffer^[j], p, axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, axis);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  M: NativeInt;
+  axis: NativeInt;
+  kdBuffPtr: PKDT156DE_SourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.Vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+    end
+  else
+    begin
+      axis := Depth mod KDT156DE_Axis;
+      M := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
+
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Vec := kdBuffPtr^[M];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], M, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[M + 1], PlanCount - (M + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT156DE.GetData(const Index: NativeInt): PKDT156DE_Source;
+begin
+  Result := @KDStoreBuff[Index];
+end;
+
+constructor TKDT156DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT156DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT156DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT156DE_Node(KDNodes[i]));
+      Inc(i);
+    end;
+
+  for i := 0 to length(KDStoreBuff) - 1 do
+      KDStoreBuff[i].Token := '';
+
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT156DE.StoreBuffPtr: PKDT156DE_DyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT156DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT156DE_BuildCall);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT156DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT156DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT156DE_BuildMethod);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT156DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT156DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT156DE_BuildProc);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT156DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{ k-means++ clusterization }
+procedure TKDT156DE.BuildKDTreeWithCluster(const inBuff: TKDT156DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT156DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT156DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT156DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT156DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT156DE.BuildKDTreeWithCluster(const inBuff: TKDT156DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT156DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT156DE_BuildCall);
+var
+  TempStoreBuff: TKDT156DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT156DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT156DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT156DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT156DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT156DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT156DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT156DE_BuildMethod);
+var
+  TempStoreBuff: TKDT156DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT156DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT156DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT156DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT156DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT156DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT156DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT156DE_BuildProc);
+var
+  TempStoreBuff: TKDT156DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT156DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT156DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT156DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT156DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT156DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+function TKDT156DE.Search(const buff: TKDT156DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT156DE_Node;
+
+var
+  NearestNeighbour: PKDT156DE_Node;
+
+  function FindParentNode(const buffPtr: PKDT156DE_Vec; NodePtr: PKDT156DE_Node): PKDT156DE_Node;
+  var
+    Next: PKDT156DE_Node;
+    Depth, axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        axis := Depth mod KDT156DE_Axis;
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT156DE_Node; const buffPtr: PKDT156DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    Inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
+        NearestNeighbour := NodePtr;
+
+    axis := Depth mod KDT156DE_Axis;
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
+            ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const buffPtr: PKDT156DE_Vec; const p1, p2: PKDT156DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
+    if d1 = d2 then
+      begin
+        if p1^.Vec^.Index = p2^.Vec^.Index then
+            Result := 0
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; L, R: NativeInt; const buffPtr: PKDT156DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT156DE_Node;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer[(L + R) shr 1];
+      repeat
+        while SortCompare(buffPtr, SortBuffer[i], p) < 0 do
+            Inc(i);
+        while SortCompare(buffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, buffPtr);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  Parent: PKDT156DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
+
+  ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT156DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT156DE.Search(const buff: TKDT156DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT156DE_Node;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT156DE.Search(const buff: TKDT156DE_Vec; var SearchedDistanceMin: Double): PKDT156DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT156DE.Search(const buff: TKDT156DE_Vec): PKDT156DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT156DE.SearchToken(const buff: TKDT156DE_Vec): TPascalString;
+var
+  p: PKDT156DE_Node;
+begin
+  p := Search(buff);
+  if p <> nil then
+      Result := p^.Vec^.Token
+  else
+      Result := '';
+end;
+
+procedure TKDT156DE.Search(const inBuff: TKDT156DE_DynamicVecBuffer; var OutBuff: TKDT156DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT156DE_DynamicVecBuffer;
+  outBuffPtr: PKDT156DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT156DE_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT156DE_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT156DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT156DE.Search(const inBuff: TKDT156DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT156DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT156DE_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT156DE_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT156DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT156DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  ID := KDT156DE_Axis;
+
+  stream.write(st, 4);
+  stream.write(ID, 4);
+
+  stream.write(cnt, 8);
+
+  i := 0;
+  while i < cnt do
+    begin
+      stream.write(KDStoreBuff[i].buff[0], SizeOf(TKDT156DE_Vec));
+      stream.write(KDStoreBuff[i].Index, 8);
+      token_B := KDStoreBuff[i].Token.Bytes;
+      token_L := length(token_B);
+      stream.write(token_L, 4);
+      if token_L > 0 then
+        begin
+          stream.write(token_B[0], token_L);
+          SetLength(token_B, 0);
+        end;
+      Inc(i);
+    end;
+end;
+
+procedure TKDT156DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  Clear;
+
+  stream.read(st, 4);
+  stream.read(ID, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if ID <> KDT156DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+
+  i := 0;
+  try
+    while i < cnt do
+      begin
+        if stream.read(KDStoreBuff[i].buff[0], SizeOf(TKDT156DE_Vec)) <> SizeOf(TKDT156DE_Vec) then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(KDStoreBuff[i].Index, 8) <> 8 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(token_L, 4) <> 4 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if token_L > 0 then
+          begin
+            SetLength(token_B, token_L);
+            if stream.read(token_B[0], token_L) <> token_L then
+              begin
+                Clear;
+                Exit;
+              end;
+            KDStoreBuff[i].Token.Bytes := token_B;
+            SetLength(token_B, 0);
+          end
+        else
+            KDStoreBuff[i].Token := '';
+        Inc(i);
+      end;
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      Inc(i);
+    end;
+
+  if cnt > 0 then
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT156DE.SaveToFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(FileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT156DE.LoadFromFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT156DE.PrintNodeTree(const NodePtr: PKDT156DE_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT156DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT156DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
+end;
+
+class function TKDT156DE.Vec(const s: SystemString): TKDT156DE_Vec;
+var
+  t: TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j: NativeInt;
+begin
+  for i := 0 to KDT156DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            Inc(j);
+            if j >= KDT156DE_Axis then
+                Break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT156DE.Vec(const v: TKDT156DE_Vec): SystemString;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT156DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT156DE.Distance(const v1, v2: TKDT156DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT156DE_Axis - 1 do
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
+end;
+
+procedure TKDT156DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT156DE_Source; const Data: Pointer);
+begin
+  Source.buff := TestBuff[IndexFor];
+  Source.Token := umlIntToStr(IndexFor);
+end;
+
+class procedure TKDT156DE.Test;
+var
+  TKDT156DE_Test: TKDT156DE;
+  t: TTimeTick;
+  i, j: NativeInt;
+  TestResultBuff: TKDT156DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex: TDynamicIndexArray;
+  errored: Boolean;
+  m64: TMemoryStream64;
+  p: PKDT156DE_Node;
+  n: TPascalString;
+begin
+  errored := False;
+  n := PFormat('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  n.Append('...build');
+  TKDT156DE_Test := TKDT156DE.Create;
+
+  n.Append('...');
+  SetLength(TKDT156DE_Test.TestBuff, 1000);
+  for i := 0 to length(TKDT156DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT156DE_Axis - 1 do
+        TKDT156DE_Test.TestBuff[i][j] := i * KDT156DE_Axis + j;
+
+{$IFDEF FPC}
+  TKDT156DE_Test.BuildKDTreeM(length(TKDT156DE_Test.TestBuff), nil, @TKDT156DE_Test.Test_BuildM);
+{$ELSE FPC}
+  TKDT156DE_Test.BuildKDTreeM(length(TKDT156DE_Test.TestBuff), nil, TKDT156DE_Test.Test_BuildM);
+{$ENDIF FPC}
+  { save/load test }
+  n.Append('...save/load');
+  m64 := TMemoryStream64.CustomCreate(1024 * 1024);
+  TKDT156DE_Test.SaveToStream(m64);
+  m64.Position := 0;
+  TKDT156DE_Test.LoadFromStream(m64);
+  for i := 0 to length(TKDT156DE_Test.TestBuff) - 1 do
+    begin
+      p := TKDT156DE_Test.Search(TKDT156DE_Test.TestBuff[i]);
+      if p^.Vec^.Index <> i then
+          errored := True;
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
+          errored := True;
+      if errored then
+          Break;
+    end;
+  DisposeObject(m64);
+
+  if not errored then
+    begin
+      { parallel search test }
+      n.Append('...parallel');
+      SetLength(TestResultBuff, length(TKDT156DE_Test.TestBuff));
+      SetLength(TestResultIndex, length(TKDT156DE_Test.TestBuff));
+      TKDT156DE_Test.Search(TKDT156DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if Distance(TKDT156DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+            errored := True;
+    end;
+
+  if not errored then
+    begin
+      n.Append('...kMean');
+      TKDT156DE_Test.Clear;
+      { kMean test }
+      TKDT156DE_Test.BuildKDTreeWithCluster(TKDT156DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+      { parallel search test }
+      TKDT156DE_Test.Search(TKDT156DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if TestResultIndex[i] <> KMeanOutIndex[i] then
+            errored := True;
+    end;
+
+  SetLength(TKDT156DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT156DE_Test.Clear;
+
+  n.Append('...');
+  if errored then
+      n.Append('error!')
+  else
+      n.Append('passed ok %dms', [GetTimeTick - t]);
+  DisposeObject(TKDT156DE_Test);
+  DoStatus(n);
+  n := '';
+end;
+
+function TKDT192DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT192DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT192DE_Node;
+  function SortCompare(const p1, p2: PKDT192DE_Source; const axis: NativeInt): ShortInt;
+  begin
+    if p1^.buff[axis] = p2^.buff[axis] then
+      begin
+        if p1^.Index = p2^.Index then
+            Result := 0
+        else if p1^.Index < p2^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.buff[axis] < p2^.buff[axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT192DE_SourceBuffer; L, R: NativeInt; const axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT192DE_Source;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer^[(L + R) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, axis) < 0 do
+            Inc(i);
+        while SortCompare(SortBuffer^[j], p, axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, axis);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  M: NativeInt;
+  axis: NativeInt;
+  kdBuffPtr: PKDT192DE_SourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.Vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+    end
+  else
+    begin
+      axis := Depth mod KDT192DE_Axis;
+      M := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
+
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Vec := kdBuffPtr^[M];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], M, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[M + 1], PlanCount - (M + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT192DE.GetData(const Index: NativeInt): PKDT192DE_Source;
+begin
+  Result := @KDStoreBuff[Index];
+end;
+
+constructor TKDT192DE.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT192DE.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT192DE.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT192DE_Node(KDNodes[i]));
+      Inc(i);
+    end;
+
+  for i := 0 to length(KDStoreBuff) - 1 do
+      KDStoreBuff[i].Token := '';
+
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT192DE.StoreBuffPtr: PKDT192DE_DyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT192DE.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT192DE_BuildCall);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT192DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT192DE.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT192DE_BuildMethod);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT192DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT192DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT192DE_BuildProc);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT192DE_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{ k-means++ clusterization }
+procedure TKDT192DE.BuildKDTreeWithCluster(const inBuff: TKDT192DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT192DE_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT192DE_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT192DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT192DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT192DE.BuildKDTreeWithCluster(const inBuff: TKDT192DE_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TDynamicIndexArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT192DE.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT192DE_BuildCall);
+var
+  TempStoreBuff: TKDT192DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT192DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT192DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT192DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT192DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT192DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT192DE.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT192DE_BuildMethod);
+var
+  TempStoreBuff: TKDT192DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT192DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT192DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT192DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT192DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT192DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT192DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT192DE_BuildProc);
+var
+  TempStoreBuff: TKDT192DE_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT192DE_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT192DE_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT192DE_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT192DE_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT192DE_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+function TKDT192DE.Search(const buff: TKDT192DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT192DE_Node;
+
+var
+  NearestNeighbour: PKDT192DE_Node;
+
+  function FindParentNode(const buffPtr: PKDT192DE_Vec; NodePtr: PKDT192DE_Node): PKDT192DE_Node;
+  var
+    Next: PKDT192DE_Node;
+    Depth, axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        axis := Depth mod KDT192DE_Axis;
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT192DE_Node; const buffPtr: PKDT192DE_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    Inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
+        NearestNeighbour := NodePtr;
+
+    axis := Depth mod KDT192DE_Axis;
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
+            ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const buffPtr: PKDT192DE_Vec; const p1, p2: PKDT192DE_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
+    if d1 = d2 then
+      begin
+        if p1^.Vec^.Index = p2^.Vec^.Index then
+            Result := 0
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; L, R: NativeInt; const buffPtr: PKDT192DE_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT192DE_Node;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer[(L + R) shr 1];
+      repeat
+        while SortCompare(buffPtr, SortBuffer[i], p) < 0 do
+            Inc(i);
+        while SortCompare(buffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, buffPtr);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  Parent: PKDT192DE_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
+
+  ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT192DE_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT192DE.Search(const buff: TKDT192DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT192DE_Node;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT192DE.Search(const buff: TKDT192DE_Vec; var SearchedDistanceMin: Double): PKDT192DE_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT192DE.Search(const buff: TKDT192DE_Vec): PKDT192DE_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT192DE.SearchToken(const buff: TKDT192DE_Vec): TPascalString;
+var
+  p: PKDT192DE_Node;
+begin
+  p := Search(buff);
+  if p <> nil then
+      Result := p^.Vec^.Token
+  else
+      Result := '';
+end;
+
+procedure TKDT192DE.Search(const inBuff: TKDT192DE_DynamicVecBuffer; var OutBuff: TKDT192DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT192DE_DynamicVecBuffer;
+  outBuffPtr: PKDT192DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT192DE_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT192DE_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT192DE_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT192DE.Search(const inBuff: TKDT192DE_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT192DE_DynamicVecBuffer;
+  outIndexPtr: PDynamicIndexArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT192DE_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT192DE_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT192DE_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT192DE.SaveToStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  ID := KDT192DE_Axis;
+
+  stream.write(st, 4);
+  stream.write(ID, 4);
+
+  stream.write(cnt, 8);
+
+  i := 0;
+  while i < cnt do
+    begin
+      stream.write(KDStoreBuff[i].buff[0], SizeOf(TKDT192DE_Vec));
+      stream.write(KDStoreBuff[i].Index, 8);
+      token_B := KDStoreBuff[i].Token.Bytes;
+      token_L := length(token_B);
+      stream.write(token_L, 4);
+      if token_L > 0 then
+        begin
+          stream.write(token_B[0], token_L);
+          SetLength(token_B, 0);
+        end;
+      Inc(i);
+    end;
+end;
+
+procedure TKDT192DE.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  Clear;
+
+  stream.read(st, 4);
+  stream.read(ID, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if ID <> KDT192DE_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+
+  i := 0;
+  try
+    while i < cnt do
+      begin
+        if stream.read(KDStoreBuff[i].buff[0], SizeOf(TKDT192DE_Vec)) <> SizeOf(TKDT192DE_Vec) then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(KDStoreBuff[i].Index, 8) <> 8 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(token_L, 4) <> 4 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if token_L > 0 then
+          begin
+            SetLength(token_B, token_L);
+            if stream.read(token_B[0], token_L) <> token_L then
+              begin
+                Clear;
+                Exit;
+              end;
+            KDStoreBuff[i].Token.Bytes := token_B;
+            SetLength(token_B, 0);
+          end
+        else
+            KDStoreBuff[i].Token := '';
+        Inc(i);
+      end;
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      Inc(i);
+    end;
+
+  if cnt > 0 then
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT192DE.SaveToFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(FileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT192DE.LoadFromFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT192DE.PrintNodeTree(const NodePtr: PKDT192DE_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT192DE_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT192DE.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
+end;
+
+class function TKDT192DE.Vec(const s: SystemString): TKDT192DE_Vec;
+var
+  t: TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j: NativeInt;
+begin
+  for i := 0 to KDT192DE_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            Inc(j);
+            if j >= KDT192DE_Axis then
+                Break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT192DE.Vec(const v: TKDT192DE_Vec): SystemString;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT192DE_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT192DE.Distance(const v1, v2: TKDT192DE_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT192DE_Axis - 1 do
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
+end;
+
+procedure TKDT192DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT192DE_Source; const Data: Pointer);
+begin
+  Source.buff := TestBuff[IndexFor];
+  Source.Token := umlIntToStr(IndexFor);
+end;
+
+class procedure TKDT192DE.Test;
+var
+  TKDT192DE_Test: TKDT192DE;
+  t: TTimeTick;
+  i, j: NativeInt;
+  TestResultBuff: TKDT192DE_DynamicVecBuffer;
+  TestResultIndex: TDynamicIndexArray;
+  KMeanOutIndex: TDynamicIndexArray;
+  errored: Boolean;
+  m64: TMemoryStream64;
+  p: PKDT192DE_Node;
+  n: TPascalString;
+begin
+  errored := False;
+  n := PFormat('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  n.Append('...build');
+  TKDT192DE_Test := TKDT192DE.Create;
+
+  n.Append('...');
+  SetLength(TKDT192DE_Test.TestBuff, 1000);
+  for i := 0 to length(TKDT192DE_Test.TestBuff) - 1 do
+    for j := 0 to KDT192DE_Axis - 1 do
+        TKDT192DE_Test.TestBuff[i][j] := i * KDT192DE_Axis + j;
+
+{$IFDEF FPC}
+  TKDT192DE_Test.BuildKDTreeM(length(TKDT192DE_Test.TestBuff), nil, @TKDT192DE_Test.Test_BuildM);
+{$ELSE FPC}
+  TKDT192DE_Test.BuildKDTreeM(length(TKDT192DE_Test.TestBuff), nil, TKDT192DE_Test.Test_BuildM);
+{$ENDIF FPC}
+  { save/load test }
+  n.Append('...save/load');
+  m64 := TMemoryStream64.CustomCreate(1024 * 1024);
+  TKDT192DE_Test.SaveToStream(m64);
+  m64.Position := 0;
+  TKDT192DE_Test.LoadFromStream(m64);
+  for i := 0 to length(TKDT192DE_Test.TestBuff) - 1 do
+    begin
+      p := TKDT192DE_Test.Search(TKDT192DE_Test.TestBuff[i]);
+      if p^.Vec^.Index <> i then
+          errored := True;
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
+          errored := True;
+      if errored then
+          Break;
+    end;
+  DisposeObject(m64);
+
+  if not errored then
+    begin
+      { parallel search test }
+      n.Append('...parallel');
+      SetLength(TestResultBuff, length(TKDT192DE_Test.TestBuff));
+      SetLength(TestResultIndex, length(TKDT192DE_Test.TestBuff));
+      TKDT192DE_Test.Search(TKDT192DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if Distance(TKDT192DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+            errored := True;
+    end;
+
+  if not errored then
+    begin
+      n.Append('...kMean');
+      TKDT192DE_Test.Clear;
+      { kMean test }
+      TKDT192DE_Test.BuildKDTreeWithCluster(TKDT192DE_Test.TestBuff, 10, 1, KMeanOutIndex);
+      { parallel search test }
+      TKDT192DE_Test.Search(TKDT192DE_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if TestResultIndex[i] <> KMeanOutIndex[i] then
+            errored := True;
+    end;
+
+  SetLength(TKDT192DE_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT192DE_Test.Clear;
+
+  n.Append('...');
+  if errored then
+      n.Append('error!')
+  else
+      n.Append('passed ok %dms', [GetTimeTick - t]);
+  DisposeObject(TKDT192DE_Test);
+  DoStatus(n);
+  n := '';
+end;
 
 function TKDT256DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT256DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT256DE_Node;
   function SortCompare(const p1, p2: PKDT256DE_Source; const axis: NativeInt): ShortInt;
@@ -28725,7 +35280,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -28743,7 +35298,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -28870,9 +35425,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT256DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT256DE_BuildProc);
 var
   i, j: NativeInt;
@@ -28901,8 +35453,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT256DE.BuildKDTreeWithCluster(const inBuff: TKDT256DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -29053,9 +35603,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT256DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT256DE_BuildProc);
 var
   TempStoreBuff: TKDT256DE_DyanmicStoreBuffer;
@@ -29109,9 +35656,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT256DE.Search(const buff: TKDT256DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT256DE_Node;
 
 var
@@ -29129,7 +35673,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT256DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -29150,21 +35694,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT256DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT256DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -29180,13 +35724,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT256DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT256DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -29246,7 +35790,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT256DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -29290,7 +35834,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -29304,13 +35848,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT256DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -29325,23 +35869,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT256DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -29360,8 +35904,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -29375,12 +35919,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT256DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -29392,22 +35936,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT256DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -29424,7 +35968,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -29536,7 +36080,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT256DE.SaveToFile(FileName: SystemString);
@@ -29556,7 +36100,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -29571,7 +36115,7 @@ end;
 procedure TKDT256DE.PrintNodeTree(const NodePtr: PKDT256DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT256DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT256DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -29587,10 +36131,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT256DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT256DE.KDT256DEVec(const s: SystemString): TKDT256DE_Vec;
+class function TKDT256DE.Vec(const s: SystemString): TKDT256DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -29615,7 +36159,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT256DE.KDT256DEVec(const v: TKDT256DE_Vec): SystemString;
+class function TKDT256DE.Vec(const v: TKDT256DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -29628,18 +36172,13 @@ begin
     end;
 end;
 
-class function TKDT256DE.KDT256DEPow(const v: TKDT256DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT256DE.KDT256DEDistance(const v1, v2: TKDT256DE_Vec): Double;
+class function TKDT256DE.Distance(const v1, v2: TKDT256DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT256DE_Axis - 1 do
-      Result := Result + KDT256DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT256DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT256DE_Source; const Data: Pointer);
@@ -29659,15 +36198,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT256DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT256DE_Test := TKDT256DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT256DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT256DE_Test.TestBuff) - 1 do
     for j := 0 to KDT256DE_Axis - 1 do
@@ -29679,7 +36219,7 @@ begin
   TKDT256DE_Test.BuildKDTreeM(length(TKDT256DE_Test.TestBuff), nil, TKDT256DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT256DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -29687,9 +36227,9 @@ begin
   for i := 0 to length(TKDT256DE_Test.TestBuff) - 1 do
     begin
       p := TKDT256DE_Test.Search(TKDT256DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -29699,19 +36239,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT256DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT256DE_Test.TestBuff));
       TKDT256DE_Test.Search(TKDT256DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT256DEDistance(TKDT256DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT256DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT256DE_Test.Clear;
       { kMean test }
       TKDT256DE_Test.BuildKDTreeWithCluster(TKDT256DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -29729,16 +36269,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT256DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT256DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT512DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT512DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT512DE_Node;
   function SortCompare(const p1, p2: PKDT512DE_Source; const axis: NativeInt): ShortInt;
@@ -29805,7 +36344,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -29823,7 +36362,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -29950,9 +36489,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT512DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT512DE_BuildProc);
 var
   i, j: NativeInt;
@@ -29981,8 +36517,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT512DE.BuildKDTreeWithCluster(const inBuff: TKDT512DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -30133,9 +36667,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT512DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT512DE_BuildProc);
 var
   TempStoreBuff: TKDT512DE_DyanmicStoreBuffer;
@@ -30189,9 +36720,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT512DE.Search(const buff: TKDT512DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT512DE_Node;
 
 var
@@ -30209,7 +36737,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT512DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -30230,21 +36758,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT512DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT512DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -30260,13 +36788,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT512DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT512DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -30326,7 +36854,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT512DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -30370,7 +36898,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -30384,13 +36912,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT512DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -30405,23 +36933,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT512DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -30440,8 +36968,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -30455,12 +36983,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT512DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -30472,22 +37000,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT512DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -30504,7 +37032,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -30616,7 +37144,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT512DE.SaveToFile(FileName: SystemString);
@@ -30636,7 +37164,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -30651,7 +37179,7 @@ end;
 procedure TKDT512DE.PrintNodeTree(const NodePtr: PKDT512DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT512DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT512DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -30667,10 +37195,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT512DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT512DE.KDT512DEVec(const s: SystemString): TKDT512DE_Vec;
+class function TKDT512DE.Vec(const s: SystemString): TKDT512DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -30695,7 +37223,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT512DE.KDT512DEVec(const v: TKDT512DE_Vec): SystemString;
+class function TKDT512DE.Vec(const v: TKDT512DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -30708,18 +37236,13 @@ begin
     end;
 end;
 
-class function TKDT512DE.KDT512DEPow(const v: TKDT512DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT512DE.KDT512DEDistance(const v1, v2: TKDT512DE_Vec): Double;
+class function TKDT512DE.Distance(const v1, v2: TKDT512DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT512DE_Axis - 1 do
-      Result := Result + KDT512DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT512DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT512DE_Source; const Data: Pointer);
@@ -30739,15 +37262,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT512DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT512DE_Test := TKDT512DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT512DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT512DE_Test.TestBuff) - 1 do
     for j := 0 to KDT512DE_Axis - 1 do
@@ -30759,7 +37283,7 @@ begin
   TKDT512DE_Test.BuildKDTreeM(length(TKDT512DE_Test.TestBuff), nil, TKDT512DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT512DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -30767,9 +37291,9 @@ begin
   for i := 0 to length(TKDT512DE_Test.TestBuff) - 1 do
     begin
       p := TKDT512DE_Test.Search(TKDT512DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -30779,19 +37303,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT512DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT512DE_Test.TestBuff));
       TKDT512DE_Test.Search(TKDT512DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT512DEDistance(TKDT512DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT512DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT512DE_Test.Clear;
       { kMean test }
       TKDT512DE_Test.BuildKDTreeWithCluster(TKDT512DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -30809,16 +37333,15 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT512DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT512DE_Test);
+  DoStatus(n);
+  n := '';
 end;
-
 
 function TKDT1024DE.InternalBuildKdTree(const KDSourceBufferPtr: PKDT1024DE_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT1024DE_Node;
   function SortCompare(const p1, p2: PKDT1024DE_Source; const axis: NativeInt): ShortInt;
@@ -30885,7 +37408,7 @@ begin
       Result^.Parent := nil;
       Result^.Right := nil;
       Result^.Left := nil;
-      Result^.vec := KDSourceBufferPtr^[0];
+      Result^.Vec := KDSourceBufferPtr^[0];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -30903,7 +37426,7 @@ begin
 
       new(Result);
       Result^.Parent := nil;
-      Result^.vec := kdBuffPtr^[M];
+      Result^.Vec := kdBuffPtr^[M];
 
       KDNodes[NodeCounter] := Result;
       Inc(NodeCounter);
@@ -31030,9 +37553,6 @@ begin
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT1024DE.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1024DE_BuildProc);
 var
   i, j: NativeInt;
@@ -31061,8 +37581,6 @@ begin
 
   RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
 end;
-{$ENDIF}
-
 
 { k-means++ clusterization }
 procedure TKDT1024DE.BuildKDTreeWithCluster(const inBuff: TKDT1024DE_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
@@ -31213,9 +37731,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$IFNDEF FPC}
-
-
 procedure TKDT1024DE.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1024DE_BuildProc);
 var
   TempStoreBuff: TKDT1024DE_DyanmicStoreBuffer;
@@ -31269,9 +37784,6 @@ begin
   SetLength(Source, 0);
 end;
 
-{$ENDIF FPC}
-
-
 function TKDT1024DE.Search(const buff: TKDT1024DE_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT1024DE_Node;
 
 var
@@ -31289,7 +37801,7 @@ var
       begin
         Result := Next;
         axis := Depth mod KDT1024DE_Axis;
-        if buffPtr^[axis] > Next^.vec^.buff[axis] then
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
             Next := Next^.Right
         else
             Next := Next^.Left;
@@ -31310,21 +37822,21 @@ var
     if NearestNodes <> nil then
         NearestNodes.Add(NodePtr);
 
-    Dist := KDT1024DEDistance(buffPtr^, NodePtr^.vec^.buff);
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
     if Dist < SearchedDistanceMin then
       begin
         SearchedDistanceMin := Dist;
         NearestNeighbour := NodePtr;
       end
-    else if (Dist = SearchedDistanceMin) and (NodePtr^.vec^.Index < NearestNeighbour^.vec^.Index) then
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
         NearestNeighbour := NodePtr;
 
     axis := Depth mod KDT1024DE_Axis;
-    Dist := NodePtr^.vec^.buff[axis] - buffPtr^[axis];
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
 
     if Dist * Dist > SearchedDistanceMin then
       begin
-        if NodePtr^.vec^.buff[axis] > buffPtr^[axis] then
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
             ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
         else
             ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
@@ -31340,13 +37852,13 @@ var
   var
     d1, d2: Double;
   begin
-    d1 := KDT1024DEDistance(buffPtr^, p1^.vec^.buff);
-    d2 := KDT1024DEDistance(buffPtr^, p2^.vec^.buff);
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
     if d1 = d2 then
       begin
-        if p1^.vec^.Index = p2^.vec^.Index then
+        if p1^.Vec^.Index = p2^.Vec^.Index then
             Result := 0
-        else if p1^.vec^.Index < p2^.vec^.Index then
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
             Result := -1
         else
             Result := 1;
@@ -31406,7 +37918,7 @@ begin
   Parent := FindParentNode(@buff[0], RootNode);
   NearestNeighbour := Parent;
 
-  SearchedDistanceMin := KDT1024DEDistance(buff, Parent^.vec^.buff);
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
 
   ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
   if NearestNeighbour = nil then
@@ -31450,7 +37962,7 @@ var
 begin
   p := Search(buff);
   if p <> nil then
-      Result := p^.vec^.Token
+      Result := p^.Vec^.Token
   else
       Result := '';
 end;
@@ -31464,13 +37976,13 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT1024DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outBuffPtr^[pass] := p^.vec^.buff;
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -31485,23 +37997,23 @@ begin
   outBuffPtr := @OutBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT1024DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outBuffPtr^[pass] := p^.vec^.buff;
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -31520,8 +38032,8 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutBuff[i] := p^.vec^.buff;
-      OutIndex[i] := p^.vec^.Index;
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -31535,12 +38047,12 @@ var
   outIndexPtr: PDynamicIndexArray;
 
 {$IFDEF FPC}
-  procedure FPC_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure FPC_ParallelFor(pass: Integer);
   var
     p: PKDT1024DE_Node;
   begin
     p := Search(inBuffPtr^[pass]);
-    outIndexPtr^[pass] := p^.vec^.Index;
+    outIndexPtr^[pass] := p^.Vec^.Index;
   end;
 {$ENDIF FPC}
 
@@ -31552,22 +38064,22 @@ begin
   inBuffPtr := @inBuff;
   outIndexPtr := @OutIndex;
 
-  GlobalMemoryHook := False;
+  GlobalMemoryHook.V := False;
   try
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@FPC_ParallelFor, 0, PtrInt(length(inBuff) - 1));
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
 {$ELSE FPC}
-    TParallel.for(Int64(0), Int64(length(inBuff) - 1),
+    DelphiParallelFor(0, length(inBuff) - 1,
       procedure(pass: Int64)
       var
         p: PKDT1024DE_Node;
       begin
         p := Search(inBuffPtr^[pass]);
-        outIndexPtr^[pass] := p^.vec^.Index;
+        outIndexPtr^[pass] := p^.Vec^.Index;
       end);
 {$ENDIF FPC}
   finally
-      GlobalMemoryHook := True;
+      GlobalMemoryHook.V := True;
   end;
 end;
 
@@ -31584,7 +38096,7 @@ begin
   for i := 0 to length(inBuff) - 1 do
     begin
       p := Search(inBuff[i]);
-      OutIndex[i] := p^.vec^.Index;
+      OutIndex[i] := p^.Vec^.Index;
     end;
 end;
 {$ENDIF parallel}
@@ -31696,7 +38208,7 @@ begin
     end;
 
   if cnt > 0 then
-    RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
 end;
 
 procedure TKDT1024DE.SaveToFile(FileName: SystemString);
@@ -31716,7 +38228,7 @@ var
   fs: TCoreClassFileStream;
 begin
   try
-      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
   except
       Exit;
   end;
@@ -31731,7 +38243,7 @@ end;
 procedure TKDT1024DE.PrintNodeTree(const NodePtr: PKDT1024DE_Node);
   procedure DoPrintNode(prefix: SystemString; const p: PKDT1024DE_Node);
   begin
-    DoStatus('%s +%d (%s) ', [prefix, p^.vec^.Index, KDT1024DEVec(p^.vec^.buff)]);
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
     if p^.Left <> nil then
         DoPrintNode(prefix + ' |-----', p^.Left);
     if p^.Right <> nil then
@@ -31747,10 +38259,10 @@ var
   i: NativeInt;
 begin
   for i := 0 to length(KDStoreBuff) - 1 do
-      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, KDT1024DEVec(KDStoreBuff[i].buff)]);
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
 end;
 
-class function TKDT1024DE.KDT1024DEVec(const s: SystemString): TKDT1024DE_Vec;
+class function TKDT1024DE.Vec(const s: SystemString): TKDT1024DE_Vec;
 var
   t: TTextParsing;
   SplitOutput: TArrayPascalString;
@@ -31775,7 +38287,7 @@ begin
   DisposeObject(t);
 end;
 
-class function TKDT1024DE.KDT1024DEVec(const v: TKDT1024DE_Vec): SystemString;
+class function TKDT1024DE.Vec(const v: TKDT1024DE_Vec): SystemString;
 var
   i: NativeInt;
 begin
@@ -31788,18 +38300,13 @@ begin
     end;
 end;
 
-class function TKDT1024DE.KDT1024DEPow(const v: TKDT1024DE_VecType): Double;
-begin
-  Result := v * v;
-end;
-
-class function TKDT1024DE.KDT1024DEDistance(const v1, v2: TKDT1024DE_Vec): Double;
+class function TKDT1024DE.Distance(const v1, v2: TKDT1024DE_Vec): Double;
 var
   i: NativeInt;
 begin
   Result := 0;
   for i := 0 to KDT1024DE_Axis - 1 do
-      Result := Result + KDT1024DEPow(v2[i] - v1[i]);
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
 end;
 
 procedure TKDT1024DE.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT1024DE_Source; const Data: Pointer);
@@ -31819,15 +38326,16 @@ var
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT1024DE_Node;
+  n: TPascalString;
 begin
   errored := False;
-  DoStatusNoLn('test %s...', [ClassName]);
+  n := PFormat('test %s...', [ClassName]);
   t := GetTimeTick;
 
-  DoStatusNoLn('...build');
+  n.Append('...build');
   TKDT1024DE_Test := TKDT1024DE.Create;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   SetLength(TKDT1024DE_Test.TestBuff, 1000);
   for i := 0 to length(TKDT1024DE_Test.TestBuff) - 1 do
     for j := 0 to KDT1024DE_Axis - 1 do
@@ -31839,7 +38347,7 @@ begin
   TKDT1024DE_Test.BuildKDTreeM(length(TKDT1024DE_Test.TestBuff), nil, TKDT1024DE_Test.Test_BuildM);
 {$ENDIF FPC}
   { save/load test }
-  DoStatusNoLn('...save/load');
+  n.Append('...save/load');
   m64 := TMemoryStream64.CustomCreate(1024 * 1024);
   TKDT1024DE_Test.SaveToStream(m64);
   m64.Position := 0;
@@ -31847,9 +38355,9 @@ begin
   for i := 0 to length(TKDT1024DE_Test.TestBuff) - 1 do
     begin
       p := TKDT1024DE_Test.Search(TKDT1024DE_Test.TestBuff[i]);
-      if p^.vec^.Index <> i then
+      if p^.Vec^.Index <> i then
           errored := True;
-      if not p^.vec^.Token.Same(umlIntToStr(i)) then
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
           errored := True;
       if errored then
           Break;
@@ -31859,19 +38367,19 @@ begin
   if not errored then
     begin
       { parallel search test }
-      DoStatusNoLn('...parallel');
+      n.Append('...parallel');
       SetLength(TestResultBuff, length(TKDT1024DE_Test.TestBuff));
       SetLength(TestResultIndex, length(TKDT1024DE_Test.TestBuff));
       TKDT1024DE_Test.Search(TKDT1024DE_Test.TestBuff, TestResultBuff, TestResultIndex);
 
       for i := 0 to length(TestResultIndex) - 1 do
-        if KDT1024DEDistance(TKDT1024DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+        if Distance(TKDT1024DE_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
             errored := True;
     end;
 
   if not errored then
     begin
-      DoStatusNoLn('...kMean');
+      n.Append('...kMean');
       TKDT1024DE_Test.Clear;
       { kMean test }
       TKDT1024DE_Test.BuildKDTreeWithCluster(TKDT1024DE_Test.TestBuff, 10, 1, KMeanOutIndex);
@@ -31889,14 +38397,14 @@ begin
   SetLength(KMeanOutIndex, 0);
   TKDT1024DE_Test.Clear;
 
-  DoStatusNoLn('...');
+  n.Append('...');
   if errored then
-      DoStatusNoLn('error!')
+      n.Append('error!')
   else
-      DoStatusNoLn('passed ok %dms', [GetTimeTick - t]);
-  DoStatusNoLn;
-
+      n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT1024DE_Test);
+  DoStatus(n);
+  n := '';
 end;
 
 
@@ -31926,6 +38434,12 @@ begin
   TKDT22DE.Test();
   TKDT23DE.Test();
   TKDT24DE.Test();
+  TKDT48DE.Test();
+  TKDT52DE.Test();
+  TKDT64DE.Test();
+  TKDT128DE.Test();
+  TKDT156DE.Test();
+  TKDT192DE.Test();
   TKDT256DE.Test();
   TKDT512DE.Test();
   TKDT1024DE.Test();

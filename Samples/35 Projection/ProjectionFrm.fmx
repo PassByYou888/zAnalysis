@@ -28,7 +28,7 @@ object ProjectionForm: TProjectionForm
     end
     object d_RightTop: TCircle
       Position.X = 472.000000000000000000
-      Position.Y = 184.000000000000000000
+      Position.Y = 192.000000000000000000
       Size.Width = 50.000000000000000000
       Size.Height = 50.000000000000000000
       Size.PlatformDefault = False
@@ -60,7 +60,7 @@ object ProjectionForm: TProjectionForm
       OnPaint = cPaint
     end
     object d_RightBottom: TCircle
-      Position.X = 480.000000000000000000
+      Position.X = 472.000000000000000000
       Position.Y = 464.000000000000000000
       Size.Width = 50.000000000000000000
       Size.Height = 50.000000000000000000
@@ -69,6 +69,42 @@ object ProjectionForm: TProjectionForm
       OnMouseMove = cMouseMove
       OnMouseUp = cMouseUp
       OnPaint = cPaint
+    end
+    object TriangleCheckBox: TCheckBox
+      StyledSettings = [Family, Size]
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 5
+      Text = 'Triangle'
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      TextSettings.FontColor = claWhite
+      OnChange = TriangleCheckBoxChange
+    end
+    object ModeComboBox: TComboBox
+      Items.Strings = (
+        'Rastermization'
+        'Morphomatics'
+        'Binaryzation')
+      ItemIndex = 0
+      Position.X = 208.000000000000000000
+      Position.Y = 5.000000000000000000
+      TabOrder = 6
+      OnChange = ModeComboBoxChange
+    end
+    object Label1: TLabel
+      StyledSettings = [Family, Size]
+      Position.X = 144.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 57.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      TextSettings.FontColor = claWhite
+      Text = 'Mode'
+      TabOrder = 7
     end
   end
   object ScrollBox2: TScrollBox
@@ -88,7 +124,7 @@ object ProjectionForm: TProjectionForm
       Size.PlatformDefault = False
     end
     object s_LeftTop: TCircle
-      Position.X = 160.000000000000000000
+      Position.X = 48.000000000000000000
       Position.Y = 128.000000000000000000
       Size.Width = 50.000000000000000000
       Size.Height = 50.000000000000000000
@@ -100,7 +136,7 @@ object ProjectionForm: TProjectionForm
     end
     object s_RightTop: TCircle
       Position.X = 408.000000000000000000
-      Position.Y = 120.000000000000000000
+      Position.Y = 128.000000000000000000
       Size.Width = 50.000000000000000000
       Size.Height = 50.000000000000000000
       Size.PlatformDefault = False
@@ -110,7 +146,7 @@ object ProjectionForm: TProjectionForm
       OnPaint = cPaint
     end
     object s_LeftBottom: TCircle
-      Position.X = 168.000000000000000000
+      Position.X = 48.000000000000000000
       Position.Y = 472.000000000000000000
       Size.Width = 50.000000000000000000
       Size.Height = 50.000000000000000000

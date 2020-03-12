@@ -6,16 +6,17 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Edit,
   FMX.StdCtrls, FMX.Layouts, FMX.TabControl, FMX.Controls.Presentation,
-  FMX.Objects, FMX.Colors, FMX.Ani, FMX.ListBox,
+  FMX.Objects, FMX.Colors, FMX.Ani, FMX.ListBox, FMX.ExtCtrls,
 
-  zDrawEngineInterface_FMX, MemoryRaster, zDrawEngine,
-  Geometry2DUnit, CoreClasses, UnicodeMixedLib, FMX.ExtCtrls;
+  CoreClasses, DoStatusIO, PascalStrings, UnicodeMixedLib,
+  MemoryRaster, zDrawEngine,
+  Geometry2DUnit,
+  zDrawEngineInterface_SlowFMX, PictureViewerInterface;
 
 type
   TBMPConverForm = class(TForm)
     converbmp32Button: TButton;
-    StyleBook1: TStyleBook;
-    Layout1: TLayout;
+    outputDirLayout: TLayout;
     DestDirEdit: TEdit;
     Label1: TLabel;
     seldirEditButton: TEditButton;
@@ -27,38 +28,48 @@ type
     converjlsButton: TButton;
     RadioButton_JLS8: TRadioButton;
     RadioButton_JLS24: TRadioButton;
-    Image: TImageViewer;
     converyv12Button: TButton;
     converbmp24Button: TButton;
     SameDirCheckBox: TCheckBox;
     converHalfYUVButton: TButton;
     converQuartYUVButton: TButton;
     converJpegButton: TButton;
-    RadioButton_Jpeg_RGBA: TRadioButton;
-    RadioButton_Jpeg_RGB: TRadioButton;
+    RadioButton_Jpeg_YCbCrA: TRadioButton;
+    RadioButton_Jpeg_YCbCr: TRadioButton;
     RadioButton_Jpeg_Gray: TRadioButton;
-    Layout2: TLayout;
+    qualilyLayout: TLayout;
     Label2: TLabel;
     JpegQualilyEdit: TEdit;
     RadioButton_Jpeg_GrayA: TRadioButton;
     RadioButton_Jpeg_CMYK: TRadioButton;
+    fpsTimer: TTimer;
+    pb: TPaintBox;
+    converPNGButton: TButton;
+    procedure FormCreate(Sender: TObject);
+    procedure fpsTimerTimer(Sender: TObject);
     procedure AddFileButtonClick(Sender: TObject);
     procedure ClearButtonClick(Sender: TObject);
     procedure converbmp24ButtonClick(Sender: TObject);
-    procedure ListBoxChange(Sender: TObject);
     procedure converbmp32ButtonClick(Sender: TObject);
     procedure converHalfYUVButtonClick(Sender: TObject);
     procedure seldirEditButtonClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure converseqButtonClick(Sender: TObject);
     procedure converjlsButtonClick(Sender: TObject);
     procedure converJpegButtonClick(Sender: TObject);
+    procedure converPNGButtonClick(Sender: TObject);
     procedure converQuartYUVButtonClick(Sender: TObject);
     procedure converyv12ButtonClick(Sender: TObject);
+    procedure pbMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+    procedure pbMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Single);
+    procedure pbMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+    procedure pbMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; var Handled: Boolean);
+    procedure pbPaint(Sender: TObject; Canvas: TCanvas);
   private
-    { Private declarations }
+    procedure ItemClick(Sender: TObject);
+    procedure DoStatusMethod(AText: SystemString; const ID: Integer);
   public
-    { Public declarations }
+    dIntf: TDrawEngineInterface_FMX;
+    Viewer: TPictureViewerInterface;
   end;
 
 var
@@ -68,6 +79,33 @@ implementation
 
 {$R *.fmx}
 
+
+procedure TBMPConverForm.FormCreate(Sender: TObject);
+begin
+  DestDirEdit.Text := umlCurrentPath;
+  dIntf := TDrawEngineInterface_FMX.Create;
+  Viewer := TPictureViewerInterface.Create(DrawPool(pb));
+  Viewer.ShowHistogramInfo := False;
+  Viewer.ShowPixelInfo := True;
+  AddDoStatusHook(Self, DoStatusMethod);
+end;
+
+procedure TBMPConverForm.fpsTimerTimer(Sender: TObject);
+begin
+  EnginePool.Progress(Interval2Delta(fpsTimer.Interval));
+  Invalidate;
+end;
+
+procedure TBMPConverForm.ItemClick(Sender: TObject);
+var
+  r: TMemoryRaster;
+begin
+  r := NewRasterFromFile(TListBoxItem(Sender).TagString);
+  r.BlendBlack;
+  Viewer.Clear;
+  Viewer.InputPicture(r, True, True);
+  Viewer.Fit();
+end;
 
 procedure TBMPConverForm.AddFileButtonClick(Sender: TObject);
 var
@@ -84,9 +122,10 @@ begin
       itm.ItemData.Text := umlGetFileName(OpenDialog.Files[i]);
       itm.ItemData.detail := umlGetFilePath(OpenDialog.Files[i]);
       itm.TagString := OpenDialog.Files[i];
-      itm.StyleLookup := 'listboxitembottomdetail';
-      itm.height := 40;
-      itm.Selectable := True;
+      itm.StyleLookup := 'listboxitemrightdetail';
+      itm.height := 35;
+      itm.Selectable := False;
+      itm.OnClick := ItemClick;
       ListBox.AddObject(itm);
     end;
   ListBox.EndUpdate;
@@ -128,10 +167,10 @@ begin
       b := TMemoryRaster.Create;
       LoadMemoryBitmap(itm.TagString, b);
       b.SaveToBmp24File(GetDestFile(F));
-      Caption := Format('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
-      DisposeObject(b);
+      DoStatus('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
+      disposeObject(b);
     end;
-  Caption := Format('all conver done!', []);
+  DoStatus('all conver done!', []);
 end;
 
 procedure TBMPConverForm.converbmp32ButtonClick(Sender: TObject);
@@ -164,11 +203,12 @@ begin
 
       b := TMemoryRaster.Create;
       LoadMemoryBitmap(itm.TagString, b);
+      b.BlendBlack;
       b.SaveToBmp32File(GetDestFile(F));
-      Caption := Format('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
-      DisposeObject(b);
+      DoStatus('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
+      disposeObject(b);
     end;
-  Caption := Format('all conver done!', []);
+  DoStatus('all conver done!', []);
 end;
 
 procedure TBMPConverForm.converHalfYUVButtonClick(Sender: TObject);
@@ -202,10 +242,57 @@ begin
       b := TMemoryRaster.Create;
       LoadMemoryBitmap(itm.TagString, b);
       b.SaveToHalfYUVFile(GetDestFile(F));
-      Caption := Format('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
-      DisposeObject(b);
+      DoStatus('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
+      disposeObject(b);
     end;
-  Caption := Format('all conver done!', []);
+  DoStatus('all conver done!', []);
+end;
+
+procedure TBMPConverForm.seldirEditButtonClick(Sender: TObject);
+var
+  v: string;
+begin
+  v := DestDirEdit.Text;
+  if SelectDirectory('output directory', '', v) then
+      DestDirEdit.Text := v;
+end;
+
+procedure TBMPConverForm.converseqButtonClick(Sender: TObject);
+  function GetDestFile(sour: string): string;
+  var
+    F: string;
+  begin
+    if SameDirCheckBox.IsChecked then
+        Result := umlChangeFileExt(sour, '.seq')
+    else
+      begin
+        F := umlGetFileName(sour);
+        Result := umlChangeFileExt(umlCombineFileName(DestDirEdit.Text, F), '.seq');
+      end;
+  end;
+
+var
+  i: Integer;
+  itm: TListBoxItem;
+  F: string;
+  b: TSequenceMemoryRaster;
+begin
+  if ListBox.Count <= 0 then
+      Exit;
+
+  for i := 0 to ListBox.Count - 1 do
+    begin
+      itm := ListBox.ListItems[i];
+      F := itm.TagString;
+
+      b := TSequenceMemoryRaster.Create;
+      LoadMemoryBitmap(itm.TagString, b);
+      b.BlendBlack;
+      b.SaveToFile(GetDestFile(F));
+      DoStatus('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
+      disposeObject(b);
+    end;
+  DoStatus('all conver done!', []);
 end;
 
 procedure TBMPConverForm.converjlsButtonClick(Sender: TObject);
@@ -246,10 +333,10 @@ begin
       else
           RaiseInfo('error.');
 
-      Caption := Format('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
-      DisposeObject(b);
+      DoStatus('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
+      disposeObject(b);
     end;
-  Caption := Format('all conver done!', []);
+  DoStatus('all conver done!', []);
 end;
 
 procedure TBMPConverForm.converJpegButtonClick(Sender: TObject);
@@ -282,21 +369,60 @@ begin
 
       b := TMemoryRaster.Create;
       LoadMemoryBitmap(itm.TagString, b);
+      b.BlendBlack;
 
-      if RadioButton_Jpeg_RGBA.IsChecked then
-          b.SaveToJpegRGBAFile(GetDestFile(F), umlStrToInt(JpegQualilyEdit.Text, 90))
-      else if RadioButton_Jpeg_RGB.IsChecked then
-          b.SaveToJpegRGBFile(GetDestFile(F), umlStrToInt(JpegQualilyEdit.Text, 90))
+      if RadioButton_Jpeg_YCbCrA.IsChecked then
+          b.SaveToJpegYCbCrAFile(GetDestFile(F), umlStrToInt(JpegQualilyEdit.Text, 90))
+      else if RadioButton_Jpeg_YCbCr.IsChecked then
+          b.SaveToJpegYCbCrFile(GetDestFile(F), umlStrToInt(JpegQualilyEdit.Text, 90))
       else if RadioButton_Jpeg_GrayA.IsChecked then
           b.SaveToJpegGrayAFile(GetDestFile(F), umlStrToInt(JpegQualilyEdit.Text, 90))
       else if RadioButton_Jpeg_Gray.IsChecked then
           b.SaveToJpegGrayFile(GetDestFile(F), umlStrToInt(JpegQualilyEdit.Text, 90))
       else if RadioButton_Jpeg_CMYK.IsChecked then
-          b.SaveToJpegCMYKRGBFile(GetDestFile(F), umlStrToInt(JpegQualilyEdit.Text, 90));
-      Caption := Format('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
-      DisposeObject(b);
+          b.SaveToJpegCMYKFile(GetDestFile(F), umlStrToInt(JpegQualilyEdit.Text, 90));
+      DoStatus('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
+      disposeObject(b);
     end;
-  Caption := Format('all conver done!', []);
+  DoStatus('all conver done!', []);
+end;
+
+procedure TBMPConverForm.converPNGButtonClick(Sender: TObject);
+  function GetDestFile(sour: string): string;
+  var
+    F: string;
+  begin
+    if SameDirCheckBox.IsChecked then
+        Result := umlChangeFileExt(sour, '.png')
+    else
+      begin
+        F := umlGetFileName(sour);
+        Result := umlChangeFileExt(umlCombineFileName(DestDirEdit.Text, F), '.png');
+      end;
+  end;
+
+var
+  i: Integer;
+  itm: TListBoxItem;
+  F: string;
+  b: TMemoryRaster;
+begin
+  if ListBox.Count <= 0 then
+      Exit;
+
+  for i := 0 to ListBox.Count - 1 do
+    begin
+      itm := ListBox.ListItems[i];
+      F := itm.TagString;
+
+      b := TMemoryRaster.Create;
+      LoadMemoryBitmap(itm.TagString, b);
+      b.BlendBlack;
+      b.SaveToPNGFile(GetDestFile(F));
+      DoStatus('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
+      disposeObject(b);
+    end;
+  DoStatus('all conver done!', []);
 end;
 
 procedure TBMPConverForm.converQuartYUVButtonClick(Sender: TObject);
@@ -330,47 +456,10 @@ begin
       b := TMemoryRaster.Create;
       LoadMemoryBitmap(itm.TagString, b);
       b.SaveToQuartYUVFile(GetDestFile(F));
-      Caption := Format('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
-      DisposeObject(b);
+      DoStatus('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
+      disposeObject(b);
     end;
-  Caption := Format('all conver done!', []);
-end;
-
-procedure TBMPConverForm.converseqButtonClick(Sender: TObject);
-  function GetDestFile(sour: string): string;
-  var
-    F: string;
-  begin
-    if SameDirCheckBox.IsChecked then
-        Result := umlChangeFileExt(sour, '.seq')
-    else
-      begin
-        F := umlGetFileName(sour);
-        Result := umlChangeFileExt(umlCombineFileName(DestDirEdit.Text, F), '.seq');
-      end;
-  end;
-
-var
-  i: Integer;
-  itm: TListBoxItem;
-  F: string;
-  b: TSequenceMemoryRaster;
-begin
-  if ListBox.Count <= 0 then
-      Exit;
-
-  for i := 0 to ListBox.Count - 1 do
-    begin
-      itm := ListBox.ListItems[i];
-      F := itm.TagString;
-
-      b := TSequenceMemoryRaster.Create;
-      LoadMemoryBitmap(itm.TagString, b);
-      b.SaveToFile(GetDestFile(F));
-      Caption := Format('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
-      DisposeObject(b);
-    end;
-  Caption := Format('all conver done!', []);
+  DoStatus('all conver done!', []);
 end;
 
 procedure TBMPConverForm.converyv12ButtonClick(Sender: TObject);
@@ -404,48 +493,46 @@ begin
       b := TMemoryRaster.Create;
       LoadMemoryBitmap(itm.TagString, b);
       b.SaveToYV12File(GetDestFile(F));
-      Caption := Format('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
-      DisposeObject(b);
+      DoStatus('%s -> %s ok!', [umlGetFileName(itm.TagString).Text, umlGetFileName(GetDestFile(F)).Text]);
+      disposeObject(b);
     end;
-  Caption := Format('all conver done!', []);
+  DoStatus('all conver done!', []);
 end;
 
-procedure TBMPConverForm.FormCreate(Sender: TObject);
+procedure TBMPConverForm.DoStatusMethod(AText: SystemString; const ID: Integer);
 begin
-  DestDirEdit.Text := umlCurrentPath;
+  DrawPool(pb).PostScrollText(5, AText, 12, DEColor(1, 1, 1, 1));
 end;
 
-procedure TBMPConverForm.seldirEditButtonClick(Sender: TObject);
-var
-  v: string;
+procedure TBMPConverForm.pbMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
 begin
-  v := DestDirEdit.Text;
-  if SelectDirectory('output directory', '', v) then
-      DestDirEdit.Text := v;
+  Viewer.TapDown(vec2(X, Y));
 end;
 
-procedure TBMPConverForm.ListBoxChange(Sender: TObject);
-var
-  b, bk: TMemoryRaster;
+procedure TBMPConverForm.pbMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Single);
 begin
-  if ListBox.selected = nil then
-      Exit;
+  Viewer.TapMove(vec2(X, Y));
+end;
 
-  b := TMemoryRaster.Create;
-  LoadMemoryBitmap(ListBox.selected.TagString, b);
+procedure TBMPConverForm.pbMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+begin
+  Viewer.TapUp(vec2(X, Y));
+end;
 
-  bk := TMemoryRaster.Create;
-  bk.SetSize(b.width, b.height);
-  FillBlackGrayBackgroundTexture(bk, 32);
-  b.DrawTo(bk);
+procedure TBMPConverForm.pbMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; var Handled: Boolean);
+begin
+  Handled := True;
+  if WheelDelta > 0 then
+      Viewer.ScaleCamera(1.1)
+  else
+      Viewer.ScaleCamera(0.9);
+end;
 
-  bk.DrawText(Format('%s' + #10 + 'width: %d * height: %d' + #10 + 'size:%s', [umlGetFileName(ListBox.selected.TagString).Text,
-    b.width, b.height, umlSizeToStr(umlGetFileSize(ListBox.selected.TagString)).Text]),
-    0, 0, vec2(1.0, 0.0), -10, 0.9, 12, RasterColorF(1.0, 0.5, 0.5, 1));
-
-  MemoryBitmapToBitmap(bk, Image.Bitmap);
-  DisposeObject(b);
-  DisposeObject(bk);
+procedure TBMPConverForm.pbPaint(Sender: TObject; Canvas: TCanvas);
+begin
+  dIntf.SetSurface(Canvas, Sender);
+  Viewer.DrawEng := DrawPool(Sender, dIntf);
+  Viewer.Render;
 end;
 
 end.

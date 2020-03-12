@@ -49,6 +49,8 @@ unit AggBasics;
 
 interface
 
+uses CoreClasses;
+
 type
   Int8 = ShortInt;
   Int8u = Byte;
@@ -937,7 +939,7 @@ end;
 
 function RandomMinMax(Min, Max: Double): Double;
 begin
-  Result := (Max - Min) * Random + Min;
+  Result := (Max - Min) * MT19937RandD + Min;
 end;
 
 function RectInteger(x1, y1, x2, y2: Integer): TRectInteger;

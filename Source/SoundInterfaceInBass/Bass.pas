@@ -33,7 +33,7 @@ unit Bass;
 
 {$UNDEF Delphi}
 {$UNDEF FastMD5}
-{$DEFINE parallel}
+{$DEFINE Parallel}
 {$DEFINE OptimizationMemoryStreamMD5}
 {$DEFINE CriticalSimulateAtomic}
 

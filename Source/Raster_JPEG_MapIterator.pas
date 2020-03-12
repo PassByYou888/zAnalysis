@@ -82,7 +82,7 @@ type
     function SingleAt(X, Y: integer): psingle;
     // Increment the Map pointer so it points to a different channel (e.g.
     // 0 for Blue, 1 for Red, 2 for Green in RGB 24bpp bitmap).
-    procedure IncrementMap(AChannel: integer);
+    procedure IncrementMap(Channel_: integer);
     // Distance between cell 0 of scanline 0 and cell 0 of scanline 1 in bytes
     property ScanStride: integer read FScanStride write FScanStride;
     // Distance between cell 0 and cell 1
@@ -106,9 +106,9 @@ type
   end;
 
   // device-independent pixelformat functions
-function sdPixelFormatToBitCount(const AFormat: TPixelFormat): cardinal;
-function sdPixelFormatToByteCount(const AFormat: TPixelFormat): cardinal;
-function sdBitCountToPixelFormat(const ABitCount: cardinal): TPixelFormat;
+function sdPixelFormatToBitCount(const Format_: TPixelFormat): cardinal;
+function sdPixelFormatToByteCount(const Format_: TPixelFormat): cardinal;
+function sdBitCountToPixelFormat(const BitCount_: cardinal): TPixelFormat;
 
 implementation
 
@@ -306,14 +306,14 @@ begin
   Result := psingle(At(X, Y));
 end;
 
-procedure TMapIterator.IncrementMap(AChannel: integer);
+procedure TMapIterator.IncrementMap(Channel_: integer);
 begin
-  inc(FMap, AChannel);
+  inc(FMap, Channel_);
 end;
 
-function sdPixelFormatToBitCount(const AFormat: TPixelFormat): cardinal;
+function sdPixelFormatToBitCount(const Format_: TPixelFormat): cardinal;
 begin
-  case AFormat of
+  case Format_ of
     spf1bit: Result := 1;
     spf2bit: Result := 2;
     spf4bit: Result := 4;
@@ -333,9 +333,9 @@ begin
   end;
 end;
 
-function sdPixelFormatToByteCount(const AFormat: TPixelFormat): cardinal;
+function sdPixelFormatToByteCount(const Format_: TPixelFormat): cardinal;
 begin
-  case AFormat of
+  case Format_ of
     spf1bit: Result := 1;
     spf2bit: Result := 1;
     spf4bit: Result := 1;
@@ -355,9 +355,9 @@ begin
   end;
 end;
 
-function sdBitCountToPixelFormat(const ABitCount: cardinal): TPixelFormat;
+function sdBitCountToPixelFormat(const BitCount_: cardinal): TPixelFormat;
 begin
-  case ABitCount of
+  case BitCount_ of
     1: Result := spf1bit;
     2: Result := spf2bit;
     4: Result := spf4bit;

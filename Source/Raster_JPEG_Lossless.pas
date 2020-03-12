@@ -47,22 +47,22 @@ type
     procedure MapFlipHorz;
     procedure MapFlipVert;
     procedure MapTranspose;
-    procedure MapAdjustDCCoef(AMap: TJpegBlockMap; const ABrightness: double);
-    procedure MapAdjustDCandACCoef(AMap: TJpegBlockMap; const ABrightness, AContrast: double);
-    procedure MapCropMcuBlocks(AMap: TJpegBlockMap; AMcuX, AMcuY, AMcuWidth, AMcuHeight: integer);
+    procedure MapAdjustDCCoef(Map_: TJpegBlockMap; const Brightness_: double);
+    procedure MapAdjustDCandACCoef(Map_: TJpegBlockMap; const Brightness_, Contrast_: double);
+    procedure MapCropMcuBlocks(Map_: TJpegBlockMap; McuX_, McuY_, McuWidth_, McuHeight_: integer);
     procedure CoefFlipHorz(var Coef: TCoefBlock);
     procedure CoefFlipVert(var Coef: TCoefBlock);
     procedure CoefTranspose(var Coef: TCoefBlock);
     procedure RemoveDHTMarkers;
   public
-    constructor Create(AOwner: TObject); virtual;
+    constructor Create(Owner_: TObject); virtual;
     procedure Clear; virtual;
-    // Crop the image to the window given with ALeft/ATop/ARight/ABottom. If the
+    // Crop the image to the window given with Left_/Top_/Right_/Bottom_. If the
     // left/top coordinates do not fall exactly on a block boundary (multiples of
     // 8 or 16, depending on encoding), then they'll be lowered to fall on the
     // closest boundary. The coordinates are also checked for image size and
     // updated accordingly.
-    procedure Crop(var ALeft, ATop, ARight, ABottom: integer);
+    procedure Crop(var Left_, Top_, Right_, Bottom_: integer);
     // Flip the image horizontally
     procedure FlipHorizontal;
     // Flip the image vertically
@@ -83,11 +83,11 @@ type
     // is adjusted. For RGB and CMYK images, the 3 color components are each
     // adjusted. Brightness adjustment only involves the DC coefficient (addition);
     // the AC coefficients are left alone.
-    procedure AdjustBrightness(ABrightness: double);
+    procedure AdjustBrightness(Brightness_: double);
     // Adjust the brightness and contrast of the image. The brightness adjustment
-    // only influences the DC coefficients. If AContrast <> 1.0, the AC coefficients
-    // are also adjusted (multiplied by AContrast).
-    procedure AdjustBrightnessContrast(ABrightness: double; AContrast: double);
+    // only influences the DC coefficients. If Contrast_ <> 1.0, the AC coefficients
+    // are also adjusted (multiplied by Contrast_).
+    procedure AdjustBrightnessContrast(Brightness_: double; Contrast_: double);
     // Set UpdateMetadata to true to force the software to update the metadata. This
     // includes e.g. the Exif rotation flag, JFIF/EXIF width/height, and JFIF thumbnail
     // (not implemented at this moment).
@@ -341,90 +341,88 @@ begin
     end;
 end;
 
-procedure TLosslessOperation.MapAdjustDCCoef(AMap: TJpegBlockMap; const ABrightness: double);
+procedure TLosslessOperation.MapAdjustDCCoef(Map_: TJpegBlockMap; const Brightness_: double);
 var
   i, Quant: integer;
   Table: TQuantizationTable;
   PSrc, PDst: PsdCoefBlock;
 begin
   // Make a backup of the coefficients
-  if not AMap.HasCoefBackup then
-      AMap.MakeCoefBackup;
+  if not Map_.HasCoefBackup then
+      Map_.MakeCoefBackup;
 
   // Quantization table
-  Table := TJpegImage(FOwner).JpegInfo.FQuantizationTables[AMap.Frame.FQTable];
+  Table := TJpegImage(FOwner).JpegInfo.FQuantizationTables[Map_.Frame.FQTable];
   Quant := Table.FQuant[0];
 
   // First value is DC value
-  PSrc := AMap.FirstCoefBackup;
-  PDst := AMap.FirstCoef;
-  for i := 0 to AMap.TotalBlockCount - 1 do
+  PSrc := Map_.FirstCoefBackup;
+  PDst := Map_.FirstCoef;
+  for i := 0 to Map_.TotalBlockCount - 1 do
     begin
-      PDst^[0] := round((PSrc^[0] * Quant + ABrightness) / Quant);
+      PDst^[0] := round((PSrc^[0] * Quant + Brightness_) / Quant);
       inc(PSrc);
       inc(PDst);
     end;
 end;
 
-procedure TLosslessOperation.MapAdjustDCandACCoef(AMap: TJpegBlockMap;
-  const ABrightness, AContrast: double);
+procedure TLosslessOperation.MapAdjustDCandACCoef(Map_: TJpegBlockMap;  const Brightness_, Contrast_: double);
 var
   i, j, Quant: integer;
   Table: TQuantizationTable;
   PSrc, PDst: PsdCoefBlock;
 begin
   // Make a backup of the coefficients
-  if not AMap.HasCoefBackup then
-      AMap.MakeCoefBackup;
+  if not Map_.HasCoefBackup then
+      Map_.MakeCoefBackup;
 
   // Quantization table
-  Table := TJpegImage(FOwner).JpegInfo.FQuantizationTables[AMap.Frame.FQTable];
+  Table := TJpegImage(FOwner).JpegInfo.FQuantizationTables[Map_.Frame.FQTable];
   Quant := Table.FQuant[0];
 
   // First value is DC value
-  PSrc := AMap.FirstCoefBackup;
-  PDst := AMap.FirstCoef;
-  for i := 0 to AMap.TotalBlockCount - 1 do
+  PSrc := Map_.FirstCoefBackup;
+  PDst := Map_.FirstCoef;
+  for i := 0 to Map_.TotalBlockCount - 1 do
     begin
       // Adjust DC
-      PDst^[0] := round((PSrc^[0] * Quant * AContrast + ABrightness) / Quant);
+      PDst^[0] := round((PSrc^[0] * Quant * Contrast_ + Brightness_) / Quant);
       // Adjust AC
       for j := 1 to 63 do
         begin
           if PSrc^[j] = 0 then
               continue;
-          PDst^[j] := round(PSrc^[j] * AContrast);
+          PDst^[j] := round(PSrc^[j] * Contrast_);
         end;
       inc(PSrc);
       inc(PDst);
     end;
 end;
 
-procedure TLosslessOperation.MapCropMcuBlocks(AMap: TJpegBlockMap;
-  AMcuX, AMcuY, AMcuWidth, AMcuHeight: integer);
+procedure TLosslessOperation.MapCropMcuBlocks(Map_: TJpegBlockMap;  McuX_, McuY_, McuWidth_, McuHeight_: integer);
 var
   Frame: TFrameComponent;
   x, y, W, H, row: integer;
   PSrc, PDst, PFirst: PsdCoefBlock;
 begin
-  Frame := AMap.Frame;
-  x := AMcuX * Frame.FHorzSampling;
-  y := AMcuY * Frame.FVertSampling;
-  W := AMcuWidth * Frame.FHorzSampling;
-  H := AMcuHeight * Frame.FVertSampling;
-  PFirst := AMap.FirstCoef;
+  Frame := Map_.Frame;
+  x := McuX_ * Frame.FHorzSampling;
+  y := McuY_ * Frame.FVertSampling;
+  W := McuWidth_ * Frame.FHorzSampling;
+  H := McuHeight_ * Frame.FVertSampling;
+  PFirst := Map_.FirstCoef;
 
   // Copy the rows
   for row := 0 to H - 1 do
     begin
       PDst := PFirst;
       inc(PDst, row * W);
-      PSrc := AMap.GetCoefPointer(x, y + row);
-      CopyPtr(PSrc, PDst, W * AMap.BlockStride * SizeOf(smallint));
+      PSrc := Map_.GetCoefPointer(x, y + row);
+      CopyPtr(PSrc, PDst, W * Map_.BlockStride * SizeOf(smallint));
     end;
 
   // Now set the new size
-  AMap.Resize(W, H);
+  Map_.Resize(W, H);
 end;
 
 procedure TLosslessOperation.CoefFlipHorz(var Coef: TCoefBlock);
@@ -481,10 +479,10 @@ begin
   Info.FACHuffmanTables.Clear;
 end;
 
-constructor TLosslessOperation.Create(AOwner: TObject);
+constructor TLosslessOperation.Create(Owner_: TObject);
 begin
   inherited Create;
-  FOwner := TJPEG_Base_Object(AOwner);
+  FOwner := TJPEG_Base_Object(Owner_);
 end;
 
 procedure TLosslessOperation.Clear;
@@ -492,7 +490,7 @@ begin
   FHasContrastChange := False;
 end;
 
-procedure TLosslessOperation.Crop(var ALeft, ATop, ARight, ABottom: integer);
+procedure TLosslessOperation.Crop(var Left_, Top_, Right_, Bottom_: integer);
 var
   i: integer;
   Coder: TJpegBlockCoder;
@@ -509,23 +507,23 @@ begin
   Coder.HasSamples := False;
   Info := TJpegImage(FOwner).JpegInfo;
   DoDebugOut(Self, wsInfo, PFormat('orig image WxH = [%d,%d]', [Info.FWidth, Info.FHeight]));
-  DoDebugOut(Self, wsInfo, PFormat('crop to LTRB = [%d,%d,%d,%d]', [ALeft, ATop, ARight, ABottom]));
-  if ALeft < 0 then
-      ALeft := 0;
-  if ATop < 0 then
-      ATop := 0;
-  if ARight > Info.FWidth then
-      ARight := Info.FWidth;
-  if ABottom > Info.FHeight then
-      ABottom := Info.FHeight;
-  L := (ALeft div Info.FMcuWidth);
-  T := (ATop div Info.FMcuHeight);
-  ALeft := L * Info.FMcuWidth;
-  ATop := T * Info.FMcuHeight;
+  DoDebugOut(Self, wsInfo, PFormat('crop to LTRB = [%d,%d,%d,%d]', [Left_, Top_, Right_, Bottom_]));
+  if Left_ < 0 then
+      Left_ := 0;
+  if Top_ < 0 then
+      Top_ := 0;
+  if Right_ > Info.FWidth then
+      Right_ := Info.FWidth;
+  if Bottom_ > Info.FHeight then
+      Bottom_ := Info.FHeight;
+  L := (Left_ div Info.FMcuWidth);
+  T := (Top_ div Info.FMcuHeight);
+  Left_ := L * Info.FMcuWidth;
+  Top_ := T * Info.FMcuHeight;
 
   // Determine number of mcu blocks to copy
-  W := (ARight - ALeft + Info.FMcuWidth - 1) div Info.FMcuWidth;
-  H := (ABottom - ATop + Info.FMcuHeight - 1) div Info.FMcuHeight;
+  W := (Right_ - Left_ + Info.FMcuWidth - 1) div Info.FMcuWidth;
+  H := (Bottom_ - Top_ + Info.FMcuHeight - 1) div Info.FMcuHeight;
   if (W <= 0) or (H <= 0) then
       exit;
 
@@ -533,8 +531,8 @@ begin
   DoDebugOut(Self, wsInfo, PFormat('MCU blocks WxH=[%d,%d]', [W, H]));
   Info.FHorzMcuCount := W;
   Info.FVertMcuCount := H;
-  Info.FWidth := ARight - ALeft;
-  Info.FHeight := ABottom - ATop;
+  Info.FWidth := Right_ - Left_;
+  Info.FHeight := Bottom_ - Top_;
   DoDebugOut(Self, wsInfo, PFormat('updated image WxH = [%d,%d]', [Info.FWidth, Info.FHeight]));
 
   // Crop each map
@@ -620,7 +618,7 @@ end;
 
 { TLosslessOperation }
 
-procedure TLosslessOperation.AdjustBrightness(ABrightness: double);
+procedure TLosslessOperation.AdjustBrightness(Brightness_: double);
 var
   i, MapCount: integer;
   Coder: TJpegBlockCoder;
@@ -630,7 +628,7 @@ begin
   RemoveDHTMarkers;
   if FHasContrastChange then
     begin
-      AdjustBrightnessContrast(ABrightness, FContrast);
+      AdjustBrightnessContrast(Brightness_, FContrast);
       exit;
     end;
   MapCount := GetIntensityMapCount;
@@ -639,18 +637,18 @@ begin
   Coder.HasSamples := False;
   // Multiply the brightness adjustment by 8 (since the coefficient for DC is
   // a factor 8 too high)
-  ABrightness := ABrightness * 8;
+  Brightness_ := Brightness_ * 8;
   for i := 0 to MapCount - 1 do
     begin
       Map := Coder.Maps[i];
       if Map.TotalBlockCount <= 0 then
           continue;
-      MapAdjustDCCoef(Map, ABrightness);
+      MapAdjustDCCoef(Map, Brightness_);
     end;
   DoAfterLossless;
 end;
 
-procedure TLosslessOperation.AdjustBrightnessContrast(ABrightness, AContrast: double);
+procedure TLosslessOperation.AdjustBrightnessContrast(Brightness_, Contrast_: double);
 var
   i, MapCount: integer;
   Coder: TJpegBlockCoder;
@@ -659,20 +657,20 @@ begin
   DoBeforeLossless;
   RemoveDHTMarkers;
   FHasContrastChange := True;
-  FContrast := AContrast;
+  FContrast := Contrast_;
   MapCount := GetIntensityMapCount;
   Coder := TJpegBlockCoder(GetBlockCoder);
   // Indicate that the samples are no longer valid (requires a new IDCT to get them)
   Coder.HasSamples := False;
   // Multiply the brightness adjustment by 8 (since the coefficient for DC is
   // a factor 8 too high)
-  ABrightness := ABrightness * 8;
+  Brightness_ := Brightness_ * 8;
   for i := 0 to MapCount - 1 do
     begin
       Map := Coder.Maps[i];
       if Map.TotalBlockCount <= 0 then
           continue;
-      MapAdjustDCandACCoef(Map, ABrightness, AContrast);
+      MapAdjustDCandACCoef(Map, Brightness_, Contrast_);
     end;
   DoAfterLossless;
 end;

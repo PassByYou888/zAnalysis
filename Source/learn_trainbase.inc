@@ -155,10 +155,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount  );
-  SetLength(LTypes, LayersCount  );
-  SetLength(LConnFirst, LayersCount  );
-  SetLength(LConnLast, LayersCount  );
+  SetLength(LSizes, LayersCount);
+  SetLength(LTypes, LayersCount);
+  SetLength(LConnFirst, LayersCount);
+  SetLength(LConnLast, LayersCount);
 
   //
   // Layers
@@ -189,10 +189,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount  );
-  SetLength(LTypes, LayersCount  );
-  SetLength(LConnFirst, LayersCount  );
-  SetLength(LConnLast, LayersCount  );
+  SetLength(LSizes, LayersCount);
+  SetLength(LTypes, LayersCount);
+  SetLength(LConnFirst, LayersCount);
+  SetLength(LConnLast, LayersCount);
 
   //
   // Layers
@@ -226,10 +226,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount  );
-  SetLength(LTypes, LayersCount  );
-  SetLength(LConnFirst, LayersCount  );
-  SetLength(LConnLast, LayersCount  );
+  SetLength(LSizes, LayersCount);
+  SetLength(LTypes, LayersCount);
+  SetLength(LConnFirst, LayersCount);
+  SetLength(LConnLast, LayersCount);
 
   //
   // Layers
@@ -282,10 +282,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount  );
-  SetLength(LTypes, LayersCount  );
-  SetLength(LConnFirst, LayersCount  );
-  SetLength(LConnLast, LayersCount  );
+  SetLength(LSizes, LayersCount);
+  SetLength(LTypes, LayersCount);
+  SetLength(LConnFirst, LayersCount);
+  SetLength(LConnLast, LayersCount);
 
   //
   // Layers
@@ -337,10 +337,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount  );
-  SetLength(LTypes, LayersCount  );
-  SetLength(LConnFirst, LayersCount  );
-  SetLength(LConnLast, LayersCount  );
+  SetLength(LSizes, LayersCount);
+  SetLength(LTypes, LayersCount);
+  SetLength(LConnFirst, LayersCount);
+  SetLength(LConnLast, LayersCount);
 
   //
   // Layers
@@ -394,10 +394,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount  );
-  SetLength(LTypes, LayersCount  );
-  SetLength(LConnFirst, LayersCount  );
-  SetLength(LConnLast, LayersCount  );
+  SetLength(LSizes, LayersCount);
+  SetLength(LTypes, LayersCount);
+  SetLength(LConnFirst, LayersCount);
+  SetLength(LConnLast, LayersCount);
 
   //
   // Layers
@@ -447,10 +447,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount  );
-  SetLength(LTypes, LayersCount  );
-  SetLength(LConnFirst, LayersCount  );
-  SetLength(LConnLast, LayersCount  );
+  SetLength(LSizes, LayersCount);
+  SetLength(LTypes, LayersCount);
+  SetLength(LConnFirst, LayersCount);
+  SetLength(LConnLast, LayersCount);
 
   //
   // Layers
@@ -494,10 +494,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount  );
-  SetLength(LTypes, LayersCount  );
-  SetLength(LConnFirst, LayersCount  );
-  SetLength(LConnLast, LayersCount  );
+  SetLength(LSizes, LayersCount);
+  SetLength(LTypes, LayersCount);
+  SetLength(LConnFirst, LayersCount);
+  SetLength(LConnLast, LayersCount);
 
   //
   // Layers
@@ -543,10 +543,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount  );
-  SetLength(LTypes, LayersCount  );
-  SetLength(LConnFirst, LayersCount  );
-  SetLength(LConnLast, LayersCount  );
+  SetLength(LSizes, LayersCount);
+  SetLength(LTypes, LayersCount);
+  SetLength(LConnFirst, LayersCount);
+  SetLength(LConnLast, LayersCount);
 
   //
   // Layers
@@ -597,10 +597,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount  );
-  SetLength(LTypes, LayersCount  );
-  SetLength(LConnFirst, LayersCount  );
-  SetLength(LConnLast, LayersCount  );
+  SetLength(LSizes, LayersCount);
+  SetLength(LTypes, LayersCount);
+  SetLength(LConnFirst, LayersCount);
+  SetLength(LConnLast, LayersCount);
 
   //
   // Layers
@@ -633,10 +633,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount  );
-  SetLength(LTypes, LayersCount  );
-  SetLength(LConnFirst, LayersCount  );
-  SetLength(LConnLast, LayersCount  );
+  SetLength(LSizes, LayersCount);
+  SetLength(LTypes, LayersCount);
+  SetLength(LConnFirst, LayersCount);
+  SetLength(LConnLast, LayersCount);
 
   //
   // Layers
@@ -671,10 +671,10 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(LSizes, LayersCount  );
-  SetLength(LTypes, LayersCount  );
-  SetLength(LConnFirst, LayersCount  );
-  SetLength(LConnLast, LayersCount  );
+  SetLength(LSizes, LayersCount);
+  SetLength(LTypes, LayersCount);
+  SetLength(LConnFirst, LayersCount);
+  SetLength(LConnLast, LayersCount);
 
   //
   // Layers
@@ -740,25 +740,25 @@ begin
   //
   // Allocate space
   //
-  SetLength(Network2.StructInfo, SSize  );
-  SetLength(Network2.Weights, WCount  );
+  SetLength(Network2.StructInfo, SSize);
+  SetLength(Network2.Weights, WCount);
   if MLPIsSoftmax(Network1) then
     begin
-      SetLength(Network2.ColumnMeans, NIn  );
-      SetLength(Network2.ColumnSigmas, NIn  );
+      SetLength(Network2.ColumnMeans, NIn);
+      SetLength(Network2.ColumnSigmas, NIn);
     end
   else
     begin
-      SetLength(Network2.ColumnMeans, NIn + NOut  );
-      SetLength(Network2.ColumnSigmas, NIn + NOut  );
+      SetLength(Network2.ColumnMeans, NIn + NOut);
+      SetLength(Network2.ColumnSigmas, NIn + NOut);
     end;
-  SetLength(Network2.Neurons, NTotal  );
-  SetLength(Network2.Chunks, 3 * NTotal + 1, ChunkSize  );
-  SetLength(Network2.NWBuf, Max(WCount, 2 * NOut)  );
-  SetLength(Network2.DFDNET, NTotal  );
-  SetLength(Network2.x, NIn  );
-  SetLength(Network2.y, NOut  );
-  SetLength(Network2.DError, NTotal  );
+  SetLength(Network2.Neurons, NTotal);
+  SetLength(Network2.Chunks, 3 * NTotal + 1, ChunkSize);
+  SetLength(Network2.NWBuf, Max(WCount, 2 * NOut));
+  SetLength(Network2.DFDNET, NTotal);
+  SetLength(Network2.x, NIn);
+  SetLength(Network2.y, NOut);
+  SetLength(Network2.DError, NTotal);
 
   //
   // Copy
@@ -841,7 +841,7 @@ begin
   // SigmaLen    ColumnSigmas
   //
   RLen := 3 + SSize + WCount + 2 * SigmaLen;
-  SetLength(RA, RLen  );
+  SetLength(RA, RLen);
   RA[0] := RLen;
   RA[1] := MLPVNum;
   RA[2] := SSize;
@@ -889,7 +889,7 @@ begin
   //
   Offs := 3;
   SSize := Round(RA[2]);
-  SetLength(Network.StructInfo, SSize  );
+  SetLength(Network.StructInfo, SSize);
   i := 0;
   while i <= SSize - 1 do
     begin
@@ -918,16 +918,16 @@ begin
   //
   // Allocate space for other fields
   //
-  SetLength(Network.Weights, WCount  );
-  SetLength(Network.ColumnMeans, SigmaLen  );
-  SetLength(Network.ColumnSigmas, SigmaLen  );
-  SetLength(Network.Neurons, NTotal  );
-  SetLength(Network.Chunks, 3 * NTotal + 1, ChunkSize  );
-  SetLength(Network.NWBuf, Max(WCount, 2 * NOut)  );
-  SetLength(Network.DFDNET, NTotal  );
-  SetLength(Network.x, NIn  );
-  SetLength(Network.y, NOut  );
-  SetLength(Network.DError, NTotal  );
+  SetLength(Network.Weights, WCount);
+  SetLength(Network.ColumnMeans, SigmaLen);
+  SetLength(Network.ColumnSigmas, SigmaLen);
+  SetLength(Network.Neurons, NTotal);
+  SetLength(Network.Chunks, 3 * NTotal + 1, ChunkSize);
+  SetLength(Network.NWBuf, Max(WCount, 2 * NOut));
+  SetLength(Network.DFDNET, NTotal);
+  SetLength(Network.x, NIn);
+  SetLength(Network.y, NOut);
+  SetLength(Network.DError, NTotal);
 
   //
   // Copy parameters from RA
@@ -943,7 +943,7 @@ end;
 (* ************************************************************************
   Randomization of neural network weights
   ************************************************************************ *)
-procedure MLPRandomize(var Network: TMultiLayerPerceptron); overload;
+procedure MLPRandomize(var Network: TMultiLayerPerceptron);
 var
   i: TLInt;
   NIn: TLInt;
@@ -951,17 +951,18 @@ var
   WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
-  for i := 0 to WCount - 1 do
+  with TLearnRandom.Create do
     begin
-      Network.Weights[i] := RandomReal - 0.5;
+      for i := 0 to WCount - 1 do
+          Network.Weights[i] := RandReal - 0.5;
+      Free;
     end;
 end;
 
 (* ************************************************************************
   Randomization of neural network weights
   ************************************************************************ *)
-procedure MLPRandomize(var Network: TMultiLayerPerceptron;
-  const Diameter: TLFloat); overload;
+procedure MLPRandomize(var Network: TMultiLayerPerceptron; const Diameter: TLFloat);
 var
   i: TLInt;
   NIn: TLInt;
@@ -969,17 +970,18 @@ var
   WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
-  for i := 0 to WCount - 1 do
+  with TLearnRandom.Create do
     begin
-      Network.Weights[i] := (RandomReal - 0.5) * Diameter;
+      for i := 0 to WCount - 1 do
+          Network.Weights[i] := (RandReal - 0.5) * Diameter;
+      Free;
     end;
 end;
 
 (* ************************************************************************
   Randomization of neural network weights
   ************************************************************************ *)
-procedure MLPRandomize(var Network: TMultiLayerPerceptron;
-  const WBest: TLVec; const Diameter: TLFloat); overload;
+procedure MLPRandomize(var Network: TMultiLayerPerceptron; const WBest: TLVec; const Diameter: TLFloat);
 var
   i: TLInt;
   NIn: TLInt;
@@ -987,9 +989,11 @@ var
   WCount: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
-  for i := 0 to WCount - 1 do
+  with TLearnRandom.Create do
     begin
-      Network.Weights[i] := WBest[i] + (RandomReal - 0.5) * Diameter;
+      for i := 0 to WCount - 1 do
+          Network.Weights[i] := WBest[i] + (RandReal - 0.5) * Diameter;
+      Free;
     end;
 end;
 
@@ -1015,52 +1019,55 @@ begin
   // Process network
   //
   i := 0;
-  while i <= WCount - 1 do
+  with TLearnRandom.Create do
     begin
-      Network.Weights[i] := RandomReal - 0.5;
-      inc(i);
-    end;
-  i := 0;
-  while i <= NIn - 1 do
-    begin
-      Network.ColumnMeans[i] := 2 * RandomReal - 1;
-      Network.ColumnSigmas[i] := 1.5 * RandomReal + 0.5;
-      inc(i);
-    end;
-  if not MLPIsSoftmax(Network) then
-    begin
-      i := 0;
-      while i <= NOut - 1 do
+      while i <= WCount - 1 do
         begin
-          Offs := IStart + (NTotal - NOut + i) * NFieldWidth;
-          NType := Network.StructInfo[Offs + 0];
-          if NType = 0 then
-            begin
-
-              //
-              // Shifts are changed only for linear outputs neurons
-              //
-              Network.ColumnMeans[NIn + i] := 2 * RandomReal - 1;
-            end;
-          if (NType = 0) or (NType = 3) then
-            begin
-
-              //
-              // Scales are changed only for linear or bounded outputs neurons.
-              // Note that scale randomization preserves sign.
-              //
-              Network.ColumnSigmas[NIn + i] := Sign(Network.ColumnSigmas[NIn + i]) * (1.5 * RandomReal + 0.5);
-            end;
+          Network.Weights[i] := RandReal - 0.5;
           inc(i);
         end;
+      i := 0;
+      while i <= NIn - 1 do
+        begin
+          Network.ColumnMeans[i] := 2 * RandReal - 1;
+          Network.ColumnSigmas[i] := 1.5 * RandReal + 0.5;
+          inc(i);
+        end;
+      if not MLPIsSoftmax(Network) then
+        begin
+          i := 0;
+          while i <= NOut - 1 do
+            begin
+              Offs := IStart + (NTotal - NOut + i) * NFieldWidth;
+              NType := Network.StructInfo[Offs + 0];
+              if NType = 0 then
+                begin
+
+                  //
+                  // Shifts are changed only for linear outputs neurons
+                  //
+                  Network.ColumnMeans[NIn + i] := 2 * RandReal - 1;
+                end;
+              if (NType = 0) or (NType = 3) then
+                begin
+
+                  //
+                  // Scales are changed only for linear or bounded outputs neurons.
+                  // Note that scale randomization preserves sign.
+                  //
+                  Network.ColumnSigmas[NIn + i] := Sign(Network.ColumnSigmas[NIn + i]) * (1.5 * RandReal + 0.5);
+                end;
+              inc(i);
+            end;
+        end;
+      Free;
     end;
 end;
 
 (* ************************************************************************
   Internal subroutine.
   ************************************************************************ *)
-procedure MLPInitPreprocessor(var Network: TMultiLayerPerceptron;
-  const xy: TLMatrix; SSize: TLInt);
+procedure MLPInitPreprocessor(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt);
 var
   i: TLInt;
   j: TLInt;
@@ -1334,8 +1341,8 @@ var
   NMAX: TLInt;
 begin
   MLPProperties(Network, NIn, NOut, WCount);
-  SetLength(WorkX, NIn  );
-  SetLength(WorkY, NOut  );
+  SetLength(WorkX, NIn);
+  SetLength(WorkY, NOut);
   Result := 0;
   i := 0;
   while i <= SSize - 1 do
@@ -2066,8 +2073,8 @@ begin
   //
   // Build network geometry
   //
-  SetLength(LNFirst, LayersCount  );
-  SetLength(LNSyn, LayersCount  );
+  SetLength(LNFirst, LayersCount);
+  SetLength(LNSyn, LayersCount);
   NTotal := 0;
   WCount := 0;
   i := 0;
@@ -2114,25 +2121,25 @@ begin
   //
   // Allocate
   //
-  SetLength(Network.StructInfo, SSize  );
-  SetLength(Network.Weights, WCount  );
+  SetLength(Network.StructInfo, SSize);
+  SetLength(Network.Weights, WCount);
   if IsClsNet then
     begin
-      SetLength(Network.ColumnMeans, NIn  );
-      SetLength(Network.ColumnSigmas, NIn  );
+      SetLength(Network.ColumnMeans, NIn);
+      SetLength(Network.ColumnSigmas, NIn);
     end
   else
     begin
-      SetLength(Network.ColumnMeans, NIn + NOut  );
-      SetLength(Network.ColumnSigmas, NIn + NOut  );
+      SetLength(Network.ColumnMeans, NIn + NOut);
+      SetLength(Network.ColumnSigmas, NIn + NOut);
     end;
-  SetLength(Network.Neurons, NTotal  );
-  SetLength(Network.Chunks, 3 * NTotal + 1, ChunkSize  );
-  SetLength(Network.NWBuf, Max(WCount, 2 * NOut)  );
-  SetLength(Network.DFDNET, NTotal  );
-  SetLength(Network.x, NIn  );
-  SetLength(Network.y, NOut  );
-  SetLength(Network.DError, NTotal  );
+  SetLength(Network.Neurons, NTotal);
+  SetLength(Network.Chunks, 3 * NTotal + 1, ChunkSize);
+  SetLength(Network.NWBuf, Max(WCount, 2 * NOut));
+  SetLength(Network.DFDNET, NTotal);
+  SetLength(Network.x, NIn);
+  SetLength(Network.y, NOut);
+  SetLength(Network.DError, NTotal);
 
   //
   // Fill structure: global info
@@ -2207,10 +2214,14 @@ begin
   // Initialize means and sigmas
   //
   i := 0;
-  while i <= WCount - 1 do
+  with TLearnRandom.Create do
     begin
-      Network.Weights[i] := RandomReal - 0.5;
-      inc(i);
+      while i <= WCount - 1 do
+        begin
+          Network.Weights[i] := RandReal - 0.5;
+          inc(i);
+        end;
+      Free;
     end;
   i := 0;
   while i <= NIn - 1 do
@@ -2348,14 +2359,14 @@ begin
   //
   // Prepare
   //
-  SetLength(x, NIn  );
-  SetLength(DesiredY, NOut  );
-  SetLength(Zeros, WCount  );
-  SetLength(GT, WCount  );
-  SetLength(RX, NTotal + NOut  , WCount  );
-  SetLength(RY, NTotal + NOut  , WCount  );
-  SetLength(rdx, NTotal + NOut  , WCount  );
-  SetLength(RDY, NTotal + NOut  , WCount  );
+  SetLength(x, NIn);
+  SetLength(DesiredY, NOut);
+  SetLength(Zeros, WCount);
+  SetLength(GT, WCount);
+  SetLength(RX, NTotal + NOut, WCount);
+  SetLength(RY, NTotal + NOut, WCount);
+  SetLength(rdx, NTotal + NOut, WCount);
+  SetLength(RDY, NTotal + NOut, WCount);
   E := 0;
   i := 0;
   while i <= WCount - 1 do

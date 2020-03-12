@@ -79,7 +79,8 @@ type
     destructor Destroy; override;
     procedure Clear;
 
-    procedure Add(FunctionID: Integer; Proc: Pointer; CPUFeatures: TCPUFeatures = []; Flags: Integer = 0);
+    procedure Add(FunctionID: Integer; Proc: Pointer; CPUFeatures: TCPUFeatures = [];
+      Flags: Integer = 0);
 
     // function rebinding support
     procedure RegisterBinding(FunctionID: Integer; BindVariable: PPointer);
@@ -115,6 +116,9 @@ begin
   if Registers = nil then
     Registers := TList.Create;
   Result := TFunctionRegistry.Create;
+  {$IFDEF NEXTGEN}
+  Result.__ObjAddRef;
+  {$ENDIF}
   Result.Name := Name;
   Registers.Add(Result);
 end;
@@ -260,4 +264,4 @@ initialization
 finalization
   FreeRegisters;
 
-end.
+end.

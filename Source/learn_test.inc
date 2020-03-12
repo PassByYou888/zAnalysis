@@ -169,8 +169,7 @@ begin
     end;
 end;
 
-function InternalRMatrixTRInverse(var a: TLMatrix; n: TLInt;
-  IsUpper: Boolean; IsunitTriangular: Boolean): Boolean;
+function InternalRMatrixTRInverse(var a: TLMatrix; n: TLInt; IsUpper: Boolean; IsunitTriangular: Boolean): Boolean;
 var
   NOunit: Boolean;
   i: TLInt;
@@ -313,10 +312,7 @@ begin
     end;
 end;
 
-procedure RefCMatrixRightTRSM(M: TLInt; n: TLInt;
-  const a: TLComplexMatrix; i1: TLInt; j1: TLInt;
-  IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt;
-  var x: TLComplexMatrix; i2: TLInt; j2: TLInt);
+procedure RefCMatrixRightTRSM(M: TLInt; n: TLInt; const a: TLComplexMatrix; i1: TLInt; j1: TLInt; IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt; var x: TLComplexMatrix; i2: TLInt; j2: TLInt);
 var
   a1: TLComplexMatrix;
   a2: TLComplexMatrix;
@@ -452,10 +448,7 @@ begin
     end;
 end;
 
-procedure RefCMatrixLeftTRSM(M: TLInt; n: TLInt;
-  const a: TLComplexMatrix; i1: TLInt; j1: TLInt;
-  IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt;
-  var x: TLComplexMatrix; i2: TLInt; j2: TLInt);
+procedure RefCMatrixLeftTRSM(M: TLInt; n: TLInt; const a: TLComplexMatrix; i1: TLInt; j1: TLInt; IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt; var x: TLComplexMatrix; i2: TLInt; j2: TLInt);
 var
   a1: TLComplexMatrix;
   a2: TLComplexMatrix;
@@ -591,10 +584,7 @@ begin
     end;
 end;
 
-procedure RefRMatrixRightTRSM(M: TLInt; n: TLInt;
-  const a: TLMatrix; i1: TLInt; j1: TLInt; IsUpper: Boolean;
-  IsUnit: Boolean; OpType: TLInt; var x: TLMatrix;
-  i2: TLInt; j2: TLInt);
+procedure RefRMatrixRightTRSM(M: TLInt; n: TLInt; const a: TLMatrix; i1: TLInt; j1: TLInt; IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt; var x: TLMatrix; i2: TLInt; j2: TLInt);
 var
   a1: TLMatrix;
   a2: TLMatrix;
@@ -710,10 +700,7 @@ begin
     end;
 end;
 
-procedure RefRMatrixLeftTRSM(M: TLInt; n: TLInt;
-  const a: TLMatrix; i1: TLInt; j1: TLInt; IsUpper: Boolean;
-  IsUnit: Boolean; OpType: TLInt; var x: TLMatrix;
-  i2: TLInt; j2: TLInt);
+procedure RefRMatrixLeftTRSM(M: TLInt; n: TLInt; const a: TLMatrix; i1: TLInt; j1: TLInt; IsUpper: Boolean; IsUnit: Boolean; OpType: TLInt; var x: TLMatrix; i2: TLInt; j2: TLInt);
 var
   a1: TLMatrix;
   a2: TLMatrix;
@@ -830,10 +817,7 @@ begin
     end;
 end;
 
-procedure RefCMatrixSYRK(n: TLInt; k: TLInt; alpha: TLFloat;
-  const a: TLComplexMatrix; IA: TLInt; ja: TLInt;
-  OpTypeA: TLInt; beta: TLFloat; var c: TLComplexMatrix;
-  IC: TLInt; JC: TLInt; IsUpper: Boolean);
+procedure RefCMatrixSYRK(n: TLInt; k: TLInt; alpha: TLFloat; const a: TLComplexMatrix; IA: TLInt; ja: TLInt; OpTypeA: TLInt; beta: TLFloat; var c: TLComplexMatrix; IC: TLInt; JC: TLInt; IsUpper: Boolean);
 var
   AE: TLComplexMatrix;
   i: TLInt;
@@ -918,10 +902,7 @@ begin
     end;
 end;
 
-procedure RefRMatrixSYRK(n: TLInt; k: TLInt; alpha: TLFloat;
-  const a: TLMatrix; IA: TLInt; ja: TLInt;
-  OpTypeA: TLInt; beta: TLFloat; var c: TLMatrix;
-  IC: TLInt; JC: TLInt; IsUpper: Boolean);
+procedure RefRMatrixSYRK(n: TLInt; k: TLInt; alpha: TLFloat; const a: TLMatrix; IA: TLInt; ja: TLInt; OpTypeA: TLInt; beta: TLFloat; var c: TLMatrix; IC: TLInt; JC: TLInt; IsUpper: Boolean);
 var
   AE: TLMatrix;
   i: TLInt;
@@ -1232,8 +1213,7 @@ begin
                 end
               else
                 begin
-                  v := APVDotProduct(@b[BI1 + j - 1][0], BJ1, BJ2, @a[AI1 + i - 1][0],
-                    AJ1, AJ2);
+                  v := APVDotProduct(@b[BI1 + j - 1][0], BJ1, BJ2, @a[AI1 + i - 1][0], AJ1, AJ2);
                 end;
             end
           else
@@ -1263,8 +1243,7 @@ begin
             end
           else
             begin
-              c[CI1 + i - 1, CJ1 + j - 1] := beta * c[CI1 + i - 1, CJ1 + j - 1]
-                + alpha * v;
+              c[CI1 + i - 1, CJ1 + j - 1] := beta * c[CI1 + i - 1, CJ1 + j - 1] + alpha * v;
             end;
           inc(j);
         end;
@@ -1559,10 +1538,8 @@ begin
       //
       // Test CXR
       //
-      CMatrixRightTRSM(n - XOffsI, M - XOffsJ, ca, AOffsI, AOffsJ, UpperType = 0,
-        UnitType = 0, OpType, CXR1, XOffsI, XOffsJ);
-      RefCMatrixRightTRSM(n - XOffsI, M - XOffsJ, ca, AOffsI, AOffsJ,
-        UpperType = 0, UnitType = 0, OpType, CXR2, XOffsI, XOffsJ);
+      CMatrixRightTRSM(n - XOffsI, M - XOffsJ, ca, AOffsI, AOffsJ, UpperType = 0, UnitType = 0, OpType, CXR1, XOffsI, XOffsJ);
+      RefCMatrixRightTRSM(n - XOffsI, M - XOffsJ, ca, AOffsI, AOffsJ, UpperType = 0, UnitType = 0, OpType, CXR2, XOffsI, XOffsJ);
       i := 0;
       while i <= n - 1 do
         begin
@@ -1579,18 +1556,15 @@ begin
       //
       // Test CXL
       //
-      CMatrixLeftTRSM(M - XOffsI, n - XOffsJ, ca, AOffsI, AOffsJ, UpperType = 0,
-        UnitType = 0, OpType, CXL1, XOffsI, XOffsJ);
-      RefCMatrixLeftTRSM(M - XOffsI, n - XOffsJ, ca, AOffsI, AOffsJ,
-        UpperType = 0, UnitType = 0, OpType, CXL2, XOffsI, XOffsJ);
+      CMatrixLeftTRSM(M - XOffsI, n - XOffsJ, ca, AOffsI, AOffsJ, UpperType = 0, UnitType = 0, OpType, CXL1, XOffsI, XOffsJ);
+      RefCMatrixLeftTRSM(M - XOffsI, n - XOffsJ, ca, AOffsI, AOffsJ, UpperType = 0, UnitType = 0, OpType, CXL2, XOffsI, XOffsJ);
       i := 0;
       while i <= M - 1 do
         begin
           j := 0;
           while j <= n - 1 do
             begin
-              Result := Result or
-                AP_FP_Greater(AbsComplex(C_Sub(CXL1[i, j], CXL2[i, j])), Threshold);
+              Result := Result or AP_FP_Greater(AbsComplex(C_Sub(CXL1[i, j], CXL2[i, j])), Threshold);
               inc(j);
             end;
           inc(i);
@@ -1601,10 +1575,8 @@ begin
           //
           // Test RXR
           //
-          RMatrixRightTRSM(n - XOffsI, M - XOffsJ, RA, AOffsI, AOffsJ,
-            UpperType = 0, UnitType = 0, OpType, RXR1, XOffsI, XOffsJ);
-          RefRMatrixRightTRSM(n - XOffsI, M - XOffsJ, RA, AOffsI, AOffsJ,
-            UpperType = 0, UnitType = 0, OpType, RXR2, XOffsI, XOffsJ);
+          RMatrixRightTRSM(n - XOffsI, M - XOffsJ, RA, AOffsI, AOffsJ, UpperType = 0, UnitType = 0, OpType, RXR1, XOffsI, XOffsJ);
+          RefRMatrixRightTRSM(n - XOffsI, M - XOffsJ, RA, AOffsI, AOffsJ, UpperType = 0, UnitType = 0, OpType, RXR2, XOffsI, XOffsJ);
           i := 0;
           while i <= n - 1 do
             begin
@@ -1621,18 +1593,15 @@ begin
           //
           // Test RXL
           //
-          RMatrixLeftTRSM(M - XOffsI, n - XOffsJ, RA, AOffsI, AOffsJ, UpperType = 0,
-            UnitType = 0, OpType, RXL1, XOffsI, XOffsJ);
-          RefRMatrixLeftTRSM(M - XOffsI, n - XOffsJ, RA, AOffsI, AOffsJ,
-            UpperType = 0, UnitType = 0, OpType, RXL2, XOffsI, XOffsJ);
+          RMatrixLeftTRSM(M - XOffsI, n - XOffsJ, RA, AOffsI, AOffsJ, UpperType = 0, UnitType = 0, OpType, RXL1, XOffsI, XOffsJ);
+          RefRMatrixLeftTRSM(M - XOffsI, n - XOffsJ, RA, AOffsI, AOffsJ, UpperType = 0, UnitType = 0, OpType, RXL2, XOffsI, XOffsJ);
           i := 0;
           while i <= M - 1 do
             begin
               j := 0;
               while j <= n - 1 do
                 begin
-                  Result := Result or AP_FP_Greater(AbsReal(RXL1[i, j] - RXL2[i, j]),
-                    Threshold);
+                  Result := Result or AP_FP_Greater(AbsReal(RXL1[i, j] - RXL2[i, j]), Threshold);
                   inc(j);
                 end;
               inc(i);
@@ -1838,17 +1807,13 @@ begin
       //
       if AP_FP_Greater(RandomReal, 0.5) then
         begin
-          CMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, CC, XOffsI, XOffsJ, 0, beta,
-            CA1, AOffsI, AOffsJ, UpperType = 0);
-          RefCMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, CC, XOffsI, XOffsJ, 0, beta,
-            CA2, AOffsI, AOffsJ, UpperType = 0);
+          CMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, CC, XOffsI, XOffsJ, 0, beta, CA1, AOffsI, AOffsJ, UpperType = 0);
+          RefCMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, CC, XOffsI, XOffsJ, 0, beta, CA2, AOffsI, AOffsJ, UpperType = 0);
         end
       else
         begin
-          CMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, CCT, XOffsJ, XOffsI, 2, beta,
-            CA1, AOffsI, AOffsJ, UpperType = 0);
-          RefCMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, CCT, XOffsJ, XOffsI, 2,
-            beta, CA2, AOffsI, AOffsJ, UpperType = 0);
+          CMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, CCT, XOffsJ, XOffsI, 2, beta, CA1, AOffsI, AOffsJ, UpperType = 0);
+          RefCMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, CCT, XOffsJ, XOffsI, 2, beta, CA2, AOffsI, AOffsJ, UpperType = 0);
         end;
       i := 0;
       while i <= n - 1 do
@@ -1856,8 +1821,7 @@ begin
           j := 0;
           while j <= n - 1 do
             begin
-              Result := Result or AP_FP_Greater(AbsComplex(C_Sub(CA1[i, j], CA2[i, j])
-                ), Threshold);
+              Result := Result or AP_FP_Greater(AbsComplex(C_Sub(CA1[i, j], CA2[i, j])), Threshold);
               inc(j);
             end;
           inc(i);
@@ -1869,17 +1833,13 @@ begin
       //
       if AP_FP_Greater(RandomReal, 0.5) then
         begin
-          RMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, RC, XOffsI, XOffsJ, 0, beta,
-            RA1, AOffsI, AOffsJ, UpperType = 0);
-          RefRMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, RC, XOffsI, XOffsJ, 0, beta,
-            RA2, AOffsI, AOffsJ, UpperType = 0);
+          RMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, RC, XOffsI, XOffsJ, 0, beta, RA1, AOffsI, AOffsJ, UpperType = 0);
+          RefRMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, RC, XOffsI, XOffsJ, 0, beta, RA2, AOffsI, AOffsJ, UpperType = 0);
         end
       else
         begin
-          RMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, RCT, XOffsJ, XOffsI, 1, beta,
-            RA1, AOffsI, AOffsJ, UpperType = 0);
-          RefRMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, RCT, XOffsJ, XOffsI, 1,
-            beta, RA2, AOffsI, AOffsJ, UpperType = 0);
+          RMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, RCT, XOffsJ, XOffsI, 1, beta, RA1, AOffsI, AOffsJ, UpperType = 0);
+          RefRMatrixSYRK(n - XOffsI, k - XOffsJ, alpha, RCT, XOffsJ, XOffsI, 1, beta, RA2, AOffsI, AOffsJ, UpperType = 0);
         end;
       i := 0;
       while i <= n - 1 do
@@ -1887,8 +1847,7 @@ begin
           j := 0;
           while j <= n - 1 do
             begin
-              Result := Result or AP_FP_Greater(AbsReal(RA1[i, j] - RA2[i, j]),
-                Threshold);
+              Result := Result or AP_FP_Greater(AbsReal(RA1[i, j] - RA2[i, j]), Threshold);
               inc(j);
             end;
           inc(i);
@@ -2049,18 +2008,15 @@ begin
       //
       // Test TLComplex
       //
-      CMatrixGEMM(M, n, k, alphaC, RefCA, AOffsI, AOffsJ, AOpType, RefCB, BOffsI,
-        BOffsJ, BOpType, betaC, CC1, COffsI, COffsJ);
-      RefCMatrixGEMM(M, n, k, alphaC, RefCA, AOffsI, AOffsJ, AOpType, RefCB,
-        BOffsI, BOffsJ, BOpType, betaC, CC2, COffsI, COffsJ);
+      CMatrixGEMM(M, n, k, alphaC, RefCA, AOffsI, AOffsJ, AOpType, RefCB, BOffsI, BOffsJ, BOpType, betaC, CC1, COffsI, COffsJ);
+      RefCMatrixGEMM(M, n, k, alphaC, RefCA, AOffsI, AOffsJ, AOpType, RefCB, BOffsI, BOffsJ, BOpType, betaC, CC2, COffsI, COffsJ);
       i := 0;
       while i <= MaxN do
         begin
           j := 0;
           while j <= MaxN do
             begin
-              Result := Result or AP_FP_Greater(AbsComplex(C_Sub(CC1[i, j], CC2[i, j])
-                ), Threshold);
+              Result := Result or AP_FP_Greater(AbsComplex(C_Sub(CC1[i, j], CC2[i, j])), Threshold);
               inc(j);
             end;
           inc(i);
@@ -2069,18 +2025,15 @@ begin
       //
       // Test real
       //
-      RMatrixGEMM(M, n, k, AlphaR, RefRA, AOffsI, AOffsJ, AOpTypeR, RefRB, BOffsI,
-        BOffsJ, BOpTypeR, BetaR, RC1, COffsI, COffsJ);
-      RefRMatrixGEMM(M, n, k, AlphaR, RefRA, AOffsI, AOffsJ, AOpTypeR, RefRB,
-        BOffsI, BOffsJ, BOpTypeR, BetaR, RC2, COffsI, COffsJ);
+      RMatrixGEMM(M, n, k, AlphaR, RefRA, AOffsI, AOffsJ, AOpTypeR, RefRB, BOffsI, BOffsJ, BOpTypeR, BetaR, RC1, COffsI, COffsJ);
+      RefRMatrixGEMM(M, n, k, AlphaR, RefRA, AOffsI, AOffsJ, AOpTypeR, RefRB, BOffsI, BOffsJ, BOpTypeR, BetaR, RC2, COffsI, COffsJ);
       i := 0;
       while i <= MaxN do
         begin
           j := 0;
           while j <= MaxN do
             begin
-              Result := Result or AP_FP_Greater(AbsReal(RC1[i, j] - RC2[i, j]),
-                Threshold);
+              Result := Result or AP_FP_Greater(AbsReal(RC1[i, j] - RC2[i, j]), Threshold);
               inc(j);
             end;
           inc(i);
@@ -2177,14 +2130,11 @@ begin
               if (i < BOffsI) or (i >= BOffsI + n) or (j < BOffsJ) or (j >= BOffsJ + M)
               then
                 begin
-                  Result := Result or
-                    AP_FP_Greater(AbsReal(RefRB[i, j] - (v1 * i + v2 * j)), Threshold);
+                  Result := Result or AP_FP_Greater(AbsReal(RefRB[i, j] - (v1 * i + v2 * j)), Threshold);
                 end
               else
                 begin
-                  Result := Result or
-                    AP_FP_Greater(AbsReal(RefRB[i, j] - RefRA[AOffsI + j - BOffsJ,
-                    AOffsJ + i - BOffsI]), Threshold);
+                  Result := Result or AP_FP_Greater(AbsReal(RefRB[i, j] - RefRA[AOffsI + j - BOffsJ, AOffsJ + i - BOffsI]), Threshold);
                 end;
               inc(j);
             end;
@@ -2200,15 +2150,11 @@ begin
               if (i < BOffsI) or (i >= BOffsI + n) or (j < BOffsJ) or (j >= BOffsJ + M)
               then
                 begin
-                  Result := Result or
-                    AP_FP_Greater(AbsComplex(C_SubR(RefCB[i, j], v1 * i + v2 * j)),
-                    Threshold);
+                  Result := Result or AP_FP_Greater(AbsComplex(C_SubR(RefCB[i, j], v1 * i + v2 * j)), Threshold);
                 end
               else
                 begin
-                  Result := Result or
-                    AP_FP_Greater(AbsComplex(C_Sub(RefCB[i, j],
-                    RefCA[AOffsI + j - BOffsJ, AOffsJ + i - BOffsI])), Threshold);
+                  Result := Result or AP_FP_Greater(AbsComplex(C_Sub(RefCB[i, j], RefCA[AOffsI + j - BOffsJ, AOffsJ + i - BOffsI])), Threshold);
                 end;
               inc(j);
             end;
@@ -2324,16 +2270,11 @@ begin
               if (i < AOffsI) or (i >= AOffsI + M) or (j < AOffsJ) or (j >= AOffsJ + n)
               then
                 begin
-                  Result := Result or
-                    AP_FP_Greater(AbsComplex(C_Sub(RefCA[i, j], RefCB[i, j])),
-                    Threshold);
+                  Result := Result or AP_FP_Greater(AbsComplex(C_Sub(RefCA[i, j], RefCB[i, j])), Threshold);
                 end
               else
                 begin
-                  Result := Result or
-                    AP_FP_Greater(AbsComplex(C_Sub(RefCA[i, j], C_Add(RefCB[i, j],
-                    C_Mul(CU[i - AOffsI + UOffs], cv[j - AOffsJ + VOffs])))),
-                    Threshold);
+                  Result := Result or AP_FP_Greater(AbsComplex(C_Sub(RefCA[i, j], C_Add(RefCB[i, j], C_Mul(CU[i - AOffsI + UOffs], cv[j - AOffsJ + VOffs])))), Threshold);
                 end;
               inc(j);
             end;
@@ -2349,15 +2290,11 @@ begin
               if (i < AOffsI) or (i >= AOffsI + M) or (j < AOffsJ) or (j >= AOffsJ + n)
               then
                 begin
-                  Result := Result or AP_FP_Greater(AbsReal(RefRA[i, j] - RefRB[i, j]),
-                    Threshold);
+                  Result := Result or AP_FP_Greater(AbsReal(RefRA[i, j] - RefRB[i, j]), Threshold);
                 end
               else
                 begin
-                  Result := Result or
-                    AP_FP_Greater
-                    (AbsReal(RefRA[i, j] - (RefRB[i, j] + RU[i - AOffsI + UOffs] *
-                    RV[j - AOffsJ + VOffs])), Threshold);
+                  Result := Result or AP_FP_Greater(AbsReal(RefRA[i, j] - (RefRB[i, j] + RU[i - AOffsI + UOffs] * RV[j - AOffsJ + VOffs])), Threshold);
                 end;
               inc(j);
             end;
@@ -2479,8 +2416,7 @@ begin
                   CV2 := C_Complex(0.0);
                   for i_ := AOffsJ to AOffsJ + n - 1 do
                     begin
-                      CV2 := C_Add(CV2, C_Mul(RefCA[AOffsI + i - YOffs, i_],
-                        Cx[i_ + i1_]));
+                      CV2 := C_Add(CV2, C_Mul(RefCA[AOffsI + i - YOffs, i_], Cx[i_ + i1_]));
                     end;
                 end;
               if OpCA = 1 then
@@ -2489,8 +2425,7 @@ begin
                   CV2 := C_Complex(0.0);
                   for i_ := AOffsI to AOffsI + n - 1 do
                     begin
-                      CV2 := C_Add(CV2, C_Mul(RefCA[i_, AOffsJ + i - YOffs],
-                        Cx[i_ + i1_]));
+                      CV2 := C_Add(CV2, C_Mul(RefCA[i_, AOffsJ + i - YOffs], Cx[i_ + i1_]));
                     end;
                 end;
               if OpCA = 2 then
@@ -2499,12 +2434,10 @@ begin
                   CV2 := C_Complex(0.0);
                   for i_ := AOffsI to AOffsI + n - 1 do
                     begin
-                      CV2 := C_Add(CV2, C_Mul(Conj(RefCA[i_, AOffsJ + i - YOffs]),
-                        Cx[i_ + i1_]));
+                      CV2 := C_Add(CV2, C_Mul(Conj(RefCA[i_, AOffsJ + i - YOffs]), Cx[i_ + i1_]));
                     end;
                 end;
-              Result := Result or AP_FP_Greater(AbsComplex(C_Sub(CV1, CV2)),
-                Threshold);
+              Result := Result or AP_FP_Greater(AbsComplex(C_Sub(CV1, CV2)), Threshold);
             end;
           inc(i);
         end;
@@ -2521,8 +2454,7 @@ begin
               RV1 := RY[i];
               if OpRA = 0 then
                 begin
-                  RV2 := APVDotProduct(@RefRA[AOffsI + i - YOffs][0], AOffsJ,
-                    AOffsJ + n - 1, @RX[0], XOffs, XOffs + n - 1);
+                  RV2 := APVDotProduct(@RefRA[AOffsI + i - YOffs][0], AOffsJ, AOffsJ + n - 1, @RX[0], XOffs, XOffs + n - 1);
                 end;
               if OpRA = 1 then
                 begin
@@ -2632,9 +2564,7 @@ begin
                 end
               else
                 begin
-                  Result := Result or
-                    AP_FP_Greater(AbsComplex(C_Sub(ca[AOffsI + i - BOffsI,
-                    AOffsJ + j - BOffsJ], CB[i, j])), Threshold);
+                  Result := Result or AP_FP_Greater(AbsComplex(C_Sub(ca[AOffsI + i - BOffsI, AOffsJ + j - BOffsJ], CB[i, j])), Threshold);
                 end;
               inc(j);
             end;
@@ -2654,9 +2584,7 @@ begin
                 end
               else
                 begin
-                  Result := Result or
-                    AP_FP_Greater(AbsReal(RA[AOffsI + i - BOffsI, AOffsJ + j - BOffsJ] -
-                    rb[i, j]), Threshold);
+                  Result := Result or AP_FP_Greater(AbsReal(RA[AOffsI + i - BOffsI, AOffsJ + j - BOffsJ] - rb[i, j]), Threshold);
                 end;
               inc(j);
             end;
@@ -2688,6 +2616,7 @@ begin
   CopyErrors := False;
   WasErrors := False;
   Threshold := 10000 * MachineEpsilon;
+  DoStatus('Check ABLAS Memory.', []);
   TRSMErrors := TRSMErrors or TestTRSM(1, 3 * ABLASBlockSize(RA) + 1);
   SYRKErrors := SYRKErrors or TestSYRK(1, 3 * ABLASBlockSize(RA) + 1);
   GEMMErrors := GEMMErrors or TestGEMM(1, 3 * ABLASBlockSize(RA) + 1);
@@ -2815,6 +2744,7 @@ begin
   MaxN := 1000;
   PassCount := 10;
 
+  DoStatus('Check XBLAS dot product.', []);
   //
   // tests:
   // 1. ability to calculate dot product
@@ -2856,8 +2786,7 @@ begin
             end;
           RV1 := APVDotProduct(@RX[0], 0, n - 1, @RY[0], 0, n - 1);
           XDot(RX, RY, n, Temp, RV2, RV2Err);
-          ApproxErrors := ApproxErrors or AP_FP_Greater(AbsReal(RV1 - RV2),
-            ApproxThreshold);
+          ApproxErrors := ApproxErrors or AP_FP_Greater(AbsReal(RV1 - RV2), ApproxThreshold);
 
           //
           // ability to approximately calculate TLComplex dot product
@@ -2894,13 +2823,13 @@ begin
               CV1 := C_Add(CV1, C_Mul(Cx[i_], Cy[i_]));
             end;
           XCDot(Cx, Cy, n, Temp, CV2, CV2Err);
-          ApproxErrors := ApproxErrors or AP_FP_Greater(AbsComplex(C_Sub(CV1, CV2)),
-            ApproxThreshold);
+          ApproxErrors := ApproxErrors or AP_FP_Greater(AbsComplex(C_Sub(CV1, CV2)), ApproxThreshold);
           inc(pass);
         end;
       inc(n);
     end;
 
+  DoStatus('Check XBLAS real precision.', []);
   //
   // test of precision: real
   //
@@ -2943,10 +2872,8 @@ begin
       RX[n - 1] := 0;
       XDot(RX, RY, n, Temp, RV2, RV2Err);
       ExactnessErrors := ExactnessErrors or AP_FP_Less(RV2Err, 0);
-      ExactnessErrors := ExactnessErrors or
-        AP_FP_Greater(RV2Err, 4 * MachineEpsilon * AbsReal(RY[0]));
-      ExactnessErrors := ExactnessErrors or
-        AP_FP_Greater(AbsReal(RV2 - RY[0]), RV2Err);
+      ExactnessErrors := ExactnessErrors or AP_FP_Greater(RV2Err, 4 * MachineEpsilon * AbsReal(RY[0]));
+      ExactnessErrors := ExactnessErrors or AP_FP_Greater(AbsReal(RV2 - RY[0]), RV2Err);
 
       //
       // First test: X + X + ... + X = N*X
@@ -2971,13 +2898,12 @@ begin
         end;
       XDot(RX, RY, n, Temp, RV2, RV2Err);
       ExactnessErrors := ExactnessErrors or AP_FP_Less(RV2Err, 0);
-      ExactnessErrors := ExactnessErrors or
-        AP_FP_Greater(RV2Err, 4 * MachineEpsilon * AbsReal(RY[0]) * n);
-      ExactnessErrors := ExactnessErrors or
-        AP_FP_Greater(AbsReal(RV2 - n * RY[0]), RV2Err);
+      ExactnessErrors := ExactnessErrors or AP_FP_Greater(RV2Err, 4 * MachineEpsilon * AbsReal(RY[0]) * n);
+      ExactnessErrors := ExactnessErrors or AP_FP_Greater(AbsReal(RV2 - n * RY[0]), RV2Err);
       inc(pass);
     end;
 
+  DoStatus('Check XBLAS TLComplex.', []);
   //
   // test of precision: TLComplex
   //
@@ -3021,10 +2947,8 @@ begin
       Cx[n - 1] := C_Complex(0);
       XCDot(Cx, Cy, n, Temp, CV2, CV2Err);
       ExactnessErrors := ExactnessErrors or AP_FP_Less(CV2Err, 0);
-      ExactnessErrors := ExactnessErrors or
-        AP_FP_Greater(CV2Err, 4 * MachineEpsilon * AbsComplex(Cy[0]));
-      ExactnessErrors := ExactnessErrors or
-        AP_FP_Greater(AbsComplex(C_Sub(CV2, Cy[0])), CV2Err);
+      ExactnessErrors := ExactnessErrors or AP_FP_Greater(CV2Err, 4 * MachineEpsilon * AbsComplex(Cy[0]));
+      ExactnessErrors := ExactnessErrors or AP_FP_Greater(AbsComplex(C_Sub(CV2, Cy[0])), CV2Err);
 
       //
       // First test: X + X + ... + X = N*X
@@ -3049,10 +2973,8 @@ begin
         end;
       XCDot(Cx, Cy, n, Temp, CV2, CV2Err);
       ExactnessErrors := ExactnessErrors or AP_FP_Less(CV2Err, 0);
-      ExactnessErrors := ExactnessErrors or
-        AP_FP_Greater(CV2Err, 4 * MachineEpsilon * AbsComplex(Cy[0]) * n);
-      ExactnessErrors := ExactnessErrors or
-        AP_FP_Greater(AbsComplex(C_Sub(CV2, C_MulR(Cy[0], n))), CV2Err);
+      ExactnessErrors := ExactnessErrors or AP_FP_Greater(CV2Err, 4 * MachineEpsilon * AbsComplex(Cy[0]) * n);
+      ExactnessErrors := ExactnessErrors or AP_FP_Greater(AbsComplex(C_Sub(CV2, C_MulR(Cy[0], n))), CV2Err);
       inc(pass);
     end;
 
@@ -4399,11 +4321,17 @@ var
   m64: TMemoryStream64;
   md5_1, md5_2: TMD5;
 begin
+  DoStatus('Begin ABLAS');
   TestABLAS(False);
+  DoStatus('Begin XBLAS');
   TestXBLAS(False);
+  DoStatus('Begin Gauss Kronrod Quadrature');
   TestGaussKronrodQuadrature(False);
+  DoStatus('Begin Gauss Quadrature');
   TestGaussQuadrature(False);
-
+  DoStatus('Begin ExpressionToMatrix');
+  ExpressionToMatrixTest;
+  DoStatus('Begin Learn Engine');
   // Regression test
   for LV := 0 to 2 do
     for lt in RegressionLearnType do
@@ -4415,20 +4343,20 @@ begin
           else lr := TLearn.CreateRegression2(lt, test_InLen, test_OutLen);
         end;
 
-        SetLength(f_In, lr.InLen);
-        SetLength(f_Out, lr.OutLen);
+        SetLength(f_In, lr.FInSize);
+        SetLength(f_Out, lr.FOutSize);
 
         for j := 0 to test_Depth - 1 do
           begin
-            for i := 0 to lr.InLen - 1 do
+            for i := 0 to lr.FInSize - 1 do
                 f_In[i] := umlRandomRangeD(0, 100);
-            for i := 0 to lr.OutLen - 1 do
+            for i := 0 to lr.FOutSize - 1 do
                 f_Out[i] := umlRandomRangeD(0, 10);
             lr.AddMemory(f_In, f_Out);
           end;
 
-        DoStatusNoLn('...Train');
-        if lr.Train then
+        DoStatusNoLn('...Training');
+        if lr.Training then
           begin
             SetLength(f_out_list, lr.Count);
             for i := 0 to lr.Count - 1 do
@@ -4466,7 +4394,7 @@ begin
             for i := 0 to lr.Count - 1 do
               if lr.process(@lr[i]^.m_in, @f_Out) then
                 begin
-                  if TKDTree.KDTreeDistance(f_Out, f_out_list[i]) <> 0 then
+                  if TKDTree.Distance(f_Out, f_out_list[i]) <> 0 then
                       DoStatusNoLn('...verify data error ');
                 end
               else
@@ -4475,7 +4403,7 @@ begin
             SetLength(f_out_list, 0, 0);
           end
         else
-            DoStatusNoLn('...train error');
+            DoStatusNoLn('...Training error');
 
         DoStatusNoLn('...ok!');
         DoStatusNoLn;
@@ -4497,18 +4425,18 @@ begin
           else lr := TLearn.CreateClassifier2(lt, test_InLen);
         end;
 
-        SetLength(f_In, lr.InLen);
-        SetLength(f_Out, lr.OutLen);
+        SetLength(f_In, lr.FInSize);
+        SetLength(f_Out, lr.FOutSize);
 
         for j := 0 to test_Depth - 1 do
           begin
-            for i := 0 to lr.InLen - 1 do
+            for i := 0 to lr.FInSize - 1 do
                 f_In[i] := umlRandomRangeD(0, 100);
-            for i := 0 to lr.OutLen - 1 do
+            for i := 0 to lr.FOutSize - 1 do
                 f_Out[i] := umlRandomRangeD(0, 10);
             lr.AddMemory(f_In, f_Out);
           end;
-        if lr.Train() then
+        if lr.Training() then
           begin
             SetLength(f_out_list, lr.Count);
             for i := 0 to lr.Count - 1 do
@@ -4530,7 +4458,7 @@ begin
             for i := 0 to lr.Count - 1 do
               if lr.process(@lr[i]^.m_in, @f_Out) then
                 begin
-                  if TKDTree.KDTreeDistance(f_Out, f_out_list[i]) <> 0 then
+                  if TKDTree.Distance(f_Out, f_out_list[i]) <> 0 then
                       DoStatusNoLn('verify data error ');
                 end
               else
@@ -4539,7 +4467,7 @@ begin
             SetLength(f_out_list, 0, 0);
           end
         else
-            DoStatusNoLn('train error ');
+            DoStatusNoLn('Training error ');
 
         DoStatusNoLn;
 
@@ -4548,8 +4476,6 @@ begin
 
         disposeObject(lr);
       end;
-
-  ExpressionToMatrixTest;
 
   DoStatus('all learn test finish!');
 end;

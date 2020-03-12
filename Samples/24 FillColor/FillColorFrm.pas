@@ -92,6 +92,7 @@ var
   v: TVec2;
 begin
   output.SetSize(w, h, RasterColorF(0, 0, 0, 1));
+  MT19937Randomize();
 
   vl := TVec2List.Create;
   // 根据steps系数构建原始坐标系
@@ -105,7 +106,7 @@ begin
   // 注意:并行化填充可以支持凹凸多边形
   // 注意:三角填充只能凸多边形
   // 在图像语义分割技术中,像素填充是作为主要输入的数据源,并行填充技术被大量应用
-  TParallel.for(0, h - 1, procedure(pass: Integer)
+  DelphiParallelFor(0, h - 1, procedure(pass: Integer)
     var
       i: Integer;
     begin

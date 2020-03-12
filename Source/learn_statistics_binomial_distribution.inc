@@ -118,7 +118,7 @@ var
   dn: TLFloat;
 begin
   Assert(AP_FP_Greater_Eq(p, 0) and AP_FP_Less_Eq(p, 1), 'Domain error in BinomialDistributionC');
-  Assert((k >= -1) and (k <= n), 'Domain error in BinomialDistributionC');
+  Assert((k >= -1) and (k <= n), 'Domain error in BinomialCDistribution');
   if k = -1 then
     begin
       Result := 1;
@@ -181,7 +181,7 @@ function InvBinomialDistribution(const k, n: TLInt; const y: TLFloat): TLFloat;
 var
   dk: TLFloat;
   dn: TLFloat;
-  p : TLFloat;
+  p: TLFloat;
 begin
   Assert((k >= 0) and (k < n), 'Domain error in InvBinomialDistribution');
   dn := n - k;
@@ -240,7 +240,7 @@ end;
   ************************************************************************ *)
 procedure OneSampleSignTest(const x: TLVec; n: TLInt; Median: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  i    : TLInt;
+  i: TLInt;
   GTCnt: TLInt;
   NECnt: TLInt;
 begin
@@ -287,6 +287,4 @@ begin
   BothTails := 2 * BinomialDistribution(Min(GTCnt, NECnt - GTCnt), NECnt, 0.5);
   LeftTail := BinomialDistribution(GTCnt, NECnt, 0.5);
   RightTail := BinomialCDistribution(GTCnt - 1, NECnt, 0.5);
-end; 
- 
- 
+end;

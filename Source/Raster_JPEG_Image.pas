@@ -50,13 +50,13 @@ type
     );
   TJpegLoadOptions = set of TJpegLoadOption;
 
-  // Ask the application to create a map (usually a TBitmap in Win) based on AIterator:
-  // width, height and cellstride (bytecount per pixel). AIterator must also be
-  // updated by the application: AIterator.Map and AIterator.ScanStride (bytecount per scanline).
-  TCreateMapEvent = function(var AIterator: TMapIterator): TObject of object;
+  // Ask the application to create a map (usually a TBitmap in Win) based on Iterator_:
+  // width, height and cellstride (bytecount per pixel). Iterator_ must also be
+  // updated by the application: Iterator_.Map and Iterator_.ScanStride (bytecount per scanline).
+  TCreateMapEvent = function(var Iterator_: TMapIterator): TObject of object;
 
   // provide the jpeg strip by strip
-  TJpegProvideStripEvent = procedure(Sender: TObject; ALeft, ATop: integer; ABitmapIter: TMapIterator) of object;
+  TJpegProvideStripEvent = procedure(Sender: TObject; Left_, Top_: integer; ABitmapIter: TMapIterator) of object;
 
   // TJpegImage is a non-VCL component that can be used to load and save
   // Jpeg files. It is best to create just one instance of TJpegImage, and
@@ -107,13 +107,13 @@ type
     function GetICCProfile: TJpegICCProfile;
     procedure SetICCProfile(const Value: TJpegICCProfile);
     function GetLossless: TLosslessOperation;
-    function GetComment: RawByteString;
-    procedure SetComment(const Value: RawByteString);
+    function GetComment: TPascalString;
+    procedure SetComment(const Value: TPascalString);
     function GetHeight: integer;
     function GetImageHeight: integer;
     function GetImageWidth: integer;
     function GetWidth: integer;
-    procedure GetBitmapTileSize(AScale: TJpegScale; var AWidth, AHeight: integer);
+    procedure GetBitmapTileSize(Scale_: TJpegScale; var Width_, Height_: integer);
     procedure BeforeLosslessUpdate(Sender: TObject);
     procedure AfterLosslessUpdate(Sender: TObject);
     procedure AVI1MarkerCheck;
@@ -124,32 +124,32 @@ type
     function LoadMarker(S: TMemoryStream64): byte;
     // Get the required color transform from bitmap to samples, based on detected
     // color space in file and bitmap
-    procedure GetColorTransformFromBitmap(var AClass: TColorTransformClass);
+    procedure GetColorTransformFromBitmap(var Class_: TColorTransformClass);
     // Get the required color transform from samples to bitmap, based on detected
     // color space in file and bitmap
-    procedure GetColorTransformToBitmap(var AClass: TColorTransformClass; var AFormat: TPixelFormat);
+    procedure GetColorTransformToBitmap(var Class_: TColorTransformClass; var Format_: TPixelFormat);
     function HasSamples: boolean;
     function HasCoefficients: boolean;
     function VerifyBitmapColorSpaceForSave: TJpegColorSpace;
-    procedure AddMinimalMarkersForColorSpaceDetection(AColors: TJpegColorSpace);
+    procedure AddMinimalMarkersForColorSpaceDetection(Colors_: TJpegColorSpace);
   public
-    constructor Create(AOwner: TJPEG_Base_Object); override;
+    constructor Create(Owner_: TJPEG_Base_Object); override;
     destructor Destroy; override;
     // Clear the jpeg PFormat: all data (coder and markers) and the bitmap
     procedure Clear;
     // Save info in the bitmap iterator to the Jpeg stream, aka compress the image.
-    procedure Compress(AIterator: TMapIterator);
+    procedure Compress(Iterator_: TMapIterator);
     // Get the size of the bitmap that must be created to hold the decoded
     // information
-    procedure GetBitmapSize(AScale: TJpegScale; var AWidth, AHeight: integer);
+    procedure GetBitmapSize(Scale_: TJpegScale; var Width_, Height_: integer);
 
     // After the image is loaded from stream, LoadJpeg actually decodes the
     // image. If DoCreateBitmap is true, it creates and renders the bitmap, thru
     // OnCreateMap
-    procedure LoadJpeg(AScale: TJpegScale; DoCreateBitmap: boolean);
+    procedure LoadJpeg(Scale_: TJpegScale; DoCreateBitmap: boolean);
 
-    // Load a Jpeg image from the file AFileName.
-    procedure LoadFromFile(const AFileName: string);
+    // Load a Jpeg image from the file FileName_.
+    procedure LoadFromFile(const FileName_: string);
 
     // Load a Jpeg image from the stream. It is best to use a TMemoryStream64
     // because the bitreader (which causes most reads to the stream) has
@@ -162,18 +162,18 @@ type
     // In case of LoadOption [loTileMode] is included, after the LoadFromStream,
     // individual tile blocks can be loaded which will be put in the resulting
     // bitmap. The tile loaded will contain all the MCU blocks that fall within
-    // the specified bounds ALeft/ATop/ARight/ABottom. Note that these are var
+    // the specified bounds Left_/Top_/Right_/Bottom_. Note that these are var
     // parameters, after calling this procedure they will be updated to the MCU
-    // block borders. ALeft/ATop can subsequently be used to draw the resulting
+    // block borders. Left_/Top_ can subsequently be used to draw the resulting
     // TJpegFormat.Bitmap to a canvas.
-    procedure LoadTileBlock(var ALeft, ATop, ARight, ABottom: integer);
+    procedure LoadTileBlock(var Left_, Top_, Right_, Bottom_: integer);
     // Reload
     procedure Reload;
     // After SaveJpeg, the original CoderStream is replaced by the new encoded stream
     // by the coder.
     procedure SaveJpeg;
-    // Save the Jpeg image to file AFileName
-    procedure SaveToFile(const AFileName: string);
+    // Save the Jpeg image to file FileName_
+    procedure SaveToFile(const FileName_: string);
     // Save the Jpeg image to stream Set SaveOptions before saving. Use
     // SaveBitmap first in order to encode the new bitmap to be saved.
     procedure SaveToStream(Stream: TMemoryStream64);
@@ -183,16 +183,16 @@ type
     // 8 or 16 pixels high).
     // Only one pass over the data is required, but the resulting jpeg will
     // be saved with standard Huffman tables (as provided in the Jpeg specification)
-    procedure SaveBitmapStripByStrip(AWidth, AHeight: integer);
+    procedure SaveBitmapStripByStrip(Width_, Height_: integer);
     // call UpdateBitmap after calling LoadJpeg(Scale, False)
     function UpdateBitmap: TObject;
-    // All metadata markers will be extracted from the file, and put in AList.
-    // AList must be initialized (AList := TJpegMarkerList.Create)
-    procedure ExtractMetadata(AList: TJpegMarkerList);
-    // Inject the metadata in AList into the marker list of the file. All existing
-    // metadata will be removed first; then the markers in AList will be added
+    // All metadata markers will be extracted from the file, and put in List_.
+    // List_ must be initialized (List_ := TJpegMarkerList.Create)
+    procedure ExtractMetadata(List_: TJpegMarkerList);
+    // Inject the metadata in List_ into the marker list of the file. All existing
+    // metadata will be removed first; then the markers in List_ will be added
     // below the SOI marker.
-    procedure InjectMetadata(AList: TJpegMarkerList);
+    procedure InjectMetadata(List_: TJpegMarkerList);
     // does the jpeg PFormat have a bitmap already?
     function HasBitmap: boolean;
     // Returns true if the Jpeg has a valid ICC profile. Use property ICCProfile
@@ -230,7 +230,7 @@ type
     // is valid until you load a new file or free the jpeg component.
     property ICCProfile: TJpegICCProfile read GetICCProfile write SetICCProfile;
     // Read and write a Jpeg comment (implemented through the COM marker).
-    property Comment: RawByteString read GetComment write SetComment;
+    property Comment: TPascalString read GetComment write SetComment;
     // Read Bitmap to get a pointer to a TBitmap object back, that has the currently
     // loaded image. The TBitmap object is no longer valid when the jpeg PFormat class is freed.
     // Assign to Bitmap in order to save the bitmap to a jpeg file. Note: when
@@ -280,7 +280,7 @@ type
     property OnDebugOut: TDebugEvent read FOnDebugOut write FOnDebugOut;
     // Connect to this event before calling SaveToStreamStripByStrip. The implementation
     // of this event should fill the passed ABitmap parameter with the part of the
-    // image at ALeft/ATop position.
+    // image at Left_/Top_ position.
     property OnProvideStrip: TJpegProvideStripEvent read FOnProvideStrip write FOnProvideStrip;
     // Connect to this event to use an external color management system (e.g. apply an
     // ICC profile to an image, with an external library, like LittleCMS). If this event is
@@ -300,13 +300,13 @@ type
     FCodingMethod: TJpegEncodingMethod;
     FUseSubSampling: boolean;
   protected
-    procedure AddMarkers(AStored: TJpegColorSpace; AWidth, AHeight: integer);
+    procedure AddMarkers(Stored_: TJpegColorSpace; Width_, Height_: integer);
     procedure SetupDefaultHuffmanTables; virtual;
     procedure SetupQuantTables; virtual;
-    procedure SetTableMultiplication(ATable: TQuantizationTable; MultiplyPercent: integer;
-      const ADefaultTable: TIntArray64);
+    procedure SetTableMultiplication(Table_: TQuantizationTable; MultiplyPercent: integer;
+      const DefaultTable_: TIntArray64);
   public
-    constructor Create(AOwner: TJpegImage);
+    constructor Create(Owner_: TJpegImage);
     property Quality: TJpegQuality read FQuality write FQuality;
     property OptimizeHuffmanTables: boolean read FOptimizeHuffmanTables write FOptimizeHuffmanTables;
     property CodingMethod: TJpegEncodingMethod read FCodingMethod write FCodingMethod;
@@ -378,7 +378,7 @@ begin
   Result := FLossless;
 end;
 
-function TJpegImage.GetComment: RawByteString;
+function TJpegImage.GetComment: TPascalString;
 var
   M: TCOMMarker;
 begin
@@ -389,7 +389,7 @@ begin
       Result := M.Comment;
 end;
 
-procedure TJpegImage.SetComment(const Value: RawByteString);
+procedure TJpegImage.SetComment(const Value: TPascalString);
 var
   M: TCOMMarker;
 begin
@@ -438,15 +438,15 @@ begin
   Result := (GetImageWidth + D - 1) div D;
 end;
 
-procedure TJpegImage.GetBitmapTileSize(AScale: TJpegScale; var AWidth, AHeight: integer);
+procedure TJpegImage.GetBitmapTileSize(Scale_: TJpegScale; var Width_, Height_: integer);
 var
   W, H, Divisor: integer;
 begin
   W := FJpegInfo.FTileWidth;
   H := FJpegInfo.FTileHeight;
-  Divisor := sdGetDivisor(AScale);
-  AWidth := (W + Divisor - 1) div Divisor;
-  AHeight := (H + Divisor - 1) div Divisor;
+  Divisor := sdGetDivisor(Scale_);
+  Width_ := (W + Divisor - 1) div Divisor;
+  Height_ := (H + Divisor - 1) div Divisor;
 end;
 
 procedure TJpegImage.BeforeLosslessUpdate(Sender: TObject);
@@ -668,13 +668,13 @@ begin
       until (BytesRead = 0) or (B = $FF);
       if BytesRead = 0 then
           raise EInvalidImage.Create(sMarkerExpected);
-      S.Seek(-1, soFromCurrent);
+      S.Seek(-1, TSeekOrigin.soCurrent);
       DoDebugOut(Self, wsHint, PFormat('Resuming at %.6d', [S.Position]));
     end;
   Result := MarkerTag;
 end;
 
-procedure TJpegImage.GetColorTransformFromBitmap(var AClass: TColorTransformClass);
+procedure TJpegImage.GetColorTransformFromBitmap(var Class_: TColorTransformClass);
 var
   InternalCS, Input: TJpegColorSpace;
 begin
@@ -705,16 +705,16 @@ begin
     end;
 
   // Defaults
-  AClass := nil;
+  Class_ := nil;
   case FJpegInfo.FFrameCount of
     1: if FPixelFormat = spf8bit then
-          AClass := TNullTransform8bit;
+          Class_ := TNullTransform8bit;
     2: if FPixelFormat = spf16bit then
-          AClass := TNullTransform16bit;
+          Class_ := TNullTransform16bit;
     3: if FPixelFormat = spf24bit then
-          AClass := TNullTransform24bit;
+          Class_ := TNullTransform24bit;
     4: if FPixelFormat = spf32bit then
-          AClass := TNullTransform32bit;
+          Class_ := TNullTransform32bit;
     else
       DoDebugOut(Self, wsWarn, 'FCodingInfo.FrameCount = 0');
   end;
@@ -723,40 +723,40 @@ begin
   case InternalCS of
     jcGray:
       case Input of
-        jcRGB: AClass := TTransformBGRToGray;
-        jcRGBA: AClass := TTransformBGRAToGray;
+        jcRGB: Class_ := TTransformBGRToGray;
+        jcRGBA: Class_ := TTransformBGRAToGray;
       end;
     jcGrayA:
       case Input of
-        jcRGB: AClass := TTransformBGRToGrayA;
-        jcRGBA: AClass := TTransformBGRAToGrayA;
+        jcRGB: Class_ := TTransformBGRToGrayA;
+        jcRGBA: Class_ := TTransformBGRAToGrayA;
       end;
     jcRGB:
       case Input of
-        jcRGB: AClass := TTransformInvertTriplet24bit;
-        jcRGBA: AClass := TTransformRGBAToBGR;
+        jcRGB: Class_ := TTransformInvertTriplet24bit;
+        jcRGBA: Class_ := TTransformRGBAToBGR;
       end;
     jcYCbCr, jcPhotoYCC:
       case Input of
-        jcRGB: AClass := TTransformBGRToYCbCr;
-        jcRGBA: AClass := TTransformBGRAToYCbCr;
+        jcRGB: Class_ := TTransformBGRToYCbCr;
+        jcRGBA: Class_ := TTransformBGRAToYCbCr;
       end;
     jcYCbCrA:
       case Input of
-        jcRGBA: AClass := TTransformBGRAToYCbCrA;
+        jcRGBA: Class_ := TTransformBGRAToYCbCrA;
       end;
   end;
 end;
 
-procedure TJpegImage.GetColorTransformToBitmap(var AClass: TColorTransformClass; var AFormat: TPixelFormat);
+procedure TJpegImage.GetColorTransformToBitmap(var Class_: TColorTransformClass; var Format_: TPixelFormat);
 var
   Warning: boolean;
   InternalCS, OutputCS: TJpegColorSpace;
   // helper
   procedure SetClassAndFormat(C: TColorTransformClass; F: TPixelFormat);
   begin
-    AClass := C;
-    AFormat := F;
+    Class_ := C;
+    Format_ := F;
   end;
 
 begin
@@ -945,20 +945,20 @@ end;
 
 { TJpegImage }
 
-procedure TJpegImage.AddMinimalMarkersForColorSpaceDetection(AColors: TJpegColorSpace);
+procedure TJpegImage.AddMinimalMarkersForColorSpaceDetection(Colors_: TJpegColorSpace);
 var
   M: TJpegMarker;
 begin
   Markers.Insert(0, TSOIMarker.Create(FJpegInfo, mkSOI));
   // JFIF marker if these color spaces
-  if AColors in [jcGray, jcYCbCr] then
+  if Colors_ in [jcGray, jcYCbCr] then
       Markers.Insert(1, TJFIFMarker.Create(FJpegInfo, mkAPP0))
   else
     // Adobe APP14 marker if these color spaces
-    if AColors in [jcRGB, jcCMYK, jcYCCK] then
+    if Colors_ in [jcRGB, jcCMYK, jcYCCK] then
       begin
         M := TAdobeApp14Marker.Create(FJpegInfo, mkAPP14);
-        case AColors of
+        case Colors_ of
           jcRGB, jcCMYK: TAdobeApp14Marker(M).Transform := 0;
           jcYCCK: TAdobeApp14Marker(M).Transform := 2;
         end;
@@ -966,9 +966,9 @@ begin
       end;
 end;
 
-constructor TJpegImage.Create(AOwner: TJPEG_Base_Object);
+constructor TJpegImage.Create(Owner_: TJPEG_Base_Object);
 begin
-  inherited Create(AOwner);
+  inherited Create(Owner_);
   // Owned objects
   FMarkers := TJpegMarkerList.Create(Self);
   FJpegInfo := TJpegInfo.Create;
@@ -1033,15 +1033,15 @@ begin
   FICCProfile := nil;
 end;
 
-procedure TJpegImage.Compress(AIterator: TMapIterator);
-// compress the Jpeg image, using the bitmap in AIterator
+procedure TJpegImage.Compress(Iterator_: TMapIterator);
+// compress the Jpeg image, using the bitmap in Iterator_
 var
   TransformClass: TColorTransformClass;
   Transform: TColorTransform;
   StoredCS_: TJpegColorSpace;
 begin
   // check iterator
-  if not assigned(AIterator) or (AIterator.Width * AIterator.Height = 0) then
+  if not assigned(Iterator_) or (Iterator_.Width * Iterator_.Height = 0) then
     begin
       DoDebugOut(Self, wsFail, sBitmapIsEmptyCannotSave);
       exit;
@@ -1051,11 +1051,11 @@ begin
   begin
 
     // BitCount to sdpixelformat
-    FPixelFormat := sdBitCountToPixelFormat(AIterator.BitCount);
+    FPixelFormat := sdBitCountToPixelFormat(Iterator_.BitCount);
 
     // coding info and important private data width/height
-    FJpegInfo.FWidth := AIterator.Width;
-    FJpegInfo.FHeight := AIterator.Height;
+    FJpegInfo.FWidth := Iterator_.Width;
+    FJpegInfo.FHeight := Iterator_.Height;
 
     FLoadScale := jsFull;
     FMapWidth := FJpegInfo.FWidth;
@@ -1091,14 +1091,14 @@ begin
       end;
 
     Transform := TransformClass.Create;
-    if assigned(AIterator) then
+    if assigned(Iterator_) then
       begin
         try
           // Initialize coder (this sets map sizes etc)
           FCoder.Initialize(jsFull);
           // Get samples from bitmap data
           // AV here in laz
-          FCoder.SamplesFromImage(AIterator, Transform);
+          FCoder.SamplesFromImage(Iterator_, Transform);
           // Now convert samples to coefficients. This also does the quantization
           FCoder.ForwardDCT;
         finally
@@ -1114,24 +1114,24 @@ begin
   end;
 end;
 
-procedure TJpegImage.GetBitmapSize(AScale: TJpegScale; var AWidth, AHeight: integer);
+procedure TJpegImage.GetBitmapSize(Scale_: TJpegScale; var Width_, Height_: integer);
 var
   W, H, Divisor: integer;
 begin
   W := FJpegInfo.FWidth;
   H := FJpegInfo.FHeight;
-  Divisor := sdGetDivisor(AScale);
-  AWidth := (W + Divisor - 1) div Divisor;
-  AHeight := (H + Divisor - 1) div Divisor;
+  Divisor := sdGetDivisor(Scale_);
+  Width_ := (W + Divisor - 1) div Divisor;
+  Height_ := (H + Divisor - 1) div Divisor;
 end;
 
-procedure TJpegImage.LoadJpeg(AScale: TJpegScale; DoCreateBitmap: boolean);
+procedure TJpegImage.LoadJpeg(Scale_: TJpegScale; DoCreateBitmap: boolean);
 var
   i: integer;
   Iteration: cardinal;
   MarkerTag, ExtraTag: byte;
 begin
-  FLoadScale := AScale;
+  FLoadScale := Scale_;
 
   DoDebugOut(Self, wsInfo, PFormat('LoadJpeg with LoadScale=%d', [integer(FLoadScale)]));
 
@@ -1190,13 +1190,13 @@ begin
     { Res := } UpdateBitmap;
 end;
 
-procedure TJpegImage.LoadFromFile(const AFileName: string);
+procedure TJpegImage.LoadFromFile(const FileName_: string);
 var
   M: TMemoryStream64;
 begin
   M := TMemoryStream64.Create;
   try
-    M.LoadFromFile(AFileName);
+    M.LoadFromFile(FileName_);
     M.Position := 0;
     LoadFromStream(M);
   finally
@@ -1276,7 +1276,7 @@ begin
   end;
 end;
 
-procedure TJpegImage.LoadTileBlock(var ALeft, ATop, ARight, ABottom: integer);
+procedure TJpegImage.LoadTileBlock(var Left_, Top_, Right_, Bottom_: integer);
 // LoadTileBlock certainly may have bugs! But it seems that tiled loading works
 // for the baseline coder.
 var
@@ -1289,7 +1289,7 @@ var
   TransformClass: TColorTransformClass;
 begin
   DoDebugOut(Self, wsInfo, PFormat('Load tile block [%d %d %d %d]',
-    [ALeft, ATop, ARight, ABottom]));
+    [Left_, Top_, Right_, Bottom_]));
 
   if not assigned(FCoder) then
     begin
@@ -1322,19 +1322,19 @@ begin
   McuW := FJpegInfo.FMCUWidth div Divisor;
   McuH := FJpegInfo.FMCUHeight div Divisor;
 
-  McuLeft := Max(0, ALeft div McuW);
-  McuRight := Min(FJpegInfo.FHorzMCUCount, (ARight + McuW - 1) div McuW);
-  McuTop := Max(0, ATop div McuH);
-  McuBottom := Min(FJpegInfo.FVertMcuCount, (ABottom + McuH - 1) div McuH);
+  McuLeft := Max(0, Left_ div McuW);
+  McuRight := Min(FJpegInfo.FHorzMCUCount, (Right_ + McuW - 1) div McuW);
+  McuTop := Max(0, Top_ div McuH);
+  McuBottom := Min(FJpegInfo.FVertMcuCount, (Bottom_ + McuH - 1) div McuH);
 
   XCount := McuRight - McuLeft;
   YCount := McuBottom - McuTop;
   XStart := McuLeft;
   YStart := McuTop;
-  ALeft := McuLeft * McuW;
-  ATop := McuTop * McuH;
-  ARight := McuRight * McuW;
-  ABottom := McuBottom * McuH;
+  Left_ := McuLeft * McuW;
+  Top_ := McuTop * McuH;
+  Right_ := McuRight * McuW;
+  Bottom_ := McuBottom * McuH;
 
   // Anything to load?
   if (XCount <= 0) or (YCount <= 0) then
@@ -1453,7 +1453,7 @@ begin
 
       if not(M.MarkerTag in [mkSOI, mkEOI, mkRST0 .. mkRST7]) then
         begin
-          DoDebugOut(Self, wsInfo, PFormat('Writing marker %s', [M.MarkerName]));
+          DoDebugOut(Self, wsInfo, PFormat('Writing marker %s', [M.MarkerName.Text]));
           // Writing a marker will also make the marker update itself in the CodingInfo
           // object, so when calling FCoder.Encode later, it will have the current data
           M.WriteMarker;
@@ -1475,14 +1475,14 @@ begin
   // the client can now use SaveToStream to save this new jpeg to a stream
 end;
 
-procedure TJpegImage.SaveToFile(const AFileName: string);
+procedure TJpegImage.SaveToFile(const FileName_: string);
 var
   FS: TMemoryStream64;
 begin
   FS := TMemoryStream64.Create;
   try
     SaveToStream(FS);
-    FS.SaveToFile(AFileName);
+    FS.SaveToFile(FileName_);
   finally
       FS.Free;
   end;
@@ -1505,7 +1505,7 @@ begin
       // write the marker tag
       Stream.Write(cFF, 1);
       Stream.Write(Marker.MarkerTag, 1);
-      DoDebugOut(Self, wsInfo, PFormat('Saving marker %s', [Marker.MarkerName]));
+      DoDebugOut(Self, wsInfo, PFormat('Saving marker %s', [Marker.MarkerName.Text]));
       if not(Marker.MarkerTag in [mkSOI, mkEOI, mkRST0 .. mkRST7]) then
         begin
           MS := TMemoryStream64.Create;
@@ -1536,7 +1536,7 @@ begin
     end;
 end;
 
-procedure TJpegImage.SaveBitmapStripByStrip(AWidth, AHeight: integer);
+procedure TJpegImage.SaveBitmapStripByStrip(Width_, Height_: integer);
 const
   cFF: byte = $FF;
 var
@@ -1594,7 +1594,7 @@ begin
     // Ask save options to add DQT, SOFn and SOS marker. We use pre-defined
     // Huffman tables because we only do one pass over the image
     FSaveOptions.OptimizeHuffmanTables := False;
-    FSaveOptions.AddMarkers(Stored, AWidth, AHeight);
+    FSaveOptions.AddMarkers(Stored, Width_, Height_);
 
     // We also must add an EOI marker
     FMarkers.Add(TEOIMarker.Create(FJpegInfo, mkEOI));
@@ -1613,7 +1613,7 @@ begin
     FCoder.Initialize(jsFull); // will calculate MCU height
 
     // bitmap strip size
-    BitmapIter.Width := AWidth;
+    BitmapIter.Width := Width_;
     BitmapIter.Height := FJpegInfo.FMCUHeight;
 
     // Result is usually a TBitmap (Win32/Linux, etc), but it is up to the application
@@ -1730,7 +1730,7 @@ begin
     end;
 end;
 
-procedure TJpegImage.ExtractMetadata(AList: TJpegMarkerList);
+procedure TJpegImage.ExtractMetadata(List_: TJpegMarkerList);
 var
   Idx: integer;
 begin
@@ -1738,17 +1738,17 @@ begin
   while Idx < FMarkers.Count do
     begin
       if FMarkers[Idx].MarkerTag in [mkAPP0 .. mkAPP15, mkCOM] then
-          AList.Add(FMarkers.Extract(FMarkers[Idx]))
+          List_.Add(FMarkers.Extract(FMarkers[Idx]))
       else
           inc(Idx);
     end;
 end;
 
-procedure TJpegImage.InjectMetadata(AList: TJpegMarkerList);
+procedure TJpegImage.InjectMetadata(List_: TJpegMarkerList);
 begin
   FMarkers.RemoveMarkers([mkAPP0 .. mkAPP15, mkCOM]);
-  while AList.Count > 0 do
-      FMarkers.Insert(1, AList.Extract(AList[AList.Count - 1]));
+  while List_.Count > 0 do
+      FMarkers.Insert(1, List_.Extract(List_[List_.Count - 1]));
 end;
 
 function TJpegImage.HasBitmap: boolean;
@@ -1776,15 +1776,15 @@ function TJpegImage.DetectInternalColorSpace: TJpegColorSpace;
 var
   JFIF: TJFIFMarker;
   Adobe: TAdobeApp14Marker;
-  IDStr: RawByteString;
+  IDStr: TPascalString;
   // local
-  function GetComponentIDString: RawByteString;
+  function GetComponentIDString: TPascalString;
   var
     i: integer;
   begin
-    SetLength(Result, FJpegInfo.FFrameCount);
+    Result.L := FJpegInfo.FFrameCount;
     for i := 0 to FJpegInfo.FFrameCount - 1 do
-        PByte(@Result[i + 1])^ := byte(FJpegInfo.FFrames[i].FComponentID);
+        Result[i + 1] := SystemChar(FJpegInfo.FFrames[i].FComponentID);
   end;
 
 begin
@@ -1877,7 +1877,7 @@ end;
 
 { TJpegSaveOptions }
 
-procedure TJpegSaveOptions.AddMarkers(AStored: TJpegColorSpace; AWidth, AHeight: integer);
+procedure TJpegSaveOptions.AddMarkers(Stored_: TJpegColorSpace; Width_, Height_: integer);
 var
   i: integer;
   Info: TJpegInfo;
@@ -1887,10 +1887,10 @@ var
 begin
   // Set the correct FInfo fields
   Info := FOwner.FJpegInfo;
-  Info.FWidth := AWidth;
-  Info.FHeight := AHeight;
+  Info.FWidth := Width_;
+  Info.FHeight := Height_;
   Info.FSamplePrecision := 8;
-  case AStored of
+  case Stored_ of
     jcGray:
       Info.FFrameCount := 1;
     jcGrayA:
@@ -1904,7 +1904,7 @@ begin
   end;
 
   // Subsampling used?
-  case AStored of
+  case Stored_ of
     jcYCbCr, jcYCbCrA, jcYCCK, jcPhotoYCC, jcPhotoYCCA:
       FUseSubSampling := True
     else
@@ -2065,14 +2065,14 @@ begin
   FOwner.Markers.Add(M);
 end;
 
-procedure TJpegSaveOptions.SetTableMultiplication(ATable: TQuantizationTable;
-  MultiplyPercent: integer; const ADefaultTable: TIntArray64);
+procedure TJpegSaveOptions.SetTableMultiplication(Table_: TQuantizationTable;
+  MultiplyPercent: integer; const DefaultTable_: TIntArray64);
 var
   i, Q: integer;
 begin
   for i := 0 to 63 do
     begin
-      Q := (ADefaultTable[cJpegInverseZigZag8x8[i]] * MultiplyPercent + 50) div 100;
+      Q := (DefaultTable_[cJpegInverseZigZag8x8[i]] * MultiplyPercent + 50) div 100;
       // ensure that quant factor is in valid range
       if Q <= 0 then
           Q := 1
@@ -2080,14 +2080,14 @@ begin
         if Q > 255 then
           Q := 255;
       // set table quant factor i
-      ATable.FQuant[i] := Q;
+      Table_.FQuant[i] := Q;
     end;
 end;
 
-constructor TJpegSaveOptions.Create(AOwner: TJpegImage);
+constructor TJpegSaveOptions.Create(Owner_: TJpegImage);
 begin
   inherited Create;
-  FOwner := AOwner;
+  FOwner := Owner_;
   FQuality := cDefaultJpgCompressionQuality;
   FOptimizeHuffmanTables := True;
   FCodingMethod := emBaselineDCT;

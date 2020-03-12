@@ -77,8 +77,10 @@ uses
 {$ENDIF FPC}
   Classes;
 
-procedure Load_ffmpeg();
+procedure Load_ffmpeg(LibPath: string); overload;
+procedure Load_ffmpeg(); overload;
 procedure Free_ffmpeg();
+function FFMPEGOK: Boolean;
 
 {$Region 'compiler const'}
 
@@ -17394,7 +17396,7 @@ type
 
 (**
  * A function pointer passed to the @ref AVFilterGraph.execute callback to be
- * executed multiple times, possibly in parallel.
+ * executed multiple times, possibly in Parallel.
  *
  * @param ctx the filter context the job belongs to
  * @param arg an opaque parameter passed through from @ref
@@ -17407,7 +17409,7 @@ type
   Tavfilter_action_func = function(ctx: PAVFilterContext; arg: Pointer; jobnr, nb_jobs: Integer): Integer; cdecl;
 
 (**
- * A function executing multiple jobs, possibly in parallel.
+ * A function executing multiple jobs, possibly in Parallel.
  *
  * @param ctx the filter context to which the jobs belong
  * @param func the function to be called multiple times
@@ -17470,7 +17472,7 @@ type
      * multithreading implementation.
      *
      * If set, filters with slice threading capability will call this callback
-     * to execute multiple jobs in parallel.
+     * to execute multiple jobs in Parallel.
      *
      * If this field is left unset, libavfilter will use its internal
      * implementation, which may or may not be multithreaded depending on the
@@ -26144,9 +26146,9 @@ function av_probe_input_buffer(pb: PAVIOContext; fmt: PPAVInputFormat;
  *)
 
 {$IFDEF API_Dynamic}
-var avformat_open_input : function(ps: PPAVFormatContext; const filename: PAnsiChar; fmt: PAVInputFormat; options: PPAVDictionary): Integer; cdecl;
+var avformat_open_input : function(ps: PPAVFormatContext; const videosource: PAnsiChar; fmt: PAVInputFormat; options: PPAVDictionary): Integer; cdecl;
 {$ELSE API_Dynamic}
-function avformat_open_input(ps: PPAVFormatContext; const filename: PAnsiChar; fmt: PAVInputFormat; options: PPAVDictionary): Integer; cdecl; external AVFORMAT_LIBNAME name _PU + 'avformat_open_input';
+function avformat_open_input(ps: PPAVFormatContext; const videosource: PAnsiChar; fmt: PAVInputFormat; options: PPAVDictionary): Integer; cdecl; external AVFORMAT_LIBNAME name _PU + 'avformat_open_input';
 {$ENDIF API_Dynamic}
 
 
@@ -30170,15 +30172,47 @@ begin
 {$IFEND}
 end;
 
+procedure Load_ffmpeg(LibPath: string);
+{$IFDEF API_Dynamic}
+var
+  CurrDir: string;
+begin
+  CurrDir := GetCurrentDir;
+  SetCurrentDir(LibPath);
+  try
+    Load_ffmpeg();
+  except
+  end;
+  SetCurrentDir(CurrDir);
+end;
+{$ELSE API_Dynamic}
+begin
+end;
+{$ENDIF API_Dynamic}
+
 procedure Load_ffmpeg();
 begin
 {$IFDEF API_Dynamic}
-  AVUTIL_LIBNAME_HND := GetExtLib(AVUTIL_LIBNAME);
-  AVCODEC_LIBNAME_HND := GetExtLib(AVCODEC_LIBNAME);
+
+  if AVUTIL_LIBNAME_HND = 0 then
+    AVUTIL_LIBNAME_HND := GetExtLib(AVUTIL_LIBNAME);
+
+  if AVCODEC_LIBNAME_HND = 0 then
+    AVCODEC_LIBNAME_HND := GetExtLib(AVCODEC_LIBNAME);
+
+  if AVFORMAT_LIBNAME_HND = 0 then
   AVFORMAT_LIBNAME_HND := GetExtLib(AVFORMAT_LIBNAME);
+
+  if AVFILTER_LIBNAME_HND = 0 then
   AVFILTER_LIBNAME_HND := GetExtLib(AVFILTER_LIBNAME);
+
+  if AVDEVICE_LIBNAME_HND = 0 then
   AVDEVICE_LIBNAME_HND := GetExtLib(AVDEVICE_LIBNAME);
+
+  if SWRESAMPLE_LIBNAME_HND = 0 then
   SWRESAMPLE_LIBNAME_HND := GetExtLib(SWRESAMPLE_LIBNAME);
+
+  if SWSCALE_LIBNAME_HND = 0 then
   SWSCALE_LIBNAME_HND := GetExtLib(SWSCALE_LIBNAME);
 
   if (AVUTIL_LIBNAME_HND = 0) or (AVCODEC_LIBNAME_HND = 0) or
@@ -31859,13 +31893,19 @@ begin
 {$ENDIF API_Dynamic}
 end;
 
+function FFMPEGOK: Boolean;
+begin
+{$IFDEF API_Dynamic}
+  Result := (AVUTIL_LIBNAME_HND <> 0) and (AVCODEC_LIBNAME_HND <> 0) and
+    (AVFORMAT_LIBNAME_HND <> 0) and (AVFILTER_LIBNAME_HND <> 0) and
+    (AVDEVICE_LIBNAME_HND <> 0) and (SWRESAMPLE_LIBNAME_HND <> 0) and (SWSCALE_LIBNAME_HND <> 0);
+{$ELSE API_Dynamic}
+  Result := True;
+{$ENDIF API_Dynamic}
+end;
 
 initialization
-
- Load_ffmpeg();
-
+  Load_ffmpeg();
 finalization
-
- Free_ffmpeg();
-
+  Free_ffmpeg();
 end.

@@ -18,7 +18,6 @@
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
 
-
 (* ************************************************************************
   F distribution
 
@@ -194,14 +193,14 @@ end;
   ************************************************************************ *)
 procedure FTest(const x: TLVec; n: TLInt; const y: TLVec; M: TLInt; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  i    : TLInt;
+  i: TLInt;
   XMean: TLFloat;
   YMean: TLFloat;
-  XVar : TLFloat;
-  YVar : TLFloat;
-  DF1  : TLInt;
-  DF2  : TLInt;
-  Stat : TLFloat;
+  XVar: TLFloat;
+  YVar: TLFloat;
+  DF1: TLInt;
+  DF2: TLInt;
+  Stat: TLFloat;
 begin
   if (n <= 2) or (M <= 2) then
     begin
@@ -264,10 +263,7 @@ begin
   DF1 := n - 1;
   DF2 := M - 1;
   Stat := Min(XVar / YVar, YVar / XVar);
-  BothTails := 1 - (FDistribution(DF1, DF2, 1 / Stat) - FDistribution(DF1,
-    DF2, Stat));
+  BothTails := 1 - (FDistribution(DF1, DF2, 1 / Stat) - FDistribution(DF1, DF2, Stat));
   LeftTail := FDistribution(DF1, DF2, XVar / YVar);
   RightTail := 1 - LeftTail;
-end; 
- 
- 
+end;

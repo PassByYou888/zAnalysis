@@ -123,8 +123,7 @@ end;
 (* ************************************************************************
   One-sample chi-square test
 
-  This test checks three hypotheses about the dispersion of the given sample
-  The following tests are performed:
+  This test checks three hypotheses about the dispersion of the given sample The following tests are performed:
   * two-tailed test (null hypothesis - the dispersion equals the given number)
   * left-tailed test (null hypothesis - the dispersion is greater than or equal to the given number)
   * right-tailed test (null hypothesis - dispersion is less than or equal to the given number).
@@ -144,11 +143,11 @@ end;
   ************************************************************************ *)
 procedure OneSampleVarianceTest(const x: TLVec; n: TLInt; Variance: TLFloat; var BothTails, LeftTail, RightTail: TLFloat);
 var
-  i    : TLInt;
+  i: TLInt;
   XMean: TLFloat;
-  XVar : TLFloat;
-  s    : TLFloat;
-  Stat : TLFloat;
+  XVar: TLFloat;
+  s: TLFloat;
+  Stat: TLFloat;
 begin
   if n <= 1 then
     begin
@@ -197,6 +196,4 @@ begin
   BothTails := 2 * Min(s, 1 - s);
   LeftTail := s;
   RightTail := 1 - LeftTail;
-end; 
- 
- 
+end;

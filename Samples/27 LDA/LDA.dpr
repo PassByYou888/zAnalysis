@@ -24,7 +24,7 @@ var
   M: TLMatrix;
   cv, v: TLVec;
   i, J: TLInt;
-  Info: SystemString;
+  Info: TPascalString;
 begin
   // 5个数据样本
   M := LMatrix(Classifier_num, sampler_num);

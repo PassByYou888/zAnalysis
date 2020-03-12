@@ -49,12 +49,12 @@ end;
 
 function RandomReal(): TLFloat;
 begin
-  RandomReal := Random;
+  RandomReal := MT19937RandD();
 end;
 
 function RandomInteger(i: TLInt): TLInt;
 begin
-  RandomInteger := Random(i);
+  RandomInteger := MT19937Rand32(i);
 end;
 
 function Sign(x: TLFloat): TLInt;

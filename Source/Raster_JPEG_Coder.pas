@@ -50,22 +50,22 @@ type
     FScale: TJpegScale;
     FTileMode: boolean;
   public
-    constructor Create(AOwner: TJPEG_Base_Object; AInfo: TJpegInfo); virtual;
+    constructor Create(Owner_: TJPEG_Base_Object; Info_: TJpegInfo); virtual;
     procedure Clear; virtual;
-    procedure Initialize(AScale: TJpegScale); virtual;
+    procedure Initialize(Scale_: TJpegScale); virtual;
     procedure Encode(S: TMemoryStream64; Iteration: cardinal); virtual; abstract;
     procedure Decode(S: TMemoryStream64; Iteration: cardinal); virtual; abstract;
     procedure DecodeBlock(S: TMemoryStream64; XStart, YStart, XCount, YCount: integer); virtual; abstract;
     procedure Finalize; virtual;
     procedure ForwardDCT; virtual; abstract;
     procedure InverseDCT; virtual; abstract;
-    // Get the values from the image described with map iterator AImage, and put
-    // them in the sample maps. Use ATransform to transform the colors.
-    procedure SamplesFromImage(AImage: TMapIterator; ATransform: TColorTransform); virtual; abstract;
-    // Build the image that is described with the map iterator AImage, based on the
+    // Get the values from the image described with map iterator Image_, and put
+    // them in the sample maps. Use Transform_ to transform the colors.
+    procedure SamplesFromImage(Image_: TMapIterator; Transform_: TColorTransform); virtual; abstract;
+    // Build the image that is described with the map iterator Image_, based on the
     // decoded samples. Transform the decoded samples color space to the image color
-    // space with ATransform.
-    procedure SamplesToImage(AImage: TMapIterator; ATransform: TColorTransform); virtual; abstract;
+    // space with Transform_.
+    procedure SamplesToImage(Image_: TMapIterator; Transform_: TColorTransform); virtual; abstract;
     function CreateDHTMarker: TDHTMarker; virtual;
     property Method: TJpegDCTCodingMethod read FMethod write FMethod;
     property HasCoefficients: boolean read FHasCoefficients write FHasCoefficients;
@@ -88,18 +88,18 @@ type
   protected
     FBlockStride: integer;
     procedure CorrectBlockStride;
-    function BlockstrideForScale(AScale: TJpegScale): integer; virtual;
-    procedure GetBlockstrideParams(ABlockstride: integer;
-      var ABlockWidth, AMcuWidth, AMcuHeight: integer);
-    procedure McuRowFromBuffer(McuY: integer; ABlockWidth: integer);
-    procedure McuRowToBuffer(McuY: integer; ABlockWidth: integer);
-    procedure SetupMaps(SpecialSize: boolean; AHorzMcuCount, AVertMcuCount: integer);
+    function BlockstrideForScale(Scale_: TJpegScale): integer; virtual;
+    procedure GetBlockstrideParams(BlockStride_: integer;
+      var BlockWidth_, McuWidth_, McuHeight_: integer);
+    procedure McuRowFromBuffer(McuY: integer; BlockWidth_: integer);
+    procedure McuRowToBuffer(McuY: integer; BlockWidth_: integer);
+    procedure SetupMaps(SpecialSize: boolean; HorzMcuCount_, VertMcuCount_: integer);
   public
-    constructor Create(AOwner: TJPEG_Base_Object; AInfo: TJpegInfo); override;
+    constructor Create(Owner_: TJPEG_Base_Object; Info_: TJpegInfo); override;
     destructor Destroy; override;
     procedure Clear; override;
-    procedure SamplesFromImage(AImage: TMapIterator; ATransform: TColorTransform); override;
-    procedure SamplesToImage(AImage: TMapIterator; ATransform: TColorTransform); override;
+    procedure SamplesFromImage(Image_: TMapIterator; Transform_: TColorTransform); override;
+    procedure SamplesToImage(Image_: TMapIterator; Transform_: TColorTransform); override;
     procedure ForwardDCT; override;
     procedure InverseDCT; override;
     property Maps: TBlockMapList read FMaps;
@@ -125,20 +125,20 @@ type
     procedure DoMcuBlockCount;
     procedure InitializeDecoderTables; virtual;
     procedure InitializeEncoderTables; virtual;
-    procedure DecodeMcu(AMcuX, AMcuY: integer; Skip: boolean); virtual;
-    procedure EncodeMcu(AMcuX, AMcuY: integer); virtual;
+    procedure DecodeMcu(McuX_, McuY_: integer; Skip: boolean); virtual;
+    procedure EncodeMcu(McuX_, McuY_: integer); virtual;
     procedure ResetDecoder;
     procedure ResetEncoder;
     procedure HandleEndOfStreamError(S: TMemoryStream64); virtual;
     procedure HandleRestartInterval(S: TMemoryStream64; Warn: boolean); virtual;
     procedure HandleHitMarkerError(S: TMemoryStream64); virtual;
-    function HandleDNLMarker(AMcuY: integer; S: TMemoryStream64): boolean; virtual;
+    function HandleDNLMarker(McuY_: integer; S: TMemoryStream64): boolean; virtual;
     procedure ResizeVerticalMcu(NewVertMcuCount: integer); virtual;
   public
-    constructor Create(AOwner: TJPEG_Base_Object; AInfo: TJpegInfo); override;
+    constructor Create(Owner_: TJPEG_Base_Object; Info_: TJpegInfo); override;
     destructor Destroy; override;
     procedure Clear; override;
-    procedure Initialize(AScale: TJpegScale); override;
+    procedure Initialize(Scale_: TJpegScale); override;
     procedure Decode(S: TMemoryStream64; Iteration: cardinal); override;
     procedure DecodeBlock(S: TMemoryStream64; XStart, YStart, XCount, YCount: integer); override;
     procedure Encode(S: TMemoryStream64; Iteration: cardinal); override;
@@ -154,9 +154,9 @@ type
     FIsDCBand: boolean;
     FIsFirst: boolean;
   protected
-    procedure DecodeMcu(AMcuX, AMcuY: integer; Skip: boolean); override;
+    procedure DecodeMcu(McuX_, McuY_: integer; Skip: boolean); override;
     procedure InitializeDecoderTables; override;
-    function BlockstrideForScale(AScale: TJpegScale): integer; override;
+    function BlockstrideForScale(Scale_: TJpegScale): integer; override;
     procedure HandleRestartInterval(S: TMemoryStream64; Warn: boolean); override;
   public
     procedure Decode(S: TMemoryStream64; Iteration: cardinal); override;
@@ -176,11 +176,11 @@ begin
   FScale := jsFull;
 end;
 
-constructor TJpegCoder.Create(AOwner: TJPEG_Base_Object; AInfo: TJpegInfo);
+constructor TJpegCoder.Create(Owner_: TJPEG_Base_Object; Info_: TJpegInfo);
 begin
   inherited Create;
-  FOwner := AOwner;
-  FInfo := AInfo;
+  FOwner := Owner_;
+  FInfo := Info_;
 end;
 
 function TJpegCoder.CreateDHTMarker: TDHTMarker;
@@ -193,16 +193,16 @@ begin
   // default does nothing
 end;
 
-procedure TJpegCoder.Initialize(AScale: TJpegScale);
+procedure TJpegCoder.Initialize(Scale_: TJpegScale);
 begin
-  FScale := AScale;
+  FScale := Scale_;
 end;
 
 { TJpegBlockCoder }
 
-function TJpegBlockCoder.BlockstrideForScale(AScale: TJpegScale): integer;
+function TJpegBlockCoder.BlockstrideForScale(Scale_: TJpegScale): integer;
 begin
-  case AScale of
+  case Scale_ of
     jsFull: Result := 64;
     jsDiv2: Result := 16;
     jsDiv4: Result := 4;
@@ -242,7 +242,7 @@ begin
     end;
 end;
 
-constructor TJpegBlockCoder.Create(AOwner: TJPEG_Base_Object; AInfo: TJpegInfo);
+constructor TJpegBlockCoder.Create(Owner_: TJPEG_Base_Object; Info_: TJpegInfo);
 begin
   inherited;
   FMaps := TBlockMapList.Create;
@@ -272,38 +272,38 @@ begin
   end;
 end;
 
-procedure TJpegBlockCoder.GetBlockstrideParams(ABlockstride: integer;
-  var ABlockWidth, AMcuWidth, AMcuHeight: integer);
+procedure TJpegBlockCoder.GetBlockstrideParams(BlockStride_: integer;
+  var BlockWidth_, McuWidth_, McuHeight_: integer);
 begin
-  case ABlockstride of
+  case BlockStride_ of
     64:
       begin
-        ABlockWidth := 8;
-        AMcuWidth := FInfo.FMcuWidth;
-        AMcuHeight := FInfo.FMcuHeight;
+        BlockWidth_ := 8;
+        McuWidth_ := FInfo.FMcuWidth;
+        McuHeight_ := FInfo.FMcuHeight;
       end;
     16:
       begin
-        ABlockWidth := 4;
-        AMcuWidth := FInfo.FMcuWidth div 2;
-        AMcuHeight := FInfo.FMcuHeight div 2;
+        BlockWidth_ := 4;
+        McuWidth_ := FInfo.FMcuWidth div 2;
+        McuHeight_ := FInfo.FMcuHeight div 2;
       end;
     4:
       begin
-        ABlockWidth := 2;
-        AMcuWidth := FInfo.FMcuWidth div 4;
-        AMcuHeight := FInfo.FMcuHeight div 4;
+        BlockWidth_ := 2;
+        McuWidth_ := FInfo.FMcuWidth div 4;
+        McuHeight_ := FInfo.FMcuHeight div 4;
       end;
     1:
       begin
-        ABlockWidth := 1;
-        AMcuWidth := FInfo.FMcuWidth div 8;
-        AMcuHeight := FInfo.FMcuHeight div 8;
+        BlockWidth_ := 1;
+        McuWidth_ := FInfo.FMcuWidth div 8;
+        McuHeight_ := FInfo.FMcuHeight div 8;
       end;
     else
-      ABlockWidth := 0; // avoid warnings
-      AMcuWidth := 0;
-      AMcuHeight := 0;
+      BlockWidth_ := 0; // avoid warnings
+      McuWidth_ := 0;
+      McuHeight_ := 0;
   end;
 end;
 
@@ -326,7 +326,7 @@ begin
   end;
 end;
 
-procedure TJpegBlockCoder.McuRowFromBuffer(McuY, ABlockWidth: integer);
+procedure TJpegBlockCoder.McuRowFromBuffer(McuY, BlockWidth_: integer);
 var
   i, j, row, col, xblock, yblock, yi, m, V: integer;
   XRepeat, YRepeat, XYArea: integer;
@@ -346,7 +346,7 @@ begin
       XRepeat := FInfo.FHorzSamplingMax div Frame.FHorzSampling;
       YRepeat := FInfo.FVertSamplingMax div Frame.FVertSampling;
       XYArea := XRepeat * YRepeat;
-      PixBlockStride := ABlockWidth * XRepeat * FBufferCellStride;
+      PixBlockStride := BlockWidth_ * XRepeat * FBufferCellStride;
       // We process VertSampling rows
       for yi := 0 to Frame.FVertSampling - 1 do
         begin
@@ -362,14 +362,14 @@ begin
               // Reset the pixel pointer to the start of the block
               PPixel := PBlock;
               // Rows of block
-              for row := 0 to ABlockWidth - 1 do
+              for row := 0 to BlockWidth_ - 1 do
                 begin
                   // Check for optimized version
                   if (XRepeat = 1) and (YRepeat = 1) then
                     begin
                       // Optimized version for no repeats
                       // Columns of block
-                      for col := 0 to ABlockWidth - 1 do
+                      for col := 0 to BlockWidth_ - 1 do
                         begin
                           // Copy pixel to value
                           PValue^ := PPixel^;
@@ -380,7 +380,7 @@ begin
                   else
                     begin
                       // Repeats in at least one direction
-                      for col := 0 to ABlockWidth - 1 do
+                      for col := 0 to BlockWidth_ - 1 do
                         begin
                           // Copy pixel(s) to value and average
                           V := 0;
@@ -407,13 +407,13 @@ begin
               //
               inc(PBlock, PixBlockStride);
             end;
-          inc(PScan, FBufferScanStride * ABlockWidth * YRepeat);
+          inc(PScan, FBufferScanStride * BlockWidth_ * YRepeat);
         end;
       inc(PFirst);
     end;
 end;
 
-procedure TJpegBlockCoder.McuRowToBuffer(McuY: integer; ABlockWidth: integer);
+procedure TJpegBlockCoder.McuRowToBuffer(McuY: integer; BlockWidth_: integer);
 var
   i, j, row, col, xblock, yblock, yi, m: integer;
   XRepeat, YRepeat: integer;
@@ -432,7 +432,7 @@ begin
       PScan := PFirst;
       XRepeat := FInfo.FHorzSamplingMax div Frame.FHorzSampling;
       YRepeat := FInfo.FVertSamplingMax div Frame.FVertSampling;
-      PixBlockStride := ABlockWidth * XRepeat * FBufferCellStride;
+      PixBlockStride := BlockWidth_ * XRepeat * FBufferCellStride;
       // We process VertSampling rows
       for yi := 0 to Frame.FVertSampling - 1 do
         begin
@@ -448,14 +448,14 @@ begin
               // Reset the pixel pointer to the start of the block
               PPixel := PBlock;
               // Rows of block
-              for row := 0 to ABlockWidth - 1 do
+              for row := 0 to BlockWidth_ - 1 do
                 begin
                   // Check for optimized version
                   if (XRepeat = 1) and (YRepeat = 1) then
                     begin
                       // Optimized version for no repeats
                       // Columns of block
-                      for col := 0 to ABlockWidth - 1 do
+                      for col := 0 to BlockWidth_ - 1 do
                         begin
                           // Copy value to pixel
                           PPixel^ := PValue^;
@@ -466,7 +466,7 @@ begin
                   else
                     begin
                       // Repeats in at least one direction
-                      for col := 0 to ABlockWidth - 1 do
+                      for col := 0 to BlockWidth_ - 1 do
                         begin
                           // Copy value to pixel(s)
                           for i := 0 to XRepeat - 1 do
@@ -491,13 +491,13 @@ begin
               //
               inc(PBlock, PixBlockStride);
             end;
-          inc(PScan, FBufferScanStride * ABlockWidth * YRepeat);
+          inc(PScan, FBufferScanStride * BlockWidth_ * YRepeat);
         end;
       inc(PFirst);
     end;
 end;
 
-procedure TJpegBlockCoder.SamplesFromImage(AImage: TMapIterator; ATransform: TColorTransform);
+procedure TJpegBlockCoder.SamplesFromImage(Image_: TMapIterator; Transform_: TColorTransform);
 var
   x, y, yi, BufPos, HorzCount: integer;
   BlockWidth, McuWidth, McuHeight: integer;
@@ -511,8 +511,8 @@ begin
   FBufferCellStride := FInfo.FFrameCount;
   FBufferScanStride := HorzCount * FBufferCellStride;
 
-  AImage.Method := imColByCol;
-  PImage := AImage.First;
+  Image_.Method := imColByCol;
+  PImage := Image_.First;
 
   // checks
   if not assigned(PImage) then
@@ -521,11 +521,11 @@ begin
       exit;
     end;
 
-  if (AImage.CellStride < FBufferCellStride) then
+  if (Image_.CellStride < FBufferCellStride) then
     begin
       DoDebugOut(Self, wsFail,
         PFormat('image cellstride insufficient (image cellstride = %d, buffer cellstride = %d)',
-        [AImage.CellStride, FBufferCellStride]));
+        [Image_.CellStride, FBufferCellStride]));
       exit;
     end;
 
@@ -542,11 +542,11 @@ begin
       while assigned(PImage) and (yi < McuHeight) do
         begin
 
-          if AImage.CellStride = FBufferCellStride then
+          if Image_.CellStride = FBufferCellStride then
             begin
 
               // Transform one row of colors with default image cellstride
-              ATransform.Transform(PImage, @FBuffer[BufPos], AImage.Width);
+              Transform_.Transform(PImage, @FBuffer[BufPos], Image_.Width);
 
             end
           else
@@ -556,21 +556,21 @@ begin
               x := 0;
               PCell := PImage;
               PBuff := @FBuffer[BufPos];
-              while assigned(PCell) and (x < AImage.Width) do
+              while assigned(PCell) and (x < Image_.Width) do
                 begin
                   // 1 pixel transformation
-                  ATransform.Transform(PCell, PBuff, 1);
+                  Transform_.Transform(PCell, PBuff, 1);
 
                   // increment pointers
                   inc(PBuff, FBufferCellStride);
-                  inc(PCell, AImage.CellStride);
+                  inc(PCell, Image_.CellStride);
                   inc(x);
                 end;
 
             end;
 
           // next scanline
-          PImage := AImage.Next;
+          PImage := Image_.Next;
           inc(BufPos, FBufferScanStride);
 
           // increment yi
@@ -585,7 +585,7 @@ begin
     end;
 end;
 
-procedure TJpegBlockCoder.SamplesToImage(AImage: TMapIterator; ATransform: TColorTransform);
+procedure TJpegBlockCoder.SamplesToImage(Image_: TMapIterator; Transform_: TColorTransform);
 var
   x, y, yi, BufPos, HorzCount: integer;
   BlockWidth, McuWidth, McuHeight: integer;
@@ -604,8 +604,8 @@ begin
 
   // We only do the first col 0, thus this iterator loops through all the rows,
   // col 0.
-  AImage.Method := imColByCol;
-  PImage := AImage.First;
+  Image_.Method := imColByCol;
+  PImage := Image_.First;
 
   // checks
   if not assigned(PImage) then
@@ -615,12 +615,12 @@ begin
     end;
 
   // eg Adobe YCCK -> RGB uses 4 ch orig to 3 ch internal, so this strict check
-  // needs to be relaxed: ATransform.DstCellStride instead of FBufferCellStride
-  if (AImage.CellStride < ATransform.DstCellStride) then
+  // needs to be relaxed: Transform_.DstCellStride instead of FBufferCellStride
+  if (Image_.CellStride < Transform_.DstCellStride) then
     begin
       DoDebugOut(Self, wsFail,
         PFormat('image cellstride insufficient (image cellstride = %d, transform dest cellstride = %d)',
-        [AImage.CellStride, FBufferCellStride]));
+        [Image_.CellStride, FBufferCellStride]));
       exit;
     end;
 
@@ -640,11 +640,11 @@ begin
       while assigned(PImage) and (yi < McuHeight) do
         begin
 
-          if AImage.CellStride = FBufferCellStride then
+          if Image_.CellStride = FBufferCellStride then
             begin
 
               // Transform one row of colors with default image cellstride
-              ATransform.Transform(@FBuffer[BufPos], PImage, AImage.Width);
+              Transform_.Transform(@FBuffer[BufPos], PImage, Image_.Width);
 
             end
           else
@@ -653,20 +653,20 @@ begin
               x := 0;
               PCell := PImage;
               PBuff := @FBuffer[BufPos];
-              while assigned(PCell) and (x < AImage.Width) do
+              while assigned(PCell) and (x < Image_.Width) do
                 begin
                   // 1 pixel transformation
-                  ATransform.Transform(PBuff, PCell, 1);
+                  Transform_.Transform(PBuff, PCell, 1);
 
                   // increment pointers
                   inc(PBuff, FBufferCellStride);
-                  inc(PCell, AImage.CellStride);
+                  inc(PCell, Image_.CellStride);
                   inc(x);
                 end;
             end;
 
           // next scanline
-          PImage := AImage.Next;
+          PImage := Image_.Next;
           inc(BufPos, FBufferScanStride);
 
           // increment yi
@@ -678,7 +678,7 @@ begin
     end;
 end;
 
-procedure TJpegBlockCoder.SetupMaps(SpecialSize: boolean; AHorzMcuCount, AVertMcuCount: integer);
+procedure TJpegBlockCoder.SetupMaps(SpecialSize: boolean; HorzMcuCount_, VertMcuCount_: integer);
 var
   i, HorzSampling, VertSampling: integer;
 begin
@@ -706,7 +706,7 @@ begin
   // create maps with given counts
   if SpecialSize then
     for i := 0 to FInfo.FFrameCount - 1 do
-        FMaps[i].SetSize(AHorzMcuCount, AVertMcuCount, FInfo.FFrames[i], FBlockStride)
+        FMaps[i].SetSize(HorzMcuCount_, VertMcuCount_, FInfo.FFrames[i], FBlockStride)
   else
     begin
       for i := 0 to FInfo.FFrameCount - 1 do
@@ -725,7 +725,7 @@ begin
   FTiles.Clear;
 end;
 
-constructor TJpegBaselineCoder.Create(AOwner: TJPEG_Base_Object; AInfo: TJpegInfo);
+constructor TJpegBaselineCoder.Create(Owner_: TJPEG_Base_Object; Info_: TJpegInfo);
 begin
   inherited;
   FDCCoders := TEntropyCoderList.Create;
@@ -988,7 +988,7 @@ begin
   end;
 end;
 
-procedure TJpegBaselineCoder.DecodeMcu(AMcuX, AMcuY: integer; Skip: boolean);
+procedure TJpegBaselineCoder.DecodeMcu(McuX_, McuY_: integer; Skip: boolean);
 var
   i: integer;
   McuBlock: PsdMCUBlock;
@@ -1003,7 +1003,7 @@ begin
       if Skip then
           McuBlock^.Values := @Dummy[0]
       else
-          McuBlock^.Values := Maps[McuBlock^.MapIdx].GetCoefPointerMCU(AMcuX, AMcuY, McuBlock^.BlockIdx);
+          McuBlock^.Values := Maps[McuBlock^.MapIdx].GetCoefPointerMCU(McuX_, McuY_, McuBlock^.BlockIdx);
 
       // Each MCU block has an index to a DC and AC table, use it to do the decoding
       TDCBaselineHuffmanDecoder(FDCCoders[McuBlock^.DCTable]).DecodeMcuBlock(McuBlock^, FBitReader);
@@ -1120,7 +1120,7 @@ begin
   end;
 end;
 
-procedure TJpegBaselineCoder.EncodeMcu(AMcuX, AMcuY: integer);
+procedure TJpegBaselineCoder.EncodeMcu(McuX_, McuY_: integer);
 var
   i: integer;
   McuBlock: PsdMCUBlock;
@@ -1132,7 +1132,7 @@ begin
       // The current MCU block
       McuBlock := @FMcu[i];
       // Initialize MCU values pointer
-      McuBlock^.Values := Maps[McuBlock^.MapIdx].GetCoefPointerMCU(AMcuX, AMcuY, McuBlock^.BlockIdx);
+      McuBlock^.Values := Maps[McuBlock^.MapIdx].GetCoefPointerMCU(McuX_, McuY_, McuBlock^.BlockIdx);
       // Each MCU block has an index to a DC and AC table, use it to do the encoding
       DC := TDCBaselineHuffmanEncoder(FDCCoders[McuBlock^.DCTable]);
       AC := TACBaselineHuffmanEncoder(FACCoders[McuBlock^.ACTable]);
@@ -1201,7 +1201,7 @@ begin
   FRstIndex := 0;
 end;
 
-function TJpegBaselineCoder.HandleDNLMarker(AMcuY: integer; S: TMemoryStream64): boolean;
+function TJpegBaselineCoder.HandleDNLMarker(McuY_: integer; S: TMemoryStream64): boolean;
 var
   ReadBytes: integer;
   B, Tag: byte;
@@ -1224,7 +1224,7 @@ begin
           exit;
         end;
       FInfo.FWaitForDNL := False;
-      ResizeVerticalMcu(AMcuY);
+      ResizeVerticalMcu(McuY_);
       Result := True;
     end;
 end;
@@ -1248,7 +1248,7 @@ begin
         inc(FRstIndex);
         FMcuIndex := FRstIndex * FInfo.FRestartInterval;
         ResetDecoder;
-        S.Seek(2, soFromCurrent);
+        S.Seek(2, TSeekOrigin.soCurrent);
         FBitReader.Reload;
       end;
   end; // case
@@ -1281,7 +1281,7 @@ begin
             end;
           mkEOI:
             begin
-              S.Seek(-2, soFromCurrent);
+              S.Seek(-2, TSeekOrigin.soCurrent);
               Break;
             end;
           else
@@ -1301,7 +1301,7 @@ begin
   FBitReader.Reload;
 end;
 
-procedure TJpegBaselineCoder.Initialize(AScale: TJpegScale);
+procedure TJpegBaselineCoder.Initialize(Scale_: TJpegScale);
 begin
   inherited;
 
@@ -1455,7 +1455,7 @@ end;
 
 { TJpegProgressiveCoder }
 
-function TJpegProgressiveCoder.BlockstrideForScale(AScale: TJpegScale): integer;
+function TJpegProgressiveCoder.BlockstrideForScale(Scale_: TJpegScale): integer;
 begin
   // Blockstride is *always* 64 for progressive coding, because the coder depends
   // on AC coefficents being set.
@@ -1476,15 +1476,15 @@ begin
   inherited Decode(S, Iteration);
 end;
 
-procedure TJpegProgressiveCoder.DecodeMcu(AMcuX, AMcuY: integer; Skip: boolean);
+procedure TJpegProgressiveCoder.DecodeMcu(McuX_, McuY_: integer; Skip: boolean);
 var
   i: integer;
   McuBlock: PsdMCUBlock;
 begin
-  // if (AMcuX=0) and (AMcuY=0) then
+  // if (McuX_=0) and (McuY_=0) then
   // DoDebugOut(Self, wsInfo, PFormat(
   // 'progressive decode mcux=%d mcuy=%d isdcband=%d isfirst=%d eobrun=%d',
-  // [AMcuX, AMcuY, integer(FIsDCBand), integer(FIsFirst), FEOBRun]));
+  // [McuX_, McuY_, integer(FIsDCBand), integer(FIsFirst), FEOBRun]));
 
   for i := 0 to FMcuBlockCount - 1 do
     begin
@@ -1493,9 +1493,9 @@ begin
 
       // Initialize MCU values pointer
       if FInfo.FScanCount > 1 then
-          McuBlock^.Values := Maps[McuBlock^.MapIdx].GetCoefPointerMCU(AMcuX, AMcuY, McuBlock^.BlockIdx)
+          McuBlock^.Values := Maps[McuBlock^.MapIdx].GetCoefPointerMCU(McuX_, McuY_, McuBlock^.BlockIdx)
       else
-          McuBlock^.Values := Maps[McuBlock^.MapIdx].GetCoefPointer(AMcuX, AMcuY);
+          McuBlock^.Values := Maps[McuBlock^.MapIdx].GetCoefPointer(McuX_, McuY_);
 
       // Each MCU block has an index to a DC and AC table, use it to do the decoding
       if FIsDCBand and assigned(FDCCoders[McuBlock^.DCTable]) then
@@ -1583,4 +1583,3 @@ begin
 end;
 
 end.
- 

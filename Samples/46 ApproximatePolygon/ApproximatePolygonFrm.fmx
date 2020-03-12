@@ -1,0 +1,113 @@
+object ApproximatePolygonForm: TApproximatePolygonForm
+  Left = 0
+  Top = 0
+  BorderStyle = Single
+  Caption = 'Approximate Polygon match. create by.qq600585'
+  ClientHeight = 744
+  ClientWidth = 1209
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object pb1: TPaintBox
+    Position.X = 16.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 497.000000000000000000
+    Size.Height = 553.000000000000000000
+    Size.PlatformDefault = False
+    OnMouseDown = pb1MouseDown
+    OnMouseMove = pb1MouseMove
+    OnMouseUp = pb1MouseUp
+    OnPaint = pb1Paint
+  end
+  object pb2: TPaintBox
+    Position.X = 696.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 497.000000000000000000
+    Size.Height = 553.000000000000000000
+    Size.PlatformDefault = False
+    OnMouseDown = pb2MouseDown
+    OnMouseMove = pb2MouseMove
+    OnMouseUp = pb2MouseUp
+    OnPaint = pb2Paint
+  end
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Lines.Strings = (
+      #22810#36793#24418#30456#20284#24615#30340#23454#29616#20351#29992'THausdorf'#31867#65292#36825#26159#22522#20110#28857#38598#25299#25169#23398#20998#25903#20013#30340#20998#31163#20844#29702':'#35946#26031#22810#22827#31354#38388#23454#29616
+      #31616#21333#26469#35828#65292#35946#26031#22810#22827#31354#38388#21516#23646#20110#25299#25169#23398#31354#38388#65292#20294#26159#22312#23450#29702#19978#26377#33258#24049#30340#20307#31995#65292#21516#26102#20860#23481#25299#25169#23398#31354#38388#12290
+      ''
+      #20851#20110#35946#26031#22810#22827#31354#38388
+      
+        #22312#25299#25169#23398#21644#30456#20851#30340#25968#23398#20998#25903#20013#65292#35946#26031#22810#22827#31354#38388#12289#20998#31163#31354#38388#25110'T2 '#31354#38388#26159#20854#20013#30340#28857#37117#8220#30001#37051#22495#20998#31163#8221#30340#25299#25169#31354#38388#12290#22312#20247#22810#21487#26045#21152#22312#25299#25169#31354#38388#19978#30340#20998 +
+        #31163#20844#29702#20013#65292#8220#35946#26031#22810#22827#26465#20214#8221#26159#26368#24120#20351#29992#21644#35752#35770#30340#12290#23427#34164#28085#20102#24207#21015#12289#32593#21644#28388#23376#30340#26497#38480#30340#21807#19968#24615#12290#35946#26031#22810#22827#24471#21517#20110#25299#25169#23398#30340#21019#31435#32773#20043#19968#36153#21033#20811#26031#183#35946 +
+        #26031#22810#22827#12290#35946#26031#22810#22827#26368#21021#30340#25299#25169#31354#38388#23450#20041#25226#35946#26031#22810#22827#26465#20214#21253#25324#20026#20844#29702#12290)
+    TextSettings.WordWrap = True
+    Position.X = 16.000000000000000000
+    Position.Y = 576.000000000000000000
+    Size.Width = 1177.000000000000000000
+    Size.Height = 153.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    Viewport.Width = 1173.000000000000000000
+    Viewport.Height = 149.000000000000000000
+  end
+  object HausdorfDisanceButton: TButton
+    Position.X = 520.000000000000000000
+    Position.Y = 192.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 8
+    Text = 'Compute Hausdorf Disance'
+    OnClick = HausdorfDisanceButtonClick
+  end
+  object Button1: TButton
+    Position.X = 520.000000000000000000
+    Position.Y = 280.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    Text = '->'
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    Position.X = 520.000000000000000000
+    Position.Y = 320.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Text = '<-'
+    OnClick = Button2Click
+  end
+  object CustomHausdorfDisanceButton: TButton
+    Position.X = 520.000000000000000000
+    Position.Y = 232.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 7
+    Text = 'Compute Hausdorf Detail'
+    OnClick = CustomHausdorfDisanceButtonClick
+  end
+  object Button3: TButton
+    Position.X = 520.000000000000000000
+    Position.Y = 360.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Text = 'exchange'
+    OnClick = Button3Click
+  end
+  object Timer1: TTimer
+    Interval = 10
+    OnTimer = Timer1Timer
+    Left = 64
+    Top = 120
+  end
+end

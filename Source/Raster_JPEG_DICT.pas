@@ -33,7 +33,7 @@ type
     FMap: TJpegBlockMap;
     FMethod: TJpegDCTCodingMethod;
   public
-    procedure BuildQuantTableFrom(ATable: TQuantizationTable);
+    procedure BuildQuantTableFrom(Table_: TQuantizationTable);
     property Map: TJpegBlockMap read FMap write FMap;
     property Method: TJpegDCTCodingMethod read FMethod write FMethod;
   end;
@@ -41,7 +41,7 @@ type
   // Forward DCT
   TJpegFDCT = class(TJpegDCT)
   public
-    procedure PerformFDCT(ATable: TQuantizationTable);
+    procedure PerformFDCT(Table_: TQuantizationTable);
   end;
 
   // Inverse DCT
@@ -234,7 +234,7 @@ const
 
   { TJpegDCT }
 
-procedure TJpegDCT.BuildQuantTableFrom(ATable: TQuantizationTable);
+procedure TJpegDCT.BuildQuantTableFrom(Table_: TQuantizationTable);
 // we must use the inverse zig-zag
 var
   i: integer;
@@ -243,7 +243,7 @@ begin
     begin
       // Get the quantization values from the table (and undo zigzag)
       for i := 0 to 63 do
-          FQuant[cJpegInverseZigZag8x8[i]] := ATable.FQuant[i];
+          FQuant[cJpegInverseZigZag8x8[i]] := Table_.FQuant[i];
       // Premultiply the quantization factors
       for i := 0 to 63 do
         // give correct bit precision
@@ -253,7 +253,7 @@ begin
     begin
       // Get the quantization values from the table (and undo zigzag)
       for i := 0 to 63 do
-          FQuant[cJpegInverseZigZag8x8[i]] := ATable.FQuant[i];
+          FQuant[cJpegInverseZigZag8x8[i]] := Table_.FQuant[i];
       // Premultiply the quantization factors
       for i := 0 to 63 do
         // scales are with 14 bits of precision, we only want 9 so divide
@@ -264,7 +264,7 @@ end;
 
 { TJpegFDCT }
 
-procedure TJpegFDCT.PerformFDCT(ATable: TQuantizationTable);
+procedure TJpegFDCT.PerformFDCT(Table_: TQuantizationTable);
 var
   i, j, k: integer;
   PCoef: PsdCoefBlock;
@@ -278,7 +278,7 @@ begin
     // We multiply divisors by 8 because the FDCT will create values that
     // are multiplied by 8 (shl 3) versus what they should be according
     // to theoretical DCT.
-      FQuant[cJpegInverseZigZag8x8[i]] := ATable.FQuant[i] * 8;
+      FQuant[cJpegInverseZigZag8x8[i]] := Table_.FQuant[i] * 8;
 
   // Forward DCT method (we always use this one)
   FFDctMethod := {$IFDEF FPC}@{$ENDIF FPC}ForwardDCTIntAccurate8x8;

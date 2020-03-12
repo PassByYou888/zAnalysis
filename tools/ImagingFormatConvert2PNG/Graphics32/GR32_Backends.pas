@@ -43,9 +43,11 @@ uses
 {$ELSE}
   Windows, Messages, Controls, Graphics,
 {$ENDIF}
-  Classes, SysUtils, GR32, GR32_Containers, GR32_Image;
+  Classes, SysUtils, GR32, GR32_Containers, GR32_Image, GR32_Paths;
 
 type
+  EBackend = class(Exception);
+
   ITextSupport = interface(IUnknown)
   ['{225997CC-958A-423E-8B60-9EDE0D3B53B5}']
     procedure Textout(X, Y: Integer; const Text: String); overload;
@@ -69,6 +71,13 @@ type
     procedure UpdateFont;
     property Font: TFont read GetFont write SetFont;
     property OnFontChange: TNotifyEvent read GetOnFontChange write SetOnFontChange;
+  end;
+
+  ITextToPathSupport = interface(IUnknown)
+  ['{6C4037E4-FF4D-4EE2-9C20-B9DB9C64B42D}']
+    procedure TextToPath(Path: TCustomPath; const X, Y: TFloat; const Text: WideString); overload;
+    procedure TextToPath(Path: TCustomPath; const DstRect: TFloatRect; const Text: WideString; Flags: Cardinal); overload;
+    function MeasureText(const DstRect: TFloatRect; const Text: WideString; Flags: Cardinal): TFloatRect;
   end;
 
   ICanvasSupport = interface(IUnknown)
@@ -129,9 +138,6 @@ resourcestring
 
 implementation
 
-uses
-  GR32_LowLevel;
-
 procedure RequireBackendSupport(TargetBitmap: TCustomBitmap32;
   RequiredInterfaces: array of TGUID;
   Mode: TRequireOperatorMode; UseOptimizedDestructiveSwitchMethod: Boolean;
@@ -158,7 +164,7 @@ begin
 
     // TODO: Try to find a back-end that supports the required interfaces
     //       instead of resorting to the default platform back-end class...
-    TargetBitmap.Backend := GetPlatformBackendClass.Create;
+    TargetBitmap.Backend := TargetBitmap.GetPlatformBackendClass.Create;
   end
   else
     ReleasedBackend := nil;

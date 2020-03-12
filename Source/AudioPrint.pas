@@ -2861,8 +2861,7 @@ begin
   Result := True;
 end;
 
-procedure TAudioprint.EnocdeFingerprint(RawFP: TU32Vec; algorithm: TLInt;
-  var EncodedFP: TPascalString; var EncodedSize: TLInt; Base64: boolean);
+procedure TAudioprint.EnocdeFingerprint(RawFP: TU32Vec; algorithm: TLInt; var EncodedFP: TPascalString; var EncodedSize: TLInt; Base64: boolean);
 var
   compressed: TPascalString;
 begin
@@ -2879,8 +2878,7 @@ begin
     end;
 end;
 
-procedure TAudioprint.DecodeFingerprint(encoded: TPascalString; var uncompressed: TU32Vec;
-  var algorithm: TLInt; Base64: boolean);
+procedure TAudioprint.DecodeFingerprint(encoded: TPascalString; var uncompressed: TU32Vec; var algorithm: TLInt; Base64: boolean);
 var
   lCompressed: TPascalString;
 begin

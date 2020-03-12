@@ -39,7 +39,7 @@ type
   public
     { Public declarations }
     ft1, ft2: TFeature;
-    procedure DoStatusM(AText: SystemString; const ID: Integer);
+    procedure DoStatusM(Text_: SystemString; const ID: Integer);
   end;
 
 var
@@ -131,7 +131,7 @@ begin
     end;
 
   dt := GetTimeTick;
-  mr := BuildMatchInfoView(mi, Min((ft1.width + ft2.width) * 0.05,3), False);
+  mr := BuildMatchInfoView(mi, Min((ft1.width + ft2.width) * 0.05,3), True);
   DoStatus('生成特征分析视图所花费的时间:%dms ', [GetTimeTick - dt]);
 
   if mr <> nil then
@@ -145,9 +145,9 @@ begin
   TabControl1.ActiveTab := TabItem3;
 end;
 
-procedure TGaussPyramidsForm.DoStatusM(AText: SystemString; const ID: Integer);
+procedure TGaussPyramidsForm.DoStatusM(Text_: SystemString; const ID: Integer);
 begin
-  Memo1.Lines.Add(AText);
+  Memo1.Lines.Add(Text_);
   Memo1.GoToTextEnd;
 end;
 

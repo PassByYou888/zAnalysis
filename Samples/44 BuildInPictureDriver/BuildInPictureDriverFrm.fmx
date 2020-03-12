@@ -1,0 +1,24 @@
+object BuildInPictureDriverForm: TBuildInPictureDriverForm
+  Left = 0
+  Top = 0
+  Caption = 'BuildIn Picture Driver'
+  ClientHeight = 432
+  ClientWidth = 859
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Orientations = [Portrait, Landscape, InvertedPortrait, InvertedLandscape]
+  FormFactor.Devices = [Desktop, iPhone, iPad]
+  OnCreate = FormCreate
+  OnMouseDown = pbMouseDown
+  OnMouseMove = pbMouseMove
+  OnMouseUp = pbMouseUp
+  OnMouseWheel = FormMouseWheel
+  OnPaint = FormPaint
+  DesignerMasterStyle = 0
+  object Timer1: TTimer
+    Interval = 10
+    OnTimer = Timer1Timer
+    Left = 344
+    Top = 128
+  end
+end

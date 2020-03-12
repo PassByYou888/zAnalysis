@@ -30,8 +30,8 @@ type
 
   TFFMPEG_Reader = class(TCoreClassObject)
   private
-    FLastFileName: TPascalString;
-    src_filename: RawByteString;
+    FVideoSource: TPascalString;
+    FWorkOnGPU: Boolean;
     FormatCtx: PAVFormatContext;
     videoCodecCtx: PAVCodecContext;
     audioCodecCtx: PAVCodecContext;
@@ -40,30 +40,37 @@ type
     Frame, FrameRGB: PAVFrame;
     FrameRGB_buffer: PByte;
     Sws_Ctx: PSwsContext;
-    videoStream: integer;
-    audioStream: integer;
+    videoStreamIndex: integer;
+    audioStreamIndex: integer;
+    videoStream: PAVStream;
     AVPacket_ptr: PAVPacket;
   public
     Current: Double;
     Current_Frame: int64;
     Width, Height: integer;
-    property LastFileName: TPascalString read FLastFileName;
+    property VideoSource: TPascalString read FVideoSource;
+    property WorkOnGPU: Boolean read FWorkOnGPU;
 
-    constructor Create(const FileName: TPascalString);
+    constructor Create(const VideoSource_: TPascalString); overload;
+    constructor Create(const VideoSource_: TPascalString; const useGPU_: Boolean); overload;
     destructor Destroy; override;
 
-    procedure OpenVideo(const FileName: TPascalString);
+    procedure OpenVideo(const VideoSource_: TPascalString; useGPU_: Boolean); overload;
+    procedure OpenVideo(const VideoSource_: TPascalString); overload;
     procedure CloseVideo;
 
+    function NextFrame(): Boolean;
     function ReadFrame(output: TMemoryRaster; RasterizationCopy_: Boolean): Boolean;
 
     procedure Seek(second: Double);
     function Total: Double;
-    function Total_Frame: int64;
-    function PerSecond_Frame(): Double;
-    property PSF: Double read PerSecond_Frame;
-    function PerSecond_FrameRound(): integer;
-    property PSFRound: integer read PerSecond_FrameRound;
+    function CurrentStream_Total_Frame: int64;
+    function CurrentStream_PerSecond_Frame(): Double;
+    function CurrentStream_PerSecond_FrameRound(): integer;
+    property PSF: Double read CurrentStream_PerSecond_Frame;
+    property PSFRound: integer read CurrentStream_PerSecond_FrameRound;
+    property RoundPSF: integer read CurrentStream_PerSecond_FrameRound;
+    property PSF_I: integer read CurrentStream_PerSecond_FrameRound;
   end;
 
   TOnWriteBufferBefore = procedure(Sender: TFFMPEG_VideoStreamReader; var p: Pointer; var siz: NativeUInt) of object;
@@ -85,6 +92,8 @@ type
     procedure DoWriteBufferBefore(var p: Pointer; var siz: NativeUInt); virtual;
     procedure DoVideoFillNewRaster(Raster: TMemoryRaster; var SaveToPool: Boolean); virtual;
     procedure DoWriteBufferAfter(p: Pointer; siz: NativeUInt; decodeFrameNum: integer); virtual;
+
+    procedure InternalOpenDecodec(const codec: PAVCodec);
   public
     OnWriteBufferBefore: TOnWriteBufferBefore;
     OnVideoFillNewRaster: TOnVideoFillNewRaster;
@@ -93,8 +102,11 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    procedure OpenCodec(const codec_id: TAVCodecID); overload;
-    procedure OpenCodec(); overload; // AV_CODEC_ID_H264
+    class procedure PrintDecodec();
+
+    procedure OpenDecodec(const codec_name: U_String); overload;
+    procedure OpenDecodec(const codec_id: TAVCodecID); overload;
+    procedure OpenDecodec(); overload; // AV_CODEC_ID_H264
     procedure CloseCodec;
 
     // parser and decode frame
@@ -107,24 +119,28 @@ type
     procedure ClearVideoPool;
   end;
 
-function ExtractVideoAsH264(VideoSource: TPascalString; dest: TCoreClassStream): integer; overload;
-function ExtractVideoAsH264(VideoSource, DestH264: TPascalString): integer; overload;
+function ExtractVideoAsH264(VideoSource_: TPascalString; dest: TCoreClassStream): integer; overload;
+function ExtractVideoAsH264(VideoSource_, DestH264: TPascalString): integer; overload;
+
+var
+  // Buffer size used for online video(rtsp/rtmp/http/https), 720p 1080p 2K 4K 8K support
+  FFMPEG_Reader_BufferSize: integer; // default 64M
 
 implementation
 
 uses H264;
 
-function ExtractVideoAsH264(VideoSource: TPascalString; dest: TCoreClassStream): integer;
+function ExtractVideoAsH264(VideoSource_: TPascalString; dest: TCoreClassStream): integer;
 var
   ff: TFFMPEG_Reader;
   h: TH264Writer;
   Raster: TMemoryRaster;
   tk: TTimeTick;
 begin
-  DoStatus('ffmpeg open ', [VideoSource.Text]);
-  ff := TFFMPEG_Reader.Create(VideoSource);
-  DoStatus('create h264 stream %d*%d total: %d', [ff.Width, ff.Height, ff.Total_Frame]);
-  h := TH264Writer.Create(ff.Width, ff.Height, ff.Total_Frame, ff.PerSecond_Frame, dest);
+  DoStatus('ffmpeg open ', [VideoSource_.Text]);
+  ff := TFFMPEG_Reader.Create(VideoSource_);
+  DoStatus('create h264 stream %d*%d total: %d', [ff.Width, ff.Height, ff.CurrentStream_Total_Frame]);
+  h := TH264Writer.Create(ff.Width, ff.Height, ff.CurrentStream_Total_Frame, ff.CurrentStream_PerSecond_Frame, dest);
   Raster := TMemoryRaster.Create;
   tk := GetTimeTick();
   while ff.ReadFrame(Raster, False) do
@@ -132,7 +148,7 @@ begin
       h.WriteFrame(Raster);
       if GetTimeTick() - tk > 2000 then
         begin
-          DoStatus('%s -> h264.stream progress %d/%d', [umlGetFileName(VideoSource).Text, h.FrameCount, ff.Total_Frame]);
+          DoStatus('%s -> h264.stream progress %d/%d', [umlGetFileName(VideoSource_).Text, h.FrameCount, ff.CurrentStream_Total_Frame]);
           h.Flush;
           tk := GetTimeTick();
         end;
@@ -140,20 +156,20 @@ begin
   Result := h.FrameCount;
   disposeObject(ff);
   disposeObject(h);
-  DoStatus('done %s -> h264 stream.', [umlGetFileName(VideoSource).Text]);
+  DoStatus('done %s -> h264 stream.', [umlGetFileName(VideoSource_).Text]);
 end;
 
-function ExtractVideoAsH264(VideoSource, DestH264: TPascalString): integer;
+function ExtractVideoAsH264(VideoSource_, DestH264: TPascalString): integer;
 var
   ff: TFFMPEG_Reader;
   h: TH264Writer;
   Raster: TMemoryRaster;
   tk: TTimeTick;
 begin
-  DoStatus('ffmpeg open ', [VideoSource.Text]);
-  ff := TFFMPEG_Reader.Create(VideoSource);
-  DoStatus('create h264 stream %d*%d total: %d', [ff.Width, ff.Height, ff.Total_Frame]);
-  h := TH264Writer.Create(ff.Width, ff.Height, ff.Total_Frame, ff.PerSecond_Frame, DestH264);
+  DoStatus('ffmpeg open ', [VideoSource_.Text]);
+  ff := TFFMPEG_Reader.Create(VideoSource_);
+  DoStatus('create h264 stream %d*%d total: %d', [ff.Width, ff.Height, ff.CurrentStream_Total_Frame]);
+  h := TH264Writer.Create(ff.Width, ff.Height, ff.CurrentStream_Total_Frame, ff.CurrentStream_PerSecond_Frame, DestH264);
   Raster := TMemoryRaster.Create;
   tk := GetTimeTick();
   while ff.ReadFrame(Raster, False) do
@@ -161,7 +177,7 @@ begin
       h.WriteFrame(Raster);
       if GetTimeTick() - tk > 2000 then
         begin
-          DoStatus('%s -> %s progress %d/%d', [umlGetFileName(VideoSource).Text, umlGetFileName(DestH264).Text, h.FrameCount, ff.Total_Frame]);
+          DoStatus('%s -> %s progress %d/%d', [umlGetFileName(VideoSource_).Text, umlGetFileName(DestH264).Text, h.FrameCount, ff.CurrentStream_Total_Frame]);
           h.Flush;
           tk := GetTimeTick();
         end;
@@ -169,13 +185,19 @@ begin
   Result := h.FrameCount;
   disposeObject(ff);
   disposeObject(h);
-  DoStatus('done %s -> %s', [umlGetFileName(VideoSource).Text, umlGetFileName(DestH264).Text]);
+  DoStatus('done %s -> %s', [umlGetFileName(VideoSource_).Text, umlGetFileName(DestH264).Text]);
 end;
 
-constructor TFFMPEG_Reader.Create(const FileName: TPascalString);
+constructor TFFMPEG_Reader.Create(const VideoSource_: TPascalString);
 begin
   inherited Create;
-  OpenVideo(FileName);
+  OpenVideo(VideoSource_);
+end;
+
+constructor TFFMPEG_Reader.Create(const VideoSource_: TPascalString; const useGPU_: Boolean);
+begin
+  inherited Create;
+  OpenVideo(VideoSource_, useGPU_);
 end;
 
 destructor TFFMPEG_Reader.Destroy;
@@ -184,16 +206,20 @@ begin
   inherited Destroy;
 end;
 
-procedure TFFMPEG_Reader.OpenVideo(const FileName: TPascalString);
-
+procedure TFFMPEG_Reader.OpenVideo(const VideoSource_: TPascalString; useGPU_: Boolean);
 var
+  gpu_decodec: PAVCodec;
+  AV_Options: PPAVDictionary;
+  tmp: Pointer;
   i: integer;
   av_st: PPAVStream;
   p: Pointer;
   numByte: integer;
 begin
-  FLastFileName := FileName;
+  FVideoSource := VideoSource_;
+  FWorkOnGPU := False;
 
+  AV_Options := nil;
   FormatCtx := nil;
   videoCodecCtx := nil;
   audioCodecCtx := nil;
@@ -204,13 +230,18 @@ begin
   AVPacket_ptr := nil;
   Sws_Ctx := nil;
 
-  p := FileName.BuildPlatformPChar;
+  p := VideoSource_.BuildPlatformPChar;
 
   // Open video file
   try
-    if (avformat_open_input(@FormatCtx, PAnsiChar(p), nil, nil) <> 0) then
+    tmp := TPascalString(IntToStr(FFMPEG_Reader_BufferSize)).BuildPlatformPChar;
+    av_dict_set(@AV_Options, 'buffer_size', tmp, 0);
+    av_dict_set(@AV_Options, 'stimeout', '3000', 0);
+    TPascalString.FreePlatformPChar(tmp);
+
+    if (avformat_open_input(@FormatCtx, PAnsiChar(p), nil, @AV_Options) <> 0) then
       begin
-        RaiseInfo('Could not open source file %s', [FileName.Text]);
+        RaiseInfo('Could not open source file %s', [VideoSource_.Text]);
         exit;
       end;
 
@@ -220,32 +251,34 @@ begin
         if FormatCtx <> nil then
             avformat_close_input(@FormatCtx);
 
-        RaiseInfo('Could not find stream information %s', [FileName.Text]);
+        RaiseInfo('Could not find stream information %s', [VideoSource_.Text]);
         exit;
       end;
 
     if IsConsole then
         av_dump_format(FormatCtx, 0, PAnsiChar(p), 0);
 
-    videoStream := -1;
-    audioStream := -1;
+    videoStreamIndex := -1;
+    audioStreamIndex := -1;
+    videoStream := nil;
     av_st := FormatCtx^.streams;
     for i := 0 to FormatCtx^.nb_streams - 1 do
       begin
-        if av_st^^.Codec^.codec_type = AVMEDIA_TYPE_VIDEO then
+        if av_st^^.codec^.codec_type = AVMEDIA_TYPE_VIDEO then
           begin
-            videoStream := av_st^^.index;
-            videoCodecCtx := av_st^^.Codec;
+            videoStreamIndex := av_st^^.index;
+            videoCodecCtx := av_st^^.codec;
+            videoStream := av_st^;
           end
-        else if av_st^^.Codec^.codec_type = AVMEDIA_TYPE_AUDIO then
+        else if av_st^^.codec^.codec_type = AVMEDIA_TYPE_AUDIO then
           begin
-            audioStream := av_st^^.index;
-            audioCodecCtx := av_st^^.Codec;
+            audioStreamIndex := av_st^^.index;
+            audioCodecCtx := av_st^^.codec;
           end;
         inc(av_st);
       end;
 
-    if videoStream = -1 then
+    if videoStreamIndex = -1 then
       begin
         RaiseInfo('Dont find a video stream');
         exit;
@@ -258,13 +291,38 @@ begin
         exit;
       end;
 
-    if avcodec_open2(videoCodecCtx, videoCodec, nil) < 0 then
+    if (useGPU_) and (CurrentPlatform in [epWin32, epWin64]) and (videoCodecCtx^.codec_id in [AV_CODEC_ID_H264, AV_CODEC_ID_HEVC]) then
       begin
-        RaiseInfo('Could not open videoCodec');
-        exit;
+        gpu_decodec := nil;
+        if videoCodecCtx^.codec_id = AV_CODEC_ID_H264 then
+            gpu_decodec := avcodec_find_decoder_by_name('h264_cuvid')
+        else if videoCodecCtx^.codec_id = AV_CODEC_ID_HEVC then
+            gpu_decodec := avcodec_find_decoder_by_name('hevc_cuvid');
+
+        if (avcodec_open2(videoCodecCtx, gpu_decodec, nil) < 0) then
+          begin
+            if avcodec_open2(videoCodecCtx, videoCodec, nil) < 0 then
+              begin
+                RaiseInfo('Could not open videoCodec');
+                exit;
+              end;
+          end
+        else
+          begin
+            videoCodec := gpu_decodec;
+            FWorkOnGPU := True;
+          end;
+      end
+    else
+      begin
+        if avcodec_open2(videoCodecCtx, videoCodec, nil) < 0 then
+          begin
+            RaiseInfo('Could not open videoCodec');
+            exit;
+          end;
       end;
 
-    if audioStream >= 0 then
+    if audioStreamIndex >= 0 then
       begin
         audioCodec := avcodec_find_decoder(audioCodecCtx^.codec_id);
         if audioCodec <> nil then
@@ -284,7 +342,7 @@ begin
       videoCodecCtx^.Width,
       videoCodecCtx^.Height,
       AV_PIX_FMT_RGB32,
-      SWS_BILINEAR,
+      SWS_FAST_BILINEAR,
       nil,
       nil,
       nil);
@@ -300,6 +358,11 @@ begin
   finally
       TPascalString.FreePlatformPChar(p);
   end;
+end;
+
+procedure TFFMPEG_Reader.OpenVideo(const VideoSource_: TPascalString);
+begin
+  OpenVideo(VideoSource_, True);
 end;
 
 procedure TFFMPEG_Reader.CloseVideo;
@@ -339,20 +402,153 @@ begin
   Sws_Ctx := nil;
 end;
 
-function TFFMPEG_Reader.ReadFrame(output: TMemoryRaster; RasterizationCopy_: Boolean): Boolean;
-
+function TFFMPEG_Reader.NextFrame(): Boolean;
 var
-  frameFinished: integer;
+  done: Boolean;
+  r: integer;
 begin
   Result := False;
-  frameFinished := 0;
+  done := False;
   try
     while (av_read_frame(FormatCtx, AVPacket_ptr) >= 0) do
       begin
-        if (AVPacket_ptr^.stream_index = videoStream) then
+        if (AVPacket_ptr^.stream_index = videoStreamIndex) then
           begin
-            avcodec_decode_video2(videoCodecCtx, Frame, @frameFinished, AVPacket_ptr);
-            if frameFinished > 0 then
+            r := avcodec_send_packet(videoCodecCtx, AVPacket_ptr);
+            if r < 0 then
+              begin
+                if FWorkOnGPU then
+                  begin
+                    av_packet_unref(AVPacket_ptr);
+                    CloseVideo;
+                    OpenVideo(FVideoSource, False);
+                    Result := NextFrame();
+                    exit;
+                  end;
+                DoStatus('Error sending a packet for decoding');
+              end;
+
+            done := False;
+            while True do
+              begin
+                r := avcodec_receive_frame(videoCodecCtx, Frame);
+
+                // success, a frame was returned
+                if r = 0 then
+                    break;
+
+                // AVERROR(EAGAIN): output is not available in this state - user must try to send new input
+                if r = AVERROR_EAGAIN then
+                  begin
+                    av_packet_unref(AVPacket_ptr);
+                    Result := NextFrame();
+                    exit;
+                  end;
+
+                // AVERROR_EOF: the decoder has been fully flushed, and there will be no more output frames
+                if r = AVERROR_EOF then
+                  begin
+                    avcodec_flush_buffers(videoCodecCtx);
+                    continue;
+                  end;
+
+                // error
+                if r < 0 then
+                  begin
+                    if FWorkOnGPU then
+                      begin
+                        av_packet_unref(AVPacket_ptr);
+                        CloseVideo;
+                        OpenVideo(FVideoSource, False);
+                        Result := NextFrame();
+                        exit;
+                      end;
+                    done := True;
+                    break;
+                  end;
+              end;
+
+            if (not done) then
+                inc(Current_Frame);
+            Result := True;
+            done := True;
+          end;
+
+        av_packet_unref(AVPacket_ptr);
+        if done then
+            break;
+      end;
+  except
+  end;
+end;
+
+function TFFMPEG_Reader.ReadFrame(output: TMemoryRaster; RasterizationCopy_: Boolean): Boolean;
+var
+  done: Boolean;
+  r: integer;
+begin
+  Result := False;
+  done := False;
+  try
+    while (av_read_frame(FormatCtx, AVPacket_ptr) >= 0) do
+      begin
+        if (AVPacket_ptr^.stream_index = videoStreamIndex) then
+          begin
+            r := avcodec_send_packet(videoCodecCtx, AVPacket_ptr);
+            if r < 0 then
+              begin
+                if FWorkOnGPU then
+                  begin
+                    av_packet_unref(AVPacket_ptr);
+                    CloseVideo;
+                    OpenVideo(FVideoSource, False);
+                    Result := ReadFrame(output, RasterizationCopy_);
+                    exit;
+                  end;
+                DoStatus('Error sending a packet for decoding');
+              end;
+
+            done := False;
+            while True do
+              begin
+                r := avcodec_receive_frame(videoCodecCtx, Frame);
+
+                // success, a frame was returned
+                if r = 0 then
+                    break;
+
+                // AVERROR(EAGAIN): output is not available in this state - user must try to send new input
+                if r = AVERROR_EAGAIN then
+                  begin
+                    av_packet_unref(AVPacket_ptr);
+                    Result := ReadFrame(output, RasterizationCopy_);
+                    exit;
+                  end;
+
+                // AVERROR_EOF: the decoder has been fully flushed, and there will be no more output frames
+                if r = AVERROR_EOF then
+                  begin
+                    avcodec_flush_buffers(videoCodecCtx);
+                    continue;
+                  end;
+
+                // error
+                if r < 0 then
+                  begin
+                    if FWorkOnGPU then
+                      begin
+                        av_packet_unref(AVPacket_ptr);
+                        CloseVideo;
+                        OpenVideo(FVideoSource, False);
+                        Result := ReadFrame(output, RasterizationCopy_);
+                        exit;
+                      end;
+                    done := True;
+                    break;
+                  end;
+              end;
+
+            if (not done) then
               begin
                 sws_scale(
                   Sws_Ctx,
@@ -371,13 +567,17 @@ begin
                 else
                     output.SetWorkMemory(FrameRGB^.data[0], videoCodecCtx^.Width, videoCodecCtx^.Height);
 
-                Result := True;
-
-                Current := AVPacket_ptr^.pts * av_q2d(FormatCtx^.streams^^.time_base);
+                if (AVPacket_ptr^.pts > 0) and (av_q2d(videoStream^.time_base) > 0) then
+                    Current := AVPacket_ptr^.pts * av_q2d(videoStream^.time_base);
+                done := True;
                 inc(Current_Frame);
-                exit;
               end;
+            Result := True;
           end;
+
+        av_packet_unref(AVPacket_ptr);
+        if done then
+            exit;
       end;
   except
   end;
@@ -386,38 +586,34 @@ end;
 
 procedure TFFMPEG_Reader.Seek(second: Double);
 begin
-  if Current = second then
-      exit;
-
   if second = 0 then
     begin
       CloseVideo;
-      OpenVideo(FLastFileName);
-      exit;
-    end;
-
-  av_seek_frame(FormatCtx, -1, Round(second * AV_TIME_BASE), AVSEEK_FLAG_ANY);
+      OpenVideo(FVideoSource, FWorkOnGPU);
+    end
+  else
+      av_seek_frame(FormatCtx, -1, Round(second * AV_TIME_BASE), AVSEEK_FLAG_ANY);
 end;
 
 function TFFMPEG_Reader.Total: Double;
 begin
-  Result := FormatCtx^.streams^^.duration * av_q2d(FormatCtx^.streams^^.time_base);
+  Result := umlMax(FormatCtx^.duration / AV_TIME_BASE, 0);
 end;
 
-function TFFMPEG_Reader.Total_Frame: int64;
+function TFFMPEG_Reader.CurrentStream_Total_Frame: int64;
 begin
-  Result := FormatCtx^.streams^^.nb_frames;
+  Result := umlMax(videoStream^.nb_frames, 0);
 end;
 
-function TFFMPEG_Reader.PerSecond_Frame(): Double;
+function TFFMPEG_Reader.CurrentStream_PerSecond_Frame(): Double;
 begin
-  with FormatCtx^.streams^^.r_frame_rate do
-      Result := num / den;
+  with videoStream^.r_frame_rate do
+      Result := umlMax(num / den, 0);
 end;
 
-function TFFMPEG_Reader.PerSecond_FrameRound(): integer;
+function TFFMPEG_Reader.CurrentStream_PerSecond_FrameRound(): integer;
 begin
-  Result := Round(PerSecond_Frame());
+  Result := Round(CurrentStream_PerSecond_Frame());
 end;
 
 procedure TFFMPEG_VideoStreamReader.DoWriteBufferBefore(var p: Pointer; var siz: NativeUInt);
@@ -436,6 +632,36 @@ procedure TFFMPEG_VideoStreamReader.DoWriteBufferAfter(p: Pointer; siz: NativeUI
 begin
   if assigned(OnWriteBufferAfter) then
       OnWriteBufferAfter(Self, p, siz, decodeFrameNum);
+end;
+
+procedure TFFMPEG_VideoStreamReader.InternalOpenDecodec(const codec: PAVCodec);
+var
+  tmp: Pointer;
+  AV_Options: PPAVDictionary;
+begin
+  videoCodec := codec;
+
+  if videoCodec = nil then
+      RaiseInfo('no found decoder', []);
+
+  AVParser := av_parser_init(Ord(videoCodec^.id));
+  if not assigned(AVParser) then
+      RaiseInfo('Parser not found');
+
+  videoCodecCtx := avcodec_alloc_context3(videoCodec);
+  if not assigned(videoCodecCtx) then
+      RaiseInfo('Could not allocate video Codec context');
+
+  AV_Options := nil;
+  tmp := TPascalString(IntToStr(FFMPEG_Reader_BufferSize)).BuildPlatformPChar;
+  av_dict_set(@AV_Options, 'buffer_size', tmp, 0);
+  TPascalString.FreePlatformPChar(tmp);
+
+  if avcodec_open2(videoCodecCtx, videoCodec, @AV_Options) < 0 then
+      RaiseInfo('Could not open Codec.');
+
+  AVPacket_ptr := av_packet_alloc();
+  Frame := av_frame_alloc();
 end;
 
 constructor TFFMPEG_VideoStreamReader.Create;
@@ -467,31 +693,42 @@ begin
   inherited Destroy;
 end;
 
-procedure TFFMPEG_VideoStreamReader.OpenCodec(const codec_id: TAVCodecID);
+class procedure TFFMPEG_VideoStreamReader.PrintDecodec;
+var
+  codec: PAVCodec;
 begin
-  AVPacket_ptr := av_packet_alloc();
-  videoCodec := avcodec_find_decoder(codec_id);
-
-  if not assigned(videoCodec) then
-      RaiseInfo('not found Codec.');
-
-  AVParser := av_parser_init(Ord(videoCodec^.id));
-  if not assigned(AVParser) then
-      RaiseInfo('Parser not found');
-
-  videoCodecCtx := avcodec_alloc_context3(videoCodec);
-  if not assigned(videoCodecCtx) then
-      RaiseInfo('Could not allocate video Codec context');
-
-  if avcodec_open2(videoCodecCtx, videoCodec, nil) < 0 then
-      RaiseInfo('Could not open Codec.');
-
-  Frame := av_frame_alloc();
+  codec := av_codec_next(nil);
+  while codec <> nil do
+    begin
+      if av_codec_is_decoder(codec) = 1 then
+          DoStatus('ID[%d] Name[%s] %s', [integer(codec^.id), string(codec^.name), string(codec^.long_name)]);
+      codec := av_codec_next(codec);
+    end;
 end;
 
-procedure TFFMPEG_VideoStreamReader.OpenCodec();
+procedure TFFMPEG_VideoStreamReader.OpenDecodec(const codec_name: U_String);
+var
+  tmp: Pointer;
+  codec: PAVCodec;
 begin
-  OpenCodec(AV_CODEC_ID_H264);
+  tmp := codec_name.BuildPlatformPChar();
+  codec := avcodec_find_decoder_by_name(tmp);
+  U_String.FreePlatformPChar(tmp);
+
+  if codec = nil then
+      RaiseInfo('no found decoder: %s', [codec_name.Text]);
+
+  InternalOpenDecodec(codec);
+end;
+
+procedure TFFMPEG_VideoStreamReader.OpenDecodec(const codec_id: TAVCodecID);
+begin
+  InternalOpenDecodec(avcodec_find_decoder(codec_id));
+end;
+
+procedure TFFMPEG_VideoStreamReader.OpenDecodec();
+begin
+  OpenDecodec(AV_CODEC_ID_H264);
 end;
 
 procedure TFFMPEG_VideoStreamReader.CloseCodec;
@@ -583,7 +820,7 @@ var
               Frame^.Width,
               Frame^.Height,
               AV_PIX_FMT_RGB32,
-              SWS_BILINEAR,
+              SWS_FAST_BILINEAR,
               nil,
               nil,
               nil);
@@ -675,6 +912,7 @@ begin
   end;
 
   Result := decodeFrameNum;
+  av_packet_unref(AVPacket_ptr);
   DoWriteBufferAfter(np, nsiz, decodeFrameNum);
 end;
 
@@ -707,5 +945,10 @@ begin
   LockVideoPool();
   UnLockVideoPool(True);
 end;
+
+initialization
+
+// Buffer size used for online video(rtsp or rtmp), 720p 1080p 2K 4K 8K support
+FFMPEG_Reader_BufferSize := 64 * 1024 * 1024; // default 64M
 
 end.

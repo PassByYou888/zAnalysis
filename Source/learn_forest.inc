@@ -204,22 +204,22 @@ begin
   //
   TreeSize := 1 + InnerNodeWidth * (SampleSize - 1) + LeafNodeWidth *
     SampleSize;
-  SetLength(PermBuf, NPoints  );
-  SetLength(Bufs.TreeBuf, TreeSize  );
-  SetLength(Bufs.IdxBuf, NPoints  );
-  SetLength(Bufs.TmpBufR, NPoints  );
-  SetLength(Bufs.TmpBufR2, NPoints  );
-  SetLength(Bufs.TmpBufI, NPoints  );
-  SetLength(Bufs.VarPool, NVars  );
-  SetLength(Bufs.EVSBin, NVars  );
-  SetLength(Bufs.EVSSplits, NVars  );
-  SetLength(Bufs.ClassIBuf, 2 * NClasses  );
-  SetLength(OOBBuf, NClasses * NPoints  );
-  SetLength(OOBCntBuf, NPoints  );
-  SetLength(df.Trees, NTrees * TreeSize  );
-  SetLength(XYS, SampleSize  , NVars + 1);
-  SetLength(x, NVars  );
-  SetLength(y, NClasses  );
+  SetLength(PermBuf, NPoints);
+  SetLength(Bufs.TreeBuf, TreeSize);
+  SetLength(Bufs.IdxBuf, NPoints);
+  SetLength(Bufs.TmpBufR, NPoints);
+  SetLength(Bufs.TmpBufR2, NPoints);
+  SetLength(Bufs.TmpBufI, NPoints);
+  SetLength(Bufs.VarPool, NVars);
+  SetLength(Bufs.EVSBin, NVars);
+  SetLength(Bufs.EVSSplits, NVars);
+  SetLength(Bufs.ClassIBuf, 2 * NClasses);
+  SetLength(OOBBuf, NClasses * NPoints);
+  SetLength(OOBCntBuf, NPoints);
+  SetLength(df.Trees, NTrees * TreeSize);
+  SetLength(XYS, SampleSize, NVars + 1);
+  SetLength(x, NVars);
+  SetLength(y, NClasses);
   i := 0;
   while i <= NPoints - 1 do
     begin
@@ -364,8 +364,7 @@ begin
       //
       // build tree, copy
       //
-      DFBuildTree(XYS, SampleSize, NVars, NClasses, NFeatures, NVarsInPool,
-        Flags, Bufs);
+      DFBuildTree(XYS, SampleSize, NVars, NClasses, NFeatures, NVarsInPool, Flags, Bufs);
       j := Round(Bufs.TreeBuf[0]);
       APVMove(@df.Trees[0], Offs, Offs + j - 1, @Bufs.TreeBuf[0], 0, j - 1);
       LastTreeOffs := Offs;
@@ -386,8 +385,7 @@ begin
           j := PermBuf[k];
           APVMove(@x[0], 0, NVars - 1, @xy[j][0], 0, NVars - 1);
           DFProcessInternal(df, LastTreeOffs, x, y);
-          APVAdd(@OOBBuf[0], j * NClasses, (j + 1) * NClasses - 1, @y[0], 0,
-            NClasses - 1);
+          APVAdd(@OOBBuf[0], j * NClasses, (j + 1) * NClasses - 1, @y[0], 0, NClasses - 1);
           OOBCntBuf[j] := OOBCntBuf[j] + 1;
           inc(k);
         end;
@@ -468,12 +466,9 @@ begin
                 begin
                   if j = k then
                     begin
-                      Rep.OOBRMSError := Rep.OOBRMSError +
-                        AP_Sqr(OOBBuf[OOBOffs + j] - 1);
-                      Rep.OOBAvgError := Rep.OOBAvgError +
-                        AbsReal(OOBBuf[OOBOffs + j] - 1);
-                      Rep.OOBAvgRelError := Rep.OOBAvgRelError +
-                        AbsReal(OOBBuf[OOBOffs + j] - 1);
+                      Rep.OOBRMSError := Rep.OOBRMSError + AP_Sqr(OOBBuf[OOBOffs + j] - 1);
+                      Rep.OOBAvgError := Rep.OOBAvgError + AbsReal(OOBBuf[OOBOffs + j] - 1);
+                      Rep.OOBAvgRelError := Rep.OOBAvgRelError + AbsReal(OOBBuf[OOBOffs + j] - 1);
                       OOBRelCnt := OOBRelCnt + 1;
                     end
                   else
@@ -490,14 +485,11 @@ begin
               //
               // regression-specific code
               //
-              Rep.OOBRMSError := Rep.OOBRMSError +
-                AP_Sqr(OOBBuf[OOBOffs] - xy[i, NVars]);
-              Rep.OOBAvgError := Rep.OOBAvgError +
-                AbsReal(OOBBuf[OOBOffs] - xy[i, NVars]);
+              Rep.OOBRMSError := Rep.OOBRMSError + AP_Sqr(OOBBuf[OOBOffs] - xy[i, NVars]);
+              Rep.OOBAvgError := Rep.OOBAvgError + AbsReal(OOBBuf[OOBOffs] - xy[i, NVars]);
               if AP_FP_NEq(xy[i, NVars], 0) then
                 begin
-                  Rep.OOBAvgRelError := Rep.OOBAvgRelError +
-                    AbsReal((OOBBuf[OOBOffs] - xy[i, NVars]) / xy[i, NVars]);
+                  Rep.OOBAvgRelError := Rep.OOBAvgRelError + AbsReal((OOBBuf[OOBOffs] - xy[i, NVars]) / xy[i, NVars]);
                   OOBRelCnt := OOBRelCnt + 1;
                 end;
             end;
@@ -610,8 +602,8 @@ var
   k: TLInt;
   TmpI: TLInt;
 begin
-  SetLength(x, df.NVars  );
-  SetLength(y, df.NClasses  );
+  SetLength(x, df.NVars);
+  SetLength(y, df.NClasses);
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
@@ -673,8 +665,8 @@ var
   k: TLInt;
   TmpI: TLInt;
 begin
-  SetLength(x, df.NVars  );
-  SetLength(y, df.NClasses  );
+  SetLength(x, df.NVars);
+  SetLength(y, df.NClasses);
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
@@ -747,8 +739,8 @@ var
   j: TLInt;
   k: TLInt;
 begin
-  SetLength(x, df.NVars  );
-  SetLength(y, df.NClasses  );
+  SetLength(x, df.NVars);
+  SetLength(y, df.NClasses);
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do
@@ -812,8 +804,8 @@ var
   j: TLInt;
   k: TLInt;
 begin
-  SetLength(x, df.NVars  );
-  SetLength(y, df.NClasses  );
+  SetLength(x, df.NVars);
+  SetLength(y, df.NClasses);
   Result := 0;
   RelCnt := 0;
   i := 0;
@@ -874,7 +866,7 @@ begin
   DF2.NClasses := DF1.NClasses;
   DF2.NTrees := DF1.NTrees;
   DF2.BufSize := DF1.BufSize;
-  SetLength(DF2.Trees, DF1.BufSize  );
+  SetLength(DF2.Trees, DF1.BufSize);
   APVMove(@DF2.Trees[0], 0, DF1.BufSize - 1, @DF1.Trees[0], 0, DF1.BufSize - 1);
 end;
 
@@ -891,7 +883,7 @@ end;
   ************************************************************************ *)
 procedure DFSerialize(const df: TDecisionForest; var RA: TLVec; var RLen: TLInt);
 begin
-  SetLength(RA, df.BufSize + 5  );
+  SetLength(RA, df.BufSize + 5);
   RA[0] := DFVNum;
   RA[1] := df.NVars;
   RA[2] := df.NClasses;
@@ -917,7 +909,7 @@ begin
   df.NClasses := Round(RA[2]);
   df.NTrees := Round(RA[3]);
   df.BufSize := Round(RA[4]);
-  SetLength(df.Trees, df.BufSize  );
+  SetLength(df.Trees, df.BufSize);
   APVMove(@df.Trees[0], 0, df.BufSize - 1, @RA[0], 5, 5 + df.BufSize - 1);
 end;
 
@@ -939,8 +931,8 @@ begin
       Result := 0;
       Exit;
     end;
-  SetLength(x, df.NVars  );
-  SetLength(y, df.NClasses  );
+  SetLength(x, df.NVars);
+  SetLength(y, df.NClasses);
   Result := 0;
   i := 0;
   while i <= NPoints - 1 do

@@ -161,7 +161,7 @@ begin
   KMeans(kBuff, 1, 5, KResultArray, kResultIndex);
   for i := 0 to 5 - 1 do
       lr1.AddMemory([KResultArray[0, i]], [i, kResultIndex[i]]);
-  lr1.Train_MT;
+  lr1.Training_MT;
 
   // 存款与月消费
   SetLength(kBuff, length(OriginBuff), 2);
@@ -173,7 +173,7 @@ begin
   KMeans(kBuff, 2, 10, KResultArray, kResultIndex);
   for i := 0 to 10 - 1 do
       lr2.AddMemory([KResultArray[0, i], KResultArray[1, i]], [i, kResultIndex[i]]);
-  lr2.Train_MT;
+  lr2.Training_MT;
 
   // 综合
   SetLength(kBuff, length(OriginBuff), 3);
@@ -186,7 +186,7 @@ begin
   KMeans(kBuff, 3, 5, KResultArray, kResultIndex);
   for i := 0 to 5 - 1 do
       lr3.AddMemory([KResultArray[0, i], KResultArray[1, i], KResultArray[2, i]], [i, kResultIndex[i]]);
-  lr3.Train_MT;
+  lr3.Training_MT;
 
   // 年龄段
   SetLength(kBuff, length(OriginBuff), 1);
@@ -195,12 +195,12 @@ begin
   KMeans(kBuff, 1, 5, KResultArray, kResultIndex);
   for i := 0 to 5 - 1 do
       lr4.AddMemory([KResultArray[0, i]], [i, kResultIndex[i]]);
-  lr4.Train_MT;
+  lr4.Training_MT;
 
   // 推理学习
   for i := 0 to length(OriginBuff) - 1 do
       lr5.AddMemory([OriginBuff[i][0]], [OriginBuff[i][1], OriginBuff[i][2]]);
-  lr5.TrainP(10, procedure(const Sender: TLearn; const state: Boolean)
+  lr5.TrainingP(10, procedure(const Sender: TLearn; const state: Boolean)
     begin
       DoStatus('推理机器人学习完成');
     end);

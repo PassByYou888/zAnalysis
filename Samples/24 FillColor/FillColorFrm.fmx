@@ -16,7 +16,6 @@ object FillColorForm: TFillColorForm
     Top = 280
   end
   object Timer2: TTimer
-    Interval = 3000
     OnTimer = Timer2Timer
     Left = 328
     Top = 216

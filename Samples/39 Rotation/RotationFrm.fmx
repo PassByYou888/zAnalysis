@@ -1,0 +1,294 @@
+object ApproximatePolygonForm: TApproximatePolygonForm
+  Left = 0
+  Top = 0
+  BorderStyle = Single
+  Caption = 'Rotation demo. create by.qq600585'
+  ClientHeight = 777
+  ClientWidth = 1209
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object pb1: TPaintBox
+    ClipChildren = True
+    ClipParent = True
+    Position.X = 16.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 497.000000000000000000
+    Size.Height = 553.000000000000000000
+    Size.PlatformDefault = False
+    OnPaint = pb1Paint
+  end
+  object pb2: TPaintBox
+    ClipChildren = True
+    ClipParent = True
+    Position.X = 696.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 497.000000000000000000
+    Size.Height = 553.000000000000000000
+    Size.PlatformDefault = False
+    OnPaint = pb2Paint
+  end
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Lines.Strings = (
+      #26059#36716#30340#23454#29616#23601#26159#25237#24433#65292#25237#24433#21407#29702#25105#20204#21487#20197#21442#32771'memoryRasterProjection'#36825#20010'demo'
+      #25105#20204#26469#30475#19968#19979#26059#36716#22270#29255#30340#25968#25454#32467#26500
+      'image.rect '#65292'rect'#34920#31034#22270#29255#30340#26694#20307#65292#36825#20063#31561#21516#20110#26059#36716#30340#37319#26679#26694
+      ''
+      #25105#20204#22312#31243#24207#20013#23454#29616#26059#36716#65292#25237#24433#21407#29702#22914#19979
+      'source image rect -> target image rect'
+      #22312#20809#26629#30340#39030#28857#31995#32479#20013#65292'rect'#26159#30001'4'#20010#39030#28857#32452#21512#32780#25104#65292#25105#20204#21482#38656#35201#36716#21160#36825'4'#20010#39030#28857#22352#26631#65292#28982#21518#25237#24433#65292#21487#23436#25104#26059#36716
+      #20809#26629#25237#24433#19981#20381#36182#20110#30828#20214#65292#30001'Vertex'#36127#36131#37325#26500#20687#32032
+      #20809#26629#25237#24433#25903#25345#24182#34892#21270#21152#36895
+      ''
+      
+        #25105#20204#22312'form'#20013#38388#20250#24456#30475#21040#24456#22810#21442#25968#65292#36825#20123#37117#23646#20110#22806#22260#30340'rect'#35745#31639#65292#21644#30697#38453#26500#36896#24456#31867#20284#65292#30446#26631#26159#35745#31639'4'#20010#39030#28857#30340#20301#32622#65292#25237#24433#30340#26680#24515#21407#29702#21487#20197 +
+        #21442#32771'memoryRasterProjection'#36825#20010'demo'
+      ''
+      '')
+    TextSettings.WordWrap = True
+    Position.X = 16.000000000000000000
+    Position.Y = 576.000000000000000000
+    Size.Width = 1177.000000000000000000
+    Size.Height = 185.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    Viewport.Width = 1157.000000000000000000
+    Viewport.Height = 181.000000000000000000
+  end
+  object Timer1: TTimer
+    Interval = 10
+    OnTimer = Timer1Timer
+    Left = 64
+    Top = 120
+  end
+  object Layout1: TLayout
+    Position.X = 520.000000000000000000
+    Position.Y = 128.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 12
+    object Label1: TLabel
+      Align = Left
+      Size.Width = 97.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'source rotation'
+      TabOrder = 0
+    end
+    object sRotateEdit: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Left
+      TabOrder = 1
+      Text = '-5'
+      Position.X = 97.000000000000000000
+      Size.Width = 40.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      OnChange = sourceOptChange
+    end
+  end
+  object Layout2: TLayout
+    Position.X = 520.000000000000000000
+    Position.Y = 200.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 9
+    object Label2: TLabel
+      Align = Left
+      Size.Width = 97.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'source offset'
+      TabOrder = 0
+    end
+    object sOffsetEdit: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Left
+      TabOrder = 1
+      Text = '0.5,0.5'
+      Position.X = 97.000000000000000000
+      Size.Width = 40.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      OnChange = sourceOptChange
+    end
+  end
+  object Layout3: TLayout
+    Position.X = 520.000000000000000000
+    Position.Y = 176.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    object Label3: TLabel
+      Align = Left
+      Size.Width = 97.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'source scale'
+      TabOrder = 0
+    end
+    object sScaleEdit: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Left
+      TabOrder = 1
+      Text = '0.5'
+      Position.X = 97.000000000000000000
+      Size.Width = 40.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      OnChange = sourceOptChange
+    end
+  end
+  object Layout4: TLayout
+    Position.X = 520.000000000000000000
+    Position.Y = 152.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 10
+    object Label4: TLabel
+      Align = Left
+      Size.Width = 97.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'source axis'
+      TabOrder = 0
+    end
+    object sAxisEdit: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Left
+      TabOrder = 1
+      Text = '0.5,0.5'
+      Position.X = 97.000000000000000000
+      Size.Width = 40.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      OnChange = sourceOptChange
+    end
+  end
+  object Layout5: TLayout
+    Position.X = 520.000000000000000000
+    Position.Y = 312.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 11
+    object Label5: TLabel
+      Align = Left
+      Size.Width = 97.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'target rotation'
+      TabOrder = 0
+    end
+    object dRotateEdit: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Left
+      TabOrder = 1
+      Text = '5'
+      Position.X = 97.000000000000000000
+      Size.Width = 40.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      OnChange = TargetOptChange
+    end
+  end
+  object Layout6: TLayout
+    Position.X = 520.000000000000000000
+    Position.Y = 384.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 8
+    object Label6: TLabel
+      Align = Left
+      Size.Width = 97.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'target offset'
+      TabOrder = 0
+    end
+    object dOffsetEdit: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Left
+      TabOrder = 1
+      Text = '0.5,0.5'
+      Position.X = 97.000000000000000000
+      Size.Width = 40.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      OnChange = TargetOptChange
+    end
+  end
+  object Layout7: TLayout
+    Position.X = 520.000000000000000000
+    Position.Y = 360.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    object Label7: TLabel
+      Align = Left
+      Size.Width = 97.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'target scale'
+      TabOrder = 0
+    end
+    object dScaleEdit: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Left
+      TabOrder = 1
+      Text = '0.5'
+      Position.X = 97.000000000000000000
+      Size.Width = 40.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      OnChange = TargetOptChange
+    end
+  end
+  object Layout8: TLayout
+    Position.X = 520.000000000000000000
+    Position.Y = 336.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 7
+    object Label8: TLabel
+      Align = Left
+      Size.Width = 97.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'target axis'
+      TabOrder = 0
+    end
+    object dAxisEdit: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Left
+      TabOrder = 1
+      Text = '0.5,0.5'
+      Position.X = 97.000000000000000000
+      Size.Width = 40.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      OnChange = TargetOptChange
+    end
+  end
+  object projButton: TButton
+    Position.X = 520.000000000000000000
+    Position.Y = 448.000000000000000000
+    Size.Width = 169.000000000000000000
+    Size.Height = 41.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 15
+    Text = 'Projection'
+    OnClick = projButtonClick
+  end
+end

@@ -38,7 +38,8 @@ interface
 
 {$I GR32.inc}
 
-uses GR32;
+uses
+  GR32, GR32_Bindings;
 
 { Fixed point math routines }
 function FixedFloor(A: TFixed): Integer;
@@ -58,6 +59,7 @@ function FixedCombine(W, X, Y: TFixed): TFixed;
 
 procedure SinCos(const Theta: TFloat; out Sin, Cos: TFloat); overload;
 procedure SinCos(const Theta, Radius: Single; out Sin, Cos: Single); overload;
+procedure SinCos(const Theta, ScaleX, ScaleY: TFloat; out Sin, Cos: Single); overload;
 function Hypot(const X, Y: TFloat): TFloat; overload;
 function Hypot(const X, Y: Integer): Integer; overload;
 function FastSqrt(const Value: TFloat): TFloat;
@@ -85,15 +87,72 @@ function Sign(Value: Integer): Integer;
 
 function FloatMod(x, y: Double): Double; {$IFDEF INLININGSUPPORTED} inline; {$ENDIF}
 
+function DivMod(Dividend, Divisor: Integer; var Remainder: Integer): Integer;
+
+
+{$IFDEF FPC}
+{$IFDEF TARGET_X64}
+(*
+  FPC has no similar {$EXCESSPRECISION OFF} directive,
+  but we can easily emulate that by overriding some internal math functions
+*)
+function PI: Single; [internproc: fpc_in_pi_real];
+//function Abs(D: Single): Single; [internproc: fpc_in_abs_real];
+//function Sqr(D: Single): Single; [internproc: fpc_in_sqr_real];
+function Sqrt(D: Single): Single; [internproc: fpc_in_sqrt_real];
+function ArcTan(D: Single): Single; [internproc: fpc_in_arctan_real];
+function Ln(D: Single): Single; [internproc: fpc_in_ln_real];
+function Sin(D: Single): Single; [internproc: fpc_in_sin_real];
+function Cos(D: Single): Single; [internproc: fpc_in_cos_real];
+function Exp(D: Single): Single; [internproc: fpc_in_exp_real];
+function Round(D: Single): Int64; [internproc: fpc_in_round_real];
+function Frac(D: Single): Single; [internproc: fpc_in_frac_real];
+function Int(D: Single): Single; [internproc: fpc_in_int_real];
+function Trunc(D: Single): Int64; [internproc: fpc_in_trunc_real];
+
+function Ceil(X: Single): Integer; {$IFDEF INLININGSUPPORTED} inline; {$ENDIF}
+function Floor(X: Single): Integer; {$IFDEF INLININGSUPPORTED} inline; {$ENDIF}
+{$ENDIF}
+{$ENDIF}
+
+type
+  TCumSumProc = procedure(Values: PSingleArray; Count: Integer);
+
+var
+  CumSum: TCumSumProc;
+
+var
+  MathRegistry: TFunctionRegistry;
+
 implementation
 
 uses
-  Math;
+  Math, GR32_System;
 
 {$IFDEF PUREPASCAL}
 const
   FixedOneS: Single = 65536;
 {$ENDIF}
+
+
+{$IFDEF FPC}
+{$IFDEF TARGET_X64}
+function Ceil(X: Single): Integer;
+begin
+  Result := Trunc(X);
+  if (X - Result) > 0 then
+    Inc(Result);
+end;
+
+function Floor(X: Single): Integer;
+begin
+  Result := Trunc(X);
+  if (X - Result) < 0 then
+    Dec(Result);
+end;
+{$ENDIF}
+{$ENDIF}
+
 
 { Fixed-point math }
 
@@ -102,6 +161,7 @@ function FixedFloor(A: TFixed): Integer;
 begin
   Result := A div FIXEDONE;
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         SAR     EAX, 16
@@ -118,6 +178,7 @@ function FixedCeil(A: TFixed): Integer;
 begin
   Result := (A + $FFFF) div FIXEDONE;
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         ADD     EAX, $0000FFFF
@@ -136,6 +197,7 @@ function FixedRound(A: TFixed): Integer;
 begin
   Result := (A + $7FFF) div FIXEDONE;
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         ADD     EAX, $00007FFF
@@ -154,6 +216,7 @@ function FixedMul(A, B: TFixed): TFixed;
 begin
   Result := Round(A * FixedToFloat * B);
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         IMUL    EDX
@@ -172,6 +235,7 @@ function FixedDiv(A, B: TFixed): TFixed;
 begin
   Result := Round(A / B * FixedOne);
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         MOV     ECX, B
@@ -198,6 +262,7 @@ const
 begin
   Result := Round(Dividend / Value);
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         MOV     ECX, Value
@@ -218,6 +283,7 @@ function FixedSqr(Value: TFixed): TFixed;
 begin
   Result := Round(Value * FixedToFloat * Value);
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         IMUL    EAX
@@ -236,6 +302,7 @@ function FixedSqrtLP(Value: TFixed): TFixed;
 begin
   Result := Round(Sqrt(Value * FixedOneS));
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         PUSH    EBX
@@ -296,6 +363,7 @@ function FixedSqrtHP(Value: TFixed): TFixed;
 begin
   Result := Round(Sqrt(Value * FixedOneS));
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         PUSH    EBX
@@ -396,6 +464,7 @@ function FixedCombine(W, X, Y: TFixed): TFixed;
 begin
   Result := Round(Y + (X - Y) * FixedToFloat * W);
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         SUB     EDX, ECX
@@ -426,7 +495,7 @@ begin
 {$ELSE}
 {$IFDEF TARGET_x64}
 var
-  Temp: DWord = 0;
+  Temp: TFloat;
 {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
@@ -454,6 +523,10 @@ begin
   Sin := S * Radius;
   Cos := C * Radius;
 {$ELSE}
+{$IFDEF TARGET_x64}
+var
+  Temp: TFloat;
+{$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         FLD     Theta
@@ -476,11 +549,48 @@ asm
 {$ENDIF}
 end;
 
+procedure SinCos(const Theta, ScaleX, ScaleY: TFloat; out Sin, Cos: Single); overload;
+{$IFDEF NATIVE_SINCOS}
+var
+  S, C: Extended;
+begin
+  Math.SinCos(Theta, S, C);
+  Sin := S * ScaleX;
+  Cos := C * ScaleY;
+{$ELSE}
+{$IFDEF TARGET_x64}
+var
+  Temp: TFloat;
+{$ENDIF}
+asm
+{$IFDEF TARGET_x86}
+        FLD     Theta
+        FSINCOS
+        FMUL    ScaleX
+        FSTP    DWORD PTR [EDX] // cosine
+        FMUL    ScaleY
+        FSTP    DWORD PTR [EAX] // sine
+{$ENDIF}
+{$IFDEF TARGET_x64}
+        MOVD    Temp, Theta
+        FLD     Temp
+        FSINCOS
+        MOVD    Temp, ScaleX
+        FMUL    Temp
+        FSTP    [Cos]
+        MOVD    Temp, ScaleY
+        FMUL    Temp
+        FSTP    [Sin]
+{$ENDIF}
+{$ENDIF}
+end;
+
 function Hypot(const X, Y: TFloat): TFloat;
 {$IFDEF PUREPASCAL}
 begin
   Result := Sqrt(Sqr(X) + Sqr(Y));
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         FLD     X
@@ -533,6 +643,7 @@ var
 begin
   J := (I - $3F800000) div 2 + $3F800000;
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         MOV     EAX, DWORD PTR Value
@@ -551,6 +662,9 @@ end;
 function FastSqrtBab1(const Value: TFloat): TFloat;
 // see http://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Approximations_that_depend_on_IEEE_representation
 // additionally one babylonian step added
+{$IFNDEF PUREPASCAL}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
+{$ENDIF}
 const
   CHalf : TFloat = 0.5;
 {$IFDEF PUREPASCAL}
@@ -593,6 +707,7 @@ begin
  Result := Result + Value / Result;
  Result := CQuarter * Result + Value / Result;
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 const
   CHalf : TFloat = 0.5;
 asm
@@ -615,7 +730,7 @@ asm
         MOVD    XMM1, EAX
         DIVSS   XMM0, XMM1
         ADDSS   XMM0, XMM1
-        MOVD    XMM1, CHalf
+        MOVD    XMM1, [RIP + CHalf]
         MULSS   XMM0, XMM1
 {$ENDIF}
 {$ENDIF}
@@ -637,6 +752,7 @@ function MulDiv(Multiplicand, Multiplier, Divisor: Integer): Integer;
 begin
   Result := Int64(Multiplicand) * Int64(Multiplier) div Divisor;
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         PUSH    EBX             // Imperative save
@@ -740,6 +856,7 @@ begin
   while Value shr 1 > 0 do
     Result := Result shl 1;
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         BSR     ECX, EAX
@@ -763,6 +880,7 @@ begin
   while Value shr 1 > 0 do 
     Result := Result shl 1;
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         DEC     EAX
@@ -795,6 +913,7 @@ function Average(A, B: Integer): Integer;
 begin
   Result := (A and B) + (A xor B) div 2;
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x86}
         MOV     ECX, EDX
@@ -820,6 +939,7 @@ begin
   //Assumes 32 bit integer
   Result := (- Value) shr 31 - (Value shr 31);
 {$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
 asm
 {$IFDEF TARGET_x64}
         MOV     EAX, Value
@@ -839,4 +959,279 @@ begin
     Result := x - y * Floor(x / y);
 end;
 
+function DivMod(Dividend, Divisor: Integer; var Remainder: Integer): Integer;
+{$IFDEF PUREPASCAL}
+begin
+  Result := Dividend div Divisor;
+  Remainder := Dividend mod Divisor;
+{$ELSE}
+{$IFDEF FPC} assembler; nostackframe; {$ENDIF}
+asm
+{$IFDEF TARGET_x86}
+        PUSH    EDX
+        CDQ
+        IDIV    DWORD PTR [ESP]
+        ADD     ESP, $04
+        MOV     DWORD PTR [ECX], edx
+{$ENDIF}
+{$IFDEF TARGET_x64}
+        MOV     RAX, RCX
+        MOV     R9, RDX
+        CDQ
+        IDIV    R9
+        MOV     DWORD PTR [R8], EDX
+{$ENDIF}
+{$ENDIF}
+end;
+
+procedure CumSum_Pas(Values: PSingleArray; Count: Integer);
+var
+  I: Integer;
+  V: TFloat;
+begin
+  V := Values[0];
+  for I := 1 to Count - 1 do
+  begin
+    if PInteger(@Values[I])^ <> 0 then
+      V := V + Values[I];
+    Values[I] := V;
+  end;
+end;
+
+{$IFNDEF PUREPASCAL}
+// Aligned SSE2 version -- Credits: Sanyin <prevodilac@hotmail.com>
+procedure CumSum_SSE2(Values: PSingleArray; Count: Integer); {$IFDEF FPC} assembler; nostackframe; {$ENDIF}
+asm
+{$IFDEF TARGET_x86}
+        MOV     ECX,EDX
+        CMP     ECX,2       // if count < 2, exit
+        JL      @END
+        CMP     ECX,32      // if count < 32, avoid SSE2 overhead
+        JL      @SMALL
+
+{--- align memory ---}
+        PUSH    EBX
+        PXOR    XMM4,XMM4
+        MOV     EBX,EAX
+        AND     EBX,15       // get aligned count
+        JZ      @ENDALIGNING // already aligned
+        ADD     EBX,-16
+        NEG     EBX          // get bytes to advance
+        JZ      @ENDALIGNING // already aligned
+
+        MOV     ECX,EBX
+        SAR     ECX,2        // div with 4 to get cnt
+        SUB     EDX,ECX
+
+        ADD     EAX,4
+        DEC     ECX
+        JZ      @SETUPLAST   // one element
+
+@ALIGNINGLOOP:
+        FLD     DWORD PTR [EAX-4]
+        FADD    DWORD PTR [EAX]
+        FSTP    DWORD PTR [EAX]
+        ADD     EAX,4
+        DEC     ECX
+        JNZ     @ALIGNINGLOOP
+
+@SETUPLAST:
+        MOVUPS  XMM4,[EAX-4]
+        PSLLDQ  XMM4,12
+        PSRLDQ  XMM4,12
+
+@ENDALIGNING:
+        POP     EBX
+        PUSH    EBX
+        MOV     ECX,EDX
+        SAR     ECX,2
+@LOOP:
+        MOVAPS  XMM0,[EAX]
+        PXOR    XMM5,XMM5
+        PCMPEQD XMM5,XMM0
+        PMOVMSKB EBX,XMM5
+        CMP     EBX,$0000FFFF
+        JNE     @NORMAL
+        PSHUFD  XMM0,XMM4,0
+        JMP     @SKIP
+
+@NORMAL:
+        ADDPS   XMM0,XMM4
+        PSHUFD  XMM1,XMM0,$e4
+        PSLLDQ  XMM1,4
+        PSHUFD  XMM2,XMM1,$90
+        PSHUFD  XMM3,XMM1,$40
+        ADDPS   XMM2,XMM3
+        ADDPS   XMM1,XMM2
+        ADDPS   XMM0,XMM1
+
+        PSHUFLW XMM4,XMM0,$E4
+        PSRLDQ  XMM4,12
+
+@SKIP:
+        PREFETCHNTA [eax+16*16*2]
+        MOVAPS  [EAX],XMM0
+        ADD     EAX,16
+        SUB     ECX,1
+        JNZ     @LOOP
+        POP     EBX
+        MOV     ECX,EDX
+        SAR     ECX,2
+        SHL     ECX,2
+        SUB     EDX,ECX
+        MOV     ECX,EDX
+        JZ      @END
+
+@LOOP2:
+        FLD     DWORD PTR [EAX-4]
+        FADD    DWORD PTR [EAX]
+        FSTP    DWORD PTR [EAX]
+        ADD     EAX,4
+        DEC     ECX
+        JNZ     @LOOP2
+        JMP     @END
+
+@SMALL:
+        MOV     ECX,EDX
+        ADD     EAX,4
+        DEC     ECX
+@LOOP3:
+        FLD     DWORD PTR [EAX-4]
+        FADD    DWORD PTR [EAX]
+        FSTP    DWORD PTR [EAX]
+        ADD     EAX,4
+        DEC     ECX
+        JNZ     @LOOP3
+{$ENDIF}
+{$IFDEF TARGET_x64}
+        CMP     EDX,2       // if count < 2, exit
+        JL      @END
+
+        MOV     RAX,RCX
+        MOV     ECX,EDX
+
+        CMP     ECX,32      // if count < 32, avoid SSE2 overhead
+        JL      @SMALL
+
+{--- align memory ---}
+        PXOR    XMM4,XMM4
+        MOV     R8D,EAX
+        AND     R8D,15       // get aligned count
+        JZ      @ENDALIGNING // already aligned
+        ADD     R8D,-16
+        NEG     R8D          // get bytes to advance
+        JZ      @ENDALIGNING // already aligned
+
+        MOV     ECX,R8D
+        SAR     ECX,2        // div with 4 to get cnt
+        SUB     EDX,ECX
+
+        ADD     RAX,4
+        DEC     ECX
+        JZ      @SETUPLAST   // one element
+
+@ALIGNINGLOOP:
+        FLD     DWORD PTR [RAX - 4]
+        FADD    DWORD PTR [RAX]
+        FSTP    DWORD PTR [RAX]
+        ADD     RAX,4
+        DEC     ECX
+        JNZ     @ALIGNINGLOOP
+
+@SETUPLAST:
+        MOVUPS  XMM4,[RAX - 4]
+        PSLLDQ  XMM4,12
+        PSRLDQ  XMM4,12
+
+@ENDALIGNING:
+        MOV     ECX,EDX
+        SAR     ECX,2
+@LOOP:
+        MOVAPS  XMM0,[RAX]
+        PXOR    XMM5,XMM5
+        PCMPEQD XMM5,XMM0
+        PMOVMSKB R8D,XMM5
+        CMP     R8D,$0000FFFF
+        JNE     @NORMAL
+        PSHUFD  XMM0,XMM4,0
+        JMP     @SKIP
+
+@NORMAL:
+        ADDPS   XMM0,XMM4
+        PSHUFD  XMM1,XMM0,$e4
+        PSLLDQ  XMM1,4
+        PSHUFD  XMM2,XMM1,$90
+        PSHUFD  XMM3,XMM1,$40
+        ADDPS   XMM2,XMM3
+        ADDPS   XMM1,XMM2
+        ADDPS   XMM0,XMM1
+
+        PSHUFLW XMM4,XMM0,$E4
+        PSRLDQ  XMM4,12
+
+@SKIP:
+        PREFETCHNTA [RAX + 32 * 2]
+        MOVAPS  [RAX],XMM0
+        ADD     RAX,16
+        SUB     ECX,1
+        JNZ     @LOOP
+        MOV     ECX,EDX
+        SAR     ECX,2
+        SHL     ECX,2
+        SUB     EDX,ECX
+        MOV     ECX,EDX
+        JZ      @END
+
+@LOOP2:
+        FLD     DWORD PTR [RAX - 4]
+        FADD    DWORD PTR [RAX]
+        FSTP    DWORD PTR [RAX]
+        ADD     RAX,4
+        DEC     ECX
+        JNZ     @LOOP2
+        JMP     @END
+
+@SMALL:
+        ADD     RAX,4
+        DEC     ECX
+@LOOP3:
+        FLD     DWORD PTR [RAX - 4]
+        FADD    DWORD PTR [RAX]
+        FSTP    DWORD PTR [RAX]
+        ADD     RAX,4
+        DEC     ECX
+        JNZ     @LOOP3
+{$ENDIF}
+@END:
+end;
+{$ENDIF}
+
+
+const
+  FID_CUMSUM = 0;
+
+const
+  MathBindingFlagPascal = $0001;
+
+procedure RegisterBindings;
+begin
+  MathRegistry := NewRegistry('GR32_Math bindings');
+
+  MathRegistry.RegisterBinding(FID_CUMSUM, @@CumSum);
+
+  // pure pascal
+  MathRegistry.Add(FID_CUMSUM, @CumSum_Pas, [], MathBindingFlagPascal);
+
+{$IFNDEF PUREPASCAL}
+{$IFNDEF OMIT_SSE2}
+  // SSE2
+  MathRegistry.Add(FID_CUMSUM, @CumSum_SSE2, [ciSSE2]);
+{$ENDIF}
+{$ENDIF}
+
+  MathRegistry.RebindAll;
+end;
+
+initialization
+  RegisterBindings;
 end.

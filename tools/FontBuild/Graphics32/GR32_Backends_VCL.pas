@@ -39,7 +39,7 @@ interface
 
 uses
   SysUtils, Classes, Windows, Graphics, GR32, GR32_Backends, GR32_Containers,
-  GR32_Image, GR32_Backends_Generic;
+  GR32_Image, GR32_Backends_Generic, GR32_Paths;
 
 type
   { TGDIBackend }
@@ -49,7 +49,7 @@ type
 
   TGDIBackend = class(TCustomBackend, IPaintSupport,
     IBitmapContextSupport, IDeviceContextSupport,
-    ITextSupport, IFontSupport, ICanvasSupport)
+    ITextSupport, IFontSupport, ICanvasSupport, ITextToPathSupport)
   private
     procedure FontChangedHandler(Sender: TObject);
     procedure CanvasChangedHandler(Sender: TObject);
@@ -95,16 +95,16 @@ type
     function GetHandle: HDC;
 
     procedure Draw(const DstRect, SrcRect: TRect; hSrc: HDC); overload;
-    procedure DrawTo(hDst: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF}; DstX, DstY: Integer); overload;
-    procedure DrawTo(hDst: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF}; const DstRect, SrcRect: TRect); overload;
+    procedure DrawTo(hDst: HDC; DstX, DstY: Integer); overload;
+    procedure DrawTo(hDst: HDC; const DstRect, SrcRect: TRect); overload;
 
     property Handle: HDC read GetHandle;
 
     { ITextSupport }
-    procedure Textout(X, Y: Integer; const Text: String); overload;
-    procedure Textout(X, Y: Integer; const ClipRect: TRect; const Text: String); overload;
-    procedure Textout(var DstRect: TRect; const Flags: Cardinal; const Text: String); overload;
-    function  TextExtent(const Text: String): TSize;
+    procedure Textout(X, Y: Integer; const Text: string); overload;
+    procedure Textout(X, Y: Integer; const ClipRect: TRect; const Text: string); overload;
+    procedure Textout(var DstRect: TRect; const Flags: Cardinal; const Text: string); overload;
+    function  TextExtent(const Text: string): TSize;
 
     procedure TextoutW(X, Y: Integer; const Text: Widestring); overload;
     procedure TextoutW(X, Y: Integer; const ClipRect: TRect; const Text: Widestring); overload;
@@ -120,6 +120,11 @@ type
     procedure UpdateFont;
     property Font: TFont read GetFont write SetFont;
     property OnFontChange: TNotifyEvent read FOnFontChange write FOnFontChange;
+
+    { ITextToPathSupport }
+    procedure TextToPath(Path: TCustomPath; const X, Y: TFloat; const Text: WideString); overload;
+    procedure TextToPath(Path: TCustomPath; const DstRect: TFloatRect; const Text: WideString; Flags: Cardinal); overload;
+    function MeasureText(const DstRect: TFloatRect; const Text: WideString; Flags: Cardinal): TFloatRect;
 
     { ICanvasSupport }
     function GetCanvasChange: TNotifyEvent;
@@ -157,7 +162,7 @@ type
   private
     procedure DoPaintRect(ABuffer: TBitmap32; ARect: TRect; ACanvas: TCanvas);
 
-    function GetHandle: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF}; // Dummy
+    function GetHandle: HDC; // Dummy
   protected
     FBitmapInfo: TBitmapInfo;
 
@@ -172,12 +177,15 @@ type
     procedure DoPaint(ABuffer: TBitmap32; AInvalidRects: TRectList; ACanvas: TCanvas; APaintBox: TCustomPaintBox32);
 
     { IDeviceContextSupport }
-    procedure Draw(const DstRect, SrcRect: TRect; hSrc: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF}); overload;
-    procedure DrawTo(hDst: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF}; DstX, DstY: Integer); overload;
-    procedure DrawTo(hDst: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF}; const DstRect, SrcRect: TRect); overload;
+    procedure Draw(const DstRect, SrcRect: TRect; hSrc: HDC); overload;
+    procedure DrawTo(hDst: HDC; DstX, DstY: Integer); overload;
+    procedure DrawTo(hDst: HDC; const DstRect, SrcRect: TRect); overload;
   end;
 
 implementation
+
+uses
+  GR32_Text_VCL;
 
 var
   StockFont: HFONT;
@@ -226,7 +234,7 @@ begin
   FBitmapHandle := CreateDIBSection(0, FBitmapInfo, DIB_RGB_COLORS, Pointer(FBits), FMapHandle, 0);
 
   if FBits = nil then
-    raise Exception.Create(RCStrCannotAllocateDIBHandle);
+    raise EBackend.Create(RCStrCannotAllocateDIBHandle);
 
   FHDC := CreateCompatibleDC(0);
   if FHDC = 0 then
@@ -234,7 +242,7 @@ begin
     DeleteObject(FBitmapHandle);
     FBitmapHandle := 0;
     FBits := nil;
-    raise Exception.Create(RCStrCannotCreateCompatibleDC);
+    raise EBackend.Create(RCStrCannotCreateCompatibleDC);
   end;
 
   if SelectObject(FHDC, FBitmapHandle) = 0 then
@@ -244,8 +252,14 @@ begin
     FHDC := 0;
     FBitmapHandle := 0;
     FBits := nil;
-    raise Exception.Create(RCStrCannotSelectAnObjectIntoDC);
+    raise EBackend.Create(RCStrCannotSelectAnObjectIntoDC);
   end;
+end;
+
+function TGDIBackend.MeasureText(const DstRect: TFloatRect;
+  const Text: WideString; Flags: Cardinal): TFloatRect;
+begin
+  Result := GR32_Text_VCL.MeasureText(Font.Handle, DstRect, Text, Flags);
 end;
 
 procedure TGDIBackend.FinalizeSurface;
@@ -291,9 +305,9 @@ begin
     FOnFontChange(Self);
 end;
 
-function TGDIBackend.TextExtent(const Text: String): TSize;
+function TGDIBackend.TextExtent(const Text: string): TSize;
 var
-  DC: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF};
+  DC: HDC;
   OldFont: HGDIOBJ;
 begin
   UpdateFont;
@@ -317,7 +331,7 @@ end;
 
 function TGDIBackend.TextExtentW(const Text: Widestring): TSize;
 var
-  DC: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF};
+  DC: HDC;
   OldFont: HGDIOBJ;
 begin
   UpdateFont;
@@ -340,7 +354,7 @@ begin
   end;
 end;
 
-procedure TGDIBackend.Textout(X, Y: Integer; const Text: String);
+procedure TGDIBackend.Textout(X, Y: Integer; const Text: string);
 var
   Extent: TSize;
 begin
@@ -389,7 +403,7 @@ begin
   FOwner.Changed(MakeRect(X, Y, X + Extent.cx + 1, Y + Extent.cy + 1));
 end;
 
-procedure TGDIBackend.Textout(X, Y: Integer; const ClipRect: TRect; const Text: String);
+procedure TGDIBackend.Textout(X, Y: Integer; const ClipRect: TRect; const Text: string);
 var
   Extent: TSize;
 begin
@@ -412,6 +426,21 @@ begin
   FOwner.Changed(DstRect);
 end;
 
+procedure TGDIBackend.TextToPath(Path: TCustomPath; const X, Y: TFloat;
+  const Text: WideString);
+var
+  R: TFloatRect;
+begin
+  R := FloatRect(X, Y, X, Y);
+  GR32_Text_VCL.TextToPath(Font.Handle, Path, R, Text, 0);
+end;
+
+procedure TGDIBackend.TextToPath(Path: TCustomPath; const DstRect: TFloatRect;
+  const Text: WideString; Flags: Cardinal);
+begin
+  GR32_Text_VCL.TextToPath(Font.Handle, Path, DstRect, Text, Flags);
+end;
+
 procedure TGDIBackend.UpdateFont;
 begin
   if (FFontHandle = 0) and (Handle <> 0) then
@@ -429,7 +458,7 @@ begin
   end;
 end;
 
-procedure TGDIBackend.Textout(var DstRect: TRect; const Flags: Cardinal; const Text: String);
+procedure TGDIBackend.Textout(var DstRect: TRect; const Flags: Cardinal; const Text: string);
 begin
   UpdateFont;
 
@@ -439,14 +468,14 @@ begin
   FOwner.Changed(DstRect);
 end;
 
-procedure TGDIBackend.DrawTo(hDst: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF}; DstX, DstY: Integer);
+procedure TGDIBackend.DrawTo(hDst: HDC; DstX, DstY: Integer);
 begin
   StretchDIBits(
     hDst, DstX, DstY, FOwner.Width, FOwner.Height,
     0, 0, FOwner.Width, FOwner.Height, Bits, FBitmapInfo, DIB_RGB_COLORS, SRCCOPY);
 end;
 
-procedure TGDIBackend.DrawTo(hDst: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF}; const DstRect, SrcRect: TRect);
+procedure TGDIBackend.DrawTo(hDst: HDC; const DstRect, SrcRect: TRect);
 begin
   StretchBlt(
     hDst,
@@ -485,7 +514,7 @@ begin
   Result := FFont;
 end;
 
-function TGDIBackend.GetHandle: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF};
+function TGDIBackend.GetHandle: HDC;
 begin
   Result := FHDC;
 end;
@@ -511,7 +540,7 @@ begin
   FOnFontChange := Handler;
 end;
 
-procedure TGDIBackend.Draw(const DstRect, SrcRect: TRect; hSrc: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF});
+procedure TGDIBackend.Draw(const DstRect, SrcRect: TRect; hSrc: HDC);
 begin
   if FOwner.Empty then Exit;
 
@@ -641,7 +670,7 @@ procedure TGDIMemoryBackend.DoPaintRect(ABuffer: TBitmap32;
   ARect: TRect; ACanvas: TCanvas);
 var
   Bitmap        : HBITMAP;
-  DeviceContext : {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF};
+  DeviceContext : HDC;
   Buffer        : Pointer;
   OldObject     : HGDIOBJ;
 begin
@@ -670,33 +699,32 @@ begin
           DeleteObject(Bitmap);
         end;
       end else
-        raise Exception.Create('Can''t create compatible DC''');
+        raise EBackend.Create(RCStrCannotCreateCompatibleDC);
     finally
       DeleteDC(DeviceContext);
     end;
   end;
 end;
 
-procedure TGDIMemoryBackend.Draw(const DstRect, SrcRect: TRect; hSrc: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF});
+procedure TGDIMemoryBackend.Draw(const DstRect, SrcRect: TRect; hSrc: HDC);
 begin
   if FOwner.Empty then Exit;
 
   if not FOwner.MeasuringMode then
-    raise Exception.Create('Not supported!');
+    raise EBackend.Create('Not supported!');
 
   FOwner.Changed(DstRect);
 end;
 
-procedure TGDIMemoryBackend.DrawTo(hDst: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF}; DstX, DstY: Integer);
+procedure TGDIMemoryBackend.DrawTo(hDst: HDC; DstX, DstY: Integer);
 var
   Bitmap        : HBITMAP;
-  DeviceContext : {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF};
+  DeviceContext : HDC;
   Buffer        : Pointer;
   OldObject     : HGDIOBJ;
 begin
-  if SetDIBitsToDevice(hDst, DstX, DstY,
-    FOwner.Width, FOwner.Height, 0, 0, 0, FOwner.Height, FBits, FBitmapInfo,
-    DIB_RGB_COLORS) = 0 then
+  if SetDIBitsToDevice(hDst, DstX, DstY, FOwner.Width, FOwner.Height, 0, 0, 0,
+    FOwner.Height, FBits, FBitmapInfo, DIB_RGB_COLORS) = 0 then
   begin
     // create compatible device context
     DeviceContext := CreateCompatibleDC(hDst);
@@ -719,18 +747,18 @@ begin
           DeleteObject(Bitmap);
         end;
       end else
-        raise Exception.Create('Can''t create compatible DC''');
+        raise EBackend.Create(RCStrCannotCreateCompatibleDC);
     finally
       DeleteDC(DeviceContext);
     end;
   end;
 end;
 
-procedure TGDIMemoryBackend.DrawTo(hDst: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF}; 
+procedure TGDIMemoryBackend.DrawTo(hDst: HDC; 
   const DstRect, SrcRect: TRect);
 var
   Bitmap        : HBITMAP;
-  DeviceContext : {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF};
+  DeviceContext : HDC;
   Buffer        : Pointer;
   OldObject     : HGDIOBJ;
 begin
@@ -760,14 +788,14 @@ begin
           DeleteObject(Bitmap);
         end;
       end else
-        raise Exception.Create('Can''t create compatible DC''');
+        raise EBackend.Create(RCStrCannotCreateCompatibleDC);
     finally
       DeleteDC(DeviceContext);
     end;
   end;
 end;
 
-function TGDIMemoryBackend.GetHandle: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF};
+function TGDIMemoryBackend.GetHandle: HDC;
 begin
   Result := 0;
 end;

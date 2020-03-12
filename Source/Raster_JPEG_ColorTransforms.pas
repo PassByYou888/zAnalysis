@@ -462,7 +462,7 @@ type
     FMaxValue: integer;
     FPrecision: integer;
     FScaleFact: integer;
-    function Clip(AValue: integer): integer;
+    function Clip(Value_: integer): integer;
     procedure InitScaleFact;
   public
     constructor Create; override;
@@ -2638,16 +2638,16 @@ end;
 
 { TYuvTransform }
 
-function TYuvTransform.Clip(AValue: integer): integer;
+function TYuvTransform.Clip(Value_: integer): integer;
 // Clip the value to the allowed range
 begin
-  if AValue < 0 then
+  if Value_ < 0 then
       Result := 0
   else
-    if AValue >= FMaxValue then
+    if Value_ >= FMaxValue then
       Result := FMaxValue
   else
-      Result := AValue;
+      Result := Value_;
 end;
 
 function TYuvTransform.DstCellStride: integer;

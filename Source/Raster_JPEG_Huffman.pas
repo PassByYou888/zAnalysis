@@ -65,7 +65,7 @@ type
   protected
     FCodes: array of THuffmanCode;
   public
-    procedure GenerateCodeTable(ATable: THuffmanTable); virtual;
+    procedure GenerateCodeTable(Table_: THuffmanTable); virtual;
   end;
 
   // Generic Huffman decoder
@@ -121,7 +121,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
-    procedure GenerateCodeTable(ATable: THuffmanTable); override;
+    procedure GenerateCodeTable(Table_: THuffmanTable); override;
     procedure OptimiseHuffmanFromHistogram(var Item: TDHTMarkerInfo);
     property Histogram: Psd8bitHuffmanHistogram read GetHistogram;
   end;
@@ -130,16 +130,16 @@ type
   TDCBaselineHuffmanDecoder = class(T8bitHuffmanDecoder)
   private
   public
-    procedure DecodeMcuBlock(var ABlock: TMcuBlock; AReader: TBitReader);
+    procedure DecodeMcuBlock(var ABlock: TMcuBlock; Reader_: TBitReader);
   end;
 
   // Specific Huffman AC baseline decoder
   TACBaselineHuffmanDecoder = class(T8bitHuffmanDecoder)
   private
   public
-    procedure DecodeMcuBlock(var ABlock: TMcuBlock; AReader: TBitReader; AZigZag: PsdZigZagArray);
+    procedure DecodeMcuBlock(var ABlock: TMcuBlock; Reader_: TBitReader; AZigZag: PsdZigZagArray);
     // Special routine for jsDiv8 scale loading, just skipping this data
-    procedure DecodeMcuBlockSkip(AReader: TBitReader);
+    procedure DecodeMcuBlockSkip(Reader_: TBitReader);
   end;
 
   // Specific Huffman DC baseline encoder
@@ -157,15 +157,15 @@ type
   TDCProgressiveHuffmanDecoder = class(TDCBaselineHuffmanDecoder)
   public
     // Progressive
-    procedure DecodeProgFirst(var ABlock: TMcuBlock; AReader: TBitReader; ApproxLow: integer);
-    procedure DecodeProgRefine(var ABlock: TMcuBlock; AReader: TBitReader; ApproxLow: integer);
+    procedure DecodeProgFirst(var ABlock: TMcuBlock; Reader_: TBitReader; ApproxLow: integer);
+    procedure DecodeProgRefine(var ABlock: TMcuBlock; Reader_: TBitReader; ApproxLow: integer);
   end;
 
   TACProgressiveHuffmanDecoder = class(TACBaselineHuffmanDecoder)
   public
     // Progressive
-    procedure DecodeProgFirst(var ABlock: TMcuBlock; AReader: TBitReader; var EOBRun: integer; SSStart, SSEnd, ApproxLow: integer);
-    procedure DecodeProgRefine(var ABlock: TMcuBlock; AReader: TBitReader; var EOBRun: integer; SSStart, SSEnd, ApproxLow: integer);
+    procedure DecodeProgFirst(var ABlock: TMcuBlock; Reader_: TBitReader; var EOBRun: integer; SSStart, SSEnd, ApproxLow: integer);
+    procedure DecodeProgRefine(var ABlock: TMcuBlock; Reader_: TBitReader; var EOBRun: integer; SSStart, SSEnd, ApproxLow: integer);
   end;
 
 implementation
@@ -227,7 +227,7 @@ end;
 
 { THuffmanCoder }
 
-procedure THuffmanCoder.GenerateCodeTable(ATable: THuffmanTable);
+procedure THuffmanCoder.GenerateCodeTable(Table_: THuffmanTable);
 var
   i, k, Idx, Len: integer;
   Code, Size: integer;
@@ -236,16 +236,16 @@ begin
   // Generate a list of codes for the table (See Fig. C.2)
   Code := 0;
   MaxVal := 0;
-  Size := ATable[0]^.L;
+  Size := Table_[0]^.L;
   k := 0;
-  Len := ATable.Count;
+  Len := Table_.Count;
   while k < Len do
     begin
-      while (k < Len) and (ATable[k]^.L = Size) do
+      while (k < Len) and (Table_[k]^.L = Size) do
         begin
-          ATable[k]^.Code := Code;
-          if ATable[k]^.V > MaxVal then
-              MaxVal := ATable[k]^.V;
+          Table_[k]^.Code := Code;
+          if Table_[k]^.V > MaxVal then
+              MaxVal := Table_[k]^.V;
           inc(Code);
           inc(k);
         end;
@@ -254,12 +254,12 @@ begin
     end;
 
   SetLength(FCodes, MaxVal + 1); // 0..MaxVal
-  for i := 0 to ATable.Count - 1 do
+  for i := 0 to Table_.Count - 1 do
     begin
-      Idx := ATable[i]^.V;
-      FCodes[Idx].L := ATable[i]^.L;
-      FCodes[Idx].V := ATable[i]^.V;
-      FCodes[Idx].Code := ATable[i]^.Code;
+      Idx := Table_[i]^.V;
+      FCodes[Idx].L := Table_[i]^.L;
+      FCodes[Idx].V := Table_[i]^.V;
+      FCodes[Idx].Code := Table_[i]^.Code;
     end;
 
 end;
@@ -384,11 +384,11 @@ begin
   inherited Destroy;
 end;
 
-procedure T8bitHuffmanEncoder.GenerateCodeTable(ATable: THuffmanTable);
+procedure T8bitHuffmanEncoder.GenerateCodeTable(Table_: THuffmanTable);
 var
   i: integer;
 begin
-  if ATable.Count = 0 then
+  if Table_.Count = 0 then
     begin
       // Uninitialized table: create just codes for histogramming
       SetLength(FCodes, 256);
@@ -412,25 +412,25 @@ var
   N, N0, N1, Top: THuffmanNode;
 
   // Recursive procedure: add values with their bitcount to the nodelist
-  procedure AddBranch(ABranch: THuffmanNode; ABitCount: integer);
+  procedure AddBranch(Branch_: THuffmanNode; BitCount_: integer);
   begin
     // Branch B0
-    if assigned(ABranch.B0.Code) then
+    if assigned(Branch_.B0.Code) then
       begin
-        ABranch.B0.BitCount := ABitCount;
-        FNodes.Add(ABranch.B0);
+        Branch_.B0.BitCount := BitCount_;
+        FNodes.Add(Branch_.B0);
       end
     else
-        AddBranch(ABranch.B0, ABitCount + 1);
+        AddBranch(Branch_.B0, BitCount_ + 1);
 
     // Branch B1
-    if assigned(ABranch.B1.Code) then
+    if assigned(Branch_.B1.Code) then
       begin
-        ABranch.B1.BitCount := ABitCount;
-        FNodes.Add(ABranch.B1);
+        Branch_.B1.BitCount := BitCount_;
+        FNodes.Add(Branch_.B1);
       end
     else
-        AddBranch(ABranch.B1, ABitCount + 1);
+        AddBranch(Branch_.B1, BitCount_ + 1);
   end;
 
 // main
@@ -545,7 +545,7 @@ end;
 
 { TDCBaselineHuffmanDecoder }
 
-procedure TDCBaselineHuffmanDecoder.DecodeMcuBlock(var ABlock: TMcuBlock; AReader: TBitReader);
+procedure TDCBaselineHuffmanDecoder.DecodeMcuBlock(var ABlock: TMcuBlock; Reader_: TBitReader);
 var
   S, Code: smallint; // S = category
   Bits: word;
@@ -554,20 +554,20 @@ var
 begin
   // Get the S code. Since its guaranteed to have <= 16 bits we can use
   // this two-step mechanism (without loop)
-  Idx := AReader.ThisByte^;
+  Idx := Reader_.ThisByte^;
   Table := @FLookup[0];
   Len := Table^.Len[Idx];
   S := Table^.Value[Idx];
   if Len = 0 then
     begin
-      Idx := AReader.NextByte^;
+      Idx := Reader_.NextByte^;
       Table := @FLookup[S];
       Len := 8 + Table^.Len[Idx];
       S := Table^.Value[Idx];
     end;
 
   // We already have the code, but need to actually remove the bits from the stream
-  AReader.RemoveBits(Len);
+  Reader_.RemoveBits(Len);
   inc(FCountCodes, Len);
 
   // Process the S code, it's an index into a category. We find "Code", and correct
@@ -577,14 +577,14 @@ begin
     0: Code := ABlock.PPred^;
     1:
       begin
-        if AReader.GetBits(1) = 1 then
+        if Reader_.GetBits(1) = 1 then
             Code := ABlock.PPred^ + 1
         else
             Code := ABlock.PPred^ - 1;
       end;
     else
       // We use the EXTEND function, Figure F12
-      Bits := AReader.GetBits(S);
+      Bits := Reader_.GetBits(S);
       if Bits < cExtendTest[S] then
           Code := ABlock.PPred^ + Bits + cExtendOffset[S]
       else
@@ -601,7 +601,7 @@ end;
 { TACBaselineHuffmanDecoder }
 
 procedure TACBaselineHuffmanDecoder.DecodeMcuBlock(var ABlock: TMcuBlock;
-  AReader: TBitReader; AZigZag: PsdZigZagArray);
+  Reader_: TBitReader; AZigZag: PsdZigZagArray);
 var
   k, kz: integer; // Position in zigzag
   Values: PsdCoefBlock;
@@ -612,7 +612,7 @@ var
 begin
   // Prepare some local variables for fast access
   Table1 := @FLookup[0];
-  ThisByte := AReader.ThisByte;
+  ThisByte := Reader_.ThisByte;
   Values := ABlock.Values;
 
   // DC did k = 0, now we're at k = 1
@@ -625,14 +625,14 @@ begin
     RS := Table1^.Value[Idx];
     if Len = 0 then
       begin
-        Idx := AReader.NextByte^;
+        Idx := Reader_.NextByte^;
         Table2 := @FLookup[RS];
         Len := 8 + Table2^.Len[Idx];
         RS := Table2^.Value[Idx];
       end;
 
     // We already have the code, but need to actually remove the bits from the stream
-    AReader.RemoveBits(Len);
+    Reader_.RemoveBits(Len);
     inc(FCountCodes, Len);
     // Split range,category
     R := RS shr 4;
@@ -659,7 +659,7 @@ begin
 
     // Process the S code, it's an index into a category.
     // We use the EXTEND function, Figure F12
-    Bits := AReader.GetBits(S);
+    Bits := Reader_.GetBits(S);
     inc(FCountBits, S);
     kz := AZigZag^[k];
     if kz > 0 then
@@ -687,7 +687,7 @@ begin
   until k > 63;
 end;
 
-procedure TACBaselineHuffmanDecoder.DecodeMcuBlockSkip(AReader: TBitReader);
+procedure TACBaselineHuffmanDecoder.DecodeMcuBlockSkip(Reader_: TBitReader);
 var
   k: integer;        // Position in zigzag
   RS, R, S: integer; // RS = range,category
@@ -697,7 +697,7 @@ var
 begin
   // Prepare some local variables for fast access
   Table1 := @FLookup[0];
-  ThisByte := AReader.ThisByte;
+  ThisByte := Reader_.ThisByte;
 
   // DC did k = 0, now we're at k = 1
   k := 1;
@@ -709,14 +709,14 @@ begin
     RS := Table1^.Value[Idx];
     if Len = 0 then
       begin
-        Idx := AReader.NextByte^;
+        Idx := Reader_.NextByte^;
         Table2 := @FLookup[RS];
         Len := 8 + Table2^.Len[Idx];
         RS := Table2^.Value[Idx];
       end;
 
     // We already have the code, but need to actually remove the bits from the stream
-    AReader.RemoveBits(Len);
+    Reader_.RemoveBits(Len);
 
     // Split range,category
     R := RS shr 4;
@@ -743,7 +743,7 @@ begin
 
     // Process the S code, it's an index into a category.
     // We use the EXTEND function, Figure F12
-    AReader.GetBits(S);
+    Reader_.GetBits(S);
 
     // Check if we're at the end of the 8x8 zigzagging
   until k > 63;
@@ -807,7 +807,7 @@ end;
 
 { TDCProgressiveHuffmanDecoder }
 
-procedure TDCProgressiveHuffmanDecoder.DecodeProgFirst(var ABlock: TMcuBlock; AReader: TBitReader; ApproxLow: integer);
+procedure TDCProgressiveHuffmanDecoder.DecodeProgFirst(var ABlock: TMcuBlock; Reader_: TBitReader; ApproxLow: integer);
 var
   S, Code: smallint; // S = category
   Bits: word;
@@ -818,20 +818,20 @@ begin
 
   // Get the S code. Since its guaranteed to have <= 16 bits we can use
   // this two-step mechanism (without loop)
-  Idx := AReader.ThisByte^;
+  Idx := Reader_.ThisByte^;
   Table := @FLookup[0];
   Len := Table^.Len[Idx];
   S := Table^.Value[Idx];
   if Len = 0 then
     begin
-      Idx := AReader.NextByte^;
+      Idx := Reader_.NextByte^;
       Table := @FLookup[S];
       Len := 8 + Table^.Len[Idx];
       S := Table^.Value[Idx];
     end;
 
   // We already have the code, but need to actually remove the bits from the stream
-  AReader.RemoveBits(Len);
+  Reader_.RemoveBits(Len);
 
   // Process the S code, it's an index into a category. We find "Code", and correct
   // it with the Pred value (undifferencing)
@@ -839,7 +839,7 @@ begin
   if S > 0 then
     begin
       // We use the EXTEND function, Figure F12
-      Bits := AReader.GetBits(S);
+      Bits := Reader_.GetBits(S);
       if Bits < cExtendTest[S] then
           Code := Bits + cExtendOffset[S]
       else
@@ -854,7 +854,7 @@ begin
   ABlock.Values^[0] := Code shl ApproxLow;
 end;
 
-procedure TDCProgressiveHuffmanDecoder.DecodeProgRefine(var ABlock: TMcuBlock; AReader: TBitReader; ApproxLow: integer);
+procedure TDCProgressiveHuffmanDecoder.DecodeProgRefine(var ABlock: TMcuBlock; Reader_: TBitReader; ApproxLow: integer);
 var
   Plus: integer;
   Value: Psmallint;
@@ -864,7 +864,7 @@ begin
   Value := @ABlock.Values^[0];
 
   // Update block
-  if AReader.GetBits(1) = 1 then
+  if Reader_.GetBits(1) = 1 then
     begin
       if Value^ > 0 then
           inc(Value^, Plus)
@@ -875,7 +875,7 @@ end;
 
 { TACProgressiveHuffmanDecoder }
 
-procedure TACProgressiveHuffmanDecoder.DecodeProgFirst(var ABlock: TMcuBlock; AReader: TBitReader; var EOBRun: integer; SSStart, SSEnd, ApproxLow: integer);
+procedure TACProgressiveHuffmanDecoder.DecodeProgFirst(var ABlock: TMcuBlock; Reader_: TBitReader; var EOBRun: integer; SSStart, SSEnd, ApproxLow: integer);
 var
   k, kz: integer; // Position in zigzag
   Values: PsdCoefBlock;
@@ -895,8 +895,8 @@ begin
 
   // Prepare some local variables for fast access
   Table1 := @FLookup[0];
-  ThisByte := AReader.ThisByte;
-  NextByte := AReader.NextByte;
+  ThisByte := Reader_.ThisByte;
+  NextByte := Reader_.NextByte;
   Values := ABlock.Values;
 
   // Start of the spectral band
@@ -920,7 +920,7 @@ begin
         end;
 
       // We already have the code, but need to actually remove the bits from the stream
-      AReader.RemoveBits(Len);
+      Reader_.RemoveBits(Len);
 
       // Split range,category
       R := RS shr 4;
@@ -934,7 +934,7 @@ begin
 
           // Process the S code, it's an index into a category.
           // We use the EXTEND function, Figure F12
-          R := AReader.GetBits(S);
+          R := Reader_.GetBits(S);
           if R < cExtendTest[S] then
               S := R + cExtendOffset[S]
           else
@@ -961,7 +961,7 @@ begin
               EOBRun := 1 shl R;
               if R > 0 then
                 begin
-                  R := AReader.GetBits(R);
+                  R := Reader_.GetBits(R);
                   inc(EOBRun, R);
                 end;
               dec(EOBRun);
@@ -973,7 +973,7 @@ begin
     end;
 end;
 
-procedure TACProgressiveHuffmanDecoder.DecodeProgRefine(var ABlock: TMcuBlock; AReader: TBitReader; var EOBRun: integer; SSStart, SSEnd, ApproxLow: integer);
+procedure TACProgressiveHuffmanDecoder.DecodeProgRefine(var ABlock: TMcuBlock; Reader_: TBitReader; var EOBRun: integer; SSStart, SSEnd, ApproxLow: integer);
 var
   k, kz: integer;
   Values: PsdCoefBlock;
@@ -987,8 +987,8 @@ begin
   // Prepare some local variables for fast access
   Plus := 1 shl ApproxLow;
   Table1 := @FLookup[0];
-  ThisByte := AReader.ThisByte;
-  NextByte := AReader.NextByte;
+  ThisByte := Reader_.ThisByte;
+  NextByte := Reader_.NextByte;
   Values := ABlock.Values;
 
   // Start of the spectral band
@@ -1014,7 +1014,7 @@ begin
             end;
 
           // We already have the code, but need to actually remove the bits from the stream
-          AReader.RemoveBits(Len);
+          Reader_.RemoveBits(Len);
 
           // Split range,category
           R := RS shr 4;
@@ -1026,7 +1026,7 @@ begin
               EOBRun := 1 shl R;
               if R <> 0 then
                 begin
-                  R := AReader.GetBits(R);
+                  R := Reader_.GetBits(R);
                   inc(EOBRun, R);
                 end;
               break;
@@ -1034,7 +1034,7 @@ begin
 
           if S <> 0 then
             begin
-              case AReader.GetBits(1) of
+              case Reader_.GetBits(1) of
                 1: S := Plus;
                 0: S := -Plus;
               end;
@@ -1045,7 +1045,7 @@ begin
             kz := cJpegInverseZigZag8x8[k];
             if Values^[kz] <> 0 then
               begin
-                if AReader.GetBits(1) = 1 then
+                if Reader_.GetBits(1) = 1 then
                   begin
                     if Values^[kz] > 0 then
                         inc(Values^[kz], Plus)
@@ -1087,7 +1087,7 @@ begin
           kz := cJpegInverseZigZag8x8[k];
           if Values^[kz] <> 0 then
             begin
-              if AReader.GetBits(1) = 1 then
+              if Reader_.GetBits(1) = 1 then
                 begin
                   if Values^[kz] > 0 then
                       inc(Values^[kz], Plus)

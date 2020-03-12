@@ -41,9 +41,9 @@ uses
 {$IFDEF FPC}
   LCLIntf,
 {$ELSE}
-  Windows,
+  Types, Windows,
 {$ENDIF}
-  Classes, SysUtils, GR32, GR32_LowLevel, GR32_Containers, GR32_Layers;
+  Classes, SysUtils, GR32, GR32_Containers, GR32_Layers;
 
 type
   { TCustomRepaintOptimizer }

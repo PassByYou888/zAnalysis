@@ -42,7 +42,7 @@ uses
   ComponentEditors,
 {$ELSE}
   Windows, ExtDlgs, ToolWin, Registry, ImgList, Consts, DesignIntf,
-DesignEditors, VCLEditors,
+  DesignEditors, VCLEditors,
 {$ENDIF}
   Forms, Controls, ComCtrls, ExtCtrls, StdCtrls, Graphics, Dialogs, Menus,
   SysUtils, Classes, Clipbrd, GR32, GR32_Image, GR32_Layers, GR32_Filters;
@@ -372,7 +372,11 @@ begin
   try
     BitmapEditor := TBitmap32Editor.Create(nil);
     try
+      {$IFDEF FPC}
+      BitmapEditor.Bitmap32 := TBitmap32(GetObjectValue);
+      {$ELSE}
       BitmapEditor.Bitmap32 := TBitmap32(Pointer(GetOrdValue));
+      {$ENDIF}
       if BitmapEditor.Execute then
       begin
         SetOrdValue(Longint(BitmapEditor.Bitmap32));

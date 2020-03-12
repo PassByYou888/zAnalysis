@@ -103,11 +103,11 @@ type
     FNavBio: TNavBio;
     FNavBioIndex: Integer;
     FExtandDistance: TGeoFloat;
-    FFastEndgePass: Boolean;
+    FFastEdgePass: Boolean;
     FNeedUpdate: Boolean;
   public
     constructor Create(AOwner: TPolyPassManager;
-      ANavBio: TNavBio; ANavBioIndex: Integer; AExpandDist: TGeoFloat; AFastEndgePass: Boolean);
+      ANavBio: TNavBio; ANavBioIndex: Integer; AExpandDist: TGeoFloat; AFastEdgePass: Boolean);
     destructor Destroy; override;
     procedure BuildPass(AExpandDist: TGeoFloat); override;
     function pass(APass: TBasePass): Boolean; override;
@@ -216,7 +216,7 @@ type
     FPassManager: TPolyPassManager;
 
     // in Pass manager
-    FEndgePassList: TCoreClassListForObj;
+    FEdgePassList: TCoreClassListForObj;
 
     FPosition: TVec2;
     FRollAngle: TGeoFloat;
@@ -316,7 +316,7 @@ type
     property PositionChanged: Boolean read FInternalStates.PositionChanged write FInternalStates.PositionChanged;
 
     // TNavigationBioPass of list
-    property EndgePassList: TCoreClassListForObj read FEndgePassList;
+    property EdgePassList: TCoreClassListForObj read FEdgePassList;
   end;
 
   TNavBioNotify = procedure(Sender: TNavBio) of object;
@@ -592,16 +592,16 @@ begin
 end;
 
 constructor TNavigationBioPass.Create(AOwner: TPolyPassManager;
-  ANavBio: TNavBio; ANavBioIndex: Integer; AExpandDist: TGeoFloat; AFastEndgePass: Boolean);
+  ANavBio: TNavBio; ANavBioIndex: Integer; AExpandDist: TGeoFloat; AFastEdgePass: Boolean);
 begin
   inherited Create(AOwner);
   FNavBio := ANavBio;
   FNavBioIndex := ANavBioIndex;
   FExtandDistance := AExpandDist;
-  FFastEndgePass := AFastEndgePass;
+  FFastEdgePass := AFastEdgePass;
   FNeedUpdate := True;
 
-  FNavBio.EndgePassList.Add(Self);
+  FNavBio.EdgePassList.Add(Self);
 end;
 
 destructor TNavigationBioPass.Destroy;
@@ -609,10 +609,10 @@ var
   i: Integer;
 begin
   i := 0;
-  while i < FNavBio.EndgePassList.Count do
+  while i < FNavBio.EdgePassList.Count do
     begin
-      if FNavBio.EndgePassList[i] = Self then
-          FNavBio.EndgePassList.Delete(i)
+      if FNavBio.EdgePassList[i] = Self then
+          FNavBio.EdgePassList.Delete(i)
       else
           inc(i);
     end;
@@ -626,7 +626,7 @@ var
   b: TBasePass;
 begin
   ClearPass;
-  if FFastEndgePass then
+  if FFastEdgePass then
     begin
       pt := GetPosition;
       for i := 0 to FOwner.Count - 1 do
@@ -1224,10 +1224,10 @@ var
 
         if AngleDistance(a1, a3) < AngleDistance(a2, a3) then
           // dir to index 0..1
-            LastPos := L.OwnerDeflectionPolygon.LerpToEndge(LastPos, totaldist, radius + 1, L.OwnerDeflectionPolygonIndex[0], L.OwnerDeflectionPolygonIndex[1])
+            LastPos := L.OwnerDeflectionPolygon.LerpToEdge(LastPos, totaldist, radius + 1, L.OwnerDeflectionPolygonIndex[0], L.OwnerDeflectionPolygonIndex[1])
         else
           // dir to index 1..0
-            LastPos := L.OwnerDeflectionPolygon.LerpToEndge(LastPos, totaldist, radius + 1, L.OwnerDeflectionPolygonIndex[1], L.OwnerDeflectionPolygonIndex[0]);
+            LastPos := L.OwnerDeflectionPolygon.LerpToEdge(LastPos, totaldist, radius + 1, L.OwnerDeflectionPolygonIndex[1], L.OwnerDeflectionPolygonIndex[0]);
 
         NewLerpPos := LastPos;
         NewPos := LastPos;
@@ -1365,7 +1365,7 @@ begin
   inherited Create;
   FOwner := AOwner;
   FPassManager := APassManager;
-  FEndgePassList := TCoreClassListForObj.Create;
+  FEdgePassList := TCoreClassListForObj.Create;
 
   FMovementPath := TVec2List.Create;
 
@@ -1394,8 +1394,8 @@ begin
 
   DisposeObject(FMovementPath);
 
-  while FEndgePassList.Count > 0 do
-      TBasePass(FEndgePassList[0]).Delete;
+  while FEdgePassList.Count > 0 do
+      TBasePass(FEdgePassList[0]).Delete;
 
   for i := 0 to FCollisionList.Count - 1 do
       TNavBio(FCollisionList[i]).UnLinkCollision(Self, False);
@@ -1410,7 +1410,7 @@ begin
     end;
 
   DisposeObject(FCollisionList);
-  DisposeObject(FEndgePassList);
+  DisposeObject(FEdgePassList);
   FInternalStates.ReleaseSelf;
 
   inherited Destroy;
@@ -1539,10 +1539,10 @@ var
 
         if AngleDistance(a1, a3) < AngleDistance(a2, a3) then
           // dir to index 0..1
-            LastPos := L.OwnerDeflectionPolygon.LerpToEndge(LastPos, totaldist, radius + 1, L.OwnerDeflectionPolygonIndex[0], L.OwnerDeflectionPolygonIndex[1])
+            LastPos := L.OwnerDeflectionPolygon.LerpToEdge(LastPos, totaldist, radius + 1, L.OwnerDeflectionPolygonIndex[0], L.OwnerDeflectionPolygonIndex[1])
         else
           // dir to index 1..0
-            LastPos := L.OwnerDeflectionPolygon.LerpToEndge(LastPos, totaldist, radius + 1, L.OwnerDeflectionPolygonIndex[1], L.OwnerDeflectionPolygonIndex[0]);
+            LastPos := L.OwnerDeflectionPolygon.LerpToEdge(LastPos, totaldist, radius + 1, L.OwnerDeflectionPolygonIndex[1], L.OwnerDeflectionPolygonIndex[0]);
       end;
 
     NewPos := LastPos;
@@ -1693,7 +1693,7 @@ begin
     begin
       if IsStatic then
         begin
-          if (FEndgePassList.Count = 0) and (FCollisionList.Count = 0) then
+          if (FEdgePassList.Count = 0) and (FCollisionList.Count = 0) then
             begin
               if Assigned(FOwner.OnRebuildNavBioPass) then
                   FOwner.OnRebuildNavBioPass(Self);

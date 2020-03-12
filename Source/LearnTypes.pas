@@ -57,15 +57,15 @@ type
     ltForest,           // random decision forest
     ltLogit,            // Logistic regression
     ltLM,               // Levenberg-Marquardt
-    ltLM_MT,            // Levenberg-Marquardt with parallel
+    ltLM_MT,            // Levenberg-Marquardt with Parallel
     ltLBFGS,            // L-BFGS
-    ltLBFGS_MT,         // L-BFGS with parallel
-    ltLBFGS_MT_Mod,     // L-BFGS with parallel and optimization
+    ltLBFGS_MT,         // L-BFGS with Parallel
+    ltLBFGS_MT_Mod,     // L-BFGS with Parallel and optimization
     ltMonteCarlo,       // fast Monte Carlo train
     ltLM_Ensemble,      // Levenberg-Marquardt Ensemble
-    ltLM_Ensemble_MT,   // Levenberg-Marquardt Ensemble with parallel
+    ltLM_Ensemble_MT,   // Levenberg-Marquardt Ensemble with Parallel
     ltLBFGS_Ensemble,   // L-BFGS Ensemble
-    ltLBFGS_Ensemble_MT // L-BFGS Ensemble with parallel
+    ltLBFGS_Ensemble_MT // L-BFGS Ensemble with Parallel
     );
 
 const
@@ -77,13 +77,13 @@ const
     'Levenberg-Marquardt',
     'Levenberg-Marquardt with Parallel',
     'L-BFGS',
-    'L-BFGS with parallel',
-    'L-BFGS with parallel and optimization',
+    'L-BFGS with Parallel',
+    'L-BFGS with Parallel and optimization',
     'fast Monte Carlo',
     'Levenberg-Marquardt Ensemble',
-    'Levenberg-Marquardt Ensemble with parallel',
+    'Levenberg-Marquardt Ensemble with Parallel',
     'L-BFGS Ensemble',
-    'L-BFGS Ensemble with parallel'
+    'L-BFGS Ensemble with Parallel'
     );
 
 procedure DoStatus(v: TLVec); overload;

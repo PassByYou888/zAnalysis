@@ -149,7 +149,7 @@ begin
   drawIntf := TDrawEngineInterface_FMX.Create;
   FixedCadencer := TCadencer.Create;
   FixedCadencer.FixedDeltaTime := 1.0 / umlStrToInt(fpsEdit.Text, 30);
-  FixedCadencer.ProgressIntf := Self;
+  FixedCadencer.ProgressInterface := Self;
 end;
 
 procedure TRender2VideoForm.fpsEditChange(Sender: TObject);

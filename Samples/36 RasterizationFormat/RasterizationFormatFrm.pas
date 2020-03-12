@@ -8,9 +8,9 @@ uses
 
   System.IOUtils,
 
-  CoreClasses, PascalStrings, UnicodeMixedLib, DoStatusIO, DataFrameEngine,
+  CoreClasses, PascalStrings, UnicodeMixedLib, DoStatusIO, DataFrameEngine, PhysicsIO,
   TextDataEngine, ListEngine, zDrawEngine, MemoryRaster, MemoryStream64, Geometry2DUnit,
-  zDrawEngineInterface_SlowFMX, Raster_JPEG_type;
+  zAI_Common, zDrawEngineInterface_SlowFMX, Raster_JPEG_type;
 
 type
   TRasterizationFormatForm = class(TForm)
@@ -177,13 +177,14 @@ begin
     var
       oriMR: TMemoryRaster;
     begin
-      oriMR := NewRasterFromFile(umlCombineFileName(TPath.GetLibraryPath, 'lena.bmp'));
+      oriMR := NewRasterFromFile(WhereFileFromConfigure('lena.bmp'));
+
       BuildFormat(oriMR.SaveToBmp24Stream, Image1.Bitmap, 'RGB');
       BuildFormat(oriMR.SaveToFastYV12Stream, Image2.Bitmap, 'YV12-Loss');
       BuildFormat(oriMR.SaveToFastHalfYUVStream, Image3.Bitmap, 'HalfYUV-Loss');
       BuildFormat(oriMR.SaveToFastQuartYUVStream, Image4.Bitmap, 'quartYUV-Loss');
       BuildFormat(oriMR.SaveToJpegLS3Stream, Image5.Bitmap, 'JpegLS-Loss');
-      BuildFormat(oriMR.SaveToJpegLS1Stream, Image6.Bitmap, 'JpegLS1-Loss');
+      BuildFormat(oriMR.SaveToPNGStream, Image6.Bitmap, 'PNG-RGB');
       BuildFormat(oriMR.SaveToZLibCompressStream, Image7.Bitmap, 'zLIB-RGB');
       BuildFormat(oriMR.SaveToDeflateCompressStream, Image8.Bitmap, 'deflate-RGB');
       BuildFormat(oriMR.SaveToBRRCCompressStream, Image9.Bitmap, 'BRRC-RGB');
@@ -192,18 +193,18 @@ begin
       BuildFormat(oriMR.SaveToQuartYUVStream, Image12.Bitmap, 'zLIB-QuartYUV-Loss');
       BuildFormat(oriMR.SaveToBmp32Stream, Image13.Bitmap, 'RGBA');
 
-      BuildFormat(oriMR.SaveToJpegRGBAStream, 90, Image14.Bitmap, 'Jpeg-RGBA-Qualily90-Loss');
-      BuildFormat(oriMR.SaveToJpegRGBStream, 90, Image15.Bitmap, 'Jpeg-RGB-Qualily90-Loss');
+      BuildFormat(oriMR.SaveToJpegYCbCraStream, 90, Image14.Bitmap, 'Jpeg-RGBA-Qualily90-Loss');
+      BuildFormat(oriMR.SaveToJpegYCbCrStream, 90, Image15.Bitmap, 'Jpeg-RGB-Qualily90-Loss');
       BuildFormat(oriMR.SaveToJpegGrayStream, 90, Image16.Bitmap, 'Jpeg-Gray-Qualily90-Loss');
       BuildFormat(oriMR.SaveToJpegGrayAStream, 90, Image17.Bitmap, 'Jpeg-GrayA-Qualily90-Loss');
-      BuildFormat(oriMR.SaveToJpegCMYKRGBStream, 90, Image18.Bitmap, 'Jpeg-CMYK-Qualily90-Loss');
+      BuildFormat(oriMR.SaveToJpegCMYKStream, 90, Image18.Bitmap, 'Jpeg-CMYK-Qualily90-Loss');
 
-      BuildFormat(oriMR.SaveToJpegRGBAStream, 50, Image19.Bitmap, 'Jpeg-RGBA-Qualily50-Loss');
-      BuildFormat(oriMR.SaveToJpegRGBStream, 50, Image20.Bitmap, 'Jpeg-RGB-Qualily50-Loss');
+      BuildFormat(oriMR.SaveToJpegYCbCraStream, 50, Image19.Bitmap, 'Jpeg-RGBA-Qualily50-Loss');
+      BuildFormat(oriMR.SaveToJpegYCbCrStream, 50, Image20.Bitmap, 'Jpeg-RGB-Qualily50-Loss');
       BuildFormat(oriMR.SaveToJpegGrayStream, 50, Image21.Bitmap, 'Jpeg-Gray-Qualily50-Loss');
       BuildFormat(oriMR.SaveToJpegGrayAStream, 50, Image22.Bitmap, 'Jpeg-GrayA-Qualily50-Loss');
-      BuildFormat(oriMR.SaveToJpegCMYKRGBStream, 50, Image23.Bitmap, 'Jpeg-CMYK-Qualily50-Loss');
-      BuildFormat(oriMR.SaveToJpegRGBStream, 10, Image24.Bitmap, 'Jpeg-RGB-Qualily10-Loss');
+      BuildFormat(oriMR.SaveToJpegCMYKStream, 50, Image23.Bitmap, 'Jpeg-CMYK-Qualily50-Loss');
+      BuildFormat(oriMR.SaveToJpegYCbCraStream, 10, Image24.Bitmap, 'Jpeg-RGB-Qualily10-Loss');
 
       disposeObject(oriMR);
     end);

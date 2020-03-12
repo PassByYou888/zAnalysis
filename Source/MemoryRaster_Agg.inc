@@ -91,6 +91,4 @@ end;
 procedure TMemoryRaster_Agg2D.LineRadialGradient(x, y, r: Double; c1, c2, c3: TRColor);
 begin
   inherited LineRadialGradient(x, y, r, AggColor(c1), AggColor(c2), AggColor(c3));
-end; 
- 
- 
+end;

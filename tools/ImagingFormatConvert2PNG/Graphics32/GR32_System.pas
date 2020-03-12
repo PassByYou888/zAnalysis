@@ -69,7 +69,8 @@ type
     procedure Start;
     function ReadNanoseconds: string;
     function ReadMilliseconds: string;
-    function ReadSeconds: String;
+    function ReadSeconds: string;
+
     function ReadValue: Int64;
   end;
 
@@ -126,48 +127,28 @@ end;
 { TPerfTimer }
 
 function TPerfTimer.ReadNanoseconds: string;
-var
-  t : timeval;
 begin
-  fpgettimeofday(@t,nil);
-   // Build a 64 bit microsecond tick from the seconds and microsecond longints
-  Result := IntToStr( ( (Int64(t.tv_sec) * 1000000) + t.tv_usec ) div 1000 );
+  Result := IntToStr(ReadValue);
 end;
 
 function TPerfTimer.ReadMilliseconds: string;
-var
-  t : timeval;
 begin
-  fpgettimeofday(@t,nil);
-   // Build a 64 bit microsecond tick from the seconds and microsecond longints
-  Result := IntToStr( ( (Int64(t.tv_sec) * 1000000) + t.tv_usec ) * 1000 );
+  Result := IntToStr(ReadValue div 1000);
 end;
 
 function TPerfTimer.ReadSeconds: string;
-var
-  t : timeval;
 begin
-  fpgettimeofday(@t,nil);
-   // Build a 64 bit microsecond tick from the seconds and microsecond longints
-  Result := IntToStr( ( (Int64(t.tv_sec) * 1000000) + t.tv_usec ) );
+  Result := IntToStr(ReadValue div 1000000);
 end;
 
 function TPerfTimer.ReadValue: Int64;
-var t : timeval;
 begin
-  fpgettimeofday(@t,nil);
-   // Build a 64 bit microsecond tick from the seconds and microsecond longints
-  Result := (Int64(t.tv_sec) * 1000000) + t.tv_usec;
-  Result := Result div 1000;
+  Result := GetTickCount - FStart;
 end;
 
 procedure TPerfTimer.Start;
-var
-  t : timeval;
 begin
-  fpgettimeofday(@t,nil);
-   // Build a 64 bit microsecond tick from the seconds and microsecond longints
-  FStart := (Int64(t.tv_sec) * 1000000) + t.tv_usec;
+  FStart := GetTickCount;
 end;
 {$ENDIF}
 {$ENDIF}
@@ -241,29 +222,13 @@ end;
 
 {$IFNDEF PUREPASCAL}
 const
-  CPUISChecks: Array[TCPUInstructionSet] of Cardinal =
+  CPUISChecks: array [TCPUInstructionSet] of Cardinal =
     ($800000,  $400000, $2000000, $4000000, $80000000, $40000000);
     {ciMMX  ,  ciEMMX,  ciSSE   , ciSSE2  , ci3DNow ,  ci3DNowExt}
 
 function CPUID_Available: Boolean;
 asm
-{$IFDEF TARGET_x64}
-        MOV       EDX,False
-        PUSHFQ
-        POP       RAX
-        MOV       ECX,EAX
-        XOR       EAX,$00200000
-        PUSH      RAX
-        POPFQ
-        PUSHFQ
-        POP       RAX
-        XOR       ECX,EAX
-        JZ        @1
-        MOV       EDX,True
-@1:     PUSH      RAX
-        POPFQ
-        MOV       EAX,EDX
-{$ELSE}
+{$IFDEF TARGET_x86}
         MOV       EDX,False
         PUSHFD
         POP       EAX
@@ -280,16 +245,28 @@ asm
         POPFD
         MOV       EAX,EDX
 {$ENDIF}
+{$IFDEF TARGET_x64}
+        MOV       EDX,False
+        PUSHFQ
+        POP       RAX
+        MOV       ECX,EAX
+        XOR       EAX,$00200000
+        PUSH      RAX
+        POPFQ
+        PUSHFQ
+        POP       RAX
+        XOR       ECX,EAX
+        JZ        @1
+        MOV       EDX,True
+@1:     PUSH      RAX
+        POPFQ
+        MOV       EAX,EDX
+{$ENDIF}
 end;
 
 function CPU_Signature: Integer;
 asm
-{$IFDEF TARGET_x64}
-        PUSH      RBX
-        MOV       EAX,1
-        CPUID
-        POP       RBX
-{$ELSE}
+{$IFDEF TARGET_x86}
         PUSH      EBX
         MOV       EAX,1
         {$IFDEF FPC}
@@ -299,17 +276,17 @@ asm
         {$ENDIF}
         POP       EBX
 {$ENDIF}
-end;
-
-function CPU_Features: Integer;
-asm
 {$IFDEF TARGET_x64}
         PUSH      RBX
         MOV       EAX,1
         CPUID
         POP       RBX
-        MOV       EAX,EDX
-{$ELSE}
+{$ENDIF}
+end;
+
+function CPU_Features: Integer;
+asm
+{$IFDEF TARGET_x86}
         PUSH      EBX
         MOV       EAX,1
         {$IFDEF FPC}
@@ -318,25 +295,20 @@ asm
         DW        $A20F   // CPUID
         {$ENDIF}
         POP       EBX
+        MOV       EAX,EDX
+{$ENDIF}
+{$IFDEF TARGET_x64}
+        PUSH      RBX
+        MOV       EAX,1
+        CPUID
+        POP       RBX
         MOV       EAX,EDX
 {$ENDIF}
 end;
 
 function CPU_ExtensionsAvailable: Boolean;
 asm
-{$IFDEF TARGET_x64}
-        PUSH      RBX
-        MOV       @Result, True
-        MOV       EAX, $80000000
-        CPUID
-        CMP       EAX, $80000000
-        JBE       @NOEXTENSION
-        JMP       @EXIT
-        @NOEXTENSION:
-        MOV       @Result, False
-        @EXIT:
-        POP       RBX
-{$ELSE}
+{$IFDEF TARGET_x86}
         PUSH      EBX
         MOV       @Result, True
         MOV       EAX, $80000000
@@ -353,17 +325,24 @@ asm
       @EXIT:
         POP       EBX
 {$ENDIF}
+{$IFDEF TARGET_x64}
+        PUSH      RBX
+        MOV       @Result, True
+        MOV       EAX, $80000000
+        CPUID
+        CMP       EAX, $80000000
+        JBE       @NOEXTENSION
+        JMP       @EXIT
+        @NOEXTENSION:
+        MOV       @Result, False
+        @EXIT:
+        POP       RBX
+{$ENDIF}
 end;
 
 function CPU_ExtFeatures: Integer;
 asm
-{$IFDEF TARGET_x64}
-        PUSH      RBX
-        MOV       EAX, $80000001
-        CPUID
-        POP       RBX
-        MOV       EAX,EDX
-{$ELSE}
+{$IFDEF TARGET_x86}
         PUSH      EBX
         MOV       EAX, $80000001
         {$IFDEF FPC}
@@ -372,6 +351,13 @@ asm
         DW        $A20F   // CPUID
         {$ENDIF}
         POP       EBX
+        MOV       EAX,EDX
+{$ENDIF}
+{$IFDEF TARGET_x64}
+        PUSH      RBX
+        MOV       EAX, $80000001
+        CPUID
+        POP       RBX
         MOV       EAX,EDX
 {$ENDIF}
 end;

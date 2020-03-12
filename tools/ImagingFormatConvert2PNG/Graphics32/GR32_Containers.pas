@@ -39,15 +39,16 @@ interface
 
 uses
 {$IFDEF FPC}
-  Types,
   {$IFDEF Windows}
   Windows,
+  {$ELSE}
+  Types,
   {$ENDIF}
 {$ELSE}
-  Windows,
+  Types, Windows,
 {$ENDIF}
   RTLConsts,
-  GR32, SysUtils, GR32_LowLevel, Classes, TypInfo;
+  GR32, SysUtils, Classes, TypInfo;
 
 const
   BUCKET_MASK = $FF;               
@@ -179,7 +180,7 @@ type
     function IndexOf(AClass: TClass): Integer;
     function First: TClass;
     function Last: TClass;
-    function Find(AClassName: string): TClass;
+    function Find(const AClassName: string): TClass;
     procedure GetClassNames(Strings: TStrings);
     procedure Insert(Index: Integer; AClass: TClass);
     property Items[Index: Integer]: TClass read GetItems write SetItems; default;
@@ -230,6 +231,9 @@ procedure Advance(var Node: PLinkedNode; Steps: Integer = 1);
 
 implementation
 
+uses
+  GR32_LowLevel;
+
 procedure SmartAssign(Src, Dst: TPersistent; TypeKinds: TTypeKinds = tkProperties);
 var
   Count, I: Integer;
@@ -246,6 +250,7 @@ begin
     // ie. mimic how the Delphi form loader would set the properties.
     Count := GetPropList(Src.ClassInfo, TypeKinds, Props, False);
 
+    {$IFNDEF NEXTGEN}
     for I := 0 to Count - 1 do
     with Props^[I]^ do
     begin
@@ -261,6 +266,7 @@ begin
       else
         SetPropValue(Dst, string(Name), GetPropValue(Src, string(Name), True));
     end;
+    {$ENDIF}
   finally
     FreeMem(Props, Count * SizeOf(PPropInfo));
   end;
@@ -421,7 +427,11 @@ function TPointerMap.Exists(Item: PItem; out BucketIndex, ItemIndex: Integer): B
 var
   I: Integer;
 begin
+{$IFDEF HAS_NATIVEINT}
+  BucketIndex := NativeUInt(Item) shr 8 and BUCKET_MASK; // KISS pointer hash(TM)
+{$ELSE}
   BucketIndex := Cardinal(Item) shr 8 and BUCKET_MASK; // KISS pointer hash(TM)
+{$ENDIF}
   // due to their randomness, pointers most commonly differ at byte 1, we use
   // this characteristic for our hash and just apply the mask to it.
   // Worst case scenario happens when most changes are at byte 0, which causes
@@ -443,7 +453,15 @@ var
   BucketIndex, ItemIndex: Integer;
 begin
   if not Exists(Item, BucketIndex, ItemIndex) then
+{$IFDEF FPC}
+    raise EListError.CreateFmt(SItemNotFound, [Item])
+{$ELSE}
+{$IFDEF HAS_NATIVEINT}
+    raise EListError.CreateFmt(SItemNotFound, [NativeInt(Item)])
+{$ELSE}
     raise EListError.CreateFmt(SItemNotFound, [Integer(Item)])
+{$ENDIF}
+{$ENDIF}
   else
     Result := FBuckets[BucketIndex].Items[ItemIndex].Data;
 end;
@@ -453,7 +471,15 @@ var
   BucketIndex, ItemIndex: Integer;
 begin
   if not Exists(Item, BucketIndex, ItemIndex) then
+{$IFDEF FPC}
+    raise EListError.CreateFmt(SItemNotFound, [Item])
+{$ELSE}
+{$IFDEF HAS_NATIVEINT}
+    raise EListError.CreateFmt(SItemNotFound, [NativeInt(Item)])
+{$ELSE}
     raise EListError.CreateFmt(SItemNotFound, [Integer(Item)])
+{$ENDIF}
+{$ENDIF}
   else
     FBuckets[BucketIndex].Items[ItemIndex].Data := Data;
 end;
@@ -643,7 +669,7 @@ begin
   Result := TClass(inherited Extract(Item));
 end;
 
-function TClassList.Find(AClassName: string): TClass;
+function TClassList.Find(const AClassName: string): TClass;
 var
   I: Integer;
 begin
@@ -835,4 +861,4 @@ begin
   end;
 end;
 
-end.
+end.

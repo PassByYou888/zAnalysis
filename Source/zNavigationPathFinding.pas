@@ -25,15 +25,14 @@ interface
 uses CoreClasses, zNavigationPass, Geometry2DUnit;
 
 type
+  TStepStackData = record
+    PassIndex: Integer;
+  end;
+
+  PStepStackData = ^TStepStackData;
+  TDecisionInt = -1 .. 1;
+
   TNavStepFinding = class(TCoreClassPersistent)
-  private type
-    TStepStackData = record
-      PassIndex: Integer;
-    end;
-
-    PStepStackData = ^TStepStackData;
-
-    TDecisionInt = -1 .. 1;
   private
     FPassManager: TPolyPassManager;
     FStackList: TCoreClassList;

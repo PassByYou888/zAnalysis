@@ -108,13 +108,13 @@ procedure TRaster_IO_Processor.IOProcessorThreadRun(ThSender: TComputeThread);
       end;
   end;
 
-{$IFDEF parallel}
+{$IFDEF Parallel}
   procedure DoParallelProcessPick(pickBuff: TRaster_IO_Buffer);
   var
     tmp_buff: TRaster_IO_Buffer;
     tmp_buff_state: array of Boolean;
 {$IFDEF FPC}
-    procedure Nested_ParallelFor(pass: PtrInt; data: Pointer; Item: TMultiThreadProcItem);
+    procedure Nested_ParallelFor(pass: Integer);
     var
       vio: TRaster_IO;
     begin
@@ -139,9 +139,9 @@ procedure TRaster_IO_Processor.IOProcessorThreadRun(ThSender: TComputeThread);
     SetLength(tmp_buff_state, tmp_buff.Count);
 
 {$IFDEF FPC}
-    ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, tmp_buff.Count - 1);
+    FPCParallelFor(@Nested_ParallelFor, 0, tmp_buff.Count - 1);
 {$ELSE FPC}
-    TParallel.for(0, tmp_buff.Count - 1, procedure(pass: Integer)
+    DelphiParallelFor(0, tmp_buff.Count - 1, procedure(pass: Integer)
       var
         vio: TRaster_IO;
       begin
@@ -169,7 +169,7 @@ procedure TRaster_IO_Processor.IOProcessorThreadRun(ThSender: TComputeThread);
     UnLockObject(FOutputBuffer);
     SetLength(tmp_buff_state, 0);
   end;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 
 
 var
@@ -178,11 +178,11 @@ begin
   while (InputCount > 0) do
     begin
       pickList := DoPickBuff();
-{$IFDEF parallel}
+{$IFDEF Parallel}
       if FParallelProcessor then
           DoParallelProcessPick(pickList)
       else
-{$ENDIF parallel}
+{$ENDIF Parallel}
           DoProcessPick(pickList);
       DisposeObject(pickList);
       TCoreClassThread.Sleep(10);

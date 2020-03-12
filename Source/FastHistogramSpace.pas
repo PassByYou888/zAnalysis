@@ -20,10 +20,9 @@
 { ****************************************************************************** }
 unit FastHistogramSpace;
 
-interface
-
 {$INCLUDE zDefine.inc}
 
+interface
 
 uses CoreClasses, MemoryRaster, Geometry2DUnit, LearnTypes;
 
@@ -82,20 +81,11 @@ type
     procedure BuildViewer(output: TMemoryRaster);
   end;
 
-procedure TestHOG(inputfile, viewfile: string);
+procedure TestHOG(Test_performace: Boolean; inputfile, viewfile: string);
 
 implementation
 
-uses
-  Math, DoStatusIO,
-{$IFDEF parallel}
-{$IFDEF FPC}
-  mtprocs,
-{$ELSE FPC}
-  Threading,
-{$ENDIF FPC}
-{$ENDIF parallel}
-  SyncObjs, Learn;
+uses Math, DoStatusIO, Learn;
 
 const
   NUM_DIFF = 511;
@@ -278,9 +268,9 @@ begin
 end;
 
 procedure THOG.ComputeRGB_Diff(img: TMemoryRaster; const M: PLMatrix);
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor(pass: Integer);
   var
     x, xDiffs, yDiffs, magni: TLInt;
     pcl, pcr, pct, pcb: TRasterColorEntry;
@@ -314,7 +304,7 @@ procedure THOG.ComputeRGB_Diff(img: TMemoryRaster; const M: PLMatrix);
       end;
   end;
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
   procedure DoFor;
   var
     pass, x, xDiffs, yDiffs, magni: TLInt;
@@ -349,15 +339,15 @@ procedure THOG.ComputeRGB_Diff(img: TMemoryRaster; const M: PLMatrix);
             end;
         end;
   end;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 
 
 begin
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor, 0, height - 1);
+  FPCParallelFor(@Nested_ParallelFor, 0, height - 1);
 {$ELSE FPC}
-  TParallel.for(0, height - 1, procedure(pass: Integer)
+  DelphiParallelFor(0, height - 1, procedure(pass: Integer)
     var
       x, xDiffs, yDiffs, magni: TLInt;
       pcl, pcr, pct, pcb: TRasterColorEntry;
@@ -391,18 +381,18 @@ begin
         end;
     end);
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
   DoFor;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 end;
 
 procedure THOG.ComputeHistogram(const AntiLight: Boolean; const oriH, oriF: PLIMatrix; const BW: PLMatrix; const itp: THOGTable.PItpRecArray);
 var
   setoff: TLInt;
 
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor_Weight(y: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor_Weight(y: Integer);
   var
     x, n: TLInt;
     xDiff, yDiff, oriIdxFull, oriIdxHalf: TLInt;
@@ -431,7 +421,7 @@ var
           end;
       end;
   end;
-  procedure Nested_ParallelFor_normH(cellY: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor_normH(cellY: Integer);
   var
     cellX, n: TLInt;
     HP: PHRec;
@@ -443,7 +433,7 @@ var
             LAdd(HP^.normH, HP^.binH[n mod HP^.nOriF] * HP^.binH[n mod HP^.nOriF]);
       end;
   end;
-  procedure Nested_ParallelFor_Ori(cellY: PtrInt; Data: Pointer; Item: TMultiThreadProcItem);
+  procedure Nested_ParallelFor_Ori(cellY: Integer);
   var
     cellX, n: TLInt;
     HP: PHRec;
@@ -496,7 +486,7 @@ var
       end;
   end;
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
   procedure DoFor_Weight;
   var
     y, x, n: TLInt;
@@ -593,19 +583,19 @@ var
             end;
         end;
   end;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 
 
 begin
   setoff := ori[0, 0].nOriH + ori[0, 0].nOriF;
 
-{$IFDEF parallel}
+{$IFDEF Parallel}
 {$IFDEF FPC}
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor_Weight, 0, height - 1);
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor_normH, 0, hSizY - 1);
-  ProcThreadPool.DoParallelLocalProc(@Nested_ParallelFor_Ori, 1, nCY - 1);
+  FPCParallelFor(@Nested_ParallelFor_Weight, 0, height - 1);
+  FPCParallelFor(@Nested_ParallelFor_normH, 0, hSizY - 1);
+  FPCParallelFor(@Nested_ParallelFor_Ori, 1, nCY - 1);
 {$ELSE FPC}
-  TParallel.for(0, height - 1, procedure(y: Integer)
+  DelphiParallelFor(0, height - 1, procedure(y: Integer)
     var
       x, n: TLInt;
       xDiff, yDiff, oriIdxFull, oriIdxHalf: TLInt;
@@ -634,7 +624,7 @@ begin
             end;
         end;
     end);
-  TParallel.for(0, hSizY - 1, procedure(cellY: Integer)
+  DelphiParallelFor(0, hSizY - 1, procedure(cellY: Integer)
     var
       cellX, n: TLInt;
       HP: PHRec;
@@ -646,7 +636,7 @@ begin
               LAdd(HP^.normH, HP^.binH[n mod HP^.nOriF] * HP^.binH[n mod HP^.nOriF]);
         end;
     end);
-  TParallel.for(1, nCY - 1, procedure(cellY: Integer)
+  DelphiParallelFor(1, nCY - 1, procedure(cellY: Integer)
     var
       cellX, n: TLInt;
       HP: PHRec;
@@ -699,11 +689,11 @@ begin
         end;
     end);
 {$ENDIF FPC}
-{$ELSE parallel}
+{$ELSE Parallel}
   DoFor_Weight;
   DoFor_normH;
   DoFor_Ori;
-{$ENDIF parallel}
+{$ENDIF Parallel}
 end;
 
 constructor THOG.Create(Table: THOGTable; img: TMemoryRaster);
@@ -771,8 +761,6 @@ var
   cellY, cellX, n: TLInt;
   maxBinValue: TLFloat;
 begin
-  output.SetSize(cSiz * nCX, cSiz * nCY, RasterColorF(0, 0, 0, 0));
-
   maxBinValue := -Learn.MaxRealNumber;
 
   for cellY := 1 to nCY do
@@ -802,21 +790,20 @@ begin
                 end
               else
                 begin
-                  pixValue := LClamp(pixValue, 0, 255);
+                  pixValue := LClamp(pixValue, 0, $FF);
                   p := PointRotation(cp, cSiz * 0.5, (MaxIdx * (360 / numOri)));
-                  output.LineF(PointLerpTo(p, cp, cSiz), p, RasterColor(pixValue, 0, 0, pixValue), True);
+                  output.LineF(PointLerpTo(p, cp, cSiz), p, RasterColor(pixValue, pixValue, pixValue, pixValue), True);
                 end;
             end;
         end;
     end;
 end;
 
-procedure TestHOG(inputfile, viewfile: string);
+procedure TestHOG(Test_performace: Boolean; inputfile, viewfile: string);
 var
   tab: THOGTable;
   HOG: THOG;
   img: TMemoryRaster;
-  view: TMemoryRaster;
   i: TLInt;
   t: TTimeTick;
   M: TLMatrix;
@@ -825,23 +812,20 @@ begin
 
   tab := THOGTable.Create(18, 36, 16);
 
-  t := GetTimeTick;
-  for i := 1 to 100 do
+  if Test_performace then
     begin
-      HOG := THOG.CreateAntiLight(tab, img);
-      DisposeObject(HOG);
+      t := GetTimeTick;
+      for i := 1 to 100 do
+        begin
+          HOG := THOG.CreateAntiLight(tab, img);
+          DisposeObject(HOG);
+        end;
+      DoStatus('%dms', [GetTimeTick - t]);
     end;
-  DoStatus('%dms', [GetTimeTick - t]);
 
   HOG := THOG.CreateAntiLight(tab, img);
-
-  view := TMemoryRaster.Create;
-  view.OpenAgg;
-  HOG.BuildViewer(view);
-  img.Draw(-8, -8, view);
+  HOG.BuildViewer(img);
   img.SaveToFile(viewfile);
-  DisposeObject(view);
-
   DisposeObject(tab);
   DisposeObject(HOG);
   DisposeObject(img);

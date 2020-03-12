@@ -43,14 +43,14 @@ interface
 {$I GR32.inc}
 
 uses
-  {$IFDEF FPC} LCLIntf, LCLType, Types, Controls, Graphics,{$ELSE}
-  Windows, Messages, Controls, Graphics,{$ENDIF}
-  Classes, SysUtils, GR32_System;
-  
+  {$IFDEF FPC} LCLIntf, LCLType, Types, {$ELSE}
+  {$IFDEF COMPILERXE2_UP}UITypes, Types, {$ENDIF} Windows, {$ENDIF}
+  Controls, Graphics, Classes, SysUtils;
+
 { Version Control }
 
 const
-  Graphics32Version = '1.9.1';
+  Graphics32Version = '2.0.0 alpha';
 
 { 32-bit Color }
 
@@ -62,13 +62,21 @@ type
   TColor32Array = array [0..0] of TColor32;
   TArrayOfColor32 = array of TColor32;
 
+{$IFNDEF RGBA_FORMAT}
   TColor32Component = (ccBlue, ccGreen, ccRed, ccAlpha);
+{$ELSE}
+  TColor32Component = (ccRed, ccGreen, ccBlue, ccAlpha);
+{$ENDIF}
   TColor32Components = set of TColor32Component;
 
   PColor32Entry = ^TColor32Entry;
   TColor32Entry = packed record
     case Integer of
+{$IFNDEF RGBA_FORMAT}
       0: (B, G, R, A: Byte);
+{$ELSE}
+      0: (R, G, B, A: Byte);
+{$ENDIF}
       1: (ARGB: TColor32);
       2: (Planes: array[0..3] of Byte);
       3: (Components: array[TColor32Component] of Byte);
@@ -235,6 +243,7 @@ const
 
   // Some semi-transparent color constants
   clTrWhite32             = TColor32($7FFFFFFF);
+  clTrGray32              = TColor32($7F7F7F7F);
   clTrBlack32             = TColor32($7F000000);
   clTrRed32               = TColor32($7FFF0000);
   clTrGreen32             = TColor32($7F00FF00);
@@ -257,13 +266,18 @@ function GreenComponent(Color32: TColor32): Integer; {$IFDEF USEINLINING} inline
 function BlueComponent(Color32: TColor32): Integer; {$IFDEF USEINLINING} inline; {$ENDIF}
 function AlphaComponent(Color32: TColor32): Integer; {$IFDEF USEINLINING} inline; {$ENDIF}
 function Intensity(Color32: TColor32): Integer; {$IFDEF USEINLINING} inline; {$ENDIF}
+function InvertColor(Color32: TColor32): TColor32; {$IFDEF USEINLINING} inline; {$ENDIF}
 function SetAlpha(Color32: TColor32; NewAlpha: Integer): TColor32; {$IFDEF USEINLINING} inline; {$ENDIF}
+procedure ModifyAlpha(var Color32: TColor32; NewAlpha: Byte); {$IFDEF USEINLINING} inline; {$ENDIF}
+procedure ScaleAlpha(var Color32: TColor32; Scale: Single); {$IFDEF USEINLINING} inline; {$ENDIF}
 
 // Color space conversion
 function HSLtoRGB(H, S, L: Single): TColor32; overload;
 procedure RGBtoHSL(RGB: TColor32; out H, S, L : Single); overload;
-function HSLtoRGB(H, S, L: Integer): TColor32; overload;
+function HSLtoRGB(H, S, L: Integer; A: Integer = $ff): TColor32; overload;
 procedure RGBtoHSL(RGB: TColor32; out H, S, L: Byte); overload;
+function HSVtoRGB(H, S, V: Single): TColor32;
+procedure RGBToHSV(Color: TColor32; out H, S, V: Single);
 
 {$IFNDEF PLATFORM_INDEPENDENT}
 // Palette conversion functions
@@ -276,8 +290,11 @@ type
   // This type has data bits arrangement compatible with Windows.TFixed
   PFixed = ^TFixed;
   TFixed = type Integer;
+  {$NODEFINE TFixed}
 
+  {$NODEFINE PFixedRec}
   PFixedRec = ^TFixedRec;
+  {$NODEFINE TFixedRec}
   TFixedRec = packed record
     case Integer of
       0: (Fixed: TFixed);
@@ -314,6 +331,13 @@ type
   PArrayOfArrayOfInteger = ^TArrayOfArrayOfInteger;
   TArrayOfArrayOfInteger = array of TArrayOfInteger;
 
+  PCardinalArray = ^TCardinalArray;
+  TCardinalArray = array [0..0] of Cardinal;
+  PArrayOfCardinal = ^TArrayOfCardinal;
+  TArrayOfCardinal = array of Cardinal;
+  PArrayOfArrayOfCardinal = ^TArrayOfArrayOfCardinal;
+  TArrayOfArrayOfCardinal = array of TArrayOfCardinal;
+
   PSingleArray = ^TSingleArray;
   TSingleArray = array [0..0] of Single;
   PArrayOfSingle = ^TArrayOfSingle;
@@ -329,7 +353,9 @@ const
   FixedOne = $10000;
   FixedHalf = $7FFF;
   FixedPI  = Round(PI * FixedOne);
-  FixedToFloat = 1/FixedOne;
+  FixedToFloat = 1 / FixedOne;
+
+  COne255th = 1 / $FF;
 
 function Fixed(S: Single): TFixed; overload; {$IFDEF USEINLINING} inline; {$ENDIF}
 function Fixed(I: Integer): TFixed; overload; {$IFDEF USEINLINING} inline; {$ENDIF}
@@ -354,6 +380,29 @@ type
   PFloatPoint = ^TFloatPoint;
   TFloatPoint = record
     X, Y: TFloat;
+  {$IFDEF SUPPORT_ENHANCED_RECORDS}
+  public
+    {$IFNDEF FPC}
+    {$IFDEF COMPILERXE2_UP}
+    constructor Create(P: TPointF); overload;
+    {$ENDIF}
+    constructor Create(P: TPoint); overload;
+    constructor Create(X, Y: Integer); overload;
+    constructor Create(X, Y: Single); overload;
+    {$ENDIF}
+
+    // operator overloads
+    class operator Equal(const Lhs, Rhs: TFloatPoint): Boolean;
+    class operator NotEqual(const Lhs, Rhs: TFloatPoint): Boolean;
+    class operator Add(const Lhs, Rhs: TFloatPoint): TFloatPoint;
+    class operator Subtract(const Lhs, Rhs: TFloatPoint): TFloatPoint;
+    {$IFDEF COMPILERXE2_UP}
+    class operator Explicit(A: TPointF): TFloatPoint;
+    class operator Implicit(A: TPointF): TFloatPoint;
+    {$ENDIF}
+
+    class function Zero: TFloatPoint; inline; static;
+  {$ENDIF}
   end;
 
   PFloatPointArray = ^TFloatPointArray;
@@ -366,7 +415,28 @@ type
   PFixedPoint = ^TFixedPoint;
   TFixedPoint = record
     X, Y: TFixed;
+  {$IFDEF SUPPORT_ENHANCED_RECORDS}
+  public
+    {$IFNDEF FPC}
+    {$IFDEF COMPILERXE2_UP}
+    constructor Create(P: TPointF); overload;
+    {$ENDIF}
+    constructor Create(P: TFloatPoint); overload;
+    constructor Create(X, Y: TFixed); overload;
+    constructor Create(X, Y: Integer); overload;
+    constructor Create(X, Y: TFloat); overload;
+    {$ENDIF}
+
+    // operator overloads
+    class operator Equal(const Lhs, Rhs: TFixedPoint): Boolean;
+    class operator NotEqual(const Lhs, Rhs: TFixedPoint): Boolean;
+    class operator Add(const Lhs, Rhs: TFixedPoint): TFixedPoint;
+    class operator Subtract(const Lhs, Rhs: TFixedPoint): TFixedPoint;
+
+    class function Zero: TFixedPoint; inline; static;
+  {$ENDIF}
   end;
+  {$NODEFINE TFixedPoint}
 
   PFixedPointArray = ^TFixedPointArray;
   TFixedPointArray = array [0..0] of TFixedPoint;
@@ -396,13 +466,29 @@ type
 {$ENDIF}
 
   PFloatRect = ^TFloatRect;
+  {$NODEFINE TFloatRect}
+{$IFDEF SupportsBoost}
+  (*$HPPEMIT '#include <boost/strong_typedef.hpp>'*)
+{$ENDIF}
+  (*$HPPEMIT 'namespace Gr32 {'*)
+{$IFDEF SupportsBoost}
+  (*$HPPEMIT 'BOOST_STRONG_TYPEDEF(int, TFixed)'*)
+{$ELSE}
+  (*$HPPEMIT 'typedef int TFixed;'*)
+{$ENDIF}
+  (*$HPPEMIT 'struct TFixedPoint { float X, Y; }; typedef struct TFixedPoint TFixedPoint;'*)
+  (*$HPPEMIT 'struct TFloatRect { float Left, Top, Right, Bottom; }; typedef struct TFloatRect TFloatRect;'*)
+  (*$HPPEMIT 'struct TFixedRect { TFixed Left, Top, Right, Bottom; }; typedef struct TFixedRect TFixedRect;'*)
+  (*$HPPEMIT '} // namespace Gr32 '*)
   TFloatRect = packed record
     case Integer of
       0: (Left, Top, Right, Bottom: TFloat);
       1: (TopLeft, BottomRight: TFloatPoint);
   end;
 
+  {$NODEFINE PFixedRect}
   PFixedRect = ^TFixedRect;
+  {$NODEFINE TFixedRect}
   TFixedRect = packed record
     case Integer of
       0: (Left, Top, Right, Bottom: TFixed);
@@ -416,9 +502,11 @@ function MakeRect(const L, T, R, B: Integer): TRect; overload; {$IFDEF USEINLINI
 function MakeRect(const FR: TFloatRect; Rounding: TRectRounding = rrClosest): TRect; overload;
 function MakeRect(const FXR: TFixedRect; Rounding: TRectRounding = rrClosest): TRect; overload;
 function FixedRect(const L, T, R, B: TFixed): TFixedRect; overload; {$IFDEF USEINLINING} inline; {$ENDIF}
+function FixedRect(const TopLeft, BottomRight: TFixedPoint): TFixedRect; overload; {$IFDEF USEINLINING} inline; {$ENDIF}
 function FixedRect(const ARect: TRect): TFixedRect; overload; {$IFDEF USEINLINING} inline; {$ENDIF}
 function FixedRect(const FR: TFloatRect): TFixedRect; overload; {$IFDEF USEINLINING} inline; {$ENDIF}
 function FloatRect(const L, T, R, B: TFloat): TFloatRect; overload; {$IFDEF USEINLINING} inline; {$ENDIF}
+function FloatRect(const TopLeft, BottomRight: TFloatPoint): TFloatRect; overload; {$IFDEF USEINLINING} inline; {$ENDIF}
 function FloatRect(const ARect: TRect): TFloatRect; overload; {$IFDEF USEINLINING} inline; {$ENDIF}
 function FloatRect(const FXR: TFixedRect): TFloatRect; overload; {$IFDEF USEINLINING} inline; {$ENDIF}
 
@@ -457,13 +545,6 @@ type
     sfLanczos, sfMitchell);
 {$ENDIF}
 
-{ Gamma bias for line/pixel antialiasing }
-
-var
-  GAMMA_TABLE: array [Byte] of Byte;
-
-procedure SetGamma(Gamma: Single = 0.7);
-
 type
   { TPlainInterfacedPersistent }
   { TPlainInterfacedPersistent provides simple interface support with
@@ -474,10 +555,15 @@ type
     FRefCount: Integer;
   protected
     { IInterface }
-    function _AddRef: Integer; {$IFNDEF WINDOWS}cdecl{$ELSE}stdcall{$ENDIF};
-    function _Release: Integer; {$IFNDEF WINDOWS}cdecl{$ELSE}stdcall{$ENDIF};
-    function QueryInterface({$IFDEF FPC_HAS_CONSTREF}constref{$ELSE}const{$ENDIF}IID: TGUID; out Obj): HResult; virtual; {$IFNDEF WINDOWS}cdecl{$ELSE}stdcall{$ENDIF};
-
+{$IFDEF FPC_HAS_CONSTREF}
+    function QueryInterface(constref iid: TGuid; out obj): HResult; {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+    function _AddRef: LongInt; {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+    function _Release: LongInt; {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+{$ELSE}
+    function QueryInterface(const iid: TGuid; out obj): HResult; stdcall;
+    function _AddRef: LongInt; stdcall;
+    function _Release: LongInt; stdcall;
+{$ENDIF}
     property RefCounted: Boolean read FRefCounted write FRefCounted;
   public
     procedure AfterConstruction; override;
@@ -496,6 +582,7 @@ type
   protected
     property UpdateCount: Integer read FUpdateCount;
   public
+    procedure BeforeDestruction; override;
     procedure Changed; virtual;
     procedure BeginUpdate; virtual;
     procedure EndUpdate; virtual;
@@ -534,11 +621,14 @@ type
     procedure SetWidth(NewWidth: Integer); virtual;
     procedure ChangeSize(var Width, Height: Integer; NewWidth, NewHeight: Integer); virtual;
   public
+    constructor Create(Width, Height: Integer); reintroduce; overload;
+
     procedure Delete; virtual;
     function  Empty: Boolean; virtual;
     procedure Resized; virtual;
     function SetSizeFrom(Source: TPersistent): Boolean;
     function SetSize(NewWidth, NewHeight: Integer): Boolean; virtual;
+
     property Height: Integer read FHeight write SetHeight;
     property Width: Integer read FWidth write SetWidth;
     property OnResize: TNotifyEvent read FOnResize write FOnResize;
@@ -601,7 +691,7 @@ type
     procedure BackendChangingHandler(Sender: TObject); virtual;
 
 {$IFDEF BITS_GETTER}
-    function GetBits: PColor32Array;     {$IFDEF USEINLINING} inline; {$ENDIF}
+    function GetBits: PColor32Array; {$IFDEF USEINLINING} inline; {$ENDIF}
 {$ENDIF}
 
     function GetPixelPtr(X, Y: Integer): PColor32;
@@ -617,7 +707,11 @@ type
     procedure SetClipRect(const Value: TRect);
     procedure SetResampler(Resampler: TCustomResampler);
     function GetResamplerClassName: string;
-    procedure SetResamplerClassName(Value: string);
+    procedure SetResamplerClassName(const Value: string);
+    function GetPenPos: TPoint;
+    procedure SetPenPos(const Value: TPoint);
+    function GetPenPosF: TFixedPoint;
+    procedure SetPenPosF(const Value: TFixedPoint);
   protected
     WrapProcHorz: TWrapProcEx;
     WrapProcVert: TWrapProcEx;
@@ -637,11 +731,15 @@ type
     procedure WriteData(Stream: TStream); virtual;
     procedure DefineProperties(Filer: TFiler); override;
 
-    procedure InitializeBackend; virtual;
+    procedure InitializeBackend(Backend: TCustomBackendClass); virtual;
     procedure FinalizeBackend; virtual;
     procedure SetBackend(const Backend: TCustomBackend); virtual;
 
-    function QueryInterface({$IFDEF FPC_HAS_CONSTREF}constref{$ELSE}const{$ENDIF} IID: TGUID; out Obj): HResult; override;
+{$IFDEF FPC_HAS_CONSTREF}
+    function QueryInterface(constref iid: TGuid; out obj): HResult; {$IFDEF WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+{$ELSE}
+    function QueryInterface(const iid: TGuid; out obj): HResult; stdcall;
+{$ENDIF}
 
     function  GetPixel(X, Y: Integer): TColor32; {$IFDEF USEINLINING} inline; {$ENDIF}
     function  GetPixelS(X, Y: Integer): TColor32; {$IFDEF USEINLINING} inline; {$ENDIF}
@@ -672,8 +770,12 @@ type
     procedure SetPixelXS(X, Y: TFixed; Value: TColor32);
     procedure SetPixelXW(X, Y: TFixed; Value: TColor32);
   public
-    constructor Create; override;
+    constructor Create(Backend: TCustomBackendClass); reintroduce; overload; virtual;
+    constructor Create; reintroduce; overload; virtual;
+    constructor Create(Width, Height: Integer); reintroduce; overload; virtual;
     destructor Destroy; override;
+
+    class function GetPlatformBackendClass: TCustomBackendClass; virtual;
 
     procedure Assign(Source: TPersistent); override;
     function  BoundsRect: TRect;
@@ -712,8 +814,8 @@ type
     procedure SetPixelTS(X, Y: Integer; Value: TColor32);
 
     procedure DrawTo(Dst: TCustomBitmap32); overload;
-    procedure DrawTo(Dst: TCustomBitmap32; DstX, DstY: Integer; const SrcRect: TRect); overload;
     procedure DrawTo(Dst: TCustomBitmap32; DstX, DstY: Integer); overload;
+    procedure DrawTo(Dst: TCustomBitmap32; DstX, DstY: Integer; const SrcRect: TRect); overload;
     procedure DrawTo(Dst: TCustomBitmap32; const DstRect: TRect); overload;
     procedure DrawTo(Dst: TCustomBitmap32; const DstRect, SrcRect: TRect); overload;
 
@@ -764,6 +866,8 @@ type
     procedure LineToFS(X, Y: Single);
     procedure LineToXSP(X, Y: TFixed);
     procedure LineToFSP(X, Y: Single);
+    property PenPos: TPoint read GetPenPos write SetPenPos;
+    property PenPosF: TFixedPoint read GetPenPosF write SetPenPosF;
 
     procedure FillRect(X1, Y1, X2, Y2: Integer; Value: TColor32);
     procedure FillRectS(X1, Y1, X2, Y2: Integer; Value: TColor32); overload;
@@ -839,7 +943,7 @@ type
   TBitmap32 = class(TCustomBitmap32)
   private
     FOnHandleChanged: TNotifyEvent;
-      
+
     procedure BackendChangedHandler(Sender: TObject); override;
     procedure BackendChangingHandler(Sender: TObject); override;
     
@@ -854,13 +958,14 @@ type
     function GetFont: TFont;
     procedure SetFont(Value: TFont);
   protected
-    procedure InitializeBackend; override;
     procedure FinalizeBackend; override;
     procedure SetBackend(const Backend: TCustomBackend); override;
-    
+
     procedure HandleChanged; virtual;
     procedure CopyPropertiesTo(Dst: TCustomBitmap32); override;
   public
+    class function GetPlatformBackendClass: TCustomBackendClass; override;
+
   {$IFDEF BCB}
     procedure Draw(const DstRect, SrcRect: TRect; hSrc: Cardinal); overload;
   {$ELSE}
@@ -870,24 +975,30 @@ type
 {$IFDEF BCB}
     procedure DrawTo(hDst: Cardinal; DstX, DstY: Integer); overload;
     procedure DrawTo(hDst: Cardinal; const DstRect, SrcRect: TRect); overload;
-    procedure TileTo(hDst: Cardinal; const DstRect, SrcRect: TRect);
+    procedure TileTo(hDst: Cardinal; const DstRect, SrcRect: TRect); overload;
 {$ELSE}
-    procedure DrawTo(hDst: HDC; DstX, DstY: Integer); overload;
+    procedure DrawTo(hDst: HDC; DstX: Integer = 0; DstY: Integer = 0); overload;
     procedure DrawTo(hDst: HDC; const DstRect, SrcRect: TRect); overload;
-    procedure TileTo(hDst: HDC; const DstRect, SrcRect: TRect);
+    procedure TileTo(hDst: HDC; const DstRect, SrcRect: TRect); overload;
+{$ENDIF}
+
+{$IFDEF COMPILER2009_UP}
+    procedure DrawTo(Dst: TControlCanvas; DstX: Integer = 0; DstY: Integer = 0); overload;
+    procedure DrawTo(Dst: TControlCanvas; const DstRect, SrcRect: TRect); overload;
+    procedure TileTo(Dst: TControlCanvas; const DstRect, SrcRect: TRect); overload;
 {$ENDIF}
 
     procedure UpdateFont;
-    procedure Textout(X, Y: Integer; const Text: String); overload;
-    procedure Textout(X, Y: Integer; const ClipRect: TRect; const Text: String); overload;
-    procedure Textout(DstRect: TRect; const Flags: Cardinal; const Text: String); overload;
-    function  TextExtent(const Text: String): TSize;
-    function  TextHeight(const Text: String): Integer;
-    function  TextWidth(const Text: String): Integer;
-    procedure RenderText(X, Y: Integer; const Text: String; AALevel: Integer; Color: TColor32);
+    procedure Textout(X, Y: Integer; const Text: string); overload;
+    procedure Textout(X, Y: Integer; const ClipRect: TRect; const Text: string); overload;
+    procedure Textout(var DstRect: TRect; const Flags: Cardinal; const Text: string); overload;
+    function  TextExtent(const Text: string): TSize;
+    function  TextHeight(const Text: string): Integer;
+    function  TextWidth(const Text: string): Integer;
+    procedure RenderText(X, Y: Integer; const Text: string; AALevel: Integer; Color: TColor32);
     procedure TextoutW(X, Y: Integer; const Text: Widestring); overload;
     procedure TextoutW(X, Y: Integer; const ClipRect: TRect; const Text: Widestring); overload;
-    procedure TextoutW(DstRect: TRect; const Flags: Cardinal; const Text: Widestring); overload;
+    procedure TextoutW(var DstRect: TRect; const Flags: Cardinal; const Text: Widestring); overload;
     function  TextExtentW(const Text: Widestring): TSize;
     function  TextHeightW(const Text: Widestring): Integer;
     function  TextWidthW(const Text: Widestring): Integer;
@@ -935,7 +1046,7 @@ type
     procedure Clear; virtual;
     function Empty: Boolean; virtual;
 
-    procedure ChangeSize(var Width, Height: Integer; NewWidth, NewHeight: Integer; ClearBuffer: Boolean = True); virtual;
+    procedure ChangeSize(out Width, Height: Integer; NewWidth, NewHeight: Integer; ClearBuffer: Boolean = True); virtual;
 
 {$IFDEF BITS_GETTER}
     property Bits: PColor32Array read GetBits;
@@ -991,16 +1102,19 @@ type
   end;
   TCustomResamplerClass = class of TCustomResampler;
 
-function GetPlatformBackendClass: TCustomBackendClass;
-
 var
   StockBitmap: TBitmap;
+
+resourcestring
+  RCStrUnmatchedReferenceCounting = 'Unmatched reference counting.';
+  RCStrCannotSetSize = 'Can''t set size from ''%s''';
+  RCStrInpropriateBackend = 'Inappropriate Backend';
 
 implementation
 
 uses
-  Math, GR32_Blend, GR32_Filters, GR32_LowLevel, GR32_Math,
-  GR32_Resamplers, GR32_Containers, GR32_Backends, GR32_Backends_Generic,
+  Math, GR32_Blend, GR32_LowLevel, GR32_Math, GR32_Resamplers,
+  GR32_Containers, GR32_Gamma, GR32_Backends, GR32_Backends_Generic,
 {$IFDEF FPC}
   Clipbrd,
   {$IFDEF LCLWin32}
@@ -1018,7 +1132,7 @@ uses
 {$ELSE}
   Clipbrd, GR32_Backends_VCL,
 {$ENDIF}
-  GR32_DrawingEx;
+  GR32_VectorUtils;
 
 type
   { We can not use the Win32 defined record here since we are cross-platform. }
@@ -1044,11 +1158,6 @@ type
 
 const
   ZERO_RECT: TRect = (Left: 0; Top: 0; Right: 0; Bottom: 0);
-
-resourcestring
-  RCStrUnmatchedReferenceCounting = 'Unmatched reference counting.';
-  RCStrCannotSetSize = 'Can''t set size from ''%s''';
-  RCStrInpropriateBackend = 'Inpropriate Backend';
 
 { Color construction and conversion functions }
 
@@ -1127,7 +1236,7 @@ asm
         MOV     EAX, ECX
 {$ENDIF}
         // the alpha channel byte is set to zero!
-        ROL     EAX, 8  // ABGR  ->  BGRA
+        ROL     EAX, 8  // ABGR  ->  RGBA
         XOR     AL, AL  // BGRA  ->  BGR0
         BSWAP   EAX     // BGR0  ->  0RGB
 {$ENDIF}
@@ -1198,11 +1307,31 @@ begin
     ) shr 8;
 end;
 
+function InvertColor(Color32: TColor32): TColor32;
+begin
+  TColor32Entry(Result).R := $FF - TColor32Entry(Color32).R;
+  TColor32Entry(Result).G := $FF - TColor32Entry(Color32).G;
+  TColor32Entry(Result).B := $FF - TColor32Entry(Color32).B;
+  TColor32Entry(Result).A := TColor32Entry(Color32).A;
+end;
+
 function SetAlpha(Color32: TColor32; NewAlpha: Integer): TColor32;
 begin
-  if NewAlpha < 0 then NewAlpha := 0
-  else if NewAlpha > 255 then NewAlpha := 255;
+  if NewAlpha < 0 then
+    NewAlpha := 0
+  else if NewAlpha > $FF then
+    NewAlpha := $FF;
   Result := (Color32 and $00FFFFFF) or (TColor32(NewAlpha) shl 24);
+end;
+
+procedure ModifyAlpha(var Color32: TColor32; NewAlpha: Byte);
+begin
+  TColor32Entry(Color32).A := NewAlpha;
+end;
+
+procedure ScaleAlpha(var Color32: TColor32; Scale: Single);
+begin
+  TColor32Entry(Color32).A := Round(Scale * TColor32Entry(Color32).A);
 end;
 
 { Color space conversions }
@@ -1212,51 +1341,51 @@ const
   OneOverThree = 1 / 3;
 var
   M1, M2: Single;
-  R, G, B: Byte;
 
   function HueToColor(Hue: Single): Byte;
   var
     V: Double;
   begin
     Hue := Hue - Floor(Hue);
-    if 6 * Hue < 1 then V := M1 + (M2 - M1) * Hue * 6
-    else if 2 * Hue < 1 then V := M2
-    else if 3 * Hue < 2 then V := M1 + (M2 - M1) * (2 * OneOverThree - Hue) * 6
+    if 6 * Hue < 1 then
+      V := M1 + (M2 - M1) * Hue * 6
+    else if 2 * Hue < 1 then
+      V := M2
+    else if 3 * Hue < 2 then
+      V := M1 + (M2 - M1) * (2 * OneOverThree - Hue) * 6
     else V := M1;
-    Result := Round(255 * V);
+    Result := Round($FF * V);
   end;
 
 begin
   if S = 0 then
   begin
-    R := Round(255 * L);
-    G := R;
-    B := R;
-  end
-  else
-  begin
-    if L <= 0.5 then M2 := L * (1 + S)
-    else M2 := L + S - L * S;
-    M1 := 2 * L - M2;
-    R := HueToColor(H + OneOverThree);
-    G := HueToColor(H);
-    B := HueToColor(H - OneOverThree)
+    Result := Gray32(Round($FF * L));
+    Exit;
   end;
-  Result := Color32(R, G, B);
+
+  if L <= 0.5 then
+    M2 := L * (1 + S)
+  else
+    M2 := L + S - L * S;
+  M1 := 2 * L - M2;
+  Result := Color32(
+    HueToColor(H + OneOverThree),
+    HueToColor(H),
+    HueToColor(H - OneOverThree));
 end;
 
 procedure RGBtoHSL(RGB: TColor32; out H, S, L : Single);
 const
   // reciprocal mul. opt.
-  R255 = 1 / 255;
   R6 = 1 / 6;
 
 var
   R, G, B, D, Cmax, Cmin: Single;
 begin
-  R := RedComponent(RGB) * R255;
-  G := GreenComponent(RGB) * R255;
-  B := BlueComponent(RGB) * R255;
+  R := RedComponent(RGB) * COne255th;
+  G := GreenComponent(RGB) * COne255th;
+  B := BlueComponent(RGB) * COne255th;
   Cmax := Max(R, Max(G, B));
   Cmin := Min(R, Min(G, B));
   L := (Cmax + Cmin) * 0.5;
@@ -1287,7 +1416,7 @@ begin
   end;
 end;
 
-function HSLtoRGB(H, S, L: Integer): TColor32;
+function HSLtoRGB(H, S, L, A: Integer): TColor32;
 var
   V, M, M1, M2, VSF: Integer;
 begin
@@ -1305,12 +1434,12 @@ begin
     M1 := M + VSF;
     M2 := V - VSF;
     case H shr 8 of
-      0: Result := Color32(V, M1, M);
-      1: Result := Color32(M2, V, M);
-      2: Result := Color32(M, V, M1);
-      3: Result := Color32(M, M2, V);
-      4: Result := Color32(M1, M, V);
-      5: Result := Color32(V, M, M2);
+      0: Result := Color32(V, M1, M, A);
+      1: Result := Color32(M2, V, M, A);
+      2: Result := Color32(M, V, M1, A);
+      3: Result := Color32(M, M2, V, A);
+      4: Result := Color32(M1, M, V, A);
+      5: Result := Color32(V, M, M2, A);
     else
       Result := 0;
     end;
@@ -1336,22 +1465,99 @@ begin
   end
   else
   begin
-    D := (Cmax - Cmin) * 255;
+    D := (Cmax - Cmin) * $FF;
     if L <= $7F then
       S := D div (Cmax + Cmin)
     else
-      S := D div (255 * 2 - Cmax - Cmin);
+      S := D div ($FF * 2 - Cmax - Cmin);
 
     D := D * 6;
     if R = Cmax then
-      HL := (G - B) * 255 * 255 div D
+      HL := (G - B) * $FF * $FF div D
     else if G = Cmax then
-      HL := 255 * 2 div 6 + (B - R) * 255 * 255 div D
+      HL := $FF * 2 div 6 + (B - R) * $FF * $FF div D
     else
-      HL := 255 * 4 div 6 + (R - G) * 255 * 255 div D;
+      HL := $FF * 4 div 6 + (R - G) * $FF * $FF div D;
 
-    if HL < 0 then HL := HL + 255 * 2;
+    if HL < 0 then HL := HL + $FF * 2;
     H := HL;
+  end;
+end;
+
+function HSVtoRGB(H, S, V: Single): TColor32;
+var
+  Tmp: TFloat;
+  Sel, Q, P: Integer;
+begin
+  V := 255 * V;
+  if S = 0 then
+  begin
+    Result := Gray32(Trunc(V));
+    Exit;
+  end;  
+
+  H := H - Floor(H);
+  Tmp := 6 * H - Floor(6 * H);
+
+  Sel := Trunc(6 * H);
+  if (Sel mod 2) = 0 then
+    Tmp := 1 - Tmp;
+
+  Q := Trunc(V * (1 - S));
+  P := Trunc(V * (1 - S * Tmp));
+
+  case Sel of
+    0:
+      Result := Color32(Trunc(V), P, Q);
+    1:
+      Result := Color32(P, Trunc(V), Q);
+    2:
+      Result := Color32(Q, Trunc(V), P);
+    3:
+      Result := Color32(Q, P, Trunc(V));
+    4:
+      Result := Color32(P, Q, Trunc(V));
+    5:
+      Result := Color32(Trunc(V), Q, P);
+  else
+    Result := Gray32(0);
+  end;
+end;
+
+procedure RGBToHSV(Color: TColor32; out H, S, V: Single);
+var
+  Delta, Min, Max: Single;
+  R, G, B: Integer;
+const
+  COneSixth = 1 / 6;
+begin
+  R := RedComponent(Color);
+  G := GreenComponent(Color);
+  B := BlueComponent(Color);
+
+  Min := MinIntValue([R, G, B]);
+  Max := MaxIntValue([R, G, B]);
+  V := Max / 255;
+
+  Delta := Max - Min;
+  if Max = 0 then
+    S := 0
+  else
+    S := Delta / Max;
+
+  if S = 0.0 then
+    H := 0
+  else
+  begin
+    if R = Max then
+      H := COneSixth * (G - B) / Delta
+    else if G = Max then
+      H := COneSixth * (2 + (B - R) / Delta)
+    else if B = Max then
+      H := COneSixth * (4 + (R - G) / Delta);
+
+    if H < 0.0 then
+      H := H + 1;
   end;
 end;
 
@@ -1366,7 +1572,7 @@ var
 begin
   L.palVersion := $300;
   L.palNumEntries := 256;
-  for I := 0 to 255 do
+  for I := 0 to $FF do
   begin
     Cl := P[I];
     with L.palPalEntry[I] do
@@ -1385,7 +1591,7 @@ end;
 
 function Fixed(S: Single): TFixed;
 begin
-  Result := Round(S * 65536);
+  Result := Round(S * FixedOne);
 end;
 
 function Fixed(I: Integer): TFixed;
@@ -1427,15 +1633,149 @@ begin
 end;
 
 function FloatPoint(const FXP: TFixedPoint): TFloatPoint;
-const
-  F = 1 / 65536;
 begin
   with FXP do
   begin
-    Result.X := X * F;
-    Result.Y := Y * F;
+    Result.X := X * FixedToFloat;
+    Result.Y := Y * FixedToFloat;
   end;
 end;
+
+{$IFDEF SUPPORT_ENHANCED_RECORDS}
+{$IFNDEF FPC}
+constructor TFloatPoint.Create(P: TPoint);
+begin
+  Self.X := P.X;
+  Self.Y := P.Y;
+end;
+
+{$IFDEF COMPILERXE2_UP}
+constructor TFloatPoint.Create(P: TPointF);
+begin
+  Self.X := P.X;
+  Self.Y := P.Y;
+end;
+{$ENDIF}
+
+constructor TFloatPoint.Create(X, Y: Integer);
+begin
+  Self.X := X;
+  Self.Y := Y;
+end;
+
+constructor TFloatPoint.Create(X, Y: TFloat);
+begin
+  Self.X := X;
+  Self.Y := Y;
+end;
+{$ENDIF}
+
+// operator overloads
+class operator TFloatPoint.Equal(const Lhs, Rhs: TFloatPoint): Boolean;
+begin
+  Result := (Lhs.X = Rhs.X) and (Lhs.Y = Rhs.Y);
+end;
+
+class operator TFloatPoint.NotEqual(const Lhs, Rhs: TFloatPoint): Boolean;
+begin
+  Result := (Lhs.X <> Rhs.X) or (Lhs.Y <> Rhs.Y);
+end;
+
+class operator TFloatPoint.Add(const Lhs, Rhs: TFloatPoint): TFloatPoint;
+begin
+  Result.X := Lhs.X + Rhs.X;
+  Result.Y := Lhs.Y + Rhs.Y;
+end;
+
+class operator TFloatPoint.Subtract(const Lhs, Rhs: TFloatPoint): TFloatPoint;
+begin
+  Result.X := Lhs.X - Rhs.X;
+  Result.Y := Lhs.Y - Rhs.Y;
+end;
+
+{$IFDEF COMPILERXE2_UP}
+class operator TFloatPoint.Explicit(A: TPointF): TFloatPoint;
+begin
+  Result.X := A.X;
+  Result.Y := A.Y;
+end;
+
+class operator TFloatPoint.Implicit(A: TPointF): TFloatPoint;
+begin
+  Result.X := A.X;
+  Result.Y := A.Y;
+end;
+{$ENDIF}
+
+class function TFloatPoint.Zero: TFloatPoint;
+begin
+  Result.X := 0;
+  Result.Y := 0;
+end;
+
+{$IFNDEF FPC}
+{$IFDEF COMPILERXE2_UP}
+constructor TFixedPoint.Create(P: TPointF);
+begin
+  Self.X := Fixed(P.X);
+  Self.Y := Fixed(P.Y);
+end;
+{$ENDIF}
+
+constructor TFixedPoint.Create(P: TFloatPoint);
+begin
+  Self.X := Fixed(P.X);
+  Self.Y := Fixed(P.Y);
+end;
+
+constructor TFixedPoint.Create(X, Y: TFixed);
+begin
+  Self.X := X;
+  Self.Y := Y;
+end;
+
+constructor TFixedPoint.Create(X, Y: Integer);
+begin
+  Self.X := Fixed(X);
+  Self.Y := Fixed(Y);
+end;
+
+constructor TFixedPoint.Create(X, Y: TFloat);
+begin
+  Self.X := Fixed(X);
+  Self.Y := Fixed(Y);
+end;
+{$ENDIF}
+
+// operator overloads
+class operator TFixedPoint.Equal(const Lhs, Rhs: TFixedPoint): Boolean;
+begin
+  Result := (Lhs.X = Rhs.X) and (Lhs.Y = Rhs.Y);
+end;
+
+class operator TFixedPoint.NotEqual(const Lhs, Rhs: TFixedPoint): Boolean;
+begin
+  Result := (Lhs.X <> Rhs.X) or (Lhs.Y <> Rhs.Y);
+end;
+
+class operator TFixedPoint.Add(const Lhs, Rhs: TFixedPoint): TFixedPoint;
+begin
+  Result.X := Lhs.X + Rhs.X;
+  Result.Y := Lhs.Y + Rhs.Y;
+end;
+
+class operator TFixedPoint.Subtract(const Lhs, Rhs: TFixedPoint): TFixedPoint;
+begin
+  Result.X := Lhs.X - Rhs.X;
+  Result.Y := Lhs.Y - Rhs.Y;
+end;
+
+class function TFixedPoint.Zero: TFixedPoint;
+begin
+  Result.X := 0;
+  Result.Y := 0;
+end;
+{$ENDIF}
 
 function FixedPoint(X, Y: Integer): TFixedPoint; overload;
 begin
@@ -1445,8 +1785,8 @@ end;
 
 function FixedPoint(X, Y: Single): TFixedPoint; overload;
 begin
-  Result.X := Round(X * 65536);
-  Result.Y := Round(Y * 65536);
+  Result.X := Round(X * FixedOne);
+  Result.Y := Round(Y * FixedOne);
 end;
 
 function FixedPoint(const P: TPoint): TFixedPoint; overload;
@@ -1457,8 +1797,8 @@ end;
 
 function FixedPoint(const FP: TFloatPoint): TFixedPoint; overload;
 begin
-  Result.X := Round(FP.X * 65536);
-  Result.Y := Round(FP.Y * 65536);
+  Result.X := Round(FP.X * FixedOne);
+  Result.Y := Round(FP.Y * FixedOne);
 end;
 
 
@@ -1550,6 +1890,12 @@ begin
   end;
 end;
 
+function FixedRect(const TopLeft, BottomRight: TFixedPoint): TFixedRect;
+begin
+  Result.TopLeft := TopLeft;
+  Result.BottomRight := BottomRight;
+end;
+
 function FixedRect(const ARect: TRect): TFixedRect;
 begin
   with Result do
@@ -1581,6 +1927,12 @@ begin
     Right := R;
     Bottom := B;
   end;
+end;
+
+function FloatRect(const TopLeft, BottomRight: TFloatPoint): TFloatRect;
+begin
+  Result.TopLeft := TopLeft;
+  Result.BottomRight := BottomRight;
 end;
 
 function FloatRect(const ARect: TRect): TFloatRect;
@@ -1744,25 +2096,6 @@ begin
     (P.Y >= R.Top) and (P.Y < R.Bottom);
 end;
 
-{ Gamma / Pixel Shape Correction table }
-
-procedure SetGamma(Gamma: Single);
-var
-  i: Integer;
-begin
-  for i := 0 to 255 do
-    GAMMA_TABLE[i] := Round(255 * Power(i / 255, Gamma));
-end;
-
-function GetPlatformBackendClass: TCustomBackendClass;
-begin
-{$IFDEF FPC}
-  Result := TLCLBackend;
-{$ELSE}
-  Result := TGDIBackend;
-{$ENDIF}
-end;
-
 { TSimpleInterfacedPersistent }
 
 function TPlainInterfacedPersistent._AddRef: Integer;
@@ -1824,6 +2157,12 @@ end;
 
 { TNotifiablePersistent }
 
+procedure TNotifiablePersistent.Beforedestruction;
+begin
+  inherited;
+  inc(FUpdateCount);
+end;
+
 procedure TNotifiablePersistent.BeginUpdate;
 begin
   Inc(FUpdateCount);
@@ -1868,6 +2207,12 @@ end;
 
 
 { TCustomMap }
+
+constructor TCustomMap.Create(Width, Height: Integer);
+begin
+  Create;
+  SetSize(Width, Height);
+end;
 
 procedure TCustomMap.ChangeSize(var Width, Height: Integer; NewWidth, NewHeight: Integer);
 begin
@@ -1930,11 +2275,11 @@ end;
 
 { TCustomBitmap32 }
 
-constructor TCustomBitmap32.Create;
+constructor TCustomBitmap32.Create(Backend: TCustomBackendClass);
 begin
-  inherited;
+  inherited Create;
 
-  InitializeBackend;
+  InitializeBackend(Backend);
 
   FOuterColor := $00000000;  // by default as full transparency black
 
@@ -1948,9 +2293,13 @@ begin
   FResampler := TNearestResampler.Create(Self);
 end;
 
+constructor TCustomBitmap32.Create;
+begin
+  Create(GetPlatformBackendClass);
+end;
+
 destructor TCustomBitmap32.Destroy;
 begin
-  BeginUpdate;
   Lock;
   try
     SetSize(0, 0);
@@ -1962,9 +2311,9 @@ begin
   inherited;
 end;
 
-procedure TCustomBitmap32.InitializeBackend;
+procedure TCustomBitmap32.InitializeBackend(Backend: TCustomBackendClass);
 begin
-  TMemoryBackend.Create(Self);
+  Backend.Create(Self);
 end;
 
 procedure TCustomBitmap32.FinalizeBackend;
@@ -1987,7 +2336,7 @@ begin
   http://qc.codegear.com/wc/qcmain.aspx?d=9157
   http://qc.codegear.com/wc/qcmain.aspx?d=9500
 
-  If any backend interface is used within the same procedure in which
+  if any backend interface is used within the same procedure in which
   the owner bitmap is also freed, the magic procedure cleanup will
   clear that particular interface long after the bitmap and its backend
   are gone. This will result in all sorts of madness - mostly heap corruption
@@ -2238,7 +2587,7 @@ procedure TCustomBitmap32.Assign(Source: TPersistent);
         DstColor := DstP^ and $00FFFFFF;
         // this checks for transparency by comparing the pixel-color of the
         // temporary bitmap (red masked) with the pixel of our
-        // bitmap (white masked). If they match, make that pixel opaque
+        // bitmap (white masked). if they match, make that pixel opaque
         if DstColor = (SrcP^ and $00FFFFFF) then
           DstP^ := DstColor or $FF000000
         else
@@ -2291,7 +2640,7 @@ procedure TCustomBitmap32.Assign(Source: TPersistent);
     if TargetBitmap.Empty then Exit;
 
     // Check if the icon was painted with a merged alpha channel.
-    // The happens transparently for new-style 32-bit icons.
+    // That happens transparently for new-style 32-bit icons.
     // For all other bit depths GDI will reset our alpha channel to opaque.
     ReassignFromMasked := True;
     P := PColor32Entry(@TargetBitmap.Bits[0]);
@@ -2319,6 +2668,10 @@ procedure TCustomBitmap32.Assign(Source: TPersistent);
 {$IFNDEF PLATFORM_INDEPENDENT}
     else if SrcGraphic is TMetaFile then
       AssignFromGraphicMasked(TargetBitmap, SrcGraphic)
+    {$IFDEF COMPILER2010_UP}
+    else if SrcGraphic is TWICImage then
+      AssignFromGraphicPlain(TargetBitmap, SrcGraphic, 0, False)
+    {$ENDIF}
 {$ENDIF}
     else
       AssignFromGraphicPlain(TargetBitmap, SrcGraphic, clWhite32, True);
@@ -2384,12 +2737,28 @@ begin
   end;
 end;
 
+constructor TCustomBitmap32.Create(Width, Height: Integer);
+begin
+  Create;
+  SetSize(Width, Height);
+end;
+
 {$IFDEF BITS_GETTER}
 function TCustomBitmap32.GetBits: PColor32Array;
 begin
   Result := FBackend.Bits;
 end;
 {$ENDIF}
+
+procedure TCustomBitmap32.SetPenPos(const Value: TPoint);
+begin
+  MoveTo(Value.X, Value.Y);
+end;
+
+procedure TCustomBitmap32.SetPenPosF(const Value: TFixedPoint);
+begin
+  MoveTo(Value.X, Value.Y);
+end;
 
 procedure TCustomBitmap32.SetPixel(X, Y: Integer; Value: TColor32);
 begin
@@ -2411,6 +2780,18 @@ end;
 function TCustomBitmap32.GetScanLine(Y: Integer): PColor32Array;
 begin
   Result := @Bits[Y * FWidth];
+end;
+
+function TCustomBitmap32.GetPenPos: TPoint;
+begin
+  Result.X := RasterX;
+  Result.Y := RasterY;
+end;
+
+function TCustomBitmap32.GetPenPosF: TFixedPoint;
+begin
+  Result.X := RasterXF;
+  Result.Y := RasterYF;
 end;
 
 function TCustomBitmap32.GetPixel(X, Y: Integer): TColor32;
@@ -2437,7 +2818,8 @@ begin
   if Assigned(Src) then Src.DrawTo(Self, DstX, DstY);
 end;
 
-procedure TCustomBitmap32.Draw(DstX, DstY: Integer; const SrcRect: TRect; Src: TCustomBitmap32);
+procedure TCustomBitmap32.Draw(DstX, DstY: Integer; const SrcRect: TRect;
+  Src: TCustomBitmap32);
 begin
   if Assigned(Src) then Src.DrawTo(Self, DstX, DstY, SrcRect);
 end;
@@ -2449,27 +2831,34 @@ end;
 
 procedure TCustomBitmap32.DrawTo(Dst: TCustomBitmap32);
 begin
-  BlockTransfer(Dst, 0, 0, Dst.ClipRect, Self, BoundsRect, DrawMode, FOnPixelCombine);
+  BlockTransfer(Dst, 0, 0, Dst.ClipRect, Self, BoundsRect, DrawMode,
+    FOnPixelCombine);
 end;
 
 procedure TCustomBitmap32.DrawTo(Dst: TCustomBitmap32; DstX, DstY: Integer);
 begin
-  BlockTransfer(Dst, DstX, DstY, Dst.ClipRect, Self, BoundsRect, DrawMode, FOnPixelCombine);
+  BlockTransfer(Dst, DstX, DstY, Dst.ClipRect, Self, BoundsRect, DrawMode,
+    FOnPixelCombine);
 end;
 
-procedure TCustomBitmap32.DrawTo(Dst: TCustomBitmap32; DstX, DstY: Integer; const SrcRect: TRect);
+procedure TCustomBitmap32.DrawTo(Dst: TCustomBitmap32; DstX, DstY: Integer;
+    const SrcRect: TRect);
 begin
-  BlockTransfer(Dst, DstX, DstY, Dst.ClipRect, Self, SrcRect, DrawMode, FOnPixelCombine);
+  BlockTransfer(Dst, DstX, DstY, Dst.ClipRect, Self, SrcRect,
+    DrawMode, FOnPixelCombine);
 end;
 
 procedure TCustomBitmap32.DrawTo(Dst: TCustomBitmap32; const DstRect: TRect);
 begin
-  StretchTransfer(Dst, DstRect, Dst.ClipRect, Self, BoundsRect, Resampler, DrawMode, FOnPixelCombine);
+  StretchTransfer(Dst, DstRect, Dst.ClipRect, Self, BoundsRect, Resampler,
+    DrawMode, FOnPixelCombine);
 end;
 
-procedure TCustomBitmap32.DrawTo(Dst: TCustomBitmap32; const DstRect, SrcRect: TRect);
+procedure TCustomBitmap32.DrawTo(Dst: TCustomBitmap32; const DstRect,
+  SrcRect: TRect);
 begin
-  StretchTransfer(Dst, DstRect, Dst.ClipRect, Self, SrcRect, Resampler, DrawMode, FOnPixelCombine);
+  StretchTransfer(Dst, DstRect, Dst.ClipRect, Self, SrcRect, Resampler,
+    DrawMode, FOnPixelCombine);
 end;
 
 procedure TCustomBitmap32.ResetAlpha;
@@ -2609,10 +2998,10 @@ begin
   if FCombineMode = cmBlend then
   begin
     A := C shr 24;  // opacity
-    celx := A * GAMMA_TABLE[flrx xor 255];
-    cely := GAMMA_TABLE[flry xor 255];
-    flrx := A * GAMMA_TABLE[flrx];
-    flry := GAMMA_TABLE[flry];
+    celx := A * GAMMA_ENCODING_TABLE[flrx xor $FF];
+    cely := GAMMA_ENCODING_TABLE[flry xor $FF];
+    flrx := A * GAMMA_ENCODING_TABLE[flrx];
+    flry := GAMMA_ENCODING_TABLE[flry];
 
     CombineMem(C, P^, celx * cely shr 16); Inc(P);
     CombineMem(C, P^, flrx * cely shr 16); Inc(P, FWidth);
@@ -2621,11 +3010,11 @@ begin
   end
   else
   begin
-    celx := GAMMA_TABLE[flrx xor 255];
-    cely := GAMMA_TABLE[flry xor 255];
-    flrx := GAMMA_TABLE[flrx];
-    flry := GAMMA_TABLE[flry];
-    
+    celx := GAMMA_ENCODING_TABLE[flrx xor $FF];
+    cely := GAMMA_ENCODING_TABLE[flry xor $FF];
+    flrx := GAMMA_ENCODING_TABLE[flrx];
+    flry := GAMMA_ENCODING_TABLE[flry];
+
     CombineMem(MergeReg(C, P^), P^, celx * cely shr 8); Inc(P);
     CombineMem(MergeReg(C, P^), P^, flrx * cely shr 8); Inc(P, FWidth);
     CombineMem(MergeReg(C, P^), P^, flrx * flry shr 8); Dec(P);
@@ -2662,10 +3051,10 @@ begin
   if FCombineMode = cmBlend then
   begin
     A := C shr 24;  // opacity
-    celx := A * GAMMA_TABLE[flrx xor 255];
-    cely := GAMMA_TABLE[flry xor 255];
-    flrx := A * GAMMA_TABLE[flrx];
-    flry := GAMMA_TABLE[flry];
+    celx := A * GAMMA_ENCODING_TABLE[flrx xor $FF];
+    cely := GAMMA_ENCODING_TABLE[flry xor $FF];
+    flrx := A * GAMMA_ENCODING_TABLE[flrx];
+    flry := GAMMA_ENCODING_TABLE[flry];
 
     if (X >= FClipRect.Left) and (Y >= FClipRect.Top) and
        (X < FClipRect.Right - 1) and (Y < FClipRect.Bottom - 1) then
@@ -2686,10 +3075,10 @@ begin
   end
   else
   begin
-    celx := GAMMA_TABLE[flrx xor 255];
-    cely := GAMMA_TABLE[flry xor 255];
-    flrx := GAMMA_TABLE[flrx];
-    flry := GAMMA_TABLE[flry];
+    celx := GAMMA_ENCODING_TABLE[flrx xor $FF];
+    cely := GAMMA_ENCODING_TABLE[flry xor $FF];
+    flrx := GAMMA_ENCODING_TABLE[flrx];
+    flry := GAMMA_ENCODING_TABLE[flry];
 
     if (X >= FClipRect.Left) and (Y >= FClipRect.Top) and
        (X < FClipRect.Right - 1) and (Y < FClipRect.Bottom - 1) then
@@ -2788,8 +3177,8 @@ var
   Pos: Integer;
 begin
   Pos := (X shr 8) + (Y shr 8) * FWidth;
-  Result := Interpolator(GAMMA_TABLE[X and $FF xor 255],
-                         GAMMA_TABLE[Y and $FF xor 255],
+  Result := Interpolator(GAMMA_ENCODING_TABLE[X and $FF xor $FF],
+                         GAMMA_ENCODING_TABLE[Y and $FF xor $FF],
                          @Bits[Pos], @Bits[Pos + FWidth]);
 end;
 
@@ -2860,6 +3249,10 @@ begin
   EMMS;
 {$ELSE}
 asm
+{$IFDEF TARGET_x64}
+          PUSH    RBP
+          SUB     RSP,$30
+{$ENDIF}
           ADD     X, $7F
           ADD     Y, $7F
           SAR     X, 8
@@ -2870,6 +3263,11 @@ asm
           JZ      @Exit
           DB      $0F, $77               /// EMMS
 @Exit:
+{$ENDIF}
+
+{$IFDEF TARGET_x64}
+          LEA     RSP,[RBP+$30]
+          POP     RBP
 {$ENDIF}
 
 {$ENDIF}
@@ -2921,6 +3319,11 @@ begin
                        CombineReg(Bits[X2 + Y1], Bits[X1 + Y1], W),
                        WordRec(TFixedRec(Y).Frac).Hi);
   EMMS;
+end;
+
+class function TCustomBitmap32.GetPlatformBackendClass: TCustomBackendClass;
+begin
+  Result := TMemoryBackend;
 end;
 
 procedure TCustomBitmap32.SetPixelXW(X, Y: TFixed; Value: TColor32);
@@ -2985,12 +3388,16 @@ begin
     Exit;
   end;
   FStippleCounter := Wrap(FStippleCounter, L);
+  {$IFDEF FPC}
+  PrevIndex := Trunc(FStippleCounter);
+  {$ELSE}
   PrevIndex := Round(FStippleCounter - 0.5);
-  PrevWeight := 255 - Round(255 * (FStippleCounter - PrevIndex));
+  {$ENDIF}
+  PrevWeight := $FF - Round($FF * (FStippleCounter - PrevIndex));
   if PrevIndex < 0 then FStippleCounter := L - 1;
   NextIndex := PrevIndex + 1;
   if NextIndex >= L then NextIndex := 0;
-  if PrevWeight = 255 then Result := FStipplePattern[PrevIndex]
+  if PrevWeight = $FF then Result := FStipplePattern[PrevIndex]
   else
   begin
     Result := CombineReg(
@@ -3127,15 +3534,15 @@ begin
     Count := X2F - X1F - 1;
     if Wy > 0 then
     begin
-      CombineMem(Value, PDst^, GAMMA_TABLE[(Wy * Wx1) shr 24]);
-      Wt := GAMMA_TABLE[Wy shr 8];
+      CombineMem(Value, PDst^, GAMMA_ENCODING_TABLE[(Wy * Wx1) shr 24]);
+      Wt := GAMMA_ENCODING_TABLE[Wy shr 8];
       Inc(PDst);
       for I := 0 to Count - 1 do
       begin
         CombineMem(Value, PDst^, Wt);
         Inc(PDst);
       end;
-      CombineMem(Value, PDst^, GAMMA_TABLE[(Wy * Wx2) shr 24]);
+      CombineMem(Value, PDst^, GAMMA_ENCODING_TABLE[(Wy * Wx2) shr 24]);
     end;
 
     PDst := PixelPtr[X1F, YF + 1];
@@ -3143,15 +3550,15 @@ begin
     Wy := Wy xor $ffff;
     if Wy > 0 then
     begin
-      CombineMem(Value, PDst^, GAMMA_TABLE[(Wy * Wx1) shr 24]);
+      CombineMem(Value, PDst^, GAMMA_ENCODING_TABLE[(Wy * Wx1) shr 24]);
       Inc(PDst);
-      Wt := GAMMA_TABLE[Wy shr 8];
+      Wt := GAMMA_ENCODING_TABLE[Wy shr 8];
       for I := 0 to Count - 1 do
       begin
         CombineMem(Value, PDst^, Wt);
         Inc(PDst);
       end;
-      CombineMem(Value, PDst^, GAMMA_TABLE[(Wy * Wx2) shr 24]);
+      CombineMem(Value, PDst^, GAMMA_ENCODING_TABLE[(Wy * Wx2) shr 24]);
     end;
 
   finally
@@ -3321,15 +3728,15 @@ begin
     Count := Y2F - Y1F - 1;
     if Wx > 0 then
     begin
-      CombineMem(Value, PDst^, GAMMA_TABLE[(Wx * Wy1) shr 24]);
-      Wt := GAMMA_TABLE[Wx shr 8];
+      CombineMem(Value, PDst^, GAMMA_ENCODING_TABLE[(Wx * Wy1) shr 24]);
+      Wt := GAMMA_ENCODING_TABLE[Wx shr 8];
       Inc(PDst, FWidth);
       for I := 0 to Count - 1 do
       begin
         CombineMem(Value, PDst^, Wt);
         Inc(PDst, FWidth);
       end;
-      CombineMem(Value, PDst^, GAMMA_TABLE[(Wx * Wy2) shr 24]);
+      CombineMem(Value, PDst^, GAMMA_ENCODING_TABLE[(Wx * Wy2) shr 24]);
     end;
 
     PDst := PixelPtr[XF + 1, Y1F];
@@ -3337,15 +3744,15 @@ begin
     Wx := Wx xor $ffff;
     if Wx > 0 then
     begin
-      CombineMem(Value, PDst^, GAMMA_TABLE[(Wx * Wy1) shr 24]);
+      CombineMem(Value, PDst^, GAMMA_ENCODING_TABLE[(Wx * Wy1) shr 24]);
       Inc(PDst, FWidth);
-      Wt := GAMMA_TABLE[Wx shr 8];
+      Wt := GAMMA_ENCODING_TABLE[Wx shr 8];
       for I := 0 to Count - 1 do
       begin
         CombineMem(Value, PDst^, Wt);
         Inc(PDst, FWidth);
       end;
-      CombineMem(Value, PDst^, GAMMA_TABLE[(Wx * Wy2) shr 24]);
+      CombineMem(Value, PDst^, GAMMA_ENCODING_TABLE[(Wx * Wy2) shr 24]);
     end;
 
   finally
@@ -3544,7 +3951,7 @@ begin
           Inc(xd);
           Inc(e, Dy2);
         end;
-        CheckAux := False; // to avoid ugly labels we set this to omit the next check
+        CheckAux := False; // to avoid ugly goto we set this to omit the next check
       end;
     end;
 
@@ -3564,24 +3971,24 @@ begin
       end;
     end;
 
-    // set auxiliary var to indicate that temp is not clipped, since
-    // temp still has the unclipped value assigned at setup.
+    // set auxiliary var to indicate that term is not clipped, since
+    // term still has the unclipped value assigned at setup.
     CheckAux := False;
 
     // is the segment exiting the clipping rect?
     if Y2 > Cy2 then
     begin
-      OC := Dx2 * (Cy2 - Y1) + Dx;
+      OC := Int64(Dx2) * (Cy2 - Y1) + Dx;
       term := X1 + OC div Dy2;
       rem := OC mod Dy2;
       if rem = 0 then Dec(term);
-      CheckAux := True; // set auxiliary var to indicate that temp is clipped
+      CheckAux := True; // set auxiliary var to indicate that term is clipped
     end;
 
     if term > Cx2 then
     begin
       term := Cx2;
-      CheckAux := True; // set auxiliary var to indicate that temp is clipped
+      CheckAux := True; // set auxiliary var to indicate that term is clipped
     end;
 
     Inc(term);
@@ -3609,7 +4016,7 @@ begin
       P := @Bits[xd + yd * Width];
     end;
 
-    // do we need to skip the last pixel of the line and is temp not clipped?
+    // do we need to skip the last pixel of the line and is term not clipped?
     if not(L or CheckAux) then
     begin
       if xd < term then
@@ -3813,7 +4220,7 @@ begin
           Inc(xd);
           Inc(e, Dy2);
         end;
-        CheckAux := False; // to avoid ugly labels we set this to omit the next check
+        CheckAux := False; // to avoid ugly goto we set this to omit the next check
       end;
     end;
 
@@ -3833,8 +4240,8 @@ begin
       end;
     end;
 
-    // set auxiliary var to indicate that temp is not clipped, since
-    // temp still has the unclipped value assigned at setup.
+    // set auxiliary var to indicate that term is not clipped, since
+    // term still has the unclipped value assigned at setup.
     CheckAux := False;
 
     // is the segment exiting the clipping rect?
@@ -3844,13 +4251,13 @@ begin
       term := X1 + OC div Dy2;
       rem := OC mod Dy2;
       if rem = 0 then Dec(term);
-      CheckAux := True; // set auxiliary var to indicate that temp is clipped
+      CheckAux := True; // set auxiliary var to indicate that term is clipped
     end;
 
     if term > Cx2 then
     begin
       term := Cx2;
-      CheckAux := True; // set auxiliary var to indicate that temp is clipped
+      CheckAux := True; // set auxiliary var to indicate that term is clipped
     end;
 
     Inc(term);
@@ -3878,7 +4285,7 @@ begin
       P := @Bits[xd + yd * Width];
     end;
 
-    // do we need to skip the last pixel of the line and is temp not clipped?
+    // do we need to skip the last pixel of the line and is term not clipped?
     if not(L or CheckAux) then
     begin
       if xd < term then
@@ -3924,8 +4331,9 @@ begin
     nx := X2 - X1; ny := Y2 - Y1;
     Inc(X1, 127); Inc(Y1, 127); Inc(X2, 127); Inc(Y2, 127);
     hyp := Hypot(nx, ny);
+    if hyp = 0 then Exit;
     hypl := hyp + (Integer(L) * FixedOne);
-    if hypl < 256 then Exit;
+    if (hypl < 256) then Exit;
     n := hypl shr 16;
     if n > 0 then
     begin
@@ -3969,7 +4377,8 @@ begin
 
     // Check for visibility and clip the coordinates
     if not ClipLine(Integer(X1), Integer(Y1), Integer(X2), Integer(Y2),
-      FFixedClipRect.Left - $10000, FFixedClipRect.Top - $10000,
+      FFixedClipRect.Left - $10000,
+      FFixedClipRect.Top - $10000,
       FFixedClipRect.Right, FFixedClipRect.Bottom) then Exit;
 
     { TODO : Handle L on clipping here... }
@@ -3987,12 +4396,13 @@ begin
       Exit;
     end;
 
-    // If we are still here, it means that the line touches one or several bitmap
+    // if we are still here, it means that the line touches one or several bitmap
     // boundaries. Use the safe version of antialiased pixel routine
     try
       nx := X2 - X1; ny := Y2 - Y1;
       Inc(X1, 127); Inc(Y1, 127); Inc(X2, 127); Inc(Y2, 127);
       hyp := Hypot(nx, ny);
+      if hyp = 0 then Exit;
       hypl := hyp + (Integer(L) * FixedOne);
       if hypl < 256 then Exit;
       n := hypl shr 16;
@@ -4009,7 +4419,7 @@ begin
       end;
       A := Value shr 24;
       hyp := hypl - n shl 16;
-      A := A * Longword(hyp) shl 8 and $FF000000;
+      A := A * Cardinal(hyp) shl 8 and $FF000000;
       SET_TS256(SAR_9(X1 + X2 - nx), SAR_9(Y1 + Y2 - ny), Value and $00FFFFFF + A);
     finally
       EMMS;
@@ -4035,6 +4445,7 @@ begin
     nx := X2 - X1; ny := Y2 - Y1;
     Inc(X1, 127); Inc(Y1, 127); Inc(X2, 127); Inc(Y2, 127);
     hyp := Hypot(nx, ny);
+    if hyp = 0 then Exit;
     hypl := hyp + (Integer(L) * FixedOne);
     if hypl < 256 then Exit;
     n := hypl shr 16;
@@ -4069,7 +4480,7 @@ end;
 
 procedure TCustomBitmap32.LineXSP(X1, Y1, X2, Y2: TFixed; L: Boolean);
 const
-  StippleInc: array [Boolean] of Single = (0, 1);
+  StippleInc: array [Boolean] of Integer = (0, 1);
 var
   n, i: Integer;
   sx, sy, ex, ey, nx, ny, hyp, hypl: Integer;
@@ -4109,11 +4520,12 @@ begin
       AdvanceStippleCounter(GR32_Math.Hypot(Integer((X1 - sx) shr 16),
         Integer((Y1 - sy) shr 16)));
 
-    // If we are still here, it means that the line touches one or several bitmap
+    // if we are still here, it means that the line touches one or several bitmap
     // boundaries. Use the safe version of antialiased pixel routine
     nx := X2 - X1; ny := Y2 - Y1;
     Inc(X1, 127); Inc(Y1, 127); Inc(X2, 127); Inc(Y2, 127);
     hyp := GR32_Math.Hypot(nx, ny);
+    if hyp = 0 then Exit;
     hypl := hyp + (Integer(L) * FixedOne);
     if hypl < 256 then Exit;
     n := hypl shr 16;
@@ -4198,9 +4610,9 @@ begin
         Inc(Y1, Sy);
         CI := EC shr 8;
         P := @Bits[X1 + Y1 * Width];
-        BlendMemEx(Value, P^, GAMMA_TABLE[CI xor 255]);
+        BlendMemEx(Value, P^, GAMMA_ENCODING_TABLE[CI xor $FF]);
         Inc(P, Sx);
-        BlendMemEx(Value, P^, GAMMA_TABLE[CI]);
+        BlendMemEx(Value, P^, GAMMA_ENCODING_TABLE[CI]);
       end;
     end
     else // DY <= DX
@@ -4216,9 +4628,9 @@ begin
         Inc(X1, Sx);
         CI := EC shr 8;
         P := @Bits[X1 + Y1 * Width];
-        BlendMemEx(Value, P^, GAMMA_TABLE[CI xor 255]);
+        BlendMemEx(Value, P^, GAMMA_ENCODING_TABLE[CI xor $FF]);
         if Sy = 1 then Inc(P, Width) else Dec(P, Width);
-        BlendMemEx(Value, P^, GAMMA_TABLE[CI]);
+        BlendMemEx(Value, P^, GAMMA_ENCODING_TABLE[CI]);
       end;
     end;
   finally
@@ -4230,7 +4642,7 @@ end;
 procedure TCustomBitmap32.LineAS(X1, Y1, X2, Y2: Integer; Value: TColor32; L: Boolean);
 var
   Cx1, Cx2, Cy1, Cy2, PI, Sx, Sy, Dx, Dy, xd, yd, rem, term, tmp: Integer;
-  CheckVert, CornerAA, TempClipped: Boolean;
+  CheckVert, CornerAA, TermClipped: Boolean;
   D1, D2: PInteger;
   EC, EA, ED, D: Word;
   CI: Byte;
@@ -4375,7 +4787,7 @@ begin
           while xd <> term do
           begin
             Inc(xd, -Sx);
-            BlendMemEx(Value, Bits[D1^ + D2^ * Width], GAMMA_TABLE[ED shr 8]);
+            BlendMemEx(Value, Bits[D1^ + D2^ * Width], GAMMA_ENCODING_TABLE[ED shr 8]);
             Dec(ED, EA);
           end;
         finally
@@ -4394,7 +4806,7 @@ begin
 
         if Sy = -1 then yd := -yd;  // negate back
         xd := rem;  // restore old xd
-        CheckVert := False; // to avoid ugly labels we set this to omit the next check
+        CheckVert := False; // to avoid ugly goto we set this to omit the next check
       end;
     end;
 
@@ -4412,7 +4824,7 @@ begin
     end;
 
     term := X2;
-    TempClipped := False;
+    TermClipped := False;
     CheckVert := False;
 
     // horizontal exit?
@@ -4435,13 +4847,13 @@ begin
         CheckVert := True;
       end;
 
-      TempClipped := True;
+      TermClipped := True;
     end;
 
     if term > Cx2 then
     begin
       term := Cx2;
-      TempClipped := True;
+      TermClipped := True;
     end;
 
     Inc(term);
@@ -4457,8 +4869,8 @@ begin
     // draw line
     if not CornerAA then
     try
-      // do we need to skip the last pixel of the line and is temp not clipped?
-      if not(L or TempClipped) and not CheckVert then
+      // do we need to skip the last pixel of the line and is term not clipped?
+      if not(L or TermClipped) and not CheckVert then
       begin
         if xd < term then
           Dec(term)
@@ -4466,14 +4878,13 @@ begin
           Inc(term);
       end;
 
-      Assert(term >= 0);
       while xd <> term do
       begin
         CI := EC shr 8;
         P := @Bits[D1^ + D2^ * Width];
-        BlendMemEx(Value, P^, GAMMA_TABLE[CI xor 255]);
+        BlendMemEx(Value, P^, GAMMA_ENCODING_TABLE[CI xor $FF]);
         Inc(P, PI);
-        BlendMemEx(Value, P^, GAMMA_TABLE[CI]);
+        BlendMemEx(Value, P^, GAMMA_ENCODING_TABLE[CI]);
         // check for overflow and jump to next line...
         D := EC;
         Inc(EC, EA);
@@ -4491,7 +4902,7 @@ begin
     try
       while xd <> rem do
       begin
-        BlendMemEx(Value, Bits[D1^ + D2^ * Width], GAMMA_TABLE[EC shr 8 xor 255]);
+        BlendMemEx(Value, Bits[D1^ + D2^ * Width], GAMMA_ENCODING_TABLE[EC shr 8 xor $FF]);
         Inc(EC, EA);
         Inc(xd, Sx);
       end;
@@ -4571,20 +4982,19 @@ var
   j: Integer;
   P: PColor32Array;
 begin
-  if Assigned(FBits) then
+  if (FBits <> nil) then
     for j := Y1 to Y2 - 1 do
     begin
       P := Pointer(@Bits[j * FWidth]);
       FillLongword(P[X1], X2 - X1, Value);
     end;
-    
+
   Changed(MakeRect(X1, Y1, X2, Y2));
 end;
 
 procedure TCustomBitmap32.FillRectS(X1, Y1, X2, Y2: Integer; Value: TColor32);
 begin
-  if not FMeasuringMode and
-    (X2 > X1) and (Y2 > Y1) and
+  if (X2 > X1) and (Y2 > Y1) and
     (X1 < FClipRect.Right) and (Y1 < FClipRect.Bottom) and
     (X2 > FClipRect.Left) and (Y2 > FClipRect.Top) then
   begin
@@ -4592,9 +5002,8 @@ begin
     if Y1 < FClipRect.Top then Y1 := FClipRect.Top;
     if X2 > FClipRect.Right then X2 := FClipRect.Right;
     if Y2 > FClipRect.Bottom then Y2 := FClipRect.Bottom;
-    FillRect(X1, Y1, X2, Y2, Value);
+    FillRect(X1, Y1, X2, Y2, Value); // Calls Changed()
   end;
-  Changed(MakeRect(X1, Y1, X2, Y2));
 end;
 
 procedure TCustomBitmap32.FillRectT(X1, Y1, X2, Y2: Integer; Value: TColor32);
@@ -4638,8 +5047,7 @@ end;
 
 procedure TCustomBitmap32.FillRectTS(X1, Y1, X2, Y2: Integer; Value: TColor32);
 begin
-  if not FMeasuringMode and
-    (X2 > X1) and (Y2 > Y1) and
+  if (X2 > X1) and (Y2 > Y1) and
     (X1 < FClipRect.Right) and (Y1 < FClipRect.Bottom) and
     (X2 > FClipRect.Left) and (Y2 > FClipRect.Top) then
   begin
@@ -4647,9 +5055,12 @@ begin
     if Y1 < FClipRect.Top then Y1 := FClipRect.Top;
     if X2 > FClipRect.Right then X2 := FClipRect.Right;
     if Y2 > FClipRect.Bottom then Y2 := FClipRect.Bottom;
-    FillRectT(X1, Y1, X2, Y2, Value);
+
+    if (FMeasuringMode) then
+      Changed(MakeRect(X1, Y1, X2, Y2))
+    else
+      FillRectT(X1, Y1, X2, Y2, Value); // Calls Changed()
   end;
-  Changed(MakeRect(X1, Y1, X2, Y2));
 end;
 
 procedure TCustomBitmap32.FillRectS(const ARect: TRect; Value: TColor32);
@@ -4757,12 +5168,12 @@ begin
     if (Contrast > 0) then
     begin
       C1 := SetAlpha(clWhite32, Clamp(Contrast * 512 div 100));
-      C2 := SetAlpha(clBlack32, Clamp(Contrast * 255 div 100));
+      C2 := SetAlpha(clBlack32, Clamp(Contrast * $FF div 100));
     end
     else if Contrast < 0 then
     begin
       Contrast := -Contrast;
-      C1 := SetAlpha(clBlack32, Clamp(Contrast * 255 div 100));
+      C1 := SetAlpha(clBlack32, Clamp(Contrast * $FF div 100));
       C2 := SetAlpha(clWhite32, Clamp(Contrast * 512 div 100));
     end
     else Exit;
@@ -4861,7 +5272,7 @@ begin
   begin
     W := Width shl 2;
     for I := Height - 1 downto 0 do
-      Stream.WriteBuffer(PixelPtr[0, I]^, W);
+      Stream.WriteBuffer(ScanLine[I]^, W);
   end
   else
   begin
@@ -4990,12 +5401,12 @@ end;
 
 procedure TCustomBitmap32.ReadData(Stream: TStream);
 var
-  w, h: Integer;
+  Width, Height: Integer;
 begin
   try
-    Stream.ReadBuffer(w, 4);
-    Stream.ReadBuffer(h, 4);
-    SetSize(w, h);
+    Stream.ReadBuffer(Width, 4);
+    Stream.ReadBuffer(Height, 4);
+    SetSize(Width, Height);
     Stream.ReadBuffer(Bits[0], FWidth * FHeight * 4);
   finally
     Changed;
@@ -5100,10 +5511,16 @@ begin
     R := MakeRect(0, 0, Width, Height);
     OffsetRect(R, Dx, Dy);
     IntersectRect(R, R, MakeRect(0, 0, Width, Height));
-    if R.Top > 0 then FillRect(0, 0, Width, R.Top, FillColor)
-    else if R.Top = 0 then FillRect(0, R.Bottom, Width, Height, FillColor);
-    if R.Left > 0 then FillRect(0, R.Top, R.Left, R.Bottom, FillColor)
-    else if R.Left = 0 then FillRect(R.Right, R.Top, Width, R.Bottom, FillColor);
+    if R.Top > 0 then
+      FillRect(0, 0, Width, R.Top, FillColor)
+    else
+    if R.Top = 0 then
+      FillRect(0, R.Bottom, Width, Height, FillColor);
+    if R.Left > 0 then
+      FillRect(0, R.Top, R.Left, R.Bottom, FillColor)
+    else
+    if R.Left = 0 then
+      FillRect(R.Right, R.Top, Width, R.Bottom, FillColor);
   end;
 
   Changed;
@@ -5175,8 +5592,8 @@ begin
     GetMem(Buffer, Width shl 2);
     for J := 0 to Height div 2 - 1 do
     begin
-      P1 := PixelPtr[0, J];
-      P2 := PixelPtr[0, J2];
+      P1 := PColor32(ScanLine[J]);
+      P2 := PColor32(ScanLine[J2]);
       MoveLongword(P1^, Buffer^, Width);
       MoveLongword(P2^, P1^, Width);
       MoveLongword(Buffer^, P2^, Width);
@@ -5191,7 +5608,7 @@ begin
     J2 := Height - 1;
     for J := 0 to Height - 1 do
     begin
-      MoveLongword(PixelPtr[0, J]^, Dst.PixelPtr[0, J2]^, Width);
+      MoveLongword(ScanLine[J]^, Dst.ScanLine[J2]^, Width);
       Dec(J2);
     end;
     Dst.Changed;
@@ -5386,7 +5803,7 @@ begin
   Result := FResampler.ClassName;
 end;
 
-procedure TCustomBitmap32.SetResamplerClassName(Value: string);
+procedure TCustomBitmap32.SetResamplerClassName(const Value: string);
 var
   ResamplerClass: TCustomResamplerClass;
 begin
@@ -5398,11 +5815,6 @@ begin
 end;
 
 { TBitmap32 }
-
-procedure TBitmap32.InitializeBackend;
-begin
-  Backend := GetPlatformBackendClass.Create;
-end;
 
 procedure TBitmap32.FinalizeBackend;
 begin
@@ -5465,6 +5877,15 @@ end;
 function TBitmap32.GetHDC: HDC;
 begin
   Result := (FBackend as IDeviceContextSupport).Handle;
+end;
+
+class function TBitmap32.GetPlatformBackendClass: TCustomBackendClass;
+begin
+{$IFDEF FPC}
+  Result := TLCLBackend;
+{$ELSE}
+  Result := TGDIBackend;
+{$ENDIF}
 end;
 
 function TBitmap32.GetFont: TFont;
@@ -5566,6 +5987,23 @@ begin
   end;
 end;
 
+{$IFDEF COMPILER2009_UP}
+procedure TBitmap32.DrawTo(Dst: TControlCanvas; DstX, DstY: Integer);
+begin
+  DrawTo(Dst.Handle, DstX, DstY);
+end;
+
+procedure TBitmap32.DrawTo(Dst: TControlCanvas; const DstRect, SrcRect: TRect);
+begin
+  DrawTo(Dst.Handle, DstRect, SrcRect);
+end;
+
+procedure TBitmap32.TileTo(Dst: TControlCanvas; const DstRect, SrcRect: TRect);
+begin
+  TileTo(Dst.Handle, DstRect, SrcRect);
+end;
+{$ENDIF}
+
 procedure TBitmap32.UpdateFont;
 begin
   (FBackend as IFontSupport).UpdateFont;
@@ -5573,7 +6011,7 @@ end;
 
 // Text and Fonts //
 
-function TBitmap32.TextExtent(const Text: String): TSize;
+function TBitmap32.TextExtent(const Text: string): TSize;
 begin
   Result := (FBackend as ITextSupport).TextExtent(Text);
 end;
@@ -5585,7 +6023,7 @@ end;
 
 // -------------------------------------------------------------------
 
-procedure TBitmap32.Textout(X, Y: Integer; const Text: String);
+procedure TBitmap32.Textout(X, Y: Integer; const Text: string);
 begin
   (FBackend as ITextSupport).Textout(X, Y, Text);
 end;
@@ -5597,7 +6035,7 @@ end;
 
 // -------------------------------------------------------------------
 
-procedure TBitmap32.Textout(X, Y: Integer; const ClipRect: TRect; const Text: String);
+procedure TBitmap32.Textout(X, Y: Integer; const ClipRect: TRect; const Text: string);
 begin
   (FBackend as ITextSupport).Textout(X, Y, ClipRect, Text);
 end;
@@ -5609,19 +6047,19 @@ end;
 
 // -------------------------------------------------------------------
 
-procedure TBitmap32.Textout(DstRect: TRect; const Flags: Cardinal; const Text: String);
+procedure TBitmap32.Textout(var DstRect: TRect; const Flags: Cardinal; const Text: string);
 begin
   (FBackend as ITextSupport).Textout(DstRect, Flags, Text);
 end;
 
-procedure TBitmap32.TextoutW(DstRect: TRect; const Flags: Cardinal; const Text: Widestring);
+procedure TBitmap32.TextoutW(var DstRect: TRect; const Flags: Cardinal; const Text: Widestring);
 begin
   (FBackend as ITextSupport).TextoutW(DstRect, Flags, Text);
 end;
 
 // -------------------------------------------------------------------
 
-function TBitmap32.TextHeight(const Text: String): Integer;
+function TBitmap32.TextHeight(const Text: string): Integer;
 begin
   Result := (FBackend as ITextSupport).TextExtent(Text).cY;
 end;
@@ -5633,7 +6071,7 @@ end;
 
 // -------------------------------------------------------------------
 
-function TBitmap32.TextWidth(const Text: String): Integer;
+function TBitmap32.TextWidth(const Text: string): Integer;
 begin
   Result := (FBackend as ITextSupport).TextExtent(Text).cX;
 end;
@@ -5673,7 +6111,7 @@ begin
     lfStrikeOut := Byte(fsStrikeOut in Font.Style);
     lfCharSet := Byte(Font.Charset);
 
-    // TODO DVT Added cast to fix TFontDataName to String warning. Need to verify is OK
+    // TODO DVT Added cast to fix TFontDataName to string warning. Need to verify is OK
     if AnsiCompareText(Font.Name, 'Default') = 0 then  // do not localize
       StrPCopy(lfFaceName, string(DefFontData.Name))
     else
@@ -5745,7 +6183,7 @@ var
   Dst: PColor32;
 begin
   Sz := 1 shl N - 1;
-  Dst := B.PixelPtr[0, 0];
+  Dst := PColor32(B.ScanLine[0]);
   for J := 0 to B.Height - 1 do
   begin
     Y := J shl N;
@@ -5769,12 +6207,12 @@ begin
   end;
 end;
 
-procedure TBitmap32.RenderText(X, Y: Integer; const Text: String; AALevel: Integer; Color: TColor32);
+procedure TBitmap32.RenderText(X, Y: Integer; const Text: string; AALevel: Integer; Color: TColor32);
 var
   B, B2: TBitmap32;
   Sz: TSize;
   Alpha: TColor32;
-  PaddedText: String;
+  PaddedText: string;
 begin
   if Empty then Exit;
 
@@ -5834,7 +6272,7 @@ begin
 
     DrawMode := dmBlend;
     MasterAlpha := Alpha;
-    CombineMode := Self.CombineMode;
+    CombineMode := CombineMode;
 
     DrawTo(Self, X, Y);
   finally
@@ -5878,7 +6316,7 @@ begin
   { TODO : Optimize Clipping here }
   B := TBitmap32.Create;
   try
-    if AALevel = 0 then
+    if AALevel <= 0 then
     begin
       Sz := TextExtentW(PaddedText);
       B.SetSize(Sz.cX, Sz.cY);
@@ -5996,7 +6434,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TCustomBackend.ChangeSize(var Width, Height: Integer; NewWidth, NewHeight: Integer; ClearBuffer: Boolean);
+procedure TCustomBackend.ChangeSize(out Width, Height: Integer; NewWidth, NewHeight: Integer; ClearBuffer: Boolean);
 begin
   try
     Changing;

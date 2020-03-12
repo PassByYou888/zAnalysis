@@ -90,10 +90,9 @@ procedure MLPEBaggingLBFGS(const MultiThread: Boolean; var Ensemble: TMLPEnsembl
   WStep: TLFloat; MAXITS: TLInt; var Info: TLInt;
   var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward;
 
-
 const
   MLPNTotalOffset = 3;
-  MLPEVNum        = 9;
+  MLPEVNum = 9;
 
 procedure MLPEAllErrors(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt; var RelCls: TLFloat; var AvgCE: TLFloat;
@@ -103,7 +102,6 @@ procedure MLPEBaggingInternal(const MultiThread: Boolean; var Ensemble: TMLPEnse
   Restarts: TLInt; WStep: TLFloat; MAXITS: TLInt;
   LMAlgorithm: Boolean; var Info: TLInt; var Rep: TMLPReport;
   var OOBErrors: TMLPCVReport); forward;
-
 
 procedure DSErrAllocate(NClasses: TLInt; var Buf: TLVec);
 begin
@@ -121,13 +119,13 @@ end;
 procedure DSErrAccumulate(var Buf: TLVec; const y: TLVec; const DesiredY: TLVec);
 var
   NClasses: TLInt;
-  NOut    : TLInt;
-  Offs    : TLInt;
-  MMAX    : TLInt;
-  rmax    : TLInt;
-  j       : TLInt;
-  v       : TLFloat;
-  EV      : TLFloat;
+  NOut: TLInt;
+  Offs: TLInt;
+  MMAX: TLInt;
+  rmax: TLInt;
+  j: TLInt;
+  v: TLFloat;
+  EV: TLFloat;
 begin
   Offs := 5;
   NClasses := Round(Buf[Offs]);
@@ -389,7 +387,7 @@ end;
   ************************************************************************ *)
 procedure MLPECreateFromNetwork(const Network: TMultiLayerPerceptron; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble);
 var
-  i     : TLInt;
+  i: TLInt;
   CCount: TLInt;
 begin
   Assert(EnsembleSize > 0, 'MLPECreate: incorrect ensemble size!');
@@ -413,7 +411,7 @@ begin
   //
   // structure information
   //
-  SetLength(Ensemble.StructInfo, Network.StructInfo[0]  );
+  SetLength(Ensemble.StructInfo, Network.StructInfo[0]);
   i := 0;
   while i <= Network.StructInfo[0] - 1 do
     begin
@@ -424,14 +422,18 @@ begin
   //
   // weights, means, sigmas
   //
-  SetLength(Ensemble.Weights, EnsembleSize * Ensemble.WCount  );
-  SetLength(Ensemble.ColumnMeans, EnsembleSize * CCount  );
-  SetLength(Ensemble.ColumnSigmas, EnsembleSize * CCount  );
+  SetLength(Ensemble.Weights, EnsembleSize * Ensemble.WCount);
+  SetLength(Ensemble.ColumnMeans, EnsembleSize * CCount);
+  SetLength(Ensemble.ColumnSigmas, EnsembleSize * CCount);
   i := 0;
-  while i <= EnsembleSize * Ensemble.WCount - 1 do
+  with TLearnRandom.Create do
     begin
-      Ensemble.Weights[i] := RandomReal - 0.5;
-      inc(i);
+      while i <= EnsembleSize * Ensemble.WCount - 1 do
+        begin
+          Ensemble.Weights[i] := RandReal - 0.5;
+          inc(i);
+        end;
+      Free;
     end;
   i := 0;
   while i <= EnsembleSize - 1 do
@@ -451,12 +453,12 @@ begin
   //
   // temporaries, internal buffers
   //
-  SetLength(Ensemble.TmpWeights, Ensemble.WCount  );
-  SetLength(Ensemble.TmpMeans, CCount  );
-  SetLength(Ensemble.TmpSigmas, CCount  );
-  SetLength(Ensemble.Neurons, Ensemble.StructInfo[MLPNTotalOffset]  );
-  SetLength(Ensemble.DFDNET, Ensemble.StructInfo[MLPNTotalOffset]  );
-  SetLength(Ensemble.y, Ensemble.NOut  );
+  SetLength(Ensemble.TmpWeights, Ensemble.WCount);
+  SetLength(Ensemble.TmpMeans, CCount);
+  SetLength(Ensemble.TmpSigmas, CCount);
+  SetLength(Ensemble.Neurons, Ensemble.StructInfo[MLPNTotalOffset]);
+  SetLength(Ensemble.DFDNET, Ensemble.StructInfo[MLPNTotalOffset]);
+  SetLength(Ensemble.y, Ensemble.NOut);
 end;
 
 (* ************************************************************************
@@ -470,8 +472,8 @@ end;
   ************************************************************************ *)
 procedure MLPECopy(const Ensemble1: TMLPEnsemble; var Ensemble2: TMLPEnsemble);
 var
-  i     : TLInt;
-  SSize : TLInt;
+  i: TLInt;
+  SSize: TLInt;
   CCount: TLInt;
   NTotal: TLInt;
 begin
@@ -493,18 +495,18 @@ begin
   //
   // Allocate space
   //
-  SetLength(Ensemble2.StructInfo, SSize  );
+  SetLength(Ensemble2.StructInfo, SSize);
   SetLength(Ensemble2.Weights, Ensemble1.EnsembleSize *
-    Ensemble1.WCount  );
-  SetLength(Ensemble2.ColumnMeans, Ensemble1.EnsembleSize * CCount  );
-  SetLength(Ensemble2.ColumnSigmas, Ensemble1.EnsembleSize * CCount  );
-  SetLength(Ensemble2.TmpWeights, Ensemble1.WCount  );
-  SetLength(Ensemble2.TmpMeans, CCount  );
-  SetLength(Ensemble2.TmpSigmas, CCount  );
-  SetLength(Ensemble2.SerializedMLP, Ensemble1.SerializedLen  );
-  SetLength(Ensemble2.Neurons, NTotal  );
-  SetLength(Ensemble2.DFDNET, NTotal  );
-  SetLength(Ensemble2.y, Ensemble1.NOut  );
+    Ensemble1.WCount);
+  SetLength(Ensemble2.ColumnMeans, Ensemble1.EnsembleSize * CCount);
+  SetLength(Ensemble2.ColumnSigmas, Ensemble1.EnsembleSize * CCount);
+  SetLength(Ensemble2.TmpWeights, Ensemble1.WCount);
+  SetLength(Ensemble2.TmpMeans, CCount);
+  SetLength(Ensemble2.TmpSigmas, CCount);
+  SetLength(Ensemble2.SerializedMLP, Ensemble1.SerializedLen);
+  SetLength(Ensemble2.Neurons, NTotal);
+  SetLength(Ensemble2.DFDNET, NTotal);
+  SetLength(Ensemble2.y, Ensemble1.NOut);
 
   //
   // Copy
@@ -546,12 +548,12 @@ end;
 procedure MLPESerialize(var Ensemble: TMLPEnsemble; var RA: TLVec;
   var RLen: TLInt);
 var
-  i     : TLInt;
-  SSize : TLInt;
+  i: TLInt;
+  SSize: TLInt;
   NTotal: TLInt;
   CCount: TLInt;
-  HSize : TLInt;
-  Offs  : TLInt;
+  HSize: TLInt;
+  Offs: TLInt;
 begin
   HSize := 13;
   SSize := Ensemble.StructInfo[0];
@@ -588,7 +590,7 @@ begin
   // [..]    ColumnMeans
   // [..]    ColumnSigmas
   //
-  SetLength(RA, RLen  );
+  SetLength(RA, RLen);
   RA[0] := RLen;
   RA[1] := MLPEVNum;
   RA[2] := Ensemble.EnsembleSize;
@@ -649,12 +651,12 @@ end;
   ************************************************************************ *)
 procedure MLPEUNSerialize(const RA: TLVec; var Ensemble: TMLPEnsemble);
 var
-  i     : TLInt;
-  SSize : TLInt;
+  i: TLInt;
+  SSize: TLInt;
   NTotal: TLInt;
   CCount: TLInt;
-  HSize : TLInt;
-  Offs  : TLInt;
+  HSize: TLInt;
+  Offs: TLInt;
 begin
   Assert(Round(RA[1]) = MLPEVNum, 'MLPEUnserialize: incorrect array!');
 
@@ -677,17 +679,17 @@ begin
   //
   // Allocate arrays
   //
-  SetLength(Ensemble.StructInfo, SSize  );
-  SetLength(Ensemble.Weights, Ensemble.EnsembleSize * Ensemble.WCount  );
-  SetLength(Ensemble.ColumnMeans, Ensemble.EnsembleSize * CCount  );
-  SetLength(Ensemble.ColumnSigmas, Ensemble.EnsembleSize * CCount  );
-  SetLength(Ensemble.TmpWeights, Ensemble.WCount  );
-  SetLength(Ensemble.TmpMeans, CCount  );
-  SetLength(Ensemble.TmpSigmas, CCount  );
-  SetLength(Ensemble.Neurons, NTotal  );
-  SetLength(Ensemble.DFDNET, NTotal  );
-  SetLength(Ensemble.SerializedMLP, Ensemble.SerializedLen  );
-  SetLength(Ensemble.y, Ensemble.NOut  );
+  SetLength(Ensemble.StructInfo, SSize);
+  SetLength(Ensemble.Weights, Ensemble.EnsembleSize * Ensemble.WCount);
+  SetLength(Ensemble.ColumnMeans, Ensemble.EnsembleSize * CCount);
+  SetLength(Ensemble.ColumnSigmas, Ensemble.EnsembleSize * CCount);
+  SetLength(Ensemble.TmpWeights, Ensemble.WCount);
+  SetLength(Ensemble.TmpMeans, CCount);
+  SetLength(Ensemble.TmpSigmas, CCount);
+  SetLength(Ensemble.Neurons, NTotal);
+  SetLength(Ensemble.DFDNET, NTotal);
+  SetLength(Ensemble.SerializedMLP, Ensemble.SerializedLen);
+  SetLength(Ensemble.y, Ensemble.NOut);
 
   //
   // load data
@@ -721,10 +723,14 @@ var
   i: TLInt;
 begin
   i := 0;
-  while i <= Ensemble.EnsembleSize * Ensemble.WCount - 1 do
+  with TLearnRandom.Create do
     begin
-      Ensemble.Weights[i] := RandomReal - 0.5;
-      inc(i);
+      while i <= Ensemble.EnsembleSize * Ensemble.WCount - 1 do
+        begin
+          Ensemble.Weights[i] := RandReal - 0.5;
+          inc(i);
+        end;
+      Free;
     end;
 end;
 
@@ -763,11 +769,11 @@ end;
 procedure MLPEProcess(var Ensemble: TMLPEnsemble; const x: TLVec;
   var y: TLVec);
 var
-  i : TLInt;
+  i: TLInt;
   ES: TLInt;
   WC: TLInt;
   CC: TLInt;
-  v : TLFloat;
+  v: TLFloat;
 begin
   ES := Ensemble.EnsembleSize;
   WC := Ensemble.WCount;
@@ -821,9 +827,9 @@ function MLPERelClsError(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
-  AvgCE : TLFloat;
-  RMS   : TLFloat;
-  Avg   : TLFloat;
+  AvgCE: TLFloat;
+  RMS: TLFloat;
+  Avg: TLFloat;
   AvgRel: TLFloat;
 begin
   MLPEAllErrors(Ensemble, xy, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
@@ -846,9 +852,9 @@ function MLPEAvgCE(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
-  AvgCE : TLFloat;
-  RMS   : TLFloat;
-  Avg   : TLFloat;
+  AvgCE: TLFloat;
+  RMS: TLFloat;
+  Avg: TLFloat;
   AvgRel: TLFloat;
 begin
   MLPEAllErrors(Ensemble, xy, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
@@ -872,9 +878,9 @@ function MLPERMSError(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
-  AvgCE : TLFloat;
-  RMS   : TLFloat;
-  Avg   : TLFloat;
+  AvgCE: TLFloat;
+  RMS: TLFloat;
+  Avg: TLFloat;
   AvgRel: TLFloat;
 begin
   MLPEAllErrors(Ensemble, xy, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
@@ -897,9 +903,9 @@ function MLPEAvgError(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
-  AvgCE : TLFloat;
-  RMS   : TLFloat;
-  Avg   : TLFloat;
+  AvgCE: TLFloat;
+  RMS: TLFloat;
+  Avg: TLFloat;
   AvgRel: TLFloat;
 begin
   MLPEAllErrors(Ensemble, xy, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
@@ -922,9 +928,9 @@ function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt): TLFloat;
 var
   RelCls: TLFloat;
-  AvgCE : TLFloat;
-  RMS   : TLFloat;
-  Avg   : TLFloat;
+  AvgCE: TLFloat;
+  RMS: TLFloat;
+  Avg: TLFloat;
   AvgRel: TLFloat;
 begin
   MLPEAllErrors(Ensemble, xy, NPoints, RelCls, AvgCE, RMS, Avg, AvgRel);
@@ -936,7 +942,7 @@ end;
   Modified Levenberg-Marquardt algorithm is used as base training method.
 
   INPUT PARAMETERS:
-  MultiThread -   parallel train
+  MultiThread -   Parallel train
   Ensemble    -   model with initialized geometry
   XY          -   training set
   NPoints     -   training set size
@@ -965,7 +971,7 @@ end;
   L-BFGS algorithm is used as base training method.
 
   INPUT PARAMETERS:
-  MultiThread -   parallel train
+  MultiThread -   Parallel train
   Ensemble    -   model with initialized geometry
   XY          -   training set
   NPoints     -   training set size
@@ -1000,14 +1006,14 @@ procedure MLPEAllErrors(var Ensemble: TMLPEnsemble; const xy: TLMatrix;
   NPoints: TLInt; var RelCls: TLFloat; var AvgCE: TLFloat;
   var RMS: TLFloat; var Avg: TLFloat; var AvgRel: TLFloat);
 var
-  i    : TLInt;
-  Buf  : TLVec;
+  i: TLInt;
+  Buf: TLVec;
   WorkX: TLVec;
-  y    : TLVec;
-  dy   : TLVec;
+  y: TLVec;
+  dy: TLVec;
 begin
-  SetLength(WorkX, Ensemble.NIn  );
-  SetLength(y, Ensemble.NOut  );
+  SetLength(WorkX, Ensemble.NIn);
+  SetLength(y, Ensemble.NOut);
   if Ensemble.IsSoftmax then
     begin
       SetLength(dy, 0 + 1);
@@ -1015,7 +1021,7 @@ begin
     end
   else
     begin
-      SetLength(dy, Ensemble.NOut  );
+      SetLength(dy, Ensemble.NOut);
       DSErrAllocate(-Ensemble.NOut, Buf);
     end;
   i := 0;
@@ -1052,26 +1058,26 @@ procedure MLPEBaggingInternal(const MultiThread: Boolean; var Ensemble: TMLPEnse
   LMAlgorithm: Boolean; var Info: TLInt; var Rep: TMLPReport;
   var OOBErrors: TMLPCVReport);
 var
-  XYS         : TLMatrix;
-  s           : TLBVec;
-  OOBBuf      : TLMatrix;
-  OOBCntBuf   : TLIVec;
-  x           : TLVec;
-  y           : TLVec;
-  dy          : TLVec;
-  DSBuf       : TLVec;
-  NIn         : TLInt;
-  NOut        : TLInt;
-  CCnt        : TLInt;
-  PCnt        : TLInt;
-  i           : TLInt;
-  j           : TLInt;
-  k           : TLInt;
-  v           : TLFloat;
-  TmpRep      : TMLPReport;
-  Network     : TMultiLayerPerceptron;
+  XYS: TLMatrix;
+  s: TLBVec;
+  OOBBuf: TLMatrix;
+  OOBCntBuf: TLIVec;
+  x: TLVec;
+  y: TLVec;
+  dy: TLVec;
+  DSBuf: TLVec;
+  NIn: TLInt;
+  NOut: TLInt;
+  CCnt: TLInt;
+  PCnt: TLInt;
+  i: TLInt;
+  j: TLInt;
+  k: TLInt;
+  v: TLFloat;
+  TmpRep: TMLPReport;
+  Network: TMultiLayerPerceptron;
   IsTerminated: Boolean;
-  EBest       : TLFloat;
+  EBest: TLFloat;
 begin
 
   //
@@ -1127,19 +1133,19 @@ begin
       CCnt := NIn + NOut;
       PCnt := NIn + NOut;
     end;
-  SetLength(XYS, NPoints  , CCnt  );
-  SetLength(s, NPoints  );
-  SetLength(OOBBuf, NPoints  , NOut  );
-  SetLength(OOBCntBuf, NPoints  );
-  SetLength(x, NIn  );
-  SetLength(y, NOut  );
+  SetLength(XYS, NPoints, CCnt);
+  SetLength(s, NPoints);
+  SetLength(OOBBuf, NPoints, NOut);
+  SetLength(OOBCntBuf, NPoints);
+  SetLength(x, NIn);
+  SetLength(y, NOut);
   if Ensemble.IsSoftmax then
     begin
       SetLength(dy, 0 + 1);
     end
   else
     begin
-      SetLength(dy, NOut  );
+      SetLength(dy, NOut);
     end;
   i := 0;
   while i <= NPoints - 1 do
@@ -1276,6 +1282,4 @@ begin
   OOBErrors.RMSError := DSBuf[2];
   OOBErrors.AvgError := DSBuf[3];
   OOBErrors.AvgRelError := DSBuf[4];
-end; 
- 
- 
+end;

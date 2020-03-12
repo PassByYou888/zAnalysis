@@ -51,7 +51,8 @@ interface
 
 uses
   Math,
-  AggBasics;
+  AggBasics,
+  CoreClasses;
 
 type
   PAggOrderRgb = ^TAggOrderRGB;
@@ -353,7 +354,7 @@ end;
 
 procedure TAggRgba8.Random;
 begin
-  ABGR := System.Random($FFFFFFFF);
+  ABGR := MT19937Rand32($FFFFFFFF);
 end;
 
 procedure TAggRgba8.White;

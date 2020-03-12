@@ -52,9 +52,16 @@ type
   TNPostExecute = class;
 
   TNPostExecuteCall = procedure(Sender: TNPostExecute);
+  TNPostExecuteCall_NP = procedure();
   TNPostExecuteMethod = procedure(Sender: TNPostExecute) of object;
-
-{$IFNDEF FPC} TNPostExecuteProc = reference to procedure(Sender: TNPostExecute); {$ENDIF}
+  TNPostExecuteMethod_NP = procedure() of object;
+{$IFDEF FPC}
+  TNPostExecuteProc = procedure(Sender: TNPostExecute) is nested;
+  TNPostExecuteProc_NP = procedure() is nested;
+{$ELSE FPC}
+  TNPostExecuteProc = reference to procedure(Sender: TNPostExecute);
+  TNPostExecuteProc_NP = reference to procedure();
+{$ENDIF FPC}
 
   TNPostExecute = class(TCoreClassObject)
   private
@@ -70,8 +77,11 @@ type
     Delay: Double;
 
     OnExecuteCall: TNPostExecuteCall;
+    OnExecuteCall_NP: TNPostExecuteCall_NP;
     OnExecuteMethod: TNPostExecuteMethod;
-{$IFNDEF FPC} OnExecuteProc: TNPostExecuteProc; {$ENDIF}
+    OnExecuteMethod_NP: TNPostExecuteMethod_NP;
+    OnExecuteProc: TNPostExecuteProc;
+    OnExecuteProc_NP: TNPostExecuteProc_NP;
     property DataEng: TDataFrameEngine read FDataEng;
     property Owner: TNProgressPost read FOwner;
 
@@ -107,27 +117,26 @@ type
     function PostExecuteM(DataEng: TDataFrameEngine; OnExecuteMethod: TNPostExecuteMethod): TNPostExecute; overload;
     function PostExecuteM(Delay: Double; DataEng: TDataFrameEngine; OnExecuteMethod: TNPostExecuteMethod): TNPostExecute; overload;
     function PostExecuteM(Delay: Double; OnExecuteMethod: TNPostExecuteMethod): TNPostExecute; overload;
+    function PostExecuteM_NP(Delay: Double; OnExecuteMethod: TNPostExecuteMethod_NP): TNPostExecute; overload;
 
     function PostExecuteC(DataEng: TDataFrameEngine; OnExecuteCall: TNPostExecuteCall): TNPostExecute; overload;
     function PostExecuteC(Delay: Double; DataEng: TDataFrameEngine; OnExecuteCall: TNPostExecuteCall): TNPostExecute; overload;
     function PostExecuteC(Delay: Double; OnExecuteCall: TNPostExecuteCall): TNPostExecute; overload;
+    function PostExecuteC_NP(Delay: Double; OnExecuteCall: TNPostExecuteCall_NP): TNPostExecute; overload;
 
-{$IFNDEF FPC}
     function PostExecuteP(DataEng: TDataFrameEngine; OnExecuteProc: TNPostExecuteProc): TNPostExecute; overload;
     function PostExecuteP(Delay: Double; DataEng: TDataFrameEngine; OnExecuteProc: TNPostExecuteProc): TNPostExecute; overload;
     function PostExecuteP(Delay: Double; OnExecuteProc: TNPostExecuteProc): TNPostExecute; overload;
-{$ENDIF}
+    function PostExecuteP_NP(Delay: Double; OnExecuteProc: TNPostExecuteProc_NP): TNPostExecute; overload;
+
     procedure Delete(p: TNPostExecute); overload; virtual;
 
     procedure Progress(deltaTime: Double);
 
-    procedure PauseProgress;
-    procedure ContinueProgress;
-
+    property Paused: Boolean read FPaused write FPaused;
     property Busy: Boolean read FBusy;
     property CurrentExecute: TNPostExecute read FCurrentExecute;
     property PostClass: TNPostExecuteClass read FPostClass write FPostClass;
-    property IsPause: Boolean read FPaused;
   end;
 
   TNProgressPostWithCadencer = class(TNProgressPost, ICadencerProgressInterface)
@@ -236,10 +245,11 @@ begin
   Delay := 0;
 
   OnExecuteCall := nil;
+  OnExecuteCall_NP := nil;
   OnExecuteMethod := nil;
-{$IFNDEF FPC}
+  OnExecuteMethod_NP := nil;
   OnExecuteProc := nil;
-{$ENDIF}
+  OnExecuteProc_NP := nil;
 end;
 
 destructor TNPostExecute.Destroy;
@@ -276,6 +286,15 @@ begin
       end;
     end;
 
+  if Assigned(OnExecuteCall_NP) then
+    begin
+      FDataEng.Reader.index := 0;
+      try
+          OnExecuteCall_NP();
+      except
+      end;
+    end;
+
   if Assigned(OnExecuteMethod) then
     begin
       FDataEng.Reader.index := 0;
@@ -285,7 +304,15 @@ begin
       end;
     end;
 
-{$IFNDEF FPC}
+  if Assigned(OnExecuteMethod_NP) then
+    begin
+      FDataEng.Reader.index := 0;
+      try
+          OnExecuteMethod_NP();
+      except
+      end;
+    end;
+
   if Assigned(OnExecuteProc) then
     begin
       FDataEng.Reader.index := 0;
@@ -294,7 +321,14 @@ begin
       except
       end;
     end;
-{$ENDIF}
+  if Assigned(OnExecuteProc_NP) then
+    begin
+      FDataEng.Reader.index := 0;
+      try
+          OnExecuteProc_NP();
+      except
+      end;
+    end;
 end;
 
 constructor TNProgressPost.Create;
@@ -390,6 +424,12 @@ begin
   Result.OnExecuteMethod := OnExecuteMethod;
 end;
 
+function TNProgressPost.PostExecuteM_NP(Delay: Double; OnExecuteMethod: TNPostExecuteMethod_NP): TNPostExecute;
+begin
+  Result := PostExecute(Delay);
+  Result.OnExecuteMethod_NP := OnExecuteMethod;
+end;
+
 function TNProgressPost.PostExecuteC(DataEng: TDataFrameEngine; OnExecuteCall: TNPostExecuteCall): TNPostExecute;
 begin
   Result := PostExecute(DataEng);
@@ -408,8 +448,11 @@ begin
   Result.OnExecuteCall := OnExecuteCall;
 end;
 
-{$IFNDEF FPC}
-
+function TNProgressPost.PostExecuteC_NP(Delay: Double; OnExecuteCall: TNPostExecuteCall_NP): TNPostExecute;
+begin
+  Result := PostExecute(Delay);
+  Result.OnExecuteCall_NP := OnExecuteCall;
+end;
 
 function TNProgressPost.PostExecuteP(DataEng: TDataFrameEngine; OnExecuteProc: TNPostExecuteProc): TNPostExecute;
 begin
@@ -429,8 +472,11 @@ begin
   Result.OnExecuteProc := OnExecuteProc;
 end;
 
-{$ENDIF}
-
+function TNProgressPost.PostExecuteP_NP(Delay: Double; OnExecuteProc: TNPostExecuteProc_NP): TNPostExecute;
+begin
+  Result := PostExecute(Delay);
+  Result.OnExecuteProc_NP := OnExecuteProc;
+end;
 
 procedure TNProgressPost.Delete(p: TNPostExecute);
 var
@@ -518,16 +564,6 @@ begin
   FPostProcessIsRun := False;
 end;
 
-procedure TNProgressPost.PauseProgress;
-begin
-  FPaused := True;
-end;
-
-procedure TNProgressPost.ContinueProgress;
-begin
-  FPaused := False;
-end;
-
 procedure TNProgressPostWithCadencer.CadencerProgress(const deltaTime, newTime: Double);
 begin
   inherited Progress(deltaTime);
@@ -537,7 +573,7 @@ constructor TNProgressPostWithCadencer.Create;
 begin
   inherited Create;
   FCadencerEngine := TCadencer.Create;
-  FCadencerEngine.ProgressIntf := Self;
+  FCadencerEngine.ProgressInterface := Self;
 end;
 
 destructor TNProgressPostWithCadencer.Destroy;
