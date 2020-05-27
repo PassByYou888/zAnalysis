@@ -1186,7 +1186,7 @@ File version 1026
   {$WARN UNIT_PLATFORM OFF}
 {$endif}
 
-// Delphi XE10 or C++ Builder XE10
+// Delphi XE10.1 or C++ Builder XE10.1
 {$ifdef VER310}
   {$define Delphi5orNewer}
   {$define Delphi6orNewer}
@@ -1254,7 +1254,7 @@ File version 1026
   {$WARN UNIT_PLATFORM OFF}
 {$endif}
 
-// Delphi XE10 or C++ Builder XE10
+// Delphi XE10.2 or C++ Builder XE10.2
 {$ifdef VER320}
   {$define Delphi5orNewer}
   {$define Delphi6orNewer}
@@ -1322,8 +1322,76 @@ File version 1026
   {$WARN UNIT_PLATFORM OFF}
 {$endif}
 
-// Delphi XE10 or C++ Builder XE10
+// Delphi XE10.3 or C++ Builder XE10.3
 {$ifdef VER330}
+  {$define Delphi5orNewer}
+  {$define Delphi6orNewer}
+  {$define Delphi7orNewer}
+  {$define Delphi2005orNewer}
+  {$define Delphi2006orNewer}
+  {$define Delphi2007orNewer}
+  {$define Delphi2009orNewer}
+  {$define Delphi2010orNewer}
+  {$define DelphiXEorNewer}
+  {$define DelphiXE2orNewer}
+  {$define DelphiXE3orNewer}
+  {$define DelphiXE4orNewer}
+  {$define DelphiXE5orNewer}
+  {$define DelphiXE6orNewer}
+  {$define DelphiXE7orNewer}
+  {$define DelphiXE8orNewer}
+  {$define DelphiXE10orNewer}
+  {$define IEFIXPREVIEWS}
+  {$define IEFIXUPDATE}
+  {$define IEFIXOSDIALOGS}
+  {$define IESUPPORTDEFPARAMS}
+  {$define IESUPPORTANCHORS}
+  {$define IEMOUSEWHEELEVENTS}
+  {$define IEHASINT64}
+  {$define IEHASUINT64}
+  {$define IEHASNATIVEINT}
+  {$define IEINCLUDEFLATSB}     // Use FlatSB unit
+  {$define IESUPPORTINLINE}
+  {$define IESUPPORTOVERLOAD}
+  {$define IENEWVARIANTS}
+  {$define IEHASFREEANDNIL}
+  {$define IEMMXSUPPORTED}
+  {$define IEHASTTHREADSTATICSYNCHRONIZE}
+  {$define IEHASTTHREADSTART}
+  {$define IEHASCONSTENUM}
+  {$define IEHASAFTERCONSTRUCTION}
+  {$define IEHASACTIVEFORMHANDLE}
+  {$define IEHASTYPES}
+  {$define IEHASUITYPES}
+  {$define IESUPPORTDEPRECATED}
+  {$define IESUPPORTINTERFACESUPPORT}
+  {$define IEHASFORMATSETTINGS}
+  {$define IEHASFOCUSSTATE}
+  {$define IEHASOPENOPTIONSEX}
+  {$define IEHASNEEDSBORDERPAINT}
+  {$define IEHASPARENTBACKGROUND}
+  {$define IEUSENEWSENDMESSAGETIMEOUT}
+  {$define IEUSEDESIGNINTF}
+  {$define IEUSEFILTEDIT}
+  {$define IEREGISTERPROPERTYEDITOR}
+  {$define IEUSEASM}
+  {$define IEVISION}
+  {$define IEHASPOSEX}
+  {$define IEHASSTRUTILS}
+  {$define IEHASRECORDASCLASSES}
+  {$define IEHASUNICODEWARNS}
+  {$define IEUSEVCLZLIB}
+  {$define IEHASTOUCH}
+  {$define IEHASPLATFORMATTRIBUTE}
+  {$define IEHASONGESTURE}
+  {$define IEHASUTF8ENCODEDECODE}
+
+  {$WARN SYMBOL_PLATFORM OFF}
+  {$WARN UNIT_PLATFORM OFF}
+{$endif}
+
+// Delphi XE10.4 or C++ Builder XE10.4
+{$ifdef VER340}
   {$define Delphi5orNewer}
   {$define Delphi6orNewer}
   {$define Delphi7orNewer}
