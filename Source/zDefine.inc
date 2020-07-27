@@ -22,14 +22,17 @@
     {$MODE objfpc}
   {$ENDIF FPC_DELPHI_MODE}
 
+  {$ASMMODE INTEL}
   {$MODESWITCH AdvancedRecords}
   {$MODESWITCH NestedProcVars}
+  {$MODESWITCH NESTEDCOMMENTS}
   {$NOTES OFF}
   {$STACKFRAMES OFF}
   {$COPERATORS OFF}
   {$GOTO ON}
   {$INLINE ON}
   {$MACRO OFF}
+  {$PIC OFF}
 
   {$DEFINE LITTLE_ENDIAN}
   {$UNDEF BIG_ENDIAN}
@@ -59,7 +62,7 @@
   // if rem this "FoldParallel" parallel for block program, thread can use linear address
   {$DEFINE FoldParallel}
 
-  // MT19937 of seed in the startup TComputeThread is 0
+  // MT19937 of seed in the startup TCompute is 0
   {$DEFINE MT19937SeedOnTComputeThreadIs0}
 
   // automated loading common AI data sets on boot-time
@@ -88,7 +91,9 @@
   {$UNDEF debug}
   {$DEFINE release}
   {$DEFINE INLINE_ASM}
-  {$R-} { range check }
+  {$R-}
+  {$I-}
+  {$S-}
 {$ELSE FPC} { IF DELPHI }
   {$DEFINE LITTLE_ENDIAN}
   {$UNDEF BIG_ENDIAN}
@@ -129,9 +134,15 @@
 
   // paper: Mersenne Twister: A 623-dimensionallyequidistributed uniformpseudorandom number generator
   // Using this paper replace of Delphi Random() and Randomize() function, work on xe 10.3 or laster
-  // {$DEFINE InstallMT19937CoreToDelphi}
+  {$UNDEF InstallMT19937CoreToDelphi}
+  {$IFDEF VER330}
+    {$DEFINE InstallMT19937CoreToDelphi}
+  {$ENDIF VER330}
+  {$IFDEF VER340}
+    {$DEFINE InstallMT19937CoreToDelphi}
+  {$ENDIF VER340}
 
-  // MT19937 of seed in the startup TComputeThread is 0
+  // MT19937 of seed in the startup TCompute is 0
   {$DEFINE MT19937SeedOnTComputeThreadIs0}
 
   // automated loading common AI data sets on boot-time
@@ -191,18 +202,37 @@
   {$Z1} { Minimum enum size }
 {$ENDIF FPC}
 
+// Using fillchar replace of FillPtr
+// Maybe fillchar works on MMX / SSE2,
+// {$Define FillPtr_Used_FillChar}
 
+// Using Move replace of CopyPtr
+// {$Define CopyPtr_Used_Move}
+
+// Sequence packets default are opened in Physics-IO
+// Sequence package can support multi platform keep-alive mode
+// building a network CS system, the symmetry of compiler(FPC/Delphi) "UsedSequencePacket"
+{$DEFINE UsedSequencePacket}
+
+// Sequence package can support multi platform keep-alive mode
+// building a network CS system, the symmetry of compiler(FPC/Delphi) "UsedSequencePacketOnP2PVM"
+// Sequence packets default are closed in P2PVM-IO
+{$UNDEF UsedSequencePacketOnP2PVM}
 
 {$IFDEF DEBUG}
   // initialization status prompt
   {$DEFINE initializationStatus}
   // warning prompt
   {$WARNINGS ON}
+  // JPEG support can output debug info
+  {$DEFINE JPEG_Debug}
 {$ELSE DEBUG}
   // initialization status prompt
   {$UNDEF initializationStatus}
   // warning prompt
   {$WARNINGS OFF}
+  // JPEG support can output debug info
+  {$UNDEF JPEG_Debug}
 {$ENDIF DEBUG}
 
 {$HINTS OFF}

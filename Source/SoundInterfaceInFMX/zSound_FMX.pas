@@ -19,20 +19,20 @@ uses CoreClasses, zSound, UnicodeMixedLib, MediaCenter,
   FMX.Media,
 
   System.SysUtils, System.Types, System.UITypes, System.Classes, FMX.Dialogs, FMX.Forms
-  {$IFDEF ANDROID}
+{$IFDEF ANDROID}
     , AndroidApi.JNI.Media, FMX.Helpers.Android, AndroidApi.JNI.JavaTypes, AndroidApi.JNI.GraphicsContentViewText, AndroidApi.JNIBridge,
   AndroidApi.Helpers, System.Threading
-  {$ENDIF}
-  {$IFDEF IOS}
+{$ENDIF}
+{$IFDEF IOS}
     , Macapi.CoreFoundation, FMX.Platform.iOS, iOSApi.CocoaTypes, iOSApi.AVFoundation, iOSApi.Foundation
-  {$ELSE}
-  {$IFDEF MACOS}
+{$ELSE}
+{$IFDEF MACOS}
     , Macapi.CoreFoundation, FMX.Platform.Mac, Macapi.CocoaTypes, Macapi.AppKit, Macapi.Foundation, Macapi.Helpers
-  {$ENDIF}
-  {$ENDIF}
-  {$IFDEF MSWINDOWS}
+{$ENDIF}
+{$ENDIF}
+{$IFDEF MSWINDOWS}
     , MMSystem
-  {$ENDIF}
+{$ENDIF}
     ;
 
 type
@@ -47,13 +47,13 @@ type
 
   TAudioManager = class
   private
-    fSoundsList    : TCoreClassList;
+    fSoundsList: TCoreClassList;
     fSoundsHashList: THashVariantList;
 
-    {$IFDEF ANDROID}
-    fAudioMgr : JAudioManager;
+{$IFDEF ANDROID}
+    fAudioMgr: JAudioManager;
     fSoundPool: JSoundPool;
-    {$ENDIF}
+{$ENDIF}
     function GetSoundsCount: Integer;
     function GetSoundFromIndex(aIndex: Integer): PSoundRec;
   public
@@ -109,10 +109,10 @@ type
 
   TSoundEngine_FMX = class(TzSound)
   protected
-    FMediaMusic  : TSEBase;
+    FMediaMusic: TSEBase;
     FMediaAmbient: TSEBase;
 
-    FMusicPlaying  : Boolean;
+    FMusicPlaying: Boolean;
     FAmbientPlaying: Boolean;
 
     procedure DoPrepareMusic(FileName: SystemString); override;
@@ -148,7 +148,7 @@ implementation
 var
   AudioManager: TAudioManager;
 
-  {$IFDEF IOS}
+{$IFDEF IOS}
 
 
 const
@@ -179,10 +179,10 @@ begin
     fSoundsList := TCoreClassList.Create;
     fSoundsHashList := THashVariantList.Create;
 
-    {$IFDEF ANDROID}
+{$IFDEF ANDROID}
     fAudioMgr := TJAudioManager.Wrap((SharedActivity.getSystemService(TJContext.JavaClass.AUDIO_SERVICE) as ILocalObject).GetObjectID);
     fSoundPool := TJSoundPool.JavaClass.Init(4, TJAudioManager.JavaClass.STREAM_MUSIC, 0);
-    {$ENDIF}
+{$ENDIF}
   except
     on E: Exception do
         raise Exception.Create('[TAudioManager.Create] : ' + E.Message);
@@ -191,7 +191,7 @@ end;
 
 destructor TAudioManager.Destroy;
 var
-  i   : Integer;
+  i: Integer;
   wRec: PSoundRec;
 begin
   try
@@ -203,10 +203,10 @@ begin
       end;
     DisposeObject([fSoundsList, fSoundsHashList]);
 
-    {$IFDEF ANDROID}
+{$IFDEF ANDROID}
     fSoundPool := nil;
     fAudioMgr := nil;
-    {$ENDIF}
+{$ENDIF}
     inherited Destroy;
   except
     on E: Exception do
@@ -217,17 +217,17 @@ end;
 function TAudioManager.AddSound(ASoundFile: SystemString): Integer;
 var
   wSndRec: PSoundRec;
-  {$IFDEF ANDROID}
+{$IFDEF ANDROID}
   wOnAndroidSndComplete: JSoundPool_OnLoadCompleteListener;
-  soundID              : NativeInt;
-  {$ENDIF}
-  {$IFDEF IOS}
-  wSndID        : nsinteger;
-  wNSFilename   : CFStringRef;
-  wNSURL        : CFURLRef;
-  wCFRunLoopRef : CFRunLoopRef;
+  soundID: NativeInt;
+{$ENDIF}
+{$IFDEF IOS}
+  wSndID: nsinteger;
+  wNSFilename: CFStringRef;
+  wNSURL: CFURLRef;
+  wCFRunLoopRef: CFRunLoopRef;
   winRunLoopMode: CFStringRef;
-  {$ENDIF}
+{$ENDIF}
 begin
   Result := -1;
   try
@@ -236,16 +236,16 @@ begin
     wSndRec.SNameExt := ExtractFilename(ASoundFile);
     wSndRec.SName := ChangeFileExt(wSndRec.SNameExt, '');
 
-    {$IFDEF ANDROID}
+{$IFDEF ANDROID}
     wSndRec.SID := fSoundPool.load(StringToJString(ASoundFile), 0);
-    {$ENDIF}
-    {$IFDEF IOS}
+{$ENDIF}
+{$IFDEF IOS}
     wNSFilename := CFStringCreateWithCharacters(nil, PChar(ASoundFile), length(ASoundFile));
     wNSURL := CFURLCreateWithFileSystemPath(nil, wNSFilename, kCFURLPOSIXPathStyle, False);
     AudioServicesCreateSystemSoundID(wNSURL, pnsinteger(wSndID));
     wSndRec.SID := wSndID;
     AudioServicesAddSystemSoundCompletion(wSndID, nil, nil, @oncompleteionIosProc, nil);
-    {$ENDIF}
+{$ENDIF}
     Result := fSoundsList.Add(wSndRec);
     fSoundsHashList.Add(umlGetFileName(ASoundFile), Result);
   except
@@ -262,12 +262,12 @@ begin
     if aIndex < fSoundsList.Count then
       begin
         wRec := fSoundsList[aIndex];
-        {$IFDEF ANDROID}
+{$IFDEF ANDROID}
         fSoundPool.unload(wRec.SID);
-        {$ENDIF}
-        {$IFDEF IOS}
+{$ENDIF}
+{$IFDEF IOS}
         AudioServicesDisposeSystemSoundID(wRec.SID);
-        {$ENDIF}
+{$ENDIF}
         Dispose(wRec);
         fSoundsList.Delete(aIndex);
       end;
@@ -280,21 +280,21 @@ end;
 procedure TAudioManager.PlaySound(aIndex: Integer);
 var
   wRec: PSoundRec;
-  {$IFDEF ANDROID}
+{$IFDEF ANDROID}
   wCurrVolume, wMaxVolume: Double;
-  wVolume                : Double;
-  {$ENDIF}
-  {$IFNDEF IOS}
-  {$IFDEF MACOS}
+  wVolume: Double;
+{$ENDIF}
+{$IFNDEF IOS}
+{$IFDEF MACOS}
   wNssound: NSSound;
-  {$ENDIF}
-  {$ENDIF}
+{$ENDIF}
+{$ENDIF}
 begin
   try
     if aIndex < fSoundsList.Count then
       begin
         wRec := fSoundsList[aIndex];
-        {$IFDEF ANDROID}
+{$IFDEF ANDROID}
         if Assigned(fAudioMgr) then
           begin
             wCurrVolume := fAudioMgr.getStreamVolume(TJAudioManager.JavaClass.STREAM_MUSIC);
@@ -302,12 +302,12 @@ begin
             wVolume := wCurrVolume / wMaxVolume;
             fSoundPool.Play(wRec.SID, wVolume, wVolume, 1, 0, 1);
           end;
-        {$ENDIF}
-        {$IFDEF IOS}
+{$ENDIF}
+{$IFDEF IOS}
         AudioServicesAddSystemSoundCompletion(wRec.SID, nil, nil, @oncompleteionIosProc, nil);
         AudioServicesPlaySystemSound(wRec.SID);
-        {$ELSE}
-        {$IFDEF MACOS}
+{$ELSE}
+{$IFDEF MACOS}
         wNssound := TNSSound.Wrap(TNSSound.Alloc.initWithContentsOfFile(StrToNSStr(wRec.SFilename), True));
         try
           wNssound.setLoops(False);
@@ -315,11 +315,11 @@ begin
         finally
             wNssound.Release;
         end;
-        {$ENDIF}
-        {$ENDIF}
-        {$IFDEF MSWINDOWS}
+{$ENDIF}
+{$ENDIF}
+{$IFDEF MSWINDOWS}
         sndPlaySound(PChar(wRec.SFilename), SND_NODEFAULT or SND_ASYNC);
-        {$ENDIF}
+{$ENDIF}
       end;
   except
     on E: Exception do
@@ -478,8 +478,8 @@ end;
 function TSoundEngine_FMX.SaveSoundAsLocalFile(FileName: SystemString): SystemString;
 var
   SourStream: TCoreClassStream;
-  m64       : TMemoryStream64;
-  md5name   : SystemString;
+  m64: TMemoryStream64;
+  md5name: SystemString;
 begin
   Result := '';
   if FCacheFileList.Exists(FileName) then
@@ -585,7 +585,4 @@ finalization
 
 DisposeObject(AudioManager);
 
-end. 
- 
- 
- 
+end.

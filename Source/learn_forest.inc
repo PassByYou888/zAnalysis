@@ -16,47 +16,10 @@
 { * https://github.com/PassByYou888/InfiniteIoT                                * }
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
-type
-  TDecisionForest = record
-    NVars: TLInt;
-    NClasses: TLInt;
-    NTrees: TLInt;
-    BufSize: TLInt;
-    Trees: TLVec;
-  end;
-
-  PDecisionForest = ^TDecisionForest;
-
-  TDFReport = record
-    RelClsError: TLFloat;
-    AvgCE: TLFloat;
-    RMSError: TLFloat;
-    AvgError: TLFloat;
-    AvgRelError: TLFloat;
-    OOBRelClsError: TLFloat;
-    OOBAvgCE: TLFloat;
-    OOBRMSError: TLFloat;
-    OOBAvgError: TLFloat;
-    OOBAvgRelError: TLFloat;
-  end;
-
-procedure DFBuildRandomDecisionForest(const xy: TLMatrix; NPoints, NVars, NClasses, NTrees: TLInt; r: TLFloat;
-  var Info: TLInt; var df: TDecisionForest; var Rep: TDFReport); forward;
-
 procedure DFBuildInternal(const xy: TLMatrix; NPoints: TLInt;
   NVars: TLInt; NClasses: TLInt; NTrees: TLInt;
   SampleSize: TLInt; NFeatures: TLInt; Flags: TLInt;
   var Info: TLInt; var df: TDecisionForest; var Rep: TDFReport); forward;
-
-procedure DFProcess(const df: TDecisionForest; const x: TLVec; var y: TLVec); forward;
-function DFRelClsError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function DFAvgCE(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function DFRMSError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function DFAvgError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function DFAvgRelError(const df: TDecisionForest; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-procedure DFCopy(const DF1: TDecisionForest; var DF2: TDecisionForest); forward;
-procedure DFSerialize(const df: TDecisionForest; var RA: TLVec; var RLen: TLInt); forward;
-procedure DFUnserialize(const RA: TLVec; var df: TDecisionForest); forward;
 
 const
   DFVNum = 8;
@@ -877,19 +840,19 @@ end;
   DF      -   original
 
   OUTPUT PARAMETERS:
-  RA      -   array of real numbers which stores decision forest,
+  ResArry      -   array of real numbers which stores decision forest,
   array[0..RLen-1]
-  RLen    -   RA lenght
+  RLen    -   ResArry lenght
   ************************************************************************ *)
-procedure DFSerialize(const df: TDecisionForest; var RA: TLVec; var RLen: TLInt);
+procedure DFSerialize(const df: TDecisionForest; var ResArry: TLVec; var RLen: TLInt);
 begin
-  SetLength(RA, df.BufSize + 5);
-  RA[0] := DFVNum;
-  RA[1] := df.NVars;
-  RA[2] := df.NClasses;
-  RA[3] := df.NTrees;
-  RA[4] := df.BufSize;
-  APVMove(@RA[0], 5, 5 + df.BufSize - 1, @df.Trees[0], 0, df.BufSize - 1);
+  SetLength(ResArry, df.BufSize + 5);
+  ResArry[0] := DFVNum;
+  ResArry[1] := df.NVars;
+  ResArry[2] := df.NClasses;
+  ResArry[3] := df.NTrees;
+  ResArry[4] := df.BufSize;
+  APVMove(@ResArry[0], 5, 5 + df.BufSize - 1, @df.Trees[0], 0, df.BufSize - 1);
   RLen := 5 + df.BufSize;
 end;
 
@@ -897,20 +860,20 @@ end;
   Unserialization of TDecisionForest strucure
 
   INPUT PARAMETERS:
-  RA      -   real array which stores decision forest
+  ResArry      -   real array which stores decision forest
 
   OUTPUT PARAMETERS:
   DF      -   restored structure
   ************************************************************************ *)
-procedure DFUnserialize(const RA: TLVec; var df: TDecisionForest);
+procedure DFUnserialize(const ResArry: TLVec; var df: TDecisionForest);
 begin
-  Assert(Round(RA[0]) = DFVNum, 'DFUnserialize: incorrect array!');
-  df.NVars := Round(RA[1]);
-  df.NClasses := Round(RA[2]);
-  df.NTrees := Round(RA[3]);
-  df.BufSize := Round(RA[4]);
+  Assert(Round(ResArry[0]) = DFVNum, 'DFUnserialize: incorrect array!');
+  df.NVars := Round(ResArry[1]);
+  df.NClasses := Round(ResArry[2]);
+  df.NTrees := Round(ResArry[3]);
+  df.BufSize := Round(ResArry[4]);
   SetLength(df.Trees, df.BufSize);
-  APVMove(@df.Trees[0], 0, df.BufSize - 1, @RA[0], 5, 5 + df.BufSize - 1);
+  APVMove(@df.Trees[0], 0, df.BufSize - 1, @ResArry[0], 5, 5 + df.BufSize - 1);
 end;
 
 (* ************************************************************************

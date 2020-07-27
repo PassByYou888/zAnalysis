@@ -42,10 +42,11 @@ type
     FRaster: TMemoryRaster;
     FImage: TJpegImage;
     FUseTiledDrawing: boolean;
-    FQuiet: boolean;
     function ImageCreateMap(var Iterator_: TMapIterator): TObject;
     procedure ImageUpdate(Sender: TObject);
+{$IFDEF JPEG_Debug}
     procedure ImageDebug(Sender: TObject; WarnStyle: TWarnStyle; const Message_: TPascalString);
+{$ENDIF JPEG_Debug}
     function GetPerformance: TJpegPerformance;
     procedure SetPerformance(const Value: TJpegPerformance);
     function GetGrayScale: boolean;
@@ -107,15 +108,12 @@ type
     // The default tile size is 256x256 pixels.
     property UseTiledDrawing: boolean read FUseTiledDrawing write SetUseTiledDrawing;
 
-    // disable debug info
-    property Quiet: boolean read FQuiet write FQuiet;
     // Version returns the current version of the NativeJpeg library.
     property Version: string read GetVersion;
     // size in bytes of the data in the Jpeg
     property DataSize: int64 read GetDataSize;
     // Access to TJpegImage
     property Image: TJpegImage read FImage;
-    // connect to OnDebugOut to get debug info from TJpegGraphic
     property Width: Integer read GetWidth;
     property Height: Integer read GetHeight;
   end;
@@ -162,8 +160,9 @@ end;
 
 function TMemoryJpegRaster.ImageCreateMap(var Iterator_: TMapIterator): TObject;
 begin
+{$IFDEF JPEG_Debug}
   ImageDebug(Self, wsInfo, PFormat('create TMemoryRaster x=%d y=%d', [Iterator_.Width, Iterator_.Height]));
-
+{$ENDIF JPEG_Debug}
   // create a bitmap with iterator size and pixelformat
   if (FRaster = nil) or (FRaster.Empty) or (FRaster.Width <> Iterator_.Width) or (FRaster.Height <> Iterator_.Height) then
     begin
@@ -177,8 +176,9 @@ begin
   // also update the iterator with bitmap properties
   GetBitmap32Iterator(FRaster, Iterator_);
 
+{$IFDEF JPEG_Debug}
   ImageDebug(Self, wsInfo, PFormat('Iterator_ bitmap scanstride=%d', [Iterator_.ScanStride]));
-
+{$ENDIF JPEG_Debug}
   Result := FRaster;
 end;
 
@@ -190,12 +190,15 @@ begin
   FRaster := nil;
 end;
 
+{$IFDEF JPEG_Debug}
+
+
 procedure TMemoryJpegRaster.ImageDebug(Sender: TObject; WarnStyle: TWarnStyle; const Message_: TPascalString);
 begin
-  if FQuiet then
-      exit;
   DoStatus('%s [%s] - %s', [cWarnStyleNames[WarnStyle], Sender.ClassName, Message_.Text]);
 end;
+{$ENDIF JPEG_Debug}
+
 
 function TMemoryJpegRaster.GetPerformance: TJpegPerformance;
 begin
@@ -285,11 +288,12 @@ begin
   inherited;
   FImage := TJpegImage.Create(nil);
   FImage.OnUpdate := {$IFDEF FPC}@{$ENDIF FPC}ImageUpdate;
+{$IFDEF JPEG_Debug}
   FImage.OnDebugOut := {$IFDEF FPC}@{$ENDIF FPC}ImageDebug;
+{$ENDIF JPEG_Debug}
   FImage.OnCreateMap := {$IFDEF FPC}@{$ENDIF FPC}ImageCreateMap;
   FImage.DCTCodingMethod := dmFast;
   FUseTiledDrawing := False;
-  FQuiet := True;
 end;
 
 destructor TMemoryJpegRaster.Destroy;
@@ -305,7 +309,7 @@ procedure TMemoryJpegRaster.Assign(Source: TMemoryJpegRaster);
 var
   MS: TMemoryStream64;
 begin
-  MS := TMemoryStream64.Create;
+  MS := TMemoryStream64.CustomCreate(512 * 1024);
   try
     TMemoryJpegRaster(Source).SaveToStream(MS);
     MS.Position := 0;
@@ -325,8 +329,9 @@ begin
   BitmapIter := TMapIterator.Create;
   try
     GetBitmap32Iterator(Source, Source_width, Source_height, BitmapIter);
+{$IFDEF JPEG_Debug}
     ImageDebug(Self, wsHint, PFormat('bitmap scanstride=%d', [BitmapIter.ScanStride]));
-
+{$ENDIF JPEG_Debug}
     // Clear the image first
     FImage.Clear;
 
@@ -353,8 +358,9 @@ begin
   BitmapIter := TMapIterator.Create;
   try
     GetBitmap32Iterator(Source, BitmapIter);
+{$IFDEF JPEG_Debug}
     ImageDebug(Self, wsHint, PFormat('bitmap scanstride=%d', [BitmapIter.ScanStride]));
-
+{$ENDIF JPEG_Debug}
     // Clear the image first
     FImage.Clear;
 

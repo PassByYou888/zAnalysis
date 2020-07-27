@@ -1,0 +1,208 @@
+object FMX_FontBuildForm: TFMX_FontBuildForm
+  Left = 0
+  Top = 0
+  Caption = 'font builder. craete by.qq600585'
+  ClientHeight = 487
+  ClientWidth = 1365
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnPaint = FormPaint
+  DesignerMasterStyle = 0
+  object clientLayout: TLayout
+    Align = Client
+    Size.Width = 1365.000000000000000000
+    Size.Height = 487.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object pb: TPaintBox
+      Align = Client
+      ClipChildren = True
+      ClipParent = True
+      Size.Width = 996.000000000000000000
+      Size.Height = 487.000000000000000000
+      Size.PlatformDefault = False
+      OnPaint = pbPaint
+      object BuildFontButton: TButton
+        Action = Action_BuildFont
+        Enabled = True
+        ImageIndex = -1
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 89.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+      end
+      object Layout1: TLayout
+        Position.X = 104.000000000000000000
+        Position.Y = 12.000000000000000000
+        Size.Width = 97.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        object Label1: TLabel
+          Align = Left
+          Size.Width = 49.000000000000000000
+          Size.Height = 25.000000000000000000
+          Size.PlatformDefault = False
+          Text = 'size:'
+          TabOrder = 0
+        end
+        object sizeEdit: TEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          Align = VertCenter
+          TabOrder = 1
+          Text = '72'
+          Position.X = 49.000000000000000000
+          Position.Y = 1.000000000000000000
+          Size.Width = 48.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+        end
+      end
+      object CheckBox_ASCII: TCheckBox
+        IsChecked = True
+        Position.X = 368.000000000000000000
+        Position.Y = 16.000000000000000000
+        Size.Width = 57.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 4
+        Text = 'ASCII'
+      end
+      object CheckBox_GBK: TCheckBox
+        IsChecked = True
+        Position.X = 424.000000000000000000
+        Position.Y = 16.000000000000000000
+        Size.Width = 57.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 5
+        Text = 'GBK'
+      end
+      object CheckBox_FULL: TCheckBox
+        Position.X = 480.000000000000000000
+        Position.Y = 16.000000000000000000
+        Size.Width = 57.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 6
+        Text = 'FULL'
+      end
+      object CheckBox_AA: TCheckBox
+        Position.X = 208.000000000000000000
+        Position.Y = 16.000000000000000000
+        Size.Width = 97.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        Text = 'Anti aliasing'
+      end
+      object CheckBox_Bold: TCheckBox
+        IsChecked = True
+        Position.X = 304.000000000000000000
+        Position.Y = 16.000000000000000000
+        Size.Width = 57.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
+        Text = 'BOLD'
+      end
+    end
+    object LeftLayout: TLayout
+      Align = MostLeft
+      Size.Width = 361.000000000000000000
+      Size.Height = 487.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object fontListBox: TListBox
+        Align = Client
+        ClipChildren = True
+        ClipParent = True
+        PopupMenu = fnListPopupMenu
+        Size.Width = 361.000000000000000000
+        Size.Height = 462.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'transparentlistboxstyle'
+        TabOrder = 0
+        AlternatingRowBackground = True
+        Columns = 2
+        DisableFocusEffect = True
+        DefaultItemStyles.ItemStyle = ''
+        DefaultItemStyles.GroupHeaderStyle = ''
+        DefaultItemStyles.GroupFooterStyle = ''
+        ShowCheckboxes = True
+        Sorted = True
+        Viewport.Width = 361.000000000000000000
+        Viewport.Height = 462.000000000000000000
+      end
+      object Layout2: TLayout
+        Align = Top
+        Size.Width = 361.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        object Label2: TLabel
+          Align = Right
+          StyledSettings = [Family, Size]
+          Position.X = 88.000000000000000000
+          Size.Width = 163.000000000000000000
+          Size.Height = 25.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.Font.StyleExt = {00070000000000000004000000}
+          TextSettings.FontColor = claLime
+          TextSettings.HorzAlign = Trailing
+          TextSettings.Trimming = None
+          Text = 'Fonts on the system, filter:'
+          TabOrder = 1
+        end
+        object FilterEdit: TEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          Align = Right
+          TabOrder = 2
+          Position.X = 261.000000000000000000
+          Margins.Left = 10.000000000000000000
+          Size.Width = 100.000000000000000000
+          Size.Height = 25.000000000000000000
+          Size.PlatformDefault = False
+          TextPrompt = 'font filter'
+          OnChange = FilterEditChange
+        end
+      end
+    end
+    object fntSplitterL: TSplitter
+      Align = Left
+      Cursor = crHSplit
+      MinSize = 20.000000000000000000
+      Position.X = 361.000000000000000000
+      ShowGrip = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 487.000000000000000000
+      Size.PlatformDefault = False
+    end
+  end
+  object sysTimer: TTimer
+    Interval = 100
+    OnTimer = sysTimerTimer
+    Left = 113
+    Top = 73
+  end
+  object fnListPopupMenu: TPopupMenu
+    Left = 112
+    Top = 129
+    object MenuItem1: TMenuItem
+      Action = Action_BuildFont
+      Enabled = True
+      ImageIndex = -1
+    end
+  end
+  object ActionList_: TActionList
+    Left = 112
+    Top = 192
+    object Action_BuildFont: TAction
+      Text = 'Build Font.'
+      OnExecute = Action_BuildFontExecute
+    end
+  end
+end

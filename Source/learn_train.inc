@@ -18,69 +18,6 @@
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
 type
-  (* ************************************************************************
-    Training report:
-    * NGrad     - number of gradient calculations
-    * NHess     - number of Hessian calculations
-    * NCholesky - number of Cholesky decompositions
-    ************************************************************************ *)
-  TMLPReport = record
-    NGrad: TLInt;
-    NHess: TLInt;
-    NCholesky: TLInt;
-  end;
-
-  (* ************************************************************************
-    Cross-validation estimates of generalization error
-    ************************************************************************ *)
-  TMLPCVReport = record
-    RelClsError: TLFloat;
-    AvgCE: TLFloat;
-    RMSError: TLFloat;
-    AvgError: TLFloat;
-    AvgRelError: TLFloat;
-  end;
-
-procedure MLPTrainLM(var Network: TMultiLayerPerceptron; const xy: TLMatrix;
-  NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
-  var Info: TLInt; var Rep: TMLPReport); forward;
-
-procedure MLPTrainLM_MT(var Network: TMultiLayerPerceptron; const xy: TLMatrix;
-  NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
-  var Info: TLInt; var Rep: TMLPReport); forward;
-
-procedure MLPTrainLBFGS(var Network: TMultiLayerPerceptron;
-  const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
-  Restarts: TLInt; WStep: TLFloat; MAXITS: TLInt;
-  var Info: TLInt; var Rep: TMLPReport; IsTerminated: PBoolean;
-  out EBest: TLFloat); forward;
-
-procedure MLPTrainLBFGS_MT(var Network: TMultiLayerPerceptron;
-  const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
-  Restarts: TLInt; WStep: TLFloat; MAXITS: TLInt;
-  var Info: TLInt; var Rep: TMLPReport); forward;
-
-procedure MLPTrainLBFGS_MT_Mod(var Network: TMultiLayerPerceptron;
-  const xy: TLMatrix; NPoints: TLInt; Restarts: TLInt;
-  WStep, Diameter: TLFloat; MAXITS: TLInt;
-  var Info: TLInt; var Rep: TMLPReport); forward;
-
-procedure MLPTrainMonteCarlo(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt;
-  const MainRestarts, SubRestarts: TLInt; const MinError: TLFloat;
-  Diameter: TLFloat; var Info: TLInt; var Rep: TMLPReport); forward;
-
-procedure MLPKFoldCVLBFGS(const Network: TMultiLayerPerceptron;
-  const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
-  Restarts: TLInt; WStep: TLFloat; MAXITS: TLInt;
-  FoldsCount: TLInt; var Info: TLInt; var Rep: TMLPReport;
-  var CVRep: TMLPCVReport); forward;
-
-procedure MLPKFoldCVLM(const Network: TMultiLayerPerceptron;
-  const xy: TLMatrix; NPoints: TLInt; Decay: TLFloat;
-  Restarts: TLInt; FoldsCount: TLInt; var Info: TLInt;
-  var Rep: TMLPReport; var CVRep: TMLPCVReport); forward;
-
-type
   TMLPProcessData = record
     TotalRestarts: TLInt;
     RestartsFinished: TLInt;

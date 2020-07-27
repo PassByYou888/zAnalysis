@@ -231,7 +231,7 @@ begin
   for i := 0 to RCLines.Count - 1 do
     begin
       p := RCLines[i];
-      n.LineF(Vec2(p^.Bp), Vec2(p^.ep), RandomRColor, True, True);
+      n.LineF(Vec2(p^.Bp), Vec2(p^.ep), RandomRColor, True, 5, True);
     end;
 
   disposeObject(MorphMath);
@@ -271,7 +271,7 @@ begin
   for i := 0 to RCLines.Count - 1 do
     begin
       p := RCLines[i];
-      n.LineF(Vec2(p^.Bp), Vec2(p^.ep), RandomRColor, True, True);
+      n.LineF(Vec2(p^.Bp), Vec2(p^.ep), RandomRColor, True, 5, True);
     end;
 
   disposeObject(MorphMath);

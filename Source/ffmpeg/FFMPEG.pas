@@ -774,7 +774,6 @@ type
   AnsiChar    = Byte;
   PAnsiChar   = MarshaledAString;
   PPAnsiChar  = ^PAnsiChar;
-  PUTF8String = MarshaledString;
 {$IFEND}
 {$ENDIF FPC}
 

@@ -44,12 +44,11 @@ uses GBK, GBKMediaCenter;
 
 function WordPart(const s: TUPascalString; const Unidentified, Completed: TListPascalString): Integer;
 var
-  ns, n2   : TUPascalString;
-  i, j     : Integer;
+  ns, n2: TUPascalString;
+  i, j: Integer;
   Successed: Boolean;
 begin
   WaitGBKMediaInit;
-  Completed.Clear;
   ns := GBKString(s);
   Result := 0;
 
@@ -92,8 +91,8 @@ end;
 function WordPart(const s: TUPascalString): TPascalString;
 var
   Unidentified: TListPascalString;
-  Completed   : TListPascalString;
-  i           : Integer;
+  Completed: TListPascalString;
+  i: Integer;
 begin
   WaitGBKMediaInit;
   Result := '';
@@ -114,8 +113,8 @@ end;
 function WordPartN(const s: TUPascalString): TPascalString;
 var
   Unidentified: TListPascalString;
-  Completed   : TListPascalString;
-  i           : Integer;
+  Completed: TListPascalString;
+  i: Integer;
 begin
   WaitGBKMediaInit;
   Result := '';
@@ -136,8 +135,8 @@ end;
 function WordPartD(const s: TUPascalString): TPascalString;
 var
   Unidentified: TListPascalString;
-  Completed   : TListPascalString;
-  i           : Integer;
+  Completed: TListPascalString;
+  i: Integer;
 begin
   WaitGBKMediaInit;
   Result := '';
@@ -158,8 +157,8 @@ end;
 function FullQuery_Table(const List: THashList; const s: TUPascalString): Integer; overload;
 var
   ns, n2, n3: TUPascalString;
-  i, j, L   : Integer;
-  Successed : Boolean;
+  i, j, L: Integer;
+  Successed: Boolean;
 begin
   WaitGBKMediaInit;
   ns := GBKString(s);
@@ -198,8 +197,8 @@ end;
 function FullQuery_Table(const List: THashTextEngine; const s: TUPascalString): Integer; overload;
   function InternalQuery(const vl: THashVariantList; const ns: TUPascalString): Integer;
   var
-    n2       : TUPascalString;
-    i, j, L  : Integer;
+    n2: TUPascalString;
+    i, j, L: Integer;
     Successed: Boolean;
   begin
     Result := 0;
@@ -234,9 +233,9 @@ function FullQuery_Table(const List: THashTextEngine; const s: TUPascalString): 
   end;
 
 var
-  ns  : TUPascalString;
+  ns: TUPascalString;
   i, r: Integer;
-  pl  : TListPascalString;
+  pl: TListPascalString;
 begin
   WaitGBKMediaInit;
   ns := GBKString(s);
@@ -287,6 +286,4 @@ begin
   Result := FullQuery_Table(GoodRepDict, s);
 end;
 
-end. 
- 
- 
+end.

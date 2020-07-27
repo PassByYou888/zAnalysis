@@ -26,6 +26,9 @@ uses DoStatusIO, CoreClasses, PascalStrings, MemoryStream64, ListEngine, Unicode
 
 procedure WaitFastGBKInit;
 
+function IfGBKChar(const c: USystemChar; const ASCII_, GBK_, FULL_: Boolean): Boolean;
+function IfChineseChar(const c: USystemChar): Boolean;
+function IfChinese(const s: TUPascalString): Boolean;
 { Quick query characters using the GBK encoding table }
 function FastGBKChar(const c: USystemChar): Boolean; overload;
 function FastGBKChar(const c: Cardinal): Boolean; overload;
@@ -55,6 +58,7 @@ procedure FastCustomSort(const inBuff: PArrayPascalString; var OutBuff: TArrayPa
 
 var
   GBKCache: array [$FF .. $FFFF] of TUPascalString;
+  Chinese_Number, Chinese_Letter, Chinese_Symbol, ChineseASCII: TUPascalString;
 
 implementation
 
@@ -62,6 +66,28 @@ uses Types, SysUtils;
 
 {$RESOURCE FastGBK.RES}
 
+
+function IfGBKChar(const c: USystemChar; const ASCII_, GBK_, FULL_: Boolean): Boolean;
+begin
+  Result := (FULL_ and (c > #$FF)) or (ASCII_ and UCharIn(c, ucVisibled))
+    or (GBK_ and (UCharIn(c, ucVisibled) or FastGBKChar(c) or UCharIn(c, ChineseASCII)));
+end;
+
+function IfChineseChar(const c: USystemChar): Boolean;
+begin
+  Result := FastGBKChar(c) or UCharIn(c, ChineseASCII);
+end;
+
+function IfChinese(const s: TUPascalString): Boolean;
+var
+  c: USystemChar;
+begin
+  Result := False;
+  for c in s.buff do
+    if not IfChineseChar(c) then
+        exit;
+  Result := True;
+end;
 
 function FastGBKChar(const c: USystemChar): Boolean;
 var
@@ -99,10 +125,10 @@ var
 begin
   Result := False;
   if s.Len = 0 then
-      Exit;
+      exit;
   for i := 1 to s.Len do
     if not FastGBKChar(s[i]) then
-        Exit;
+        exit;
   Result := True;
 end;
 
@@ -208,7 +234,7 @@ procedure FastPYSort(const inverse: Boolean; const inBuff: PArrayPascalString; v
   begin
     for c in t^.buff do
       if FastGBKChar(c) then
-          Exit(1);
+          exit(1);
     Result := 0;
   end;
 
@@ -407,9 +433,10 @@ begin
       FastSortList_(OutBuff, low(OutBuff), high(OutBuff));
 end;
 
-var GBKCache_Inited: TAtomBool;
+var
+  GBKCache_Inited: TAtomBool;
 
-procedure InitFastGBKThread(thSender: TComputeThread);
+procedure InitFastGBKThread(thSender: TCompute);
 // gbk with unpack format(unicode)
 // char=py1,py2,py3
 var
@@ -461,7 +488,25 @@ end;
 initialization
 
 GBKCache_Inited := TAtomBool.Create(False);
-TComputeThread.RunC({$IFDEF FPC}@{$ENDIF FPC}InitFastGBKThread);
+TCompute.RunC({$IFDEF FPC}@{$ENDIF FPC}InitFastGBKThread);
+
+Chinese_Number := #65296#65297#65298#65299#65300#65301#65302#65303#65304#65305;
+Chinese_Letter :=
+  #65313#65314#65315#65316#65317#65318#65319#65320#65321#65322#65323#65324#65325#65326#65327 +
+  #65328#65329#65330#65331#65332#65333#65334#65335#65336#65337#65338#65345#65346#65347#65348 +
+  #65349#65350#65351#65352#65353#65354#65355#65356#65357#65358#65359#65360#65361#65362#65363 +
+  #65364#65365#65366#65367#65368#65369#65370;
+Chinese_Symbol :=
+  #65374#65281#65312#65283#65509#65285#8230#8230#65286#65290#65288#65289#65293#65309#8216 +
+  #8217#8212#8212#65291#12304#12305#65371#65373#12289#65372#65307#65306#65292#12290#12298#12299#47#65311#8220#8221;
+ChineseASCII :=
+  #19968#20108#19977#22235#20116#20845#19971#20843#20061#21313 +
+  #65296#65297#65298#65299#65300#65301#65302#65303#65304#65305#65313#65314#65315#65316#65317 +
+  #65318#65319#65320#65321#65322#65323#65324#65325#65326#65327#65328#65329#65330#65331#65332 +
+  #65333#65334#65335#65336#65337#65338#65345#65346#65347#65348#65349#65350#65351#65352#65353 +
+  #65354#65355#65356#65357#65358#65359#65360#65361#65362#65363#65364#65365#65366#65367#65368 +
+  #65369#65370#65374#65281#65312#65283#65509#65285#8230#8230#65286#65290#65288#65289#65293 +
+  #65309#8216#8217#8212#8212#65291#12304#12305#65371#65373#12289#65372#65307#65306#65292#12290#12298#12299#47#65311#8220#8221;
 
 finalization
 

@@ -761,7 +761,7 @@ var
   cellY, cellX, n: TLInt;
   maxBinValue: TLFloat;
 begin
-  maxBinValue := -Learn.MaxRealNumber;
+  maxBinValue := -MaxRealNumber;
 
   for cellY := 1 to nCY do
     for cellX := 1 to nCX do

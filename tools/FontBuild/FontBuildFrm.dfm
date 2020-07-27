@@ -6,7 +6,7 @@ object FontBuildForm: TFontBuildForm
   BorderWidth = 10
   Caption = 'Font Build. create by qq.600585'
   ClientHeight = 761
-  ClientWidth = 1232
+  ClientWidth = 1335
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -22,9 +22,9 @@ object FontBuildForm: TFontBuildForm
   TextHeight = 13
   object Image: TImage
     Left = 111
-    Top = 240
-    Width = 1113
-    Height = 377
+    Top = 271
+    Width = 1224
+    Height = 346
   end
   object Label1: TLabel
     Left = 8
@@ -54,7 +54,7 @@ object FontBuildForm: TFontBuildForm
   object Memo: TMemo
     Left = 0
     Top = 623
-    Width = 1232
+    Width = 1335
     Height = 138
     TabOrder = 2
     WordWrap = False
@@ -71,7 +71,7 @@ object FontBuildForm: TFontBuildForm
   object ProgressBar: TProgressBar
     Left = 111
     Top = 0
-    Width = 1113
+    Width = 1224
     Height = 17
     TabOrder = 4
   end
@@ -107,10 +107,15 @@ object FontBuildForm: TFontBuildForm
   object SampleMemo: TMemo
     Left = 111
     Top = 23
-    Width = 1113
-    Height = 200
+    Width = 1224
+    Height = 242
     Lines.Strings = (
-      '0123456789 abc ABC +-*/()')
+      
+        '||Default-Size|| |color(0.5,0.5,0.5),size:24|24-size|| |s:16|16-' +
+        'Size||'
+      '|color(1,0,0,1),size:24|24-Size-red|color(1,1,0)| Default-Size'
+      '|color(0,1,0,1),size:50|50 size text'
+      '|s:32|32-size-text')
     TabOrder = 8
     OnChange = SampleMemoChange
   end
@@ -134,7 +139,7 @@ object FontBuildForm: TFontBuildForm
   object FontDialog: TFontDialog
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -32
+    Font.Height = -37
     Font.Name = 'Tahoma'
     Font.Style = [fsBold]
     Options = []

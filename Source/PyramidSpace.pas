@@ -400,7 +400,7 @@ begin
         RasterColor2F(Source.Pixel[i, j], r, g, b);
         w := Trunc((r * wr + g * wg + b * wb) / (wr + wg + wb) * $FF);
         wf := (w div f) * f;
-        dest[j, i] := Clamp(Round(wf) / $FF, 0.0, 1.0);
+        dest[j, i] := Clamp(wf / $FF, 0.0, 1.0);
       end;
 end;
 
@@ -464,7 +464,7 @@ var
 
 {$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: Integer);
+  procedure Nested_ParallelFor(pass: TLInt);
   begin
     ZoomLine(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
   end;
@@ -494,7 +494,7 @@ begin
 {$IFDEF FPC}
       FPCParallelFor(@Nested_ParallelFor, 0, DestWidth - 1);
 {$ELSE FPC}
-      DelphiParallelFor(0, DestWidth - 1, procedure(pass: Integer)
+      DelphiParallelFor(0, DestWidth - 1, procedure(pass: TLInt)
         begin
           ZoomLine(SourceP, DestP, pass, SourceWidth, SourceHeight, DestWidth, DestHeight);
         end);
@@ -571,11 +571,11 @@ var
 
 {$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelForH(pass: Integer);
+  procedure Nested_ParallelForH(pass: TLInt);
   begin
     SigmaRow(SourceP^[pass], DestP^[pass], k);
   end;
-  procedure Nested_ParallelForW(pass: Integer);
+  procedure Nested_ParallelForW(pass: TLInt);
   var
     j: TLInt;
     LPixels: TGaussVec;
@@ -636,11 +636,11 @@ begin
   FPCParallelFor(@Nested_ParallelForH, 0, h - 1);
   FPCParallelFor(@Nested_ParallelForW, 0, w - 1);
 {$ELSE FPC}
-  DelphiParallelFor(0, h - 1, procedure(pass: Integer)
+  DelphiParallelFor(0, h - 1, procedure(pass: TLInt)
     begin
       SigmaRow(SourceP^[pass], DestP^[pass], k);
     end);
-  DelphiParallelFor(0, w - 1, procedure(pass: Integer)
+  DelphiParallelFor(0, w - 1, procedure(pass: TLInt)
     var
       j: TLInt;
       LPixels: TGaussVec;
@@ -714,7 +714,7 @@ end;
 
 function pascal_sqr_128(sour, dest: PGFloat): TGFloat_4x;
 var
-  i: Integer;
+  i: TLInt;
 begin
   Result[0] := 0;
   Result[1] := 0;
@@ -801,7 +801,7 @@ end;
 procedure _test_e_sqr;
 var
   d1, d2: TDescriptorArray;
-  i: Integer;
+  i: TLInt;
   f128_1, f128_2: TGFloat_4x;
   t1, t2: TTimeTick;
 begin
@@ -853,7 +853,7 @@ var
 
 {$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: Integer);
+  procedure Nested_ParallelFor(pass: TLInt);
   var
     m_idx, j: TLInt;
     dsc1, dsc2: PDescriptor;
@@ -995,7 +995,7 @@ begin
 {$IFDEF FPC}
   FPCParallelFor(@Nested_ParallelFor, 0, pf1_len - 1);
 {$ELSE FPC}
-  DelphiParallelFor(0, pf1_len - 1, procedure(pass: Integer)
+  DelphiParallelFor(0, pf1_len - 1, procedure(pass: TLInt)
     var
       m_idx, j: TLInt;
       dsc1, dsc2: PDescriptor;
@@ -1216,7 +1216,7 @@ end;
 
 procedure TPyramidCoorList.SaveToDataFrame(df: TDataFrameEngine);
 var
-  i: Integer;
+  i: TLInt;
   p: PPyramidCoor;
   d: TDataFrameEngine;
 begin
@@ -1263,7 +1263,7 @@ end;
 class procedure TPyramidLayer.ComputeMagAndOrt(const w, h: TLInt; const OriSamplerP, MagP, OrtP: PGaussSpace);
 {$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: Integer);
+  procedure Nested_ParallelFor(pass: TLInt);
   var
     x: TLInt;
     mag_row, ort_row, orig_row, orig_plus, orig_minus: PGaussVec;
@@ -1348,7 +1348,7 @@ begin
 {$IFDEF FPC}
   FPCParallelFor(@Nested_ParallelFor, 0, h - 1);
 {$ELSE FPC}
-  DelphiParallelFor(0, h - 1, procedure(pass: Integer)
+  DelphiParallelFor(0, h - 1, procedure(pass: TLInt)
     var
       x: TLInt;
       mag_row, ort_row, orig_row, orig_plus, orig_minus: PGaussVec;
@@ -1393,7 +1393,7 @@ end;
 class procedure TPyramidLayer.ComputeDiff(const w, h: TLInt; const s1, s2, DiffOut: PGaussSpace);
 {$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(j: Integer);
+  procedure Nested_ParallelFor(j: TLInt);
   var
     i: TLInt;
   begin
@@ -1418,7 +1418,7 @@ begin
 {$IFDEF FPC}
   FPCParallelFor(@Nested_ParallelFor, 0, h - 1);
 {$ELSE FPC}
-  DelphiParallelFor(0, h - 1, procedure(j: Integer)
+  DelphiParallelFor(0, h - 1, procedure(j: TLInt)
     var
       i: TLInt;
     begin
@@ -1435,7 +1435,7 @@ procedure TPyramidLayer.Build(var OriSampler: TGaussSpace; const factorWidth, fa
 
   procedure DoFor();
   var
-    i: Integer;
+    i: TLInt;
     k: TGFloat;
   begin
     k := GaussSigma * GaussSigma;
@@ -1477,10 +1477,10 @@ begin
 {$IFDEF FPC}
   DoFor;
 {$ELSE FPC}
-  DelphiParallelFor(1, numScale - 1, procedure(pass: Integer)
+  DelphiParallelFor(1, numScale - 1, procedure(pass: TLInt)
     var
       k_: TGFloat;
-      j_: Integer;
+      j_: TLInt;
     begin
       k_ := GaussSigma * GaussSigma;
       for j_ := 2 to pass do
@@ -1489,7 +1489,7 @@ begin
       TPyramidLayer.ComputeMagAndOrt(width, height, @SigmaIntegral[pass], @MagIntegral[pass - 1], @OrtIntegral[pass - 1]);
     end);
 
-  DelphiParallelFor(1, numScale - 1, procedure(pass: Integer)
+  DelphiParallelFor(1, numScale - 1, procedure(pass: TLInt)
     begin
       TPyramidLayer.ComputeDiff(width, height, @SigmaIntegral[pass - 1], @SigmaIntegral[pass], @Diffs[pass - 1]);
     end);
@@ -1591,7 +1591,7 @@ var
 
 {$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: Integer);
+  procedure Nested_ParallelFor(pass: TLInt);
   var
     x: TLInt;
   begin
@@ -1635,7 +1635,7 @@ begin
 {$IFDEF FPC}
   FPCParallelFor(@Nested_ParallelFor, 1, h - 2);
 {$ELSE FPC}
-  DelphiParallelFor(1, h - 2, procedure(pass: Integer)
+  DelphiParallelFor(1, h - 2, procedure(pass: TLInt)
     var
       x: TLInt;
     begin
@@ -1664,7 +1664,7 @@ var
 
 {$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: Integer);
+  procedure Nested_ParallelFor(pass: TLInt);
   var
     x: TLInt;
     p: PExtremaCoor;
@@ -1714,7 +1714,7 @@ begin
 {$IFDEF FPC}
   FPCParallelFor(@Nested_ParallelFor, 1, h - 2);
 {$ELSE FPC}
-  DelphiParallelFor(1, h - 2, procedure(pass: Integer)
+  DelphiParallelFor(1, h - 2, procedure(pass: TLInt)
     var
       x: TLInt;
       p: PExtremaCoor;
@@ -2101,7 +2101,7 @@ end;
 constructor TPyramids.CreateWithMorphomatics(const morph: TMorphomatics);
 var
   spr: TGaussSpace;
-  i, j: Integer;
+  i, j: TLInt;
 begin
   SetLength(spr, morph.height, morph.width);
   for j := 0 to morph.height - 1 do
@@ -2130,7 +2130,7 @@ end;
 procedure TPyramids.SetRegion(const Clip: TVec2List);
 {$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: Integer);
+  procedure Nested_ParallelFor(pass: TLInt);
   var
     i: TLInt;
   begin
@@ -2157,7 +2157,7 @@ begin
 {$IFDEF FPC}
       FPCParallelFor(@Nested_ParallelFor, 0, FHeight - 1);
 {$ELSE FPC}
-      DelphiParallelFor(0, FHeight - 1, procedure(pass: Integer)
+      DelphiParallelFor(0, FHeight - 1, procedure(pass: TLInt)
         var
           i: TLInt;
         begin
@@ -2194,7 +2194,7 @@ end;
 procedure TPyramids.BuildPyramid;
   procedure DoFor();
   var
-    pass: Integer;
+    pass: TLInt;
     factor: TGFloat;
   begin
     for pass := 1 to CNUMBER_OCTAVE - 1 do
@@ -2209,7 +2209,7 @@ procedure TPyramids.BuildPyramid;
   end;
 
 var
-  i: Integer;
+  i: TLInt;
 begin
   if length(Pyramids) > 0 then
     begin
@@ -2229,7 +2229,7 @@ begin
 {$ELSE FPC}
   if WorkInParallelCore.v then
     begin
-      DelphiParallelFor(1, CNUMBER_OCTAVE - 1, procedure(pass: Integer)
+      DelphiParallelFor(1, CNUMBER_OCTAVE - 1, procedure(pass: TLInt)
         var
           factor: TGFloat;
         begin
@@ -2280,7 +2280,7 @@ var
 
 {$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: Integer);
+  procedure Nested_ParallelFor(pass: TLInt);
   var
     EP: PExtremaCoor;
     p: TPyramidCoorList;
@@ -2350,7 +2350,7 @@ begin
 {$IFDEF FPC}
   FPCParallelFor(@Nested_ParallelFor, 0, ExtremaList.Count - 1);
 {$ELSE FPC}
-  DelphiParallelFor(0, ExtremaList.Count - 1, procedure(pass: Integer)
+  DelphiParallelFor(0, ExtremaList.Count - 1, procedure(pass: TLInt)
     var
       EP: PExtremaCoor;
       p: TPyramidCoorList;
@@ -2623,7 +2623,7 @@ procedure TFeature.BuildFeature(Pyramids: TPyramids);
 
 {$IFDEF Parallel}
 {$IFDEF FPC}
-  procedure Nested_ParallelFor(pass: Integer);
+  procedure Nested_ParallelFor(pass: TLInt);
   begin
     ComputeDescriptor(FPyramidCoordList[pass], FDescriptorBuff[pass].descriptor);
   end;
@@ -2659,7 +2659,7 @@ begin
 {$IFDEF FPC}
   FPCParallelFor(@Nested_ParallelFor, 0, FPyramidCoordList.Count - 1);
 {$ELSE FPC}
-  DelphiParallelFor(0, FPyramidCoordList.Count - 1, procedure(pass: Integer)
+  DelphiParallelFor(0, FPyramidCoordList.Count - 1, procedure(pass: TLInt)
     begin
       ComputeDescriptor(FPyramidCoordList[pass], FDescriptorBuff[pass].descriptor);
     end);
@@ -2790,7 +2790,7 @@ end;
 
 procedure TFeature.SaveToStream(stream: TCoreClassStream);
 var
-  i, L: Integer;
+  i, L: TLInt;
   p: PDescriptor;
 begin
   L := Count;
@@ -2810,7 +2810,7 @@ end;
 
 procedure TFeature.LoadFromStream(stream: TCoreClassStream);
 var
-  i, L: Integer;
+  i, L: TLInt;
 begin
   stream.read(L, 4);
   SetLength(FDescriptorBuff, L);

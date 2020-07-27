@@ -98,7 +98,7 @@ function is_inter(const M: int32_t): Boolean; inline;
 
 type
   // motion vector
-  TMotionvec = record
+  TMotionvec = packed record
     x, y: int16_t;
 
 {$IFNDEF FPC}
@@ -264,7 +264,7 @@ implementation
 
 class operator TMotionvec.Equal(const a, b: TMotionvec): Boolean;
 begin
-  Result := int32_t(a) = int32_t(b);
+  Result := (a.x = b.x) and (a.y = b.y);
 end;
 
 class operator TMotionvec.Add(const a, b: TMotionvec): TMotionvec;
@@ -296,7 +296,7 @@ end;
 
 operator = (const a, b: TMotionvec): Boolean; inline;
 begin
-  Result := int32_t(a) = int32_t(b);
+  Result := (a.x = b.x) and (a.y = b.y);
 end;
 
 operator / (const a: TMotionvec; const Divisor: int32_t): TMotionvec;

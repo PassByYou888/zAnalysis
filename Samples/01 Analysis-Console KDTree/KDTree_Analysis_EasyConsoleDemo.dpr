@@ -23,7 +23,7 @@ procedure Demo;
 var
   i, j: Integer;
   buff: TKDT1DD.TKDT1DD_DynamicVecBuffer;
-  outIndex: TDynamicIndexArray;
+  outIndex: TKMIntegerArray;
   k1t: TKDT1DD;
   k1r: TKDT1DD.PKDT1DD_Node;
   d: Double;

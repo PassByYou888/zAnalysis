@@ -548,7 +548,7 @@ begin
 {$ENDIF initializationStatus}
 end;
 
-procedure InitGBKMediaThread(th: TComputeThread);
+procedure InitGBKMediaThread(th: TCompute);
 var
   dbEng: TObjectDataManagerOfCache;
   rs: TCoreClassResourceStream;
@@ -618,7 +618,7 @@ initialization
 
 GBKMediaInited := TAtomBool.Create(False);
 GBKProgressInfo := TAtomString.Create('');
-TComputeThread.RunC({$IFDEF FPC}@{$ENDIF FPC}InitGBKMediaThread);
+TCompute.RunC({$IFDEF FPC}@{$ENDIF FPC}InitGBKMediaThread);
 
 finalization
 

@@ -23,34 +23,39 @@ begin
   Result := (t[1, 0] - t[0, 0]) * (t[2, 1] - t[0, 1]) > (t[2, 0] - t[0, 0]) * (t[1, 1] - t[0, 1]);
 end;
 
-function TexCoordWrapRepeat(const f: TGeoFloat): TGeoFloat;
+function TexCoordWrapRepeat(LockSamplerCoord: Boolean; F: TGeoFloat): TGeoFloat;
 begin
-  if f < 0 then
-      Result := 1 - Trunc(f) + f
-  else if f > 1 then
-      Result := f - Trunc(f)
+  if LockSamplerCoord then
+      Result := umlClamp(F, 0.0, 1.0)
+  else if F < 0 then
+      Result := 1.0 - Trunc(F) + F
+  else if F > 1.0 then
+      Result := F - Trunc(F)
   else
-      Result := f;
+      Result := F;
 end;
 
-procedure Vertex_ComputeBlend(const Sender: TRasterVertex; const f, M: TRColor; var b: TRColor);
+procedure Vertex_ComputeBlend(const Sender: TRasterVertex; const F, M: TRColor; var B: TRColor);
 begin
+  // overlap alpha
+  TRColorEntry(B).A := umlMax(TRColorEntry(B).A, TRColorEntry(F).A);
+
   if M >= $FF then
-      BlendMem(f, b)
+      BlendMem(F, B)
   else
-      BlendMemEx(f, b, M);
+      BlendMemEx(F, B, M);
 end;
 
-function Vertex_ComputeNearest(const Sender: TRasterVertex; const Sampler: TMemoryRaster; const x, y: TGeoFloat): TRColor;
+function Vertex_ComputeNearest(const Sender: TRasterVertex; const Sampler: TMemoryRaster; const X, Y: TGeoFloat): TRColor;
 var
   tu0, tv0: Integer;
 begin
-  tu0 := ClampInt(Trunc(TexCoordWrapRepeat(x) * (Sampler.Width0)), 0, Sampler.Width0i);
-  tv0 := ClampInt(Trunc(TexCoordWrapRepeat(y) * (Sampler.Height0)), 0, Sampler.Height0i);
-  Result := Sampler.Pixel[tu0, tv0];
+  tu0 := ClampInt(Trunc(TexCoordWrapRepeat(Sender.LockSamplerCoord, X) * (Sampler.Width0)), 0, Sampler.Width0i);
+  tv0 := ClampInt(Trunc(TexCoordWrapRepeat(Sender.LockSamplerCoord, Y) * (Sampler.Height0)), 0, Sampler.Height0i);
+  Result := Sampler.FastPixel[tu0, tv0];
 end;
 
-function Vertex_ComputeLinear(const Sender: TRasterVertex; const Sampler: TMemoryRaster; const x, y: TGeoFloat): TRColor;
+function Vertex_ComputeLinear(const Sender: TRasterVertex; const Sampler: TMemoryRaster; const X, Y: TGeoFloat): TRColor;
 var
   fx, fy: TGeoFloat;
   i_x, i_y: Integer;
@@ -58,10 +63,10 @@ var
   delta_x, delta_y: TGeoFloat;
   k1, k2, k3, K4: TGeoFloat;
   c1, c2, c3, c4: TRColorEntry;
-  r, g, b, a: TGeoFloat;
+  R, G, B, A: TGeoFloat;
 begin
-  fx := TexCoordWrapRepeat(x) * Sampler.Width0;
-  fy := TexCoordWrapRepeat(y) * Sampler.Height0;
+  fx := TexCoordWrapRepeat(Sender.LockSamplerCoord, X) * Sampler.Width0;
+  fy := TexCoordWrapRepeat(Sender.LockSamplerCoord, Y) * Sampler.Height0;
 
   i_x := ClampInt(Trunc(fx), 0, Sampler.Width0i);
   i_y := ClampInt(Trunc(fy), 0, Sampler.Height0i);
@@ -70,7 +75,7 @@ begin
   i_y2 := i_y + 1;
   if (i_x2 > Sampler.Width0) or (i_y2 > Sampler.Height0) then
     begin
-      Result := Sampler[i_x, i_y];
+      Result := Sampler.FastPixel[i_x, i_y];
       exit;
     end;
 
@@ -82,17 +87,17 @@ begin
   k3 := delta_x * delta_y;
   K4 := (1 - delta_x) * delta_y;
 
-  c1.BGRA := Sampler[i_x, i_y];
-  c2.BGRA := Sampler[i_x2, i_y];
-  c3.BGRA := Sampler[i_x2, i_y2];
-  c4.BGRA := Sampler[i_x, i_y2];
+  c1.BGRA := Sampler.FastPixel[i_x, i_y];
+  c2.BGRA := Sampler.FastPixel[i_x2, i_y];
+  c3.BGRA := Sampler.FastPixel[i_x2, i_y2];
+  c4.BGRA := Sampler.FastPixel[i_x, i_y2];
 
-  r := ((c1.r / $FF) * k1) + ((c2.r / $FF) * k2) + ((c3.r / $FF) * k3) + ((c4.r / $FF) * K4);
-  g := ((c1.g / $FF) * k1) + ((c2.g / $FF) * k2) + ((c3.g / $FF) * k3) + ((c4.g / $FF) * K4);
-  b := ((c1.b / $FF) * k1) + ((c2.b / $FF) * k2) + ((c3.b / $FF) * k3) + ((c4.b / $FF) * K4);
-  a := ((c1.a / $FF) * k1) + ((c2.a / $FF) * k2) + ((c3.a / $FF) * k3) + ((c4.a / $FF) * K4);
+  R := ((c1.R / $FF) * k1) + ((c2.R / $FF) * k2) + ((c3.R / $FF) * k3) + ((c4.R / $FF) * K4);
+  G := ((c1.G / $FF) * k1) + ((c2.G / $FF) * k2) + ((c3.G / $FF) * k3) + ((c4.G / $FF) * K4);
+  B := ((c1.B / $FF) * k1) + ((c2.B / $FF) * k2) + ((c3.B / $FF) * k3) + ((c4.B / $FF) * K4);
+  A := ((c1.A / $FF) * k1) + ((c2.A / $FF) * k2) + ((c3.A / $FF) * k3) + ((c4.A / $FF) * K4);
 
-  Result := RColorF(r, g, b, a);
+  Result := RColorF(R, G, B, A);
 end;
 
 procedure TRasterVertex.RasterizeTriangle(const FS: TFragmentSampling; const sc: TRColor; const tex: TMemoryRaster; const SamplerTri, RenderTri: TTriangle);
@@ -129,8 +134,8 @@ type
     y2 := RenderTri[1, 1];
     x3 := RenderTri[2, 0];
     y3 := RenderTri[2, 1];
-    Result.a := ((y2 - y3) * W1 + (y3 - y1) * W2 + (y1 - y2) * W3) / Determinant;
-    Result.b := ((x3 - x2) * W1 + (x1 - x3) * W2 + (x2 - x1) * W3) / Determinant;
+    Result.A := ((y2 - y3) * W1 + (y3 - y1) * W2 + (y1 - y2) * W3) / Determinant;
+    Result.B := ((x3 - x2) * W1 + (x1 - x3) * W2 + (x2 - x1) * W3) / Determinant;
     Result.c := ((x2 * y3 - x3 * y2) * W1 + (x3 * y1 - x1 * y3) * W2 + (x1 * y2 - x2 * y1) * W3) / Determinant;
   end;
 
@@ -149,18 +154,18 @@ var
   FragmentParamNum: Integer;
   FragmentParamArry: array of TFragmentParam;
 {$ENDIF Parallel}
-  function min3(const a, b, c: Int64): Int64;
+  function min3(const A, B, c: Int64): Int64;
   begin
-    Result := umlMin(a, umlMin(b, c));
+    Result := umlMin(A, umlMin(B, c));
     if Result > 0 then
         Result := (Result + 15) div 16
     else
         Result := (Result - 15) div 16;
   end;
 
-  function max3(const a, b, c: Int64): Int64;
+  function max3(const A, B, c: Int64): Int64;
   begin
-    Result := umlMax(a, umlMax(b, c));
+    Result := umlMax(A, umlMax(B, c));
     if Result > 0 then
         Result := (Result + 15) div 16
     else
@@ -272,6 +277,7 @@ begin
       row_last_x := 0;
       if (j >= 0) and (j < Window.Height) then // if empty line
         begin
+          // prepare row_frag_count
           i := minX;
           while i < maxX do
             begin
@@ -326,8 +332,8 @@ begin
             attr_v, attr_u);
         end);
 {$ENDIF FPC}
+      SetLength(FragmentParamArry, 0);
     end;
-  SetLength(FragmentParamArry, 0);
 {$ENDIF Parallel}
 end;
 
@@ -335,27 +341,32 @@ procedure TRasterVertex.FillFragment(const FS: TFragmentSampling; const sc: TRCo
 const bitDst, j, start_x, frag_count: Int64; var attr_v, attr_u: TBilerpConsts);
 var
   i, bitX: Int64;
-  x, y: TGeoFloat;
+  X, Y: TGeoFloat;
 begin
-  x := attr_u.a * start_x + attr_u.b * j + attr_u.c;
-  y := attr_v.a * start_x + attr_v.b * j + attr_v.c;
+  X := attr_u.A * start_x + attr_u.B * j + attr_u.c;
+  Y := attr_v.A * start_x + attr_v.B * j + attr_v.c;
 
   bitX := bitDst + start_x;
   i := 0;
   while i < frag_count do
     begin
-      if (bitX >= 0) and (bitX < WindowSize) and (FNearestWriteBuffer[bitX] <> FNearestWriterID) then
+      if (start_x + i >= 0) and (start_x + i < Window.Width) and (bitX >= 0) and (bitX < WindowSize) and (FNearestWriteBuffer[bitX] <> FNearestWriterID) then
         begin
           FNearestWriteBuffer[bitX] := FNearestWriterID;
           case FS of
-            fsSolid: BlendMem(sc, Window.FBits^[bitX]);
-            fsNearest: ComputeBlend(Self, ComputeNearest(Self, tex, x, y), tex.MasterAlpha, Window.FBits^[bitX]);
-            fsLinear: ComputeBlend(Self, ComputeLinear(Self, tex, x, y), tex.MasterAlpha, Window.FBits^[bitX]);
+            fsSolid:
+              begin
+                with TRColorEntry(Window.FBits^[bitX]) do
+                    A := umlMax(A, TRColorEntry(sc).A);
+                BlendMem(sc, Window.FBits^[bitX]);
+              end;
+            fsNearest: ComputeBlend(Self, ComputeNearest(Self, tex, X, Y), tex.MasterAlpha, Window.FBits^[bitX]);
+            fsLinear: ComputeBlend(Self, ComputeLinear(Self, tex, X, Y), tex.MasterAlpha, Window.FBits^[bitX]);
           end;
         end;
 
-      x := x + attr_u.a;
-      y := y + attr_v.a;
+      X := X + attr_u.A;
+      Y := Y + attr_v.A;
       inc(bitX);
       inc(i);
     end;
@@ -401,7 +412,7 @@ end;
 procedure TRasterVertex.internal_Draw(const SamplerTri, RenderTri: TTriangle; const Sampler: TMemoryRaster; const bilinear_sampling: Boolean);
 var
   nSamplerTri, nRenderTri: TTriangle;
-  f: TFragmentSampling;
+  F: TFragmentSampling;
 begin
   nSamplerTri := SamplerTri;
   nRenderTri := RenderTri;
@@ -423,12 +434,12 @@ begin
   nRenderTri := TriRound(TriMul(nRenderTri, Window.Size0));
 
   if bilinear_sampling then
-      f := TFragmentSampling.fsLinear
+      F := TFragmentSampling.fsLinear
   else
-      f := TFragmentSampling.fsNearest;
+      F := TFragmentSampling.fsNearest;
 
   try
-    RasterizeTriangle(f, RColor(0, 0, 0), Sampler, nSamplerTri, nRenderTri);
+    RasterizeTriangle(F, RColor(0, 0, 0), Sampler, nSamplerTri, nRenderTri);
     if TRasterVertex.DebugTriangle then
         Window.DrawTriangle(RenderTri, True, TRasterVertex.DebugTriangleColor, False);
   except
@@ -462,6 +473,7 @@ begin
   ComputeBlend := {$IFDEF FPC}@{$ENDIF FPC}Vertex_ComputeBlend;
   ComputeNearest := {$IFDEF FPC}@{$ENDIF FPC}Vertex_ComputeNearest;
   ComputeLinear := {$IFDEF FPC}@{$ENDIF FPC}Vertex_ComputeLinear;
+  LockSamplerCoord := True;
   LocalParallel := True;
   Window := raster;
   WindowSize := Window.Width * Window.Height;

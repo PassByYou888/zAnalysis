@@ -34,7 +34,8 @@ type
     Sws_Ctx: PSwsContext;
     FOutput: TCoreClassStream;
     FAutoFreeOutput: Boolean;
-    function InternalOpenCodec(const codec: PAVCodec; const Width, Height, PSF, gop, bFrame: Integer; const Bitrate: Int64): Boolean;
+    FPixelFormat: TAVPixelFormat;
+    function InternalOpenCodec(const codec: PAVCodec; const Width, Height, PSF, gop, bFrame, quantizerMin, quantizerMax: Integer; const Bitrate: Int64): Boolean;
   public
     constructor Create(output_: TCoreClassStream);
     destructor Destroy; override;
@@ -45,6 +46,9 @@ type
     function OpenCodec(const codec_id: TAVCodecID; const Width, Height, PSF, gop, bFrame: Integer; const Bitrate: Int64): Boolean; overload;
     function OpenH264Codec(const Width, Height, PSF: Integer; const Bitrate: Int64): Boolean; overload;
     function OpenH264Codec(const codec_name: U_String; const Width, Height, PSF: Integer; const Bitrate: Int64): Boolean; overload;
+    // default quantizerMin=2, quantizerMax=31
+    function OpenJPEGCodec(const Width, Height, quantizerMin, quantizerMax: Integer): Boolean; overload;
+    function OpenJPEGCodec(const Width, Height: Integer): Boolean; overload;
     procedure CloseCodec;
 
     function EncodeRaster(raster: TMemoryRaster): Boolean;
@@ -54,11 +58,12 @@ type
     function LockOutput: TCoreClassStream;
     procedure UnLockOutoput;
     property AutoFreeOutput: Boolean read FAutoFreeOutput write FAutoFreeOutput;
+    property PixelFormat: TAVPixelFormat read FPixelFormat write FPixelFormat;
   end;
 
 implementation
 
-function TFFMPEG_Writer.InternalOpenCodec(const codec: PAVCodec; const Width, Height, PSF, gop, bFrame: Integer; const Bitrate: Int64): Boolean;
+function TFFMPEG_Writer.InternalOpenCodec(const codec: PAVCodec; const Width, Height, PSF, gop, bFrame, quantizerMin, quantizerMax: Integer; const Bitrate: Int64): Boolean;
 var
   r: Integer;
 begin
@@ -88,7 +93,9 @@ begin
   videoCodecCtx^.framerate.den := 1;
   videoCodecCtx^.gop_size := gop;
   videoCodecCtx^.max_b_frames := bFrame;
-  videoCodecCtx^.pix_fmt := AV_PIX_FMT_YUV420P;
+  videoCodecCtx^.pix_fmt := FPixelFormat;
+  videoCodecCtx^.qmin := quantizerMin;
+  videoCodecCtx^.qmax := quantizerMax;
 
   r := avcodec_open2(videoCodecCtx, videoCodec, nil);
   if r < 0 then
@@ -129,7 +136,7 @@ begin
     AV_PIX_FMT_RGB32,
     Frame^.Width,
     Frame^.Height,
-    AV_PIX_FMT_YUV420P,
+    FPixelFormat,
     SWS_BILINEAR,
     nil,
     nil,
@@ -149,6 +156,7 @@ begin
   Sws_Ctx := nil;
   FOutput := output_;
   FAutoFreeOutput := False;
+  FPixelFormat := AV_PIX_FMT_YUV420P;
 end;
 
 destructor TFFMPEG_Writer.Destroy;
@@ -176,14 +184,16 @@ function TFFMPEG_Writer.OpenCodec(const codec_name: U_String; const Width, Heigh
 var
   tmp: Pointer;
 begin
+  FPixelFormat := AV_PIX_FMT_YUV420P;
   tmp := codec_name.BuildPlatformPChar();
-  Result := InternalOpenCodec(avcodec_find_encoder_by_name(tmp), Width, Height, PSF, gop, bFrame, Bitrate);
+  Result := InternalOpenCodec(avcodec_find_encoder_by_name(tmp), Width, Height, PSF, gop, bFrame, 2, 31, Bitrate);
   U_String.FreePlatformPChar(tmp);
 end;
 
 function TFFMPEG_Writer.OpenCodec(const codec_id: TAVCodecID; const Width, Height, PSF, gop, bFrame: Integer; const Bitrate: Int64): Boolean;
 begin
-  Result := InternalOpenCodec(avcodec_find_encoder(codec_id), Width, Height, PSF, gop, bFrame, Bitrate);
+  FPixelFormat := AV_PIX_FMT_YUV420P;
+  Result := InternalOpenCodec(avcodec_find_encoder(codec_id), Width, Height, PSF, gop, bFrame, 2, 31, Bitrate);
 end;
 
 function TFFMPEG_Writer.OpenH264Codec(const Width, Height, PSF: Integer; const Bitrate: Int64): Boolean;
@@ -194,6 +204,17 @@ end;
 function TFFMPEG_Writer.OpenH264Codec(const codec_name: U_String; const Width, Height, PSF: Integer; const Bitrate: Int64): Boolean;
 begin
   Result := OpenCodec(codec_name, Width, Height, PSF, PSF div 2, 1, Bitrate);
+end;
+
+function TFFMPEG_Writer.OpenJPEGCodec(const Width, Height, quantizerMin, quantizerMax: Integer): Boolean;
+begin
+  FPixelFormat := AV_PIX_FMT_YUVJ420P;
+  Result := InternalOpenCodec(avcodec_find_encoder(AV_CODEC_ID_MJPEG), Width, Height, 25, 1, 0, quantizerMin, quantizerMax, 1024 * 1024);
+end;
+
+function TFFMPEG_Writer.OpenJPEGCodec(const Width, Height: Integer): Boolean;
+begin
+  Result := OpenJPEGCodec(Width, Height, 2, 31);
 end;
 
 procedure TFFMPEG_Writer.CloseCodec;

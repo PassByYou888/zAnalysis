@@ -36,6 +36,9 @@ uses SysUtils, CoreClasses, Types,
   CoreCompress, UnicodeMixedLib, PascalStrings;
 
 type
+  TDataFrameEngine = class;
+  TDFE = TDataFrameEngine;
+
   TDataFrameBase = class(TCoreClassObject)
   protected
     FID: Byte; // data frame id
@@ -428,8 +431,6 @@ type
     property Buffer: UInt64 read FBuffer write FBuffer;
   end;
 
-  TDataFrameEngine = class;
-
   TDataFrameEngineReader = class sealed(TCoreClassObject)
   private
     FOwner: TDataFrameEngine;
@@ -493,6 +494,8 @@ type
     procedure Read(var aBuf; aCount: Int64); overload;
     // read as TDataFrameBase
     function Read: TDataFrameBase; overload;
+    // return current TDataFrameBase
+    function Current: TDataFrameBase;
   end;
 
   TDataFrameEngine = class(TCoreClassObject)
@@ -636,6 +639,7 @@ type
 
     class procedure BuildEmptyStream(output: TCoreClassStream);
 
+    function EncodeTo(output: TCoreClassStream; const FastMode, AutoCompressed: Boolean): Integer; overload;
     function EncodeTo(output: TCoreClassStream; const FastMode: Boolean): Integer; overload;
     function EncodeTo(output: TCoreClassStream): Integer; overload;
 
@@ -2470,6 +2474,11 @@ begin
   inc(FIndex);
 end;
 
+function TDataFrameEngineReader.Current: TDataFrameBase;
+begin
+  Result := FOwner.Read(FIndex);
+end;
+
 function TDataFrameEngine.DataTypeToByte(v: TRunTimeDataType): Byte;
 begin
   Result := Byte(v);
@@ -3902,7 +3911,7 @@ begin
   output.write(cnt, C_Integer_Size);
 end;
 
-function TDataFrameEngine.EncodeTo(output: TCoreClassStream; const FastMode: Boolean): Integer;
+function TDataFrameEngine.EncodeTo(output: TCoreClassStream; const FastMode, AutoCompressed: Boolean): Integer;
 var
   i: Integer;
   DataFrame_: TDataFrameBase;
@@ -3924,9 +3933,9 @@ begin
     end;
 
   // if encode size too large(>1M), we use EncodeAsSelectCompressor
-  if ComputeEncodeSize > 1024 * 1024 then
+  if (AutoCompressed) and (ComputeEncodeSize > 1024 * 1024) then
     begin
-      Result := EncodeAsSelectCompressor(TSelectCompressionMethod.scmZLIB, output, FastMode);
+      Result := EncodeAsSelectCompressor(TSelectCompressionMethod.scmZLIB_Fast, output, FastMode);
       Exit;
     end;
 
@@ -3981,6 +3990,11 @@ begin
   StoreStream.Position := 0;
   output.CopyFrom(StoreStream, StoreStream.Size);
   DisposeObject(StoreStream);
+end;
+
+function TDataFrameEngine.EncodeTo(output: TCoreClassStream; const FastMode: Boolean): Integer;
+begin
+  Result := EncodeTo(output, FastMode, True);
 end;
 
 function TDataFrameEngine.EncodeTo(output: TCoreClassStream): Integer;
@@ -4219,7 +4233,7 @@ begin
   if ComputeEncodeSize > 64 * 1024 then
     begin
       if FastMode then
-          scm := TSelectCompressionMethod.scmZLIB
+          scm := TSelectCompressionMethod.scmZLIB_Fast
       else
           scm := TSelectCompressionMethod.scmZLIB_Max;
       Result := EncodeAsSelectCompressor(scm, output, FastMode);

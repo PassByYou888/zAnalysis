@@ -124,12 +124,16 @@ begin
   FCoder := TJpegImage(FOwner).Coder;
   if not(FCoder is TJpegBlockCoder) or not FCoder.HasCoefficients then
     begin
+{$IFDEF JPEG_Debug}
       DoDebugOut(Self, wsFail, sNoDCTCoefficentsAvailable);
+{$ENDIF JPEG_Debug}
       exit;
     end;
   if FCoder.Scale <> jsFull then
     begin
+{$IFDEF JPEG_Debug}
       DoDebugOut(Self, wsFail, sOperationOnlyFor8x8);
+{$ENDIF JPEG_Debug}
       exit;
     end;
   Result := TJpegBlockCoder(FCoder);
@@ -196,7 +200,7 @@ var
   Coder: TJpegBlockCoder;
   Info: TJpegInfo;
   Map: TJpegBlockMap;
-  PCoef, PBuf, PNew: PsdCoefBlock;
+  PCoef, PBuf, PNew: PCoefBlock;
 begin
   Coder := TJpegBlockCoder(GetBlockCoder);
   if not assigned(Coder) then
@@ -239,7 +243,7 @@ var
   Coder: TJpegBlockCoder;
   Info: TJpegInfo;
   Map: TJpegBlockMap;
-  PCoef, PBuf, PNew: PsdCoefBlock;
+  PCoef, PBuf, PNew: PCoefBlock;
 begin
   Coder := TJpegBlockCoder(GetBlockCoder);
   if not assigned(Coder) then
@@ -289,7 +293,7 @@ var
   Coder: TJpegBlockCoder;
   Info: TJpegInfo;
   Map: TJpegBlockMap;
-  PCoef, PBuf, PNew: PsdCoefBlock;
+  PCoef, PBuf, PNew: PCoefBlock;
   Frame: TFrameComponent;
 begin
   Coder := TJpegBlockCoder(GetBlockCoder);
@@ -345,7 +349,7 @@ procedure TLosslessOperation.MapAdjustDCCoef(Map_: TJpegBlockMap; const Brightne
 var
   i, Quant: integer;
   Table: TQuantizationTable;
-  PSrc, PDst: PsdCoefBlock;
+  PSrc, PDst: PCoefBlock;
 begin
   // Make a backup of the coefficients
   if not Map_.HasCoefBackup then
@@ -366,11 +370,11 @@ begin
     end;
 end;
 
-procedure TLosslessOperation.MapAdjustDCandACCoef(Map_: TJpegBlockMap;  const Brightness_, Contrast_: double);
+procedure TLosslessOperation.MapAdjustDCandACCoef(Map_: TJpegBlockMap; const Brightness_, Contrast_: double);
 var
   i, j, Quant: integer;
   Table: TQuantizationTable;
-  PSrc, PDst: PsdCoefBlock;
+  PSrc, PDst: PCoefBlock;
 begin
   // Make a backup of the coefficients
   if not Map_.HasCoefBackup then
@@ -399,11 +403,11 @@ begin
     end;
 end;
 
-procedure TLosslessOperation.MapCropMcuBlocks(Map_: TJpegBlockMap;  McuX_, McuY_, McuWidth_, McuHeight_: integer);
+procedure TLosslessOperation.MapCropMcuBlocks(Map_: TJpegBlockMap; McuX_, McuY_, McuWidth_, McuHeight_: integer);
 var
   Frame: TFrameComponent;
   x, y, W, H, row: integer;
-  PSrc, PDst, PFirst: PsdCoefBlock;
+  PSrc, PDst, PFirst: PCoefBlock;
 begin
   Frame := Map_.Frame;
   x := McuX_ * Frame.FHorzSampling;
@@ -499,15 +503,19 @@ var
   Map: TJpegBlockMap;
 begin
   DoBeforeLossless;
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, '"lossless" crop');
+{$ENDIF JPEG_Debug}
   RemoveDHTMarkers;
   Coder := TJpegBlockCoder(GetBlockCoder);
 
   // Indicate that the samples are no longer valid (requires a new IDCT to get them)
   Coder.HasSamples := False;
   Info := TJpegImage(FOwner).JpegInfo;
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, PFormat('orig image WxH = [%d,%d]', [Info.FWidth, Info.FHeight]));
   DoDebugOut(Self, wsInfo, PFormat('crop to LTRB = [%d,%d,%d,%d]', [Left_, Top_, Right_, Bottom_]));
+{$ENDIF JPEG_Debug}
   if Left_ < 0 then
       Left_ := 0;
   if Top_ < 0 then
@@ -528,13 +536,16 @@ begin
       exit;
 
   // Update Info
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, PFormat('MCU blocks WxH=[%d,%d]', [W, H]));
+{$ENDIF JPEG_Debug}
   Info.FHorzMcuCount := W;
   Info.FVertMcuCount := H;
   Info.FWidth := Right_ - Left_;
   Info.FHeight := Bottom_ - Top_;
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, PFormat('updated image WxH = [%d,%d]', [Info.FWidth, Info.FHeight]));
-
+{$ENDIF JPEG_Debug}
   // Crop each map
   for i := 0 to Info.FFrameCount - 1 do
     begin
@@ -549,7 +560,9 @@ end;
 procedure TLosslessOperation.FlipHorizontal;
 begin
   DoBeforeLossless;
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, 'flip horizontal');
+{$ENDIF JPEG_Debug}
   RemoveDHTMarkers;
   MapFlipHorz;
   DoAfterLossless;
@@ -558,7 +571,9 @@ end;
 procedure TLosslessOperation.FlipVertical;
 begin
   DoBeforeLossless;
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, 'flip vertical');
+{$ENDIF JPEG_Debug}
   RemoveDHTMarkers;
   MapFlipVert;
   DoAfterLossless;
@@ -567,7 +582,9 @@ end;
 procedure TLosslessOperation.Rotate90;
 begin
   DoBeforeLossless;
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, 'lossless rotate 90deg');
+{$ENDIF JPEG_Debug}
   RemoveDHTMarkers;
   InfoTranspose;
   MapTranspose;
@@ -578,7 +595,9 @@ end;
 procedure TLosslessOperation.Rotate180;
 begin
   DoBeforeLossless;
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, 'lossless rotate 180deg');
+{$ENDIF JPEG_Debug}
   RemoveDHTMarkers;
   MapFlipHorz;
   MapFlipVert;
@@ -588,7 +607,9 @@ end;
 procedure TLosslessOperation.Rotate270;
 begin
   DoBeforeLossless;
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, 'lossless rotate 270deg');
+{$ENDIF JPEG_Debug}
   RemoveDHTMarkers;
   InfoTranspose;
   MapTranspose;
@@ -599,7 +620,9 @@ end;
 procedure TLosslessOperation.Transpose;
 begin
   DoBeforeLossless;
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, 'lossless transpose');
+{$ENDIF JPEG_Debug}
   RemoveDHTMarkers;
   // Transpose parameters contained in info
   InfoTranspose;
@@ -611,7 +634,9 @@ end;
 procedure TLosslessOperation.Touch;
 begin
   DoBeforeLossless;
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, 'lossless touch');
+{$ENDIF JPEG_Debug}
   RemoveDHTMarkers;
   DoAfterLossless;
 end;

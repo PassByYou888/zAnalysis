@@ -107,6 +107,8 @@ type
     procedure OpenDecodec(const codec_name: U_String); overload;
     procedure OpenDecodec(const codec_id: TAVCodecID); overload;
     procedure OpenDecodec(); overload; // AV_CODEC_ID_H264
+    procedure OpenH264Decodec();
+    procedure OpenMJPEGDecodec();
     procedure CloseCodec;
 
     // parser and decode frame
@@ -119,8 +121,13 @@ type
     procedure ClearVideoPool;
   end;
 
-function ExtractVideoAsH264(VideoSource_: TPascalString; dest: TCoreClassStream): integer; overload;
-function ExtractVideoAsH264(VideoSource_, DestH264: TPascalString): integer; overload;
+  // pascal h264
+function ExtractVideoAsPasH264(VideoSource_: TPascalString; dest: TCoreClassStream): integer; overload;
+function ExtractVideoAsPasH264(VideoSource_, DestH264: TPascalString): integer; overload;
+
+// hardware h264
+function ExtractVideoAsH264(VideoSource_: TPascalString; dest: TCoreClassStream; Bitrate: int64): integer; overload;
+function ExtractVideoAsH264(VideoSource_: TPascalString; DestH264: TPascalString; Bitrate: int64): integer; overload;
 
 var
   // Buffer size used for online video(rtsp/rtmp/http/https), 720p 1080p 2K 4K 8K support
@@ -128,9 +135,9 @@ var
 
 implementation
 
-uses H264;
+uses H264, FFMPEG_Writer;
 
-function ExtractVideoAsH264(VideoSource_: TPascalString; dest: TCoreClassStream): integer;
+function ExtractVideoAsPasH264(VideoSource_: TPascalString; dest: TCoreClassStream): integer;
 var
   ff: TFFMPEG_Reader;
   h: TH264Writer;
@@ -138,8 +145,13 @@ var
   tk: TTimeTick;
 begin
   DoStatus('ffmpeg open ', [VideoSource_.Text]);
-  ff := TFFMPEG_Reader.Create(VideoSource_);
-  DoStatus('create h264 stream %d*%d total: %d', [ff.Width, ff.Height, ff.CurrentStream_Total_Frame]);
+  try
+    ff := TFFMPEG_Reader.Create(VideoSource_);
+    DoStatus('create h264 stream %d*%d total: %d', [ff.Width, ff.Height, ff.CurrentStream_Total_Frame]);
+  except
+    Result := 0;
+    exit;
+  end;
   h := TH264Writer.Create(ff.Width, ff.Height, ff.CurrentStream_Total_Frame, ff.CurrentStream_PerSecond_Frame, dest);
   Raster := TMemoryRaster.Create;
   tk := GetTimeTick();
@@ -159,7 +171,7 @@ begin
   DoStatus('done %s -> h264 stream.', [umlGetFileName(VideoSource_).Text]);
 end;
 
-function ExtractVideoAsH264(VideoSource_, DestH264: TPascalString): integer;
+function ExtractVideoAsPasH264(VideoSource_, DestH264: TPascalString): integer;
 var
   ff: TFFMPEG_Reader;
   h: TH264Writer;
@@ -167,8 +179,13 @@ var
   tk: TTimeTick;
 begin
   DoStatus('ffmpeg open ', [VideoSource_.Text]);
-  ff := TFFMPEG_Reader.Create(VideoSource_);
-  DoStatus('create h264 stream %d*%d total: %d', [ff.Width, ff.Height, ff.CurrentStream_Total_Frame]);
+  try
+    ff := TFFMPEG_Reader.Create(VideoSource_);
+    DoStatus('create h264 stream %d*%d total: %d', [ff.Width, ff.Height, ff.CurrentStream_Total_Frame]);
+  except
+    Result := 0;
+    exit;
+  end;
   h := TH264Writer.Create(ff.Width, ff.Height, ff.CurrentStream_Total_Frame, ff.CurrentStream_PerSecond_Frame, DestH264);
   Raster := TMemoryRaster.Create;
   tk := GetTimeTick();
@@ -186,6 +203,56 @@ begin
   disposeObject(ff);
   disposeObject(h);
   DoStatus('done %s -> %s', [umlGetFileName(VideoSource_).Text, umlGetFileName(DestH264).Text]);
+end;
+
+function ExtractVideoAsH264(VideoSource_: TPascalString; dest: TCoreClassStream; Bitrate: int64): integer;
+var
+  ff: TFFMPEG_Reader;
+  h: TFFMPEG_Writer;
+  Raster: TMemoryRaster;
+  tk: TTimeTick;
+begin
+  Result := 0;
+  DoStatus('ffmpeg open ', [VideoSource_.Text]);
+  try
+    ff := TFFMPEG_Reader.Create(VideoSource_);
+    DoStatus('create h264 stream %d*%d total: %d', [ff.Width, ff.Height, ff.CurrentStream_Total_Frame]);
+  except
+      exit;
+  end;
+  h := TFFMPEG_Writer.Create(dest);
+  if h.OpenH264Codec(ff.Width, ff.Height, Round(ff.CurrentStream_PerSecond_Frame), Bitrate) then
+    begin
+      Raster := TMemoryRaster.Create;
+      tk := GetTimeTick();
+      while ff.ReadFrame(Raster, False) do
+        begin
+          h.EncodeRaster(Raster);
+          if GetTimeTick() - tk > 2000 then
+            begin
+              DoStatus('%s -> h264.stream progress %d/%d', [umlGetFileName(VideoSource_).Text, Result, ff.CurrentStream_Total_Frame]);
+              h.Flush;
+              tk := GetTimeTick();
+            end;
+          inc(Result);
+        end;
+      disposeObject(Raster);
+    end;
+  disposeObject(ff);
+  disposeObject(h);
+  DoStatus('done %s -> h264 stream.', [umlGetFileName(VideoSource_).Text]);
+end;
+
+function ExtractVideoAsH264(VideoSource_: TPascalString; DestH264: TPascalString; Bitrate: int64): integer;
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(DestH264, fmCreate);
+  try
+      Result := ExtractVideoAsH264(VideoSource_, fs, Bitrate);
+  except
+  end;
+  disposeObject(fs);
 end;
 
 constructor TFFMPEG_Reader.Create(const VideoSource_: TPascalString);
@@ -729,6 +796,16 @@ end;
 procedure TFFMPEG_VideoStreamReader.OpenDecodec();
 begin
   OpenDecodec(AV_CODEC_ID_H264);
+end;
+
+procedure TFFMPEG_VideoStreamReader.OpenH264Decodec();
+begin
+  OpenDecodec(AV_CODEC_ID_H264);
+end;
+
+procedure TFFMPEG_VideoStreamReader.OpenMJPEGDecodec;
+begin
+  OpenDecodec(AV_CODEC_ID_MJPEG);
 end;
 
 procedure TFFMPEG_VideoStreamReader.CloseCodec;

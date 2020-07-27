@@ -17,60 +17,8 @@
 { * https://github.com/PassByYou888/InfiniteIoT                                * }
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
-type
-  TMinLBFGSState = record
-    n: TLInt;
-    M: TLInt;
-    EpsG: TLFloat;
-    EpsF: TLFloat;
-    EpsX: TLFloat;
-    MAXITS: TLInt;
-    Flags: TLInt;
-    XRep: Boolean;
-    StpMax: TLFloat;
-    NFEV: TLInt;
-    MCStage: TLInt;
-    k: TLInt;
-    q: TLInt;
-    p: TLInt;
-    Rho: TLVec;
-    y: TLMatrix;
-    s: TLMatrix;
-    Theta: TLVec;
-    d: TLVec;
-    Stp: TLFloat;
-    Work: TLVec;
-    FOld: TLFloat;
-    GammaK: TLFloat;
-    x: TLVec;
-    f: TLFloat;
-    g: TLVec;
-    NeedFG: Boolean;
-    XUpdated: Boolean;
-    RState: TLearnCommState;
-    RepIterationsCount: TLInt;
-    RepNFEV: TLInt;
-    RepTerminationType: TLInt;
-    LState: TLinMinState;
-  end;
-
-  TMinLBFGSReport = record
-    IterationsCount: TLInt;
-    NFEV: TLInt;
-    TerminationType: TLInt;
-  end;
-
-procedure MinLBFGSCreate(n: TLInt; M: TLInt; const x: TLVec; var State: TMinLBFGSState); forward;
-procedure MinLBFGSSetCond(var State: TMinLBFGSState; EpsG: TLFloat; EpsF: TLFloat; EpsX: TLFloat; MAXITS: TLInt); forward;
-procedure MinLBFGSSetXRep(var State: TMinLBFGSState; NeedXRep: Boolean); forward;
-procedure MinLBFGSSetStpMax(var State: TMinLBFGSState; StpMax: TLFloat); forward;
-procedure MinLBFGSCreateX(n: TLInt; M: TLInt; const x: TLVec; Flags: TLInt; var State: TMinLBFGSState); forward;
-function MinLBFGSIteration(var State: TMinLBFGSState): Boolean; forward;
-procedure MinLBFGSResults(const State: TMinLBFGSState; var x: TLVec; var Rep: TMinLBFGSReport); forward;
-procedure MinLBFGSFree(var x: TLVec; var State: TMinLBFGSState); forward;
 
 procedure ClearRequestFields(var State: TMinLBFGSState); forward;
-
 
 (* ************************************************************************
   LIMITED MEMORY BFGS METHOD FOR LARGE SCALE OPTIMIZATION
@@ -249,7 +197,7 @@ begin
   State.k := 0;
   APVMove(@State.x[0], 0, n - 1, @x[0], 0, n - 1);
   SetLength(State.RState.IA, 6 + 1);
-  SetLength(State.RState.RA, 4 + 1);
+  SetLength(State.RState.ResArry, 4 + 1);
   State.RState.Stage := -1;
 end;
 
@@ -325,11 +273,11 @@ begin
       j := State.RState.IA[4];
       IC := State.RState.IA[5];
       MCINFO := State.RState.IA[6];
-      EpsF := State.RState.RA[0];
-      EpsG := State.RState.RA[1];
-      EpsX := State.RState.RA[2];
-      v := State.RState.RA[3];
-      VV := State.RState.RA[4];
+      EpsF := State.RState.ResArry[0];
+      EpsG := State.RState.ResArry[1];
+      EpsX := State.RState.ResArry[2];
+      v := State.RState.ResArry[3];
+      VV := State.RState.ResArry[4];
     end
   else
     begin
@@ -641,11 +589,11 @@ lbl_rcomm:
   State.RState.IA[4] := j;
   State.RState.IA[5] := IC;
   State.RState.IA[6] := MCINFO;
-  State.RState.RA[0] := EpsF;
-  State.RState.RA[1] := EpsG;
-  State.RState.RA[2] := EpsX;
-  State.RState.RA[3] := v;
-  State.RState.RA[4] := VV;
+  State.RState.ResArry[0] := EpsF;
+  State.RState.ResArry[1] := EpsG;
+  State.RState.ResArry[2] := EpsX;
+  State.RState.ResArry[3] := v;
+  State.RState.ResArry[4] := VV;
 end;
 
 (* ************************************************************************
@@ -696,7 +644,7 @@ begin
   SetLength(State.g, 0);
   SetLength(State.Work, 0);
   SetLength(State.RState.IA, 0);
-  SetLength(State.RState.RA, 0);
+  SetLength(State.RState.ResArry, 0);
 end;
 
 (* ************************************************************************

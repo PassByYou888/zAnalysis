@@ -2028,3 +2028,37 @@ begin
   SetLength(tmpHashBuff, 0);
   disposeObject(tmpHashEng);
 end;
+
+procedure TestRasterSavePerformance(inputfile: SystemString);
+var
+  m64, tmp: TMemoryStream64;
+  f: TRasterSaveFormat;
+  raster: TRaster;
+  tk: TTimeTick;
+begin
+  m64 := TMemoryStream64.Create;
+  m64.LoadFromFile(inputfile);
+
+  for f := Low(TRasterSaveFormat) to high(TRasterSaveFormat) do
+    begin
+      tmp := TMemoryStream64.CustomCreate(64 * 1024 * 1024);
+      m64.Position := 0;
+      raster := NewRasterFromStream(m64);
+      raster.FitScale(1920, 1920);
+      tk := GetTimeTick;
+      raster.SaveToStream(tmp, f);
+      DoStatus('%s save %dms', [GetEnumName(TypeInfo(TRasterSaveFormat), Ord(f)), GetTimeTick - tk]);
+
+      raster.Reset;
+      tmp.Position := 0;
+      tk := GetTimeTick;
+      raster.LoadFromStream(tmp);
+      DoStatus('%s load %dms', [GetEnumName(TypeInfo(TRasterSaveFormat), Ord(f)), GetTimeTick - tk]);
+      disposeObject(raster);
+      disposeObject(tmp);
+
+      DoStatus('');
+    end;
+
+  disposeObject(m64);
+end;

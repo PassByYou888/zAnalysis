@@ -62,7 +62,7 @@ begin
   UnLockObject(FInputBuffer);
 end;
 
-procedure TRaster_IO_Processor.IOProcessorThreadRun(ThSender: TComputeThread);
+procedure TRaster_IO_Processor.IOProcessorThreadRun(ThSender: TCompute);
 
   function DoPickBuff(): TRaster_IO_Buffer;
   var
@@ -187,11 +187,7 @@ begin
       DisposeObject(pickList);
       TCoreClassThread.Sleep(10);
     end;
-end;
-
-procedure TRaster_IO_Processor.IOProcessorThreadDone(ThSender: TComputeThread);
-begin
-  AtomDec(FRuningThreadCounter);
+  FIOThreadRuning.V := False;
 end;
 
 constructor TRaster_IO_Processor.Create(IO_Class_: TRaster_IO_Class);
@@ -200,19 +196,20 @@ begin
   FIO_Class := IO_Class_;
   FInputBuffer := TRaster_IO_Buffer.Create;
   FOutputBuffer := TRaster_IO_Buffer.Create;
-  FRuningThreadCounter := 0;
+  FIOThreadRuning := TAtomBool.Create(False);
   FParallelProcessor := False;
   FIndexNumber := 0;
 end;
 
 destructor TRaster_IO_Processor.Destroy;
 begin
-  while FRuningThreadCounter > 0 do
-      CheckThreadSynchronize(100);
+  while FIOThreadRuning.V do
+      CheckThreadSynchronize(1);
 
   Clear;
   DisposeObject(FInputBuffer);
   DisposeObject(FOutputBuffer);
+  DisposeObject(FIOThreadRuning);
   inherited Destroy;
 end;
 
@@ -276,16 +273,25 @@ end;
 
 procedure TRaster_IO_Processor.Process(UserData: Pointer);
 begin
-  if (FRuningThreadCounter > 0) or (InputCount = 0) then
+  if (FIOThreadRuning.V) or (InputCount = 0) then
       exit;
 
-  AtomInc(FRuningThreadCounter);
-  TComputeThread.RunM(UserData, Self, {$IFDEF FPC}@{$ENDIF FPC}IOProcessorThreadRun);
+  FIOThreadRuning.V := True;
+  TCompute.RunM(UserData, Self, {$IFDEF FPC}@{$ENDIF FPC}IOProcessorThreadRun);
 end;
 
 function TRaster_IO_Processor.Finished: Boolean;
 begin
-  Result := (InputCount = 0) and (FRuningThreadCounter = 0);
+  Result := (InputCount = 0) and (not FIOThreadRuning.V);
+end;
+
+procedure TRaster_IO_Processor.WaitProcessDone;
+begin
+  while not Finished do
+    begin
+      DoStatus();
+      CheckThreadSynchronize(10);
+    end;
 end;
 
 function TRaster_IO_Processor.LockOutputBuffer: TRaster_IO_Buffer;

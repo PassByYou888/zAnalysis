@@ -19,6 +19,8 @@
 { ****************************************************************************** }
 unit zDrawEngineInterface_VCL;
 
+{$INCLUDE ..\zDefine.inc}
+
 interface
 
 uses
@@ -62,24 +64,48 @@ end;
 
 procedure MemoryBitmapToBitmap(mr: TMemoryRaster; bmp: TBitmap);
 var
-  m64: TMemoryStream64;
+  i: integer;
+  bak_event: TNotifyEvent;
+  bak_progress: TProgressEvent;
 begin
-  m64 := TMemoryStream64.CustomCreate(1024 * 1024);
-  mr.SaveToBmp24Stream(m64);
-  m64.Position := 0;
-  bmp.LoadFromStream(m64);
-  DisposeObject(m64);
+  bak_event := bmp.OnChange;
+  bak_progress := bmp.OnProgress;
+  bmp.OnChange := nil;
+  bmp.OnProgress := nil;
+  bmp.PixelFormat := TPixelFormat.pf32bit;
+  bmp.SetSize(mr.Width, mr.Height);
+  for i := 0 to mr.Height - 1 do
+      CopyPtr(mr.ScanLine[i], bmp.ScanLine[i], mr.Width * 4);
+  bmp.OnChange := bak_event;
+  bmp.OnProgress := bak_progress;
+  bmp.Modified := True;
 end;
 
 procedure BitmapToMemoryBitmap(bmp: TBitmap; mr: TMemoryRaster);
 var
-  m64: TMemoryStream64;
+  i, j: integer;
+  rgb_p: PRGBArray;
+  rgba_p: PRColorArray;
 begin
-  m64 := TMemoryStream64.CustomCreate(1024 * 1024);
-  bmp.SaveToStream(m64);
-  m64.Position := 0;
-  mr.LoadFromStream(m64);
-  DisposeObject(m64);
+  if bmp.PixelFormat = TPixelFormat.pf32bit then
+    begin
+      mr.SetSize(bmp.Width, bmp.Height);
+      for i := 0 to bmp.Height - 1 do
+          CopyPtr(bmp.ScanLine[i], mr.ScanLine[i], mr.Width * 4);
+    end
+  else if bmp.PixelFormat = TPixelFormat.pf24bit then
+    begin
+      mr.SetSize(bmp.Width, bmp.Height);
+      for i := 0 to bmp.Height - 1 do
+        begin
+          rgb_p := PRGBArray(bmp.ScanLine[i]);
+          rgba_p := mr.ScanLine[i];
+          for j := 0 to bmp.Width - 1 do
+              rgba_p^[i] := RGB2RGBA(rgb_p^[i]);
+        end;
+    end
+  else
+      RaiseInfo('no support.');
 end;
 
 function _NewRaster: TMemoryRaster;

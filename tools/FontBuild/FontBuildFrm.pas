@@ -6,8 +6,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls,
 
-  System.Math, System.Threading, FastGBK, GBK,
-  MemoryStream64, MemoryRaster, Geometry2DUnit, DoStatusIO, PascalStrings, CoreClasses, GR32;
+  System.Math, System.Threading,
+  FastGBK, GBK,
+  MemoryStream64, MemoryRaster, Geometry2DUnit, DoStatusIO, PascalStrings, UPascalStrings, CoreClasses, GR32, zDrawEngine;
 
 type
   TFontBuildForm = class(TForm)
@@ -44,6 +45,7 @@ type
     { Public declarations }
     FR: TFontRaster;
     procedure DoStatus_Backcall(AText: SystemString; const ID: Integer);
+    procedure UpdatePreview();
   end;
 
 var
@@ -60,21 +62,24 @@ begin
   DeleteDoStatusHook(Self);
 end;
 
-procedure TFontBuildForm.DoStatus_Backcall(AText: SystemString; const ID: Integer);
-begin
-  Memo.Lines.Add(AText);
-end;
-
 procedure TFontBuildForm.FormCreate(Sender: TObject);
 begin
   AddDoStatusHook(Self, DoStatus_Backcall);
   FR := TFontRaster.Create;
-  SampleMemo.Font.Assign(FontDialog.Font);
-  SampleMemo.ParentColor := True;
-  BuildButtonClick(BuildButton);
+
+  if ParamCount = 1 then
+      FR.LoadFromFile(ParamStr(1))
+  else
+      FR.Assign(Wait_SystemFont_Init);
+
+  DoStatus('Activted Word:%d', [FR.ActivtedWord]);
+  DoStatus('size: %d x %d ', [FR.width, FR.height]);
+
+  UpdatePreview;
 end;
 
 procedure TFontBuildForm.BuildButtonClick(Sender: TObject);
+
   function computeYHead(R: TMemoryRaster): Integer;
   var
     X, Y: Integer;
@@ -155,9 +160,6 @@ procedure TFontBuildForm.BuildButtonClick(Sender: TObject);
   end;
 
 var
-  m64: TMemoryStream64;
-  ngr: TBitmap32;
-  raster: TMemoryRaster;
   pass: Integer;
 begin
   FR.Clear;
@@ -177,13 +179,7 @@ begin
 
   for pass := ProgressBar.Min to ProgressBar.Max do
     begin
-      if (pass <= $FF) then
-          DoFor(pass)
-      else if FastGBKChar(SystemChar(pass)) and IncludeGBKCheckBox.Checked then
-          DoFor(pass)
-      else if CharIn(SystemChar(pass), '¡¤£±£²£³£´£µ£¶£·£¸£¹£°£­£½¡¾¡¿£Ü£»¡¯£¬¡£¡¢¡«£¡£À£££¤£¥¡­¡­£¦¡Á£¨£©¡ª¡ª£«£û£ý£ü£º¡°¡¶¡·£¿') then
-          DoFor(pass)
-      else if (IncludeallCheckBox.Checked) then
+      if IfGBKChar(USystemChar(pass), True, IncludeGBKCheckBox.Checked, IncludeallCheckBox.Checked) then
           DoFor(pass);
       ProgressBar.Position := pass;
       Application.ProcessMessages;
@@ -191,7 +187,7 @@ begin
 
   ProgressBar.Position := 0;
 
-  FR.Build(FontDialog.Font.Size);
+  FR.Build(FontDialog.Font.Name, FontDialog.Font.Size, True);
 
   DoStatus('Activted Word:%d', [FR.ActivtedWord]);
   DoStatus('size: %d x %d ', [FR.width, FR.height]);
@@ -205,21 +201,7 @@ begin
   IncludeallCheckBox.Enabled := True;
   IncludeGBKCheckBox.Enabled := True;
 
-  ngr := TBitmap32.Create;
-  ngr.SetSize(Image.width, Image.height);
-  ngr.Clear(Color32(0, 0, 0, 0));
-  raster := TMemoryRaster.Create;
-  raster.DrawMode := MemoryRaster.TDrawMode.dmBlend;
-  raster.SetWorkMemory(ngr.Bits, ngr.width, ngr.height);
-  FR.Draw(SampleMemo.Text, raster, vec2(0, 0), RasterColorF(1, 1, 1));
-
-  m64 := TMemoryStream64.Create;
-  ngr.SaveToStream(m64);
-  m64.Position := 0;
-  Image.Picture.LoadFromStream(m64);
-  DisposeObject(m64);
-  DisposeObject(raster);
-  DisposeObject(ngr);
+  UpdatePreview;
 end;
 
 procedure TFontBuildForm.ExportBMPButtonClick(Sender: TObject);
@@ -237,60 +219,20 @@ begin
 end;
 
 procedure TFontBuildForm.LoadButtonClick(Sender: TObject);
-var
-  m64: TMemoryStream64;
-  ngr: TBitmap32;
-  raster: TMemoryRaster;
 begin
   if not OpenDialog.Execute then
       Exit;
-  m64 := TMemoryStream64.Create;
-  m64.LoadFromFile(OpenDialog.FileName);
-  m64.Position := 0;
-  FR.LoadFromStream(m64);
-  DisposeObject(m64);
+  FR.LoadFromFile(OpenDialog.FileName);
 
   DoStatus('Activted Word:%d', [FR.ActivtedWord]);
   DoStatus('size: %d x %d ', [FR.width, FR.height]);
 
-  ngr := TBitmap32.Create;
-  ngr.SetSize(Image.width, Image.height);
-  ngr.Clear(Color32(0, 0, 0, 0));
-  raster := TMemoryRaster.Create;
-  raster.DrawMode := MemoryRaster.TDrawMode.dmBlend;
-  raster.SetWorkMemory(ngr.Bits, ngr.width, ngr.height);
-  FR.Draw(SampleMemo.Text, raster, vec2(0, 0), RasterColorF(1, 1, 1));
-
-  m64 := TMemoryStream64.Create;
-  ngr.SaveToStream(m64);
-  m64.Position := 0;
-  Image.Picture.LoadFromStream(m64);
-  DisposeObject(m64);
-  DisposeObject(raster);
-  DisposeObject(ngr);
+  UpdatePreview;
 end;
 
 procedure TFontBuildForm.SampleMemoChange(Sender: TObject);
-var
-  m64: TMemoryStream64;
-  ngr: TBitmap32;
-  raster: TMemoryRaster;
 begin
-  ngr := TBitmap32.Create;
-  ngr.SetSize(Image.width, Image.height);
-  ngr.Clear(Color32(0, 0, 0, 0));
-  raster := TMemoryRaster.Create;
-  raster.DrawMode := MemoryRaster.TDrawMode.dmBlend;
-  raster.SetWorkMemory(ngr.Bits, ngr.width, ngr.height);
-  FR.Draw(SampleMemo.Text, raster, vec2(0, 0), RasterColorF(1, 1, 1));
-
-  m64 := TMemoryStream64.Create;
-  ngr.SaveToStream(m64);
-  m64.Position := 0;
-  Image.Picture.LoadFromStream(m64);
-  DisposeObject(m64);
-  DisposeObject(raster);
-  DisposeObject(ngr);
+  UpdatePreview;
 end;
 
 procedure TFontBuildForm.SaveButtonClick(Sender: TObject);
@@ -309,13 +251,43 @@ procedure TFontBuildForm.SetFontButtonClick(Sender: TObject);
 begin
   if not FontDialog.Execute then
       Exit;
-  SampleMemo.Font.Assign(FontDialog.Font);
-  SampleMemo.ParentColor := True;
 end;
 
 procedure TFontBuildForm.Timer1Timer(Sender: TObject);
 begin
   DoStatus();
+end;
+
+procedure TFontBuildForm.DoStatus_Backcall(AText: SystemString; const ID: Integer);
+begin
+  Memo.Lines.Add(AText);
+end;
+
+procedure TFontBuildForm.UpdatePreview;
+var
+  m64: TMemoryStream64;
+  ngr: TBitmap32;
+  raster: TMemoryRaster;
+begin
+  ngr := TBitmap32.Create;
+  ngr.SetSize(Image.width, Image.height);
+  ngr.Clear(Color32(0, 0, 0, 0));
+
+  raster := TMemoryRaster.Create;
+  raster.DrawMode := MemoryRaster.TDrawMode.dmBlend;
+  // map memory for TBitmap32
+  raster.SetWorkMemory(ngr.Bits, ngr.width, ngr.height);
+  raster.Font := FR;
+  raster.DrawEngine.DrawText(SampleMemo.Text, FR.FontSize, raster.DrawEngine.ScreenRect, DEColor(1, 1, 1), True);
+  raster.DrawEngine.Flush;
+
+  m64 := TMemoryStream64.Create;
+  ngr.SaveToStream(m64);
+  m64.Position := 0;
+  Image.Picture.LoadFromStream(m64);
+  DisposeObject(m64);
+  DisposeObject(raster);
+  DisposeObject(ngr);
 end;
 
 end.

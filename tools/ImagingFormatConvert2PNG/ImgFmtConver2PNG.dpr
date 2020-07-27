@@ -4,9 +4,7 @@ program ImgFmtConver2PNG;
 
 uses
   Vcl.Forms,
-  ImgFmtConverPngFrm in 'ImgFmtConverPngFrm.pas' {ImgFmtConverPngForm},
-  Vcl.Themes,
-  Vcl.Styles;
+  ImgFmtConverPngFrm in 'ImgFmtConverPngFrm.pas' {ImgFmtConverPngForm};
 
 {$R *.res}
 
@@ -23,7 +21,6 @@ begin
     end;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('Windows10 Dark');
   Application.Title := 'image to .PNG';
   Application.CreateForm(TImgFmtConverPngForm, ImgFmtConverPngForm);
   Application.Run;

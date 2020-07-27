@@ -123,7 +123,7 @@ end;
 procedure TKDTree_KMeanPlus_GUIMainForm.BuildCluster(pl: T2DPointList; k: Integer; bmp: TMemoryRaster);
 var
   k2d: TKDT2DS;
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
   arryPl: array of T2DPointList;
   i: Integer;
   pt: T2DPoint;

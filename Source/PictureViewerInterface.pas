@@ -46,8 +46,8 @@ type
     Busy: TAtomBool;
     DrawBox: TRectV2;
     MorphData: TMorphomatics;
-    procedure BuildHisComputeTh(thSender: TComputeThread);
-    procedure UpdateHisComputeTh(thSender: TComputeThread);
+    procedure BuildHisComputeTh(thSender: TCompute);
+    procedure UpdateHisComputeTh(thSender: TCompute);
     constructor Create(Parent_: TRasterHistogramInfos; raster_: TMemoryRaster; MorphPix_: TMorphologyPixel; Height_: Integer; hColor: TRColor);
     destructor Destroy; override;
     procedure Update(MorphPix_: TMorphologyPixel; Height_: Integer; hColor: TRColor);
@@ -89,7 +89,7 @@ type
   TPictureViewerDataList = {$IFDEF FPC}specialize {$ENDIF FPC} TGenericsList<TPictureViewerData>;
   TRasterHistogramInfoList = {$IFDEF FPC}specialize {$ENDIF FPC} TGenericsList<TRasterHistogramInfo>;
 
-  TPictureViewerStyle = (pvsTop2Bottom, pvsLeft2Right);
+  TPictureViewerStyle = (pvsTop2Bottom, pvsLeft2Right, pvsDynamic);
 
   TPictureViewerInterface = class
   private
@@ -132,10 +132,17 @@ type
     function AtPictureOffset(data_: TPictureViewerData; pt: TVec2): TPoint;
 
     // tap
-    property DownState: Boolean read FDownState;
     procedure TapDown(pt: TVec2);
     procedure TapMove(pt: TVec2);
     procedure TapUp(pt: TVec2);
+    // tap state
+    property DownScreenPT: TVec2 read FDownScreenPT;
+    property DownScenePT: TVec2 read FDownScenePT;
+    property MoveScreenPT: TVec2 read FMoveScreenPT;
+    property MoveScenePT: TVec2 read FMoveScenePT;
+    property UpScreenPT: TVec2 read FUpScreenPT;
+    property UpScenePT: TVec2 read FUpScenePT;
+    property DownState: Boolean read FDownState;
 
     // scale
     procedure ScaleCamera(f: TGeoFloat);
@@ -146,14 +153,18 @@ type
     procedure Fit(); overload;
 
     // renderer
-    procedure Render();
+    procedure Render(showPicture_, flush_: Boolean); overload;
+    procedure Render(showPicture_: Boolean); overload;
+    procedure Render(); overload;
 
+    // viewer options
     property ShowHistogramInfo: Boolean read FShowHistogramInfo write FShowHistogramInfo;
     property ShowPixelInfo: Boolean read FShowPixelInfo write FShowPixelInfo;
     property ShowPictureInfo: Boolean read FShowPictureInfo write FShowPictureInfo;
     property ShowPictureInfoFontSize: TGeoFloat read FShowPictureInfoFontSize write FShowPictureInfoFontSize;
     property ShowBackground: Boolean read FShowBackground write FShowBackground;
     property PictureViewerStyle: TPictureViewerStyle read FPictureViewerStyle write FPictureViewerStyle;
+    property BackgroundTex: TMemoryRaster read FBackgroundTex;
   end;
 
 implementation
@@ -168,7 +179,7 @@ type
 
   PRasterHistogramThData = ^TRasterHistogramThData;
 
-procedure TRasterHistogramInfo.BuildHisComputeTh(thSender: TComputeThread);
+procedure TRasterHistogramInfo.BuildHisComputeTh(thSender: TCompute);
 var
   p: PRasterHistogramThData;
   r: TMemoryRaster;
@@ -181,7 +192,7 @@ begin
   Busy.V := False;
 end;
 
-procedure TRasterHistogramInfo.UpdateHisComputeTh(thSender: TComputeThread);
+procedure TRasterHistogramInfo.UpdateHisComputeTh(thSender: TCompute);
 var
   p: PRasterHistogramThData;
 begin
@@ -214,7 +225,7 @@ begin
   p^.MorphPix_ := MorphPix_;
   p^.Height_ := Height_;
   p^.hColor := hColor;
-  TComputeThread.RunM(p, nil, {$IFDEF FPC}@{$ENDIF FPC}BuildHisComputeTh);
+  TCompute.RunM(p, nil, {$IFDEF FPC}@{$ENDIF FPC}BuildHisComputeTh);
 
 {$ELSE Parallel}
     MorphData := raster_.BuildMorphomatics(MorphPix_);
@@ -252,7 +263,7 @@ begin
   p^.MorphPix_ := MorphPix_;
   p^.Height_ := Height_;
   p^.hColor := hColor;
-  TComputeThread.RunM(p, nil, {$IFDEF FPC}@{$ENDIF FPC}UpdateHisComputeTh);
+  TCompute.RunM(p, nil, {$IFDEF FPC}@{$ENDIF FPC}UpdateHisComputeTh);
 {$ELSE Parallel}
     Parent.Parent.Raster.BuildMorphomaticsTo(MorphPix_, MorphData);
   MorphData.BuildHistogramTo(Height_, hColor, Raster);
@@ -724,17 +735,35 @@ var
   j: Integer;
   tmpRect: TRectV2;
   sData: TPictureViewerData;
+  rp: TRectPacking;
 begin
-  tmpRect[0] := vec2(0, 0);
-  for j := 0 to Count - 1 do
+  if FPictureViewerStyle = pvsDynamic then
     begin
-      sData := Items[j];
-      tmpRect[1] := Vec2Add(tmpRect[0], sData.Raster.Size2D);
-      sData.DrawBox := tmpRect;
-      case FPictureViewerStyle of
-        pvsTop2Bottom: tmpRect[0, 1] := tmpRect[1, 1] + 10;
-        pvsLeft2Right: tmpRect[0, 0] := tmpRect[1, 0] + 10;
-      end;
+      rp := TRectPacking.Create;
+      for j := 0 to Count - 1 do
+        begin
+          sData := Items[j];
+          rp.Add(nil, sData, sData.Raster.BoundsRectV2);
+        end;
+      rp.Margins := 10;
+      rp.Build();
+      for j := 0 to rp.Count - 1 do
+          TPictureViewerData(rp[j]^.Data2).DrawBox := rp[j]^.Rect;
+      DisposeObject(rp);
+    end
+  else
+    begin
+      tmpRect[0] := vec2(0, 0);
+      for j := 0 to Count - 1 do
+        begin
+          sData := Items[j];
+          tmpRect[1] := Vec2Add(tmpRect[0], sData.Raster.Size2D);
+          sData.DrawBox := tmpRect;
+          case FPictureViewerStyle of
+            pvsTop2Bottom: tmpRect[0, 1] := tmpRect[1, 1] + 10;
+            pvsLeft2Right: tmpRect[0, 0] := tmpRect[1, 0] + 10;
+          end;
+        end;
     end;
 end;
 
@@ -755,10 +784,14 @@ begin
       for i := 1 to Count - 1 do
           Box := BoundRect(Box, Items[i].DrawBox);
       Fit(Box);
+    end
+  else
+    begin
+      FDrawEng.ResetCamera;
     end;
 end;
 
-procedure TPictureViewerInterface.Render();
+procedure TPictureViewerInterface.Render(showPicture_, flush_: Boolean);
 var
   i, j: Integer;
   hisRect: TRectV2;
@@ -783,55 +816,68 @@ begin
   hisRect := FDrawEng.ScreenRect;
   hisRect[0, 1] := hisRect[1, 1] - 100;
 
-  for j := 0 to Count - 1 do
-    begin
-      sData := Items[j];
-      FDrawEng.DrawPictureInScene(sData.Raster, sData.Raster.BoundsRectV2, sData.DrawBox, 1.0);
-    end;
+  if showPicture_ then
+    for j := 0 to Count - 1 do
+      begin
+        sData := Items[j];
+        FDrawEng.DrawPictureInScene(sData.Raster, sData.Raster.BoundsRectV2, sData.DrawBox, 1.0);
+      end;
 
-  for j := 0 to Count - 1 do
-    begin
-      sData := Items[j];
+  if showPicture_ then
+    for j := 0 to Count - 1 do
+      begin
+        sData := Items[j];
 
-      if FShowPictureInfo then
-        begin
-          n := PFormat('%s' + #13#10 + 'size:%d * %d', [sData.texInfo.Text, sData.Raster.width, sData.Raster.height]);
-          n := FDrawEng.RebuildTextColor(n, tsText, '', '', '', '', '|color(0.5,1.0,0.5)|', '||', '', '', '', '');
-          text_siz := FDrawEng.GetTextSize(n, FShowPictureInfoFontSize);
-          if text_siz[0] < RectWidth(FDrawEng.SceneToScreen(sData.DrawBox)) then
-            begin
-              FDrawEng.BeginCaptureShadow(vec2(2, 2), 1.0);
-              FDrawEng.DrawText(n, FShowPictureInfoFontSize, FDrawEng.SceneToScreen(sData.DrawBox), DEColor(1, 1, 1), False);
-              FDrawEng.EndCaptureShadow;
-            end;
-        end;
+        if FShowPictureInfo then
+          begin
+            n := PFormat('%s' + #13#10 + 'size:%d * %d', [sData.texInfo.Text, sData.Raster.width, sData.Raster.height]);
+            n := FDrawEng.RebuildTextColor(n, tsText, '', '', '', '', '|color(0.5,1.0,0.5)|', '||', '', '', '', '');
+            text_siz := FDrawEng.GetTextSize(n, FShowPictureInfoFontSize);
+            if text_siz[0] < RectWidth(FDrawEng.SceneToScreen(sData.DrawBox)) then
+              begin
+                FDrawEng.BeginCaptureShadow(vec2(2, 2), 1.0);
+                FDrawEng.DrawText(n, FShowPictureInfoFontSize, FDrawEng.SceneToScreen(sData.DrawBox), DEColor(1, 1, 1), False);
+                FDrawEng.EndCaptureShadow;
+              end;
+          end;
 
-      if FShowPixelInfo and Vec2InRect(FMoveScenePT, sData.DrawBox) then
-        begin
-          tex_pt := RectProjection(sData.DrawBox, sData.Raster.BoundsRectV2, FMoveScenePT);
-          tex_color.BGRA := sData.Raster.PixelVec[tex_pt];
-          n := PFormat(#13#10 + 'X:%d Y:%d color:$%.8x' + #13#10 + 'R:$%.2x G:$%.2x B:$%.2x A:$%.2x' + #13#10,
-            [Round(tex_pt[0]), Round(tex_pt[1]), tex_color.BGRA, tex_color.r, tex_color.G, tex_color.B, tex_color.A]);
-          YIQ_.RGB := tex_color.BGRA;
-          HSI_.RGB := tex_color.BGRA;
-          CMYK_.RGB := tex_color.BGRA;
-          n.Append('YIQ Y:%f I:%f Q:%f' + #13#10, [YIQ_.Y, YIQ_.i, YIQ_.Q]);
-          n.Append('HSI H:%f S:%f I:%f' + #13#10, [HSI_.h, HSI_.S, HSI_.i]);
-          n.Append('CMYK C:%f M:%f Y:%f K:%f' + #13#10, [CMYK_.C, CMYK_.M, CMYK_.Y, CMYK_.k]);
-          n.Append('RGBA R:%f G:%f B:%f, A:%f', [tex_color.r / $FF, tex_color.G / $FF, tex_color.B / $FF, tex_color.A / $FF]);
-          n := FDrawEng.RebuildTextColor(n, tsText, '', '', '', '', '|color(0.5,1.0,0.5)|', '||', '', '', '', '');
-          FDrawEng.BeginCaptureShadow(vec2(2, 2), 1.0);
-          r4 := FDrawEng.DrawText(n, FShowPixelInfoFontSize, DEColor(1, 1, 1, 1), Vec2Add(FMoveScreenPT, 15), 5);
-          FDrawEng.EndCaptureShadow;
-          FDrawEng.DrawPoint(FMoveScreenPT, DEColor(1, 1, 1), 5, 1);
-          FDrawEng.DrawPoint(Vec2Add(FMoveScreenPT, 1), DEColor(0, 0, 0), 5, 1);
-        end;
+        if FShowPixelInfo and Vec2InRect(FMoveScenePT, sData.DrawBox) then
+          begin
+            tex_pt := RectProjection(sData.DrawBox, sData.Raster.BoundsRectV2, FMoveScenePT);
+            tex_color.BGRA := sData.Raster.PixelVec[tex_pt];
+            n := PFormat(#13#10 + 'X:%d Y:%d color:$%.8x' + #13#10 + 'R:$%.2x G:$%.2x B:$%.2x A:$%.2x' + #13#10,
+              [Round(tex_pt[0]), Round(tex_pt[1]), tex_color.BGRA, tex_color.r, tex_color.G, tex_color.B, tex_color.A]);
+            YIQ_.RGB := tex_color.BGRA;
+            HSI_.RGB := tex_color.BGRA;
+            CMYK_.RGB := tex_color.BGRA;
+            n.Append('YIQ Y:%f I:%f Q:%f' + #13#10, [YIQ_.Y, YIQ_.i, YIQ_.Q]);
+            n.Append('HSI H:%f S:%f I:%f' + #13#10, [HSI_.h, HSI_.S, HSI_.i]);
+            n.Append('CMYK C:%f M:%f Y:%f K:%f' + #13#10, [CMYK_.C, CMYK_.M, CMYK_.Y, CMYK_.k]);
+            n.Append('RGBA R:%f G:%f B:%f, A:%f', [tex_color.r / $FF, tex_color.G / $FF, tex_color.B / $FF, tex_color.A / $FF]);
+            n := FDrawEng.RebuildTextColor(n, tsText, '', '', '', '', '|color(0.5,1.0,0.5)|', '||', '', '', '', '');
+            FDrawEng.BeginCaptureShadow(vec2(2, 2), 1.0);
+            r4 := FDrawEng.DrawText(n, FShowPixelInfoFontSize, DEColor(1, 1, 1, 1), Vec2Add(FMoveScreenPT, 15), 5);
+            FDrawEng.EndCaptureShadow;
+            FDrawEng.DrawPoint(FMoveScreenPT, DEColor(1, 1, 1), 5, 1);
+            FDrawEng.DrawPoint(Vec2Add(FMoveScreenPT, 1), DEColor(0, 0, 0), 5, 1);
+          end;
 
-      if (FShowHistogramInfo) and (sData.hInfo <> nil) and ((Count = 1) or PointInRect(FMoveScenePT, sData.DrawBox)) then
-          sData.hInfo.Draw(FDrawEng);
-    end;
+        if (FShowHistogramInfo) and (sData.hInfo <> nil) and ((Count = 1) or PointInRect(FMoveScenePT, sData.DrawBox)) then
+            sData.hInfo.Draw(FDrawEng);
+      end;
 
-  FDrawEng.Flush;
+  if flush_ then
+      FDrawEng.Flush;
+end;
+
+procedure TPictureViewerInterface.Render(showPicture_: Boolean);
+begin
+  Render(True, True);
+end;
+
+procedure TPictureViewerInterface.Render();
+begin
+  Render(True);
 end;
 
 end.

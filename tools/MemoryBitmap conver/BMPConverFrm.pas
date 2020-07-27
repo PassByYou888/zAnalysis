@@ -79,7 +79,6 @@ implementation
 
 {$R *.fmx}
 
-
 procedure TBMPConverForm.FormCreate(Sender: TObject);
 begin
   DestDirEdit.Text := umlCurrentPath;

@@ -40,9 +40,7 @@ type
     );
 
   // device-independent pixel PFormat
-  TPixelFormat =
-    (spf1bit, spf2bit, spf4bit, spf8bit, spf10bit, spf12bit, spf15bit, spf16bit,
-    spf24bit, spf30bit, spf32bit, spf36bit, spf48bit, spf64bit);
+  TPixelFormat = (spf1bit, spf2bit, spf4bit, spf8bit, spf10bit, spf12bit, spf15bit, spf16bit, spf24bit, spf30bit, spf32bit, spf36bit, spf48bit, spf64bit);
 
   // TMapIterator is a lightweight class that allows iterating along all kinds
   // of maps: often the 8, 16, 24 and 32 bitmaps are used but not necessarily, also
@@ -51,73 +49,73 @@ type
   // "First" and iterating with function "Next" until the result is nil.
   TMapIterator = class(TJPEG_Persistent)
   private
-    FCount: integer;
-    FDelta: integer;
-    FLine: integer;
-    FLineFirst: pbyte;
-    FThis: pbyte;
-    FMap: pbyte;
-    FWidth: integer;
-    FHeight: integer;
-    FScanStride: integer;
-    FCellStride: integer;
-    FBitCount: integer;
+    FCount: Integer;
+    FDelta: Integer;
+    FLine: Integer;
+    FLineFirst: PByte;
+    FThis: PByte;
+    FMap: PByte;
+    FWidth: Integer;
+    FHeight: Integer;
+    FScanStride: Integer;
+    FCellStride: Integer;
+    FBitCount: Integer;
     FMethod: TIteratorMethod;
-    function IsDirect: boolean;
-    function GetDirection: integer;
+    function IsDirect: Boolean;
+    function GetDirection: Integer;
   public
     procedure CopyFrom(Source: TMapIterator);
     // Call First to get a pointer to the first cell
-    function First: pbyte;
+    function First: PByte;
     // Call Next iteratively to get the next cell, until it returns nil
-    function Next: pbyte;
+    function Next: PByte;
     // Get the pointer to the cell at X,Y. Next does *not* work from this
     // position, the First/Next paradigm cannot be mixed.
-    function At(X, Y: integer): pbyte;
+    function At(X, Y: Integer): PByte;
     // Same thing, but checks dimensions and returns nil if not within them
-    function SafeAt(X, Y: integer): pbyte;
+    function SafeAt(X, Y: Integer): PByte;
     // integer at X, Y
-    function IntAt(X, Y: integer): pinteger;
+    function IntAt(X, Y: Integer): PInteger;
     // "single" float at X, Y
-    function SingleAt(X, Y: integer): psingle;
+    function SingleAt(X, Y: Integer): PSingle;
     // Increment the Map pointer so it points to a different channel (e.g.
     // 0 for Blue, 1 for Red, 2 for Green in RGB 24bpp bitmap).
-    procedure IncrementMap(Channel_: integer);
+    procedure IncrementMap(Channel_: Integer);
     // Distance between cell 0 of scanline 0 and cell 0 of scanline 1 in bytes
-    property ScanStride: integer read FScanStride write FScanStride;
+    property ScanStride: Integer read FScanStride write FScanStride;
     // Distance between cell 0 and cell 1
-    property CellStride: integer read FCellStride write FCellStride;
+    property CellStride: Integer read FCellStride write FCellStride;
     // Number of bits for each cell, eg with PixelFormat = pf15bits, BitCount = 15.
     // This property is merely for client apps that want to exchange their individual
     // pixel data.
-    property BitCount: integer read FBitCount write FBitCount;
+    property BitCount: Integer read FBitCount write FBitCount;
     // Pointer to cell 0, 0
-    property Map: pbyte read FMap write FMap;
+    property Map: PByte read FMap write FMap;
     // Width of map in pixels
-    property Width: integer read FWidth write FWidth;
+    property Width: Integer read FWidth write FWidth;
     // Height of map in pixels
-    property Height: integer read FHeight write FHeight;
+    property Height: Integer read FHeight write FHeight;
     // Iterator method, see TIteratorMethod for an explanation.
     property Method: TIteratorMethod read FMethod write FMethod;
     // Current line number (if multi-line iteration)
-    property Line: integer read FLine;
+    property Line: Integer read FLine;
     // Current direction (if zig-zag)
-    property Direction: integer read GetDirection;
+    property Direction: Integer read GetDirection;
   end;
 
   // device-independent pixelformat functions
-function sdPixelFormatToBitCount(const Format_: TPixelFormat): cardinal;
-function sdPixelFormatToByteCount(const Format_: TPixelFormat): cardinal;
-function sdBitCountToPixelFormat(const BitCount_: cardinal): TPixelFormat;
+function sdPixelFormatToBitCount(const Format_: TPixelFormat): Cardinal;
+function sdPixelFormatToByteCount(const Format_: TPixelFormat): Cardinal;
+function sdBitCountToPixelFormat(const BitCount_: Cardinal): TPixelFormat;
 
 implementation
 
-function TMapIterator.IsDirect: boolean;
+function TMapIterator.IsDirect: Boolean;
 begin
   Result := (FCellStride * FWidth = FScanStride);
 end;
 
-function TMapIterator.GetDirection: integer;
+function TMapIterator.GetDirection: Integer;
 begin
   if FDelta > 0 then
       Result := 1
@@ -143,7 +141,7 @@ begin
   FMethod := S.FMethod;
 end;
 
-function TMapIterator.First: pbyte;
+function TMapIterator.First: PByte;
 begin
   FThis := FMap;
   FLine := 0;
@@ -194,7 +192,7 @@ begin
   Result := FThis;
 end;
 
-function TMapIterator.Next: pbyte;
+function TMapIterator.Next: PByte;
 begin
   dec(FCount);
 
@@ -207,18 +205,15 @@ begin
     end
   else
     begin
-
       // No more simple iterations are available (FCount <= 0), so now we look at
       // the iterator method
       case FMethod of
-
         imLineByLine, imColByCol:
           begin
             // Just one line or col, so we exit with nil
             Result := nil;
             exit;
           end;
-
         imReaderX, imReaderXInv:
           begin
             inc(FLine);
@@ -231,7 +226,6 @@ begin
             FThis := FLineFirst;
             FCount := FWidth;
           end;
-
         imReaderXBtm:
           begin
             inc(FLine);
@@ -244,7 +238,6 @@ begin
             FThis := FLineFirst;
             FCount := FWidth;
           end;
-
         imReaderY, imReaderYInv:
           begin
             inc(FLine);
@@ -257,7 +250,6 @@ begin
             FThis := FLineFirst;
             FCount := FHeight;
           end;
-
         imZigZag:
           begin
             inc(FLine);
@@ -278,13 +270,13 @@ begin
   Result := FThis;
 end;
 
-function TMapIterator.At(X, Y: integer): pbyte;
+function TMapIterator.At(X, Y: Integer): PByte;
 begin
   Result := FMap;
   inc(Result, X * FCellStride + Y * FScanStride);
 end;
 
-function TMapIterator.SafeAt(X, Y: integer): pbyte;
+function TMapIterator.SafeAt(X, Y: Integer): PByte;
 begin
   Result := nil;
 
@@ -296,22 +288,22 @@ begin
   Result := At(X, Y);
 end;
 
-function TMapIterator.IntAt(X, Y: integer): pinteger;
+function TMapIterator.IntAt(X, Y: Integer): PInteger;
 begin
-  Result := pinteger(At(X, Y));
+  Result := PInteger(At(X, Y));
 end;
 
-function TMapIterator.SingleAt(X, Y: integer): psingle;
+function TMapIterator.SingleAt(X, Y: Integer): PSingle;
 begin
-  Result := psingle(At(X, Y));
+  Result := PSingle(At(X, Y));
 end;
 
-procedure TMapIterator.IncrementMap(Channel_: integer);
+procedure TMapIterator.IncrementMap(Channel_: Integer);
 begin
   inc(FMap, Channel_);
 end;
 
-function sdPixelFormatToBitCount(const Format_: TPixelFormat): cardinal;
+function sdPixelFormatToBitCount(const Format_: TPixelFormat): Cardinal;
 begin
   case Format_ of
     spf1bit: Result := 1;
@@ -328,12 +320,11 @@ begin
     spf36bit: Result := 36;
     spf48bit: Result := 48;
     spf64bit: Result := 64;
-    else
-      Result := 0;
+    else Result := 0;
   end;
 end;
 
-function sdPixelFormatToByteCount(const Format_: TPixelFormat): cardinal;
+function sdPixelFormatToByteCount(const Format_: TPixelFormat): Cardinal;
 begin
   case Format_ of
     spf1bit: Result := 1;
@@ -350,12 +341,11 @@ begin
     spf36bit: Result := 5;
     spf48bit: Result := 6;
     spf64bit: Result := 8;
-    else
-      Result := 0;
+    else Result := 0;
   end;
 end;
 
-function sdBitCountToPixelFormat(const BitCount_: cardinal): TPixelFormat;
+function sdBitCountToPixelFormat(const BitCount_: Cardinal): TPixelFormat;
 begin
   case BitCount_ of
     1: Result := spf1bit;
@@ -371,8 +361,7 @@ begin
     36: Result := spf36bit;
     48: Result := spf48bit;
     64: Result := spf64bit;
-    else
-      Result := spf8bit;
+    else Result := spf8bit;
   end;
 end;
 

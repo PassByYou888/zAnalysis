@@ -323,7 +323,7 @@ begin
               calBin := TMBin.Create;
               r4 := TV2R4.Init(BoundsRectV20, LinePtr^.CalibrateLineAngle);
               calBin.SetSizeR(r4.BoundRect, False);
-              ProjectionTo(calBin, BoundsV2Rect40, r4.ScaleToRect(calBin.BoundsRectV20, 0), True, 1.0);
+              ProjectionTo(calBin, BoundsV2Rect40, r4.TransformToRect(calBin.BoundsRectV20, 0), True, 1.0);
               free;
             end;
           free;
@@ -335,7 +335,7 @@ begin
   LinePtr^.LineCalibrateRaster := NewRaster();
   LinePtr^.LineCalibrateRaster.SetSizeR(r4.BoundRect, RColor($FF, $FF, $FF));
   LinePtr^.LineCalibrateRaster.LocalParallel := False;
-  LinePtr^.LineRaster.ProjectionTo(LinePtr^.LineCalibrateRaster, LinePtr^.LineRaster.BoundsV2Rect40, r4.ScaleToRect(LinePtr^.LineCalibrateRaster.BoundsRectV20, 0), True, 1.0);
+  LinePtr^.LineRaster.ProjectionTo(LinePtr^.LineCalibrateRaster, LinePtr^.LineRaster.BoundsV2Rect40, r4.TransformToRect(LinePtr^.LineCalibrateRaster.BoundsRectV20, 0), True, 1.0);
   Scale := Vec2Div(calBin.Size0, LinePtr^.LineCalibrateRaster.Size0);
 
   // extract as 1D space
@@ -375,7 +375,7 @@ begin
             and (calBin.BoxHitSum(R, True) > opt^.WordSegmentationHitSum) then
             begin
               R := RectDiv(R, Scale);
-              LinePtr^.WordList.AddWordData(R, LinePtr^.LineCalibrateRaster.BuildAreaCopy(R));
+              LinePtr^.WordList.AddWordData(R, LinePtr^.LineCalibrateRaster.BuildAreaCopyAs(R));
             end;
         end;
     end;
@@ -484,14 +484,14 @@ begin
   DoStatus('calibrate projection.');
   OriCalRaster := NewRaster();
   OriCalRaster.SetSizeR(TV2R4.Init(OriDetRaster.BoundsRectV20, Angle).BoundRect, RColor($FF, $FF, $FF));
-  OrientCalibrateRect4 := TV2R4.Init(OriDetRaster.BoundsRectV20, Angle).ScaleToRect(OriCalRaster.BoundsRectV20, 0);
+  OrientCalibrateRect4 := TV2R4.Init(OriDetRaster.BoundsRectV20, Angle).TransformToRect(OriCalRaster.BoundsRectV20, 0);
   OriDetRaster.ProjectionTo(OriCalRaster, OriDetRaster.BoundsV2Rect40, OrientCalibrateRect4, True, 1.0);
 
   // projection origin raster
   DoStatus('origin input projection.');
   CalOri := NewRaster();
   CalOri.SetSizeR(TV2R4.Init(Ori.BoundsRectV20, Angle).BoundRect, RColor($FF, $FF, $FF));
-  rOriR4 := TV2R4.Init(Ori.BoundsRectV20, Angle).ScaleToRect(CalOri.BoundsRectV20, 0);
+  rOriR4 := TV2R4.Init(Ori.BoundsRectV20, Angle).TransformToRect(CalOri.BoundsRectV20, 0);
   Ori.ProjectionTo(CalOri, Ori.BoundsV2Rect40, rOriR4, True, 1.0);
 
   LDataList.DocumentCalibrateRaster := CalOri.clone;
@@ -529,7 +529,7 @@ begin
         begin
           r2 := RectProjection(OriCalRaster.BoundsRectV20, CalOri.BoundsRectV20, r1);
           if (RectWidth(r2) > opt^.LineSegmentationWidthSuppression) and (RectHeight(r2) > opt^.LineSegmentationHeightSuppression) then
-              LDataList.AddLineData(r2, CalOri.BuildAreaCopy(r2));
+              LDataList.AddLineData(r2, CalOri.BuildAreaCopyAs(r2));
         end;
     end;
   DisposeObject(Seg);

@@ -315,7 +315,7 @@ end;
 procedure TDHTMarker.ReadMarker;
 var
   i, j, Idx, Count, InfoCount: Integer;
-  Item: PsdDHTMarkerInfo;
+  Item: PDHTMarkerInfo;
   B: byte;
   Table: THuffmanTable;
 begin
@@ -344,15 +344,23 @@ begin
       0:
         begin
           Table := THuffmanTableList(FCodingInfo.FDCHuffmanTables)[Item^.Th];
+{$IFDEF JPEG_Debug}
           DoDebugOut(Self, wsInfo, PFormat('DC Huffman table=%d, length=%d', [Item^.Th, Count]));
+{$ENDIF JPEG_Debug}
         end;
       1:
         begin
           Table := THuffmanTableList(FCodingInfo.FACHuffmanTables)[Item^.Th];
+{$IFDEF JPEG_Debug}
           DoDebugOut(Self, wsInfo, PFormat('AC Huffman table=%d, length=%d', [Item^.Th, Count]));
+{$ENDIF JPEG_Debug}
         end;
       else
-        DoDebugOut(Self, wsFail, sInvalidTableClass);
+        begin
+{$IFDEF JPEG_Debug}
+          DoDebugOut(Self, wsFail, sInvalidTableClass);
+{$ENDIF JPEG_Debug}
+        end;
     end;
 
     // Set table length
@@ -381,7 +389,7 @@ procedure TDHTMarker.WriteMarker;
 var
   i, Count: Integer;
   B: byte;
-  Item: PsdDHTMarkerInfo;
+  Item: PDHTMarkerInfo;
   Table: THuffmanTable;
   // local
   procedure SetTableValues;
@@ -464,6 +472,7 @@ begin
         for i := 0 to 63 do
             Table.FQuant[i] := GetWord(FStream);
     end; // case
+{$IFDEF JPEG_Debug}
     case Table.FPrecision of
       qp8bit: DoDebugOut(Self, wsInfo, PFormat('QTable=%d precision=8bit', [T]));
       qp16bit: DoDebugOut(Self, wsInfo, PFormat('QTable=%d precision=16bit', [T]));
@@ -471,6 +480,7 @@ begin
     for i := 0 to 7 do
         DoDebugOut(Self, wsInfo, PFormat('%3d %3d %3d %3d %3d %3d %3d %3d',
         [TabVal(0), TabVal(1), TabVal(2), TabVal(3), TabVal(4), TabVal(5), TabVal(6), TabVal(7)]));
+{$ENDIF JPEG_Debug}
   until FStream.Position = FStream.Size;
 end;
 
@@ -514,7 +524,9 @@ begin
   // Define Restart Interval
   // Read restart interval MCU count
   FCodingInfo.FRestartInterval := GetWord(FStream);
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, PFormat('Restart interval: %d', [FCodingInfo.FRestartInterval]));
+{$ENDIF JPEG_Debug}
 end;
 
 procedure TDRIMarker.WriteMarker;
@@ -539,35 +551,46 @@ begin
   // start of frame x
   inherited;
 
+{$IFDEF JPEG_Debug}
   // Determine encoding
   DoDebugOut(Self, wsInfo, PFormat('SOFn marker: %x', [MarkerTag]));
-
+{$ENDIF JPEG_Debug}
   case MarkerTag of
     mkSOF0:
       begin
         FCodingInfo.FEncodingMethod := emBaselineDCT;
+{$IFDEF JPEG_Debug}
         DoDebugOut(Self, wsInfo, 'coding method: baseline DCT (SOF0)');
+{$ENDIF JPEG_Debug}
       end;
     mkSOF1:
       begin
         FCodingInfo.FEncodingMethod := emExtendedDCT;
+{$IFDEF JPEG_Debug}
         DoDebugOut(Self, wsInfo, 'coding method: extended DCT (SOF1)');
+{$ENDIF JPEG_Debug}
       end;
     mkSOF2:
       begin
         FCodingInfo.FEncodingMethod := emProgressiveDCT;
+{$IFDEF JPEG_Debug}
         DoDebugOut(Self, wsInfo, 'coding method: progressive DCT (SOF2)');
+{$ENDIF JPEG_Debug}
       end;
     mkSOF3, mkSOF5 .. mkSOF7, mkSOF9 .. mkSOF11, mkSOF13 .. mkSOF15:
       begin
         // we do not yet support anything fancy
+{$IFDEF JPEG_Debug}
         DoDebugOut(Self, wsWarn, PFormat(sUnsupportedEncoding, [(MarkerTag and $0F)]));
+{$ENDIF JPEG_Debug}
         Exit;
       end;
     else
       begin
         // unknown encoding
+{$IFDEF JPEG_Debug}
         DoDebugOut(Self, wsWarn, PFormat('unknown encoding %x', [MarkerTag]));
+{$ENDIF JPEG_Debug}
         Exit;
       end;
   end; // case
@@ -585,9 +608,10 @@ begin
   // Variable Nf: Number of image components in frame
   Nf := GetByte(FStream);
   FCodingInfo.FFrameCount := Nf;
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, PFormat('Image %dx%d, %d frames, %dbit samples',
     [FCodingInfo.FWidth, FCodingInfo.FHeight, FCodingInfo.FFrameCount, FCodingInfo.FSamplePrecision]));
-
+{$ENDIF JPEG_Debug}
   for i := 0 to Nf - 1 do
     begin
       Frame := FCodingInfo.FFrames[i];
@@ -606,8 +630,10 @@ begin
           Frame.FVertSampling := B and $0F; // Vertical blocksize in MCU
         end;
       Frame.FQTable := GetByte(FStream); // Index into quantization table array
+{$IFDEF JPEG_Debug}
       DoDebugOut(Self, wsInfo, PFormat('Frame %d: %dx%d sampling ID=%s QTable=%d',
         [i, Frame.FHorzSampling, Frame.FVertSampling, IntToHex(Frame.FComponentID, 2), Frame.FQTable]));
+{$ENDIF JPEG_Debug}
     end;
 end;
 
@@ -645,9 +671,11 @@ begin
     if FCodingInfo.FFrames[i].FComponentID = ID_ then
         Scan_.FComponent := i;
 
+{$IFDEF JPEG_Debug}
   // Make sure we have a frame for this scan
   if Scan_.FComponent = -1 then
       DoDebugOut(Self, wsFail, sInvalidFrameRef);
+{$ENDIF JPEG_Debug}
 end;
 
 function TSOSMarker.GetMarkerName: TPascalString;
@@ -662,19 +690,21 @@ var
   Scan: TScanComponent;
 begin
   // Start of Scan
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, '<SOS marker>');
-
+{$ENDIF JPEG_Debug}
   // Variable Ns, number of image components in scan
   FScanCount := GetByte(FStream);
   FCodingInfo.FScanCount := FScanCount;
   FCodingInfo.FScans.Clear;
   SetLength(FMarkerInfo, FScanCount);
 
+{$IFDEF JPEG_Debug}
   if FScanCount = 1 then
       DoDebugOut(Self, wsInfo, 'Single Channel')
   else
       DoDebugOut(Self, wsInfo, PFormat('Interleaved (%d channels)', [FScanCount]));
-
+{$ENDIF JPEG_Debug}
   // read table specifiers
   for i := 0 to FScanCount - 1 do
     begin
@@ -690,7 +720,9 @@ begin
       Scan.FDCTable := FMarkerInfo[i].DCTable;
       Scan.FACTable := FMarkerInfo[i].ACTable;
       Scan.FPredictor := 0; // Predictor (used for diff'ing the DC component)
+{$IFDEF JPEG_Debug}
       DoDebugOut(Self, wsInfo, PFormat('Channel %d DCTable: %d, ACTable: %d', [Scan.FComponent, Scan.FDCTable, Scan.FACTable]))
+{$ENDIF JPEG_Debug}
     end;
 
   // read Ss, Se, these are used in progressive scans
@@ -708,8 +740,10 @@ begin
   FCodingInfo.FApproxLow := FApproxLow;
 
   // Following is entropy coded data
+{$IFDEF JPEG_Debug}
   if FCodingInfo.FEncodingMethod = emProgressiveDCT then
       DoDebugOut(Self, wsInfo, PFormat('Progressive params: Ss=%d, Se=%d, Ah=%d, Al=%d', [FSpectralStart, FSpectralEnd, FApproxHigh, FApproxLow]));
+{$ENDIF JPEG_Debug}
 end;
 
 procedure TSOSMarker.WriteMarker;
@@ -757,7 +791,9 @@ end;
 procedure TSOIMarker.ReadMarker;
 begin
   // Start of Image
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, '<SOI marker>');
+{$ENDIF JPEG_Debug}
 end;
 
 { TEOIMarker }
@@ -770,7 +806,9 @@ end;
 procedure TEOIMarker.ReadMarker;
 begin
   // End of Image
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, '<EOI marker>');
+{$ENDIF JPEG_Debug}
 end;
 
 { TRSTMarker }
@@ -782,7 +820,9 @@ end;
 
 procedure TRSTMarker.ReadMarker;
 begin
-  DoDebugOut(Self, wsInfo, PFormat('<RST%s marker>', [IntToHex(MarkerTag and $0F, 1), FStream.Size]));
+{$IFDEF JPEG_Debug}
+  DoDebugOut(Self, wsInfo, PFormat('<RST%s marker %d>', [IntToHex(MarkerTag and $0F, 1), FStream.Size]));
+{$ENDIF JPEG_Debug}
 end;
 
 { TDNLMarker }
@@ -795,7 +835,9 @@ end;
 procedure TDNLMarker.ReadMarker;
 begin
   FCodingInfo.FHeight := GetWord(FStream);
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, PFormat('Image height: %d', [FCodingInfo.FHeight]));
+{$ENDIF JPEG_Debug}
 end;
 
 procedure TDNLMarker.WriteMarker;
@@ -809,7 +851,7 @@ end;
 function TCOMMarker.GetComment: TPascalString;
 begin
   FStream.Position := 0;
-  Result:=FStream.ReadANSI(FStream.Size);
+  Result := FStream.ReadANSI(FStream.Size);
 end;
 
 function TCOMMarker.GetMarkerName: TPascalString;
@@ -819,7 +861,9 @@ end;
 
 procedure TCOMMarker.ReadMarker;
 begin
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, GetComment);
+{$ENDIF JPEG_Debug}
 end;
 
 procedure TCOMMarker.SetComment(const Value: TPascalString);

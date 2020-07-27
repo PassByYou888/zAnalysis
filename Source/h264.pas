@@ -28,7 +28,7 @@ uses SysUtils, CoreClasses, PascalStrings, UnicodeMixedLib, MemoryRaster,
 type
   TH264Writer = class
   private
-    ioHandle: TIOHnd;
+    IOHandle: TIOHnd;
     FFrameCount: uint32_t;
     img: TPlanarImage;
     Param: TEncodingParameters;
@@ -56,7 +56,7 @@ implementation
 constructor TH264Writer.Create(const w, h, totalframe: int32_t; psf: Single; const FileName: TPascalString);
 begin
   inherited Create;
-  umlFileCreate(FileName, ioHandle);
+  umlFileCreate(FileName, IOHandle);
   FFrameCount := 0;
   img := TPlanarImage.Create(w, h);
   Param := TEncodingParameters.Create;
@@ -69,7 +69,7 @@ end;
 constructor TH264Writer.Create(const w, h, totalframe: int32_t; psf: Single; const stream: TCoreClassStream);
 begin
   inherited Create;
-  umlFileCreateAsStream(stream, ioHandle);
+  umlFileCreateAsStream(stream, IOHandle);
   FFrameCount := 0;
   img := TPlanarImage.Create(w, h);
   Param := TEncodingParameters.Create;
@@ -85,31 +85,19 @@ begin
   DisposeObject(Param);
   DisposeObject(Encoder);
   DisposeObject(img);
-  umlFileClose(ioHandle);
+  umlFileClose(IOHandle);
   inherited Destroy;
 end;
 
 procedure TH264Writer.WriteFrame(raster: TMemoryRaster);
 var
-  t1, t2, pixl, enl: TTimeTick;
   oSiz: uint32_t;
-  ssd: Int64;
 begin
   if FFrameCount >= Param.FrameCount then
       Exit;
-
-  t1 := GetTimeTick;
   img.LoadFromRaster(raster);
-  t2 := GetTimeTick;
-  pixl := t2 - t1;
-
-  t1 := t2;
   Encoder.EncodeFrame(img, buffer, oSiz);
-  t2 := GetTimeTick;
-  enl := t2 - t1;
-
-  umlFileWrite(ioHandle, oSiz, buffer^);
-
+  umlFileWrite(IOHandle, oSiz, buffer^);
   inc(FFrameCount);
 end;
 
@@ -132,12 +120,12 @@ end;
 
 procedure TH264Writer.Flush;
 begin
-  umlFileFlushWrite(ioHandle);
+  umlFileFlushWrite(IOHandle);
 end;
 
 function TH264Writer.H264Size: Int64_t;
 begin
-  Result := umlFileSize(ioHandle);
+  Result := umlFileSize(IOHandle);
 end;
 
 function TH264Writer.width: uint16_t;
@@ -155,7 +143,4 @@ begin
   Result := Param.FrameRate;
 end;
 
-end.  
- 
- 
- 
+end.

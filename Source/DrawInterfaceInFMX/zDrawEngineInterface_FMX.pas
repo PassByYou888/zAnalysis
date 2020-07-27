@@ -51,8 +51,8 @@ type
     procedure DrawEllipse(r: TDERect; COLOR: TDEColor); override;
     procedure FillEllipse(r: TDERect; COLOR: TDEColor); override;
     procedure FillPolygon(PolygonBuff: TArrayVec2; COLOR: TDEColor); override;
-    procedure DrawText(const Text: SystemString; Size: TDEFloat; r: TDERect; COLOR: TDEColor; center: Boolean; RotateVec: TDEVec; angle: TDEFloat); override;
-    procedure DrawPicture(t: TCoreClassObject; sour, dest: TDE4V; alpha: TDEFloat); override;
+    procedure DrawText(Shadow: Boolean; Text: SystemString; Size: TDEFloat; r: TDERect; COLOR: TDEColor; center: Boolean; RotateVec: TDEVec; angle: TDEFloat); override;
+    procedure DrawPicture(Shadow: Boolean; t: TCoreClassObject; sour, dest: TDE4V; alpha: TDEFloat); override;
     procedure Flush; override;
     procedure ResetState; override;
     procedure BeginDraw; override;
@@ -355,7 +355,11 @@ end;
 
 function CanLoadMemoryBitmap(f: SystemString): Boolean;
 begin
-  Result := TMemoryRaster.CanLoadFile(f) or TBitmapCodecManager.CodecExists(f);
+  try
+      Result := TMemoryRaster.CanLoadFile(f) or TBitmapCodecManager.CodecExists(f);
+  except
+      Result := False;
+  end;
 end;
 
 procedure LoadMemoryBitmap(f: SystemString; b: TMemoryRaster);
@@ -588,7 +592,7 @@ begin
   FCanvas.FillPolygon(polygon_, COLOR[3]);
 end;
 
-procedure TDrawEngineInterface_FMX.DrawText(const Text: SystemString; Size: TDEFloat; r: TDERect; COLOR: TDEColor; center: Boolean; RotateVec: TDEVec; angle: TDEFloat);
+procedure TDrawEngineInterface_FMX.DrawText(Shadow: Boolean; Text: SystemString; Size: TDEFloat; r: TDERect; COLOR: TDEColor; center: Boolean; RotateVec: TDEVec; angle: TDEFloat);
 var
   M, bak: TMatrix;
   rf: TRectf;
@@ -618,7 +622,7 @@ begin
       FCanvas.SetMatrix(bak);
 end;
 
-procedure TDrawEngineInterface_FMX.DrawPicture(t: TCoreClassObject; sour, dest: TDE4V; alpha: TDEFloat);
+procedure TDrawEngineInterface_FMX.DrawPicture(Shadow: Boolean; t: TCoreClassObject; sour, dest: TDE4V; alpha: TDEFloat);
 var
   newSour, newDest: TDE4V;
 {$IF Defined(ANDROID) or Defined(IOS)}

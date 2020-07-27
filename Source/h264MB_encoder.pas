@@ -180,15 +180,11 @@ end;
 procedure TMacroblockEncoder.Decode;
 begin
   case mb.mbtype of
-    MB_I_PCM:
-      decode_mb_pcm(mb);
+    MB_I_PCM: decode_mb_pcm(mb);
     // MB_I_4x4: decoded during encode
-    MB_I_16x16:
-      decode_mb_intra_i16(mb, intrapred);
-    MB_P_16x16:
-      decode_mb_inter(mb);
-    MB_P_SKIP:
-      decode_mb_inter_pskip(mb);
+    MB_I_16x16: decode_mb_intra_i16(mb, intrapred);
+    MB_P_16x16: decode_mb_inter(mb);
+    MB_P_SKIP: decode_mb_inter_pskip(mb);
   end;
   if chroma_coding and (mb.mbtype <> MB_I_PCM) then
       decode_mb_chroma(mb, mb.mbtype in [MB_I_4x4, MB_I_16x16]);
@@ -253,7 +249,7 @@ const
   }
 function TMacroblockEncoder.TrySkip(const use_satd: Boolean): Boolean;
 const
-  SKIP_SSD_TRESH        = 256;
+  SKIP_SSD_TRESH = 256;
   SKIP_SSD_CHROMA_TRESH = 96;
 var
   mv: TMotionvec;
@@ -633,7 +629,7 @@ end;
 
 procedure TMBEncoderQuickAnalyseSATD.Encode(mbx, mby: int32_t);
 const
-  I16_SATD_QPBONUS   = 50;
+  I16_SATD_QPBONUS = 50;
   INTRA_MODE_PENALTY = 10;
 
 var
@@ -728,6 +724,4 @@ begin
   FinalizeMB;
 end;
 
-end.  
- 
- 
+end.

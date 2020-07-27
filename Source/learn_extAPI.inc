@@ -547,6 +547,18 @@ begin
       Result := AValue;
 end;
 
+function LComplex(X, Y: TLFloat): TLComplex;
+begin
+  Result.X := X;
+  Result.Y := Y;
+end;
+
+function LComplex(f: TLFloat): TLComplex;
+begin
+  Result.X := f;
+  Result.Y := f;
+end;
+
 procedure ZoomLineF(const Source, dest: PLMatrix; const pass, SourceWidth, SourceHeight, DestWidth, DestHeight: TLInt);
 var
   j: TLInt;

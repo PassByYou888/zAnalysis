@@ -17,67 +17,6 @@
 { * https://github.com/PassByYou888/InfiniteIoT                                * }
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
-type
-  TLogitModel = record
-    w: TLVec;
-  end;
-
-  PLogitModel = ^TLogitModel;
-
-  TLogitMCState = record
-    BRACKT: Boolean;
-    STAGE1: Boolean;
-    INFOC: TLInt;
-    DG: TLFloat;
-    DGM: TLFloat;
-    DGINIT: TLFloat;
-    DGTEST: TLFloat;
-    DGX: TLFloat;
-    DGXM: TLFloat;
-    DGY: TLFloat;
-    DGYM: TLFloat;
-    FINIT: TLFloat;
-    FTEST1: TLFloat;
-    FM: TLFloat;
-    fx: TLFloat;
-    FXM: TLFloat;
-    fy: TLFloat;
-    FYM: TLFloat;
-    STX: TLFloat;
-    STY: TLFloat;
-    STMIN: TLFloat;
-    STMAX: TLFloat;
-    width: TLFloat;
-    WIDTH1: TLFloat;
-    XTRAPF: TLFloat;
-  end;
-
-  (* ************************************************************************
-    MNLReport structure contains information about training process:
-    * NGrad     -   number of gradient calculations
-    * NHess     -   number of Hessian calculations
-    ************************************************************************ *)
-  TMNLReport = record
-    NGrad: TLInt;
-    NHess: TLInt;
-  end;
-
-procedure MNLTrainH(const xy: TLMatrix; NPoints: TLInt; NVars: TLInt; NClasses: TLInt;
-  var Info: TLInt; var LM: TLogitModel; var Rep: TMNLReport); forward;
-
-procedure MNLProcess(var LM: TLogitModel; const x: TLVec; var y: TLVec); forward;
-procedure MNLUnpack(const LM: TLogitModel; var a: TLMatrix; var NVars: TLInt; var NClasses: TLInt); forward;
-procedure MNLPack(const a: TLMatrix; NVars: TLInt; NClasses: TLInt; var LM: TLogitModel); forward;
-procedure MNLCopy(const LM1: TLogitModel; var LM2: TLogitModel); forward;
-procedure MNLSerialize(const LM: TLogitModel; var RA: TLVec; var RLen: TLInt); forward;
-procedure MNLUnserialize(const RA: TLVec; var LM: TLogitModel); forward;
-function MNLAvgCE(var LM: TLogitModel; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function MNLRelClsError(var LM: TLogitModel; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function MNLRMSError(var LM: TLogitModel; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function MNLAvgError(var LM: TLogitModel; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function MNLAvgRelError(var LM: TLogitModel; const xy: TLMatrix; SSize: TLInt): TLFloat; forward;
-function MNLClsError(var LM: TLogitModel; const xy: TLMatrix; NPoints: TLInt): TLInt; forward;
-
 const
   LogitXTOL = 100 * MachineEpsilon;
   LogitFTOL = 0.0001;
@@ -479,7 +418,7 @@ end;
   S(M-1) = 1
 
   INPUT PARAMETERS:
-  LM          -   logit model in ALGLIB format
+  LM          -   logit model
 
   OUTPUT PARAMETERS:
   V           -   coefficients, array[0..NClasses-2,0..NVars]
@@ -507,7 +446,7 @@ begin
 end;
 
 (* ************************************************************************
-  "Packs" coefficients and creates logit model in ALGLIB format (MNLUnpack reversed).
+  "Packs" coefficients and creates logit model (MNLUnpack reversed).
 
   INPUT PARAMETERS:
   A           -   model (see MNLUnpack)
@@ -568,33 +507,33 @@ end;
   LM      -   original
 
   OUTPUT PARAMETERS:
-  RA      -   array of real numbers which stores model,
+  ResArry      -   array of real numbers which stores model,
   array[0..RLen-1]
-  RLen    -   RA lenght
+  RLen    -   ResArry lenght
   ************************************************************************ *)
-procedure MNLSerialize(const LM: TLogitModel; var RA: TLVec;
+procedure MNLSerialize(const LM: TLogitModel; var ResArry: TLVec;
   var RLen: TLInt);
 begin
   RLen := Round(LM.w[0]) + 1;
-  SetLength(RA, RLen);
-  RA[0] := LogitVNum;
-  APVMove(@RA[0], 1, RLen - 1, @LM.w[0], 0, RLen - 2);
+  SetLength(ResArry, RLen);
+  ResArry[0] := LogitVNum;
+  APVMove(@ResArry[0], 1, RLen - 1, @LM.w[0], 0, RLen - 2);
 end;
 
 (* ************************************************************************
   Unserialization of TLogitModel strucure
 
   INPUT PARAMETERS:
-  RA      -   real array which stores model
+  ResArry      -   real array which stores model
 
   OUTPUT PARAMETERS:
   LM      -   restored model
   ************************************************************************ *)
-procedure MNLUnserialize(const RA: TLVec; var LM: TLogitModel);
+procedure MNLUnserialize(const ResArry: TLVec; var LM: TLogitModel);
 begin
-  Assert(Round(RA[0]) = LogitVNum, 'MNLUnserialize: incorrect array!');
-  SetLength(LM.w, Round(RA[1]));
-  APVMove(@LM.w[0], 0, Round(RA[1]) - 1, @RA[0], 1, Round(RA[1]));
+  Assert(Round(ResArry[0]) = LogitVNum, 'MNLUnserialize: incorrect array!');
+  SetLength(LM.w, Round(ResArry[1]));
+  APVMove(@LM.w[0], 0, Round(ResArry[1]) - 1, @ResArry[0], 1, Round(ResArry[1]));
 end;
 
 (* ************************************************************************

@@ -5,6 +5,7 @@ object BMPConverForm: TBMPConverForm
   ClientHeight = 588
   ClientWidth = 1490
   Position = DesktopCenter
+  StyleBook = StyleDataModule.GlobalStyleBook
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]

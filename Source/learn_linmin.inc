@@ -17,34 +17,6 @@
 { * https://github.com/PassByYou888/InfiniteIoT                                * }
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
-type
-  TLinMinState = record
-    BRACKT: Boolean;
-    STAGE1: Boolean;
-    INFOC: TLInt;
-    DG: TLFloat;
-    DGM: TLFloat;
-    DGINIT: TLFloat;
-    DGTEST: TLFloat;
-    DGX: TLFloat;
-    DGXM: TLFloat;
-    DGY: TLFloat;
-    DGYM: TLFloat;
-    FINIT: TLFloat;
-    FTEST1: TLFloat;
-    FM: TLFloat;
-    fx: TLFloat;
-    FXM: TLFloat;
-    fy: TLFloat;
-    FYM: TLFloat;
-    STX: TLFloat;
-    STY: TLFloat;
-    STMIN: TLFloat;
-    STMAX: TLFloat;
-    width: TLFloat;
-    WIDTH1: TLFloat;
-    XTRAPF: TLFloat;
-  end;
 
 procedure LinMinNormalizeD(var d: TLVec; var Stp: TLFloat; n: TLInt); forward;
 

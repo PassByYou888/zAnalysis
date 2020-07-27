@@ -30,8 +30,8 @@ type
   TUInt32 = Cardinal;
   TU32Vec = array of TUInt32;
   TI16Vec = array of TInt16;
-  TBytes = array of Byte;
-  TAudioprintAlgorithm = (Audioprint_ALGORITHM_TEST1, Audioprint_ALGORITHM_TEST2, Audioprint_ALGORITHM_TEST3, Audioprint_ALGORITHM_TEST4);
+  TBytes_ = array of Byte;
+  TAudioprintAlgorithm = (Audioprint_ALGORITHM1, Audioprint_ALGORITHM2, Audioprint_ALGORITHM3, Audioprint_ALGORITHM4);
 
   TAudioprint = class(TInterfacedObject)
   private type
@@ -46,14 +46,15 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    function New(algorithm: TAudioprintAlgorithm): boolean;
+    function NewAlgorithm(algorithm: TAudioprintAlgorithm): boolean;
     function GetAlgorithm: TAudioprintAlgorithm;
     function SetOption(const Name: TPascalString; Value: TLInt): boolean;
     function Start(Sample_Rate: TLInt; NumChannels: TLInt): boolean;
     function Feed(Data: TI16Vec; len: TLInt): boolean;
     function Finish: boolean;
-    function GetFingerprint(out fingerprint: TPascalString): boolean;
-    function GetRawFingerprint(out fingerprint: TU32Vec; out Size: TLInt): boolean;
+    function GetFingerprint(var fingerprint: TPascalString): boolean;
+    function GetCompressionFingerprint(var fingerprint: TPascalString): boolean;
+    function GetRawFingerprint(var fingerprint: TU32Vec; var Size: TLInt): boolean;
 
     procedure EnocdeFingerprint(RawFP: TU32Vec; algorithm: TLInt; var EncodedFP: TPascalString; var EncodedSize: TLInt; Base64: boolean);
     procedure DecodeFingerprint(encoded: TPascalString; var uncompressed: TU32Vec; var algorithm: TLInt; Base64: boolean);
@@ -418,7 +419,7 @@ type
   TFingerprintCompressor = class(TCoreClassObject)
   public
     FResult: TPascalString;
-    FBits: TBytes;
+    FBits: TBytes_;
     procedure WriteNormalBits();
     procedure WriteExceptionBits();
     procedure ProcessSubfingerprint(x: TUInt32);
@@ -429,7 +430,7 @@ type
   TFingerprintDecompressor = class(TCoreClassObject)
   public
     FResult: TU32Vec;
-    FBits: TBytes;
+    FBits: TBytes_;
     function ReadNormalBits(reader: TBitStringReader): boolean;
     function ReadExceptionBits(reader: TBitStringReader): boolean;
     procedure UnpackBits();
@@ -539,7 +540,7 @@ type
     FMinIndex: TLInt;
     FMaxIndex: TLInt;
 
-    FNotes: TBytes;
+    FNotes: TBytes_;
     FNotesFrac: TLVec;
     FFeatures: TLVec;
 
@@ -2010,12 +2011,8 @@ var
 begin
   writer := TBitStringWriter.Create;
   for i := 0 to Length(FBits) - 1 do
-    begin
-      if (FBits[i] >= kMaxNormalValue) then
-        begin
-          writer.Write(FBits[i] - kMaxNormalValue, kExceptionBits);
-        end;
-    end;
+    if (FBits[i] >= kMaxNormalValue) then
+        writer.Write(FBits[i] - kMaxNormalValue, kExceptionBits);
   writer.Flush();
   FResult.Append(writer.FValue);
   DisposeObject(writer);
@@ -2028,9 +2025,7 @@ var
 begin
   writer := TBitStringWriter.Create;
   for i := 0 to Length(FBits) - 1 do
-    begin
       writer.Write(Math.min(FBits[i], kMaxNormalValue), kNormalBits);
-    end;
   writer.Flush();
   FResult.Append(writer.FValue);
   DisposeObject(writer);
@@ -2045,9 +2040,7 @@ begin
     begin
       ProcessSubfingerprint(fingerprint[0]);
       for i := 1 to n - 1 do
-        begin
           ProcessSubfingerprint(fingerprint[i] xor fingerprint[i - 1]);
-        end;
     end;
   FResult := chr(algorithm and 255);
   FResult.Append(chr((n shr 16) and 255));
@@ -2183,10 +2176,10 @@ end;
 function CreateFingerprinterConfiguration(algorithm: TAudioprintAlgorithm): TFingerprinterConfiguration;
 begin
   case (algorithm) of
-    Audioprint_ALGORITHM_TEST1: Result := TFingerprinterConfigurationTest1.Create;
-    Audioprint_ALGORITHM_TEST2: Result := TFingerprinterConfigurationTest2.Create;
-    Audioprint_ALGORITHM_TEST3: Result := TFingerprinterConfigurationTest3.Create;
-    Audioprint_ALGORITHM_TEST4: Result := TFingerprinterConfigurationTest4.Create;
+    Audioprint_ALGORITHM1: Result := TFingerprinterConfigurationTest1.Create;
+    Audioprint_ALGORITHM2: Result := TFingerprinterConfigurationTest2.Create;
+    Audioprint_ALGORITHM3: Result := TFingerprinterConfigurationTest3.Create;
+    Audioprint_ALGORITHM4: Result := TFingerprinterConfigurationTest4.Create;
     else
       Result := nil;
   end;
@@ -2482,10 +2475,8 @@ begin
   lLength := Math.min(ALength, FBufferSize - FBufferOffset);
 
   case (FNumChannels) of
-    1:
-      LoadMono(Input, offset, lLength);
-    2:
-      LoadStereo(Input, offset, lLength);
+    1: LoadMono(Input, offset, lLength);
+    2: LoadStereo(Input, offset, lLength);
     else
       LoadMultiChannel(Input, offset, lLength);
 
@@ -2810,7 +2801,7 @@ begin
   inherited Destroy;
 end;
 
-function TAudioprint.New(algorithm: TAudioprintAlgorithm): boolean;
+function TAudioprint.NewAlgorithm(algorithm: TAudioprintAlgorithm): boolean;
 begin
   SetLength(ctx.fingerprint, 0);
   ctx.algorithm := algorithm;
@@ -2848,15 +2839,22 @@ begin
   Result := True;
 end;
 
-function TAudioprint.GetFingerprint(out fingerprint: TPascalString): boolean;
+function TAudioprint.GetFingerprint(var fingerprint: TPascalString): boolean;
 begin
   umlEncodeLineBASE64(CompressFingerprint(ctx.fingerprint, Ord(ctx.algorithm)), fingerprint);
   Result := True;
 end;
 
-function TAudioprint.GetRawFingerprint(out fingerprint: TU32Vec; out Size: TLInt): boolean;
+function TAudioprint.GetCompressionFingerprint(var fingerprint: TPascalString): boolean;
 begin
-  fingerprint := ctx.fingerprint;
+  fingerprint := CompressFingerprint(ctx.fingerprint, Ord(ctx.algorithm));
+  Result := True;
+end;
+
+function TAudioprint.GetRawFingerprint(var fingerprint: TU32Vec; var Size: TLInt): boolean;
+begin
+  SetLength(fingerprint, Length(ctx.fingerprint));
+  CopyPtr(@ctx.fingerprint[0], @fingerprint[0], sizeof(TUInt32) * Length(ctx.fingerprint));
   Size := Length(ctx.fingerprint);
   Result := True;
 end;

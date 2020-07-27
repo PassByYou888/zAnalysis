@@ -19,6 +19,15 @@
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
 
+procedure TMorphomaticsList.Clean;
+var
+  i: Integer;
+begin
+  for i := 0 to Count - 1 do
+      DisposeObject(Items[i]);
+  Clear;
+end;
+
 function TMorphomatics.GetPixel(const X, Y: Integer): TMorphomaticsValue;
 begin
   Result := FBits^[ClampInt(X, 0, FWidth - 1) + ClampInt(Y, 0, FHeight - 1) * FWidth];
@@ -192,7 +201,7 @@ begin
   rnd := TMT19937Random.Create;
   for i := Width * Height - 1 downto 0 do
       FBits^[i] := rnd.RandF();
-  disposeObject(rnd);
+  DisposeObject(rnd);
 end;
 
 procedure TMorphomatics.FillValueFromPolygon(Polygon: TVec2List; InsideValue, OutsideValue: TMorphomaticsValue);
@@ -275,7 +284,7 @@ begin
   m64.WritePtr(@FBits^[0], Width * Height * SizeOf(TMorphomaticsValue));
   m64.Position := 0;
   FastCompressStream(m64, stream);
-  disposeObject(m64);
+  DisposeObject(m64);
 end;
 
 procedure TMorphomatics.LoadFromStream(stream: TCoreClassStream);
@@ -290,7 +299,7 @@ begin
   H := m64.ReadInt32;
   SetSize(W, H);
   m64.ReadPtr(@FBits^[0], Width * Height * SizeOf(TMorphomaticsValue));
-  disposeObject(m64);
+  DisposeObject(m64);
 end;
 
 procedure TMorphomatics.SwapData(dest: TMorphomatics);
@@ -320,8 +329,8 @@ begin
   tmp.Scale(K);
   morph_ := tmp.BuildMorphomatics(mpGrayscale);
   SwapData(morph_);
-  disposeObject(morph_);
-  disposeObject(tmp);
+  DisposeObject(morph_);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.FitScale(NewWidth, NewHeight: TGeoFloat);
@@ -333,8 +342,8 @@ begin
   tmp.FitScale(NewWidth, NewHeight);
   morph_ := tmp.BuildMorphomatics(mpGrayscale);
   SwapData(morph_);
-  disposeObject(morph_);
-  disposeObject(tmp);
+  DisposeObject(morph_);
+  DisposeObject(tmp);
 end;
 
 function TMorphomatics.FitScaleAsNew(NewWidth, NewHeight: TGeoFloat): TMorphomatics;
@@ -344,7 +353,7 @@ begin
   tmp := BuildViewer(mpGrayscale);
   tmp.FitScale(NewWidth, NewHeight);
   Result := tmp.BuildMorphomatics(mpGrayscale);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.DrawTo(MorphPix_: TMorphologyPixel; dest: TMemoryRaster);
@@ -466,8 +475,8 @@ begin
   dest_r := Dst.BuildViewer(DestMorph_);
   sour_r.ProjectionTo(dest_r, sourRect, DestRect, bilinear_sampling, alpha);
   dest_r.BuildMorphomaticsTo(DestMorph_, Dst);
-  disposeObject(sour_r);
-  disposeObject(dest_r);
+  DisposeObject(sour_r);
+  DisposeObject(dest_r);
 end;
 
 procedure TMorphomatics.ProjectionTo(SourMorph_, DestMorph_: TMorphologyPixel; Dst: TMorphomatics; sourRect, DestRect: TRectV2; bilinear_sampling: Boolean; alpha: TGeoFloat);
@@ -484,7 +493,7 @@ begin
   MorphToRColor(DestMorph_, PixelValue_, c);
   sour_r.Projection(DestRect, c);
   sour_r.BuildMorphomaticsTo(DestMorph_, Self);
-  disposeObject(sour_r);
+  DisposeObject(sour_r);
 end;
 
 procedure TMorphomatics.ProjectionTo(Dst: TMorphomatics; sourRect, DestRect: TV2Rect4; bilinear_sampling: Boolean; alpha: TGeoFloat);
@@ -593,7 +602,7 @@ begin
   MorphSigmaGaussianSampler(TMorphomatics.Parallel and LocalParallel, Self, tmp, SIGMA, SigmaGaussianKernelFactor);
 
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Average(BoxW, BoxH: Integer);
@@ -667,7 +676,7 @@ begin
   DoFor;
 {$ENDIF Parallel}
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.WeightedAVG(BoxW, BoxH: Integer);
@@ -761,7 +770,7 @@ begin
 {$ENDIF Parallel}
   SetLength(Mask, 0, 0);
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.GeometricMean(BoxW, BoxH: Integer);
@@ -843,7 +852,7 @@ begin
   DoFor;
 {$ENDIF Parallel}
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Median(BoxW, BoxH: Integer);
@@ -928,7 +937,7 @@ begin
   DoFor;
 {$ENDIF Parallel}
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Maximum(BoxW, BoxH: Integer);
@@ -1029,7 +1038,7 @@ begin
   DoFor;
 {$ENDIF Parallel}
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Minimum(BoxW, BoxH: Integer);
@@ -1135,7 +1144,7 @@ begin
   DoFor;
 {$ENDIF Parallel}
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.MiddlePoint(BoxW, BoxH: Integer);
@@ -1256,7 +1265,7 @@ begin
   DoFor;
 {$ENDIF Parallel}
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.TruncatedAVG(BoxW, BoxH, d: Integer);
@@ -1380,7 +1389,7 @@ begin
   DoFor;
 {$ENDIF Parallel}
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Previtt(AdditiveToOriginal: Boolean);
@@ -1459,7 +1468,7 @@ begin
   DoFor;
 {$ENDIF Parallel}
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Sobel(AdditiveToOriginal: Boolean);
@@ -1538,7 +1547,7 @@ begin
   DoFor;
 {$ENDIF Parallel}
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Sharr(AdditiveToOriginal: Boolean);
@@ -1617,7 +1626,7 @@ begin
   DoFor;
 {$ENDIF Parallel}
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Laplace(AdditiveToOriginal: Boolean);
@@ -1695,7 +1704,7 @@ begin
   DoFor;
 {$ENDIF Parallel}
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.ProcessFilter(filter: TMorphFilter);
@@ -2175,7 +2184,7 @@ begin
   tmp := TMorphomatics.Create;
   Dilatation(ConvolutionKernel, tmp);
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Erosion(ConvolutionKernel: TMorphologyBinaryzation);
@@ -2185,7 +2194,7 @@ begin
   tmp := TMorphomatics.Create;
   Erosion(ConvolutionKernel, tmp);
   SwapData(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Opening(ConvolutionKernel: TMorphologyBinaryzation);
@@ -2219,7 +2228,7 @@ begin
   tmp := TMorphologyBinaryzation.Create;
   tmp.SetConvolutionSize(ConvolutionSizeX, ConvolutionSizeY, True);
   Dilatation(tmp, output);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Erosion(const ConvolutionSizeX, ConvolutionSizeY: Integer; output: TMorphomatics);
@@ -2229,7 +2238,7 @@ begin
   tmp := TMorphologyBinaryzation.Create;
   tmp.SetConvolutionSize(ConvolutionSizeX, ConvolutionSizeY, True);
   Erosion(tmp, output);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Opening(const ConvolutionSizeX, ConvolutionSizeY: Integer; output: TMorphomatics);
@@ -2239,7 +2248,7 @@ begin
   tmp := TMorphologyBinaryzation.Create;
   tmp.SetConvolutionSize(ConvolutionSizeX, ConvolutionSizeY, True);
   Opening(tmp, output);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Closing(const ConvolutionSizeX, ConvolutionSizeY: Integer; output: TMorphomatics);
@@ -2249,7 +2258,7 @@ begin
   tmp := TMorphologyBinaryzation.Create;
   tmp.SetConvolutionSize(ConvolutionSizeX, ConvolutionSizeY, True);
   Closing(tmp, output);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.OpeningAndClosing(const ConvolutionSizeX, ConvolutionSizeY: Integer; output: TMorphomatics);
@@ -2259,7 +2268,7 @@ begin
   tmp := TMorphologyBinaryzation.Create;
   tmp.SetConvolutionSize(ConvolutionSizeX, ConvolutionSizeY, True);
   OpeningAndClosing(tmp, output);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.ClosingAndOpening(const ConvolutionSizeX, ConvolutionSizeY: Integer; output: TMorphomatics);
@@ -2269,7 +2278,7 @@ begin
   tmp := TMorphologyBinaryzation.Create;
   tmp.SetConvolutionSize(ConvolutionSizeX, ConvolutionSizeY, True);
   ClosingAndOpening(tmp, output);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Dilatation(const ConvolutionSizeX, ConvolutionSizeY: Integer);
@@ -2279,7 +2288,7 @@ begin
   tmp := TMorphologyBinaryzation.Create;
   tmp.SetConvolutionSize(ConvolutionSizeX, ConvolutionSizeY, True);
   Dilatation(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Erosion(const ConvolutionSizeX, ConvolutionSizeY: Integer);
@@ -2289,7 +2298,7 @@ begin
   tmp := TMorphologyBinaryzation.Create;
   tmp.SetConvolutionSize(ConvolutionSizeX, ConvolutionSizeY, True);
   Erosion(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Opening(const ConvolutionSizeX, ConvolutionSizeY: Integer);
@@ -2299,7 +2308,7 @@ begin
   tmp := TMorphologyBinaryzation.Create;
   tmp.SetConvolutionSize(ConvolutionSizeX, ConvolutionSizeY, True);
   Opening(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.Closing(const ConvolutionSizeX, ConvolutionSizeY: Integer);
@@ -2309,7 +2318,7 @@ begin
   tmp := TMorphologyBinaryzation.Create;
   tmp.SetConvolutionSize(ConvolutionSizeX, ConvolutionSizeY, True);
   Closing(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.OpeningAndClosing(const ConvolutionSizeX, ConvolutionSizeY: Integer);
@@ -2319,7 +2328,7 @@ begin
   tmp := TMorphologyBinaryzation.Create;
   tmp.SetConvolutionSize(ConvolutionSizeX, ConvolutionSizeY, True);
   OpeningAndClosing(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 procedure TMorphomatics.ClosingAndOpening(const ConvolutionSizeX, ConvolutionSizeY: Integer);
@@ -2329,7 +2338,7 @@ begin
   tmp := TMorphologyBinaryzation.Create;
   tmp.SetConvolutionSize(ConvolutionSizeX, ConvolutionSizeY, True);
   ClosingAndOpening(tmp);
-  disposeObject(tmp);
+  DisposeObject(tmp);
 end;
 
 function TMorphomatics.Binarization(Thresold: TMorphomaticsValue): TMorphologyBinaryzation;
@@ -2423,7 +2432,7 @@ var
 
 begin
   output_ := TMorphologyBinaryzation.Create;
-  Result.LocalParallel := LocalParallel;
+  output_.LocalParallel := LocalParallel;
   output_.SetSize(Width, Height, False);
 
 {$IFDEF Parallel}
@@ -2597,7 +2606,7 @@ begin
       DoStatus('STREAM Morphomatics VERIFY OK')
   else
       DoStatus('STREAM Morphomatics VERIFY FAILED');
-  disposeObject(m64);
+  DisposeObject(m64);
   DoStatusNoLn;
 
   DoStatusNoLn('TESTING AVGFilter..');
@@ -2770,35 +2779,35 @@ begin
   DoStatusNoLn;
   DoStatusNoLn('TESTING Binarization..');
   tmp.Assign(ori);
-  disposeObject(tmp.Binarization(0.5));
+  DisposeObject(tmp.Binarization(0.5));
 
   DoStatusNoLn('DONE');
   DoStatusNoLn;
   DoStatusNoLn('TESTING Binarization_InRange..');
   tmp.Assign(ori);
-  disposeObject(tmp.Binarization_InRange(0.0, 1.0));
+  DisposeObject(tmp.Binarization_InRange(0.0, 1.0));
 
   DoStatusNoLn('DONE');
   DoStatusNoLn;
   DoStatusNoLn('TESTING Binarization_Bernsen..');
   tmp.Assign(ori);
-  disposeObject(tmp.Binarization_Bernsen(5, 0.8));
+  DisposeObject(tmp.Binarization_Bernsen(5, 0.8));
 
   DoStatusNoLn('DONE');
   DoStatusNoLn;
   DoStatusNoLn('TESTING Binarization_FloydSteinbergDithering..');
   tmp.Assign(ori);
-  disposeObject(tmp.Binarization_FloydSteinbergDithering());
+  DisposeObject(tmp.Binarization_FloydSteinbergDithering());
 
   DoStatusNoLn('DONE');
   DoStatusNoLn;
   DoStatusNoLn('TESTING Binarization_OTSU..');
   tmp.Assign(ori);
-  disposeObject(tmp.Binarization_OTSU());
+  DisposeObject(tmp.Binarization_OTSU());
 
   DoStatusNoLn;
 
-  disposeObject(ori);
-  disposeObject(tmp);
+  DisposeObject(ori);
+  DisposeObject(tmp);
   DoStatus('All Morphomatics Test done.');
 end;

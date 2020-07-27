@@ -44,18 +44,24 @@ type
   TJPEG_Base_Object = class(TCoreClassObject)
   protected
     FOwner: TJPEG_Base_Object;
+{$IFDEF JPEG_Debug}
     FOnDebugOut: TDebugEvent;
+{$ENDIF JPEG_Debug}
   public
     constructor Create(Owner_: TJPEG_Base_Object); virtual;
+{$IFDEF JPEG_Debug}
     procedure DoDebugOut(Sender: TObject; WarnStyle: TWarnStyle; const Message_: TPascalString); virtual;
     property OnDebugOut: TDebugEvent read FOnDebugOut write FOnDebugOut;
+{$ENDIF JPEG_Debug}
     property Owner: TJPEG_Base_Object read FOwner;
   end;
 
   TJPEG_Persistent = class(TCoreClassObject)
   protected
     FOwner: TJPEG_Base_Object;
+{$IFDEF JPEG_Debug}
     procedure DoDebugOut(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const Message_: TPascalString); virtual;
+{$ENDIF JPEG_Debug}
   public
     constructor Create;
     constructor CreateDebug(Owner_: TJPEG_Base_Object); virtual;
@@ -109,17 +115,17 @@ type
   TJpegQuality = 1 .. 100;
 
   TCoefBlock = array [0 .. 63] of SmallInt;
-  PsdCoefBlock = ^TCoefBlock;
+  PCoefBlock = ^TCoefBlock;
   TSampleBlock = array [0 .. 63] of Byte;
-  PsdSampleBlock = ^TSampleBlock;
+  PSampleBlock = ^TSampleBlock;
 
   TZigZagArray = array [0 .. 63 + 16] of Byte;
-  PsdZigZagArray = ^TZigZagArray;
+  PZigZagArray = ^TZigZagArray;
   TIntArray64 = array [0 .. 63] of Integer;
 
   // Minimum Coded Unit block (MCU)
   TMCUBlock = record
-    Values: PsdCoefBlock;
+    Values: PCoefBlock;
     PPred: PSmallint;
     DCTable: Integer;
     ACTable: Integer;
@@ -127,7 +133,7 @@ type
     MapIdx: Integer;
   end;
 
-  PsdMCUBlock = ^TMCUBlock;
+  PMCUBlock = ^TMCUBlock;
 
   // Huffman code
   THuffmanCode = record
@@ -136,7 +142,7 @@ type
     V: Integer;    // Value for huffman code
   end;
 
-  PsdHuffmanCode = ^THuffmanCode;
+  PHuffmanCode = ^THuffmanCode;
 
   TDHTMarkerInfo = record
     BitLengths: array [0 .. 15] of Byte;
@@ -144,7 +150,7 @@ type
     Tc, Th: Byte;
   end;
 
-  PsdDHTMarkerInfo = ^TDHTMarkerInfo;
+  PDHTMarkerInfo = ^TDHTMarkerInfo;
 
   // Lookup table for Huffman decoding. The Huffman code is left-aligned
   // in the table, Len indicates the number of bits to take out of the stream,
@@ -155,11 +161,11 @@ type
     Value: array [0 .. 255] of SmallInt;
   end;
 
-  PsdHuffmanLookupTable = ^THuffmanLookupTable;
+  PHuffmanLookupTable = ^THuffmanLookupTable;
 
   // Used to construct a histogram (frequency count) of encoded huffman symbols
   T8bitHuffmanHistogram = array [0 .. 255] of Integer;
-  Psd8bitHuffmanHistogram = ^T8bitHuffmanHistogram;
+  P8bitHuffmanHistogram = ^T8bitHuffmanHistogram;
 
   // Quantization table specified in DQT marker
   TQuantizationTable = class(TJPEG_Persistent)
@@ -242,12 +248,12 @@ type
     function McuBlockCount(ScanCount_: Integer): Integer;
     // Total number of blocks in image (size / 8x8)
     function TotalBlockCount: Integer;
-    function GetCoefPointerMCU(McuX_, McuY_, McuIdx_: Integer): pointer;
-    function GetCoefPointer(BlockX, BlockY: Integer): pointer;
-    function GetSamplePointer(BlockX, BlockY: Integer): pointer;
-    function FirstCoef: pointer;
-    function FirstCoefBackup: pointer;
-    function HasCoefBackup: boolean;
+    function GetCoefPointerMCU(McuX_, McuY_, McuIdx_: Integer): Pointer;
+    function GetCoefPointer(BlockX, BlockY: Integer): Pointer;
+    function GetSamplePointer(BlockX, BlockY: Integer): Pointer;
+    function FirstCoef: Pointer;
+    function FirstCoefBackup: Pointer;
+    function HasCoefBackup: Boolean;
     procedure MakeCoefBackup;
     procedure ClearCoefBackup;
     procedure SaveRawValues(const FileName_: string);
@@ -328,7 +334,7 @@ type
     // Vertical MCU count
     FVertMcuCount: Integer;
     //
-    FWaitForDNL: boolean;
+    FWaitForDNL: Boolean;
     // Width of a tile in pixels during TileMode
     FTileWidth: Integer;
     // Height of a tile in pixels during TileMode
@@ -348,7 +354,9 @@ type
     FCodingInfo: TJpegInfo;
     function GetMarkerName: TPascalString; virtual;
     procedure StoreData(S: TCoreClassStream; Size: Integer);
+{$IFDEF JPEG_Debug}
     procedure DebugSample(S: TCoreClassStream; Size: Integer);
+{$ENDIF JPEG_Debug}
   public
     constructor Create(CodingInfo_: TJpegInfo; Tag_: Byte); virtual;
     destructor Destroy; override;
@@ -358,7 +366,7 @@ type
     class procedure PutWord(S: TCoreClassStream; W: word);
     class function GetSignature: TPascalString; virtual;
     class function GetMarker: Byte; virtual;
-    class function IsSegment(Marker_: Byte; Stream_: TCoreClassStream): boolean; virtual;
+    class function IsSegment(Marker_: Byte; Stream_: TCoreClassStream): Boolean; virtual;
     procedure LoadFromStream(S: TCoreClassStream; Size: Integer);
     procedure SaveToStream(S: TCoreClassStream);
     procedure ReadMarker; virtual;
@@ -386,7 +394,7 @@ type
     constructor Create(Owner_: TJPEG_Base_Object);
     function ByTag(MarkerTag_: Byte): TJpegMarker;
     function ByClass(Class_: TJpegMarkerClass): TJpegMarker;
-    function HasMarker(Set_: TJpegMarkerSet): boolean;
+    function HasMarker(Set_: TJpegMarkerSet): Boolean;
     procedure RemoveMarkers(Set_: TJpegMarkerSet);
     procedure InsertAfter(Set_: TJpegMarkerSet; Marker_: TJpegMarker);
     procedure Add(Item_: TCoreClassObject);
@@ -402,26 +410,26 @@ type
 
   TICCProfileMarker = class(TAPPnMarker)
   private
-    FIsValid: boolean;
+    FIsValid: Boolean;
     FCurrentMarker: Byte;
     FMarkerCount: Byte;
     function GetCurrentMarker: Byte;
     function GetMarkerCount: Byte;
-    function GetData: pointer;
+    function GetData: Pointer;
     function GetDataLength: Integer;
     procedure SetDataLength(const Value: Integer);
     procedure SetCurrentMarker(const Value: Byte);
     procedure SetMarkerCount(const Value: Byte);
   protected
-    function GetIsValid: boolean;
+    function GetIsValid: Boolean;
     function GetMarkerName: TPascalString; override;
   public
     class function GetSignature: TPascalString; override;
     class function GetMarker: Byte; override;
-    property IsValid: boolean read GetIsValid;
+    property IsValid: Boolean read GetIsValid;
     property CurrentMarker: Byte read GetCurrentMarker write SetCurrentMarker;
     property MarkerCount: Byte read GetMarkerCount write SetMarkerCount;
-    property Data: pointer read GetData;
+    property Data: Pointer read GetData;
     property DataLength: Integer read GetDataLength write SetDataLength;
   end;
 
@@ -429,7 +437,7 @@ type
   TJpegICCProfile = class(TCoreClassPersistent)
   private
     FData: array of Byte;
-    function GetData: pointer;
+    function GetData: Pointer;
     function GetDataLength: Integer;
   public
     procedure LoadFromStream(S: TCoreClassStream);
@@ -438,7 +446,7 @@ type
     procedure SaveToStream(S: TCoreClassStream);
     procedure ReadFromMarkerList(List_: TJpegMarkerList);
     procedure WriteToMarkerList(List_: TJpegMarkerList);
-    property Data: pointer read GetData;
+    property Data: Pointer read GetData;
     property DataLength: Integer read GetDataLength;
   end;
 
@@ -515,8 +523,7 @@ const
   mkTEM = $01; // Reserved for temporary use
 
   cColorSpaceNames: array [TJpegColorSpace] of string =
-    ('AutoDetect',
-    'Gray', 'GrayA', 'RGB', 'RGBA', 'YCbCr', 'YCbCrA', 'CMYK', 'CMYK as YCbCrK', 'YCCK', 'PhotoYCC', 'PhotoYCCA', 'ITU CieLAB');
+    ('AutoDetect', 'Gray', 'GrayA', 'RGB', 'RGBA', 'YCbCr', 'YCbCrA', 'CMYK', 'CMYK as YCbCrK', 'YCCK', 'PhotoYCC', 'PhotoYCCA', 'ITU CieLAB');
 
   cDefaultJpgCompressionQuality = 80;
 
@@ -595,9 +602,7 @@ const
     0, 0, 0, 0, 0, 0, 0, 0);
 
   // entry n equals 1 shl (n-1)
-  cExtendTest: array [0 .. 15] of Integer =
-    ($0000, $0001, $0002, $0004, $0008, $0010, $0020, $0040,
-    $0080, $0100, $0200, $0400, $0800, $1000, $2000, $4000);
+  cExtendTest: array [0 .. 15] of Integer = ($0000, $0001, $0002, $0004, $0008, $0010, $0020, $0040, $0080, $0100, $0200, $0400, $0800, $1000, $2000, $4000);
 
   // entry n equals (-1 shl n) + 1
   cExtendOffset: array [0 .. 15] of Integer =
@@ -630,21 +635,14 @@ const
     99, 99, 99, 99, 99, 99, 99, 99);
 
   // These are standard Huffman tables for general use
-  cHuffmanBitsDcLum: array [0 .. 15] of Byte =
-    (0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0);
-  cHuffmanValDCLum: array [0 .. 11] of Byte =
-    (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+  cHuffmanBitsDcLum: array [0 .. 15] of Byte = (0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0);
+  cHuffmanValDCLum: array [0 .. 11] of Byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 
-  cHuffmanBitsDCChrom: array [0 .. 15] of Byte =
-    (0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0);
-  cHuffmanValDCChrom: array [0 .. 11] of Byte =
-    (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+  cHuffmanBitsDCChrom: array [0 .. 15] of Byte = (0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0);
+  cHuffmanValDCChrom: array [0 .. 11] of Byte = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 
-const
-  cHuffmanBitsACLum: array [0 .. 15] of Byte =
-    (0, 2, 1, 3, 3, 2, 4, 3, 5, 5, 4, 4, 0, 0, 1, $7D);
+  cHuffmanBitsACLum: array [0 .. 15] of Byte = (0, 2, 1, 3, 3, 2, 4, 3, 5, 5, 4, 4, 0, 0, 1, $7D);
 
-const
   cHuffmanValACLum: array [0 .. 161] of Byte =
     ($01, $02, $03, $00, $04, $11, $05, $12,
     $21, $31, $41, $06, $13, $51, $61, $07,
@@ -668,8 +666,7 @@ const
     $F1, $F2, $F3, $F4, $F5, $F6, $F7, $F8,
     $F9, $FA);
 
-  cHuffmanBitsACChrom: array [0 .. 15] of Byte =
-    (0, 2, 1, 2, 4, 4, 3, 4, 7, 5, 4, 4, 0, 1, 2, $77);
+  cHuffmanBitsACChrom: array [0 .. 15] of Byte = (0, 2, 1, 2, 4, 4, 3, 4, 7, 5, 4, 4, 0, 1, 2, $77);
   cHuffmanValACChrom: array [0 .. 161] of Byte =
     ($00, $01, $02, $03, $11, $04, $05, $21,
     $31, $06, $12, $41, $51, $07, $61, $71,
@@ -749,7 +746,9 @@ const
   sCannotUseTileMode = 'Cannot use tilemode with progressive jpeg';
   sRangeErrorInTileLoading = 'Range error in tiled loading: make sure to select tilemode';
 
+{$IFDEF JPEG_Debug}
 function sdDebugMessageToString(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const Message_: TPascalString): TPascalString;
+{$ENDIF JPEG_Debug}
 
 function sdClassName(Object_: TCoreClassObject): TPascalString;
 
@@ -760,9 +759,9 @@ function IntMin(i1, i2: Integer): Integer; inline;
 function sdGetDivisor(Scale_: TJpegScale): Integer;
 
 type
-  TItemCompareEvent = function(Item1, Item2: TObject; Info: pointer): Integer of object;
-  TItemCompareMethod = function(Item1, Item2: TObject; Info: pointer): Integer;
-  TPointerCompareMethod = function(Ptr1, Ptr2: pointer): Integer;
+  TItemCompareEvent = function(Item1, Item2: TObject; Info: Pointer): Integer of object;
+  TItemCompareMethod = function(Item1, Item2: TObject; Info: Pointer): Integer;
+  TPointerCompareMethod = function(Ptr1, Ptr2: Pointer): Integer;
 
   TCustomObjectList = class(TCoreClassObjectList)
   public
@@ -776,10 +775,10 @@ type
   TLuidList = class(TCustomObjectList)
   protected
     function GetLuid(Item_: TObject): Integer; virtual; abstract;
-    function IndexByLuid(const LUID_: Integer; out Index: Integer): boolean;
+    function IndexByLuid(const LUID_: Integer; out Index: Integer): Boolean;
   public
     function NextLuid: Integer;
-    function HasLuid(const LUID_: Integer): boolean;
+    function HasLuid(const LUID_: Integer): Boolean;
     procedure RemoveByLuid(const LUID_: Integer);
     function Add(Item_: TObject): Integer;
   end;
@@ -789,9 +788,9 @@ type
   TGuidList = class(TCustomObjectList)
   protected
     function GetGuid(Item_: TObject): TGuid; virtual; abstract;
-    function IndexByGuid(const GUID_: TGuid; out Index: Integer): boolean;
+    function IndexByGuid(const GUID_: TGuid; out Index: Integer): Boolean;
   public
-    function HasGuid(const GUID_: TGuid): boolean;
+    function HasGuid(const GUID_: TGuid): Boolean;
     procedure RemoveByGuid(const GUID_: TGuid);
     function Add(Item_: TObject): Integer;
   end;
@@ -801,43 +800,43 @@ type
   // to compare two items.
   TCustomSortedList = class(TCustomObjectList)
   private
-    FSorted: boolean;
-    procedure SetSorted(Value_: boolean);
+    FSorted: Boolean;
+    procedure SetSorted(Value_: Boolean);
   protected
     // Override this method to implement the object comparison between two
     // items. The default just compares the item pointers
     function DoCompare(Item1, Item2: TObject): Integer; virtual;
   public
-    constructor Create(OwnsObjects_: boolean = true);
+    constructor Create(OwnsObjects_: Boolean = true);
     function Add(Item_: TObject): Integer;
     // AddUnique behaves just like Add but checks if the item to add is unique
     // by checking the result of the Find function. If the item is found it is
     // replaced by the new item (old item removed), unless RaiseError = True, in
     // that case an exception is raised.
-    function AddUnique(Item: TObject; RaiseError: boolean = false): Integer; virtual;
-    function Find(Item: TObject; out Index: Integer): boolean; virtual;
+    function AddUnique(Item: TObject; RaiseError: Boolean = false): Integer; virtual;
+    function Find(Item: TObject; out Index: Integer): Boolean; virtual;
     // Find (multiple) items equal to Item, and return Index of first equal
     // item and the number of multiples in Count
     procedure FindMultiple(Item: TObject; out AIndex, Count_: Integer); virtual;
     procedure Sort; virtual;
-    property Sorted: boolean read FSorted write SetSorted default true;
+    property Sorted: Boolean read FSorted write SetSorted default true;
   end;
 
   // Some basic compare routines
-function CompareCardinal(C1, C2: cardinal): Integer;
-function CompareInteger(Int1, Int2: Integer): Integer;
-function CompareLongWord(LW1, LW2: longword): Integer;
-function CompareInt64(const Int1, Int2: int64): Integer;
-function ComparePointer(Item1, Item2: pointer): Integer;
-function CompareBool(Bool1, Bool2: boolean): Integer;
-function CompareSingle(const Single1, Single2: single): Integer;
-function CompareDouble(const Double1, Double2: double): Integer;
+function CompareCardinal(C1, C2: cardinal): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CompareInteger(Int1, Int2: Integer): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CompareLongWord(LW1, LW2: longword): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CompareInt64(const Int1, Int2: int64): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function ComparePointer(Item1, Item2: Pointer): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CompareBool(Bool1, Bool2: Boolean): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CompareSingle(const Single1, Single2: single): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function CompareDouble(const Double1, Double2: double): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 // Compare globally unique ID (TGUID, defined in SysUtils)
-function CompareGuid(const Guid1, Guid2: TGuid): Integer;
+function CompareGuid(const Guid1, Guid2: TGuid): Integer; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 
 // GUID methods
-function IsEqualGuid(const Guid1, Guid2: TGuid): boolean;
-function IsEmptyGuid(const GUID_: TGuid): boolean;
+function IsEqualGuid(const Guid1, Guid2: TGuid): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
+function IsEmptyGuid(const GUID_: TGuid): Boolean; {$IFDEF INLINE_ASM} inline; {$ENDIF}
 function NewGuid: TGuid;
 // streaming of TGuid can be found in sdStreamableData.pas
 
@@ -846,12 +845,12 @@ type
   TCustomSorter = class
   private
     FCompareMethod: TPointerCompareMethod;
-    FFirst: pointer;
+    FFirst: Pointer;
     FStride: Integer;
     FCount: Integer;
   public
     property CompareMethod: TPointerCompareMethod read FCompareMethod write FCompareMethod;
-    property First: pointer read FFirst write FFirst;
+    property First: Pointer read FFirst write FFirst;
     property Stride: Integer read FStride write FStride;
     property Count: Integer read FCount write FCount;
     procedure Sort;
@@ -895,7 +894,13 @@ constructor TJPEG_Base_Object.Create(Owner_: TJPEG_Base_Object);
 begin
   inherited Create;
   FOwner := Owner_;
+{$IFDEF JPEG_Debug}
+  FOnDebugOut := nil;
+{$ENDIF JPEG_Debug}
 end;
+
+{$IFDEF JPEG_Debug}
+
 
 procedure TJPEG_Base_Object.DoDebugOut(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const Message_: TPascalString);
 var
@@ -912,6 +917,7 @@ begin
       Owner_ := TJPEG_Base_Object(Owner_).FOwner;
     end;
 end;
+{$ENDIF JPEG_Debug}
 
 { TJPEG_Persistent }
 
@@ -927,13 +933,20 @@ begin
   FOwner := Owner_;
 end;
 
+{$IFDEF JPEG_Debug}
+
+
 procedure TJPEG_Persistent.DoDebugOut(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const Message_: TPascalString);
 begin
   if FOwner <> nil then
       FOwner.DoDebugOut(Sender, WarnStyle, Message_);
 end;
+{$ENDIF JPEG_Debug}
 
 { Functions }
+
+{$IFDEF JPEG_Debug}
+
 
 function sdDebugMessageToString(Sender: TCoreClassObject; WarnStyle: TWarnStyle; const Message_: TPascalString): TPascalString;
 var
@@ -945,6 +958,8 @@ begin
       SenderString := '';
   Result := '[' + cWarnStyleNames[WarnStyle] + '] ' + SenderString + ': ' + Message_;
 end;
+{$ENDIF JPEG_Debug}
+
 
 function sdClassName(Object_: TCoreClassObject): TPascalString;
 begin
@@ -1036,22 +1051,22 @@ begin
   ClearCoefBackup;
 end;
 
-function TJpegBlockMap.FirstCoef: pointer;
+function TJpegBlockMap.FirstCoef: Pointer;
 begin
   Result := @FCoef[0];
 end;
 
-function TJpegBlockMap.FirstCoefBackup: pointer;
+function TJpegBlockMap.FirstCoefBackup: Pointer;
 begin
   Result := @FCoefBackup[0];
 end;
 
-function TJpegBlockMap.GetCoefPointer(BlockX, BlockY: Integer): pointer;
+function TJpegBlockMap.GetCoefPointer(BlockX, BlockY: Integer): Pointer;
 begin
   Result := @FCoef[BlockX * FBlockStride + BlockY * FScanStride];
 end;
 
-function TJpegBlockMap.GetCoefPointerMCU(McuX_, McuY_, McuIdx_: Integer): pointer;
+function TJpegBlockMap.GetCoefPointerMCU(McuX_, McuY_, McuIdx_: Integer): Pointer;
 var
   x, y: Integer;
 begin
@@ -1066,12 +1081,12 @@ begin
   Result := @FCoef[x * FBlockStride + y * FScanStride];
 end;
 
-function TJpegBlockMap.GetSamplePointer(BlockX, BlockY: Integer): pointer;
+function TJpegBlockMap.GetSamplePointer(BlockX, BlockY: Integer): Pointer;
 begin
   Result := @FSample[BlockX * FBlockStride + BlockY * FScanStride];
 end;
 
-function TJpegBlockMap.HasCoefBackup: boolean;
+function TJpegBlockMap.HasCoefBackup: Boolean;
 begin
   Result := length(FCoefBackup) > 0;
 end;
@@ -1160,7 +1175,7 @@ procedure TJpegBlockMap.SaveRawValues(const FileName_: string);
 var
   i, x, y: Integer;
   F: TCoreClassFileStream;
-  Block: PsdCoefBlock;
+  Block: PCoefBlock;
   procedure WriteS(const S: TPascalString);
   var
     buff: TBytes;
@@ -1302,8 +1317,11 @@ begin
   inherited Create;
   FCodingInfo := CodingInfo_;
   FMarkerTag := Tag_;
-  FStream := TMemoryStream64.Create;
+  FStream := TMemoryStream64.CustomCreate(512 * 1024);
 end;
+
+{$IFDEF JPEG_Debug}
+
 
 procedure TJpegMarker.DebugSample(S: TCoreClassStream; Size: Integer);
 var
@@ -1323,6 +1341,8 @@ begin
   S.Position := 0;
   DoDebugOut(Self, wsInfo, Msg + '...');
 end;
+{$ENDIF JPEG_Debug}
+
 
 destructor TJpegMarker.Destroy;
 begin
@@ -1350,7 +1370,9 @@ end;
 
 procedure TJpegMarker.LoadFromStream(S: TCoreClassStream; Size: Integer);
 begin
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, PFormat('<loading marker %s, length:%d>', [MarkerName.Text, Size]));
+{$ENDIF JPEG_Debug}
   // by default, we copy the marker data to the marker stream,
   // overriding methods may use other means
   StoreData(S, Size);
@@ -1380,7 +1402,9 @@ begin
   // updated with .WriteMarker
   if FStream.Size > 0 then
     begin
+{$IFDEF JPEG_Debug}
       DoDebugOut(Self, wsInfo, PFormat('saving marker %s, length:%d', [MarkerName.Text, FStream.Size]));
+{$ENDIF JPEG_Debug}
       FStream.Position := 0;
       S.CopyFrom(FStream, FStream.Size);
     end;
@@ -1410,7 +1434,7 @@ begin
   Result := 0;
 end;
 
-class function TJpegMarker.IsSegment(Marker_: Byte; Stream_: TCoreClassStream): boolean;
+class function TJpegMarker.IsSegment(Marker_: Byte; Stream_: TCoreClassStream): Boolean;
 var
   S: word;
   buff: TBytes;
@@ -1487,7 +1511,7 @@ begin
   Result := TJpegMarker(inherited Items[index]);
 end;
 
-function TJpegMarkerList.HasMarker(Set_: TJpegMarkerSet): boolean;
+function TJpegMarkerList.HasMarker(Set_: TJpegMarkerSet): Boolean;
 var
   i: Integer;
 begin
@@ -1532,9 +1556,11 @@ end;
 
 procedure TAPPnMarker.ReadMarker;
 begin
+{$IFDEF JPEG_Debug}
   DoDebugOut(Self, wsInfo, PFormat('<%s marker, length:%d>', [MarkerName.Text, FStream.Size]));
   // show first bytes as hex
   DebugSample(FStream, FStream.Size);
+{$ENDIF JPEG_Debug}
 end;
 
 function TAPPnMarker.GetMarkerName: TPascalString;
@@ -1560,7 +1586,7 @@ begin
   Result := FCurrentMarker;
 end;
 
-function TICCProfileMarker.GetData: pointer;
+function TICCProfileMarker.GetData: Pointer;
 var
   PData: Pbyte;
 begin
@@ -1584,7 +1610,7 @@ begin
       Result := FStream.Size - 14;
 end;
 
-function TICCProfileMarker.GetIsValid: boolean;
+function TICCProfileMarker.GetIsValid: Boolean;
 var
   Magic: array [0 .. 11] of Byte;
 begin
@@ -1642,7 +1668,7 @@ end;
 
 { TJpegICCProfile }
 
-function TJpegICCProfile.GetData: pointer;
+function TJpegICCProfile.GetData: Pointer;
 begin
   if length(FData) > 0 then
       Result := @FData[0]
@@ -1830,7 +1856,7 @@ begin
       Result := 0;
 end;
 
-function ComparePointer(Item1, Item2: pointer): Integer;
+function ComparePointer(Item1, Item2: Pointer): Integer;
 begin
   if NativeUInt(Item1) < NativeUInt(Item2) then
       Result := -1
@@ -1840,7 +1866,7 @@ begin
       Result := 0;
 end;
 
-function CompareBool(Bool1, Bool2: boolean): Integer;
+function CompareBool(Bool1, Bool2: Boolean): Integer;
 begin
   if Bool1 < Bool2 then
       Result := -1
@@ -1891,12 +1917,12 @@ begin
     end;
 end;
 
-function IsEqualGuid(const Guid1, Guid2: TGuid): boolean;
+function IsEqualGuid(const Guid1, Guid2: TGuid): Boolean;
 begin
   Result := CompareGuid(Guid1, Guid2) = 0;
 end;
 
-function IsEmptyGuid(const GUID_: TGuid): boolean;
+function IsEmptyGuid(const GUID_: TGuid): Boolean;
 begin
   Result := CompareGuid(GUID_, cEmptyGuid) = 0;
 end;
@@ -1911,17 +1937,17 @@ end;
 
 // For use with custom sorter and procedures
 
-function ComparePSingle(Ptr1, Ptr2: pointer): Integer;
+function ComparePSingle(Ptr1, Ptr2: Pointer): Integer;
 begin
   Result := CompareSingle(PSingle(Ptr1)^, PSingle(Ptr2)^);
 end;
 
-function ComparePDouble(Ptr1, Ptr2: pointer): Integer;
+function ComparePDouble(Ptr1, Ptr2: Pointer): Integer;
 begin
   Result := CompareDouble(PDouble(Ptr1)^, PDouble(Ptr2)^);
 end;
 
-function ComparePInteger(Ptr1, Ptr2: pointer): Integer;
+function ComparePInteger(Ptr1, Ptr2: Pointer): Integer;
 begin
   Result := CompareInteger(PInteger(Ptr1)^, PInteger(Ptr2)^);
 end;
@@ -1947,7 +1973,7 @@ begin
     end;
 end;
 
-function TLuidList.HasLuid(const LUID_: Integer): boolean;
+function TLuidList.HasLuid(const LUID_: Integer): Boolean;
 var
   Index: Integer;
 begin
@@ -1955,7 +1981,7 @@ begin
 end;
 
 function TLuidList.IndexByLuid(const LUID_: Integer;
-  out Index: Integer): boolean;
+  out Index: Integer): Boolean;
 var
   Min, Max: Integer;
 begin
@@ -2011,7 +2037,7 @@ begin
     end;
 end;
 
-function TGuidList.HasGuid(const GUID_: TGuid): boolean;
+function TGuidList.HasGuid(const GUID_: TGuid): Boolean;
 var
   Index: Integer;
 begin
@@ -2019,7 +2045,7 @@ begin
 end;
 
 function TGuidList.IndexByGuid(const GUID_: TGuid;
-  out Index: Integer): boolean;
+  out Index: Integer): Boolean;
 var
   Min, Max: Integer;
 begin
@@ -2068,7 +2094,7 @@ begin
       Result := inherited Add(Item_);
 end;
 
-function TCustomSortedList.AddUnique(Item: TObject; RaiseError: boolean): Integer;
+function TCustomSortedList.AddUnique(Item: TObject; RaiseError: Boolean): Integer;
 begin
   if Find(Item, Result) then
     begin
@@ -2079,7 +2105,7 @@ begin
   Insert(Result, Item);
 end;
 
-constructor TCustomSortedList.Create(OwnsObjects_: boolean);
+constructor TCustomSortedList.Create(OwnsObjects_: Boolean);
 begin
   inherited Create(OwnsObjects_);
   FSorted := true;
@@ -2090,7 +2116,7 @@ begin
   Result := ComparePointer(Item1, Item2);
 end;
 
-function TCustomSortedList.Find(Item: TObject; out Index: Integer): boolean;
+function TCustomSortedList.Find(Item: TObject; out Index: Integer): Boolean;
 var
   AMin, AMax: Integer;
 begin
@@ -2163,7 +2189,7 @@ begin
   Count_ := IdxClose - IdxStart + 1;
 end;
 
-procedure TCustomSortedList.SetSorted(Value_: boolean);
+procedure TCustomSortedList.SetSorted(Value_: Boolean);
 begin
   if Value_ <> FSorted then
     begin

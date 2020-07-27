@@ -56,11 +56,14 @@ const
   KDT48DS_Axis = 48;
   KDT52DS_Axis = 52;
   KDT64DS_Axis = 64;
+  KDT96DS_Axis = 96;
   KDT128DS_Axis = 128;
   KDT156DS_Axis = 156;
   KDT192DS_Axis = 192;
   KDT256DS_Axis = 256;
+  KDT384DS_Axis = 384;
   KDT512DS_Axis = 512;
+  KDT800DS_Axis = 800;
   KDT1024DS_Axis = 1024;
 
 type
@@ -93,11 +96,14 @@ type
   TKDT48DS = class;  TKDT48DS_VecType = KM.TKMFloat; // 48D
   TKDT52DS = class;  TKDT52DS_VecType = KM.TKMFloat; // 52D
   TKDT64DS = class;  TKDT64DS_VecType = KM.TKMFloat; // 64D
+  TKDT96DS = class;  TKDT96DS_VecType = KM.TKMFloat; // 96D
   TKDT128DS = class;  TKDT128DS_VecType = KM.TKMFloat; // 128D
   TKDT156DS = class;  TKDT156DS_VecType = KM.TKMFloat; // 156D
   TKDT192DS = class;  TKDT192DS_VecType = KM.TKMFloat; // 192D
   TKDT256DS = class;  TKDT256DS_VecType = KM.TKMFloat; // 256D
+  TKDT384DS = class;  TKDT384DS_VecType = KM.TKMFloat; // 384D
   TKDT512DS = class;  TKDT512DS_VecType = KM.TKMFloat; // 512D
+  TKDT800DS = class;  TKDT800DS_VecType = KM.TKMFloat; // 800D
   TKDT1024DS = class;  TKDT1024DS_VecType = KM.TKMFloat; // 1024D
 
 
@@ -171,12 +177,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT1DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT1DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT1DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT1DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT1DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT1DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT1DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT1DS_Node; overload;
     function Search(const buff: TKDT1DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT1DS_Node; overload;
@@ -184,8 +190,8 @@ type
     function Search(const buff: TKDT1DS_Vec): PKDT1DS_Node; overload;
     function SearchToken(const buff: TKDT1DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT1DS_DynamicVecBuffer; var OutBuff: TKDT1DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT1DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT1DS_DynamicVecBuffer; var OutBuff: TKDT1DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT1DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -267,12 +273,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT2DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT2DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT2DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT2DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT2DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT2DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT2DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT2DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT2DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT2DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT2DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT2DS_Node; overload;
     function Search(const buff: TKDT2DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT2DS_Node; overload;
@@ -280,8 +286,8 @@ type
     function Search(const buff: TKDT2DS_Vec): PKDT2DS_Node; overload;
     function SearchToken(const buff: TKDT2DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT2DS_DynamicVecBuffer; var OutBuff: TKDT2DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT2DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT2DS_DynamicVecBuffer; var OutBuff: TKDT2DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT2DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -363,12 +369,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT3DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT3DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT3DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT3DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT3DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT3DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT3DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT3DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT3DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT3DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT3DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT3DS_Node; overload;
     function Search(const buff: TKDT3DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT3DS_Node; overload;
@@ -376,8 +382,8 @@ type
     function Search(const buff: TKDT3DS_Vec): PKDT3DS_Node; overload;
     function SearchToken(const buff: TKDT3DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT3DS_DynamicVecBuffer; var OutBuff: TKDT3DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT3DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT3DS_DynamicVecBuffer; var OutBuff: TKDT3DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT3DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -459,12 +465,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT4DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT4DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT4DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT4DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT4DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT4DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT4DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT4DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT4DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT4DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT4DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT4DS_Node; overload;
     function Search(const buff: TKDT4DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT4DS_Node; overload;
@@ -472,8 +478,8 @@ type
     function Search(const buff: TKDT4DS_Vec): PKDT4DS_Node; overload;
     function SearchToken(const buff: TKDT4DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT4DS_DynamicVecBuffer; var OutBuff: TKDT4DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT4DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT4DS_DynamicVecBuffer; var OutBuff: TKDT4DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT4DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -555,12 +561,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT5DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT5DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT5DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT5DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT5DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT5DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT5DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT5DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT5DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT5DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT5DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT5DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT5DS_Node; overload;
     function Search(const buff: TKDT5DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT5DS_Node; overload;
@@ -568,8 +574,8 @@ type
     function Search(const buff: TKDT5DS_Vec): PKDT5DS_Node; overload;
     function SearchToken(const buff: TKDT5DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT5DS_DynamicVecBuffer; var OutBuff: TKDT5DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT5DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT5DS_DynamicVecBuffer; var OutBuff: TKDT5DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT5DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -651,12 +657,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT6DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT6DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT6DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT6DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT6DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT6DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT6DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT6DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT6DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT6DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT6DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT6DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT6DS_Node; overload;
     function Search(const buff: TKDT6DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT6DS_Node; overload;
@@ -664,8 +670,8 @@ type
     function Search(const buff: TKDT6DS_Vec): PKDT6DS_Node; overload;
     function SearchToken(const buff: TKDT6DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT6DS_DynamicVecBuffer; var OutBuff: TKDT6DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT6DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT6DS_DynamicVecBuffer; var OutBuff: TKDT6DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT6DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -747,12 +753,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT7DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT7DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT7DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT7DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT7DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT7DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT7DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT7DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT7DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT7DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT7DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT7DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT7DS_Node; overload;
     function Search(const buff: TKDT7DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT7DS_Node; overload;
@@ -760,8 +766,8 @@ type
     function Search(const buff: TKDT7DS_Vec): PKDT7DS_Node; overload;
     function SearchToken(const buff: TKDT7DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT7DS_DynamicVecBuffer; var OutBuff: TKDT7DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT7DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT7DS_DynamicVecBuffer; var OutBuff: TKDT7DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT7DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -843,12 +849,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT8DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT8DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT8DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT8DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT8DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT8DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT8DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT8DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT8DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT8DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT8DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT8DS_Node; overload;
     function Search(const buff: TKDT8DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT8DS_Node; overload;
@@ -856,8 +862,8 @@ type
     function Search(const buff: TKDT8DS_Vec): PKDT8DS_Node; overload;
     function SearchToken(const buff: TKDT8DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT8DS_DynamicVecBuffer; var OutBuff: TKDT8DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT8DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT8DS_DynamicVecBuffer; var OutBuff: TKDT8DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT8DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -939,12 +945,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT9DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT9DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT9DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT9DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT9DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT9DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT9DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT9DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT9DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT9DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT9DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT9DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT9DS_Node; overload;
     function Search(const buff: TKDT9DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT9DS_Node; overload;
@@ -952,8 +958,8 @@ type
     function Search(const buff: TKDT9DS_Vec): PKDT9DS_Node; overload;
     function SearchToken(const buff: TKDT9DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT9DS_DynamicVecBuffer; var OutBuff: TKDT9DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT9DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT9DS_DynamicVecBuffer; var OutBuff: TKDT9DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT9DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -1035,12 +1041,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT10DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT10DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT10DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT10DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT10DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT10DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT10DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT10DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT10DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT10DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT10DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT10DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT10DS_Node; overload;
     function Search(const buff: TKDT10DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT10DS_Node; overload;
@@ -1048,8 +1054,8 @@ type
     function Search(const buff: TKDT10DS_Vec): PKDT10DS_Node; overload;
     function SearchToken(const buff: TKDT10DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT10DS_DynamicVecBuffer; var OutBuff: TKDT10DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT10DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT10DS_DynamicVecBuffer; var OutBuff: TKDT10DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT10DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -1131,12 +1137,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT11DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT11DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT11DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT11DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT11DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT11DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT11DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT11DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT11DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT11DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT11DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT11DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT11DS_Node; overload;
     function Search(const buff: TKDT11DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT11DS_Node; overload;
@@ -1144,8 +1150,8 @@ type
     function Search(const buff: TKDT11DS_Vec): PKDT11DS_Node; overload;
     function SearchToken(const buff: TKDT11DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT11DS_DynamicVecBuffer; var OutBuff: TKDT11DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT11DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT11DS_DynamicVecBuffer; var OutBuff: TKDT11DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT11DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -1227,12 +1233,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT12DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT12DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT12DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT12DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT12DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT12DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT12DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT12DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT12DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT12DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT12DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT12DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT12DS_Node; overload;
     function Search(const buff: TKDT12DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT12DS_Node; overload;
@@ -1240,8 +1246,8 @@ type
     function Search(const buff: TKDT12DS_Vec): PKDT12DS_Node; overload;
     function SearchToken(const buff: TKDT12DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT12DS_DynamicVecBuffer; var OutBuff: TKDT12DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT12DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT12DS_DynamicVecBuffer; var OutBuff: TKDT12DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT12DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -1323,12 +1329,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT13DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT13DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT13DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT13DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT13DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT13DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT13DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT13DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT13DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT13DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT13DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT13DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT13DS_Node; overload;
     function Search(const buff: TKDT13DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT13DS_Node; overload;
@@ -1336,8 +1342,8 @@ type
     function Search(const buff: TKDT13DS_Vec): PKDT13DS_Node; overload;
     function SearchToken(const buff: TKDT13DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT13DS_DynamicVecBuffer; var OutBuff: TKDT13DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT13DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT13DS_DynamicVecBuffer; var OutBuff: TKDT13DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT13DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -1419,12 +1425,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT14DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT14DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT14DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT14DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT14DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT14DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT14DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT14DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT14DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT14DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT14DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT14DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT14DS_Node; overload;
     function Search(const buff: TKDT14DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT14DS_Node; overload;
@@ -1432,8 +1438,8 @@ type
     function Search(const buff: TKDT14DS_Vec): PKDT14DS_Node; overload;
     function SearchToken(const buff: TKDT14DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT14DS_DynamicVecBuffer; var OutBuff: TKDT14DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT14DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT14DS_DynamicVecBuffer; var OutBuff: TKDT14DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT14DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -1515,12 +1521,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT15DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT15DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT15DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT15DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT15DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT15DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT15DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT15DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT15DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT15DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT15DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT15DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT15DS_Node; overload;
     function Search(const buff: TKDT15DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT15DS_Node; overload;
@@ -1528,8 +1534,8 @@ type
     function Search(const buff: TKDT15DS_Vec): PKDT15DS_Node; overload;
     function SearchToken(const buff: TKDT15DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT15DS_DynamicVecBuffer; var OutBuff: TKDT15DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT15DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT15DS_DynamicVecBuffer; var OutBuff: TKDT15DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT15DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -1611,12 +1617,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT16DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT16DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT16DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT16DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT16DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT16DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT16DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT16DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT16DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT16DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT16DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT16DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT16DS_Node; overload;
     function Search(const buff: TKDT16DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT16DS_Node; overload;
@@ -1624,8 +1630,8 @@ type
     function Search(const buff: TKDT16DS_Vec): PKDT16DS_Node; overload;
     function SearchToken(const buff: TKDT16DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT16DS_DynamicVecBuffer; var OutBuff: TKDT16DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT16DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT16DS_DynamicVecBuffer; var OutBuff: TKDT16DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT16DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -1707,12 +1713,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT17DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT17DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT17DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT17DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT17DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT17DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT17DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT17DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT17DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT17DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT17DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT17DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT17DS_Node; overload;
     function Search(const buff: TKDT17DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT17DS_Node; overload;
@@ -1720,8 +1726,8 @@ type
     function Search(const buff: TKDT17DS_Vec): PKDT17DS_Node; overload;
     function SearchToken(const buff: TKDT17DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT17DS_DynamicVecBuffer; var OutBuff: TKDT17DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT17DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT17DS_DynamicVecBuffer; var OutBuff: TKDT17DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT17DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -1803,12 +1809,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT18DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT18DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT18DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT18DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT18DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT18DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT18DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT18DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT18DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT18DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT18DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT18DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT18DS_Node; overload;
     function Search(const buff: TKDT18DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT18DS_Node; overload;
@@ -1816,8 +1822,8 @@ type
     function Search(const buff: TKDT18DS_Vec): PKDT18DS_Node; overload;
     function SearchToken(const buff: TKDT18DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT18DS_DynamicVecBuffer; var OutBuff: TKDT18DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT18DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT18DS_DynamicVecBuffer; var OutBuff: TKDT18DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT18DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -1899,12 +1905,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT19DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT19DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT19DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT19DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT19DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT19DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT19DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT19DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT19DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT19DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT19DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT19DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT19DS_Node; overload;
     function Search(const buff: TKDT19DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT19DS_Node; overload;
@@ -1912,8 +1918,8 @@ type
     function Search(const buff: TKDT19DS_Vec): PKDT19DS_Node; overload;
     function SearchToken(const buff: TKDT19DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT19DS_DynamicVecBuffer; var OutBuff: TKDT19DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT19DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT19DS_DynamicVecBuffer; var OutBuff: TKDT19DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT19DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -1995,12 +2001,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT20DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT20DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT20DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT20DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT20DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT20DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT20DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT20DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT20DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT20DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT20DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT20DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT20DS_Node; overload;
     function Search(const buff: TKDT20DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT20DS_Node; overload;
@@ -2008,8 +2014,8 @@ type
     function Search(const buff: TKDT20DS_Vec): PKDT20DS_Node; overload;
     function SearchToken(const buff: TKDT20DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT20DS_DynamicVecBuffer; var OutBuff: TKDT20DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT20DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT20DS_DynamicVecBuffer; var OutBuff: TKDT20DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT20DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -2091,12 +2097,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT21DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT21DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT21DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT21DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT21DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT21DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT21DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT21DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT21DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT21DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT21DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT21DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT21DS_Node; overload;
     function Search(const buff: TKDT21DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT21DS_Node; overload;
@@ -2104,8 +2110,8 @@ type
     function Search(const buff: TKDT21DS_Vec): PKDT21DS_Node; overload;
     function SearchToken(const buff: TKDT21DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT21DS_DynamicVecBuffer; var OutBuff: TKDT21DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT21DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT21DS_DynamicVecBuffer; var OutBuff: TKDT21DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT21DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -2187,12 +2193,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT22DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT22DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT22DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT22DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT22DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT22DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT22DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT22DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT22DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT22DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT22DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT22DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT22DS_Node; overload;
     function Search(const buff: TKDT22DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT22DS_Node; overload;
@@ -2200,8 +2206,8 @@ type
     function Search(const buff: TKDT22DS_Vec): PKDT22DS_Node; overload;
     function SearchToken(const buff: TKDT22DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT22DS_DynamicVecBuffer; var OutBuff: TKDT22DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT22DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT22DS_DynamicVecBuffer; var OutBuff: TKDT22DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT22DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -2283,12 +2289,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT23DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT23DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT23DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT23DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT23DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT23DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT23DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT23DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT23DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT23DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT23DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT23DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT23DS_Node; overload;
     function Search(const buff: TKDT23DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT23DS_Node; overload;
@@ -2296,8 +2302,8 @@ type
     function Search(const buff: TKDT23DS_Vec): PKDT23DS_Node; overload;
     function SearchToken(const buff: TKDT23DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT23DS_DynamicVecBuffer; var OutBuff: TKDT23DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT23DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT23DS_DynamicVecBuffer; var OutBuff: TKDT23DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT23DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -2379,12 +2385,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT24DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT24DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT24DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT24DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT24DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT24DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT24DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT24DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT24DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT24DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT24DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT24DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT24DS_Node; overload;
     function Search(const buff: TKDT24DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT24DS_Node; overload;
@@ -2392,8 +2398,8 @@ type
     function Search(const buff: TKDT24DS_Vec): PKDT24DS_Node; overload;
     function SearchToken(const buff: TKDT24DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT24DS_DynamicVecBuffer; var OutBuff: TKDT24DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT24DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT24DS_DynamicVecBuffer; var OutBuff: TKDT24DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT24DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -2475,12 +2481,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT48DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT48DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT48DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT48DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT48DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT48DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT48DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT48DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT48DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT48DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT48DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT48DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT48DS_Node; overload;
     function Search(const buff: TKDT48DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT48DS_Node; overload;
@@ -2488,8 +2494,8 @@ type
     function Search(const buff: TKDT48DS_Vec): PKDT48DS_Node; overload;
     function SearchToken(const buff: TKDT48DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT48DS_DynamicVecBuffer; var OutBuff: TKDT48DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT48DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT48DS_DynamicVecBuffer; var OutBuff: TKDT48DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT48DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -2571,12 +2577,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT52DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT52DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT52DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT52DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT52DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT52DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT52DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT52DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT52DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT52DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT52DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT52DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT52DS_Node; overload;
     function Search(const buff: TKDT52DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT52DS_Node; overload;
@@ -2584,8 +2590,8 @@ type
     function Search(const buff: TKDT52DS_Vec): PKDT52DS_Node; overload;
     function SearchToken(const buff: TKDT52DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT52DS_DynamicVecBuffer; var OutBuff: TKDT52DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT52DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT52DS_DynamicVecBuffer; var OutBuff: TKDT52DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT52DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -2667,12 +2673,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT64DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT64DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT64DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT64DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT64DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT64DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT64DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT64DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT64DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT64DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT64DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT64DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT64DS_Node; overload;
     function Search(const buff: TKDT64DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT64DS_Node; overload;
@@ -2680,8 +2686,8 @@ type
     function Search(const buff: TKDT64DS_Vec): PKDT64DS_Node; overload;
     function SearchToken(const buff: TKDT64DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT64DS_DynamicVecBuffer; var OutBuff: TKDT64DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT64DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT64DS_DynamicVecBuffer; var OutBuff: TKDT64DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT64DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -2694,6 +2700,102 @@ type
     class function Distance(const v1, v2: TKDT64DS_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT64DS_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT96DS = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT96DS_Vec = array [0 .. KDT96DS_Axis - 1] of TKDT96DS_VecType;
+    PKDT96DS_Vec = ^TKDT96DS_Vec;
+
+    TKDT96DS_DynamicVecBuffer = array of TKDT96DS_Vec;
+    PKDT96DS_DynamicVecBuffer = ^TKDT96DS_DynamicVecBuffer;
+
+    TKDT96DS_Source = record
+      buff: TKDT96DS_Vec;
+      Index: Int64;
+      Token: TPascalString;
+    end;
+
+    PKDT96DS_Source = ^TKDT96DS_Source;
+    TKDT96DS_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT96DS_Source) - 1] of PKDT96DS_Source;
+    PKDT96DS_SourceBuffer = ^TKDT96DS_SourceBuffer;
+
+    TKDT96DS_DyanmicSourceBuffer = array of PKDT96DS_Source;
+    PKDT96DS_DyanmicSourceBuffer = ^TKDT96DS_DyanmicSourceBuffer;
+
+    TKDT96DS_DyanmicStoreBuffer = array of TKDT96DS_Source;
+    PKDT96DS_DyanmicStoreBuffer = ^TKDT96DS_DyanmicStoreBuffer;
+
+    PKDT96DS_Node = ^TKDT96DS_Node;
+
+    TKDT96DS_Node = record
+      Parent, Right, Left: PKDT96DS_Node;
+      Vec: PKDT96DS_Source;
+    end;
+
+    TKDT96DS_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT96DS_Source; const Data: Pointer);
+    TKDT96DS_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT96DS_Source; const Data: Pointer) of object;
+{$IFDEF FPC}
+    TKDT96DS_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT96DS_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT96DS_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT96DS_Source; const Data: Pointer);
+{$ENDIF FPC}
+  private
+    KDStoreBuff: TKDT96DS_DyanmicStoreBuffer;
+    KDBuff: TKDT96DS_DyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes: array of PKDT96DS_Node;
+    TestBuff: TKDT96DS_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT96DS_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT96DS_Node;
+    function GetData(const Index: NativeInt): PKDT96DS_Source;
+  public
+    RootNode: PKDT96DS_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT96DS_DyanmicStoreBuffer;
+    property SourceP[const Index: NativeInt]: PKDT96DS_Source read GetData; default;
+
+    { bakcall build }
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT96DS_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT96DS_BuildMethod);
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT96DS_BuildProc);
+    { fill k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT96DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT96DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT96DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT96DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT96DS_BuildProc); overload;
+    { search }
+    function Search(const buff: TKDT96DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT96DS_Node; overload;
+    function Search(const buff: TKDT96DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT96DS_Node; overload;
+    function Search(const buff: TKDT96DS_Vec; var SearchedDistanceMin: Double): PKDT96DS_Node; overload;
+    function Search(const buff: TKDT96DS_Vec): PKDT96DS_Node; overload;
+    function SearchToken(const buff: TKDT96DS_Vec): TPascalString;
+    { parallel search }
+    procedure Search(const inBuff: TKDT96DS_DynamicVecBuffer; var OutBuff: TKDT96DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT96DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+    procedure SaveToFile(FileName: SystemString);
+    procedure LoadFromFile(FileName: SystemString);
+    procedure PrintNodeTree(const NodePtr: PKDT96DS_Node);
+    procedure PrintBuffer;
+    class function Vec(const s: SystemString): TKDT96DS_Vec; overload;
+    class function Vec(const v: TKDT96DS_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT96DS_Vec): Double;
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT96DS_Source; const Data: Pointer);
     class procedure Test;
   end;
 
@@ -2763,12 +2865,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT128DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT128DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT128DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT128DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT128DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT128DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT128DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT128DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT128DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT128DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT128DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT128DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT128DS_Node; overload;
     function Search(const buff: TKDT128DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT128DS_Node; overload;
@@ -2776,8 +2878,8 @@ type
     function Search(const buff: TKDT128DS_Vec): PKDT128DS_Node; overload;
     function SearchToken(const buff: TKDT128DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT128DS_DynamicVecBuffer; var OutBuff: TKDT128DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT128DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT128DS_DynamicVecBuffer; var OutBuff: TKDT128DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT128DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -2859,12 +2961,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT156DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT156DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT156DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT156DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT156DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT156DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT156DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT156DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT156DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT156DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT156DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT156DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT156DS_Node; overload;
     function Search(const buff: TKDT156DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT156DS_Node; overload;
@@ -2872,8 +2974,8 @@ type
     function Search(const buff: TKDT156DS_Vec): PKDT156DS_Node; overload;
     function SearchToken(const buff: TKDT156DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT156DS_DynamicVecBuffer; var OutBuff: TKDT156DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT156DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT156DS_DynamicVecBuffer; var OutBuff: TKDT156DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT156DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -2955,12 +3057,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT192DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT192DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT192DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT192DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT192DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT192DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT192DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT192DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT192DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT192DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT192DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT192DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT192DS_Node; overload;
     function Search(const buff: TKDT192DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT192DS_Node; overload;
@@ -2968,8 +3070,8 @@ type
     function Search(const buff: TKDT192DS_Vec): PKDT192DS_Node; overload;
     function SearchToken(const buff: TKDT192DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT192DS_DynamicVecBuffer; var OutBuff: TKDT192DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT192DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT192DS_DynamicVecBuffer; var OutBuff: TKDT192DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT192DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -3051,12 +3153,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT256DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT256DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT256DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT256DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT256DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT256DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT256DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT256DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT256DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT256DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT256DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT256DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT256DS_Node; overload;
     function Search(const buff: TKDT256DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT256DS_Node; overload;
@@ -3064,8 +3166,8 @@ type
     function Search(const buff: TKDT256DS_Vec): PKDT256DS_Node; overload;
     function SearchToken(const buff: TKDT256DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT256DS_DynamicVecBuffer; var OutBuff: TKDT256DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT256DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT256DS_DynamicVecBuffer; var OutBuff: TKDT256DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT256DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -3078,6 +3180,102 @@ type
     class function Distance(const v1, v2: TKDT256DS_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT256DS_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT384DS = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT384DS_Vec = array [0 .. KDT384DS_Axis - 1] of TKDT384DS_VecType;
+    PKDT384DS_Vec = ^TKDT384DS_Vec;
+
+    TKDT384DS_DynamicVecBuffer = array of TKDT384DS_Vec;
+    PKDT384DS_DynamicVecBuffer = ^TKDT384DS_DynamicVecBuffer;
+
+    TKDT384DS_Source = record
+      buff: TKDT384DS_Vec;
+      Index: Int64;
+      Token: TPascalString;
+    end;
+
+    PKDT384DS_Source = ^TKDT384DS_Source;
+    TKDT384DS_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT384DS_Source) - 1] of PKDT384DS_Source;
+    PKDT384DS_SourceBuffer = ^TKDT384DS_SourceBuffer;
+
+    TKDT384DS_DyanmicSourceBuffer = array of PKDT384DS_Source;
+    PKDT384DS_DyanmicSourceBuffer = ^TKDT384DS_DyanmicSourceBuffer;
+
+    TKDT384DS_DyanmicStoreBuffer = array of TKDT384DS_Source;
+    PKDT384DS_DyanmicStoreBuffer = ^TKDT384DS_DyanmicStoreBuffer;
+
+    PKDT384DS_Node = ^TKDT384DS_Node;
+
+    TKDT384DS_Node = record
+      Parent, Right, Left: PKDT384DS_Node;
+      Vec: PKDT384DS_Source;
+    end;
+
+    TKDT384DS_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT384DS_Source; const Data: Pointer);
+    TKDT384DS_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT384DS_Source; const Data: Pointer) of object;
+{$IFDEF FPC}
+    TKDT384DS_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT384DS_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT384DS_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT384DS_Source; const Data: Pointer);
+{$ENDIF FPC}
+  private
+    KDStoreBuff: TKDT384DS_DyanmicStoreBuffer;
+    KDBuff: TKDT384DS_DyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes: array of PKDT384DS_Node;
+    TestBuff: TKDT384DS_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT384DS_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT384DS_Node;
+    function GetData(const Index: NativeInt): PKDT384DS_Source;
+  public
+    RootNode: PKDT384DS_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT384DS_DyanmicStoreBuffer;
+    property SourceP[const Index: NativeInt]: PKDT384DS_Source read GetData; default;
+
+    { bakcall build }
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT384DS_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT384DS_BuildMethod);
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT384DS_BuildProc);
+    { fill k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT384DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT384DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT384DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT384DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT384DS_BuildProc); overload;
+    { search }
+    function Search(const buff: TKDT384DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT384DS_Node; overload;
+    function Search(const buff: TKDT384DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT384DS_Node; overload;
+    function Search(const buff: TKDT384DS_Vec; var SearchedDistanceMin: Double): PKDT384DS_Node; overload;
+    function Search(const buff: TKDT384DS_Vec): PKDT384DS_Node; overload;
+    function SearchToken(const buff: TKDT384DS_Vec): TPascalString;
+    { parallel search }
+    procedure Search(const inBuff: TKDT384DS_DynamicVecBuffer; var OutBuff: TKDT384DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT384DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+    procedure SaveToFile(FileName: SystemString);
+    procedure LoadFromFile(FileName: SystemString);
+    procedure PrintNodeTree(const NodePtr: PKDT384DS_Node);
+    procedure PrintBuffer;
+    class function Vec(const s: SystemString): TKDT384DS_Vec; overload;
+    class function Vec(const v: TKDT384DS_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT384DS_Vec): Double;
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT384DS_Source; const Data: Pointer);
     class procedure Test;
   end;
 
@@ -3147,12 +3345,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT512DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT512DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT512DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT512DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT512DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT512DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT512DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT512DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT512DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT512DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT512DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT512DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT512DS_Node; overload;
     function Search(const buff: TKDT512DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT512DS_Node; overload;
@@ -3160,8 +3358,8 @@ type
     function Search(const buff: TKDT512DS_Vec): PKDT512DS_Node; overload;
     function SearchToken(const buff: TKDT512DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT512DS_DynamicVecBuffer; var OutBuff: TKDT512DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT512DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT512DS_DynamicVecBuffer; var OutBuff: TKDT512DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT512DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -3174,6 +3372,102 @@ type
     class function Distance(const v1, v2: TKDT512DS_Vec): Double;
     // debug time
     procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT512DS_Source; const Data: Pointer);
+    class procedure Test;
+  end;
+
+
+
+  TKDT800DS = class(TCoreClassObject)
+  public type
+    // code split
+    TKDT800DS_Vec = array [0 .. KDT800DS_Axis - 1] of TKDT800DS_VecType;
+    PKDT800DS_Vec = ^TKDT800DS_Vec;
+
+    TKDT800DS_DynamicVecBuffer = array of TKDT800DS_Vec;
+    PKDT800DS_DynamicVecBuffer = ^TKDT800DS_DynamicVecBuffer;
+
+    TKDT800DS_Source = record
+      buff: TKDT800DS_Vec;
+      Index: Int64;
+      Token: TPascalString;
+    end;
+
+    PKDT800DS_Source = ^TKDT800DS_Source;
+    TKDT800DS_SourceBuffer = array [0 .. MaxInt div SizeOf(PKDT800DS_Source) - 1] of PKDT800DS_Source;
+    PKDT800DS_SourceBuffer = ^TKDT800DS_SourceBuffer;
+
+    TKDT800DS_DyanmicSourceBuffer = array of PKDT800DS_Source;
+    PKDT800DS_DyanmicSourceBuffer = ^TKDT800DS_DyanmicSourceBuffer;
+
+    TKDT800DS_DyanmicStoreBuffer = array of TKDT800DS_Source;
+    PKDT800DS_DyanmicStoreBuffer = ^TKDT800DS_DyanmicStoreBuffer;
+
+    PKDT800DS_Node = ^TKDT800DS_Node;
+
+    TKDT800DS_Node = record
+      Parent, Right, Left: PKDT800DS_Node;
+      Vec: PKDT800DS_Source;
+    end;
+
+    TKDT800DS_BuildCall = procedure(const IndexFor: NativeInt; var Source: TKDT800DS_Source; const Data: Pointer);
+    TKDT800DS_BuildMethod = procedure(const IndexFor: NativeInt; var Source: TKDT800DS_Source; const Data: Pointer) of object;
+{$IFDEF FPC}
+    TKDT800DS_BuildProc = procedure(const IndexFor: NativeInt; var Source: TKDT800DS_Source; const Data: Pointer) is nested;
+{$ELSE FPC}
+    TKDT800DS_BuildProc = reference to procedure(const IndexFor: NativeInt; var Source: TKDT800DS_Source; const Data: Pointer);
+{$ENDIF FPC}
+  private
+    KDStoreBuff: TKDT800DS_DyanmicStoreBuffer;
+    KDBuff: TKDT800DS_DyanmicSourceBuffer;
+    NodeCounter: NativeInt;
+    KDNodes: array of PKDT800DS_Node;
+    TestBuff: TKDT800DS_DynamicVecBuffer;
+    function InternalBuildKdTree(const KDSourceBufferPtr: PKDT800DS_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT800DS_Node;
+    function GetData(const Index: NativeInt): PKDT800DS_Source;
+  public
+    RootNode: PKDT800DS_Node;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Clear;
+
+    property Count: NativeInt read NodeCounter;
+    function StoreBuffPtr: PKDT800DS_DyanmicStoreBuffer;
+    property SourceP[const Index: NativeInt]: PKDT800DS_Source read GetData; default;
+
+    { bakcall build }
+    procedure BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT800DS_BuildCall);
+    procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT800DS_BuildMethod);
+    procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT800DS_BuildProc);
+    { fill k-means++ clusterization }
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT800DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT800DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
+    { backcall k-means++ clusterization }
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT800DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT800DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT800DS_BuildProc); overload;
+    { search }
+    function Search(const buff: TKDT800DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT800DS_Node; overload;
+    function Search(const buff: TKDT800DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT800DS_Node; overload;
+    function Search(const buff: TKDT800DS_Vec; var SearchedDistanceMin: Double): PKDT800DS_Node; overload;
+    function Search(const buff: TKDT800DS_Vec): PKDT800DS_Node; overload;
+    function SearchToken(const buff: TKDT800DS_Vec): TPascalString;
+    { parallel search }
+    procedure Search(const inBuff: TKDT800DS_DynamicVecBuffer; var OutBuff: TKDT800DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT800DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+
+    procedure SaveToStream(stream: TCoreClassStream);
+    procedure LoadFromStream(stream: TCoreClassStream);
+    procedure SaveToFile(FileName: SystemString);
+    procedure LoadFromFile(FileName: SystemString);
+    procedure PrintNodeTree(const NodePtr: PKDT800DS_Node);
+    procedure PrintBuffer;
+    class function Vec(const s: SystemString): TKDT800DS_Vec; overload;
+    class function Vec(const v: TKDT800DS_Vec): SystemString; overload;
+    class function Distance(const v1, v2: TKDT800DS_Vec): Double;
+    // debug time
+    procedure Test_BuildM(const IndexFor: NativeInt; var Source: TKDT800DS_Source; const Data: Pointer);
     class procedure Test;
   end;
 
@@ -3243,12 +3537,12 @@ type
     procedure BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildMethod);
     procedure BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildProc);
     { fill k-means++ clusterization }
-    procedure BuildKDTreeWithCluster(const inBuff: TKDT1024DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray); overload;
+    procedure BuildKDTreeWithCluster(const inBuff: TKDT1024DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray); overload;
     procedure BuildKDTreeWithCluster(const inBuff: TKDT1024DS_DynamicVecBuffer; const k, Restarts: NativeInt); overload;
     { backcall k-means++ clusterization }
-    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildCall); overload;
-    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildMethod); overload;
-    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildProc); overload;
+    procedure BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildCall); overload;
+    procedure BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildMethod); overload;
+    procedure BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildProc); overload;
     { search }
     function Search(const buff: TKDT1024DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT1024DS_Node; overload;
     function Search(const buff: TKDT1024DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT1024DS_Node; overload;
@@ -3256,8 +3550,8 @@ type
     function Search(const buff: TKDT1024DS_Vec): PKDT1024DS_Node; overload;
     function SearchToken(const buff: TKDT1024DS_Vec): TPascalString;
     { parallel search }
-    procedure Search(const inBuff: TKDT1024DS_DynamicVecBuffer; var OutBuff: TKDT1024DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
-    procedure Search(const inBuff: TKDT1024DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray); overload;
+    procedure Search(const inBuff: TKDT1024DS_DynamicVecBuffer; var OutBuff: TKDT1024DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
+    procedure Search(const inBuff: TKDT1024DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray); overload;
 
     procedure SaveToStream(stream: TCoreClassStream);
     procedure LoadFromStream(stream: TCoreClassStream);
@@ -3535,7 +3829,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT1DS.BuildKDTreeWithCluster(const inBuff: TKDT1DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT1DS.BuildKDTreeWithCluster(const inBuff: TKDT1DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -3571,13 +3865,13 @@ end;
 
 procedure TKDT1DS.BuildKDTreeWithCluster(const inBuff: TKDT1DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT1DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1DS_BuildCall);
+procedure TKDT1DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT1DS_BuildCall);
 var
   TempStoreBuff: TKDT1DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -3630,7 +3924,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT1DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1DS_BuildMethod);
+procedure TKDT1DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT1DS_BuildMethod);
 var
   TempStoreBuff: TKDT1DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -3683,7 +3977,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT1DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1DS_BuildProc);
+procedure TKDT1DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT1DS_BuildProc);
 var
   TempStoreBuff: TKDT1DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -3919,13 +4213,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT1DS.Search(const inBuff: TKDT1DS_DynamicVecBuffer; var OutBuff: TKDT1DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT1DS.Search(const inBuff: TKDT1DS_DynamicVecBuffer; var OutBuff: TKDT1DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT1DS_DynamicVecBuffer;
   outBuffPtr: PKDT1DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -3991,12 +4285,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT1DS.Search(const inBuff: TKDT1DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT1DS.Search(const inBuff: TKDT1DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT1DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -4273,8 +4567,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT1DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT1DS_Node;
@@ -4599,7 +4893,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT2DS.BuildKDTreeWithCluster(const inBuff: TKDT2DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT2DS.BuildKDTreeWithCluster(const inBuff: TKDT2DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -4635,13 +4929,13 @@ end;
 
 procedure TKDT2DS.BuildKDTreeWithCluster(const inBuff: TKDT2DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT2DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT2DS_BuildCall);
+procedure TKDT2DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT2DS_BuildCall);
 var
   TempStoreBuff: TKDT2DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -4694,7 +4988,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT2DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT2DS_BuildMethod);
+procedure TKDT2DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT2DS_BuildMethod);
 var
   TempStoreBuff: TKDT2DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -4747,7 +5041,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT2DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT2DS_BuildProc);
+procedure TKDT2DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT2DS_BuildProc);
 var
   TempStoreBuff: TKDT2DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -4983,13 +5277,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT2DS.Search(const inBuff: TKDT2DS_DynamicVecBuffer; var OutBuff: TKDT2DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT2DS.Search(const inBuff: TKDT2DS_DynamicVecBuffer; var OutBuff: TKDT2DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT2DS_DynamicVecBuffer;
   outBuffPtr: PKDT2DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -5055,12 +5349,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT2DS.Search(const inBuff: TKDT2DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT2DS.Search(const inBuff: TKDT2DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT2DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -5337,8 +5631,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT2DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT2DS_Node;
@@ -5663,7 +5957,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT3DS.BuildKDTreeWithCluster(const inBuff: TKDT3DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT3DS.BuildKDTreeWithCluster(const inBuff: TKDT3DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -5699,13 +5993,13 @@ end;
 
 procedure TKDT3DS.BuildKDTreeWithCluster(const inBuff: TKDT3DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT3DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT3DS_BuildCall);
+procedure TKDT3DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT3DS_BuildCall);
 var
   TempStoreBuff: TKDT3DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -5758,7 +6052,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT3DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT3DS_BuildMethod);
+procedure TKDT3DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT3DS_BuildMethod);
 var
   TempStoreBuff: TKDT3DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -5811,7 +6105,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT3DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT3DS_BuildProc);
+procedure TKDT3DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT3DS_BuildProc);
 var
   TempStoreBuff: TKDT3DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -6047,13 +6341,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT3DS.Search(const inBuff: TKDT3DS_DynamicVecBuffer; var OutBuff: TKDT3DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT3DS.Search(const inBuff: TKDT3DS_DynamicVecBuffer; var OutBuff: TKDT3DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT3DS_DynamicVecBuffer;
   outBuffPtr: PKDT3DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -6119,12 +6413,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT3DS.Search(const inBuff: TKDT3DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT3DS.Search(const inBuff: TKDT3DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT3DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -6401,8 +6695,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT3DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT3DS_Node;
@@ -6727,7 +7021,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT4DS.BuildKDTreeWithCluster(const inBuff: TKDT4DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT4DS.BuildKDTreeWithCluster(const inBuff: TKDT4DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -6763,13 +7057,13 @@ end;
 
 procedure TKDT4DS.BuildKDTreeWithCluster(const inBuff: TKDT4DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT4DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT4DS_BuildCall);
+procedure TKDT4DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT4DS_BuildCall);
 var
   TempStoreBuff: TKDT4DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -6822,7 +7116,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT4DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT4DS_BuildMethod);
+procedure TKDT4DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT4DS_BuildMethod);
 var
   TempStoreBuff: TKDT4DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -6875,7 +7169,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT4DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT4DS_BuildProc);
+procedure TKDT4DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT4DS_BuildProc);
 var
   TempStoreBuff: TKDT4DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -7111,13 +7405,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT4DS.Search(const inBuff: TKDT4DS_DynamicVecBuffer; var OutBuff: TKDT4DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT4DS.Search(const inBuff: TKDT4DS_DynamicVecBuffer; var OutBuff: TKDT4DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT4DS_DynamicVecBuffer;
   outBuffPtr: PKDT4DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -7183,12 +7477,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT4DS.Search(const inBuff: TKDT4DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT4DS.Search(const inBuff: TKDT4DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT4DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -7465,8 +7759,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT4DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT4DS_Node;
@@ -7791,7 +8085,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT5DS.BuildKDTreeWithCluster(const inBuff: TKDT5DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT5DS.BuildKDTreeWithCluster(const inBuff: TKDT5DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -7827,13 +8121,13 @@ end;
 
 procedure TKDT5DS.BuildKDTreeWithCluster(const inBuff: TKDT5DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT5DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT5DS_BuildCall);
+procedure TKDT5DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT5DS_BuildCall);
 var
   TempStoreBuff: TKDT5DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -7886,7 +8180,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT5DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT5DS_BuildMethod);
+procedure TKDT5DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT5DS_BuildMethod);
 var
   TempStoreBuff: TKDT5DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -7939,7 +8233,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT5DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT5DS_BuildProc);
+procedure TKDT5DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT5DS_BuildProc);
 var
   TempStoreBuff: TKDT5DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -8175,13 +8469,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT5DS.Search(const inBuff: TKDT5DS_DynamicVecBuffer; var OutBuff: TKDT5DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT5DS.Search(const inBuff: TKDT5DS_DynamicVecBuffer; var OutBuff: TKDT5DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT5DS_DynamicVecBuffer;
   outBuffPtr: PKDT5DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -8247,12 +8541,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT5DS.Search(const inBuff: TKDT5DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT5DS.Search(const inBuff: TKDT5DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT5DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -8529,8 +8823,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT5DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT5DS_Node;
@@ -8855,7 +9149,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT6DS.BuildKDTreeWithCluster(const inBuff: TKDT6DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT6DS.BuildKDTreeWithCluster(const inBuff: TKDT6DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -8891,13 +9185,13 @@ end;
 
 procedure TKDT6DS.BuildKDTreeWithCluster(const inBuff: TKDT6DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT6DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT6DS_BuildCall);
+procedure TKDT6DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT6DS_BuildCall);
 var
   TempStoreBuff: TKDT6DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -8950,7 +9244,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT6DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT6DS_BuildMethod);
+procedure TKDT6DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT6DS_BuildMethod);
 var
   TempStoreBuff: TKDT6DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -9003,7 +9297,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT6DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT6DS_BuildProc);
+procedure TKDT6DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT6DS_BuildProc);
 var
   TempStoreBuff: TKDT6DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -9239,13 +9533,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT6DS.Search(const inBuff: TKDT6DS_DynamicVecBuffer; var OutBuff: TKDT6DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT6DS.Search(const inBuff: TKDT6DS_DynamicVecBuffer; var OutBuff: TKDT6DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT6DS_DynamicVecBuffer;
   outBuffPtr: PKDT6DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -9311,12 +9605,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT6DS.Search(const inBuff: TKDT6DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT6DS.Search(const inBuff: TKDT6DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT6DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -9593,8 +9887,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT6DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT6DS_Node;
@@ -9919,7 +10213,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT7DS.BuildKDTreeWithCluster(const inBuff: TKDT7DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT7DS.BuildKDTreeWithCluster(const inBuff: TKDT7DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -9955,13 +10249,13 @@ end;
 
 procedure TKDT7DS.BuildKDTreeWithCluster(const inBuff: TKDT7DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT7DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT7DS_BuildCall);
+procedure TKDT7DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT7DS_BuildCall);
 var
   TempStoreBuff: TKDT7DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -10014,7 +10308,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT7DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT7DS_BuildMethod);
+procedure TKDT7DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT7DS_BuildMethod);
 var
   TempStoreBuff: TKDT7DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -10067,7 +10361,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT7DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT7DS_BuildProc);
+procedure TKDT7DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT7DS_BuildProc);
 var
   TempStoreBuff: TKDT7DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -10303,13 +10597,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT7DS.Search(const inBuff: TKDT7DS_DynamicVecBuffer; var OutBuff: TKDT7DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT7DS.Search(const inBuff: TKDT7DS_DynamicVecBuffer; var OutBuff: TKDT7DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT7DS_DynamicVecBuffer;
   outBuffPtr: PKDT7DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -10375,12 +10669,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT7DS.Search(const inBuff: TKDT7DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT7DS.Search(const inBuff: TKDT7DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT7DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -10657,8 +10951,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT7DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT7DS_Node;
@@ -10983,7 +11277,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT8DS.BuildKDTreeWithCluster(const inBuff: TKDT8DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT8DS.BuildKDTreeWithCluster(const inBuff: TKDT8DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -11019,13 +11313,13 @@ end;
 
 procedure TKDT8DS.BuildKDTreeWithCluster(const inBuff: TKDT8DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT8DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT8DS_BuildCall);
+procedure TKDT8DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT8DS_BuildCall);
 var
   TempStoreBuff: TKDT8DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -11078,7 +11372,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT8DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT8DS_BuildMethod);
+procedure TKDT8DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT8DS_BuildMethod);
 var
   TempStoreBuff: TKDT8DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -11131,7 +11425,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT8DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT8DS_BuildProc);
+procedure TKDT8DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT8DS_BuildProc);
 var
   TempStoreBuff: TKDT8DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -11367,13 +11661,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT8DS.Search(const inBuff: TKDT8DS_DynamicVecBuffer; var OutBuff: TKDT8DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT8DS.Search(const inBuff: TKDT8DS_DynamicVecBuffer; var OutBuff: TKDT8DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT8DS_DynamicVecBuffer;
   outBuffPtr: PKDT8DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -11439,12 +11733,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT8DS.Search(const inBuff: TKDT8DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT8DS.Search(const inBuff: TKDT8DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT8DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -11721,8 +12015,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT8DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT8DS_Node;
@@ -12047,7 +12341,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT9DS.BuildKDTreeWithCluster(const inBuff: TKDT9DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT9DS.BuildKDTreeWithCluster(const inBuff: TKDT9DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -12083,13 +12377,13 @@ end;
 
 procedure TKDT9DS.BuildKDTreeWithCluster(const inBuff: TKDT9DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT9DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT9DS_BuildCall);
+procedure TKDT9DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT9DS_BuildCall);
 var
   TempStoreBuff: TKDT9DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -12142,7 +12436,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT9DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT9DS_BuildMethod);
+procedure TKDT9DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT9DS_BuildMethod);
 var
   TempStoreBuff: TKDT9DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -12195,7 +12489,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT9DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT9DS_BuildProc);
+procedure TKDT9DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT9DS_BuildProc);
 var
   TempStoreBuff: TKDT9DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -12431,13 +12725,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT9DS.Search(const inBuff: TKDT9DS_DynamicVecBuffer; var OutBuff: TKDT9DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT9DS.Search(const inBuff: TKDT9DS_DynamicVecBuffer; var OutBuff: TKDT9DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT9DS_DynamicVecBuffer;
   outBuffPtr: PKDT9DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -12503,12 +12797,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT9DS.Search(const inBuff: TKDT9DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT9DS.Search(const inBuff: TKDT9DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT9DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -12785,8 +13079,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT9DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT9DS_Node;
@@ -13111,7 +13405,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT10DS.BuildKDTreeWithCluster(const inBuff: TKDT10DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT10DS.BuildKDTreeWithCluster(const inBuff: TKDT10DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -13147,13 +13441,13 @@ end;
 
 procedure TKDT10DS.BuildKDTreeWithCluster(const inBuff: TKDT10DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT10DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT10DS_BuildCall);
+procedure TKDT10DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT10DS_BuildCall);
 var
   TempStoreBuff: TKDT10DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -13206,7 +13500,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT10DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT10DS_BuildMethod);
+procedure TKDT10DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT10DS_BuildMethod);
 var
   TempStoreBuff: TKDT10DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -13259,7 +13553,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT10DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT10DS_BuildProc);
+procedure TKDT10DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT10DS_BuildProc);
 var
   TempStoreBuff: TKDT10DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -13495,13 +13789,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT10DS.Search(const inBuff: TKDT10DS_DynamicVecBuffer; var OutBuff: TKDT10DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT10DS.Search(const inBuff: TKDT10DS_DynamicVecBuffer; var OutBuff: TKDT10DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT10DS_DynamicVecBuffer;
   outBuffPtr: PKDT10DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -13567,12 +13861,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT10DS.Search(const inBuff: TKDT10DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT10DS.Search(const inBuff: TKDT10DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT10DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -13849,8 +14143,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT10DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT10DS_Node;
@@ -14175,7 +14469,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT11DS.BuildKDTreeWithCluster(const inBuff: TKDT11DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT11DS.BuildKDTreeWithCluster(const inBuff: TKDT11DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -14211,13 +14505,13 @@ end;
 
 procedure TKDT11DS.BuildKDTreeWithCluster(const inBuff: TKDT11DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT11DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT11DS_BuildCall);
+procedure TKDT11DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT11DS_BuildCall);
 var
   TempStoreBuff: TKDT11DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -14270,7 +14564,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT11DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT11DS_BuildMethod);
+procedure TKDT11DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT11DS_BuildMethod);
 var
   TempStoreBuff: TKDT11DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -14323,7 +14617,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT11DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT11DS_BuildProc);
+procedure TKDT11DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT11DS_BuildProc);
 var
   TempStoreBuff: TKDT11DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -14559,13 +14853,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT11DS.Search(const inBuff: TKDT11DS_DynamicVecBuffer; var OutBuff: TKDT11DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT11DS.Search(const inBuff: TKDT11DS_DynamicVecBuffer; var OutBuff: TKDT11DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT11DS_DynamicVecBuffer;
   outBuffPtr: PKDT11DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -14631,12 +14925,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT11DS.Search(const inBuff: TKDT11DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT11DS.Search(const inBuff: TKDT11DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT11DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -14913,8 +15207,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT11DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT11DS_Node;
@@ -15239,7 +15533,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT12DS.BuildKDTreeWithCluster(const inBuff: TKDT12DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT12DS.BuildKDTreeWithCluster(const inBuff: TKDT12DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -15275,13 +15569,13 @@ end;
 
 procedure TKDT12DS.BuildKDTreeWithCluster(const inBuff: TKDT12DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT12DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT12DS_BuildCall);
+procedure TKDT12DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT12DS_BuildCall);
 var
   TempStoreBuff: TKDT12DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -15334,7 +15628,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT12DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT12DS_BuildMethod);
+procedure TKDT12DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT12DS_BuildMethod);
 var
   TempStoreBuff: TKDT12DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -15387,7 +15681,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT12DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT12DS_BuildProc);
+procedure TKDT12DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT12DS_BuildProc);
 var
   TempStoreBuff: TKDT12DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -15623,13 +15917,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT12DS.Search(const inBuff: TKDT12DS_DynamicVecBuffer; var OutBuff: TKDT12DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT12DS.Search(const inBuff: TKDT12DS_DynamicVecBuffer; var OutBuff: TKDT12DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT12DS_DynamicVecBuffer;
   outBuffPtr: PKDT12DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -15695,12 +15989,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT12DS.Search(const inBuff: TKDT12DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT12DS.Search(const inBuff: TKDT12DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT12DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -15977,8 +16271,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT12DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT12DS_Node;
@@ -16303,7 +16597,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT13DS.BuildKDTreeWithCluster(const inBuff: TKDT13DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT13DS.BuildKDTreeWithCluster(const inBuff: TKDT13DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -16339,13 +16633,13 @@ end;
 
 procedure TKDT13DS.BuildKDTreeWithCluster(const inBuff: TKDT13DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT13DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT13DS_BuildCall);
+procedure TKDT13DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT13DS_BuildCall);
 var
   TempStoreBuff: TKDT13DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -16398,7 +16692,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT13DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT13DS_BuildMethod);
+procedure TKDT13DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT13DS_BuildMethod);
 var
   TempStoreBuff: TKDT13DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -16451,7 +16745,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT13DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT13DS_BuildProc);
+procedure TKDT13DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT13DS_BuildProc);
 var
   TempStoreBuff: TKDT13DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -16687,13 +16981,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT13DS.Search(const inBuff: TKDT13DS_DynamicVecBuffer; var OutBuff: TKDT13DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT13DS.Search(const inBuff: TKDT13DS_DynamicVecBuffer; var OutBuff: TKDT13DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT13DS_DynamicVecBuffer;
   outBuffPtr: PKDT13DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -16759,12 +17053,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT13DS.Search(const inBuff: TKDT13DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT13DS.Search(const inBuff: TKDT13DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT13DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -17041,8 +17335,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT13DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT13DS_Node;
@@ -17367,7 +17661,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT14DS.BuildKDTreeWithCluster(const inBuff: TKDT14DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT14DS.BuildKDTreeWithCluster(const inBuff: TKDT14DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -17403,13 +17697,13 @@ end;
 
 procedure TKDT14DS.BuildKDTreeWithCluster(const inBuff: TKDT14DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT14DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT14DS_BuildCall);
+procedure TKDT14DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT14DS_BuildCall);
 var
   TempStoreBuff: TKDT14DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -17462,7 +17756,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT14DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT14DS_BuildMethod);
+procedure TKDT14DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT14DS_BuildMethod);
 var
   TempStoreBuff: TKDT14DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -17515,7 +17809,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT14DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT14DS_BuildProc);
+procedure TKDT14DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT14DS_BuildProc);
 var
   TempStoreBuff: TKDT14DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -17751,13 +18045,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT14DS.Search(const inBuff: TKDT14DS_DynamicVecBuffer; var OutBuff: TKDT14DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT14DS.Search(const inBuff: TKDT14DS_DynamicVecBuffer; var OutBuff: TKDT14DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT14DS_DynamicVecBuffer;
   outBuffPtr: PKDT14DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -17823,12 +18117,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT14DS.Search(const inBuff: TKDT14DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT14DS.Search(const inBuff: TKDT14DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT14DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -18105,8 +18399,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT14DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT14DS_Node;
@@ -18431,7 +18725,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT15DS.BuildKDTreeWithCluster(const inBuff: TKDT15DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT15DS.BuildKDTreeWithCluster(const inBuff: TKDT15DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -18467,13 +18761,13 @@ end;
 
 procedure TKDT15DS.BuildKDTreeWithCluster(const inBuff: TKDT15DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT15DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT15DS_BuildCall);
+procedure TKDT15DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT15DS_BuildCall);
 var
   TempStoreBuff: TKDT15DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -18526,7 +18820,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT15DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT15DS_BuildMethod);
+procedure TKDT15DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT15DS_BuildMethod);
 var
   TempStoreBuff: TKDT15DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -18579,7 +18873,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT15DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT15DS_BuildProc);
+procedure TKDT15DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT15DS_BuildProc);
 var
   TempStoreBuff: TKDT15DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -18815,13 +19109,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT15DS.Search(const inBuff: TKDT15DS_DynamicVecBuffer; var OutBuff: TKDT15DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT15DS.Search(const inBuff: TKDT15DS_DynamicVecBuffer; var OutBuff: TKDT15DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT15DS_DynamicVecBuffer;
   outBuffPtr: PKDT15DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -18887,12 +19181,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT15DS.Search(const inBuff: TKDT15DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT15DS.Search(const inBuff: TKDT15DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT15DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -19169,8 +19463,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT15DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT15DS_Node;
@@ -19495,7 +19789,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT16DS.BuildKDTreeWithCluster(const inBuff: TKDT16DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT16DS.BuildKDTreeWithCluster(const inBuff: TKDT16DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -19531,13 +19825,13 @@ end;
 
 procedure TKDT16DS.BuildKDTreeWithCluster(const inBuff: TKDT16DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT16DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT16DS_BuildCall);
+procedure TKDT16DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT16DS_BuildCall);
 var
   TempStoreBuff: TKDT16DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -19590,7 +19884,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT16DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT16DS_BuildMethod);
+procedure TKDT16DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT16DS_BuildMethod);
 var
   TempStoreBuff: TKDT16DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -19643,7 +19937,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT16DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT16DS_BuildProc);
+procedure TKDT16DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT16DS_BuildProc);
 var
   TempStoreBuff: TKDT16DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -19879,13 +20173,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT16DS.Search(const inBuff: TKDT16DS_DynamicVecBuffer; var OutBuff: TKDT16DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT16DS.Search(const inBuff: TKDT16DS_DynamicVecBuffer; var OutBuff: TKDT16DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT16DS_DynamicVecBuffer;
   outBuffPtr: PKDT16DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -19951,12 +20245,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT16DS.Search(const inBuff: TKDT16DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT16DS.Search(const inBuff: TKDT16DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT16DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -20233,8 +20527,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT16DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT16DS_Node;
@@ -20559,7 +20853,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT17DS.BuildKDTreeWithCluster(const inBuff: TKDT17DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT17DS.BuildKDTreeWithCluster(const inBuff: TKDT17DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -20595,13 +20889,13 @@ end;
 
 procedure TKDT17DS.BuildKDTreeWithCluster(const inBuff: TKDT17DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT17DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT17DS_BuildCall);
+procedure TKDT17DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT17DS_BuildCall);
 var
   TempStoreBuff: TKDT17DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -20654,7 +20948,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT17DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT17DS_BuildMethod);
+procedure TKDT17DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT17DS_BuildMethod);
 var
   TempStoreBuff: TKDT17DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -20707,7 +21001,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT17DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT17DS_BuildProc);
+procedure TKDT17DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT17DS_BuildProc);
 var
   TempStoreBuff: TKDT17DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -20943,13 +21237,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT17DS.Search(const inBuff: TKDT17DS_DynamicVecBuffer; var OutBuff: TKDT17DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT17DS.Search(const inBuff: TKDT17DS_DynamicVecBuffer; var OutBuff: TKDT17DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT17DS_DynamicVecBuffer;
   outBuffPtr: PKDT17DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -21015,12 +21309,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT17DS.Search(const inBuff: TKDT17DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT17DS.Search(const inBuff: TKDT17DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT17DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -21297,8 +21591,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT17DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT17DS_Node;
@@ -21623,7 +21917,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT18DS.BuildKDTreeWithCluster(const inBuff: TKDT18DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT18DS.BuildKDTreeWithCluster(const inBuff: TKDT18DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -21659,13 +21953,13 @@ end;
 
 procedure TKDT18DS.BuildKDTreeWithCluster(const inBuff: TKDT18DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT18DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT18DS_BuildCall);
+procedure TKDT18DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT18DS_BuildCall);
 var
   TempStoreBuff: TKDT18DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -21718,7 +22012,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT18DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT18DS_BuildMethod);
+procedure TKDT18DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT18DS_BuildMethod);
 var
   TempStoreBuff: TKDT18DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -21771,7 +22065,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT18DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT18DS_BuildProc);
+procedure TKDT18DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT18DS_BuildProc);
 var
   TempStoreBuff: TKDT18DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -22007,13 +22301,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT18DS.Search(const inBuff: TKDT18DS_DynamicVecBuffer; var OutBuff: TKDT18DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT18DS.Search(const inBuff: TKDT18DS_DynamicVecBuffer; var OutBuff: TKDT18DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT18DS_DynamicVecBuffer;
   outBuffPtr: PKDT18DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -22079,12 +22373,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT18DS.Search(const inBuff: TKDT18DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT18DS.Search(const inBuff: TKDT18DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT18DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -22361,8 +22655,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT18DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT18DS_Node;
@@ -22687,7 +22981,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT19DS.BuildKDTreeWithCluster(const inBuff: TKDT19DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT19DS.BuildKDTreeWithCluster(const inBuff: TKDT19DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -22723,13 +23017,13 @@ end;
 
 procedure TKDT19DS.BuildKDTreeWithCluster(const inBuff: TKDT19DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT19DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT19DS_BuildCall);
+procedure TKDT19DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT19DS_BuildCall);
 var
   TempStoreBuff: TKDT19DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -22782,7 +23076,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT19DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT19DS_BuildMethod);
+procedure TKDT19DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT19DS_BuildMethod);
 var
   TempStoreBuff: TKDT19DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -22835,7 +23129,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT19DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT19DS_BuildProc);
+procedure TKDT19DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT19DS_BuildProc);
 var
   TempStoreBuff: TKDT19DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -23071,13 +23365,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT19DS.Search(const inBuff: TKDT19DS_DynamicVecBuffer; var OutBuff: TKDT19DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT19DS.Search(const inBuff: TKDT19DS_DynamicVecBuffer; var OutBuff: TKDT19DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT19DS_DynamicVecBuffer;
   outBuffPtr: PKDT19DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -23143,12 +23437,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT19DS.Search(const inBuff: TKDT19DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT19DS.Search(const inBuff: TKDT19DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT19DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -23425,8 +23719,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT19DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT19DS_Node;
@@ -23751,7 +24045,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT20DS.BuildKDTreeWithCluster(const inBuff: TKDT20DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT20DS.BuildKDTreeWithCluster(const inBuff: TKDT20DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -23787,13 +24081,13 @@ end;
 
 procedure TKDT20DS.BuildKDTreeWithCluster(const inBuff: TKDT20DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT20DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT20DS_BuildCall);
+procedure TKDT20DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT20DS_BuildCall);
 var
   TempStoreBuff: TKDT20DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -23846,7 +24140,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT20DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT20DS_BuildMethod);
+procedure TKDT20DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT20DS_BuildMethod);
 var
   TempStoreBuff: TKDT20DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -23899,7 +24193,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT20DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT20DS_BuildProc);
+procedure TKDT20DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT20DS_BuildProc);
 var
   TempStoreBuff: TKDT20DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -24135,13 +24429,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT20DS.Search(const inBuff: TKDT20DS_DynamicVecBuffer; var OutBuff: TKDT20DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT20DS.Search(const inBuff: TKDT20DS_DynamicVecBuffer; var OutBuff: TKDT20DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT20DS_DynamicVecBuffer;
   outBuffPtr: PKDT20DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -24207,12 +24501,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT20DS.Search(const inBuff: TKDT20DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT20DS.Search(const inBuff: TKDT20DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT20DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -24489,8 +24783,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT20DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT20DS_Node;
@@ -24815,7 +25109,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT21DS.BuildKDTreeWithCluster(const inBuff: TKDT21DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT21DS.BuildKDTreeWithCluster(const inBuff: TKDT21DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -24851,13 +25145,13 @@ end;
 
 procedure TKDT21DS.BuildKDTreeWithCluster(const inBuff: TKDT21DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT21DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT21DS_BuildCall);
+procedure TKDT21DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT21DS_BuildCall);
 var
   TempStoreBuff: TKDT21DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -24910,7 +25204,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT21DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT21DS_BuildMethod);
+procedure TKDT21DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT21DS_BuildMethod);
 var
   TempStoreBuff: TKDT21DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -24963,7 +25257,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT21DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT21DS_BuildProc);
+procedure TKDT21DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT21DS_BuildProc);
 var
   TempStoreBuff: TKDT21DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -25199,13 +25493,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT21DS.Search(const inBuff: TKDT21DS_DynamicVecBuffer; var OutBuff: TKDT21DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT21DS.Search(const inBuff: TKDT21DS_DynamicVecBuffer; var OutBuff: TKDT21DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT21DS_DynamicVecBuffer;
   outBuffPtr: PKDT21DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -25271,12 +25565,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT21DS.Search(const inBuff: TKDT21DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT21DS.Search(const inBuff: TKDT21DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT21DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -25553,8 +25847,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT21DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT21DS_Node;
@@ -25879,7 +26173,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT22DS.BuildKDTreeWithCluster(const inBuff: TKDT22DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT22DS.BuildKDTreeWithCluster(const inBuff: TKDT22DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -25915,13 +26209,13 @@ end;
 
 procedure TKDT22DS.BuildKDTreeWithCluster(const inBuff: TKDT22DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT22DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT22DS_BuildCall);
+procedure TKDT22DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT22DS_BuildCall);
 var
   TempStoreBuff: TKDT22DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -25974,7 +26268,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT22DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT22DS_BuildMethod);
+procedure TKDT22DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT22DS_BuildMethod);
 var
   TempStoreBuff: TKDT22DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -26027,7 +26321,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT22DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT22DS_BuildProc);
+procedure TKDT22DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT22DS_BuildProc);
 var
   TempStoreBuff: TKDT22DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -26263,13 +26557,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT22DS.Search(const inBuff: TKDT22DS_DynamicVecBuffer; var OutBuff: TKDT22DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT22DS.Search(const inBuff: TKDT22DS_DynamicVecBuffer; var OutBuff: TKDT22DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT22DS_DynamicVecBuffer;
   outBuffPtr: PKDT22DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -26335,12 +26629,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT22DS.Search(const inBuff: TKDT22DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT22DS.Search(const inBuff: TKDT22DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT22DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -26617,8 +26911,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT22DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT22DS_Node;
@@ -26943,7 +27237,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT23DS.BuildKDTreeWithCluster(const inBuff: TKDT23DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT23DS.BuildKDTreeWithCluster(const inBuff: TKDT23DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -26979,13 +27273,13 @@ end;
 
 procedure TKDT23DS.BuildKDTreeWithCluster(const inBuff: TKDT23DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT23DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT23DS_BuildCall);
+procedure TKDT23DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT23DS_BuildCall);
 var
   TempStoreBuff: TKDT23DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -27038,7 +27332,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT23DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT23DS_BuildMethod);
+procedure TKDT23DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT23DS_BuildMethod);
 var
   TempStoreBuff: TKDT23DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -27091,7 +27385,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT23DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT23DS_BuildProc);
+procedure TKDT23DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT23DS_BuildProc);
 var
   TempStoreBuff: TKDT23DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -27327,13 +27621,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT23DS.Search(const inBuff: TKDT23DS_DynamicVecBuffer; var OutBuff: TKDT23DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT23DS.Search(const inBuff: TKDT23DS_DynamicVecBuffer; var OutBuff: TKDT23DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT23DS_DynamicVecBuffer;
   outBuffPtr: PKDT23DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -27399,12 +27693,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT23DS.Search(const inBuff: TKDT23DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT23DS.Search(const inBuff: TKDT23DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT23DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -27681,8 +27975,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT23DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT23DS_Node;
@@ -28007,7 +28301,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT24DS.BuildKDTreeWithCluster(const inBuff: TKDT24DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT24DS.BuildKDTreeWithCluster(const inBuff: TKDT24DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -28043,13 +28337,13 @@ end;
 
 procedure TKDT24DS.BuildKDTreeWithCluster(const inBuff: TKDT24DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT24DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT24DS_BuildCall);
+procedure TKDT24DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT24DS_BuildCall);
 var
   TempStoreBuff: TKDT24DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -28102,7 +28396,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT24DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT24DS_BuildMethod);
+procedure TKDT24DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT24DS_BuildMethod);
 var
   TempStoreBuff: TKDT24DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -28155,7 +28449,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT24DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT24DS_BuildProc);
+procedure TKDT24DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT24DS_BuildProc);
 var
   TempStoreBuff: TKDT24DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -28391,13 +28685,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT24DS.Search(const inBuff: TKDT24DS_DynamicVecBuffer; var OutBuff: TKDT24DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT24DS.Search(const inBuff: TKDT24DS_DynamicVecBuffer; var OutBuff: TKDT24DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT24DS_DynamicVecBuffer;
   outBuffPtr: PKDT24DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -28463,12 +28757,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT24DS.Search(const inBuff: TKDT24DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT24DS.Search(const inBuff: TKDT24DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT24DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -28745,8 +29039,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT24DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT24DS_Node;
@@ -29071,7 +29365,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT48DS.BuildKDTreeWithCluster(const inBuff: TKDT48DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT48DS.BuildKDTreeWithCluster(const inBuff: TKDT48DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -29107,13 +29401,13 @@ end;
 
 procedure TKDT48DS.BuildKDTreeWithCluster(const inBuff: TKDT48DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT48DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT48DS_BuildCall);
+procedure TKDT48DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT48DS_BuildCall);
 var
   TempStoreBuff: TKDT48DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -29166,7 +29460,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT48DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT48DS_BuildMethod);
+procedure TKDT48DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT48DS_BuildMethod);
 var
   TempStoreBuff: TKDT48DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -29219,7 +29513,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT48DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT48DS_BuildProc);
+procedure TKDT48DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT48DS_BuildProc);
 var
   TempStoreBuff: TKDT48DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -29455,13 +29749,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT48DS.Search(const inBuff: TKDT48DS_DynamicVecBuffer; var OutBuff: TKDT48DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT48DS.Search(const inBuff: TKDT48DS_DynamicVecBuffer; var OutBuff: TKDT48DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT48DS_DynamicVecBuffer;
   outBuffPtr: PKDT48DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -29527,12 +29821,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT48DS.Search(const inBuff: TKDT48DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT48DS.Search(const inBuff: TKDT48DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT48DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -29809,8 +30103,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT48DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT48DS_Node;
@@ -30135,7 +30429,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT52DS.BuildKDTreeWithCluster(const inBuff: TKDT52DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT52DS.BuildKDTreeWithCluster(const inBuff: TKDT52DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -30171,13 +30465,13 @@ end;
 
 procedure TKDT52DS.BuildKDTreeWithCluster(const inBuff: TKDT52DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT52DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT52DS_BuildCall);
+procedure TKDT52DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT52DS_BuildCall);
 var
   TempStoreBuff: TKDT52DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -30230,7 +30524,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT52DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT52DS_BuildMethod);
+procedure TKDT52DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT52DS_BuildMethod);
 var
   TempStoreBuff: TKDT52DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -30283,7 +30577,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT52DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT52DS_BuildProc);
+procedure TKDT52DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT52DS_BuildProc);
 var
   TempStoreBuff: TKDT52DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -30519,13 +30813,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT52DS.Search(const inBuff: TKDT52DS_DynamicVecBuffer; var OutBuff: TKDT52DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT52DS.Search(const inBuff: TKDT52DS_DynamicVecBuffer; var OutBuff: TKDT52DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT52DS_DynamicVecBuffer;
   outBuffPtr: PKDT52DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -30591,12 +30885,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT52DS.Search(const inBuff: TKDT52DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT52DS.Search(const inBuff: TKDT52DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT52DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -30873,8 +31167,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT52DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT52DS_Node;
@@ -31199,7 +31493,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT64DS.BuildKDTreeWithCluster(const inBuff: TKDT64DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT64DS.BuildKDTreeWithCluster(const inBuff: TKDT64DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -31235,13 +31529,13 @@ end;
 
 procedure TKDT64DS.BuildKDTreeWithCluster(const inBuff: TKDT64DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT64DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT64DS_BuildCall);
+procedure TKDT64DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT64DS_BuildCall);
 var
   TempStoreBuff: TKDT64DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -31294,7 +31588,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT64DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT64DS_BuildMethod);
+procedure TKDT64DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT64DS_BuildMethod);
 var
   TempStoreBuff: TKDT64DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -31347,7 +31641,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT64DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT64DS_BuildProc);
+procedure TKDT64DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT64DS_BuildProc);
 var
   TempStoreBuff: TKDT64DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -31583,13 +31877,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT64DS.Search(const inBuff: TKDT64DS_DynamicVecBuffer; var OutBuff: TKDT64DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT64DS.Search(const inBuff: TKDT64DS_DynamicVecBuffer; var OutBuff: TKDT64DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT64DS_DynamicVecBuffer;
   outBuffPtr: PKDT64DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -31655,12 +31949,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT64DS.Search(const inBuff: TKDT64DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT64DS.Search(const inBuff: TKDT64DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT64DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -31937,8 +32231,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT64DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT64DS_Node;
@@ -32019,6 +32313,1070 @@ begin
   else
       n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT64DS_Test);
+  DoStatus(n);
+  n := '';
+end;
+
+function TKDT96DS.InternalBuildKdTree(const KDSourceBufferPtr: PKDT96DS_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT96DS_Node;
+  function SortCompare(const p1, p2: PKDT96DS_Source; const axis: NativeInt): ShortInt;
+  begin
+    if p1^.buff[axis] = p2^.buff[axis] then
+      begin
+        if p1^.Index = p2^.Index then
+            Result := 0
+        else if p1^.Index < p2^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.buff[axis] < p2^.buff[axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT96DS_SourceBuffer; L, R: NativeInt; const axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT96DS_Source;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer^[(L + R) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, axis) < 0 do
+            Inc(i);
+        while SortCompare(SortBuffer^[j], p, axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, axis);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  M: NativeInt;
+  axis: NativeInt;
+  kdBuffPtr: PKDT96DS_SourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.Vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+    end
+  else
+    begin
+      axis := Depth mod KDT96DS_Axis;
+      M := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
+
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Vec := kdBuffPtr^[M];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], M, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[M + 1], PlanCount - (M + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT96DS.GetData(const Index: NativeInt): PKDT96DS_Source;
+begin
+  Result := @KDStoreBuff[Index];
+end;
+
+constructor TKDT96DS.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT96DS.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT96DS.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT96DS_Node(KDNodes[i]));
+      Inc(i);
+    end;
+
+  for i := 0 to length(KDStoreBuff) - 1 do
+      KDStoreBuff[i].Token := '';
+
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT96DS.StoreBuffPtr: PKDT96DS_DyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT96DS.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT96DS_BuildCall);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT96DS_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT96DS.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT96DS_BuildMethod);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT96DS_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT96DS.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT96DS_BuildProc);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT96DS_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{ k-means++ clusterization }
+procedure TKDT96DS.BuildKDTreeWithCluster(const inBuff: TKDT96DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT96DS_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT96DS_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT96DS_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT96DS_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT96DS.BuildKDTreeWithCluster(const inBuff: TKDT96DS_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TKMIntegerArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT96DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT96DS_BuildCall);
+var
+  TempStoreBuff: TKDT96DS_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT96DS_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT96DS_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT96DS_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT96DS_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT96DS_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT96DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT96DS_BuildMethod);
+var
+  TempStoreBuff: TKDT96DS_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT96DS_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT96DS_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT96DS_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT96DS_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT96DS_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT96DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT96DS_BuildProc);
+var
+  TempStoreBuff: TKDT96DS_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT96DS_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT96DS_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT96DS_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT96DS_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT96DS_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+function TKDT96DS.Search(const buff: TKDT96DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT96DS_Node;
+
+var
+  NearestNeighbour: PKDT96DS_Node;
+
+  function FindParentNode(const buffPtr: PKDT96DS_Vec; NodePtr: PKDT96DS_Node): PKDT96DS_Node;
+  var
+    Next: PKDT96DS_Node;
+    Depth, axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        axis := Depth mod KDT96DS_Axis;
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT96DS_Node; const buffPtr: PKDT96DS_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    Inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
+        NearestNeighbour := NodePtr;
+
+    axis := Depth mod KDT96DS_Axis;
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
+            ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const buffPtr: PKDT96DS_Vec; const p1, p2: PKDT96DS_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
+    if d1 = d2 then
+      begin
+        if p1^.Vec^.Index = p2^.Vec^.Index then
+            Result := 0
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; L, R: NativeInt; const buffPtr: PKDT96DS_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT96DS_Node;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer[(L + R) shr 1];
+      repeat
+        while SortCompare(buffPtr, SortBuffer[i], p) < 0 do
+            Inc(i);
+        while SortCompare(buffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, buffPtr);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  Parent: PKDT96DS_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
+
+  ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT96DS_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT96DS.Search(const buff: TKDT96DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT96DS_Node;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT96DS.Search(const buff: TKDT96DS_Vec; var SearchedDistanceMin: Double): PKDT96DS_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT96DS.Search(const buff: TKDT96DS_Vec): PKDT96DS_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT96DS.SearchToken(const buff: TKDT96DS_Vec): TPascalString;
+var
+  p: PKDT96DS_Node;
+begin
+  p := Search(buff);
+  if p <> nil then
+      Result := p^.Vec^.Token
+  else
+      Result := '';
+end;
+
+procedure TKDT96DS.Search(const inBuff: TKDT96DS_DynamicVecBuffer; var OutBuff: TKDT96DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT96DS_DynamicVecBuffer;
+  outBuffPtr: PKDT96DS_DynamicVecBuffer;
+  outIndexPtr: PKMIntegerArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT96DS_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT96DS_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT96DS_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT96DS.Search(const inBuff: TKDT96DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT96DS_DynamicVecBuffer;
+  outIndexPtr: PKMIntegerArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT96DS_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT96DS_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT96DS_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT96DS.SaveToStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  ID := KDT96DS_Axis;
+
+  stream.write(st, 4);
+  stream.write(ID, 4);
+
+  stream.write(cnt, 8);
+
+  i := 0;
+  while i < cnt do
+    begin
+      stream.write(KDStoreBuff[i].buff[0], SizeOf(TKDT96DS_Vec));
+      stream.write(KDStoreBuff[i].Index, 8);
+      token_B := KDStoreBuff[i].Token.Bytes;
+      token_L := length(token_B);
+      stream.write(token_L, 4);
+      if token_L > 0 then
+        begin
+          stream.write(token_B[0], token_L);
+          SetLength(token_B, 0);
+        end;
+      Inc(i);
+    end;
+end;
+
+procedure TKDT96DS.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  Clear;
+
+  stream.read(st, 4);
+  stream.read(ID, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if ID <> KDT96DS_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+
+  i := 0;
+  try
+    while i < cnt do
+      begin
+        if stream.read(KDStoreBuff[i].buff[0], SizeOf(TKDT96DS_Vec)) <> SizeOf(TKDT96DS_Vec) then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(KDStoreBuff[i].Index, 8) <> 8 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(token_L, 4) <> 4 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if token_L > 0 then
+          begin
+            SetLength(token_B, token_L);
+            if stream.read(token_B[0], token_L) <> token_L then
+              begin
+                Clear;
+                Exit;
+              end;
+            KDStoreBuff[i].Token.Bytes := token_B;
+            SetLength(token_B, 0);
+          end
+        else
+            KDStoreBuff[i].Token := '';
+        Inc(i);
+      end;
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      Inc(i);
+    end;
+
+  if cnt > 0 then
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT96DS.SaveToFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(FileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT96DS.LoadFromFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT96DS.PrintNodeTree(const NodePtr: PKDT96DS_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT96DS_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT96DS.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
+end;
+
+class function TKDT96DS.Vec(const s: SystemString): TKDT96DS_Vec;
+var
+  t: TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j: NativeInt;
+begin
+  for i := 0 to KDT96DS_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            Inc(j);
+            if j >= KDT96DS_Axis then
+                Break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT96DS.Vec(const v: TKDT96DS_Vec): SystemString;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT96DS_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT96DS.Distance(const v1, v2: TKDT96DS_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT96DS_Axis - 1 do
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
+end;
+
+procedure TKDT96DS.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT96DS_Source; const Data: Pointer);
+begin
+  Source.buff := TestBuff[IndexFor];
+  Source.Token := umlIntToStr(IndexFor);
+end;
+
+class procedure TKDT96DS.Test;
+var
+  TKDT96DS_Test: TKDT96DS;
+  t: TTimeTick;
+  i, j: NativeInt;
+  TestResultBuff: TKDT96DS_DynamicVecBuffer;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
+  errored: Boolean;
+  m64: TMemoryStream64;
+  p: PKDT96DS_Node;
+  n: TPascalString;
+begin
+  errored := False;
+  n := PFormat('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  n.Append('...build');
+  TKDT96DS_Test := TKDT96DS.Create;
+
+  n.Append('...');
+  SetLength(TKDT96DS_Test.TestBuff, 1000);
+  for i := 0 to length(TKDT96DS_Test.TestBuff) - 1 do
+    for j := 0 to KDT96DS_Axis - 1 do
+        TKDT96DS_Test.TestBuff[i][j] := i * KDT96DS_Axis + j;
+
+{$IFDEF FPC}
+  TKDT96DS_Test.BuildKDTreeM(length(TKDT96DS_Test.TestBuff), nil, @TKDT96DS_Test.Test_BuildM);
+{$ELSE FPC}
+  TKDT96DS_Test.BuildKDTreeM(length(TKDT96DS_Test.TestBuff), nil, TKDT96DS_Test.Test_BuildM);
+{$ENDIF FPC}
+  { save/load test }
+  n.Append('...save/load');
+  m64 := TMemoryStream64.CustomCreate(1024 * 1024);
+  TKDT96DS_Test.SaveToStream(m64);
+  m64.Position := 0;
+  TKDT96DS_Test.LoadFromStream(m64);
+  for i := 0 to length(TKDT96DS_Test.TestBuff) - 1 do
+    begin
+      p := TKDT96DS_Test.Search(TKDT96DS_Test.TestBuff[i]);
+      if p^.Vec^.Index <> i then
+          errored := True;
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
+          errored := True;
+      if errored then
+          Break;
+    end;
+  DisposeObject(m64);
+
+  if not errored then
+    begin
+      { parallel search test }
+      n.Append('...parallel');
+      SetLength(TestResultBuff, length(TKDT96DS_Test.TestBuff));
+      SetLength(TestResultIndex, length(TKDT96DS_Test.TestBuff));
+      TKDT96DS_Test.Search(TKDT96DS_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if Distance(TKDT96DS_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+            errored := True;
+    end;
+
+  if not errored then
+    begin
+      n.Append('...kMean');
+      TKDT96DS_Test.Clear;
+      { kMean test }
+      TKDT96DS_Test.BuildKDTreeWithCluster(TKDT96DS_Test.TestBuff, 10, 1, KMeanOutIndex);
+      { parallel search test }
+      TKDT96DS_Test.Search(TKDT96DS_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if TestResultIndex[i] <> KMeanOutIndex[i] then
+            errored := True;
+    end;
+
+  SetLength(TKDT96DS_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT96DS_Test.Clear;
+
+  n.Append('...');
+  if errored then
+      n.Append('error!')
+  else
+      n.Append('passed ok %dms', [GetTimeTick - t]);
+  DisposeObject(TKDT96DS_Test);
   DoStatus(n);
   n := '';
 end;
@@ -32263,7 +33621,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT128DS.BuildKDTreeWithCluster(const inBuff: TKDT128DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT128DS.BuildKDTreeWithCluster(const inBuff: TKDT128DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -32299,13 +33657,13 @@ end;
 
 procedure TKDT128DS.BuildKDTreeWithCluster(const inBuff: TKDT128DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT128DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT128DS_BuildCall);
+procedure TKDT128DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT128DS_BuildCall);
 var
   TempStoreBuff: TKDT128DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -32358,7 +33716,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT128DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT128DS_BuildMethod);
+procedure TKDT128DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT128DS_BuildMethod);
 var
   TempStoreBuff: TKDT128DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -32411,7 +33769,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT128DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT128DS_BuildProc);
+procedure TKDT128DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT128DS_BuildProc);
 var
   TempStoreBuff: TKDT128DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -32647,13 +34005,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT128DS.Search(const inBuff: TKDT128DS_DynamicVecBuffer; var OutBuff: TKDT128DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT128DS.Search(const inBuff: TKDT128DS_DynamicVecBuffer; var OutBuff: TKDT128DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT128DS_DynamicVecBuffer;
   outBuffPtr: PKDT128DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -32719,12 +34077,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT128DS.Search(const inBuff: TKDT128DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT128DS.Search(const inBuff: TKDT128DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT128DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -33001,8 +34359,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT128DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT128DS_Node;
@@ -33327,7 +34685,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT156DS.BuildKDTreeWithCluster(const inBuff: TKDT156DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT156DS.BuildKDTreeWithCluster(const inBuff: TKDT156DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -33363,13 +34721,13 @@ end;
 
 procedure TKDT156DS.BuildKDTreeWithCluster(const inBuff: TKDT156DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT156DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT156DS_BuildCall);
+procedure TKDT156DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT156DS_BuildCall);
 var
   TempStoreBuff: TKDT156DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -33422,7 +34780,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT156DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT156DS_BuildMethod);
+procedure TKDT156DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT156DS_BuildMethod);
 var
   TempStoreBuff: TKDT156DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -33475,7 +34833,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT156DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT156DS_BuildProc);
+procedure TKDT156DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT156DS_BuildProc);
 var
   TempStoreBuff: TKDT156DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -33711,13 +35069,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT156DS.Search(const inBuff: TKDT156DS_DynamicVecBuffer; var OutBuff: TKDT156DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT156DS.Search(const inBuff: TKDT156DS_DynamicVecBuffer; var OutBuff: TKDT156DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT156DS_DynamicVecBuffer;
   outBuffPtr: PKDT156DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -33783,12 +35141,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT156DS.Search(const inBuff: TKDT156DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT156DS.Search(const inBuff: TKDT156DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT156DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -34065,8 +35423,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT156DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT156DS_Node;
@@ -34391,7 +35749,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT192DS.BuildKDTreeWithCluster(const inBuff: TKDT192DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT192DS.BuildKDTreeWithCluster(const inBuff: TKDT192DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -34427,13 +35785,13 @@ end;
 
 procedure TKDT192DS.BuildKDTreeWithCluster(const inBuff: TKDT192DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT192DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT192DS_BuildCall);
+procedure TKDT192DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT192DS_BuildCall);
 var
   TempStoreBuff: TKDT192DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -34486,7 +35844,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT192DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT192DS_BuildMethod);
+procedure TKDT192DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT192DS_BuildMethod);
 var
   TempStoreBuff: TKDT192DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -34539,7 +35897,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT192DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT192DS_BuildProc);
+procedure TKDT192DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT192DS_BuildProc);
 var
   TempStoreBuff: TKDT192DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -34775,13 +36133,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT192DS.Search(const inBuff: TKDT192DS_DynamicVecBuffer; var OutBuff: TKDT192DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT192DS.Search(const inBuff: TKDT192DS_DynamicVecBuffer; var OutBuff: TKDT192DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT192DS_DynamicVecBuffer;
   outBuffPtr: PKDT192DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -34847,12 +36205,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT192DS.Search(const inBuff: TKDT192DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT192DS.Search(const inBuff: TKDT192DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT192DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -35129,8 +36487,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT192DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT192DS_Node;
@@ -35455,7 +36813,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT256DS.BuildKDTreeWithCluster(const inBuff: TKDT256DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT256DS.BuildKDTreeWithCluster(const inBuff: TKDT256DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -35491,13 +36849,13 @@ end;
 
 procedure TKDT256DS.BuildKDTreeWithCluster(const inBuff: TKDT256DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT256DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT256DS_BuildCall);
+procedure TKDT256DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT256DS_BuildCall);
 var
   TempStoreBuff: TKDT256DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -35550,7 +36908,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT256DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT256DS_BuildMethod);
+procedure TKDT256DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT256DS_BuildMethod);
 var
   TempStoreBuff: TKDT256DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -35603,7 +36961,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT256DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT256DS_BuildProc);
+procedure TKDT256DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT256DS_BuildProc);
 var
   TempStoreBuff: TKDT256DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -35839,13 +37197,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT256DS.Search(const inBuff: TKDT256DS_DynamicVecBuffer; var OutBuff: TKDT256DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT256DS.Search(const inBuff: TKDT256DS_DynamicVecBuffer; var OutBuff: TKDT256DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT256DS_DynamicVecBuffer;
   outBuffPtr: PKDT256DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -35911,12 +37269,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT256DS.Search(const inBuff: TKDT256DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT256DS.Search(const inBuff: TKDT256DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT256DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -36193,8 +37551,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT256DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT256DS_Node;
@@ -36275,6 +37633,1070 @@ begin
   else
       n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT256DS_Test);
+  DoStatus(n);
+  n := '';
+end;
+
+function TKDT384DS.InternalBuildKdTree(const KDSourceBufferPtr: PKDT384DS_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT384DS_Node;
+  function SortCompare(const p1, p2: PKDT384DS_Source; const axis: NativeInt): ShortInt;
+  begin
+    if p1^.buff[axis] = p2^.buff[axis] then
+      begin
+        if p1^.Index = p2^.Index then
+            Result := 0
+        else if p1^.Index < p2^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.buff[axis] < p2^.buff[axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT384DS_SourceBuffer; L, R: NativeInt; const axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT384DS_Source;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer^[(L + R) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, axis) < 0 do
+            Inc(i);
+        while SortCompare(SortBuffer^[j], p, axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, axis);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  M: NativeInt;
+  axis: NativeInt;
+  kdBuffPtr: PKDT384DS_SourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.Vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+    end
+  else
+    begin
+      axis := Depth mod KDT384DS_Axis;
+      M := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
+
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Vec := kdBuffPtr^[M];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], M, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[M + 1], PlanCount - (M + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT384DS.GetData(const Index: NativeInt): PKDT384DS_Source;
+begin
+  Result := @KDStoreBuff[Index];
+end;
+
+constructor TKDT384DS.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT384DS.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT384DS.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT384DS_Node(KDNodes[i]));
+      Inc(i);
+    end;
+
+  for i := 0 to length(KDStoreBuff) - 1 do
+      KDStoreBuff[i].Token := '';
+
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT384DS.StoreBuffPtr: PKDT384DS_DyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT384DS.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT384DS_BuildCall);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT384DS_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT384DS.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT384DS_BuildMethod);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT384DS_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT384DS.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT384DS_BuildProc);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT384DS_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{ k-means++ clusterization }
+procedure TKDT384DS.BuildKDTreeWithCluster(const inBuff: TKDT384DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT384DS_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT384DS_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT384DS_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT384DS_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT384DS.BuildKDTreeWithCluster(const inBuff: TKDT384DS_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TKMIntegerArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT384DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT384DS_BuildCall);
+var
+  TempStoreBuff: TKDT384DS_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT384DS_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT384DS_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT384DS_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT384DS_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT384DS_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT384DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT384DS_BuildMethod);
+var
+  TempStoreBuff: TKDT384DS_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT384DS_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT384DS_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT384DS_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT384DS_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT384DS_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT384DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT384DS_BuildProc);
+var
+  TempStoreBuff: TKDT384DS_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT384DS_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT384DS_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT384DS_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT384DS_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT384DS_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+function TKDT384DS.Search(const buff: TKDT384DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT384DS_Node;
+
+var
+  NearestNeighbour: PKDT384DS_Node;
+
+  function FindParentNode(const buffPtr: PKDT384DS_Vec; NodePtr: PKDT384DS_Node): PKDT384DS_Node;
+  var
+    Next: PKDT384DS_Node;
+    Depth, axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        axis := Depth mod KDT384DS_Axis;
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT384DS_Node; const buffPtr: PKDT384DS_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    Inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
+        NearestNeighbour := NodePtr;
+
+    axis := Depth mod KDT384DS_Axis;
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
+            ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const buffPtr: PKDT384DS_Vec; const p1, p2: PKDT384DS_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
+    if d1 = d2 then
+      begin
+        if p1^.Vec^.Index = p2^.Vec^.Index then
+            Result := 0
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; L, R: NativeInt; const buffPtr: PKDT384DS_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT384DS_Node;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer[(L + R) shr 1];
+      repeat
+        while SortCompare(buffPtr, SortBuffer[i], p) < 0 do
+            Inc(i);
+        while SortCompare(buffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, buffPtr);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  Parent: PKDT384DS_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
+
+  ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT384DS_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT384DS.Search(const buff: TKDT384DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT384DS_Node;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT384DS.Search(const buff: TKDT384DS_Vec; var SearchedDistanceMin: Double): PKDT384DS_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT384DS.Search(const buff: TKDT384DS_Vec): PKDT384DS_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT384DS.SearchToken(const buff: TKDT384DS_Vec): TPascalString;
+var
+  p: PKDT384DS_Node;
+begin
+  p := Search(buff);
+  if p <> nil then
+      Result := p^.Vec^.Token
+  else
+      Result := '';
+end;
+
+procedure TKDT384DS.Search(const inBuff: TKDT384DS_DynamicVecBuffer; var OutBuff: TKDT384DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT384DS_DynamicVecBuffer;
+  outBuffPtr: PKDT384DS_DynamicVecBuffer;
+  outIndexPtr: PKMIntegerArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT384DS_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT384DS_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT384DS_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT384DS.Search(const inBuff: TKDT384DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT384DS_DynamicVecBuffer;
+  outIndexPtr: PKMIntegerArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT384DS_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT384DS_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT384DS_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT384DS.SaveToStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  ID := KDT384DS_Axis;
+
+  stream.write(st, 4);
+  stream.write(ID, 4);
+
+  stream.write(cnt, 8);
+
+  i := 0;
+  while i < cnt do
+    begin
+      stream.write(KDStoreBuff[i].buff[0], SizeOf(TKDT384DS_Vec));
+      stream.write(KDStoreBuff[i].Index, 8);
+      token_B := KDStoreBuff[i].Token.Bytes;
+      token_L := length(token_B);
+      stream.write(token_L, 4);
+      if token_L > 0 then
+        begin
+          stream.write(token_B[0], token_L);
+          SetLength(token_B, 0);
+        end;
+      Inc(i);
+    end;
+end;
+
+procedure TKDT384DS.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  Clear;
+
+  stream.read(st, 4);
+  stream.read(ID, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if ID <> KDT384DS_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+
+  i := 0;
+  try
+    while i < cnt do
+      begin
+        if stream.read(KDStoreBuff[i].buff[0], SizeOf(TKDT384DS_Vec)) <> SizeOf(TKDT384DS_Vec) then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(KDStoreBuff[i].Index, 8) <> 8 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(token_L, 4) <> 4 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if token_L > 0 then
+          begin
+            SetLength(token_B, token_L);
+            if stream.read(token_B[0], token_L) <> token_L then
+              begin
+                Clear;
+                Exit;
+              end;
+            KDStoreBuff[i].Token.Bytes := token_B;
+            SetLength(token_B, 0);
+          end
+        else
+            KDStoreBuff[i].Token := '';
+        Inc(i);
+      end;
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      Inc(i);
+    end;
+
+  if cnt > 0 then
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT384DS.SaveToFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(FileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT384DS.LoadFromFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT384DS.PrintNodeTree(const NodePtr: PKDT384DS_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT384DS_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT384DS.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
+end;
+
+class function TKDT384DS.Vec(const s: SystemString): TKDT384DS_Vec;
+var
+  t: TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j: NativeInt;
+begin
+  for i := 0 to KDT384DS_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            Inc(j);
+            if j >= KDT384DS_Axis then
+                Break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT384DS.Vec(const v: TKDT384DS_Vec): SystemString;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT384DS_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT384DS.Distance(const v1, v2: TKDT384DS_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT384DS_Axis - 1 do
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
+end;
+
+procedure TKDT384DS.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT384DS_Source; const Data: Pointer);
+begin
+  Source.buff := TestBuff[IndexFor];
+  Source.Token := umlIntToStr(IndexFor);
+end;
+
+class procedure TKDT384DS.Test;
+var
+  TKDT384DS_Test: TKDT384DS;
+  t: TTimeTick;
+  i, j: NativeInt;
+  TestResultBuff: TKDT384DS_DynamicVecBuffer;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
+  errored: Boolean;
+  m64: TMemoryStream64;
+  p: PKDT384DS_Node;
+  n: TPascalString;
+begin
+  errored := False;
+  n := PFormat('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  n.Append('...build');
+  TKDT384DS_Test := TKDT384DS.Create;
+
+  n.Append('...');
+  SetLength(TKDT384DS_Test.TestBuff, 1000);
+  for i := 0 to length(TKDT384DS_Test.TestBuff) - 1 do
+    for j := 0 to KDT384DS_Axis - 1 do
+        TKDT384DS_Test.TestBuff[i][j] := i * KDT384DS_Axis + j;
+
+{$IFDEF FPC}
+  TKDT384DS_Test.BuildKDTreeM(length(TKDT384DS_Test.TestBuff), nil, @TKDT384DS_Test.Test_BuildM);
+{$ELSE FPC}
+  TKDT384DS_Test.BuildKDTreeM(length(TKDT384DS_Test.TestBuff), nil, TKDT384DS_Test.Test_BuildM);
+{$ENDIF FPC}
+  { save/load test }
+  n.Append('...save/load');
+  m64 := TMemoryStream64.CustomCreate(1024 * 1024);
+  TKDT384DS_Test.SaveToStream(m64);
+  m64.Position := 0;
+  TKDT384DS_Test.LoadFromStream(m64);
+  for i := 0 to length(TKDT384DS_Test.TestBuff) - 1 do
+    begin
+      p := TKDT384DS_Test.Search(TKDT384DS_Test.TestBuff[i]);
+      if p^.Vec^.Index <> i then
+          errored := True;
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
+          errored := True;
+      if errored then
+          Break;
+    end;
+  DisposeObject(m64);
+
+  if not errored then
+    begin
+      { parallel search test }
+      n.Append('...parallel');
+      SetLength(TestResultBuff, length(TKDT384DS_Test.TestBuff));
+      SetLength(TestResultIndex, length(TKDT384DS_Test.TestBuff));
+      TKDT384DS_Test.Search(TKDT384DS_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if Distance(TKDT384DS_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+            errored := True;
+    end;
+
+  if not errored then
+    begin
+      n.Append('...kMean');
+      TKDT384DS_Test.Clear;
+      { kMean test }
+      TKDT384DS_Test.BuildKDTreeWithCluster(TKDT384DS_Test.TestBuff, 10, 1, KMeanOutIndex);
+      { parallel search test }
+      TKDT384DS_Test.Search(TKDT384DS_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if TestResultIndex[i] <> KMeanOutIndex[i] then
+            errored := True;
+    end;
+
+  SetLength(TKDT384DS_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT384DS_Test.Clear;
+
+  n.Append('...');
+  if errored then
+      n.Append('error!')
+  else
+      n.Append('passed ok %dms', [GetTimeTick - t]);
+  DisposeObject(TKDT384DS_Test);
   DoStatus(n);
   n := '';
 end;
@@ -36519,7 +38941,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT512DS.BuildKDTreeWithCluster(const inBuff: TKDT512DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT512DS.BuildKDTreeWithCluster(const inBuff: TKDT512DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -36555,13 +38977,13 @@ end;
 
 procedure TKDT512DS.BuildKDTreeWithCluster(const inBuff: TKDT512DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT512DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT512DS_BuildCall);
+procedure TKDT512DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT512DS_BuildCall);
 var
   TempStoreBuff: TKDT512DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -36614,7 +39036,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT512DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT512DS_BuildMethod);
+procedure TKDT512DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT512DS_BuildMethod);
 var
   TempStoreBuff: TKDT512DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -36667,7 +39089,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT512DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT512DS_BuildProc);
+procedure TKDT512DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT512DS_BuildProc);
 var
   TempStoreBuff: TKDT512DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -36903,13 +39325,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT512DS.Search(const inBuff: TKDT512DS_DynamicVecBuffer; var OutBuff: TKDT512DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT512DS.Search(const inBuff: TKDT512DS_DynamicVecBuffer; var OutBuff: TKDT512DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT512DS_DynamicVecBuffer;
   outBuffPtr: PKDT512DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -36975,12 +39397,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT512DS.Search(const inBuff: TKDT512DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT512DS.Search(const inBuff: TKDT512DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT512DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -37257,8 +39679,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT512DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT512DS_Node;
@@ -37339,6 +39761,1070 @@ begin
   else
       n.Append('passed ok %dms', [GetTimeTick - t]);
   DisposeObject(TKDT512DS_Test);
+  DoStatus(n);
+  n := '';
+end;
+
+function TKDT800DS.InternalBuildKdTree(const KDSourceBufferPtr: PKDT800DS_SourceBuffer; const PlanCount, Depth: NativeInt): PKDT800DS_Node;
+  function SortCompare(const p1, p2: PKDT800DS_Source; const axis: NativeInt): ShortInt;
+  begin
+    if p1^.buff[axis] = p2^.buff[axis] then
+      begin
+        if p1^.Index = p2^.Index then
+            Result := 0
+        else if p1^.Index < p2^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if p1^.buff[axis] < p2^.buff[axis] then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(const SortBuffer: PKDT800DS_SourceBuffer; L, R: NativeInt; const axis: NativeInt);
+  var
+    i, j: NativeInt;
+    p, t: PKDT800DS_Source;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer^[(L + R) shr 1];
+      repeat
+        while SortCompare(SortBuffer^[i], p, axis) < 0 do
+            Inc(i);
+        while SortCompare(SortBuffer^[j], p, axis) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer^[i];
+                SortBuffer^[i] := SortBuffer^[j];
+                SortBuffer^[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, axis);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  M: NativeInt;
+  axis: NativeInt;
+  kdBuffPtr: PKDT800DS_SourceBuffer;
+begin
+  Result := nil;
+  if PlanCount = 0 then
+      Exit;
+
+  if PlanCount = 1 then
+    begin
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Right := nil;
+      Result^.Left := nil;
+      Result^.Vec := KDSourceBufferPtr^[0];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+    end
+  else
+    begin
+      axis := Depth mod KDT800DS_Axis;
+      M := PlanCount div 2;
+
+      kdBuffPtr := GetMemory(PlanCount * SizeOf(Pointer));
+      CopyPtr(@KDSourceBufferPtr^[0], @kdBuffPtr^[0], PlanCount * SizeOf(Pointer));
+
+      if PlanCount > 1 then
+          InternalSort(@kdBuffPtr^[0], 0, PlanCount - 1, axis);
+
+      new(Result);
+      Result^.Parent := nil;
+      Result^.Vec := kdBuffPtr^[M];
+
+      KDNodes[NodeCounter] := Result;
+      Inc(NodeCounter);
+
+      Result^.Left := InternalBuildKdTree(@kdBuffPtr^[0], M, Depth + 1);
+      if Result^.Left <> nil then
+          Result^.Left^.Parent := Result;
+
+      Result^.Right := InternalBuildKdTree(@kdBuffPtr^[M + 1], PlanCount - (M + 1), Depth + 1);
+      if Result^.Right <> nil then
+          Result^.Right^.Parent := Result;
+
+      FreeMemory(kdBuffPtr);
+    end;
+end;
+
+function TKDT800DS.GetData(const Index: NativeInt): PKDT800DS_Source;
+begin
+  Result := @KDStoreBuff[Index];
+end;
+
+constructor TKDT800DS.Create;
+begin
+  inherited Create;
+  NodeCounter := 0;
+  RootNode := nil;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  Clear;
+end;
+
+destructor TKDT800DS.Destroy;
+begin
+  Clear;
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+  inherited Destroy;
+end;
+
+procedure TKDT800DS.Clear;
+var
+  i: NativeInt;
+begin
+  i := 0;
+  while i < length(KDNodes) do
+    begin
+      Dispose(PKDT800DS_Node(KDNodes[i]));
+      Inc(i);
+    end;
+
+  for i := 0 to length(KDStoreBuff) - 1 do
+      KDStoreBuff[i].Token := '';
+
+  SetLength(KDNodes, 0);
+  SetLength(KDStoreBuff, 0);
+  SetLength(KDBuff, 0);
+
+  NodeCounter := 0;
+  RootNode := nil;
+end;
+
+function TKDT800DS.StoreBuffPtr: PKDT800DS_DyanmicStoreBuffer;
+begin
+  Result := @KDStoreBuff;
+end;
+
+procedure TKDT800DS.BuildKDTreeC(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT800DS_BuildCall);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT800DS_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT800DS.BuildKDTreeM(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT800DS_BuildMethod);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT800DS_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+procedure TKDT800DS.BuildKDTreeP(const PlanCount: NativeInt; const Data: Pointer; const OnTrigger: TKDT800DS_BuildProc);
+var
+  i, j: NativeInt;
+begin
+  Clear;
+
+  if PlanCount <= 0 then
+      Exit;
+
+  SetLength(KDStoreBuff, PlanCount);
+  SetLength(KDBuff, PlanCount);
+  SetLength(KDNodes, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      KDStoreBuff[i].Index := i;
+      KDStoreBuff[i].Token := '';
+      FillPtrByte(@KDStoreBuff[i].buff[0], SizeOf(TKDT800DS_Vec), 0);
+      OnTrigger(i, KDStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  j := PlanCount;
+
+  RootNode := InternalBuildKdTree(@KDBuff[0], j, 0);
+end;
+
+{ k-means++ clusterization }
+procedure TKDT800DS.BuildKDTreeWithCluster(const inBuff: TKDT800DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
+var
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  SetLength(Source, length(inBuff), KDT800DS_Axis);
+  for i := 0 to length(inBuff) - 1 do
+    for j := 0 to KDT800DS_Axis - 1 do
+        Source[i, j] := inBuff[i, j];
+
+  if KMeansCluster(Source, KDT800DS_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT800DS_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(Source, 0);
+end;
+
+procedure TKDT800DS.BuildKDTreeWithCluster(const inBuff: TKDT800DS_DynamicVecBuffer; const k, Restarts: NativeInt);
+var
+  OutIndex: TKMIntegerArray;
+begin
+  BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
+  SetLength(OutIndex, 0);
+end;
+
+procedure TKDT800DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT800DS_BuildCall);
+var
+  TempStoreBuff: TKDT800DS_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT800DS_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT800DS_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT800DS_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT800DS_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT800DS_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT800DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT800DS_BuildMethod);
+var
+  TempStoreBuff: TKDT800DS_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT800DS_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT800DS_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT800DS_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT800DS_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT800DS_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+procedure TKDT800DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT800DS_BuildProc);
+var
+  TempStoreBuff: TKDT800DS_DyanmicStoreBuffer;
+  Source: TKMFloat2DArray;
+  KArray: TKMFloat2DArray;
+  i, j: NativeInt;
+begin
+  Clear;
+  SetLength(TempStoreBuff, PlanCount);
+
+  i := 0;
+  while i < PlanCount do
+    begin
+      TempStoreBuff[i].Index := i;
+      TempStoreBuff[i].Token := '';
+      FillPtrByte(@TempStoreBuff[i].buff[0], SizeOf(TKDT800DS_Vec), 0);
+      OnTrigger(i, TempStoreBuff[i], Data);
+      Inc(i);
+    end;
+
+  SetLength(Source, length(TempStoreBuff), KDT800DS_Axis);
+  for i := 0 to length(TempStoreBuff) - 1 do
+    for j := 0 to KDT800DS_Axis - 1 do
+        Source[i, j] := TempStoreBuff[i].buff[j];
+
+  if KMeansCluster(Source, KDT800DS_Axis, k, umlMax(Restarts, 1), KArray, OutIndex) = 1 then
+    begin
+      SetLength(KDStoreBuff, k);
+      SetLength(KDBuff, k);
+      SetLength(KDNodes, k);
+
+      for i := 0 to k - 1 do
+        begin
+          KDBuff[i] := @KDStoreBuff[i];
+
+          KDStoreBuff[i].Index := i;
+          KDStoreBuff[i].Token := '';
+          for j := 0 to KDT800DS_Axis - 1 do
+              KDStoreBuff[i].buff[j] := KArray[j, i];
+        end;
+
+      RootNode := InternalBuildKdTree(@KDBuff[0], k, 0);
+
+      for i := 0 to length(OutIndex) - 1 do
+          OutIndex[i] := TempStoreBuff[OutIndex[i]].Index;
+
+      SetLength(KArray, 0);
+    end;
+
+  SetLength(TempStoreBuff, 0);
+  SetLength(Source, 0);
+end;
+
+function TKDT800DS.Search(const buff: TKDT800DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt; const NearestNodes: TCoreClassList): PKDT800DS_Node;
+
+var
+  NearestNeighbour: PKDT800DS_Node;
+
+  function FindParentNode(const buffPtr: PKDT800DS_Vec; NodePtr: PKDT800DS_Node): PKDT800DS_Node;
+  var
+    Next: PKDT800DS_Node;
+    Depth, axis: NativeInt;
+  begin
+    Result := nil;
+    Depth := 0;
+    Next := NodePtr;
+    while Next <> nil do
+      begin
+        Result := Next;
+        axis := Depth mod KDT800DS_Axis;
+        if buffPtr^[axis] > Next^.Vec^.buff[axis] then
+            Next := Next^.Right
+        else
+            Next := Next^.Left;
+        Depth := Depth + 1;
+      end;
+  end;
+
+  procedure ScanSubtree(const NodePtr: PKDT800DS_Node; const buffPtr: PKDT800DS_Vec; const Depth: NativeInt; const NearestNodes: TCoreClassList);
+  var
+    Dist: Double;
+    axis: NativeInt;
+  begin
+    if NodePtr = nil then
+        Exit;
+
+    Inc(SearchedCounter);
+
+    if NearestNodes <> nil then
+        NearestNodes.Add(NodePtr);
+
+    Dist := Distance(buffPtr^, NodePtr^.Vec^.buff);
+    if Dist < SearchedDistanceMin then
+      begin
+        SearchedDistanceMin := Dist;
+        NearestNeighbour := NodePtr;
+      end
+    else if (Dist = SearchedDistanceMin) and (NodePtr^.Vec^.Index < NearestNeighbour^.Vec^.Index) then
+        NearestNeighbour := NodePtr;
+
+    axis := Depth mod KDT800DS_Axis;
+    Dist := NodePtr^.Vec^.buff[axis] - buffPtr^[axis];
+
+    if Dist * Dist > SearchedDistanceMin then
+      begin
+        if NodePtr^.Vec^.buff[axis] > buffPtr^[axis] then
+            ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes)
+        else
+            ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end
+    else
+      begin
+        ScanSubtree(NodePtr^.Left, buffPtr, Depth + 1, NearestNodes);
+        ScanSubtree(NodePtr^.Right, buffPtr, Depth + 1, NearestNodes);
+      end;
+  end;
+
+  function SortCompare(const buffPtr: PKDT800DS_Vec; const p1, p2: PKDT800DS_Node): ShortInt;
+  var
+    d1, d2: Double;
+  begin
+    d1 := Distance(buffPtr^, p1^.Vec^.buff);
+    d2 := Distance(buffPtr^, p2^.Vec^.buff);
+    if d1 = d2 then
+      begin
+        if p1^.Vec^.Index = p2^.Vec^.Index then
+            Result := 0
+        else if p1^.Vec^.Index < p2^.Vec^.Index then
+            Result := -1
+        else
+            Result := 1;
+      end
+    else if d1 < d2 then
+        Result := -1
+    else
+        Result := 1;
+  end;
+
+  procedure InternalSort(var SortBuffer: TCoreClassPointerList; L, R: NativeInt; const buffPtr: PKDT800DS_Vec);
+  var
+    i, j: NativeInt;
+    p, t: PKDT800DS_Node;
+  begin
+    repeat
+      i := L;
+      j := R;
+      p := SortBuffer[(L + R) shr 1];
+      repeat
+        while SortCompare(buffPtr, SortBuffer[i], p) < 0 do
+            Inc(i);
+        while SortCompare(buffPtr, SortBuffer[j], p) > 0 do
+            Dec(j);
+        if i <= j then
+          begin
+            if i <> j then
+              begin
+                t := SortBuffer[i];
+                SortBuffer[i] := SortBuffer[j];
+                SortBuffer[j] := t;
+              end;
+            Inc(i);
+            Dec(j);
+          end;
+      until i > j;
+      if L < j then
+          InternalSort(SortBuffer, L, j, buffPtr);
+      L := i;
+    until i >= R;
+  end;
+
+var
+  Parent: PKDT800DS_Node;
+begin
+  Result := nil;
+  SearchedDistanceMin := 0;
+  SearchedCounter := 0;
+  NearestNeighbour := nil;
+  if NearestNodes <> nil then
+      NearestNodes.Clear;
+  if RootNode = nil then
+      Exit;
+  if Count = 0 then
+      Exit;
+
+  Parent := FindParentNode(@buff[0], RootNode);
+  NearestNeighbour := Parent;
+
+  SearchedDistanceMin := Distance(buff, Parent^.Vec^.buff);
+
+  ScanSubtree(RootNode, @buff[0], 0, NearestNodes);
+  if NearestNeighbour = nil then
+      NearestNeighbour := RootNode;
+  Result := NearestNeighbour;
+
+  if NearestNodes <> nil then
+    begin
+      Result := NearestNeighbour;
+      if NearestNodes.Count > 1 then
+          InternalSort(NearestNodes.ListData^, 0, NearestNodes.Count - 1, @buff[0]);
+
+      if NearestNodes.Count > 0 then
+          Result := PKDT800DS_Node(NearestNodes[0]);
+    end;
+end;
+
+function TKDT800DS.Search(const buff: TKDT800DS_Vec; var SearchedDistanceMin: Double; var SearchedCounter: NativeInt): PKDT800DS_Node;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter, nil);
+end;
+
+function TKDT800DS.Search(const buff: TKDT800DS_Vec; var SearchedDistanceMin: Double): PKDT800DS_Node;
+var
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT800DS.Search(const buff: TKDT800DS_Vec): PKDT800DS_Node;
+var
+  SearchedDistanceMin: Double;
+  SearchedCounter: NativeInt;
+begin
+  Result := Search(buff, SearchedDistanceMin, SearchedCounter);
+end;
+
+function TKDT800DS.SearchToken(const buff: TKDT800DS_Vec): TPascalString;
+var
+  p: PKDT800DS_Node;
+begin
+  p := Search(buff);
+  if p <> nil then
+      Result := p^.Vec^.Token
+  else
+      Result := '';
+end;
+
+procedure TKDT800DS.Search(const inBuff: TKDT800DS_DynamicVecBuffer; var OutBuff: TKDT800DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT800DS_DynamicVecBuffer;
+  outBuffPtr: PKDT800DS_DynamicVecBuffer;
+  outIndexPtr: PKMIntegerArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT800DS_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outBuffPtr^[pass] := p^.Vec^.buff;
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outBuffPtr := @OutBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT800DS_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outBuffPtr^[pass] := p^.Vec^.buff;
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT800DS_Node;
+begin
+  if length(OutBuff) <> length(OutIndex) then
+      Exit;
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutBuff[i] := p^.Vec^.buff;
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT800DS.Search(const inBuff: TKDT800DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
+
+{$IFDEF parallel}
+var
+  inBuffPtr: PKDT800DS_DynamicVecBuffer;
+  outIndexPtr: PKMIntegerArray;
+
+{$IFDEF FPC}
+  procedure FPC_ParallelFor(pass: Integer);
+  var
+    p: PKDT800DS_Node;
+  begin
+    p := Search(inBuffPtr^[pass]);
+    outIndexPtr^[pass] := p^.Vec^.Index;
+  end;
+{$ENDIF FPC}
+
+
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  inBuffPtr := @inBuff;
+  outIndexPtr := @OutIndex;
+
+  GlobalMemoryHook.V := False;
+  try
+{$IFDEF FPC}
+    FPCParallelFor(@FPC_ParallelFor, 0, length(inBuff) - 1);
+{$ELSE FPC}
+    DelphiParallelFor(0, length(inBuff) - 1,
+      procedure(pass: Int64)
+      var
+        p: PKDT800DS_Node;
+      begin
+        p := Search(inBuffPtr^[pass]);
+        outIndexPtr^[pass] := p^.Vec^.Index;
+      end);
+{$ENDIF FPC}
+  finally
+      GlobalMemoryHook.V := True;
+  end;
+end;
+
+{$ELSE parallel}
+
+
+var
+  i: NativeInt;
+  p: PKDT800DS_Node;
+begin
+  if length(inBuff) <> length(OutIndex) then
+      Exit;
+
+  for i := 0 to length(inBuff) - 1 do
+    begin
+      p := Search(inBuff[i]);
+      OutIndex[i] := p^.Vec^.Index;
+    end;
+end;
+{$ENDIF parallel}
+
+
+procedure TKDT800DS.SaveToStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  cnt := length(KDStoreBuff);
+  st := SaveToken;
+  ID := KDT800DS_Axis;
+
+  stream.write(st, 4);
+  stream.write(ID, 4);
+
+  stream.write(cnt, 8);
+
+  i := 0;
+  while i < cnt do
+    begin
+      stream.write(KDStoreBuff[i].buff[0], SizeOf(TKDT800DS_Vec));
+      stream.write(KDStoreBuff[i].Index, 8);
+      token_B := KDStoreBuff[i].Token.Bytes;
+      token_L := length(token_B);
+      stream.write(token_L, 4);
+      if token_L > 0 then
+        begin
+          stream.write(token_B[0], token_L);
+          SetLength(token_B, 0);
+        end;
+      Inc(i);
+    end;
+end;
+
+procedure TKDT800DS.LoadFromStream(stream: TCoreClassStream);
+var
+  cnt: Int64;
+  st, ID: Integer;
+  i: NativeInt;
+  token_B: TBytes;
+  token_L: Integer;
+begin
+  Clear;
+
+  stream.read(st, 4);
+  stream.read(ID, 4);
+
+  if st <> SaveToken then
+      RaiseInfo('kdtree token error!');
+  if ID <> KDT800DS_Axis then
+      RaiseInfo('kdtree axis error!');
+
+  stream.read(cnt, 8);
+
+  SetLength(KDStoreBuff, cnt);
+
+  i := 0;
+  try
+    while i < cnt do
+      begin
+        if stream.read(KDStoreBuff[i].buff[0], SizeOf(TKDT800DS_Vec)) <> SizeOf(TKDT800DS_Vec) then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(KDStoreBuff[i].Index, 8) <> 8 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if stream.read(token_L, 4) <> 4 then
+          begin
+            Clear;
+            Exit;
+          end;
+        if token_L > 0 then
+          begin
+            SetLength(token_B, token_L);
+            if stream.read(token_B[0], token_L) <> token_L then
+              begin
+                Clear;
+                Exit;
+              end;
+            KDStoreBuff[i].Token.Bytes := token_B;
+            SetLength(token_B, 0);
+          end
+        else
+            KDStoreBuff[i].Token := '';
+        Inc(i);
+      end;
+  except
+    Clear;
+    Exit;
+  end;
+
+  SetLength(KDBuff, cnt);
+  SetLength(KDNodes, cnt);
+
+  i := 0;
+  while i < cnt do
+    begin
+      KDBuff[i] := @KDStoreBuff[i];
+      Inc(i);
+    end;
+
+  if cnt > 0 then
+      RootNode := InternalBuildKdTree(@KDBuff[0], cnt, 0);
+end;
+
+procedure TKDT800DS.SaveToFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  fs := TCoreClassFileStream.Create(FileName, fmCreate);
+  try
+      SaveToStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT800DS.LoadFromFile(FileName: SystemString);
+var
+  fs: TCoreClassFileStream;
+begin
+  try
+      fs := TCoreClassFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  except
+      Exit;
+  end;
+
+  try
+      LoadFromStream(fs);
+  finally
+      DisposeObject(fs);
+  end;
+end;
+
+procedure TKDT800DS.PrintNodeTree(const NodePtr: PKDT800DS_Node);
+  procedure DoPrintNode(prefix: SystemString; const p: PKDT800DS_Node);
+  begin
+    DoStatus('%s +%d (%s) ', [prefix, p^.Vec^.Index, Vec(p^.Vec^.buff)]);
+    if p^.Left <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Left);
+    if p^.Right <> nil then
+        DoPrintNode(prefix + ' |-----', p^.Right);
+  end;
+
+begin
+  DoPrintNode('', NodePtr);
+end;
+
+procedure TKDT800DS.PrintBuffer;
+var
+  i: NativeInt;
+begin
+  for i := 0 to length(KDStoreBuff) - 1 do
+      DoStatus('%d - %d : %s ', [i, KDStoreBuff[i].Index, Vec(KDStoreBuff[i].buff)]);
+end;
+
+class function TKDT800DS.Vec(const s: SystemString): TKDT800DS_Vec;
+var
+  t: TTextParsing;
+  SplitOutput: TArrayPascalString;
+  i, j: NativeInt;
+begin
+  for i := 0 to KDT800DS_Axis - 1 do
+      Result[i] := 0;
+
+  t := TTextParsing.Create(s, tsText, nil);
+  if t.SplitChar(1, ', ', '', SplitOutput) > 0 then
+    begin
+      j := 0;
+      for i := 0 to length(SplitOutput) - 1 do
+        if umlGetNumTextType(SplitOutput[i]) <> ntUnknow then
+          begin
+            Result[j] := umlStrToFloat(SplitOutput[i], 0);
+            Inc(j);
+            if j >= KDT800DS_Axis then
+                Break;
+          end;
+    end;
+  DisposeObject(t);
+end;
+
+class function TKDT800DS.Vec(const v: TKDT800DS_Vec): SystemString;
+var
+  i: NativeInt;
+begin
+  Result := '';
+  for i := 0 to KDT800DS_Axis - 1 do
+    begin
+      if i > 0 then
+          Result := Result + ',';
+      Result := Result + umlFloatToStr(v[i]);
+    end;
+end;
+
+class function TKDT800DS.Distance(const v1, v2: TKDT800DS_Vec): Double;
+var
+  i: NativeInt;
+begin
+  Result := 0;
+  for i := 0 to KDT800DS_Axis - 1 do
+      Result := Result + (v2[i] - v1[i]) * (v2[i] - v1[i]);
+end;
+
+procedure TKDT800DS.Test_BuildM(const IndexFor: NativeInt; var Source: TKDT800DS_Source; const Data: Pointer);
+begin
+  Source.buff := TestBuff[IndexFor];
+  Source.Token := umlIntToStr(IndexFor);
+end;
+
+class procedure TKDT800DS.Test;
+var
+  TKDT800DS_Test: TKDT800DS;
+  t: TTimeTick;
+  i, j: NativeInt;
+  TestResultBuff: TKDT800DS_DynamicVecBuffer;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
+  errored: Boolean;
+  m64: TMemoryStream64;
+  p: PKDT800DS_Node;
+  n: TPascalString;
+begin
+  errored := False;
+  n := PFormat('test %s...', [ClassName]);
+  t := GetTimeTick;
+
+  n.Append('...build');
+  TKDT800DS_Test := TKDT800DS.Create;
+
+  n.Append('...');
+  SetLength(TKDT800DS_Test.TestBuff, 1000);
+  for i := 0 to length(TKDT800DS_Test.TestBuff) - 1 do
+    for j := 0 to KDT800DS_Axis - 1 do
+        TKDT800DS_Test.TestBuff[i][j] := i * KDT800DS_Axis + j;
+
+{$IFDEF FPC}
+  TKDT800DS_Test.BuildKDTreeM(length(TKDT800DS_Test.TestBuff), nil, @TKDT800DS_Test.Test_BuildM);
+{$ELSE FPC}
+  TKDT800DS_Test.BuildKDTreeM(length(TKDT800DS_Test.TestBuff), nil, TKDT800DS_Test.Test_BuildM);
+{$ENDIF FPC}
+  { save/load test }
+  n.Append('...save/load');
+  m64 := TMemoryStream64.CustomCreate(1024 * 1024);
+  TKDT800DS_Test.SaveToStream(m64);
+  m64.Position := 0;
+  TKDT800DS_Test.LoadFromStream(m64);
+  for i := 0 to length(TKDT800DS_Test.TestBuff) - 1 do
+    begin
+      p := TKDT800DS_Test.Search(TKDT800DS_Test.TestBuff[i]);
+      if p^.Vec^.Index <> i then
+          errored := True;
+      if not p^.Vec^.Token.Same(umlIntToStr(i)) then
+          errored := True;
+      if errored then
+          Break;
+    end;
+  DisposeObject(m64);
+
+  if not errored then
+    begin
+      { parallel search test }
+      n.Append('...parallel');
+      SetLength(TestResultBuff, length(TKDT800DS_Test.TestBuff));
+      SetLength(TestResultIndex, length(TKDT800DS_Test.TestBuff));
+      TKDT800DS_Test.Search(TKDT800DS_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if Distance(TKDT800DS_Test.TestBuff[TestResultIndex[i]], TestResultBuff[TestResultIndex[i]]) <> 0 then
+            errored := True;
+    end;
+
+  if not errored then
+    begin
+      n.Append('...kMean');
+      TKDT800DS_Test.Clear;
+      { kMean test }
+      TKDT800DS_Test.BuildKDTreeWithCluster(TKDT800DS_Test.TestBuff, 10, 1, KMeanOutIndex);
+      { parallel search test }
+      TKDT800DS_Test.Search(TKDT800DS_Test.TestBuff, TestResultBuff, TestResultIndex);
+
+      for i := 0 to length(TestResultIndex) - 1 do
+        if TestResultIndex[i] <> KMeanOutIndex[i] then
+            errored := True;
+    end;
+
+  SetLength(TKDT800DS_Test.TestBuff, 0);
+  SetLength(TestResultBuff, 0);
+  SetLength(TestResultIndex, 0);
+  SetLength(KMeanOutIndex, 0);
+  TKDT800DS_Test.Clear;
+
+  n.Append('...');
+  if errored then
+      n.Append('error!')
+  else
+      n.Append('passed ok %dms', [GetTimeTick - t]);
+  DisposeObject(TKDT800DS_Test);
   DoStatus(n);
   n := '';
 end;
@@ -37583,7 +41069,7 @@ begin
 end;
 
 { k-means++ clusterization }
-procedure TKDT1024DS.BuildKDTreeWithCluster(const inBuff: TKDT1024DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray);
+procedure TKDT1024DS.BuildKDTreeWithCluster(const inBuff: TKDT1024DS_DynamicVecBuffer; const k, Restarts: NativeInt; var OutIndex: TKMIntegerArray);
 var
   Source: TKMFloat2DArray;
   KArray: TKMFloat2DArray;
@@ -37619,13 +41105,13 @@ end;
 
 procedure TKDT1024DS.BuildKDTreeWithCluster(const inBuff: TKDT1024DS_DynamicVecBuffer; const k, Restarts: NativeInt);
 var
-  OutIndex: TDynamicIndexArray;
+  OutIndex: TKMIntegerArray;
 begin
   BuildKDTreeWithCluster(inBuff, k, Restarts, OutIndex);
   SetLength(OutIndex, 0);
 end;
 
-procedure TKDT1024DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildCall);
+procedure TKDT1024DS.BuildKDTreeWithClusterC(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildCall);
 var
   TempStoreBuff: TKDT1024DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -37678,7 +41164,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT1024DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildMethod);
+procedure TKDT1024DS.BuildKDTreeWithClusterM(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildMethod);
 var
   TempStoreBuff: TKDT1024DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -37731,7 +41217,7 @@ begin
   SetLength(Source, 0);
 end;
 
-procedure TKDT1024DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TDynamicIndexArray; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildProc);
+procedure TKDT1024DS.BuildKDTreeWithClusterP(const PlanCount, k, Restarts: NativeInt; var OutIndex: TKMIntegerArray; const Data: Pointer; const OnTrigger: TKDT1024DS_BuildProc);
 var
   TempStoreBuff: TKDT1024DS_DyanmicStoreBuffer;
   Source: TKMFloat2DArray;
@@ -37967,13 +41453,13 @@ begin
       Result := '';
 end;
 
-procedure TKDT1024DS.Search(const inBuff: TKDT1024DS_DynamicVecBuffer; var OutBuff: TKDT1024DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT1024DS.Search(const inBuff: TKDT1024DS_DynamicVecBuffer; var OutBuff: TKDT1024DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT1024DS_DynamicVecBuffer;
   outBuffPtr: PKDT1024DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -38039,12 +41525,12 @@ end;
 {$ENDIF parallel}
 
 
-procedure TKDT1024DS.Search(const inBuff: TKDT1024DS_DynamicVecBuffer; var OutIndex: TDynamicIndexArray);
+procedure TKDT1024DS.Search(const inBuff: TKDT1024DS_DynamicVecBuffer; var OutIndex: TKMIntegerArray);
 
 {$IFDEF parallel}
 var
   inBuffPtr: PKDT1024DS_DynamicVecBuffer;
-  outIndexPtr: PDynamicIndexArray;
+  outIndexPtr: PKMIntegerArray;
 
 {$IFDEF FPC}
   procedure FPC_ParallelFor(pass: Integer);
@@ -38321,8 +41807,8 @@ var
   t: TTimeTick;
   i, j: NativeInt;
   TestResultBuff: TKDT1024DS_DynamicVecBuffer;
-  TestResultIndex: TDynamicIndexArray;
-  KMeanOutIndex: TDynamicIndexArray;
+  TestResultIndex: TKMIntegerArray;
+  KMeanOutIndex: TKMIntegerArray;
   errored: Boolean;
   m64: TMemoryStream64;
   p: PKDT1024DS_Node;
@@ -38437,11 +41923,14 @@ begin
   TKDT48DS.Test();
   TKDT52DS.Test();
   TKDT64DS.Test();
+  TKDT96DS.Test();
   TKDT128DS.Test();
   TKDT156DS.Test();
   TKDT192DS.Test();
   TKDT256DS.Test();
+  TKDT384DS.Test();
   TKDT512DS.Test();
+  TKDT800DS.Test();
   TKDT1024DS.Test();
 end;
 

@@ -19,8 +19,6 @@
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
 
-procedure PCABuildBasis(const x: TLMatrix; NPoints: TLInt; NVars: TLInt; var Info: TLInt; var s2: TLVec; var v: TLMatrix); forward;
-
 procedure InternalStatHeapSort(var Arr: TLVec; n: TLInt); forward;
 
 (* ************************************************************************

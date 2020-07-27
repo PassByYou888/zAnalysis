@@ -23,15 +23,16 @@ unit zSound;
 
 interface
 
-uses CoreClasses, MemoryStream64, UnicodeMixedLib,
+uses CoreClasses, MemoryStream64, UnicodeMixedLib, Cadencer,
   ObjectDataManager, ObjectDataHashField, PascalStrings, ListEngine;
 
 type
-  TzSound = class(TCoreClassPersistent)
+  TzSound = class(TCoreClassInterfacedObject, ICadencerProgressInterface)
   protected
-    FSearchDB             : TCoreClassObject;
-    FTempPath             : SystemString;
-    FCacheFileList        : THashVariantList;
+    FCadEng: TCadencer;
+    FSearchDB: TCoreClassObject;
+    FTempPath: SystemString;
+    FCacheFileList: THashVariantList;
     FLastPlaySoundFilename: SystemString;
 
     procedure DoPrepareMusic(FileName: SystemString); virtual; abstract;
@@ -52,6 +53,9 @@ type
 
     function SaveSoundAsLocalFile(FileName: SystemString): SystemString; virtual;
     function SoundReadyOk(FileName: SystemString): Boolean; virtual;
+  protected
+    // ICadencerProgressInterface
+    procedure CadencerProgress(const deltaTime, newTime: Double); virtual;
   public
     constructor Create(ATempPath: SystemString); virtual;
     destructor Destroy; override;
@@ -70,7 +74,8 @@ type
 
     procedure StopAll;
 
-    procedure Progress(deltaTime: Double); virtual;
+    procedure Progress(deltaTime: Double); overload; virtual;
+    procedure Progress(); overload;
 
     property SearchDB: TCoreClassObject read FSearchDB write FSearchDB;
     property LastPlaySoundFilename: SystemString read FLastPlaySoundFilename;
@@ -95,9 +100,16 @@ begin
   Result := False;
 end;
 
+procedure TzSound.CadencerProgress(const deltaTime, newTime: Double);
+begin
+  Progress(deltaTime);
+end;
+
 constructor TzSound.Create(ATempPath: SystemString);
 begin
   inherited Create;
+  FCadEng := TCadencer.Create;
+  FCadEng.ProgressInterface := Self;
   FSearchDB := nil;
   FTempPath := ATempPath;
   FCacheFileList := THashVariantList.Create;
@@ -107,6 +119,7 @@ end;
 destructor TzSound.Destroy;
 begin
   DisposeObject(FCacheFileList);
+  DisposeObject(FCadEng);
   inherited Destroy;
 end;
 
@@ -218,11 +231,13 @@ procedure TzSound.Progress(deltaTime: Double);
 begin
 end;
 
+procedure TzSound.Progress;
+begin
+  FCadEng.Progress;
+end;
+
 initialization
 
 DefaultSoundEngineClass := TzSound;
 
-end. 
- 
- 
- 
+end.

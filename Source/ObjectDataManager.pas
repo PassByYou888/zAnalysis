@@ -116,17 +116,18 @@ type
     function NewHandle(Stream_: TCoreClassStream; const dbFile: SystemString; const dbItemID: Byte; dbOnlyRead, IsNewDB_: Boolean): Boolean; overload;
     function NewHandle(FixedStringL: Byte; Stream_: TCoreClassStream; const dbFile: SystemString; const dbItemID: Byte; dbOnlyRead, IsNewDB_: Boolean): Boolean; overload;
   public
-    // DoOpen Database from file
+    // Open Database
     constructor Open(const dbFile: SystemString; const dbItemID: Byte; dbOnlyRead: Boolean); overload;
-    // create new Database file
+    // create new Database
     constructor CreateNew(const dbFile: SystemString; const dbItemID: Byte); overload;
     constructor CreateNew(FixedStringL: Byte; const dbFile: SystemString; const dbItemID: Byte); overload;
-    // create or DoOpen Database for Stream IO
+    // create or Open form Stream IO
     constructor CreateAsStream(Stream_: TCoreClassStream;
       const dbFile: SystemString; const dbItemID: Byte; dbOnlyRead, isNewDB, DestroyTimeFreeStream: Boolean); overload;
     constructor CreateAsStream(FixedStringL: Byte; Stream_: TCoreClassStream;
       const dbFile: SystemString; const dbItemID: Byte; dbOnlyRead, isNewDB, DestroyTimeFreeStream: Boolean); overload;
 
+    // destroy
     destructor Destroy; override;
 
     function CopyTo(DestDB: TObjectDataManager): Boolean;
@@ -166,6 +167,8 @@ type
     procedure ExpItemToDisk(DBPath, DBItem, ExpFilename_: SystemString);
 
     // state
+    function Is_BACKUP_Mode: Boolean;
+    function Is_Flush_Mode: Boolean;
     function isAbort: Boolean;
     function Close: Boolean;
     function ErrorNo: Int64;
@@ -339,7 +342,7 @@ type
     FLibList: TCoreClassStrings;
     FUseWildcard: Boolean;
     function GetItems(aIndex: Integer): TObjectDataManager;
-    function GetNames(AName: SystemString): TObjectDataManager;
+    function GetNames(Name_: SystemString): TObjectDataManager;
     procedure SetItems(aIndex: Integer; const Value: TObjectDataManager);
   public
     constructor Create(dbItemID: Byte);
@@ -352,14 +355,14 @@ type
     procedure Clear;
     function Count: Integer;
     procedure Delete(aIndex: Integer);
-    procedure DeleteFromName(AName: SystemString);
+    procedure DeleteFromName(Name_: SystemString);
     procedure UpdateAll;
     procedure Disable;
     procedure Enabled;
 
     property LibList: TCoreClassStrings read FLibList;
     property Items[aIndex: Integer]: TObjectDataManager read GetItems write SetItems;
-    property Names[AName: SystemString]: TObjectDataManager read GetNames; default;
+    property Names[Name_: SystemString]: TObjectDataManager read GetNames; default;
     property UseWildcard: Boolean read FUseWildcard write FUseWildcard;
     property ID: Byte read FID write FID;
   end;
@@ -1144,6 +1147,26 @@ begin
       end;
       ItemClose(itmHnd);
     end;
+end;
+
+function TObjectDataManager.Is_BACKUP_Mode: Boolean;
+begin
+{$IFDEF ZDB_BACKUP}
+  Result := FDBHandle.IOHnd.Handle is TReliableFileStream;
+{$ELSE ZDB_BACKUP}
+  Result := False;
+{$ENDIF ZDB_BACKUP}
+end;
+
+function TObjectDataManager.Is_Flush_Mode: Boolean;
+begin
+{$IFDEF ZDB_PHYSICAL_FLUSH}
+  Result := (not FDBHandle.IOHnd.IsOnlyRead)
+    and (FDBHandle.IOHnd.IsOpen)
+    and (FDBHandle.IOHnd.Handle is TReliableFileStream);
+{$ELSE ZDB_PHYSICAL_FLUSH}
+  Result := False;
+{$ENDIF ZDB_PHYSICAL_FLUSH}
 end;
 
 function TObjectDataManager.isAbort: Boolean;
@@ -2444,13 +2467,13 @@ begin
   Result := TObjectDataManager(FLibList.Objects[aIndex]);
 end;
 
-function TObjectDataMarshal.GetNames(AName: SystemString): TObjectDataManager;
+function TObjectDataMarshal.GetNames(Name_: SystemString): TObjectDataManager;
 var
   i: Integer;
   aUName: SystemString;
 begin
   Result := nil;
-  aUName := GetAbsoluteFileName(AName);
+  aUName := GetAbsoluteFileName(Name_);
   if FLibList.Count > 0 then
     begin
       if FUseWildcard then
@@ -2629,12 +2652,12 @@ begin
   FLibList.Delete(aIndex);
 end;
 
-procedure TObjectDataMarshal.DeleteFromName(AName: SystemString);
+procedure TObjectDataMarshal.DeleteFromName(Name_: SystemString);
 var
   i: Integer;
   aUName: SystemString;
 begin
-  aUName := GetAbsoluteFileName(AName);
+  aUName := GetAbsoluteFileName(Name_);
   if FLibList.Count > 0 then
     begin
       if FUseWildcard then

@@ -32,7 +32,7 @@ type
     procedure Button6Click(Sender: TObject);
   private
     { Private declarations }
-    ze                     : TDBStoreBase;
+    ze                     : TDBStore;
     lr1, lr2, lr3, lr4, lr5: TLearn;
   public
     { Public declarations }
@@ -376,7 +376,7 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  ze := TDBStoreBase.CreateNewMemory;
+  ze := TDBStore.CreateNewMemory;
   AddDoStatusHook(Self, DoStatusM);
 
   // lr1          这是做消费能力统计的机器人

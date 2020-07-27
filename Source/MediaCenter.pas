@@ -40,7 +40,7 @@ type
     Alias: THashVariantList;
   end;
 
-  TFileIOHook = class
+  TFileIO = class
   private
     FCritical: TCritical;
     FList: TCoreClassList;
@@ -79,7 +79,7 @@ type
   end;
 
 var
-  FileIO: TFileIOHook = nil;
+  FileIO: TFileIO = nil;
 
   // resource: sound.ox or sound
   SoundLibrary: TObjectDataHashField = nil;
@@ -102,7 +102,6 @@ var
 function FileIOCreate(const FileName: SystemString): TCoreClassStream;
 function FileIOOpen(const FileName: SystemString): TCoreClassStream;
 function FileIOExists(const FileName: SystemString): Boolean;
-
 function GetResourceStream(const FileName: SystemString): TStream;
 
 type
@@ -158,17 +157,17 @@ begin
   end;
 end;
 
-function TFileIOHook.GetSearchItems(index: Integer): PSearchConfigInfo;
+function TFileIO.GetSearchItems(index: Integer): PSearchConfigInfo;
 begin
   Result := FList[index];
 end;
 
-procedure TFileIOHook.SetSearchItems(index: Integer; const Value: PSearchConfigInfo);
+procedure TFileIO.SetSearchItems(index: Integer; const Value: PSearchConfigInfo);
 begin
   FList[index] := Value;
 end;
 
-function TFileIOHook.SearchObjData(aRootDir, AName: SystemString; Recursion: Boolean; aIntf: TObjectDataManager; var Hnd: TCoreClassStream): Boolean;
+function TFileIO.SearchObjData(aRootDir, AName: SystemString; Recursion: Boolean; aIntf: TObjectDataManager; var Hnd: TCoreClassStream): Boolean;
 var
   ItemHnd: TItemHandle;
   ItmSearchHnd: TItemSearch;
@@ -206,7 +205,7 @@ begin
     end;
 end;
 
-function TFileIOHook.SearchLib(LibName, ItmName: SystemString; Intf: TObjectDataHashField; var Hnd: TCoreClassStream): Boolean;
+function TFileIO.SearchLib(LibName, ItmName: SystemString; Intf: TObjectDataHashField; var Hnd: TCoreClassStream): Boolean;
 var
   n: SystemString;
   p: PHashItemData;
@@ -225,7 +224,7 @@ begin
     end;
 end;
 
-function TFileIOHook.SearchStreamList(AName: SystemString; Intf: TObjectDataHashItem; var Hnd: TCoreClassStream): Boolean;
+function TFileIO.SearchStreamList(AName: SystemString; Intf: TObjectDataHashItem; var Hnd: TCoreClassStream): Boolean;
 var
   p: PHashItemData;
 begin
@@ -239,7 +238,7 @@ begin
     end;
 end;
 
-function TFileIOHook.ExistsObjData(aRootDir, AName: SystemString; Recursion: Boolean; aIntf: TObjectDataManager): Boolean;
+function TFileIO.ExistsObjData(aRootDir, AName: SystemString; Recursion: Boolean; aIntf: TObjectDataManager): Boolean;
 var
   ItmSearchHnd: TItemSearch;
   ItmRecursionHnd: TItemRecursionSearch;
@@ -264,7 +263,7 @@ begin
       Result := aIntf.ItemFindFirst(aRootDir, AName, ItmSearchHnd);
 end;
 
-function TFileIOHook.ExistsLib(LibName, ItmName: SystemString; Intf: TObjectDataHashField): Boolean;
+function TFileIO.ExistsLib(LibName, ItmName: SystemString; Intf: TObjectDataHashField): Boolean;
 var
   n: SystemString;
 begin
@@ -275,19 +274,19 @@ begin
   Result := Intf.PathItems[n] <> nil;
 end;
 
-function TFileIOHook.ExistsStreamList(AName: SystemString; Intf: TObjectDataHashItem): Boolean;
+function TFileIO.ExistsStreamList(AName: SystemString; Intf: TObjectDataHashItem): Boolean;
 begin
   Result := Intf.Names[AName] <> nil;
 end;
 
-constructor TFileIOHook.Create;
+constructor TFileIO.Create;
 begin
   inherited Create;
   FCritical := TCritical.Create;
   FList := TCoreClassList.Create;
 end;
 
-destructor TFileIOHook.Destroy;
+destructor TFileIO.Destroy;
 begin
   while SearchCount > 0 do
       DeleteSearchIndex(0);
@@ -297,7 +296,7 @@ begin
   inherited Destroy;
 end;
 
-function TFileIOHook.FileIOStream(FileName: SystemString; Mode: Word): TCoreClassStream;
+function TFileIO.FileIOStream(FileName: SystemString; Mode: Word): TCoreClassStream;
 var
   i: Integer;
   p: PSearchConfigInfo;
@@ -421,7 +420,7 @@ begin
   Result := nil;
 end;
 
-function TFileIOHook.FileIOStreamExists(FileName: SystemString): Boolean;
+function TFileIO.FileIOStreamExists(FileName: SystemString): Boolean;
 var
   i: Integer;
   p: PSearchConfigInfo;
@@ -512,18 +511,18 @@ begin
   end;
 end;
 
-procedure TFileIOHook.Clear;
+procedure TFileIO.Clear;
 begin
   while SearchCount > 0 do
       DeleteSearchIndex(0);
 end;
 
-function TFileIOHook.SearchCount: Integer;
+function TFileIO.SearchCount: Integer;
 begin
   Result := FList.Count;
 end;
 
-procedure TFileIOHook.AddPrioritySearchObj(Recursion: Boolean; Intf: TCoreClassObject; Info: SystemString);
+procedure TFileIO.AddPrioritySearchObj(Recursion: Boolean; Intf: TCoreClassObject; Info: SystemString);
 var
   p: PSearchConfigInfo;
 begin
@@ -542,7 +541,7 @@ begin
     end;
 end;
 
-procedure TFileIOHook.AddSearchObj(Recursion: Boolean; Intf: TCoreClassObject; Info: SystemString);
+procedure TFileIO.AddSearchObj(Recursion: Boolean; Intf: TCoreClassObject; Info: SystemString);
 var
   p: PSearchConfigInfo;
 begin
@@ -554,7 +553,7 @@ begin
   FList.Add(p);
 end;
 
-procedure TFileIOHook.DeleteSearchObj(Value: TCoreClassObject);
+procedure TFileIO.DeleteSearchObj(Value: TCoreClassObject);
 var
   i: Integer;
   p: PSearchConfigInfo;
@@ -581,7 +580,7 @@ begin
     end;
 end;
 
-procedure TFileIOHook.DeleteSearchIndex(Value: Integer);
+procedure TFileIO.DeleteSearchIndex(Value: Integer);
 var
   p: PSearchConfigInfo;
 begin
@@ -597,7 +596,7 @@ begin
   FList.Delete(Value);
 end;
 
-function TFileIOHook.ChangePrioritySearchOption(Intf: TCoreClassObject; Recursion: Boolean; Info: SystemString): Boolean;
+function TFileIO.ChangePrioritySearchOption(Intf: TCoreClassObject; Recursion: Boolean; Info: SystemString): Boolean;
 var
   i: Integer;
   p: PSearchConfigInfo;
@@ -622,7 +621,7 @@ begin
   Result := True;
 end;
 
-function TFileIOHook.SetSearchObjAlias(Intf: TCoreClassObject; SourFileName, DestFileName: SystemString): Boolean;
+function TFileIO.SetSearchObjAlias(Intf: TCoreClassObject; SourFileName, DestFileName: SystemString): Boolean;
 var
   i: Integer;
   p: PSearchConfigInfo;
@@ -644,7 +643,7 @@ begin
     end;
 end;
 
-function TFileIOHook.SetSearchObjAliasFromList(Intf: TCoreClassObject; Alias: THashVariantList): Boolean;
+function TFileIO.SetSearchObjAliasFromList(Intf: TCoreClassObject; Alias: THashVariantList): Boolean;
 var
   i: Integer;
   p: PSearchConfigInfo;
@@ -667,7 +666,7 @@ begin
     end;
 end;
 
-function TFileIOHook.SetSearchObjAliasFromStream(Intf: TCoreClassObject; Alias: TCoreClassStream): Boolean;
+function TFileIO.SetSearchObjAliasFromStream(Intf: TCoreClassObject; Alias: TCoreClassStream): Boolean;
 var
   i: Integer;
   p: PSearchConfigInfo;
@@ -888,7 +887,7 @@ end;
 
 initialization
 
-FileIO := TFileIOHook.Create;
+FileIO := TFileIO.Create;
 
 SoundLibrary := nil;
 ArtLibrary := nil;

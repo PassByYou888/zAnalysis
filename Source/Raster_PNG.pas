@@ -1884,14 +1884,14 @@ begin
           raise EPngError.Create(RCStrIncompletePalette);
 
       Setlength(FPaletteEntries, ChunkSize_ div SizeOf(TRGB24));
-
       Read(FPaletteEntries[0], Length(FPaletteEntries) * SizeOf(TRGB24));
     end;
 end;
 
 procedure TChunkPngPalette.WriteToStream(Stream: TCoreClassStream);
 begin
-  Stream.Write(FPaletteEntries[0], ChunkSize);
+  if ChunkSize > 0 then
+      Stream.Write(FPaletteEntries[0], ChunkSize);
 end;
 
 procedure TChunkPngPalette.PaletteEntriesChanged;
@@ -5601,17 +5601,16 @@ begin
 end;
 
 type
-  TPortableNetworkGraphic32 = class(TPortableNetworkGraphic)
+  TPortableNetworkMemoryRaster = class(TPortableNetworkGraphic)
   private
     procedure AssignPropertiesFromRaster(raster: TMemoryRaster);
     function GetBackgroundColor: TRColor;
   protected
     function RasterScanline(raster: TObject; Y: TGeoInt): Pointer; virtual;
   public
+    constructor Create; override;
     procedure AssignTo(Dest: TCoreClassObject);
     procedure Assign(Source: TCoreClassObject);
-
-    procedure MakeIndexColored(MaxColorCount: TGeoInt);
 
     function IsPremultiplied: Boolean;
     procedure DrawToRaster(raster: TMemoryRaster); virtual;
@@ -5889,31 +5888,6 @@ type
     property Count: TGeoInt read FCount;
   end;
 
-  TPngHistogram = class
-  private
-    FItems: array of TPngHistogramEntry;
-    FCount: TGeoInt;
-    procedure Remove(Index: TGeoInt);
-  protected
-    function GetItem(Index: TGeoInt): TPngHistogramEntry;
-    function Find(const Item: TRColor; var Index: TGeoInt): Boolean;
-    function Compare(const item1, item2: TRColor): TGeoInt;
-    procedure InsertItem(Index: TGeoInt; const anItem: TPngHistogramEntry);
-  public
-    function Add(const anItem: TPngHistogramEntry): TGeoInt; overload;
-    function IndexOf(const Value: TRColor): TGeoInt;
-
-    function Add(Value: TRColor): TGeoInt; overload;
-    procedure Advance(Value: TRColor); overload;
-
-    procedure Clear;
-    procedure Clean;
-    function GetPalette(MaxColors: TGeoInt = 256): TPngPalette;
-
-    property Items[index: TGeoInt]: TPngHistogramEntry read GetItem; default;
-    property Count: TGeoInt read FCount;
-  end;
-
 function ColorIndexInPalette(Color: TRColor; Palette: TPalette24): TGeoInt;
 begin
   for Result := 0 to Length(Palette) - 1 do
@@ -5926,7 +5900,7 @@ end;
 
 function IsPNG(const Stream: TCoreClassStream): Boolean;
 begin
-  with TPortableNetworkGraphic32.Create do
+  with TPortableNetworkMemoryRaster.Create do
     begin
       try
           Result := CanLoad(Stream);
@@ -5939,7 +5913,7 @@ end;
 
 procedure LoadRasterFromPNG(raster: TMemoryRaster; Stream: TCoreClassStream);
 begin
-  with TPortableNetworkGraphic32.Create do
+  with TPortableNetworkMemoryRaster.Create do
     begin
       try
         LoadFromStream(Stream);
@@ -5953,7 +5927,7 @@ end;
 
 procedure SaveRasterToPNG(raster: TMemoryRaster; Stream: TCoreClassStream);
 begin
-  with TPortableNetworkGraphic32.Create do
+  with TPortableNetworkMemoryRaster.Create do
     begin
       try
         Assign(raster);
@@ -5964,7 +5938,7 @@ begin
     end;
 end;
 
-procedure TPortableNetworkGraphic32.AssignPropertiesFromRaster(raster: TMemoryRaster);
+procedure TPortableNetworkMemoryRaster.AssignPropertiesFromRaster(raster: TMemoryRaster);
 var
   Index, PalIndex: TGeoInt;
   IsAlpha: Boolean;
@@ -6038,16 +6012,13 @@ begin
                           TempPalette[PalIndex].R := TRColorEntry(Color).R;
                           TempPalette[PalIndex].G := TRColorEntry(Color).G;
                           TempPalette[PalIndex].B := TRColorEntry(Color).B;
-                          if IsGrayScale and not
-                            ((TRColorEntry(Color).R = TRColorEntry(Color).G) and
-                            (TRColorEntry(Color).B = TRColorEntry(Color).G)) then
+                          if IsGrayScale and (not((TRColorEntry(Color).R = TRColorEntry(Color).G) and (TRColorEntry(Color).B = TRColorEntry(Color).G))) then
                               IsGrayScale := False;
                         end
                       else
                           IsPalette := False;
                     end
-                  else if not((TRColorEntry(Color).R = TRColorEntry(Color).G) and
-                    (TRColorEntry(Color).B = TRColorEntry(Color).G)) then
+                  else if not((TRColorEntry(Color).R = TRColorEntry(Color).G) and (TRColorEntry(Color).B = TRColorEntry(Color).G)) then
                       IsGrayScale := False;
                 end;
             end;
@@ -6063,23 +6034,25 @@ begin
       // set image header
       with ImageHeader do
         if IsGrayScale then
-          if IsAlpha then
-            begin
-              ColorType := ctGrayscaleAlpha;
-              BitDepth := 8;
-            end
-          else
-            begin
-              ColorType := ctIndexedColor; // ctGrayscale
-              if Length(TempPalette) <= 2 then
-                  BitDepth := 1
-              else if Length(TempPalette) <= 4 then
-                  BitDepth := 2
-              else if Length(TempPalette) <= 16 then
-                  BitDepth := 4
-              else
-                  BitDepth := 8;
-            end
+          begin
+            if IsAlpha then
+              begin
+                ColorType := ctGrayscaleAlpha;
+                BitDepth := 8;
+              end
+            else
+              begin
+                ColorType := ctIndexedColor; // ctGrayscale
+                if Length(TempPalette) <= 2 then
+                    BitDepth := 1
+                else if Length(TempPalette) <= 4 then
+                    BitDepth := 2
+                else if Length(TempPalette) <= 16 then
+                    BitDepth := 4
+                else
+                    BitDepth := 8;
+              end;
+          end
         else if IsPalette then
           begin
             ColorType := ctIndexedColor;
@@ -6122,7 +6095,7 @@ begin
     end;
 end;
 
-function TPortableNetworkGraphic32.GetBackgroundColor: TRColor;
+function TPortableNetworkMemoryRaster.GetBackgroundColor: TRColor;
 var
   ResultColor32: TRColorEntry absolute Result;
 begin
@@ -6136,16 +6109,15 @@ begin
             ResultColor32.B := GraySampleValue;
             ResultColor32.A := $FF;
           end
-      else
-        if FBackgroundChunk.Background is TPngBackgroundColorFormat26 then
+      else if FBackgroundChunk.Background is TPngBackgroundColorFormat26 then
         with TPngBackgroundColorFormat26(FBackgroundChunk.Background) do
           begin
             ResultColor32.R := RedSampleValue;
             ResultColor32.G := GreenSampleValue;
             ResultColor32.B := BlueSampleValue;
             ResultColor32.A := $FF;
-          end;
-      if FBackgroundChunk.Background is TPngBackgroundColorFormat3 then
+          end
+      else if FBackgroundChunk.Background is TPngBackgroundColorFormat3 then
         with TPngBackgroundColorFormat3(FBackgroundChunk.Background) do
           begin
             ResultColor32.R := PaletteEntry[PaletteIndex].R;
@@ -6158,7 +6130,7 @@ begin
       Result := $0;
 end;
 
-function TPortableNetworkGraphic32.RasterScanline(raster: TObject; Y: TGeoInt): Pointer;
+function TPortableNetworkMemoryRaster.RasterScanline(raster: TObject; Y: TGeoInt): Pointer;
 begin
   if raster is TMemoryRaster then
       Result := TMemoryRaster(raster).ScanLine[Y]
@@ -6166,7 +6138,12 @@ begin
       Result := nil;
 end;
 
-procedure TPortableNetworkGraphic32.AssignTo(Dest: TCoreClassObject);
+constructor TPortableNetworkMemoryRaster.Create;
+begin
+  inherited Create;
+end;
+
+procedure TPortableNetworkMemoryRaster.AssignTo(Dest: TCoreClassObject);
 begin
   if Dest is TMemoryRaster then
     begin
@@ -6175,7 +6152,7 @@ begin
     end;
 end;
 
-procedure TPortableNetworkGraphic32.Assign(Source: TCoreClassObject);
+procedure TPortableNetworkMemoryRaster.Assign(Source: TCoreClassObject);
 var
   EncoderClass: TCustomPngEncoderClass;
   DataStream: TMemoryStream64;
@@ -6232,121 +6209,7 @@ begin
       end;
 end;
 
-procedure TPortableNetworkGraphic32.MakeIndexColored(MaxColorCount: TGeoInt);
-var
-  Index: TGeoInt;
-  Histogram: TPngHistogram;
-  Palette: TPngPalette;
-  raster: TMemoryRaster;
-  Bits: PRColor;
-  PixelCount: TGeoInt;
-  InvPixelCount: TGeoFloat;
-  RGB24: TRGB24;
-  EncoderClass: TCustomPngEncoderClass;
-  DataStream: TMemoryStream64;
-begin
-  if ColorType in [ctIndexedColor, ctGrayscale, ctGrayscaleAlpha] then
-      raise Exception.Create('Color type not suitable');
-
-  raster := TMemoryRaster.Create;
-  try
-    AssignTo(raster);
-
-    Histogram := TPngHistogram.Create;
-    try
-      Bits := PRColor(raster.Bits);
-      PixelCount := raster.Height * raster.Width;
-      InvPixelCount := 100 / (PixelCount - 1);
-
-      for Index := 0 to PixelCount - 1 do
-        begin
-          Histogram.Advance(Bits^);
-          Inc(Bits);
-        end;
-
-      Palette := Histogram.GetPalette(MaxColorCount);
-    finally
-        Histogram.Free;
-    end;
-
-    Bits := PRColor(raster.Bits);
-    for Index := 0 to PixelCount - 1 do
-      begin
-        Palette.GetNearest(Bits^);
-        Inc(Bits);
-      end;
-
-    // basic properties
-    ImageHeader.Width := Width;
-    ImageHeader.Height := Height;
-    ImageHeader.CompressionMethod := 0;
-    ImageHeader.InterlaceMethod := imNone;
-
-    ImageHeader.ColorType := ctIndexedColor;
-    if Palette.Count <= 2 then
-        ImageHeader.BitDepth := 1
-    else
-      if Palette.Count <= 4 then
-        ImageHeader.BitDepth := 2
-    else
-      if Palette.Count <= 16 then
-        ImageHeader.BitDepth := 4
-    else
-        ImageHeader.BitDepth := 8;
-
-    if not Assigned(FPaletteChunk) then
-        FPaletteChunk := TChunkPngPalette.Create(ImageHeader);
-
-    FPaletteChunk.Count := Palette.Count;
-    for Index := 0 to Palette.Count - 1 do
-      begin
-        RGB24.R := TRColorEntry(Palette.Items[Index]).R;
-        RGB24.G := TRColorEntry(Palette.Items[Index]).G;
-        RGB24.B := TRColorEntry(Palette.Items[Index]).B;
-        FPaletteChunk.PaletteEntry[Index] := RGB24;
-      end;
-
-    // delete any gama correction table
-    if Assigned(FGammaChunk) then
-        DisposeObjectAndNil(FGammaChunk);
-
-    case ImageHeader.ColorType of
-      ctIndexedColor:
-        case ImageHeader.BitDepth of
-          1: EncoderClass := TPngNonInterlacedPalette1bitEncoder;
-          2: EncoderClass := TPngNonInterlacedPalette2bitEncoder;
-          4: EncoderClass := TPngNonInterlacedPalette4bitEncoder;
-          8: EncoderClass := TPngNonInterlacedPalette8bitEncoder;
-          else raise EPngError.Create(RCStrUnsupportedFormat);
-        end;
-      else
-        raise EPngError.Create(RCStrUnsupportedFormat);
-    end;
-
-    DataStream := TMemoryStream64.Create;
-    with DataStream do
-      try
-        with EncoderClass.Create(DataStream, FImageHeader, FGammaChunk, FPaletteChunk) do
-          try
-              EncodeFromScanline(raster, {$IFDEF FPC}@{$ENDIF FPC}RasterScanline);
-          finally
-              Free;
-          end;
-
-        // reset data stream position
-        DataStream.Seek(0, TSeekOrigin.soBeginning);
-
-        // compress image data from data stream
-        CompressImageDataFromStream(DataStream);
-      finally
-          DisposeObjectAndNil(DataStream);
-      end;
-  finally
-      raster.Free;
-  end;
-end;
-
-function TPortableNetworkGraphic32.IsPremultiplied: Boolean;
+function TPortableNetworkMemoryRaster.IsPremultiplied: Boolean;
 var
   TempRaster: TMemoryRaster;
   Pointer: PRColorArray;
@@ -6375,7 +6238,7 @@ begin
   end;
 end;
 
-procedure TPortableNetworkGraphic32.DrawToRaster(raster: TMemoryRaster);
+procedure TPortableNetworkMemoryRaster.DrawToRaster(raster: TMemoryRaster);
 var
   DecoderClass: TCustomPngDecoderClass;
   DataStream: TMemoryStream64;
@@ -7692,131 +7555,6 @@ end;
 procedure TPngHistogramEntry.Advance;
 begin
   Inc(FCount);
-end;
-
-function TPngHistogram.GetItem(Index: TGeoInt): TPngHistogramEntry;
-begin
-  Result := FItems[index];
-end;
-
-function TPngHistogram.Find(const Item: TRColor; var Index: TGeoInt): Boolean;
-var
-  lo, hi, mid, compResult: TGeoInt;
-begin
-  Result := False;
-  lo := 0;
-  hi := FCount - 1;
-  while lo <= hi do
-    begin
-      mid := (lo + hi) shr 1;
-      compResult := Compare(FItems[mid].Color, Item);
-      if compResult < 0 then
-          lo := mid + 1
-      else
-        begin
-          hi := mid - 1;
-          if compResult = 0 then
-              Result := True;
-        end;
-    end;
-
-  index := lo;
-end;
-
-procedure TPngHistogram.InsertItem(Index: TGeoInt; const anItem: TPngHistogramEntry);
-begin
-  if Count = Length(FItems) then
-      Setlength(FItems, Count + 8 + (Count shr 4));
-
-  if index < Count then
-      System.Move(FItems[index], FItems[index + 1], (Count - index) * SizeOf(Pointer));
-
-  Inc(FCount);
-  FItems[index] := anItem;
-end;
-
-function TPngHistogram.Add(Value: TRColor): TGeoInt;
-begin
-  Add(TPngHistogramEntry.Create(Value));
-end;
-
-function TPngHistogram.Add(const anItem: TPngHistogramEntry): TGeoInt;
-begin
-  Find(anItem.Color, Result{%H-});
-  InsertItem(Result, anItem);
-end;
-
-procedure TPngHistogram.Advance(Value: TRColor);
-var
-  Index: TGeoInt;
-begin
-  Index := IndexOf(Value);
-  if Index < 0 then
-      Add(Value)
-  else
-      FItems[Index].Advance;
-end;
-
-function TPngHistogram.IndexOf(const Value: TRColor): TGeoInt;
-begin
-  if not Find(Value, Result{%H-}) then
-      Result := -1;
-end;
-
-procedure TPngHistogram.Remove(Index: TGeoInt);
-var
-  n: TGeoInt;
-begin
-  Dec(FCount);
-  n := FCount - index;
-  if n > 0 then
-      System.Move(FItems[Index + 1], FItems[Index], n * SizeOf(TPngHistogramEntry));
-  Setlength(FItems, FCount);
-end;
-
-function TPngHistogram.GetPalette(MaxColors: TGeoInt = 256): TPngPalette;
-var
-  PaletteIndex, Index, LastIndex: TGeoInt;
-  ColorCount: TGeoInt;
-begin
-  Result := TPngPalette.Create;
-
-  for PaletteIndex := 0 to Min(Count, MaxColors) - 1 do
-    begin
-      ColorCount := FItems[0].Count;
-      LastIndex := 0;
-      for Index := 1 to FCount - 1 do
-        begin
-          if (FItems[Index].Count > ColorCount) then
-            begin
-              LastIndex := Index;
-              ColorCount := FItems[Index].Count;
-            end;
-        end;
-
-      Result.Add(FItems[LastIndex].FColor);
-      Remove(LastIndex);
-    end;
-end;
-
-procedure TPngHistogram.Clear;
-begin
-  Setlength(FItems, 0);
-  FCount := 0;
-end;
-
-function TPngHistogram.Compare(const item1, item2: TRColor): TGeoInt;
-begin
-  Result := item1 - item2;
-end;
-
-procedure TPngHistogram.Clean;
-var
-  i: TGeoInt;
-begin
-  for i := 0 to FCount - 1 do
-      FItems[i].Free;
-  Clear;
 end;
 
 procedure BuildCRCTable(Polynomial: Cardinal);

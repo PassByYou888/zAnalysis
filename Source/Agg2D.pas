@@ -571,7 +571,7 @@ begin
   FFillGradientD2 := 100;
   FLineGradientD2 := 100;
 
-  FImageFilter := ifBilinear;
+  FImageFilter := ifBlackman144;
   FImageResample := irNever;
 
   FGammaNone := TAggGammaNone.Create;

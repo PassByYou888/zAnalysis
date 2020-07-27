@@ -29,31 +29,24 @@ uses
 
   CoreClasses, ListEngine,
   ObjectData, ObjectDataManager, ItemStream, zExpression,
-  MemoryStream64, MemoryRaster, Geometry2DUnit, DoStatusIO, PascalStrings, UPascalStrings,
+  MemoryStream64, MemoryRaster, Geometry2DUnit, PascalStrings, UPascalStrings,
   UnicodeMixedLib, zDrawEngine, zDrawEngineInterface_SlowFMX;
 
-type
-  TCharBox_ = record
-    Char_: SystemChar;
-    box_: TRect;
-  end;
-
-  TArrayCharBox = array of TCharBox_;
-
-function BuildFMXCharacterRaster(fontName_: U_String; fontSize_: Integer; Bold_, Italic_: Boolean; InputBuff: TArrayChar; var boxOutput: TArrayCharBox): TMemoryRaster;
+function BuildFMXCharacterAsFontRaster(AA_: Boolean; fontName_: TUPascalString; fontSize_: Single; Bold_, Italic_: Boolean; InputBuff: TUArrayChar): TFontRaster;
 
 implementation
 
 type
   TFMXFontToRasterFactory = class
-  public
+  protected
     bmp: FMX.Graphics.TBitmap;
     dIntf: TDrawEngineInterface_FMX;
     d: TDrawEngine;
     fontSize: Integer;
+  public
     constructor Create(fontName_: string; fontSize_: Integer; Bold_, Italic_: Boolean);
     destructor Destroy; override;
-    function MakeCharRaster(Char_: string; var MinRect_: TRect): TMemoryRaster;
+    function MakeCharRaster(C: string; var MinRect_: TRect): TMemoryRaster;
   end;
 
 constructor TFMXFontToRasterFactory.Create(fontName_: string; fontSize_: Integer; Bold_, Italic_: Boolean);
@@ -92,79 +85,54 @@ begin
   inherited Destroy;
 end;
 
-function TFMXFontToRasterFactory.MakeCharRaster(Char_: string; var MinRect_: TRect): TMemoryRaster;
+function TFMXFontToRasterFactory.MakeCharRaster(C: string; var MinRect_: TRect): TMemoryRaster;
 var
   r4: TV2Rect4;
+  raster: TMemoryRaster;
 begin
   d.FillBox(d.ScreenRect, DEColor(0, 0, 0));
   d.Flush;
-  r4 := d.DrawText(Char_, fontSize, d.ScreenRect, DEColor(1, 1, 1), True);
-  MinRect_ := Rect2Rect(r4.BoundRect);
+  r4 := d.DrawText(C, fontSize, d.ScreenRect, DEColor(1, 1, 1), True);
   d.Flush;
-  Result := TMemoryRaster.Create;
-  BitmapToMemoryBitmap(bmp, Result);
+  raster := TMemoryRaster.Create;
+  BitmapToMemoryBitmap(bmp, raster);
+  MinRect_ := Rect2Rect(r4.BoundRect);
+  Result := raster;
 end;
 
-function BuildFMXCharacterRaster(fontName_: U_String; fontSize_: Integer; Bold_, Italic_: Boolean; InputBuff: TArrayChar; var boxOutput: TArrayCharBox): TMemoryRaster;
+function BuildFMXCharacterAsFontRaster(AA_: Boolean; fontName_: TUPascalString; fontSize_: Single; Bold_, Italic_: Boolean; InputBuff: TUArrayChar): TFontRaster;
 var
   BmpFactory: TFMXFontToRasterFactory;
   fr: TFontRaster;
-  c: SystemChar;
-  tmp, nRaster: TMemoryRaster;
-  morph: TMorphMath;
-  bin: TMorphBin;
-  R: TRect;
-  box_: TCharBox_;
-  boxL: TGenericsList<TCharBox_>;
   i: Integer;
+  C: USystemChar;
+  tmp, raster: TMemoryRaster;
+  R: TRect;
 begin
-  BmpFactory := TFMXFontToRasterFactory.Create(fontName_, fontSize_, Bold_, Italic_);
+  BmpFactory := TFMXFontToRasterFactory.Create(fontName_, round(if_(AA_, fontSize_ * 4, fontSize_)), Bold_, Italic_);
   fr := TFontRaster.Create;
-  for c in InputBuff do
+
+  for i := 0 to length(InputBuff) - 1 do
     begin
-      tmp := BmpFactory.MakeCharRaster(c, R);
-      morph := tmp.BuildMorphomatics(TMorphPixel.mpGrayscale);
-      bin := morph.Binarization(0.5);
-      R := bin.BoundsRect;
-      if not R.IsEmpty then
+      C := InputBuff[i];
+      tmp := BmpFactory.MakeCharRaster(InputBuff[i], R);
+      if AA_ then
         begin
-          inc(R.Right);
-          inc(R.Bottom);
-          nRaster := TRaster.Create;
-          nRaster.SetSize(R.Width + 1, R.Height + 1, RColor(0, 0, 0));
-          nRaster.Draw(1, 1, R, tmp);
-          try
-              fr.Add(c, nRaster);
-          except
-          end;
+          Antialias32(tmp);
+          tmp.Scale(1 / 4);
+          R := Rect2Rect(RectMul(RectV2(R), 1 / 4));
+          R := CalibrationRectInRect(R, tmp.BoundsRect0);
         end;
+      raster := NewRaster();
+      raster.SetSize(R.Width, R.Height, RColorF(0, 0, 0));
+      tmp.DrawTo(raster, 0, 0, R);
+
+      fr.Add(C, raster);
+
       disposeObject(tmp);
-      disposeObject(morph);
-      disposeObject(bin);
     end;
-  fr.Build(fontSize_);
-  Result := fr.BuildRaster(False);
-
-  DoStatus('compute character box.');
-  boxL := TGenericsList<TCharBox_>.Create;
-  for c in InputBuff do
-    begin
-      if fr.ValidChar(c) then
-        begin
-          box_.Char_ := c;
-          box_.box_ := fr.GetBox(c);
-          boxL.Add(box_);
-        end;
-    end;
-
-  setLength(boxOutput, boxL.Count);
-  for i := 0 to boxL.Count - 1 do
-      boxOutput[i] := boxL[i];
-
-  DoStatus('font generate done.');
-  disposeObject(boxL);
-  disposeObject(fr);
   disposeObject(BmpFactory);
+  Result := fr;
 end;
 
 end.

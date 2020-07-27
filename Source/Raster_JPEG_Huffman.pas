@@ -31,19 +31,19 @@ type
   THuffmanTable = class(TCoreClassPersistent)
   private
     FItems: array of THuffmanCode;
-    function GetItems(Index: integer): PsdHuffmanCode;
-    function GetCount: integer;
-    procedure SetCount(const Value: integer);
+    function GetItems(Index: Integer): PHuffmanCode;
+    function GetCount: Integer;
+    procedure SetCount(const Value: Integer);
   public
-    property Items[Index: integer]: PsdHuffmanCode read GetItems; default;
-    property Count: integer read GetCount write SetCount;
+    property Items[Index: Integer]: PHuffmanCode read GetItems; default;
+    property Count: Integer read GetCount write SetCount;
   end;
 
   THuffmanTableList = class(TCoreClassObjectList)
   private
-    function GetItems(Index: integer): THuffmanTable;
+    function GetItems(Index: Integer): THuffmanTable;
   public
-    property Items[Index: integer]: THuffmanTable read GetItems; default;
+    property Items[Index: Integer]: THuffmanTable read GetItems; default;
   end;
 
   TEntropyCoder = class(TJPEG_Persistent)
@@ -53,15 +53,14 @@ type
 
   TEntropyCoderList = class(TCoreClassObjectList)
   private
-    function GetItems(Index: integer): TEntropyCoder;
-    procedure SetItems(Index: integer; const Value: TEntropyCoder);
+    function GetItems(Index: Integer): TEntropyCoder;
+    procedure SetItems(Index: Integer; const Value: TEntropyCoder);
   public
-    property Items[Index: integer]: TEntropyCoder read GetItems write SetItems; default;
+    property Items[Index: Integer]: TEntropyCoder read GetItems write SetItems; default;
   end;
 
   // Generic Huffman coder implementing shared methods
   THuffmanCoder = class(TEntropyCoder)
-  private
   protected
     FCodes: array of THuffmanCode;
   public
@@ -70,14 +69,13 @@ type
 
   // Generic Huffman decoder
   THuffmanDecoder = class(THuffmanCoder)
-  private
   protected
     FLookup: array of THuffmanLookupTable;
-    FLookupCount: word;
+    FLookupCount: Word;
   public
-    FCountCodes: integer;
-    FCountBits: integer;
-    procedure AddToLookupTable(Table, Code, Len, Value: integer);
+    FCountCodes: Integer;
+    FCountBits: Integer;
+    procedure AddToLookupTable(Table, Code, Len, Value: Integer);
     procedure GenerateLookupTables(Table: THuffmanTable); virtual;
   end;
 
@@ -89,27 +87,27 @@ type
 
   THuffmanNode = class
   private
-    FBitCount: integer;
-    FCount: integer;
-    FCode: PsdHuffmanCode;
+    FBitCount: Integer;
+    FCount: Integer;
+    FCode: PHuffmanCode;
     FB0: THuffmanNode;
     FB1: THuffmanNode;
   public
     destructor Destroy; override;
-    property BitCount: integer read FBitCount write FBitCount;
-    property Count: integer read FCount write FCount;
-    property Code: PsdHuffmanCode read FCode write FCode;
+    property BitCount: Integer read FBitCount write FBitCount;
+    property Count: Integer read FCount write FCount;
+    property Code: PHuffmanCode read FCode write FCode;
     property B0: THuffmanNode read FB0 write FB0;
     property B1: THuffmanNode read FB1 write FB1;
   end;
 
   THuffmanNodeList = class(TCustomSortedList)
   private
-    function GetItems(Index: integer): THuffmanNode;
+    function GetItems(Index: Integer): THuffmanNode;
   protected
-    function DoCompare(Item1, Item2: TObject): integer; override;
+    function DoCompare(Item1, Item2: TObject): Integer; override;
   public
-    property Items[Index: integer]: THuffmanNode read GetItems; default;
+    property Items[Index: Integer]: THuffmanNode read GetItems; default;
   end;
 
   // General 8-bit huffman encoder
@@ -117,27 +115,25 @@ type
   private
     FHistogram: T8bitHuffmanHistogram;
     FNodes: THuffmanNodeList; // list of huffman nodes (count, code and leaves)
-    function GetHistogram: Psd8bitHuffmanHistogram;
+    function GetHistogram: P8bitHuffmanHistogram;
   public
     constructor Create; override;
     destructor Destroy; override;
     procedure GenerateCodeTable(Table_: THuffmanTable); override;
     procedure OptimiseHuffmanFromHistogram(var Item: TDHTMarkerInfo);
-    property Histogram: Psd8bitHuffmanHistogram read GetHistogram;
+    property Histogram: P8bitHuffmanHistogram read GetHistogram;
   end;
 
   // Specific Huffman DC baseline decoder
   TDCBaselineHuffmanDecoder = class(T8bitHuffmanDecoder)
-  private
   public
-    procedure DecodeMcuBlock(var ABlock: TMcuBlock; Reader_: TBitReader);
+    procedure DecodeMcuBlock(var Block_: TMCUBlock; Reader_: TBitReader);
   end;
 
   // Specific Huffman AC baseline decoder
   TACBaselineHuffmanDecoder = class(T8bitHuffmanDecoder)
-  private
   public
-    procedure DecodeMcuBlock(var ABlock: TMcuBlock; Reader_: TBitReader; AZigZag: PsdZigZagArray);
+    procedure DecodeMcuBlock(var Block_: TMCUBlock; Reader_: TBitReader; AZigZag: PZigZagArray);
     // Special routine for jsDiv8 scale loading, just skipping this data
     procedure DecodeMcuBlockSkip(Reader_: TBitReader);
   end;
@@ -145,51 +141,47 @@ type
   // Specific Huffman DC baseline encoder
   TDCBaselineHuffmanEncoder = class(T8bitHuffmanEncoder)
   public
-    procedure EncodeMcuBlock(var ABlock: TMcuBlock; AWriter: TBitWriter);
+    procedure EncodeMcuBlock(var Block_: TMCUBlock; Writer_: TBitWriter);
   end;
 
   // Specific Huffman AC baseline encoder
   TACBaselineHuffmanEncoder = class(T8bitHuffmanEncoder)
   public
-    procedure EncodeMcuBlock(var ABlock: TMcuBlock; AWriter: TBitWriter);
+    procedure EncodeMcuBlock(var Block_: TMCUBlock; Writer_: TBitWriter);
   end;
 
   TDCProgressiveHuffmanDecoder = class(TDCBaselineHuffmanDecoder)
   public
     // Progressive
-    procedure DecodeProgFirst(var ABlock: TMcuBlock; Reader_: TBitReader; ApproxLow: integer);
-    procedure DecodeProgRefine(var ABlock: TMcuBlock; Reader_: TBitReader; ApproxLow: integer);
+    procedure DecodeProgFirst(var Block_: TMCUBlock; Reader_: TBitReader; ApproxLow: Integer);
+    procedure DecodeProgRefine(var Block_: TMCUBlock; Reader_: TBitReader; ApproxLow: Integer);
   end;
 
   TACProgressiveHuffmanDecoder = class(TACBaselineHuffmanDecoder)
   public
     // Progressive
-    procedure DecodeProgFirst(var ABlock: TMcuBlock; Reader_: TBitReader; var EOBRun: integer; SSStart, SSEnd, ApproxLow: integer);
-    procedure DecodeProgRefine(var ABlock: TMcuBlock; Reader_: TBitReader; var EOBRun: integer; SSStart, SSEnd, ApproxLow: integer);
+    procedure DecodeProgFirst(var Block_: TMCUBlock; Reader_: TBitReader; var EOBRun: Integer; SSStart, SSEnd, ApproxLow: Integer);
+    procedure DecodeProgRefine(var Block_: TMCUBlock; Reader_: TBitReader; var EOBRun: Integer; SSStart, SSEnd, ApproxLow: Integer);
   end;
 
 implementation
 
-{ THuffmanTable }
-
-function THuffmanTable.GetCount: integer;
+function THuffmanTable.GetCount: Integer;
 begin
   Result := length(FItems);
 end;
 
-function THuffmanTable.GetItems(Index: integer): PsdHuffmanCode;
+function THuffmanTable.GetItems(Index: Integer): PHuffmanCode;
 begin
   Result := @FItems[Index];
 end;
 
-procedure THuffmanTable.SetCount(const Value: integer);
+procedure THuffmanTable.SetCount(const Value: Integer);
 begin
   SetLength(FItems, Value);
 end;
 
-{ THuffmanTableList }
-
-function THuffmanTableList.GetItems(Index: integer): THuffmanTable;
+function THuffmanTableList.GetItems(Index: Integer): THuffmanTable;
 begin
   if Index >= Count then
       Count := Index + 1;
@@ -201,23 +193,19 @@ begin
     end;
 end;
 
-{ TEntropyCoder }
-
 constructor TEntropyCoder.Create;
 begin
   inherited Create;
 end;
 
-{ TEntropyCoderList }
-
-function TEntropyCoderList.GetItems(Index: integer): TEntropyCoder;
+function TEntropyCoderList.GetItems(Index: Integer): TEntropyCoder;
 begin
   if Index >= Count then
       Count := Index + 1;
   Result := TEntropyCoder(inherited Items[Index]);
 end;
 
-procedure TEntropyCoderList.SetItems(Index: integer;
+procedure TEntropyCoderList.SetItems(Index: Integer;
   const Value: TEntropyCoder);
 begin
   if Index >= Count then
@@ -225,13 +213,11 @@ begin
   inherited Items[Index] := Value;
 end;
 
-{ THuffmanCoder }
-
 procedure THuffmanCoder.GenerateCodeTable(Table_: THuffmanTable);
 var
-  i, k, Idx, Len: integer;
-  Code, Size: integer;
-  MaxVal: integer;
+  i, k, Idx, Len: Integer;
+  Code, Size: Integer;
+  MaxVal: Integer;
 begin
   // Generate a list of codes for the table (See Fig. C.2)
   Code := 0;
@@ -261,17 +247,14 @@ begin
       FCodes[Idx].V := Table_[i]^.V;
       FCodes[Idx].Code := Table_[i]^.Code;
     end;
-
 end;
 
-{ THuffmanDecoder }
-
-procedure THuffmanDecoder.AddToLookupTable(Table, Code, Len, Value: integer);
+procedure THuffmanDecoder.AddToLookupTable(Table, Code, Len, Value: Integer);
 var
-  i, Iter, Mask: integer;
-  Base: integer;
-  Next: integer;
-  Lookup: PsdHuffmanLookupTable;
+  i, Iter, Mask: Integer;
+  Base: Integer;
+  Next: Integer;
+  Lookup: PHuffmanLookupTable;
 begin
   Lookup := @FLookup[Table];
   if Len <= 8 then
@@ -320,11 +303,9 @@ begin
   // Default does nothing more
 end;
 
-{ T8bitHuffmanDecoder }
-
 procedure T8bitHuffmanDecoder.GenerateLookupTables(Table: THuffmanTable);
 var
-  i: integer;
+  i: Integer;
 begin
   inherited;
   for i := 0 to length(FCodes) - 1 do begin
@@ -332,8 +313,6 @@ begin
           AddToLookupTable(0, FCodes[i].Code, FCodes[i].L, i);
     end;
 end;
-
-{ THuffmanNode }
 
 destructor THuffmanNode.Destroy;
 begin
@@ -344,9 +323,7 @@ begin
   inherited Destroy;
 end;
 
-{ THuffmanNodeList }
-
-function THuffmanNodeList.DoCompare(Item1, Item2: TObject): integer;
+function THuffmanNodeList.DoCompare(Item1, Item2: TObject): Integer;
 var
   L1, L2: THuffmanNode;
 begin
@@ -363,12 +340,10 @@ begin
     end;
 end;
 
-function THuffmanNodeList.GetItems(Index: integer): THuffmanNode;
+function THuffmanNodeList.GetItems(Index: Integer): THuffmanNode;
 begin
   Result := THuffmanNode(inherited Items[index]);
 end;
-
-{ T8bitHuffmanEncoder }
 
 constructor T8bitHuffmanEncoder.Create;
 begin
@@ -386,7 +361,7 @@ end;
 
 procedure T8bitHuffmanEncoder.GenerateCodeTable(Table_: THuffmanTable);
 var
-  i: integer;
+  i: Integer;
 begin
   if Table_.Count = 0 then
     begin
@@ -399,20 +374,19 @@ begin
   inherited;
 end;
 
-function T8bitHuffmanEncoder.GetHistogram: Psd8bitHuffmanHistogram;
+function T8bitHuffmanEncoder.GetHistogram: P8bitHuffmanHistogram;
 begin
   Result := @FHistogram;
 end;
 
 procedure T8bitHuffmanEncoder.OptimiseHuffmanFromHistogram(var Item: TDHTMarkerInfo);
-// Create an optimized huffman table from the data gathered in the histogram by
-// the dry-run
+// Create an optimized huffman table from the data gathered in the histogram by the dry-run
 var
-  i: integer;
+  i: Integer;
   N, N0, N1, Top: THuffmanNode;
 
   // Recursive procedure: add values with their bitcount to the nodelist
-  procedure AddBranch(Branch_: THuffmanNode; BitCount_: integer);
+  procedure AddBranch(Branch_: THuffmanNode; BitCount_: Integer);
   begin
     // Branch B0
     if assigned(Branch_.B0.Code) then
@@ -433,13 +407,10 @@ var
         AddBranch(Branch_.B1, BitCount_ + 1);
   end;
 
-// main
 begin
   // initialise the FNodes before clearing and adding!
   if not assigned(FNodes) then
-    begin
       FNodes := THuffmanNodeList.Create(False);
-    end;
 
   // Start by adding nodes in sorted fashion
   FNodes.Clear;
@@ -543,14 +514,12 @@ begin
   Top.Free;
 end;
 
-{ TDCBaselineHuffmanDecoder }
-
-procedure TDCBaselineHuffmanDecoder.DecodeMcuBlock(var ABlock: TMcuBlock; Reader_: TBitReader);
+procedure TDCBaselineHuffmanDecoder.DecodeMcuBlock(var Block_: TMCUBlock; Reader_: TBitReader);
 var
-  S, Code: smallint; // S = category
-  Bits: word;
-  Idx, Len: byte;
-  Table: PsdHuffmanLookupTable;
+  S, Code: SmallInt; // S = category
+  Bits: Word;
+  Idx, Len: Byte;
+  Table: PHuffmanLookupTable;
 begin
   // Get the S code. Since its guaranteed to have <= 16 bits we can use
   // this two-step mechanism (without loop)
@@ -574,46 +543,43 @@ begin
   // it with the Pred value (undifferencing)
   inc(FCountBits, S);
   case S of
-    0: Code := ABlock.PPred^;
+    0: Code := Block_.PPred^;
     1:
       begin
         if Reader_.GetBits(1) = 1 then
-            Code := ABlock.PPred^ + 1
+            Code := Block_.PPred^ + 1
         else
-            Code := ABlock.PPred^ - 1;
+            Code := Block_.PPred^ - 1;
       end;
     else
       // We use the EXTEND function, Figure F12
       Bits := Reader_.GetBits(S);
       if Bits < cExtendTest[S] then
-          Code := ABlock.PPred^ + Bits + cExtendOffset[S]
+          Code := Block_.PPred^ + Bits + cExtendOffset[S]
       else
-          Code := ABlock.PPred^ + Bits;
+          Code := Block_.PPred^ + Bits;
   end; // case
 
   // Update block
-  ABlock.Values^[0] := Code;
+  Block_.Values^[0] := Code;
 
   // Update image component's predictor
-  ABlock.PPred^ := Code;
+  Block_.PPred^ := Code;
 end;
 
-{ TACBaselineHuffmanDecoder }
-
-procedure TACBaselineHuffmanDecoder.DecodeMcuBlock(var ABlock: TMcuBlock;
-  Reader_: TBitReader; AZigZag: PsdZigZagArray);
+procedure TACBaselineHuffmanDecoder.DecodeMcuBlock(var Block_: TMCUBlock; Reader_: TBitReader; AZigZag: PZigZagArray);
 var
-  k, kz: integer; // Position in zigzag
-  Values: PsdCoefBlock;
-  RS, R, S: integer; // RS = range,category
-  Bits, Idx, Len: integer;
-  Table1, Table2: PsdHuffmanLookupTable;
+  k, kz: Integer; // Position in zigzag
+  Values: PCoefBlock;
+  RS, R, S: Integer; // RS = range,category
+  Bits, Idx, Len: Integer;
+  Table1, Table2: PHuffmanLookupTable;
   ThisByte: PByte;
 begin
   // Prepare some local variables for fast access
   Table1 := @FLookup[0];
   ThisByte := Reader_.ThisByte;
-  Values := ABlock.Values;
+  Values := Block_.Values;
 
   // DC did k = 0, now we're at k = 1
   k := 1;
@@ -689,10 +655,10 @@ end;
 
 procedure TACBaselineHuffmanDecoder.DecodeMcuBlockSkip(Reader_: TBitReader);
 var
-  k: integer;        // Position in zigzag
-  RS, R, S: integer; // RS = range,category
-  Idx, Len: integer;
-  Table1, Table2: PsdHuffmanLookupTable;
+  k: Integer;        // Position in zigzag
+  RS, R, S: Integer; // RS = range,category
+  Idx, Len: Integer;
+  Table1, Table2: PHuffmanLookupTable;
   ThisByte: PByte;
 begin
   // Prepare some local variables for fast access
@@ -749,33 +715,27 @@ begin
   until k > 63;
 end;
 
-{ TDCBaselineHuffmanEncoder }
-
-procedure TDCBaselineHuffmanEncoder.EncodeMcuBlock(var ABlock: TMcuBlock;
-  AWriter: TBitWriter);
+procedure TDCBaselineHuffmanEncoder.EncodeMcuBlock(var Block_: TMCUBlock; Writer_: TBitWriter);
 var
-  S, Diff: smallint; // S = category
+  S, Diff: SmallInt; // S = category
 begin
-  Diff := ABlock.Values^[0] - ABlock.PPred^;
-  ABlock.PPred^ := ABlock.Values^[0];
+  Diff := Block_.Values^[0] - Block_.PPred^;
+  Block_.PPred^ := Block_.Values^[0];
 
   // count the bits
-  S := AWriter.CountBits(Diff);
+  S := Writer_.CountBits(Diff);
 
   // Put S code  + extend
-  AWriter.PutCodeExtend(@FCodes[S], Diff, S);
+  Writer_.PutCodeExtend(@FCodes[S], Diff, S);
 end;
 
-{ TACBaselineHuffmanEncoder }
-
-procedure TACBaselineHuffmanEncoder.EncodeMcuBlock(var ABlock: TMcuBlock;
-  AWriter: TBitWriter);
+procedure TACBaselineHuffmanEncoder.EncodeMcuBlock(var Block_: TMCUBlock; Writer_: TBitWriter);
 var
-  k: integer; // Position in zigzag
-  Values: PsdCoefBlock;
-  RS, R, S, Diff: integer; // RS = range,category
+  k: Integer; // Position in zigzag
+  Values: PCoefBlock;
+  RS, R, S, Diff: Integer; // RS = range,category
 begin
-  Values := ABlock.Values;
+  Values := Block_.Values;
   R := 0;
   k := 1;
   repeat
@@ -789,30 +749,28 @@ begin
     while R >= 16 do
       begin
         // Code an RS = $F0
-        AWriter.PutCode(@FCodes[$F0]);
+        Writer_.PutCode(@FCodes[$F0]);
         dec(R, 16);
       end;
     // Code the value
-    S := AWriter.CountBits(Diff);
+    S := Writer_.CountBits(Diff);
     // RS value
     RS := R shl 4 + S;
     R := 0;
-    AWriter.PutCodeExtend(@FCodes[RS], Diff, S);
+    Writer_.PutCodeExtend(@FCodes[RS], Diff, S);
   until k = 64;
 
   // if we have R > 0 this means we must code end of block
   if R > 0 then
-      AWriter.PutCode(@FCodes[$00]);
+      Writer_.PutCode(@FCodes[$00]);
 end;
 
-{ TDCProgressiveHuffmanDecoder }
-
-procedure TDCProgressiveHuffmanDecoder.DecodeProgFirst(var ABlock: TMcuBlock; Reader_: TBitReader; ApproxLow: integer);
+procedure TDCProgressiveHuffmanDecoder.DecodeProgFirst(var Block_: TMCUBlock; Reader_: TBitReader; ApproxLow: Integer);
 var
-  S, Code: smallint; // S = category
-  Bits: word;
-  Idx, Len: byte;
-  Table: PsdHuffmanLookupTable;
+  S, Code: SmallInt; // S = category
+  Bits: Word;
+  Idx, Len: Byte;
+  Table: PHuffmanLookupTable;
 begin
   // DoDebugOut(Self, wsInfo, 'DC DecodeProgFirst');
 
@@ -845,23 +803,23 @@ begin
       else
           Code := Bits;
     end;
-  inc(Code, ABlock.PPred^);
+  inc(Code, Block_.PPred^);
 
   // Update image component's predictor
-  ABlock.PPred^ := Code;
+  Block_.PPred^ := Code;
 
   // Update block
-  ABlock.Values^[0] := Code shl ApproxLow;
+  Block_.Values^[0] := Code shl ApproxLow;
 end;
 
-procedure TDCProgressiveHuffmanDecoder.DecodeProgRefine(var ABlock: TMcuBlock; Reader_: TBitReader; ApproxLow: integer);
+procedure TDCProgressiveHuffmanDecoder.DecodeProgRefine(var Block_: TMCUBlock; Reader_: TBitReader; ApproxLow: Integer);
 var
-  Plus: integer;
+  Plus: Integer;
   Value: Psmallint;
 begin
   // DoDebugOut(Self, wsInfo, 'DC DecodeProgRefine');
   Plus := 1 shl ApproxLow;
-  Value := @ABlock.Values^[0];
+  Value := @Block_.Values^[0];
 
   // Update block
   if Reader_.GetBits(1) = 1 then
@@ -873,15 +831,13 @@ begin
     end;
 end;
 
-{ TACProgressiveHuffmanDecoder }
-
-procedure TACProgressiveHuffmanDecoder.DecodeProgFirst(var ABlock: TMcuBlock; Reader_: TBitReader; var EOBRun: integer; SSStart, SSEnd, ApproxLow: integer);
+procedure TACProgressiveHuffmanDecoder.DecodeProgFirst(var Block_: TMCUBlock; Reader_: TBitReader; var EOBRun: Integer; SSStart, SSEnd, ApproxLow: Integer);
 var
-  k, kz: integer; // Position in zigzag
-  Values: PsdCoefBlock;
-  RS, R, S: integer; // RS = range,category
-  Idx, Len: integer;
-  Table1, Table2: PsdHuffmanLookupTable;
+  k, kz: Integer; // Position in zigzag
+  Values: PCoefBlock;
+  RS, R, S: Integer; // RS = range,category
+  Idx, Len: Integer;
+  Table1, Table2: PHuffmanLookupTable;
   ThisByte, NextByte: PByte;
 begin
   // DoDebugOut(Self, wsInfo, 'AC DecodeProgFirst');
@@ -897,15 +853,13 @@ begin
   Table1 := @FLookup[0];
   ThisByte := Reader_.ThisByte;
   NextByte := Reader_.NextByte;
-  Values := ABlock.Values;
+  Values := Block_.Values;
 
   // Start of the spectral band
   k := SSStart;
-
   // Check if we're at the end of the spectral band
   while k <= SSEnd do
     begin
-
       // Get the RS code. Since its guaranteed to have <= 16 bits we can use
       // this two-step mechanism (without loop)
       Idx := ThisByte^;
@@ -946,17 +900,13 @@ begin
         end
       else
         begin
-
           if R = 15 then
             begin
-
               // 16 sample runlength, no sample setting
               inc(k, 15);
-
             end
           else
             begin
-
               // EOB run
               EOBRun := 1 shl R;
               if R > 0 then
@@ -966,20 +916,19 @@ begin
                 end;
               dec(EOBRun);
               break;
-
             end;
         end;
       inc(k);
     end;
 end;
 
-procedure TACProgressiveHuffmanDecoder.DecodeProgRefine(var ABlock: TMcuBlock; Reader_: TBitReader; var EOBRun: integer; SSStart, SSEnd, ApproxLow: integer);
+procedure TACProgressiveHuffmanDecoder.DecodeProgRefine(var Block_: TMCUBlock; Reader_: TBitReader; var EOBRun: Integer; SSStart, SSEnd, ApproxLow: Integer);
 var
-  k, kz: integer;
-  Values: PsdCoefBlock;
-  RS, R, S, Plus: integer; // RS = range,category
-  Idx, Len: integer;
-  Table1, Table2: PsdHuffmanLookupTable;
+  k, kz: Integer;
+  Values: PCoefBlock;
+  RS, R, S, Plus: Integer; // RS = range,category
+  Idx, Len: Integer;
+  Table1, Table2: PHuffmanLookupTable;
   ThisByte, NextByte: PByte;
 begin
   // DoDebugOut(Self, wsInfo, 'AC DecodeProgRefine');
@@ -989,7 +938,7 @@ begin
   Table1 := @FLookup[0];
   ThisByte := Reader_.ThisByte;
   NextByte := Reader_.NextByte;
-  Values := ABlock.Values;
+  Values := Block_.Values;
 
   // Start of the spectral band
   k := SSStart;
@@ -997,7 +946,6 @@ begin
   // Not part of EOB run?
   if EOBRun = 0 then
     begin
-
       while k <= SSEnd do
         begin
           // Get the RS code. Since its guaranteed to have <= 16 bits we can use
@@ -1071,17 +1019,14 @@ begin
                       Values^[kz] := S;
                 end;
             end;
-
           // Increment range-coded index
           inc(k);
-
         end; // while
     end;     // EOBRun = 0
 
   // Deal with EOBRun
   if EOBRun > 0 then
     begin
-
       while k <= SSEnd do
         begin
           kz := cJpegInverseZigZag8x8[k];
@@ -1097,7 +1042,6 @@ begin
             end;
           inc(k);
         end;
-
       // decrement the EOB run
       dec(EOBRun);
     end;

@@ -269,7 +269,7 @@ type
     IOHnd: TIOHnd; // IO handle
 
     ReservedData: array [0 .. DB_ReservedData_Size - 1] of Byte; // file: reserved struct
-    FixedStringL: Byte;                                          // file: fixed string lenght
+    FixedStringL: Byte;                                          // file: fixed string length
     MajorVer, MinorVer: SmallInt;                                // file: version info
     CreateTime, ModificationTime: Double;                        // file: time
     RootHeaderCount: Int64;                                      // file: header counter

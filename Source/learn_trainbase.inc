@@ -17,77 +17,6 @@
 { * https://github.com/PassByYou888/InfiniteIoT                                * }
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
-type
-  TMultiLayerPerceptron = record
-    StructInfo: TLIVec;
-    Weights: TLVec;
-    ColumnMeans: TLVec;
-    ColumnSigmas: TLVec;
-    Neurons: TLVec;
-    DFDNET: TLVec;
-    DError: TLVec;
-    x: TLVec;
-    y: TLVec;
-    Chunks: TLMatrix;
-    NWBuf: TLVec;
-  end;
-
-  PMultiLayerPerceptron = ^TMultiLayerPerceptron;
-
-procedure MLPCreate0(NIn, NOut: TLInt; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreate1(NIn, NHid, NOut: TLInt; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreate2(NIn, NHid1, NHid2, NOut: TLInt; var Network: TMultiLayerPerceptron); forward;
-
-procedure MLPCreateB0(NIn, NOut: TLInt; b, d: TLFloat; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateB1(NIn, NHid, NOut: TLInt; b, d: TLFloat; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateB2(NIn, NHid1, NHid2, NOut: TLInt; b, d: TLFloat; var Network: TMultiLayerPerceptron); forward;
-
-procedure MLPCreateR0(NIn, NOut: TLInt; a, b: TLFloat; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateR1(NIn, NHid, NOut: TLInt; a, b: TLFloat; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateR2(NIn, NHid1, NHid2, NOut: TLInt; a, b: TLFloat; var Network: TMultiLayerPerceptron); forward;
-
-procedure MLPCreateC0(NIn, NOut: TLInt; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateC1(NIn, NHid, NOut: TLInt; var Network: TMultiLayerPerceptron); forward;
-procedure MLPCreateC2(NIn, NHid1, NHid2, NOut: TLInt; var Network: TMultiLayerPerceptron); forward;
-
-procedure MLPFree(var Network: TMultiLayerPerceptron); forward;
-procedure MLPCopy(const Network1: TMultiLayerPerceptron; var Network2: TMultiLayerPerceptron); forward;
-
-procedure MLPSerialize(const Network: TMultiLayerPerceptron; var RA: TLVec; var RLen: TLInt); forward;
-procedure MLPUNSerialize(const RA: TLVec; var Network: TMultiLayerPerceptron); forward;
-
-procedure MLPRandomize(var Network: TMultiLayerPerceptron); overload; forward;
-procedure MLPRandomize(var Network: TMultiLayerPerceptron; const Diameter: TLFloat); overload; forward;
-procedure MLPRandomize(var Network: TMultiLayerPerceptron; const WBest: TLVec; const Diameter: TLFloat); overload; forward;
-procedure MLPRandomizeFull(var Network: TMultiLayerPerceptron); forward;
-
-procedure MLPInitPreprocessor(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt); forward;
-procedure MLPProperties(const Network: TMultiLayerPerceptron; var NIn: TLInt; var NOut: TLInt; var WCount: TLInt); forward;
-function MLPIsSoftmax(const Network: TMultiLayerPerceptron): Boolean; forward;
-
-procedure MLPProcess(var Network: TMultiLayerPerceptron; const x: TLVec; var y: TLVec); forward;
-
-function MLPError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt): TLFloat; forward;
-function MLPErrorN(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt): TLFloat; forward;
-function MLPClsError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt): TLInt; forward;
-function MLPRelClsError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function MLPAvgCE(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function MLPRMSError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function MLPAvgError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function MLPAvgRelError(var Network: TMultiLayerPerceptron; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-
-procedure MLPGrad(var Network: TMultiLayerPerceptron; const x: TLVec; const DesiredY: TLVec; var E: TLFloat; var Grad: TLVec); forward;
-procedure MLPGradN(var Network: TMultiLayerPerceptron; const x: TLVec; const DesiredY: TLVec; var E: TLFloat; var Grad: TLVec); forward;
-procedure MLPGradBatch(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec); forward;
-procedure MLPGradNBatch(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec); forward;
-
-procedure MLPHessianNBatch(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec; var h: TLMatrix); forward;
-procedure MLPHessianBatch(var Network: TMultiLayerPerceptron; const xy: TLMatrix; SSize: TLInt; var E: TLFloat; var Grad: TLVec; var h: TLMatrix); forward;
-
-procedure MLPInternalProcessVector(const StructInfo: TLIVec;
-  const Weights: TLVec; const ColumnMeans: TLVec;
-  const ColumnSigmas: TLVec; var Neurons: TLVec;
-  var DFDNET: TLVec; const x: TLVec; var y: TLVec); forward;
 
 const
   MLPVNum = 7;
@@ -795,12 +724,12 @@ end;
   Network -   original
 
   OUTPUT PARAMETERS:
-  RA      -   array of real numbers which stores network,
+  ResArry      -   array of real numbers which stores network,
   array[0..RLen-1]
-  RLen    -   RA lenght
+  RLen    -   ResArry lenght
   ************************************************************************ *)
 procedure MLPSerialize(const Network: TMultiLayerPerceptron;
-  var RA: TLVec; var RLen: TLInt);
+  var ResArry: TLVec; var RLen: TLInt);
 var
   i: TLInt;
   SSize: TLInt;
@@ -830,7 +759,7 @@ begin
     end;
 
   //
-  // RA format:
+  // ResArry format:
   // LEN         DESRC.
   // 1           RLen
   // 1           version (MLPVNum)
@@ -841,23 +770,23 @@ begin
   // SigmaLen    ColumnSigmas
   //
   RLen := 3 + SSize + WCount + 2 * SigmaLen;
-  SetLength(RA, RLen);
-  RA[0] := RLen;
-  RA[1] := MLPVNum;
-  RA[2] := SSize;
+  SetLength(ResArry, RLen);
+  ResArry[0] := RLen;
+  ResArry[1] := MLPVNum;
+  ResArry[2] := SSize;
   Offs := 3;
   i := 0;
   while i <= SSize - 1 do
     begin
-      RA[Offs + i] := Network.StructInfo[i];
+      ResArry[Offs + i] := Network.StructInfo[i];
       inc(i);
     end;
   Offs := Offs + SSize;
-  APVMove(@RA[0], Offs, Offs + WCount - 1, @Network.Weights[0], 0, WCount - 1);
+  APVMove(@ResArry[0], Offs, Offs + WCount - 1, @Network.Weights[0], 0, WCount - 1);
   Offs := Offs + WCount;
-  APVMove(@RA[0], Offs, Offs + SigmaLen - 1, @Network.ColumnMeans[0], 0, SigmaLen - 1);
+  APVMove(@ResArry[0], Offs, Offs + SigmaLen - 1, @Network.ColumnMeans[0], 0, SigmaLen - 1);
   Offs := Offs + SigmaLen;
-  APVMove(@RA[0], Offs, Offs + SigmaLen - 1, @Network.ColumnSigmas[0], 0, SigmaLen - 1);
+  APVMove(@ResArry[0], Offs, Offs + SigmaLen - 1, @Network.ColumnSigmas[0], 0, SigmaLen - 1);
   Offs := Offs + SigmaLen;
 end;
 
@@ -865,12 +794,12 @@ end;
   Unserialization of TMultiLayerPerceptron strucure
 
   INPUT PARAMETERS:
-  RA      -   real array which stores network
+  ResArry      -   real array which stores network
 
   OUTPUT PARAMETERS:
   Network -   restored network
   ************************************************************************ *)
-procedure MLPUNSerialize(const RA: TLVec;
+procedure MLPUNSerialize(const ResArry: TLVec;
   var Network: TMultiLayerPerceptron);
 var
   i: TLInt;
@@ -882,18 +811,18 @@ var
   SigmaLen: TLInt;
   Offs: TLInt;
 begin
-  Assert(Round(RA[1]) = MLPVNum, 'MLPUnserialize: incorrect array!');
+  Assert(Round(ResArry[1]) = MLPVNum, 'MLPUnserialize: incorrect array!');
 
   //
   // Unload StructInfo from IA
   //
   Offs := 3;
-  SSize := Round(RA[2]);
+  SSize := Round(ResArry[2]);
   SetLength(Network.StructInfo, SSize);
   i := 0;
   while i <= SSize - 1 do
     begin
-      Network.StructInfo[i] := Round(RA[Offs + i]);
+      Network.StructInfo[i] := Round(ResArry[Offs + i]);
       inc(i);
     end;
   Offs := Offs + SSize;
@@ -930,13 +859,13 @@ begin
   SetLength(Network.DError, NTotal);
 
   //
-  // Copy parameters from RA
+  // Copy parameters from ResArry
   //
-  APVMove(@Network.Weights[0], 0, WCount - 1, @RA[0], Offs, Offs + WCount - 1);
+  APVMove(@Network.Weights[0], 0, WCount - 1, @ResArry[0], Offs, Offs + WCount - 1);
   Offs := Offs + WCount;
-  APVMove(@Network.ColumnMeans[0], 0, SigmaLen - 1, @RA[0], Offs, Offs + SigmaLen - 1);
+  APVMove(@Network.ColumnMeans[0], 0, SigmaLen - 1, @ResArry[0], Offs, Offs + SigmaLen - 1);
   Offs := Offs + SigmaLen;
-  APVMove(@Network.ColumnSigmas[0], 0, SigmaLen - 1, @RA[0], Offs, Offs + SigmaLen - 1);
+  APVMove(@Network.ColumnSigmas[0], 0, SigmaLen - 1, @ResArry[0], Offs, Offs + SigmaLen - 1);
   Offs := Offs + SigmaLen;
 end;
 

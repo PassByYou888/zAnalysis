@@ -656,7 +656,7 @@ var
   p_logit: PLogitModel;
   p_n: PMultiLayerPerceptron;
   p_e: PMLPEnsemble;
-  kmIndexOut: TDynamicIndexArray;
+  kmIndexOut: TKMIntegerArray;
   buff: TLMatrix;
   rInfo: TLInt;
   mlReport: TMLPReport;
@@ -1816,6 +1816,20 @@ begin
 
   SetLength(buff, 0);
   SetLength(buffPtr, 0);
+end;
+
+function TLearn.BuildKDTree: TKDTree;
+var
+  i: Integer;
+  L: TKDTreeDataList;
+begin
+  L := TKDTreeDataList.Create;
+  for i := 0 to Count - 1 do
+    with MemorySource[i]^ do
+        L.Add(m_in, token);
+  Result := TKDTree.Create(FInSize);
+  L.Build(Result);
+  DisposeObject(L);
 end;
 
 procedure TLearn.SaveToDF(df: TDataFrameEngine);

@@ -126,6 +126,9 @@
         <Projects Include="06 MemoryRasterizationScale\MemoryRasterScale.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="47 ParallelProjection\ParallelProjection.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -503,14 +506,23 @@
     <Target Name="MemoryRasterScale:Make">
         <MSBuild Projects="06 MemoryRasterizationScale\MemoryRasterScale.dproj" Targets="Make"/>
     </Target>
+    <Target Name="ParallelProjection">
+        <MSBuild Projects="47 ParallelProjection\ParallelProjection.dproj"/>
+    </Target>
+    <Target Name="ParallelProjection:Clean">
+        <MSBuild Projects="47 ParallelProjection\ParallelProjection.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ParallelProjection:Make">
+        <MSBuild Projects="47 ParallelProjection\ParallelProjection.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="KDTree_Analysis_EasyConsoleDemo;DrawEngine4FMXBitmap;zExpressionSupport;TriangleOptimization;TextDraw;PolygonScaleAndExtract;ParallelCompressor;NumTrans;MemoryMapping;MatrixAndVectorExpression;LDA;GeometryIntersect;FillColor;FFMPEG_ReaderDemo;MemoryRasterMoreFont;zDrawEngine_HelloWorld;PascalCodeDependencyAnslysis;memoryRasterProjection;PCA;GaussPyramidRegionDemo;GaussPyramidDemo;zDBAnalysisDemo;yuv2Video;SoftRenderer;Render2Video;numberTrainDemo;BoxColorDetector;BuildInPictureDriver;HoughRotationDetectAndCalibrate;MorphGalaxiesDetection;MorphologySegmentation;ParallelDemo;RasterizationFormatDemo;RectRotationProjection;RotationDemo;Wildcard;ApproximatePolygon;Analysis_RandomForestDemo;Analysis_Decision;KDTree_KMeanPlus_Graphics;MemoryRasterScale"/>
+        <CallTarget Targets="KDTree_Analysis_EasyConsoleDemo;DrawEngine4FMXBitmap;zExpressionSupport;TriangleOptimization;TextDraw;PolygonScaleAndExtract;ParallelCompressor;NumTrans;MemoryMapping;MatrixAndVectorExpression;LDA;GeometryIntersect;FillColor;FFMPEG_ReaderDemo;MemoryRasterMoreFont;zDrawEngine_HelloWorld;PascalCodeDependencyAnslysis;memoryRasterProjection;PCA;GaussPyramidRegionDemo;GaussPyramidDemo;zDBAnalysisDemo;yuv2Video;SoftRenderer;Render2Video;numberTrainDemo;BoxColorDetector;BuildInPictureDriver;HoughRotationDetectAndCalibrate;MorphGalaxiesDetection;MorphologySegmentation;ParallelDemo;RasterizationFormatDemo;RectRotationProjection;RotationDemo;Wildcard;ApproximatePolygon;Analysis_RandomForestDemo;Analysis_Decision;KDTree_KMeanPlus_Graphics;MemoryRasterScale;ParallelProjection"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="KDTree_Analysis_EasyConsoleDemo:Clean;DrawEngine4FMXBitmap:Clean;zExpressionSupport:Clean;TriangleOptimization:Clean;TextDraw:Clean;PolygonScaleAndExtract:Clean;ParallelCompressor:Clean;NumTrans:Clean;MemoryMapping:Clean;MatrixAndVectorExpression:Clean;LDA:Clean;GeometryIntersect:Clean;FillColor:Clean;FFMPEG_ReaderDemo:Clean;MemoryRasterMoreFont:Clean;zDrawEngine_HelloWorld:Clean;PascalCodeDependencyAnslysis:Clean;memoryRasterProjection:Clean;PCA:Clean;GaussPyramidRegionDemo:Clean;GaussPyramidDemo:Clean;zDBAnalysisDemo:Clean;yuv2Video:Clean;SoftRenderer:Clean;Render2Video:Clean;numberTrainDemo:Clean;BoxColorDetector:Clean;BuildInPictureDriver:Clean;HoughRotationDetectAndCalibrate:Clean;MorphGalaxiesDetection:Clean;MorphologySegmentation:Clean;ParallelDemo:Clean;RasterizationFormatDemo:Clean;RectRotationProjection:Clean;RotationDemo:Clean;Wildcard:Clean;ApproximatePolygon:Clean;Analysis_RandomForestDemo:Clean;Analysis_Decision:Clean;KDTree_KMeanPlus_Graphics:Clean;MemoryRasterScale:Clean"/>
+        <CallTarget Targets="KDTree_Analysis_EasyConsoleDemo:Clean;DrawEngine4FMXBitmap:Clean;zExpressionSupport:Clean;TriangleOptimization:Clean;TextDraw:Clean;PolygonScaleAndExtract:Clean;ParallelCompressor:Clean;NumTrans:Clean;MemoryMapping:Clean;MatrixAndVectorExpression:Clean;LDA:Clean;GeometryIntersect:Clean;FillColor:Clean;FFMPEG_ReaderDemo:Clean;MemoryRasterMoreFont:Clean;zDrawEngine_HelloWorld:Clean;PascalCodeDependencyAnslysis:Clean;memoryRasterProjection:Clean;PCA:Clean;GaussPyramidRegionDemo:Clean;GaussPyramidDemo:Clean;zDBAnalysisDemo:Clean;yuv2Video:Clean;SoftRenderer:Clean;Render2Video:Clean;numberTrainDemo:Clean;BoxColorDetector:Clean;BuildInPictureDriver:Clean;HoughRotationDetectAndCalibrate:Clean;MorphGalaxiesDetection:Clean;MorphologySegmentation:Clean;ParallelDemo:Clean;RasterizationFormatDemo:Clean;RectRotationProjection:Clean;RotationDemo:Clean;Wildcard:Clean;ApproximatePolygon:Clean;Analysis_RandomForestDemo:Clean;Analysis_Decision:Clean;KDTree_KMeanPlus_Graphics:Clean;MemoryRasterScale:Clean;ParallelProjection:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="KDTree_Analysis_EasyConsoleDemo:Make;DrawEngine4FMXBitmap:Make;zExpressionSupport:Make;TriangleOptimization:Make;TextDraw:Make;PolygonScaleAndExtract:Make;ParallelCompressor:Make;NumTrans:Make;MemoryMapping:Make;MatrixAndVectorExpression:Make;LDA:Make;GeometryIntersect:Make;FillColor:Make;FFMPEG_ReaderDemo:Make;MemoryRasterMoreFont:Make;zDrawEngine_HelloWorld:Make;PascalCodeDependencyAnslysis:Make;memoryRasterProjection:Make;PCA:Make;GaussPyramidRegionDemo:Make;GaussPyramidDemo:Make;zDBAnalysisDemo:Make;yuv2Video:Make;SoftRenderer:Make;Render2Video:Make;numberTrainDemo:Make;BoxColorDetector:Make;BuildInPictureDriver:Make;HoughRotationDetectAndCalibrate:Make;MorphGalaxiesDetection:Make;MorphologySegmentation:Make;ParallelDemo:Make;RasterizationFormatDemo:Make;RectRotationProjection:Make;RotationDemo:Make;Wildcard:Make;ApproximatePolygon:Make;Analysis_RandomForestDemo:Make;Analysis_Decision:Make;KDTree_KMeanPlus_Graphics:Make;MemoryRasterScale:Make"/>
+        <CallTarget Targets="KDTree_Analysis_EasyConsoleDemo:Make;DrawEngine4FMXBitmap:Make;zExpressionSupport:Make;TriangleOptimization:Make;TextDraw:Make;PolygonScaleAndExtract:Make;ParallelCompressor:Make;NumTrans:Make;MemoryMapping:Make;MatrixAndVectorExpression:Make;LDA:Make;GeometryIntersect:Make;FillColor:Make;FFMPEG_ReaderDemo:Make;MemoryRasterMoreFont:Make;zDrawEngine_HelloWorld:Make;PascalCodeDependencyAnslysis:Make;memoryRasterProjection:Make;PCA:Make;GaussPyramidRegionDemo:Make;GaussPyramidDemo:Make;zDBAnalysisDemo:Make;yuv2Video:Make;SoftRenderer:Make;Render2Video:Make;numberTrainDemo:Make;BoxColorDetector:Make;BuildInPictureDriver:Make;HoughRotationDetectAndCalibrate:Make;MorphGalaxiesDetection:Make;MorphologySegmentation:Make;ParallelDemo:Make;RasterizationFormatDemo:Make;RectRotationProjection:Make;RotationDemo:Make;Wildcard:Make;ApproximatePolygon:Make;Analysis_RandomForestDemo:Make;Analysis_Decision:Make;KDTree_KMeanPlus_Graphics:Make;MemoryRasterScale:Make;ParallelProjection:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

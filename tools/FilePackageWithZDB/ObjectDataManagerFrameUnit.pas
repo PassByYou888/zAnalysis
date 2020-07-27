@@ -55,7 +55,7 @@ type
     procedure SetResourceData(Value: TObjectDataManager);
     function GetCurrentObjectDataPath: string;
     procedure SetCurrentObjectDataPath(const Value: string);
-    procedure OpenObjectDataPath(APath: string);
+    procedure OpenObjectDataPath(Path_: string);
 
     procedure SetFileFilter(const Value: string);
     function GetMultiSelect: Boolean;
@@ -64,7 +64,7 @@ type
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure UpdateItemList(APath: string);
+    procedure UpdateItemList(Path_: string);
 
     procedure ExportDBPathToPath(DBPath_, destDir_: string);
     procedure ExportToFile(DBPath_, DBItem_, destDir_, destFileName_: string; var showMsg: Boolean);
@@ -109,9 +109,9 @@ var
   i: Integer;
   destDir: string;
 begin
-  if ListView.IsEditing then
-      Exit;
   if FResourceData = nil then
+      Exit;
+  if ListView.IsEditing then
       Exit;
   if ListView.SelCount = 1 then
     begin
@@ -220,6 +220,8 @@ procedure TObjectDataManagerFrame.ActionImportDirectoryExecute(Sender: TObject);
 var
   d: string;
 begin
+  if FResourceData = nil then
+      Exit;
   if not SelectDirectory('Import directory', '', d, [sdNewFolder, sdNewUI]) then
       Exit;
 
@@ -234,11 +236,11 @@ procedure TObjectDataManagerFrame.ActionRemoveExecute(Sender: TObject);
 var
   i: Integer;
 begin
+  if FResourceData = nil then
+      Exit;
   if ListView.IsEditing then
       Exit;
   if MessageDlg('remove?', mtWarning, [mbYes, mbNo], 0) <> mrYes then
-      Exit;
-  if FResourceData = nil then
       Exit;
   if ListView.SelCount > 0 then
     begin
@@ -266,6 +268,8 @@ end;
 
 procedure TObjectDataManagerFrame.ActionRenameExecute(Sender: TObject);
 begin
+  if FResourceData = nil then
+      Exit;
   if ListView.IsEditing then
       Exit;
   if ListView.Selected <> nil then
@@ -278,9 +282,9 @@ var
   i: Integer;
   destDir: string;
 begin
-  if ListView.IsEditing then
-      Exit;
   if FResourceData = nil then
+      Exit;
+  if ListView.IsEditing then
       Exit;
   if ListView.SelCount = 1 then
     begin
@@ -364,9 +368,9 @@ begin
   FResourceTreeFrame.CurrentObjectDataPath := Value;
 end;
 
-procedure TObjectDataManagerFrame.OpenObjectDataPath(APath: string);
+procedure TObjectDataManagerFrame.OpenObjectDataPath(Path_: string);
 begin
-  UpdateItemList(APath);
+  UpdateItemList(Path_);
 end;
 
 procedure TObjectDataManagerFrame.SetFileFilter(const Value: string);
@@ -410,7 +414,7 @@ begin
   inherited;
 end;
 
-procedure TObjectDataManagerFrame.UpdateItemList(APath: string);
+procedure TObjectDataManagerFrame.UpdateItemList(Path_: string);
 var
   ItmSR: TItemSearch;
   FieldSR: TFieldSearch;
@@ -419,17 +423,17 @@ begin
   umlGetSplitArray(FFileFilter, Filter, '|;');
   ListView.Items.BeginUpdate;
   ListView.Items.Clear;
-  CurrentObjectDataPath := APath;
+  CurrentObjectDataPath := Path_;
   if FResourceData <> nil then
     begin
-      if FResourceData.FieldFindFirst(APath, '*', FieldSR) then
+      if FResourceData.FieldFindFirst(Path_, '*', FieldSR) then
         begin
           repeat
             with ListView.Items.Add do
               begin
                 Caption := FieldSR.Name;
                 SubItems.Add('Field');
-                SubItems.Add('Child : ' + umlIntToStr(FieldSR.HeaderCount));
+                SubItems.Add('Files : ' + umlIntToStr(FieldSR.HeaderCount));
                 ImageIndex := FDefaultFolderImageIndex;
                 StateIndex := -1;
                 Data := nil;
@@ -437,7 +441,7 @@ begin
           until not FResourceData.FieldFindNext(FieldSR);
         end;
 
-      if FResourceData.ItemFindFirst(APath, '*', ItmSR) then
+      if FResourceData.ItemFindFirst(Path_, '*', ItmSR) then
         begin
           repeat
             if umlMultipleMatch(Filter, ItmSR.Name) then

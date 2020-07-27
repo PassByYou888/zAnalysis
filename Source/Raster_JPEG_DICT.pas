@@ -164,7 +164,7 @@ const
   // scalefactor[0] := 1
   // scalefactor[k] := cos(k*PI/16) * sqrt(2)    for k=1..7
   // To get integer precision, the multiplier table is scaled by 14 bits
-  cIFastQuantScales: array [0 .. 63] of integer =
+  cIFastQuantScales: array [0 .. 63] of Integer =
     ( { precomputed values scaled up by 14 bits }
     16384, 22725, 21407, 19266, 16384, 12873, 8867, 4520,
     22725, 31521, 29692, 26722, 22725, 17855, 12299, 6270,
@@ -182,10 +182,10 @@ const
   cIFastConstScale = 1 shl cIFastConstBits;
 
 const
-  FIX_1_082392200F = integer(Round(cIFastConstScale * 1.082392200));
-  FIX_1_414213562F = integer(Round(cIFastConstScale * 1.414213562));
-  FIX_1_847759065F = integer(Round(cIFastConstScale * 1.847759065));
-  FIX_2_613125930F = integer(Round(cIFastConstScale * 2.613125930));
+  FIX_1_082392200F = Integer(Round(cIFastConstScale * 1.082392200));
+  FIX_1_414213562F = Integer(Round(cIFastConstScale * 1.414213562));
+  FIX_1_847759065F = Integer(Round(cIFastConstScale * 1.847759065));
+  FIX_2_613125930F = Integer(Round(cIFastConstScale * 2.613125930));
 
 const
   // Accurate FDCT
@@ -232,12 +232,10 @@ const
   FIX_2_562915447AI = Round(cIAccConstScale * 2.562915447);
   FIX_3_072711026AI = Round(cIAccConstScale * 3.072711026);
 
-  { TJpegDCT }
-
 procedure TJpegDCT.BuildQuantTableFrom(Table_: TQuantizationTable);
 // we must use the inverse zig-zag
 var
-  i: integer;
+  i: Integer;
 begin
   if (FMethod = dmAccurate) or (FMap.BlockStride < 64) then
     begin
@@ -254,21 +252,20 @@ begin
       // Get the quantization values from the table (and undo zigzag)
       for i := 0 to 63 do
           FQuant[cJpegInverseZigZag8x8[i]] := Table_.FQuant[i];
+
       // Premultiply the quantization factors
+      // scales are with 14 bits of precision, we only want 9 so divide
+      // by 5 bits of precision
       for i := 0 to 63 do
-        // scales are with 14 bits of precision, we only want 9 so divide
-        // by 5 bits of precision
           FQuant[i] := (FQuant[i] * cIFastQuantScales[i]) div (1 shl (14 - cIFastConstBits));
     end;
 end;
 
-{ TJpegFDCT }
-
 procedure TJpegFDCT.PerformFDCT(Table_: TQuantizationTable);
 var
-  i, j, k: integer;
-  PCoef: PsdCoefBlock;
-  PSample: PsdSampleBlock;
+  i, j, k: Integer;
+  PCoef: PCoefBlock;
+  PSample: PSampleBlock;
   Work: TIntArray64;
   FFDctMethod: TFDCTMethod;
   CVal, QVal: SmallInt;
@@ -320,13 +317,11 @@ begin
     end;
 end;
 
-{ TJpegIDCT }
-
 procedure TJpegIDCT.PerformIDCT;
 var
-  i, j: integer;
-  PCoef: PsdCoefBlock;
-  PSample: PsdSampleBlock;
+  i, j: Integer;
+  PCoef: PCoefBlock;
+  PSample: PSampleBlock;
   Work: TIntArray64;
   FIDctMethod: TIDCTMethod;
 begin
@@ -365,9 +360,9 @@ begin
 end;
 
 // integer multiply with shift arithmetic right
-function MultiplyF(A, B: integer): integer; inline;
+function MultiplyF(A, B: Integer): Integer; inline;
 begin
-  // Delphi seems to convert the "div" here to SAR just fine (D7), so we
+  // Delphi seems to convert the "div" here to SAR just fine (DXE10.3), so we
   // don't use ASM but plain pascal
   Result := (A * B) div cIFastConstScale;
 end;
@@ -375,9 +370,9 @@ end;
 // Descale and range limit to byte domain. We shift right over
 // 13 bits: 10 bits to remove precision, and 3 bits to get rid of the additional
 // factor 8 introducted by the IDCT transform.
-function RangeLimitF(A: integer): integer; inline;
+function RangeLimitF(A: Integer): Integer; inline;
 begin
-  // Delphi seems to convert the "div" here to SAR just fine (D7), so we
+  // Delphi seems to convert the "div" here to SAR just fine (DXE10.3), so we
   // don't use ASM but plain pascal
   Result := A div (1 shl cIFastRangeBits) + 128;
   if Result < 0 then
@@ -389,15 +384,15 @@ end;
 
 procedure InverseDCTIntFast8x8(const Coef: TCoefBlock; out Sample: TSampleBlock; const Quant: TIntArray64; var Wrksp: TIntArray64);
 var
-  i, QIdx: integer;
-  dci: integer;
-  dcs: byte;
-  p0, p1, p2, p3, p4, p5, p6, p7: Psmallint;
-  w0, w1, w2, w3, w4, w5, w6, w7: Pinteger;
-  s0, s1, s2, s3, s4, s5, s6, s7: Pbyte;
-  tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7: integer;
-  tmp10, tmp11, tmp12, tmp13: integer;
-  z5, z10, z11, z12, z13: integer;
+  i, QIdx: Integer;
+  dci: Integer;
+  dcs: Byte;
+  p0, p1, p2, p3, p4, p5, p6, p7: PSmallInt;
+  w0, w1, w2, w3, w4, w5, w6, w7: PInteger;
+  s0, s1, s2, s3, s4, s5, s6, s7: PByte;
+  tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7: Integer;
+  tmp10, tmp11, tmp12, tmp13: Integer;
+  z5, z10, z11, z12, z13: Integer;
 begin
   QIdx := 0;
   // First do the columns
@@ -435,7 +430,6 @@ begin
       else
         begin
           // Even part
-
           tmp0 := p0^ * Quant[QIdx];
           tmp1 := p2^ * Quant[QIdx + 16];
           tmp2 := p4^ * Quant[QIdx + 32];
@@ -483,7 +477,6 @@ begin
           w5^ := tmp2 - tmp5;
           w4^ := tmp3 + tmp4;
           w3^ := tmp3 - tmp4;
-
         end;
       // Advance block pointers
       inc(p0);
@@ -539,9 +532,7 @@ begin
         end
       else
         begin
-
           // Even part
-
           tmp10 := w0^ + w4^;
           tmp11 := w0^ - w4^;
 
@@ -554,7 +545,6 @@ begin
           tmp2 := tmp11 - tmp12;
 
           // Odd part
-
           z13 := w5^ + w3^;
           z10 := w5^ - w3^;
           z11 := w1^ + w7^;
@@ -581,7 +571,6 @@ begin
           s5^ := RangeLimitF(tmp2 - tmp5);
           s4^ := RangeLimitF(tmp3 + tmp4);
           s3^ := RangeLimitF(tmp3 - tmp4);
-
         end;
       // Advance block pointers
       inc(s0, 8);
@@ -605,29 +594,29 @@ end;
 
 procedure ForwardDCTIntAccurate8x8(const Sample: TSampleBlock; out Coef: TCoefBlock; var Wrksp: TIntArray64);
 var
-  i: integer;
-  s0, s1, s2, s3, s4, s5, s6, s7: Pbyte;
-  p0, p1, p2, p3, p4, p5, p6, p7: Psmallint;
-  w0, w1, w2, w3, w4, w5, w6, w7: Pinteger;
-  z1, z2, z3, z4, z5, z10, z11, z12, z13: integer;
-  tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp10, tmp11, tmp12, tmp13: integer;
+  i: Integer;
+  s0, s1, s2, s3, s4, s5, s6, s7: PByte;
+  p0, p1, p2, p3, p4, p5, p6, p7: PSmallInt;
+  w0, w1, w2, w3, w4, w5, w6, w7: PInteger;
+  z1, z2, z3, z4, z5, z10, z11, z12, z13: Integer;
+  tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7, tmp10, tmp11, tmp12, tmp13: Integer;
 
   // local
-  function DescaleMin(x: integer): integer; inline;
+  function DescaleMin(x: Integer): Integer; inline;
   begin
     // Delphi seems to convert the "div" here to SAR just fine (D7), so we
     // don't use ASM but plain pascal
     Result := x div (1 shl (cConstBits - cPass1Bits));
   end;
 
-  function DescalePlus(x: integer): integer; inline;
+  function DescalePlus(x: Integer): Integer; inline;
   begin
     // Delphi seems to convert the "div" here to SAR just fine (D7), so we
     // don't use ASM but plain pascal
     Result := x div (1 shl (cConstBits + cPass1Bits));
   end;
 
-  function DescalePass(x: integer): integer; inline;
+  function DescalePass(x: Integer): Integer; inline;
   begin
     // Delphi seems to convert the "div" here to SAR just fine (D7), so we
     // don't use ASM but plain pascal
@@ -825,7 +814,7 @@ begin
 end;
 
 // integer multiply with shift arithmetic right
-function MultiplyA(A, B: integer): integer; inline;
+function MultiplyA(A, B: Integer): Integer; inline;
 begin
   // Delphi seems to convert the "div" here to SAR just fine (D7), so we
   // don't use ASM but plain pascal
@@ -835,7 +824,7 @@ end;
 // Descale and range limit to byte domain. We shift right over
 // 12 bits: 9 bits to remove precision, and 3 bits to get rid of the additional
 // factor 8 introducted by the IDCT transform.
-function RangeLimitA(A: integer): integer; inline;
+function RangeLimitA(A: Integer): Integer; inline;
 begin
   // Delphi seems to convert the "div" here to SAR just fine (D7), so we
   // don't use ASM but plain pascal
@@ -849,14 +838,14 @@ end;
 
 procedure InverseDCTIntAccurate8x8(const Coef: TCoefBlock; out Sample: TSampleBlock; const Quant: TIntArray64; var Wrksp: TIntArray64);
 var
-  i, QIdx: integer;
-  dci: integer;
-  dcs: byte;
-  p0, p1, p2, p3, p4, p5, p6, p7: Psmallint;
-  w0, w1, w2, w3, w4, w5, w6, w7: Pinteger;
-  s0, s1, s2, s3, s4, s5, s6, s7: Pbyte;
-  z1, z2, z3, z4, z5: integer;
-  tmp0, tmp1, tmp2, tmp3, tmp10, tmp11, tmp12, tmp13: integer;
+  i, QIdx: Integer;
+  dci: Integer;
+  dcs: Byte;
+  p0, p1, p2, p3, p4, p5, p6, p7: PSmallInt;
+  w0, w1, w2, w3, w4, w5, w6, w7: PInteger;
+  s0, s1, s2, s3, s4, s5, s6, s7: PByte;
+  z1, z2, z3, z4, z5: Integer;
+  tmp0, tmp1, tmp2, tmp3, tmp10, tmp11, tmp12, tmp13: Integer;
 begin
   QIdx := 0;
   // First do the columns
@@ -1007,7 +996,6 @@ begin
         end
       else
         begin
-
           // Even part:
           z2 := w2^;
           z3 := w6^;
@@ -1085,14 +1073,14 @@ end;
 
 procedure InverseDCTIntAccurate4x4(const Coef: TCoefBlock; out Sample: TSampleBlock; const Quant: TIntArray64; var Wrksp: TIntArray64);
 var
-  i, QIdx: integer;
-  dci: integer;
-  dcs: byte;
-  p0, p1, p2, p3: Psmallint;
-  w0, w1, w2, w3: Pinteger;
-  s0, s1, s2, s3: Pbyte;
-  z1, z2, z3, z4, z5: integer;
-  tmp0, tmp1, tmp2, tmp3, tmp10, tmp11, tmp12, tmp13: integer;
+  i, QIdx: Integer;
+  dci: Integer;
+  dcs: Byte;
+  p0, p1, p2, p3: PSmallInt;
+  w0, w1, w2, w3: PInteger;
+  s0, s1, s2, s3: PByte;
+  z1, z2, z3, z4, z5: Integer;
+  tmp0, tmp1, tmp2, tmp3, tmp10, tmp11, tmp12, tmp13: Integer;
 begin
   QIdx := 0;
 
@@ -1118,7 +1106,6 @@ begin
       else
         begin
           // Even part:
-
           z2 := p2^ * Quant[QIdx + 2 * 8];
 
           z1 := MultiplyA(z2, FIX_0_541196100AI);
@@ -1157,7 +1144,6 @@ begin
           w3^ := tmp11 - tmp2;
           w1^ := tmp12 + tmp1;
           w2^ := tmp13 - tmp0;
-
         end;
       // Advance block pointers
       inc(p0);
@@ -1193,7 +1179,6 @@ begin
       else
         begin
           // Even part:
-
           z2 := w2^;
 
           z1 := MultiplyA(z2, FIX_0_541196100AI);
@@ -1234,7 +1219,6 @@ begin
           s3^ := RangeLimitA(tmp11 - tmp2);
           s1^ := RangeLimitA(tmp12 + tmp1);
           s2^ := RangeLimitA(tmp13 - tmp0);
-
         end;
 
       // Advance block pointers
@@ -1251,14 +1235,14 @@ end;
 
 procedure InverseDCTIntAccurate2x2(const Coef: TCoefBlock; out Sample: TSampleBlock; const Quant: TIntArray64; var Wrksp: TIntArray64);
 var
-  i, QIdx: integer;
-  dci: integer;
-  dcs: byte;
-  p0, p1: Psmallint;
-  w0, w1: Pinteger;
-  s0, s1: Pbyte;
-  z1, z2, z4, z5: integer;
-  tmp0, tmp3, tmp10: integer;
+  i, QIdx: Integer;
+  dci: Integer;
+  dcs: Byte;
+  p0, p1: PSmallInt;
+  w0, w1: PInteger;
+  s0, s1: PByte;
+  z1, z2, z4, z5: Integer;
+  tmp0, tmp3, tmp10: Integer;
 begin
   QIdx := 0;
   // First do the columns
@@ -1293,7 +1277,6 @@ begin
 
           w0^ := z2 + tmp3;
           w1^ := z2 - tmp0;
-
         end;
       // Advance block pointers
       inc(p0);
@@ -1335,7 +1318,6 @@ begin
 
           s0^ := RangeLimitA(tmp10 + tmp3);
           s1^ := RangeLimitA(tmp10 - tmp0);
-
         end;
       // Advance block pointers
       inc(s0, 2);

@@ -1,5 +1,5 @@
 { ****************************************************************************** }
-{ * machine Learn base type support, by QQ 600585@qq.com                       * }
+{ * Learn base type support, by QQ 600585@qq.com                               * }
 { * https://zpascal.net                                                        * }
 { * https://github.com/PassByYou888/zAI                                        * }
 { * https://github.com/PassByYou888/ZServer4D                                  * }
@@ -17,34 +17,14 @@
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
 
-type
-  TLearnCommState = record
-    Stage: TLInt;
-    IA: TLIVec;
-    BA: TLBVec;
-    RA: TLVec;
-    ca: TLComplexVec;
-  end;
-
-  /// //////////////////////////////////////////////////////////////////////
-  // Functions/procedures
-  /// //////////////////////////////////////////////////////////////////////
 function AbsReal(x: TLFloat): TLFloat;
 begin
-  // Result := Abs(X);
-  if x >= 0 then
-      AbsReal := x
-  else
-      AbsReal := -x;
+  Result := abs(x);
 end;
 
 function AbsInt(i: TLInt): TLInt;
 begin
-  // Result := Abs(I);
-  if i >= 0 then
-      AbsInt := i
-  else
-      AbsInt := -i;
+  Result := abs(i);
 end;
 
 function RandomReal(): TLFloat;

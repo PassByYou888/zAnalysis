@@ -27,96 +27,103 @@ interface
 uses CoreClasses, PascalStrings, MemoryStream64, UnicodeMixedLib, DoStatusIO, Raster_JPEG_type;
 
 type
-  // Abstract bit reader class
   TBitReader = class(TJPEG_Persistent)
   private
-    FBits: cardinal;
-    FBitsLeft: integer;
+    FBits: Cardinal;
+    FBitsLeft: Integer;
     FStream: TMemoryStream64;
-    // Errors - we don't use exceptions here, since we need highspeed
-    FHitMarker: boolean;
-    FHitEndOfStream: boolean;
-    FMarkerTag: byte;
+    { Errors - we don't use exceptions here, since we need highspeed }
+    FHitMarker: Boolean;
+    FHitEndOfStream: Boolean;
+    FMarkerTag: Byte;
   protected
-    function GetStreamPos: int64; virtual;
-    procedure SetStreamPos(const Value: int64); virtual;
+    function GetStreamPos: Int64; virtual;
+    procedure SetStreamPos(const Value: Int64); virtual;
   public
-    // These are public for fast access. Not the most beatiful under OO design
-    // but speed requests sacrifices
+    { These are public for fast access. Not the most beatiful under OO design }
+    { but speed requests sacrifices }
     ThisByte: PByte;
     NextByte: PByte;
     constructor Create(S: TMemoryStream64); virtual;
-    function GetBits(Count: integer): cardinal;
-    procedure RemoveBits(Count: integer); virtual; abstract;
+    function GetBits(Count: Integer): Cardinal;
+    procedure RemoveBits(Count: Integer); virtual; abstract;
     procedure Reset; virtual;
     procedure Reload; virtual;
-    function HasError: boolean;
-    // Are we at a marker, and there are no more bits?
-    function HitMarkerNoBitsLeft: boolean;
-    property HitEndOfStream: boolean read FHitEndOfStream;
-    // Are we at a marker? (there may still be up to 24 bits left)
-    property HitMarker: boolean read FHitMarker;
-    property MarkerTag: byte read FMarkerTag;
-    property Bits: cardinal read FBits write FBits;
-    property BitsLeft: integer read FBitsLeft write FBitsLeft;
-    property StreamPos: int64 read GetStreamPos write SetStreamPos;
+    function HasError: Boolean;
+    { Are we at a marker, and there are no more bits? }
+    function HitMarkerNoBitsLeft: Boolean;
+    property HitEndOfStream: Boolean read FHitEndOfStream;
+    { Are we at a marker? (there may still be up to 24 bits left) }
+    property HitMarker: Boolean read FHitMarker;
+    property MarkerTag: Byte read FMarkerTag;
+    property Bits: Cardinal read FBits write FBits;
+    property BitsLeft: Integer read FBitsLeft write FBitsLeft;
+    property StreamPos: Int64 read GetStreamPos write SetStreamPos;
   end;
 
-  // Optimized bit reader directly from memory
+  { Optimized bit reader directly from memory }
   TMemoryBitReader = class(TBitReader)
   private
     FNextInMem, FLastInMem: PByte;
   protected
-    function GetStreamPos: int64; override;
-    procedure SetStreamPos(const Value: int64); override;
+    function GetStreamPos: Int64; override;
+    procedure SetStreamPos(const Value: Int64); override;
   public
     constructor Create(S: TMemoryStream64); override;
-    procedure RemoveBits(Count: integer); override;
+    procedure RemoveBits(Count: Integer); override;
     procedure Reset; override;
     procedure Reload; override;
   end;
 
-  // Bit writer that saves to any stream. The writer has a buffer of approx. 1K to
-  // store the data locally until it fills up or Restart is called. In that case
-  // the buffer is flushed to the stream.
+  { Bit writer that saves to any stream. The writer has a buffer of approx. 1K to }
+  { store the data locally until it fills up or Restart is called. In that case }
+  { the buffer is flushed to the stream. }
   TBitWriter = class(TJPEG_Persistent)
   private
-    FStored: cardinal;
-    FBitsStored: integer;
+    FStored: Cardinal;
+    FBitsStored: Integer;
     FStream: TMemoryStream64;
-    FBuffer: array [0 .. 1030] of byte;
-    FBufferPos: integer;
-    procedure Emit(B: byte);
+    FBuffer: array [0 .. 1030] of Byte;
+    FBufferPos: Integer;
+    procedure Emit(B: Byte); inline;
     procedure FlushBuffer;
   public
     constructor Create(S: TMemoryStream64); virtual;
-    function CountBits(Value_: integer): integer;
-    procedure PutCode(Code_: PsdHuffmanCode); virtual;
-    procedure PutCodeExtend(Code_: PsdHuffmanCode; Value_: integer; BitCount_: integer); virtual;
-    procedure PutBits(Bits: cardinal; Count: integer); virtual;
+    function CountBits(Value_: Integer): Integer;
+    procedure PutCode(Code_: PHuffmanCode); virtual;
+    procedure PutCodeExtend(Code_: PHuffmanCode; Value_: Integer; BitCount_: Integer); virtual;
+    procedure PutBits(Bits: Cardinal; Count: Integer); virtual;
     procedure Restart; virtual;
   end;
 
   TDryRunBitWriter = class(TBitWriter)
   private
-    FHistogram: Psd8bitHuffmanHistogram;
+    FHistogram: P8bitHuffmanHistogram;
   public
-    procedure PutCode(Code_: PsdHuffmanCode); override;
-    procedure PutCodeExtend(Code_: PsdHuffmanCode; Value_: integer; BitCount_: integer); override;
-    procedure PutBits(Bits: cardinal; Count: integer); override;
+    procedure PutCode(Code_: PHuffmanCode); override;
+    procedure PutCodeExtend(Code_: PHuffmanCode; Value_: Integer; BitCount_: Integer); override;
+    procedure PutBits(Bits: Cardinal; Count: Integer); override;
     procedure Restart; override;
-    property Histogram: Psd8bitHuffmanHistogram read FHistogram write FHistogram;
+    property Histogram: P8bitHuffmanHistogram read FHistogram write FHistogram;
   end;
 
 implementation
 
-{ TBitReader }
+function TBitReader.GetStreamPos: Int64;
+begin
+  Result := FStream.Position;
+end;
+
+procedure TBitReader.SetStreamPos(const Value: Int64);
+begin
+  FStream.Position := Value;
+end;
 
 constructor TBitReader.Create(S: TMemoryStream64);
 begin
   inherited Create;
-  // These two points to bits register, which is inverted in memory,
-  // so increment by 3 for first (MSB) byte, and by 2 for next byte
+  { These two points to bits register, which is inverted in memory, }
+  { so increment by 3 for first (MSB) byte, and by 2 for next byte }
   ThisByte := @FBits;
   inc(ThisByte, 3);
   NextByte := @FBits;
@@ -124,34 +131,13 @@ begin
   FStream := S;
 end;
 
-function TBitReader.GetBits(Count: integer): cardinal;
+function TBitReader.GetBits(Count: Integer): Cardinal;
 begin
-  // Count is guaranteed <= 16 under normal circumstances
+  { Count is guaranteed <= 16 under normal circumstances }
   if Count > FBitsLeft then
       FHitEndOfStream := True;
   Result := FBits shr (32 - Count);
   RemoveBits(Count);
-end;
-
-function TBitReader.GetStreamPos: int64;
-begin
-  Result := FStream.Position;
-end;
-
-function TBitReader.HasError: boolean;
-begin
-  Result := FHitMarker or FHitEndOfStream;
-end;
-
-function TBitReader.HitMarkerNoBitsLeft: boolean;
-begin
-  Result := FHitMarker and (FBitsLeft <= 0);
-end;
-
-procedure TBitReader.Reload;
-begin
-  // Fill 'r up
-  RemoveBits(0);
 end;
 
 procedure TBitReader.Reset;
@@ -163,39 +149,45 @@ begin
   FMarkerTag := 0;
 end;
 
-procedure TBitReader.SetStreamPos(const Value: int64);
+procedure TBitReader.Reload;
 begin
-  FStream.Position := Value;
-end;
-
-{ TMemoryBitReader }
-
-constructor TMemoryBitReader.Create(S: TMemoryStream64);
-begin
-  inherited Create(S);
-  // Set pointers in memory
-  FNextInMem := TMemoryStream64(S).Memory;
-  FLastInMem := FNextInMem;
-  inc(FNextInMem, S.Position);
-  inc(FLastInMem, S.Size);
-  // Fill up register, with trick to call RemoveBits
   RemoveBits(0);
 end;
 
-function TMemoryBitReader.GetStreamPos: int64;
+function TBitReader.HasError: Boolean;
+begin
+  Result := FHitMarker or FHitEndOfStream;
+end;
+
+function TBitReader.HitMarkerNoBitsLeft: Boolean;
+begin
+  Result := FHitMarker and (FBitsLeft <= 0);
+end;
+
+function TMemoryBitReader.GetStreamPos: Int64;
 begin
   Result := NativeUInt(FNextInMem) - NativeUInt(TMemoryStream64(FStream).Memory);
 end;
 
-procedure TMemoryBitReader.Reload;
+procedure TMemoryBitReader.SetStreamPos(const Value: Int64);
 begin
-  // Set pointers in memory
   FNextInMem := TMemoryStream64(FStream).Memory;
-  inc(FNextInMem, FStream.Position);
+  inc(FNextInMem, Value);
+end;
+
+constructor TMemoryBitReader.Create(S: TMemoryStream64);
+begin
+  inherited Create(S);
+  { Set pointers in memory }
+  FNextInMem := TMemoryStream64(S).Memory;
+  FLastInMem := FNextInMem;
+  inc(FNextInMem, S.Position);
+  inc(FLastInMem, S.Size);
+  { Fill up register, with trick to call RemoveBits }
   RemoveBits(0);
 end;
 
-procedure TMemoryBitReader.RemoveBits(Count: integer);
+procedure TMemoryBitReader.RemoveBits(Count: Integer);
 begin
   FBits := FBits shl Count;
   dec(FBitsLeft, Count);
@@ -209,20 +201,20 @@ begin
           if FHitMarker then
               break;
 
-          // Skipping $FF00 and markers
+          { Skipping $FF00 and markers }
 
-          // increment next and verify next=last
+          { increment next and verify next=last }
           inc(FNextInMem);
           if FNextInMem = FLastInMem then
               break;
 
           if FNextInMem^ = $00 then
             begin
-              // Skip $00, add $FF
+              { Skip $00, add $FF }
               FBits := FBits + $FF shl (24 - FBitsLeft);
               inc(FBitsLeft, 8);
 
-              // increment next and verify next=last
+              { increment next and verify next=last }
               inc(FNextInMem);
               if FNextInMem = FLastInMem then
                   break;
@@ -231,7 +223,7 @@ begin
             end
           else
             begin
-              // We hit a marker
+              { We hit a marker }
               FHitMarker := True;
               FMarkerTag := FNextInMem^;
               dec(FNextInMem);
@@ -247,37 +239,19 @@ end;
 procedure TMemoryBitReader.Reset;
 begin
   inherited;
-  // We must adjust the streams position too
+  { We must adjust the streams position too }
   FStream.Position := NativeUInt(FNextInMem) - NativeUInt(TMemoryStream64(FStream).Memory);
 end;
 
-procedure TMemoryBitReader.SetStreamPos(const Value: int64);
+procedure TMemoryBitReader.Reload;
 begin
+  { Set pointers in memory }
   FNextInMem := TMemoryStream64(FStream).Memory;
-  inc(FNextInMem, Value);
+  inc(FNextInMem, FStream.Position);
+  RemoveBits(0);
 end;
 
-{ TBitWriter }
-
-function TBitWriter.CountBits(Value_: integer): integer;
-begin
-  if Value_ < 0 then
-      Value_ := -Value_;
-  Result := 0;
-  while Value_ > 0 do
-    begin
-      inc(Result);
-      Value_ := Value_ shr 1;
-    end;
-end;
-
-constructor TBitWriter.Create(S: TMemoryStream64);
-begin
-  inherited Create;
-  FStream := S;
-end;
-
-procedure TBitWriter.Emit(B: byte);
+procedure TBitWriter.Emit(B: Byte);
 begin
   FBuffer[FBufferPos] := B;
   inc(FBufferPos);
@@ -295,31 +269,37 @@ begin
   FBufferPos := 0;
 end;
 
-procedure TBitWriter.PutBits(Bits: cardinal; Count: integer);
+constructor TBitWriter.Create(S: TMemoryStream64);
 begin
-  inc(FBitsStored, Count);
-  FStored := FStored + Bits shl (32 - FBitsStored);
-  if FBitsStored >= 16 then
+  inherited Create;
+  FStream := S;
+end;
+
+function TBitWriter.CountBits(Value_: Integer): Integer;
+var
+  v: Integer;
+begin
+  v := if_(Value_ < 0, -Value_, Value_);
+  Result := 0;
+  while v > 0 do
     begin
-      Emit(FStored shr 24);
-      Emit(FStored shr 16 and $FF);
-      FStored := FStored shl 16;
-      FBitsStored := FBitsStored - 16;
-      if FBufferPos >= 1024 then
-          FlushBuffer;
+      inc(Result);
+      v := v shr 1;
     end;
 end;
 
-procedure TBitWriter.PutCode(Code_: PsdHuffmanCode);
+procedure TBitWriter.PutCode(Code_: PHuffmanCode);
 begin
+{$IFDEF JPEG_Debug}
   if Code_^.L = 0 then
     begin
       DoDebugOut(Self, wsWarn, 'invalid Huffman code');
     end;
+{$ENDIF JPEG_Debug}
   PutBits(Code_^.Code, Code_^.L);
 end;
 
-procedure TBitWriter.PutCodeExtend(Code_: PsdHuffmanCode; Value_, BitCount_: integer);
+procedure TBitWriter.PutCodeExtend(Code_: PHuffmanCode; Value_, BitCount_: Integer);
 begin
   PutCode(Code_);
   if BitCount_ = 0 then
@@ -338,6 +318,21 @@ begin
       PutBits(Value_ - cExtendOffset[BitCount_], BitCount_);
 end;
 
+procedure TBitWriter.PutBits(Bits: Cardinal; Count: Integer);
+begin
+  inc(FBitsStored, Count);
+  FStored := FStored + Bits shl (32 - FBitsStored);
+  if FBitsStored >= 16 then
+    begin
+      Emit(FStored shr 24);
+      Emit(FStored shr 16 and $FF);
+      FStored := FStored shl 16;
+      FBitsStored := FBitsStored - 16;
+      if FBufferPos >= 1024 then
+          FlushBuffer;
+    end;
+end;
+
 procedure TBitWriter.Restart;
 begin
   if FBitsStored > 0 then
@@ -352,28 +347,23 @@ begin
   FlushBuffer;
 end;
 
-{ TDryRunBitWriter }
-
-procedure TDryRunBitWriter.PutBits(Bits: cardinal; Count: integer);
+procedure TDryRunBitWriter.PutCode(Code_: PHuffmanCode);
 begin
-  // this does nothing
+  { increment the histogram }
+  inc(FHistogram^[Code_^.v]);
 end;
 
-procedure TDryRunBitWriter.PutCode(Code_: PsdHuffmanCode);
-begin
-  // increment the histogram
-  inc(FHistogram^[Code_^.V]);
-end;
-
-procedure TDryRunBitWriter.PutCodeExtend(Code_: PsdHuffmanCode; Value_,
-  BitCount_: integer);
+procedure TDryRunBitWriter.PutCodeExtend(Code_: PHuffmanCode; Value_, BitCount_: Integer);
 begin
   PutCode(Code_);
 end;
 
+procedure TDryRunBitWriter.PutBits(Bits: Cardinal; Count: Integer);
+begin
+end;
+
 procedure TDryRunBitWriter.Restart;
 begin
-  // this does nothing
 end;
 
 end.

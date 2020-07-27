@@ -29,17 +29,14 @@ type
   TKMInt = Integer;
   PKMInt = ^TKMInt;
 
-  TDynamicIndexArray = array of TKMInt;
-  PDynamicIndexArray = ^TDynamicIndexArray;
-
   TKMBoolArray = array of Boolean;
   PKMBoolArray = ^TKMBoolArray;
 
   TKMFloat = Double;
   PKMFloat = ^TKMFloat;
 
-  TKMIntegerArray = TDynamicIndexArray;
-  PKMIntegerArray = PDynamicIndexArray;
+  TKMIntegerArray = array of TKMInt;
+  PKMIntegerArray = ^TKMIntegerArray;
 
   TKMFloatArray = array of TKMFloat;
   PKMFloatArray = ^TKMFloatArray;
@@ -58,7 +55,7 @@ function KMeansCluster(const Source: TKMFloat2DArray; const NVars, k, Restarts: 
 
 implementation
 
-uses Math, Learn;
+uses Math, LearnTypes, Learn;
 
 procedure ArrayMove(VDst: PKMFloat; const i11, i12: NativeInt; vSrc: PKMFloat; const i21, i22: NativeInt); inline; overload;
 var

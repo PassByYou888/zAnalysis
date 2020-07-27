@@ -237,5 +237,5 @@ begin
     chroma_qp_offset, b2s(loopfilter), b2s(filter_thread)]);
 end;
 
-end.  
+end.
 

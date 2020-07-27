@@ -18,78 +18,6 @@
 { * https://github.com/PassByYou888/FastMD5                                    * }
 { ****************************************************************************** }
 
-type
-  (* ************************************************************************
-    Neural networks ensemble
-    ************************************************************************ *)
-  TMLPEnsemble = record
-    StructInfo: TLIVec;
-    EnsembleSize: TLInt;
-    NIn: TLInt;
-    NOut: TLInt;
-    WCount: TLInt;
-    IsSoftmax: Boolean;
-    PostProcessing: Boolean;
-    Weights: TLVec;
-    ColumnMeans: TLVec;
-    ColumnSigmas: TLVec;
-    SerializedLen: TLInt;
-    SerializedMLP: TLVec;
-    TmpWeights: TLVec;
-    TmpMeans: TLVec;
-    TmpSigmas: TLVec;
-    Neurons: TLVec;
-    DFDNET: TLVec;
-    y: TLVec;
-  end;
-
-  PMLPEnsemble = ^TMLPEnsemble;
-
-procedure MLPECreate0(NIn, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-procedure MLPECreate1(NIn, NHid, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-procedure MLPECreate2(NIn, NHid1, NHid2, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-
-procedure MLPECreateB0(NIn, NOut: TLInt; b, d: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-procedure MLPECreateB1(NIn, NHid, NOut: TLInt; b, d: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-procedure MLPECreateB2(NIn, NHid1, NHid2, NOut: TLInt; b, d: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-
-procedure MLPECreateR0(NIn, NOut: TLInt; a, b: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-procedure MLPECreateR1(NIn, NHid, NOut: TLInt; a, b: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-procedure MLPECreateR2(NIn, NHid1, NHid2, NOut: TLInt; a, b: TLFloat; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-
-procedure MLPECreateC0(NIn, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-procedure MLPECreateC1(NIn, NHid, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-procedure MLPECreateC2(NIn, NHid1, NHid2, NOut, EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-
-procedure MLPECreateFromNetwork(const Network: TMultiLayerPerceptron; EnsembleSize: TLInt; var Ensemble: TMLPEnsemble); forward;
-
-procedure MLPECopy(const Ensemble1: TMLPEnsemble; var Ensemble2: TMLPEnsemble); forward;
-procedure MLPESerialize(var Ensemble: TMLPEnsemble; var RA: TLVec; var RLen: TLInt); forward;
-procedure MLPEUNSerialize(const RA: TLVec; var Ensemble: TMLPEnsemble); forward;
-
-procedure MLPERandomize(var Ensemble: TMLPEnsemble); forward;
-
-procedure MLPEProperties(const Ensemble: TMLPEnsemble; var NIn: TLInt; var NOut: TLInt); forward;
-
-function MLPEIsSoftmax(const Ensemble: TMLPEnsemble): Boolean; forward;
-
-procedure MLPEProcess(var Ensemble: TMLPEnsemble; const x: TLVec; var y: TLVec); forward;
-
-function MLPERelClsError(var Ensemble: TMLPEnsemble; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function MLPEAvgCE(var Ensemble: TMLPEnsemble; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function MLPERMSError(var Ensemble: TMLPEnsemble; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function MLPEAvgError(var Ensemble: TMLPEnsemble; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-function MLPEAvgRelError(var Ensemble: TMLPEnsemble; const xy: TLMatrix; NPoints: TLInt): TLFloat; forward;
-
-procedure MLPEBaggingLM(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const xy: TLMatrix;
-  NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
-  var Info: TLInt; var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward;
-
-procedure MLPEBaggingLBFGS(const MultiThread: Boolean; var Ensemble: TMLPEnsemble; const xy: TLMatrix;
-  NPoints: TLInt; Decay: TLFloat; Restarts: TLInt;
-  WStep: TLFloat; MAXITS: TLInt; var Info: TLInt;
-  var Rep: TMLPReport; var OOBErrors: TMLPCVReport); forward;
-
 const
   MLPNTotalOffset = 3;
   MLPEVNum = 9;
@@ -541,11 +469,11 @@ end;
   Ensemble-   original
 
   OUTPUT PARAMETERS:
-  RA      -   array of real numbers which stores ensemble,
+  ResArry      -   array of real numbers which stores ensemble,
   array[0..RLen-1]
-  RLen    -   RA lenght
+  RLen    -   ResArry lenght
   ************************************************************************ *)
-procedure MLPESerialize(var Ensemble: TMLPEnsemble; var RA: TLVec;
+procedure MLPESerialize(var Ensemble: TMLPEnsemble; var ResArry: TLVec;
   var RLen: TLInt);
 var
   i: TLInt;
@@ -570,7 +498,7 @@ begin
     Ensemble.EnsembleSize + Ensemble.SerializedLen;
 
   //
-  // RA format:
+  // ResArry format:
   // [0]     RLen
   // [1]     Version (MLPEVNum)
   // [2]     EnsembleSize
@@ -590,52 +518,52 @@ begin
   // [..]    ColumnMeans
   // [..]    ColumnSigmas
   //
-  SetLength(RA, RLen);
-  RA[0] := RLen;
-  RA[1] := MLPEVNum;
-  RA[2] := Ensemble.EnsembleSize;
-  RA[3] := Ensemble.NIn;
-  RA[4] := Ensemble.NOut;
-  RA[5] := Ensemble.WCount;
+  SetLength(ResArry, RLen);
+  ResArry[0] := RLen;
+  ResArry[1] := MLPEVNum;
+  ResArry[2] := Ensemble.EnsembleSize;
+  ResArry[3] := Ensemble.NIn;
+  ResArry[4] := Ensemble.NOut;
+  ResArry[5] := Ensemble.WCount;
   if Ensemble.IsSoftmax then
     begin
-      RA[6] := 1;
+      ResArry[6] := 1;
     end
   else
     begin
-      RA[6] := 0;
+      ResArry[6] := 0;
     end;
   if Ensemble.PostProcessing then
     begin
-      RA[7] := 1;
+      ResArry[7] := 1;
     end
   else
     begin
-      RA[7] := 9;
+      ResArry[7] := 9;
     end;
-  RA[8] := SSize;
-  RA[9] := NTotal;
-  RA[10] := CCount;
-  RA[11] := HSize;
-  RA[12] := Ensemble.SerializedLen;
+  ResArry[8] := SSize;
+  ResArry[9] := NTotal;
+  ResArry[10] := CCount;
+  ResArry[11] := HSize;
+  ResArry[12] := Ensemble.SerializedLen;
   Offs := HSize;
   i := Offs;
   while i <= Offs + SSize - 1 do
     begin
-      RA[i] := Ensemble.StructInfo[i - Offs];
+      ResArry[i] := Ensemble.StructInfo[i - Offs];
       inc(i);
     end;
   Offs := Offs + SSize;
-  APVMove(@RA[0], Offs, Offs + Ensemble.EnsembleSize * Ensemble.WCount - 1,
+  APVMove(@ResArry[0], Offs, Offs + Ensemble.EnsembleSize * Ensemble.WCount - 1,
     @Ensemble.Weights[0], 0, Ensemble.EnsembleSize * Ensemble.WCount - 1);
   Offs := Offs + Ensemble.EnsembleSize * Ensemble.WCount;
-  APVMove(@RA[0], Offs, Offs + Ensemble.EnsembleSize * CCount - 1,
+  APVMove(@ResArry[0], Offs, Offs + Ensemble.EnsembleSize * CCount - 1,
     @Ensemble.ColumnMeans[0], 0, Ensemble.EnsembleSize * CCount - 1);
   Offs := Offs + Ensemble.EnsembleSize * CCount;
-  APVMove(@RA[0], Offs, Offs + Ensemble.EnsembleSize * CCount - 1,
+  APVMove(@ResArry[0], Offs, Offs + Ensemble.EnsembleSize * CCount - 1,
     @Ensemble.ColumnSigmas[0], 0, Ensemble.EnsembleSize * CCount - 1);
   Offs := Offs + Ensemble.EnsembleSize * CCount;
-  APVMove(@RA[0], Offs, Offs + Ensemble.SerializedLen - 1,
+  APVMove(@ResArry[0], Offs, Offs + Ensemble.SerializedLen - 1,
     @Ensemble.SerializedMLP[0], 0, Ensemble.SerializedLen - 1);
   Offs := Offs + Ensemble.SerializedLen;
 end;
@@ -644,12 +572,12 @@ end;
   Unserialization of TMLPEnsemble strucure
 
   INPUT PARAMETERS:
-  RA      -   real array which stores ensemble
+  ResArry      -   real array which stores ensemble
 
   OUTPUT PARAMETERS:
   Ensemble-   restored structure
   ************************************************************************ *)
-procedure MLPEUNSerialize(const RA: TLVec; var Ensemble: TMLPEnsemble);
+procedure MLPEUNSerialize(const ResArry: TLVec; var Ensemble: TMLPEnsemble);
 var
   i: TLInt;
   SSize: TLInt;
@@ -658,23 +586,23 @@ var
   HSize: TLInt;
   Offs: TLInt;
 begin
-  Assert(Round(RA[1]) = MLPEVNum, 'MLPEUnserialize: incorrect array!');
+  Assert(Round(ResArry[1]) = MLPEVNum, 'MLPEUnserialize: incorrect array!');
 
   //
   // load info
   //
   HSize := 13;
-  Ensemble.EnsembleSize := Round(RA[2]);
-  Ensemble.NIn := Round(RA[3]);
-  Ensemble.NOut := Round(RA[4]);
-  Ensemble.WCount := Round(RA[5]);
-  Ensemble.IsSoftmax := Round(RA[6]) = 1;
-  Ensemble.PostProcessing := Round(RA[7]) = 1;
-  SSize := Round(RA[8]);
-  NTotal := Round(RA[9]);
-  CCount := Round(RA[10]);
-  Offs := Round(RA[11]);
-  Ensemble.SerializedLen := Round(RA[12]);
+  Ensemble.EnsembleSize := Round(ResArry[2]);
+  Ensemble.NIn := Round(ResArry[3]);
+  Ensemble.NOut := Round(ResArry[4]);
+  Ensemble.WCount := Round(ResArry[5]);
+  Ensemble.IsSoftmax := Round(ResArry[6]) = 1;
+  Ensemble.PostProcessing := Round(ResArry[7]) = 1;
+  SSize := Round(ResArry[8]);
+  NTotal := Round(ResArry[9]);
+  CCount := Round(ResArry[10]);
+  Offs := Round(ResArry[11]);
+  Ensemble.SerializedLen := Round(ResArry[12]);
 
   //
   // Allocate arrays
@@ -697,20 +625,20 @@ begin
   i := Offs;
   while i <= Offs + SSize - 1 do
     begin
-      Ensemble.StructInfo[i - Offs] := Round(RA[i]);
+      Ensemble.StructInfo[i - Offs] := Round(ResArry[i]);
       inc(i);
     end;
   Offs := Offs + SSize;
   APVMove(@Ensemble.Weights[0], 0, Ensemble.EnsembleSize * Ensemble.WCount - 1,
-    @RA[0], Offs, Offs + Ensemble.EnsembleSize * Ensemble.WCount - 1);
+    @ResArry[0], Offs, Offs + Ensemble.EnsembleSize * Ensemble.WCount - 1);
   Offs := Offs + Ensemble.EnsembleSize * Ensemble.WCount;
   APVMove(@Ensemble.ColumnMeans[0], 0, Ensemble.EnsembleSize * CCount - 1,
-    @RA[0], Offs, Offs + Ensemble.EnsembleSize * CCount - 1);
+    @ResArry[0], Offs, Offs + Ensemble.EnsembleSize * CCount - 1);
   Offs := Offs + Ensemble.EnsembleSize * CCount;
   APVMove(@Ensemble.ColumnSigmas[0], 0, Ensemble.EnsembleSize * CCount - 1,
-    @RA[0], Offs, Offs + Ensemble.EnsembleSize * CCount - 1);
+    @ResArry[0], Offs, Offs + Ensemble.EnsembleSize * CCount - 1);
   Offs := Offs + Ensemble.EnsembleSize * CCount;
-  APVMove(@Ensemble.SerializedMLP[0], 0, Ensemble.SerializedLen - 1, @RA[0],
+  APVMove(@Ensemble.SerializedMLP[0], 0, Ensemble.SerializedLen - 1, @ResArry[0],
     Offs, Offs + Ensemble.SerializedLen - 1);
   Offs := Offs + Ensemble.SerializedLen;
 end;

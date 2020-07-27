@@ -236,12 +236,65 @@ type
     class procedure Test();
   end;
 
-  TOnRegExternalAPI = procedure(Exp: TMorphExpRunTime) of object;
+  TOnRegExternalAPI_C = procedure(Exp: TMorphExpRunTime);
+  TOnRegExternalAPI_M = procedure(Exp: TMorphExpRunTime) of object;
+{$IFDEF FPC}
+  TOnRegExternalAPI_P = procedure(Exp: TMorphExpRunTime) is nested;
+{$ELSE FPC}
+  TOnRegExternalAPI_P = reference to procedure(Exp: TMorphExpRunTime);
+{$ENDIF FPC}
 
-var
-  OnRegExternalAPI: TOnRegExternalAPI = nil;
+function RegMorphExpExternalAPI(OnRegC: TOnRegExternalAPI_C; OnRegM: TOnRegExternalAPI_M; OnRegP: TOnRegExternalAPI_P): Pointer;
+procedure RemoveMorphExpExternalAPI(p: Pointer);
 
 implementation
+
+type
+  POnRegExternalAPIData = ^TOnRegExternalAPIData;
+
+  TOnRegExternalAPIData = record
+    OnRegExternalAPI_C: TOnRegExternalAPI_C;
+    OnRegExternalAPI_M: TOnRegExternalAPI_M;
+    OnRegExternalAPI_P: TOnRegExternalAPI_P;
+  end;
+
+  TOnRegExternalAPIDataList = {$IFDEF FPC}specialize {$ENDIF FPC} TGenericsList<POnRegExternalAPIData>;
+
+var
+  ExternalAPIDataList_: TOnRegExternalAPIDataList;
+
+procedure InitExternalAPI;
+begin
+  ExternalAPIDataList_ := TOnRegExternalAPIDataList.Create;
+end;
+
+procedure FreeExternalAPI;
+var
+  i: Integer;
+begin
+  for i := 0 to ExternalAPIDataList_.Count - 1 do
+      dispose(ExternalAPIDataList_[i]);
+  ExternalAPIDataList_.Clear;
+  DisposeObject(ExternalAPIDataList_);
+end;
+
+function RegMorphExpExternalAPI(OnRegC: TOnRegExternalAPI_C; OnRegM: TOnRegExternalAPI_M; OnRegP: TOnRegExternalAPI_P): Pointer;
+var
+  p: POnRegExternalAPIData;
+begin
+  new(p);
+  p^.OnRegExternalAPI_C := OnRegC;
+  p^.OnRegExternalAPI_M := OnRegM;
+  p^.OnRegExternalAPI_P := OnRegP;
+  ExternalAPIDataList_.Add(p);
+  Result := p;
+end;
+
+procedure RemoveMorphExpExternalAPI(p: Pointer);
+begin
+  ExternalAPIDataList_.Remove(POnRegExternalAPIData(p));
+  dispose(POnRegExternalAPIData(p));
+end;
 
 procedure TExp_API.RegInternalAPI(Exp: TMorphExpRunTime);
 begin
@@ -1203,8 +1256,8 @@ begin
 
   r := meRT.Step.InData.Segmentation[0].BoundsRectV2;
   tmp := meRT.Step.InData.Segmentation[0].Projection(step_.OutData.Raster);
-  meRT.Step.OutData.Raster := tmp.BuildAreaCopy(r);
-  disposeObject(tmp);
+  meRT.Step.OutData.Raster := tmp.BuildAreaCopyAs(r);
+  DisposeObject(tmp);
   Result := OpRunTime.Trigger^.Name + '[ok]';
 end;
 
@@ -2479,10 +2532,10 @@ begin
   Morph := TMorphMath.Create;
   Morph.SetSize(meRT.Step.InData.Morphomatics.Width, meRT.Step.InData.Morphomatics.Height);
   Morph.FillValueFromPolygon(poly, InsideValue, OutsideValue);
-  disposeObject(poly);
+  DisposeObject(poly);
   meRT.Step.OutData.Assign(meRT.Step.InData);
   meRT.Step.OutData.Morphomatics.Mul_(Morph);
-  disposeObject(Morph);
+  DisposeObject(Morph);
   Result := OpRunTime.Trigger^.Name + '[ok]';
 end;
 
@@ -2518,7 +2571,7 @@ begin
     begin
       Morph := meRT.Step.InData.Raster.BuildMorphomatics(TMorphPixel.mpYIQ_Y);
       meRT.Step.OutData.Binaryzation := Morph.Binarization(Thresold);
-      disposeObject(Morph);
+      DisposeObject(Morph);
     end;
 
   Result := OpRunTime.Trigger^.Name + '[ok]';
@@ -2565,7 +2618,7 @@ begin
     begin
       Morph := meRT.Step.InData.Raster.BuildMorphomatics(TMorphPixel.mpYIQ_Y);
       meRT.Step.OutData.Binaryzation := Morph.Binarization_InRange(Min_, Max_);
-      disposeObject(Morph);
+      DisposeObject(Morph);
     end;
 
   Result := OpRunTime.Trigger^.Name + '[ok]';
@@ -2613,7 +2666,7 @@ begin
     begin
       Morph := meRT.Step.InData.Raster.BuildMorphomatics(TMorphPixel.mpYIQ_Y);
       meRT.Step.OutData.Binaryzation := Morph.Binarization_Bernsen(r, ContrastThresold);
-      disposeObject(Morph);
+      DisposeObject(Morph);
     end;
   Result := OpRunTime.Trigger^.Name + '[ok]';
 end;
@@ -2644,7 +2697,7 @@ begin
     begin
       Morph := meRT.Step.InData.Raster.BuildMorphomatics(TMorphPixel.mpYIQ_Y);
       meRT.Step.OutData.Binaryzation := Morph.Binarization_FloydSteinbergDithering();
-      disposeObject(Morph);
+      DisposeObject(Morph);
     end;
   Result := OpRunTime.Trigger^.Name + '[ok]';
 end;
@@ -2675,7 +2728,7 @@ begin
     begin
       Morph := meRT.Step.InData.Raster.BuildMorphomatics(TMorphPixel.mpYIQ_Y);
       meRT.Step.OutData.Binaryzation := Morph.Binarization_OTSU();
-      disposeObject(Morph);
+      DisposeObject(Morph);
     end;
   Result := OpRunTime.Trigger^.Name + '[ok]';
 end;
@@ -2750,7 +2803,7 @@ begin
   if meRT.Step.InData.Binaryzation <> nil then
       meRT.Step.OutData.Binaryzation.Dilatation(ConvolutionKernel_);
 
-  disposeObject(ConvolutionKernel_);
+  DisposeObject(ConvolutionKernel_);
 
   Result := OpRunTime.Trigger^.Name + '[ok]';
 end;
@@ -2798,7 +2851,7 @@ begin
   if meRT.Step.InData.Binaryzation <> nil then
       meRT.Step.OutData.Binaryzation.Erosion(ConvolutionKernel_);
 
-  disposeObject(ConvolutionKernel_);
+  DisposeObject(ConvolutionKernel_);
 
   Result := OpRunTime.Trigger^.Name + '[ok]';
 end;
@@ -2846,7 +2899,7 @@ begin
   if meRT.Step.InData.Binaryzation <> nil then
       meRT.Step.OutData.Binaryzation.Opening(ConvolutionKernel_);
 
-  disposeObject(ConvolutionKernel_);
+  DisposeObject(ConvolutionKernel_);
 
   Result := OpRunTime.Trigger^.Name + '[ok]';
 end;
@@ -2894,7 +2947,7 @@ begin
   if meRT.Step.InData.Binaryzation <> nil then
       meRT.Step.OutData.Binaryzation.Closing(ConvolutionKernel_);
 
-  disposeObject(ConvolutionKernel_);
+  DisposeObject(ConvolutionKernel_);
 
   Result := OpRunTime.Trigger^.Name + '[ok]';
 end;
@@ -2942,7 +2995,7 @@ begin
   if meRT.Step.InData.Binaryzation <> nil then
       meRT.Step.OutData.Binaryzation.OpeningAndClosing(ConvolutionKernel_);
 
-  disposeObject(ConvolutionKernel_);
+  DisposeObject(ConvolutionKernel_);
 
   Result := OpRunTime.Trigger^.Name + '[ok]';
 end;
@@ -2990,7 +3043,7 @@ begin
   if meRT.Step.InData.Binaryzation <> nil then
       meRT.Step.OutData.Binaryzation.ClosingAndOpening(ConvolutionKernel_);
 
-  disposeObject(ConvolutionKernel_);
+  DisposeObject(ConvolutionKernel_);
 
   Result := OpRunTime.Trigger^.Name + '[ok]';
 end;
@@ -3034,7 +3087,7 @@ begin
 
   meRT.Step.OutData.Assign(meRT.Step.InData);
   meRT.Step.OutData.Binaryzation.Skeleton(ConvolutionKernel_);
-  disposeObject(ConvolutionKernel_);
+  DisposeObject(ConvolutionKernel_);
 
   Result := OpRunTime.Trigger^.Name + '[ok]';
 end;
@@ -3078,18 +3131,29 @@ begin
 end;
 
 constructor TMorphExpRunTime.Create;
+var
+  i: Integer;
 begin
   inherited Create;
   Step := nil;
   API := TExp_API.Create;
   API.RegInternalAPI(Self);
-  if Assigned(OnRegExternalAPI) then
-      OnRegExternalAPI(Self);
+  for i := 0 to ExternalAPIDataList_.Count - 1 do
+    begin
+      if Assigned(ExternalAPIDataList_[i]^.OnRegExternalAPI_C) then
+          ExternalAPIDataList_[i]^.OnRegExternalAPI_C(Self);
+
+      if Assigned(ExternalAPIDataList_[i]^.OnRegExternalAPI_M) then
+          ExternalAPIDataList_[i]^.OnRegExternalAPI_M(Self);
+
+      if Assigned(ExternalAPIDataList_[i]^.OnRegExternalAPI_P) then
+          ExternalAPIDataList_[i]^.OnRegExternalAPI_P(Self);
+    end;
 end;
 
 destructor TMorphExpRunTime.Destroy;
 begin
-  disposeObject(API);
+  DisposeObject(API);
   inherited Destroy;
 end;
 
@@ -3249,10 +3313,10 @@ begin
             end;
 
           for i := 0 to rasterLst.Count - 1 do
-              disposeObject(rasterLst[i]);
+              DisposeObject(rasterLst[i]);
         end;
     end;
-  disposeObject(rasterLst);
+  DisposeObject(rasterLst);
   DebugViewer := tmpFinal;
 end;
 
@@ -3270,7 +3334,7 @@ end;
 
 destructor TMorphExpStep.Destroy;
 begin
-  disposeObject(OutData);
+  DisposeObject(OutData);
   inherited Destroy;
 end;
 
@@ -3293,7 +3357,7 @@ end;
 
 procedure TMorphExpSteps.Remove(obj: TMorphExpStep);
 begin
-  disposeObject(obj);
+  DisposeObject(obj);
   inherited Remove(obj);
 end;
 
@@ -3301,7 +3365,7 @@ procedure TMorphExpSteps.Delete(index: Integer);
 begin
   if (index >= 0) and (index < Count) then
     begin
-      disposeObject(Items[index]);
+      DisposeObject(Items[index]);
       inherited Delete(index);
     end;
 end;
@@ -3311,7 +3375,7 @@ var
   i: Integer;
 begin
   for i := 0 to Count - 1 do
-      disposeObject(Items[i]);
+      DisposeObject(Items[i]);
   inherited Clear;
 end;
 
@@ -3350,9 +3414,9 @@ end;
 
 destructor TMorphExp.Destroy;
 begin
-  disposeObject(FInData);
-  disposeObject(FSteps);
-  disposeObject(VL_Const);
+  DisposeObject(FInData);
+  DisposeObject(FSteps);
+  DisposeObject(VL_Const);
   inherited Destroy;
 end;
 
@@ -3465,8 +3529,8 @@ begin
       if err then
           break;
     end;
-  disposeObject(rt);
-  disposeObject(spec);
+  DisposeObject(rt);
+  DisposeObject(spec);
   Result := (not err);
 end;
 
@@ -3481,7 +3545,7 @@ begin
   pl.Text := script;
   for i := 0 to pl.Count - 1 do
       AddExp(pl[i]);
-  disposeObject(pl);
+  DisposeObject(pl);
   Result := Run();
 end;
 
@@ -3511,13 +3575,15 @@ begin
         end;
       Free;
     end;
-  disposeObject(r);
+  DisposeObject(r);
 end;
 
 initialization
 
-OnRegExternalAPI := nil;
+InitExternalAPI();
 
 finalization
+
+FreeExternalAPI();
 
 end.

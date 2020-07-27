@@ -53,19 +53,19 @@ implementation
 
 type
   // motion search patterns
-  TXYOffs      = array [0 .. 1] of int8_t;
+  TXYOffs = array [0 .. 1] of int8_t;
   TMEPrecision = (mpFpel, mpHpel, mpQpel);
 
 const
-  FPEL_SAD_TRESH                                 = 64;
-  ME_RANGES: array [TMEPrecision] of uint8_t     = (16, 4, 4);
-  MIN_XY                                         = -FRAME_EDGE_W;
-  MIN_XY_HPEL                                    = MIN_XY * 2;
-  MIN_XY_QPEL                                    = MIN_XY * 4;
-  pt_dia_small: array [0 .. 3] of TXYOffs        = ((0, -1), (0, 1), (-1, 0), (1, 0));
-  pt_dia_large: array [0 .. 7] of TXYOffs        = ((0, -2), (0, 2), (-2, 0), (2, 0), (-1, -1), (-1, 1), (1, -1), (1, 1));
+  FPEL_SAD_TRESH = 64;
+  ME_RANGES: array [TMEPrecision] of uint8_t = (16, 4, 4);
+  MIN_XY = -FRAME_EDGE_W;
+  MIN_XY_HPEL = MIN_XY * 2;
+  MIN_XY_QPEL = MIN_XY * 4;
+  pt_dia_small: array [0 .. 3] of TXYOffs = ((0, -1), (0, 1), (-1, 0), (1, 0));
+  pt_dia_large: array [0 .. 7] of TXYOffs = ((0, -2), (0, 2), (-2, 0), (2, 0), (-1, -1), (-1, 1), (1, -1), (1, 1));
   pt_dia_large_sparse: array [0 .. 3] of TXYOffs = ((0, -2), (0, 2), (-2, 0), (2, 0));
-  pt_square: array [0 .. 7] of TXYOffs           = ((0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1));
+  pt_square: array [0 .. 7] of TXYOffs = ((0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1));
 
 constructor TRegionSearch.Create(region_width, region_height: int32_t; mc: TMotionCompensation; cost_eval: IInterPredCostEvaluator);
 var
@@ -312,8 +312,7 @@ var
   mbx, mby,      // macroblock qpel x,y position
   x, y: int32_t; // currently searched qpel x,y position
   min_score: int32_t;
-  mv,
-    mv_prev_pass: TMotionvec;
+  mv, mv_prev_pass: TMotionvec;
   Range: int32_t;
   ITER: int32_t;
   check_bounds: Boolean;
@@ -397,6 +396,4 @@ begin
   Result := mv;
 end;
 
-end.  
- 
- 
+end.

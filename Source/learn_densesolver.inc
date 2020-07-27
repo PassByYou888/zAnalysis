@@ -324,19 +324,6 @@ begin
     end;
 end;
 
-type
-  TDenseSolverReport = record
-    r1: TLFloat;
-    RInf: TLFloat;
-  end;
-
-  TDenseSolverLSReport = record
-    r2: TLFloat;
-    Cx: TLMatrix;
-    n: TLInt;
-    k: TLInt;
-  end;
-
 procedure RMatrixSolve(const a: TLMatrix; n: TLInt;
   const b: TLVec; var Info: TLInt; var Rep: TDenseSolverReport;
   var x: TLVec); forward;
